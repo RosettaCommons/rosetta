@@ -27,8 +27,8 @@
 #include <protocols/medal/MedalMain.hh>
 #include <protocols/nonlocal/NonlocalAbinitioMain.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/rigid/RBSegmentRelax_main.hh>
-#include <protocols/loops/LoopBuild.hh>
+#include <protocols/rbsegment_relax/RBSegmentRelax_main.hh>
+#include <protocols/loop_build/LoopBuild.hh>
 #include <protocols/loophash/Mover_LoopHashRefine.hh>
 #include <protocols/abinitio/vs_test.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -202,7 +202,7 @@ main( int argc, char * argv [] )
 		} else if ( option[ run::protocol ]() == "relax" ) {
 			protocols::relax::Relax_main( true );
 		} else if ( option[ run::protocol ]() == "looprelax" ) {
-			protocols::loops::LoopRelax_main( true );
+			protocols::loop_build::LoopBuild_main( true );
 		} else if ( option[ run::protocol ]() == "threading" ) {
 			protocols::comparative_modeling::cm_main();
 		} else if ( option[ run::protocol ]() == "nonlocal_abinitio" ) {

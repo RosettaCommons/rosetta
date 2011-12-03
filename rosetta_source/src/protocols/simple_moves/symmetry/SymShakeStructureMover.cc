@@ -102,7 +102,7 @@
 //protocols
 #include <protocols/simple_moves/symmetry/SymShakeStructureMover.hh>
 #include <protocols/simple_moves/ShakeStructureMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/RotamerTrialsMover.hh>
@@ -252,8 +252,8 @@ namespace symmetry {
 			// make symmetric movemap
 			core::pose::symmetry::make_symmetric_movemap( p, *mm );
 
-      moves::SmallMoverOP small_mover(new moves::SmallMover( mm, temperature, nmoves)) ;
-      moves::ShearMoverOP shear_mover( new moves::ShearMover(mm, temperature, nmoves));
+      simple_moves::SmallMoverOP small_mover(new simple_moves::SmallMover( mm, temperature, nmoves)) ;
+      simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(mm, temperature, nmoves));
 
       setup_movers(small_mover,shear_mover,
                    0.2,0.2,0.4,
@@ -263,8 +263,8 @@ namespace symmetry {
       apply_random_move->add_mover( small_mover, .5);
       apply_random_move->add_mover( shear_mover, .5);
 
-      moves::SmallMoverOP small_mover_low(new moves::SmallMover( mm, (temperature*0.25), nmoves)) ;
-      moves::ShearMoverOP shear_mover_low( new moves::ShearMover(mm, (temperature*0.25), nmoves));
+      simple_moves::SmallMoverOP small_mover_low(new simple_moves::SmallMover( mm, (temperature*0.25), nmoves)) ;
+      simple_moves::ShearMoverOP shear_mover_low( new simple_moves::ShearMover(mm, (temperature*0.25), nmoves));
 
       setup_movers(small_mover_low,shear_mover_low,
                    0.1,0.1,0.2,

@@ -47,7 +47,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/util/kinematics_util.hh>
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
-#include <protocols/moves/RationalMonteCarlo.hh>
+#include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 
 // Package headers
 #include <protocols/nonlocal/Policy.hh>
@@ -73,7 +73,7 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
   using core::Real;
   using core::Size;
   using protocols::moves::MoverOP;
-  using protocols::moves::RationalMonteCarlo;
+  using protocols::simple_moves::rational_mc::RationalMonteCarlo;
 
   // Consider only the top k best fragments in each library
   Size num_fragments = option[OptionKeys::abinitio::number_3mer_frags];

@@ -17,12 +17,12 @@
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/moves/BackboneMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
 
@@ -276,7 +276,7 @@ my_main( void* )
 	}
 
 	// set up the BackrubMover
-	protocols::moves::BackrubMover backrubmover;
+	protocols::backrub::BackrubMover backrubmover;
 	// read known and unknown optimization parameters from the database
 	backrubmover.branchopt().read_database();
 	// tell the branch angle optimizer about the score function MMBondAngleResidueTypeParamSet, if any
@@ -285,7 +285,7 @@ my_main( void* )
 	}
 
 	// set up the SmallMover
-	protocols::moves::SmallMover smallmover;
+	protocols::simple_moves::SmallMover smallmover;
 	smallmover.nmoves(1);
 	if (option[ backrub::sm_prob ] > 0) {
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
@@ -294,7 +294,7 @@ my_main( void* )
 	}
 
 	// set up the SidechainMover
-	protocols::moves::SidechainMover sidechainmover;
+	protocols::simple_moves::sidechain_moves::SidechainMover sidechainmover;
 	sidechainmover.set_task_factory(main_task_factory);
 	sidechainmover.set_prob_uniform(option[ backrub::sc_prob_uniform ]);
 	sidechainmover.set_prob_withinrot(option[ backrub::sc_prob_withinrot ]);

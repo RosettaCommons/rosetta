@@ -33,7 +33,7 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <core/sequence/SequenceProfile.hh>
-#include <protocols/constraints_additional/SequenceProfileConstraint.hh>
+#include <core/scoring/constraints/SequenceProfileConstraint.hh>
 
 #include <basic/Tracer.hh>
 static basic::Tracer TR("apps.pilot.MSA_design");
@@ -71,7 +71,6 @@ using namespace core;
 	using namespace sequence;
 
 using namespace protocols;
-	using namespace constraints_additional;
 
 ////////////////////////////////////////////////////////////////////////////////
 void
@@ -85,7 +84,7 @@ MSA_design(
 
 	// register SequenceProfileConstraint with the ConstraintFactory so that it can be constructed from a constraint file
 	//ConstraintIO::get_cst_factory().add_type(
-	//	new SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
+	//	new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
 
 	// set up scoring
 	std::string const weights( option[ OptionKeys::score::weights ]() );
@@ -108,7 +107,7 @@ MSA_design(
 		for ( Size seqpos(1), end( pose->total_residue() ); seqpos <= end; ++seqpos ) {
 			// add individual profile constraint for each residue position
 			// because of the underlying constraint implementation, this enures that the constraint is a context-independent 1-body energy, or (intra)residue constraint
-			pose->add_constraint( new SequenceProfileConstraint( *pose, seqpos, profile ) );
+			pose->add_constraint( new core::scoring::constraints::SequenceProfileConstraint( *pose, seqpos, profile ) );
 		}
 	} else {
 	  std::string cst_file( option[ OptionKeys::constraints::cst_file ]().front() );

@@ -23,7 +23,7 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
-#include <protocols/ScoreMap.hh>
+#include <protocols/jd2/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 
 // just for tracer output

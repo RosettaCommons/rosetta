@@ -6,7 +6,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <devel/init.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/symmetry/util.hh>

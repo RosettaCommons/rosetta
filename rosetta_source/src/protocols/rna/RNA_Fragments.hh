@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_rna_RNA_Fragments_HH
 
 #include <protocols/rna/RNA_Fragments.fwd.hh>
-#include <protocols/rna/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 // AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -23,7 +23,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/rna/AllowInsert.hh>
+	#include <protocols/toolbox/AllowInsert.hh>
 #endif
 
 
@@ -47,7 +47,7 @@ namespace rna{
 													core::Size const position,
 													core::Size const size,
 													core::Size const type,
-													AllowInsertOP allow_insert 	);
+													toolbox::AllowInsertOP allow_insert 	);
 
 
 		virtual bool

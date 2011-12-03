@@ -27,7 +27,7 @@
 #include <basic/options/option.hh>
 //#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
@@ -215,7 +215,7 @@ optimize_linkers_centroid_mode(
   }
 
 	// more traditional small moves
-  SmallMoverOP small_mover( new SmallMover( mm, 0.8/*temp*/, 1/*nmoves*/ ) );
+  protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8/*temp*/, 1/*nmoves*/ ) );
   small_mover->angle_max( 'H', 2.0 );  // max angle displacement 180 degrees
   small_mover->angle_max( 'E', 4.0 );
   small_mover->angle_max( 'L', 4.0 );
@@ -228,7 +228,7 @@ optimize_linkers_centroid_mode(
 	} else {
 		// if no fragments, use coarse small moves
 		Size nmoves ( 1 );
-		SmallMoverOP coarse_small_mover( new SmallMover( mm, 0.8/*temp*/, nmoves ) );
+		protocols::simple_moves::SmallMoverOP coarse_small_mover( new protocols::simple_moves::SmallMover( mm, 0.8/*temp*/, nmoves ) );
 		coarse_small_mover->angle_max( 'H', 180.0 );  // max angle displacement 180 degrees
 		coarse_small_mover->angle_max( 'E', 180.0 );
 		coarse_small_mover->angle_max( 'L', 180.0 );
@@ -365,7 +365,7 @@ optimize_linkers_fullatom_mode(
 	MonteCarloOP mc( new MonteCarlo( full_pose, *scorefxn, 0.8 /*temperature*/ ) );
 
 	// MOVER: small moves
-  SmallMoverOP small_mover( new SmallMover( mm, 0.8/*temp*/, 1 ) );
+  protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8/*temp*/, 1 ) );
   small_mover->angle_max( 'H', 2.0 );
   small_mover->angle_max( 'E', 3.0 );
   small_mover->angle_max( 'L', 4.0 );
@@ -483,7 +483,7 @@ optimize_linkers_rna_fullatom_mode(
 	MonteCarloOP mc( new MonteCarlo( full_pose, *scorefxn_cont, 0.8) );
 
 	// MOVER: small moves
-  SmallMoverOP small_mover( new SmallMover( mm, 0.8, 1 ) );
+  protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8, 1 ) );
   small_mover->angle_max( 'H', 2.0 );
   small_mover->angle_max( 'E', 4.0 );
   small_mover->angle_max( 'L', 4.0 );
@@ -495,13 +495,13 @@ optimize_linkers_rna_fullatom_mode(
 	MinMoverOP min_mover = new MinMover( mm, scorefxn_cont, "dfpmin", 0.001, true );
 
 	// MOVER: coarse small moves
-	SmallMoverOP coarse_small_mover( new SmallMover( mm, 0.8, 1 ) );
+	protocols::simple_moves::SmallMoverOP coarse_small_mover( new protocols::simple_moves::SmallMover( mm, 0.8, 1 ) );
 	coarse_small_mover->angle_max( 'H', 180.0 );  // max angle displacement 180 degrees
 	coarse_small_mover->angle_max( 'E', 180.0 );
 	coarse_small_mover->angle_max( 'L', 180.0 );
 
 		// MOVER: coarse small moves
-	SmallMoverOP semi_small_mover( new SmallMover( mm, 0.8, 1 ) );
+	protocols::simple_moves::SmallMoverOP semi_small_mover( new protocols::simple_moves::SmallMover( mm, 0.8, 1 ) );
 	semi_small_mover->angle_max( 'H', 45.0 );  // max angle displacement 180 degrees
 	semi_small_mover->angle_max( 'E', 45.0 );
 	semi_small_mover->angle_max( 'L', 45.0 );

@@ -46,7 +46,7 @@
 #include <protocols/loops/CcdLoopClosureMover.hh>
 #include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/LoopMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -639,10 +639,10 @@ void CloseOneMover::close_one_loop_stem (
 
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	BackboneMoverOP small_mover = new SmallMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
 																								high_move_temp,
 																								n_small_moves );
-	BackboneMoverOP shear_mover = new ShearMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
 																								high_move_temp,
 																								n_small_moves );
 	small_mover->angle_max( 'H', 2.0 );
@@ -770,10 +770,10 @@ void CloseOneMover::close_one_loop_stem (
 
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	BackboneMoverOP small_mover = new SmallMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
 																								high_move_temp,
 																								n_small_moves );
-	BackboneMoverOP shear_mover = new ShearMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
 																								high_move_temp,
 																								n_small_moves );
 	small_mover->angle_max( 'H', 2.0 );
@@ -955,10 +955,10 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	BackboneMoverOP small_mover = new SmallMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
 																								high_move_temp,
 																								n_small_moves );
-	BackboneMoverOP shear_mover = new ShearMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
 																								high_move_temp,
 																								n_small_moves );
 	small_mover->angle_max( 'H', 2.0 );

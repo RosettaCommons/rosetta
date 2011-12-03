@@ -41,7 +41,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -591,7 +591,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 		Warning() << "In AnchoredDesign, calculator " << interface_calc_ << " already exists.  "
 							<< "Given the two-chain restriction, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc_, new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2) ) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc_, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2) ) );
 	}
 
 	if( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( neighborhood_calc_ ) ){

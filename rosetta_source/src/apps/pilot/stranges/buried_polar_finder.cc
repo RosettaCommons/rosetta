@@ -24,8 +24,8 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/moves/Mover.hh>

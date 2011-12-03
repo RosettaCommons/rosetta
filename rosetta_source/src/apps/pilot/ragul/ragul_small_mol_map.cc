@@ -20,7 +20,7 @@
 # include <sstream>
 // Protocol Headers
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 // Core Headers

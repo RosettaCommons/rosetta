@@ -63,9 +63,9 @@
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/CyclicMover.hh>
-#include <protocols/moves/RationalMonteCarlo.hh>
+#include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMotionMover.hh>
 #include <protocols/nonlocal/BiasedFragmentMover.hh>
 #include <protocols/nonlocal/Policy.hh>
@@ -337,6 +337,7 @@ protocols::moves::MoverOP MedalMover::create_fragment_mover(
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace protocols::moves;
+  using namespace protocols::simple_moves::rational_mc;
   using namespace protocols::nonlocal;
 
   MoverOP fragment_mover = new BiasedFragmentMover(fragments, PolicyFactory::get_policy(policy, fragments, library_size), probs);
@@ -369,6 +370,7 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace protocols::moves;
+  using namespace protocols::simple_moves::rational_mc;
   using namespace protocols::nonlocal;
 
   CyclicMoverOP meta = new CyclicMover();
@@ -398,6 +400,7 @@ protocols::moves::MoverOP MedalMover::create_small_mover(core::pose::PoseOP nati
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace protocols::moves;
+  using namespace protocols::simple_moves::rational_mc;
   using core::kinematics::MoveMap;
   using core::kinematics::MoveMapOP;
 
@@ -405,11 +408,11 @@ protocols::moves::MoverOP MedalMover::create_small_mover(core::pose::PoseOP nati
   movable->set_bb(true);
 
   CyclicMoverOP meta = new CyclicMover();
-  meta->enqueue(new SmallMover(movable,
+  meta->enqueue(new protocols::simple_moves::SmallMover(movable,
                                option[OptionKeys::rigid::temperature](),
                                option[OptionKeys::rigid::residues_backbone_move]()));
 
-  meta->enqueue(new ShearMover(movable,
+  meta->enqueue(new protocols::simple_moves::ShearMover(movable,
                                option[OptionKeys::rigid::temperature](),
                                option[OptionKeys::rigid::residues_backbone_move]()));
 

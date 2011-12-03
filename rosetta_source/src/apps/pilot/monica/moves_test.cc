@@ -47,7 +47,7 @@
 
 // AUTO-REMOVED #include <basic/database/open.hh>
 
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -108,7 +108,7 @@ small_moves_test( pose::Pose & pose )
 	using namespace protocols::moves;
 	using namespace io::pdb;
 	// setup the move objects
-	SmallMover small_mover;
+	protocols::simple_moves::SmallMover small_mover;
 	small_mover.apply( pose );
 	core::Real phi = small_mover.new_phi();
 	core::Real psi = small_mover.new_psi();
@@ -124,7 +124,7 @@ shear_moves_test( pose::Pose & pose )
 	using namespace protocols::moves;
 	using namespace io::pdb;
 	// setup the move objects
-	ShearMover shear_mover;
+	protocols::simple_moves::ShearMover shear_mover;
 	shear_mover.apply( pose );
 	core::Real phi = shear_mover.new_phi();
 	core::Real psi = shear_mover.new_psi();

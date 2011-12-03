@@ -588,7 +588,7 @@ namespace loophash {
 		using namespace core::pose;
 		using namespace conformation;
 		using namespace kinematics;
-		using namespace protocols::match;
+		using namespace numeric::geometry::hashing;
 
 		core::pose::Pose original_pose = pose;
 
@@ -699,7 +699,7 @@ namespace loophash {
 		using namespace core::pose;
 		using namespace conformation;
 		using namespace kinematics;
-		using namespace protocols::match;
+		using namespace numeric::geometry::hashing;
 		using namespace optimization;
 		using namespace id;
 
@@ -884,7 +884,7 @@ namespace loophash {
 		using namespace core::pose;
 		using namespace conformation;
 		using namespace kinematics;
-		using namespace protocols::match;
+		using namespace numeric::geometry::hashing;
 
 		Size ir, jr;
 		//Size newpep_index = 0;
@@ -953,7 +953,7 @@ namespace loophash {
 		using namespace core::pose;
 		using namespace conformation;
 		using namespace kinematics;
-		using namespace protocols::match;
+		using namespace numeric::geometry::hashing;
 
 		core::pose::Pose original_pose = pose;
 

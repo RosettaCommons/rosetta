@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 // AUTO-REMOVED #include <basic/MetricValue.hh>
 
@@ -69,8 +69,8 @@ void RestrictToInterfaceOperation::make_calculator( core::Size upper_chain, core
 		Warning() << "In RestrictToInterfaceOperation, calculator " << calculator_name_
 							<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-	using protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator;
-	CalculatorFactory::Instance().register_calculator( calculator_name_, new InterfaceNeighborDefinitionCalculator( upper_chain, lower_chain ) );
+	using core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator;
+	CalculatorFactory::Instance().register_calculator( calculator_name_, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( upper_chain, lower_chain ) );
 	}
 }
 

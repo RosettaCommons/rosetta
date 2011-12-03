@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/moves/BackrubMover.cxxtest.hh
-/// @brief  test suite for protocols::moves::BackrubMover.cc
+/// @file   protocols/backrub/BackrubMover.cxxtest.hh
+/// @brief  test suite for protocols::backrub::BackrubMover.cc
 /// @author Colin A. Smith
 
 // Test headers
@@ -27,7 +27,7 @@
 
 // Protocol Headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 
 // Numeric Headers
 #include <numeric/conversions.hh>
@@ -80,8 +80,8 @@
 #include <protocols/branch_angle/BranchParam2.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/moves/BackrubMover.fwd.hh>
-#include <protocols/moves/BackrubSegment.hh>
+#include <protocols/backrub/BackrubMover.fwd.hh>
+#include <protocols/backrub/BackrubSegment.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -174,7 +174,7 @@ public:
 
 		//test::UTracer UT("prococols/moves/BackrubMover.u");
 
-		BackrubMover backrubmover;
+		protocols::backrub::BackrubMover backrubmover;
 
 		backrubmover.set_input_pose(the_pose);
 

@@ -570,7 +570,7 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 	using protocols::forge::remodel::RemodelLoopMover;
 	using protocols::forge::remodel::RemodelLoopMoverOP;
 	using protocols::loops::IndependentLoopMover;
-	using protocols::loops::get_loop_mover;
+	using protocols::loops::LoopMoverFactory;
 
 	typedef utility::pointer::owning_ptr< IndependentLoopMover > IndependentLoopMoverOP;
 
@@ -595,7 +595,7 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 
 		// protocols::loops really needs to get refactored; when this happens the
 		// artificial cast and setup below will change.
-		IndependentLoopMoverOP loop_mover( static_cast< IndependentLoopMover * >( get_loop_mover( loop_mover_str_, loops ).get() ) );
+		IndependentLoopMoverOP loop_mover( static_cast< IndependentLoopMover * >( loops::LoopMoverFactory::get_instance()->create_loop_mover( loop_mover_str_, loops ).get() ) );
 		loop_mover->set_scorefxn( sfx_ );
 		loop_mover->set_strict_loops( true ); // no sliding window
 

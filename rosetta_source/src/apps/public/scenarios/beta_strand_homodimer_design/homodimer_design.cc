@@ -53,7 +53,7 @@
 //protocols
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 // AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
 // AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
@@ -64,7 +64,7 @@
 //#include <protocols/moves/PymolMover.hh>
 //symmetry
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymmetricRMSMover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -114,7 +114,6 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::jd2;
 using namespace core::pose::metrics;
-using namespace protocols::toolbox::pose_metric_calculators;
 
 //  Index for option[ OptionKeys::symmetry::perturb_rigid_body_dofs ] values
 typedef enum Index{
@@ -225,14 +224,14 @@ void HDdesignMover::cloak_and_setup( pose::Pose & pose ){
 		zero_vector.push_back(0.0);
 		basic::options::option[ OptionKeys::symmetry::perturb_rigid_body_dofs ].value(zero_vector);
 		//setup apply
-		protocols::symmetric_docking::SetupForSymmetryMoverOP setup_mover = new protocols::symmetric_docking::SetupForSymmetryMover;
+		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::simple_moves::symmetry::SetupForSymmetryMover;
 		setup_mover->apply(pose);
 		//uncloak
 		basic::options::option[ OptionKeys::symmetry::perturb_rigid_body_dofs ].value(pert_mags);
 	}
 	else{
 		//setup apply
-		protocols::symmetric_docking::SetupForSymmetryMoverOP setup_mover = new protocols::symmetric_docking::SetupForSymmetryMover;
+		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::simple_moves::symmetry::SetupForSymmetryMover;
 		setup_mover->apply(pose);
 	}
 
@@ -250,7 +249,7 @@ void HDdesignMover::register_calculators(){
 	else{
 		CalculatorFactory::Instance().register_calculator(
 																											InterfaceNeighborDefinition_,
-																											new InterfaceNeighborDefinitionCalculator(chain1, chain2));
+																											new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1, chain2));
 		//TR<<"Registering calculator " << InterfaceNeighborDefinition_ << std::endl;
 	}
 }//end register_calculators

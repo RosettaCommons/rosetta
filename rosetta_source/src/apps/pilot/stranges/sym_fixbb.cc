@@ -29,7 +29,7 @@
 #include <protocols/moves/Mover.hh>
 
 //symmetry
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>

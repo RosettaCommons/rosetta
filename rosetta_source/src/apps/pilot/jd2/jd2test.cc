@@ -24,7 +24,7 @@
 #include <devel/init.hh>
 
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <basic/Tracer.hh>
@@ -69,7 +69,7 @@ public:
 		pack_mover->score_function( score_fxn );
 
 		//set up another mover
-		sc_mover = new protocols::moves::SidechainMover();
+		sc_mover = new protocols::simple_moves::sidechain_moves::SidechainMover();
 		sc_mover->set_task_factory( main_task_factory );
 	}
 
@@ -171,7 +171,7 @@ private:
 	core::pack::task::TaskFactoryOP main_task_factory;
 
 	//second mover for testing
-	protocols::moves::SidechainMoverOP sc_mover;
+	protocols::simple_moves::sidechain_moves::SidechainMoverOP sc_mover;
 
 };
 

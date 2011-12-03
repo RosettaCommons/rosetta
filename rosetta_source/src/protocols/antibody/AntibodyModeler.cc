@@ -61,7 +61,7 @@
 #include <ObjexxFCL/string.functions.hh>
 using namespace ObjexxFCL::fmt;
 
-#include <protocols/ScoreMap.hh>
+#include <protocols/jd2/ScoreMap.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/antibody/AntibodyClass.hh>
 #include <protocols/antibody/AntibodyModeler.hh>
@@ -346,14 +346,14 @@ void AntibodyModeler::apply( pose::Pose & pose_in ){
 
 	// add scores to map for outputting constraint score
 	( *scorefxn )( pose_in );
-	protocols::ScoreMap::nonzero_energies(score_map_, scorefxn, pose_in);
+	protocols::jd2::ScoreMap::nonzero_energies(score_map_, scorefxn, pose_in);
 	Real constraint_score = score_map_[ "atom_pair_constraint" ];
 
 	// removing constraint score
 	scorefxn->set_weight( core::scoring::atom_pair_constraint, 0.00 );
 	// add scores to map for output
 	( *scorefxn )( pose_in );
-	protocols::ScoreMap::nonzero_energies(score_map_, scorefxn, pose_in);
+	protocols::jd2::ScoreMap::nonzero_energies(score_map_, scorefxn, pose_in);
 
 	score_map_[ "AA_H3" ] = global_loop_rmsd( pose_in, native_pose_, "h3" );
 	score_map_[ "AB_H2" ] = global_loop_rmsd( pose_in, native_pose_, "h2" );

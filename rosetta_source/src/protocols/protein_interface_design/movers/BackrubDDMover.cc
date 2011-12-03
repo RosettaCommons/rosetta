@@ -23,8 +23,8 @@
 #include <protocols/simple_moves/BBGaussianMover.hh>
 
 // Package headers
-#include <protocols/moves/BackboneMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/protein_interface_design/util.hh>
 
@@ -39,7 +39,7 @@
 #include <core/pose/Pose.hh>
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 // AUTO-REMOVED #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <basic/options/option.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -60,7 +60,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
-//#include <protocols/moves/BackboneMover.hh>
+//#include <protocols/simple_moves/BackboneMover.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -202,9 +202,9 @@ BackrubDDMover::apply( Pose & pose )
 	// backrub setup based on collin's backrub.cc
 
 	// set up the BackrubMover
-	protocols::moves::BackrubMover backrub_mover;
-	protocols::moves::SidechainMover sidechain_mover;
-	protocols::moves::SmallMover smallmover;
+	protocols::backrub::BackrubMover backrub_mover;
+	protocols::simple_moves::sidechain_moves::SidechainMover sidechain_mover;
+	protocols::simple_moves::SmallMover smallmover;
 	protocols::simple_moves::BBG8T3AMover bbg8t3amover;
 
 	smallmover.nmoves( 1 );

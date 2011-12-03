@@ -292,4 +292,4 @@ private:
 }
 }
 
-#endif //INCLUDED_protocols_moves_mc_convergence_check_HierarchicalLevel_HH
+#endif //INCLUDED_protocols_canonical_sampling_mc_convergence_check_HierarchicalLevel_HH

@@ -11,7 +11,7 @@
 
 // libRosetta headers
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 

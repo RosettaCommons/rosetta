@@ -22,7 +22,7 @@
  #include <core/scoring/constraints/ConstraintIO.hh>
  #include <core/scoring/constraints/FlatHarmonicFunc.hh>
 
- #include <protocols/moves/BackboneMover.hh>
+ #include <protocols/simple_moves/BackboneMover.hh>
  #include <protocols/moves/MinMover.hh>
  #include <protocols/moves/MonteCarlo.hh>
  #include <protocols/moves/Mover.hh>

@@ -38,7 +38,7 @@
 // AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/ProlineFixMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
@@ -151,7 +151,7 @@ void test( std::string fname ) {
 	Size nmoves_( 20 );
 	Real  m_Temperature = 0.8;
 	core::kinematics::MoveMapOP movemap_ = new core::kinematics::MoveMap();
-	moves::SmallMoverOP small_mover( new moves::SmallMover( movemap_,
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( movemap_,
 m_Temperature, nmoves_ ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 2.0 );

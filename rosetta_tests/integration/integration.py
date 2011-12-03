@@ -234,15 +234,15 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
                 if options.fulldiff:
                     for diff in proc.stdout.readlines():
-                        msg += "~ %s" % diff.strip()
+                        msg += "~ %s\n" % diff.strip()
                         full_log_msg += "     %s\n" % diff.strip()
                 else :
                     lines = proc.stdout.readlines()
                     for line in lines :
                         cols = line.split()
                         if len(cols) < 4 :
-                            msg += "~ %s" % diff.strip()
-                            full_log_msg += "     %s\n" % diff.strip()
+                            msg += "~ %s\n" % line.strip()
+                            full_log_msg += "     %s\n" % line.strip()
                         else:
                             msg += "~ nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
                             full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
@@ -256,15 +256,15 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
                 if options.fulldiff:
                     for diff in proc.stdout.readlines():
-                        msg += "~ %s" % diff.strip()
+                        msg += "~ %s\n" % diff.strip()
                         full_log_msg += "     %s\n" % diff.strip()
                 else :
                     lines = proc.stdout.readlines()
                     for line in lines :
                         cols = line.split()
-                        if len(cols) < 4 :
-                            msg += "    %s" % diff.strip()
-                            full_log_msg += "     %s\n" % diff.strip()
+                        if len(cols) < 4 or not( cols[2] == "and" ) :
+                            msg += "    %s\n" %  line.strip()
+                            full_log_msg += "     %s\n" % line.strip()
                         else:
                             msg += "    nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
                             full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )

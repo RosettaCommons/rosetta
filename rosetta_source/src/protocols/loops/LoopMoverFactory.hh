@@ -7,25 +7,60 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @author Mike Tyka
+/// @file src/protocols/loops/LoopMoverFactory.hh
+/// @brief Factory for creating LoopMover objects
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_protocols_loops_LoopMoverFactory_hh
-#define INCLUDED_protocols_loops_LoopMoverFactory_hh
 
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
+#ifndef INCLUDED_protocols_evaluator_LoopMoverFactory_hh
+#define INCLUDED_protocols_evaluator_LoopMoverFactory_hh
+
+// Unit Headers
+#include <protocols/loops/LoopMoverFactory.fwd.hh>
+
+// Project Headers
 #include <protocols/loops/LoopMover.fwd.hh>
-
 #include <protocols/loops/Loops.fwd.hh>
+
+// Platform Headers
+#include <core/pose/Pose.fwd.hh>
+#include <utility/factory/WidgetRegistrator.hh>
+
+// C++ Headers
+#include <map>
+
+#include <utility/vector1.hh>
 
 
 namespace protocols {
 namespace loops {
 
-loops::LoopMoverOP get_loop_mover(
-	std::string const & name, loops::Loops const & loops
-);
+/// Create LoopMover Reporters
+class LoopMoverFactory {
 
-} // loops
-} // protocols
+	// Private constructor to make it singleton managed
+	LoopMoverFactory();
+	LoopMoverFactory(const LoopMoverFactory & src); // unimplemented
+
+	LoopMoverFactory const &
+	operator=( LoopMoverFactory const & ); // unimplemented
+
+public:
+
+	// Warning this is not called because of the singleton pattern
+	virtual ~LoopMoverFactory();
+
+	static LoopMoverFactory * get_instance();
+
+	LoopMoverOP create_loop_mover(std::string const & type_name, Loops const & loops );
+
+private:
+
+	static LoopMoverFactory * instance_;
+
+};
+
+} // namespace
+} // namespace
 
 #endif

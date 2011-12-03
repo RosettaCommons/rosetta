@@ -16,11 +16,11 @@
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/moves/BackboneMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/viewer/viewers.hh>
 
 // Core Headers
@@ -225,19 +225,19 @@ my_main( void* )
 	score_fxn->set_energy_method_options(energymethodoptions);
 
 	// set up the BackrubMover
-	protocols::moves::BackrubMover backrubmover;
+	protocols::backrub::BackrubMover backrubmover;
 	// read known and unknown optimization parameters from the database
 	backrubmover.branchopt().read_database();
 
 	// set up the SmallMover
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->init_from_file(option[ in::file::movemap ]);
-	protocols::moves::SmallMover smallmover;
+	protocols::simple_moves::SmallMover smallmover;
 	smallmover.nmoves(1);
 	smallmover.movemap(movemap);
 
 	// set up the SidechainMover
-	protocols::moves::SidechainMover sidechainmover;
+	protocols::simple_moves::sidechain_moves::SidechainMover sidechainmover;
 	sidechainmover.set_task_factory(main_task_factory);
 	sidechainmover.set_prob_uniform(option[ backrub::sc_prob_uniform ]);
 

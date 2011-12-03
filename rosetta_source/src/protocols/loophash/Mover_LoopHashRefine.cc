@@ -50,7 +50,7 @@
 // AUTO-REMOVED #include <protocols/wum/SilentStructStore.hh>
 #include <protocols/relax/FastRelax.hh>
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
-#include <protocols/match/Hit.fwd.hh>
+// #include <protocols/match/Hit.fwd.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <numeric/geometry/hashing/SixDHasher.hh>
 #include <protocols/moves/Mover.hh>
@@ -107,7 +107,7 @@ using namespace core;
 using namespace core::pose;
 using namespace conformation;
 using namespace kinematics;
-using namespace protocols::match;
+using namespace numeric::geometry::hashing;
 using namespace protocols::frag_picker;
 using namespace protocols::loophash;
 

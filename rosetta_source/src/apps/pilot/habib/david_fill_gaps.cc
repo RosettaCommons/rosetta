@@ -47,7 +47,7 @@
 
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <numeric/random/random.hh>
-#include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 
 
 // Utility Headers

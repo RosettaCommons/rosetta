@@ -35,7 +35,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // project headers
@@ -422,7 +422,7 @@ if (working_model.manager.size()!= 0){
 
 	//initialize symmetry
   if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-      protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+      protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
       pre_mover.apply( pose );
 			// Remodel assumes chain ID is ' '
 			core::pose::PDBInfoOP pdb_info ( pose.pdb_info() );

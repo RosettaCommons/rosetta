@@ -23,7 +23,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/moves/HelixRotate.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RationalMonteCarlo.hh>
+#include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 #include <protocols/viewer/viewers.hh>
 
 void* viewer_main(void* ) {
@@ -33,7 +33,7 @@ void* viewer_main(void* ) {
   using protocols::loops::Loop;
   using protocols::moves::HelixRotate;
   using protocols::moves::MoverOP;
-  using protocols::moves::RationalMonteCarlo;
+  using protocols::simple_moves::rational_mc::RationalMonteCarlo;
 
   Pose input  = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0538/2kruA_1.pdb_full_length.pdb");
   Pose output = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0538/2kruA_1.pdb_full_length.pdb");

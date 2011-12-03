@@ -18,7 +18,7 @@
 
 // Protocol Headers
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 // Core Headers
@@ -124,7 +124,7 @@ main( int argc, char * argv [] )
 		TR << "Starting trajectory: " << traj << " of " << ntraj << std::endl;
 
 		// set up BackrubMover and read from the database
-		protocols::moves::BackrubMover backrubmover;
+		protocols::backrub::BackrubMover backrubmover;
 		backrubmover.branchopt().read_database();
 
 		// Create Owning Pointer for pose

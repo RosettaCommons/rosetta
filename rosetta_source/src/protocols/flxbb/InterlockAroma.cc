@@ -31,7 +31,7 @@
 #include <protocols/jd2/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
-#include <protocols/moves/MakePolyXMover.hh>
+#include <protocols/simple_moves/MakePolyXMover.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -130,7 +130,7 @@ InterlockAroma::apply( Pose & pose )
 	using protocols::fldsgn::filters::InterlockingAromaFilter;
 	using protocols::fldsgn::topology::SS_Info2;
 	using protocols::fldsgn::topology::SS_Info2_OP;
-	using protocols::moves::MakePolyXMover;
+	using protocols::simple_moves::MakePolyXMover;
 
 	// set pose to fullatom
 	runtime_assert( pose.is_fullatom() );

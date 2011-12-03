@@ -127,7 +127,7 @@ numeric::random::RandomGenerator RG(1548761031); // <- Magic number, do not chan
 #include <core/io/silent/SilentFileData.hh>
 
 //protocols
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
@@ -249,7 +249,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 
 
 void
-setup_movers(moves::SmallMoverOP small, moves::ShearMoverOP shear,
+setup_movers(simple_moves::SmallMoverOP small, simple_moves::ShearMoverOP shear,
 						 core::Real small_H_angle_max, core::Real small_E_angle_max, core::Real small_L_angle_max,
 						 core::Real shear_H_angle_max, core::Real shear_E_angle_max, core::Real shear_L_angle_max){
 	//smaller moves to boost acceptance rate
@@ -285,8 +285,8 @@ run_mc(pose::Pose & p, ScoreFunction & s,
 	utility::vector1<core::Real> CA_rmsd_from_start;
 
 	//small mover
-	moves::SmallMoverOP small_mover(new moves::SmallMover( mm, temperature, nmoves)) ;
-	moves::ShearMoverOP shear_mover( new moves::ShearMover(mm, temperature, nmoves));
+	simple_moves::SmallMoverOP small_mover(new simple_moves::SmallMover( mm, temperature, nmoves)) ;
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(mm, temperature, nmoves));
 
 	setup_movers(small_mover,shear_mover,
 							 0.2,0.2,0.4,
@@ -297,8 +297,8 @@ run_mc(pose::Pose & p, ScoreFunction & s,
 	apply_random_move->add_mover( shear_mover, .5);
 
 	//separate set of movers for low temperature (reduce angle-max)
-	moves::SmallMoverOP small_mover_low(new moves::SmallMover( mm, (temperature*0.25), nmoves)) ;
-	moves::ShearMoverOP shear_mover_low( new moves::ShearMover(mm, (temperature*0.25), nmoves));
+	simple_moves::SmallMoverOP small_mover_low(new simple_moves::SmallMover( mm, (temperature*0.25), nmoves)) ;
+	simple_moves::ShearMoverOP shear_mover_low( new simple_moves::ShearMover(mm, (temperature*0.25), nmoves));
 
 	setup_movers(small_mover_low,shear_mover_low,
 							 0.1,0.1,0.2,

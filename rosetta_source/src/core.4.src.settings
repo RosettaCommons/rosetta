@@ -104,6 +104,7 @@ sources = {
 		"UnboundRotamersOperation",
 		"WaterAnchorInfo",
 		"WaterPackingInfo",
+		"bb_independent_rotamers",
 	],
 	"core/pack/scmin" : [
 		"AtomTreeCollection",

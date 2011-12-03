@@ -17,13 +17,13 @@
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/moves/BackboneMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/DOFHistogramRecorder.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
 
@@ -291,7 +291,7 @@ my_main( void* )
 	if (option[ backrub::test_detailed_balance ]) score_fxn = new core::scoring::ScoreFunction();
 
 	// set up the BackrubMover
-	protocols::moves::BackrubMover backrubmover;
+	protocols::backrub::BackrubMover backrubmover;
 	// read known and unknown optimization parameters from the database
 	backrubmover.branchopt().read_database();
 	// tell the branch angle optimizer about the score function MMBondAngleResidueTypeParamSet, if any
@@ -301,7 +301,7 @@ my_main( void* )
 	backrubmover.set_preserve_detailed_balance(option[ backrub::detailed_balance ]);
 
 	// set up the SmallMover
-	protocols::moves::SmallMover smallmover;
+	protocols::simple_moves::SmallMover smallmover;
 	smallmover.nmoves(1);
 	smallmover.set_preserve_detailed_balance(option[ backrub::detailed_balance ]);
 	if ( option[ backrub::sm_angle_max ].user() ) smallmover.angle_max(option[ backrub::sm_angle_max ]);
@@ -312,7 +312,7 @@ my_main( void* )
 	}
 
 	// set up the SidechainMover
-	protocols::moves::SidechainMover sidechainmover;
+	protocols::simple_moves::sidechain_moves::SidechainMover sidechainmover;
 	sidechainmover.set_task_factory(main_task_factory);
 	sidechainmover.set_prob_uniform(option[ backrub::sc_prob_uniform ]);
 	sidechainmover.set_prob_withinrot(option[ backrub::sc_prob_withinrot ]);
@@ -506,7 +506,7 @@ my_main( void* )
 					backrubmover.apply(*pose);
 					move_type = backrubmover.type();
 
-					protocols::moves::BackrubSegment const & segment(backrubmover.segment(backrubmover.last_segment_id()));
+					protocols::backrub::BackrubSegment const & segment(backrubmover.segment(backrubmover.last_segment_id()));
 					if (option[ backrub::backrub_sc_prob ] && segment.size() == 7) {
 						core::Size middle_resnum(static_cast<core::Size>((segment.start_atomid().rsd() + segment.end_atomid().rsd())*.5));
 						//TR << "Simultaneous move for segment: " << segment.start_atomid() << segment.end_atomid() << " middle: " << middle_resnum << std::endl;

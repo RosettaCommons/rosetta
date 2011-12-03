@@ -20,7 +20,7 @@
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/RNA_Fragments.fwd.hh>
-#include <protocols/rna/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -42,7 +42,7 @@ public:
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
 	RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
-										 protocols::rna::AllowInsertOP allow_insert );
+										 protocols::toolbox::AllowInsertOP allow_insert );
 
 	// is this defunct now? I think so.
 	RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
@@ -72,7 +72,7 @@ private:
 	update_insert_map( core::pose::Pose const & pose );
 
 	protocols::rna::RNA_FragmentsOP rna_fragments_;
-	protocols::rna::AllowInsertOP allow_insert_;
+	protocols::toolbox::AllowInsertOP allow_insert_;
 
 	std::map < Size, Size > insert_map_;
 	Size num_insertable_residues_;

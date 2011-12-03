@@ -24,7 +24,7 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
-#include <protocols/ScoreMap.hh>
+#include <protocols/jd2/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 
 // External library headers
@@ -116,7 +116,7 @@ PDBTrajectoryRecorder::write_model(
 
 	std::map < std::string, core::Real > score_map;
 	std::map < std::string, std::string > string_map;
-	protocols::ScoreMap::score_map_from_scored_pose(score_map, pose);
+	protocols::jd2::ScoreMap::score_map_from_scored_pose(score_map, pose);
 	core::io::raw_data::ScoreStruct score_struct;
 
 	trajectory_stream_ << "MODEL     " << std::setw(4) << model_count() << std::endl;

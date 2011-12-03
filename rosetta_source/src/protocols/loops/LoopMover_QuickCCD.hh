@@ -42,8 +42,12 @@ class LoopMover_Perturb_QuickCCD: public IndependentLoopMover {
 public: // construct/destruct
 
 	/// @brief Loops constructor
+	/// @remarks Will be initialized with centroid level score function 'score4L'.
+	LoopMover_Perturb_QuickCCD();
+
+
+	/// @brief Loops constructor
 	/// @param[in] loops_in the set of loops to model
-	/// @param[in] frags_from_file read fragments from files specified on command line?
 	/// @remarks Will be initialized with centroid level score function 'score4L'.
 	LoopMover_Perturb_QuickCCD(
 		protocols::loops::Loops loops_in
@@ -52,8 +56,6 @@ public: // construct/destruct
 	/// @brief Loops & ScoreFunction constructor
 	/// @param[in] loops_in the set of loops to model
 	/// @param[in] scorefxn desired ScoreFunction
-	/// @param[in] frags_from_file read fragments from files specified on command
-	/// line?
 	LoopMover_Perturb_QuickCCD(
 		protocols::loops::Loops loops_in,
 		core::scoring::ScoreFunctionOP scorefxn

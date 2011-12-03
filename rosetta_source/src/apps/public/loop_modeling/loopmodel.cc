@@ -14,7 +14,7 @@
 
 #include <protocols/abinitio/AbrelaxApplication.hh>
 
-#include <protocols/loops/LoopBuild.hh>
+#include <protocols/loop_build/LoopBuild.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <devel/init.hh>
@@ -25,8 +25,8 @@
 
 ////////////////////////////////////////////////////////
 void *
-LoopRelax_main_local( void* ) {
-	 protocols::loops::LoopRelax_main( false );
+LoopBuild_main_local( void* ) {
+	 protocols::loop_build::LoopBuild_main( false );
 	return 0;
 }
 
@@ -38,7 +38,7 @@ main( int argc, char * argv [] )
 	protocols::abinitio::ClassicAbinitio::register_options();
 	protocols::abinitio::AbrelaxApplication::register_options();
 	devel::init( argc, argv );
-	protocols::viewer::viewer_main( LoopRelax_main_local );
+	protocols::viewer::viewer_main( LoopBuild_main_local );
 	return 0;
 }
 

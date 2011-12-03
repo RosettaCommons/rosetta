@@ -36,7 +36,7 @@
 //  Movers
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/BackboneMover.hh> //Small Mover
+#include <protocols/simple_moves/BackboneMover.hh> //Small Mover
 #include <protocols/moves/MoverContainer.hh> //SequenceMover
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -210,9 +210,9 @@ void PepMinMover::apply (pose::Pose& pose ) {
   TR<< "Minimizing with: " << option[ OptionKeys::run::min_type ].value() << std::endl;
   //backbone moves
   Size nmoves (5);
-  SmallMoverOP small_mover = new SmallMover(movemap, mc_temp, nmoves);
+  protocols::simple_moves::SmallMoverOP small_mover = new protocols::simple_moves::SmallMover(movemap, mc_temp, nmoves);
   small_mover->set_angles(10.0);
-  ShearMoverOP shear_mover = new ShearMover(movemap, mc_temp, nmoves);
+  protocols::simple_moves::ShearMoverOP shear_mover = new protocols::simple_moves::ShearMover(movemap, mc_temp, nmoves);
   shear_mover->set_angles(10.0);
   RandomMoverOP bb_random_mover( new moves::RandomMover() );
   bb_random_mover->add_mover( small_mover );

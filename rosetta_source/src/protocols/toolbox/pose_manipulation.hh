@@ -89,6 +89,17 @@ remove_non_protein_residues(
 	core::pose::Pose & pose
 );
 
+
+/// @author Florian Richter( floric@u.washington.edu), nov 11
+/// @brief adds chainbreak residue types depending on fold tree jumps
+void
+add_chainbreaks_according_to_jumps( core::pose::Pose & pose );
+
+/// @author Florian Richter( floric@u.washington.edu), nov 11
+/// @brief removes chainbreak residue types depending on fold tree jumps
+void
+remove_chainbreaks_according_to_jumps( core::pose::Pose & pose );
+
 /// @author Florian Richter( floric@u.washington.edu) , sep 08
 /// @brief superimposes one pose onto the other at the positions specified and
 /// @brief with the offset specified

@@ -37,7 +37,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/loops/loops_main.hh>
@@ -551,13 +551,13 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	}
 
 	// setup the move objects
-	moves::SmallMoverOP small_mover( new moves::SmallMover( movemap, 1.0, 1 ) );
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( movemap, 1.0, 1 ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 2.0 );
 	small_mover->angle_max( 'L', 3.0 );
 
 	// setup the move objects
-	moves::ShearMoverOP shear_mover( new moves::ShearMover( movemap, 1.0, 1 ) );
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( movemap, 1.0, 1 ) );
 	shear_mover->angle_max( 'H', 2.0 );
 	shear_mover->angle_max( 'E', 2.0 );
 	shear_mover->angle_max( 'L', 3.0 );

@@ -20,6 +20,7 @@
 #include <protocols/match/MatcherTask.hh>
 #include <protocols/match/output/MatchGrouper.hh>
 #include <protocols/match/output/UpstreamHitCacher.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -271,7 +272,7 @@ PDBWriter::assemble_remark_lines(
 			targ_chain =  utility::to_string( orig_upstream_pose_->pdb_info()->chain( upstream_matchres[ upstream_only_it->second ]->seqpos() ) );
 			targ_seqpos = orig_upstream_pose_->pdb_info()->number( upstream_matchres[ upstream_only_it->second ]->seqpos() );
 		}
-		ri.value =  enzdes::enzutil::assemble_remark_line(
+		ri.value =  toolbox::match_enzdes_util::assemble_remark_line(
 			targ_chain, targ_resname, targ_seqpos, upres_chain, upname3, orig_upstream_pose_->pdb_info()->number( upstream_matchres[ i ]->seqpos() ), i , ex_geom_ids_for_upstream_res[ i ] );
 		rems.push_back( ri );
 

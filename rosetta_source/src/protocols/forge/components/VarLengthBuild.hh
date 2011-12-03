@@ -161,7 +161,7 @@ public: // accessors
 	/// @brief the string id of the loop mover to use
 	///  (default "RemodelLoopMover")
 	/// @return "RemodelLoopMover" for the forge RemodelLoopMover, otherwise a
-	///  string recognized by protocols::loops::get_loop_mover() "LoopMoverFactory".
+	///  string recognized by create_loop_mover() in the "LoopMoverFactory".
 	inline
 	String const & loop_mover_str() const {
 		return loop_mover_str_;
@@ -289,7 +289,7 @@ public: // mutators
 	/// @brief set the loop mover to use via string
 	/// @details use "RemodelLoopMover" for the forge RemodelLoopMover,
 	///  otherwise set it to a string recognized by
-	///  protocols::loops::get_loop_mover() "LoopMoverFactory".
+	///  create_loop_mover() in the "LoopMoverFactory".
 	inline
 	void loop_mover_str( String const & str ) {
 		loop_mover_str_ = str;
@@ -529,7 +529,7 @@ private: // data
 	///  (default "RemodelLoopMover" )
 	/// @details use "RemodelLoopMover" for the forge RemodelLoopMover,
 	///  otherwise set it to a string recognized by
-	///  protocols::loops::get_loop_mover() "LoopMoverFactory".
+	///  create_loop_mover() in the "LoopMoverFactory".
 	String loop_mover_str_;
 
 

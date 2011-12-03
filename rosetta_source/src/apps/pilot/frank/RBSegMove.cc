@@ -11,7 +11,7 @@
 /// @brief
 /// @author Srivatsan Raman
 /// @author Frank DiMaio
-#include <protocols/rigid/RBSegmentRelax_main.hh>
+#include <protocols/rbsegment_relaxRelax_main.hh>
 #include <protocols/viewer/viewers.hh>
 #include <devel/init.hh>
 

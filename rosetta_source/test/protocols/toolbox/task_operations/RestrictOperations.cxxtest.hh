@@ -35,7 +35,7 @@
 #include <core/pack/task/PackerTask.hh>
 
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -122,7 +122,7 @@ public:
 		std::string const interface_calc("interface"), neighborhood_calc("neighborhood");
 		std::set< core::Size > crset_RBC;
 		crset_RBC.insert(127); crset_RBC.insert(170), crset_RBC.insert(46);
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2) ) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2) ) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( crset_RBC ) );
 
 		//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform

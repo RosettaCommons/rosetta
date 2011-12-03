@@ -31,7 +31,7 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/constraints_additional/SequenceProfileConstraint.hh>
+#include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/sequence/SequenceProfile.hh> 
 #include <utility/file/FileName.hh>
 
@@ -56,12 +56,11 @@ void
 SequenceProfileMover::apply( core::pose::Pose & pose )
 {
     using namespace core::sequence;
-    using namespace protocols::constraints_additional;
     
     SequenceProfileOP profile = new SequenceProfile;
     profile->read_from_checkpoint( cst_file_name_ );
     for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos )
-        pose.add_constraint( new SequenceProfileConstraint( pose, seqpos, profile ) );
+        pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
     
     TR << "Added sequence profile constraints specified in file " << cst_file_name_ << "." << std::endl;
     

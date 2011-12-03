@@ -462,7 +462,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
  */
           // DJM: need to cast this as IndependentLoopMover to set strict loops to true.
 					loops::IndependentLoopMoverOP remodel_mover( static_cast< loops::IndependentLoopMover * >
-														 ( loops::get_loop_mover( remodel(), loops ).get() ) );
+						( loops::LoopMoverFactory::get_instance()->create_loop_mover( remodel(), loops ).get() ) );
 					core::kinematics::FoldTree f_orig=pose.fold_tree();
 					if ( !remodel_mover ) {
 						utility_exit_with_message( "Error: no remodel mover defined!" );

@@ -16,7 +16,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/rna/RNA_JumpLibrary.fwd.hh>
-#include <protocols/rna/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -68,11 +68,11 @@ public:
 	bool
 	random_jump_change( core::pose::Pose & pose ) const;
 
-	AllowInsertOP
+toolbox::AllowInsertOP
 	allow_insert();
 
 	void
-	set_allow_insert( AllowInsertOP allow_insert );
+	set_allow_insert(toolbox::AllowInsertOP allow_insert );
 
 	bool
 	check_base_pairs( core::pose::Pose & pose ) const;
@@ -169,7 +169,7 @@ private:
 	bool add_virtual_anchor_;
 
 	utility::vector1 < std::pair< core::Size, core::Size > > allow_insert_segments_;
-	AllowInsertOP allow_insert_;
+toolbox::AllowInsertOP allow_insert_;
 
 };
 

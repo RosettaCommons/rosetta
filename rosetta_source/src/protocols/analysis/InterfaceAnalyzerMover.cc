@@ -53,10 +53,10 @@
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 // AUTO-REMOVED #include <protocols/moves/MutateResidue.hh>
-#include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceDeltaEnergeticsCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
@@ -1029,7 +1029,7 @@ namespace analysis{
         Warning() << "In InterfaceAnalyzerMover, calculator " << Sasa_
             << " already exists, this is hopefully correct for your purposes" << std::endl;
     } else {
-        CalculatorFactory::Instance().register_calculator( Sasa_, new SasaCalculator);
+        CalculatorFactory::Instance().register_calculator( Sasa_, new core::pose::metrics::simple_calculators::SasaCalculator);
     }
 
     InterfaceNeighborDefinition_ = "InterfaceNeighborDefinition_" + ijump;
@@ -1037,7 +1037,7 @@ namespace analysis{
         Warning() << "In InterfaceAnalyzerMover, calculator " << InterfaceNeighborDefinition_
             << " already exists, this is hopefully correct for your purposes" << std::endl;
     } else {
-        CalculatorFactory::Instance().register_calculator( InterfaceNeighborDefinition_, new InterfaceNeighborDefinitionCalculator(chain1_, chain2_));
+        CalculatorFactory::Instance().register_calculator( InterfaceNeighborDefinition_, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1_, chain2_));
     }
 
     InterfaceSasaDefinition_ = "InterfaceSasaDefinition_" + ijump;
@@ -1045,7 +1045,7 @@ namespace analysis{
         Warning() << "In InterfaceAnalyzerMover, calculator " << InterfaceSasaDefinition_
             << " already exists, this is hopefully correct for your purposes" << std::endl;
     } else {
-        CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, new InterfaceSasaDefinitionCalculator(chain1_, chain2_));
+        CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(chain1_, chain2_));
     }
 
     InterfaceDeltaEnergetics_ = "InterfaceDeltaEnergetics_" + ijump;
@@ -1053,7 +1053,7 @@ namespace analysis{
         Warning() << "In InterfaceAnalyzerMover, calculator " << InterfaceDeltaEnergetics_
             << " already exists, this is hopefully correct for your purposes" << std::endl;
     } else {
-        CalculatorFactory::Instance().register_calculator( InterfaceDeltaEnergetics_, new InterfaceDeltaEnergeticsCalculator(InterfaceNeighborDefinition_));
+        CalculatorFactory::Instance().register_calculator( InterfaceDeltaEnergetics_, new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator(InterfaceNeighborDefinition_));
     }
 
     NumberHBonds_ = "NumberHBonds_" + ijump;

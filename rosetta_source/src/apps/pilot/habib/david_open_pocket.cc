@@ -18,8 +18,8 @@
 
 // Protocol Headers
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/BackrubMover.hh>
-#include <protocols/moves/BackrubMover.fwd.hh>
+#include <protocols/backrub/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
@@ -45,7 +45,7 @@
 #include <basic/options/util.hh>
 #include <basic/options/after_opts.hh>
 #include <core/id/AtomID_Map.hh>
-#include <protocols/constraints_additional/PocketConstraint.hh>
+#include <protocols/pockets/PocketConstraint.hh>
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
 #include <core/scoring/Energies.hh>
 
@@ -162,7 +162,7 @@ main( int argc, char * argv [] )
 		std::cout << "Starting trajectory: " << traj << std::endl;
 
 		// set up BackrubMover and read from the database
-		protocols::moves::BackrubMoverOP backrubmover=new protocols::moves::BackrubMover();
+		protocols::backrub::BackrubMoverOP backrubmover=new protocols::backrub::BackrubMover();
 		backrubmover->branchopt().read_database();
 
 		// Create Owning Pointer for pose

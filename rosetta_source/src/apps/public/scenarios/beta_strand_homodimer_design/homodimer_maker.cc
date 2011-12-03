@@ -62,7 +62,7 @@
 
 //protocols
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/RollMover.hh>
+#include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/StructureRestrictor.hh>
 
@@ -371,8 +371,8 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 			Real const max_angle(180.0);
 			//moves the input pose, not the copy
 			pose::Pose anti_pose (pose), parl_pose (pose);
-			moves::RollMoverOP parl_roll_mover( new moves::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, parl_vector, center_xyz ));
-			moves::RollMoverOP anti_roll_mover( new moves::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, anti_vector, center_xyz ));
+			rigid::RollMoverOP parl_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, parl_vector, center_xyz ));
+			rigid::RollMoverOP anti_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, anti_vector, center_xyz ));
 
 			//apply to pose and output
 			anti_roll_mover->apply( anti_pose );

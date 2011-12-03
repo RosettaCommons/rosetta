@@ -38,6 +38,13 @@ namespace loops {
 // override the apply method.
 class IndependentLoopMover : public LoopMover {
 public:
+	IndependentLoopMover() :
+		LoopMover()
+	{
+		Mover::type("IndependentLoopMover");
+		set_defaults();
+	}
+
 	IndependentLoopMover(
 		protocols::loops::Loops loops_in
 	) : LoopMover( loops_in )

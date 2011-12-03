@@ -26,7 +26,7 @@
 
 //protocols
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/BackboneMover.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -137,8 +137,8 @@ protected:
 
 	void
 	setup_movers(
-		protocols::moves::SmallMoverOP gsmall,
-		protocols::moves::ShearMoverOP gshear,
+		protocols::simple_moves::SmallMoverOP gsmall,
+		protocols::simple_moves::ShearMoverOP gshear,
 		core::Real small_H_angle_max, core::Real small_E_angle_max, core::Real small_L_angle_max,
 		core::Real shear_H_angle_max, core::Real shear_E_angle_max, core::Real shear_L_angle_max);
 

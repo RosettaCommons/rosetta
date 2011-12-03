@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <protocols/moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/SidechainMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 

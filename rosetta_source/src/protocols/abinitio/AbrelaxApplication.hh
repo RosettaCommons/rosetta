@@ -45,7 +45,7 @@
 
 // AUTO-REMOVED #include <protocols/abinitio/ClassicAbinitio.fwd.hh>
 // AUTO-REMOVED #include <protocols/abinitio/MembraneAbinitio.fwd.hh>
-#include <protocols/Protocol.fwd.hh>
+#include <protocols/abinitio/Protocol.fwd.hh>
 #include <protocols/abinitio/Templates.fwd.hh>
 
 /// The instance of Loops contained by AbrelaxApplication should be replaced by a LoopsOP

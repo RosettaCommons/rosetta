@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_constraints_additional_SequenceCoupling1BDConstraint_hh
 
 #include <protocols/constraints_additional/SequenceCoupling1BDConstraint.fwd.hh>
-#include <protocols/constraints_additional/SequenceProfileConstraint.hh>
+#include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
 // AUTO-REMOVED #include <core/chemical/AA.hh>
@@ -31,7 +31,7 @@ namespace protocols {
 namespace constraints_additional {
 
 ///@brief
-class SequenceCoupling1BDConstraint : public SequenceProfileConstraint {
+class SequenceCoupling1BDConstraint : public core::scoring::constraints::SequenceProfileConstraint {
 public:
 	typedef core::sequence::SequenceCoupling SequenceCoupling;
 	typedef core::sequence::SequenceCouplingOP SequenceCouplingOP;

@@ -43,7 +43,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/forge/build/Interval.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MakePolyXMover.hh>
+#include <protocols/simple_moves/MakePolyXMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
@@ -210,7 +210,7 @@ public: // apply
 		BetaAlphaBetaMotifSet babset( ssinfo_, sheet_set );
 		
 		// make poly ala		
-		protocols::moves::MakePolyXMover make_poly_ala( "ALA", false, false, false );
+		protocols::simple_moves::MakePolyXMover make_poly_ala( "ALA", false, false, false );
 		make_poly_ala.apply( pose );
 
 		// set rama to score function
@@ -220,7 +220,7 @@ public: // apply
 		( *scorefxn_fullatom_ )( pose );
 		
 		// make poly gly
-		protocols::moves::MakePolyXMover make_poly_gly( "GLY", false, false, false );
+		protocols::simple_moves::MakePolyXMover make_poly_gly( "GLY", false, false, false );
 		Pose gly_pose( pose );
 		make_poly_gly.apply( gly_pose );
 		( *scorefxn_fullatom_ )( gly_pose );

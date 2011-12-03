@@ -18,15 +18,15 @@
 
 
 // protocols headers
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
-#include <protocols/moves/SidechainMover.hh>
-#include <protocols/moves/SidechainMCMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -373,7 +373,7 @@ MetropolisHastingsMover::add_backrub_mover(
 {
 	if (!weight) return;
 
-	protocols::moves::BackrubMoverOP backrub_mover(new protocols::moves::BackrubMover);
+	protocols::backrub::BackrubMoverOP backrub_mover(new protocols::backrub::BackrubMover);
 	backrub_mover->branchopt().read_database();
 
 	add_mover(backrub_mover, weight);
@@ -389,7 +389,7 @@ MetropolisHastingsMover::add_small_mover(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::moves::SmallMoverOP small_mover(new protocols::moves::SmallMover);
+	protocols::simple_moves::SmallMoverOP small_mover(new protocols::simple_moves::SmallMover);
 	small_mover->nmoves(1);
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	if (utility::file::file_exists(option[ in::file::movemap ])) {
@@ -412,7 +412,7 @@ MetropolisHastingsMover::add_shear_mover(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::moves::ShearMoverOP shear_mover(new protocols::moves::ShearMover);
+	protocols::simple_moves::ShearMoverOP shear_mover(new protocols::simple_moves::ShearMover);
 	shear_mover->nmoves(1);
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	if (utility::file::file_exists(option[ in::file::movemap ])) {
@@ -447,7 +447,7 @@ MetropolisHastingsMover::add_sidechain_mover(
 	}
 	if (preserve_cbeta) main_task_factory->push_back( new core::pack::task::operation::PreserveCBeta );
 
-	protocols::moves::SidechainMoverOP sidechain_mover(new protocols::moves::SidechainMover);
+	protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechain_mover(new protocols::simple_moves::sidechain_moves::SidechainMover);
 	sidechain_mover->set_task_factory(main_task_factory);
 	sidechain_mover->set_prob_uniform(prob_uniform);
 	sidechain_mover->set_prob_withinrot(prob_withinrot);
@@ -478,7 +478,7 @@ MetropolisHastingsMover::add_sidechain_mc_mover(
 	}
 	if (preserve_cbeta) main_task_factory->push_back( new core::pack::task::operation::PreserveCBeta );
 
-	protocols::moves::SidechainMCMoverOP sidechain_mc_mover(new protocols::moves::SidechainMCMover);
+	protocols::simple_moves::sidechain_moves::SidechainMCMoverOP sidechain_mc_mover(new protocols::simple_moves::sidechain_moves::SidechainMCMover);
 	sidechain_mc_mover->set_task_factory(main_task_factory);
 	sidechain_mc_mover->set_prob_uniform(prob_uniform);
 	sidechain_mc_mover->set_prob_withinrot(prob_withinrot);

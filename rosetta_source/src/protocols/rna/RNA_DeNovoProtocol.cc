@@ -17,7 +17,7 @@
 #include <protocols/rna/RNA_DeNovoProtocol.hh>
 
 // Package headers
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <protocols/rna/RNA_BasePairClassifier.hh>
 #include <protocols/rna/RNA_DataReader.hh>
 #include <protocols/rna/RNA_DataReader.fwd.hh>

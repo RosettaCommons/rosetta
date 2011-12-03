@@ -19,7 +19,7 @@
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 //#include <devel/Gaussian/BBGaussianMover.hh>
 #include <protocols/simple_moves/BBGaussianMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/simple_moves/BBConRotMover.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -28,11 +28,9 @@
 // AUTO-REMOVED #include <protocols/jd2/MPIFileBufJobDistributor.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
-#include <protocols/moves/SidechainMover.hh>
-#include <protocols/moves/SidechainMCMover.hh>
-// AUTO-REMOVED #include <protocols/canonical_sampling/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
-// AUTO-REMOVED #include <protocols/canonical_sampling/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 
 // AUTO-REMOVED #include <protocols/canonical_sampling/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 
@@ -111,7 +109,7 @@ canonical_sampling_main(){
 
 	if( !use_fast_sc_moves ){
 		//setup sidechain mover
-		SidechainMoverOP scm(new SidechainMover());
+		protocols::simple_moves::sidechain_moves::SidechainMoverOP scm(new protocols::simple_moves::sidechain_moves::SidechainMover());
 		TaskFactoryOP main_task_factory = new TaskFactory;
 		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
 		main_task_factory->push_back( rtrop );
@@ -132,7 +130,7 @@ canonical_sampling_main(){
 		csm->add_mover(scm,options::option[options::OptionKeys::canonical_sampling::probabilities::sc]);
 	}else{
 		//setup sidechain mover
-		SidechainMCMoverOP scm(new SidechainMCMover());
+		protocols::simple_moves::sidechain_moves::SidechainMCMoverOP scm(new protocols::simple_moves::sidechain_moves::SidechainMCMover());
 		TaskFactoryOP main_task_factory = new TaskFactory;
 		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
 		main_task_factory->push_back( rtrop );
@@ -174,7 +172,7 @@ canonical_sampling_main(){
 
 	//setup backrub mover
 	if( options::option[options::OptionKeys::canonical_sampling::probabilities::backrub]() > 0 ) {
-		protocols::moves::BackrubMoverOP backrubmover = new BackrubMover;
+		protocols::backrub::BackrubMoverOP backrubmover = new protocols::backrub::BackrubMover;
 		core::scoring::methods::EnergyMethodOptions energymethodoptions(sfxn->energy_method_options());
     if (energymethodoptions.bond_angle_residue_type_param_set()) {
       backrubmover->branchopt().bond_angle_residue_type_param_set(energymethodoptions.bond_angle_residue_type_param_set());

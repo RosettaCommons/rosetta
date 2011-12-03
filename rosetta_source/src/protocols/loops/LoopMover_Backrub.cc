@@ -15,7 +15,7 @@
 #include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/LoopMover_Backrub.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverStatus.hh>
 //
@@ -74,6 +74,13 @@ static numeric::random::RandomGenerator RG(42678);
 
 extern basic::Tracer tr;
 
+LoopMover_Refine_Backrub::LoopMover_Refine_Backrub() :
+	LoopMover()
+{
+	scorefxn_ = core::scoring::getScoreFunction();
+	protocols::moves::Mover::type("LoopMover_Refine_Backrub");
+	set_default_settings();
+}
 
 LoopMover_Refine_Backrub::LoopMover_Refine_Backrub(
 	protocols::loops::Loops  loops_in
@@ -148,7 +155,7 @@ void LoopMover_Refine_Backrub::apply(
 	(*scorefxn)(pose);
 
 	// set up BackrubMover and read from the database
-	protocols::moves::BackrubMover backrubmover;
+	protocols::backrub::BackrubMover backrubmover;
 	backrubmover.branchopt().read_database();
 
 	//clear segments and set the input pose

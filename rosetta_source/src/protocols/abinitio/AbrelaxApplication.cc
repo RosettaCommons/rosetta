@@ -77,7 +77,7 @@
 #include <protocols/abinitio/PairingStatistics.hh>
 #include <protocols/abinitio/StrandConstraints.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/Protocol.hh>
+#include <protocols/abinitio/Protocol.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/jumping/SheetBuilder.hh>
 #include <protocols/jumping/RandomSheetBuilder.hh>

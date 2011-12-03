@@ -68,7 +68,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
-#include <protocols/loops/LoopBuild.hh>
+#include <protocols/loop_build/LoopBuild.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.fwd.hh>
 #include <protocols/comparative_modeling/ConstraintRemodelMover.hh>

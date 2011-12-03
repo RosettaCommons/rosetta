@@ -25,7 +25,7 @@
 #include <core/init.hh>
 
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -41,7 +41,7 @@
 
 //old JD and relevant headers
 //#include <protocols/jobdist/standard_mains.hh>
-//#include <protocols/ScoreMap.hh>
+//#include <protocols/jd2/ScoreMap.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -215,7 +215,7 @@ public:
 
       if ( old_pose.residue( res_no ).name() != curr_pose.residue( res_no ).name() ){
 //	score_map_["pKa"] = curr_pH;
-//	protocols::ScoreMap::nonzero_energies( score_map_, score_fxn, curr_pose );
+//	protocols::jd2::ScoreMap::nonzero_energies( score_map_, score_fxn, curr_pose );
         break;
       }
 

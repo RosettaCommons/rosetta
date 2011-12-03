@@ -77,6 +77,16 @@ using namespace core;
 static numeric::random::RandomGenerator RG(42863);
 
 //constructors
+
+LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD() :
+	IndependentLoopMover()
+{
+	scorefxn_ = get_cen_scorefxn();
+
+	protocols::moves::Mover::type("LoopMover_Perturb_QuickCCD");
+	set_default_settings();
+}
+
 LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 	protocols::loops::Loops loops_in
 ) : IndependentLoopMover( loops_in )

@@ -41,6 +41,8 @@ namespace loops {
 class LoopMover_Perturb_KIC: public IndependentLoopMover {
 public:
 
+	LoopMover_Perturb_KIC();
+
 	LoopMover_Perturb_KIC(
 		protocols::loops::Loops  loops_in
 	);

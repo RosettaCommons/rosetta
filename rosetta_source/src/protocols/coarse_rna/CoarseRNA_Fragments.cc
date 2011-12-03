@@ -14,7 +14,7 @@
 
 
 #include <protocols/coarse_rna/CoarseRNA_Fragments.hh>
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/rna/RNA_SecStructInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -142,7 +142,7 @@ namespace coarse_rna {
 																			 Size const & insert_res,
 																			 Size const & source_res,
 																			 Size const & frag_size,
-																			 protocols::rna::AllowInsertOP allow_insert ){
+																			 protocols::toolbox::AllowInsertOP allow_insert ){
 
 		using namespace core::id;
 
@@ -282,7 +282,7 @@ namespace coarse_rna {
 																						 core::Size const position,
 																						 core::Size const size,
 																						 core::Size const type,
-																						 protocols::rna::AllowInsertOP allow_insert )
+																						 protocols::toolbox::AllowInsertOP allow_insert )
 	{
 		Size const source_res = pick_random_fragment( pose, position, size, type );
 		//		std::cout << "applying to fragment position " << position << " from source position " << source_res << std::endl;

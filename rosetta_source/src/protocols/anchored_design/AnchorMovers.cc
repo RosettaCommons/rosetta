@@ -42,7 +42,7 @@
 //needed for a benchmarking thing
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 // AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+// AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -57,7 +57,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 
 #include <protocols/moves/Mover.fwd.hh> //MoverOP
-#include <protocols/moves/BackboneMover.hh> //SmallMover
+#include <protocols/simple_moves/BackboneMover.hh> //SmallMover
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
@@ -907,9 +907,9 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			//now, check whether perturb is fragment based or not
 			if ( !interface_->get_frags() /*if NULL*/ || no_frags_ ) {
 				core::Size nmoves(5);
-				using protocols::moves::SmallMover;
-				using protocols::moves::SmallMoverOP;
-				SmallMoverOP small_mover = new SmallMover(interface_->movemap_cen(i), 0.8, nmoves);
+				using protocols::simple_moves::SmallMover;
+				using protocols::simple_moves::SmallMoverOP;
+				protocols::simple_moves::SmallMoverOP small_mover = new protocols::simple_moves::SmallMover(interface_->movemap_cen(i), 0.8, nmoves);
 				small_mover->angle_max( 'H', 180.0 );
 				small_mover->angle_max( 'E', 180.0 );
 				small_mover->angle_max( 'L', 180.0 );
@@ -1267,8 +1267,8 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 		if (!internal || !refine_CCD_off_) { //termini and ccd loops
 
 			core::Size nmoves(1);
-			protocols::moves::MoverOP small_mover = new protocols::moves::SmallMover(interface_->movemap_fa(i), 0.8, nmoves);
-			protocols::moves::MoverOP shear_mover = new protocols::moves::ShearMover(interface_->movemap_fa(i), 0.8, nmoves);
+			protocols::moves::MoverOP small_mover = new protocols::simple_moves::SmallMover(interface_->movemap_fa(i), 0.8, nmoves);
+			protocols::moves::MoverOP shear_mover = new protocols::simple_moves::ShearMover(interface_->movemap_fa(i), 0.8, nmoves);
 			T_refine << "creating Small & ShearMover for loop " << loop_start << " " << loop_end << std::endl;
 
 			//generate "real" movers

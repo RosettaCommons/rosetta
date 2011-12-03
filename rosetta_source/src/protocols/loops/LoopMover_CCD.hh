@@ -33,9 +33,6 @@
 
 #include <utility/vector1.hh>
 
-
-// C++ Headers
-
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {
@@ -53,6 +50,8 @@ namespace loops {
 class LoopMover_Perturb_CCD: public IndependentLoopMover {
 public:
 	//constructor
+	LoopMover_Perturb_CCD();
+
 	LoopMover_Perturb_CCD(
 		protocols::loops::Loops  loops_in
 	);

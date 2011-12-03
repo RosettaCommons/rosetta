@@ -23,7 +23,7 @@
 // AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
 
-#include <protocols/moves/BackrubMover.fwd.hh>
+#include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/loops/kinematic_closure/KinematicMover.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
 
@@ -165,7 +165,7 @@ private:
 	core::pose::Pose pack_region_ala_pose_;
 	utility::vector1< core::Real > native_fragment_bb_energies_;
 
-	protocols::moves::BackrubMoverOP brub_mover_;
+	protocols::backrub::BackrubMoverOP brub_mover_;
 	protocols::loops::kinematic_closure::KinematicMoverOP kinematic_mover_;
 
 	core::Real mc_kt_low_, mc_kt_high_;

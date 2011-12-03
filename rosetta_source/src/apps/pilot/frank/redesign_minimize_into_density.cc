@@ -25,7 +25,7 @@
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/util.hh>
 
 #include <core/scoring/electron_density/util.hh>
@@ -80,7 +80,7 @@ main( int argc, char * argv [] )
 
 	// make symmetric pose if necessary
 	if ( option[ symmetry::symmetry_definition ].user() )  {
-	    seq_mover->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover );
+	    seq_mover->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 	}
 
 	// set pose for density scoring if a map was input

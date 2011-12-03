@@ -16,7 +16,7 @@
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
 
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 // AUTO-REMOVED #include <protocols/electron_density/util.hh>
 
 #include <core/fragment/FragSet.hh>
@@ -104,7 +104,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 
 	// setup for symmetry
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+		protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 		pre_mover.apply( pose );
 	}
 

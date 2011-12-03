@@ -25,7 +25,7 @@
  #include <core/scoring/LREnergyContainer.hh>
  #include <core/scoring/methods/Methods.hh>
 
- #include <protocols/moves/BackboneMover.hh>
+ #include <protocols/simple_moves/BackboneMover.hh>
  #include <protocols/moves/MinMover.hh>
  #include <protocols/moves/MonteCarlo.hh>
  #include <protocols/moves/Mover.hh>
@@ -763,7 +763,7 @@ RunPepSpec()
 			//small CG backbone moves//
 			if( !( option[ pep_spec::test_no_cgrelax ] || cgrelax_loop == 1 ) ){
 
-				SmallMoverOP cg_small( new SmallMover( mm_move, 2.0, 1 ) ); //LOOP
+				protocols::simple_moves::SmallMoverOP cg_small( new protocols::simple_moves::SmallMover( mm_move, 2.0, 1 ) ); //LOOP
 				cg_small->angle_max( 'H', 2.0 );
 				cg_small->angle_max( 'E', 2.0 );
 				cg_small->angle_max( 'L', 2.0 );
@@ -872,7 +872,7 @@ RunPepSpec()
 			rep_scorefxn->accumulate_residue_total_energies( pose );
 
 			if( has_clash( pose, is_pep_not_anchor, rep_scorefxn, 5.0 ) ){
-				SmallMoverOP rep_small_mover( new SmallMover( mm_move, 1.0, 1 ) );	//LOOP
+				protocols::simple_moves::SmallMoverOP rep_small_mover( new protocols::simple_moves::SmallMover( mm_move, 1.0, 1 ) );	//LOOP
 				rep_small_mover->angle_max( 'H', 5.0 );
 				rep_small_mover->angle_max( 'E', 5.0 );
 				rep_small_mover->angle_max( 'L', 5.0 );
@@ -945,7 +945,7 @@ RunPepSpec()
 			//define movers//
 			MinMoverOP min_mover = new MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
 
-			ShearMoverOP shear_mover( new ShearMover( mm_move, 5.0, 1 ) );	//LOOP
+			protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover( mm_move, 5.0, 1 ) );	//LOOP
 			shear_mover->angle_max( 'H', 5.0 );
 			shear_mover->angle_max( 'E', 5.0 );
 			shear_mover->angle_max( 'L', 5.0 );

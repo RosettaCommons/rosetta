@@ -26,7 +26,7 @@
 
 #include <core/scoring/constraints/util.hh>
 // AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 
@@ -100,7 +100,7 @@ Relax_main( bool ) {
 	//   to avoid adding extra VRTs
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-	    seqmov->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover );
+	    seqmov->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 	    seqmov->add_mover( protocol );
 	    protocol = seqmov;
 	}

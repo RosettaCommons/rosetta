@@ -22,7 +22,7 @@
 // Project headers
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <protocols/rna/MultipleDomainMover.hh>
 #include <protocols/rna/RNA_ChunkLibrary.hh>
 #include <protocols/rna/RNA_FragmentMover.hh>

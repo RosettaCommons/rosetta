@@ -38,7 +38,7 @@
 #include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.hh>
 
 #include <protocols/moves/DataMap.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
 #include <utility/tag/Tag.hh>
 // C++ headers
@@ -242,8 +242,8 @@ void SetSecStructEnergies::apply( Pose & pose )
 
 	using core::conformation::symmetry::SymmetricConformation;
 	using core::pose::symmetry::is_symmetric;
-	using protocols::symmetric_docking::SetupForSymmetryMover;
-	using protocols::symmetric_docking::SetupForSymmetryMoverOP;
+	using protocols::simple_moves::symmetry::SetupForSymmetryMover;
+	using protocols::simple_moves::symmetry::SetupForSymmetryMoverOP;
 
 	if( loaded_ ) return;
 

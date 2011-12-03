@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
@@ -86,7 +86,7 @@
 //#include <basic/Tracer.fwd.hh>
 //#include <basic/datacache/BasicDataCache.fwd.hh>
 //#include <protocols/filters/Filter.fwd.hh>
-//#include <protocols/moves/BackboneMover.fwd.hh>
+//#include <protocols/simple_moves/BackboneMover.fwd.hh>
 //#include <protocols/moves/DataMap.fwd.hh>
 //#include <protocols/moves/MonteCarlo.fwd.hh>
 //#include <protocols/moves/Mover.fwd.hh>
@@ -154,7 +154,7 @@ class ShearMoverBenchmark : public Benchmark
 public:
 	pose::PoseOP pose;
 	kinematics::MoveMapOP movemap;
-	protocols::moves::ShearMover shear_mover;
+	protocols::simple_moves::ShearMover shear_mover;
 
 	//ShearMoverBenchmark(std::string name) : Benchmark(name), shear_mover(300., 100) {};
 	ShearMoverBenchmark(std::string name) : Benchmark(name) {};
@@ -180,7 +180,7 @@ public:
 	};
 
 	virtual void run(core::Real scaleFactor) {
-		//protocols::moves::ShearMover shear_mover(movemap, 300., 100);
+		//protocols::simple_moves::ShearMover shear_mover(movemap, 300., 100);
 		for(int i=0; i<2000*scaleFactor; i++) {
 			shear_mover.apply(*pose);
 		}

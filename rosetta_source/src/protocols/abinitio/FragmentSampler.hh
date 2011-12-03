@@ -42,7 +42,7 @@
 #include <core/scoring/ScoreType.hh>
 //#include <core/pack/task/PackerTask.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/Protocol.hh>
+// AUTO-REMOVED #include <protocols/abinitio/Protocol.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 
 // ObjexxFCL Headers

@@ -25,7 +25,7 @@
  #include <core/scoring/LREnergyContainer.hh>
  #include <core/scoring/methods/Methods.hh>
 
- #include <protocols/moves/BackboneMover.hh>
+ #include <protocols/simple_moves/BackboneMover.hh>
  #include <protocols/moves/MinMover.hh>
  #include <protocols/moves/MonteCarlo.hh>
  #include <protocols/moves/Mover.hh>
@@ -37,9 +37,9 @@
  #include <protocols/moves/PackRotamersMover.hh>
  #include <protocols/moves/RotamerTrialsMover.hh>
  #include <protocols/moves/RepeatMover.hh>
- #include <protocols/moves/BackrubMover.fwd.hh>
- #include <protocols/moves/BackrubMover.hh>
- #include <protocols/moves/SidechainMover.hh>
+ #include <protocols/backrub/BackrubMover.fwd.hh>
+ #include <protocols/backrub/BackrubMover.hh>
+ #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
  #include <protocols/relax/FastMultiRelax.hh>
 
@@ -160,7 +160,7 @@
 #include <protocols/toolbox/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -1154,7 +1154,7 @@ perturb_pep_bb(
 )
 {
 	( *cen_scorefxn )( pose );
-	SmallMoverOP cg_small( new SmallMover( mm_move, 5.0, 1 ) );
+	protocols::simple_moves::SmallMoverOP cg_small( new protocols::simple_moves::SmallMover( mm_move, 5.0, 1 ) );
 	cg_small->angle_max( 'H', 10.0 );
 	cg_small->angle_max( 'E', 10.0 );
 	cg_small->angle_max( 'L', 10.0 );
@@ -1208,7 +1208,7 @@ refine_fa_pep_bb(
 	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
 	rb_mover->apply( pose );
 
-	SmallMoverOP rep_small_mover( new SmallMover( mm, 2.0, 10 ) );
+	protocols::simple_moves::SmallMoverOP rep_small_mover( new protocols::simple_moves::SmallMover( mm, 2.0, 10 ) );
 	rep_small_mover->angle_max( 'H', 1.0 );
 	rep_small_mover->angle_max( 'E', 1.0 );
 	rep_small_mover->angle_max( 'L', 1.0 );
@@ -1297,7 +1297,7 @@ mutate_random_residue(
 /*
 	if( pose.residue( seqpos ).name3() != "PRO" && pose.residue( seqpos ).name3() != "GLY" && pose.residue( seqpos ).name3() != "ALA" ){
 		MonteCarloOP mc( new MonteCarlo( pose, *soft_scorefxn, 1.0 ) );
-		protocols::moves::SidechainMoverOP sidechain_mover( new SidechainMover() );
+		protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechain_mover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 		sidechain_mover->set_task_factory( rp_task_factory );
 		sidechain_mover->set_prob_uniform( 0.05 );
 		for( Size ii = 1; ii <= 20; ++ii ){
@@ -1492,7 +1492,7 @@ RunPepSpec()
 */
 
 	// set up the BackrubMover
-	moves::BackrubMoverOP backrub_mover( new moves::BackrubMover() );
+	protocols::backrub::BackrubMoverOP backrub_mover( new protocols::backrub::BackrubMover() );
 	// read known and unknown optimization parameters from the database
 	if( option[ pep_spec::flex_prot_bb ] ) backrub_mover->branchopt().read_database();
 
@@ -1505,7 +1505,7 @@ RunPepSpec()
 	decomp_reweight_calculator->master_weight_vector( reweight_vector );
 	decomp_reweight_calculator->num_sets( ( Size ) 2 );
 	calculator_factory.register_calculator("energy_decomposition", decomp_reweight_calculator);
-	core::pose::metrics::PoseMetricCalculatorOP int_calculator( new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator( (Size)1, (Size)2 ) );
+	core::pose::metrics::PoseMetricCalculatorOP int_calculator( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( (Size)1, (Size)2 ) );
 	calculator_factory.register_calculator( "interface", int_calculator );
 
 	int pose_index( 0 );
@@ -1871,7 +1871,7 @@ RunPepSpec()
 
 			//Refine//
 			if( n_farelax_loop > 0 ){
-				ShearMoverOP shear_mover( new ShearMover( mm_move, 1.0, 1 ) );	//LOOP
+				protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover( mm_move, 1.0, 1 ) );	//LOOP
 				shear_mover->angle_max( 'H', 2.0 );
 				shear_mover->angle_max( 'E', 2.0 );
 				shear_mover->angle_max( 'L', 2.0 );

@@ -16,10 +16,10 @@
 #include <protocols/canonical_sampling/SidechainMetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/SidechainMetropolisHastingsMoverCreator.hh>
 
-#include <protocols/moves/SidechainMoverBase.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMoverBase.hh>
 
 // protocols headers
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/DataMap.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
@@ -29,9 +29,9 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
-#include <protocols/moves/SidechainMover.hh>
-#include <protocols/moves/SidechainMCMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -168,7 +168,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	Real last_accepted_prop_density( 1.0 );
 	Real last_accepted_dE( 0.0 );
 	for ( Size ct = 1; ct <= ntrials(); ct++) {
-		protocols::moves::SidechainMoverBaseOP move = dynamic_cast< protocols::moves::SidechainMoverBase* >( random_mover().get() );
+		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP move = dynamic_cast< protocols::simple_moves::sidechain_moves::SidechainMoverBase* >( random_mover().get() );
 		runtime_assert( move ); //fow now only Sidechain Movers...
 
 		Size resid = move->suggest_residue_number( pose );

@@ -45,8 +45,8 @@ scorefxn(pose)
 
 print 'mover: SmallMover'
 movemap.set_bb(1)
-smallmover = SmallMover(movemap,kT,n_moves)
-smallmover = SmallMover()
+smallmover = protocols::simple_moves::SmallMover(movemap,kT,n_moves)
+smallmover = protocols::simple_moves::SmallMover()
 smallmover.angle_max('L',50)
 smallmover.apply(pose_frag)
 print smallmover

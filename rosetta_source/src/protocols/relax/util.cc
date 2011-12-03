@@ -30,7 +30,7 @@
 
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
-// AUTO-REMOVED #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/SuperimposeMover.hh>
 // AUTO-REMOVED #include <protocols/moves/ConstraintSetMover.hh>
 

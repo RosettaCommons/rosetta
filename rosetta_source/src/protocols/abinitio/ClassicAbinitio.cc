@@ -37,13 +37,13 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/WhileMover.hh>
 #include <protocols/abinitio/AllResiduesChanged.hh>
-//#include <protocols/moves/BackboneMover.hh>
+//#include <protocols/simple_moves/BackboneMover.hh>
 
 // AUTO-REMOVED #include <protocols/checkpoint/Checkpoint.hh>
 
@@ -991,7 +991,7 @@ bool ClassicAbinitio::do_stage5_cycles( pose::Pose &pose ) {//vats
 
 	Size nmoves = 1;
 	core::kinematics::MoveMapOP mm_temp( new core::kinematics::MoveMap( *movemap() ) );
-	moves::SmallMoverOP small_mover( new moves::SmallMover( mm_temp, temperature_, nmoves) );
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, temperature_, nmoves) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 2.0 );
 	small_mover->angle_max( 'L', 5.0 );

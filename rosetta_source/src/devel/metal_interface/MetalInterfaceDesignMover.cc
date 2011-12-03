@@ -32,7 +32,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <protocols/rigid/RotateJumpAxisMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Random, Sequence Mover
 #include <protocols/moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MinMover.hh>
@@ -150,7 +150,7 @@ void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
 	task->nonconst_residue_task(ligand_res).or_ex4_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
 	TR << *task << std::endl;
 
-	protocols::moves::SidechainMoverOP SCmover( new protocols::moves::SidechainMover() );
+	protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
  	SCmover->set_task(task);
  	SCmover->set_prob_uniform(0); //we want only Dunbrack rotamers, 0 percent chance of uniform sampling
 

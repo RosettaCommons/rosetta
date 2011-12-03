@@ -36,7 +36,7 @@
 #include <protocols/loops/LoopMover_CCD.hh>
 #include <protocols/loops/make_loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
 #include <utility/tag/Tag.hh>
@@ -322,7 +322,7 @@ DesignProteinBackboneAroundDNA::backrub(
 	emo.bond_angle_central_atoms_to_score( option[ OptionKeys::backrub::pivot_atoms ] );
 	br_scorefxn->set_energy_method_options( emo );
 
-	moves::BackrubMover backrubmover;
+	protocols::backrub::BackrubMover backrubmover;
 	// read known and unknown optimization parameters from the database
 	backrubmover.branchopt().read_database();
 

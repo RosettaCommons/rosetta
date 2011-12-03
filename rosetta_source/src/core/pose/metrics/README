@@ -6,6 +6,8 @@
 
 Notes on Pose Metrics (this file is src/core/pose/metrics/README):
 
+(Some files have been moved. see also src/core/pose/metrics/simple_calculators as well.)
+
 Pose "metrics" is a general framework for holding data which is returned when asked for. Space for this data is allocated 
 the first time the data is requested, and the data is computed. The data is then cached, and recomputed as needed.
 

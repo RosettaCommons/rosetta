@@ -80,11 +80,11 @@ static basic::Tracer tr("protocols.jumping");
 // if false pose does still contain jumps in the fold-tree
 void
 close_chainbreaks(
-		  loops::SlidingWindowLoopClosureOP closure_protocol,
-		  Pose& open_pose,
-		  protocols::checkpoint::CheckPointer &checkpoint,
-		  const std::string &decoy_tag,
-		  core::kinematics::FoldTree const& final_fold_tree_in  /*default empty fold-tree */
+	loops::SlidingWindowLoopClosureOP closure_protocol,
+	Pose& open_pose,
+	protocols::checkpoint::CheckPointer &checkpoint,
+	const std::string &decoy_tag,
+	core::kinematics::FoldTree const& final_fold_tree_in  /*default empty fold-tree */
 )
 {
   core::kinematics::FoldTree final_fold_tree;

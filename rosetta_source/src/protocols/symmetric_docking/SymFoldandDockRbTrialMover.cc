@@ -12,7 +12,7 @@
 
 // Unit headers
 #include <protocols/symmetric_docking/SymFoldandDockRbTrialMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -80,7 +80,7 @@ SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover(
 void
 SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 {
-	protocols::symmetric_docking::SetupForSymmetryMover setup;
+	protocols::simple_moves::symmetry::SetupForSymmetryMover setup;
 	setup.apply( pose );
 
 	using namespace core::conformation::symmetry;

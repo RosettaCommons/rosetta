@@ -21,6 +21,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.fwd.hh>
@@ -666,11 +667,11 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 
 		if( match_params[i]->resA() == match_params[i]->get_missing_template_res( outpose ) ){
 			//ri.value = "BONE TEMPLATE "+mis_remark+" MATCH MOTIF "+other_remark;
-			ri.value = enzutil::assemble_remark_line( mis_chain, mis_name3, mispos, other_chain, other_name3, otherpos, match_params[i]->cst_block() );
+			ri.value = toolbox::match_enzdes_util::assemble_remark_line( mis_chain, mis_name3, mispos, other_chain, other_name3, otherpos, match_params[i]->cst_block() );
 		}
 		else if( match_params[i]->resB() == match_params[i]->get_missing_template_res( outpose ) ){
 			//			ri.value = "BONE TEMPLATE "+other_remark+" MATCH MOTIF "+mis_remark;
-			ri.value = enzutil::assemble_remark_line( other_chain, other_name3, otherpos, mis_chain, mis_name3, mispos, match_params[i]->cst_block() );
+			ri.value = toolbox::match_enzdes_util::assemble_remark_line( other_chain, other_name3, otherpos, mis_chain, mis_name3, mispos, match_params[i]->cst_block() );
 		}
 		else{
 			utility_exit_with_message("Weird. Suddenly no residue is missing anymore.\n");

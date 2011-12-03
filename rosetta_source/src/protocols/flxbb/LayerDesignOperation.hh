@@ -42,7 +42,7 @@
 // AUTO-REMOVED #include <core/chemical/AA.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <protocols/flxbb/LayerDesignOperation.fwd.hh>
-#include <protocols/flxbb/SelectResiduesByLayer.fwd.hh>
+#include <protocols/toolbox/SelectResiduesByLayer.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -72,8 +72,8 @@ public:
 	typedef TaskOperation parent;
 	typedef utility::tag::TagPtr TagPtr;
 
-	//typedef protocols::flxbb::SelectResiduesByLayer SelectResiduesByLayer;
-	//typedef protocols::flxbb::SelectResiduesByLayerOP SelectResiduesByLayerOP;
+	//typedef protocols::toolbox::SelectResiduesByLayer SelectResiduesByLayer;
+	//typedef protocols::toolbox::SelectResiduesByLayerOP SelectResiduesByLayerOP;
 
 public:
 
@@ -142,7 +142,7 @@ private:
 	bool verbose_;
 
 	// define the layer each residue belong to
-	SelectResiduesByLayerOP srbl_;
+	toolbox::SelectResiduesByLayerOP srbl_;
 
 
 };

@@ -16,7 +16,7 @@
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
 
 // Package headers
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 //
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
@@ -205,7 +205,7 @@ CoarseRNA_LoopCloser::output_forward_backward_res(){
 bool
 CoarseRNA_LoopCloser::figure_out_pivots( core::pose::Pose const & pose ){
 
-	if ( !allow_insert_ ) allow_insert_ = new protocols::rna::AllowInsert( pose );
+	if ( !allow_insert_ ) allow_insert_ = new protocols::toolbox::AllowInsert( pose );
 
 	figure_out_forward_backward_res_by_backtracking( pose );
 
@@ -973,12 +973,12 @@ CoarseRNA_LoopCloser::fill_chainTORS(
 
 ///////////////////////////////////////////////////////////
 void
-CoarseRNA_LoopCloser::set_allow_insert( protocols::rna::AllowInsertOP allow_insert ) {
+CoarseRNA_LoopCloser::set_allow_insert( protocols::toolbox::AllowInsertOP allow_insert ) {
 	allow_insert_ = allow_insert;
 }
 
 ///////////////////////////////////////////////////////////
-protocols::rna::AllowInsertOP
+protocols::toolbox::AllowInsertOP
 CoarseRNA_LoopCloser::allow_insert(){
 	return allow_insert_;
 }

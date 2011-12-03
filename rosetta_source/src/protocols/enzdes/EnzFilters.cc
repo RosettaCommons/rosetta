@@ -53,9 +53,9 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ChargeCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceDeltaEnergeticsCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NonlocalContactsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
@@ -1206,15 +1206,15 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
 			std::string lig_interface_e_calc_name = "interf_E_" + prot_ch_string + "_" + lig_ch_string;
 
 			if( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_neighbor_calc_name ) ){
-				PoseMetricCalculatorOP lig_neighbor_calc = new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator( prot_chain, lig_chain );
+				PoseMetricCalculatorOP lig_neighbor_calc = new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( prot_chain, lig_chain );
 				CalculatorFactory::Instance().register_calculator( lig_interface_neighbor_calc_name, lig_neighbor_calc );
 			}
 			if( !CalculatorFactory::Instance().check_calculator_exists( lig_dsasa_calc_name ) ){
-				PoseMetricCalculatorOP lig_dsasa_calc = new protocols::toolbox::pose_metric_calculators::InterfaceSasaDefinitionCalculator( prot_chain, lig_chain );
+				PoseMetricCalculatorOP lig_dsasa_calc = new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( prot_chain, lig_chain );
 				CalculatorFactory::Instance().register_calculator( lig_dsasa_calc_name, lig_dsasa_calc );
 			}
 			if( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_e_calc_name ) ){
-				PoseMetricCalculatorOP lig_interf_E_calc = new protocols::toolbox::pose_metric_calculators::InterfaceDeltaEnergeticsCalculator( lig_interface_neighbor_calc_name );
+				PoseMetricCalculatorOP lig_interf_E_calc = new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( lig_interface_neighbor_calc_name );
 				CalculatorFactory::Instance().register_calculator( lig_interface_e_calc_name, lig_interf_E_calc );
 			}
 

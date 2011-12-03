@@ -30,7 +30,7 @@
 #include <basic/Tracer.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
@@ -155,11 +155,11 @@ FlexPepDockingLowRes::torsions_monte_carlo
 {
   using namespace protocols::moves;
   // setup sub-moves
-  moves::SmallMoverOP small_mover =
-    new SmallMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ );
+  simple_moves::SmallMoverOP small_mover =
+    new protocols::simple_moves::SmallMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ );
   small_mover->angle_max('L',flags_.smove_angle_range);
-  ShearMoverOP shear_mover =
-    new ShearMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ );
+  protocols::simple_moves::ShearMoverOP shear_mover =
+    new protocols::simple_moves::ShearMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ );
   shear_mover->angle_max('L',flags_.smove_angle_range);
 
   // setup cycle of sub-moves

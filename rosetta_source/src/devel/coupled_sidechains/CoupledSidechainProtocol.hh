@@ -19,7 +19,7 @@
 #include <devel/coupled_sidechains/CoupledSidechainProtocol.fwd.hh>
 
 // Unit Headers
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
 #include <protocols/canonical_sampling/SimulatedTemperingObserver.hh>
 #include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
@@ -62,7 +62,7 @@ namespace coupled_sidechains {
 
 
 /// @brief class for non-discrete side chain sampling using Dunbrack rotamer probabilities/distributions
-class CoupledSidechainProtocol : public protocols::moves::SidechainMover {
+class CoupledSidechainProtocol : public protocols::simple_moves::sidechain_moves::SidechainMover {
 
 public:
 //

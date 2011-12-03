@@ -37,7 +37,7 @@
 
 #include <basic/options/option.hh>
 
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -536,9 +536,9 @@ namespace ssrbrelax {
 				float chainbreak_weight( start_chainbreak_weight + float ( chainbreak_wt_stepsize*i ) );
 				scorefxn->set_weight( chainbreak, chainbreak_weight );
 			}
-			protocols::moves::SmallMover small_moves( refine_move_map, temperature, nmoves );
+			protocols::simple_moves::SmallMover small_moves( refine_move_map, temperature, nmoves );
 			small_moves.apply( pose );
-			protocols::moves::ShearMover shear_moves( refine_move_map, temperature, nmoves );
+			protocols::simple_moves::ShearMover shear_moves( refine_move_map, temperature, nmoves );
 			shear_moves.apply( pose );
 			localLPObj.fast_ccd_close_loops( pose, this_segment.n_term_loop(),
 																			 this_segment.c_term_loop(), cutpoint, *refine_move_map );

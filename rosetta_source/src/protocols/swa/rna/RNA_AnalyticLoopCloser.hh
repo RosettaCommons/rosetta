@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_rna_RNA_AnalyticLoopCloser_HH
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/rna/AllowInsert.fwd.hh>
+// AUTO-REMOVED #include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.fwd.hh>

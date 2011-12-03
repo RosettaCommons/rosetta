@@ -90,6 +90,17 @@ static numeric::random::RandomGenerator RG(42444);
 
 extern basic::Tracer tr;
 
+LoopMover_Perturb_KIC::LoopMover_Perturb_KIC() :
+	IndependentLoopMover()
+{
+	scorefxn_ = get_cen_scorefxn();
+	loops_set_chainbreak_weight( scorefxn_, 1 );
+
+	protocols::moves::Mover::type("LoopMover_Perturb_KIC");
+	set_default_settings();
+}
+
+
 LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
 	protocols::loops::Loops  loops_in
 ) : IndependentLoopMover( loops_in )

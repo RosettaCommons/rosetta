@@ -146,7 +146,7 @@ public: // accessors
 
 	/// @brief the loop mover string to use during centroid build
 	///  (default "RemodelLoopMover")
-	/// @remarks set to either a string the get_loop_mover() LoopMoverFactory
+	/// @remarks set to either a string the create_loop_mover() LoopMoverFactory
 	///  recognizes or the "RemodelLoopMover"
 	inline
 	String const & centroid_loop_mover_str() const {
@@ -230,7 +230,7 @@ public: // mutators
 
 
 	/// @brief the loop mover string to use during centroid build
-	/// @remarks set to either a string the get_loop_mover() LoopMoverFactory
+	/// @remarks set to either a string the create_loop_mover() LoopMoverFactory
 	///  recognizes or the "RemodelLoopMover"
 	inline
 	void centroid_loop_mover_str( String const & loop_mover_str ) {
@@ -395,7 +395,7 @@ private: // data
 
 	/// @brief the loop mover string to use during centroid build
 	///  (default "RemodelLoopMover")
-	/// @remarks set to either a string the get_loop_mover() LoopMoverFactory
+	/// @remarks set to either a string the create_loop_mover() LoopMoverFactory
 	///  recognizes or the "RemodelLoopMover"
 	String centroid_loop_mover_str_;
 

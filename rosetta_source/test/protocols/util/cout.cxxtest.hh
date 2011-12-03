@@ -28,7 +28,7 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 
 // Package Headers
 
@@ -87,8 +87,8 @@ public:
 		scorefxn( pose );
 
 		{ protocols::simple_moves::ScoreMover sm;  sm.test_move(pose); }
-		{ protocols::moves::SmallMover sm;  sm.test_move(pose); }
-		{ protocols::moves::ShearMover sm;  sm.test_move(pose); }
+		{ protocols::simple_moves::SmallMover sm;  sm.test_move(pose); }
+		{ protocols::simple_moves::ShearMover sm;  sm.test_move(pose); }
 
 
 		// setting back old cout streambuf

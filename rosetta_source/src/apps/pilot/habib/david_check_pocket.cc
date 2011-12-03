@@ -18,7 +18,7 @@
 
 // Protocol Headers
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 // Core Headers
@@ -40,7 +40,7 @@
 #include <basic/options/util.hh>
 #include <basic/options/after_opts.hh>
 #include <core/id/AtomID_Map.hh>
-#include <protocols/constraints_additional/PocketConstraint.hh>
+#include <protocols/pockets/PocketConstraint.hh>
 #include <protocols/pockets/PocketGrid.hh>
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
 #include <core/scoring/Energies.hh>

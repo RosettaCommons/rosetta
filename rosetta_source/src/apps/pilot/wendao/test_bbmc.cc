@@ -17,14 +17,14 @@
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/moves/BackboneMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/ReplicaExchangeMC.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/SidechainMover.hh>
-#include <protocols/moves/SidechainMCMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/TrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
@@ -346,7 +346,7 @@ my_main( void* )
 
 
 	//set up the BackrubMover
-	protocols::moves::BackrubMover backrubmover;
+	protocols::backrub::BackrubMover backrubmover;
 	//read known and unknown optimization parameters from the database
 	backrubmover.branchopt().read_database();
 	// tell the branch angle optimizer about the score function MMBondAngleResidueTypeParamSet, if any
@@ -356,7 +356,7 @@ my_main( void* )
 	backrubmover.set_preserve_detailed_balance(option[ mc::detailed_balance ]);
 
 	//setup the SmallMover
-	protocols::moves::SmallMover smallmover;
+	protocols::simple_moves::SmallMover smallmover;
 	smallmover.nmoves(1);
 	smallmover.set_preserve_detailed_balance(option[ mc::detailed_balance ]);
 	if ( option[ mc::sm_angle_max ].user() ) smallmover.angle_max(option[ mc::sm_angle_max ]);
@@ -377,7 +377,7 @@ my_main( void* )
 	}
 
 	// set up the SidechainMover
-	protocols::moves::SidechainMover sidechainmover;
+	protocols::simple_moves::sidechain_moves::SidechainMover sidechainmover;
 	sidechainmover.set_task_factory(main_task_factory);
 	sidechainmover.set_prob_uniform(option[ mc::sc_prob_uniform ]);
 	sidechainmover.set_prob_withinrot(option[ mc::sc_prob_withinrot ]);
@@ -633,7 +633,7 @@ my_main( void* )
 	if (option[mc::sc_strategy2]) sidechainmover.set_sampling_temperature(kT);
 
 	//setup SidechainMC mover
-	protocols::moves::SidechainMCMover scmc;
+	protocols::simple_moves::sidechain_moves::SidechainMCMover scmc;
 	if ( option[mc::fast_sc] || option[mc::fast_sc_prob]>0 ) {
 		pack::task::PackerTaskOP pt = core::pack::task::TaskFactory::create_packer_task( p );
 		scmc.set_task( pt );

@@ -22,13 +22,13 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RationalMonteCarlo.hh>
+#include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 #include <protocols/moves/SheetTranslate.hh>
 #include <protocols/viewer/viewers.hh>
 
 void run(protocols::moves::MoverOP base_mover, core::pose::Pose* pose) {
   using core::scoring::ScoreFunctionFactory;
-  using protocols::moves::RationalMonteCarlo;
+  using protocols::simple_moves::rational_mc::RationalMonteCarlo;
   assert(pose);
 
   RationalMonteCarlo mc(

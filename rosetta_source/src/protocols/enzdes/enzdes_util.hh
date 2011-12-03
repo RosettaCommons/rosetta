@@ -84,30 +84,6 @@ read_pose_from_pdb(
 );
 
 void
-replace_residue_keeping_all_atom_positions(
-	core::pose::Pose & pose,
-	core::conformation::Residue new_res,
-	core::Size res_pos
-);
-
-/// @brief a crude function to spit out a list of rotamers
-/// given the residue type only, independent of backbone
-/// currently there is no proper way of doing this, since
-/// the Dunbrack bbind library is not implemented in rosetta.
-/// this function tries to circumvent that by constructing
-/// a one residue pose and then using the regular dunbrack
-/// library, which will use neutral phi/psi for the only
-/// residue in the pose
-/// the bool ignore_cmdline can be used if someone only
-/// wants base inverse rotamers but use the full set
-/// in packing
-utility::vector1< core::conformation::ResidueCOP >
-bb_independent_rotamers(
-	core::chemical::ResidueTypeCAP rot_restype,
-	bool ignore_cmdline = false
-);
-
-void
 make_continuous_true_regions_in_bool_vector(
 	utility::vector1< bool > & the_vector,
  	core::Size const min_number_continuous_trues
@@ -136,32 +112,6 @@ remove_remark_header_for_geomcst(
 void
 create_remark_headers_from_cstcache(
 	core::pose::Pose & pose
-);
-
-std::string
-assemble_remark_line(
-	std::string chainA,
-	std::string resA,
-	int seqposA,
-	std::string chainB,
-	std::string resB,
-	int seqposB,
-	core::Size cst_block,
-	core::Size ex_geom_id = 1
-);
-
-
-bool
-split_up_remark_line(
-	std::string line,
-	std::string & chainA,
-	std::string & resA,
-	int & seqposA,
-	std::string & chainB,
-	std::string & resB,
-	int & seqposB,
-	core::Size & cst_block,
-	core::Size & ex_geom_id
 );
 
 std::string

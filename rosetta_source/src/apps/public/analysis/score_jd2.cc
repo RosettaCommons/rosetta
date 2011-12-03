@@ -21,7 +21,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
@@ -193,7 +193,7 @@ main( int argc, char * argv [] )
 	// set pose for symmetry
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-		seqmov->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover );
+		seqmov->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 		seqmov->add_mover( scoremover );
 		scoremover = seqmov;
 	}

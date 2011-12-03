@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/moves/SidechainMCMover.cc
+/// @file protocols/simple_moves/sidechain_moves/SidechainMCMover.cc
 /// @brief implementation of SidechainMCMover class and functions
 /// @author Oliver Lange
 
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <devel/coupled_sidechains/CoupledSidechainProtocol.hh>
 //#include <devel/coupled_sidechains/CoupledSidechainProtocolCreator.hh>
 
@@ -138,7 +138,7 @@ CoupledSidechainProtocolCreator::mover_name() {
 }
 */
 CoupledSidechainProtocol::CoupledSidechainProtocol():
-	SidechainMover(),
+	protocols::simple_moves::sidechain_moves::SidechainMover(),
 	current_(),
 	previous_(),
 	best_(),
@@ -160,7 +160,7 @@ CoupledSidechainProtocol::CoupledSidechainProtocol():
 CoupledSidechainProtocol::CoupledSidechainProtocol(
 	core::pack::dunbrack::RotamerLibrary const & rotamer_library
 ):
-	SidechainMover(rotamer_library),
+	protocols::simple_moves::sidechain_moves::SidechainMover(rotamer_library),
 	current_(),
 	previous_(),
 	best_(),

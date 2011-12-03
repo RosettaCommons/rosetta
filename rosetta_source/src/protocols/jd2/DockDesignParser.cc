@@ -47,7 +47,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
 // AUTO-REMOVED #include <protocols/moves/StructureRestrictor.hh>
-#include <protocols/moves/ParsedProtocol.hh>
+#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/moves/NullMover.hh>
 /// #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsMover.hh>
 #include <boost/foreach.hpp>
@@ -59,10 +59,10 @@
 //#include <protocols/qsar/qsarTypeManager.hh>
 
 //Pose Metric Calculators for filters
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceDeltaEnergeticsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
 //#include <protocols/fldsgn/filters/SheetTopologyFilter.hh>
 //#include <protocols/fldsgn/filters/NcontactsFilter.hh>
@@ -71,7 +71,7 @@
 
 // constraint types
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
-// REMOVED at XRW2 for this-should-be-a-mover-project #include <protocols/constraints_additional/SequenceProfileConstraint.hh> /// <--- you gotta go
+// REMOVED at XRW2 for this-should-be-a-mover-project #include <core/scoring/constraints/SequenceProfileConstraint.hh> /// <--- you gotta go
 // REMOVED at XRW2 for this-should-be-a-mover-project #include <core/sequence/SequenceProfile.hh> // to pass NULL pointer for constraint prototype
 // REMOVED at XRW2 for this-should-be-a-mover-project #include <core/pack/dunbrack/RotamerConstraint.hh>
 
@@ -144,7 +144,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & i
 
 	if( !new_input ) return modified_pose;
 
-	in_mover = new protocols::moves::ParsedProtocol;
+	in_mover = new protocols::rosetta_scripts::ParsedProtocol;
 
 	std::string const dock_design_filename( xml_fname == "" ? option[ OptionKeys::parser::protocol ] : xml_fname );
 	TR << "dock_design_filename=" << dock_design_filename << std::endl;
@@ -263,7 +263,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & i
 					SequenceProfileOP profile = new SequenceProfile;
 					profile->read_from_checkpoint( cst_file_name );
 					for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos )
-						pose.add_constraint( new SequenceProfileConstraint( pose, seqpos, profile ) );
+						pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
 
 					TR<<"Added sequence profile constraints specified in file "<<cst_file_name<<". Changed all scorefxns to have profile weights of "<<profile_wgt<<std::endl;
 					favor_nat = profile_wgt; // sequence profile constraint uses the same score as favor native residue
@@ -415,29 +415,28 @@ DockDesignParser::register_factory_prototypes()
 	// this allows derived non-core constraints to be constructed from string definitions in constraints files
 	//using namespace core::scoring::constraints;
 	//ConstraintFactory & cstf( ConstraintIO::get_cst_factory() );
-	//cstf.add_type( new constraints_additional::SequenceProfileConstraint(
+	//cstf.add_type( new core::scoring::constraints::SequenceProfileConstraint(
 	//	Size(), utility::vector1< id::AtomID >(), NULL ) );
 
 	// register calculators
 	core::Size const chain1( 1 ), chain2( 2 );
-	using namespace protocols::toolbox::pose_metric_calculators;
 	using namespace core::pose::metrics;
 
 	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_interface" ) ){
-		PoseMetricCalculatorOP int_sasa_calculator = new InterfaceSasaDefinitionCalculator( chain1, chain2 );
+		PoseMetricCalculatorOP int_sasa_calculator = new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( chain1, chain2 );
 		CalculatorFactory::Instance().register_calculator( "sasa_interface", int_sasa_calculator );
 	}
 
 	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-		PoseMetricCalculatorOP sasa_calculator = new SasaCalculator();
+		PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator();
 		CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
 	if( !CalculatorFactory::Instance().check_calculator_exists( "ligneigh" ) ){
-		PoseMetricCalculatorOP lig_neighbor_calc = new InterfaceNeighborDefinitionCalculator( chain1, chain2 );
+		PoseMetricCalculatorOP lig_neighbor_calc = new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1, chain2 );
   	CalculatorFactory::Instance().register_calculator( "ligneigh", lig_neighbor_calc );
 	}
 	if( !CalculatorFactory::Instance().check_calculator_exists( "liginterfE" ) ){
-  	PoseMetricCalculatorOP lig_interf_E_calc = new InterfaceDeltaEnergeticsCalculator( "ligneigh" );
+  	PoseMetricCalculatorOP lig_interf_E_calc = new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "ligneigh" );
   	CalculatorFactory::Instance().register_calculator( "liginterfE", lig_interf_E_calc );
 	}
 }

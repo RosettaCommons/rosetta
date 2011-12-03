@@ -90,12 +90,12 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
@@ -357,8 +357,8 @@ int main (int argc, char *argv[]) {
 
 
 
-// 
-// 
+//
+//
 
 
 

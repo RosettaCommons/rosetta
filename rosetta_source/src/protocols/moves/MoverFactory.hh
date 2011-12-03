@@ -30,7 +30,7 @@
 
 // c++ headers
 #include <map>
-
+#include <set>
 #include <utility/vector1.hh>
 
 
@@ -92,6 +92,8 @@ private:
 	static MoverFactory * instance_;
 
 	MoverMap mover_creator_map_;
+
+	std::set< std::string > forbidden_names_; //certain names have historic meanings and shouldn't be assigned to new movers
 
 };
 

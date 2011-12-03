@@ -49,7 +49,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/docking/util.hh>
 #include <protocols/moves/Mover.hh>

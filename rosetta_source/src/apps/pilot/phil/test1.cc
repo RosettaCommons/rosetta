@@ -25,7 +25,7 @@
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/Methods.hh>
 
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
@@ -1959,7 +1959,7 @@ small_min_test()
 
 	// setup the move objects
 	Size nmoves ( 5 );
-	SmallMoverOP small_mover( new SmallMover( mm, 0.8/*temp*/, nmoves ) );
+	protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8/*temp*/, nmoves ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 2.0 );
 	small_mover->angle_max( 'L', 3.0 );

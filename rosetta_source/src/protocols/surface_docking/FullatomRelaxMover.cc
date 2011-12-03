@@ -33,7 +33,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/BackboneMover.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 
@@ -57,7 +57,7 @@
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -122,7 +122,7 @@ void FullatomRelaxMover::setupMovers(){
 	//Creating smallMove; temperature_ : explanation;
 	//          nnmoves_ : number of residues to move(Robin thinks its a
 	//          good idea to change this based on length of peptide !!!!
-	smallmover_=new moves::SmallMover(moveMapOP_,temperature_,nmoves_);
+	smallmover_=new simple_moves::SmallMover(moveMapOP_,temperature_,nmoves_);
 	smallmover_->angle_max(30); // max angle deviation.
 	//Default Values copied from  MinMover.cc
 	smallminmover_= new moves::MinMover(moveMapOP_,
@@ -136,7 +136,7 @@ void FullatomRelaxMover::setupMovers(){
 	//Setting up shearTrialMover
 	//Creating smallMove; temperature_ : explanation;
 	//									nnmoves_ : number of residues to move
-	shearmover_=new moves::ShearMover(moveMapOP_,temperature_,nmoves_/2);
+	shearmover_=new simple_moves::ShearMover(moveMapOP_,temperature_,nmoves_/2);
 	shearmover_->angle_max(30); // need to enable after testing!!
 	//Default Values copied from  MinMover.cc
 	shearminmover_= new moves::MinMover(moveMapOP_,score_high_res_,

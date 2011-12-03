@@ -14,7 +14,7 @@
 // Rosetta Headers
 #include <protocols/rna/RNA_ChunkLibrary.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
@@ -111,7 +111,7 @@ namespace rna{
 
 	///////////////////////////////////////////////////////////////////////
 	void
-	ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, AllowInsertOP const & allow_insert ) const{
+	ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index,toolbox::AllowInsertOP const & allow_insert ) const{
 
 		using namespace core::pose;
 		using namespace core::id;
@@ -177,7 +177,7 @@ namespace rna{
 
 		// allow_insert keeps track of where chunks are placed -- only allow
 		// fragment insertions *outside* these regions.
-		allow_insert_ = new AllowInsert( pose );
+		allow_insert_ = new toolbox::AllowInsert( pose );
 		covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
 
 		utility::vector1< Size > input_res;
@@ -234,7 +234,7 @@ namespace rna{
 
 		// allow_insert keeps track of where chunks are placed -- only allow
 		// fragment insertions *outside* these regions.
-		allow_insert_ = new AllowInsert( pose );
+		allow_insert_ = new toolbox::AllowInsert( pose );
 		covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
 
 		Size count( 0 );
@@ -874,7 +874,7 @@ namespace rna{
 
 	////////////////////////////////////////////////////////////////
 	void
-	RNA_ChunkLibrary::set_allow_insert( AllowInsertOP allow_insert ){
+	RNA_ChunkLibrary::set_allow_insert(toolbox::AllowInsertOP allow_insert ){
 		allow_insert_ = allow_insert;
 	}
 

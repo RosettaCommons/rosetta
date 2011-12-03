@@ -23,7 +23,7 @@
 
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <protocols/ScoreMap.hh>
+// AUTO-REMOVED #include <protocols/jd2/ScoreMap.hh>
 
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>

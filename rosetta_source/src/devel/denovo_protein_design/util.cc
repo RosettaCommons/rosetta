@@ -56,7 +56,7 @@
 #include <core/scoring/dssp/Dssp.hh>// dssp info
 
 // AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh> //MoverOP
-//#include <protocols/moves/BackboneMover.hh> //Small/ShearMover
+//#include <protocols/simple_moves/BackboneMover.hh> //Small/ShearMover
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>

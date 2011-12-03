@@ -12,13 +12,14 @@
 
 // Unit headers
 #include <protocols/symmetric_docking/SymFoldandDockSlideTrialMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
 
 // Package headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
+
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
@@ -52,7 +53,7 @@ SymFoldandDockSlideTrialMover::~SymFoldandDockSlideTrialMover(){}
 void
 SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose )
 {
-	protocols::symmetric_docking::SetupForSymmetryMover setup;
+	protocols::simple_moves::symmetry::SetupForSymmetryMover setup;
 	setup.apply( pose );
 
 	using namespace core::conformation::symmetry;
@@ -72,20 +73,20 @@ SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose )
 	}
 
 	if ( slide_info.get_slide_type() == SEQUENTIAL ) {
-		SequentialSymmetrySlider symm_slider = SequentialSymmetrySlider( pose,
+		simple_moves::symmetry::SequentialSymmetrySlider symm_slider = simple_moves::symmetry::SequentialSymmetrySlider( pose,
 																																			 slide_info.get_SlideCriteriaType(),
 																																			 slide_info.get_SlideCriteriaVal() );
 		symm_slider.apply( pose );
 	}
 	if ( slide_info.get_slide_type() == ORDERED_SEQUENTIAL ) {
-		OrderedSequentialSymmetrySlider symm_slider = OrderedSequentialSymmetrySlider( pose,
+		simple_moves::symmetry::OrderedSequentialSymmetrySlider symm_slider = simple_moves::symmetry::OrderedSequentialSymmetrySlider( pose,
 																																									 slide_info.get_SlideCriteriaType(),
 																																									 slide_info.get_SlideCriteriaVal(),
 																																									 slide_info.get_slide_order() );
 		symm_slider.apply( pose );
 	}
 	if ( slide_info.get_slide_type() == RANDOM ) {
-		RandomSymmetrySlider symm_slider = RandomSymmetrySlider( pose,
+		simple_moves::symmetry::RandomSymmetrySlider symm_slider = simple_moves::symmetry::RandomSymmetrySlider( pose,
 																														 slide_info.get_SlideCriteriaType(),
 																														 slide_info.get_SlideCriteriaVal() );
 		symm_slider.apply( pose );

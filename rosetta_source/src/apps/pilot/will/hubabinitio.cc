@@ -82,12 +82,12 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
@@ -157,7 +157,7 @@ static core::io::silent::SilentFileData sfd;
 // 			tmp->chain(1);
 // 			p.append_residue_by_bond( *tmp, true );
 // 			p.set_omega(ir-1,180.0);
-// 			p.set_omega(ir  ,180.0);		
+// 			p.set_omega(ir  ,180.0);
 // 		}
 // 		core::pose::add_upper_terminus_type_to_pose_residue(p,p.n_residue());
 // 		//sfsym->show(p);
@@ -169,7 +169,7 @@ static core::io::silent::SilentFileData sfd;
 // 		// cout << ft << endl;
 // 		ft.set_jump_atoms( 1, "ORIG", "CA");
 // 		ft.set_jump_atoms( 2, "ORIG", "CA");
-// 		ft.set_jump_atoms( 3, "ORIG", "CA");		
+// 		ft.set_jump_atoms( 3, "ORIG", "CA");
 // 		p.fold_tree(ft);
 // 		// cout << ft << endl;
 
@@ -202,7 +202,7 @@ static core::io::silent::SilentFileData sfd;
 // 	}
 
 // 	void apply(core::pose::Pose & p) {
-		
+
 // 		core::util::switch_to_residue_type_set(init,"centroid");
 // 		//cout << iter << " fold" << endl;
 // 		p = init;
@@ -285,7 +285,7 @@ void calc_c3_rmsd(Size const nres, Pose p, Pose const & native, Vec const & natc
 	if(native.n_residue() == 0) return;
 	if(native.n_residue()+1 != nres) {
 		cout << p.sequence() << endl;
-		cout << " " << native.sequence() << endl;		
+		cout << " " << native.sequence() << endl;
 		utility_exit_with_message("native should be 1 chain w/o hub");
 	}
 	core::pose::symmetry::make_asymmetric_pose(p);
@@ -353,7 +353,7 @@ void calc_c3_rmsd(Size const nres, Pose p, Pose const & native, Vec const & natc
 	}
 	if(carmsd1 < carmsd2) {
 		carmsd = carmsd1;
-		aarmsd = aarmsd1;		
+		aarmsd = aarmsd1;
 	} else {
 		carmsd = carmsd2;
 		aarmsd = aarmsd2;
@@ -413,7 +413,7 @@ int main(int argc, char *argv[]) {
 		tmp->chain(1);
 		p.append_residue_by_bond( *tmp, true );
 		p.set_omega(ir-1,180.0);
-		p.set_omega(ir  ,180.0);		
+		p.set_omega(ir  ,180.0);
 	}
 	core::pose::add_upper_terminus_type_to_pose_residue(p,p.n_residue());
 	//sfsym->show(p);
@@ -425,7 +425,7 @@ int main(int argc, char *argv[]) {
 	// cout << ft << endl;
 	ft.set_jump_atoms( 1, "ORIG", "CA");
 	ft.set_jump_atoms( 2, "ORIG", "CA");
-	ft.set_jump_atoms( 3, "ORIG", "CA");		
+	ft.set_jump_atoms( 3, "ORIG", "CA");
 	p.fold_tree(ft);
 	// cout << ft << endl;
 
@@ -512,7 +512,7 @@ int main(int argc, char *argv[]) {
 		core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 	  	ss_out->fill_struct(p,fn);
 	  	ss_out->add_energy( "carmsd", carmsd );
-	  	ss_out->add_energy( "aarmsd", aarmsd );	  	
+	  	ss_out->add_energy( "aarmsd", aarmsd );
 	  	sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
 		p.dump_pdb(fn);
 
@@ -530,7 +530,7 @@ int main(int argc, char *argv[]) {
 
 
 	// for(Size ippo = 1; ippo <= 3; ++ippo ) {
-	// 	for(Size ir = 1; ir <= nres; ++ir ) {		
+	// 	for(Size ir = 1; ir <= nres; ++ir ) {
 	// 		Pose tmp(p);
 	// 	  	for(Size itrial = 1; itrial <= 10; ++itrial) {
 	// 			// for(Size i = 1; i <= nres; ++i) {

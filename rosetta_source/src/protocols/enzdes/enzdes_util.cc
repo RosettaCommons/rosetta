@@ -19,9 +19,8 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
-
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -195,80 +194,6 @@ read_pose_from_pdb(
 		rb_generator.apply( pose );
 	}
 }
-
-
-void
-replace_residue_keeping_all_atom_positions(
-	core::pose::Pose & pose,
-	core::conformation::Residue new_res,
-	core::Size res_pos
- ){
-
-	//have to set the position of the new res to their old values, so we gotta save them now
-	std::map< std::string, core::PointPosition > atom_name_to_xyz;
-
-	for( core::Size at_ct = 1; at_ct <= pose.residue(res_pos).natoms(); at_ct++){
-		atom_name_to_xyz.insert( 	std::pair< std::string, core::PointPosition > (pose.residue(res_pos).atom_name(at_ct), pose.residue(res_pos).xyz( at_ct ) ) );
-	}
-
-	//replacing the residue
-	pose.replace_residue( res_pos, new_res, true);
-
-	//and resetting the xyz positions
-	for( core::Size at_ct = 1; at_ct <= pose.residue(res_pos).natoms(); at_ct++){
-
-		std::map< std::string, core::PointPosition>::iterator xyz_map_it = atom_name_to_xyz.find( pose.residue(res_pos).atom_name(at_ct) );
-
-		if(xyz_map_it == atom_name_to_xyz.end() ) {
-			std::cerr << "ERROR: when trying to make dsflkj constraint covalent, atom " << pose.residue(res_pos).atom_name(at_ct) << " was not found for residue " << pose.residue(res_pos).name3() << " at position " << res_pos << std::endl;
-			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-		}
-		else{
-			pose.set_xyz( core::id::AtomID (at_ct, res_pos), xyz_map_it->second );
-		}
-	}
-
-} //replace_residues_keeping_positions
-
-
-
-utility::vector1< core::conformation::ResidueCOP >
-bb_independent_rotamers(
-	core::chemical::ResidueTypeCAP rot_restype,
-	bool ignore_cmdline
-)
-{
-	core::conformation::Residue firstres( *rot_restype, true );
-	core::pose::Pose dummy_pose;
-	dummy_pose.append_residue_by_jump( firstres, (core::Size) 0 );
-	core::pose::add_lower_terminus_type_to_pose_residue( dummy_pose, 1 ); //prolly critical so that the dunbrack library uses neutral phi
-	core::pose::add_upper_terminus_type_to_pose_residue( dummy_pose, 1 ); //prolly critical so that the dunbrack library uses neutral psi
-	core::scoring::ScoreFunction dummy_sfxn;
-	dummy_sfxn( dummy_pose );
-	core::pack::task::PackerTaskOP dummy_task = core::pack::task::TaskFactory::create_packer_task( dummy_pose );
-	if( !ignore_cmdline ) dummy_task->initialize_from_command_line();
-	dummy_task->nonconst_residue_task( 1 ).restrict_to_repacking();
-	dummy_task->nonconst_residue_task( 1 ).or_include_current( false ); //need to do this because the residue was built from internal coords and is probably crumpled up
-	dummy_task->nonconst_residue_task( 1 ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
-	core::graph::GraphOP dummy_png = core::pack::create_packer_graph( dummy_pose, dummy_sfxn, dummy_task );
-
-	core::pack::rotamer_set::RotamerSetFactory rsf;
-	core::pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( dummy_pose.residue( 1 ) ) );
-	rotset->set_resid( 1 );
-	rotset->build_rotamers( dummy_pose, dummy_sfxn, *dummy_task, dummy_png );
-
-	utility::vector1< core::conformation::ResidueCOP > to_return;
-
-	//now when creating the rotamers, we have to make sure we don't sneak in the additional variant types
-	for( core::Size i = 1; i <= rotset->num_rotamers(); ++i ){
-		core::conformation::ResidueOP rot( firstres.clone() );
-		for( core::Size j =1; j <= firstres.nchi(); ++j ) rot->set_chi( j, rotset->rotamer( i )->chi( j ) );
-		to_return.push_back( rot );
-	}
-
-	return to_return;
-}
-
 
 void
 make_continuous_true_regions_in_bool_vector(
@@ -464,7 +389,7 @@ remove_remark_header_for_geomcst(
 		std::string chainA(""), chainB(""), resA(""), resB("");
 		core::Size cst_block(0), exgeom_id( 0 );
 		int pdbposA(0), pdbposB(0);
-		if( split_up_remark_line( remarks[i].value, chainA, resA, pdbposA, chainB, resB, pdbposB, cst_block, exgeom_id ) ){
+		if( toolbox::match_enzdes_util::split_up_remark_line( remarks[i].value, chainA, resA, pdbposA, chainB, resB, pdbposB, cst_block, exgeom_id ) ){
 			if( cst_block == geomcst ) continue;
 		}
 		newremarks.push_back( remarks[i] );
@@ -504,7 +429,7 @@ create_remark_headers_from_cstcache(
 
 			core::pose::RemarkInfo ri;
 			ri.num = 666;
-			ri.value = assemble_remark_line( chainA, resA, pdbposA, chainB, resB, pdbposB, i, 1 );
+			ri.value = toolbox::match_enzdes_util::assemble_remark_line( chainA, resA, pdbposA, chainB, resB, pdbposB, i, 1 );
 			//std::cout << "adding " << ri.value << " to header... " << std::endl;
 			newremarks.push_back( ri );
 		}
@@ -517,75 +442,10 @@ create_remark_headers_from_cstcache(
 		core::Size cst_block(0), exgeom_id( 0 );
 		int pdbposA(0), pdbposB(0);
 
-		if( !split_up_remark_line( remarks[i].value, chainA, resA, pdbposA, chainB, resB, pdbposB, cst_block, exgeom_id ) )	newremarks.push_back( remarks[i] );
+		if( !toolbox::match_enzdes_util::split_up_remark_line( remarks[i].value, chainA, resA, pdbposA, chainB, resB, pdbposB, cst_block, exgeom_id ) )	newremarks.push_back( remarks[i] );
 	}
 	pose.pdb_info()->remarks( newremarks );
 }
-
-
-std::string
-assemble_remark_line(
-	std::string chainA,
-	std::string resA,
-	int seqposA,
-	std::string chainB,
-	std::string resB,
-	int seqposB,
-	core::Size cst_block,
-	core::Size ex_geom_id
-)
-{
-	std::string posA = utility::to_string( seqposA );
-	utility::add_spaces_right_align( posA, 4 );
-
-	std::string posB = utility::to_string( seqposB );
-	utility::add_spaces_right_align( posB, 4 );
-
-	return "MATCH TEMPLATE "+ chainA +" "+ resA +" "+ posA +  " MATCH MOTIF "+ chainB + " " + resB + " "+posB + "  " + utility::to_string( cst_block ) + "  " + utility::to_string( ex_geom_id );
-
-} //assemble remark line function
-
-
-bool
-split_up_remark_line(
-	std::string line,
-	std::string & chainA,
-	std::string & resA,
-	int & seqposA,
-	std::string & chainB,
-	std::string & resB,
-	int & seqposB,
-	core::Size & cst_block,
-	core::Size & ex_geom_id
-){
-
-	std::istringstream line_stream;
-	std::string buffer(""), tag("");
-
-	line_stream.clear();
-	line_stream.str( line );
-
-	line_stream >> buffer >> tag;
-	if( tag == "TEMPLATE"){
-		line_stream >> chainA >> resA >> seqposA >> buffer >> buffer;
-		line_stream >> chainB >> resB >> seqposB >> cst_block;
-		if( resA.size() == 2 ) resA = " " + resA;
-		if( resB.size() == 2 ) resB = " " + resB;
-
-		if( !line_stream.good() ){
-			tr << "ERROR when trying to split up pdb remark line. Not all fields seem to have been specified." << std::endl;
-			return false;
-		}
-
-		line_stream >> ex_geom_id;
-		if( !line_stream.good() ) ex_geom_id = 1;
-
-		return true;
-	}
-
-	return false;
-}  //split up remark line function
-
 
 /// @detail function not implemented very slick at the moment, need to find way to compile boost regex library :((
 /// @detail to extract the pdb code from the pose tag without a regular expression module, some explicit functions

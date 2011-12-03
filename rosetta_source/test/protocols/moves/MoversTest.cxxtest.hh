@@ -15,7 +15,7 @@
 #include <test/UMoverTest.hh>
 
 // Unit headers
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 
 //Auto Headers
 #include <platform/types.hh>
@@ -35,7 +35,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/moves/BackboneMover.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -90,13 +90,13 @@ public:
 	}
 
 	void test_AllMovers() {
-		TEST_MOVER(SmallMover, "protocols/moves/test_in.pdb", "protocols/moves/smallmoves_out.pdb");
+		TEST_MOVER( protocols::simple_moves::SmallMover, "protocols/moves/test_in.pdb", "protocols/moves/smallmoves_out.pdb");
 		//one_mover_test(__FILE__, __LINE__, new SmallMover,
 		//			   "protocols/moves/test_in.pdb", "protocols/moves/smallmoves_out.pdb",
 		//			   "protocols/moves/smallmoves.u", "core protocols");
 		std::cout << "End SmallMover test" << "\n";
 
-		TEST_MOVER(ShearMover, "protocols/moves/test_in.pdb", "protocols/moves/shearmoves_out.pdb");
+		TEST_MOVER( protocols::simple_moves::ShearMover, "protocols/moves/test_in.pdb", "protocols/moves/shearmoves_out.pdb");
 		std::cout << "End ShearMover test" << "\n";
 	 }
 };

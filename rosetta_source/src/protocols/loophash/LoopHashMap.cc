@@ -40,7 +40,7 @@
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 #include <numeric/HomogeneousTransform.hh>
-#include <protocols/match/Hit.fwd.hh>
+//#include <protocols/match/Hit.fwd.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <utility/excn/Exceptions.hh>
@@ -77,7 +77,6 @@ using namespace core;
 using namespace core::pose;
 using namespace conformation;
 using namespace kinematics;
-using namespace protocols::match;
 using namespace protocols::frag_picker;
 
 
@@ -97,12 +96,12 @@ static basic::Tracer TR("LoopHashMap");
 
 /// @brief This takes a pose and two residue positions and determines the rigid body transform of the Leap described by those two residues.
 ///        Returns true is successful or false if something went haywire and one should just ignore this loop (this can happen at the ends)
-bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::Size jr, protocols::match::Real6 &rt_6 ){
+bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::Size jr, numeric::geometry::hashing::Real6 &rt_6 ){
 	using namespace core;
 	using namespace core::pose;
 	using namespace conformation;
 	using namespace kinematics;
-	using namespace protocols::match;
+	using namespace numeric::geometry::hashing;
 
 	core::pose::Pose pose = orig_pose;
 
@@ -212,12 +211,12 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 /// @brief This takes a pose and two residue positions and determines the rigid body transform of the Leap described by those two residues
 ///       THe difference between this and the get_rt_over_leap function is that this version doesnt make a copy of the pose which makes it faster.
 ///     However this means that the pose passed cannot be a const pose, even though the function restores the fold tree afterwards..
-bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr, protocols::match::Real6 &rt_6 ){
+bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr, numeric::geometry::hashing::Real6 &rt_6 ){
 	using namespace core;
 	using namespace core::pose;
 	using namespace conformation;
 	using namespace kinematics;
-	using namespace protocols::match;
+	using namespace numeric::geometry::hashing;
 
 	core::Size newroot=0;
 	if( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) newroot = pose.fold_tree().root();
@@ -360,11 +359,11 @@ LoopHashMap::setup( core::Size loop_size)
 				HASH_POSITION_GRID_BASE*(int)loop_size,
 				HASH_POSITION_GRID_BASE*(int)loop_size
 				) );
-	protocols::match::Size3 euler_offsets;
+	numeric::geometry::hashing::Size3 euler_offsets;
 	euler_offsets[1] = 0;
 	euler_offsets[2] = 0;
 	euler_offsets[3] = 0;
-	protocols::match::Real6 bin_widths;
+	numeric::geometry::hashing::Real6 bin_widths;
 
 	core::Real space_multiplier = 0.2;
   core::Real angle_multiplier =  15.0/6.0;
@@ -394,7 +393,7 @@ LoopHashMap::setup( core::Size loop_size)
 void
 LoopHashMap::add_legacyleap( const LegacyLeapIndex & legacyleap_index)
 {
-	Real6 rt_6;
+	numeric::geometry::hashing::Real6 rt_6;
 	rt_6[1] = legacyleap_index.vecx;
 	rt_6[2] = legacyleap_index.vecy;
 	rt_6[3] = legacyleap_index.vecz;
@@ -414,10 +413,10 @@ void LoopHashMap::add_leap( const LeapIndex &leap_index, boost::uint64_t key ) {
 	backbone_index_map_.insert( std::make_pair( key, cpindex ));
 }
 
-void LoopHashMap::add_leap( const LeapIndex &leap_index, protocols::match::Real6 & transform ){
+void LoopHashMap::add_leap( const LeapIndex &leap_index, numeric::geometry::hashing::Real6 & transform ){
 	core::Size cpindex = loopdb_.size();
 	loopdb_.push_back( leap_index );
-	Real6 rt_6;
+	numeric::geometry::hashing::Real6 rt_6;
 	rt_6[1] = transform[1];
 	rt_6[2] = transform[2];
 	rt_6[3] = transform[3];
@@ -436,7 +435,7 @@ void LoopHashMap::add_leap( const LeapIndex &leap_index, protocols::match::Real6
 	hash_index( rt_6, cpindex  );
 }
 
-void LoopHashMap::hash_index( protocols::match::Real6 transform, core::Size data ){
+void LoopHashMap::hash_index( numeric::geometry::hashing::Real6 transform, core::Size data ){
 	// Hash the transform
 	if( ! hash_->contains( transform ) ){
 		//TR.Error << "OutofBOIUNDS! " << std::endl;
@@ -458,7 +457,7 @@ void LoopHashMap::bbdb_range( std::pair< BackboneIndexMap::iterator, BackboneInd
 
 // append to a bucket of vectors in the appropriate bin
 void
-LoopHashMap::lookup(  protocols::match::Real6 transform, std::vector < core::Size > &result )
+LoopHashMap::lookup(  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result )
 {
 	// Hash the transform
 	if( ! hash_->contains( transform ) ){
@@ -484,7 +483,7 @@ LoopHashMap::lookup(  protocols::match::Real6 transform, std::vector < core::Siz
 	}
 }
 
-void LoopHashMap::radial_lookup( core::Size radius,  protocols::match::Real6 center, std::vector < core::Size > &result )
+void LoopHashMap::radial_lookup( core::Size radius,  numeric::geometry::hashing::Real6 center, std::vector < core::Size > &result )
 {
 
 	center[4] = numeric::nonnegative_principal_angle_degrees(center[4] );
@@ -534,7 +533,7 @@ void
 LoopHashMap::radial_lookup_withkey( boost::uint64_t key, core::Size radius, std::vector < core::Size > &result )
 {
 	// get center of bin from key
-	protocols::match::Real6 center = hash_->bin_center_point( hash_->bin_from_index( key ) );
+	numeric::geometry::hashing::Real6 center = hash_->bin_center_point( hash_->bin_from_index( key ) );
 	radial_lookup( radius, center, result );
 }
 

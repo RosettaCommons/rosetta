@@ -14,7 +14,7 @@
 
 
 #include <protocols/rna/RNA_Minimizer.hh>
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 // AUTO-REMOVED #include <protocols/rna/RNA_ProtocolUtil.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/conformation/Residue.hh>
@@ -46,7 +46,7 @@
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
-#include <protocols/moves/ConstrainToIdealMover.hh>
+#include <protocols/simple_moves/ConstrainToIdealMover.hh>
 
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
@@ -168,7 +168,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 	kinematics::MoveMap mm;
 
-	if (!allow_insert_) allow_insert_ = new AllowInsert( pose ); // initialized to let all dofs move.
+	if (!allow_insert_) allow_insert_ = new toolbox::AllowInsert( pose ); // initialized to let all dofs move.
 	setup_movemap( mm, pose );
 
 // 	mm.set_bb( false );
@@ -323,7 +323,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	if ( vary_bond_geometry_ ) {
 		// Let additional degrees of freedom vary -- but apply constraints to stay near
 		// ideal bond lengths and angles!
-		protocols::moves::ConstrainToIdealMover CTIMover;
+		protocols::simple_moves::ConstrainToIdealMover CTIMover;
 		core::kinematics::MoveMapOP mmop(mm.clone());
 		CTIMover.set_movemap(mmop);
 		CTIMover.set_AllowInsert(allow_insert_);
@@ -340,7 +340,7 @@ RNA_Minimizer::set_score_function( core::scoring::ScoreFunctionOP const & scoref
 }
 
 void
-RNA_Minimizer::set_allow_insert( AllowInsertOP allow_insert ){
+RNA_Minimizer::set_allow_insert(toolbox::AllowInsertOP allow_insert ){
 	allow_insert_ = allow_insert;
 }
 

@@ -36,7 +36,7 @@
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 // AUTO-REMOVED #include <protocols/moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/BackboneMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/BackboneMover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -54,7 +54,7 @@
 #include <map>
 #include <list>
 
-#include <protocols/moves/BackboneMover.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
 #include <utility/vector1.hh>
@@ -139,12 +139,12 @@ private:
 	moves::MonteCarloOP  smallmonteCarlo_;
 	moves::MonteCarloOP  shearmonteCarlo_;
 
-	moves::SmallMoverOP smallmover_;
+	simple_moves::SmallMoverOP smallmover_;
 	moves::MinMoverOP smallminmover_;
 	moves::SequenceMoverOP smallsequenceMover_;
 	moves::TrialMoverOP small_trial_min_mover_;
 
-	moves::ShearMoverOP shearmover_;
+	simple_moves::ShearMoverOP shearmover_;
 	moves::MinMoverOP shearminmover_;
 	moves::SequenceMoverOP shearsequenceMover_;
 	moves::TrialMoverOP shear_trial_min_mover_;

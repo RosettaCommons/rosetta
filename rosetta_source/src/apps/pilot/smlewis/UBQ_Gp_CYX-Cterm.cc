@@ -51,7 +51,7 @@
 
 //movers
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/moves/RotamerTrialsMover.hh>
@@ -65,8 +65,8 @@
 
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 // AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
@@ -132,7 +132,7 @@ public:
 		using namespace protocols::toolbox::pose_metric_calculators;
 		//magic number: chains 1 and 2; set up interface SASA calculator
 		if( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ){
-			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, new InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)));
+			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)));
 		}
 
 		IAM_->set_use_centroid_dG(false);
@@ -299,7 +299,7 @@ public:
 
 		std::string const interface_calc("UBQGTPase_InterfaceNeighborDefinitionCalculator");
 		std::string const neighborhood_calc("UBQGTPase_NeighborhoodByDistanceCalculator");
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) );
 
 		//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
@@ -335,12 +335,12 @@ public:
 		MonteCarloOP mc( new MonteCarlo( pose, *fullatom_scorefunction_, option[ refine_temp ].value() ) );
 
 		//////////////////////////Small/ShearMovers////////////////////////////////////////////////////////
-		protocols::moves::BackboneMoverOP small_mover = new protocols::moves::SmallMover(thioester_mm_, 0.8, 1);
+		protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover(thioester_mm_, 0.8, 1);
 		small_mover->angle_max( 'H', 4.0 );
 		small_mover->angle_max( 'E', 4.0 );
 		small_mover->angle_max( 'L', 4.0 );
 
-		protocols::moves::BackboneMoverOP shear_mover = new protocols::moves::ShearMover(thioester_mm_, 0.8, 1);
+		protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover(thioester_mm_, 0.8, 1);
 		shear_mover->angle_max( 'H', 4.0 );
 		shear_mover->angle_max( 'E', 4.0 );
 		shear_mover->angle_max( 'L', 4.0 );

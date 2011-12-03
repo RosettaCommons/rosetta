@@ -19,7 +19,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
 #include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
-#include <protocols/enzdes/enzdes_util.hh>
+#include <core/pack/rotamer_set/bb_independent_rotamers.hh>
 
 //#include <protocols/enzdes/EnzConstraintIO.hh>
 //#include <protocols/enzdes/EnzConstraintParameters.hh>
@@ -539,7 +539,7 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 
 	std::list< core::conformation::ResidueCOP > to_return;
 
-	utility::vector1< core::conformation::ResidueCOP > rotamers( protocols::enzdes::enzutil::bb_independent_rotamers( invrot_restype, true ) ); //This is getting the residue specific inverse rotamers
+	utility::vector1< core::conformation::ResidueCOP > rotamers( core::pack::rotamer_set::bb_independent_rotamers( invrot_restype, true ) ); //This is getting the residue specific inverse rotamers
 
 //	bool no_theozyme_inverse_rotamers( basic::options::option[ basic::options::OptionKeys::enzdes::no_theozyme_inverse_rotamers ]() );
 //	if( no_theozyme_inverse_rotamers ) get rid of rotamers ;

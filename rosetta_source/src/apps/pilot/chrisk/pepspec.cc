@@ -27,7 +27,7 @@
  #include <core/scoring/LREnergyContainer.hh>
  #include <core/scoring/methods/Methods.hh>
 
- #include <protocols/moves/BackboneMover.hh>
+ #include <protocols/simple_moves/BackboneMover.hh>
  #include <protocols/moves/MinMover.hh>
  #include <protocols/moves/MonteCarlo.hh>
  #include <protocols/moves/Mover.hh>
@@ -139,9 +139,9 @@
 #include <protocols/toolbox/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceDeltaEnergeticsCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -950,7 +950,7 @@ refine_fa_pep_bb(
 	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
 	rb_mover->apply( pose );
 
-	SmallMoverOP rep_small_mover( new SmallMover( mm, 2.0, 10 ) );
+	protocols::simple_moves::SmallMoverOP rep_small_mover( new protocols::simple_moves::SmallMover( mm, 2.0, 10 ) );
 	rep_small_mover->angle_max( 'H', 1.5 );
 	rep_small_mover->angle_max( 'E', 1.5 );
 	rep_small_mover->angle_max( 'L', 1.5 );
@@ -1277,7 +1277,7 @@ perturb_pep_bb(
 )
 {
 	( *cen_scorefxn )( pose );
-	SmallMoverOP cg_small( new SmallMover( mm_move, 5.0, 1 ) );
+	protocols::simple_moves::SmallMoverOP cg_small( new protocols::simple_moves::SmallMover( mm_move, 5.0, 1 ) );
 	cg_small->angle_max( 'H', 10.0 );
 	cg_small->angle_max( 'E', 10.0 );
 	cg_small->angle_max( 'L', 10.0 );
@@ -1364,7 +1364,7 @@ mutate_random_residue(
 /*
 	if( pose.residue( seqpos ).name3() != "PRO" && pose.residue( seqpos ).name3() != "GLY" && pose.residue( seqpos ).name3() != "ALA" ){
 		MonteCarloOP mc( new MonteCarlo( pose, *soft_scorefxn, 1.0 ) );
-		protocols::moves::SidechainMoverOP sidechain_mover( new SidechainMover() );
+		protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechain_mover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 		sidechain_mover->set_task_factory( rp_task_factory );
 		sidechain_mover->set_prob_uniform( 0.05 );
 		for( Size ii = 1; ii <= 20; ++ii ){
@@ -1602,11 +1602,11 @@ RunPepSpec()
 	decomp_reweight_calculator->master_weight_vector( reweight_vector );
 	decomp_reweight_calculator->num_sets( ( Size ) 2 );
 	calculator_factory.register_calculator("energy_decomposition", decomp_reweight_calculator);
-	core::pose::metrics::PoseMetricCalculatorOP int_calculator( new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator( (Size)1, (Size)2 ) );
+	core::pose::metrics::PoseMetricCalculatorOP int_calculator( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( (Size)1, (Size)2 ) );
 	calculator_factory.register_calculator( "interface", int_calculator );
-	core::pose::metrics::PoseMetricCalculatorOP int_delta_energy_calculator( new protocols::toolbox::pose_metric_calculators::InterfaceDeltaEnergeticsCalculator( "interface" ) );
+	core::pose::metrics::PoseMetricCalculatorOP int_delta_energy_calculator( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "interface" ) );
 	calculator_factory.register_calculator( "interface_delta_energies", int_delta_energy_calculator );
-	core::pose::metrics::PoseMetricCalculatorOP int_sasa_calculator( new protocols::toolbox::pose_metric_calculators::InterfaceSasaDefinitionCalculator( (Size)1, (Size)2 ) );
+	core::pose::metrics::PoseMetricCalculatorOP int_sasa_calculator( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( (Size)1, (Size)2 ) );
 	calculator_factory.register_calculator( "sasa_interface", int_sasa_calculator );
 
 	int pose_index( 0 );

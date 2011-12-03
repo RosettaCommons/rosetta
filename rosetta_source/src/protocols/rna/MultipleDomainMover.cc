@@ -26,8 +26,10 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
+
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
+
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -102,7 +104,7 @@ MultipleDomainMover::apply_at_domain( core::pose::Pose & pose, Size const & n )
 
 ////////////////////////////////////////////////////////////////
 void
-MultipleDomainMover::initialize( pose::Pose const & pose, AllowInsertOP allow_insert ){
+MultipleDomainMover::initialize( pose::Pose const & pose,toolbox::AllowInsertOP allow_insert ){
 	//	std::cout << "HELLO! " << pose.residue_type( pose.total_residue() ).name3() << std::endl;
 	if ( pose.residue_type( pose.total_residue() ).name3() != "XXX" /*virtual residue*/ ) return;
 	setup_jump_numbers_and_partner( pose );
@@ -196,7 +198,7 @@ void MultipleDomainMover::setup_jump_numbers_and_partner( pose::Pose const & pos
 
 /////////////////////////////////////
 void
-MultipleDomainMover::setup_ok_for_centroid_calculation( AllowInsertOP & allow_insert ){
+MultipleDomainMover::setup_ok_for_centroid_calculation(toolbox::AllowInsertOP & allow_insert ){
 	// Need to find jump number [Can try alternate constructor later]
 	ok_for_centroid_calculation_.clear();
 

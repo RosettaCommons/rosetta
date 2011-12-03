@@ -19,7 +19,7 @@
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/io/raw_data/ScoreFileData.hh>
-#include <protocols/ScoreMap.hh>
+#include <protocols/jd2/ScoreMap.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -101,7 +101,7 @@ void protocols::jd2::FileJobOutputter::scorefile(
 	core::io::raw_data::ScoreFileData sfd((scorefile.empty() ? scorefile_name_.name() : scorefile));
 	std::map < std::string, core::Real > score_map;
     std::map < std::string, std::string > string_map;
-	protocols::ScoreMap::score_map_from_scored_pose( score_map, pose );
+	protocols::jd2::ScoreMap::score_map_from_scored_pose( score_map, pose );
 
 	// Adds StringReal job info into the score map for output in the scorefile.
 	for( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());

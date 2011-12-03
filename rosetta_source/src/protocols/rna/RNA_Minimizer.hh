@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_rna_RNA_Minimizer_HH
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -57,7 +57,7 @@ public:
 	void vary_bond_geometry( bool const setting ){ vary_bond_geometry_ = setting; };
 
 	void
-	set_allow_insert( AllowInsertOP allow_insert  );
+	set_allow_insert(toolbox::AllowInsertOP allow_insert  );
 
 	void
 	set_score_function( core::scoring::ScoreFunctionOP const & scorefxn );
@@ -93,7 +93,7 @@ private:
 	bool skip_o2star_trials_;
 	bool vary_bond_geometry_;
 
-	AllowInsertOP allow_insert_;
+toolbox::AllowInsertOP allow_insert_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 

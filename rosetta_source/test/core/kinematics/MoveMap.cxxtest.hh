@@ -24,7 +24,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -64,7 +64,7 @@ class MoveMapTest : public CxxTest::TestSuite {
   void test_backbone_range_protection() {
 		using core::Real;
 		using core::Size;
-		using protocols::moves::SmallMover;
+		using protocols::simple_moves::SmallMover;
 		using std::endl;
 
 		vector<Real> before;
@@ -83,7 +83,7 @@ class MoveMapTest : public CxxTest::TestSuite {
 
 		// create a simple mover and make some modifications
 		Pose modified_pose(pose_);
-		SmallMover mover(mmap, 10, 200);
+		protocols::simple_moves::SmallMover mover(mmap, 10, 200);
 		mover.apply(modified_pose);
 
 		// make sure that some moves have occurred

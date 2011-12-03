@@ -21,7 +21,6 @@
 
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/jumping/JumpSample.hh>
 
 // Project Headers
 #include <core/io/silent/SilentStruct.hh>
@@ -30,6 +29,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/options/option.hh>
+
+#include <protocols/toolbox/pose_manipulation.hh>
 // AUTO-REMOVED #include <iterator>
 
 // Utility headers
@@ -84,8 +85,7 @@ ScoreEvaluator::apply(
 	core::scoring::ScoreFunction scorefxn( *scorefxn_ );
 	core::pose::Pose chainbreak_pose( pose );
 	core::pose::Pose nochainbreak_pose( pose );
-	jumping::JumpSample js( pose.fold_tree() );
-	js.add_chainbreaks( chainbreak_pose );
+	toolbox::pose_manipulation::add_chainbreaks_according_to_jumps( chainbreak_pose );
 	//	js.remove_chainbreaks( nochainbreak_pose );  --- whatever comes in should be consistent with constraints..this might make it worse
 	scoring::ScoreFunction chainbreaks_scfxn;
 	chainbreaks_scfxn.set_weight(  scoring::linear_chainbreak, scorefxn.get_weight(  scoring::linear_chainbreak ) );
@@ -158,8 +158,7 @@ Real TruncatedScoreEvaluator::apply( core::pose::Pose& pose ) const {
 
 	core::pose::Pose chainbreak_pose( pose );
 	core::pose::Pose nochainbreak_pose( pose );
-	jumping::JumpSample js( pose.fold_tree() );
-	js.add_chainbreaks( chainbreak_pose );
+	toolbox::pose_manipulation::add_chainbreaks_according_to_jumps( chainbreak_pose );
 	//	js.remove_chainbreaks( nochainbreak_pose );
 	scoring::ScoreFunction chainbreaks_scfxn;
 	chainbreaks_scfxn.set_weight(  scoring::linear_chainbreak, scorefxn->get_weight(  scoring::linear_chainbreak ) );

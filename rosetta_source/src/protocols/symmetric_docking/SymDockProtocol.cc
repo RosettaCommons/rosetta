@@ -16,7 +16,7 @@
 #include <protocols/symmetric_docking/SymSidechainMinMover.hh>
 
 ////////////
-#include <protocols/ScoreMap.hh>
+#include <protocols/jd2/ScoreMap.hh>
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
@@ -37,7 +37,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/symmetric_docking/SymDockingHiRes.hh>
 
@@ -93,7 +93,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -394,7 +394,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 			to_centroid.apply( pose );
 
 			// make starting perturbations based on command-line flags over each movable jump (takes care of dock_pert and randomize)
-			SymDockingInitialPerturbation initial( true /*slide into contact*/ );
+			simple_moves::symmetry::SymDockingInitialPerturbation initial( true /*slide into contact*/ );
 			initial.apply( pose );
 
 			TR << "finished initial perturbation" << std::endl;
@@ -414,7 +414,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 			if( !hurry_ ) passed_lowres_filter_ = docking_lowres_filter( pose );
 
 			// add scores to map for output
-			if( !hurry_ ) ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );
+			if( !hurry_ ) protocols::jd2::ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );
 			if( !hurry_ && get_native_pose() ){
 				Real cen_rms = calc_rms( pose );
 				score_map_["cen_rms"] = cen_rms; //jd1
@@ -441,7 +441,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 			if( !hurry_ ) {
 				Real interface_score = calc_interaction_energy( pose );
 				// add scores to map for output
-				ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );//jd1
+				protocols::jd2::ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );//jd1
 				score_map_["I_sc"] = interface_score; //jd1
 				job->add_string_real_pair("I_sc", interface_score);
 				// check highres docking filter

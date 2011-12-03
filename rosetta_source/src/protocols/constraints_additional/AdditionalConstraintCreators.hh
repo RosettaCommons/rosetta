@@ -76,18 +76,6 @@ public:
 	virtual std::string keyname() const;
 };
 
-/// @brief Mover creator for the PocketConstraint constraint
-class PocketConstraintCreator : public core::scoring::constraints::ConstraintCreator
-{
-public:
-	PocketConstraintCreator();
-	virtual ~PocketConstraintCreator();
-
-	virtual core::scoring::constraints::ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
-};
-
-
 
 } //namespace constraints_additional
 } //namespace protocols

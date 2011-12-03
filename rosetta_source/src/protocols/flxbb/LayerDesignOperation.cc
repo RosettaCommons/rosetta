@@ -47,7 +47,7 @@
 // AUTO-REMOVED #include <core/scoring/sasa.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <protocols/flxbb/SelectResiduesByLayer.hh>
+#include <protocols/toolbox/SelectResiduesByLayer.hh>
 
 
 // Utility Headers
@@ -87,7 +87,7 @@ LayerDesignOperation::LayerDesignOperation():
 	add_helix_capping_( true ),
 	use_original_( true ),
 	verbose_( false ),
-	srbl_( new SelectResiduesByLayer )
+	srbl_( new toolbox::SelectResiduesByLayer )
 {}
 
 
@@ -97,7 +97,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	add_helix_capping_( true ),
 	use_original_( true ),
 	verbose_( false ),
-	srbl_( new SelectResiduesByLayer )
+	srbl_( new toolbox::SelectResiduesByLayer )
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
 }

@@ -8,7 +8,7 @@
 
 /// @file /src/apps/pilat/will/genmatch.cc
 /// @brief ???
- 
+
 #include <boost/tuple/tuple.hpp>
 #include <basic/database/open.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
@@ -90,12 +90,12 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
@@ -117,7 +117,7 @@ static basic::Tracer TR("genmatch_d6_bpy");
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	add_lower_terminus_type_to_pose_residue(pose,1);
 	add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
-	core::pack::optimizeH(pose,*sf);	
+	core::pack::optimizeH(pose,*sf);
 	remove_lower_terminus_type_from_pose_residue(pose,1);
 	remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
 }
@@ -128,7 +128,7 @@ void myoptH(Pose & pose, ScoreFunctionOP sf) {
 void run() {
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
-	
+
 	core::chemical::ResidueTypeSetCAP cen_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 	core::chemical::ResidueTypeSetCAP  fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	Real tmpdis = option[willmatch::max_dis_metal]();
@@ -158,22 +158,22 @@ void run() {
 		core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
 		// core::chemical::ResidueType const & hise( in_fa.residue(1).residue_type_set().name_map("HIS") );
 		// core::chemical::ResidueType const & hisd( in_fa.residue(1).residue_type_set().name_map("HIS_D") );
-		for(Size i = 1; i <= nres; ++i) {	
+		for(Size i = 1; i <= nres; ++i) {
 			core::pose::replace_pose_residue_copying_existing_coordinates(in_cen,i,ala);
 			core::pose::replace_pose_residue_copying_existing_coordinates(in_fa,i,alafa);
 		}
 		Pose const init_pose = in_cen;
 		Pose const fa_pose = in_fa;
 		ImplicitFastClashCheck clashcheck(init_pose,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
-	
+
 		ScoreFunctionOP sf = core::scoring::getScoreFunction();
-	
+
 		Real chi1incr = option[willmatch::chi1_increment]();
-		Real chi2incr = option[willmatch::chi2_increment]();	
+		Real chi2incr = option[willmatch::chi2_increment]();
 		vector1<Real> CHI1,CHI2;
-		for(Real i = 0; i < 360; i+= chi1incr) CHI1.push_back(i); 
-		for(Real i = 0; i < 360; i+= chi2incr) CHI2.push_back(i); 
-	
+		for(Real i = 0; i < 360; i+= chi1incr) CHI1.push_back(i);
+		for(Real i = 0; i < 360; i+= chi2incr) CHI2.push_back(i);
+
 		// setup HIS residues for checking
 		Pose hse,hsd,bpy,glu,cys;
 		core::pose::make_pose_from_sequence(hse,"H[HIS]"  ,*fa_residue_set,false);
@@ -182,7 +182,7 @@ void run() {
 		core::pose::make_pose_from_sequence(glu,"E"       ,*fa_residue_set,false);
 		core::pose::make_pose_from_sequence(cys,"C"       ,*fa_residue_set,false);
 		hsd.set_dof(DOF_ID(AtomID(hsd.residue(1).atom_index("HD1"),1),D),2.1);
-		hse.set_dof(DOF_ID(AtomID(hse.residue(1).atom_index("HE2"),1),D),2.1);	
+		hse.set_dof(DOF_ID(AtomID(hse.residue(1).atom_index("HE2"),1),D),2.1);
 		// hse.dump_pdb("hse.pdb");
 		// hsd.dump_pdb("hsd.pdb");
 		ObjexxFCL::FArray3D<Vec> chi2cen(2,CHI1.size(),CHI2.size()),chi2ori(2,CHI1.size(),CHI2.size());

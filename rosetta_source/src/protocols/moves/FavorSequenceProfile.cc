@@ -22,7 +22,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 
-#include <protocols/constraints_additional/SequenceProfileConstraint.hh>
+#include <core/scoring/constraints/SequenceProfileConstraint.hh>
 
 #include <protocols/moves/DataMap.hh>
 #include <utility/tag/Tag.hh>
@@ -114,7 +114,7 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 	}
 
 	for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
-		pose.add_constraint( new protocols::constraints_additional::SequenceProfileConstraint( pose, seqpos, profile ) );
+		pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
 	}
 }
 

@@ -17,7 +17,7 @@
 
 // Package headers
 #include <protocols/protein_interface_design/design_utils.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
 // Project headers
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -123,7 +123,7 @@ RepackMinimize::apply( pose::Pose & pose )
 	allowed_aas_[ chemical::aa_pro ] = false;
 
 if ( symmetry_ ) {
-    protocols::symmetric_docking::SetupForSymmetryMoverOP setup_mover = new protocols::symmetric_docking::SetupForSymmetryMover;
+    protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::simple_moves::symmetry::SetupForSymmetryMover;
 		setup_mover->apply( pose );
 	}
 

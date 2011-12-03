@@ -51,6 +51,15 @@ public: // typedefs
 
 public:
 
+	LoopMover() :
+		Mover(),
+		loops_(),
+		checkpoints_("LoopMover"),
+		loops_from_observer_cache_(false)
+	{
+		Mover::type("LoopMover");
+	}
+
 	LoopMover(
 		protocols::loops::Loops loops_in
 	) : Mover(),

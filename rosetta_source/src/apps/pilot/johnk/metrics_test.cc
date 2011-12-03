@@ -27,10 +27,10 @@
 //#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceDeltaEnergeticsCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 
 #include <basic/options/option_macros.hh>
 
@@ -57,23 +57,23 @@ OPT_KEY( Boolean, test_incorrect_type )
 
 void register_metrics() {
 
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new protocols::toolbox::pose_metric_calculators::SasaCalculator;
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 	core::pose::metrics::PoseMetricCalculatorOP int12_calculator =
-		new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator((Size)1,(Size)2);
+		new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator((Size)1,(Size)2);
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "interface_1_2", int12_calculator );
 
 	core::pose::metrics::PoseMetricCalculatorOP int23_calculator =
-		new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator((Size)2,(Size)3);
+		new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator((Size)2,(Size)3);
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "interface_2_3", int23_calculator );
 
 	core::pose::metrics::PoseMetricCalculatorOP int12_sasa_calculator =
-		new protocols::toolbox::pose_metric_calculators::InterfaceSasaDefinitionCalculator((Size)1,(Size)2);
+		new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator((Size)1,(Size)2);
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa_interface_1_2", int12_sasa_calculator );
 
 	core::pose::metrics::PoseMetricCalculatorOP int_delta_energy_calculator =
-		new protocols::toolbox::pose_metric_calculators::InterfaceDeltaEnergeticsCalculator( "interface_1_2" );
+		new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "interface_1_2" );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "interface_delta_energies", int_delta_energy_calculator );
 
 	return;

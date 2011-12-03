@@ -22,7 +22,7 @@
 #include <devel/init.hh>
 
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
-#include <protocols/moves/RollMover.hh>
+#include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
@@ -204,7 +204,7 @@ public:
     point zinc2 = homodimer.residue(zinc2_res_).atom(1).xyz();
     axis const ZnZn_axis = zinc1 - zinc2;
     Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
-    protocols::moves::RollMoverOP ZnZn_axis_rollmover = new protocols::moves::RollMover( zinc2_res_+1, last_residue, 180, 180, ZnZn_axis, zinc1 );
+    protocols::rigid::RollMoverOP ZnZn_axis_rollmover = new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, ZnZn_axis, zinc1 );
     ZnZn_axis_rollmover->apply( homodimer );
     //homodimer.dump_pdb("homodimer_ZnZnaxis_rollmove.pdb");
 
@@ -214,7 +214,7 @@ public:
     point ZnZn_midpoint = midpoint(zinc1, zinc2); //#include<numeric/xyzVector.hh>
     axis axis_normal_to_origZn1_origZn2 = cross_product(zinc1, zinc2);
     axis orthogonal_axis = cross_product(zinc1 - zinc2, axis_normal_to_origZn1_origZn2);
-    protocols::moves::RollMoverOP orthogonal_axis_rollmover = new protocols::moves::RollMover( zinc2_res_+1, last_residue, 180, 180, orthogonal_axis, ZnZn_midpoint );
+    protocols::rigid::RollMoverOP orthogonal_axis_rollmover = new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, orthogonal_axis, ZnZn_midpoint );
     orthogonal_axis_rollmover->apply( homodimer );
     //homodimer.dump_pdb("homodimer_orthaxis_rollmove.pdb");
   }
@@ -281,7 +281,7 @@ public:
     Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
     Real grid_angle = basic::options::option[angle_rotation_increment].value();
 
-    protocols::moves::RollMoverOP ZnZn_axis_rollmover = new protocols::moves::RollMover( zinc2_res_+1, last_residue, grid_angle, grid_angle, ZnZn_axis, zinc1 );
+    protocols::rigid::RollMoverOP ZnZn_axis_rollmover = new protocols::rigid::RollMover( zinc2_res_+1, last_residue, grid_angle, grid_angle, ZnZn_axis, zinc1 );
 
     for( Size i(1); i <= 360.0/grid_angle; i++ ) {
 

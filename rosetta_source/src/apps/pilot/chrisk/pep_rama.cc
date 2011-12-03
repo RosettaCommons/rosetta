@@ -25,7 +25,7 @@
  #include <core/scoring/LREnergyContainer.hh>
  #include <core/scoring/methods/Methods.hh>
 
- #include <protocols/moves/BackboneMover.hh>
+ #include <protocols/simple_moves/BackboneMover.hh>
  #include <protocols/moves/MinMover.hh>
  #include <protocols/moves/MonteCarlo.hh>
  #include <protocols/moves/Mover.hh>
@@ -619,7 +619,7 @@ perturb_pep_bb(
 )
 {
 	( *cen_scorefxn )( pose );
-	SmallMoverOP cg_small( new SmallMover( mm_move, 2.0, 1 ) );
+	protocols::simple_moves::SmallMoverOP cg_small( new protocols::simple_moves::SmallMover( mm_move, 2.0, 1 ) );
 	cg_small->angle_max( 'H', 2.0 );
 	cg_small->angle_max( 'E', 2.0 );
 	cg_small->angle_max( 'L', 2.0 );

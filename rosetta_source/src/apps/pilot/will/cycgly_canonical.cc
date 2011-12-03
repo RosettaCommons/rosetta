@@ -66,8 +66,8 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/SidechainMCMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
 #include <sstream>

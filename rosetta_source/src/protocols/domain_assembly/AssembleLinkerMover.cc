@@ -108,7 +108,7 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 		Loop loop( loop_start, loop_stop, 0, 0, false );
 		Loops loops;
 		loops.add_loop(loop);
-		LoopMoverOP loop_mover = get_loop_mover(
+		LoopMoverOP loop_mover = LoopMoverFactory::get_instance()->create_loop_mover(
 			loop_mover_name_, loops
 		);
 		for ( Size ii = 1; ii <= frag_libs_.size(); ++ii ) {
@@ -121,7 +121,7 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 			Loops loops = pick_loops_chainbreak( pose, min_loop_size_ );
 			loops_closed = ( loops.size() == 0 );
 			if ( loops_closed ) {
-				loop_mover = get_loop_mover( loop_mover_name_, loops );
+				loop_mover = LoopMoverFactory::get_instance()->create_loop_mover( loop_mover_name_, loops );
 				loop_mover->apply( pose );
 			}
 		}

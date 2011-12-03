@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverList.hh>
+// AUTO-REMOVED #include <protocols/wum/MoverList.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
 #include <string>

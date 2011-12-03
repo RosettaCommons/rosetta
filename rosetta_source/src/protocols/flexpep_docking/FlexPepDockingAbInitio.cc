@@ -41,7 +41,7 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
@@ -193,13 +193,13 @@ FlexPepDockingAbInitio::torsions_monte_carlo
   using namespace protocols::simple_moves;
 
   // setup sub-moves
-  moves::SmallMoverOP small_mover =
-    new SmallMover( movemap_, mc_->temperature() /*temp*/, 5 /*nmoves ???*/ );
+  simple_moves::SmallMoverOP small_mover =
+    new protocols::simple_moves::SmallMover( movemap_, mc_->temperature() /*temp*/, 5 /*nmoves ???*/ );
   small_mover->angle_max('L',180 /*angle - TODO: parametrize and slowly ramp down */);
   small_mover->angle_max('H',180 /*angle - TODO: parametrize and slowly ramp down */);
   small_mover->angle_max('E',180 /*angle - TODO: parametrize and slowly ramp down */);
-  ShearMoverOP shear_mover =
-    new ShearMover( movemap_, mc_->temperature() /*temp*/, 5 /*nmoves ???*/ );
+  protocols::simple_moves::ShearMoverOP shear_mover =
+    new protocols::simple_moves::ShearMover( movemap_, mc_->temperature() /*temp*/, 5 /*nmoves ???*/ );
   shear_mover->angle_max('L',180 /*angle - TODO: parametrize, slowly ramp down */);
   shear_mover->angle_max('H',180 /*angle - TODO: parametrize, slowly ramp down */);
   shear_mover->angle_max('E',180 /*angle - TODO: parametrize, slowly ramp down */);

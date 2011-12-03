@@ -14,13 +14,13 @@
 #include <protocols/topology_broker/FoldandDockClaimer.hh>
 #include <protocols/symmetric_docking/SymFoldandDockRbTrialMover.hh>
 #include <protocols/symmetric_docking/SymFoldandDockSlideTrialMover.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 // Package Headers
 #include <protocols/topology_broker/DofClaim.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/Tracer.hh>
 
 // Utility header
@@ -110,8 +110,8 @@ void FoldandDockClaimer::initialize_dofs(
 
 	// Setup symmetry if we have nit already done it
 	// slide chains into contact
-	protocols::symmetric_docking::SetupForSymmetryMoverOP setup_mover = new
-		protocols::symmetric_docking::SetupForSymmetryMover;
+	protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover = new
+		protocols::simple_moves::symmetry::SetupForSymmetryMover;
 	setup_mover->slide_into_contact(true);
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
 		setup_mover->apply( pose ); // calls SymDockingInitialPerturbation
@@ -121,7 +121,7 @@ void FoldandDockClaimer::initialize_dofs(
 	} else {
 		input_pose_ = pose;
 		// Randomize the rigid body
-		protocols::symmetric_docking::SymDockingInitialPerturbation initial( true /*slide into contact*/ );
+		protocols::simple_moves::symmetry::SymDockingInitialPerturbation initial( true /*slide into contact*/ );
 		initial.apply( pose );
 	}
 

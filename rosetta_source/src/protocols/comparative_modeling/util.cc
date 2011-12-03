@@ -391,7 +391,7 @@ void rebuild_loops_until_closed(
 
 	bool closed( false );
 	for ( core::Size iter = 1; !closed && iter <= max_rebuild; iter++ ) {
-		loops::LoopMoverOP loop_mover = protocols::loops::get_loop_mover(
+		loops::LoopMoverOP loop_mover = protocols::loops::LoopMoverFactory::get_instance()->create_loop_mover(
 			loop_mover_name, my_loops
 		);
 		loop_mover->apply( query_pose );

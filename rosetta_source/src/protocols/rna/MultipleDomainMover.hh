@@ -19,8 +19,11 @@
 
 #include <protocols/rna/MultipleDomainMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/rna/AllowInsert.hh>
+
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.fwd.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -79,13 +82,13 @@ public:
 
 private:
 	void
-	initialize( core::pose::Pose const & pose, protocols::rna::AllowInsertOP allow_insert );
+	initialize( core::pose::Pose const & pose, protocols::toolbox::AllowInsertOP allow_insert );
 
 	void
 	setup_jump_numbers_and_partner( core::pose::Pose const & pose );
 
 	void
-	setup_ok_for_centroid_calculation( protocols::rna::AllowInsertOP & allow_insert );
+	setup_ok_for_centroid_calculation( protocols::toolbox::AllowInsertOP & allow_insert );
 
 	void
 	randomize_orientations( core::pose::Pose & pose );

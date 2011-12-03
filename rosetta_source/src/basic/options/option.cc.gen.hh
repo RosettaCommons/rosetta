@@ -419,7 +419,7 @@ option.add( basic::options::OptionKeys::jd2::mpi_filebuf_jobdistributor, "same a
 option.add( basic::options::OptionKeys::jd2::mpi_fast_nonblocking_output, "By default the master node blocks while a slave node outputs to avoid two slaves writing to a score file or silent file at the same time setting this to true disables that feature" ).def(false);
 option.add( basic::options::OptionKeys::jd2::dd_parser, "determine whether to use the dock_design_parser" ).def(false);
 option.add( basic::options::OptionKeys::jd2::ntrials, "number of attempts at creating an output file for each nstruct. e.g., ntrials 3 and nstruct 10 would mean that each of 10 trajectories would attempt to write an output file 3 times and if unsuccessful would fail." );
-option.add( basic::options::OptionKeys::jd2::generic_job_name, "job name when using GenericJobInputter (i.e. abinitio)" ).def("S");
+option.add( basic::options::OptionKeys::jd2::generic_job_name, "job name when using protocols::comparative_modeling::GenericJobInputter (i.e. abinitio)" ).def("S");
 option.add( basic::options::OptionKeys::jd2::no_output, "use NoOutputJobOutputter; do not store the pose after a run (no silent or scorefile)" ).def(false);
 option.add( basic::options::OptionKeys::jd2::enzdes_out, "causes an enzdes-style scorefile (with information about catalytic res and some pose metric stuff ) to be written instead of the regular scorefile" ).def(false);
 option.add( basic::options::OptionKeys::jd2::buffer_silent_output, "write structures to silent-files in blocks of N structures to" ).def(1);

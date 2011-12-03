@@ -54,7 +54,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/filters/ScoreCutoffFilter.hh> // for filtering kinematic mover
 #include <protocols/loops/Loops.hh> //input file reading
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/MinMover.hh>
@@ -119,7 +119,7 @@ EnzdesFlexBBProtocol::EnzdesFlexBBProtocol()
 	//if( loop_ensemble_size_ % 2 != 0 ) loop_ensemble_size_++;
 	//loop_ensemble_size_ /= 2; //divide by 2 because brub generates two reasonable structs for each run
 
-	//brub_mover_ = new protocols::moves::BackrubMover();
+	//brub_mover_ = new protocols::backrub::BackrubMover();
 	//apparently it's better to initialize the backrub mover new for every structure
 	brub_mover_ = NULL;
 	brub_pivot_atoms_.push_back("CA");
@@ -163,7 +163,7 @@ EnzdesFlexBBProtocol::apply(
 	using namespace core::pack::task;
 
 	//if ( ! basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
-	//	brub_mover_ = new protocols::moves::BackrubMover();
+	//	brub_mover_ = new protocols::backrub::BackrubMover();
 	//	brub_mover_->set_native_pose( & pose );
 	//}
 	//kinematic_mover_ = new protocols::loops::kinematic_closure::KinematicMover();
@@ -338,7 +338,7 @@ EnzdesFlexBBProtocol::register_options()
 	option.add_relevant( OptionKeys::enzdes::max_bb_deviation );
 	option.add_relevant( OptionKeys::enzdes::checkpoint );
 
-	protocols::moves::BackrubMover::register_options();
+	protocols::backrub::BackrubMover::register_options();
 
 }
 
@@ -672,7 +672,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 	tr.flush();
 
 	if ( ! basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
-		brub_mover_ = new protocols::moves::BackrubMover();
+		brub_mover_ = new protocols::backrub::BackrubMover();
 		//brub_mover_->set_native_pose( & pose );
 	}
 	kinematic_mover_ = new protocols::loops::kinematic_closure::KinematicMover();

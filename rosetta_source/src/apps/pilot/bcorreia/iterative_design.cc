@@ -46,7 +46,7 @@
 #include <protocols/loops/LoopMover_CCD.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
 // Auto-header: duplicate removed #include <protocols/loops/looprelax_protocols.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopBuild.hh>
+// AUTO-REMOVED #include <protocols/loop_build/LoopBuild.hh>
 #include <protocols/viewer/viewers.hh>
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
 //#include <protocols/frags/TorsionFragment.hh>

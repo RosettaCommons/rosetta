@@ -19,9 +19,9 @@
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
 // AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/enzdes/enzdes_util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -127,7 +127,7 @@ CovalentConnectionReplaceInfo::remove_covalent_connection_from_pose(
 		core::conformation::Residue newA_res( restype_set_->name_map(resA_basename_), true);
 
 		utility::vector1< std::string > curA_variants = pose.residue_type( resA_seqpos_ ).variant_types();
-		protocols::enzdes::enzutil::replace_residue_keeping_all_atom_positions( pose, newA_res, resA_seqpos_ );
+		replace_residue_keeping_all_atom_positions( pose, newA_res, resA_seqpos_ );
 
 		for(core::Size var = 1; var <= curA_variants.size(); var++){
 			if( curA_variants[ var ] != resA_varname_ ){
@@ -138,7 +138,7 @@ CovalentConnectionReplaceInfo::remove_covalent_connection_from_pose(
 		core::conformation::Residue newB_res( restype_set_->name_map(resB_basename_), true);
 
 		utility::vector1< std::string > curB_variants = pose.residue_type( resB_seqpos_ ).variant_types();
-		protocols::enzdes::enzutil::replace_residue_keeping_all_atom_positions( pose, newB_res, resB_seqpos_ );
+		replace_residue_keeping_all_atom_positions( pose, newB_res, resB_seqpos_ );
 
 		for(core::Size var = 1; var <= curB_variants.size(); var++){
 			if( curB_variants[ var ] != resB_varname_ ){
@@ -658,7 +658,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 
 	core::conformation::Residue new_res( restype_set_->name_map(res_type_mod_name), true);
 
-	protocols::enzdes::enzutil::replace_residue_keeping_all_atom_positions( pose, new_res, res_pos );
+	replace_residue_keeping_all_atom_positions( pose, new_res, res_pos );
 
 	//std::cout << "APL DEBUG EnzConstraintParameters.cc::make_constraint_covalent_helper end" << std::endl;
 
@@ -792,7 +792,7 @@ EnzConstraintParameters::update_pdb_remarks(
 		core::Size cst_block(0), exgeom_id( 0 );
 		int rem_pdbposA(0), rem_pdbposB(0);
 
-		if( !protocols::enzdes::enzutil::split_up_remark_line( remark_it->value, chainA, resA, rem_pdbposA, chainB, resB, rem_pdbposB, cst_block, exgeom_id ) ) continue;
+		if( !split_up_remark_line( remark_it->value, chainA, resA, rem_pdbposA, chainB, resB, rem_pdbposB, cst_block, exgeom_id ) ) continue;
 
 		if( cst_block != cst_block_ ) continue;
 
@@ -835,7 +835,7 @@ EnzConstraintParameters::update_pdb_remarks(
 		}
 
 		if( remark_changed ){
-			remark_it->value = protocols::enzdes::enzutil::assemble_remark_line( chainA, resA, rem_pdbposA, chainB, resB, rem_pdbposB, cst_block, exgeom_id );
+			remark_it->value = assemble_remark_line( chainA, resA, rem_pdbposA, chainB, resB, rem_pdbposB, cst_block, exgeom_id );
 		}
 	}
 	return true;

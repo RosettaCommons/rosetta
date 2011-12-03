@@ -53,7 +53,7 @@
 #include <core/scoring/dssp/Dssp.hh>// dssp info
 
 #include <protocols/moves/Mover.fwd.hh> //MoverOP
-#include <protocols/moves/BackboneMover.hh> //Small/ShearMover
+#include <protocols/simple_moves/BackboneMover.hh> //Small/ShearMover
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
@@ -259,12 +259,12 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 		int nmoves = 6;
 		double mc_temp = 3.0;
 
-		protocols::moves::SmallMoverOP small_mover( new protocols::moves::SmallMover( movemap, mc_temp, nmoves ) );
+		protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( movemap, mc_temp, nmoves ) );
 		small_mover->angle_max( 'H', 10.0 );
 		small_mover->angle_max( 'E', 10.0 );
 		small_mover->angle_max( 'L', 10.0 );
 
-		protocols::moves::ShearMoverOP shear_mover( new protocols::moves::ShearMover( movemap, mc_temp, nmoves ) );
+		protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover( movemap, mc_temp, nmoves ) );
 		shear_mover->angle_max( 'H', 10.0 );
 		shear_mover->angle_max( 'E', 10.0 );
 		shear_mover->angle_max( 'L', 10.0 );

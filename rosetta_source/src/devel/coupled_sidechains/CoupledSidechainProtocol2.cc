@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/moves/SidechainMCMover.cc
+/// @file protocols/simple_moves/sidechain_moves/SidechainMCMover.cc
 /// @brief implementation of SidechainMCMover class and functions
 /// @author Oliver Lange
 
@@ -57,10 +57,10 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/canonical_sampling/SilentTrajectoryRecorder.hh>
 #include <protocols/canonical_sampling/SimulatedTempering.hh>
-#include <protocols/moves/PerturbRotamerSidechainMover.hh>
-#include <protocols/moves/JumpRotamerSidechainMover.hh>
-#include <protocols/moves/PerturbChiSidechainMover.hh>
-#include <protocols/moves/TrialCounterObserver.hh>
+#include <protocols/simple_moves/sidechain_moves/PerturbRotamerSidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMover.hh>
+#include <protocols/canonical_sampling/TrialCounterObserver.hh>
 
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
@@ -197,23 +197,23 @@ CoupledSidechainProtocol::setup_objects() {
 	sampler_->set_monte_carlo( mc_object );
 	sampler_->set_tempering( tempering );
 	sampler_->add_observer( new protocols::canonical_sampling::SilentTrajectoryRecorder );
-	sampler_->add_observer( new TrialCounterObserver );
+	sampler_->add_observer( new protocols::canonical_sampling::TrialCounterObserver );
 	sampler_->set_ntrials( ntrials_ );
 	if ( prob_withinrot_ > 0.0 ) {
-		SidechainMoverBaseOP mover( new PerturbRotamerSidechainMover );
+		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP mover( new protocols::simple_moves::sidechain_moves::PerturbRotamerSidechainMover );
 		//		mover->set_task_factory( task_factory );
 		sampler_->add_mover( mover, prob_withinrot_ );
 	}
 
 	if ( prob_pert_chi_ > 0.0 ) {
-		PerturbChiSidechainMoverOP mover = new PerturbChiSidechainMover();
+		protocols::simple_moves::sidechain_moves::PerturbChiSidechainMoverOP mover = new protocols::simple_moves::sidechain_moves::PerturbChiSidechainMover();
 		mover->set_magnitude( pert_magnitude_ );
 		//		mover->set_task_factory( task_factory );
 		sampler_->add_mover( mover, prob_pert_chi_ );
 	}
 
 	if ( prob_jump_rot_ > 0.0 ) {
-		SidechainMoverBaseOP mover = new JumpRotamerSidechainMover();
+		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP mover = new protocols::simple_moves::sidechain_moves::JumpRotamerSidechainMover();
 		//		mover->set_task_factory( task_factory );
 		sampler_->add_mover( mover, prob_jump_rot_ );
 	}

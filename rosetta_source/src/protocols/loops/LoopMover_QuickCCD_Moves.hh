@@ -41,6 +41,8 @@ namespace loops {
 class LoopMover_Perturb_QuickCCD_Moves: public LoopMover_Perturb_QuickCCD{
 public:
 
+	LoopMover_Perturb_QuickCCD_Moves();
+
 	LoopMover_Perturb_QuickCCD_Moves(
 		protocols::loops::Loops  loops_in
 	);

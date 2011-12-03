@@ -64,7 +64,7 @@ using namespace ObjexxFCL::fmt;
 // AUTO-REMOVED #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/rigid/RB_geometry.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -77,7 +77,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/ScoreMap.hh>
+#include <protocols/jd2/ScoreMap.hh>
 
 //#include <utility/vector1.hh>
 // AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
@@ -687,7 +687,7 @@ namespace ub_e2c {
 
 				// add scores to map for output
 				score_map_[ "AD_k48_CA_CA" ] = ubi_cov_bond_dist;
-				ScoreMap::nonzero_energies( score_map_, lowres_cst_scorefxn_, pose_in);
+				protocols::jd2::ScoreMap::nonzero_energies( score_map_, lowres_cst_scorefxn_, pose_in);
 
 				// check low-res docking filter
 				( *dock_lowres_cst_scorefxn_ )( pose_in );
@@ -708,7 +708,7 @@ namespace ub_e2c {
 
 					// add scores to map for output
 					score_map_[ "AD_k48_CA_CA" ] = ubi_cov_bond_dist;
-					ScoreMap::nonzero_energies( score_map_, pack_cst_scorefxn_, pose_in);
+					protocols::jd2::ScoreMap::nonzero_energies( score_map_, pack_cst_scorefxn_, pose_in);
 
 					// check highres docking filter
 					( *dockfa_cst_scorefxn_ )( pose_in );
@@ -731,11 +731,11 @@ namespace ub_e2c {
 			// add scores to map for output
 			if( applied_fullatom_pert_ || cov_bond_only_flag_ ) {
 				( *output_full_scorefxn_ )( pose_in );
-				ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
+				protocols::jd2::ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
 			}
 			else {
 				( *output_cen_scorefxn_ )( pose_in );
-				ScoreMap::nonzero_energies( score_map_, output_cen_scorefxn_, pose_in);
+				protocols::jd2::ScoreMap::nonzero_energies( score_map_, output_cen_scorefxn_, pose_in);
 			}
 
 			if( !cov_bond_only_flag_ ) {
@@ -998,10 +998,10 @@ namespace ub_e2c {
 
 			SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-			BackboneMoverOP small_mover =	new SmallMover(ub_cter_map,
+			protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover(ub_cter_map,
 																									 temperature_, 8 );
 			small_mover->angle_max( 90.0 );
-			BackboneMoverOP shear_mover =	new ShearMover(ub_cter_map,
+			protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover(ub_cter_map,
 																									 temperature_, 8 );
 
 			shear_mover->angle_max( 90.0 );
@@ -1428,11 +1428,11 @@ namespace ub_e2c {
 				//////////Small/ShearMovers//////////////////////////////////////
 				SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-				BackboneMoverOP small_mover =	new SmallMover( flex_cter_map_,
+				protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( flex_cter_map_,
 					temperature_, 5 /*n_moves*/ );
 				small_mover->angle_max( 90.0 );
 
-				BackboneMoverOP shear_mover =	new ShearMover( flex_cter_map_,
+				protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( flex_cter_map_,
 					temperature_, 5 /*n_moves*/ );
 				shear_mover->angle_max( 90.0 );
 
@@ -1573,10 +1573,10 @@ namespace ub_e2c {
 			//////////Small/ShearMovers//////////////////////////////////////
 			SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-			BackboneMoverOP small_mover =	new SmallMover( flex_cter_map_,
+			protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( flex_cter_map_,
 				temperature_,	5 );
 			small_mover->angle_max( 5.0 );
-			BackboneMoverOP shear_mover =	new ShearMover( flex_cter_map_,
+			protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( flex_cter_map_,
 				temperature_,	5 );
 			shear_mover->angle_max( 5.0 );
 
@@ -2281,10 +2281,10 @@ namespace ub_e2c {
 			// cter movers
 			SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-			BackboneMoverOP small_mover =	new SmallMover( flex_cter_map_,
+			protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( flex_cter_map_,
 																										temperature_,	5 );
 			small_mover->angle_max( 5.0 );
-			BackboneMoverOP shear_mover =	new ShearMover( flex_cter_map_,
+			protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( flex_cter_map_,
 																										temperature_,	5 );
 			shear_mover->angle_max( 5.0 );
 
@@ -2484,7 +2484,7 @@ namespace ub_e2c {
 				// convert to centroid mode
 				to_centroid.apply( pose_in );
 				monoub_centroid_mode_perturbation( pose_in );
-				ScoreMap::nonzero_energies( score_map_, lowres_cst_scorefxn_, pose_in);
+				protocols::jd2::ScoreMap::nonzero_energies( score_map_, lowres_cst_scorefxn_, pose_in);
 
 				// check low-res docking filter
 				( *dock_lowres_cst_scorefxn_ )( pose_in );
@@ -2501,7 +2501,7 @@ namespace ub_e2c {
 					monoub_fullatom_mode_perturbation( pose_in );
 
 					// add scores to map for output
-					ScoreMap::nonzero_energies( score_map_, pack_cst_scorefxn_, pose_in);
+					protocols::jd2::ScoreMap::nonzero_energies( score_map_, pack_cst_scorefxn_, pose_in);
 
 					// check highres docking filter
 					( *dockfa_cst_scorefxn_ )( pose_in );
@@ -2516,11 +2516,11 @@ namespace ub_e2c {
 			// add scores to map for output
 			if( applied_fullatom_pert_ ) {
 				( *output_full_scorefxn_ )( pose_in );
-				ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
+				protocols::jd2::ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
 			}
 			else {
 				( *output_cen_scorefxn_ )( pose_in );
-				ScoreMap::nonzero_energies( score_map_, output_cen_scorefxn_, pose_in);
+				protocols::jd2::ScoreMap::nonzero_energies( score_map_, output_cen_scorefxn_, pose_in);
 			}
 
 			score_map_["AJ_monoub_rms"] = monoub_calc_Lrmsd( pose_in, start_pose );
@@ -2693,10 +2693,10 @@ namespace ub_e2c {
 
 			SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-			BackboneMoverOP small_mover =	new SmallMover( ub_cter_map,
+			protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( ub_cter_map,
 																										temperature_, 8 );
 			small_mover->angle_max( 90.0 );
-			BackboneMoverOP shear_mover =	new ShearMover( ub_cter_map,
+			protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( ub_cter_map,
 																										temperature_, 8 );
 
 			shear_mover->angle_max( 90.0 );
@@ -2838,11 +2838,11 @@ namespace ub_e2c {
 				//////////Small/ShearMovers//////////////////////////////////////
 				SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-				BackboneMoverOP small_mover =	new SmallMover( monoub_flex_cter_map_,
+				protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( monoub_flex_cter_map_,
 					temperature_, 5 /*n_moves*/ );
 				small_mover->angle_max( 90.0 );
 
-				BackboneMoverOP shear_mover =	new ShearMover( monoub_flex_cter_map_,
+				protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( monoub_flex_cter_map_,
 					temperature_, 5 /*n_moves*/ );
 				shear_mover->angle_max( 90.0 );
 
@@ -2947,10 +2947,10 @@ namespace ub_e2c {
 			//////////Small/ShearMovers//////////////////////////////////////
 			SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-			BackboneMoverOP small_mover =	new SmallMover( monoub_flex_cter_map_,
+			protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( monoub_flex_cter_map_,
 				temperature_,	5 );
 			small_mover->angle_max( 5.0 );
-			BackboneMoverOP shear_mover =	new ShearMover( monoub_flex_cter_map_,
+			protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( monoub_flex_cter_map_,
 				temperature_,	5 );
 			shear_mover->angle_max( 5.0 );
 

@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_rna_FullAtomRNA_Fragments_HH
 
 #include <protocols/rna/FullAtomRNA_Fragments.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/AllowInsert.hh>
+// AUTO-REMOVED #include <protocols/toolbox/AllowInsert.hh>
 #include <protocols/rna/RNA_Fragments.hh>
 
 // ObjexxFCL Headers
@@ -135,7 +135,7 @@ namespace rna{
 					core::Size const position,
 					core::Size const size,
 					core::Size const type,
-					AllowInsertOP allow_insert );
+				toolbox::AllowInsertOP allow_insert );
 
 		virtual bool
 		is_fullatom();
@@ -180,7 +180,7 @@ namespace rna{
 										core::pose::Pose & pose,
 										Size const position,
 										protocols::rna::TorsionSet const & torsion_set,
-										AllowInsertOP allow_insert );
+									toolbox::AllowInsertOP allow_insert );
 
 	private:
 

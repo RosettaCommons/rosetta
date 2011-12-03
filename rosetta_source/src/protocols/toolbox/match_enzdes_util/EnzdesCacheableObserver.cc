@@ -35,7 +35,7 @@
 //MSA
 #include <core/sequence/SequenceProfile.hh>
 
-#include <protocols/constraints_additional/SequenceProfileConstraint.hh> //msa
+#include <core/scoring/constraints/SequenceProfileConstraint.hh> //msa
 
 //utility headers
 #include <utility/signals/Link.hh>
@@ -294,13 +294,12 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 		using namespace sequence;
 
 		using namespace protocols;
-  		using namespace constraints_additional;
 
   	tr << " Starting MSA design " << std::endl;
 
   	// register SequenceProfileConstraint with the ConstraintFactory so that it can be constructed from a constraint file
     	//ConstraintIO::get_cst_factory().add_type(
-    	//new SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
+    	//new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
 
    	 // add constraints to bias design toward a sequence profile
     	SequenceProfileOP profile = new SequenceProfile;
@@ -314,7 +313,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
       	// add individual profile constraint for each residue position
       	// because of the underlying constraint implementation, this enures that the constraint is
 				// a context-independent 1-body energy, or (intra)residue constraint
-      	pose.add_constraint( new SequenceProfileConstraint( pose, seqpos, profile ) );
+      	pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
 			}
   	}// else if ( option[ OptionKeys::constraints::in::file::pssm ].user() ){
  //}

@@ -18,7 +18,7 @@
 #include <protocols/rna/RNA_JumpLibrary.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/rna/RNA_SecStructInfo.hh>
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
 
@@ -221,7 +221,7 @@ void
 RNA_StructureParameters::initialize_allow_insert( core::pose::Pose & pose  )
 {
 
- 	allow_insert_ = new AllowInsert( pose );
+ 	allow_insert_ = new toolbox::AllowInsert( pose );
 
  	if (allow_insert_segments_.size() > 0 ) {
  		allow_insert_->set( false );
@@ -1078,13 +1078,13 @@ RNA_StructureParameters::connections() const
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_StructureParameters::set_allow_insert( AllowInsertOP allow_insert_in )
+RNA_StructureParameters::set_allow_insert(toolbox::AllowInsertOP allow_insert_in )
 {
 	allow_insert_ = allow_insert_in;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-AllowInsertOP
+toolbox::AllowInsertOP
 RNA_StructureParameters::allow_insert(){ return allow_insert_; }
 
 ////////////////////////////////////////////////////////////////////////////////////////

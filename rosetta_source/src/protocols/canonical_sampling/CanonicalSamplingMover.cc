@@ -1,6 +1,6 @@
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
-// AUTO-REMOVED #include <protocols/moves/SidechainMover.hh>
-// AUTO-REMOVED #include <protocols/moves/SidechainMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/sidechain_moves/SidechainMover.fwd.hh>
 #include <protocols/jd2/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -473,7 +473,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 
   if( MPI_synchronize_pools_  && MPI_bcast_ ){
     protocols::canonical_sampling::mc_convergence_checks::MPIBPool_RMSD* mpi_pool_rms = dynamic_cast <protocols::canonical_sampling::mc_convergence_checks::MPIBPool_RMSD *> (&(*pool_rms_));
-    mpi_pool_rms->set_discovered_out( (option[ canonical_sampling::out::new_structures ]()).name() );
+    mpi_pool_rms->set_discovered_out( (option[ basic::options::OptionKeys::canonical_sampling::out::new_structures ]()).name() );
     if( mpi_pool_rms ){
       mpi_pool_rms->set_transition_threshold( transition_threshold_ );
       //tr.Debug << " set transition threshold to " << transition_threshold_ << std::endl;
@@ -485,7 +485,7 @@ CanonicalSamplingMover::apply(Pose & pose){
   }else if( MPI_synchronize_pools_  ){
     if( !use_hierarchical_clustering_ ) {
       protocols::canonical_sampling::mc_convergence_checks::MPIPool_RMSD* mpi_pool_rms = dynamic_cast <protocols::canonical_sampling::mc_convergence_checks::MPIPool_RMSD *> (&(*pool_rms_));
-      mpi_pool_rms->set_discovered_out( (option[ canonical_sampling::out::new_structures ]()).name() );
+      mpi_pool_rms->set_discovered_out( (option[ basic::options::OptionKeys::canonical_sampling::out::new_structures ]()).name() );
       if( mpi_pool_rms ){
 	mpi_pool_rms->set_transition_threshold( transition_threshold_ );
 	mpi_pool_rms->set_reserve_size( n_nodes );
@@ -497,7 +497,7 @@ CanonicalSamplingMover::apply(Pose & pose){
       }
     } else {
       protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD* mpi_pool_rms = dynamic_cast <protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD *> (&(*pool_rms_));
-      mpi_pool_rms->set_discovered_out( (option[ canonical_sampling::out::new_structures ]()).name() );
+      mpi_pool_rms->set_discovered_out( (option[ basic::options::OptionKeys::canonical_sampling::out::new_structures ]()).name() );
       if( mpi_pool_rms ){
 	mpi_pool_rms->set_transition_threshold( transition_threshold_ );
 	mpi_pool_rms->set_reserve_size( n_nodes );

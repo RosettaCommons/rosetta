@@ -47,7 +47,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 
 
 
@@ -128,7 +128,7 @@ BuriedUnsatisfiedPolarsCalculator::assert_calculators()
 		if( name_of_sasa_calc_ != "default" ) TR << "Attention: couldn't find the specified sasa calculator ( " << name_of_sasa_calc_ << " ), instantiating default one." << std::endl;
 		name_of_sasa_calc_ = "bur_unsat_calc_default_sasa_calc";
 		if( !CalculatorFactory::Instance().check_calculator_exists( name_of_sasa_calc_ ) ){
-			CalculatorFactory::Instance().register_calculator( name_of_sasa_calc_, new SasaCalculator() );
+			CalculatorFactory::Instance().register_calculator( name_of_sasa_calc_, new core::pose::metrics::simple_calculators::SasaCalculator() );
 		}
 	}
 }

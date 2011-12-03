@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/moves/SmallMover.cxxtest.hh
-/// @brief  test suite for protocols::moves::SmallMover.cc
+/// @brief  test suite for protocols::simple_moves::SmallMover.cc
 /// @author Monica Berrondo
 
 
@@ -25,7 +25,7 @@
 #include <core/types.hh>
 
 // Unit headers
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 
 // Package headers
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
@@ -81,7 +81,7 @@ public:
 	}
 
 	void test_OneSmallMover() {
-		SmallMover mover; // create a default small mover
+		protocols::simple_moves::SmallMover mover; // create a default small mover
 		core::Real correct_phi ( -57.0946 );
 		core::Real correct_psi ( -57.1872 );
 		// make the move
@@ -111,7 +111,7 @@ public:
 		}
 
 		// set up the mover to only change on residue and loop 100 times
-		SmallMover mover; // create a default small mover
+		protocols::simple_moves::SmallMover mover; // create a default small mover
 		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->set_bb( false );
 		movemap->set_bb( resnum, true );
@@ -170,7 +170,7 @@ public:
 	void test_comprehensiveSmallMover() {
 		core::pose::Pose initial_pose;
 		initial_pose = *the_pose;
-		SmallMover mover; // create a default small mover
+		protocols::simple_moves::SmallMover mover; // create a default small mover
 		// make the move
 		mover.apply( *the_pose );
 

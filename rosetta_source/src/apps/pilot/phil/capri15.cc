@@ -31,7 +31,7 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-//#include <protocols/moves/BackboneMover.hh>
+//#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/rigid_body_moves.hh>
 
@@ -1358,7 +1358,7 @@ capri15_relax(
 	MoverOP rna_mover( new DME_FilterMover( new BondedRNA_Mover( bonded_rna_mover_scale ), dme_threshold, max_tries ) );
 
 	// small mover
-	MoverOP small_mover( new SmallMover( mm, small_mover_temperature, small_mover_nmoves ) );
+	MoverOP small_mover( new protocols::simple_moves::SmallMover( mm, small_mover_temperature, small_mover_nmoves ) );
 
 	// rotamer trials w/ energycut
 	EnergyCutRotamerTrialsMoverOP rottrial_mover

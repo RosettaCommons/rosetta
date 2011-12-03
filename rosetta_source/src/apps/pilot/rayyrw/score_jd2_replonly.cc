@@ -21,7 +21,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <protocols/moves/RepulsiveOnlyMover.hh>
 

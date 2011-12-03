@@ -29,9 +29,9 @@
 #include <basic/MetricValue.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceDeltaEnergeticsCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -85,15 +85,15 @@ void register_metrics() {
 	TR << "you are likely to get bizarre behaviors if these chains aren't in the poses!" << std::endl;
 
 	core::pose::metrics::PoseMetricCalculatorOP int_calculator =
-		new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator(chain1, chain2);
+		new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1, chain2);
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "interface", int_calculator );
 
 	core::pose::metrics::PoseMetricCalculatorOP int_sasa_calculator =
-		new protocols::toolbox::pose_metric_calculators::InterfaceSasaDefinitionCalculator(chain1, chain2);
+		new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(chain1, chain2);
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa_interface", int_sasa_calculator );
 
 	core::pose::metrics::PoseMetricCalculatorOP int_delta_energy_calculator =
-		new protocols::toolbox::pose_metric_calculators::InterfaceDeltaEnergeticsCalculator( "interface" );
+		new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "interface" );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "interface_delta_energies", int_delta_energy_calculator );
 
 	return;

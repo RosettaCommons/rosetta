@@ -34,7 +34,7 @@
 #include <core/scoring/MembranePotential.fwd.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 
-#include <protocols/Protocol.hh>
+#include <protocols/abinitio/Protocol.hh>
 #include <protocols/moves/TrialMover.hh>
 
 #include <protocols/checkpoint/CheckPointer.hh>

@@ -37,7 +37,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/ScoreMap.hh>
+#include <protocols/jd2/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 #include <string>

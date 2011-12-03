@@ -30,7 +30,7 @@
 // Package Headers
 // AUTO-REMOVED #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/abinitio/KinematicControl.hh>
-#include <protocols/Protocol.hh>
+#include <protocols/abinitio/Protocol.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 #include <protocols/abinitio/ResolutionSwitcher.hh>
 

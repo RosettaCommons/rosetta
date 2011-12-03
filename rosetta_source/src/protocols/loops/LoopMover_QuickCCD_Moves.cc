@@ -53,7 +53,7 @@
 //#include <core/pack/task/operation/TaskOperations.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-//#include <protocols/moves/BackboneMover.hh>
+//#include <protocols/simple_moves/BackboneMover.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -93,13 +93,17 @@ extern basic::Tracer tr;
 static numeric::random::RandomGenerator RG(42862);
 
 
+LoopMover_Perturb_QuickCCD_Moves::LoopMover_Perturb_QuickCCD_Moves() :
+	LoopMover_Perturb_QuickCCD( )
+{}
+
+
 LoopMover_Perturb_QuickCCD_Moves::LoopMover_Perturb_QuickCCD_Moves(
 	protocols::loops::Loops  loops_in
 ) :
 	LoopMover_Perturb_QuickCCD( loops_in )
 {
 }
-
 
 
 LoopMover_Perturb_QuickCCD_Moves::LoopMover_Perturb_QuickCCD_Moves(

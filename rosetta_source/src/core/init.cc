@@ -151,6 +151,7 @@
 #include <core/scoring/constraints/BasicConstraintCreators.hh>
 
 #include <core/pack/dunbrack/DunbrackConstraintCreator.hh>
+#include <core/scoring/constraints/SequenceProfileConstraintCreator.hh>
 
 // SilentStruct registration
 #include <core/io/silent/SilentStructFactory.hh>
@@ -361,6 +362,7 @@ static ConstraintRegistrator< core::scoring::constraints::MultiConstraintCreator
 
 static ConstraintRegistrator< core::pack::dunbrack::DunbrackConstraintCreator > DunbrackConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::SiteConstraintCreator > SiteConstraintCreator_registrator;
+static ConstraintRegistrator< core::scoring::constraints::SequenceProfileConstraintCreator > SequenceProfileConstraintCreator_registrator;
 
 // SilentStruct registrators
 using namespace core::io::silent;

@@ -48,7 +48,7 @@
 
 //movers
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/moves/RotamerTrialsMover.hh>
@@ -60,12 +60,12 @@
 #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/rigid/RotateJumpAxisMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
@@ -145,7 +145,7 @@ public:
 		using namespace protocols::toolbox::pose_metric_calculators;
 		//magic number: chains 1 and 2; set up interface SASA calculator
 		if( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ){
-			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, new InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)));
+			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)));
 		}
 
 		IAM_->set_use_centroid_dG(false);
@@ -356,9 +356,9 @@ public:
 		std::string const interface_calc23("UBQE2_InterfaceNeighborDefinitionCalculator23");
 		std::string const interface_calc13("UBQE2_InterfaceNeighborDefinitionCalculator13");
 		std::string const neighborhood_calc("UBQE2_NeighborhoodByDistanceCalculator");
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc12, new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc23, new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator( core::Size(2), core::Size(3)) );
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc13, new protocols::toolbox::pose_metric_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(3)) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc12, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc23, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(2), core::Size(3)) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc13, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(3)) );
 
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) );
 
@@ -395,12 +395,12 @@ public:
 		MonteCarloOP mc( new MonteCarlo( pose, *fullatom_scorefunction_, option[ refine_temp ].value() ) );
 
 		//////////////////////////Small/ShearMovers////////////////////////////////////////////////////////
-		protocols::moves::BackboneMoverOP small_mover = new protocols::moves::SmallMover(thioester_mm_, 0.8, 1);
+		protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover(thioester_mm_, 0.8, 1);
 		small_mover->angle_max( 'H', 4.0 );
 		small_mover->angle_max( 'E', 4.0 );
 		small_mover->angle_max( 'L', 4.0 );
 
-		protocols::moves::BackboneMoverOP shear_mover = new protocols::moves::ShearMover(thioester_mm_, 0.8, 1);
+		protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover(thioester_mm_, 0.8, 1);
 		shear_mover->angle_max( 'H', 4.0 );
 		shear_mover->angle_max( 'E', 4.0 );
 		shear_mover->angle_max( 'L', 4.0 );
@@ -486,7 +486,7 @@ public:
 		task->nonconst_residue_task(Kres).or_ex4_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
 		//		TR << *task << std::endl;
 
-		protocols::moves::SidechainMoverOP SCmover( new protocols::moves::SidechainMover() );
+		protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 		SCmover->set_task(task);
 		SCmover->set_prob_uniform(0); //we want only Dunbrack rotamers, 0 percent chance of uniform sampling
 

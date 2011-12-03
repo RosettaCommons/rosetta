@@ -40,7 +40,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <protocols/ScoreMap.hh>
+// AUTO-REMOVED #include <protocols/jd2/ScoreMap.hh>
 // AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 #include <string>

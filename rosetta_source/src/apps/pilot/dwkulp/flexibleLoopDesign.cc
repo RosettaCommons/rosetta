@@ -39,7 +39,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/CcdLoopClosureMover.hh>
-#include <protocols/moves/BackboneMover.hh> //23
+#include <protocols/simple_moves/BackboneMover.hh> //23
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
@@ -128,7 +128,7 @@ int main( int argc, char * argv[] ) {
   cout << "Done getting loops"<<endl;
   // Get CCD closure movers (one per loop)
   vector<protocols::loops::CcdLoopClosureMoverOP> ccds;
-  //vector<protocols::moves::BackboneMoverOP> bbMovers;
+  //vector<protocols::simple_moves::BackboneMoverOP> bbMovers;
   vector<vector<protocols::moves::MoverOP> > bbMovers;
 
   // poly-Val or poly-Ala sequence for testing fragment picker while designing.
@@ -183,7 +183,7 @@ int main( int argc, char * argv[] ) {
     // Keep list of CCD Closure Movers
     ccds.push_back(closer);
     /*
-    protocols::moves::BackboneMoverOP small = new protocols::moves::SmallMover(moveMap, 10, 200); //huge moves for sampling
+    protocols::simple_moves::BackboneMoverOP small = new protocols::simple_moves::SmallMover(moveMap, 10, 200); //huge moves for sampling
     small->angle_max( 'H', 180.0 );
     small->angle_max( 'E', 180.0 );
     small->angle_max( 'L', 180.0 );

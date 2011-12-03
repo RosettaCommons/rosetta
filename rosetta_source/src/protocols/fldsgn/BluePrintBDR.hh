@@ -131,7 +131,7 @@ public: // accessors
 
 	/// @brief the loop mover string to use during centroid build
 	///  (default "RemodelLoopMover")
-	/// @remarks set to either a string the get_loop_mover() LoopMoverFactory
+	/// @remarks set to either a string the create_loop_mover() LoopMoverFactory
 	///  recognizes or the "RemodelLoopMover"
 	inline String const & loop_mover_str() const {	return loop_mover_str_; }
 
@@ -182,7 +182,7 @@ public: // mutators
 	inline void max_linear_chainbreak( Real const threshold ) { max_linear_chainbreak_ = threshold; }
 
 	/// @brief the loop mover string to use during centroid build
-	/// @remarks set to either a string the get_loop_mover() LoopMoverFactory
+	/// @remarks set to either a string the create_loop_mover() LoopMoverFactory
 	///  recognizes or the "RemodelLoopMover"
 	inline void loop_mover_str( String const & loop_mover_str ) { loop_mover_str_ = loop_mover_str;	}
 
@@ -260,7 +260,7 @@ private: // data
 
 	/// @brief the loop mover string to use during centroid build
 	///  (default "RemodelLoopMover")
-	/// @remarks set to either a string the get_loop_mover() LoopMoverFactory
+	/// @remarks set to either a string the create_loop_mover() LoopMoverFactory
 	///  recognizes or the "RemodelLoopMover"
 	String loop_mover_str_;
 

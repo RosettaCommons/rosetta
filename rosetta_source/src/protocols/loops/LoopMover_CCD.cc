@@ -45,7 +45,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -90,8 +90,17 @@ using namespace core;
 static numeric::random::RandomGenerator RG(42478);
 extern basic::Tracer tr;
 
-
 //constructors
+LoopMover_Perturb_CCD::LoopMover_Perturb_CCD() :
+	IndependentLoopMover()
+{
+	scorefxn_ = get_cen_scorefxn();
+
+	protocols::moves::Mover::type("LoopMover_Perturb_CCD");
+	set_default_settings();
+}
+
+
 LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
 	protocols::loops::Loops loops_in
 ) : IndependentLoopMover( loops_in )
@@ -431,23 +440,6 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 
 }
 
-std::string
-LoopMover_Refine_CCDCreator::keyname() const
-{
-	return LoopMover_Refine_CCDCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-LoopMover_Refine_CCDCreator::create_mover() const {
-	return new LoopMover_Refine_CCD;
-}
-
-std::string
-LoopMover_Refine_CCDCreator::mover_name()
-{
-	return "LoopMover_Refine_CCD";
-}
-
 
 //constructors
 LoopMover_Refine_CCD::LoopMover_Refine_CCD()
@@ -750,7 +742,7 @@ void LoopMover_Refine_CCD::apply(
 					pose.dump_pdb("small_move-0.pdb");
 				}
 
-				protocols::moves::SmallMover small_moves( mm_one_loop, temperature, nmoves );
+				protocols::simple_moves::SmallMover small_moves( mm_one_loop, temperature, nmoves );
 				small_moves.apply( pose );
 
 				if (local_debug) {
@@ -815,7 +807,7 @@ void LoopMover_Refine_CCD::apply(
 				// set up movemap properly
 				kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
 				setup_movemap( pose, one_loop, allow_repacked, *mm_one_loop );
-				protocols::moves::ShearMover shear_moves( mm_one_loop, temperature, nmoves );
+				protocols::simple_moves::ShearMover shear_moves( mm_one_loop, temperature, nmoves );
 				shear_moves.apply( pose );
 				if (! it->is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *mm_one_loop);
 				pack::rotamer_trials( pose, *scorefxn, this_packer_task );

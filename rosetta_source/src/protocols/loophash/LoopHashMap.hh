@@ -15,7 +15,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/match/Hit.fwd.hh>
+//#include <protocols/match/Hit.fwd.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh>
 //#include <protocols/match/SixDHasher.hh>
 #include <boost/unordered_map.hpp>
@@ -44,13 +44,13 @@ namespace loophash {
 
 /// @brief This takes a pose and two residue positions and determines the rigid body transform of the Leap described by those two residues.
 ///        Returns true is successful or false if something went haywire and one should just ignore this loop (this can happen at the ends)
-bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::Size jr, protocols::match::Real6 &rt_6 );
+bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::Size jr, numeric::geometry::hashing::Real6 &rt_6 );
 
 /// @brief This takes a pose and two residue positions and determines the rigid body transform of the Leap described by those two residues
 ///        Returns true is successful or false if something went haywire and one should just ignore this loop (this can happen at the ends)
 ///       THe difference between this and the get_rt_over_leap function is that this version doesnt make a copy of the pose which makes it faster.
 ///     However this means that the pose passed cannot be a const pose, even though the function restores the fold tree afterwards..
-bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr, protocols::match::Real6 &rt_6 );
+bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr, numeric::geometry::hashing::Real6 &rt_6 );
 
 
 /// @brief The LeapIndex stores information about a particular Leap. It hold the oroiginal high precision rigid body transform
@@ -90,11 +90,11 @@ class LoopHashMap{
 		void setup( core::Size loop_size);
 
     /// @brief Add a given piece of data to the hash
-		void hash_index( protocols::match::Real6 transform, core::Size data );
+		void hash_index( numeric::geometry::hashing::Real6 transform, core::Size data );
 public:
 
     /// @brief Add a leap/loop to the HashMap
-		void add_leap( const LeapIndex &leap_index, protocols::match::Real6 & transform );
+		void add_leap( const LeapIndex &leap_index, numeric::geometry::hashing::Real6 & transform );
 
     /// @brief Add a leap/loop to the HashMap with a key, skipping hashing
 		void add_leap( const LeapIndex &leap_index, boost::uint64_t key );
@@ -121,10 +121,10 @@ public:
         void lookup_withkey( boost::uint64_t key, std::vector < core::Size > &result );
 
 		/// @brief Append to a bucket of vectors in the appropriate bin, lookup by transform
-		void lookup(  protocols::match::Real6 transform, std::vector < core::Size > &result );
+		void lookup(  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result );
 
 		/// @brief Append to a bucket of vectors in the appropriate bin, radial lookup by transform
-		void radial_lookup( core::Size radius,  protocols::match::Real6 transform, std::vector < core::Size > &result );
+		void radial_lookup( core::Size radius,  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result );
 
 		/// @brief Append to a bucket of vectors in the appropriate bin, lookup by bin index
         /// Using core::Size instead of boost::uinst64_t

@@ -90,12 +90,12 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
@@ -158,11 +158,11 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	for(Size i = 1; i <= nres; ++i) {
 		if(pose.residue(i).name3()=="BPY") {
 			task->nonconst_residue_task(i).prevent_repacking();
-		} else {			
+		} else {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 		}
 	}
-	// TR << *task << std::endl;	
+	// TR << *task << std::endl;
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
@@ -174,7 +174,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		atom_map.set(AtomID(2,ir) , true );
 		atom_map.set(AtomID(3,ir) , true );
 		atom_map.set(AtomID(5,ir) , true );
-	}			
+	}
 	core::id::AtomID_Map<Real> atom_sasa; utility::vector1<Real> sasa;
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, sasa, 2.3, false, atom_map );
 	for(Size i = 1; i <= sasa.size(); ++i) if( atom_sasa.n_atom(i) > 4 ) sasa[i] = atom_sasa[AtomID(5,i)];
@@ -193,11 +193,11 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		aas[core::chemical::aa_ser] = false;
 		aas[core::chemical::aa_thr] = false;
 		aas[core::chemical::aa_asp] = false;
-		aas[core::chemical::aa_glu] = false;		
-		aas[core::chemical::aa_lys] = false;		
-		aas[core::chemical::aa_arg] = false;		
-		aas[core::chemical::aa_asn] = false;		
-		aas[core::chemical::aa_gln] = false;		
+		aas[core::chemical::aa_glu] = false;
+		aas[core::chemical::aa_lys] = false;
+		aas[core::chemical::aa_arg] = false;
+		aas[core::chemical::aa_asn] = false;
+		aas[core::chemical::aa_gln] = false;
 	}
 
 	vector1<Size> fixed;
@@ -220,7 +220,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 				if(pose.xyz(aid).distance_squared(pose.xyz(aid2)) < 49) {
 					interface.push_back(i);
 				}
-			}		
+			}
 		}
 		for(Size i = 1; i <= nres; ++i) {
 			Vec xyz = pose.xyz(AtomID(5,i));
@@ -232,11 +232,11 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		if(pose.residue(i).name3()=="BPY") {
 			task->nonconst_residue_task(i).prevent_repacking();
 			// std::exit(-1);
-		} else if(std::find(fixed.begin(),fixed.end(),i)!=fixed.end()){			
+		} else if(std::find(fixed.begin(),fixed.end(),i)!=fixed.end()){
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).or_ex1_sample_level( core::pack::task::EX_ONE_STDDEV );
 			task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
-		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){			
+		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 			task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();
 		} else {
@@ -249,7 +249,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		task->nonconst_residue_task(i).prevent_repacking();
 	}
 	TR << *task << std::endl;
-	
+
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
@@ -262,7 +262,7 @@ void design_dyad(Pose & pose, Size const r1, Size const r2, ScoreFunctionOP sf, 
 	aas[core::chemical::aa_cys] = false;
 	aas[core::chemical::aa_his] = false;
 	aas[core::chemical::aa_tyr] = false;
-	
+
 	aas[core::chemical::aa_ser] = false;
 	aas[core::chemical::aa_thr] = false;
 	aas[core::chemical::aa_asp] = false;
@@ -273,16 +273,16 @@ void design_dyad(Pose & pose, Size const r1, Size const r2, ScoreFunctionOP sf, 
 	aas[core::chemical::aa_gln] = false;
 	// aas[core::chemical::aa_ala] = false;
 	aas[core::chemical::aa_gly] = false;
-	
+
 	sf->score(pose);
 	Real worig = sf->get_weight(core::scoring::res_type_constraint);
 	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
-	
+
 	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
-	
+
 	// aas[core::chemical::aa_trp] = false;
 	if(ex) task->initialize_extra_rotamer_flags_from_command_line();
-	
+
 	for(Size i = 1; i <= pose.n_residue(); ++i) {
 		if( pose.residue(i).name3()=="GLY" || pose.residue(i).name3()=="CYS" || pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="CYD" ) {
 			task->nonconst_residue_task(i).prevent_repacking();
@@ -316,9 +316,9 @@ void design_dyad(Pose & pose, Size const r1, Size const r2, ScoreFunctionOP sf, 
 	// TR << *task << std::endl;
 	protocols::moves::PackRotamersMover repack( sf, task );
 	repack.apply(pose);
-	
+
 	sf->show(pose);
-	
+
 	pose.remove_constraints( res_cst );
 	sf->set_weight(core::scoring::res_type_constraint,worig);
 }
@@ -339,7 +339,7 @@ void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
 	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
 	m.apply(pose);
-		
+
 }
 
 
@@ -424,7 +424,7 @@ std::pair<vector1<Size>,vector1<Size> > makesplitwork( utility::vector1<Size> re
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	add_lower_terminus_type_to_pose_residue(pose,1);
 	add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
-	core::pack::optimizeH(pose,*sf);	
+	core::pack::optimizeH(pose,*sf);
 	remove_lower_terminus_type_from_pose_residue(pose,1);
 	remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
 }
@@ -450,7 +450,7 @@ void align_carboxyl_m8(core::pose::Pose & pose, Size irsd, Size jrsd, Vec cen) {
 void run_m8() {
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
-	
+
 	core::chemical::ResidueTypeSetCAP cen_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 	core::chemical::ResidueTypeSetCAP  fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	Real tmpdis = option[willmatch::max_dis_metal]();
@@ -467,22 +467,22 @@ void run_m8() {
 	core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
 	// core::chemical::ResidueType const & hise( in_fa.residue(1).residue_type_set().name_map("HIS") );
 	// core::chemical::ResidueType const & hisd( in_fa.residue(1).residue_type_set().name_map("HIS_D") );
-	for(Size i = 1; i <= nres; ++i) {	
+	for(Size i = 1; i <= nres; ++i) {
 		core::pose::replace_pose_residue_copying_existing_coordinates(in_cen,i,ala);
 		core::pose::replace_pose_residue_copying_existing_coordinates(in_fa,i,alafa);
 	}
 	Pose const init_pose = in_cen;
 	Pose const fa_pose = in_fa;
 	ImplicitFastClashCheck clashcheck(init_pose,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
-	
+
 	ScoreFunctionOP sf = core::scoring::getScoreFunction();
-	
+
 	Real chi1incr = option[willmatch::chi1_increment]();
-	Real chi2incr = option[willmatch::chi2_increment]();	
+	Real chi2incr = option[willmatch::chi2_increment]();
 	vector1<Real> CHI1,CHI2;
-	for(Real i = 0; i < 360; i+= chi1incr) CHI1.push_back(i); 
-	for(Real i = 0; i < 360; i+= chi2incr) CHI2.push_back(i); 
-	
+	for(Real i = 0; i < 360; i+= chi1incr) CHI1.push_back(i);
+	for(Real i = 0; i < 360; i+= chi2incr) CHI2.push_back(i);
+
 	// setup HIS residues for checking
 	Pose glu;
 	core::pose::make_pose_from_sequence(glu,"E",*fa_residue_set,false);
@@ -529,7 +529,7 @@ void run_m8() {
 
 	ScoreFunctionOP cstsf = new core::scoring::ScoreFunction;
 	cstsf->set_weight(core::scoring::atom_pair_constraint,1.0);
-	
+
 
 	Pose pose = fa_pose;
 
@@ -555,10 +555,10 @@ void run_m8() {
 				// Vec mcen2d = s2.local2global(mcentroid(1,jch1));
 				// Vec mcen1e = s1.local2global(mcentroid(2,ich1));
 				// Vec mcen2e = s2.local2global(mcentroid(2,jch1));
-				// if( mcen1d.distance_squared(mcen2d) > 16.5*16.5 && 
-				//     mcen1d.distance_squared(mcen2e) > 15.0*15.0 && 
-				//     mcen1e.distance_squared(mcen2d) > 15.0*15.0 && 
-				//     mcen1e.distance_squared(mcen2e) > 14.0*14.0					
+				// if( mcen1d.distance_squared(mcen2d) > 16.5*16.5 &&
+				//     mcen1d.distance_squared(mcen2e) > 15.0*15.0 &&
+				//     mcen1e.distance_squared(mcen2d) > 15.0*15.0 &&
+				//     mcen1e.distance_squared(mcen2e) > 14.0*14.0
 				// ) continue;
 				for(Size ich2 = 1; ich2 <= CHI2.size(); ++ich2) {
 					for(Size jch2 = 1; jch2 <= CHI2.size(); ++jch2) {
@@ -599,14 +599,14 @@ void run_m8() {
 							if(clash) break;
 						}
 						if(clash) continue;
-								
+
 						// core::id::AtomID_Mask mask;
 						// core::pose::initialize_atomid_map(mask,pose,false);
 						// mask.fill_with(irsd,true);
-						// mask.fill_with(jrsd,true);									
+						// mask.fill_with(jrsd,true);
 						// core::pack::optimize_H_and_notify(pose,mask);
-								
-						
+
+
 						for(Size iatm = 6; iatm <= pose.residue(irsd).nheavyatoms()-2; ++iatm) {
 							if(!clashcheck.clash_check(pose.residue(irsd).xyz(iatm),irsd)) clash=true;
 						}
@@ -629,20 +629,20 @@ void run_m8() {
 							if(!clashcheck.clash_check(pose.residue(jrsd).xyz(jatm),jrsd)) clash=true;
 						}
 						if(clash) continue;
-						
+
 						for(Size iatm = pose.residue(irsd).nheavyatoms()-1; iatm <= pose.residue(irsd).nheavyatoms(); ++iatm) {
 							for(Size jatm = pose.residue(jrsd).nheavyatoms()-1; jatm <= pose.residue(jrsd).nheavyatoms(); ++jatm) {
 								if( pose.residue(jrsd).xyz(jatm).distance_squared(pose.residue(irsd).xyz(iatm)) < 7.0 ) clash=true;
 							}
 						}
 						if(clash) continue;
-						
+
 
 						// is cross better than what was in HIS/HIS?
 						Vec ori = (orii.cross(orij)).normalized();
 						bool overlap = false;
 						for(Size i = 1; i <= foundori.size(); ++i) {
-							if( cen.distance_squared(foundcen[i]) < option[willmatch::match_overlap_dis]() && 
+							if( cen.distance_squared(foundcen[i]) < option[willmatch::match_overlap_dis]() &&
 							    ori .dot(foundori [i])            > MATCH_OVERLAP_DOT                      ){
 								// TR << "overlap!" << std::endl;
 								overlap = true;
@@ -653,7 +653,7 @@ void run_m8() {
 						count++;
 						foundcen.push_back(cen);
 						foundori.push_back(ori);
-						
+
 						string geom = "EE4";
 						string tag = utility::file_basename(infile)+"_"+geom+"_"+string_of(irsd)+"_"+string_of(CHI1[ich1])+"_"+string_of(CHI2[ich2])+"_"+string_of(jrsd)+"_"+string_of(CHI1[jch1])+"_"+string_of(CHI2[jch2]);
 						TR << "MATCH " << tag << std::endl;
@@ -666,7 +666,7 @@ void run_m8() {
 						r1.seqpos(irsd);
 						r2.seqpos(jrsd);
 						core::io::pdb::dump_pdb_residue(r1,one,out);
-						core::io::pdb::dump_pdb_residue(r2,two,out);									
+						core::io::pdb::dump_pdb_residue(r2,two,out);
 
 						Vec viz;
 						viz = cen+2.0*mori      ; out<<"HETATM"<<I(5,9997)<<' '<<"ZN  "<<' ' <<	" ZN"<<' '<<"B"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
@@ -674,15 +674,15 @@ void run_m8() {
 						viz = cen               ; out<<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' ' <<	" ZN"<<' '<<"Z"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 
 						out << "ENDMDL" << std::endl;
-					
+
 						Vec axis1 = ((cen-pose.residue(irsd).xyz("CD"))  +   (cen-pose.residue(jrsd).xyz("CD"))).normalized();
 						Vec axis2 = ((cen-pose.residue(irsd).xyz("CD")).cross(cen-pose.residue(jrsd).xyz("CD"))).normalized();
 						axis1 = projperp(axis2,axis1).normalized();
-						
+
 						for(Size ii = 1; ii <= 4; ii++) {
 							Pose pose2 = pose;
 							rot_pose(pose2,axis2,180,cen);
-							
+
 							for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 								for(Size ia = 1; ia <= pose.residue(ir).nheavyatoms()-2; ++ia) {
 									for(Size jr = 1; jr <= pose.n_residue(); ++jr) {
@@ -693,7 +693,7 @@ void run_m8() {
 								}
 							}
 							if(clash) continue;
-														
+
 							utility::io::ozstream out(tag+"_homodimer_"+string_of(ii)+".pdb");
 							pose.dump_pdb(out);
 							for(Size jj = 1; jj <= pose2.n_residue(); ++jj) {
@@ -712,20 +712,20 @@ void run_m8() {
 					}
 				}
 			}
-		}			
-		
+		}
+
 	}
 	out.close();
-	
+
 }
 
 
-int main (int argc, char *argv[]) {	
-	
+int main (int argc, char *argv[]) {
+
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
 	core::init(argc,argv);
-	
+
 	run_m8();
 
 }
@@ -733,8 +733,8 @@ int main (int argc, char *argv[]) {
 
 
 
-// 
-// 
+//
+//
 
 
 

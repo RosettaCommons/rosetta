@@ -63,7 +63,7 @@
 
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopBuild.hh>
+// AUTO-REMOVED #include <protocols/loop_build/LoopBuild.hh>
 #include <protocols/comparative_modeling/ConstraintRemodelMover.hh>
 
 #include <utility/vector1.hh>

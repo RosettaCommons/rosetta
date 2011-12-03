@@ -84,11 +84,11 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
@@ -116,7 +116,7 @@ string & replace_string(string & s, string const & f, string const & r) {
 		replaced = true;
 	}
 	if(!replaced) utility_exit_with_message("no string replaced!!! probably mismatch tags in input and sym file");
-	// TR << i << " " << s.size() << " " << s.npos << std::endl;	
+	// TR << i << " " << s.size() << " " << s.npos << std::endl;
 	return s;
 }
 
@@ -179,8 +179,8 @@ int up_jump_tree(Pose & pose, int rsd) {
 // 	pose.add_constraint(cc);
 // }
 
-void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID aid2, core::Real mean, core::Real sd, 
-			 core::scoring::ScoreType st = core::scoring::atom_pair_constraint) 
+void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID aid2, core::Real mean, core::Real sd,
+			 core::scoring::ScoreType st = core::scoring::atom_pair_constraint)
 {
 	core::scoring::constraints::ConstraintOP cc = new core::scoring::constraints::AtomPairConstraint(
 		aid1, aid2, new core::scoring::constraints::HarmonicFunc(mean,sd), st );
@@ -215,7 +215,7 @@ void change_floating_sc_geometry(Pose & pose, Size rsd_in, Size nres) {
 		if( pose.residue(rsd).name3()=="HSC" ) {
 			Size oldath=pose.residue(rsd).atom_index("NE2"), newath=pose.residue(rsd).atom_index("ND1"), ce1=pose.residue(rsd).atom_index("CE1");
 			string newatm = "ND1";
-			if( pose.xyz(AtomID(newath,rsd)).distance(metal) < pose.xyz(AtomID(oldath,rsd)).distance(metal) ) { 
+			if( pose.xyz(AtomID(newath,rsd)).distance(metal) < pose.xyz(AtomID(oldath,rsd)).distance(metal) ) {
 				newath=pose.residue(rsd).atom_index("NE2");
 				oldath=pose.residue(rsd).atom_index("ND1");
 				newatm = "NE2";
@@ -231,7 +231,7 @@ void change_floating_sc_geometry(Pose & pose, Size rsd_in, Size nres) {
 			FoldTree ft = pose.fold_tree();
 			for(Size j = 1; j <= pose.fold_tree().num_jump(); ++j) {
 				if((pose.fold_tree().downstream_jump_residue(j)-1)%nres+1 == rsd && pose.fold_tree().upstream_atom(j).size()) {
-					ft.set_jump_atoms(j,ft.upstream_atom(j),newatm);				
+					ft.set_jump_atoms(j,ft.upstream_atom(j),newatm);
 				}
 			}
 			pose.fold_tree(ft);
@@ -271,12 +271,12 @@ void change_floating_sc_geometry(Pose & pose, Size rsd_in, Size nres) {
 			// 		std::ofstream out2("change_floating_sc_geometry_after.pdb",std::ios::app);
 			// 		out2 << "HETATM 9999 ZN    ZN A 999       " << F(5,3,metal.x()) << "   " << F(5,3,metal.y()) << "   " << F(5,3,metal.z()) << "  1.00  0.00              " << std::endl;
 			// 		out2 << "HETATM 9999 PT    PT A 999       " << F(5,3,(metal+axis).x()) << "   " << F(5,3,(metal+axis).y()) << "   " << F(5,3,(metal+axis).z()) << "  1.00  0.00              " << std::endl;
-			// 		utility_exit_with_message("ERROR in change_floating_sc_geometry_reverse! BPY");		
+			// 		utility_exit_with_message("ERROR in change_floating_sc_geometry_reverse! BPY");
 			// 	}
 			// }
 		}
 	}
-	
+
 }
 
 void change_floating_sc_geometry_reverse(Pose & pose, Size rsd, Size nres) {
@@ -306,7 +306,7 @@ public:
 	}
 
 	void show_definition( std::ostream &out ) const {
-		out << "ABS " << x0_ << " " << sd_ << std::endl;		
+		out << "ABS " << x0_ << " " << sd_ << std::endl;
 	}
 
 	Real x0() const {
@@ -357,7 +357,7 @@ public:
 	}
 
 	void show_definition( std::ostream &out ) const {
-		out << "ABS " << range_ << " " << height_ << std::endl;		
+		out << "ABS " << range_ << " " << height_ << std::endl;
 	}
 
 private:
@@ -433,7 +433,7 @@ struct PoseWrap : public ReferenceCount {
 	Size which_sub(Size i) {
 		return( std::ceil(i/nres) );
 	}
-	
+
 	PoseWrap(
 		string tag_in,
 		vector1<core::pose::Pose> const & poses,
@@ -468,7 +468,7 @@ struct PoseWrap : public ReferenceCount {
 		if(poses.size()!=ss_suff    .size()) utility_exit_with_message( "ss_suff     must be specified for every pose" );
 
 		scattach_res_user.push_back(vector1<Size>());
-		
+
 		primary_subsub = option[ basic::options::OptionKeys::smhybrid::primary_subsubunit ]();
 		debug = option[basic::options::OptionKeys::smhybrid::debug]();
 
@@ -477,7 +477,7 @@ struct PoseWrap : public ReferenceCount {
 				utility_exit_with_message("can't have prefix or suffix on pose attached as side chain!! "+string_of(i)+" pref:  '"+ss_pref[i]+"' suff: '"+ss_suff[i]+"'");
 			}
 		}
-		
+
 		 fa_residue_set_ = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		cen_residue_set_ = ChemicalManager::get_instance()->residue_type_set( CENTROID    );
 
@@ -496,10 +496,10 @@ struct PoseWrap : public ReferenceCount {
 			scattach_res_user.push_back(vector1<Size>());
 			for(Size j = 1; j <=   design_res_in[i].size(); ++j)   design_res_user   .push_back(  design_res_in[i][j]+ss_.size());
 			for(Size j = 1; j <=    fixed_res_in[i].size(); ++j)    fixed_res_user   .push_back(   fixed_res_in[i][j]+ss_.size());
-			for(Size j = 1; j <=     frag_res_in[i].size(); ++j)     frag_res_user   .push_back(    frag_res_in[i][j]+ss_.size());			
-			for(Size j = 1; j <=  virtual_res_in[i].size(); ++j)  virtual_res_user   .push_back( virtual_res_in[i][j]+ss_.size());			
+			for(Size j = 1; j <=     frag_res_in[i].size(); ++j)     frag_res_user   .push_back(    frag_res_in[i][j]+ss_.size());
+			for(Size j = 1; j <=  virtual_res_in[i].size(); ++j)  virtual_res_user   .push_back( virtual_res_in[i][j]+ss_.size());
 			for(Size j = 1; j <= scattach_res_in[i].size(); ++j) scattach_res_user[i].push_back(scattach_res_in[i][j]+ss_.size());
-			
+
 			// Size ins_frag_segment_edge = 3;
 			bool marked_subsub_fixed = false;
 			for(Size j=1;j<=tmp.n_residue();++j) {
@@ -520,7 +520,7 @@ struct PoseWrap : public ReferenceCount {
 			}
 			if( ! marked_subsub_fixed ) {
 				subsub_fixed_begin.push_back(0);
-				subsub_fixed_end.push_back(0);				
+				subsub_fixed_end.push_back(0);
 			}
 
 			ss_ += ss_suff[i];
@@ -550,7 +550,7 @@ struct PoseWrap : public ReferenceCount {
 					pose.append_residue_by_jump(tmp.residue(j),pose.n_residue());
 				}
 			}
-			
+
 			for(Size j = 1; j <= rep_edge_res_in[i].size(); ++j) {
 				rep_edge_res_.push_back( rep_edge_res_in[i][j] + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
 			}
@@ -562,7 +562,7 @@ struct PoseWrap : public ReferenceCount {
 				for( Size j = 1; j <= jumpcut[i].size(); ++j ) {
 					jmpu_     .push_back( jumpcut[i][j].x() + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
 					jmpd_     .push_back( jumpcut[i][j].y() + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
-					cuts_     .push_back( jumpcut[i][j].z() + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );								
+					cuts_     .push_back( jumpcut[i][j].z() + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
 					user_cuts_.push_back( jumpcut[i][j].z() + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
 					TR << "adding jmps/cuts from user input " << jmpu_[jmpu_.size()] << " " << jmpd_[jmpd_.size()] << " " << cuts_[cuts_.size()] << std::endl;
 				}
@@ -577,7 +577,7 @@ struct PoseWrap : public ReferenceCount {
 			}
 			for(Size j = 1; j <= ss_pref[i].size(); ++j) linker_res_.push_back(pose.n_residue()-tmp.n_residue()+j);
 			for(Size j = ss_suff[i].size(); j >= 1; --j) linker_res_.push_back(pose.n_residue()-j+1);
-			
+
 			attach_as_sc_.push_back(attach_as_sc_in[i]);
 			if(attach_as_sc_in[i] > 0) {
 				floating_scs_.push_back(attach_rsd_[i]);
@@ -596,7 +596,7 @@ struct PoseWrap : public ReferenceCount {
 		// if( attach_as_sc_in[poses.size()] ) ut -=  poses[poses.size()].n_residue(); // TODO: make more general
 		// add_lower_terminus_type_to_pose_residue(pose,lt);
 		// add_upper_terminus_type_to_pose_residue(pose,ut);
-		
+
 
 		// TR << ss_.size() << " " << pose.n_residue() << std::endl;
 		assert( ss_.size() == pose.n_residue() );
@@ -607,7 +607,7 @@ struct PoseWrap : public ReferenceCount {
 		TR << "jumps/cuts size " << jmpu_.size() << " " << jmpd_.size() << " " << cuts_.size() << std::endl;
 		TR << "PoweWrap constructor jumps/cuts :"; for(Size i=1;i<=cuts_.size();++i) TR << jmpu_[i] << " " << jmpd_[i] << " " << cuts_[i] << ",  "; TR << std::endl;
 
-		
+
 		//////// add variants
 		if( floating_scs_.size() > 1 ) {
 			// utility_exit_with_message("only support one floating sc at the moment");
@@ -631,19 +631,19 @@ struct PoseWrap : public ReferenceCount {
 				}
 			} else {
 				if(pose.residue(subsub_ends_[i]+1).is_protein()) add_lower_terminus_type_to_pose_residue(pose,subsub_starts_[i+1]);
-				if(pose.residue(subsub_ends_[i]  ).is_protein()) add_upper_terminus_type_to_pose_residue(pose,subsub_ends_  [i  ]);				
+				if(pose.residue(subsub_ends_[i]  ).is_protein()) add_upper_terminus_type_to_pose_residue(pose,subsub_ends_  [i  ]);
 			}
 		}
 		if( chainbreaks_[chainbreaks_.size()] ) {
 			if(pose.residue(pose.n_residue()).is_protein()) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, pose.n_residue() );
-			if(pose.residue(1               ).is_protein()) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, 1    );				
-		} else {                                          
+			if(pose.residue(1               ).is_protein()) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, 1    );
+		} else {
 			if(pose.residue(1               ).is_protein()) pose::add_lower_terminus_type_to_pose_residue(pose,1);
 			if(pose.residue(pose.n_residue()).is_protein()) pose::add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
 		}
 		for( Size i = 1; i <= floating_scs_.size(); ++i ) {
 			core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_BBCB",floating_scs_[i]);
-		}		
+		}
 		if(option[basic::options::OptionKeys::smhybrid::virtual_nterm]()) {
 			if(debug) pose.dump_pdb("before_vnterm.pdb");
 			// remove_lower_terminus_type_from_pose_residue(pose,1);
@@ -657,7 +657,7 @@ struct PoseWrap : public ReferenceCount {
 		//////////// setup fold tree
 		// TR << "FT " << pose.fold_tree() << std::endl;
 		std::map<Size,string> jump_atom;
-		for(Size i = 1; i <= attach_rsd_.size(); ++i ) {		
+		for(Size i = 1; i <= attach_rsd_.size(); ++i ) {
 			jump_atom[attach_rsd_[i]] = attach_atom_[i];
 		}
 		ObjexxFCL::FArray2D_int jumps(2,cuts_.size());
@@ -670,7 +670,7 @@ struct PoseWrap : public ReferenceCount {
 		kinematics::FoldTree ft = pose.fold_tree();
 		ft.tree_from_jumps_and_cuts(pose.n_residue(),cuts_.size(),jumps,cuts,attach_rsd_[1]);
 		TR << "tree_from_jumps_and_cuts:" << std::endl;
-		TR << ft << std::endl;		
+		TR << ft << std::endl;
 		ft.reorder(attach_rsd_[primary_subsub]);
 		std::vector<Size> seenit;
 		for(Size i = 1; i <= ft.num_jump(); ++i ) {
@@ -695,7 +695,7 @@ struct PoseWrap : public ReferenceCount {
 		}
 		TR << "POSEWRAP done setting up fold tree" << std::endl;
 		pose.fold_tree(ft);
-		// TR << "FT " << pose.fold_tree() << std::endl;		
+		// TR << "FT " << pose.fold_tree() << std::endl;
 
 		// std::exit(-1);
 
@@ -703,7 +703,7 @@ struct PoseWrap : public ReferenceCount {
 		utility::options::StringVectorOption & symm_file_tag = option[ basic::options::OptionKeys::smhybrid::symm_file_tag ];
 		if( primary_subsub > poses.size() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
 		if( attach_rsd_[primary_subsub] < 1                ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
-		if( attach_rsd_[primary_subsub] > pose.n_residue() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));		
+		if( attach_rsd_[primary_subsub] > pose.n_residue() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
 		string pstr = symm_file_tag[primary_subsub];
 		Size n_eq_primary = 0;
 		for(Size i = 1; i <= symm_file_tag.size(); ++i) {
@@ -717,7 +717,7 @@ struct PoseWrap : public ReferenceCount {
 			utility_exit_with_message("must be exactly one primary subunit... this is seriously messed up "+primary_subsub);
 		}
 		TR << "making symm data" << std::endl;
-		
+
 		symm_data = new core::conformation::symmetry::SymmData(pose.n_residue(),pose.fold_tree().num_jump());
 		std::istringstream iss(symm_def_template_reduced);
 		symm_data->read_symmetry_data_from_stream(iss);
@@ -729,7 +729,7 @@ struct PoseWrap : public ReferenceCount {
 		orig_pose = pose;
 
 		if(debug) dump_pdb("init2.pdb");
-		
+
 		// TR << "POSEWRAP switch_to_residue_type_set cen" << std::endl;
 		// core::chemical::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 
@@ -742,8 +742,8 @@ struct PoseWrap : public ReferenceCount {
 		for( i = dofs.begin(); i != dofs.end(); ++i ) {
 			TR << "DOF " << i->first << " " << i->second << std::endl;
 		}
-		
-		
+
+
 		// if( !option[basic::options::OptionKeys::smhybrid::refine]() ) {
 		// 	TR << "POSEWRAP set symm dofs" << std::endl;
 		// 	protocols::rigid::RigidBodyDofSeqRandomizeMover symsetup(dofs);
@@ -765,15 +765,15 @@ struct PoseWrap : public ReferenceCount {
 		// 	// symsetup.apply(pose);
 		// 	// pose.dump_pdb("sym_init9.pdb");
 		// 	std::exit(-1);
-		// }		
+		// }
 
 		nsub = symmetry::symmetry_info(pose)->subunits(); // TODO read from SymmData
-		
+
 		if(debug) dump_pdb("sym_init1.pdb");
-		
+
 		// if( !option[basic::options::OptionKeys::smhybrid::refine]() ) {
 			// for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs.begin(); i != dofs.end(); ++i) {
-			// 	if( i->second.allow_dof(1) && i->second.allow_dof(2) && i->second.allow_dof(3) && 
+			// 	if( i->second.allow_dof(1) && i->second.allow_dof(2) && i->second.allow_dof(3) &&
 			// 		i->second.allow_dof(4) && i->second.allow_dof(5) && i->second.allow_dof(6) ) continue; // ignore the "RB" 6 dof jumps
 			// 	core::kinematics::Jump j(pose.jump(i->first));
 			// 	j.set_translation( j.get_translation() + Vec(-40.0,0,0) );
@@ -794,10 +794,10 @@ struct PoseWrap : public ReferenceCount {
 			switch_to_fa();
 			pose.dump_pdb("sym_init_switch_to_fa.pdb");
 			switch_to_cen();
-			pose.dump_pdb("sym_init_switch_to_cen2.pdb");						
+			pose.dump_pdb("sym_init_switch_to_cen2.pdb");
 			std::exit(-1);
 		}
-		
+
 
 		// pose.dump_pdb("sym_init2.pdb");
 
@@ -805,9 +805,9 @@ struct PoseWrap : public ReferenceCount {
 		// pose.dump_pdb("sym_init1.pdb");
 		// pose.set_chi(1,1,pose.chi(1,1)+10.0);
 		// pose.dump_pdb("sym_init2.pdb");
-		// 
+		//
 		// std::exit(-1);
-		
+
 
 		// core::scoring::ScoreFunction sf;
 		// sf.set_weight(scoring::atom_pair_constraint,1.0);
@@ -826,16 +826,16 @@ struct PoseWrap : public ReferenceCount {
 		// for(Size i = 1; i <= cs.size(); i++) {
 		// 	TR << "cst " << i << std::endl;
 		// 	cs[i]->show(TR);
-		// }		
+		// }
 		TR << "add_constraints_from_cmdline_to_pose AFTER  NCST: " << pose.constraint_set()->get_all_constraints().size() << std::endl;
 
 		add_floating_sc_csts();
-		
+
 		cst_sub_files_ = cst_sub_files;
 		// dump_pdb("cst_test.pdb");
 		// std::exit(-1);
-		
-		
+
+
 		if( basic::options::option[basic::options::OptionKeys::smhybrid::linker_cst]() ) {
 			using namespace core::scoring::constraints;
 			ConstraintCOPs ac;
@@ -870,7 +870,7 @@ struct PoseWrap : public ReferenceCount {
 							if(pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[i]]          ) ires = pose.fold_tree().upstream_jump_residue(jmp);
 							if(pose.fold_tree().downstream_jump_residue(jmp)==(int)attach_rsd_[real_subsubs[j]]+(int)nres) jres = pose.fold_tree().upstream_jump_residue(jmp);
 						}
-						if( ires * jres == 0 ) utility_exit_with_message("ires or jres is 0!!!");						
+						if( ires * jres == 0 ) utility_exit_with_message("ires or jres is 0!!!");
 						pose.add_constraint(new AtomPairConstraint(AtomID(1,ires),AtomID(1,jres),new AbsFunc(0,1),core::scoring::coordinate_constraint ));
 						TR << "adding subsub's attract cst sub 2-" << i << " 2-" << j << " " << ires << " " << jres << std::endl;
 					}
@@ -880,9 +880,9 @@ struct PoseWrap : public ReferenceCount {
 		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[5]),AtomID(1,attach_rsd_[6]     ),new AbsFunc(0,1) ));
 		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[5]),AtomID(1,attach_rsd_[5]+nres),new AbsFunc(0,1) ));
 		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[5]),AtomID(1,attach_rsd_[6]+nres),new AbsFunc(0,1) ));
-		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[6]),AtomID(1,attach_rsd_[5]+nres),new AbsFunc(0,1) ));						
-		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[6]),AtomID(1,attach_rsd_[6]+nres),new AbsFunc(0,1) ));						
-		
+		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[6]),AtomID(1,attach_rsd_[5]+nres),new AbsFunc(0,1) ));
+		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[6]),AtomID(1,attach_rsd_[6]+nres),new AbsFunc(0,1) ));
+
 		if( basic::options::option[basic::options::OptionKeys::smhybrid::pseudosym]() ) {
 			if( pose.n_residue() < 2*nres ) {
 				utility_exit_with_message("pseudosym requires at least 2 subunits!!!");
@@ -896,12 +896,12 @@ struct PoseWrap : public ReferenceCount {
 					TR << "Pseudo-sym cst: " << a1 << " " << a2 << " " << b1 << " " << b2 << std::endl;
 					CoupledFunc* cf = new CoupledFunc(&pose,AtomID(2,a1),AtomID(2,a2),AtomID(2,b1),AtomID(2,b2),h);
 					pose.add_constraint(new AtomPairConstraint(AtomID(2,a1),AtomID(2,a2),cf));
-					pose.add_constraint(new AtomPairConstraint(AtomID(2,b1),AtomID(2,b2),cf));					
-				}				
+					pose.add_constraint(new AtomPairConstraint(AtomID(2,b1),AtomID(2,b2),cf));
+				}
 			}
 		}
-		
-		
+
+
 		if( option[basic::options::OptionKeys::edensity::mapfile].user() ) {
 			protocols::electron_density::SetupForDensityScoringMover m;
 			m.apply(pose);
@@ -915,30 +915,30 @@ struct PoseWrap : public ReferenceCount {
 		// 		if(pose.fold_tree().downstream_jump_residue(j)==1) {
 		// 			core::kinematics::Jump jmp(pose.jump(j));
 		// 			jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
-		// 			pose.set_jump(j,jmp);					
+		// 			pose.set_jump(j,jmp);
 		// 		}
 		// 		if(pose.fold_tree().downstream_jump_residue(j)==2) {
 		// 			core::kinematics::Jump jmp(pose.jump(j));
 		// 			jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
-		// 			pose.set_jump(j,jmp);					
+		// 			pose.set_jump(j,jmp);
 		// 		}
 		// 		// if(pose.fold_tree().downstream_jump_residue(j)==3) {
 		// 		// 	core::kinematics::Jump jmp(pose.jump(j));
 		// 		// 	jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
-		// 		// 	pose.set_jump(j,jmp);					
+		// 		// 	pose.set_jump(j,jmp);
 		// 		// }
 		// 		// if(pose.fold_tree().downstream_jump_residue(j)==4) {
 		// 		// 	core::kinematics::Jump jmp(pose.jump(j));
 		// 		// 	jmp.set_rotation(rotation_matrix_degrees(Vec(1,0,0),(gaussian()*10.0))*jmp.get_rotation());
-		// 		// 	pose.set_jump(j,jmp);					
+		// 		// 	pose.set_jump(j,jmp);
 		// 		// }
 		// 	}
 		// 	dump_pdb("sym_init_"+string_of(i)+".pdb");
 		// }
 		// std::exit(-1);
 		// TR << "score after adding csts: " << ssf(pose) << std::endl;
-		// 
-		// 
+		//
+		//
 		// using namespace core::scoring::constraints;
 		// ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
 		// TR << "num cst: " << cs.size() << std::endl;
@@ -946,58 +946,58 @@ struct PoseWrap : public ReferenceCount {
 		// 	TR << "cst " << i << std::endl;
 		// 	cs[i]->show(TR);
 		// }
-		// // std::exit(-1);		
-		// 
+		// // std::exit(-1);
+		//
 		// // TR << "constraints " <<  std::endl;
 		// // pose.constraint_set()->show(TR);
-		// 
+		//
 		// pose.set_xyz(AtomID(1,scattach_res_user[1]),pose.xyz(AtomID(1,floating_scs_[1])));
 		// pose.set_xyz(AtomID(2,scattach_res_user[1]),pose.xyz(AtomID(2,floating_scs_[1])));
 		// pose.set_xyz(AtomID(3,scattach_res_user[1]),pose.xyz(AtomID(3,floating_scs_[1])));
-		// pose.set_xyz(AtomID(5,scattach_res_user[1]),pose.xyz(AtomID(5,floating_scs_[1])));						
-		// 
+		// pose.set_xyz(AtomID(5,scattach_res_user[1]),pose.xyz(AtomID(5,floating_scs_[1])));
+		//
 		// for(Real i = -10; i <= 10; i+=1.0 ) {
 		// 	pose.set_xyz(AtomID(1,scattach_res_user[1]),pose.xyz(AtomID(1,floating_scs_[1]))+Vec(i,0,0));
 		// 	pose.set_xyz(AtomID(2,scattach_res_user[1]),pose.xyz(AtomID(2,floating_scs_[1]))+Vec(i,0,0));
 		// 	pose.set_xyz(AtomID(3,scattach_res_user[1]),pose.xyz(AtomID(3,floating_scs_[1]))+Vec(i,0,0));
-		// 	pose.set_xyz(AtomID(5,scattach_res_user[1]),pose.xyz(AtomID(5,floating_scs_[1]))+Vec(i,0,0));						
+		// 	pose.set_xyz(AtomID(5,scattach_res_user[1]),pose.xyz(AtomID(5,floating_scs_[1]))+Vec(i,0,0));
 		// 	TR << i << " " << ssf(pose) << std::endl;
 		// }
 		// ssf.show(pose);
-		// 
+		//
 		// std::exit(-1);
-		
-		// dump_pdb("PoseWrap_symm_0.pdb");		
+
+		// dump_pdb("PoseWrap_symm_0.pdb");
 		// for(Size iter = 1; iter < 10; iter++ ) {
 		// 	for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs.begin(); i != dofs.end(); ++i) {
 		// 			core::kinematics::Jump j(pose.jump(i->first));
 		// 			j.set_translation( j.get_translation() + Vec(gaussian()*4,0,0) );
 		// 			j.set_rotation(numeric::rotation_matrix(Vec(1,0,0),gaussian())*j.get_rotation());
-		// 			pose.set_jump(i->first,j);			
+		// 			pose.set_jump(i->first,j);
 		// 		}
 		// 	// for(Size j = 1; j <= 4; ++j) {
 		// 	// 	pose.set_chi( j, attach_rsd_[1], pose.chi(j,attach_rsd_[1]) + 10.0);
 		// 	// }
 		// 	dump_pdb("PoseWrap_symm_"+string_of(iter)+".pdb");
 		// }
-		// 
+		//
 		// std::exit(-1);
-		
+
 		// pose.dump_pdb("pw_init_done.pdb");
-		
-		if (option[ basic::options::OptionKeys::parser::view ]()) {		
+
+		if (option[ basic::options::OptionKeys::parser::view ]()) {
 			protocols::viewer::add_conformation_viewer(pose.conformation(),"smhybrid",1000,1000);
 		}
-		
-		
+
+
 		// pose.dump_pdb("test0.pdb");
 		// for(Size i = 1; i < 10; ++i) {
 		// 	pose.set_chi(4,1,pose.chi(4,1)+10.0);
 		// 	pose.dump_pdb("test"+string_of(i)+".pdb");
 		// }
 		// std::exit(-1);
-		
-		
+
+
 	}
 
 	void add_floating_sc_csts() {
@@ -1024,7 +1024,7 @@ struct PoseWrap : public ReferenceCount {
 		// hfunc->show(TR);
 		// Size last_subsub = 0;
 		floating_scs_sub_ = basic::options::option[basic::options::OptionKeys::smhybrid::attach_as_sc_sub]();
-		while(floating_scs_sub_.size() < floating_scs_sub_.size()) floating_scs_sub_.push_back(1);		
+		while(floating_scs_sub_.size() < floating_scs_sub_.size()) floating_scs_sub_.push_back(1);
 		for(Size i = 1; i <= floating_scs_.size(); ++i) {
 			TR << i << " Adding floating scs constraints " << floating_scs_[i] << " " << floating_scs_subsub_[i] << " " << scattach_res_user[floating_scs_subsub_[i]].size() << " " << floating_scs_sub_[i] << std::endl;
 			vector1<Size> scattach_res = scattach_res_user[floating_scs_subsub_[i]];
@@ -1056,12 +1056,12 @@ struct PoseWrap : public ReferenceCount {
 				mc.push_back(new AtomPairConstraint( AtomID(pose.residue(scattach_res[j]).atom_index( "C"),scattach_res[j]+(floating_scs_sub_[i]-1)*nres), AtomID(pose.residue(floating_scs_[i]).atom_index( "O"),floating_scs_[i]), bb ) );
 				mc.push_back(new AtomPairConstraint( AtomID(pose.residue(scattach_res[j]).atom_index("CB"),scattach_res[j]+(floating_scs_sub_[i]-1)*nres), AtomID(pose.residue(floating_scs_[i]).atom_index("CB"),floating_scs_[i]), cb ) );
 				ac.push_back(new MultiConstraint(mc));
-				TR << "adding cst " << i << " " << j << " " << scattach_res[j]+(floating_scs_sub_[i]-1)*nres << std::endl;		
+				TR << "adding cst " << i << " " << j << " " << scattach_res[j]+(floating_scs_sub_[i]-1)*nres << std::endl;
 			}
 			if(ac.size()) pose.add_constraint(new AmbiguousConstraint(ac));
 			else utility_exit_with_message("no floating sidechain attachments speficied!");
 		}
-		
+
 		// for(Size i = 1; i <= floating_scs_.size(); ++i) {
 		// 	for(Size j = 1; j <= floating_scs_.size(); ++j) {
 		// 		for(Size k = 0; k < nsub; ++k) {
@@ -1087,41 +1087,41 @@ struct PoseWrap : public ReferenceCount {
 					ConstraintCOPs ac;
 					TR << "adding fsc CA rep cstres1=" << floating_scs_[i] << " cstres2=" << floating_scs_[j]+(k-1)*nres << " | i=" << i << " j=" << j << " k=" << k << " n=" << nres << std::endl;
 					ac.push_back(new core::scoring::constraints::AtomPairConstraint(
-					   AtomID(2,floating_scs_[i]),AtomID(2,floating_scs_[j]+(k-1)*nres), 
+					   AtomID(2,floating_scs_[i]),AtomID(2,floating_scs_[j]+(k-1)*nres),
 					   new RepFunc(8.0,1000.0), core::scoring::coordinate_constraint ));
 					pose.add_constraint(new AmbiguousConstraint(ac));
 				}
 			}
 		}
-			
+
 		// }
 		// std::exit(-1);
 		// TR << "BPY CB IS: " << pose.residue(1).atom_index("CB") << std::endl;
 		// for(Size i = 1; i <= pose.residue(1).natoms(); ++i) {
 		// 	TR << "BPY atom " << i << " " << pose.residue(1).atom_name(i) << std::endl;
 		// }
-		
+
 	}
 
 	void set_root_atomno(Size i) { root_atomno_ = i; }
-	Size set_root_atomno() { return root_atomno_; }	
+	Size set_root_atomno() { return root_atomno_; }
 
-	bool move_chi(Size rsd) { 
+	bool move_chi(Size rsd) {
 		for(Size i = 1; i <= attach_rsd_.size(); ++i ) {
 			if( rsd == attach_rsd_[i] && attach_atom_[i] != "N" && pose.residue(rsd).is_protein() ) return true;
 		}
 		return false;
 	}
-	
-	
+
+
 	void validate_set_reference() {
 		validate_reference_ = pose;
 	}
 	bool validate() {
 		check_scattach_res();
 		return true;
-	}	
-	
+	}
+
 	string tag() {
 		string r = tag_;
 		for(Size i = 1; i <= attached_scattach_res_.size(); ++i) r += "_"+string_of(attached_scattach_res_[i]);
@@ -1134,7 +1134,7 @@ struct PoseWrap : public ReferenceCount {
 	// 	// 	kinematics::FoldTree const & f,
 	// 	// 	Pose & pose
 	// 	// );
-	// 
+	//
 	// 	ObjexxFCL::FArray2D_int jumps(2,cuts_.size());
 	// 	ObjexxFCL::FArray1D_int cuts(cuts_.size());
 	// 	for(Size i = 1; i <= cuts_.size(); ++i ) {
@@ -1144,16 +1144,16 @@ struct PoseWrap : public ReferenceCount {
 	// 	}
 	// 	core::kinematics::FoldTree ft = pose.fold_tree();
 	// 	ft.tree_from_jumps_and_cuts(nres,cuts_.size(),jumps,cuts,attach_rsd_[1]);
-	// 
+	//
 	// 	vector1<Size> pos;
 	// 	for(Size i = 1; i <= nres; ++i) pos.push_back(i);
-	// 
+	//
 	// 	core::pose::Pose pose;
 	// 	core::pose::create_subpose(in,pos,ft,pose);
 	// 	return pose;
 	// }
 	// void make_full_pose(core::pose::Pose & mono_pose) const {
-	// 	core::conformation::symmetry::make_symmetric_pose( mono_pose, *symm_data_full );		
+	// 	core::conformation::symmetry::make_symmetric_pose( mono_pose, *symm_data_full );
 	// }
 	// Size get_region(Size rsd) {
 	// 	for(Size i = 1; i<= cuts_.size(); ++i) if( rsd <= cuts_[i] ) return i;
@@ -1164,12 +1164,12 @@ struct PoseWrap : public ReferenceCount {
 
 		core::pose::Pose out_pose;
 		if( fullsymm ) {
-		// 	// TR << "init pose nres " << pose.n_residue() << std::endl;		
+		// 	// TR << "init pose nres " << pose.n_residue() << std::endl;
 		// 	out_pose = make_mono_pose(pose);
 		// 	// TR << "mono pose nres " << out_pose.n_residue() << std::endl;
 		// 	make_full_pose(out_pose);
-		// 	// TR << "full pose nres " << out_pose.n_residue() << std::endl;		
-		// 
+		// 	// TR << "full pose nres " << out_pose.n_residue() << std::endl;
+		//
 			out_pose = pose;
 		} else  {
 			out_pose = pose;
@@ -1195,15 +1195,15 @@ struct PoseWrap : public ReferenceCount {
 			for( Size i = 1; i <= ft.num_jump(); ++i ) {
 				for( Size j = 1; j <= attach_rsd_.size(); ++j ) {
 					if( add_atom_at_cen[j] == "_" ) continue;
-					if( (ft.downstream_jump_residue(i)-1)%nres+1 == attach_rsd_[j] && ft.downstream_jump_residue(i) <= (int)(nsub*nres) ) {					
+					if( (ft.downstream_jump_residue(i)-1)%nres+1 == attach_rsd_[j] && ft.downstream_jump_residue(i) <= (int)(nsub*nres) ) {
 						Vec o = out_pose.xyz(core::id::AtomID(1,ft.upstream_jump_residue(i)));
 						added.push_back(o);
 						// TR << "output metal at origin of " << ft.upstream_jump_residue(i) << " " << add_atom_at_cen[j] << " " << o << std::endl;
 					}
 				}
 			}
-		}		
-		
+		}
+
 		numeric::xyzVector<Real> shift;
 		// center output on added atom, if only one
 		Real mxdis = 0.0;
@@ -1225,13 +1225,13 @@ struct PoseWrap : public ReferenceCount {
 			}
 			shift /= N;
 		}
-		
+
 		for(Size i = 1; i <= pose.n_residue(); ++i) {
 			for(Size j = 1; j <= pose.residue_type(i).natoms(); ++j) {
 				out_pose.set_xyz( AtomID(j,i), out_pose.xyz(AtomID(j,i)) - shift );
 			}
 		}
-		
+
 		out_pose.dump_pdb(out);
 
 		{
@@ -1240,7 +1240,7 @@ struct PoseWrap : public ReferenceCount {
 			for( Size i = 1; i <= ft.num_jump(); ++i ) {
 				for( Size j = 1; j <= attach_rsd_.size(); ++j ) {
 					if( add_atom_at_cen[j] == "_" ) continue;
-					if( (ft.downstream_jump_residue(i)-1)%nres+1 == attach_rsd_[j] && ft.downstream_jump_residue(i) <= (int)(nsub*nres) ) {					
+					if( (ft.downstream_jump_residue(i)-1)%nres+1 == attach_rsd_[j] && ft.downstream_jump_residue(i) <= (int)(nsub*nres) ) {
 						Vec o = out_pose.xyz(core::id::AtomID(1,ft.upstream_jump_residue(i)));
 						Size subunit = (ft.downstream_jump_residue(i)-1) / nres;
 						char chain = string("ABCDEFGHIJKLMNOPQRSTUVWXYZ")[(subunit-1)%26];
@@ -1260,51 +1260,51 @@ struct PoseWrap : public ReferenceCount {
 		// for( std::map< string, core::conformation::symmetry::VirtualCoordinate >::const_iterator i = m.begin(); i != m.end(); ++i ) {
 		// 	TR << i->first << " " << i->second.get_x() << " " << i->second.get_y() << " " << i->second.get_origin() << std::endl;
 		// }
-		
+
 	}
-	
+
 	bool is_floating_sc(Size ir) {
 		return std::find(floating_scs_.begin(),floating_scs_.end(),ir)!=floating_scs_.end();
 	}
-	
+
 	void align_orig_pose( Size beg, Size end ) {
 		using namespace core;
 		id::AtomID_Map< id::AtomID > atom_map;
 		id::initialize( atom_map, orig_pose, id::BOGUS_ATOM_ID ); // maps every atomid to bogus atom
-		
+
 		for ( Size i=beg; i<=end; ++i ) {
 		  id::AtomID const id1( orig_pose.residue(i).atom_index("CA"), i );
 		  id::AtomID const id2( pose     .residue(i).atom_index("CA"), i );
 		  atom_map[ id1 ] = id2;
 		}
 		scoring::superimpose_pose( orig_pose, pose, atom_map );
-		
+
 	}
-	
+
 	bool switch_to_fa() {
 		TR << "switch to fa" << std::endl;
 		if(pose.is_fullatom()) {
 			TR << "WARNING: switch to FA when already in fa!" << std::endl;
 		} else {
-		
+
 			if(debug) pose.dump_pdb("before_switch_to_fa.pdb");
 
-			if( basic::options::option[basic::options::OptionKeys::smhybrid::centroid_all_val]() ) {		
+			if( basic::options::option[basic::options::OptionKeys::smhybrid::centroid_all_val]() ) {
 				for(Size i = 1; i <= nres; ++i) {
 					res_types_.push_back(&(pose.residue(i).type()));
 					if(find(floating_scs_.begin(),floating_scs_.end(),i)==floating_scs_.end()) {
 						core::chemical::replace_pose_residue_copying_existing_coordinates( pose, i, *res_types_[i] );
 					}
 				}
-			}		
-		
-			core::pose::Pose const cen( pose );	
+			}
+
+			core::pose::Pose const cen( pose );
 			// TR << "switch to fa:" << std::endl;
 			core::chemical::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 			// check_scattach_res();
 			// dump_pdb("switch_to_fa_1.pdb");
 			//get_closest_res_for_sc_attach
-		
+
 			for(Size i = 1; i <= subsub_fixed_begin.size(); ++i) {
 				if(subsub_fixed_begin[i]==0 || subsub_fixed_end[i]==0) continue;
 				TR << "align orig_pose " << subsub_fixed_begin[i] << " " << subsub_fixed_end[i] << std::endl;
@@ -1324,7 +1324,7 @@ struct PoseWrap : public ReferenceCount {
 			core::id::AtomID_Map<bool> missing;
 			core::id::initialize(missing,pose,false);
 			bool anymissing = false;
-			for(Size ath = 1; ath <= attach_rsd_.size(); ++ath) {	
+			for(Size ath = 1; ath <= attach_rsd_.size(); ++ath) {
 				for(Size attach = attach_rsd_[ath]; attach < nsub*nres; attach += nres) {
 					for(Size i = 1; i <= pose.residue(attach).natoms(); ++i) {
 						string aname = pose.residue(attach).atom_name(i);
@@ -1347,24 +1347,24 @@ struct PoseWrap : public ReferenceCount {
 		add_apcs_local(true);
 		check_scattach_res();
 		if(debug) pose.dump_pdb("after_switch_to_fa.pdb");
-		if(!replace_scattach_res()) { 
+		if(!replace_scattach_res()) {
 			TR << "switch_to_fa: replace_scattach_res failed!" << std::endl;
 			return false;
 		}
-		
+
 		for(Size i = 1; i <= rep_edge_res_.size(); ++i) {
 			core::core::pose::add_variant_type_to_pose_residue(pose,"SHOVE_STRAND",rep_edge_res_[i]);
-			TR << "switch_to_fa setting edge strand repulsive: " << rep_edge_res_[i] << " " << pose.residue(rep_edge_res_[i]).atom_name(1) << std::endl;			
-			
+			TR << "switch_to_fa setting edge strand repulsive: " << rep_edge_res_[i] << " " << pose.residue(rep_edge_res_[i]).atom_name(1) << std::endl;
+
 		}
-		
+
 		check_scattach_res();
 		// for(Size i = 1; i <= pose.residue(1).natoms(); ++i) {
 		// 	TR << "BPY atom " << i << " " << pose.residue(1).atom_name(i) << std::endl;
 		// }
 		// std::exit(-1);
 		// dump_pdb("switch_to_fa_3.pdb");
-		
+
 		// for( Size scid = 1; scid <= floating_scs_.size(); ++scid ) {
 		// 	Vec f = pose.residue(floating_scs_[scid]).xyz("CA");
 		// 	Real best = 9e9;
@@ -1378,7 +1378,7 @@ struct PoseWrap : public ReferenceCount {
 		// 		}
 		// 	}
 		// 	floating_scs_attach_.push_back(bsti);
-		// 	
+		//
 		// }
 		return true;
 	}
@@ -1386,7 +1386,7 @@ struct PoseWrap : public ReferenceCount {
 		for(Size i = 1; i <=attached_scattach_res_.size(); ++i) {
 			if(pose.residue(attached_scattach_res_[i]).name3() != attached_scattach_res_name_[i]) {
 				if(debug) std::cerr << "FA FAIL: " << pose.residue(attached_scattach_res_[i]).name3() << " " << attached_scattach_res_name_[i] << std::endl;
-				return false;		
+				return false;
 			}
 		}
 		return true;
@@ -1416,12 +1416,12 @@ struct PoseWrap : public ReferenceCount {
 		}
 		// pose.dump_pdb("switch_to_cen1.pdb");
 		// for(Size i = 1; i <= subsub_fixed_begin.size(); ++i) {
-		// 	if(subsub_fixed_begin[i]==0 || subsub_fixed_end[i]==0) continue;			
+		// 	if(subsub_fixed_begin[i]==0 || subsub_fixed_end[i]==0) continue;
 		// 	for(Size rsd = subsub_fixed_begin[i]; rsd <= subsub_fixed_end[i]; ++rsd) {
 		// 		// addcc(pose,AtomID(2,rsd),attach_rsd_[i],1.0);
 		// 	}
 		// }
-		
+
 
 		core::id::AtomID_Map<bool> missing;
 		core::id::initialize(missing,pose,false);
@@ -1435,21 +1435,21 @@ struct PoseWrap : public ReferenceCount {
 						// TR << "switch_to_cen: setting coords for res " << attach << " atom " << aname << std::endl;
 						pose.set_xyz(core::id::AtomID(i,attach),fa.residue(attach).xyz(aname));
 					} else {
-						TR << "WARNING: switch_to_cen: res " << attach << " missing " << aname << std::endl;				
+						TR << "WARNING: switch_to_cen: res " << attach << " missing " << aname << std::endl;
 						missing[core::id::AtomID(i,attach)] = true;
 						anymissing = true;
 					}
 				}
 			}
 		}
-		
+
 		for(Size i = 1; i <= rep_edge_res_.size(); ++i) {
 			core::core::pose::add_variant_type_to_pose_residue(pose,"SHOVE_STRAND",rep_edge_res_[i]);
 			TR << "switch_to_cen setting edge strand repulsive: " << rep_edge_res_[i] << " " << pose.residue(rep_edge_res_[i]).atom_name(1) << std::endl;
 		}
 		// pose.dump_pdb("switch_to_cen2.pdb");
-		// TR << "switch_to_cen fill missing" << std::endl;		
-		if(anymissing) pose.conformation().fill_missing_atoms( missing );	
+		// TR << "switch_to_cen fill missing" << std::endl;
+		if(anymissing) pose.conformation().fill_missing_atoms( missing );
 		// TR << "switch_to_cen DONE" << std::endl;
 		// pose.dump_pdb("switch_to_cen3.pdb");
 		add_apcs_local(false);
@@ -1464,12 +1464,12 @@ struct PoseWrap : public ReferenceCount {
 		}
 		using namespace core::scoring::constraints;
 		ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
-		
+
 		// TR << pose.constraint_set()->get_all_constraints()[1] << std::endl;
 		// TR << pose.constraint_set()->get_all_constraints()[1] << std::endl;
 		// TR << pose.constraint_set()->get_all_constraints()[1] << std::endl;
 		// std::exit(-1);
-		
+
 		// core::scoring::EnergyMap weights,emap;
 		// weights[core::scoring::atom_pair_constraint] = 1;
 		// core::scoring::constraints::ResiduePairXYZ xyzfunc(pose.residue(float_rsd),pose.residue(float_rsd));
@@ -1478,20 +1478,20 @@ struct PoseWrap : public ReferenceCount {
 		sf->set_weight(core::scoring::atom_pair_constraint,1.0);
 		sf = new core::scoring::symmetry::SymmetricScoreFunction(*sf);
 		(*sf)(pose);
-		
+
 		for(Size i = 1; i <= cs.size(); i++) {
 			if( cs[i]->type() != "AmbiguousConstraint" ) continue;
 			AmbiguousConstraint const * ac = (AmbiguousConstraint const *)(cs[i]());
 			if(ac->active_constraint()->type() != "MultiConstraint") continue;
 			MultiConstraint     const * mc = (MultiConstraint     const *)(ac->active_constraint()());
-			AtomPairConstraint  const * pc = (AtomPairConstraint  const *)(mc->member_constraints()[1]());			
+			AtomPairConstraint  const * pc = (AtomPairConstraint  const *)(mc->member_constraints()[1]());
 			AtomID paid = pc->atom(1);
 			AtomID faid = pc->atom(2);
 			TR << "PAID " << paid.rsd() << " FAID " << faid.rsd() << std::endl;
 			if(faid.rsd()==float_rsd) {
 				return (paid.rsd()-1)%nres+1;
-			}				
-		}	
+			}
+		}
 		utility_exit_with_message("couldn't find float sc attach point");
 		return 0;
 
@@ -1499,9 +1499,9 @@ struct PoseWrap : public ReferenceCount {
 		// core::conformation::symmetry::SymmetricConformation const & SymmConf (
 		// 	dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		// core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-		// 
+		//
 		// Vec floater( pose.residue(float_rsd).xyz("CA"));
-		// 
+		//
 		// // vector1<bool> nearcut(pose.n_residue(),false);
 		// // for(Size i = 1; i <= 4; ++i) nearcut[i] = true;
 		// // for(Size i = 1; i <= (Size)pose.fold_tree().num_cutpoint(); ++i) {
@@ -1509,7 +1509,7 @@ struct PoseWrap : public ReferenceCount {
 		// // 	if( !symm_info->bb_is_independent(cp) ) continue;
 		// // 	for(Size j = numeric::max(((Size)1),cp-4); j <= numeric::min(cp+4,pose.n_residue()); ++j) nearcut[j] = true;
 		// // }
-		// 	
+		//
 		// Size best = 9e9;
 		// Size sc_attch_rsd = 0;
 		// for( Size i = 1; i <= nres; ++i ) {
@@ -1519,7 +1519,7 @@ struct PoseWrap : public ReferenceCount {
 		// 	for(Size j = 1; j <= attach_rsd_.size(); ++j) if( attach_rsd_[j]==i && attach_atom_[j]!="N" ) isattach = true;
 		// 	if(isattach) continue;
 		// 	// if( nearcut[i] ) continue;
-		// 	
+		//
 		// 	Real dis = (floater.distance( pose.residue(i).xyz(2) )); dis = abs(dis);
 		// 	if( dis < best ) {
 		// 		// TR << "floating_sc " << i << " " << dis << std::endl;
@@ -1529,13 +1529,13 @@ struct PoseWrap : public ReferenceCount {
 		// }
 		// return sc_attch_rsd;
 	}
-	
+
 	void update_designable_packable() {
 		is_repackable_.resize(nres);
 		is_designable_.resize(nres);
 		for(Size i = 1; i <= nres; ++i) {
 			is_designable_[i] = true;
-			is_repackable_[i] = true;			
+			is_repackable_[i] = true;
 		}
 		for(Size i = 1; i <= nres; ++i) {
 			if(ss(i)=='F') {
@@ -1548,25 +1548,25 @@ struct PoseWrap : public ReferenceCount {
 		}
 		for(Size i = 1; i <= design_res_user.size(); ++i) {
 			is_designable_[design_res_user[i]] = true;
-			is_repackable_[design_res_user[i]] = true;			
+			is_repackable_[design_res_user[i]] = true;
 		}
 		for(Size i = 1; i <= fixed_res_user.size(); ++i) {
 			is_designable_[fixed_res_user[i]] = false;
-			is_repackable_[fixed_res_user[i]] = false;			
+			is_repackable_[fixed_res_user[i]] = false;
 		}
 		for(Size j = 1; j <= floating_scs_.size(); ++j) {
 			Size r = get_closest_res_for_sc_attach(floating_scs_[j]);
 			if(!r) continue;
 			if( pose.is_fullatom() ) {
-				core::chemical::replace_pose_residue_copying_existing_coordinates( pose, r, fa_residue_set_->name_map("ALA") );				
+				core::chemical::replace_pose_residue_copying_existing_coordinates( pose, r, fa_residue_set_->name_map("ALA") );
 				core::core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_SC",r);
 				TR << "setting res " << r << " to alanine" << std::endl;
 			}
 			is_designable_[r] = false;
 			is_repackable_[r] = false;
 		}
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::restrict_design_to_interface]() ) {		
-			for(Size i = 1; i <= nres; ++i) { 
+		if( basic::options::option[basic::options::OptionKeys::smhybrid::restrict_design_to_interface]() ) {
+			for(Size i = 1; i <= nres; ++i) {
 				// if(!is_designable_[i]) continue;
 				Size is = which_sub(i);
 				bool iface = false;
@@ -1581,8 +1581,8 @@ struct PoseWrap : public ReferenceCount {
 		 		else is_designable_[i] = true;
 			}
 		}
-		if( basic::options::option[basic::options::OptionKeys::smhybrid::restrict_design_to_subsub_interface]() ) {		
-			for(Size i = 1; i <= nres; ++i) { 
+		if( basic::options::option[basic::options::OptionKeys::smhybrid::restrict_design_to_subsub_interface]() ) {
+			for(Size i = 1; i <= nres; ++i) {
 				if(!is_designable_[i]) continue;
 				Size is = which_subsub(i);
 				bool iface = false;
@@ -1607,24 +1607,24 @@ struct PoseWrap : public ReferenceCount {
 		}
 		for(Size i = 1; i <= attached_scattach_res_.size(); ++i) {
 			is_designable_[attached_scattach_res_[i]] = false;
-			is_repackable_[attached_scattach_res_[i]] = true;			
+			is_repackable_[attached_scattach_res_[i]] = true;
 		}
 	}
 	bool is_rsd_designable(Size i) const { return is_designable_[i]; }
-	bool is_rsd_repackable(Size i) const { return is_repackable_[i]; }	
+	bool is_rsd_repackable(Size i) const { return is_repackable_[i]; }
 
 	void add_apcs_local(bool fullatom = false) {
 		// std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 		// return;
 		vector1<Size> all_subsub;
 		// for(Size ss = 1; ss <= subsub_starts_.size(); ++ss) {
-			// Size start=subsub_starts_[ss], end=subsub_ends_[ss];			
+			// Size start=subsub_starts_[ss], end=subsub_ends_[ss];
 		for(Size ss = 1; ss <= subsub_fixed_begin.size(); ++ss) {
-			Size start=subsub_fixed_begin[ss], end=subsub_fixed_end[ss];			
+			Size start=subsub_fixed_begin[ss], end=subsub_fixed_end[ss];
 			vector1<Size> subs;
 			if(cst_sub_files_.size() >= ss) subs = cst_sub_files_[ss];
 			if(subs.size()==0) subs.push_back(1);
-			
+
 			vector1<Size> res;
 			for(vector1<Size>::iterator i = subs.begin(); i != subs.end(); ++i) {
 				for(Size j = start; j <= end; ++j) {
@@ -1639,7 +1639,7 @@ struct PoseWrap : public ReferenceCount {
 					else TR << "FA adding local apcs to resi " << i << std::endl;
 				} else { // is frag res
 					if(fullatom) continue;
-					else TR << "CEN adding local apcs to resi " << i << std::endl;					
+					else TR << "CEN adding local apcs to resi " << i << std::endl;
 				}
 				for(vector1<Size>::iterator j = res.begin(); j != res.end(); ++j) {
 					if( i+5 > *j ) continue;
@@ -1666,7 +1666,7 @@ struct PoseWrap : public ReferenceCount {
 				}
 			}
 		}
-		
+
 		// trying to make sheet....
 // 		using namespace core::scoring::constraints;
 // 		ConstraintCOPs ac;
@@ -1688,23 +1688,23 @@ struct PoseWrap : public ReferenceCount {
 // 				ConstraintCOPs mc;
 // 				mc.push_back(new AtomPairConstraint( AtomID(2,a[i][0]), AtomID(2,b[j][0]), func ) );
 // 				mc.push_back(new AtomPairConstraint( AtomID(2,a[i][1]), AtomID(2,b[j][1]), func ) );
-// 				ac.push_back(new MultiConstraint(mc));				
+// 				ac.push_back(new MultiConstraint(mc));
 // 				}
 // 				{
 // 				ConstraintCOPs mc;
 // 				mc.push_back(new AtomPairConstraint( AtomID(2,a[i][0]), AtomID(2,b[j][1]), func ) );
 // 				mc.push_back(new AtomPairConstraint( AtomID(2,a[i][1]), AtomID(2,b[j][0]), func ) );
-// 				ac.push_back(new MultiConstraint(mc));				
+// 				ac.push_back(new MultiConstraint(mc));
 // 				}
 
 // 			}
 // 		}
 // 		if(ac.size()) pose.add_constraint(new AmbiguousConstraint(ac));
-// 
-	
-		
+//
+
+
 	}
-	
+
 	// void add_fsc_harmonic_cst() {
 	// 	using namespace core::scoring::constraints;
 	// 	for(Size i = 1; i <= floating_scs_.size(); ++i ) {
@@ -1713,13 +1713,13 @@ struct PoseWrap : public ReferenceCount {
 	// 			if( pose.residue(r).has(pose.residue(fsc).atom_name(j)) ) {
 	// 				Real wt = 1.0;
 	// 				if(j < 5) wt = 3.0;
-	// 				pose.add_constraint( new AtomPairConstraint( 
+	// 				pose.add_constraint( new AtomPairConstraint(
 	// 					AtomID(pose.residue(r).atom_index(pose.residue(fsc).atom_name(j)),r),
 	// 					AtomID(j,fsc), new HarmonicFunc(0.0,wt) ) );
-	// 			} 
+	// 			}
 	// 		}
-	// 	} 
-	// 	
+	// 	}
+	//
 	// }
 
 	bool check_scattach_res() {
@@ -1730,8 +1730,8 @@ struct PoseWrap : public ReferenceCount {
 				Vec ne2 = pose.residue(floating_scs_[i]).xyz("NE2");
 				Vec nd1 = pose.residue(floating_scs_[i]).xyz("ND1");
 				Vec ce1 = pose.residue(floating_scs_[i]).xyz("CE1");
-				// Vec cd2 = pose.residue(floating_scs_[i]).xyz("CD2");								
-				// Vec cg  = pose.residue(floating_scs_[i]).xyz("CG" );								
+				// Vec cd2 = pose.residue(floating_scs_[i]).xyz("CD2");
+				// Vec cg  = pose.residue(floating_scs_[i]).xyz("CG" );
 				Real dd = cen.distance(nd1), de = cen.distance(ne2);
 				bool fail = false;
 				if(dd<de) {
@@ -1742,7 +1742,7 @@ struct PoseWrap : public ReferenceCount {
 						TR << "check_scattach_res FAIL angle cen nd1 ce1 " << i << " " << fabs(numeric::angle_radians(cen,nd1,ce1)-2.21751) << std::endl;
 						TR << cen << std::endl;
 						TR << nd1 << std::endl;
-						TR << ce1 << std::endl;														
+						TR << ce1 << std::endl;
 					}
 					for(Size j = 1; j <= other_tetra.size(); j++) {
 						// TR << "tetra: " << numeric::angle_radians(nd1,cen,other_tetra[j]) << std::endl;
@@ -1751,7 +1751,7 @@ struct PoseWrap : public ReferenceCount {
 							TR << "check_scattach_res FAIL tetra " << i << " " << j << " " << fabs(numeric::angle_radians(nd1,cen,other_tetra[j])-1.911136) << std::endl;
 							TR << nd1 << std::endl;
 							TR << cen << std::endl;
-							TR << other_tetra[j] << std::endl;														
+							TR << other_tetra[j] << std::endl;
 						}
 					}
 					other_tetra.push_back(nd1);
@@ -1763,8 +1763,8 @@ struct PoseWrap : public ReferenceCount {
 						TR << "check_scattach_res FAIL angle cen ne2 ce1 " << i << " " << fabs(numeric::angle_radians(cen,ne2,ce1)-2.21751) << std::endl;
 						TR << cen << std::endl;
 						TR << ne2 << std::endl;
-						TR << ce1 << std::endl;														
-					}						
+						TR << ce1 << std::endl;
+					}
 					for(Size j = 1; j <= other_tetra.size(); j++) {
 						// TR << "tetra: " << numeric::angle_radians(ne2,cen,other_tetra[j]) << std::endl;
 						if(fabs(numeric::angle_radians(ne2,cen,other_tetra[j])-1.911136) > 0.02) {
@@ -1810,8 +1810,8 @@ struct PoseWrap : public ReferenceCount {
 		// 	}
 		// }
 		// pose.fold_tree(ft);
-		
-		
+
+
 		TR << "NCST: " << pose.constraint_set()->get_all_constraints().size() << std::endl;
 		using namespace core::scoring::constraints;
 		ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
@@ -1821,12 +1821,12 @@ struct PoseWrap : public ReferenceCount {
 			rem.push_back(cs[i]);
 		}
 		pose.remove_constraints(rem);
-		
+
 		TR << "NCST: " << pose.constraint_set()->get_all_constraints().size() << std::endl;
 		TR << "=========================================================" << std::endl;
 		TR << pose.fold_tree() << std::endl;
 		check_scattach_res();
-		
+
 		attached_scattach_res_.clear();
 		attached_scattach_res_name_.clear();
 		for(Size i = 1; i <= floating_scs_.size(); ++i ) {
@@ -1838,14 +1838,14 @@ struct PoseWrap : public ReferenceCount {
 				// 	if(pose.fold_tree().downstream_jump_residue(j) == (int)fsc) {
 				// 		TR << "adding dist cst from HIS N to virt ZN" << std::endl;
 				// 		Size upres = pose.fold_tree().upstream_jump_residue(j);
-				// 		pose.add_constraint( new AtomPairConstraint( 
+				// 		pose.add_constraint( new AtomPairConstraint(
 				// 			AtomID(pose.residue(r).atom_index(pose.fold_tree().downstream_atom(j)),r),
 				// 			AtomID(1,upres), new AbsFunc(2.0,0.5) ) );
 				// 		break;
 				// 	}
 				// }
 			} else if ( pose.residue(fsc).name3() == "BPY" ) {
-				core::chemical::replace_pose_residue_copying_existing_coordinates( pose, r, fa_residue_set_->name_map("BPY") );				
+				core::chemical::replace_pose_residue_copying_existing_coordinates( pose, r, fa_residue_set_->name_map("BPY") );
 			}
 			check_scattach_res();
 			if(debug) dump_pdb("before_virt.pdb");
@@ -1868,7 +1868,7 @@ struct PoseWrap : public ReferenceCount {
 				if( pose.residue(r).has(pose.residue(fsc).atom_name(j)) ) {
 					Real wt = 1.0;
 					if(j < 5) wt = 3.0;
-					pose.add_constraint( new AtomPairConstraint( 
+					pose.add_constraint( new AtomPairConstraint(
 						AtomID(pose.residue(r).atom_index(pose.residue(fsc).atom_name(j)),r),
 						AtomID(j,fsc), new AbsFunc(0.0,wt) ) );
 				} else {
@@ -1878,12 +1878,12 @@ struct PoseWrap : public ReferenceCount {
 			attached_scattach_res_.push_back(r);
 			attached_scattach_res_name_.push_back(pose.residue(r).name3());
 			check_scattach_res();
-		} 
-		
+		}
+
 		for(Size i = 1; i <= attached_scattach_res_.size(); ++i) {
 			for(Size j = i+1; j <= attached_scattach_res_.size(); ++j) {
 				if(attached_scattach_res_[i]==attached_scattach_res_[j]) return false;
-			}			
+			}
 		}
 		// ft = pose.fold_tree();
 		// for(Size j = 1; j <= (Size)ft.num_jump(); ++j ) {
@@ -1895,14 +1895,14 @@ struct PoseWrap : public ReferenceCount {
 
 		return true;
 	}
-	
+
 	Real rms_to_orig_subsubs() {
 		Real rms = 0.0;
 		Size n = 0;
 		for(Size i = 1; i <= subsub_starts_.size(); ++i) {
 			// TR << "align orig_pose " << subsub_starts_[i] << " " << subsub_ends_[i] << std::endl;
 			align_orig_pose( subsub_starts_[i], subsub_ends_[i] );
-			// TR << "set coords " << subsub_starts_[i] << " " << subsub_ends_[i] << std::endl;			
+			// TR << "set coords " << subsub_starts_[i] << " " << subsub_ends_[i] << std::endl;
 			for(Size rsd = subsub_starts_[i]; rsd <= subsub_ends_[i]; ++rsd) {
 				for(Size j = 1; j <= pose.residue(rsd).nheavyatoms(); ++j) {
 					if( j > orig_pose.residue(rsd).nheavyatoms() ) continue;
@@ -1913,13 +1913,13 @@ struct PoseWrap : public ReferenceCount {
 			}
 		}
 		return std::sqrt(rms/n);
-	}	
+	}
 
 	Real absrms_to_orig_subsubs() {
 		Real rms = 0.0;
 		Size n = 0;
 		for(Size i = 1; i <= subsub_starts_.size(); ++i) {
-			// TR << "set coords " << subsub_starts_[i] << " " << subsub_ends_[i] << std::endl;			
+			// TR << "set coords " << subsub_starts_[i] << " " << subsub_ends_[i] << std::endl;
 			for(Size rsd = subsub_starts_[i]; rsd <= subsub_ends_[i]; ++rsd) {
 				for(Size j = 1; j <= pose.residue(rsd).nheavyatoms(); ++j) {
 					if( j > orig_pose.residue(rsd).nheavyatoms() ) continue;
@@ -1931,7 +1931,7 @@ struct PoseWrap : public ReferenceCount {
 			}
 		}
 		return std::sqrt(rms/n);
-	}	
+	}
 
 
 	void center() {
@@ -1961,7 +1961,7 @@ vector1<xyzVector<Size> > read_jumpcut_file(string fn) {
 	vector1<numeric::xyzVector<Size> > l;
 	if(fn=="") return l;
 	if(fn=="_") return l;
-	if(fn.size()==1 && fn[0]==(char)0) return l;	
+	if(fn.size()==1 && fn[0]==(char)0) return l;
 	izstream in(fn);
 	if(!in.good()) {
 		utility_exit_with_message("can't open file "+fn);
@@ -2001,7 +2001,7 @@ PoseWrap posewrap_from_command_line(string symm_def_template = "", string symm_d
 	vector1<core::pose::Pose> poses;
 	// TR << "found poses " << pdbs.size() << std::endl;
 	vector1<Size> filepick;
-	string tag;	
+	string tag;
 	vector1<string> attach_rsd = option[ smhybrid::attach_rsd ]();
 	vector1<string> attach_atom = option[ smhybrid::attach_atom ]();
 	vector1<string> ss_pref = option[ smhybrid::add_ss_before ]();
@@ -2017,7 +2017,7 @@ PoseWrap posewrap_from_command_line(string symm_def_template = "", string symm_d
 	if(option[smhybrid::attach_as_sc].user()) attach_as_sc = option[ smhybrid::attach_as_sc ]();
 	// convert to vector1s
 	vector1<Size> myattach;
-	vector1<Size> mysc;	
+	vector1<Size> mysc;
 	vector1<string> myattach_atom,mypref,mysuff,myrespref,myressuff;
 
 	for(Size i = 1; i <= pdbs.size(); ++i ) {
@@ -2192,7 +2192,7 @@ core::fragment::FragSetOP make_frag_set(PoseWrap const & pw, std::map<string, ve
 		vector1<char> ss0,ss1,ss2;
 		if('*'==ss3[0]) { ss0.push_back('H'); ss0.push_back('E'); ss0.push_back('L'); } else ss0.push_back(ss3[0]);
 		if('*'==ss3[1]) { ss1.push_back('H'); ss1.push_back('E'); ss1.push_back('L'); } else ss1.push_back(ss3[1]);
-		if('*'==ss3[2]) { ss2.push_back('H'); ss2.push_back('E'); ss2.push_back('L'); } else ss2.push_back(ss3[2]);				
+		if('*'==ss3[2]) { ss2.push_back('H'); ss2.push_back('E'); ss2.push_back('L'); } else ss2.push_back(ss3[2]);
 		for( Size j = 1; j <= ss0.size(); ++j ) {
 		for( Size k = 1; k <= ss1.size(); ++k ) {
 		for( Size l = 1; l <= ss2.size(); ++l ) {
@@ -2258,7 +2258,7 @@ public:
 			pose.set_chi(i,residue_,chis[i]);
 		}
 		for(Size i = chis.size()+1; i <= nchi; ++i ) {
-			pose.set_chi(i,residue_,uniform()*360.0);			
+			pose.set_chi(i,residue_,uniform()*360.0);
 		}
 		// Real a =  5.0*numeric::random::gaussian();
 		// Real b = 30.0*numeric::random::gaussian();
@@ -2311,24 +2311,24 @@ public:
 	bool concerted_,debug_;
 	MoverOP post_;
 	Size concert_sub_;
-	vector1<int> symjumps,rbjumps,comjump;	
+	vector1<int> symjumps,rbjumps,comjump;
 	MyTransMover(PoseWrap & pw, Real mag, bool concerted=false, MoverOP post = NULL, Real postfrac = 0, Size concert_sub=0) : mag_(mag), postfrac_(postfrac), concerted_(concerted), debug_(pw.debug), post_(post), concert_sub_(concert_sub) {
 		pw_ = pw;
 		core::pose::Pose & pose(pw.pose);
 		dofs_ = core::conformation::symmetry::symmetry_info(pose)->get_dofs();
 		if(concerted_) {
 			for(Size j = 1; j <= pose.fold_tree().num_jump(); ++j) {
-				if( pose.fold_tree().downstream_jump_residue(j)==(int)concert_sub_ ) concert_sub_ = pose.fold_tree().upstream_jump_residue(j);		
+				if( pose.fold_tree().downstream_jump_residue(j)==(int)concert_sub_ ) concert_sub_ = pose.fold_tree().upstream_jump_residue(j);
 			}
 		}
 		for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs_.begin(); i != dofs_.end(); ++i) {
-			if(        i->second.allow_dof(1) &&  i->second.allow_dof(2) &&  i->second.allow_dof(3) && 
+			if(        i->second.allow_dof(1) &&  i->second.allow_dof(2) &&  i->second.allow_dof(3) &&
 			          !i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
 				comjump.push_back(i->first);
-			} else if( i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) && 
+			} else if( i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) &&
 			           i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
 				symjumps.push_back(i->first);
-			} else if(/*i->second.allow_dof(1)&&*/i->second.allow_dof(2) && i->second.allow_dof(3) && 
+			} else if(/*i->second.allow_dof(1)&&*/i->second.allow_dof(2) && i->second.allow_dof(3) &&
 			            i->second.allow_dof(4) && i->second.allow_dof(5) && i->second.allow_dof(6) ) {
 				rbjumps.push_back(i->first);
 			}
@@ -2340,13 +2340,13 @@ public:
 		pw_->validate_set_reference();
 		// if(debug_) TR << "MyTransMover " << concerted_ << std::endl;
 		if( concerted_ ) {
-			// pose.dump_pdb("trans_before.pdb");			
-			if( (rbjumps.size()==0 || uniform() < 0.6) && symjumps.size() > 0 ) {	
+			// pose.dump_pdb("trans_before.pdb");
+			if( (rbjumps.size()==0 || uniform() < 0.6) && symjumps.size() > 0 ) {
 				Real magx = gaussian()*mag_;
 				for(Size idx = 1; idx <= symjumps.size(); ++idx) {
 					core::kinematics::Jump j(pose.jump(symjumps[idx]));
 					j.set_translation(j.get_translation()+(magx)*Vec(1,0,0));
-					pose.set_jump(symjumps[idx],j);				
+					pose.set_jump(symjumps[idx],j);
 				}
 			} else {
 				Real magx = gaussian()*mag_; Real magy = gaussian()*mag_; Real magz = gaussian()*mag_;
@@ -2355,22 +2355,22 @@ public:
 					if(dofs_[rbjumps[idx]].allow_dof(1)) j.set_translation(j.get_translation()+(magx)*Vec(1,0,0));
 					if(dofs_[rbjumps[idx]].allow_dof(2)) j.set_translation(j.get_translation()+(magy)*Vec(0,1,0));
 					if(dofs_[rbjumps[idx]].allow_dof(3)) j.set_translation(j.get_translation()+(magz)*Vec(0,0,1));
-					pose.set_jump(rbjumps[idx],j);				
-				}				
+					pose.set_jump(rbjumps[idx],j);
+				}
 			}
 			// pose.dump_pdb("trans_after.pdb");
 			// if(uniform() < 0.01) std::exit(-1);
 		} else {
 			if( (rbjumps.size()==0 || uniform() < 0.6) && symjumps.size() > 0 ) {
-				Size idx = std::ceil(uniform()*symjumps.size());				
+				Size idx = std::ceil(uniform()*symjumps.size());
 				core::kinematics::Jump j(pose.jump(symjumps[idx]));
 				j.set_translation(j.get_translation()+(gaussian()*mag_)*Vec(1,0,0));
-				pose.set_jump(symjumps[idx],j);				
+				pose.set_jump(symjumps[idx],j);
 			} else if(rbjumps.size()>0) { // move rb jump
 				Size idx = std::ceil(uniform()*rbjumps.size());
 				core::kinematics::Jump j(pose.jump(rbjumps[idx]));
 				j.set_translation(j.get_translation()+Vec((gaussian()*mag_),(gaussian()*mag_),(gaussian()*mag_)));
-				pose.set_jump(rbjumps[idx],j);				
+				pose.set_jump(rbjumps[idx],j);
 			} else {
 				static bool printed(false);
 				if(!printed) {
@@ -2379,11 +2379,11 @@ public:
 				}
 			}
 		}
-		
+
 		if(post_ && uniform() < postfrac_ && !concerted_) post_->apply(pose);
-		
+
 		pw_->validate();
-		pw_->center();	
+		pw_->center();
 	}
 };
 
@@ -2419,14 +2419,14 @@ public:
 		dofs_ = core::conformation::symmetry::symmetry_info(pw.pose)->get_dofs();
 		if(counterrot_) {
 			for(Size j = 1; j <= pw.pose.fold_tree().num_jump(); ++j) {
-				if( pw.pose.fold_tree().downstream_jump_residue(j)==(int)concert_sub_ ) concert_sub_ = pw.pose.fold_tree().upstream_jump_residue(j);		
+				if( pw.pose.fold_tree().downstream_jump_residue(j)==(int)concert_sub_ ) concert_sub_ = pw.pose.fold_tree().upstream_jump_residue(j);
 			}
 		}
 		for(std::map<Size,core::conformation::symmetry::SymDof>::iterator i = dofs_.begin(); i != dofs_.end(); ++i) {
-			if( i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) && 
+			if( i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) &&
 			    i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
 				symjumps.push_back(i->first);
-			} else if( !i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) && 
+			} else if( !i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) &&
 			            i->second.allow_dof(4) && !i->second.allow_dof(5) && !i->second.allow_dof(6) ) {
 				rotjumps.push_back(i->first);
 			} else {
@@ -2460,9 +2460,9 @@ public:
 					Size idx = std::ceil(uniform()*rotjumps.size());
 					core::kinematics::Jump j(pose.jump(rotjumps[idx]));
 					j.set_rotation(x_rotation_matrix_degrees(MAG)*j.get_rotation());
-					pose.set_jump(rotjumps[idx],j);						
+					pose.set_jump(rotjumps[idx],j);
 					// TR << "ROT MOVER MOVE 1 " << MAG << std::endl;
-				} else if( (rbjumps.size()==0 || uniform() < 0.5) && symjumps.size() > 0 ) {			
+				} else if( (rbjumps.size()==0 || uniform() < 0.5) && symjumps.size() > 0 ) {
 				// TR << "ROT not concerted symjumps" << std::endl;
 				Size idx = std::ceil(uniform()*symjumps.size());
 				core::kinematics::Jump j(pose.jump(symjumps[idx]));
@@ -2496,7 +2496,7 @@ public:
 					}
 				}
 				CEN = Vec(tmp.x()/n,tmp.y()/n,tmp.z()/n); // TODO: FIX THIS HACK!!!!!!!!!!! assumes z,x,y coord frame in sym file!!!!!!!
-				// Vec CEN(0,0,0);			
+				// Vec CEN(0,0,0);
 				// pose.dump_pdb("rot_before.pdb");
 				// std::ofstream out1("rot_before.pdb",std::ios::app);
 				// out1 << "HETATM 9999 ZN    ZN A 999      " << LJ(8,F(5,3,CEN.x())) << LJ(8,F(5,3,CEN.y())) << LJ(8,F(5,3,CEN.z())) << "1.00  0.00" << std::endl;
@@ -2507,7 +2507,7 @@ public:
 				// 	out1 << "HETATM 9999 ZN    ZN A "+string_of(999-idx)+"      " << LJ(8,F(5,3,LCEN.x())) << LJ(8,F(5,3,LCEN.y())) << LJ(8,F(5,3,LCEN.z())) << "1.00  0.00" << std::endl;
 				// }
 			}
-			
+
 			// numeric::xyzVector<Real> com(0,0,0);
 			// if(comjumps.size()) com = pose.jump(comjumps[1]).get_translation();
 			for(Size idx = 1; idx <= rbjumps.size(); ++idx) {
@@ -2528,7 +2528,7 @@ public:
 			}
 
 			// {
-			// 	pose.dump_pdb("rot_after.pdb");				
+			// 	pose.dump_pdb("rot_after.pdb");
 			// 	Vec tmp(0,0,0); // TODO: set to center of subunit!!!!
 			// 	Size n = 0;
 			// 	for(Size idx = 1; idx <= starts_.size(); ++idx) {
@@ -2538,7 +2538,7 @@ public:
 			// 			n++;
 			// 		}
 			// 	}
-			// 	Vec CEN = Vec(tmp.x()/n,tmp.y()/n,tmp.z()/n); // TODO: FIX THIS HACK!!!!!!!!!!! assumes z,x,y coord frame in sym file!!!!!!!				
+			// 	Vec CEN = Vec(tmp.x()/n,tmp.y()/n,tmp.z()/n); // TODO: FIX THIS HACK!!!!!!!!!!! assumes z,x,y coord frame in sym file!!!!!!!
 			// 	pose.dump_pdb("rot_after.pdb");
 			// 	std::ofstream out("rot_after.pdb",std::ios::app);
 			// 	out << "HETATM 9999 ZN    ZN A 999      " << LJ(8,F(5,3,CEN.x())) << LJ(8,F(5,3,CEN.y())) << LJ(8,F(5,3,CEN.z())) << "1.00  0.00" << std::endl;
@@ -2547,7 +2547,7 @@ public:
 			// 		out << "HETATM 9999 ZN    ZN A "+string_of(999-idx)+"      " << LJ(8,F(5,3,LCEN.x())) << LJ(8,F(5,3,LCEN.y())) << LJ(8,F(5,3,LCEN.z())) << "1.00  0.00" << std::endl;
 			// 	}
 			// }
-			
+
 			// pose.dump_pdb("rot_after.pdb");
 			// std::exit(-1);
 		} else if(rbjumps.size() > 0 && counterrot_) {
@@ -2567,7 +2567,7 @@ public:
 				if(dofs_[rbjumps[idx2]].allow_dof(4)) j.set_rotation(x_rotation_matrix_degrees(magx)*j.get_rotation());
 				if(dofs_[rbjumps[idx2]].allow_dof(5)) j.set_rotation(y_rotation_matrix_degrees(magy)*j.get_rotation());
 				if(dofs_[rbjumps[idx2]].allow_dof(6)) j.set_rotation(z_rotation_matrix_degrees(magz)*j.get_rotation());
-				pose.set_jump(rbjumps[idx2],j);				
+				pose.set_jump(rbjumps[idx2],j);
 				// TR << "ROT MOVER MOVE 5 " << magx << " " << magy << " " << magz << std::endl;
 			}
 		} else {
@@ -2577,10 +2577,10 @@ public:
 				printed=true;
 			}
 		}
-		if(post_ && uniform() < postfrac_ && !concerted_) post_->apply(pose);		
+		if(post_ && uniform() < postfrac_ && !concerted_) post_->apply(pose);
 
 		pw_->validate();
-		
+
 	}
 };
 
@@ -2601,7 +2601,7 @@ public:
 void print_movemap(core::kinematics::MoveMap const & movemap) {
 	using namespace core::id;
 	using namespace core::kinematics;
-	TR << "movemap " << std::endl;		
+	TR << "movemap " << std::endl;
 	for(std::map< TorsionType, bool >::const_iterator i = movemap.torsion_type_begin(); i != movemap.torsion_type_end(); ++i) {
 		TR << "TorsionType " << i->first << " " << i->second << std::endl;
 	}
@@ -2620,7 +2620,7 @@ void print_movemap(core::kinematics::MoveMap const & movemap) {
 	for(std::map< JumpID, bool >::const_iterator i = movemap.jump_id_begin(); i != movemap.jump_id_end(); ++i) {
 		TR << "JumpID " << i->first << " " << i->second << std::endl;
 	}
-	
+
 }
 
 void jumps_to_root(Pose & pose, Size rsd, vector1<Size> & jumps) {
@@ -2651,8 +2651,8 @@ make_float_sc_min_mover(core::pose::Pose & pose, vector1<Size> rsd_, Real tol) {
 	movemap->set_chi(false);
 	movemap->set_bb(false);
 	movemap->set_jump(false);
-	for(Size i = 1; i <= rsd_.size(); ++i) movemap->set_chi(rsd_[i],true);		
-	for(Size i = 1; i <= rsd_.size(); ++i) movemap->set_bb(rsd_[i],true);		
+	for(Size i = 1; i <= rsd_.size(); ++i) movemap->set_chi(rsd_[i],true);
+	for(Size i = 1; i <= rsd_.size(); ++i) movemap->set_bb(rsd_[i],true);
 	// TR << pose.fold_tree() << std::endl;
 	for(Size i = 1; i <= jumps.size(); ++i) {
 		// TR << "JUMP " << jumps[i] << std::endl;
@@ -2673,7 +2673,7 @@ public:
 	void apply(Pose & pose) {
 		Size i = rsd_[ std::ceil(uniform()*rsd_.size()) ];
 		Size j = rsd_[ std::ceil(uniform()*pose.residue(i).nchi()) ];
-		pose.set_chi(j,i,uniform()*360.0);		
+		pose.set_chi(j,i,uniform()*360.0);
 	}
 	std::string get_name() const { return "FloatScRandomChi"; }
 };
@@ -2694,7 +2694,7 @@ public:
 		TR << "floating_scs_monte_carlo start " << sf(pose) << std::endl;
 		RepeatMover( new TrialMover( new FloatScRandomChi(rsd_), mc ), N_ ).apply( pose );
 		TR << "floating_scs_monte_carlo end " << sf(pose) << std::endl;
-	
+
 	}
 	std::string get_name() const { return "FloatScMonteCarlo"; }
 };
@@ -2725,7 +2725,7 @@ public:
 		}
 		// FloatScMonteCarlo(rsd_,100).apply(pose);
 		min_->apply(pose);
-		// TR << "after ScMinMover  " << (*sf_)(pose) << std::endl;		
+		// TR << "after ScMinMover  " << (*sf_)(pose) << std::endl;
 	}
 	std::string get_name() const { return "ScMinMover"; }
 };
@@ -2759,7 +2759,7 @@ void repack(PoseWrap & pw, ScoreFunctionOP sf, bool fsc_only=false) {
 	if(fsc_only) {
 		for(Size i = 1; i <= pw.nres; ++i) {
 			if(std::find(pw.attached_scattach_res_.begin(),pw.attached_scattach_res_.end(),i)!=pw.attached_scattach_res_.end()) continue;
-			task->nonconst_residue_task(i).prevent_repacking();	
+			task->nonconst_residue_task(i).prevent_repacking();
 		}
 	}
 	for(Size i = 1; i <= pw.attached_scattach_res_.size(); ++i) {
@@ -2768,9 +2768,9 @@ void repack(PoseWrap & pw, ScoreFunctionOP sf, bool fsc_only=false) {
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex2(true);
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
 		if(fsc_only) task->nonconst_residue_task(pw.attached_scattach_res_[i]).or_ex2_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
-		task->nonconst_residue_task(pw.attached_scattach_res_[i]).and_extrachi_cutoff(0);		
+		task->nonconst_residue_task(pw.attached_scattach_res_[i]).and_extrachi_cutoff(0);
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).restrict_to_repacking();
-	}	
+	}
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
@@ -2787,13 +2787,13 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 	// for(Size i = 1; i <= task->total_residue(); ++i) {
 	// 	task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 	// }
-	
+
 	vector1< bool > aas(20,true);
 	// aas[core::chemical::aa_his] = false;
 	aas[core::chemical::aa_pro] = false;
-	aas[core::chemical::aa_cys] = false;	
-	aas[core::chemical::aa_met] = false;		
-	aas[core::chemical::aa_lys] = false;		
+	aas[core::chemical::aa_cys] = false;
+	aas[core::chemical::aa_met] = false;
+	aas[core::chemical::aa_lys] = false;
 	if(pw.pose.is_fullatom()) {
 		if( basic::options::option[basic::options::OptionKeys::smhybrid::design_hydrophobic]() ) {
 			for(Size i = 1; i <= aas.size(); ++i) aas[i] = false;
@@ -2805,7 +2805,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 			aas[core::chemical::aa_tyr] = true;
 			aas[core::chemical::aa_met] = true;
 			aas[core::chemical::aa_pro] = true;
-			if(do_trp) aas[core::chemical::aa_trp] = true;			
+			if(do_trp) aas[core::chemical::aa_trp] = true;
 		}
 	} else {
 		utility_exit_with_message("design() called on cen pose... use cen_design()?");
@@ -2825,7 +2825,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 			task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
 		} else {
 			TR << "designing " << i << std::endl;
-			task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();				
+			task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 		}
 	}
@@ -2833,7 +2833,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 	// for(Size i = 1; i <= pw.nres; ++i) {
 	// 	if(std::find(pw.attached_scattach_res_.begin(),pw.attached_scattach_res_.end(),i)!=pw.attached_scattach_res_.end()) continue;
 	// 	std::cerr << "SLKDFJSKLDJ " << i << std::endl;
-	// 	task->nonconst_residue_task(i).prevent_repacking();	
+	// 	task->nonconst_residue_task(i).prevent_repacking();
 	// }
 	for(Size i = 1; i <= pw.attached_scattach_res_.size(); ++i) {
 		TR << "scattach res packing mode: " << pw.attached_scattach_res_[i] << std::endl;
@@ -2844,14 +2844,14 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).and_extrachi_cutoff(0);
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).restrict_to_repacking();
 	}
-	// steal Nobu's smart rules about what can do where...	
+	// steal Nobu's smart rules about what can do where...
 	protocols::flxbb::DesignLayerOperationOP op = new protocols::flxbb::DesignLayerOperation(true,true,true);
 	op->apply(pose,*task);
-	// for(Size i = 1; i <= pw.nres; ++i) {	
+	// for(Size i = 1; i <= pw.nres; ++i) {
 	// 	task->nonconst_residue_task(i).allow_aa(pose.residue(i).aa());
 	// }
-	
-	
+
+
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	TR << *task << std::endl;
 	repack.apply(pose);
@@ -2873,8 +2873,8 @@ void cen_design(PoseWrap & pw, ScoreFunctionOP sf) {
 	// aas[core::chemical::aa_lys] = false;
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	task->or_include_current(true);
-	for(Size i = 1; i <= pw.nres; ++i) {		
-		task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);	
+	for(Size i = 1; i <= pw.nres; ++i) {
+		task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 	}
 	for(Size i = 1; i <= pw.floating_scs_.size(); ++i) {
 		task->nonconst_residue_task(pw.floating_scs_[i]).prevent_repacking();
@@ -2901,7 +2901,7 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf, int bb=0, bool jmp=true, bool c
 	// if(bb >= 2) for(Size i = 1; i <= pw.nres; ++i) movemap->set_bb(i,true);
 	if(bb > 0) TR << "minimizing with flexible bb! " << bb << std::endl;
 
-	
+
 	// set jumps, chi, bb true for floating sc res always
 	vector1<Size> jumps;
 	for(Size i = 1; i <= pw.floating_scs_.size(); ++i) jumps_to_root(pose,pw.floating_scs_[i],jumps);
@@ -2924,7 +2924,7 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf, int bb=0, bool jmp=true, bool c
 	print_movemap(*movemap);
 	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
-	// TR << "movemap " << std::endl;		
+	// TR << "movemap " << std::endl;
 	// for(std::map< DOF_ID, bool >::const_iterator i = movemap->dof_id_begin(); i != movemap->dof_id_end(); ++i) {
 		// TR << "DOF " << i->first << " " << i->second << std::endl;
 	// }
@@ -2941,13 +2941,13 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf, int bb=0, bool jmp=true, bool c
 	// 		} else {
 	// 			TR << "ScMinMover: performed sc swap on res " << i << std::endl;
 	// 		}
-	// 	}	
-	// }	
-	
+	// 	}
+	// }
+
 	m.apply(pose);
 	// TR << "minimize after  " << (*sf)(pose) << std::endl;
 	pw.check_scattach_res();
-		
+
 }
 
 // void add_sheet_cst(PoseWrap & pw) {
@@ -2968,7 +2968,7 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf, int bb=0, bool jmp=true, bool c
 // 		add_apc(pw.pose,AtomID(2,i),AtomID(2,pw.nres*3+other),5.0,1.0);
 // 		TR << "apc " << i << " " << pw.nres*3+other << std::endl;
 // 	}
-// 	
+//
 // }
 
 core::scoring::ScoreFunctionOP
@@ -3043,8 +3043,8 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	// 	}
 	// }
 
-	
-	
+
+
 	scoring::ScoreFunctionOP sf0 = scoring::ScoreFunctionFactory::create_score_function( "score0" );
 	scoring::ScoreFunctionOP sf1 = scoring::ScoreFunctionFactory::create_score_function( "score1" );
 	scoring::ScoreFunctionOP sf2 = scoring::ScoreFunctionFactory::create_score_function( "score2" );
@@ -3081,7 +3081,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	// sf5->set_weight(scoring::ss_pair,1.0);
 	// sf5->set_weight(scoring::rsigma ,1.0);
 	// sf5->set_weight(scoring::sheet  ,1.0);
-	// 
+	//
 	// sf0->set_weight(scoring::vdw,10.0);
 	// sf1->set_weight(scoring::vdw,10.0);
 	// sf2->set_weight(scoring::vdw,10.0);
@@ -3133,7 +3133,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *sf1 );
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *sf2 );
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *sf3 );
-		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *sf5 );								
+		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *sf5 );
 	}
 
 	// add_sheet_cst(pw);
@@ -3143,7 +3143,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	core::pose::Pose init = pose;
 	if(pw.debug) pw.dump_pdb("cen_init.pdb");
 
-	bool skip0=false,skip1=false,skip2=false,filter=options::option[basic::options::OptionKeys::smhybrid::filter].user();	
+	bool skip0=false,skip1=false,skip2=false,filter=options::option[basic::options::OptionKeys::smhybrid::filter].user();
 	Real filter0=0,filter1=0,filter2=0,filter3=0;
 	Size ntries=1;
 	if(filter) {
@@ -3172,16 +3172,16 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			if(pw.debug) pw.dump_pdb("cen0.pdb");
 			if(filter) {
 				if( pw.pose.energies().total_energies()[scoring::linear_chainbreak] > 50.0 ||
-				 	pw.pose.energies().total_energies()[scoring::atom_pair_constraint] > filter0 ) { 
-					TR << "linear_chainbreak or atom_pair_constraint FAIL after score0! redoing centroid 0: " 
-					   << pw.pose.energies().total_energies()[scoring::linear_chainbreak] << " " 
+				 	pw.pose.energies().total_energies()[scoring::atom_pair_constraint] > filter0 ) {
+					TR << "linear_chainbreak or atom_pair_constraint FAIL after score0! redoing centroid 0: "
+					   << pw.pose.energies().total_energies()[scoring::linear_chainbreak] << " "
 					   << pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
 					if( pw.pose.energies().total_energies()[scoring::linear_chainbreak]       > 50.0 ) {
-						sf0->set_weight(scoring::linear_chainbreak, sf0->get_weight(scoring::linear_chainbreak)*1.2 );				
+						sf0->set_weight(scoring::linear_chainbreak, sf0->get_weight(scoring::linear_chainbreak)*1.2 );
 						TR << "upweight linear_chainbreak" << std::endl;
 					}
 					if( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter0 ) {
-						sf0->set_weight(scoring::atom_pair_constraint, sf0->get_weight(scoring::atom_pair_constraint)*1.2 );				
+						sf0->set_weight(scoring::atom_pair_constraint, sf0->get_weight(scoring::atom_pair_constraint)*1.2 );
 						TR << "upweight atom_pair_constraint" << std::endl;
 					}
 					skip0 = false;
@@ -3192,7 +3192,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 				}
 			}
 		}
-		
+
 		if(!skip1) {
 
 			TR << "stage 1" << std::endl;
@@ -3206,16 +3206,16 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 
 			if(filter) {
 				if( pw.pose.energies().total_energies()[scoring::linear_chainbreak] > 30.0 ||
-				 	pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter1 ) { 
-					TR << "linear_chainbreak or atom_pair_constraint FAIL after score1! redoing centroid 1 " 
-					   << pw.pose.energies().total_energies()[scoring::linear_chainbreak] << " " 
+				 	pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter1 ) {
+					TR << "linear_chainbreak or atom_pair_constraint FAIL after score1! redoing centroid 1 "
+					   << pw.pose.energies().total_energies()[scoring::linear_chainbreak] << " "
 					   << pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
 					if( pw.pose.energies().total_energies()[scoring::linear_chainbreak]       > 30.0 ) {
-						sf1->set_weight(scoring::linear_chainbreak, sf1->get_weight(scoring::linear_chainbreak)*1.2 );				
+						sf1->set_weight(scoring::linear_chainbreak, sf1->get_weight(scoring::linear_chainbreak)*1.2 );
 						TR << "upweight linear_chainbreak" << std::endl;
 					}
 					if( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter1 ) {
-						sf1->set_weight(scoring::atom_pair_constraint, sf1->get_weight(scoring::atom_pair_constraint)*1.2 );				
+						sf1->set_weight(scoring::atom_pair_constraint, sf1->get_weight(scoring::atom_pair_constraint)*1.2 );
 						TR << "upweight atom_pair_constraint" << std::endl;
 					}
 					skip1 = false;
@@ -3255,22 +3255,22 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			}
 			if(filter) {
 				if( pw.pose.energies().total_energies()[scoring::chainbreak] > 10.0 ||
-				    pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter2 ) { 
-					TR << "chainbreak or atom_pair_constraint FAIL after score25! redoing centroid 2 " 
-					   << pw.pose.energies().total_energies()[scoring::chainbreak] << " " 
+				    pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter2 ) {
+					TR << "chainbreak or atom_pair_constraint FAIL after score25! redoing centroid 2 "
+					   << pw.pose.energies().total_energies()[scoring::chainbreak] << " "
 					   << pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
 					if( pw.pose.energies().total_energies()[scoring::chainbreak]       > 10.0 ) {
-						sf2->set_weight(scoring::chainbreak, sf2->get_weight(scoring::chainbreak)*1.2 );				
-						sf5->set_weight(scoring::chainbreak, sf5->get_weight(scoring::chainbreak)*1.2 );				
+						sf2->set_weight(scoring::chainbreak, sf2->get_weight(scoring::chainbreak)*1.2 );
+						sf5->set_weight(scoring::chainbreak, sf5->get_weight(scoring::chainbreak)*1.2 );
 						TR << "upweight chainbreak" << std::endl;
 					}
 					if( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter2 ) {
-						sf2->set_weight(scoring::atom_pair_constraint, sf2->get_weight(scoring::atom_pair_constraint)*1.2 );				
-						sf5->set_weight(scoring::atom_pair_constraint, sf2->get_weight(scoring::atom_pair_constraint)*1.2 );				
+						sf2->set_weight(scoring::atom_pair_constraint, sf2->get_weight(scoring::atom_pair_constraint)*1.2 );
+						sf5->set_weight(scoring::atom_pair_constraint, sf2->get_weight(scoring::atom_pair_constraint)*1.2 );
 						TR << "upweight atom_pair_constraint" << std::endl;
 					}
 					skip2 = false;
-					continue;				
+					continue;
 				} else {
 					skip2 = true;
 					init = pose;
@@ -3302,7 +3302,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			MoverOP rotsmc   = new MyRotMover(  pw,rb_mag* 2.0,false,true ,minsc,0.1,csub);
 			MoverOP trans    = new MyTransMover(pw,rb_mag* 1.0,false,      minsc,0.5,csub);
 			MoverOP transc   = new MyTransMover(pw,rb_mag* 1.0,true ,      minsc,0.5,csub);
-			MoverOP transsm  = new MyTransMover(pw,rb_mag* 0.1,false,      minsc,0.1,csub);		
+			MoverOP transsm  = new MyTransMover(pw,rb_mag* 0.1,false,      minsc,0.1,csub);
 			MoverOP transsmc = new MyTransMover(pw,rb_mag* 0.1,true ,      minsc,0.1,csub);
 			// if( option[basic::options::OptionKeys::smhybrid::refine]() ) {
 			// 	MoverOP rot      = new MyRotMover(  pw,rb_mag*1.0,false,false,minsc,0.2,csub);
@@ -3311,7 +3311,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			// 	MoverOP rotsmc   = new MyRotMover(  pw,rb_mag*0.1,false,true ,minsc,0.2,csub);
 			// 	MoverOP trans    = new MyTransMover(pw,rb_mag*0.5,      false,minsc,0.2,csub);
 			// 	MoverOP transc   = new MyTransMover(pw,rb_mag*0.5,      true ,minsc,0.2,csub);
-			// 	MoverOP transsm  = new MyTransMover(pw,rb_mag*0.1,      false,minsc,0.2,csub);		
+			// 	MoverOP transsm  = new MyTransMover(pw,rb_mag*0.1,      false,minsc,0.2,csub);
 			// 	MoverOP transsmc = new MyTransMover(pw,rb_mag*0.1,      true ,minsc,0.2,csub);
 			// }
 			if(true) mover3->add_mover(rot     ,0.2);
@@ -3329,7 +3329,7 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 		TR << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 		// for(Size i = 1; i <= pw.attach_rsd_.size(); ++i) {
 		// 	if( pw.move_chi( pw.attach_rsd_[i] ) ) {
-		// 		TR << "add chi mover res " << pw.attach_rsd_[i] << std::endl;			
+		// 		TR << "add chi mover res " << pw.attach_rsd_[i] << std::endl;
 		// 		mover3->add_mover(new ChiMover(pw.pose,pw.attach_rsd_[i]),1.0);
 		// 	}
 		// }
@@ -3343,34 +3343,34 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 			mc->reset( pose );
 			cen_design(pw,sf3);
 			if(pw.debug) sf3->show(TR,pose);
-			if(pw.debug) pw.dump_pdb("cen3.pdb");			
+			if(pw.debug) pw.dump_pdb("cen3.pdb");
 		}
 		TR << std::endl;
 
 		if(filter) {
 			if( pw.pose.energies().total_energies()[scoring::chainbreak] > 5.0 ||
-			 	pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter3 ) { 
-				TR << "chainbreak or atom_pair_constraint FAIL after score3! redoing centroid 3 " 
-				   << pw.pose.energies().total_energies()[scoring::chainbreak] << " " 
+			 	pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter3 ) {
+				TR << "chainbreak or atom_pair_constraint FAIL after score3! redoing centroid 3 "
+				   << pw.pose.energies().total_energies()[scoring::chainbreak] << " "
 				   << pw.pose.energies().total_energies()[scoring::atom_pair_constraint] << std::endl;
 				if( pw.pose.energies().total_energies()[scoring::chainbreak]       > 5.0 ) {
-					sf3->set_weight(scoring::chainbreak, sf3->get_weight(scoring::chainbreak)*1.2 );				
+					sf3->set_weight(scoring::chainbreak, sf3->get_weight(scoring::chainbreak)*1.2 );
 					TR << "upweight chainbreak" << std::endl;
 				}
 				if( pw.pose.energies().total_energies()[scoring::atom_pair_constraint]       > filter3 ) {
-					sf3->set_weight(scoring::atom_pair_constraint, sf3->get_weight(scoring::atom_pair_constraint)*1.2 );				
+					sf3->set_weight(scoring::atom_pair_constraint, sf3->get_weight(scoring::atom_pair_constraint)*1.2 );
 					TR << "upweight atom_pair_constraint" << std::endl;
 				}
 				continue;
 			}
 		}
-		
+
 		break;
 	}
-	
+
 	sf3->show(TR,pose);
 	if(pw.debug) pw.dump_pdb("cen.pdb");
-	
+
 	return sf3;
 }
 
@@ -3410,7 +3410,7 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 	sf2->set_weight(fa_sol,0.800);
 	sf3->set_weight(fa_sol,0.800);
 	sf4->set_weight(fa_sol,0.800);
-	
+
 	// sf1->set_weight(overlap_chainbreak,1.00);
 	// sf2->set_weight(overlap_chainbreak,2.00);
 	// sf3->set_weight(overlap_chainbreak,3.00);
@@ -3435,7 +3435,7 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 		sf1->set_weight(atom_pair_constraint,80.0);
 		sf2->set_weight(atom_pair_constraint,50.0);
 		sf3->set_weight(atom_pair_constraint,30.0);
-		sf4->set_weight(atom_pair_constraint,20.0);		
+		sf4->set_weight(atom_pair_constraint,20.0);
 	}
 
 	// sf1->set_weight(rg,1.00);
@@ -3460,22 +3460,22 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 
 	string tmp = string_of(uniform());
 	if(pw.debug) pw.dump_pdb("fa_init"+tmp+".pdb");
-	// pw.add_fsc_harmonic_cst();	
+	// pw.add_fsc_harmonic_cst();
 	sf1->set_weight(atom_pair_constraint,100);
 	pw.check_scattach_res();
 	repack(pw,sf1,true);
 	pw.check_scattach_res();
 	// if(pw.debug) pw.dump_pdb("fa0PACK"+tmp+".pdb");
-	minimize(pw,sf1,0,false);	
+	minimize(pw,sf1,0,false);
 	pw.check_scattach_res();
 	if(pw.debug) pw.dump_pdb("fa0_"+tmp+".pdb");
-	sf1->set_weight(atom_pair_constraint,1);	
+	sf1->set_weight(atom_pair_constraint,1);
 	// std::exit(-1);
 	pw.check_scattach_res();
 
 	int bb = basic::options::option[basic::options::OptionKeys::smhybrid::minbb]();
 	int chi1 = -1;
-	for(Size i = 1; i <= NCYCLE; ++i ) {		
+	for(Size i = 1; i <= NCYCLE; ++i ) {
 		// for(Size k = 1; k <= 4; ++k) {
 		// 	repack(pw,sf1); minimize(pw,sf1);
 		// 	repack(pw,sf2); minimize(pw,sf2);
@@ -3496,7 +3496,7 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 			// minimize(pw,sf1,bb-1,true);
 			// if(pw.debug) sf1->show(std::cerr,pose);
 			// if(pw.debug) pw.dump_pdb("fa1_"+tmp+".pdb");
-			
+
 			// std::cerr << "SCORE 2" << std::endl;
 			design(pw,sf2); if(!pw.check()) return NULL;
 			if(pw.debug) pw.dump_pdb("fa2A_"+tmp+".pdb");
@@ -3539,21 +3539,21 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 			if(pw.debug) pw.dump_pdb("fa5A_"+tmp+".pdb");
 			minimize(pw,sf4,bb,false,chi1>0);
 			if(pw.debug) pw.dump_pdb("fa5_"+tmp+".pdb");
-		// if(pw.debug) sf4->show(TR,pose);		
+		// if(pw.debug) sf4->show(TR,pose);
 		// TR << "deisgn/min cb3   " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,pw.nres) << std::endl;
 
 		// sf4->set_weight(overlap_chainbreak,2.00);
 		// sf4->set_weight(chainbreak,2.0);
 		// sf4->set_weight(atom_pair_constraint,0.50);
 		// design(pw,sf4); minimize(pw,sf4,true);
-		// if(pw.debug) sf4->show(TR,pose);		
+		// if(pw.debug) sf4->show(TR,pose);
 		// TR << "deisgn/min cb3   " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,pw.nres) << std::endl;
-		// 
+		//
 		// sf4->set_weight(overlap_chainbreak,1.00);
 		// sf4->set_weight(chainbreak,1.0);
 		// sf4->set_weight(atom_pair_constraint,0.20);
 		// design(pw,sf4); minimize(pw,sf4,true);
-		// if(pw.debug) sf4->show(TR,pose);		
+		// if(pw.debug) sf4->show(TR,pose);
 		// TR << "deisgn/min cb3   " << F(10,3,(*sf4)(pose)) << " " << pose.sequence().substr(0,pw.nres) << std::endl;
 
 		// sf3->set_weight(coordinate_constraint,1.0);
@@ -3694,7 +3694,7 @@ find_clashes( PoseWrap & pw ) {
 			}
 		}
 	}
-	
+
 	return clashes;
 }
 
@@ -3711,7 +3711,7 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	if(sf_fa) {
 	// core::pose::Pose posebefore = pose;
 	// sf_fa->set_weight(scoring::holes_min,1.0);
-		sf_fa->set_weight(scoring::rg,0.00001);	
+		sf_fa->set_weight(scoring::rg,0.00001);
 	// TR << "BEFORE HOLES MIN: " << (*sf4)(pose) << std::endl;
 		(*sf_fa)(pose);
 		sf_fa->show(TR,pose);
@@ -3728,7 +3728,7 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	//    	ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
 	// }
 
-		
+
 		ife = interface_energy_ratio(pose,sf_fa);
 		clashes = find_clashes(pw);
 	}
@@ -3740,11 +3740,11 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 		// LocalCoordinateConstraint const * cc = (LocalCoordinateConstraint const *)(cs[i]());
 		// TR << "cst " << i << " " << cc->atom(1) << " " << cc->atom(2) << " " << cc->dist(pose) << std::endl;
 	}
-	
+
 	core::conformation::symmetry::SymmetricConformation const & SymmConf (
 		dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-		
+
 	Size nheavy = 0;
 	for(Size i = 1; i <= pose.n_residue(); ++i) nheavy += pose.residue(i).nheavyatoms();
 
@@ -3876,19 +3876,19 @@ string make_rand_ss_h(core::Size len) {
 // class SmhybridMover : public protocols::moves::Mover
 // {
 // public:
-// 
+//
 // public:
-// 
+//
 // 	// default constructor
 // 	SmhybridMover() {}
-// 
+//
 // 	virtual ~SmhybridMover() {}
-// 
+//
 // 	// constructor with arguments
-// 
+//
 // 	virtual protocols::moves::MoverOP clone() const { return new SmhybridMover(*this); }
 // 	virtual protocols::moves::MoverOP fresh_instance() const { return new SmhybridMover; }
-// 
+//
 // 	virtual void apply( core::pose::Pose & pose ){
 void* doit(void* /*x = NULL*/) {
 	using namespace core;
@@ -3915,13 +3915,13 @@ void* doit(void* /*x = NULL*/) {
 		// core::fragment::FragSetOP frags0 = make_frag_set_9mers(pw.nres);
 		core::fragment::FragSetOP frags0 = NULL;//make_frag_set(pw,fds);
 		core::fragment::FragSetOP frags3 = NULL;//make_frag_set(pw,fds);
-		
+
 		scoring::ScoreFunctionOP sf_cen = cen_fold(pw,Ncycle,frags0,frags3);
 
 		if( options::option[basic::options::OptionKeys::smhybrid::filter].user() ) {
 			if( pw.pose.energies().total_energies()[scoring::linear_chainbreak]    > 5.0 ||
 		 		pw.pose.energies().total_energies()[scoring::atom_pair_constraint] > options::option[basic::options::OptionKeys::smhybrid::filter]()[5] )
-			{ 
+			{
 				TR << "chainbreak or floating_sc FAIL! redoing centroid" << std::endl;
 				sf_cen->show(TR,pw.pose);
 				--iter;
@@ -3951,7 +3951,7 @@ void* doit(void* /*x = NULL*/) {
 			}
 		}
 
-	}	
+	}
 
 	return NULL;
 }
@@ -3983,16 +3983,16 @@ void* doit_refine(void* /*x = NULL*/) {
 			pose_from_pdb(ref,fname);
 			for(Size ir = 1; ir <= pw.pose.n_residue(); ++ir) {
 				pw.pose.replace_residue(ir,ref.residue(ir),false);
-				for(Size ia = 1; ia <= ref.residue(ir).natoms(); ++ia) {					
+				for(Size ia = 1; ia <= ref.residue(ir).natoms(); ++ia) {
 					pw.pose.set_xyz(AtomID(ia,ir),ref.xyz(AtomID(ia,ir)));
 				}
 			}
-			for(Size ir = 1; ir <= pw.floating_scs_.size(); ++ir) {			
+			for(Size ir = 1; ir <= pw.floating_scs_.size(); ++ir) {
 				Size const rsd(pw.floating_scs_[ir]);
 				pose::add_lower_terminus_type_to_pose_residue(pw.pose,rsd);
 				pose::add_upper_terminus_type_to_pose_residue(pw.pose,rsd);
 				core::pose::add_variant_type_to_pose_residue(pw.pose,"VIRTUAL_BBCB",rsd);
-				for(Size ia = 1; ia <= ref.residue(rsd).natoms(); ++ia) {										
+				for(Size ia = 1; ia <= ref.residue(rsd).natoms(); ++ia) {
 					if(pw.pose.residue(rsd).has(ref.residue(rsd).atom_name(ia))) {
 						pw.pose.set_xyz(AtomID(pw.pose.residue(rsd).atom_index(ref.residue(rsd).atom_name(ia)),rsd),ref.xyz(AtomID(ia,rsd)));
 					}
@@ -4009,7 +4009,7 @@ void* doit_refine(void* /*x = NULL*/) {
 
 			report(pw,sf_fa,oss,0.0);
 
-		}	
+		}
 	}
 	return NULL;
 }
@@ -4030,5 +4030,5 @@ main( int argc, char * argv [] )
 		func(NULL);
 	}
 
-	
+
 }

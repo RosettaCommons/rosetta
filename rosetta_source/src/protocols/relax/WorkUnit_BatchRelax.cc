@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/relax/FastRelax.hh>
-// AUTO-REMOVED #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 // AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 // AUTO-REMOVED #include <protocols/electron_density/util.hh>

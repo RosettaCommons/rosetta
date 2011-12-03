@@ -41,7 +41,7 @@
 
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/jumping/JumpSample.hh>
+#include <protocols/toolbox/pose_manipulation.hh>
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
@@ -111,8 +111,7 @@ ConstraintEvaluator::ConstraintEvaluator( std::string tag, std::string file_name
 
 void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::pose::Pose& pose ) const {
 
-	protocols::jumping::JumpSample jumps( pose.fold_tree() );
-  jumps.remove_chainbreaks( pose );
+	toolbox::pose_manipulation::remove_chainbreaks_according_to_jumps( pose );
 
 	ConstraintSetOP now_cst = pose.is_fullatom() ? fa_constraints_ : constraints_;
 	if ( !now_cst ) {

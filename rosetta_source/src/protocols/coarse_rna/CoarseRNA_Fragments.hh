@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_rna_CoarseRNA_FragmentsClasses_HH
 
 #include <protocols/rna/RNA_Fragments.hh>
-#include <protocols/rna/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 // AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.hh>
@@ -76,7 +76,7 @@ namespace coarse_rna{
 					core::Size const position,
 					core::Size const size,
 					core::Size const type,
-					protocols::rna::AllowInsertOP allow_insert );
+					protocols::toolbox::AllowInsertOP allow_insert );
 
 		virtual bool
 		is_fullatom();
@@ -89,7 +89,7 @@ namespace coarse_rna{
 										Size const & insert_res,
 										Size const & source_res,
 										Size const & frag_size,
-										protocols::rna::AllowInsertOP allow_insert );
+										protocols::toolbox::AllowInsertOP allow_insert );
 
 		void
 		find_source_positions( SequenceSecStructPair const & key );

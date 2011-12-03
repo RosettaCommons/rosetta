@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_rna_CoarseRNA_LoopCloser_HH
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -73,9 +73,9 @@ public:
 										 utility::vector1< core::pose::PoseOP > & pose_list );
 
 	void
-	set_allow_insert( protocols::rna::AllowInsertOP allow_insert );
+	set_allow_insert( protocols::toolbox::AllowInsertOP allow_insert );
 
-	protocols::rna::AllowInsertOP  allow_insert();
+	protocols::toolbox::AllowInsertOP  allow_insert();
 
 	Size const nsol(){ return nsol_; }
 
@@ -167,7 +167,7 @@ private:
 	utility::vector1< core::Size > cutpos_list_;
 	int nsol_;
 
-	protocols::rna::AllowInsertOP allow_insert_;
+	protocols::toolbox::AllowInsertOP allow_insert_;
 	utility::vector1< core::Size > backward_res_, forward_res_, pivot_res_, scratch_res_, pivot_to_scratch_res_;
 	utility::vector1< bool > is_backward_res_, is_forward_res_, is_pivot_res_, is_scratch_res_;
 	core::Size which_scratch_res_is_cut_;

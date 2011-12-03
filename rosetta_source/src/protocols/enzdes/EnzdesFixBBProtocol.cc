@@ -26,7 +26,7 @@
 #include <protocols/ligand_docking/LigandDockProtocol.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/ConsensusDesignMover.hh>
+#include <protocols/simple_moves/ConsensusDesignMover.hh>
 
 #include <basic/Tracer.hh>
 
@@ -141,7 +141,7 @@ EnzdesFixBBProtocol::apply(
 
 	if( basic::options::option[basic::options::OptionKeys::enzdes::make_consensus_mutations] ){
 
-		moves::ConsensusDesignMover consensus_mover( create_enzdes_pack_task( pose, false ), scorefxn_ );
+		simple_moves::ConsensusDesignMover consensus_mover( create_enzdes_pack_task( pose, false ), scorefxn_ );
 		consensus_mover.set_invert_task( true );
 		consensus_mover.set_use_seqprof_constraints( true );
 		consensus_mover.set_sasa_cutoff( 1.0 ); //let's prevent totally buried residues from being redesigned

@@ -24,7 +24,7 @@
 #include <basic/datacache/DiagnosticData.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
-// AUTO-REMOVED #include <protocols/ScoreMap.hh>
+// AUTO-REMOVED #include <protocols/jd2/ScoreMap.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 // ObjexxFCL Headers

@@ -14,7 +14,7 @@
 // libRosetta headers
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 #include <basic/options/option.hh>
@@ -83,7 +83,7 @@ main( int argc, char * argv [] )
 	// optionally set pose for symmetry
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-		seqmov->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover );
+		seqmov->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 		seqmov->add_mover( mover );
 		mover = seqmov;
 	}

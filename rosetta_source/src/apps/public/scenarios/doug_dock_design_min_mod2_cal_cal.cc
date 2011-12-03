@@ -86,7 +86,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
@@ -106,10 +106,10 @@
 // Filter headers
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceDeltaEnergeticsCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+// AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
+// AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
+// AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
@@ -329,13 +329,13 @@ DougsDockDesignMinimizeMagicMover::apply(
 	pert_pep_mm->set_bb_true_range(pep1_start, pep1_end);
 
 	// create small and shear movers
-	moves::SmallMoverOP pert_pep_small( new moves::SmallMover( pert_pep_mm, option[ dddm::pert_pep_small_temp ].value(), 1 ) );
+	simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_mm, option[ dddm::pert_pep_small_temp ].value(), 1 ) );
 	pert_pep_small->set_preserve_detailed_balance( true ); // skips the rama check in small move
 	pert_pep_small->angle_max( 'H', option[ dddm::pert_pep_small_H ].value() );
 	pert_pep_small->angle_max( 'L', option[ dddm::pert_pep_small_L ].value() );
 	pert_pep_small->angle_max( 'E', option[ dddm::pert_pep_small_E ].value() );
 
-	moves::ShearMoverOP pert_pep_shear( new moves::ShearMover( pert_pep_mm, option[ dddm::pert_pep_shear_temp ].value(), 1 ) );
+	simple_moves::ShearMoverOP pert_pep_shear( new simple_moves::ShearMover( pert_pep_mm, option[ dddm::pert_pep_shear_temp ].value(), 1 ) );
 	pert_pep_shear->set_preserve_detailed_balance( true ); // skips the rama check in shear move
 	pert_pep_shear->angle_max( 'H', option[ dddm::pert_pep_shear_H ].value() );
 	pert_pep_shear->angle_max( 'L', option[ dddm::pert_pep_shear_L ].value() );
@@ -366,13 +366,13 @@ DougsDockDesignMinimizeMagicMover::apply(
 	pert_ter_mm->set_bb_true_range(ter1_start, ter1_end);
 
 	// create small and shear movers
-	moves::SmallMoverOP pert_ter_small( new moves::SmallMover( pert_ter_mm, option[ dddm::pert_ter_small_temp ].value(), 1 ) );
+	simple_moves::SmallMoverOP pert_ter_small( new simple_moves::SmallMover( pert_ter_mm, option[ dddm::pert_ter_small_temp ].value(), 1 ) );
 	pert_ter_small->set_preserve_detailed_balance( true ); // skips rama check in small move
 	pert_ter_small->angle_max( 'H', option[ dddm::pert_ter_small_H ].value() );
 	pert_ter_small->angle_max( 'L', option[ dddm::pert_ter_small_L ].value() );
 	pert_ter_small->angle_max( 'E', option[ dddm::pert_ter_small_E ].value() );
 
- 	moves::ShearMoverOP pert_ter_shear( new moves::ShearMover( pert_ter_mm,  option[ dddm::pert_ter_shear_temp ].value(), 1 ) );
+ 	simple_moves::ShearMoverOP pert_ter_shear( new simple_moves::ShearMover( pert_ter_mm,  option[ dddm::pert_ter_shear_temp ].value(), 1 ) );
 	pert_ter_shear->set_preserve_detailed_balance( true ); // skips rama check in shear move
 	pert_ter_shear->angle_max( 'H', option[ dddm::pert_ter_shear_H ].value() );
 	pert_ter_shear->angle_max( 'L', option[ dddm::pert_ter_shear_L ].value() );
@@ -728,7 +728,7 @@ DougsDockDesignMinimizeMagicMover::setup_filter_stats()
 	*********************************************************************************************************************/
 
 	// create and register sasa calculator
-	pose::metrics::PoseMetricCalculatorOP sasa_calculator( new protocols::toolbox::pose_metric_calculators::SasaCalculator() );
+	pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculator() );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 	// create and register hb calculator

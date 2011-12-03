@@ -33,7 +33,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/moves/RampingMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -56,7 +56,7 @@
 
 #include <protocols/simple_moves/GunnCost.hh>
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
-#include <protocols/ScoreMap.hh>
+#include <protocols/jd2/ScoreMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -318,13 +318,13 @@ void ClassicRelax::set_default_minimizer() {
 void ClassicRelax::set_default_moveset_phase1()
 {
 	// setup the move objects
-	moves::SmallMoverOP small_mover( new moves::SmallMover( get_movemap(), m_Temperature, nmoves_ ) );
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( get_movemap(), m_Temperature, nmoves_ ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 2.0 );
 	small_mover->angle_max( 'L', 3.0 );
 
 	// setup the move objects
-	moves::ShearMoverOP shear_mover( new moves::ShearMover( get_movemap(), m_Temperature, nmoves_ ) );
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( get_movemap(), m_Temperature, nmoves_ ) );
 	shear_mover->angle_max( 'H', 2.0 );
 	shear_mover->angle_max( 'E', 2.0 );
 	shear_mover->angle_max( 'L', 3.0 );
@@ -342,13 +342,13 @@ void ClassicRelax::set_default_moveset_phase1()
 void ClassicRelax::set_default_moveset_phase2()
 {
 	// setup the move objects
-	moves::SmallMoverOP small_mover( new moves::SmallMover( get_movemap(), m_Temperature, nmoves_ ) );
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( get_movemap(), m_Temperature, nmoves_ ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 2.0 );
 	small_mover->angle_max( 'L', 3.0 );
 
 	// setup the move objects
-	moves::ShearMoverOP shear_mover( new moves::ShearMover( get_movemap(), m_Temperature, nmoves_ ) );
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( get_movemap(), m_Temperature, nmoves_ ) );
 	shear_mover->angle_max( 'H', 2.0 );
 	shear_mover->angle_max( 'E', 2.0 );
 	shear_mover->angle_max( 'L', 3.0 );
@@ -379,13 +379,13 @@ void ClassicRelax::set_default_moveset_phase2()
 void ClassicRelax::set_default_moveset_phase3()
 {
 	// setup the move objects
-	moves::SmallMoverOP small_mover( new moves::SmallMover( get_movemap(), m_Temperature, nmoves_ ) );
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( get_movemap(), m_Temperature, nmoves_ ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 2.0 );
 	small_mover->angle_max( 'L', 3.0 );
 
 	// setup the move objects
-	moves::ShearMoverOP shear_mover( new moves::ShearMover( get_movemap(), m_Temperature, nmoves_ ) );
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( get_movemap(), m_Temperature, nmoves_ ) );
 	shear_mover->angle_max( 'H', 2.0 );
 	shear_mover->angle_max( 'E', 2.0 );
 	shear_mover->angle_max( 'L', 3.0 );
@@ -755,7 +755,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 
 	// add scores to map for output
 	std::map < std::string, core::Real > score_map;
-	ScoreMap::nonzero_energies( score_map, get_scorefxn(), pose );
+	protocols::jd2::ScoreMap::nonzero_energies( score_map, get_scorefxn(), pose );
 	if ( get_native_pose()!=0 ) {
 		score_map["rms"] = CA_rmsd( *get_native_pose(), pose );
 	}

@@ -91,13 +91,11 @@
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
-// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
-// AUTO-REMOVED #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 // AUTO-REMOVED #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 // AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <sstream>

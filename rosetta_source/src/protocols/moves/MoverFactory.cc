@@ -35,7 +35,17 @@ MoverFactory * MoverFactory::instance_( 0 );
 
 
 MoverFactory::MoverFactory()
-{}
+{
+	forbidden_names_.clear();
+	//the following 5 names are used in the original
+	//LoopMoverFactory
+	forbidden_names_.insert("quick_ccd");
+	forbidden_names_.insert("sdwindow");
+	forbidden_names_.insert("quick_ccd_moves");
+	forbidden_names_.insert("perturb_ccd");
+	forbidden_names_.insert("perturb_kic");
+	//original loop mover names over
+}
 
 MoverFactory::~MoverFactory(){}
 
@@ -56,6 +66,9 @@ MoverFactory::factory_register( MoverCreatorOP creator )
 	std::string const mover_type( creator->keyname() );
 	if ( mover_type == "UNDEFINED NAME" ) {
 		utility_exit_with_message("Can't map derived Mover with undefined type name.");
+	}
+	if( forbidden_names_.find( mover_type ) != forbidden_names_.end() ){
+		utility_exit_with_message("Name "+mover_type+" is not an allowed mover name, probably because it has historical meaning.");
 	}
 	if ( mover_creator_map_.find( mover_type ) != mover_creator_map_.end() ) {
 		utility_exit_with_message("MoverFactory::factory_register already has a mover creator with name \"" + mover_type + "\".  Conflicting Mover names" );

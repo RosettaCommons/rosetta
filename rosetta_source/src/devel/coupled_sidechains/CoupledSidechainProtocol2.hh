@@ -19,7 +19,7 @@
 #include <devel/coupled_sidechains/CoupledSidechainProtocol.fwd.hh>
 
 // Unit Headers
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
 #include <protocols/canonical_sampling/SimulatedTempering.hh>
 #include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>

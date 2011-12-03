@@ -31,24 +31,24 @@ namespace simple_moves {
 class SequenceProfileMover : public moves::Mover {
 public:
 	~SequenceProfileMover();
-    SequenceProfileMover();
+	SequenceProfileMover();
 	virtual void apply( core::pose::Pose& pose );
 	virtual std::string get_name() const;
 
-    // function for the parser with lots of accessors
+	// function for the parser with lots of accessors
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-    void set_cst_file_name( std::string const& cst_file_name ) { cst_file_name_ = cst_file_name; }
-    void set_profile_wgt( core::Real const profile_wgt ) { profile_wgt_ = profile_wgt; }
+	void set_cst_file_name( std::string const& cst_file_name ) { cst_file_name_ = cst_file_name; }
+	void set_profile_wgt( core::Real const profile_wgt ) { profile_wgt_ = profile_wgt; }
 
-    virtual protocols::moves::MoverOP clone() const;
-    virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-    core::Real get_profile_wgt() const { return profile_wgt_; }
-    std::string const& get_cst_file_name() const { return cst_file_name_; }
+	core::Real get_profile_wgt() const { return profile_wgt_; }
+	std::string const& get_cst_file_name() const { return cst_file_name_; }
 
 private:
-    core::Real profile_wgt_;
-    std::string cst_file_name_;
+	core::Real profile_wgt_;
+	std::string cst_file_name_;
 
 };
 

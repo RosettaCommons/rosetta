@@ -26,7 +26,7 @@
  #include <core/scoring/LREnergyContainer.hh>
  #include <core/scoring/methods/Methods.hh>
 
- #include <protocols/moves/BackboneMover.hh>
+ #include <protocols/simple_moves/BackboneMover.hh>
  #include <protocols/moves/MinMover.hh>
  #include <protocols/moves/MonteCarlo.hh>
  #include <protocols/moves/Mover.hh>

@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
@@ -33,7 +33,7 @@ class SmallMoverBenchmark : public Benchmark
 public:
 	pose::PoseOP pose;
 	kinematics::MoveMapOP movemap;
-	protocols::moves::SmallMover small_mover;
+	protocols::simple_moves::SmallMover small_mover;
 
 	SmallMoverBenchmark(std::string name) : Benchmark(name) {};
 

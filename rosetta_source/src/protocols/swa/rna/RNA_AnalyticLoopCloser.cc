@@ -16,7 +16,7 @@
 #include <protocols/swa/rna/RNA_AnalyticLoopCloser.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/rna/AllowInsert.hh>
+// AUTO-REMOVED #include <protocols/toolbox/AllowInsert.hh>
 //
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>

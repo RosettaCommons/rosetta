@@ -9,7 +9,7 @@
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <protocols/relax/util.hh>
@@ -32,8 +32,8 @@
 
 #include <protocols/relax/RelaxProtocolBase.hh>
 
-#include <protocols/rigid/AutoRBRelaxMover.hh>
-#include <protocols/rigid/util.hh>
+#include <protocols/rbsegment_relax/AutoRBRelaxMover.hh>
+#include <protocols/rbsegment_relax/util.hh>
 
 // AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 // AUTO-REMOVED #include <protocols/comparative_modeling/ThreadingMover.hh>
@@ -108,7 +108,7 @@
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/rigid/RBSegment.hh>
+#include <protocols/rbsegment_relax/RBSegment.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -440,7 +440,7 @@ public:
 		using namespace protocols::moves;
 		using namespace core::pack::task;
 
-		MoverOP autorb( new protocols::rigid::AutoRBMover );
+		MoverOP autorb( new protocols::rbsegment_relax::AutoRBMover );
 		autorb->apply( pose );
 	}
 
@@ -451,7 +451,7 @@ public:
 		using namespace basic::options::OptionKeys;
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+			protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 		} else {
 			core::pose::addVirtualResAsRoot( pose );
@@ -460,7 +460,7 @@ public:
 		// optionally set "smart" foldtree
 		// TO DO symmetric version
 		if ( option[ MR::smart_foldtree ].user() ) {
-			using namespace protocols::rigid;
+			using namespace protocols::rbsegment_relax;
 			utility::vector1< RBSegment > rigid_segs, rb_chunks;
 			utility::vector1< core::Size > jumps;
 			protocols::loops::Loops loops;
@@ -498,7 +498,7 @@ public:
 
 		// setup for symmetry
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+			protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 		} else {
 			core::pose::addVirtualResAsRoot( pose );
@@ -583,7 +583,7 @@ public:
 
 		// setup for symmetry
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+			protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 		} else {
 			core::pose::addVirtualResAsRoot( pose );

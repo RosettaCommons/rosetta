@@ -67,7 +67,7 @@
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/MinMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 #include <protocols/electron_density/util.hh>
@@ -842,7 +842,7 @@ scmove_residue(
 	core::pack::task::PackerTaskOP packer_task( single_res_task( pose, seqpos, no_incl_curr, false ) );
 
 	//create movers and apply
-	SidechainMoverOP scmover( new SidechainMover() );
+	protocols::simple_moves::sidechain_moves::SidechainMoverOP scmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 	scmover->set_task( packer_task );
 	scmover->init_task( pose );
 	scmover->set_prob_uniform( 0.1 );

@@ -25,10 +25,6 @@
 
 #include <utility/vector1.hh>
 
-
-// C++ Headers
-
-
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {
@@ -36,6 +32,8 @@ namespace loops {
 
 class LoopMover_Refine_Backrub: public LoopMover {
 public:
+	LoopMover_Refine_Backrub();
+
 	LoopMover_Refine_Backrub(
 		protocols::loops::Loops  loops_in
 	);

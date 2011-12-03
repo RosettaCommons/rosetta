@@ -23,6 +23,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesSeqRecoveryCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
@@ -775,7 +776,7 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 				std::string chainA(""), resA(""),chainB(""),resB("");
 				core::Size cst_block(0), exgeom_id(0);
 				int seqposA(0), seqposB(0);
-				if( enzutil::split_up_remark_line( rem_it->value, chainA, resA, seqposA, chainB, resB, seqposB, cst_block, exgeom_id ) ){
+				if( toolbox::match_enzdes_util::split_up_remark_line( rem_it->value, chainA, resA, seqposA, chainB, resB, seqposB, cst_block, exgeom_id ) ){
 
 					bool line_changed( false );
 
@@ -793,7 +794,7 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 					}
 
 					if( line_changed ){
-						rem_it->value = enzutil::assemble_remark_line( chainA, resA, seqposA, chainB, resB, seqposB, cst_block, exgeom_id );
+						rem_it->value = toolbox::match_enzdes_util::assemble_remark_line( chainA, resA, seqposA, chainB, resB, seqposB, cst_block, exgeom_id );
 					}
 				}
 			}

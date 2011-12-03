@@ -23,7 +23,7 @@
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+// AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -51,7 +51,7 @@
 #include <basic/Tracer.hh>
 
 //SYMMETRY
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -140,7 +140,7 @@ public:
 		pdbname_base_ = pdbfilename.base();
 
 		// make symmetric pose according to symm definition file included as an option
-		protocols::symmetric_docking::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::symmetric_docking::SetupForSymmetryMover();
+		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::simple_moves::symmetry::SetupForSymmetryMover();
 		make_monomeric_input_pose_symmetrical->apply( pose );
 
 		pose.dump_pdb("sym.pdb");

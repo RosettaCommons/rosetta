@@ -19,6 +19,8 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
+
 #include <protocols/match/MatchPositionModifiers.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -1181,7 +1183,7 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 		Size cst_block(0);
 		std::string resA_chain ,resB_chain;
 		core::Size ex_geom_id;
-		if( protocols::enzdes::enzutil::split_up_remark_line(remark_it->value, resA_chain,
+		if( protocols::toolbox::match_enzdes_util::split_up_remark_line(remark_it->value, resA_chain,
 				resA_type, resA_num, resB_chain, resB_type,
 				resB_num, cst_block, ex_geom_id)  ){
 

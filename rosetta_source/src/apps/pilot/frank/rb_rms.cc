@@ -60,7 +60,7 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
-#include <protocols/rigid/RBSegment.hh>
+#include <protocols/rbsegment_relax.hh>
 
 
 

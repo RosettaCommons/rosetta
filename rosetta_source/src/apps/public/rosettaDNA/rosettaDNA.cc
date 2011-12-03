@@ -19,7 +19,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <protocols/constraints_additional/SequenceProfileConstraint.fwd.hh>
+#include <core/scoring/constraints/SequenceProfileConstraint.fwd.hh>
 #include <utility/vector1.hh>
 
 using namespace core;
@@ -27,7 +27,6 @@ using namespace core;
 		using namespace constraints;
 
 using namespace protocols;
-	using namespace constraints_additional;
 	using namespace dna;
 	using namespace moves;
 	using namespace jd2;

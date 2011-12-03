@@ -18,12 +18,12 @@
 #include <devel/metal_interface/AddMetalSiteConstraints.hh>
 
 #include <protocols/anchored_design/InterfaceAnalyzerMover.hh>
-#include <protocols/moves/RollMover.hh>
+#include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
 #include <protocols/jd2/Job.hh>
@@ -44,7 +44,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Symmetry Headers
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -151,7 +151,7 @@ public:
   setup ( Pose & pose ) {
     //pose.dump_pdb("initial_mono_pose.pdb");
 
-    protocols::symmetric_docking::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::symmetric_docking::SetupForSymmetryMover(); // according to symm definition file included as an option
+    protocols::simple_moves::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::simple_moves::symmetry::SetupForSymmetryMover(); // according to symm definition file included as an option
     make_monomeric_input_pose_symmetrical->apply( pose );
 
     //pose.dump_pdb("initial_symm_pose.pdb");
@@ -355,15 +355,15 @@ public:
 
     //create Z axis
     axis const zaxis = cross_product( zinc-p1a, zinc-p1b );
-    zmover_ = new protocols::moves::RollMover( chain_begin, chain_end, -10, 10, zaxis, zinc );
+    zmover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, zaxis, zinc );
     //create Y axis
     core::Angle const create_y_rot( angle_of(zinc-p1a, zinc-p1b) );
     numeric::xyzMatrix< core::Real > z_rotation_matrix( numeric::rotation_matrix( zaxis, create_y_rot ) );
     axis const yaxis = ( z_rotation_matrix*(zinc - p1a) );
-    ymover_ = new protocols::moves::RollMover( chain_begin, chain_end, -10, 10, yaxis, zinc );
+    ymover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, yaxis, zinc );
     //create X axis
     axis const xaxis = cross_product(zaxis, yaxis);
-    xmover_ = new protocols::moves::RollMover( chain_begin, chain_end, -10, 10, xaxis, zinc );
+    xmover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, xaxis, zinc );
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -516,9 +516,9 @@ private:
   protocols::moves::MonteCarloOP mc_;
   protocols::anchored_design::InterfaceAnalyzerMoverOP interface_analyzer_;
 
-  protocols::moves::RollMoverOP zmover_;
-  protocols::moves::RollMoverOP ymover_;
-  protocols::moves::RollMoverOP xmover_;
+  protocols::rigid::RollMoverOP zmover_;
+  protocols::rigid::RollMoverOP ymover_;
+  protocols::rigid::RollMoverOP xmover_;
 
 
   //int nstruct_count_;

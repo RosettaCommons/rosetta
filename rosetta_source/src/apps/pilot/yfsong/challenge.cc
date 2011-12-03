@@ -47,7 +47,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/RationalMonteCarlo.hh>
+#include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMotionMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
@@ -823,7 +823,7 @@ void do_rigid_body_moves(const core::scoring::ScoreFunctionOP& score,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using protocols::moves::MoverOP;
-	using protocols::moves::RationalMonteCarlo;
+	using protocols::simple_moves::rational_mc::RationalMonteCarlo;
 	using protocols::rigid::RigidBodyMotionMover;
 	assert(pose);
 

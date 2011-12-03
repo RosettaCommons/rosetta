@@ -43,7 +43,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 
 //movers
-#include <protocols/moves/BackboneMover.hh> //SmallMover
+#include <protocols/simple_moves/BackboneMover.hh> //SmallMover
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
@@ -403,15 +403,15 @@ public:
 		////////////////////////////////////backbone_mover_cent/////////////////////////////////////
 		protocols::moves::RandomMoverOP backbone_mover_cen( new protocols::moves::RandomMover() );
 
-		using protocols::moves::SmallMover;
-		using protocols::moves::BackboneMoverOP;
-		BackboneMoverOP small_mover_cen = new SmallMover(movemap_, 0.8, 0);
+		using protocols::simple_moves::SmallMover;
+		using protocols::simple_moves::BackboneMoverOP;
+		protocols::simple_moves::BackboneMoverOP small_mover_cen = new protocols::simple_moves::SmallMover(movemap_, 0.8, 0);
 		small_mover_cen->angle_max( 'H', 180.0 );
 		small_mover_cen->angle_max( 'E', 180.0 );
 		small_mover_cen->angle_max( 'L', 180.0 );
 		backbone_mover_cen->add_mover(small_mover_cen, 1.0);
 
-		BackboneMoverOP shear_mover_cen = new protocols::moves::ShearMover(movemap_, 0.8, 0);
+		protocols::simple_moves::BackboneMoverOP shear_mover_cen = new protocols::simple_moves::ShearMover(movemap_, 0.8, 0);
 		shear_mover_cen->angle_max( 'H', 180.0 );
 		shear_mover_cen->angle_max( 'E', 180.0 );
 		shear_mover_cen->angle_max( 'L', 180.0 );
@@ -529,12 +529,12 @@ public:
 		//////////////////////////////////////// backbone mover/////////////////////////////////////////
 		protocols::moves::RandomMoverOP backbone_mover_fa( new protocols::moves::RandomMover() );
 
-		BackboneMoverOP small_mover_fa = new SmallMover(movemap_lesstail_, 0.8, 0);
+		protocols::simple_moves::BackboneMoverOP small_mover_fa = new protocols::simple_moves::SmallMover(movemap_lesstail_, 0.8, 0);
 		small_mover_fa->angle_max( 'H', 4.0 );
 		small_mover_fa->angle_max( 'E', 4.0 );
 		small_mover_fa->angle_max( 'L', 4.0 );
 
-		BackboneMoverOP shear_mover_fa = new protocols::moves::ShearMover(movemap_lesstail_, 0.8, 0);
+		protocols::simple_moves::BackboneMoverOP shear_mover_fa = new protocols::simple_moves::ShearMover(movemap_lesstail_, 0.8, 0);
 		shear_mover_fa->angle_max( 'H', 4.0 );
 		shear_mover_fa->angle_max( 'E', 4.0 );
 		shear_mover_fa->angle_max( 'L', 4.0 );

@@ -53,7 +53,7 @@
 #include <core/scoring/rms_util.hh>
 
 //movers
-#include <protocols/moves/BackboneMover.hh> //SmallMover
+#include <protocols/simple_moves/BackboneMover.hh> //SmallMover
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/moves/PackRotamersMover.hh>
@@ -556,14 +556,14 @@ public:
 		frag_mover_tail->enable_end_bias_check(false);
 		random_mover->add_mover(frag_mover_tail, 1.0);
 
-		/////////////////////////////////////SmallMover, ShearMover//////////////////////////////////
-		BackboneMoverOP small_mover = new SmallMover(movemap_, 0.8, 0);
+		/////////////////////////////////////SmallMover, protocols::simple_moves::ShearMover//////////////////////////////////
+		protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover(movemap_, 0.8, 0);
 		small_mover->angle_max( 'H', 4.0 );
 		small_mover->angle_max( 'E', 4.0 );
 		small_mover->angle_max( 'L', 4.0 );
 		random_mover->add_mover(small_mover, 1.0);
 
-		BackboneMoverOP shear_mover = new protocols::moves::ShearMover(movemap_, 0.8, 0);
+		protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover(movemap_, 0.8, 0);
 		shear_mover->angle_max( 'H', 4.0 );
 		shear_mover->angle_max( 'E', 4.0 );
 		shear_mover->angle_max( 'L', 4.0 );

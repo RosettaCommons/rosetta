@@ -13,7 +13,7 @@
 // Unit Headers
 #include <protocols/topology_broker/MembraneTopologyClaimer.hh>
 #include <core/scoring/MembraneTopology.hh>
-#include <protocols/moves/PoseMembraneRigidBodyMover.hh>
+#include <protocols/rigid/PoseMembraneRigidBodyMover.hh>
 
 // Project headers
 #include <basic/options/option.hh>
@@ -76,14 +76,14 @@ MembraneTopologyClaimer::add_mover(
 		//core::Real move_pose_to_membrane_weight(1.0);
 		//random_mover.add_mover( move_pose_to_membrane, move_pose_to_membrane_weight);
 
-		moves::MoverOP membrane_center_perturbation_mover =	new moves::MembraneCenterPerturbationMover;
+		moves::MoverOP membrane_center_perturbation_mover =	new rigid::MembraneCenterPerturbationMover;
 		core::Real membrane_center_perturbation_weight(2.0);
 		random_mover.add_mover( membrane_center_perturbation_mover, membrane_center_perturbation_weight );
 
 		// TR << pose.fold_tree();
 		// if pose is symmetric or option has symmetry, no rotation trial
 		if ( !core::pose::symmetry::is_symmetric( pose ) ) {
-			moves::MoverOP membrane_normal_perturbation_mover =	new moves::MembraneNormalPerturbationMover;
+			moves::MoverOP membrane_normal_perturbation_mover =	new rigid::MembraneNormalPerturbationMover;
 			core::Real membrane_normal_perturbation_weight(5.0);
 			random_mover.add_mover( membrane_normal_perturbation_mover, membrane_normal_perturbation_weight);
 		}
@@ -98,9 +98,10 @@ void MembraneTopologyClaimer::new_decoy( core::pose::Pose const& pose ) {
 */
 
 void MembraneTopologyClaimer::initialize_dofs(
-											  core::pose::Pose& pose,
-											  DofClaims const& /*init_dofs*/,
-											  DofClaims& /*failed_to_init*/ ) {
+	core::pose::Pose& pose,
+	DofClaims const& /*init_dofs*/,
+	DofClaims& /*failed_to_init*/
+) {
 	using basic::options::option;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -147,9 +148,9 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 	// create a virtual residue, fullatom or centroid
 	bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSetCAP const &residue_set(
-														 core::chemical::ChemicalManager::get_instance()->residue_type_set
-														 ( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-														 );
+		core::chemical::ChemicalManager::get_instance()->residue_type_set
+		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
+		);
 	core::chemical::ResidueTypeCAPs const & rsd_type_list( residue_set->name3_map("VRT") );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
 

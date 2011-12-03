@@ -17,7 +17,7 @@
 
 // Rosetta Headers
 #include <protocols/rna/FullAtomRNA_Fragments.hh>
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <protocols/rna/RNA_SecStructInfo.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh> // for compare_RNA_char, compare_RNA_secstruct
 
@@ -313,7 +313,7 @@ namespace rna{
 			 Size const position,
 			 Size const size,
 			 Size const type,
-			 AllowInsertOP allow_insert ){
+			toolbox::AllowInsertOP allow_insert ){
 
 		TorsionSet torsion_set( size );
 		pick_random_fragment( torsion_set, pose, position, size, type );
@@ -326,7 +326,7 @@ namespace rna{
 																 core::pose::Pose & pose,
 																 Size const position,
 																 protocols::rna::TorsionSet const & torsion_set,
-																 AllowInsertOP allow_insert
+																toolbox::AllowInsertOP allow_insert
 																 )
 	{
 		using namespace core::scoring::rna;

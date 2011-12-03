@@ -66,8 +66,8 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/moves/BackboneMover.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -564,7 +564,7 @@ FlexPepDockingProtocol::small_moves(
 		using namespace core::pose;
 		using namespace protocols;
 
-		moves::SmallMoverOP small_mover( new moves::SmallMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
+		simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
 		small_mover->angle_max('L',flags_.smove_angle_range);
 		small_mover->apply(pose);
 
@@ -583,7 +583,7 @@ FlexPepDockingProtocol::shear_moves(
 		using namespace core::pose;
 		using namespace protocols;
 
-		moves::ShearMoverOP shear_mover( new moves::ShearMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
+		simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
 		shear_mover->angle_max('L',flags_.smove_angle_range);
 		shear_mover->apply(pose);
 
@@ -603,7 +603,7 @@ FlexPepDockingProtocol::backrub_move(
 		using namespace protocols;
 
 		// set up the BackrubMover
-		moves::BackrubMover backrubmover;
+		protocols::backrub::BackrubMover backrubmover;
 		// read known and unknown optimization parameters from the database
 		// ? backrubmover.branchopt().read_database();
 		backrubmover.clear_segments();

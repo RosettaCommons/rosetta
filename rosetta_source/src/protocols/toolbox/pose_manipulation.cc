@@ -38,7 +38,7 @@
 #include <core/id/AtomID_Map.hh>
 
 #include <protocols/moves/MinMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 
@@ -218,6 +218,44 @@ remove_non_protein_residues(
 
 } //remove_non_protein_residues
 
+
+void
+add_chainbreaks_according_to_jumps( core::pose::Pose & pose )
+{
+	for( core::Size i =1; i <= pose.fold_tree().num_jump(); ++i ){
+
+		core::Size this_cutpoint( pose.fold_tree().cutpoint( i ) );
+
+		if ( pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::UPPER_TERMINUS ) ) continue;
+
+		if ( pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::LOWER_TERMINUS ) ) continue;
+
+		if( !pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
+			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, this_cutpoint );
+		}
+		if( !pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ){
+			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, this_cutpoint +1 );
+		}
+	}
+}
+
+
+void
+remove_chainbreaks_according_to_jumps( core::pose::Pose & pose )
+{
+	for( core::Size i =1; i <= pose.fold_tree().num_jump(); ++i ){
+
+		core::Size this_cutpoint( pose.fold_tree().cutpoint( i ) );
+
+		if( pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
+			core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, this_cutpoint );
+		}
+		if( pose.residue_type( this_cutpoint + 1).has_variant_type( core::chemical::CUTPOINT_UPPER ) ){
+			core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, this_cutpoint+1 );
+		}
+	}
+}
+
 core::Real
 superimpose_pose_on_subset_CA(
 	core::pose::Pose & pose,
@@ -370,7 +408,7 @@ insert_pose_into_pose(
 
 	//create CCD mover, smallmover
 	protocols::loops::CcdLoopClosureMover close( *(loops.begin()), movemap );
-	protocols::moves::SmallMover small(movemap, 10, 200); //huge moves for sampling
+	protocols::simple_moves::SmallMover small(movemap, 10, 200); //huge moves for sampling
 	small.angle_max( 'H', 180.0 );
 	small.angle_max( 'E', 180.0 );
 	small.angle_max( 'L', 180.0 );

@@ -57,7 +57,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/MPIFileBufJobDistributor.hh>
 #include <protocols/jd2/NoOutputJobOutputter.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/simple_moves/BBGaussianMover.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
@@ -70,8 +70,8 @@
 // #include <protocols/moves/ReplicaExchangeMC.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/SidechainMCMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
 #include <sstream>
@@ -557,7 +557,7 @@ int main( int argc, char * argv [] ) {
 	// 	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
 	// 	core::pose::add_lower_terminus_type_to_pose_residue(pose,1);
 	// 	core::pose::add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
-	// 	protocols::moves::BackrubMoverOP brmove = new protocols::moves::BackrubMover();
+	// 	protocols::backrub::BackrubMoverOP brmove = new protocols::backrub::BackrubMover();
 	// 	brmove->branchopt().read_database();
 	// 	brmove->clear_segments();
 	// 	core::pose::PoseOP pose_ptr( new core::pose::Pose() );

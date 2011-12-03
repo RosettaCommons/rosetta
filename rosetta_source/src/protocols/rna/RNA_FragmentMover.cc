@@ -15,8 +15,8 @@
 
 #include <protocols/rna/RNA_FragmentMover.hh>
 #include <protocols/rna/RNA_Fragments.hh>
-#include <protocols/rna/AllowInsert.hh>
-#include <protocols/rna/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
@@ -59,7 +59,7 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	RNA_FragmentMover::RNA_FragmentMover(
 																		 RNA_FragmentsOP rna_fragments,
-																		 protocols::rna::AllowInsertOP allow_insert ):
+																		 protocols::toolbox::AllowInsertOP allow_insert ):
   Mover(),
 	rna_fragments_( rna_fragments ),
 	allow_insert_( allow_insert ),
@@ -82,7 +82,7 @@ namespace rna {
 {
 	Mover::type("RNA_FragmentMover");
 
-	allow_insert_ = new AllowInsert( pose );
+	allow_insert_ = new toolbox::AllowInsert( pose );
 	allow_insert_->set( false );
 	for ( Size i = 1; i <= allow_insert_in.size(); i++ ){
 		if ( pose.residue_type( i ).is_RNA() && allow_insert_in[ i ] ) allow_insert_->set( i, true );

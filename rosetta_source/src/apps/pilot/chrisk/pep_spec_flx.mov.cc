@@ -25,7 +25,7 @@
  #include <core/scoring/LREnergyContainer.hh>
  #include <core/scoring/methods/Methods.hh>
 
- #include <protocols/moves/BackboneMover.hh>
+ #include <protocols/simple_moves/BackboneMover.hh>
  #include <protocols/moves/MinMover.hh>
  #include <protocols/moves/MonteCarlo.hh>
  #include <protocols/moves/Mover.hh>
@@ -37,9 +37,9 @@
  #include <protocols/moves/PackRotamersMover.hh>
  #include <protocols/moves/RotamerTrialsMover.hh>
  #include <protocols/moves/RepeatMover.hh>
- #include <protocols/moves/BackrubMover.fwd.hh>
- #include <protocols/moves/BackrubMover.hh>
- #include <protocols/moves/SidechainMover.hh>
+ #include <protocols/backrub/BackrubMover.fwd.hh>
+ #include <protocols/backrub/BackrubMover.hh>
+ #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
 
  #include <protocols/loops/ccd_closure.hh>
@@ -1046,7 +1046,7 @@ perturb_pep_bb(
 )
 {
 	( *cen_scorefxn )( pose );
-	SmallMoverOP cg_small( new SmallMover( mm_move, 5.0, 1 ) );
+	protocols::simple_moves::SmallMoverOP cg_small( new protocols::simple_moves::SmallMover( mm_move, 5.0, 1 ) );
 	cg_small->angle_max( 'H', 10.0 );
 	cg_small->angle_max( 'E', 10.0 );
 	cg_small->angle_max( 'L', 10.0 );
@@ -1101,7 +1101,7 @@ refine_fa_pep_bb(
 	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
 	rb_mover->apply( pose );
 
-	SmallMoverOP rep_small_mover( new SmallMover( mm, 2.0, 10 ) );
+	protocols::simple_moves::SmallMoverOP rep_small_mover( new protocols::simple_moves::SmallMover( mm, 2.0, 10 ) );
 	rep_small_mover->angle_max( 'H', 1.0 );
 	rep_small_mover->angle_max( 'E', 1.0 );
 	rep_small_mover->angle_max( 'L', 1.0 );
@@ -1190,7 +1190,7 @@ mutate_random_residue(
 
 	if( pose.residue( seqpos ).name3() != "PRO" && pose.residue( seqpos ).name3() != "GLY" && pose.residue( seqpos ).name3() != "ALA" ){
 		MonteCarloOP mc( new MonteCarlo( pose, *soft_scorefxn, 1.0 ) );
-		protocols::moves::SidechainMoverOP sidechain_mover( new SidechainMover() );
+		protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechain_mover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 		sidechain_mover->set_task_factory( rp_task_factory );
 		sidechain_mover->set_prob_uniform( 0.05 );
 		for( Size ii = 1; ii <= 20; ++ii ){
@@ -1351,7 +1351,7 @@ RunPepSpec()
 
 
 	// set up the BackrubMover
-	moves::BackrubMoverOP backrub_mover( new moves::BackrubMover() );
+	protocols::backrub::BackrubMoverOP backrub_mover( new protocols::backrub::BackrubMover() );
 	// read known and unknown optimization parameters from the database
 	if( option[ pep_spec::flex_prot_bb ] ) backrub_mover->branchopt().read_database();
 
@@ -1685,7 +1685,7 @@ RunPepSpec()
 			//Refine//
 			if( !option[ pep_spec::test_no_farelax ] ){
 
-				ShearMoverOP shear_mover( new ShearMover( mm_move, 1.0, 1 ) );	//LOOP
+				protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover( mm_move, 1.0, 1 ) );	//LOOP
 				shear_mover->angle_max( 'H', 2.0 );
 				shear_mover->angle_max( 'E', 2.0 );
 				shear_mover->angle_max( 'L', 2.0 );
@@ -1724,7 +1724,7 @@ RunPepSpec()
 					rp_task_factory->push_back( restrict_to_repack_taskop );
 					rp_task_factory->push_back( prevent_repack_taskop );
 				}
-				protocols::moves::SidechainMoverOP sidechain_mover( new SidechainMover() );
+				protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechain_mover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 				sidechain_mover->set_task_factory( rp_task_factory );
 				sidechain_mover->set_prob_uniform( 0.05 );
 */

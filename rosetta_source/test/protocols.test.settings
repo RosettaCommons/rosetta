@@ -175,7 +175,35 @@ sources = {
 }
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
-libraries    = [ "sqlite3", "cppdb", "protocols","core.5","core.4","core.3","core.2","core.1","basic", "utility", "numeric", "ObjexxFCL", "z" ]
+libraries    = [ "devel", 
+"protocols.7",
+"protocols_c.6", 
+"protocols_b.6", 
+"protocols_a.6", 
+"protocols_c.5", 
+"protocols_b.5", 
+"protocols_a.5", 
+"protocols_f.4", 
+"protocols_e.4", 
+"protocols_d.4", 
+"protocols_c.4", 
+"protocols_b.4", 
+"protocols_a.4",
+"protocols.3",
+"protocols.2",
+"protocols.1",
+"core.5",
+"core.4",
+"core.3",
+"core.2",
+"core.1",
+"basic",
+"numeric",
+"utility",
+"ObjexxFCL",
+"z",
+"cppdb",
+"sqlite3" ]
 subprojects  = []
 testinputfiles = [
 	"abinitio/2GB3.pdb",

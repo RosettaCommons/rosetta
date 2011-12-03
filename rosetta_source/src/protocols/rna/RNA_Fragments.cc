@@ -13,9 +13,9 @@
 
 // Rosetta Headers
 #include <protocols/rna/RNA_Fragments.hh>
-#include <protocols/rna/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/rna/AllowInsert.hh>
+// AUTO-REMOVED #include <protocols/toolbox/AllowInsert.hh>
 // AUTO-REMOVED #include <core/id/AtomID.hh>
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>
@@ -38,7 +38,7 @@ namespace rna{
 												core::Size const /*position*/,
 												core::Size const /*size*/,
 												core::Size const /*type = MATCH_YR*/,
-												AllowInsertOP  /*allow_insert*/ ){
+											toolbox::AllowInsertOP  /*allow_insert*/ ){
 		std::cout << "Should not be in here! " << std::endl;
 	}
 

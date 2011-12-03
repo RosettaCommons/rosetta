@@ -16,12 +16,10 @@
 #include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
 
 /// Project Headers
-#include <protocols/constraints_additional/SequenceProfileConstraint.hh>
 #include <protocols/constraints_additional/SequenceCouplingConstraint.hh>
 #include <protocols/constraints_additional/SequenceCoupling1BDConstraint.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
-#include <protocols/constraints_additional/PocketConstraint.hh>
 
 #include <utility/vector1.hh>
 
@@ -72,21 +70,6 @@ SequenceCouplingConstraintCreator::keyname() const
 	return "SequenceCoupling";
 }
 
-SequenceProfileConstraintCreator::SequenceProfileConstraintCreator() {}
-SequenceProfileConstraintCreator::~SequenceProfileConstraintCreator() {}
-
-core::scoring::constraints::ConstraintOP
-SequenceProfileConstraintCreator::create_constraint() const
-{
-	return new SequenceProfileConstraint;
-}
-
-std::string
-SequenceProfileConstraintCreator::keyname() const
-{
-	return "SequenceProfile";
-}
-
 NamedAtomPairConstraintCreator::NamedAtomPairConstraintCreator() {}
 NamedAtomPairConstraintCreator::~NamedAtomPairConstraintCreator() {}
 
@@ -100,20 +83,6 @@ std::string
 NamedAtomPairConstraintCreator::keyname() const {
 	return "AtomPair";
 }
-
-PocketConstraintCreator::PocketConstraintCreator() {}
-PocketConstraintCreator::~PocketConstraintCreator() {}
-
-core::scoring::constraints::ConstraintOP
-PocketConstraintCreator::create_constraint() const {
-	return new PocketConstraint;
-}
-
-std::string PocketConstraintCreator::keyname() const
-{
-	return "Pocket";
-}
-
 
 } //namespace constraints_additional
 } //namespace protocols

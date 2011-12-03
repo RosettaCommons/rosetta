@@ -103,9 +103,9 @@
 
 //Backrub
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 
@@ -1342,12 +1342,12 @@ backrub_protocol( pose::Pose const & native_pose, pose::PoseOP & pose, scoring::
 	score_fxn->set_weight(core::scoring::mm_bend, option[ backrub::mm_bend_weight ]);
 
 	// set up the BackrubMover
-	protocols::moves::BackrubMover backrubmover;
+	protocols::backrub::BackrubMover backrubmover;
 	// read known and unknown optimization parameters from the database
 	backrubmover.branchopt().read_database();
 
 	// set up the SidechainMover
-	protocols::moves::SidechainMover sidechainmover;
+	protocols::simple_moves::sidechain_moves::SidechainMover sidechainmover;
 	sidechainmover.set_task_factory(main_task_factory);
 	sidechainmover.set_prob_uniform(option[ backrub::sc_prob_uniform ]);
 

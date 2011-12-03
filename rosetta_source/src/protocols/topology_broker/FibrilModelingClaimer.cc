@@ -14,7 +14,7 @@
 #include <protocols/topology_broker/FibrilModelingClaimer.hh>
 #include <protocols/symmetric_docking/SymFoldandDockRbTrialMover.hh>
 #include <protocols/symmetric_docking/SymFoldandDockSlideTrialMover.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
@@ -159,7 +159,7 @@ void FibrilModelingClaimer::initialize_dofs(
 	make_fibril( pose );
 
 	// Randomize the rigid body
-	protocols::symmetric_docking::SymDockingInitialPerturbation initial( false /*slide into contact*/ );
+	protocols::simple_moves::symmetry::SymDockingInitialPerturbation initial( false /*slide into contact*/ );
 	initial.apply( pose );
 	// Setup the movemap
   //SymmetricConformation & symm_conf (

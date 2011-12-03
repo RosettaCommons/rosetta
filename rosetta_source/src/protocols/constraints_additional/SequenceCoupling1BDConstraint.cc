@@ -54,21 +54,21 @@ using basic::t_trace;
 static basic::Tracer TR("protocols.constraints_additional.SequenceCoupling1BDConstraint");
 
 	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint()
-	:SequenceProfileConstraint( )
+	:core::scoring::constraints::SequenceProfileConstraint( )
 {}
 
 	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint( 
 		Pose const & pose,
 		core::Size numpos,
 		SequenceProfileOP profile
-		):SequenceProfileConstraint(pose, numpos,profile)
+		):core::scoring::constraints::SequenceProfileConstraint(pose, numpos,profile)
 {}
 
 	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint( 
 		core::Size numpos,
 		utility::vector1< AtomID > const & atomids,
 		SequenceProfileOP profile
-		):SequenceProfileConstraint(numpos, atomids ,profile)
+		):core::scoring::constraints::SequenceProfileConstraint(numpos, atomids ,profile)
 {}
 SequenceCoupling1BDConstraint::~SequenceCoupling1BDConstraint() {}
 

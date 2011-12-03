@@ -35,7 +35,7 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 
 #include <utility/io/ozstream.hh>
 
@@ -100,7 +100,7 @@ int run_boinc_debug() {
 	using core::Size;
 	using namespace protocols::moves;
 	MonteCarloOP mc( new MonteCarlo( fold_pose, *scorefxn, 1.0 ) );
-	moves::SmallMoverOP small_mover( new moves::SmallMover( movemap, 1.0, 1 ) );
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( movemap, 1.0, 1 ) );
 	moves::TrialMoverOP smooth_trials( new moves::TrialMover( small_mover, mc ) );
 
 	if ( option[ james::debug ]() ) {

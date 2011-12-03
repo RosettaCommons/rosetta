@@ -12,8 +12,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/moves/SidechainMCMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -74,7 +74,7 @@ main(int argc, char* argv []){
 	//SilentStructOP ssin = SilentStructFactory::get_silent_struct_in();
 	if( !sidechainmover ){ //38.0 accorind to util.prof
 	  std::cout << "Selection: FAST-SC mover with detailed balance " << detailed_balance << std::endl;
-	  protocols::moves::SidechainMCMover scmc;
+	  protocols::simple_moves::sidechain_moves::SidechainMCMover scmc;
 	  pack::task::PackerTaskOP pt = core::pack::task::TaskFactory::create_packer_task( pose );
 	  pt->initialize_from_command_line();
 	  if ( option[ basic::options::OptionKeys::packing::resfile ].user() )
@@ -110,7 +110,7 @@ main(int argc, char* argv []){
 	}else{
 	  std::cout << "Selection: Regular SC mover with detailed balance " << detailed_balance;
 
-	  protocols::moves::SidechainMover sc;
+	  protocols::simple_moves::sidechain_moves::SidechainMover sc;
 	  pack::task::PackerTaskOP pt = core::pack::task::TaskFactory::create_packer_task( pose );
 	  protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( *sfxn, 1.0);
 	  mc->reset( pose );

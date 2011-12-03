@@ -105,7 +105,7 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
     using namespace core::pose;
     using namespace conformation;
     using namespace kinematics;
-    using namespace protocols::match;
+    using namespace numeric::geometry::hashing;
     using namespace optimization;
     using namespace id;
 
@@ -413,7 +413,7 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
     using namespace core::pose;
     using namespace conformation;
     using namespace kinematics;
-    using namespace protocols::match;
+    using namespace numeric::geometry::hashing;
     using namespace optimization;
     using namespace id;
 

@@ -22,7 +22,7 @@
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <core/scoring/constraints/util.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
+//#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
 // Project Headers
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>

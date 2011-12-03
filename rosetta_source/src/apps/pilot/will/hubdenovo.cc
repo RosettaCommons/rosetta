@@ -75,11 +75,11 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
@@ -130,7 +130,7 @@ Real calc_c3_carmsd(Size const nres, Pose p, Pose const & native) {
 	if(native.n_residue() == 0) return;
 	if(native.n_residue()+1 != nres) {
 		tr << p.sequence() << endl;
-		tr << " " << native.sequence() << endl;		
+		tr << " " << native.sequence() << endl;
 		utility_exit_with_message("native should be 1 chain w/o hub");
 	}
 	core::pose::symmetry::make_asymmetric_pose(p);
@@ -165,7 +165,7 @@ Real calc_c3_carmsd(Size const nres, Pose p, Pose const & native) {
 
 
 
-// bool hocstcmp (std::pair<Size,Size> i, std::pair<Size,Size> j) { 
+// bool hocstcmp (std::pair<Size,Size> i, std::pair<Size,Size> j) {
 // 	return abs(i.first-i.second) < abs(j.first-j.second);
 // }
 string peek(std::istream & in) {
@@ -204,7 +204,7 @@ Strings getline(std::istream & in) {
 	while(iss >> s) v.push_back(s);
 	return v;
 }
-struct DCST {	
+struct DCST {
 	string atm1,atm2;
 	Size rsd1,rsd2;
 	Real d,sd;
@@ -238,7 +238,7 @@ struct ConstraintConfig {
 	vector1<DCST> dcst;
 	core::chemical::ResidueTypeSetCAP crs,frs;
 	virtual ~ConstraintConfig() {}
-	ConstraintConfig() 
+	ConstraintConfig()
 	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
 	{
 		init();
@@ -355,7 +355,7 @@ struct ConstraintConfig {
 				Size lb = atoi(s1.c_str()), ub = atoi(s2.c_str());
 				for(Size i = lb; i <= ub; ++i) r.push_back(i);
 			} else {
-				utility_exit_with_message("parse_residues "+s);	
+				utility_exit_with_message("parse_residues "+s);
 			}
 		}
 		// tr << "parse_residues " << s << " " << r << endl;
@@ -366,7 +366,7 @@ struct ConstraintConfig {
 		for(Strings::const_iterator i = s.begin(); i != s.end(); ++i) {
 			Sizes r = parse_residues(*i,aliases);
 			res.insert(res.end(),r.begin(),r.end());
-		}	
+		}
 		//tr << "parse_residues '" << s << "'' " << res << endl;
 		return res;
 	}
@@ -398,13 +398,13 @@ struct ConstraintConfig {
 			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1)             );
 			AtomID id2B( id1.atomno(), id1.rsd() - nres * (sub2-1) + nhub*nres );
 			//tr << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
-			p.add_constraint( new AtomPairConstraint( id1B, id2B, new HarmonicFunc(d,sd) ) );		
+			p.add_constraint( new AtomPairConstraint( id1B, id2B, new HarmonicFunc(d,sd) ) );
 		}
 		if(sub2 > nhub) { // !!!!!!!!!!!!!! assuming dimer cst on higher sym!
 			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1) );
 			AtomID id2B( id1.atomno(), id1.rsd() + nres * (sub2-1) );
 			//tr << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
-			p.add_constraint( new AtomPairConstraint( id1B, id2B, new HarmonicFunc(d,sd) ) );					
+			p.add_constraint( new AtomPairConstraint( id1B, id2B, new HarmonicFunc(d,sd) ) );
 		}
 	}
 	int hub_seq_sep(int r1, int r2) const {
@@ -459,7 +459,7 @@ struct ConstraintConfig {
 							prev = ss[i];
 							nss[ss[i]]++;
 							symbol = ss[i] + alphabet.substr(nss[ss[i]],1);
-							ssst = i;					
+							ssst = i;
 						}
 						ssmap[symbol+str(i-ssst+1)] = Sizes(1,i);
 					}
@@ -533,7 +533,7 @@ struct ConstraintConfig {
 			if("CONSTRAINT"==op) {
 				if(ssmap.size()==0) utility_exit_with_message("SECSTRUCT must come before CONSTRAINT");
 				string atm1,rsd1,atm2,rsd2;
-				Real d,sd;				
+				Real d,sd;
 				in >> atm1 >> rsd1 >> atm2 >> rsd2 >> d >> sd;
 				Sizes tmp1 = parse_residues(rsd1);
 				if( tmp1.size() != 1 ) utility_exit_with_message("bad resi for DCST: "+rsd1);
@@ -554,7 +554,7 @@ struct ConstraintConfig {
 				while(true) {
 					if("TEMPLATE"==peek(in)) break;
 					if(!(read_ignore_comments(in,op2))) break;
-					while(true) {					
+					while(true) {
 						++wcount;
 						if(wcount > 100) utility_exit_with_message("TEMPLATE "+tpdb+" parse error on "+op2);
 						if("MAPPING"==peek(in)||"SIDECHAINS"==peek(in)||"BACKBONE"==peek(in)||"DISTANCES"==peek(in)||"TEMPLATE"==peek(in)||""==peek(in)) break;
@@ -578,7 +578,7 @@ struct ConstraintConfig {
 									if(template_map.back().count(tresi)==0) utility_exit_with_message("SIDECHAIN: template "+tpdb+" residue "+str(tresi)+" not mapped to design residue!");
 									Size dresi = template_map.back()[tresi];
 									dres.push_back(dresi);
-									if(template_sc[resi_to_primary(dresi)]!=0 && template_sc[resi_to_primary(dresi)]!=templates_fname.size()) 
+									if(template_sc[resi_to_primary(dresi)]!=0 && template_sc[resi_to_primary(dresi)]!=templates_fname.size())
 										utility_exit_with_message("template "+tpdb+": design AA "+str(dresi)+" already mapped to template "+templates_fname.back());
 									template_sc[resi_to_primary(dresi)] = templates_fname.size();
 									template_sc[dresi] = templates_fname.size();
@@ -626,7 +626,7 @@ struct ConstraintConfig {
 		}
 		// for(Size i = 1; i <= templates_fa.size(); ++i) {
 		// 	templates_fa[i]->dump_pdb("TEMPLATE_FA__"+str(i)+".pdb");
-		// 	templates_fa[i]->dump_pdb("TEMPLATE_CEN_"+str(i)+".pdb");			
+		// 	templates_fa[i]->dump_pdb("TEMPLATE_CEN_"+str(i)+".pdb");
 		// }
 	}
 
@@ -642,7 +642,7 @@ struct ConstraintConfig {
 					if(!p.residue(i->dres2).has(anames[an2]) || !t.residue(i->tres2).has(anames[an2])) continue;
 					Real d = t.residue(i->tres1).xyz(anames[an1]).distance( t.residue(i->tres2).xyz(anames[an2]) );
 					AtomID id1( p.residue(i->dres1).atom_index(anames[an1]), i->dres1 );
-					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );			
+					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );
 					add_sym_cst( p, id1, id2, d, CSTSDMULT*sqrt(d) );
 					// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 				}
@@ -650,14 +650,14 @@ struct ConstraintConfig {
 			// {
 			// 	Real d = t.residue(i->tres1).xyz("H").distance( t.residue(i->tres2).xyz("O") );
 			// 	AtomID id1( p.residue(i->dres1).atom_index("H"), i->dres1 );
-			// 	AtomID id2( p.residue(i->dres2).atom_index("O"), i->dres2 );			
+			// 	AtomID id2( p.residue(i->dres2).atom_index("O"), i->dres2 );
 			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",H " << i->dres2 << ",O " << d << endl;
 			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 			// }
 			// {
 			// 	Real d = t.residue(i->tres1).xyz("O").distance( t.residue(i->tres2).xyz("H") );
 			// 	AtomID id1( p.residue(i->dres1).atom_index("O"), i->dres1 );
-			// 	AtomID id2( p.residue(i->dres2).atom_index("H"), i->dres2 );			
+			// 	AtomID id2( p.residue(i->dres2).atom_index("H"), i->dres2 );
 			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",O " << i->dres2 << ",H " << d << endl;
 			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 			// }
@@ -689,13 +689,13 @@ struct ConstraintConfig {
 					if(!p.residue(i->dres2).has(anames[an2]) || !t.residue(i->tres2).has(anames[an2])) continue;
 					Real d = t.residue(i->tres1).xyz(anames[an1]).distance( t.residue(i->tres2).xyz(anames[an2]) );
 					AtomID id1( p.residue(i->dres1).atom_index(anames[an1]), i->dres1 );
-					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );			
+					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );
 					add_sym_cst( p, id1, id2, d, CSTSDMULT*sqrt(d) );
 				}
 			}
 			// Real d = t.residue(i->tres1).xyz("CEN").distance( t.residue(i->tres2).xyz("CEN") );
 			// AtomID id1( p.residue(i->dres1).atom_index("CEN"), i->dres1 );
-			// AtomID id2( p.residue(i->dres2).atom_index("CEN"), i->dres2 );			
+			// AtomID id2( p.residue(i->dres2).atom_index("CEN"), i->dres2 );
 			// //tr << "constraint: " << ssep << " " << i->dres1 << ",CEN " << i->dres2 << ",CEN " << d << endl;
 			// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 		}
@@ -792,7 +792,7 @@ struct HubDenovo {
 		{
 		  	protocols::moves::RandomMoverOP tmp = new protocols::moves::RandomMover;
 		  	tmp->add_mover(fragins3,0.5);
-		  	tmp->add_mover(fraginsL,0.5);		  	
+		  	tmp->add_mover(fraginsL,0.5);
 		  	fragins = tmp;
 		}
 		des      = new protocols::flxbb::FlxbbDesign( sfsym, sfsym );
@@ -821,7 +821,7 @@ struct HubDenovo {
 			tmp->chain(1);
 			p.append_residue_by_bond( *tmp, true );
 			p.set_omega(ir-1,180.0);
-			p.set_omega(ir  ,180.0);		
+			p.set_omega(ir  ,180.0);
 		}
 		core::pose::add_upper_terminus_type_to_pose_residue(p,p.n_residue());
 		//sfsym->show(p);
@@ -832,7 +832,7 @@ struct HubDenovo {
 		// tr << ft << endl;
 		ft.set_jump_atoms( 1, "ORIG", "CA");
 		ft.set_jump_atoms( 2, "ORIG", "CA");
-		ft.set_jump_atoms( 3, "ORIG", "CA");		
+		ft.set_jump_atoms( 3, "ORIG", "CA");
 		p.fold_tree(ft);
 		// tr << ft << endl;
 
@@ -841,7 +841,7 @@ struct HubDenovo {
 		core::util::switch_to_residue_type_set(p,"centroid");
 
 		return p;
-		
+
 	}
 
 	bool cen_fold(Pose & p) {
@@ -863,7 +863,7 @@ struct HubDenovo {
 			tr << icst << " " << sf3->score(p) << endl;
 		}
 		for(Size icst = 2*cfg.nres+1; icst <= cfg.nsub*cfg.nres; ++icst) {
-			cfg.apply_csts(p,icst);			
+			cfg.apply_csts(p,icst);
 		}
 		for(Size i = 1; i < 5; ++i) {
 			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
@@ -876,7 +876,7 @@ struct HubDenovo {
 		}
 		return true;
 	}
-	
+
 	void min_as_poly_ala(Pose & p, ScoreFunctionOP sf) {
 		for(Size i = 2; i <= cfg.nres; ++i) {
 			if(p.residue(i).name3()=="GLY") continue;
@@ -903,7 +903,7 @@ struct HubDenovo {
 		for(int iter = 1; iter < NITER; ++iter) {
 			Pose tmp = make_start_pose();
 			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
-			
+
 			if(!cen_fold(tmp)) continue;
 
 			{
@@ -959,7 +959,7 @@ struct HubDenovo {
 		  	sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
 
 		}
-		
+
 	}
 
 };
@@ -996,15 +996,15 @@ int main(int argc, char *argv[]) {
 	// 	using namespace core::scoring::constraints;
 	// 	tr << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;
 	// 	p.add_constraint( new AtomPairConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
-	// 		                                      AtomID(p.residue(jr).atom_index("O"),jr),	
+	// 		                                      AtomID(p.residue(jr).atom_index("O"),jr),
 	// 											  new HarmonicFunc(2.0,0.5)) );
-	// 	p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("N"),ir),	
+	// 	p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("N"),ir),
 	// 			                               AtomID(p.residue(ir).atom_index("H"),ir),
-	// 		                                   AtomID(p.residue(jr).atom_index("O"),jr),	
+	// 		                                   AtomID(p.residue(jr).atom_index("O"),jr),
 	// 									       new CircularHarmonicFunc(3.14159,1.0)) );
 	// 	p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
 	// 			                               AtomID(p.residue(jr).atom_index("O"),jr),
-	// 		                                   AtomID(p.residue(jr).atom_index("C"),jr),	
+	// 		                                   AtomID(p.residue(jr).atom_index("C"),jr),
 	// 									       new CircularHarmonicFunc(3.14159,1.0)) );
 	// 	if( ir > nres || jr > nres ) {
 	// 		tr << "sym cst!" << endl;
@@ -1012,17 +1012,17 @@ int main(int argc, char *argv[]) {
 	// 		else          ir += 2*nres;
 	// 		if(jr > nres) jr -=   nres;
 	// 		else          jr += 2*nres;
-	// 		tr << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;			
+	// 		tr << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;
 	// 		p.add_constraint( new AtomPairConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
-	// 			                                      AtomID(p.residue(jr).atom_index("O"),jr),	
+	// 			                                      AtomID(p.residue(jr).atom_index("O"),jr),
 	// 												  new HarmonicFunc(2.0,0.5)) );
 	// 		p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("N"),ir),
 	// 				                               AtomID(p.residue(ir).atom_index("H"),ir),
-	// 			                                   AtomID(p.residue(jr).atom_index("O"),jr),	
+	// 			                                   AtomID(p.residue(jr).atom_index("O"),jr),
 	// 										       new CircularHarmonicFunc(3.14159,1.0)) );
-	// 		p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("H"),ir),	
+	// 		p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
 	// 				                               AtomID(p.residue(ir).atom_index("O"),ir),
-	// 			                                   AtomID(p.residue(jr).atom_index("C"),jr),	
+	// 			                                   AtomID(p.residue(jr).atom_index("C"),jr),
 	// 										       new CircularHarmonicFunc(3.14159,1.0)) );
 	// 	}
 
@@ -1033,7 +1033,7 @@ int main(int argc, char *argv[]) {
 
 
 	// for(Size ippo = 1; ippo <= 3; ++ippo ) {
-	// 	for(Size ir = 1; ir <= nres; ++ir ) {		
+	// 	for(Size ir = 1; ir <= nres; ++ir ) {
 	// 		Pose tmp(p);
 	// 	  	for(Size itrial = 1; itrial <= 10; ++itrial) {
 	// 			// for(Size i = 1; i <= nres; ++i) {

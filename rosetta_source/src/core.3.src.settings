@@ -137,6 +137,7 @@ sources = {
 		"util",
 		"LinearPenaltyFunction",
 		"SiteConstraint",
+		"SequenceProfileConstraint",
 	],
 
 	"core/scoring/dna" : [
@@ -463,6 +464,13 @@ sources = {
 		"CalculatorFactory",
 		"PoseMetricContainer",
 	],
+        "core/pose/metrics/simple_calculators" : [
+		"SasaCalculator",
+                "InterfaceDefinitionCalculatorBase",
+		"InterfaceNeighborDefinitionCalculator",
+		"InterfaceSasaDefinitionCalculator",
+		"InterfaceDeltaEnergeticsCalculator",
+        ],
 	"core/pose/symmetry" : [
 		"util"
 	],

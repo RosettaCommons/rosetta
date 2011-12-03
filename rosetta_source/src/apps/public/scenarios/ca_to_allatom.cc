@@ -72,10 +72,7 @@
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 
-#include <protocols/rigid/RBSegmentRelax.hh>
-//#include <protocols/rbsegment_Moves/RBSegmentMover.hh>
-//#include <protocols/rbsegment_Moves/RBSegmentRelax.hh>
-//#include <protocols/rbsegment_Moves/FragInsertAndAlignMover.hh>
+#include <protocols/rbsegment_relax/RBSegmentRelax.hh>
 
 #include <protocols/loops/loops_main.hh>
 // AUTO-REMOVED #include <protocols/loops/ccd_closure.hh>
@@ -89,14 +86,14 @@
 // AUTO-REMOVED #include <protocols/loops/LoopMoverFactory.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopRelaxMover.hh>
 // AUTO-REMOVED #include <protocols/loops/looprelax_protocols.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopBuild.hh>
+// AUTO-REMOVED #include <protocols/loop_build/LoopBuild.hh>
 
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
 #include <utility/options/OptionCollection.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/viewer/viewers.hh>
-//#include <protocols/moves/BackboneMover.hh>
+//#include <protocols/simple_moves/BackboneMover.hh>
 
 #include <utility/vector1.hh>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
@@ -128,7 +125,7 @@ static basic::Tracer TZ("pilot_apps::ca_to_allatom");
 #include <core/import_pose/import_pose.hh>
 #include <protocols/evaluation/util.hh>
 #include <protocols/moves/MoverStatistics.hh>
-#include <protocols/rigid/RBSegment.hh>
+#include <protocols/rbsegment_relax/RBSegment.hh>
 #include <numeric/xyzVector.io.hh>
 
 //Auto Headers
@@ -204,7 +201,7 @@ ca_to_allatom_main( void * )
 	}
 
 	// load rbsegs
-	utility::vector1< protocols::rigid::RBSegment > rbsegs,rbsegs_remap;
+	utility::vector1< protocols::rbsegment_relax::RBSegment > rbsegs,rbsegs_remap;
 	utility::vector1< int > cutpts;
 	protocols::loops::Loops loops;
 	std::string filename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
@@ -252,12 +249,12 @@ ca_to_allatom_main( void * )
 			while ( !start_pose.residue( last_peptide_res ).is_protein() ) last_peptide_res--;
 
 			std::string rbfilename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
-			protocols::rigid::read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );
+			protocols::rbsegment_relax::read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );
 		}
 		pose = start_pose;
 
 		// the rigid body movement mover
-		protocols::rigid::RBSegmentRelax shaker( scorefxn_cst, rbsegs, loops );
+		protocols::rbsegment_relax::RBSegmentRelax shaker( scorefxn_cst, rbsegs, loops );
 		shaker.initialize( frag_libs , option[ ca_to_allatom::frag_randomness ]() );
 		shaker.set_bootstrap( true );
 		shaker.set_skip_lr( option[ ca_to_allatom::no_lr ] );

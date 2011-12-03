@@ -39,7 +39,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/WobbleMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
@@ -570,13 +570,13 @@ moves::MoverOP KinematicAbinitio::create_bb_moves(
 
   // setup the move objects
 	core::kinematics::MoveMapOP mm_temp( new core::kinematics::MoveMap( *movemap() ) );
-  moves::SmallMoverOP small_mover( new moves::SmallMover( mm_temp, temp, nmoves ) );
+  simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, temp, nmoves ) );
   small_mover->angle_max( 'H', 2.0*crank_up_angle );
   small_mover->angle_max( 'E', 2.0*crank_up_angle );
   small_mover->angle_max( 'L', 3.0*crank_up_angle );
 
   // setup the move objects
-  moves::ShearMoverOP shear_mover( new moves::ShearMover( mm_temp, temp, nmoves ) );
+  simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( mm_temp, temp, nmoves ) );
   shear_mover->angle_max( 'H', 2.0*crank_up_angle*2.0 );
   shear_mover->angle_max( 'E', 2.0*crank_up_angle*2.0 );
   shear_mover->angle_max( 'L', 3.0*crank_up_angle*2.0 );

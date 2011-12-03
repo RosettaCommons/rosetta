@@ -9,7 +9,7 @@
 #include <protocols/moves/Mover.hh>
 
 //#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 //#include <protocols/moves/MonteCarlo.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -100,10 +100,10 @@ void wrap__moves__by_hand()
     bp::implicitly_convertible< utility::pointer::owning_ptr< ::protocols::moves::TrialMover >
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover > >();
 
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::protocols::moves::SmallMover >
+    bp::implicitly_convertible< utility::pointer::owning_ptr< ::protocols::simple_moves::SmallMover >
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover > >();
 
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::protocols::moves::ShearMover >
+    bp::implicitly_convertible< utility::pointer::owning_ptr< ::protocols::simple_moves::ShearMover >
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover > >();
 */
 

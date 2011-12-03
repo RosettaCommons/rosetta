@@ -57,7 +57,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/MPIFileBufJobDistributor.hh>
 #include <protocols/jd2/NoOutputJobOutputter.hh>
-#include <protocols/moves/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.hh>
 #include <protocols/simple_moves/BBGaussianMover.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
@@ -69,8 +69,8 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/SidechainMCMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
 #include <sstream>

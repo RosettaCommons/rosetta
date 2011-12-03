@@ -33,7 +33,7 @@
 
 
 //protocols
-#include <protocols/moves/BackboneMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -404,7 +404,7 @@ protocols::moves::SequenceMoverOP LoopRefiner::small_move_rot_trial_mover(
 
 	using namespace moves;
 	//setup move objects
-	moves::SmallMoverOP small_mover( new moves::SmallMover( movemap_one_loop, mc_temperature_, nmoves_ ) );
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( movemap_one_loop, mc_temperature_, nmoves_ ) );
 	small_mover->angle_max( 'H', 0.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -425,7 +425,7 @@ protocols::moves::SequenceMoverOP LoopRefiner::shear_move_rot_trial_mover(
 {
 
 	//setup move objects
-	moves::ShearMoverOP shear_mover( new moves::ShearMover( movemap_one_loop, mc_temperature_, nmoves_ ) );
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( movemap_one_loop, mc_temperature_, nmoves_ ) );
 	shear_mover->angle_max( 'H', 0.0 );
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );

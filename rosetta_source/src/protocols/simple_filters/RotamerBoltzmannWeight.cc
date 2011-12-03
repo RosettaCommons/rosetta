@@ -21,8 +21,8 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
-// AUTO-REMOVED #include <protocols/moves/MakePolyXMover.hh>
-#include <protocols/flxbb/SelectResiduesByLayer.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MakePolyXMover.hh>
+#include <protocols/toolbox/SelectResiduesByLayer.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -229,7 +229,7 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 	utility::vector1< core::Size > hotspot_res;
 	core::pose::Pose unbound_pose( const_pose );
 	if( type_ == "monomer" ) {
-		protocols::flxbb::SelectResiduesByLayer srb( true, true, false );
+		protocols::toolbox::SelectResiduesByLayer srb( true, true, false );
 		utility::vector1< core::chemical::AA > select_aa_types;
 		select_aa_types.push_back( core::chemical::aa_tyr );
 		select_aa_types.push_back( core::chemical::aa_phe );
@@ -279,7 +279,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	core::pose::Pose pose( const_pose );
 //	core::pose::Pose ala_pose( pose );
 //	if( type_ == "monomer" ) {
-//		protocols::moves::MakePolyXMover bap( "ALA", false, true, false );
+//		protocols::simple_moves::MakePolyXMover bap( "ALA", false, true, false );
 //		bap.apply( ala_pose );
 //	} else {
 //		protocols::protein_interface_design::movers::BuildAlaPose bap( true/*part1*/, true/*part2*/, 100000/*dist_cutoff*/);

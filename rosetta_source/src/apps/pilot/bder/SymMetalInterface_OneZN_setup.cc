@@ -22,7 +22,7 @@
 #include <devel/init.hh>
 #include <devel/metal_interface/MatchGrafter.hh>
 #include <devel/metal_interface/FindClosestAtom.hh>
-#include <protocols/moves/RollMover.hh>
+#include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -130,7 +130,7 @@ public:
     axis const parallel_axis = metalsite_atom_xyz[2] - metalsite_atom_xyz[1];
     core::Size const chain_begin = scaffold.conformation().chain_begin(1);
     core::Size const chain_end =  scaffold.conformation().chain_end(1);
-    protocols::moves::RollMoverOP parallel_rollmover = new protocols::moves::RollMover( chain_begin, chain_end, 180, 180, parallel_axis, metalsite_atom_xyz[5] );
+    protocols::rigid::RollMoverOP parallel_rollmover = new protocols::rigid::RollMover( chain_begin, chain_end, 180, 180, parallel_axis, metalsite_atom_xyz[5] );
     parallel_rollmover->apply( homodimer_A ); // A and B will diverge after 90 degree or -90 degree flip
     parallel_rollmover->apply( homodimer_B );
 
@@ -150,7 +150,7 @@ public:
     //this is the axis through zinc, parallel to 3 -> 1 vector (point 1 was changed, needs to be updated)
     axis const axis_90_degree = metalsite_atom_xyz[3] - homodimer_A.residue( metalsite_seqpos[1] ).atom( metalsite_atom_name[1] ).xyz();
 
-    protocols::moves::RollMoverOP rollmover_90_degree = new protocols::moves::RollMover( chain_begin, chain_end, 90, 90, axis_90_degree, metalsite_atom_xyz[5] );
+    protocols::rigid::RollMoverOP rollmover_90_degree = new protocols::rigid::RollMover( chain_begin, chain_end, 90, 90, axis_90_degree, metalsite_atom_xyz[5] );
     rollmover_90_degree->apply( homodimer_A );
     // also want to flip -90 degrees
     rollmover_90_degree->set_min_max_angles( -90.0, -90.0 ); // change rollmove angle to -90 degrees

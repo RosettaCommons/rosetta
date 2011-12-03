@@ -26,8 +26,8 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 // AUTO-REMOVED #include <numeric/xyzVector.hh>
-#include <protocols/rna/AllowInsert.hh>
-//#include <protocols/rna/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AllowInsert.hh>
+//#include <protocols/toolbox/AllowInsert.fwd.hh>
 //#include <core/kinematics/tree/Atom.fwd.hh>
 // AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
@@ -79,7 +79,7 @@ namespace rna{
 		~ChunkSet();
 
 		void
-		insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::rna::AllowInsertOP const & allow_insert ) const;
+		insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
 
 		Size
 		num_chunks() const{ return mini_pose_list_.size(); };
@@ -137,9 +137,9 @@ namespace rna{
 		void
 		initialize_random_chunks( core::pose::Pose & pose, bool const dump_pdb = false ) const;
 
-		AllowInsertOP allow_insert(){ return allow_insert_; };
+	toolbox::AllowInsertOP allow_insert(){ return allow_insert_; };
 
-		void set_allow_insert( AllowInsertOP allow_insert );
+		void set_allow_insert(toolbox::AllowInsertOP allow_insert );
 
 		core::Real const & chunk_coverage() const{ return chunk_coverage_; };
 
@@ -234,7 +234,7 @@ namespace rna{
 	private:
 
 		utility::vector1< ChunkSetOP > chunk_sets_;
-		AllowInsertOP allow_insert_;
+	toolbox::AllowInsertOP allow_insert_;
 		ObjexxFCL::FArray1D <bool> covered_by_chunk_;
 		core::Real chunk_coverage_;
 		bool coarse_rna_;
