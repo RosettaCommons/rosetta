@@ -87,7 +87,7 @@ main( int argc, char * argv [] )
 //#include <protocols/loops/Loops.hh>
 //#include <protocols/loops/loops_main.hh>
 
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 #include <utility/vector1.hh>
 
@@ -381,7 +381,7 @@ void  ThisApplication::fix_chainbreaks( pose::Pose &pose ) {
 	kinematics::MoveMapOP movemap = new kinematics::MoveMap;
 	// allow bb moves
 	movemap->set_bb( true );
-	moves::MinMoverOP min_move_ = new moves::MinMover;
+	protocols::simple_moves::MinMoverOP min_move_ = new protocols::simple_moves::MinMover;
 	min_move_->movemap( movemap() );
 	min_move_->min_type( "dfpmin" );
 	//get currently used score_function...

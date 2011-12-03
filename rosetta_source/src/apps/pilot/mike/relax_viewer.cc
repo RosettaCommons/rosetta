@@ -18,7 +18,7 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
 
 // AUTO-REMOVED #include <protocols/loops/ccd_closure.hh>

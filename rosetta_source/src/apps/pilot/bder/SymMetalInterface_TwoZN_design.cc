@@ -19,8 +19,8 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
 // AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>

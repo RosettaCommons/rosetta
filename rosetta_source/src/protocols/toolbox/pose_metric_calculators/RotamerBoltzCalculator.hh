@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator_hh
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/MinMover.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.fwd.hh>
@@ -60,13 +60,13 @@ protected:
 	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
 	virtual std::string print( std::string const & key ) const;
 	virtual void recompute( core::pose::Pose const & this_pose );
-  core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi, protocols::moves::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
+  core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi, protocols::simple_moves::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
 
   core::scoring::ScoreFunctionOP scorefxn() const {return scorefxn_;};
 	//core::kinematics::MoveMapOP mm();
-	//protocols::moves::MinMover min_mover();
+	//protocols::simple_moves::MinMover min_mover();
   core::Real computeBoltzSum(core::Real init_score, utility::vector1<core::Real> scores);
-  protocols::moves::MinMoverOP init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task);
+  protocols::simple_moves::MinMoverOP init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task);
   core::pack::task::PackerTaskOP init_task(core::pose::Pose& pose, core::Size resi);
   protocols::simple_filters::ScoreTypeFilter stf(){
     return stf_;
@@ -95,7 +95,7 @@ private:
   utility::vector0<int> init_rot_to_pack(core::pack::rotamer_set::RotamerSetsCOP rotamer_sets, core::Size moltenres, core::Size rot_to_fix);
   core::scoring::ScoreFunctionOP scorefxn_;
 	//core::kinematics::MoveMapOP mm_;
-	//protocols::moves::MinMover min_mover_;
+	//protocols::simple_moves::MinMover min_mover_;
   core::Real temperature_;
   protocols::simple_filters::ScoreTypeFilter const stf_;
   utility::vector1<core::Real>all_boltz_;

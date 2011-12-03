@@ -895,7 +895,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
-    protocols::moves::PackRotamersMover repack( sf, task );
+    protocols::simple_moves::PackRotamersMover repack( sf, task );
     repack.apply(pose);
   }
 
@@ -919,7 +919,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
   //  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
   //  m.apply(pose);
   // } else {
-  //  protocols::moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+  //  protocols::simple_moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
   //  m.apply(pose);
   // }
   // //TR << "done" << std::endl;
@@ -958,7 +958,7 @@ void repack_iface(Pose & p, ScoreFunctionOP sf, Size Ntri, vector1<bool> & iface
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(p);
   } else {
-    protocols::moves::PackRotamersMover repack( sf, task );
+    protocols::simple_moves::PackRotamersMover repack( sf, task );
     repack.apply(p);
   }
   //sf->set_weight(core::scoring::fa_rep,rorig);

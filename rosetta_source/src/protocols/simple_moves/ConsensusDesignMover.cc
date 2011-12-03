@@ -31,7 +31,7 @@
 
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <protocols/moves/DataMap.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperation.hh>
 
@@ -45,7 +45,7 @@
 // AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.moves.ConsensusDesignMover" );
+static basic::Tracer TR( "protocols.simple_moves.ConsensusDesignMover" );
 
 // c++ headerss
 #include <string>
@@ -124,7 +124,7 @@ ConsensusDesignMover::apply( core::pose::Pose & pose )
 	}
 
 	core::pack::task::PackerTaskCOP task = create_consensus_design_task( pose );
-	protocols::moves::PackRotamersMover packer( sfxn_, task );
+	protocols::simple_moves::PackRotamersMover packer( sfxn_, task );
 
 	core::scoring::constraints::ConstraintCOPs seqprof_constraints;
 

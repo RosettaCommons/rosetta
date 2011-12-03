@@ -20,9 +20,9 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/PackRotamersMoverLazy.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMoverLazy.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 
 #include <utility/string_util.hh>
@@ -57,10 +57,10 @@ namespace pose_metric_calculators {
   }
   core::Real RotamerBoltzCalculator::computeBoltzWeight(core::pose::Pose& pose, Size resi){
     core::pack::task::PackerTaskOP task = init_task(pose,resi);
-    protocols::moves::MinMoverOP  mm = init_minmover(pose, resi, true, task); 
+    protocols::simple_moves::MinMoverOP  mm = init_minmover(pose, resi, true, task); 
     return computeBoltzWeight(pose, resi, mm, task);//assume unbound
   }
-  core::Real RotamerBoltzCalculator::computeBoltzWeight(core::pose::Pose& pose, Size resi,  protocols::moves::MinMoverOP min_mover, core::pack::task::PackerTaskOP task){
+  core::Real RotamerBoltzCalculator::computeBoltzWeight(core::pose::Pose& pose, Size resi,  protocols::simple_moves::MinMoverOP min_mover, core::pack::task::PackerTaskOP task){
     ///user doesn't have movemap, so can't initialize min_mover himself right now.
 
     //core::pose::Pose& pose = pose();
@@ -69,7 +69,7 @@ namespace pose_metric_calculators {
     using namespace core::pack::rotamer_set;
     using namespace core::pack::task;
     using namespace core::conformation;
-    PackRotamersMoverLazy pmover(scorefxn());
+    protocols::simple_moves::PackRotamersMoverLazy pmover(scorefxn());
     task->set_bump_check(false);
     pmover.task(task);
     pmover.call_setup(pose);
@@ -151,7 +151,7 @@ namespace pose_metric_calculators {
     PackerTaskOP task = tf->create_task_and_apply_taskoperations( pose );
     return task;
   }
-  protocols::moves::MinMoverOP RotamerBoltzCalculator::init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task){
+  protocols::simple_moves::MinMoverOP RotamerBoltzCalculator::init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task){
 	  using namespace core::conformation;
 
     core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
@@ -174,7 +174,7 @@ namespace pose_metric_calculators {
     }
 	  //task->nonconst_residue_task( resi ).prevent_repacking();
 
-    protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover();
+    protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover();
     min_mover->score_function( scorefxn() );
     min_mover->movemap( mm );
     min_mover->min_options()->min_type( "dfpmin_armijo_nonmonotone" );

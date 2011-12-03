@@ -186,9 +186,9 @@
 //#include <protocols/loops/looprelax_protocols.hh>
 
 #include <protocols/filters/Filter.hh>
-#include <protocols/filters/RGFilter.hh>
-#include <protocols/filters/COFilter.hh>
-#include <protocols/filters/SheetFilter.hh>
+#include <protocols/simple_filters/RGFilter.hh>
+#include <protocols/simple_filters/COFilter.hh>
+#include <protocols/simple_filters/SheetFilter.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>

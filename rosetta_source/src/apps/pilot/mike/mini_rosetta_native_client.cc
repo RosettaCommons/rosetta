@@ -36,7 +36,7 @@
 #include <utility/string_util.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/relax_main.hh>
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <ObjexxFCL/string.functions.hh>

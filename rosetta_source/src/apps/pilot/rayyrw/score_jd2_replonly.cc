@@ -20,10 +20,10 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/CompositionMover.hh>
-#include <protocols/moves/RepulsiveOnlyMover.hh>
+#include <protocols/simple_moves/RepulsiveOnlyMover.hh>
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
@@ -169,7 +169,7 @@ main( int argc, char * argv [] )
 	//MoverOP scoremover = new MyScoreMover;
 	//protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
 	protocols::moves::CompositionMoverOP container( new CompositionMover );
-	container->add_mover( new protocols::moves::RepulsiveOnlyMover() );
+	container->add_mover( new protocols::simple_moves::RepulsiveOnlyMover() );
 	container->add_mover( new MyScoreMover );
 
 	using namespace protocols::jd2;

@@ -1,0 +1,70 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   src/protocols/init/init.FilterCreators.ihh
+/// @brief  Creator #includes for Filters for init
+/// @author Steven Lewis smlewi@gmail.com
+
+//FilterCreator #includes
+#include <protocols/filters/FilterFactory.hh>
+
+#include <protocols/enzdes/EnzFilterCreators.hh>
+
+#include <protocols/filters/BasicFilterCreators.hh>
+#include <protocols/filters/ContingentFilterCreator.hh>
+#include <protocols/filters/TimeFilterCreator.hh>
+
+#include <protocols/fldsgn/filters/CoreDunbrackFilterCreator.hh>
+#include <protocols/fldsgn/filters/FragQualFilterCreator.hh>
+#include <protocols/fldsgn/filters/HelixKinkFilterCreator.hh>
+#include <protocols/fldsgn/filters/HelixPairingFilterCreator.hh>
+#include <protocols/fldsgn/filters/HSSTripletFilterCreator.hh>
+#include <protocols/fldsgn/filters/InterlockingAromaFilterCreator.hh>
+#include <protocols/fldsgn/filters/NcontactsFilterCreator.hh>
+#include <protocols/fldsgn/filters/ParallelBetaPairingPreferenceFilterCreator.hh>
+#include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
+#include <protocols/fldsgn/filters/SheetTopologyFilterCreator.hh>
+
+#include <protocols/ligand_docking/CompleteConnectionsFilterCreator.hh>
+#include <protocols/ligand_docking/HeavyAtomFilterCreator.hh>
+
+#include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/BoltzmannFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/DeltaFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/DesignableResiduesFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/DisulfideFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/FilterScanCreator.hh>
+#include <protocols/protein_interface_design/filters/HbondsToResidueFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/InterfaceHolesFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/RelativePoseFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/RmsdFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/SequenceRecoveryFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/TorsionFilterCreator.hh>
+
+#include <protocols/simple_filters/AlaScanCreator.hh>
+#include <protocols/simple_filters/AtomicContactFilterCreator.hh>
+#include <protocols/simple_filters/AtomicDistanceFilterCreator.hh>
+#include <protocols/simple_filters/BuriedUnsatHbondFilterCreator.hh>
+#include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
+#include <protocols/simple_filters/DdgFilterCreator.hh>
+#include <protocols/simple_filters/EnergyPerResidueFilterCreator.hh>
+#include <protocols/simple_filters/HolesFilterCreator.hh>
+#include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
+#include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
+#include <protocols/simple_filters/PackStatFilterCreator.hh>
+#include <protocols/simple_filters/ResidueBurialFilterCreator.hh>
+#include <protocols/simple_filters/ResidueDistanceFilterCreator.hh>
+#include <protocols/simple_filters/ResiduesInInterfaceFilterCreator.hh>
+#include <protocols/simple_filters/RotamerBoltzmannWeightFilterCreator.hh>
+#include <protocols/simple_filters/ScoreCutoffFilterCreator.hh>
+#include <protocols/simple_filters/ScoreTypeFilterCreator.hh>
+#include <protocols/simple_filters/ShapeComplementarityFilterCreator.hh>
+#include <protocols/simple_filters/TerminusDistanceFilterCreator.hh>

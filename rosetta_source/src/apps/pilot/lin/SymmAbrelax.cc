@@ -50,7 +50,7 @@
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Auto-header: duplicate removed #include <protocols/abinitio/AbrelaxApplication.hh>

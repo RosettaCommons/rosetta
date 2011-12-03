@@ -40,7 +40,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.moves.symmetry.SymPackRotamersMover");
+static basic::Tracer TR("protocols.simple_moves.symmetry.SymPackRotamersMover");
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -79,7 +79,7 @@ SymPackRotamersMoverCreator::mover_name() {
 /// PackRotamersMover
 
 SymPackRotamersMover::SymPackRotamersMover()
-	: PackRotamersMover(),
+	: protocols::simple_moves::PackRotamersMover(),
 		sym_rotamer_sets_( new rotamer_set::symmetry::SymmetricRotamerSets() ),
 		symmetric_ig_(0)
 {}
@@ -89,7 +89,7 @@ SymPackRotamersMover::SymPackRotamersMover(
 	ScoreFunctionCOP scorefxn,
 	task::PackerTaskCOP task,
 	Size nloop
-) : PackRotamersMover( scorefxn, task, nloop ),
+) : protocols::simple_moves::PackRotamersMover( scorefxn, task, nloop ),
 		sym_rotamer_sets_( new rotamer_set::symmetry::SymmetricRotamerSets() ),
 		symmetric_ig_(0)
 {}
@@ -97,7 +97,7 @@ SymPackRotamersMover::SymPackRotamersMover(
 SymPackRotamersMover::~SymPackRotamersMover(){}
 
 SymPackRotamersMover::SymPackRotamersMover( PackRotamersMover const & other )
-	: PackRotamersMover( other )
+	: protocols::simple_moves::PackRotamersMover( other )
 {
 	sym_rotamer_sets_ = new rotamer_set::symmetry::SymmetricRotamerSets();
 

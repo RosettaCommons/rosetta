@@ -45,13 +45,13 @@
 //movers
 #include <protocols/simple_moves/BackboneMover.hh> //SmallMover
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
-#include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
 
 //calculators and neighbor detection machinery
@@ -425,9 +425,9 @@ public:
 		}
 
 		/////////////////////////minimizer mover/////////////////////////////////////////
-		using protocols::moves::MinMoverOP;
-		using protocols::moves::MinMover;
-		MinMoverOP min_mover_cen = new MinMover(
+		using protocols::simple_moves::MinMoverOP;
+		using protocols::simple_moves::MinMover;
+		protocols::simple_moves::MinMoverOP min_mover_cen = new protocols::simple_moves::MinMover(
 																						movemap_,
 																						centroid_scorefunction_,
 																						basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
@@ -496,7 +496,7 @@ public:
 		////////////////////////////////////fullatom///////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		protocols::moves::ReturnSidechainMover return_sidechains( saved_input_pose );
+		protocols::simple_moves::ReturnSidechainMover return_sidechains( saved_input_pose );
 		return_sidechains.apply( pose );
 
 		//remove centroid constraints; add fullatom constraints
@@ -504,11 +504,11 @@ public:
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose); //protected internally if no csts
 
 		/////////////////////////////generate full repack&minimize mover//////////////////////////////
-		protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 		pack_mover->task_factory( task_factory_ );
 		pack_mover->score_function( fullatom_scorefunction_ );
 
-		MinMoverOP min_mover_fa = new MinMover(
+		protocols::simple_moves::MinMoverOP min_mover_fa = new protocols::simple_moves::MinMover(
 																					 movemap_,
 																					 fullatom_scorefunction_,
 																					 basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
@@ -516,9 +516,9 @@ public:
 																					 true /*use_nblist*/ );
 
 		//definitely want sidechain minimization here
-		using protocols::moves::TaskAwareMinMoverOP;
-		using protocols::moves::TaskAwareMinMover;
-		TaskAwareMinMoverOP TAmin_mover_fa = new TaskAwareMinMover(min_mover_fa, task_factory_);
+		using protocols::simple_moves::TaskAwareMinMoverOP;
+		using protocols::simple_moves::TaskAwareMinMover;
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa = new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_);
 
 		/////////////////////////repack/minimize once to fix sidechains//////////////////////////////////
 		// TR << "packing" << std::endl;
@@ -547,9 +547,9 @@ public:
 		MonteCarloOP mc_fa( new MonteCarlo( pose, *fullatom_scorefunction_, option[ refine_temp ].value() ) );
 
 		/////////////////////////////////rotamer trials mover///////////////////////////////////////////
-		using protocols::moves::RotamerTrialsMoverOP;
-		using protocols::moves::EnergyCutRotamerTrialsMover;
-		RotamerTrialsMoverOP rt_mover(new EnergyCutRotamerTrialsMover(
+		using protocols::simple_moves::RotamerTrialsMoverOP;
+		using protocols::simple_moves::EnergyCutRotamerTrialsMover;
+		protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
 																																	fullatom_scorefunction_,
 																																	task_factory_,
 																																	mc_fa,

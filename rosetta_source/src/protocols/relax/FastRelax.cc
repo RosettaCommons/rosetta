@@ -153,8 +153,8 @@ endrepeat
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>
@@ -422,11 +422,11 @@ void FastRelax::do_minimize(
 	using namespace core::scoring;
 	using namespace core::conformation;
 
-  moves::MinMoverOP min_mover;
+  protocols::simple_moves::MinMoverOP min_mover;
   if ( core::pose::symmetry::is_symmetric( pose ) )  {
     min_mover = new simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
   } else {
-    min_mover = new moves::MinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
+    min_mover = new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
   }
 	min_mover->cartesian( cartesian_ );
   min_mover->apply( pose );
@@ -508,7 +508,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			lp_op.apply( pose, *task_ );
 	}
 
-  moves::PackRotamersMoverOP pack_full_repack_ = new moves::PackRotamersMover( local_scorefxn, task_ );
+  protocols::simple_moves::PackRotamersMoverOP pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn, task_ );
 
 	// If symmmetric pose then create a symmeteric rotamers mover
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
@@ -917,7 +917,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 
 
 	PackerTaskOP task_;
-  moves::PackRotamersMoverOP pack_full_repack_;
+  protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	core::pose::Pose pose;
 	core::Real decay_rate = 0.7;
@@ -1011,7 +1011,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 
 			task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 			task_->or_include_current( true );
-			pack_full_repack_ = new moves::PackRotamersMover( local_scorefxn, task_ );
+			pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn, task_ );
 			if ( core::pose::symmetry::is_symmetric( pose ) )  {
 				pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
 			}

@@ -49,7 +49,7 @@
 
 
 //minimization stuff
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/Mover.hh>
 
 // AUTO-REMOVED #include <math.h>  //need for sqrt taking
@@ -273,9 +273,9 @@ public:
 	  movemap->set_chi(68, true);
 
 
-	  protocols::moves::MinMoverOP dfpMinTightTol = new protocols::moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
+	  protocols::simple_moves::MinMoverOP dfpMinTightTol = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
 
-	  protocols::moves::MinMoverOP dfpMinTightTol2 = new protocols::moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
+	  protocols::simple_moves::MinMoverOP dfpMinTightTol2 = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
 
 
 	  TR << "scoring seems to work, doing minimization...  ";

@@ -68,7 +68,7 @@ RotamerRecoveryMoverCreator::mover_name()
 #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 #include <protocols/rotamer_recovery/RRProtocol.hh>
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>

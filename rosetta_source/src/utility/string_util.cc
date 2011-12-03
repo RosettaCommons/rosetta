@@ -12,7 +12,7 @@
 ///
 /// @brief  Some std::string helper functions.
 /// @author Sergey Lyskov
-#include <core/types.hh>
+#include <platform/types.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
@@ -243,7 +243,7 @@ void add_spaces_right_align( std::string & st, std::size_t const newlen )
 bool is_string_numeric(std::string const & input)
 {
 	std::locale loc;
-	for(core::Size i = 0 ; i < input.size();++i)
+	for(platform::Size i = 0 ; i < input.size();++i)
 	{
 		char current = input[i];
 		if(std::isdigit(current,loc) || current == '-' || current == '+' || current =='E' ||current=='e')
@@ -299,19 +299,19 @@ std::string replace_environment_variables(std::string input)
 	const std::string start("${");
 	const std::string end("}");
 
-	core::Size start_position = 0;
+	platform::Size start_position = 0;
 	while(true)
 	{
 		start_position = input.find(start);
 		if(start_position != std::string::npos)
 		{
-			core::Size end_position = input.find(end,start_position);
+			platform::Size end_position = input.find(end,start_position);
 			if(start_position == std::string::npos)
 			{
 				utility_exit_with_message("opening ${ but no closing } around an environment variable, check your options file");
 			}
 
-			core::Size env_length = end_position-start_position;
+			platform::Size env_length = end_position-start_position;
 
 			std::string env_name = input.substr(start_position+2,env_length-2);
 			char * env_value = getenv(env_name.c_str());

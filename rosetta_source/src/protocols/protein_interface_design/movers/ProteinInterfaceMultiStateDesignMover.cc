@@ -106,7 +106,7 @@ ProteinInterfaceMultiStateDesignMoverCreator::mover_name()
 }
 
 ProteinInterfaceMultiStateDesignMover::ProteinInterfaceMultiStateDesignMover() :
-	PackRotamersMover( ProteinInterfaceMultiStateDesignMoverCreator::mover_name() ),
+	protocols::simple_moves::PackRotamersMover( ProteinInterfaceMultiStateDesignMoverCreator::mover_name() ),
 	gen_alg_(0),
 	multistate_packer_(0),
 	// option flags/parameters: default to command line options

@@ -15,8 +15,8 @@
 
 // Unit headers
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.fwd.hh>
-#include <protocols/moves/RotamerTrialsMover.fwd.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.fwd.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
@@ -30,7 +30,7 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
-	class SymRotamerTrialsMover : public protocols::moves::RotamerTrialsMover {
+	class SymRotamerTrialsMover : public protocols::simple_moves::RotamerTrialsMover {
 public:
 
 typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;

@@ -50,7 +50,7 @@
 
 //#include <basic/options/keys/Remodel.OptionKeys.gen.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -388,7 +388,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			//only use this type of cst file in this case
 			if (basic::options::option[ OptionKeys::constraints::cst_file ].user()){
 
-				protocols::moves::ConstraintSetMoverOP repeat_constraint = new protocols::moves::ConstraintSetMover();
+				protocols::simple_moves::ConstraintSetMoverOP repeat_constraint = new protocols::simple_moves::ConstraintSetMover();
 				repeat_constraint->apply( repeat_pose_ );
 			}
 

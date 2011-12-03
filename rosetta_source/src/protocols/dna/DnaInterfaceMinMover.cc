@@ -74,7 +74,7 @@ DnaInterfaceMinMoverCreator::mover_name()
 }
 
 DnaInterfaceMinMover::DnaInterfaceMinMover()
-	: MinMover("DnaInterfaceMinMover"),
+	: protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
 		interface_(0),
 		chi_(true),
 		bb_(false)
@@ -85,7 +85,7 @@ DnaInterfaceMinMover::DnaInterfaceMinMover()
 
 DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceMinMover const & src ) : 
 	//utility::pointer::ReferenceCount(), 
-	MinMover( src )
+	protocols::simple_moves::MinMover( src )
 {
 	*this = src;
 }
@@ -103,7 +103,7 @@ DnaInterfaceMinMover::operator = ( DnaInterfaceMinMover const & src )
 DnaInterfaceMinMover::~DnaInterfaceMinMover(){}
 
 DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceFinderOP interface )
-	: MinMover("DnaInterfaceMinMover"),
+	: protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
 		interface_( interface ),
 		chi_(true),
 		bb_(false)

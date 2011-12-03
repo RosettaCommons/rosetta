@@ -312,7 +312,7 @@ void dock(Pose init, std::string const & fn) {
   // sf->set_weight(core::scoring::angle_constraint,1.0);
   core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
   movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
-  protocols::moves::MinMover( movemap, sfnosym, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false ).apply(init);
+  protocols::simple_moves::MinMover( movemap, sfnosym, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false ).apply(init);
   /*///////////////////////////////////////////////////////////////////////////////////*/ tr << "make mbcount" << endl; /*//////////////////////*/
   vector1<Size> nbcount(init.n_residue(),0);
   for(Size ir = 1; ir <= init.n_residue(); ++ir)

@@ -355,7 +355,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 			symmscorefxn_dens->show( TR, pose ); TR<<std::endl;
 			dens_score = (*symmscorefxn_dens)( pose );
 		} else {
-			moves::MoverOP min_mover = new moves::MinMover( rbmm, scorefxn_dens, "dfpmin_armijo_nonmonotone", 1e-5, true );
+			moves::MoverOP min_mover = new protocols::simple_moves::MinMover( rbmm, scorefxn_dens, "dfpmin_armijo_nonmonotone", 1e-5, true );
 
 			bool densInMinimizer = core::scoring::electron_density::getDensityMap().getUseDensityInMinimizer();
 			core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( true );

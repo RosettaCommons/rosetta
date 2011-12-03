@@ -49,7 +49,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMotionMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/util.hh>
 #include <protocols/medal/MedalMover.hh>
@@ -778,7 +778,7 @@ apply ( core::pose::Pose & pose )
 {
 	initialize_pose(pose);
 
-	protocols::moves::ConstraintSetMoverOP const_set = new protocols::moves::ConstraintSetMover();
+	protocols::simple_moves::ConstraintSetMoverOP const_set = new protocols::simple_moves::ConstraintSetMover();
 	const_set->apply(pose);
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
@@ -910,7 +910,7 @@ my_main( void* ) {
 
 	SequenceMoverOP whole_sequence( new SequenceMover() );
 	if (basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user()) {
-		whole_sequence->add_mover(new protocols::moves::ConstraintSetMover());
+		whole_sequence->add_mover(new protocols::simple_moves::ConstraintSetMover());
 	}
 	apps::pilot::SampleSecondaryStructureAlignmentMover * sample_ss ( new apps::pilot::SampleSecondaryStructureAlignmentMover(RG, template_filenames) );
 	whole_sequence->add_mover(sample_ss);

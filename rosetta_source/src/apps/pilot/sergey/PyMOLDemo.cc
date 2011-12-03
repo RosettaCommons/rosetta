@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 
 
 //#include <unistd.h>
@@ -47,7 +47,7 @@ int main( int argc, char * argv [] )
 {
 	using namespace core;
 
-	protocols::init(argc, argv);
+	protocols::init::init(argc, argv);
 
 	core::pose::Pose pose;
 	core::import_pose::pose_from_pdb(pose, "src/python/bindings/test/data/test_in.pdb");
@@ -105,7 +105,7 @@ int _main( int argc, char * argv [] )
 {
 	using namespace core;
 
-	protocols::init(argc, argv);
+	protocols::init::init(argc, argv);
 
 	protocols::moves::UDPSocketClient s;
 

@@ -31,7 +31,7 @@
 #include <core/init.hh>
 
 // avoid having to create the static protocol movers
-//#include <protocols/init.hh>
+//#include <protocols/init/init.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/boinc.OptionKeys.gen.hh>
@@ -1321,7 +1321,7 @@ int main(int argc, char** argv) {
   core::init( argc, argv );
 
 	// avoid having to create the static protocol movers
-	//protocols::init( argc, argv );
+	//protocols::init::init( argc, argv );
 
 	// override database option and set to current directory
 	option[in::path::database].value("minirosetta_database");

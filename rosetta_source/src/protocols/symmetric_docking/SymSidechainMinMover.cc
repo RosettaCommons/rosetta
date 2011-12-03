@@ -96,7 +96,7 @@ SymSidechainMinMover::SymSidechainMinMover(
 //destructor
 SymSidechainMinMover::~SymSidechainMinMover() {}
 
-void SymSidechainMinMover::set_minmover( moves::MinMoverOP minmover_in ){ minmover_ = minmover_in; }
+void SymSidechainMinMover::set_minmover( protocols::simple_moves::MinMoverOP minmover_in ){ minmover_ = minmover_in; }
 
 //default options setup for SymSidechainMinMover
 void SymSidechainMinMover::set_default_options()

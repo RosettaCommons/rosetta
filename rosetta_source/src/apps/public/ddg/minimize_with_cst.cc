@@ -100,7 +100,7 @@
 
 
 //protocols
-// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMover.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 //#include <protocols/looprelax/looprelax_main.hh>

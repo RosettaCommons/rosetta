@@ -1353,7 +1353,7 @@ if __name__ == "__main__": GCC_XML_main(sys.argv)
 '''
 ToDo:
  - investigate why we can't use ::core::scoring::ScoreFunctionFactory::create_score_function ?
- - bp::implicitly_convertible< std::string const &, protocols::moves::MinMover >();
+ - bp::implicitly_convertible< std::string const &, protocols::simple_moves::MinMover >();
  - docs for enums
 
 '''

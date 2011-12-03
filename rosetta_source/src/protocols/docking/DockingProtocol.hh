@@ -37,8 +37,8 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/ConstraintSetMover.fwd.hh>
-#include <protocols/moves/ReturnSidechainMover.fwd.hh>
+#include <protocols/simple_moves/ConstraintSetMover.fwd.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.fwd.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
 //#include <protocols/moves/MoverContainer.fwd.hh>
 
@@ -251,9 +251,9 @@ private:
 	std::string ensemble1_filename_, ensemble2_filename_;
 
 	// constraint set mover
-	protocols::moves::ConstraintSetMoverOP docking_constraint_;
+	protocols::simple_moves::ConstraintSetMoverOP docking_constraint_;
 
-	protocols::moves::ReturnSidechainMoverOP recover_sidechains_;
+	protocols::simple_moves::ReturnSidechainMoverOP recover_sidechains_;
 
 	//if side-chains are to be taken from specified pdb file... it is set here...
 	std::string recover_sidechains_filename_;

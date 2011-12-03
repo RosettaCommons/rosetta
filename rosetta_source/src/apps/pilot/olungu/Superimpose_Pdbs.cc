@@ -45,8 +45,8 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/ReturnSidechainMover.hh>
 
 #include <utility/vector1.functions.hh>
 #include <utility/vector1.hh>
@@ -213,7 +213,7 @@ main( int argc, char* argv[] )
 	scoring::ScoreFunctionOP scorefxn( scoring::ScoreFunctionFactory::create_score_function(scoring::STANDARD_WTS, scoring::SCORE12_PATCH) );
 
 	//initialize PackRotamersMover with defined task factory and score function
-	protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 	pack_mover->task_factory( generate_factory() );
 	pack_mover->score_function( scorefxn );
 

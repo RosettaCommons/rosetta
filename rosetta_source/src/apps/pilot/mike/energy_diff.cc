@@ -28,7 +28,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/PDBInfo.hh>
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -74,7 +74,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options::OptionKeys;
 	using namespace scoring;
 
-	protocols::init(argc, argv);
+	protocols::init::init(argc, argv);
 
 	std::string pdb1_filename =  option[ assembly::pdb1 ]();
 	std::string pdb2_filename =  option[ assembly::pdb2 ]();

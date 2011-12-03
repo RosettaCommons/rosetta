@@ -32,7 +32,7 @@
 #include <core/scoring/electron_density/util.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/SuperimposeMover.hh>
-// AUTO-REMOVED #include <protocols/moves/ConstraintSetMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/ConstraintSetMover.hh>
 
 
 #include <basic/options/option.hh>

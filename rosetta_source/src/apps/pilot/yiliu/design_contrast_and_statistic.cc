@@ -47,7 +47,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <ObjexxFCL/format.hh>
 
 
@@ -299,7 +299,7 @@ int main( int argc, char * argv [] )
 		main_task_factory->push_back( new operation::ReadResfile );
 	}
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
-	protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( score_fxn );
 	TR << "before the loop" << std::endl;

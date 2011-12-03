@@ -53,7 +53,7 @@
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/StealSideChainsMover.hh>
 // AUTO-REMOVED #include <protocols/comparative_modeling/MultiThreadingMover.hh>
-#include <protocols/moves/RepulsiveOnlyMover.hh>
+#include <protocols/simple_moves/RepulsiveOnlyMover.hh>
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/jd2/Job.hh>
@@ -80,7 +80,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	using namespace protocols::jd2;
 
 	// apply a mover which calculates only repulsive energy on designate residues
-	protocols::moves::RepulsiveOnlyMover replonly;
+	protocols::simple_moves::RepulsiveOnlyMover replonly;
 	replonly.apply( pose );
 
 	using core::Size;

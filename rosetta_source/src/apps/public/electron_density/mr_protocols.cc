@@ -8,7 +8,7 @@
 #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
@@ -79,7 +79,7 @@
 
 
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
@@ -210,7 +210,7 @@ public:
 			protocols::simple_moves::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
 			pack1.apply( pose );
 		} else {
-			protocols::moves::PackRotamersMover pack1( fa_scorefxn_, taskstd );
+			protocols::simple_moves::PackRotamersMover pack1( fa_scorefxn_, taskstd );
 			pack1.apply( pose );
 		}
 	}

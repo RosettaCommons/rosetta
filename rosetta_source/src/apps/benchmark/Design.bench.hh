@@ -15,7 +15,7 @@
 /// takes about 1 minute on my machine
 /// @author Gordon Lemmon
 
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -112,7 +112,7 @@
 //#include <protocols/moves/Mover.hh>
 //#include <protocols/moves/MoverStatistics.hh>
 //#include <protocols/moves/MoverStatus.hh>
-//#include <protocols/moves/PackRotamersMover.fwd.hh>
+//#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 //#include <utility/down_cast.hh>
 //#include <utility/exit.hh>
 //#include <utility/vector1.fwd.hh>
@@ -202,7 +202,7 @@ class DesignBenchmark : public Benchmark
 public:
 	DesignBenchmark(std::string name) : Benchmark(name) {};
 
-	protocols::moves::PackRotamersMover pack_mover;
+	protocols::simple_moves::PackRotamersMover pack_mover;
 	core::pose::Pose design_pose;
 
 	virtual void setUp() {

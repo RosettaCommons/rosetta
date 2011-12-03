@@ -35,14 +35,14 @@
 namespace protocols {
 namespace simple_moves {
 
-static basic::Tracer TR("protocols.moves.SuperimposeMover");
+static basic::Tracer TR("protocols.simple_moves.SuperimposeMover");
 
 SuperimposeMover::SuperimposeMover() :
-	Mover("SuperimposeMover")
+	protocols::moves::Mover("SuperimposeMover")
 {}
 
 SuperimposeMover::SuperimposeMover( Pose const & pose ) :
-  Mover("SuperimposeMover"),
+  protocols::moves::Mover("SuperimposeMover"),
 	ref_pose_(pose)
 	{}
 

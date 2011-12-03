@@ -13,7 +13,7 @@
 // Unit headers
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -59,27 +59,27 @@ SymRotamerTrialsMoverCreator::mover_name() {
 
 //////////////////////////
 // default constructor
-SymRotamerTrialsMover::SymRotamerTrialsMover() : RotamerTrialsMover()
+SymRotamerTrialsMover::SymRotamerTrialsMover() : protocols::simple_moves::RotamerTrialsMover()
 {
-	Mover::type( "SymRotamerTrials" );
+	protocols::moves::Mover::type( "SymRotamerTrials" );
 }
 
 // constructor with arguments
 SymRotamerTrialsMover::SymRotamerTrialsMover(
 	ScoreFunctionCOP scorefxn_in,
 	PackerTask & task_in
-) : RotamerTrialsMover(scorefxn_in, task_in )
+) : protocols::simple_moves::RotamerTrialsMover(scorefxn_in, task_in )
 {
-	Mover::type( "SymRotamerTrials" );
+	protocols::moves::Mover::type( "SymRotamerTrials" );
 }
 
 // constructor with arguments
 SymRotamerTrialsMover::SymRotamerTrialsMover(
 	ScoreFunctionCOP scorefxn_in,
 	TaskFactoryCOP factory_in
-) : RotamerTrialsMover(scorefxn_in, factory_in )
+) : protocols::simple_moves::RotamerTrialsMover(scorefxn_in, factory_in )
 {
-	Mover::type( "SymRotamerTrials" );
+	protocols::moves::Mover::type( "SymRotamerTrials" );
 }
 
 SymRotamerTrialsMover::~SymRotamerTrialsMover() {}
@@ -138,7 +138,7 @@ SymRotamerTrialsMover::parse_my_tag(
 SymEnergyCutRotamerTrialsMover::SymEnergyCutRotamerTrialsMover() :
   SymRotamerTrialsMover()
 {
-  Mover::type( "SymEnergyCutRotamerTrials" );
+  protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
 }
 
 // constructor with arguments
@@ -149,7 +149,7 @@ SymEnergyCutRotamerTrialsMover::SymEnergyCutRotamerTrialsMover(
   core::Real energycut_in
 ) : SymRotamerTrialsMover(scorefxn_in, task_in), mc_( mc_in ), energycut_( energycut_in )
 {
-  Mover::type( "SymEnergyCutRotamerTrials" );
+  protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
 }
 
 // constructor with arguments
@@ -160,7 +160,7 @@ SymEnergyCutRotamerTrialsMover::SymEnergyCutRotamerTrialsMover(
   core::Real energycut_in
 ) : SymRotamerTrialsMover(scorefxn_in, factory_in), mc_( mc_in ), energycut_( energycut_in )
 {
-  Mover::type( "SymEnergyCutRotamerTrials" );
+  protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
 }
 
 SymEnergyCutRotamerTrialsMover::~SymEnergyCutRotamerTrialsMover() {}

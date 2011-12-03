@@ -28,8 +28,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MissingDensityToJumpMover.hh>
-#include <protocols/moves/MissingDensityToJumpMover.fwd.hh>
+#include <protocols/simple_moves/MissingDensityToJumpMover.hh>
+#include <protocols/simple_moves/MissingDensityToJumpMover.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
@@ -179,7 +179,7 @@ int main( int argc, char * argv [] ) {
 		output_caAtomsToConstraint(caAtomsToConstrain,offset,coordCstFile,input_poseOP);
 		if( option[ minimalCstRelax::relax_pdb]()){
 			core::pose::PoseOP finalRelax_poseOP =  new core::pose::Pose(*toRelax_poseOP);
-			protocols::moves::MissingDensityToJumpMoverOP fixMissingDensityMover (new MissingDensityToJumpMover());
+			protocols::simple_moves::MissingDensityToJumpMoverOP fixMissingDensityMover (new protocols::simple_moves::MissingDensityToJumpMover());
 			core::scoring::ScoreFunctionOP scorefxn_w_csts_ = ScoreFunctionFactory::create_score_function(core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
 			scorefxn_w_csts_->set_weight( coordinate_constraint, COORDINATE_CST_WT );
 			fixMissingDensityMover->apply(*finalRelax_poseOP);

@@ -32,7 +32,7 @@
 #ifndef INCLUDED_numeric_MathMatrix_operations_hh
 #define INCLUDED_numeric_MathMatrix_operations_hh
 
-#include<numeric/MathMatrix.hh>
+#include <numeric/MathMatrix.hh>
 
 #include <algorithm> //needed for std::transform, std::find_if
 namespace numeric{

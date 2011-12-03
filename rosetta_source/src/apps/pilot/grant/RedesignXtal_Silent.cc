@@ -38,7 +38,7 @@
 
 
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/relax_protocols.hh>
 
 #include <utility/io/util.hh>

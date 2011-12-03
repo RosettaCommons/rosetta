@@ -37,7 +37,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //unnecessary include
 // AUTO-REMOVED #include <protocols/backrub/BackrubMover.hh> //unnecessary include
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh> //unnecessary include
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh> //unnecessary include
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh> //unnecessary include
 
 //#include <protocols/enzdes/EnzdesBaseProtocol.hh>
 //#include <protocols/enzdes/EnzConstraintIO.hh>
@@ -49,7 +49,7 @@
 //#include <core/scoring/ScoreFunction.hh>
 //#include <protocols/ligand_docking/LigandDockProtocol.hh>
 //#include <protocols/moves/MonteCarlo.hh>
-//#include <protocols/moves/PackRotamersMover.hh>
+//#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
 #if defined GL_GRAPHICS
  #include <protocols/viewer/viewers.hh>
@@ -76,8 +76,8 @@
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/datacache/cacheable_observers.hh>
 
-#include <protocols/filters/ScoreCutoffFilter.hh>
-#include <protocols/filters/PackerNeighborGraphFilter.hh>
+#include <protocols/simple_filters/ScoreCutoffFilter.hh>
+#include <protocols/simple_filters/PackerNeighborGraphFilter.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/toolbox/pose_metric_calculators/NonlocalContactsCalculator.hh>
 
@@ -649,7 +649,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 	//score pose in reduced scorefxn to set up score filter correctly
 	(*enz_prot_->reduced_scorefxn())( pose );
 
-	protocols::filters::ScoreCutoffFilterOP score_filter = new protocols::filters::ScoreCutoffFilter();
+	protocols::simple_filters::ScoreCutoffFilterOP score_filter = new protocols::simple_filters::ScoreCutoffFilter();
 
 
 	//setting the predesign score filter to a pretty generous cutoff.
@@ -691,7 +691,7 @@ EnzdesRemodelMover::setup_packer_neighbor_graph_filter( core::pose::Pose const &
 	nl_calc.get( (std::string) "nlcontacts_graph", mval_graph, pose );
 
 
-	protocols::filters::PackerNeighborGraphFilterOP png_filter = new protocols::filters::PackerNeighborGraphFilter( orig_task_, enz_prot_->get_scorefxn() );
+	protocols::simple_filters::PackerNeighborGraphFilterOP png_filter = new protocols::simple_filters::PackerNeighborGraphFilter( orig_task_, enz_prot_->get_scorefxn() );
 
 	png_filter->add_required_connections_between_regions( remodel_positions_, other_design_positions_, mval_size.value() );
 

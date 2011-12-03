@@ -7,44 +7,43 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-sources = {
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
-	"core/optimization" : [
+sources = {
+	"core/optimization": [
 		"atom_tree_minimize",
 		"AtomTreeMinimizer",
 		"AtomTreeMultifunc",
-		"SingleResidueMultifunc",
+		"cartesian_minimize",
+		"CartesianMinimizer",
+		"CartesianMinimizerMap",
+		"CartesianMultifunc",
+		"GA_Minimizer",
 		"LineMinimizer",
 		"Minimizer",
 		"MinimizerMap",
 		"MinimizerOptions",
 		"NumericalDerivCheckResult",
-		"GA_Minimizer",
 		"ParticleSwarmMinimizer",
-		"cartesian_minimize",
-		"CartesianMinimizer",
-		"CartesianMultifunc",
-		"CartesianMinimizerMap",
+		"SingleResidueMultifunc",
 	],
-
-	"core/optimization/symmetry" : [
+	"core/optimization/symmetry": [
 		"sym_atom_tree_minimize",
 		"SymAtomTreeMinimizer",
 		"SymAtomTreeMultifunc",
 		"SymMinimizerMap",
 	],
-
-	"core/pack" : [
+	"core/pack": [
 		"make_symmetric_task",
 		"min_pack",
 		"optimizeH",
-		"packer_neighbors",
-		"pack_rotamers",
 		"pack_missing_sidechains",
+		"pack_rotamers",
+		"packer_neighbors",
 		"rotamer_trials",
 		"rtmin",
 	],
-	"core/pack/annealer" : [
+	"core/pack/annealer": [
 		"AnnealerFactory",
 		"FASTERAnnealer",
 		"FixbbCoupledRotamerSimAnnealer",
@@ -54,11 +53,7 @@ sources = {
 		"RotamerAssigningAnnealer",
 		"SimAnnealerBase",
 	],
-	"core/pack/dunbrack" : [
-		#XRW_B_T1
-		#"CoarseRotamer",
-		#"CoarseSingleResidueLibrary",
-		#XRW_B_T1
+	"core/pack/dunbrack": [
 		"DunbrackConstraint",
 		"DunbrackEnergy",
 		"DunbrackRotamer",
@@ -66,32 +61,34 @@ sources = {
 		"RotamerLibrary",
 		"RotamerLibraryScratchSpace",
 		"SemiRotamericSingleResidueDunbrackLibrary",
-		"SingleResidueDunbrackLibrary",
 		"SingleLigandRotamerLibrary",
+		"SingleResidueDunbrackLibrary",
 	],
-	"core/pack/interaction_graph" : [
+	"core/pack/interaction_graph": [
 		"DensePDInteractionGraph",
 		"DoubleDensePDInteractionGraph",
 		"DoubleLazyInteractionGraph",
 		"FASTERInteractionGraph",
 		"FixedBBInteractionGraph",
+		"HPatchEnergy",
 		"InteractionGraphBase",
 		"InteractionGraphFactory",
 		"LazyInteractionGraph",
 		"LinearMemoryInteractionGraph",
 		"OnTheFlyInteractionGraph",
-		"PrecomputedPairEnergiesInteractionGraph",
 		"PDInteractionGraph",
+		"PrecomputedPairEnergiesInteractionGraph",
 		"RotamerDots",
 		"SimpleInteractionGraph",
-		"SurfacePotential",
 		"SurfaceEnergy",
-		"HPatchEnergy",
+		"SurfacePotential",
 	],
-	"core/pack/rotamer_set" : [
+	"core/pack/rotamer_set": [
+		"bb_independent_rotamers",
 		"BumpSelector",
 		"ContinuousRotamerSet",
 		"FixbbRotamerSets",
+		"rotamer_building_functions",
 		"RotamerSet",
 		"RotamerSet_",
 		"RotamerSetFactory",
@@ -100,59 +97,69 @@ sources = {
 		"RotamerSetsBase",
 		"RotamerSubset",
 		"RotamerSubsets",
-		"rotamer_building_functions",
 		"UnboundRotamersOperation",
 		"WaterAnchorInfo",
 		"WaterPackingInfo",
-		"bb_independent_rotamers",
 	],
-	"core/pack/scmin" : [
+	"core/pack/rotamer_set/symmetry": [
+		"SymmetricRotamerSet_",
+		"SymmetricRotamerSetFactory",
+		"SymmetricRotamerSets",
+	],
+	"core/pack/scmin": [
 		"AtomTreeCollection",
 		"SCMinMinimizerMap",
 		"SCMinMultifunc",
 		"SidechainStateAssignment",
 	],
-
-	"core/pack/rotamer_set/symmetry" : [
-		"SymmetricRotamerSet_",
-		"SymmetricRotamerSetFactory",
-		"SymmetricRotamerSets",
-	],
-
-	"core/pack/task" : [
+	"core/pack/task": [
+		"IGEdgeReweightContainer",
 		"PackerTask",
 		"PackerTask_",
+		"ResfileReader",
 		"RotamerSampleOptions",
 		"TaskFactory",
-		"ResfileReader",
-		"IGEdgeReweightContainer",
 	],
-	"core/pack/task/operation" : [
-		"OperateOnCertainResidues",
-		"TaskOperationFactory",
-		"TaskOperation",
-		"TaskOperations",
-		"ReplicateTask",
-		"ResLvlTaskOperationFactory",
-		"ResLvlTaskOperations",
-		"ResFilterFactory",
-		"ResFilters",
+	"core/pack/task/operation": [
 		"NoRepackDisulfides",
+		"OperateOnCertainResidues",
 		"OptCysHG",
 		"OptH",
+		"ReplicateTask",
+		"ResFilterFactory",
+		"ResFilters",
+		"ResLvlTaskOperationFactory",
+		"ResLvlTaskOperations",
+		"TaskOperation",
+		"TaskOperationFactory",
+		"TaskOperations",
 	],
-    "core/pack/task/operation/util":[
-        "interface_vector_calculate",
-        ],
-        "core/util" : [
-                "ABEGOManager",
-                "ChainbreakUtil",
-                "disulfide_util",
-                "kinematics_util",
-                "SwitchResidueTypeSet",
-        ],
+	"core/pack/task/operation/util": [
+		"interface_vector_calculate",
+	],
+	"core/util": [
+		"ABEGOManager",
+		"ChainbreakUtil",
+		"disulfide_util",
+		"kinematics_util",
+		"SwitchResidueTypeSet",
+	],
 }
-include_path = [ ]
-library_path = [ ]
-libraries    = [ ]
-subprojects  = [ "basic","numeric", "core.1","core.2","core.3","utility", "ObjexxFCL", "z","sqlite3", "cppdb" ]
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"basic",
+	"numeric",
+	"core.1",
+	"core.2",
+	"core.3",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"sqlite3",
+	"cppdb",
+]

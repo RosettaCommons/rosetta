@@ -51,7 +51,7 @@ MakePolyXMoverCreator::mover_name()
 }
 
 MakePolyXMover::MakePolyXMover():
-	Mover( MakePolyXMoverCreator::mover_name() ),
+	protocols::moves::Mover( MakePolyXMoverCreator::mover_name() ),
 	aa_( "AA" ),
 	keep_pro_( false ),
 	keep_gly_( true ),
@@ -59,7 +59,7 @@ MakePolyXMover::MakePolyXMover():
 {}
 
 MakePolyXMover::MakePolyXMover( std::string aa, bool keep_pro, bool keep_gly, bool keep_disulfide_cys ):
-	Mover( MakePolyXMoverCreator::mover_name() ),
+	protocols::moves::Mover( MakePolyXMoverCreator::mover_name() ),
 	aa_( aa ),
 	keep_pro_( keep_pro ),
 	keep_gly_( keep_gly ),
@@ -103,9 +103,9 @@ MakePolyXMover::get_name() const {
 void
 MakePolyXMover::parse_my_tag(
 	TagPtr const tag,
-	DataMap &,
+	protocols::moves::DataMap &,
 	Filters_map const &,
-	Movers_map const &,
+	protocols::moves::Movers_map const &,
 	Pose const & )
 {
 	aa_ = tag->getOption<std::string>( "aa", "ALA" );

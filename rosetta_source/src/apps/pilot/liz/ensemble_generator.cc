@@ -130,7 +130,7 @@ numeric::random::RandomGenerator RG(1548761031); // <- Magic number, do not chan
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>

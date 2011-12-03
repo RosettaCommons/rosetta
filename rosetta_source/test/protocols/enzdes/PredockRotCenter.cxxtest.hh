@@ -41,7 +41,7 @@
 
 //minimization stuff
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>

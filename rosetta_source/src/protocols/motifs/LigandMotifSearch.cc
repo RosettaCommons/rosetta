@@ -26,7 +26,7 @@
 #include <protocols/dna/DnaInterfaceFinder.hh>
 // AUTO-REMOVED #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/dna/util.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
@@ -1046,7 +1046,7 @@ LigandMotifSearch::incorporate_motifs(
 						}*/
 						core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
 						movemap->set_chi( (*ir)->seqpos(), true );
-						protocols::moves::MinMoverOP minmover = new protocols::moves::MinMover( movemap, score_fxn, "dfpmin_armijo_nonmonotone_atol", 0.000001, true );
+						protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover( movemap, score_fxn, "dfpmin_armijo_nonmonotone_atol", 0.000001, true );
 						minmover->apply( pose_dump );
 						//core::io::pdb::dump_pdb( pose_dump, pose3_name_full.str() );
 						core::Real sc_constraint_check( pose_dump.energies().total_energies()[ coordinate_constraint ] );

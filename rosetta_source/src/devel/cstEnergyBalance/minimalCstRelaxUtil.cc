@@ -61,8 +61,8 @@
 #include <protocols/comparative_modeling/ThreadingMover.hh>
 // AUTO-REMOVED #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MissingDensityToJumpMover.hh>
-#include <protocols/moves/MissingDensityToJumpMover.fwd.hh>
+#include <protocols/simple_moves/MissingDensityToJumpMover.hh>
+#include <protocols/simple_moves/MissingDensityToJumpMover.fwd.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/cst_util.hh>
 
@@ -317,7 +317,7 @@ std::set<Size> get_residuesToConstrain(const Size coordCstGapInitial, const Real
 	//Get input pdbs-------------------------------------------------------------
 	std::set< Size > caAtomsToConstrain;
 	//if missing density exists fix gaps.
-	protocols::moves::MissingDensityToJumpMoverOP fixMissingDensityMover (new MissingDensityToJumpMover());
+	protocols::simple_moves::MissingDensityToJumpMoverOP fixMissingDensityMover (new protocols::simple_moves::MissingDensityToJumpMover());
 	fixMissingDensityMover->apply(pose);
 	core::scoring::ScoreFunctionOP scorefxn_ = ScoreFunctionFactory::create_score_function(core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
 	core::scoring::ScoreFunctionOP scorefxn_w_csts_ = ScoreFunctionFactory::create_score_function(core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );

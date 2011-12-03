@@ -84,7 +84,7 @@ JumpRotamerSidechainMoverCreator::mover_name() {
 
 
 JumpRotamerSidechainMover::JumpRotamerSidechainMover() {
-	Mover::type( "JumpRotamerSidechain" );
+	protocols::moves::Mover::type( "JumpRotamerSidechain" );
 	set_defaults();
 }
 

@@ -15,7 +15,7 @@
 
 // Unit headers
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.fwd.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 // Project headers
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
@@ -33,7 +33,7 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
-class SymPackRotamersMover : public protocols::moves::PackRotamersMover {
+class SymPackRotamersMover : public protocols::simple_moves::PackRotamersMover {
 
 public:
 	// default constructor

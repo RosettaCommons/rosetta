@@ -60,8 +60,8 @@
 #include <core/io/pdb/pose_io.hh>
 
 //GreenPacker
-#include <protocols/moves/GreenPacker.hh>
-#include <protocols/moves/GreenPacker.fwd.hh>
+#include <protocols/simple_moves/GreenPacker.hh>
+#include <protocols/simple_moves/GreenPacker.fwd.hh>
 
 // AUTO-REMOVED #include <numeric/xyz.functions.hh> // APL TEMP
 
@@ -747,13 +747,13 @@ return "StepWiseRNA_ResidueSampler";
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 
-		o2star_green_packer_ = new protocols::moves::GreenPacker;
+		o2star_green_packer_ = new protocols::simple_moves::GreenPacker;
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
 		bool const root_partition = partition_definition( pose.fold_tree().root() );
 
 		Size const nres = pose.total_residue();
-		UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new UserDefinedGroupDiscriminator);
+		protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new protocols::simple_moves::UserDefinedGroupDiscriminator);
 		utility::vector1< Size > group_ids;
 
 		Size current_group = 0;

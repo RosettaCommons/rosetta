@@ -23,7 +23,7 @@
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <basic/options/option.hh>
 #include <fstream>
@@ -220,7 +220,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 				if (option[ OptionKeys::remodel::repeat_structure].user()){
 					if (option[ OptionKeys::constraints::cst_file ].user()){
-						protocols::moves::ConstraintSetMoverOP repeat_constraint = new protocols::moves::ConstraintSetMover();
+						protocols::simple_moves::ConstraintSetMoverOP repeat_constraint = new protocols::simple_moves::ConstraintSetMover();
 						repeat_constraint->apply( dummyPose );
 					}
 

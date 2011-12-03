@@ -47,7 +47,7 @@
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
 // AUTO-REMOVED #include <protocols/frags/TorsionFragment.hh>
 // AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 

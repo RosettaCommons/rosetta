@@ -37,8 +37,8 @@
 //   #include <core/kinematics/FoldTree.hh>
 // #endif
 
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/Mover.hh>
 
 // AUTO-REMOVED #include <basic/options/util.hh>
@@ -245,10 +245,10 @@ void MinPackMinMover::apply (pose::Pose& pose ) {
 
   //first do minimization mover making
 	//leave out movemap in initialization
-  moves::MinMoverOP min_mover = new moves::MinMover( movemap_initial, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+  protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_initial, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
 
   // Make PackRots movers
-  protocols::moves::PackRotamersMoverOP repacker = new protocols::moves::PackRotamersMover();
+  protocols::simple_moves::PackRotamersMoverOP repacker = new protocols::simple_moves::PackRotamersMover();
   repacker->task_factory( tf );
   repacker->score_function( scorefxn_ );
 

@@ -43,10 +43,10 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
@@ -931,9 +931,9 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 	//TR << "mutant packer task: " << *scan_task << std::endl;  // generates a TON of output
 
 	// now create the movers that will do the repacking and minimization
-	moves::PackRotamersMoverOP mutant_repacker_mover = new moves::PackRotamersMover( scorefxn, scan_task, 2 ); // ndruns: 2
-	moves::MinMoverOP min_mover = new moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
-	moves::TaskAwareMinMoverOP task_aware_min_mover = new moves::TaskAwareMinMover( min_mover, mutant_tf );
+	protocols::simple_moves::PackRotamersMoverOP mutant_repacker_mover = new protocols::simple_moves::PackRotamersMover( scorefxn, scan_task, 2 ); // ndruns: 2
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
+	protocols::simple_moves::TaskAwareMinMoverOP task_aware_min_mover = new protocols::simple_moves::TaskAwareMinMover( min_mover, mutant_tf );
 	protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
 	seq_mover->add_mover( mutant_repacker_mover );
 	seq_mover->add_mover( task_aware_min_mover );
@@ -946,9 +946,9 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 	pack::task::PackerTaskOP wt_task = native_tf->create_task_and_apply_taskoperations( native_pose );
 
 	// now create the movers that will do the repacking and minimization of the native structure
-	moves::PackRotamersMoverOP native_pack_mover = new moves::PackRotamersMover( scorefxn, wt_task, 2 ); // ndruns: 2
-	min_mover = new moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
-	task_aware_min_mover = new moves::TaskAwareMinMover( min_mover, native_tf );
+	protocols::simple_moves::PackRotamersMoverOP native_pack_mover = new protocols::simple_moves::PackRotamersMover( scorefxn, wt_task, 2 ); // ndruns: 2
+	min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
+	task_aware_min_mover = new protocols::simple_moves::TaskAwareMinMover( min_mover, native_tf );
 	seq_mover = new protocols::moves::SequenceMover;
 	seq_mover->add_mover( native_pack_mover );
 	seq_mover->add_mover( task_aware_min_mover );

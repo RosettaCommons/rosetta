@@ -23,10 +23,10 @@
 
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
@@ -250,17 +250,17 @@ HighResDocker::apply(core::pose::Pose & pose) {
 
 		if(cycle % repack_every_Nth_ == 1){
 			high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
-			pack_mover= (protocols::moves::Mover *) new protocols::moves::PackRotamersMover(score_fxn_, packer_task);
+			pack_mover= (protocols::moves::Mover *) new protocols::simple_moves::PackRotamersMover(score_fxn_, packer_task);
 		}
 		else{
 			high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
-			pack_mover= (protocols::moves::Mover *) new protocols::moves::RotamerTrialsMover(score_fxn_, *packer_task);
+			pack_mover= (protocols::moves::Mover *) new protocols::simple_moves::RotamerTrialsMover(score_fxn_, *packer_task);
 		}
 
 		// Wrap it in something to disable the torsion constraints before packing!
 		pack_mover = new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, minimized_ligands );
 
-		protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( movemap, score_fxn_, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ );
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, score_fxn_, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ );
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 		core::Real const score1 = (*score_fxn_)( pose );

@@ -1,0 +1,43 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   src/protocols/init/init.FeaturesReporterCreators.ihh
+/// @brief  Creator #includes for FeaturesReporters for init
+/// @author Steven Lewis smlewi@gmail.com
+
+//FeaturesReporterCreator #includes
+#include <protocols/features/FeaturesReporterFactory.hh>
+
+#include <protocols/features/AtomAtomPairFeaturesCreator.hh>
+#include <protocols/features/GeometricSolvationFeaturesCreator.hh>
+#include <protocols/features/HBondFeaturesCreator.hh>
+#include <protocols/features/HBondParameterFeaturesCreator.hh>
+#include <protocols/features/JobDataFeaturesCreator.hh>
+#include <protocols/features/OrbitalsFeaturesCreator.hh>
+#include <protocols/features/PairFeaturesCreator.hh>
+#include <protocols/features/PdbDataFeaturesCreator.hh>
+#include <protocols/features/PoseCommentsFeaturesCreator.hh>
+#include <protocols/features/PoseConformationFeaturesCreator.hh>
+#include <protocols/features/ProteinBackboneTorsionAngleFeaturesCreator.hh>
+#include <protocols/features/ProteinBackboneAtomAtomPairFeaturesCreator.hh>
+#include <protocols/features/ProteinResidueConformationFeaturesCreator.hh>
+#include <protocols/features/ProteinRMSDFeaturesCreator.hh>
+#include <protocols/features/ProtocolFeaturesCreator.hh>
+#include <protocols/features/RadiusOfGyrationFeaturesCreator.hh>
+#include <protocols/features/ResidueBurialFeaturesCreator.hh>
+#include <protocols/features/ResidueConformationFeaturesCreator.hh>
+#include <protocols/features/ResidueFeaturesCreator.hh>
+#include <protocols/features/ResidueSecondaryStructureFeaturesCreator.hh>
+#include <protocols/features/ResidueTypesFeaturesCreator.hh>
+#include <protocols/features/RotamerBoltzmannWeightFeaturesCreator.hh>
+#include <protocols/features/RotamerRecoveryFeaturesCreator.hh>
+#include <protocols/features/SaltBridgeFeaturesCreator.hh>
+#include <protocols/features/ScoreTypeFeaturesCreator.hh>
+#include <protocols/features/StructureFeaturesCreator.hh>
+#include <protocols/features/StructureScoresFeaturesCreator.hh>

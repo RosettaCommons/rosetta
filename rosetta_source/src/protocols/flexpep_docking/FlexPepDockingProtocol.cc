@@ -71,11 +71,11 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
@@ -198,7 +198,7 @@ void FlexPepDockingProtocol::set_default()
 	if(! flags_.pep_fold_only)
 		interface_tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump_ ));
 
-	interface_packer_ = new moves::PackRotamersMover();
+	interface_packer_ = new protocols::simple_moves::PackRotamersMover();
 	interface_packer_->score_function( scorefxn_ );
 	interface_packer_->task_factory( interface_tf_ );
 
@@ -393,7 +393,7 @@ FlexPepDockingProtocol::minimize_only(
   const float min_func_tol
 )
 {
-	moves::MinMover minimizer(movemap_minimizer_, scorefxn_, min_type, min_func_tol, true /*nb_list*/ );
+	protocols::simple_moves::MinMover minimizer(movemap_minimizer_, scorefxn_, min_type, min_func_tol, true /*nb_list*/ );
   minimizer.apply(pose);
 }
 
@@ -449,10 +449,10 @@ FlexPepDockingProtocol::prepack_only(
 		new pack::rotamer_set::UnboundRotamersOperation();
 	unboundrot_oper->initialize_from_command_line();
 	task->append_rotamerset_operation( unboundrot_oper );
-	moves::PackRotamersMoverOP prepack_protein = new moves::PackRotamersMover( scorefxn_, task );
+	protocols::simple_moves::PackRotamersMoverOP prepack_protein = new protocols::simple_moves::PackRotamersMover( scorefxn_, task );
 
 	// set up min mover to pre-minimize the side chains + backbone // TODO: 1e-5 - is this a good threshold? optimize this
-	MinMoverOP min_mover( new MinMover(mm_protein, scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(mm_protein, scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  ) );
 
 	//set up translate-by-axis movers
 	Real trans_magnitude = 1000;
@@ -716,9 +716,9 @@ FlexPepDockingProtocol::torsions_monte_carlo_minimize(
   int n_accepted = 0; // diagnostic counter
   const float rt_energycut = 0.05; // TODO: tune param
 
-	moves::EnergyCutRotamerTrialsMover rottrial_ecut(scorefxn_, allprotein_tf_, mc, rt_energycut);
-	moves::RotamerTrialsMinMover interface_rtmin(scorefxn_, interface_tf_);
-	moves::MinMover minimizer(movemap_minimizer_, scorefxn_, min_type, min_func_tol, true /*nb_list*/ );
+	protocols::simple_moves::EnergyCutRotamerTrialsMover rottrial_ecut(scorefxn_, allprotein_tf_, mc, rt_energycut);
+	protocols::simple_moves::RotamerTrialsMinMover interface_rtmin(scorefxn_, interface_tf_);
+	protocols::simple_moves::MinMover minimizer(movemap_minimizer_, scorefxn_, min_type, min_func_tol, true /*nb_list*/ );
 
 	// start the minimization
   for( int i=1; i<=cycles; ++i ) {
@@ -789,10 +789,10 @@ FlexPepDockingProtocol::rigidbody_monte_carlo_minimize(
 
 	rigid::RigidBodyPerturbMover rb_mover(
 		rb_jump_, rot_magnitude, trans_magnitude );
-	moves::RotamerTrialsMover interface_rottrial(scorefxn_, interface_tf_);
-	moves::EnergyCutRotamerTrialsMover rottrial_ecut(scorefxn_, allprotein_tf_, mc, rt_energycut);
-	moves::RotamerTrialsMinMover interface_rtmin(scorefxn_, interface_tf_);
-	moves::MinMover minimizer(
+	protocols::simple_moves::RotamerTrialsMover interface_rottrial(scorefxn_, interface_tf_);
+	protocols::simple_moves::EnergyCutRotamerTrialsMover rottrial_ecut(scorefxn_, allprotein_tf_, mc, rt_energycut);
+	protocols::simple_moves::RotamerTrialsMinMover interface_rtmin(scorefxn_, interface_tf_);
+	protocols::simple_moves::MinMover minimizer(
 		movemap_minimizer_, scorefxn_, min_type, min_func_tol, true /*nb_list*/ );
 
 	// start the minimization
@@ -938,7 +938,7 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 	scorefxn_ = orig_scorefxn->clone(); // restore (note that this removes the coordinate constraints weight set above)
 
 	// final minimization, with stringent tolerance
-	protocols::moves::MinMover minimizer(movemap_minimizer_, scorefxn_, "dfpmin_armijo_atol", 0.001, true /*nb_list*/ );
+	protocols::simple_moves::MinMover minimizer(movemap_minimizer_, scorefxn_, "dfpmin_armijo_atol", 0.001, true /*nb_list*/ );
   minimizer.apply(pose);
 	// final scoring, w/o constraints for receptor backbone
 	if(flags_.min_receptor_bb)

@@ -75,18 +75,18 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody/CDRH3Modeler.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/antibody/GraftMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/TrialMover.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -216,8 +216,8 @@ void AntibodyModeler::apply( pose::Pose & pose_in ){
 	using namespace protocols::moves;
 
 	if( model_h3_ && ( cst_weight_ != 0.00 ) ) {
-		protocols::moves::ConstraintSetMoverOP cdr_constraint =
-			new protocols::moves::ConstraintSetMover();
+		protocols::simple_moves::ConstraintSetMoverOP cdr_constraint =
+			new protocols::simple_moves::ConstraintSetMover();
 		cdr_constraint->apply( pose_in );
 	}
 	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
@@ -534,19 +534,19 @@ AntibodyModeler::relax_cdrs()
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	MinMoverOP all_cdr_min_mover = new MinMover( allcdr_map,
+	protocols::simple_moves::MinMoverOP all_cdr_min_mover = new protocols::simple_moves::MinMover( allcdr_map,
 		scorefxn, min_type, min_tolerance, nb_list );
 	all_cdr_min_mover->apply( antibody_in_.Fv );
 
 	if( !benchmark_ ) {
-		PackRotamersMoverOP repack=new PackRotamersMover( scorefxn );
+		protocols::simple_moves::PackRotamersMoverOP repack=new protocols::simple_moves::PackRotamersMover( scorefxn );
 		setup_packer_task( antibody_in_.Fv );
 		( *scorefxn )( antibody_in_.Fv );
 		tf_->push_back( new RestrictToInterface( is_flexible ) );
 		repack->task_factory( tf_ );
 		repack->apply( antibody_in_.Fv );
 
-		RotamerTrialsMinMoverOP rtmin = new RotamerTrialsMinMover(
+		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover(
 																		scorefxn, tf_ );
 		rtmin->apply( antibody_in_.Fv );
 	}
@@ -777,7 +777,7 @@ AntibodyModeler::snugfit_MC_min (
 	bool nb_list = true;
 	Size nres = pose_in.total_residue();
 
-	MinMoverOP min_mover = new MinMover( cdr_dock_map, scorefxn,
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn,
 				"dfpmin_armijo_nonmonotone", minimization_threshold, nb_list );
 
 	//set up rigid body movers
@@ -797,7 +797,7 @@ AntibodyModeler::snugfit_MC_min (
 	using namespace protocols::toolbox::task_operations;
 	tf_->push_back( new RestrictToInterface( rb_jump, loop_residues ) );
 
-	RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
 		pack_scorefxn, tf_ );
 	SequenceMoverOP rb_mover = new SequenceMover;
 	rb_mover->add_mover( rb_perturb );
@@ -876,7 +876,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 
 	//set up minimizer movers
-	MinMoverOP min_mover = new MinMover( cdr_dock_map, scorefxn, min_type,
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn, min_type,
 																			 min_threshold, nb_list );
 
 	//set up rigid body movers
@@ -898,10 +898,10 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 
 
-	RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
 												 pack_scorefxn, tf_ );
 
-	PackRotamersMoverOP pack_interface_repack = new PackRotamersMover(
+	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover(
 														  pack_scorefxn );
 	pack_interface_repack->task_factory(tf_);
 

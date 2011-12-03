@@ -55,7 +55,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/protein_interface_design/movers/ddG.hh>
 

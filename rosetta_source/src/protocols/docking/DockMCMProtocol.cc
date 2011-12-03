@@ -31,7 +31,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <core/kinematics/FoldTree.hh>
 // Utility Headers
@@ -160,7 +160,7 @@ void DockMCMProtocol::apply( core::pose::Pose & pose )
 
 	tf2()->create_and_attach_task_factory( this, pose );
 
-	moves::PackRotamersMoverOP initial_pack = new moves::PackRotamersMover();
+	protocols::simple_moves::PackRotamersMoverOP initial_pack = new protocols::simple_moves::PackRotamersMover();
 	initial_pack->score_function( scorefxn_pack() );
 	initial_pack->task_factory( task_factory() );
 
@@ -245,7 +245,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	}
 
 	//JQX: define the initial_pack, and this initial_pack was defined as a trial mover
-	moves::PackRotamersMoverOP initial_pack = new moves::PackRotamersMover();
+	protocols::simple_moves::PackRotamersMoverOP initial_pack = new protocols::simple_moves::PackRotamersMover();
 	initial_pack->score_function( scorefxn_pack() );
 	initial_pack->task_factory( task_factory() );
 	if ( dock_mcm_->get_mc()->last_accepted_pose().empty() ) { dock_mcm_->init_mc(pose); } //JQX: use the dock_mcm_'s "mc_" object

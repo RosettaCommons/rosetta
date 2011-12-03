@@ -34,11 +34,11 @@
 
 #include <protocols/moves/RampingMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -310,7 +310,7 @@ void ClassicRelax::set_default_minimizer() {
 	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
 		min_mover_ = new simple_moves::symmetry::SymMinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list );
 	} else {
-		min_mover_ = new moves::MinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list );
+		min_mover_ = new protocols::simple_moves::MinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list );
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -443,7 +443,7 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 		if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
 			pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( get_scorefxn(), task_ );
 		} else {
-			pack_full_repack_ = new moves::PackRotamersMover( get_scorefxn(), task_ );
+			pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( get_scorefxn(), task_ );
 		}
 		/* TODO set packer_task_factory */
 
@@ -453,7 +453,7 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void ClassicRelax::set_full_repack( moves::PackRotamersMoverOP new_pack_full_repack ) {
+void ClassicRelax::set_full_repack( protocols::simple_moves::PackRotamersMoverOP new_pack_full_repack ) {
 	pack_full_repack_ = new_pack_full_repack;
 	use_default_pack_full_repack_ = false;
 }
@@ -488,13 +488,13 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 		if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
 			pack_rottrial_ = new simple_moves::symmetry::SymEnergyCutRotamerTrialsMover( get_scorefxn(), *task_, mc_, energycut );
 		 } else {
-			pack_rottrial_ = new moves::EnergyCutRotamerTrialsMover( get_scorefxn(), *task_, mc_, energycut );
+			pack_rottrial_ = new protocols::simple_moves::EnergyCutRotamerTrialsMover( get_scorefxn(), *task_, mc_, energycut );
 		}
 	}
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void ClassicRelax::set_rottrial ( moves::RotamerTrialsMoverOP new_pack_rottrial ){
+void ClassicRelax::set_rottrial ( protocols::simple_moves::RotamerTrialsMoverOP new_pack_rottrial ){
 	pack_rottrial_ = new_pack_rottrial;
 	use_default_pack_full_repack_ = false;
 }

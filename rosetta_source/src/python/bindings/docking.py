@@ -27,7 +27,7 @@ print "setting up movers"
 #centroid/fullatom conversion movers
 to_centroid = protocols::simple_moves::SwitchResidueTypeSetMover('centroid')
 to_fullatom = protocols::simple_moves::SwitchResidueTypeSetMover('fa_standard')
-recover_sidechains = ReturnSidechainMover(starting_p)
+recover_sidechains = protocols::simple_moves::ReturnSidechainMover(starting_p)
 
 #initial perturbation movers
 randomize1 = RigidBodyRandomizeMover(p, dock_jump, rigid::partner_upstream)

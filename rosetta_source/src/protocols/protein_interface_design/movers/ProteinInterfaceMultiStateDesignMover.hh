@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_protein_interface_design_movers_ProteinInterfaceMultiStateDesignMover_hh
 #define INCLUDED_protocols_protein_interface_design_movers_ProteinInterfaceMultiStateDesignMover_hh
 #include <protocols/protein_interface_design/movers/ProteinInterfaceMultiStateDesignMover.fwd.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <protocols/multistate_design/MultiStatePacker.fwd.hh>
 // AUTO-REMOVED #include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
@@ -36,7 +36,7 @@ namespace protein_interface_design {
 namespace movers {
 
 ///@brief wraps protein-interface specific considerations around the general multistate design / genetic algorithm framework
-class ProteinInterfaceMultiStateDesignMover : public moves::PackRotamersMover {
+class ProteinInterfaceMultiStateDesignMover : public protocols::simple_moves::PackRotamersMover {
 public:
 	typedef multistate_design::PosType PosType;
 	typedef core::pack::task::PackerTaskCOP PackerTaskCOP;

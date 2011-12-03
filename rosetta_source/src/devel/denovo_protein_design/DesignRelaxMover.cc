@@ -44,7 +44,7 @@
 #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
@@ -133,7 +133,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 		// by default the designfxn_ will be soft
 		// convert taskfactory into PackerTaskOP
 		core::pack::task::PackerTaskOP designtask = designtaskfactory_->create_task_and_apply_taskoperations( pose );
-		protocols::moves::PackRotamersMover design_step( designfxn_, designtask );
+		protocols::simple_moves::PackRotamersMover design_step( designfxn_, designtask );
 		design_step.apply( pose );
 
 		if( debug ){

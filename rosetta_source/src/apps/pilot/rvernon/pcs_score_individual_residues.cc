@@ -77,7 +77,7 @@
 // AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 
 // Unit headers

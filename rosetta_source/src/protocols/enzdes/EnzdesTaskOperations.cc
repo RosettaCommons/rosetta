@@ -30,8 +30,8 @@
 #include <protocols/dna/util.hh> // Needed for arginine sweep interface detection
 
 #include <protocols/motifs/LigandMotifSearch.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
 #include <protocols/toolbox/rotamer_set_operations/RigidBodyMoveRotSetOps.hh>
@@ -642,8 +642,8 @@ DetectProteinLigandInterface::register_options()
 
 	option.add_relevant( OptionKeys::packing::resfile  );
 
-	protocols::moves::MinMover::register_options();
-	protocols::moves::PackRotamersMover::register_options();
+	protocols::simple_moves::MinMover::register_options();
+	protocols::simple_moves::PackRotamersMover::register_options();
 
 	option.add_relevant( OptionKeys::enzdes::detect_design_interface );
 	option.add_relevant( OptionKeys::enzdes::cut1 );

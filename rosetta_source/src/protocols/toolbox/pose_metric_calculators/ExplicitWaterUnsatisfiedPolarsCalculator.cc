@@ -48,7 +48,7 @@
 #include <core/conformation/ResidueFactory.hh>
 
 //protocol headers
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -196,7 +196,7 @@ dock_waters_to_atom(
     if( mc_create->boltzmann( pose ) ){
 				MoveMapOP mm = new MoveMap;
 				mm->set_jump( pose.fold_tree().num_jump(), true );
-				protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "dfpmin", 0.001, false );
+				protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, false );
 				min_mover->apply( pose );
 				++n_wat;
 		}

@@ -95,8 +95,8 @@
 #include <protocols/cluster/cluster.hh>
 
 //GreenPacker
-#include <protocols/moves/GreenPacker.hh>
-#include <protocols/moves/GreenPacker.fwd.hh>
+#include <protocols/simple_moves/GreenPacker.hh>
+#include <protocols/simple_moves/GreenPacker.fwd.hh>
 
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>

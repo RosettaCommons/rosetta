@@ -1,8 +1,3 @@
-so because of the library split for some reason, if you type "scons" instead of "scons bin" or "scons bin pilot_apps_all", scons will look for a path called src/core.1, src/score.2 etc and die when it cant find them. 
+This file (and all the other core.* and protocols.* files) exists because scons expects each item in the list "projects" to have a directory or file in src with the same name.  Since we split core and protocols into multiple libraries but left them all in the same directory, we need these dummy files to keep scons from dying.
 
-There has got to be some way to fix this, but its 4 AM and I've run out of brain
-
-By the way, scons is pretty terrible.
-
-
-Also, git seemed like a good idea, but let me tell you it gives you more than enough room to completely screw yourself in ways you cant even understand.  The plot of Primer makes more sense than our commit tree does.
+This is a sort of silly requirement, and I feel like there must be a better solution, I haven't found it yet.

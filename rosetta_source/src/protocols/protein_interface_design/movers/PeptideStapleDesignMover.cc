@@ -23,7 +23,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/jobdist/Jobs.hh>
-#include <protocols/moves/PeptideStapleMover.hh>
+#include <protocols/simple_moves/PeptideStapleMover.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -63,14 +63,14 @@ PeptideStapleDesignMover::PeptideStapleDesignMover() :
 PeptideStapleDesignMover::PeptideStapleDesignMover( core::Size const seqpos, core::Size const staple_gap ) :
 	protocols::moves::Mover( PeptideStapleDesignMoverCreator::mover_name() )
 {
-	stapler_ = new protocols::moves::PeptideStapleMover( seqpos, staple_gap );
+	stapler_ = new protocols::simple_moves::PeptideStapleMover( seqpos, staple_gap );
 }
 
 PeptideStapleDesignMover::PeptideStapleDesignMover( PeptideStapleDesignMover const & init ) :
 	//utility::pointer::ReferenceCount(), 
 	protocols::moves::Mover( init )
 {
-	stapler_ = new protocols::moves::PeptideStapleMover( *(init.stapler_) );
+	stapler_ = new protocols::simple_moves::PeptideStapleMover( *(init.stapler_) );
 }
 
 PeptideStapleDesignMover::~PeptideStapleDesignMover() {}
@@ -95,7 +95,7 @@ PeptideStapleDesignMover::parse_my_tag( TagPtr const tag, DataMap &, protocols::
 {
 	core::Size const staple_start( protocols::rosetta_scripts::get_resnum( tag, pose ));
 	core::Size const gap( tag->getOption<core::Size>( "staple_gap", 4 ) );
-	stapler_ = new protocols::moves::PeptideStapleMover( staple_start, gap );
+	stapler_ = new protocols::simple_moves::PeptideStapleMover( staple_start, gap );
 }
 
 } //movers

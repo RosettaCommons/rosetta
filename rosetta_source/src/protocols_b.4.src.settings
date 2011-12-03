@@ -7,56 +7,80 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-sources = {'protocols/cluster': ['APCluster', 'cluster'],
- 'protocols/forge/build': ['Bridge',
-                           'BuildInstruction',
-                           'BuildManager',
-                           'ConnectRight',
-                           'GrowLeft',
-                           'GrowRight',
-                           'RelativeConnectRight',
-                           'SegmentInsert',
-                           'SegmentRebuild',
-                           'SegmentSwap'],
- 'protocols/forge/components': ['BDR', 'VarLengthBuild'],
- 'protocols/forge/constraints': ['ConstraintFileRCG',
-                                 'NtoC_RCG',
-                                 'InverseRotamersRCG'],
- 'protocols/forge/methods': ['chainbreak_eval',
-                             'fold_tree_functions',
-                             'fragment_functions',
-                             'pose_mod',
-                             'util'],
- 'protocols/forge/remodel': ['RemodelLoopMover',
-                             'RemodelConstraintGenerator',
-                             'ResidueVicinityRCG',
-                             'RemodelAccumulator',
-                             'RemodelEnzdesCstModule',
-                             'RemodelData',
-                             'RemodelWorkingSet',
-                             'RemodelMover',
-                             'RemodelDesignMover',
-                             'RemodelRotamerLinks'],
- 'protocols/pockets': ['Fingerprint',
-                       'FingerprintMultifunc',
-                       'PocketConstraint',
-                       'PocketGrid']}
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
-include_path = []
-library_path = []
-libraries = []
-subprojects = ['protocols.3',
- 'protocols.2',
- 'protocols.1',
- 'core.5',
- 'core.4',
- 'core.3',
- 'core.2',
- 'core.1',
- 'basic',
- 'numeric',
- 'utility',
- 'ObjexxFCL',
- 'z',
- 'sqlite3',
- 'cppdb']
+sources = {
+	"protocols/cluster": [
+		"APCluster",
+		"cluster",
+	],
+	"protocols/forge/build": [
+		"Bridge",
+		"BuildInstruction",
+		"BuildManager",
+		"ConnectRight",
+		"GrowLeft",
+		"GrowRight",
+		"RelativeConnectRight",
+		"SegmentInsert",
+		"SegmentRebuild",
+		"SegmentSwap",
+	],
+	"protocols/forge/components": [
+		"BDR",
+		"VarLengthBuild",
+	],
+	"protocols/forge/constraints": [
+		"ConstraintFileRCG",
+		"InverseRotamersRCG",
+		"NtoC_RCG",
+	],
+	"protocols/forge/methods": [
+		"chainbreak_eval",
+		"fold_tree_functions",
+		"fragment_functions",
+		"pose_mod",
+		"util",
+	],
+	"protocols/forge/remodel": [
+		"RemodelAccumulator",
+		"RemodelConstraintGenerator",
+		"RemodelData",
+		"RemodelDesignMover",
+		"RemodelEnzdesCstModule",
+		"RemodelLoopMover",
+		"RemodelMover",
+		"RemodelRotamerLinks",
+		"RemodelWorkingSet",
+		"ResidueVicinityRCG",
+	],
+	"protocols/pockets": [
+		"Fingerprint",
+		"FingerprintMultifunc",
+		"PocketConstraint",
+		"PocketGrid",
+	],
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"protocols.3",
+	"protocols.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"sqlite3",
+	"cppdb",
+]

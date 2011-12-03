@@ -157,13 +157,13 @@
 #include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/Exceptions.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/filters/RGFilter.hh>
-#include <protocols/filters/COFilter.hh>
-#include <protocols/filters/SheetFilter.hh>
+#include <protocols/simple_filters/RGFilter.hh>
+#include <protocols/simple_filters/COFilter.hh>
+#include <protocols/simple_filters/SheetFilter.hh>
 #include <protocols/simple_filters/PDDFScoreFilter.hh>
-#include <protocols/filters/SAXSScoreFilter.hh>
+#include <protocols/simple_filters/SAXSScoreFilter.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/RepulsiveOnlyMover.hh>
+#include <protocols/simple_moves/RepulsiveOnlyMover.hh>
 
 //numeric headers
 #include <numeric/random/random.hh>
@@ -1409,7 +1409,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	generate_extended_pose( extended_pose, sequence_ );
 
 	// apply a mover which calculates only repulsive energy on designate residues
-	protocols::moves::RepulsiveOnlyMover replonly;
+	protocols::simple_moves::RepulsiveOnlyMover replonly;
 	replonly.apply( extended_pose );
 
 
@@ -1673,9 +1673,9 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 	if ( option[ basic::options::OptionKeys::filters::disable_all_filters ]() ) return true; //makes a lot of sense IMHO
 
 	// apply RG, contact-order and sheet filters
-	protocols::filters::RGFilter    rg_filter;
-	protocols::filters::COFilter    co_filter;
-	protocols::filters::SheetFilter sh_filter;
+	protocols::simple_filters::RGFilter    rg_filter;
+	protocols::simple_filters::COFilter    co_filter;
+	protocols::simple_filters::SheetFilter sh_filter;
 
 	if ( !option[ basic::options::OptionKeys::filters::disable_rg_filter ]() && !rg_filter.apply( pose) ) return false;
 	if ( !option[ basic::options::OptionKeys::filters::disable_co_filter ]() && !co_filter.apply( pose) ) return false;
@@ -1693,7 +1693,7 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 	if( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
 	    ( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
 
-	    protocols::filters::SAXSScoreFilterOP saxs_filter = new protocols::filters::SAXSScoreFilter();
+	    protocols::simple_filters::SAXSScoreFilterOP saxs_filter = new protocols::simple_filters::SAXSScoreFilter();
 	    bool flag = saxs_filter->apply(pose);
 	    core::pose::setPoseExtraScores( pose, "saxs_score", saxs_filter->recent_score());
 	    if( ! flag ) return false;	// We need this flag because filter's score must be set before this if statement

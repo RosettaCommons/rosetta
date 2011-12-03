@@ -33,7 +33,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -268,7 +268,7 @@ MinimizeStoredRBConfs::rb_minimize_all_confs(
 	Size natoms( confs[1]->natoms() );
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
 	movemap->set_jump( pose.fold_tree().get_jump_that_builds_residue( seqpos ), true );
-	protocols::moves::MinMover minmover( movemap, sfxn_, "dfpmin", 0.1, true );
+	protocols::simple_moves::MinMover minmover( movemap, sfxn_, "dfpmin", 0.1, true );
 
 	//I guess we need a task...
 	core::pack::task::PackerTaskOP rtmin_task = core::pack::task::TaskFactory::create_packer_task( mod_pose );

@@ -39,7 +39,7 @@
 #include <numeric/angle.functions.hh>
 
 // protocol headers
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 // C++ headers
 #include <iostream>
@@ -216,7 +216,7 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 		mvmp->set_chi( 1, true );
 		mvmp->set( bb1, true );
 		mvmp->set( bb4, true );
-		protocols::moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
+		protocols::simple_moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
 
 
 		Real current_ener( orig_ener), previous_ener( orig_ener );
@@ -675,7 +675,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		mvmp->set_chi( 1, true );
 		mvmp->set( bb1, true );
 		mvmp->set( bb4, true );
-		protocols::moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
+		protocols::simple_moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
 		for ( Size j=1; j<= 25; ++j ) {
 			//std::cout << " ----- " << j << " ----- " << std::flush << std::endl;
 			mnmvr.apply( pose );

@@ -56,8 +56,8 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -184,7 +184,7 @@ void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 
   utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
   pose.add_constraints( res_cst );
 
-  protocols::moves::PackRotamersMover repack( sf, task );
+  protocols::simple_moves::PackRotamersMover repack( sf, task );
   repack.apply(pose);
 
   // cleanup 2
@@ -198,15 +198,15 @@ void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 
   // movemap->set_jump(false);
   // movemap->set_bb(false);
   // movemap->set_chi(true);
-  // protocols::moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  // protocols::simple_moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
   // movemap->set_jump(false);
   // movemap->set_bb(true);
   // movemap->set_chi(true);
-  // protocols::moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  // protocols::simple_moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
   movemap->set_jump(true);
   movemap->set_bb(true);
   movemap->set_chi(true);
-  protocols::moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  protocols::simple_moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 
 
 

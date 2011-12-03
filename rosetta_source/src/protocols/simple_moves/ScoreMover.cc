@@ -109,7 +109,7 @@ ScoreMover::~ScoreMover() {}
 ScoreMover::ScoreMover(
 	std::string const & weights, std::string const & patch /* = "" */
 ) :
-	Mover( ScoreMoverCreator::mover_name() ),
+	protocols::moves::Mover( ScoreMoverCreator::mover_name() ),
 	score_function_(0),
 	verbose_(true),
 	scorefile_("")
@@ -124,7 +124,7 @@ ScoreMover::ScoreMover(
 }
 
 ScoreMover::ScoreMover( ScoreFunctionOP score_function_in ) :
-	Mover( ScoreMoverCreator::mover_name() ),
+	protocols::moves::Mover( ScoreMoverCreator::mover_name() ),
 	score_function_( score_function_in ),
 	verbose_(true),
 	scorefile_("")
@@ -214,7 +214,7 @@ void ScoreMover::parse_my_tag(
 		if ( datamap.has( "scorefxns", scorefxn_key ) ) {
 			score_function_ = datamap.get< ScoreFunction* >( "scorefxns", scorefxn_key );
 		} else {
-			utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in DataMap.");
+			utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in protocols::moves::DataMap.");
 		}
 	}
 

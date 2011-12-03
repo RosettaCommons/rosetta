@@ -7,158 +7,139 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
 sources = {
-    "devel" : [
-        "init",
-    ],
-
-    "devel/coupled_sidechains" : [
-        "CoupledSidechainProtocol2",
-    ],
-
-	"devel/cartesian_frags" : [
-		"SafeID",
+	"devel": [
+		"init",
+	],
+	"devel/cartesian_frags": [
 		"CartesianFragment",
 		"DNA_FragLib",
 		"dna_util",
+		"SafeID",
 	],
-
-        "devel/cstEnergyBalance" : [
+	"devel/coupled_sidechains": [
+		"CoupledSidechainProtocol2",
+	],
+	"devel/cstEnergyBalance": [
 		"minimalCstRelaxUtil",
 	],
-
-	"devel/dna" : [
-		"protocols",
-		"ProteinDNA_Relax",
+	"devel/denovo_protein_design": [
+		"CreateStartingStructureMover",
+		"DesignRelaxMover",
+		"SequenceFitnessMover",
+		"SSClass",
 		"util",
+	],
+	"devel/dna": [
 		"base_movers",
+		"ProteinDNA_Relax",
+		"protocols",
 		"relax_util",
-   ],
-
-	"devel/domain_assembly" : [
-		"DomainAssemblyReader",
+		"util",
+	],
+	"devel/domain_assembly": [
 		"domain_assembly",
 		"domain_assembly_setup",
+		"DomainAssemblyReader",
 	],
-
-    "devel/denovo_protein_design" : [
-      "util",
-      "SequenceFitnessMover",
-      "DesignRelaxMover",
-      "CreateStartingStructureMover",
-      "SSClass",
-	],
-
-    "devel/enzdes" : [
+	"devel/enzdes": [
 		"DesignSilentStruct",
 		"EnzdesRemodelProtocol",
 	],
-
-#        "path_rover" : [
-#                "pathrover_DOFs_manager",
-#        ],
-
-#	"devel/integrated_loop" : [
-#		"LoopModeler",
-#		"CcdCloseMover",
-#		"LoopManager"
-#	],
-
-	"devel/inv_kin_lig_loop_design" : [
-		"Ints",
-		"ResID",
-		"Fragment",
-		"Loop",
+	"devel/fold_from_loops": [
+		"FoldFromLoops_functions",
+		"FoldFromLoopsMover",
+	],
+	#"devel/integrated_loop": [
+	#	"CcdCloseMover",
+	#	"LoopManager",
+	#	"LoopModeler",
+	#],
+	"devel/inv_kin_lig_loop_design": [
 		"Cloner",
+		"Fragment",
+		"Ints",
+		"JumpManager",
+		"Loop",
 		"Mover",
 		"Protocol",
-		"JumpManager",
+		"ResID",
 	],
-    "devel/loop_extend" : [
-        "LoopExtendMover",
-    ],
-	"devel/metal_interface" : [
-		"DualMonteCarlo",
-		"MetalInterfaceDesignMover",
-                "FindClosestAtom",
-                "AddMetalSiteConstraints",
-                "MatchGrafter",
-                "MetalSiteResidue",
-                "ParseMetalSite",
+	"devel/loop_extend": [
+		"LoopExtendMover",
 	],
-
-#	"devel/pose_metric_calculators" : [
-#		"SasaCalculator",
-#		"InterfaceDefinitionCalculatorBase",
-#		"InterfaceNeighborDefinitionCalculator",
-#		"InterfaceSasaDefinitionCalculator",
-#		"InterfaceDeltaEnergeticsCalculator",
-#	],
-
-	"devel/residual_dipolar_coupling" : [
-		"RDC_main",
-		"RDC_energies",
-	],
-
-	"devel/simple_options" : [
-		"option",
-	],
-
-#	"devel/ssrbrelax" : [
-#		"SSrbrelax",
-#		"SSRbClass"
-#	],
-
-    "devel/optest" : [
-        "A",
-        "B1",
-        "B2",
-        "C1",
-        "C2",
-	],
-
-	"devel/fold_from_loops" : [
-		"FoldFromLoopsMover",
-		"FoldFromLoops_functions",
-	],
-	"devel/loop_grids" : [
+	"devel/loop_grids": [
 		"LoopGrid",
 	],
-	"devel/vardist_solaccess" : [
+	"devel/metal_interface": [
+		"AddMetalSiteConstraints",
+		"DualMonteCarlo",
+		"FindClosestAtom",
+		"MatchGrafter",
+		"MetalInterfaceDesignMover",
+		"MetalSiteResidue",
+		"ParseMetalSite",
+	],
+	"devel/optest": [
+		"A",
+		"B1",
+		"B2",
+		"C1",
+		"C2",
+	],
+	"devel/residual_dipolar_coupling": [
+		"RDC_energies",
+		"RDC_main",
+	],
+	"devel/simple_options": [
+		"option",
+	],
+	#"devel/ssrbrelax": [
+	#	"SSRbClass",
+	#	"SSrbrelax",
+	#],
+	"devel/vardist_solaccess": [
 		"VarSolDRotamerDots",
 	],
-
+	#"path_rover": [
+	#	"pathrover_DOFs_manager",
+	#],
 }
-
-include_path = [ ]
-library_path = [ ]
-libraries    = [ ]
-subprojects  = [ 
-"protocols.7",
-"protocols_c.6", 
-"protocols_b.6", 
-"protocols_a.6", 
-"protocols_c.5", 
-"protocols_b.5", 
-"protocols_a.5", 
-"protocols_f.4", 
-"protocols_e.4", 
-"protocols_d.4", 
-"protocols_c.4", 
-"protocols_b.4", 
-"protocols_a.4",
-"protocols.3",
-"protocols.2",
-"protocols.1",
-"core.5",
-"core.4",
-"core.3",
-"core.2",
-"core.1",
-"basic",
-"numeric",
-"utility",
-"ObjexxFCL",
-"z",
-"cppdb",
-"sqlite3"]
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"protocols.7",
+	"protocols_c.6",
+	"protocols_b.6",
+	"protocols_a.6",
+	"protocols_c.5",
+	"protocols_b.5",
+	"protocols_a.5",
+	"protocols_f.4",
+	"protocols_e.4",
+	"protocols_d.4",
+	"protocols_c.4",
+	"protocols_b.4",
+	"protocols_a.4",
+	"protocols.3",
+	"protocols.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"cppdb",
+	"sqlite3",
+]

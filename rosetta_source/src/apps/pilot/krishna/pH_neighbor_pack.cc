@@ -24,7 +24,7 @@
 
 #include <core/init.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
@@ -140,7 +140,7 @@ public:
       scoring::ScoreFunctionOP score_fxn( scoring::getScoreFunction() );
       scoring::methods::pHEnergy::set_pH ( curr_pH );
 
-      protocols::moves::PackRotamersMoverOP pack_mover( new protocols::moves::PackRotamersMover( score_fxn, task ) );
+      protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( score_fxn, task ) );
 
       pack_mover->apply(curr_pose);
 
@@ -203,7 +203,7 @@ public:
       scoring::ScoreFunctionOP score_fxn( scoring::getScoreFunction() );
       scoring::methods::pHEnergy::set_pH ( curr_pH );
 
-      protocols::moves::PackRotamersMoverOP pack_mover( new protocols::moves::PackRotamersMover( score_fxn, task ) );
+      protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( score_fxn, task ) );
 
       TR << " CURRENTLY SIMULATING AT pH " << curr_pH << std::endl;
 

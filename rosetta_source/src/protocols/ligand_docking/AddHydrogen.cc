@@ -17,7 +17,7 @@
 
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>

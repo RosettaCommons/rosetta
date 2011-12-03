@@ -51,7 +51,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/moves/CompositionMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 
 #include <devel/init.hh>
 

@@ -6,7 +6,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
@@ -16,7 +16,7 @@
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/rigid/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
 
@@ -652,7 +652,7 @@ my_main( void* ) {
 
 	SequenceMoverOP seq( new SequenceMover() );
 	//seq->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
-	seq->add_mover( new protocols::moves::ConstraintSetMover() );
+	seq->add_mover( new protocols::simple_moves::ConstraintSetMover() );
 	seq->add_mover( new CustomMover() );
 
 	try{

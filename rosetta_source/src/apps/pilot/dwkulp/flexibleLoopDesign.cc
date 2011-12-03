@@ -21,7 +21,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/TaskOperations.fwd.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
@@ -276,7 +276,7 @@ int main( int argc, char * argv[] ) {
   cout << "Num to be repacked22: "<<ptask->num_to_be_packed()<<endl;
 
 
-  protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover();
+  protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover();
   pack_mover->task_factory( task );
   pack_mover->score_function( scorefxn );
 

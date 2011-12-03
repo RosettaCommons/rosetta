@@ -149,13 +149,13 @@
 //#include <protocols/loops/looprelax_protocols.hh>
 
 #include <protocols/filters/Filter.hh>
-#include <protocols/filters/RGFilter.hh>
-#include <protocols/filters/COFilter.hh>
-#include <protocols/filters/SheetFilter.hh>
+#include <protocols/simple_filters/RGFilter.hh>
+#include <protocols/simple_filters/COFilter.hh>
+#include <protocols/simple_filters/SheetFilter.hh>
 
 
 
-//#include <protocols/moves/MinMover.hh>
+//#include <protocols/simple_moves/MinMover.hh>
 
 //numeric headers
 #include <numeric/random/random.hh>
@@ -595,7 +595,7 @@ void JumpSpecificAbrelax::setup() {
 // 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cut+1 );
 // 	}
 
-// 	moves::MinMoverOP min_move_ = new moves::MinMover;
+// 	protocols::simple_moves::MinMoverOP min_move_ = new protocols::simple_moves::MinMover;
 // 	min_move_->movemap( movemap );
 // 	min_move_->min_type( "dfpmin" );
 // 	//get currently used score_function...
@@ -1675,9 +1675,9 @@ bool JumpSpecificAbrelax::check_filters( core::pose::Pose & pose ) {
 	if ( option[ basic::options::OptionKeys::filters::disable_all_filters ]() ) return true; //makes a lot of sense IMHO
 
 	// apply RG, contact-order and sheet filters
-	protocols::filters::RGFilter    rg_filter;
-	protocols::filters::COFilter    co_filter;
-	protocols::filters::SheetFilter sh_filter;
+	protocols::simple_filters::RGFilter    rg_filter;
+	protocols::simple_filters::COFilter    co_filter;
+	protocols::simple_filters::SheetFilter sh_filter;
 
 	if ( !option[ basic::options::OptionKeys::filters::disable_rg_filter ]() && !rg_filter.apply( pose) ) return false;
 	if ( !option[ basic::options::OptionKeys::filters::disable_co_filter ]() && !co_filter.apply( pose) ) return false;

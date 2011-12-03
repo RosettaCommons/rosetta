@@ -41,7 +41,7 @@ CycPepMover::~CycPepMover() {
 void CycPepMover::minimize(core::pose::Pose& workpose){
 	core::kinematics::MoveMapOP moveMap = new core::kinematics::MoveMap();
 	moveMap->set_jump( 1, true );
-	protocols::moves::MinMover minimizer(moveMap, _scorefxn, "dfpmin_armijo_atol", 0.0001, true /*nb_list*/ );
+	protocols::simple_moves::MinMover minimizer(moveMap, _scorefxn, "dfpmin_armijo_atol", 0.0001, true /*nb_list*/ );
 	minimizer.apply(workpose);
 }
 
@@ -56,7 +56,7 @@ void CycPepMover::packRotamers(core::pose::Pose& workpose){
 	_preventer.include_residue(workpose.n_residue());
 	_preventer.apply(workpose,*_packTask);
 	_noRepackDisulf.apply(workpose, *_packTask);
-	protocols::moves::PackRotamersMoverOP packer = new protocols::moves::PackRotamersMover(_scorefxn, _packTask);
+	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(_scorefxn, _packTask);
 	packer->apply(workpose);
 }
 

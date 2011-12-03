@@ -27,7 +27,7 @@
 
 #include <protocols/viewer/viewers.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 

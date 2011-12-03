@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/MinMoverMinMoverCreator.hh
-///@brief This class will create instances of Mover MinMover for the MoverFactory
+///@file protocols/simple_moves/MinMoverMinMoverCreator.hh
+///@brief This class will create instances of protocols::moves::Mover MinMover for the protocols::moves::MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_moves_SymMinMoverCreator_hh
-#define INCLUDED_protocols_moves_SymMinMoverCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_SymMinMoverCreator_hh
+#define INCLUDED_protocols_simple_moves_SymMinMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

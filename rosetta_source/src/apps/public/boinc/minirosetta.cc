@@ -41,11 +41,11 @@
 
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 #endif
 
 #ifdef WIN32
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 #endif
 
 #include <core/types.hh>
@@ -120,10 +120,10 @@ main( int argc, char * argv [] )
 #endif
 
 #ifdef BOINC
-	protocols::init( argc, argv );
+	protocols::init::init( argc, argv );
 #endif
 #ifdef WIN32
-	protocols::init( argc, argv );
+	protocols::init::init( argc, argv );
 #endif
 
 #ifdef BOINC // BOINC STUFF

@@ -42,7 +42,7 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
-static basic::Tracer TZ("protocols.moves.symmetry.SetupNCSMover");
+static basic::Tracer TZ("protocols.simple_moves.symmetry.SetupNCSMover");
 
 // creators
 std::string
@@ -63,22 +63,22 @@ SetupNCSMoverCreator::mover_name() {
 ////////////////////
 ////////////////////
 
-SetupNCSMover::SetupNCSMover() : Mover("SetupNCSMover") { 
+SetupNCSMover::SetupNCSMover() : protocols::moves::Mover("SetupNCSMover") { 
 	set_defaults();
 }
 
-SetupNCSMover::SetupNCSMover( std::string src, std::string tgt ) : Mover("SetupNCSMover") { 
+SetupNCSMover::SetupNCSMover( std::string src, std::string tgt ) : protocols::moves::Mover("SetupNCSMover") { 
 	add_group( src, tgt );
 	set_defaults();
 }
 
-SetupNCSMover::SetupNCSMover( std::string src, utility::vector1<std::string> tgt ): Mover("SetupNCSMover") {
+SetupNCSMover::SetupNCSMover( std::string src, utility::vector1<std::string> tgt ): protocols::moves::Mover("SetupNCSMover") {
 	for (int i=1; i<=tgt.size(); ++i)
 		add_group( src, tgt[i] );
 	set_defaults();
 }
 
-SetupNCSMover::SetupNCSMover( utility::vector1<std::string> src, utility::vector1<std::string> tgt ) : Mover("SetupNCSMover") {
+SetupNCSMover::SetupNCSMover( utility::vector1<std::string> src, utility::vector1<std::string> tgt ) : protocols::moves::Mover("SetupNCSMover") {
 	runtime_assert( src.size() == tgt.size() );
 	for (int i=1; i<=tgt.size(); ++i)
 		add_group( src[i], tgt[i] );

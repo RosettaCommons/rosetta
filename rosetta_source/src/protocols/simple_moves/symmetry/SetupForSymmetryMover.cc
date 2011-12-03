@@ -79,10 +79,10 @@ ExtractAsymmetricUnitMoverCreator::mover_name() {
 ////////////////////
 
 SetupForSymmetryMover::SetupForSymmetryMover()
-	: Mover("SetupForSymmetryMover"), slide_(false), symmdef_file_("") { }
+	: protocols::moves::Mover("SetupForSymmetryMover"), slide_(false), symmdef_file_("") { }
 
 SetupForSymmetryMover::SetupForSymmetryMover( std::string const & symmdef_file)
-	: Mover("SetupForSymmetryMover"), slide_(false), symmdef_file_(symmdef_file) { }
+	: protocols::moves::Mover("SetupForSymmetryMover"), slide_(false), symmdef_file_(symmdef_file) { }
 
 
 SetupForSymmetryMover::~SetupForSymmetryMover(){}
@@ -127,7 +127,7 @@ SetupForSymmetryMover::get_name() const {
 ////////////////////
 
 ExtractAsymmetricUnitMover::ExtractAsymmetricUnitMover()
-	: Mover("ExtractAsymmetricUnitMover") { }
+	: protocols::moves::Mover("ExtractAsymmetricUnitMover") { }
 
 ExtractAsymmetricUnitMover::~ExtractAsymmetricUnitMover(){}
 

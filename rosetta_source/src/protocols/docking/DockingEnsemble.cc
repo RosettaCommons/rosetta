@@ -29,7 +29,7 @@
 // AUTO-REMOVED #include <protocols/scoring/Interface.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 
@@ -131,7 +131,7 @@ void DockingEnsemble::recover_conformer_sidechains( core::pose::Pose & pose )
 {
 	using namespace core::pose::datacache;
 	core::pose::Pose recover_pose = ensemble_list_[conf_num_];
-	protocols::moves::ReturnSidechainMoverOP recover_mover = new protocols::moves::ReturnSidechainMover( recover_pose, start_res_, end_res_ );
+	protocols::simple_moves::ReturnSidechainMoverOP recover_mover = new protocols::simple_moves::ReturnSidechainMover( recover_pose, start_res_, end_res_ );
 	recover_mover->apply( pose );
 
 	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache

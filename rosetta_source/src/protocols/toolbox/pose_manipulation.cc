@@ -37,9 +37,9 @@
 
 #include <core/id/AtomID_Map.hh>
 
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 
 #include <protocols/moves/MonteCarlo.hh>
@@ -401,7 +401,7 @@ insert_pose_into_pose(
 
 	//centroidize the pose before we do stuff to it - sidechains are expensive and unnecessary
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
-	protocols::moves::ReturnSidechainMover return_sidechains( combined );
+	protocols::simple_moves::ReturnSidechainMover return_sidechains( combined );
 	typeset_swap.apply( combined );
 
 	//combined.dump_pdb("combined_preclose_cen.pdb");
@@ -426,7 +426,7 @@ insert_pose_into_pose(
 	(*scfxn).set_weight( hbond_sr_bb, 1.0 );
 	(*scfxn).set_weight( omega,       5.0 );
 
-	protocols::moves::MinMover min_mover(movemap, scfxn, "dfpmin_armijo", 0.01, true /*use_nblist*/ );
+	protocols::simple_moves::MinMover min_mover(movemap, scfxn, "dfpmin_armijo", 0.01, true /*use_nblist*/ );
 
 	/////////////////////////Monte Carlo//////////////////////////////////////////////////////////
 	//make the monte carlo object

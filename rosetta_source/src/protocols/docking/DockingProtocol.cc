@@ -64,11 +64,11 @@
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
 // AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/RepackSidechainsMover.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
-// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
+#include <protocols/simple_moves/RepackSidechainsMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 //#include <protocols/moves/MoverContainer.hh>
 
@@ -267,7 +267,7 @@ void DockingProtocol::setup_objects()
 	//generate to_all_atom mover: 	to_all_atom_ =
 	protocols::moves::SequenceMoverOP to_all_atom_and_repack = new protocols::moves::SequenceMover;
 	to_all_atom_and_repack->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
-	to_all_atom_and_repack->add_mover( new protocols::moves::RepackSidechainsMover( docking_scorefxn_pack_ ) );
+	to_all_atom_and_repack->add_mover( new protocols::simple_moves::RepackSidechainsMover( docking_scorefxn_pack_ ) );
 	to_all_atom_=to_all_atom_and_repack;
 
 	sync_objects_with_flags();
@@ -335,7 +335,7 @@ void DockingProtocol::sync_objects_with_flags()
 		docking_constraint_ = NULL;
 	} else {
 		if ( !docking_constraint_ ) {
-			docking_constraint_ = new protocols::moves::ConstraintSetMover();
+			docking_constraint_ = new protocols::simple_moves::ConstraintSetMover();
 		}
 	}
 
@@ -527,10 +527,10 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 			if ( !recover_sidechains_ ) {
 				core::pose::Pose a_pose;
 				core::import_pose::pose_from_pdb( a_pose, recover_sidechains_filename_ );
-				recover_sidechains_ = new protocols::moves::ReturnSidechainMover( a_pose );
+				recover_sidechains_ = new protocols::simple_moves::ReturnSidechainMover( a_pose );
 			} //first initialization ?
 		} else if ( get_input_pose() && get_input_pose()->is_fullatom() ) {
-			recover_sidechains_ = new protocols::moves::ReturnSidechainMover( *get_input_pose() );
+			recover_sidechains_ = new protocols::simple_moves::ReturnSidechainMover( *get_input_pose() );
 		} else {
 			// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble fi
 			recover_sidechains_ = NULL;
@@ -644,9 +644,9 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 		lhs.ensemble2_filename_ = rhs.ensemble2_filename_;
 	}
 	if( rhs.docking_constraint_ )
-		lhs.docking_constraint_ = static_cast< protocols::moves::ConstraintSetMover * >( rhs.docking_constraint_->clone()() );
+		lhs.docking_constraint_ = static_cast< protocols::simple_moves::ConstraintSetMover * >( rhs.docking_constraint_->clone()() );
 	if( rhs.recover_sidechains_ )
-		lhs.recover_sidechains_ = static_cast< protocols::moves::ReturnSidechainMover * >( rhs.recover_sidechains_->clone()() );
+		lhs.recover_sidechains_ = static_cast< protocols::simple_moves::ReturnSidechainMover * >( rhs.recover_sidechains_->clone()() );
 	if(	rhs.init_task_factory_ ){
 		lhs.init_task_factory_ = new 	core::pack::task::TaskFactory( *(rhs.init_task_factory_) );
 	}

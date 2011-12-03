@@ -30,7 +30,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
 
 #include <core/fragment/FragSet.hh>
@@ -219,7 +219,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 			// if fullatom do a repack now
 			core::pack::task::PackerTaskOP task_fast = core::pack::task::TaskFactory::create_packer_task( pose_noloops );
 			task_fast->restrict_to_repacking(); task_fast->or_include_current(false);
-			moves::PackRotamersMover pack_fast( scorefxn_, task_fast );
+			protocols::simple_moves::PackRotamersMover pack_fast( scorefxn_, task_fast );
 			if (fullatom)
 				pack_fast.apply( pose_noloops );
 		}
@@ -324,7 +324,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 	taskstd->initialize_from_command_line();
 	taskstd->restrict_to_repacking();
 	taskstd->or_include_current(true);
-	moves::PackRotamersMover pack( scorefxn_, taskstd );
+	protocols::simple_moves::PackRotamersMover pack( scorefxn_, taskstd );
 
 	// rand
 	if (rand_>0) {

@@ -84,7 +84,7 @@
 
 // AUTO-REMOVED #include <basic/database/open.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 
 #include <utility/vector1.hh>
@@ -811,7 +811,7 @@ measure_sequence_recovery(
 	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
 	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
 
-	protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( sfxn );
 

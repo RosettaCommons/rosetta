@@ -41,8 +41,8 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/SetReturningPackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/SetReturningPackRotamersMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 
@@ -495,7 +495,7 @@ main( int argc, char* argv[] ) {
 #endif
 
 	//apply mutation
-	protocols::moves::PackRotamersMoverOP packrot_mover( new protocols::moves::PackRotamersMover (scorefxn, muttask) );
+	protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover (scorefxn, muttask) );
 	packrot_mover->apply ( mut_pose );  //makes the passed in mutation
 
 
@@ -543,9 +543,9 @@ main( int argc, char* argv[] ) {
 	////////////////////////////////////////////////////////
 
 	//first do minimization mover making
-	moves::MinMoverOP min_mover = new moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
-	moves::MinMoverOP min_mover_sc = new moves::MinMover( movemap_sc, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
-	moves::MinMoverOP min_mover_split = new moves::MinMover( movemap_split, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP min_mover_sc = new protocols::simple_moves::MinMover( movemap_sc, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP min_mover_split = new protocols::simple_moves::MinMover( movemap_split, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
 
 	TR << "Minimizing with: " << option[ OptionKeys::run::min_type ].value() << "." << std::endl;
 	//make vectors to hold repacked poses
@@ -556,7 +556,7 @@ main( int argc, char* argv[] ) {
 
 
 	// Make PackRots movers
-	moves::SetReturningPackRotamersMoverOP wt_repacker = new protocols::moves::SetReturningPackRotamersMover( pack_cycles );
+	protocols::simple_moves::SetReturningPackRotamersMoverOP wt_repacker = new protocols::simple_moves::SetReturningPackRotamersMover( pack_cycles );
 	wt_repacker->task_factory( wt_tf );
 	wt_repacker->score_function( scorefxn );
 

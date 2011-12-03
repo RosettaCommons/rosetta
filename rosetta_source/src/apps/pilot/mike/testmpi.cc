@@ -15,7 +15,7 @@
 #include <protocols/wum/MPI_Relax.hh>
 #include <cstdio>
 
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 
 #include <ObjexxFCL/FArray4D.hh>
 
@@ -28,7 +28,7 @@ int
 main( int argc, char * argv [] )
 {
 	// initialize core
-	protocols::init(argc, argv);
+	protocols::init::init(argc, argv);
 	//protocols::wum::MPI_Relax wum;
 	//wum.go();
 

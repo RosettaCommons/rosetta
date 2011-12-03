@@ -61,7 +61,7 @@
 #include <core/conformation/ResidueFactory.hh>
 
 //protocol headers
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/rigid/RB_geometry.hh>
 
@@ -324,7 +324,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
   //just min the new jump
   //MoveMapOP mm = new MoveMap;
   //mm->set_jump( jump_number, true );
-  //protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "dfpmin", 0.01, true );
+  //protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.01, true );
 
   //new naive fold tree
   FoldTree f_rot( pose.total_residue() );

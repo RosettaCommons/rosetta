@@ -97,7 +97,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>
@@ -122,7 +122,7 @@ namespace simple_moves {
 static numeric::random::RandomGenerator rg(15433); // <- Magic number, do not change it!!!
 
 ShakeStructureMover::ShakeStructureMover() :
-	Mover("ShakeStructureMover"),
+	protocols::moves::Mover("ShakeStructureMover"),
 	mc_temp(0),
 	ramp_fa_rep(false),
 	min_cst(false),
@@ -141,7 +141,7 @@ ShakeStructureMover::ShakeStructureMover() :
 {}
 
 ShakeStructureMover::ShakeStructureMover(core::scoring::ScoreFunctionOP s) :
-	Mover("ShakeStructureMover"),
+	protocols::moves::Mover("ShakeStructureMover"),
 	mc_temp(0),
 	ramp_fa_rep(false),
 	min_cst(false),
@@ -163,7 +163,7 @@ ShakeStructureMover::ShakeStructureMover(
 	core::scoring::ScoreFunctionOP s,
 	core::Real temperature
 ) :
-	Mover("ShakeStructureMover"),
+	protocols::moves::Mover("ShakeStructureMover"),
 	mc_temp(temperature),
 	ramp_fa_rep(false),
 	min_cst(false),
@@ -185,7 +185,7 @@ ShakeStructureMover::ShakeStructureMover(
 	core::scoring::ScoreFunctionOP s,
 	core::Real ens_diversity, core::Real ens_div_tolerance
 ):
-	Mover("ShakeStructureMover"),
+	protocols::moves::Mover("ShakeStructureMover"),
 	mc_temp(0),
 	ramp_fa_rep(false),
 	min_cst(false),
@@ -546,7 +546,7 @@ ShakeStructureMover::run_mc(
 	apply_random_move_low->add_mover( small_mover_low, .5);
 	apply_random_move_low->add_mover( shear_mover_low, .5);
 
-	MonteCarloOP mc(new moves::MonteCarlo(p,s,temperature));
+	protocols::moves::MonteCarloOP mc(new moves::MonteCarlo(p,s,temperature));
 	//time_t time_per_decoy = time(NULL);
 
 	//			mc->reset_counters();

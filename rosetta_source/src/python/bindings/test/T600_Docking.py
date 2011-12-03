@@ -41,7 +41,7 @@ docking_lowres = DockingLowRes()
 docking_lowres.apply(dock_p)
 
 #DockingProtocol().recover_sidechains(dock_p, starting_p)
-recover_side_chain_mover = ReturnSidechainMover(starting_p)
+recover_side_chain_mover = protocols::simple_moves::ReturnSidechainMover(starting_p)
 recover_side_chain_mover.apply(dock_p)
 
 #docking_highres = DockingHighRes()

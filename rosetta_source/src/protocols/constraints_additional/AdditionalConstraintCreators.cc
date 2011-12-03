@@ -86,4 +86,3 @@ NamedAtomPairConstraintCreator::keyname() const {
 
 } //namespace constraints_additional
 } //namespace protocols
-

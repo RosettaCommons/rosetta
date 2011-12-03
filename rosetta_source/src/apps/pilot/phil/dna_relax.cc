@@ -25,9 +25,9 @@
 // #include <protocols/frags/TorsionFragment.hh>
 
 #include <protocols/viewer/viewers.hh>
-// #include <protocols/moves/PackRotamersMover.hh>
+// #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 // #include <protocols/moves/rigid_body_moves.hh>
@@ -283,7 +283,7 @@ dna_stats()
 			// movers
 			BasePairMoverOP bp_mover( new BasePairMover( fraglib, 2.0, 20, 2.0, cst_scorefxn ) );
 			BaseStepMoverOP bs_mover( new BaseStepMover( fraglib, 2.0, 20, 2.0, cst_scorefxn ) );
-			MinMoverOP minmover( new MinMover( mm, scorefxn, "dfpmin", min_tol, true ) );
+			protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", min_tol, true ) );
 			TrialMoverOP bp_trial, bs_trial;
 			{
 				SequenceMoverOP bpseq( new SequenceMover() ), bsseq( new SequenceMover() );

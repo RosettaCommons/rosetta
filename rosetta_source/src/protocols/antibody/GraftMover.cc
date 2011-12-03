@@ -47,13 +47,13 @@
 #include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/LoopMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <utility/exit.hh>
@@ -191,7 +191,7 @@ void GraftMover::apply( pose::Pose & pose_in )
 		to_centroid.apply( pose_in );
 		to_full_atom.apply( pose_in );
 		//recover sidechains from starting structures
-		protocols::moves::ReturnSidechainMover recover_sidechains(
+		protocols::simple_moves::ReturnSidechainMover recover_sidechains(
 			saved_sidechains );
 		recover_sidechains.apply( pose_in );
 		bool include_current( false );
@@ -345,7 +345,7 @@ void GraftMover::set_packer_default(
 	task = pack::task::TaskFactory::create_packer_task( pose_in );
 	task->restrict_to_repacking();
 	task->or_include_current( include_current );
-	GraftMover::packer_ = new moves::PackRotamersMover( scorefxn, task );
+	GraftMover::packer_ = new protocols::simple_moves::PackRotamersMover( scorefxn, task );
 
 } // GraftMover set_packer_default
 
@@ -512,7 +512,7 @@ void CloseOneMover::apply( pose::Pose & pose_in ) {
 	// saving sidechains for use of include_current
 	pose::Pose saved_sc( pose_in );
 	//recover sidechains from starting structures
-	protocols::moves::ReturnSidechainMover recover_sidechains( saved_sc );
+	protocols::simple_moves::ReturnSidechainMover recover_sidechains( saved_sc );
 
 	bool nter( false );
 	if( nter_separation > allowed_separation_ ) {
@@ -623,7 +623,7 @@ void CloseOneMover::close_one_loop_stem (
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	MinMoverOP loop_min_mover = new MinMover( loop_map,
+	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
 		lowres_scorefxn, min_type, min_tolerance, nb_list );
 
 	// more params
@@ -754,7 +754,7 @@ void CloseOneMover::close_one_loop_stem (
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	MinMoverOP loop_min_mover = new MinMover( loop_map,
+	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
 		lowres_scorefxn, min_type, min_tolerance, nb_list );
 
 	// more params
@@ -929,7 +929,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 												allow_repack);
 	loop_map->set_chi( allow_repack );
 
-	PackRotamersMoverOP loop_repack=new PackRotamersMover(highres_scorefxn_);
+	protocols::simple_moves::PackRotamersMoverOP loop_repack=new protocols::simple_moves::PackRotamersMover(highres_scorefxn_);
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
 	tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );
@@ -940,7 +940,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	MinMoverOP loop_min_mover = new MinMover( loop_map,
+	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
 		highres_scorefxn_, min_type, min_tolerance, nb_list );
 
 	// more params
@@ -983,7 +983,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
 	tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );
-	RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
 																			 highres_scorefxn_, tf_ );
 
 	pack_rottrial->apply( pose_in );
@@ -1016,7 +1016,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 			setup_packer_task( pose_in );
 			( *highres_scorefxn_ )( pose_in );
 			tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );
-			RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
+			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
 																					 highres_scorefxn_, tf_ );
 			pack_rottrial->apply( pose_in );
 
@@ -1025,7 +1025,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 			if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
 				// repack trial
-				loop_repack = new PackRotamersMover( highres_scorefxn_ );
+				loop_repack = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
 				setup_packer_task( pose_in );
 				( *highres_scorefxn_ )( pose_in );
 				tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );

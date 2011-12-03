@@ -27,7 +27,7 @@
  #include <core/scoring/methods/Methods.hh>
 
  #include <protocols/simple_moves/BackboneMover.hh>
- #include <protocols/moves/MinMover.hh>
+ #include <protocols/simple_moves/MinMover.hh>
  #include <protocols/moves/MonteCarlo.hh>
  #include <protocols/moves/Mover.hh>
  #include <protocols/moves/MoverContainer.hh>
@@ -35,8 +35,8 @@
  #include <protocols/rigid/RigidBodyMover.hh>
  // #include <protocols/moves/rigid_body_moves.hh>
  #include <protocols/moves/TrialMover.hh>
- #include <protocols/moves/PackRotamersMover.hh>
- #include <protocols/moves/RotamerTrialsMover.hh>
+ #include <protocols/simple_moves/PackRotamersMover.hh>
+ #include <protocols/simple_moves/RotamerTrialsMover.hh>
  #include <protocols/moves/RepeatMover.hh>
 
  #include <protocols/loops/ccd_closure.hh>
@@ -651,8 +651,8 @@ RunPepSpec()
 			pack::task::TaskFactoryOP rottrial_task_factory( new pack::task::TaskFactory );
 			rottrial_task_factory->push_back( new pack::task::InitializeFromCommandlineOperation() );
 
-			PackRotamersMoverOP dz_pack( new PackRotamersMover( scorefxn, dz_task, 1 ) );
-			RotamerTrialsMoverOP dz_rottrial ( new RotamerTrialsMover( scorefxn, rottrial_task_factory ) );
+			protocols::simple_moves::PackRotamersMoverOP dz_pack( new protocols::simple_moves::PackRotamersMover( scorefxn, dz_task, 1 ) );
+			protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::RotamerTrialsMover( scorefxn, rottrial_task_factory ) );
 			SequenceMoverOP design_seq = new SequenceMover;
 			design_seq->add_mover( dz_pack );
 			design_seq->add_mover( dz_rottrial );

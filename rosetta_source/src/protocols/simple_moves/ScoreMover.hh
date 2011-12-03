@@ -68,7 +68,7 @@ public:
 	///@brief add an rms to the score_map
 	/// TODO possibly find a better way to do this?
 	/// for now, there are too many different rmsd calculation
-	/// functions to be able to do the actual calculation in the Mover
+	/// functions to be able to do the actual calculation in the protocols::moves::Mover
 	void insert_rms( core::Real rms ) { score_map_["rms"] = rms; }
 
 	virtual void apply( Pose & pose );

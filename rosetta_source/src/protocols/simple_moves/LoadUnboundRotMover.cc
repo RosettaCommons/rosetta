@@ -49,7 +49,7 @@ LoadUnboundRotMoverCreator::mover_name()
 }
 
 LoadUnboundRotMover::LoadUnboundRotMover()
-	: Mover("LoadUnboundRotMover")
+	: protocols::moves::Mover("LoadUnboundRotMover")
 {}
 
 LoadUnboundRotMover::~LoadUnboundRotMover(){}

@@ -38,10 +38,10 @@ namespace protocols {
 namespace simple_moves {
 namespace asym_fold_and_dock {
 
-static basic::Tracer TR("protocols.moves.symmetry.AsymFoldandDockRbTrialMover");
+static basic::Tracer TR("protocols.simple_moves.symmetry.AsymFoldandDockRbTrialMover");
 
 AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover() :
-	Mover( "AsymFoldandDockRbTrialMover" ),
+	protocols::moves::Mover( "AsymFoldandDockRbTrialMover" ),
 	smooth_move_(false), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
 {
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
@@ -50,7 +50,7 @@ AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover() :
 AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover(
 	core::scoring::ScoreFunctionCOP scorefxn
 ) :
-	Mover( "AsymFoldandDockRbTrialMover" ),
+	protocols::moves::Mover( "AsymFoldandDockRbTrialMover" ),
 	scorefxn_(scorefxn), smooth_move_(false), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
 {}
 
@@ -58,7 +58,7 @@ AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover(
 	core::scoring::ScoreFunctionCOP scorefxn,
 	bool smooth_move
 ) :
-	Mover( "AsymFoldandDockRbTrialMover" ),
+	protocols::moves::Mover( "AsymFoldandDockRbTrialMover" ),
 	scorefxn_(scorefxn), smooth_move_(smooth_move), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
 {}
 
@@ -68,7 +68,7 @@ AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover(
 	core::Real rot_mag,
 	core::Real trans_mag
 ) :
-	Mover( "AsymFoldandDockRbTrialMover" ),
+	protocols::moves::Mover( "AsymFoldandDockRbTrialMover" ),
 	scorefxn_( scorefxn), smooth_move_(smooth_move), rot_mag_(rot_mag), trans_mag_(trans_mag)
 {}
 
@@ -121,7 +121,7 @@ AsymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	}
 
 	// Setup Monte Carlo object
-	protocols::moves::MonteCarloOP monteCarlo_ = new MonteCarlo(pose, *scorefxn_, 2.0 );
+	protocols::moves::MonteCarloOP monteCarlo_ = new protocols::moves::MonteCarlo(pose, *scorefxn_, 2.0 );
 
 
 	// Setup the movemap

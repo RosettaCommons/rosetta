@@ -20,7 +20,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 //#include <protocols/qsar/qsarTypeManager.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>

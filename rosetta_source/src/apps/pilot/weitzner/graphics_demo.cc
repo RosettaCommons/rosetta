@@ -27,7 +27,7 @@
 #include <protocols/moves/PyMolMover.hh>
 
 // Utility Headers
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 #include <basic/Tracer.hh>
 #include <protocols/forge/methods/util.hh>
 
@@ -114,7 +114,7 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
-	protocols::init(argc, argv);
+	protocols::init::init(argc, argv);
 	protocols::viewer::viewer_main( my_main );
 
 }

@@ -50,8 +50,8 @@
 #include <basic/Tracer.hh>
 
 //#include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 // AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>

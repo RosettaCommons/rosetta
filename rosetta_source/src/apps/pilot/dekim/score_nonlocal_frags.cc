@@ -46,7 +46,7 @@
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 // Utility headers
 #include <basic/options/option.hh>
@@ -167,7 +167,7 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	taskstd->restrict_to_repacking();
 	taskstd->or_include_current(true);
 	taskstd->restrict_to_residues( needToRepack );
-	protocols::moves::PackRotamersMover pack1( sfxn_, taskstd );
+	protocols::simple_moves::PackRotamersMover pack1( sfxn_, taskstd );
 	pack1.apply( pose );
 
 	// quick SC minimization

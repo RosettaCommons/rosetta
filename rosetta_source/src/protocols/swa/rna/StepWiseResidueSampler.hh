@@ -23,7 +23,7 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/GreenPacker.fwd.hh>
+#include <protocols/simple_moves/GreenPacker.fwd.hh>
 #include <protocols/swa/MainChainTorsionSet.hh> // should make a .fwd.hh probably
 #include <string>
 #include <map>
@@ -82,7 +82,7 @@ namespace swa {
 		//		PoseList pose_list_;
 		core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
 		core::scoring::ScoreFunctionOP hires_scorefxn_;
-		protocols::moves::GreenPackerOP green_packer_;
+		protocols::simple_moves::GreenPackerOP green_packer_;
 		std::string silent_file_;
 
 		core::io::silent::SilentFileDataOP sfd_;

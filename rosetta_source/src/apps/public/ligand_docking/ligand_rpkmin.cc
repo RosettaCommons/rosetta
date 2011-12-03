@@ -32,10 +32,10 @@
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 
 // Utility Headers
 
@@ -112,11 +112,11 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 	//core::pack::rtmin(pose, *scorefxn_, pack_task);
 	//return;
 
-	PackRotamersMoverOP fullRepack = new PackRotamersMover(scorefxn_, pack_task);
+	protocols::simple_moves::PackRotamersMoverOP fullRepack = new protocols::simple_moves::PackRotamersMover(scorefxn_, pack_task);
 	fullRepack->apply(pose);
 
 	// Is this necessary?  How well does the repack converge?
-	RotamerTrialsMoverOP rotamerTrials = new RotamerTrialsMover(scorefxn_, *pack_task);
+	protocols::simple_moves::RotamerTrialsMoverOP rotamerTrials = new protocols::simple_moves::RotamerTrialsMover(scorefxn_, *pack_task);
 	rotamerTrials->apply(pose);
 
 	// Set up move map for minimizing.
@@ -127,7 +127,7 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 			movemap->set_chi(i, true);
 		}
 	}
-	MinMoverOP dfpMinTightTol = new MinMover( movemap, scorefxn_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol = new protocols::simple_moves::MinMover( movemap, scorefxn_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
 	dfpMinTightTol->min_options()->nblist_auto_update(true);
 	dfpMinTightTol->apply(pose);
 

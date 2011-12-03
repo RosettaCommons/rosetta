@@ -43,7 +43,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.moves.symmetry.SymMinMover");
+static basic::Tracer TR("protocols.simple_moves.symmetry.SymMinMover");
 
 
 namespace protocols {
@@ -75,10 +75,10 @@ SymMinMoverCreator::mover_name() {
 // default constructor
 // proper lightweight default constructor
 SymMinMover::SymMinMover()
-	: MinMover() {}
+	: protocols::simple_moves::MinMover() {}
 
 SymMinMover::SymMinMover( std::string const & name )
-	: MinMover(name) {}
+	: protocols::simple_moves::MinMover(name) {}
 
 SymMinMover::~SymMinMover(){}
 
@@ -91,7 +91,7 @@ SymMinMover::SymMinMover(
 	bool use_nb_list_in,
 	bool deriv_check_in /* = false */,
 	bool deriv_check_verbose_in /* = false */
-) : MinMover(movemap_in, scorefxn_in, min_type_in,
+) : protocols::simple_moves::MinMover(movemap_in, scorefxn_in, min_type_in,
 					tolerance_in, use_nb_list_in,
 					deriv_check_in, deriv_check_verbose_in ) {}
 

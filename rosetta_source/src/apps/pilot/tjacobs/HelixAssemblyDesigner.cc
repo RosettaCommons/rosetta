@@ -32,11 +32,11 @@
 #include<devel/helixAssembly/BridgeFragmentMover.hh>
 
 // Protocols
-#include <protocols/moves/MinPackMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinPackMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
@@ -150,7 +150,7 @@ main( int argc, char * argv [] )
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
 
 	//create the PackRotamersMover which will do the packing
-	protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 
 //	// Use the symmetric packer if necessary
 //	if ( option[ symmetry::symmetry_definition ].user() ) {

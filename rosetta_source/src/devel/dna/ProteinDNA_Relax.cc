@@ -40,9 +40,9 @@
 // AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -180,17 +180,17 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 	// setup movers:
 
 	// packmover
-	PackRotamersMoverOP pack_mover( new PackRotamersMover( scorefxn_, pack_task, 25 ) );
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scorefxn_, pack_task, 25 ) );
 
 	// min mover
-	MinMoverOP min_mover( new MinMover( mm, scorefxn_, "dfpmin", min_tol_, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn_, "dfpmin", min_tol_, true ) );
 
 	// rb mover
 	RB_MoverOP rb_mover( new RB_Mover( mm, trans_mag_, rot_mag_ ) );
 
 	// rotamer trials w/ energycut
-	EnergyCutRotamerTrialsMoverOP rottrial_mover
-		( new EnergyCutRotamerTrialsMover( scorefxn_, *rottrial_task, mc, energycut_ ) );
+	protocols::simple_moves::EnergyCutRotamerTrialsMoverOP rottrial_mover
+		( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_, *rottrial_task, mc, energycut_ ) );
 
 	// trials:
 	TrialMoverOP rb_min_trial = setup_MCM_trial( rb_mover, rottrial_mover, min_mover, mc );

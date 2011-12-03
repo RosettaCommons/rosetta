@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/moves/TaskAwareMinMover.cxxtest.hh
+/// @file   protocols/simple_moves/TaskAwareMinMover.cxxtest.hh
 /// @brief  test for TaskAwareMinMover
 /// @author Steven Lewis
 
@@ -25,8 +25,8 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -87,39 +87,39 @@ public:
 
 		/////////////////////////minimizer movers/////////////////////////////////////////
 		using namespace core::scoring;
-		using protocols::moves::MinMoverOP;
-		using protocols::moves::MinMover;
-		using protocols::moves::TaskAwareMinMoverOP;
-		using protocols::moves::TaskAwareMinMover;
+		using protocols::simple_moves::MinMoverOP;
+		using protocols::simple_moves::MinMover;
+		using protocols::simple_moves::TaskAwareMinMoverOP;
+		using protocols::simple_moves::TaskAwareMinMover;
 
 		ScoreFunctionOP sf(ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ));
 
 		//TA + minmover for all positions fixed
-		MinMoverOP min_mover_all = new MinMover(
+		protocols::simple_moves::MinMoverOP min_mover_all = new protocols::simple_moves::MinMover(
 																						mm_start,
 																						sf,
 																						"dfpmin_armijo", //faster and irrelevant for the purpose...
 																						0.01,
 																						true /*use_nblist*/ );
-		TaskAwareMinMoverOP TAmin_mover_all = new TaskAwareMinMover(min_mover_all, task_factory_all);
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_all = new protocols::simple_moves::TaskAwareMinMover(min_mover_all, task_factory_all);
 
 		//TA + minmover for one position fixed
-		MinMoverOP min_mover_one = new MinMover(
+		protocols::simple_moves::MinMoverOP min_mover_one = new protocols::simple_moves::MinMover(
 																						mm_start,
 																						sf,
 																						"dfpmin_armijo", //faster and irrelevant for the purpose...
 																						0.01,
 																						true /*use_nblist*/ );
-		TaskAwareMinMoverOP TAmin_mover_one = new TaskAwareMinMover(min_mover_one, task_factory_one);
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_one = new protocols::simple_moves::TaskAwareMinMover(min_mover_one, task_factory_one);
 
 		//TA + minmover for no positions fixed
-		MinMoverOP min_mover = new MinMover(
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
 																				mm_start,
 																				sf,
 																				"dfpmin_armijo", //faster and irrelevant for the purpose...
 																				0.01,
 																				true /*use_nblist*/ );
-		TaskAwareMinMoverOP TAmin_mover = new TaskAwareMinMover(min_mover, task_factory);
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, task_factory);
 
 
 		//now the not-task-aware part
@@ -133,7 +133,7 @@ public:
 		mm->set_bb(false); mm->set_jump(false); mm->set_chi(true);
 
 		//MinMover for all positions fixed
-		MinMoverOP noTA_min_mover_all = new MinMover(
+		protocols::simple_moves::MinMoverOP noTA_min_mover_all = new protocols::simple_moves::MinMover(
 																								 mm_all,
 																								 sf,
 																								 "dfpmin_armijo", //faster and irrelevant for the purpose...
@@ -141,7 +141,7 @@ public:
 																								 true /*use_nblist*/ );
 
 		//MinMover for one position fixed
-		MinMoverOP noTA_min_mover_one = new MinMover(
+		protocols::simple_moves::MinMoverOP noTA_min_mover_one = new protocols::simple_moves::MinMover(
 																								 mm_one,
 																								 sf,
 																								 "dfpmin_armijo", //faster and irrelevant for the purpose...
@@ -149,7 +149,7 @@ public:
 																								 true /*use_nblist*/ );
 
 		//MinMover for no positions fixed
-		MinMoverOP noTA_min_mover = new MinMover(
+		protocols::simple_moves::MinMoverOP noTA_min_mover = new protocols::simple_moves::MinMover(
 																						 mm,
 																						 sf,
 																						 "dfpmin_armijo", //faster and irrelevant for the purpose...

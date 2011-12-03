@@ -58,7 +58,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <utility/vector1.hh>
@@ -386,7 +386,7 @@ FoldConstraints::get_name() const {
 void
 FoldConstraints::setup_default_min_move() {
 	tr.Info << "setup basic minmove" << std::endl;
-	min_move_ = new moves::MinMover;
+	min_move_ = new protocols::simple_moves::MinMover;
 	min_move_->movemap( movemap() );
 	min_move_->min_type( "dfpmin" );
 }
@@ -398,7 +398,7 @@ void FoldConstraints::set_movemap ( core::kinematics::MoveMapCOP mm ) {
 }
 
 
-void FoldConstraints::set_min_move( protocols::moves::MinMoverOP mm) {
+void FoldConstraints::set_min_move( protocols::simple_moves::MinMoverOP mm) {
 	min_move_ = mm;
 }
 

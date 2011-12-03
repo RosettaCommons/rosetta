@@ -34,9 +34,9 @@
 #include <protocols/rigid/RotateJumpAxisMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Random, Sequence Mover
-#include <protocols/moves/TaskAwareMinMover.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/OutputMovers.hh> //PDBDump for movie
 #include <devel/metal_interface/DualMonteCarlo.hh>
 
@@ -263,7 +263,7 @@ void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
 	/////////////////////////////end perturb, begin fullatom design/refinement////////////////////
 
 	////////////////////////////PackRotamersMover////////////////////////////////////////////
-	protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 	pack_mover->task_factory( factory_ );
 	pack_mover->score_function( fullatom_scorefunction_ );
 
@@ -271,18 +271,18 @@ void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
 	//movemap is empty, TAmin_mover will fill it
 	core::kinematics::MoveMapOP map(new core::kinematics::MoveMap() );
 
-	using protocols::moves::MinMoverOP;
-	using protocols::moves::MinMover;
-	MinMoverOP min_mover = new MinMover(
+	using protocols::simple_moves::MinMoverOP;
+	using protocols::simple_moves::MinMover;
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
 																			map,
 																			fullatom_scorefunction_,
 																			option[ basic::options::OptionKeys::run::min_type ].value(),
 																			0.01,
 																			true /*use_nblist*/ );
 
-	using protocols::moves::TaskAwareMinMoverOP;
-	using protocols::moves::TaskAwareMinMover;
-	TaskAwareMinMoverOP TAmin_mover = new TaskAwareMinMover(min_mover, factory_);
+	using protocols::simple_moves::TaskAwareMinMoverOP;
+	using protocols::simple_moves::TaskAwareMinMover;
+	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, factory_);
 
 	//let's examine the task
 	//TR << *(factory_->create_task_and_apply_taskoperations( pose )) << std::endl;

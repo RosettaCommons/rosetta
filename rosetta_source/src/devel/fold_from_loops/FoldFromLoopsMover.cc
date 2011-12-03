@@ -59,7 +59,7 @@
 
 //design headers
 
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>

@@ -21,7 +21,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/ligand_docking/ligand_functions.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
@@ -397,7 +397,7 @@ RepackLigandSiteWithoutLigandMover::apply(
 	//pose.dump_pdb( "rlswlm_after_rigid.pdb");
 
 	//4. repack
-	protocols::moves::PackRotamersMoverOP packer = new protocols::moves::PackRotamersMover(sfxn_, ptask_);
+	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(sfxn_, ptask_);
 	packer->apply( pose );
 	//pose.dump_pdb( "rlswlm_after_repack.pdb");
 

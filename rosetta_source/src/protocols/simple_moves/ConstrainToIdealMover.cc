@@ -64,7 +64,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.moves.ConstrainToIdealMover" );
+static basic::Tracer TR( "protocols.simple_moves.ConstrainToIdealMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -91,9 +91,9 @@ ConstrainToIdealMoverCreator::mover_name()
 // void
 // ConstrainToIdealMover::parse_my_tag(
 // 	TagPtr const tag,
-// 	DataMap & datamap,
+// 	protocols::moves::DataMap & datamap,
 // 	Filters_map const & filters,
-// 	Movers_map const & movers,
+// 	protocols::moves::Movers_map const & movers,
 // 	Pose const & pose
 // )
 // {
@@ -105,7 +105,7 @@ ConstrainToIdealMoverCreator::mover_name()
 //}
 
 ConstrainToIdealMover::ConstrainToIdealMover()
-	: Mover("ConstrainToIdealMover"),
+	: protocols::moves::Mover("ConstrainToIdealMover"),
 		allow_insert_(NULL), //requires pose to initialize
 		mm_(new core::kinematics::MoveMap()),
 		supplied_movemap_(false)
@@ -113,7 +113,7 @@ ConstrainToIdealMover::ConstrainToIdealMover()
 
 ConstrainToIdealMover::~ConstrainToIdealMover(){}
 
-ConstrainToIdealMover::ConstrainToIdealMover(ConstrainToIdealMover const & rhs) : Mover(rhs) {
+ConstrainToIdealMover::ConstrainToIdealMover(ConstrainToIdealMover const & rhs) : protocols::moves::Mover(rhs) {
 	*this = rhs;
 	return;
 }

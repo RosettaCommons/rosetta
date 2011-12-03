@@ -33,7 +33,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 //
-#include <protocols/moves/RepulsiveOnlyMover.hh>
+#include <protocols/simple_moves/RepulsiveOnlyMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/CompositionMover.hh>
@@ -56,7 +56,7 @@ main ( int argc, char *argv[] ) {
 	scoring::ScoreFunctionOP score = scoring::getScoreFunction();
 
 	CompositionMoverOP container( new CompositionMover );
-	container->add_mover( new protocols::moves::RepulsiveOnlyMover() );
+	container->add_mover( new protocols::simple_moves::RepulsiveOnlyMover() );
 	container->add_mover( new protocols::relax::FastRelax(score) );
 
 	JobDistributor::get_instance()->go(container);

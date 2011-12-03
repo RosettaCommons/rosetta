@@ -58,8 +58,8 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <sstream>
@@ -1210,7 +1210,7 @@ void repack(Pose & arg) {
   ScoreFunctionOP sf = core::scoring::getScoreFunction();
   core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(arg);
   task->restrict_to_repacking();
-  protocols::moves::PackRotamersMover repack( sf, task );
+  protocols::simple_moves::PackRotamersMover repack( sf, task );
   repack.apply(arg);
 }
 // }}}
@@ -1391,7 +1391,7 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
 		movemap->set_chi(true);
 		movemap->set_jump(false);
 		movemap->set_jump(4,true);
-		protocols::moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+		protocols::simple_moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
     for(Size is = 1; is <= rhits.size(); ++is) {
       Hit const shit(*rhits[is]);
       if(rhit.rsd1==shit.rsd1||rhit.rsd1==shit.rsd2||rhit.rsd2==shit.rsd1||rhit.rsd2==shit.rsd2) continue;
@@ -1686,7 +1686,7 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
   //   movemap->set_chi(true);
   //   movemap->set_jump(false);
   //   movemap->set_jump(4,true);
-  //   protocols::moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+  //   protocols::simple_moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
   //   TR << ixr << std::endl;
   //   for(Size iyr = 1; iyr <= rgrid.size2(); ++iyr) {
@@ -1833,7 +1833,7 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
   //   movemap->set_chi(true);
   //   movemap->set_jump(false);
   //   movemap->set_jump(4,true);
-  //   protocols::moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+  //   protocols::simple_moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
   //   Pose ctp; pose_from_pdb(ctp,"inrut/ctp.pdb");
   //   Size iO2=ctp.residue(1).atom_index("O2"), iC5=ctp.residue(1).atom_index("C5"), iO1=ctp.residue(1).atom_index("O1");

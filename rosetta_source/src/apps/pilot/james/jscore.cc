@@ -15,7 +15,7 @@
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/NullMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 
 #include <devel/init.hh>
@@ -67,7 +67,7 @@ main( int argc, char * argv [] ) {
 
 	MoverOP mover( new NullMover );
 	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
-		ConstraintSetMoverOP loadcsts( new ConstraintSetMover );
+		protocols::simple_moves::ConstraintSetMoverOP loadcsts( new protocols::simple_moves::ConstraintSetMover );
 		loadcsts->constraint_file( core::scoring::constraints::get_cst_file_option() );
 		mover = loadcsts;
 	}

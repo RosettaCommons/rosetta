@@ -88,14 +88,14 @@ FlxbbDesignCreator::mover_name()
 
 /// @brief default constructor
 FlxbbDesignPack::FlxbbDesignPack() :
-	PackRotamersMover("FlxbbDesignPack")
+	protocols::simple_moves::PackRotamersMover("FlxbbDesignPack")
 {}
 
 FlxbbDesignPack::FlxbbDesignPack(
 	ScoreFunctionCOP scorefxn,
 	PackerTaskCOP task,
   FilterStructsOP filter ):
-	PackRotamersMover( scorefxn, task ),
+	protocols::simple_moves::PackRotamersMover( scorefxn, task ),
 	filter_( filter )
 {}
 

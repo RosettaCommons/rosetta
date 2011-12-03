@@ -51,7 +51,7 @@ using namespace numeric;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("protocols.moves.BBGaussianMover");
+static basic::Tracer TR("protocols.simple_moves.BBGaussianMover");
 static numeric::random::RandomGenerator RG(6233); //Magic Number
 
 namespace protocols {
@@ -68,7 +68,7 @@ BBGaussianMover::BBGaussianMover( Size n_end_atom, Size n_dof_angle, Size n_pert
         matrix_dRdPhi(n_end_atom_,utility::vector1<Vector>(n_dof_angle_)),
         last_proposal_density_ratio_(1.0)
 {
-    Mover::type("BBGaussianMover");
+    protocols::moves::Mover::type("BBGaussianMover");
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 		movemap->set_bb(true);
 		movemap_=movemap;
@@ -313,7 +313,7 @@ BBG8T3AMover::BBG8T3AMover()
         :BBGaussianMover(3,8,4),
         dphi(utility::vector1<Real>(n_dof_angle_))
 {
-    Mover::type("BBG8T3AMover");
+    protocols::moves::Mover::type("BBG8T3AMover");
     //build end atom list
     end_atom_list_.push_back("CA");
     end_atom_list_.push_back("C");

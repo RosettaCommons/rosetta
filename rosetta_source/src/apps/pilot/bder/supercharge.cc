@@ -26,8 +26,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 
@@ -117,8 +117,8 @@ public:
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
 
-		protocols::moves::MinMoverOP min_sc = new protocols::moves::MinMover( movemap_sc, scorefxn, "dfpmin_armijo", 0.01, true );
-		protocols::moves::MinMoverOP min_scbb = new protocols::moves::MinMover( movemap_scbb, scorefxn, "dfpmin_armijo", 0.01, true );
+		protocols::simple_moves::MinMoverOP min_sc = new protocols::simple_moves::MinMover( movemap_sc, scorefxn, "dfpmin_armijo", 0.01, true );
+		protocols::simple_moves::MinMoverOP min_scbb = new protocols::simple_moves::MinMover( movemap_scbb, scorefxn, "dfpmin_armijo", 0.01, true );
 
 		TR << "Minimizing sidechains..." << std::endl;
 		min_sc->apply( pose );
@@ -318,7 +318,7 @@ public:
 		customref_scorefxn->set_method_weights( ref, custom_ref_weights );
 		TR << "Using SCORE12 with custom reference weights\n" << *customref_scorefxn << std::flush;
 
-		protocols::moves::PackRotamersMoverOP packrot_mover = new protocols::moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP packrot_mover = new protocols::simple_moves::PackRotamersMover;
 		packrot_mover->score_function( customref_scorefxn );
 		packrot_mover->task_factory( task_factory );
 

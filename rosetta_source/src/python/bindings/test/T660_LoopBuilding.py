@@ -25,7 +25,7 @@ set_single_loop_fold_tree(loop_p, loop)
 
 print loop_p.fold_tree()
 
-#recover_sidechain = ReturnSidechainMover(loop_p)
+#recover_sidechain = protocols::simple_moves::ReturnSidechainMover(loop_p)
 #to_centroid.apply(loop_p)
 
 #fragset3mer = ConstantLengthFragSet(3, "test_in3_fragments")

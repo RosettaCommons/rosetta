@@ -14,7 +14,7 @@
 #include <protocols/moves/PyMolMover.hh>
 
 // Utility Headers
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 #include <basic/Tracer.hh>
 #include <protocols/forge/methods/util.hh>
 
@@ -61,7 +61,7 @@ set_all_loop_dihedrals_to_180( pose::PoseOP pose, const Loops::LoopList & loop_l
 
 int
 main( int argc, char * argv [] ) {
-	protocols::init(argc, argv);
+	protocols::init::init(argc, argv);
 
 	pose::PoseOP pose = new pose::Pose();
 

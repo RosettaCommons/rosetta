@@ -10,7 +10,7 @@
 /// @file   src/devel/init.hh
 /// @brief  Initialization function to ensure all load-time factory registration occurs
 ///         for classes that live in the devel library.  devel::init() calls
-///         protocols::init(), which in turn calls devel::init()
+///         protocols::init::init(), which in turn calls devel::init()
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_devel_init_hh

@@ -98,7 +98,7 @@
 #include <core/io/pdb/pose_io.hh>
 
 //protocols
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/evaluation/RmsdEvaluator.cc>
 

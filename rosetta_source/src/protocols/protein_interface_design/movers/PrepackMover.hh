@@ -17,7 +17,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -30,7 +30,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-class PrepackMover : public protocols::moves::PackRotamersMover
+class PrepackMover : public protocols::simple_moves::PackRotamersMover
 {
 public:
 	PrepackMover();

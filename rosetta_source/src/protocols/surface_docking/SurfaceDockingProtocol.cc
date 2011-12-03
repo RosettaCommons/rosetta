@@ -29,7 +29,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/MinMover.fwd.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>

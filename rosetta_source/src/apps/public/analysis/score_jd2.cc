@@ -20,7 +20,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
 #include <basic/Tracer.hh>
@@ -170,7 +170,7 @@ main( int argc, char * argv [] )
 	// add constraints from cmd line
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-			protocols::moves::ConstraintSetMoverOP loadCsts( new protocols::moves::ConstraintSetMover );
+			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
 			if( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 			} else {

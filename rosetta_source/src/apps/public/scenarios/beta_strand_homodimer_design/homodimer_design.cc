@@ -57,7 +57,7 @@
 // AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
 // AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
-// AUTO-REMOVED #include <protocols/moves/MutateResidue.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <protocols/simple_moves/ddG.hh>

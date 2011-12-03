@@ -131,12 +131,12 @@ numeric::random::RandomGenerator RG(1345675431); // <- Magic number, do not chan
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 //#include <protocols/looprelax/looprelax_main.hh>
 #include <protocols/comparative_modeling/ConstraintRemodelMover.hh>
 
@@ -300,7 +300,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 	pt->restrict_to_repacking();
 	//instead of a packertask, try rotamer_trials on one residue at a time.
 
-	moves::RotamerTrialsMoverOP rottrial_mover(new RotamerTrialsMover(s,(*pt)));
+	protocols::simple_moves::RotamerTrialsMoverOP rottrial_mover(new protocols::simple_moves::RotamerTrialsMover(s,(*pt)));
 
 	moves::RandomMoverOP apply_random_move( new moves::RandomMover());
 	apply_random_move->add_mover( small_mover, .45);

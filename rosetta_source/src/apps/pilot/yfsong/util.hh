@@ -19,7 +19,7 @@
 
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <protocols/moves/MutateResidue.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 
 #include <core/kinematics/Edge.hh>
 

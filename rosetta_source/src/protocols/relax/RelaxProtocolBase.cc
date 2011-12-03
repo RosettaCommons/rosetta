@@ -34,7 +34,7 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
@@ -284,7 +284,7 @@ RelaxProtocolBase::get_task_factory() const
 		std::string weight_set("score12_justdisulfides");
 		core::scoring::ScoreFunctionOP disulf_score_only(scoring::ScoreFunctionFactory::create_score_function( weight_set));
 
-		moves::PackRotamersMoverOP full_repack;
+		protocols::simple_moves::PackRotamersMoverOP full_repack;
 		core::pack::task::PackerTaskOP task;
 		task = pack::task::TaskFactory::create_packer_task( pose );
 
@@ -304,7 +304,7 @@ RelaxProtocolBase::get_task_factory() const
 		if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
 			full_repack = new simple_moves::symmetry::SymPackRotamersMover( disulf_score_only, task );
 		} else {
-			full_repack = new moves::PackRotamersMover( disulf_score_only, task );
+			full_repack = new protocols::simple_moves::PackRotamersMover( disulf_score_only, task );
 		}
 
 		( *disulf_score_only )( pose );

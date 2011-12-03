@@ -29,4 +29,4 @@ typedef utility::pointer::owning_ptr< ConstrainToIdealMover const > ConstrainToI
 }//moves
 }//protocols
 
-#endif //INCLUDED_protocols_moves_ConstrainToIdealMover_FWD_HH
+#endif //INCLUDED_protocols_simple_moves_ConstrainToIdealMover_FWD_HH

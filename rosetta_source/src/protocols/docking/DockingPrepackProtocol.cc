@@ -34,8 +34,8 @@
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -118,13 +118,13 @@ void DockingPrepackProtocol::score_and_output(std::string outfilename,
 
 void DockingPrepackProtocol::setup_pack_operation_movers()
 {
-	prepack_full_repack_ = new PackRotamersMover();
+	prepack_full_repack_ = new protocols::simple_moves::PackRotamersMover();
 	prepack_full_repack_->score_function( scorefxn_pack() );
 	prepack_full_repack_->task_factory( task_factory() );
 	pack_operations_->add_mover(prepack_full_repack_);
 
 	if ( rt_min() ){
-		rtmin_mover_ = new RotamerTrialsMinMover( );
+		rtmin_mover_ = new protocols::simple_moves::RotamerTrialsMinMover( );
 		rtmin_mover_->score_function( scorefxn_pack() );
 		rtmin_mover_->task_factory( task_factory() );
 		pack_operations_->add_mover(rtmin_mover_);

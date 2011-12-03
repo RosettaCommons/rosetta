@@ -25,11 +25,11 @@
 #include <protocols/frags/TorsionFragment.hh>
 
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/DME_FilterMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/DME_FilterMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -1346,23 +1346,23 @@ capri15_relax(
 	// setup movers:
 
 	// packmover
-	PackRotamersMoverOP pack_mover( new PackRotamersMover( scorefxn, pack_task, 25 ) );
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scorefxn, pack_task, 25 ) );
 
 	// min mover
-	MinMoverOP min_mover( new MinMover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", min_atol, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", min_atol, true ) );
 
 	// rb mover
-	MoverOP sam_mover( new DME_FilterMover( new RB_Mover( mm, trans_mag, rot_mag ), dme_threshold, max_tries ) );
+	MoverOP sam_mover( new protocols::simple_moves::DME_FilterMover( new RB_Mover( mm, trans_mag, rot_mag ), dme_threshold, max_tries ) );
 
 	// rna mover
-	MoverOP rna_mover( new DME_FilterMover( new BondedRNA_Mover( bonded_rna_mover_scale ), dme_threshold, max_tries ) );
+	MoverOP rna_mover( new protocols::simple_moves::DME_FilterMover( new BondedRNA_Mover( bonded_rna_mover_scale ), dme_threshold, max_tries ) );
 
 	// small mover
 	MoverOP small_mover( new protocols::simple_moves::SmallMover( mm, small_mover_temperature, small_mover_nmoves ) );
 
 	// rotamer trials w/ energycut
-	EnergyCutRotamerTrialsMoverOP rottrial_mover
-		( new EnergyCutRotamerTrialsMover( scorefxn, *rottrial_task, mc, energycut ) );
+	protocols::simple_moves::EnergyCutRotamerTrialsMoverOP rottrial_mover
+		( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *rottrial_task, mc, energycut ) );
 
 	// trials:
 	TrialMoverOP sam_min_trial = setup_MCM_trial( sam_mover, rottrial_mover, min_mover, mc );

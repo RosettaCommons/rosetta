@@ -75,8 +75,8 @@
 #include <protocols/cluster/cluster.hh>
 
 //GreenPacker
-#include <protocols/moves/GreenPacker.hh>
-#include <protocols/moves/GreenPacker.fwd.hh>
+#include <protocols/simple_moves/GreenPacker.hh>
+#include <protocols/simple_moves/GreenPacker.fwd.hh>
 
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
@@ -536,7 +536,7 @@ sample_trp_test()
 
 	Size n = option[ sample_residue ](); //tryptophan.
 
-	UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new UserDefinedGroupDiscriminator);
+	protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new UserDefinedGroupDiscriminator);
 	utility::vector1< Size > group_ids;
 	for (Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( i == n ) {
@@ -546,7 +546,7 @@ sample_trp_test()
 		}
 	}
 	user_defined_group_discriminator->set_group_ids( group_ids );
-	GreenPackerOP green_packer( new GreenPacker );
+	protocols::simple_moves::GreenPackerOP green_packer( new GreenPacker );
 	green_packer->set_group_discriminator( user_defined_group_discriminator );
 
 	static ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );

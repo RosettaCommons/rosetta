@@ -28,7 +28,7 @@
 // AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 
 
 #include <basic/options/option.hh>
@@ -80,7 +80,7 @@ Relax_main( bool ) {
 	// add constraints from cmd line
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-			protocols::moves::ConstraintSetMoverOP loadCsts( new protocols::moves::ConstraintSetMover );
+			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
 			loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 			seqmov->add_mover( loadCsts );
 			seqmov->add_mover( protocol );

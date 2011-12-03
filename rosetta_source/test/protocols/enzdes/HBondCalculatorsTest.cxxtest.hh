@@ -47,7 +47,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
@@ -163,7 +163,7 @@ public:
 			else test_task->nonconst_residue_task(i).prevent_repacking();
 		}
 
-		protocols::moves::PackRotamersMoverOP testpack = new protocols::moves::PackRotamersMover(scorefxn, test_task);
+		protocols::simple_moves::PackRotamersMoverOP testpack = new protocols::simple_moves::PackRotamersMover(scorefxn, test_task);
 		testpack->apply(test_pose);
 		(*scorefxn)(test_pose);
 

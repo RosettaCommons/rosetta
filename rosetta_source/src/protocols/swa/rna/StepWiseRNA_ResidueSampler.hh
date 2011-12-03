@@ -26,7 +26,7 @@
 #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <protocols/moves/GreenPacker.fwd.hh>
+#include <protocols/simple_moves/GreenPacker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -189,7 +189,7 @@ namespace rna {
 
 		bool o2star_screen_;
 		core::pack::task::PackerTaskOP o2star_pack_task_;
-		protocols::moves::GreenPackerOP o2star_green_packer_;
+		protocols::simple_moves::GreenPackerOP o2star_green_packer_;
 		bool const use_green_packer_;
 		bool allow_bulge_at_chainbreak_;
 		bool fast_;

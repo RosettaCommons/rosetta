@@ -16,7 +16,7 @@
 #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechains.hh>
 #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechainsCreator.hh>
 
-#include <protocols/moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -103,7 +103,7 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 
 	if( low_res_protocol_only_ ) {
 		protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
-		protocols::moves::ReturnSidechainMover recover_sidechains( *saved_pose );
+		protocols::simple_moves::ReturnSidechainMover recover_sidechains( *saved_pose );
 		to_all_atom.apply( pose );
 		recover_sidechains.apply( pose );
 		pose.update_residue_neighbors();

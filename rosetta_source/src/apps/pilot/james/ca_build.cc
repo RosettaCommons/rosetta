@@ -52,7 +52,7 @@
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/CompositionMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -221,7 +221,7 @@ main( int argc, char* argv [] ) {
 
 				//core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 				//l_container.add_mover(
-				//	new protocols::moves::MinMover(
+				//	new protocols::simple_moves::MinMover(
 				//		new core::kinematics::MoveMap, scorefxn, "dfpmin", 1e-5, true
 				//	)
 				//);

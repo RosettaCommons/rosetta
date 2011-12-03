@@ -35,8 +35,8 @@
 
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/NullMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/ProlineFixMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/ProlineFixMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>

@@ -25,7 +25,7 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -207,7 +207,7 @@ main( int argc, char* argv[] )
 			task->nonconst_residue_task(i).and_extrachi_cutoff(1); //histidines are near surface
 		}
 
-		protocols::moves::PackRotamersMover pack(score_fxn, task);
+		protocols::simple_moves::PackRotamersMover pack(score_fxn, task);
 		pack.apply(partner1);
 		//partner1.dump_scored_pdb("partner1_repack.pdb", *score_fxn);
 	}

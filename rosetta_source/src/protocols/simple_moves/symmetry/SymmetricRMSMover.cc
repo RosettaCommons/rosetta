@@ -42,10 +42,10 @@ namespace simple_moves {
 namespace symmetry {
 
 using namespace ObjexxFCL;
-static basic::Tracer TR("protocols.moves.symmetry.SymmetricRMSMover");
+static basic::Tracer TR("protocols.simple_moves.symmetry.SymmetricRMSMover");
 
 SymmetricRMSMover::SymmetricRMSMover()
-	: Mover("SymmetricRMSMover") {}
+	: protocols::moves::Mover("SymmetricRMSMover") {}
 
 SymmetricRMSMover::~SymmetricRMSMover(){}
 

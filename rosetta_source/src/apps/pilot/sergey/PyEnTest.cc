@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -36,7 +36,7 @@
 #include <iostream>
 
 #include <core/scoring/methods/PyEnergyMethodRegisterer.hh>
-#include <core/scoring/methods/EnergyMethodRegisterer.hh>
+#include <core/scoring/methods/EnergyMethodRegistrator.hh>
 
 using core::pose::Pose;
 using core::conformation::Residue;
@@ -107,7 +107,7 @@ int main( int argc, char * argv [] )
 
 	core::scoring::methods::PyEnergyMethodRegistrator ENC( new MyCI1B_Creator() );
 
-	protocols::init(argc, argv);
+	protocols::init::init(argc, argv);
 
 	core::pose::PoseOP pose = core::import_pose::pose_from_pdb("src/python/bindings/test/data/test_in.pdb");
 	//core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("standard");

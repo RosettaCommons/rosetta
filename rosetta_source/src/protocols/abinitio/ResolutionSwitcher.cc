@@ -43,7 +43,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
@@ -194,7 +194,7 @@ void ResolutionSwitcher::apply( pose::Pose &pose ) {
 	} else {
 		pose.constraint_set( init_pose().constraint_set()->clone() );
 	}
-  protocols::moves::PackRotamersMover pack1( scorefxn_fa_ , taskstd );
+  protocols::simple_moves::PackRotamersMover pack1( scorefxn_fa_ , taskstd );
   pack1.apply( pose );
 
   // quick SC minimization

@@ -71,7 +71,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>  // this was auto-removed but is needed for graphics builds!
 #endif
@@ -756,7 +756,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 				mzr.run( pose, *mm, *fa_scorefxn_, options );
 			} else {
-				moves::PackRotamersMover pack1( fa_scorefxn_, taskstd );
+				protocols::simple_moves::PackRotamersMover pack1( fa_scorefxn_, taskstd );
 				pack1.apply( pose );
 
 				// quick SC minimization

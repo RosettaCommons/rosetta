@@ -16,7 +16,7 @@
 
 #include <core/init_util.hh>
 
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 
 #include <string>
 #include <fstream>
@@ -35,7 +35,7 @@ inline void protocols_init_from_string( std::string const & commandline )
 	char** pseudo_argv = create_pseudo_commandline(
 		std::string(command_line_argv[0]) + " "
 		+ commandline, pseudo_argc );
-	protocols::init( pseudo_argc, pseudo_argv );
+	protocols::init::init( pseudo_argc, pseudo_argv );
 	destroy_pseudo_commandline( pseudo_argc, pseudo_argv );
 }
 
@@ -56,13 +56,13 @@ inline void protocols_init_with_additional_options( std::string const & commandl
 }*/
 
 //
-// @brief Analog of protocols::init() for unit test suite.
+// @brief Analog of protocols::init::init() for unit test suite.
 //
 inline void protocols_init()
 {
 	extern int command_line_argc; extern char ** command_line_argv;
 
-	if( command_line_argc > 1 ) protocols::init(command_line_argc, command_line_argv);
+	if( command_line_argc > 1 ) protocols::init::init(command_line_argc, command_line_argv);
 	else {
 		std::string commandline = "core.test -mute all";
 		std::string db_cmdline = append_db_to_commandline( commandline );

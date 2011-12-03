@@ -19,7 +19,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/viewer/viewers.hh>
 
@@ -242,7 +242,7 @@ my_main( void* )
 	sidechainmover.set_prob_uniform(option[ backrub::sc_prob_uniform ]);
 
 	// set up the PackRotamersMoveer
-	protocols::moves::PackRotamersMover packrotamersmover;
+	protocols::simple_moves::PackRotamersMover packrotamersmover;
 	packrotamersmover.task_factory(main_task_factory);
 	packrotamersmover.score_function(score_fxn);
 

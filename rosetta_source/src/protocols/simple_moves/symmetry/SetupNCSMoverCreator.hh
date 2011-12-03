@@ -7,7 +7,7 @@
 // For more information, see http://www.rosettacommons.org/.
 
 /// @file   SetupNCSMoverCreator.hh
-/// @brief  MoverCreator for SetupNCSMover
+/// @brief  protocols::moves::MoverCreator for SetupNCSMover
 /// @author Frank DiMaio
 
 

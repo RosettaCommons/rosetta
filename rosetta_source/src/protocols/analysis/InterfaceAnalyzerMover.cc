@@ -52,7 +52,7 @@
 
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-// AUTO-REMOVED #include <protocols/moves/MutateResidue.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MutateResidue.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
@@ -64,7 +64,7 @@
 
 #include <core/scoring/packstat/compute_sasa.hh>
 // AUTO-REMOVED #include <protocols/analysis/PackStatMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -667,7 +667,7 @@ namespace analysis{
 
     //setup mover to pack interface
     //core::Size ndruns = option[packing::ndruns];
-    PackRotamersMoverOP repacker = new PackRotamersMover(sf_, task_ );
+    protocols::simple_moves::PackRotamersMoverOP repacker = new protocols::simple_moves::PackRotamersMover(sf_, task_ );
 
     //do we pack the complex?
     if ( pack_input_ ){
@@ -1355,7 +1355,7 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size & interface_jump, core:
     #endif
 
     //apply mutations
-    protocols::moves::PackRotamersMoverOP packrot_mover( new protocols::moves::PackRotamersMover( sf_ , task) );
+    protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover( sf_ , task) );
     packrot_mover->apply ( copy_complex );
     packrot_mover->apply( copy_separate );
     gly_dG_ =  (*sf_) ( copy_complex ) - (*sf_) ( copy_separate )  ;

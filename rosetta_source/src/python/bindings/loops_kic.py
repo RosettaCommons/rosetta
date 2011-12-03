@@ -56,13 +56,13 @@ kic_mover = KinematicMover()
 #centroid/fullatom conversion movers
 to_centroid = protocols::simple_moves::SwitchResidueTypeSetMover( 'centroid' )
 to_fullatom = protocols::simple_moves::SwitchResidueTypeSetMover( 'fa_standard' )
-recover_sidechains = ReturnSidechainMover( starting_p )
+recover_sidechains = protocols::simple_moves::ReturnSidechainMover( starting_p )
 
 #set up sidechain packer movers
 task_pack = TaskFactory.create_packer_task( starting_p )
 task_pack.restrict_to_repacking()
 task_pack.or_include_current( True )
-pack = PackRotamersMover( scorefxn_high, task_pack )
+pack = protocols::simple_moves::PackRotamersMover( scorefxn_high, task_pack )
 
 #convert to centroid mode
 to_centroid.apply( p )
@@ -74,7 +74,7 @@ movemap.set_bb( True )
 # set up centroid stage line minimizer
 tol = 0.001
 min_type = "linmin"
-linmin_mover = MinMover( mm, scorefxn_low, min_type, tol, True )
+linmin_mover = protocols::simple_moves::MinMover( mm, scorefxn_low, min_type, tol, True )
 
 # save starting pose
 starting_p_centroid = Pose()

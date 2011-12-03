@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/ligand_docking/LigandDockProtocol.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/ConsensusDesignMover.hh>
 
 #include <basic/Tracer.hh>
@@ -158,7 +158,7 @@ EnzdesFixBBProtocol::apply(
 		(*scorefxn_)( pose );
 		repack_task = create_enzdes_pack_task( pose, false ); //remake task in case the ligand has moved a lot
 		tr.Info << "Starting after design unconstrained repack/minimization... " << std::endl;
-		PackRotamersMoverOP enzdes_repack = new PackRotamersMover(scorefxn_, repack_task);
+		protocols::simple_moves::PackRotamersMoverOP enzdes_repack = new protocols::simple_moves::PackRotamersMover(scorefxn_, repack_task);
 		enzdes_repack->apply( pose );
 
 		if(basic::options::option[basic::options::OptionKeys::enzdes::cst_min]) cst_minimize(pose, repack_task);

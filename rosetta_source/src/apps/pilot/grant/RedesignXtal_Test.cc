@@ -33,7 +33,7 @@
 // AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
 
 

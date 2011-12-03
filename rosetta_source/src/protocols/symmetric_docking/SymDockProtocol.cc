@@ -43,12 +43,12 @@
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/util.hh>
 
-#include <protocols/filters/SAXSScoreFilter.hh>
+#include <protocols/simple_filters/SAXSScoreFilter.hh>
 #include <basic/options/keys/filters.OptionKeys.gen.hh>
 #include <core/pose/util.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -65,7 +65,7 @@
 
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
 
 #include <protocols/viewer/viewers.hh>
 //for resfile reading
@@ -349,7 +349,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 	// Residue movers
 	simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 	simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
-	ReturnSidechainMover recover_sidechains( *get_input_pose());
+	simple_moves::ReturnSidechainMover recover_sidechains( *get_input_pose());
 
 	core::scoring::ScoreFunctionOP docking_scorefxn;
 
@@ -359,7 +359,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 	if ( option[ OptionKeys::constraints::cst_file ].user() ){
-		ConstraintSetMoverOP docking_constraint = new ConstraintSetMover();
+		protocols::simple_moves::ConstraintSetMoverOP docking_constraint = new protocols::simple_moves::ConstraintSetMover();
 		docking_constraint->apply( starting_pose );
 
 		core::scoring::symmetry::SymmetricScoreFunctionOP docking_scorefxn_cst, docking_highres_cst;
@@ -523,7 +523,7 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 	if( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
 	    ( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
 
-	    protocols::filters::SAXSScoreFilterOP saxs_filter = new protocols::filters::SAXSScoreFilter();
+	    protocols::simple_filters::SAXSScoreFilterOP saxs_filter = new protocols::simple_filters::SAXSScoreFilter();
 	    if( ! saxs_filter->apply(pose) )
 		passed_filter = false;
 	    core::pose::setPoseExtraScores( pose, "saxs_score", saxs_filter->recent_score());
@@ -563,7 +563,7 @@ SymDockProtocol::docking_highres_filter( core::pose::Pose & pose){
 void
 SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::Pose & native_pose )
 {
-	protocols::moves::ReturnSidechainMover recover_sidechains( native_pose );
+	protocols::simple_moves::ReturnSidechainMover recover_sidechains( native_pose );
 	recover_sidechains.apply( pose );
 
 	TR << "Doing initial repack of sidechains" << std::endl;
@@ -586,12 +586,12 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 		//tf->push_back( new SymRestrictTaskForDocking( docking_score_pack_, true, 1000 ) );
 		tf->push_back( new RestrictToInterface( 1 ) );
 
-		protocols::moves::PackRotamersMoverOP dock_pack = new protocols::simple_moves::symmetry::SymPackRotamersMover(docking_score_pack_);
+		protocols::simple_moves::PackRotamersMoverOP dock_pack = new protocols::simple_moves::symmetry::SymPackRotamersMover(docking_score_pack_);
 		dock_pack->task_factory( tf );
 		dock_pack->apply( pose );
 
 		if (rtmin_){
-	//		RotamerTrialsMinMoverOP rtmin_trial = new RotamerTrialsMinMover( docking_score_pack_, tf);
+	//		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_trial = new protocols::simple_moves::RotamerTrialsMinMover( docking_score_pack_, tf);
 	//		rtmin_trial->apply( pose );
 		}
 		if (basic::options::option[ basic::options::OptionKeys::docking::sc_min ]()){
@@ -733,7 +733,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 			// to_all_atom.apply( pose );
 
 			//recover sidechains from starting structures
-			protocols::moves::ReturnSidechainMover recover_sidechains( *get_input_pose() );
+			protocols::simple_moves::ReturnSidechainMover recover_sidechains( *get_input_pose() );
 			recover_sidechains.apply( pose );
 
 			(*docking_scorefxn)( pose );

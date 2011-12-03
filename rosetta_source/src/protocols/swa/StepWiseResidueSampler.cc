@@ -32,8 +32,8 @@
 #include <core/io/silent/SilentFileData.hh>
 
 //GreenPacker
-#include <protocols/moves/GreenPacker.hh>
-#include <protocols/moves/GreenPacker.fwd.hh>
+#include <protocols/simple_moves/GreenPacker.hh>
+#include <protocols/simple_moves/GreenPacker.fwd.hh>
 
 // AUTO-REMOVED #include <numeric/angle.functions.hh>
 
@@ -77,7 +77,7 @@ namespace swa {
 		moving_residues_( moving_residues ),
 		main_chain_torsion_set_lists_( main_chain_torsion_set_lists ),
 		scorefxn_( core::scoring::getScoreFunction() ),
-		green_packer_( new protocols::moves::GreenPacker ),
+		green_packer_( new protocols::simple_moves::GreenPacker ),
 		silent_file_( "" ),
 		sfd_( new core::io::silent::SilentFileData)
   {
@@ -161,7 +161,7 @@ namespace swa {
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 
-		UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new UserDefinedGroupDiscriminator);
+		protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new UserDefinedGroupDiscriminator);
 		utility::vector1< Size > group_ids;
 
 		Size current_group = 0;

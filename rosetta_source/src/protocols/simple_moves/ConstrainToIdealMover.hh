@@ -49,7 +49,7 @@ namespace simple_moves {
 //check RNA assumptions in i_want_this_atom_to_move
 //remap which score term these appear in (so it's not rna_bond_geometry)
 
-///@details Idealization is generally performed by adding constraints to the Pose that keep bond lengths and angles within the appropriate ranges; then freeing those DOFs and performing minimization or sampling.  This Mover creates bond and angle constraints compatible with idealization; it does not modify the input Pose other than by adding constraints.  If your pose is already ideal, this is likely to unidealize it.  Also, it will add a LOT of degrees of freedom to your minimization, which may lead to significant slowdowns!
+///@details Idealization is generally performed by adding constraints to the Pose that keep bond lengths and angles within the appropriate ranges; then freeing those DOFs and performing minimization or sampling.  This protocols::moves::Mover creates bond and angle constraints compatible with idealization; it does not modify the input Pose other than by adding constraints.  If your pose is already ideal, this is likely to unidealize it.  Also, it will add a LOT of degrees of freedom to your minimization, which may lead to significant slowdowns!
 class ConstrainToIdealMover : public protocols::moves::Mover {
 
 public:
@@ -80,9 +80,9 @@ public:
 	///@brief parse XML (specifically in the context of the parser/scripting scheme)
 	// virtual void parse_my_tag(
 	// 	TagPtr const,
-	// 	DataMap &,
+	// 	protocols::moves::DataMap &,
 	// 	Filters_map const &,
-	// 	Movers_map const &,
+	// 	protocols::moves::Movers_map const &,
 	// 	Pose const & );
 
 private:
@@ -168,4 +168,4 @@ private:
 }//namespace moves
 }//namespace protocols
 
-#endif // INCLUDED_protocols_moves_ConstrainToIdealMover_HH
+#endif // INCLUDED_protocols_simple_moves_ConstrainToIdealMover_HH

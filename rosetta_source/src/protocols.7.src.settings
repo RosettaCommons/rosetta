@@ -7,36 +7,45 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-sources = {'protocols': ['init']}
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
-include_path = []
-library_path = []
-libraries = []
-subprojects = [ 
- 'protocols_c.6',
- 'protocols_b.6',
- 'protocols_a.6',
- 'protocols_c.5',
- 'protocols_b.5',
- 'protocols_a.5',
- 'protocols_f.4',
- 'protocols_e.4',
- 'protocols_d.4',
- 'protocols_c.4',
- 'protocols_b.4',
- 'protocols_a.4',
- 'protocols.3',
- 'protocols.2',
- 'protocols.1',
- 'core.5',
- 'core.4',
- 'core.3',
- 'core.2',
- 'core.1',
- 'basic',
- 'numeric',
- 'utility',
- 'ObjexxFCL',
- 'z',
- 'sqlite3',
- 'cppdb']
+sources = {
+	"protocols/init": [
+		"init",
+	],
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"protocols_c.6",
+	"protocols_b.6",
+	"protocols_a.6",
+	"protocols_c.5",
+	"protocols_b.5",
+	"protocols_a.5",
+	"protocols_f.4",
+	"protocols_e.4",
+	"protocols_d.4",
+	"protocols_c.4",
+	"protocols_b.4",
+	"protocols_a.4",
+	"protocols.3",
+	"protocols.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"sqlite3",
+	"cppdb",
+]

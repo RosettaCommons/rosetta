@@ -58,7 +58,7 @@ using namespace numeric;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("protocols.moves.BBConRotMover");
+static basic::Tracer TR("protocols.simple_moves.BBConRotMover");
 static numeric::random::RandomGenerator RG(19500606); //Magic Number
 
 namespace protocols {
@@ -86,7 +86,7 @@ oldphi(utility::vector1<Real>(n_dof_angle_))
 {
     using numeric::constants::d::pi;
 
-    Mover::type("BBConRotMover");
+    protocols::moves::Mover::type("BBConRotMover");
 
     //in bbg, set_phi(degree), 1 (A/2) ~ 57.3/2
     //here, set_dof(rad)

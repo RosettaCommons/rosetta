@@ -23,7 +23,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 
 
@@ -222,7 +222,7 @@ main( int argc, char * argv [] )
                 }
                 repack_task->restrict_to_residues( allow_moving );
 
-		protocols::moves::RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( scorefxn, *repack_task);
+		protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn, *repack_task);
 		protocols::moves::TrialMoverOP pack_rottrial_trial = new TrialMover (pack_rottrial, mc);
 
 		protocols::moves::SequenceMoverOP repack_step = new SequenceMover;

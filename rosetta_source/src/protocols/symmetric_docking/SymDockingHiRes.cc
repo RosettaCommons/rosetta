@@ -61,7 +61,7 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
@@ -373,7 +373,7 @@ void SymDockingHiRes::set_dock_min_protocol() {
 
 	TR << "::::::::::::::::::DOCK_MIN:::::::::::::::::::" << std::endl;
 
-	moves::MinMoverOP min_mover = new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
+	protocols::simple_moves::MinMoverOP min_mover = new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
 	TrialMoverOP minimize_trial = new TrialMover( min_mover, mc_ );
 	docking_highres_protocol_mover_ = new SequenceMover;
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
@@ -417,25 +417,25 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	rigid::RigidBodyDofSeqPerturbMoverOP rb_perturb = new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ );
 
 	//set up minimizer movers
-	moves::MinMoverOP min_mover = new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
+	protocols::simple_moves::MinMoverOP min_mover = new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
 
 	//set up sidechain movers for each movable jump
 	tf_->push_back( new RestrictToInterface( 1 ) );
 
-	RotamerTrialsMoverOP pack_rottrial = new simple_moves::symmetry::SymRotamerTrialsMover( scorefxn_pack_, tf_ );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new simple_moves::symmetry::SymRotamerTrialsMover( scorefxn_pack_, tf_ );
 
 	SequenceMoverOP interface_repack_and_move_loops = new moves::SequenceMover;
 
 	std::string const flex_bb_docking_type = option[ OptionKeys::docking::flexible_bb_docking ]();
 	if ( flex_bb_docking_type == "fixedbb" ) {
 		// Call pack_rotamers, no backbone movement
-		PackRotamersMoverOP pack_interface_repack = new simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_ );
+		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_ );
 		pack_interface_repack->task_factory(tf_);
 		interface_repack_and_move_loops->add_mover( pack_interface_repack );
 	} else {
 
 		// Call pack_rotamer before and after loop movement
-		PackRotamersMoverOP pack_interface_repack = new simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_ );
+		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_ );
 		pack_interface_repack->task_factory(tf_);
 		interface_repack_and_move_loops->add_mover( pack_interface_repack );
 
@@ -501,7 +501,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 
 	TrialMoverOP pack_interface_and_move_loops_trial = new TrialMover( interface_repack_and_move_loops, mc_ );
 
-//	RotamerTrialsMinMoverOP rtmin = new RotamerTrialsMinMover( scorefxn_pack_, tf_ );
+//	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
 //	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
 
 	//InterfaceSidechainMinMoverOP scmin_mover = new InterfaceSidechainMinMover(rb_jump_, scorefxn_pack_ );
@@ -619,7 +619,7 @@ void SymDockingHiRes::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 
 	PackerTaskOP task = tf_->create_task_and_apply_taskoperations( pose ); // does not include restrict to interface
 
-	PackRotamersMoverOP prepack_full_repack = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_, task );
+	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_, task );
 	//RotamerTrialsMinMoverOP rtmin_mover = new symmetry::SymRotamerTrialsMinMover( scorefxn_pack_, *task );
 	SymSidechainMinMoverOP scmin_mover = new SymSidechainMinMover(scorefxn_pack_, task);
 

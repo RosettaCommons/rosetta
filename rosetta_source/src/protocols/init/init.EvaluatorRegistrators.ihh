@@ -1,0 +1,40 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   src/protocols/init/init.EvaluatorRegistrators.ihh
+/// @brief  Declare WidgetRegistrators as static (global) variables in this .cc file
+///         so that at load time, they will be initialized, and the Creator classes
+///         they register will be handed to the appropriate WidgetFactory.
+///         This is for EvaluatorRegistrators ONLY.
+/// @author Steven Lewis smlewi@gmail.com
+
+namespace protocols {
+
+//The order of EvaluatorRegistrators must be in this order or silent file column order will change.
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RmsdTargetEvaluatorCreator> RmsdTargetEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::PredictedBurialFnEvaluatorCreator> PredictedBurialFnEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::comparative_modeling::AlignRmsdTargetEvaluatorCreator> AlignRmsdTargetEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::StructureSimilarityEvaluatorCreator> StructureSimilarityEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::JScoreEvaluatorCreator> JScoreEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::ContactMapEvaluatorCreator> ContactMapEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::NativeEvaluatorCreator> NativeEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::PoolEvaluatorCreator> PoolEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RmsdEvaluatorCreator> RmsdEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcTargetEvaluatorCreator> RdcTargetEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcSelectEvaluatorCreator> RdcSelectEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcEvaluatorCreator> RdcEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::constraints_additional::ConstraintEvaluatorCreator> ConstraintEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::constraints_additional::CombinedConstraintEvaluatorCreator> CombinedConstraintEvaluatorCreator_registrator;
+	static protocols::evaluation::EvaluatorRegistrator<protocols::sparta::ChemicalShiftEvaluatorCreator> ChemicalShiftEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::CamShiftEvaluatorCreator> CamShiftEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::PalesEvaluatorCreator> PalesEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::ExtraScoreEvaluatorCreator> ExtraScoreEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::JumpNrEvaluatorCreator> JumpNrEvaluatorCreator_registrator;
+
+} //namespace protocols

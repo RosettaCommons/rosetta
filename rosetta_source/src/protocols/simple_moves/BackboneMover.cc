@@ -387,7 +387,7 @@ ShearMoverCreator::mover_name() {
 
 //constructor
 
-ShearMover::ShearMover() : BackboneMover() { Mover::type( "ShearMover" );	}
+ShearMover::ShearMover() : BackboneMover() { protocols::moves::Mover::type( "ShearMover" );	}
 
 ShearMover::ShearMover(
 	core::kinematics::MoveMapOP movemap_in,
@@ -396,7 +396,7 @@ ShearMover::ShearMover(
 )
 	: BackboneMover( movemap_in, temperature_in, nmoves_in )
 {
-		Mover::type( "Shear" );
+		protocols::moves::Mover::type( "Shear" );
 }
 
 //destructor

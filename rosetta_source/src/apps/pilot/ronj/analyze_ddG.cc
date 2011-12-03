@@ -36,9 +36,9 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/SetReturningPackRotamersMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/SetReturningPackRotamersMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/HPatchCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
@@ -383,15 +383,15 @@ int main( int argc, char* argv[] ) {
 	#endif
 
 	// the repack mover
-	moves::SetReturningPackRotamersMoverOP mutant_repacker = new protocols::moves::SetReturningPackRotamersMover( pack_cycles );
+	protocols::simple_moves::SetReturningPackRotamersMoverOP mutant_repacker = new protocols::simple_moves::SetReturningPackRotamersMover( pack_cycles );
 	mutant_repacker->task_factory( mutant_tf );
 	mutant_repacker->score_function( scorefxn );
 	mutant_repacker->apply( mutant_pose );
 	mutant_repacker->get_repacked_poses( repacked_mutant_poses );
 
 	// the side-chain minimization mover
-	moves::MinMoverOP min_mover = new moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
-	moves::TaskAwareMinMoverOP task_aware_min_mover = new moves::TaskAwareMinMover( min_mover, mutant_tf );
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+	protocols::simple_moves::TaskAwareMinMoverOP task_aware_min_mover = new protocols::simple_moves::TaskAwareMinMover( min_mover, mutant_tf );
 
 	Energy sum_repacked_scores_mutant = 0.0;
 	Energy average_repacked_score_mutant = 0.0;
@@ -439,15 +439,15 @@ int main( int argc, char* argv[] ) {
 
 	utility::vector1< pose::Pose > repacked_poses = utility::vector1< pose::Pose >( pack_cycles );
 
-	moves::SetReturningPackRotamersMoverOP wt_repacker = new protocols::moves::SetReturningPackRotamersMover( pack_cycles );
+	protocols::simple_moves::SetReturningPackRotamersMoverOP wt_repacker = new protocols::simple_moves::SetReturningPackRotamersMover( pack_cycles );
 	wt_repacker->task_factory( wt_tf );
 	wt_repacker->score_function( scorefxn );
 	wt_repacker->apply( pose );
 	wt_repacker->get_repacked_poses( repacked_poses );
 
 	// the side-chain minimization mover
-	moves::MinMoverOP wt_min_mover = new moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
-	moves::TaskAwareMinMoverOP wt_task_aware_min_mover = new moves::TaskAwareMinMover( wt_min_mover, wt_tf );
+	protocols::simple_moves::MinMoverOP wt_min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+	protocols::simple_moves::TaskAwareMinMoverOP wt_task_aware_min_mover = new protocols::simple_moves::TaskAwareMinMover( wt_min_mover, wt_tf );
 
 	Energy sum_repacked_scores_wt = 0.0;
 	Energy average_repacked_score_wt = 0.0;

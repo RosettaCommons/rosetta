@@ -36,9 +36,9 @@
 //#include <core/scoring/ScoringManager.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 //#include <protocols/moves/ResidueMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 
@@ -125,7 +125,7 @@ refine_pose( Pose & pose, int seqpos = 0 ){
 	if ( 0 != seqpos ) {
 		mm->set_bb( seqpos, true );
 	}
-	protocols::moves::MinMover minstd( mm, sfstd , "dfpmin", 0.001, true, false, false );
+	protocols::simple_moves::MinMover minstd( mm, sfstd , "dfpmin", 0.001, true, false, false );
 	minstd.min_options()->nblist_auto_update(true);
 
 	pack::task::PackerTaskOP taskstd = pack::task::TaskFactory::create_packer_task( pose );
@@ -139,7 +139,7 @@ refine_pose( Pose & pose, int seqpos = 0 ){
 		taskstd->nonconst_residue_task(seqpos).or_ex3(true);
 		taskstd->nonconst_residue_task(seqpos).or_ex4(true);
 	}
-	protocols::moves::PackRotamersMover packstd( sfstd, taskstd );
+	protocols::simple_moves::PackRotamersMover packstd( sfstd, taskstd );
 
 	packstd.apply( pose );
 	//minstd.apply( pose );

@@ -638,7 +638,7 @@ def mb_exclude(path, mb, hfile):
             #mb.class_('Mover').member_function('parse_tag').exclude()
             mb.class_('Mover').member_function('parse_my_tag').exclude()
 
-        if hfile == 'protocols/moves/PackRotamersMover.hh':
+        if hfile == 'protocols/simple_moves/PackRotamersMover.hh':
             mb.class_('PackRotamersMover').member_function('run').exclude()  # Template problem
 
         #if hfile == 'protocols/moves/WobbleMover.hh':

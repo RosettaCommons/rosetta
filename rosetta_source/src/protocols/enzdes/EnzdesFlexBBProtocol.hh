@@ -25,7 +25,7 @@
 
 #include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/loops/kinematic_closure/KinematicMover.fwd.hh>
-#include <protocols/moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/MinMover.fwd.hh>
 
 #include <core/pose/Pose.hh> /// Replace pack_region_ala_pose_ with a PoseOP to remove this header
 
@@ -180,7 +180,7 @@ private:
 	//stuff for minimizing catalytic residue chis only during loop generation
 	bool minimize_cats_;
 	core::kinematics::MoveMapOP catmin_movemap_;
-	protocols::moves::MinMoverOP catmin_mover_;
+	protocols::simple_moves::MinMoverOP catmin_mover_;
 	core::scoring::ScoreFunctionOP catmin_sfxn_;
 
 }; //class EnzdesFlexBBProtocol

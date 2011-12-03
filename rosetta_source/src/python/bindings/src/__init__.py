@@ -332,7 +332,7 @@ def mutate_residue(pose, resid, new_res):
 
 	pack_task.nonconst_residue_task(resid).restrict_absent_canonical_aas( v1 )
 
-	packer = PackRotamersMover(scorefxn, pack_task)
+	packer = protocols::simple_moves::PackRotamersMover(scorefxn, pack_task)
 	packer.apply(pose)
 	return pose
 

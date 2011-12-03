@@ -1,64 +1,71 @@
 # -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
 #
-# Project setting for utility sources
+# Project settings for rosetta sources
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
 sources = {
-	"utility" : [
+	"utility": [
 		"basic_sys_util",
-		"string_util",
-		"heap",
-		"integer_mapping",
-        #"noop",
-        "mpi_util",
 		"exit",
-		"LexicographicalIterator",
-		"static_database",
+		"heap",
 		"inline_file_provider",
+		"integer_mapping",
+		"LexicographicalIterator",
+		"mpi_util",
+		"static_database",
+		"string_util",
 	],
-	"utility/boinc" : [
-		"boinc_util"
+	"utility/boinc": [
+		"boinc_util",
 	],
-	"utility/file" : [
+	"utility/excn": [
+		"Exceptions",
+	],
+	"utility/file": [
 		"file_sys_util",
 		"FileName",
 		"gzip_util",
-		"PathName"
+		"PathName",
 	],
-	"utility/io" : [
+	"utility/io": [
 		"icstream",
 		"izstream",
 		"ocstream",
-		"ozstream"
+		"ozstream",
 	],
-	"utility/options" : [
+	"utility/options": [
+		"mpi_stderr",
 		"OptionCollection",
-		"mpi_stderr"
 	],
-	"utility/options/keys" : [
-		"OptionKeys"
+	"utility/options/keys": [
+		"OptionKeys",
 	],
-	"utility/pointer" : [
+	"utility/pointer": [
 		"ReferenceCount",
-		"ReferenceCountMI_"
+		"ReferenceCountMI_",
 	],
-	"utility/excn" : [
-		"Exceptions",
+	"utility/sql_database": [
+		"DatabaseSessionManager",
 	],
-	"utility/sql_database" : [
-                "DatabaseSessionManager",
-#		"sqlite3_interface",
-#		"sqlite3_connection_manager"
-        ],
-	"utility/tag" : [
-		"Tag"
+	"utility/tag": [
+		"Tag",
 	],
 }
-include_path = []
-library_path = []
-libraries    = [ ]
-subprojects  = [ "ObjexxFCL", "z","cppdb","sqlite3" ]
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"ObjexxFCL",
+	"z",
+	"cppdb",
+	"sqlite3",
+]

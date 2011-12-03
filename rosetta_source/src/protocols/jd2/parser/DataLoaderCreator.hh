@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd2/parser/DataLoaderCreator.hhhh
+/// @file   protocols/jd2/parser/DataLoaderCreator.hh
 /// @brief  Creator class for the parser's DataLoader classes
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_DataLoaderCreator_hh
-#define INCLUDED_protocols_jd2_parser_DataLoaderCreator_hh
+#ifndef INCLUDED_protocols_jd2_parser_DataLoaderCreator_HH
+#define INCLUDED_protocols_jd2_parser_DataLoaderCreator_HH
 
 // Package headers
 #include <protocols/jd2/parser/DataLoader.fwd.hh>
@@ -46,4 +46,4 @@ typedef utility::pointer::owning_ptr< DataLoaderCreator const > DataLoaderCreato
 } //namespace jd2
 } //namespace protocols
 
-#endif
+#endif //INCLUDED_protocols_jd2_parser_DataLoaderCreator_HH

@@ -76,13 +76,13 @@
 
 // Mover headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -410,7 +410,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 	pert_tf->push_back( pert_rtrp );
 
 	// create a rotamer trials mover
-	moves::RotamerTrialsMoverOP pert_rt(new moves::EnergyCutRotamerTrialsMover( score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	protocols::simple_moves::RotamerTrialsMoverOP pert_rt(new protocols::simple_moves::EnergyCutRotamerTrialsMover( score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	/*********************************************************
 	   ___       	       	       	    ___	     _
@@ -462,7 +462,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 	desn_tf->push_back( desn_rrop );
 
 	// create a pack rotamers mover
-	moves::PackRotamersMoverOP desn_pr( new moves::PackRotamersMover() );
+	protocols::simple_moves::PackRotamersMoverOP desn_pr( new protocols::simple_moves::PackRotamersMover() );
 	desn_pr->task_factory( desn_tf );
 	desn_pr->score_function( score_fxn );
 	desn_pr->nloop( 1 );
@@ -489,12 +489,12 @@ DougsDockDesignMinimizeMagicMover::apply(
 	}
 
 	// create minimization mover
-	moves::MinMoverOP desn_min( new moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	protocols::simple_moves::MinMoverOP desn_min( new protocols::simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
 
 	//definitely want sidechain minimization here
-	using protocols::moves::TaskAwareMinMoverOP;
-	using protocols::moves::TaskAwareMinMover;
-	TaskAwareMinMoverOP desn_ta_min = new TaskAwareMinMover( desn_min, desn_tf );
+	using protocols::simple_moves::TaskAwareMinMoverOP;
+	using protocols::simple_moves::TaskAwareMinMover;
+	protocols::simple_moves::TaskAwareMinMoverOP desn_ta_min = new protocols::simple_moves::TaskAwareMinMover( desn_min, desn_tf );
 
 	/*********************************************************
 	   ___       	       	       	    ___	     _
@@ -547,7 +547,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 			}
 
 			// create a pack rotamers mover for the final design
-			moves::PackRotamersMoverOP final_desn_pr( new moves::PackRotamersMover(score_fxn, final_desn_pt, 10 ) );
+			protocols::simple_moves::PackRotamersMoverOP final_desn_pr( new protocols::simple_moves::PackRotamersMover(score_fxn, final_desn_pt, 10 ) );
 
 			// design with final pr mover
 			final_desn_pr->apply( pose );
@@ -603,7 +603,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 		}
 
 		// create a pack rotamers mover for the final design
-		moves::PackRotamersMoverOP final_desn_pr( new moves::PackRotamersMover(score_fxn, final_desn_pt, 10 ) );
+		protocols::simple_moves::PackRotamersMoverOP final_desn_pr( new protocols::simple_moves::PackRotamersMover(score_fxn, final_desn_pt, 10 ) );
 		//final_desn_pr->packer_task( final_desn_pt );
 		//final_desn_pr->score_function( score_fxn );
 		//final_desn_pr->nloop( 10 );

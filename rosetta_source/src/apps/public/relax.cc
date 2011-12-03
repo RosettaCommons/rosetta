@@ -14,7 +14,7 @@
 // AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <basic/options/option.hh>
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 
 
 // C++ headers
@@ -60,7 +60,7 @@ main( int argc, char * argv [] )
 	jd2::register_options();
 	option.add_relevant( OptionKeys::in::file::fullatom );
 	option.add_relevant( OptionKeys::relax::fast );
-	protocols::init(argc, argv);
+	protocols::init::init(argc, argv);
 
 	return relax::Relax_main( false );
 }

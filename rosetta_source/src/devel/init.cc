@@ -14,7 +14,7 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #include <devel/init.hh>
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 
 #include <protocols/moves/MoverFactory.hh>
 
@@ -30,12 +30,12 @@ static protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > r
 
 void init( int argc, char * argv [] )
 {
-	protocols::init( argc, argv );
+	protocols::init::init( argc, argv );
 }
 
 void init( utility::vector1< std::string > const & args )
 {
-	protocols::init( args );
+	protocols::init::init( args );
 }
 
 }

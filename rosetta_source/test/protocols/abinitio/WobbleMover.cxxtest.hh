@@ -20,7 +20,7 @@
 #include <protocols/simple_moves/WobbleMover.hh>
 
 #include <protocols/simple_moves/GunnCost.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -108,7 +108,7 @@ void WobbleMoverTest::test_wobble() {
 #if 0
 	kinematics::MoveMapOP hardly_moves( new kinematics::MoveMap );
 	hardly_moves->set_bb( pose_.total_residue(), true );
-	moves::MinMover minimize(
+	protocols::simple_moves::MinMover minimize(
 			 hardly_moves,
 				ScoreFunctionFactory::create_score_function( STANDARD_WTS, "score12" ),
 				"dfpmin",

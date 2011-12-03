@@ -43,7 +43,7 @@
 //#include <protocols/flxbb/DesignTask.hh>
 
 // movers
-//#include <protocols/moves/ConstraintSetMover.hh>
+//#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
 // AUTO-REMOVED #include <protocols/moves/StructureRestrictor.hh>

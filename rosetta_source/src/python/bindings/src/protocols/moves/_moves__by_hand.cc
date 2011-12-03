@@ -48,11 +48,11 @@ struct Wrapper_PyMover : public PyMover, bp::wrapper<PyMover>
 };
 */
 
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 protocols::moves::MoverOP QQQ_CreateMinMover()
 {
-	return new protocols::moves::MinMover();
+	return new protocols::simple_moves::MinMover();
 }
 
 void QQQ_SubclassTester(protocols::moves::MoverOP m)

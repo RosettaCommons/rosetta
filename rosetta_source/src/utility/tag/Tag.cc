@@ -59,7 +59,7 @@
 
 #include <boost/spirit/include/classic_position_iterator.hpp> // for reporting where errors occur
 #include <boost/spirit/include/classic_functor_parser.hpp>
-#include <core/types.hh>
+#include <platform/types.hh>
 
 namespace boost {
 	void throw_exception(std::exception const&) {
@@ -359,8 +359,8 @@ void Tag::read(std::istream& in ) {
 	string str;
 	string line;
 	while( getline( in, line ) ){ // get rid of anything but the internal most < > statement on each line. This allows for writing comments in xml files
-		core::Size const bra( line.find_last_of( "<" ) );
-		core::Size const ket( line.find_first_of(  ">" ) - bra + 1);
+		platform::Size const bra( line.find_last_of( "<" ) );
+		platform::Size const ket( line.find_first_of(  ">" ) - bra + 1);
 		if( bra != line.npos && ket != line.npos ){
 			str.append( line.substr( bra, ket ) );
 			str.push_back( '\n' );

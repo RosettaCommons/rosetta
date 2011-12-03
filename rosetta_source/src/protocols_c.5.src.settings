@@ -7,45 +7,57 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-sources = {'protocols/flexpep_docking': ['FlexPepDockingFlags',
-                               'FlexPepDockingLowRes',
-                               'FlexPepDockingPoseMetrics',
-                               'FlexPepDockingProtocol',
-                               'FlexPepDockingAbInitio'],
- 'protocols/loophash': ['BackboneDB',
-                        'LoopHashMap',
-                        'LoopHashLibrary',
-                        'LocalInserter',
-                        'LoopHashSampler',
-                        'WorkUnit_LoopHash',
-                        'MPI_LoopHashRefine',
-                        'MPI_LoopHashRefine_Emperor',
-                        'MPI_LoopHashRefine_Master',
-                        'Mover_LoopHashRefine',
-                        'LoopHashMoverWrapper',
-                        'FastGapMover']}
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
-include_path = []
-library_path = []
-libraries = []
-subprojects = ['protocols_f.4',
- 'protocols_e.4',
- 'protocols_d.4',
- 'protocols_c.4',
- 'protocols_b.4',
- 'protocols_a.4',
- 'protocols.3',
- 'protocols.2',
- 'protocols.1',
- 'core.5',
- 'core.4',
- 'core.3',
- 'core.2',
- 'core.1',
- 'basic',
- 'numeric',
- 'utility',
- 'ObjexxFCL',
- 'z',
- 'sqlite3',
- 'cppdb']
+sources = {
+	"protocols/flexpep_docking": [
+		"FlexPepDockingAbInitio",
+		"FlexPepDockingFlags",
+		"FlexPepDockingLowRes",
+		"FlexPepDockingPoseMetrics",
+		"FlexPepDockingProtocol",
+	],
+	"protocols/loophash": [
+		"BackboneDB",
+		"FastGapMover",
+		"LocalInserter",
+		"LoopHashLibrary",
+		"LoopHashMap",
+		"LoopHashMoverWrapper",
+		"LoopHashSampler",
+		"Mover_LoopHashRefine",
+		"MPI_LoopHashRefine",
+		"MPI_LoopHashRefine_Emperor",
+		"MPI_LoopHashRefine_Master",
+		"WorkUnit_LoopHash",
+	],
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"protocols_f.4",
+	"protocols_e.4",
+	"protocols_d.4",
+	"protocols_c.4",
+	"protocols_b.4",
+	"protocols_a.4",
+	"protocols.3",
+	"protocols.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"sqlite3",
+	"cppdb",
+]

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ///@file protocols/simple_moves/sidechain_moves/PerturbChiSidechainMoverCreator.hh
-///@brief This class will create instances of Mover PerturbChiSidechainMover for the protocols::moves::MoverFactory
+///@brief This class will create instances of protocols::moves::Mover PerturbChiSidechainMover for the protocols::moves::MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 ///@author Rocco Moretti (rmoretti@u.washington.edu)
 

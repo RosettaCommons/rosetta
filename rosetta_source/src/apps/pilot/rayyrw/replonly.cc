@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 //
-#include <protocols/moves/RepulsiveOnlyMover.hh>
+#include <protocols/simple_moves/RepulsiveOnlyMover.hh>
 #include <protocols/moves/Mover.hh>
 
 int
@@ -42,7 +42,7 @@ main (int argc, char *argv[])
 		using namespace core;
 		
 		core::init(argc, argv);
-		protocols::moves::MoverOP mover = new protocols::moves::RepulsiveOnlyMover(); 
+		protocols::moves::MoverOP mover = new protocols::simple_moves::RepulsiveOnlyMover(); 
 		scoring::ScoreFunctionOP score = scoring::getScoreFunction(); 
 		
 		pose::Pose pose;

@@ -205,7 +205,7 @@ void
 FadeInterval::show(
 	ostream & out ) const
 {
-	out << "(" << name_ << "; " << min0_ << ", " << fmin_ << ", " << fmax_ << ", " << max0_ << ")" << smooth_ ? " smoothed" : "";
+	out << "(" << name_ << "; " << min0_ << ", " << fmin_ << ", " << fmax_ << ", " << max0_ << ")" << (smooth_ ? " smoothed" : "");
 }
 
 } // hbonds

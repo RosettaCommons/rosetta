@@ -23,7 +23,7 @@
 
 // Protocol headers
 #include <protocols/pmut_scan/PointMutScanDriver.hh>
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 
 #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
@@ -61,7 +61,7 @@ main( int argc, char * argv [] ) {
 	option.add( protocols::pmut_scan::mutants_list, "List of specific (single, double, or higher order) mutants to make." );
 	option.add( protocols::pmut_scan::output_mutant_structures, "Output PDB files for the mutant poses. Default: false" ).def( false );
 	
-	protocols::init( argc, argv );
+	protocols::init::init( argc, argv );
 
 	//
 	// concatenate -s and -l flags together to get total list of PDB files

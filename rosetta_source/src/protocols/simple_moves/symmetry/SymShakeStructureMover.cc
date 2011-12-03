@@ -105,7 +105,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>

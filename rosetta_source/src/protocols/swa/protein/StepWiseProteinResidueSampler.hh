@@ -26,7 +26,7 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/GreenPacker.fwd.hh>
+#include <protocols/simple_moves/GreenPacker.fwd.hh>
 // AUTO-REMOVED #include <protocols/swa/protein/MainChainTorsionSet.hh> // should make a .fwd.hh probably
 #include <string>
 #include <map>
@@ -122,7 +122,7 @@ namespace protein {
 		utility::vector1< utility::vector1< core::Real > > main_chain_torsion_set_lists_;
 		//		PoseList pose_list_;
 		core::scoring::ScoreFunctionOP scorefxn_;
-		protocols::moves::GreenPackerOP green_packer_;
+		protocols::simple_moves::GreenPackerOP green_packer_;
 		bool use_green_packer_;
 		bool use_packer_instead_of_rotamer_trials_;
 		bool pack_at_neighbors_only_;

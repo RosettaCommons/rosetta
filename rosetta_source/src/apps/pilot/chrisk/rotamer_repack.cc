@@ -63,10 +63,10 @@
 
 //protocols library (Movers)
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -781,7 +781,7 @@ minimize_all_sidechains(
 		}
 	}
 
-	MinMoverOP min_mover( new MinMover( mm, scorefxn, "dfpmin", 0.001, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true ) );
 	min_mover->apply( pose );
 }
 
@@ -800,7 +800,7 @@ minimize_sidechain(
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_chi( false );
 	mm->set_chi( seqpos, true );
-	MinMoverOP min_mover( new MinMover( mm, scorefxn, "dfpmin", 0.001, true ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true ) );
 	min_mover->apply( pose );
 
 }
@@ -879,7 +879,7 @@ rottrial_residue(
 	core::pack::task::PackerTaskOP packer_task( single_res_task( pose, seqpos, no_incl_curr, design ) );
 
 	//create movers
-	RotamerTrialsMoverOP rottrial ( new RotamerTrialsMover( scorefxn, *packer_task ) );
+	protocols::simple_moves::RotamerTrialsMoverOP rottrial ( new protocols::simple_moves::RotamerTrialsMover( scorefxn, *packer_task ) );
 
 	//and apply
 	rottrial->apply( pose );
@@ -904,7 +904,7 @@ rottrialmin_residue(
 	core::pack::task::PackerTaskOP packer_task( single_res_task( pose, seqpos, false, design ) );
 
 	//create movers
-	RotamerTrialsMinMoverOP rottrialmin ( new RotamerTrialsMinMover( scorefxn, *packer_task ) );
+	protocols::simple_moves::RotamerTrialsMinMoverOP rottrialmin ( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn, *packer_task ) );
 
 	//and apply
 	rottrialmin->apply( pose );

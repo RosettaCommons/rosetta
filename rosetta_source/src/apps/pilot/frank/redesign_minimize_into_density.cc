@@ -20,10 +20,10 @@
 #include <core/kinematics/MoveMap.hh>
 
 //protocols library (Movers)
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/util.hh>
@@ -65,7 +65,7 @@ main( int argc, char * argv [] )
 	}
 
 	//create the PackRotamersMover which will do the packing
-	protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 
 	// Use the symmetric packer if necessary
 	if ( option[ symmetry::symmetry_definition ].user() ) {
@@ -111,7 +111,7 @@ main( int argc, char * argv [] )
 		movemap->set_bb(true);
 		movemap->set_chi(true);
 		movemap->set_jump(true);
-		protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover(
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
 			movemap, score_fxn, "dfpmin_armijo_nonmonotone", 0.01, true );
 		seq_mover->add_mover( min_mover );
 	} else {

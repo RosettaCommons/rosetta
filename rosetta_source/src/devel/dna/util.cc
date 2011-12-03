@@ -46,8 +46,8 @@ using namespace protocols::dna;
 // AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 // AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>

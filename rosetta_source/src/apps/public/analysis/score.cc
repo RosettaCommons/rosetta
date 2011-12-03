@@ -20,10 +20,10 @@
 
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/NullMover.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/ProlineFixMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/ProlineFixMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 // AUTO-REMOVED #include <protocols/electron_density/util.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/util.hh>
@@ -200,13 +200,13 @@ main( int argc, char * argv [] )
 		assert( sfxn );
 		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
 		if ( option[ in::file::repair_sidechains ]() ) {
-			protocols::moves::ProlineFixMoverOP pfm = new ProlineFixMover;
+			protocols::simple_moves::ProlineFixMoverOP pfm = new protocols::simple_moves::ProlineFixMover;
 			seqmov->add_mover( pfm );
 		}
 		if ( option[ score_app::linmin ]() ) {
 			core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 			movemap->set_bb( true ); movemap->set_chi( true );
-			protocols::moves::MinMoverOP minmover = new protocols::moves::MinMover(
+			protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover(
 				movemap, sfxn, "linmin", 1e-4,
 				true /*use_nblist*/, false /*deriv_check*/, false /*verbose driv check*/ );
 			seqmov->add_mover( minmover );
@@ -219,7 +219,7 @@ main( int argc, char * argv [] )
 	// add constraints from cmd line
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-			protocols::moves::ConstraintSetMoverOP loadCsts( new protocols::moves::ConstraintSetMover );
+			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
 			if( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 			} else {

@@ -19,9 +19,9 @@
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
@@ -300,7 +300,7 @@ my_main( void* )
 	sidechainmover.set_prob_withinrot(option[ backrub::sc_prob_withinrot ]);
 
 	// set up the PackRotamersMover
-	protocols::moves::PackRotamersMover packrotamersmover;
+	protocols::simple_moves::PackRotamersMover packrotamersmover;
 	packrotamersmover.task_factory(main_task_factory);
 	packrotamersmover.score_function(score_fxn);
 
@@ -388,7 +388,7 @@ my_main( void* )
 					core::kinematics::MoveMapOP minimize_movemap_progressive = new core::kinematics::MoveMap;
 
 					// setup the MinMover
-					protocols::moves::MinMover minmover;
+					protocols::simple_moves::MinMover minmover;
 					minmover.score_function(score_fxn);
 					minmover.min_type("dfpmin");
 

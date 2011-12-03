@@ -7,27 +7,39 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-sources = {'protocols/cartesian': ['md'],
- 'protocols/unfolded_state_energy_calculator': ['UnfoldedStateEnergyCalculatorMover',
-                                                'UnfoldedStateEnergyCalculatorJobDistributor',
-                                                'UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor',
-                                                'UnfoldedStateEnergyCalculatorUtil']}
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
-include_path = []
-library_path = []
-libraries = []
-subprojects = ['protocols.3',
- 'protocols.2',
- 'protocols.1',
- 'core.5',
- 'core.4',
- 'core.3',
- 'core.2',
- 'core.1',
- 'basic',
- 'numeric',
- 'utility',
- 'ObjexxFCL',
- 'z',
- 'sqlite3',
- 'cppdb']
+sources = {
+	"protocols/cartesian": [
+		"md",
+	],
+	"protocols/unfolded_state_energy_calculator": [
+		"UnfoldedStateEnergyCalculatorJobDistributor",
+		"UnfoldedStateEnergyCalculatorMover",
+		"UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor",
+		"UnfoldedStateEnergyCalculatorUtil",
+	],
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"protocols.3",
+	"protocols.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"sqlite3",
+	"cppdb",
+]

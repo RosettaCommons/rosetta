@@ -7,47 +7,54 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-sources = {
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
-	"basic" : [
-		"Tracer",
-		"MemTracer",
-		"ComparingTracer",
-		"TracerToFile",
+sources = {
+	"basic": [
 		"basic",
+		"ComparingTracer",
 		"Emitter",
 		"interpolate",
+		"MemTracer",
 		"MetricValueIO",
 		"prof",
+		"Tracer",
+		"TracerToFile",
 	],
-	"basic/datacache" : [
+	"basic/database": [
+		"open",
+		"sql_utils",
+	],
+	"basic/datacache": [
 		"BasicDataCache",
 	],
-
-	"basic/database" : [
-		"open",
-		"sql_utils"
-	],
-	#needed by src/numeric/random.functions.cc (ran3 setup)
-	"basic/options" : [
+	"basic/options": [
 		"after_opts",
 		"option",
-		'PyRosettaFunctions',
+		"PyRosettaFunctions",
 		"util",
 	],
-
-	"basic/options/keys" : [
+	"basic/options/keys": [
 		"OptionKeys0",
 		"OptionKeys1",
 		"OptionKeys2",
 		"OptionKeys3",
 	],
-        "basic/svd" : [
-                "SVD_Solver"
-        ],
-
+	"basic/svd": [
+		"SVD_Solver",
+	],
 }
-include_path = [ ]
-library_path = [ ]
-libraries    = [ ]
-subprojects  = [  "numeric", "utility", "z", "ObjexxFCL","sqlite3", "cppdb" ]
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"numeric",
+	"utility",
+	"z",
+	"ObjexxFCL",
+	"sqlite3",
+	"cppdb",
+]

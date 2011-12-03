@@ -34,7 +34,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/MinMover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
@@ -58,7 +58,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <utility/vector0.hh>
@@ -125,7 +125,7 @@ void FullatomRelaxMover::setupMovers(){
 	smallmover_=new simple_moves::SmallMover(moveMapOP_,temperature_,nmoves_);
 	smallmover_->angle_max(30); // max angle deviation.
 	//Default Values copied from  MinMover.cc
-	smallminmover_= new moves::MinMover(moveMapOP_,
+	smallminmover_= new protocols::simple_moves::MinMover(moveMapOP_,
 			score_high_res_,smallmin_type_,tolerance,true,false,false);
 	//smallsequenceMover_ =
 	///     new moves::SequenceMover(smallmover_,smallminmover_);
@@ -139,7 +139,7 @@ void FullatomRelaxMover::setupMovers(){
 	shearmover_=new simple_moves::ShearMover(moveMapOP_,temperature_,nmoves_/2);
 	shearmover_->angle_max(30); // need to enable after testing!!
 	//Default Values copied from  MinMover.cc
-	shearminmover_= new moves::MinMover(moveMapOP_,score_high_res_,
+	shearminmover_= new protocols::simple_moves::MinMover(moveMapOP_,score_high_res_,
 					shearmin_type_,tolerance,true,false,false);
 	//shearsequenceMover_ =
 	//     new moves::SequenceMover(shearmover_,shearminmover_);

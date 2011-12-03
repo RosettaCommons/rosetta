@@ -46,10 +46,10 @@ using protocols::moves::MoverOP;
 
 typedef protocols::moves::Mover Parent;
 
-static basic::Tracer TR("protocols.moves.RationalMonteCarlo");
+static basic::Tracer TR("protocols.simple_moves.RationalMonteCarlo");
 
 
-RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, unsigned num_trials, double temperature, bool recover_low)
+RationalMonteCarlo::RationalMonteCarlo(protocols::moves::MoverOP mover, ScoreFunctionOP score, unsigned num_trials, double temperature, bool recover_low)
     : Parent("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
   mc_ = new protocols::moves::MonteCarlo(*score, temperature);
   protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");

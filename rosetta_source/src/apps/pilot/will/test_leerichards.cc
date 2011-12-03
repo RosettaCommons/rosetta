@@ -28,7 +28,7 @@
 #include <core/scoring/packstat/AtomRadiusMap.hh>
 #include <core/scoring/packstat/SimplePDB.hh>
 
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <utility/io/izstream.hh>

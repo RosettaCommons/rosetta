@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <protocols/simple_moves/symmetry/SymMinMover.fwd.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -43,7 +43,7 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 ///////////////////////////////////////////////////////////////////////////////
-class SymMinMover : public protocols::moves::MinMover
+class SymMinMover : public protocols::simple_moves::MinMover
 {
 public:
 

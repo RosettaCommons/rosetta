@@ -29,14 +29,14 @@
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
 #include <protocols/flexpep_docking/FlexPepDockingPoseMetrics.hh>
 // AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <string>
 // AUTO-REMOVED #include <set>
 
-#include <protocols/moves/PackRotamersMover.fwd.hh>
+#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -246,12 +246,12 @@ private:
 	core::pack::task::TaskFactoryOP interface_tf_;
 
 	// for packing the docking interface
-	moves::PackRotamersMoverOP interface_packer_;
+	protocols::simple_moves::PackRotamersMoverOP interface_packer_;
 
 	// for designing the peptide;
 	core::pack::task::operation::RestrictResidueToRepackingOP receptor_protector_oper_; // operation to prevent the receptor from being redesigned
 	core::pack::task::PackerTaskOP design_task_;
-	moves::PackRotamersMoverOP design_mover_;
+	protocols::simple_moves::PackRotamersMoverOP design_mover_;
 
   // the flexpepdock protocol movemap // may change throughout the run
 	core::kinematics::MoveMapOP movemap_;

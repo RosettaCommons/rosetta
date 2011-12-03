@@ -1,0 +1,48 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   src/protocols/init/init.FeaturesReporterRegistrators.ihh
+/// @brief  Declare WidgetRegistrators as static (global) variables in this .cc file
+///         so that at load time, they will be initialized, and the Creator classes
+///         they register will be handed to the appropriate WidgetFactory.
+///         This is for FeaturesReporterRegistrators ONLY.
+/// @author Steven Lewis smlewi@gmail.com
+
+namespace protocols {
+
+using namespace protocols::features;
+static FeaturesReporterRegistrator< AtomAtomPairFeaturesCreator > AtomAtomPairFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< GeometricSolvationFeaturesCreator > GeometricSolvationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< HBondFeaturesCreator > HBondFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< HBondParameterFeaturesCreator > HBondParameterFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< JobDataFeaturesCreator > JobDataFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< OrbitalsFeaturesCreator > OrbitalsFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< PairFeaturesCreator > PairFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< PdbDataFeaturesCreator > PdbDataFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< PoseCommentsFeaturesCreator > PoseCommentsFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< PoseConformationFeaturesCreator > PoseConformationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProteinBackboneAtomAtomPairFeaturesCreator > ProteinBackboneAtomAtomPairFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProteinBackboneTorsionAngleFeaturesCreator > ProteinBackboneTorsionAngleFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProteinResidueConformationFeaturesCreator > ProteinResidueConformationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProteinRMSDFeaturesCreator > ProteinRMSDFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProtocolFeaturesCreator > ProtocolFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< RadiusOfGyrationFeaturesCreator > RadiusOfGyrationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueBurialFeaturesCreator > ResidueBurialFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueConformationFeaturesCreator > ResidueConformationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueFeaturesCreator > ResidueFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueSecondaryStructureFeaturesCreator > ResidueSecondaryStructureFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueTypesFeaturesCreator > ResidueTypesFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< RotamerBoltzmannWeightFeaturesCreator > RotamerBoltzmannWeightFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< RotamerRecoveryFeaturesCreator > RotamerRecoveryFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< SaltBridgeFeaturesCreator > SaltBridgeFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ScoreTypeFeaturesCreator > ScoreTypeFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< StructureFeaturesCreator > StructureFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< StructureScoresFeaturesCreator > StructureScoresFeaturesCreator_registrator;
+
+} //namespace protocols

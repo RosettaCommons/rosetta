@@ -56,10 +56,10 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
 
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <utility/io/izstream.hh>
@@ -271,8 +271,8 @@ EnzdesBaseProtocol::register_options()
 
 	protocols::enzdes::DetectProteinLigandInterface::register_options();
 	protocols::enzdes::ProteinLigandInterfaceUpweighter::register_options();
-	protocols::moves::MinMover::register_options();
-	protocols::moves::PackRotamersMover::register_options();
+	protocols::simple_moves::MinMover::register_options();
+	protocols::simple_moves::PackRotamersMover::register_options();
 
 	option.add_relevant( OptionKeys::enzdes::detect_design_interface );
 	option.add_relevant( OptionKeys::enzdes::include_catres_in_interface_detection );
@@ -503,7 +503,7 @@ EnzdesBaseProtocol::enzdes_pack(
 
 		if( soft_rep ) packsfxn = soft_scorefxn_;
 		else packsfxn = scorefxn;
-		protocols::moves::PackRotamersMoverOP enzdes_pack = new protocols::moves::PackRotamersMover(packsfxn, usetask);
+		protocols::simple_moves::PackRotamersMoverOP enzdes_pack = new protocols::simple_moves::PackRotamersMover(packsfxn, usetask);
 
 		enzdes_pack->apply(pose);
 
@@ -627,7 +627,7 @@ EnzdesBaseProtocol::cst_minimize(
 	//create movemap
 	 core::kinematics::MoveMapOP movemap = create_enzdes_movemap( pose, task, min_all_jumps_);
 	//setting up move map done, now do minimization
-	protocols::moves::MinMoverOP dfpMinTightTol = new protocols::moves::MinMover( movemap, min_scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol = new protocols::simple_moves::MinMover( movemap, min_scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
 	dfpMinTightTol->apply(pose);
 
 	min_scorefxn->set_weight( core::scoring::chainbreak, orig_cbreak_weight);

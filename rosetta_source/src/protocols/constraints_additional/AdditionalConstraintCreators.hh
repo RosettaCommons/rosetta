@@ -54,17 +54,6 @@ public:
 	virtual std::string keyname() const;
 };
 
-/// @brief Mover creator for the SequenceProfileConstraint constraint
-class SequenceProfileConstraintCreator : public core::scoring::constraints::ConstraintCreator
-{
-public:
-	SequenceProfileConstraintCreator();
-	virtual ~SequenceProfileConstraintCreator();
-
-	virtual core::scoring::constraints::ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
-};
-
 /// @brief This class can be used to replace the standard AtomPairConstraintsCreator; see BrokerMain.cc for an example
 class NamedAtomPairConstraintCreator : public core::scoring::constraints::ConstraintCreator
 {

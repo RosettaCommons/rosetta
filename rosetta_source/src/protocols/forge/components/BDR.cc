@@ -43,7 +43,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
@@ -371,7 +371,7 @@ bool BDR::design_refine(
 	using protocols::forge::build::SegmentInsert;
 	using protocols::loops::Loops;
 	using protocols::loops::LoopMover_Refine_CCD;
-	using protocols::moves::PackRotamersMover;
+	using protocols::simple_moves::PackRotamersMover;
 	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
 
 	using core::pose::annotated_to_oneletter_sequence;

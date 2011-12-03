@@ -72,7 +72,7 @@ FragmentMover::FragmentMover(
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_bb( true ); //standard movemap
 	movemap_=movemap;
-	Mover::type( type );
+	protocols::moves::Mover::type( type );
 	update_insert_map();
 }
 
@@ -87,7 +87,7 @@ FragmentMover::FragmentMover(
 	movemap_( movemap )//,
 	//bValidInsertMap_ ( false )
 {
-	Mover::type( type );
+	protocols::moves::Mover::type( type );
 	update_insert_map();
 }
 
@@ -395,7 +395,7 @@ bool ClassicFragmentMover::valid_ss( std::string const & new_ss ) const {
 }
 
 
-/// @brief choose and insert a Fragment from the Movers Fragment-Set into a Pose.
+/// @brief choose and insert a Fragment from the protocols::moves::Movers Fragment-Set into a Pose.
 void ClassicFragmentMover::apply( core::pose::Pose & pose ) {
 	PROF_START( basic::FRAGMENT_MOVER );
 	//	update_insert_map( ); // checks if bValidInsertMap == false

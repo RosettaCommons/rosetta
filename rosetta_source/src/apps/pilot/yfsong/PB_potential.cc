@@ -34,9 +34,9 @@
 
 // protocols
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MutateResidue.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/jobdist/standard_mains.hh>       
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 // utility
 #include <ObjexxFCL/format.hh>

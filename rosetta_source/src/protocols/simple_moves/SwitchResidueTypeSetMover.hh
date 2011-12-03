@@ -44,7 +44,7 @@ public:
 	SwitchResidueTypeSetMover( std::string const & );
 
 	/// @brief Applies ResidueTypeSet converion on the pose
-	/// @note: a single Mover only converts in ONE direction e.g. to centroid
+	/// @note: a single protocols::moves::Mover only converts in ONE direction e.g. to centroid
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 

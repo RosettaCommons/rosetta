@@ -4457,7 +4457,7 @@ public:
 
 		TR << "Minimizing..." << std::endl;
 	// BAD!  We are in core, not protocols!  protocols lib is not even linked here!
-	//protocols::moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.001, true /*use_nblist*/ );
+	//protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.001, true /*use_nblist*/ );
 
 		core::optimization::AtomTreeMinimizer minimizer;
 		core::optimization::MinimizerOptionsOP min_options =

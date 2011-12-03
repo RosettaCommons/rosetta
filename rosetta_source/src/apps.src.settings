@@ -1,4 +1,3 @@
-
 # -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
 #
 # Project settings for rosetta sources
@@ -23,168 +22,173 @@
 #the scientific benchmark, a literature reference if the application has
 #been published, and the revision number from trunk with which the
 #benchmark was completed..
-
+#
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"" : [
+	"": [
 	],
-
-	#"curated": [],
-	"benchmark": [ "benchmark" ],
+	"benchmark": [
+		"benchmark",
+	],
 	"benchmark/scientific": [
-		"design_contrast_and_statistic",
 		"ddg_benchmark",
+		"design_contrast_and_statistic",
 		"rotamer_recovery",
-        ],
-        "public/analysis" : [ "score",
-                              "score_jd2",
-                              "InterfaceAnalyzer"
-        ],
-
-        "public/antibody" : [
-			"antibody_mode",
-        ],
-
-	"public/boinc" : [ "minirosetta", "minirosetta_graphics" ],
-	"public/ligand_docking" : [
-		"ligand_rpkmin",
-		"ligand_dock",
-		"extract_atomtree_diffs",
 	],
-	"public/docking" : [
-		"docking_protocol",
-		"docking_prepack_protocol",
-	],
-	"public/ddg" : [
-		"ddg_monomer",
-		"minimize_with_cst",
-	],
-	"public/flexpep_docking" : [
-                "BuildPeptide",
-		"FlexPepDocking",
-	],   # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */
-	"public/enzdes" : [
-		"enzyme_design",
-		"CstfileToTheozymePDB"
-	],
-	"public/design" : [
-		"fixbb",
-                "mpi_msd",
-		"sequence_recovery",
-	],
-        "public/interface_design/anchored_design" : [
-                "AnchoredDesign", # /* Steven Lewis, doc/apps/pilot/smlewis/anchored_design.dox, test/integration/tests/anchored_design/ */
-                "AnchoredPDBCreator", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchoredPDBCreator.dox, test/integration/tests/AnchoredPDBCreator/ */
-                "AnchorFinder", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchorFinder.dox, test/integration/tests/AnchorFinder/ */
-        ],
-	"public/loop_modeling" : [
-		"loopmodel"
-	],
-	"public/match" : [
-		"match",
-		"gen_lig_grids",
-		"gen_apo_grids"
-	],
-	"public/rna" : [
-		"rna_denovo",
-		"rna_extract",
-		"rna_cluster",
-		"rna_database",
-		"rna_design",
-                "rna_helix",
-                "rna_minimize",
-		"rna_score",
-		],
-	"public/membrane_abinitio" : [
-		"membrane_abinitio2"
-	],
-
-	"public/comparative_modeling" : [
-		"score_aln",
-		"score_aln2",
-		"super_aln",
-		"full_length_model",
-		"cluster_alns",
-		"fix_alignment_to_match_pdb",
-		#"fast_cm",
-	],
-
-	"public/electron_density" : [
-        "mr_protocols",
-		"loops_from_density",
-	],
-
-	"public" : [
-		"relax",
+	#"curated": [
+	#],
+	"public": [
+		"AbinitioRelax",
+		"backrub",
+		"cluster",
+		"combine_silent",
+		"extract_pdbs",
+		"fragment_picker",
 		"idealize",
 		"idealize_jd2",
 		"minimize",
-		"cluster",
 		"packstat",
-		"combine_silent",
-		"extract_pdbs",
-		"AbinitioRelax",
-		"backrub",
+		"relax",
 		"sequence_tolerance",
 		"SymDock",
-		"fragment_picker"
 	],
-	"public/rosettaDNA" : [
-		"rosettaDNA",
+	"public/analysis": [
+		"InterfaceAnalyzer",
+		"score",
+		"score_jd2",
 	],
-	"public/rosetta_scripts" : [
-		"rosetta_scripts",
-		"revert_design_to_native"
+	"public/antibody": [
+		"antibody_mode",
 	],
-	"public/scenarios" : [
-		"FloppyTail", # /* Steven Lewis, doc/apps/public/scenarios/FloppyTail.dox, test/integration/tests/FloppyTail/ */
-#       		"FloppyTailACAT", # /* Barak Raveh */
-		"ca_to_allatom", # /* Frank DiMaio, doc/apps/public/scenarios/ca_to_allatom.dox */
-                "UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_E2_thioester.dox, test/integration/tests/UBQ_E2_thioester/ */
-                "doug_dock_design_min_mod2_cal_cal",
-                "beta_strand_homodimer_design/homodimer_design",
-                "beta_strand_homodimer_design/homodimer_maker",
-                "beta_strand_homodimer_design/exposed_strand_finder",
+	"public/boinc": [
+		"minirosetta",
+		"minirosetta_graphics",
 	],
-        "public/ncaa_utilities" : [
-               "make_rot_lib",
-               "UnfoldedStateEnergyCalculator"
-        ],
-	"public/pepspec" : [
+	"public/comparative_modeling": [
+		"cluster_alns",
+		#"fast_cm",
+		"fix_alignment_to_match_pdb",
+		"full_length_model",
+		"score_aln",
+		"score_aln2",
+		"super_aln",
+	],
+	"public/ddg": [
+		"ddg_monomer",
+		"minimize_with_cst",
+	],
+	"public/design": [
+		"fixbb",
+		"mpi_msd",
+		"sequence_recovery",
+	],
+	"public/docking": [
+		"docking_prepack_protocol",
+		"docking_protocol",
+	],
+	"public/electron_density": [
+		"loops_from_density",
+		"mr_protocols",
+	],
+	"public/enzdes": [
+		"CstfileToTheozymePDB",
+		"enzyme_design",
+	],
+	"public/flexpep_docking": [
+		"BuildPeptide",
+		"FlexPepDocking", # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */
+	],
+	"public/interface_design/anchored_design": [
+		"AnchoredDesign", # /* Steven Lewis, doc/apps/pilot/smlewis/anchored_design.dox, test/integration/tests/anchored_design/ */
+		"AnchoredPDBCreator", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchoredPDBCreator.dox, test/integration/tests/AnchoredPDBCreator/ */
+		"AnchorFinder", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchorFinder.dox, test/integration/tests/AnchorFinder/ */
+	],
+	"public/ligand_docking": [
+		"extract_atomtree_diffs",
+		"ligand_dock",
+		"ligand_rpkmin",
+	],
+	"public/loop_modeling": [
+		"loopmodel",
+	],
+	"public/match": [
+		"gen_apo_grids",
+		"gen_lig_grids",
+		"match",
+	],
+	"public/membrane_abinitio": [
+		"membrane_abinitio2",
+	],
+	"public/ncaa_utilities": [
+		"make_rot_lib",
+		"UnfoldedStateEnergyCalculator",
+	],
+	"public/pepspec": [
 		"pepspec",
 		"pepspec_anchor_dock",
 	],
+	"public/rna": [
+		"rna_cluster",
+		"rna_database",
+		"rna_denovo",
+		"rna_design",
+		"rna_extract",
+		"rna_helix",
+		"rna_minimize",
+		"rna_score",
+	],
+	"public/rosetta_scripts": [
+		"revert_design_to_native",
+		"rosetta_scripts",
+	],
+	"public/rosettaDNA": [
+		"rosettaDNA",
+	],
+	"public/scenarios": [
+		"beta_strand_homodimer_design/exposed_strand_finder",
+		"beta_strand_homodimer_design/homodimer_design",
+		"beta_strand_homodimer_design/homodimer_maker",
+		"ca_to_allatom", # /* Frank DiMaio, doc/apps/public/scenarios/ca_to_allatom.dox */
+		"doug_dock_design_min_mod2_cal_cal",
+		"FloppyTail", # /* Steven Lewis, doc/apps/public/scenarios/FloppyTail.dox, test/integration/tests/FloppyTail/ */
+		"UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_E2_thioester.dox, test/integration/tests/UBQ_E2_thioester/ */
+	],
 }
-include_path = [  ]
-library_path = [  ]
-libraries    = [  ]
-subprojects  = [
-"devel", 
-"protocols.7",
-"protocols_c.6", 
-"protocols_b.6", 
-"protocols_a.6", 
-"protocols_c.5", 
-"protocols_b.5", 
-"protocols_a.5", 
-"protocols_f.4", 
-"protocols_e.4", 
-"protocols_d.4", 
-"protocols_c.4", 
-"protocols_b.4", 
-"protocols_a.4",
-"protocols.3",
-"protocols.2",
-"protocols.1",
-"core.5",
-"core.4",
-"core.3",
-"core.2",
-"core.1",
-"basic",
-"numeric",
-"utility",
-"ObjexxFCL",
-"z",
-"cppdb",
-"sqlite3" ]
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"devel",
+	"protocols.7",
+	"protocols_c.6",
+	"protocols_b.6",
+	"protocols_a.6",
+	"protocols_c.5",
+	"protocols_b.5",
+	"protocols_a.5",
+	"protocols_f.4",
+	"protocols_e.4",
+	"protocols_d.4",
+	"protocols_c.4",
+	"protocols_b.4",
+	"protocols_a.4",
+	"protocols.3",
+	"protocols.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"cppdb",
+	"sqlite3",
+]

@@ -41,13 +41,13 @@ ccd_closure = CcdLoopClosureMover(my_loop, movemap)
 #centroid/fullatom conversion movers
 to_centroid = protocols::simple_moves::SwitchResidueTypeSetMover('centroid')
 to_fullatom = protocols::simple_moves::SwitchResidueTypeSetMover('fa_standard')
-recover_sidechains = ReturnSidechainMover(starting_p)
+recover_sidechains = protocols::simple_moves::ReturnSidechainMover(starting_p)
 
 #set up sidechain packer movers
 task_pack = TaskFactory.create_packer_task(starting_p)
 task_pack.restrict_to_repacking()
 task_pack.or_include_current( True )
-pack = PackRotamersMover( scorefxn_high, task_pack )
+pack = protocols::simple_moves::PackRotamersMover( scorefxn_high, task_pack )
 
 #convert to centroid mode
 to_centroid.apply(p)

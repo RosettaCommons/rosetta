@@ -65,16 +65,16 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/rigid/RB_geometry.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/jd2/ScoreMap.hh>
@@ -649,8 +649,8 @@ namespace ub_e2c {
 			}
 			*/
 
-			protocols::moves::ConstraintSetMoverOP mtsl_constraint =
-        new protocols::moves::ConstraintSetMover();
+			protocols::simple_moves::ConstraintSetMoverOP mtsl_constraint =
+        new protocols::simple_moves::ConstraintSetMover();
 			mtsl_constraint->apply( pose_in );
 
 			const pose::Pose start_pose( pose_in );
@@ -667,7 +667,7 @@ namespace ub_e2c {
 			// Residue movers
 			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
 			protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
-			moves::ReturnSidechainMover recover_sidechains( start_pose);
+			protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose);
 
 			// centroid mode
 			// Filter distance for K48-Cterminal
@@ -1006,7 +1006,7 @@ namespace ub_e2c {
 
 			shear_mover->angle_max( 90.0 );
 
-			MinMoverOP min_mover( new MinMover ( ub_cter_map, lowres_cst_scorefxn_,
+			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover ( ub_cter_map, lowres_cst_scorefxn_,
  			  "linmin",	min_tolerance_, nb_list_, false, false ) );
 
 			perturb_min_cter->add_mover( small_mover );
@@ -1436,7 +1436,7 @@ namespace ub_e2c {
 					temperature_, 5 /*n_moves*/ );
 				shear_mover->angle_max( 90.0 );
 
-				MinMoverOP min_mover(new MinMover(flex_cter_map_, lowres_cst_scorefxn_,
+				protocols::simple_moves::MinMoverOP min_mover(new protocols::simple_moves::MinMover(flex_cter_map_, lowres_cst_scorefxn_,
           "linmin",	min_tolerance_,	nb_list_, false /*deriv_check*/,
 					false /* non verbose-deriv-check, default*/ ) );
 
@@ -1529,7 +1529,7 @@ namespace ub_e2c {
 
 			SequenceMoverOP fullatom_optimizer( new SequenceMover() ); // **MAIN**
 
-			PackRotamersMoverOP pack_interface_repack = new PackRotamersMover(
+			protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover(
 																									pack_scorefxn_ );
 			pack_interface_repack->task_factory(tf_);
 
@@ -1537,18 +1537,18 @@ namespace ub_e2c {
 			//pack_interface_repack->apply( pose_in );
 
 			//set up minimizer movers
-			MinMoverOP k48r_dock_min_mover = new MinMover( k48r_docking_map_,
+			protocols::simple_moves::MinMoverOP k48r_dock_min_mover = new protocols::simple_moves::MinMover( k48r_docking_map_,
 				dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-			MinMoverOP d77_dock_min_mover = new MinMover( d77_docking_map_,
+			protocols::simple_moves::MinMoverOP d77_dock_min_mover = new protocols::simple_moves::MinMover( d77_docking_map_,
 				dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-			MinMoverOP dock_min_mover = new MinMover( docking_map_,
+			protocols::simple_moves::MinMoverOP dock_min_mover = new protocols::simple_moves::MinMover( docking_map_,
 				dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-			MinMoverOP flex_cter_min_mover = new MinMover( flex_cter_map_,
+			protocols::simple_moves::MinMoverOP flex_cter_min_mover = new protocols::simple_moves::MinMover( flex_cter_map_,
 				dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-			MinMoverOP all_dof_min_mover = new MinMover( all_dof_map_,
+			protocols::simple_moves::MinMoverOP all_dof_min_mover = new protocols::simple_moves::MinMover( all_dof_map_,
 				dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
 
-			RotamerTrialsMinMoverOP rtmin = new RotamerTrialsMinMover(
+			protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover(
 				pack_scorefxn_, tf_ );
 
 			// set up rigid body movers
@@ -1561,7 +1561,7 @@ namespace ub_e2c {
  			  e2_d77_jump_, rot_magnitude, trans_magnitude, rigid::partner_downstream,
 				  true );
 
-			RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
+			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
 				pack_scorefxn_, tf_ );
 
 			MonteCarloOP mc;
@@ -1703,7 +1703,7 @@ namespace ub_e2c {
 			setup_packer_task( pose_in );
 			// restrict_to_interfacial_loop_packing( pose_in );
 
-			PackRotamersMoverOP pack_interface_repack = new PackRotamersMover(
+			protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover(
 				pack_scorefxn_ );
 			pack_interface_repack->task_factory(tf_);
 			TrialMoverOP pack_interface_and_loops_trial = new TrialMover(
@@ -2190,7 +2190,7 @@ namespace ub_e2c {
 
 			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
 			protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
-			moves::ReturnSidechainMover recover_sidechains( start_pose);
+			protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose);
 
 			Real score( 0.00 );
 			to_centroid.apply( pose_in );
@@ -2211,7 +2211,7 @@ namespace ub_e2c {
 			TR << "Native Pack Score    : " << score << std::endl;
 
 			setup_packer_task( pose_in );
-			PackRotamersMoverOP repack = new PackRotamersMover(	pack_score );
+			protocols::simple_moves::PackRotamersMoverOP repack = new protocols::simple_moves::PackRotamersMover(	pack_score );
 			repack->task_factory( tf_ );
 			repack->apply( pose_in );
 
@@ -2266,14 +2266,14 @@ namespace ub_e2c {
 
 			setup_packer_task( pose_in );
 
-			PackRotamersMoverOP packer = new PackRotamersMover(	pack_cst_scorefxn_ );
+			protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(	pack_cst_scorefxn_ );
 			packer->task_factory(tf_);
 
 			//set up minimizer
-			MinMoverOP flex_cter_min_mover = new MinMover( flex_cter_map_,
+			protocols::simple_moves::MinMoverOP flex_cter_min_mover = new protocols::simple_moves::MinMover( flex_cter_map_,
 			  dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
 
-			RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
+			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
 				pack_cst_scorefxn_, tf_ );
 
 			flex_cter_min_mover->apply( pose_in ); // **REAL** MINIMIZE C TER
@@ -2453,8 +2453,8 @@ namespace ub_e2c {
 
 			TR << "UBI Mono Ubi Apply Start" << std::endl;
 
-			moves::ConstraintSetMoverOP mtsl_constraint =
-        new protocols::moves::ConstraintSetMover();
+			protocols::simple_moves::ConstraintSetMoverOP mtsl_constraint =
+        new protocols::simple_moves::ConstraintSetMover();
 			mtsl_constraint->apply( pose_in );
 
 			const pose::Pose start_pose( pose_in );
@@ -2471,7 +2471,7 @@ namespace ub_e2c {
 			// Residue movers
 			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
 			protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
-			moves::ReturnSidechainMover recover_sidechains( start_pose);
+			protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose);
 
 			// centroid mode
 			Size tries = 0;
@@ -2701,7 +2701,7 @@ namespace ub_e2c {
 
 			shear_mover->angle_max( 90.0 );
 
-			MinMoverOP min_mover( new MinMover ( ub_cter_map, lowres_cst_scorefxn_,
+			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover ( ub_cter_map, lowres_cst_scorefxn_,
  			  "linmin",	min_tolerance_, nb_list_, false, false ) );
 
 			perturb_min_cter->add_mover( small_mover );
@@ -2846,7 +2846,7 @@ namespace ub_e2c {
 					temperature_, 5 /*n_moves*/ );
 				shear_mover->angle_max( 90.0 );
 
-				MinMoverOP min_mover(new MinMover( monoub_flex_cter_map_,
+				protocols::simple_moves::MinMoverOP min_mover(new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
           lowres_cst_scorefxn_, "linmin",	min_tolerance_,	nb_list_,
             false /*deriv_check*/,false /* non verbose-deriv-check,default*/));
 
@@ -2914,19 +2914,19 @@ namespace ub_e2c {
 
 			SequenceMoverOP fullatom_optimizer( new SequenceMover() ); // **MAIN**
 
-			PackRotamersMoverOP pack_interface_repack = new PackRotamersMover(
+			protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover(
 																									pack_scorefxn_ );
 			pack_interface_repack->task_factory(tf_);
 
 			//set up minimizer movers
-			MinMoverOP monoub_dock_min_mover = new MinMover( monoub_docking_map_,
+			protocols::simple_moves::MinMoverOP monoub_dock_min_mover = new protocols::simple_moves::MinMover( monoub_docking_map_,
 				dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-			MinMoverOP flex_cter_min_mover = new MinMover( monoub_flex_cter_map_,
+			protocols::simple_moves::MinMoverOP flex_cter_min_mover = new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
 				dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-			MinMoverOP all_dof_min_mover = new MinMover( monoub_all_dof_map_,
+			protocols::simple_moves::MinMoverOP all_dof_min_mover = new protocols::simple_moves::MinMover( monoub_all_dof_map_,
 				dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
 
-			RotamerTrialsMinMoverOP rtmin = new RotamerTrialsMinMover(
+			protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover(
 				pack_scorefxn_, tf_ );
 
 			// set up rigid body movers
@@ -2935,7 +2935,7 @@ namespace ub_e2c {
 			rigid::RigidBodyPerturbMoverOP monoub_perturb = new rigid::RigidBodyPerturbMover(
  			  1, rot_magnitude, trans_magnitude , rigid::partner_downstream,
 				  true );
-			RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
+			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
 				pack_scorefxn_, tf_ );
 
 			MonteCarloOP mc;

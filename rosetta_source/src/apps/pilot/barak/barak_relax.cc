@@ -30,7 +30,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/relax_protocols.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/jobdist/standard_mains.hh>
 
 //Auto Headers

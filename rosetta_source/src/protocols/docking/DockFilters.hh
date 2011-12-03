@@ -27,7 +27,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/filters/Filter.hh>
-#include <protocols/filters/ScoreCutoffFilter.hh>
+#include <protocols/simple_filters/ScoreCutoffFilter.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -84,7 +84,7 @@ private:
 	DockJumps movable_jumps_;
 	core::Real score_margin_; /// @brief extra margin for passing filters for early in protocol
 	core::scoring::ScoreFunctionOP scorefunction_; /// @brief ScoreFunction for evaluating interface_score //defaults to docking scorefxn
-	protocols::filters::ScoreCutoffFilterOP scorefilter_; /// @brief filter for total_score
+	protocols::simple_filters::ScoreCutoffFilterOP scorefilter_; /// @brief filter for total_score
 };
 
 

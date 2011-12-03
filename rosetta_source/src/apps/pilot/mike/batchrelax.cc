@@ -40,7 +40,7 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 // AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 // AUTO-REMOVED #include <protocols/loops/Loop.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -113,7 +113,7 @@ main( int argc, char * argv [] )
 
 
  	// initialize core
- 	protocols::init(argc, argv);
+ 	protocols::init::init(argc, argv);
 
  	core::Size nstruct = option[ OptionKeys::out::nstruct ];
  	core::Size batch_size = option[ OptionKeys::batch_relax::batch_size ];

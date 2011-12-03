@@ -57,7 +57,7 @@
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 //#include <devel/init.hh>
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 #include <core/init.hh>
 #include <core/types.hh>
 
@@ -157,7 +157,7 @@ int main( int argc, char * argv [] )
 
 	using namespace core;
 
-	//protocols::init(argc, argv);
+	//protocols::init::init(argc, argv);
 	core::init(argc, argv);
 
 	{

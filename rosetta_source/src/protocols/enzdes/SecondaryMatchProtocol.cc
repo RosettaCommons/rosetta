@@ -50,7 +50,7 @@
 #include <basic/datacache/CacheableString.hh>
 
 // AUTO-REMOVED #include <protocols/ligand_docking/LigandDockProtocol.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
 
 #include <basic/Tracer.hh>
@@ -307,7 +307,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 				else task->nonconst_residue_task( i ).prevent_repacking();
 			}
 
-			moves::PackRotamersMoverOP trial_packer = new moves::PackRotamersMover(reduced_scofx_, task);
+			protocols::simple_moves::PackRotamersMoverOP trial_packer = new protocols::simple_moves::PackRotamersMover(reduced_scofx_, task);
 			trial_packer->apply( pose );
 
 			(*reduced_scofx_)( pose );

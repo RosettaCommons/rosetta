@@ -47,8 +47,8 @@
 #include <basic/Tracer.hh>
 
 //GreenPacker
-#include <protocols/moves/GreenPacker.hh>
-#include <protocols/moves/GreenPacker.fwd.hh>
+#include <protocols/simple_moves/GreenPacker.hh>
+#include <protocols/simple_moves/GreenPacker.fwd.hh>
 
 // AUTO-REMOVED #include <numeric/angle.functions.hh>
 
@@ -96,7 +96,7 @@ namespace protein {
 													 protocols::swa::StepWisePoseSampleGeneratorOP sample_generator ):
 		moving_residues_( moving_residues ),
 		scorefxn_( core::scoring::getScoreFunction() ),
-		green_packer_( new protocols::moves::GreenPacker ),
+		green_packer_( new protocols::simple_moves::GreenPacker ),
 		use_green_packer_( false ),
 		use_packer_instead_of_rotamer_trials_( false ),
 		pack_at_neighbors_only_( true ),
@@ -216,7 +216,7 @@ return "StepWiseProteinPacker";
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 
-		UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new UserDefinedGroupDiscriminator);
+		protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new protocols::simple_moves::UserDefinedGroupDiscriminator);
 		utility::vector1< Size > group_ids;
 
 		Size current_group = 0;

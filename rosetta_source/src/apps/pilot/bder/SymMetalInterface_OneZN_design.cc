@@ -20,7 +20,7 @@
 #include <protocols/anchored_design/InterfaceAnalyzerMover.hh>
 #include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>

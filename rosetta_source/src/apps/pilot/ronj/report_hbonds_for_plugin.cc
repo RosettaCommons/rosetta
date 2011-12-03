@@ -35,7 +35,7 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/relax/FastRelax.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>

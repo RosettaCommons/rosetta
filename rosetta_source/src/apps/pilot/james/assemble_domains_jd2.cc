@@ -51,7 +51,7 @@
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/moves/CompositionMover.hh>
-// AUTO-REMOVED #include <protocols/moves/ConstraintSetMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/ConstraintSetMover.hh>
 
 #include <devel/init.hh>
 

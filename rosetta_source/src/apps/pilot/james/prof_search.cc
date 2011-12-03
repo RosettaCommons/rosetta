@@ -45,7 +45,7 @@
 // AUTO-REMOVED #include <protocols/comparative_modeling/ThreadingMover.hh>
 // AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>

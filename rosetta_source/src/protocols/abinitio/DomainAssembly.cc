@@ -25,7 +25,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <core/fragment/FragmentIO.hh>
@@ -105,7 +105,7 @@ DomainAssembly::fresh_instance() const
 void
 DomainAssembly::apply( core::pose::Pose & pose )
 {
-	protocols::moves::ReturnSidechainMover recover_sidechains( pose );
+	protocols::simple_moves::ReturnSidechainMover recover_sidechains( pose );
 
 	if( !fragments_set_ ) {
 		TR<<"*******WARNING WARNING********: fragments not set, skipping domain assembly"<<std::endl;

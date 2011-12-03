@@ -41,7 +41,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 
 #include <core/scoring/constraints/util.hh>
 
@@ -130,7 +130,7 @@ main( int argc, char * argv [] )
 
 	// csts
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-			protocols::moves::ConstraintSetMoverOP loadCsts( new protocols::moves::ConstraintSetMover );
+			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
 			loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 			loadCsts->apply(*pose);
 	}

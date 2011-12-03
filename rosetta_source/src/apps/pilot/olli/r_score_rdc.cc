@@ -33,7 +33,7 @@
 #include <protocols/jd2/util.hh>
 //for derivative check
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 #include <protocols/loops/Loops.hh>
 
@@ -188,7 +188,7 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 	if ( option[ score_app::linmin ]() ) {
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 		movemap->set_bb( true ); movemap->set_chi( true );
-		protocols::moves::MinMoverOP minmover = new protocols::moves::MinMover(
+		protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover(
 					 movemap, score.clone(), "linmin", 1e-4,
 					 false /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/ );
 		minmover->apply( pose );

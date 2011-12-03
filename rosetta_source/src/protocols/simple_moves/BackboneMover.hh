@@ -193,7 +193,7 @@ public:
 
 	// default constructor
 	SmallMover();
-//	SmallMover() : BackboneMover() { Mover::type( "SmallMover" ); }
+//	SmallMover() : BackboneMover() { protocols::moves::Mover::type( "SmallMover" ); }
 
 	/// @brief Constructs a SmallMover
 	/// smallmover = SmallMover( movemap , kT , n_moves )
@@ -254,7 +254,7 @@ public:
 
 	// default constructor
 	ShearMover();
-	//ShearMover() : BackboneMover() { Mover::type( "ShearMover" );	}
+	//ShearMover() : BackboneMover() { protocols::moves::Mover::type( "ShearMover" );	}
 
 	/// @brief Constructs a ShearMover
 	/// shearmover = ShearMover( movemap , kT , n_moves )

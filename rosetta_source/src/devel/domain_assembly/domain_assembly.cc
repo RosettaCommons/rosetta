@@ -28,18 +28,18 @@
 //#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/analysis/PackStatMover.hh>
 // AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
@@ -258,7 +258,7 @@ optimize_linkers_centroid_mode(
 	///////  END_STAGE 2 ////////
 
 	mc -> recover_low( full_pose );
-	protocols::moves::ReturnSidechainMover return_sidechains( saved_input_pose );
+	protocols::simple_moves::ReturnSidechainMover return_sidechains( saved_input_pose );
 	return_sidechains.apply( full_pose );
 
 	// for graphics:
@@ -371,10 +371,10 @@ optimize_linkers_fullatom_mode(
   small_mover->angle_max( 'L', 4.0 );
 
 	// MOVER: rotamer trials
-	protocols::moves::RotamerTrialsMoverOP pack_rottrial_mover( new EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
 
 	// MOVER minimization
-	MinMoverOP min_mover = new MinMover( mm, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ );
 	//TrialMoverOP min_trial_mover( new TrialMover( min_mover, mc ) );
 
 	// Initial Minimization //
@@ -489,10 +489,10 @@ optimize_linkers_rna_fullatom_mode(
   small_mover->angle_max( 'L', 4.0 );
 
 	// MOVER: rotamer trials
-	protocols::moves::RotamerTrialsMoverOP pack_rottrial_mover( new EnergyCutRotamerTrialsMover( scorefxn_cont, *base_packer_task, mc, 0.01 ) );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_cont, *base_packer_task, mc, 0.01 ) );
 
 	// MOVER: minimization
-	MinMoverOP min_mover = new MinMover( mm, scorefxn_cont, "dfpmin", 0.001, true );
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn_cont, "dfpmin", 0.001, true );
 
 	// MOVER: coarse small moves
 	protocols::simple_moves::SmallMoverOP coarse_small_mover( new protocols::simple_moves::SmallMover( mm, 0.8, 1 ) );

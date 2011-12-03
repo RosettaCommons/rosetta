@@ -36,7 +36,7 @@
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 // AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -56,7 +56,7 @@
 // AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 // AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 
 // AUTO-REMOVED #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>

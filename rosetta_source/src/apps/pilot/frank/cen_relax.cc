@@ -7,7 +7,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>

@@ -22,7 +22,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <protocols/moves/PackRotamersMover.fwd.hh>
+#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -97,7 +97,7 @@ private:
 	bool camelid_;
 
 	// Packer
-	moves::PackRotamersMoverOP packer_;
+	protocols::simple_moves::PackRotamersMoverOP packer_;
 
 	void set_packer_default(
 		core::pose::Pose & pose_in,

@@ -25,7 +25,7 @@
 #include <protocols/rbsegment_relax/RBSegment.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>

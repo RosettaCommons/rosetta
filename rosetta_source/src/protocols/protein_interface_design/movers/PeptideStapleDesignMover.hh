@@ -19,9 +19,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/PeptideStapleMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PeptideStapleMover.hh>
 
-#include <protocols/moves/PeptideStapleMover.fwd.hh>
+#include <protocols/simple_moves/PeptideStapleMover.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -44,7 +44,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new PeptideStapleDesignMover ); }
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
-	protocols::moves::PeptideStapleMoverOP stapler_;
+	protocols::simple_moves::PeptideStapleMoverOP stapler_;
 };
 
 } // movers

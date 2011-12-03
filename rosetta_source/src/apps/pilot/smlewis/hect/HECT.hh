@@ -54,12 +54,12 @@
 
 //movers
 #include <protocols/simple_moves/BackboneMover.hh> //SmallMover
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
-#include <protocols/moves/TorsionDOFMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/TorsionDOFMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
@@ -513,20 +513,20 @@ public:
 		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *fullatom_scorefunction_, 0.8 ) );
 
 		/////////////////////////////////rotamer trials mover///////////////////////////////////////////
-		using protocols::moves::RotamerTrialsMoverOP;
-		using protocols::moves::EnergyCutRotamerTrialsMover;
-		RotamerTrialsMoverOP rt_mover(new EnergyCutRotamerTrialsMover(
+		using protocols::simple_moves::RotamerTrialsMoverOP;
+		using protocols::simple_moves::EnergyCutRotamerTrialsMover;
+		protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
 																																	fullatom_scorefunction_,
 																																	task_factory_,
 																																	mc,
 																																	0.01 /*energycut*/ ) );
 
 		//////////////////////////TorsionDOFMovers for the chemical linkage////////////////////////////////
-		//utility::vector1< protocols::moves::TorsionDOFMoverOP > DOF_movers;
+		//utility::vector1< protocols::simple_moves::TorsionDOFMoverOP > DOF_movers;
 		//we are going to iterate over the ordered quadruplets describing the torsional degrees of freedom involved in the thioester bond, like so: 1,2,3,4; 2,3,4,5; 3,4,5,6
 		//This iterates from the cysteine backbone C to the second glycine backbone C.  See the enum names for which atoms are which
 		for( core::Size i(1); i <= GLY2_C-3; ++i){
-			protocols::moves::TorsionDOFMoverOP DOF_mover(new protocols::moves::TorsionDOFMover);
+			protocols::simple_moves::TorsionDOFMoverOP DOF_mover(new protocols::simple_moves::TorsionDOFMover);
 			DOF_mover->set_DOF(atomIDs[i], atomIDs[i+1], atomIDs[i+2], atomIDs[i+3]);
 			DOF_mover->check_mmt(true);
 			DOF_mover->temp(0.4);
@@ -570,21 +570,21 @@ public:
 		random_mover->add_mover(shear_mover, 1.0);
 
 		/////////////////////////////generate full repack mover////////////////////////////////////////
-		protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 		pack_mover->task_factory( task_factory_ );
 		pack_mover->score_function( fullatom_scorefunction_ );
 
 		///////////////////////////////////////////Minimizer mover and TAMinmover///////////////////////////
-		MinMoverOP min_mover = new MinMover(
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
 																				movemap_,
 																				fullatom_scorefunction_,
 																				basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 																				0.01,
 																				true /*use_nblist*/ );
 
-		using protocols::moves::TaskAwareMinMoverOP;
-		using protocols::moves::TaskAwareMinMover;
-		TaskAwareMinMoverOP TAmin_mover = new TaskAwareMinMover(min_mover, task_factory_);
+		using protocols::simple_moves::TaskAwareMinMoverOP;
+		using protocols::simple_moves::TaskAwareMinMover;
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, task_factory_);
 
 		///////////////////////package RT/min for JumpOutMover////////////////////////////////////////
 		protocols::moves::SequenceMoverOP RT_min_seq( new protocols::moves::SequenceMover );

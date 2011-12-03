@@ -7,120 +7,119 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-sources = {
-	"core/id" : [
-		"AtomID",
-		"DOF_ID",
-		"DOF_ID_Range",
-		"TorsionID",
-		"TorsionID_Range",
-		"NamedAtomID",
-		"NamedStubID",
-		"Exceptions",
-		"SequenceMapping",
-	],
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
-	"core/chemical" : [
+sources = {
+	"core/chemical": [
+		"AA",
 		"Adduct",
+		"adduct_util",
+		"AtomICoor",
 		"AtomType",
 		"AtomTypeSet",
-		"Element",
-		"ElementSet",
-		#"CSDAtomTypeSet",
-		"MMAtomType",
-		"MMAtomTypeSet",
-		"AA",
-		"AtomICoor",
 		"automorphism",
 		"ChemicalManager",
+		"Element",
+		"ElementSet",
+		"MMAtomType",
+		"MMAtomTypeSet",
 		"Patch",
 		"PatchOperation",
 		"ResConnID",
-		"ResidueType",
-		"ResidueSelector",
-		"ResidueTypeSet",
-		"ResidueSupport",
-		"adduct_util",
 		"residue_io",
+		"ResidueSelector",
+		"ResidueSupport",
+		"ResidueType",
+		"ResidueTypeSet",
 		"util",
 		"VariantType",
 	],
-	
-	"core/chemical/orbitals" : [
-		"OrbitalType",
-		"OrbitalTypeSet",
-		"ICoorOrbitalData",
-		"OrbitalTypeMapper",
+	"core/chemical/orbitals": [
 		"AssignOrbitals",
-	],	
-
-	"core/chemical/sdf" : [
-		"ctab_base",
-                #"ctab_parser",
-                "ctab_typer",
-                "MolData",
-                "mol_parser",
-                #"sdf_parser",
-                "mol_writer",
-                "mol_util",
-                "v2_parser",
-                "v3_parser"
+		"ICoorOrbitalData",
+		"OrbitalType",
+		"OrbitalTypeMapper",
+		"OrbitalTypeSet",
 	],
-
-
-	"core/conformation" : [
-		"Conformation",
-		#"find_neighbors",
-		"PointGraph",
+	"core/chemical/sdf": [
+		"ctab_base",
+		"ctab_typer",
+		"mol_parser",
+		"mol_util",
+		"mol_writer",
+		"MolData",
+		"v2_parser",
+		"v3_parser",
+	],
+	"core/conformation": [
 		"AtomGraph",
-		#"PointGraphData",
+		"Conformation",
+		"PointGraph",
 		"PseudoBond",
 		"Residue",
-		"RotamerSetBase",
 		"Residue.functions",
+		"ResidueFactory",
 		"ResidueKinWriter",
 		"ResidueMatcher",
-		"ResidueFactory",
+		"RotamerSetBase",
 		"util",
 	],
-	
-    "core/conformation/orbitals" :[
-        "OrbitalXYZCoords",
-    ],
-
-
-	"core/conformation/symmetry" : [
+	"core/conformation/orbitals": [
+		"OrbitalXYZCoords",
+	],
+	"core/conformation/symmetry": [
+		"SymDof",
+		"SymmData",
 		"SymmetricConformation",
 		"SymmetryInfo",
-		"SymmData",
-		"VirtualCoordinate",
-		"SymDof",
 		"SymSlideInfo",
 		"util",
+		"VirtualCoordinate",
 	],
-	"core/kinematics" : [
+	"core/id": [
+		"AtomID",
+		"DOF_ID",
+		"DOF_ID_Range",
+		"Exceptions",
+		"NamedAtomID",
+		"NamedStubID",
+		"SequenceMapping",
+		"TorsionID",
+		"TorsionID_Range",
+	],
+	"core/kinematics": [
 		"AtomTree",
 		"constants",
 		"Edge",
 		"FoldTree",
-		"MinimizerMapBase",
-		"ShortestPathInFoldTree",
 		"Jump",
+		"MinimizerMapBase",
 		"MoveMap",
-		"RT",
 		"ResidueCoordinateChangeList",
+		"RT",
+		"ShortestPathInFoldTree",
 		"Stub",
 		"util",
 	],
-
-	"core/kinematics/tree" : [
+	"core/kinematics/tree": [
 		"Atom_",
 		"BondedAtom",
 		"JumpAtom",
 	],
-
 }
-include_path = [ ]
-library_path = [ ]
-libraries    = [ ]
-subprojects  = [ "basic","numeric", "core.1","utility", "ObjexxFCL", "z" ,"sqlite3", "cppdb"]
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"basic",
+	"numeric",
+	"core.1",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"sqlite3",
+	"cppdb",
+]

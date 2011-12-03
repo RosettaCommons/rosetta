@@ -70,7 +70,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 #include <protocols/loops/LoopMover_KIC.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
@@ -90,7 +90,7 @@
 
 //test
 // AUTO-REMOVED #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechains.hh>
-// AUTO-REMOVED #include <protocols/moves/ReturnSidechainMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/ReturnSidechainMover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 // C++ headers
@@ -98,7 +98,7 @@
 
 #include <core/pose/annotated_sequence.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <protocols/moves/PackRotamersMover.fwd.hh>
+#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -415,7 +415,7 @@ if (working_model.manager.size()!= 0){
 //	pose.dump_pdb("testArcRestore3.pdb");
 	//testArc.dump_pdb("testArcRestoreSrc3.pdb");
 	//protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD);
-	//protocols::moves::ReturnSidechainMover recover_sidechains( testArc);
+	//protocols::simple_moves::ReturnSidechainMover recover_sidechains( testArc);
 	//to_all_atom.apply(pose);
 	//recover_sidechains.apply(pose);
 	//pose.dump_pdb("MoverREstore.pdb");
@@ -873,7 +873,7 @@ bool RemodelMover::design_refine_seq_relax(
 	using namespace protocols::loops;
 	using protocols::loops::Loops;
 	using protocols::loops::LoopMover_Refine_CCD;
-	using protocols::moves::PackRotamersMover;
+	using protocols::simple_moves::PackRotamersMover;
 	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
 	using namespace core::scoring::constraints;
 	using namespace basic::options;
@@ -1000,7 +1000,7 @@ bool RemodelMover::design_refine(
 	using namespace protocols::loops;
 	using protocols::loops::Loops;
 	using protocols::loops::LoopMover_Refine_CCD;
-	using protocols::moves::PackRotamersMover;
+	using protocols::simple_moves::PackRotamersMover;
 	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
 
 	using core::pose::annotated_to_oneletter_sequence;

@@ -7,34 +7,57 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-sources = {'protocols/RotamerDump': ['RotamerDumpMover'],
- 'protocols/contact_map': ['ContactMap'],
- 'protocols/ddg': ['ddGData', 'ddG_main', 'ddGMover'],
- 'protocols/kinmatch': ['FunGroupTK'],
- 'protocols/make_rot_lib': ['MakeRotLib', 'RotData'],
- 'protocols/optimize_weights': ['DGBindOptEData',
-                                'DDGBindOptEData',
-                                'IterativeOptEDriver',
-                                'OptEData',
-                                'OptEMultifunc',
-                                'PNatLigPoseOptEData',
-                                'NestedEnergyTermOptEData']}
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
-include_path = []
-library_path = []
-libraries = []
-subprojects = ['protocols.3',
- 'protocols.2',
- 'protocols.1',
- 'core.5',
- 'core.4',
- 'core.3',
- 'core.2',
- 'core.1',
- 'basic',
- 'numeric',
- 'utility',
- 'ObjexxFCL',
- 'z',
- 'sqlite3',
- 'cppdb']
+sources = {
+	"protocols/contact_map": [
+		"ContactMap",
+	],
+	"protocols/ddg": [
+		"ddG_main",
+		"ddGData",
+		"ddGMover",
+	],
+	"protocols/kinmatch": [
+		"FunGroupTK",
+	],
+	"protocols/make_rot_lib": [
+		"MakeRotLib",
+		"RotData",
+	],
+	"protocols/optimize_weights": [
+		"DDGBindOptEData",
+		"DGBindOptEData",
+		"IterativeOptEDriver",
+		"NestedEnergyTermOptEData",
+		"OptEData",
+		"OptEMultifunc",
+		"PNatLigPoseOptEData",
+	],
+	"protocols/RotamerDump": [
+		"RotamerDumpMover",
+	],
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"protocols.3",
+	"protocols.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"sqlite3",
+	"cppdb",
+]

@@ -26,7 +26,7 @@
 namespace protocols {
 namespace simple_moves {
 
-///@details This BS class exists to route around a hard-coded pseudo-Mover in the APPLY_TO_POSE section of the Parser.  At XRW2 we needed to move junk out of Parser to use the MoverFactory instead.
+///@details This BS class exists to route around a hard-coded pseudo-Mover in the APPLY_TO_POSE section of the Parser.  At XRW2 we needed to move junk out of Parser to use the protocols::moves::MoverFactory instead.
 class LoadUnboundRotMover : public protocols::moves::Mover {
 
 public:

@@ -66,13 +66,13 @@ class ExtendedPoseMover : public protocols::moves::Mover {
   void residue_type_set(const string& residue_type_set);
 
   // -- RosettaScripts -- //
-  /// @brief Creates a replica of this Mover
+  /// @brief Creates a replica of this protocols::moves::Mover
   protocols::moves::MoverOP clone() const;
 
   /// @brief Creates a new instance by calling the no-argument constructor
   protocols::moves::MoverOP fresh_instance() const;
 
-  /// @brief Mover-specific parsing required by RosettaScripts
+  /// @brief protocols::moves::Mover-specific parsing required by RosettaScripts
   void parse_my_tag(const utility::tag::TagPtr tag,
 		                      protocols::moves::DataMap& data,
                     const protocols::filters::Filters_map& filters,

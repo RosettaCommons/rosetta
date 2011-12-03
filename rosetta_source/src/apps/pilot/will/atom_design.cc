@@ -69,7 +69,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <protocols/moves/MoverStatistics.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -114,7 +114,7 @@ void adesign(core::pose::Pose & pose, ScoreFunctionOP sf, core::chemical::Residu
 		}
 	}
 	TR << *task << std::endl;
-	protocols::moves::PackRotamersMover repack( sf, task );
+	protocols::simple_moves::PackRotamersMover repack( sf, task );
 	repack.apply(pose);
 	
 }

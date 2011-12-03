@@ -77,10 +77,10 @@
 
 #include <basic/Tracer.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinPackMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinPackMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
@@ -4828,12 +4828,12 @@ IterativeOptEDriver::measure_sequence_recovery(
 	protocols::moves::MoverOP design_mover;
 
 	if ( option[ optE::design_with_minpack ]) {
-		protocols::moves::MinPackMoverOP minpack_mover = new protocols::moves::MinPackMover;
+		protocols::simple_moves::MinPackMoverOP minpack_mover = new protocols::simple_moves::MinPackMover;
 		minpack_mover->task_factory( task_factory_for_design );
 		minpack_mover->score_function( sfxn );
 		design_mover = minpack_mover;
 	} else {
-		protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 		pack_mover->task_factory( task_factory_for_design );
 		pack_mover->score_function( sfxn );
 		design_mover = pack_mover;
@@ -4968,7 +4968,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 	TaskFactoryOP task_factory_for_repacking = new TaskFactory( *task_factory_ );
 	task_factory_for_repacking->push_back( new operation::RestrictToRepacking );
 
-	protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 	pack_mover->task_factory( task_factory_for_repacking );
 	pack_mover->score_function( sfxn );
 
@@ -5306,7 +5306,7 @@ IterativeOptEDriver::repack_and_minimize_pose(
 	using namespace moves;
 	using namespace core::pack::task;
 
-	PackRotamersMover packer( sfxn );
+	protocols::simple_moves::PackRotamersMover packer( sfxn );
 	TaskFactoryOP factory = new TaskFactory;
 	factory->push_back( new operation::RestrictToRepacking );
 	factory->push_back( new operation::IncludeCurrent );
@@ -5315,7 +5315,7 @@ IterativeOptEDriver::repack_and_minimize_pose(
 
 	packer.apply( pose );
 
-	MinMover minmover;
+	protocols::simple_moves::MinMover minmover;
 	minmover.min_type( "dfpmin_armijo_nonmonotone_atol" );
 	minmover.score_function( sfxn );
 

@@ -23,7 +23,7 @@
 
 #include <devel/init.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -64,7 +64,7 @@ public:
 
 		score_fxn = core::scoring::getScoreFunction();
 
-		pack_mover = new protocols::moves::PackRotamersMover;
+		pack_mover = new protocols::simple_moves::PackRotamersMover;
 		pack_mover->task_factory( main_task_factory );
 		pack_mover->score_function( score_fxn );
 
@@ -167,7 +167,7 @@ public:
 private:
 	//original holdovers
 	core::scoring::ScoreFunctionOP score_fxn;
-	protocols::moves::PackRotamersMoverOP pack_mover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover;
 	core::pack::task::TaskFactoryOP main_task_factory;
 
 	//second mover for testing

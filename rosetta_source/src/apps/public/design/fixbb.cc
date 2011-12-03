@@ -27,11 +27,11 @@
 #include <core/kinematics/MoveMap.hh>
 
 //protocols library (Movers)
-#include <protocols/moves/MinPackMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinPackMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 
 
 	//create the PackRotamersMover which will do the packing
-	protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 
 	// Use the symmetric packer if necessary
 	if ( option[ symmetry::symmetry_definition ].user() ) {
@@ -117,7 +117,7 @@ main( int argc, char * argv [] )
 	}
 
 	if ( option[ min_pack ] || option[ stochastic_pack ] ) {
-		protocols::moves::MinPackMoverOP minpack_mover = new protocols::moves::MinPackMover;
+		protocols::simple_moves::MinPackMoverOP minpack_mover = new protocols::simple_moves::MinPackMover;
 		minpack_mover->task_factory( main_task_factory );
 		minpack_mover->score_function( score_fxn );
 		if ( option[ stochastic_pack ] ) minpack_mover->stochastic_pack( true );
@@ -129,14 +129,14 @@ main( int argc, char * argv [] )
 	//If sidechain minimization is requested, include that too
 	if ( option[ minimize_sidechains ] ) {
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-		protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover(
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
 			movemap,
 			score_fxn,
 			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 			0.01,
 			true
 		);
-		protocols::moves::TaskAwareMinMoverOP TAmin_mover = new protocols::moves::TaskAwareMinMover(min_mover, main_task_factory);
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, main_task_factory);
 		seq_mover->add_mover( TAmin_mover );
 	} // end optional side chain minimization
 

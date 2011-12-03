@@ -35,7 +35,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>

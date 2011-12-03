@@ -25,7 +25,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/MinMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 // AUTO-REMOVED #include <utility/options/keys/BooleanOptionKey.hh>
 #include <string>
@@ -119,7 +119,7 @@ private:
 
 	moves::MonteCarloOP mc_;
 
-	moves::MinMoverOP minimizer_;
+	protocols::simple_moves::MinMoverOP minimizer_;
 
 	// loop mover for modeling loop closure // TODO: this is a wrapper, use the loop modeller directly
 	protocols::comparative_modeling::LoopRelaxMoverOP loop_relax_mover_;

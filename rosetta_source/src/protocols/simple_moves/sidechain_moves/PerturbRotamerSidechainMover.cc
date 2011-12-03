@@ -84,14 +84,14 @@ PerturbRotamerSidechainMoverCreator::mover_name() {
 
 
 PerturbRotamerSidechainMover::PerturbRotamerSidechainMover() {
-	Mover::type( "PerturbRotamerSidechain" );
+	protocols::moves::Mover::type( "PerturbRotamerSidechain" );
 	set_defaults();
 }
 
 PerturbRotamerSidechainMover::PerturbRotamerSidechainMover(
 	pack::dunbrack::RotamerLibrary const & rotamer_library
 ) :	Parent( rotamer_library ) {
-	Mover::type( "PerturbRotamerSidechain" );
+	protocols::moves::Mover::type( "PerturbRotamerSidechain" );
 	set_defaults();
 }
 

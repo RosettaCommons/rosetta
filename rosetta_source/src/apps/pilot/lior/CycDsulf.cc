@@ -20,8 +20,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/optimization/MinimizerMap.hh>
@@ -267,7 +267,7 @@ void performMinimization(pose::Pose& workpose, core::scoring::ScoreFunctionOP sc
 	core::kinematics::MoveMapOP tempMap = new core::kinematics::MoveMap();
 
 	tempMap->set_bb_true_range(1,workpose.n_residue());
-	protocols::moves::MinMover minimizer(tempMap, scorefxn, "dfpmin_armijo_atol", 0.0001, true /*nb_list*/ );
+	protocols::simple_moves::MinMover minimizer(tempMap, scorefxn, "dfpmin_armijo_atol", 0.0001, true /*nb_list*/ );
 	std::cout<<"Score before minimization: "<<scorefxn->score(workpose)<<std::endl;
 	workpose.dump_pdb("before_minimization.pdb");
 	minimizer.apply(workpose);
@@ -286,7 +286,7 @@ void packRotamers( pose::Pose& workpose, core::scoring::ScoreFunctionOP scorefxn
 	prevent.include_residue(workpose.n_residue());
 	prevent.apply(workpose,*task);
 	noRepackDisulf.apply(workpose, *task);
-	protocols::moves::PackRotamersMoverOP packer = new protocols::moves::PackRotamersMover(scorefxn, task);
+	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(scorefxn, task);
 	packer->apply(workpose);
 	std::cout<<"Score after side chain repacking: "<<scorefxn->score(workpose)<<std::endl;
 }

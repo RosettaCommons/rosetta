@@ -96,7 +96,7 @@ DesignProteinBackboneAroundDNACreator::mover_name()
 }
 
 DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA() :
-	PackRotamersMover( DesignProteinBackboneAroundDNACreator::mover_name() ),
+	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNACreator::mover_name() ),
 	type_("ccd"),
 	gapspan_( option[ OptionKeys::loops::gapspan ]() ),
 	spread_( option[ OptionKeys::loops::spread ]() ),
@@ -112,7 +112,7 @@ DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA(
 	std::string const & type,
 	ScoreFunctionCOP scorefxn
 ) :
-	PackRotamersMover( DesignProteinBackboneAroundDNACreator::mover_name() ),
+	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNACreator::mover_name() ),
 	type_(type),
 	gapspan_( option[ OptionKeys::loops::gapspan ]() ),
 	spread_( option[ OptionKeys::loops::spread ]() ),

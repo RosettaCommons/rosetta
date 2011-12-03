@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_dna_DnaInterfaceMultiStateDesign_hh
 
 #include <protocols/dna/DnaInterfaceMultiStateDesign.fwd.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <protocols/dna/DnaChains.fwd.hh>
 #include <protocols/dna/DnaDesignDef.fwd.hh>
@@ -38,7 +38,7 @@ namespace dna {
 
 ///@brief wraps DNA-interface specific considerations around the general multistate design / genetic algorithm framework
 // could also derive from DnaInterfacePacker(?)
-class DnaInterfaceMultiStateDesign : public moves::PackRotamersMover {
+class DnaInterfaceMultiStateDesign : public protocols::simple_moves::PackRotamersMover {
 public:
 	typedef multistate_design::PosType PosType;
 	typedef core::pack::task::PackerTaskCOP PackerTaskCOP;

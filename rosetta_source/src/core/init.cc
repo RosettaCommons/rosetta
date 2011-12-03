@@ -38,7 +38,7 @@
 #include <core/scoring/etable/EtableEnergyCreator.hh>
 
 #include <core/scoring/hbonds/HBondEnergyCreator.hh>
-#include <core/scoring/methods/EnergyMethodRegisterer.hh>
+#include <core/scoring/methods/EnergyMethodRegistrator.hh>
 #include <core/scoring/methods/CenPairEnergyCreator.hh>
 #include <core/scoring/methods/ChainbreakEnergyCreator.hh>
 #include <core/scoring/methods/ContactOrderEnergyCreator.hh>

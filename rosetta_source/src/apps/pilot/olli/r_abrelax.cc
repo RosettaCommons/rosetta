@@ -13,7 +13,7 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/options/option.hh>
 #include <core/types.hh>
-#include <protocols/init.hh>
+#include <protocols/init/init.hh>
 #include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
 #include <protocols/moves/Mover.hh>
@@ -101,8 +101,8 @@ main( int argc, char * argv [] )
 	}
 
   try {
-    protocols::init( argc, argv );//
-		basic::mem_tr << "protocols::init" << std::endl;
+    protocols::init::init( argc, argv );//
+		basic::mem_tr << "protocols::init::init" << std::endl;
 		//    protocols::abinitio::Broker_main();
 		protocols::jd2::JobDistributor::get_instance()->go( NULL );
   } catch ( utility::excn::EXCN_Base& excn ) {

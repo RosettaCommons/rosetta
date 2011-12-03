@@ -34,7 +34,7 @@
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 //#include <protocols/symmetrical_docking/SymRestrictTaskForDocking.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 //#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
@@ -161,7 +161,7 @@ kinematics::MoveMap mm;
 
 //	pose.dump_pdb("after_min.pdb");
 //	std::exit(0);
-//  moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::symmetry::SymPackRotamersMover( scfx_cop, packer_task );
+//  protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::symmetry::SymPackRotamersMover( scfx_cop, packer_task );
 //	pack_interface_repack->apply(pose);
 		protocols::symmetric_docking::SymDockProtocolOP dock_mover = new protocols::symmetric_docking::SymDockProtocol();
 		dock_mover->apply(pose);

@@ -59,8 +59,8 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 // AUTO-REMOVED #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <sstream>
@@ -1254,7 +1254,7 @@ void repack(Pose & arg) {
   ScoreFunctionOP sf = core::scoring::getScoreFunction();
   core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(arg);
   task->restrict_to_repacking();
-  protocols::moves::PackRotamersMover repack( sf, task );
+  protocols::simple_moves::PackRotamersMover repack( sf, task );
   repack.apply(arg);
 }
 // }}}
@@ -1433,7 +1433,7 @@ int main (int argc, char *argv[]) {
     movemap->set_chi(true);
     movemap->set_jump(false);
     movemap->set_jump(4,true);
-    protocols::moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+    protocols::simple_moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
     for(Size is = 1; is <= rhits.size(); ++is) {
       Hit const shit(*rhits[is]);
       if(rhit.rsd1==shit.rsd1||rhit.rsd1==shit.rsd2||rhit.rsd2==shit.rsd1||rhit.rsd2==shit.rsd2) continue;
@@ -1620,7 +1620,7 @@ int main (int argc, char *argv[]) {
               movemap2->set_bb(true);
               movemap2->set_chi(true);
               movemap2->set_jump(true);
-              protocols::moves::MinMover minm2( movemap2, sf2, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+              protocols::simple_moves::MinMover minm2( movemap2, sf2, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
               //tmp3.dump_pdb("pre.pdb");
               minm2.apply(tmp3);

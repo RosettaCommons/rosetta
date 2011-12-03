@@ -31,8 +31,8 @@
 
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
-#include <protocols/moves/PackRotamersMover.fwd.hh>
-#include <protocols/moves/RotamerTrialsMinMover.fwd.hh>
+#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -70,8 +70,8 @@ private:
 
 	core::Real trans_magnitude_;
 
-	RotamerTrialsMinMoverOP rtmin_mover_;
-	PackRotamersMoverOP prepack_full_repack_;
+	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover_;
+	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack_;
 	SidechainMinMoverOP scmin_mover_;
 	SequenceMoverOP pack_operations_;
 

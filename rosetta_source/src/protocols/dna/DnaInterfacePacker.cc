@@ -131,7 +131,7 @@ DnaInterfacePackerCreator::mover_name()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@brief lightweight default constructor
 DnaInterfacePacker::DnaInterfacePacker()
-	: moves::PackRotamersMover("DnaInterfacePacker"),
+	: protocols::simple_moves::PackRotamersMover("DnaInterfacePacker"),
 		reference_pose_(0),
 		dna_chains_(0),
 		minimize_(false),
@@ -156,7 +156,7 @@ DnaInterfacePacker::DnaInterfacePacker(
 	ScoreFunctionOP scorefxn_in,
 	bool minimize,
 	std::string filename_root
-) : moves::PackRotamersMover("DnaInterfacePacker"),
+) : protocols::simple_moves::PackRotamersMover("DnaInterfacePacker"),
 		reference_pose_(0),
 		dna_chains_(0),
 		minimize_( minimize ),

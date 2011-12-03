@@ -29,7 +29,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -762,7 +762,7 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose& pose ) {
 	if ( tr.Debug.visible() ) pose.dump_pdb( "before_repack.pdb");
 	if ( tr.Debug.visible() ) pose.constraint_set()->show_numbers( tr.Debug );
 
-	protocols::moves::PackRotamersMover pack1( repack_scorefxn_ , taskstd );
+	protocols::simple_moves::PackRotamersMover pack1( repack_scorefxn_ , taskstd );
     pack1.apply( pose );
 
     // quick SC minimization

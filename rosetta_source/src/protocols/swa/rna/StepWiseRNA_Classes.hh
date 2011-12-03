@@ -27,7 +27,7 @@
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/GreenPacker.fwd.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/GreenPacker.fwd.hh>
 #include <string>
 // AUTO-REMOVED #include <map>
 

@@ -47,14 +47,14 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/moves/JumpOutMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
-// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 
@@ -264,7 +264,7 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 //	using namespace protocols::toolbox::task_operations;
 //
 //	// @TODO these are not being used at all, need to be incorporated into the sequence
-////	RotamerTrialsMinMoverOP rtmin = new RotamerTrialsMinMover( scorefxn_pack_, tf_ );
+////	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
 ////	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
 ////
 ////	SidechainMinMoverOP scmin_mover = new SidechainMinMover(scorefxn_pack_, tf_ );
@@ -276,10 +276,10 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 //	//set up sidechain movers for each movable jump
 //	tf_->push_back( new RestrictToInterface( movable_jumps_ ) );
 //
-//	RotamerTrialsMoverOP rottrial = new RotamerTrialsMover( scorefxn_pack_, tf_ );
+//	protocols::simple_moves::RotamerTrialsMoverOP rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack_, tf_ );
 //
 //	// old loop here
-//	PackRotamersMoverOP pack_rotamers = new PackRotamersMover( scorefxn_pack_ );
+//	protocols::simple_moves::PackRotamersMoverOP pack_rotamers = new protocols::simple_moves::PackRotamersMover( scorefxn_pack_ );
 //	pack_rotamers->task_factory(tf_);
 //	TrialMoverOP pack_trial = new TrialMover( pack_rotamers, mc_ );
 //
@@ -288,7 +288,7 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 //	rb_mover->add_mover( rottrial );
 //
 //	//set up minimizer movers
-//	moves::MinMoverOP min_mover = new moves::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
+//	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
 //	core::Real minimization_threshold = 15.0;
 //	JumpOutMoverOP rb_min = new JumpOutMover( rb_mover, min_mover, scorefxn_, minimization_threshold );
 //	TrialMoverOP rb_min_trial = new TrialMover( rb_min, mc_ );
@@ -321,7 +321,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
   using namespace protocols::toolbox::task_operations;
 
 	// @TODO these are not being used at all, need to be incorporated into the sequence
-//	RotamerTrialsMinMoverOP rtmin = new RotamerTrialsMinMover( scorefxn_pack_, tf_ );
+//	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
 //	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
 //
 //	SidechainMinMoverOP scmin_mover = new SidechainMinMover(scorefxn_pack_, tf_ );
@@ -333,10 +333,10 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	//set up sidechain movers for each movable jump
 //	tf_->push_back( new RestrictToInterface( movable_jumps_ ) );   //JQX: temporarly commented out this, because I commented out the Legacy code for this for testing
 
-	RotamerTrialsMoverOP rottrial = new RotamerTrialsMover( scorefxn_pack_, tf_ );
+	protocols::simple_moves::RotamerTrialsMoverOP rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack_, tf_ );
 
 	// old loop here
-	PackRotamersMoverOP pack_rotamers = new PackRotamersMover( scorefxn_pack_ );
+	protocols::simple_moves::PackRotamersMoverOP pack_rotamers = new protocols::simple_moves::PackRotamersMover( scorefxn_pack_ );
 	pack_rotamers->task_factory(tf_);
 
 	CycleMoverOP pack_cycle = new CycleMover;
@@ -344,7 +344,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	pack_cycle->add_mover( pack_rotamers );
 
 	//set up minimizer movers
-	moves::MinMoverOP min_mover = new moves::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
 
 	// the standard mcm cycle : rb perturbation->rotamer trials->minimization->MC accept
 	SequenceMoverOP rb_pack_min = new SequenceMover;
@@ -381,7 +381,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 
 
 	// @TODO these are not being used at all, need to be incorporated into the sequence
-	//	RotamerTrialsMinMoverOP rtmin = new RotamerTrialsMinMover( scorefxn_pack_, tf_ );
+	//	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
 	//	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
 	//
 	//	SidechainMinMoverOP scmin_mover = new SidechainMinMover(scorefxn_pack_, tf_ );
@@ -399,7 +399,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 			// JQX commented this out, there is one more RestrictToInterface function in the DockTaskFactory.cc file
 
 
-	RotamerTrialsMoverOP rottrial = new RotamerTrialsMover( scorefxn_pack_, tf_ );
+	protocols::simple_moves::RotamerTrialsMoverOP rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack_, tf_ );
 	SequenceMoverOP rb_pack_min = new SequenceMover;
 
 	rb_pack_min->add_mover( rb_mover );
@@ -409,7 +409,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	//JQX: use   (SequenceMover) rb_pack_min   and   (MinMover) min_mover
 	//JQX: to define the JumpOutMover
 	core::Real minimization_threshold = 15.0;
-	moves::MinMoverOP min_mover = new moves::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
 	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_pack_min, min_mover, scorefxn_, minimization_threshold );
 
 
@@ -423,7 +423,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	//JQX: the TrialMover is actually    ...       (PackRotamersMover) pack_rotamers
 	SequenceMoverOP repack_step = new SequenceMover;
 	repack_step->add_mover(rb_mover_min_trail);
-	PackRotamersMoverOP pack_rotamers = new PackRotamersMover( scorefxn_pack_ ); pack_rotamers->task_factory(tf_);
+	protocols::simple_moves::PackRotamersMoverOP pack_rotamers = new protocols::simple_moves::PackRotamersMover( scorefxn_pack_ ); pack_rotamers->task_factory(tf_);
 	TrialMoverOP pack_interface_and_move_loops_trial = new TrialMover( pack_rotamers, mc_);
 	repack_step->add_mover(pack_interface_and_move_loops_trial);
 

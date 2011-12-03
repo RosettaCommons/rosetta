@@ -54,16 +54,16 @@
 //movers
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
-#include <protocols/moves/TorsionDOFMover.hh>
+#include <protocols/simple_moves/TorsionDOFMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -395,35 +395,35 @@ public:
 		shear_mover->angle_max( 'E', 4.0 );
 		shear_mover->angle_max( 'L', 4.0 );
 
-		protocols::moves::TorsionDOFMoverOP DOF_mover_chi1(new protocols::moves::TorsionDOFMover);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_chi1(new protocols::simple_moves::TorsionDOFMover);
 		DOF_mover_chi1->set_DOF(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4]);
 		DOF_mover_chi1->check_mmt(true);
 		DOF_mover_chi1->temp(0.4);
 		DOF_mover_chi1->set_angle_range(-180, 180);
 		DOF_mover_chi1->tries(1000);
 
-		protocols::moves::TorsionDOFMoverOP DOF_mover_chi2(new protocols::moves::TorsionDOFMover);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_chi2(new protocols::simple_moves::TorsionDOFMover);
 		DOF_mover_chi2->set_DOF(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]);
 		DOF_mover_chi2->check_mmt(true);
 		DOF_mover_chi2->temp(0.4);
 		DOF_mover_chi2->set_angle_range(-180, 180);
 		DOF_mover_chi2->tries(1000);
 
-		protocols::moves::TorsionDOFMoverOP DOF_mover_thioester(new protocols::moves::TorsionDOFMover);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_thioester(new protocols::simple_moves::TorsionDOFMover);
 		DOF_mover_thioester->set_DOF(atomIDs[3], atomIDs[4], atomIDs[5], atomIDs[6]);
 		DOF_mover_thioester->check_mmt(true);
 		DOF_mover_thioester->temp(0.4);
 		DOF_mover_thioester->set_angle_range(-180, 180);
 		DOF_mover_thioester->tries(1000);
 
-		protocols::moves::TorsionDOFMoverOP DOF_mover_psi(new protocols::moves::TorsionDOFMover);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_psi(new protocols::simple_moves::TorsionDOFMover);
 		DOF_mover_psi->set_DOF(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7]);
 		DOF_mover_psi->check_mmt(true);
 		DOF_mover_psi->temp(0.4);
 		DOF_mover_psi->set_angle_range(-180, 180);
 		DOF_mover_psi->tries(1000);
 
-		protocols::moves::TorsionDOFMoverOP DOF_mover_phi(new protocols::moves::TorsionDOFMover);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_phi(new protocols::simple_moves::TorsionDOFMover);
 		DOF_mover_phi->set_DOF(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8]);
 		DOF_mover_phi->check_mmt(true);
 		DOF_mover_phi->temp(0.4);
@@ -459,9 +459,9 @@ public:
 		}
 
 		/////////////////////////minimize backbone DOFs//////////////////////////////////////////////
-		using protocols::moves::MinMoverOP;
-		using protocols::moves::MinMover;
-		MinMoverOP min_mover = new MinMover(
+		using protocols::simple_moves::MinMoverOP;
+		using protocols::simple_moves::MinMover;
+		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
 																				thioester_mm_,
 																				fullatom_scorefunction_,
 																				basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
@@ -469,9 +469,9 @@ public:
 																				true /*use_nblist*/ );
 
 		/////////////////////////////////rotamer trials mover///////////////////////////////////////////
-		using protocols::moves::RotamerTrialsMoverOP;
-		using protocols::moves::EnergyCutRotamerTrialsMover;
-		RotamerTrialsMoverOP rt_mover(new EnergyCutRotamerTrialsMover(
+		using protocols::simple_moves::RotamerTrialsMoverOP;
+		using protocols::simple_moves::EnergyCutRotamerTrialsMover;
+		protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
 																																	fullatom_scorefunction_,
 																																	task_factory_,
 																																	mc,
@@ -489,20 +489,20 @@ public:
 																																											20.0));
 
 		///////////////////////////////repack///////////////////////////////////////////////
-		protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 		pack_mover->task_factory( task_factory_ );
 		pack_mover->score_function( fullatom_scorefunction_ );
 
-		MinMoverOP min_mover_pack = new MinMover(
+		protocols::simple_moves::MinMoverOP min_mover_pack = new protocols::simple_moves::MinMover(
 																						 thioester_mm_,
 																						 fullatom_scorefunction_,
 																						 basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 																						 0.01,
 																						 true /*use_nblist*/ );
 
-		using protocols::moves::TaskAwareMinMoverOP;
-		using protocols::moves::TaskAwareMinMover;
-		TaskAwareMinMoverOP TAmin_mover = new TaskAwareMinMover(min_mover_pack, task_factory_);
+		using protocols::simple_moves::TaskAwareMinMoverOP;
+		using protocols::simple_moves::TaskAwareMinMover;
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover_pack, task_factory_);
 
 		/////////////////////////////////////////refine loop///////////////////////////////////////////
 

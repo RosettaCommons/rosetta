@@ -39,7 +39,7 @@
 #include <protocols/jobdist/not_universal_main.hh>
 // AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <pstream.h>
 #include <sstream>
 // AUTO-REMOVED #include <time.h>

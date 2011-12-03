@@ -314,7 +314,7 @@ void design_dyad(Pose & pose, Size const r1, Size const r2, ScoreFunctionOP sf, 
 		}
 	}
 	// TR << *task << std::endl;
-	protocols::moves::PackRotamersMover repack( sf, task );
+	protocols::simple_moves::PackRotamersMover repack( sf, task );
 	repack.apply(pose);
 
 	sf->show(pose);

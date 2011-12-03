@@ -54,7 +54,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
@@ -114,7 +114,7 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->clear();
 	mm->set_chi( true );
-	protocols::moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone", 1e-5, true, false  );
+	protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone", 1e-5, true, false  );
 	min_mover.apply( pose );
 
 	// split the pose into separate chains

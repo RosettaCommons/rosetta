@@ -78,19 +78,19 @@ static numeric::random::RandomGenerator RG(4227034);
 //     at the end, partners are slid into contact and scored
 //
 	// default constructor
-	SymDockingInitialPerturbation::SymDockingInitialPerturbation() : Mover()
+	SymDockingInitialPerturbation::SymDockingInitialPerturbation() : protocols::moves::Mover()
 	{
 		slide_ = false;
-		Mover::type( "SymmDockingInitialPerturbation" );
+		protocols::moves::Mover::type( "SymmDockingInitialPerturbation" );
 	}
 
 	// constructor with arguments
 	SymDockingInitialPerturbation::SymDockingInitialPerturbation(
 		bool const slide_in
-	) : Mover(),
+	) : protocols::moves::Mover(),
 			slide_(slide_in)
 	{
-		Mover::type( "SymmDockingInitialPerturbation" );
+		protocols::moves::Mover::type( "SymmDockingInitialPerturbation" );
 	}
 
 SymDockingInitialPerturbation::~SymDockingInitialPerturbation(){}
@@ -167,16 +167,16 @@ SymDockingInitialPerturbation::get_name() const {
 
 
 	// default constructor
-	SymDockingSlideIntoContact::SymDockingSlideIntoContact() : Mover() {	}
+	SymDockingSlideIntoContact::SymDockingSlideIntoContact() : protocols::moves::Mover() {	}
 
 	// constructor with arguments
 	SymDockingSlideIntoContact::SymDockingSlideIntoContact(
 		std::map< Size, core::conformation::symmetry::SymDof > dofs
-	) : Mover(),
+	) : protocols::moves::Mover(),
 			dofs_(dofs)
 	{
 
-		Mover::type( "SymDockingSlideIntoContact" );
+		protocols::moves::Mover::type( "SymDockingSlideIntoContact" );
 		core::scoring::symmetry::SymmetricScoreFunction scorefxn_sym ( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH ) );
 		scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_sym );
 	}
@@ -234,11 +234,11 @@ SymDockingSlideIntoContact::get_name() const {
 
 	FaSymDockingSlideTogether::FaSymDockingSlideTogether(
 		std::map< Size, core::conformation::symmetry::SymDof > dofs
-	) : Mover(),
+	) : protocols::moves::Mover(),
 			dofs_(dofs),
 			tolerance_(0.2)
 	{
-		Mover::type( "FaSymDockingSlideTogether" );
+		protocols::moves::Mover::type( "FaSymDockingSlideTogether" );
 		scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
 		scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 	}

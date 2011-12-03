@@ -51,7 +51,7 @@ namespace docking {
 
 DockingLowResFilter::DockingLowResFilter() : Filter()
 {
-	using namespace protocols::filters;
+	using namespace protocols::simple_filters;
 	using namespace core::scoring;
 
 	ScoreCutoffFilterOP hascontacts = new ScoreCutoffFilter();
@@ -64,7 +64,7 @@ DockingLowResFilter::DockingLowResFilter() : Filter()
 	fewclashes->set_unweighted( true );
 	fewclashes->set_cutoff(1.0); // no more than 1.0 clash (low-res bump score)
 
-	filters_ = new FilterCollection();
+	filters_ = new protocols::filters::FilterCollection();
 	filters_->add_filter( hascontacts );
 	filters_->add_filter( fewclashes );
 }
@@ -81,7 +81,7 @@ DockingLowResFilter::~DockingLowResFilter() {}
 void
 DockingLowResFilter::set_use_constraints( bool setting, core::Real cutoff )
 {
-	using namespace protocols::filters;
+	using namespace protocols::simple_filters;
 	using namespace core::scoring;
 
 	use_constraints_ = setting;
@@ -116,7 +116,7 @@ DockingHighResFilter::DockingHighResFilter( ) : Filter()
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
 	scorefunction_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
 	score_margin_ = 0.0;
-	scorefilter_ = new protocols::filters::ScoreCutoffFilter();
+	scorefilter_ = new protocols::simple_filters::ScoreCutoffFilter();
 	scorefilter_->set_score_type( core::scoring::total_score );
 	scorefilter_->set_cutoff( 1000000.0 );
 }

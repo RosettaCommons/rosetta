@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -133,20 +133,20 @@ FinalMinimizer::apply( core::pose::Pose & pose ){
 		MinimizeBackbone backbone_foldtree_setup(bb_interface_builder);
 		backbone_foldtree_setup.apply(pose);
 
-		protocols::moves::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
+		protocols::simple_moves::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
 		dfpMinTightTol->apply(pose);
 		pose.fold_tree(fold_tree_copy);
 	}
 	else{
-		protocols::moves::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
+		protocols::simple_moves::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
 		dfpMinTightTol->apply(pose);
 	}
 
 }
 
-protocols::moves::MinMoverOP const
+protocols::simple_moves::MinMoverOP const
 FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose) const{
 	std::string min_type= "dfpmin_armijo_nonmonotone_atol";
 	core::Real tolerance= 0.02;
@@ -154,7 +154,7 @@ FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose) const{
 	core::kinematics::MoveMapOP movemap= movemap_builder_->build(pose);
 	movemap->show(FinalMinimizer_tracer, pose.n_residue());
 	FinalMinimizer_tracer<< std::endl;
-	return new protocols::moves::MinMover(movemap, score_fxn_, min_type, tolerance, use_nb_list);
+	return new protocols::simple_moves::MinMover(movemap, score_fxn_, min_type, tolerance, use_nb_list);
 }
 
 } //namespace ligand_docking

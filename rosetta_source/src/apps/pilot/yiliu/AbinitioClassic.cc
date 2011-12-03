@@ -100,13 +100,13 @@
 #include <protocols/loops/looprelax_protocols.hh>
 
 #include <protocols/filters/Filter.hh>
-#include <protocols/filters/RGFilter.hh>
-#include <protocols/filters/COFilter.hh>
-#include <protocols/filters/SheetFilter.hh>
+#include <protocols/simple_filters/RGFilter.hh>
+#include <protocols/simple_filters/COFilter.hh>
+#include <protocols/simple_filters/SheetFilter.hh>
 
 #include <protocols/abinitio/KinematicTaskControl.hh>
 
-//#include <protocols/moves/MinMover.hh>
+//#include <protocols/simple_moves/MinMover.hh>
 
 //numeric headers
 #include <numeric/random/random.hh>

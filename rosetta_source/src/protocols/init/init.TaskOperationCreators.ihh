@@ -1,0 +1,46 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   src/protocols/init/init.TaskOperationCreators.ihh
+/// @brief  Creator #includes for TaskOperations for init
+/// @author Steven Lewis smlewi@gmail.com
+
+//TaskOperationCreator #includes
+#include <core/pack/task/operation/TaskOperationRegistrator.hh>
+
+#include <protocols/dna/RestrictDesignToProteinDNAInterfaceCreator.hh>
+#include <protocols/dna/WatsonCrickRotamerCouplingsCreator.hh>
+
+#include <protocols/enzdes/AddLigandMotifRotamersOperationCreator.hh>
+#include <protocols/enzdes/AddRigidBodyLigandConfsCreator.hh>
+#include <protocols/enzdes/DetectProteinLigandInterfaceOperationCreator.hh>
+#include <protocols/enzdes/ProteinLigandInterfaceUpweighterOperationCreator.hh>
+#include <protocols/enzdes/SetCatalyticResPackBehaviorCreator.hh>
+
+#include <protocols/flxbb/LayerDesignOperationCreator.hh>
+
+#include <protocols/forge/remodel/RemodelRotamerLinksCreator.hh>
+
+#include <protocols/toolbox/task_operations/DesignAroundOperationCreator.hh>
+#include <protocols/toolbox/task_operations/JointSequenceOperationCreator.hh>
+#include <protocols/toolbox/task_operations/LimitAromaChi2OperationCreator.hh>
+#include <protocols/toolbox/task_operations/PreventChainFromRepackingOperationCreator.hh>
+#include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperationCreator.hh>
+#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperationCreator.hh>
+#include <protocols/toolbox/task_operations/ReadResfileFromDBCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictByCalculatorsOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictNonSurfaceToRepackingOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictResiduesToRepackingOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterfaceCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterfaceOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperationCreator.hh>
+#include <protocols/toolbox/task_operations/SeqprofConsensusOperationCreator.hh> //also effectively RestrictConservedLowDdgOperationCreator.hh
+#include <protocols/toolbox/task_operations/ThreadSequenceOperationCreator.hh>

@@ -39,7 +39,7 @@
 #include <basic/options/option.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -119,7 +119,7 @@ void repack_pose( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
 	repack_task->set_bump_check( true );
 	repack_task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
 
-	moves::PackRotamersMoverOP repack_protocol( new moves::PackRotamersMover( scorefxn, repack_task, 1 /*ndruns value hardcoded*/ ) );
+	protocols::simple_moves::PackRotamersMoverOP repack_protocol( new protocols::simple_moves::PackRotamersMover( scorefxn, repack_task, 1 /*ndruns value hardcoded*/ ) );
 	repack_protocol->apply( pose );
 
 	return;

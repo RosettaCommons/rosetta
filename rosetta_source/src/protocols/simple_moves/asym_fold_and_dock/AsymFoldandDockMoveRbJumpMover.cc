@@ -42,11 +42,11 @@ namespace protocols {
 namespace simple_moves {
 namespace asym_fold_and_dock {
 
-static basic::Tracer TR("protocols.moves.symmetry.AsymFoldandDockMoveRbJumpMover");
+static basic::Tracer TR("protocols.simple_moves.symmetry.AsymFoldandDockMoveRbJumpMover");
 static numeric::random::RandomGenerator RG(44525243); // <- Magic number, do not change it!!!
 
 AsymFoldandDockMoveRbJumpMover::AsymFoldandDockMoveRbJumpMover( core::Size chain_start )
-	: Mover("AsymFoldandDockMoveRbJumpMover"), chain_start_( chain_start )
+	: protocols::moves::Mover("AsymFoldandDockMoveRbJumpMover"), chain_start_( chain_start )
 {}
 
 void

@@ -77,7 +77,7 @@
 
 #include <protocols/jumping/JumpSetup.hh>
 
-//#include <protocols/moves/MinMover.hh>
+//#include <protocols/simple_moves/MinMover.hh>
 
 //numeric headers
 #include <numeric/random/random.hh>

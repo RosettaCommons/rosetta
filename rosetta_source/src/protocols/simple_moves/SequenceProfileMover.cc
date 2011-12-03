@@ -46,7 +46,7 @@ namespace protocols {
 namespace simple_moves {
 
 SequenceProfileMover::SequenceProfileMover() :
-	Mover( "SequenceProfileMover" )
+	protocols::moves::Mover( "SequenceProfileMover" )
 {
 }
 

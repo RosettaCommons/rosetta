@@ -68,8 +68,8 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
@@ -228,7 +228,7 @@ void minimize(Pose & pose, ScoreFunctionOP sf, vector1<Size> matchres) {
     protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
     m.apply(pose);
   } else {
-    protocols::moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+    protocols::simple_moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
     m.apply(pose);
   }
 
@@ -334,7 +334,7 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
-    protocols::moves::PackRotamersMover repack( sf, task );
+    protocols::simple_moves::PackRotamersMover repack( sf, task );
     repack.apply(pose);
   }
 
@@ -359,7 +359,7 @@ void repack(Pose & pose, ScoreFunctionOP sf, Size /*end_of_prot_1*/, vector1<Siz
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
-    protocols::moves::PackRotamersMover repack( sf, task );
+    protocols::simple_moves::PackRotamersMover repack( sf, task );
     repack.apply(pose);
   }
 }
@@ -447,7 +447,7 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
-    protocols::moves::PackRotamersMover repack( sf, task );
+    protocols::simple_moves::PackRotamersMover repack( sf, task );
     repack.apply(pose);
   }
 

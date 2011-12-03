@@ -32,7 +32,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/filters/ScoreCutoffFilter.hh>
+// AUTO-REMOVED #include <protocols/simple_filters/ScoreCutoffFilter.hh>
 
 #include <string>
 

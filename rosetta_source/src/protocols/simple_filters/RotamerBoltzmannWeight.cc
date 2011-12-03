@@ -31,7 +31,7 @@
 // AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
@@ -340,7 +340,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		min_mover = new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ); // NK 110621
 	} else {
-		min_mover = new protocols::moves::MinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ); // NK 110621
+		min_mover = new protocols::simple_moves::MinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ); // NK 110621
 	}
 	min_mover->apply( pose );
 	core::pose::Pose const const_min_pose( pose );

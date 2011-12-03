@@ -35,7 +35,7 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -131,8 +131,8 @@ void run_test() {
 	movemap->set_jump( rb_move_jump, true );
 	bool const deriv_check(true);
 	bool const deriv_check_verbose(true);
-	protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( movemap, scorefxn, "linmin", 0.00001, true, deriv_check, deriv_check_verbose );
-	//	protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( movemap, scorefxn, "dfpmin", 0.0001, true, deriv_check, deriv_check_verbose );
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "linmin", 0.00001, true, deriv_check, deriv_check_verbose );
+	//	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin", 0.0001, true, deriv_check, deriv_check_verbose );
 	(*scorefxn)(pose);
 	min_mover->apply( pose );
 	pose.dump_pdb("minimized.pdb");

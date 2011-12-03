@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/filters/ContingentFilter.hh
+/// @file protocols/simple_filters/ContingentFilter.hh
 /// @brief A filter that is contingent on some other mover to set its pass/fail value
 /// @author Sarel Fleishman (sarelf@uw.edu)
 

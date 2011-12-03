@@ -789,7 +789,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
-    protocols::moves::PackRotamersMover repack( sf, task );
+    protocols::simple_moves::PackRotamersMover repack( sf, task );
     repack.apply(pose);
   }
 
@@ -812,7 +812,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
   //  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
   //  m.apply(pose);
   // } else {
-  //  protocols::moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+  //  protocols::simple_moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
   //  m.apply(pose);
   // }
   // //TR << "done" << std::endl;
@@ -855,7 +855,7 @@ Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real &
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(p);
   } else {
-    protocols::moves::PackRotamersMover repack( sf, task );
+    protocols::simple_moves::PackRotamersMover repack( sf, task );
     repack.apply(p);
   }
   Real s0 = sf->score(p);
@@ -870,7 +870,7 @@ Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real &
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(p);
   } else {
-    protocols::moves::PackRotamersMover repack( sf, task );
+    protocols::simple_moves::PackRotamersMover repack( sf, task );
     repack.apply(p);
   }
   Real s1 = sf->score(p);

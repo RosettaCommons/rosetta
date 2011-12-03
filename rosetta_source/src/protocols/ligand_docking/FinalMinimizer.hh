@@ -24,7 +24,7 @@
 //// Project Headers
 #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/MinMover.fwd.hh>
 
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -66,7 +66,7 @@ private:
 	core::scoring::ScoreFunctionOP score_fxn_;
 	MoveMapBuilderOP movemap_builder_;
 
-	protocols::moves::MinMoverOP const
+	protocols::simple_moves::MinMoverOP const
 	get_final_min_mover(core::pose::Pose const & pose) const;
 };
 

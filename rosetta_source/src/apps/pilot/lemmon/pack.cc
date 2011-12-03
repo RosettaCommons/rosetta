@@ -32,7 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 
 // option key includes
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 		std::string pdb=pdbs[0];
 		core::import_pose::pose_from_pdb(pose, pdb);
 	}
-	protocols::moves::PackRotamersMover mover;
+	protocols::simple_moves::PackRotamersMover mover;
 	mover.apply(pose);
 	{
 		const std::string output("output.pdb");

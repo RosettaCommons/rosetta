@@ -26,7 +26,7 @@
  #include <core/scoring/methods/Methods.hh>
 
  #include <protocols/simple_moves/BackboneMover.hh>
- #include <protocols/moves/MinMover.hh>
+ #include <protocols/simple_moves/MinMover.hh>
  #include <protocols/moves/MonteCarlo.hh>
  #include <protocols/moves/Mover.hh>
  #include <protocols/moves/MoverContainer.hh>
@@ -34,8 +34,8 @@
  #include <protocols/rigid/RigidBodyMover.hh>
  // #include <protocols/moves/rigid_body_moves.hh>
  #include <protocols/moves/TrialMover.hh>
- #include <protocols/moves/PackRotamersMover.hh>
- #include <protocols/moves/RotamerTrialsMover.hh>
+ #include <protocols/simple_moves/PackRotamersMover.hh>
+ #include <protocols/simple_moves/RotamerTrialsMover.hh>
  #include <protocols/moves/RepeatMover.hh>
 
  #include <protocols/loops/ccd_closure.hh>
@@ -521,7 +521,7 @@ pep_scan_analysis(
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_mut_nbr );
-			MinMoverOP min_mover = new MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
 
 			//define design task and repack task
 			pack::task::RestrictResidueToRepackingOperationOP restrict_to_repack_taskop( new pack::task::RestrictResidueToRepackingOperation() );
@@ -543,8 +543,8 @@ pep_scan_analysis(
 			rottrial_task_factory->push_back( restrict_to_repack_taskop );
 			rottrial_task_factory->push_back( prevent_repack_taskop );
 
-			PackRotamersMoverOP pack( new PackRotamersMover( soft_scorefxn, rp_task, 1 ) );
-			RotamerTrialsMoverOP rottrial ( new RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
+			protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, rp_task, 1 ) );
+			protocols::simple_moves::RotamerTrialsMoverOP rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
 			SequenceMoverOP seq = new SequenceMover;
 			if( !option[ pep_spec::test_no_pack ] ){
 				seq->add_mover( pack );
@@ -590,7 +590,7 @@ pep_scan_analysis(
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_mut_nbr );
-			MinMoverOP min_mover = new MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
 
 			//define design task and repack task
 			pack::task::RestrictResidueToRepackingOperationOP restrict_to_repack_taskop( new pack::task::RestrictResidueToRepackingOperation() );
@@ -612,8 +612,8 @@ pep_scan_analysis(
 			rottrial_task_factory->push_back( restrict_to_repack_taskop );
 			rottrial_task_factory->push_back( prevent_repack_taskop );
 
-			PackRotamersMoverOP pack( new PackRotamersMover( soft_scorefxn, rp_task, 1 ) );
-			RotamerTrialsMoverOP rottrial ( new RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
+			protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, rp_task, 1 ) );
+			protocols::simple_moves::RotamerTrialsMoverOP rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
 			SequenceMoverOP design_seq = new SequenceMover;
 			if( !option[ pep_spec::test_no_pack ] ){
 				design_seq->add_mover( pack );
@@ -784,7 +784,7 @@ RunPepSpec()
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_pep_nbr );
-			MinMoverOP min_mover = new MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
 		}
 */
 

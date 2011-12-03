@@ -31,7 +31,7 @@
 #include <protocols/jobdist/not_universal_main.hh>
 // AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>

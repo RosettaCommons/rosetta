@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ///@file protocols/simple_moves/ScoreMoverScoreMoverCreator.hh
-///@brief This class will create instances of Mover ScoreMover for the MoverFactory
+///@brief This class will create instances of protocols::moves::Mover ScoreMover for the protocols::moves::MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_ScoreMoverCreator_hh

@@ -98,7 +98,7 @@ DnaInterfaceMultiStateDesignCreator::mover_name()
 }
 
 DnaInterfaceMultiStateDesign::DnaInterfaceMultiStateDesign()
-	: PackRotamersMover( DnaInterfaceMultiStateDesignCreator::mover_name() ),
+	: protocols::simple_moves::PackRotamersMover( DnaInterfaceMultiStateDesignCreator::mover_name() ),
 		gen_alg_(0),
 		multistate_packer_(0),
 		dna_chains_(0),

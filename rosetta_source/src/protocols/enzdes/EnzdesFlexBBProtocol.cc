@@ -52,12 +52,12 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-#include <protocols/filters/ScoreCutoffFilter.hh> // for filtering kinematic mover
+#include <protocols/simple_filters/ScoreCutoffFilter.hh> // for filtering kinematic mover
 #include <protocols/loops/Loops.hh> //input file reading
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
@@ -718,7 +718,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	if ( basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
 
-		protocols::filters::ScoreCutoffFilterOP bump_filter = new protocols::filters::ScoreCutoffFilter();
+		protocols::simple_filters::ScoreCutoffFilterOP bump_filter = new protocols::simple_filters::ScoreCutoffFilter();
 		bump_filter->set_positions( flex_regions_[region]->positions() );
 		bump_filter->set_score_type( core::scoring::fa_rep );
 		bump_filter->set_cutoff( bump_filter->get_score( pose ) + region_size * 0.2 );
@@ -1332,7 +1332,7 @@ EnzdesFlexBBProtocol::setup_catalytic_residue_minimization_for_region(
 		}
 	}
 
-	catmin_mover_ = new protocols::moves::MinMover( catmin_movemap_, catmin_sfxn_, "linmin", 0.02, true /*use_nblist*/ );
+	catmin_mover_ = new protocols::simple_moves::MinMover( catmin_movemap_, catmin_sfxn_, "linmin", 0.02, true /*use_nblist*/ );
 	tr << std::endl;
 
 } //setup_catalytic_residue_minimization_for_region
@@ -2091,7 +2091,7 @@ EnzdesFlexibleRegion::minimize_region(
 	//trial_score->set_weight( core::scoring::mm_bend, 0.0 );
 	//(*trial_score)(pose);
 	(*min_scorefxn)(pose);
-	protocols::moves::MinMoverOP dfpMinTightTol = new protocols::moves::MinMover( movemap, min_scorefxn, "dfpmin_armijo_nonmonotone_atol", min_tolerance, true  );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol = new protocols::simple_moves::MinMover( movemap, min_scorefxn, "dfpmin_armijo_nonmonotone_atol", min_tolerance, true  );
 	dfpMinTightTol->apply(pose);
 	core::Real totE_end = (*scorefxn)(pose);
 	core::Real cbE_end = pose.energies().total_energies()[ core::scoring::chainbreak ];
