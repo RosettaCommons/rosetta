@@ -492,6 +492,45 @@ void Loops::read_loop_file(
 	tr.Warning << *this;
 }
 
+/// @detail Given the total number of residues, inverts this set
+/// of loops *correctly*. The similarly named "invert()" method
+/// claims to do this, but has an error. In order to preserve
+/// existing behavior, this method was added. Note: the inline
+/// comments are geared toward comparative modeling, but are
+/// not specific to it. Think of "unaligned" as this, "aligned"
+/// as the inverse.
+Loops Loops::rational_invert(core::Size num_residues) const {
+  Loops inv;
+
+  // no unaligned regions
+  if (!num_loop()) {
+    inv.add_loop(1, num_residues);
+    return inv;
+  }
+
+  // aligned region preceding first unaligned region
+  const Loop& first = loops_[1];
+  if (first.start() != 1) {
+    inv.add_loop(Loop(1, first.start() - 1));
+  }
+
+  // aligned region following last unaligned region
+  const Loop& last = loops_[num_loop()];
+  if (last.stop() != num_residues) {
+    inv.add_loop(Loop(last.stop() + 1, num_residues));
+  }
+
+  // aligned regions in between unaligned regions
+  for (unsigned i = 2; i <= num_loop(); ++i) {
+    const Loop& prev = loops_[i - 1];
+    const Loop& curr = loops_[i];
+    inv.add_loop(Loop(prev.stop() + 1, curr.start() - 1));
+  }
+
+  inv.sequential_order();
+  return inv;
+}
+
 Loops Loops::invert( core::Size total_res ) const {
 	Loops core; //the opposite of loops
 
