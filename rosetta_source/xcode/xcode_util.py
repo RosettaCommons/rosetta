@@ -4,6 +4,11 @@ import hashlib, os, string, sys
 #sys.path.append(PATH_TO_ROOT + 'script/')
 import build_util
 
+# group keys grep:
+# grep -A 30 'BE8A17150CA8365000D67A6F \/\* Sources \*\/ =' Rosetta.xcodeproj/project.pbxproj
+# protocols sources keys grep:
+# grep -A 500 '^\/\* Begin PBXNativeTarget' Rosetta.xcodeproj/project.pbxproj | grep -A 6 '\/\* protocols' | grep -E '(\/\* Sources|\/\* protocols)'
+
 PROJECT_KEYS = {  #        group                       sources
     'basic'       :      ('D1FC4A1A13687F50006C102D', 'D1FC49F813687F42006C102D'),
     'utility'     :      ('BEA64D500DB2E11C003495F8', 'BEDC3FB80CA84F63000FAD97'),
@@ -14,7 +19,22 @@ PROJECT_KEYS = {  #        group                       sources
     'core.3'      :      ('D1FC4A1C13687F7A006C102D', 'D139B7E413687E0F0030829C'),
     'core.4'      :      ('D1FC4A1D13687F7E006C102D', 'D139BA0C13687E180030829C'),
     'core.5'      :      ('D1FC4A1E13687F83006C102D', 'D139BC3413687E200030829C'),
-    'protocols'   :      ('BEA64BC10DB2E0EB003495F8', 'D1FD035D0E2851B800B3C702'),
+    'protocols.1'   :    ('BEA64BC10DB2E0EB003495F8', 'D1FD035D0E2851B800B3C702'),
+    'protocols.2'   :    ('3B94611C148C9E7300C2FBE5', '3B945C85148C9D5200C2FBE5'),
+    'protocols.3'   :    ('3B94619C148CA65600C2FBE5', '3B94613C148CA62A00C2FBE5'),
+    'protocols_a.4' :    ('3B946302148CB34900C2FBE5', '3B9461B7148CB2B700C2FBE5'),
+    'protocols_b.4' :    ('3B946482148CBB9E00C2FBE5', '3B946329148CBAD200C2FBE5'),
+    'protocols_c.4' :    ('3B946487148CBBDB00C2FBE5', '3B946374148CBAD400C2FBE5'),
+    'protocols_d.4' :    ('3B946486148CBBD700C2FBE5', '3B9463BE148CBAD600C2FBE5'),
+    'protocols_e.4' :    ('3B946485148CBBD300C2FBE5', '3B946408148CBB3F00C2FBE5'),
+    'protocols_f.4' :    ('3B946484148CBBCF00C2FBE5', '3B946452148CBB4200C2FBE5'),
+    'protocols_a.5' :    ('3B94653F148CBE4900C2FBE5', '3B9464A6148CBD9D00C2FBE5'),
+    'protocols_b.5' :    ('3B94653E148CBE4600C2FBE5', '3B9464EE148CBE0A00C2FBE5'),
+    'protocols_c.5' :    ('3B946483148CBBC700C2FBE5', '3B946529148CBE0C00C2FBE5'),
+    'protocols_a.6' :    ('3B94662E148CC04400C2FBE5', '3B94656E148CBF6800C2FBE5'),
+    'protocols_b.6' :    ('3B94662D148CC04100C2FBE5', '3B9465A0148CBF6E00C2FBE5'),
+    'protocols_c.6' :    ('3B94662C148CC03F00C2FBE5', '3B9465D1148CBF7000C2FBE5'),
+    'protocols.7'   :    ('3B94662B148CC03A00C2FBE5', '3B94661A148CBFBF00C2FBE5'),
     #'interactive' :      ('BE8A199B0CA8367500D67A6F', 'BEDC41120CA85A65000FAD97'),
     #'game'        :      ('D1CA2C0E110BFEC30085C48B', 'D1CA2C08110BFE910085C48B'),
     #'interactive.test' : ('D18BC31A0FCDF26D000AE673', 'D18BC3030FCDF1C6000AE673'),
