@@ -88,6 +88,11 @@ public:
 		core::pose::Pose const & pose
 	);
 
+	virtual void reset(
+		protocols::moves::MonteCarlo const& mc,
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+	);
+
 	virtual
 	void
 	finalize_simulation(
@@ -99,7 +104,8 @@ private:
 
 	void
 	write_model(
-		core::pose::Pose const & pose
+		core::pose::Pose const & pose,
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	utility::io::ozstream trajectory_stream_;

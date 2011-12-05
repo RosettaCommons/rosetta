@@ -75,12 +75,29 @@ public:
 		core::pose::Pose const & pose
 	);
 
+	std::string const& current_output_name() const {
+		return current_output_name_;
+	}
+
+	virtual void initialize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	);
+
+	virtual	void observe_after_metropolis(
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	);
+
 protected:
 
-	virtual void 	write_model( core::pose::Pose const & pose );
+	virtual void 	write_model(
+		core::pose::Pose const & pose,
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+	);
 
 	core::Size score_stride_;
 
+	std::string current_output_name_;
 	static bool options_registered_;
 }; // SilentTrajectoryRecorder
 

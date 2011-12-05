@@ -28,8 +28,13 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/jd2/util.hh>
 
+// just for tracer output
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
+
 // External library headers
 #include <basic/options/option_macros.hh>
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <iomanip>
@@ -38,6 +43,8 @@
 
 // Forward declarations
 OPT_1GRP_KEY( Integer, trajectory, score_stride )
+
+static basic::Tracer tr( "protocols.canonical_sampling.SilentTrajectoryRecorder" );
 
 bool protocols::canonical_sampling::SilentTrajectoryRecorder::options_registered_( false );
 
@@ -117,11 +124,53 @@ SilentTrajectoryRecorder::parse_my_tag(
 
 void
 SilentTrajectoryRecorder::write_model(
-	core::pose::Pose const & pose
+	core::pose::Pose const & pose,
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 ) {
 	runtime_assert( jd2::jd2_used() );
 	core::Size mc = model_count();
 	jd2::output_intermediate_pose( pose, current_output_name(), mc,  ( mc % score_stride_ ) != 0 && mc > 1 ); //write always first a structure
+}
+
+void
+SilentTrajectoryRecorder::initialize_simulation(
+  core::pose::Pose & pose,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover )
+{
+	if ( !cumulate_replicas() && metropolis_hastings_mover.output_name() != "" ) {
+		std::ostringstream filename;
+		current_output_name_ = metropolis_hastings_mover.output_name();
+		tr.Info << "obtained output name " << current_output_name_ << " from MetropolisHastings Object" << std::endl;
+	} else {
+		current_output_name_ = file_name();
+		tr.Info << "no output name obtained because " << ( cumulate_replicas() ? " cumulate-mode " : " not available " ) << std::endl;
+	}
+	Parent::initialize_simulation(pose, metropolis_hastings_mover);
+	tr.Info << std::setprecision( 3 );
+	tr.Debug << std::setprecision( 3 );
+}
+
+void
+SilentTrajectoryRecorder::observe_after_metropolis(
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+)
+{
+	protocols::moves::MonteCarlo const& mc( *(metropolis_hastings_mover.monte_carlo()) );
+	Pose const& pose( mc.last_accepted_pose() );
+	if (step_count() % std::max(stride(),(core::Size)500) == 0) {
+		if ( tr.Info.visible() ) {
+			jd2::JobOP job( jd2::get_current_job() ) ;
+			tr.Info << step_count() << " E=" << pose.energies().total_energy();
+			//output what is in job-object (e.g. temperature )
+			for ( jd2::Job::StringRealPairs::const_iterator it( job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end()); it != end; ++it ) {
+				tr.Info << " " << it->first << "=" << it->second;
+			}
+			tr.Info << std::endl;
+		}
+		mc.show_counters();
+	}
+	
+	Parent::observe_after_metropolis(metropolis_hastings_mover);
 }
 
 

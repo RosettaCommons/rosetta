@@ -80,10 +80,6 @@ public:
 		file_name_ = file_name;
 	}
 
-	std::string const& current_output_name() const {
-		return current_output_name_;
-	}
-
 	core::Size model_count() const {
 		return model_count_;
 	}
@@ -96,20 +92,22 @@ public:
 		return stride_;
 	}
 
-	bool cumulate() const {
-		return cumulate_;
+	bool cumulate_replicas() const {
+		return cumulate_replicas_;
 	}
 
 	void stride( core::Size stride ) {
 		stride_ = stride;
 	}
 
-	void reset(
-		protocols::moves::MonteCarlo const& mc
+	virtual void reset(
+		protocols::moves::MonteCarlo const& mc,
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	void update_after_boltzmann(
-		core::pose::Pose const & pose
+		core::pose::Pose const & pose,
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	void update_after_boltzmann(
@@ -129,15 +127,17 @@ public:
 
 protected:
 
-	virtual void 	write_model( core::pose::Pose const & pose ) = 0;
+	virtual void 	write_model(
+		core::pose::Pose const & pose,
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+	) = 0;
 
 private:
 	core::Size stride_;
 	core::Size model_count_;
 	core::Size step_count_;
 	std::string file_name_;
-	std::string current_output_name_;
-	bool cumulate_;
+	bool cumulate_replicas_;
 
 	static bool options_registered_;
 }; // TrajectoryRecorder

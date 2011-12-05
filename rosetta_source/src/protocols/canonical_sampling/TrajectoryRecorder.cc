@@ -23,12 +23,8 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
-#include <protocols/jd2/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 
-// just for tracer output
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 // External library headers
 
 // C++ headers
@@ -43,7 +39,7 @@ static basic::Tracer tr( "protocols.canonical_sampling.TrajectoryRecorder" );
 // Operating system headers
 
 OPT_1GRP_KEY( Integer, trajectory, stride )
-OPT_1GRP_KEY( Boolean, trajectory, cumulate )
+OPT_1GRP_KEY( Boolean, trajectory, cumulate_replicas )
 
 bool protocols::canonical_sampling::TrajectoryRecorder::options_registered_( false );
 
@@ -53,7 +49,7 @@ void protocols::canonical_sampling::TrajectoryRecorder::register_options() {
   if ( options_registered_ ) return;
   options_registered_ = true;
 	NEW_OPT( trajectory::stride, "how often should a snapshot be written to the trajectory", 1 );
-	NEW_OPT( trajectory::cumulate, "write all decoys into the same trajectory file", false );
+	NEW_OPT( trajectory::cumulate_replicas, "write all decoys into the same trajectory file", false );
 }
 
 
@@ -64,13 +60,13 @@ TrajectoryRecorder::TrajectoryRecorder() :
 	stride_(1),
 	model_count_(0),
 	step_count_(0),
-	cumulate_( false )
+	cumulate_replicas_( false )
 {
   using namespace basic::options;
   using namespace OptionKeys;
 	if ( options_registered_ ) {
 		stride_ = option[ OptionKeys::trajectory::stride ]();
-		cumulate_ = option[ OptionKeys::trajectory::cumulate ]();
+		cumulate_replicas_ = option[ OptionKeys::trajectory::cumulate_replicas ]();
 	}
 	file_name_ = "traj";
 }
@@ -86,7 +82,7 @@ TrajectoryRecorder::TrajectoryRecorder(
 	model_count_(other.model_count_),
 	step_count_(other.step_count_),
 	file_name_(other.file_name_),
-	cumulate_( other.cumulate_ )
+	cumulate_replicas_( other.cumulate_replicas_ )
 {}
 
 TrajectoryRecorder&
@@ -113,24 +109,29 @@ TrajectoryRecorder::parse_my_tag(
 )
 {
 	stride_ = tag->getOption< core::Size >( "stride", 100 );
-	file_name_ = tag->getOption< std::string >( "filename", "traj" );
-	cumulate_= tag->getOption< bool > ("cumulate", false );
+	file_name_ = tag->getOption< std::string >( "filename", file_name_ );
+	cumulate_replicas_= tag->getOption< bool > ("cumulate_replicas", false );
 }
 
 void
-TrajectoryRecorder::reset( protocols::moves::MonteCarlo const & mc ) {
+TrajectoryRecorder::reset(
+	protocols::moves::MonteCarlo const & mc,
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+) {
 	model_count_ = 0;
 	step_count_ = 0;
-	//	write_model(mc.last_accepted_pose()); //why writing this model ? can fuck up score file
 }
 
 void
-TrajectoryRecorder::update_after_boltzmann(	core::pose::Pose const & pose ) {
+TrajectoryRecorder::update_after_boltzmann(
+	core::pose::Pose const & pose,
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	) {
 	++step_count_;
 
 	if (step_count_ % stride_ == 0) {
 		++model_count_;
-		write_model(pose);
+		write_model(pose, metropolis_hastings_mover);
 	}
 }
 
@@ -149,17 +150,10 @@ TrajectoryRecorder::initialize_simulation(
   core::pose::Pose & pose,
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover )
 {
-	if ( !cumulate_ && metropolis_hastings_mover.output_name() != "" ) {
-		std::ostringstream filename;
-		current_output_name_ = metropolis_hastings_mover.output_name();
-		tr.Info << "obtained output name " << current_output_name_ << " from MetropolisHastings Object" << std::endl;
-	} else {
-		current_output_name_ = file_name();
-		tr.Info << "no output name obtained because " << ( cumulate_ ? " cumulate-mode " : " not available " ) << std::endl;
-	}
-	reset(*(metropolis_hastings_mover.monte_carlo()));
-	tr.Info << std::setprecision( 3 );
-	tr.Debug << std::setprecision( 3 );
+	reset(
+		*(metropolis_hastings_mover.monte_carlo()),
+		&metropolis_hastings_mover
+	);
 }
 
 void
@@ -167,22 +161,10 @@ TrajectoryRecorder::observe_after_metropolis(
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
-	protocols::moves::MonteCarlo const& mc( *(metropolis_hastings_mover.monte_carlo()) );
-	Pose const& pose( mc.last_accepted_pose() );
-	if (step_count_ % std::max(stride_,(core::Size)500) == 0) {
-		if ( tr.Info.visible() ) {
-			jd2::JobOP job( jd2::get_current_job() ) ;
-			tr.Info << step_count_ << " E=" << pose.energies().total_energy();
-			//output what is in job-object (e.g. temperature )
-			for ( jd2::Job::StringRealPairs::const_iterator it( job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end()); it != end; ++it ) {
-				tr.Info << " " << it->first << "=" << it->second;
-			}
-			tr.Info << std::endl;
-		}
-		mc.show_counters();
-	}
-	update_after_boltzmann(*(metropolis_hastings_mover.monte_carlo()));
-
+	update_after_boltzmann(
+		metropolis_hastings_mover.monte_carlo()->last_accepted_pose(),
+		&metropolis_hastings_mover
+	);
 }
 
 } // namespace canonical_sampling

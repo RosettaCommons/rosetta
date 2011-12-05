@@ -22,9 +22,11 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
+#include <protocols/canonical_sampling/TemperingBase.hh>
 #include <protocols/jd2/ScoreMap.hh>
+#include <protocols/jd2/util.hh>
+#include <protocols/moves/MonteCarlo.hh>
 #include <utility/tag/Tag.hh>
 
 // External library headers
@@ -55,7 +57,10 @@ PDBTrajectoryRecorderCreator::mover_name() {
 	return "PDBTrajectoryRecorder";
 }
 
-PDBTrajectoryRecorder::PDBTrajectoryRecorder() {}
+PDBTrajectoryRecorder::PDBTrajectoryRecorder()
+{
+	file_name("traj.pdb");
+}
 
 PDBTrajectoryRecorder::~PDBTrajectoryRecorder() {}
 
@@ -102,16 +107,33 @@ PDBTrajectoryRecorder::parse_my_tag(
 }
 
 void
+PDBTrajectoryRecorder::reset(
+	protocols::moves::MonteCarlo const & mc,
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+)
+{
+	Parent::reset(mc, metropolis_hastings_mover);
+	write_model(mc.last_accepted_pose(), metropolis_hastings_mover);
+}
+
+void
 PDBTrajectoryRecorder::write_model(
-	core::pose::Pose const & pose
+	core::pose::Pose const & pose,
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 )
 {
 	if (trajectory_stream_.filename() == "") {
-		std::string filename( cumulate() ? file_name() : current_output_name()+"_"+file_name() );
-		if ( filename.find( ".pdb" ) == std::string::npos ) {
-			filename = filename+".pdb";
-		}
+
+		std::string filename( metropolis_hastings_mover ? metropolis_hastings_mover->output_file_name(file_name(), cumulate_replicas()) : file_name() );
+
 		trajectory_stream_.open( filename );
+	}
+
+	int replica = protocols::jd2::current_replica();
+
+	TemperingBaseCAP tempering = 0;
+	if (metropolis_hastings_mover) {
+		tempering = dynamic_cast< TemperingBase const * >( metropolis_hastings_mover->tempering()() );
 	}
 
 	std::map < std::string, core::Real > score_map;
@@ -120,11 +142,13 @@ PDBTrajectoryRecorder::write_model(
 	core::io::raw_data::ScoreStruct score_struct;
 
 	trajectory_stream_ << "MODEL     " << std::setw(4) << model_count() << std::endl;
-	trajectory_stream_ << "REMARK  99 " << step_count() << std::endl;
-	trajectory_stream_ << "REMARK  98 " << pose.energies().total_energy() << std::endl;
-	trajectory_stream_ << "REMARK  97 ";
+	trajectory_stream_ << "REMARK  99 Trial: " << step_count() << std::endl;
+	if (replica >= 0) trajectory_stream_ << "REMARK  99 Replica: " << replica << std::endl;
+	if (tempering) trajectory_stream_ << "REMARK  99 Temperature: " << metropolis_hastings_mover->monte_carlo()->temperature() << std::endl;
+	trajectory_stream_ << "REMARK  99 Score: " << pose.energies().total_energy() << std::endl;
+	trajectory_stream_ << "REMARK  99 ";
 	score_struct.print_header(trajectory_stream_, score_map, string_map, false);
-	trajectory_stream_ << "REMARK  97 ";
+	trajectory_stream_ << "REMARK  99 ";
 	score_struct.print_scores(trajectory_stream_, score_map, string_map);
 
 	pose.dump_pdb(trajectory_stream_);
