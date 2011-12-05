@@ -25,6 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -155,6 +156,7 @@ private:
 	core::Real temp_initial_, temp_final_;
 	bool packing_isolated_to_active_loops_;
 	bool set_fold_tree_from_loops_;
+	core::kinematics::MoveMapOP move_map_;
 
 }; // LoopMover_Refine_CCD
 

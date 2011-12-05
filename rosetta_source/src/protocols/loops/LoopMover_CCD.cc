@@ -20,7 +20,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <boost/foreach.hpp>
+#include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
 // Rosetta Headers
@@ -106,7 +106,6 @@ LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
 ) : IndependentLoopMover( loops_in )
 {
 	scorefxn_ = get_cen_scorefxn();
-
 	protocols::moves::Mover::type("LoopMover_Perturb_CCD");
 	set_default_settings();
 }
@@ -541,9 +540,22 @@ core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const 
 
 void
 LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
-
+  packing_isolated_to_active_loops_ = false;
 	//using parser implies that the fold tree probably isn't set correctly
 	set_fold_tree_from_loops( tag->getOption< bool >( "set_fold_tree_from_loops", true ) );
+	utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );
+	bool specified_movemap( false );
+	foreach( utility::tag::TagPtr const tag, branch_tags ){
+		if( tag->getName() == "MoveMap" ) specified_movemap = true;
+		break;
+	}
+	if( specified_movemap ){
+		move_map_ = new core::kinematics::MoveMap;
+		move_map_->set_bb( false );
+		move_map_->set_chi( false );
+		move_map_->set_jump( false );
+		protocols::rosetta_scripts::parse_movemap( tag, pose, move_map_, data, false/*don't reset movemap, keep falses, unless stated otherwise*/ );
+	}
 	if( tag->hasOption( "loops" ) ){
 		std::string const loops_str( tag->getOption< std::string >( "loops" ) );
 		loops( loops_from_string( loops_str, pose ) );
@@ -560,6 +572,8 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 
 	if( tag->hasOption( "outer_cycles" ) ) outer_cycles_ = tag->getOption<core::Size>( "outer_cycles", 3 );
 	if( tag->hasOption( "max_inner_cycles" ) ) max_inner_cycles_ = tag->getOption<core::Size>( "max_inner_cycles", 250 );
+	temp_initial( tag->getOption< core::Real >( "temp_initial", 1.5 ) );
+	temp_final( tag->getOption< core::Real >( "temp_final", 0.5 ) );
 }
 
 void LoopMover_Refine_CCD::apply(
@@ -640,7 +654,7 @@ void LoopMover_Refine_CCD::apply(
 	// minimizer
 	AtomTreeMinimizerOP minimizer;
 	MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
-	bool const repack_neighbors( ! option[ OptionKeys::loops::fix_natsc ] );
+	bool const repack_neighbors( (! option[ OptionKeys::loops::fix_natsc ])  || task_factory_ );
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		minimizer = dynamic_cast<AtomTreeMinimizer*>( new core::optimization::symmetry::SymAtomTreeMinimizer );
 	} else {
@@ -861,6 +875,10 @@ void LoopMover_Refine_CCD::setup_movemap(
 	core::kinematics::MoveMap & movemap
 )
 {
+	if( move_map_ ){
+		movemap = *move_map_;
+		return;
+	}
 	loops_set_move_map( loops, allow_repack, movemap );
 	enforce_false_movemap( movemap );
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
