@@ -6144,12 +6144,6 @@
 		3BB44B25D7DD1D715145AA8C /* DimensionExpression.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DimensionExpression.hh; path = "../src/ObjexxFCL//DimensionExpression.hh"; sourceTree = SOURCE_ROOT; };
 		3BCA848F8A7A671E012735A9 /* PoseEvaluator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PoseEvaluator.fwd.hh; path = ../src/protocols/evaluation/PoseEvaluator.fwd.hh; sourceTree = SOURCE_ROOT; };
 		3BCE7D8C14862E7600FCBFAF /* rosetta_scripts.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rosetta_scripts.cc; path = ../src/apps/public/rosetta_scripts/rosetta_scripts.cc; sourceTree = "<group>"; };
-		3BDC9AE2148CDB1C00259306 /* external_dynamic2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "external_dynamic2-Prefix.pch"; sourceTree = "<group>"; };
-		3BDC9AE3148CDB1C00259306 /* external_dynamic2Proj.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = external_dynamic2Proj.xcconfig; sourceTree = "<group>"; };
-		3BDC9AE4148CDB1C00259306 /* external_dynamic2Target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = external_dynamic2Target.xcconfig; sourceTree = "<group>"; };
-		3BDC9AE5148CDB1C00259306 /* external_dynamic2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = external_dynamic2.h; sourceTree = "<group>"; };
-		3BDC9AE6148CDB1C00259306 /* external_dynamic2Priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = external_dynamic2Priv.h; sourceTree = "<group>"; };
-		3BDC9AE7148CDB1C00259306 /* external_dynamic2.cp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = external_dynamic2.cp; sourceTree = "<group>"; };
 		3BDFD87CAE6FB1B48372A702 /* CamShiftEvaluatorCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CamShiftEvaluatorCreator.cc; path = ../src/protocols/simple_filters/CamShiftEvaluatorCreator.cc; sourceTree = SOURCE_ROOT; };
 		3BF5B3AC1EFEA55BC2409715 /* FragSetCollection.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FragSetCollection.cc; path = ../src/core/fragment/FragSetCollection.cc; sourceTree = SOURCE_ROOT; };
 		3C1826854616D4444B768725 /* agglomerative_hierarchical_clustering.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = agglomerative_hierarchical_clustering.cc; path = "../src/numeric//agglomerative_hierarchical_clustering.cc"; sourceTree = SOURCE_ROOT; };
@@ -13639,27 +13633,6 @@
 			name = Apps;
 			sourceTree = "<group>";
 		};
-		3BDC9AE0148CDB1C00259306 /* external_dynamic2 */ = {
-			isa = PBXGroup;
-			children = (
-				3BDC9AE3148CDB1C00259306 /* external_dynamic2Proj.xcconfig */,
-				3BDC9AE4148CDB1C00259306 /* external_dynamic2Target.xcconfig */,
-				3BDC9AE5148CDB1C00259306 /* external_dynamic2.h */,
-				3BDC9AE6148CDB1C00259306 /* external_dynamic2Priv.h */,
-				3BDC9AE7148CDB1C00259306 /* external_dynamic2.cp */,
-				3BDC9AE1148CDB1C00259306 /* Supporting Files */,
-			);
-			path = external_dynamic2;
-			sourceTree = "<group>";
-		};
-		3BDC9AE1148CDB1C00259306 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				3BDC9AE2148CDB1C00259306 /* external_dynamic2-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		3D33B07213A94D170003B416 /* sqlite3 */ = {
 			isa = PBXGroup;
 			children = (
@@ -17545,7 +17518,6 @@
 			isa = PBXGroup;
 			children = (
 				BE723A510CA87429000CC218 /* Data */,
-				3BDC9AE0148CDB1C00259306 /* external_dynamic2 */,
 				BE7237CF0CA873E0000CC218 /* Frameworks */,
 				BE8A16FF0CA8352500D67A6F /* Products */,
 				BE8A17150CA8365000D67A6F /* Sources */,
