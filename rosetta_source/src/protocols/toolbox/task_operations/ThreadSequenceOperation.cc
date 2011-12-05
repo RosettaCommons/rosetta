@@ -72,21 +72,22 @@ ThreadSequenceOperation::apply( core::pose::Pose const & pose, core::pack::task:
 	using namespace core::chemical;
 
 	runtime_assert( target_sequence().length() + start_res() -1 <= pose.total_residue() );
-	PreventRepacking pr;
+	core::pack::task::operation::RestrictResidueToRepacking rtr;
 	for( core::Size resi( 1 ); resi <= pose.total_residue(); ++resi ){
-		if( resi >= start_res() && resi <= start_res() + target_sequence().length() - 1 ){
-			if( target_sequence()[ resi - start_res() ] == ' ' || target_sequence()[ resi - start_res() ] == 'x' ) continue; // allows for 'wildcard' residues that can be allowed to design to anything within the threaded sequence
+		if( resi >= start_res() && resi <= start_res() + target_sequence_.length() - 1 ){
+			if( target_sequence_[ resi - start_res() ] == ' ' || target_sequence_[ resi - start_res() ] == 'x' ) continue; // allows for 'wildcard' residues that can be allowed to design to anything within the threaded sequence
 			RestrictAbsentCanonicalAAS racaas;
 			utility::vector1< bool > keep_aas( num_canonical_aas, false );
-			keep_aas[ aa_from_oneletter_code( target_sequence()[ resi-start_res() ] ) ] = true;
+			keep_aas[ aa_from_oneletter_code( target_sequence_[ resi-start_res() ] ) ] = true;
 			racaas.keep_aas( keep_aas );
 			racaas.include_residue( resi );
 			racaas.apply( pose, task );
 		}
-		else
-			pr.include_residue( resi );
+		else if( !allow_design_around() )
+			rtr.include_residue( resi );
 	}
-	pr.apply( pose, task );
+	if( !allow_design_around())
+		rtr.apply( pose, task );
 }
 
 void
@@ -116,7 +117,8 @@ ThreadSequenceOperation::parse_tag( TagPtr tag )
 {
 	target_sequence( tag->getOption< std::string >( "target_sequence" ) );
 	start_res( tag->getOption< core::Size >( "start_res", 1 ) );
-	TR<<"Threading with sequence: "<<target_sequence()<<" starting at residue #"<<start_res()<<std::endl;
+	allow_design_around( tag->getOption< bool >( "allow_design_around", true ) );
+	TR<<"Threading with sequence: "<<target_sequence()<<" starting at residue #"<<start_res()<<" allow design around "<<allow_design_around()<<std::endl;
 }
 
 } //namespace protocols

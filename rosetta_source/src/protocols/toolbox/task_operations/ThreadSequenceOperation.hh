@@ -61,9 +61,12 @@ public:
 
 	core::Size start_res() const;
 	void start_res( core::Size const s );
+	bool allow_design_around() const{ return allow_design_around_;}
+	void allow_design_around( bool const b ){ allow_design_around_ = b ; }
 private:
 	std::string target_sequence_;
 	core::Size start_res_; // dflt 1; which residue number to start threading (useful for partial threads)
+	bool allow_design_around_; //dflt true; if false restricts rest of the pose to repakcing
 };
 
 } //namespace protocols
