@@ -526,6 +526,10 @@ namespace nonlocal { FileOptionKey const chunks( "nonlocal:chunks" );  }
 namespace nonlocal { IntegerOptionKey const max_chunk_size( "nonlocal:max_chunk_size" );  }
 namespace nonlocal { BooleanOptionKey const randomize_missing( "nonlocal:randomize_missing" );  }
 namespace nonlocal { RealOptionKey const rdc_weight( "nonlocal:rdc_weight" );  }
+namespace abinitio { namespace star { BooleanOptionKey const star( "abinitio:star" );  } }
+namespace abinitio { namespace star { BooleanOptionKey const close_loops( "abinitio:star:close_loops" );  } }
+namespace abinitio { namespace star { BooleanOptionKey const relax( "abinitio:star:relax" );  } }
+namespace abinitio { namespace star { IntegerOptionKey const short_loop_len( "abinitio:star:short_loop_len" );  } }
 namespace abinitio { RealOptionKey const prob_perturb_weights( "abinitio:prob_perturb_weights" );  }
 namespace abinitio { BooleanOptionKey const abinitio( "abinitio" );  }
 namespace abinitio { BooleanOptionKey const membrane( "abinitio:membrane" );  }
@@ -579,6 +583,3 @@ namespace abinitio { BooleanOptionKey const start_native( "abinitio:start_native
 namespace abinitio { BooleanOptionKey const debug_structures( "abinitio:debug_structures" );  }
 namespace abinitio { FileOptionKey const log_frags( "abinitio:log_frags" );  }
 namespace abinitio { BooleanOptionKey const only_stage1( "abinitio:only_stage1" );  }
-namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
-namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }
-namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight_stage1" );  }

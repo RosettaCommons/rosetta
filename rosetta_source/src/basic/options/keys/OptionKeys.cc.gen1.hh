@@ -1,3 +1,6 @@
+namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
+namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }
+namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight_stage1" );  }
 namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }
@@ -580,5 +583,3 @@ namespace wum { BooleanOptionKey const wum( "wum" );  }
 namespace wum { IntegerOptionKey const n_slaves_per_master( "wum:n_slaves_per_master" );  }
 namespace wum { IntegerOptionKey const n_masters( "wum:n_masters" );  }
 namespace wum { IntegerOptionKey const memory_limit( "wum:memory_limit" );  }
-namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
-namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }

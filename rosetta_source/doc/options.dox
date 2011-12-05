@@ -2515,6 +2515,27 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 5</dd><br>
 </dl>
  </li>
+<li><h2>abinitio:star</h2>
+<dl>
+<dt><b>-star</b> \<Boolean\><dt>
+<dd>star option group</dd><br>
+</dl>
+<dl>
+<dt><b>-close_loops</b> \<Boolean\><dt>
+<dd>Close remaining loops at end of StarAbinitio protocol.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-relax</b> \<Boolean\><dt>
+<dd>Relax structures at end of StarAbinitio protocol.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-short_loop_len</b> \<Integer\><dt>
+<dd>StarAbinitio treats short loops differently from long ones. If the sequence separation between the consecutive aligned regions is <= short_loop_len, it is considered short, otherwise it is considered long.</dd><br>
+<dd>Default: 18</dd><br>
+</dl>
+ </li>
 <li><h2>abinitio</h2>
 <dl>
 <dt><b>-prob_perturb_weights</b> \<Real\><dt>

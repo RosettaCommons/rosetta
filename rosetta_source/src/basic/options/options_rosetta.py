@@ -1095,7 +1095,7 @@ Options = Option_Group( '',
 
 		Option( 'dd_parser', 'Boolean', desc='determine whether to use the dock_design_parser', default='false' ),
 		Option( 'ntrials', 'Integer', desc='number of attempts at creating an output file for each nstruct. e.g., ntrials 3 and nstruct 10 would mean that each of 10 trajectories would attempt to write an output file 3 times and if unsuccessful would fail.' ),
-		Option( 'generic_job_name', 'String', desc='job name when using protocols::comparative_modeling::GenericJobInputter (i.e. abinitio)', default = 'S'),#no I don't know why it's S, I think it's S for Success
+		Option( 'generic_job_name', 'String', desc='job name when using GenericJobInputter (i.e. abinitio)', default = 'S'),#no I don't know why it's S, I think it's S for Success
 		Option( 'no_output', 'Boolean', desc='use NoOutputJobOutputter; do not store the pose after a run (no silent or scorefile)', default='false'),
 		Option( 'enzdes_out', 'Boolean', desc='causes an enzdes-style scorefile (with information about catalytic res and some pose metric stuff ) to be written instead of the regular scorefile', default='false'),
 		Option( 'buffer_silent_output', 'Integer', default = '1', desc = 'write structures to silent-files in blocks of N structures to', ),
@@ -1333,6 +1333,11 @@ Options = Option_Group( '',
 
 	# Ab initio mode -----------------------------------------------------------
 	Option_Group( 'abinitio',
+    Option_Group('star',
+				Option('close_loops', 'Boolean', desc = 'Close remaining loops at end of StarAbinitio protocol.', default = 'true'),
+				Option('relax', 'Boolean', desc = 'Relax structures at end of StarAbinitio protocol.', default = 'true'),
+				Option('short_loop_len', 'Integer', desc = 'StarAbinitio treats short loops differently from long ones. If the sequence separation between the consecutive aligned regions is <= short_loop_len, it is considered short, otherwise it is considered long.', default = '18'),
+    ),
 		Option( 'prob_perturb_weights', 'Real', desc='Probability of perturbing score function weights', default='0', lower='0', upper='1',),
 		Option( 'abinitio', 'Boolean', desc="Ab initio mode" ),
 		Option('membrane', 'Boolean', desc = "will use the membrane abinitio protocol. sequential insertion of TMH", default='false' ),

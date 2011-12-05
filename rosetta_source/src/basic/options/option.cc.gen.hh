@@ -419,7 +419,7 @@ option.add( basic::options::OptionKeys::jd2::mpi_filebuf_jobdistributor, "same a
 option.add( basic::options::OptionKeys::jd2::mpi_fast_nonblocking_output, "By default the master node blocks while a slave node outputs to avoid two slaves writing to a score file or silent file at the same time setting this to true disables that feature" ).def(false);
 option.add( basic::options::OptionKeys::jd2::dd_parser, "determine whether to use the dock_design_parser" ).def(false);
 option.add( basic::options::OptionKeys::jd2::ntrials, "number of attempts at creating an output file for each nstruct. e.g., ntrials 3 and nstruct 10 would mean that each of 10 trajectories would attempt to write an output file 3 times and if unsuccessful would fail." );
-option.add( basic::options::OptionKeys::jd2::generic_job_name, "job name when using protocols::comparative_modeling::GenericJobInputter (i.e. abinitio)" ).def("S");
+option.add( basic::options::OptionKeys::jd2::generic_job_name, "job name when using GenericJobInputter (i.e. abinitio)" ).def("S");
 option.add( basic::options::OptionKeys::jd2::no_output, "use NoOutputJobOutputter; do not store the pose after a run (no silent or scorefile)" ).def(false);
 option.add( basic::options::OptionKeys::jd2::enzdes_out, "causes an enzdes-style scorefile (with information about catalytic res and some pose metric stuff ) to be written instead of the regular scorefile" ).def(false);
 option.add( basic::options::OptionKeys::jd2::buffer_silent_output, "write structures to silent-files in blocks of N structures to" ).def(1);
@@ -531,6 +531,10 @@ option.add( basic::options::OptionKeys::nonlocal::chunks, "Decsribes how the str
 option.add( basic::options::OptionKeys::nonlocal::max_chunk_size, "Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces." ).def(20);
 option.add( basic::options::OptionKeys::nonlocal::randomize_missing, "Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter" ).def(false);
 option.add( basic::options::OptionKeys::nonlocal::rdc_weight, "Weight for the rdc energy term in nonlocal abinitio protocol" ).def(5);
+option.add( basic::options::OptionKeys::abinitio::star::star, "star option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::abinitio::star::close_loops, "Close remaining loops at end of StarAbinitio protocol." ).def(true);
+option.add( basic::options::OptionKeys::abinitio::star::relax, "Relax structures at end of StarAbinitio protocol." ).def(true);
+option.add( basic::options::OptionKeys::abinitio::star::short_loop_len, "StarAbinitio treats short loops differently from long ones. If the sequence separation between the consecutive aligned regions is <= short_loop_len, it is considered short, otherwise it is considered long." ).def(18);
 option.add( basic::options::OptionKeys::abinitio::prob_perturb_weights, "Probability of perturbing score function weights" ).lower(0).upper(1).def(0);
 option.add( basic::options::OptionKeys::abinitio::abinitio, "Ab initio mode" );
 option.add( basic::options::OptionKeys::abinitio::membrane, "will use the membrane abinitio protocol. sequential insertion of TMH" ).def(false);
@@ -584,12 +588,12 @@ option.add( basic::options::OptionKeys::abinitio::start_native, "start from nati
 option.add( basic::options::OptionKeys::abinitio::debug_structures, "write structures to debug-out files" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::log_frags, "fragment insertions (each trial) will be logged to file" ).def("");
 option.add( basic::options::OptionKeys::abinitio::only_stage1, "useful for benchmarks sets cycle of all higher stages to 0" ).def(false);
-option.add( basic::options::OptionKeys::abinitio::end_bias, "set the endbias for Fragment moves" ).def(30.0);
-option.add( basic::options::OptionKeys::abinitio::symmetry_residue, "hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1" ).def(-1);
-option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight in stage1" ).def(1.0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::override_vdw_all_stages, "apply vdw_weight_stage1 for all stages" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::end_bias, "set the endbias for Fragment moves" ).def(30.0);
+option.add( basic::options::OptionKeys::abinitio::symmetry_residue, "hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1" ).def(-1);
+option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight in stage1" ).def(1.0);
+option.add( basic::options::OptionKeys::abinitio::override_vdw_all_stages, "apply vdw_weight_stage1 for all stages" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say default: 2 3 4 recover_low happens in stages 2 3 4" ).def(0);
 option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
 option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
@@ -1171,11 +1175,11 @@ option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(tru
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
 option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
-option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
-option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
+option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
+option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
@@ -1758,10 +1762,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "ce
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
-option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
