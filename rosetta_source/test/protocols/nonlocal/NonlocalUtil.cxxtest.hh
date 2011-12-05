@@ -74,53 +74,6 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
                                         &alignments_);
   }
 
-  void test_find_regions() {
-    const SequenceAlignment& alignment = alignments_[1];
-
-    Loops aligned, unaligned;
-    protocols::nonlocal::find_regions_with_minimum_size
-        (alignment, MIN_CHUNK_SZ, &aligned, &unaligned);
-
-    // Verify sizes
-    for (Loops::const_iterator i = aligned.begin(); i != aligned.end(); ++i)
-      TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
-
-    for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i)
-      TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
-
-    // Verify aligned
-    TS_ASSERT_EQUALS(aligned.size(), 13);
-    TS_ASSERT(aligned[1] == Loop(8, 28));
-    TS_ASSERT(aligned[2] == Loop(36, 62));
-    TS_ASSERT(aligned[3] == Loop(70, 80));
-    TS_ASSERT(aligned[4] == Loop(88, 120));
-    TS_ASSERT(aligned[5] == Loop(128, 149));
-    TS_ASSERT(aligned[6] == Loop(157, 169));
-    TS_ASSERT(aligned[7] == Loop(177, 204));
-    TS_ASSERT(aligned[8] == Loop(212, 235));
-    TS_ASSERT(aligned[9] == Loop(256, 280));
-    TS_ASSERT(aligned[10] == Loop(297, 306));
-    TS_ASSERT(aligned[11] == Loop(314, 332));
-    TS_ASSERT(aligned[12] == Loop(340, 350));
-    TS_ASSERT(aligned[13] == Loop(358, 370));
-
-    // Verify unaligned
-    TS_ASSERT_EQUALS(unaligned.size(), 13);
-    TS_ASSERT(unaligned[1] == Loop(1, 7));
-    TS_ASSERT(unaligned[2] == Loop(29, 35));
-    TS_ASSERT(unaligned[3] == Loop(63, 69));
-    TS_ASSERT(unaligned[4] == Loop(81, 87));
-    TS_ASSERT(unaligned[5] == Loop(121, 127));
-    TS_ASSERT(unaligned[6] == Loop(150, 156));
-    TS_ASSERT(unaligned[7] == Loop(170, 176));
-    TS_ASSERT(unaligned[8] == Loop(205, 211));
-    TS_ASSERT(unaligned[9] == Loop(236, 255));
-    TS_ASSERT(unaligned[10] == Loop(281, 296));
-    TS_ASSERT(unaligned[11] == Loop(307, 313));
-    TS_ASSERT(unaligned[12] == Loop(333, 339));
-    TS_ASSERT(unaligned[13] == Loop(351, 358));
-  }
-
   void test_limit_chunk_size() {
     const SequenceAlignment& alignment = alignments_[1];
 

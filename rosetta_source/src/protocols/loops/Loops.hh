@@ -193,15 +193,8 @@ public:
 	/// @brief yield the Loop which contains the residue seqpos, returns false if seqpos is not in any residue.
 	bool loop_of_residue( core::Size const seqpos, Loop& loop ) const;
 
-	///@brief yields the regions that are NOT loops in this loop-object.
-	Loops invert( core::Size total_res ) const;
-
-	/// @brief A correctly functioning alternative to `invert`, which is both
-	/// needlessly complex in implementation and incorrect. Given the total
-	/// number of residues, returns the inverse of this selection. Assumes
-	/// this object is stored in increasing order of start position-- i.e.
-	/// sequential_order() has been called.
-	Loops rational_invert(core::Size num_residues) const;
+	/// Given the total number of residues, returns the inverse of this selection.
+	Loops invert(core::Size num_residues) const;
 
 	//@brief switch DOF_Type for residues in loop. id::CHI, id::BB --- don't use with id::JUMP
 	void switch_movemap( core::kinematics::MoveMap& movemap, core::id::TorsionType, bool allow_moves = true ) const;

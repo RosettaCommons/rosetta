@@ -62,38 +62,24 @@ class LoopsTest : public CxxTest::TestSuite {
   void test_invert_empty() {
     Loops loops;
 
-    Loops loops_inv_old = loops.invert(10);
-    Loops loops_inv_new = loops.rational_invert(10);
+    Loops loops_inv = loops.invert(10);
+    TS_ASSERT_EQUALS(1, loops_inv.size());
 
-    TS_ASSERT_EQUALS(1, loops_inv_old.size());
-    TS_ASSERT_EQUALS(1, loops_inv_new.size());
-
-    const Loop& loop_old = loops_inv_old[1];
-    const Loop& loop_new = loops_inv_new[1];
-
-    TS_ASSERT_EQUALS(1, loop_old.start());
-    TS_ASSERT_EQUALS(1, loop_new.start());
-    TS_ASSERT_EQUALS(10, loop_old.stop());
-    TS_ASSERT_EQUALS(10, loop_new.stop());
+    const Loop& loop = loops_inv[1];
+    TS_ASSERT_EQUALS(1, loop.start());
+    TS_ASSERT_EQUALS(10, loop.stop());
   }
 
   void test_invert_preceding() {
     Loops loops;
     loops.add_loop(Loop(3, 10));
 
-    Loops loops_inv_old = loops.invert(10);
-    Loops loops_inv_new = loops.rational_invert(10);
+    Loops loops_inv = loops.invert(10);
+    TS_ASSERT_EQUALS(1, loops_inv.size());
 
-    TS_ASSERT_EQUALS(1, loops_inv_old.size());
-    TS_ASSERT_EQUALS(1, loops_inv_new.size());
-
-    const Loop& loop_old = loops_inv_old[1];
-    const Loop& loop_new = loops_inv_new[1];
-
-    TS_ASSERT_EQUALS(1, loop_old.start());
-    TS_ASSERT_EQUALS(1, loop_new.start());
-    TS_ASSERT_EQUALS(2, loop_old.stop());
-    TS_ASSERT_EQUALS(2, loop_new.stop());
+    const Loop& loop = loops_inv[1];
+    TS_ASSERT_EQUALS(1, loop.start());
+    TS_ASSERT_EQUALS(2, loop.stop());
   }
 
   /// @detail Simple unit test illustrating a bug in Loops::invert()
@@ -101,19 +87,12 @@ class LoopsTest : public CxxTest::TestSuite {
     Loops loops;
     loops.add_loop(Loop(1, 6));
 
-    Loops loops_inv_new = loops.rational_invert(10);
-    TS_ASSERT_EQUALS(1, loops_inv_new.size());
+    Loops loops_inv = loops.invert(10);
+    TS_ASSERT_EQUALS(1, loops_inv.size());
 
-    const Loop& loop_new = loops_inv_new[1];
-    TS_ASSERT_EQUALS(7, loop_new.start());
-    TS_ASSERT_EQUALS(10, loop_new.stop());
-
-    //Loops loops_inv_old = loops.invert(10);
-    //const Loop& loop_old = loops_inv_old[1];
-    //
-    //TS_ASSERT_EQUALS(1, loops_inv_old.size());
-    //TS_ASSERT_EQUALS(7, loop_old.start());
-    //TS_ASSERT_EQUALS(10, loop_old.stop());
+    const Loop& loop = loops_inv[1];
+    TS_ASSERT_EQUALS(7, loop.start());
+    TS_ASSERT_EQUALS(10, loop.stop());
   }
 
   void test_invert_between() {
@@ -122,7 +101,7 @@ class LoopsTest : public CxxTest::TestSuite {
     loops.add_loop(Loop(6, 7));
     loops.add_loop(Loop(9, 10));
 
-    Loops loops_inv = loops.rational_invert(12);
+    Loops loops_inv = loops.invert(12);
     TS_ASSERT_EQUALS(3, loops_inv.size());
 
     TS_ASSERT_EQUALS(4, loops_inv[1].start());

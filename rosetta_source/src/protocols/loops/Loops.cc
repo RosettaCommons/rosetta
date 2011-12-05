@@ -492,15 +492,12 @@ void Loops::read_loop_file(
 	tr.Warning << *this;
 }
 
-/// @detail Given the total number of residues, inverts this set
-/// of loops *correctly*. The similarly named "invert()" method
-/// claims to do this, but has an error. In order to preserve
-/// existing behavior, this method was added. Note: the inline
-/// comments are geared toward comparative modeling, but are
-/// not specific to it. Think of "unaligned" as this, "aligned"
-/// as the inverse.
-Loops Loops::rational_invert(core::Size num_residues) const {
-  Loops inv;
+/// @detail Given the total number of residues, inverts this set of loops.
+/// Note: the inline comments are geared toward comparative modeling, but
+/// are not specific to it. Think of "unaligned" as this, "aligned" as its
+/// inverse.
+Loops Loops::invert(core::Size num_residues) const {
+	Loops inv;
 
   // no unaligned regions
   if (!num_loop()) {
@@ -508,22 +505,24 @@ Loops Loops::rational_invert(core::Size num_residues) const {
     return inv;
   }
 
+	Loops copy = *this;
+
   // aligned region preceding first unaligned region
-  const Loop& first = loops_[1];
+  const Loop& first = copy[1];
   if (first.start() != 1) {
     inv.add_loop(Loop(1, first.start() - 1));
   }
 
   // aligned region following last unaligned region
-  const Loop& last = loops_[num_loop()];
+  const Loop& last = copy[copy.num_loop()];
   if (last.stop() != num_residues) {
     inv.add_loop(Loop(last.stop() + 1, num_residues));
   }
 
   // aligned regions in between unaligned regions
-  for (unsigned i = 2; i <= num_loop(); ++i) {
-    const Loop& prev = loops_[i - 1];
-    const Loop& curr = loops_[i];
+  for (unsigned i = 2; i <= copy.num_loop(); ++i) {
+    const Loop& prev = copy[i - 1];
+    const Loop& curr = copy[i];
     inv.add_loop(Loop(prev.stop() + 1, curr.start() - 1));
   }
 
@@ -531,98 +530,26 @@ Loops Loops::rational_invert(core::Size num_residues) const {
   return inv;
 }
 
-Loops Loops::invert( core::Size total_res ) const {
-	Loops core; //the opposite of loops
-
-	if ( loops_.size() == 0 ) {
-		core.add_loop( 1, total_res, 0 );
-		return core;
-	}
-
-	LoopList loops( loops_ ); //or can we assume order ?
-	// sort by start residue
-	std::sort( loops.begin(), loops.end(), Loop_lt() );
-	for ( LoopList::const_iterator it = loops.begin(), eit = loops.end(); it!=eit; ++it )
-		tr.Debug << (*it)  << std::endl;
-
-	if ( loops.begin()->start() > 1 ) {
-		core.add_loop( 1, loops.begin()->start()-1, 0 );
-	}
-	LoopList::const_iterator eit, it, next;
-	for (  it = loops.begin(), next = loops.begin() + 1, eit = loops.end(); next!=eit; ++it,++next ) {
-		if ( it->stop()+1 < next->start()-1 ) {
-			tr.Debug << "add " << it->stop()+1 << " " << next->start()-1 << std::endl;
-			core.add_loop( it->stop()+1, next->start()-1, 0 );
-		} else {
-			tr.Debug << "do not add " << it->stop()+1 << " " << next->start()-1 << std::endl;
-		}
-	}
-	if ( it->stop() < total_res ) {
-		core.add_loop( it->stop(), total_res, 0 );
-	}
-	return core;
-}
-
-
-///////////////////////////////////////////////////////////////////////
-void
-Loops::set_extended( bool input ) {
+void Loops::set_extended( bool input ) {
   for( Loops::iterator it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
 		it->set_extended( input );
 	}
 }
 
-
-
-///////////////////////////////////////////////////////////////////////
-void
-Loops::auto_choose_cutpoints(	core::pose::Pose const & pose ) {
+void Loops::auto_choose_cutpoints(	core::pose::Pose const & pose ) {
   for( Loops::iterator it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
 		it->auto_choose_cutpoint( pose );
 	}
 }
 
-
-/////////////////////////////////////////////////////////////////////////
-//void
-//Loops::find_missing_density(	core::pose::Pose const & pose ) {
-//	bool inloop = false;
-//	for ( Size pos = 1; pos <= pose->total_residue(); pos++ ) {
-//		numeric::xyzVector< core::Real> ca_pos = pose->residue( pos ).atom("CA").xyz();
-//		bool good ( true );
-//		for ( Size j=1; j<= pose->residue( pos ).natoms(); ++j ) {
-//			if ( ( ca_pos - pose->residue( pos ).atom(j).xyz() ).length() > 20 ) {
-//				good = false;
-//			}
-//		}
-//		if ( good )
-//	}
-//	if ( tr.Trace.visible() ) {
-//		tr.Trace << "selection of residues for rmsd of " << tag << std::endl;
-//		for ( std::list< core::Size >::const_iterator it = selection_.begin(), eit = selection_.end();
-//				it != eit; ++it ) {
-//			tr.Trace << " " << *it;
-//		}
-//		tr.Trace << std::endl;
-//	}
-//}
-//
-
-
-///////////////////////////////////////////////////////////////////////
-void
-Loops::choose_cutpoints( core::pose::Pose const & pose ) {
+void Loops::choose_cutpoints( core::pose::Pose const & pose ) {
   for( Loops::iterator it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
 		it->choose_cutpoint( pose );
 	}
 }
 
-
-///////////////////////////////////////////////////////////////////////
 // @Check loops are compatible with pose.
-
-void
-Loops::verify_against( core::pose::Pose const & pose ) const {
+void Loops::verify_against( core::pose::Pose const & pose ) const {
 	using core::Size;
 	Size nres = pose.total_residue();
 
