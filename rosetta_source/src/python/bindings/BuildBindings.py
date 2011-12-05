@@ -482,7 +482,12 @@ def prepareMiniLibs(mini_path, bindings_path):
 
     # Now the funny part - we rebuild all libs to produce just one lib file...
     all_sources = []
-    for scons_file in ['ObjexxFCL', 'utility', 'numeric', 'basic', 'core.1', 'core.2', 'core.3', 'core.4', 'core.5', 'protocols']:
+    for scons_file in ['ObjexxFCL', 'utility', 'numeric', 'basic', 'core.1', 'core.2', 'core.3', 'core.4', 'core.5',
+        'protocols.1', 'protocols.2', 'protocols.3',
+        'protocols_a.4', 'protocols_a.5', 'protocols_a.6', 'protocols_b.4', 'protocols_b.5', 'protocols_b.6',
+        'protocols_c.4', 'protocols_c.5', 'protocols_c.6', 'protocols_d.4', 'protocols_e.4', 'protocols_f.4',
+        ]:
+
     #for scons_file in ['utility']:
     #for scons_file in ['ObjexxFCL', 'numeric', 'utility',]:
         f = file('./../../%s.src.settings' % scons_file).read();  exec(f)
