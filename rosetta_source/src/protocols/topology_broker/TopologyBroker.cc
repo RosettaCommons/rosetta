@@ -187,23 +187,23 @@ void TopologyBroker::add_constraints( core::pose::Pose &pose ) {
 	}
 }
 
-moves::MoverOP TopologyBroker::mover(core::pose::Pose const& pose, 
+moves::MoverOP TopologyBroker::mover(core::pose::Pose const& pose,
 									 abinitio::StageID stage_id,
 									 core::scoring::ScoreFunction const& scorefxn,
 									 core::Real progress ) const {
-	
+
 	moves::RandomMoverOP random_mover = new moves::RandomMover;
 	for ( TopologyClaimers::const_iterator top = claimers_.begin();
 					top != claimers_.end(); ++top ) {
 		(*top)->add_mover( *random_mover, pose, stage_id, scorefxn, progress );
 	}
-	
+
 	//should this be an exception? --- it seems pretty pathological
 	if ( !random_mover->size() ) {
 		tr.Warning << "[ WARNING ] no mover returned in stage " << stage_id
 				   << " progress " << progress << std::endl;
 	}
-	
+
 	runtime_assert( random_mover->size() ); //seg-fault down the line otherwise
 	return random_mover;
 }
@@ -586,20 +586,20 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 	}
 
 	pose.clear(); //yay!
-	
+
 	if ( pose::symmetry::is_symmetric( pose ) ) {
 		pose::symmetry::make_asymmetric_pose( pose );
 	}
-	
+
 	tr.Debug << "Initialize Sequence" << std::endl;
 	DofClaims fresh_claims;
-	
+
 	sequence_claims_.clear();
 	generate_sequence_claims( fresh_claims );
 	if ( ok ) ok = broking( fresh_claims, pre_accepted );
 	initialize_sequence( pre_accepted, pose );
 	current_pose_ = new core::pose::Pose( pose );
-	
+
 	tr.Debug << "Start Round1-Broking..." << std::endl;
 	DofClaims round1_claims;
 	generate_round1( round1_claims );
@@ -612,7 +612,7 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 
 	tr.Debug << "Broking finished" << std::endl;
 	//	--> now we know nres
-	if ( tr.Debug.visible() )	pose.dump_pdb( "init_seq.pdb" );
+	//	if ( tr.Debug.visible() )	pose.dump_pdb( "init_seq.pdb" );
 	current_pose_ = new core::pose::Pose( pose );
 
 	tr.Debug << "build fold-tree..." << std::endl;
@@ -626,7 +626,7 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 
 	tr.Debug << "initialize dofs..." << std::endl;
 	initialize_dofs( pre_accepted, pose );
-	if ( tr.Debug.visible() )	pose.dump_pdb( "init_dofs.pdb" );
+	//	if ( tr.Debug.visible() )	pose.dump_pdb( "init_dofs.pdb" );
 	current_pose_ = new core::pose::Pose( pose );
 
 	//we will need this one in switch_to_fullatom
@@ -759,7 +759,7 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose& pose ) {
 
 	add_constraints( pose );
 
-	if ( tr.Debug.visible() ) pose.dump_pdb( "before_repack.pdb");
+	//	if ( tr.Debug.visible() ) pose.dump_pdb( "before_repack.pdb");
 	if ( tr.Debug.visible() ) pose.constraint_set()->show_numbers( tr.Debug );
 
 	protocols::simple_moves::PackRotamersMover pack1( repack_scorefxn_ , taskstd );
