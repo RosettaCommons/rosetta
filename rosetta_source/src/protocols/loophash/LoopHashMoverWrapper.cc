@@ -106,6 +106,7 @@ LoopHashMoverWrapper::LoopHashMoverWrapper() :
 	nprefilter_( 0 ),
 	ideal_( false ),
 	cenfilter_( NULL ),
+	ranking_cenfilter_( NULL ),
 	fafilter_( NULL ),
 	ranking_fafilter_( NULL ),
 	sample_weight_const_( 50 )
@@ -189,7 +190,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 		// apply selection criteria
 		bool passed_i = cenfilter_->apply( rpose );
 		if (passed_i) {
-			core::Real score_i = cenfilter_->report_sm( rpose );
+			core::Real score_i = ranking_cenfilter()->report_sm( rpose );
 			core::util::switch_to_residue_type_set( rpose, core::chemical::FA_STANDARD );
 
 			core::io::silent::SilentStructOP new_struct = ideal_?
@@ -357,6 +358,7 @@ LoopHashMoverWrapper::parse_my_tag( TagPtr const tag,
 	if( find_cenfilter == filters.end() )
 		utility_exit_with_message( "Filter " + centroid_filter_name + " not found in LoopHashMoverWrapper" );
 	cenfilter( find_cenfilter->second );
+	ranking_cenfilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ranking_cenfilter", centroid_filter_name ), filters ) );
 
 	// batch relax mover
 	if (tag->hasOption( "relax_mover" )) {
