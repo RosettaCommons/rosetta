@@ -230,6 +230,33 @@ add_chainbreaks_according_to_jumps( core::pose::Pose & pose )
 
 		if ( pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::LOWER_TERMINUS ) ) continue;
 
+		if ( !pose.residue_type( this_cutpoint ).is_protein() ) continue;
+		if ( !pose.residue_type( this_cutpoint +1 ).is_protein() ) continue;
+
+		if( !pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
+			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, this_cutpoint );
+		}
+		if( !pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ){
+			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, this_cutpoint +1 );
+		}
+	}
+}
+
+void
+add_chainbreaks_according_to_jumps( core::pose::Pose & pose, utility::vector1< core::Size > const& no_cutpoint_residues  )
+{
+	for( core::Size i =1; i <= pose.fold_tree().num_jump(); ++i ){
+
+		core::Size this_cutpoint( pose.fold_tree().cutpoint( i ) );
+		//exclude residue numbers in array
+		if ( find( no_cutpoint_residues.begin(), no_cutpoint_residues.end(), this_cutpoint ) != no_cutpoint_residues.end() ) {
+			continue;
+		}
+
+		if ( pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::UPPER_TERMINUS ) ) continue;
+
+		if ( pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::LOWER_TERMINUS ) ) continue;
+
 		if( !pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, this_cutpoint );
 		}
