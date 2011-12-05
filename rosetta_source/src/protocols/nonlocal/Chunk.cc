@@ -13,30 +13,24 @@
 // Unit headers
 #include <protocols/nonlocal/Chunk.hh>
 
-// C/C++ headers
-// AUTO-REMOVED #include <cmath>
-
 // External headers
 #include <boost/scoped_ptr.hpp>
 #include <boost/accumulators/accumulators.hpp>
-// AUTO-REMOVED #include <boost/accumulators/statistics/mean.hpp>
+#include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
-// AUTO-REMOVED #include <boost/math/distributions/normal.hpp>
-
-// Package headers
-#include <protocols/nonlocal/Region.hh>
-
-// Project headers
-#include <core/types.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <boost/math/distributions/normal.hpp>
 
 // Utility headers
 #include <numeric/random/DistributionSampler.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <utility/vector1.hh>
+// Project headers
+#include <core/types.hh>
+#include <core/kinematics/MoveMap.hh>
 
+// Package headers
+#include <protocols/nonlocal/Region.hh>
 
 namespace protocols {
 namespace nonlocal {
@@ -123,6 +117,15 @@ Size Chunk::length() const {
 
 // -- Utility Functions -- //
 
+bool Chunk::is_movable() const {
+  for (Size i = start(); i <= stop(); ++i) {
+    if (movable_->get_bb(i))
+      return true;
+  }
+
+  return false;
+}
+
 bool Chunk::valid() const {
   // Region's are agnostic as to their direction: start => stop, stop <= start.
   // For simplicity, our iteration methods assume a left-to-right orientation
@@ -131,12 +134,7 @@ bool Chunk::valid() const {
 
   // In order to avoid an infinite loop in choose(), at least one position on
   // the interval [start(), stop()] must be movable. Short-circuit evaluation.
-  for (Size i = start(); i <= stop(); ++i) {
-    if (movable_->get_bb(i))
-      return true;
-  }
-
-  return false;
+  return is_movable();
 }
 
 }  // namespace nonlocal

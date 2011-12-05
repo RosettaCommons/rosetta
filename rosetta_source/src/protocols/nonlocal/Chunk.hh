@@ -18,7 +18,7 @@
 
 // External headers
 #include <boost/scoped_ptr.hpp>
-// AUTO-REMOVED #include <boost/math/distributions/normal.hpp>
+#include <boost/math/distributions/normal.hpp>
 
 // Package headers
 #include <protocols/nonlocal/Region.hh>
@@ -30,9 +30,6 @@
 // Utility headers
 #include <numeric/random/DistributionSampler.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace nonlocal {
@@ -78,6 +75,9 @@ class Chunk : public utility::pointer::ReferenceCount {
 
   /// @brief Returns the length of this region
   Size length() const;
+
+  /// @brief Returns true if at least one position on [start(), stop()] is movable
+  bool is_movable() const;
 
   /// @brief Returns true if there is at least one valid insertion position in
   /// the closed region [start(), stop()], false otherwise.

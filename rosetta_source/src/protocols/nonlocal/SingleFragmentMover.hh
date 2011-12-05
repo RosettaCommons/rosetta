@@ -27,6 +27,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -38,9 +39,6 @@
 // Package headers
 #include <protocols/nonlocal/Chunk.hh>
 #include <protocols/nonlocal/Policy.hh>
-
-#include <core/fragment/FragData.hh>
-
 
 namespace protocols {
 namespace nonlocal {
@@ -126,7 +124,7 @@ class SingleFragmentMover : public protocols::moves::Mover {
   void initialize_chunks(const FoldTree& tree);
 
   /// @brief Returns a randomly chosen chunk with uniform probability
-  const Chunk& random_chunk() const;
+  const Chunk* random_chunk() const;
 
   /// @brief If <pose> is fullatom, converts it to centroid and returns true.
   /// Otherwise, takes no action and returns false.

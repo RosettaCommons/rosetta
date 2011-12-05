@@ -14,6 +14,7 @@
 #include <protocols/nonlocal/SingleFragmentMover.hh>
 
 // C/C++ headers
+#include <iostream>
 #include <string>
 
 // Utility headers
@@ -29,12 +30,10 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -42,10 +41,6 @@
 #include <protocols/nonlocal/Chunk.hh>
 #include <protocols/nonlocal/Policy.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
-
-#include <protocols/jobdist/Jobs.hh>
-#include <utility/vector0.hh>
-
 
 typedef protocols::moves::Mover Parent;
 
@@ -102,7 +97,7 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
   bool was_fullatom = to_centroid(&pose);
 
   // reuse <chunks_> when possible
-  FoldTree current_tree = pose.fold_tree();
+  const FoldTree& current_tree = pose.fold_tree();
   if (!previous_tree_ || *previous_tree_ != current_tree) {
     chunks_.clear();
     probs_.clear();
@@ -111,8 +106,13 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
   }
 
   // randomly select the insertion position
-  const Chunk& chunk = random_chunk();
-  Size insertion_pos = chunk.choose();
+  const Chunk* chunk = random_chunk();
+  if (!chunk) {
+    TR.Warning << "No move possible-- 0 chunks" << std::endl;
+    return;
+  }
+
+  Size insertion_pos = chunk->choose();
 
   // delegate responsibility for choosing the fragment to the policy
   const Frame& frame = library_[insertion_pos];
@@ -197,11 +197,12 @@ void SingleFragmentMover::initialize_chunks(const core::kinematics::FoldTree& tr
       // Ensure that the chunk is valid before adding it to the list. Mainly, this
       // means that there must be at least 1 movable residue.
       Chunk chunk(region, movable_);
-      if (chunk.valid()) {
+
+      if (chunk.is_movable()) {
         TR.Debug << "Added chunk: " << region->start() << "-" << region->stop() << std::endl;
         chunks_.push_back(chunk);
       } else {
-        TR.Debug << "Skipped chunk: " << region->start() << "-" << region->stop() << std::endl;
+        TR.Debug << "Skipped chunk: " << region->start() << "-" << region->stop() << ": no movable positions" << std::endl;
       }
     }
 
@@ -224,7 +225,7 @@ void SingleFragmentMover::initialize_chunks(const core::kinematics::FoldTree& tr
   }
 }
 
-const Chunk& SingleFragmentMover::random_chunk() const {
+const Chunk* SingleFragmentMover::random_chunk() const {
   using core::Real;
   using core::Size;
   using utility::vector1;
@@ -243,9 +244,9 @@ const Chunk& SingleFragmentMover::random_chunk() const {
   // this could be done more efficiently with binary search
   for (Size i = 2; i <= n; ++i) {
     if (fitnesses[i-1] < x && x <= fitnesses[i])
-      return chunks_[i];
+      return &chunks_[i];
   }
-  return chunks_[1];
+  return &chunks_[1];
 }
 
 bool SingleFragmentMover::to_centroid(core::pose::Pose* pose) const {
