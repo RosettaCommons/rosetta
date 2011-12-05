@@ -65,14 +65,6 @@ public:
 	bool
 	reinitialize_for_new_input() const { return false; };
 
-	/// @brief callback executed before any Monte Carlo trials
-	virtual
-	void
-	initialize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
-
 	virtual
 	void
 	observe_after_metropolis(
@@ -92,10 +84,6 @@ public:
 		return 1;
 	}
 
-	virtual/// @brief callback executed before any Monte Carlo trials
-	void
-	initialize_simulation() {};
-
 	virtual core::Size n_temp_levels() const { return 1; };
 
 	protocols::moves::MonteCarloCOP
@@ -105,6 +93,10 @@ public:
 	set_monte_carlo(
 		protocols::moves::MonteCarloOP monte_carlo
 	);
+
+protected:
+	protocols::moves::MonteCarloOP
+	monte_carlo();
 
 private:
 	protocols::moves::MonteCarloOP monte_carlo_;
@@ -117,7 +109,7 @@ public:
 		temperature_ ( temp ) {};
 
 	protocols::moves::MoverOP
-	clone() const { new protocols::canonical_sampling::FixedTemperatureController( temperature_ ); };
+	clone() const { return new protocols::canonical_sampling::FixedTemperatureController( temperature_ ); };
 
 	virtual
 	std::string

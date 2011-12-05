@@ -113,7 +113,6 @@ TemperingBase::TemperingBase(	TemperingBase const & other ) :
 	stats_silent_output_ = other.stats_silent_output_;
 	stats_file_ = other.stats_file_;
 
-	monte_carlo_ = other.monte_carlo_;
 	job_ = other.job_;
 	instance_initialized_ = other.instance_initialized_;
 	current_temp_ = other.current_temp_;
@@ -126,25 +125,12 @@ Size TemperingBase::n_temp_levels() const { return temperatures_.size(); }
 
 core::Real
 TemperingBase::temperature() const {
-	return monte_carlo_->temperature();
+	return monte_carlo()->temperature();
 }
 
 core::Real
 TemperingBase::temperature( Size level ) const {
 	return temperatures_[ level ];
-}
-
-protocols::moves::MonteCarloCOP
-TemperingBase::monte_carlo() const {
-	return monte_carlo_;
-}
-
-void
-TemperingBase::set_monte_carlo(
-	protocols::moves::MonteCarloOP monte_carlo
-)
-{
-	monte_carlo_ = monte_carlo;
 }
 
 std::string
@@ -181,6 +167,7 @@ TemperingBase::parse_my_tag(
 	stats_line_output_ = tag->getOption< bool >( "stats_line_output", false );
 	stats_silent_output_ = tag->getOption< bool >( "stats_silent_output", false );
 	stats_file_ = tag->getOption< std::string >( "stats_file", "" );
+	instance_initialized_ = true;
 }
 
 
@@ -192,16 +179,19 @@ void TemperingBase::set_defaults() {
 }
 
 	/// @brief callback executed before any Monte Carlo trials
-void TemperingBase::initialize_simulation() {
+void TemperingBase::initialize_simulation(
+	pose::Pose& pose,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+) {
 	if ( !instance_initialized_ ) init_from_options();
 	current_temp_=temperatures_.size();
-	monte_carlo_->set_temperature( temperatures_[ current_temp_ ] );
+	monte_carlo()->set_temperature( temperatures_[ current_temp_ ] );
 	if ( jd2::jd2_used() ) {
 		job_ = jd2::get_current_job();
 	}
 	tr.Debug << std::setprecision(2);
 	if ( job_ ) {
-		job_->add_string_real_pair( "temperature", monte_carlo_->temperature() );
+		job_->add_string_real_pair( "temperature", monte_carlo()->temperature() );
 		job_->add_string_real_pair( "temp_level", current_temp_ );
 	}
 	temp_trial_count_ = 0;
@@ -219,7 +209,7 @@ bool TemperingBase::check_temp_consistency() {
 		//we can trust our current temp variable or get it from protocols::moves::MonteCarlo object
 	if ( !trust_current_temp_ ) {
 		current_temp_=1;
-		Real const mc_temp( monte_carlo_->temperature() );
+		Real const mc_temp( monte_carlo()->temperature() );
 		for (	utility::vector1< Real >::const_iterator it = temperatures_.begin();
 					it != temperatures_.end(); ++it ) {
 			if ( *it > mc_temp ) break;
@@ -227,7 +217,7 @@ bool TemperingBase::check_temp_consistency() {
 		}
 		if ( current_temp_ > temperatures_.size() ) current_temp_ = temperatures_.size();
 	} //if trusted
-	runtime_assert( monte_carlo_->temperature() == temperatures_[ current_temp_ ] );
+	runtime_assert( monte_carlo()->temperature() == temperatures_[ current_temp_ ] );
 	return true;
 }
 
@@ -372,7 +362,7 @@ void TemperingBase::set_temperatures( utility::vector1< Real > const& temps ) {
 void TemperingBase::set_current_temp( Size new_temp ) {
 	current_temp_ = new_temp;
 	Real real_temp = temperatures_[ current_temp_ ];
-	monte_carlo_->set_temperature( real_temp );
+	monte_carlo()->set_temperature( real_temp );
 	if ( job_ ) {
 		job_->add_string_real_pair( "temperature", real_temp );
 		job_->add_string_real_pair( "temp_level", new_temp );

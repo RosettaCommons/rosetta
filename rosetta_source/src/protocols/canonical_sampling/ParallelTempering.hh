@@ -83,7 +83,10 @@ public:
 
 	/// @brief callback executed before any Monte Carlo trials
 	virtual void
-	initialize_simulation();
+	initialize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	);
 
 	/// @brief callback executed after all Monte Carlo trials
 	virtual

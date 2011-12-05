@@ -21,7 +21,9 @@
 // AUTO-REMOVED #include <core/io/raw_data/ScoreStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/TemperingBase.hh>
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
 #include <protocols/rosetta_scripts/util.hh>
@@ -65,7 +67,9 @@ MetricRecorderCreator::mover_name() {
 
 MetricRecorder::MetricRecorder() :
 	stride_(1),
-	step_count_(0)
+	cumulate_replicas_(false),
+	step_count_(0),
+	last_flush_(0)
 {}
 
 MetricRecorder::~MetricRecorder()
@@ -76,9 +80,11 @@ MetricRecorder::MetricRecorder(
 ) :
 	protocols::canonical_sampling::ThermodynamicObserver(other),
 	stride_(other.stride_),
+	cumulate_replicas_(other.cumulate_replicas_),
 	step_count_(other.step_count_),
 	file_name_(other.file_name_),
-	torsion_ids_(other.torsion_ids_)
+	torsion_ids_(other.torsion_ids_),
+	last_flush_(other.last_flush_)
 {}
 
 MetricRecorder&
@@ -117,6 +123,7 @@ MetricRecorder::parse_my_tag(
 )
 {
 	stride_ = tag->getOption< core::Size >( "stride", 100 );
+	cumulate_replicas_ = tag->getOption< bool >( "cumulate_replicas", false );
 	file_name_ = tag->getOption< std::string >( "filename", "metrics.txt" );
 
 	utility::vector0< utility::tag::TagPtr > const subtags( tag->getTags() );
@@ -171,6 +178,20 @@ MetricRecorder::stride(
 	stride_ = stride;
 }
 
+bool
+MetricRecorder::cumulate_replicas() const
+{
+	return cumulate_replicas_;
+}
+
+void
+MetricRecorder::cumulate_replicas(
+	bool cumulate_replicas
+)
+{
+	cumulate_replicas_ = cumulate_replicas;
+}
+
 void
 MetricRecorder::add_torsion(
 	core::id::TorsionID const & torsion_id,
@@ -219,41 +240,67 @@ MetricRecorder::add_torsion(
 
 void
 MetricRecorder::reset(
-	core::pose::Pose const & pose
+	core::pose::Pose const & pose,
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 )
 {
 	step_count_ = 0;
 	recorder_stream_.close();
-	update_after_boltzmann(pose);
+	update_after_boltzmann(pose, metropolis_hastings_mover);
 }
 
 void
 MetricRecorder::update_after_boltzmann(
-	core::pose::Pose const & pose
+	core::pose::Pose const & pose,
+	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 )
 {
 	if (recorder_stream_.filename() == "") recorder_stream_.open(file_name_);
+	
+	int replica = protocols::jd2::current_replica();
+
+	TemperingBaseCAP tempering = 0;
+	if (metropolis_hastings_mover) {
+		tempering = dynamic_cast< TemperingBase const * >( metropolis_hastings_mover->tempering()() );
+	}
 
 	if (step_count_ == 0) {
 
-		recorder_stream_ << "Trial" << '\t' << "Score";
+		if (!cumulate_replicas_ || replica <= 0) {
 
-		for (core::Size i = 1; i <= torsion_ids_.size(); ++i) {
-			recorder_stream_ << '\t' << torsion_ids_[i].second;
+			recorder_stream_ << "Trial";
+			if (cumulate_replicas_ && replica >= 0) recorder_stream_ << '\t' << "Replica";
+			if (tempering) recorder_stream_ << '\t' << "Temperature";
+			recorder_stream_ << '\t' << "Score";
+
+			for (core::Size i = 1; i <= torsion_ids_.size(); ++i) {
+				recorder_stream_ << '\t' << torsion_ids_[i].second;
+			}
+
+			recorder_stream_ << std::endl;
+			recorder_stream_.flush();
 		}
-
-		recorder_stream_ << std::endl;
+		last_flush_ = time(NULL);
 	}
 
 	if (step_count_ % stride_ == 0) {
 
-		recorder_stream_ << step_count_ << '\t' << pose.energies().total_energy();
-		
+		recorder_stream_ << step_count_;
+		if (cumulate_replicas_ && replica >= 0) recorder_stream_ << '\t' << replica;
+		if (tempering) recorder_stream_ << '\t' << metropolis_hastings_mover->monte_carlo()->temperature();
+		recorder_stream_ << '\t' << pose.energies().total_energy();
+
 		for (core::Size i = 1; i <= torsion_ids_.size(); ++i) {
 			recorder_stream_ << '\t' << pose.torsion(torsion_ids_[i].first);
 		}
-		
+
 		recorder_stream_ << std::endl;
+		
+		time_t now = time(NULL);
+		if (now-last_flush_ > 10) {
+			recorder_stream_.flush();
+			last_flush_ = now;
+		}
 	}
 
 	++step_count_;
@@ -264,7 +311,7 @@ MetricRecorder::apply(
 	core::pose::Pose & pose
 )
 {
-	update_after_boltzmann(pose);
+	update_after_boltzmann(pose, 0);
 }
 
 void
@@ -275,13 +322,12 @@ MetricRecorder::initialize_simulation(
 {
 	std::string original_file_name(file_name());
 
-	if (metropolis_hastings_mover.output_name() != "") {
-		std::ostringstream filename;
-		filename << metropolis_hastings_mover.output_name() << "_" << file_name();
-		file_name(filename.str());
-	}
+	file_name(metropolis_hastings_mover.output_file_name(file_name(), cumulate_replicas_));
 
-	reset(metropolis_hastings_mover.monte_carlo()->last_accepted_pose());
+	reset(
+		metropolis_hastings_mover.monte_carlo()->last_accepted_pose(),
+		&metropolis_hastings_mover
+	);
 
 	file_name(original_file_name);
 }
@@ -291,7 +337,10 @@ MetricRecorder::observe_after_metropolis(
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
-	update_after_boltzmann(metropolis_hastings_mover.monte_carlo()->last_accepted_pose());
+	update_after_boltzmann(
+		metropolis_hastings_mover.monte_carlo()->last_accepted_pose(),
+		&metropolis_hastings_mover
+	);
 }
 
 void

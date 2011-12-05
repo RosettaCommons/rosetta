@@ -21,6 +21,7 @@
 #include <protocols/backrub/BackrubMover.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
@@ -108,6 +109,11 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 
 	for (core::Size i = 1; i <= metropolis_hastings_mover.observers_.size(); ++i) {
 		observers_.push_back(reinterpret_cast<ThermodynamicObserver *>(metropolis_hastings_mover.observers_[i]->clone()()));
+	}
+
+	if (metropolis_hastings_mover.tempering_) {
+		tempering_ = reinterpret_cast<TemperatureController *>(metropolis_hastings_mover.tempering_->clone()());
+		if (monte_carlo_) tempering_->set_monte_carlo(monte_carlo_);
 	}
 }
 
@@ -334,6 +340,29 @@ MetropolisHastingsMover::set_output_name(
 	std::string const & output_name
 ) {
 	output_name_ = output_name;
+}
+
+std::string
+MetropolisHastingsMover::output_file_name(
+	std::string const & suffix,
+	bool cumulate_replicas //= false
+) const {
+
+	std::ostringstream file_name_stream;
+	file_name_stream << output_name_;
+
+	int const rank( protocols::jd2::current_replica() );
+	if (!cumulate_replicas && rank >= 0) {
+		if ( output_name_.length() ) file_name_stream << "_";
+		file_name_stream << std::setfill('0') << std::setw(3) << rank;
+	}
+
+	if ( suffix.length() ) {
+		if ( file_name_stream.str().length() && suffix.length() ) file_name_stream << "_";
+		file_name_stream << suffix;
+	}
+
+	return file_name_stream.str();
 }
 
 void

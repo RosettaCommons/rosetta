@@ -163,7 +163,7 @@ public:
   ) :
     m_buf( filename, buffer_size_, master_rank, append )
   {
-    init( &m_buf );
+    this->init( &m_buf );
   }
 
   /// @brief returns the underlying mpi ostream object
@@ -311,6 +311,16 @@ public:
 		static_cast< std::ostream & >( *this ).write( str, count );
     return *this;
   }
+
+	inline
+	basic_mpi_ostream &
+	flush() {
+		ostream_type::flush();
+		// std::basic_ostream::flush() only calls rdbuf()->sync() not rdbuf()->flush()
+		// therefore, include explicit call below to trigger MpiFileBuffer::flush_channel()
+		rdbuf()->flush();
+		return *this;
+	}
 
 private:
 

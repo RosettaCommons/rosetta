@@ -79,15 +79,6 @@ TemperatureController::observe_after_metropolis( protocols::canonical_sampling::
 	temperature_move( score );
 }
 
-void
-TemperatureController::initialize_simulation(
-	 pose::Pose& pose,
-	 protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-) {
-	initialize_simulation();
-}
-
-
 protocols::moves::MonteCarloCOP
 TemperatureController::monte_carlo() const {
 	return monte_carlo_;
@@ -99,6 +90,11 @@ TemperatureController::set_monte_carlo(
 )
 {
 	monte_carlo_ = monte_carlo;
+}
+
+protocols::moves::MonteCarloOP
+TemperatureController::monte_carlo() {
+	return monte_carlo_;
 }
 
 std::string

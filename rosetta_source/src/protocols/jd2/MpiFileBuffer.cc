@@ -80,7 +80,7 @@ MpiFileBuffer::~MpiFileBuffer() {
 
 void MpiFileBuffer::garbage_collection() {
 	time_t const now( time(NULL) );
-	//tr.Debug << "last garbage collection " << now-lasg_garbage_collection_ " seconds ago" << std::endl;
+	//tr.Debug << "last garbage collection " << now-last_garbage_collection_ << " seconds ago" << std::endl;
 	if ( now-last_garbage_collection_ < 30 ) return;
 	tr.Debug << "garbage collection active..." << std::endl;
 	for ( GarbageList::iterator it=garbage_collector_.begin(); it!=garbage_collector_.end(); ) {
@@ -345,9 +345,14 @@ void MpiFileBuffer::open_channel( Size , std::string const&, bool, Size& status 
 
 
 void MpiFileBuffer::store_to_channel( Size slave, Size channel, std::string const& line ) {
+	//tr.Debug << "store channel for slave " << slave << " channel: " << channel << " length: " << line.length() << std::endl;
 	SingleFileBufferOP buf = open_buffers_[ channel ];
 	runtime_assert( buf ); //writing to open file ?
 	buf->store_line( slave, channel, line );
+	if (buf->length(slave) > 5e6) {
+		tr.Debug << "autoflush threshold (5 MB) triggered for slave " << slave << " channel: " << channel << std::endl;
+		flush_channel(slave, channel);
+	}
 }
 
 void MpiFileBuffer::flush_channel( Size slave, Size channel_id ) {

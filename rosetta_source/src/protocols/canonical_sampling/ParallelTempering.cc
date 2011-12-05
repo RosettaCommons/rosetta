@@ -145,14 +145,18 @@ ParallelTempering::~ParallelTempering() {
 
 
 void
-ParallelTempering::initialize_simulation() {
-	Parent::initialize_simulation();
+ParallelTempering::initialize_simulation(
+	pose::Pose & pose,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+) {
+	Parent::initialize_simulation(pose, metropolis_hastings_mover);
 #ifdef USEMPI
 	set_mpi_comm( jd2::current_mpi_comm() );
 #endif
 	Size const nlevels( n_temp_levels() );
 	allocate_buffers( nlevels );
 	setup_exchange_schedule( nlevels );
+	set_current_temp( rank2tlevel_[rank_] );
 
 	last_exchange_schedule_ = 0;
 }

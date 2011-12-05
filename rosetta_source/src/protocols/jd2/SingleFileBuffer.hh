@@ -52,6 +52,7 @@ public:
 	virtual ~SingleFileBuffer() { runtime_assert( !has_open_slaves() ); };
 	void flush( core::Size slave );
 	void store_line( core::Size slave, core::Size channel, std::string const & line );
+	core::Size length( core::Size slave );
 	void close( core::Size slave );
 	bool has_open_slaves() const;
 	core::Size nr_open_slaves() const;

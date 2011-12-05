@@ -80,7 +80,10 @@ SilentTrajectoryRecorder::SilentTrajectoryRecorder() {
 
 SilentTrajectoryRecorder::SilentTrajectoryRecorder(
 	SilentTrajectoryRecorder const & other
-) :	protocols::canonical_sampling::TrajectoryRecorder(other) {}
+) :	
+	TrajectoryRecorder(other),
+	score_stride_(other.score_stride_)
+{}
 
 protocols::moves::MoverOP
 SilentTrajectoryRecorder::clone() const

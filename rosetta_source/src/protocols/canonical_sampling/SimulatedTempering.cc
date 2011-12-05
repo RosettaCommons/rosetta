@@ -126,8 +126,11 @@ SimulatedTempering::reset_raw_counter() {
 }
 
 void
-SimulatedTempering::initialize_simulation() {
-	Parent::initialize_simulation();
+SimulatedTempering::initialize_simulation(
+	pose::Pose & pose,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+) {
+	Parent::initialize_simulation(pose, metropolis_hastings_mover);
 	total_count_ = 0;
 	reset_raw_counter();
 	tr.Debug << std::setprecision(2);

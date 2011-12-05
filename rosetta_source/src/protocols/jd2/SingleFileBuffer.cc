@@ -68,6 +68,17 @@ void SingleFileBuffer::store_line( Size slave, Size channel, std::string const& 
 	//	std::cout << "channel: " << mpi_channel_ << " slave: " << slave <<std::endl;// << "line: " << line << std::endl;
 }
 
+core::Size SingleFileBuffer::length( core::Size slave ) {
+
+	core::Size length = 0;
+	LineBuffer & buf( unfinished_blocks_[ slave ] );
+	for (LineBuffer::iterator iter = buf.begin(); iter != buf.end(); ++iter) {
+		length += iter->length();
+	}
+
+	return length;
+}
+
 void SingleFileBuffer::write_lines( LineBuffer const& buf ) {
 	std::cout << "START_BLOCK" << std::endl;
 	copy( buf.begin(), buf.end(), std::ostream_iterator< std::string>( std::cout ) );

@@ -60,7 +60,10 @@ public:
 
 	/// @brief callback executed before any Monte Carlo trials
 	virtual void
-	initialize_simulation();
+	initialize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	);
 
 	/// @brief callback executed after all Monte Carlo trials
 	virtual
@@ -79,14 +82,6 @@ public:
 	core::Size temperature_level() const {
 		return current_temp_;
 	}
-
-	protocols::moves::MonteCarloCOP
-	monte_carlo() const;
-
-	void
-	set_monte_carlo(
-		protocols::moves::MonteCarloOP monte_carlo
-	);
 
 	/// @brief callback executed after all Monte Carlo trials
 	core::Size n_temp_levels() const;
@@ -156,10 +151,6 @@ private:
 	bool stats_line_output_;
 	bool stats_silent_output_;
 	std::string stats_file_;
-
-	///---- automatically configured and state... -----
-	//is set when added to MetropolisHastingsMover
-	protocols::moves::MonteCarloOP monte_carlo_;
 
 	//job object to report on temperatures
 	protocols::jd2::JobOP job_;

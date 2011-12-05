@@ -129,6 +129,7 @@ PDBTrajectoryRecorder::write_model(
 
 	pose.dump_pdb(trajectory_stream_);
 	trajectory_stream_ << "ENDMDL" << std::endl;
+	trajectory_stream_.flush();
 }
 
 void

@@ -15,6 +15,7 @@
 #define INCLUDED_protocols_canonical_sampling_TemperingBase_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
 namespace canonical_sampling {
@@ -24,6 +25,8 @@ class TemperingBase;
 
 typedef utility::pointer::owning_ptr< TemperingBase > TemperingBaseOP;
 typedef utility::pointer::owning_ptr< TemperingBase const > TemperingBaseCOP;
+typedef utility::pointer::access_ptr< TemperingBase > TemperingBaseAP;
+typedef utility::pointer::access_ptr< TemperingBase const > TemperingBaseCAP;
 
 } // namespace canonical_sampling
 } // namespace protocols

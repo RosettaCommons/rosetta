@@ -119,6 +119,12 @@ public:
 		std::string const & output_name
 	);
 
+	std::string
+	output_file_name(
+		std::string const & suffix,
+		bool cumulate_replicas = false
+	) const;
+
 	bool
 	finished() const;
 

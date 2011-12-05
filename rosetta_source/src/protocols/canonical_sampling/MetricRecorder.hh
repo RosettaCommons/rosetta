@@ -32,6 +32,7 @@
 
 
 // C++ headers
+#include <ctime>
 #include <string>
 
 #include <core/id/TorsionID.fwd.hh>
@@ -143,6 +144,14 @@ public: // Methods
 		core::Size stride
 	);
 
+	bool
+	cumulate_replicas() const;
+	
+	void
+	cumulate_replicas(
+		bool cumulate_replicas
+	);
+
 	void
 	add_torsion(
 		core::id::TorsionID const & torsion_id,
@@ -160,12 +169,14 @@ public: // Methods
 
 	void
 	reset(
-		core::pose::Pose const & pose
+		core::pose::Pose const & pose,
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	void
 	update_after_boltzmann(
-		core::pose::Pose const & pose
+		core::pose::Pose const & pose,
+		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	virtual
@@ -212,9 +223,11 @@ private: // Fields
 
 	std::string file_name_;
 	core::Size stride_;
+	bool cumulate_replicas_;
 	core::Size step_count_;
 	utility::io::ozstream recorder_stream_;
 	utility::vector1<std::pair<core::id::TorsionID, std::string> > torsion_ids_;
+	time_t last_flush_;
 
 }; // MetricRecorder
 

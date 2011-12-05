@@ -1124,7 +1124,7 @@ settings = {
         },
         "overrides" : {
             "cc"            : "mpicc",
-            "cxx"           : "mpiCC",
+            "cxx"           : "mpicxx",
         },
     },
     "clang, boost_mpi" : {

@@ -38,7 +38,7 @@ namespace mpi_stream {
 	) :	m_buffer( buffer_size_, 0 ), master_rank_( master_rank )
 	{
 		//find comm_tag_;
-		setp( &(m_buffer[0]), &(m_buffer[m_buffer.size()-1]) );
+		this->setp( &(m_buffer[0]), &(m_buffer[m_buffer.size()-1]) );
 
 #ifdef USEMPI
   MPI_Comm_rank (MPI_COMM_WORLD, &my_rank_);/* get current process id */
