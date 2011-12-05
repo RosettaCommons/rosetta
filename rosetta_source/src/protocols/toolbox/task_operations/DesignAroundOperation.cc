@@ -62,6 +62,7 @@ using namespace std;
 DesignAroundOperation::DesignAroundOperation() :
 	design_shell_( 8.0 ),
 	repack_shell_( 8.0 ),
+	allow_design_( true ),
 	string_resnums_( "" )
 {
 	resid_.clear();
@@ -97,16 +98,24 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		utility::vector1< core::Size > packing_residues, prevent_repacking_residues;
 	packing_residues.clear(); prevent_repacking_residues.clear();
 	for( core::Size i=1; i<=pose.total_residue(); ++i ){
-		bool allow_design( false );
+		bool allow_design_res( false );
 		bool allow_packing( false );
-		foreach( core::Size const res, focus_residues ){
-			core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
-			if( distance <= design_shell() ){
-				allow_design = true;
+		foreach( core::Size const res, focus_residues ){ // don't change anything for focus residues
+			if( i == res ){
+				allow_design_res = true;
 				break;
-			}// fi distance
-		} //foreach res
-		if( allow_design ) continue;
+			}
+		}
+		if( allow_design() && !allow_design_res ){
+			foreach( core::Size const res, focus_residues ){
+				core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
+				if( distance <= design_shell() ){
+					allow_design_res = true;
+					break;
+				}// fi distance
+			} //foreach res
+		}
+		if( allow_design_res ) continue;
 		foreach( core::Size const res, focus_residues ){
 			core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
 			if( distance <= repack_shell() ){
@@ -150,8 +159,10 @@ DesignAroundOperation::parse_tag( TagPtr tag )
 {
 	string_resnums_ = tag->getOption< std::string >( "resnums" );// these are kept in memory until the pose is available (at apply time)
   design_shell( tag->getOption< core::Real >( "design_shell", 8.0 ) );
+	allow_design( tag->getOption< bool >( "allow_design", 1 ) );
 	repack_shell( tag->getOption< core::Real >( "repack_shell", 8.0 ));
 	runtime_assert( design_shell() <= repack_shell() );
+	TR<<"repack_shell = "<<repack_shell()<<" design shell = "<<design_shell()<<std::endl;
 }
 } //namespace protocols
 } //namespace toolbox
