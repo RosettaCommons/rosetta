@@ -87,7 +87,9 @@ MPIArchiveJobDistributor::MPIArchiveJobDistributor() :
 
 void
 MPIArchiveJobDistributor::set_archive( ArchiveBaseOP archive ) {
-	theArchive_ = archive;
+	if ( rank() == archive_rank() ) {
+		theArchive_ = archive;
+	}
 }
 ///@brief dummy for master/slave version -- start the appropriate process depending on rank()
 void

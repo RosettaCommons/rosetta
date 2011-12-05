@@ -103,6 +103,11 @@ public:
 	void set_manager( ArchiveManagerAP manager ) {
 		manager_=manager;
 	}
+protected:
+
+	ArchiveManagerAP manager_ptr() {
+		return manager_;
+	}
 
 private:
 	ArchiveManagerAP manager_;

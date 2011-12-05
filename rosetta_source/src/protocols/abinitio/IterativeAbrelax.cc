@@ -125,8 +125,12 @@ void IterativeAbrelax::generate_batch() {
 // 			fullatom_archive_.set_first_noesy_fa_cst_file( centroid_archive_.first_noesy_fa_cst_file() );
 // 			fullatom_archive_.set_noesy_assign_float_cycle( centroid_archive_.noesy_assign_float_cycle() );
 // 		}
+		fullatom_archive_.set_manager( manager_ptr() );
 		fullatom_archive_.generate_batch();
-	} else centroid_archive_.generate_batch();
+	} else {
+		centroid_archive_.set_manager( manager_ptr() );
+		centroid_archive_.generate_batch();
+	}
 }
 
 

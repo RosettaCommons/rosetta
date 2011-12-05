@@ -132,6 +132,10 @@ public:
 	void
 	set_archive( archive::ArchiveBaseOP );
 
+	bool is_archive_rank() const {
+		return archive_rank() == rank();
+	}
+
 protected:
 	///@brief triggered in slave if new batch_ID comes in.
 	virtual void batch_underflow();
