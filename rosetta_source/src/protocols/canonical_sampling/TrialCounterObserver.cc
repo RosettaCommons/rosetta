@@ -48,6 +48,18 @@ std::string protocols::canonical_sampling::TrialCounterObserver::get_name() cons
 	return "TrialCounterObserver";
 };
 
+
+void
+TrialCounterObserver::parse_my_tag(
+       utility::tag::TagPtr const,
+       protocols::moves::DataMap &,
+       protocols::filters::Filters_map const &,
+       protocols::moves::Movers_map const &,
+       core::pose::Pose const &
+) { //no options ...
+}
+
+
 void
 protocols::canonical_sampling::TrialCounterObserver::initialize_simulation(
 	core::pose::Pose & /*pose*/,

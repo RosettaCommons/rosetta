@@ -161,8 +161,6 @@ TemperingBase::parse_my_tag(
 	protocols::moves::Movers_map const & movers,
 	pose::Pose const & pose
 ) {
-	init_from_options();
-	Parent::parse_my_tag( tag, data, filters, movers, pose );
 	//figure out temperatures...
 	std::string temp_file = tag->getOption< std::string >( "temp_file", "" );
 	bool success( false );
@@ -239,6 +237,12 @@ void TemperingBase::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
+
+	if ( !options_registered_ ) {
+		utility_exit_with_message( "cannot call TemperingBase::init_from_options() unless TemperingBase::register_options() \
+                     on application level before devel::init()" );
+	}
+
 	bool success( false );
 	if ( option[ tempering::temp::file ].user() ) {
 		success=initialize_from_file( option[ tempering::temp::file ]() );

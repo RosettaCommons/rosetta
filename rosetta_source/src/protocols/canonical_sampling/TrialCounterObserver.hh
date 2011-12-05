@@ -44,6 +44,16 @@ public:
 	~TrialCounterObserver();
 
 	virtual std::string get_name() const;
+
+  void
+	parse_my_tag(
+		 utility::tag::TagPtr const tag,
+     protocols::moves::DataMap & data,
+     protocols::filters::Filters_map const & filters,
+     protocols::moves::Movers_map const & movers,
+     core::pose::Pose const & pose
+	);
+
 	/// @brief callback executed before any Monte Carlo trials
 	virtual
 	void
