@@ -28,20 +28,17 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <numeric/interpolate.hh>
 #include <numeric/prob_util.hh>
 #include <utility/vector1.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
@@ -76,8 +73,6 @@
 // Package headers
 #include <protocols/medal/util.hh>
 
-//Auto Headers
-#include <core/chemical/ChemicalManager.fwd.hh>
 namespace protocols {
 namespace medal {
 
@@ -259,7 +254,7 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
 
   // Choose chainbreaks automatically
   Loops empty;
-	protocols::comparative_modeling::LoopRelaxMover closure;
+  protocols::comparative_modeling::LoopRelaxMover closure;
   closure.remodel("quick_ccd");
   closure.intermedrelax("no");
   closure.refine("no");
@@ -340,7 +335,7 @@ protocols::moves::MoverOP MedalMover::create_fragment_mover(
   using namespace protocols::simple_moves::rational_mc;
   using namespace protocols::nonlocal;
 
-  MoverOP fragment_mover = new BiasedFragmentMover(fragments, PolicyFactory::get_policy(policy, fragments, library_size), probs);
+  MoverOP fragment_mover = new BiasedFragmentMover(PolicyFactory::get_policy(policy, fragments, library_size), probs);
 
   RationalMonteCarloOP mover =
       new RationalMonteCarlo(fragment_mover, score,
@@ -375,9 +370,7 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
 
   CyclicMoverOP meta = new CyclicMover();
   meta->enqueue(new rigid::RigidBodyMotionMover(pose.fold_tree()));
-  meta->enqueue(new BiasedFragmentMover(fragments,
-                                        PolicyFactory::get_policy(policy, fragments, library_size),
-                                        probs));
+  meta->enqueue(new BiasedFragmentMover(PolicyFactory::get_policy(policy, fragments, library_size), probs));
 
   RationalMonteCarloOP mover =
       new RationalMonteCarlo(meta,

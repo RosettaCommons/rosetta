@@ -26,6 +26,7 @@
 #include <utility/vector1.hh>
 
 // Project headers
+#include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -36,9 +37,6 @@
 // Package headers
 #include <protocols/nonlocal/Policy.hh>
 
-#include <core/fragment/FragData.hh>
-
-
 namespace protocols {
 namespace nonlocal {
 
@@ -47,13 +45,13 @@ namespace nonlocal {
 /// control over the simulation.
 class BiasedFragmentMover : public protocols::moves::Mover {
   typedef boost::unordered_map<unsigned, core::fragment::Frame> FrameMap;
-  typedef core::fragment::FragSetOP FragSetOP;
+  typedef core::fragment::FragSetCOP FragSetCOP;
   typedef utility::vector1<double> Probabilities;
 
  public:
   /// @brief Creates a new BiasedFragmentMover that selects uniformly from the
   /// available fragments at the selected insertion position.
-  BiasedFragmentMover(const FragSetOP& fragments, const PolicyOP& policy, const Probabilities& probs);
+  BiasedFragmentMover(const PolicyOP& policy, const Probabilities& probs);
 
   ~BiasedFragmentMover() {}
 
@@ -90,7 +88,7 @@ class BiasedFragmentMover : public protocols::moves::Mover {
   core::kinematics::MoveMap movable_;
 
   /// @brief Fragment library
-  FragSetOP fragments_;
+  FragSetCOP fragments_;
 
   /// @brief Position-indexable Frame lookup
   FrameMap frames_;

@@ -50,10 +50,11 @@ namespace nonlocal {
 
 typedef utility::vector1<double> Probabilities;
 
-BiasedFragmentMover::BiasedFragmentMover(const core::fragment::FragSetOP& fragments, const PolicyOP& policy, const Probabilities& pdf)
-    : fragments_(fragments), policy_(policy), pdf_(pdf) {
+BiasedFragmentMover::BiasedFragmentMover(const PolicyOP& policy, const Probabilities& pdf)
+    : policy_(policy), pdf_(pdf) {
   assert(fragments);
   assert(policy);
+  fragments_ = policy->fragments();
   initialize_library();
   initialize_probabilities();
 
