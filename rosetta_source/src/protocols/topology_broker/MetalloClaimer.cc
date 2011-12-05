@@ -75,7 +75,7 @@ MetalloClaimer::MetalloClaimer() : residue_pair_jump_( NULL )
 void MetalloClaimer::initialize_residues( core::pose::Pose& pose, SequenceClaimOP my_claim, DofClaims& failed_to_init ) {
 	SequenceClaimer::initialize_residues( pose, my_claim, failed_to_init );
 	// I know this guy isn't doing anything JumpClaimer::initialize_residues( pose, my_claim, failed_to_init );
-
+	jump_setup_->clear();
 	resolved_anchor_residue_ = broker().resolve_residue( anchor_chain_, anchor_residue_ );
 	tr.Trace << "MetalloClaimer: setup jump between " << anchor_residue_ << " " << my_claim->offset() << std::endl;
 	jump_setup_->add_jump(

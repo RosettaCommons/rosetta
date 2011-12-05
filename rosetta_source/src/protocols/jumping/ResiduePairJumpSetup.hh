@@ -139,6 +139,9 @@ public:
 	total_residue() const {
 		return total_residue_;
 	}
+	void clear() {
+		jumps_.clear();
+	}
 
 private:
 	utility::vector1< JumpDef > jumps_;

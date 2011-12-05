@@ -159,6 +159,9 @@ public:
 		return jumps_.end();
 	};
 
+	void clear() {
+		jumps_.clear();
+	}
 	void
 	read_file( std::string file );
 
