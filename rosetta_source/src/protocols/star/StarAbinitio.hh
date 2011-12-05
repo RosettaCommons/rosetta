@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/abinitio/star/StarAbinitio.hh
+/// @file protocols/star/StarAbinitio.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_ABINITIO_STAR_STAR_ABINITIO_HH_
-#define PROTOCOLS_ABINITIO_STAR_STAR_ABINITIO_HH_
+#ifndef PROTOCOLS_STAR_STAR_ABINITIO_HH_
+#define PROTOCOLS_STAR_STAR_ABINITIO_HH_
 
 // Unit header
-#include <protocols/abinitio/star/StarAbinitio.fwd.hh>
+#include <protocols/star/StarAbinitio.fwd.hh>
 
 // C/C++ headers
 #include <string>
@@ -29,7 +29,6 @@
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {
-namespace abinitio {
 namespace star {
 
 class StarAbinitio : public protocols::moves::Mover {
@@ -83,7 +82,6 @@ class StarAbinitio : public protocols::moves::Mover {
 };
 
 }  // namespace star
-}  // namespace abinitio
 }  // namespace protocols
 
 #endif  // PROTOCOLS_ABINITIO_STAR_STAR_ABINITIO_HH_

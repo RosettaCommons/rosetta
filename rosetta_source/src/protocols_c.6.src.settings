@@ -10,9 +10,6 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-        "protocols/abinitio/star" : [
-                "StarAbinitio",
-        ],
 	"protocols/medal": [
 		"MedalExchangeMover",
 		"MedalMain",
@@ -38,6 +35,9 @@ sources = {
 		"UniformPolicy",
 		"util",
 	],
+        "protocols/star" : [
+                "StarAbinitio",
+        ],
 	"protocols/nonlocal/frag_picker": [
 		"NonlocalFrags",
 		"NonlocalFragsMain",

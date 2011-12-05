@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/abinitio/star/StarAbinitio.cc
+/// @file protocols/star/StarAbinitio.cc
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit header
-#include <protocols/abinitio/star/StarAbinitio.hh>
+#include <protocols/star/StarAbinitio.hh>
 
 // C/C++ headers
 #include <iostream>
@@ -73,10 +73,9 @@
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 
 namespace protocols {
-namespace abinitio {
 namespace star {
 
-static basic::Tracer TR("protocols.abinitio.StarAbinitio");
+static basic::Tracer TR("protocols.star.StarAbinitio");
 
 // Numeric constants
 static const double EXT_PHI = -150;
@@ -597,5 +596,4 @@ protocols::moves::MoverOP StarAbinitio::fresh_instance() const {
 }
 
 }  // namespace star
-}  // namespace abinitio
 }  // namespace protocols

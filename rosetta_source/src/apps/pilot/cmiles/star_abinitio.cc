@@ -24,7 +24,7 @@
 #include <utility/excn/EXCN_Base.hh>
 
 // Project headers
-#include <protocols/abinitio/star/StarAbinitio.hh>
+#include <protocols/star/StarAbinitio.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/viewer/viewers.hh>
@@ -56,7 +56,7 @@ void check_required() {
 
 void* star_main(void*) {
   using protocols::jd2::JobDistributor;
-  using protocols::abinitio::star::StarAbinitio;
+  using protocols::star::StarAbinitio;
   using protocols::moves::MoverOP;
 
   check_required();
