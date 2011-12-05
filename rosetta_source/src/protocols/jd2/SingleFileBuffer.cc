@@ -48,6 +48,10 @@ bool SingleFileBuffer::has_open_slaves() const {
 	return unfinished_blocks_.size();
 }
 
+Size SingleFileBuffer::nr_open_slaves() const {
+	return unfinished_blocks_.size();
+}
+
 void SingleFileBuffer::close( Size slave ) {
 	flush( slave );
 	BufferMap::iterator iter = unfinished_blocks_.find( slave );
@@ -112,8 +116,10 @@ WriteFileSFB::~WriteFileSFB() {
 
 void WriteFileSFB::write_lines( LineBuffer const& buf ) {
 	copy( buf.begin(), buf.end(), std::ostream_iterator< std::string>( out_ ) );
-	copy( buf.begin(), buf.end(), std::ostream_iterator< std::string>( tr.Debug ) );
-	tr.Debug << std::endl;
+	if ( tr.Trace.visible() ) {
+		copy( buf.begin(), buf.end(), std::ostream_iterator< std::string>( tr.Trace ) );
+		tr.Trace << std::endl;
+	}
 }
 
 void WriteFileSFB::block( core::Size slave ) {

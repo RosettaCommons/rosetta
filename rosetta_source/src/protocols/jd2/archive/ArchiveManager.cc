@@ -485,8 +485,8 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 		file_buf.block_file( ".//"+batch.silent_out() ); //destructor will release file automatically
 	} else {
 		tr.Debug << "final ... close file " << std::endl;
-		file_buf.close_file( ".//"+batch.silent_out() ); //that is not very nice, but file-buf isn't very smart with filenames...
-		file_buf.close_file( ".//"+batch.score_file() );
+		//	file_buf.close_file( ".//"+batch.silent_out() ); //that is not very nice, but file-buf isn't very smart with filenames...
+		//		file_buf.close_file( ".//"+batch.score_file() ); // not required since now we have garbage-collection
 	}
 	if ( batch.is_cancelled() && !batch.allow_reading_cancelled_decoys() ) {
 		tr.Debug << "returned decoys of cancelled batch.. ignore..." << std::endl;

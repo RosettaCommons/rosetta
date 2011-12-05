@@ -54,6 +54,7 @@ public:
 	void store_line( core::Size slave, core::Size channel, std::string const & line );
 	void close( core::Size slave );
 	bool has_open_slaves() const;
+	core::Size nr_open_slaves() const;
 	//a sequential block of lines hat come from a single slave node (i.e., a full-silent struct )
 	// called when flush() or close() is called on the stream on the slave node
 	virtual void write_lines( LineBuffer const & );

@@ -62,6 +62,9 @@ private:
 	void block_file( core::Size slave, std::string const& filename ); //don't write to this file, and close-reopen_append streams
 	void close_file( core::Size channel );
 	bool remote_close_file( std::string const& filename ); //this file is no longer used... close
+	//helper routine -- call when manually closing file or re-opening channel
+	void clear_channel_from_garbage_collector( core::Size channel );
+
 public:
 	void release_file( std::string filename );
 	void block_file( std::string const& filename );

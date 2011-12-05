@@ -85,21 +85,28 @@ void MpiFileBuffer::garbage_collection() {
 	tr.Debug << "garbage collection active..." << std::endl;
 	for ( GarbageList::iterator it=garbage_collector_.begin(); it!=garbage_collector_.end(); ) {
 		GarbageList::iterator to_erase( it );
-		++it;
+		++it; //move forward now, because to_erase will be erased in "close_file"
 		tr.Debug << "marked " << to_erase->first << " " << now-to_erase->second << " seconds ago." << std::endl;
 		if ( now-to_erase->second > seconds_to_keep_files_alive_ ) {
 			int channel( to_erase->first );
 			SingleFileBufferOP buf = open_buffers_[ channel ];
-			runtime_assert( buf ); //writing to open file ?
+			if ( !buf ) {
+				garbage_collector_.erase( to_erase );
+				// this is now understood. some files can be closed directly via MPI_CLOSE_FILE (e.g., from ArchiveManager )
+				// to avoid this case I could call clear_channel_from_garbage_collector( channel_id ) in close_file()
+				// but then one has to be careful to not delete the iterator in this for-loop
+				continue;
+			}
 			if ( !buf->has_open_slaves() ) {
 				tr.Debug << "channel "<< channel
 								 << " has no more open slaves... and has not been touched again --- close via garbage collector" << std::endl;
+				//				garbage_collector_.erase( to_erase ); now removed from garbage_collector in close_file()
 				close_file( channel );
 				mem_tr << "closed_channel" << std::endl;
-				garbage_collector_.erase( to_erase );
 			} else {
-				tr.Debug << "channel " << to_erase->first << " has still open slaves ... not closed" << std::endl;
-				it->second = now;
+				runtime_assert( false ); //shouldn't happen anymore
+				tr.Debug << "channel " << to_erase->first << " has open slaves again ... not closed, remove from closing list" << std::endl;
+				//				garbage_collector_.erase( to_erase );
 			}
 		}
 	}
@@ -276,6 +283,14 @@ bool MpiFileBuffer::is_open_channel( std::string const& filename ) {
 	return ( iter != open_files_.end() );
 }
 
+void MpiFileBuffer::clear_channel_from_garbage_collector( core::Size channel ) {
+	//remove from garbage_collector if its in there already
+	GarbageList::iterator giter = garbage_collector_.find( channel );
+	if ( giter != garbage_collector_.end() ) {
+		tr.Debug << "remove channel " << channel << " from garbage-collector list " << std::endl;
+		garbage_collector_.erase( giter );
+	}
+}
 
 #ifdef USEMPI
 void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool append, Size& status ) {
@@ -290,6 +305,8 @@ void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool 
 		buf->flush( slave );
 		tr.Debug << "channel exists already: " << channel << std::endl;
 		status = MPI_SUCCESS_APPEND;
+
+		clear_channel_from_garbage_collector( channel );
 	} else {
 		//new file
 		channel = ++last_channel_; //this might overrun eventually
@@ -341,18 +358,20 @@ void MpiFileBuffer::flush_channel( Size slave, Size channel_id ) {
 }
 
 void MpiFileBuffer::close_channel( Size slave, Size channel_id ) {
-	tr.Debug << "close channel "<< channel_id <<" for slave " << slave
-					 << " currently " << open_buffers_.size() << " open buffers" << std::endl;
 	SingleFileBufferOP buf = open_buffers_[ channel_id ];
 	runtime_assert( buf ); //writing to open file ?
 	buf->close( slave );
+	tr.Debug << "close channel "<< channel_id <<" for slave " << slave
+					 << " currently " << buf->nr_open_slaves() << " open slave buffers; open files: " << open_buffers_.size() << std::endl;
 	if ( !buf->has_open_slaves() && bSlaveCanOpenFile_ && !bKeepFilesAlive_ ) {
 		tr.Debug << "channel has no more open slaves... close completely now" << std::endl;
 		close_file( channel_id );
 		mem_tr << "closed_channel" << std::endl;
 	} else {
-		tr.Debug << "mark channel " << channel_id << " for closing in " << seconds_to_keep_files_alive_ << std::endl;
-		garbage_collector_[ channel_id ]=time(NULL);
+		if ( !buf->has_open_slaves() ) {
+			tr.Debug << "mark channel " << channel_id << " for closing in " << seconds_to_keep_files_alive_ << std::endl;
+			garbage_collector_[ channel_id ]=time(NULL);
+		}
 	}
 	tr.Debug << "currently " << open_buffers_.size() << " open buffers" << std::endl;
 }
