@@ -66,7 +66,7 @@ MPIMultiCommJobDistributor::MPIMultiCommJobDistributor( core::Size sub_size ) {
 }
 
 void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
-	n_comm_ = n_rank() / sub_size;
+	n_comm_ = ( n_rank()-min_client_rank() ) / sub_size;
 	set_n_worker( n_comm_ );
 #ifdef USEMPI
 	if ( n_comm_ < 1 ) {
@@ -81,7 +81,7 @@ void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
 	mpi_groups_.resize( n_comm_, MPI_GROUP_NULL );
 	mpi_communicators_.resize( n_comm_, MPI_COMM_NULL );
 	for ( Size i_comm = 1; i_comm <= n_comm_; ++i_comm ) {
-		mpi_ranks_.push_back( new int[ sub_size ] );
+		mpi_ranks_.push_back( new int[ sub_size ] ); //delete never called because singleton class
 		for ( Size i = 0; i < sub_size; ++i, ++i_rank ) {
 			mpi_ranks_.back()[ i ] = i_rank;
 			if ( i_rank == rank() ) {
