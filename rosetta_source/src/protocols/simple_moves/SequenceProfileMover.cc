@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/simple_moves/SequenceProfileMover.cc
-/// @brief  BS mover to get around a stupid "mover" that was embedded in the parser
+/// @brief  moverization of code that was embedded in the parser
 /// @author Brian Weitzner brian.weitzner@gmail.com, Steven Lewis smlewi@gmail.com
 /// @date   Rebased to next year.
 
@@ -32,7 +32,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <core/sequence/SequenceProfile.hh> 
+#include <core/sequence/SequenceProfile.hh>
 #include <utility/file/FileName.hh>
 
 #include <protocols/moves/DataMap.hh>
@@ -56,15 +56,13 @@ void
 SequenceProfileMover::apply( core::pose::Pose & pose )
 {
     using namespace core::sequence;
-    
+
     SequenceProfileOP profile = new SequenceProfile;
     profile->read_from_checkpoint( cst_file_name_ );
     for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos )
         pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
-    
+
     TR << "Added sequence profile constraints specified in file " << cst_file_name_ << "." << std::endl;
-    
-    TR << "This code is included in the test!" << std::endl;
 }
 
 std::string
@@ -86,7 +84,7 @@ void
 SequenceProfileMover::parse_my_tag( TagPtr const tag, moves::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	using namespace core::scoring;
-    
+
     //handle cst_file_name
     protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
     std::string const input_file_name( job->input_tag() );
@@ -96,7 +94,7 @@ SequenceProfileMover::parse_my_tag( TagPtr const tag, moves::DataMap & data, pro
 
     //handle profile_wgt
     set_profile_wgt( tag->getOption< core::Real >( "weight", 0.25 ) );
- 
+
     /*
     if( profile_wgt_ ) {
         using namespace utility::pointer;
@@ -106,7 +104,7 @@ SequenceProfileMover::parse_my_tag( TagPtr const tag, moves::DataMap & data, pro
             TR << "setting " << it->first << " res_type_constraint to " << profile_wgt_ << "\n";
 		}
 	}
-        
+
     TR << "Changed all scorefxns to have profile weights of " << profile_wgt_ << std::endl;
    */
 } //end parse_my_tag
