@@ -10,7 +10,7 @@
 /// @author Sarel Fleishman (sarelf@uw.edu)
 #include <protocols/protein_interface_design/filters/TorsionFilter.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilterCreator.hh>
-
+#include <sstream>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -44,15 +44,24 @@ bool
 Torsion::apply(core::pose::Pose const & pose ) const
 {
 	if( resnum() == 0 ){ // just print all torsions
+		std::stringstream s("");
 		for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+			if( i % 5 == 0 ) s << pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
 			TR<<"Residue "<<pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
-			if( torsion() == "phi" || torsion() == "" )
+			if( torsion() == "phi" || torsion() == "" ){
 				TR<<" phi "<<pose.phi( i )<<'\t';
-			if( torsion() == "psi" || torsion() == "" )
+				s<<pose.phi( i )<<' ';
+			}
+			if( torsion() == "psi" || torsion() == "" ){
 				TR<<" psi "<<pose.psi( i )<<'\t';
-			if( torsion() == "omega" || torsion() == "" )
+				s<<pose.psi( i )<<' ';
+			}
+			if( torsion() == "omega" || torsion() == "" ){
 				TR<<" omega "<<pose.omega( i )<<std::endl;
+				s<<pose.omega( i )<<' ';
+			}
 		}
+		TR<<s.str()<<std::endl;
 		return true;
 	}
 	else{
