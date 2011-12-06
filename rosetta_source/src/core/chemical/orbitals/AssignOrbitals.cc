@@ -69,8 +69,8 @@ void AssignOrbitals::assign_orbitals( )
 			core::Size parameter_bohrradius = atom_type_set->extra_parameter_index("BOHR_RADIUS");
 
 			orbital_info.atom_index = atm_index;
-			orbital_info.hybridization = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_hybridization);
-			orbital_info.orbitaltypes = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_orbitaltypes);
+			orbital_info.hybridization = (core::Size)( atom_type_set->operator[](atom_type_index ).extra_parameter(parameter_hybridization) );
+			orbital_info.orbitaltypes = (core::Size)( atom_type_set->operator[](atom_type_index).extra_parameter(parameter_orbitaltypes) );
 			orbital_info.dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
 			orbital_info.bondedatoms = restype_->bonded_neighbor(atm_index);
 
