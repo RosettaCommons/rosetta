@@ -35,6 +35,9 @@
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
 
+// C Headers
+#include <time.h>
+
 namespace protocols {
 namespace canonical_sampling {
 
@@ -142,6 +145,10 @@ private:
 	double *last_energies_;
 	int *rank2tlevel_;
 	int *tlevel2rank_;
+	std::map<std::pair<int, int>, core::Size> exchange_attempts_;
+	std::map<std::pair<int, int>, core::Size> exchange_accepts_;
+	clock_t start_time_;
+	clock_t total_mpi_wait_time_;
 
 }; //end ParallelTempering
 

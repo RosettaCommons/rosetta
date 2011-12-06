@@ -158,7 +158,8 @@ TemperingBase::parse_my_tag(
 		Real temp_low = tag->getOption< Real >( "temp_low", 0.6 );
 		Real temp_high = tag->getOption< Real >( "temp_high", 3.0 );
 		Size temp_levels = tag->getOption< Size >( "temp_levels", 10 );
-		generate_temp_range( temp_low, temp_high, temp_levels );
+		InterpolationType temp_interpolation = interpolation_type_string_to_enum(tag->getOption< std::string >( "temp_interpolation", "linear" ));
+		generate_temp_range( temp_low, temp_high, temp_levels, temp_interpolation );
 	}
 
 	//simple options
@@ -257,13 +258,24 @@ void TemperingBase::init_from_options() {
 	instance_initialized_ = true;
 }
 
-void TemperingBase::generate_temp_range( Real temp_low, Real temp_high, Size n_levels ) {
+void TemperingBase::generate_temp_range( Real temp_low, Real temp_high, Size n_levels, InterpolationType interpolation /*= linear*/ ) {
 	temperatures_.clear();
 	runtime_assert( n_levels >= 2 );
-	Real const temp_step ( (temp_high-temp_low)/(n_levels-1) );
-	tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels." << std::endl;
-	for ( Size ct=0; ct<n_levels; ++ct ) {
-		temperatures_.push_back( temp_low+ct*temp_step );
+	tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels using " 
+	        << interpolation_type_enum_to_string(interpolation) << " interpolation." << std::endl;
+	if (interpolation == linear) {
+		Real const temp_step ( (temp_high-temp_low)/(n_levels-1) );
+		for ( Size ct=0; ct<n_levels; ++ct ) {
+			temperatures_.push_back( temp_low+ct*temp_step );
+		}
+	} else if (interpolation == exponential) {
+		Real next_temp( temp_low );
+		Real temp_factor( pow(temp_high/temp_low, 1/Real(n_levels-1)) );
+		for ( Size ct=1; ct<n_levels; ++ct ) {
+			temperatures_.push_back( next_temp );
+			next_temp *= temp_factor;
+		}
+		temperatures_.push_back( temp_high );
 	}
 }
 

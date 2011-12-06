@@ -63,6 +63,23 @@ namespace canonical_sampling {
 using namespace core;
 
 
+std::string
+interpolation_type_enum_to_string( InterpolationType interp_enum ) {
+
+	return interp_enum == linear ? "linear" : "exponential";
+}
+
+InterpolationType
+interpolation_type_string_to_enum( std::string const & interp_string ) {
+
+	if (interp_string == "linear") {
+		return linear;
+	} else if (interp_string != "exponential") {
+		utility_exit_with_message("invalid temp_interpolation value, expecting linear or exponential");
+	}
+	return exponential;
+}
+
 TemperatureController::TemperatureController() :
 	protocols::canonical_sampling::ThermodynamicObserver()
 {}

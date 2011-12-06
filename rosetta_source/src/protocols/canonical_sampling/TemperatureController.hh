@@ -41,6 +41,14 @@
 namespace protocols {
 namespace canonical_sampling {
 
+typedef enum { linear, exponential } InterpolationType;
+
+std::string
+interpolation_type_enum_to_string( InterpolationType interp_enum );
+
+InterpolationType
+interpolation_type_string_to_enum( std::string const & interp_string );
+
 ///@details
 class TemperatureController : public protocols::canonical_sampling::ThermodynamicObserver {
 

@@ -54,6 +54,9 @@
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
+// basic headers
+#include <basic/prof.hh>
+
 // C++ Headers
 #include <cmath>
 
@@ -99,7 +102,9 @@ ParallelTempering::ParallelTempering() :
 	rank_( -1 ),
 	last_energies_( NULL ),
 	rank2tlevel_( NULL ),
-	tlevel2rank_( NULL )
+	tlevel2rank_( NULL ),
+	start_time_(0),
+	total_mpi_wait_time_(0)
 {
 #ifndef USEMPI
 	utility_exit_with_message( "ParallelTempering requires MPI build" );
@@ -116,7 +121,9 @@ ParallelTempering::ParallelTempering(	ParallelTempering const & other ) :
 	last_exchange_schedule_( other.last_exchange_schedule_ ),
 	last_energies_( NULL ),
 	rank2tlevel_( NULL ),
-	tlevel2rank_( NULL )
+	tlevel2rank_( NULL ),
+	start_time_( other.start_time_ ),
+	total_mpi_wait_time_( other.total_mpi_wait_time_ )
 {
 #ifndef USEMPI
 	utility_exit_with_message( "ParallelTempering requires MPI build" );
@@ -159,6 +166,8 @@ ParallelTempering::initialize_simulation(
 	set_current_temp( rank2tlevel_[rank_] );
 
 	last_exchange_schedule_ = 0;
+	start_time_ = clock() / basic::SHRINK_FACTOR;
+	total_mpi_wait_time_ = 0;
 }
 
 void
@@ -168,6 +177,31 @@ ParallelTempering::finalize_simulation(
 ) {
 	deallocate_buffers();
 	Parent::finalize_simulation( pose, mhm );
+
+	if (rank() == 0) {
+		tr << "Temperature Exchange Frequencies:" << std::endl;
+		std::streamsize oldwidth( tr.width() );
+		std::streamsize oldprecision( tr.precision() );
+		std::ios_base::fmtflags oldflags( tr.flags() );
+		tr.width(5);
+		tr.precision(3);
+		tr.setf(std::ios_base::fixed);
+		for (core::Size i=0; i<n_temp_levels()-1; ++i) {
+			std::pair<int, int> elem(i, i+1);
+			core::Real frequency(core::Real(exchange_accepts_[elem])/core::Real(exchange_attempts_[elem]));
+			tr << temperature(i+1) << " <-> " << temperature(i+2) << ": " << frequency 
+				 << " (" << exchange_accepts_[elem] << " of " << exchange_attempts_[elem] << ")" << std::endl;
+		}
+		tr.width(oldwidth);
+		tr.precision(oldprecision);
+		tr.flags(oldflags);
+	}
+
+	core::Real const clock_factor( ( (double) basic::SHRINK_FACTOR ) / CLOCKS_PER_SEC );
+	clock_t total_time(clock()/basic::SHRINK_FACTOR - start_time_);
+	core::Real fraction_waiting = total_mpi_wait_time_*clock_factor / ( total_time*clock_factor );
+	tr << "Spent " << fraction_waiting*100 << "% time waiting for MPI temperature exchange (" 
+	   << total_mpi_wait_time_*clock_factor << " seconds out of " << total_time*clock_factor << " total)" << std::endl;
 }
 
 void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
@@ -179,6 +213,10 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
 	for (int i=0; i<nlevels-1; i+=2) {
 		std::pair<int, int> elem(i, i+1);
 		list.push_back(elem);
+		if (rank() == 0) {
+			exchange_attempts_[elem] = 0;
+			exchange_accepts_[elem] = 0;
+		}
 	}
 	exchange_schedules_.push_back(list);
 
@@ -187,6 +225,10 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
 	for (int i=1; i<nlevels-1; i+=2) {
 		std::pair<int, int> elem(i, i+1);
 		list.push_back(elem);
+		if (rank() == 0) {
+			exchange_attempts_[elem] = 0;
+			exchange_accepts_[elem] = 0;
+		}
 	}
 	exchange_schedules_.push_back(list);
 }
@@ -222,6 +264,7 @@ ParallelTempering::temperature_move( core::Real score ) {
 #ifdef USEMPI
 	//get infomation
 	double last_energy = score;
+	clock_t time_before_MPI = clock();
 	MPI_Gather(&last_energy, 1, MPI_DOUBLE, last_energies_, 1, MPI_DOUBLE, 0, mpi_comm() );
 
 	  //change the T_tag and T_rev at node0
@@ -230,8 +273,10 @@ ParallelTempering::temperature_move( core::Real score ) {
 	//public the new T_tag
 	int new_tlevel;
 	MPI_Scatter(rank2tlevel_, 1, MPI_INT, &new_tlevel, 1, MPI_INT, 0, mpi_comm() );
+	total_mpi_wait_time_ += ( clock() - time_before_MPI ) / basic::SHRINK_FACTOR;
 	set_current_temp( new_tlevel );
 #endif
+	return temperature();
 }
 
 void
@@ -247,6 +292,8 @@ ParallelTempering::shuffle_temperatures( double *energies ) {
 		Real const deltaE( energies[rank2]-energies[rank1] );
 		Real const delta( ( invT1 - invT2 ) * deltaE );
 
+		++exchange_attempts_[ex[i]];
+
 		if ( RG.uniform() < std::min( 1.0, std::exp( std::max(-40.0, -delta) ) ) ) {
 			Size tmp;
 
@@ -260,6 +307,7 @@ ParallelTempering::shuffle_temperatures( double *energies ) {
 			tlevel2rank_[ex[i].first]=tlevel2rank_[ex[i].second];
 			tlevel2rank_[ex[i].second]=tmp;
 
+			++exchange_accepts_[ex[i]];
 		}
 	}
 }

@@ -126,7 +126,7 @@ protected:
 		return stats_file_;
 	}
 
-	void generate_temp_range( core::Real temp_low, core::Real temp_high, core::Size n_levels );
+	void generate_temp_range( core::Real temp_low, core::Real temp_high, core::Size n_levels, InterpolationType interpolation = linear );
 
 /// ------------------ register cmdline options ---------------------------
 private:
