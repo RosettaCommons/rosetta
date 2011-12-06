@@ -36,6 +36,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 // Package headers
@@ -65,6 +67,10 @@ public:
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 	typedef protocols::filters::FilterOP FilterOP;
 	typedef protocols::moves::MoverOP MoverOP;
+	typedef core::pack::task::PackerTask PackerTask;
+	typedef core::pack::task::PackerTaskOP PackerTaskOP;
+	typedef core::pack::task::PackerTaskCOP PackerTaskCOP;
+	typedef core::pack::task::TaskFactoryOP TaskFactoryOP;
 
 	typedef utility::tag::TagPtr TagPtr;
 	typedef protocols::moves::DataMap DataMap;
@@ -74,7 +80,7 @@ public:
 	/// @brief default constructor
 	GenericMonteCarloMover();
 
-	/// @brief value constructor
+	/// @brief value constructor without score function
 	GenericMonteCarloMover(
 		Size const maxtrials,
 		MoverOP const & mover,
@@ -83,7 +89,7 @@ public:
 		bool const drift = true
 	);
 
-	/// @brief value constructor
+	/// @brief value constructor with score function
 	GenericMonteCarloMover(
 		Size const maxtrials,
 		MoverOP const & mover,
@@ -92,6 +98,18 @@ public:
 		String const sample_type = "low",
 		bool const drift = true
 	);
+
+
+	/// @brief value constructor with task operation via TaskFactory
+	GenericMonteCarloMover(
+		Size const maxtrials,
+		MoverOP const & mover,
+		TaskFactoryOP factory_in,
+		Real const temperature = 0.0,
+		String const sample_type = "low",
+		bool const drift = true
+	);
+
 
 	/// @brief destructor
 	~GenericMonteCarloMover();
@@ -118,6 +136,8 @@ public:
 
 	/// @brief core of MC
 	bool boltzmann( Pose & pose );
+
+	Size num_designable( Pose & pose, PackerTaskOP & task); 
 
  public: // accessor
 
@@ -224,6 +244,14 @@ public:
 		Pose const &
 	);
 
+	///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
+	virtual void parse_task_operations(
+		TagPtr const,
+		DataMap const &,
+		Filters_map const &,
+		Movers_map const &
+);
+
 	void add_filter( FilterOP filter, bool const adaptive, Real const temp, String const sample_type, bool rank_by=false);
 
 	void stopping_condition( protocols::filters::FilterOP filter );
@@ -243,8 +271,17 @@ private:
 	/// @brief max number of MC trials
 	Size maxtrials_;
 
+	/// @brief number of designable positions
+	Size number_designable_;
+
 	/// @brief mover
 	MoverOP mover_;
+
+	/// @brief task
+	PackerTaskOP task_;
+
+	/// @brief task factory
+	TaskFactoryOP factory_;
 
 	/// @brief Pose is evaluated by FilterOP which can do report_sm() during MC trials
 	utility::vector1< FilterOP > filters_;
@@ -260,6 +297,9 @@ private:
 
 	/// @brief Pose is evaluated by ScoreFunctionOP during MC trials
 	ScoreFunctionOP scorefxn_;
+
+	/// @brief setter
+	void task_factory( core::pack::task::TaskFactoryOP tf );
 
 	/// @brief acceptance criterion temperature
 	Real temperature_;// temperature for non-filters

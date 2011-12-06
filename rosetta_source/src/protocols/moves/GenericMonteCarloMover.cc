@@ -21,7 +21,7 @@
 
 // C/C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <iterator>
+#include <iterator>
 #include <string>
 
 // External headers
@@ -39,6 +39,9 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
 #include <protocols/filters/Filter.hh>
 
 // Package Headers
@@ -46,11 +49,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/rosetta_scripts/util.hh>
-
-#include <protocols/jobdist/Jobs.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-
 
 static basic::Tracer TR("protocols.moves.GenericMonteCarloMover");
 static basic::Tracer TR_energies("protocols.moves.GenericMonteCarloMover.individual_energies");
@@ -100,7 +98,7 @@ GenericMonteCarloMover::GenericMonteCarloMover():
   initialize();
 }
 
-/// @brief value constructor
+/// @brief value constructor with a score function
 GenericMonteCarloMover::GenericMonteCarloMover(
   Size const maxtrials,
   MoverOP const & mover,
@@ -110,7 +108,6 @@ GenericMonteCarloMover::GenericMonteCarloMover(
   Super("GenericMonteCarlo"),
   maxtrials_( maxtrials ),
   mover_( mover ),
-  scorefxn_( NULL ),
   temperature_( temperature ),
   sample_type_( sample_type ),
   drift_( drift ),
@@ -124,18 +121,19 @@ GenericMonteCarloMover::GenericMonteCarloMover(
   initialize();
 }
 
-/// @brief value constructor
+/// @brief value constructor with a TaskFactory
 GenericMonteCarloMover::GenericMonteCarloMover(
   Size const maxtrials,
   MoverOP const & mover,
-  ScoreFunctionOP const & sfxn,
+	TaskFactoryOP factory_in,
   Real const temperature,
   String const sample_type,
   bool const drift ) :
   Super("GenericMonteCarlo"),
   maxtrials_( maxtrials ),
   mover_( mover ),
-  scorefxn_( sfxn ),
+	task_( NULL ),
+	factory_ (factory_in),
   temperature_( temperature ),
   sample_type_( sample_type ),
   drift_( drift ),
@@ -147,6 +145,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
   initialize();
 }
 
+
 /// @brief destructor
 GenericMonteCarloMover::~GenericMonteCarloMover(){}
 
@@ -156,6 +155,8 @@ GenericMonteCarloMover::clone() const
 {
   return new GenericMonteCarloMover( *this );
 }
+
+void GenericMonteCarloMover::task_factory( core::pack::task::TaskFactoryOP tf ) { factory_ = tf; }
 
 /// @brief create this type of object
 GenericMonteCarloMover::MoverOP
@@ -413,6 +414,21 @@ GenericMonteCarloMover::scoring( Pose & pose )
   }
   return score;
 }
+GenericMonteCarloMover::Size
+GenericMonteCarloMover::num_designable( Pose & pose, PackerTaskOP & task )
+{
+	Size number_designable = 0;
+	TR << "Designable Residues: ";
+	for(Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
+		if(task->design_residue(i)) {
+			++number_designable;
+			TR << i << ", ";
+		}
+	}
+	TR << std::endl << "Calculated number designable residues" << ": ";
+	TR << number_designable << std::endl;
+	return number_designable;
+}
 
 // @brief
 bool
@@ -522,6 +538,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
 } // boltzmann
 
 /// @Brief
+///comment
 void
 GenericMonteCarloMover::apply( Pose & pose )
 {
@@ -537,6 +554,25 @@ GenericMonteCarloMover::apply( Pose & pose )
     TR.Warning << "Both ScorefunctionOP and FilterOP are empty ! " << std::endl;
     return;
   }
+
+
+	core::pack::task::PackerTaskOP task;
+
+	if ( factory_ ) {
+		task = factory_->create_task_and_apply_taskoperations( pose );
+	} else {
+		TR << "No task inputted" << std::endl; //LGN
+	}
+
+	core::Size coverage_multiplier_ = 5;
+
+	if (factory_ ){
+		number_designable_ = num_designable (pose, task);
+		TR << "Input number of trials is " << maxtrials_ << std::endl;
+		maxtrials_ = coverage_multiplier_ * number_designable_;
+		TR << "Resetting number of trials based on your input task to: " << maxtrials_ << std::endl;
+	}
+	TR << "Number of trials for the run is now: " << maxtrials_ << std::endl;
 
   //fpd
   if (mover_->get_additional_output())
@@ -607,6 +643,10 @@ GenericMonteCarloMover::get_name() const {
 void
 GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & )
 {
+	//using core::pack::task::operation::TaskOperation;
+	//using core::pack::task::TaskFactoryOP;
+	//using core::pack::task::TaskFactory;
+
 	maxtrials_ = tag->getOption< core::Size >( "trials", 10 );
 	temperature_ = tag->getOption< Real >( "temperature", 0.0 );
 
@@ -636,6 +676,8 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	}else{
 		scorefxn_ = NULL;
 	}
+
+	parse_task_operations( tag, data, filters, movers );
 
 	if( filter_name == "true_filter" && !scorefxn_ ){
 		TR.Error << "You need to set filter_name or scorefxn_name for MC criteria." << std::endl;
@@ -695,6 +737,23 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 
   initialize();
 }
+
+///@brief parse "task_operations" XML option
+void GenericMonteCarloMover::parse_task_operations(
+	TagPtr const tag,
+	DataMap const & datamap,
+	Filters_map const &,
+	Movers_map const &
+)
+{
+	if ( ( tag->hasOption("task_operations") )){
+			TR << "Found a task operation" << std::endl;
+			TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
+			if ( new_task_factory == 0) return;
+			task_factory( new_task_factory );
+		}
+}
+
 
 void GenericMonteCarloMover::fire_all_triggers(
 	Size cycle,
