@@ -36,8 +36,6 @@
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh> /// <--- you gotta go
-//#include <protocols/hotspot_hashing/HotspotStub.hh> /// <--- you gotta go
 //#include <protocols/forge/build/BuildInstruction.hh>
 //#include <protocols/flxbb/FlxbbDesign.hh>
 //#include <protocols/flxbb/DesignTask.hh>
@@ -71,9 +69,6 @@
 
 // constraint types
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
-// REMOVED at XRW2 for this-should-be-a-mover-project #include <core/scoring/constraints/SequenceProfileConstraint.hh> /// <--- you gotta go
-// REMOVED at XRW2 for this-should-be-a-mover-project #include <core/sequence/SequenceProfile.hh> // to pass NULL pointer for constraint prototype
-// REMOVED at XRW2 for this-should-be-a-mover-project #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -100,7 +95,6 @@ namespace jd2 { // why is this in namespace jd2?
 
 using namespace core;
 	using namespace basic::options;
-// REMOVED at XRW2 for this-should-be-a-mover-project 	using namespace pack;
 	using namespace scoring;
 using namespace moves;
 
@@ -179,10 +173,6 @@ DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & i
 	typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
 	typedef std::pair< std::string const, ScoreFunctionOP > StringScorefxn_pair;
 	typedef std::pair< std::string const, StringScorefxn_pair > ScorefxnObjects_pair;
-    /* // REMOVED at XRW2 for this-should-be-a-mover-project
-	Real favor_nat( 0.0 ); // the weight on the res_type_constraint score type
-	Real hotspot_hash( 0.0 ); // the weight on the backbone_stub_constraint score type
-    */
 //setting up some defaults
 	protocols::filters::FilterOP true_filter = new protocols::filters::TrueFilter;
 	protocols::filters::FilterOP false_filter = new protocols::filters::FalseFilter;
@@ -204,17 +194,6 @@ DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & i
 	data.add( "scorefxns", "soft_rep", soft_rep );
 	data.add( "scorefxns", "score_docking_low", docking_score_low );
 	data.add( "scorefxns", "score4L", score4L );
-    /* // REMOVED at XRW2 for this-should-be-a-mover-project
-	if( favor_nat || hotspot_hash ) {
-		using namespace utility::pointer;
-		for( std::map< std::string, ReferenceCountOP >::const_iterator it=(data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){
-			ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", it->first ) );
-			scorefxn->set_weight( res_type_constraint, favor_nat );
-			scorefxn->set_weight( backbone_stub_constraint, hotspot_hash );
-			TR<<"setting "<<it->first<<" res_type_constraint to "<<favor_nat<<" and backbone_stub_constraint to "<<hotspot_hash<<"\n";
-		}
-	}
-    */
 	//default scorefxns end
 
 	/// Data Loaders
@@ -248,40 +227,10 @@ DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & i
 
 			foreach(TagPtr apply_tag_ptr, apply_tags){
 				std::string const mover_type( apply_tag_ptr->getName() );
-				/*if( mover_type == "profile" ){ // REMOVED at XRW2 for this-should-be-a-mover-project 	
-					using namespace core::sequence;
-					using namespace protocols::constraints_additional;
-
-					has_profile = true;
-					Real const profile_wgt( apply_tag_ptr->getOption< Real >( "weight", 0.25 ));
-					std::string const input_file_name( job->input_tag() );
-					core::Size const wheres_period( input_file_name.find_first_of( "." ) );
-
-					std::string const dflt_cst_file_name( input_file_name.substr(0, wheres_period ) + ".cst" );
-					std::string const cst_file_name( apply_tag_ptr->getOption< std::string >( "file_name", dflt_cst_file_name ) );
-
-					SequenceProfileOP profile = new SequenceProfile;
-					profile->read_from_checkpoint( cst_file_name );
-					for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos )
-						pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
-
-					TR<<"Added sequence profile constraints specified in file "<<cst_file_name<<". Changed all scorefxns to have profile weights of "<<profile_wgt<<std::endl;
-					favor_nat = profile_wgt; // sequence profile constraint uses the same score as favor native residue
-					modified_pose = true;
-					
-					TR << "This code is included in the test" << std::endl;
-
-// REMOVED at XRW2 for this-should-be-a-mover-project 				} else if(mover_type == "load_unbound_rot") {// adds scoring bonuses for the "unbound" rotamers, if any...
-// REMOVED at XRW2 for this-should-be-a-mover-project 					 // must provide list of files with OptionKeys::packing::unboundrot
-// REMOVED at XRW2 for this-should-be-a-mover-project 					core::pack::dunbrack::load_unboundrot(pose);
- 				}
-				else{//for all other movers*/
-                MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
-                runtime_assert( new_mover );
-                new_mover->apply( pose );
-                TR << "Defined and applied mover of type " << mover_type << std::endl;
-// REMOVED at XRW2 for this-should-be-a-mover-project 		}//all other movers
-
+				MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
+				runtime_assert( new_mover );
+				new_mover->apply( pose );
+				TR << "Defined and applied mover of type " << mover_type << std::endl;
 				bool const name_exists( movers.find( mover_type ) != movers.end() );
 				if ( name_exists ) {
 					utility_exit_with_message( "Can't apply_to_pose the same mover twice" + mover_type );
