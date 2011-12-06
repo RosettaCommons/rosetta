@@ -45,8 +45,8 @@ scorefxn(pose)
 
 print 'mover: SmallMover'
 movemap.set_bb(1)
-smallmover = protocols::simple_moves::SmallMover(movemap,kT,n_moves)
-smallmover = protocols::simple_moves::SmallMover()
+smallmover = protocols.simple_moves.SmallMover(movemap,kT,n_moves)
+smallmover = protocols.simple_moves.SmallMover()
 smallmover.angle_max('L',50)
 smallmover.apply(pose_frag)
 print smallmover
@@ -63,13 +63,13 @@ print shearmover
 #TODO: same as above
 
 print 'mover: MinMover'
-minmover = protocols::simple_moves::MinMover()
+minmover = protocols.simple_moves.MinMover()
 minmover.movemap(movemap)
 minmover.score_function(scorefxn)
 minmover.apply(pose_frag)
 
 # currently crash!
-minmover = protocols::simple_moves::MinMover(movemap,scorefxn,'linmin',0.5, True) #nblist mover was recent undefaulted
+minmover = protocols.simple_moves.MinMover(movemap,scorefxn,'linmin',0.5, True) #nblist mover was recent undefaulted
 # the above crashes unless False changes to True -- what is this about?
 # TODO: prefered solution is to overload the last argument to a default, valid value
 minmover.apply(pose_frag)

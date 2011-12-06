@@ -16,7 +16,7 @@ dock_p = pose_from_pdb("test/data/test_dock.pdb")
 dock_jump = 1
 #DockingProtocol().setup_foldtree(dock_p)
 
-to_centroid = protocols::simple_moves::SwitchResidueTypeSetMover('centroid')
+to_centroid = protocols.simple_moves.SwitchResidueTypeSetMover('centroid')
 
 jmp_arr = utility.vector1_int()
 #jmp_arr = utility.vector1_ulong()
@@ -41,7 +41,7 @@ docking_lowres = DockingLowRes()
 docking_lowres.apply(dock_p)
 
 #DockingProtocol().recover_sidechains(dock_p, starting_p)
-recover_side_chain_mover = protocols::simple_moves::ReturnSidechainMover(starting_p)
+recover_side_chain_mover = protocols.simple_moves.ReturnSidechainMover(starting_p)
 recover_side_chain_mover.apply(dock_p)
 
 #docking_highres = DockingHighRes()

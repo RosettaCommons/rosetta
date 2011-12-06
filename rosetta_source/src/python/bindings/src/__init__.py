@@ -67,6 +67,8 @@ import rosetta.protocols.wum
 import rosetta.protocols.relax
 import rosetta.core.pose.signals
 
+import rosetta.protocols.simple_moves
+
 from rosetta.core.id import *
 from rosetta.core.conformation import *
 from rosetta.core.chemical import *
@@ -88,6 +90,9 @@ from rosetta.protocols.abinitio import *
 from rosetta.protocols.docking import *
 from rosetta.protocols.loops import *
 from rosetta.protocols.relax import *
+
+from rosetta.protocols.rigid import *
+from rosetta.protocols.simple_moves import *
 
 
 class CD:

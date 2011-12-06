@@ -988,9 +988,12 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
     #if len(files) != 1:  # Build mode 'All'
     if False:
         output = commands.getoutput("cd %s && cat *.cc *.hh | grep '#include <core'" % path)
+        '''
         output += '\n' + commands.getoutput("cd %s && cat *.cc *.hh | grep '#include <protocols'" % path)
         output += '\n' + commands.getoutput("cd %s && cat *.cc *.hh | grep '#include <numeric'" % path)
         output += '\n' + commands.getoutput("cd %s && cat *.cc *.hh | grep '#include <utility'" % path)
+        '''
+        output += '\n' + commands.getoutput("cd %s && cat *.cc *.hh | grep '#include <protocols\|#include <numeric\|#include <utility' | grep '\.hh'" % path)
 
         # Some exceptional situation where we want to add additional includes
         if fname.find('AmbiguousMultiConstraint.cc') > 0: output += '\n#include <core/conformation/Conformation.hh>\n'
@@ -1042,13 +1045,13 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
 
             for f in files:
                 #print f
-                lines = commands.getoutput(  "cat %s | grep '^#include <core'" % f) + '\n'        \
-                        + commands.getoutput("cat %s | grep '^#include <numeric'" % f) + '\n'   \
-                        + commands.getoutput("cat %s | grep '^#include <utility'" % f) + '\n'   \
-                        + commands.getoutput("cat %s | grep '^#include <protocols'" % f) + '\n' \
-                        + commands.getoutput("cat %s | grep '^#include <basic'" % f) + '\n' \
-                        + commands.getoutput("cat %s | grep '^#include <ObjexxFCL'" % f) + '\n' \
-                        + commands.getoutput("cat %s | grep '^#include <boost'" % f) + '\n'
+                lines = commands.getoutput(  "cat %s | grep '^#include <core' | grep '\.hh'" % f) + '\n'        \
+                        + commands.getoutput("cat %s | grep '^#include <numeric' | grep '\.hh'" % f) + '\n'   \
+                        + commands.getoutput("cat %s | grep '^#include <utility' | grep '\.hh'" % f) + '\n'   \
+                        + commands.getoutput("cat %s | grep '^#include <protocols' | grep '\.hh'" % f) + '\n' \
+                        + commands.getoutput("cat %s | grep '^#include <basic' | grep '\.hh'" % f) + '\n' \
+                        + commands.getoutput("cat %s | grep '^#include <ObjexxFCL' | grep '\.hh'" % f) + '\n' \
+                        + commands.getoutput("cat %s | grep '^#include <boost' | grep '\.hh'" % f) + '\n'
 
                 #print f, lines
 
