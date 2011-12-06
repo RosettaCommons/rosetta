@@ -197,7 +197,7 @@ public:
 		AtomTreeMinimizer minimizer;
 		Real start_score = sfxn(pose);
 		std::cout.precision( 16 );
-		std::cout << "start score: " << sfxn(pose) << std::endl;
+		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -33.67974148760877, start_score, 1e-12 );
 
 
@@ -210,7 +210,7 @@ public:
 		minimizer.run( pose, movemap, sfxn, min_options );
 
 		Real end_score = sfxn(pose);
-		std::cout << "end score: " << sfxn(pose) << std::endl;
+		//std::cout << "end score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -36.48274046926093, end_score, 1e-12 );
 	}
 
@@ -291,7 +291,7 @@ public:
 		AtomTreeMinimizer minimizer;
 		Real start_score = sfxn(pose);
 		std::cout.precision( 16 );
-		std::cout << "start score: " << sfxn(pose) << std::endl;
+		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -33.67974148760877, start_score, 1e-12 );
 
 
@@ -303,7 +303,7 @@ public:
 		minimizer.run( pose, movemap, sfxn, min_options );
 
 		Real end_score = sfxn(pose);
-		std::cout << "end score: " << sfxn(pose) << std::endl;
+		//std::cout << "end score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -33.88566264995315, end_score, 1e-12 );
 	}
 

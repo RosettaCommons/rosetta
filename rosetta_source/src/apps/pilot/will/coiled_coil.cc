@@ -1106,7 +1106,7 @@ void do_centroid_stuff(core::pose::Pose & cenpose, ScoreFunctionOP sfc ) {
 	core::kinematics::MoveMapOP movemap = make_move_map(cenpose);
 	MoverOP cendock = new protocols::symmetric_docking::SymDockingLowRes(sfc);
 	// FragmentIO io;
-	// FragSetOP hhh = io.read( basic::database::full_name("ss_fragfiles/HHH.fragfile") );
+	// FragSetOP hhh = io.read( basic::database::full_name("sampling/ss_fragfiles/HHH.fragfile") );
 	// std::cerr << "frags " << hhh << std::endl;
 	// MoverOP fragins( new protocols::abinitio::ClassicFragmentMover(hhh,movemap) );
 	// MonteCarloOP mc( new MonteCarlo( cenpose, *sfc, 2000000.0 ) );

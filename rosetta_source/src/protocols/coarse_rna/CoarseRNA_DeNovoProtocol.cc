@@ -117,7 +117,7 @@ CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 		rna_params_file_( "" ),
 		rna_data_file_( "" ),
 		all_rna_fragments_file_( basic::database::full_name("1jj2_coarse_coords.txt") ),
-		jump_library_file_( basic::database::full_name("1jj2_coarse_jumps.dat" ) ),
+		jump_library_file_( basic::database::full_name("chemical/rna/1jj2_coarse_jumps.dat" ) ),
 		lores_scorefxn_( "coarse_rna.wts" ),
 		rna_structure_parameters_( new protocols::rna::RNA_StructureParameters ),
 		rna_data_reader_( new protocols::rna::RNA_DataReader ),

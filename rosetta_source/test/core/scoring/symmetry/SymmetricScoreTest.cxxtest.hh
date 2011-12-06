@@ -274,7 +274,7 @@ public:
 	void one_score_type_test(scoring::ScoreType st, std::string pdb_file_name, std::string data_file_name,
 								double abs_p=0.0001, double rel_p=0.0001)
 	{
-		std::cout << " Testing score: " << scoring::name_from_score_type(st) << "..." << std::endl;
+		//std::cout << " Testing score: " << scoring::name_from_score_type(st) << "..." << std::endl;
 
 		Pose pose;
 		core::import_pose::pose_from_pdb(pose, pdb_file_name);
@@ -319,7 +319,7 @@ public:
 
 	void one_score_type_test_old(scoring::ScoreType st, std::string pdb_file_name, std::string utracer_file_name)
 	{
-		std::cout << " Testing score: " << scoring::name_from_score_type(st) << "..." << std::endl;
+		//std::cout << " Testing score: " << scoring::name_from_score_type(st) << "..." << std::endl;
 
 		Pose pose;
 		core::import_pose::pose_from_pdb(pose, pdb_file_name);
@@ -354,8 +354,8 @@ public:
 
 		Real sym_score = (*scorefxn)(pose);
 		Real asym_score = (*scorefxn)(pose_asym);
-		std::cout << " Comparing the symmetrical score: " << sym_score << " to the assymetric: " <<
-							asym_score << " difference: " << sym_score - asym_score << std::endl;
+		//std::cout << " Comparing the symmetrical score: " << sym_score << " to the assymetric: " <<
+		//					asym_score << " difference: " << sym_score - asym_score << std::endl;
 		TS_ASSERT( std::fabs( sym_score - asym_score ) < score_delta_threshold );
 	}
 };

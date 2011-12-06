@@ -62,7 +62,7 @@ namespace packstat {
 		extern ObjexxFCL::FArray2D_int angles;
 		extern ObjexxFCL::FArray2D_ubyte masks;
 
-		///cj    Reads in SASA-angles.dat  SASA-masks.dat
+		///cj    Reads in sampling/SASA-angles.dat  sampling/SASA-masks.dat
 		void input_sasa_dats();
 
 		///cj    getting overlap from a to b (or i to j, see below)

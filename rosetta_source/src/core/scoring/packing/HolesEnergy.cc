@@ -88,8 +88,8 @@ HolesEnergyCreator::score_types_for_method() const {
 //////////////////////////////////////////////////////
 HolesEnergy::HolesEnergy() : parent( new HolesEnergyCreator )
 {
-	decoy_params_.read_data_file(basic::database::full_name("rosettaholes/decoy25.params"));
-	resl_params_ .read_data_file(basic::database::full_name("rosettaholes/resl.params"));
+	decoy_params_.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy25.params"));
+	resl_params_ .read_data_file(basic::database::full_name("scoring/rosettaholes/resl.params"));
 	std::string p = basic::options::option[ basic::options::OptionKeys::holes::minimize ]();
 	min_params_  .read_data_file(basic::database::full_name("rosettaholes/"+p+".params"));
 }

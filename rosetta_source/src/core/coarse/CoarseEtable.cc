@@ -51,8 +51,8 @@ CoarseEtable::CoarseEtable( chemical::AtomTypeSetCAP atom_set, std::string tag )
 	if ( tag == chemical::COARSE_TWO_BEAD )
 		{
 			read_files(
-		 basic::database::full_name( "resolve_etable.twobead.txt" ),
-		 basic::database::full_name( "etable.twobead.lj.dat" ),
+		 basic::database::full_name( "scoring/score_functions/etable/resolve_etable.twobead.txt" ),
+		 basic::database::full_name( "scoring/score_functions/etable/etable.twobead.lj.dat" ),
 		 basic::database::full_name( "etable.twobead.dlj.dat" )
 			);
 		} else {

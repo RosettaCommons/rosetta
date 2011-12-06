@@ -103,7 +103,7 @@ Sparta::SpartaLib::SpartaLib() {
 	using namespace basic::options::OptionKeys;
 
 	slash_char = "/"; //default Unix
-	SPARTA_DIR=basic::database::full_name( "SPARTA+" );
+	SPARTA_DIR=basic::database::full_name( "external/SPARTA+" );
 	if ( option[ OptionKeys::evaluation::sparta_dir ].user() ) SPARTA_DIR=option[ OptionKeys::evaluation::sparta_dir ]();
 
 	if ( SPARTA_DIR.find("/") != string::npos ) slash_char = "/"; // unix

@@ -1,4 +1,0 @@
-patches/CtermProteinFull.txt
-patches/NtermProteinFull.txt
-
-

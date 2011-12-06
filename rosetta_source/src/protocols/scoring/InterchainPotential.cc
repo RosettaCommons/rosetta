@@ -90,28 +90,28 @@ InterchainPotential::InterchainPotential():
 		interchain_env_log_.dimension( max_aa, env_log_table_size );
 
 		utility::io::izstream stream;
-		basic::database::open( stream, "interchain_env_log.txt" );
+		basic::database::open( stream, "scoring/score_functions/InterchainPotential/interchain_env_log.txt" );
 		while ( getline( stream, line ) ) {
 			std::istringstream l(line);
 			l >> tag >> aa;
 			for ( Size i=1; i<= env_log_table_size; ++i ){
 				l >> interchain_env_log_(aa,i);
 			}
-			if ( l.fail() || tag != "INT_CHAIN_ENV_LOG:"  ) utility_exit_with_message("bad format for interchain_env_log.txt");
+			if ( l.fail() || tag != "INT_CHAIN_ENV_LOG:"  ) utility_exit_with_message("bad format for scoring/score_functions/InterchainPotential/interchain_env_log.txt");
 		}
 	}
 	{ // interchain_pair_log
 		interchain_pair_log_.dimension( max_aa, max_aa );
 
 		utility::io::izstream stream;
-		basic::database::open( stream, "interchain_pair_log.txt" );
+		basic::database::open( stream, "scoring/score_functions/InterchainPotential/interchain_pair_log.txt" );
 		while ( getline( stream, line ) ) {
 			std::istringstream l(line);
 			l >> tag >> aa;
 			for ( Size i=1; i<= max_aa; ++i ) {
 				l >> interchain_pair_log_(aa,i);
 			}
-			if ( l.fail() || tag != "INT_CHAIN_PAIR_LOG:"  ) utility_exit_with_message("bad format for interchain_pair_log.txt");
+			if ( l.fail() || tag != "INT_CHAIN_PAIR_LOG:"  ) utility_exit_with_message("bad format for scoring/score_functions/InterchainPotential/interchain_pair_log.txt");
 		}
 	}
 }

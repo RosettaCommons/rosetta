@@ -46,12 +46,12 @@ static basic::Tracer trCS2ndShift("protocols.frag_picker.SecondaryShiftCalculato
 
 CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 	//Change to database files!
-	std::map<char,std::map<std::string,Real> > rcprev(CS2ndShift::read_adjust_table("SPARTA+/tab/rcprev.tab") );
-	std::map<char,std::map<std::string,Real> > rcnext(CS2ndShift::read_adjust_table("SPARTA+/tab/rcnext.tab") );
-	std::map<char,std::map<std::string,Real> > rcadj(CS2ndShift::read_adjust_table("SPARTA+/tab/rcadj.tab") );
-	std::map<char,std::map<std::string,Real> > randcoil(CS2ndShift::read_adjust_table("SPARTA+/tab/randcoil.tab") );
+	std::map<char,std::map<std::string,Real> > rcprev(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcprev.tab") );
+	std::map<char,std::map<std::string,Real> > rcnext(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcnext.tab") );
+	std::map<char,std::map<std::string,Real> > rcadj(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcadj.tab") );
+	std::map<char,std::map<std::string,Real> > randcoil(CS2ndShift::read_adjust_table("external/SPARTA+/tab/randcoil.tab") );
 
-	std::map<char,std::map<std::string,std::pair< Real, Real > > > 	sslimit(CS2ndShift::read_sslimit_table("SPARTA+/tab/sslimit.tab") );
+	std::map<char,std::map<std::string,std::pair< Real, Real > > > 	sslimit(CS2ndShift::read_sslimit_table("external/SPARTA+/tab/sslimit.tab") );
 
 	//Recalculate Values:
 	std::string const sequence( also_check_fix_disulf( input_data.get_sequence() ) );

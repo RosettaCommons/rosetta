@@ -86,7 +86,7 @@ public:
 
 		jobdist.startup();
 		while ( jobdist.next_job(curr_job, curr_nstruct) ) {
-			std::cout << "jobdist curr_nstruct: " << curr_nstruct << " actual curr_nstruct: " << actual_curr_nstruct << std::endl;
+			//std::cout << "jobdist curr_nstruct: " << curr_nstruct << " actual curr_nstruct: " << actual_curr_nstruct << std::endl;
 			TS_ASSERT( curr_nstruct == actual_curr_nstruct );
 			actual_curr_nstruct++;
 		}

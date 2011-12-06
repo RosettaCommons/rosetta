@@ -104,7 +104,7 @@ namespace old {
 	FArray2D_int angles( nphi, ntheta );
 	FArray2D_ubyte masks( nbytes, nolp*nori );
 
-	///cj    Reads in SASA-angles.dat  SASA-masks.dat
+	///cj    Reads in sampling/SASA-angles.dat  sampling/SASA-masks.dat
 	void
 	input_sasa_dats()
 	{
@@ -119,7 +119,7 @@ namespace old {
 
 	//cj    inputting the masks they are 21 ubytes long, 162x100 (see header)
 	//cj    expects file to be complete
-		utility::io::izstream masks_stream( basic::database::full_name("SASA-masks.dat" ) );
+		utility::io::izstream masks_stream( basic::database::full_name("sampling/SASA-masks.dat" ) );
 
 		for ( int i = 1; i <= nolp*nori; ++i ) {
 			for ( int j = 1; j <= nbytes; ++j ) {
@@ -133,7 +133,7 @@ namespace old {
 		masks_stream.close();
 
 	//cj    inputting the angle lookup for the mask, need to add a 1 to each number
-		utility::io::izstream angles_stream( basic::database::full_name( "SASA-angles.dat" ) );
+		utility::io::izstream angles_stream( basic::database::full_name( "sampling/SASA-angles.dat" ) );
 
 	//cj    2D array is aphi by theta
 		for ( int i = 1; i <= nphi; ++i ) {

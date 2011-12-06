@@ -66,9 +66,9 @@ main( int argc, char * argv [] )
 	// Read holes params
 	TR << "Reading input params" << std::endl;
 	core::scoring::packing::HolesParams hp_resl,hp_dec,hp_dec15;
-	hp_resl.read_data_file(basic::database::full_name("rosettaholes/resl.params"));
-	hp_dec.read_data_file(basic::database::full_name("rosettaholes/decoy25.params"));
-	hp_dec15.read_data_file(basic::database::full_name("rosettaholes/decoy15.params"));
+	hp_resl.read_data_file(basic::database::full_name("scoring/rosettaholes/resl.params"));
+	hp_dec.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy25.params"));
+	hp_dec15.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 
 	// scoring function
 	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );

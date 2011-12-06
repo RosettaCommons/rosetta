@@ -2144,7 +2144,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 	std::map< std::string, Real > res_to_average_hASA;
 
 	utility::io::izstream residue_hASA_ifstream;
-	basic::database::open( residue_hASA_ifstream, "average_hASA_by_res_and_neighbor.txt" );
+	basic::database::open( residue_hASA_ifstream, "scoring/score_functions/SurfacePotential/average_hASA_by_res_and_neighbor.txt" );
 
 	std::string restype;
 	Real lte10_asa = 0.0;
@@ -2467,7 +2467,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 	std::map< std::string, Real > res_to_average_hASA;
 
 	utility::io::izstream residue_hASA_ifstream;
-	basic::database::open( residue_hASA_ifstream, "average_hASA_by_res_and_neighbor.txt" );
+	basic::database::open( residue_hASA_ifstream, "scoring/score_functions/SurfacePotential/average_hASA_by_res_and_neighbor.txt" );
 
 	std::string restype;
 	Real lte10_asa = 0.0;

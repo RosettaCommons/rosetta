@@ -284,7 +284,7 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 
 		AtomTreeMinimizer minimizer;
 		Real start_score = sfxn(pose);
-		std::cout << "start score: " << sfxn(pose) << std::endl;
+		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -27.89673840790607, start_score, 1e-12 );
 
 
@@ -297,7 +297,7 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 		minimizer.run( pose, movemap, sfxn, min_options );
 
 		Real end_score = sfxn(pose);
-		std::cout << "end score: " << sfxn(pose) << std::endl;
+		//std::cout << "end score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -28.10526841844615, end_score, 1e-12 );
 	}
 
@@ -337,7 +337,7 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 
 		AtomTreeMinimizer minimizer;
 		Real start_score = sfxn(pose);
-		std::cout << "start score: " << sfxn(pose) << std::endl;
+		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -27.89673840790607, start_score, 1e-12 );
 
 
@@ -349,7 +349,7 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 		minimizer.run( pose, movemap, sfxn, min_options );
 
 		Real end_score = sfxn(pose);
-		std::cout << "end score: " << sfxn(pose) << std::endl;
+		//std::cout << "end score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -27.9539686076814, end_score, 1e-12 );
 	}
 

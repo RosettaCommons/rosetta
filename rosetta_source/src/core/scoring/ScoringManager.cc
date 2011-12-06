@@ -577,7 +577,6 @@ ScoringManager::get_NVLookupTable() const
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		NV_lookup_table_ = new nv::NVlookup(basic::database::full_name(option[score::NV_table]()));
-		//NV_lookup_table_ = new nv::NVlookup(basic::database::full_name("neighbor_vector_score.histogram"));
 	}
 	return *NV_lookup_table_;
 
@@ -623,7 +622,7 @@ ScoringManager::get_DDPLookupTable() const
 	{
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		DDP_lookup_table_ = new interface::DDPlookup("interface_ddp_score.txt");
+		DDP_lookup_table_ = new interface::DDPlookup("scoring/score_functions/DDPscore/interface_ddp_score.txt");
 	}
 	return *DDP_lookup_table_;
 }
@@ -803,7 +802,7 @@ ScoringManager::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type )
 	if ( ncaa_rotlibs_.find( aa_name3 ) == ncaa_rotlibs_.end() ) {
 
 		// create izstream from path
-		std::string dir_name = basic::database::full_name( "/ncaa_rotlibs/" );
+		std::string dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
 		std::string file_name = rsd_type.get_ncaa_rotlib_path();
 		utility::io::izstream rotlib_in( dir_name + file_name );
 		std::cout << "Reading in rot lib " << dir_name + file_name << "...";

@@ -205,7 +205,7 @@ bool DFIRE_Potential::is_loaded() const {
 DFIRE_Potential & get_DFIRE_potential() {
 	static DFIRE_Potential potential;
 	if (!potential.is_loaded()) {
-		potential.read_potential("dfire/dfire_pair.lib.txt");
+		potential.read_potential("scoring/dfire/dfire_pair.lib.txt");
 	}
 	return potential;
 }

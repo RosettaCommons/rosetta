@@ -151,7 +151,7 @@ public:
 
 		utility::vector1< ObjexxFCL::ubyte > test_case_mask( num_bytes, ObjexxFCL::ubyte( 0 ) ); // create an empty mask vector
 
-		// make up a fake masknum like 2549, which in the SASA-masks.dat file is
+		// make up a fake masknum like 2549, which in the sampling/SASA-masks.dat file is
 		// 97 128 119 254 255 63 6 0 136 255 255 39 0 192 127 7 0 0 105 0 0
 		int masknum = 2549;
 		for ( Size bb = 1; bb <= num_bytes; ++bb ) {

@@ -138,7 +138,7 @@ class SasaTests : public CxxTest::TestSuite {
 	// ronj based on the output of the function and the data in the database files
 	void x_test_get_orientation() {
 
-		// lines 1-5 of the database file SASA-angles.dat are the following:
+		// lines 1-5 of the database file sampling/SASA-angles.dat are the following:
 		// 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 		// 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 		// 6 6 6 6 6 6 6 5 5 5 5 5 5 5 5 5 5 5 5 5 17 17 17 17 17 17 17 17 17 17 17 17 17 27 27 27 27 27 27 27 27 27 27 27 27 37 37 37 37 37 37 37 37 37 37 37 37 37 6 6 6 6 6 6
@@ -168,10 +168,10 @@ class SasaTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( phi_index, 5, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 2, TOLERATED_ERROR );
 
-		std::cout << "\n" << std::endl;
+		//std::cout << "\n" << std::endl;
 
 
-		// lines 1-5 of the database file SASA-angles.dat are the following:
+		// lines 1-5 of the database file sampling/SASA-angles.dat are the following:
 		// 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 		// 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 		// 6 6 6 6 6 6 6 5 5 5 5 5 5 5 5 5 5 5 5 5 17 17 17 17 17 17 17 17 17 17 17 17 17 27 27 27 27 27 27 27 27 27 27 27 27 37 37 37 37 37 37 37 37 37 37 37 37 37 6 6 6 6 6 6
@@ -193,10 +193,10 @@ class SasaTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( phi_index, 4, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 33, TOLERATED_ERROR );
 
-		std::cout << "\n" << std::endl;
+		//std::cout << "\n" << std::endl;
 
 
-		// lines 5 of the database file SASA-angles.dat:
+		// lines 5 of the database file sampling/SASA-angles.dat:
 		// 6 6 6 7 7 7 7 7 7 7 7 5 5 5 5 5 18 18 18 18 18 18 18 17 17 17 17 17 17 28 28 28 28 28 28 28 27 27 27 27 27 27 38 38 38 38 38 38 38 37 37 37 37 37 45 45 45 45 45 45 45 45 6 6
 		//
 		// let's assume that the database is in theta,phi order
@@ -209,7 +209,7 @@ class SasaTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( phi_index, 5, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 63, TOLERATED_ERROR );
 
-		std::cout << "\n" << std::endl;
+		//std::cout << "\n" << std::endl;
 
 
 		// I'm worried that the bottom 32 phi bins ( 180 to 360 degrees ) aren't being used correctly. That would be values
@@ -234,10 +234,10 @@ class SasaTests : public CxxTest::TestSuite {
 		//TS_ASSERT_DELTA( phi_index, 63, TOLERATED_ERROR );
 		//TS_ASSERT_DELTA( theta_index, 1, TOLERATED_ERROR );
 
-		std::cout << "\n" << std::endl;
+		//std::cout << "\n" << std::endl;
 
 
-		// lines 60 of the database file SASA-angles.dat:
+		// lines 60 of the database file sampling/SASA-angles.dat:
 		// 28 28 28 28 26 26 26 26 26 26 38 38 38 38 38 38 38 36 36 36 36 36 36 45 45 45 45 45 45 45 4 4 4 4 4 7 7 7 7 7 7 7 3 3 3 3 3 3 18 18 18 18 18 18 18 16 16 16 16 16 16 28 28 28
 		//
 		// let's assume
@@ -255,10 +255,10 @@ class SasaTests : public CxxTest::TestSuite {
 		//TS_ASSERT_DELTA( phi_index, 60, TOLERATED_ERROR );
 		//TS_ASSERT_DELTA( theta_index, 6, TOLERATED_ERROR );
 
-		std::cout << "\n" << std::endl;
+		//std::cout << "\n" << std::endl;
 
 
-		// lines 60 of the database file SASA-angles.dat:
+		// lines 60 of the database file sampling/SASA-angles.dat:
 		// 28 28 28 28 26 26 26 26 26 26 38 38 38 38 38 38 38 36 36 36 36 36 36 45 45 45 45 45 45 45 4 4 4 4 4 7 7 7 7 7 7 7 3 3 3 3 3 3 18 18 18 18 18 18 18 16 16 16 16 16 16 28 28 28
 		//
 		// let's assume
@@ -276,7 +276,7 @@ class SasaTests : public CxxTest::TestSuite {
 		//TS_ASSERT_DELTA( phi_index, 60, TOLERATED_ERROR );
 		//TS_ASSERT_DELTA( theta_index, 61, TOLERATED_ERROR );
 
-		std::cout << "\n" << std::endl;
+		//std::cout << "\n" << std::endl;
 	}
 
 

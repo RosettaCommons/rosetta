@@ -2297,7 +2297,7 @@ RotamerLibrary::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type )
 	if ( ncaa_rotlibs_.find( aa_name3 ) == ncaa_rotlibs_.end() ) {
 
 		// create izstream from path
-		std::string dir_name = basic::database::full_name( "/ncaa_rotlibs/" );
+		std::string dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
 		std::string file_name = rsd_type.get_ncaa_rotlib_path();
 		utility::io::izstream rotlib_in( dir_name + file_name );
 		std::cout << "Reading in rot lib " << dir_name + file_name << "...";

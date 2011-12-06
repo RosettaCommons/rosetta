@@ -61,8 +61,8 @@ public:
 		// func points to the SplineFunc
 		SplineFuncOP func( new SplineFunc());
 
-		// Get the epr_distance_potential.histogram from mini database
-		std::string epr_dist_histogram( basic::database::full_name("epr_distance_potential.histogram"));
+		// Get the scoring/constraints/epr_distance_potential.histogram from mini database
+		std::string epr_dist_histogram( basic::database::full_name("scoring/constraints/epr_distance_potential.histogram"));
 
 		std::stringstream test_input;
 		test_input << "EPR_DISTANCE " << epr_dist_histogram << " 0.0 1.0 0.5";

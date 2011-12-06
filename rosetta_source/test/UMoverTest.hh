@@ -85,7 +85,7 @@ public:
 			basic::otstreamOP ut = new test::UTracer(fileTracerOut);
 			basic::Tracer::set_ios_hook(ut, tracerChannelsList);
 		}
-		std::cout << " Testing: " << mover->type() << "..." << std::endl;
+		//std::cout << " Testing: " << mover->type() << "..." << std::endl;
 
 		PoseOP pose = new Pose;
 		PoseOP n_pose = new Pose; // native pose

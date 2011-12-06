@@ -70,9 +70,9 @@ AtomVDW::AtomVDW( std::string const & atom_type_set_name )
 			utility_exit_with_message( "cant find atom_vdw.txt in directory: "+ atom_set.directory() );
 		}
 		TR.Warning << "YOU NEED TO UPDATE YOUR MINIROSETTA DATABASE!" << std::endl;
-		basic::database::open( stream, "atom_vdw.txt" );
+		basic::database::open( stream, "scoring/AtomVDW/atom_vdw.txt" );
 		if ( !stream.good() ) {
-			utility_exit_with_message( "Unable to open atom_vdw.txt!" );
+			utility_exit_with_message( "Unable to open scoring/AtomVDW/atom_vdw.txt!" );
 		}
 	}
 

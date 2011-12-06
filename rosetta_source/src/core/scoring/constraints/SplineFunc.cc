@@ -132,8 +132,8 @@ namespace core {
 			if( basic::options::option[ basic::options::OptionKeys::constraints::epr_distance]() )
 			{
 				in >> KB_description_ >> exp_val_ >> weight_ >> bin_size_;
-				filename_ = basic::database::full_name("epr_distance_potential.histogram");
-				//basic::database::open( potential_file, "epr_distance_potential.histogram");
+				filename_ = basic::database::full_name("scoring/constraints/epr_distance_potential.histogram");
+				//basic::database::open( potential_file, "scoring/constraints/epr_distance_potential.histogram");
 			}
 
 			// Else, read in potential specified in constraints file

@@ -54,7 +54,7 @@ polarizGrid::polarizGrid() : GridBase("polarizGrid",1.0), radius_(3.0)
 	//TODO: extract this to a method
 	utility::io::izstream infile;
 
-	infile.open(basic::database::full_name("qsar/TPSA.txt",true),std::ifstream::in);
+	infile.open(basic::database::full_name("scoring/qsar/TPSA.txt",true),std::ifstream::in);
 	std::string line;
 	do
 	{
@@ -80,7 +80,7 @@ polarizGrid::polarizGrid(core::Real weight) : GridBase("polarizGrid",weight), ra
 {
 	utility::io::izstream infile;
 
-	infile.open(basic::database::full_name("qsar/TPSA.txt",true),std::ifstream::in);
+	infile.open(basic::database::full_name("scoring/qsar/TPSA.txt",true),std::ifstream::in);
 	std::string line;
 	do
 	{

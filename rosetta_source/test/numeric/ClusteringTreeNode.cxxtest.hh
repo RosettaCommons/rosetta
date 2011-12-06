@@ -48,7 +48,7 @@ public:
 	    for(Size i=1;i<=ids.size();i++) {
 		TS_ASSERT( ids[i] == result[i-1] );
 	    }
-	    std::cout <<std::endl;
+	    //std::cout <<std::endl;
 	    ids.clear();
 	    root->copy_leaf_ids(ids);
 	    assert( ids.size() == 3 );

@@ -479,7 +479,7 @@ void init(int argc, char * argv [])
 
 		// p_aa_pp
 		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp ].user() ) {
-			basic::options::option[basic::options::OptionKeys::corrections::score::p_aa_pp].value( "P_AA_pp_08.2009" );
+			basic::options::option[basic::options::OptionKeys::corrections::score::p_aa_pp].value( "scoring/score_functions/P_AA_pp/P_AA_pp_08.2009" );
 		}
 		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ].user() ) {
 			basic::options::option[basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift].value( true );
@@ -490,7 +490,7 @@ void init(int argc, char * argv [])
 			basic::options::option[basic::options::OptionKeys::corrections::score::rama_not_squared].value( true );
 		}
 		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::rama_map ].user() ) {
-			basic::options::option[ basic::options::OptionKeys::corrections::score::rama_map ].value("Rama09_noEH_kernel25_it08.dat");
+			basic::options::option[ basic::options::OptionKeys::corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
 		}
 		//rotamer library
 		//if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::dun08 ].user() ) {
@@ -500,7 +500,7 @@ void init(int argc, char * argv [])
 			basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir].value( "dun08_12.2009_it10" );
 		}
 	    if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::dun02_file ].user() ) {
-	      basic::options::option[basic::options::OptionKeys::corrections::score::dun02_file].value( "bbdep02.May.sortlib-correct.12.2010" );
+	      basic::options::option[basic::options::OptionKeys::corrections::score::dun02_file].value( "rotamer/rotamer/bbdep02.May.sortlib-correct.12.2010" );
 	    }
 
 		//icoor
@@ -512,7 +512,7 @@ void init(int argc, char * argv [])
 		}
 
 		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::ch_o_bond_potential ].user() ) {
-			basic::options::option[ basic::options::OptionKeys::corrections::score::ch_o_bond_potential ].value("ch_o_bond_potential_near_min_yf.dat");
+			basic::options::option[ basic::options::OptionKeys::corrections::score::ch_o_bond_potential ].value("scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat");
 		}
 	}
 

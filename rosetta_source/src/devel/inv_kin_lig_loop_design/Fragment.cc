@@ -319,7 +319,7 @@ namespace devel {
     string Librarian::get( const string& s) {
       //assert( false );
 
-      return "ss_fragfiles/" + s + ".fragfile";
+      return "sampling/ss_fragfiles/" + s + ".fragfile";
 
     }
 

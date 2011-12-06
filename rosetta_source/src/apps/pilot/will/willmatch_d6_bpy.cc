@@ -262,7 +262,7 @@ void run() {
     Pose native = in_fa;
     Size nres = in_fa.n_residue();
     core::scoring::packing::HolesParams hp_dec15;
-    hp_dec15.read_data_file(basic::database::full_name("rosettaholes/decoy15.params"));
+    hp_dec15.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
     Real natrholes = core::scoring::packing::compute_dec15_score(native);
 
     core::chemical::ResidueType const & rtala( in_fa.residue(1).residue_type_set().name_map("ALA") );

@@ -147,12 +147,12 @@ MembranePotential::MembranePotential():
 	{ // mem_env_cen6:
 		mem_env_log6_.dimension( max_aa, max_mem_layers,env_log_table_cen6_bins );
 		utility::io::izstream stream;
-		basic::database::open( stream, "CEN6_mem_env_log.txt" );
+		basic::database::open( stream, "scoring/score_functions/MembranePotential/CEN6_mem_env_log.txt" );
 		for ( Size i=1; i<= max_aa; ++i ){
 			getline( stream, line );
 			std::istringstream l(line);
 			l >> tag >> aa;
-			if ( l.fail() || tag != "MEM_ENV_LOG_CEN6:"  ) utility_exit_with_message("bad format for mem_env_log.txt (cen6)");
+			if ( l.fail() || tag != "MEM_ENV_LOG_CEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/CEN6_mem_env_log.txt (cen6)");
 			for( Size j=1;j<=max_mem_layers;++j) {
 				for( Size k=1;k<=env_log_table_cen6_bins;++k) {
 					l >> mem_env_log6_(aa,j,k);
@@ -164,12 +164,12 @@ MembranePotential::MembranePotential():
 		mem_env_log10_.dimension( max_aa, max_mem_layers,env_log_table_cen10_bins );
 
 		utility::io::izstream stream;
-		basic::database::open( stream, "CEN10_mem_env_log.txt" );
+		basic::database::open( stream, "scoring/score_functions/MembranePotential/CEN10_mem_env_log.txt" );
 		for ( Size i=1; i<= max_aa; ++i ){
 			getline( stream, line );
 			std::istringstream l(line);
 			l >> tag >> aa;
-			if ( l.fail() || tag != "MEM_ENV_LOG_CEN10:"  ) utility_exit_with_message("bad format for mem_env_log.txt (cen10)");
+			if ( l.fail() || tag != "MEM_ENV_LOG_CEN10:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/CEN10_mem_env_log.txt (cen10)");
 			for( Size j=1;j<=max_mem_layers;++j) {
 				for( Size k=1;k<=env_log_table_cen10_bins;++k) {
 						l >> mem_env_log10_(aa,j,k);
@@ -187,7 +187,7 @@ MembranePotential::MembranePotential():
 		mem_cbeta_4TM_den12_.dimension( cbeta_den_table_size );
 
 		utility::io::izstream stream;
-		basic::database::open( stream, "memcbeta_den.txt" );
+		basic::database::open( stream, "scoring/score_functions/MembranePotential/memcbeta_den.txt" );
 
 		{ // den6
 			getline( stream, line );
@@ -197,7 +197,7 @@ MembranePotential::MembranePotential():
 				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
 					l >>mem_cbeta_den6_(i);
 				}
-			if ( l.fail() || tag != "MEMCBETA_DEN6:"  ) utility_exit_with_message("bad format for cbeta_den.txt (DEN6)");
+			if ( l.fail() || tag != "MEMCBETA_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (DEN6)");
 			}
 			getline( stream, line );
 			{
@@ -206,7 +206,7 @@ MembranePotential::MembranePotential():
 				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
 					l >> mem_cbeta_2TM_den6_(i);
 				}
-				if ( l.fail() || tag != "MEMCBETA_2TM_DEN6:"  ) utility_exit_with_message("bad format for cbeta_den.txt (2TM_DEN6)");
+				if ( l.fail() || tag != "MEMCBETA_2TM_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (2TM_DEN6)");
 			}
 			getline( stream, line );
 			{
@@ -215,7 +215,7 @@ MembranePotential::MembranePotential():
 				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
 					l >> mem_cbeta_4TM_den6_(i);
 				}
-				if ( l.fail() || tag != "MEMCBETA_4TM_DEN6:"  ) utility_exit_with_message("bad format for cbeta_den.txt (4TM_DEN6)");
+				if ( l.fail() || tag != "MEMCBETA_4TM_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (4TM_DEN6)");
 			}
 		}
 
@@ -227,7 +227,7 @@ MembranePotential::MembranePotential():
 				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
 					l >> mem_cbeta_den12_(i);
 				}
-				if ( l.fail() || tag != "MEMCBETA_DEN12:"  ) utility_exit_with_message("bad format for cbeta_den.txt (DEN12)");
+				if ( l.fail() || tag != "MEMCBETA_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (DEN12)");
 			}
 			getline( stream, line );
 		    {
@@ -236,7 +236,7 @@ MembranePotential::MembranePotential():
 				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
 					l >> mem_cbeta_2TM_den12_(i);
 				}
-				if ( l.fail() || tag != "MEMCBETA_2TM_DEN12:"  ) utility_exit_with_message("bad format for cbeta_den.txt (2TM_DEN12)");
+				if ( l.fail() || tag != "MEMCBETA_2TM_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (2TM_DEN12)");
 			}
 			getline( stream, line );
 			{
@@ -245,7 +245,7 @@ MembranePotential::MembranePotential():
 				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
 					l >> mem_cbeta_4TM_den12_(i);
 				}
-				if ( l.fail() || tag != "MEMCBETA_4TM_DEN12:"  ) utility_exit_with_message("bad format for cbeta_den.txt (4TM_DEN12)");
+				if ( l.fail() || tag != "MEMCBETA_4TM_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (4TM_DEN12)");
 			}
 
 		}
@@ -255,7 +255,7 @@ MembranePotential::MembranePotential():
 		mem_pair_log_.dimension( min_mem_layers,pair_log_table_size,max_aa, max_aa );
 
 		utility::io::izstream stream;
-		basic::database::open( stream, "mem_pair_log.txt" );
+		basic::database::open( stream, "scoring/score_functions/MembranePotential/mem_pair_log.txt" );
 		for ( Size i=1; i<= min_mem_layers;++i) {
 			for ( Size j=1; j<= pair_log_table_size; ++j ) {
 				for ( Size k=1; k<= max_aa; ++k ) {
@@ -268,7 +268,7 @@ MembranePotential::MembranePotential():
 						{
 							l >> mem_pair_log_(i,j,aa,n);
 						}
-					if ( l.fail() || ii != i || jj != j || tag != "MEM_PAIR_LOG:"  ) utility_exit_with_message("bad format for mem_pair_log.txt");
+					if ( l.fail() || ii != i || jj != j || tag != "MEM_PAIR_LOG:"  ) utility_exit_with_message("scoring/score_functions/MembranePotential/mem_pair_log.txt");
 				}
 
 			}

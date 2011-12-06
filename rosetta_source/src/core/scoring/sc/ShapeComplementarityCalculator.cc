@@ -305,7 +305,7 @@ int ShapeComplementarityCalculator::Calc()
 
 int ShapeComplementarityCalculator::ReadScRadii()
 {
-	char const *fn = "sc_radii.lib";
+	char const *fn = "scoring/score_functions/sc/sc_radii.lib";
 	ATOM_RADIUS radius;
 	utility::io::izstream in;
 

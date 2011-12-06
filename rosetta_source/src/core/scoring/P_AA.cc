@@ -83,7 +83,7 @@ P_AA::read_P_AA()
 	std::string id;
 	Probability probability, probability_sum( 0.0 );
 	utility::io::izstream stream;
-	basic::database::open( stream, "P_AA" );
+	basic::database::open( stream, "scoring/score_functions/P_AA_pp/P_AA" );
 
 	P_AA_.resize( num_canonical_aas );
 
@@ -119,7 +119,7 @@ P_AA::read_P_AA_n()
 	int n; // Number of neighbors
 	Probability probability;
 	utility::io::izstream stream;
-	basic::database::open( stream, "P_AA_n" );
+	basic::database::open( stream, "scoring/score_functions/P_AA_pp/P_AA_n" );
 
 	P_AA_n_.resize( chemical::num_canonical_aas );
 	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) P_AA_n_[ ii ].resize( 14 );

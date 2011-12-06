@@ -118,14 +118,14 @@ EnvPairPotential::EnvPairPotential():
 		env_log_.dimension( max_aa, env_log_table_size );
 
 		utility::io::izstream stream;
-		basic::database::open( stream, "env_log.txt" );
+		basic::database::open( stream, "scoring/score_functions/EnvPairPotential/env_log.txt" );
 		while ( getline( stream, line ) ) {
 			std::istringstream l(line);
 			l >> tag >> aa;
 			for ( Size i=1; i<= env_log_table_size; ++i ){
 				l >> env_log_(aa,i);
 			}
-			if ( l.fail() || tag != "ENV_LOG:"  ) utility_exit_with_message("bad format for env_log.txt");
+			if ( l.fail() || tag != "ENV_LOG:"  ) utility_exit_with_message("bad format for scoring/score_functions/EnvPairPotential/env_log.txt");
 		}
 	}
 
@@ -134,7 +134,7 @@ EnvPairPotential::EnvPairPotential():
 		cbeta_den12_.dimension( cbeta_den_table_size );
 
 		utility::io::izstream stream;
-		basic::database::open( stream, "cbeta_den.txt" );
+		basic::database::open( stream, "scoring/score_functions/EnvPairPotential/cbeta_den.txt" );
 
 		{ // den6
 			getline( stream, line );
@@ -143,7 +143,7 @@ EnvPairPotential::EnvPairPotential():
 			for ( Size i=1; i<= cbeta_den_table_size; ++i ){
 				l >> cbeta_den6_(i);
 			}
-			if ( l.fail() || tag != "CBETA_DEN6:"  ) utility_exit_with_message("bad format for cbeta_den.txt");
+			if ( l.fail() || tag != "CBETA_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/EnvPairPotential/cbeta_den.txt");
 		}
 
 		{ // den12
@@ -153,7 +153,7 @@ EnvPairPotential::EnvPairPotential():
 			for ( Size i=1; i<= cbeta_den_table_size; ++i ){
 				l >> cbeta_den12_(i);
 			}
-			if ( l.fail() || tag != "CBETA_DEN12:"  ) utility_exit_with_message("bad format for cbeta_den.txt");
+			if ( l.fail() || tag != "CBETA_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/EnvPairPotential/cbeta_den.txt");
 		}
 	}
 
@@ -162,7 +162,7 @@ EnvPairPotential::EnvPairPotential():
 		pair_log_.dimension( pair_log_table_size, max_aa, max_aa );
 
 		utility::io::izstream stream;
-		basic::database::open( stream, "pair_log.txt" );
+		basic::database::open( stream, "scoring/score_functions/EnvPairPotential/pair_log.txt" );
 		for ( Size j=1; j<= pair_log_table_size; ++j ) {
 			for ( Size k=1; k<= max_aa; ++k ) {
 				getline( stream, line );
@@ -173,7 +173,7 @@ EnvPairPotential::EnvPairPotential():
 				for ( Size i=1; i<= max_aa; ++i ) {
 					l >> pair_log_(j,aa,i);
 				}
-				if ( l.fail() || jj != j || tag != "PAIR_LOG:"  ) utility_exit_with_message("bad format for pair_log.txt");
+				if ( l.fail() || jj != j || tag != "PAIR_LOG:"  ) utility_exit_with_message("bad format for scoring/score_functions/EnvPairPotential/pair_log.txt");
 			}
 		}
 	}
@@ -182,14 +182,14 @@ EnvPairPotential::EnvPairPotential():
 		cenpack_log_.dimension( cenpack_log_table_size ); //sequence independent
 
 		utility::io::izstream stream;
-		basic::database::open( stream, "cenpack_log.txt" );
+		basic::database::open( stream, "scoring/score_functions/EnvPairPotential/cenpack_log.txt" );
 		for ( Size j=1; j<= cenpack_log_table_size; ++j ) {
 				getline( stream, line );
 				std::istringstream l(line);
 				Size jj;
 				l >> tag >> jj;
 				l >> cenpack_log_(j);
-				if ( l.fail() || jj != j || tag != "CENPACK_LOG:"  ) utility_exit_with_message("bad format for cenpack_log.txt");
+				if ( l.fail() || jj != j || tag != "CENPACK_LOG:"  ) utility_exit_with_message("bad format for scoring/score_functions/EnvPairPotential/cenpack_log.txt");
 		}
 	}
 }

@@ -7683,7 +7683,7 @@ Torsion_analysis_test(){
 	using namespace protocols::rna;
 
 
-			std::string filename="1jj2.torsions";
+			std::string filename="chemical/rna/1jj2.torsions";
 
 			std::ifstream infile;
 		 	infile.open(filename.c_str());
@@ -8136,7 +8136,7 @@ Chi_angle_test(){
  //nu_2=31.169
  //nu_1=110.123  Parameter from G of UUCG tetraloop
 
- //Statistical analysis of 1jj2.torsions
+ //Statistical analysis of chemical/rna/1jj2.torsions
 //  Syn_3prime  count 21
 //	mean nu_1= 107.792  mean_square nu_1= 11655.6  standard_deviation_nu_1 6.04656
 //  mean nu_2= 31.8163  mean_square nu_2= 1026.34  standard_deviation_nu_2 3.75109

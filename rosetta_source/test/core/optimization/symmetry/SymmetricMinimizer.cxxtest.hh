@@ -318,13 +318,13 @@ public:
 		bool all_derivatives_correct = sadv.simple_deriv_check( true, tolerance );
 
 		if ( ! all_derivatives_correct ) {
-			std::cout << "Derivative failure in the fibril symmetry for term(s): ";
+			//std::cout << "Derivative failure in the fibril symmetry for term(s): ";
 			for ( Size ii = 1; ii <= (Size) end_of_score_type_enumeration; ++ii ) {
 				if ( in_weights[ (ScoreType) ii ] != 0.0 ) {
-					std::cout  << " " << (ScoreType) ii;
+					//std::cout  << " " << (ScoreType) ii;
 				}
 			}
-			std::cout << " given tolerance: " << tolerance << std::endl;
+			//std::cout << " given tolerance: " << tolerance << std::endl;
 		}
 
 		//SymAtomTreeMinimizer minimizer;
@@ -358,9 +358,9 @@ public:
 
 		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
 
-		std::cout << "Symmetric score helix before: " << (* scorefxn )( pose ) << std::endl;
+		//std::cout << "Symmetric score helix before: " << (* scorefxn )( pose ) << std::endl;
 
-		std::cout << "Symmetric score before: " << (* scorefxn )( pose ) << std::endl;
+		//std::cout << "Symmetric score before: " << (* scorefxn )( pose ) << std::endl;
 
 		SymmetricConformation const & SymmConf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 		assert( conformation::symmetry::is_symmetric( SymmConf ) );
@@ -374,7 +374,7 @@ public:
 		MinimizerOptionsOP min_options = new MinimizerOptions( "dfpmin", 0.001, true, true, false );
 		minimizer.run( pose, *mm, *scorefxn, *min_options );
 
-		std::cout << "Symmetric score after: " << (* scorefxn )( pose ) << std::endl;
+		//std::cout << "Symmetric score after: " << (* scorefxn )( pose ) << std::endl;
 
 		/*kinematics::MoveMapOP mm = new kinematics::MoveMap;
 		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
@@ -382,7 +382,7 @@ public:
 		MinimizerOptionsOP min_options = new MinimizerOptions( "dfpmin", 0.001, true, true, false );
 		minimizer.run( pose, *mm, *scorefxn, *min_options );
 
-		std::cout << "Symmetric score helix after: " << (* scorefxn )( pose ) << std::endl;*/
+		//std::cout << "Symmetric score helix after: " << (* scorefxn )( pose ) << std::endl;*/
 	}
 
 

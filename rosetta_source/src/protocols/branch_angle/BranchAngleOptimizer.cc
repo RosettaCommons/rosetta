@@ -669,12 +669,12 @@ BranchAngleOptimizer::read_coef1(
 }
 
 /// @detailed
-/// read from branch_angle/branch_angle_1.txt
+/// read from sampling/branch_angle/branch_angle_1.txt
 void
 BranchAngleOptimizer::read_coef1_default()
 {
 	utility::io::izstream infile;
-	basic::database::open(infile, "branch_angle/branch_angle_1.txt");
+	basic::database::open(infile, "sampling/branch_angle/branch_angle_1.txt");
 	read_coef1(infile);
 	infile.close();
 }
@@ -803,12 +803,12 @@ BranchAngleOptimizer::read_coef2(
 }
 
 /// @detailed
-/// read from branch_angle/branch_angle_2.txt, fails hard
+/// read from sampling/branch_angle/branch_angle_2.txt, fails hard
 void
 BranchAngleOptimizer::read_coef2_default()
 {
 	utility::io::izstream infile;
-	basic::database::open(infile, "branch_angle/branch_angle_2.txt");
+	basic::database::open(infile, "sampling/branch_angle/branch_angle_2.txt");
 	read_coef2(infile);
 	infile.close();
 }

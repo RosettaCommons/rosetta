@@ -27,7 +27,7 @@ namespace interpolation {
 ///The file should be tab seperated, and have two lines
 ///The first field of one line should be "x_axis", the next fields should be the x values of the points for the spline
 ///The first field of the other line should be "y_axis", the next fields should be the y values for the points on the spline
-///For an example, see "epr_distance_potential.histogram"
+///For an example, see "scoring/constraints/epr_distance_potential.histogram"
 spline::SplineGenerator spline_from_file(std::string const &  filename,platform::Real const & bin_size)
 {
 	utility::io::izstream potential_file;

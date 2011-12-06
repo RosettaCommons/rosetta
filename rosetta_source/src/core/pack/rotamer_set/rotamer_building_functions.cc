@@ -584,7 +584,7 @@ build_dna_rotamers(
 	if ( level == task::EX_SIX_QUARTER_STEP_STDDEVS ) {
 
 			utility::io::izstream lib_stream;
-			basic::database::open( lib_stream, "VQ-DNA-64.rotlib" );
+			basic::database::open( lib_stream, "rotamer/dna/VQ-DNA-64.rotlib" );
 
 			// Read rotamers from rotamer library
 			utility::vector1< DihedralSet* > library;

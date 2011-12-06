@@ -50,8 +50,7 @@ public:
 		Sparta sparta(cs_file);
 
 		Real const sparta_score(sparta.score_pose(pose));
-		std::cout << "score(" << pdb_file << "," << cs_file << ") = " << sparta_score <<
-			std::endl;
+		//std::cout << "score(" << pdb_file << "," << cs_file << ") = " << sparta_score << std::endl;
 		return sparta_score;
 	}
 
@@ -62,7 +61,7 @@ public:
 		string const cs_fn ( "protocols/sparta/17280_trim.tab" );
 		Real const sparta_score( calc_sparta_score(pdb_fn,cs_fn) );
 
-		std::cout << sparta_score << std::endl;
+		//std::cout << sparta_score << std::endl;
 	}
 
 	void test_sparta_2kywA() {
@@ -194,8 +193,7 @@ public:
 
 		Real const sparta_score(sparta.score_pose(pose));
 		TS_ASSERT_DELTA( sparta_score, 702.378, TOLERATED_ERROR );
-		std::cout << "score(" << pdb_file << "," << cs_file << ") = " << sparta_score <<
-			std::endl;
+		//std::cout << "score(" << pdb_file << "," << cs_file << ") = " << sparta_score << std::endl;
 	}
 
 };

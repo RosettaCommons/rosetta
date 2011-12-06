@@ -88,9 +88,9 @@ private:
 public:
 
 RosettaHolesMover() {
-	hp_resl_ .read_data_file(basic::database::full_name("rosettaholes/resl.params"));
-	hp_dec_  .read_data_file(basic::database::full_name("rosettaholes/decoy25.params"));
-	hp_dec15_.read_data_file(basic::database::full_name("rosettaholes/decoy15.params"));
+	hp_resl_ .read_data_file(basic::database::full_name("scoring/rosettaholes/resl.params"));
+	hp_dec_  .read_data_file(basic::database::full_name("scoring/rosettaholes/decoy25.params"));
+	hp_dec15_.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	make_pdb_       = basic::options::option[ basic::options::OptionKeys::holes::make_pdb ]();
 	make_voids_     = basic::options::option[ basic::options::OptionKeys::holes::make_voids ]();
 	atom_scores_    = basic::options::option[ basic::options::OptionKeys::holes::atom_scores ]();

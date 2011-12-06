@@ -116,10 +116,10 @@ public:
 			if ( std::abs( hs_pair - silent_hs_pair ) <= TOLERATED_ERROR ) {
 				ngood++;
 			}
-			std::cout << "decoy_tag = " << iter->decoy_tag() << std::endl;
+			//std::cout << "decoy_tag = " << iter->decoy_tag() << std::endl;
 		}
 
-		std::cout << std::endl << "found " << ngood << " hs_pair scores that passed threshold!" << std::endl;
+		//std::cout << std::endl << "found " << ngood << " hs_pair scores that passed threshold!" << std::endl;
 	} // test_eval_energy()
 }; // SecondaryStructureEnergy_Tests
 

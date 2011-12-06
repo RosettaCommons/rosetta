@@ -294,7 +294,7 @@ get_atom_packing_score (Pose const &pose, vector1<Size> intra_subs, Real cutoff=
 {
 
 	Pose sub_pose = get_neighbor_subs(pose, intra_subs);
-	core::scoring::packing::HolesParams hp(basic::database::full_name("rosettaholes/decoy15.params"));
+	core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
   Size nres_monomer = symm_info->num_independent_residues();

@@ -715,7 +715,7 @@ StandardPairingLibrary* StandardPairingLibrary::instance_( NULL );
 StandardPairingLibrary* StandardPairingLibrary::get_instance() {
 	if ( instance_ == NULL ) {
 		instance_ = new StandardPairingLibrary();
-		instance_->read_from_file( basic::database::full_name("jump_templates_SSpairs_v2.dat") );
+		instance_->read_from_file( basic::database::full_name("scoring/score_functions/jump_templates_SSpairs_v2.dat") );
 	};
 	return instance_;
 }

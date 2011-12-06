@@ -65,7 +65,7 @@ DisulfideMatchingDatabase::read_disulfide_database() const{
 
 	utility::io::izstream disulfide_database;
 
-	basic::database::open(disulfide_database, "disulfide_jump_database_wip.dat");
+	basic::database::open(disulfide_database, "sampling/disulfide_jump_database_wip.dat");
 
 	std::string line;
 

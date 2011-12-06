@@ -66,11 +66,11 @@ RNA_AtomVDW::RNA_AtomVDW()
 {
 	//Read in data file, and fill in private data.
 	utility::io::izstream stream;
-	basic::database::open( stream, "rna_atom_vdw.txt" );
+	basic::database::open( stream, "chemical/rna/rna_atom_vdw.txt" );
 
 	rna_vdw_parameter_.dimension( 10, 10, 4, 4 );
 
-	if ( !stream.good() ) utility_exit_with_message( "Unable to open rna_atom_vdw.txt!" );
+	if ( !stream.good() ) utility_exit_with_message( "Unable to open rna_scoring/AtomVDW/atom_vdw.txt!" );
 
 	// read the entire file and figure out what atom_types are present and in what order
 	utility::vector1< std::string > lines;

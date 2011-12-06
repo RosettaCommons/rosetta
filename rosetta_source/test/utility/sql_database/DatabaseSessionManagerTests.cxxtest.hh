@@ -72,16 +72,16 @@ public:
       if( name1.next() ){
         string name;
         name1 >> name;
-        cout<<name<<endl;
+        //cout<<name<<endl;
     	} else {
-    	  cout<<"No user with id="<<1<<endl;
+    	  //cout<<"No user with id="<<1<<endl;
     	}
       cppdb::result id_names = (*db_session) << "SELECT id,name FROM users";
     	while(id_names.next()) {
     	  int id;
     	  string name;
     	  id_names >> id >> name;
-    	  cout << id << "\t" << name << endl;
+    	  //cout << id << "\t" << name << endl;
     	}
     } catch(std::exception const &e) {
       cerr << e.what() << endl;

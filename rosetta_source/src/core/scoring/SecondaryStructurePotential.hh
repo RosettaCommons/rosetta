@@ -220,8 +220,8 @@ private: // initialization
 	/// @brief load phi/theta bins for use in secondary structure scoring
 	void
 	load_phi_theta_bins(
-		std::string const & hs_filename = "phi.theta.36.HS.resmooth",
-		std::string const & ss_filename = "phi.theta.36.SS.resmooth"
+		std::string const & hs_filename = "scoring/score_functions/SecondaryStructurePotential/phi.theta.36.HS.resmooth",
+		std::string const & ss_filename = "scoring/score_functions/SecondaryStructurePotential/phi.theta.36.SS.resmooth"
 	);
 
 

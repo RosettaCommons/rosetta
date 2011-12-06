@@ -109,7 +109,7 @@ SurfacePotential::SurfacePotential() {
 void SurfacePotential::read_average_res_hASA_database_file() {
 
 	utility::io::izstream residue_hASA_ifstream;
-	basic::database::open( residue_hASA_ifstream, "average_hASA_by_res_and_neighbor.txt" );
+	basic::database::open( residue_hASA_ifstream, "scoring/score_functions/SurfacePotential/average_hASA_by_res_and_neighbor.txt" );
 
 	std::string str_restype;
 	Real lte10_asa = 0.0;
@@ -172,7 +172,7 @@ void SurfacePotential::read_average_res_hASA_database_file() {
 void SurfacePotential::read_hASA_score_database_file() {
 
 	utility::io::izstream hASA_score_ifstream;
-	basic::database::open( hASA_score_ifstream, "surface_score.txt" );
+	basic::database::open( hASA_score_ifstream, "scoring/score_functions/SurfacePotential/surface_score.txt" );
 
 	Real amount_hASA = 0.0;
 	Real score = 0.0;
@@ -213,7 +213,7 @@ void SurfacePotential::read_hASA_score_database_file() {
 void SurfacePotential::read_hpatch_score_database_file() {
 
 	utility::io::izstream hpatch_score_ifstream;
-	basic::database::open( hpatch_score_ifstream, "hpatch_score.txt" );
+	basic::database::open( hpatch_score_ifstream, "scoring/score_functions/SurfacePotential/hpatch_score.txt" );
 
 	Real patch_area = 0.0;
 	Real score = 0.0;
@@ -528,7 +528,7 @@ SurfacePotential::compute_pose_hpatch_score(
 /// @brief
 /// Uses the src/core/pack/interaction_graph/RotamerDots classes to determine exact SASAs and then uses a graph-based
 /// approach to find all the exposed hydrophobic patches on the surface of the pose. Uses the scores in the file
-/// hpatch_score.txt to assign a score to each patch and puts the score into the passed in Real.
+/// scoring/score_functions/SurfacePotential/hpatch_score.txt to assign a score to each patch and puts the score into the passed in Real.
 ///
 /// Note: If a Pose object has overlapping atoms anywhere, then this function will fail with the following error:
 ///

@@ -172,7 +172,7 @@ compute_dec15_score(
 	std::string cmd = basic::options::option[ basic::options::OptionKeys::holes::dalphaball ]();
 
 	HolesParams dec15_params;
-	dec15_params.read_data_file(basic::database::full_name("rosettaholes/decoy15.params"));
+	dec15_params.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	PoseBalls pb(pose);
 
 	Real dec15_score = 0.0;
@@ -437,9 +437,9 @@ compute_rosettaholes_score(
 	PoseBalls        & pb
 ) {
 	HolesParams hp_resl, hp_dec, hp_dec15;
-	hp_resl .read_data_file(basic::database::full_name("rosettaholes/resl.params"));
-	hp_dec  .read_data_file(basic::database::full_name("rosettaholes/decoy25.params"));
-	hp_dec15.read_data_file(basic::database::full_name("rosettaholes/decoy15.params"));
+	hp_resl .read_data_file(basic::database::full_name("scoring/rosettaholes/resl.params"));
+	hp_dec  .read_data_file(basic::database::full_name("scoring/rosettaholes/decoy25.params"));
+	hp_dec15.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
    return compute_rosettaholes_score(pose,pb,hp_resl,hp_dec,hp_dec15);
 }
 
@@ -487,9 +487,9 @@ compute_holes_score( pose::Pose const & pose,	std::string const & cmd )
 {
 	PoseBalls pb(pose);
 	HolesParams hp_resl, hp_dec, hp_dec15;
-	hp_resl .read_data_file(basic::database::full_name("rosettaholes/resl.params"));
-	hp_dec  .read_data_file(basic::database::full_name("rosettaholes/decoy25.params"));
-	hp_dec15.read_data_file(basic::database::full_name("rosettaholes/decoy15.params"));
+	hp_resl .read_data_file(basic::database::full_name("scoring/rosettaholes/resl.params"));
+	hp_dec  .read_data_file(basic::database::full_name("scoring/rosettaholes/decoy25.params"));
+	hp_dec15.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	bool use_cached_surfs( false );
  	return compute_rosettaholes_score( pose, pb, hp_resl, hp_dec, hp_dec15, use_cached_surfs, cmd );
 }

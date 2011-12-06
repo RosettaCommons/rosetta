@@ -245,7 +245,7 @@ main( int argc, char* argv [] )
 	//outfile << "DISULF PDB RES1 RES1 AA1 AA2 SS1 SS2 SEQ_SEP CB_DIS CEN_DIS CA1CB1CB2_angle1 CA2CB2CB1_angle2 CACBCBCA_dihedral NCACAC_dihedral R_DIST MIN_R_DIST MIN_T_DIST RT" << std::endl;
 
 	utility::io::izstream disulfide_database;
-	basic::database::open(disulfide_database, "disulfide_jump_database_wip.dat");
+	basic::database::open(disulfide_database, "sampling/disulfide_jump_database_wip.dat");
 	std::string line;
 
 	utility::vector1< core::kinematics::RT > disulfides;

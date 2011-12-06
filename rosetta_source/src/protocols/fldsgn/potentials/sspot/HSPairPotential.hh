@@ -93,7 +93,7 @@ private: // initialization
 
 
 	/// @brief load phi/theta bins for use in secondary structure scoring
-	void load_phi_theta_bins( String const & ss_filename = "phi.theta.36.HS.resmooth" );
+	void load_phi_theta_bins( String const & ss_filename = "scoring/score_functions/SecondaryStructurePotential/phi.theta.36.HS.resmooth" );
 
 
 private: // secondary structure data

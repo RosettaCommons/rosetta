@@ -161,7 +161,7 @@ DNA_BasePotential::load_score_tables()
 
 	// load base-pair and base-step parameters
 	utility::io::izstream data;
-	basic::database::open( data, "dna_bs_bp.dat" );
+	basic::database::open( data, "scoring/dna/dna_bs_bp.dat" );
 
 
 	std::string line, type_name, bases, param_name;

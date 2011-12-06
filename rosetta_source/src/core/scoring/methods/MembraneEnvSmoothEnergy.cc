@@ -81,12 +81,12 @@ MembraneEnvSmoothEnergy::MembraneEnvSmoothEnergy() :
 	chemical::AA aa;
 	mem_env_log10_.dimension( max_aa, max_mem_layers, env_log_table_cen10_bins );
 	utility::io::izstream stream;
-	basic::database::open( stream, "CEN10_Menv_smooth_log.txt" );
+	basic::database::open( stream, "scoring/score_functions/MembranePotential/CEN10_Menv_smooth_log.txt" );
 	for ( Size i=1; i<= max_aa; ++i ){
 		getline( stream, line );
 		std::istringstream l(line);
 		l >> tag >> aa;
-		if ( l.fail() || tag != "MENV_SMOOTH_LOG_CEN10:"  ) utility_exit_with_message("bad format for CEN10_Menv_smooth_log.txt (Menv_smooth)");
+		if ( l.fail() || tag != "MENV_SMOOTH_LOG_CEN10:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/CEN10_Menv_smooth_log.txt (Menv_smooth)");
 		for( Size j=1;j<=max_mem_layers;++j) {
 			for( Size k=1;k<=env_log_table_cen10_bins;++k) {
 				l >> mem_env_log10_(aa,j,k);

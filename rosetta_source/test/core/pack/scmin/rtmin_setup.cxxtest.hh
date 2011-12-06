@@ -646,15 +646,15 @@ public:
 		Multivec dEdchi( dofs );
 
 		f.dfunc( dofs, dEdchi );
-		std::cout << "chi (dofs):";
+		//std::cout << "chi (dofs):";
 		for ( Size ii = 1; ii <= dofs.size(); ++ii ) {
-			std::cout << " " << dofs[ ii ];
+			//std::cout << " " << dofs[ ii ];
 		}
-		std::cout << "dEdchi:";
+		//std::cout << "dEdchi:";
 		for ( Size ii = 1; ii <= dEdchi.size(); ++ii ) {
-			std::cout << " " << dEdchi[ ii ];
+			//std::cout << " " << dEdchi[ ii ];
 		}
-		std::cout << std::endl;
+		//std::cout << std::endl;
 
 		SimpleDerivCheckResult deriv_check = simple_numeric_deriv_check( f, dofs, dEdchi, true, true );
 
@@ -701,7 +701,7 @@ public:
 				rtmin_run( copy_pose, sfxn );
 			}
 			clock_t stop_time = clock();
-			std::cout << "RTMIN TIMING: " << pdbs[ii] << " nres " << orig_pose.total_residue() << " avg time: " << ((double) stop_time - start_time ) / ( niterations * CLOCKS_PER_SEC ) << std::endl;
+			//std::cout << "RTMIN TIMING: " << pdbs[ii] << " nres " << orig_pose.total_residue() << " avg time: " << ((double) stop_time - start_time ) / ( niterations * CLOCKS_PER_SEC ) << std::endl;
 		}
 
 	}

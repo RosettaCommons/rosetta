@@ -177,7 +177,7 @@ rna_assemble_test()
 	make_pose_from_sequence( pose,	seq_in,	*rsd_set );
 
 	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
-	std::string jump_library_file( io::database::full_name("1jj2_RNA_jump_library.dat" ) );
+	std::string jump_library_file( io::database::full_name("chemical/rna/1jj2_RNA_jump_library.dat" ) );
 	std::string rna_params_file( 	option[ params_file ] );
 
 	rna_structure_parameters->initialize( pose, rna_params_file, jump_library_file, false );
@@ -361,7 +361,7 @@ rna_assemble_all_combinations_test()
 	make_pose_from_sequence( pose,	fasta_sequence->sequence(),	*rsd_set );
 
 	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
-	std::string jump_library_file( io::database::full_name("1jj2_RNA_jump_library.dat" ) );
+	std::string jump_library_file( io::database::full_name("chemical/rna/1jj2_RNA_jump_library.dat" ) );
 	std::string rna_params_file( 	option[ params_file ] );
 
 	rna_structure_parameters->initialize( pose, rna_params_file, jump_library_file, false );

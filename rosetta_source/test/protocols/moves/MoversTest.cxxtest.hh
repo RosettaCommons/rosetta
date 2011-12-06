@@ -94,9 +94,9 @@ public:
 		//one_mover_test(__FILE__, __LINE__, new SmallMover,
 		//			   "protocols/moves/test_in.pdb", "protocols/moves/smallmoves_out.pdb",
 		//			   "protocols/moves/smallmoves.u", "core protocols");
-		std::cout << "End SmallMover test" << "\n";
+		//std::cout << "End SmallMover test" << "\n";
 
 		TEST_MOVER( protocols::simple_moves::ShearMover, "protocols/moves/test_in.pdb", "protocols/moves/shearmoves_out.pdb");
-		std::cout << "End ShearMover test" << "\n";
+		//std::cout << "End ShearMover test" << "\n";
 	 }
 };

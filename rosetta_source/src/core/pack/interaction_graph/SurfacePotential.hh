@@ -88,7 +88,7 @@ private:
 	utility::vector1< utility::vector1 < Real > > res_to_average_hASA_;
 	std::vector< utility::vector1 < Real > > hASA_to_score_;
 
-	// vector which holds the values read from hpatch_score.txt
+	// vector which holds the values read from scoring/score_functions/SurfacePotential/hpatch_score.txt
 	std::vector< core::Real > patcharea_to_score_;
 
 	static SurfacePotential* instance_;

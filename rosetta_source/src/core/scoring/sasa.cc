@@ -103,7 +103,7 @@ ObjexxFCL::FArray2D_ubyte masks( num_bytes, num_overlaps * num_orientations );
 /// @begin sasa.cc::input_sasa_dats
 ///
 /// @brief
-/// Reads in the SASA database files SASA-angles.dat and SASA-masks.dat into FArrays above.
+/// Reads in the SASA database files sampling/SASA-angles.dat and sampling/SASA-masks.dat into FArrays above.
 ///
 void input_sasa_dats() {
 
@@ -114,7 +114,7 @@ void input_sasa_dats() {
 	init = true;
 
 	//j inputting the masks. they are 21 ubytes long, 162x100 (see header). expects file to be complete
-	utility::io::izstream masks_stream( basic::database::full_name("SASA-masks.dat" ) );
+	utility::io::izstream masks_stream( basic::database::full_name("sampling/SASA-masks.dat" ) );
 
 	//ronj iterate over all 16200 bit masks in the database file and save them to the FArray 'masks'
 	//ronj the lines have 21 space-delimited DECIMAL values which we need to convert to binary values that are 8-bits long
@@ -132,9 +132,9 @@ void input_sasa_dats() {
 	}
 	masks_stream.close();
 
-	//ronj iterate over all 64 lines of the SASA-angles database file and save them to the FArray 'angles'
+	//ronj iterate over all 64 lines of the sampling/SASA-angles.database file and save them to the FArray 'angles'
 	//ronj these lines have 64 space-delimited ints which need to be stored
-	utility::io::izstream angles_stream( basic::database::full_name( "SASA-angles.dat" ) );
+	utility::io::izstream angles_stream( basic::database::full_name( "sampling/SASA-angles.dat" ) );
 
 	for ( int ii = 1; ii <= num_phi; ++ii ) {
 		for ( int jj = 1; jj <= num_theta; ++jj ) {
@@ -241,7 +241,7 @@ get_overlap( Real const radius_a, Real const radius_b, Real const distance_ijxyz
 /// ronj phi = arctan( y / x )
 ///
 /// ronj Then, once we have the true phi and theta, we need to translate this into an index (or offset) for the correct
-/// ronj value in the database file. There are 64 phi angle bin and 64 theta bins in the database file SASA-angles.dat.
+/// ronj value in the database file. There are 64 phi angle bin and 64 theta bins in the database file sampling/SASA-angles.dat.
 /// ronj We need to convert the phi and theta into indexes for this file by multiplying them by num_phi / 2*pi.
 //  ronj pi_2 is 2*pi
 ///
@@ -827,7 +827,7 @@ int get_num_bytes() { return num_bytes; }
 /// @begin get_angles
 ///
 /// @brief
-/// Returns const access to the angles FArray, which contains the information in the SASA database file SASA-angles.dat.
+/// Returns const access to the angles FArray, which contains the information in the SASA database file sampling/SASA-angles.dat.
 /// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
 ///
 ObjexxFCL::FArray2D_int const & get_angles() {
@@ -839,7 +839,7 @@ ObjexxFCL::FArray2D_int const & get_angles() {
 /// @begin get_masks
 ///
 /// @brief
-/// Returns const access to the masks FArray, which contains the information in the SASA database file SASA-masks.dat.
+/// Returns const access to the masks FArray, which contains the information in the SASA database file sampling/SASA-masks.dat.
 /// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
 ///
 ObjexxFCL::FArray2D_ubyte const & get_masks() {

@@ -475,7 +475,7 @@ StandardDisulfPairingLibrary* StandardDisulfPairingLibrary::get_instance() {
 	if ( instance_ == NULL ) {
 		instance_ = new StandardDisulfPairingLibrary();
 		std::cout << "READING START" << std::endl;
-		instance_->read_from_file( basic::database::full_name("disulfide_jump_database_wip.dat") );
+		instance_->read_from_file( basic::database::full_name("sampling/disulfide_jump_database_wip.dat") );
 		std::cout << "READING END" << std::endl;
 	};
 	return instance_;

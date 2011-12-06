@@ -249,7 +249,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( filter_lores_base_pairs, "Filter for models that satisfy structure parameters",false );
 	NEW_OPT( vary_geometry, "Let bond lengths and angles vary from ideal",false );
 	NEW_OPT( cycles, "Default number of Monte Carlo cycles", 10000 );
-	NEW_OPT( vall_torsions, "Torsions file?", "1jj2.torsions" );
+	NEW_OPT( vall_torsions, "Torsions file?", "chemical/rna/1jj2.torsions" );
 	NEW_OPT( temperature, "temperature", 0.3 );
 	NEW_OPT( jump_change_frequency, "jump change frequency", 0.1 );
 	NEW_OPT( close_loops, "close loops during frag insertion and jump mover", false );
@@ -258,7 +258,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( heat, "Heat (random frag insertions)", false );
 	NEW_OPT( dump, "Dump pdb", false );
 	NEW_OPT( staged_constraints, "Apply constraints in stages depending on sequence separation", false );
-	NEW_OPT( jump_library_file, "Input file for jumps", "1jj2_RNA_jump_library.dat" );
+	NEW_OPT( jump_library_file, "Input file for jumps", "chemical/rna/1jj2_RNA_jump_library.dat" );
 	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
 	NEW_OPT( data_file, "Input file for RNA exposure data", "" );
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );

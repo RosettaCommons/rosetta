@@ -60,7 +60,7 @@ PairEPotential::PairEPotential() :
 
 	// Open the residue pair statistics file
 	utility::io::izstream stream;
-	basic::database::open( stream, "pdb_pair_stats_fine" );
+	basic::database::open( stream, "scoring/score_functions/PairEPotential/pdb_pair_stats_fine" );
 
 	// Dimension/allocate the pair_corr array
 	pair_corr_.dimension( max_aa, max_aa, 2, 2, 5, TableProbability( 0.0 ) );
