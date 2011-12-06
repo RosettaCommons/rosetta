@@ -26,6 +26,8 @@
 namespace protocols {
 namespace protein_interface_design {
 
+// Undefined, commenting out to fix PyRosetta build
+/*
 class AlaScanFilterCreator : public protocols::filters::FilterCreator
 {
 public:
@@ -109,6 +111,7 @@ public:
 	virtual protocols::filters::FilterOP create_filter() const;
 	virtual std::string keyname() const;
 };
+*/
 
 } //namespace protein_interface_design
 } //namespace protocols

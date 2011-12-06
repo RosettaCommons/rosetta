@@ -37,9 +37,9 @@ public:
   void count_accepted( std::string const& );
   void count_energy_drop( std::string const&, core::Real );
 
-  core::Size trial( std::string const& );
-  core::Size accepted( std::string const& );
-  core::Real energy_drop( std::string const& );
+  // Undefined, commenting out to fix PyRosetta build  core::Size trial( std::string const& );
+  // Undefined, commenting out to fix PyRosetta build  core::Size accepted( std::string const& );
+  // Undefined, commenting out to fix PyRosetta build  core::Real energy_drop( std::string const& );
 
   protocols::moves::TrialCounter const& operator[]( core::Size ) const;
   protocols::moves::TrialCounter& operator[]( core::Size );

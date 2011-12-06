@@ -132,12 +132,12 @@ protected: // data
 
 };
 
-
+/*  Undefined, commenting out to fix PyRosetta build
 void fast_ccd_close_loops(
 	core::pose::Pose & pose,
 	protocols::loops::Loop const & loop,
 	core::kinematics::MoveMap & mm
-);
+); */
 
 
 } //namespace loop_build

@@ -33,60 +33,60 @@ class GrowPeptides : public protocols::moves::Mover
 {
 public:
 	GrowPeptides();
-			
+
 	virtual ~GrowPeptides();
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
   virtual protocols::moves::MoverOP clone() const;
   virtual protocols::moves::MoverOP fresh_instance() const;
-			
+
 	void parse_my_tag( 		  utility::tag::TagPtr const tag,
 							  protocols::moves::DataMap &,
 							  protocols::filters::Filters_map const &,
 							  protocols::moves::Movers_map const &,
 							  core::pose::Pose const & );
 
-	void add_chainbreakterm( bool ac );
-	
-	bool add_chainbreakterm();
+	// Undefined, commenting out to fix PyRosetta build   void add_chainbreakterm( bool ac );
+
+	// Undefined, commenting out to fix PyRosetta build   bool add_chainbreakterm();
 
 	bool ddg();
-			
+
 private: ///functions
-	
-	void append_residues_nterminally (	
+
+	void append_residues_nterminally (
 									  core::Size seq_register,
-									  core::Size res_pos, 
-									  core::Size stop, 
-									  std::string & nat_seq , 
+									  core::Size res_pos,
+									  core::Size stop,
+									  std::string & nat_seq ,
 									  core::pose::Pose & target_seeds
 									  );
-	
+
 	void append_residues_cterminally (
 									  core::Size seq_register,
-									  core::Size res_pos, 
-									  core::Size stop, 
-									  std::string & nat_seq , 
+									  core::Size res_pos,
+									  core::Size stop,
+									  std::string & nat_seq ,
 									  core::pose::Pose & target_seeds
 									   );
-	
-	void grow_from_seeds(	
-								  core::pose::Pose curr_pose, //the pose that gets changed 
+
+	void grow_from_seeds(
+								  core::pose::Pose curr_pose, //the pose that gets changed
 								  std::string sequence,
 								  protocols::loops::Loops & seeds,
 								  utility::vector1< Size > cutpoints//,
 						 			);
 
-	
-	void grow_from_verteces(	
-									 core::pose::Pose & curr_pose, 
+
+	void grow_from_verteces(
+									 core::pose::Pose & curr_pose,
 									 std::string sequence,
 									 protocols::loops::Loops & seeds,
 									 std::set< core::Size > vertex_set
 									);
-	
+
 	void setup_cached_observers( core::pose::Pose & pose );
-	
+
 		private: /// data
 
 			core::Size extend_nterm;
@@ -97,25 +97,25 @@ private: ///functions
 			bool all_ala_C;
 			//bool add_chainbreakterm_;
 
-			bool ddg_;			
+			bool ddg_;
 			/// template pose to derrive a sequence from
 			core::pose::PoseOP template_pdb_;
 			bool template_presence;
 			core::scoring::ScoreFunctionOP scorefxn_;
 			bool output_centroid;
-			/// vector of sequence pieces 
+			/// vector of sequence pieces
 			utility::vector1< std::string > sequence_chunks_;
 			protocols::loops::Loops all_seeds_;
 			bool fetch_foldtree;
 			///foldtree after growing out peptide pieces
 			core::kinematics::FoldTreeOP seed_foldtree_;
-			/// pointer for the current pose 
+			/// pointer for the current pose
 			core::pose::PoseOP curr_pose_;
 			std::set< core::Size > verteces_;
 			//bool add_chainbreakterm_;
-			
+
 		};
 	}//end seeded_abinitio
 }//end protocols
 
-#endif 
+#endif

@@ -56,9 +56,9 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
 
     'protocols/jd2/MultiThreadingJob.hh',  # Linker errors, neeed somefunction to be explicitly defined
 
-    'protocols/moves/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh', # not in scons, MPI only
-    'protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh', # not in scons, MPI only
-    'protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh', # not in scons, MPI only
+    'protocols/canonical_sampling/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh', # not in scons, MPI only
+    'protocols/canonical_sampling/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh', # not in scons, MPI only
+    'protocols/canonical_sampling/mc_convergence_checks/MPIPool_ConvergenceCheck.hh', # not in scons, MPI only
 
     'protocols/moves/ReportToDB.hh',  # need sqlite3, not sure if we need it...
 

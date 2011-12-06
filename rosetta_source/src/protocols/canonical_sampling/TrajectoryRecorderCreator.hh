@@ -20,12 +20,15 @@
 namespace protocols {
 namespace canonical_sampling {
 
+// Undefined, commenting out to fix PyRosetta build
+/*
 class TrajectoryRecorderCreator : public protocols::moves::MoverCreator {
 public:
 	virtual moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
 };
+*/
 
 }
 }

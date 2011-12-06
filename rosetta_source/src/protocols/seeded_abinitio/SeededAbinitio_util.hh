@@ -62,8 +62,8 @@ protocols::loops::Loops parse_seeds(	core::pose::Pose const & pose, utility::vec
 
 /// to readjust the move map after length changes
 void adjust_mm_to_length( core::pose::Pose const & pose, core::kinematics::MoveMapOP & mm );
-		
-void combine_two_poses( core::pose::Pose & design_pose , core::pose::PoseOP & target_chain );
+
+void combine_two_poses( core::pose::Pose design_pose , core::pose::PoseOP target_chain );
 
 
 }

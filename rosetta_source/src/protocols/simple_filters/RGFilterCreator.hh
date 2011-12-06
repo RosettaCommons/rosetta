@@ -30,13 +30,15 @@
 namespace protocols {
 namespace simple_filters {
 
+// Undefined, commenting out to fix PyRosetta build
+/*
 class RGFilterCreator : public protocols::filters::FilterCreator
 {
 public:
 	virtual filters::FilterOP create_filter() const;
 	virtual std::string keyname() const;
 };
-
+*/
 
 } //namespace filters
 } //namespace protocols
