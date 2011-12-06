@@ -270,7 +270,7 @@ compute_sasa(
 	PackstatReal fraction,total_sa,expose;//,dist_sq,total_sasa5,total_sasa14,
 	PackstatReal const largest_probe( opts.probe_radii[1] ); // first probe is largest
 
-	ObjexxFCL::FArray3D_ubyte atom_sasa_masks( old::nbytes, Nspheres, Nprobes, false );
+	ObjexxFCL::FArray3D_ubyte atom_sasa_masks( old::nbytes, Nspheres, Nprobes, NULL );
 
 	vector1< RotPair > rotations;
 
@@ -419,7 +419,7 @@ compute_cav_ball_volumes(
 	using namespace ObjexxFCL;
 	using namespace old;
 
-	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), false );
+	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), NULL );
 
 	std::sort( cavballs.begin(), cavballs.end(), OrderCavBallOnX() ); // already sorted
 
@@ -495,7 +495,7 @@ prune_hidden_cavity_balls(
 	using namespace ObjexxFCL;
 	using namespace old;
 
-	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), false );
+	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), NULL );
 
 	std::sort( cavballs.begin(), cavballs.end(), OrderCavBallOnX() );
 

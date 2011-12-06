@@ -148,7 +148,7 @@ HolesEnergy::setup_for_derivatives(
 	AtomID_Map<xyzVector<Real> > & derivs(cachemap->map());
 	core::pose::initialize_atomid_map_heavy_only(derivs,pose);
 
-   /*Real score = */compute_holes_deriv( pose, min_params_, derivs ).score;
+   /*Real score = */compute_holes_deriv( pose, min_params_, derivs );//.score;
 
 	// if( !pose.data().has( HOLES_POSE_SCORE ) ) {
 	// 	pose.data().set( HOLES_POSE_SCORE, new CacheableAtomID_MapVector );

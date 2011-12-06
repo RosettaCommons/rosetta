@@ -61,7 +61,7 @@ namespace pcs2{
 basic::Tracer TR_PcsInputFile("protocols.scoring.methods.pcs.PcsInputFile");
 
 PcsInputFile::PcsInputFile():
-	filename_(filename_), weight_(0)
+	filename_(""), weight_(0)
 {
 	utility_exit_with_message( "You shouldn't call the empty constructor for PcsInputFile class" );
 }

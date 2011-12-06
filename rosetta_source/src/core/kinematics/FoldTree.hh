@@ -114,7 +114,7 @@ public:
 		assert(res > 0);
 		assert(res <= nres());
 		assert(!is_root(res));
-		return get_residue_edge(res).start();
+		return get_residue_edge(int(res)).start();
 	}
 
 	/// @brief Returns the ending residue of the kinematic chunk to which res belongs
@@ -122,7 +122,7 @@ public:
 		assert(res > 0);
 		assert(res <= nres());
 		assert(!is_root(res));
-		return get_residue_edge(res).stop();
+		return get_residue_edge(int(res)).stop();
 	}
 
 

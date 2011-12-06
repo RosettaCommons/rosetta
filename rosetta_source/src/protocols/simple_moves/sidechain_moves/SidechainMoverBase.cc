@@ -245,7 +245,7 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 	/// set the chi
 	conformation::ResidueOP new_residue = old_res;
 	conformation::ResidueOP previous_residue = old_res;
-	if (  false ) { /* replace by	if (residue_type() != & previous_residue->type() )
+	if (  false ) { /* replace by	if (residue_type() != & previous_residue->type() ) */
 		/* do design stuff */
 		/* new_residue = < a new residue > */
 		/*		new_residue =

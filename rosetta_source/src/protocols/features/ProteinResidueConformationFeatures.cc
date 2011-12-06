@@ -119,7 +119,7 @@ ProteinResidueConformationFeatures::schema() const {
 			"	x DOUBLE,\n"
 			"	y DOUBLE,\n"
 			"	z DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),";
+			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),"
 			"	PRIMARY KEY (struct_id, seqpos, atomno));";
 	}else
 	{

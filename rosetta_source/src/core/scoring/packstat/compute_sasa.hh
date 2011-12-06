@@ -378,7 +378,7 @@ namespace packstat {
 		int olp, aphi, theta, point, masknum;
 
 		Size const Nspheres( S.size() );
-		ObjexxFCL::FArray2D_ubyte atom_sasa_masks( old::nbytes, Nspheres, false );
+		ObjexxFCL::FArray2D_ubyte atom_sasa_masks( old::nbytes, Nspheres, NULL );
 
 		for( size_t i = 1; i <= Nspheres; ++i ) {
 			for( size_t j = 1; j < i; ++j ) {

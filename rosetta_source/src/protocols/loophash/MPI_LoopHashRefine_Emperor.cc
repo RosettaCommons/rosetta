@@ -144,7 +144,7 @@ MPI_LoopHashRefine_Emperor::process_inbound_wus(){
 		if ( structure_wu->get_wu_type() == "resultpack" ){
 			TR << "Emperor: receivd structures: " << decoys.size() << std::endl;
 			// dump structures
-			if( add_structures_to_library( decoys )); 
+			add_structures_to_library( decoys );
 		} else
 		if ( structure_wu->get_wu_type() == "getnewstruct" ){
 			TR << "Emperor: received expired structures: " << decoys.size() << std::endl;

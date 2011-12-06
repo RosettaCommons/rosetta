@@ -507,7 +507,7 @@ MotifDnaPacker::init_options()
 	if( option[ OptionKeys::motifs::num_repacks ].user() ) num_repacks_ = option[ OptionKeys::motifs::num_repacks ]();
 	if( option[ OptionKeys::motifs::minimize_dna ].user() ) minimize_dna_ = true;
 	if( option[ OptionKeys::motifs::flex_sugar ].user() ) flex_dna_sugar_ = true;
-	if( option[ OptionKeys::motifs::quick_and_dirty ].user() );
+	//if( option[ OptionKeys::motifs::quick_and_dirty ].user() );
 	if( option[ OptionKeys::motifs::target_dna_defs ].user() ) dna_design_ = true;
 }
 

@@ -199,7 +199,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 			random_move.add_mover(new rigid::RigidBodyPerturbMover( i , 3.0 , 1.0 ));
 
 		//TODO rigid-chunk fragment insertion
-		if (allowSSFragInserts_) ;
+		//if (allowSSFragInserts_) ;
 
 		// sequence shift
 		if (allowSeqShiftMoves_) {

@@ -40,6 +40,8 @@
 
 // C++ headers
 
+void* my_main( void *);
+
 void*
 my_main( void *)
 {

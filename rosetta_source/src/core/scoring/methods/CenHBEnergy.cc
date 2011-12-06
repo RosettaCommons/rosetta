@@ -138,7 +138,7 @@ CenHBEnergy::residue_pair_energy(
 		bbH = rsd2.atom( rsd2.atom_index("H") ).xyz();
 		bbO = rsd1.atom( rsd1.atom_index("O") ).xyz();
 	
-		r =  bbH.distance( bbO ), xd, xh;
+		r =  bbH.distance( bbO );//, xd, xh;
 		if ( r <= potential_.cutoff( seqsep ) ) {
 			bbN = rsd2.atom( rsd2.atom_index("N") ).xyz();
 			bbC = rsd1.atom( rsd1.atom_index("C") ).xyz();

@@ -169,7 +169,7 @@ void SequenceCoupling::read_from_file(
       }
       count++;
     }
-		if(minPotAA<0 || minPotAA>order.size()){
+		if(minPotAA>order.size()){
 			std::cout << " minpotAA" << minPotAA << "count " << count << std::endl;
 			utility_exit_with_message("minPotAA was of wrong size. quitting");
 		}

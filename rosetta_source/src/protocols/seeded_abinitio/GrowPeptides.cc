@@ -329,7 +329,7 @@ std::cout << "sec str for template: " << secstr_template << std::endl;
 				}
 			}
 		
-			append_residues_nterminally ( 0 /*start in sequnce*//*,1, extend_nterm /*+ 1 will see*//*, nseq , copy_pose );
+			append_residues_nterminally ( 0 , 1 , 1 , nseq , copy_pose );
 		}//end nterm extension
 			
 				

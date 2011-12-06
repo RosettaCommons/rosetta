@@ -89,7 +89,7 @@ PCS_line_data::~PCS_line_data(){
 }
 
 PCS_file_data::PCS_file_data():
-	filename_(filename_), weight_(0)
+	filename_(""), weight_(0)
 {
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_file_data class" );
 }
