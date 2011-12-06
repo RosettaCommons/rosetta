@@ -98,25 +98,25 @@ GenericMonteCarloMover::GenericMonteCarloMover():
   initialize();
 }
 
-/// @brief value constructor with a score function
+/// @brief value constructor without a score function
 GenericMonteCarloMover::GenericMonteCarloMover(
   Size const maxtrials,
   MoverOP const & mover,
   Real const temperature,
   String const sample_type,
   bool const drift ) :
-  Super("GenericMonteCarlo"),
-  maxtrials_( maxtrials ),
-  mover_( mover ),
-  temperature_( temperature ),
-  sample_type_( sample_type ),
-  drift_( drift ),
+	Super("GenericMonteCarlo"),
+	maxtrials_( maxtrials ),
+	mover_( mover ),
+	temperature_( temperature ),
+	sample_type_( sample_type ),
+	drift_( drift ),
 	preapply_( true ),
-  recover_low_( true ),
+	recover_low_( true ),
 	rank_by_filter_(1),
 	boltz_rank_( false ),
-  last_accepted_pose_( NULL ),
-  lowest_score_pose_( NULL )
+	last_accepted_pose_( NULL ),
+	lowest_score_pose_( NULL )
 {
   initialize();
 }

@@ -90,14 +90,15 @@ public:
 	);
 
 	/// @brief value constructor with score function
-	GenericMonteCarloMover(
+	// Undefined, commenting out to fix PyRosetta build
+	/* GenericMonteCarloMover(
 		Size const maxtrials,
 		MoverOP const & mover,
 		ScoreFunctionOP const & sfxn,
 		Real const temperature = 0.0,
 		String const sample_type = "low",
 		bool const drift = true
-	);
+	); */
 
 
 	/// @brief value constructor with task operation via TaskFactory
@@ -137,7 +138,7 @@ public:
 	/// @brief core of MC
 	bool boltzmann( Pose & pose );
 
-	Size num_designable( Pose & pose, PackerTaskOP & task); 
+	Size num_designable( Pose & pose, PackerTaskOP & task);
 
  public: // accessor
 
