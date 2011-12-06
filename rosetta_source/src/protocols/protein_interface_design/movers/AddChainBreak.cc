@@ -59,7 +59,8 @@ AddChainBreakCreator::mover_name()
 
 AddChainBreak::AddChainBreak() :
 	protocols::moves::Mover( AddChainBreakCreator::mover_name() ),
-	resnum_( "" )
+	resnum_( "" ),
+	change_foldtree_( true )
 {}
 
 AddChainBreak::~AddChainBreak() {}
@@ -78,7 +79,8 @@ AddChainBreak::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Fi
 	else if( tag->hasOption( "pdb_num" ) ){
 		resnum_ = tag->getOption< std::string > ("pdb_num" );
 	}
-	TR<<"resnum: "<<resnum_<<std::endl;
+	change_foldtree( tag->getOption< bool >( "change_foldtree", true ) );
+	TR<<"resnum: "<<resnum_<<" change foldtree "<<change_foldtree()<<std::endl;
 }//end parse my tag
 
 void
@@ -89,11 +91,15 @@ AddChainBreak::apply( core::pose::Pose & pose )
 	using namespace core::chemical;
 	using namespace pose;
 	core::kinematics::FoldTree f( pose.fold_tree() );
-	f.new_jump( resn, resn+1, resn );
+	if( change_foldtree() ){
+		f.new_jump( resn, resn+1, resn );
+	}
 	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, resn );
 	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, resn +1);
-	pose.fold_tree( f );
-	TR<<"New fold tree: "<<pose.fold_tree()<<std::endl;
+	if( change_foldtree() ){
+		pose.fold_tree( f );
+		TR<<"New fold tree: "<<pose.fold_tree()<<std::endl;
+	}
 }
 
 std::string

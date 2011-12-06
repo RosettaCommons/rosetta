@@ -42,8 +42,11 @@ public :
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void resnum( std::string const r ){ resnum_=r; }
 	std::string resnum() const{ return resnum_;}
+	void change_foldtree( bool const c ){ change_foldtree_ = c; }
+	bool change_foldtree() const{ return change_foldtree_; }
 private :
 	std::string resnum_;
+	bool change_foldtree_; //dflt true; should we add a jump around the chainbreak?
 };
 
 } // movers
