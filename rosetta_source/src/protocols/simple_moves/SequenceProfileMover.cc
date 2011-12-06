@@ -95,7 +95,6 @@ SequenceProfileMover::parse_my_tag( TagPtr const tag, moves::DataMap & data, pro
     //handle profile_wgt
     set_profile_wgt( tag->getOption< core::Real >( "weight", 0.25 ) );
 
-    /*
     if( profile_wgt_ ) {
         using namespace utility::pointer;
 		for( std::map< std::string, ReferenceCountOP >::const_iterator it=data[ "scorefxns" ].begin(); it!=data[ "scorefxns" ].end(); ++it ){
@@ -104,9 +103,7 @@ SequenceProfileMover::parse_my_tag( TagPtr const tag, moves::DataMap & data, pro
             TR << "setting " << it->first << " res_type_constraint to " << profile_wgt_ << "\n";
 		}
 	}
-
-    TR << "Changed all scorefxns to have profile weights of " << profile_wgt_ << std::endl;
-   */
+  TR << "Changed all scorefxns to have profile weights of " << profile_wgt_ << std::endl;
 } //end parse_my_tag
 
 std::string
@@ -122,7 +119,7 @@ SequenceProfileMoverCreator::create_mover() const {
 
 std::string
 SequenceProfileMoverCreator::mover_name()
-{ // This name was chosen for compatibility reasons - this name was hard coded into the logic of the DockDesignParser in r46190
+{
 	return "profile";
 }
 
