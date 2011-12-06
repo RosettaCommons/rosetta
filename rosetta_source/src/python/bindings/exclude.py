@@ -31,7 +31,8 @@ def isFileInScons(fname):
         for scons_file in ['ObjexxFCL', 'utility', 'numeric', 'basic', 'core.1', 'core.2', 'core.3', 'core.4', 'core.5',
                 'protocols.1', 'protocols.2', 'protocols.3',
                 'protocols_a.4', 'protocols_a.5', 'protocols_a.6', 'protocols_b.4', 'protocols_b.5', 'protocols_b.6',
-                'protocols_c.4', 'protocols_c.5', 'protocols_c.6', 'protocols_d.4', 'protocols_e.4', 'protocols_f.4',]:
+                'protocols_c.4', 'protocols_c.5', 'protocols_c.6', 'protocols_d.4', 'protocols_e.4', 'protocols_f.4',
+                'protocols.7', ]:
             f = file('./%s.src.settings' % scons_file).read();  exec(f)
             for k in sources:
                 for f in sources[k]:
@@ -66,7 +67,7 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
 
     'protocols/viewer',  # OpenGL
 
-    'protocols/wum/WorkUnitManager.hh', # strange linker errors, will deal with it later
+    #'protocols/wum/WorkUnitManager.hh', # strange linker errors, will deal with it later
 
     #'protocols/toolbox/task_operations/RestrictToInterfaceCreator.hh', # not in scons?
     #we need  -DBOOST_NO_INITIALIZER_LISTS or gccxml choke on protocols/genetic_algorithm/GeneticAlgorithm.hh

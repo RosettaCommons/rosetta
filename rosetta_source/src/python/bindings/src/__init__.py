@@ -39,14 +39,16 @@ import core.pose
 
 
 import protocols
-import protocols.simple_moves
 import protocols.moves
+import protocols.canonical_sampling
+import protocols.simple_moves
 import protocols.jumping
 import protocols.jd2.archive
 import protocols.abinitio
 
 import protocols.filters
 import protocols.docking
+import protocols.init
 
 import rosetta.utility.file
 import rosetta.core.chemical
@@ -61,6 +63,7 @@ import rosetta.core.pack.task
 import rosetta.core.pose
 import rosetta.core.scoring.hbonds
 import rosetta.protocols.loops
+import rosetta.protocols.wum
 import rosetta.protocols.relax
 import rosetta.core.pose.signals
 
@@ -332,7 +335,7 @@ def mutate_residue(pose, resid, new_res):
 
 	pack_task.nonconst_residue_task(resid).restrict_absent_canonical_aas( v1 )
 
-	packer = protocols::simple_moves::PackRotamersMover(scorefxn, pack_task)
+	packer = protocols.simple_moves.PackRotamersMover(scorefxn, pack_task)
 	packer.apply(pose)
 	return pose
 
@@ -1109,7 +1112,7 @@ def init(*args):
     #v.append(database)
 
     print version()
-    protocols.init(v)
+    protocols.init.init(v)
 
 
 def version():
