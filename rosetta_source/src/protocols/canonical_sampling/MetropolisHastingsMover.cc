@@ -351,10 +351,10 @@ MetropolisHastingsMover::output_file_name(
 	std::ostringstream file_name_stream;
 	file_name_stream << output_name_;
 
-	int const rank( protocols::jd2::current_replica() );
-	if (!cumulate_replicas && rank >= 0) {
+	core::Size const replica( protocols::jd2::current_replica() );
+	if (!cumulate_replicas && replica) {
 		if ( output_name_.length() ) file_name_stream << "_";
-		file_name_stream << std::setfill('0') << std::setw(3) << rank;
+		file_name_stream << std::setfill('0') << std::setw(3) << replica;
 	}
 
 	if ( suffix.length() ) {

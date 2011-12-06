@@ -257,7 +257,7 @@ MetricRecorder::update_after_boltzmann(
 {
 	if (recorder_stream_.filename() == "") recorder_stream_.open(file_name_);
 	
-	int replica = protocols::jd2::current_replica();
+	core::Size replica = protocols::jd2::current_replica();
 
 	TemperingBaseCAP tempering = 0;
 	if (metropolis_hastings_mover) {
@@ -266,10 +266,11 @@ MetricRecorder::update_after_boltzmann(
 
 	if (step_count_ == 0) {
 
-		if (!cumulate_replicas_ || replica <= 0) {
+		// output header if not cumulating, replica exchange inactive, or this is the first replica
+		if (!cumulate_replicas_ || replica <= 1) {
 
 			recorder_stream_ << "Trial";
-			if (cumulate_replicas_ && replica >= 0) recorder_stream_ << '\t' << "Replica";
+			if (cumulate_replicas_ && replica) recorder_stream_ << '\t' << "Replica";
 			if (tempering) recorder_stream_ << '\t' << "Temperature";
 			recorder_stream_ << '\t' << "Score";
 
@@ -286,7 +287,7 @@ MetricRecorder::update_after_boltzmann(
 	if (step_count_ % stride_ == 0) {
 
 		recorder_stream_ << step_count_;
-		if (cumulate_replicas_ && replica >= 0) recorder_stream_ << '\t' << replica;
+		if (cumulate_replicas_ && replica) recorder_stream_ << '\t' << replica;
 		if (tempering) recorder_stream_ << '\t' << metropolis_hastings_mover->monte_carlo()->temperature();
 		recorder_stream_ << '\t' << pose.energies().total_energy();
 

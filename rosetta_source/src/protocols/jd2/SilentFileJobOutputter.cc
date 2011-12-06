@@ -230,9 +230,9 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 	std::ostringstream tag;
 	tag << output_name( job );
 	if ( copy_count>=0 ) {
-		int const rank( current_replica() );
-		if ( rank >= 0 ) {
-			tag << "_" << std::setfill('0') << std::setw(3) << rank;
+		core::Size const replica( current_replica() );
+		if ( replica ) {
+			tag << "_" << std::setfill('0') << std::setw(3) << replica;
 		}
 		tag << '_' << std::setfill('0') << std::setw(8) << copy_count;
 	}

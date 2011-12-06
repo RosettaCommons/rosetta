@@ -129,7 +129,7 @@ PDBTrajectoryRecorder::write_model(
 		trajectory_stream_.open( filename );
 	}
 
-	int replica = protocols::jd2::current_replica();
+	core::Size replica = protocols::jd2::current_replica();
 
 	TemperingBaseCAP tempering = 0;
 	if (metropolis_hastings_mover) {
@@ -143,7 +143,7 @@ PDBTrajectoryRecorder::write_model(
 
 	trajectory_stream_ << "MODEL     " << std::setw(4) << model_count() << std::endl;
 	trajectory_stream_ << "REMARK  99 Trial: " << step_count() << std::endl;
-	if (replica >= 0) trajectory_stream_ << "REMARK  99 Replica: " << replica << std::endl;
+	if (replica) trajectory_stream_ << "REMARK  99 Replica: " << replica << std::endl;
 	if (tempering) trajectory_stream_ << "REMARK  99 Temperature: " << metropolis_hastings_mover->monte_carlo()->temperature() << std::endl;
 	trajectory_stream_ << "REMARK  99 Score: " << pose.energies().total_energy() << std::endl;
 	trajectory_stream_ << "REMARK  99 ";

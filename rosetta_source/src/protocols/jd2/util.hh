@@ -21,6 +21,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
+#include <core/types.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
@@ -67,9 +68,9 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tag );
 MPI_Comm const& current_mpi_comm();
 #endif
 
-///@brief returns -1 if no replicas (i.e., multiple processes per job )
-/// otherwise it returns the sub-rank of the process within the job
-int current_replica();
+///@brief returns 0 if no replicas (i.e., multiple processes per job )
+/// otherwise it returns the sub-rank of the process within the job starting at 1
+core::Size current_replica();
 
 }
 }

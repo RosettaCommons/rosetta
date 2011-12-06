@@ -221,16 +221,16 @@ MPI_Comm const& current_mpi_comm() {
 }
 #endif
 
-int current_replica() {
+core::Size current_replica() {
 	JobDistributor* jd
 		= JobDistributor::get_instance();
 	if ( jd ) {
 		MPIMultiCommJobDistributor* mpi_jd = dynamic_cast< MPIMultiCommJobDistributor* >( jd );
 		if ( mpi_jd ) {
-			return mpi_jd->sub_rank();
+			return mpi_jd->sub_rank()+1;
 		}
 	}
-	return -1;
+	return 0;
 }
 
 } // jd2
