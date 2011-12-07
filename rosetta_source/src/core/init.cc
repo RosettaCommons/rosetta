@@ -185,15 +185,14 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <cstring>
 
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
 // Windows headers
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
-// AUTO-REMOVED #include <windows.h>
-// AUTO-REMOVED #include <wincrypt.h>
+#include <windows.h>
+#include <wincrypt.h>
 #endif
 
 // STL headers
