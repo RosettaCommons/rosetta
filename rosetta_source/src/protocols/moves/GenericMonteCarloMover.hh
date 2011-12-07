@@ -38,7 +38,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/filters/Filter.hh>
 
 // Package headers
 #include <protocols/moves/DataMap.fwd.hh>

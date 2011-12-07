@@ -203,7 +203,7 @@ MonteCarlo::reset_counters()
 ///@detail return number of trials since last reset
 core::Size
 MonteCarlo::total_trials() const {
-	counter_.total_trials();
+	return counter_.total_trials();
 }
 /////////////////////////////////////////////////////////////////////////////
 void
