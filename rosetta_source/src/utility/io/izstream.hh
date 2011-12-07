@@ -33,6 +33,7 @@
 
 // C++ headers
 #include <fstream>
+#include <istream>
 #include <limits>
 #include <string>
 
