@@ -472,6 +472,22 @@ ScoreFunction::show( std::ostream & out,  pose::Pose & pose ) const
 	out << " Total weighted score:                    " << F(9,3,sum_weighted) << '\n';
 }
 
+///////////////////////// output as show( os, pose ) but without the pose //////////////////////////
+void
+ScoreFunction::show_pretty( std::ostream & out ) const {
+	out << "---------------------------------------------\n";
+	out << " Scores                       Weight   \n";
+	out << "---------------------------------------------\n";
+	float sum_weighted=0.0;
+	for ( int i=1; i<= n_score_types; ++i ) {
+		if ( weights_[ ScoreType(i) ] != 0.0 ) {
+			out << ' ' << LJ(24,ScoreType(i)) << ' '<< F(9,3,weights_[ ScoreType(i) ]) << "   "
+					<< '\n';
+		}
+	}
+	out << "---------------------------------------------------\n";
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void
 show_detail( std::ostream & out, EnergyMap & energies,  EnergyMap weights )

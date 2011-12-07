@@ -624,7 +624,7 @@ public:
 	void
 	show( std::ostream & out ) const;
 
-	/// @brief Merges in the weights of another score function 
+	/// @brief Merges in the weights of another score function
 	///
 	/// example(s):
 	///     scorefxn.merge(scorefxn2)
@@ -648,6 +648,10 @@ public:
 	///     create_score_function
 	void
 	show( std::ostream & out,  pose::Pose & pose ) const;
+
+	/// @brief similar output as show( ostream, pose ) but without the pose
+	void
+	show_pretty( std::ostream & out ) const;
 
 
 	/// @brief Scores  <pose>  and shows the raw and weighted scores for each
