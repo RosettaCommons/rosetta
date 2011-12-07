@@ -580,3 +580,16 @@ namespace matdes { namespace design { IntegerVectorOptionKey const revert_pos( "
 namespace matdes { namespace design { StringVectorOptionKey const revert_ids( "matdes:design:revert_ids" );  } }
 namespace gpu { BooleanOptionKey const gpu( "gpu" );  }
 namespace gpu { FileOptionKey const kernel( "gpu:kernel" );  }
+namespace cp { BooleanOptionKey const cp( "cp" );  }
+namespace cp { RealOptionKey const cutoff( "cp:cutoff" );  }
+namespace cp { StringOptionKey const minimizer( "cp:minimizer" );  }
+namespace cp { StringOptionKey const relax_sfxn( "cp:relax_sfxn" );  }
+namespace cp { StringOptionKey const pack_sfxn( "cp:pack_sfxn" );  }
+namespace cp { RealOptionKey const minimizer_tol( "cp:minimizer_tol" );  }
+namespace cp { StringOptionKey const minimizer_score_fxn( "cp:minimizer_score_fxn" );  }
+namespace cp { StringOptionKey const output( "cp:output" );  }
+namespace cp { IntegerOptionKey const ncycles( "cp:ncycles" );  }
+namespace cp { BooleanOptionKey const print_reports( "cp:print_reports" );  }
+namespace cp { StringOptionKey const vipReportFile( "cp:vipReportFile" );  }
+namespace cp { StringOptionKey const relax_mover( "cp:relax_mover" );  }
+

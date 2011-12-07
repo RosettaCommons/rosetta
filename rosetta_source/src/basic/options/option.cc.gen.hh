@@ -2346,6 +2346,18 @@ option.add( basic::options::OptionKeys::matdes::design::revert_pos, "Positions t
 option.add( basic::options::OptionKeys::matdes::design::revert_ids, "AA identities at the revert_pos positions, in the format ALA" );
 option.add( basic::options::OptionKeys::gpu::gpu, "gpu option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::gpu::kernel, "kernel src" );
+option.add( basic::options::OptionKeys::cp::cp, "cp option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cp::cutoff, "designable neighbor cutoff" ).def(16);
+option.add( basic::options::OptionKeys::cp::minimizer, "minimizer to use for initial minimization" ).def("score12_full");
+option.add( basic::options::OptionKeys::cp::relax_sfxn, "score function for final relaxation step" ).def("score12_full");
+option.add( basic::options::OptionKeys::cp::pack_sfxn, "score function for mutational trials" ).def("soft_rep_design");
+option.add( basic::options::OptionKeys::cp::minimizer_tol, "tolerance for minimization" ).def(.0001);
+option.add( basic::options::OptionKeys::cp::minimizer_score_fxn, "score function for initial minimization" ).def("score12_full");
+option.add( basic::options::OptionKeys::cp::output, "file where we want to dump the final pose" ).def("final_mutant.pdb");
+option.add( basic::options::OptionKeys::cp::ncycles, "how many cycles to run refinement for" ).def(1);
+option.add( basic::options::OptionKeys::cp::print_reports, "print reports to text file?" ).def(false);
+option.add( basic::options::OptionKeys::cp::vipReportFile, "File to print reports to" ).def("reports.txt");
+option.add( basic::options::OptionKeys::cp::relax_mover, "relax w/o constraints=relax, w constraints=cst_relax" ).def("relax");
 
 }
 
