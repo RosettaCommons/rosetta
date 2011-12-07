@@ -375,7 +375,6 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <core/pose/util.tmpl.hh>
-#include <execinfo.h>
 
 namespace protocols {
 namespace forge {

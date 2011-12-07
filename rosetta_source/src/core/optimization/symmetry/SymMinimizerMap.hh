@@ -25,7 +25,7 @@
 #include <core/id/DOF_ID_Map.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/DerivVectorPair.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
