@@ -13,6 +13,7 @@
 
 // project headers
 #include <core/init.hh>
+#include <protocols/init/init.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <basic/options/option.hh>
@@ -35,7 +36,7 @@
 #include <protocols/forge/build/SegmentRebuild.hh>
 #include <protocols/forge/components/BDR.hh>
 #include <protocols/forge/remodel/RemodelMover.hh>
-#include <protocols/evaluation/PoseMetricEvaluator.hh>
+#include <protocols/simple_filters/PoseMetricEvaluator.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -510,6 +511,7 @@ int main( int argc, char * argv [] ) {
 
 	// initialize rosetta
 	core::init( argc, argv );
+	protocols::init::init(argc, argv);
 
 	// check required options are specified
 //	if ( !check_required_options( required_options ) ) {

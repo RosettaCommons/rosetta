@@ -33,6 +33,7 @@
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pack/pack_rotamers.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -173,6 +174,18 @@ void RemodelDesignMover::apply( Pose & pose )
 			mode1_packertask(pose);
 		}
 	}
+
+	if (option[ OptionKeys::remodel::repeat_structure].user()){
+		//try turning off bumpcheck
+    //TR << "bumpcheck off" << std::endl;
+    working_model_.task->set_bump_check(true);
+
+
+		//make rotamer links
+		RemodelRotamerLinksOP  linkOP = new RemodelRotamerLinks;
+		linkOP->apply(pose, *working_model_.task);
+	}
+
 	if (!strcmp(state_.c_str(), "stage")){
     if (!basic::options::option[basic::options::OptionKeys::remodel::design::skip_partial].user()){
 			reduce_task(pose, working_model_.task, true, true, false);
@@ -183,11 +196,6 @@ void RemodelDesignMover::apply( Pose & pose )
 		//reduce_task(pose, working_model_.task, true, true, true);
 	}
 
-	if (option[ OptionKeys::remodel::repeat_structure].user()){
-		//make rotamer links
-		RemodelRotamerLinksOP  linkOP = new RemodelRotamerLinks;
-		linkOP->apply(pose, *working_model_.task);
-	}
 /*
 	//mode4_packertask(pose);
 	//mode5_packertask(pose);
@@ -208,8 +216,7 @@ void RemodelDesignMover::apply( Pose & pose )
 	}
 	*/
 	//debug
-//TR <<  *working_model_.task << std::endl;
-//	score_fxn_->show(TR, pose);
+	//	score_fxn_->show(TR, pose);
 	core::pack::pack_rotamers(pose, *score_fxn_ , working_model_.task);
 	score_fxn_->show(TR, pose);
 	TR<< std::endl;
@@ -271,9 +278,13 @@ run_calculator(
 void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskOP &task, bool core, bool boundary, bool surface){
 
   // setup calculators
+	using namespace basic::options;
 	using core::pose::metrics::CalculatorFactory;
   using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 	using core::pack::task::ResfileCommandOP;
+
+	//std::cout << "START REDUCE" << std::endl;
+	//std::cout << *task << std::endl;
 
   // need to collect all positions before reduction
   CalculatorFactory::Instance().remove_calculator( "reducetask_calc" );
@@ -304,20 +315,90 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	basic::MetricValue< std::map< core::Size, core::Size > >nbr_map;
 	pose.metric("reducetask_calc", "num_neighbors_map", nbr_map);
   std::map< core::Size, core::Size > sizemap=nbr_map.value();
-	for (Size i = 1; i<= resclass.size(); i++){ //check everyposition in the packertask
-		if (task->nonconst_residue_task(i).being_packed() && sizemap[i]){
-			TR << "touch position " << i << std::endl;
-			if (sizemap[i] >= CORE_CUTOFF){
-				corePos.push_back(i);
-			} else if ( sizemap[i] < CORE_CUTOFF && sizemap[i] >= BOUNDARY_CUTOFF){
-				boundaryPos.push_back(i);
-			} else if ( sizemap[i] < BOUNDARY_CUTOFF){
-				surfPos.push_back(i);
-			} else {
-				TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
+
+	if (option[ OptionKeys::remodel::repeat_structure].user()){
+
+		utility::vector1<bool> visited(pose.total_residue(),false);
+
+		for (Size i = 1; i<= resclass.size(); i++){ //check everyposition in the packertask
+
+			if (visited[i]){
+				continue;
+			}
+			// process linkage info
+			utility::vector1<int> copies = task->rotamer_links()->get_equiv( i );
+
+			int coreCount = 0;
+			int boundaryCount = 0;
+			int surfCount = 0;
+
+			for (uint jj = 1; jj <= copies.size(); ++jj){
+
+					visited[ copies[jj] ] = true;
+
+					//take the counts for each set
+					if ( sizemap[ copies[jj] ] >= CORE_CUTOFF){
+						coreCount++;
+					} else if ( sizemap[ copies[jj] ] < CORE_CUTOFF && sizemap[ copies[jj] ] >= BOUNDARY_CUTOFF ){
+						boundaryCount++;
+					} else if ( sizemap[ copies[jj] ] < BOUNDARY_CUTOFF){
+						surfCount++;
+					} else {
+						TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
+					}
+			}
+
+			//assign
+			if (coreCount > 0) { //if any of them is core, turn everythign to core
+				//TR.trace << "core: ";
+				for (uint jj = 1; jj <= copies.size(); ++jj){
+					corePos.push_back(copies[jj]);
+				//TR.trace << copies[jj] << " " ;
+				}
+				//TR.trace << std::endl;
+			}
+			else if (coreCount == 0 && boundaryCount > 0){
+				//TR.trace << "boundary: ";
+				for (uint jj = 1; jj <= copies.size(); ++jj){
+					boundaryPos.push_back(copies[jj]);
+				//TR.trace << copies[jj] << " " ;
+				}
+				//TR.trace << std::endl;
+			}
+			else if (coreCount == 0 && boundaryCount == 0){
+				//TR.trace << "surf: ";
+				for (uint jj = 1; jj <= copies.size(); ++jj){
+					surfPos.push_back(copies[jj]);
+				//TR.trace << copies[jj] << " " ;
+				}
+				//TR.trace << std::endl;
+			}
+			else {
+				TR << "no idea what kind of scenario this would be" << std::endl;
+			}
+
+		}
+	} //if repeat
+	else {
+		for (Size i = 1; i<= resclass.size(); i++){ //check everyposition in the packertask
+			if (task->nonconst_residue_task(i).being_packed() && sizemap[i]){
+				TR << "touch position " << i << std::endl;
+				if (sizemap[i] >= CORE_CUTOFF){
+					corePos.push_back(i);
+				} else if ( sizemap[i] < CORE_CUTOFF && sizemap[i] >= BOUNDARY_CUTOFF){
+					boundaryPos.push_back(i);
+				} else if ( sizemap[i] < BOUNDARY_CUTOFF){
+					surfPos.push_back(i);
+				} else {
+					TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
+				}
 			}
 		}
 	}
+
+	//std::cout << "MID REDUCE" << std::endl;
+	//std::cout << *task << std::endl;
+
 /*
 		//debug:
 		for (utility::vector1<Size>::iterator it= corePos.begin(), end=corePos.end(); it!=end; it++){
@@ -401,13 +482,15 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 						utility::vector1<std::string> decoy;
 						decoy.push_back("NATRO");
 						Size resid = *it;
-						TR << "NATRO " << resid << resid << "(" << pose.residue(resid).name() << ")" << std::endl;
+						TR << "NATRO " << resid << " (" << pose.residue(resid).name() << ")" << std::endl;
 						Size whichtoken = 1;
 						command->initialize_from_tokens(decoy, whichtoken, resid);
 						command->residue_action(*task, resid); //not sure about this token thing...
 			}
 		}
 
+	//std::cout << "END REDUCE" << std::endl;
+	//std::cout << *task << std::endl;
 
 }
 

@@ -36,6 +36,7 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // project headers
@@ -581,6 +582,36 @@ if (working_model.manager.size()!= 0){
 			}
 		}
 		else {
+
+			if (option[ OptionKeys::remodel::repeat_structure].user()) {
+
+				core::kinematics::MoveMapOP cmmop = new core::kinematics::MoveMap;
+				//pose.dump_pdb("pretest.pdb");
+
+				cmmop->import(remodel_data_.natro_movemap_);
+				cmmop->import( manager_.movemap() );
+
+				core::scoring::ScoreFunctionOP cen_min_sfxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
+
+				TR << "centroid minimizing repeat structures" << std::endl;
+
+				Pose archived_pose = pose;
+
+				// flip residue type set for centroid minimize
+				core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
+
+				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , cen_min_sfxn, "dfpmin_armijo", 0.01, true);
+				minMover->apply(pose);
+
+				// flip residue type set back, for repeat builds, currently don't do
+				// restore_sidechain, as they should all be redesigned.  MAY NEED TO
+				// CHANGE
+				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, true);
+				//protocols::forge::methods::restore_residues( manager_.original2modified(), archived_pose , pose );
+				//pose.dump_pdb("test.pdb");
+
+			}
+
 			designMover.apply(pose);
 
 			if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
@@ -937,6 +968,16 @@ bool RemodelMover::design_refine_seq_relax(
 					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 				}
 
+			for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
+					std::stringstream templateRangeSS;
+					templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
+					std::stringstream targetSS;
+					targetSS << 1+(segment_length*rep)+2 << "-" << segment_length + (segment_length*rep)+2;
+				  TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+				}
+
+
 				std::stringstream templateRangeSS;
 				//take care of the terminal repeat, since the numbers are offset.
 				templateRangeSS << "2-" << segment_length-1; // offset by one to work around the termini
@@ -957,12 +998,16 @@ bool RemodelMover::design_refine_seq_relax(
 		//update dihedral constraint for repeat structures
 		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			setup_ncs.apply(pose);
+			sfx->show(TR, pose);
+			TR << std::endl;
 		}
 
 		relaxMover.apply(pose);
 
 		//reset constraints without NCS
 		pose.constraint_set(cst_set_post_built);
+			sfx->show(TR, pose);
+			TR << std::endl;
 	}
 
 

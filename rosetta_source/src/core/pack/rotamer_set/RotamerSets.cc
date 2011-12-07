@@ -13,9 +13,11 @@
 
 // Unit Headers
 #include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
 
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
@@ -24,8 +26,10 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/graph/Graph.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
@@ -153,7 +157,100 @@ RotamerSets::build_rotamers(
 		set_of_rotamer_sets_[ ii ]->build_dependent_rotamers( *this, pose, sfxn, *task_, packer_neighbor_graph );
 	}
 
-	/* Dump rotamers to the screen.
+	update_offset_data();
+
+	if (task_->rotamer_links_exist()){
+//	if (false){
+		//check all the linked positions
+
+		utility::vector1<bool> visited(pose.total_residue(),false);
+
+		int expected_rot_count = 0;
+
+		for (int ii = 1; ii <= nmoltenres_; ++ii){
+
+			utility::vector1<int> copies = task_->rotamer_links()->get_equiv(moltenres_2_resid_[ii]);
+
+			if ( visited[ moltenres_2_resid_[ii] ]){
+				continue;
+			}
+
+			int num_rot = 1000000;
+			int smallest_res = 0;
+			for (uint jj = 1; jj <= copies.size(); ++jj){
+				visited[ copies[jj] ] = true;
+				int buffer;
+				buffer = set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ] ]->num_rotamers();
+				if (buffer <= num_rot){
+					num_rot = buffer;
+					smallest_res = copies[jj];
+				}
+			}
+			expected_rot_count += num_rot;
+
+			//relace rotset with the smallest set
+			RotamerSetCOP bufferset = rotamer_set_for_moltenresidue( resid_2_moltenres_[ smallest_res ]);
+
+			for (uint jj = 1; jj <= copies.size(); ++jj){
+
+				if (copies[jj] == smallest_res){
+					//no need to overwrite itself
+					continue;
+				}
+
+				RotamerSetOP smallset( rsf.create_rotamer_set( pose.residue( 1 ) )) ;
+
+				for (Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; itr++){
+					// std::cout << "copying rotamers" << std::endl;
+					conformation::ResidueOP cloneRes = new conformation::Residue(*(*itr)->clone());
+					cloneRes->seqpos(copies[jj]);
+
+					// if not start or end of chain remove the terminus residue type if
+					// any
+
+					using namespace core::chemical;
+					if ((copies[jj] != 1 || copies[jj] != pose.total_residue()) && (cloneRes->has_variant_type("UPPER_TERMINUS") || cloneRes->has_variant_type("LOWER_TERMINUS"))){
+						if (cloneRes->has_variant_type("UPPER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
+						if (cloneRes->has_variant_type("LOWER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
+					}
+					if (copies[jj]==1){
+						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
+						//std::cout << cloneRes->name()  << " of variant type lower? " << cloneRes->has_variant_type("LOWER_TERMINUS") << std::endl;
+					}
+					if (copies[jj]==pose.total_residue()){
+						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
+						//std::cout << cloneRes->name() << " of variant type upper? " << cloneRes->has_variant_type("UPPER_TERMINUS") <<  std::endl;
+					}
+
+					cloneRes->place( pose.residue(copies[jj]), pose.conformation());
+
+					smallset->add_rotamer(*cloneRes);
+
+					//	std::cout << "smallset has " << smallset->num_rotamers() << std::endl;
+				}
+				smallset->set_resid(copies[jj]);
+				set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ]] = smallset;
+				//std::cout << "replacing rotset at " << copies[jj] << " with smallest set from " << smallest_res << std::endl;
+			}
+
+//debug
+/*
+			for (int i =1; i<= set_of_rotamer_sets_.size(); ++i){
+				std::cout << "set of rot set has " << set_of_rotamer_sets_[i]->num_rotamers() << " at " << i << std::endl;
+			}
+*/
+
+		}
+		std::cout << "expected rotamer count is " << expected_rot_count << std::endl;
+
+	}
+	update_offset_data();
+
+
+
+
+/*
+	// Dump rotamers to the screen.
 	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
 		RotamerSetOP rotset( set_of_rotamer_sets_[ ii ] );
 		for ( Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
@@ -164,9 +261,8 @@ RotamerSets::build_rotamers(
 			}
 			std::cout << std::endl;
 		}
-	} */
-
-	update_offset_data();
+	}
+*/
 }
 
 void

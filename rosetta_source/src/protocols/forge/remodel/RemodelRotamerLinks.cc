@@ -76,14 +76,14 @@ RemodelRotamerLinks::apply(
 //find all the equivalent positions, first pass iterate over the base
 	for (Size res = 1; res<= segment_length ; res++){
 		utility::vector1< Size> list;
-		
+
 		for (Size rep = 0; rep < repeat_number; rep++){
 			list.push_back(res+(segment_length*rep));
 		}
 		equiv_pos.push_back(list);
 	}
 
-	
+
 	//second pass, iterate over to populate the entire chain
 
 	for (Size i = 1; i <= nres ; i++){
@@ -94,12 +94,18 @@ RemodelRotamerLinks::apply(
 
 		links->set_equiv(i, equiv_pos[subcounter]);
 
-		std::cout << "linking " << i << " with " << subcounter << "array with ";
+		//std::cout << "linking " << i << " with " << subcounter << "array with ";
 		for (Size k=1; k<= equiv_pos[subcounter].size(); k++){
-			std::cout << " " << equiv_pos[subcounter][k];
+		//std::cout << " " << equiv_pos[subcounter][k];
 		}
-		std::cout << std::endl;
+	//std::cout << std::endl;
+	// check for similarities
+	//std::cout << ptask.task_string(pose);
+
 	}
+
+	//std::cout << ptask << std::endl;
+
 
 	ptask.rotamer_links( links );
 }
