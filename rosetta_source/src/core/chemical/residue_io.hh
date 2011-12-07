@@ -14,25 +14,16 @@
 #ifndef INCLUDED_core_chemical_residue_io_hh
 #define INCLUDED_core_chemical_residue_io_hh
 
-
-// Unit headers
-
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
-
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 
-//Auto Headers
-//#include <core/chemical/CSDAtomTypeSet.fwd.hh>
-
-
-// Utility headers
-
 // C++ headers
+#include <string>
 
 namespace core {
 namespace chemical {
