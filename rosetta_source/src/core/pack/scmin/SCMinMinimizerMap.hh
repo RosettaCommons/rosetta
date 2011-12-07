@@ -19,7 +19,7 @@
 #include <core/pack/scmin/SCMinMinimizerMap.fwd.hh>
 
 // Package Headers
-#include <core/pack/scmin/AtomTreeCollection.fwd.hh>
+#include <core/pack/scmin/AtomTreeCollection.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -32,9 +32,9 @@
 // AUTO-REMOVED #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 // AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
-// AUTO-REMOVED #include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/DerivVectorPair.hh>
 #include <core/optimization/types.hh>
-#include <core/optimization/DOF_Node.fwd.hh>
+#include <core/optimization/DOF_Node.hh>
 
 //#include <core/pose/Pose.fwd.hh>
 //#include <core/scoring/ScoreFunction.fwd.hh>
@@ -46,7 +46,6 @@
 #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
-#include <core/scoring/DerivVectorPair.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 
