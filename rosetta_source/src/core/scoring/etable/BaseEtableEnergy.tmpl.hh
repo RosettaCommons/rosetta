@@ -535,8 +535,6 @@
 #include <boost/pool/poolfwd.hpp>
 #include <boost/unordered_map.hpp>
 #include <core/pose/util.tmpl.hh>
-#include <execinfo.h>
-
 
 namespace core {
 namespace scoring {
