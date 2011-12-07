@@ -11,10 +11,12 @@
 /// @brief  implementation of BOINCJobDistributor
 /// @author Mike Tyka
 
-// Project headers
+
+// -- IMPORTANT --
 // This has to come before boinc.hh or we get this error on VC++
 // '_read' : is not a member of 'std::basic_istream<_Elem,_Traits>'
-// AUTO-REMOVED #include <utility/io/izstream.hh>
+#include <utility/io/izstream.hh>
+
 
 #ifdef BOINC
 	#include <protocols/boinc/boinc.hh>
@@ -46,7 +48,6 @@ If you got this message, something is wrong with your build settings.
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
 // C++ headers

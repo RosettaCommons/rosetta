@@ -16,7 +16,7 @@
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/CSTalosIO.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/FragmentPicker.hh>
+#include <protocols/frag_picker/FragmentPicker.hh>
 // AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <utility/io/ozstream.hh>
 
