@@ -11,6 +11,8 @@
 //
 
 #include <cxxtest/Flags.h>
+#include <limits>
+
 
 #ifdef _CXXTEST_OLD_TEMPLATE_SYNTAX
 #   define CXXTEST_TEMPLATE_INSTANTIATION
@@ -145,6 +147,13 @@ namespace CxxTest
                           unsigned skipDigits = 0,
                           unsigned maxDigits = (unsigned)-1 )
     {
+        if ( std::numeric_limits< N >::has_infinity && n == std::numeric_limits< N >::infinity() ) {
+	    *s++ = 'i';
+	    *s++ = 'n';
+	    *s++ = 'f';
+	    *s++ = '\0';
+	    return s;
+        }
         if ( negative(n) ) {
             *s++ = '-';
             n = abs(n);
@@ -312,9 +321,11 @@ namespace CxxTest
     public:
         ValueTraits( double t ) 
         {
-            ( requiredDigitsOnLeft( t ) > MAX_DIGITS_ON_LEFT ) ?
-                hugeNumber( t ) :
-                normalNumber( t );
+	  ( t == std::numeric_limits< double >::infinity() ) ? 
+			hugeNumber( t ) :
+			( requiredDigitsOnLeft( t ) > MAX_DIGITS_ON_LEFT ) ?
+			hugeNumber( t ) :
+                	normalNumber( t );
         }
 
         const char *asString( void ) const { return _asString; }

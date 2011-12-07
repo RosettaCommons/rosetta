@@ -96,6 +96,7 @@ namespace CxxTest
 #ifndef CXXTEST_USER_VALUE_TRAITS
     unsigned ValueTraits<const double>::requiredDigitsOnLeft( double t )
     {
+        if ( t == std::numeric_limits< double >::infinity() ) return 24; 
         unsigned digits = 1;
         for ( t = (t < 0.0) ? -t : t; t > 1.0; t /= BASE )
             ++ digits;
