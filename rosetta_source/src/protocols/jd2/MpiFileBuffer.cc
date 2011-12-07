@@ -190,7 +190,7 @@ void MpiFileBuffer::block_file( Size from_node, std::string const& filename ) {
 		channel = iter->second;
 		SingleFileBufferOP buf = open_buffers_[ channel ];
 		runtime_assert( buf ); //consistent?
-		buf->block( from_node );
+		buf->block( from_node ); //closes-file, sends MPI signal back and forth and hangs until release, reopens file
 		tr.Debug << "block released... for file " << filename << std::endl;
 	} else {
 		tr.Warning << "file " << filename << " is not known to MpiFileBuffer " << std::endl;
