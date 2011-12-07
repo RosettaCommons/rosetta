@@ -1045,13 +1045,13 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
 
             for f in files:
                 #print f
-                lines = commands.getoutput(  "cat %s | grep '^#include <core' | grep '\.hh'" % f) + '\n'        \
-                        + commands.getoutput("cat %s | grep '^#include <numeric' | grep '\.hh'" % f) + '\n'   \
-                        + commands.getoutput("cat %s | grep '^#include <utility' | grep '\.hh'" % f) + '\n'   \
-                        + commands.getoutput("cat %s | grep '^#include <protocols' | grep '\.hh'" % f) + '\n' \
-                        + commands.getoutput("cat %s | grep '^#include <basic' | grep '\.hh'" % f) + '\n' \
-                        + commands.getoutput("cat %s | grep '^#include <ObjexxFCL' | grep '\.hh'" % f) + '\n' \
-                        + commands.getoutput("cat %s | grep '^#include <boost' | grep '\.hh'" % f) + '\n'
+                lines = commands.getoutput(  "cat %s | grep '^#include <core' | grep '\.hh\|\.hpp'" % f) + '\n'        \
+                        + commands.getoutput("cat %s | grep '^#include <numeric' | grep '\.hh\|\.hpp'" % f) + '\n'   \
+                        + commands.getoutput("cat %s | grep '^#include <utility' | grep '\.hh\|\.hpp'" % f) + '\n'   \
+                        + commands.getoutput("cat %s | grep '^#include <protocols' | grep '\.hh\|\.hpp'" % f) + '\n' \
+                        + commands.getoutput("cat %s | grep '^#include <basic' | grep '\.hh\|\.hpp'" % f) + '\n' \
+                        + commands.getoutput("cat %s | grep '^#include <ObjexxFCL' | grep '\.hh\|\.hpp'" % f) + '\n' \
+                        + commands.getoutput("cat %s | grep '^#include <boost' | grep '\.hh\|\.hpp'" % f) + '\n'
 
                 #print f, lines
 
