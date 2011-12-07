@@ -19,11 +19,14 @@
 // Unit headers
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/signals/ConnectionEvent.hh>
-// AUTO-REMOVED #include <core/conformation/signals/GeneralEvent.hh>
-// AUTO-REMOVED #include <core/conformation/signals/IdentityEvent.hh>
-// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.hh>
-// AUTO-REMOVED #include <core/conformation/signals/XYZEvent.hh>
+
+#ifdef WIN32
+#include <core/conformation/signals/ConnectionEvent.hh>
+#include <core/conformation/signals/GeneralEvent.hh>
+#include <core/conformation/signals/IdentityEvent.hh>
+#include <core/conformation/signals/LengthEvent.hh>
+#include <core/conformation/signals/XYZEvent.hh>
+#endif
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
