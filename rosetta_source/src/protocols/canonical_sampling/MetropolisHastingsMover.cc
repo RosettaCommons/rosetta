@@ -49,6 +49,7 @@
 
 // utility headers
 #include <utility/file/file_sys_util.hh>
+#include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 
@@ -345,20 +346,26 @@ MetropolisHastingsMover::set_output_name(
 std::string
 MetropolisHastingsMover::output_file_name(
 	std::string const & suffix,
+	bool cumulate_jobs, //= false
 	bool cumulate_replicas //= false
 ) const {
 
+	if (cumulate_jobs || cumulate_replicas) runtime_assert(utility::io::ozstream::MPI_reroute_rank() >= 0);
+
 	std::ostringstream file_name_stream;
-	file_name_stream << output_name_;
+
+	if (!cumulate_jobs) {
+		file_name_stream << output_name_;
+	}
 
 	core::Size const replica( protocols::jd2::current_replica() );
 	if (!cumulate_replicas && replica) {
-		if ( output_name_.length() ) file_name_stream << "_";
+		if ( file_name_stream.str().length() ) file_name_stream << "_";
 		file_name_stream << std::setfill('0') << std::setw(3) << replica;
 	}
 
 	if ( suffix.length() ) {
-		if ( file_name_stream.str().length() && suffix.length() ) file_name_stream << "_";
+		if ( file_name_stream.str().length() ) file_name_stream << "_";
 		file_name_stream << suffix;
 	}
 

@@ -122,6 +122,7 @@ public:
 	std::string
 	output_file_name(
 		std::string const & suffix,
+		bool cumulate_jobs = false,
 		bool cumulate_replicas = false
 	) const;
 

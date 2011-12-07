@@ -59,7 +59,7 @@ PDBTrajectoryRecorderCreator::mover_name() {
 
 PDBTrajectoryRecorder::PDBTrajectoryRecorder()
 {
-	file_name("traj.pdb");
+	file_name(file_name()+".pdb");
 }
 
 PDBTrajectoryRecorder::~PDBTrajectoryRecorder() {}
@@ -124,11 +124,12 @@ PDBTrajectoryRecorder::write_model(
 {
 	if (trajectory_stream_.filename() == "") {
 
-		std::string filename( metropolis_hastings_mover ? metropolis_hastings_mover->output_file_name(file_name(), cumulate_replicas()) : file_name() );
+		std::string filename( metropolis_hastings_mover ? metropolis_hastings_mover->output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) : file_name() );
 
 		trajectory_stream_.open( filename );
 	}
 
+	std::string job( metropolis_hastings_mover ? metropolis_hastings_mover->output_name() : "" );
 	core::Size replica = protocols::jd2::current_replica();
 
 	TemperingBaseCAP tempering = 0;
@@ -143,7 +144,8 @@ PDBTrajectoryRecorder::write_model(
 
 	trajectory_stream_ << "MODEL     " << std::setw(4) << model_count() << std::endl;
 	trajectory_stream_ << "REMARK  99 Trial: " << step_count() << std::endl;
-	if (replica) trajectory_stream_ << "REMARK  99 Replica: " << replica << std::endl;
+	if (cumulate_jobs() && job.length()) trajectory_stream_ << "REMARK  99 Job: " << job << std::endl;
+	if (cumulate_replicas() && replica) trajectory_stream_ << "REMARK  99 Replica: " << replica << std::endl;
 	if (tempering) trajectory_stream_ << "REMARK  99 Temperature: " << metropolis_hastings_mover->monte_carlo()->temperature() << std::endl;
 	trajectory_stream_ << "REMARK  99 Score: " << pose.energies().total_energy() << std::endl;
 	trajectory_stream_ << "REMARK  99 ";

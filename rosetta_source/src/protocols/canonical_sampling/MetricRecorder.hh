@@ -145,6 +145,14 @@ public: // Methods
 	);
 
 	bool
+	cumulate_jobs() const;
+	
+	void
+	cumulate_jobs(
+		bool cumulate_jobs
+	);
+
+	bool
 	cumulate_replicas() const;
 	
 	void
@@ -223,6 +231,7 @@ private: // Fields
 
 	std::string file_name_;
 	core::Size stride_;
+	bool cumulate_jobs_;
 	bool cumulate_replicas_;
 	core::Size step_count_;
 	utility::io::ozstream recorder_stream_;

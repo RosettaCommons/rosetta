@@ -92,6 +92,10 @@ public:
 		return stride_;
 	}
 
+	bool cumulate_jobs() const {
+		return cumulate_jobs_;
+	}
+
 	bool cumulate_replicas() const {
 		return cumulate_replicas_;
 	}
@@ -137,6 +141,7 @@ private:
 	core::Size model_count_;
 	core::Size step_count_;
 	std::string file_name_;
+	bool cumulate_jobs_;
 	bool cumulate_replicas_;
 
 	static bool options_registered_;

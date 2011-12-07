@@ -39,6 +39,7 @@ static basic::Tracer tr( "protocols.canonical_sampling.TrajectoryRecorder" );
 // Operating system headers
 
 OPT_1GRP_KEY( Integer, trajectory, stride )
+OPT_1GRP_KEY( Boolean, trajectory, cumulate_jobs )
 OPT_1GRP_KEY( Boolean, trajectory, cumulate_replicas )
 
 bool protocols::canonical_sampling::TrajectoryRecorder::options_registered_( false );
@@ -49,7 +50,8 @@ void protocols::canonical_sampling::TrajectoryRecorder::register_options() {
   if ( options_registered_ ) return;
   options_registered_ = true;
 	NEW_OPT( trajectory::stride, "how often should a snapshot be written to the trajectory", 1 );
-	NEW_OPT( trajectory::cumulate_replicas, "write all decoys into the same trajectory file", false );
+	NEW_OPT( trajectory::cumulate_jobs, "write structures from different jobs into the same trajectory file", false );
+	NEW_OPT( trajectory::cumulate_replicas, "write structures from different replicas the same trajectory file", false );
 }
 
 
@@ -60,12 +62,14 @@ TrajectoryRecorder::TrajectoryRecorder() :
 	stride_(1),
 	model_count_(0),
 	step_count_(0),
+	cumulate_jobs_( false ),
 	cumulate_replicas_( false )
 {
   using namespace basic::options;
   using namespace OptionKeys;
 	if ( options_registered_ ) {
 		stride_ = option[ OptionKeys::trajectory::stride ]();
+		cumulate_jobs_ = option[ OptionKeys::trajectory::cumulate_jobs ]();
 		cumulate_replicas_ = option[ OptionKeys::trajectory::cumulate_replicas ]();
 	}
 	file_name_ = "traj";
@@ -82,6 +86,7 @@ TrajectoryRecorder::TrajectoryRecorder(
 	model_count_(other.model_count_),
 	step_count_(other.step_count_),
 	file_name_(other.file_name_),
+	cumulate_jobs_( other.cumulate_jobs_ ),
 	cumulate_replicas_( other.cumulate_replicas_ )
 {}
 
@@ -110,6 +115,7 @@ TrajectoryRecorder::parse_my_tag(
 {
 	stride_ = tag->getOption< core::Size >( "stride", 100 );
 	file_name_ = tag->getOption< std::string >( "filename", file_name_ );
+	cumulate_jobs_= tag->getOption< bool > ("cumulate_jobs", false );
 	cumulate_replicas_= tag->getOption< bool > ("cumulate_replicas", false );
 }
 

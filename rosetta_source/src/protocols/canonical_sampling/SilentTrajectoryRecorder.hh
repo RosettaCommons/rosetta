@@ -75,10 +75,6 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	std::string const& current_output_name() const {
-		return current_output_name_;
-	}
-
 	virtual void initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
@@ -97,7 +93,6 @@ protected:
 
 	core::Size score_stride_;
 
-	std::string current_output_name_;
 	static bool options_registered_;
 }; // SilentTrajectoryRecorder
 

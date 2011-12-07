@@ -21,6 +21,8 @@
 // AUTO-REMOVED #include <core/io/raw_data/ScoreStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/TemperingBase.hh>
@@ -67,6 +69,7 @@ MetricRecorderCreator::mover_name() {
 
 MetricRecorder::MetricRecorder() :
 	stride_(1),
+	cumulate_jobs_(false),
 	cumulate_replicas_(false),
 	step_count_(0),
 	last_flush_(0)
@@ -80,6 +83,7 @@ MetricRecorder::MetricRecorder(
 ) :
 	protocols::canonical_sampling::ThermodynamicObserver(other),
 	stride_(other.stride_),
+	cumulate_jobs_(other.cumulate_jobs_),
 	cumulate_replicas_(other.cumulate_replicas_),
 	step_count_(other.step_count_),
 	file_name_(other.file_name_),
@@ -123,6 +127,7 @@ MetricRecorder::parse_my_tag(
 )
 {
 	stride_ = tag->getOption< core::Size >( "stride", 100 );
+	cumulate_jobs_ = tag->getOption< bool >( "cumulate_jobs", false );
 	cumulate_replicas_ = tag->getOption< bool >( "cumulate_replicas", false );
 	file_name_ = tag->getOption< std::string >( "filename", "metrics.txt" );
 
@@ -176,6 +181,20 @@ MetricRecorder::stride(
 )
 {
 	stride_ = stride;
+}
+
+bool
+MetricRecorder::cumulate_jobs() const
+{
+	return cumulate_jobs_;
+}
+
+void
+MetricRecorder::cumulate_jobs(
+	bool cumulate_jobs
+)
+{
+	cumulate_jobs_ = cumulate_jobs;
 }
 
 bool
@@ -256,7 +275,11 @@ MetricRecorder::update_after_boltzmann(
 )
 {
 	if (recorder_stream_.filename() == "") recorder_stream_.open(file_name_);
-	
+
+	protocols::jd2::JobCOP job( protocols::jd2::get_current_job() );
+	core::Size nstruct_index( job ? job->nstruct_index() : 1 );
+	std::string output_name( metropolis_hastings_mover ? metropolis_hastings_mover->output_name() : "" );
+
 	core::Size replica = protocols::jd2::current_replica();
 
 	TemperingBaseCAP tempering = 0;
@@ -267,9 +290,10 @@ MetricRecorder::update_after_boltzmann(
 	if (step_count_ == 0) {
 
 		// output header if not cumulating, replica exchange inactive, or this is the first replica
-		if (!cumulate_replicas_ || replica <= 1) {
+		if ((!cumulate_jobs_ || nstruct_index == 1) && (!cumulate_replicas_ || replica <= 1)) {
 
 			recorder_stream_ << "Trial";
+			if (cumulate_jobs_ && output_name.length()) recorder_stream_ << '\t' << "Job";
 			if (cumulate_replicas_ && replica) recorder_stream_ << '\t' << "Replica";
 			if (tempering) recorder_stream_ << '\t' << "Temperature";
 			recorder_stream_ << '\t' << "Score";
@@ -287,6 +311,7 @@ MetricRecorder::update_after_boltzmann(
 	if (step_count_ % stride_ == 0) {
 
 		recorder_stream_ << step_count_;
+		if (cumulate_jobs_ && output_name.length()) recorder_stream_ << '\t' << output_name;
 		if (cumulate_replicas_ && replica) recorder_stream_ << '\t' << replica;
 		if (tempering) recorder_stream_ << '\t' << metropolis_hastings_mover->monte_carlo()->temperature();
 		recorder_stream_ << '\t' << pose.energies().total_energy();
@@ -323,7 +348,7 @@ MetricRecorder::initialize_simulation(
 {
 	std::string original_file_name(file_name());
 
-	file_name(metropolis_hastings_mover.output_file_name(file_name(), cumulate_replicas_));
+	file_name(metropolis_hastings_mover.output_file_name(file_name(), cumulate_jobs_, cumulate_replicas_));
 
 	reset(
 		metropolis_hastings_mover.monte_carlo()->last_accepted_pose(),

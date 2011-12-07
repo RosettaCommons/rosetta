@@ -128,8 +128,9 @@ SilentTrajectoryRecorder::write_model(
 	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 ) {
 	runtime_assert( jd2::jd2_used() );
+	std::string filename( metropolis_hastings_mover ? metropolis_hastings_mover->output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) : file_name() );
 	core::Size mc = model_count();
-	jd2::output_intermediate_pose( pose, current_output_name(), mc,  ( mc % score_stride_ ) != 0 && mc > 1 ); //write always first a structure
+	jd2::output_intermediate_pose( pose, filename, mc,  ( mc % score_stride_ ) != 0 && mc > 1 ); //write always first a structure
 }
 
 void
@@ -137,14 +138,6 @@ SilentTrajectoryRecorder::initialize_simulation(
   core::pose::Pose & pose,
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover )
 {
-	if ( !cumulate_replicas() && metropolis_hastings_mover.output_name() != "" ) {
-		std::ostringstream filename;
-		current_output_name_ = metropolis_hastings_mover.output_name();
-		tr.Info << "obtained output name " << current_output_name_ << " from MetropolisHastings Object" << std::endl;
-	} else {
-		current_output_name_ = file_name();
-		tr.Info << "no output name obtained because " << ( cumulate_replicas() ? " cumulate-mode " : " not available " ) << std::endl;
-	}
 	Parent::initialize_simulation(pose, metropolis_hastings_mover);
 	tr.Info << std::setprecision( 3 );
 	tr.Debug << std::setprecision( 3 );
