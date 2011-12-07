@@ -17,6 +17,9 @@
 // Project Headers
 #include <core/scoring/constraints/ConstraintCreator.hh>
 
+// C/C++ headers
+#include <string>
+
 namespace protocols {
 namespace constraints_additional {
 
