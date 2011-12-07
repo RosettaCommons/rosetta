@@ -31,7 +31,7 @@
 #include <basic/Tracer.hh>
 
 
-// AUTO-REMOVED #include <time.h>
+#include <time.h>
 
 #include <utility/vector1.hh>
 #include <utility/io/zipstream.ipp>

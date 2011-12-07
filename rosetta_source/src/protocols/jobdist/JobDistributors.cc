@@ -34,7 +34,7 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
+#include <numeric/random/random.hh>
 #include <numeric/numeric.functions.hh>
 
 #include <utility/exit.hh>
