@@ -114,6 +114,13 @@ TemperatureController::monte_carlo() {
 	return monte_carlo_;
 }
 
+/// @brief execute the temperatur move ( called by observer_after_metropolis )
+/// returns the current temperatur in kT.
+core::Real
+TemperatureController::temperature_move( core::pose::Pose& pose, core::Real score) {
+	return temperature_move( score );
+}
+
 std::string
 TemperatureController::get_name() const
 {

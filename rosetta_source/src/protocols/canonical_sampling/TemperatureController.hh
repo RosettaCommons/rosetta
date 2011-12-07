@@ -82,6 +82,11 @@ public:
 	/// returns the current temperatur in kT.
 	virtual core::Real temperature_move( core::Real score) = 0;
 
+	/// @brief second interface for temperature_move - standard implementation calls the pose-less temperature move.
+	/// hamiltonian exchange needs to evaluate the alternative Hamiltonian though...
+	virtual core::Real temperature_move( core::pose::Pose& pose, core::Real score);
+
+
 	virtual core::Real temperature() const = 0;
 
 	///@brief  return temperature of a certain level

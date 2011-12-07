@@ -280,7 +280,7 @@ void TemperingBase::generate_temp_range( Real temp_low, Real temp_high, Size n_l
 }
 
 bool TemperingBase::initialize_from_file( std::string const& filename ) {
-	temperatures_.resize( 0 );
+	clear();
 
 	utility::io::izstream in( filename );
 	if ( !in.good() ) {
@@ -337,6 +337,11 @@ bool TemperingBase::initialize_from_file( std::string const& filename ) {
 	return true; //succesfully initialized
 }
 
+void TemperingBase::clear() {
+	temperatures_.clear();
+	instance_initialized_ = false;
+}
+
 void TemperingBase::write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< Real > const& wcounts ) {
 
 	//either write all these things to a single file, or write to <jobname>.file_in
@@ -374,7 +379,9 @@ void TemperingBase::set_temperatures( utility::vector1< Real > const& temps ) {
 void TemperingBase::set_current_temp( Size new_temp ) {
 	current_temp_ = new_temp;
 	Real real_temp = temperatures_[ current_temp_ ];
-	monte_carlo()->set_temperature( real_temp );
+	if ( monte_carlo() ) {
+		monte_carlo()->set_temperature( real_temp );
+	}
 	if ( job_ ) {
 		job_->add_string_real_pair( "temperature", real_temp );
 		job_->add_string_real_pair( "temp_level", new_temp );

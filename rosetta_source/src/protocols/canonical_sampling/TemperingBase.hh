@@ -112,6 +112,9 @@ protected:
 		return current_temp_;
 	}
 
+	//back to uninitialized state
+	void clear();
+
 	void set_temperatures( utility::vector1< core::Real > const& );
 
 	void set_current_temp( core::Size new_temp );

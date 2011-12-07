@@ -730,6 +730,10 @@ X( int const w );
 std::string
 space( int const w );
 
+/// @brief w*c
+std::string
+repeat( int const w, char c );
+
 
 // Logical Formatting
 

@@ -274,6 +274,13 @@ space( int const w )
 	return std::string( std::max( w, 0 ), ' ' );
 }
 
+/// @brief Blank string
+std::string
+repeat( int const w, char c  )
+{
+	return std::string( std::max( w, 0 ), c );
+}
+
 
 // Logical Formatting
 

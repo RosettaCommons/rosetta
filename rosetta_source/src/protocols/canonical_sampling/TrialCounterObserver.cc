@@ -14,6 +14,7 @@
 
 // Unit Headers
 #include <protocols/canonical_sampling/TrialCounterObserver.hh>
+#include <protocols/canonical_sampling/TrialCounterObserverCreator.hh>
 
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 // Package Headers
@@ -35,16 +36,33 @@ static basic::Tracer tr( "protocols.canonical_sampling.TrialCounter" );
 namespace protocols {
 namespace canonical_sampling {
 
+
+std::string
+TrialCounterObserverCreator::keyname() const {
+	return TrialCounterObserverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+TrialCounterObserverCreator::create_mover() const {
+	return new TrialCounterObserver;
+}
+
+std::string
+TrialCounterObserverCreator::mover_name() {
+	return "TrialCounterObserver";
+}
+
+
 ///@brief
-protocols::canonical_sampling::TrialCounterObserver::TrialCounterObserver(
-) : protocols::canonical_sampling::ThermodynamicObserver()
+TrialCounterObserver::TrialCounterObserver(
+) : ThermodynamicObserver()
 {
 	Mover::type( "TrialCounterObserver" );
 }
 
-protocols::canonical_sampling::TrialCounterObserver::~TrialCounterObserver() {}
+TrialCounterObserver::~TrialCounterObserver() {}
 
-std::string protocols::canonical_sampling::TrialCounterObserver::get_name() const {
+std::string TrialCounterObserver::get_name() const {
 	return "TrialCounterObserver";
 };
 
@@ -61,9 +79,9 @@ TrialCounterObserver::parse_my_tag(
 
 
 void
-protocols::canonical_sampling::TrialCounterObserver::initialize_simulation(
+TrialCounterObserver::initialize_simulation(
 	core::pose::Pose & /*pose*/,
-	protocols::canonical_sampling::MetropolisHastingsMover const& mhm /*metropolis_hastings_mover*/
+	MetropolisHastingsMover const& mhm /*metropolis_hastings_mover*/
 )
 {
 	counters_.set_temperature_observer( mhm.tempering() );
@@ -72,8 +90,8 @@ protocols::canonical_sampling::TrialCounterObserver::initialize_simulation(
 
 	/// @brief callback executed after the Metropolis criterion is evaluated
 void
-protocols::canonical_sampling::TrialCounterObserver::observe_after_metropolis(
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+TrialCounterObserver::observe_after_metropolis(
+		MetropolisHastingsMover const & metropolis_hastings_mover
 ) {
 	std::string const& move_type( metropolis_hastings_mover.last_move().type() );
 	counters_.count_trial( move_type );
@@ -83,9 +101,9 @@ protocols::canonical_sampling::TrialCounterObserver::observe_after_metropolis(
 }
 
 void
-protocols::canonical_sampling::TrialCounterObserver::finalize_simulation(
+TrialCounterObserver::finalize_simulation(
 	core::pose::Pose & /*pose*/,
-	protocols::canonical_sampling::MetropolisHastingsMover const &mhm /*metropolis_hastings_mover*/
+	MetropolisHastingsMover const &mhm /*metropolis_hastings_mover*/
 )
 {
 	counters_.show( tr.Info );

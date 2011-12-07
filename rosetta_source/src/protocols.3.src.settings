@@ -30,6 +30,7 @@ sources = {
 		"MetropolisHastingsMover",
 		"MultiTemperatureTrialCounter",
 		"ParallelTempering",
+                "HamiltonianExchange",
 		"PDBTrajectoryRecorder",
 		"SidechainMetropolisHastingsMover",
 		"SilentTrajectoryRecorder",
