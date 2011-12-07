@@ -22,7 +22,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/types.hh>
-
+#include <string>
 
 namespace protocols {
 namespace jd2 {
