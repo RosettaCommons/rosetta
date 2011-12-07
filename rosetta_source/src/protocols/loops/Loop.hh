@@ -32,7 +32,7 @@
 // C++ headers
 #include <algorithm>
 #include <ostream>
-// AUTO-REMOVED #include <functional>
+#include <functional>
 
 //Auto Headers
 #include <utility/vector1.hh>

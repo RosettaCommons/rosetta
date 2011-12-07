@@ -361,7 +361,6 @@
 #include <complex>
 #include <cstddef>
 #include <cstdio>
-#include <execinfo.h>
 #include <iomanip>
 #include <iosfwd>
 #include <istream>
