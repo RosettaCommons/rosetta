@@ -202,6 +202,7 @@ namespace out { namespace file { BooleanOptionKey const silent_decoytime( "out:f
 namespace out { namespace file { IntegerOptionKey const silent_comment_bound( "out:file:silent_comment_bound" );  } }
 namespace out { namespace file { BooleanOptionKey const raw( "out:file:raw" );  } }
 namespace out { namespace file { BooleanOptionKey const fullatom( "out:file:fullatom" );  } }
+namespace out { namespace file { BooleanOptionKey const suppress_zero_occ_pdb_output( "out:file:suppress_zero_occ_pdb_output" );  } }
 namespace out { namespace file { BooleanOptionKey const output_virtual( "out:file:output_virtual" );  } }
 namespace out { namespace file { BooleanOptionKey const output_orbitals( "out:file:output_orbitals" );  } }
 namespace out { namespace file { BooleanOptionKey const weight_silent_scores( "out:file:weight_silent_scores" );  } }
@@ -582,4 +583,3 @@ namespace abinitio { IntegerVectorOptionKey const rmsd_residues( "abinitio:rmsd_
 namespace abinitio { BooleanOptionKey const start_native( "abinitio:start_native" );  }
 namespace abinitio { BooleanOptionKey const debug_structures( "abinitio:debug_structures" );  }
 namespace abinitio { FileOptionKey const log_frags( "abinitio:log_frags" );  }
-namespace abinitio { BooleanOptionKey const only_stage1( "abinitio:only_stage1" );  }

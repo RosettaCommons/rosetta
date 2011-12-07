@@ -1,3 +1,4 @@
+namespace abinitio { BooleanOptionKey const only_stage1( "abinitio:only_stage1" );  }
 namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
 namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }
 namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight_stage1" );  }
@@ -582,4 +583,3 @@ namespace phil { StringOptionKey const align_file( "phil:align_file" );  }
 namespace wum { BooleanOptionKey const wum( "wum" );  }
 namespace wum { IntegerOptionKey const n_slaves_per_master( "wum:n_slaves_per_master" );  }
 namespace wum { IntegerOptionKey const n_masters( "wum:n_masters" );  }
-namespace wum { IntegerOptionKey const memory_limit( "wum:memory_limit" );  }

@@ -207,6 +207,7 @@ option.add( basic::options::OptionKeys::out::file::silent_decoytime, "Add time s
 option.add( basic::options::OptionKeys::out::file::silent_comment_bound, "String data longer than this ends up as remark rather than in score line" ).def(15);
 option.add( basic::options::OptionKeys::out::file::raw, "Use silent-type file output" ).def(false);
 option.add( basic::options::OptionKeys::out::file::fullatom, "Enable full-atom output of PDB or centroid structures" ).def(false);
+option.add( basic::options::OptionKeys::out::file::suppress_zero_occ_pdb_output, "Suppress output of atoms with zero (or negative) occupancy" ).def(false);
 option.add( basic::options::OptionKeys::out::file::output_virtual, "Output virtual atoms in output of PDB" ).def(false);
 option.add( basic::options::OptionKeys::out::file::output_orbitals, "Output all orbitals into PDB" ).def(false);
 option.add( basic::options::OptionKeys::out::file::weight_silent_scores, "weight scores in silent-file output." ).def(true);
@@ -587,10 +588,10 @@ option.add( basic::options::OptionKeys::abinitio::rmsd_residues, "give start and
 option.add( basic::options::OptionKeys::abinitio::start_native, "start from native structure (instead of extended)" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::debug_structures, "write structures to debug-out files" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::log_frags, "fragment insertions (each trial) will be logged to file" ).def("");
-option.add( basic::options::OptionKeys::abinitio::only_stage1, "useful for benchmarks sets cycle of all higher stages to 0" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::end_bias, "set the endbias for Fragment moves" ).def(30.0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::only_stage1, "useful for benchmarks sets cycle of all higher stages to 0" ).def(false);
+option.add( basic::options::OptionKeys::abinitio::end_bias, "set the endbias for Fragment moves" ).def(30.0);
 option.add( basic::options::OptionKeys::abinitio::symmetry_residue, "hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1" ).def(-1);
 option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight in stage1" ).def(1.0);
 option.add( basic::options::OptionKeys::abinitio::override_vdw_all_stages, "apply vdw_weight_stage1 for all stages" ).def(false);
@@ -1174,10 +1175,10 @@ option.add( basic::options::OptionKeys::phil::align_file, "No description" );
 option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
-option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
+option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
@@ -1761,10 +1762,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::testing, "testi
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "centroid VDW weight; testing if 2 better than 1" ).lower(0).def(1.0);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
-option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
+option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);

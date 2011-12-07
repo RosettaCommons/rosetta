@@ -127,6 +127,12 @@ FileData::append_residue(
 		if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&
 				rsd.atom_type(j).is_virtual() ) continue;
 
+		// skip outputting zero occupancy atoms if specified
+		if ( use_PDB && basic::options::option[ basic::options::OptionKeys::out::file::suppress_zero_occ_pdb_output ]() &&
+			( rsd.seqpos() <= pdb_info->nres() ) ) {
+			if ( pdb_info->occupancy( rsd.seqpos(), j ) < 0.0001 ) continue;
+		}
+
 		++atom_index;
 
 		AtomInformation ai;

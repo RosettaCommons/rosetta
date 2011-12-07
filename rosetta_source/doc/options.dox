@@ -417,7 +417,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-rama2b_map</b> \<File\><dt>
 <dd>Ramachandran file used by rama2b</dd><br>
-<dd>Default: "Rama08.dat"</dd><br>
+<dd>Default: "scoring/score_functions/rama/Rama08.dat"</dd><br>
 </dl>
 <dl>
 <dt><b>-psipred_ss2</b> \<File\><dt>
@@ -472,7 +472,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-vall</b> \<FileVector\><dt>
 <dd>Fragment database file, e.g vall.dat.2006-05-05</dd><br>
-<dd>Default: "filtered.vall.dat.2006-05-05"</dd><br>
+<dd>Default: "/sampling/filtered.vall.dat.2006-05-05"</dd><br>
 </dl>
 <dl>
 <dt><b>-rescore</b> \<Boolean\><dt>
@@ -953,6 +953,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-fullatom</b> \<Boolean\><dt>
 <dd>Enable full-atom output of PDB or centroid structures</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-suppress_zero_occ_pdb_output</b> \<Boolean\><dt>
+<dd>Suppress output of atoms with zero (or negative) occupancy</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -3486,7 +3491,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-NV_table</b> \<String\><dt>
 <dd>Location of path to potential lookup table</dd><br>
-<dd>Default: "neighbor_vector_score.histogram"</dd><br>
+<dd>Default: "scoring/score_functions/NV/neighbor_vector_score.histogram"</dd><br>
 </dl>
 <dl>
 <dt><b>-syn_chi_penalty</b> \<Real\><dt>
@@ -3701,7 +3706,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-correct</b> \<Boolean\><dt>
-<dd>turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential ch_o_bond_potential_near_min_yf.dat</dd><br>
+<dd>turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>
@@ -3729,8 +3734,8 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-p_aa_pp</b> \<String\><dt>
-<dd>Name of P_AA_PP potential file (search in the local directory first, then look in the database)</dd><br>
-<dd>Default: "P_AA_pp"</dd><br>
+<dd>Name of scoring/score_functions/P_AA_pp/P_AA_PP potential file (search in the local directory first, then look in the database)</dd><br>
+<dd>Default: "scoring/score_functions/P_AA_pp/P_AA_pp"</dd><br>
 </dl>
 <dl>
 <dt><b>-p_aa_pp_nogridshift</b> \<Boolean\><dt>
@@ -3743,7 +3748,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-rama_map</b> \<File\><dt>
 <dd>Ramachandran file used by rama</dd><br>
-<dd>Default: "Rama_smooth_dyn.dat_ss_6.4"</dd><br>
+<dd>Default: "scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4"</dd><br>
 </dl>
 <dl>
 <dt><b>-dun10</b> \<Boolean\><dt>
@@ -3761,17 +3766,17 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-dun08_dir</b> \<String\><dt>
 <dd>Name of dun08 dir</dd><br>
-<dd>Default: "dun08"</dd><br>
+<dd>Default: "rotamer/dun08"</dd><br>
 </dl>
 <dl>
 <dt><b>-dun02_file</b> \<String\><dt>
 <dd>Name of dun02 input file</dd><br>
-<dd>Default: "bbdep02.May.sortlib"</dd><br>
+<dd>Default: "rotamer/bbdep02.May.sortlib"</dd><br>
 </dl>
 <dl>
 <dt><b>-ch_o_bond_potential</b> \<String\><dt>
 <dd>Name of ch_o_bond potential file (search in the local directory first, then look in the database)</dd><br>
-<dd>Default: "ch_o_bond_potential.dat"</dd><br>
+<dd>Default: "scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat"</dd><br>
 </dl>
 <dl>
 <dt><b>-hack_elec_co_only</b> \<Boolean\><dt>
@@ -11033,7 +11038,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-frag_file</b> \<String\><dt>
 <dd>No description</dd><br>
-<dd>Default: "filtered.vall.dat.2006-05-05.gz"</dd><br>
+<dd>Default: "sampling/filtered.vall.dat.2006-05-05.gz"</dd><br>
 </dl>
 <dl>
 <dt><b>-gen_pep_bb_sequential</b> \<Boolean\><dt>
