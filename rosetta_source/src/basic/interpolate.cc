@@ -61,14 +61,6 @@
 #include <limits>
 #include <string>
 
-//Auto Headers
-#include <execinfo.h>
-
-//#include "wobble.h"
-
-// apl -- Can this be removed?  We have numeric/interpolation/periodic_range etc
-
-
 namespace basic {
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -110,11 +110,6 @@
 #include <string>
 #include <vector>
 
-//Auto Headers
-#include <execinfo.h>
-// C++ headers
-
-
 namespace basic{
 namespace svd{
 
