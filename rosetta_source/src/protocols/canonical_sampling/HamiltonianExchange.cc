@@ -350,6 +350,7 @@ HamiltonianExchange::temperature_move( pose::Pose& pose, core::Real score ) {
 	// I master-slave:  (rank 0 gathers all information and decides for all )
 	//   requires GATHER of score, SCATTER of alternative levels, GATHER of alternative score, SCATTER of assigned levels
 	// II peer2peer: ( pairwise communication; the lower-rank of a pair makes the decision)
+	//   requires: Allgather --> everybody should know which level is where -- subsequently pairwise exchanges only
 	//   requires: SEND UP ( alternative level ), SEND DOWN ( score, alternative score, previous level ), decision, SEND UP ( new level )
 	// strategy II involves less communication and is thus preferred.
 
@@ -405,6 +406,7 @@ HamiltonianExchange::temperature_move( pose::Pose& pose, core::Real score ) {
 	if ( swap ) {
 		//	tr.Trace<< "swap! " << std::endl;
 		set_current_temp( new_level );
+		monte_carlo()->score_function( *hamiltonians_[ new_level ] );
 	}
 #endif
 }
@@ -492,10 +494,20 @@ bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 		}
 		tr.Debug << "line_stream still good after PATCH reading" << std::endl;
 		while ( line_stream.good() ) {
+			std::string tag;
 			core::scoring::ScoreType score_type;
 			std::string operation;
 			Real wt;
-			line_stream >> score_type >> operation >> wt;
+			line_stream >> tag;
+			if ( tag == "ETABLE" ) {
+				line_stream >> tag;
+				score->set_etable( tag );
+				continue;
+			} else {
+				std::istringstream tag_stream( tag );
+				tag_stream >> score_type;
+				line_stream >> operation >> wt;
+			}
 			if ( line_stream.fail() ) {
 				tr.Debug << "tried to read a X op wt triple and failed.. " << std::endl;
 				break;
@@ -561,7 +573,7 @@ void HamiltonianExchange::show( std::ostream& os ) const {
 		}
 		os << A( 15, " Temperature: " ) << F( 5, 3, temperature( level ) )
 			 << space( 74-20-20-3*exchange_grid_dimension_ ) << line_marker << std::endl;
-		hamiltonians_[ level ]->show_pretty( os );
+		hamiltonians_[ level ]->show( os );
 		os << std::endl;
 		os << line_marker << repeat( 74, '-' ) << line_marker << std::endl;
 	}
