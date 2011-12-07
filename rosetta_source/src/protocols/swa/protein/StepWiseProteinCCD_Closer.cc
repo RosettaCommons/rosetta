@@ -47,7 +47,10 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <time.h>
+
+#ifdef WIN32
+#include <time.h>
+#endif
 
 #include <string>
 

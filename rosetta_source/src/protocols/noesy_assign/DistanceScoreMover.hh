@@ -34,11 +34,9 @@
 
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
 
-
-
-//// C++ headers
-
-
+#ifdef WIN32
+#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
+#endif
 
 namespace protocols {
 namespace noesy_assign {

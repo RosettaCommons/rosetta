@@ -160,7 +160,7 @@ DockSetupMover::parse_my_tag(
 	if ( tag->hasOption( "moveable_jump" ) ) {
 		movable_jumps_.push_back( tag->getOption< core::Size >( "moveable_jump" ));
 	}
-	if (partners_ == "_" and movable_jumps_.size()<1 ) {
+	if (partners_ == "_" && movable_jumps_.size()<1 ) {
 		movable_jumps_.push_back( 1 );
 	}
 }//end parse_my_tag

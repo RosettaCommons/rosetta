@@ -50,7 +50,10 @@
 #include <numeric/conversions.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <time.h>
+
+#ifdef WIN32
+#include <time.h>
+#endif
 
 #include <string>
 

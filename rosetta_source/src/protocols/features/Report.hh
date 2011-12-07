@@ -18,7 +18,9 @@
 #include <protocols/features/Report.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/features/FeaturesReporter.hh>
+#ifdef WIN32
+#include <protocols/features/FeaturesReporter.hh>
+#endif
 
 // Project Headers
 #include <core/types.hh>

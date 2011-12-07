@@ -69,7 +69,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <time.h>
+#include <time.h>
 
 #include <string>
 #include <fstream>

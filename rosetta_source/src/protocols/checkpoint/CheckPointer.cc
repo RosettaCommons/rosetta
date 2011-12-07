@@ -17,7 +17,7 @@
 
 // must be here to avoid VC++ ambiguous symbol w/ ObjexxFCL::byte
 // for boinc builds - dek
-#ifdef BOINC_GRAPHICS
+#ifdef BOINC
 #include <protocols/boinc/boinc.hh>
 #include <protocols/boinc/watchdog.hh>
 #endif
@@ -37,7 +37,10 @@
 // AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
+
+#ifdef WIN32
+#include <core/io/silent/SilentStructFactory.hh>
+#endif
 
 #include <core/io/silent/SilentStruct.hh>
 #include <numeric/random/random.hh>

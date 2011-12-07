@@ -20,14 +20,15 @@
 #ifndef INCLUDED_protocols_evaluation_CombinedConstraintEvaluator_hh
 #define INCLUDED_protocols_evaluation_CombinedConstraintEvaluator_hh
 
-//#include <protocols/evaluation/CombinedConstraintEvaluator.fwd.hh>
+#ifdef WIN32
+#include <protocols/constraints_additional/ConstraintEvaluator.hh>
+#endif
 
 
 // Unit Headers
 
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.hh>
-// AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh> // Necessary because this class contains a vector of ConstraintEvaluators, instead of, e.g. a vector of ConstraintEvaluatorOPs.
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>

@@ -173,7 +173,6 @@ public:
   // Last accepted pose and energy - set by monte carlo object
 	static void update_graphics_last_accepted( core::pose::Pose & pose, core::Real last_accepted_energy );
 
-
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -182,15 +181,16 @@ public:
 	static void attach_shared_memory( void );
 	static void update_status_shmem( void );
 	static BoincSharedMemory* get_shmem( void );
+#endif // BOINC_GRAPHICS
 
 	// data synchronization
-
 #ifdef USE_SYSV_SEMAPHORE
 	// integer key based on the boinc client slot run directory
 	static const key_t get_sema_key( void );
 
 	static const int destroy_semaphore( void );
 #endif
+
 	// name based on the boinc client slot run directory
 	static void get_sema_name( char * name);
 
@@ -200,8 +200,6 @@ public:
 	static const int trywait_semaphore( void );
 	static const int unlock_semaphore( void );
 
-
-#endif // BOINC_GRAPHICS
 	static int decoy_count()  { return decoy_count_; };
 
 private:

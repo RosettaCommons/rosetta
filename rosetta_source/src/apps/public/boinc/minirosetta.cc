@@ -46,6 +46,8 @@
 
 #ifdef WIN32
 #include <protocols/init/init.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/io/pdb/pose_io.hh>
 #endif
 
 #include <core/types.hh>
@@ -68,6 +70,7 @@
 #include <utility/excn/Exceptions.hh>
 
 // option key includes
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 

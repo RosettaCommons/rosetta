@@ -12,7 +12,9 @@
 
 #ifdef BOINC
 #include <utility/io/izstream.hh>
+#include <protocols/boinc/boinc.hh>
 #endif
+
 // Unit header
 #include <protocols/boinc/watchdog.hh>
 
@@ -213,7 +215,7 @@ get_the_hell_out(std::string )
 	utility::io::ozstream pdb_out_checkstream( fullname,
 			std::ios_base::in|std::ios_base::out );
 	utility::io::ozstream pdb_out_stream;
-#ifdef _WIN32
+#ifdef BOINC
 	if (!Boinc::trywait_semaphore()) {
 #else
 	pthread_mutex_lock(&bailout_mutex);

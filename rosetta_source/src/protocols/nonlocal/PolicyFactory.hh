@@ -14,7 +14,7 @@
 #define PROTOCOLS_NONLOCAL_POLICYFACTORY_HH_
 
 // C/C++ headers
-// AUTO-REMOVED #include <string>
+#include <string>
 
 // Project headers
 #include <core/types.hh>

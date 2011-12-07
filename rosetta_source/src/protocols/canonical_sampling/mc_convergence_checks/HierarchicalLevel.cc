@@ -1061,7 +1061,7 @@ namespace mc_convergence_checks {
     core::Size ntries = 5;
     while( pool_ptr->size() == 0 && ntries > 0 ) { //we never try to open empty files
 #ifdef _WIN32
-	#ifndef WIN_PYROSETTA
+	#ifndef WIN32
 		Sleep(5000);  // REQUIRED FOR WINDOWS
 		#endif
 #else
