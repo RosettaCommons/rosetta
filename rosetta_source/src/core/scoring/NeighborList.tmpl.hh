@@ -420,9 +420,6 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
-#include <execinfo.h>
-
-
 
 namespace core {
 namespace scoring {
