@@ -405,10 +405,6 @@
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
 
-//Auto Headers
-#include <execinfo.h>
-
-
 namespace core {
 namespace pack {
 namespace dunbrack {

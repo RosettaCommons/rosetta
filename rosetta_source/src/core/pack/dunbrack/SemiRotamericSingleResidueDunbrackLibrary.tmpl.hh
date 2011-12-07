@@ -407,9 +407,6 @@
 #include <boost/pool/poolfwd.hpp>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
-#include <execinfo.h>
-
-
 
 namespace core {
 namespace pack {

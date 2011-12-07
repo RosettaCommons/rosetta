@@ -210,7 +210,6 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <execinfo.h>
 #include <iomanip>
 #include <iosfwd>
 #include <iostream>
