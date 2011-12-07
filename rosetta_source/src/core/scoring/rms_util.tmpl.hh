@@ -384,9 +384,7 @@
 #include <boost/unordered/unordered_map.hpp>
 
 //Auto Headers
-#include <execinfo.h>
 #define foreach BOOST_FOREACH
-
 
 namespace core {
 namespace scoring {
