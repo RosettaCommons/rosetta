@@ -216,6 +216,7 @@ HamiltonianExchange::initialize_simulation(
 	Size const nlevels( n_temp_levels() );
 	current_exchange_schedule_ = 0;
 	set_current_temp( rank()+1 );
+	monte_carlo()->reset_scorefxn( pose, *hamiltonians_[ rank()+1 ] );
 }
 
 void

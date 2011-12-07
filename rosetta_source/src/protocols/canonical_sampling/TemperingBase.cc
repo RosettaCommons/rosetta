@@ -163,7 +163,7 @@ TemperingBase::parse_my_tag(
 	}
 
 	//simple options
-	temperature_stride_ = tag->getOption< Size >( "temp_stride", 10 );
+	temperature_stride_ = tag->getOption< Size >( "temp_stride", 100 );
 	trust_current_temp_ = tag->getOption< bool >( "trust_crurrent_temp", true );
 	stats_line_output_ = tag->getOption< bool >( "stats_line_output", false );
 	stats_silent_output_ = tag->getOption< bool >( "stats_silent_output", false );
@@ -261,7 +261,7 @@ void TemperingBase::init_from_options() {
 void TemperingBase::generate_temp_range( Real temp_low, Real temp_high, Size n_levels, InterpolationType interpolation /*= linear*/ ) {
 	temperatures_.clear();
 	runtime_assert( n_levels >= 2 );
-	tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels using " 
+	tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels using "
 	        << interpolation_type_enum_to_string(interpolation) << " interpolation." << std::endl;
 	if (interpolation == linear) {
 		Real const temp_step ( (temp_high-temp_low)/(n_levels-1) );
