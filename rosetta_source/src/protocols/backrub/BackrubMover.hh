@@ -34,7 +34,7 @@
 // AUTO-REMOVED #include <utility/vector0.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 // AUTO-REMOVED #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <utility/keys/Key3Vector.hh>
+#include <utility/keys/Key3Vector.hh>
 
 // Numeric Headers
 #include <numeric/IntervalSet.fwd.hh>
