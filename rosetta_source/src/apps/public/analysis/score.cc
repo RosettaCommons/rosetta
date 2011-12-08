@@ -208,7 +208,7 @@ main( int argc, char * argv [] )
 			movemap->set_bb( true ); movemap->set_chi( true );
 			protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover(
 				movemap, sfxn, "linmin", 1e-4,
-				true /*use_nblist*/, false /*deriv_check*/, false /*verbose driv check*/ );
+				true /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/ );
 			seqmov->add_mover( minmover );
 		}
 

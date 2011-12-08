@@ -1,0 +1,137 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
+sources = {
+	"protocols/boinc": [
+		"boinc",
+		"BoincPoseObserver",
+		"watchdog",
+	],
+	"protocols/frag_picker": [
+		"BestTotalScoreSelector",
+		"CompositeFragmentSelector",
+		"ContactTypes",
+		"CS2ndShift",
+		"CSTalosIO",
+		"CustomScoreSelector",
+		"DiversifyCrmsdByClustering",
+		"DiversifyCrmsdSelector",
+		"DiversifyDihedralsSelector",
+		"Faraggi_SA",
+		"FragmentCandidate",
+		"FragmentPicker",
+		"JCouplingIO",
+		"LAMBEGO_IO",
+		"PdbIdChunkFilter",
+		"PhiPsiTalosIO",
+		"TorsionBinIO",
+		"VallChunk",
+		"VallProvider",
+		"VallResidue",
+	],
+	"protocols/frag_picker/quota": [
+		"ABEGO_SS_Config",
+		"ABEGO_SS_Map",
+		"ABEGO_SS_Pool",
+		"QuotaCollector",
+		"QuotaConfig",
+		"QuotaSelector",
+		"SecondaryStructurePool",
+	],
+	"protocols/frag_picker/scores": [
+		"ABEGO_SS_Score",
+		"AdaptiveScoreHistogram",
+		"AmbigCSScore",
+		"AtomBasedConstraintsScore",
+		"AtomPairConstraintsScore",
+		"BFactor",
+		"CSScore",
+		"DihedralConstraintsScore",
+		"DisulfideDistance",
+		"DisulfideIdentity",
+		"FourAtomsConstraintData",
+		"fragment_scoring_utilities",
+		"FragmentAllAtomCrmsd",
+		"FragmentCrmsd",
+		"FragmentDME",
+		"FragmentScoreManager",
+		"GunnCost",
+		"GunnCostScore",
+		"HydrophobicitySimilarity",
+		"InterbondAngleScore",
+		"JCoupling",
+		"LAMBEGO_Similarity",
+		"MidPhiOut",
+		"MidPsiOut",
+		"PartialSecondarySimilarity",
+		"PCS_FragDistance",
+		"Phi",
+		"PhiPsiRmsd",
+		"PhiPsiSquareWell",
+		"ProfileScore",
+		"ProfileScoreBlosum62",
+		"ProfileScoreDistWeight",
+		"ProfileScoreL1",
+		"ProfileScoreSubMatrix",
+		"ProlinePhiScore",
+		"Psi",
+		"PValuedFragmentScoreManager",
+		"RamaScore",
+		"RDCScore",
+		"ScoreEValuator",
+		"SecondaryIdentity",
+		"SecondarySimilarity",
+		"SequenceIdentity",
+		"SolventAccessibility",
+		"TalosSSSimilarity",
+		"TorsionBinSimilarity",
+	],
+	"protocols/frags": [
+		"heap",
+		"TorsionFragment",
+		"VallData",
+	],
+	"protocols/genetic_algorithm": [
+		"Entity",
+		"EntityRandomizer",
+		"GeneticAlgorithm",
+	],
+	"protocols/wum": [
+		"MoverList",
+		"MPI_WorkUnitManager",
+		"MPI_WorkUnitManager_Slave",
+		"SilentStructStore",
+		"WorkUnitBase",
+		"WorkUnitList",
+		"WorkUnitManager",
+	],
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"sqlite3",
+	"cppdb",
+]

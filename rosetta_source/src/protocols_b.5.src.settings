@@ -123,14 +123,10 @@ library_path = [
 libraries = [
 ]
 subprojects = [
-	"protocols_f.4",
-	"protocols_e.4",
-	"protocols_d.4",
-	"protocols_c.4",
-	"protocols_b.4",
-	"protocols_a.4",
+	"protocols_h.4",
+	"protocols_g.4",
 	"protocols.3",
-	"protocols.2",
+	"protocols_a.2",
 	"protocols.1",
 	"core.5",
 	"core.4",

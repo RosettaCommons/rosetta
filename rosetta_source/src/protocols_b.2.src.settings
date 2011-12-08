@@ -10,12 +10,22 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"protocols/antibody": [
-		"AntibodyClass",
-		"AntibodyModeler",
-		"CDRH3Modeler",
-		"GraftMover",
-		"Ubiquitin_E2C_Modeler",
+	"protocols/flexpack": [
+		"FlexPacker",
+		"OtherContextScoreFunction",
+	],
+	"protocols/flexpack/annealer/": [
+		"FlexbbSimAnnealer",
+	],
+	"protocols/flexpack/interaction_graph/": [
+		"FlexbbIGFactory",
+		"FlexbbInteractionGraph",
+		"MinimalistFlexbbInteractionGraph",
+		"OTFFlexbbInteractionGraph",
+	],
+	"protocols/flexpack/rotamer_set": [
+		"FlexbbRotamerSet",
+		"FlexbbRotamerSets",
 	],
 }
 include_path = [
@@ -25,9 +35,6 @@ library_path = [
 libraries = [
 ]
 subprojects = [
-	"protocols_h.4",
-	"protocols.3",
-	"protocols_a.2",
 	"protocols.1",
 	"core.5",
 	"core.4",

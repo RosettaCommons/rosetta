@@ -69,7 +69,7 @@ libraries = [
 ]
 subprojects = [
 	"protocols.3",
-	"protocols.2",
+	"protocols_a.2",
 	"protocols.1",
 	"core.5",
 	"core.4",

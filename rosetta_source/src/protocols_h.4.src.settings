@@ -1,0 +1,131 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
+sources = {
+	"protocols/docking": [
+		"ConformerSwitchMover",
+		"DockFilters",
+		"DockingEnsemble",
+		"DockingEnsemblePrepackProtocol",
+		"DockingHighRes",
+		"DockingHighResLegacy",
+		"DockingInitialPerturbation",
+		"DockingLowRes",
+		"DockingPrepackProtocol",
+		"DockingProtocol",
+		"DockMCMCycle",
+		"DockMCMProtocol",
+		"DockMinMover",
+		"DockSetupMover",
+		"DockTaskFactory",
+		"metrics",
+		"SidechainMinMover",
+		"TemperedDocking",
+		"util",
+	],
+	"protocols/docking/stateless": [
+		"SaneDockingProtocol",
+	],
+	"protocols/ligand_docking": [
+		"AddHydrogen",
+		"AddHydrogens",
+		"AtomCountFilter",
+		"CompleteConnectionsFilter",
+		"CompoundTranslate",
+		"DistributionMap",
+		"FinalMinimizer",
+		"grid_functions",
+		"GrowLigand",
+		"HBondAcceptorFilter",
+		"HBondDonorFilter",
+		"HeavyAtomFilter",
+		"HighResDocker",
+		"InterfaceBuilder",
+		"InterfaceScoreCalculator",
+		"ligand_dock_impl",
+		"ligand_functions",
+		"ligand_scores",
+		"LigandArea",
+		"LigandBaseProtocol",
+		"LigandDesign",
+		"LigandDockingLoaders",
+		"LigandDockProtocol",
+		"MinimizeBackbone",
+		"MinimizeLigand",
+		"MoveMapBuilder",
+		"RandomConformerMover",
+		"RandomConformers",
+		"ResidueTorsionRestraints",
+		"RigidSearchMover",
+		"Rotate",
+		"Rotates",
+		"SlideTogether",
+		"StartFrom",
+		"TetherLigand",
+		"Transform",
+		"Translate",
+		"UnconstrainedTorsionsMover",
+	],
+	"protocols/ligand_docking/ligand_options": [
+		"Interface",
+		"interface_distance_functions",
+	],
+	"protocols/qsar": [
+		"qsarMap",
+		"qsarMover",
+		"qsarOptFunc",
+		"RenderGridsToKinemage",
+	],
+	"protocols/qsar/scoring_grid": [
+		"AtrGrid",
+		"GridBase",
+		"GridCreator",
+		"GridFactory",
+		"GridManager",
+		"HbaGrid",
+		"HbdGrid",
+		"polarizGrid",
+		"RepGrid",
+		"ScoringGridLoader",
+		"VdwGrid",
+	],
+	"protocols/surface_docking": [
+		"CentroidRelaxMover",
+		"FullatomRelaxMover",
+		"SlideIntoSurface",
+		"SurfaceDockingProtocol",
+		"SurfaceOrientMover",
+		"SurfaceParameters",
+	],
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"protocols.3",
+	"protocols_a.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+	"z",
+	"sqlite3",
+	"cppdb",
+]

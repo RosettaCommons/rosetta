@@ -10,12 +10,37 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"protocols/antibody": [
-		"AntibodyClass",
-		"AntibodyModeler",
-		"CDRH3Modeler",
-		"GraftMover",
-		"Ubiquitin_E2C_Modeler",
+	"protocols/medal": [
+		"MedalExchangeMover",
+		"MedalMain",
+		"MedalMover",
+		"util",
+	],
+	"protocols/nonlocal": [
+		"BiasedFragmentMover",
+		"BrokenFold",
+		"Chunk",
+		"HelixRotate",
+		"NonlocalAbinitio",
+		"NonlocalAbinitioMain",
+		"PolicyFactory",
+		"Region",
+		"SheetTranslate",
+		"SimpleTreeBuilder",
+		"SingleFragmentMover",
+		"SingleFragmentMoverCreator",
+		"SmoothPolicy",
+		"StarTreeBuilder",
+		"TreeBuilderFactory",
+		"UniformPolicy",
+		"util",
+	],
+	"protocols/star" : [
+		"StarAbinitio",
+	],
+	"protocols/nonlocal/frag_picker": [
+		"NonlocalFrags",
+		"NonlocalFragsMain",
 	],
 }
 include_path = [
@@ -25,7 +50,7 @@ library_path = [
 libraries = [
 ]
 subprojects = [
-	"protocols_h.4",
+	"protocols_g.4",
 	"protocols.3",
 	"protocols_a.2",
 	"protocols.1",
