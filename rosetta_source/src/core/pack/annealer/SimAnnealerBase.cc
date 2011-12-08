@@ -25,7 +25,6 @@
 // AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 // NUmeric headers
-//#include <numeric/random.functions.hh>
 #include <numeric/random/random.hh>
 
 // C++ headers

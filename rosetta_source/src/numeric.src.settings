@@ -18,7 +18,6 @@ sources = {
 		"MultiDimensionalHistogram",
 		"polynomial",
 		"prob_util",
-		"random.functions",
 		"roc_curve",
 		"statistics.functions",
 		"util",

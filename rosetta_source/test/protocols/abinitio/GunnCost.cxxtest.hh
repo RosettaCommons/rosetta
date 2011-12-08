@@ -48,7 +48,6 @@
 
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <numeric/random.functions.hh>
 
 #include <protocols/simple_moves/GunnCost.hh>
 

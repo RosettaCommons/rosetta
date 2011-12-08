@@ -140,7 +140,6 @@ numeric::random::RandomGenerator RG(1345675431); // <- Magic number, do not chan
 //#include <protocols/looprelax/looprelax_main.hh>
 #include <protocols/comparative_modeling/ConstraintRemodelMover.hh>
 
-#include <utility/random.functions.hh>
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>

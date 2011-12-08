@@ -21,7 +21,6 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <numeric/random.functions.hh>
 // AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/format.hh>

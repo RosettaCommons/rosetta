@@ -27,7 +27,6 @@
 #include <devel/init.hh>
 #include <utility/vector1.hh>
 #include <fstream>
-// AUTO-REMOVED #include <utility/random.functions.hh>
 
 //Options
 #include <basic/options/util.hh>
