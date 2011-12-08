@@ -294,7 +294,7 @@ void JumpingTest::test_strand_fraction() {
 						<< " H " << RJ( 3, ss.helix_fraction( i ) )
 						<< std::endl;
 	}
-	if ( tr.Debug.visible() ) ss.show( std::cout );
+	if ( tr.Debug.visible() ) ss.show( tr );
 	//	std::ofstream os( "gb3_secondary_structure.dat" );
 	//	ss.show( os );
 	SecondaryStructure ss_gold;
