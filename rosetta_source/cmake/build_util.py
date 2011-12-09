@@ -1,35 +1,10 @@
 import os, stat, shutil, sys
 
-KNOWN_PROJECTS = [
-	'ObjexxFCL',
-	'utility',
-	'numeric',
-	'basic',
-	'core.1',
-	'core.2',
-	'core.3',
-	'core.4',
-	'core.5',
-	'protocols.1',
-	'protocols.2',
-	'protocols.3',
-    "protocols_a.4",
-    "protocols_b.4",
-    "protocols_c.4",
-    "protocols_d.4",
-    "protocols_e.4",
-    "protocols_f.4",
-    "protocols_a.5",
-    "protocols_b.5",
-    "protocols_c.5",
-    "protocols_a.6",
-    "protocols_b.6",
-    "protocols_c.6",
-	'protocols.7',
-	'devel',
-	'apps',
-	'pilot_apps',
-]
+# Load projects.settings file and put resultant data into PROJECT_SETTINGS
+# This script (build_util.py) is in rosetta_source/cmake/, and want rosetta_source/projects.settings
+PROJECTS_SETTINGS = {}
+execfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.settings") ,PROJECTS_SETTINGS) 
+KNOWN_PROJECTS = PROJECTS_SETTINGS["projects"]["src"]
 
 #if 'cygwin' in sys.platform:
 #	KNOWN_PROJECTS.append('protocols#A')
