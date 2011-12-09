@@ -101,7 +101,7 @@ void MatrixScoringScheme::read_from_file( utility::file::FileName const & fn ) {
 /// @brief Read an alignment matrix from the given database filename using the
 /// NCBI BLOSUM format for matrices.
 void MatrixScoringScheme::read_from_database( std::string name ) {
-	read_from_file( basic::database::full_name( "substitution_matrix/" + name ) );
+	read_from_file( basic::database::full_name( "sequence/substitution_matrix/" + name ) );
 }
 
 /// @brief Get the values for amino acid aa, in Rosetta aa order.
