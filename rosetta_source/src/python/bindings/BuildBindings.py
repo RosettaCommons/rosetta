@@ -487,8 +487,7 @@ def prepareMiniLibs(mini_path, bindings_path):
         'protocols.3',
         'protocols_a.4', 'protocols_b.4', 'protocols_c.4', 'protocols_d.4', 'protocols_e.4', 'protocols_f.4',
         'protocols_a.5', 'protocols_b.5', 'protocols_c.5',
-        'protocols_a.6', 'protocols_b.6', 'protocols_c.6',
-        'protocols.7', ]:
+        'protocols.6', 'protocols.7', ]:
 
     #for scons_file in ['utility']:
     #for scons_file in ['ObjexxFCL', 'numeric', 'utility',]:
