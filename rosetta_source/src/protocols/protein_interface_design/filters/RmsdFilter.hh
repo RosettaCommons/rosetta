@@ -48,6 +48,8 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~RmsdFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
+	void superimpose_on_all( bool const b ){ superimpose_on_all_ = b; }
+	bool superimpose_on_all() const{ return superimpose_on_all_; }
 private:
 	std::list< core::Size > selection_;
 	bool superimpose_, symmetry_;
@@ -55,6 +57,7 @@ private:
 	core::pose::PoseOP reference_pose_;
 
 	bool selection_from_segment_cache_;
+	bool superimpose_on_all_; // dflt false; if segments are defined, are those to be used for superimposing or only to measure rmsd?
 
 };
 

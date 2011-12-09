@@ -53,7 +53,8 @@ RmsdFilter::RmsdFilter() :
 	symmetry_( false ),
 	threshold_( 5.0 ),
 	reference_pose_( NULL ),
-	selection_from_segment_cache_(false)
+	selection_from_segment_cache_(false),
+	superimpose_on_all_( false )
 {
 	selection_.clear();
 }
@@ -97,24 +98,29 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 		runtime_assert( copy_pose.total_residue() == native.total_residue() );
 
 	// generate temporary FArray
-	FArray1D_bool selection_array( pose.total_residue(), false );
-	if( selection_from_segment_cache_ ) core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( selection_array, pose, true );
+	FArray1D_bool selection_array( pose.total_residue(), false ); // on which residues to check rmsd
+	FArray1D_bool superimpose_array( pose.total_residue(), false ); // which residues to superimpose
+
+	if( selection_from_segment_cache_ ) core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( superimpose_array, pose, true );
 	else {
+		if( selection_.size() && superimpose_on_all() ){
+			core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( superimpose_array, pose, true );
+		}
 		for( std::list<core::Size>::const_iterator it = selection_.begin(); it!=selection_.end(); ++it ) {
 			selection_array[*it-1] = true; // FArray1D is 0 indexed
+			superimpose_array[*it-1] = true;
 		}
 	}
 
 	if ( reference_pose_->total_residue() == pose.total_residue() ) {
 		if( superimpose_ ) {
-			if ( symmetry_ )
+			if ( symmetry_ ) // SJF I haven't changed symmetry selection_array b/c I don't know which tests to use
 				rmsd = core::scoring::sym_rmsd_with_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
 			else
-				rmsd = core::scoring::rmsd_with_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
+				rmsd = core::scoring::rmsd_with_super_subset( copy_pose, native, superimpose_array, core::scoring::is_protein_CA );
 		}
-		else{
+		if( superimpose_on_all() )
 			rmsd = core::scoring::rmsd_no_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
-		}
 	}
 	return rmsd;
 }
@@ -158,6 +164,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Data
 
 	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
 	std::string chains = tag->getOption<std::string>( "chains", "" );
+	superimpose_on_all( tag->getOption< bool >( "superimpose_on_all", false ) );
 	if( chains != "" ) {
 		core::Size chain_start( 0 );
 		core::Size chain_end( 0 );
@@ -224,6 +231,8 @@ RmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Data
 	}
 
 	TR<<"RMSD filter with superimpose=" << superimpose_ << " and threshold="<< threshold_ << " over residues ";
+	if( superimpose_on_all() )
+		TR<<" superimpose_on_all set to true. Any spans defined will be used only to measure RMSd but the pose will be supreimposed on the reference pose through all residues ";
 	if( selection_from_segment_cache_ ) TR << " that are in pose segment observer cache at apply time." << std::endl;
 	else if( selection_.size() == 0 ) {
 		TR << "ALL" << std::endl;
