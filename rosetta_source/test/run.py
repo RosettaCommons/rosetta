@@ -137,7 +137,7 @@ class Tester:
 
         output = "Running %s unit tests..." % lib
 
-        timelimit = sys.executable + ' ' +os.path.abspath('test/timelimit.py') + ' 30 '
+        timelimit = sys.executable + ' ' +os.path.abspath('test/timelimit.py') + ' 10 '
         #print "timelimit:", timelimit
 
         command_line = path + ' ' + timelimit + exe + " 1>&2"
