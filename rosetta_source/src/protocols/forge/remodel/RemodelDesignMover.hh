@@ -84,7 +84,7 @@ public:
 	void set_state( std::string state_tag );
 
 	bool find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners);
-	void make_disulfide(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners);
+	void make_disulfide(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, core::kinematics::MoveMapOP mm);
 
 	virtual void apply( Pose & pose);
 	virtual std::string get_name() const;

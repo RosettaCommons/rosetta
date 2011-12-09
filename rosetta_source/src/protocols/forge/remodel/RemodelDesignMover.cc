@@ -30,6 +30,7 @@
 #include <core/conformation/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -610,11 +611,11 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 }
 
-void RemodelDesignMover::make_disulfide(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners){
+void RemodelDesignMover::make_disulfide(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, core::kinematics::MoveMapOP mm){
 	//utility::vector1<std::pair<Size,Size>> dummy_vector;
 	for (utility::vector1<std::pair<Size,Size> >::iterator itr = disulf_partners.begin(); itr != disulf_partners.end(); itr++){
 		core::conformation::form_disulfide(pose.conformation(), (*itr).first, (*itr).second);
-		core::util:: rebuild_disulfide(pose, (*itr).first,(*itr).second);
+		core::util:: rebuild_disulfide(pose, (*itr).first,(*itr).second, NULL /*task*/, NULL /*scfxn*/, mm, NULL /*min scfxn*/);
 	TR << "build_disulf between " << (*itr).first << " and " << (*itr).second << std::endl;
 	//	pose.dump_pdb("disulf.pdb");
 		}

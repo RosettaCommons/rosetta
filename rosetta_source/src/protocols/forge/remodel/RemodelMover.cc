@@ -562,7 +562,13 @@ if (working_model.manager.size()!= 0){
 				Pose disulf_copy_pose = pose;
 				utility::vector1<std::pair <Size, Size> > single_disulf;
 				single_disulf.push_back(*itr);
-				designMover.make_disulfide(disulf_copy_pose, single_disulf);
+
+				core::kinematics::MoveMapOP combined_mm = new core::kinematics::MoveMap;
+
+				combined_mm->import(remodel_data_.natro_movemap_);
+				combined_mm->import( manager_.movemap() );
+
+				designMover.make_disulfide(disulf_copy_pose, single_disulf, combined_mm);
 				designMover.apply(disulf_copy_pose);
 				//for now, accept all disulf build, as it is hard enough to do
 				//already.  Accept instead of cst filter?
