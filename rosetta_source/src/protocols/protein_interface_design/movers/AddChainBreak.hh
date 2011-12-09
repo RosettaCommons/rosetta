@@ -44,9 +44,15 @@ public :
 	std::string resnum() const{ return resnum_;}
 	void change_foldtree( bool const c ){ change_foldtree_ = c; }
 	bool change_foldtree() const{ return change_foldtree_; }
+	bool find_automatically() const{ return find_automatically_; }
+	void find_automatically( bool const b ){ find_automatically_ = b; }
+	core::Real automatic_distance_cutoff() const{ return automatic_distance_cutoff_; }
+	void automatic_distance_cutoff( core::Real const a ){ automatic_distance_cutoff_ = a; }
 private :
 	std::string resnum_;
 	bool change_foldtree_; //dflt true; should we add a jump around the chainbreak?
+	bool find_automatically_; // dflt false; allow the mover to decide where the cutpoint is based on the distance between subsequent C and N atoms?
+	core::Real automatic_distance_cutoff_; //dflt 2.5; very large (probably 1.5 is enough), but this a very primitive method for finding breaks!
 };
 
 } // movers

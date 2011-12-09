@@ -23,6 +23,8 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 //Auto Headers
 #include <utility/vector0.hh>
@@ -60,7 +62,9 @@ AddChainBreakCreator::mover_name()
 AddChainBreak::AddChainBreak() :
 	protocols::moves::Mover( AddChainBreakCreator::mover_name() ),
 	resnum_( "" ),
-	change_foldtree_( true )
+	change_foldtree_( true ),
+	find_automatically_( false ),
+	automatic_distance_cutoff_( 2.5 )
 {}
 
 AddChainBreak::~AddChainBreak() {}
@@ -79,23 +83,48 @@ AddChainBreak::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Fi
 	else if( tag->hasOption( "pdb_num" ) ){
 		resnum_ = tag->getOption< std::string > ("pdb_num" );
 	}
+	if( tag->hasOption( "find_automatically" ) ){
+		find_automatically( tag->getOption< bool >( "find_automatically" ) );
+		automatic_distance_cutoff( tag->getOption< core::Real >( "distance_cutoff", 2.5 ));
+	}
 	change_foldtree( tag->getOption< bool >( "change_foldtree", true ) );
-	TR<<"resnum: "<<resnum_<<" change foldtree "<<change_foldtree()<<std::endl;
+	TR<<"resnum: "<<resnum_<<" change foldtree "<<change_foldtree()<<" find cutpoints automatically "<<find_automatically()<<std::endl;
 }//end parse my tag
 
 void
 AddChainBreak::apply( core::pose::Pose & pose )
 {
-	core::Size const resn( protocols::rosetta_scripts::parse_resnum( resnum(), pose ) );
-
 	using namespace core::chemical;
 	using namespace pose;
 	core::kinematics::FoldTree f( pose.fold_tree() );
-	if( change_foldtree() ){
-		f.new_jump( resn, resn+1, resn );
+
+	if( resnum() != "" ){
+		core::Size const resn( protocols::rosetta_scripts::parse_resnum( resnum(), pose ) );
+
+		if( change_foldtree() ){
+			f.new_jump( resn, resn+1, resn );
+		}
+		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, resn );
+		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, resn +1);
 	}
-	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, resn );
-	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, resn +1);
+	utility::vector1< core::Size > cuts;
+	cuts.clear();
+	if( find_automatically() ){
+		for( core::Size i = 1; i < pose.total_residue(); ++i ){
+			core::Real const distance( pose.residue( i ).xyz( "C" ).distance( pose.residue( i + 1 ).xyz( "N" ) ) );
+			if( distance >= automatic_distance_cutoff() ){
+				cuts.push_back( i );
+				TR<<"Detecting cut at "<<i<<" with distance "<<distance<<std::endl;
+			}
+		}
+	}
+	foreach( core::Size const res, cuts ){
+		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res );
+		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res +1);
+		if( change_foldtree() ){
+			f.new_jump( res, res+1, res );
+		}
+	}
 	if( change_foldtree() ){
 		pose.fold_tree( f );
 		TR<<"New fold tree: "<<pose.fold_tree()<<std::endl;
