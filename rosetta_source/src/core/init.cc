@@ -496,10 +496,10 @@ void init(int argc, char * argv [])
 		//	basic::options::option[basic::options::OptionKeys::corrections::score::dun08].value( true );
 		//}
 		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::dun08_dir ].user() ) {
-			basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir].value( "dun08_12.2009_it10" );
+			basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir].value( "rotamer/dun08_12.2009_it10" );
 		}
 	    if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::dun02_file ].user() ) {
-	      basic::options::option[basic::options::OptionKeys::corrections::score::dun02_file].value( "rotamer/rotamer/bbdep02.May.sortlib-correct.12.2010" );
+	      basic::options::option[basic::options::OptionKeys::corrections::score::dun02_file].value( "rotamer/bbdep02.May.sortlib-correct.12.2010" );
 	    }
 
 		//icoor

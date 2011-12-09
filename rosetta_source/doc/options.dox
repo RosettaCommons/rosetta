@@ -3757,7 +3757,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-dun10_dir</b> \<String\><dt>
 <dd>Name of dun10 dir</dd><br>
-<dd>Default: "ExtendedOpt1-5"</dd><br>
+<dd>Default: "rotamer/ExtendedOpt1-5"</dd><br>
 </dl>
 <dl>
 <dt><b>-dun08</b> \<Boolean\><dt>
@@ -10633,6 +10633,67 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-trg_anchor</b> \<Integer\><dt>
 <dd>anchor residue for backbone threading</dd><br>
+</dl>
+ </li>
+<li><h2>cp</h2>
+<dl>
+<dt><b>-cp</b> \<Boolean\><dt>
+<dd>cp option group</dd><br>
+</dl>
+<dl>
+<dt><b>-cutoff</b> \<Real\><dt>
+<dd>designable neighbor cutoff</dd><br>
+<dd>Default: 16</dd><br>
+</dl>
+<dl>
+<dt><b>-minimizer</b> \<String\><dt>
+<dd>minimizer to use for initial minimization</dd><br>
+<dd>Default: "score12_full"</dd><br>
+</dl>
+<dl>
+<dt><b>-relax_sfxn</b> \<String\><dt>
+<dd>score function for final relaxation step</dd><br>
+<dd>Default: "score12_full"</dd><br>
+</dl>
+<dl>
+<dt><b>-pack_sfxn</b> \<String\><dt>
+<dd>score function for mutational trials</dd><br>
+<dd>Default: "soft_rep_design"</dd><br>
+</dl>
+<dl>
+<dt><b>-minimizer_tol</b> \<Real\><dt>
+<dd>tolerance for minimization</dd><br>
+<dd>Default: .0001</dd><br>
+</dl>
+<dl>
+<dt><b>-minimizer_score_fxn</b> \<String\><dt>
+<dd>score function for initial minimization</dd><br>
+<dd>Default: "score12_full"</dd><br>
+</dl>
+<dl>
+<dt><b>-output</b> \<String\><dt>
+<dd>file where we want to dump the final pose</dd><br>
+<dd>Default: "final_mutant.pdb"</dd><br>
+</dl>
+<dl>
+<dt><b>-ncycles</b> \<Integer\><dt>
+<dd>how many cycles to run refinement for</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-print_reports</b> \<Boolean\><dt>
+<dd>print reports to text file?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-vipReportFile</b> \<String\><dt>
+<dd>File to print reports to</dd><br>
+<dd>Default: "reports.txt"</dd><br>
+</dl>
+<dl>
+<dt><b>-relax_mover</b> \<String\><dt>
+<dd>relax w/o constraints=relax, w constraints=cst_relax</dd><br>
+<dd>Default: "relax"</dd><br>
 </dl>
  </li>
 <li><h2>archive</h2>

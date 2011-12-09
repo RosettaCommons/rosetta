@@ -63,6 +63,7 @@
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
+#include <basic/options/keys/cp.OptionKeys.gen.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/bbg.OptionKeys.gen.hh>
 #include <basic/options/keys/flxbb.OptionKeys.gen.hh>
@@ -104,4 +105,3 @@
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/cp.OptionKeys.gen.hh>

@@ -583,3 +583,6 @@ namespace abinitio { IntegerVectorOptionKey const rmsd_residues( "abinitio:rmsd_
 namespace abinitio { BooleanOptionKey const start_native( "abinitio:start_native" );  }
 namespace abinitio { BooleanOptionKey const debug_structures( "abinitio:debug_structures" );  }
 namespace abinitio { FileOptionKey const log_frags( "abinitio:log_frags" );  }
+namespace abinitio { BooleanOptionKey const only_stage1( "abinitio:only_stage1" );  }
+namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
+namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }

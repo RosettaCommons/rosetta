@@ -588,12 +588,12 @@ option.add( basic::options::OptionKeys::abinitio::rmsd_residues, "give start and
 option.add( basic::options::OptionKeys::abinitio::start_native, "start from native structure (instead of extended)" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::debug_structures, "write structures to debug-out files" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::log_frags, "fragment insertions (each trial) will be logged to file" ).def("");
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::only_stage1, "useful for benchmarks sets cycle of all higher stages to 0" ).def(false);
+option.add( basic::options::OptionKeys::abinitio::only_stage1, "useful for benchmarks sets cycle of all higher stages to 0" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::end_bias, "set the endbias for Fragment moves" ).def(30.0);
 option.add( basic::options::OptionKeys::abinitio::symmetry_residue, "hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1" ).def(-1);
-option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight in stage1" ).def(1.0);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight in stage1" ).def(1.0);
 option.add( basic::options::OptionKeys::abinitio::override_vdw_all_stages, "apply vdw_weight_stage1 for all stages" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say default: 2 3 4 recover_low happens in stages 2 3 4" ).def(0);
 option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
@@ -785,7 +785,7 @@ option.add( basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift,
 option.add( basic::options::OptionKeys::corrections::score::rama_not_squared, "Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (rama+entropy) > 1.0" );
 option.add( basic::options::OptionKeys::corrections::score::rama_map, "Ramachandran file used by rama" ).def("scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4");
 option.add( basic::options::OptionKeys::corrections::score::dun10, "Use the 2010 Dunbrack library instead of either the 2008 or the 2002 libraries." );
-option.add( basic::options::OptionKeys::corrections::score::dun10_dir, "Name of dun10 dir" ).def("ExtendedOpt1-5");
+option.add( basic::options::OptionKeys::corrections::score::dun10_dir, "Name of dun10 dir" ).def("rotamer/ExtendedOpt1-5");
 option.add( basic::options::OptionKeys::corrections::score::dun08, "Use the 2008 Dunbrack library instead of the 2002 library." );
 option.add( basic::options::OptionKeys::corrections::score::dun08_dir, "Name of dun08 dir" ).def("rotamer/dun08");
 option.add( basic::options::OptionKeys::corrections::score::dun02_file, "Name of dun02 input file" ).def("rotamer/bbdep02.May.sortlib");
@@ -1175,15 +1175,15 @@ option.add( basic::options::OptionKeys::phil::align_file, "No description" );
 option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
+option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
 option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
 option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
@@ -1762,9 +1762,7 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::testing, "testi
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "centroid VDW weight; testing if 2 better than 1" ).lower(0).def(1.0);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
+option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
@@ -1773,7 +1771,9 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
@@ -2196,6 +2196,18 @@ option.add( basic::options::OptionKeys::threadsc::src_first_resid, "Residue id o
 option.add( basic::options::OptionKeys::threadsc::trg_first_resid, "Residue id of first residue in source pdb range" ).shortd( "Residue id of first residue in source pdb range" );
 option.add( basic::options::OptionKeys::threadsc::nres, "Number of residues to be threaded" ).shortd( "Number of residues to be threaded" );
 option.add( basic::options::OptionKeys::threadsc::trg_anchor, "anchor residue for backbone threading" ).shortd( "anchor residue for backbone threading" );
+option.add( basic::options::OptionKeys::cp::cp, "cp option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cp::cutoff, "designable neighbor cutoff" ).def(16);
+option.add( basic::options::OptionKeys::cp::minimizer, "minimizer to use for initial minimization" ).def("score12_full");
+option.add( basic::options::OptionKeys::cp::relax_sfxn, "score function for final relaxation step" ).def("score12_full");
+option.add( basic::options::OptionKeys::cp::pack_sfxn, "score function for mutational trials" ).def("soft_rep_design");
+option.add( basic::options::OptionKeys::cp::minimizer_tol, "tolerance for minimization" ).def(.0001);
+option.add( basic::options::OptionKeys::cp::minimizer_score_fxn, "score function for initial minimization" ).def("score12_full");
+option.add( basic::options::OptionKeys::cp::output, "file where we want to dump the final pose" ).def("final_mutant.pdb");
+option.add( basic::options::OptionKeys::cp::ncycles, "how many cycles to run refinement for" ).def(1);
+option.add( basic::options::OptionKeys::cp::print_reports, "print reports to text file?" ).def(false);
+option.add( basic::options::OptionKeys::cp::vipReportFile, "File to print reports to" ).def("reports.txt");
+option.add( basic::options::OptionKeys::cp::relax_mover, "relax w/o constraints=relax, w constraints=cst_relax" ).def("relax");
 option.add( basic::options::OptionKeys::archive::archive, "archive option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::archive::reread_all_structures, "ignore pool file... reread from batches" ).def(false);
 option.add( basic::options::OptionKeys::archive::completion_notify_frequency, "tell Archive every X completed decoys" ).def(100);
@@ -2346,18 +2358,6 @@ option.add( basic::options::OptionKeys::matdes::design::revert_pos, "Positions t
 option.add( basic::options::OptionKeys::matdes::design::revert_ids, "AA identities at the revert_pos positions, in the format ALA" );
 option.add( basic::options::OptionKeys::gpu::gpu, "gpu option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::gpu::kernel, "kernel src" );
-option.add( basic::options::OptionKeys::cp::cp, "cp option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::cp::cutoff, "designable neighbor cutoff" ).def(16);
-option.add( basic::options::OptionKeys::cp::minimizer, "minimizer to use for initial minimization" ).def("score12_full");
-option.add( basic::options::OptionKeys::cp::relax_sfxn, "score function for final relaxation step" ).def("score12_full");
-option.add( basic::options::OptionKeys::cp::pack_sfxn, "score function for mutational trials" ).def("soft_rep_design");
-option.add( basic::options::OptionKeys::cp::minimizer_tol, "tolerance for minimization" ).def(.0001);
-option.add( basic::options::OptionKeys::cp::minimizer_score_fxn, "score function for initial minimization" ).def("score12_full");
-option.add( basic::options::OptionKeys::cp::output, "file where we want to dump the final pose" ).def("final_mutant.pdb");
-option.add( basic::options::OptionKeys::cp::ncycles, "how many cycles to run refinement for" ).def(1);
-option.add( basic::options::OptionKeys::cp::print_reports, "print reports to text file?" ).def(false);
-option.add( basic::options::OptionKeys::cp::vipReportFile, "File to print reports to" ).def("reports.txt");
-option.add( basic::options::OptionKeys::cp::relax_mover, "relax w/o constraints=relax, w constraints=cst_relax" ).def("relax");
 
 }
 

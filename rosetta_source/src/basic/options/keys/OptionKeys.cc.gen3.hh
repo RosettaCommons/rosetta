@@ -1,12 +1,3 @@
-namespace AnchoredDesign { namespace testing { FileOptionKey const RMSD_only_this( "AnchoredDesign:testing:RMSD_only_this" );  } }
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noise_constraints_mode( "AnchoredDesign:testing:anchor_noise_constraints_mode" );  } }
-namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "DenovoProteinDesign" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_surface( "DenovoProteinDesign:redesign_surface" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "DenovoProteinDesign:redesign_complete" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
 namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
@@ -430,6 +421,18 @@ namespace threadsc { IntegerOptionKey const src_first_resid( "threadsc:src_first
 namespace threadsc { IntegerOptionKey const trg_first_resid( "threadsc:trg_first_resid" );  }
 namespace threadsc { IntegerOptionKey const nres( "threadsc:nres" );  }
 namespace threadsc { IntegerOptionKey const trg_anchor( "threadsc:trg_anchor" );  }
+namespace cp { BooleanOptionKey const cp( "cp" );  }
+namespace cp { RealOptionKey const cutoff( "cp:cutoff" );  }
+namespace cp { StringOptionKey const minimizer( "cp:minimizer" );  }
+namespace cp { StringOptionKey const relax_sfxn( "cp:relax_sfxn" );  }
+namespace cp { StringOptionKey const pack_sfxn( "cp:pack_sfxn" );  }
+namespace cp { RealOptionKey const minimizer_tol( "cp:minimizer_tol" );  }
+namespace cp { StringOptionKey const minimizer_score_fxn( "cp:minimizer_score_fxn" );  }
+namespace cp { StringOptionKey const output( "cp:output" );  }
+namespace cp { IntegerOptionKey const ncycles( "cp:ncycles" );  }
+namespace cp { BooleanOptionKey const print_reports( "cp:print_reports" );  }
+namespace cp { StringOptionKey const vipReportFile( "cp:vipReportFile" );  }
+namespace cp { StringOptionKey const relax_mover( "cp:relax_mover" );  }
 namespace archive { BooleanOptionKey const archive( "archive" );  }
 namespace archive { BooleanOptionKey const reread_all_structures( "archive:reread_all_structures" );  }
 namespace archive { IntegerOptionKey const completion_notify_frequency( "archive:completion_notify_frequency" );  }
@@ -580,16 +583,3 @@ namespace matdes { namespace design { IntegerVectorOptionKey const revert_pos( "
 namespace matdes { namespace design { StringVectorOptionKey const revert_ids( "matdes:design:revert_ids" );  } }
 namespace gpu { BooleanOptionKey const gpu( "gpu" );  }
 namespace gpu { FileOptionKey const kernel( "gpu:kernel" );  }
-namespace cp { BooleanOptionKey const cp( "cp" );  }
-namespace cp { RealOptionKey const cutoff( "cp:cutoff" );  }
-namespace cp { StringOptionKey const minimizer( "cp:minimizer" );  }
-namespace cp { StringOptionKey const relax_sfxn( "cp:relax_sfxn" );  }
-namespace cp { StringOptionKey const pack_sfxn( "cp:pack_sfxn" );  }
-namespace cp { RealOptionKey const minimizer_tol( "cp:minimizer_tol" );  }
-namespace cp { StringOptionKey const minimizer_score_fxn( "cp:minimizer_score_fxn" );  }
-namespace cp { StringOptionKey const output( "cp:output" );  }
-namespace cp { IntegerOptionKey const ncycles( "cp:ncycles" );  }
-namespace cp { BooleanOptionKey const print_reports( "cp:print_reports" );  }
-namespace cp { StringOptionKey const vipReportFile( "cp:vipReportFile" );  }
-namespace cp { StringOptionKey const relax_mover( "cp:relax_mover" );  }
-
