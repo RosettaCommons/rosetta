@@ -17,6 +17,12 @@ sources = {
 		"GraftMover",
 		"Ubiquitin_E2C_Modeler",
 	],
+        "protocols/antibody2": [
+                "AntibodyInfo",
+                "AntibodyModeler2",
+                "CDRH3Modeler2",
+                "GraftMover2",
+        ],
 }
 include_path = [
 ]
