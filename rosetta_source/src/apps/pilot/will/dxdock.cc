@@ -311,7 +311,7 @@ int main(int argc, char *argv[]) {
 			if(pnat.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
 			if(pnat.residue(ir).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
 			// if(pnat.residue(ir).name3()=="CYS") { if(++cyscnt > 3) goto cont1; }
-		} goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
+		}// goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
 		// if( nhelix < 20 ) continue;
 		Pose pala(pnat);
 		dock(pala,fn,ssamp);
