@@ -1,1 +1,9 @@
-These are 
+http://www2.research.att.com/~njas/icosahedral.codes/
+
+The packing problem: How should one place n points on a sphere so as to maximize the minimal distance between them? Arrangements (which we hope are close to optimal) are given for various values of n in the range 60 - 33002.
+
+The covering problem: How should one place n points on a sphere so as to minimize the maximal distance of any point on the sphere from the closest one of the n points? This maximal distance is called the covering radius. Arrangements (which we hope are close to optimal) are given for various values of n in the range 72 - 78032.
+
+The maximal volume problem: How should one place n points on a sphere so as to maximize the volume of their convex hull? Arrangements (which we hope are close to optimal) are given for various values of n in the range 72 - 78032.
+
+these sphere covering sets satisfy the covering problem
