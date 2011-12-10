@@ -498,6 +498,11 @@ void CloseOneMover::set_default()
 	pymol_ = new protocols::moves::PyMolMover();
 } // CloseOneMover::set_default
 
+void CloseOneMover::set_pymol( protocols::moves::PyMolMoverOP pymol ) 
+{ 
+    pymol_ = pymol; 
+}
+
 void CloseOneMover::apply( pose::Pose & pose_in )
 {
 	TRC<<"step 2         I am here 7.4.2"<<std::endl;

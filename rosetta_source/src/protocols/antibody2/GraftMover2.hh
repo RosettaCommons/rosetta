@@ -27,7 +27,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMolMover.fwd.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 
@@ -208,12 +208,12 @@ namespace antibody2 {
 		CloseOneMover(
 			core::Size query_start,
 			core::Size query_end  );
-
+        
 		void set_default();
 		virtual void apply( core::pose::Pose & pose_in );
 		virtual std::string get_name() const;
 
-		void set_pymol( protocols::moves::PyMolMoverOP pymol ) { pymol_ = pymol; }
+		void set_pymol( protocols::moves::PyMolMoverOP pymol );
 
 		/// @brief enable benchmark mode
 		inline void enable_benchmark_mode( bool setting ) {
