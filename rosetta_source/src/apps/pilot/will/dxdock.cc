@@ -33,6 +33,7 @@
 
 #include <apps/pilot/will/will_util.ihh>
 
+#include <set>
 
 OPT_1GRP_KEY( Integer      , cxdock, sphere       )
 //OPT_1GRP_KEY( IntegerVector, cxdock, syms         )
@@ -94,7 +95,9 @@ int num_hbonds(core::pose::Pose const & pose) {
 	core::scoring::hbonds::fill_hbond_set( pose, false, hbset, false );
 	int nhb = 0;
 	for(Size i = 1; i <= hbset.nhbonds(); ++i) {
-		if( hbset.hbond(i).energy() < -0.2 ) nhb++;
+		if( !hbset.hbond(i).don_hatm_is_protein_backbone() ) continue;
+		if( !hbset.hbond(i).acc_atm_is_protein_backbone() ) continue;
+		nhb++;
 	}
 	return nhb;
 }
@@ -165,18 +168,23 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 				for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*(*i);
 				Real cbc;
 				Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
+				
+				Real hbsc = shb->score(tmp2) - basehb*4.0;
+				Real nhb = (Real(num_hbonds(tmp2))-4*Real(basenhb))/2.0;
+				
 				if(cbc >= basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]()) {
-					Hit h(iss,irt,cbc,syms[ic]);
-					h.s1.from_four_points(bb1[1],bb1[1],bb1[2],bb1[3]);
-					h.s2.from_four_points(bb2[1],bb2[1],bb2[2],bb2[3]);
-					h.s1.v += t*Vec(0,0,1);
-#ifdef USE_OPENMP
-#pragma omp critical
-#endif
-					hits[ic].push_back(h);
+// 					Hit h(iss,irt,cbc,syms[ic]);
+// 					h.s1.from_four_points(bb1[1],bb1[1],bb1[2],bb1[3]);
+// 					h.s2.from_four_points(bb2[1],bb2[1],bb2[2],bb2[3]);
+// 					h.s1.v += t*Vec(0,0,1);
+// #ifdef USE_OPENMP
+// #pragma omp critical
+// #endif
+// 					hits[ic].push_back(h);
 
 					if( option[OptionKeys::out::file::o].user() || option[OptionKeys::cxdock::dumpfirst] ) {	
-						string tag = utility::file_basename(fn)+"_C"+str(syms[ic])+"_"+str(iss)+"_"+str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())+"_"+str(irt)+"_"+str(cbc);
+						string tag = utility::file_basename(fn)+"_C"+str(syms[ic])+"_"+str(iss)+"_"
+						+str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())+"_"+str(irt)+"_"+str(cbc);
 						{
 							option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(syms[ic])+"_Z.sym");							
 						  Pose p(init);
@@ -238,12 +246,13 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 										core::pose::symmetry::make_asymmetric_pose(tmp2);
 										string tag2 = tag + "_"+str(if4)+"_"+str(ir4);
 										Real hbsc = shb->score(tmp2) - basehb*4.0;
-										Real nhb = Real(num_hbonds(tmp2))/4.0-Real(basenhb);
-										cout << "HIT " << cbc << " " << cbc2/2 << " " << F(7,4,hbsc) << " " << F(3,1,nhb) << " "
-										     << utility::file_basename(fn)+" C"+str(syms[ic])+" "+str(iss)+" "
-										      +str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())
-										      +" "+str(irt)+" "+str(cbc)+" "+str(if4)+" "+str(ir4) << std::endl;
-										if(hbsc < -4.0 || nhb > 5 || cbc2*.075 > basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]() ) {
+										Real nhb = (Real(num_hbonds(tmp2))-4*Real(basenhb))/2.0;
+										
+										if(hbsc < -4.0 || nhb > 3 || cbc2/2 > basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]() ) {
+											cout << "HIT " << cbc << " " << cbc2/2 << " " << F(7,4,hbsc) << " " << F(3,1,nhb) << " "
+											     << utility::file_basename(fn)+" C"+str(syms[ic])+" "+str(iss)+" "
+											      +str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())
+											      +" "+str(irt)+" "+str(cbc)+" "+str(if4)+" "+str(ir4) << std::endl;
 											tmp.dump_pdb(option[OptionKeys::out::file::o]()+"/"+tag2+".pdb");
 										}
 //										utility_exit_with_message("oraiestn");								
