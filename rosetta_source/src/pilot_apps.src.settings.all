@@ -552,6 +552,9 @@ sources = {
 		#"antibody_mode", # /* Aroop,Documentation Location,Demo Location */
 		#"model_e2c_ubiquitin", # /* Aroop,Documentation Location,Demo Location */
 	],
+	"pilot/jianqing" : [
+		"antibody2",
+	],
 	"pilot/barak" : [
 		#"BuildFloppyTail",
 		#"print_phipsi",
