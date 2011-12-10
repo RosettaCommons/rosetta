@@ -223,7 +223,8 @@ RemodelMover::MoverOP RemodelMover::clone() {
 /// @brief create this type of object
 RemodelMover::MoverOP RemodelMover::fresh_instance() {
 	return new RemodelMover();
-}
+mooth
+
 
 
 /// @brief the centroid level score function, default "remodel_cen"
@@ -597,7 +598,7 @@ if (working_model.manager.size()!= 0){
 				cmmop->import(remodel_data_.natro_movemap_);
 				cmmop->import( manager_.movemap() );
 
-				core::scoring::ScoreFunctionOP cen_min_sfxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
+				//core::scoring::ScoreFunctionOP cen_min_sfxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 
 				TR << "centroid minimizing repeat structures" << std::endl;
 
@@ -606,8 +607,11 @@ if (working_model.manager.size()!= 0){
 				// flip residue type set for centroid minimize
 				core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
 
-				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , cen_min_sfxn, "dfpmin_armijo", 0.01, true);
-				//minMover->apply(pose);
+				centroid_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
+				centroid_sfx_->set_weight( core::scoring::hb_cen, 1.0);
+
+				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
+				minMover->apply(pose);
 
 				// flip residue type set back, for repeat builds, currently don't do
 				// restore_sidechain, as they should all be redesigned.  MAY NEED TO
