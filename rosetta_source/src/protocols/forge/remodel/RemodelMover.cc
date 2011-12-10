@@ -223,8 +223,6 @@ RemodelMover::MoverOP RemodelMover::clone() {
 /// @brief create this type of object
 RemodelMover::MoverOP RemodelMover::fresh_instance() {
 	return new RemodelMover();
-mooth
-
 
 
 /// @brief the centroid level score function, default "remodel_cen"
