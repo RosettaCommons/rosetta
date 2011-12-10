@@ -275,7 +275,7 @@ public:
 	PyMolMover() : update_energy_(false), energy_type_(core::scoring::total_score),
 	               keep_history_(false), update_interval_(0), last_packet_sent_time_(0), name_() {};
 
-
+    virtual ~PyMolMover();
 	virtual std::string get_name() const;
 	virtual void apply( Pose & );
 

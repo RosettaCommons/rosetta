@@ -144,6 +144,8 @@ void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packet
          PyMolMover Class
    ---------------------------------------------------------------------------------------------- */
 
+PyMolMover::~PyMolMover() {}
+
 std::string PyMolMover::get_name() const
 {
 	return "PyMOL_Mover";

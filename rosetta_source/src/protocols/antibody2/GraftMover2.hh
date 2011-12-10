@@ -27,7 +27,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
+#include <protocols/moves/PyMolMover.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 
