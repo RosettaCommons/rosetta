@@ -878,15 +878,17 @@ RotamerLibrary::get_binary_name() const
 std::string
 RotamerLibrary::get_binary_name_02() const
 {
-	/// Avoid name collision with old dunbrack binary.
-	///return get_library_name_02() + ".bin";
-	return basic::database::full_name( "Dunbrack02.lib.bin" );
+	// Keep the binaries for multiple dun02 libraries seperate.
+	return get_library_name_02() + ".Dunbrack02.lib.bin";
 }
 
 std::string
 RotamerLibrary::get_binary_name_08() const
 {
-	return basic::database::full_name( "Dunbrack08.lib.bin" );
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	return basic::database::full_name( option[ corrections::score::dun08_dir ] + "/" + "Dunbrack08.lib.bin" );
 }
 
 std::string
