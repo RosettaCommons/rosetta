@@ -283,6 +283,12 @@ public: // mutators
 		temperature_ = temp;
 	}
 
+	inline
+	void
+	set_repeat_tail_length( Size const length ) {
+		repeat_tail_length_ = length;
+	}
+
 
 public: // loop management
 
@@ -508,6 +514,8 @@ private: // data
 
 	/// @brief randomize loops prior to running main protocol? (default true)
 	bool randomize_loops_;
+
+	Size repeat_tail_length_;
 
 
 	/// @brief the allowed number of overall closure attempts before apply() exits

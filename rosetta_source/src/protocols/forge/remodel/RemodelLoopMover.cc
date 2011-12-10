@@ -238,10 +238,16 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
   if (option[ OptionKeys::remodel::repeat_structure].user()){
 
-	//remove the extra tail from pose, but still use the pose with tail to build
-		non_terminal_pose.conformation().delete_residue_slow(pose.total_residue());
+		//remove the extra tail from pose, but still use the pose with tail to build
+		Size tail_count = repeat_tail_length_;
+		while ( tail_count ){
+			non_terminal_pose.conformation().delete_residue_slow(non_terminal_pose.total_residue());
+			tail_count--;
+		}
+
 		repeat_pose=non_terminal_pose;
     core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
+
 
     Size repeatFactor = option[ OptionKeys::remodel::repeat_structure];
     Size count = 1;
@@ -250,14 +256,21 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
         Size current_term = repeat_pose.total_residue();
 				//intentially insert behind the last residue, this way blueprint definition will cover the junction with fragments
 				if (rsd == non_terminal_pose.total_residue()){
-        repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(),true);
+        repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(), true);
 				}else {
-        repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(),false);
+        repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(), false);
+				/*
+				for (int i =1; i<= repeat_pose.total_residue(); i++){
+			std::cout << "repeat_pose Phi: "<< repeat_pose.phi(i) << " psi: " << repeat_pose.psi(i) <<  " omega: " << repeat_pose.omega(i) << " at " << i << std::endl;
+		} */
 				}
       }
       Size junction = (non_terminal_pose.total_residue())* count;
-        repeat_pose.conformation().insert_ideal_geometry_at_polymer_bond(junction);
-        repeat_pose.set_omega(junction,180);
+			repeat_pose.conformation().insert_ideal_geometry_at_polymer_bond(junction);
+			//std::cout << "junction " << junction << std::endl;
+			repeat_pose.set_phi(junction+1,-150);
+			repeat_pose.set_psi(junction,150);
+			repeat_pose.set_omega(junction,180);
       //std::cout << "repeat Factor : " << repeatFactor << std::endl;
       count++;
       repeatFactor--;
@@ -276,6 +289,10 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		repeat_pose.fold_tree(f);
 
 		//repeat_pose.dump_pdb("repeat.pdb");
+		/*
+		for (int i =1; i<= repeat_pose.total_residue(); i++){
+			std::cout << "repeat_pose Phi: "<< repeat_pose.phi(i) << " psi: " << repeat_pose.psi(i) << " omega: " << repeat_pose.omega(i) << " at " << i << std::endl;
+		}*/
   //  pose = repeat_pose;
 	//	std::cout << repeat_pose.fold_tree()<< std::endl;
   }
@@ -342,18 +359,36 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	using core::Size;
 	Size segment_length = (repeat_pose.n_residue())/repeat_number;
 	//std::cout << "DEBUG: segment lenght = " << segment_length << std::endl;
-	for (Size rep = 0; rep < repeat_number; rep++){ //start from 2 because first segment is built
-		for (Size res = 1; res <= segment_length; res++){
 
-	//std::cout << "DEBUG: res+segmentlength*rep = " << res+(segment_length*rep) << std::endl;
-				repeat_pose.set_phi(res+(segment_length*rep), pose.phi(res));
-				repeat_pose.set_psi(res+(segment_length*rep), pose.psi(res));
-				repeat_pose.set_omega(res+(segment_length*rep), pose.omega(res));
+	for (Size rep = 0; rep < repeat_number; rep++){
+		for (Size res = 1; res <= segment_length; res++){
+				//std::cout << "DEBUG: res+segmentlength*rep = " << res+(segment_length*rep) << std::endl;
+				Real loop_phi = 0;
+				Real loop_psi = 0;
+				if (res == 1 ){
+					loop_phi = pose.phi(segment_length+1);
+					loop_psi = pose.psi(segment_length+1);
+				} else {
+					loop_phi = pose.phi(res);
+					loop_psi = pose.psi(res);
+				}
+
+				repeat_pose.set_phi(res+( segment_length*rep), loop_phi );
+				repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
+				repeat_pose.set_omega( res+(segment_length*rep), pose.omega(res) );
 		}
 	}
+
+	//loop over the tail fragment to the first fragment
+
+
   //pose = repeat_pose;
   //pose.dump_pdb("test_repeat1.pdb");
   //repeat_pose.dump_pdb("repeat2.pdb");
+/*
+		for (int i =1; i<= repeat_pose.total_residue(); i++){
+			std::cout << "repeat_pose Phi: "<< repeat_pose.phi(i) << " psi: " << repeat_pose.psi(i) << " omega: " << repeat_pose.omega(i) << " at " << i << std::endl;
+		} */
 }
 
 
@@ -493,6 +528,11 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 					repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 					(*sfxOP)(repeat_pose_);
+
+					//this has to be set because when copying to pose_prime, it lost the
+					//first phi angle
+					pose_prime->set_phi(1, repeat_pose_.phi(1));
+
 					accumulator.insert( std::make_pair( repeat_pose_.energies().total_energy(), pose_prime ) );
 			}	else {
 				(*sfxOP)( *pose_prime );
@@ -807,7 +847,7 @@ void RemodelLoopMover::simultaneous_stage(
 	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			Size copy_size =0;
 		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
-				copy_size = pose.total_residue()-1;
+				copy_size = pose.total_residue() - repeat_tail_length_;
 			} else {
 				copy_size = pose.total_residue();
 			}

@@ -607,7 +607,7 @@ if (working_model.manager.size()!= 0){
 				core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
 
 				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , cen_min_sfxn, "dfpmin_armijo", 0.01, true);
-				minMover->apply(pose);
+				//minMover->apply(pose);
 
 				// flip residue type set back, for repeat builds, currently don't do
 				// restore_sidechain, as they should all be redesigned.  MAY NEED TO

@@ -630,6 +630,8 @@ private: // data
 	/// remodel fucks up up a remodel run that was started from enzdes
 	bool ignore_cmdline_enzdes_cstfile_;
 
+	Size repeat_tail_length_;
+
 
 };
 

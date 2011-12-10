@@ -293,12 +293,25 @@ void VarLengthBuild::apply( Pose & pose ) {
 		}
 	}
 	// REPEAT: used for fragment picking and others
+
+	repeat_tail_length_ =0;
   if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
-		core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
-		pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-		pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-		pose.set_omega(pose.total_residue()-1,180);
+		// adding a tail to the starter monomer pose
+
+		// cache the original lengh
+		Size len_start = pose.total_residue();
+
+		// append a tail of the same length
+		for (int i = 1; i<= len_start; i++){
+			core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+			pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+			pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+			pose.set_omega(pose.total_residue()-1,180);
+			repeat_tail_length_++;
+		}
+		//confirm new length and update the number used for later
+		//std::cout << "pose_with_tail " << pose.total_residue() << std::endl;
 	}
 
 	// centroid level protocol
@@ -440,7 +453,7 @@ bool VarLengthBuild::centroid_build(
 		Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
 
 		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
-			interval.right = interval.right+1; // pad interval to include the extra shadow residue in pose
+			interval.right = interval.right + repeat_tail_length_; // pad interval to include the extra shadow residue in pose
 			}
 		TR << "VLB count_cutpoints " << n_cuts << " interval.left " << interval.left << " interval.right " << interval.right << std::endl;
 
@@ -579,6 +592,10 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 	if ( loop_mover_str_ == "RemodelLoopMover" ) { // use RemodelLoopMover
 		RemodelLoopMoverOP loop_mover = new RemodelLoopMover( loops );
 		loop_mover->scorefunction( *sfx_ );
+
+		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+			loop_mover->set_repeat_tail_length( repeat_tail_length_ );
+		}
 
 		if ( use_fullmer_ ) {
 			loop_mover->add_fragments( fragfull_ );
