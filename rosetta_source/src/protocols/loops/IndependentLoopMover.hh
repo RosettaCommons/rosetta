@@ -80,6 +80,7 @@ public:
   bool get_random_order() const { return random_order_; }
   bool get_build_all_loops() const { return build_all_loops_; }
   bool get_loop_combine_rate() const { return loop_combine_rate_; }
+	bool get_all_loops_closed() const {return all_loops_closed_; }
 
 private:
 
@@ -104,6 +105,9 @@ private:
 	/// Force to build all loops (i.e. ignore skiprate)
 	bool build_all_loops_;
 
+	/// determines if all the loops were closed in the last time mover was
+	/// called.
+	bool all_loops_closed_;
 	/// Loop combine rate
 	core::Real loop_combine_rate_;
 

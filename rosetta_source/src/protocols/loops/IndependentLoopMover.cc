@@ -98,7 +98,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 	basic::Tracer tr("protocol.loops.LoopMover");
 
  	// Select Loops to be built
-
+	all_loops_closed_ = true;
 	tr.Info << "ALL_LOOPS:" << loops_ << std::endl;
 
 	Loops selected_loops;
@@ -113,6 +113,8 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 
 
 	int select_best_loop_from = option[ OptionKeys::loops::select_best_loop_from ]();
+
+	LoopResult result_of_loopModel;
 
 	for ( Loops::iterator it=selected_loops.v_begin(), it_end=selected_loops.v_end();
 		 it != it_end; ++it ) {
@@ -137,7 +139,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		//Size nrmsfail = 0;
 
 		tr.Info << "Building Loop: " << buildloop << std::endl;
-		LoopResult result = Failure;
+		result_of_loopModel = Failure;
 
 		pose::Pose best_pose = pose_initial;
 		Real       best_score = 10000000.0;
@@ -146,7 +148,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		for ( int extension_attempt = 0; extension_attempt <= grow_attempts_; extension_attempt ++ ){
 
 			if ( !strict_loops_ && extension_attempt > 0 ){
-				loops_.grow_loop( pose, buildloop, 1.0 );
+				loops_.grow_loop_away_from_sheets( pose, buildloop, 1.0 );
 			}
 			for ( int build_attempt = 0; build_attempt < build_attempts_; build_attempt ++ ){
 				tr.Info << "Building Loop attempt: " << build_attempt << std::endl;
@@ -161,26 +163,26 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 
 				if ( checkpoints_.recover_checkpoint( pose, curr_job_tag, checkname + "_S", pose.is_fullatom(), true) ) {
 					checkpoint_recovery = true;
-					result = Success;
+					result_of_loopModel = Success;
 				}
 				else
 				if ( checkpoints_.recover_checkpoint( pose, curr_job_tag, checkname + "_C", pose.is_fullatom(), true) ) {
 					checkpoint_recovery = true;
-					result = CriticalFailure;
+					result_of_loopModel = CriticalFailure;
 				}else
 				if ( checkpoints_.recover_checkpoint( pose, curr_job_tag, checkname + "_F", pose.is_fullatom(), true) ) {
 					checkpoint_recovery = true;
-					result = Failure;
+					result_of_loopModel = Failure;
 				} else {
 					// this should have been called before here, but there are
 					// some cases where loop-building is attempted with a cut
 					// of zero.
 					buildloop.auto_choose_cutpoint( pose );
-					result = model_loop( pose, buildloop );
+					result_of_loopModel = model_loop( pose, buildloop );
 				}
 
 				// If the loop bas built and closed ok.
-				if ( result == Success || accept_aborted_loops_ ){
+				if ( result_of_loopModel == Success || accept_aborted_loops_ ){
 					if ( ! checkpoint_recovery ){
 						checkpoints_.checkpoint( pose, curr_job_tag, checkname + "_S", true );
 					}
@@ -204,7 +206,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 				nfailure++;
 
 				//fpd if we have strict loops on, keep trying rather than immediately failing
-				if ( result == ExtendFailure && !strict_loops_ ){ // means extend loop immediately!
+				if ( result_of_loopModel == ExtendFailure && !strict_loops_ ){ // means extend loop immediately!
 					if ( ! checkpoint_recovery ){
 						checkpoints_.checkpoint( pose, curr_job_tag, checkname + "_F", true );
 					}
@@ -212,7 +214,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 					break;
 				}
 
-				if ( result == CriticalFailure ){
+				if ( result_of_loopModel == CriticalFailure ){
 					if ( ! checkpoint_recovery ){
 						checkpoints_.checkpoint( pose, curr_job_tag, checkname + "_C", true );
 					}
@@ -226,11 +228,16 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 			// default this means 1 closed loop)
 			if ( best_count >= (Size)select_best_loop_from ) break;
 			// If we can't build this loop due to some major fundamental failure
-			if ( result == CriticalFailure ) break;
+			if ( result_of_loopModel == CriticalFailure ) break;
 			// or if we're still unsuccessful (i.e. best_count == 0) and growing the loop isnt an option (because strict_loops is set) then also give up.
 			if ( strict_loops_ ) break;
 		}
 
+		tr.Info << "result of loop closure:0 success, 3 failure " << result_of_loopModel << std::endl;
+		if(result_of_loopModel != Success){
+			all_loops_closed_ = false;
+			break; //no need to check the rest of the loops if one can't be closed the result will be an open structure.
+		}
 
 		if ( (best_count > 0) || accept_aborted_loops_ ){
 			pose_initial = best_pose;

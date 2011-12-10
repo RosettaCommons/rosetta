@@ -350,7 +350,11 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 		tr.Info << "Chainbreak: " << chain_break_score << " Max: "
 			<< chain_break_tol << std::endl;
 
-		if ( chain_break_score > (chain_break_tol*10) ) return ExtendFailure;   // if we have a really bad chain break, extend loop definitions
+		//remove cutpoints before all return statements because the code is now determining loop failure without cutpoints.
+		loops::remove_cutpoint_variants( pose );
+		pose.fold_tree( f_orig );
+
+		if ( chain_break_score > (chain_break_tol*10) )	return ExtendFailure;   // if we have a really bad chain break, extend loop definitions
 		if ( chain_break_score > chain_break_tol )      return Failure;         // if we only have a slight chainbreak problem, try again
 	} // if ( chainbreak_present )
 

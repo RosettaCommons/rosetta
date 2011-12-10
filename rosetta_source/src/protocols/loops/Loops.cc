@@ -609,6 +609,40 @@ void Loops::grow_loop(
 	grow_loop( pose.total_residue(), loop, magL, magR );
 }
 
+void Loops::grow_loop_away_from_sheets(
+	core::pose::Pose const & pose,
+	Loop & loop,
+	core::Real magnitude
+) {
+	//fpd don't grow across chainbreaks
+	//fpd do this by adjusting magnitude in both directions
+	//adds a layer that if possible does not grow the loop into beta sheets
+	//I allow growth into helices because sometimes
+	//there are 2 or 3 residues helices in the middle of loops
+	core::Real magL=magnitude, magR=magnitude;
+	for (int i=0; i<=magnitude; ++i)
+		if (( pose.fold_tree().is_cutpoint( loop.start()-i-1 ) ) || (pose.secstruct(loop.start()-i-1) == 'E')) {
+			magL=i; break;
+		}
+	for (int i=0; i<=magnitude; ++i)
+		if (( pose.fold_tree().is_cutpoint( loop.stop()+i ) ) ||  (pose.secstruct(loop.start()+i) == 'E')){
+			magR=i; break;
+		}
+	//if both sides hit extended structure than default to the cutpoint behavior
+	if((magR == 0) && (magL == 0)){
+		for (int i=0; i<=magnitude; ++i)
+			if ( pose.fold_tree().is_cutpoint( loop.start()-i-1 ) ) {
+				magL=i; break;
+			}
+		for (int i=0; i<=magnitude; ++i)
+			if ( pose.fold_tree().is_cutpoint( loop.stop()+i ) ) {
+				magR=i; break;
+			}
+	}
+	grow_loop( pose.total_residue(), loop, magL, magR );
+}
+
+
 
 /// @brief Extend a loop
 void Loops::grow_loop(
@@ -656,48 +690,26 @@ void Loops::grow_loop(
 		std::min( (int)nres, (int)loop.stop()   + (int)extend_stop )
 	);
 
-	tr.Debug << "NewLoop: " << new_start << "  " << new_stop << std::endl;
+	tr.Debug << "NewLoop before loop check: " << new_start << "  " << new_stop << std::endl;
 
-	// make sure we dont eat into existing other loops
-	//
-	bool start_is_in_previous_loop = false;
-	do {
-		if ( new_stop <= new_start+1 ) break;
-		if ( start_is_in_previous_loop ) new_start++;
-		start_is_in_previous_loop = false;
-		for ( Loops::iterator it=loops_.v_begin(), it_end=loops_.v_end();
-			it != it_end; ++it
-		) {
-			if ( it->start() >= new_start ) continue; // ignore that start after this loop
-			if ( (*it) == originalloop ) continue; // ignore the original loop
-			if ( (it->stop()+1) >= new_start){
-				tr.Warning << "Tried growing loop into previous loop" << *it << "  " << new_start << "  " << new_stop << std::endl;
-				start_is_in_previous_loop = true;
-				break;
+	//grow loops to the start of previous or next loop
+	for ( Loops::iterator it=loops_.v_begin(), it_end=loops_.v_end();
+			it != it_end; ++it ) {
+		if((*it) != originalloop ){
+			//case where the start has grown into the previous loop
+			if ((new_start >= it->start())&&(new_start <= it->stop())){
+				new_start = it->start();
+				tr.Warning << "Tried growing loop into previous loop:" << *it << "  " << new_start << "  " << new_stop << std::endl;
+			}
+			//case where the stop has grown into the next loop
+			if ((new_stop <= it->stop())&&(new_stop >= it->start())){
+				new_stop = it->stop();
+				tr.Warning << "Tried growing loop into next loop:" << *it << "  " << new_start << "  " << new_stop << std::endl;
 			}
 		}
 	}
-	while( start_is_in_previous_loop );
 
-
-	bool stop_is_in_next_loop = false;
-	do {
-		if ( new_stop <= new_start+1 ) break;
-		if ( stop_is_in_next_loop ) new_stop--;
-		stop_is_in_next_loop = false;
-		for ( Loops::iterator it=loops_.v_begin(), it_end=loops_.v_end();
-			it != it_end; ++it ) {
-			// ignore that stop before this loop
-			if ( it->stop() <= new_stop ) continue;
-			if ( (*it) == originalloop ) continue; // ignore the original loop
-			if ( ( it->start()-1) <= new_stop ) {
-				tr.Warning << "Tried growing loop into next loop:" << *it << "  " << new_start << "  " << new_stop << std::endl;
-			 	stop_is_in_next_loop = true;
-				break;
-			}
-		}
-	} while( stop_is_in_next_loop );
-
+ 	tr.Debug << "NewLoop after loop check: " << new_start << "  " << new_stop << std::endl;
 
 	if ( new_stop < loop.stop() ) {
 		tr.Info << "Loop stops earlier than before ???" << std::endl;

@@ -3335,7 +3335,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'build_specific_loops',     'IntegerVector', desc='Numbers of the loops to be built' ),
 		Option( 'random_order',              'Boolean',
 			desc='build in random order     ',
-			legal=['true','false'], default='false'
+			legal=['true','false'], default='true'
 		),
 		Option( 'build_all_loops',           'Boolean',
 			desc='build all loops(no skip)  ',

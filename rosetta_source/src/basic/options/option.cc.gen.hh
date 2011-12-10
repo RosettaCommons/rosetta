@@ -1603,7 +1603,7 @@ option.add( basic::options::OptionKeys::loops::accept_aborted_loops, "accept abo
 option.add( basic::options::OptionKeys::loops::strict_loops, "Do not allow growing of loops" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::superimpose_native, "Superimpose the native over the core before calculating looprms" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::build_specific_loops, "Numbers of the loops to be built" );
-option.add( basic::options::OptionKeys::loops::random_order, "build in random order     " ).legal(true).legal(false).def(false);
+option.add( basic::options::OptionKeys::loops::random_order, "build in random order     " ).legal(true).legal(false).def(true);
 option.add( basic::options::OptionKeys::loops::build_all_loops, "build all loops(no skip)  " ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::fa_closure_protocol, "Abrelax uses FASlidingWindowLoopClosure... " ).def(false);
 option.add( basic::options::OptionKeys::loops::combine_rate, "Combine successive loops at this rate" ).def(0.0);

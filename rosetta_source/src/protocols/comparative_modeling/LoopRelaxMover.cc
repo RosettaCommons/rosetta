@@ -141,7 +141,7 @@ LoopRelaxMover::LoopRelaxMover(
 ) :
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
-	n_rebuild_tries_( 1 ),
+	n_rebuild_tries_( 3 ),
 	rebuild_filter_( 999 ),
 	remodel_( remodel ),
 	intermedrelax_( intermedrelax ),
@@ -427,6 +427,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 
 	long starttime = time(NULL);
+	bool all_loops_closed = false;
+	bool tmp_all_loops_closed = false;
 	if ( remodel() != "no" ) {
 		TR << "====================================================================================" << std::endl;
 		TR << "===" << std::endl;
@@ -487,20 +489,35 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					remodel_mover->set_native_pose( new Pose( native_pose ) );
 					remodel_mover->apply( pose );
 
-					if ( remodel() == "perturb_kic" ) { // DJM: skip this struct if initial closure fails
+					if ( remodel() == "perturb_kic" ) { //DJM: skip this struct if initial closure fails
 						if ( remodel_mover->get_last_move_status() != protocols::moves::MS_SUCCESS) {
 							set_last_move_status(protocols::moves::FAIL_RETRY);
 							TR << "Structure " << " failed initial kinematic closure. Skipping..." << std::endl;
-							//	bool fail = true; // make this
+								bool fail = true; // make this
 							pose.fold_tree( f_orig );
 							return;
 						}
 						pose.fold_tree( f_orig );
-					} // if ( remodel() == "perturb_kic" )
+					}//if ( remodel() == "perturb_kic" )
+					tmp_all_loops_closed = remodel_mover->get_all_loops_closed();
 				}
 				current_sc = (*cen_scorefxn_)( pose );
-				if ( current_sc <= rebuild_filter() ) break;  //fpd changed >= to <=
-				                                              // ... don't we want to stop when our score is _less_ than the cutoff
+
+				if(option[ OptionKeys::cm::loop_rebuild_filter ].user() || (remodel() == "old_loop_relax")){
+					TR << "classic check for loop closure" << std::endl;
+					current_sc = (*cen_scorefxn_)( pose );
+					if ( current_sc <= rebuild_filter() ){
+						all_loops_closed = true;
+						break;  //fpd changed >= to <=
+						// ... don't we want to stop when our score is _less_ than the cutoff
+					}
+				}
+				else{
+					if(tmp_all_loops_closed){
+						all_loops_closed = true;
+						break;
+					}
+				}
 			} // for ( in n_rebuild_tries )
 
 			if ( debug ) pose.dump_pdb(curr_job_tag + "_after_rebuild.pdb");
@@ -781,7 +798,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////  intermediate relax the structure
 	////
 	////
-	if ( intermedrelax() != "no" ) {
+	if ( intermedrelax() != "no" && (all_loops_closed)) {
 		TR << "====================================================================================" << std::endl;
 		TR << "===" << std::endl;
 		TR << "===   Intermediate Relax  " << std::endl;
@@ -835,7 +852,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////
 	////
 
-	if ( refine() != "no" ) {
+	if ( refine() != "no" && (all_loops_closed)) {
 		TR << "====================================================================================" << std::endl;
 		TR << "===" << std::endl;
 		TR << "===   Refine " << std::endl;
@@ -914,7 +931,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////  Maybe idealize the structure before relax ?
 	////
 	////
-	if ( option[ OptionKeys::loops::idealize_after_loop_close ].user() ) {
+	if ( option[ OptionKeys::loops::idealize_after_loop_close ].user() && (all_loops_closed)) {
 
 		if ( debug ){
 			pose.dump_pdb(curr_job_tag + "_before_idealize.pdb");
@@ -934,7 +951,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////
 	////
 
-	if ( relax() != "no" ) {
+	if ( relax() != "no" && (all_loops_closed)) {
 		TR << "====================================================================================" << std::endl;
 		TR << "===" << std::endl;
 		TR << "===   Relax  " << std::endl;
@@ -1010,6 +1027,20 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			checkpoints_.debug( curr_job_tag, "ffrelax", (*fa_scorefxn_)( pose ) );
 		}
 	} // relax the structure
+	if ( relax() != "no" && (!all_loops_closed)) {
+		//The following keeps the score lines equivalent in the silent file.
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
+			}
+		}
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	////
@@ -1070,7 +1101,7 @@ void LoopRelaxMover::set_defaults_() {
 	intermedrelax_   = option[ OptionKeys::loops::intermedrelax ]();
 	refine_          = option[ OptionKeys::loops::refine ]() ;
 	relax_           = option[ OptionKeys::loops::relax ]();
-	n_rebuild_tries_ = 1;
+	n_rebuild_tries_ = 3;
 	rebuild_filter_  = 999.0;
 	compute_rmsd( true );
 

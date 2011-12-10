@@ -7772,7 +7772,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-random_order</b> \<Boolean\><dt>
 <dd>build in random order     </dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-build_all_loops</b> \<Boolean\><dt>

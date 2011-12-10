@@ -231,6 +231,13 @@ public:
 		core::Real magnitude
 	);
 
+	/// @brief if possible grows loop will not cross cutpoints or if possible into sheets
+	void grow_loop_away_from_sheets(
+		core::pose::Pose const &pose,
+		Loop & loop,
+		core::Real magnitude
+	);
+
 	/// @brief Extend a loop
 	void grow_loop(
 		core::Size nres,
