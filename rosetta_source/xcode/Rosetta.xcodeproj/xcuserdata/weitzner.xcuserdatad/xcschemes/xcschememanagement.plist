@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>10</integer>
 		</dict>
+		<key>antibody2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>33</integer>
+		</dict>
 		<key>basic.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -278,6 +283,11 @@
 			<true/>
 		</dict>
 		<key>3D5BA0AC1492D97300524FBB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3D9A16011492EAC2004F3648</key>
 		<dict>
 			<key>primary</key>
 			<true/>
