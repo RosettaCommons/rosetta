@@ -243,7 +243,7 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 										     << utility::file_basename(fn)+" C"+str(syms[ic])+" "+str(iss)+" "
 										      +str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())
 										      +" "+str(irt)+" "+str(cbc)+" "+str(if4)+" "+str(ir4) << std::endl;
-										if(hbsc < -4.0 || nhb > 3 || cbc2/2 > basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]() ) {
+										if(hbsc < -4.0 || nhb > 5 || cbc2*.075 > basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]() ) {
 											tmp.dump_pdb(option[OptionKeys::out::file::o]()+"/"+tag2+".pdb");
 										}
 //										utility_exit_with_message("oraiestn");								
