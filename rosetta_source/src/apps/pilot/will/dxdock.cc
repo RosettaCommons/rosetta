@@ -169,9 +169,6 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 				Real cbc;
 				Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
 				
-				Real hbsc = shb->score(tmp2) - basehb*4.0;
-				Real nhb = (Real(num_hbonds(tmp2))-4*Real(basenhb))/2.0;
-				
 				if(cbc >= basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]()) {
 // 					Hit h(iss,irt,cbc,syms[ic]);
 // 					h.s1.from_four_points(bb1[1],bb1[1],bb1[2],bb1[3]);
