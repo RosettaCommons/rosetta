@@ -26,6 +26,7 @@
 
 //Auto Headers
 #include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
 
 
 // AUTO-REMOVED #include <utility/vector1.hh>

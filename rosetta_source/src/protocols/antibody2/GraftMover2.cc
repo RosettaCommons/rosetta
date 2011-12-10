@@ -71,6 +71,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
 #include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
