@@ -67,6 +67,12 @@ namespace antibody2 {
 		inline void enable_graft_h3( bool setting ) { graft_h3_ = setting; }
 		inline void set_camelid( bool setting ) { camelid_ = setting; }
 
+	        ///@brief copy ctor
+        	GraftMover2( GraftMover2 const & rhs );
+
+        	///@brief assignment operator
+        	GraftMover2 & operator=( GraftMover2 const & rhs );
+        
 		/// @brief enable benchmark mode
 		inline void enable_benchmark_mode( bool setting ) {
 			benchmark_ = setting;
@@ -108,6 +114,7 @@ namespace antibody2 {
 		void set_packer_default(
 			core::pose::Pose & pose,
 			bool include_current );
+        void initForEqualOperatorAndCopyConstructor(GraftMover2 & lhs, GraftMover2 const & rhs);
 	}; // class GraftMover2
 
 	class GraftOneMover;

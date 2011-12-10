@@ -249,6 +249,43 @@ GraftMover2::get_name() const {
 	return "GraftMover2";
 }
 
+// copy ctor
+GraftMover2::GraftMover2( GraftMover2 const & rhs )
+{
+    initForEqualOperatorAndCopyConstructor(*this, rhs);
+}
+
+///@brief assignment operator
+GraftMover2 & GraftMover2::operator=( GraftMover2 const & rhs ){
+    //abort self-assignment
+    if (this == &rhs) return *this;
+    Mover::operator=(rhs);
+    initForEqualOperatorAndCopyConstructor(*this, rhs);
+    return *this;
+}
+
+void GraftMover2::initForEqualOperatorAndCopyConstructor(GraftMover2 & lhs, GraftMover2 const & rhs)
+{
+    lhs.graft_l1_ = rhs.graft_l1_;
+    lhs.graft_l2_ = rhs.graft_l2_;
+    lhs.graft_l3_ = rhs.graft_l3_;
+    lhs.graft_h1_ = rhs.graft_h1_;
+    lhs.graft_h2_ = rhs.graft_h2_;
+    lhs.graft_h3_ = rhs.graft_h3_;
+    
+    lhs.grafts_ = rhs.grafts_;
+    
+    lhs.benchmark_ = rhs.benchmark_;
+    lhs.camelid_ = rhs.camelid_;
+    lhs.user_defined_ = rhs.user_defined_;
+    lhs.first_apply_with_current_setup_ = rhs.first_apply_with_current_setup_;
+    lhs.graft_sequence_ = new protocols::moves::SequenceMover( *( rhs.graft_sequence_ ) );
+    lhs.relax_sequence_ = new protocols::moves::SequenceMover( *( rhs.relax_sequence_ ) );
+    lhs.packer_ = new protocols::simple_moves::PackRotamersMover( *( rhs.packer_ ) );
+    lhs.pymol_ = new protocols::moves::PyMolMover( *( rhs.pymol_ ) );
+    lhs.scorefxn_ = new core::scoring::ScoreFunction( *( rhs.scorefxn_ ) );
+}
+
 void GraftMover2::set_packer_default(
 	pose::Pose & pose,
 	bool include_current) {
