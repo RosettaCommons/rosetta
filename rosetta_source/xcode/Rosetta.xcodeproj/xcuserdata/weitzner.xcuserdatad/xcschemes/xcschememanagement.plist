@@ -79,6 +79,11 @@
 			<key>orderHint</key>
 			<integer>14</integer>
 		</dict>
+		<key>protocols_a.2 copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>30</integer>
+		</dict>
 		<key>protocols_a.4.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -134,10 +139,25 @@
 			<key>orderHint</key>
 			<integer>25</integer>
 		</dict>
+		<key>protocols_e.5 copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>29</integer>
+		</dict>
+		<key>protocols_f.4 copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>31</integer>
+		</dict>
 		<key>protocols_f.4.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>26</integer>
+		</dict>
+		<key>protocols_g.4 copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>32</integer>
 		</dict>
 		<key>rosetta_scripts.xcscheme</key>
 		<dict>
@@ -238,6 +258,26 @@
 			<true/>
 		</dict>
 		<key>3D3A9AE313ECEA2A0081959A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3D5BA03E1492D94500524FBB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3D5BA0701492D95800524FBB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3D5BA08C1492D96800524FBB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3D5BA0AC1492D97300524FBB</key>
 		<dict>
 			<key>primary</key>
 			<true/>

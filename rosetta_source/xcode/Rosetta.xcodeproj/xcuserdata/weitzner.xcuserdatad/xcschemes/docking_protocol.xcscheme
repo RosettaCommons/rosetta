@@ -42,13 +42,24 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "3DFB7A801405746F00EA18CE"
+            BuildableName = "docking_protocol"
+            BlueprintName = "docking_protocol"
+            ReferencedContainer = "container:Rosetta.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug">
+      buildConfiguration = "Debug"
+      debugDocumentVersioning = "YES"
+      allowLocationSimulation = "YES">
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
@@ -61,7 +72,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "ROSETTA3_DB"
-            value = "/home/weitzner/Rosetta/rosetta/rosetta_database"
+            value = "/scratch/weitzner/rosetta/rosetta_database"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
@@ -72,7 +83,8 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release">
+      buildConfiguration = "Release"
+      debugDocumentVersioning = "YES">
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"

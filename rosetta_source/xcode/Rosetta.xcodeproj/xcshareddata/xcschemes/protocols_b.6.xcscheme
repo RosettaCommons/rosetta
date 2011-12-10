@@ -14,8 +14,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3B94657A148CBF6E00C2FBE5"
-               BuildableName = "libprotocols_b.6.a"
-               BlueprintName = "protocols_b.6"
+               BuildableName = "libprotocols_f.5.a"
+               BlueprintName = "protocols_f.5"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

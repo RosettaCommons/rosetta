@@ -21,7 +21,8 @@ if 'cygwin' in sys.platform:
 else:
 	KNOWN_PROJECTS += [
 	'protocols.1',
-	'protocols.2',
+	'protocols_a.2',
+	'protocols_b.2',
 	'protocols.3',
 	'protocols_a.4',
 	'protocols_b.4',
@@ -29,12 +30,15 @@ else:
 	'protocols_d.4',
 	'protocols_e.4',
 	'protocols_f.4',
+	'protocols_g.4',
+	'protocols_h.4',
 	'protocols_a.5',
 	'protocols_b.5',
 	'protocols_c.5',
-	'protocols_a.6',
-	'protocols_b.6',
-	'protocols_c.6',
+	'protocols_d.5',
+	'protocols_e.5',
+	'protocols_f.5',
+	'protocols.6',
 	'protocols.7',
         ]
 
