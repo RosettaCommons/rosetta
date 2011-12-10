@@ -475,7 +475,7 @@ SilentFileData::read_stream(
 		<< " structures from " << filename
 		<< std::endl;
 	else  tr.Info << "Reading all structures from " << filename << std::endl;
-	bool all_tags = (tagset.size()) ? false : true;
+	bool all_tags = tagset.size() == 0; //if no tags selected we read all decoys
 
 	// start looping over the structures
 	bool line_ok( true );
@@ -512,11 +512,11 @@ SilentFileData::read_stream(
 				// because that means that all the structures that we want
 				// have been read.
 				bool good_tag = false;
-				if(!all_tags){
+				if ( !all_tags ) {
 					std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
-					if(tag_it != tagset.end()){
+					if ( tag_it != tagset.end() ) {
 						good_tag = true;
-						tagset.erase(tag_it);
+						tagset.erase(tag_it); //expensive restructering of set -- how about saving a bunch of bools to do this book-keeping.
 			   	}
 				}
 				bool add_struct( init_good && ( all_tags || good_tag ));
@@ -542,8 +542,11 @@ SilentFileData::read_stream(
 		mylines.push_back( line );
 
 		line_ok = getline(data,line);
-		 if(!all_tags && tagset.empty())
-					break;
+		/// in no case interrupt loop here, because then mylines will have incomplete silent-struct causing
+		/// seqfault in the "init_from_lines" for last decoy
+		/* CAUSES SEGFAULT  OL 12/10/11
+ if(!all_tags && tagset.empty())
+			 break;  */
 	} // while( getline(data,line) )
 
 	// don't forget to initialize last structure!
@@ -552,7 +555,7 @@ SilentFileData::read_stream(
 
   bool good_tag = false;
   std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
-  if(tag_it != tagset.end()){
+  if ( tag_it != tagset.end() ) {
   	good_tag = true;
   }
 
