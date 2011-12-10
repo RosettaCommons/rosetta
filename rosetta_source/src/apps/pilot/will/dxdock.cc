@@ -221,7 +221,7 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 								for(vector1<Vec>::iterator i = c2cb2.begin(); i != c2cb2.end(); ++i) *i = R1z*(*i);								
 								rot_pose(p,R180x);
 
-								for(Size ir4 = 0; ir4 < 360; ir4+=2) {
+								for(Size ir4 = 0; ir4 < 90; ir4+=2) {
 									for(vector1<Vec>::iterator i = c2bb2.begin(); i != c2bb2.end(); ++i) *i = R1z*(*i);
 									for(vector1<Vec>::iterator i = c2cb2.begin(); i != c2cb2.end(); ++i) *i = R1z*(*i);
 									rot_pose(p,R1z);
