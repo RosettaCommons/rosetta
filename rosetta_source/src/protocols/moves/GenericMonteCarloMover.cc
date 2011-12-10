@@ -82,6 +82,7 @@ GenericMonteCarloMoverCreator::mover_name()
 GenericMonteCarloMover::GenericMonteCarloMover():
   Mover("GenericMonteCarlo"),
   maxtrials_( 10 ),
+	task_scaling_( 5 ),
   mover_( NULL ),
   scorefxn_( NULL ),
   temperature_( 0.0 ),
@@ -98,15 +99,19 @@ GenericMonteCarloMover::GenericMonteCarloMover():
   initialize();
 }
 
+ 
 /// @brief value constructor without a score function
+
 GenericMonteCarloMover::GenericMonteCarloMover(
   Size const maxtrials,
+  Size const task_scaling,
   MoverOP const & mover,
   Real const temperature,
   String const sample_type,
   bool const drift ) :
 	Super("GenericMonteCarlo"),
 	maxtrials_( maxtrials ),
+	task_scaling_( task_scaling ),
 	mover_( mover ),
 	temperature_( temperature ),
 	sample_type_( sample_type ),
@@ -121,9 +126,11 @@ GenericMonteCarloMover::GenericMonteCarloMover(
   initialize();
 }
 
+
 /// @brief value constructor with a TaskFactory
 GenericMonteCarloMover::GenericMonteCarloMover(
   Size const maxtrials,
+  Size const task_scaling,
   MoverOP const & mover,
 	TaskFactoryOP factory_in,
   Real const temperature,
@@ -131,6 +138,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
   bool const drift ) :
   Super("GenericMonteCarlo"),
   maxtrials_( maxtrials ),
+	task_scaling_( task_scaling ),
   mover_( mover ),
 	task_( NULL ),
 	factory_ (factory_in),
@@ -233,6 +241,13 @@ void
 GenericMonteCarloMover::set_maxtrials( Size const ntrial )
 {
   maxtrials_ = ntrial;
+}
+
+/// @brief set task multiplier to calculate trials from task
+void
+GenericMonteCarloMover::set_task_scaling( Size const scaling )
+{
+  task_scaling_ = scaling;
 }
 
 /// @brief set mover
@@ -555,7 +570,6 @@ GenericMonteCarloMover::apply( Pose & pose )
     return;
   }
 
-
 	core::pack::task::PackerTaskOP task;
 
 	if ( factory_ ) {
@@ -564,15 +578,14 @@ GenericMonteCarloMover::apply( Pose & pose )
 		TR << "No task inputted" << std::endl; //LGN
 	}
 
-	core::Size coverage_multiplier_ = 5;
-
 	if (factory_ ){
 		number_designable_ = num_designable (pose, task);
 		TR << "Input number of trials is " << maxtrials_ << std::endl;
-		maxtrials_ = coverage_multiplier_ * number_designable_;
+		TR << "The task_scaling is: " << task_scaling_ << std::endl;
+		maxtrials_ = task_scaling_ * number_designable_;
 		TR << "Resetting number of trials based on your input task to: " << maxtrials_ << std::endl;
 	}
-	TR << "Number of trials for the run is now: " << maxtrials_ << std::endl;
+	TR << "The number of trials for this run is: " << maxtrials_ << std::endl;
 
   //fpd
   if (mover_->get_additional_output())
@@ -649,6 +662,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 
 	maxtrials_ = tag->getOption< core::Size >( "trials", 10 );
 	temperature_ = tag->getOption< Real >( "temperature", 0.0 );
+	task_scaling_ = tag->getOption< core::Size >( "task_scaling", 5 );
 
 	String const  mover_name( tag->getOption< String >( "mover_name" ,""));
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );

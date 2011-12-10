@@ -83,6 +83,7 @@ public:
 	/// @brief value constructor without score function
 	GenericMonteCarloMover(
 		Size const maxtrials,
+		Size const task_scaling,
 		MoverOP const & mover,
 		Real const temperature = 0.0,
 		String const sample_type = "low",
@@ -104,6 +105,7 @@ public:
 	/// @brief value constructor with task operation via TaskFactory
 	GenericMonteCarloMover(
 		Size const maxtrials,
+		Size const task_scaling,
 		MoverOP const & mover,
 		TaskFactoryOP factory_in,
 		Real const temperature = 0.0,
@@ -199,6 +201,9 @@ public:
 	/// @brief set max trials of MC trials
 	void set_maxtrials( Size const ntrial );
 
+	/// @brief set task multiplier to calculate trials from task
+	void set_task_scaling( Size const scaling );
+
 	/// @brief set mover
 	void set_mover( MoverOP const & mover );
 
@@ -274,6 +279,9 @@ private:
 
 	/// @brief number of designable positions
 	Size number_designable_;
+
+	/// @brief multiply the number_designable_ by task_scaling to get the number of trials
+	Size task_scaling_;
 
 	/// @brief mover
 	MoverOP mover_;
