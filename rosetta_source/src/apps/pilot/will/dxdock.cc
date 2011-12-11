@@ -245,7 +245,7 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 										Real hbsc = shb->score(tmp2) - basehb*4.0;
 										Real nhb = (Real(num_hbonds(tmp2))-4*Real(basenhb))/2.0;
 										
-										if(hbsc < -4.0 || nhb > 3 || cbc2/2 > basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]() ) {
+										if( nhb > 3 || cbc2/2 > basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]() ) {
 											cout << "HIT " << cbc << " " << cbc2/2 << " " << F(7,4,hbsc) << " " << F(3,1,nhb) << " "
 											     << utility::file_basename(fn)+" C"+str(syms[ic])+" "+str(iss)+" "
 											      +str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())
