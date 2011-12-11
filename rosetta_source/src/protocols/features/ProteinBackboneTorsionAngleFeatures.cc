@@ -78,6 +78,9 @@ ProteinBackboneTorsionAngleFeatures::report_features(
 		if(!relevant_residues[i]) continue;
 
 		Residue const & resi = pose.residue(i);
+		if(!resi.is_protein()) continue;
+
+
 		Real phi  (resi.mainchain_torsion(1));
 		Real psi  (resi.mainchain_torsion(2));
 		Real omega(resi.mainchain_torsion(3));
