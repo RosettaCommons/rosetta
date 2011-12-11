@@ -24,6 +24,10 @@
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 
+
+#include <core/id/AtomID_Map.hh>
+#include <core/pose/util.tmpl.hh>
+
 #include <basic/Tracer.hh>
 
 
