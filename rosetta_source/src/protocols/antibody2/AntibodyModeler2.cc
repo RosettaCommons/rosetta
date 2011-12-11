@@ -79,6 +79,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody2/CDRH3Modeler2.hh>
 #include <protocols/antibody2/GraftMover2.hh>
+
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -1085,12 +1086,10 @@ AntibodyModeler2::get_name() const {
 		using ObjexxFCL::FArray1D_bool;
 		FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
 
-		for ( Size i = loop_start; i <= loop_end; ++i )
-			superpos_partner(i) = true;
+		for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
 
 		using namespace core::scoring;
-		Real rmsG = rmsd_no_super_subset( native_pose, pose_in,
-			superpos_partner, is_protein_CA );
+		Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_CA );
 		return ( rmsG );
 	} // global_loop_rmsd
 
