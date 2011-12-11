@@ -63,7 +63,10 @@ void CloseOneMover::set_default()
 std::string
 CloseOneMover::get_name() const { return "CloseOneMover"; }
 
-
+void CloseOneMover::set_pymol( protocols::moves::PyMolMoverOP pymol ) 
+{ 
+    pymol_ = pymol;
+}
 
 
 void CloseOneMover::apply( pose::Pose & pose_in )

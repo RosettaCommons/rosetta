@@ -42,7 +42,7 @@ namespace antibody2 {
 		virtual void apply( core::pose::Pose & pose_in );
 		virtual std::string get_name() const;
 
-		void set_pymol( protocols::moves::PyMolMoverOP pymol ) { pymol_ = pymol; }
+		void set_pymol( protocols::moves::PyMolMoverOP pymol );
 
 		/// @brief enable benchmark mode
 		inline void enable_benchmark_mode( bool setting ) {
