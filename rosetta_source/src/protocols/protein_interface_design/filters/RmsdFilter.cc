@@ -90,10 +90,6 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	core::pose::Pose native = *reference_pose_;
 	core::Real rmsd( 0 );
 
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
-	}
-
 	if ( !symmetry_ )
 		runtime_assert( copy_pose.total_residue() == native.total_residue() );
 
@@ -112,15 +108,18 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 		}
 	}
 
+	using namespace core::scoring;
 	if ( reference_pose_->total_residue() == pose.total_residue() ) {
-		if( superimpose_ ) {
+		if( superimpose_ && !superimpose_on_all() ) {
 			if ( symmetry_ ) // SJF I haven't changed symmetry selection_array b/c I don't know which tests to use
-				rmsd = core::scoring::sym_rmsd_with_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
+				rmsd = sym_rmsd_with_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
 			else
-				rmsd = core::scoring::rmsd_with_super_subset( copy_pose, native, superimpose_array, core::scoring::is_protein_CA );
+				rmsd = rmsd_with_super_subset( copy_pose, native, superimpose_array, core::scoring::is_protein_CA );
 		}
-		if( superimpose_on_all() )
+		if( superimpose_ && superimpose_on_all() ){
+			calpha_superimpose_pose( copy_pose, native );
 			rmsd = core::scoring::rmsd_no_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
+		}
 	}
 	return rmsd;
 }
@@ -160,7 +159,11 @@ RmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Data
 	if( tag->hasOption("reference_name") ){
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
 	}
-	else reference_pose_ = new core::pose::Pose( reference_pose );
+	else{
+		reference_pose_ = new core::pose::Pose( reference_pose );
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
+			core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+	}
 
 	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
 	std::string chains = tag->getOption<std::string>( "chains", "" );
