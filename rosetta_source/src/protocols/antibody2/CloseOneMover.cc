@@ -37,6 +37,13 @@ namespace antibody2 {
 using namespace core;
 
 
+CloseOneMover::CloseOneMover( ) : Mover( "CloseOneMover" ) {
+	set_default();
+	cdr_loop_start_ = 0;
+	cdr_loop_end_ = 0;
+	loop_start_ = 0-flanking_residues_;
+	loop_end_ = 0+flanking_residues_;
+} // CloseOneMover default constructor
 
 
 CloseOneMover::CloseOneMover( Size query_start, Size query_end ) : Mover( "CloseOneMover" ) {
@@ -63,8 +70,8 @@ void CloseOneMover::set_default()
 std::string
 CloseOneMover::get_name() const { return "CloseOneMover"; }
 
-void CloseOneMover::set_pymol( protocols::moves::PyMolMoverOP pymol ) 
-{ 
+void CloseOneMover::set_pymol( protocols::moves::PyMolMoverOP pymol )
+{
     pymol_ = pymol;
 }
 
