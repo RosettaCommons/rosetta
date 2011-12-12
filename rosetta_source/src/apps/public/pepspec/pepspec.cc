@@ -494,15 +494,15 @@ make_sequence_change(
 	std::string const errmsg
 		( "make_sequence_change failed: new_aa= "+name_from_aa(new_aa)+" rsd_types.size()= "+string_of( rsd_types.size() ) );
 
-	if( rsd_types.size() == 0 ) TR << errmsg << std::cout; 
+	if( rsd_types.size() == 0 ) TR << errmsg << std::endl; 
 	else{
 		Size rsd_types_index( 1 );
 
 		if ( new_aa == aa_his ) {
-			if ( rsd_types.size() != 2 || which_his_variant > 2 ) TR << errmsg << std::cout;
+			if ( rsd_types.size() != 2 || which_his_variant > 2 ) TR << errmsg << std::endl;
 			rsd_types_index = which_his_variant;
 		} else if ( rsd_types.size() != 1 ) {
-			TR << errmsg << std::cout;
+			TR << errmsg << std::endl;
 		}
 
 		conformation::ResidueOP new_rsd( ResidueFactory::create_residue( *(rsd_types[ rsd_types_index ] ),
@@ -1071,6 +1071,7 @@ gen_pep_bb_sequential(
 			this_prepend = static_cast< int >( RG.uniform() * ( n_prepend - n_prepended + 1 ) );
 			this_append = static_cast< int >( RG.uniform() * ( n_append - n_appended + 1 ) );
 		}
+		if( this_prepend + this_append == 0 ) continue;
 
 		std::string this_input_seq( input_seq );
 		for( Size ii = 1; ii <= this_prepend; ++ii ){
