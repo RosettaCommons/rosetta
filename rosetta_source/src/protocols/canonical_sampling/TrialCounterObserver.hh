@@ -45,6 +45,8 @@ public:
 
 	virtual std::string get_name() const;
 
+	virtual protocols::moves::MoverOP	clone() const;
+
   void
 	parse_my_tag(
 		 utility::tag::TagPtr const tag,

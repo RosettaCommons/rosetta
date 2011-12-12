@@ -66,6 +66,12 @@ std::string TrialCounterObserver::get_name() const {
 	return "TrialCounterObserver";
 };
 
+protocols::moves::MoverOP
+TrialCounterObserver::clone() const {
+	return new TrialCounterObserver( *this );
+}
+
+
 
 void
 TrialCounterObserver::parse_my_tag(

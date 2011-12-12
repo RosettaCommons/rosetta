@@ -254,7 +254,8 @@ protected:
 	core::Real rot_mag_;
 	core::Real trans_mag_;
 private:
-	utility::vector1< core::Size > movable_jumps_;
+	typedef utility::vector1< core::Size > JumpList;
+	JumpList movable_jumps_;
 };
 
 class RigidBodyRandomizeMover : public RigidBodyMover {

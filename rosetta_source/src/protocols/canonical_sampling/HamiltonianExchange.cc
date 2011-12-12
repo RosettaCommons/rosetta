@@ -315,7 +315,7 @@ HamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 		if ( ex[ i ].second == self ) other = ex[ i ].first;
 	}
 	if ( other < 0 ) {
-		//tr.Trace<< "no partner for cell " << self << " on rank " << rank() << std::endl;
+		//		tr.Trace<< "no partner for cell " << self << " on rank " << rank() << std::endl;
 		partner = -1;
 		return;
 	}
@@ -339,6 +339,7 @@ HamiltonianExchange::temperature_move( core::Real score ) {
 
 core::Real
 HamiltonianExchange::temperature_move( pose::Pose& pose, core::Real score ) {
+	using namespace ObjexxFCL::fmt;
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
 	next_exchange_schedule();
@@ -375,37 +376,46 @@ HamiltonianExchange::temperature_move( pose::Pose& pose, core::Real score ) {
 	MPI_Status stats[2];
 	//SEND UP ( alternative levels )
 	if ( exchange_partner < 0 ) return temperature();
-	//	tr.Trace<< "exchange partner: " << exchange_partner << std::endl;
+	//tr.Trace << "exchange partner: " << exchange_partner << std::endl;
 	MPI_Isend( &my_level, 1, MPI_INT, exchange_partner, mpi_LEVEL_INFORM, mpi_comm(), &reqs[0]);
 	MPI_Irecv( &new_level, 1, MPI_INT, exchange_partner, mpi_LEVEL_INFORM, mpi_comm(), &reqs[1]);
 	MPI_Waitall(2, reqs, stats);
-	//	tr.Trace<< "my_level: " << my_level << " other level: " << new_level << std::endl;
+	//tr.Trace<< "my_level: " << my_level << " other level: " << new_level << std::endl;
 	core::scoring::ScoreFunction& new_scorefxn( *hamiltonians_[ new_level ] );
 	Real new_score( new_scorefxn( pose ) );
-	Real scores[ 2 ];
+	float scores[ 2 ];
 	int swap( 0 );
 	if ( !is_master ) {
-		scores[ 0 ] = score;
-		scores[ 1 ] = new_score;
-		MPI_Send( &scores, 2, MPI_REAL, exchange_partner, mpi_SCORE_INFORM, mpi_comm() );
+		scores[ 0 ] = new_score; //the lower is other for the upper partner
+		scores[ 1 ] = score; //the higher is self for the upper partner
+		//tr.Trace << " send scores " << F( 8,5, scores[ 1 ]) << " " << F( 8,5, scores[ 0 ]) << std::endl;
+		MPI_Send( &scores, 2, MPI_FLOAT, exchange_partner, mpi_SCORE_INFORM, mpi_comm() );
 		MPI_Recv( &swap, 1, MPI_INT, exchange_partner, mpi_LEVEL_DECISION, mpi_comm(), &stats[0] );
 	} else {
-		MPI_Recv( &scores, 2, MPI_REAL, exchange_partner, mpi_SCORE_INFORM, mpi_comm(), &stats[0] );
+		MPI_Recv( &scores, 2, MPI_FLOAT, exchange_partner, mpi_SCORE_INFORM, mpi_comm(), &stats[0] );
 		//x1 : our process
 		//x2 : other process
 		// V0 : our scorefxn, V1 : other scorefxn
 		// V0(x2)-V0(x1) --> scores[1] - score
 		// V1(x1)-V1(x2) --> new_score - scores[0]
+		//tr.Trace << "level: " << my_level << " other level: " << new_level << " scores: "
+		//<< F( 8,5, score ) << " " << F( 8,5, new_score ) << " "
+		//<< F( 8,5, scores[ 0 ]) << " " << F( 8,5, scores[ 1 ]) << std::endl;
 		Real const invT1( 1.0 / temperature() );
 		Real const invT2( 1.0 / temperature( new_level ) );
-		Real const deltaE1( scores[ 1 ] - score );
-		Real const deltaE2( scores[ 0 ] - new_score );
+		Real const deltaE1( scores[ 0 ] - score );
+		Real const deltaE2( scores[ 1 ] - new_score );
 		Real const delta( invT1*deltaE1 - invT2*deltaE2 );
-		swap = RG.uniform() < std::min( 1.0, std::exp( std::max(-40.0, -delta) ) ) ? 1 : 0;
+		Real const r( RG.uniform() );
+		swap = r < std::min( 1.0, std::exp( std::max(-40.0, -delta) ) ) ? 1 : 0;
 		MPI_Send( &swap, 1, MPI_INT, exchange_partner, mpi_LEVEL_DECISION, mpi_comm() );
+		//tr.Trace << "decision: "<< F( 4,2, invT1) << " " << F( 4,2,invT2) << " "<< F( 4,2, deltaE1 )
+		//			 << " " << F( 4,2, deltaE2 ) << " " << F( 4,2, delta ) << " "
+		//			 << F( 4,2, std::exp( std::max(-40.0, -delta ) ) ) <<  " " << F( 4,2, r ) << std::endl;
+
 	}
 	if ( swap ) {
-		//	tr.Trace<< "swap! " << std::endl;
+		//tr.Trace<< "swap! " << std::endl;
 		set_current_temp( new_level );
 		monte_carlo()->score_function( *hamiltonians_[ new_level ] );
 	}
@@ -423,7 +433,49 @@ void HamiltonianExchange::clear() {
 	Parent::clear();
 }
 
+using namespace core::scoring;
+class PatchOperation {
+public:
+
+	PatchOperation( ScoreType st, std::string const& op, Real wt ) :
+		score_type_( st ),
+		op_ ( op ),
+		wt_ ( wt ),
+		is_file_ (false)
+	{}
+
+	PatchOperation( std::string const& file ) : file_( file ) {
+		is_file_ = true; //cheap Polymorphism
+	}
+
+	void apply( ScoreFunction& score ) const {
+		if ( is_file_ ) {
+			score.apply_patch_from_file( file_ );
+		} else { //direct operation
+			if ( op_ == "*=" ) {
+				tr.Debug << "patching weight " << score_type_ << " with " << op_ << wt_ << std::endl;
+				score.set_weight( score_type_, score.get_weight( score_type_ )*wt_ );
+			} else if ( op_ == "=" ) {
+				score.set_weight( score_type_, wt_ );
+			} else {
+				utility_exit_with_message("unrecognized scorefunction patch operation "+op_	);
+			}
+		} //direct operation
+	} //apply
+
+private:
+	ScoreType score_type_;
+	std::string op_;
+	Real wt_;
+	std::string file_;
+	bool is_file_;
+};
+
+
 bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
+	typedef utility::vector1< PatchOperation > PatchOperationList;
+	PatchOperationList global_patch_operations;
+
 	clear();
 	utility::vector1< core::Real > temperatures;
 	utility::io::izstream in( filename );
@@ -453,14 +505,36 @@ bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 			tr.Info << "using " << n_dim << " grid-dimensions" << std::endl;
 			continue;
 		}
-
+		if ( tag_stream.good() && tag == "GLOBAL_PATCH" ) {
+			std::string tag1, tag2;
+			tag_stream >> tag1;
+			if ( tag_stream.fail() ) {
+				utility_exit_with_message( "GLOBAL_PATCH statement has to be followed by file-name or patch-operation" );
+			}
+			tag_stream >> tag2;
+			if ( tag_stream.fail() ) { //this was a single file-name
+				global_patch_operations.push_back( PatchOperation( tag1 ) );
+			} else {
+				std::istringstream line_stream( line );
+				line_stream >> tag; //read GLOBAL_PATCH again
+				core::scoring::ScoreType score_type;
+				std::string operation;
+				Real wt;
+				line_stream >> score_type >> operation >> wt;
+				if ( line_stream.fail() ) {
+					utility_exit_with_message( "Expected score_type, operation and weight after GLOBAL_PATCH or a file-name" );
+				}
+				global_patch_operations.push_back( PatchOperation( score_type, operation, wt ) );
+			}
+			continue;
+		}
 		if ( tag_stream.good() && tag[0]=='#' ) {
-			tr.Trace << "read comment line: " << line << std::endl;
+			tr.Debug << "read comment line: " << line << std::endl;
 			continue;
 		}
 
 		if ( !tag_stream.good() ) {
-			tr.Trace << "read empy line: " << line << std::endl;
+			tr.Debug << "read empy line: " << line << std::endl;
 			continue;
 		}
 
@@ -493,6 +567,9 @@ bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 		} else { // patch or patch = "NO_PATCH"
 			score = ScoreFunctionFactory::create_score_function( score_name, patch_name );
 		}
+		for ( PatchOperationList::const_iterator it = global_patch_operations.begin(); it != global_patch_operations.end(); ++it ) {
+			it->apply( *score );
+		}
 		tr.Debug << "line_stream still good after PATCH reading" << std::endl;
 		while ( line_stream.good() ) {
 			std::string tag;
@@ -513,14 +590,8 @@ bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 				tr.Debug << "tried to read a X op wt triple and failed.. " << std::endl;
 				break;
 			}
-			if ( operation == "*=" ) {
-				tr.Debug << "patching weight " << score_type << " with " << operation << wt << std::endl;
-				score->set_weight( score_type, score->get_weight( score_type )*wt );
-			} else if ( operation == "=" ) {
-				score->set_weight( score_type, wt );
-			} else {
-				utility_exit_with_message("unrecognized scorefunction patch operation "+operation+" in file: "+filename	);
-			}
+			PatchOperation patch( score_type, operation, wt );
+			patch.apply( *score );
 		}
 		temperatures.push_back( temp );
 		hamiltonians_.push_back( score );

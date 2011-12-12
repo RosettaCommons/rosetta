@@ -41,7 +41,7 @@ namespace protocols {
 namespace canonical_sampling {
 
 ///@details
-	class MetropolisHastingsMover : public protocols::moves::Mover {
+class MetropolisHastingsMover : public protocols::moves::Mover {
 
 public:
 
@@ -182,7 +182,6 @@ public:
 	last_accepted() const {
 		return last_accepted_;
 	}
-
 
 protected:
 

@@ -174,6 +174,8 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 				 mover->last_proposal_density_ratio(),
 				 mover->last_inner_score_temperature_delta()
 		);
+		set_last_move( mover );
+		set_last_accepted( accepted );
 		tempering_->temperature_move( pose, monte_carlo_->last_accepted_score() );
 		mover->observe_after_metropolis(*this);
 
