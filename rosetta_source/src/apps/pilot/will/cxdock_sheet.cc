@@ -40,6 +40,7 @@ OPT_1GRP_KEY( Integer      , cxdock, sphere       )
 OPT_1GRP_KEY( IntegerVector, cxdock, syms         )
 OPT_1GRP_KEY( Real         , cxdock, clash_dis    )
 OPT_1GRP_KEY( Real         , cxdock, contact_dis  )
+OPT_1GRP_KEY( Real         , cxdock, hb_dis  )
 OPT_1GRP_KEY( Real         , cxdock, num_contacts )
 OPT_1GRP_KEY( Boolean      , cxdock, dumpfirst )
 void register_options() {
@@ -49,6 +50,7 @@ void register_options() {
 	NEW_OPT( cxdock::syms	 ,"CX symmitries", utility::vector1< Size >() );
 	NEW_OPT( cxdock::clash_dis   ,"min acceptable contact dis", 3.5 );
 	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 7.0 );	
+	NEW_OPT( cxdock::hb_dis      ,"max acceptable hb dis", 5.2 );	 // very loose!
 	NEW_OPT( cxdock::num_contacts ,"required no. contacts", 30.0 );
 	NEW_OPT( cxdock::sphere       ,"sph points", 8192 );
 	NEW_OPT( cxdock::dumpfirst    ,"stop on first hit", false );
@@ -91,7 +93,7 @@ static core::io::silent::SilentFileData sfd;
 #include <apps/pilot/will/sicfast.ihh>
 
 
-void get_avail_don_acc(Pose & pose, std::set<Size> actdon, std::set<Size> actacc) {
+void get_avail_don_acc(Pose & pose, std::set<Size> & actdon, std::set<Size> & actacc) {
 	ScoreFunctionOP shb = new core::scoring::ScoreFunction;
 	shb->set_weight(core::scoring::hbond_lr_bb,1.0);
 	shb->set_weight(core::scoring::hbond_sr_bb,1.0);
@@ -131,8 +133,16 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 		if(!init.residue(ir).is_protein()) continue;
 		for(int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia) {
 			bb0tmp.push_back(init.xyz(AtomID(ia,ir)));
-			if( ir > 1 && ir < init.n_residue() && init.secstruct(ir)=='E' && ia==1 && actdon.find(ir)==actdon.end() ) availdon.push_back(bb0tmp.size());
-			if( ir > 1 && ir < init.n_residue() && init.secstruct(ir)=='E' && ia==4 && actacc.find(ir)==actacc.end() ) availacc.push_back(bb0tmp.size());			
+			if( ir > 1 && ir < init.n_residue() && ia==1 && actdon.find(ir)==actdon.end() &&
+			    (init.secstruct(ir-1)=='E'&&actdon.find(ir-1)==actdon.end()||
+					 init.secstruct(ir  )=='E'&&actdon.find(ir  )==actdon.end()||
+					 init.secstruct(ir+1)=='E'&&actdon.find(ir+1)==actdon.end())
+			) availdon.push_back(bb0tmp.size());
+			if( ir > 1 && ir < init.n_residue() && ia==4 && actacc.find(ir)==actacc.end() &&
+		    	(init.secstruct(ir-1)=='E'&&actacc.find(ir-1)==actacc.end()||
+				 	 init.secstruct(ir  )=='E'&&actacc.find(ir  )==actacc.end()||
+				 	 init.secstruct(ir+1)=='E'&&actacc.find(ir+1)==actacc.end())
+			) availacc.push_back(bb0tmp.size());
 		}
 		if(init.secstruct(ir)=='H') {
 			if(init.residue(ir).has("CB")) cb0tmp.push_back(init.xyz(AtomID(5,ir)));

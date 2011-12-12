@@ -13,8 +13,8 @@ sicfast(
 	Real & hbcount
 ) {
 	Real const CONTACT_D2 = sqr(basic::options::option[basic::options::OptionKeys::cxdock::contact_dis]());
-	Real const BIN        =     basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]() /2.0;
-
+	Real const BIN        =     basic::options::option[basic::options::OptionKeys::cxdock::clash_dis]()/2.0;
+	Real const HB_DIS2    = sqr(basic::options::option[basic::options::OptionKeys::cxdock::hb_dis]());
 	// get bounds for plane hashes
 	Real xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
 	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
@@ -91,10 +91,20 @@ sicfast(
 	  }
 	}
 	hbcount = 0.0;
-	for(vector1<int>::const_iterator ia = don.begin(); ia != don.end(); ++ia) {
-		for(vector1<int>::const_iterator ib = acc.begin(); ib != acc.end(); ++ib) {		
-			if( pb[*ib].distance_squared(pa[*ia]+(mindis*Vec(0,0,1)) ) < 5.0*5.0 ) hbcount+=1.0;
-			if( pb[*ia].distance_squared(pa[*ib]+(mindis*Vec(0,0,1)) ) < 5.0*5.0 ) hbcount+=1.0;
+	for(vector1<int>::const_iterator id = don.begin(); id != don.end(); ++id) {
+		for(vector1<int>::const_iterator ia = acc.begin(); ia != acc.end(); ++ia) {		
+			if( pb[*ia].distance_squared(pa[*id]+(mindis*Vec(0,0,1)) ) < HB_DIS2 ) {
+				Vec const & acb = pb[*ia-1];
+				Vec const & acc = pb[*ia  ];
+				Vec const & don = pa[*id  ]+(mindis*Vec(0,0,1));
+				if( (acc-acb).normalized().dot( (don-acc).normalized() ) > 0.0 ) hbcount+=1.0;
+			}
+			if( pb[*id].distance_squared(pa[*ia]+(mindis*Vec(0,0,1)) ) < HB_DIS2 ) {
+				Vec const & acb = pa[*ia-1]+(mindis*Vec(0,0,1));
+				Vec const & acc = pa[*ia  ]+(mindis*Vec(0,0,1));
+				Vec const & don = pb[*id  ];
+				if( (acc-acb).normalized().dot( (don-acc).normalized() ) > 0.0 ) hbcount+=1.0;
+			}
 		}
 	}
 	return mindis;
