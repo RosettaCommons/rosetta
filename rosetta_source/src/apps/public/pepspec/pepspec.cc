@@ -491,20 +491,24 @@ make_sequence_change(
 	ResidueTypeCAPs rsd_types
 		( ResidueSelector().set_aa( new_aa ).match_variants( current_rsd.type() ).select( current_rsd.residue_type_set() ) );
 
-	Size rsd_types_index( 1 );
 	std::string const errmsg
 		( "make_sequence_change failed: new_aa= "+name_from_aa(new_aa)+" rsd_types.size()= "+string_of( rsd_types.size() ) );
 
-	if ( new_aa == aa_his ) {
-		if ( rsd_types.size() != 2 || which_his_variant > 2 ) utility_exit_with_message( errmsg );
-		rsd_types_index = which_his_variant;
-	} else if ( rsd_types.size() != 1 ) {
-		utility_exit_with_message( errmsg );
-	}
+	if( rsd_types.size() == 0 ) TR << errmsg << std::cout; 
+	else{
+		Size rsd_types_index( 1 );
 
-	conformation::ResidueOP new_rsd( ResidueFactory::create_residue( *(rsd_types[ rsd_types_index ] ),
-				current_rsd, pose.conformation() ) );
-	pose.replace_residue( seqpos, *new_rsd, false );
+		if ( new_aa == aa_his ) {
+			if ( rsd_types.size() != 2 || which_his_variant > 2 ) TR << errmsg << std::cout;
+			rsd_types_index = which_his_variant;
+		} else if ( rsd_types.size() != 1 ) {
+			TR << errmsg << std::cout;
+		}
+
+		conformation::ResidueOP new_rsd( ResidueFactory::create_residue( *(rsd_types[ rsd_types_index ] ),
+					current_rsd, pose.conformation() ) );
+		pose.replace_residue( seqpos, *new_rsd, false );
+	}
 }
 
 
@@ -801,7 +805,7 @@ void add_pep_res(
 //		ResidueOP vrt( ResidueFactory::create_residue( rsd_set.name_map( "VirtBB" ) ) );
 
 		if( add_cterm ){
-			pose.conformation().safely_append_polymer_residue_after_seqpos( *vrt, pep_end, true );
+			pose.conformation().safely_append_polymer_residue_after_seqpos( *vrt, pep_end, false );
 			pep_end = pep_end + 1;
 			pose.set_omega( pep_end - 1, 180.0 );
 			pose.conformation().update_polymeric_connection( pep_end );
@@ -810,7 +814,7 @@ void add_pep_res(
 		}
 
 		if( add_nterm ){
-			pose.conformation().safely_prepend_polymer_residue_before_seqpos( *vrt, pep_begin, true );
+			pose.conformation().safely_prepend_polymer_residue_before_seqpos( *vrt, pep_begin, false );
 			pep_end = pep_end + 1;
 			pep_anchor = pep_anchor + 1;
 			pose.set_omega( pep_begin, 180.0 );
@@ -1070,7 +1074,7 @@ gen_pep_bb_sequential(
 
 		std::string this_input_seq( input_seq );
 		for( Size ii = 1; ii <= this_prepend; ++ii ){
-			pose.prepend_polymer_residue_before_seqpos( *res, pep_begin, true );
+			pose.prepend_polymer_residue_before_seqpos( *res, pep_begin, false );
 			pep_end = pep_end + 1;
 			pep_anchor = pep_anchor + 1;
 			pose.set_omega( pep_begin, 180.0 );
@@ -1078,7 +1082,7 @@ gen_pep_bb_sequential(
 			pose.conformation().update_polymeric_connection( pep_begin + 1 );
 		}
 		for( Size ii = 1; ii <= this_append; ++ii ){
-			pose.append_polymer_residue_after_seqpos( *res, pep_end, true );
+			pose.append_polymer_residue_after_seqpos( *res, pep_end, false );
 			pep_end = pep_end + 1;
 			pose.set_omega( pep_end - 1, 180.0 );
 			pose.conformation().update_polymeric_connection( pep_end );
