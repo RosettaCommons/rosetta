@@ -159,8 +159,8 @@ main (int argc, char *argv[])
 		offset = -1;
 	}
 	//TR << string_of(dt) << "\t" << string_of(offset) << std::endl;
-	Size nsub_bb = options::option[matdes::dock::num_subs_building_block]();
-	Size nsub_total = options::option[matdes::dock::num_subs_total]();
+	Size nsub_bb = options::option[matdes::num_subs_building_block]();
+	Size nsub_total = options::option[matdes::num_subs_total]();
 
   // Read in pose
   Pose pose;
@@ -199,8 +199,8 @@ main (int argc, char *argv[])
 
   // If matdes::dock::dump_pdb is set, dump the pdb and get the hell outta here.
   if (options::option[matdes::dock::dump_pdb]()) {
-		utility::vector1<Real> radial_disps = options::option[matdes::dock::radial_disp]();
-		utility::vector1<Real> angles = options::option[matdes::dock::angle]();
+		utility::vector1<Real> radial_disps = options::option[matdes::radial_disp]();
+		utility::vector1<Real> angles = options::option[matdes::angle]();
 		if (radial_disps.size() != angles.size()) {
 			utility_exit_with_message("ERROR: radial_disp and angle input vectors are not the same length!");
 		} else {
@@ -208,7 +208,7 @@ main (int argc, char *argv[])
 		    move_pose(pose, sym_jump, Vec(radial_disps[i],0,0), angles[i]+1);
 				// If desired, only spit out chain A
 				if (options::option[matdes::dock::dump_chainA_only]()) {
-					std::string fn = options::option[matdes::dock::prefix]()+options::option[matdes::dock::pdbID]()+"_"+string_of(radial_disps[i])+"_"+string_of(angles[i])+"_A.pdb";
+					std::string fn = options::option[matdes::prefix]()+options::option[matdes::pdbID]()+"_"+string_of(radial_disps[i])+"_"+string_of(angles[i])+"_A.pdb";
   	      utility::io::ozstream out( fn );
 					Size atom_counter = 1;
 					for (Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
@@ -219,7 +219,7 @@ main (int argc, char *argv[])
 	        out.close();
 				// Otherwise, spit out the entire assembly
 				} else {
-					pose.dump_pdb(options::option[matdes::dock::prefix]()+options::option[matdes::dock::pdbID]()+"_"+string_of(radial_disps[i])+"_"+string_of(angles[i])+".pdb");
+					pose.dump_pdb(options::option[matdes::prefix]()+options::option[matdes::pdbID]()+"_"+string_of(radial_disps[i])+"_"+string_of(angles[i])+".pdb");
 				}
 				move_pose(pose, sym_jump, Vec(-radial_disps[i],0,0), -(angles[i]+1));
 			}
@@ -231,7 +231,7 @@ main (int argc, char *argv[])
   move_pose(pose, sym_jump, Vec(offset,0.0,0.0), 0.0);
   Real radial_disp = 0;
   for (int r=0; r<(360/nsub_bb); r++) { // Will need to move away from hard-coding eventually
-    move_pose(pose, sym_jump, Vec(-radial_disp,0.0,0.0), 1.0);
+	  move_pose(pose, sym_jump, Vec(-radial_disp,0.0,0.0), 1.0);
     radial_disp = 0;
     int int_cb_count = -1;
     while (int_cb_count != 0) {

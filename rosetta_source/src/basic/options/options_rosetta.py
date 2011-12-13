@@ -252,30 +252,6 @@ Options = Option_Group( '',
 			),
 		), # rdf
 
-		Option_Group( 'matdes_dock',
-			Option('radial_disp', 'RealVector', desc='Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb'),
-			Option('neg_r', 'Real', desc='Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive.', default='0'),
-			Option('angle', 'RealVector', desc='Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb'),
-			Option('dump_pdb', 'Boolean', desc='Dump a pdb of a particular docked configuration', default='false'),
-			Option('dump_chainA_only', 'Boolean', desc='Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb', default='false'),
-			Option('pdbID', 'String', desc='The PDB ID', default='0xxx'),
-			Option('prefix', 'String', desc='Prefix appended to output PDB files. Perhaps useful to describe the architecture, e.g., 532_3_...', default='pre_'),
-			Option('num_subs_building_block', 'Integer', desc='The number of subunits in the oligomeric building block', default='0'),
-			Option('num_subs_total', 'Integer', desc='The number of subunits in the target assembly', default='0'),
-		), # matdes_search
-
-		Option_Group( 'matdes_design',
-			Option('contact_dist', 'Real', desc='CA-CA distance for defining interface residues', default='10.0'),
-			Option('grid_size_angle' , 'Real', desc='The width of angle space to start design/minimize runs from, centered on the starting angle', default='1.0'),
-			Option('grid_size_radius', 'Real', desc='The width of radius space to start design/minimize runs from, centered on the starting radius', default='1.0'),
-			Option('grid_nsamp_angle' , 'Integer', desc='The number of samples the rigid body grid is divided into in angle space', default='9'),
-			Option('grid_nsamp_radius', 'Integer', desc='The number of samples the rigid body grid is divided into in radius space', default='9'),
-			Option('num_subs_building_block', 'Integer', desc='The number of subunits in the oligomeric building block', default='0'),
-			Option('fav_nat_bonus', 'Real', desc='Bonus to be awarded to native residues', default='0.0'),
-			Option('revert_pos', 'IntegerVector', desc='Positions that were designed, including those being reverted'),
-			Option('revert_ids', 'StringVector', desc='AA identities at the revert_pos positions, in the format aa_ala'),
-		), # matdes_design
-
 	), # in
 
 	Option_Group( 'MM',
@@ -4579,16 +4555,17 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
   ),
 
 	Option_Group( 'matdes',
-		Option_Group( 'dock',
-                        Option('radial_disp', 'RealVector', desc='Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb'),
-                        Option('neg_r', 'Real', desc='Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive.', default='0'),
-                        Option('angle', 'RealVector', desc='Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb'),
-                        Option('dump_pdb', 'Boolean', desc='Dump a pdb of a particular docked configuration', default='false'),
-                        Option('dump_chainA_only', 'Boolean', desc='Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb', default='false'),
+                        Option('num_subs_building_block', 'Integer', desc='The number of subunits in the oligomeric building block', default='1'),
+                        Option('num_subs_total', 'Integer', desc='The number of subunits in the target assembly', default='1'),
                         Option('pdbID', 'String', desc='The PDB ID', default='0xxx'),
                         Option('prefix', 'String', desc='Prefix appended to output PDB files. Perhaps useful to describe the architecture, e.g., 532_3_...', default='pre_'),
-                        Option('num_subs_building_block', 'Integer', desc='The number of subunits in the oligomeric building block', default='0'),
-                        Option('num_subs_total', 'Integer', desc='The number of subunits in the target assembly', default='0'),
+                        Option('radial_disp', 'RealVector', desc='Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb'),
+                        Option('angle', 'RealVector', desc='Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb'),
+			Option('tag', 'String', desc='Four digit ID tag attached to a design model during design'),
+		Option_Group( 'dock',
+                        Option('neg_r', 'Real', desc='Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive.', default='0'),
+                        Option('dump_pdb', 'Boolean', desc='Dump a pdb of a particular docked configuration', default='false'),
+                        Option('dump_chainA_only', 'Boolean', desc='Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb', default='false'),
                 ), # dock
 
                 Option_Group( 'design',
@@ -4597,11 +4574,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                         Option('grid_size_radius', 'Real', desc='The width of radius space to start design/minimize runs from, centered on the starting radius', default='1.0'),
                         Option('grid_nsamp_angle' , 'Integer', desc='The number of samples the rigid body grid is divided into in angle space', default='9'),
                         Option('grid_nsamp_radius', 'Integer', desc='The number of samples the rigid body grid is divided into in radius space', default='9'),
-                        Option('num_subs_building_block', 'Integer', desc='The number of subunits in the oligomeric building block', default='0'),
                         Option('fav_nat_bonus', 'Real', desc='Bonus to be awarded to native residues', default='0.0'),
-                        Option('revert_pos', 'IntegerVector', desc='Positions that were designed, including those being reverted'),
-                        Option('revert_ids', 'StringVector', desc='AA identities at the revert_pos positions, in the format ALA'),
                 ), # design
+
+		Option_Group( 'mutalyze',
+			Option('calc_rot_boltz', 'Boolean', desc='Specify whether to calculate RotamerBoltzmann probabilities or not', default='0'),
+			Option('min_rb', 'Boolean', desc='Specify whether to minimize the rigid body DOFs', default='1'),
+		), # mutalyze
+
 	), # matdes
 
 	Option_Group( 'gpu',

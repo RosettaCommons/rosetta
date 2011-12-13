@@ -523,104 +523,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
  </li>
-<li><h2>in:matdes_dock</h2>
-<dl>
-<dt><b>-matdes_dock</b> \<Boolean\><dt>
-<dd>matdes_dock option group</dd><br>
-</dl>
-<dl>
-<dt><b>-radial_disp</b> \<RealVector\><dt>
-<dd>Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb</dd><br>
-</dl>
-<dl>
-<dt><b>-neg_r</b> \<Real\><dt>
-<dd>Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive.</dd><br>
-<dd>Default: 0</dd><br>
-</dl>
-<dl>
-<dt><b>-angle</b> \<RealVector\><dt>
-<dd>Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb</dd><br>
-</dl>
-<dl>
-<dt><b>-dump_pdb</b> \<Boolean\><dt>
-<dd>Dump a pdb of a particular docked configuration</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-dump_chainA_only</b> \<Boolean\><dt>
-<dd>Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-pdbID</b> \<String\><dt>
-<dd>The PDB ID</dd><br>
-<dd>Default: "0xxx"</dd><br>
-</dl>
-<dl>
-<dt><b>-prefix</b> \<String\><dt>
-<dd>Prefix appended to output PDB files. Perhaps useful to describe the architecture, e.g., 532_3_...</dd><br>
-<dd>Default: "pre_"</dd><br>
-</dl>
-<dl>
-<dt><b>-num_subs_building_block</b> \<Integer\><dt>
-<dd>The number of subunits in the oligomeric building block</dd><br>
-<dd>Default: 0</dd><br>
-</dl>
-<dl>
-<dt><b>-num_subs_total</b> \<Integer\><dt>
-<dd>The number of subunits in the target assembly</dd><br>
-<dd>Default: 0</dd><br>
-</dl>
- </li>
-<li><h2>in:matdes_design</h2>
-<dl>
-<dt><b>-matdes_design</b> \<Boolean\><dt>
-<dd>matdes_design option group</dd><br>
-</dl>
-<dl>
-<dt><b>-contact_dist</b> \<Real\><dt>
-<dd>CA-CA distance for defining interface residues</dd><br>
-<dd>Default: 10.0</dd><br>
-</dl>
-<dl>
-<dt><b>-grid_size_angle</b> \<Real\><dt>
-<dd>The width of angle space to start design/minimize runs from, centered on the starting angle</dd><br>
-<dd>Default: 1.0</dd><br>
-</dl>
-<dl>
-<dt><b>-grid_size_radius</b> \<Real\><dt>
-<dd>The width of radius space to start design/minimize runs from, centered on the starting radius</dd><br>
-<dd>Default: 1.0</dd><br>
-</dl>
-<dl>
-<dt><b>-grid_nsamp_angle</b> \<Integer\><dt>
-<dd>The number of samples the rigid body grid is divided into in angle space</dd><br>
-<dd>Default: 9</dd><br>
-</dl>
-<dl>
-<dt><b>-grid_nsamp_radius</b> \<Integer\><dt>
-<dd>The number of samples the rigid body grid is divided into in radius space</dd><br>
-<dd>Default: 9</dd><br>
-</dl>
-<dl>
-<dt><b>-num_subs_building_block</b> \<Integer\><dt>
-<dd>The number of subunits in the oligomeric building block</dd><br>
-<dd>Default: 0</dd><br>
-</dl>
-<dl>
-<dt><b>-fav_nat_bonus</b> \<Real\><dt>
-<dd>Bonus to be awarded to native residues</dd><br>
-<dd>Default: 0.0</dd><br>
-</dl>
-<dl>
-<dt><b>-revert_pos</b> \<IntegerVector\><dt>
-<dd>Positions that were designed, including those being reverted</dd><br>
-</dl>
-<dl>
-<dt><b>-revert_ids</b> \<StringVector\><dt>
-<dd>AA identities at the revert_pos positions, in the format aa_ala</dd><br>
-</dl>
- </li>
 <li><h2>MM</h2>
 <dl>
 <dt><b>-MM</b> \<Boolean\><dt>
@@ -11303,34 +11205,15 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-matdes</b> \<Boolean\><dt>
 <dd>matdes option group</dd><br>
 </dl>
- </li>
-<li><h2>matdes:dock</h2>
 <dl>
-<dt><b>-dock</b> \<Boolean\><dt>
-<dd>dock option group</dd><br>
+<dt><b>-num_subs_building_block</b> \<Integer\><dt>
+<dd>The number of subunits in the oligomeric building block</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
 <dl>
-<dt><b>-radial_disp</b> \<RealVector\><dt>
-<dd>Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb</dd><br>
-</dl>
-<dl>
-<dt><b>-neg_r</b> \<Real\><dt>
-<dd>Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive.</dd><br>
-<dd>Default: 0</dd><br>
-</dl>
-<dl>
-<dt><b>-angle</b> \<RealVector\><dt>
-<dd>Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb</dd><br>
-</dl>
-<dl>
-<dt><b>-dump_pdb</b> \<Boolean\><dt>
-<dd>Dump a pdb of a particular docked configuration</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-dump_chainA_only</b> \<Boolean\><dt>
-<dd>Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb</dd><br>
-<dd>Default: false</dd><br>
+<dt><b>-num_subs_total</b> \<Integer\><dt>
+<dd>The number of subunits in the target assembly</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-pdbID</b> \<String\><dt>
@@ -11343,14 +11226,37 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "pre_"</dd><br>
 </dl>
 <dl>
-<dt><b>-num_subs_building_block</b> \<Integer\><dt>
-<dd>The number of subunits in the oligomeric building block</dd><br>
+<dt><b>-radial_disp</b> \<RealVector\><dt>
+<dd>Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb</dd><br>
+</dl>
+<dl>
+<dt><b>-angle</b> \<RealVector\><dt>
+<dd>Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb</dd><br>
+</dl>
+<dl>
+<dt><b>-tag</b> \<String\><dt>
+<dd>Four digit ID tag attached to a design model during design</dd><br>
+</dl>
+ </li>
+<li><h2>matdes:dock</h2>
+<dl>
+<dt><b>-dock</b> \<Boolean\><dt>
+<dd>dock option group</dd><br>
+</dl>
+<dl>
+<dt><b>-neg_r</b> \<Real\><dt>
+<dd>Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive.</dd><br>
 <dd>Default: 0</dd><br>
 </dl>
 <dl>
-<dt><b>-num_subs_total</b> \<Integer\><dt>
-<dd>The number of subunits in the target assembly</dd><br>
-<dd>Default: 0</dd><br>
+<dt><b>-dump_pdb</b> \<Boolean\><dt>
+<dd>Dump a pdb of a particular docked configuration</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-dump_chainA_only</b> \<Boolean\><dt>
+<dd>Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>matdes:design</h2>
@@ -11384,22 +11290,25 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 9</dd><br>
 </dl>
 <dl>
-<dt><b>-num_subs_building_block</b> \<Integer\><dt>
-<dd>The number of subunits in the oligomeric building block</dd><br>
-<dd>Default: 0</dd><br>
-</dl>
-<dl>
 <dt><b>-fav_nat_bonus</b> \<Real\><dt>
 <dd>Bonus to be awarded to native residues</dd><br>
 <dd>Default: 0.0</dd><br>
 </dl>
+ </li>
+<li><h2>matdes:mutalyze</h2>
 <dl>
-<dt><b>-revert_pos</b> \<IntegerVector\><dt>
-<dd>Positions that were designed, including those being reverted</dd><br>
+<dt><b>-mutalyze</b> \<Boolean\><dt>
+<dd>mutalyze option group</dd><br>
 </dl>
 <dl>
-<dt><b>-revert_ids</b> \<StringVector\><dt>
-<dd>AA identities at the revert_pos positions, in the format ALA</dd><br>
+<dt><b>-calc_rot_boltz</b> \<Boolean\><dt>
+<dd>Specify whether to calculate RotamerBoltzmann probabilities or not</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-min_rb</b> \<Boolean\><dt>
+<dd>Specify whether to minimize the rigid body DOFs</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
  </li>
 <li><h2>gpu</h2>

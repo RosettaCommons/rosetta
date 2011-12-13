@@ -1,8 +1,3 @@
-namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
-namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
-namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
@@ -561,25 +556,26 @@ namespace orbitals { BooleanOptionKey const sc_bb( "orbitals:sc_bb" );  }
 namespace dwkulp { BooleanOptionKey const dwkulp( "dwkulp" );  }
 namespace dwkulp { StringOptionKey const forcePolyAAfragments( "dwkulp:forcePolyAAfragments" );  }
 namespace matdes { BooleanOptionKey const matdes( "matdes" );  }
+namespace matdes { IntegerOptionKey const num_subs_building_block( "matdes:num_subs_building_block" );  }
+namespace matdes { IntegerOptionKey const num_subs_total( "matdes:num_subs_total" );  }
+namespace matdes { StringOptionKey const pdbID( "matdes:pdbID" );  }
+namespace matdes { StringOptionKey const prefix( "matdes:prefix" );  }
+namespace matdes { RealVectorOptionKey const radial_disp( "matdes:radial_disp" );  }
+namespace matdes { RealVectorOptionKey const angle( "matdes:angle" );  }
+namespace matdes { StringOptionKey const tag( "matdes:tag" );  }
 namespace matdes { namespace dock { BooleanOptionKey const dock( "matdes:dock" );  } }
-namespace matdes { namespace dock { RealVectorOptionKey const radial_disp( "matdes:dock:radial_disp" );  } }
 namespace matdes { namespace dock { RealOptionKey const neg_r( "matdes:dock:neg_r" );  } }
-namespace matdes { namespace dock { RealVectorOptionKey const angle( "matdes:dock:angle" );  } }
 namespace matdes { namespace dock { BooleanOptionKey const dump_pdb( "matdes:dock:dump_pdb" );  } }
 namespace matdes { namespace dock { BooleanOptionKey const dump_chainA_only( "matdes:dock:dump_chainA_only" );  } }
-namespace matdes { namespace dock { StringOptionKey const pdbID( "matdes:dock:pdbID" );  } }
-namespace matdes { namespace dock { StringOptionKey const prefix( "matdes:dock:prefix" );  } }
-namespace matdes { namespace dock { IntegerOptionKey const num_subs_building_block( "matdes:dock:num_subs_building_block" );  } }
-namespace matdes { namespace dock { IntegerOptionKey const num_subs_total( "matdes:dock:num_subs_total" );  } }
 namespace matdes { namespace design { BooleanOptionKey const design( "matdes:design" );  } }
 namespace matdes { namespace design { RealOptionKey const contact_dist( "matdes:design:contact_dist" );  } }
 namespace matdes { namespace design { RealOptionKey const grid_size_angle( "matdes:design:grid_size_angle" );  } }
 namespace matdes { namespace design { RealOptionKey const grid_size_radius( "matdes:design:grid_size_radius" );  } }
 namespace matdes { namespace design { IntegerOptionKey const grid_nsamp_angle( "matdes:design:grid_nsamp_angle" );  } }
 namespace matdes { namespace design { IntegerOptionKey const grid_nsamp_radius( "matdes:design:grid_nsamp_radius" );  } }
-namespace matdes { namespace design { IntegerOptionKey const num_subs_building_block( "matdes:design:num_subs_building_block" );  } }
 namespace matdes { namespace design { RealOptionKey const fav_nat_bonus( "matdes:design:fav_nat_bonus" );  } }
-namespace matdes { namespace design { IntegerVectorOptionKey const revert_pos( "matdes:design:revert_pos" );  } }
-namespace matdes { namespace design { StringVectorOptionKey const revert_ids( "matdes:design:revert_ids" );  } }
+namespace matdes { namespace mutalyze { BooleanOptionKey const mutalyze( "matdes:mutalyze" );  } }
+namespace matdes { namespace mutalyze { BooleanOptionKey const calc_rot_boltz( "matdes:mutalyze:calc_rot_boltz" );  } }
+namespace matdes { namespace mutalyze { BooleanOptionKey const min_rb( "matdes:mutalyze:min_rb" );  } }
 namespace gpu { BooleanOptionKey const gpu( "gpu" );  }
 namespace gpu { FileOptionKey const kernel( "gpu:kernel" );  }

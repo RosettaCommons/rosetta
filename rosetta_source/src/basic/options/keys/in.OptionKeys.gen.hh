@@ -117,26 +117,6 @@ namespace in { namespace file { extern BooleanOptionKey const new_chain_order; }
 namespace in { namespace file { extern FileOptionKey const ddg_predictions_file; } }
 namespace in { namespace rdf { extern BooleanOptionKey const rdf; } }
 namespace in { namespace rdf { extern BooleanOptionKey const sep_bb_ss; } }
-namespace in { namespace matdes_dock { extern BooleanOptionKey const matdes_dock; } }
-namespace in { namespace matdes_dock { extern RealVectorOptionKey const radial_disp; } }
-namespace in { namespace matdes_dock { extern RealOptionKey const neg_r; } }
-namespace in { namespace matdes_dock { extern RealVectorOptionKey const angle; } }
-namespace in { namespace matdes_dock { extern BooleanOptionKey const dump_pdb; } }
-namespace in { namespace matdes_dock { extern BooleanOptionKey const dump_chainA_only; } }
-namespace in { namespace matdes_dock { extern StringOptionKey const pdbID; } }
-namespace in { namespace matdes_dock { extern StringOptionKey const prefix; } }
-namespace in { namespace matdes_dock { extern IntegerOptionKey const num_subs_building_block; } }
-namespace in { namespace matdes_dock { extern IntegerOptionKey const num_subs_total; } }
-namespace in { namespace matdes_design { extern BooleanOptionKey const matdes_design; } }
-namespace in { namespace matdes_design { extern RealOptionKey const contact_dist; } }
-namespace in { namespace matdes_design { extern RealOptionKey const grid_size_angle; } }
-namespace in { namespace matdes_design { extern RealOptionKey const grid_size_radius; } }
-namespace in { namespace matdes_design { extern IntegerOptionKey const grid_nsamp_angle; } }
-namespace in { namespace matdes_design { extern IntegerOptionKey const grid_nsamp_radius; } }
-namespace in { namespace matdes_design { extern IntegerOptionKey const num_subs_building_block; } }
-namespace in { namespace matdes_design { extern RealOptionKey const fav_nat_bonus; } }
-namespace in { namespace matdes_design { extern IntegerVectorOptionKey const revert_pos; } }
-namespace in { namespace matdes_design { extern StringVectorOptionKey const revert_ids; } }
 
 } // namespace OptionKeys
 } // namespace options

@@ -479,8 +479,8 @@ Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
       core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
       Size const j( edge->get_second_node_ind() );
 			bool symm_add;
-			if (basic::options::option[basic::options::OptionKeys::matdes::design::num_subs_building_block].user()) {
-				Size num_subs = basic::options::option[basic::options::OptionKeys::matdes::design::num_subs_building_block]();
+			if (basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user()) {
+				Size num_subs = basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
 				symm_add = (symm_info->subunit_index(i) <= num_subs && symm_info->subunit_index(j) > num_subs) || (symm_info->subunit_index(j) <= num_subs && symm_info->subunit_index(i) > num_subs); // NK
 			} else {
 				symm_add = ( ( (symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ||

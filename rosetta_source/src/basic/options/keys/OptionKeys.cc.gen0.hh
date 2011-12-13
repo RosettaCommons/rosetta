@@ -112,26 +112,6 @@ namespace in { namespace file { BooleanOptionKey const new_chain_order( "in:file
 namespace in { namespace file { FileOptionKey const ddg_predictions_file( "in:file:ddg_predictions_file" );  } }
 namespace in { namespace rdf { BooleanOptionKey const rdf( "in:rdf" );  } }
 namespace in { namespace rdf { BooleanOptionKey const sep_bb_ss( "in:rdf:sep_bb_ss" );  } }
-namespace in { namespace matdes_dock { BooleanOptionKey const matdes_dock( "in:matdes_dock" );  } }
-namespace in { namespace matdes_dock { RealVectorOptionKey const radial_disp( "in:matdes_dock:radial_disp" );  } }
-namespace in { namespace matdes_dock { RealOptionKey const neg_r( "in:matdes_dock:neg_r" );  } }
-namespace in { namespace matdes_dock { RealVectorOptionKey const angle( "in:matdes_dock:angle" );  } }
-namespace in { namespace matdes_dock { BooleanOptionKey const dump_pdb( "in:matdes_dock:dump_pdb" );  } }
-namespace in { namespace matdes_dock { BooleanOptionKey const dump_chainA_only( "in:matdes_dock:dump_chainA_only" );  } }
-namespace in { namespace matdes_dock { StringOptionKey const pdbID( "in:matdes_dock:pdbID" );  } }
-namespace in { namespace matdes_dock { StringOptionKey const prefix( "in:matdes_dock:prefix" );  } }
-namespace in { namespace matdes_dock { IntegerOptionKey const num_subs_building_block( "in:matdes_dock:num_subs_building_block" );  } }
-namespace in { namespace matdes_dock { IntegerOptionKey const num_subs_total( "in:matdes_dock:num_subs_total" );  } }
-namespace in { namespace matdes_design { BooleanOptionKey const matdes_design( "in:matdes_design" );  } }
-namespace in { namespace matdes_design { RealOptionKey const contact_dist( "in:matdes_design:contact_dist" );  } }
-namespace in { namespace matdes_design { RealOptionKey const grid_size_angle( "in:matdes_design:grid_size_angle" );  } }
-namespace in { namespace matdes_design { RealOptionKey const grid_size_radius( "in:matdes_design:grid_size_radius" );  } }
-namespace in { namespace matdes_design { IntegerOptionKey const grid_nsamp_angle( "in:matdes_design:grid_nsamp_angle" );  } }
-namespace in { namespace matdes_design { IntegerOptionKey const grid_nsamp_radius( "in:matdes_design:grid_nsamp_radius" );  } }
-namespace in { namespace matdes_design { IntegerOptionKey const num_subs_building_block( "in:matdes_design:num_subs_building_block" );  } }
-namespace in { namespace matdes_design { RealOptionKey const fav_nat_bonus( "in:matdes_design:fav_nat_bonus" );  } }
-namespace in { namespace matdes_design { IntegerVectorOptionKey const revert_pos( "in:matdes_design:revert_pos" );  } }
-namespace in { namespace matdes_design { StringVectorOptionKey const revert_ids( "in:matdes_design:revert_ids" );  } }
 namespace MM { BooleanOptionKey const MM( "MM" );  }
 namespace MM { BooleanOptionKey const ignore_missing_bondangle_params( "MM:ignore_missing_bondangle_params" );  }
 namespace mysql { BooleanOptionKey const mysql( "mysql" );  }
@@ -586,3 +566,18 @@ namespace abinitio { FileOptionKey const log_frags( "abinitio:log_frags" );  }
 namespace abinitio { BooleanOptionKey const only_stage1( "abinitio:only_stage1" );  }
 namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
 namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }
+namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight_stage1" );  }
+namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }
+namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }
+namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }
+namespace abinitio { BooleanOptionKey const close_chbrk( "abinitio:close_chbrk" );  }
+namespace abinitio { BooleanOptionKey const include_stage5( "abinitio:include_stage5" );  }
+namespace abinitio { BooleanOptionKey const close_loops_by_idealizing( "abinitio:close_loops_by_idealizing" );  }
+namespace abinitio { BooleanOptionKey const optimize_cutpoints_using_kic( "abinitio:optimize_cutpoints_using_kic" );  }
+namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio:optimize_cutpoints_margin" );  }
+namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
+namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
+namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
+namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
+namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
+namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }

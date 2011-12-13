@@ -117,26 +117,6 @@ option.add( basic::options::OptionKeys::in::file::new_chain_order, "ensures chai
 option.add( basic::options::OptionKeys::in::file::ddg_predictions_file, "File that contains mutational ddG information. Used by ddG task operation/filter." ).def("");
 option.add( basic::options::OptionKeys::in::rdf::rdf, "rdf option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::in::rdf::sep_bb_ss, "separate RDFs by SS for backbone atypes " ).def(true);
-option.add( basic::options::OptionKeys::in::matdes_dock::matdes_dock, "matdes_dock option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::in::matdes_dock::radial_disp, "Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb" );
-option.add( basic::options::OptionKeys::in::matdes_dock::neg_r, "Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive." ).def(0);
-option.add( basic::options::OptionKeys::in::matdes_dock::angle, "Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb" );
-option.add( basic::options::OptionKeys::in::matdes_dock::dump_pdb, "Dump a pdb of a particular docked configuration" ).def(false);
-option.add( basic::options::OptionKeys::in::matdes_dock::dump_chainA_only, "Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb" ).def(false);
-option.add( basic::options::OptionKeys::in::matdes_dock::pdbID, "The PDB ID" ).def("0xxx");
-option.add( basic::options::OptionKeys::in::matdes_dock::prefix, "Prefix appended to output PDB files. Perhaps useful to describe the architecture, e.g., 532_3_..." ).def("pre_");
-option.add( basic::options::OptionKeys::in::matdes_dock::num_subs_building_block, "The number of subunits in the oligomeric building block" ).def(0);
-option.add( basic::options::OptionKeys::in::matdes_dock::num_subs_total, "The number of subunits in the target assembly" ).def(0);
-option.add( basic::options::OptionKeys::in::matdes_design::matdes_design, "matdes_design option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::in::matdes_design::contact_dist, "CA-CA distance for defining interface residues" ).def(10.0);
-option.add( basic::options::OptionKeys::in::matdes_design::grid_size_angle, "The width of angle space to start design/minimize runs from, centered on the starting angle" ).def(1.0);
-option.add( basic::options::OptionKeys::in::matdes_design::grid_size_radius, "The width of radius space to start design/minimize runs from, centered on the starting radius" ).def(1.0);
-option.add( basic::options::OptionKeys::in::matdes_design::grid_nsamp_angle, "The number of samples the rigid body grid is divided into in angle space" ).def(9);
-option.add( basic::options::OptionKeys::in::matdes_design::grid_nsamp_radius, "The number of samples the rigid body grid is divided into in radius space" ).def(9);
-option.add( basic::options::OptionKeys::in::matdes_design::num_subs_building_block, "The number of subunits in the oligomeric building block" ).def(0);
-option.add( basic::options::OptionKeys::in::matdes_design::fav_nat_bonus, "Bonus to be awarded to native residues" ).def(0.0);
-option.add( basic::options::OptionKeys::in::matdes_design::revert_pos, "Positions that were designed, including those being reverted" );
-option.add( basic::options::OptionKeys::in::matdes_design::revert_ids, "AA identities at the revert_pos positions, in the format aa_ala" );
 option.add( basic::options::OptionKeys::MM::MM, "MM option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::MM::ignore_missing_bondangle_params, "ignore failed lookups for missing bond angle parameters" ).def(false);
 option.add( basic::options::OptionKeys::mysql::mysql, "mysql option group" ).legal(true).def(true);
@@ -591,9 +571,7 @@ option.add( basic::options::OptionKeys::abinitio::log_frags, "fragment insertion
 option.add( basic::options::OptionKeys::abinitio::only_stage1, "useful for benchmarks sets cycle of all higher stages to 0" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::end_bias, "set the endbias for Fragment moves" ).def(30.0);
 option.add( basic::options::OptionKeys::abinitio::symmetry_residue, "hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1" ).def(-1);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight in stage1" ).def(1.0);
+option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight in stage1" ).def(1.0);
 option.add( basic::options::OptionKeys::abinitio::override_vdw_all_stages, "apply vdw_weight_stage1 for all stages" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say default: 2 3 4 recover_low happens in stages 2 3 4" ).def(0);
 option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
@@ -608,7 +586,9 @@ option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for ea
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
@@ -1181,9 +1161,7 @@ option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extr
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
+option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
 option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
@@ -1193,7 +1171,9 @@ option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs
 option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);
 option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
-option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
 option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
@@ -1771,14 +1751,14 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
@@ -2336,26 +2316,27 @@ option.add( basic::options::OptionKeys::orbitals::sc_bb, "score the backbone" ).
 option.add( basic::options::OptionKeys::dwkulp::dwkulp, "dwkulp option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::dwkulp::forcePolyAAfragments, "a single amino acid that will be used for fragment picking,default is blank which means taking actual sequence from pose" ).def("");
 option.add( basic::options::OptionKeys::matdes::matdes, "matdes option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::matdes::num_subs_building_block, "The number of subunits in the oligomeric building block" ).def(1);
+option.add( basic::options::OptionKeys::matdes::num_subs_total, "The number of subunits in the target assembly" ).def(1);
+option.add( basic::options::OptionKeys::matdes::pdbID, "The PDB ID" ).def("0xxx");
+option.add( basic::options::OptionKeys::matdes::prefix, "Prefix appended to output PDB files. Perhaps useful to describe the architecture, e.g., 532_3_..." ).def("pre_");
+option.add( basic::options::OptionKeys::matdes::radial_disp, "Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb" );
+option.add( basic::options::OptionKeys::matdes::angle, "Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb" );
+option.add( basic::options::OptionKeys::matdes::tag, "Four digit ID tag attached to a design model during design" );
 option.add( basic::options::OptionKeys::matdes::dock::dock, "dock option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::matdes::dock::radial_disp, "Specify the radial displacement from the center of a closed point group assembly. Use with -in::olig_search::dump_pdb" );
 option.add( basic::options::OptionKeys::matdes::dock::neg_r, "Specify whether radial displacement is positive or negative. 1 for negative, 0 for positive." ).def(0);
-option.add( basic::options::OptionKeys::matdes::dock::angle, "Specify the angle by which a building block is rotated in a symmetrical assembly. Use with -in::olig_search::dump_pdb" );
 option.add( basic::options::OptionKeys::matdes::dock::dump_pdb, "Dump a pdb of a particular docked configuration" ).def(false);
 option.add( basic::options::OptionKeys::matdes::dock::dump_chainA_only, "Only output chain A (the asymmetric unit) of the symmetrical assembly. Use with -in::olig_search::dump_pdb" ).def(false);
-option.add( basic::options::OptionKeys::matdes::dock::pdbID, "The PDB ID" ).def("0xxx");
-option.add( basic::options::OptionKeys::matdes::dock::prefix, "Prefix appended to output PDB files. Perhaps useful to describe the architecture, e.g., 532_3_..." ).def("pre_");
-option.add( basic::options::OptionKeys::matdes::dock::num_subs_building_block, "The number of subunits in the oligomeric building block" ).def(0);
-option.add( basic::options::OptionKeys::matdes::dock::num_subs_total, "The number of subunits in the target assembly" ).def(0);
 option.add( basic::options::OptionKeys::matdes::design::design, "design option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::matdes::design::contact_dist, "CA-CA distance for defining interface residues" ).def(10.0);
 option.add( basic::options::OptionKeys::matdes::design::grid_size_angle, "The width of angle space to start design/minimize runs from, centered on the starting angle" ).def(1.0);
 option.add( basic::options::OptionKeys::matdes::design::grid_size_radius, "The width of radius space to start design/minimize runs from, centered on the starting radius" ).def(1.0);
 option.add( basic::options::OptionKeys::matdes::design::grid_nsamp_angle, "The number of samples the rigid body grid is divided into in angle space" ).def(9);
 option.add( basic::options::OptionKeys::matdes::design::grid_nsamp_radius, "The number of samples the rigid body grid is divided into in radius space" ).def(9);
-option.add( basic::options::OptionKeys::matdes::design::num_subs_building_block, "The number of subunits in the oligomeric building block" ).def(0);
 option.add( basic::options::OptionKeys::matdes::design::fav_nat_bonus, "Bonus to be awarded to native residues" ).def(0.0);
-option.add( basic::options::OptionKeys::matdes::design::revert_pos, "Positions that were designed, including those being reverted" );
-option.add( basic::options::OptionKeys::matdes::design::revert_ids, "AA identities at the revert_pos positions, in the format ALA" );
+option.add( basic::options::OptionKeys::matdes::mutalyze::mutalyze, "mutalyze option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::matdes::mutalyze::calc_rot_boltz, "Specify whether to calculate RotamerBoltzmann probabilities or not" ).def(0);
+option.add( basic::options::OptionKeys::matdes::mutalyze::min_rb, "Specify whether to minimize the rigid body DOFs" ).def(1);
 option.add( basic::options::OptionKeys::gpu::gpu, "gpu option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::gpu::kernel, "kernel src" );
 
