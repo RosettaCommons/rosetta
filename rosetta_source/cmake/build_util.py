@@ -6,16 +6,7 @@ PROJECTS_SETTINGS = {}
 execfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.settings") ,PROJECTS_SETTINGS) 
 KNOWN_PROJECTS = PROJECTS_SETTINGS["projects"]["src"]
 
-#if 'cygwin' in sys.platform:
-#	KNOWN_PROJECTS.append('protocols#A')
-#	KNOWN_PROJECTS.append('protocols#B')
-#else:
-#	KNOWN_PROJECTS.append('protocols')
-#KNOWN_TESTS = [
-#	'interactive',
-#	'game',
-#]
-
+KNOWN_PROJECTS = rosetta_projects()
 TEST_DIR = 'test_area/'
 CXX_TEST_TEMPLATE_FORMAT = '%stest/cxxtest_main.tpl'
 CXX_TEST_GEN_PART_FORMAT = 'external/cxxtest/cxxtestgen.py --part --have-eh --abort-on-fail -o %s %s'
@@ -186,6 +177,11 @@ def clean_test(path_to_mini, test_path, test_files, test_inputs):
 			print 'removing: ' + rem
 			os.remove(rem)
 
+def update_libraries_list(projects):
+    exclude = ['apps', 'pilot_apps']
+    out = open('build/libraries.cmake', 'w')
+    out.write('SET( LIBRARIES ' + reduce(lambda x,y: x + ' ' + y, filter(lambda x: x not in exclude, projects)) + ')')
+
 def project_main(path_to_mini, argv, project_callback):
 	if len(argv) < 2:
 		print 'usage: %s [project]...' % argv[0]
@@ -193,7 +189,7 @@ def project_main(path_to_mini, argv, project_callback):
 		for p in KNOWN_PROJECTS + ['all']:
 			print '    %s' % p
 		sys.exit(-1)
-
+	update_libraries_list(KNOWN_PROJECTS)
 	projects = argv[1:]
 	if projects == ['all']:
 		projects = KNOWN_PROJECTS
