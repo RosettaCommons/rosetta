@@ -147,11 +147,15 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 		// rosetta string functions suck
 		std::string sample_weight_str;
 		core::pose::get_comment(start_pose, "sample_weight", sample_weight_str);
-		std::list < std::string > t;
-		t = utility::split_to_list(sample_weight_str);
+		
+		std::vector < std::string > sample_weight_input_parameters;
+		sample_weight_input_parameters = utility::split(sample_weight_str);
+		
 		utility::vector1 < core::Size > sample_weight;
-		for (std::list<std::string>::const_iterator iterator = t.begin(), end = t.end(); iterator != end; ++iterator) {
-				    sample_weight.push_back( utility::string2int( *iterator ) );
+		for ( core::Size res_count = 0; res_count < start_pose.total_residue(); ++res_count ){ 
+			core::Size new_sample_weight = 50;
+			if( res_count < sample_weight_input_parameters.size() ) new_sample_weight = utility::string2int( sample_weight_input_parameters[res_count] );
+			sample_weight.push_back( new_sample_weight );
 		}
 
 
