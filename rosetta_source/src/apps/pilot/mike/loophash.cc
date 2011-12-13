@@ -31,14 +31,8 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -47,27 +41,14 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
 #include <core/init.hh>
-// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
-// AUTO-REMOVED #include <protocols/loops/Loop.hh>
-// AUTO-REMOVED #include <protocols/wum/SilentStructStore.hh>
 #include <protocols/relax/FastRelax.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/match/Hit.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
-#include <numeric/geometry/hashing/SixDHasher.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/topology_broker/TopologyBroker.hh>
-// AUTO-REMOVED #include <protocols/topology_broker/util.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
@@ -77,6 +58,8 @@
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/BackboneDB.hh>
 
+#include <numeric/geometry/hashing/SixDHasher.hh>
+
 // C++ headers
 //#include <cstdlib>
 
@@ -85,7 +68,6 @@
 #include <cstdio>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -94,13 +76,13 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
 
 
 
 static basic::Tracer TR("main");
+static numeric::random::RandomGenerator RG(2537081);  // <- Magic number, do not change it (and dont try and use it anywhere else)
 
 using namespace protocols::moves;
 using namespace core::scoring;
@@ -110,10 +92,8 @@ using namespace conformation;
 using namespace kinematics;
 using namespace protocols::match;
 using namespace protocols::frag_picker;
-
-
 using namespace protocols::loophash;
-
+using namespace numeric::geometry::hashing; 
 
 class LoopHashRelax_Sampler;
 typedef utility::pointer::owning_ptr< LoopHashRelax_Sampler > LoopHashRelax_SamplerOP;
@@ -159,7 +139,9 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
   using namespace basic::options::OptionKeys;
 
   std::string prefix = option[ out::prefix ]();
-  core::Size skim_size = option[ lh::skim_size ]();
+  core::Size skim_size = option[ lh::skim_size ]();   // default 100
+	core::Real mpi_metropolis_temp_ = option[ lh::mpi_metropolis_temp ]();
+
 
   LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
   LoopHashSampler  lsampler( library_, simple_inserter );
@@ -167,16 +149,33 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
   lsampler.set_max_bbrms( 1400.0 );
   lsampler.set_min_rms( 0.5 );
   lsampler.set_max_rms( 4.0 );
+	
+	core::pose::Pose native_pose;
+	if( option[ in::file::native ].user() ){
+		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+	} else {
+		utility_exit_with_message("This app requires specifying the -in:file:native flag.");
+	}
+
+	// Set up contraints
+	ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
+	
+	// convert pose to centroid pose:
+	if( !pose.is_fullatom() ){
+		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+	}
+	core::Real last_accepted_score = (*fascorefxn)(pose);
+
 
   for(int round = 1; round <= option[ OptionKeys::lh::rounds ]; round ++ ){
-    static int casecount = 0;
+    core::Size total_starttime = time(NULL);
+		
+		static int casecount = 0;
     core::pose::Pose opose = pose;
     std::vector< core::io::silent::SilentStructOP > lib_structs;
 
     TR.Info << "Loophash apply function ! " << std::endl;
 
-    // Set up contraints
-    ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
     //protocols::relax::FastRelax *qrelax = new protocols::relax::FastRelax( fascorefxn, 1 );
     protocols::relax::FastRelax *relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
 
@@ -184,28 +183,29 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
     core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
     core::pose::set_ss_from_phipsi( pose );
 
+
+		// Generate alternate structures
     core::Size starttime2 = time(NULL);
-
-
+		core::Size sampler_chunk_size = 1;
+		core::Size start_res = std::max( core::Size(2), core::Size(rand()%(pose.total_residue() - sampler_chunk_size - 2 )) );
+		core::Size stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size)  );
+  	lsampler.set_start_res( start_res ); 
+  	lsampler.set_stop_res(  stop_res );
     lsampler.build_structures( pose, lib_structs );
-    //get_all( pose, lib_structs, 1, 0, 20,1400.0, 0.5, 4.0  );   // old way
-
     core::Size endtime2 = time(NULL);
-    TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
+    core::Size loophash_time = endtime2 - starttime2;
+		TR.Info << "FOUND (" << start_res << " to " << stop_res << "): " 
+		        << lib_structs.size() << " states in time: " 
+						<< endtime2 - starttime2 << " s " << std::endl;
 
+		// try again if we have failed to find structures
+		if ( lib_structs.size() == 0 ) continue; 
+
+		// choose up to "skim_size" of them 
     std::random_shuffle( lib_structs.begin(), lib_structs.end());
-
     std::vector< core::io::silent::SilentStructOP > select_lib_structs;
-
     for( core::Size k=0;k< std::min(skim_size, lib_structs.size() ) ;k++){
       select_lib_structs.push_back( lib_structs[k] );
-    }
-
-    core::pose::Pose native_pose;
-    if( option[ in::file::native ].user() ){
-      core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
-    } else {
-      utility_exit_with_message("This app requires specifying the -in:file:native flag.");
     }
 
 		core::pose::Pose ref_pose;
@@ -213,11 +213,8 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
       core::import_pose::pose_from_pdb( ref_pose, option[ lh::refstruct ]() );
     }
 
-
     core::Real bestcenscore = MAXIMAL_FLOAT;
     core::Size bestcenindex = 0;
-
-
 		for( core::Size h = 0; h < select_lib_structs.size(); h++){
       core::pose::Pose rpose;
       select_lib_structs[h]->fill_pose( rpose );
@@ -231,13 +228,13 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 
 			select_lib_structs[h]->add_energy( "refrms",     refrms,      1.0 );
 			select_lib_structs[h]->add_energy( "comb_score", decoy_score, 1.0 );
-			std::cout << "refrms: " << refrms << "  Energy: " << decoy_score << std::endl;
+			TR.Info << "refrms: " << refrms << "  Energy: " << decoy_score << std::endl;
 			if( decoy_score < bestcenscore ){
 				bestcenscore = decoy_score;
 				bestcenindex = h;
 			}
 		}
-		std::cout << "Best:" << "  Energy: " << bestcenscore << std::endl;
+		TR.Info << "Best:" << "  Energy: " << bestcenscore << std::endl;
 
 
 
@@ -265,24 +262,26 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		/// In centroid cleanup mode this is IT
 		if( option[ OptionKeys::lh::centroid_only ]() ){
       select_lib_structs[bestcenindex]->fill_pose( pose );
+			TR.Info << "Centroid mode. Skipping relax" << std::endl;
 			continue;
 		}
 
 
 
 
+
 		/// For fullatom goodness, continue
-    core::Real bestscore = MAXIMAL_FLOAT;
-    core::Size bestindex = 0;
-    // Batch relax the result:
 
     core::Size starttime = time(NULL);
     relax->batch_apply( select_lib_structs );
     core::Size endtime = time(NULL);
-    TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
+    core::Size batchrelax_time = endtime - starttime; 
+		TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 
-
-    for( core::Size h = 0; h < select_lib_structs.size(); h++){
+    core::Real bestscore = MAXIMAL_FLOAT;
+    core::Size bestindex = 0;
+    core::pose::Pose relax_winner;
+		for( core::Size h = 0; h < select_lib_structs.size(); h++){
       TR.Info << "DOING: " << h << " / " << select_lib_structs.size() << std::endl;
       core::pose::Pose rpose;
 
@@ -295,31 +294,62 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
       if( score < bestscore ){
         bestscore = score;
         bestindex = h;
-        pose = rpose;
+        relax_winner = rpose;
       }
     }
     casecount++;
-    //test_loop_sample( pose, pose.total_residue() );
-
-    core::Real bestrms = scoring::CA_rmsd( native_pose, pose );
-    TR.Info << "BESTSCORE: " << bestscore << "BESTRMS" << bestrms << std::endl;
-    //pose.dump_pdb( "lhb_" + prefix + "_" + utility::to_string( round ) + ".pdb" );
 
 
-    core::io::silent::SilentFileData sfd;
-    std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
-    for( core::Size h = 0; h < select_lib_structs.size(); h++){
+		TR.Info << "Metropolis decision: " << std::endl;
+		// apply metropolis criterion
+		core::Real new_energy = bestscore; 
+		core::Real old_energy = last_accepted_score;
 
-      if( h == bestindex ) {
-        core::pose::Pose rpose;
-        select_lib_structs[h]->fill_pose( rpose );
-        core::Real rms = scoring::CA_rmsd( native_pose, rpose );
-        select_lib_structs[h]->add_energy( "round", round, 1.0 );
-        select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
-        select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
-        sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
-      }
-    }
+		bool metropolis_replace = false;
+		core::Real energy_diff_T = 0;
+		if( mpi_metropolis_temp_ > 0.0 ) energy_diff_T = old_energy - new_energy;
+
+		if( ( energy_diff_T >= 0.0 ) ) metropolis_replace = true; // energy of new is simply lower
+		else if ( energy_diff_T > (-10.0) ){
+			core::Real random_float = RG.uniform();
+			if ( random_float < exp( energy_diff_T ) )  metropolis_replace = true;
+		}
+		
+		TR.Info << "Metropolis: " << new_energy <<  ( (new_energy<old_energy)?" < ":" > ") << old_energy << " :" << (metropolis_replace?"ACC":"REJ") << std::endl; 
+		 
+		if ( metropolis_replace ) {
+			pose = relax_winner;
+			last_accepted_score = new_energy;
+			// Ok, pose has new content
+			core::Real bestrms = scoring::CA_rmsd( native_pose, pose );
+			TR.Info << "BESTSCORE: " << bestscore << "BESTRMS" << bestrms << std::endl;
+			//pose.dump_pdb( "lhb_" + prefix + "_" + utility::to_string( round ) + ".pdb" );
+			core::io::silent::SilentFileData sfd;
+			std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
+			for( core::Size h = 0; h < select_lib_structs.size(); h++){
+
+				if( h == bestindex ) {
+					core::pose::Pose rpose;
+					select_lib_structs[h]->fill_pose( rpose );
+					core::Real rms = scoring::CA_rmsd( native_pose, rpose );
+					select_lib_structs[h]->add_energy( "round", round, 1.0 );
+					select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
+					select_lib_structs[h]->set_decoy_tag( "S_" + string_of( round ) + "_" + string_of(  h )  );
+					select_lib_structs[h]->sort_silent_scores();
+					select_lib_structs[h]->print_score_header( std::cout );
+					
+					sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
+				}
+			}
+		}  // end of acceptance loop
+
+		core::Size total_endtime = time(NULL);
+
+		TR.Info << "------------------------------------------------------------------------------------" << std::endl;
+		TR.Info << " Energy: " << round << "  " << old_energy << "  " << new_energy << std::endl; 
+		TR.Info << " Timing: " << total_endtime - total_starttime << " L: " << loophash_time << " B: " << batchrelax_time << std::endl; 
+		TR.Info << "------------------------------------------------------------------------------------" << std::endl;
+
 
   }
 
@@ -341,22 +371,22 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 
   std::string sdata;
   mystore.serialize( sdata );
-  std::cout << "----" << std::endl;
-  mystore.print( std::cout );
+  TR.Info << "----" << std::endl;
+  mystore.print( TR.Info );
 
 
   protocols::wum::SilentStructStore mystore2;
 
   mystore2.read_from_cmd_line();
-  std::cout << "-------" << std::endl;
-  mystore2.print( std::cout );
-  std::cout << "-AA-AA-" << std::endl;
+  TR.Info << "-------" << std::endl;
+  mystore2.print( TR.Info );
+  TR.Info << "-AA-AA-" << std::endl;
 
   mystore.add( mystore2 );
 
-  std::cout << "-------" << std::endl;
+  TR.Info << "-------" << std::endl;
 
-  mystore.print( std::cout );
+  mystore.print( TR.Info );
 
   std::string serial_form;
   mystore.serialize( serial_form );
@@ -366,7 +396,7 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
   protocols::wum::SilentStructStore recovered_store;
   recovered_store.read_from_string( serial_form );
 
-  recovered_store.print( std::cout );
+  recovered_store.print( TR.Info );
 
 */
 // Loopgraft
@@ -393,8 +423,8 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
     std::ostringstream ss;
     pss.print_scores( ss );
     pss.print_conformation( ss );
-   // std::cout << ss.str() << std::endl;
-    std::cout << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
+   // TR.Info << ss.str() << std::endl;
+    TR.Info << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
   }
 
 //  {
@@ -404,8 +434,8 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 //    std::ostringstream ss;
 //    pss.print_scores( ss );
 //    pss.print_conformation( ss );
-//   // std::cout << ss.str() << std::endl;
-//    std::cout << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
+//   // TR.Info << ss.str() << std::endl;
+//    TR.Info << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
 //  }
 
   core::util::switch_to_residue_type_set( tgtpose, core::chemical::CENTROID);
@@ -418,8 +448,8 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
     std::ostringstream ss;
     pss.print_scores( ss );
     pss.print_conformation( ss );
-   // std::cout << ss.str() << std::endl;
-    std::cout <<pss.mem_footprint() << "  " <<  ss.str().length() << std::endl;
+   // TR.Info << ss.str() << std::endl;
+    TR.Info <<pss.mem_footprint() << "  " <<  ss.str().length() << std::endl;
   }
 
   {
@@ -429,8 +459,8 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
     std::ostringstream ss;
     pss.print_scores( ss );
     pss.print_conformation( ss );
-   // std::cout << ss.str() << std::endl;
-    //std::cout <<pss.mem_footprint() << "  " <<  ss.str().length() << std::endl;
+   // TR.Info << ss.str() << std::endl;
+    //TR.Info <<pss.mem_footprint() << "  " <<  ss.str().length() << std::endl;
   }
 }
 
@@ -464,10 +494,10 @@ main( int argc, char * argv [] )
 #endif
 
 
-	std::cout << "SIZEOF short: " << sizeof( short ) << std::endl;
-	std::cout << "SIZEOF short*: " << sizeof( short * ) << std::endl;
-	std::cout << "SIZEOF core::Size: " << sizeof( core::Size ) << std::endl;
-	std::cout << "SIZEOF core::Size: " << sizeof( unsigned int ) << std::endl;
+	TR.Info << "SIZEOF short: " << sizeof( short ) << std::endl;
+	TR.Info << "SIZEOF short*: " << sizeof( short * ) << std::endl;
+	TR.Info << "SIZEOF core::Size: " << sizeof( core::Size ) << std::endl;
+	TR.Info << "SIZEOF core::Size: " << sizeof( unsigned int ) << std::endl;
 
 	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
 	LoopHashLibraryOP loop_hash_library = new LoopHashLibrary( loop_sizes );
@@ -497,7 +527,7 @@ main( int argc, char * argv [] )
     std::cerr << "Exception: " << std::endl;
     excn.show( std::cerr );
     std::cout << "Exception: " << std::endl;
-    excn.show( std::cout ); //so its also seen in a >LOG file
+    excn.show( TR.Info ); //so its also seen in a >LOG file
   }
 
 	return 0;
