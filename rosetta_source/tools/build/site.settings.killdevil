@@ -28,6 +28,7 @@ settings = {
             "library_path" : os.environ["LD_LIBRARY_PATH"].split(":"),
         },
         "appends" : {
+						"defines" : ["EXIT_THROWS_EXCEPTION"],
         },
         "overrides" : {
         },
