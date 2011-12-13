@@ -105,15 +105,15 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 	trial_(metropolis_hastings_mover.trial_)
 {
 	for (core::Size i = 1; i <= metropolis_hastings_mover.movers_.size(); ++i) {
-		movers_.push_back(reinterpret_cast<ThermodynamicMover *>(metropolis_hastings_mover.movers_[i]->clone()()));
+		movers_.push_back(reinterpret_cast<ThermodynamicMover *>(metropolis_hastings_mover.movers_[i]()));
 	}
 
 	for (core::Size i = 1; i <= metropolis_hastings_mover.observers_.size(); ++i) {
-		observers_.push_back(reinterpret_cast<ThermodynamicObserver *>(metropolis_hastings_mover.observers_[i]->clone()()));
+		observers_.push_back(reinterpret_cast<ThermodynamicObserver *>(metropolis_hastings_mover.observers_[i]()));
 	}
 
 	if (metropolis_hastings_mover.tempering_) {
-		tempering_ = reinterpret_cast<TemperatureController *>(metropolis_hastings_mover.tempering_->clone()());
+		tempering_ = reinterpret_cast<TemperatureController *>(metropolis_hastings_mover.tempering_());
 		if (monte_carlo_) tempering_->set_monte_carlo(monte_carlo_);
 	}
 }
@@ -269,19 +269,22 @@ MetropolisHastingsMover::parse_my_tag(
 			mover = mover_factory->newMover(subtag, data, filters, movers, pose);
 		}
 
+		ThermodynamicMoverOP th_mover( dynamic_cast<ThermodynamicMover *>( mover() ) );
+		ThermodynamicObserverOP th_observer( dynamic_cast<ThermodynamicObserver *>( mover() ) );
+		TemperatureControllerOP temp_controller( dynamic_cast< TemperatureController* >( mover() ) );
 		//figure out if ThermodynamicMover or ThermodynamicObserver
-		if ( dynamic_cast<ThermodynamicMover *>(mover() )) { //its a mover
+		if ( th_mover ) { //its a mover
 			core::Real const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
-			add_mover( reinterpret_cast<ThermodynamicMover *>( mover->clone()() ), weight);
-		} else if ( dynamic_cast<ThermodynamicObserver *>(mover()) ) { //its an observer
+			add_mover( th_mover, weight );
+		} else if ( th_observer ) { //its an observer
 			//it might also be a tempering module...
-			if ( dynamic_cast< TemperatureController* >( mover() ) ) { // it is a temperature controller
+			if ( temp_controller ) { // it is a temperature controller
 				if ( tempering_ ) {
 					utility_exit_with_message( "cannot define two TemperatureControllers" );
 				}
-				set_tempering( reinterpret_cast< TemperatureController* >( mover->clone()() ) );
+				set_tempering( temp_controller );
 			} else {  //no just an plain old observer
-				add_observer( reinterpret_cast<ThermodynamicObserver *>( mover->clone()() ) );
+				add_observer( th_observer );
 			}
 		} else { //its something different
 			TR << "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << subtag << std::endl;
