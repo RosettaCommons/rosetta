@@ -95,7 +95,7 @@ void IndependentLoopMover::set_defaults() {
 void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	basic::Tracer tr("protocol.loops.LoopMover");
+	basic::Tracer tr("protocol.loops." + get_name() );
 
  	// Select Loops to be built
 	all_loops_closed_ = true;
