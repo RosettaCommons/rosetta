@@ -33,7 +33,7 @@
 // REQUIRED FOR WINDOWS
 #ifndef NATCL
 	#ifdef WIN32
-		#include <winsock2.h>
+		#include <winsock.h>
 		#undef min
 		#undef max
 	#else
