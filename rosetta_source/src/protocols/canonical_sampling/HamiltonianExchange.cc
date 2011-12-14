@@ -335,6 +335,7 @@ core::Real
 HamiltonianExchange::temperature_move( core::Real score ) {
 	utility_exit_with_message( "HamiltonianExchange::temperature_move() called without pose... HamEx requires pose \
   to evaluate alternative energy function prior to switching..." );
+	return -1;
 }
 
 core::Real

@@ -333,7 +333,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 			int boundaryCount = 0;
 			int surfCount = 0;
 
-			for (uint jj = 1; jj <= copies.size(); ++jj){
+			for (unsigned jj = 1; jj <= copies.size(); ++jj){
 
 					visited[ copies[jj] ] = true;
 
@@ -352,7 +352,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 			//assign
 			if (coreCount > 0) { //if any of them is core, turn everythign to core
 				//TR.trace << "core: ";
-				for (uint jj = 1; jj <= copies.size(); ++jj){
+				for (unsigned jj = 1; jj <= copies.size(); ++jj){
 					corePos.push_back(copies[jj]);
 				//TR.trace << copies[jj] << " " ;
 				}
@@ -360,7 +360,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 			}
 			else if (coreCount == 0 && boundaryCount > 0){
 				//TR.trace << "boundary: ";
-				for (uint jj = 1; jj <= copies.size(); ++jj){
+				for (unsigned jj = 1; jj <= copies.size(); ++jj){
 					boundaryPos.push_back(copies[jj]);
 				//TR.trace << copies[jj] << " " ;
 				}
@@ -368,7 +368,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 			}
 			else if (coreCount == 0 && boundaryCount == 0){
 				//TR.trace << "surf: ";
-				for (uint jj = 1; jj <= copies.size(); ++jj){
+				for (unsigned jj = 1; jj <= copies.size(); ++jj){
 					surfPos.push_back(copies[jj]);
 				//TR.trace << copies[jj] << " " ;
 				}

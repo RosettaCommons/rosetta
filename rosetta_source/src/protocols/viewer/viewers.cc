@@ -17,7 +17,6 @@
 #include <protocols/viewer/SilentObserver.hh>
 #include <protocols/viewer/SilentObserver.fwd.hh>
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 
 // Package headers
 #include <protocols/moves/MonteCarlo.hh>
@@ -26,8 +25,16 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+
+#ifdef WIN32
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/scoring/electron_density/ElectronDensity.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+#include <protocols/viewer/triangleIterator.hh>
+#endif
+
 #include <core/conformation/Residue.hh>
 
 
