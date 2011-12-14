@@ -447,6 +447,55 @@ bool VarLengthBuild::centroid_build(
 
 	// identify regions to rebuild and pick fragments
 	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
+
+	if (basic::options::option[basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user()){
+		//unfortunately hacky...  pre-process interval sets to make sure fragments
+		//aren't picked for the insertion region;  should move this processing to
+		//buildManager at some point
+
+		//find insertion
+		Size insertStartIndex = remodel_data_.dssp_updated_ss.find_first_of("I");
+		Size insertEndIndex = remodel_data_.dssp_updated_ss.find_last_of("I");
+
+			//loop over the interval set to find insertion and split it into two sections
+			for ( std::set< Interval >::iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
+				Interval interval = *i;
+
+				if (interval.left <= insertStartIndex && interval.right >= insertEndIndex && ((insertEndIndex-insertStartIndex) != 0)){
+					//found insertion
+
+					//create new left interval
+					Interval split_interval_left(interval.left, insertStartIndex);
+					//create new right interval
+					Interval split_interval_right(insertEndIndex, interval.right);
+
+					//insert the intervals to loop_intervals definition
+					loop_intervals.insert(split_interval_left);
+					loop_intervals.insert(split_interval_right);
+
+					//delete the current interval
+					loop_intervals.erase( i );
+
+					break; //expect only one insertion, so can jump out if found one.
+				}
+			}
+
+		// pick fragments for insertion case
+		for ( std::set< Interval >::const_iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
+			Interval interval = *i;
+			if ( !( cache_fragments_ && fragments_picked_ ) ) {
+				pick_all_fragments( ss, aa, abego_, interval, num_fragpick_ );
+			}
+		}
+		fragments_picked_ = true;
+	}
+
+	//after finishing picking fragments, revert the interval, in case the
+	//intervals are split by pdb insertion.  need to revert because the insertion
+	//should be part of a single loop and not flanked by two connection rebuilt
+	//loops
+	loop_intervals = manager_.intervals_containing_undefined_positions();
+
 	for ( std::set< Interval >::const_iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
 		Interval interval = *i;
 
@@ -454,31 +503,22 @@ bool VarLengthBuild::centroid_build(
 
 		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 			interval.right = interval.right + repeat_tail_length_; // pad interval to include the extra shadow residue in pose
-			}
+		}
 		TR << "VLB count_cutpoints " << n_cuts << " interval.left " << interval.left << " interval.right " << interval.right << std::endl;
 
 		// multi-cutpoint region handling not implemented yet
 		runtime_assert( n_cuts < 2 );
 
 		// setup regions
-		//if ( n_cuts > 0 ) { // loop model region
 		if (interval.left != 1 && interval.right != pose.n_residue()){ //internal loop
-			Size cutpoint = 0;
-			//if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
-			//	cutpoint = find_cutpoint( pose, interval.left, interval.right-1 );
-//}
-			//else {
-				cutpoint = find_cutpoint( pose, interval.left, interval.right );
-			//}
 
-		//	if (basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user()){
-		//		cutpoint = interval.left+1;
-		//	}
+			Size cutpoint = find_cutpoint( pose, interval.left, interval.right );
 
 			loops.add_loop( Loop( interval.left, interval.right, cutpoint, 0.0, true ) );
 			if (cutpoint == 0){
 				loops.choose_cutpoints(pose);
 			}
+
 		} else if ( n_cuts == 0 ) { // fragment only region
 
 			if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user())	{
@@ -497,6 +537,7 @@ bool VarLengthBuild::centroid_build(
 
 	// we're done picking fragments; report status and do memory management
 	fragments_picked_ = true;
+
 
 	if ( use_fullmer_ ) {
 		TR << "total full-mer fragments: " << fragfull_->size() << std::endl;

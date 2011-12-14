@@ -469,6 +469,8 @@ if (working_model.manager.size()!= 0){
 		//turning on the res_type_linking constraint weight for designs
 		fullatom_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
 		fullatom_sfx_->set_weight( core::scoring::res_type_linking_constraint, 0.3);
+		fullatom_sfx_->set_weight(core::scoring::res_type_constraint, 1.0);
+
 		//fullatom_sfx_->set_weight( core::scoring::fa_dun, 0);
 //		fullatom_sfx_->set_weight( core::scoring::fa_sol, 0);
 //		fullatom_sfx_->set_weight( core::scoring::fa_pair, 0);
@@ -606,6 +608,7 @@ if (working_model.manager.size()!= 0){
 				core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
 
 				centroid_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
+				centroid_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0 );
 				centroid_sfx_->set_weight( core::scoring::cen_hb, 1.0);
 
 				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
