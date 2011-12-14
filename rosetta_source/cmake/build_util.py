@@ -6,7 +6,6 @@ PROJECTS_SETTINGS = {}
 execfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.settings") ,PROJECTS_SETTINGS) 
 KNOWN_PROJECTS = PROJECTS_SETTINGS["projects"]["src"]
 
-KNOWN_PROJECTS = rosetta_projects()
 TEST_DIR = 'test_area/'
 CXX_TEST_TEMPLATE_FORMAT = '%stest/cxxtest_main.tpl'
 CXX_TEST_GEN_PART_FORMAT = 'external/cxxtest/cxxtestgen.py --part --have-eh --abort-on-fail -o %s %s'
