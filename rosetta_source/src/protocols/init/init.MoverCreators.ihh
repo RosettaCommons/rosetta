@@ -177,6 +177,7 @@
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>
 #include <protocols/simple_moves/MakePolyXMoverCreator.hh>
+#include <protocols/simple_moves/MembraneTopologyCreator.hh>
 #include <protocols/simple_moves/MinMoverCreator.hh>
 #include <protocols/simple_moves/MinPackMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>

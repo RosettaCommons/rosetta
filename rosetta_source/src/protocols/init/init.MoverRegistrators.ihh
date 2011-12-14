@@ -180,6 +180,7 @@ static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPo
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 static MoverRegistrator< simple_moves::LoadUnboundRotMoverCreator > reg_LoadUnboundRotMoverCreator;
 static MoverRegistrator< simple_moves::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
+static MoverRegistrator< simple_moves::MembraneTopologyCreator > reg_MembraneTopologyCreator;
 static MoverRegistrator< simple_moves::MinMoverCreator > reg_MinMoverCreator;
 static MoverRegistrator< simple_moves::MinPackMoverCreator > reg_MinPackMoverCreator;
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
