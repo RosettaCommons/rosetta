@@ -30,7 +30,7 @@
 #include <sstream>
 #include <basic/Tracer.fwd.hh>
 #include <basic/Tracer.hh>
-
+#include <utility/exit.hh>
 
 
 
@@ -39,6 +39,9 @@ namespace basic {
 TracerToFile::TracerToFile( std::string const & file_name )
 {
   file_.open( file_name.c_str(), std::fstream::out );
+  if ( !file_.good() || !file_.is_open() ) {
+    utility_exit_with_message( "cannot open tracer file "+file_name );
+  }
 }
 
 TracerToFile::~TracerToFile()

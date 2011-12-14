@@ -114,14 +114,22 @@ MPIMultiCommJobDistributor::get_new_job_id() {
 #ifdef USEMPI
 		int new_job_id( -1 );
 		if ( sub_rank_ == 0 ) {
-			new_job_id = Parent::get_new_job_id();
+			new_job_id = Parent::get_new_job_id(); 			//this sets batch_id()
 		}
-		//communicate new_job_id to group-members...
-		MPI_Bcast( &new_job_id, 1, MPI_INT, 0, mpi_communicators_[ communicator_handle_ ] );
-		runtime_assert( new_job_id >= 0 );
-		return new_job_id;
+		if ( sub_rank_ >= 0 ) {
+			//communicate new job and batch ids to group-members...
+			runtime_assert( communicator_handle_ && communicator_handle_ <= mpi_communicators_.size() );
+			int mpi_buf[ 2 ];
+			mpi_buf[ 0 ] = new_job_id;
+			mpi_buf[ 1 ] = current_batch_id();
+			MPI_Bcast( mpi_buf, 2, MPI_INT, 0, mpi_communicators_[ communicator_handle_ ] );
+			new_job_id = mpi_buf[ 0 ];
+			if ( sub_rank_ > 0 ) set_batch_id( mpi_buf[ 1 ] );
+			runtime_assert( new_job_id >= 0 );
+			return new_job_id;
+		}
 #endif
-	}
+	} //e.g. overhang processes that didn't fit into any of the sub-groups  -- send spin-down
 	return 0;
 }
 
