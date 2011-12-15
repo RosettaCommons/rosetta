@@ -280,10 +280,13 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 			SeedFoldTreeOP seed_ft_generator = new SeedFoldTree();
 			seed_ft_generator->ddg_based( ddg() );
 			seed_ft_generator->scorefxn( scorefxn_ );
+			seed_ft_generator->anchor_specified(anchor_specified_);
+			if( anchor_specified_ )
+				seed_ft_generator->set_anchor_res( anchors_ );	
 			core::scoring::dssp::Dssp dssp( *template_pdb_ );
     	dssp.insert_ss_into_pose( *template_pdb_ ); 
 			std::string secstr_template = template_pdb_->secstruct();
-std::cout << "sec str for template: " << secstr_template << std::endl; 
+			TR.Debug  << "sec str for template: " << secstr_template << std::endl; 
 			seed_foldtree_ = seed_ft_generator->set_foldtree( /**template_pdb_ ,*/ tmp_seed_target_poseOP, secstr_template, all_seeds_, true );
 			verteces_ = seed_ft_generator->get_folding_verteces();
 			TR.Debug<<"verteces for folding: " <<std::endl;
@@ -450,6 +453,8 @@ GrowPeptides::parse_my_tag(
 		if( template_presence )
 			curr_pose_ = template_pdb_;
 		
+		anchor_specified_ = false;
+
 		if( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 			//needs some assertions to avoid bogus input
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );
@@ -457,7 +462,14 @@ GrowPeptides::parse_my_tag(
 			core::Size const begin( protocols::rosetta_scripts::parse_resnum( beginS, *curr_pose_ ) );
 			core::Size const end( protocols::rosetta_scripts::parse_resnum( endS, *curr_pose_ ) );
 			all_seeds_.add_loop( begin , end , 0, 0, false );
-			TR <<"parsing seeds: \n"<< begin <<" and " << end <<std::endl; 
+			TR <<"parsing seeds: \n"<< begin <<" and " << end <<std::endl;
+
+			if( btag->hasOption( "anchor" )){
+        Size anchor_res = btag->getOption< core::Size >("anchor", 0 );
+        TR<<"anchor residue: " << anchor_res << std::endl;
+        anchors_.push_back( anchor_res );
+        anchor_specified_ = true; 
+			}
 		}//end seed tags
 		
 		//not hooked in yet...

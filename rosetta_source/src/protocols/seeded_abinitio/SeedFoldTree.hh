@@ -66,9 +66,10 @@ public:
 												bool protein_not_folded_yet );
 
 	bool ddg_based();
-
 	void ddg_based( bool ddgb );
-  		
+	void set_anchor_res( utility::vector1< core::Size > anchor );  		
+	void anchor_specified( bool anchor_specified );
+	bool anchor_specified();
 
 private:
 	/// newly generated foldtree OP

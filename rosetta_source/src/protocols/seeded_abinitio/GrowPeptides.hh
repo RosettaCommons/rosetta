@@ -101,6 +101,8 @@ private: ///functions
 			/// template pose to derrive a sequence from
 			core::pose::PoseOP template_pdb_;
 			bool template_presence;
+			bool anchor_specified_;
+      utility::vector1< core::Size > anchors_;
 			core::scoring::ScoreFunctionOP scorefxn_;
 			bool output_centroid;
 			/// vector of sequence pieces
