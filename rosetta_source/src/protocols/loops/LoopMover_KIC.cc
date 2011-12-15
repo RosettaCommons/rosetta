@@ -93,8 +93,8 @@ extern basic::Tracer tr;
 LoopMover_Perturb_KIC::LoopMover_Perturb_KIC() :
 	IndependentLoopMover()
 {
-	scorefxn_ = get_cen_scorefxn();
-	loops_set_chainbreak_weight( scorefxn_, 1 );
+	set_scorefxn( get_cen_scorefxn() );
+	loops_set_chainbreak_weight( scorefxn(), 1 );
 
 	protocols::moves::Mover::type("LoopMover_Perturb_KIC");
 	set_default_settings();
@@ -105,8 +105,8 @@ LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
 	protocols::loops::Loops  loops_in
 ) : IndependentLoopMover( loops_in )
 {
-	scorefxn_ = get_cen_scorefxn();
-	loops_set_chainbreak_weight( scorefxn_, 1 );
+	set_scorefxn( get_cen_scorefxn() );
+	loops_set_chainbreak_weight( scorefxn(), 1 );
 
 	protocols::moves::Mover::type("LoopMover_Perturb_KIC");
 	set_default_settings();
@@ -119,10 +119,10 @@ LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
 ) : IndependentLoopMover( loops_in )
 {
 	if( scorefxn ){
-		scorefxn_ = scorefxn;
+		set_scorefxn( scorefxn );
 	}else{
-		scorefxn_ = get_cen_scorefxn();
- 		loops_set_chainbreak_weight( scorefxn_, 1 );
+		set_scorefxn( get_cen_scorefxn() );
+ 		loops_set_chainbreak_weight( scorefxn(), 1 );
 	}
 	protocols::moves::Mover::type("LoopMover_Perturb_KIC");
 	set_default_settings();
@@ -205,12 +205,12 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 
 	if (local_debug) {
 		std::ofstream out("score.tmp_input_cen");
-		out << "scoring before cen_perturb: " << (*scorefxn_)(pose) << std::endl;
+		out << "scoring before cen_perturb: " << ( *scorefxn() )(pose) << std::endl;
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies(pose);
-		scorefxn_->show( out );
-		out << pose.energies().total_energies().weighted_string_of( scorefxn_->weights() ) << std::endl;
+		scorefxn()->show( out );
+		out << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 		tr << "before cen_perturb: "
-			<< pose.energies().total_energies().weighted_string_of( scorefxn_->weights() ) << std::endl;
+			<< pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 		out << pose.energies();
 	}
 
@@ -245,9 +245,9 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 	float const gamma = std::pow( (final_temp/init_temp), (1.0f/(outer_cycles*inner_cycles)) );
 	float temperature = init_temp;
 	if ( local_debug ) { // hacking
-		(*scorefxn_)(pose);
+		( *scorefxn() )(pose);
 		tr << "before mc ctor: "
-			<< pose.energies().total_energies().weighted_string_of( scorefxn_->weights() ) << std::endl;
+			<< pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 	}
 
 	// minimizer
@@ -313,8 +313,8 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 			//pose.fold_tree( f_orig ); // DJM: doing above in LoopRelaxMover now
 			return CriticalFailure;
 		}
-		(*scorefxn_)(pose);
-		minimizer->run( pose, mm_one_loop, *scorefxn_, options );
+		( *scorefxn() )(pose);
+		minimizer->run( pose, mm_one_loop, *scorefxn(), options );
 		tr << "loop rmsd after initial kinematic perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
 
 	}
@@ -342,13 +342,13 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 	}
 
 	// Monte Carlo object
-	protocols::moves::MonteCarlo mc( pose, *scorefxn_, temperature);
+	protocols::moves::MonteCarlo mc( pose, *scorefxn(), temperature);
 	mc.show_scores();
 
 	for( int i=1; i<=outer_cycles; ++i ) {
 		if ( local_debug) { // debug
-			(*scorefxn_)( pose );
-			tr << "befor rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn_->weights() ) <<
+			( *scorefxn() )( pose );
+			tr << "befor rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 				" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
 		}
 
@@ -358,8 +358,8 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 		}
 
 		if ( local_debug) { // debug
-			(*scorefxn_)( pose );
-			tr << "after rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn_->weights() ) <<
+			( *scorefxn() )( pose );
+			tr << "after rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 				" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
 		}
 
@@ -387,8 +387,8 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 				if ( core::pose::symmetry::is_symmetric( pose ) )  {
 					core::pose::symmetry::make_symmetric_movemap( pose, mm_one_loop );
 				}
-				(*scorefxn_)(pose);
-				minimizer->run( pose, mm_one_loop, *scorefxn_, options );
+				( *scorefxn() )(pose);
+				minimizer->run( pose, mm_one_loop, *scorefxn(), options );
 				std::string move_type = "kinematic_perturb";
 				bool accepted = mc.boltzmann( pose, move_type );
 				if (accepted) {
@@ -433,9 +433,9 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 	}
 	if (local_debug) {
 		std::ofstream out("score.tmp_perturb_cen");
-		out << "scoring after cen_perturb: " << (*scorefxn_)(pose) << std::endl;
+		out << "scoring after cen_perturb: " << ( *scorefxn() )(pose) << std::endl;
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies(pose);
-		scorefxn_->show( out );
+		scorefxn()->show( out );
 		out << pose.energies();
 	}
 
@@ -455,7 +455,7 @@ LoopMover_Refine_KIC::LoopMover_Refine_KIC(
 	protocols::loops::Loops  loops_in
 ) : LoopMover( loops_in )
 {
-	scorefxn_ = get_fa_scorefxn();
+	set_scorefxn( get_fa_scorefxn() );
 	protocols::moves::Mover::type("LoopMover_Refine_KIC");
 	set_default_settings();
 }
@@ -465,7 +465,7 @@ LoopMover_Refine_KIC::LoopMover_Refine_KIC(
 	core::scoring::ScoreFunctionCOP  scorefxn
 ) : LoopMover( loops_in )
 {
-	scorefxn_ = scorefxn->clone();
+	set_scorefxn( scorefxn->clone() );
 	protocols::moves::Mover::type("LoopMover_Refine_KIC");
 	set_default_settings();
 }
@@ -545,7 +545,7 @@ void LoopMover_Refine_KIC::apply(
 	Size const nres( pose.total_residue() );
 	utility::vector1< bool > is_loop( nres, false );
 
-	for( Loops::const_iterator it=loops_.begin(), it_end=loops_.end();
+	for( Loops::const_iterator it=loops().begin(), it_end=loops().end();
 		 it != it_end; ++it ) {
 		for ( Size i= it->start(); i<= it->stop(); ++i ) {
 			is_loop[i] = true;
@@ -577,22 +577,22 @@ void LoopMover_Refine_KIC::apply(
 		max_inner_cycles = 3;
 	}
 
-	int const inner_cycles = std::min( Size(max_inner_cycles), fast ? (int)loops_.loop_size() : 10*loops_.loop_size() );
+	int const inner_cycles = std::min( Size(max_inner_cycles), fast ? (int)loops().loop_size() : 10*loops().loop_size() );
 	int repack_period = 20; // should be an option
 	if ( option[ OptionKeys::loops::repack_period ].user() ) {
 		repack_period = option[ OptionKeys::loops::repack_period ]();
 	}
 
 	// scorefxn
-	scoring::ScoreFunctionOP scorefxn;
+	scoring::ScoreFunctionOP local_scorefxn;
 	scoring::ScoreFunctionOP min_scorefxn;
-	if ( scorefxn_ != 0 ) scorefxn = scorefxn_->clone();
+	if ( scorefxn() != 0 ) local_scorefxn = scorefxn()->clone();
 	else {
-		scorefxn = get_fa_scorefxn();
+		local_scorefxn = get_fa_scorefxn();
 	}
 
 	// For testing JK's new solvation term. The exact form isn't yet differentiable
-	min_scorefxn = scorefxn->clone();
+	min_scorefxn = local_scorefxn->clone();
 	if ( min_scorefxn->get_weight( core::scoring::occ_sol_exact ) > 0.0 ) {
 		min_scorefxn->set_weight( core::scoring::fa_sol, 0.65 );
 		min_scorefxn->set_weight( core::scoring::occ_sol_exact, 0.0 );
@@ -603,7 +603,7 @@ void LoopMover_Refine_KIC::apply(
 
 	//	scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
 	//	min_scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
-	loops_set_chainbreak_weight( scorefxn_, 1 );
+	loops_set_chainbreak_weight( scorefxn(), 1 );
 	loops_set_chainbreak_weight( min_scorefxn, 1 );
 	//scorefxn->set_weight(core::scoring::mm_bend, 1.0);
 
@@ -613,7 +613,7 @@ void LoopMover_Refine_KIC::apply(
 	float const	final_temp( option[ OptionKeys::loops::refine_final_temp ]() );
 	float const gamma = std::pow( (final_temp/init_temp), 1.0f/(outer_cycles*inner_cycles) );
 	float temperature = init_temp;
-	protocols::moves::MonteCarlo mc( pose, *scorefxn, temperature );
+	protocols::moves::MonteCarlo mc( pose, *local_scorefxn, temperature );
 
 	// minimizer
  	AtomTreeMinimizerOP minimizer;
@@ -683,12 +683,12 @@ void LoopMover_Refine_KIC::apply(
 
 	// perform initial repack trial
 	utility::vector1<bool> allow_sc_move_all_loops( nres, false );
-	(*scorefxn)(pose); // update 10A nbr graph, silly way to do this
+	(*local_scorefxn)(pose); // update 10A nbr graph, silly way to do this
 	// here we'll optimize all side-chains within neighbor_dist_ of any loop (unless fix_natsc_ is true)
-	select_loop_residues( pose, loops_, !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
+	select_loop_residues( pose, loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
 	core::pose::symmetry::make_residue_mask_symmetric( pose, allow_sc_move_all_loops );
 	repack_packer_task->restrict_to_residues( allow_sc_move_all_loops );
-	core::pack::pack_rotamers( pose, *scorefxn, repack_packer_task );
+	core::pack::pack_rotamers( pose, *local_scorefxn, repack_packer_task );
 
 	// setup rottrials packer task here to ensure we're using current sequence if design was active
 	rottrials_packer_task = task_factory->create_task_and_apply_taskoperations( pose );
@@ -700,7 +700,7 @@ void LoopMover_Refine_KIC::apply(
 	std::string move_type = "repack";
 	pose.update_residue_neighbors(); // to update 10A nbr graph
 	kinematics::MoveMap mm_all_loops; // DJM tmp
-	loops_set_move_map( pose, loops_, fix_natsc_, mm_all_loops, neighbor_dist_);
+	loops_set_move_map( pose, loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
 	minimizer->run( pose, mm_all_loops, *min_scorefxn, options ); // DJM tmp
 	mc.boltzmann( pose, move_type );
 	mc.show_scores();
@@ -711,14 +711,14 @@ void LoopMover_Refine_KIC::apply(
 
 	// Get a vector of move_maps and allow_sc_move vectors, one for each loop. This way if we have multiple loops
 	// we can optimize only the side-chains around the loop selected in the inner_cycle
-	utility::vector1< kinematics::MoveMap > move_maps ( loops_.size() );
-	utility::vector1< utility::vector1< bool > > allow_sc_vectors ( loops_.size() );
+	utility::vector1< kinematics::MoveMap > move_maps ( loops().size() );
+	utility::vector1< utility::vector1< bool > > allow_sc_vectors ( loops().size() );
 	update_movemap_vectors( pose, move_maps );
 	update_allow_sc_vectors( pose, allow_sc_vectors );
 
 	if (local_movie) {
 		// this assumes there is only one loops_.
-		Loops::const_iterator one_loop( loops_.begin() );
+		Loops::const_iterator one_loop( loops().begin() );
 		Size begin_loop=one_loop->start();
 		Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;
@@ -735,16 +735,16 @@ void LoopMover_Refine_KIC::apply(
 		// increase CHAINBREAK weight and update monte carlo
 		//scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
 		//min_scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
-		loops_set_chainbreak_weight( scorefxn_, i );
+		loops_set_chainbreak_weight( scorefxn(), i );
 		loops_set_chainbreak_weight( min_scorefxn, i );
 		//scorefxn->set_weight( chainbreak, float(i) );
-		mc.score_function( *scorefxn );
+		mc.score_function( *local_scorefxn );
 		// recover low
 		if ( recover_low_ ) {
 			mc.recover_low( pose );
 		}
 		// score info
-		if ( verbose ) tr << "cycle: " << i << "  " << (*scorefxn)(pose) << std::endl;
+		if ( verbose ) tr << "cycle: " << i << "  " << (*local_scorefxn)(pose) << std::endl;
 		//pose.energies().show( tr );
 		for ( int j=1; j<=inner_cycles; ++j ) {
 			temperature *= gamma;
@@ -756,10 +756,10 @@ void LoopMover_Refine_KIC::apply(
 
 			// choose a random loop for both rounds
 			//Loops::const_iterator it( loops_.one_random_loop() );
-			Size loop_ind = RG.random_range(1, loops_.size());
+			Size loop_ind = RG.random_range(1, loops().size());
 			Loops one_loop;
 			//one_loop.add_loop( it );
-			one_loop.add_loop( loops_[ loop_ind ] );
+			one_loop.add_loop( loops()[ loop_ind ] );
 			// get loop endpoints
 			Size begin_loop=one_loop.begin()->start();
 			Size end_loop=one_loop.begin()->stop();
@@ -791,7 +791,7 @@ void LoopMover_Refine_KIC::apply(
 						set_rottrials_from_kic_segment( pose, rottrials_packer_task, kic_start, kic_end ); // for rottrials
 						set_movemap_from_kic_segment( pose, cur_mm, kic_start, kic_end ); // for minimization
 					}
-					pack::rotamer_trials( pose, *scorefxn, rottrials_packer_task );
+					pack::rotamer_trials( pose, *local_scorefxn, rottrials_packer_task );
 					pose.update_residue_neighbors(); // to update 10A nbr graph
 
 					if ( core::pose::symmetry::is_symmetric( pose ) )  {
@@ -808,8 +808,8 @@ void LoopMover_Refine_KIC::apply(
 					bool accepted = mc.boltzmann( pose, move_type );
 					if (accepted) {
 						tr << "RMS to native after accepted kinematic round 1 move on loop "
-						   << loops_.size() + 1 - loop_ind << ": " // reverse the order so it corresponds with the loop file
-						   << loop_rmsd(pose, native_pose, loops_) << std::endl;
+						   << loops().size() + 1 - loop_ind << ": " // reverse the order so it corresponds with the loop file
+						   << loop_rmsd(pose, native_pose, loops()) << std::endl;
 						//tr << "after accepted move res " << kic_start + 2 << " omega is " << pose.omega(kic_start+2) << std::endl;
 						if (local_movie) {
 							loop_outfile << "MODEL" << std::endl;
@@ -822,7 +822,7 @@ void LoopMover_Refine_KIC::apply(
 						}
 						//tr << "temperature: " << temperature << std::endl;
 						//tr << "chainbreak: " << pose.energies().total_energies()[ scoring::chainbreak ] << std::endl;
-						if ( verbose ) tr << "energy after accepted move: " << (*scorefxn)(pose) << std::endl;
+						if ( verbose ) tr << "energy after accepted move: " << (*local_scorefxn)(pose) << std::endl;
 					}
 					//mc.show_scores();
 				}
@@ -848,7 +848,7 @@ void LoopMover_Refine_KIC::apply(
 						set_rottrials_from_kic_segment( pose, rottrials_packer_task, kic_start, kic_end ); // for rottrials
 						set_movemap_from_kic_segment( pose, cur_mm, kic_start, kic_end ); // for minimization
 					}
-					pack::rotamer_trials( pose, *scorefxn, rottrials_packer_task );
+					pack::rotamer_trials( pose, *local_scorefxn, rottrials_packer_task );
 					pose.update_residue_neighbors(); // to update 10A nbr graph
 					if ( core::pose::symmetry::is_symmetric( pose ) )  {
 						//fpd  minimizing with the reduced movemap seems to cause occasional problems
@@ -864,7 +864,7 @@ void LoopMover_Refine_KIC::apply(
 					bool accepted = mc.boltzmann( pose, move_type );
 					if (accepted) {
 						tr << "RMS to native after accepted kinematic round 2 move on loop " << loop_ind << ": "
-						<< loop_rmsd(pose, native_pose, loops_) << std::endl;
+						<< loop_rmsd(pose, native_pose, loops()) << std::endl;
 						if (local_movie) {
 							loop_outfile << "MODEL" << std::endl;
 							utility::vector1<Size> indices(end_loop - begin_loop + 3);
@@ -875,7 +875,7 @@ void LoopMover_Refine_KIC::apply(
 							loop_outfile << "ENDMDL" << std::endl;
 						}
 						//tr << "chainbreak score: " << pose.energies().total_energies()[ core::scoring::chainbreak ] << std::endl;
-						if ( verbose ) tr << "energy after accepted move: " << (*scorefxn)(pose) << std::endl;
+						if ( verbose ) tr << "energy after accepted move: " << (*local_scorefxn)(pose) << std::endl;
 					}
 					//mc.show_scores();
 				}
@@ -892,20 +892,20 @@ void LoopMover_Refine_KIC::apply(
 
 					// the repack/design and subsequent minimization within this main_repack_trial block apply
 					// to all loops (and their neighbors, if requested)
-					loops_set_move_map( pose, loops_, fix_natsc_, mm_all_loops, neighbor_dist_);
-					select_loop_residues( pose, loops_, !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
+					loops_set_move_map( pose, loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
+					select_loop_residues( pose, loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
 
 					core::pose::symmetry::make_residue_mask_symmetric( pose, allow_sc_move_all_loops );  //fpd symmetrize res mask -- does nothing if pose is not symm
 					repack_packer_task->restrict_to_residues( allow_sc_move_all_loops );
 					rottrials_packer_task->restrict_to_residues( allow_sc_move_all_loops );
-					pack::pack_rotamers( pose, *scorefxn, repack_packer_task ); // design here if resfile supplied
-					if ( verbose ) tr << "energy after design: " << (*scorefxn)(pose) << std::endl; // DJM remove
+					pack::pack_rotamers( pose, *local_scorefxn, repack_packer_task ); // design here if resfile supplied
+					if ( verbose ) tr << "energy after design: " << (*local_scorefxn)(pose) << std::endl; // DJM remove
 					if ( redesign_loop_ ) { // need to make new rottrials packer task with redesigned sequence
 						rottrials_packer_task = task_factory->create_task_and_apply_taskoperations( pose );
 						rottrials_packer_task->restrict_to_repacking();
 						rottrials_packer_task->set_bump_check( true );
 						rottrials_packer_task->restrict_to_residues( allow_sc_move_all_loops );
-						if ( verbose ) tr << "energy after design repack: " << (*scorefxn)(pose) << std::endl; // DJM remove
+						if ( verbose ) tr << "energy after design repack: " << (*local_scorefxn)(pose) << std::endl; // DJM remove
 					}
 
 					// minimize after repack if requested
@@ -913,7 +913,7 @@ void LoopMover_Refine_KIC::apply(
 						if ( core::pose::symmetry::is_symmetric( pose ) )  {
 							//fpd  minimizing with the reduced movemap seems to cause occasional problems
 							//     in the symmetric case ... am looking into this
-							loops_set_move_map( pose, loops_, fix_natsc_, mm_all_loops, neighbor_dist_ );
+							loops_set_move_map( pose, loops(), fix_natsc_, mm_all_loops, neighbor_dist_ );
 							minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
 						} else {
 							minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
@@ -929,7 +929,7 @@ void LoopMover_Refine_KIC::apply(
 						tr << "Sequence after design step: "
 						   << pose.sequence() << std::endl;
 					}
-					if ( verbose ) tr << "energy after repack: " << (*scorefxn)(pose) << std::endl;
+					if ( verbose ) tr << "energy after repack: " << (*local_scorefxn)(pose) << std::endl;
 				}
 			}
 			if ( verbose || local_debug ) tr << std::flush;
@@ -945,7 +945,7 @@ void LoopMover_Refine_KIC::apply(
 	}
 	if (local_movie) {
 		// this assumes there is only one loops_.
-		Loops::const_iterator one_loop( loops_.begin() );
+		Loops::const_iterator one_loop( loops().begin() );
 		Size begin_loop=one_loop->start();
 		Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;
@@ -974,9 +974,9 @@ LoopMover_Refine_KIC::update_movemap_vectors(
 	core::pose::Pose & pose,
 	utility::vector1<core::kinematics::MoveMap> & move_maps ) {
 
-	for( Size i = 1; i <= loops_.size(); i++ ) {
+	for( Size i = 1; i <= loops().size(); i++ ) {
 		protocols::loops::Loops cur_loop;
-		cur_loop.add_loop( loops_[ i ] );
+		cur_loop.add_loop( loops()[ i ] );
 		core::kinematics::MoveMap cur_mm;
 		loops_set_move_map( pose, cur_loop, fix_natsc_, cur_mm, neighbor_dist_ );
 		move_maps[ i ] = cur_mm;
@@ -992,9 +992,9 @@ LoopMover_Refine_KIC::update_allow_sc_vectors(
 	core::pose::Pose & pose,
 	utility::vector1< utility::vector1< bool > > & allow_sc_vectors ) {
 
-	for( Size i = 1; i <= loops_.size(); i++ ) {
+	for( Size i = 1; i <= loops().size(); i++ ) {
 		protocols::loops::Loops cur_loop;
-		cur_loop.add_loop( loops_[ i ] );
+		cur_loop.add_loop( loops()[ i ] );
 		utility::vector1<bool> cur_allow_sc_move( pose.total_residue(), false );
 		select_loop_residues( pose, cur_loop, !fix_natsc_, cur_allow_sc_move, neighbor_dist_);
 		allow_sc_vectors[ i ] = cur_allow_sc_move;

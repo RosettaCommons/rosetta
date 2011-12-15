@@ -77,7 +77,7 @@ extern basic::Tracer tr;
 LoopMover_Refine_Backrub::LoopMover_Refine_Backrub() :
 	LoopMover()
 {
-	scorefxn_ = core::scoring::getScoreFunction();
+	set_scorefxn( core::scoring::getScoreFunction() );
 	protocols::moves::Mover::type("LoopMover_Refine_Backrub");
 	set_default_settings();
 }
@@ -86,7 +86,7 @@ LoopMover_Refine_Backrub::LoopMover_Refine_Backrub(
 	protocols::loops::Loops  loops_in
 ) : LoopMover( loops_in )
 {
-	scorefxn_ = core::scoring::getScoreFunction();
+	set_scorefxn( core::scoring::getScoreFunction() );
 	protocols::moves::Mover::type("LoopMover_Refine_Backrub");
 	set_default_settings();
 }
@@ -96,7 +96,7 @@ LoopMover_Refine_Backrub::LoopMover_Refine_Backrub(
 	core::scoring::ScoreFunctionOP  scorefxn
 ) : LoopMover( loops_in )
 {
-	scorefxn_ = scorefxn;
+	set_scorefxn( scorefxn );
 	protocols::moves::Mover::type("LoopMover_Refine_Backrub");
 	set_default_settings();
 }
@@ -135,7 +135,7 @@ void LoopMover_Refine_Backrub::apply(
 		max_inner_cycles = 2;
 	}
 
-	int const inner_cycles = std::min( Size(max_inner_cycles), fast ? (int)loops_.loop_size() : 10*loops_.loop_size() );
+	int const inner_cycles = std::min( Size(max_inner_cycles), fast ? (int)loops().loop_size() : 10*loops().loop_size() );
 	int repack_period = 20; // should be an option
 	if ( option[ OptionKeys::loops::repack_period ].user() ) {
 		repack_period = option[ OptionKeys::loops::repack_period ]();
@@ -148,7 +148,7 @@ void LoopMover_Refine_Backrub::apply(
 
 	// scorefxn
 	scoring::ScoreFunctionOP scorefxn;
-	if ( scorefxn_ != 0 ) scorefxn = scorefxn_->clone();
+	if ( scorefxn() != 0 ) scorefxn = scorefxn()->clone();
 	else {
 		scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
 	}
@@ -166,7 +166,7 @@ void LoopMover_Refine_Backrub::apply(
 	// set backrub segments
 	Size const nres( pose.total_residue() );
 	utility::vector1< bool > is_loop( nres, false );
-	for ( Loops::const_iterator it=loops_.begin(), it_end=loops_.end(); it != it_end; ++it ) {
+	for ( Loops::const_iterator it=loops().begin(), it_end=loops().end(); it != it_end; ++it ) {
 		for ( core::Size seg_start = it->start(); seg_start <= it->stop(); ++seg_start ) {
 			is_loop[seg_start] = true;
 			for ( core::Size seg_end = seg_start + 2; seg_end <= it->stop(); ++seg_end ) {
@@ -224,7 +224,7 @@ void LoopMover_Refine_Backrub::apply(
 	pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 	utility::vector1<bool> allow_repacked( nres, false );
 	pose.update_residue_neighbors(); // to update 10A nbr graph
-	select_loop_residues( pose, loops_, !fix_natsc, allow_repacked, 10.0 /* neighbor_cutoff */);
+	select_loop_residues( pose, loops(), !fix_natsc, allow_repacked, 10.0 /* neighbor_cutoff */);
 	this_packer_task->restrict_to_residues( allow_repacked );
 	core::pack::pack_rotamers( pose, *scorefxn, this_packer_task );
 	std::string move_type = "repack";
@@ -252,7 +252,7 @@ void LoopMover_Refine_Backrub::apply(
 				//pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 				// DJM: try updating existing packer task
 				utility::vector1<bool> allow_repacked( nres, false );
-				select_loop_residues( pose, loops_, !fix_natsc, allow_repacked, 10.0 /* neighbor_cutoff */);
+				select_loop_residues( pose, loops(), !fix_natsc, allow_repacked, 10.0 /* neighbor_cutoff */);
 				this_packer_task->restrict_to_residues( allow_repacked );
 				pack::pack_rotamers( pose, *scorefxn, this_packer_task );
 				std::string move_type = "repack";

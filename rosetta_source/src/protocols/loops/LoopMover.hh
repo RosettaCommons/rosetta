@@ -82,7 +82,15 @@ public:
 	const protocols::loops::Loops & loops() const {
 		return loops_;
 	}
-
+    
+    const core::scoring::ScoreFunctionOP & scorefxn() const {
+		return scorefxn_;
+	}
+    
+    const utility::vector1< core::fragment::FragSetOP > & frag_libs() const {
+		return frag_libs_;
+	}
+    
 	void loops( protocols::loops::Loops const l ){ loops_ = l; }
 	/// @brief Extend a loop
 	virtual void set_extended_torsions(
@@ -140,21 +148,19 @@ protected: // movemap management
 	/// fly step
 	void
 	set_loops_from_pose_observer_cache( core::pose::Pose const & pose );
-
-protected: // data
-
-	protocols::loops::Loops loops_;
-	core::scoring::ScoreFunctionOP scorefxn_;
-
-	checkpoint::CheckPointer checkpoints_;
-
-	// it's really dumb that this is a std::vector rather a vector1
-	std::vector< core::fragment::FragSetOP > frag_libs_;
-
-	bool loops_from_observer_cache_;
+    
+    bool const use_loops_from_observer_cache() const; 
+    void set_use_loops_from_observer_cache( bool const loops_from_observer_cache );
 
 private: // data
 
+    protocols::loops::Loops loops_;
+    
+    core::scoring::ScoreFunctionOP scorefxn_;
+    utility::vector1< core::fragment::FragSetOP > frag_libs_;
+    checkpoint::CheckPointer checkpoints_;
+    bool loops_from_observer_cache_;
+    
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol

@@ -81,7 +81,7 @@ static numeric::random::RandomGenerator RG(42863);
 LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD() :
 	IndependentLoopMover()
 {
-	scorefxn_ = get_cen_scorefxn();
+	set_scorefxn( get_cen_scorefxn() );
 
 	protocols::moves::Mover::type("LoopMover_Perturb_QuickCCD");
 	set_default_settings();
@@ -91,7 +91,7 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 	protocols::loops::Loops loops_in
 ) : IndependentLoopMover( loops_in )
 {
-	scorefxn_ = get_cen_scorefxn();
+	set_scorefxn( get_cen_scorefxn() );
 
 	protocols::moves::Mover::type("LoopMover_Perturb_QuickCCD");
 	set_default_settings();
@@ -105,9 +105,9 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 ) : IndependentLoopMover( loops_in )
 {
 	if ( scorefxn ) {
-		scorefxn_ = scorefxn;
+		set_scorefxn(  scorefxn );
 	} else {
-		scorefxn_ = get_cen_scorefxn();
+		set_scorefxn( get_cen_scorefxn() );
 	}
 
 	protocols::moves::Mover::type("LoopMover_Perturb_QuickCCD");
@@ -121,9 +121,9 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 ) : IndependentLoopMover( loops_in )
 {
 	if ( scorefxn ) {
-		scorefxn_ = scorefxn;
+		set_scorefxn( scorefxn );
 	} else {
-		scorefxn_ = get_cen_scorefxn();
+		set_scorefxn( get_cen_scorefxn() );
 	}
 
 	protocols::moves::Mover::type("LoopMover_Perturb_QuickCCD");
@@ -201,7 +201,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	}
 
 
-	(*scorefxn_)(pose);
+	( *scorefxn() )(pose);
 	core::pose::Pose start_pose = pose;
 
 	// either extend or at least idealize the loop (just in case).
@@ -216,7 +216,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 
 	utility::vector1< FragmentMoverOP > fragmover;
 	for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
-				it = frag_libs_.begin(), it_end = frag_libs_.end();
+				it = frag_libs().begin(), it_end = frag_libs().end();
 				it != it_end; it++ ) {
 		ClassicFragmentMover *cfm = new ClassicFragmentMover( *it, frag_mover_movemap );
 		cfm->set_check_ss( false );
@@ -225,7 +225,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	}
 
 	core::Real m_Temperature_ = 2.0;
-	moves::MonteCarloOP mc_ = new moves::MonteCarlo( pose, *scorefxn_, m_Temperature_ );
+	moves::MonteCarloOP mc_ = new moves::MonteCarlo( pose, *scorefxn(), m_Temperature_ );
 
 	if ( randomize_loop_ ) {
 		// insert random fragment as many times as the loop is long (not quite
@@ -259,7 +259,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 
   int   starttime    = time(NULL);
   int   frag_count   = 0;
-	scorefxn_->show_line_headers( tr.Info );
+	scorefxn()->show_line_headers( tr.Info );
 	tr.Info << std::endl;
 
 	core::Real const final_temp( 1.0 );
@@ -270,14 +270,14 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	bool 	has_constraints         = pose.constraint_set()->has_constraints();
 	float final_constraint_weight = option[ basic::options::OptionKeys::constraints::cst_weight ](); // this is really stupid.
 
-	if ( chainbreak_present ) scorefxn_->set_weight( chainbreak, 1.0 );
+	if ( chainbreak_present ) scorefxn()->set_weight( chainbreak, 1.0 );
 
 	// for symmetric case, upweight the chainbreak by # of monomers
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::conformation::symmetry::SymmetricConformation const & symm_conf (
 					dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-		scorefxn_->set_weight( chainbreak, symm_info->subunits() );
+		scorefxn()->set_weight( chainbreak, symm_info->subunits() );
 	}
 
 	for( int c2 = 1; c2 <= cycles2; ++c2 ) {
@@ -286,16 +286,16 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 		// ramp up constraints
 		if ( has_constraints ) {
 			if( c2 != cycles2 ) {
-				scorefxn_->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight*float(c2)/float( cycles2 ) );
+				scorefxn()->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight*float(c2)/float( cycles2 ) );
 			} else {
-				scorefxn_->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight * 0.2 );
+				scorefxn()->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight * 0.2 );
 			}
 		}
 
-		(*scorefxn_)(pose);
-		if ( tr.visible() ) { scorefxn_->show_line( tr.Info , pose ); }
+		( *scorefxn() )(pose);
+		if ( tr.visible() ) { scorefxn()->show_line( tr.Info , pose ); }
 		tr.Info << std::endl;
-		mc_->score_function( *scorefxn_ );
+		mc_->score_function( *scorefxn() );
 
 		for ( int c3 = 1; c3 <= cycles3; ++c3 ) {
 			temperature *= gamma;
@@ -309,14 +309,14 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 					fast_ccd_close_loops( pose, loop,  *mm_one_loop );
 				}
 
-				mzr->run( pose, *mm_one_loop_symm, *scorefxn_, options );
+				mzr->run( pose, *mm_one_loop_symm, *scorefxn(), options );
 				mc_->boltzmann( pose, "QuickCCD" );
 				frag_count++;
 			}
 
 			if ( debug ) {
-				(*scorefxn_)(pose);
-				scorefxn_->show_line( tr.Info , pose );
+				( *scorefxn() )(pose);
+				scorefxn()->show_line( tr.Info , pose );
 				tr.Info << std::endl;
 			}
 		} // for c3 in cycles3
@@ -327,19 +327,19 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	tr << "Looptime " << looptime << std::endl;
 
 	pose = mc_->lowest_score_pose();
-	scorefxn_->show(  tr.Info , pose );
+	scorefxn()->show(  tr.Info , pose );
 	tr.Info << "-------------------------" << std::endl;
 	mc_->show_counters();
 
 	// restore original CB wt if symmetric
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		scorefxn_->set_weight( chainbreak, 1.0 );
+		scorefxn()->set_weight( chainbreak, 1.0 );
 	}
 
 	// Check chain break !
 	if ( chainbreak_present ) {
 		using namespace core::scoring;
-		(*scorefxn_)( pose );
+		( *scorefxn() )( pose );
 		core::Real chain_break_score = std::max(
 			static_cast<float> (pose.energies().total_energies()[ chainbreak ]),
 			static_cast<float> (pose.energies().total_energies()[ linear_chainbreak ])

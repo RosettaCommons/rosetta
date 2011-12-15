@@ -67,8 +67,8 @@ static numeric::random::RandomGenerator RG(10003);
 LoopMover_SlidingWindow::LoopMover_SlidingWindow() :
 	IndependentLoopMover()
 {
-	scorefxn_ = loops::get_cen_scorefxn();
-	scorefxn_->set_weight( scoring::chainbreak, 1.0*10.0/3.0);
+	set_scorefxn( loops::get_cen_scorefxn() );
+	scorefxn()->set_weight( scoring::chainbreak, 1.0*10.0/3.0);
 
 	protocols::moves::Mover::type("LoopMover_SlidingWindow");
 	set_default_settings();
@@ -79,8 +79,8 @@ LoopMover_SlidingWindow::LoopMover_SlidingWindow(
 	protocols::loops::Loops  loops_in
 ) : IndependentLoopMover( loops_in )
 {
-	scorefxn_ = loops::get_cen_scorefxn();
-	scorefxn_->set_weight( scoring::chainbreak, 1.0*10.0/3.0);
+	set_scorefxn( loops::get_cen_scorefxn() );
+	scorefxn()->set_weight( scoring::chainbreak, 1.0*10.0/3.0);
 
 	protocols::moves::Mover::type("LoopMover_SlidingWindow");
 	set_default_settings();
@@ -94,10 +94,10 @@ LoopMover_SlidingWindow::LoopMover_SlidingWindow(
 ) : IndependentLoopMover( loops_in )
 {
 	if( scorefxn ){
-		scorefxn_ = scorefxn;
+		set_scorefxn( scorefxn );
 	} else {
-		scorefxn_ = loops::get_cen_scorefxn();
-		scorefxn_->set_weight( scoring::chainbreak, 1.0*10.0/3.0);
+		set_scorefxn( loops::get_cen_scorefxn() );
+		scorefxn()->set_weight( scoring::chainbreak, 1.0*10.0/3.0);
 	}
 
 	protocols::moves::Mover::type("LoopMover_SlidingWindow");
@@ -171,14 +171,14 @@ loops::LoopResult LoopMover_SlidingWindow::model_loop(
 	protocols::jumping::close_chainbreaks(
 		  closure_protocol,
 		  pose,
-		  checkpoints_,
+		  get_checkpoints(),
 			get_current_tag(),
 		  f_empty
 	);
 
 	// Check chain break !
 	if( chainbreak_present ){
-		(*scorefxn_)( pose );
+		( *scorefxn() )( pose );
 		core::Real chain_break_score = std::max( (float)pose.energies().total_energies()[ scoring::chainbreak ],
 																	(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
 

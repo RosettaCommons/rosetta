@@ -134,6 +134,16 @@ LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 	}
 }
 
+bool const LoopMover::use_loops_from_observer_cache() const
+{
+    return loops_from_observer_cache_;
+}
+ 
+void LoopMover::set_use_loops_from_observer_cache( bool const loops_from_observer_cache )
+{
+    loops_from_observer_cache_ = loops_from_observer_cache;
+}
+
 // Used by both LoopMover_Refine_KIC and LoopMover_Perturb_KIC
 void
 loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, Size const round ){
