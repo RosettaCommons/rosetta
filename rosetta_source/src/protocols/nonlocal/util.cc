@@ -17,6 +17,10 @@
 #include <iostream>
 #include <string>
 
+#ifdef WIN32
+#include <iterator>
+#endif
+
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>

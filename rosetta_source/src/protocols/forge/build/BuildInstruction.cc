@@ -27,7 +27,10 @@
 
 // C++ headers
 #include <algorithm>
-// AUTO-REMOVED #include <iterator>
+
+#ifdef WIN32
+#include <iterator>
+#endif
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

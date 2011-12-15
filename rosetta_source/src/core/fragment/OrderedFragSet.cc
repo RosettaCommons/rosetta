@@ -41,6 +41,10 @@
 #include <core/fragment/FrameIterator.hh>
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+#include <iterator>
+#endif
+
 namespace core {
 namespace fragment {
 

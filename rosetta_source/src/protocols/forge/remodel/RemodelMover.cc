@@ -432,7 +432,7 @@ if (working_model.manager.size()!= 0){
 			pose.pdb_info( pdb_info );
   }
 
-  Size i = basic::options::option[basic::options::OptionKeys::remodel::num_trajectory];
+  Size i = basic::options::option[basic::options::OptionKeys::remodel::num_trajectory]();
 	Size num_traj = i; //need this for checkpointing math
 	Size prev_checkpoint = 0;
 

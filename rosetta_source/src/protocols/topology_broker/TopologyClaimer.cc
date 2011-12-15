@@ -29,7 +29,11 @@
 #include <basic/Tracer.hh>
 
 // C/C++ headers
-// AUTO-REMOVED #include <iterator>
+#ifdef WIN32
+#include <algorithm>
+#include <iterator>
+#endif
+
 #include <vector>
 
 #include <utility/vector0.hh>

@@ -135,7 +135,7 @@ class Atom :
 	public numeric::xyzVector < float >
 #endif
 {
-protected:
+public:
 	core::Size natom;
 	core::Size nresidue;
 	char atom[4];
@@ -212,7 +212,7 @@ public:
 	int Init();
 	void Reset();
 
-	int AddAtom(int molecule, Atom &atom);
+	int add_atom(int molecule, Atom &atom);
 	core::Size AddResidue(int molecule, core::conformation::Residue const &residue);
 
 	int Calc();

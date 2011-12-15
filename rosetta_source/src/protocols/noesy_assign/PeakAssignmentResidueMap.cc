@@ -47,6 +47,10 @@
 #include <cstdlib>
 #include <string>
 
+#ifdef WIN32
+#include <iterator>
+#endif
+
 #include <protocols/noesy_assign/CrossPeak.hh>
 #include <utility/vector1.hh>
 

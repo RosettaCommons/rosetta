@@ -40,6 +40,10 @@
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+#include <iterator>
+#endif
+
 static basic::Tracer tr("protocols.topo_broker",basic::t_info);
 
 namespace protocols {

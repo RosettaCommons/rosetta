@@ -43,6 +43,9 @@
 #include <basic/database/open.hh>
 #include <utility/exit.hh>
 
+// C headers
+#include <stdio.h>
+
 // C++ headers
 #include <iostream>
 #include <ostream>
@@ -151,7 +154,7 @@ void ShapeComplementarityCalculator::Reset()
 /// This is a static function and can be called without instantiating ShapeComplementarityCalculator.
 /// The jump_id is used to partition the pose into two molecular surfaces; the first jump (1)
 /// is used is no jump_id is explicity specified. Those desiring more control as to what residues
-/// make up either surface should use the AddResidue() or even AddAtom() function instead.
+/// make up either surface should use the AddResidue() or even add_atom() function instead.
 /// Setting quick to true will perform a much faster calculation (~5-10 times faster) at the expense
 /// of accuracy (about 0.05 units).
 ///
@@ -176,7 +179,7 @@ core::Real ShapeComplementarityCalculator::CalcSc(core::pose::Pose const & pose,
 /// @detailed
 /// This non-static function requires an instance of the ShapeComplementarityCalculator class.
 /// The jump_id is used to partition the pose into two molecular surfaces. To control what
-/// residues make up either surface, use the AddResidue() or even AddAtom() function instead.
+/// residues make up either surface, use the AddResidue() or even add_atom() function instead.
 /// Returns true on success. Results are retrieved with GetResults().
 ///
 /// Example:
@@ -210,7 +213,7 @@ int ShapeComplementarityCalculator::Calc(core::pose::Pose const & pose, core::Si
 }
 
 /// @begin ShapeComplementarityCalculator::Calc
-/// @brief Run the SC calculation for previously defined molecules (via AddResidue or AddAtom calls)
+/// @brief Run the SC calculation for previously defined molecules (via AddResidue or add_atom calls)
 /// @detailed
 /// This function should be called the residues / atoms making up the two molecular surfaces
 /// have been explicitly defined.
@@ -370,14 +373,14 @@ core::Size ShapeComplementarityCalculator::AddResidue(
 		scatom.nresidue = 0;
 		strncpy(scatom.residue, residue.name3().c_str(), sizeof(scatom.residue)-1);
 		strncpy(scatom.atom, residue.atom_name(i).c_str()+1, sizeof(scatom.atom)-1);
-		if(AddAtom(molecule, scatom))
+		if(add_atom(molecule, scatom))
 			++n;
 	}
 
 	return n;
 }
 
-/// @begin ShapeComplementarityCalculator::AddAtom()
+/// @begin ShapeComplementarityCalculator::add_atom()
 /// @brief Add an atom to a molecule for computation.
 /// @detailed
 /// Add an core::scoring::sc::Atom to the molecule.
@@ -386,7 +389,7 @@ core::Size ShapeComplementarityCalculator::AddResidue(
 /// This function also looks-up the atom radius and density.
 /// Returns true on success.
 
-int ShapeComplementarityCalculator::AddAtom(
+int ShapeComplementarityCalculator::add_atom(
 		int molecule,
 		Atom &atom)
 {
@@ -399,7 +402,7 @@ int ShapeComplementarityCalculator::AddAtom(
 		run_.atoms.push_back(atom);
 		++run_.results.surface[molecule].nAtoms;
 		/*
-		printf("AddAtom[%d] %d: %s:%s (%10.4f, %10.4f, %10.4f) = %.4f\n", molecule, run_.results.surface[molecule].nAtoms, atom.residue, atom.atom, atom.x(), atom.y(), atom.z(), atom.radius);
+		printf("add_atom[%d] %d: %s:%s (%10.4f, %10.4f, %10.4f) = %.4f\n", molecule, run_.results.surface[molecule].nAtoms, atom.residue, atom.atom, atom.x(), atom.y(), atom.z(), atom.radius);
 		*/
 		return 1;
 
@@ -465,7 +468,7 @@ int ShapeComplementarityCalculator::AssignAttentionNumbers(std::vector<Atom> &at
 
 		// check if within separator distance
 		if(dist_min >= settings.sep) {
-			// too far away from other molecule, blocker atom only
+			// too _far_ away from other molecule, blocker atom only
 			pAtom1->atten = ATTEN_BLOCKER;
 			++run_.results.surface[pAtom1->molecule].nBlockedAtoms;
 		} else {
@@ -612,7 +615,7 @@ int ShapeComplementarityCalculator::FindNeighborsForAtom(Atom &atom1)
 int ShapeComplementarityCalculator::SecondLoop(Atom &atom1)
 {
 	Vec3 uij, tij;
-	ScValue erj, eri, rij, density, dij, asymm, far, contain;
+	ScValue erj, eri, rij, density, dij, asymm, _far_, contain;
 	int between;
 	std::vector<Atom*> &neighbors = atom1.neighbors;
 
@@ -634,18 +637,18 @@ int ShapeComplementarityCalculator::SecondLoop(Atom &atom1)
 
 		tij = ((atom1 + atom2) * 0.5f) + (uij * (asymm * 0.5f));
 
-		far = (eri + erj) * (eri + erj) - dij * dij;
-		if (far <= 0.0)
+		_far_ = (eri + erj) * (eri + erj) - dij * dij;
+		if (_far_ <= 0.0)
 			continue;
 
-		far = sqrt(far);
+		_far_ = sqrt(_far_);
 
 		contain = dij * dij - ((atom1.radius - atom2.radius) * (atom1.radius - atom2.radius));
 		if (contain <= 0.0)
 			continue;
 
 		contain = sqrt(contain);
-		rij = 0.5 * far * contain / dij;
+		rij = 0.5 * _far_ * contain / dij;
 
 		if (neighbors.size() <= 1) {
 			atom1.access = 1;
@@ -792,7 +795,7 @@ int ShapeComplementarityCalculator::GenerateConvexSurface(Atom const &atom1)
 	Vec3 south(0, 0, -1);
 	Vec3 eqvec(1, 0, 0);
 	Vec3 vtemp, vql, uij, tij, pij, cen, pcen;
-	ScValue dt, erj, dij, eri, far, contain;
+	ScValue dt, erj, dij, eri, _far_, contain;
 	ScValue area, asymm, cs, ps, rad, ri, rij, rj;
 
 	ri = atom1.radius;
@@ -825,16 +828,16 @@ int ShapeComplementarityCalculator::GenerateConvexSurface(Atom const &atom1)
 
 		asymm = (eri*eri - erj*erj) / dij;
 		tij = ((atom1 + *neighbor) * 0.5f) + (uij * (asymm * 0.5f));
-		far = pow(eri + erj, 2) - dij*dij;
-		if(far <= 0.0)
-			throw ShapeComplementarityCalculatorException("Imaginary far for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
-		far = sqrt(far);
+		_far_ = pow(eri + erj, 2) - dij*dij;
+		if(_far_ <= 0.0)
+			throw ShapeComplementarityCalculatorException("Imaginary _far_ for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
+		_far_ = sqrt(_far_);
 
 		contain = pow(dij, 2) - pow(ri - rj, 2);
 		if(contain <= 0.0)
 			throw ShapeComplementarityCalculatorException("Imaginary contain for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
 		contain = sqrt(contain);
-		rij = 0.5 * far * contain / dij;
+		rij = 0.5 * _far_ * contain / dij;
 		pij = tij + (vql * rij);
 		south = (pij - atom1) / eri;
 
@@ -1165,9 +1168,9 @@ int ShapeComplementarityCalculator::CheckProbeCollision(
 		std::vector<PROBE const *> const nears,
 		ScValue const r2)
 {
-	for(std::vector<const PROBE*>::const_iterator near = nears.begin();
-			near < nears.end(); ++near) {
-		if(point.distance_squared((*near)->point) < r2)
+	for(std::vector<const PROBE*>::const_iterator _near_ = nears.begin();
+			_near_ < nears.end(); ++_near_) {
+		if(point.distance_squared((*_near_)->point) < r2)
 			// Collision
 			return 1;
 	}
@@ -1490,15 +1493,17 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		}
 		cumperc = c;
 
-		#ifndef WIN_PYROSETTA
+		#ifndef WIN32
 			if(settings.verbose) {
 				char buf[128];
+
 				snprintf(buf, sizeof(buf),
 					"%.2f - %.2f\t%.1f\t%.1f\t%.1f\t%.1f",
 					(ScValue)it->first * settings.binwidth_dist,
 					(ScValue)it->first * settings.binwidth_dist + settings.binwidth_dist,
 					abin, cumarea,
 					perc, cumperc);
+
 				tr << buf << std::endl;
 			}
 		#endif
@@ -1521,7 +1526,7 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		}
 		cumperc = c;
 
-		#ifndef WIN_PYROSETTA
+		#ifndef WIN32
 			if(settings.verbose) {
 				char buf[128];
 				snprintf(buf, sizeof(buf),

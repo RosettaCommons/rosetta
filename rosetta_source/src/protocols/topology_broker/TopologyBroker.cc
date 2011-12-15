@@ -64,7 +64,11 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iterator>
+#ifdef WIN32
+#include <algorithm>
+#include <iterator>
+#endif
+
 #include <sstream>
 #include <vector>
 

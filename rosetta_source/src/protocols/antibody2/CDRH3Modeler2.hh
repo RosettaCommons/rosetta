@@ -22,9 +22,12 @@
 // Rosetta headers
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
+
 #ifdef WIN32
 #include <core/fragment/FragData.hh> // WIN32 INCLUDE
+#include <core/fragment/FragSet.hh>
 #endif
+
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

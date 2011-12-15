@@ -63,6 +63,10 @@
 #include <utility/vector1.hh>
 #include <csignal>
 
+#ifdef WIN32
+#include <iterator>
+#endif
+
 namespace protocols {
 namespace jd2 {
 static basic::Tracer tr("protocols.jd2.JobDistributor");

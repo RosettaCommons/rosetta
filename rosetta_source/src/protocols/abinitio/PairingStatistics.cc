@@ -66,7 +66,11 @@
 
 // C++ headers
 #include <cstdlib>
-// AUTO-REMOVED #include <iterator>
+
+#ifdef WIN32
+#include <iterator>
+#endif
+
 #include <string>
 #include <vector>
 
