@@ -171,7 +171,7 @@ loops::LoopResult LoopMover_SlidingWindow::model_loop(
 	protocols::jumping::close_chainbreaks(
 		  closure_protocol,
 		  pose,
-		  get_checkpoints(),
+		  *get_checkpoints(),
 			get_current_tag(),
 		  f_empty
 	);

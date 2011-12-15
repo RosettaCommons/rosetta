@@ -104,6 +104,11 @@ LoopMover::get_name() const {
 	return "LoopMover";
 }
 
+void LoopMover::non_OP_loops(const protocols::loops::Loops l)
+{
+    loops( new Loops( l ) );
+}
+
 void LoopMover::add_fragments(
 	core::fragment::FragSetOP fragset
 ) {
@@ -120,13 +125,13 @@ void
 LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 
 	if( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ){
-		loops_.clear();
+		loops_->clear();
 		utility::vector1< std::pair< core::Size, core::Size > > const & segments = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >(pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER ) )->segments();
 		for( core::Size i = 1; i <= segments.size(); ++i ){
 			core::Size loop_end = segments[i].second - 1; //segment convention
 			if( loop_end <= segments[i].first ) continue; //safeguard against faulty or segments of length 1
 			tr << "Setting loop from observer cache between seqpos " << segments[i].first << " and " << loop_end << "." << std::endl;
-			loops_.add_loop( segments[i].first, loop_end, numeric::random::random_range( int(segments[i].first), int(loop_end)  ) );
+			loops_->add_loop( segments[i].first, loop_end, numeric::random::random_range( int(segments[i].first), int(loop_end)  ) );
 		}
 	}
 	else{

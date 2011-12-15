@@ -360,7 +360,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				quick_ccd.add_fragments( frag_libs()[i] );
 			}
 
-			quick_ccd.get_checkpoints().set_type("InitialBuild");
+			quick_ccd.get_checkpoints()->set_type("InitialBuild");
 			quick_ccd.set_current_tag( curr_job_tag );
 			quick_ccd.set_native_pose( new core::pose::Pose ( native_pose ) );
 			quick_ccd.set_scorefxn( cen_scorefxn_ );
@@ -484,7 +484,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						protocols::loops::fold_tree_from_loops( pose, loops,  f_new, true );
 						pose.fold_tree( f_new );
 					}
-					remodel_mover->get_checkpoints().set_type("Remodel");
+					remodel_mover->get_checkpoints()->set_type("Remodel");
 					remodel_mover->set_current_tag( curr_job_tag );
 					remodel_mover->set_native_pose( new Pose( native_pose ) );
 					remodel_mover->apply( pose );

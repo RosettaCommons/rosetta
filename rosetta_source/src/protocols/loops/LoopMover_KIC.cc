@@ -545,7 +545,7 @@ void LoopMover_Refine_KIC::apply(
 	Size const nres( pose.total_residue() );
 	utility::vector1< bool > is_loop( nres, false );
 
-	for( Loops::const_iterator it=loops().begin(), it_end=loops().end();
+	for( Loops::const_iterator it=loops()->begin(), it_end=loops()->end();
 		 it != it_end; ++it ) {
 		for ( Size i= it->start(); i<= it->stop(); ++i ) {
 			is_loop[i] = true;
@@ -577,7 +577,7 @@ void LoopMover_Refine_KIC::apply(
 		max_inner_cycles = 3;
 	}
 
-	int const inner_cycles = std::min( Size(max_inner_cycles), fast ? (int)loops().loop_size() : 10*loops().loop_size() );
+	int const inner_cycles = std::min( Size(max_inner_cycles), fast ? (int)loops()->loop_size() : 10 * (Size)( loops()->loop_size() ) );
 	int repack_period = 20; // should be an option
 	if ( option[ OptionKeys::loops::repack_period ].user() ) {
 		repack_period = option[ OptionKeys::loops::repack_period ]();
@@ -685,7 +685,7 @@ void LoopMover_Refine_KIC::apply(
 	utility::vector1<bool> allow_sc_move_all_loops( nres, false );
 	(*local_scorefxn)(pose); // update 10A nbr graph, silly way to do this
 	// here we'll optimize all side-chains within neighbor_dist_ of any loop (unless fix_natsc_ is true)
-	select_loop_residues( pose, loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
+	select_loop_residues( pose, *loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
 	core::pose::symmetry::make_residue_mask_symmetric( pose, allow_sc_move_all_loops );
 	repack_packer_task->restrict_to_residues( allow_sc_move_all_loops );
 	core::pack::pack_rotamers( pose, *local_scorefxn, repack_packer_task );
@@ -700,7 +700,7 @@ void LoopMover_Refine_KIC::apply(
 	std::string move_type = "repack";
 	pose.update_residue_neighbors(); // to update 10A nbr graph
 	kinematics::MoveMap mm_all_loops; // DJM tmp
-	loops_set_move_map( pose, loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
+	loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
 	minimizer->run( pose, mm_all_loops, *min_scorefxn, options ); // DJM tmp
 	mc.boltzmann( pose, move_type );
 	mc.show_scores();
@@ -711,14 +711,14 @@ void LoopMover_Refine_KIC::apply(
 
 	// Get a vector of move_maps and allow_sc_move vectors, one for each loop. This way if we have multiple loops
 	// we can optimize only the side-chains around the loop selected in the inner_cycle
-	utility::vector1< kinematics::MoveMap > move_maps ( loops().size() );
-	utility::vector1< utility::vector1< bool > > allow_sc_vectors ( loops().size() );
+	utility::vector1< kinematics::MoveMap > move_maps ( loops()->size() );
+	utility::vector1< utility::vector1< bool > > allow_sc_vectors ( loops()->size() );
 	update_movemap_vectors( pose, move_maps );
 	update_allow_sc_vectors( pose, allow_sc_vectors );
 
 	if (local_movie) {
 		// this assumes there is only one loops_.
-		Loops::const_iterator one_loop( loops().begin() );
+		Loops::const_iterator one_loop( loops()->begin() );
 		Size begin_loop=one_loop->start();
 		Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;
@@ -756,10 +756,10 @@ void LoopMover_Refine_KIC::apply(
 
 			// choose a random loop for both rounds
 			//Loops::const_iterator it( loops_.one_random_loop() );
-			Size loop_ind = RG.random_range(1, loops().size());
+			Size loop_ind = RG.random_range(1, loops()->size());
 			Loops one_loop;
 			//one_loop.add_loop( it );
-			one_loop.add_loop( loops()[ loop_ind ] );
+			one_loop.add_loop( ( *loops() )[ loop_ind ] );
 			// get loop endpoints
 			Size begin_loop=one_loop.begin()->start();
 			Size end_loop=one_loop.begin()->stop();
@@ -808,8 +808,8 @@ void LoopMover_Refine_KIC::apply(
 					bool accepted = mc.boltzmann( pose, move_type );
 					if (accepted) {
 						tr << "RMS to native after accepted kinematic round 1 move on loop "
-						   << loops().size() + 1 - loop_ind << ": " // reverse the order so it corresponds with the loop file
-						   << loop_rmsd(pose, native_pose, loops()) << std::endl;
+						   << loops()->size() + 1 - loop_ind << ": " // reverse the order so it corresponds with the loop file
+						   << loop_rmsd(pose, native_pose, *loops()) << std::endl;
 						//tr << "after accepted move res " << kic_start + 2 << " omega is " << pose.omega(kic_start+2) << std::endl;
 						if (local_movie) {
 							loop_outfile << "MODEL" << std::endl;
@@ -864,7 +864,7 @@ void LoopMover_Refine_KIC::apply(
 					bool accepted = mc.boltzmann( pose, move_type );
 					if (accepted) {
 						tr << "RMS to native after accepted kinematic round 2 move on loop " << loop_ind << ": "
-						<< loop_rmsd(pose, native_pose, loops()) << std::endl;
+						<< loop_rmsd(pose, native_pose, *loops()) << std::endl;
 						if (local_movie) {
 							loop_outfile << "MODEL" << std::endl;
 							utility::vector1<Size> indices(end_loop - begin_loop + 3);
@@ -892,8 +892,8 @@ void LoopMover_Refine_KIC::apply(
 
 					// the repack/design and subsequent minimization within this main_repack_trial block apply
 					// to all loops (and their neighbors, if requested)
-					loops_set_move_map( pose, loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
-					select_loop_residues( pose, loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
+					loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
+					select_loop_residues( pose, *loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
 
 					core::pose::symmetry::make_residue_mask_symmetric( pose, allow_sc_move_all_loops );  //fpd symmetrize res mask -- does nothing if pose is not symm
 					repack_packer_task->restrict_to_residues( allow_sc_move_all_loops );
@@ -913,7 +913,7 @@ void LoopMover_Refine_KIC::apply(
 						if ( core::pose::symmetry::is_symmetric( pose ) )  {
 							//fpd  minimizing with the reduced movemap seems to cause occasional problems
 							//     in the symmetric case ... am looking into this
-							loops_set_move_map( pose, loops(), fix_natsc_, mm_all_loops, neighbor_dist_ );
+							loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_ );
 							minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
 						} else {
 							minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
@@ -945,7 +945,7 @@ void LoopMover_Refine_KIC::apply(
 	}
 	if (local_movie) {
 		// this assumes there is only one loops_.
-		Loops::const_iterator one_loop( loops().begin() );
+		Loops::const_iterator one_loop( loops()->begin() );
 		Size begin_loop=one_loop->start();
 		Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;
@@ -974,9 +974,9 @@ LoopMover_Refine_KIC::update_movemap_vectors(
 	core::pose::Pose & pose,
 	utility::vector1<core::kinematics::MoveMap> & move_maps ) {
 
-	for( Size i = 1; i <= loops().size(); i++ ) {
+	for( Size i = 1; i <= loops()->size(); i++ ) {
 		protocols::loops::Loops cur_loop;
-		cur_loop.add_loop( loops()[ i ] );
+		cur_loop.add_loop( ( *loops() )[ i ] );
 		core::kinematics::MoveMap cur_mm;
 		loops_set_move_map( pose, cur_loop, fix_natsc_, cur_mm, neighbor_dist_ );
 		move_maps[ i ] = cur_mm;
@@ -992,9 +992,9 @@ LoopMover_Refine_KIC::update_allow_sc_vectors(
 	core::pose::Pose & pose,
 	utility::vector1< utility::vector1< bool > > & allow_sc_vectors ) {
 
-	for( Size i = 1; i <= loops().size(); i++ ) {
+	for( Size i = 1; i <= loops()->size(); i++ ) {
 		protocols::loops::Loops cur_loop;
-		cur_loop.add_loop( loops()[ i ] );
+		cur_loop.add_loop( ( *loops() )[ i ] );
 		utility::vector1<bool> cur_allow_sc_move( pose.total_residue(), false );
 		select_loop_residues( pose, cur_loop, !fix_natsc_, cur_allow_sc_move, neighbor_dist_);
 		allow_sc_vectors[ i ] = cur_allow_sc_move;

@@ -558,7 +558,7 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 	}
 	if( tag->hasOption( "loops" ) ){
 		std::string const loops_str( tag->getOption< std::string >( "loops" ) );
-		loops( loops_from_string( loops_str, pose ) );
+		non_OP_loops( loops_from_string( loops_str, pose ) );
 	}
 	if( tag->hasOption( "scorefxn" ) ) this->set_scorefxn( new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption<std::string>( "scorefxn" ) ) ) );
 
@@ -593,7 +593,7 @@ void LoopMover_Refine_CCD::apply(
 	if( set_fold_tree_from_loops_ ){
 		core::kinematics::FoldTree f_new;
 		f_orig = pose.fold_tree();
-		loops::fold_tree_from_loops( pose, this->loops(), f_new);
+		loops::fold_tree_from_loops( pose, *( this->loops() ), f_new);
 		pose.fold_tree( f_new );
 		loops::add_cutpoint_variants( pose );
 	}
@@ -606,7 +606,7 @@ void LoopMover_Refine_CCD::apply(
 	Size const nres( pose.total_residue() );   //fpd fix for symmetry
 	utility::vector1< bool > is_loop( nres, false );
 
-	for( Loops::const_iterator it=loops().begin(), it_end=loops().end();
+	for( Loops::const_iterator it=loops()->begin(), it_end=loops()->end();
 			 it != it_end; ++it ) {
 		for ( Size i= it->start(); i<= it->stop(); ++i ) {
 			is_loop[i] = true;
@@ -632,7 +632,7 @@ void LoopMover_Refine_CCD::apply(
 	// scheduler
 	int const fast( option[ OptionKeys::loops::fast ] ); // why is this an int?
 	Size const inner_cycles(
-		std::min( max_inner_cycles_, fast ? loops().loop_size() : Size(10)*loops().loop_size() ) );
+		std::min( max_inner_cycles_, fast ? loops()->loop_size() : Size(10)*loops()->loop_size() ) );
 
 	// scorefxn
 	scoring::ScoreFunctionOP scorefxn;
@@ -691,7 +691,7 @@ void LoopMover_Refine_CCD::apply(
 	pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 	utility::vector1<bool> allow_repacked( nres, false );
 	if ( packing_isolated_to_active_loops_ ) {
-		select_loop_residues( pose, loops(), repack_neighbors, allow_repacked, 10.0 /* neighbor_cutoff */ );
+		select_loop_residues( pose, *loops(), repack_neighbors, allow_repacked, 10.0 /* neighbor_cutoff */ );
 		core::pose::symmetry::make_residue_mask_symmetric( pose, allow_repacked );
 		             // does nothing if pose is not symm
 		this_packer_task->restrict_to_residues( allow_repacked );
@@ -716,7 +716,7 @@ void LoopMover_Refine_CCD::apply(
 	}
 	// set minimization degrees of freedom for all loops
 	kinematics::MoveMap mm_all_loops;
-	setup_movemap( pose, loops(), allow_repacked, mm_all_loops );
+	setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
 
 	// small/shear move parameters
 	// should be options
@@ -742,7 +742,7 @@ void LoopMover_Refine_CCD::apply(
 								<< j << "/" << inner_cycles << " "
 								<< std::endl;
 			{// small_CCD_min_trial
-				Loops::const_iterator it( loops().one_random_loop() );
+				Loops::const_iterator it( loops()->one_random_loop() );
 				Loops one_loop;
 				one_loop.add_loop( it );
 				// set up movemap properly
@@ -752,7 +752,7 @@ void LoopMover_Refine_CCD::apply(
 				if (local_debug) {
 					tr << "chutmp-debug small_move-0: " << "  " << (*scorefxn)(pose) << std::endl;
 					tr << "small_move-0: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
-										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, loops() )) << std::endl;
+										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-0.pdb");
 				}
 
@@ -762,7 +762,7 @@ void LoopMover_Refine_CCD::apply(
 				if (local_debug) {
 					tr << "chutmp-debug small_move-1: " << "  " << (*scorefxn)(pose) << std::endl;
 					tr << "small_move-1: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
-										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, loops() )) << std::endl;
+										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-1.pdb");
 					std::ofstream out("score.small_move_1");
 					out << "scoring of input_pose " << (*scorefxn)(pose) << std::endl;
@@ -775,7 +775,7 @@ void LoopMover_Refine_CCD::apply(
 				if (local_debug) {
 					tr << "chutmp-debug small_move-2: " << "  " << (*scorefxn)(pose) << std::endl;
 					tr << "small_move-2: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
-										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, loops() )) << std::endl;
+										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-2.pdb");
 					std::ofstream out("score.small_move_2");
 					out << "scoring of input_pose " << (*scorefxn)(pose) << std::endl;
@@ -788,17 +788,17 @@ void LoopMover_Refine_CCD::apply(
 				if (local_debug) {
 					tr << "chutmp-debug small_move-3: " << "  " << (*scorefxn)(pose) << std::endl;
 					tr << "small_move-3: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
-										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, loops() )) << std::endl;
+										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-3.pdb");
 				}
 
-				setup_movemap( pose, loops(), allow_repacked, mm_all_loops );
+				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
 				minimizer->run( pose, mm_all_loops, *scorefxn, options );
 
 				if (local_debug) {
 					tr << "chutmp-debug small_move-4: " << "  " << (*scorefxn)(pose) << std::endl;
 					tr << "small_move-4: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
-										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, loops() )) << std::endl;
+										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-4.pdb");
 				}
 
@@ -808,14 +808,14 @@ void LoopMover_Refine_CCD::apply(
 				if (local_debug) {
 					tr << "chutmp-debug small_move-5: " << "  " << (*scorefxn)(pose) << std::endl;
 					tr << "small_move-5: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
-										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, loops() )) << std::endl;
+										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-5.pdb");
 				}
 
 				mc.show_scores();
 			}
 			{// shear_CCD_min_trial
-				Loops::const_iterator it( loops().one_random_loop() );
+				Loops::const_iterator it( loops()->one_random_loop() );
 				Loops one_loop;
 				one_loop.add_loop( it );
 				// set up movemap properly
@@ -826,7 +826,7 @@ void LoopMover_Refine_CCD::apply(
 				if (! it->is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *mm_one_loop);
 				pack::rotamer_trials( pose, *scorefxn, this_packer_task );
 				(*scorefxn)(pose); // update 10A nbr graph, silly way to do this
-				setup_movemap( pose, loops(), allow_repacked, mm_all_loops );
+				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
 				minimizer->run( pose, mm_all_loops, *scorefxn, options );
 				std::string move_type = "shear_ccd_min";
 				mc.boltzmann( pose, move_type );
@@ -837,7 +837,7 @@ void LoopMover_Refine_CCD::apply(
 					// repack trial
 
 					if ( packing_isolated_to_active_loops_ ) {
-						select_loop_residues( pose, loops(), repack_neighbors, allow_repacked, 10.0 /* neighbor_cutoff */ );
+						select_loop_residues( pose, *loops(), repack_neighbors, allow_repacked, 10.0 /* neighbor_cutoff */ );
 					}
 					core::pose::symmetry::make_residue_mask_symmetric( pose, allow_repacked );  //fpd symmetrize res mask -- does nothing if pose is not symm
 					this_packer_task->restrict_to_residues( allow_repacked );

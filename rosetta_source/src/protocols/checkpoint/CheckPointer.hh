@@ -32,6 +32,7 @@
 #endif
 
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 
 // ObjexxFCL Headers
@@ -74,7 +75,7 @@ class FileBuffer {
 
 
 
-class CheckPointer {
+class CheckPointer : public utility::pointer::ReferenceCount {
 public:
   CheckPointer( std::string const& type );
 

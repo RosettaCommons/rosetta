@@ -99,7 +99,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 
  	// Select Loops to be built
 	all_loops_closed_ = true;
-	tr.Info << "ALL_LOOPS:" << loops() << std::endl;
+	tr.Info << "ALL_LOOPS:" << *loops() << std::endl;
 
 	Loops selected_loops;
 	select_loops( selected_loops );
@@ -148,10 +148,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		for ( int extension_attempt = 0; extension_attempt <= grow_attempts_; extension_attempt ++ ){
 
 			if ( !strict_loops_ && extension_attempt > 0 ){
-                // This is a little sloppy right now because LoopMover uses Loops as a member and not a LoopsOP.
-                LoopsOP temp_loops = new Loops( loops() );
-                temp_loops->grow_loop_away_from_sheets( pose, buildloop, 1.0 );
-                loops( *temp_loops );
+                non_const_loops()->grow_loop_away_from_sheets( pose, buildloop, 1.0 );
 			}
 			for ( int build_attempt = 0; build_attempt < build_attempts_; build_attempt ++ ){
 				tr.Info << "Building Loop attempt: " << build_attempt << std::endl;
@@ -164,16 +161,16 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 				std::string curr_job_tag = get_current_tag();
 				bool checkpoint_recovery = false;
 
-				if ( get_checkpoints().recover_checkpoint( pose, curr_job_tag, checkname + "_S", pose.is_fullatom(), true) ) {
+				if ( get_checkpoints()->recover_checkpoint( pose, curr_job_tag, checkname + "_S", pose.is_fullatom(), true) ) {
 					checkpoint_recovery = true;
 					result_of_loopModel = Success;
 				}
 				else
-				if ( get_checkpoints().recover_checkpoint( pose, curr_job_tag, checkname + "_C", pose.is_fullatom(), true) ) {
+				if ( get_checkpoints()->recover_checkpoint( pose, curr_job_tag, checkname + "_C", pose.is_fullatom(), true) ) {
 					checkpoint_recovery = true;
 					result_of_loopModel = CriticalFailure;
 				}else
-				if ( get_checkpoints().recover_checkpoint( pose, curr_job_tag, checkname + "_F", pose.is_fullatom(), true) ) {
+				if ( get_checkpoints()->recover_checkpoint( pose, curr_job_tag, checkname + "_F", pose.is_fullatom(), true) ) {
 					checkpoint_recovery = true;
 					result_of_loopModel = Failure;
 				} else {
@@ -187,14 +184,14 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 				// If the loop bas built and closed ok.
 				if ( result_of_loopModel == Success || accept_aborted_loops_ ){
 					if ( ! checkpoint_recovery ){
-						get_checkpoints().checkpoint( pose, curr_job_tag, checkname + "_S", true );
+						get_checkpoints()->checkpoint( pose, curr_job_tag, checkname + "_S", true );
 					}
 					// briefly score the pose with whatever scorefunction is being used.
 					core::Real pose_score;
 					if ( scorefxn() ) pose_score = (*scorefxn())(pose);
 					else             pose_score = 0;
 
-					get_checkpoints().debug(  curr_job_tag, checkname, pose_score);
+					get_checkpoints()->debug(  curr_job_tag, checkname, pose_score);
 
 					// compare to previous score - if better "accept"
 					if ( pose_score < best_score || best_count == 0 ){
@@ -211,17 +208,17 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 				//fpd if we have strict loops on, keep trying rather than immediately failing
 				if ( result_of_loopModel == ExtendFailure && !strict_loops_ ){ // means extend loop immediately!
 					if ( ! checkpoint_recovery ){
-						get_checkpoints().checkpoint( pose, curr_job_tag, checkname + "_F", true );
+						get_checkpoints()->checkpoint( pose, curr_job_tag, checkname + "_F", true );
 					}
-					get_checkpoints().debug(  curr_job_tag, checkname, -1);
+					get_checkpoints()->debug(  curr_job_tag, checkname, -1);
 					break;
 				}
 
 				if ( result_of_loopModel == CriticalFailure ){
 					if ( ! checkpoint_recovery ){
-						get_checkpoints().checkpoint( pose, curr_job_tag, checkname + "_C", true );
+						get_checkpoints()->checkpoint( pose, curr_job_tag, checkname + "_C", true );
 					}
-					get_checkpoints().debug(  curr_job_tag, checkname, -2);
+					get_checkpoints()->debug(  curr_job_tag, checkname, -2);
 					tr.Error << "Unable to build this loop - a critical error occured. Moving on .. " << std::endl;
 					break;
 				}
@@ -287,15 +284,15 @@ void IndependentLoopMover::select_loops( Loops & selected_loops ){
 				if ( loop_numbers[i]  <= 0 ){
 					utility_exit_with_message( "Specified loop numbers is 0 or below.");
 				}
-				if ( (Size)loop_numbers[i]  > loops().size()  ){
+				if ( (Size)loop_numbers[i]  > loops()->size()  ){
 					utility_exit_with_message( "Specified loop number is greater than the number of loops in the loop file itself.");
 				}
-				temp_loops.add_loop( loops()[ loop_numbers[i] ] );
+				temp_loops.add_loop( ( *loops() )[ loop_numbers[i] ] );
 		}
 
 	} else {
 		// Choose loops by skiprate
-		for ( Loops::const_iterator it=loops().begin(), it_end=loops().end(); it != it_end; ++it ) {
+		for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
 			if ( build_all_loops_ ||
 				( numeric::random::uniform() >= it->skip_rate() )
 			) {

@@ -98,7 +98,7 @@ LoopMoverFactory::create_loop_mover(
 		utility_exit_with_message(error_msg.str());
 	}
 
-	loop_mover->loops(loops);
+	loop_mover->non_OP_loops(loops);
 
 	return loop_mover;
 }

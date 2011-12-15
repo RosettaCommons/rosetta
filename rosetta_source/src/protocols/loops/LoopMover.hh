@@ -54,7 +54,7 @@ public:
 	LoopMover() :
 		Mover(),
 		loops_(),
-		checkpoints_("LoopMover"),
+        checkpoints_( new checkpoint::CheckPointer("LoopMover") ),
 		loops_from_observer_cache_(false)
 	{
 		Mover::type("LoopMover");
@@ -63,8 +63,8 @@ public:
 	LoopMover(
 		protocols::loops::Loops loops_in
 	) : Mover(),
-		loops_( loops_in ),
-		checkpoints_("LoopMover"),
+		loops_( new Loops( loops_in ) ),
+        checkpoints_( new checkpoint::CheckPointer("LoopMover") ),
 		loops_from_observer_cache_(false)
 	{
 		Mover::type("LoopMover");
@@ -79,7 +79,7 @@ public:
 
 	virtual std::string get_name() const;
 
-	const protocols::loops::Loops & loops() const {
+	const protocols::loops::LoopsCOP loops() const {
 		return loops_;
 	}
     
@@ -91,7 +91,8 @@ public:
 		return frag_libs_;
 	}
     
-	void loops( protocols::loops::Loops const l ){ loops_ = l; }
+    void non_OP_loops( protocols::loops::Loops const l );
+	void loops( protocols::loops::LoopsOP const l ){ loops_ = l; }
 	/// @brief Extend a loop
 	virtual void set_extended_torsions(
 		core::pose::Pose & pose,
@@ -126,7 +127,7 @@ public: // movemap management
 
 public: // checkpointing
 
-	checkpoint::CheckPointer & get_checkpoints() {
+	checkpoint::CheckPointerOP & get_checkpoints() {
 		return checkpoints_;
 	}
 
@@ -151,14 +152,18 @@ protected: // movemap management
     
     bool const use_loops_from_observer_cache() const; 
     void set_use_loops_from_observer_cache( bool const loops_from_observer_cache );
+    const protocols::loops::LoopsOP & non_const_loops() const {
+		return loops_;
+	}
+
 
 private: // data
 
-    protocols::loops::Loops loops_;
+    protocols::loops::LoopsOP loops_;
     
     core::scoring::ScoreFunctionOP scorefxn_;
     utility::vector1< core::fragment::FragSetOP > frag_libs_;
-    checkpoint::CheckPointer checkpoints_;
+    checkpoint::CheckPointerOP checkpoints_;
     bool loops_from_observer_cache_;
     
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
