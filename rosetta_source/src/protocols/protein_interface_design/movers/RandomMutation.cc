@@ -14,11 +14,13 @@
 // Unit headers
 #include <protocols/protein_interface_design/movers/RandomMutation.hh>
 #include <protocols/protein_interface_design/movers/RandomMutationCreator.hh>
-
+#include <core/pose/symmetry/util.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 // Package headers
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
@@ -137,7 +139,12 @@ RandomMutation::apply( core::pose::Pose & pose )
       mutate_residue->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
   }
   TR<<"Mutating residue "<<pose.residue( random_entry ).name3()<<random_entry<<" to ";
-  core::pack::pack_rotamers( pose, *scorefxn(), mutate_residue );
+	protocols::simple_moves::PackRotamersMoverOP pack;
+  if( core::pose::symmetry::is_symmetric( pose ) )
+  	pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
+  else
+    pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
+  pack->apply( pose );
   TR<<pose.residue( random_entry ).name3()<<std::endl;
   (*scorefxn())(pose);
 }

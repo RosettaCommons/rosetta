@@ -39,9 +39,12 @@
 #define foreach BOOST_FOREACH
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
-
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
+#include <core/pose/symmetry/util.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
 //Auto Headers
 #include <basic/options/keys/OptionKeys.hh>
@@ -250,7 +253,12 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
     	 }
 			 pose = pose_orig;//unbind if necessary
     	 TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
-    	 core::pack::pack_rotamers( pose, *scorefxn(), mutate_residue );
+			 protocols::simple_moves::PackRotamersMoverOP pack;
+			 if( core::pose::symmetry::is_symmetric( pose ) )
+				 pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
+			 else
+				 pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
+    	 pack->apply( pose );
     	 TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
     	 relax_mover()->apply( pose );
 			 bool const triage_filter_pass( triage_filter()->apply( pose ) );
