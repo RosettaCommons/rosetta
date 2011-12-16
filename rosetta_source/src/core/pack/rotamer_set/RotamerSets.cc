@@ -160,7 +160,6 @@ RotamerSets::build_rotamers(
 	update_offset_data();
 
 	if (task_->rotamer_links_exist()){
-//	if (false){
 		//check all the linked positions
 
 		utility::vector1<bool> visited(pose.total_residue(),false);
@@ -201,18 +200,43 @@ RotamerSets::build_rotamers(
 				RotamerSetOP smallset( rsf.create_rotamer_set( pose.residue( 1 ) )) ;
 
 				for (Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; itr++){
-					// std::cout << "copying rotamers" << std::endl;
+
 					conformation::ResidueOP cloneRes = new conformation::Residue(*(*itr)->clone());
+
 					cloneRes->seqpos(copies[jj]);
 
-					// if not start or end of chain remove the terminus residue type if
-					// any
+					//correct for connections if the smallset is from first or last
+					//residues.  These positions don't have a complete connect record.
+
+					if ((*itr)->seqpos() == 1 && copies[jj] != 1  ){
+					  if (cloneRes->has_variant_type("LOWER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
+						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
+						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
+					}
+					else if ((*itr)->seqpos() == 1 && copies[jj] == 1  ){
+						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
+					}
+					else if ( (*itr)->seqpos() == pose.total_residue() && copies[jj] != pose.total_residue() ){
+						if (cloneRes->has_variant_type("UPPER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
+						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
+						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
+					}
+					else if ( (*itr)->seqpos() == pose.total_residue() && copies[jj] == pose.total_residue() ){
+						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
+					}
+					else {
+						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
+					}
+
+					//debug	connectivity
+					//std::cout << "resconn1: " << cloneRes->connected_residue_at_resconn( 1 ) << " ";
+					//std::cout	<< cloneRes->residue_connection_conn_id(1);
+					//std::cout << " resconn2: " << cloneRes->connected_residue_at_resconn( 2 ) << " ";
+					//std::cout << cloneRes->residue_connection_conn_id(2);
+					//std::cout << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << (*itr)->seqpos() << std::endl;
 
 					using namespace core::chemical;
-					if ((copies[jj] != 1 || copies[jj] != pose.total_residue()) && (cloneRes->has_variant_type("UPPER_TERMINUS") || cloneRes->has_variant_type("LOWER_TERMINUS"))){
-						if (cloneRes->has_variant_type("UPPER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
-						if (cloneRes->has_variant_type("LOWER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
-					}
+
 					if (copies[jj]==1){
 						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
 						//std::cout << cloneRes->name()  << " of variant type lower? " << cloneRes->has_variant_type("LOWER_TERMINUS") << std::endl;
@@ -233,21 +257,18 @@ RotamerSets::build_rotamers(
 				//std::cout << "replacing rotset at " << copies[jj] << " with smallest set from " << smallest_res << std::endl;
 			}
 
-//debug
-/*
-			for (int i =1; i<= set_of_rotamer_sets_.size(); ++i){
-				std::cout << "set of rot set has " << set_of_rotamer_sets_[i]->num_rotamers() << " at " << i << std::endl;
-			}
-*/
+			//debug
+			/*
+						for (int i =1; i<= set_of_rotamer_sets_.size(); ++i){
+							std::cout << "set of rot set has " << set_of_rotamer_sets_[i]->num_rotamers() << " at " << i << std::endl;
+						}
+			*/
 
 		}
 		std::cout << "expected rotamer count is " << expected_rot_count << std::endl;
 
 	}
 	update_offset_data();
-
-
-
 
 /*
 	// Dump rotamers to the screen.
