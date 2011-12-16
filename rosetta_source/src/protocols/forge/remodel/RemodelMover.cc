@@ -432,7 +432,7 @@ if (working_model.manager.size()!= 0){
 }
 /*
 	up = working_model.manager.undefined_positions();
-  for ( std::set<core::iterator i = up.begin(); i!=up.end(); i++){
+  for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
 	  TR << *i << std::endl;
 		}
      uup = working_model.manager.union_of_intervals_containing_undefined_positions();
