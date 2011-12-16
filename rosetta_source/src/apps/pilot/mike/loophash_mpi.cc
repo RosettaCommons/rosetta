@@ -19,7 +19,7 @@
 #include <protocols/wum/WorkUnitList.hh>
 #include <protocols/wum/WorkUnitManager.hh>
 #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>
-#include <protocols/wum/WorkUnit_BatchRelax.hh>
+#include <protocols/relax/WorkUnit_BatchRelax.hh>
 #include <protocols/loophash/MPI_LoopHashRefine.hh>
 #include <protocols/loophash/MPI_LoopHashRefine_Master.hh>
 #include <protocols/loophash/MPI_LoopHashRefine_Emperor.hh>
@@ -49,6 +49,7 @@ class MPI_LoopHash_Launcher {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace protocols::wum;
+		using namespace protocols::relax;
 		using namespace protocols::loophash;
 
 		core::pose::PoseOP native_pose_;
