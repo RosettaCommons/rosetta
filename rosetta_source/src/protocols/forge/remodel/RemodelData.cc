@@ -20,6 +20,7 @@
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh> 
 
 //fragset
 // AUTO-REMOVED #include <core/fragment/OrderedFragSet.hh>
@@ -223,7 +224,19 @@ protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile()
 
 			std::map< std::string, core::pack::task::ResfileCommandOP > resfile_command_map = core::pack::task::create_command_map();
 
-			oss << line.index << " _ " ;
+
+
+			//chain defined by option, no chain by default
+			if (basic::options::option[ OptionKeys::run::chain].user()) {
+				std::string const chain (basic::options::option[ OptionKeys::run::chain]);
+				oss << line.index << " " << chain << " " ;
+			}
+			else {
+				oss << line.index << " _ " ;
+			}
+
+
+
 			bool pickaa = false;
 			for (int i = 3; i< (int)split_info.size();  i++){
 				if (split_info[i].substr(0,3) != "CST" || split_info[i].substr(0,3) != "DM_" || split_info[i].substr(0,3) != "DS_"){

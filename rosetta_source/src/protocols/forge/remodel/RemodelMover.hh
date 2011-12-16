@@ -35,6 +35,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
+#include <protocols/moves/DataMap.fwd.hh> //parser
+
 // utility headers
 #include <utility/vector1.hh>
 
@@ -86,6 +88,11 @@ public: // typedefs
 	typedef std::pair< Interval, String > OriginalInterval2DesignString;
 	typedef utility::vector1< OriginalInterval2DesignString > DesignInfo;
 
+//parser fabio
+	typedef utility::tag::TagPtr TagPtr;
+	typedef protocols::filters::Filters_map Filters_map;
+	typedef protocols::moves::DataMap DataMap;
+	typedef protocols::moves::Movers_map Movers_map;
 
 public: // construct/destruct
 
@@ -112,6 +119,15 @@ private: // disallow assignment
 
 
 public: // virtual constructors
+
+	/// @brief clone this object, for parser
+	virtual
+	MoverOP clone() const;
+
+
+	/// @brief create this type of object, for parser
+	virtual
+	MoverOP fresh_instance() const;
 
 
 	/// @brief clone this object
@@ -501,6 +517,14 @@ private: // per-stage movers
 	/// @warning Remember to set this to null if the BuildManager changes.
 	VarLengthBuildOP vlb_;
 
+
+public: // parser
+
+	virtual void parse_my_tag( TagPtr const tag,
+														 DataMap & data,
+														 Filters_map const &,
+														 Movers_map const &,
+														 Pose const & );
 
 };
 

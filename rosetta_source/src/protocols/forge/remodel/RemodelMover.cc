@@ -16,6 +16,7 @@
 #include <protocols/forge/remodel/RemodelMover.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.fwd.hh>
+#include <protocols/forge/remodel/RemodelMoverCreator.hh> 
 
 // package headers
 #include <protocols/forge/build/BuildInstruction.hh>
@@ -88,6 +89,9 @@
 
 // AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 
+// Parser headers
+#include <protocols/moves/DataMap.hh>
+#include <utility/tag/Tag.hh>
 
 //test
 // AUTO-REMOVED #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechains.hh>
@@ -114,6 +118,24 @@ namespace remodel {
 
 static basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
 
+//parser
+std::string
+RemodelMoverCreator::keyname() const
+{
+	return RemodelMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+RemodelMoverCreator::create_mover() const {
+	return new RemodelMover;
+}
+
+std::string
+RemodelMoverCreator::mover_name()
+{
+	return "RemodelMover";
+}
+
 
 /// @brief default constructor
 RemodelMover::RemodelMover() :
@@ -121,6 +143,7 @@ RemodelMover::RemodelMover() :
 //	use_fullmer_( false ),
 //	use_sequence_bias_( false ),
 	max_linear_chainbreak_( 0.07 ),
+//	max_linear_chainbreak_( 0.15 ),
 	//centroid_loop_mover_str_( "quick_ccd" ),
 	centroid_loop_mover_str_( "RemodelLoopMover" ),
 	redesign_loop_neighborhood_( false ),
@@ -214,8 +237,20 @@ RemodelMover::RemodelMover( RemodelMover const & rval ) :
 RemodelMover::~RemodelMover() {}
 
 
+/// @brief clone for parser
+RemodelMover::MoverOP RemodelMover::clone() const {
+	return new RemodelMover( *this );
+}
+
+
+/// @brief fresh instance for parser
+RemodelMover::MoverOP RemodelMover::fresh_instance() const {
+	return new RemodelMover();
+}
+
+
 /// @brief clone this object
-RemodelMover::MoverOP RemodelMover::clone() {
+RemodelMover::MoverOP RemodelMover::clone() { 
 	return new RemodelMover( *this );
 }
 
@@ -397,7 +432,7 @@ if (working_model.manager.size()!= 0){
 }
 /*
 	up = working_model.manager.undefined_positions();
-  for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
+  for ( std::set<core::iterator i = up.begin(); i!=up.end(); i++){
 	  TR << *i << std::endl;
 		}
      uup = working_model.manager.union_of_intervals_containing_undefined_positions();
@@ -494,7 +529,6 @@ if (working_model.manager.size()!= 0){
 		if (option[ OptionKeys::remodel::repeat_structure].user()) {
 			cached_modified_pose = pose;
 		}
-
 		// do centroid build
 		TR << "BUILD CYCLE REMAINING " << i << std::endl;
 		core::kinematics::FoldTree originalTree = pose.fold_tree();
@@ -514,6 +548,8 @@ if (working_model.manager.size()!= 0){
 				cached_modified_pose.set_omega(res, pose.phi(res));
 			}
 		}
+
+
 		//test
 		//pose.dump_pdb("check.pdb");
 /*
@@ -601,7 +637,6 @@ if (working_model.manager.size()!= 0){
 				//core::scoring::ScoreFunctionOP cen_min_sfxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 
 				TR << "centroid minimizing repeat structures" << std::endl;
-
 				Pose archived_pose = pose;
 
 				// flip residue type set for centroid minimize
@@ -668,6 +703,7 @@ if (working_model.manager.size()!= 0){
 
 	//seriously refine the poses
 	Size filecount = 1;
+	core::Real current_score = 10000;
 
 	TR << "clustered poses count: " << results.size() << std::endl;
 	for(std::vector<core::pose::PoseOP>::iterator it = results.begin(), end= results.end(); it!= end; it++){
@@ -712,6 +748,14 @@ if (working_model.manager.size()!= 0){
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
 
 		(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
+
+		ScoreTypeFilter const  pose_total_score( scorefxn, total_score, 100 );
+		core::Real score(pose_total_score.compute( *(*it) ));
+		if (score <= current_score) {
+			current_score = score ;
+			pose = *(*it) ;
+		}
+		
 		filecount++;
 	}
 
@@ -948,7 +992,7 @@ bool RemodelMover::design_refine_seq_relax(
   sfx->set_weight(core::scoring::coordinate_constraint, 1.0 );
   sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
   sfx->set_weight(core::scoring::angle_constraint, 1.0 );
-  sfx->set_weight(core::scoring::dihedral_constraint, 10.0 );
+  sfx->set_weight(core::scoring::dihedral_constraint, 10.0 ); // 1.0 originally
   sfx->set_weight(core::scoring::res_type_constraint, 1.0);
   sfx->set_weight(core::scoring::res_type_linking_constraint, 1.0);
 	protocols::relax::FastRelax relaxMover(sfx);
@@ -1105,11 +1149,21 @@ bool RemodelMover::design_refine(
 		// set loop topology
 		pose.fold_tree( loop_ft );
 
-
 		if (!basic::options::option[basic::options::OptionKeys::remodel::swap_refine_confirm_protocols].user()){
 			// refine the new section
 			LoopMover_Refine_CCD refine( loops, sfx );
 			core::kinematics::MoveMap combined_mm;
+
+		////// fix dna
+      for ( Size i=1; i<=pose.total_residue() ; ++i )      {
+//                if( pose.aa( i ) == core::chemical::na_ade or pose.aa( i ) == core::chemical::na_gua or pose.aa( i ) == core::chemical::na_cyt or pose.aa( i ) == core::chemical::na_thy ) {
+                if( pose.residue( i ).is_DNA())  {
+												TR << "NATRO movemap setup: turning off DNA bb and chi move for refinement stage" << std::endl;
+                        remodel_data_.natro_movemap_.set_bb( i, false );
+                        remodel_data_.natro_movemap_.set_chi( i, false );
+                  }
+          }
+    ////// end fix dna
 
 			combined_mm.import(remodel_data_.natro_movemap_);
 			combined_mm.import( manager_.movemap() );
@@ -1213,6 +1267,17 @@ bool RemodelMover::confirm_sequence(core::pose::Pose & pose ) {
 
 	LoopMover_Refine_CCD refine( confirmation_loops, fullatom_sfx_ );
 			core::kinematics::MoveMap combined_mm;
+
+		////// fix dna
+      for ( Size i=1; i<=pose.total_residue() ; ++i )      {
+//                if( pose.aa( i ) == core::chemical::na_ade or pose.aa( i ) == core::chemical::na_gua or pose.aa( i ) == core::chemical::na_cyt or pose.aa( i ) == core::chemical::na_thy ) {
+                if( pose.residue( i ).is_DNA())  {
+												TR << "NATRO movemap setup: turning off DNA bb and chi move for refinement stage" << std::endl;
+                        remodel_data_.natro_movemap_.set_bb( i, false );
+                        remodel_data_.natro_movemap_.set_chi( i, false );
+                  }
+          }
+    ////// end fix dna
 
 			combined_mm.import(remodel_data_.natro_movemap_);
 			combined_mm.import( manager_.movemap() );
@@ -1425,6 +1490,17 @@ utility::vector1< bool > const & RemodelMover::allowed_surface_aa() {
 
 	return v;
 }
+
+/// @brief parse xml
+void
+RemodelMover::parse_my_tag(
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const &,
+	Movers_map const &,
+	Pose const & pose )
+{}
+
 
 
 } // namespace remodel

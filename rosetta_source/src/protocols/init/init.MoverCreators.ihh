@@ -65,6 +65,7 @@
 #include <protocols/flxbb/InterlockAromaCreator.hh>
 
 #include <protocols/forge/remodel/RemodelLoopMoverCreator.hh>
+#include <protocols/forge/remodel/RemodelMoverCreator.hh> 
 
 #include <protocols/idealize/IdealizeMoverCreator.hh>
 
