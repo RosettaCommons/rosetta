@@ -1,5 +1,16 @@
 inline Real sqr(Real x) { return x*x; }
 
+inline Real sigmoid( Real const & sqdist, Real const & start, Real const & stop ) {
+  if( sqdist > stop*stop ) {
+    return 0.0;
+  } else if( sqdist < start*start ) {
+    return 1.0;
+  } else {
+    Real dist = sqrt( sqdist );
+    return sqr(1.0  - sqr( (dist - start) / (stop - start) ) );
+  }
+}
+
 
 Real
 sicfast(
@@ -118,10 +129,10 @@ sicfast(
 	vector1<Vec> const & cba,
 	vector1<Vec> const & cbb,
 //Vec ori,
-	Real & cbcount,
-	bool debug = false
+	Real & cbcount
 ) {
 	Real const CONTACT_D2 = sqr(basic::options::option[basic::options::OptionKeys::cxdock::contact_dis]());
+	Real const CLASH_D2   =     basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]();
 	Real const BIN        =     basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]() /2.0;
 
 	// get points, rotated ro ori is 0,0,1, might already be done
@@ -144,7 +155,7 @@ sicfast(
 		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
 	}
 	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
-	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
+	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1); // bounds of grid
 	
 	
 	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
@@ -221,13 +232,18 @@ sicfast(
 	//	out.close();
 	// }
 	
+	Real const CLASH_D = sqrt(CLASH_D2);
+	Real const CONTACT_D = sqrt(CONTACT_D2);	
+
 	cbcount = 0.0;
 	// utility::io::ozstream out("cb8.pdb");
 	// TR << "CB0 " << cbcount << std::endl;
 	for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
 	  for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-	 	 if( ib->distance_squared( (*ia + (mindis*Vec(0,0,1)) ) ) < CONTACT_D2 ) {
-	 		 cbcount += 1.0;
+			Real d2 = ib->distance_squared( (*ia + (mindis*Vec(0,0,1)) ) );
+	 	 if( d2 < CONTACT_D2 ) {
+			// CHANGE ME!
+	 		 cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
 	 		 // Vec viz = (*ia) + (mindis*ori);
 	 		 // out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 	 		 // viz = *ib;
