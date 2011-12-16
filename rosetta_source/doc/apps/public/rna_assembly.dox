@@ -133,7 +133,7 @@ STEM  PAIR 42 60 W W A  PAIR 43 59 W W A  PAIR 44 58 W W A  PAIR 45 57 W W A  PA
 OBLIGATE PAIR 47 55 W W A
 @endverbatim
 
-@anchor constraint_file
+@anchor constraint_file_rna_assembly
 The constraint file add_mutate_map_threetertiarycontacts_assemble.cst encodes regions in tertiary contact (here including the short two-base-pair helix) inferred from the mutate-and-map data:
 
 @verbatim
