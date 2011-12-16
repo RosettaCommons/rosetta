@@ -7,7 +7,10 @@ ADD_DEFINITIONS(-DNDEBUG)
 ADD_DEFINITIONS(-DUSEMPI)
 SET(COMPILE_FLAGS "-pipe -w -O2")
 
-SET( LIBRARIES ObjexxFCL utility numeric basic core.1 core.2 core.3 core.4 core.5 protocols devel)
+SET( LIBRARIES
+	ObjexxFCL utility numeric basic
+	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel
+    )
 FOREACH(LIBRARY ${LIBRARIES})
 	INCLUDE(../build/${LIBRARY}.cmake)
 	ADD_LIBRARY(${LIBRARY} ${LINK_TYPE} ${${LIBRARY}_files})
@@ -20,7 +23,39 @@ ENDFOREACH( LIBRARY )
 ### Static Libraries (including rosetta)
 ### These MUST be full paths, otherwise binaries will not recompile when these change
 ### THIS ORDER IS VERY IMPORTANT -> NEEDS TO BE REVERSE ORDER OF DEPENDENCY GRAPH
-SET(LINK_STATIC_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/libdevel.a ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.a ${CMAKE_CURRENT_SOURCE_DIR}/libcore.5.a ${CMAKE_CURRENT_SOURCE_DIR}/libcore.4.a ${CMAKE_CURRENT_SOURCE_DIR}/libcore.3.a ${CMAKE_CURRENT_SOURCE_DIR}/libcore.2.a ${CMAKE_CURRENT_SOURCE_DIR}/libcore.1.a ${CMAKE_CURRENT_SOURCE_DIR}/libbasic.a ${CMAKE_CURRENT_SOURCE_DIR}/libnumeric.a ${CMAKE_CURRENT_SOURCE_DIR}/libutility.a ${CMAKE_CURRENT_SOURCE_DIR}/libObjexxFCL.a ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a  -lz) 
+SET(LINK_STATIC_LIBS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libdevel.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.7.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.6.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_f.5.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_e.5.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_d.5.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_c.5.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.5.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.5.a    
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_h.4.a   
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_g.4.a    
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_f.4.a    
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_e.4.a    
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_d.4.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_c.4.a    
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.4.a    
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.4.a           
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.3.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.2.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.2.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.1.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.5.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.4.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.3.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.2.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.1.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libbasic.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libnumeric.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libutility.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libObjexxFCL.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a  
+    -lz) 
 ### libc must be linked dynamically if using static ompi libs
 SET(LINK_DYNAMIC_LIBS "-Wl,-Bdynamic -l c")
 
@@ -46,7 +81,8 @@ SET_TARGET_PROPERTIES(loophash_createfiltereddb.mpi.linuxgccrelease PROPERTIES C
 SET_TARGET_PROPERTIES(loophash_createfiltereddb.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-ADD_DEPENDENCIES(loophash_createfiltereddb.mpi.linuxgccrelease ObjexxFCL utility numeric basic core.1 core.2 core.3 core.4 core.5 protocols devel)
+ADD_DEPENDENCIES(loophash_createfiltereddb.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
+	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel)
 
 ### loophash_analyse 
 #ADD_EXECUTABLE(loophash_analyse.mpi.linuxgccrelease ../../src/apps/pilot/mike/loophash_analyse.cc)
@@ -65,7 +101,8 @@ SET_TARGET_PROPERTIES(loophash_mpi.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS 
 SET_TARGET_PROPERTIES(loophash_mpi.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-ADD_DEPENDENCIES(loophash_mpi.mpi.linuxgccrelease ObjexxFCL utility numeric basic core.1 core.2 core.3 core.4 core.5 protocols devel)
+ADD_DEPENDENCIES(loophash_mpi.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
+	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel)
 
 ### relax 
 ADD_EXECUTABLE(relax.mpi.linuxgccrelease ../../src/apps/public/relax.cc)
@@ -74,4 +111,5 @@ SET_TARGET_PROPERTIES(relax.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMP
 SET_TARGET_PROPERTIES(relax.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-ADD_DEPENDENCIES(relax.mpi.linuxgccrelease ObjexxFCL utility numeric basic core.1 core.2 core.3 core.4 core.5 protocols devel)
+ADD_DEPENDENCIES(relax.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
+	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel)
