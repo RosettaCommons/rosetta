@@ -182,10 +182,10 @@ AlignmentClustering::AlignmentClustering(){
   using namespace core::sequence;
   using namespace ObjexxFCL::fmt;
   Real THRESHOLD_FOR_E_VAL = 1e-30;
-  Real MIN_GDT = .50;
-  Real MAX_GDT = .85;
+  Real MIN_GDT = .70;
+  Real MAX_GDT = .90;
   Real INCREMENT_GDT = .05;
-  Size MAX_NUMB_CLUSTERS = 4;
+  Size GOAL_NUMB_CLUSTERS = 5;
   Real MAX_CLUSTER_OVERLAP = .70;
   Size MIN_POSE_SIZE = 5;
 
@@ -307,7 +307,7 @@ AlignmentClustering::AlignmentClustering(){
   set<Size>::iterator location_mergeSet;
   multimap<Size,Size> mergeMap;
   multimap<Size,Size>::iterator start_mergeMap,stop_mergeMap;
-  while((number_clusters > MAX_NUMB_CLUSTERS) && (threshold_gdt >= MIN_GDT)){
+  while((number_clusters > GOAL_NUMB_CLUSTERS) && (threshold_gdt >= MIN_GDT)){
     cluster_v.clear();
     cluster_v = cluster(gdtmms,rankedAlignments_valid,threshold_gdt);
     //===Merging clusters that have overlap above MAX_CLUSTER_OVERLAP
@@ -340,7 +340,7 @@ AlignmentClustering::AlignmentClustering(){
     number_clusters = cluster_v.size() - mergeSet.size();
     tr << "threshold_gdt" << threshold_gdt << "number_clusters" << number_clusters << std::endl;
 
-    if(number_clusters > MAX_NUMB_CLUSTERS)
+    if(number_clusters > GOAL_NUMB_CLUSTERS)
       threshold_gdt = threshold_gdt - INCREMENT_GDT;
   }
 
@@ -443,7 +443,7 @@ map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< s
   map<string,Real> template_map;
   vector1<SequenceAlignment>::iterator start_rankedAln,stop_rankedAln;
   map<string,SequenceAlignment>::iterator start_alns, stop_alns;
-  //mjo commenting out 'hhsearch_ranking' because it is unused and causes a warning     
+  //mjo commenting out 'hhsearch_ranking' because it is unused and causes a warning
   //bool hhsearch_ranking = 0;
   //mjo commenting out 'evmap_ranking' because it is unused and causes a warning
   //bool evmap_ranking = 0;
