@@ -38,7 +38,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(BOINC)
 #include <core/io/silent/SilentStructFactory.hh>
 #endif
 

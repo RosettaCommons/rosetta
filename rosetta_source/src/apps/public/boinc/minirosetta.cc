@@ -60,6 +60,7 @@
 
 #ifdef BOINC
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/util.hh>
 #include <core/pose/util.hh>

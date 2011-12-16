@@ -26,7 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(BOINC)
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
