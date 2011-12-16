@@ -77,7 +77,7 @@ main( int argc, char * argv [] )
 			protocols::viewer::viewer_main( my_main );
 		else{
 #ifdef BOINC
-			protocols::jd2::BoincJobDistributor::get_instance()->go( mover );
+			protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );
 #else
 #ifdef USEMPI
 			protocols::jd2::MPIFileBufJobDistributor::get_instance()->go( mover );

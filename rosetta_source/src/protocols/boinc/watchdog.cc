@@ -245,11 +245,10 @@ get_the_hell_out(std::string )
 
 #ifdef _WIN32
 		Boinc::unlock_semaphore();
-	}
 #else
 	pthread_mutex_unlock(&bailout_mutex);
 #endif
-
+	}
 
 	pdb_out_stream.close();
 	pdb_out_stream.clear();
