@@ -51,6 +51,8 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
     'core/scoring/etable/CoarseEtableEnergyCreator.hh',  # not in scons (.hh only)
     'core/scoring/memb_etable/BaseMembEtableEnergy.hh', # abandoned?
     'core/scoring/rna/RNA_FA_Stack.hh', # not in scons (.hh only)
+    'core/scoring/methods/GaussianOverlapEnergyCreator.hh', # not in scons
+
     'protocols/abinitio/JumpingFoldConstraints.hh', # not in scons (.hh only)
     'protocols/boinc',
     'protocols/filters/RGFilterCreator.hh', # not in scons
