@@ -32,6 +32,7 @@
 #include <utility/vector1.hh>
 
 
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // C++
 

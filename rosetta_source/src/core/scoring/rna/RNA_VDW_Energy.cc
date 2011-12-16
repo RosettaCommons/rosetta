@@ -20,6 +20,7 @@
 
 // Package headers
 #include <core/scoring/rna/RNA_AtomVDW.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
 // AUTO-REMOVED #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Energies.hh>
@@ -87,7 +88,8 @@ void
 RNA_VDW_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
-	//	setup_atom_numbers_for_vdw_calculation( pose );
+	// MATT -- put this back in!
+	setup_atom_numbers_for_vdw_calculation( pose );
 }
 
 
@@ -97,7 +99,8 @@ RNA_VDW_Energy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 {
 	//	std::cout << "VDW DERIV SETUP! " << std::endl;
 	pose.update_residue_neighbors();
-	//	setup_atom_numbers_for_vdw_calculation( pose );
+	// MATT -- put this back in!
+		setup_atom_numbers_for_vdw_calculation( pose );
 }
 
 
@@ -115,7 +118,7 @@ void
 RNA_VDW_Energy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & /*pose*/,
+	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const
@@ -128,15 +131,23 @@ RNA_VDW_Energy::residue_pair_energy(
 
 	char const which_nucleotide1 = rsd1.name1(); //a,c,g,u
 	char const which_nucleotide2 = rsd2.name1(); //a,c,g,u
+	// MATT -- index by position
+	Size const pos1 = rsd1.seqpos();
+	Size const pos2 = rsd2.seqpos();
 
 	Real score(0.0);
 
 	//Precomputed list of atom numbers... cached inside the pose.
-	//	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	// MATT -- let's put this back in.
+	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 
-	//ObjexxFCL::FArray2D< Size >const &
-	//		atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
-	utility::vector1< Size > const & atom_numbers1 ( rna_atom_vdw_.atom_numbers_for_vdw_calculation( which_nucleotide1)  );
+	// MATT -this too.
+	utility::vector1< utility::vector1< Size > > const & 
+			atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
+
+
+	// MATT I changed this.
+	utility::vector1< Size > const & atom_numbers1 ( atom_numbers_for_vdw_calculation[ pos1 ]  );
 
 	Size const num_vdw_atoms( rna_atom_vdw_.num_atoms() );
 
@@ -149,7 +160,7 @@ RNA_VDW_Energy::residue_pair_energy(
 
 		for ( Size n = 1; n <= num_vdw_atoms; ++n ) {
 
-			utility::vector1< Size > const & atom_numbers2 ( rna_atom_vdw_.atom_numbers_for_vdw_calculation( which_nucleotide2)  );
+			utility::vector1< Size > const & atom_numbers2 ( atom_numbers_for_vdw_calculation[ pos2 ]  );
 			Size const j = atom_numbers2[ n ];
 
 			Real const bump_dsq( rna_atom_vdw_.bump_parameter( m, n, which_nucleotide1, which_nucleotide2 ) );
@@ -171,7 +182,7 @@ RNA_VDW_Energy::residue_pair_energy(
 /////////////////////////////////
 Size
 RNA_VDW_Energy::get_vdw_atom_number(
-  ObjexxFCL::FArray2D <Size > const & atom_numbers_for_vdw_calculation,
+  utility::vector1< utility::vector1< Size > > const & atom_numbers_for_vdw_calculation,
 	Size const & pos1,
 	Size const & i ) const
 {
@@ -179,7 +190,7 @@ RNA_VDW_Energy::get_vdw_atom_number(
 	bool is_vdw_atom( false );
 	Size const & num_vdw_atoms( rna_atom_vdw_.num_atoms() );
 	for ( m = 1; m <= num_vdw_atoms; ++m ) {
-		if ( atom_numbers_for_vdw_calculation( pos1, m ) == i ){
+		if ( atom_numbers_for_vdw_calculation[ pos1 ][ m ] == i ){
 			is_vdw_atom = true; break;
 		}
 	}
@@ -190,6 +201,7 @@ RNA_VDW_Energy::get_vdw_atom_number(
 
 
 /////////////////////////////////
+//This version of the function only works for unmodified, non-virtual, non-chainbreak nucleotides.
 Size
 RNA_VDW_Energy::get_vdw_atom_number(
 																		char const which_nucleotide,
@@ -237,15 +249,18 @@ RNA_VDW_Energy::eval_atom_derivative(
 	bool const pos1_fixed( pos1_map != 0 );
 
 	Vector const & i_xyz( rsd1.xyz(i) );
+	
+	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 
-	//Precomputed list of atom numbers... cached inside the pose.
-	//	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	//	ObjexxFCL::FArray2D< Size >const &
-	//		atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
+	utility::vector1< utility::vector1< Size > > const &
+			atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
+
+
+	utility::vector1< Size > const & atom_numbers1 ( atom_numbers_for_vdw_calculation[ pos1 ]  );
 
 	Size const num_vdw_atoms( rna_atom_vdw_.num_atoms() );
 
-	Size m = get_vdw_atom_number( which_nucleotide1, i );
+	Size m = get_vdw_atom_number( atom_numbers_for_vdw_calculation, which_nucleotide1, i );
 	if ( m == 0 )  return;
 
 	// cached energies object
@@ -272,7 +287,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 
 		for ( Size n = 1; n <= num_vdw_atoms; ++n ) {
 
-			utility::vector1< Size > const & atom_numbers2 ( rna_atom_vdw_.atom_numbers_for_vdw_calculation( which_nucleotide2 )  );
+			utility::vector1< Size > const & atom_numbers2 ( atom_numbers_for_vdw_calculation[ pos2 ]  );
 			Size const j = atom_numbers2[ n ];
 
 			Vector const & j_xyz( rsd2.xyz(j) );
@@ -309,45 +324,44 @@ RNA_VDW_Energy::indicate_required_context_graphs( utility::vector1< bool > & /* 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// void
-// RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) const
-// {
+// MATT -- uncomment this! And make atom_numbers_for_vdw_calculation a vector of vectors, and
+//   have a copy available in RNA_Scoring_info for setting (in this funciton) and getting in
+//    the score & derivative functions above.
 
-// 	//We don't know a priori which atom numbers correspond to which
-// 	// atom names (e.g., O2* on an adenosine could be different depending
-// 	// on whether its at a chainbreak, terminus, etc.)
-// 	//Better to do a quick setup every time to pinpoint atoms that require
-// 	//  monitoring for VDW clashes.
+void
+RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) const
+{
+	//We don't know a priori which atom numbers correspond to which
+	// atom names (e.g., O2* on an adenosine could be different depending
+	// on whether its at a chainbreak, terminus, etc.)
+	//Better to do a quick setup every time to pinpoint atoms that require
+	//  monitoring for VDW clashes.
 
-// 	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-// 	ObjexxFCL::FArray2D< Size >&
-// 		atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
+	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	
+	utility::vector1< utility::vector1< Size > > & 
+			atom_numbers_for_vdw_calculation( rna_scoring_info.nonconst_atom_numbers_for_vdw_calculation() );
 
-// 	Size const total_residue( pose.total_residue() );
-// 	Size const num_vdw_atoms( rna_atom_vdw_.num_atoms() );
+	Size const total_residue( pose.total_residue() );
+	Size const num_vdw_atoms( rna_atom_vdw_.num_atoms() );
+	
+	atom_numbers_for_vdw_calculation.resize( total_residue );
 
-// 	atom_numbers_for_vdw_calculation.dimension( total_residue, num_vdw_atoms );
-// 	atom_numbers_for_vdw_calculation = 0;
-
-// 	for (Size i = 1; i <= total_residue; i++ ) {
-
-// 		conformation::Residue const & rsd( pose.residue( i ) );
-
-// 		if ( rsd.is_RNA() ) {
-// 			//a,c,g, or u?
-// 			char const which_nucleotide = rsd.name1();
-
-// 			//What atom names to look at?
-// 			utility::vector1< std::string > const vdw_atom_list = rna_atom_vdw_.vdw_atom_list( which_nucleotide );
-
-// 			for (Size m = 1; m <= num_vdw_atoms; m++ ){
-// 				atom_numbers_for_vdw_calculation( i, m ) = rsd.atom_index( vdw_atom_list[ m ] );
-// 			}
-
-// 		}
-// 	}
-
-// }
+	for (Size i = 1; i <= total_residue; i++ ) {
+		conformation::Residue const & rsd( pose.residue( i ) );
+		
+		if ( rsd.is_RNA() ) {
+			//a,c,g, or u?
+			char const which_nucleotide = rsd.name1();
+			//What atom names to look at?
+			utility::vector1< std::string > const vdw_atom_list = rna_atom_vdw_.vdw_atom_list( which_nucleotide );
+			for (Size m = 1; m <= num_vdw_atoms; m++ ){
+				atom_numbers_for_vdw_calculation[ i ].push_back( rsd.atom_index( vdw_atom_list[ m ] ));
+			}
+		}
+		
+	}
+}
 core::Size
 RNA_VDW_Energy::version() const
 {

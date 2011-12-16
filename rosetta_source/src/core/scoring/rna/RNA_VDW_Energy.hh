@@ -22,6 +22,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/rna/RNA_AtomVDW.fwd.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -29,6 +30,7 @@
 #include <utility/vector1.hh>
 
 
+// AUTO-REMOVED #include <map>
 
 // Utility headers
 
@@ -116,7 +118,7 @@ private:
 
 	Size
 	get_vdw_atom_number(
-		 ObjexxFCL::FArray2D <Size > const & atom_numbers_for_vdw_calculation,
+		 utility::vector1< utility::vector1< Size > > const & atom_numbers_for_vdw_calculation,
 		 Size const & pos1,
 		 Size const & i ) const;
 
@@ -132,8 +134,8 @@ private:
 private:
 
 	//Helper functions just to get things set up.
-	//	void
-	//	setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) const;
+	void
+	setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) const;
 
 	// Data!
 	// const-ref to scoring database

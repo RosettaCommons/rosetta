@@ -76,6 +76,11 @@ public:
 						 rna_raw_base_base_info_.calculated() &&
 						 rna_filtered_base_base_info_.calculated() );
   }
+	utility::vector1< utility::vector1< Size > > const &
+	atom_numbers_for_vdw_calculation() const { return atom_numbers_for_vdw_calculation_; }
+	
+	utility::vector1< utility::vector1< Size > > &
+	nonconst_atom_numbers_for_vdw_calculation() { return atom_numbers_for_vdw_calculation_; }
 
 	RNA_CentroidInfo &
 	rna_centroid_info() { return rna_centroid_info_; }
@@ -119,6 +124,8 @@ private:
 	rna::RNA_RawBaseBaseInfo rna_raw_base_base_info_;
 	rna::RNA_FilteredBaseBaseInfo rna_filtered_base_base_info_;
 	rna::RNA_DataInfo rna_data_info_;
+	
+	utility::vector1< utility::vector1< Size > > atom_numbers_for_vdw_calculation_;
 
 	//ObjexxFCL::FArray2D< Size > atom_numbers_for_vdw_calculation_;
 	//ObjexxFCL::FArray2D< Size > atom_numbers_for_backbone_score_calculations_;
