@@ -1076,7 +1076,7 @@ class EnergyMethod:
 # --------------------------------------------------------------------------------------------------
 
 
-def init(*args):
+def init(*args, **kargs):
     utility.set_pyexit_callback()  # make sure that all mini sys exit just generate exceptions
 
     #if not args: args = ["app"
@@ -1108,6 +1108,8 @@ def init(*args):
 
 
     if not args: args = ["app", "-database", database, "-ex1", "-ex2aro"]
+
+    args.extend( kargs.get('extra_options', '').split(' ') )
 
     v = utility.vector1_string()
     #v = utility.vector1_string('--database %s' % database)

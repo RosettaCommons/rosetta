@@ -221,7 +221,7 @@ class CppVariable:
         self.name = node.getAttribute('name')
         self.context = context
         self.public  = (not node.hasAttribute('access')) or  (node.getAttribute('access') == 'public')
-        #self.type_ = refSection.getType( node.getAttribute('type') ) ) )
+        self.type_ = refSection.getType( node.getAttribute('type') )
 
         self.file_ =  refSection.Files[node.getAttribute('file')]
         self.line  =  node.getAttribute('line')
@@ -229,7 +229,11 @@ class CppVariable:
 
     def wrap(self, indent='', wrappingScope='boost::python::'):
         if not self.public: return ''
-        r = '  %sdef_readwrite("%s", &%s%s);\n' % (wrappingScope, self.name, self.context, self.name)
+        print '________________ self.type_:', self.type_
+        if isinstance(self.type_, CppType_Fundamental): readwrite = 'readwrite'
+        else: readwrite = 'readonly'
+
+        r = '  %sdef_%s("%s", &%s%s);\n' % (wrappingScope, readwrite, self.name, self.context, self.name)
         return  ('\n' + indent).join( r.split('\n') ) + '\n'
 
 
@@ -887,6 +891,7 @@ class CppClass:
 
 
         #for v in self.dataMembers:  r += v.wrap(indent='  ', wrappingScope=exposer + '.')
+        # commenting out for now because there is no reliable way check if object is wrappable or not
 
         for i in statics.values():
             r += '\n' + i + '\n'
