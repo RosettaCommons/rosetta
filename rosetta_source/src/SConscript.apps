@@ -110,14 +110,16 @@ if "static" not in build.options.extras:
 for entry in actual.sources:
   list_entry = entry.split('/')
   last_list_entry=list_entry[len(list_entry)-1]
+  prog_name = last_list_entry[0:len(last_list_entry)-3]
   target = ""
   if len(build.options.extras) == 0:
-    target =  last_list_entry[0:len(last_list_entry)-3] + ".default." + build.options.os + build.options.cxx + build.options.mode
+    target =  prog_name + ".default." + build.options.os + build.options.cxx + build.options.mode
   else:
-    target =  last_list_entry[0:len(last_list_entry)-3] + "." + "".join(build.options.extras)+ "." + build.options.os + build.options.cxx + build.options.mode
-  stripped_target = last_list_entry[0:len(last_list_entry)-3] + "." + build.options.os + build.options.cxx + build.options.mode
+    target =  prog_name + "." + "".join(build.options.extras)+ "." + build.options.os + build.options.cxx + build.options.mode
+  stripped_target = prog_name + "." + build.options.os + build.options.cxx + build.options.mode
   exe = env.Program( target, entry )
-  Alias("bin/" + stripped_target, "#bin/" + target)
+  Depends("#bin/" + stripped_target, "#bin/" + target)
+  Alias(prog_name, "#bin/" + target)
   env["INSTALL"] = utility.install_links_with_stripped_target
   install_bin = env.Install("#bin", exe)
 
