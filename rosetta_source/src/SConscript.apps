@@ -115,10 +115,9 @@ for entry in actual.sources:
     target =  last_list_entry[0:len(last_list_entry)-3] + ".default." + build.options.os + build.options.cxx + build.options.mode
   else:
     target =  last_list_entry[0:len(last_list_entry)-3] + "." + "".join(build.options.extras)+ "." + build.options.os + build.options.cxx + build.options.mode
-  last_target = last_list_entry[0:len(last_list_entry)-3] + "." + build.options.os + build.options.cxx + build.options.mode
+  stripped_target = last_list_entry[0:len(last_list_entry)-3] + "." + build.options.os + build.options.cxx + build.options.mode
   exe = env.Program( target, entry )
-  Alias("#bin/" + target, "#build/src/" + build.platform + "/" + target)
-  Alias("#bin/" + last_target, "#build/src/" + build.platform+ "/" + target)
+  Alias("bin/" + stripped_target, "#bin/" + target)
   env["INSTALL"] = utility.install_links_with_stripped_target
   install_bin = env.Install("#bin", exe)
 
