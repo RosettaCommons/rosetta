@@ -147,6 +147,7 @@ sources = {
 		"SetTemperatureFactor",
 		"SetupHotspotConstraintsMover",
 		"SpinMover",
+		"Splice",
 		"SubroutineMover",
 		"TryRotamers",
 		"VLB",
