@@ -27,6 +27,7 @@ sources = {
 		"PatchOperation",
 		"ResConnID",
 		"residue_io",
+		"ResidueDatabaseIO",
 		"ResidueSelector",
 		"ResidueSupport",
 		"ResidueType",

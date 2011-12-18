@@ -477,7 +477,7 @@ read_topology_file(
 
 			phi = radians(phi); theta = radians(theta); // in degrees in the file for human readability
 
-
+			//This code should probably be extracted to a util function
 			if ( natoms > 1 ) {
 				/// build the cartesian coords for the new atom:
 				if ( child_atom == parent_atom ) {

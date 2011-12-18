@@ -131,6 +131,7 @@
 #include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/string_util.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <ObjexxFCL/TypeTraits.hh>
 #include <ObjexxFCL/char.functions.hh>
@@ -154,6 +155,11 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <boost/scoped_ptr.hpp>
 #include <cppdb/frontend.h>
+
+// Boost Headers
+#include <boost/foreach.hpp>
+#include <boost/tokenizer.hpp>
+#define foreach BOOST_FOREACH
 
 
 using std::string;
@@ -322,9 +328,6 @@ cppdb::result safely_read_from_database(cppdb::statement & statement)
 	}
 }
 
-
-
-
 bool
 table_exists(
 	sessionOP db_session,
@@ -356,6 +359,31 @@ table_exists(
 		return false;
 	}
 }
+
+void write_schema_to_database(
+	std::string schema_str,
+	utility::sql_database::sessionOP db_session)
+{
+	boost::char_separator< char > sep(";");
+	boost::tokenizer< boost::char_separator< char > > tokens( schema_str, sep );
+	foreach( std::string const & stmt_str, tokens){
+		std::string trimmed_stmt_str(utility::trim(stmt_str, " \n\t"));
+		if(trimmed_stmt_str.size()){
+			try{
+				cppdb::statement stmt = (*db_session) << trimmed_stmt_str + ";";
+				stmt.exec();
+			} catch (cppdb::cppdb_error e) {
+				TR.Error
+					<< "ERROR reading schema \n"
+					<< trimmed_stmt_str << std::endl;
+				TR.Error << e.what() << std::endl;
+				utility_exit();
+			}
+		}
+	}
+}
+
+
 
 }
 }

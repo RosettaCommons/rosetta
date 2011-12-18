@@ -35,7 +35,6 @@
 #include <boost/scoped_ptr.hpp>
 #include <cppdb/frontend.h>
 
-
 namespace basic {
 namespace database {
 
@@ -61,6 +60,10 @@ bool
 table_exists(
 	utility::sql_database::sessionOP db_session,
 	std::string const & table_name);
+
+void write_schema_to_database(
+	std::string schema,
+	utility::sql_database::sessionOP db_session);
 
 }
 }

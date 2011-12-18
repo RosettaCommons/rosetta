@@ -260,6 +260,15 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>.mol file(s) for new fullatom residue types (e.g. ligands)</dd><br>
 </dl>
 <dl>
+<dt><b>-extra_res_database</b> \<String\><dt>
+<dd>the name of a database containing fullatom residue types (e.g. ligands)</dd><br>
+</dl>
+<dl>
+<dt><b>-extra_res_database_mode</b> \<String\><dt>
+<dd>The type of database drivert o use for -in:file:extra_res_database.  Acceptable values are 'mysql' or 'sqlite3'</dd><br>
+<dd>Default: "sqlite3"</dd><br>
+</dl>
+<dl>
 <dt><b>-extra_res_cen</b> \<FileVector\><dt>
 <dd>.params file(s) for new centroid residue types (e.g. ligands)</dd><br>
 </dl>

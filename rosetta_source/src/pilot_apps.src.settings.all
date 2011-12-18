@@ -57,7 +57,8 @@ sources = {
 		#"roc_test",
 	#:	"roc_optimizer",
 		#"RotamerDump",
-		#"process_mdl"
+		#"process_mdl",
+		"ligands_to_database",
 		#"map_testing"
 	],
 	"pilot/doug" : [

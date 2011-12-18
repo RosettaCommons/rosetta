@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   /git/src/protocols/qsar/scoring_grid/HbaGrid.cc
+/// @file   src/protocols/qsar/scoring_grid/HbaGrid.cc
 /// @author Sam DeLuca
 
 #include <protocols/qsar/scoring_grid/HbaGrid.hh>

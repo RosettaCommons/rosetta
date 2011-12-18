@@ -43,15 +43,19 @@
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/sdf/mol_parser.hh>
+#include <core/chemical/ResidueDatabaseIO.hh>
 
 #include <utility/vector1.hh>
 
 // Project headers
+#include <basic/database/sql_utils.hh>
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
+
 
 // option key includes
 
@@ -219,6 +223,31 @@ ChemicalManager::residue_type_set( std::string const & tag )
 				extra_residues.push_back(parser.GetResidueTypeOP());
 			}
 
+			if(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database].user())
+			{
+				std::string database_name = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database];
+				std::string database_mode = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_mode];
+				utility::sql_database::sessionOP db_session(basic::database::get_db_session(database_name,database_mode,true,false));
+
+				ResidueDatabaseIO residue_database_interface;
+				utility::vector1<std::string> residue_names_in_database( residue_database_interface.get_all_residues_in_database(db_session));
+				for(Size index =1; index <= residue_names_in_database.size();++index)
+				{
+					ResidueTypeOP new_residue(
+						residue_database_interface.read_residuetype_from_database(
+							atom_types,
+							elements,
+							mm_atom_types,
+							orbital_types,
+							"fa_standard",
+							residue_names_in_database[index],
+							db_session));
+					extra_residues.push_back(new_residue);
+				}
+
+			}
+
+
 
 		} else if(tag == CENTROID) {
 			utility::options::FileVectorOption & fvec
@@ -243,12 +272,13 @@ ChemicalManager::residue_type_set( std::string const & tag )
 
 		std::string const directory( temp_str );
 		ResidueTypeSetOP new_set( new ResidueTypeSet( tag, directory, extra_params_files ) );
-
+		ResidueTypeSetCAP new_setCAP(*new_set);
 
 		for(core::Size index =0 ;index < extra_residues.size();++index)
 		{
 			//tr << extra_residues[index]->name3() <<std::endl;
 			new_set->add_residue_type(extra_residues[index]);
+			extra_residues[index]->residue_type_set(new_setCAP);
 			ResidueTypeSetCAP new_set_cap(new_set.get());
 			extra_residues[index]->residue_type_set(new_set_cap);
 		}

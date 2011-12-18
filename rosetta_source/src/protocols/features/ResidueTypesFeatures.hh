@@ -17,6 +17,7 @@
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ResidueTypesFeatures.fwd.hh>
+#include <core/chemical/ResidueDatabaseIO.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -46,15 +47,15 @@ public:
 
 	virtual ~ResidueTypesFeatures();
 
-	///@breif return string with class name
+	///@brief return string with class name
 	std::string
 	type_name() const;
 
-	///@breif return sql statements that setup the right tables
+	///@brief return sql statements that setup the right tables
 	std::string
 	schema() const;
 
-	///@breif collect all the feature data for the pose
+	///@brief collect all the feature data for the pose
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,
@@ -62,66 +63,12 @@ public:
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session);
 
-private:
-
-	void
-	report_residue_type(
-		std::string const & residue_type_set_name,
-		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
-
-	void
-	report_residue_type_atom(
-		std::string const & residue_type_set_name,
-		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
-
-	void
-	report_residue_type_bond(
-		std::string const & residue_type_set_name,
-		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
-
-	void
-	report_residue_type_cut_bond(
-		std::string const & residue_type_set_name,
-		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
-
-	void
-	report_residue_type_chi(
-		std::string const & residue_type_set_name,
-		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
-
-	void
-	report_residue_type_chi_rotamer(
-		std::string const & residue_type_set_name,
-		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
-
-	void
-	report_residue_type_proton_chi(
-		std::string const & residue_type_set_name,
-		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
-
-	void
-	report_residue_type_properties(
-		std::string const & residue_type_set_name,
-		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
-
-	void
-	report_residue_type_variant(
-		std::string const & residue_type_set_name,
-		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
 
 private:
 
 	// should match version string in residue type parameter sets
-	core::Real const version_;
+	core::Real version_;
+	core::chemical::ResidueDatabaseIO residue_dbio_;
 
 };
 

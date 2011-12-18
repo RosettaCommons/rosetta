@@ -573,6 +573,10 @@ ResidueTypeSet::place_adducts()
 void
 ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 {
+	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
+		orbitals::AssignOrbitals add_orbitals_to_residue(new_type);
+		add_orbitals_to_residue.assign_orbitals();
+	}
 	residue_types_.push_back( new_type );
 	add_residue_type_to_maps( *new_type );
 	aas_defined_.sort();

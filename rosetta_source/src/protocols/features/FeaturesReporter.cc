@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/PDBInfo.hh>
+#include <basic/database/sql_utils.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -76,23 +77,8 @@ FeaturesReporter::write_schema_to_db(
 
   string schema_str(schema());
 
-	char_separator< char > sep(";");
-	tokenizer< char_separator< char > > tokens( schema_str, sep );
-	foreach( string const & stmt_str, tokens){
-		string trimmed_stmt_str(trim(stmt_str, " \n\t"));
-		if(trimmed_stmt_str.size()){
-			try{
-				statement stmt = (*db_session) << trimmed_stmt_str + ";";
-				stmt.exec();
-			} catch (cppdb_error e) {
-				TR.Error
-					<< "ERROR reading schema for FeaturesReporter: " << type_name() << "\n"
-					<< trimmed_stmt_str << endl;
-				TR.Error << e.what() << endl;
-				utility_exit();
-			}
-		}
-	}
+  basic::database::write_schema_to_database(schema_str,db_session);
+
 }
 
 ///@details Extract all features from the pose to the database.  The

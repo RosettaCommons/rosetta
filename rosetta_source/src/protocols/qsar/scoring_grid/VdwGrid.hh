@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   /git/src/protocols/ligand_docking/scoring_grid/VdwGrid.hh
+/// @file   src/protocols/ligand_docking/scoring_grid/VdwGrid.hh
 /// @author Sam DeLuca
 
 #ifndef INCLUDED_protocols_qsar_scoring_grid_VdwGrid_hh

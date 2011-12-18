@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   /git/src/numeric/roc_curve.fwd.hh
+/// @file   src/numeric/roc_curve.fwd.hh
 /// @author Sam DeLuca
 
 #ifndef INCLUDED_numeric_roc_curve_FWD_HH_

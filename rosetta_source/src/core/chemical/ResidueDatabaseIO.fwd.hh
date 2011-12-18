@@ -7,21 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/qsar/scoring_grid/HbaGrid.fwd.hh
+/// @file   src/core/chemical/residue_dbio.fwd.hh
 /// @author Sam DeLuca
 
+#ifndef INCLUDED_core_chemical_ResidueDatabaseIO_fwd_hh
+#define INCLUDED_core_chemical_ResidueDatabaseIO_fwd_hh
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_HbdGrid_fwd_hh
-#define INCLUDED_protocols_qsar_scoring_grid_HbdGrid_fwd_hh
+namespace core {
+namespace chemical {
 
-namespace protocols {
-namespace qsar {
-namespace scoring_grid {
-
-class HbdGrid;
+class ResidueDatabaseIO;
 
 }
 }
-}
 
-#endif /* HBAGRID_FWD_HH_ */
+#endif /* RESIDUE_DBIO_FWD_HH_ */
