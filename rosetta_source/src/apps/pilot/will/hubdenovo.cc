@@ -103,6 +103,7 @@ using core::id::NamedAtomID;
 typedef utility::vector1<core::Size> Sizes;
 typedef utility::vector1<std::string> Strings;
 
+OPT_KEY( File  , hub_pdb )
 OPT_KEY( String, hub_ss )
 OPT_KEY( String, hub_sequence )
 OPT_KEY( File, hub_cst_cfg )
@@ -113,6 +114,7 @@ OPT_KEY( Boolean, hub_no_fa )
 void register_options() {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+  NEW_OPT( hub_pdb      ,"", "input/CHC_HUB_FA.pdb" );
   NEW_OPT( hub_ss       ,"", "" );
   NEW_OPT( hub_sequence ,"", "" );
   NEW_OPT( hub_cst_cfg  ,"", "" );
@@ -120,6 +122,7 @@ void register_options() {
   NEW_OPT( hub_cen_energy_cut   ,"", 200.0 );
   NEW_OPT( hub_no_fa   ,"", false );
 }
+
 static core::io::silent::SilentFileData sfd;
 
 static basic::Tracer tr("hubdenovo");
@@ -205,16 +208,16 @@ Strings getline(std::istream & in) {
 	return v;
 }
 struct DCST {
-	string atm1,atm2;
-	Size rsd1,rsd2;
-	Real d,sd;
-	DCST() : atm1(""),atm2(""),rsd1(0),rsd2(0),d(0),sd(0) {}
-	DCST( string _atm1, Size _rsd1, string _atm2, Size _rsd2, Real _d, Real _sd ) : atm1(_atm1), rsd1(_rsd1), atm2(_atm2), rsd2(_rsd2), d(_d), sd(_sd) {}
+	// sc cst
+	string atm1,atm2;    	Size rsd1,rsd2;    	Real d,sd;   bool active;
+	DCST() : atm1(""),atm2(""),rsd1(0),rsd2(0),d(0),sd(0),active(false) {}
+	DCST( string _atm1, Size _rsd1, string _atm2, Size _rsd2, Real _d, Real _sd ) : atm1(_atm1), rsd1(_rsd1), atm2(_atm2), rsd2(_rsd2), d(_d), sd(_sd),active(false) {}
 };
 struct CST {
-	int tplt,grp,dres1,tres1,dres2,tres2;
-	CST() : tplt(0),grp(0),dres1(0),tres1(0),dres2(0),tres2(0) {}
-	CST(int _tplt, int _grp, int a, int b, int c, int d) : tplt(_tplt),grp(_grp),dres1(a),tres1(b),dres2(c),tres2(d) {}
+	// bb cst
+	int tplt,grp,dres1,tres1,dres2,tres2;     bool active;
+	CST() : tplt(0),grp(0),dres1(0),tres1(0),dres2(0),tres2(0),active(false) {}
+	CST(int _tplt, int _grp, int a, int b, int c, int d) : tplt(_tplt),grp(_grp),dres1(a),tres1(b),dres2(c),tres2(d),active(false) {}
 };
 std::ostream & operator<<(std::ostream & out, CST const & c) {
 	out << c.tplt << " " << c.grp << " " << c.dres1 << " " << c.tres1 << " " << c.dres2 << " " << c.tres2 << endl;
@@ -382,7 +385,7 @@ struct ConstraintConfig {
 	}
 
 	void add_sym_cst(Pose & p, AtomID id1, AtomID id2, Real d, Real sd) const {
-		if(nsub > 11) utility_exit_with_message("residue mapping unclear!!!!!!!!");
+//		if(nsub > 11) utility_exit_with_message("residue mapping unclear!!!!!!!!");
 		//tr << "add sym cst " << id1 << " " << id2 << endl;
 		using namespace core::scoring::constraints;
 		if(id1.rsd() > id2.rsd()) {
@@ -392,6 +395,7 @@ struct ConstraintConfig {
 		}
 		if(id2.rsd() > nsub*nres) utility_exit_with_message("2nd constraint rsd "+str(id2.rsd())+" outside of nres*nsub");
 		if(id1.rsd() > nres     ) return;//utility_exit_with_message("1st constraint rsd "+str(id1.rsd())+" outside of primary subunit");
+		//tr << "SYMCST " << id1.rsd() << "-" << id2.rsd() << endl;
 		p.add_constraint( new AtomPairConstraint( id1 , id2 , new HarmonicFunc(d,sd) ) );
 		int sub2 = (id2.rsd()-1)/nres + 1;
 		if(sub2 > 1 && sub2 <= nhub) {
@@ -408,8 +412,9 @@ struct ConstraintConfig {
 		}
 	}
 	int hub_seq_sep(int r1, int r2) const {
-		if(r1 >  r2) { int tmp = r1; r1 = r2; r2 = tmp;	}
+		if(r1 >  r2) { int tmp = r1; r1 = r2; r2 = tmp;	}		
 		if(r1 >  nres) return nsub*nres;
+		if(r1 <= nres) return r2-r1;
 		if(r2 <= nhub*nres) return (r2-1)%nres+1 + (r1-1)%nres+1;
 		if(r2 >  nhub*nres) return nhub*nres+1;
 	}
@@ -630,11 +635,14 @@ struct ConstraintConfig {
 		// }
 	}
 
-	void apply_bb_csts(Pose & p, Size ssep=0) const {
+	void apply_bb_csts(Pose & p, Size ssep=0, bool earlycst = false) {
 		using namespace core::scoring::constraints;
 		vector1<string> anames; anames.push_back("N"); anames.push_back("CA"); anames.push_back("C"); anames.push_back("O"); /*anames.push_back("CB");*/ anames.push_back("H");
-		for(CSTs::const_iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) {
-			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) ) continue;
+		for(CSTs::iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) {
+			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) && (!earlycst || numeric::random::uniform() > 0.0003) ) continue;
+			if(i->active) continue; else i->active = true;
+			if(hub_seq_sep(i->dres1,i->dres2) != ssep) tr << "early cst!!!" << endl;
+
 			Pose & t(*templates_cen[i->tplt]);
 			for(Size an1 = 1; an1 <= anames.size(); ++an1) {
 				if(!p.residue(i->dres1).has(anames[an1]) || !t.residue(i->tres1).has(anames[an1])) continue;
@@ -647,26 +655,13 @@ struct ConstraintConfig {
 					// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 				}
 			}
-			// {
-			// 	Real d = t.residue(i->tres1).xyz("H").distance( t.residue(i->tres2).xyz("O") );
-			// 	AtomID id1( p.residue(i->dres1).atom_index("H"), i->dres1 );
-			// 	AtomID id2( p.residue(i->dres2).atom_index("O"), i->dres2 );
-			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",H " << i->dres2 << ",O " << d << endl;
-			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
-			// }
-			// {
-			// 	Real d = t.residue(i->tres1).xyz("O").distance( t.residue(i->tres2).xyz("H") );
-			// 	AtomID id1( p.residue(i->dres1).atom_index("O"), i->dres1 );
-			// 	AtomID id2( p.residue(i->dres2).atom_index("H"), i->dres2 );
-			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",O " << i->dres2 << ",H " << d << endl;
-			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
-			// }
 		}
 	}
-	void apply_dcsts(Pose & p, Size ssep=0) const {
+	void apply_dcsts(Pose & p, Size ssep=0) {
 		using namespace core::scoring::constraints;
-		for(vector1<DCST>::const_iterator i = dcst.begin(); i != dcst.end(); ++i) {
+		for(vector1<DCST>::iterator i = dcst.begin(); i != dcst.end(); ++i) {
 			if(ssep && (hub_seq_sep(i->rsd1,i->rsd2) != ssep) ) continue;
+			if(i->active) continue; else i->active = true;
 			if( !p.residue(i->rsd1).has(i->atm1) || !p.residue(i->rsd2).has(i->atm2) ) {
 				utility_exit_with_message("CONSTRAINT missing atom "+i->atm1+" "+str(i->rsd1)+" "+i->atm2+" "+str(i->rsd2)+" "+str(i->d)+" "+str(i->sd) );
 			}
@@ -676,12 +671,13 @@ struct ConstraintConfig {
 			add_sym_cst( p, id1, id2, i->d, i->sd );
 		}
 	}
-	void apply_cen_csts(Pose & p, Size ssep=0) const {
+	void apply_cen_csts(Pose & p, Size ssep=0, bool earlycst = false) {
 		using namespace core::scoring::constraints;
 		vector1<string> anames; anames.push_back("CB"); anames.push_back("CEN");
 		if(p.is_fullatom()) utility_exit_with_message("apply_cen_csts called on fa pose!");
-		for(CSTs::const_iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) {
+		for(CSTs::iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) {
 			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) ) continue;
+			if(i->active) continue; else i->active = true;
 			Pose & t(*templates_cen[i->tplt]);
 			for(Size an1 = 1; an1 <= anames.size(); ++an1) {
 				if(!p.residue(i->dres1).has(anames[an1]) || !t.residue(i->tres1).has(anames[an1])) continue;
@@ -699,14 +695,15 @@ struct ConstraintConfig {
 			// //tr << "constraint: " << ssep << " " << i->dres1 << ",CEN " << i->dres2 << ",CEN " << d << endl;
 			// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 		}
-		apply_bb_csts(p,ssep);
+		apply_bb_csts(p,ssep,earlycst);
 		apply_dcsts(p,ssep);
 	}
-	void apply_fa_csts(Pose & p, Size ssep=0) const {
+	void apply_fa_csts(Pose & p, Size ssep=0) {
 		using namespace core::scoring::constraints;
 		if(p.is_centroid()) utility_exit_with_message("apply_fa_csts called on cen pose!");
-		for(CSTs::const_iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) {
+		for(CSTs::iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) {
 			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) ) continue;
+			if(i->active) continue; else i->active = true;
 			Pose & t(*templates_fa[i->tplt]);
 			for(Size a1 = 6; a1 <= p.residue(i->dres1).nheavyatoms(); ++a1) {
 				string aname1 = p.residue(i->dres1).atom_name(a1);
@@ -729,10 +726,10 @@ struct ConstraintConfig {
 		apply_bb_csts(p,ssep);
 		apply_dcsts(p,ssep);
 	}
-	void apply_csts(Pose & p, Size ssep=0) const {
+	void apply_csts(Pose & p, Size ssep=0, bool earlycst = false) {
 		if(  p.is_centroid() &&  p.is_fullatom() ) utility_exit_with_message("MADNESS!");
 		if( !p.is_centroid() && !p.is_fullatom() ) utility_exit_with_message("MADNESS!");
-		if(p.is_centroid()) apply_cen_csts(p,ssep);
+		if(p.is_centroid()) apply_cen_csts(p,ssep,earlycst);
 		if(p.is_fullatom()) apply_fa_csts(p,ssep);
 	}
 	std::string pick_sequence() const {
@@ -759,6 +756,18 @@ struct ConstraintConfig {
 		tr << "pick sequence: " << s << endl;
 		return s;
 	}
+	int get_highest_intrahub_seqsep() {
+		int mx=1;
+		for(CSTs::const_iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) {
+			if( i->dres1 <= nhub*nres && i->dres1 > mx) mx = i->dres1;
+			if( i->dres2 <= nhub*nres && i->dres2 > mx) mx = i->dres2;
+		}
+		for(CSTs::const_iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) {
+			if( i->dres1 <= nhub*nres && i->dres1 > mx) mx = i->dres1;
+			if( i->dres2 <= nhub*nres && i->dres2 > mx) mx = i->dres2;
+		}
+		return mx;
+	}	
 };
 
 
@@ -799,13 +808,7 @@ struct HubDenovo {
 		rlxcst   = new protocols::relax::FastRelax (sfsym);
 		rlxnocst = new protocols::relax::FastRelax(sfsymnocst);
 
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-	  	movemap->set_jump(false);
-	  	movemap->set_bb(true);
-	  	movemap->set_chi(true);
-		cenmin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false );
-
-		hub = *core::import_pose::pose_from_pdb(*rtsfa,"input/CHC_HUB_FA.pdb");
+		hub = *core::import_pose::pose_from_pdb(*rtsfa, option[OptionKeys::hub_pdb]() );
 
 	}
 	Pose make_start_pose() {
@@ -845,10 +848,28 @@ struct HubDenovo {
 	}
 
 	bool cen_fold(Pose & p) {
+		
+		// set up movemap and min mover
+		using core::conformation::symmetry::SymDof;
+		core::conformation::symmetry::SymmetryInfoCOP si = core::pose::symmetry::symmetry_info(p);
+		std::map<Size,SymDof> const & dofs = si->get_dofs();
+		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	  movemap->set_jump(false);
+	  movemap->set_bb(true);
+	  movemap->set_chi(true);
+		for(std::map<Size,SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
+			cout << "sym dof jump: " << i->first << endl;
+	  	movemap->set_jump(i->first,true);
+		}
+		cenmin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false );
+		
+		Size STOP = cfg.get_highest_intrahub_seqsep() + 4;
+		tr << "rnd 1 ssep STOP " << STOP << endl;
+		
 		Real temp = 2.0;
 		Pose last_cor_ori = p;
-		for(Size icst = 1; icst <= 2*cfg.nres; ++icst) {
-			cfg.apply_csts(p,icst);
+		for(Size icst = 1; icst <= STOP; ++icst) {
+			cfg.apply_csts(p,icst,icst > 20);
 			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
 			mc->set_autotemp( true, temp );	mc->set_temperature( temp );
 			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 3000/cfg.nres ).apply( p );
@@ -862,7 +883,7 @@ struct HubDenovo {
 			else                              last_cor_ori = p;
 			tr << icst << " " << sf3->score(p) << endl;
 		}
-		for(Size icst = 2*cfg.nres+1; icst <= cfg.nsub*cfg.nres; ++icst) {
+		for(Size icst = STOP+1; icst <= cfg.nsub*cfg.nres; ++icst) {
 			cfg.apply_csts(p,icst);
 		}
 		for(Size i = 1; i < 5; ++i) {
@@ -902,6 +923,9 @@ struct HubDenovo {
 		using namespace core::scoring;
 		for(int iter = 1; iter < NITER; ++iter) {
 			Pose tmp = make_start_pose();
+			
+			protocols::viewer::add_conformation_viewer(tmp.conformation(),"test",1150,1150);
+			
 			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 
 			if(!cen_fold(tmp)) continue;
@@ -968,7 +992,11 @@ struct HubDenovo {
 
 
 
-
+void * run(void *) {
+	string cstcfg = option[OptionKeys::hub_cst_cfg]();
+	HubDenovo hd(cstcfg);
+	hd.run();
+}
 
 
 
@@ -977,76 +1005,10 @@ int main(int argc, char *argv[]) {
 	core::init(argc,argv);
 	using namespace core::scoring;
 
-	string cstcfg = option[OptionKeys::hub_cst_cfg]();
-
-	//tr << "USING input/run/cylindrin_hairpin.hubdenovo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-	HubDenovo hd(cstcfg);
-
-	hd.run(option[OptionKeys::out::nstruct]());
+	protocols::viewer::viewer_main(&run);
 
 	return 0;
 }
 
 
 
-
-	// void add_ho_csts(Pose & p, Size ir, Size jr) {
-	// 	// Size ir = hocsts[i].first;
-	// 	// Size jr = hocsts[i].second;
-	// 	using namespace core::scoring::constraints;
-	// 	tr << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;
-	// 	p.add_constraint( new AtomPairConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
-	// 		                                      AtomID(p.residue(jr).atom_index("O"),jr),
-	// 											  new HarmonicFunc(2.0,0.5)) );
-	// 	p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("N"),ir),
-	// 			                               AtomID(p.residue(ir).atom_index("H"),ir),
-	// 		                                   AtomID(p.residue(jr).atom_index("O"),jr),
-	// 									       new CircularHarmonicFunc(3.14159,1.0)) );
-	// 	p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
-	// 			                               AtomID(p.residue(jr).atom_index("O"),jr),
-	// 		                                   AtomID(p.residue(jr).atom_index("C"),jr),
-	// 									       new CircularHarmonicFunc(3.14159,1.0)) );
-	// 	if( ir > nres || jr > nres ) {
-	// 		tr << "sym cst!" << endl;
-	// 		if(ir > nres) ir -=   nres;
-	// 		else          ir += 2*nres;
-	// 		if(jr > nres) jr -=   nres;
-	// 		else          jr += 2*nres;
-	// 		tr << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;
-	// 		p.add_constraint( new AtomPairConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
-	// 			                                      AtomID(p.residue(jr).atom_index("O"),jr),
-	// 												  new HarmonicFunc(2.0,0.5)) );
-	// 		p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("N"),ir),
-	// 				                               AtomID(p.residue(ir).atom_index("H"),ir),
-	// 			                                   AtomID(p.residue(jr).atom_index("O"),jr),
-	// 										       new CircularHarmonicFunc(3.14159,1.0)) );
-	// 		p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
-	// 				                               AtomID(p.residue(ir).atom_index("O"),ir),
-	// 			                                   AtomID(p.residue(jr).atom_index("C"),jr),
-	// 										       new CircularHarmonicFunc(3.14159,1.0)) );
-	// 	}
-
-	// }
-
-
-
-
-
-	// for(Size ippo = 1; ippo <= 3; ++ippo ) {
-	// 	for(Size ir = 1; ir <= nres; ++ir ) {
-	// 		Pose tmp(p);
-	// 	  	for(Size itrial = 1; itrial <= 10; ++itrial) {
-	// 			// for(Size i = 1; i <= nres; ++i) {
-	// 			// 	p.set_phi(1,uniform()*360.0);
-	// 			// 	p.set_psi(1,uniform()*360.0);
-	// 			// 	p.set_omega(1,170.0+uniform()*20.0);
-	// 			// }
-	// 		 	//  protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
-	// 			if(1==ippo) tmp.set_phi  (ir,tmp.phi  (ir)+10.0);
-	// 			if(2==ippo) tmp.set_psi  (ir,tmp.psi  (ir)+10.0);
-	// 			if(3==ippo) tmp.set_omega(ir,tmp.omega(ir)+10.0);
-	// 			core::util::switch_to_residue_type_set(tmp,"fa_standard");
-	// 			tmp.dump_pdb("test_"+str(ippo)+"_"+str(ir)+"_"+str(itrial) +".pdb");
-	// 		}
-	// 	}
-	// }
