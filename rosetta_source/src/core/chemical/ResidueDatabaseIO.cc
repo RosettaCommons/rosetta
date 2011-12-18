@@ -19,7 +19,6 @@
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
 #include <utility/string_util.hh>
