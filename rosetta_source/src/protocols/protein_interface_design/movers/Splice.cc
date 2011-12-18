@@ -229,6 +229,16 @@ Splice::clone() const {
     return( protocols::moves::MoverOP( new Splice( *this ) ));
 }
 
+void
+Splice::scorefxn( core::scoring::ScoreFunctionOP sf ){
+	scorefxn_ = sf;
+}
+
+core::scoring::ScoreFunctionOP
+Splice::scorefxn() const{
+	return scorefxn_;
+}
+
 } //movers
 } //protein_interface_design
 } //protocols

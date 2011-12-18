@@ -18,13 +18,8 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace protein_interface_design {
@@ -51,8 +46,8 @@ public:
 	void source_pdb( std::string const s ){ source_pdb_ = s; }
 	void ccd( bool const c ){ ccd_ = c;}
 	bool ccd() const { return ccd_; }
-	void scorefxn( core::scoring::ScoreFunctionOP sf ){ scorefxn_ = sf; }
-	core::scoring::ScoreFunctionOP scorefxn() const { return scorefxn_; }
+	void scorefxn( core::scoring::ScoreFunctionOP sf );
+	core::scoring::ScoreFunctionOP scorefxn() const;
 private:
 	core::Size from_res_, to_res_;
 	std::string source_pdb_;
