@@ -129,7 +129,8 @@ public:
 	void temp_final( core::Real value ) { temp_final_ = value; }
 	void set_fold_tree_from_loops( bool const s ){ set_fold_tree_from_loops_ = s; }
 	bool set_fold_tree_from_loops() const{ return set_fold_tree_from_loops_; }
-
+	core::kinematics::MoveMapOP move_map() const{ return move_map_; }
+	void move_map( core::kinematics::MoveMapOP mm ){ move_map_ = mm; }
 protected:
 	void read_options();
 
