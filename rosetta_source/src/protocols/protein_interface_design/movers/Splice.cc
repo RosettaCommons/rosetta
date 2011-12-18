@@ -121,8 +121,13 @@ Splice::apply( core::pose::Pose & pose )
 			threaded_seq += "G";
 		else if( source_pose.residue( i ).name3() == "PRO" )
 			threaded_seq += "P";
-		else
-			threaded_seq += "A";
+		else{
+			core::Size const nearest_on_target( find_nearest_res( pose, source_pose, i ) );
+			if( nearest_on_target > 0 && source_pose.residue( i ).name3() == pose.residue( nearest_on_target ).name3() )
+				threaded_seq += source_pose.residue(i).name1();
+			else
+				threaded_seq += "A";
+		}
 	}
 
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
