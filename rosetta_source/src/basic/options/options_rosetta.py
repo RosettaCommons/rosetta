@@ -3895,7 +3895,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option(  'keep_jumps_in_minimizer ', 'Boolean', desc=' no constraint is setup for minimization, only rebuilt regions allow bbmove.'),
 		Option(  'output_fragfiles', 'File', desc='output fragment file [filename ,e.g. aafr01].'),
 		Option(  'read_fragfile' , 'File' , desc='read fragment file.'),
-		Option(  'generic_aa' , 'String' , desc='the type of AA for centroid building', default='VAL'),
+		Option(  'generic_aa' , 'String' , desc='the type of AA for centroid building', default='V'),
 		Option(  'cluster_radius', 'Real', desc='cluster radius for accumulator, default to auto set value', default = '-1.0'),
 		Option(  'use_clusters', 'Boolean', desc='use clustering in accumulator', default = 'true'),
 		Option(  'run_confirmation', 'Boolean', desc='use KIC rms confirmation', default = 'false'),

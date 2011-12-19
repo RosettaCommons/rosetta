@@ -74,7 +74,7 @@ RemodelEnzdesCstModule::apply(core::pose::Pose & pose)
 
 		blueprint_cst_definition(pose);
 
-
+bool not_packed = true;
 		for (core::Size block = 1 ; block <= cstblocksize_; ++block){
 			if (!backbone_only_ && (!cst_pairs_[block]->resA()->is_backbone() || !cst_pairs_[block]->resB()->is_backbone())) { //s-b, s-s don't apply if not after design
 
@@ -83,11 +83,13 @@ RemodelEnzdesCstModule::apply(core::pose::Pose & pose)
 	 WorkingRemodelSet working_model;
 	 working_model.workingSetGen(pose, remodel_data_);
 
-
+if (not_packed){
 	//unfortunately needed this to make the sidechains for fullatom cst
     RemodelDesignMover designMover(remodel_data_, working_model, scorefxn_);
 	  designMover.set_state("stage");
 		designMover.apply(pose);
+		not_packed= false;
+		}
 
 				TR  << "applying sidechain constraints" << std::endl;
 				add_constraints_to_pose_for_block_without_clearing_and_header_processing(pose, scorefxn_, block);

@@ -35,6 +35,7 @@ namespace remodel{
           std::vector<int> copy_end;
           std::vector<int> src_begin;
           std::vector<int> src_end;
+					std::string aa; // for assigning generic type used for building.
           bool hasInsertion;
 
 					protocols::forge::build::BuildManager manager;

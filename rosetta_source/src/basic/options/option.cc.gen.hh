@@ -1953,7 +1953,7 @@ option.add( basic::options::OptionKeys::remodel::use_dssp_assignment, " use dssp
 option.add( basic::options::OptionKeys::remodel::keep_jumps_in_minimizer , " no constraint is setup for minimization, only rebuilt regions allow bbmove." );
 option.add( basic::options::OptionKeys::remodel::output_fragfiles, "output fragment file [filename ,e.g. aafr01]." );
 option.add( basic::options::OptionKeys::remodel::read_fragfile, "read fragment file." );
-option.add( basic::options::OptionKeys::remodel::generic_aa, "the type of AA for centroid building" ).def("VAL");
+option.add( basic::options::OptionKeys::remodel::generic_aa, "the type of AA for centroid building" ).def("V");
 option.add( basic::options::OptionKeys::remodel::cluster_radius, "cluster radius for accumulator, default to auto set value" ).def(-1.0);
 option.add( basic::options::OptionKeys::remodel::use_clusters, "use clustering in accumulator" ).def(true);
 option.add( basic::options::OptionKeys::remodel::run_confirmation, "use KIC rms confirmation" ).def(false);
