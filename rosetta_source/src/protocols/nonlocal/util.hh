@@ -40,20 +40,20 @@ namespace nonlocal {
 /// @brief Combine aligned and unaligned regions, limit size of final loop
 protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
                                          core::Size num_residues,
-                                         const protocols::loops::Loops& aligned_regions,
-                                         const protocols::loops::Loops& unaligned_regions);
+                                         const protocols::loops::LoopsOP aligned_regions,
+                                         const protocols::loops::LoopsOP unaligned_regions);
 
 // -- Utility methods -- not to be called directly
 void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& alignment,
                                     const core::Size unaligned_region_min_sz,
-                                    protocols::loops::Loops* aligned_regions,
-                                    protocols::loops::Loops* unaligned_regions);
+                                    protocols::loops::LoopsOP & aligned_regions,
+                                    protocols::loops::LoopsOP & unaligned_regions);
 
 /// @brief Best-effort attempt to limit the length of a chunk by recursively
 /// decomposing <regions> such that min_chunk_sz <= |chunk| <= max_chunk_sz.
 void limit_chunk_size(core::Size min_chunk_sz,
                       core::Size max_chunk_sz,
-                      protocols::loops::Loops* regions);
+                      protocols::loops::LoopsOP & regions);
 
 /// @brief Recursively decomposes <loop> into a series of <pieces>, each having
 /// length less than or equal to <max_length>.

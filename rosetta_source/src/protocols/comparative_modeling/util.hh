@@ -43,7 +43,7 @@ void bounded_loops_from_alignment(
     const core::Size num_residues,
     const core::Size min_size,
     const core::sequence::SequenceAlignment& alignment,
-    protocols::loops::LoopsOP unaligned_regions);
+    protocols::loops::LoopsOP & unaligned_regions);
 
 protocols::loops::LoopsOP loops_from_transitive_alignments(
 	core::Size nres1,

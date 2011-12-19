@@ -223,10 +223,12 @@ void NonlocalAbinitio::identify_chunks(const core::sequence::SequenceAlignment& 
   const Size min_chunk_sz = fragments_lg_->max_frag_length();
   const Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
 
-  Loops aligned, unaligned;
-  find_regions_with_minimum_size(alignment, min_chunk_sz, &aligned, &unaligned);
-  limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned);
-  limit_chunk_size(min_chunk_sz, max_chunk_sz, &unaligned);
+  protocols::loops::LoopsOP aligned = new protocols::loops::Loops();
+  protocols::loops::LoopsOP unaligned = new protocols::loops::Loops();
+  
+  find_regions_with_minimum_size(alignment, min_chunk_sz, aligned, unaligned);
+  limit_chunk_size(min_chunk_sz, max_chunk_sz, aligned);
+  limit_chunk_size(min_chunk_sz, max_chunk_sz, unaligned);
 
   *chunks = combine_and_trim(min_chunk_sz, alignment.length(), aligned, unaligned);
   chunks->sequential_order();

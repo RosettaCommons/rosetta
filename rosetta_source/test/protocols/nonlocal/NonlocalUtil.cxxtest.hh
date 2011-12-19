@@ -77,18 +77,20 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
   void test_limit_chunk_size() {
     const SequenceAlignment& alignment = alignments_[1];
 
-    Loops aligned, unaligned;
+    protocols::loops::LoopsOP aligned  = new Loops();
+    protocols::loops::LoopsOP unaligned = new Loops();
+    
     protocols::nonlocal::find_regions_with_minimum_size
-        (alignment, MIN_CHUNK_SZ, &aligned, &unaligned);
-
-    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, &aligned);
-    for (Loops::const_iterator i = aligned.begin(); i != aligned.end(); ++i) {
+        (alignment, MIN_CHUNK_SZ, aligned, unaligned);
+        
+    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, aligned);
+    for (Loops::const_iterator i = aligned->begin(); i != aligned->end(); ++i) {
       TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
       TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
     }
 
-    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, &unaligned);
-    for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i) {
+    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, unaligned);
+    for (Loops::const_iterator i = unaligned->begin(); i != unaligned->end(); ++i) {
       const Loop& loop = *i;
       TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
       TS_ASSERT(i->length() <= MAX_CHUNK_SZ);

@@ -103,14 +103,14 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 
 protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
                                          core::Size num_residues,
-                                         const protocols::loops::Loops& aligned_regions,
-                                         const protocols::loops::Loops& unaligned_regions) {
+                                         const protocols::loops::LoopsOP aligned_regions,
+                                         const protocols::loops::LoopsOP unaligned_regions) {
   using protocols::loops::Loops;
 
   Loops combined;
-  for (Loops::const_iterator i = aligned_regions.begin(); i != aligned_regions.end(); ++i)
+  for (Loops::const_iterator i = aligned_regions->begin(); i != aligned_regions->end(); ++i)
     combined.push_back(*i);
-  for (Loops::const_iterator i = unaligned_regions.begin(); i != unaligned_regions.end(); ++i)
+  for (Loops::const_iterator i = unaligned_regions->begin(); i != unaligned_regions->end(); ++i)
     combined.push_back(*i);
 
   // trim back the final loop to nres() - min_chunk_sz
@@ -120,7 +120,7 @@ protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
 
 void limit_chunk_size(core::Size min_chunk_sz,
                       core::Size max_chunk_sz,
-                      protocols::loops::Loops* regions) {
+                      protocols::loops::LoopsOP & regions) {
   using core::Size;
   using protocols::loops::Loop;
   using protocols::loops::Loops;
@@ -130,15 +130,15 @@ void limit_chunk_size(core::Size min_chunk_sz,
   assert(regions);
   assert(min_chunk_sz <= max_chunk_sz);
 
-  Loops output;
+  protocols::loops::LoopsOP output = new protocols::loops::Loops();
   for (Loops::const_iterator i = regions->begin(); i != regions->end(); ++i) {
     utility::vector1<Loop> pieces;
     decompose(min_chunk_sz, max_chunk_sz, *i, &pieces);
 
     for (utility::vector1<Loop>::const_iterator j = pieces.begin(); j != pieces.end(); ++j)
-      output.push_back(*j);
+      output->push_back(*j);
   }
-  *regions = output;
+  regions = output;
 }
 
 void decompose(core::Size min_chunk_sz,
@@ -189,8 +189,8 @@ void decompose(core::Size min_chunk_sz,
 
 void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& alignment,
                                     const core::Size unaligned_region_min_sz,
-                                    protocols::loops::Loops* aligned_regions,
-                                    protocols::loops::Loops* unaligned_regions) {
+                                    protocols::loops::LoopsOP & aligned_regions,
+                                    protocols::loops::LoopsOP & unaligned_regions) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::Size;
@@ -204,7 +204,6 @@ void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& ali
 
   protocols::comparative_modeling::bounded_loops_from_alignment(
       pose_space_num_residues, unaligned_region_min_sz, alignment, unaligned_regions);
-
   *aligned_regions = unaligned_regions->invert(pose_space_num_residues);
 }
 
