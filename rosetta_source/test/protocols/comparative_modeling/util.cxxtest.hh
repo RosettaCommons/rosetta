@@ -61,7 +61,7 @@ void test_loop_picking_aligned() {
 	unaligned_residues.push_back(  11 );
 	unaligned_residues.push_back( 116 );
 
-	protocols::loops::Loops myloops = pick_loops_unaligned(
+	protocols::loops::LoopsOP myloops = pick_loops_unaligned(
     query_pose_.total_residue(),
 		unaligned_residues,
 		5 // min_loop_size
@@ -71,9 +71,9 @@ void test_loop_picking_aligned() {
 	// 1-5
 	// 8-13
 	// 112-116
-	TS_ASSERT( myloops.size() == 3 );
+	TS_ASSERT( myloops->size() == 3 );
 
-	protocols::loops::Loops::const_iterator it = myloops.begin();
+	protocols::loops::Loops::const_iterator it = myloops->begin();
 	TS_ASSERT( it->start() ==   1 );
 	TS_ASSERT( it->stop()  ==   5 );
 	++it;
@@ -96,7 +96,7 @@ void test_loop_picking_chainbreak() {
 	core::id::NamedAtomID id( "CA", 81 );
 	query_pose_.set_xyz( id, query_pose_.xyz(id) + 15.0 );
 
-	Loops myloops = pick_loops_chainbreak(
+	LoopsOP myloops = pick_loops_chainbreak(
 		query_pose_,
 		5 // min_loop_size
 	);
@@ -111,9 +111,9 @@ void test_loop_picking_chainbreak() {
 	//		<< std::endl;
 	//}
 
-	TS_ASSERT( myloops.size() == 1 );
+	TS_ASSERT( myloops->size() == 1 );
 
-	protocols::loops::Loops::const_iterator it = myloops.begin();
+	protocols::loops::Loops::const_iterator it = myloops->begin();
 	TS_ASSERT( it->start() == 78 );
 	TS_ASSERT( it->stop()  == 83 );
 	++it;
