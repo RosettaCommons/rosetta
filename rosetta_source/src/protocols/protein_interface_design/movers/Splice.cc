@@ -160,8 +160,10 @@ Splice::apply( core::pose::Pose & pose )
 /// the torsion in the loop are maintained. Allow repacking around the loop.
 /// If disulfide occurs in the range that is allowed to minimize, adjust that region to not include disulf
 		core::scoring::ScoreFunctionOP scorefxn_local( scorefxn()->clone() );
-		scorefxn_local->set_weight( core::scoring::sheet, 5.0 );
+//		scorefxn_local->set_weight( core::scoring::sheet, 5.0 );
 		protocols::loops::LoopMover_Refine_CCD ccd_mover( loops, scorefxn_local );
+		ccd_mover.temp_initial( 1.5 );
+		ccd_mover.temp_final( 0.5 );
 		core::kinematics::MoveMapOP mm;
 		using namespace protocols::toolbox::task_operations;
 		DesignAroundOperationOP dao = new DesignAroundOperation;
