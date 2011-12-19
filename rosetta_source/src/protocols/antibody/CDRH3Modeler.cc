@@ -287,9 +287,9 @@ void CDRH3Modeler::build_centroid_loop() {
 	simple_one_loop_fold_tree( antibody_in_.Fv, cdr_h3 );
 
 	// silly hack to make extended loops to work
-	loops::Loops cdr_h3_loop_list;
-	cdr_h3_loop_list.add_loop( cdr_h3 );
-	loops::LoopMoverOP my_loop_move( new loops::LoopMover(cdr_h3_loop_list));
+	loops::LoopsOP cdr_h3_loop_list = new loops::Loops();
+	cdr_h3_loop_list->add_loop( cdr_h3 );
+	loops::LoopMoverOP my_loop_move =  new loops::LoopMover( cdr_h3_loop_list );
 	my_loop_move->set_extended_torsions( antibody_in_.Fv, cdr_h3 );
 	my_loop_move->apply( antibody_in_.Fv );
 

@@ -215,12 +215,12 @@ public:
 		}
 	}
 
-	void fast_loopclose( Pose &pose, protocols::loops::Loops &loops ) {
+	void fast_loopclose( Pose &pose, protocols::loops::LoopsOP const loops ) {
 		using namespace protocols::loops;
 
 		// for all loops
 		core::kinematics::FoldTree f_orig = pose.fold_tree();
-		for ( Loops::iterator it=loops.v_begin(), it_end=loops.v_end(); it != it_end; ++it ) {
+		for ( Loops::iterator it=loops->v_begin(), it_end=loops->v_end(); it != it_end; ++it ) {
 			Loop buildloop( *it );
 
 			set_single_loop_fold_tree( pose, buildloop );
@@ -260,7 +260,7 @@ public:
 		core::kinematics::MoveMapOP mm_relax = new core::kinematics::MoveMap();
 		mm_relax->set_chi(true);
 		mm_relax->set_bb(true);
-		for ( Loops::iterator it=loops.v_begin(), it_end=loops.v_end(); it != it_end; ++it )
+		for ( Loops::iterator it=loops->v_begin(), it_end=loops->v_end(); it != it_end; ++it )
 			for (int i=it->start(); i<=it->stop(); ++i)
 				mm_relax->set_bb(i, true);
 
@@ -512,18 +512,18 @@ public:
 
 		// if a loopfile is given, use it
 		// otherwise, use model
-		protocols::loops::Loops to_rebuild;
+		protocols::loops::LoopsOP to_rebuild = new protocols::loops::Loops();
 		if ( option[ OptionKeys::loops::loop_file ].user() ) {
-			to_rebuild.read_loop_file( option[ OptionKeys::loops::loop_file ]()[1] );
+			to_rebuild->read_loop_file( option[ OptionKeys::loops::loop_file ]()[1] );
 		} else {
 			// autoselect
 			if (fadens_scorefxn_->get_weight(core::scoring::patterson_cc) > 0) {
-				to_rebuild = protocols::electron_density::findLoopFromPatterson( pose, 10, (core::Size)std::ceil(pose.total_residue()/40), false );
+				to_rebuild = new Loops( protocols::electron_density::findLoopFromPatterson( pose, 10, (core::Size)std::ceil(pose.total_residue()/40), false ) );
 			} else {
-				to_rebuild = protocols::electron_density::findLoopFromDensity( pose, 0.3, -1, 1 );
+				to_rebuild = new Loops( protocols::electron_density::findLoopFromDensity( pose, 0.3, -1, 1 ) );
 			}
 		}
-		to_rebuild.choose_cutpoints( pose );
+		to_rebuild->choose_cutpoints( pose );
 
 		// now do loopbuilding
 		protocols::comparative_modeling::LoopRelaxMoverOP lr_mover( new protocols::comparative_modeling::LoopRelaxMover );
@@ -569,10 +569,10 @@ public:
 		// set up initial loop build
 		core::Size nres = pose.total_residue();
 		while (!pose.residue(nres).is_polymer()) nres--;
-		Loops my_loops( job->loops( nres ) );
+		LoopsOP my_loops = new Loops( job->loops( nres ) );
 
 		if ( option[ MR::max_gaplength_to_model ].user() ) {
-			trim_target_pose( pose, my_loops, option[ MR::max_gaplength_to_model ]() );
+			trim_target_pose( pose, *my_loops, option[ MR::max_gaplength_to_model ]() );
 		}
 
 		// find disulfides conserved from template
@@ -596,7 +596,7 @@ public:
 
 		if (debug) pose.dump_pdb( "pre_loopmodel.pdb" );
 
-		my_loops.choose_cutpoints( pose );
+		my_loops->choose_cutpoints( pose );
 
 		if ( superfast ) {  // no loop modeling
 			// fix loops initially

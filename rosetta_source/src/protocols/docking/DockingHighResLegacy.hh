@@ -80,7 +80,7 @@ public:
 	void set_protocol( core::pose::Pose & pose );
 	virtual void set_task_factory( core::pack::task::TaskFactoryOP task );
 
-	void define_loops( core::pose::Pose const & pose, loops::Loops & loop_set, Real & interface_dist );
+	void define_loops( core::pose::Pose const & pose, loops::LoopsOP loop_set, Real & interface_dist );
 
 	moves::MonteCarloOP get_mc();
 

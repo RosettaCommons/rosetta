@@ -247,12 +247,14 @@ void DockingHighResLegacy::set_protocol( pose::Pose & pose )
 	}
 }
 
-void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::Loops & loop_set, Real & interface_dist ) {
+void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::LoopsOP loop_set, Real & interface_dist ) {
 	//runtime_assert( movable_jumps_.size() == 1 ); // CURRENTLY ONLY SUPPORTED WITH SIMPLE DOCKING
 	//core::Size const rb_jump = movable_jumps_[1];
 
-	loop_set.clear();
+    TR << "This method clears the loop set the is passed in.  Before using this, please investigate it thoroughly." << std::endl;
 
+	loop_set->clear();
+    
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using namespace protocols::toolbox::task_operations;
@@ -329,12 +331,12 @@ void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::Loops &
 				}
 				loop_stop = j;
 			}
-			loop_set.add_loop( loop_start, loop_stop, 0 );
+			loop_set->add_loop( loop_start, loop_stop, 0 );
 			i = loop_stop;
 		}
 	}
 
-	loop_set.choose_cutpoints( pose );
+	loop_set->choose_cutpoints( pose );
 
 	return;
 }
@@ -467,7 +469,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 			(*scorefxn_pack())(pose_for_loop_defn);
 			pose_for_loop_defn.fold_tree( docking_fold_tree );
 
-			protocols::loops::Loops loop_set;
+			protocols::loops::LoopsOP loop_set = new protocols::loops::Loops();
 			Real interface_dist = option[ OptionKeys::docking::flexible_bb_docking_interface_dist ];
 			define_loops( pose_for_loop_defn, loop_set, interface_dist );
 
@@ -475,13 +477,13 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 			if ( flex_bb_docking_type == "ccd" ) {
 				// jk CCD loop refinement (fullatom only)
 				TR << "Setting up for ccd loop modeling" << std::endl;
-				protocols::loops::fold_tree_from_loops( pose, loop_set, loop_fold_tree );
+				protocols::loops::fold_tree_from_loops( pose, *loop_set, loop_fold_tree );
 				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
 				loop_refine = new loops::LoopMover_Refine_CCD( loop_set, scorefxn_pack()->clone() );
 			} else if ( flex_bb_docking_type == "kic" ) {
 				// jk KIC loop refinement (fullatom only)
 				TR << "Setting up for kinematic (kic) loop modeling" << std::endl;
-				protocols::loops::fold_tree_from_loops( pose, loop_set, loop_fold_tree );
+				protocols::loops::fold_tree_from_loops( pose, *loop_set, loop_fold_tree );
 				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
 				loop_refine = new loops::LoopMover_Refine_KIC( loop_set, scorefxn_pack()->clone() );
 			} else if ( flex_bb_docking_type == "backrub" ) {

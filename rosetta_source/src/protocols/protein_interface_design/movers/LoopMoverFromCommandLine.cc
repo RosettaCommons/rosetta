@@ -180,9 +180,9 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		core::kinematics::FoldTree old_ft( pose.fold_tree() );
 		for( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						it->set_extended( true ); // set all loops to extended (needed for CCD mover to really perturb)
-						protocols::loops::Loops single_loop;
-						single_loop.add_loop(*it);
-		core::kinematics::FoldTree new_ft = protocols::forge::methods::fold_tree_from_loops( pose, single_loop );
+						protocols::loops::LoopsOP single_loop = new protocols::loops::Loops();
+						single_loop->add_loop(*it);
+		core::kinematics::FoldTree new_ft = protocols::forge::methods::fold_tree_from_loops( pose, *single_loop );
 		pose.fold_tree( new_ft );
 		add_cutpoint_variants( pose );
 		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );

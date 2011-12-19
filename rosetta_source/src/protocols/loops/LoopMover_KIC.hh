@@ -44,11 +44,11 @@ public:
 	LoopMover_Perturb_KIC();
 
 	LoopMover_Perturb_KIC(
-		protocols::loops::Loops  loops_in
+		protocols::loops::LoopsOP loops_in
 	);
 
 	LoopMover_Perturb_KIC(
-		protocols::loops::Loops  loops_in,
+		protocols::loops::LoopsOP  loops_in,
 		core::scoring::ScoreFunctionOP  scorefxn
 	);
 
@@ -85,11 +85,11 @@ class LoopMover_Refine_KIC: public LoopMover {
 public:
 	//constructors
 	LoopMover_Refine_KIC(
-		protocols::loops::Loops  loops_in
+		protocols::loops::LoopsOP  loops_in
 	);
 
 	LoopMover_Refine_KIC(
-		protocols::loops::Loops const loops_in,
+		protocols::loops::LoopsOP const loops_in,
 		core::scoring::ScoreFunctionCOP  scorefxn
 	);
 

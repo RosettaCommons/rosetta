@@ -50,14 +50,14 @@ public: // construct/destruct
 	/// @param[in] loops_in the set of loops to model
 	/// @remarks Will be initialized with centroid level score function 'score4L'.
 	LoopMover_Perturb_QuickCCD(
-		protocols::loops::Loops loops_in
+		protocols::loops::LoopsOP loops_in
 	);
 
 	/// @brief Loops & ScoreFunction constructor
 	/// @param[in] loops_in the set of loops to model
 	/// @param[in] scorefxn desired ScoreFunction
 	LoopMover_Perturb_QuickCCD(
-		protocols::loops::Loops loops_in,
+		protocols::loops::LoopsOP loops_in,
 		core::scoring::ScoreFunctionOP scorefxn
 	);
 
@@ -67,7 +67,7 @@ public: // construct/destruct
 	/// @param[in] fragset is the FragSet to be used
 	/// line?
 	LoopMover_Perturb_QuickCCD(
-		protocols::loops::Loops loops_in,
+		protocols::loops::LoopsOP loops_in,
 		core::scoring::ScoreFunctionOP scorefxn,
 		core::fragment::FragSetOP fragset
 	);

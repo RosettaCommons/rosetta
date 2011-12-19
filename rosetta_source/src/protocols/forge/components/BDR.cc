@@ -386,10 +386,10 @@ bool BDR::design_refine(
 	Original2Modified original2modified_interval_endpoints = manager_.original2modified_interval_endpoints();
 
 	// collect loops
-	Loops loops = intervals_to_loops( loop_intervals.begin(), loop_intervals.end() );
+	loops::LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
 
 	// refine Mover used doesn't setup a fold tree, so do it here
-	FoldTree loop_ft = protocols::forge::methods::fold_tree_from_loops( pose, loops );
+	FoldTree loop_ft = protocols::forge::methods::fold_tree_from_loops( pose, *loops );
 
 	// save original fold tree
 	FoldTree original_ft = pose.fold_tree();
@@ -470,7 +470,7 @@ bool BDR::design_refine(
 
 	// evaluate all chainbreaks using linear chainbreak
 	bool cbreaks_pass = true;
-	for ( Loops::const_iterator l = loops.begin(), le = loops.end(); l != le && cbreaks_pass; ++l ) {
+	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = linear_chainbreak( pose, l->cut() );
 			TR << "design_refine: final chainbreak = " << c << std::endl;

@@ -44,11 +44,11 @@ public:
 	LoopMover_Perturb_QuickCCD_Moves();
 
 	LoopMover_Perturb_QuickCCD_Moves(
-		protocols::loops::Loops  loops_in
+		protocols::loops::LoopsOP  loops_in
 	);
 
 	LoopMover_Perturb_QuickCCD_Moves(
-		protocols::loops::Loops  loops_in,
+		protocols::loops::LoopsOP  loops_in,
 		core::scoring::ScoreFunctionOP  scorefxn
 	);
 

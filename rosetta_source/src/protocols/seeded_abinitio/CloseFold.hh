@@ -89,9 +89,9 @@ namespace protocols {
   		boost::unordered_map<core::Size, core::fragment::Frame> library_;
 			//FrameMap library_;
 
-			void fast_loopclose( core::pose::Pose &pose, protocols::loops::Loops &loops, bool kic );
+			void fast_loopclose( core::pose::Pose &pose, protocols::loops::LoopsOP const loops, bool kic );
 
-			void quick_closure( core::pose::Pose &pose, protocols::loops::Loops &loops );	
+			void quick_closure( core::pose::Pose &pose, protocols::loops::LoopsOP const loops );	
 
 			core::pose::PoseOP template_pdb_;
 			

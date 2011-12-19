@@ -113,7 +113,7 @@ void bounded_loops_from_alignment(
     const core::Size num_residues,
     const core::Size min_size,
     const core::sequence::SequenceAlignment& alignment,
-    protocols::loops::Loops* unaligned_regions) {
+    protocols::loops::LoopsOP unaligned_regions) {
 
   using core::Size;
   using core::id::SequenceMapping;
@@ -139,11 +139,11 @@ void bounded_loops_from_alignment(
 
   // Ensure the unaligned regions meet size constraints.
   // Aligned regions are incorrect at this point.
-  Loops unaligned_ok = pick_loops_unaligned(num_residues, unaligned_residues, min_size);
+  protocols::loops::LoopsOP unaligned_ok = pick_loops_unaligned(num_residues, unaligned_residues, min_size);
 
   // Ensure the aligned regions meet size constraints.
   unaligned_residues.clear();
-  for (Loops::const_iterator i = unaligned_ok.begin(); i != unaligned_ok.end(); ++i) {
+  for (Loops::const_iterator i = unaligned_ok->begin(); i != unaligned_ok->end(); ++i) {
     const Loop& loop = *i;
     for (Size j = loop.start(); j <= loop.stop(); ++j) {
       unaligned_residues.push_back(j);
@@ -166,10 +166,10 @@ void bounded_loops_from_alignment(
   std::sort(bounded_unaligned_residues.begin(), bounded_unaligned_residues.end());
 
   // Retrieve loops without affecting unaligned region length
-  *unaligned_regions = pick_loops_unaligned(num_residues, bounded_unaligned_residues, NO_LOOP_SIZE_CST);
+  unaligned_regions = pick_loops_unaligned(num_residues, bounded_unaligned_residues, NO_LOOP_SIZE_CST);
 }
 
-protocols::loops::Loops loops_from_alignment(
+protocols::loops::LoopsOP loops_from_alignment(
 	core::Size nres,
 	core::sequence::SequenceAlignment const & aln,
 	core::Size const min_loop_size
@@ -210,7 +210,7 @@ protocols::loops::Loops loops_from_alignment(
 
 
 //fpd  build a loopfile from the intersection of loops from multiple aln files
-protocols::loops::Loops loops_from_transitive_alignments(
+protocols::loops::LoopsOP loops_from_transitive_alignments(
 	core::Size nres1,
 	core::sequence::SequenceAlignment const & aln1,
 	core::Size nres2,
@@ -264,14 +264,14 @@ protocols::loops::Loops loops_from_transitive_alignments(
 	);
 }
 
-protocols::loops::Loops pick_loops_unaligned(
+protocols::loops::LoopsOP pick_loops_unaligned(
 	core::Size nres,
 	utility::vector1< core::Size > const & unaligned_residues,
 	core::Size min_loop_size
 ) {
 	typedef core::Size Size;
 
-	protocols::loops::Loops query_loops;
+	protocols::loops::LoopsOP query_loops = new protocols::loops::Loops();
 	if ( unaligned_residues.size() == 0 ) {
 		tr.Warning << "No unaligned residues, no loops found." << std::endl;
 		return query_loops;
@@ -298,7 +298,7 @@ protocols::loops::Loops pick_loops_unaligned(
 			tr.Debug << "adding loop from " << loop_start << " to " << loop_stop
 				<< std::endl;
 			protocols::loops::Loop loop( loop_start, loop_stop, 0, 0, false );
-			query_loops.add_loop( loop, 1 );
+			query_loops->add_loop( loop, 1 );
 
 			loop_start = *next;
 		}
@@ -313,14 +313,14 @@ protocols::loops::Loops pick_loops_unaligned(
 	tr.Debug << "adding loop from " << loop_start << " to " << loop_stop
 		<< std::endl;
 	protocols::loops::Loop loop( loop_start, loop_stop, 0, 0, false );
-	query_loops.add_loop( loop , 1 );
+	query_loops->add_loop( loop , 1 );
 
 	tr.flush_all_channels();
 
 	return query_loops;
 } // pick_loops
 
-protocols::loops::Loops pick_loops_chainbreak(
+protocols::loops::LoopsOP pick_loops_chainbreak(
 	core::pose::Pose & query_pose,
 	core::Size min_loop_size
 ) {
@@ -374,12 +374,12 @@ void rebuild_loops_until_closed(
 	using namespace basic::options::OptionKeys;
 
 	// switch to centroid ResidueTypeSet for loop remodeling
-	protocols::loops::Loops my_loops = pick_loops_chainbreak(
+	protocols::loops::LoopsOP my_loops = pick_loops_chainbreak(
 		query_pose,
 		min_loop_size
 	);
 
-	if ( my_loops.size() == 0 ) {
+	if ( my_loops->size() == 0 ) {
 		tr.Debug << "no loops found." << std::endl;
 		return;
 	}
@@ -401,7 +401,7 @@ void rebuild_loops_until_closed(
 			min_loop_size
 		);
 
-		if ( my_loops.size() == 0 ) {
+		if ( my_loops->size() == 0 ) {
 			tr.Debug << "closed loops on iteration " << iter << " ." << std::endl;
 			closed = true;
 		}
@@ -524,7 +524,7 @@ templates_from_cmd_line() {
 }
 
 bool loops_are_closed( core::pose::Pose & pose ) {
-	return ( pick_loops_chainbreak(pose, 3).size() == 0 ) ;
+	return ( pick_loops_chainbreak(pose, 3)->size() == 0 ) ;
 }
 
 std::map< std::string, core::pose::Pose >

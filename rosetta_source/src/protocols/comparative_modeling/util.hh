@@ -29,7 +29,7 @@
 namespace protocols {
 namespace comparative_modeling {
 
-protocols::loops::Loops loops_from_alignment(
+protocols::loops::LoopsOP loops_from_alignment(
   core::Size nres,
 	core::sequence::SequenceAlignment const & aln,
 	core::Size const min_loop_size
@@ -43,9 +43,9 @@ void bounded_loops_from_alignment(
     const core::Size num_residues,
     const core::Size min_size,
     const core::sequence::SequenceAlignment& alignment,
-    protocols::loops::Loops* unaligned_regions);
+    protocols::loops::LoopsOP unaligned_regions);
 
-protocols::loops::Loops loops_from_transitive_alignments(
+protocols::loops::LoopsOP loops_from_transitive_alignments(
 	core::Size nres1,
 	core::sequence::SequenceAlignment const & aln1,
 	core::Size nres2,
@@ -53,13 +53,13 @@ protocols::loops::Loops loops_from_transitive_alignments(
 	core::Size const min_loop_size
 );
 
-protocols::loops::Loops pick_loops_unaligned(
+protocols::loops::LoopsOP pick_loops_unaligned(
   core::Size nres,
 	utility::vector1< core::Size > const & unaligned_residues,
 	core::Size min_loop_size
 );
 
-protocols::loops::Loops pick_loops_chainbreak(
+protocols::loops::LoopsOP pick_loops_chainbreak(
 	core::pose::Pose & query_pose,
 	core::Size min_loop_size
 );

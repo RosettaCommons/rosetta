@@ -296,13 +296,13 @@ CloseFold::is_cut( utility::vector1<Size> & cut_points, Size residue){
 }
 
 void
-CloseFold::fast_loopclose( core::pose::Pose &pose, protocols::loops::Loops &loops, bool kic ) {
+CloseFold::fast_loopclose( core::pose::Pose &pose, protocols::loops::LoopsOP const loops, bool kic ) {
 	using namespace protocols::loops;
 
 	core::kinematics::FoldTree f_orig = pose.fold_tree();
 
 	//improvisory loop closure protocol from Frank
-	for ( Loops::iterator it=loops.v_begin(), it_end=loops.v_end(); it != it_end; ++it ) {
+	for ( Loops::iterator it=loops->v_begin(), it_end=loops->v_end(); it != it_end; ++it ) {
 		Loop buildloop( *it );
 		set_single_loop_fold_tree( pose, buildloop );
 		set_extended_torsions( pose, buildloop );
@@ -336,7 +336,7 @@ CloseFold::fast_loopclose( core::pose::Pose &pose, protocols::loops::Loops &loop
 }
 
 void
-CloseFold::quick_closure( core::pose::Pose &pose, protocols::loops::Loops &loops ) {
+CloseFold::quick_closure( core::pose::Pose &pose, protocols::loops::LoopsOP const loops ) {
   using namespace protocols::loops;
 
   core::kinematics::FoldTree f_orig( pose.fold_tree() );
@@ -359,7 +359,7 @@ CloseFold::quick_closure( core::pose::Pose &pose, protocols::loops::Loops &loops
 
    	//set kinematics
    	core::kinematics::FoldTree looptree;
-   	fold_tree_from_loops( pose, loops, looptree );
+   	fold_tree_from_loops( pose, *loops, looptree );
 		pose.fold_tree(looptree);
 		TR << "current loop-based foldtree: " << looptree << std::endl;
    	ccd_closure->apply(pose);
@@ -407,10 +407,10 @@ CloseFold::apply( core::pose::Pose & pose ){
 	TR <<"loops " << *loops_ <<std::endl;
 
 	if( ccd_ )
-		quick_closure( pose, *loops_ );
+		quick_closure( pose, loops_ );
 
 	if( kic_ )
-		fast_loopclose( pose, *loops_ , kic_  );
+		fast_loopclose( pose, loops_ , kic_  );
 	else
 		TR << "no loop closure protocol specified " << std::endl;
 

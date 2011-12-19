@@ -443,7 +443,7 @@ bool VarLengthBuild::centroid_build(
 
 	// data to feed to other parts of rosetta
 	Intervals fragment_only_regions;
-	Loops loops;
+	loops::LoopsOP loops = new loops::Loops();
 
 	// identify regions to rebuild and pick fragments
 	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
@@ -514,17 +514,17 @@ bool VarLengthBuild::centroid_build(
 
 			Size cutpoint = find_cutpoint( pose, interval.left, interval.right );
 
-			loops.add_loop( Loop( interval.left, interval.right, cutpoint, 0.0, true ) );
+			loops->add_loop( Loop( interval.left, interval.right, cutpoint, 0.0, true ) );
 			if (cutpoint == 0){
-				loops.choose_cutpoints(pose);
+				loops->choose_cutpoints(pose);
 			}
 
 		} else if ( n_cuts == 0 ) { // fragment only region
 
 			if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user())	{
-				loops.add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );//pick additional frame for connection to repeats
+				loops->add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );//pick additional frame for connection to repeats
 			}else{
-			loops.add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );
+			loops->add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );
 			}
 		}
 
@@ -601,7 +601,7 @@ bool VarLengthBuild::centroid_build(
 		return cbreaks_pass;
 	}
 
-	for ( Loops::const_iterator l = loops.begin(), le = loops.end(); l != le && cbreaks_pass; ++l ) {
+	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = linear_chainbreak( pose, l->cut() );
 			TR << "centroid_build: final chainbreak = " << c << std::endl;
@@ -617,7 +617,7 @@ bool VarLengthBuild::centroid_build(
 /// @param[in] false_mm Enforce False settings in this MoveMap.  Currently
 ///  only useful with the RemodelLoopMover.
 VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
-	Loops const & loops,
+	loops::LoopsOP const loops,
 	MoveMap const & false_mm
 )
 {

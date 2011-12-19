@@ -69,8 +69,28 @@ using namespace ObjexxFCL::fmt;
 
 basic::Tracer tr("protocol.loops.LoopMover");
 
+LoopMover::LoopMover() : Mover()
+{
+   init( new Loops() ); 
+}
+
+LoopMover::LoopMover( protocols::loops::LoopsOP loops_in ) : Mover()
+{
+    init( loops_in );
+}
+    
+void LoopMover::init( protocols::loops::LoopsOP loops_in )
+{
+    Mover::type( "LoopMover" );
+    loops_from_observer_cache_ = false;
+    checkpoints_ = new checkpoint::CheckPointer( "LoopMover" );
+    loops_ = loops_in;
+    
+}
 
 //////////////////////////////////////////////////////////////////////////////////
+    
+
 /// @details  Set a loop to extended torsion angles.
 void LoopMover::set_extended_torsions(
 	core::pose::Pose & pose,

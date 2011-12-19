@@ -63,8 +63,8 @@ public:
 
 private: // methods
 	void set_loop_info( Pose const &, Loops const & );
-	void ccd( Pose &, Loops const &, TaskFactoryCOP );
-	void backrub( Pose &, Loops const &, TaskFactoryCOP );
+	void ccd( Pose &, loops::LoopsOP const, TaskFactoryCOP );
+	void backrub( Pose &, loops::LoopsOP const, TaskFactoryCOP );
 
 private: // data
 	std::string type_;

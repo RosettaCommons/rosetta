@@ -198,8 +198,8 @@ FlexPepDockingLowRes::loopclosure_monte_carlo
   // set up and model a random loop
   Size first_res = flags_.peptide_first_res() + 1;
   Size last_res = flags_.peptide_last_res() - 1;
-  protocols::loops::Loops loops;
-  loops.add_loop(first_res, last_res); // TODO: cut defaults to zero, is this a random cut?
+  protocols::loops::LoopsOP loops = new protocols::loops::Loops();
+  loops->add_loop(first_res, last_res); // TODO: cut defaults to zero, is this a random cut?
   for(Size i = first_res; i <= last_res ; i++)
     runtime_assert( movemap_->get_bb(i) ); // verify loop is movable, this should have been always true for the peptide
   loop_relax_mover_->loops( loops );

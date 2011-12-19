@@ -157,10 +157,10 @@ void GraftMover::apply( pose::Pose & pose_in )
 		simple_one_loop_fold_tree( pose_in, cdr_h3);
 
 		// silly hack to make extended loops work
-		loops::Loops loop_list;
-		loop_list.add_loop( cdr_h3 );
+		loops::LoopsOP loop_list = new loops::Loops();
+		loop_list->add_loop( cdr_h3 );
 
-		loops::LoopMoverOP my_loop_move( new loops::LoopMover( loop_list ) );
+		loops::LoopMoverOP my_loop_move = new loops::LoopMover( loop_list );
 		my_loop_move->set_extended_torsions( pose_in, cdr_h3 );
 	}
 

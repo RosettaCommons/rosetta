@@ -39,13 +39,13 @@ public:
 
 	core::Size nirotamers() const;
 
-	void find_closest_backbone( core::pose::Pose & pose, protocols::loops::Loops & flexible_positions,
+	void find_closest_backbone( core::pose::Pose & pose, protocols::loops::LoopsOP const flexible_positions,
 		utility::vector1< core::Size > & closest_pos, utility::vector1< core::Real > & closest_rmsd );
 
-	void incorporate_motifs( core::pose::Pose & pose, protocols::loops::Loops & flexible_positions );
+	void incorporate_motifs( core::pose::Pose & pose, protocols::loops::LoopsOP const flexible_positions );
 
 	void try_for_more( core::pose::Pose & pose,
-		protocols::loops::Loops & flexible_positions,
+		protocols::loops::LoopsOP const flexible_positions,
 		std::map< core::Size, MotifCOP > setpos,
 		std::map< core::Size, core::conformation::ResidueCOP > setpos_ir,
 		std::map< core::Size, bool > setpos_forward_info,
@@ -55,7 +55,7 @@ public:
   bool
   successful_loop_closure(
     core::pose::Pose & pose,
-		protocols::loops::Loops & flexible_regions,
+		protocols::loops::LoopsOP flexible_regions,
 		std::map< core::Size, MotifCOP > & setpos,
 		std::map< core::Size, core::conformation::ResidueCOP > & setpos_ir,
 		std::map< core::Size, bool > & setpos_forward_info,

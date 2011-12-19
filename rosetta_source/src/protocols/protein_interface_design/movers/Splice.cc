@@ -137,9 +137,9 @@ Splice::apply( core::pose::Pose & pose )
 	protocols::loops::FoldTreeFromLoops ffl;
 	using namespace utility;
 	protocols::loops::Loop loop( from_res() - 6/*start*/, to_res() + 6/*stop*/, to_res()/*cut*/ );
-	protocols::loops::Loops loops;
-	loops.push_back( loop );
-	ffl.loops( loops );
+	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
+	loops->push_back( loop );
+	ffl.loops( *loops );
 	ffl.apply( pose );
 	core::Size const residue_diff( nearest_to_to - nearest_to_from - ( to_res() - from_res()) );
 /// change the loop length

@@ -244,26 +244,25 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 #endif
 
 	// pick loops if necessary
-	protocols::loops::Loops loops = get_loops();
+	protocols::loops::LoopsOP loops = get_loops();
 	// try to load loops from command line
-	if ( loops.size() == 0 )
-		protocols::loops::Loops loops = protocols::loops::get_loops_from_file();
-	if ( loops.size() == 0 ) {
+	if ( loops->size() == 0 )
+		protocols::loops::LoopsOP loops = new protocols::loops::Loops( protocols::loops::get_loops_from_file() );
+	if ( loops->size() == 0 ) {
 		TR.Debug << "picking loops by chainbreak score." << std::endl;
 		loops = protocols::comparative_modeling::pick_loops_chainbreak(
-			start_pose, option[ cm::min_loop_size ]()
-		);
+			start_pose, option[ cm::min_loop_size ]() );
 
-		if ( loops.size() == 0 ) {
+		if ( loops->size() == 0 ) {
 			TR.Debug << "no loops found." << std::endl;
 			remodel( "no" );
 		}
 	} // loops.size() == 0
 
-	loops.verify_against( start_pose );
+	loops->verify_against( start_pose );
 	TR.Debug << loops << std::endl;
 
-	if ( option[ OptionKeys::loops::extended ]() ) loops.set_extended( true );
+	if ( option[ OptionKeys::loops::extended ]() ) loops->set_extended( true );
 	bool const debug( option[ OptionKeys::loops::debug ]() );
 
 	// superimpose native over core ?
@@ -272,7 +271,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	if(  option[ OptionKeys::loops::superimpose_native ]()  ){
 		core::pose::initialize_atomid_map( atom_map, native_pose_super, core::id::BOGUS_ATOM_ID );
 		for ( core::Size ir=1; ir <= native_pose.total_residue(); ++ir ) {
-			if( !loops.is_loop_residue( ir ) ){
+			if( !loops->is_loop_residue( ir ) ){
 				id::AtomID const id1( native_pose_super.residue(ir).atom_index("CA"), ir );
 				id::AtomID const id2( pose.residue(ir).atom_index("CA"), ir );
 				atom_map.set(id1, id2);
@@ -310,13 +309,13 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////////////////////////////
 
 	// loop rebuilding
-	loops.auto_choose_cutpoints( pose );
+	loops->auto_choose_cutpoints( pose );
 
 	// if remove_extended_loops is specified, treat extended loops as missing density, by randomly placing the atoms
 	// this is not great behavior, BUT the code is already tolerant of missing density treated in this fashion
 	bool remove_extended_loops = option[ OptionKeys::loops::remove_extended_loops ]();
 	if (remove_extended_loops) {
-		for ( loops::Loops::const_iterator it = loops.begin(), it_end = loops.end();
+		for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end();
 					it != it_end; ++it
 		) {
 			if ( it->is_extended() && it->skip_rate() == 0.0 ) {
@@ -388,7 +387,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 	// Make sure loops can be grown in any protocol, not just QuickCCD
 	if ( basic::options::option[ basic::options::OptionKeys::loops::random_grow_loops_by ].user() ) {
-		loops.grow_all_loops( pose ,  basic::options::option[ basic::options::OptionKeys::loops::random_grow_loops_by ]() );
+		loops->grow_all_loops( pose ,  basic::options::option[ basic::options::OptionKeys::loops::random_grow_loops_by ]() );
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -446,7 +445,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				core::Real current_sc( rebuild_filter() + 1 );
 				TR.Debug << "Remodeling attempt " << ii << "." << std::endl;
 				if ( remodel() == "old_loop_relax") {
-					LoopRebuild loop_rebuild( cen_scorefxn_, loops );
+					LoopRebuild loop_rebuild( cen_scorefxn_, *loops );
 					loop_rebuild.apply( pose );
 				} else {
 
@@ -481,7 +480,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 					if ( remodel() == "perturb_kic" ) {
 						core::kinematics::FoldTree f_new;
-						protocols::loops::fold_tree_from_loops( pose, loops,  f_new, true );
+						protocols::loops::fold_tree_from_loops( pose, *loops,  f_new, true );
 						pose.fold_tree( f_new );
 					}
 					remodel_mover->get_checkpoints()->set_type("Remodel");
@@ -541,8 +540,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		setPoseExtraScores( pose, "cen_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
 		if ( option[ in::file::native ].user() ) {
 			setPoseExtraScores( pose, "cen_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-			setPoseExtraScores( pose, "cen_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
-			setPoseExtraScores( pose, "cen_loopcarms",  loops::loop_rmsd(native_pose_super, pose, loops, true ) );
+			setPoseExtraScores( pose, "cen_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+			setPoseExtraScores( pose, "cen_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops, true ) );
 		}
 	}
 
@@ -589,16 +588,16 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 				// if remodelling was done, repack the loops - otherwise leave it.
 				if ( remodel() != "no" ) {
-					for ( int j = 1; j <= (int)loops.size(); ++j ) {
-						if (    i >= core::Size( loops[j].start() ) - 3
-						     && i <= core::Size( loops[j].stop() ) + 3 ) {
+                    for( loops::Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
+                        if (    i >= core::Size( it->start() ) - 3
+                            && i <= core::Size( it->stop() ) + 3 ) {
 							// allow 3-residue leeway on either side for 'random_loops'
 							// this kind of sucks.
 							TR.Debug << "Repacking because in loop: " << i << std::endl;
 							needToRepack[i] = true;
 							break;
-						}
-					}
+                        }
+                    }
 				}
 
 				// if there is missing density in the sidechain, then we need to
@@ -647,7 +646,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			core::pose::Pose constraint_target_pose = pose;
 
 
-			coordconstraint_segments = loops.invert( pose.total_residue() );  // Invert the loops selection - i.e. the rigid areas are now defined
+			coordconstraint_segments = loops->invert( pose.total_residue() );  // Invert the loops selection - i.e. the rigid areas are now defined
 			std::cout << "Restraining the following segments: " << std::endl << coordconstraint_segments << std::endl;
 
 			// ResidueTypeSet
@@ -806,7 +805,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 		core::kinematics::FoldTree f_new, f_orig=pose.fold_tree();
 		if ( option[ OptionKeys::loops::relax_with_foldtree ].user() ){
-			loops::fold_tree_from_loops( pose, loops, f_new );
+			loops::fold_tree_from_loops( pose, *loops, f_new );
 			pose.fold_tree( f_new );
 			loops::add_cutpoint_variants( pose );
 			fa_scorefxn_->set_weight( core::scoring::chainbreak,        option[ OptionKeys::relax::chainbreak_weight ]() );
@@ -823,9 +822,9 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
 				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
-				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
-				setPoseExtraScores( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, loops,true ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScores( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops,true ) );
 			}
 		}
 
@@ -867,17 +866,17 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
 				setPoseExtraScores( pose, "bref_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "bref_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
-				setPoseExtraScores( pose, "bref_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
+				setPoseExtraScores( pose, "bref_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "bref_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
 			}
 		}
 
 		core::kinematics::FoldTree f_new, f_orig=pose.fold_tree();
 		if ( refine() == "refine_kic" ) {
-			loops::fold_tree_from_loops( pose, loops, f_new, true /* include terminal cutpoints */);
+			loops::fold_tree_from_loops( pose, *loops, f_new, true /* include terminal cutpoints */);
 		}
 		else {
-			loops::fold_tree_from_loops( pose, loops, f_new);
+			loops::fold_tree_from_loops( pose, *loops, f_new);
 		}
 		pose.fold_tree( f_new );
 		TR << "fold_tree_before_refine " << pose.fold_tree() << std::endl;
@@ -959,7 +958,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 		core::kinematics::FoldTree f_new, f_orig=pose.fold_tree();
 		if ( option[ OptionKeys::loops::relax_with_foldtree ].user() ){
-			loops::fold_tree_from_loops( pose, loops, f_new );
+			loops::fold_tree_from_loops( pose, *loops, f_new );
 			pose.fold_tree( f_new );
 			loops::add_cutpoint_variants( pose );
 			fa_scorefxn_->set_weight( core::scoring::chainbreak,        option[ OptionKeys::relax::chainbreak_weight ]() );
@@ -976,8 +975,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
 				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
-				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
 			}
 		}
 
@@ -1036,8 +1035,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 				}
 				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
-				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
 			}
 		}
 	}
@@ -1062,10 +1061,10 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 			}
 			setPoseExtraScores(	pose, "rms",     core::scoring::native_CA_rmsd( native_pose, pose ));
-			setPoseExtraScores(	pose, "looprms", loops::loop_rmsd( native_pose_super, pose, loops, false /*CA_only*/, true /*bb_only*/ ));
-			setPoseExtraScores(	pose, "loop_heavy_rms", loops::loop_rmsd( native_pose_super, pose, loops, false /*CA_only*/, false /*bb_only*/ ));
-			setPoseExtraScores(	pose, "loopcarms", loops::loop_rmsd( native_pose_super, pose, loops, true ));
-			setPoseExtraScores(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, loops, corelength )	);
+			setPoseExtraScores(	pose, "looprms", loops::loop_rmsd( native_pose_super, pose, *loops, false /*CA_only*/, true /*bb_only*/ ));
+			setPoseExtraScores(	pose, "loop_heavy_rms", loops::loop_rmsd( native_pose_super, pose, *loops, false /*CA_only*/, false /*bb_only*/ ));
+			setPoseExtraScores(	pose, "loopcarms", loops::loop_rmsd( native_pose_super, pose, *loops, true ));
+			setPoseExtraScores(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, *loops, corelength )	);
 			setPoseExtraScores( pose, "corelen", corelength );
 		//if( pose.is_fullatom() ) addScoresForLoopParts( pose, loops, (*fa_scorefxn_), native_pose, 10 );
 		//else                     addScoresForLoopParts( pose, loops, (*cen_scorefxn_), native_pose, 10 );
@@ -1140,7 +1139,7 @@ LoopRelaxMover::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filter
 /// each loop should have the format loop_start:loop_end:cut
 /// if cut is not set then it's taken to be 0. Residue numbering can follow the
 /// pdb numbering
- 	protocols::loops::Loops loops_from_tag;
+ 	protocols::loops::LoopsOP loops_from_tag = new loops::Loops();
 	foreach( std::string const residue_pair, loops_vec ){
 		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 		runtime_assert( residues.size() == 2 || residues.size() == 3 );
@@ -1152,7 +1151,7 @@ LoopRelaxMover::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filter
 		runtime_assert( loop_start <= loop_stop );
 		runtime_assert( loop_start >= 1 );
 		runtime_assert( loop_stop <= pose.total_residue() );
-		loops_from_tag.add_loop( loop_start, loop_stop, loop_cut );
+		loops_from_tag->add_loop( loop_start, loop_stop, loop_cut );
 	}
 	loops( loops_from_tag );
 }

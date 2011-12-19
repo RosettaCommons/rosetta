@@ -453,7 +453,7 @@ protected: // main operations
 	///  only useful with the RemodelLoopMover.
 	virtual
 	MoverOP loop_mover_instance(
-		Loops const & loops,
+		loops::LoopsOP const loops,
 		MoveMap const & false_mm
 	);
 

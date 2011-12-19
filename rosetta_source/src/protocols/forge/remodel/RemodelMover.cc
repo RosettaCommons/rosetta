@@ -1115,12 +1115,12 @@ bool RemodelMover::design_refine(
 	Original2Modified original2modified_interval_endpoints = manager_.original2modified_interval_endpoints();
 
 	// collect loops
-	Loops loops = intervals_to_loops( loop_intervals.begin(), loop_intervals.end() );
+	LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
 
 	// refine Mover used doesn't setup a fold tree, so do it here
 	//FoldTree loop_ft = protocols::forge::methods::fold_tree_from_loops( pose, loops );
 	FoldTree loop_ft;
-	protocols::loops::fold_tree_from_loops( pose, loops, loop_ft, true /*term cut*/);
+	protocols::loops::fold_tree_from_loops( pose, *loops, loop_ft, true /*term cut*/);
 
 	// save original fold tree
 	FoldTree original_ft = pose.fold_tree();
@@ -1209,7 +1209,7 @@ bool RemodelMover::design_refine(
 
 	// evaluate all chainbreaks using linear chainbreak
 	bool cbreaks_pass = true;
-	for ( Loops::const_iterator l = loops.begin(), le = loops.end(); l != le && cbreaks_pass; ++l ) {
+	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = linear_chainbreak( pose, l->cut() );
 			TR << "design_refine: final chainbreak = " << c << std::endl;
@@ -1235,11 +1235,11 @@ bool RemodelMover::confirm_sequence(core::pose::Pose & pose ) {
 	//pose.dump_pdb("pre_KICpose.pdb");
 
   // collect loops
-  Loops confirmation_loops = intervals_to_confirmation_loops( loop_intervals.begin(), loop_intervals.end(), pose.total_residue() );
+  LoopsOP confirmation_loops = new Loops( intervals_to_confirmation_loops( loop_intervals.begin(), loop_intervals.end(), pose.total_residue() ) );
 
  // refine Mover used doesn't setup a fold tree, so do it here
   FoldTree loop_ft;
-	protocols::loops::fold_tree_from_loops( pose, confirmation_loops, loop_ft, true );
+	protocols::loops::fold_tree_from_loops( pose, *confirmation_loops, loop_ft, true );
 	TR << "confirmation loops tree" << loop_ft << std::endl;
 
   // save original fold tree
@@ -1304,7 +1304,7 @@ bool RemodelMover::confirm_sequence(core::pose::Pose & pose ) {
 	core::Real sum_sd_archive2native=0;
 	core::Size atom_count = 0;
 
-	for ( Loops::iterator it = confirmation_loops.v_begin(), end = confirmation_loops.v_end(); it!=end; it++) {
+	for ( Loops::iterator it = confirmation_loops->v_begin(), end = confirmation_loops->v_end(); it!=end; it++) {
 					for (core::Size i = it->start(); i <= it->stop(); ++i){
 						core::Real dist_squared = (pose.residue(i).xyz( "CA" ) - archive_pose.residue(i).xyz( "CA" ) ).length_squared();
 						core::Real dist_squared_native = (pose.residue(i).xyz( "CA" ) - native_pose_.residue(i).xyz( "CA" ) ).length_squared();

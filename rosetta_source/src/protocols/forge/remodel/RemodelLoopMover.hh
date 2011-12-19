@@ -93,7 +93,7 @@ public: // construct/destruct
 
 
 	/// @brief loops constructor
-	RemodelLoopMover( Loops const & loops );
+	RemodelLoopMover( loops::LoopsOP const loops );
 
 
 	/// @brief copy constructor
@@ -295,22 +295,22 @@ public: // loop management
 
 	/// @brief the loops to model
 	inline
-	Loops const & loops() const {
+	loops::LoopsOP const loops() const {
 		return loops_;
 	}
 
 
 	/// @brief set the loops to model
 	inline
-	void loops( Loops const & loops ) {
+	void loops( loops::LoopsOP const loops ) {
 		loops_ = loops;
 	}
 
 
 	/// @brief add a loop to model
 	inline
-	void add_loop( Loop const & loop ) {
-		loops_.add_loop( loop );
+	void add_loop( Loop const loop ) {
+		loops_->add_loop( loop );
 	}
 
 
@@ -385,7 +385,7 @@ protected: // loops
 	/// @brief determine which loops need modeling wrt to given Pose
 	/// @remarks Skips closed loops and shuffles the order of the remaining
 	///  loops.
-	Loops determine_loops_to_model( Pose & pose );
+	loops::LoopsOP determine_loops_to_model( Pose & pose );
 
 
 	/// @brief check all loops for closure criteria
@@ -431,7 +431,7 @@ protected: // fragments
 	/// @param[in] largest_frag_size Only use fragment sets whose largest fragment
 	///  size is this number.  If zero, uses all fragment sets.
 	FragmentMoverOPs create_per_loop_fragment_movers(
-		Loops const & loops,
+		loops::LoopsOP const loops,
 		Size const largest_frag_size = 0
 	);
 
@@ -450,7 +450,7 @@ protected: // movemap
 	///  doing either fragment insertion or scoring function has omega
 	///  tether, otherwise should probably be no)
 	void mark_loops_moveable(
-		Loops const & loops,
+		loops::LoopsOP const loops,
 		MoveMap & movemap,
 		bool const allow_omega
 	);
@@ -504,7 +504,7 @@ private: // data
 
 
 	/// @brief list of loops to model
-	Loops loops_;
+	loops::LoopsOP loops_;
 
 
 	/// @brief if linear chainbreak is <= this value, loop is considered closed

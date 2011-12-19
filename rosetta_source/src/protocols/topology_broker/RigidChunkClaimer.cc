@@ -70,11 +70,11 @@ protocols::loops::Loops generate_rigid_from_alignment( pose::Pose query_pose, co
 	using core::Size;
 	using namespace basic::options;
 
-	loops::Loops loops = comparative_modeling::loops_from_alignment( query_pose.total_residue(), align, min_loop_size );
+	loops::LoopsOP loops = comparative_modeling::loops_from_alignment( query_pose.total_residue(), align, min_loop_size );
 
 	// this is now done in select_parts()
  	// randomly grow loops by N residues (4 is a good amount)
-	return loops.invert( query_pose.total_residue() );
+	return loops->invert( query_pose.total_residue() );
 }
 
 // having AdjacentJumps causes problems in fix_internal_coords_of_siblings.

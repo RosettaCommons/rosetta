@@ -123,9 +123,9 @@ PlaceOnLoop::minimize_toward_stub( core::pose::Pose & pose ) const
 	core::kinematics::FoldTree f_new;
 	Loop loop( loop_begin_, curr_loop_end_ );
 	loop.choose_cutpoint( pose );
-	Loops loops;
-	loops.push_back( loop );
-	loops::fold_tree_from_loops( pose, loops, f_new, true /* include terminal cutpoints */);
+	LoopsOP loops = new protocols::loops::Loops();
+	loops->push_back( loop );
+	loops::fold_tree_from_loops( pose, *loops, f_new, true /* include terminal cutpoints */);
 	pose.fold_tree( f_new );
 	pose.update_residue_neighbors();
 	protocols::loops::kinematic_closure::KinematicWrapper kinwrap( kinematic_mover_, loop, chain_closing_attempts_ );

@@ -102,7 +102,7 @@ LoopMover_Perturb_CCD::LoopMover_Perturb_CCD() :
 
 
 LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
-	protocols::loops::Loops loops_in
+	protocols::loops::LoopsOP loops_in
 ) : IndependentLoopMover( loops_in )
 {
 	set_scorefxn( get_cen_scorefxn() );
@@ -113,7 +113,7 @@ LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
 
 
 LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
-	protocols::loops::Loops loops_in,
+	protocols::loops::LoopsOP loops_in,
 	core::scoring::ScoreFunctionOP scorefxn
 ) : IndependentLoopMover( loops_in )
 {
@@ -129,7 +129,7 @@ LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
 
 
 LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
-	protocols::loops::Loops loops_in,
+	protocols::loops::LoopsOP loops_in,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::fragment::FragSetOP fragset
 ) : IndependentLoopMover( loops_in )
@@ -442,7 +442,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 
 //constructors
 LoopMover_Refine_CCD::LoopMover_Refine_CCD()
-	: LoopMover( Loops() ),
+	: LoopMover(),
 		outer_cycles_(3),
 		max_inner_cycles_(200),
 		repack_period_(20),
@@ -457,7 +457,7 @@ LoopMover_Refine_CCD::LoopMover_Refine_CCD()
 }
 
 LoopMover_Refine_CCD::LoopMover_Refine_CCD(
-	protocols::loops::Loops  loops_in
+	protocols::loops::LoopsOP  loops_in
 ) : LoopMover( loops_in ),
 		outer_cycles_(3),
 		max_inner_cycles_(200),
@@ -474,7 +474,7 @@ LoopMover_Refine_CCD::LoopMover_Refine_CCD(
 
 
 LoopMover_Refine_CCD::LoopMover_Refine_CCD(
-	protocols::loops::Loops  loops_in,
+	protocols::loops::LoopsOP  loops_in,
 	core::scoring::ScoreFunctionOP  scorefxn
 ) : LoopMover( loops_in ),
 		outer_cycles_(3),

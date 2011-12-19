@@ -94,7 +94,7 @@ public:
 		relax_ = val;
 	}
 
-	void loops( protocols::loops::Loops val ) {
+	void loops( protocols::loops::LoopsOP const val ) {
 		loops_ = val;
 	}
 
@@ -116,7 +116,7 @@ public:
 		 return rebuild_filter_;
 	}
 
-	protocols::loops::Loops get_loops() const {
+	protocols::loops::LoopsOP get_loops() const {
 		return loops_;
 	}
 
@@ -159,7 +159,7 @@ private:
 	std::string refine_;
 	std::string relax_;
 
-	loops::Loops loops_;
+	loops::LoopsOP loops_;
 
 	core::scoring::ScoreFunctionOP cen_scorefxn_;
 	core::scoring::ScoreFunctionOP fa_scorefxn_;

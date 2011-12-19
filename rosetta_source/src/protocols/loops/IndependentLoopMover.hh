@@ -46,7 +46,7 @@ public:
 	}
 
 	IndependentLoopMover(
-		protocols::loops::Loops loops_in
+		protocols::loops::LoopsOP loops_in
 	) : LoopMover( loops_in )
 	{
 		Mover::type("IndependentLoopMover");

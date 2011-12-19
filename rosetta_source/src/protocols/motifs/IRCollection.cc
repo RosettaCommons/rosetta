@@ -96,7 +96,7 @@ namespace motifs {
 
 	void IRCollection::find_closest_backbone(
 		core::pose::Pose & pose,
-		protocols::loops::Loops & flexible_regions,
+		protocols::loops::LoopsOP const flexible_regions,
 		utility::vector1< core::Size > & closest_pos,
 		utility::vector1< core::Real > & closest_rmsd
 	)
@@ -115,7 +115,7 @@ namespace motifs {
 
 				for( core::Size test_pos = 1, end_pos = pose.total_residue() ; test_pos <= end_pos ; ++test_pos ) {
 
-					if( !flexible_regions.is_loop_residue( test_pos ) ) {
+					if( !flexible_regions->is_loop_residue( test_pos ) ) {
 						continue;
 					}
 
@@ -130,7 +130,7 @@ namespace motifs {
 		}
 	}
 
-	void IRCollection::incorporate_motifs( core::pose::Pose & pose, protocols::loops::Loops & flexible_regions )
+	void IRCollection::incorporate_motifs( core::pose::Pose & pose, protocols::loops::LoopsOP const flexible_regions )
 	{
 		// Set up the initial state stuff and fire off the actual
 		// recursive routine
@@ -143,7 +143,7 @@ namespace motifs {
 		std::map< core::Size, bool > setpos_forward_info; // whether previous motifs are forward or reverse
 
 		// makes loop residues alanine, except pro and gly, which stay the same
-		mutate_loops_for_search( pose, flexible_regions );
+		mutate_loops_for_search( pose, *flexible_regions );
 
 		// Relax away any clashes in the initial loop
 		core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "standard" ) );;
@@ -170,7 +170,7 @@ namespace motifs {
 	// the motif itself.
 	void IRCollection::try_for_more(
 		core::pose::Pose & start_pose,
-		protocols::loops::Loops & flexible_regions,
+		protocols::loops::LoopsOP const flexible_regions,
 		std::map< core::Size, MotifCOP > setpos, // Note:  Passed by value (not by reference) intentionally
 		std::map< core::Size, core::conformation::ResidueCOP > setpos_ir, // Note:  Passed by value (not by reference) intentionally
 		std::map< core::Size, bool > setpos_forward_info, // Note:  Passed by value (not by reference) intentionally
@@ -218,7 +218,7 @@ namespace motifs {
 
 					// Here we disqualify positions that are already set, and those not in the defined flexible region
 					if( setpos.find( this_pos ) != setpos.end() ||
-							!flexible_regions.is_loop_residue( this_pos ) ) {
+							!flexible_regions->is_loop_residue( this_pos ) ) {
 						continue;
 					}
 
@@ -290,7 +290,7 @@ namespace motifs {
 	bool
 	IRCollection::successful_loop_closure(
 		core::pose::Pose & pose,
-		protocols::loops::Loops & flexible_regions,
+		protocols::loops::LoopsOP flexible_regions,
 		std::map< core::Size, MotifCOP > & setpos,
 		std::map< core::Size, core::conformation::ResidueCOP > & setpos_ir,
 		std::map< core::Size, bool > & setpos_forward_info,

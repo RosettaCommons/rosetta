@@ -199,8 +199,8 @@ void simple_fold_tree(core::pose::Pose* pose) {
 /// increasing order of start position.
 void identify_regions(unsigned num_residues,
                       const core::sequence::SequenceAlignment& alignment,
-                      protocols::loops::Loops* aligned,
-                      protocols::loops::Loops* unaligned) {
+                      protocols::loops::LoopsOP aligned,
+                      protocols::loops::LoopsOP unaligned) {
   using core::id::SequenceMapping;
   using utility::vector1;
 
@@ -217,7 +217,7 @@ void identify_regions(unsigned num_residues,
     }
   }
 
-  *unaligned = protocols::comparative_modeling::pick_loops_unaligned(num_residues, unaligned_res, 3);
+  unaligned = protocols::comparative_modeling::pick_loops_unaligned(num_residues, unaligned_res, 3);
   unaligned->sequential_order();
 
   *aligned = unaligned->invert(num_residues);
@@ -546,13 +546,13 @@ void StarAbinitio::close_remaining_loops(core::pose::Pose* pose) const {
   using core::kinematics::FoldTree;
   using core::util::ChainbreakUtil;
   using protocols::comparative_modeling::LoopRelaxMover;
-  using protocols::loops::Loops;
+  using protocols::loops::LoopsOP;
   assert(pose);
 
   if (!option[OptionKeys::abinitio::star::close_loops]() || !ChainbreakUtil::has_chainbreak(*pose))
     return;
 
-  Loops empty;
+  LoopsOP empty = new protocols::loops::Loops();
   LoopRelaxMover closure;
   closure.remodel("quick_ccd");
   closure.intermedrelax("fast");

@@ -340,9 +340,9 @@ CDRH3Modeler2::get_name() const {
 			simple_one_loop_fold_tree( pose, cdr_h3 );
 
 			// silly hack to make extended loops to work
-			loops::Loops cdr_h3_loop_list;
-			cdr_h3_loop_list.add_loop( cdr_h3 );
-			loops::LoopMoverOP my_loop_move( new loops::LoopMover(cdr_h3_loop_list));
+			loops::LoopsOP cdr_h3_loop_list = new loops::Loops();
+			cdr_h3_loop_list->add_loop( cdr_h3 );
+			loops::LoopMoverOP my_loop_move = new loops::LoopMover( cdr_h3_loop_list );
 			my_loop_move->set_extended_torsions( pose, cdr_h3 );
 			my_loop_move->apply( pose );
 

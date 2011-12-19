@@ -123,7 +123,7 @@ RemodelLoopMover::RemodelLoopMover() :
 
 
 /// @brief loops constructor
-RemodelLoopMover::RemodelLoopMover( Loops const & loops ) :
+RemodelLoopMover::RemodelLoopMover( loops::LoopsOP const loops ) :
 	Super( "RemodelLoop" ),
 	sfx_( core::scoring::ScoreFunctionFactory::create_score_function( "remodel_cen" ) ),
 	loops_( loops ),
@@ -623,10 +623,10 @@ void RemodelLoopMover::randomize_stage( Pose & pose ) {
 	else {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			core::kinematics::FoldTree f_new;
-			protocols::loops::fold_tree_from_loops( pose, loops_, f_new );
+			protocols::loops::fold_tree_from_loops( pose, *loops_, f_new );
 			pose.fold_tree( f_new );
 		} else {
-			pose.fold_tree( protocols::forge::methods::fold_tree_from_loops( pose, loops_ ) );
+			pose.fold_tree( protocols::forge::methods::fold_tree_from_loops( pose, *loops_ ) );
 		}
 	}
 
@@ -660,7 +660,7 @@ void RemodelLoopMover::insert_random_smallestmer_per_loop(
 	using namespace basic::options;
 
 	// determine the right set of loops to insert fragments
-	Loops loops_to_model;
+	loops::LoopsOP loops_to_model = new loops::Loops();
 
 	if ( only_broken_loops ) {
 		loops_to_model = determine_loops_to_model( pose );
@@ -674,10 +674,10 @@ void RemodelLoopMover::insert_random_smallestmer_per_loop(
 	else {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			core::kinematics::FoldTree f_new;
-			protocols::loops::fold_tree_from_loops( pose, loops_to_model, f_new );
+			protocols::loops::fold_tree_from_loops( pose, *loops_to_model, f_new );
 			pose.fold_tree( f_new );
 		} else {
-		pose.fold_tree( protocols::forge::methods::fold_tree_from_loops( pose, loops_to_model ) );
+		pose.fold_tree( protocols::forge::methods::fold_tree_from_loops( pose, *loops_to_model ) );
 		}
 	}
 	// find the size of the smallest fragments
@@ -721,10 +721,10 @@ void RemodelLoopMover::simultaneous_stage(
 
 	// Make a local copy of the Loops list.  At this stage all loops
 	// are malleable so we don't use determine_loops_to_model().
-	Loops loops_to_model = loops_;
-	TR << "   n_loops = " << loops_to_model.size() << std::endl;
+	loops::LoopsOP loops_to_model = new loops::Loops( *loops_ );
+	TR << "   n_loops = " << loops_to_model->size() << std::endl;
 
-	if ( loops_to_model.size() == 0 ) { // nothing to do...
+	if ( loops_to_model->size() == 0 ) { // nothing to do...
 		return;
 	}
 
@@ -740,10 +740,10 @@ void RemodelLoopMover::simultaneous_stage(
 	else {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			core::kinematics::FoldTree f_new;
-			protocols::loops::fold_tree_from_loops( pose, loops_to_model, f_new );
+			protocols::loops::fold_tree_from_loops( pose, *loops_to_model, f_new );
 			pose.fold_tree( f_new );
 		} else {
-		pose.fold_tree( protocols::forge::methods::fold_tree_from_loops( pose, loops_to_model ) );
+		pose.fold_tree( protocols::forge::methods::fold_tree_from_loops( pose, *loops_to_model ) );
 	}
 }
 	// add cutpoint variants
@@ -764,7 +764,7 @@ void RemodelLoopMover::simultaneous_stage(
 	Size const n_moveable = count_moveable_residues( movemap, 1, pose.n_residue() );
 	Size const n_standard_cycles = total_standard_cycles();
 	Size const max_outer_cycles = simultaneous_cycles();
-	Size const max_inner_cycles = std::max( 50 * loops_to_model.size(), 10 * n_moveable );
+	Size const max_inner_cycles = std::max( 50 * loops_to_model->size(), 10 * n_moveable );
 
 	// reset counters
 	mc.reset_counters();
@@ -820,8 +820,8 @@ void RemodelLoopMover::simultaneous_stage(
 				}
 			} else {
 				// per-loop ccd
-				random_permutation( loops_to_model.v_begin(), loops_to_model.v_end(), RG );
-				for ( Loops::const_iterator l = loops_to_model.begin(), le = loops_to_model.end(); l != le; ++l ) {
+				random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), RG );
+				for ( Loops::const_iterator l = loops_to_model->begin(), le = loops_to_model->end(); l != le; ++l ) {
 					if ( !l->is_terminal( pose ) ) {
 
 						if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
@@ -899,10 +899,10 @@ void RemodelLoopMover::independent_stage(
 	TR << "** independent_stage" << std::endl;
 
 	// setup loops
-	Loops loops_to_model = determine_loops_to_model( pose );
-	TR << "   n_loops = " << loops_to_model.size() << std::endl;
+	loops::LoopsOP loops_to_model = determine_loops_to_model( pose );
+	TR << "   n_loops = " << loops_to_model->size() << std::endl;
 
-	if ( loops_to_model.size() == 0 ) { // nothing to do...
+	if ( loops_to_model->size() == 0 ) { // nothing to do...
 		return;
 	}
 
@@ -911,7 +911,7 @@ void RemodelLoopMover::independent_stage(
 	Size const max_outer_cycles = independent_cycles();
 
 	// per-loop frag + ccd_move
-	for ( Loops::iterator l = loops_to_model.v_begin(), le = loops_to_model.v_end(); l != le; ++l ) {
+	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
 
 		// alter cutpoint to one before the end of the loop (either direction,
@@ -1101,22 +1101,22 @@ void RemodelLoopMover::boost_closure_stage(
 	TR << "** boost_closure_stage" << std::endl;
 
 	// setup loops
-	Loops pre_loops_to_model = determine_loops_to_model( pose );
-	Loops loops_to_model;
+	loops::LoopsOP pre_loops_to_model = determine_loops_to_model( pose );
+	loops::LoopsOP loops_to_model = new loops::Loops();
 
 	// filter for non-terminal loops that are within tolerance
 	Real const cbreak_tolerance = 1.0;
-	for ( Loops::const_iterator l = pre_loops_to_model.begin(), le = pre_loops_to_model.end(); l != le; ++l ) {
+	for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
 		if ( !l->is_terminal( pose ) ) {
 			Real const cbreak = linear_chainbreak( pose, l->cut() );
 			if ( cbreak < cbreak_tolerance ) {
-				loops_to_model.add_loop( *l );
+				loops_to_model->add_loop( *l );
 			}
 		}
 	}
 
-	TR << "   n_loops = " << loops_to_model.size() << std::endl;
-	if ( loops_to_model.size() == 0 ) { // nothing to do...
+	TR << "   n_loops = " << loops_to_model->size() << std::endl;
+	if ( loops_to_model->size() == 0 ) { // nothing to do...
 		return;
 	}
 
@@ -1134,7 +1134,7 @@ void RemodelLoopMover::boost_closure_stage(
 	Real const frag_mover_probability = 0.25; // do 1-mer insertions only 25% of the time
 
 	// 1-mer frag + ccd_move
-	for ( Loops::const_iterator l = loops_to_model.begin(), le = loops_to_model.end(); l != le; ++l ) {
+	for ( Loops::const_iterator l = loops_to_model->begin(), le = loops_to_model->end(); l != le; ++l ) {
 		Loop const & loop = *l;
 
 		// movemap
@@ -1274,11 +1274,12 @@ void RemodelLoopMover::boost_closure_stage(
 /// @brief determine which loops need modeling wrt to given Pose
 /// @remarks Skips closed loops and shuffles the order of the remaining
 ///  loops.
-RemodelLoopMover::Loops RemodelLoopMover::determine_loops_to_model( Pose & pose ) {
+loops::LoopsOP RemodelLoopMover::determine_loops_to_model( Pose & pose ) {
 	using protocols::forge::methods::linear_chainbreak;
-	Loops loops_to_model;
+    
+	loops::LoopsOP loops_to_model = new loops::Loops();
 
-	for ( Loops::const_iterator l = loops_.begin(), le = loops_.end(); l != le; ++l ) {
+	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
 		bool skip_loop = false;
 
 		if ( !l->is_terminal( pose ) ) {
@@ -1286,12 +1287,12 @@ RemodelLoopMover::Loops RemodelLoopMover::determine_loops_to_model( Pose & pose 
 		}
 
 		if ( !skip_loop ) {
-			loops_to_model.add_loop( *l );
+			loops_to_model->add_loop( *l );
 		}
 	}
 
 	// shuffle the order
-	random_permutation( loops_to_model.v_begin(), loops_to_model.v_end(), RG );
+	random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), RG );
 
 	return loops_to_model;
 }
@@ -1324,7 +1325,7 @@ bool RemodelLoopMover::check_closure_criteria(
 
 	bool all_loops_pass = true;
 
-	for ( Loops::const_iterator l = loops_.begin(), le = loops_.end(); l != le; ++l ) {
+	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
 		Real cbreak = 0.0;
 		if ( !l->is_terminal( pose ) ) {
 			cbreak = linear_chainbreak( pose, l->cut() );
@@ -1399,7 +1400,7 @@ void RemodelLoopMover::create_fragment_movers(
 /// @param[in] largest_frag_size Only use fragment sets whose largest fragment
 ///  size is this number.  If zero, uses all fragment sets.
 RemodelLoopMover::FragmentMoverOPs RemodelLoopMover::create_per_loop_fragment_movers(
-	Loops const & loops,
+	loops::LoopsOP const loops,
 	Size const largest_frag_size
 )
 {
@@ -1407,7 +1408,7 @@ RemodelLoopMover::FragmentMoverOPs RemodelLoopMover::create_per_loop_fragment_mo
 	// want to allow an equal probability of movement per-loop, rather than
 	// per-residue.
 	FragmentMoverOPs frag_movers;
-	for ( Loops::const_iterator l = loops.begin(), le = loops.end(); l != le; ++l ) {
+	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le; ++l ) {
 		MoveMap mm;
 		mark_loop_moveable( *l, mm, true );
 		enforce_false_movemap( mm );
@@ -1432,12 +1433,12 @@ void RemodelLoopMover::enforce_false_movemap( MoveMap & movemap ) {
 ///  doing either fragment insertion or scoring function has omega
 ///  tether, otherwise should probably be no)
 void RemodelLoopMover::mark_loops_moveable(
-	Loops const & loops,
+	loops::LoopsOP const loops,
 	MoveMap & movemap,
 	bool const allow_omega
 )
 {
-	for ( Loops::const_iterator l = loops.begin(), le = loops.end(); l != le; ++l ) {
+	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le; ++l ) {
 		mark_loop_moveable( *l, movemap, allow_omega );
 	}
 }
@@ -1543,7 +1544,7 @@ RemodelLoopMover::parse_my_tag(
 		}
 		TR << "Modelling loop " << ++num << ": left=" << left << ",right=" << right << ",cutpoint=" << cutpoint << std::endl;
 		// add a loop
-		loops_.add_loop( Loop( left, right, cutpoint, 0.0, true ) );
+		loops_->add_loop( Loop( left, right, cutpoint, 0.0, true ) );
 	}
 
 	// set fragsets

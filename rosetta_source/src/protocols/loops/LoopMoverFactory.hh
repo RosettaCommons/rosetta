@@ -52,7 +52,7 @@ public:
 
 	static LoopMoverFactory * get_instance();
 
-	LoopMoverOP create_loop_mover(std::string const & type_name, Loops const & loops );
+	LoopMoverOP create_loop_mover(std::string const & type_name, LoopsOP const  loops );
 
 private:
 

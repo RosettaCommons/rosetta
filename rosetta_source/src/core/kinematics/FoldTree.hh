@@ -113,7 +113,7 @@ public:
 	Size boundary_left(Size res) const {
 		assert(res > 0);
 		assert(res <= nres());
-		assert(!is_root(res));
+		assert(!is_root( int(res) ) );
 		return get_residue_edge(int(res)).start();
 	}
 
@@ -121,7 +121,7 @@ public:
 	Size boundary_right(Size res) const {
 		assert(res > 0);
 		assert(res <= nres());
-		assert(!is_root(res));
+		assert(!is_root( int(res) ) );
 		return get_residue_edge(int(res)).stop();
 	}
 

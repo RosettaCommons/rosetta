@@ -423,24 +423,24 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 
 		// cut loops & restore original loop conformation
 		// dilate loops
-		protocols::loops::Loops loops = loops_input_;
-		for (core::Size j=1; j<=loops.size(); ++j) {
-			if (!pose.fold_tree().is_cutpoint( loops[j].start() - 1 ) )
-				loops[j].set_start( loops[j].start() - 1 );
-			if (!pose.fold_tree().is_cutpoint( loops[j].stop() ) )
-				loops[j].set_stop( loops[j].stop() + 1 );
+		protocols::loops::LoopsOP loops = new protocols::loops::Loops( loops_input_ );
+		for ( loops::Loops::iterator it = loops->v_begin(), it_end = loops->v_end(); it != it_end; ++it ) {
+			if (!pose.fold_tree().is_cutpoint( it->start() - 1 ) )
+				it->set_start( it->start() - 1 );
+			if (!pose.fold_tree().is_cutpoint( it->stop() ) )
+				it->set_stop( it->stop() + 1 );
 		}
 
 		core::kinematics::FoldTree f, f_in = pose.fold_tree();
-		loops.auto_choose_cutpoints( pose );
-		protocols::loops::fold_tree_from_loops( pose, loops, f);
+		loops->auto_choose_cutpoints( pose );
+		protocols::loops::fold_tree_from_loops( pose, *loops, f);
 
 		//pose.dump_pdb("precopy.pdb");
 		//protocols::viewer::add_conformation_viewer( pose.conformation() );   // <<<< added in looprelax mover
 		pose.fold_tree( f );
-		for (core::Size j=1; j<=loops.size(); ++j) {
-			core::Size lstart = loops[j].start(), lstop = loops[j].stop();
-			idealize_loop( pose, loops[j] );
+		for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end(); it != it_end; ++it ) {
+			core::Size lstart = it->start(), lstop = it->stop();
+			idealize_loop( pose, *it );
 			for (core::Size k=lstart; k<lstop; ++k) {
 				pose.set_phi( k, pose_input.phi(k) );
 				pose.set_psi( k, pose_input.psi(k) );

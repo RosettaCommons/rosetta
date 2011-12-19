@@ -76,7 +76,7 @@ LoopMover_SlidingWindow::LoopMover_SlidingWindow() :
 
 
 LoopMover_SlidingWindow::LoopMover_SlidingWindow(
-	protocols::loops::Loops  loops_in
+	protocols::loops::LoopsOP  loops_in
 ) : IndependentLoopMover( loops_in )
 {
 	set_scorefxn( loops::get_cen_scorefxn() );
@@ -89,7 +89,7 @@ LoopMover_SlidingWindow::LoopMover_SlidingWindow(
 
 
 LoopMover_SlidingWindow::LoopMover_SlidingWindow(
-	protocols::loops::Loops  loops_in,
+	protocols::loops::LoopsOP  loops_in,
 	core::scoring::ScoreFunctionOP  scorefxn
 ) : IndependentLoopMover( loops_in )
 {

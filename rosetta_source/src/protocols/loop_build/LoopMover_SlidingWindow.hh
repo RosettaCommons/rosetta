@@ -54,7 +54,7 @@ public: // construct/destruct
 	/// @param[in] frags_from_file read fragments from files specified on command line?
 	/// @remarks Will be initialized with centroid level score function 'score4L'.
 	LoopMover_SlidingWindow(
-		protocols::loops::Loops loops_in
+		protocols::loops::LoopsOP loops_in
 	);
 
 
@@ -63,7 +63,7 @@ public: // construct/destruct
 	/// @param[in] scorefxn desired ScoreFunction
 	/// @param[in] frags_from_file read fragments from files specified on command line?
 	LoopMover_SlidingWindow(
-		protocols::loops::Loops loops_in,
+		protocols::loops::LoopsOP loops_in,
 		core::scoring::ScoreFunctionOP scorefxn
 	);
 

@@ -258,7 +258,7 @@ LoopBuild_main( bool boinc_mode ) {
 		<< start_pose.annotated_sequence(true) << std::endl;
 
 	// load loopfile
-	protocols::loops::Loops my_loops = protocols::loops::get_loops_from_file();
+	protocols::loops::LoopsOP my_loops = new protocols::loops::Loops( protocols::loops::get_loops_from_file() );
 
 	while ( jobdist->next_job(curr_job, curr_nstruct) ) { // loop over jobs
 		std::string curr_job_tag = curr_job->output_tag( curr_nstruct );

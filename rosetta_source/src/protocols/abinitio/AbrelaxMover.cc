@@ -408,19 +408,19 @@ void AbrelaxMover::close_with_idealization( pose::Pose &pose) {
 	kinematics::FoldTree fold_tree( pose.fold_tree() );
 
 	// record cutpoints
-	protocols::loops::Loops cloops;
+	protocols::loops::LoopsOP cloops = new protocols::loops::Loops();
 	for ( Size ncut = 1; ncut <= (Size) pose.fold_tree().num_cutpoint(); ncut++ ) {
 		Size cutpoint = pose.fold_tree().cutpoint( ncut );
 		Size margin = option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_margin ]();
 		protocols::loops::Loop newloop (std::max( (int) 1, int(cutpoint - margin) ),
 										std::min( (int) pose.total_residue(), int(cutpoint + margin) ),
 										0);
-		if( cloops.size() >= 2 )
-			if( newloop.start() <= cloops[cloops.size()-1].stop() ) newloop.set_start( cloops[cloops.size()-1].stop() +2 );
+		if( cloops->size() >= 2 )
+			if( newloop.start() <= ( *cloops )[cloops->size()-1].stop() ) newloop.set_start( ( *cloops )[cloops->size()-1].stop() +2 );
 		newloop.choose_cutpoint( pose );
-		cloops.add_loop( newloop );
+		cloops->add_loop( newloop );
 	}
-	cloops.auto_choose_cutpoints( pose );
+	cloops->auto_choose_cutpoints( pose );
 
 	// remove cuts
 	pose.fold_tree( topology_broker()->final_fold_tree() );
@@ -435,7 +435,7 @@ void AbrelaxMover::close_with_idealization( pose::Pose &pose) {
 
 	// now optimize around the old cut points.
 	if( option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic ]() ){
-		protocols::loops::fold_tree_from_loops( pose, cloops, fold_tree , true /* include terminal cutpoints */);
+		protocols::loops::fold_tree_from_loops( pose, *cloops, fold_tree , true /* include terminal cutpoints */);
 		pose.fold_tree( fold_tree );
 
 		protocols::relax::RelaxProtocolBaseCOP relax_prot = relax_protocol();

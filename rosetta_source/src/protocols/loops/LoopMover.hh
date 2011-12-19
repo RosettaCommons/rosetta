@@ -51,24 +51,9 @@ public: // typedefs
 
 public:
 
-	LoopMover() :
-		Mover(),
-		loops_(),
-        checkpoints_( new checkpoint::CheckPointer("LoopMover") ),
-		loops_from_observer_cache_(false)
-	{
-		Mover::type("LoopMover");
-	}
-
-	LoopMover(
-		protocols::loops::Loops loops_in
-	) : Mover(),
-		loops_( new Loops( loops_in ) ),
-        checkpoints_( new checkpoint::CheckPointer("LoopMover") ),
-		loops_from_observer_cache_(false)
-	{
-		Mover::type("LoopMover");
-	}
+	LoopMover();
+    
+	LoopMover( protocols::loops::LoopsOP loops_in );
 
 	void set_scorefxn( const core::scoring::ScoreFunctionOP score_in ) {
 		scorefxn_ = score_in;
@@ -170,6 +155,8 @@ private: // data
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
 	MoveMap false_movemap_;
+    
+    void init( protocols::loops::LoopsOP loops_in );
 
 }; // class LoopMover
 

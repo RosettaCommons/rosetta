@@ -365,13 +365,13 @@ void ThreadingMover::apply(
 	if ( build_loops() ) {
 		using protocols::loops::Loops;
 		tr.Debug << "building query loops." << std::endl;
-		Loops query_loops = loops_from_alignment(
+		loops::LoopsOP query_loops = loops_from_alignment(
 			 query_pose.total_residue(), align_, min_loop_size()
 		);
-		query_loops.choose_cutpoints( query_pose );
+		query_loops->choose_cutpoints( query_pose );
 		tr.Debug << query_loops << std::endl;
 
-		if ( query_loops.size() > 0 ) {
+		if ( query_loops->size() > 0 ) {
 			// switch to centroid ResidueTypeSet for loop remodeling
 			std::string const orig_rsd_set_name(
 				query_pose.residue_type(1).residue_type_set().name()

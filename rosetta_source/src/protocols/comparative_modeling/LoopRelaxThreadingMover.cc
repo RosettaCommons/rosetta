@@ -93,8 +93,8 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 		utility_exit_with_message("ERROR: You must use the ThreadingJobInputter with the LoopRelaxThreadingMover - did you forget the -in:file:template_pdb option?");
 	}
 
-	Loops my_loops( job->loops( pose.total_residue() ) );
-	my_loops.choose_cutpoints( pose );
+	LoopsOP my_loops = new Loops( job->loops( pose.total_residue() ) );
+	my_loops->choose_cutpoints( pose );
 	tr.Info << "loops to be rebuilt are: " << std::endl;
 	tr.Info << my_loops << std::endl;
 
@@ -114,7 +114,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	// setup for density
 	if ( option[ edensity::mapfile ].user() ) {
 		protocols::electron_density::SetupForDensityScoringMover pre_mover;
-		pre_mover.mask( my_loops );
+		pre_mover.mask( *my_loops );
 		pre_mover.apply( pose );
 	}
 
@@ -135,7 +135,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	if ( option[ OptionKeys::cm::loop_close_level ]() == 2 ) {
 		// if loops aren't closed here, try to figure out the loops again
 		using namespace protocols::comparative_modeling;
-		Loops temp_loops = pick_loops_chainbreak( pose, min_loop_size );
+		LoopsOP temp_loops = pick_loops_chainbreak( pose, min_loop_size );
 		lr_mover->loops( temp_loops );
 		lr_mover->apply( pose );
 	} else if ( option[ OptionKeys::cm::loop_close_level ]() == 3 ) {
@@ -143,8 +143,8 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 		Size const max_tries( 10 ); // make this an option?
 		bool loops_closed( false );
 		for ( Size ii = 1; (ii <= max_tries) && !loops_closed; ++ii ) {
-			Loops temp_loops = pick_loops_chainbreak( pose, min_loop_size );
-			loops_closed = ( temp_loops.size() == 0 );
+			LoopsOP temp_loops = pick_loops_chainbreak( pose, min_loop_size );
+			loops_closed = ( temp_loops->size() == 0 );
 			if ( !loops_closed ) {
 				lr_mover->loops(temp_loops);
 				lr_mover->apply(pose);

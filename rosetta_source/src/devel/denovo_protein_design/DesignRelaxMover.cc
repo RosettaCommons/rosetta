@@ -105,14 +105,14 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 
 
 	// make decision about what loops may be rebuilt
-	protocols::loops::Loops loops;
+	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
 	// we need this for the rama term
 	basic::options::option[ basic::options::OptionKeys::loops::nonpivot_torsion_sampling ].value(true);
 	if( option[ OptionKeys::loops::loop_file].user() ){
 		// read in loops from a file if given
 		std::string loop_filename( protocols::loops::get_loop_file_name() );
-		loops.read_loop_file( loop_filename );
-	}else{ protocols::loops::loopfinder( pose, loops ); }
+		loops->read_loop_file( loop_filename );
+	}else{ protocols::loops::loopfinder( pose, *loops ); }
 
 	// set up variables to control designrelaxcycles
 	core::Size designrelaxcycles(1);
@@ -238,7 +238,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 		  protocols::loops::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::kinematic_closure::KinematicMover());
 		  kin_moverOP->set_vary_bondangles( true );
 		  kin_moverOP->set_temperature( 2.0 );
-		  for( protocols::loops::Loops::const_iterator it= loops.begin(), it_end=loops.end();
+		  for( protocols::loops::Loops::const_iterator it= loops->begin(), it_end=loops->end();
 				 it != it_end; ++it ){
 			  protocols::loops::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 1000);
 			  kinwrapper.apply(pose);

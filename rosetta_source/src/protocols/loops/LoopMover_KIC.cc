@@ -102,7 +102,7 @@ LoopMover_Perturb_KIC::LoopMover_Perturb_KIC() :
 
 
 LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
-	protocols::loops::Loops  loops_in
+	protocols::loops::LoopsOP  loops_in
 ) : IndependentLoopMover( loops_in )
 {
 	set_scorefxn( get_cen_scorefxn() );
@@ -114,7 +114,7 @@ LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
 }
 
 LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
-	protocols::loops::Loops  loops_in,
+	protocols::loops::LoopsOP  loops_in,
 	core::scoring::ScoreFunctionOP  scorefxn
 ) : IndependentLoopMover( loops_in )
 {
@@ -452,7 +452,7 @@ LoopMover_Perturb_KIC::get_name() const {
 
 
 LoopMover_Refine_KIC::LoopMover_Refine_KIC(
-	protocols::loops::Loops  loops_in
+	protocols::loops::LoopsOP  loops_in
 ) : LoopMover( loops_in )
 {
 	set_scorefxn( get_fa_scorefxn() );
@@ -461,7 +461,7 @@ LoopMover_Refine_KIC::LoopMover_Refine_KIC(
 }
 
 LoopMover_Refine_KIC::LoopMover_Refine_KIC(
-	protocols::loops::Loops const loops_in,
+	protocols::loops::LoopsOP const loops_in,
 	core::scoring::ScoreFunctionCOP  scorefxn
 ) : LoopMover( loops_in )
 {

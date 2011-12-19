@@ -1905,7 +1905,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 			if( option[ basic::options::OptionKeys::abinitio::close_loops_by_idealizing ]() ){
 				// record cutpoints
-				protocols::loops::Loops cloops;
+				protocols::loops::LoopsOP cloops = new protocols::loops::Loops();
 				for ( Size ncut = 1; ncut <= (Size) fold_pose.fold_tree().num_cutpoint(); ncut++ ) {
 					Size cutpoint = fold_pose.fold_tree().cutpoint( ncut );
 					protocols::loops::Loop newloop (
@@ -1914,13 +1914,13 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 						 0
 					);
 
-					if( cloops.size() >= 2 )
-					if( newloop.start() <= cloops[cloops.size()-1].stop() ) newloop.set_start( cloops[cloops.size()-1].stop() +2 );
+					if( cloops->size() >= 2 )
+					if( newloop.start() <= ( *cloops )[cloops->size()-1].stop() ) newloop.set_start( ( *cloops )[cloops->size()-1].stop() +2 );
 					newloop.choose_cutpoint( fold_pose );
-					cloops.add_loop( newloop );
+					cloops->add_loop( newloop );
 				}
 
-				cloops.auto_choose_cutpoints( fold_pose );
+				cloops->auto_choose_cutpoints( fold_pose );
 
 				// forget about foldtree & cuts
 				core::kinematics::FoldTree f_new;
@@ -1935,7 +1935,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 				relax( fold_pose, fullatom_scorefxn, jobdist.get_current_output_tag() );
 
 				if( option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic ]() ){
-					protocols::loops::fold_tree_from_loops( fold_pose, cloops, f_new, true /* include terminal cutpoints */);
+					protocols::loops::fold_tree_from_loops( fold_pose, *cloops, f_new, true /* include terminal cutpoints */);
 					fold_pose.fold_tree( f_new );
 					core::scoring::ScoreFunctionOP refine_scorefxn = fullatom_scorefxn->clone();
 					protocols::loops::LoopMover_Refine_KIC refine_kic( cloops, refine_scorefxn );

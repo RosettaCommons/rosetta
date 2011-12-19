@@ -246,14 +246,14 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   using core::kinematics::FoldTree;
   using core::util::ChainbreakUtil;
   using protocols::comparative_modeling::LoopRelaxMover;
-  using protocols::loops::Loops;
+  using protocols::loops::LoopsOP;
   assert(pose);
 
   if (!option[OptionKeys::rigid::close_loops]() || !ChainbreakUtil::has_chainbreak(*pose))
     return;
 
   // Choose chainbreaks automatically
-  Loops empty;
+  LoopsOP empty = new protocols::loops::Loops();
   protocols::comparative_modeling::LoopRelaxMover closure;
   closure.remodel("quick_ccd");
   closure.intermedrelax("no");

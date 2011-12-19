@@ -146,12 +146,12 @@ void NonlocalAbinitio::loop_closure(core::pose::Pose* pose) const {
   using namespace basic::options::OptionKeys;
   using core::kinematics::FoldTree;
   using protocols::comparative_modeling::LoopRelaxMover;
-  using protocols::loops::Loops;
+  using protocols::loops::LoopsOP;
   assert(pose);
 
   // An empty Loops selection notifies LoopRelaxMover that it is responsible
   // for choosing the breaks to close automatically.
-  Loops empty;
+  LoopsOP empty = new protocols::loops::Loops();
   LoopRelaxMover closure;
   closure.remodel("quick_ccd");
   closure.intermedrelax("no");

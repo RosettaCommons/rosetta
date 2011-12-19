@@ -839,8 +839,8 @@ FlexPepDockingProtocol::peptide_random_loop_model(
 	// set up and model a random loop
 	Size first_res = 	flags_.peptide_first_res(); // TODO: make sure it is ok to use the N' residue
 	Size last_res = flags_.peptide_last_res() - 1; // TODO: add the C' terminal, Dan sais there might be a bug with C' followed by another chain
-	protocols::loops::Loops loops;
-	loops.add_loop(first_res, last_res); // TODO: cut defaults to zero, is this a random cut?
+	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
+	loops->add_loop(first_res, last_res); // TODO: cut defaults to zero, is this a random cut?
 	for(Size i = first_res; i <= last_res ; i++)
 		runtime_assert( movemap_->get_bb(i) ); // verify loop is movable, this should have been always true for the peptide
 	loop_relax_mover_->loops( loops );

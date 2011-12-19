@@ -94,19 +94,19 @@ ThreadingJob::ThreadingJob(
 protocols::loops::Loops ThreadingJob::loops( core::Size nres ) const {
 	using namespace protocols::loops;
 	using namespace protocols::comparative_modeling;
-	Loops loops = loops_from_transitive_alignments( nres, *alignment_, nres_template_, *fasta2template_, 0 );
+	LoopsOP loops = loops_from_transitive_alignments( nres, *alignment_, nres_template_, *fasta2template_, 0 );
 
 	// remove loops that overlap stolen residues
 	Loops valid_loops;
-	for ( Size jj = 1; jj <= loops.size(); ++jj ) {
+    for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end(); it != it_end; ++it ) {
 		bool valid(true);
 		for ( Size ii = 1; ii <= extra_residues_to_steal_.size(); ++ii ) {
 			Size const extra_res( extra_residues_to_steal_[ii] );
-			if ( loops[jj].start() <= extra_res && extra_res <= loops[jj].stop() ) {
+			if ( it->start() <= extra_res && extra_res <= it->stop() ) {
 				valid = false;
 			}
 		}
-		if ( valid ) valid_loops.add_loop( loops[jj] );
+		if ( valid ) valid_loops.add_loop( *it );
 	}
 
 	return valid_loops;

@@ -54,16 +54,16 @@ public:
 	LoopMover_Perturb_CCD();
 
 	LoopMover_Perturb_CCD(
-		protocols::loops::Loops  loops_in
+		protocols::loops::LoopsOP  loops_in
 	);
 
 	LoopMover_Perturb_CCD(
-		protocols::loops::Loops  loops_in,
+		protocols::loops::LoopsOP  loops_in,
 		core::scoring::ScoreFunctionOP  scorefxn
 	);
 
 	LoopMover_Perturb_CCD(
-		protocols::loops::Loops  loops_in,
+		protocols::loops::LoopsOP  loops_in,
 		core::scoring::ScoreFunctionOP  scorefxn,
 		core::fragment::FragSetOP fragset
 	);
@@ -94,11 +94,11 @@ public:
 
 	//constructor
 	LoopMover_Refine_CCD(
-		protocols::loops::Loops  loops_in
+		protocols::loops::LoopsOP  loops_in
 	);
 
 	LoopMover_Refine_CCD(
-		protocols::loops::Loops  loops_in,
+		protocols::loops::LoopsOP  loops_in,
 		core::scoring::ScoreFunctionOP  scorefxn
 	);
 

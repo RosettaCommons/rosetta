@@ -1453,16 +1453,16 @@ void LoopRefine::apply(
 
 	TR << "***** Starting full-atom loop refinement protocol  ****" << std::endl;
 
-	protocols::loops::Loops LoopsToRefine;
+    protocols::loops::LoopsOP LoopsToRefine = new protocols::loops::Loops();
 
-  for( Loops::const_iterator it=Loops_in_.begin(), it_end=Loops_in_.end(); it != it_end; ++it ) {
+    for( Loops::const_iterator it=Loops_in_.begin(), it_end=Loops_in_.end(); it != it_end; ++it ) {
 		Loop refine_loop( *it );
 		refine_loop.choose_cutpoint( pose );
-		LoopsToRefine.add_loop( refine_loop );
+		LoopsToRefine->add_loop( refine_loop );
 	}
 
  	core::kinematics::FoldTree f;
-	protocols::loops::fold_tree_from_loops( pose, LoopsToRefine, f );
+	protocols::loops::fold_tree_from_loops( pose, *LoopsToRefine, f );
 	pose.fold_tree( f );
 
 	//protocols::loops::refine_loops_with_ccd( pose, pose, LoopsToRefine );

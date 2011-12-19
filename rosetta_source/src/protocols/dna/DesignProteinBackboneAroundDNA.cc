@@ -194,18 +194,18 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 		new OperateOnCertainResidues( new RestrictToRepackingRLT, new ResidueHasProperty("DNA") ) );
 
 	// make loops
-	Loops loops_to_move;
+	loops::LoopsOP loops_to_move = new Loops();
 
-	loops::loops_around_residues( loops_to_move, pose, design_positions, gapspan_, spread_ );
-	if ( loops_to_move.size() == 0 ) {
+	loops::loops_around_residues( *loops_to_move, pose, design_positions, gapspan_, spread_ );
+	if ( loops_to_move->size() == 0 ) {
 		TR << "WARNING: no loop regions were defined, aborting backbone design" << std::endl;
 		return;
 	}
-	set_loop_info( pose, loops_to_move );
+	set_loop_info( pose, *loops_to_move );
 
 	// rewrite foldtree to fix loop termini (prevents propagation of movement beyond loop)
 	kinematics::FoldTree ft_new, ft_orig( pose.fold_tree() );
-	loops::fold_tree_from_loops( pose, loops_to_move, ft_new );
+	loops::fold_tree_from_loops( pose, *loops_to_move, ft_new );
 	pose.fold_tree( ft_new );
 
 	// finally call backbone movement protocol
@@ -293,7 +293,7 @@ DesignProteinBackboneAroundDNA::set_loop_info( Pose const & pose, Loops const & 
 void
 DesignProteinBackboneAroundDNA::ccd(
 	Pose & pose,
-	Loops const & loops,
+	loops::LoopsOP const loops,
 	TaskFactoryCOP task_factory2
 )
 {
@@ -311,7 +311,7 @@ DesignProteinBackboneAroundDNA::ccd(
 void
 DesignProteinBackboneAroundDNA::backrub(
 	Pose & pose,
-	Loops const & loops,
+	loops::LoopsOP const loops,
 	TaskFactoryCOP task_factory2
 )
 {
@@ -333,7 +333,7 @@ DesignProteinBackboneAroundDNA::backrub(
 	// set up backrub segments
 	backrubmover.clear_segments();
 
-	for ( Loops::const_iterator loop( loops.begin() ), end( loops.end() );
+	for ( Loops::const_iterator loop( loops->begin() ), end( loops->end() );
 			loop != end; ++loop ) {
 		Size const start( loop->start() ), stop( loop->stop() );
 		backrubmover.add_segment(

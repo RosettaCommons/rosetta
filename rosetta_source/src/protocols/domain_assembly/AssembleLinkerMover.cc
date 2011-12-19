@@ -106,8 +106,8 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 		);
 
 		Loop loop( loop_start, loop_stop, 0, 0, false );
-		Loops loops;
-		loops.add_loop(loop);
+		LoopsOP loops = new Loops();
+		loops->add_loop(loop);
 		LoopMoverOP loop_mover = LoopMoverFactory::get_instance()->create_loop_mover(
 			loop_mover_name_, loops
 		);
@@ -118,8 +118,8 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 		Size const max_tries( 10 ); // make this an option?
 		bool loops_closed( false );
 		for ( Size ii = 1; (ii <= max_tries) && !loops_closed; ++ii ) {
-			Loops loops = pick_loops_chainbreak( pose, min_loop_size_ );
-			loops_closed = ( loops.size() == 0 );
+			LoopsOP loops = pick_loops_chainbreak( pose, min_loop_size_ );
+			loops_closed = ( loops->size() == 0 );
 			if ( loops_closed ) {
 				loop_mover = LoopMoverFactory::get_instance()->create_loop_mover( loop_mover_name_, loops );
 				loop_mover->apply( pose );

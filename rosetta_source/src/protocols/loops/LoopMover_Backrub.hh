@@ -35,11 +35,11 @@ public:
 	LoopMover_Refine_Backrub();
 
 	LoopMover_Refine_Backrub(
-		protocols::loops::Loops  loops_in
+		protocols::loops::LoopsOP  loops_in
 	);
 
 	LoopMover_Refine_Backrub(
-		protocols::loops::Loops  loops_in,
+		protocols::loops::LoopsOP  loops_in,
 		core::scoring::ScoreFunctionOP  scorefxn
 	);
 

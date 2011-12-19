@@ -88,7 +88,7 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD() :
 }
 
 LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
-	protocols::loops::Loops loops_in
+	protocols::loops::LoopsOP loops_in
 ) : IndependentLoopMover( loops_in )
 {
 	set_scorefxn( get_cen_scorefxn() );
@@ -100,7 +100,7 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 
 
 LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
-	protocols::loops::Loops loops_in,
+	protocols::loops::LoopsOP loops_in,
 	core::scoring::ScoreFunctionOP scorefxn
 ) : IndependentLoopMover( loops_in )
 {
@@ -115,7 +115,7 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 }
 
 LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
-	protocols::loops::Loops loops_in,
+	protocols::loops::LoopsOP loops_in,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::fragment::FragSetOP fragset
 ) : IndependentLoopMover( loops_in )

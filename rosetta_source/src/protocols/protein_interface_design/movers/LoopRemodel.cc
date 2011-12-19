@@ -278,14 +278,14 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					for( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						it->set_extended( true ); // set all loops to extended (needed for kinematic mover to really perturb)
 					}
-					protocols::loops::LoopMover_Perturb_KIC perturb(*loops, lores_score_ );
+					protocols::loops::LoopMover_Perturb_KIC perturb( loops, lores_score_ );
 					perturb.set_native_pose( new core::pose::Pose ( native_pose ) );
 					perturb.apply( pose );
 				}
 				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
 				if( refine_ ) {
-					protocols::loops::LoopMover_Refine_KIC refine( *loops, hires_score_ );
+					protocols::loops::LoopMover_Refine_KIC refine( loops, hires_score_ );
 					refine.set_redesign_loop( design() ); // design?
 					//if( task_factory() ) refine.set_task_factory( task_factory() ); // if we have a task factory set, then we should pass it to the loop mover
 					refine.set_native_pose( new core::pose::Pose ( native_pose ) );
@@ -310,7 +310,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					for( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
                                                 it->set_extended( true ); // set all loops to extended (needed for CCD mover to really perturb)
                                         }
-					protocols::loops::LoopMover_Perturb_CCD perturb(*loops, lores_score_ );
+					protocols::loops::LoopMover_Perturb_CCD perturb( loops, lores_score_ );
 					perturb.add_fragments( frag1_ );
 					perturb.add_fragments( frag3_ );
 					perturb.add_fragments( frag9_ );
@@ -322,7 +322,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
 				if( refine_ ) {
-					protocols::loops::LoopMover_Refine_CCD refine( *loops, hires_score_ );
+					protocols::loops::LoopMover_Refine_CCD refine( loops, hires_score_ );
 					refine.add_fragments( frag1_ );
 					refine.add_fragments( frag3_ );
 					refine.add_fragments( frag9_ );
@@ -346,7 +346,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					set_last_move_status( protocols::moves::FAIL_RETRY );
 					return;
 				}
-				protocols::forge::remodel::RemodelLoopMover remodel( *loops );
+				protocols::forge::remodel::RemodelLoopMover remodel( loops );
 				remodel.scorefunction( *hires_score_ );
 				remodel.add_fragments( frag1_ );
 				remodel.add_fragments( frag3_ );

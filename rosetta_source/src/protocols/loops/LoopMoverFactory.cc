@@ -67,7 +67,7 @@ LoopMoverFactory::get_instance()
 LoopMoverOP
 LoopMoverFactory::create_loop_mover(
 	std::string const & type_name_in,
-	Loops const & loops
+	LoopsOP const loops
 ) {
 
 	std::string type_name;
@@ -98,7 +98,7 @@ LoopMoverFactory::create_loop_mover(
 		utility_exit_with_message(error_msg.str());
 	}
 
-	loop_mover->non_OP_loops(loops);
+	loop_mover->loops(loops);
 
 	return loop_mover;
 }
