@@ -1955,7 +1955,7 @@ option.add( basic::options::OptionKeys::remodel::output_fragfiles, "output fragm
 option.add( basic::options::OptionKeys::remodel::read_fragfile, "read fragment file." );
 option.add( basic::options::OptionKeys::remodel::generic_aa, "the type of AA for centroid building" ).def("V");
 option.add( basic::options::OptionKeys::remodel::cluster_radius, "cluster radius for accumulator, default to auto set value" ).def(-1.0);
-option.add( basic::options::OptionKeys::remodel::use_clusters, "use clustering in accumulator" ).def(true);
+option.add( basic::options::OptionKeys::remodel::use_clusters, "use clustering in accumulator" ).def(false);
 option.add( basic::options::OptionKeys::remodel::run_confirmation, "use KIC rms confirmation" ).def(false);
 option.add( basic::options::OptionKeys::remodel::cluster_on_entire_pose, "cluster use all pose, not just loops" ).def(false);
 option.add( basic::options::OptionKeys::remodel::collect_clustered_top, "take the best N from each cluster" ).def(1);
