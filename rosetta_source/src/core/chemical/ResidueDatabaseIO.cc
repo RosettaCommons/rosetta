@@ -21,6 +21,9 @@
 #include <core/kinematics/Stub.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
+
+#include <numeric/xyz.functions.hh>
+
 #include <utility/string_util.hh>
 // Boost Headers
 #include <boost/foreach.hpp>
