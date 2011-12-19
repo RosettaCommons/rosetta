@@ -221,7 +221,7 @@ Splice::apply( core::pose::Pose & pose )
 	TR<<"Average distance of spliced segment to original: "<< average_rms<<std::endl;
 	if( average_rms >= rms_cutoff() ){
 		TR<<"Failing."<<std::endl;
-		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+		set_last_move_status( protocols::moves::FAIL_RETRY );
 		return;
 	}
 
