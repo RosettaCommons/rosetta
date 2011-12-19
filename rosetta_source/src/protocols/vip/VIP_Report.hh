@@ -12,12 +12,14 @@
 #define INCLUDED_protocols_vip_VIP_Report_HH
 
 
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/AddCavitiesMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -38,7 +40,6 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/id/AtomID_Map.Pose.hh>
 #include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/packstat/packing_score_params.hh>
@@ -57,7 +58,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/pose/Pose.hh>
-#include <protocols/moves/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -68,9 +68,6 @@
 #include <basic/options/keys/cp.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <utility/options/keys/OptionKey.hh>
-#include <protocols/moves/AddCavitiesMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -97,7 +94,7 @@ class VIP_Report
                         utility::vector1<core::pose::Pose>,
                         core::pose::Pose);
                 virtual ~VIP_Report();
- 
+
 		void set_goe_repack( utility::vector1<core::pose::Pose> gp ){
 			goe_repack = gp;}
 		void set_goe_relax( utility::vector1<core::pose::Pose> gr ){

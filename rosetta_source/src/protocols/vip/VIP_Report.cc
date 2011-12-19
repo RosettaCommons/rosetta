@@ -8,7 +8,7 @@
 /// @brief Prints information about changes implemented in vip mover
 
 
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
@@ -18,7 +18,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/id/AtomID_Map.Pose.hh>
 #include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/packstat/packing_score_params.hh>
@@ -63,9 +62,9 @@ VIP_Report::get_GOE_repack_report(){
         output.open( fname.c_str(), std::ios::out | std::ios::app );
 
 	output << " GOE point mutant report: " << std::endl;
-	
+
         core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
-	protocols::moves::ScoreMoverOP score_em = new protocols::moves::ScoreMover(sf2);
+	protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
 	score_em->apply( goe_native );
 
 	for( core::Size i = 1; i <= goe_repack.size(); i++ ){
@@ -89,7 +88,7 @@ VIP_Report::get_GOE_relaxed_report(){
         output << " GOE after relax report: " << std::endl;
 
         core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
-        protocols::moves::ScoreMoverOP score_em = new protocols::moves::ScoreMover(sf2);
+        protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
         score_em->apply( goe_native );
 
 	for( core::Size i = 1; i <= goe_relax.size(); i++ ){

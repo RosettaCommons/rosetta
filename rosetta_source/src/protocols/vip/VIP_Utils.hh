@@ -19,7 +19,7 @@
 #include "core/scoring/packstat/compute_sasa.hh"
 
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/moves/PackStatMover.hh>
+#include <protocols/analysis/PackStatMover.hh>
 
 #include <devel/init.hh>
 #include "core/types.hh"

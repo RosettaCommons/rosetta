@@ -10,13 +10,13 @@
 /// and attempts to fill these using fixed backbone packing and the GOE energy
 /// @author ben bborgo@genetics.wustl.edu
 
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/relax/MiniRelax.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -29,7 +29,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/id/AtomID_Map.Pose.hh>
 #include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/packstat/packing_score_params.hh>
@@ -50,7 +49,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/pose/Pose.hh>
-#include <protocols/moves/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -62,9 +60,8 @@
 #include <basic/options/keys/cp.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <utility/options/keys/OptionKey.hh>
-#include <protocols/moves/AddCavitiesMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/AddCavitiesMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -113,7 +110,7 @@ static basic::Tracer TR("VIP");
 				void_mutatables = vm;
 				final_energy = fe;}
 		VIP_Mover::~VIP_Mover(){}
-		
+
 		void VIP_Mover::set_initial_pose( core::pose::Pose pose ){
 		        using namespace basic::options;
 			using namespace basic::options::OptionKeys;
@@ -121,18 +118,18 @@ static basic::Tracer TR("VIP");
 //			core::io::pdb::build_pose_from_pdb_as_is( pose, option[ OptionKeys::in::file::s ]().vector().front() );
 			initial_pose = pose;}
 
- 
+
 		void VIP_Mover::minimize_conformation(){
 			using namespace basic::options;
 			using namespace basic::options::OptionKeys;
-        	
+
 			core::pose::Pose pose = initial_pose;
 			core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::minimizer_score_fxn] );
 			core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
         		movemap->set_jump(false);
         		movemap->set_chi(true);
         		movemap->set_bb(true);
-        		protocols::moves::MoverOP min_native = new protocols::moves::MinMover( movemap, sf2, "dfpmin_armijo_nonmonotone", 1e-2, true );
+        		protocols::moves::MoverOP min_native = new protocols::simple_moves::MinMover( movemap, sf2, "dfpmin_armijo_nonmonotone", 1e-2, true );
         		min_native->apply( pose );
 			initial_pose = pose;}
 
@@ -145,7 +142,7 @@ static basic::Tracer TR("VIP");
 
                 void VIP_Mover::apply_holes(){
 			core::pose::Pose pose = initial_pose;
-        		protocols::moves::AddCavitiesMover cavget;
+        		protocols::simple_moves::AddCavitiesMover cavget;
         		cavget.apply( pose );
 			cavity_pose = pose;}
 
@@ -155,7 +152,7 @@ static basic::Tracer TR("VIP");
 				if( cavity_pose.residue(i).name() == "SUCK" ){
 					cav_positions.push_back(i);}}
 			cavity_balls = cav_positions;}
-			
+
                 void VIP_Mover::dump_pdb_to_file( core::pose::Pose posey, std::string filename ){
 		        posey.dump_pdb(filename);}
 
@@ -201,27 +198,27 @@ static basic::Tracer TR("VIP");
         			temp_poses.push_back(initial_pose);}
 
         		core::pack::task::ResfileCommandOP command = new core::pack::task::APOLAR;
-        
+
 		for( core::Size aa = 1; aa <= void_mutatables.size(); aa++ ){
 			core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( temp_poses[aa]));
 	        	core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
 			core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
-		for( core::Size j = 1; j <= temp_poses[aa].total_residue(); j++ ){  
-			if( j != void_mutatables[aa] ){  	
+		for( core::Size j = 1; j <= temp_poses[aa].total_residue(); j++ ){
+			if( j != void_mutatables[aa] ){
         	task->nonconst_residue_task(j).prevent_repacking();}
 			else{
         	task->nonconst_residue_task(void_mutatables[aa]).or_ex1(true);
         	task->nonconst_residue_task(void_mutatables[aa]).or_ex2(true);
         	task->nonconst_residue_task(void_mutatables[aa]).or_ex3(true);
         	command->residue_action(*task,void_mutatables[aa]);}}
-        protocols::moves::PackRotamersMoverOP pack_mover = new protocols::moves::PackRotamersMover(score_fxn, task);
+        protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover(score_fxn, task);
         pack_mover->apply(temp_poses[aa]);}
 }
 
 		void VIP_Mover::print_pack_report(){
 			VIP_Report();
 			VIP_Report vip_report;
-			
+
 			vip_report.set_goe_native( initial_pose );
 			vip_report.set_goe_repack( favorable_poses );
 			vip_report.get_GOE_repack_report();}
@@ -231,8 +228,8 @@ static basic::Tracer TR("VIP");
                         using namespace basic::options::OptionKeys;
 
 		         core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
-			protocols::moves::ScoreMoverOP score_em = new protocols::moves::ScoreMover(score_fxn);
-			score_em->apply( initial_pose );			
+			protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(score_fxn);
+			score_em->apply( initial_pose );
 
 			core::Real baseE = initial_pose.energies().total_energy();
 			core::pose::Pose basePose = initial_pose;
@@ -243,7 +240,7 @@ static basic::Tracer TR("VIP");
 
 			if( option[ cp::print_reports ] ){
 				print_pack_report();}}
-		
+
 		void VIP_Mover::print_relax_report(){
 			VIP_Report();
 			VIP_Report vip_report;
@@ -252,7 +249,7 @@ static basic::Tracer TR("VIP");
 			vip_report.set_goe_relax( favorable_poses );
 			vip_report.get_GOE_relaxed_report();
                 	vip_report.get_GOE_packstat_report();
-}		
+}
 
 		void VIP_Mover::relax_favorable_poses(){
                         using namespace basic::options;
@@ -284,7 +281,7 @@ if( rmover == "cst_relax" ){
 			final_pose = favorable_poses[bestP];
 			dump_pdb_to_file( final_pose, "final.pdb" );
 			final_energy = bestE;
-	
+
 			if( option[ cp::print_reports ] ){
 				print_relax_report();}}
 
@@ -299,7 +296,7 @@ if( rmover == "cst_relax" ){
 			try_point_mutants();
 			sort_fill_energies();
 			relax_favorable_poses();
-			sort_relaxed_poses();}			
+			sort_relaxed_poses();}
 
 		void VIP_Mover::apply(){
 			nook_finder();

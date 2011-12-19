@@ -10,7 +10,7 @@
 /// @file /src/apps/public/RosettaVIP/VIP_app.cc
 /// @brief RosettaVIP protocol. Locates buried voids
 /// using RosettaHoles and attempts point mutants (using GOE) on a fixed backbone to reduce void
-/// volumes and improve packing. 
+/// volumes and improve packing.
 /// @author ben (bborgo@genetics.wustl.edu)
 
 
@@ -43,7 +43,7 @@ main( int argc, char * argv [] )
 	core::pose::Pose in_pose;
         core::io::pdb::build_pose_from_pdb_as_is( in_pose, option[ OptionKeys::in::file::s ]().vector().front() );
         core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
-        protocols::moves::ScoreMover scoreme = protocols::moves::ScoreMover( scorefxn );
+        protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
 	bool iterate = true;
 	core::Size it = 1;
@@ -61,7 +61,7 @@ if ( option[ cp::ncycles ] ) {
         	protocols::vip::VIP_Mover vip_mover;
         		vip_mover.set_initial_pose( in_pose );
         		vip_mover.apply();
-        
+
 		out_pose = vip_mover.get_final_pose();
         	core::Real new_energy = vip_mover.get_final_energy();
 
@@ -71,13 +71,13 @@ if ( option[ cp::ncycles ] ) {
                 it++;}}
                 out_pose.dump_pdb( option[ cp::output ] );}
 
-else{ 
+else{
 	while( iterate == true ){
         	scoreme.apply(in_pose);
 		core::Real old_energy = in_pose.energies().total_energy();
 
 		protocols::vip::VIP_Mover();
-		protocols::vip::VIP_Mover vip_mover; 
+		protocols::vip::VIP_Mover vip_mover;
 			vip_mover.set_initial_pose( in_pose );
 			vip_mover.apply();
 
@@ -87,9 +87,9 @@ else{
 	if( new_energy < old_energy ){
 		old_energy = new_energy;
 		in_pose = out_pose;
-		iterate = true;}	
-	else{ 
+		iterate = true;}
+	else{
 		out_pose.dump_pdb( option[cp::output] );
-		iterate = false;}}}	
+		iterate = false;}}}
 
 }

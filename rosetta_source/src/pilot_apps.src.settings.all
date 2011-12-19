@@ -34,6 +34,10 @@ sources = {
 		"SymMetalInterface_TwoZN_design",
 	],
 
+	"pilot/ben" : [
+		"VIP_app",
+	],
+
 	"pilot/blivens" : [
 		#"convert", # /* Spencer Bliven,Documentation Location,Demo Location */
 		#"disulfide_scorer", # /* Spencer Bliven,Documentation Location,Demo Location */
