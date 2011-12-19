@@ -172,7 +172,7 @@ std::string ResidueDatabaseIO::schema() const
 		"	FOREIGN KEY(residue_type_set_name,residue_type_name)\n"
 		"		REFERENCES residue_type(residue_type_set_name,name)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(residue_type_set_name,residue_type_set_name,child_atom));\n";
+		"	PRIMARY KEY(residue_type_set_name,residue_type_name,child_atom));\n";
 }
 
 void ResidueDatabaseIO::initialize(utility::sql_database::sessionOP db_session)
