@@ -30,6 +30,7 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/protein_interface_design/movers/AddChainBreak.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
@@ -70,7 +71,9 @@ Splice::Splice() :
 	from_res_( 0 ),
 	to_res_( 0 ),
 	source_pdb_( "" ),
-	ccd_( true )
+	ccd_( true ),
+	rms_cutoff_( 999999 ),
+	res_move_( 4 )
 {
 }
 
@@ -168,6 +171,7 @@ Splice::apply( core::pose::Pose & pose )
 		tso->target_sequence( threaded_seq );
 		tso->start_res( from_res() );
 		tso->allow_design_around( false );
+		TR<<"Threading sequence: "<<threaded_seq<<" starting from "<<from_res()<<std::endl;
 
 		mm = new core::kinematics::MoveMap;
 		mm->set_chi( false ); mm->set_bb( false ); mm->set_jump( false );
@@ -185,12 +189,12 @@ Splice::apply( core::pose::Pose & pose )
 			}
 		}
 		core::Size const startn( disulfn > 0 ? disulfn + 1 : from_res() - 3 );
-		core::Size const startc( disulfc > 0 ? disulfc - 5 : from_res() + total_residue_new - 1 );
-		for( core::Size i = startn; i <= startn + 3; ++i ){
+		core::Size const startc( disulfc > 0 ? disulfc - 6 : from_res() + total_residue_new - ( res_move() - 3 ) );
+		for( core::Size i = startn; i <= startn + res_move() - 1; ++i ){
 			mm->set_chi( i, true );
 			mm->set_bb( i, true );
 		}
-		for( core::Size i = startc; i <= startc + 3; ++i ){
+		for( core::Size i = startc; i <= startc + res_move() - 1; ++i ){
 			mm->set_chi( i, true );
 			mm->set_bb( i, true );
 		}
@@ -206,6 +210,25 @@ Splice::apply( core::pose::Pose & pose )
 		ccd_mover.move_map( mm );
 		ccd_mover.apply( pose );
 	}
+	core::Real rms( 0 );
+	for( core::Size i = 0; i <= total_residue_new - 1; ++i ){
+		core::Real const dist( pose.residue( from_res() + i ).xyz( "CA" ).distance( source_pose.residue( nearest_to_from+ i ).xyz("CA" ) ) );
+		rms += dist;
+	}
+	core::Real const average_rms( rms / total_residue_new );
+	TR<<"Average distance of spliced segment to original: "<< average_rms<<std::endl;
+	if( average_rms >= rms_cutoff() ){
+		TR<<"Failing."<<std::endl;
+		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+		return;
+	}
+
+	protocols::protein_interface_design::movers::AddChainBreak acb;
+	acb.resnum( utility::to_string( from_res() + total_residue_new - 1 ));
+	acb.find_automatically( false );
+	acb.change_foldtree( false );
+	acb.apply( pose );
+	TR<<"Adding chainbreak at: "<<from_res() + total_residue_new - 1<<std::endl;
 }
 
 std::string
@@ -221,7 +244,9 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	source_pdb( tag->getOption< std::string >( "source_pdb" ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	ccd( tag->getOption< bool >( "ccd", 1 ) );
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<std::endl;
+	rms_cutoff( tag->getOption< core::Real >( "rms_cutoff", 999999 ) );
+	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<std::endl;
 }
 
 protocols::moves::MoverOP

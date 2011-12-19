@@ -48,11 +48,17 @@ public:
 	bool ccd() const { return ccd_; }
 	void scorefxn( core::scoring::ScoreFunctionOP sf );
 	core::scoring::ScoreFunctionOP scorefxn() const;
+	core::Real rms_cutoff() const{ return rms_cutoff_; }
+	void rms_cutoff( core::Real const r ){ rms_cutoff_ = r; }
+	void res_move( core::Size const r ){ res_move_ = r; }
+	core::Size res_move() const{ return res_move_; }
 private:
 	core::Size from_res_, to_res_;
 	std::string source_pdb_;
 	bool ccd_;//dflt true; do ccd?
-	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12 with reweighted sheet weight
+	core::Real rms_cutoff_; //dflt 99999; after splicing, checks the average displacement of Ca atoms in the source and target segments. Failure leads to mover failure and no output
+	core::Size res_move_; //dflt 4; how many residues to allow to move during ccd
 };
 
 
