@@ -32,7 +32,7 @@ This protocol has been tested on a benchmark set of 51 proteins and found to inc
 The required files are in:
 rosetta/rosetta_source/src/apps/public/relax_w_allatom_cst
 
-(0) Note that we often "clean" structures to replace non-canonical amino acids with their closest counterparts using this script: clean_pdb_keep_ligand.py
+(0) This protocol is designed for a single-chain pdb. For multiple chains we recommend that you split the pdb into one for each chain and run the protocol separately on each. Note that we often "clean" structures to replace non-canonical amino acids with their closest counterparts using this script: clean_pdb_keep_ligand.py
 
 python clean_pdb_keep_ligand.py your_structure_original.pdb -ignorechain
 
@@ -40,11 +40,12 @@ python clean_pdb_keep_ligand.py your_structure_original.pdb -ignorechain
 
 python sidechain_cst_3.py your_structure.pdb 0.1 0.5 [output: your_structure_sc.cst]
 
-(2) Run relax using these constraints and with a custom relax script to force constraints to stay on during the entire run. Please adjust the path for the relax:script flag in the flags file to point to the correct location for your always_constrained_relax_script.
+(2) Run relax using these constraints and with a custom relax script to force constraints to stay on during the entire run. Please adjust the path for the relax:script flag in the flags file to point to the correct location for your always_constrained_relax_script. Run time is approximately 30 minutes for a 340 residue protein.
 
 relax.linuxiccrelease @flags -database rosetta_database/ -s your_structure.pdb -constraints:cst_fa_file your_structure_sc.cst [-extra_res_fa your_ligand.params]
 
-Use the flags file listed below. The bracketed extra_res_fa only applies if there are any ligand(s) in the structure. 
+Use the flags file listed below. The bracketed extra_res_fa only applies if there are any ligand(s) in the structure.
+
 flags:
 @code
 -constrain_relax_to_start_coords
@@ -71,7 +72,7 @@ cys_acetylated tyr_diiodinated N_acetylated C_methylamidated
 MethylatedProteinCterm
 @endcode
 
-note: Including extra rotamers is important if your goal is to keep all sidechain atoms tightly constrained; if that is not important for your applications, by all means exclude the ex1 and ex2. 
+note: Including extra rotamers is important if your goal is to keep all sidechain atoms tightly constrained; if that is not important for your applications, exclude the ex1 and ex2 for speed.
 
 @section relax_w_csts_data Relax with all-heavy-atom constraints: Data
 To test protocols for relaxation of input pdbs we used the 51 scaffold test set for enzdes. We run design over the input structures and calculate the percent of residues which come back with the native identity -- sequence recovery, only over the designed residues. This is of course an imperfect metric (the original sequence might not be fully optimal), but it allows us to ask how many residues rosetta will correctly choose, assuming that the input structure is already at a minimum in sequence space for the ligand in question. It had already been found that relax alone (with no constraints) will distort most structures, and that those structures will give a much higher sequence recovery in design, but this is a result of the distortion to the input structure.
