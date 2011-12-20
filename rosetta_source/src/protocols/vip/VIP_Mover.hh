@@ -46,7 +46,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <devel/init.hh>
+//#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>

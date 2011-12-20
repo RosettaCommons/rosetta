@@ -50,7 +50,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <devel/init.hh>
+//#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/pdb/file_data.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

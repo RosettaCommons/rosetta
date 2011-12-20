@@ -21,7 +21,7 @@
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/analysis/PackStatMover.hh>
 
-#include <devel/init.hh>
+//#include <devel/init.hh>
 #include "core/types.hh"
 #include <basic/options/option.hh>
 #include "basic/Tracer.hh"

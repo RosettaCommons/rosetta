@@ -23,7 +23,7 @@
 
 #include <protocols/simple_filters/PackStatFilter.hh>
 
-#include <devel/init.hh>
+//#include <devel/init.hh>
 #include "core/types.hh"
 #include <basic/options/option.hh>
 

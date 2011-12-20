@@ -29,7 +29,7 @@
 #include <numeric/all.hh>
 #include <utility/all.hh>
 #include <core/pose/Pose.hh>
-#include <devel/init.hh>
+//#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
