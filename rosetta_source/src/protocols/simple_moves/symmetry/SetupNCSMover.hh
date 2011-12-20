@@ -45,6 +45,7 @@ public:
 
 	// add an ncs group
 	void add_group( std::string src, std::string tgt );
+	void add_groupE( std::string src, std::string tgt );
 
 
 	void set_defaults();
@@ -70,6 +71,8 @@ public:
 	bool bb( ) { return bb_; }
 	void set_chi( bool chi_in ) { chi_ = chi_in; }
 	bool chi( ) { return chi_; }
+	void set_symmetric_sequence( bool symmetric_sequence_in ) { symmetric_sequence_ = symmetric_sequence_in; } //to symmetrize sequence
+	bool symmetric_sequence( ) { return symmetric_sequence_; }
 
 	void set_limit( core::Real limit_in) { limit_ = limit_in; }
 	core::Real limit( ) { return limit_; }
@@ -79,8 +82,11 @@ public:
 private:
 	utility::vector1< std::string > src_;
 	utility::vector1< std::string > tgt_;
+	utility::vector1< std::string > srcE_;
+	utility::vector1< std::string > tgtE_;
 
-	bool bb_, chi_;
+	bool bb_, chi_, symmetric_sequence_; 
+
 	core::Real limit_, wt_;
 };
 

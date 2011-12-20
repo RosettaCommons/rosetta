@@ -91,11 +91,17 @@ void SetupNCSMover::set_defaults() {
 	wt_ = 0.01;  //fpd this seems reasonable in fullatom
 	limit_ = 10.0;  // in degrees
 	bb_ = chi_ = true;
+	symmetric_sequence_ = false;
 }
 
 void SetupNCSMover::add_group( std::string src, std::string tgt ) {
 	src_.push_back( src );
 	tgt_.push_back( tgt );
+}
+
+void SetupNCSMover::add_groupE( std::string src, std::string tgt ) {
+  srcE_.push_back( src );
+  tgtE_.push_back( tgt );
 }
 
 
@@ -125,6 +131,12 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 			id::AtomID id_a1,id_a2,id_a3,id_a4, id_b1,id_b2,id_b3,id_b4;
 
 			TZ.Debug << "Add constraint " << resnum_src << " <--> " << resnum_tgt << std::endl;
+
+
+			//replace residue identity to match reference positions
+			if (symmetric_sequence_) {
+				pose.replace_residue( resnum_tgt, pose.residue(resnum_src), true );
+			}
 
 			if (bb_) {
 				// fpd better safe than sorry
@@ -169,6 +181,36 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 			}
 		}
 	}
+
+
+//symmetrize ONLY sequence (eg. N- and C-term)
+	if (symmetric_sequence_) {
+
+	  assert( srcE_.size() == tgtE_.size() );
+	
+	  // map residue ranges -> resid pairs (using PDBinfo if necessary)
+	  for (int i=1; i<=srcE_.size(); ++i) {
+	    utility::vector1<Size> src_i = protocols::rosetta_scripts::get_resnum_list_ordered( srcE_[i], pose );
+	    utility::vector1<Size> tgt_i = protocols::rosetta_scripts::get_resnum_list_ordered( tgtE_[i], pose );
+	    runtime_assert( src_i.size() == tgt_i.size() );
+	
+	    //
+	    if ( src_i.size() == 0 ) {
+	      utility_exit_with_message("Error creating NCS constraints: " + src_[i] +" : "+tgt_[i]);
+	    }
+	
+	    for (int j=1; j<=src_i.size(); ++j) {
+	      core::Size resnum_src = src_i[j], resnum_tgt = tgt_i[j];
+	
+	      TZ.Debug << "Symmetrizing residues " << resnum_src << " <--> " << resnum_tgt << std::endl;
+	
+	      //replace residue identity to match reference positions
+	      pose.replace_residue( resnum_tgt, pose.residue(resnum_src), true );
+			}
+		}
+	}
+
+
 }
 
 void SetupNCSMover::parse_my_tag( 
@@ -181,6 +223,8 @@ void SetupNCSMover::parse_my_tag(
 	if (tag->hasOption( "chi" )) chi_ = tag->getOption< bool >( "chi" );
 	if (tag->hasOption( "wt" )) wt_ = tag->getOption< core::Real >( "wt" );
 	if (tag->hasOption( "limit" )) limit_ = tag->getOption< core::Real >( "limit" );
+	if (tag->hasOption( "symmetric_sequence" )) symmetric_sequence_ = tag->getOption< bool >( "symmetric_sequence" );
+
 
 	// now parse ncs groups <<< subtags
 	utility::vector1< TagPtr > const branch_tags( tag->getTags() );
@@ -189,9 +233,22 @@ void SetupNCSMover::parse_my_tag(
 		if( (*tag_it)->getName() == "NCSgroup" || (*tag_it)->getName() == "ncsgroup" ){
 			std::string src_i = (*tag_it)->getOption<std::string>( "source" );
 			std::string tgt_i = (*tag_it)->getOption<std::string>( "target" );
+			if (symmetric_sequence_) {
+				TZ.Debug << "Symmetrizing sequences " << src_i << " -> " << tgt_i << std::endl;
+			}
 			TZ.Debug << "Adding NCS cst " << src_i << " -> " << tgt_i << std::endl;
 			add_group( src_i, tgt_i );
 		}
+		
+		if( (*tag_it)->getName() == "NCSend" || (*tag_it)->getName() == "ncsend" ){
+      std::string srcE_i = (*tag_it)->getOption<std::string>( "source" );
+      std::string tgtE_i = (*tag_it)->getOption<std::string>( "target" );
+      if (symmetric_sequence_) {
+				TZ.Debug << "Symmetrizing sequences at ends" << srcE_i << " -> " << tgtE_i << std::endl;
+			}
+      add_groupE( srcE_i, tgtE_i );
+		}
+		
 	}
 }
 
