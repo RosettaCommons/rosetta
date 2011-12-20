@@ -39,6 +39,6 @@ private:
 };
 
 
-}; // namespace utility
+} // namespace utility
 
 #endif // INCLUDED_utility_PyExitCallback_hh

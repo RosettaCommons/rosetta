@@ -25,6 +25,6 @@ class PyExitCallback;
 typedef utility::pointer::owning_ptr< PyExitCallback > PyExitCallbackOP;
 typedef utility::pointer::owning_ptr< PyExitCallback const > PyExitCallbackCOP;
 
-}; // namespace utility
+} // namespace utility
 
 #endif // INCLUDED_utility_PyExitCallback_fwd_hh
