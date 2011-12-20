@@ -374,16 +374,16 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 
 		if (head == 0 && segmentStorageVector[i].residues.front() == 1 ){ // N-term extension
 			TR << "debug: N-term ext" << std::endl;
-			this->manager.add( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ) ) );
+			this->manager.add( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) );
 		}
 		else if (tail ==0 && segmentStorageVector[i].residues.back() == model_length){
 		  TR << "debug: C-term ext" << std::endl;
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
-			this->manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), data.dssp_updated_ss.substr( segmentStorageVector[i].residues.front()-1, gap ) ) );
+			this->manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), data.dssp_updated_ss.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) );
 		}
 		else {
 			TR << "debug: normal rebuild" << std::endl;
-			this->manager.add( new SegmentRebuild( Interval(head, tail),  data.dssp_updated_ss.substr( headNew-1, gap )));
+			this->manager.add( new SegmentRebuild( Interval(head, tail),  data.dssp_updated_ss.substr( headNew-1, gap ), aa.substr( headNew-1, gap )) );
 		}
 	}
 
