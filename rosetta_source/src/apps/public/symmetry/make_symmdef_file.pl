@@ -471,6 +471,15 @@ if ($ncs_mode == 1) {
 
 		$allQs[0] = [ $X0->[0]*$S_x , $X0->[1]*$S_x, $X0->[2]*$S_x, $W_x];
 		$allQs[1] = [ $Y0->[0]*$S_y , $Y0->[1]*$S_y, $Y0->[2]*$S_y, $W_y];
+
+		# if we're Dn symmetry, always expand the Cn before the C2
+		if ($sym_orders[ 0 ] == 2 && $sym_orders[ 1 ] != 2) {
+			my $temp;
+			$temp = $allQs[1]; $allQs[1] = $allQs[0]; $allQs[0] = $temp;
+			$temp = $allCOMs[1]; $allCOMs[1] = $allCOMs[0]; $allCOMs[0] = $temp;
+			$temp = $sym_orders[1]; $sym_orders[1] = $sym_orders[0]; $sym_orders[0] = $temp;
+			$temp = $secondary_chains[1]; $secondary_chains[1] = $secondary_chains[0]; $secondary_chains[0] = $temp;
+		}
 	}
 
 	# 2) Icosahedral symmetries
@@ -506,17 +515,16 @@ if ($ncs_mode == 1) {
 			$R_i = mmult($newR, $R_i);
 		}
 
-		# special case for D symmetry
-		if ($#allQs == 1 && $sym_orders[ $i ] == 2 && $sym_orders[ 1-$i ] != 2) {
-			my $axis_proj_i = [ $allQs[1-$i]->[0],  $allQs[1-$i]->[1],  $allQs[1-$i]->[2] ];
-
+		# special case for Dn symmetry
+		if ( $i == 1 && $#allQs == 1 ) { 
+			my $axis_proj_i =  [ $allQs[1-$i]->[0],  $allQs[1-$i]->[1],  $allQs[1-$i]->[2] ];
 			# project $delCOM along this axis
 			normalize( $axis_proj_i );
 			my $del_COM_inplane    = vsub( $newDelCOM , vscale(dot($newDelCOM,$axis_proj_i),$axis_proj_i) );
-			$err_pos = vscale( 2 , $del_COM_inplane );
+			$err_pos = vscale( $sym_orders[ $i ] , $del_COM_inplane );
 		}
 		print STDERR "  translation error = ".vnorm( $err_pos )."\n";
-
+		
 
 		# special case for icosehedral symmetry
 		# see above for restrictions
@@ -875,7 +883,7 @@ if ($cryst_mode == 1) {
 			my $fX_i = $fCoM;
 			my $delfXY = vsub( $fY_j,$fX_i );
 			my $delfXY_min = vminmod( $delfXY , [1.0,1.0,1.0] );
-			my $delfXY_min = $delfXY;
+			#my $delfXY_min = $delfXY;
 
 			my $delXY = mapply( $f2c, $delfXY_min );
 			my $dist2XY = vnorm2( $delXY );
