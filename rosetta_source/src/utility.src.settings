@@ -18,6 +18,7 @@ sources = {
 		"integer_mapping",
 		"LexicographicalIterator",
 		"mpi_util",
+		"PyExitCallback",
 		"static_database",
 		"string_util",
 	],

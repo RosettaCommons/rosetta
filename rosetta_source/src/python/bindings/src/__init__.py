@@ -1075,9 +1075,28 @@ class EnergyMethod:
 
 # --------------------------------------------------------------------------------------------------
 
+class PyRosettaException(Exception):
+    #def __init__(self): pass
+    def __str__(self): return 'PyRosettaException'
 
-def init(*args, **kargs):
-    utility.set_pyexit_callback()  # make sure that all mini sys exit just generate exceptions
+
+class PythonPyExitCallback(utility.PyExitCallback):
+    def exit_callback(self):
+        raise PyRosettaException()
+
+    def __init__(self): utility.PyExitCallback.__init__(self)
+
+
+__global_PythonPyExitCallback__ = None
+
+def init(*args):
+    global __global_PythonPyExitCallback__
+
+    __global_PythonPyExitCallback__ = PythonPyExitCallback()
+    utility.PyExitCallback.set_PyExitCallBack(__global_PythonPyExitCallback__)
+
+    #utility.set_pyexit_callback()  # make sure that all mini sys exit just generate exceptions
+
 
     #if not args: args = ["app"
     #                  ,"-database"

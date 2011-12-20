@@ -295,8 +295,8 @@ void wrap__utility__by_hand()
     bp::def("Q_Test_CI1B", Q_Test_CI1B);
     bp::def("Q_Test_EnergyMethodCreator", Q_Test_EnergyMethodCreator);
 
-
     bp::def("set_pyexit_callback", set_pyexit_callback);
+    //bp::def("set_main_exit_callback", set_main_exit_callback);
     bp::def("pyexit_callback", pyexit_callback);
 
     // Wraping for derived Demo

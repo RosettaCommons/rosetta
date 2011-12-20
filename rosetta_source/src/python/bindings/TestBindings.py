@@ -38,7 +38,8 @@ def execute(message, commandline, return_=False, untilSuccesses=False):
 
 def main(args):
     #tests = execute('getting list of tests...', 'ls test/T*.py', return_= 'output').split()
-    tests = filter(lambda x: x.startswith('T') and x.endswith('.py'), sorted( os.listdir('test/') ) )
+    #tests = filter(lambda x: x.startswith('T') and x.endswith('.py'), sorted( os.listdir('test/') ) )
+    tests = filter(lambda x: x.endswith('.py'), sorted( os.listdir('test/') ) )
     print 'Preparingn to run:\n%s\n' % '\n'.join(tests)
 
     for t in args[1:] or tests:
