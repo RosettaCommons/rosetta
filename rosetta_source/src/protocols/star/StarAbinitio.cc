@@ -399,6 +399,7 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
   using core::scoring::ScoreFunctionOP;
   using protocols::comparative_modeling::ThreadingJob;
   using protocols::loops::Loops;
+  using protocols::loops::LoopsOP;
   using protocols::moves::MoverOP;
   using protocols::nonlocal::BiasedFragmentMover;
   using protocols::nonlocal::PolicyOP;
@@ -416,19 +417,21 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
 
   vector1<unsigned> interior_cuts;
 
-  Loops aligned, unaligned;
-  identify_regions(pose.total_residue(), job->alignment(), &aligned, &unaligned);
-  extend_unaligned(aligned, unaligned, &interior_cuts, &pose);
+  LoopsOP aligned = new Loops();
+  LoopsOP unaligned = new Loops();
+
+  identify_regions(pose.total_residue(), job->alignment(), aligned, unaligned);
+  extend_unaligned(*aligned, *unaligned, &interior_cuts, &pose);
   emit_intermediate(pose, "star_extended.pdb");
 
   // Prepare the pose
   const unsigned num_residues = pose.total_residue();
-  setup_kinematics(aligned, interior_cuts, &pose);
+  setup_kinematics(*aligned, interior_cuts, &pose);
   setup_constraints(&pose);
 
   Probabilities probs_sm, probs_lg;
-  compute_per_residue_probabilities(num_residues, fragments_sm_->max_frag_length(), aligned, pose.fold_tree(), &probs_sm);
-  compute_per_residue_probabilities(num_residues, fragments_lg_->max_frag_length(), aligned, pose.fold_tree(), &probs_lg);
+  compute_per_residue_probabilities(num_residues, fragments_sm_->max_frag_length(), *aligned, pose.fold_tree(), &probs_sm);
+  compute_per_residue_probabilities(num_residues, fragments_lg_->max_frag_length(), *aligned, pose.fold_tree(), &probs_lg);
 
   // Simulation parameters
   const unsigned num_stages = 4;

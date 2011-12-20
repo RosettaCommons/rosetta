@@ -38,6 +38,7 @@
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
 #include <protocols/nonlocal/frag_picker/NonlocalFragsMain.hh>
+#include <protocols/star/StarAbinitioMain.hh>
 
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
@@ -215,6 +216,8 @@ main( int argc, char * argv [] )
 			protocols::medal::Medal_main(NULL);
 		} else if ( option[ run::protocol ]() == "medal_exchange" ) {
 			protocols::medal::MedalExchange_main(NULL);
+		} else if ( option[ run::protocol ]() == "star" ) {
+			protocols::star::StarAbinitio_main(NULL);
 		} else if ( option[ run::protocol ]() == "rbsegmentrelax" ) {
 			protocols::RBSegmentRelax_main( true );
 		} else if ( option[ run::protocol ]() == "boinc_debug" ) {

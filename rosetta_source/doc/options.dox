@@ -9442,7 +9442,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-generic_aa</b> \<String\><dt>
 <dd>the type of AA for centroid building</dd><br>
-<dd>Default: "VAL"</dd><br>
+<dd>Default: "V"</dd><br>
 </dl>
 <dl>
 <dt><b>-cluster_radius</b> \<Real\><dt>
@@ -9452,7 +9452,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-use_clusters</b> \<Boolean\><dt>
 <dd>use clustering in accumulator</dd><br>
-<dd>Default: true</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-run_confirmation</b> \<Boolean\><dt>

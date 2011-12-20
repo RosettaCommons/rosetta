@@ -996,7 +996,7 @@ Options = Option_Group( '',
 				'abrelax', 'broker', 'vf_abrelax', 'ligand_dock', 'relax', 'symdock', 'nonlocal_abinitio',
 				'loophash','looprelax','threading', 'rbsegmentrelax', 'boinc_debug', 'parser',
 				'jd2_scripting', 'cm', 'flxbb','rna','ddg', 'canonical_sampling', 'nonlocal_frags', 'medal',
-				'medal_abinitio', 'medal_exchange',
+				'medal_abinitio', 'medal_exchange', 'star'
 			],
 		),
 		Option( 'remove_ss_length_screen', 'Boolean',
