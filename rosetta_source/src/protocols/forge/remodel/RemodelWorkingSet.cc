@@ -311,21 +311,17 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	}
 
 	//set generic aa type before assigning manager tasks.
-  if (option[OptionKeys::remodel::generic_aa].user()){
-		//if (option[OptionKeys::remodel::generic_aa] != 'ALA' || option[OptionKeys::remodel::generic_aa] != 'A'){
 
-		//for now only allow one letter code
-		String build_aa_type = option[OptionKeys::remodel::generic_aa];
+	//for now only allow one letter code
+	String build_aa_type = option[OptionKeys::remodel::generic_aa]; //devaults to VAL
 
-		runtime_assert (build_aa_type.size() == 1);
+	runtime_assert (build_aa_type.size() == 1);
 
-		if (build_aa_type.compare("A") != 0){
+	if (build_aa_type.compare("A") != 0){
 
-
-			//build the aa string to be the same length as dssp updated ss
-			for (int i = 1; i<= data.dssp_updated_ss.size(); i++){
-				aa.append(build_aa_type);
-			}
+		//build the aa string to be the same length as dssp updated ss
+		for (int i = 1; i<= data.dssp_updated_ss.size(); i++){
+			aa.append(build_aa_type);
 		}
 	}
 
