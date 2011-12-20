@@ -11,16 +11,87 @@
 
 @page preparing_structures How to prepare structures for use in Rosetta
 
-@author Coallated by Steven Lewis and Ramesh Jha
+@author Relaxation with all-atom constraints by Lucas Nivon and Rocco Moretti. 
+@author Other answers collated by Steven Lewis and Ramesh Jha
 
 @section purpose Why prepare structures?
-Structures derived straight from the PDB are not always perfectly compatible with Rosetta - it is common for them to have clashes (atom overlaps) or other minor errors.  It is often beneficial to prepare the structures before doing real work on them to get these errors out of the way beforehand.  This provides several benefits:
+Structures derived straight from the PDB are almost never perfectly compatible with Rosetta - it is common for them to have clashes (atom overlaps), amino acid rotamers with terrible rosetta energy, or other errors.  It is often beneficial to prepare the structures before doing real work on them to get these errors out of the way beforehand.  This provides several benefits:
+@li In design rosetta often places a certain amino acid solely because the original has a bad clash or rotamer energy, preparing structures first will allow rosetta to keep the wild-type amino acid and minimize the number of changes made based on incorrect scoring of the native.
 @li Less time spent in each trajectory independently re-relaxing the same errors in the input
 @li Less noise in the results caused by errors being handled in different ways in different trajectories
 @li Lower overall scores (you should never have positive score12 scores for a well folded protein)
 
 @section how_to_prepare How do I prepare structures?
-How to prepare your structures is unfortunately closely linked to what you want to do with them.  In other words, your main protocol dictates your preparation protocol.  Remember that all you're really doing here is relaxing into Rosetta's energy function - you're not necessarily making it objectively more correct (although clashes are generally wrong), you're really just making Rosetta like it better.  What follows is advice from many of the Rosetta developers on how to best prepare structures.
+How to prepare your structures is unfortunately closely linked to what you want to do with them.  In other words, your main protocol dictates your preparation protocol.  Remember that all you're really doing here is relaxing into Rosetta's energy function - you're not necessarily making it objectively more correct (although clashes are generally wrong), you're really just making Rosetta like it better.  What follows is a protocol that has been benchmarked for enzyme design and should work for any design situation, and then a series of suggestions from rosetta developers for other situations.
+
+@section relax_w_csts_intro Relax with all-heavy-atom constraints: Introduction
+We looked for a way to simultaneously minimize rosetta energy and keep all heavy atoms in a crystal structure as close as possible to their starting positions. As many posts below -- or hard-won experience -- will show, running relax on a structure will often move the backbone a few Angstroms. The best way we have found to perform the simultaneous optimization is to run relax with constraints always turned on (typically constraints ramp down in the late cycles of a relax run) and to constrain not just backbone but also sidechain atoms. 
+This protocol has been tested on a benchmark set of 51 proteins and found to increase sequence recovery in enzyme design by 5% as compared with design in raw pdb structures. It accomplishes this with only .077 Angstrom RMSD over the set of proteins (C-alpha RMSD) from raw pdb to relaxed-with-csts pdb. A more complete description of the data leading to this protocol is below.
+
+@section relax_w_csts_protocol Relax with all-heavy-atom constraints: Protocol
+The required files are in:
+rosetta/rosetta_source/src/apps/public/relax_w_allatom_cst
+
+(0) Note that we often "clean" structures to replace non-canonical amino acids with their closest counterparts using this script: clean_pdb_keep_ligand.py
+
+python clean_pdb_keep_ligand.py your_structure_original.pdb -ignorechain
+
+(1) Generate sidechain coordinate constraints on your pdb using sidechain_cst_3.py: 
+
+python sidechain_cst_3.py your_structure.pdb 0.1 0.5 [output: your_structure_sc.cst]
+
+(2) Run relax using these constraints and with a custom relax script to force constraints to stay on during the entire run. Please adjust the path for the relax:script flag in the flags file to point to the correct location for your always_constrained_relax_script.
+
+relax.linuxiccrelease @flags -database rosetta_database/ -s your_structure.pdb -constraints:cst_fa_file your_structure_sc.cst [-extra_res_fa your_ligand.params]
+
+Use the flags file listed below. The bracketed extra_res_fa only applies if there are any ligand(s) in the structure. 
+flags:
+@code
+-constrain_relax_to_start_coords
+-relax:script rosetta/rosetta_source/src/apps/public/relax_w_allatom_cst/always_constrained_relax_script
+-ex1
+-ex2
+-use_input_sc
+-correct
+-no_his_his_pairE
+-score::hbond_params correct_params
+-lj_hbond_hdis 1.75
+-lj_hbond_OH_donor_dis 2.6
+-linmem_ig 10
+-nblist_autoupdate true
+-dun08 false
+-no_optH false
+-flip_HNQ
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer
+ VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals
+pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated
+thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated
+lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated
+cys_acetylated tyr_diiodinated N_acetylated C_methylamidated
+MethylatedProteinCterm
+@endcode
+
+note: Including extra rotamers is important if your goal is to keep all sidechain atoms tightly constrained; if that is not important for your applications, by all means exclude the ex1 and ex2. 
+
+@section relax_w_csts_data Relax with all-heavy-atom constraints: Data
+To test protocols for relaxation of input pdbs we used the 51 scaffold test set for enzdes. We run design over the input structures and calculate the percent of residues which come back with the native identity -- sequence recovery, only over the designed residues. This is of course an imperfect metric (the original sequence might not be fully optimal), but it allows us to ask how many residues rosetta will correctly choose, assuming that the input structure is already at a minimum in sequence space for the ligand in question. It had already been found that relax alone (with no constraints) will distort most structures, and that those structures will give a much higher sequence recovery in design, but this is a result of the distortion to the input structure.
+
+We decided to test a few protocols to find the one that would best minimize RMSD from the original pdb while maximizing sequence recovery. All calculations are averages over 50 runs of the 51 scaffold set. All RMSDs are to native C-alpha. It is also possible to read in electron density for a pdb and use that as a constraint during relax, but electron density is not uniformly available, and we were looking for a protocol that would work in every case even if the electron density was lacking. We chose the first protocol as the best because it minimized rmsd (and sidechain motions) while maximizing sequence recovery.
+
+Running relax with sidechain coordinate constraints and bb coord constraints: (ex flags and use native; ex flags on in enzdes)
+@li 0.447 sequence recovery (0.077 RMSD) [-557 totalscore]
+
+Running relax with sc-sc distance constraints at 3.5 distance cutoff. Note that this gets similar rmsd minimization but doesn't maximize sequence recovery or minimize score as well as coordinate constraints. We tested this protocol with a variety of sc-sc distance constraint cutoff values and found it to slightly but systematically underperform coordinate constraints:
+@li 0.436 sequence recovery (0.0706 RMSD) (-534 totalscore)
+
+Running elax with backbone constraints only. Note that this does worse in terms of rmsd and that many sidechains are a few angstroms off:
+@li 0.488 sequences recovery (0.098 RMSD) (-633 totalscore)
+
+No relax benchmark and rosetta scoring of native input structures:
+@li 0.40 (0 RMSD by definition) (-194.7 totalscore)
+
+At this point, the astute reader might ask, what score terms became 438 Rosetta Energy Units (REU) better? We ranked the difference in scores over all structures, comparing the all-atom coordinate constraint protocol and the non-relaxed input structure. The biggest difference is fa_dun (-192.4), followed by fa_rep (-108.1), pro_close (-26.4), hbond_sc (-10.8) and omega (-8.5). Many input rotamers are close to but not in a "good" Dunbrack rotamer, and the backbone has to be slightly tweaked in order for that residue to get a good dunbrack score. Also many atoms are slightly too close, and they give the fa_rep contribution.
+
 
 @section original_question Original question from Ramesh Jha
 Is there a consensus protocol to create the starting PDBs to be used in mini? It is not unknown that the PDBs right from the Protein Data Bank are composed of artifacts and defects that can give an exceptional jump in energy if happened to be altered during a design protocol. In order to minimize this problem, there are a few things which can be tried and that I am aware of:
