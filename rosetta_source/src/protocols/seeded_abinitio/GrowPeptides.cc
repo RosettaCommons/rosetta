@@ -82,8 +82,7 @@ namespace protocols {
 		using namespace core;
 		
 		std::string
-		GrowPeptidesCreator::keyname() const
-		{
+		GrowPeptidesCreator::keyname() const{
 			return GrowPeptidesCreator::mover_name();
 		}
 		
@@ -93,15 +92,16 @@ namespace protocols {
 		}
 		
 		std::string
-		GrowPeptidesCreator::mover_name()
-		{
+		GrowPeptidesCreator::mover_name(){
 			return "GrowPeptides";
 		}
 
-		GrowPeptides::GrowPeptides()
-		{}
-		
-		GrowPeptides::~GrowPeptides() {}
+
+    GrowPeptides::GrowPeptides()
+    {}
+
+    GrowPeptides::~GrowPeptides() {}
+
 
 protocols::moves::MoverOP
 GrowPeptides::clone() const {
@@ -297,9 +297,14 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 				TR.Debug<< r <<"\t";
 			}
 		}
-		
-		std::string template_sequence = template_pdb_->sequence();
-		grow_from_verteces( pose, template_sequence, all_seeds_ , verteces_ );
+		std::string seq; 
+		if( seq_ != "" ) 
+			seq = seq_;		
+		else 
+			seq = template_pdb_->sequence();
+		if( seq == "" ) utility_exit_with_message("no sequence specified" );
+
+		grow_from_verteces( pose, seq, all_seeds_ , verteces_ );
 	
 		//add the new seed foldtree to the pose 
 		pose.fold_tree( *seed_foldtree_ );
@@ -400,7 +405,8 @@ GrowPeptides::parse_my_tag(
 							 core::pose::Pose const & pose )
 {
 	TR<<"GrowPeptides mover has been initiated" <<std::endl;
-	
+	//default
+	template_presence = false;
 	//need scorefxn to score extended/changed pose
 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
 	scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name) ));
@@ -444,7 +450,14 @@ GrowPeptides::parse_my_tag(
 		TR<<"read in a template pdb with " <<template_pdb_->total_residue() <<"residues"<<std::endl;
 		template_presence = true;
 		}
-		
+
+	if( tag->hasOption("sequence" )){
+		seq_ = tag->getOption< std::string >("sequence" );
+	}	
+
+	if( !template_presence && seq_ == "" )
+		utility_exit_with_message("neither template pdb nor sequence for growing is specified!!" );
+
 	//parsing branch tags
 	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
 	foreach( TagPtr const btag, branch_tags ){
@@ -452,6 +465,8 @@ GrowPeptides::parse_my_tag(
 		//parse the pdb of interest, which is either the template or the input pdb depending on the users specificiation
 		if( template_presence )
 			curr_pose_ = template_pdb_;
+		else 
+			curr_pose_ = new pose::Pose( pose );
 		
 		anchor_specified_ = false;
 

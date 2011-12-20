@@ -93,6 +93,7 @@ private: ///functions
 			core::Size extend_cterm;
       std::string nsequence_;
       std::string csequence_;
+			std::string seq_;
 			bool all_ala_N;
 			bool all_ala_C;
 			//bool add_chainbreakterm_;
