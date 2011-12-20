@@ -42,13 +42,15 @@
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/protein_interface_design/movers/LoopLengthChange.hh>
+#include <core/scoring/dssp/Dssp.hh>
+#include <numeric/random/random.hh>
 
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.Splice" );
-
+static numeric::random::RandomGenerator RG( 78289 );
 std::string
 SpliceCreator::keyname() const
 {
@@ -73,7 +75,8 @@ Splice::Splice() :
 	source_pdb_( "" ),
 	ccd_( true ),
 	rms_cutoff_( 999999 ),
-	res_move_( 4 )
+	res_move_( 4 ),
+	randomize_cut_( false )
 {
 }
 
@@ -136,7 +139,24 @@ Splice::apply( core::pose::Pose & pose )
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
 	protocols::loops::FoldTreeFromLoops ffl;
 	using namespace utility;
-	protocols::loops::Loop loop( from_res() - 6/*start*/, to_res() + 6/*stop*/, to_res()/*cut*/ );
+	core::Size cut_site( to_res() );
+	if( randomize_cut() ){
+		core::scoring::dssp::Dssp dssp( source_pose );
+		dssp.dssp_reduced(); // switch to simplified H E L notation
+		std::vector< core::Size > loop_positions_in_source;
+		loop_positions_in_source.clear();
+		TR<<"DSSP of source segment: ";
+		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
+			if( dssp.get_dssp_secstruct( i ) == 'L' )
+				loop_positions_in_source.push_back( i );
+			TR<<dssp.get_dssp_secstruct( i );
+		}
+		TR<<std::endl;
+		cut_site = loop_positions_in_source[ RG.uniform() * loop_positions_in_source.size() ] - nearest_to_from + from_res();
+		TR<<"Cut placed at: "<<cut_site<<std::endl;
+  }
+
+	protocols::loops::Loop loop( from_res() - 6/*start*/, to_res() + 6/*stop*/, cut_site/*cut*/ );
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
 	loops->push_back( loop );
 	ffl.loops( loops );
@@ -145,9 +165,17 @@ Splice::apply( core::pose::Pose & pose )
 /// change the loop length
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res() );
-	llc.loop_end( to_res());
+	llc.loop_end( cut_site );
 	llc.delta( residue_diff );
 	llc.apply( pose );
+	protocols::protein_interface_design::movers::AddChainBreak acb;
+	acb.resnum( utility::to_string( cut_site + residue_diff ) );
+	acb.find_automatically( false );
+	acb.change_foldtree( false );
+	acb.apply( pose );
+	TR<<"Adding chainbreak at: "<<cut_site<<std::endl;
+
+
 /// set torsions
 	core::Size const total_residue_new( nearest_to_to - nearest_to_from + 1 );
 	for( core::Size i = 0; i < total_residue_new; ++i ){
@@ -225,12 +253,6 @@ Splice::apply( core::pose::Pose & pose )
 		return;
 	}
 
-	protocols::protein_interface_design::movers::AddChainBreak acb;
-	acb.resnum( utility::to_string( from_res() + total_residue_new - 1 ));
-	acb.find_automatically( false );
-	acb.change_foldtree( false );
-	acb.apply( pose );
-	TR<<"Adding chainbreak at: "<<from_res() + total_residue_new - 1<<std::endl;
 }
 
 std::string
@@ -248,7 +270,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	ccd( tag->getOption< bool >( "ccd", 1 ) );
 	rms_cutoff( tag->getOption< core::Real >( "rms_cutoff", 999999 ) );
 	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<std::endl;
+	randomize_cut( tag->getOption< bool >( "randomize_cut", false ) );
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<std::endl;
 }
 
 protocols::moves::MoverOP

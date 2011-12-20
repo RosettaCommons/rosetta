@@ -52,6 +52,8 @@ public:
 	void rms_cutoff( core::Real const r ){ rms_cutoff_ = r; }
 	void res_move( core::Size const r ){ res_move_ = r; }
 	core::Size res_move() const{ return res_move_; }
+	void randomize_cut( bool const r ){ randomize_cut_ = r; }
+	bool randomize_cut() const{ return randomize_cut_; }
 private:
 	core::Size from_res_, to_res_;
 	std::string source_pdb_;
@@ -59,6 +61,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12 with reweighted sheet weight
 	core::Real rms_cutoff_; //dflt 99999; after splicing, checks the average displacement of Ca atoms in the source and target segments. Failure leads to mover failure and no output
 	core::Size res_move_; //dflt 4; how many residues to allow to move during ccd
+	bool randomize_cut_; //dflt false; true: place cut in a randomly chosen loop residue, if available. false: place cut at loop's end
 };
 
 
