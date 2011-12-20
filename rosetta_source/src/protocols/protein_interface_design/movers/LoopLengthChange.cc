@@ -71,7 +71,7 @@ void
 LoopLengthChange::apply( core::pose::Pose & pose )
 {
 	TR<<"Changing loop "<<loop_start()<<"-"<<loop_end()<<" by "<<delta()<<std::endl;
-  runtime_assert( loop_end() > loop_start() );
+  runtime_assert( loop_end() >= loop_start() );
   runtime_assert( loop_end() + delta() >= loop_start() );
   if( delta() < 0 ){
     for( int del(-1); del>=delta(); --del )
