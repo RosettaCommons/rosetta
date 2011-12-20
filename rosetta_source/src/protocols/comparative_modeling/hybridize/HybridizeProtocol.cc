@@ -11,20 +11,31 @@
 /// @brief Add constraints to the current pose conformation.
 /// @author Yifan Song
 
-#include <protocols/moves/HybridizeProtocol.hh>
-#include <protocols/moves/HybridizeProtocolCreator.hh>
+#include <protocols/comparative_modeling/hybridize/HybridizeProtocol.hh>
+
+#include <protocols/nonlocal/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/import_pose/import_pose.hh>
 
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+
+#include <core/fragment/FragSet.hh>
+#include <core/fragment/FrameIterator.hh>
+#include <core/fragment/FragmentIO.hh>
+#include <core/fragment/ConstantLengthFragSet.hh>
+
+#include <core/sequence/util.hh>
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/kinematics/FoldTree.hh>
 
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
@@ -39,17 +50,25 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
+// evaluation
+#include <core/scoring/rms_util.hh>
+#include <protocols/evaluation/Align_RmsdEvaluator.hh>
+#include <protocols/comparative_modeling/coord_util.hh>
+
 // option
 #include <basic/options/option.hh>
+#include <basic/options/keys/cm.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
-static basic::Tracer TR( "protocols.moves.HybridizeProtocol" );
+static basic::Tracer TR( "protocols.comparative_modeling.hybridize.HybridizeProtocol" );
 
 namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 
 using namespace core;
+using namespace sequence;
 using namespace pack;
 using namespace task;
 using namespace operation;
@@ -61,41 +80,41 @@ HybridizeProtocol::HybridizeProtocol()
 	//read templates
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	read_template_structures( option[cm::hybridize::templates]() )
+	read_template_structures( option[cm::hybridize::templates]() );
 
 	//break templates into chunks
 	template_chunks_.clear();
-	template_chunks_.resize(template_poses_.size());
-	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
+	template_chunks_.resize(templates_.size());
+	for (core::Size i_template=1; i_template<=templates_.size(); ++i_template) {
 		// find ss chunks in template
-		template_chunks_[i_template] = extract_secondary_structure_chunks(*template_poses_[i_template]); // add split by residue numbering in this function -ys
+		template_chunks_[i_template] = protocols::nonlocal::extract_secondary_structure_chunks(*templates_[i_template]); // add split by residue numbering in this function -ys
 	}
 	
 	//break templates into contigs
 	template_contigs_.clear();
-	template_contigs_.resize(template_poses_.size());
-	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
+	template_contigs_.resize(templates_.size());
+	for (core::Size i_template=1; i_template<=templates_.size(); ++i_template) {
 		// find ss chunks in template
-		template_contigs_[i_template] = extract_continuous_chunks(*template_poses_[i_template]); 
+		// template_contigs_[i_template] = extract_continuous_chunks(*templates_[i_template]); 
 	}
 	
 	//read fragments
 	if ( option[ OptionKeys::in::file::frag9 ].user() ) {
 		using namespace core::fragment;
 		fragments9_ = new ConstantLengthFragSet( 9 );
-		fragments9_ = FragmentIO().read_data( option[ OptionKeys::fpd::frag9 ]().name() );
+		fragments9_ = FragmentIO().read_data( option[ OptionKeys::in::file::frag9 ]() );
 		for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
 			core::Size position = (*i)->start();
-			library_[position] = **i;
+			//library_[position] = **i;
 		}
 	}
 	if ( option[ OptionKeys::in::file::frag3 ].user() ) {
 		using namespace core::fragment;
 		fragments3_ = new ConstantLengthFragSet( 3 );
-		fragments3_ = FragmentIO().read_data( option[ OptionKeys::fpd::frag3 ]().name() );
+		fragments3_ = FragmentIO().read_data( option[ OptionKeys::in::file::frag3 ]() );
 		for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
 			core::Size position = (*i)->start();
-			library_[position] = **i;
+			//library_[position] = **i;
 		}
 	}
 	
@@ -108,7 +127,6 @@ HybridizeProtocol::HybridizeProtocol()
 
 
 }
-
 	
 core::Real HybridizeProtocol::get_gdtmm( core::pose::Pose &pose ) {
 	core::Real gdtmm = 0;
@@ -142,8 +160,8 @@ void HybridizeProtocol::read_template_structures(utility::vector1 < utility::fil
 	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
 	for (core::Size i_ref=1; i_ref<= template_filenames.size(); ++i_ref) {
-		template_structures[i_ref] = new core::pose::Pose();
-		core::import_pose::pose_from_pdb( *(templates_[i_ref]), *residue_set, template_filenames[i_ref] );
+		templates_[i_ref] = new core::pose::Pose();
+		core::import_pose::pose_from_pdb( *(templates_[i_ref]), *residue_set, template_filenames[i_ref].name() );
 		
 		core::scoring::dssp::Dssp dssp_obj( *templates_[i_ref] );
 		dssp_obj.insert_ss_into_pose( *templates_[i_ref] );
@@ -155,20 +173,15 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 }
 
 
-MoverOP HybridizeProtocol::clone() const { return new HybridizeProtocol( *this ); }
-MoverOP HybridizeProtocol::fresh_instance() const { return new HybridizeProtocol; }
+protocols::moves::MoverOP HybridizeProtocol::clone() const { return new HybridizeProtocol( *this ); }
+protocols::moves::MoverOP HybridizeProtocol::fresh_instance() const { return new HybridizeProtocol; }
 
-protocols::moves::MoverOP
-HybridizeProtocolCreator::create_mover() const {
-	return new HybridizeProtocol;
-}
-		
 std::string
 HybridizeProtocol::get_name() const {
 	return "HybridizeProtocol";
 }
 
-} //	namespace hybridize 
+} // hybridize 
 } // comparative_modeling 
 } // protocols
 
