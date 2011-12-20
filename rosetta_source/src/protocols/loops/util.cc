@@ -380,14 +380,14 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 
 }
 
-Loops
+LoopsOP
 loops_from_string( std::string const loop_str, core::pose::Pose const & pose ){
   utility::vector1< std::string > const loops_vec( utility::string_split( loop_str, ',' ) );
 
 // each loop should have the format loop_start:loop_end:cut
 // if cut is not set then it's taken to be 0. Residue numbering can follow the
 // pdb numbering
-  Loops loops_from_tag;
+  LoopsOP loops_from_tag = new Loops();
  	foreach( std::string const residue_pair, loops_vec ){
     utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
     runtime_assert( residues.size() == 2 || residues.size() == 3 );
@@ -399,7 +399,7 @@ loops_from_string( std::string const loop_str, core::pose::Pose const & pose ){
     runtime_assert( loop_start <= loop_stop );
 	  runtime_assert( loop_start >= 1 );
     runtime_assert( loop_stop <= pose.total_residue() );
-    loops_from_tag.add_loop( loop_start, loop_stop, loop_cut );
+    loops_from_tag->add_loop( loop_start, loop_stop, loop_cut );
 	}
 	return( loops_from_tag );
 }

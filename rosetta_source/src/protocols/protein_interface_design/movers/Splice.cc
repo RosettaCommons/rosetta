@@ -139,7 +139,7 @@ Splice::apply( core::pose::Pose & pose )
 	protocols::loops::Loop loop( from_res() - 6/*start*/, to_res() + 6/*stop*/, to_res()/*cut*/ );
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
 	loops->push_back( loop );
-	ffl.loops( *loops );
+	ffl.loops( loops );
 	ffl.apply( pose );
 	core::Size const residue_diff( nearest_to_to - nearest_to_from - ( to_res() - from_res()) );
 /// change the loop length

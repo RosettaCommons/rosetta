@@ -79,6 +79,9 @@ using namespace core;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 
+// destructor
+IndependentLoopMover::~IndependentLoopMover(){}
+
 void IndependentLoopMover::set_defaults() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -148,7 +151,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		for ( int extension_attempt = 0; extension_attempt <= grow_attempts_; extension_attempt ++ ){
 
 			if ( !strict_loops_ && extension_attempt > 0 ){
-                non_const_loops()->grow_loop_away_from_sheets( pose, buildloop, 1.0 );
+                loops()->grow_loop_away_from_sheets( pose, buildloop, 1.0 );
 			}
 			for ( int build_attempt = 0; build_attempt < build_attempts_; build_attempt ++ ){
 				tr.Info << "Building Loop attempt: " << build_attempt << std::endl;

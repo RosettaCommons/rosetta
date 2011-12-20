@@ -34,6 +34,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>

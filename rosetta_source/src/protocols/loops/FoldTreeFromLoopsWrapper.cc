@@ -57,7 +57,7 @@ FoldTreeFromLoopsCreator::mover_name()
 FoldTreeFromLoops::FoldTreeFromLoops() :
 	Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
 {
-	loops_.clear();
+	loops_->clear();
 }
 
 
@@ -66,10 +66,10 @@ FoldTreeFromLoops::~FoldTreeFromLoops() {}
 void
 FoldTreeFromLoops::apply( core::pose::Pose & pose )
 {
-	if( loops().empty() )
+	if( loops()->empty() )
 		loops( loops_from_string( loop_str(), pose ) );
 	FoldTree f;
-	fold_tree_from_loops( pose, loops(), f );
+	fold_tree_from_loops( pose, *loops(), f );
 	TR<<"old foldtree "<<pose.fold_tree()<<"\nNew foldtree ";
 	pose.fold_tree( f );
 	TR<<pose.fold_tree()<<std::endl;

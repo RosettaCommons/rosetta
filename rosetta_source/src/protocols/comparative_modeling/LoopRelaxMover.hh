@@ -28,6 +28,8 @@
 
 #include <utility/vector1.hh>
 
+#include <protocols/loops/Loops.hh>
+
 
 namespace protocols {
 namespace comparative_modeling {

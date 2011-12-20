@@ -27,6 +27,8 @@
 
 #include <protocols/checkpoint/CheckPointer.hh>
 
+#include <utility/vector1.hh>
+
 #include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
@@ -88,8 +90,72 @@ void LoopMover::init( protocols::loops::LoopsOP loops_in )
     
 }
 
+// destructor
+LoopMover::~LoopMover(){}
+
 //////////////////////////////////////////////////////////////////////////////////
-    
+
+// accessors //
+
+void LoopMover::set_scorefxn( const core::scoring::ScoreFunctionOP score_in ) 
+{
+    scorefxn_ = score_in;
+}
+
+const core::scoring::ScoreFunctionOP & LoopMover::scorefxn() const 
+{
+    return scorefxn_;
+}
+
+void LoopMover::loops( protocols::loops::LoopsOP const l )
+{ 
+    loops_ = l; 
+}
+
+const protocols::loops::LoopsOP LoopMover::loops() const 
+{
+    return loops_;
+}
+
+
+const utility::vector1< core::fragment::FragSetOP > & LoopMover::frag_libs() const 
+{
+    return frag_libs_;
+}
+
+void LoopMover::set_use_loops_from_observer_cache( bool const loops_from_observer_cache )
+{
+    loops_from_observer_cache_ = loops_from_observer_cache;
+}
+
+bool const LoopMover::use_loops_from_observer_cache() const
+{
+    return loops_from_observer_cache_;
+}
+ 
+checkpoint::CheckPointerOP & LoopMover::get_checkpoints() 
+{
+    return checkpoints_;
+}
+
+void LoopMover::false_movemap( MoveMap const & mm ) 
+{
+		false_movemap_ = mm;
+}
+
+core::kinematics::MoveMap const & LoopMover::false_movemap() const 
+{
+    return false_movemap_;
+}
+
+// end of accessors
+
+// Additional MoveMap method
+Size LoopMover::enforce_false_movemap( MoveMap & mm ) const 
+{
+		return mm.import_false( false_movemap_ );
+}
+
 
 /// @details  Set a loop to extended torsion angles.
 void LoopMover::set_extended_torsions(
@@ -124,11 +190,6 @@ LoopMover::get_name() const {
 	return "LoopMover";
 }
 
-void LoopMover::non_OP_loops(const protocols::loops::Loops l)
-{
-    loops( new Loops( l ) );
-}
-
 void LoopMover::add_fragments(
 	core::fragment::FragSetOP fragset
 ) {
@@ -159,17 +220,8 @@ LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 	}
 }
 
-bool const LoopMover::use_loops_from_observer_cache() const
-{
-    return loops_from_observer_cache_;
-}
- 
-void LoopMover::set_use_loops_from_observer_cache( bool const loops_from_observer_cache )
-{
-    loops_from_observer_cache_ = loops_from_observer_cache;
-}
 
-// Used by both LoopMover_Refine_KIC and LoopMover_Perturb_KIC
+// Used by both LoopMover_Refine_KIC and LoopMover_Perturb_KIC - maybe it should be there, then?
 void
 loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, Size const round ){
 	bool const use_linear_chainbreak( basic::options::option[basic::options::OptionKeys::loops::kic_use_linear_chainbreak]() );
@@ -179,6 +231,32 @@ loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, Size const
 	} else { // default behavior.
 		scorefxn->set_weight( core::scoring::chainbreak, float(round) * 10.0 / 3.0 );
 	}
+}
+
+///@brief copy ctor
+LoopMover::LoopMover( LoopMover const & rhs ) :
+	Mover(rhs)
+{
+	initForEqualOperatorAndCopyConstructor(*this, rhs);
+}
+
+///@brief assignment operator
+LoopMover & LoopMover::operator=( LoopMover const & rhs ){
+	//abort self-assignment
+	if (this == &rhs) return *this;
+	Mover::operator=(rhs);
+	initForEqualOperatorAndCopyConstructor(*this, rhs);
+	return *this;
+}
+
+void LoopMover::initForEqualOperatorAndCopyConstructor(LoopMover & lhs, LoopMover const & rhs){
+	//going through all of member data and assigning it
+	lhs.loops_ = rhs.loops_;
+    lhs.scorefxn_ = rhs.scorefxn_;
+    lhs.frag_libs_ = rhs.frag_libs_;
+    lhs.checkpoints_ = rhs.checkpoints_;
+    lhs.loops_from_observer_cache_ = rhs.loops_from_observer_cache_;
+    lhs.false_movemap_ = rhs.false_movemap_;
 }
 
 } // namespace loops

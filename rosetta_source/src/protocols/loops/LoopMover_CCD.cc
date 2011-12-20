@@ -558,7 +558,7 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 	}
 	if( tag->hasOption( "loops" ) ){
 		std::string const loops_str( tag->getOption< std::string >( "loops" ) );
-		non_OP_loops( loops_from_string( loops_str, pose ) );
+		loops( loops_from_string( loops_str, pose ) );
 	}
 	if( tag->hasOption( "scorefxn" ) ) this->set_scorefxn( new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption<std::string>( "scorefxn" ) ) ) );
 

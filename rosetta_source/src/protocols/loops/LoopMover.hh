@@ -15,21 +15,17 @@
 #define INCLUDED_protocols_loops_LoopMover_hh
 
 #include <protocols/loops/LoopMover.fwd.hh>
+#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.hh>  // Changing from .fwd.hh --> .hh to make python bindings compile
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loops.hh>
-
-#include <core/fragment/FragSet.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-
-#include <protocols/checkpoint/CheckPointer.hh>
-
-#include <utility/vector1.hh>
+#include <protocols/checkpoint/CheckPointer.fwd.hh>
+#include <utility/vector1.fwd.hh>
 
 
 // C++ Headers
@@ -51,38 +47,34 @@ public: // typedefs
 
 public:
 
-	LoopMover();
-    
+	LoopMover();    
 	LoopMover( protocols::loops::LoopsOP loops_in );
+    
+    ///@brief copy ctor
+	LoopMover( LoopMover const & rhs );
 
-	void set_scorefxn( const core::scoring::ScoreFunctionOP score_in ) {
-		scorefxn_ = score_in;
-	}
-
-	/// @brief Apply the loop-build protocol to the input pose
-	void apply( core::pose::Pose & ) {}
+	///@brief assignment operator
+	LoopMover & operator=( LoopMover const & rhs );
+	
+    //destructor
+	virtual ~LoopMover();
 
 	virtual std::string get_name() const;
-
-	const protocols::loops::LoopsCOP loops() const {
-		return loops_;
-	}
     
-    const core::scoring::ScoreFunctionOP & scorefxn() const {
-		return scorefxn_;
-	}
+    /// @brief Apply the loop-build protocol to the input pose
+	void apply( core::pose::Pose & ) {}
     
-    const utility::vector1< core::fragment::FragSetOP > & frag_libs() const {
-		return frag_libs_;
-	}
+    void set_scorefxn( const core::scoring::ScoreFunctionOP score_in );
+    const core::scoring::ScoreFunctionOP & scorefxn() const;	
     
-    void non_OP_loops( protocols::loops::Loops const l );
-	void loops( protocols::loops::LoopsOP const l ){ loops_ = l; }
+    void loops( protocols::loops::LoopsOP const l );
+    const protocols::loops::LoopsOP loops() const;
+        
+    const utility::vector1< core::fragment::FragSetOP > & frag_libs() const;
+    
+	
 	/// @brief Extend a loop
-	virtual void set_extended_torsions(
-		core::pose::Pose & pose,
-		Loop const & loop
-	);
+	virtual void set_extended_torsions( core::pose::Pose & pose, Loop const & loop );
 
 public: // fragment libraries
 
@@ -97,50 +89,33 @@ public: // movemap management
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
-	inline
-	MoveMap const & false_movemap() const {
-		return false_movemap_;
-	}
-
+    MoveMap const & false_movemap() const;
+    
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
-	inline
-	void false_movemap( MoveMap const & mm ) {
-		false_movemap_ = mm;
-	}
-
+	void false_movemap( MoveMap const & mm );
+    
 public: // checkpointing
-
-	checkpoint::CheckPointerOP & get_checkpoints() {
-		return checkpoints_;
-	}
-
+	checkpoint::CheckPointerOP & get_checkpoints();
+    
 protected: // movemap management
 
 	/// @brief import the false_movemap's <b>explicit</b> False settings into the
 	///  given MoveMap
 	/// @return The number of False settings imported.
-	inline
-	Size enforce_false_movemap( MoveMap & mm ) const {
-		return mm.import_false( false_movemap_ );
-	}
-
+	Size enforce_false_movemap( MoveMap & mm ) const;
+    
 	/// @author flo, march 2011
 	/// @brief allow the loops to be set from the segments
 	/// stored in the poses observer cache. makes it possible
 	/// to have LoopMovers be part of parser protocols
 	/// where the loops were determined by some previous on the
 	/// fly step
-	void
-	set_loops_from_pose_observer_cache( core::pose::Pose const & pose );
+	void set_loops_from_pose_observer_cache( core::pose::Pose const & pose );
     
     bool const use_loops_from_observer_cache() const; 
     void set_use_loops_from_observer_cache( bool const loops_from_observer_cache );
-    const protocols::loops::LoopsOP & non_const_loops() const {
-		return loops_;
-	}
-
 
 private: // data
 
@@ -157,6 +132,7 @@ private: // data
 	MoveMap false_movemap_;
     
     void init( protocols::loops::LoopsOP loops_in );
+    void initForEqualOperatorAndCopyConstructor(LoopMover & lhs, LoopMover const & rhs);
 
 }; // class LoopMover
 

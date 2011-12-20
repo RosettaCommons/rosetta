@@ -52,7 +52,10 @@ public:
 		Mover::type("IndependentLoopMover");
 		set_defaults();
 	}
-
+	
+	//destructor
+        virtual ~IndependentLoopMover();
+	
 	void set_defaults();
 
 	/// @brief Apply the loop-build protocol to the input pose

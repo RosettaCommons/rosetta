@@ -41,11 +41,11 @@ public:
 	virtual ~FoldTreeFromLoops();
 	void loop_str( std::string const str ){ loop_str_ = str; }
 	std::string loop_str() const { return loop_str_; }
-	void loops( Loops const l ) { loops_ = l; }
-	Loops loops() const{ return loops_; }
+	void loops( LoopsOP const l ) { loops_ = l; }
+	LoopsOP loops() const{ return loops_; }
 private:
 	std::string loop_str_; // loaded at parsetime but only realized at apply
-	Loops loops_; // a different interface into FoldTreeFromLoops, which takes precedence over loop_str_;
+	LoopsOP loops_; // a different interface into FoldTreeFromLoops, which takes precedence over loop_str_;
 };
 
 
