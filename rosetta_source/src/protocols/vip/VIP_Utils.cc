@@ -49,7 +49,7 @@ namespace vip {
 using core::Real;
 using namespace core::scoring::packstat;
 
-inline std::string base_name(const std::string& str) {
+std::string base_name(const std::string& str) {
   size_t begin = 0;
   size_t end = str.length();
 

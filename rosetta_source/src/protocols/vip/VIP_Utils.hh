@@ -49,7 +49,7 @@ using core::Real;
 
 using namespace core::scoring::packstat;
 
-inline std::string base_name(const std::string& str);
+std::string base_name(const std::string& str);
 std::string get_out_tag(std::string fname);
 core::Real output_packstat( core::pose::Pose & );
 
