@@ -18,10 +18,20 @@ def svn_version():
     # If svnversion is not found, returns "" -> "unknown"
     # These commands work correctly because our current working directory is the Mini root.
     ver = os.popen("svnversion .").read().strip() or "unknown"
-    svn_info = os.popen("svn info").read()
-    match = re.search('URL: (.+)', svn_info)
-    if match: url = match.group(1)
-    else: url = "unknown"
+
+    #if we aren't in an svn repository, try git
+    if ver == "unknown" or ver == "exported":
+        ver = os.popen("git log -1 --format='%H'").read().strip() or "unknown"
+        if ver != "unknown":
+            url = os.popen("git remote -v |grep fetch |awk '{print $2}'").read().strip()
+            if url == "":
+                url = "unknown"
+    else:
+        svn_info = os.popen("svn info").read()
+        match = re.search('URL: (.+)', svn_info)
+        if match: url = match.group(1)
+        else: url = "unknown"
+    print ver, url
     # normpath() converts foward slashes to backslashes on Windows
     f = open( os.path.normpath("src/core/svn_version.cc"), "w" )
     f.write('''// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
