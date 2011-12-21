@@ -1089,7 +1089,7 @@ class PythonPyExitCallback(utility.PyExitCallback):
 
 __global_PythonPyExitCallback__ = None
 
-def init(*args):
+def init(*args, **kargs):
     global __global_PythonPyExitCallback__
 
     __global_PythonPyExitCallback__ = PythonPyExitCallback()
