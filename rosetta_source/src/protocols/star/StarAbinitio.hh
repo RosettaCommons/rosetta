@@ -24,6 +24,7 @@
 
 // Project headers
 #include <core/fragment/FragSet.fwd.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -58,27 +59,12 @@ class StarAbinitio : public protocols::moves::Mover {
   /// @detail Removes virtual residue, cutpoint variants and restores simple kinematics
   void tear_down_kinematics(core::pose::Pose* pose) const;
 
-  /// @detail Sets unaligned residues' torsions to their extended values and modifies
-  /// bond lengths, angles to their ideal values. Since short and long loops are
-  /// modeled differently, this method is also responsible for selecting interior
-  /// cutpoints (i.e. those between consecutive aligned regions).
-  void extend_unaligned(const protocols::loops::Loops& aligned,
-                        const protocols::loops::Loops& unaligned,
-                        utility::vector1<unsigned>* interior_cuts,
-                        core::pose::Pose* pose) const;
-
-  /// @detail Stochastically selects a cutpoint on the closed interval [start, stop]
-  /// using weighted reservoir sampling. Each residue is assigned a weight proportional
-  /// to its likelihood of being a loop. A small, non-zero value is added to each weight
-  /// to avoid the unlikely situation where we're asked to choose a cutpoint in a region
-  /// with P(res_i = loop) is zero. In such cases, equiprobable selection occurs.
-  unsigned choose_cutpoint(unsigned start, unsigned stop) const;
-
   /// @detail Closes any loops that remain after ab initio folding using CCD
   void close_remaining_loops(core::pose::Pose* pose) const;
 
   core::fragment::FragSetOP fragments_lg_;
   core::fragment::FragSetOP fragments_sm_;
+  core::fragment::SecondaryStructureOP pred_ss_;
 };
 
 }  // namespace star

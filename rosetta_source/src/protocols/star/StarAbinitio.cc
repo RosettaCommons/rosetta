@@ -28,7 +28,6 @@
 #include <basic/Tracer.hh>
 #include <numeric/interpolate.hh>
 #include <numeric/prob_util.hh>
-#include <numeric/random/WeightedReservoirSampler.hh>
 #include <numeric/xyzVector.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -72,15 +71,13 @@
 #include <protocols/relax/util.hh>
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 
+// Package headers
+#include <protocols/star/Extender.hh>
+
 namespace protocols {
 namespace star {
 
 static basic::Tracer TR("protocols.star.StarAbinitio");
-
-// Numeric constants
-static const double EXT_PHI = -150;
-static const double EXT_PSI = +150;
-static const double EXT_OMG = +180;
 
 typedef utility::vector1<double> Probabilities;
 
@@ -104,9 +101,16 @@ void compute_per_residue_probabilities(unsigned num_residues,
   numeric::product(probs->begin(), probs->end(), p_cut.begin(), p_cut.end());
   numeric::product(probs->begin(), probs->end(), p_end.begin(), p_end.end());
 
-  // Zero-out probabilities of aligned residues
+  // Zero-out probabilities of aligned residues and preceding torsions that
+  // would cause them to move
   for (unsigned i = 1; i <= aligned.num_loop(); ++i) {
-    for (unsigned j = aligned[i].start(); j <= aligned[i].stop(); ++j) {
+    unsigned stop = aligned[i].stop();
+    unsigned start = aligned[i].start() - fragment_len + 1;
+    if (start < 1) {
+      start = 1;
+    }
+
+    for (unsigned j = start; j <= stop; ++j) {
       (*probs)[j] = 0;
     }
   }
@@ -115,17 +119,13 @@ void compute_per_residue_probabilities(unsigned num_residues,
   // Zero-out probabilities of residues that would allow folding across the cut
   protocols::medal::invalidate_residues_spanning_cuts(tree, fragment_len, probs);
   numeric::normalize(probs->begin(), probs->end());
+  numeric::print_probabilities(*probs, TR.Debug);
 }
 
 void update_chainbreak(core::scoring::ScoreFunctionOP score, double weight) {
   assert(score);
   assert(weight >= 0);
   score->set_weight(core::scoring::linear_chainbreak, weight);
-}
-
-void add_constraints_to_score(core::scoring::ScoreFunctionOP score) {
-  assert(score);
-  core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score);
 }
 
 /// @detail Utility method for creating a score function of the given type,
@@ -135,7 +135,7 @@ core::scoring::ScoreFunctionOP setup_score(const std::string& weights, double cb
   using core::scoring::ScoreFunctionFactory;
 
   ScoreFunctionOP score = ScoreFunctionFactory::create_score_function(weights);
-  add_constraints_to_score(score);
+  core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score);
   update_chainbreak(score, cb);
   return score;
 }
@@ -194,55 +194,6 @@ void simple_fold_tree(core::pose::Pose* pose) {
   pose->fold_tree(FoldTree(pose->total_residue()));
 }
 
-/// @detail Identifies aligned and unaligned regions in the structure
-/// by scanning the SequenceAlignment. Returns both sets of regions in
-/// increasing order of start position.
-void identify_regions(unsigned num_residues,
-                      const core::sequence::SequenceAlignment& alignment,
-                      protocols::loops::LoopsOP aligned,
-                      protocols::loops::LoopsOP unaligned) {
-  using core::id::SequenceMapping;
-  using utility::vector1;
-
-  assert(aligned);
-  assert(unaligned);
-  assert(num_residues > 0);
-
-  SequenceMapping mapping = alignment.sequence_mapping(1, 2);
-
-  vector1<unsigned> unaligned_res;
-  for (unsigned i = 1; i <= num_residues; ++i) {
-    if (mapping[i] == 0) {
-      unaligned_res.push_back(i);
-    }
-  }
-
-  unaligned = protocols::comparative_modeling::pick_loops_unaligned(num_residues, unaligned_res, 3);
-  unaligned->sequential_order();
-
-  *aligned = unaligned->invert(num_residues);
-
-  TR << "Aligned: " << *aligned << std::endl;
-  TR << "Unaligned: " << *unaligned << std::endl;
-}
-
-/// @detail Sets torsion angles for residues [start.. stop] to their extended
-/// values and idealizes bond lengths and bond angles.
-void extend_section(unsigned start, unsigned stop, core::pose::Pose* pose) {
-  using protocols::loops::Loop;
-  using protocols::loops::Loops;
-
-  assert(pose);
-  assert(start > 0);
-  assert(stop > 0);
-  assert(start <= stop);
-  assert(stop <= pose->total_residue());
-
-  Loops region;
-  region.add_loop(Loop(start, stop));
-  protocols::loops::set_extended_torsions_and_idealize_loops(*pose, region);
-}
-
 /// @detail Optionally relaxes the pose
 void relax(core::pose::Pose* pose) {
   using protocols::moves::MoverOP;
@@ -256,89 +207,6 @@ void relax(core::pose::Pose* pose) {
   MoverOP relax = protocols::relax::generate_relax_from_cmd();
   relax->apply(*pose);
   emit_intermediate(*pose, "star_relaxed.pdb");
-}
-
-void StarAbinitio::extend_unaligned(const protocols::loops::Loops& aligned,
-                                    const protocols::loops::Loops& unaligned,
-                                    utility::vector1<unsigned>* interior_cuts,
-                                    core::pose::Pose* pose) const {
-  using core::kinematics::FoldTree;
-  using protocols::loops::Loop;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-
-  assert(pose);
-  assert(interior_cuts);
-  assert(aligned.num_loop() >= 2);
-
-  const Loop& first = aligned[1];
-  const Loop& last = aligned[aligned.num_loop()];
-
-  unsigned num_residues = pose->total_residue();
-  bool has_preceding_region = first.start() > 1;
-  bool has_trailing_region = last.stop() < num_residues;
-
-  // beginning
-  if (has_preceding_region) {
-    extend_section(1, first.start() - 1, pose);
-    pose->set_phi(first.start(), EXT_PHI);
-    core::conformation::idealize_position(first.start(), pose->conformation());
-  }
-
-  // end
-  if (has_trailing_region) {
-    simple_fold_tree(pose);
-    extend_section(last.stop() + 1, num_residues, pose);
-    pose->set_omega(last.stop(), EXT_OMG);
-    core::conformation::idealize_position(last.stop(), pose->conformation());
-  }
-
-  // interior
-  for (unsigned i = 2; i <= aligned.num_loop(); ++i) {
-    const Loop& prev = aligned[i - 1];
-    const Loop& curr = aligned[i];
-
-    // If the sequence separation between consecutive aligned regions <= x,
-    // chain the unaligned residues off the first aligned region. Otherwise,
-    // split the unaligned residues between the two aligned regions.
-    unsigned separation = curr.start() - prev.stop();
-
-    if (separation <= option[OptionKeys::abinitio::star::short_loop_len]()) {
-      FoldTree tree(num_residues);
-      tree.new_jump(1, curr.start(), curr.start() - 1);
-      pose->fold_tree(tree);
-      extend_section(prev.stop(), curr.start() - 2, pose);
-
-      // Since we chained the unaligned residues off one side (i.e. `prev`),
-      // set the cutpoint before the first residue on the other side (i.e. `curr`)
-      interior_cuts->push_back(curr.start() - 1);
-    } else {
-      unsigned cut = choose_cutpoint(prev.stop() + 1, curr.start() - 1);
-      interior_cuts->push_back(cut);
-
-      FoldTree tree(num_residues);
-      tree.new_jump(1, curr.start() + 1, cut);
-      pose->fold_tree(tree);
-
-      // Extend torsions left of the cut-- incr order toward cut
-      for (unsigned i = prev.stop(); i < cut; ++i) {
-        pose->set_phi(i, EXT_PHI);
-        pose->set_psi(i, EXT_PSI);
-        pose->set_omega(i, EXT_OMG);
-        core::conformation::idealize_position(i, pose->conformation());
-      }
-
-      // Extend torsions right of the cut-- decr order toward cut
-      for (unsigned i = curr.start(); i >= cut; --i) {
-        pose->set_phi(i, EXT_PHI);
-        pose->set_psi(i, EXT_PSI);
-        pose->set_omega(i, EXT_OMG);
-        core::conformation::idealize_position(i, pose->conformation());
-      }
-    }
-  }
-
-  simple_fold_tree(pose);
 }
 
 void StarAbinitio::setup_kinematics(const protocols::loops::Loops& aligned,
@@ -415,37 +283,38 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
   to_centroid(&pose);
   emit_intermediate(pose, "star_initial.pdb");
 
-  vector1<unsigned> interior_cuts;
-
-  LoopsOP aligned = new Loops();
-  LoopsOP unaligned = new Loops();
-
-  identify_regions(pose.total_residue(), job->alignment(), aligned, unaligned);
-  extend_unaligned(*aligned, *unaligned, &interior_cuts, &pose);
+  Extender extender(job->alignment().clone(), pose.total_residue());
+  extender.set_secondary_structure(pred_ss_);
+  extender.extend_unaligned(&pose);
   emit_intermediate(pose, "star_extended.pdb");
+
+  const Loops& aligned = *(extender.aligned());
+  const Loops& unaligned = *(extender.unaligned());
+  TR << "Aligned: " << aligned << std::endl;
+  TR << "Unaligned: " << unaligned << std::endl;
 
   // Prepare the pose
   const unsigned num_residues = pose.total_residue();
-  setup_kinematics(*aligned, interior_cuts, &pose);
+  setup_kinematics(aligned, extender.cutpoints(), &pose);
   setup_constraints(&pose);
 
   Probabilities probs_sm, probs_lg;
-  compute_per_residue_probabilities(num_residues, fragments_sm_->max_frag_length(), *aligned, pose.fold_tree(), &probs_sm);
-  compute_per_residue_probabilities(num_residues, fragments_lg_->max_frag_length(), *aligned, pose.fold_tree(), &probs_lg);
+  compute_per_residue_probabilities(num_residues, fragments_sm_->max_frag_length(), aligned, pose.fold_tree(), &probs_sm);
+  compute_per_residue_probabilities(num_residues, fragments_lg_->max_frag_length(), aligned, pose.fold_tree(), &probs_lg);
 
   // Simulation parameters
-  const unsigned num_stages = 4;
+  const int num_stages = 4;
   const double t = option[OptionKeys::abinitio::temperature]();
   const double m = option[OptionKeys::abinitio::increase_cycles]();
   const double c = option[OptionKeys::jumps::increase_chainbreak]();
 
   // Compute ramping schedules
   ShortestPathInFoldTree ft_dist(pose.fold_tree());
-  unsigned max_dist = ft_dist.max_dist();
+  int max_dist = ft_dist.max_dist();
 
-  vector1<unsigned> seq_sep(num_stages);
-  for (unsigned i = 1; i <= num_stages; ++i) {
-    seq_sep[i] = static_cast<unsigned>(numeric::linear_interpolate<unsigned>(0, max_dist, i, num_stages));
+  vector1<int> seq_sep(num_stages);
+  for (int i = 1; i <= num_stages; ++i) {
+    seq_sep[i] = static_cast<int>(numeric::linear_interpolate<int>(0, max_dist, i, num_stages));
   }
 
   // Movers
@@ -506,32 +375,6 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
   relax(&pose);
 }
 
-unsigned StarAbinitio::choose_cutpoint(unsigned start, unsigned stop) const {
-  using core::fragment::SecondaryStructure;
-  using numeric::random::WeightedReservoirSampler;
-  using utility::vector1;
-
-  assert(start > 0);
-  assert(stop > 0);
-  assert(start <= stop);
-
-  SecondaryStructure ss_sm(*fragments_sm_);
-  SecondaryStructure ss_lg(*fragments_lg_);
-
-  WeightedReservoirSampler<unsigned> sampler(1);
-
-  for (unsigned i = start; i <= stop; ++i) {
-    double weight = ss_sm.loop_fraction(i) + ss_lg.loop_fraction(i) + 1e-20;
-    sampler.consider_sample(i, weight);
-  }
-
-  vector1<unsigned> samples;
-  sampler.samples(&samples);
-  assert(samples.size());
-
-  return samples[1];
-}
-
 void StarAbinitio::tear_down_kinematics(core::pose::Pose* pose) const {
   assert(pose);
 
@@ -580,10 +423,13 @@ StarAbinitio::StarAbinitio() {
   using namespace basic::options::OptionKeys;
   using core::fragment::FragmentIO;
   using core::fragment::FragSetOP;
+  using core::fragment::SecondaryStructure;
 
   FragmentIO io;
   fragments_lg_ = io.read_data(option[in::file::frag9]());
   fragments_sm_ = io.read_data(option[in::file::frag3]());
+
+  pred_ss_ = new SecondaryStructure(*fragments_sm_);
 }
 
 std::string StarAbinitio::get_name() const {

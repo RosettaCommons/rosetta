@@ -1,3 +1,4 @@
+namespace lh { RealOptionKey const max_bbrms( "lh:max_bbrms" );  }
 namespace lh { RealOptionKey const min_rms( "lh:min_rms" );  }
 namespace lh { RealOptionKey const max_rms( "lh:max_rms" );  }
 namespace lh { BooleanOptionKey const filter_by_phipsi( "lh:filter_by_phipsi" );  }
@@ -581,4 +582,3 @@ namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }

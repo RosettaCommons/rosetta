@@ -1,3 +1,4 @@
+namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
@@ -581,4 +582,3 @@ namespace lh { StringOptionKey const refstruct( "lh:refstruct" );  }
 namespace lh { StringOptionKey const homo_file( "lh:homo_file" );  }
 namespace lh { RealVectorOptionKey const createdb_rms_cutoff( "lh:createdb_rms_cutoff" );  }
 namespace lh { RealOptionKey const min_bbrms( "lh:min_bbrms" );  }
-namespace lh { RealOptionKey const max_bbrms( "lh:max_bbrms" );  }

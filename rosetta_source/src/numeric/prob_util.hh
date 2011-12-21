@@ -15,6 +15,7 @@
 
 // C/C++ headers
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <string>
 
@@ -72,6 +73,9 @@ void product(ForwardIterator probs1_first, ForwardIterator probs1_last,
 /// of sampling residue i. There must be 1 line for each residue in the
 /// pose on which this data will be used.
 void read_probabilities_or_die(const std::string& filename, utility::vector1<double>* probs);
+
+/// @brief Writes probs to the specified ostream
+void print_probabilities(const utility::vector1<double>& probs, std::ostream& out);
 
 }  // namespace numeric
 

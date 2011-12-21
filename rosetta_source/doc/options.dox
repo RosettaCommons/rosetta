@@ -2442,6 +2442,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-min_unaligned_len</b> \<Integer\><dt>
+<dd>Minimum length of an unaligned region</dd><br>
+<dd>Default: 3</dd><br>
+</dl>
+<dl>
 <dt><b>-relax</b> \<Boolean\><dt>
 <dd>Relax structures at end of StarAbinitio protocol.</dd><br>
 <dd>Default: true</dd><br>

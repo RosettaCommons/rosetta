@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file numeric/prob_util.cc
-/// @author Christopher Miles (cmiles@uw.edu) 
+/// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit header
 #include <numeric/prob_util.hh>
@@ -39,6 +39,12 @@ void read_probabilities_or_die(const std::string& filename, utility::vector1<dou
     probs->push_back(p);
   }
   in.close();
+}
+
+void print_probabilities(const utility::vector1<double>& probs, std::ostream& out) {
+  for (unsigned i = 1; i <= probs.size(); ++i) {
+    out << "P(" << i << ") = " << probs[i] << std::endl;
+  }
 }
 
 }  // namespace numeric
