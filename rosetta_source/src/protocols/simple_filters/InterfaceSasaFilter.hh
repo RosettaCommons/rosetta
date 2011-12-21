@@ -30,7 +30,7 @@ class InterfaceSasaFilter : public filters::Filter
 {
 public:
 	InterfaceSasaFilter();
-	InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic=false, bool const polar=false );
+	InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic=false, bool const polar=false, core::Real const upper_threshold=100000000.0 );
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -44,6 +44,7 @@ public:
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Real lower_threshold_;
+	core::Real upper_threshold_;
 	bool hydrophobic_, polar_; /// count only hydrophobics? polars?
 	core::Size jump_; // dflt 1; across which jump to compute sasa
 };

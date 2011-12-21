@@ -42,14 +42,16 @@ InterfaceSasaFilter::InterfaceSasaFilter() :
 	lower_threshold_( 0.0 ),
 	hydrophobic_( false ),
 	polar_( false ),
-	jump_( 1 )
+	jump_( 1 ),
+	upper_threshold_(100000000000.0)
 {}
 
-InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/ ) :
+InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/, core::Real upper_threshold ) :
 	Filter( "Sasa" ),
 	lower_threshold_( lower_threshold ),
 	hydrophobic_( hydrophobic ),
-	polar_( polar )
+	polar_( polar ),
+	upper_threshold_(upper_threshold)
 {}
 
 InterfaceSasaFilter::~InterfaceSasaFilter(){}
@@ -68,6 +70,7 @@ void
 InterfaceSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & )
 {
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
+	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000000000000);
 	jump( tag->getOption< core::Size >( "jump", 1 ));
 	hydrophobic_ = tag->getOption<bool>( "hydrophobic", false );
 	polar_ = tag->getOption<bool>( "polar", false );
@@ -88,7 +91,7 @@ InterfaceSasaFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const sasa( compute( pose ) );
 
 	interface_sasa_filter_tracer<<"sasa is "<<sasa<<". ";
-	if( sasa >= lower_threshold_ ){
+	if( sasa >= lower_threshold_ && sasa <= upper_threshold_ ){
 		interface_sasa_filter_tracer<<"passing." <<std::endl;
 		return true;
 	}
