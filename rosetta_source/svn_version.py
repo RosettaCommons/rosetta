@@ -31,7 +31,6 @@ def svn_version():
         match = re.search('URL: (.+)', svn_info)
         if match: url = match.group(1)
         else: url = "unknown"
-    print ver, url
     # normpath() converts foward slashes to backslashes on Windows
     f = open( os.path.normpath("src/core/svn_version.cc"), "w" )
     f.write('''// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-

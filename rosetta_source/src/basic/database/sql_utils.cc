@@ -196,7 +196,7 @@ sessionOP get_db_session(
 
 		if(option[mysql::host].user() || option[mysql::user].user() || option[mysql::password].user() || option[mysql::port].user())
 		{
-			utility_exit_with_message("you have specified mysql server options, but are running in sqlite3 mode, specify -inout:database_mode mysql to rectify this.");
+			TR << "WARNING: You have specified both mysql and sqlite connection options.  Are you sure you meant to do this?";
 		}
 		sessionOP db_session(DatabaseSessionManager::get_instance()->get_session(db_name, readonly, separate_db_per_mpi_process));
 		return db_session;
