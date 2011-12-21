@@ -370,9 +370,13 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
 
   // Housekeeping
   tear_down_kinematics(&pose);
-  tear_down_constraints(&pose);
   close_remaining_loops(&pose);
   relax(&pose);
+
+  // Rescore with a consistent energy function to normalize output
+  to_centroid(&pose);
+  score4->score(pose);
+  tear_down_constraints(&pose);
 }
 
 void StarAbinitio::tear_down_kinematics(core::pose::Pose* pose) const {
