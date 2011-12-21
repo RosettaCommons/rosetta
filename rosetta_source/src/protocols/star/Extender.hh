@@ -20,10 +20,10 @@
 #include <utility/vector1.hh>
 
 // Project headers
-#include <core/fragment/SecondaryStructure.fwd.hh>
+#include <core/fragment/SecondaryStructure.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/Loops.hh>
 
 namespace protocols {
 namespace star {
