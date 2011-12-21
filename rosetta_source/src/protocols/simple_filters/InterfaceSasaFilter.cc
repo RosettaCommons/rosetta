@@ -70,7 +70,7 @@ void
 InterfaceSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & )
 {
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
-	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000000000000);
+	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);
 	jump( tag->getOption< core::Size >( "jump", 1 ));
 	hydrophobic_ = tag->getOption<bool>( "hydrophobic", false );
 	polar_ = tag->getOption<bool>( "polar", false );
