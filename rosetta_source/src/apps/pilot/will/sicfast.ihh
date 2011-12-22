@@ -11,6 +11,7 @@ inline Real sigmoid( Real const & sqdist, Real const & start, Real const & stop 
   }
 }
 
+std::set<int> CONTACTS;
 
 Real
 sicfast(
@@ -123,26 +124,64 @@ sicfast(
 
 
 Real
+sicsafe(
+	vector1<Vec> const & pa,
+	vector1<Vec> const & pb,
+	vector1<Vec> const & cba,
+	vector1<Vec> const & cbb,
+	Real & cbcount
+) {
+	Real const CONTACT_D  = basic::options::option[basic::options::OptionKeys::cxdock::contact_dis]();
+	Real const CLASH_D    = basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]();
+	Real const CONTACT_D2 = sqr(CONTACT_D);
+	Real const CLASH_D2   = sqr(CLASH_D);
+	
+	Real mindis = 9e9;
+	int mni,mnj;
+	// for(vector1<Vec>::const_iterator i = pa.begin(); i != pa.end(); ++i) {
+	// for(vector1<Vec>::const_iterator j = pb.begin(); j != pb.end(); ++j) {
+	for(int ii = 1; ii <= pa.size(); ++ii) {
+	Vec const *i = &pa[ii];
+	for(int jj = 1; jj <= pa.size(); ++jj) {		
+		Vec const *j = &pb[jj];		
+
+		Real const dxy2 = (i->x()-j->x())*(i->x()-j->x()) + (i->y()-j->y())*(i->y()-j->y());
+		if( dxy2 >= CLASH_D2 ) continue;
+		Real const dz = j->z() - i->z() - sqrt(CLASH_D2-dxy2);
+		if( dz < mindis) {
+			mindis = dz;
+			mni = ii;
+			mnj = jj;
+		}
+	}		
+	}
+	CONTACTS.insert(mni);
+	CONTACTS.insert(mnj);	
+	
+	cbcount = 0.0;
+	for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
+	  for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
+			Real d2 = ib->distance_squared( (*ia + (mindis*Vec(0,0,1)) ) );
+			if( d2 < CONTACT_D2 ) {
+				cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
+			}
+	  }
+	}
+	
+	return mindis;
+}
+
+Real
 sicfast(
 	vector1<Vec> const & pa,
 	vector1<Vec> const & pb,
 	vector1<Vec> const & cba,
 	vector1<Vec> const & cbb,
-//Vec ori,
 	Real & cbcount
 ) {
 	Real const CONTACT_D2 = sqr(basic::options::option[basic::options::OptionKeys::cxdock::contact_dis]());
-	Real const CLASH_D2   =     basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]();
+	Real const CLASH_D2   = sqr(basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]());
 	Real const BIN        =     basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]() /2.0;
-
-	// get points, rotated ro ori is 0,0,1, might already be done
-	// Mat rot = Mat::identity();
-	// if		 ( ori.dot(Vec(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vec(1,0,0).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-	// else if( ori.dot(Vec(0,0,1)) <	0.99999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-	// if( rot != Mat::identity() ) {
-	//	 for(vector1<Vec>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-	//	 for(vector1<Vec>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
-	// }
 
 	// get bounds for plane hashes
 	Real xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
@@ -161,24 +200,17 @@ sicfast(
 	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
 	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
 	
-	// TR << "BOUNDS " << xmn << " " << xmx << " " << ymn << " " << ymx << std::endl;
-	// TR << "BOUNDS " << xlb << " " << xub << " " << ylb << " " << yub << std::endl;
-	
 	// insert points into hashes
 	int const xsize = xub-xlb+1;
 	int const ysize = yub-ylb+1;
 	ObjexxFCL::FArray2D<Vec> ha(xsize,ysize,Vec(0,0,-9e9)),hb(xsize,ysize,Vec(0,0,9e9));
 	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-	  // int const ix = min(xsize,max(1,(int)ceil(ia->x()/BIN)-xlb));
-	  // int const iy = min(ysize,max(1,(int)ceil(ia->y()/BIN)-ylb));
 	  int const ix = (int)ceil(ia->x()/BIN)-xlb;
 	  int const iy = (int)ceil(ia->y()/BIN)-ylb;
 	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
 	  if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
 	}
 	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-	  // int const ix = min(xsize,max(1,(int)ceil(ib->x()/BIN)-xlb));
-	  // int const iy = min(ysize,max(1,(int)ceil(ib->y()/BIN)-ylb));
 	  int const ix = (int)ceil(ib->x()/BIN)-xlb;
 	  int const iy = (int)ceil(ib->y()/BIN)-ylb;
 	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
@@ -215,23 +247,6 @@ sicfast(
 	  }
 	}
 	
-	// {
-	//	utility::io::ozstream out("cba.pdb");
-	//	for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
-	//		Vec viz = (*ia) + (mindis*ori);
-	//		out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	//	}
-	//	out.close();
-	// }
-	// {
-	//	utility::io::ozstream out("cbb.pdb");
-	//	for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-	//		Vec viz = (*ib);
-	//		out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	//	}
-	//	out.close();
-	// }
-	
 	Real const CLASH_D = sqrt(CLASH_D2);
 	Real const CONTACT_D = sqrt(CONTACT_D2);	
 
@@ -244,6 +259,8 @@ sicfast(
 	 	 if( d2 < CONTACT_D2 ) {
 			// CHANGE ME!
 	 		 cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
+//	 		 cbcount += sigmoid(d2, 0.0, 2*CONTACT_D );
+//			cbcount++;
 	 		 // Vec viz = (*ia) + (mindis*ori);
 	 		 // out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 	 		 // viz = *ib;
@@ -297,39 +314,6 @@ sicfast(
 	return mindis;
 }
 
-// Real sicfast(
-//								Pose const & a,
-//								Pose const & b,
-//								Vec ori_in,
-//								int & cbcount
-//								) {
-//	 // get points, rotated ro ori is 0,0,1
-//	 vector1<Vec> pa,pb;
-//	 vector1<Vec> cba,cbb;
-//	 Vec ori = ori_in.normalized();
-//	 Mat rot = Mat::identity();
-//	 if		 ( ori.dot(Vec(0,0,1)) < -0.999 ) rot = rotation_matrix( Vec(1,0,0).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-//	 else if( ori.dot(Vec(0,0,1)) <	0.999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-//	 for(int i = 1; i <= (int)a.n_residue(); ++i) {
-//		 if(a.residue(i).name3()=="GLY") {
-//			 cba.push_back(rot*Vec(a.residue(i).xyz(2)));
-//			 for(int j = 1; j <= 4; ++j) pa.push_back(rot*Vec(a.residue(i).xyz(j)));
-//		 } else {
-//			 cba.push_back(rot*Vec(a.residue(i).xyz(5)));
-//			 for(int j = 1; j <= 5; ++j) pa.push_back(rot*Vec(a.residue(i).xyz(j)));
-//		 }
-//	 }
-//	 for(int i = 1; i <= (int)b.n_residue(); ++i) {
-//		 if(b.residue(i).name3()=="GLY") {
-//			 cbb.push_back(rot*Vec(b.residue(i).xyz(2)));
-//			 for(int j = 1; j <= 4; ++j) pb.push_back(rot*Vec(b.residue(i).xyz(j)));
-//		 } else {
-//			 cbb.push_back(rot*Vec(b.residue(i).xyz(5)));
-//			 for(int j = 1; j <= 5; ++j) pb.push_back(rot*Vec(b.residue(i).xyz(j)));
-//		 }
-//	 }
-//	 return sicfast( pa, pb, cba, cbb, Vec(0,0,1), cbcount );
-// }
 
 Real
 mindis(
@@ -340,7 +324,7 @@ mindis(
 	Real mndis2=9e9;
 	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
 		for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-			Real d2 = ib->distance_squared( (*ia + (t*Vec(0,0,1)) ) );
+			Real d2 = ib->distance_squared( (*ia + (Vec(0,0,t)) ) );
 			if( d2 < mndis2 ) {
 				mndis2 = d2;
 			}

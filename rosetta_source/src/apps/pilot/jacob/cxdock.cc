@@ -13,6 +13,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/scoring/sasa.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -24,6 +25,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/io/izstream.hh>
@@ -38,7 +40,6 @@ OPT_1GRP_KEY( Real         , cxdock, clash_dis    )
 OPT_1GRP_KEY( Real         , cxdock, contact_dis  )
 OPT_1GRP_KEY( Real         , cxdock, hb_dis  )
 OPT_1GRP_KEY( Real         , cxdock, num_contacts )
-OPT_1GRP_KEY( Real         , cxdock, ang_samp )
 OPT_1GRP_KEY( Boolean      , cxdock, dumpfirst )
 
 void register_options() {
@@ -50,14 +51,13 @@ void register_options() {
 	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 6.0 );	
 	NEW_OPT( cxdock::hb_dis       ,"max acceptable hb dis", 6.0 );
 	NEW_OPT( cxdock::num_contacts ,"required no. contacts", 20.0 );
-	NEW_OPT( cxdock::ang_samp     ,"num degrees", 1.0 );
 	NEW_OPT( cxdock::sphere       ,"sph points", 8192 );
 	NEW_OPT( cxdock::dumpfirst    ,"stop on first hit", false );
 }
 
 
 typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Matf;
+typedef numeric::xyzMatrix<Real> Mat;
 using core::id::AtomID;
 using basic::options::option;
 using core::pose::Pose;
@@ -92,6 +92,83 @@ static core::io::silent::SilentFileData sfd;
 #include <apps/pilot/will/sicfast.ihh>
 
 
+class SphereSampler {
+	vector1<Vec> all_;
+	vector1<int> half_;
+	vector1<int> half_w_nbr_;
+	vector1<vector1<int> > nbr_;
+public:
+	SphereSampler(int NSS) {
+		all_.resize(NSS);		{
+			izstream is;
+			basic::database::open(is,"sampling/spheres/sphere_"+str(NSS)+".dat");
+			for(int i = 1; i <= NSS; ++i) {
+				Real x,y,z;
+				is >> x >> y >> z;
+				all_[i] = Vec(x,y,z);
+				if( all_[i].z() > 0) half_.push_back(i);
+				else if( all_[i].z()==0 && all_[i].y() > 0) half_.push_back(i);
+				else if( all_[i].z()==0 && all_[i].y()==0 && all_[i].x() > 0) half_.push_back(i);
+			}
+			is.close();
+		}
+		nbr_.resize(NSS);		{
+			izstream is;
+			basic::database::open(is,"sampling/spheres/sphere_"+str(NSS)+"_neighbors.dat");
+			if(!is.good()) utility_exit_with_message("sphere neighbors not found!");
+			for(int i = 1; i <= NSS; ++i) {
+				int tmp;
+				nbr_[i].resize(6);
+				is >> tmp >> nbr_[i][1] >> nbr_[i][2] >> nbr_[i][3] >> nbr_[i][4] >> nbr_[i][5] >> nbr_[i][6];
+				if( ! nbr_[i].back() ) nbr_[i].pop_back();
+			}
+			is.close();
+		}
+		// inefficient not to use set...
+		half_w_nbr_ = half_;
+		for(vector1<int>::const_iterator i = half_.begin(); i != half_.end(); ++i) {
+			for(vector1<int>::const_iterator j = nbr_[*i].begin(); j != nbr_[*i].end(); ++j) {
+				if( std::find(half_w_nbr_.begin(),half_w_nbr_.end(),*j) == half_w_nbr_.end() ) {
+					half_w_nbr_.push_back(*j);
+				}
+			}
+		}
+		cout << "SphereSampler " << all_.size() << " " << half_.size() << " " << half_w_nbr_.size() << endl;
+		if( half_.size() != all_.size()/2 ) utility_exit_with_message("bad half!!");
+	}
+	Vec const & operator[](size_t i) const { return all_[i]; }
+	size_t size() const { return all_.size(); }
+	size_t half_w_nbr_size() const { return half_w_nbr_.size(); }
+	vector1<int> const & half_w_nbr() const { return half_w_nbr_; }
+	vector1<int>::const_iterator nbr_begin(size_t const & i) const { return nbr_[i].begin(); }
+	vector1<int>::const_iterator nbr_end  (size_t const & i) const { return nbr_[i].end()  ; }
+	vector1<int>::const_iterator half_begin() const { return half_.begin(); }
+	vector1<int>::const_iterator half_end  () const { return half_.end()  ; }
+	vector1<int>::const_iterator half_w_nbr_begin() const { return half_w_nbr_.begin(); }
+	vector1<int>::const_iterator half_w_nbr_end  () const { return half_w_nbr_.end()  ; }
+};
+
+void dump_points_pdb(vector1<Vec> const & p, string fn) {
+	std::ofstream o(fn.c_str());
+	for(Size i = 1; i <= p.size(); ++i) {
+		string rn = "VIZ";
+		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x())<<F(8,3,p[i].y())<<F(8,3,p[i].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	}
+	o.close();
+}
+
+void dump_points_pdb_contacts(vector1<Vec> const & p, string fn) {
+	std::ofstream o(fn.c_str());
+	for(Size i = 1; i <= p.size(); ++i) {
+		string aname = " CA ";
+		if( CONTACTS.count(i) ) aname = "CONT";
+		o<<"HETATM"<<I(5,i)<<' '<<aname<<' '<<"VIZ"<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x())<<F(8,3,p[i].y())<<F(8,3,p[i].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	}
+	o.close();
+}
+
+
+
 struct Hit {
 	Real cbc;
 	int iss,irt,sym;
@@ -103,16 +180,31 @@ struct Hit {
 	}
 };
 
+utility::vector1<core::Real> get_ang_samp() {
+	using numeric::constants::d::pi;
+	vector1<Real> asamp;
+	Real requested = basic::options::option[basic::options::OptionKeys::cxdock::sphere]();
+	requested = sqrt( 4*pi*(180.0/pi)*(180.0/pi) / requested );
+	Real angsamp = 360.0 / round(360.0/requested);
+	TR << "using angsamp: " << angsamp << " (closest feasible value to requested "<<requested <<")" << endl;
+	for(int i = 0; i < int(360.0/angsamp); ++i  ) {
+		asamp.push_back( (Real(i))*angsamp );
+	}	
+	// for(Size i = 1; i <= asamp.size(); ++i) {
+	// 	if( fabs( asamp[i]+angsamp/2.0 - (360.0-asamp[asamp.size()-i+1]) ) > 0.00001 ) utility_exit_with_message("angle samp issue!!!!");
+	// }
+	return asamp;
+}
 
-void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp, ObjexxFCL::FArray2D<int> const & snbr) {
+
+void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp) {
 	using namespace basic::options;
 	
 	vector1<Size> syms = basic::options::option[ basic::options::OptionKeys::cxdock::syms ]();
 	if(syms.size()==0) utility_exit_with_message("you must specify cbdock::syms");
-	vector1<Real> asamp;
-	for(Real i = -5.0; i <= 180/option[OptionKeys::cxdock::ang_samp]()+5.0; ++i  ) {
-		asamp.push_back( i*option[OptionKeys::cxdock::ang_samp]() ); // just 0-179
-	}
+
+	vector1<Real> asamp( get_ang_samp() );
+
 	// set up n-ca-c-o-cb ord arrays
 	vector1<Vec> bb0tmp,cb0tmp;
 	for(int ir = 1; ir <= init.n_residue(); ++ir) {
@@ -128,22 +220,31 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp, O
 	vector1<Vec> const bb0(bb0tmp);
 	vector1<Vec> const cb0(cb0tmp);
 
-	vector1<ObjexxFCL::FArray2D<float> > grids( syms.size(), ObjexxFCL::FArray2D<float>(asamp.size(),ssamp.size(),0.0f)  );
+	vector1<ObjexxFCL::FArray2D<float> > grids( syms.size(), ObjexxFCL::FArray2D<float>(asamp.size(),ssamp.size(),-12345.0f)  );
 
-	vector1<Matf> Rsym(syms.size());
+	vector1<Mat> Rsym(syms.size());
 	for(Size ic = 1; ic <= syms.size(); ++ic) Rsym[ic] = rotation_matrix_degrees(Vec(1,0,0),360.0/(Real)syms[ic]);
 
-	for(int iss = 1; iss <= ssamp.size(); ++iss) {
-		if(iss%100==0) {
-			TR << iss << " of " << ssamp.size();
-			TR << endl;
+	int count = 0;
+#ifdef USE_OPENMP
+#pragma omp parallel for schedule(dynamic,1)
+#endif	
+	//for(vector1<int>::const_iterator issi = ssamp.half_w_nbr_begin(); issi != ssamp.half_w_nbr_end(); ++issi) {
+	for(Size issi = 1; issi <= ssamp.half_w_nbr_size(); ++issi) {
+		int const iss( ssamp.half_w_nbr()[issi] );
+		count++; 
+		if(count%100==0) {
+#ifdef USE_OPENMP
+#pragma omp critical
+#endif									
+			TR << " ..." << F(4,1, Real(count)/Real(ssamp.half_w_nbr_size())*100.0) << "\%" << endl;
 		}
 		Vec axs = ssamp[iss];
 		for(int irt = 1; irt <= asamp.size(); ++irt) {
 			//if(axs.x() < 0.0) continue;
 			//Real const u = uniform();
 			Real const rot = asamp[irt];
-			Matf const R = rotation_matrix_degrees(axs,rot);
+			Mat const R = rotation_matrix_degrees(axs,rot);
 
 			vector1<Vec> bb1 = bb0;
 			vector1<Vec> cb1 = cb0;
@@ -157,73 +258,52 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp, O
 				for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*( *i );
 				Real cbc;
 				Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
-				grids[ic](irt,iss) = cbc;
 				
-				// if(cbc >= basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]()) {
-				// 
-				// 	if( option[OptionKeys::out::file::o].user() || option[OptionKeys::cxdock::dumpfirst] ) {	
-				// 		/// this is the filename
-				// 		string tag =  utility::file_basename(fn)	+"_C"+str(syms[ic])		+"_"+str(iss)
-				// 			+"_"	+str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())
-				// 			+"_"	+str(irt)		+"_"		+str(cbc);
-				// 		{
-				// 			option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(syms[ic])+".sym");							
-				// 		  Pose p(init);
-				// 		  rot_pose(p,ssamp[iss],asamp[irt]);
-				// 		  trans_pose(p,Vec(0,0,t));
-				// 		  Vec cen = Vec(0,t/2.0/tan( numeric::constants::d::pi / (Real)syms[ic] ),t/2.0);
-				// 		  trans_pose(p,-cen);
-				// 			rot_pose(p,Vec(0,1,0),90.0); // align sym Z
-				// 		  //core::pose::symmetry::make_symmetric_pose(p);
-				// 			p.dump_pdb(option[OptionKeys::out::file::o]+"/"+tag+"_aln_mono.pdb.gz");
-				// 			
-				// 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
-				// 		  ss_out->fill_struct(p,option[OptionKeys::out::file::o]+"/"+tag+"_aln_mono.pdb.gz");
-				// 		  ss_out->add_energy("sym",syms[ic]);
-				// 		  ss_out->add_energy("num_contact",cbc);
-				// 		  ss_out->add_energy("num_res",p.n_residue());
-				// 		  sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
-				// 		  							
-				// 		}
-				// 		// {
-				// 		// 	Pose p(init),q(init);
-				// 		// 	core::kinematics::Stub s(init.xyz(AtomID(1,1)),init.xyz(AtomID(2,1)),init.xyz(AtomID(3,1)));
-				// 		// 	xform_pose_rev(p,s); xform_pose(p,h.s1);
-				// 		// 	xform_pose_rev(q,s); xform_pose(q,h.s2);
-				// 		// 	p.dump_pdb(option[OptionKeys::out::file::o]+"/"+tag+"_A.pdb.gz");
-				// 		// 	q.dump_pdb(option[OptionKeys::out::file::o]+"/"+tag+"_B.pdb.gz");
-				// 		// }
-				// 		if(option[OptionKeys::cxdock::dumpfirst]()) utility_exit_with_message("dumpfirst");
-				// 	}
-				// }
+				//cout << I(5,iss) << " " << I(3,irt) << " " << cbc << endl;
+				
+				grids[ic](irt,iss) = cbc;
+				//grids[ic](irt,iss) = -fabs(t);//cbc;				
 			}
 		}
-		//break;
 	}
+	TR << endl;
+
+
+
+	dump_points_pdb_contacts(bb0,"contacts.pdb");
+
+
+
+
 	
-
-
 	for(Size ic = 1; ic <= syms.size(); ++ic) {
 		Size nlocalmax = 0;
-		Size NTOP = 20;
+		Size NTOP = 10;
 		vector1<Hit> tophits(NTOP,Hit(-9e9,0,0,0));
 		
-		for(Size iss = 1; iss <= ssamp.size(); ++iss) {
-			for(Size irt = 6; irt <= asamp.size()-5; ++irt) {
-				Real cbc = grids[ic](irt,iss);
+		float mx = -9e9; { 
+			for(Size iss = 1; iss <= ssamp.size(); ++iss) 
+				for(Size irt = 2; irt <= asamp.size()-1; ++irt) 
+					mx = max(mx,grids[ic](irt,iss));
+		}
+		//cout << "sym " << ic << " " << syms[ic] << " cbc mx: " << mx << endl;
+		
+		for(vector1<int>::const_iterator issi = ssamp.half_begin(); issi != ssamp.half_end(); ++issi) {
+			int const iss(*issi);
+			for(Size irt = 1; irt <= asamp.size(); ++irt) {
+				float cbc = grids[ic](irt,iss);
+				if( cbc < 0.0 ) utility_exit_with_message("BAD CBC!!!");
+				if( cbc < 1.0 ) continue;
 				
 				bool is_local_max = true;
-				for(Size inb = 1; inb <= 6; inb++) {
-					Real ncbc0 = grids[ic]( irt-1, snbr(inb,iss) );
-					Real ncbc1 = grids[ic]( irt  , snbr(inb,iss) );
-					Real ncbc2 = grids[ic]( irt+1, snbr(inb,iss) );										
-					if( ncbc0 > cbc || ncbc1 > cbc || ncbc2 > cbc ) is_local_max = false;
+				for(vector1<int>::const_iterator inb = ssamp.nbr_begin(iss); inb != ssamp.nbr_end(iss); inb++) {
+					float ncbc = grids[ic]( irt, *inb );
+					if( ncbc < 0.0 ) utility_exit_with_message("BAD NCBC!!!");
+					if( ncbc > cbc ) is_local_max = false;
 				}
-				Real ancbc1 = grids[ic](irt-1,iss);
-				Real ancbc2 = grids[ic](irt+1,iss);
-				Real ancbc3 = grids[ic](irt-2,iss);
-				Real ancbc4 = grids[ic](irt+2,iss);
-				if( ancbc1 > cbc || ancbc2 > cbc || ancbc3 > cbc || ancbc4 > cbc) is_local_max = false;
+				float ancbc1 = grids[ic]( irt==1 ? asamp.size() : irt-1 , iss ); if( ancbc1 < 0.0 ) utility_exit_with_message("BAD ANCBC1!!!");
+				float ancbc2 = grids[ic]( irt==asamp.size() ? 1 : irt+1 , iss ); if( ancbc2 < 0.0 ) utility_exit_with_message("BAD ANCBC2!!!");
+				if( ancbc1 > cbc || ancbc2 > cbc ) is_local_max = false;
 				
 				if(is_local_max==false) continue;
 				nlocalmax++;
@@ -244,9 +324,15 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp, O
 
 		for(Size k = 1; k <= NTOP; k++) {
 			Hit h = tophits[k];
-			TR << "TOP HIT " << h.sym << " " << h.cbc << " " << h.iss << " " << h.irt << " " << ssamp.size() << " " << option[OptionKeys::cxdock::ang_samp]() << endl;
+			Vec a = ssamp[h.iss];
+			Real ang = asamp[h.irt];
+			// if( a.x() < 0.0 ) {
+			// 	a = -a;
+			// 	ang = 360.0 - ang;
+			// }
+			TR << "TOPHIT C" << h.sym << " " << F(11,7,h.cbc) << "  axs: " << F(16,13,a.x())<<","<<F(16,13,a.y())<<","<<F(16,13,a.z()) << "  ang: " << F(20,16,ang) << endl;
 			
-			Matf const R = rotation_matrix_degrees(ssamp[h.iss],asamp[h.irt]);
+			Mat const R = rotation_matrix_degrees(ssamp[h.iss],asamp[h.irt]);
 			vector1<Vec> bb1 = bb0;
 			vector1<Vec> cb1 = cb0;
 			for(vector1<Vec>::iterator i = bb1.begin(); i != bb1.end(); ++i) *i = R*(*i);
@@ -258,12 +344,14 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp, O
 			Real tmp;
 			Real t = sicfast(bb1,bb2,cb1,cb2,tmp);
 			
+			option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(h.sym)+"_Z.sym");			
 		  Pose p(init);
 		  rot_pose(p,ssamp[h.iss],asamp[h.irt]);
 		  trans_pose(p,Vec(0,0,t));
 		  Vec cen = Vec(0,t/2.0/tan( numeric::constants::d::pi / (Real)syms[ic] ),t/2.0);
 		  trans_pose(p,-cen);
 			rot_pose(p,Vec(0,1,0),90.0); // align sym Z
+			core::pose::symmetry::make_symmetric_pose(p);
 			p.dump_pdb(option[OptionKeys::out::file::o]+"/hit_"+str(k)+".pdb.gz");
 
 		}
@@ -276,39 +364,204 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp, O
 }
 
 
+void testone(vector1<Vec> const & bb0,
+             vector1<Vec> const & cb0,
+						 int i, int j, int k
+) {
+	Vec axs0(-0.7591034465040, 0.1958853313150, 0.6207985941360);
+	Real ang0(309.0265486725663777);
+	Vec X = Vec(1,0,0).cross(axs0);
+	Vec Y = X.cross(axs0);
+	int N = 20;
+	Real step = 0.5;
+	Mat Rsym = rotation_matrix_degrees(Vec(1,0,0),120.0);
+
+	Vec axs = axs0;
+	axs = rotation_matrix_degrees(X,Real(i)*step) * axs;
+	axs = rotation_matrix_degrees(Y,Real(j)*step) * axs;
+	Mat R = rotation_matrix_degrees(axs,ang0+Real(k)*step);
+
+	vector1<Vec> bb1 = bb0;
+	vector1<Vec> cb1 = cb0;
+	for(vector1<Vec>::iterator it = bb1.begin(); it != bb1.end(); ++it) *it = R*(*it);
+	for(vector1<Vec>::iterator it = cb1.begin(); it != cb1.end(); ++it) *it = R*(*it);
+	vector1<Vec> bb2 = bb1;
+	vector1<Vec> cb2 = cb1;
+	for(vector1<Vec>::iterator it = bb2.begin(); it != bb2.end(); ++it) *it = Rsym*(*it);
+	for(vector1<Vec>::iterator it = cb2.begin(); it != cb2.end(); ++it) *it = Rsym*(*it);
+
+	Real cbc;
+	Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
+		
+	TR << i << " " << j << " " << k << " " << cbc << " " << mindis(bb1,bb2,t) << endl;
+	
+
+	for(vector1<Vec>::iterator it = bb1.begin(); it != bb1.end(); ++it) *it += Vec(0,0,t);
+	for(vector1<Vec>::iterator it = cb1.begin(); it != cb1.end(); ++it) *it += Vec(0,0,t);
+	dump_points_pdb(bb1,"test"+str(k)+"A.pdb");
+	dump_points_pdb(bb2,"test"+str(k)+"B.pdb");	
+	//TR << i+N+1 << " " << j+N+1 << " " << k+N+1 << endl;
+	
+}
+
+void visualize(Pose const & init) {
+ 
+	//Vec axs0(-0.7475852223468591,0.2098162208303284,0.6301535438327303);
+	//Real ang0(308.327); 
+	// Vec axs0(-0.6719036788257763  ,   0.03696683782422633   ,   0.7397154177665476 );
+	// Real ang0(297.32700000);
+	Vec axs0(-0.8906229656427180  ,    0.1436574080368423  ,    0.4314548437389231 );
+	Real ang0(305.83700000);
+	
+	Vec X = Vec(1,0,0).cross(axs0);
+	Vec Y = X.cross(axs0);
+	int N = 30;
+	Real step = 0.001;
+	
+	// set up n-ca-c-o-cb ord arrays
+	vector1<Vec> bb0tmp,cb0tmp;
+	for(int ir = 1; ir <= init.n_residue(); ++ir) {
+		if(!init.residue(ir).is_protein()) continue;
+		for(int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia) bb0tmp.push_back(init.xyz(AtomID(ia,ir)));
+		if( init.secstruct(ir)=='H' || init.secstruct(ir)=='E' ) {
+			if(init.residue(ir).has("CB")) cb0tmp.push_back(init.xyz(AtomID(5,ir)));
+			else													 cb0tmp.push_back(init.xyz(AtomID(4,ir)));
+		}
+	}
+	vector1<Vec> const bb0(bb0tmp);
+	vector1<Vec> const cb0(cb0tmp);
+	
+	Mat Rsym = rotation_matrix_degrees(Vec(1,0,0),120.0);
+	
+	ObjexxFCL::FArray3D<float> grid(2*N+1,2*N+1,2*N+1,0.0f);
+	
+	// testone(bb0,cb0,12-N-1,33-N-1,11-N-1);
+	// testone(bb0,cb0,12-N-1,33-N-1,11-N);
+	// 
+	// utility_exit_with_message("aorstn");
+#ifdef USE_OPENMP
+#pragma omp parallel for schedule(dynamic,1)
+#endif
+	for(int i = -N; i <= N; i++) {
+		cout << i << " "; cout.flush();
+		for(int j = -N; j <= N; j++) {
+			for(int k = -N; k <= N; k++) {
+				Vec axs = axs0;
+				axs = rotation_matrix_degrees(X,Real(i)*step) * axs;
+				axs = rotation_matrix_degrees(Y,Real(j)*step) * axs;
+				Mat R = rotation_matrix_degrees(axs,ang0+Real(k)*step);
+	
+				vector1<Vec> bb1 = bb0;
+				vector1<Vec> cb1 = cb0;
+				for(vector1<Vec>::iterator it = bb1.begin(); it != bb1.end(); ++it) *it = R*(*it);
+				for(vector1<Vec>::iterator it = cb1.begin(); it != cb1.end(); ++it) *it = R*(*it);
+				vector1<Vec> bb2 = bb1;
+				vector1<Vec> cb2 = cb1;
+				for(vector1<Vec>::iterator it = bb2.begin(); it != bb2.end(); ++it) *it = Rsym*(*it);
+				for(vector1<Vec>::iterator it = cb2.begin(); it != cb2.end(); ++it) *it = Rsym*(*it);
+
+				Real cbc;
+				Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
+				grid(i+N+1,j+N+1,k+N+1) = cbc;
+				
+			//mndis(i+N+1,j+N+1,k+N+1) = mindis(bb1,bb2,t);
+				//TR << i+N+1 << " " << j+N+1 << " " << k+N+1 << endl;
+			}
+		}
+	}
+	cout << endl;
+	
+	// ObjexxFCL::FArray3D<float> gridsmooth(2*N+1,2*N+1,2*N+1,0.0f);
+	// for(int k = 2; k < 2*N+1; k++) {
+	// for(int j = 2; j < 2*N+1; j++) {
+	// for(int i = 2; i < 2*N+1; i++) {
+	// 	float wtot=0.0, smval=0.0;
+	// 	for(int di = -1; di <= 1; ++di) {
+	// 	for(int dj = -1; dj <= 1; ++dj) {
+	// 	for(int dk = -1; dk <= 1; ++dk) {						
+	// 		float wt = 2.0;
+	// 		if( di!=0 || dj!=0 || dk!=0 ) {
+	// 			wt = 1.0 / sqrt( di*di +  )
+	// 		}
+	// 	}
+	// 	}
+	// 	}
+	// 	smval /= wtot;
+	// 	gridsmooth(i,j,k) = smval;
+	// }
+	// }
+	// }	
+
+	for(int k = 1; k <= 2*N+1; k++) {
+	for(int j = 1; j <= 2*N+1; j++) {
+	for(int i = 1; i <= 2*N+1; i++) {
+		cerr << grid(i,j,k) << endl;
+	}
+	}
+	}	
+
+	int nlocalmax = 0, nsamp=0;
+	float mxcbc = -9e9;
+#ifdef USE_OPENMP
+#pragma omp parallel for schedule(dynamic,1)
+#endif	
+	for(int i = 3; i < 2*N; i++) {
+	for(int j = 3; j < 2*N; j++) {
+	for(int k = 3; k < 2*N; k++) {
+		nsamp++;
+		float cbc = grid(i,j,k);
+		bool is_local_max = true;
+		if(cbc < 2.0) continue;
+		mxcbc = max(mxcbc,cbc);
+		float nbavg=0.0,nbmin=9e9,nbmax=0.0;
+		for(int di = -1; di <= 1; ++di) {
+		for(int dj = -1; dj <= 1; ++dj) {
+		for(int dk = -1; dk <= 1; ++dk) {						
+			if(di==0&&dj==0&&dk==0) continue;
+			float nbcbc = grid(i+di,j+dj,k+dk);
+			nbavg += nbcbc;
+			nbmin = min(nbmin,nbcbc);
+			nbmax = max(nbmax,nbcbc);			
+			if( nbcbc > cbc ) is_local_max = false;
+		}
+		}
+		}
+		if(!is_local_max) continue;
+
+		nbavg /= 26.0;
+		float avg_slope = (cbc-nbavg)/step;
+		float min_slope = (cbc-nbmax)/step;
+		float max_slope = (cbc-nbmin)/step;		
+		if( min_slope < 0.1 ) continue;
+		if( avg_slope < 1.0 ) continue;
+		
+		
+		Vec axs = axs0;
+		axs = rotation_matrix_degrees(X,Real(i-N-1)*step) * axs;
+		axs = rotation_matrix_degrees(Y,Real(j-N-1)*step) * axs;
+		Real ang = ang0+Real(k-N-1)*step;
+
+#ifdef USE_OPENMP
+#pragma omp critical
+#endif						
+		TR<<"local max "<<F(7,3,cbc)<<" "<<F(6,3,min_slope)<<" "<<F(6,3,avg_slope)<<" "<<F(6,3,max_slope)<<"     "<<i<<" "<<j<<" "<<k<<" "<<axs<<" "<<F(12,8,ang)<<endl;
+		nlocalmax++;
+	}
+	}
+	}
+	TR << "max " << mxcbc << " local max " << nlocalmax << " of " << nsamp << endl;
+	
+}
+
+
 int main(int argc, char *argv[]) {
 	register_options();
 	core::init(argc,argv);
 	using namespace basic::options::OptionKeys;
 
-
 	Size const NSS = basic::options::option[basic::options::OptionKeys::cxdock::sphere]();
-	vector1<Vec> ssamp(NSS);
-	{
-		izstream is;
-		basic::database::open(is,"sampling/spheres/sphere_"+str(NSS)+".dat");
-		for(int i = 1; i <= NSS; ++i) {
-			Real x,y,z;
-			is >> x >> y >> z;
-			ssamp[i] = Vec(x,y,z);
-		}
-		is.close();
-	}
-	ObjexxFCL::FArray2D<int> snbr(6,NSS);
-	{
-		izstream is;
-		basic::database::open(is,"sampling/spheres/sphere_"+str(NSS)+"_neighbors.dat");
-		for(int i = 1; i <= NSS; ++i) {
-			int tmp;
-			is >> tmp >> snbr(1,i) >> snbr(2,i) >> snbr(3,i) >> snbr(4,i) >> snbr(5,i) >> snbr(6,i);
-			;
-		}
-		is.close();
-	}
+	SphereSampler ssamp(NSS);
 	
-	
-	
-
 	for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
 		string fn = option[in::file::s]()[ifn];
 		Pose pnat;
@@ -328,7 +581,8 @@ int main(int argc, char *argv[]) {
 		} goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
 		// if( nhelix < 20 ) continue;
 		Pose pala(pnat);
-		dock(pala,fn,ssamp,snbr);
+		dock(pala,fn,ssamp);
+		//visualize(pnat);
 	}
 }
 

@@ -110,6 +110,7 @@ OPT_KEY( File, hub_cst_cfg )
 OPT_KEY( IntegerVector, hub_ho_cst )
 OPT_KEY( Real, hub_cen_energy_cut )
 OPT_KEY( Boolean, hub_no_fa )
+OPT_KEY( Boolean, hub_graphics )
 
 void register_options() {
   using namespace basic::options;
@@ -121,6 +122,7 @@ void register_options() {
   NEW_OPT( hub_ho_cst   ,"", utility::vector1< Size >() );
   NEW_OPT( hub_cen_energy_cut   ,"", 200.0 );
   NEW_OPT( hub_no_fa   ,"", false );
+  NEW_OPT( hub_graphics,"", false );
 }
 
 static core::io::silent::SilentFileData sfd;
@@ -239,6 +241,7 @@ struct ConstraintConfig {
 	vector1<Size> template_sc,template_sc_resi;
 	vector1<CST> cst_sc,cst_bb;
 	vector1<DCST> dcst;
+	Size ncst,nintracst,nintercst;
 	core::chemical::ResidueTypeSetCAP crs,frs;
 	virtual ~ConstraintConfig() {}
 	ConstraintConfig()
@@ -629,20 +632,39 @@ struct ConstraintConfig {
 					break;
 			}
 		}
-		// for(Size i = 1; i <= templates_fa.size(); ++i) {
-		// 	templates_fa[i]->dump_pdb("TEMPLATE_FA__"+str(i)+".pdb");
-		// 	templates_fa[i]->dump_pdb("TEMPLATE_CEN_"+str(i)+".pdb");
-		// }
+		for(Size i = 1; i <= cst_bb.size(); ++i) {
+			Size r1=cst_bb[i].dres1;
+			Size r2=cst_bb[i].dres2;
+			if(r2<r1) {
+				r2=cst_bb[i].dres1;
+				r1=cst_bb[i].dres2;
+			}
+			if(r1 > nres ) continue;
+			if(r2 > nhub*nres) nintercst++;
+			else               nintracst++;
+			ncst++;
+		}
+		for(Size i = 1; i <= cst_sc.size(); ++i) {
+			Size r1=cst_sc[i].dres1;
+			Size r2=cst_sc[i].dres2;
+			if(r2<r1) {
+				r2=cst_sc[i].dres1;
+				r1=cst_sc[i].dres2;
+			}
+			if(r1 > nres ) continue;
+			if(r2 > nhub*nres) nintercst++;
+			else               nintracst++;
+			ncst++;
+		}
 	}
 
 	void apply_bb_csts(Pose & p, Size ssep=0, bool earlycst = false) {
 		using namespace core::scoring::constraints;
 		vector1<string> anames; anames.push_back("N"); anames.push_back("CA"); anames.push_back("C"); anames.push_back("O"); /*anames.push_back("CB");*/ anames.push_back("H");
 		for(CSTs::iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) {
-			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) && (!earlycst || numeric::random::uniform() > 0.0003) ) continue;
+			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) && (!earlycst || numeric::random::uniform() > Real(nres)/6.0/Real(nintercst)) ) continue;
 			if(i->active) continue; else i->active = true;
 			if(hub_seq_sep(i->dres1,i->dres2) != ssep) tr << "early cst!!!" << endl;
-
 			Pose & t(*templates_cen[i->tplt]);
 			for(Size an1 = 1; an1 <= anames.size(); ++an1) {
 				if(!p.residue(i->dres1).has(anames[an1]) || !t.residue(i->tres1).has(anames[an1])) continue;
@@ -782,14 +804,13 @@ struct HubDenovo {
 	{
 		using namespace core::scoring;
 		sf3 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score4_smooth"));
-		sf3->set_weight(                 vdw,2.0);
-		sf3->set_weight(atom_pair_constraint,1.0);
-		sf3->set_weight(    angle_constraint,1.0);
+		Real cstwt = Real(cfg.nres)/Real(cfg.cst_bb.size());
+		sf3->set_weight(atom_pair_constraint,cstwt);
+		sf3->set_weight(vdw,2.0);
 		sfsym  = getScoreFunction();
 		sfsymnocst  = getScoreFunction();
 		sfasym = new ScoreFunction(*sfsym);
-		sfsym->set_weight(atom_pair_constraint,1.0);
-		sfsym->set_weight(    angle_constraint,1.0);
+		sfsym->set_weight(atom_pair_constraint,cstwt);
 		core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
 		std::map<string, vector1<core::fragment::FragDataOP> > fds( get_frags_map() );
@@ -869,14 +890,15 @@ struct HubDenovo {
 		Real temp = 2.0;
 		Pose last_cor_ori = p;
 		for(Size icst = 1; icst <= STOP; ++icst) {
-			cfg.apply_csts(p,icst,icst > 20);
+			cfg.apply_csts(p,icst,icst > 15);
 			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
 			mc->set_autotemp( true, temp );	mc->set_temperature( temp );
-			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 3000/cfg.nres ).apply( p );
+			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 4000/cfg.nres ).apply( p );
 			mc->reset( p );
 			if(icst%5==0) {
 				tr << "cen min" << endl;
 				cenmin->apply(p);
+				sf3->show(p);
 				//if( option[OptionKeys::hub_cen_energy_cut]()*4.0 < sf3->score(p) ) return false;
 			}
 			if( center_of_geom(p).z() < 0.0 ) p = last_cor_ori;
@@ -886,14 +908,17 @@ struct HubDenovo {
 		for(Size icst = STOP+1; icst <= cfg.nsub*cfg.nres; ++icst) {
 			cfg.apply_csts(p,icst);
 		}
+		Real cstwt = sf3->get_weight(core::scoring::atom_pair_constraint);
 		for(Size i = 1; i < 5; ++i) {
+			sf3->set_weight(core::scoring::atom_pair_constraint,cstwt/Real(i*i));
+			tr << i << " fin " << sf3->score(p) << endl;
 			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
 			mc->set_autotemp( true, temp );	mc->set_temperature( temp );
-			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 600 ).apply( p );
+			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 400 ).apply( p );
 			mc->reset( p );
 			cenmin->apply(p);
+			sf3->show(p);			
 			//if( option[OptionKeys::hub_cen_energy_cut]()*4.0 < sf3->score(p) ) return false;
-			tr << i << " fin " << sf3->score(p) << endl;
 		}
 		return true;
 	}
@@ -924,7 +949,9 @@ struct HubDenovo {
 		for(int iter = 1; iter < NITER; ++iter) {
 			Pose tmp = make_start_pose();
 			
-			protocols::viewer::add_conformation_viewer(tmp.conformation(),"test",1150,1150);
+			if(basic::options::option[basic::options::OptionKeys::hub_graphics]()) {
+				protocols::viewer::add_conformation_viewer(tmp.conformation(),"test",1150,1150);
+			}
 			
 			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 
@@ -1005,7 +1032,11 @@ int main(int argc, char *argv[]) {
 	core::init(argc,argv);
 	using namespace core::scoring;
 
-	protocols::viewer::viewer_main(&run);
+	if(basic::options::option[basic::options::OptionKeys::hub_graphics]()) {
+		protocols::viewer::viewer_main(&run);
+	} else {
+		run(NULL);
+	}
 
 	return 0;
 }

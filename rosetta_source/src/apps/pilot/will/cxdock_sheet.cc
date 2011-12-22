@@ -50,7 +50,7 @@ void register_options() {
 	NEW_OPT( cxdock::syms	 ,"CX symmitries", utility::vector1< Size >() );
 	NEW_OPT( cxdock::clash_dis   ,"min acceptable contact dis", 3.5 );
 	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 7.0 );	
-	NEW_OPT( cxdock::hb_dis      ,"max acceptable hb dis", 5.2 );	 // very loose!
+	NEW_OPT( cxdock::hb_dis      ,"max acceptable hb dis", 4.7 );	 // very loose!
 	NEW_OPT( cxdock::num_contacts ,"required no. contacts", 30.0 );
 	NEW_OPT( cxdock::sphere       ,"sph points", 8192 );
 	NEW_OPT( cxdock::dumpfirst    ,"stop on first hit", false );
@@ -181,10 +181,11 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 				for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*(*i);
 				Real cbc, nhb;
 				Real t = sicfast(bb1,bb2,cb1,cb2,availdon,availacc,cbc,nhb);				
-				
-				if(nhb>0.0&&cbc>=cbcth*1.0||nhb>1.0&&cbc>=cbcth*0.9||nhb>2.0&&cbc>=cbcth*0.8||nhb>3.0&&cbc>=cbcth*0.7||
-				   nhb>4.0&&cbc>=cbcth*0.6||nhb>5.0&&cbc>=cbcth*0.5||nhb>6.0&&cbc>=cbcth*0.4||nhb>7.0&&cbc>=cbcth*0.3||
-				   nhb>8.0&&cbc>=cbcth*0.2||nhb>9.0&&cbc>=cbcth*0.1||nhb>10.0&&cbc>=cbcth*0.0  ){
+
+				if(nhb > 3) {
+				// if(nhb>0.0&&cbc>=cbcth*1.0||nhb>1.0&&cbc>=cbcth*0.9||nhb>2.0&&cbc>=cbcth*0.8||nhb>3.0&&cbc>=cbcth*0.7||
+				//    nhb>4.0&&cbc>=cbcth*0.6||nhb>5.0&&cbc>=cbcth*0.5||nhb>6.0&&cbc>=cbcth*0.4||nhb>7.0&&cbc>=cbcth*0.3||
+				//    nhb>8.0&&cbc>=cbcth*0.2||nhb>9.0&&cbc>=cbcth*0.1||nhb>10.0&&cbc>=cbcth*0.0  ){
 // 					Hit h(iss,irt,cbc,syms[ic]);
 // 					h.s1.from_four_points(bb1[1],bb1[1],bb1[2],bb1[3]);
 // 					h.s2.from_four_points(bb2[1],bb2[1],bb2[2],bb2[3]);
@@ -262,6 +263,38 @@ int main(int argc, char *argv[]) {
 		}
 		is.close();
 	}
+
+	Size NTOP = 6;
+	for(Size i = 1; i <= ssamp.size(); ++i) {
+		vector1<Real> mnv(NTOP,9e9);
+		vector1<Size> mni(NTOP,0);
+		for(Size j = 1; j <= ssamp.size(); ++j) {		
+			if(i==j) continue;
+			for(Size k = 1; k <= NTOP; k++) {
+				Real d = ssamp[i].distance_squared(ssamp[j]);
+				if(mnv[k] > d) {
+					for(Size l = NTOP; l > k; --l) {
+						mnv[l] = mnv[l-1];
+						mni[l] = mni[l-1];						
+					}
+					mnv[k] = d;
+					mni[k] = j;
+					break;
+				}
+			}
+		}
+		cerr << i;
+		for(Size j = 1; j <= NTOP; ++j) {
+			if( j > 1 && ssamp[i].distance(ssamp[mni[j]]) > 1.5*ssamp[i].distance(ssamp[mni[j-1]]) ) {
+				cerr << " 0";				
+			} else {
+				cerr << " " << mni[j];
+			}
+		}
+		cerr << endl;
+	}
+
+	utility_exit_with_message("oarstne");
 
 	for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
 		string fn = option[in::file::s]()[ifn];
