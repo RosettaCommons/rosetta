@@ -12,20 +12,36 @@
 /// @detailed
 /// @author Yifan Song
 
-#ifndef apps_pilot_yfsong_FoldTreeHybridize_HH
-#define apps_pilot_yfsong_FoldTreeHybridize_HH
+#include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.hh>
+
+#include <core/pose/PDBInfo.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <apps/pilot/yfsong/FoldTreeHybridize.fwd.hh>
 
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
+
+#include <protocols/nonlocal/StarTreeBuilder.hh>
+#include <protocols/nonlocal/util.hh>
+
+#include <ObjexxFCL/format.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/random/random.hh>
+#include <numeric/model_quality/rms.hh>
+#include <numeric/model_quality/maxsub.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+static numeric::random::RandomGenerator RG(482136);
 
 namespace protocols {
 namespace comparative_modeling {
@@ -41,18 +57,15 @@ using namespace numeric::model_quality;
 using namespace id;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-
 	
-public:
-FoldTreeHybridize::FoldTreeHybridize(numeric::random::RandomGenerator & RG,
+FoldTreeHybridize::FoldTreeHybridize(
 							 utility::vector1 < core::pose::PoseOP > const & template_poses,
 							 Loops ss_chunks_pose,
-							 AlignOption align_option = all_chunks,
-							 Size max_registry_shift = 0) :
-RG_(RG),
+							 AlignOption align_option,
+							 Size max_registry_shift) :
 template_poses_(template_poses),
 align_option_(align_option),
-align_chunk_(RG_),
+align_chunk_(),
 max_registry_shift_input_(max_registry_shift)
 {
 	bool alignment_from_template = option[challenge::aligned]();
@@ -140,13 +153,13 @@ void FoldTreeHybridize::pick_random_template() {
 	
 	template_number_ = 0;
 	while (!template_number_) {
-		template_number_ = RG_.random_range(1, template_poses_.size());
+		template_number_ = RG.random_range(1, template_poses_.size());
 		if (template_ss_chunks_[template_number_].size() == 0) template_number_ = 0;
 	}
 }
 
 void FoldTreeHybridize::pick_random_chunk(core::pose::Pose & pose) {
-	jump_number_ = RG_.random_range(1, pose.num_jump());
+	jump_number_ = RG.random_range(1, pose.num_jump());
 }
 
 Size FoldTreeHybridize::trial_counter(Size ires) {
@@ -169,7 +182,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		align_chunk_.set_reset_torsion_unaligned(false);
 		
 		// apply alignment
-		int registry_shift = RG_.random_range(-max_registry_shift_[jump_number_], max_registry_shift_[jump_number_]);
+		int registry_shift = RG.random_range(-max_registry_shift_[jump_number_], max_registry_shift_[jump_number_]);
 		align_chunk_.set_registry_shift(registry_shift);
 		align_chunk_.apply(pose);
 	}
@@ -179,35 +192,19 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			align_chunk_.set_aligned_chunk(pose, jump_number);
 			
 			// apply alignment
-			int registry_shift = RG_.random_range(-max_registry_shift_[jump_number], max_registry_shift_[jump_number]);
+			int registry_shift = RG.random_range(-max_registry_shift_[jump_number], max_registry_shift_[jump_number]);
 			align_chunk_.set_registry_shift(registry_shift);
 			align_chunk_.apply(pose);
 		}
 	}
 }
 
-std::string
-	FoldTreeHybridize::get_name() const {
+std::string FoldTreeHybridize::get_name() const
+{
 	return "FoldTreeHybridize";
 }
-	
-private:
-	FoldTreeHybridize align_chunk_;
-	numeric::random::RandomGenerator & RG_;
-	AlignOption align_option_;
-	
-	utility::vector1 < core::pose::PoseCOP > template_poses_;
-	utility::vector1 < Loops > template_ss_chunks_;
-	utility::vector1 < std::map <core::Size, core::Size> > sequence_alignments_;
-	Size max_registry_shift_input_;
-	utility::vector1 < Size > max_registry_shift_;
-	
-	Size template_number_; // the jump to be realigned
-	Size jump_number_; // the jump to be realigned
-}; //class FoldTreeHybridize
 
 } // hybridize 
 } // comparative_modeling 
 } // protocols
 
-#endif

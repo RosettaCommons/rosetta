@@ -12,45 +12,61 @@
 /// @detailed
 /// @author Yifan Song
 
-#ifndef apps_pilot_yfsong_InsertSingleChunk_HH
-#define apps_pilot_yfsong_InsertSingleChunk_HH
+#include <protocols/comparative_modeling/hybridize/InsertSingleChunk.hh>
+#include <protocols/comparative_modeling/hybridize/util.hh>
+
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/conformation/Residue.hh>
 #include <core/util/kinematics_util.hh>
+
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <apps/pilot/yfsong/InsertSingleChunk.fwd.hh>
 
 #include <numeric/xyz.functions.hh>
 
+#include <protocols/moves/Mover.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/rigid.OptionKeys.gen.hh>
+
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/format.hh>
+#include <numeric/random/random.hh>
+#include <numeric/model_quality/rms.hh>
+#include <numeric/model_quality/maxsub.hh>
+
 #include <basic/Tracer.hh>
 
-namespace challenge {
-	basic::options::StringOptionKey		ss("challenge:ss");
-	basic::options::BooleanOptionKey    aligned("challenge:aligned");
-	basic::options::IntegerVectorOptionKey    chunk_mapping("challenge:chunk_mapping");
-}
+static numeric::random::RandomGenerator RG(482136);
+static basic::Tracer TR( "protocols.comparative_modeling.hybridize.InsertSingleChunk" );
 
 namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 
-enum AlignOption { all_chunks, random_chunk };
-	
-class InsertSingleChunk: public protocols::moves::Mover
-{
-public:
-	
-InsertSingleChunk() : 
-RG_(RG), registry_shift_(0), reset_torsion_unaligned_(true), align_to_ss_only_(true), copy_ss_torsion_only_(false), secstruct_('L')
+using namespace core;
+using namespace id;
+using namespace ObjexxFCL;
+
+InsertSingleChunk::InsertSingleChunk() : 
+registry_shift_(0), reset_torsion_unaligned_(true), align_to_ss_only_(true), copy_ss_torsion_only_(false), secstruct_('L')
 {
 	align_trial_counter_.clear();
 }
-	
+
+InsertSingleChunk::~InsertSingleChunk(){}
+
 // atom_map: from mod_pose to ref_pose
 void
-get_superposition_transformation(
+InsertSingleChunk::get_superposition_transformation(
 								 pose::Pose const & mod_pose,
 								 pose::Pose const & ref_pose,
 								 id::AtomID_Map< id::AtomID > const & atom_map,
@@ -118,7 +134,7 @@ get_superposition_transformation(
 }
 
 void
-apply_transform(
+InsertSingleChunk::apply_transform(
 				pose::Pose & mod_pose,
 				std::list <Size> const & residue_list,
 				numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
@@ -142,7 +158,7 @@ apply_transform(
 	mod_pose.batch_set_xyz(ids,positions);
 }
 	
-void align_chunk(core::pose::Pose & pose) {
+void InsertSingleChunk::align_chunk(core::pose::Pose & pose) {
 	std::list <Size> residue_list;
 	for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
 		residue_list.push_back(ires_pose);
@@ -156,13 +172,13 @@ void align_chunk(core::pose::Pose & pose) {
 	apply_transform( pose, residue_list, R, preT, postT );
 }
 	
-void set_template(core::pose::PoseCOP template_pose,
+void InsertSingleChunk::set_template(core::pose::PoseCOP template_pose,
 				  std::map <core::Size, core::Size> const & sequence_alignment ) {
 	template_pose_ = template_pose;
 	sequence_alignment_ = sequence_alignment;
 }
 
-void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number) {
+void InsertSingleChunk::set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number) {
 	jump_number_ = jump_number;
 	
 	std::list < Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
@@ -173,12 +189,11 @@ void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number) {
 	assert(downstream_residues.size() == (seqpos_stop_ - seqpos_start_ + 1));
 }
 
-void set_reset_torsion_unaligned(bool reset_torsion_unaligned) {
+void InsertSingleChunk::set_reset_torsion_unaligned(bool reset_torsion_unaligned) {
 	reset_torsion_unaligned_ = reset_torsion_unaligned;
 }
 	
-void steal_torsion_from_template(core::pose::Pose & pose) {
-	basic::Tracer TR("pilot.yfsong.util");
+void InsertSingleChunk::steal_torsion_from_template(core::pose::Pose & pose) {
 	using namespace ObjexxFCL::fmt;
 	for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
 		if (reset_torsion_unaligned_) {
@@ -215,9 +230,9 @@ void steal_torsion_from_template(core::pose::Pose & pose) {
 	}
 }
 	
-bool get_local_sequence_mapping(core::pose::Pose const & pose,
-								int registry_shift = 0,
-								Size MAX_TRIAL = 10 )
+bool InsertSingleChunk::get_local_sequence_mapping(core::pose::Pose const & pose,
+								int registry_shift,
+								Size MAX_TRIAL)
 {
 	core::Size counter = 0;
 	while (counter < MAX_TRIAL) {
@@ -225,7 +240,7 @@ bool get_local_sequence_mapping(core::pose::Pose const & pose,
 		sequence_alignment_local_.clear();
 		core::pose::initialize_atomid_map( atom_map_, pose, core::id::BOGUS_ATOM_ID );
 		
-		core::Size seqpos_pose = RG_.random_range(seqpos_start_, seqpos_stop_);
+		core::Size seqpos_pose = RG.random_range(seqpos_start_, seqpos_stop_);
 
 		if (sequence_alignment_.find(seqpos_pose+registry_shift) == sequence_alignment_.end()) continue;
 		core::Size seqpos_template = sequence_alignment_.find(seqpos_pose+registry_shift)->second;
@@ -279,11 +294,11 @@ bool get_local_sequence_mapping(core::pose::Pose const & pose,
 	return false;	
 }
 	
-void set_registry_shift(int registry_shift) {
+void InsertSingleChunk::set_registry_shift(int registry_shift) {
 	registry_shift_ = registry_shift;
 }
 	
-Size trial_counter(Size ires) {
+Size InsertSingleChunk::trial_counter(Size ires) {
 	if (ires <= align_trial_counter_.size()) {
 		return align_trial_counter_[ires];	
 	}
@@ -291,7 +306,7 @@ Size trial_counter(Size ires) {
 }
 	
 void
-apply(core::pose::Pose & pose) {
+InsertSingleChunk::apply(core::pose::Pose & pose) {
 	// apply alignment
 	bool success = get_local_sequence_mapping(pose, registry_shift_);
 	if (!success) return;
@@ -301,33 +316,11 @@ apply(core::pose::Pose & pose) {
 }
 	
 std::string
-get_name() const {
+InsertSingleChunk::get_name() const {
 	return "InsertSingleChunk";
 }
 	
-private:
-	numeric::random::RandomGenerator & RG_;
-	core::pose::PoseCOP template_pose_;
-	std::map <core::Size, core::Size> sequence_alignment_;
-
-	Size jump_number_; // the jump to be realigned
-	Size seqpos_start_; // start and end seqpose of the chunk
-	Size seqpos_stop_;
-	int registry_shift_;
-	char secstruct_;
-
-	// parameters of the protocol
-	bool reset_torsion_unaligned_; // reset torsion of unaligned region to the default value for the given secondary structure
-	bool align_to_ss_only_; // only use the secondary structure portion to align to the template
-	bool copy_ss_torsion_only_; // only copy the secondary structure information from the template
-	
-	std::map <core::Size, core::Size> sequence_alignment_local_;
-	core::id::AtomID_Map< core::id::AtomID > atom_map_; // atom map for superposition
-	utility::vector1 <Size> align_trial_counter_;
-};
 	
 } // hybridize 
 } // comparative_modeling 
 } // protocols
-
-#endif

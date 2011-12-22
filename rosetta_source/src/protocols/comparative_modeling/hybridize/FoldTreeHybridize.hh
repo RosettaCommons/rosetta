@@ -15,15 +15,33 @@
 #ifndef apps_pilot_yfsong_FoldTreeHybridize_HH
 #define apps_pilot_yfsong_FoldTreeHybridize_HH
 
+#include <protocols/comparative_modeling/hybridize/InsertSingleChunk.hh>
+//#include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.fwd.hh>
+
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <apps/pilot/yfsong/FoldTreeHybridize.fwd.hh>
 
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
+
+#include <protocols/moves/Mover.hh>
+#include <protocols/nonlocal/StarTreeBuilder.hh>
+#include <protocols/nonlocal/util.hh>
+
+#include <ObjexxFCL/format.hh>
+#include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/model_quality/rms.hh>
+#include <numeric/model_quality/maxsub.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 namespace challenge {
@@ -37,15 +55,9 @@ namespace comparative_modeling {
 namespace hybridize {
 
 using namespace core;
-using namespace core::kinematics;
-using namespace ObjexxFCL;
 using namespace protocols::moves;
 using namespace protocols::loops;
 using namespace protocols::nonlocal;
-using namespace numeric::model_quality;
-using namespace id;
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
 	
 enum AlignOption { all_chunks, random_chunk };
 	
@@ -53,7 +65,7 @@ class FoldTreeHybridize: public protocols::moves::Mover
 {
 	
 public:
-FoldTreeHybridize(numeric::random::RandomGenerator & RG,
+FoldTreeHybridize(
 						 utility::vector1 < core::pose::PoseOP > const & template_poses,
 						 Loops ss_chunks_pose,
 						 AlignOption align_option = all_chunks,
@@ -82,8 +94,7 @@ std::string
 	get_name() const;
 	
 private:
-	FoldTreeHybridize align_chunk_;
-	numeric::random::RandomGenerator & RG_;
+	InsertSingleChunk align_chunk_;
 	AlignOption align_option_;
 	
 	utility::vector1 < core::pose::PoseCOP > template_poses_;

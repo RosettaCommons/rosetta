@@ -52,7 +52,7 @@
 
 // evaluation
 #include <core/scoring/rms_util.hh>
-#include <protocols/evaluation/Align_RmsdEvaluator.hh>
+//#include <protocols/comparative_modeling/Align_RmsdEvaluator.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
 
 // option

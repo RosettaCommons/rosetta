@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file HybridizeProtocol.fwd.hh
+/// @file FoldTreeHybridize.fwd.hh
 /// @brief
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_moves_HybridizeProtocol_fwd_hh
-#define INCLUDED_protocols_moves_HybridizeProtocol_fwd_hh
+#ifndef INCLUDED_protocols_moves_FoldTreeHybridize_fwd_hh
+#define INCLUDED_protocols_moves_FoldTreeHybridize_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -21,9 +21,9 @@
 namespace protocols {
 namespace moves {
 
-class HybridizeProtocol;
-typedef utility::pointer::owning_ptr< HybridizeProtocol > HybridizeProtocolOP;
-typedef utility::pointer::owning_ptr< HybridizeProtocol const > HybridizeProtocolCOP;
+class FoldTreeHybridize;
+typedef utility::pointer::owning_ptr< FoldTreeHybridize > FoldTreeHybridizeOP;
+typedef utility::pointer::owning_ptr< FoldTreeHybridize const > FoldTreeHybridizeCOP;
 
 
 } // moves

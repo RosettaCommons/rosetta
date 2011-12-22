@@ -12,34 +12,32 @@
 /// @detailed
 /// @author Yifan Song
 
-#ifndef apps_pilot_yfsong_InsertSingleChunk_HH
-#define apps_pilot_yfsong_InsertSingleChunk_HH
+#ifndef INCLUDED_protocols_moves_InsertSingleChunk_hh
+#define INCLUDED_protocols_moves_InsertSingleChunk_hh
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <apps/pilot/yfsong/InsertSingleChunk.fwd.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
+
+#include <protocols/moves/Mover.hh>
 
 #include <numeric/xyz.functions.hh>
 
 #include <basic/Tracer.hh>
 
-namespace challenge {
-	basic::options::StringOptionKey		ss("challenge:ss");
-	basic::options::BooleanOptionKey    aligned("challenge:aligned");
-	basic::options::IntegerVectorOptionKey    chunk_mapping("challenge:chunk_mapping");
-}
-
 namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 
-enum AlignOption { all_chunks, random_chunk };
-	
+using namespace core;
+
 class InsertSingleChunk: public protocols::moves::Mover
 {
+
 public:
 	
 InsertSingleChunk();
@@ -84,7 +82,6 @@ void apply(core::pose::Pose & pose);
 std::string get_name() const;
 	
 private:
-	numeric::random::RandomGenerator & RG_;
 	core::pose::PoseCOP template_pose_;
 	std::map <core::Size, core::Size> sequence_alignment_;
 
