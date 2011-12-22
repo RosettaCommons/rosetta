@@ -217,7 +217,13 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	TR<<"Computing baseline filter value\n";
 	PackerTaskOP repack = task_factory()->create_task_and_apply_taskoperations( pose );
 	repack->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
-  core::pack::pack_rotamers( pose, *scorefxn(), repack );
+
+	protocols::simple_moves::PackRotamersMoverOP repack_mover;
+  if( core::pose::symmetry::is_symmetric( pose ) )
+		 repack_mover =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), repack );
+ 	else
+		 repack_mover = new protocols::simple_moves::PackRotamersMover( scorefxn(), repack );
+ 	repack_mover->apply( pose );
 	pose_orig = pose;
 	relax_mover()->apply( pose );
 	core::Real const baseline( filter()->report_sm( pose ) );
