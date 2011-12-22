@@ -846,6 +846,22 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		checkpoints_.debug( curr_job_tag, "relax", (*fa_scorefxn_)( pose ) );
 	} // intermediate relax the structure
 
+	if ( intermedrelax() != "no" && (!all_loops_closed)) {
+		//The following keeps the score lines equivalent in the silent file.
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScores( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops,true ) );
+			}
+		}
+	}
+
 	///////////////////////////////////////////////////////////////////////////////////////
 	////
 	////  Loop refine (fullatom type loop modelling )
@@ -924,7 +940,23 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 		TR << "Refinetime: " << endtime - starttime << std::endl;
 
-	} // if ( refine != "no" )
+	}
+	if ( refine() != "no" && (!all_loops_closed)) {
+		//The following keeps the score lines equivalent in the silent file.
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+			}
+		}
+	}
+
+	// if ( refine != "no" )
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	////
