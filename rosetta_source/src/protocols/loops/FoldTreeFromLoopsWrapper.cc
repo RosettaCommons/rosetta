@@ -57,6 +57,7 @@ FoldTreeFromLoopsCreator::mover_name()
 FoldTreeFromLoops::FoldTreeFromLoops() :
 	Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
 {
+	loops_ = new Loops;
 	loops_->clear();
 }
 
