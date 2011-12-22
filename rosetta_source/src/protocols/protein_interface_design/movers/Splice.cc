@@ -146,13 +146,13 @@ Splice::apply( core::pose::Pose & pose )
 		std::vector< core::Size > loop_positions_in_source;
 		loop_positions_in_source.clear();
 		TR<<"DSSP of source segment: ";
-		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
+		for( core::Size i = nearest_to_from; i <= std::min( nearest_to_to, to_res() - from_res() + nearest_to_from ); ++i ){
 			if( dssp.get_dssp_secstruct( i ) == 'L' )
 				loop_positions_in_source.push_back( i );
 			TR<<dssp.get_dssp_secstruct( i );
 		}
 		TR<<std::endl;
-		cut_site = loop_positions_in_source[ RG.uniform() * loop_positions_in_source.size() ] - nearest_to_from + from_res();
+		cut_site = loop_positions_in_source[ (core::Size) ( RG.uniform() * loop_positions_in_source.size()) ] - nearest_to_from + from_res();
 		TR<<"Cut placed at: "<<cut_site<<std::endl;
   }
 
