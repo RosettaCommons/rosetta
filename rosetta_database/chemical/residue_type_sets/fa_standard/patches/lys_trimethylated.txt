@@ -1,7 +1,7 @@
 ## fullatom protein N(6)-trimethylation patch for lysine
 ## By Andy M. Chen, June 2009, achen39@jhu.edu
 
-NAME lys_trimethylated
+NAME M3L
 TYPES TRIMETHYLATION
 
 ## general requirements for this patch
@@ -17,10 +17,14 @@ NOT VARIANT_TYPE PROTONATED
 NOT VARIANT_TYPE DEPROTONATED
 END_SELECTOR
 
+
 ## now we search for a case that matches the residue, take the first one
 ## so put generic case last
 
 BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+
+SET_IO_STRING M3L K
 
 ## these are the operations involved
 DELETE_ATOM 1HZ ## This amine hydrogen is now a carbon atom
