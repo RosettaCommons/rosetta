@@ -250,7 +250,8 @@ void define_movemap_chains(
 									bool chi_chain1,
 									bool chi_chain2,
 									bool interface_chi1,
-									bool interface_chi2
+									bool interface_chi2,
+									core::Real interface_distance_cutoff
 									){
 			
 	using namespace basic::options;
@@ -270,7 +271,7 @@ void define_movemap_chains(
 		//kinematics::FoldTree ori_ft = pose.fold_tree();
 	  pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
   	protocols::scoring::Interface interface_obj(rb_jump );
-		interface_obj.distance( 8 /*interface_distance_cutoff_*/ );
+		interface_obj.distance( interface_distance_cutoff );
   	interface_obj.calculate( pose );	
 		//protocols::scoring::Interface interface_obj(rb_jump);
 
@@ -340,7 +341,7 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 	utility::vector1 <Size> norepack_residues = adjust_des_residues( pose, norepack_res_ );
 	
 	/// 2. set movemap
-	define_movemap_chains( pose , movemap_ , all_seeds_, chi_chain1_, chi_chain2_, interface_chi1_, interface_chi2_ );
+	define_movemap_chains( pose , movemap_ , all_seeds_, chi_chain1_, chi_chain2_, interface_chi1_, interface_chi2_, interface_distance_cutoff_ );
 		
 	/// 3. compute new task operations for seeds and target
 	
