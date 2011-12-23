@@ -156,6 +156,17 @@ static basic::Tracer TR("VIP");
                 void VIP_Mover::dump_pdb_to_file( core::pose::Pose posey, std::string filename ){
 		        posey.dump_pdb(filename);}
 
+		core::Real VIP_Mover::get_cav_approx( core::Size a ){
+			numeric::xyzVector< core::Real > cppos = cavity_pose.residue( cavity_balls[a] ).xyz(1);
+					core::Real min = 99999.9;
+				for( core::Size i = 1; i <= initial_pose.total_residue(); i++ ){
+					for( core::Size j = 1; j <= initial_pose.residue(i).nheavyatoms(); j++ ){
+						if( initial_pose.residue(i).xyz(j).distance( cppos ) < min ){
+								min = initial_pose.residue(i).xyz(j).distance( cppos );}
+						else{
+							min = min;}}}
+			return min;}			
+
                 void VIP_Mover::get_neighbors(){
                         using namespace basic::options;
                         using namespace basic::options::OptionKeys;
@@ -168,10 +179,11 @@ static basic::Tracer TR("VIP");
 
 			for( core::Size i = 1; i <= cavity_balls.size(); i++ ){
 			  numeric::xyzVector<core::Real> cav_center = cavity_pose.residue( cavity_balls[i]).xyz(1);
+				core::Real min = get_cav_approx( i );
 			    for( core::Size a = 1; a <= initial_pose.total_residue(); a++ ){
 				for( core::Size b = 1; b <= initial_pose.residue(a).nheavyatoms(); b++ ){
 			numeric::xyzVector<core::Real> test_position = initial_pose.residue(a).xyz(b);
-			if( test_position.distance(cav_center) <= option[cp::cutoff] ){
+			if( test_position.distance(cav_center) <= (option[cp::cutoff]+min) ){
 				neighbors.push_back( a );
 				neighbors.push_back( b );}}}}
 			void_neighbors = neighbors;}
@@ -251,6 +263,22 @@ static basic::Tracer TR("VIP");
                 	vip_report.get_GOE_packstat_report();
 }
 
+		void VIP_Mover::skip_relax(){
+			using namespace basic::options;
+                        using namespace basic::options::OptionKeys;
+
+                        core::Real bestE = 99999;
+                        core::Size bestP = 0;
+                        for( core::Size i = 1; i <= favorable_poses.size(); i++ ){
+                                if( favorable_poses[i].energies().total_energy() < bestE ){
+                                        bestE = favorable_poses[i].energies().total_energy();
+                                        bestP = i;}}
+                        final_pose = favorable_poses[bestP];
+                        dump_pdb_to_file( final_pose, "final.pdb" );
+                        final_energy = bestE;}
+
+	
+
 		void VIP_Mover::relax_favorable_poses(){
                         using namespace basic::options;
                         using namespace basic::options::OptionKeys;
@@ -293,10 +321,16 @@ if( rmover == "cst_relax" ){
 			cull_mutatable_residues();}
 
 		void VIP_Mover::cranny_packer(){
+                        using namespace basic::options;
+                        using namespace basic::options::OptionKeys;
+
 			try_point_mutants();
 			sort_fill_energies();
-			relax_favorable_poses();
-			sort_relaxed_poses();}
+			if( option[ cp::skip_relax ] ){
+				skip_relax();}				
+			else{
+				relax_favorable_poses();
+				sort_relaxed_poses();}}
 
 		void VIP_Mover::apply(){
 			nook_finder();

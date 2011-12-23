@@ -428,6 +428,7 @@ namespace cp { IntegerOptionKey const ncycles( "cp:ncycles" );  }
 namespace cp { BooleanOptionKey const print_reports( "cp:print_reports" );  }
 namespace cp { StringOptionKey const vipReportFile( "cp:vipReportFile" );  }
 namespace cp { StringOptionKey const relax_mover( "cp:relax_mover" );  }
+namespace cp { BooleanOptionKey const skip_relax( "cp:skip_relax" );  }
 namespace archive { BooleanOptionKey const archive( "archive" );  }
 namespace archive { BooleanOptionKey const reread_all_structures( "archive:reread_all_structures" );  }
 namespace archive { IntegerOptionKey const completion_notify_frequency( "archive:completion_notify_frequency" );  }

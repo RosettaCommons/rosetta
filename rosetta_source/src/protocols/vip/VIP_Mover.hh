@@ -113,7 +113,9 @@ class VIP_Mover
 		void relax_favorable_poses();
 		void cull_mutatable_residues();
 		void sort_fill_energies();
+                core::Real VIP_Mover::get_cav_approx( core::Size );
 		// Undefined, commenting out to fix PyRosetta build  void print_favorable_mutations();
+		void skip_relax();
 		void sort_relaxed_poses();
 		void print_pack_report();
 		void print_relax_report();
