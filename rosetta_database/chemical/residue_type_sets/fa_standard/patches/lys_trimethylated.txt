@@ -1,7 +1,7 @@
 ## fullatom protein N(6)-trimethylation patch for lysine
 ## By Andy M. Chen, June 2009, achen39@jhu.edu
 
-NAME M3L
+NAME lys_trimethylated 
 TYPES TRIMETHYLATION
 
 ## general requirements for this patch
