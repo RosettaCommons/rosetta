@@ -1,0 +1,37 @@
+ATOM      1  N   HYP A   1      -3.366  16.585  44.188  1.00 10.00           N
+ATOM      2  CA  HYP A   1      -2.955  15.768  43.044  1.00 10.00           C
+ATOM      3  C   HYP A   1      -1.447  15.609  43.030  1.00 10.00           C
+ATOM      4  O   HYP A   1      -0.722  16.484  43.503  1.00 10.00           O
+ATOM      5  CB  HYP A   1      -3.408  16.578  41.829  1.00 10.00           C
+ATOM      6  CG  HYP A   1      -4.437  17.482  42.330  1.00 10.00           C
+ATOM      7  CD  HYP A   1      -4.068  17.803  43.753  1.00 10.00           C
+ATOM      8  OD1 HYP A   1      -5.693  16.815  42.294  1.00 10.00           O
+ATOM      9  OXT HYP A   1      -0.976  14.502  42.469  1.00 10.00           O
+ATOM     10  H   HYP A   1      -3.980  16.047  44.765  1.00 10.00           H
+ATOM     11  HA  HYP A   1      -3.385  14.756  43.068  1.00 10.00           H
+ATOM     12  HB2 HYP A   1      -2.567  17.141  41.398  1.00 10.00           H
+ATOM     13  HB3 HYP A   1      -3.790  15.930  41.026  1.00 10.00           H
+ATOM     14  HG  HYP A   1      -4.508  18.399  41.726  1.00 10.00           H
+ATOM     15 HD22 HYP A   1      -4.956  18.005  44.370  1.00 10.00           H
+ATOM     16 HD23 HYP A   1      -3.457  18.713  43.848  1.00 10.00           H
+ATOM     17  HD1 HYP A   1      -5.999  16.666  43.181  1.00 10.00           H
+ATOM     18  HXT HYP A   1      -0.027  14.511  42.499  1.00 10.00           H
+CONECT    1    2    7   10
+CONECT    2    1    3    5   11
+CONECT    3    2    4    9
+CONECT    4    3
+CONECT    5    2    6   12   13
+CONECT    6    5    7    8   14
+CONECT    7    1    6   15   16
+CONECT    8    6   17
+CONECT    9    3   18
+CONECT   10    1
+CONECT   11    2
+CONECT   12    5
+CONECT   13    5
+CONECT   14    6
+CONECT   15    7
+CONECT   16    7
+CONECT   17    8
+CONECT   18    9
+END   

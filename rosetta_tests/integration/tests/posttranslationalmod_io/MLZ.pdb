@@ -1,0 +1,55 @@
+ATOM      1  N   MLZ A   1       0.306  -2.126  -2.601  1.00 10.00           N
+ATOM      2  CA  MLZ A   1       0.164  -0.696  -2.695  1.00 10.00           C
+ATOM      3  CB  MLZ A   1       1.172   0.050  -1.819  1.00 10.00           C
+ATOM      4  CG  MLZ A   1       1.029  -0.210  -0.314  1.00 10.00           C
+ATOM      5  CD  MLZ A   1       2.018   0.595   0.536  1.00 10.00           C
+ATOM      6  CE  MLZ A   1       1.909   0.286   2.031  1.00 10.00           C
+ATOM      7  NZ  MLZ A   1       2.885   1.034   2.814  1.00 10.00           N
+ATOM      8  CM  MLZ A   1       2.795   0.688   4.225  1.00 10.00           C
+ATOM      9  C   MLZ A   1       0.373  -0.338  -4.153  1.00 10.00           C
+ATOM     10  O   MLZ A   1       1.159  -0.891  -4.911  1.00 10.00           O
+ATOM     11  OXT MLZ A   1      -0.389   0.723  -4.529  1.00 10.00           O
+ATOM     12  H   MLZ A   1      -0.419  -2.715  -2.974  1.00 10.00           H
+ATOM     13  H2  MLZ A   1       1.013  -2.509  -1.994  1.00 10.00           H
+ATOM     14  HA  MLZ A   1      -0.871  -0.473  -2.418  1.00 10.00           H
+ATOM     15  HB2 MLZ A   1       2.192  -0.230  -2.117  1.00 10.00           H
+ATOM     16  HB3 MLZ A   1       1.090   1.129  -2.004  1.00 10.00           H
+ATOM     17  HG2 MLZ A   1       1.197  -1.280  -0.139  1.00 10.00           H
+ATOM     18  HG3 MLZ A   1       0.000   0.000   0.000  1.00 10.00           H
+ATOM     19  HD2 MLZ A   1       1.866   1.669   0.377  1.00 10.00           H
+ATOM     20  HD3 MLZ A   1       3.041   0.368   0.210  1.00 10.00           H
+ATOM     21  HE2 MLZ A   1       0.902   0.522   2.390  1.00 10.00           H
+ATOM     22  HE3 MLZ A   1       2.071  -0.786   2.190  1.00 10.00           H
+ATOM     23  HZ  MLZ A   1       2.710   2.032   2.701  1.00 10.00           H
+ATOM     24 HCM1 MLZ A   1       2.237   1.456   4.766  1.00 10.00           H
+ATOM     25 HCM2 MLZ A   1       3.796   0.608   4.659  1.00 10.00           H
+ATOM     26 HCM3 MLZ A   1       2.283  -0.271   4.347  1.00 10.00           H
+ATOM     27  HXT MLZ A   1      -0.266   1.020  -5.456  1.00 10.00           H
+CONECT    1    2   12   13
+CONECT    2    1    3    9   14
+CONECT    3    2    4   15   16
+CONECT    4    3    5   17   18
+CONECT    5    4    6   19   20
+CONECT    6    5    7   21   22
+CONECT    7    6    8   23
+CONECT    8    7   24   25   26
+CONECT    9    2   10   11
+CONECT   10    9
+CONECT   11    9   27
+CONECT   12    1
+CONECT   13    1
+CONECT   14    2
+CONECT   15    3
+CONECT   16    3
+CONECT   17    4
+CONECT   18    4
+CONECT   19    5
+CONECT   20    5
+CONECT   21    6
+CONECT   22    6
+CONECT   23    7
+CONECT   24    8
+CONECT   25    8
+CONECT   26    8
+CONECT   27   11
+END   

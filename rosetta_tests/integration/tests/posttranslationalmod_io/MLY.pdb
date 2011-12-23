@@ -1,0 +1,61 @@
+ATOM      1  N   MLY A   1      30.897  32.013  86.595  1.00 10.00           N
+ATOM      2  CA  MLY A   1      30.008  31.772  85.465  1.00 10.00           C
+ATOM      3  CB  MLY A   1      28.866  32.726  85.430  1.00 10.00           C
+ATOM      4  CG  MLY A   1      27.670  32.308  86.280  1.00 10.00           C
+ATOM      5  CD  MLY A   1      27.216  30.876  86.047  1.00 10.00           C
+ATOM      6  CE  MLY A   1      25.708  30.712  86.248  1.00 10.00           C
+ATOM      7  NZ  MLY A   1      25.277  29.321  86.461  1.00 10.00           N
+ATOM      8  CH1 MLY A   1      23.809  29.228  86.351  1.00 10.00           C
+ATOM      9  CH2 MLY A   1      25.992  28.420  85.520  1.00 10.00           C
+ATOM     10  C   MLY A   1      30.734  31.700  84.129  1.00 10.00           C
+ATOM     11  O   MLY A   1      31.846  32.183  83.971  1.00 10.00           O
+ATOM     12  OXT MLY A   1      30.115  31.026  83.149  1.00 10.00           O
+ATOM     13  H   MLY A   1      31.679  31.359  86.619  1.00 10.00           H
+ATOM     14  H2  MLY A   1      30.383  32.004  87.476  1.00 10.00           H
+ATOM     15  HA  MLY A   1      29.580  30.756  85.633  1.00 10.00           H
+ATOM     16  HB2 MLY A   1      29.205  33.749  85.713  1.00 10.00           H
+ATOM     17  HB3 MLY A   1      28.548  32.914  84.377  1.00 10.00           H
+ATOM     18  HG2 MLY A   1      27.878  32.481  87.361  1.00 10.00           H
+ATOM     19  HG3 MLY A   1      26.820  33.016  86.136  1.00 10.00           H
+ATOM     20  HD2 MLY A   1      27.532  30.509  85.042  1.00 10.00           H
+ATOM     21  HD3 MLY A   1      27.788  30.161  86.683  1.00 10.00           H
+ATOM     22  HE2 MLY A   1      25.351  31.363  87.080  1.00 10.00           H
+ATOM     23  HE3 MLY A   1      25.148  31.168  85.398  1.00 10.00           H
+ATOM     24 HH11 MLY A   1      23.482  28.174  86.512  1.00 10.00           H
+ATOM     25 HH12 MLY A   1      23.291  29.936  87.039  1.00 10.00           H
+ATOM     26 HH13 MLY A   1      23.434  29.638  85.384  1.00 10.00           H
+ATOM     27 HH21 MLY A   1      25.665  27.366  85.681  1.00 10.00           H
+ATOM     28 HH22 MLY A   1      25.867  28.739  84.458  1.00 10.00           H
+ATOM     29 HH23 MLY A   1      27.099  28.531  85.593  1.00 10.00           H
+ATOM     30  HXT MLY A   1      30.568  30.981  82.315  1.00 10.00           H
+CONECT    1    2   13   14
+CONECT    2    1    3   10   15
+CONECT    3    2    4   16   17
+CONECT    4    3    5   18   19
+CONECT    5    4    6   20   21
+CONECT    6    5    7   22   23
+CONECT    7    6    8    9
+CONECT    8    7   24   25   26
+CONECT    9    7   27   28   29
+CONECT   10    2   11   12
+CONECT   11   10
+CONECT   12   10   30
+CONECT   13    1
+CONECT   14    1
+CONECT   15    2
+CONECT   16    3
+CONECT   17    3
+CONECT   18    4
+CONECT   19    4
+CONECT   20    5
+CONECT   21    5
+CONECT   22    6
+CONECT   23    6
+CONECT   24    8
+CONECT   25    8
+CONECT   26    8
+CONECT   27    9
+CONECT   28    9
+CONECT   29    9
+CONECT   30   12
+END   

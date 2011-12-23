@@ -1,0 +1,39 @@
+ATOM      1  N   SCY A   1      23.142 -11.341   8.918  1.00 10.00           N
+ATOM      2  CA  SCY A   1      24.392 -11.916   8.473  1.00 10.00           C
+ATOM      3  CB  SCY A   1      24.413 -13.486   8.741  1.00 10.00           C
+ATOM      4  SG  SCY A   1      24.324 -13.618  10.533  1.00 10.00           S
+ATOM      5  CD  SCY A   1      22.632 -14.322  10.566  1.00 10.00           C
+ATOM      6  OCD SCY A   1      22.483 -15.453  10.187  1.00 10.00           O
+ATOM      7  CE  SCY A   1      21.438 -13.488  11.075  1.00 10.00           C
+ATOM      8  C   SCY A   1      24.627 -11.759   7.003  1.00 10.00           C
+ATOM      9  O   SCY A   1      25.761 -11.895   6.554  1.00 10.00           O
+ATOM     10  OXT SCY A   1      23.655 -11.407   6.168  1.00 10.00           O
+ATOM     11  H   SCY A   1      23.128 -10.335   8.746  1.00 10.00           H
+ATOM     12  H2  SCY A   1      22.950 -11.561   9.895  1.00 10.00           H
+ATOM     13  HA  SCY A   1      25.177 -11.369   9.045  1.00 10.00           H
+ATOM     14  HB2 SCY A   1      23.622 -14.055   8.198  1.00 10.00           H
+ATOM     15  HB3 SCY A   1      25.279 -14.018   8.283  1.00 10.00           H
+ATOM     16  HE1 SCY A   1      20.408 -13.916  11.095  1.00 10.00           H
+ATOM     17  HE2 SCY A   1      21.681 -13.122  12.099  1.00 10.00           H
+ATOM     18  HE3 SCY A   1      21.406 -12.536  10.494  1.00 10.00           H
+ATOM     19  HXT SCY A   1      23.804 -11.307   5.235  1.00 10.00           H
+CONECT    1    2   11   12
+CONECT    2    1    3    8   13
+CONECT    3    2    4   14   15
+CONECT    4    3    5
+CONECT    5    4    6    7
+CONECT    6    5
+CONECT    7    5   16   17   18
+CONECT    8    2    9   10
+CONECT    9    8
+CONECT   10    8   19
+CONECT   11    1
+CONECT   12    1
+CONECT   13    2
+CONECT   14    3
+CONECT   15    3
+CONECT   16    7
+CONECT   17    7
+CONECT   18    7
+CONECT   19   10
+END   
