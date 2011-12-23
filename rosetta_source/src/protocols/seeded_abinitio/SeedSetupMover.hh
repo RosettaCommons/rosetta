@@ -94,10 +94,13 @@ class SeedSetupMover : public protocols::moves::Mover {
 
   /// let chi angles of chain 1 move
   bool chi_chain1_;
-
   /// let chi angles of chain 2 move
   bool chi_chain2_;
 
+	///interface chi angles be movable
+	bool interface_chi1_;
+	bool interface_chi2_;
+  core::Real interface_distance_cutoff_;
   /// set helper taskfactory
   bool packtask_;
 };

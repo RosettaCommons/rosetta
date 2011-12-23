@@ -40,6 +40,7 @@
 
 #include <basic/Tracer.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <protocols/scoring/Interface.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -247,7 +248,9 @@ void define_movemap_chains(
 									core::kinematics::MoveMapOP & movemap,
 									protocols::loops::Loops & seeds,
 									bool chi_chain1,
-									bool chi_chain2
+									bool chi_chain2,
+									bool interface_chi1,
+									bool interface_chi2
 									){
 			
 	using namespace basic::options;
@@ -260,12 +263,26 @@ void define_movemap_chains(
 
 	//setting chi to true if specified
 	if( num_chains > 1 ){
+
+		//setting up interface object
+		//multy chain possible, make jump a variable
+		Size rb_jump = 1;
+		//kinematics::FoldTree ori_ft = pose.fold_tree();
+	  pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
+  	protocols::scoring::Interface interface_obj(rb_jump );
+		interface_obj.distance( 8 /*interface_distance_cutoff_*/ );
+  	interface_obj.calculate( pose );	
+		//protocols::scoring::Interface interface_obj(rb_jump);
+
 		TR<<"disallowing all chains to be movable but the last one" <<std::endl;
 		for ( Size i = 1; i <= pose.conformation().chain_end( num_chains - 1 ); ++i ){
 			//to be safe
 			movemap->set_bb( i , false );
 			movemap->set_chi( i, false );
-			if( chi_chain1 )
+			if( chi_chain1 ){
+				movemap->set_chi( i, true );
+			}
+			if(interface_chi1 && interface_obj.is_interface(i))
 				movemap->set_chi( i, true );
 			//TR.Debug<<"i: "<<i << ", bb: "<< movemap->get_bb(i)<<", chi: "<<movemap->get_chi(i)<<  std::endl;
 		}
@@ -323,7 +340,7 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 	utility::vector1 <Size> norepack_residues = adjust_des_residues( pose, norepack_res_ );
 	
 	/// 2. set movemap
-	define_movemap_chains( pose , movemap_ , all_seeds_, chi_chain1_, chi_chain2_ );
+	define_movemap_chains( pose , movemap_ , all_seeds_, chi_chain1_, chi_chain2_, interface_chi1_, interface_chi2_ );
 		
 	/// 3. compute new task operations for seeds and target
 	
@@ -373,7 +390,11 @@ SeedSetupMover::parse_my_tag( TagPtr const tag,
 
 	chi_chain2_ = tag->getOption< bool >("chi_chain2", 0 );
 	chi_chain1_ = tag->getOption< bool >("chi_chain1", 0 );
-
+	
+	interface_chi1_ = tag->getOption< bool >("interface_chi1", 0 );
+	interface_chi2_ = tag->getOption< bool >("interface_chi2", 0 );
+	interface_distance_cutoff_ = tag->getOption< core::Real >("interface_distance_cutoff" , 8 );
+ 
 	//repacking for packer tasks options
 	repack_target_ = tag->getOption< bool >("repack_target", 1 );
 	repack_foldpose_ = tag->getOption< bool >("repack_foldpose", 1 );
