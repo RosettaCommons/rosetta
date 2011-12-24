@@ -26,7 +26,11 @@ import pymol
 class PR_UDPServer:
     def __init__(self, udp_ip = '127.0.0.1', udp_port=65000):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind( (udp_ip, udp_port) )
+        try:
+            self.socket.bind( (udp_ip, udp_port) )
+        except:
+            print 'FAILD TO START PyRosetta-PyMOL server, do you already have another instance of it running?'
+            raise 'FAILD TO START PyRosetta-PyMOL server, do you already have another instance of it running?'
         self.buf = {}
         self.last_cleanup_time = time.time()
 
