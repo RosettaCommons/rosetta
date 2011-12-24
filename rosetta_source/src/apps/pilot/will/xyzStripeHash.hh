@@ -2,7 +2,7 @@
 #include <apps/pilot/will/gpu_bit_utils.hh>
 
 template<typename T, typename M>
-class xyzHash {
+class xyzStripeHash {
 public:
   //typedef struct { T x,y,z,w; } float4;
   //typedef struct { ushort x,y; } ushort2;
@@ -15,9 +15,9 @@ private:
   //numeric::xyzMatrix<Real> rotation_;
   //numeric::xyzVector<Real> translation_;
 public:
-  xyzHash( T grid_size ) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
+  xyzStripeHash( T grid_size ) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
                            /*rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))*/ {}
-  xyzHash( T grid_size,
+  xyzStripeHash( T grid_size,
            vector1<numeric::xyzVector<T> > const & atoms,
            vector1<M> const & meta
            ) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
@@ -33,7 +33,7 @@ public:
   {
     if( sizeof(T) < sizeof(M) ) utility_exit_with_message("octree metadata must fit in sizeof(T)!");
     if( atoms.size() != meta.size() ) utility_exit_with_message("must be metadata for each point!");
-    if( atoms.size() > 65535 ) utility_exit_with_message("xyzHash con only handle < 65535 atoms!");
+    if( atoms.size() > 65535 ) utility_exit_with_message("xyzStripeHash con only handle < 65535 atoms!");
 
 #define FUDGE 0.0f
 
@@ -117,7 +117,7 @@ public:
     //   }
     delete gridc,gindex;
   }
-  virtual ~xyzHash() {
+  virtual ~xyzStripeHash() {
     if(grid_atoms_)  delete grid_atoms_;
     if(grid_stripe_) delete grid_stripe_;
   }
@@ -215,58 +215,6 @@ public:
 };
 
 
-enum PoseHashMode {
-  NBR,
-  BB,
-  BNP,
-  HVY,
-  ALL
-};
-
-class PoseHash : public xyzHash<float,float> {
-public:
-  PoseHash(float radius, core::pose::Pose p, PoseHashMode m = BB ) : xyzHash<float,float>(radius) { // makes copy
-    Size natom = 0;
-    for(int ir = 1; ir <= p.n_residue(); ++ir) {
-      core::conformation::Residue const & r(p.residue(ir));
-      if( NBR==m ) natom++;
-      if( BB ==m ) natom += r.has("N")+r.has("CA")+r.has("C")+r.has("O")+r.has("CB");
-      if( HVY==m ) natom += r.nheavyatoms();
-      if( ALL==m ) natom += r.natoms();
-    }
-    utility::vector1<numeric::xyzVector<float> > atoms(natom);
-    utility::vector1<float>                      meta (natom);
-    uint count = 0;
-    for(int ir = 1; ir <= p.n_residue(); ++ir) {
-      core::conformation::Residue const & r(p.residue(ir));
-      if(NBR==m) {
-        Size ia = r.nbr_atom();
-        core::id::AtomID const aid(ia,ir);;
-        atoms[++count] = p.xyz(aid);
-        meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );
-      } else if(BB==m) {
-        if(r.has( "N")){ atoms[++count]=r.xyz( "N"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "N"),ir),r.atom_type(r.atom_index( "N")).lj_radius()); }
-        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius()); }
-        if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius()); }
-        if(r.has( "O")){ atoms[++count]=r.xyz( "O"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "O"),ir),r.atom_type(r.atom_index( "O")).lj_radius()); }
-        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius()); }
-      } else if(BB==m) {
-        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius()); }
-        if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius()); }
-        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius()); }
-      } else {
-        Size natom = (ALL==m) ? r.natoms() : r.nheavyatoms();;
-        for(int ia = 1; ia <= natom; ++ia) {
-          core::id::AtomID const aid(ia,ir);
-          atoms[++count] = p.xyz(aid);
-          meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );
-        }
-      }
-    }
-    init(atoms,meta);
-  }
-
-};
 
 inline short const  short_min( short const a,  short const b) { return (a < b) ? a : b; }
 inline short const  short_max( short const a,  short const b) { return (a > b) ? a : b; }

@@ -73,16 +73,19 @@ struct CL {
     }
     out << "clCreateContext(0, 1, &device_id_, NULL, NULL, &err_);" << endl;
     context_ = clCreateContext(0, 1, &device_id_, NULL, NULL, &err_);
-    if(!context_)  handle_error("Error: Failed to create a compute context!");
-    queue_ = clCreateCommandQueue(context_, device_id_, CL_QUEUE_PROFILING_ENABLE, &err_);
-    if(!queue_) handle_error("Error: Failed to create a command commands!");
+    if(err_ != CL_SUCCESS) handle_error("Error: Failed to create a compute context: "+errstr(err_));
+
+    queue_ = clCreateCommandQueue(context_, device_id_, NULL, &err_);
+    if(err_ != CL_SUCCESS) handle_error("Error: Failed to create a command queue: "+errstr(err_));
+
+		out << "reading kernels from: '" << basic::options::option[basic::options::OptionKeys::gpu::kernel]() << "'" << endl;
     utility::io::izstream kin(basic::options::option[basic::options::OptionKeys::gpu::kernel]());
     std::string stmp((std::istreambuf_iterator<char>(kin)), std::istreambuf_iterator<char>());
     stmp += zeromemfunc;
     const char * kernelsource = stmp.c_str();
     //out_ << kernelsource << std::endl;
     program_ = clCreateProgramWithSource(context_, 1, (const char **) &kernelsource, NULL, &err_);
-    if(!program_) handle_error("Error: Failed to create compute program!");
+    if(err_ != CL_SUCCESS) handle_error("Error: Failed to create compute program! "+errstr(err_));
     out << "clBuildProgram" << endl;
     double t = time_highres();
     err_ = clBuildProgram(program_, 0, NULL, "-I src/apps/pilot/will -cl-single-precision-constant -cl-mad-enable -cl-no-signed-zeros -cl-fast-relaxed-math -w", NULL, NULL);
@@ -123,7 +126,7 @@ struct CL {
   }
   void make_kernel(std::string kname) {
     kernels_[kname] = clCreateKernel(program_,kname.c_str(),&err_);
-    if(!(kernels_[kname]) || err_ != CL_SUCCESS) handle_error("Error: Failed to create compute kernel "+kname+"!");
+    if(!(kernels_[kname]) || err_ != CL_SUCCESS) handle_error("Error: Failed to create compute kernel "+kname+"! "+errstr(err_));
   }
   cl_kernel & operator[](std::string kname) {
     return kernels_[kname];

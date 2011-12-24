@@ -512,7 +512,6 @@ void copy_torsions(uint N, __global float *a, __global float const *b) {
 }
 
 
-#pragma OPENCL EXTENSION cl_amd_printf : enable
 
 __kernel void abinitio(
                      __global       float *tors,

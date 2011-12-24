@@ -2,28 +2,7 @@
 #include <apps/pilot/will/gpu/gpu_refold_test_cpu.hh>
 #include <numeric/xyz.io.hh>
 
-void set_pose_to_ideal(core::pose::Pose & p) {
-  float const COS_C_N_CA = 0.5254717f;
-  float const SIN_C_N_CA = 0.8508111f;
-  float const COS_N_CA_C = 0.3616246f;
-  float const SIN_N_CA_C = 0.9323238f;
-  float const COS_CA_C_N = 0.4415059f;
-  float const SIN_CA_C_N = 0.8972584f;
-  float const DIS_N_CA   = 1.4580010f;
-  float const DIS_CA_C   = 1.5232580f;
-  float const DIS_C_N    = 1.3286850f;
-  Real ang_n = /*3.1415926535897932384626433832795-*/(acos(COS_CA_C_N)+asin(SIN_CA_C_N))/2.0;
-  Real angca = /*3.1415926535897932384626433832795-*/(acos(COS_C_N_CA)+asin(SIN_C_N_CA))/2.0;
-  Real ang_c = /*3.1415926535897932384626433832795-*/(acos(COS_N_CA_C)+asin(SIN_N_CA_C))/2.0;  
-  for(Size i = 1; i <= p.n_residue(); ++i) {
-    ;        p.set_dof(DOF_ID(AtomID(1,i),core::id::THETA),ang_n);
-    if(i!=1) p.set_dof(DOF_ID(AtomID(2,i),core::id::THETA),angca);
-    ;        p.set_dof(DOF_ID(AtomID(3,i),core::id::THETA),ang_c);
-    ;        p.set_dof(DOF_ID(AtomID(1,i),core::id::D),DIS_C_N);
-    if(i!=1) p.set_dof(DOF_ID(AtomID(2,i),core::id::D),DIS_N_CA);
-    ;        p.set_dof(DOF_ID(AtomID(3,i),core::id::D),DIS_CA_C);
-  }
-}
+#include <apps/pilot/will/gpu/set_pose_to_ideal.ihh>
 
 void gpu_refold_test(uint const NITER) {
   uint LOCAL_DIM = option[basic::options::OptionKeys::gpu::numthreads_per_workunit]();

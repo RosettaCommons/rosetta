@@ -1,8 +1,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/gpu.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
+#include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -45,12 +45,25 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include <apps/pilot/will/will_util.ihh>
-#include <apps/pilot/will/mynamespaces.ihh>
 
 
 static basic::Tracer TR("gpu_test");
 
+
+OPT_1GRP_KEY( Integer, gpu, numthreads_per_workunit )
+OPT_1GRP_KEY( File   , gpu, kernel )
+
+void register_options() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	NEW_OPT( gpu::numthreads_per_workunit ,"local work unit dim", 128 );
+	NEW_OPT( gpu::kernel ,"kernel file", "" );
+
+	
+}
+
+#include <apps/pilot/will/will_util.ihh>
+#include <apps/pilot/will/mynamespaces.ihh>
 #include <apps/pilot/will/gpu/CL.hh>
 
 
@@ -76,6 +89,7 @@ typedef cl_uint8 uint8;
 #include <core/scoring/AtomVDW.hh>
 
 int main(int argc, char *argv[]) {
+	register_options();
   core::init(argc,argv);
   using namespace basic::options;
 
