@@ -27,6 +27,11 @@
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
+#ifdef WIN32
+	//#include <core/fragment/FragData.hh>
+	#include <core/fragment/FragSet.hh>
+#endif
+
 
 // C++ Headers
 
@@ -47,32 +52,32 @@ public: // typedefs
 
 public:
 
-	LoopMover();    
+	LoopMover();
 	LoopMover( protocols::loops::LoopsOP loops_in );
-    
+
     ///@brief copy ctor
 	LoopMover( LoopMover const & rhs );
 
 	///@brief assignment operator
 	LoopMover & operator=( LoopMover const & rhs );
-	
+
     //destructor
 	virtual ~LoopMover();
 
 	virtual std::string get_name() const;
-    
+
     /// @brief Apply the loop-build protocol to the input pose
 	void apply( core::pose::Pose & ) {}
-    
+
     void set_scorefxn( const core::scoring::ScoreFunctionOP score_in );
-    const core::scoring::ScoreFunctionOP & scorefxn() const;	
-    
+    const core::scoring::ScoreFunctionOP & scorefxn() const;
+
     void loops( protocols::loops::LoopsOP const l );
     const protocols::loops::LoopsOP loops() const;
-        
+
     const utility::vector1< core::fragment::FragSetOP > & frag_libs() const;
-    
-	
+
+
 	/// @brief Extend a loop
 	virtual void set_extended_torsions( core::pose::Pose & pose, Loop const & loop );
 
@@ -90,22 +95,22 @@ public: // movemap management
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
     MoveMap const & false_movemap() const;
-    
+
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
 	void false_movemap( MoveMap const & mm );
-    
+
 public: // checkpointing
 	checkpoint::CheckPointerOP & get_checkpoints();
-    
+
 protected: // movemap management
 
 	/// @brief import the false_movemap's <b>explicit</b> False settings into the
 	///  given MoveMap
 	/// @return The number of False settings imported.
 	Size enforce_false_movemap( MoveMap & mm ) const;
-    
+
 	/// @author flo, march 2011
 	/// @brief allow the loops to be set from the segments
 	/// stored in the poses observer cache. makes it possible
@@ -113,24 +118,24 @@ protected: // movemap management
 	/// where the loops were determined by some previous on the
 	/// fly step
 	void set_loops_from_pose_observer_cache( core::pose::Pose const & pose );
-    
-    bool const use_loops_from_observer_cache() const; 
+
+    bool const use_loops_from_observer_cache() const;
     void set_use_loops_from_observer_cache( bool const loops_from_observer_cache );
 
 private: // data
 
     protocols::loops::LoopsOP loops_;
-    
+
     core::scoring::ScoreFunctionOP scorefxn_;
     utility::vector1< core::fragment::FragSetOP > frag_libs_;
     checkpoint::CheckPointerOP checkpoints_;
     bool loops_from_observer_cache_;
-    
+
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
 	MoveMap false_movemap_;
-    
+
     void init( protocols::loops::LoopsOP loops_in );
     void initForEqualOperatorAndCopyConstructor(LoopMover & lhs, LoopMover const & rhs);
 
