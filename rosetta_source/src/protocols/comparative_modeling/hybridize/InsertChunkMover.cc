@@ -12,7 +12,7 @@
 /// @detailed
 /// @author Yifan Song
 
-#include <protocols/comparative_modeling/hybridize/InsertSingleChunk.hh>
+#include <protocols/comparative_modeling/hybridize/InsertChunkMover.hh>
 #include <protocols/comparative_modeling/hybridize/util.hh>
 
 #include <core/pose/Pose.hh>
@@ -46,7 +46,7 @@
 #include <basic/Tracer.hh>
 
 static numeric::random::RandomGenerator RG(482136);
-static basic::Tracer TR( "protocols.comparative_modeling.hybridize.InsertSingleChunk" );
+static basic::Tracer TR( "protocols.comparative_modeling.hybridize.InsertChunkMover" );
 
 namespace protocols {
 namespace comparative_modeling {
@@ -56,17 +56,17 @@ using namespace core;
 using namespace id;
 using namespace ObjexxFCL;
 
-InsertSingleChunk::InsertSingleChunk() : 
+InsertChunkMover::InsertChunkMover() : 
 registry_shift_(0), reset_torsion_unaligned_(true), align_to_ss_only_(true), copy_ss_torsion_only_(false), secstruct_('L')
 {
 	align_trial_counter_.clear();
 }
 
-InsertSingleChunk::~InsertSingleChunk(){}
+InsertChunkMover::~InsertChunkMover(){}
 
 // atom_map: from mod_pose to ref_pose
 void
-InsertSingleChunk::get_superposition_transformation(
+InsertChunkMover::get_superposition_transformation(
 								 pose::Pose const & mod_pose,
 								 pose::Pose const & ref_pose,
 								 id::AtomID_Map< id::AtomID > const & atom_map,
@@ -134,7 +134,7 @@ InsertSingleChunk::get_superposition_transformation(
 }
 
 void
-InsertSingleChunk::apply_transform(
+InsertChunkMover::apply_transform(
 				pose::Pose & mod_pose,
 				std::list <Size> const & residue_list,
 				numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
@@ -158,7 +158,7 @@ InsertSingleChunk::apply_transform(
 	mod_pose.batch_set_xyz(ids,positions);
 }
 	
-void InsertSingleChunk::align_chunk(core::pose::Pose & pose) {
+void InsertChunkMover::align_chunk(core::pose::Pose & pose) {
 	std::list <Size> residue_list;
 	for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
 		residue_list.push_back(ires_pose);
@@ -172,13 +172,13 @@ void InsertSingleChunk::align_chunk(core::pose::Pose & pose) {
 	apply_transform( pose, residue_list, R, preT, postT );
 }
 	
-void InsertSingleChunk::set_template(core::pose::PoseCOP template_pose,
+void InsertChunkMover::set_template(core::pose::PoseCOP template_pose,
 				  std::map <core::Size, core::Size> const & sequence_alignment ) {
 	template_pose_ = template_pose;
 	sequence_alignment_ = sequence_alignment;
 }
 
-void InsertSingleChunk::set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number) {
+void InsertChunkMover::set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number) {
 	jump_number_ = jump_number;
 	
 	std::list < Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
@@ -189,11 +189,11 @@ void InsertSingleChunk::set_aligned_chunk(core::pose::Pose const & pose, Size co
 	assert(downstream_residues.size() == (seqpos_stop_ - seqpos_start_ + 1));
 }
 
-void InsertSingleChunk::set_reset_torsion_unaligned(bool reset_torsion_unaligned) {
+void InsertChunkMover::set_reset_torsion_unaligned(bool reset_torsion_unaligned) {
 	reset_torsion_unaligned_ = reset_torsion_unaligned;
 }
 	
-void InsertSingleChunk::steal_torsion_from_template(core::pose::Pose & pose) {
+void InsertChunkMover::steal_torsion_from_template(core::pose::Pose & pose) {
 	using namespace ObjexxFCL::fmt;
 	for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
 		if (reset_torsion_unaligned_) {
@@ -230,7 +230,7 @@ void InsertSingleChunk::steal_torsion_from_template(core::pose::Pose & pose) {
 	}
 }
 	
-bool InsertSingleChunk::get_local_sequence_mapping(core::pose::Pose const & pose,
+bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 								int registry_shift,
 								Size MAX_TRIAL)
 {
@@ -294,11 +294,11 @@ bool InsertSingleChunk::get_local_sequence_mapping(core::pose::Pose const & pose
 	return false;	
 }
 	
-void InsertSingleChunk::set_registry_shift(int registry_shift) {
+void InsertChunkMover::set_registry_shift(int registry_shift) {
 	registry_shift_ = registry_shift;
 }
 	
-Size InsertSingleChunk::trial_counter(Size ires) {
+Size InsertChunkMover::trial_counter(Size ires) {
 	if (ires <= align_trial_counter_.size()) {
 		return align_trial_counter_[ires];	
 	}
@@ -306,7 +306,7 @@ Size InsertSingleChunk::trial_counter(Size ires) {
 }
 	
 void
-InsertSingleChunk::apply(core::pose::Pose & pose) {
+InsertChunkMover::apply(core::pose::Pose & pose) {
 	// apply alignment
 	bool success = get_local_sequence_mapping(pose, registry_shift_);
 	if (!success) return;
@@ -316,8 +316,8 @@ InsertSingleChunk::apply(core::pose::Pose & pose) {
 }
 	
 std::string
-InsertSingleChunk::get_name() const {
-	return "InsertSingleChunk";
+InsertChunkMover::get_name() const {
+	return "InsertChunkMover";
 }
 	
 	

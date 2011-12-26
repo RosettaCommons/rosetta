@@ -12,8 +12,12 @@
 /// @author Yifan Song
 
 #include <protocols/comparative_modeling/hybridize/HybridizeProtocol.hh>
+#include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.hh>
 
 #include <protocols/nonlocal/util.hh>
+
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -59,7 +63,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 static basic::Tracer TR( "protocols.comparative_modeling.hybridize.HybridizeProtocol" );
 
@@ -77,6 +81,8 @@ using namespace constraints;
 
 HybridizeProtocol::HybridizeProtocol()
 {
+	check_options();
+	
 	//read templates
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -99,19 +105,19 @@ HybridizeProtocol::HybridizeProtocol()
 	}
 	
 	//read fragments
-	if ( option[ OptionKeys::in::file::frag9 ].user() ) {
+	if ( option[ in::file::frag9 ].user() ) {
 		using namespace core::fragment;
 		fragments9_ = new ConstantLengthFragSet( 9 );
-		fragments9_ = FragmentIO().read_data( option[ OptionKeys::in::file::frag9 ]() );
+		fragments9_ = FragmentIO().read_data( option[ in::file::frag9 ]() );
 		for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
 			core::Size position = (*i)->start();
 			//library_[position] = **i;
 		}
 	}
-	if ( option[ OptionKeys::in::file::frag3 ].user() ) {
+	if ( option[ in::file::frag3 ].user() ) {
 		using namespace core::fragment;
 		fragments3_ = new ConstantLengthFragSet( 3 );
-		fragments3_ = FragmentIO().read_data( option[ OptionKeys::in::file::frag3 ]() );
+		fragments3_ = FragmentIO().read_data( option[ in::file::frag3 ]() );
 		for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
 			core::Size position = (*i)->start();
 			//library_[position] = **i;
@@ -167,9 +173,27 @@ void HybridizeProtocol::read_template_structures(utility::vector1 < utility::fil
 		dssp_obj.insert_ss_into_pose( *templates_[i_ref] );
 	}
 }
+
+void HybridizeProtocol::check_options()
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( !basic::options::option[ cm::hybridize::templates ].user() ) {
+		utility_exit_with_message("Error! Need the -cm::hybridize::templates for input template structures.");
+	}
+}
 	
 void HybridizeProtocol::apply( core::pose::Pose & pose )
 {
+	using namespace protocols::moves;
+	SequenceMoverOP whole_sequence( new SequenceMover() );
+	
+	if (basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user()) {
+		whole_sequence->add_mover(new protocols::simple_moves::ConstraintSetMover());
+	}
+	
+	FoldTreeHybridize * ft_hybridize ( new FoldTreeHybridize(templates_) );
+	whole_sequence->add_mover(ft_hybridize);
 }
 
 

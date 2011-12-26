@@ -11,11 +11,10 @@
 /// @brief Add constraints to the current pose conformation.
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_moves_HybridizeProtocol_hh
-#define INCLUDED_protocols_moves_HybridizeProtocol_hh
+#ifndef INCLUDED_protocols_comparative_modeling_hybridize_HybridizeProtocol_hh
+#define INCLUDED_protocols_comparative_modeling_hybridize_HybridizeProtocol_hh
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 #include <protocols/loops/Loops.hh>
 
@@ -39,6 +38,8 @@ public:
 		
 	void read_template_structures(utility::vector1 < utility::file::FileName > const & template_filenames);
 	core::Real get_gdtmm( core::pose::Pose & pose );
+
+	void check_options();
 
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file FoldTreeHybridize.fwd.hh
+/// @file ChunkTrialMover.fwd.hh
 /// @brief
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_comparative_modeling_hybridize_FoldTreeHybridize_fwd_hh
-#define INCLUDED_protocols_comparative_modeling_hybridize_FoldTreeHybridize_fwd_hh
+#ifndef INCLUDED_protocols_comparative_modeling_hybridize_ChunkTrialMover_fwd_hh
+#define INCLUDED_protocols_comparative_modeling_hybridize_ChunkTrialMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,9 +22,9 @@ namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 			
-class FoldTreeHybridize;
-typedef utility::pointer::owning_ptr< FoldTreeHybridize > FoldTreeHybridizeOP;
-typedef utility::pointer::owning_ptr< FoldTreeHybridize const > FoldTreeHybridizeCOP;
+class ChunkTrialMover;
+typedef utility::pointer::owning_ptr< ChunkTrialMover > ChunkTrialMoverOP;
+typedef utility::pointer::owning_ptr< ChunkTrialMover const > ChunkTrialMoverCOP;
 
 
 } // hybridize 

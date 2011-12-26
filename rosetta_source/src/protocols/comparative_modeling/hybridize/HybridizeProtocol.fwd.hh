@@ -11,22 +11,24 @@
 /// @brief
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_moves_HybridizeProtocol_fwd_hh
-#define INCLUDED_protocols_moves_HybridizeProtocol_fwd_hh
+#ifndef INCLUDED_protocols_comparative_modeling_hybridize_HybridizeProtocol_fwd_hh
+#define INCLUDED_protocols_comparative_modeling_hybridize_HybridizeProtocol_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 
 namespace protocols {
-namespace moves {
-
+namespace comparative_modeling {
+namespace hybridize {
+			
 class HybridizeProtocol;
 typedef utility::pointer::owning_ptr< HybridizeProtocol > HybridizeProtocolOP;
 typedef utility::pointer::owning_ptr< HybridizeProtocol const > HybridizeProtocolCOP;
 
 
-} // moves
+} // hybridize 
+} // comparative_modeling 
 } // protocols
 
 #endif

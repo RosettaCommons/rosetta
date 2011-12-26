@@ -12,16 +12,17 @@
 /// @detailed
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_comparative_modeling_hybridize_FoldTreeHybridize_hh
-#define INCLUDED_protocols_comparative_modeling_hybridize_FoldTreeHybridize_hh
+#ifndef INCLUDED_protocols_comparative_modeling_hybridize_ChunkTrialMover_hh
+#define INCLUDED_protocols_comparative_modeling_hybridize_ChunkTrialMover_hh
 
 #include <protocols/comparative_modeling/hybridize/InsertChunkMover.hh>
-//#include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.fwd.hh>
+#include <protocols/comparative_modeling/hybridize/ChunkTrialMover.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/util/kinematics_util.hh>
-#include <core/fragment/FragSet.fwd.hh>
+#include <core/fragment/Frame.hh>
+#include <core/fragment/FrameIterator.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -52,31 +53,34 @@ using namespace protocols::moves;
 using namespace protocols::loops;
 using namespace protocols::nonlocal;
 	
-class FoldTreeHybridize: public protocols::moves::Mover
+enum AlignOption { all_chunks, random_chunk };
+	
+class ChunkTrialMover: public protocols::moves::Mover
 {
 	
 public:
+ChunkTrialMover(
+				utility::vector1 < core::pose::PoseCOP > const & template_poses,
+				Loops ss_chunks_pose,
+				AlignOption align_option = all_chunks,
+				Size max_registry_shift = 0);
 
-	FoldTreeHybridize(utility::vector1 < core::pose::PoseOP > const & template_poses);
+void
+	get_alignment_from_template(core::pose::PoseCOP const template_pose, std::map <core::Size, core::Size> & seqpos_alignment);
 
-	void revert_loops_to_original(core::pose::Pose & pose, Loops loops);
-
-	void set_loops_to_virt_ala(core::pose::Pose & pose, Loops loops);
-
-	Real
-	gap_distance(Size Seq_gap);
 	
-	void add_gap_constraints_to_pose(core::pose::Pose & pose, Loops const & chunks, int gap_edge_shift=0, Real stdev=0.1);
+void
+get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk_mapping,
+								 Loops const template_ss_chunks,
+								 Loops const target_ss_chunks,
+								 std::map <core::Size, core::Size> & sequence_alignment);
+	
+void pick_random_template();
 
-	void
-	setup_startree(core::pose::Pose & pose);
+void pick_random_chunk(core::pose::Pose & pose);
 
-	numeric::xyzVector<Real> center_of_mass(core::pose::Pose const & pose);
-
-	void translate_virt_to_CoM(core::pose::Pose & pose);
-
-	Loops loops();
-
+Size trial_counter(Size ires);
+	
 void
 	apply(core::pose::Pose & pose);
 
@@ -84,14 +88,18 @@ std::string
 	get_name() const;
 	
 private:
+	InsertChunkMover align_chunk_;
+	AlignOption align_option_;
+	
 	utility::vector1 < core::pose::PoseCOP > template_poses_;
+	utility::vector1 < Loops > template_ss_chunks_;
+	utility::vector1 < std::map <core::Size, core::Size> > sequence_alignments_;
+	Size max_registry_shift_input_;
+	utility::vector1 < Size > max_registry_shift_;
 	
-	core::fragment::FragSetOP fragments9_, fragments3_; // abinitio frag9,frag3 flags
-
-	Loops ss_chunks_pose_;
-	Loops loops_pose_;
-	
-}; //class FoldTreeHybridize
+	Size template_number_; // the jump to be realigned
+	Size jump_number_; // the jump to be realigned
+}; //class ChunkTrialMover
 	
 } // hybridize 
 } // comparative_modeling 

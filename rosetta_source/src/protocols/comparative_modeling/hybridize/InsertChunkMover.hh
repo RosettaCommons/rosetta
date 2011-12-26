@@ -12,8 +12,8 @@
 /// @detailed
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_moves_InsertSingleChunk_hh
-#define INCLUDED_protocols_moves_InsertSingleChunk_hh
+#ifndef INCLUDED_protocols_moves_InsertChunkMover_hh
+#define INCLUDED_protocols_moves_InsertChunkMover_hh
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -35,13 +35,13 @@ namespace hybridize {
 
 using namespace core;
 
-class InsertSingleChunk: public protocols::moves::Mover
+class InsertChunkMover: public protocols::moves::Mover
 {
 
 public:
 	
-InsertSingleChunk();
-~InsertSingleChunk();
+InsertChunkMover();
+~InsertChunkMover();
 	
 // atom_map: from mod_pose to ref_pose
 void
@@ -96,7 +96,7 @@ private:
 	bool align_to_ss_only_; // only use the secondary structure portion to align to the template
 	bool copy_ss_torsion_only_; // only copy the secondary structure information from the template
 	
-	std::map <core::Size, core::Size> sequence_alignment_local_;
+	std::map <core::Size, core::Size> sequence_alignment_local_; // with registry shift of the aligned chunk
 	core::id::AtomID_Map< core::id::AtomID > atom_map_; // atom map for superposition
 	utility::vector1 <Size> align_trial_counter_;
 };
