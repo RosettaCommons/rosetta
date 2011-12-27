@@ -17,7 +17,9 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pack/pack_rotamers.hh>
-
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
@@ -117,7 +119,13 @@ BindingStrainFilter::compute( core::pose::Pose const & p ) const{
 	core::pose::Pose pose( p );
 	unbind( pose );
 	core::Real const energy_before_pack( stf.compute( pose ));
-	pack_rotamers( pose, *scorefxn(), pack );
+
+  protocols::simple_moves::PackRotamersMoverOP prm;
+  if( core::pose::symmetry::is_symmetric( pose ) )
+    prm =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), pack );
+  else
+    prm = new protocols::simple_moves::PackRotamersMover( scorefxn(), pack );
+  prm->apply( pose );
 	core::Real const energy_after_pack( stf.compute( pose ) );
 	return( energy_before_pack - energy_after_pack );
 }
