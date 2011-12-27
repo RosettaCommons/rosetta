@@ -32,6 +32,7 @@
 #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_ChunkLibrary.hh>
 #include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/swa/StepWiseUtil.hh> //move this to toolbox/
 
 // Project headers
 #include <protocols/moves/MonteCarlo.hh>
@@ -43,7 +44,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_Util.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
@@ -262,7 +263,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			if (filter_lores_base_pairs_) found_good_decoy = rna_structure_parameters_->check_base_pairs( pose );
 		}
 
-		if (output_lores_silent_file_ ) output_to_silent_file( pose, lores_silent_file_, out_file_tag );
+		if (output_lores_silent_file_ ) align_and_output_to_silent_file( pose, lores_silent_file_, out_file_tag );
 
 		if (close_loops_) {
 			//rna_loop_closer_->close_loops_carefully( pose, rna_structure_parameters_->connections() );
@@ -283,7 +284,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		std::string const out_file_name = out_file_tag + ".pdb";
 		if (dump_pdb_)	 dump_pdb( pose,  out_file_name );
 
-		output_to_silent_file( pose, silent_file_, out_file_tag );
+		align_and_output_to_silent_file( pose, silent_file_, out_file_tag );
 
 	} //nstruct
 
@@ -438,6 +439,7 @@ RNA_DeNovoProtocol::output_silent_struct(
 
 }
 
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag, bool const score_only /* = false */) const
@@ -462,6 +464,43 @@ RNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::string 
 	}
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag ) const
+{
+
+	if ( get_native_pose() ){
+		Pose const & native_pose = *get_native_pose();
+
+		//realign to native for ease of viewing.
+		// check for any fixed domains.
+		utility::vector1< Size > superimpose_res;
+
+		protocols::toolbox::AllowInsertOP const & allow_insert = rna_structure_parameters_->allow_insert();
+		for( Size n = 1; n <= pose.total_residue(); n++ ){
+			if ( !allow_insert->get( n ) ) superimpose_res.push_back( n );
+		}
+
+		// if no fixed domains, just superimpose over all residues.
+		if ( superimpose_res.size() == 0 ){
+			for( Size n = 1; n <= pose.total_residue(); n++ )  superimpose_res.push_back( n );
+		}
+
+		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
+			protocols::swa::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+
+		std::cout << "Aligning pose to native." << std::endl;
+
+		//pose.dump_pdb( "before_align.pdb");
+		//		native_pose.dump_pdb( "native.pdb" );
+		core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
+		//		pose.dump_pdb( "after_align.pdb");
+
+	}
+
+	output_to_silent_file( pose, silent_file, out_file_tag );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void

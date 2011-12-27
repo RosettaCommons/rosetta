@@ -156,6 +156,9 @@ public:
 	output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag, bool const score_only = false ) const;
 
 	void
+	align_and_output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag ) const;
+
+	void
 	set_staged_constraints( bool const setting ){ staged_constraints_ = setting; }
 
 private:
