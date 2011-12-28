@@ -19,6 +19,8 @@
 #include <protocols/swa/StepWiseUtil.hh>
 
 //////////////////////////////////
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/util.hh>
 #include <core/types.hh>
 //#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -96,6 +98,9 @@ namespace protein {
 
 		ConstraintSetOP cst_set = pose.constraint_set()->clone();
 
+		utility::vector1< std::pair<core::Size,core::Size> > disulfides;
+		core::conformation::disulfide_bonds(pose.conformation(), disulfides);
+
     AtomTreeMinimizer minimizer;
     bool const use_nblist( true );
     MinimizerOptions options( min_type_, min_tolerance_, use_nblist, false, false );
@@ -124,7 +129,9 @@ namespace protein {
       PoseOP & pose_op( iter->second );
       pose = *pose_op; // This copy is to allow for easy graphic visualization.
 
-			pose.constraint_set( cst_set ); // this is necessary because poses from clustering went thorugh silent struct and lost their constraints
+			// Following are necessary because poses from clustering went thorugh silent struct and lost their constraints & disulfide information.
+			pose.constraint_set( cst_set );
+			pose.conformation().fix_disulfides( disulfides );
 
 			Real const score_original = (*fa_scorefxn_)( pose );
 

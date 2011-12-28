@@ -196,7 +196,6 @@ return "StepWisePoseSetup";
 		apply_virtual_res_variant( pose);
 
 		setup_constraints( pose );
-
 		setup_disulfides( pose );
 
 		//////////////////////////////////////////////////
@@ -519,7 +518,7 @@ return "StepWisePoseSetup";
 		if ( remove_nterminus_variant_ ) 	pose::remove_lower_terminus_type_from_pose_residue( pose, 1 );
 		if ( remove_cterminus_variant_ ) 	pose::remove_upper_terminus_type_from_pose_residue( pose, pose.total_residue() );
 
-		std::cout << remove_nterminus_variant_ << ' ' << remove_cterminus_variant_ << "  FULL POSE ANNOTATED SEQUENCE: " << pose.annotated_sequence() << std::endl;
+		std::cout << remove_nterminus_variant_ << ' ' << remove_cterminus_variant_ << "  FULL POSE ANNOTATED SEQUENCE: " << pose.annotated_sequence( true ) << std::endl;
 
 	}
 
@@ -615,16 +614,27 @@ return "StepWisePoseSetup";
 		ObjexxFCL::FArray1D< Size > const & is_working_res = job_parameters_->is_working_res();
 
 		utility::vector1< std::pair<Size,Size> > working_disulf_bonds;
+
 		for ( Size n = 1; n <= disulf_bonds.size(); n++ ){
-			if ( is_working_res( disulf_bonds[n].first  ) &&
-					 is_working_res( disulf_bonds[n].second  )  ){
+			//			std::cout <<  disulf_bonds[n].first  << " " << is_working_res( disulf_bonds[n].first  ) << "    " << disulf_bonds[n].second << " " << is_working_res( disulf_bonds[n].second  ) << std::endl;
+			if ( is_working_res( disulf_bonds[n].first  )>0 &&
+					 is_working_res( disulf_bonds[n].second  )>0  ){
+
+				std::cout << "FOUND PAIR: " << disulf_bonds[n].first << "--" << disulf_bonds[n].second << "[in subpose: " << full_to_sub[ disulf_bonds[n].first ] << "--" << full_to_sub[ disulf_bonds[n].second ] << "]" << std::endl;
+
 				working_disulf_bonds.push_back(  std::make_pair( full_to_sub[ disulf_bonds[n].first ], full_to_sub[ disulf_bonds[n].second ] ) );
 			}
 		}
 
 		pose.conformation().fix_disulfides( working_disulf_bonds );
+		for ( Size n = 1; n<= pose.total_residue();n++ ) std::cout << pose.residue_type( n ).has_variant_type( chemical::DISULFIDE );
+		std::cout << std::endl;
+
+		// this is not showing up right...
+		std::cout << "AFTER DISULF: " << pose.annotated_sequence( true ) << std::endl;
 
 	}
+
 	////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWisePoseSetup::setup_constraints( pose::Pose & pose ){
@@ -1162,7 +1172,7 @@ return "StepWisePoseSetup";
 
 		if ( get_native_pose() == 0 ) return;
 
-		std::cout << "NATIVE sequence: " << get_native_pose()->annotated_sequence() << std::endl;
+		std::cout << "NATIVE sequence: " << get_native_pose()->annotated_sequence( true ) << std::endl;
 
 		working_native_pose = new Pose;
 		get_working_pose( *get_native_pose(), *working_native_pose );
