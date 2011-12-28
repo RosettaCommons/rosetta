@@ -44,6 +44,7 @@
 #include <protocols/protein_interface_design/filters/HbondsToResidueFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/InterfaceHolesFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RelativePoseFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/RelativeSegmentFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/SequenceRecoveryFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>
