@@ -30,6 +30,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -229,6 +230,7 @@ OPT_KEY( Integer, n_sample )
 OPT_KEY( Integer, nstruct_centroid )
 OPT_KEY( String, pack_weights )
 OPT_KEY( String, cst_file )
+OPT_KEY( String, disulfide_file )
 OPT_KEY( String, align_pdb )
 OPT_KEY( String, centroid_weights )
 OPT_KEY( String, min_type )
@@ -300,6 +302,14 @@ rebuild_test(){
 		native_pose = PoseOP( new Pose );
 		std::string native_pdb_file  = option[ in::file::native ];
 		import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+
+		native_pose->conformation().detect_disulfides();
+		if (!option[ disulfide_file ].user() ){
+			for (Size n = 1; n <= native_pose->total_residue(); n++){
+				if ( native_pose->residue_type( n ).has_variant_type( chemical::DISULFIDE ) ) utility_exit_with_message( "native pose has disulfides -- you should probable specify disulfides with -disulfide_file" );
+			}
+		}
+
 		if ( option[ dump ]() ) native_pose->dump_pdb("full_native.pdb");
 	}
 
@@ -332,7 +342,8 @@ rebuild_test(){
 	stepwise_pose_setup->set_dump( option[ dump ] );
 	stepwise_pose_setup->set_rsd_set( rsd_set );
 	stepwise_pose_setup->set_secstruct( option[ secstruct ] );
-	if ( option[ cst_file ].user() ) stepwise_pose_setup->set_cst_file( option[ cst_file ]() );
+	stepwise_pose_setup->set_cst_file( option[ cst_file ]() );
+	stepwise_pose_setup->set_disulfide_file( option[ disulfide_file ]() );
 
 	stepwise_pose_setup->apply( pose );
 
@@ -978,7 +989,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( skip_minimize, "Skip minimize, e.g. in prepack step", false );
 	NEW_OPT( pack_weights, "weights for green packing", "standard.wts" );
 	NEW_OPT( centroid_weights, "weights for centroid filter", "score3.wts" );
-	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
+	NEW_OPT( cst_file, "Input file for constraints", "" );
+	NEW_OPT( disulfide_file, "Input file for disulfides", "" );
 	NEW_OPT( align_pdb, "PDB to align to. Default will be native, or no alignment", "" );
 	NEW_OPT( min_type, "Minimizer type", "dfpmin_armijo_nonmonotone" );
 	NEW_OPT( min_tolerance, "Minimizer tolerance", 0.000025 );

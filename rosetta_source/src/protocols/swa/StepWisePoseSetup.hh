@@ -105,6 +105,9 @@ namespace swa {
 		set_cst_file( std::string const cst_file );
 
 		void
+		set_disulfide_file( std::string const disulfide_file );
+
+		void
 		set_align_file( std::string const align_file );
 
 		void
@@ -173,6 +176,9 @@ namespace swa {
 
 		void
 		setup_constraints( core::pose::Pose & pose );
+
+		void
+		setup_disulfides( core::pose::Pose & pose );
 
 		void
 		initialize_pose_from_streams( core::pose::Pose & pose );
@@ -283,6 +289,7 @@ namespace swa {
 		bool parin_favorite_output_;
 
 		std::string cst_file_;
+		std::string disulfide_file_;
 		core::scoring::constraints::ConstraintSetOP cst_set_;
 		core::pose::PoseOP working_native_pose;
 

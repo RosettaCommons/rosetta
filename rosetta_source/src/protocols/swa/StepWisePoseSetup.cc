@@ -28,6 +28,7 @@
 #include <core/chemical/VariantType.hh>
 //////////////////////////////////////////////
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -37,7 +38,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-
+#include <core/io/raw_data/DisulfideFile.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/pose/annotated_sequence.hh>
@@ -195,6 +196,8 @@ return "StepWisePoseSetup";
 		apply_virtual_res_variant( pose);
 
 		setup_constraints( pose );
+
+		setup_disulfides( pose );
 
 		//////////////////////////////////////////////////
 		// Final cleanup. This is manual and quite silly, but the pose machinery currently
@@ -546,6 +549,7 @@ return "StepWisePoseSetup";
 		for ( Size n = 1; n <= pose.total_residue(); n++ ) if ( is_working_res( n ) ) working_res_list.push_back( n );
 		pdbslice( pose, working_res_list );
 
+
 		Size const nres( pose.total_residue() );
 		core::kinematics::FoldTree f( nres );
 		assert( cuts_.size() == jump_partners_.size() );
@@ -592,6 +596,35 @@ return "StepWisePoseSetup";
 
 	}
 
+
+	////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWisePoseSetup::setup_disulfides( pose::Pose & pose ){
+
+		if ( disulfide_file_.size() == 0 ) return;
+
+		Pose full_pose;
+		make_full_pose( full_pose );
+
+		// move to its own function?
+		utility::vector1< std::pair<Size,Size> > disulf_bonds;
+		core::io::raw_data::DisulfideFile ds_file( disulfide_file_ );
+		ds_file.disulfides(disulf_bonds, full_pose);
+
+		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
+		ObjexxFCL::FArray1D< Size > const & is_working_res = job_parameters_->is_working_res();
+
+		utility::vector1< std::pair<Size,Size> > working_disulf_bonds;
+		for ( Size n = 1; n <= disulf_bonds.size(); n++ ){
+			if ( is_working_res( disulf_bonds[n].first  ) &&
+					 is_working_res( disulf_bonds[n].second  )  ){
+				working_disulf_bonds.push_back(  std::make_pair( full_to_sub[ disulf_bonds[n].first ], full_to_sub[ disulf_bonds[n].second ] ) );
+			}
+		}
+
+		pose.conformation().fix_disulfides( working_disulf_bonds );
+
+	}
 	////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWisePoseSetup::setup_constraints( pose::Pose & pose ){
@@ -1114,6 +1147,10 @@ return "StepWisePoseSetup";
 		// RNA thing.
 		protocols::rna::ensure_phosphate_nomenclature_matches_mini_parin( working_pose );
 
+
+		//also carry over disulfides?
+
+
 	}
 
 	////////////////////////////////////////////////////////
@@ -1558,6 +1595,13 @@ return "StepWisePoseSetup";
 	void
 	StepWisePoseSetup::set_cst_file( std::string const cst_file ){
 		cst_file_ = cst_file;
+	}
+
+
+  //////////////////////////////////////////////////////////////////////////
+	void
+	StepWisePoseSetup::set_disulfide_file( std::string const disulfide_file ){
+		disulfide_file_ = disulfide_file;
 	}
 
   //////////////////////////////////////////////////////////////////////////
