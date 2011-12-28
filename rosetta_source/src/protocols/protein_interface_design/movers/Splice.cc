@@ -83,31 +83,14 @@ Splice::Splice() :
 
 Splice::~Splice() {}
 
-
-/// @brief Return the number of the residue on source that is nearest to res on target. If the distance
-/// is greater than 2.0 returns 0 to indicate error
-core::Size
-find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res ){
-	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
-	for( core::Size i = 1; i <= source.total_residue(); ++i ){
-	  core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
-		if( dist <= min_dist ){
-			min_dist = dist;
-			nearest_res = i;
-		}
-	}
-	if( min_dist <= 2.0 ) return nearest_res;
-	else return 0;
-}
-
 void
 Splice::apply( core::pose::Pose & pose )
 {
 	core::pose::Pose source_pose;
 	core::import_pose::pose_from_pdb( source_pose, source_pdb_ );
 
-	core::Size const nearest_to_from( find_nearest_res( source_pose, pose, from_res() ) );
-	core::Size const nearest_to_to( find_nearest_res( source_pose, pose, to_res() ) );
+	core::Size const nearest_to_from( protocols::rosetta_scripts::find_nearest_res( source_pose, pose, from_res() ) );
+	core::Size const nearest_to_to( protocols::rosetta_scripts::find_nearest_res( source_pose, pose, to_res() ) );
 
 	if( nearest_to_from == 0 || nearest_to_to == 0 ){
 		TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
@@ -128,7 +111,7 @@ Splice::apply( core::pose::Pose & pose )
 		else if( source_pose.residue( i ).name3() == "PRO" )
 			threaded_seq += "P";
 		else{
-			core::Size const nearest_on_target( find_nearest_res( pose, source_pose, i ) );
+			core::Size const nearest_on_target( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, i ) );
 			if( nearest_on_target > 0 && source_pose.residue( i ).name3() == pose.residue( nearest_on_target ).name3() )
 				threaded_seq += source_pose.residue(i).name1();
 			else

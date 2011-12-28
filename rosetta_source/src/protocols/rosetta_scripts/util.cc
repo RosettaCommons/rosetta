@@ -9,7 +9,7 @@
 
 /// @file protocols/RosettaScripts/util.cc
 /// @brief Utility functions useful in RosettaScripts.
-/// @authors Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu), 
+/// @authors Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu),
 ///					Rocco Moretti (rmoretti@u.washington.edu), Eva-Maria Strauch (evas01@uw.edu)
 
 // Unit Headers
@@ -494,6 +494,22 @@ parse_xyz_vector( utility::tag::TagPtr const xyz_vector_tag ){
 
 	return xyz_v;
 
+}
+
+/// @brief Return the number of the residue on source that is nearest to res on target. If the distance
+/// is greater than 2.0 returns 0 to indicate error
+core::Size
+find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res ){
+  core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
+  for( core::Size i = 1; i <= source.total_residue(); ++i ){
+    core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
+    if( dist <= min_dist ){
+      min_dist = dist;
+      nearest_res = i;
+    }
+  }
+  if( min_dist <= 2.0 ) return nearest_res;
+  else return 0;
 }
 
 } //RosettaScripts

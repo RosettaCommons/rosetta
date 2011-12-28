@@ -73,7 +73,7 @@ get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap c
 core::pack::task::TaskFactoryOP
 parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
 
-/// allows the transfer of whole taskfactories on the datamap. This way a "base" taskfactory can be created, transferred on the datamap, and 
+/// allows the transfer of whole taskfactories on the datamap. This way a "base" taskfactory can be created, transferred on the datamap, and
 /// individual mover's specific taskoperations can be added on top
 core::pack::task::TaskFactoryOP
 parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap /*const*/ & data, core::pack::task::TaskFactoryOP & task_factory );
@@ -101,6 +101,10 @@ parse_mover( std::string const mover_name, protocols::moves::Movers_map const & 
 
 numeric::xyzVector< core::Real >
 parse_xyz_vector( utility::tag::TagPtr const xyz_vector_tag );
+
+/// @brief find source residue that is nearest to res on source. If distance is greater than 2.0A, return 0
+core::Size
+find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res );
 
 } // RosettaScripts
 } // protocols
