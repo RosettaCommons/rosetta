@@ -370,6 +370,7 @@ sources = {
 		"RestrictNonSurfaceToRepackingOperation",
 		"RestrictOperationsBase",
 		"RestrictResiduesToRepackingOperation",
+		"RestrictToAlignedSegments",
 		"RestrictToInterface",
 		"RestrictToInterfaceOperation",
 		"RestrictToInterfaceVectorOperation",
