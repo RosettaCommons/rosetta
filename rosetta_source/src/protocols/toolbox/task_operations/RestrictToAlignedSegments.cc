@@ -122,8 +122,10 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 	if( tag->hasOption( "stop_res" ) )
 		stop_res_.push_back( tag->getOption< core::Size >( "stop_res" ) );
 
-	runtime_assert( source_pdb_.size() == start_res_.size() == stop_res_.size() );
-	runtime_assert( start_res_[ 1 ] < stop_res_[ 1 ] );
+	if( tag->hasOption( "source_pdb" ) || tag->hasOption( "start_res" ) || tag->hasOption( "stop_res" ) ){
+		runtime_assert( tag->hasOption( "source_pdb" ) && tag->hasOption( "start_res" ) && tag->hasOption( "stop_res" ) );
+		runtime_assert( start_res_[ 1 ] < stop_res_[ 1 ] );
+	}
 
 	utility::vector0< TagPtr > const btags( tag->getTags() );
 	foreach( TagPtr const btag, btags ){
