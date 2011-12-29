@@ -237,23 +237,23 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
-        //pba
-        //virtual
-        void
-        hbond_derivs_1way(
-        EnergyMap const & weights,
-        HBondSet const & hbond_set,
-        HBondDatabaseCOP database,
-        conformation::Residue const & don_rsd,
-        conformation::Residue const & acc_rsd,
-        Size const don_nb,
-        Size const acc_nb,
-        bool const exclude_bsc, /* exclude if acc=bb and don=sc */
-        bool const exclude_scb, /* exclude if acc=sc and don=bb */
-        // output
-        utility::vector1< DerivVectorPair > & don_atom_derivs,
-        utility::vector1< DerivVectorPair > & acc_atom_derivs
-        ) const;
+	//pba
+	//virtual
+	void
+	hbond_derivs_1way(
+		EnergyMap const & weights,
+		HBondSet const & hbond_set,
+		HBondDatabaseCOP database,
+		conformation::Residue const & don_rsd,
+		conformation::Residue const & acc_rsd,
+		Size const don_nb,
+		Size const acc_nb,
+		bool const exclude_bsc, /* exclude if acc=bb and don=sc */
+		bool const exclude_scb, /* exclude if acc=sc and don=bb */
+		// output
+		utility::vector1< DerivVectorPair > & don_atom_derivs,
+		utility::vector1< DerivVectorPair > & acc_atom_derivs
+	) const;
 
 	///@brief Evaluates the interaction between the backbone of rsd1 and the
 	/// backbone of rsd2 and accumulates the unweighted energy.

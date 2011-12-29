@@ -133,19 +133,19 @@ public:
 	HBondResidueMinData const & res1_data() const { return *res1_dat_; }
 	HBondResidueMinData const & res2_data() const { return *res2_dat_; }
 
-	void update_natoms();
+	//void update_natoms();
 
 	void clear_hbonds();
 	void add_hbond( HBond const & );
 
 	/// @brief res should be 1 or 2
-	utility::vector1< HBond > const &
-	hbonds_for_atom( Size res, Size atom ) const {
-		assert( res == 1 || res == 2 );
-		return ( res == 1 ? res1_hbonds_[ atom ] : res2_hbonds_[ atom ] );
-	}
+	//utility::vector1< HBond > const &
+	//hbonds_for_atom( Size res, Size atom ) const {
+	//	assert( res == 1 || res == 2 );
+	//	return ( res == 1 ? res1_hbonds_[ atom ] : res2_hbonds_[ atom ] );
+	//}
 private:
-	void add_hbond_for_resatom( HBond const &, Size rsd, Size atno );
+	//void add_hbond_for_resatom( HBond const &, Size rsd, Size atno );
 
 private:
 
@@ -154,8 +154,8 @@ private:
 
 	// The hydrogen bonds that atoms in residue 1 form with atoms in residue 2
 	// These must be updated during the setup_for_derivatives
-	utility::vector1< utility::vector1< HBond > > res1_hbonds_;
-	utility::vector1< utility::vector1< HBond > > res2_hbonds_;
+	//utility::vector1< utility::vector1< HBond > > res1_hbonds_;
+	//utility::vector1< utility::vector1< HBond > > res2_hbonds_;
 
 };
 
@@ -164,45 +164,45 @@ void HBondResPairMinData::set_res1_data( HBondResidueMinDataCOP dat ) { res1_dat
 void HBondResPairMinData::set_res2_data( HBondResidueMinDataCOP dat ) { res2_dat_ = dat; }
 
 /// @details Don't resize to a smaller size for hbonds
-void HBondResPairMinData::update_natoms()
-{
-	assert( res1_dat_ && res2_dat_ );
-	//clear_hbonds();
-	if ( res1_hbonds_.size() < res1_dat_->natoms() ) res1_hbonds_.resize( res1_dat_->natoms() );
-	if ( res2_hbonds_.size() < res2_dat_->natoms() ) res2_hbonds_.resize( res2_dat_->natoms() );
-}
+//void HBondResPairMinData::update_natoms()
+//{
+//	assert( res1_dat_ && res2_dat_ );
+//	//clear_hbonds();
+//	if ( res1_hbonds_.size() < res1_dat_->natoms() ) res1_hbonds_.resize( res1_dat_->natoms() );
+//	if ( res2_hbonds_.size() < res2_dat_->natoms() ) res2_hbonds_.resize( res2_dat_->natoms() );
+//}
 
 /// @details Don't deallocate the vectors of hbonds; just resize those vectors to 0 length.
 /// This saves new() and delete() expenses for future add_hbond() calls.
-void HBondResPairMinData::clear_hbonds() {
-	for ( Size ii = 1, iiend = res1_dat_->natoms(); ii <= iiend; ++ii ) {
-		res1_hbonds_[ ii ].clear();
-	}
-	for ( Size ii = 1, iiend = res2_dat_->natoms(); ii <= iiend; ++ii ) {
-		res2_hbonds_[ ii ].clear();
-	}
+//void HBondResPairMinData::clear_hbonds() {
+//	for ( Size ii = 1, iiend = res1_dat_->natoms(); ii <= iiend; ++ii ) {
+//		res1_hbonds_[ ii ].clear();
+//	}
+//	for ( Size ii = 1, iiend = res2_dat_->natoms(); ii <= iiend; ++ii ) {
+//		res2_hbonds_[ ii ].clear();
+//	}
+//
+//}
 
-}
+//void HBondResPairMinData::add_hbond( HBond const & hb )
+//{
+//	/// find lower res and upper res
+//	Size don_id( hb.don_res() < hb.acc_res() ? 1 : 2 );
+//	add_hbond_for_resatom( hb, don_id, hb.don_hatm() );
+//	Size acc_id( hb.don_res() < hb.acc_res() ? 2 : 1 );
+//	add_hbond_for_resatom( hb, acc_id, hb.acc_atm() );
+//}
 
-void HBondResPairMinData::add_hbond( HBond const & hb )
-{
-	/// find lower res and upper res
-	Size don_id( hb.don_res() < hb.acc_res() ? 1 : 2 );
-	add_hbond_for_resatom( hb, don_id, hb.don_hatm() );
-	Size acc_id( hb.don_res() < hb.acc_res() ? 2 : 1 );
-	add_hbond_for_resatom( hb, acc_id, hb.acc_atm() );
-}
-
-void HBondResPairMinData::add_hbond_for_resatom( HBond const & hb, Size res, Size atno )
-{
-	assert( res == 1 || res == 2 );
-
-	if ( res == 1 ) {
-		res1_hbonds_[ atno ].push_back( hb );
-	} else {
-		res2_hbonds_[ atno ].push_back( hb );
-	}
-}
+//void HBondResPairMinData::add_hbond_for_resatom( HBond const & hb, Size res, Size atno )
+//{
+//	assert( res == 1 || res == 2 );
+//
+//	if ( res == 1 ) {
+//		res1_hbonds_[ atno ].push_back( hb );
+//	} else {
+//		res2_hbonds_[ atno ].push_back( hb );
+//	}
+//}
 
 static basic::Tracer tr("core.scoring.hbonds.HbondEnergy");
 
@@ -266,14 +266,14 @@ HBondEnergy::setup_for_packing(
 	pose.update_residue_neighbors();
 	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_ ) );
 
-        //pba membrane object initialization
-        if (options_->Mbhbond()) {
-           memb_potential_.compute_fa_projection( pose );
-           normal_ = MembraneEmbed_from_pose( pose ).normal();
-           center_ = MembraneEmbed_from_pose( pose ).center();
-           thickness_ = Membrane_FAEmbed_from_pose( pose ).thickness();
-           steepness_ = Membrane_FAEmbed_from_pose( pose ).steepness();
-        }
+	//pba membrane object initialization
+	if (options_->Mbhbond()) {
+		memb_potential_.compute_fa_projection( pose );
+		normal_ = MembraneEmbed_from_pose( pose ).normal();
+		center_ = MembraneEmbed_from_pose( pose ).center();
+		thickness_ = Membrane_FAEmbed_from_pose( pose ).thickness();
+		steepness_ = Membrane_FAEmbed_from_pose( pose ).steepness();
+	}
 
 	hbond_set->setup_for_residue_pair_energies( pose );
 	pose.energies().data().set( HBOND_SET, hbond_set );
@@ -375,7 +375,9 @@ HBondEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) c
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-/// note that this only evaluates sc-sc and sc-bb energies
+/// @details Note that this only evaluates sc-sc and sc-bb energies unless options_->decompose_bb_hb_into_pair_energies
+/// is set to true, in which case, this function also evaluates bb-bb energies.
+/// Note also that this function enforces the bb/sc hbond exclusion rule.
 void
 HBondEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -399,8 +401,9 @@ HBondEnergy::residue_pair_energy(
 
 	// Non-pairwise additive exclusion rules:
 	// exclude backbone-backbone hbond if set in options_ (if, say, they were pre-computed)
-	// exclude backbone-sidechain hbond if backbone-backbone hbond already in hbond_set
-	// exclude sidechain-backbone hbond if backbone-backbone hbond already in hbond_set
+	// exclude backbone-sidechain hbond if backbone-backbone hbond already in hbond_set*
+	// exclude sidechain-backbone hbond if backbone-backbone hbond already in hbond_set*
+	// * these two rules are only enforced as long as bb_donor_acceptor_check is "true"
 
 	// mjo Historically, if this exclusion rule is not
 	// enforced--accoring to Brian Kuhlman--"Serines are put up and down
@@ -415,8 +418,8 @@ HBondEnergy::residue_pair_energy(
 	//       "scb" -> don=sc don=bb
 
 	bool exclude_bsc = false, exclude_scb = false;
-	if (rsd1.is_protein()) exclude_scb = hbond_set.don_bbg_in_bb_bb_hbond(rsd1.seqpos());
-	if (rsd2.is_protein()) exclude_bsc = hbond_set.acc_bbg_in_bb_bb_hbond(rsd2.seqpos());
+	if (rsd1.is_protein()) exclude_scb = options_->bb_donor_acceptor_check() && hbond_set.don_bbg_in_bb_bb_hbond(rsd1.seqpos());
+	if (rsd2.is_protein()) exclude_bsc = options_->bb_donor_acceptor_check() && hbond_set.acc_bbg_in_bb_bb_hbond(rsd2.seqpos());
 
 	//pba membrane dependent hbond potential hack
 	if (options_->Mbhbond()) {
@@ -431,8 +434,8 @@ HBondEnergy::residue_pair_energy(
 			pose);
 
 		exclude_bsc = exclude_scb = false;
-		if (rsd2.is_protein()) exclude_scb = hbond_set.don_bbg_in_bb_bb_hbond(rsd2.seqpos());
-		if (rsd1.is_protein()) exclude_bsc = hbond_set.acc_bbg_in_bb_bb_hbond(rsd1.seqpos());
+		if (rsd2.is_protein()) exclude_scb = options_->bb_donor_acceptor_check() && hbond_set.don_bbg_in_bb_bb_hbond(rsd2.seqpos());
+		if (rsd1.is_protein()) exclude_bsc = options_->bb_donor_acceptor_check() && hbond_set.acc_bbg_in_bb_bb_hbond(rsd1.seqpos());
 
 		identify_hbonds_1way_membrane(
 			*database_,
@@ -454,8 +457,8 @@ HBondEnergy::residue_pair_energy(
 			emap);
 
 		exclude_bsc = exclude_scb = false;
-		if (rsd2.is_protein()) exclude_scb = hbond_set.don_bbg_in_bb_bb_hbond(rsd2.seqpos());
-		if (rsd1.is_protein()) exclude_bsc = hbond_set.acc_bbg_in_bb_bb_hbond(rsd1.seqpos());
+		if (rsd2.is_protein()) exclude_scb = options_->bb_donor_acceptor_check() && hbond_set.don_bbg_in_bb_bb_hbond(rsd2.seqpos());
+		if (rsd1.is_protein()) exclude_bsc = options_->bb_donor_acceptor_check() && hbond_set.acc_bbg_in_bb_bb_hbond(rsd1.seqpos());
 
 		identify_hbonds_1way(
 			*database_,
@@ -490,6 +493,8 @@ HBondEnergy::use_extended_residue_pair_energy_interface() const
 /// as opposed to the standard residue_pair_energy interface, which does not include bb/bb energies.
 /// On the other hand, this interface presumes that no new bb/bb hydrogen bonds are formed during
 /// the course of minimization, and no existing bb/bb hydrogen bonds are lost.
+/// Note: this function does not directly enforce the bb/sc exclusion rule logic, but rather,
+/// takes the boolean "bb_don_avail" and "bb_acc_avail" data stored in the pairdata object
 void
 HBondEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
@@ -582,6 +587,11 @@ HBondEnergy::residue_pair_energy_ext(
 
 }
 
+/// @details Note that this function helps enforce the bb/sc exclusion rule by setting the donor and acceptor availability
+/// for backbone donors and acceptors.  If the backbone-sidechain-exclusion rule is not being enforced, then this function
+/// marks all donors and acceptors as being available.  If it is being enforced, then is uses the hbondset functions
+/// don_bbg_in_bb_bb_hbond and acc_bbg_in_bb_bb_hbond.  The decisions made in this function impact the evaluation
+/// of energies in the above residue_pair_energy_ext method.
 void
 HBondEnergy::setup_for_minimizing_for_residue(
 	conformation::Residue const & rsd,
@@ -602,8 +612,8 @@ HBondEnergy::setup_for_minimizing_for_residue(
 		hbresdata = new HBondResidueMinData;
 		hbresdata->set_nneighbors( hbondset.nbrs( rsd.seqpos() ) );
 		if ( rsd.is_protein() ) {
-			hbresdata->set_bb_don_avail( ! hbondset.don_bbg_in_bb_bb_hbond( rsd.seqpos() ) );
-			hbresdata->set_bb_acc_avail( ! hbondset.acc_bbg_in_bb_bb_hbond( rsd.seqpos() ) );
+			hbresdata->set_bb_don_avail( options_->bb_donor_acceptor_check() ? ! hbondset.don_bbg_in_bb_bb_hbond( rsd.seqpos() ) : true );
+			hbresdata->set_bb_acc_avail( options_->bb_donor_acceptor_check() ? ! hbondset.acc_bbg_in_bb_bb_hbond( rsd.seqpos() ) : true );
 		}
 		res_data_cache.set_data( hbond_res_data, hbresdata );
 	}
@@ -638,7 +648,7 @@ HBondEnergy::setup_for_minimizing_for_residue_pair(
 		hbpairdat->set_res2_data( static_cast< HBondResidueMinData const * > ( res2_data_cache.get_data( hbond_res_data )() ));
 		data_cache.set_data( hbond_respair_data, hbpairdat );
 	}
-	hbpairdat->update_natoms();
+	//hbpairdat->update_natoms();
 
 }
 
@@ -987,7 +997,7 @@ HBondEnergy::backbone_backbone_energy(
 	}
 }
 
-
+/// @details Note: this function enforces the bb/sc hbond exclusion rule
 void
 HBondEnergy::backbone_sidechain_energy(
 	conformation::Residue const & rsd1,
@@ -1011,7 +1021,9 @@ HBondEnergy::backbone_sidechain_energy(
 	//pba membrane dependent hbond potential hack
 	if (options_->Mbhbond()) {
 
-		if (rsd1.is_protein() && !hbond_set.don_bbg_in_bb_bb_hbond(rsd1.seqpos())) {
+		/// If we're enforcing the bb/sc exclusion rule, and residue1 is a protein residue, and if residue 1's backbone-donor group
+		/// is already participating in a bb/bb hbond, then do not evaluate the identify_hbonds_1way_membrane function
+		if ( !options_->bb_donor_acceptor_check() || ! rsd1.is_protein() || ! hbond_set.don_bbg_in_bb_bb_hbond(rsd1.seqpos())) {
 			identify_hbonds_1way_membrane(
 				*database_,
 				rsd1, rsd2, hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()),
@@ -1021,7 +1033,9 @@ HBondEnergy::backbone_sidechain_energy(
 				emap, pose);
 		}
 
-		if (rsd1.is_protein() && !hbond_set.acc_bbg_in_bb_bb_hbond(rsd1.seqpos())) {
+		/// If we're enforcing the bb/sc exclusion rule, and residue1 is a protein residue, and if residue 1's backbone-acceptor group
+		/// is already participating in a bb/bb hbond, then do not evaluate the identify_hbonds_1way_membrane function
+		if ( !options_->bb_donor_acceptor_check() || ! rsd1.is_protein() || ! hbond_set.acc_bbg_in_bb_bb_hbond(rsd1.seqpos())) {
 			identify_hbonds_1way_membrane(
 				*database_,
 				rsd2, rsd1, hbond_set.nbrs(rsd2.seqpos()), hbond_set.nbrs(rsd1.seqpos()),
@@ -1032,8 +1046,9 @@ HBondEnergy::backbone_sidechain_energy(
 		}
 
 	} else {
-
-		if (rsd1.is_protein() && !hbond_set.don_bbg_in_bb_bb_hbond(rsd1.seqpos())) {
+		/// If we're enforcing the bb/sc exclusion rule, and residue1 is a protein residue, and if residue 1's backbone-donor group
+		/// is already participating in a bb/bb hbond, then do not evaluate the identify_hbonds_1way function
+		if ( !options_->bb_donor_acceptor_check() || !rsd1.is_protein() || !hbond_set.don_bbg_in_bb_bb_hbond(rsd1.seqpos())) {
 			identify_hbonds_1way(
 				*database_,
 				rsd1, rsd2, hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()),
@@ -1043,7 +1058,9 @@ HBondEnergy::backbone_sidechain_energy(
 				emap);
 		}
 
-		if (rsd1.is_protein() && !hbond_set.acc_bbg_in_bb_bb_hbond(rsd1.seqpos())) {
+		/// If we're enforcing the bb/sc exclusion rule, and residue1 is a protein residue, and if residue 1's backbone-acceptor group
+		/// is already participating in a bb/bb hbond, then do not evaluate the identify_hbonds_1way function
+		if ( !options_->bb_donor_acceptor_check() || !rsd1.is_protein() || !hbond_set.acc_bbg_in_bb_bb_hbond(rsd1.seqpos())) {
 			 identify_hbonds_1way(
 				*database_,
 				rsd2, rsd1, hbond_set.nbrs(rsd2.seqpos()), hbond_set.nbrs(rsd1.seqpos()),
@@ -1390,6 +1407,7 @@ HBondEnergy::eval_intrares_energy(
 void
 create_rotamer_descriptor(
 	conformation::Residue const & res,
+	hbonds::HBondOptions const & options,
 	hbonds::HBondSet const & hbond_set,
 	trie::RotamerDescriptor< hbtrie::HBAtom, hbtrie::HBCPData > & rotamer_descriptor
 )
@@ -1454,7 +1472,10 @@ create_rotamer_descriptor(
 
 			cpdata.is_sc( ! res.type().atom_is_backbone( jj ) );
 
-			cpdata.avoid_sc_hbonds( ! cpdata.is_sc() &&
+			/// Count-pair data is responsible for enforcing the sc/bb hbond exclusion rule.
+			/// If we're not using the rule, set "avoid_sc_hbonds" to false.
+			cpdata.avoid_sc_hbonds( options.bb_donor_acceptor_check() &&
+				! cpdata.is_sc() &&
 				res.type().is_protein() &&
 				hbond_set.acc_bbg_in_bb_bb_hbond( resid ) );
 		}
@@ -1484,7 +1505,10 @@ create_rotamer_descriptor(
 			HBCPData hcpdata;
 			hcpdata.is_sc( ! res.type().atom_is_backbone( kk ) );
 
-			hcpdata.avoid_sc_hbonds( ! hcpdata.is_sc() &&
+			/// Count-pair data is responsible for enforcing the sc/bb hbond exclusion rule.
+			/// If we're not using the rule, set "avoid_sc_hbonds" to false.
+			hcpdata.avoid_sc_hbonds( options.bb_donor_acceptor_check() &&
+				! hcpdata.is_sc() &&
 				res.type().is_protein() &&
 				hbond_set.don_bbg_in_bb_bb_hbond( resid ) );
 
@@ -1515,7 +1539,7 @@ HBondEnergy::create_rotamer_trie(
 
 	for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
 		conformation::ResidueCOP ii_rotamer( rotset.rotamer( ii ) );
-		create_rotamer_descriptor( *ii_rotamer, hbond_set, rotamer_descriptors[ ii ] );
+		create_rotamer_descriptor( *ii_rotamer, *options_, hbond_set, rotamer_descriptors[ ii ] );
 		rotamer_descriptors[ ii ].rotamer_id( ii );
 	}
 
@@ -1541,7 +1565,7 @@ HBondEnergy::create_rotamer_trie(
 
 	utility::vector1< RotamerDescriptor< HBAtom, HBCPData > > rotamer_descriptors( 1 );
 
-	create_rotamer_descriptor( res, hbond_set, rotamer_descriptors[ 1 ] );
+	create_rotamer_descriptor( res, *options_, hbond_set, rotamer_descriptors[ 1 ] );
 	rotamer_descriptors[ 1 ].rotamer_id( 1 );
 
 	return new RotamerTrie< HBAtom, HBCPData >( rotamer_descriptors, atomic_interaction_cutoff());

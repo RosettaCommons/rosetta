@@ -54,7 +54,7 @@ public:
 	operator=( HBondOptions const & src );
 
 	/// @brief Double counted hbonds include:
-  /// @brief  - Hydrogen bonds to self
+	/// @brief  - Hydrogen bonds to self
 	/// @brief  - Backbone - sidechain hydrogen bonds where the backbone partner is forming a backbone - backbone hydrogen bond.
 	/// @brief Turning off this exclusion rule is useful for collecting statistics on hydrogen bond site satisfaction
 	bool
@@ -96,13 +96,13 @@ public:
 	void
 	smooth_hb_env_dep( bool const setting );
 
-  ///
-  bool
-  bb_donor_acceptor_check() const;
+	///
+	bool
+	bb_donor_acceptor_check() const;
 
-  ///
-  void
-  bb_donor_acceptor_check( bool const setting );
+	///
+	void
+	bb_donor_acceptor_check( bool const setting );
 
 	///
 	bool
@@ -168,7 +168,7 @@ private:
 	bool use_hb_env_dep_;
 	bool use_hb_env_dep_DNA_;
 	bool smooth_hb_env_dep_;
-  bool bb_donor_acceptor_check_;
+	bool bb_donor_acceptor_check_; // T/F? Should we apply the rule that sc/bb hbonds are rejected if bb/bb exist?
 	bool decompose_bb_hb_into_pair_energies_;
 	std::string params_database_tag_;
 	bool use_incorrect_deriv_;

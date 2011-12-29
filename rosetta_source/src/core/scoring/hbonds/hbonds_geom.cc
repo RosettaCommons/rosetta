@@ -626,11 +626,10 @@ hbond_compute_energy(
 	Real angleBAH(0.0);
 	Real half_cos_piminus3BAH_plus_1(1.0);
 	if ( hbondoptions.use_sp2_chi_penalty() &&
-			get_hbe_acc_hybrid( hbe ) == chemical::SP2_HYBRID &&
-			hbe > hbe_dPBAaPBAsepP4helix ) {
+			get_hbe_acc_hybrid( hbe ) == chemical::SP2_HYBRID ) {
 		apply_chi_torsion_penalty = true;
 
-		// NEW FORMULA #6:
+		// NEW FORMULA #6: (aka "vesion 7")
 		// weaken hbonds in the center relative to hbonds on the edges
 		// place the maximum chi bonus @ BAH = 120, but make sure that @ BAH = 180, there is no contribution from the chi angle
 		// chi term: cos(2chi)+1/2 -- ranges from 1 to 0; maxima at 0 and 180, minima at 90 and 270.
@@ -642,9 +641,12 @@ hbond_compute_energy(
 		// (a/p)*(( (p-1)(cos(2chi)+1)/2 + 1 ) * ( 1 - (cos(pi-3BAH)+1)/2) + (cos(pi-3BAH)+1)/2))
 		// (a/p)*(( (p-1)(cos(2chi)+1)/2 )( 1 - (cos3BAH+1)/2) + 1) -- may be easier to just add a and p back in.
 
-    /// Version #7: do not use the sp2 term for short-ranged backbone-backbone hydrogen bonds.
+    /// Version #8: do not use the sp2 term for short-ranged backbone-backbone hydrogen bonds.
     /// Added exclusion in the if-check above for hbe <= hbe_dPBAaPBAsepP4helix (which covers
     /// all the short-ranged backbone-backbone hydrogen bonds)
+
+		/// Version #7: (11/12/19) restoring v7 after determining that sp2 potential should be used for
+		/// all bb/bb contacts.
 
 		chi_penalty = std::cos( 2 * chi ) + 1;
 		chi_penalty *= (peak_height - 1)/ 2;
