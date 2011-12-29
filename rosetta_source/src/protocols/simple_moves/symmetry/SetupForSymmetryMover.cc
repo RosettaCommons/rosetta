@@ -34,6 +34,8 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -117,6 +119,7 @@ void SetupForSymmetryMover::parse_my_tag(
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ ) {
 	symmdef_file_ = tag->getOption<std::string>("definition", "");
+	 basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 }
 
 std::string
