@@ -1,3 +1,8 @@
+#ifndef INCLUDED_apps_pilot_will_gpu_gpu_bit_utils_hh
+#define INCLUDED_apps_pilot_will_gpu_gpu_bit_utils_hh
+
+#include <core/id/AtomID.hh>
+
 template<typename T>
 void printbits32(T const & x) {
   if( sizeof(T) != 4 ) utility_exit_with_message("must be 32 bits!");
@@ -26,7 +31,7 @@ inline float bitsasfloat(uint const & i) {
   return *((float*)(&i));
 }
 
-float aidr_as_float(core::id::AtomID const & aid, Real const & radius) {
+float aidr_as_float(core::id::AtomID const & aid, core::Real const & radius) {
   uint i = std::floor(radius*100.0);
   i += ((uint)aid.atomno()<< 8u);
   i += ((uint)aid.rsd()   <<16u);
@@ -41,3 +46,4 @@ inline float float_as_aidr(float const & aidr, core::id::AtomID & aid) {
   return r;
 }
 
+#endif

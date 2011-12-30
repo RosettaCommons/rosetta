@@ -62,7 +62,7 @@ void register_options() {
 #include <apps/pilot/will/will_util.ihh>
 #include <apps/pilot/will/mynamespaces.ihh>
 #include <apps/pilot/will/gpu/CL.hh>
-#include <apps/pilot/will/gpu/set_pose_to_ideal.hh>
+#include <apps/pilot/will/gpu/set_pose_to_ideal.ihh>
 
 typedef numeric::xyzVector<float> Vecf;
 typedef numeric::xyzMatrix<float> Matf;
@@ -184,20 +184,55 @@ void test_refold() {
 	fere_torsions(N,tor); // radians!
 	refold_ros(p,tor,roscrd);
 	refold_gpu(tor,N,gpucrd, cl,clmtor,clmout);
-	dump_points_pdb(roscrd,N,"fere_ros.pdb");
-	dump_points_pdb(gpucrd,N,"fere_gpu.pdb");	
-	//cout << "fere rms: " << numeric::model_quality::calc_rms(array2vecs(roscrd,3*N),array2vecs(gpucrd,3*N)) << endl;;
+	// Real ga1=0.0,ga2=0.0,ga3=0.0,ra1=0.0,ra2=0.0,ra3=0.0;
+	// Real gd1=0.0,gd2=0.0,gd3=0.0,rd1=0.0,rd2=0.0,rd3=0.0;
+	// for(int i = 1; i < N-1; ++i) {
+	// 	ra1 += numeric::angle_radians(Vec(roscrd[9*i-3],roscrd[9*i-2],roscrd[9*i-1]),Vec(roscrd[9*i+0],roscrd[9*i+1],roscrd[9*i+2]),Vec(roscrd[9*i+3],roscrd[9*i+ 4],roscrd[9*i+ 5]));
+	// 	ga1 += numeric::angle_radians(Vec(gpucrd[9*i-3],gpucrd[9*i-2],gpucrd[9*i-1]),Vec(gpucrd[9*i+0],gpucrd[9*i+1],gpucrd[9*i+2]),Vec(gpucrd[9*i+3],gpucrd[9*i+ 4],gpucrd[9*i+ 5]));
+	// 	ra2 += numeric::angle_radians(Vec(roscrd[9*i+0],roscrd[9*i+1],roscrd[9*i+2]),Vec(roscrd[9*i+3],roscrd[9*i+4],roscrd[9*i+5]),Vec(roscrd[9*i+6],roscrd[9*i+ 7],roscrd[9*i+ 8]));
+	// 	ga2 += numeric::angle_radians(Vec(gpucrd[9*i+0],gpucrd[9*i+1],gpucrd[9*i+2]),Vec(gpucrd[9*i+3],gpucrd[9*i+4],gpucrd[9*i+5]),Vec(gpucrd[9*i+6],gpucrd[9*i+ 7],gpucrd[9*i+ 8]));
+	// 	ra3 += numeric::angle_radians(Vec(roscrd[9*i+3],roscrd[9*i+4],roscrd[9*i+5]),Vec(roscrd[9*i+6],roscrd[9*i+7],roscrd[9*i+8]),Vec(roscrd[9*i+9],roscrd[9*i+10],roscrd[9*i+11]));
+	// 	ga3 += numeric::angle_radians(Vec(gpucrd[9*i+3],gpucrd[9*i+4],gpucrd[9*i+5]),Vec(gpucrd[9*i+6],gpucrd[9*i+7],gpucrd[9*i+8]),Vec(gpucrd[9*i+9],gpucrd[9*i+10],gpucrd[9*i+11]));
+	// 	rd1 += Vec(roscrd[9*i+0],roscrd[9*i+1],roscrd[9*i+2]).distance( Vec(roscrd[9*i+3],roscrd[9*i+ 4],roscrd[9*i+ 5]) );
+	// 	gd1 += Vec(gpucrd[9*i+0],gpucrd[9*i+1],gpucrd[9*i+2]).distance( Vec(gpucrd[9*i+3],gpucrd[9*i+ 4],gpucrd[9*i+ 5]) );
+	// 	rd2 += Vec(roscrd[9*i+3],roscrd[9*i+4],roscrd[9*i+5]).distance( Vec(roscrd[9*i+6],roscrd[9*i+ 7],roscrd[9*i+ 8]) );
+	// 	gd2 += Vec(gpucrd[9*i+3],gpucrd[9*i+4],gpucrd[9*i+5]).distance( Vec(gpucrd[9*i+6],gpucrd[9*i+ 7],gpucrd[9*i+ 8]) );
+	// 	rd3 += Vec(roscrd[9*i+6],roscrd[9*i+7],roscrd[9*i+8]).distance( Vec(roscrd[9*i+9],roscrd[9*i+10],roscrd[9*i+11]) );
+	// 	gd3 += Vec(gpucrd[9*i+6],gpucrd[9*i+7],gpucrd[9*i+8]).distance( Vec(gpucrd[9*i+9],gpucrd[9*i+10],gpucrd[9*i+11]) );
+	// }
+	// ra1 /= Real(N-2);
+	// ga1 /= Real(N-2);
+	// ra2 /= Real(N-2);
+	// ga2 /= Real(N-2);
+	// ra3 /= Real(N-2);
+	// ga3 /= Real(N-2);
+	// cout << F(12,8,ra1) << " " << F(12,8,ra2) << " " << F(12,8,ra3) << endl;
+	// cout << F(12,8,ga1) << " " << F(12,8,ga2) << " " << F(12,8,ga3) << endl;	
+	// rd1 /= Real(N-2);
+	// gd1 /= Real(N-2);
+	// rd2 /= Real(N-2);
+	// gd2 /= Real(N-2);
+	// rd3 /= Real(N-2);
+	// gd3 /= Real(N-2);
+	// cout << F(12,8,rd1) << " " << F(12,8,rd2) << " " << F(12,8,rd3) << endl;
+	// cout << F(12,8,gd1) << " " << F(12,8,gd2) << " " << F(12,8,gd3) << endl;		
+	// dump_points_pdb(roscrd,N,"fere_ros.pdb");
+	// dump_points_pdb(gpucrd,N,"fere_gpu.pdb");	
+	cout << "fere rms: " << numeric::model_quality::calc_rms(array2vecs(roscrd,3*N),array2vecs(gpucrd,3*N)) << endl;;
 
 	Real minrms=9e9,maxrms=-9e9;
-	for(int i = 0; i < 10000; ++i) {
+	for(int i = 0; i < 1000; ++i) {
 		random_torsions(N,tor); // radians!
 		refold_ros(p,tor,roscrd);
 		refold_gpu(tor,N,gpucrd, cl,clmtor,clmout);
 		Real rms = numeric::model_quality::calc_rms(array2vecs(roscrd,3*N),array2vecs(gpucrd,3*N));
 		minrms = min(rms,minrms);
 		maxrms = max(rms,maxrms);
+		if(i < 997) continue;
+ 		dump_points_pdb(roscrd,N,"test_ros_"+str(i)+".pdb");
+	 	dump_points_pdb(gpucrd,N,"test_gpu_"+str(i)+".pdb");	
 	}
-	cout << "10,000 random 64-res refolds with " << minrms << " < rms < " << maxrms << endl;
+	cout << "1000 random 64-res refolds with " << minrms << " < rms < " << maxrms << endl;
   
 }
 

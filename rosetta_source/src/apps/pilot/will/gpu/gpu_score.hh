@@ -1,17 +1,26 @@
-#include <apps/pilot/will/PoseOctree_v0.hh>
-#include <apps/pilot/will/gpu/gpu_refold.hh>
+#ifndef INCLUDED_apps_pilot_will_gpu_gpu_score_hh
+#define INCLUDED_apps_pilot_will_gpu_gpu_score_hh
+
+
+#include <apps/pilot/will/xyzStripeHash.hh>
+#include <apps/pilot/will/xyzStripeHashPose.hh>
+//#include <apps/pilot/will/gpu/gpu_refold.hh>
 
 
 
 
-void gpu_score_test(PoseOcTreeMode pom) {
+void gpu_score_test(xyzStripeHashPoseMode pom) {
   using namespace basic::options;
   using core::pose::Pose;
 
 
   Pose p;
   core::import_pose::pose_from_pdb(p,option[OptionKeys::in::file::s]()[1]);
-  remove_tremini(p);
+	for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+		if( p.residue(ir).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(p,ir);
+		if( p.residue(ir).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(p,ir);		
+	}
+
   //uint natom = pose_natom(p);
   uint N = p.n_residue();
 
@@ -22,8 +31,8 @@ void gpu_score_test(PoseOcTreeMode pom) {
   TR<<"MODE: "<<runmode<<" "<<NITER<<" "<<GRADIUS<<std::endl;
 
 
-  PoseOcTree poc(GRADIUS,p,pom);
-  protocols::scoring::ImplicitFastClashCheck ifc(p,GRADIUS);
+  xyzStripeHashPose poc(GRADIUS,p,pom);
+//  protocols::scoring::ImplicitFastClashCheck ifc(p,GRADIUS);
 
 
 
@@ -116,3 +125,5 @@ void gpu_score_test(PoseOcTreeMode pom) {
   TR << "gpu speedup: " << 500*tno / tcl << std::endl;
 
 }
+
+#endif
