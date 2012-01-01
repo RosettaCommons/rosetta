@@ -282,7 +282,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			 	using namespace protocols::jd2;
 			 	JobOP job( JobDistributor::get_instance()->current_job() );
 			 	std::stringstream fname;
-				fname << job->input_tag() << pose_orig.residue( resi ).name3() << resi << pose.residue( resi ).name3();
+				fname << job->input_tag() << pose_orig.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
 			 	TR<<"Saving pose "<<fname.str();
 				pose.dump_scored_pdb( fname.str(), *scorefxn() );
 			 }
