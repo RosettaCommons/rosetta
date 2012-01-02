@@ -227,7 +227,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Data
 	TR.Debug << std::endl;
 
 	superimpose_ = tag->getOption<bool>( "superimpose", 1 );
-	threshold_ = tag->getOption<core::Size>( "threshold", 5 );
+	threshold_ = tag->getOption<core::Real>( "threshold", 5 );
 	if( tag->hasOption("rms_residues_from_pose_cache") ){
 		selection_from_segment_cache_ = tag->getOption<bool>( "rms_residues_from_pose_cache", 1 );
 		if( selection_.size() != 0 ) std::cerr << "Warning: in rmsd filter tag, both a span selection and the instruction to set the residues from the pose cache is given. Incompatible, defined span will be ignored." << std::endl;
