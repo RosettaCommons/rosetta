@@ -14,7 +14,7 @@
 
 // Unit Headers
 #include <protocols/rosetta_scripts/util.hh>
-
+#include <core/pack/task/PackerTask.hh>
 // Project Headers
 
 #include <core/types.hh>
@@ -512,5 +512,25 @@ find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & targ
   else return 0;
 }
 
+utility::vector1< core::Size >
+residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/) {
+  utility::vector1< core::Size > designable_vec, packable_vec, both;
+  designable_vec.clear(); packable_vec.clear(); both.clear();
+  core::pack::task::PackerTaskOP packer_task( tf->create_task_and_apply_taskoperations( pose ) );
+  for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
+    if( packer_task->being_designed( resi ) )
+      designable_vec.push_back( resi );
+		else if( packer_task->being_packed( resi ) )
+			packable_vec.push_back( resi );
+	}
+	if( designable && packable ){
+		both.insert( both.begin(), designable_vec.begin(), designable_vec.end() );
+		both.insert( both.end(), packable_vec.begin(), packable_vec.end() );
+ 		return both;
+ 	}
+	if( designable )
+		return designable_vec;
+	return packable_vec;
+}
 } //RosettaScripts
 } //protocols

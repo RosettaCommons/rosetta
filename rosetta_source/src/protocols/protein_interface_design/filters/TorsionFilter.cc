@@ -19,10 +19,12 @@
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
-
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 //Auto Headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <core/pack/task/TaskFactory.hh>
 
 
 namespace protocols {
@@ -37,13 +39,22 @@ Torsion::Torsion() :
 	lower_( false ),
 	upper_( true ),
 	resnum_( 0 ),
-	torsion_( "" )
+	torsion_( "" ),
+	task_factory_( NULL ),
+	task_factory_set_( false )
 {}
 
 bool
 Torsion::apply(core::pose::Pose const & pose ) const
 {
-	if( resnum() == 0 ){ // just print all torsions
+	if( task_factory_set() ){
+		utility::vector1< core::Size > const designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
+		foreach( core::Size const resi, designable )
+			TR<<pose.phi( resi )<<" "<<pose.psi( resi )<<" "<<pose.omega( resi )<<" "<<pose.residue( resi ).name3()<<" ";
+		TR<<std::endl;
+		return true;
+	}
+	else if( resnum() == 0 ){ // just print all torsions
 		std::stringstream s("");
 		for( core::Size i = 1; i <= pose.total_residue(); ++i ){
 			if( i % 5 == 0 ) s << pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
@@ -111,7 +122,12 @@ Torsion::parse_my_tag( utility::tag::TagPtr const tag,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose )
 {
+	task_factory_set( false );
+	if( tag->hasOption( "task_operations" ) )
+		task_factory_set( true );
+	runtime_assert( task_factory_set_ != tag->hasOption( "resnum" ) );
 	lower( tag->getOption< core::Real >( "lower", 0 ) );
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	upper( tag->getOption< core::Real >( "upper", 0 ) );
 	torsion( tag->getOption< std::string >( "torsion", "" ) );
 	if( tag->hasOption( "resnum" ))
@@ -137,6 +153,14 @@ TorsionCreator::create_filter() const { return new Torsion; }
 
 std::string
 TorsionCreator::keyname() const { return "Torsion"; }
+
+core::pack::task::TaskFactoryOP
+Torsion::task_factory() const{ return task_factory_; }
+
+void
+Torsion::task_factory( core::pack::task::TaskFactoryOP tf ){
+	task_factory_ = tf;
+}
 
 } // filters
 } // protein_interface_design

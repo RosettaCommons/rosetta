@@ -21,6 +21,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilter.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -58,11 +59,17 @@ public:
 	void resnum( core::Size const r ){ resnum_ = r; }
 	void torsion( std::string const t ){ torsion_ = t; }
 	std::string torsion() const{ return torsion_; }
+	core::pack::task::TaskFactoryOP task_factory() const;
+	void task_factory( core::pack::task::TaskFactoryOP tf );
+	void task_factory_set( bool const b ){ task_factory_set_ = b; }
+	bool task_factory_set() const { return task_factory_set_; }
 private:
 
   core::Real lower_, upper_;
 	core::Size resnum_;
 	std::string torsion_;
+	core::pack::task::TaskFactoryOP task_factory_;
+	bool task_factory_set_;/// if you call this filter from within another routine, rather than through rosetta_scripts, and you want to use a task_factory, set this parameter to true before apply
 };
 
 } // filters
