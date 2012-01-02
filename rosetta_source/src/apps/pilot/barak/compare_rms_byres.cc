@@ -21,7 +21,7 @@
 #include <numeric/constants.hh>
 #include <numeric/random/random.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pose_io.hh>

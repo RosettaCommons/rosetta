@@ -31,7 +31,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -521,7 +521,7 @@ int main( int argc, char * argv [] ) {
 	using namespace basic::options::OptionKeys;
 
 	protocols::simple_moves::BBG8T3AMover::register_options();
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	Size N = option[cyclic::nres]();
 	
 	// score functions

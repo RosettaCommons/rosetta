@@ -75,7 +75,7 @@
 #include <core/pose/util.hh>
 #include <core/util/basic.hh>
 #include <core/io/database/open.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
@@ -303,7 +303,7 @@ main( int argc, char * argv [] )
 
   //Uh, options?
   NEW_OPT( seq, "Input sequence", "" );
-  core::init(argc, argv);
+  devel::init(argc, argv);
 
   ////////////////////////////////////////////////////////////////////////////
   // end of setup

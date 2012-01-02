@@ -39,7 +39,7 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -625,7 +625,7 @@ process_file_list()
 int
 main( int argc, char * argv [] )
 {
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	process_file_list();
 

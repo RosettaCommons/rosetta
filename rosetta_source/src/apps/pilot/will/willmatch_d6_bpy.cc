@@ -27,7 +27,7 @@
 #include <core/scoring/constraints/CircularHarmonicFunc.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/database/open.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Stub.hh>
@@ -1042,6 +1042,6 @@ void run() {
 
 
 int main (int argc, char *argv[]) {
-  core::init(argc,argv);
+  devel::init(argc,argv);
   run();
 }

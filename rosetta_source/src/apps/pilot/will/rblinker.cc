@@ -24,7 +24,7 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -759,7 +759,7 @@ void* doit(void*) {
 
 
 int main( int argc, char * argv [] ) {
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	void* (*func)(void*) = &doit;
 	if (option[ basic::options::OptionKeys::parser::view ]()) {

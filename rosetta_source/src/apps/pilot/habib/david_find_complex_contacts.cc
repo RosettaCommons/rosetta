@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -73,7 +73,7 @@ int
 main( int argc, char * argv [] )
 {
   NEW_OPT ( apo_chain, "Chain to find contacts on","A");
-  core::init(argc, argv);
+  devel::init(argc, argv);
   pose::Pose input_pose;
   std::string chain = option [ apo_chain ];
 

@@ -186,7 +186,7 @@ main( int argc, char * argv [] )
 	//
 	// option.add( sasa::output_name, "output name" );
 	// init
-  //core::init(argc, argv);
+  //devel::init(argc, argv);
 
 	ThisApplication::register_options();
 	devel::init( argc, argv );

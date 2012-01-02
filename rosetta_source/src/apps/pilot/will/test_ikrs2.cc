@@ -22,7 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -1221,7 +1221,7 @@ void repack(Pose & arg) {
 
 
 int main (int argc, char *argv[]) {
-  core::init(argc,argv);
+  devel::init(argc,argv);
 
   Pose ctp; pose_from_pdb(ctp,"input/ctp.pdb");
   Pose pose,arg,asp,glu,lys,ala;

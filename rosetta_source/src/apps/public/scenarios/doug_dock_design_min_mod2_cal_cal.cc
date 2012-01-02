@@ -115,7 +115,7 @@
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility headers
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -252,7 +252,7 @@ main( int argc, char* argv[] )
 	option.add( dddm::desn_mc_temp, "The temperature to use for the design/minimization phase of the DDDM protocol. Defaults to 0.8." ).def( 0.8 );
 
 	// init command line options
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	// create an instance of my mover
 	DougsDockDesignMinimizeMagicMoverOP D3DM( new DougsDockDesignMinimizeMagicMover() );

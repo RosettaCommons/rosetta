@@ -12,7 +12,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -238,7 +238,7 @@ void test_refold() {
 
 int main(int argc, char *argv[]) {
 	register_options();
-  core::init(argc,argv);
+  devel::init(argc,argv);
 
 	test_refold();
 }

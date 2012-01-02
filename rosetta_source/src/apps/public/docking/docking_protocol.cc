@@ -35,7 +35,7 @@
 // Sergey believes that in production run,
 // the -constant_seed is not working properly in Jump.cc file
 // Please see the details in the Jump.cc file
-//#include <core/init.hh>     //JQX
+//#include <devel/init.hh>     //JQX
 //#include <numeric/random/random.hh> //JQX
 
 
@@ -54,7 +54,7 @@ main( int argc, char * argv [] )
 	protocols::jd2::register_options();
 	// initialize core
 	devel::init(argc, argv);
-//	core::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
+//	devel::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
 	DockingProtocolOP dp = new DockingProtocol();
 

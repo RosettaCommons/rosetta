@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -123,7 +123,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( constant_score_chain, "chain will have the avg score", "A" );
 	NEW_OPT( native_pdb, "chain with original pdb", "native.pdb" );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	std::string tmp_chain = option[ identify_epitope_chain ];
 	std::string tmp2_chain = option[ constant_score_chain ];

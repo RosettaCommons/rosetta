@@ -24,7 +24,7 @@
 // C++ headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/io/pdb/file_data.hh>
@@ -45,7 +45,7 @@ int
 main( int argc, char * argv [] )
 {
 	// initialize core
-	core::init(argc, argv);
+	devel::init(argc, argv);
 	utility::vector1 < std::string > pdblist;
 	pdblist = option[lh::symfragrm::pdblist]();
 	if ( pdblist.size() == 0 ) {

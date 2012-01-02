@@ -45,7 +45,7 @@
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/wum/SilentStructStore.hh>
@@ -461,7 +461,7 @@ main( int argc, char * argv [] )
 
 
 	// initialize core
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 #ifdef USEMPI
 	int mpi_rank_, mpi_npes_;

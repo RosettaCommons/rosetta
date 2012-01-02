@@ -12,7 +12,7 @@
 
 
 #include <core/id/AtomID_Map.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -124,7 +124,7 @@ main (int argc, char *argv[]){
   using namespace basic::options::OptionKeys;
 	using namespace core::conformation::symmetry;
 
-  core::init( argc, argv );
+  devel::init( argc, argv );
 
   for(Size ifile = 1; ifile <= option[in::file::s]().size(); ++ifile) {
     string fname = option[in::file::s]()[ifile];

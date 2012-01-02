@@ -12,7 +12,7 @@
 /// @brief
 
 // libRosetta headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
@@ -49,7 +49,7 @@ main( int argc, char * argv [] )
 
 
 	// initialize core
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
    // Shouldn't these ints be core::size?
    // Default num_partitions = 1

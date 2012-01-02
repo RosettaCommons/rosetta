@@ -18,7 +18,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
@@ -303,7 +303,7 @@ bool brt_clash(Pose const & pose, core::kinematics::Stub const & stub, Real clas
 
 
 int main (int argc, char *argv[]) {
-  core::init(argc,argv);
+  devel::init(argc,argv);
   using namespace basic::options::OptionKeys;
   std::string fn = basic::options::option[in::file::s]()[1];
   Pose pose;

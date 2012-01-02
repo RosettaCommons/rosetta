@@ -14,7 +14,7 @@
 /// @brief mdsmith, sthyme
 ///
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
@@ -101,7 +101,7 @@ main( int argc, char * argv [] )
 	using namespace options;
 	using namespace OptionKeys;
 
-	init( argc, argv ); // reading options--name should be more descriptive
+	devel::init( argc, argv ); // reading options--name should be more descriptive
 
 	basic::prof_reset();
 

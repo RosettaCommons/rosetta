@@ -19,7 +19,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/database/open.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -135,7 +135,7 @@ main( int argc, char * argv [] )
 	using numeric::random::uniform;
 	using ObjexxFCL::lead_zero_string_of;
 
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	// init pose from dubois catalyst ncaa
 	Pose init;

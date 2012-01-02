@@ -21,7 +21,7 @@
 #include <iostream>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -41,7 +41,7 @@ main (int argc, char *argv[])
 
 		using namespace core;
 		
-		core::init(argc, argv);
+		devel::init(argc, argv);
 		protocols::moves::MoverOP mover = new protocols::simple_moves::RepulsiveOnlyMover(); 
 		scoring::ScoreFunctionOP score = scoring::getScoreFunction(); 
 		

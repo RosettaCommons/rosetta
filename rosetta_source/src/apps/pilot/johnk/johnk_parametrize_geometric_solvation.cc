@@ -10,7 +10,7 @@
 /// @author jk
 
 // Project Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/id/AtomID.hh>
@@ -170,7 +170,7 @@ main( int argc, char * argv [] )
 
 	// note: radii are: 2.0 for C, 1.75 for N, 1.55 for O, 1.9 for S, 2.15 for P, 1.0 for polar H, and 1.2 for non-polar H
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	std::string const atom_type_to_parametrize = option[ atom_type ];
 	core::Real const radius_of_occluding_atom = option[ occluding_radius ];

@@ -22,7 +22,7 @@
 #include <iostream>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -51,7 +51,7 @@ main ( int argc, char *argv[] ) {
 	using namespace protocols::jd2;
 	using namespace protocols::moves;
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	scoring::ScoreFunctionOP score = scoring::getScoreFunction();
 

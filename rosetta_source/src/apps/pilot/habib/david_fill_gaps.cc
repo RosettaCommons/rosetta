@@ -25,7 +25,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <basic/MetricValue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -89,7 +89,7 @@ std::set <std::string> interface;
   using namespace core;
   using namespace core::scoring;
 
-  core::init(argc, argv);
+  devel::init(argc, argv);
   pose::Pose pose;
   std::string const input_pdb_name ( basic::options::start_file() );
   core::import_pose::pose_from_pdb( pose, input_pdb_name );

@@ -23,7 +23,7 @@
 
 // Core Headers
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -74,7 +74,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( central_relax_pdb_num, "which residue to carry out backrub around", 1 );
 	NEW_OPT( central_relax_chain, "which chain the residue is on", "A" );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	std::string const tmp_chain = option[ central_relax_chain ];
 	if ( tmp_chain.length() != 1 ) {

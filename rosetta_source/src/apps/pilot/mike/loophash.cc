@@ -42,7 +42,7 @@
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -59,6 +59,7 @@
 #include <protocols/loophash/BackboneDB.hh>
 
 #include <numeric/geometry/hashing/SixDHasher.hh>
+#include <numeric/random/random.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -476,7 +477,7 @@ main( int argc, char * argv [] )
 
 
 	// initialize core
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 #ifdef USEMPI
 	int mpi_rank_, mpi_npes_;

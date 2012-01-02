@@ -19,7 +19,7 @@
 #include <ObjexxFCL/format.hh>
 
 // Utility Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -309,7 +309,7 @@ main( int argc, char* argv[] )
 	option.add( ia_stats_filename,"Name of the file output with interface stats." ).def("interface_stats.txt");
 	option.add( pack_input,"Run pack rots on the input pose?").def(false);
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	protocols::jd2::JobDistributor::get_instance()->go(new IAMover);
 

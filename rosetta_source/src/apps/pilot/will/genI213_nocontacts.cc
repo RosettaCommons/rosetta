@@ -29,7 +29,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -1507,7 +1507,7 @@ vector1<Hit> dock(Pose & init, string fname) {
 
 
 int main (int argc, char *argv[]) {
-  core::init(argc,argv);
+  devel::init(argc,argv);
   using namespace basic::options::OptionKeys;
 
   string D = option[out::file::o]();

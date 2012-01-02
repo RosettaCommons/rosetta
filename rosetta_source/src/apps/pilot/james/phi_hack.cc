@@ -51,7 +51,7 @@
 
 // option key includes
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/james.OptionKeys.gen.hh>
@@ -83,7 +83,7 @@ main( int argc, char* argv [] ) {
 	using numeric::random::uniform;
 	using numeric::random::random_range;
 
-	core::init( argc, argv );
+	devel::init( argc, argv );
 	ScoreFunctionOP scorefxn( getScoreFunction() );
 
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;

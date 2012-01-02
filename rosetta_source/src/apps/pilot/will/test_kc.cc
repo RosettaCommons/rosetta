@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 // AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
@@ -450,7 +450,7 @@ void test_kc2() {
 
 
 int main (int argc, char *argv[]) {
-  core::init(argc,argv);
+  devel::init(argc,argv);
 	//	numeric::kinematic_closure::test_bridgeObjects();
 	test_kc();
 }

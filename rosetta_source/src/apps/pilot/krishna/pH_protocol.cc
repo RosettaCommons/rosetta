@@ -22,7 +22,7 @@
 // AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <basic/options/option.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/conformation/Residue.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -208,7 +208,7 @@ typedef utility::pointer::owning_ptr< PhProtocol > PhProtocolOP;
 int
 main( int argc, char * argv [] )
 {
-  core::init(argc, argv);
+  devel::init(argc, argv);
 
   PhProtocolOP pH_test(new PhProtocol);
 

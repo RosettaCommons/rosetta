@@ -17,7 +17,7 @@
 #include <iomanip>
 
 #include <core/pose/Pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -75,7 +75,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( report_orig_geosol, "whether to old (Hbond energy directly) solvation energies", false );
 	NEW_OPT( report_exact, "report the exact calculation", false );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	TR << "Starting to compute various solvation energies" << std::endl;
 

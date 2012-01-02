@@ -6,7 +6,7 @@
 #include <basic/database/open.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/kinematics/Stub.hh>

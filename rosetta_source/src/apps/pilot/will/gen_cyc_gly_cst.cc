@@ -19,7 +19,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
@@ -152,7 +152,7 @@ int main( int argc, char * argv [] ) {
   using namespace basic::options::OptionKeys;
   using namespace core::scoring::constraints;
 
-  core::init(argc,argv);
+  devel::init(argc,argv);
 
   std::string seq = "G"; while((int)seq.size() < option[cyclic::nres]()) seq += "G";
 

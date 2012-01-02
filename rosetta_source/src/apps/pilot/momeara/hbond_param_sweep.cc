@@ -56,7 +56,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <basic/Tracer.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 
 
 #include <devel/init.hh>

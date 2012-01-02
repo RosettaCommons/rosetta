@@ -31,7 +31,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -171,7 +171,7 @@ main (int argc, char *argv[])
   using namespace pose;
   using namespace core::conformation::symmetry;
 
-  core::init(argc,argv);
+  devel::init(argc,argv);
   chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
 	// Get some of the command line options for docking

@@ -33,7 +33,7 @@
 #include <iostream>
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <boost/lexical_cast.hpp>
 
@@ -52,7 +52,7 @@ int
 main( int argc, char * argv [] )
 {
 	// initialize core
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
   utility::vector1 < core::Size > loopsizes = option[lh::loopsizes]();
 	utility::vector1 < core::Size > indexoffset = option[lh::fragpdb::indexoffset]();

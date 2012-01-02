@@ -15,7 +15,7 @@
 #include <map>
 #include <stdio.h>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -957,7 +957,7 @@ main( int argc, char * argv [] )
 	option.add( challenge::revert_real_loops, "reset loops to real residues" ).def(false);
 	option.add( challenge::chunk_mapping, "a vector of chain numbers mapping onto secondary structure chunks" );
 
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	//protocols::viewer::viewer_main( challenge_main );
 	protocols::viewer::viewer_main( my_main );

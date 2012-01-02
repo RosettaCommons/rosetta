@@ -59,7 +59,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <basic/database/open.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <protocols/idealize/idealize.hh>

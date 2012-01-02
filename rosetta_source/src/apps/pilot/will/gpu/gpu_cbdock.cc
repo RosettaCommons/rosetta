@@ -11,7 +11,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -139,7 +139,7 @@ inline uint contacts( xyzStripeHash const * h, float4 const a )
 }
 
 int main(int argc, char *argv[]) {
-  core::init(argc,argv);
+  devel::init(argc,argv);
   using namespace basic::options;
   using namespace core::scoring::packing;
 

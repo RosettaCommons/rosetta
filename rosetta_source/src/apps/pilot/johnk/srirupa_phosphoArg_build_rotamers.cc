@@ -16,7 +16,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -74,7 +74,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( phosphate_force_constant, "force constant for the coordinate constraint used in minimization", 25.0 );
 	NEW_OPT( do_minimization, "whether or not to do minimzation for rotamers found", false );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	TR << "Starting phospho-Arg calculations" << std::endl;
 

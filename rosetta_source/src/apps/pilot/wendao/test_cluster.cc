@@ -7,7 +7,7 @@
 
 #include <protocols/toolbox/KCluster.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -150,7 +150,7 @@ bool do_clustering( KClusterData &data, KClusterElementOP element, Size level, S
 
 int main(int argc, char *argv[])
 {
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	KClusterData dat;
 	KClusterElementOP elem = new KClusterElement(dat.get_ndata());

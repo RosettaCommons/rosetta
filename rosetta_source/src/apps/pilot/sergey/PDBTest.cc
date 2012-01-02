@@ -57,8 +57,8 @@
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 //#include <devel/init.hh>
-#include <protocols/init/init.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
@@ -157,8 +157,8 @@ int main( int argc, char * argv [] )
 
 	using namespace core;
 
-	//protocols::init::init(argc, argv);
-	core::init(argc, argv);
+	//devel::init(argc, argv);
+	devel::init(argc, argv);
 
 	{
 		core::pose::Pose pose;

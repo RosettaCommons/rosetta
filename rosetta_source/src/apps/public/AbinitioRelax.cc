@@ -41,7 +41,7 @@ main( int argc, char * argv [] )
 
 	try {
 	  //YL, move the options register functions out of the boinc section
-	  // has to be called before core::init. Which is really stupid.
+	  // has to be called before devel::init. Which is really stupid.
 	  protocols::abinitio::AbrelaxApplication::register_options();
 
 	  // options, random initialization

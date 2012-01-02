@@ -17,7 +17,7 @@
 #include <iomanip>
 
 #include <core/pose/Pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/database/open.hh>
 //#include <core/pose/PDBInfo.hh>
@@ -57,7 +57,7 @@ main( int argc, char * argv [] )
 
 	//	NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	TR << "Starting to identify holes" << std::endl;
 

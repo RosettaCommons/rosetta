@@ -8,7 +8,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/kinematics/Stub.hh>
@@ -236,7 +236,7 @@ void dock(Pose const & init1,
 
 int main(int argc, char *argv[]) {
 	register_options();
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
 
 

@@ -30,7 +30,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -226,7 +226,7 @@ int main (int argc, char *argv[])
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	
 	ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction( core::scoring::getScoreFunction() );
 	

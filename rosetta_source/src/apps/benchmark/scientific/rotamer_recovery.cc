@@ -54,7 +54,6 @@ using core::pack::task::operation::ReadResfile;
 using core::pack::task::operation::RestrictToRepacking;
 using core::scoring::getScoreFunction;
 using core::scoring::ScoreFunctionOP;
-using devel::init;
 using protocols::rotamer_recovery::RotamerRecoveryOP;
 using protocols::rotamer_recovery::RotamerRecoveryFactory;
 using protocols::rotamer_recovery::RotamerRecoveryMover;
@@ -94,7 +93,7 @@ main( int argc, char * argv [] )
 {
   register_options();
 
-  init(argc, argv);
+	devel::init(argc, argv);
 
   using namespace basic::options;
   using namespace basic::options::OptionKeys;

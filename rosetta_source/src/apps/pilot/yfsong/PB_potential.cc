@@ -19,7 +19,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // core
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
@@ -204,7 +204,7 @@ main( int argc, char * argv [] )
 	basic::options::option.add( PB_potential::no_charge_on_chain, "chain with zero charge" );
 	//basic::options::option.add( PB_potential::chain, "Only print given chains" );
 	//basic::options::option.add( PB_potential::chain, "Only print given chains" );
-	core::init( argc, argv );
+	devel::init( argc, argv );
 	PBPotentialMover PB_potential_mover;
 	PB_potential_mover.initialize();
 	

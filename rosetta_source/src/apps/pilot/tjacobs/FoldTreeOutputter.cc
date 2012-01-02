@@ -14,7 +14,7 @@
 /// @author Tim jacobs
 
 // Core headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 
@@ -72,7 +72,7 @@ main( int argc, char * argv [] )
   using namespace core;
 
   // initialize core
-  core::init(argc, argv);
+  devel::init(argc, argv);
 
   protocols::jd2::JobDistributor::get_instance()->go( new FoldTreeOutputter() );
 

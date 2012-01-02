@@ -13,7 +13,6 @@
 
 // core headers
 #include <core/types.hh>
-#include <core/init.hh>
 #include <basic/options/option.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -21,6 +20,7 @@
 // unit headers
 #include <protocols/make_rot_lib/RotData.hh>
 #include <protocols/make_rot_lib/MakeRotLib.hh>
+#include <devel/init.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -68,7 +68,7 @@ main( int argc, char * argv [] )
 	option.add( mrlo::phe_tyr_hack, "" ).def( false );
 
 	//init
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	// get options file name
 	std::string options_filename( option[ mrlo::rot_lib_options_file ]() );

@@ -12,11 +12,11 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/qsar/qsarMover.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 
 int main(int argc, char* argv[])
 {
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 
 	protocols::qsar::qsarMoverOP mover = new protocols::qsar::qsarMover(40,0.25);

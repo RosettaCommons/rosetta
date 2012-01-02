@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <numeric/roc_curve.hh>
 
 
@@ -20,7 +20,7 @@
 
 int main(int argc, char* argv[])
 {
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	numeric::RocCurve roc;
 

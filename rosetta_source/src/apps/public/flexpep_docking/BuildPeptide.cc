@@ -43,7 +43,7 @@
 //#include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
 //#include <core/options/util.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 //#include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -76,15 +76,15 @@ main( int argc, char * argv [] )
 	using namespace pose;
 	using namespace scoring;
 	using namespace conformation;
-        using namespace core::chemical;
-      
+	using namespace core::chemical;
+
 	//setup random numbers and options
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
    //create a pose
    pose::Pose pose;
-        
-   //protein pose
+
+	//protein pose
 	//pose::Pose prot_pose;
 	//io::pdb::pose_from_pdb( prot_pose, options::start_file() ); // gets filename from -s option
 

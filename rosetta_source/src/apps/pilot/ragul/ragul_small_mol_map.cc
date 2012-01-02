@@ -25,7 +25,7 @@
 
 // Core Headers
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -91,7 +91,7 @@ core::Real Find_Intersect(core::SSize const & phiAngle, core::SSize const & psiA
 
 int main( int argc, char * argv [] )
 {
-	core::init(argc, argv);
+	devel::init(argc, argv);
 	// std::string const output_tag = option[ OptionKeys::out::output_tag ]();
 	pose::Pose input_pose;
 	//read in pdb file from command line

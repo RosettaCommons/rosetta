@@ -16,7 +16,7 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -566,7 +566,7 @@ typedef utility::pointer::owning_ptr< JDtestmover > JDtestmoverOP;
 int
 main( int argc, char * argv [] )
 {
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	JDtestmoverOP test_mover(new JDtestmover);
 

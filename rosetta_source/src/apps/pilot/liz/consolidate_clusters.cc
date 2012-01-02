@@ -5,7 +5,7 @@
 #include <iostream>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <devel/init.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/CacheableString.hh>
@@ -178,7 +178,7 @@ int main( int argc, char *argv[] ) {
   using namespace utility::file;
 
 
-  //  core::init( argc, argv );
+  //  devel::init( argc, argv );
 
   NEW_OPT( analysis::occupancy_data, "file which  contains the cluster-centers and their occupancies", "empty");
   NEW_OPT( analysis::min_occupancies, "list of minimum occupancies to try", utility::vector1<core::Real> (1,0));

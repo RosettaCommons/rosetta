@@ -10,7 +10,7 @@
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.io.hh>
 #include <fstream>
@@ -69,7 +69,7 @@ void dump_points_pdb(utility::vector1<Vec> & p, std::string fn) {
 
 int main(int argc, char *argv[]) {
 	register_options();
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	core::kinematics::Stub s(Vec(0,0,0),Vec(-1,0,0),Vec(1,1,0));
 	std::cout << s.M << std::endl;

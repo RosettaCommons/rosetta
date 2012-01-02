@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Stub.hh>
 // AUTO-REMOVED #include <core/pack/optimizeH.hh>
@@ -79,7 +79,7 @@ static basic::Tracer TR("disulf_stat");
 int main (int argc, char *argv[]) {
   using namespace basic::options::OptionKeys;
 
-  core::init(argc,argv);
+  devel::init(argc,argv);
 
   vector1<Pose> poses;
   TR << "reading big data!" << std::endl;

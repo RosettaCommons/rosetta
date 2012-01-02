@@ -33,7 +33,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>
 #include <core/pose/PDBInfo.hh>
@@ -114,7 +114,7 @@ void Features::print_features(std::ostream &output)
 int
 main(int argc, char* argv[]){
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	pose::Pose input_pose;
 	std::string input_pdb_name (basic::options::start_file());

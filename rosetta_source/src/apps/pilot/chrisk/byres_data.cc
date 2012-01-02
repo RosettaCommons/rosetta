@@ -12,7 +12,7 @@
 
 //core library
 #include <math.h>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -2057,7 +2057,7 @@ main( int argc, char * argv [] )
 	option.add( byres_data::nloop_solvdock, "number of iter of RBMover water molecule per atom" ).def( 10 );
 	option.add( byres_data::nloop_hbscan, "number of iter of hbscan per polar h or acc" ).def( 10 );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	protocols::viewer::viewer_main( my_main );
 

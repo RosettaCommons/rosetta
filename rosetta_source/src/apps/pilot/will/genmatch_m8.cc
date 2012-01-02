@@ -38,7 +38,7 @@
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -724,7 +724,7 @@ int main (int argc, char *argv[]) {
 
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	run_m8();
 

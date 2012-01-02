@@ -19,7 +19,7 @@
 #include <vector>
 #include <map>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 
 #include <numeric/random/random.hh>

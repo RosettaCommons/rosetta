@@ -25,7 +25,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -210,7 +210,7 @@ main( int argc, char * argv [] )
 	using numeric::random::uniform;
 	using ObjexxFCL::lead_zero_string_of;
 
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	std::string outdir = option[out::file::o]() + "/";
 

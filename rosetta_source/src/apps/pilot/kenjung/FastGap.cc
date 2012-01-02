@@ -41,7 +41,7 @@
 
 // C++ headers
 #include <map>
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
@@ -91,7 +91,7 @@ int
 main( int argc, char * argv [] )
 {
 	// initialize core
-	core::init(argc, argv);
+	devel::init(argc, argv);
 	
   // read in poses
 	std::map< string, Pose > input_poses = poses_from_cmd_line(option[ in::file::s ]());

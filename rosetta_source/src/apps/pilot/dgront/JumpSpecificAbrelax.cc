@@ -13,7 +13,7 @@
 /// use JumpSpecificAbrelax in the following way:
 ///
 /// AbrelaxAppliaction::register_options();
-/// core::init
+/// devel::init
 /// AbrelaxAppliaction my_app;
 /// my_app.add_evaluation( new MySpecialEvaluator );
 /// ...

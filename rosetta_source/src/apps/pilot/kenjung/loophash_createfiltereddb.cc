@@ -28,7 +28,7 @@
 // C++ headers
 #include <iostream>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <core/types.hh>
 #include <protocols/loophash/LoopHashSampler.fwd.hh>
@@ -59,7 +59,7 @@ main( int argc, char * argv [] )
 
 
 	// initialize core
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	// Shouldn't these ints be core::size?
 	// Default num_partitions = 1

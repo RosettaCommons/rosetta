@@ -146,7 +146,7 @@ main( int argc, char * argv [] )
 	// options, random initialization
 	devel::init( argc, argv );
 
-	// after core::init to regenerate as constant seed after initial initialization
+	// after devel::init to regenerate as constant seed after initial initialization
 	numeric::random::RandomGenerator::initializeRandomGenerators(
 		1000, numeric::random::_RND_TestRun_, "ran3" );
 

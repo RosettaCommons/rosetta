@@ -38,7 +38,7 @@
 #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
@@ -85,7 +85,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
@@ -179,7 +179,7 @@ main( int argc, char* argv [] )
 	using namespace core::io::silent;
 	using namespace ObjexxFCL::fmt;
 
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 

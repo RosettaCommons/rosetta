@@ -27,7 +27,7 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -85,7 +85,7 @@ static core::io::silent::SilentFileData sfd;
 
 int main (int argc, char *argv[]) {
 	
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );		
 

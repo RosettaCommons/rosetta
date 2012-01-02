@@ -71,7 +71,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
@@ -183,7 +183,7 @@ int
 main( int argc, char * argv [] )
 {
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;

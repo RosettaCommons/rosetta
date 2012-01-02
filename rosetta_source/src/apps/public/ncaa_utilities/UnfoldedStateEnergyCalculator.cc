@@ -38,13 +38,14 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
+#include <devel/init.hh>
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.hh>
 // AUTO-REMOVED #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh>
 
 #include <basic/options/option.hh>
 
 // Utility Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -80,7 +81,7 @@ int main( int argc, char* argv[] )
 	option.add( usec::native_sequence, "Controls if the central residue will be mutated before scoring" ).def( false );
 
 	// init
-  init(argc, argv);
+	devel::init(argc, argv);
 
   // setup score function for packing fragments
 	ScoreFunctionOP packing_scrfxn( ScoreFunctionFactory::create_score_function( MM_STD_WTS ) );

@@ -6,7 +6,7 @@
 #include <basic/database/open.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/kinematics/Stub.hh>
@@ -339,7 +339,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 
 int main(int argc, char *argv[]) {
 	register_options();
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
 
 

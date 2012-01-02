@@ -19,7 +19,7 @@
 #include <map>
 #include <string>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
@@ -107,7 +107,7 @@ int main( int argc, char * argv [] )
     NEW_OPT(grid_bb_cutoff, "Backbone occupation size", 2.25);
     NEW_OPT(grid_active_res_cutoff, "Active residues around ligand", 5.0);
 
-    core::init( argc, argv );
+    devel::init( argc, argv );
 
     pose::Pose scaffold;
 

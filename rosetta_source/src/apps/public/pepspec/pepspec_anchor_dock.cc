@@ -103,7 +103,7 @@
 
  #include <basic/database/open.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -1254,7 +1254,7 @@ int main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 
 	run_pep_prep();

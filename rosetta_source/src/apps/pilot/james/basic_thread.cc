@@ -12,7 +12,7 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueType.hh>
@@ -84,7 +84,7 @@ main( int argc, char* argv [] ) {
 	basic::Tracer tr( "basic_thread" );
 
 	// options, random initialization
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
 	vector1< SequenceOP > seqs = core::sequence::read_fasta_file(

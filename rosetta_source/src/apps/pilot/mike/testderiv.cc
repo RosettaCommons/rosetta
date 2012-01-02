@@ -125,7 +125,7 @@ main( int argc, char * argv [] )
 
 	devel::init(argc, argv);
 
-	// is this also done inside core::init?
+	// is this also done inside devel::init?
 	numeric::random::RandomGenerator::initializeRandomGenerators(
 		 111111, numeric::random::_RND_TestRun_, "ran3");
 

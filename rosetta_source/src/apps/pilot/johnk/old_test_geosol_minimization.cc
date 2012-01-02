@@ -10,7 +10,7 @@
 /// @author jk
 
 // Project Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/id/AtomID.hh>
@@ -73,7 +73,7 @@ int
 main( int argc, char * argv [] )
 {
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	TR << "jk testing derivatives for geometric solvation" << std::endl;
 

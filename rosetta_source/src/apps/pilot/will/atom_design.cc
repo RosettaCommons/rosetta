@@ -19,7 +19,7 @@
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -136,7 +136,7 @@ main( int argc, char * argv [] )
 	using namespace chemical;
 	using namespace pose;
 
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	core::chemical::ResidueTypeSet & rs = core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD );
 	// for(ResidueTypeSet::const_residue_iterator i = rs->all_residues_begin(); i != rs->all_residues_end(); ++i) {

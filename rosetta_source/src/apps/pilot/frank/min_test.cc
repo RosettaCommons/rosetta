@@ -32,7 +32,7 @@
 
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -94,7 +94,7 @@ main( int argc, char * argv [] )
 	NEW_OPT(min::cartesian, "cartesian minimization?", false);
 	NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo");
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

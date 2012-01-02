@@ -38,7 +38,7 @@
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -350,7 +350,7 @@ void run_sf4h() {
 
 
 int main (int argc, char *argv[]) {
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	run_sf4h();
 }
 

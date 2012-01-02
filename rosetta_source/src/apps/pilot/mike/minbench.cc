@@ -30,7 +30,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DiagnosticData.hh>
 #include <basic/Tracer.hh>
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -142,7 +142,7 @@ main( int argc, char * argv [] )
 	using namespace protocols::moves;
 	using namespace scoring;
 
-	protocols::init::init(argc, argv);
+	devel::init(argc, argv);
 
 	MoverOP protocol = new Benchmark();
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );

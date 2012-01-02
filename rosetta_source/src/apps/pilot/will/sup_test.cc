@@ -13,7 +13,7 @@
 #include <basic/options/option.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -28,7 +28,7 @@
 int main (int argc, char *argv[])
 {
 	
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	
 	core::pose::Pose mod_pose,ref_pose;
 	

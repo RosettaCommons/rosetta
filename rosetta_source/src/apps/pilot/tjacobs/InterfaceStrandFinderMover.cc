@@ -17,7 +17,7 @@
 #include <devel/init.hh>
 
 //core library
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>

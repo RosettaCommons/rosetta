@@ -1,7 +1,7 @@
 //////////////////////////////
 // EXE
 //////////////////////////////
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::moves::mc_convergence_checks;
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 	HPool_RMSD_OP hp = new HPool_RMSD(option[mc::known_structures]);
 
 	//hp->debug();

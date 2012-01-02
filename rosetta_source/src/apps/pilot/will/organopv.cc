@@ -27,7 +27,7 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <devel/init.hh>
 #include <basic/database/open.hh>
 #include <core/io/pdb/pose_io.hh>

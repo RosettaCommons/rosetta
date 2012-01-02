@@ -23,7 +23,7 @@
 #include <protocols/packstat/sasa_dot_locations.hh>
 #include <protocols/packstat/packing_score_params.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <core/id/AtomID_Map.hh>
 #include <basic/options/option.hh>

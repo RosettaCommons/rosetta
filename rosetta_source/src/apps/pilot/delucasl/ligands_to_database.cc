@@ -11,7 +11,7 @@
 /// @author Sam DeLuca
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/ResidueType.hh>
@@ -35,7 +35,7 @@ int main(int argc, char*argv[])
 	NEW_OPT(ligand_import::params_database_name,"filename of the database to import params files into","");
 	NEW_OPT(ligand_import::database_mode,"the database mode to use, select mysql or sqlite3","sqlite3");
 
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	core::chemical::ResidueDatabaseIO residue_database_io;
 

@@ -18,7 +18,7 @@
 #include <devel/pack_daemon/PackDaemon.hh>
 
 /// Core headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -73,7 +73,7 @@ int main( int argc, char ** argv )
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::genetic_algorithm;
 
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	std::string entity_resfile( "2wo2_entity.resfile" );
 	std::string secondary_resfile( "2wo2_secondary.resfile" );

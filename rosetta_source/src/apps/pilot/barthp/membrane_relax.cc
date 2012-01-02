@@ -86,7 +86,7 @@
 
 #include <basic/database/open.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
@@ -144,9 +144,9 @@ main( int argc, char * argv [] )
 	// setup
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
-	// is this also done inside core::init?
+	// is this also done inside devel::init?
 	//numeric::random::RandomGenerator::initializeRandomGenerators(
 	//	 111111, numeric::random::_RND_TestRun_, "ran3");
 

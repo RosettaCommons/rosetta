@@ -9,7 +9,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>//option.hh>
@@ -90,7 +90,7 @@
 //								"lower seq. cys to form the loop in pose numbering").def(-1);
 //		option.add( ss_loop_builder::end_cys,"higher seq. cys to form the loop in pose numbering").def(-1);
 //		option.add( ss_loop_builder::ncycles,"Num. cycles of relax/loopmodel and S-S samples").def(1);
-//	core::init(argc,argv);
+//	devel::init(argc,argv);
 //
 //	core::util::Tracer TR("protocols.moves.CycPep");
 //
@@ -276,7 +276,7 @@ main( int argc, char * argv [] )
 	// setup
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// end of setup

@@ -40,7 +40,7 @@
 #include <core/util/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/options/util.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -93,7 +93,7 @@ main( int argc, char * argv [] )
 		using namespace core::scoring::constraints;
 
 		//setup random numbers and options
-		core::init(argc, argv);
+		devel::init(argc, argv);
 		//setup scorefxn
 		core::scoring::ScoreFunctionOP scorefxn(
 				  ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ));

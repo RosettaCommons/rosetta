@@ -32,7 +32,7 @@
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -239,7 +239,7 @@ int
 main( int argc, char * argv [] )
 {
 	//using namespace core;
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	build_asn_motifs();
 

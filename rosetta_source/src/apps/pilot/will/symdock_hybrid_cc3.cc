@@ -12,7 +12,7 @@
 
 
 #include <core/id/AtomID_Map.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -90,7 +90,7 @@ main (int argc, char *argv[]){
   using basic::options::option;
   using namespace basic::options::OptionKeys;
 
-  core::init( argc, argv );
+  devel::init( argc, argv );
   pose::Pose cc3;
   import_pose::pose_from_pdb(cc3,"input/cc3.pdb"); strip_termini(cc3);
   cc3.set_xyz(AtomID(cc3.residue(1).atom_index("H"),1),Vec(0,0,0));

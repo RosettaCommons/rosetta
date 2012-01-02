@@ -23,7 +23,7 @@
 #include <protocols/pack_daemon/PackDaemon.hh>
 
 /// Core headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -66,6 +66,7 @@
 
 // Numeric headers
 #include <numeric/numeric.functions.hh>
+#include <numeric/random/random.hh>
 
 // option key includes
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
@@ -405,7 +406,7 @@ int main( int argc, char ** argv )
 	NEW_OPT( msd::seed_sequence_from_input_pdb, "Seed the GA's population with the given input sequences using the sequence already present in a given pdb file; requires the use of the msd::seed_sequence_using_correspondence_file flag ", "" );
 	NEW_OPT( msd::seed_sequence_using_correspondence_file, "The name of the correspondence file to guide the seeding of the GA's population with the sequence from a particular pdb", "" );
 
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	//std::string secondary_resfile( "2wo2_secondary.resfile" );
 	//std::string bound_pdb( "2wo2.pdb" );

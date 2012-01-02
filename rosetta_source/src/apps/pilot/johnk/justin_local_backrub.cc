@@ -23,7 +23,7 @@
 
 // Core Headers
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -76,7 +76,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( central_relax_pdb_num2, "which residue to carry out backrub around", -1 );
 	NEW_OPT( central_relax_pdb_num3, "which residue to carry out backrub around", -1 );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	int const central_relax_pdb_number1 = option[ central_relax_pdb_num1 ];
 	int const central_relax_pdb_number2 = option[ central_relax_pdb_num2 ];

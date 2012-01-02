@@ -22,7 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 #include <basic/MetricValue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -96,7 +96,7 @@ std::set <std::string> interface;
   using namespace core;
   using namespace core::scoring;
 
-  core::init(argc, argv);
+  devel::init(argc, argv);
   register_metrics();
   pose::Pose pose;
   std::string const input_pdb_name ( basic::options::start_file() );

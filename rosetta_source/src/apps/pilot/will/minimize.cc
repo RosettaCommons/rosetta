@@ -10,7 +10,7 @@
 /// @brief
 
 #include <core/pose/Pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -69,7 +69,7 @@ main (int argc, char *argv[])
 {
 	using namespace basic::options;
 	
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 
 	utility::vector1<std::string> files = option[in::file::s]();

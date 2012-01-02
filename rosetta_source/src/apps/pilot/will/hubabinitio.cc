@@ -26,7 +26,7 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -362,7 +362,7 @@ void calc_c3_rmsd(Size const nres, Pose p, Pose const & native, Vec const & natc
 
 int main(int argc, char *argv[]) {
 	register_options();
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	using namespace core::scoring;
 
 	string seq = option[OptionKeys::hub_sequence]();

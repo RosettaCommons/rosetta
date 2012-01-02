@@ -23,7 +23,7 @@
 #include <devel/pack_daemon/PackDaemon.hh>
 
 /// Core headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -147,7 +147,7 @@ int main( int argc, char ** argv )
 	NEW_OPT( msd::dont_score_bbhbonds, "Disable the default activation of the decompose_bb_hb_into_pair_energies flag for hbonds", false );
 	NEW_OPT( msd::exclude_background_energies, "Disable the default activation of the inclusion of background one-body and background/background two-body interaction energies in the state energies (which until now held only the packer energies)", false );
 
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	//std::string secondary_resfile( "2wo2_secondary.resfile" );
 	//std::string bound_pdb( "2wo2.pdb" );

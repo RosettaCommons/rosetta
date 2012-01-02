@@ -22,7 +22,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
@@ -265,7 +265,7 @@ main( int argc, char * argv [] )
 //  using namespace protocols::jobdist;
 //  using namespace protocols::moves;
 
-  core::init(argc, argv);
+  devel::init(argc, argv);
 
   PhProtocolOP pH_test(new PhProtocol);
 

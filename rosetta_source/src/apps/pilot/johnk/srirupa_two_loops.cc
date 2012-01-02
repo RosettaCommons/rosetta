@@ -23,7 +23,7 @@
 
 // Core Headers
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -78,7 +78,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( relax2_start_resnum, "first residue allowed to move", 0 );
 	NEW_OPT( relax2_final_resnum, "last residues allowed to move", 0 );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	TR << "Starting to relax backbone as requested" << std::endl;
 

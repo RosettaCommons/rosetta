@@ -19,7 +19,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -1029,7 +1029,7 @@ void * run(void *) {
 
 int main(int argc, char *argv[]) {
 	register_options();
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	using namespace core::scoring;
 
 	if(basic::options::option[basic::options::OptionKeys::hub_graphics]()) {

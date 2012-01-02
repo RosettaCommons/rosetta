@@ -19,7 +19,7 @@
 #include <map>
 
 // Protocol Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <protocols/pockets/Fingerprint.hh>
 #include <protocols/pockets/PocketGrid.hh>
 #include <core/optimization/ParticleSwarmMinimizer.hh>
@@ -37,6 +37,7 @@
 // AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/after_opts.hh>
 
+#include <numeric/random/random.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
@@ -89,7 +90,7 @@ int main( int argc, char * argv [] ) {
   NEW_OPT( origin_cutoff, "value for setting minimum and maximum origin cut off", 7.0 );
 	//NEW_OPT( angle_increment, "angle increment", 20 );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	std::string const input_protein = option[ input_protein_file ];
 	std::string const input_ligand = option[ input_ligand_file ];

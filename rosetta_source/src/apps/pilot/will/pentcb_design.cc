@@ -30,7 +30,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -439,7 +439,7 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
 
 int main(int argc, char *argv[]) {
 	register_options();
-  core::init(argc,argv);
+  devel::init(argc,argv);
   using namespace basic::options;
   Size const NSS = basic::options::option[basic::options::OptionKeys::cxdock::sphere]();
   vector1<xyzVector<double> > ssamp(NSS); {

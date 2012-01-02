@@ -37,7 +37,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/after_opts.hh>
@@ -80,7 +80,7 @@ int
 main( int argc, char* argv [] )
 {
 	// options, random initialization
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	using namespace core::scoring;
 	using namespace basic::options;

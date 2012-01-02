@@ -24,7 +24,7 @@
 // Core Headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -78,7 +78,7 @@ main( int argc, char * argv [] )
 {
   NEW_OPT ( num_angles, "Number of different pose angles to measure score at", 1);
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
   int angles = option[ num_angles ];
   if (angles <1){
     fprintf (stderr, "Error: invalid number of angles.  Must be greather than 0\n");

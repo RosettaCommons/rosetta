@@ -18,7 +18,7 @@
 #include <protocols/jd2/Job.hh>
 
 //Core
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
@@ -104,7 +104,7 @@ main( int argc, char * argv [] )
   using namespace core;
 
   // initialize core
-  core::init(argc, argv);
+  devel::init(argc, argv);
 
   protocols::jd2::JobDistributor::get_instance()->go( new HelicalPdbGeneratorMover() );
 

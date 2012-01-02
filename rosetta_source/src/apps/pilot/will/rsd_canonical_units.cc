@@ -13,7 +13,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -56,7 +56,7 @@ static basic::Tracer TR("rsd_canonical_units");
 int main(int argc, char *argv[]) {
   using namespace core::chemical;
 
-  core::init(argc,argv);
+  devel::init(argc,argv);
   cout<<std::setprecision(8)<<std::fixed;
 
   std::map<float,vector1<string> > crdgrp;

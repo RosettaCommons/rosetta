@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/util/basic.hh>
 #include <core/io/database/open.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -869,7 +869,7 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 
 	////////////////////////////////////////////////////////////////////////////

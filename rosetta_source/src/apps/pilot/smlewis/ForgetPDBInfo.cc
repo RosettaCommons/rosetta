@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/Tracer.hh>
 
@@ -47,7 +47,7 @@ int
 main( int argc, char* argv[] )
 {
 	using basic::options::option;
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	protocols::jd2::JobDistributor::get_instance()->go(new ForgetMover);
 

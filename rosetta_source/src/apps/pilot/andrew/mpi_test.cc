@@ -13,7 +13,7 @@
 
 
 /// Core headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
@@ -29,7 +29,7 @@ int main( int argc, char ** argv )
 {
 	using namespace utility;
 
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	TR << "Hello World from node " << mpi_rank() << " of " << mpi_nprocs() << std::endl;
 

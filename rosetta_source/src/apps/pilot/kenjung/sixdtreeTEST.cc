@@ -15,7 +15,7 @@
 #include <numeric/geometry/hashing/SixDHasher.hh>
 #include <protocols/match/Hit.hh>
 // C++ headers
-#include <core/init.hh>
+#include <devel/init.hh>
 
 
 using basic::T;
@@ -30,7 +30,7 @@ main( int argc, char * argv [] )
 {
 	// initialize core
 	const int HASH_POSITION_GRID_SIZE= 75;
-	core::init(argc, argv);
+	devel::init(argc, argv);
 	SixDCoordinateBinnerOP  hash_;
 
 	Size loop_size = 10;

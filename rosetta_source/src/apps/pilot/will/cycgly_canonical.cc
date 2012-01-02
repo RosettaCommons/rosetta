@@ -30,7 +30,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/MoveMap.hh>

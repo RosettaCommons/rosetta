@@ -29,7 +29,7 @@
 
 // Core Headers
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -82,7 +82,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( pocket_kT, "kT to be used for backrub MC", 1.2 );
 	NEW_OPT( pocket_SA, "Use simulated annealing during backrub", false );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	std::cout << "Starting to relax backbone around central residue" << std::endl;
 

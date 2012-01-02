@@ -46,7 +46,7 @@ sheffler_voids( core::pose::Pose & pose ) {
 
 }
 
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <iostream>
 
@@ -56,7 +56,7 @@ sheffler_voids( core::pose::Pose & pose ) {
 
 int main (int argc, char *argv[])
 {
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	core::pose::Pose test;
 	core::import_pose::pose_from_pdb(test,"test.pdb");

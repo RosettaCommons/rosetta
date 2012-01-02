@@ -12,7 +12,7 @@
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // project headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -126,7 +126,7 @@ int main( int argc, char * argv [] ) {
 	using basic::options::option;
 
 	// initialize rosetta
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( graphics_main );
 

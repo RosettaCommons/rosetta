@@ -14,7 +14,7 @@
 #include <cmath>
 #include <map>
 // Protocol Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <protocols/pockets/Fingerprint.hh>
 #include <protocols/pockets/PocketGrid.hh>
 #include <core/optimization/ParticleSwarmMinimizer.hh>
@@ -23,7 +23,7 @@
 
 // Utility Headers
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBInfo.hh>
@@ -84,7 +84,7 @@ int main( int argc, char * argv [] ) {
   NEW_OPT( origin_cutoff, "value for setting minimum and maximum origin cut off", 5.0 );
 	//NEW_OPT( angle_increment, "angle increment", 20.0 );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	std::string const input_protein = option[ input_protein_file ];
 	std::string const input_ligand = option[ input_ligand_file ];

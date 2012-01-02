@@ -12,8 +12,8 @@
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
 // project headers
-#include <core/init.hh>
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
+#include <devel/init.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <basic/options/option.hh>
@@ -510,8 +510,8 @@ int main( int argc, char * argv [] ) {
 	register_options( optional_options );
 
 	// initialize rosetta
-	core::init( argc, argv );
-	protocols::init::init(argc, argv);
+	devel::init( argc, argv );
+	devel::init(argc, argv);
 
 	// check required options are specified
 //	if ( !check_required_options( required_options ) ) {

@@ -23,7 +23,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Stub.hh>
 // AUTO-REMOVED #include <core/pack/optimizeH.hh>
@@ -119,7 +119,7 @@ void run() {
 
 
 int main (int argc, char *argv[]) {
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	run();
 }
 

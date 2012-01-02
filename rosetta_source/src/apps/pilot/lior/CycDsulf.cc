@@ -32,7 +32,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -300,7 +300,7 @@ void writeScores(pose::Pose& workpose, pose::Pose& nativePose, const std::string
 
 int main (int argc, char** argv) {
 
-		core::init(argc,argv);
+		devel::init(argc,argv);
 		basic::Tracer TR("protocols.moves.CycPep");
 		Size nstruct = option[out::nstruct];
 		pose::Pose nativePose;
@@ -379,7 +379,7 @@ int main (int argc, char** argv) {
 //	using namespace basic::options;
 //	using namespace basic::options::OptionKeys;
 //
-//	core::init(argc,argv);
+//	devel::init(argc,argv);
 //	core: :scoring::ScoreFunctionOP scorefxn_ = core::scoring::getScoreFunction();
 //	protocols::loops::Loops myloop;
 //	myloop.add_loop(2,6,4);

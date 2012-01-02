@@ -13,14 +13,14 @@
 
 
 // libRosetta headers
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 #include <utility/inline_file_provider.hh>
 
 // C++ headers
 //#include <cstdlib>
 // libRosetta headers
 #include <basic/options/option.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // C++ headers
 #include <iostream>
 #include <string>
@@ -32,7 +32,7 @@
 #include <utility/string_util.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/relax_main.hh>
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -52,7 +52,7 @@ main( int argc, char * argv [] )
  	using namespace protocols::moves;
  	using namespace basic::options;
 //	// initialize core
-//	core::init(argc, argv);
+//	devel::init(argc, argv);
 //
 //	utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
 //
@@ -76,7 +76,7 @@ main( int argc, char * argv [] )
 	jd2::register_options();
 	option.add_relevant( OptionKeys::in::file::fullatom );
 	option.add_relevant( OptionKeys::relax::fast );
-	protocols::init::init(argc, argv);
+	devel::init(argc, argv);
 
 	return relax::Relax_main( false );
 	

@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -105,7 +105,7 @@ main( int argc, char * argv [] )
 
 	NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	TR << "Starting recomputing scores and rmsds" << std::endl;
 

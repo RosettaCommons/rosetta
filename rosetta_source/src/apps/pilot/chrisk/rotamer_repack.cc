@@ -11,7 +11,7 @@
 /// @brief
 
 //core library
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -1095,7 +1095,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	protocols::viewer::viewer_main( my_main );
 

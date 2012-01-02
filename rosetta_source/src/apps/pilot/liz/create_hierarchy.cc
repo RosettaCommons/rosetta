@@ -5,7 +5,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -71,7 +71,7 @@ assign_tag( Address& addr, std::string & newtag, HierarchicalLevelOP hlevel ) {
 
 int main(int argc, char *argv[])
 {
-  core::init(argc, argv);
+  devel::init(argc, argv);
 
   std::string silentin = option[ in::file::silent ]()[1];
   SilentFileData sfd;

@@ -35,7 +35,7 @@
 #include <protocols/qsar/qsarOptFunc.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <numeric/roc_curve.hh>
 
 #include <protocols/ligand_docking/Transform.hh>
@@ -398,7 +398,7 @@ int main(int argc, char* argv[])
 	NEW_OPT(roc_opt::inactive_list,"a list of inactive protein_ligand complexes","");
 	//NEW_OPT(roc_opt::outer_cycles,"the number of dock/optimize cycles to perfrom","");
 
-	core::init(argc,argv);
+	devel::init(argc,argv);
 
 	GridWeights current_weights(1.0,1.0,1.0,1.0,1.0);
 

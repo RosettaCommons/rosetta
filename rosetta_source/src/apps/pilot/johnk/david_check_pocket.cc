@@ -22,7 +22,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 
 // Core Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -71,7 +71,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( central_relax_pdb_num, "which residue to carry out backrub around", 1 );
 	NEW_OPT( pocket_constraint_weight, "weight to use for the pocket constraint", 1. );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	std::cout << "Starting to relax backbone around central residue" << std::endl;
 

@@ -21,7 +21,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/graph/Graph.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
@@ -525,7 +525,7 @@ void dock(Pose init, std::string const & fn) {
 
 
 int main(int argc, char *argv[]) {
-  core::init(argc,argv);
+  devel::init(argc,argv);
   using namespace basic::options::OptionKeys;
   // loop over input files, do some checks, call dock
   for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {

@@ -27,7 +27,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -951,7 +951,7 @@ void run(std::string fname) {
 int main (int argc, char *argv[]) {
 
 
-  core::init(argc,argv);
+  devel::init(argc,argv);
 
   using basic::options::option;
   using namespace basic::options::OptionKeys;

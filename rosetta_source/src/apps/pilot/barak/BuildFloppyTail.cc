@@ -77,7 +77,7 @@
 #include <core/util/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/options/util.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -180,7 +180,7 @@ main( int argc, char * argv [] )
         using namespace core::chemical;
 
 	//setup random numbers and options
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
         //create a pose
         pose::Pose pose;

@@ -10,7 +10,7 @@
 /// @author jk
 
 // Project Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/id/AtomID.hh>
@@ -119,7 +119,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( do_repack, "repack the interface", false );
 	NEW_OPT( use_geosol, "use geosol instead of LK", false );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	TR << "jk doing geosol interface minimiations" << std::endl;
 

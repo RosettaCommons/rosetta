@@ -11,7 +11,7 @@
 /// @author Sam DeLuca
 /// @brief  AtomType and assign neighbor atoms for a list of mdl files, output fixed mdl files and pdbs
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -31,7 +31,7 @@
 
 int main(int argc, char*argv[])
 {
-  core::init(argc, argv);
+  devel::init(argc, argv);
   std::list<std::string> file_list;
   if(basic::options::option[basic::options::OptionKeys::in::file::l].user())
   {

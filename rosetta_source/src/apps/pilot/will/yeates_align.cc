@@ -12,7 +12,7 @@
 
 
 #include <core/id/AtomID_Map.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -69,7 +69,7 @@ main (int argc, char *argv[]){
   using basic::options::option;
   using namespace basic::options::OptionKeys;
 
-  core::init( argc, argv );
+  devel::init( argc, argv );
   pose::Pose ccpp,ccap;
   import_pose::pose_from_pdb(ccpp,"input/ccpp.pdb"); remove_termini(ccpp);
   import_pose::pose_from_pdb(ccap,"input/ccap.pdb"); remove_termini(ccap);

@@ -12,7 +12,7 @@
 /// @author Robert Vernon
 
 #include <core/types.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <basic/prof.hh>
 
 #include <core/chemical/AA.hh>
@@ -20,7 +20,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 
 #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <core/init.hh>
+// Auto-header: duplicate removed #include <devel/init.hh>
 
 #include <core/kinematics/RT.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -153,7 +153,7 @@ main( int argc, char* argv [] )
 	using namespace core::scoring::methods::pcs;
 
 	// options, random initialization
-	core::init( argc, argv );
+	devel::init( argc, argv );
 
 	// setup residue types
 	core::chemical::ResidueTypeSetCAP rsd_set;

@@ -26,7 +26,7 @@
 #include <string>
 #include <sstream>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <core/io/pdb/file_data.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
@@ -122,7 +122,7 @@ inline void assure(std::ofstream& in, const char* filename = "")
 int main( int argc, char * argv [] )
 {
     //normal init
-    core::init( argc, argv );
+    devel::init( argc, argv );
 
     pose::Pose pose;
     string filename = option[ in::file::s ]().vector()[ 0 ];

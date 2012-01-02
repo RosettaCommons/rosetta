@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -59,7 +59,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( desired_sequence, "the sequence to thread onto the current backbone", "" );
 	NEW_OPT( repack_preserved, "if true, repack residues which match in both sequences", false );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	TR << "Starting gapless threading" << std::endl;
 

@@ -22,7 +22,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
@@ -1039,7 +1039,7 @@ void run(  ) {
 
 
 int main (int argc, char *argv[]) {	
-	core::init(argc,argv);	
+	devel::init(argc,argv);	
 	run();
 }
 

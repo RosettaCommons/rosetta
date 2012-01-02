@@ -24,7 +24,7 @@
 
 // libRosetta headers
 #include <basic/options/option.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // C++ headers
 #include <iostream>
 #include <string>
@@ -36,7 +36,7 @@
 #include <utility/string_util.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/relax_main.hh>
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -457,7 +457,7 @@ const char* const kGetStdoutMethodId = "getStdout";
 //////
 ////// 		rosetta->ss_cout << "start" << std::endl;
 ////// 		try{
-////// 			core::init(tokens_v1);
+////// 			devel::init(tokens_v1);
 ////// 			relax::ClassicRelax::register_options();
 ////// 			jd2::register_options();
 ////// 			option.add_relevant( OptionKeys::in::file::fullatom );
@@ -578,7 +578,7 @@ void * run( void * data ){
 		jd2::register_options();
 		option.add_relevant( OptionKeys::in::file::fullatom );
 		option.add_relevant( OptionKeys::relax::fast );
-		core::init(tokens_v1);
+		devel::init(tokens_v1);
 		relax::Relax_main( false );
 	}
 	catch( std::string ex ){

@@ -10,7 +10,7 @@
 #include <string>
 #include <sstream>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <core/io/pdb/file_data.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -85,7 +85,7 @@ basic::Tracer TR("apps.pilot.wendao.gen_cav_ball");
 int main( int argc, char * argv [] )
 {
     //normal init
-    core::init( argc, argv );
+    devel::init( argc, argv );
 
     pose::Pose pose;
     TR << "[get pdb] Get the pose from pdb ..." << endl;

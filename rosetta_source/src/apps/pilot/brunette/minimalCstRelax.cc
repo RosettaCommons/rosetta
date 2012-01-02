@@ -67,7 +67,7 @@
 
 
 #include <devel/init.hh>
-//#include <core/init.hh>
+//#include <devel/init.hh>
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>

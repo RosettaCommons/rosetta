@@ -23,7 +23,7 @@
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
@@ -332,7 +332,7 @@ void run_hd(std::string fname) {
 int main (int argc, char *argv[]) {
 
 
-  core::init(argc,argv);
+  devel::init(argc,argv);
 
   using basic::options::option;
   using namespace basic::options::OptionKeys;

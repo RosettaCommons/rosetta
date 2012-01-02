@@ -33,7 +33,7 @@
 
 #include <cstdio>
 
-#include <core/init.hh>
+#include <devel/init.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -131,7 +131,7 @@ int
 main( int argc, char * argv [] )
 {
 	// initialize core
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	MPI_LoopHash_Launcher launch_mpi_loophash;
 	launch_mpi_loophash.run();

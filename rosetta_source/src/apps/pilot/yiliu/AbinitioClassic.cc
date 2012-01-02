@@ -189,7 +189,7 @@ main( int argc, char * argv [] )
 	using utility::vector1;
 
 	//YL, move the options register functions out of the boinc section
-	// has to be called before core::init. Which is really stupid.
+	// has to be called before devel::init. Which is really stupid.
 	protocols::abinitio::ClassicAbinitio::register_options();
 	// options, random initialization
 	devel::init( argc, argv );

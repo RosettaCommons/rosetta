@@ -10,7 +10,7 @@
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.io.hh>
 #include <core/scoring/sasa.hh>
@@ -59,7 +59,7 @@ get_surface_points(core::pose::Pose const & p, Real DIST) {
 
 int main(int argc, char *argv[]) {
 	register_options();
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	using namespace basic::options;
 
 

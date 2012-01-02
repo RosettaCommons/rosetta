@@ -27,7 +27,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -586,7 +586,7 @@ int main (int argc, char *argv[]) {
 	// }
 	// utility_exit_with_message("debug line_cone_intersection");	
 
-	core::init(argc,argv);
+	devel::init(argc,argv);
 	run();
 }
 
