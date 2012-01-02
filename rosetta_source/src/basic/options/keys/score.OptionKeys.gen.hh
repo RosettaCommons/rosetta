@@ -40,6 +40,7 @@ namespace score { extern BooleanOptionKey const ramaneighbors; }
 namespace score { extern StringOptionKey const optH_weights; }
 namespace score { extern StringOptionKey const optH_patch; }
 namespace score { extern StringOptionKey const hbond_params; }
+namespace score { extern BooleanOptionKey const hbond_disable_bbsc_exclusion_rule; }
 namespace score { extern IntegerOptionKey const symE_units; }
 namespace score { extern RealOptionKey const symE_bonus; }
 namespace score { extern RealOptionKey const NV_lbound; }

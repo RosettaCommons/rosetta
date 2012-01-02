@@ -118,6 +118,7 @@ namespace score { BooleanOptionKey const ramaneighbors( "score:ramaneighbors" );
 namespace score { StringOptionKey const optH_weights( "score:optH_weights" );  }
 namespace score { StringOptionKey const optH_patch( "score:optH_patch" );  }
 namespace score { StringOptionKey const hbond_params( "score:hbond_params" );  }
+namespace score { BooleanOptionKey const hbond_disable_bbsc_exclusion_rule( "score:hbond_disable_bbsc_exclusion_rule" );  }
 namespace score { IntegerOptionKey const symE_units( "score:symE_units" );  }
 namespace score { RealOptionKey const symE_bonus( "score:symE_bonus" );  }
 namespace score { RealOptionKey const NV_lbound( "score:NV_lbound" );  }
@@ -581,4 +582,3 @@ namespace lh { BooleanOptionKey const exclude_homo( "lh:exclude_homo" );  }
 namespace lh { StringOptionKey const refstruct( "lh:refstruct" );  }
 namespace lh { StringOptionKey const homo_file( "lh:homo_file" );  }
 namespace lh { RealVectorOptionKey const createdb_rms_cutoff( "lh:createdb_rms_cutoff" );  }
-namespace lh { RealOptionKey const min_bbrms( "lh:min_bbrms" );  }

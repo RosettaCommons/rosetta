@@ -709,6 +709,7 @@ option.add( basic::options::OptionKeys::score::ramaneighbors, "Uses neighbor-dep
 option.add( basic::options::OptionKeys::score::optH_weights, "Name of weights file (without extension .wts) to use during optH" );
 option.add( basic::options::OptionKeys::score::optH_patch, "Name of weights file (without extension .wts) to use during optH" );
 option.add( basic::options::OptionKeys::score::hbond_params, "Directory name in the database for which hydrogen bond parameters to use." ).def("standard_params");
+option.add( basic::options::OptionKeys::score::hbond_disable_bbsc_exclusion_rule, "Disable the rule that protein bb/sc hbonds are excluded if the backbone group is already forming a hydrogen bond to a backbone group; with this flag, no hbonds are excluded" ).def(false);
 option.add( basic::options::OptionKeys::score::symE_units, "Number of symmetric Units in design for use with symE scoring" ).def(-1);
 option.add( basic::options::OptionKeys::score::symE_bonus, "Energy bonus per match for use with symE scoring" ).def(0.0);
 option.add( basic::options::OptionKeys::score::NV_lbound, "Lower Bound for neighbor Vector scoring" ).def(3.3);
@@ -1172,10 +1173,10 @@ option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusi
 option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
 option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs to exclude" ).def("");
 option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);
-option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
+option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
 option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
 option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
@@ -1758,10 +1759,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
@@ -2191,6 +2192,7 @@ option.add( basic::options::OptionKeys::cp::ncycles, "how many cycles to run ref
 option.add( basic::options::OptionKeys::cp::print_reports, "print reports to text file?" ).def(false);
 option.add( basic::options::OptionKeys::cp::vipReportFile, "File to print reports to" ).def("reports.txt");
 option.add( basic::options::OptionKeys::cp::relax_mover, "relax w/o constraints=relax, w constraints=cst_relax" ).def("relax");
+option.add( basic::options::OptionKeys::cp::skip_relax, "Skip relax step... may reduce accurate identification of mutations" ).def(false);
 option.add( basic::options::OptionKeys::archive::archive, "archive option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::archive::reread_all_structures, "ignore pool file... reread from batches" ).def(false);
 option.add( basic::options::OptionKeys::archive::completion_notify_frequency, "tell Archive every X completed decoys" ).def(100);

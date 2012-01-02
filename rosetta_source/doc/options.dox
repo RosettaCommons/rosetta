@@ -3385,6 +3385,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "standard_params"</dd><br>
 </dl>
 <dl>
+<dt><b>-hbond_disable_bbsc_exclusion_rule</b> \<Boolean\><dt>
+<dd>Disable the rule that protein bb/sc hbonds are excluded if the backbone group is already forming a hydrogen bond to a backbone group; with this flag, no hbonds are excluded</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-symE_units</b> \<Integer\><dt>
 <dd>Number of symmetric Units in design for use with symE scoring</dd><br>
 <dd>Default: -1</dd><br>
@@ -10610,6 +10615,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-relax_mover</b> \<String\><dt>
 <dd>relax w/o constraints=relax, w constraints=cst_relax</dd><br>
 <dd>Default: "relax"</dd><br>
+</dl>
+<dl>
+<dt><b>-skip_relax</b> \<Boolean\><dt>
+<dd>Skip relax step... may reduce accurate identification of mutations</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>archive</h2>
