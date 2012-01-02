@@ -32,6 +32,7 @@ namespace protein_interface_design{
 namespace filters {
 
 static basic::Tracer TR( "protocols.protein_interface_design.filters.Torsion" );
+static basic::Tracer TR_database( "protocols.protein_interface_design.filters.Torsion_database" );
 
 ///@brief default ctor
 Torsion::Torsion() :
@@ -50,8 +51,8 @@ Torsion::apply(core::pose::Pose const & pose ) const
 	if( task_factory_set() ){
 		utility::vector1< core::Size > const designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
 		foreach( core::Size const resi, designable )
-			TR<<pose.phi( resi )<<" "<<pose.psi( resi )<<" "<<pose.omega( resi )<<" "<<pose.residue( resi ).name3()<<" ";
-		TR<<std::endl;
+			TR_database<<pose.phi( resi )<<" "<<pose.psi( resi )<<" "<<pose.omega( resi )<<" "<<pose.residue( resi ).name3()<<" ";
+		TR_database<<std::endl;
 		return true;
 	}
 	else if( resnum() == 0 ){ // just print all torsions
