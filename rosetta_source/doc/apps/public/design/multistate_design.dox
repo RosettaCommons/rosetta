@@ -30,7 +30,7 @@ directs your attention to a set of input files for a fairly involved multistate 
 the interface of a homodimer so that it forms a heterodimer.  This example takes about 80 minutes to run when
 using 10 CPUs and MPI.
 
-The majority of the classes for the mpi_msd application live in <code>rosetta/rosetta_source/src/protocols/pack_daeomon</code>.
+The majority of the classes for the mpi_msd application live in <code>rosetta/rosetta_source/src/protocols/pack_daemon</code>.
 
 @section refs References
 
@@ -165,7 +165,7 @@ start
 
 In this entity resfile, there are 16 residues declared in the entity protein (and 16 positions for
 each entity the genetic algorithm will consider) and all but residue 3 in this protein has the behavior
-"ALLAAxc" (all amino acids allowed, except for cystein) and the rotamer-building instructions of
+"ALLAAxc" (all amino acids allowed, except for cysteine) and the rotamer-building instructions of
 "EX 1 EX 2 ARO" which builds extra rotamers at chi1 for all amino acids, and extra rotamers at
 chi 2 for aromatic amino acids (FHWY).
 
@@ -213,7 +213,7 @@ and this residue is residue 14, then you say "14", not "5"); the chain-id is a
 character referring to a particular chain in the PDB or an underscore ("_") if the
 chain is not labeled.
 
-Example correspondend files: consider the heterodimerization task where two monomers are being
+Example correspondence files: consider the heterodimerization task where two monomers are being
 designed such that the "A" monomer binds the "B" monomer, but not itself, and the "B" monomer
 binds the "A" monomer but not itself.  Then there are five arrangements of these two monomers:
 the A monomer, the B monomer, the AB heterodimer, the AA homodimer, and the BB homodimer.
@@ -237,8 +237,8 @@ Then the following correspondence files will be used for each of the five arrang
 @verbatim
 <begin B monomer correspondence file>
 4 10 A
-5 10 A
-6 10 A
+5 15 A
+6 20 A
 <end>
 @endverbatim
 
