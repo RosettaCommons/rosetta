@@ -18,6 +18,9 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/chemical/AA.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -31,7 +34,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>
-
+#include <utility/io/izstream.hh>
+#include <iostream>
+#include <sstream>
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -44,6 +49,7 @@
 #include <protocols/protein_interface_design/movers/LoopLengthChange.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <numeric/random/random.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -76,8 +82,12 @@ Splice::Splice() :
 	ccd_( true ),
 	rms_cutoff_( 999999 ),
 	res_move_( 4 ),
-	randomize_cut_( false )
+	randomize_cut_( false ),
+	task_factory_( NULL ),
+	torsion_database_fname_( "" ),
+	database_entry_( 0 )
 {
+	torsion_database_.clear();
 }
 
 
@@ -86,39 +96,84 @@ Splice::~Splice() {}
 void
 Splice::apply( core::pose::Pose & pose )
 {
-	core::pose::Pose source_pose;
-	core::import_pose::pose_from_pdb( source_pose, source_pdb_ );
-
-	core::Size const nearest_to_from( protocols::rosetta_scripts::find_nearest_res( source_pose, pose, from_res() ) );
-	core::Size const nearest_to_to( protocols::rosetta_scripts::find_nearest_res( source_pose, pose, to_res() ) );
-
-	if( nearest_to_from == 0 || nearest_to_to == 0 ){
-		TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
-		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
-		return;
+	TR<<"Starting splice apply"<<std::endl;
+	if( from_res() == 0 && to_res() == 0 ){/// set the splice site dynamically according to the task factory
+		utility::vector1< core::Size > designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
+		std::sort( designable.begin(), designable.end() );
+		from_res( designable[ 1 ] );
+		to_res( designable[ designable.size() ] );
 	}
-/// Don't do anything with loops that contain disulfides. At one point, might be a good idea to copy these disulfides onto new pose.
-/// Keep Gly/Pro residues as those have torsion angle strangeness
-	std::string threaded_seq( "" );
-	for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
-		if( source_pose.residue( i ).name3() == "CYD" ){
-			TR<<"Residue "<<i<<" in "<<source_pdb()<<" is a disulfide. Failing"<<std::endl;
+	TR<<"From res: "<<from_res()<<" to_res: "<<to_res()<<std::endl;
+	runtime_assert( to_res() > from_res() );
+	core::pose::Pose source_pose;
+	core::Size nearest_to_from( 0 ), nearest_to_to( 0 ); // residues on source_pose that are nearest to from_res and to_res
+	utility::vector1< BBDofs > dofs;
+	dofs.clear();
+	if( torsion_database_fname_ == "" ){ // read dofs from source pose rather than database
+		core::import_pose::pose_from_pdb( source_pose, source_pdb_ );
+		nearest_to_from = protocols::rosetta_scripts::find_nearest_res( source_pose, pose, from_res() );
+		nearest_to_to = protocols::rosetta_scripts::find_nearest_res( source_pose, pose, to_res() );
+		if( nearest_to_from == 0 || nearest_to_to == 0 ){
+			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
 			set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 			return;
 		}
-		if( source_pose.residue( i ).name3() == "GLY" )
-			threaded_seq += "G";
-		else if( source_pose.residue( i ).name3() == "PRO" )
-			threaded_seq += "P";
-		else{
-			core::Size const nearest_on_target( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, i ) );
-			if( nearest_on_target > 0 && source_pose.residue( i ).name3() == pose.residue( nearest_on_target ).name3() )
-				threaded_seq += source_pose.residue(i).name1();
-			else
-				threaded_seq += "A";
-		}
-	}
+		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
+		  if( source_pose.residue( i ).name3() == "CYD" ){
+				TR<<"Residue "<<i<<" is a disulfide. Failing"<<std::endl;
+				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+				return;
+			}
+/// Feed the source_pose dofs into the BBDofs array
+			BBDofs residue_dofs;
+			residue_dofs.resid( i ); /// resid is probably never used
+			residue_dofs.phi( source_pose.phi( i ) );
+			residue_dofs.psi( source_pose.psi( i ) );
+			residue_dofs.omega( source_pose.omega( i ) );
 
+			core::Size const nearest_on_target( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, i ) );
+
+/// copy the residue identity from source if the residue identity is gly/pro or is identitcal to the one in target pose (conserved)
+			if( source_pose.residue( i ).name3() == "GLY" || source_pose.residue( i ).name3() == "PRO" || (nearest_on_target > 0 && source_pose.residue( i ).name3() == pose.residue( nearest_on_target ).name3() )){
+				std::stringstream ss; std::string s;
+				ss << source_pose.residue( i ).name1();
+				ss >> s;
+				residue_dofs.resn( s );
+			}
+			else
+				residue_dofs.resn( "A" );
+
+			dofs.push_back( residue_dofs );
+		}// for i nearest_to_from..nearest_to_to
+	}// fi torsion_database_fname==NULL
+	else{/// read from dbase
+		core::Size dbase_entry( database_entry() );
+		if( dbase_entry == 0 )/// randomize entry
+			dbase_entry = (core::Size) ( RG.uniform() * torsion_database_.size() + 1);
+		dofs = torsion_database_[ dbase_entry ];
+		foreach( BBDofs & resdofs, dofs ){/// transform 3-letter code to 1-letter code
+			using namespace core::chemical;
+			if( resdofs.resn() == "CYD" ){// at one point it would be a good idea to use disfulfides rather than bail out on them...
+				TR<<"Residue "<<resdofs.resid()<<" is a disulfide. Failing"<<std::endl;
+				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+				return;
+			}
+			std::stringstream ss;
+			std::string s;
+			ss << oneletter_code_from_aa( aa_from_name( resdofs.resn() ) );
+			ss >> s;
+			resdofs.resn( s );
+			if( resdofs.resn() != "G" && resdofs.resn() != "P" )
+				resdofs.resn( "A" ); // keep as is without designing
+		}/// foreach resdof
+		nearest_to_to = dofs.size(); /// nearest_to_to and nearest_to_from are used below to compute the difference in residue numbers...
+		nearest_to_from = 1;
+  }// read from dbase
+	std::string threaded_seq( "" );/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
+	foreach( BBDofs const bbdofs, dofs ){
+		runtime_assert( bbdofs.resn().length() == 1 );
+		threaded_seq += bbdofs.resn();
+	}
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
 	protocols::loops::FoldTreeFromLoops ffl;
 	using namespace utility;
@@ -137,7 +192,7 @@ Splice::apply( core::pose::Pose & pose )
 		TR<<std::endl;
 		cut_site = loop_positions_in_source[ (core::Size) ( RG.uniform() * loop_positions_in_source.size()) ] - nearest_to_from + from_res();
 		TR<<"Cut placed at: "<<cut_site<<std::endl;
-  }
+  }// fi randomize_cut
 
 	protocols::loops::Loop loop( from_res() - 6/*start*/, to_res() + 6/*stop*/, cut_site/*cut*/ );
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
@@ -158,14 +213,25 @@ Splice::apply( core::pose::Pose & pose )
 	acb.apply( pose );
 	TR<<"Adding chainbreak at: "<<cut_site<<std::endl;
 
-
 /// set torsions
 	core::Size const total_residue_new( nearest_to_to - nearest_to_from + 1 );
 	for( core::Size i = 0; i < total_residue_new; ++i ){
-		pose.set_phi( from_res() + i, source_pose.phi( nearest_to_from + i ) );
-		pose.set_psi( from_res() + i, source_pose.psi( nearest_to_from + i ) );
-		pose.set_omega( from_res() + i, source_pose.omega( nearest_to_from + i ) );
+		pose.set_phi( from_res() + i, dofs[ i + 1 ].phi() );
+		pose.set_psi( from_res() + i, dofs[ i + 1 ].psi() );
+		pose.set_omega( from_res() + i, dofs[ i + 1 ].omega() );
 	}
+
+	using namespace protocols::toolbox::task_operations;
+	using namespace core::pack::task;
+	ThreadSequenceOperationOP tso = new ThreadSequenceOperation;
+	tso->target_sequence( threaded_seq );
+	tso->start_res( from_res() );
+	tso->allow_design_around( false );
+	TR<<"Threading sequence: "<<threaded_seq<<" starting from "<<from_res()<<std::endl;
+	TaskFactoryOP tf = new TaskFactory;
+	tf->push_back( new operation::InitializeFromCommandline );
+	tf->push_back( tso );
+
 	if( ccd() ){
 /// Set ccd to minimize 4 residues at each loop terminus including the first residue of the loop. This way,
 /// the torsion in the loop are maintained. Allow repacking around the loop.
@@ -176,15 +242,9 @@ Splice::apply( core::pose::Pose & pose )
 		ccd_mover.temp_initial( 1.5 );
 		ccd_mover.temp_final( 0.5 );
 		core::kinematics::MoveMapOP mm;
-		using namespace protocols::toolbox::task_operations;
 		DesignAroundOperationOP dao = new DesignAroundOperation;
-		ThreadSequenceOperationOP tso = new ThreadSequenceOperation;
 		dao->design_shell( 5 ); // threaded sequence operation needs to design, and will restrict design to the loop only
 		dao->repack_shell( 8.0 );
-		tso->target_sequence( threaded_seq );
-		tso->start_res( from_res() );
-		tso->allow_design_around( false );
-		TR<<"Threading sequence: "<<threaded_seq<<" starting from "<<from_res()<<std::endl;
 
 		mm = new core::kinematics::MoveMap;
 		mm->set_chi( false ); mm->set_bb( false ); mm->set_jump( false );
@@ -215,27 +275,29 @@ Splice::apply( core::pose::Pose & pose )
 			if( pose.residue( i ).name3() != "CYD" )
 				dao->include_residue( i );
 		}
-	  core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;
 		tf->push_back( dao );
-		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
-		tf->push_back( tso );
 		ccd_mover.set_task_factory( tf );
 		ccd_mover.move_map( mm );
 		ccd_mover.apply( pose );
-	}
-	core::Real rms( 0 );
-	for( core::Size i = 0; i <= total_residue_new - 1; ++i ){
-		core::Real const dist( pose.residue( from_res() + i ).xyz( "CA" ).distance( source_pose.residue( nearest_to_from+ i ).xyz("CA" ) ) );
-		rms += dist;
-	}
-	core::Real const average_rms( rms / total_residue_new );
-	TR<<"Average distance of spliced segment to original: "<< average_rms<<std::endl;
-	if( average_rms >= rms_cutoff() ){
-		TR<<"Failing."<<std::endl;
-		set_last_move_status( protocols::moves::FAIL_RETRY );
-		return;
-	}
 
+		core::Real rms( 0 );
+		for( core::Size i = 0; i <= total_residue_new - 1; ++i ){
+			core::Real const dist( pose.residue( from_res() + i ).xyz( "CA" ).distance( source_pose.residue( nearest_to_from+ i ).xyz("CA" ) ) );
+			rms += dist;
+		}
+		core::Real const average_rms( rms / total_residue_new );
+		TR<<"Average distance of spliced segment to original: "<< average_rms<<std::endl;
+		if( average_rms >= rms_cutoff() ){
+			TR<<"Failing."<<std::endl;
+			set_last_move_status( protocols::moves::FAIL_RETRY );
+			return;
+		}
+	}// fi ccd
+	else{
+		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
+		protocols::simple_moves::PackRotamersMover prm( scorefxn(), ptask );
+		prm.apply( pose );
+	}
 }
 
 std::string
@@ -246,9 +308,20 @@ Splice::get_name() const {
 void
 Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
-	from_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "from_res" ), pose ) );
-	to_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "to_res" ), pose ) );
-	source_pdb( tag->getOption< std::string >( "source_pdb" ) );
+	runtime_assert( tag->hasOption( "task_operations" ) != (tag->hasOption( "from_res" ) || tag->hasOption( "to_res" ) ) ); // it makes no sense to activate both taskoperations and from_res/to_res.
+	runtime_assert( tag->hasOption( "torsion_database" ) != tag->hasOption( "source_pdb" ) );
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	if( !tag->hasOption( "task_operations" ) ){
+		from_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "from_res" ), pose ) );
+		to_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "to_res" ), pose ) );
+	}
+	if( tag->hasOption( "torsion_database" ) ){
+		torsion_database_fname( tag->getOption< std::string >( "torsion_database" ) );
+		read_torsion_database();
+		TR<<"torsion_database: "<<torsion_database_fname()<<" ";
+	}
+	else
+		source_pdb( tag->getOption< std::string >( "source_pdb" ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	ccd( tag->getOption< bool >( "ccd", 1 ) );
 	rms_cutoff( tag->getOption< core::Real >( "rms_cutoff", 999999 ) );
@@ -270,6 +343,38 @@ Splice::scorefxn( core::scoring::ScoreFunctionOP sf ){
 core::scoring::ScoreFunctionOP
 Splice::scorefxn() const{
 	return scorefxn_;
+}
+
+core::pack::task::TaskFactoryOP
+Splice::task_factory() const{ return task_factory_; }
+
+void
+Splice::task_factory( core::pack::task::TaskFactoryOP tf ){ task_factory_ = tf; }
+
+void
+Splice::read_torsion_database(){
+	using namespace std;
+
+  utility::io::izstream data( torsion_database_fname_ );
+  if ( !data ) {
+    TR << "cannot open torsion database " << torsion_database_fname_ << std::endl;
+		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+		return;
+  }
+  std::string line;
+  while( getline( data, line ) ) {
+    std::istringstream line_stream( line );
+		utility::vector1< BBDofs > bbdof_entry;
+		bbdof_entry.clear();
+  	while( !line_stream.eof() ){
+			core::Real phi, psi, omega;
+			std::string resn;
+			line_stream >> phi >> psi >> omega >> resn;
+			bbdof_entry.push_back( BBDofs( 0/*resid*/, phi, psi, omega, resn ) );
+		}
+		torsion_database_.push_back( bbdof_entry );
+	}
+	TR<<"Finished reading torsion database with "<<torsion_database_.size()<<" entries"<<std::endl;
 }
 
 } //movers
