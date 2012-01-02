@@ -57,14 +57,14 @@ public:
 
 	utility::vector1< std::string > source_pdb() const{ return source_pdb_; }
 	void source_pdb( utility::vector1< std::string > const s ){ source_pdb_ = s; }
-	utility::vector1< core::Size > start_res() const{ return start_res_; }
-	void start_res( utility::vector1< core::Size > const s ){ start_res_ = s; }
-	utility::vector1< core::Size > stop_res() const{ return stop_res_; }
-	void stop_res( utility::vector1< core::Size > const s ){ stop_res_ = s; }
+	utility::vector1< std::string > start_res() const{ return start_res_; }
+	void start_res( utility::vector1< std::string > const s ){ start_res_ = s; }
+	utility::vector1< std::string > stop_res() const{ return stop_res_; }
+	void stop_res( utility::vector1< std::string > const s ){ stop_res_ = s; }
 private:
 	utility::vector1< std::string > source_pdb_;
-	utility::vector1< core::Size > start_res_;
-	utility::vector1< core::Size > stop_res_;
+	utility::vector1< std::string > start_res_; // start and end will be parsed at apply time to determine the relevant residue numbers
+	utility::vector1< std::string > stop_res_;
 };
 
 } //namespace protocols

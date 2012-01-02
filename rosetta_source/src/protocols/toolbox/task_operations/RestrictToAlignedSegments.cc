@@ -72,10 +72,11 @@ core::pack::task::operation::TaskOperationOP RestrictToAlignedSegmentsOperation:
 	return new RestrictToAlignedSegmentsOperation( *this );
 }
 
-///@brief restricts to repacking all residues outside of design_shell_ around each residue
 void
 RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
+	using namespace protocols::rosetta_scripts;
+
 	std::set< core::Size > designable;
 	designable.clear();
 	core::pose::Pose source_pose;
@@ -83,8 +84,10 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		if( count == 1 || source_pdb_[ count ] != source_pdb_[ count - 1 ]){ // scrimp on reading from disk
 			core::import_pose::pose_from_pdb( source_pose, source_pdb_[ count ] );
 		}
-		core::Size const nearest_to_from = protocols::rosetta_scripts::find_nearest_res( pose, source_pose, start_res_[ count ] );
-		core::Size const nearest_to_to = protocols::rosetta_scripts::find_nearest_res( pose, source_pose, stop_res_[ count ] );
+		core::Size const parsed_start( parse_resnum( start_res_[ count ], source_pose ) );
+		core::Size const parsed_stop ( parse_resnum( stop_res_[ count  ], source_pose ) );
+		core::Size const nearest_to_from = find_nearest_res( pose, source_pose, parsed_start );
+		core::Size const nearest_to_to = find_nearest_res( pose, source_pose, parsed_stop );
 
 		if( nearest_to_from == 0 || nearest_to_to == 0 ){
 			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
@@ -115,12 +118,13 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 void
 RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 {
+	using namespace protocols::rosetta_scripts;
 	if( tag->hasOption( "source_pdb" ) )
 		source_pdb_.push_back( tag->getOption< std::string >( "source_pdb" ) );
 	if( tag->hasOption( "start_res" ) )
-		start_res_.push_back( tag->getOption< core::Size >( "start_res" ) );
+		start_res_.push_back( tag->getOption< std::string >( "start_res" ) );
 	if( tag->hasOption( "stop_res" ) )
-		stop_res_.push_back( tag->getOption< core::Size >( "stop_res" ) );
+		stop_res_.push_back( tag->getOption< std::string >( "stop_res" ) );
 
 	if( tag->hasOption( "source_pdb" ) || tag->hasOption( "start_res" ) || tag->hasOption( "stop_res" ) ){
 		runtime_assert( tag->hasOption( "source_pdb" ) && tag->hasOption( "start_res" ) && tag->hasOption( "stop_res" ) );
@@ -130,8 +134,8 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 	utility::vector0< TagPtr > const btags( tag->getTags() );
 	foreach( TagPtr const btag, btags ){
 		source_pdb_.push_back( btag->getOption< std::string >( "source_pdb" ) );
-		start_res_.push_back( btag->getOption< core::Size >( "start_res" ) );
-		stop_res_.push_back( btag->getOption< core::Size >( "stop_res" ) );
+		start_res_.push_back( btag->getOption< std::string >( "start_res" ) );
+		stop_res_.push_back( btag->getOption< std::string >( "stop_res" ) );
 	}
 }
 } //namespace protocols
