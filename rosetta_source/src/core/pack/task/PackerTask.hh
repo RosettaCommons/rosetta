@@ -405,10 +405,10 @@ public:
 	task_string( pose::Pose const & pose ) const = 0;
 
 	virtual
-  void remap_residue_level_tasks(
-    core::id::SequenceMappingCOP seqmap,
-    core::pose::Pose & pose
-  ) = 0;
+	void remap_residue_level_tasks(
+		core::id::SequenceMappingCOP seqmap,
+		core::pose::Pose & pose
+	) = 0;
 
 	// stream (I)/O ////////////////////////////////////////////////////
 

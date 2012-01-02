@@ -23,7 +23,7 @@
 // AUTO-REMOVED #include <core/scoring/hbonds/constants.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/types.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondTypeManager.hh>
 
@@ -42,12 +42,21 @@
 
 // AUTO-REMOVED #include <core/id/DOF_ID.hh>
 // AUTO-REMOVED #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
+#include <core/pose/Pose.hh>
 
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionInfo.hh>
+#include <core/scoring/EnergyGraph.hh>
+
+#include <core/import_pose/import_pose.hh>
+
+#include <core/pack/pack_rotamers.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/ResfileReader.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/interaction_graph/InteractionGraphBase.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -99,9 +108,9 @@ namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUT
 
 
 using namespace core;
-  using namespace conformation;
-  using namespace scoring;
-    using namespace hbonds;
+using namespace conformation;
+using namespace scoring;
+using namespace hbonds;
 
 
 class HBondEnergyTests : public CxxTest::TestSuite {
@@ -306,6 +315,183 @@ public:
 		//std::cout << "end score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -33.88566264995315, end_score, 1e-12 );
 	}
+	
+	void initialize_lj_hbond_sfxn( core::scoring::ScoreFunction & sfxn )
+	{
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.5 );
+		sfxn.set_weight( hbond_sr_bb, 0.75 );
+		sfxn.set_weight( hbond_lr_bb, 0.5  );
+		sfxn.set_weight( hbond_bb_sc, 1.25 );
+		sfxn.set_weight( hbond_sc, 1.125 );
+	}
 
+	void create_excludable_bb_sc_hbond( core::pose::Pose & pose )
+	{
+		using namespace core::id;
+
+		core::import_pose::pose_from_pdb( pose, "core/scoring/hbonds/1ubq_23_to_34.pdb" ); // read in the helix from ubiquitin
+		core::scoring::ScoreFunction sfxn;
+		initialize_lj_hbond_sfxn( sfxn );
+
+		std::string resfile_mutate_l26s( "NATRO\nstart\n30 _ PIKAA S\n" );
+		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
+		core::pack::task::parse_resfile_string( pose, *task, resfile_mutate_l26s );
+		core::pack::pack_rotamers( pose, sfxn, task );
+		
+		TS_ASSERT( pose.residue_type( 8 ).aa() == chemical::aa_ser );
+		
+		// set chi for residue 4 to form hbond
+		pose.set_chi( 1, 8, -65.9 );
+		pose.set_chi( 2, 8, 80.0 );
+		
+		core::Size res8_HG_ind = pose.residue_type( 8 ).atom_index( "HG" );
+		core::Size res4_O_ind = pose.residue_type( 4 ).atom_index( "O" );
+		// HG on residue 30 should (residue 8) should be ~2.5 A from the backbone O on residue 26 (residue 4 )
+		TS_ASSERT( pose.xyz( AtomID( res8_HG_ind, 8 )).distance( pose.xyz( AtomID( res4_O_ind, 4 )) ) < 2.6 );
+	}
+
+	void test_hbonds_w_excluded_bb_sc_interactions() {
+		using namespace core::pose;
+		using namespace core::scoring;
+
+		Pose pose;
+		create_excludable_bb_sc_hbond( pose );
+		ScoreFunction sfxn;
+		initialize_lj_hbond_sfxn( sfxn );
+		sfxn( pose );
+		
+		{ // scope
+		core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
+		TS_ASSERT( e4_8 );
+		if ( ! e4_8 ) return;
+		
+		EnergyEdge const * ee4_8 = dynamic_cast< EnergyEdge const * > (e4_8);
+		TS_ASSERT( ee4_8 );
+		if ( ! ee4_8 ) return;
+		
+		// there should be no hydrogen bond detected, since residue 4 is already participating in a bb/bb hbond.
+		TS_ASSERT( (*ee4_8)[ hbond_bb_sc ] == 0.0 );
+		}
+		
+		ScoreFunction sfxn2;
+		methods::EnergyMethodOptions enmethopts = sfxn2.energy_method_options();
+		enmethopts.hbond_options().bb_donor_acceptor_check( false ); // <-- disable the bb/sc exclusion rule.
+		sfxn2.set_energy_method_options( enmethopts );
+		initialize_lj_hbond_sfxn( sfxn2 );
+		TS_ASSERT( pose.energies().get_scorefxn_info() != (* sfxn2.info()) );
+		
+		sfxn2( pose );
+		
+		{ // scope
+		core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
+		TS_ASSERT( e4_8 );
+		if ( ! e4_8 ) return;
+		
+		EnergyEdge const * ee4_8 = dynamic_cast< EnergyEdge const * > (e4_8);
+		TS_ASSERT( ee4_8 );
+		if ( ! ee4_8 ) return;
+
+		// turning off the bb/sc exclusion rule should produce an hbond.
+		TS_ASSERT( (*ee4_8)[ hbond_bb_sc ] != 0.0 );
+		}
+
+		HBondEnergy hbe_w_bbsc_exclusion(   sfxn.energy_method_options().hbond_options() );
+		HBondEnergy hbe_wo_bbsc_exclusion( sfxn2.energy_method_options().hbond_options() );
+		
+		// Let's check the backbone_sidechain_energy() function to make sure the exclusion rule is properly applied.
+		EnergyMap emap;
+		sfxn( pose );
+		hbe_w_bbsc_exclusion.backbone_sidechain_energy( pose.residue(4), pose.residue(8), pose, sfxn, emap );
+		TS_ASSERT( emap[ hbond_bb_sc ] == 0.0 );
+		
+		emap.zero();
+		sfxn2( pose );
+		hbe_wo_bbsc_exclusion.backbone_sidechain_energy( pose.residue(4), pose.residue(8), pose, sfxn, emap );
+		TS_ASSERT( emap[ hbond_bb_sc ] != 0.0 );
+
+	}
+
+	void verify_hbond_trie_vs_trie_calculation( ScoreFunction const & sfxn )
+	{
+		using namespace core::pose;
+		using namespace core::scoring;
+
+		Pose pose;
+		create_excludable_bb_sc_hbond( pose );
+		sfxn( pose );
+
+		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
+		// design residues 4 and 8. Turn everything else off.
+		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if ( ii == 4 || ii == 8 ) continue;
+			task->nonconst_residue_task(ii).prevent_repacking();
+		}
+
+		task->nonconst_residue_task(4).and_extrachi_cutoff( 1 );
+		task->nonconst_residue_task(8).and_extrachi_cutoff( 1 );
+
+		//pack_scorefxn_pose_handshake( pose, sfxn);
+
+		//replace this with RotSetsFactory
+		core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets() );
+		core::pack::interaction_graph::InteractionGraphBaseOP ig = NULL;
+
+		// create the rotamer sets so that we can then compute the trie-vs-trie energies
+		core::pack::pack_rotamers_setup( pose, sfxn, task, rotsets, ig );
+		
+		core::Size res4_nrots = rotsets->rotamer_set_for_residue( 4 )->num_rotamers();
+		core::Size res8_nrots = rotsets->rotamer_set_for_residue( 8 )->num_rotamers();
+		
+		ObjexxFCL::FArray2D< core::PackerEnergy > rpe_table( res8_nrots, res4_nrots, core::PackerEnergy( 0.0 ) );
+		HBondEnergy hbe( sfxn.energy_method_options().hbond_options() );
+		hbe.evaluate_rotamer_pair_energies(
+			*rotsets->rotamer_set_for_residue( 4 ),
+			*rotsets->rotamer_set_for_residue( 8 ),
+			pose, sfxn, sfxn.weights(), rpe_table );
+
+		EnergyMap emap;
+		for ( Size ii = 1; ii <= res4_nrots; ++ii ) {
+			for ( Size jj = 1; jj <= res8_nrots; ++jj ) {
+				emap.zero();
+				hbe.residue_pair_energy(
+					*rotsets->rotamer_set_for_residue(4)->rotamer( ii ),
+					*rotsets->rotamer_set_for_residue(8)->rotamer( jj ),
+					pose, sfxn, emap );
+				core::PackerEnergy score = emap.dot( sfxn.weights() );
+				TS_ASSERT_DELTA( score, rpe_table( jj, ii ), 1e-6 );
+			}
+		}
+
+
+	}
+
+	/// Ensure that the rotamer pair energy evaluation works correctly when using the trie-vs-trie algorithm
+	void test_hbonds_trie_vs_trie_standard() {
+
+		ScoreFunction sfxn;
+		methods::EnergyMethodOptions enmethopts = sfxn.energy_method_options();
+		enmethopts.hbond_options().decompose_bb_hb_into_pair_energies( true ); // calculate bb/bb hbonds in residue_pair_energy calls.
+		sfxn.set_energy_method_options( enmethopts );
+
+		initialize_lj_hbond_sfxn( sfxn );
+		
+		verify_hbond_trie_vs_trie_calculation( sfxn );
+	}
+
+	/// Ensure that the rotamer pair energy evaluation works correctly when using the trie-vs-trie algorithm
+	void test_hbonds_trie_vs_trie_no_bbsc_exclusion() {
+
+		ScoreFunction sfxn;
+		methods::EnergyMethodOptions enmethopts = sfxn.energy_method_options();
+		enmethopts.hbond_options().decompose_bb_hb_into_pair_energies( true ); // calculate bb/bb hbonds in residue_pair_energy calls.
+		enmethopts.hbond_options().bb_donor_acceptor_check( false ); // <-- disable the bb/sc exclusion rule.
+
+		sfxn.set_energy_method_options( enmethopts );
+
+		initialize_lj_hbond_sfxn( sfxn );
+		
+		verify_hbond_trie_vs_trie_calculation( sfxn );
+	}
 
 };

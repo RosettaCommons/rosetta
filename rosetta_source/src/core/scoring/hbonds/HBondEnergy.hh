@@ -66,6 +66,8 @@ public:
 	///
 	HBondEnergy( HBondEnergy const & src );
 
+	virtual ~HBondEnergy();
+	
 	/// clone
 	virtual
 	methods::EnergyMethodOP

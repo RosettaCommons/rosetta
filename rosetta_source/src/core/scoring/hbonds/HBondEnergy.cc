@@ -244,6 +244,7 @@ HBondEnergy::HBondEnergy( HBondEnergy const & src ):
 	memb_potential_( src.memb_potential_) //pba
 {}
 
+HBondEnergy::~HBondEnergy() {}
 
 /// clone
 methods::EnergyMethodOP
