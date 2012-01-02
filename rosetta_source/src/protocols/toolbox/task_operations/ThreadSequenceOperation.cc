@@ -73,9 +73,15 @@ ThreadSequenceOperation::apply( core::pose::Pose const & pose, core::pack::task:
 
 	runtime_assert( target_sequence().length() + start_res() -1 <= pose.total_residue() );
 	core::pack::task::operation::RestrictResidueToRepacking rtr;
+	bool activated_rtr( false );
 	for( core::Size resi( 1 ); resi <= pose.total_residue(); ++resi ){
 		if( resi >= start_res() && resi <= start_res() + target_sequence_.length() - 1 ){
-			if( target_sequence_[ resi - start_res() ] == ' ' || target_sequence_[ resi - start_res() ] == 'x' ) continue; // allows for 'wildcard' residues that can be allowed to design to anything within the threaded sequence
+			if( target_sequence_[ resi - start_res() ] == 'x' ) continue; // allows for 'wildcard' residues that can be allowed to design to anything within the threaded sequence
+			if( target_sequence_[ resi - start_res() ] == ' ' ){/// only repack this residue
+				rtr.include_residue( resi );
+				activated_rtr = true;
+				continue;
+			}
 			RestrictAbsentCanonicalAAS racaas;
 			utility::vector1< bool > keep_aas( num_canonical_aas, false );
 			keep_aas[ aa_from_oneletter_code( target_sequence_[ resi-start_res() ] ) ] = true;
@@ -86,7 +92,7 @@ ThreadSequenceOperation::apply( core::pose::Pose const & pose, core::pack::task:
 		else if( !allow_design_around() )
 			rtr.include_residue( resi );
 	}
-	if( !allow_design_around())
+	if( !allow_design_around() || activated_rtr )
 		rtr.apply( pose, task );
 }
 
