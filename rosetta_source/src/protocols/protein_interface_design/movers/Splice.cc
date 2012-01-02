@@ -317,8 +317,15 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	}
 	if( tag->hasOption( "torsion_database" ) ){
 		torsion_database_fname( tag->getOption< std::string >( "torsion_database" ) );
+		database_entry( tag->getOption< core::Size >( "database_entry", 0 ) );
 		read_torsion_database();
 		TR<<"torsion_database: "<<torsion_database_fname()<<" ";
+		if( database_entry() == 0 )
+			TR<<" database entry will be randomly picked at run time. ";
+		else{
+			TR<<" database_entry: "<<database_entry()<<" ";
+			runtime_assert( database_entry() <= torsion_database_.size() );
+		}
 	}
 	else
 		source_pdb( tag->getOption< std::string >( "source_pdb" ) );
