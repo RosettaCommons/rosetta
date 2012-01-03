@@ -494,4 +494,19 @@ public:
 		verify_hbond_trie_vs_trie_calculation( sfxn );
 	}
 
+	/// Ensure that the rotamer pair energy evaluation works correctly when using the trie-vs-trie algorithm
+	void test_hbonds_trie_vs_trie_sp2() {
+
+		ScoreFunction sfxn;
+		methods::EnergyMethodOptions enmethopts = sfxn.energy_method_options();
+		enmethopts.hbond_options().decompose_bb_hb_into_pair_energies( true ); // calculate bb/bb hbonds in residue_pair_energy calls.
+		enmethopts.hbond_options().use_sp2_chi_penalty( true ); // activate the sp2 potential
+
+		sfxn.set_energy_method_options( enmethopts );
+
+		initialize_lj_hbond_sfxn( sfxn );
+		
+		verify_hbond_trie_vs_trie_calculation( sfxn );
+	}
+
 };
