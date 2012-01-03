@@ -24,7 +24,7 @@
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
@@ -39,6 +39,7 @@
 #include <sstream>
 //Auto Headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <protocols/toolbox/task_operations/ThreadSequenceOperation.hh>
@@ -97,6 +98,9 @@ void
 Splice::apply( core::pose::Pose & pose )
 {
 	core::pose::Pose const in_pose_copy( pose );
+	using core::chemical::DISULFIDE;
+	pose.conformation().detect_disulfides();
+
 	TR<<"Starting splice apply"<<std::endl;
 	if( from_res() == 0 && to_res() == 0 ){/// set the splice site dynamically according to the task factory
 		utility::vector1< core::Size > designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
@@ -122,7 +126,7 @@ Splice::apply( core::pose::Pose & pose )
 			return;
 		}
 		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
-		  if( source_pose.residue( i ).name3() == "CYD" ){
+		  if( source_pose.residue( i ).has_variant_type( DISULFIDE ) ){
 				TR<<"Residue "<<i<<" is a disulfide. Failing"<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 				return;
@@ -258,12 +262,12 @@ Splice::apply( core::pose::Pose & pose )
 	/// First look for disulfides. Those should never be moved.
 		core::Size disulfn( 0 ), disulfc( 0 );
 		for( core::Size i = from_res() - 3; i <= from_res(); ++i ){
-			if( pose.residue( i ).name3() == "CYD" ){
+			if( pose.residue( i ).has_variant_type( DISULFIDE ) ){
 				disulfn = i;
 			}
 		}
 		for( core::Size i = from_res() + total_residue_new - 1; i <= from_res() + total_residue_new + 2; ++i ){
-			if( pose.residue( i ).name3() == "CYD" ){
+			if( pose.residue( i ).has_variant_type( DISULFIDE ) ){
 				disulfc = i;
 				break;
 			}
@@ -279,7 +283,7 @@ Splice::apply( core::pose::Pose & pose )
 			mm->set_bb( i, true );
 		}
 		for( core::Size i = from_res() - 3; i <= from_res() + total_residue_new + 2; ++i ){
-			if( pose.residue( i ).name3() != "CYD" )
+			if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
 				dao->include_residue( i );
 		}
 		tf->push_back( dao );
@@ -287,17 +291,19 @@ Splice::apply( core::pose::Pose & pose )
 		ccd_mover.move_map( mm );
 		ccd_mover.apply( pose );
 
-		core::Real rms( 0 );
-		for( core::Size i = 0; i <= total_residue_new - 1; ++i ){
-			core::Real const dist( pose.residue( from_res() + i ).xyz( "CA" ).distance( source_pose.residue( nearest_to_from+ i ).xyz("CA" ) ) );
-			rms += dist;
-		}
-		core::Real const average_rms( rms / total_residue_new );
-		TR<<"Average distance of spliced segment to original: "<< average_rms<<std::endl;
-		if( average_rms >= rms_cutoff() ){
-			TR<<"Failing."<<std::endl;
-			set_last_move_status( protocols::moves::FAIL_RETRY );
-			return;
+		if( torsion_database_fname_ == "" ){ // no use computing rms if coming from a database (no coordinates)
+			core::Real rms( 0 );
+			for( core::Size i = 0; i <= total_residue_new - 1; ++i ){
+				core::Real const dist( pose.residue( from_res() + i ).xyz( "CA" ).distance( source_pose.residue( nearest_to_from+ i ).xyz("CA" ) ) );
+				rms += dist;
+			}
+			core::Real const average_rms( rms / total_residue_new );
+			TR<<"Average distance of spliced segment to original: "<< average_rms<<std::endl;
+			if( average_rms >= rms_cutoff() ){
+				TR<<"Failing."<<std::endl;
+				set_last_move_status( protocols::moves::FAIL_RETRY );
+				return;
+			}
 		}
 	}// fi ccd
 	else{ // if no ccd, still need to thread sequence
@@ -339,6 +345,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	ccd( tag->getOption< bool >( "ccd", 1 ) );
 	rms_cutoff( tag->getOption< core::Real >( "rms_cutoff", 999999 ) );
+	runtime_assert( !(tag->hasOption( "torsion_database" ) && tag->hasOption( "rms_cutoff" )) ); // torsion database doesn't specify coordinates so no point in computing rms
 	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
 	randomize_cut( tag->getOption< bool >( "randomize_cut", false ) );
 	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<std::endl;
