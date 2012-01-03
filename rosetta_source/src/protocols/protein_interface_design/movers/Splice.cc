@@ -96,6 +96,7 @@ Splice::~Splice() {}
 void
 Splice::apply( core::pose::Pose & pose )
 {
+	core::pose::Pose const in_pose_copy( pose );
 	TR<<"Starting splice apply"<<std::endl;
 	if( from_res() == 0 && to_res() == 0 ){/// set the splice site dynamically according to the task factory
 		utility::vector1< core::Size > designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
@@ -110,9 +111,11 @@ Splice::apply( core::pose::Pose & pose )
 	utility::vector1< BBDofs > dofs;
 	dofs.clear();
 	if( torsion_database_fname_ == "" ){ // read dofs from source pose rather than database
+		using namespace protocols::rosetta_scripts;
+
 		core::import_pose::pose_from_pdb( source_pose, source_pdb_ );
-		nearest_to_from = protocols::rosetta_scripts::find_nearest_res( source_pose, pose, from_res() );
-		nearest_to_to = protocols::rosetta_scripts::find_nearest_res( source_pose, pose, to_res() );
+		nearest_to_from = find_nearest_res( source_pose, pose, from_res() );
+		nearest_to_to = find_nearest_res( source_pose, pose, to_res() );
 		if( nearest_to_from == 0 || nearest_to_to == 0 ){
 			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
 			set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
@@ -131,17 +134,13 @@ Splice::apply( core::pose::Pose & pose )
 			residue_dofs.psi( source_pose.psi( i ) );
 			residue_dofs.omega( source_pose.omega( i ) );
 
-			core::Size const nearest_on_target( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, i ) );
+			core::Size const nearest_on_target( find_nearest_res( pose, source_pose, i ) );
 
-/// copy the residue identity from source if the residue identity is gly/pro or is identitcal to the one in target pose (conserved)
-			if( source_pose.residue( i ).name3() == "GLY" || source_pose.residue( i ).name3() == "PRO" || (nearest_on_target > 0 && source_pose.residue( i ).name3() == pose.residue( nearest_on_target ).name3() )){
-				std::stringstream ss; std::string s;
-				ss << source_pose.residue( i ).name1();
-				ss >> s;
-				residue_dofs.resn( s );
-			}
-			else
-				residue_dofs.resn( "A" );
+/// convert 3let residue code to 1let code
+			std::stringstream ss; std::string s;
+			ss << source_pose.residue( i ).name1();
+			ss >> s;
+			residue_dofs.resn( s );
 
 			dofs.push_back( residue_dofs );
 		}// for i nearest_to_from..nearest_to_to
@@ -158,22 +157,16 @@ Splice::apply( core::pose::Pose & pose )
 				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 				return;
 			}
-			std::stringstream ss;
-			std::string s;
+			std::stringstream ss; std::string s;
 			ss << oneletter_code_from_aa( aa_from_name( resdofs.resn() ) );
 			ss >> s;
 			resdofs.resn( s );
-			if( resdofs.resn() != "G" && resdofs.resn() != "P" )
-				resdofs.resn( "A" ); // keep as is without designing
+// postpone decision on what to do with residue identities until we know the coordinates of the residues (after set torsion)
 		}/// foreach resdof
 		nearest_to_to = dofs.size(); /// nearest_to_to and nearest_to_from are used below to compute the difference in residue numbers...
 		nearest_to_from = 1;
   }// read from dbase
-	std::string threaded_seq( "" );/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
-	foreach( BBDofs const bbdofs, dofs ){
-		runtime_assert( bbdofs.resn().length() == 1 );
-		threaded_seq += bbdofs.resn();
-	}
+
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
 	protocols::loops::FoldTreeFromLoops ffl;
 	using namespace utility;
@@ -216,9 +209,23 @@ Splice::apply( core::pose::Pose & pose )
 /// set torsions
 	core::Size const total_residue_new( nearest_to_to - nearest_to_from + 1 );
 	for( core::Size i = 0; i < total_residue_new; ++i ){
-		pose.set_phi( from_res() + i, dofs[ i + 1 ].phi() );
-		pose.set_psi( from_res() + i, dofs[ i + 1 ].psi() );
-		pose.set_omega( from_res() + i, dofs[ i + 1 ].omega() );
+		core::Size const pose_resi( from_res() + i );
+		pose.set_phi( pose_resi, dofs[ i + 1 ].phi() );
+		pose.set_psi( pose_resi, dofs[ i + 1 ].psi() );
+		pose.set_omega( pose_resi, dofs[ i + 1 ].omega() );
+
+	}
+	std::string threaded_seq( "" );/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
+/// Now decide on residue identities: Alanine throughout except when the template pose has Gly, Pro or a residue that is the same as that in the original pose
+	for( core::Size i = 0; i < total_residue_new; ++i ){
+		core::Size const pose_resi( from_res() + i );
+		std::string const dofs_resn( dofs[ i + 1 ].resn() );
+		runtime_assert( dofs_resn.length() == 1 );
+		core::Size const nearest_in_copy( protocols::rosetta_scripts::find_nearest_res( in_pose_copy, pose, pose_resi ) );
+		if( ( nearest_in_copy > 0 && dofs_resn[ 0 ] == in_pose_copy.residue( nearest_in_copy ).name1() )  || dofs_resn == "G" || dofs_resn == "P" )
+			threaded_seq += dofs_resn;
+		else
+			threaded_seq += "A";
 	}
 
 	using namespace protocols::toolbox::task_operations;
@@ -293,7 +300,7 @@ Splice::apply( core::pose::Pose & pose )
 			return;
 		}
 	}// fi ccd
-	else{
+	else{ // if no ccd, still need to thread sequence
 		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
 		protocols::simple_moves::PackRotamersMover prm( scorefxn(), ptask );
 		prm.apply( pose );
