@@ -1152,7 +1152,7 @@ bool RemodelMover::design_refine(
 		if (!basic::options::option[basic::options::OptionKeys::remodel::swap_refine_confirm_protocols].user()){
 			// refine the new section
 			LoopMover_Refine_CCD refine( loops, sfx );
-			core::kinematics::MoveMap combined_mm;
+			core::kinematics::MoveMapOP combined_mm = new core::kinematics::MoveMap();
 
 		////// fix dna
       for ( Size i=1; i<=pose.total_residue() ; ++i )      {
@@ -1165,8 +1165,8 @@ bool RemodelMover::design_refine(
           }
     ////// end fix dna
 
-			combined_mm.import(remodel_data_.natro_movemap_);
-			combined_mm.import( manager_.movemap() );
+			combined_mm->import(remodel_data_.natro_movemap_);
+			combined_mm->import( manager_.movemap() );
 
 			//modify task to accept NATRO definition
 			utility::vector1<core::Size> natroPositions;
@@ -1266,7 +1266,7 @@ bool RemodelMover::confirm_sequence(core::pose::Pose & pose ) {
 	refine_tf->push_back( new RestrictToRepacking() );
 
 	LoopMover_Refine_CCD refine( confirmation_loops, fullatom_sfx_ );
-			core::kinematics::MoveMap combined_mm;
+			core::kinematics::MoveMapOP combined_mm = new core::kinematics::MoveMap();
 
 		////// fix dna
       for ( Size i=1; i<=pose.total_residue() ; ++i )      {
@@ -1279,8 +1279,8 @@ bool RemodelMover::confirm_sequence(core::pose::Pose & pose ) {
           }
     ////// end fix dna
 
-			combined_mm.import(remodel_data_.natro_movemap_);
-			combined_mm.import( manager_.movemap() );
+			combined_mm->import(remodel_data_.natro_movemap_);
+			combined_mm->import( manager_.movemap() );
 
 			refine.false_movemap( combined_mm );
 			refine.set_task_factory( refine_tf );

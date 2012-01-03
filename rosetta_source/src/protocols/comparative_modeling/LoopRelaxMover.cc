@@ -37,6 +37,7 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pack/task/PackerTask.hh>

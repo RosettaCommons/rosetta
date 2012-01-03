@@ -18,7 +18,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -48,7 +48,7 @@ enum LoopResult { Success, CriticalFailure, Failure, ExtendFailure };
 class LoopMover: public protocols::moves::Mover {
 public: // typedefs
 
-	typedef core::kinematics::MoveMap MoveMap;
+	typedef core::kinematics::MoveMapOP MoveMapOP;
 
 public:
 
@@ -94,12 +94,12 @@ public: // movemap management
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
-    MoveMap const & false_movemap() const;
+    MoveMapOP const & false_movemap() const;
 
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
-	void false_movemap( MoveMap const & mm );
+	void false_movemap( MoveMapOP const & mm );
 
 public: // checkpointing
 	checkpoint::CheckPointerOP & get_checkpoints();
@@ -109,7 +109,7 @@ protected: // movemap management
 	/// @brief import the false_movemap's <b>explicit</b> False settings into the
 	///  given MoveMap
 	/// @return The number of False settings imported.
-	Size enforce_false_movemap( MoveMap & mm ) const;
+	Size enforce_false_movemap( MoveMapOP & mm ) const;
 
 	/// @author flo, march 2011
 	/// @brief allow the loops to be set from the segments
@@ -134,7 +134,7 @@ private: // data
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
-	MoveMap false_movemap_;
+	MoveMapOP false_movemap_;
 
     void init( protocols::loops::LoopsOP loops_in );
     void initForEqualOperatorAndCopyConstructor(LoopMover & lhs, LoopMover const & rhs);

@@ -25,6 +25,7 @@
 
 #include <core/scoring/ScoreFunction.hh>
 
+#include <core/kinematics/MoveMap.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 
 #include <utility/vector1.hh>
@@ -86,6 +87,7 @@ void LoopMover::init( protocols::loops::LoopsOP loops_in )
     Mover::type( "LoopMover" );
     loops_from_observer_cache_ = false;
     checkpoints_ = new checkpoint::CheckPointer( "LoopMover" );
+    false_movemap_ = new core::kinematics::MoveMap();
     loops_ = loops_in;
     
 }
@@ -138,12 +140,12 @@ checkpoint::CheckPointerOP & LoopMover::get_checkpoints()
     return checkpoints_;
 }
 
-void LoopMover::false_movemap( MoveMap const & mm ) 
+void LoopMover::false_movemap( MoveMapOP const & mm ) 
 {
-		false_movemap_ = mm;
+    false_movemap_ = mm;
 }
 
-core::kinematics::MoveMap const & LoopMover::false_movemap() const 
+LoopMover::MoveMapOP const & LoopMover::false_movemap() const 
 {
     return false_movemap_;
 }
@@ -151,9 +153,9 @@ core::kinematics::MoveMap const & LoopMover::false_movemap() const
 // end of accessors
 
 // Additional MoveMap method
-Size LoopMover::enforce_false_movemap( MoveMap & mm ) const 
+Size LoopMover::enforce_false_movemap( MoveMapOP & mm ) const 
 {
-		return mm.import_false( false_movemap_ );
+    return mm->import_false( *false_movemap() );
 }
 
 

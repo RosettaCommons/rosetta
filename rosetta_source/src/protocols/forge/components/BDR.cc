@@ -451,7 +451,7 @@ bool BDR::design_refine(
 
 		// refine the new section
 		LoopMover_Refine_CCD refine( loops, sfx );
-		refine.false_movemap( manager_.movemap() );
+		refine.false_movemap( manager_.movemap_as_OP() );
 		refine.set_task_factory( refine_tf );
 		refine.apply( pose );
 

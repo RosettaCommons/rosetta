@@ -174,6 +174,7 @@
 		FCA774C5C5F3CBE1AAA25243 /* OptionKeys3.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9CB8C59ED0AC8C4818A98AA2 /* OptionKeys3.cc */; };
 		5CE9BFD7DB88F8171E966348 /* SVD_Solver.cc in Sources */ = {isa = PBXBuildFile; fileRef = 163B0988D568C0C287AF0C09 /* SVD_Solver.cc */; };
 		F4EDAF0227B004F53A371EF9 /* LexicographicalIterator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 96B4D813FC9D2038DB2F07CE /* LexicographicalIterator.cc */; };
+		4C85F62054BE86701D3EFA85 /* PyExitCallback.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F2949830CFA6E9ABD62A7AA /* PyExitCallback.cc */; };
 		8A7164DF4F3E068D28D3EF24 /* basic_sys_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 797BF27FE2D74CF71D8B5A4F /* basic_sys_util.cc */; };
 		8AA320485491ED62E43FFBA4 /* exit.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0417960CC763E34F2F31E7B1 /* exit.cc */; };
 		9397D9374265286C305DF599 /* heap.cc in Sources */ = {isa = PBXBuildFile; fileRef = CD8E148FBEE4951BA5B0F2C0 /* heap.cc */; };
@@ -1455,6 +1456,7 @@
 		86E5932FB40980590567884C /* RestrictNonSurfaceToRepackingOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = D32CD8EFFE9DD3ABC5F7DA34 /* RestrictNonSurfaceToRepackingOperation.cc */; };
 		A992D2319BA517F06950433A /* RestrictOperationsBase.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6ECCFA105C3D5E55873043BD /* RestrictOperationsBase.cc */; };
 		B0BFAB65F978835F79748F41 /* RestrictResiduesToRepackingOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 805D09448261C5521698D79C /* RestrictResiduesToRepackingOperation.cc */; };
+		D6061563C5D936541A3E1CA4 /* RestrictToAlignedSegments.cc in Sources */ = {isa = PBXBuildFile; fileRef = D8CEB02D91728ADC3769324A /* RestrictToAlignedSegments.cc */; };
 		A789F1FE8B6D039C517B73CB /* RestrictToInterface.cc in Sources */ = {isa = PBXBuildFile; fileRef = AC17EFA0D97F625524BE444C /* RestrictToInterface.cc */; };
 		37D2A16C996A9284324A4A88 /* RestrictToInterfaceOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = C33B735E06931D24EA43B6B9 /* RestrictToInterfaceOperation.cc */; };
 		360A541DF453E0E7E14548E3 /* RestrictToInterfaceVectorOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1A08474F8A5A70E06388D00 /* RestrictToInterfaceVectorOperation.cc */; };
@@ -1503,6 +1505,9 @@
 		AF47B31AC234243CC174DE5B /* MultistateAggregateFunction.cc in Sources */ = {isa = PBXBuildFile; fileRef = 29EF78F50965840C5A1CDEB0 /* MultistateAggregateFunction.cc */; };
 		DC2747F1E2F2579636403F75 /* MultistateFitnessFunction.cc in Sources */ = {isa = PBXBuildFile; fileRef = 262B5285C5CA23BFD3043BD7 /* MultistateFitnessFunction.cc */; };
 		0D1878E87CBE9D2A005452B9 /* PackDaemon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7FB66D00C874C18822B6E346 /* PackDaemon.cc */; };
+		E7D97AB55D25A18ED249A00C /* VIP_Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = EA67D8F4DBBD09B7547BA444 /* VIP_Mover.cc */; };
+		19A7783B891AFC2E4FB6E9CF /* VIP_Report.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0E26307B62547F25050162D6 /* VIP_Report.cc */; };
+		10C3BFD7E907361558D45CB2 /* VIP_Utils.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5486F920D3C0E092D8C81706 /* VIP_Utils.cc */; };
 		2A1AD7295B6EE79C9FD2CF63 /* APCluster.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4516EDAD1C1D00901EE1D3D2 /* APCluster.cc */; };
 		85B3A423DB3FA46FA1C6AC67 /* cluster.cc in Sources */ = {isa = PBXBuildFile; fileRef = C7C04D2A1A462B739CF67F94 /* cluster.cc */; };
 		08AB2FF1D60B43ACDF79C4DF /* Bridge.cc in Sources */ = {isa = PBXBuildFile; fileRef = A8A145720A580C1CC460C81E /* Bridge.cc */; };
@@ -1966,7 +1971,9 @@
 		10A138C690591BBEEC1D9E7F /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7C2BC8095053A36AECEF19E8 /* util.cc */; };
 		011B7314F6F74613DF1DF3F0 /* NonlocalFrags.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1D68859BFD0F1D3C250D4533 /* NonlocalFrags.cc */; };
 		95DCF5464F171114F4B7C964 /* NonlocalFragsMain.cc in Sources */ = {isa = PBXBuildFile; fileRef = 72B2515387C738354C28C299 /* NonlocalFragsMain.cc */; };
+		342637067594E0E4558112CE /* Extender.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2C5D9C005B8067A8BA45E9D5 /* Extender.cc */; };
 		C6EC2BD71CA429CB2ED175A1 /* StarAbinitio.cc in Sources */ = {isa = PBXBuildFile; fileRef = A0F243A19F33AA52086AC95D /* StarAbinitio.cc */; };
+		82B647CA20DE69EDE88925EA /* StarAbinitioMain.cc in Sources */ = {isa = PBXBuildFile; fileRef = 981BD4E22321DF5AD173247B /* StarAbinitioMain.cc */; };
 		3C4CCA30C857EC819F6D3F02 /* BluePrintBDR.cc in Sources */ = {isa = PBXBuildFile; fileRef = EE6AB4D8F2075AD9533E51FE /* BluePrintBDR.cc */; };
 		A9DFCD6E30A631BABBF49A72 /* CircularPermutation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A524BC2D30C50BC980DAE /* CircularPermutation.cc */; };
 		52114372B77BE2CE0BF9CB48 /* NcontactsCalculator.cc in Sources */ = {isa = PBXBuildFile; fileRef = D32141F6D91FFB47038B9717 /* NcontactsCalculator.cc */; };
@@ -2088,6 +2095,7 @@
 		8DEC78C584773E9B5C2CDB3F /* HbondsToResidueFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 99B966CC8F1865A495313673 /* HbondsToResidueFilter.cc */; };
 		8E22CFEC38B2BF05A273163E /* InterfaceHolesFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 09740B9757FB8B902FDFBFA7 /* InterfaceHolesFilter.cc */; };
 		46FEFDAD64338EE509744B94 /* RelativePoseFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = C6C27F3C6CBA542D182387CD /* RelativePoseFilter.cc */; };
+		C10770E7B9D4D6479ABB0CA1 /* RelativeSegmentFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8C035F17B99F40080A3C27C2 /* RelativeSegmentFilter.cc */; };
 		060ABAA7F6486E848386E4BE /* RmsdFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 01ED5295341EBCA70A874D88 /* RmsdFilter.cc */; };
 		5B0794886BD6DFCCF6045124 /* SequenceRecoveryFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5158061F9508873ED23D9AB1 /* SequenceRecoveryFilter.cc */; };
 		AD30EE327C5C4E2C7FA1C395 /* StubScoreFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4E8CF6CD0B008431433840FD /* StubScoreFilter.cc */; };
@@ -6552,6 +6560,9 @@
 		D25D9E538D87EB6D725A616F /* PeriodicSplineReader.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PeriodicSplineReader.fwd.hh; path = ../src/utility//PeriodicSplineReader.fwd.hh; sourceTree = SOURCE_ROOT; };
 		7FF62E6AD0D3F478A53AE0E0 /* PeriodicSplineReader.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PeriodicSplineReader.hh; path = ../src/utility//PeriodicSplineReader.hh; sourceTree = SOURCE_ROOT; };
 		BF08A21FA96BA1D35A61785A /* PyAssert.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PyAssert.hh; path = ../src/utility//PyAssert.hh; sourceTree = SOURCE_ROOT; };
+		6F2949830CFA6E9ABD62A7AA /* PyExitCallback.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PyExitCallback.cc; path = ../src/utility//PyExitCallback.cc; sourceTree = SOURCE_ROOT; };
+		53F0F7A98992B4F7D7B43A01 /* PyExitCallback.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PyExitCallback.fwd.hh; path = ../src/utility//PyExitCallback.fwd.hh; sourceTree = SOURCE_ROOT; };
+		075E40DA500D586D9DC8353D /* PyExitCallback.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PyExitCallback.hh; path = ../src/utility//PyExitCallback.hh; sourceTree = SOURCE_ROOT; };
 		B5938ECFD2D1AADD0A3FF4E0 /* PyHelper.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PyHelper.hh; path = ../src/utility//PyHelper.hh; sourceTree = SOURCE_ROOT; };
 		F9F623A1551F1BF3AF1DADDD /* Show.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Show.hh; path = ../src/utility//Show.hh; sourceTree = SOURCE_ROOT; };
 		AD07DD5A1402A1978A95EE2E /* TopScoreSelector.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TopScoreSelector.fwd.hh; path = ../src/utility//TopScoreSelector.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -10795,6 +10806,10 @@
 		CFD4FA57B5F2A11CF98EC922 /* RestrictResiduesToRepackingOperation.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictResiduesToRepackingOperation.fwd.hh; path = ../src/protocols/toolbox/task_operations/RestrictResiduesToRepackingOperation.fwd.hh; sourceTree = SOURCE_ROOT; };
 		739329A3F50C072D9654128B /* RestrictResiduesToRepackingOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictResiduesToRepackingOperation.hh; path = ../src/protocols/toolbox/task_operations/RestrictResiduesToRepackingOperation.hh; sourceTree = SOURCE_ROOT; };
 		500CE6790042B48A4E879270 /* RestrictResiduesToRepackingOperationCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictResiduesToRepackingOperationCreator.hh; path = ../src/protocols/toolbox/task_operations/RestrictResiduesToRepackingOperationCreator.hh; sourceTree = SOURCE_ROOT; };
+		D8CEB02D91728ADC3769324A /* RestrictToAlignedSegments.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RestrictToAlignedSegments.cc; path = ../src/protocols/toolbox/task_operations/RestrictToAlignedSegments.cc; sourceTree = SOURCE_ROOT; };
+		A88247522434E3213DF50480 /* RestrictToAlignedSegments.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictToAlignedSegments.fwd.hh; path = ../src/protocols/toolbox/task_operations/RestrictToAlignedSegments.fwd.hh; sourceTree = SOURCE_ROOT; };
+		855F2D516858DA6401AD20D2 /* RestrictToAlignedSegments.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictToAlignedSegments.hh; path = ../src/protocols/toolbox/task_operations/RestrictToAlignedSegments.hh; sourceTree = SOURCE_ROOT; };
+		245A9EAB005B7F756FA3AEAD /* RestrictToAlignedSegmentsCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictToAlignedSegmentsCreator.hh; path = ../src/protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh; sourceTree = SOURCE_ROOT; };
 		AC17EFA0D97F625524BE444C /* RestrictToInterface.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RestrictToInterface.cc; path = ../src/protocols/toolbox/task_operations/RestrictToInterface.cc; sourceTree = SOURCE_ROOT; };
 		01346BB0D5413384A7B1A657 /* RestrictToInterface.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictToInterface.fwd.hh; path = ../src/protocols/toolbox/task_operations/RestrictToInterface.fwd.hh; sourceTree = SOURCE_ROOT; };
 		E7EFAFF1FDABDFD818203DD4 /* RestrictToInterface.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictToInterface.hh; path = ../src/protocols/toolbox/task_operations/RestrictToInterface.hh; sourceTree = SOURCE_ROOT; };
@@ -10951,6 +10966,12 @@
 		7FB66D00C874C18822B6E346 /* PackDaemon.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PackDaemon.cc; path = ../src/protocols/pack_daemon/PackDaemon.cc; sourceTree = SOURCE_ROOT; };
 		92D9083B7BFFDBF1C07E4CF4 /* PackDaemon.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackDaemon.fwd.hh; path = ../src/protocols/pack_daemon/PackDaemon.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C9A21CA28BE035E1FD85D228 /* PackDaemon.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackDaemon.hh; path = ../src/protocols/pack_daemon/PackDaemon.hh; sourceTree = SOURCE_ROOT; };
+		EA67D8F4DBBD09B7547BA444 /* VIP_Mover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VIP_Mover.cc; path = ../src/protocols/vip/VIP_Mover.cc; sourceTree = SOURCE_ROOT; };
+		AF2371796BB456EE884B6280 /* VIP_Mover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VIP_Mover.hh; path = ../src/protocols/vip/VIP_Mover.hh; sourceTree = SOURCE_ROOT; };
+		0E26307B62547F25050162D6 /* VIP_Report.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VIP_Report.cc; path = ../src/protocols/vip/VIP_Report.cc; sourceTree = SOURCE_ROOT; };
+		8738A7B3498B0AEBCEEFE03C /* VIP_Report.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VIP_Report.hh; path = ../src/protocols/vip/VIP_Report.hh; sourceTree = SOURCE_ROOT; };
+		5486F920D3C0E092D8C81706 /* VIP_Utils.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VIP_Utils.cc; path = ../src/protocols/vip/VIP_Utils.cc; sourceTree = SOURCE_ROOT; };
+		B734ABF2157EB55FD72FEED8 /* VIP_Utils.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VIP_Utils.hh; path = ../src/protocols/vip/VIP_Utils.hh; sourceTree = SOURCE_ROOT; };
 		4516EDAD1C1D00901EE1D3D2 /* APCluster.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = APCluster.cc; path = ../src/protocols/cluster/APCluster.cc; sourceTree = SOURCE_ROOT; };
 		BB63C461B278B08619D2E5AB /* APCluster.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = APCluster.fwd.hh; path = ../src/protocols/cluster/APCluster.fwd.hh; sourceTree = SOURCE_ROOT; };
 		1458A1858C3FF04EB0E79152 /* APCluster.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = APCluster.hh; path = ../src/protocols/cluster/APCluster.hh; sourceTree = SOURCE_ROOT; };
@@ -12260,9 +12281,13 @@
 		B290474FFFD53D3458FA468F /* NonlocalFrags.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NonlocalFrags.hh; path = ../src/protocols/nonlocal/frag_picker/NonlocalFrags.hh; sourceTree = SOURCE_ROOT; };
 		72B2515387C738354C28C299 /* NonlocalFragsMain.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NonlocalFragsMain.cc; path = ../src/protocols/nonlocal/frag_picker/NonlocalFragsMain.cc; sourceTree = SOURCE_ROOT; };
 		758DACFECF78DED8CD16F061 /* NonlocalFragsMain.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NonlocalFragsMain.hh; path = ../src/protocols/nonlocal/frag_picker/NonlocalFragsMain.hh; sourceTree = SOURCE_ROOT; };
+		2C5D9C005B8067A8BA45E9D5 /* Extender.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Extender.cc; path = ../src/protocols/star/Extender.cc; sourceTree = SOURCE_ROOT; };
+		68BCDBAB570788C809FC2382 /* Extender.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Extender.hh; path = ../src/protocols/star/Extender.hh; sourceTree = SOURCE_ROOT; };
 		A0F243A19F33AA52086AC95D /* StarAbinitio.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StarAbinitio.cc; path = ../src/protocols/star/StarAbinitio.cc; sourceTree = SOURCE_ROOT; };
 		D8960E760B3329A719070A1C /* StarAbinitio.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StarAbinitio.fwd.hh; path = ../src/protocols/star/StarAbinitio.fwd.hh; sourceTree = SOURCE_ROOT; };
 		2307CBA78EE09A6C4FAE7719 /* StarAbinitio.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StarAbinitio.hh; path = ../src/protocols/star/StarAbinitio.hh; sourceTree = SOURCE_ROOT; };
+		981BD4E22321DF5AD173247B /* StarAbinitioMain.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StarAbinitioMain.cc; path = ../src/protocols/star/StarAbinitioMain.cc; sourceTree = SOURCE_ROOT; };
+		FCF80023AB30DA346E080912 /* StarAbinitioMain.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StarAbinitioMain.hh; path = ../src/protocols/star/StarAbinitioMain.hh; sourceTree = SOURCE_ROOT; };
 		EE6AB4D8F2075AD9533E51FE /* BluePrintBDR.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BluePrintBDR.cc; path = ../src/protocols/fldsgn/BluePrintBDR.cc; sourceTree = SOURCE_ROOT; };
 		A7BA4A755946863CDF1C2674 /* BluePrintBDR.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BluePrintBDR.fwd.hh; path = ../src/protocols/fldsgn/BluePrintBDR.fwd.hh; sourceTree = SOURCE_ROOT; };
 		09623651D1163F08E9B363AA /* BluePrintBDR.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BluePrintBDR.hh; path = ../src/protocols/fldsgn/BluePrintBDR.hh; sourceTree = SOURCE_ROOT; };
@@ -12655,6 +12680,10 @@
 		2DA5B34BE01E38552A3D169E /* RelativePoseFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RelativePoseFilter.fwd.hh; path = ../src/protocols/protein_interface_design/filters/RelativePoseFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		93C99010A485E61302F23202 /* RelativePoseFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RelativePoseFilter.hh; path = ../src/protocols/protein_interface_design/filters/RelativePoseFilter.hh; sourceTree = SOURCE_ROOT; };
 		31978DEE82CCBF71A7CE1164 /* RelativePoseFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RelativePoseFilterCreator.hh; path = ../src/protocols/protein_interface_design/filters/RelativePoseFilterCreator.hh; sourceTree = SOURCE_ROOT; };
+		8C035F17B99F40080A3C27C2 /* RelativeSegmentFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RelativeSegmentFilter.cc; path = ../src/protocols/protein_interface_design/filters/RelativeSegmentFilter.cc; sourceTree = SOURCE_ROOT; };
+		74EE4670C1BC01D0E9D62E51 /* RelativeSegmentFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RelativeSegmentFilter.fwd.hh; path = ../src/protocols/protein_interface_design/filters/RelativeSegmentFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
+		2C1C3E2E2F71469567668150 /* RelativeSegmentFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RelativeSegmentFilter.hh; path = ../src/protocols/protein_interface_design/filters/RelativeSegmentFilter.hh; sourceTree = SOURCE_ROOT; };
+		02E601D37F527FE5117B1FE6 /* RelativeSegmentFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RelativeSegmentFilterCreator.hh; path = ../src/protocols/protein_interface_design/filters/RelativeSegmentFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		01ED5295341EBCA70A874D88 /* RmsdFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RmsdFilter.cc; path = ../src/protocols/protein_interface_design/filters/RmsdFilter.cc; sourceTree = SOURCE_ROOT; };
 		FEDB86E3E8AF3D5CFB2CA28B /* RmsdFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RmsdFilter.hh; path = ../src/protocols/protein_interface_design/filters/RmsdFilter.hh; sourceTree = SOURCE_ROOT; };
 		07FAE96A0EB110BE60C55453 /* RmsdFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RmsdFilterCreator.hh; path = ../src/protocols/protein_interface_design/filters/RmsdFilterCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -13625,6 +13654,9 @@
 				D25D9E538D87EB6D725A616F /* PeriodicSplineReader.fwd.hh */,
 				7FF62E6AD0D3F478A53AE0E0 /* PeriodicSplineReader.hh */,
 				BF08A21FA96BA1D35A61785A /* PyAssert.hh */,
+				6F2949830CFA6E9ABD62A7AA /* PyExitCallback.cc */,
+				53F0F7A98992B4F7D7B43A01 /* PyExitCallback.fwd.hh */,
+				075E40DA500D586D9DC8353D /* PyExitCallback.hh */,
 				B5938ECFD2D1AADD0A3FF4E0 /* PyHelper.hh */,
 				F9F623A1551F1BF3AF1DADDD /* Show.hh */,
 				AD07DD5A1402A1978A95EE2E /* TopScoreSelector.fwd.hh */,
@@ -19423,6 +19455,10 @@
 				CFD4FA57B5F2A11CF98EC922 /* RestrictResiduesToRepackingOperation.fwd.hh */,
 				739329A3F50C072D9654128B /* RestrictResiduesToRepackingOperation.hh */,
 				500CE6790042B48A4E879270 /* RestrictResiduesToRepackingOperationCreator.hh */,
+				D8CEB02D91728ADC3769324A /* RestrictToAlignedSegments.cc */,
+				A88247522434E3213DF50480 /* RestrictToAlignedSegments.fwd.hh */,
+				855F2D516858DA6401AD20D2 /* RestrictToAlignedSegments.hh */,
+				245A9EAB005B7F756FA3AEAD /* RestrictToAlignedSegmentsCreator.hh */,
 				AC17EFA0D97F625524BE444C /* RestrictToInterface.cc */,
 				01346BB0D5413384A7B1A657 /* RestrictToInterface.fwd.hh */,
 				E7EFAFF1FDABDFD818203DD4 /* RestrictToInterface.hh */,
@@ -19460,6 +19496,7 @@
 				A7DC18903A5C39E0475572EE /* motifs */,
 				F60F0CA4070F0590BDBA7A36 /* multistate_design */,
 				03BAC77396FCB60A9E5F399B /* pack_daemon */,
+				DC337C9216435933811C0EAB /* vip */,
 			);
 			name = protocols_a.4;
 			path = ../src/protocols//;
@@ -19635,6 +19672,20 @@
 			);
 			name = pack_daemon;
 			path = ../src/protocols/pack_daemon/;
+			sourceTree = SOURCE_ROOT;
+		};
+		DC337C9216435933811C0EAB /* vip */ = {
+			isa = PBXGroup;
+			children = (
+				EA67D8F4DBBD09B7547BA444 /* VIP_Mover.cc */,
+				AF2371796BB456EE884B6280 /* VIP_Mover.hh */,
+				0E26307B62547F25050162D6 /* VIP_Report.cc */,
+				8738A7B3498B0AEBCEEFE03C /* VIP_Report.hh */,
+				5486F920D3C0E092D8C81706 /* VIP_Utils.cc */,
+				B734ABF2157EB55FD72FEED8 /* VIP_Utils.hh */,
+			);
+			name = vip;
+			path = ../src/protocols/vip/;
 			sourceTree = SOURCE_ROOT;
 		};
 		3D5BA0321492D6C900524FBB /* protocols_b.4 */ = {
@@ -21487,9 +21538,13 @@
 		25B51EEA9C98DC9E8889E9F2 /* star */ = {
 			isa = PBXGroup;
 			children = (
+				2C5D9C005B8067A8BA45E9D5 /* Extender.cc */,
+				68BCDBAB570788C809FC2382 /* Extender.hh */,
 				A0F243A19F33AA52086AC95D /* StarAbinitio.cc */,
 				D8960E760B3329A719070A1C /* StarAbinitio.fwd.hh */,
 				2307CBA78EE09A6C4FAE7719 /* StarAbinitio.hh */,
+				981BD4E22321DF5AD173247B /* StarAbinitioMain.cc */,
+				FCF80023AB30DA346E080912 /* StarAbinitioMain.hh */,
 			);
 			name = star;
 			path = ../src/protocols/star/;
@@ -22026,6 +22081,10 @@
 				2DA5B34BE01E38552A3D169E /* RelativePoseFilter.fwd.hh */,
 				93C99010A485E61302F23202 /* RelativePoseFilter.hh */,
 				31978DEE82CCBF71A7CE1164 /* RelativePoseFilterCreator.hh */,
+				8C035F17B99F40080A3C27C2 /* RelativeSegmentFilter.cc */,
+				74EE4670C1BC01D0E9D62E51 /* RelativeSegmentFilter.fwd.hh */,
+				2C1C3E2E2F71469567668150 /* RelativeSegmentFilter.hh */,
+				02E601D37F527FE5117B1FE6 /* RelativeSegmentFilterCreator.hh */,
 				01ED5295341EBCA70A874D88 /* RmsdFilter.cc */,
 				FEDB86E3E8AF3D5CFB2CA28B /* RmsdFilter.hh */,
 				07FAE96A0EB110BE60C55453 /* RmsdFilterCreator.hh */,
@@ -24221,6 +24280,7 @@
 				86E5932FB40980590567884C /* RestrictNonSurfaceToRepackingOperation.cc in Sources */,
 				A992D2319BA517F06950433A /* RestrictOperationsBase.cc in Sources */,
 				B0BFAB65F978835F79748F41 /* RestrictResiduesToRepackingOperation.cc in Sources */,
+				D6061563C5D936541A3E1CA4 /* RestrictToAlignedSegments.cc in Sources */,
 				A789F1FE8B6D039C517B73CB /* RestrictToInterface.cc in Sources */,
 				37D2A16C996A9284324A4A88 /* RestrictToInterfaceOperation.cc in Sources */,
 				360A541DF453E0E7E14548E3 /* RestrictToInterfaceVectorOperation.cc in Sources */,
@@ -24276,6 +24336,9 @@
 				AF47B31AC234243CC174DE5B /* MultistateAggregateFunction.cc in Sources */,
 				DC2747F1E2F2579636403F75 /* MultistateFitnessFunction.cc in Sources */,
 				0D1878E87CBE9D2A005452B9 /* PackDaemon.cc in Sources */,
+				E7D97AB55D25A18ED249A00C /* VIP_Mover.cc in Sources */,
+				19A7783B891AFC2E4FB6E9CF /* VIP_Report.cc in Sources */,
+				10C3BFD7E907361558D45CB2 /* VIP_Utils.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24626,7 +24689,9 @@
 				10A138C690591BBEEC1D9E7F /* util.cc in Sources */,
 				011B7314F6F74613DF1DF3F0 /* NonlocalFrags.cc in Sources */,
 				95DCF5464F171114F4B7C964 /* NonlocalFragsMain.cc in Sources */,
+				342637067594E0E4558112CE /* Extender.cc in Sources */,
 				C6EC2BD71CA429CB2ED175A1 /* StarAbinitio.cc in Sources */,
+				82B647CA20DE69EDE88925EA /* StarAbinitioMain.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24762,6 +24827,7 @@
 				8DEC78C584773E9B5C2CDB3F /* HbondsToResidueFilter.cc in Sources */,
 				8E22CFEC38B2BF05A273163E /* InterfaceHolesFilter.cc in Sources */,
 				46FEFDAD64338EE509744B94 /* RelativePoseFilter.cc in Sources */,
+				C10770E7B9D4D6479ABB0CA1 /* RelativeSegmentFilter.cc in Sources */,
 				060ABAA7F6486E848386E4BE /* RmsdFilter.cc in Sources */,
 				5B0794886BD6DFCCF6045124 /* SequenceRecoveryFilter.cc in Sources */,
 				AD30EE327C5C4E2C7FA1C395 /* StubScoreFilter.cc in Sources */,
@@ -25148,6 +25214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4EDAF0227B004F53A371EF9 /* LexicographicalIterator.cc in Sources */,
+				4C85F62054BE86701D3EFA85 /* PyExitCallback.cc in Sources */,
 				8A7164DF4F3E068D28D3EF24 /* basic_sys_util.cc in Sources */,
 				8AA320485491ED62E43FFBA4 /* exit.cc in Sources */,
 				9397D9374265286C305DF599 /* heap.cc in Sources */,

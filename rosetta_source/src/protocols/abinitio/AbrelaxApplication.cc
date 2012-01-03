@@ -66,6 +66,7 @@
 
 // Package Headers
 #include <core/kinematics/util.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <protocols/abinitio/MembraneAbinitio.hh>
 #include <protocols/abinitio/FoldConstraints.hh>

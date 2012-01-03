@@ -443,14 +443,18 @@ bool BuildManager::compatibility_check() const {
 
 /// @brief return the combined movemap from all instructions in this manager
 BuildManager::MoveMap BuildManager::movemap() const {
-	MoveMap combined_mm;
+	return *movemap_as_OP();
+}
+
+BuildManager::MoveMapOP BuildManager::movemap_as_OP() const {
+	MoveMapOP combined_mm = new MoveMap();
 
 	if ( !modify_was_successful_ ) {
 		return combined_mm;
 	}
 
 	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		combined_mm.import( (**i).movemap() );
+		combined_mm->import( (**i).movemap() );
 	}
 
 	return combined_mm;

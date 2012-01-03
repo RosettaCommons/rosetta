@@ -25,7 +25,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -129,8 +128,8 @@ public:
 	void temp_final( core::Real value ) { temp_final_ = value; }
 	void set_fold_tree_from_loops( bool const s ){ set_fold_tree_from_loops_ = s; }
 	bool set_fold_tree_from_loops() const{ return set_fold_tree_from_loops_; }
-	core::kinematics::MoveMapOP move_map() const{ return move_map_; }
-	void move_map( core::kinematics::MoveMapOP mm ){ move_map_ = mm; }
+	core::kinematics::MoveMapOP move_map() const;
+	void move_map( core::kinematics::MoveMapOP mm );
 protected:
 	void read_options();
 
@@ -144,7 +143,7 @@ protected:
 		core::pose::Pose const & pose,
 		protocols::loops::Loops const & loops,
 		utility::vector1< bool > const & allow_repack,
-		core::kinematics::MoveMap & movemap
+		core::kinematics::MoveMapOP & movemap
 	);
 
 	core::pack::task::TaskFactoryOP task_factory_;

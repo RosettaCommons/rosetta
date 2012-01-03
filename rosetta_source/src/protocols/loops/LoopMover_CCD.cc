@@ -509,6 +509,14 @@ void LoopMover_Refine_CCD::set_default_settings()
 		redesign_loop_ = false;
 		packing_isolated_to_active_loops_ = false;
 }
+LoopMover::MoveMapOP LoopMover_Refine_CCD::move_map() const
+{ 
+    return move_map_; 
+}
+void LoopMover_Refine_CCD::move_map( LoopMover::MoveMapOP mm )
+{ 
+    move_map_ = mm; 
+}
 
 void
 LoopMover_Refine_CCD::read_options()
@@ -715,7 +723,7 @@ void LoopMover_Refine_CCD::apply(
 		else allow_repacked[index] = true;
 	}
 	// set minimization degrees of freedom for all loops
-	kinematics::MoveMap mm_all_loops;
+	kinematics::MoveMapOP mm_all_loops = new core::kinematics::MoveMap;
 	setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
 
 	// small/shear move parameters
@@ -747,7 +755,7 @@ void LoopMover_Refine_CCD::apply(
 				one_loop.add_loop( it );
 				// set up movemap properly
 				kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
-				setup_movemap( pose, one_loop, allow_repacked, *mm_one_loop );
+				setup_movemap( pose, one_loop, allow_repacked, mm_one_loop );
 
 				if (local_debug) {
 					tr << "chutmp-debug small_move-0: " << "  " << (*scorefxn)(pose) << std::endl;
@@ -793,7 +801,7 @@ void LoopMover_Refine_CCD::apply(
 				}
 
 				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
-				minimizer->run( pose, mm_all_loops, *scorefxn, options );
+				minimizer->run( pose, *mm_all_loops, *scorefxn, options );
 
 				if (local_debug) {
 					tr << "chutmp-debug small_move-4: " << "  " << (*scorefxn)(pose) << std::endl;
@@ -820,14 +828,14 @@ void LoopMover_Refine_CCD::apply(
 				one_loop.add_loop( it );
 				// set up movemap properly
 				kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
-				setup_movemap( pose, one_loop, allow_repacked, *mm_one_loop );
+				setup_movemap( pose, one_loop, allow_repacked, mm_one_loop );
 				protocols::simple_moves::ShearMover shear_moves( mm_one_loop, temperature, nmoves );
 				shear_moves.apply( pose );
 				if (! it->is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *mm_one_loop);
 				pack::rotamer_trials( pose, *scorefxn, this_packer_task );
 				(*scorefxn)(pose); // update 10A nbr graph, silly way to do this
 				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
-				minimizer->run( pose, mm_all_loops, *scorefxn, options );
+				minimizer->run( pose, *mm_all_loops, *scorefxn, options );
 				std::string move_type = "shear_ccd_min";
 				mc.boltzmann( pose, move_type );
 				mc.show_scores();
@@ -872,17 +880,17 @@ void LoopMover_Refine_CCD::setup_movemap(
 	core::pose::Pose const & pose,
 	protocols::loops::Loops const & loops,
 	utility::vector1< bool > const & allow_repack,
-	core::kinematics::MoveMap & movemap
+	core::kinematics::MoveMapOP & movemap
 )
 {
 	if( move_map_ ){
-		movemap = *move_map_;
+		movemap = move_map_;
 		return;
 	}
-	loops_set_move_map( loops, allow_repack, movemap );
+	loops_set_move_map( loops, allow_repack, *movemap );
 	enforce_false_movemap( movemap );
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		core::pose::symmetry::make_symmetric_movemap( pose, movemap );
+		core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 	}
 }
 
