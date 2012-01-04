@@ -18,6 +18,7 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
+#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
@@ -37,6 +38,7 @@
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 // AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/io/pdb/pose_io.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <ObjexxFCL/format.hh>
 
@@ -149,6 +151,12 @@ RotamerSets::build_rotamers(
 		rotset->build_rotamers( pose, sfxn, *task_, packer_neighbor_graph );
 
 		set_of_rotamer_sets_[ ii ] = rotset;
+	}
+
+	// make sure we have a symmetric RotamerSet_ if we have a symmetric pose
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		if ( set_of_rotamer_sets_.size() > 0 )
+			runtime_assert ( dynamic_cast< core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const * >( set_of_rotamer_sets_[ 1 ].get() ) );
 	}
 
 	// now build any additional rotamers that are dependent on placement of other rotamers
