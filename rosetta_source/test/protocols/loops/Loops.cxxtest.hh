@@ -25,25 +25,28 @@
 
 #define TOLERANCE 0.00001
 
+using core::Real;
+using core::Size;
 using protocols::loops::Loop;
 using protocols::loops::Loops;
 
 class LoopsTest : public CxxTest::TestSuite {
- public:
+ private:
   core::pose::PoseOP pose_;
-  Loops loops_;
 
-  void setUp() {
+ public:
+  LoopsTest() {
     protocols_init();
     pose_ = core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
-    loops_.push_back(Loop(1, 5));
-    loops_.push_back(Loop(10, 15));
-    loops_.push_back(Loop(20, 25));
   }
 
   void test_center_of_mass() {
-    using core::Real;
     using numeric::xyzVector;
+
+    Loops loops;
+    loops.push_back(Loop(1, 5));
+    loops.push_back(Loop(10, 15));
+    loops.push_back(Loop(20, 25));
 
     // Expected
     Real x = -1.6075882353;
@@ -52,7 +55,7 @@ class LoopsTest : public CxxTest::TestSuite {
 
     // Actual
     xyzVector<Real> center;
-    loops_.center_of_mass(*pose_, &center);
+    loops.center_of_mass(*pose_, &center);
 
     TS_ASSERT_DELTA(x, center.x(), TOLERANCE);
     TS_ASSERT_DELTA(y, center.y(), TOLERANCE);
@@ -82,7 +85,6 @@ class LoopsTest : public CxxTest::TestSuite {
     TS_ASSERT_EQUALS(2, loop.stop());
   }
 
-  /// @detail Simple unit test illustrating a bug in Loops::invert()
   void test_invert_trailing() {
     Loops loops;
     loops.add_loop(Loop(1, 6));
@@ -113,5 +115,19 @@ class LoopsTest : public CxxTest::TestSuite {
     TS_ASSERT_EQUALS(11, loops_inv[3].start());
     TS_ASSERT_EQUALS(12, loops_inv[3].stop());
   }
-};
 
+  void test_loop_size_empty() {
+    Loops loops;
+    TS_ASSERT_EQUALS(0, loops.loop_size());
+  }
+
+	void test_loop_size() {
+		Loops loops;
+		loops.add_loop(Loop(10, 15));
+		loops.add_loop(Loop(20, 25));
+
+		TS_ASSERT_EQUALS(6, loops.loop_size(1));
+		TS_ASSERT_EQUALS(6, loops.loop_size(2));
+		TS_ASSERT_EQUALS(12, loops.loop_size());
+	}
+};
