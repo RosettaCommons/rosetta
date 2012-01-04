@@ -11,7 +11,6 @@
 /// @brief
 /// @author Chu Wang
 /// @author Mike Tyka
-/// @author James Thompson
 
 // Unit header
 #include <protocols/loops/Loops.hh>
@@ -312,7 +311,7 @@ Loops::loop_size(
 	Size const num
 ) const {
 	runtime_assert( num > 0 && num <= loops_.size() );
-	return loops_[num-1].size();
+	return loops_[num].size();
 }
 /////////////////////////////////////////////////////////////////////////////
 Size

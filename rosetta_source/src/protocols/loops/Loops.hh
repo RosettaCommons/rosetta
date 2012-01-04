@@ -11,7 +11,6 @@
 /// @brief
 /// @author Chu Wang
 /// @author Mike Tyka
-/// @author James Thompson
 
 #ifndef INCLUDED_protocols_loops_Loops_hh
 #define INCLUDED_protocols_loops_Loops_hh

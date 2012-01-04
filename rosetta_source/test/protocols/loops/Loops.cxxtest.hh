@@ -31,11 +31,11 @@ using protocols::loops::Loop;
 using protocols::loops::Loops;
 
 class LoopsTest : public CxxTest::TestSuite {
- private:
+ protected:
   core::pose::PoseOP pose_;
 
  public:
-  LoopsTest() {
+  void setUp() {
     protocols_init();
     pose_ = core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
   }
@@ -121,13 +121,14 @@ class LoopsTest : public CxxTest::TestSuite {
     TS_ASSERT_EQUALS(0, loops.loop_size());
   }
 
-	void test_loop_size() {
-		Loops loops;
-		loops.add_loop(Loop(10, 15));
-		loops.add_loop(Loop(20, 25));
+  void test_loop_size() {
+    Loops l;
+    l.add_loop(Loop(10, 15));
+    l.add_loop(Loop(20, 25));
 
-		TS_ASSERT_EQUALS(6, loops.loop_size(1));
-		TS_ASSERT_EQUALS(6, loops.loop_size(2));
-		TS_ASSERT_EQUALS(12, loops.loop_size());
-	}
+    TS_ASSERT_EQUALS(2, l.size());
+    TS_ASSERT_EQUALS(6, l.loop_size(1));
+    TS_ASSERT_EQUALS(6, l.loop_size(2));
+    TS_ASSERT_EQUALS(12, l.loop_size());
+  }
 };
