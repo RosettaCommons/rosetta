@@ -202,7 +202,7 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
 
   PolicyOP policy = PolicyFactory::get_policy("uniform", fragments_, num_fragments);
   MoverOP fragment_mover = new BiasedFragmentMover(policy, probs);
-  RationalMonteCarlo mover(fragment_mover, score, num_cycles, temp, true);
+  RationalMonteCarlo mover(fragment_mover, score, num_cycles, temp, false);
   mover.apply(pose);
 
   // Housekeeping
