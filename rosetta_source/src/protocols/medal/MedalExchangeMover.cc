@@ -43,6 +43,7 @@
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/Energies.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
@@ -157,6 +158,7 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::id::AtomID;
+  using core::scoring::Energies;
   using core::scoring::ScoreFunction;
   using core::scoring::ScoreFunctionOP;
   using protocols::comparative_modeling::ThreadingJob;
@@ -205,9 +207,16 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
   RationalMonteCarlo mover(fragment_mover, score, num_cycles, temp, false);
   mover.apply(pose);
 
+  // Removing the virtual residue introduced by the star fold tree invalidates
+  // the pose's cached energies. Doing so causes the score line in the silent
+  // file to be 0.
+  Energies energies = pose.energies();
+
   // Housekeeping
   pose.remove_constraints();
   builder->tear_down(&pose);
+
+  pose.set_new_energies_object(new Energies(energies));
 }
 
 MedalExchangeMover::MedalExchangeMover() {
