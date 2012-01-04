@@ -32,9 +32,6 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-// Package headers
-#include <protocols/medal/MedalMover.hh>
-
 namespace protocols {
 namespace medal {
 
