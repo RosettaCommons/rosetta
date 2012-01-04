@@ -113,6 +113,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		oocr_repacking.residue_indices( restrict_to_repacking );
 		oocr_repacking.apply( pose, task );
 	}
+	TR<<std::endl;
 }
 
 void

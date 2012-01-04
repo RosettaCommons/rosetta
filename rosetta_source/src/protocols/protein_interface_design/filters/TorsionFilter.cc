@@ -49,9 +49,12 @@ bool
 Torsion::apply(core::pose::Pose const & pose ) const
 {
 	if( task_factory_set() ){
-		utility::vector1< core::Size > const designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
-		foreach( core::Size const resi, designable )
-			TR_database<<pose.phi( resi )<<" "<<pose.psi( resi )<<" "<<pose.omega( resi )<<" "<<pose.residue( resi ).name3()<<" ";
+		utility::vector1< core::Size > designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
+		std::sort( designable.begin(), designable.end() );
+		core::Size const start( designable[ 1 ] );
+		core::Size const stop( designable[ designable.size() ] );
+		for( core::Size i = start; i<=stop; ++i )
+			TR_database<<pose.phi( i )<<" "<<pose.psi( i )<<" "<<pose.omega( i )<<" "<<pose.residue( i ).name3()<<" ";
 		TR_database<<std::endl;
 		return true;
 	}

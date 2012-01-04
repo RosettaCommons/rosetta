@@ -109,7 +109,7 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		if( allow_design() && !allow_design_res ){
 			foreach( core::Size const res, focus_residues ){
 				core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
-				if( distance <= design_shell() ){
+				if( distance <= design_shell() || distance <= 0.0001 /*if design_shell is specified as 0 ensure that focus residues are allowed to design*/){
 					allow_design_res = true;
 					break;
 				}// fi distance
