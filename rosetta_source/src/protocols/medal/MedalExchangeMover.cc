@@ -131,6 +131,9 @@ void MedalExchangeMover::setup_constraints(const core::pose::Pose& pose, LoopsCO
       constraints->add_constraint(constraint);
     }
   }
+
+  constraints->show(TR.Debug);
+  TR.flush_all_channels();
 }
 
 void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kinematics::FoldTree& tree, LoopsCOP aligned, vector1<double>* probs) const {
@@ -147,7 +150,7 @@ void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kin
 
   protocols::medal::invalidate_residues_spanning_cuts(tree, fragments_->max_frag_length(), probs);
   numeric::normalize(probs->begin(), probs->end());
-  numeric::print_probabilities(*probs, TR);
+  numeric::print_probabilities(*probs, TR.Debug);
 }
 
 void MedalExchangeMover::apply(core::pose::Pose& pose) {
@@ -180,6 +183,7 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
 
   TreeBuilderOP builder = TreeBuilderFactory::get_builder("star");
   builder->set_up(*combined, &pose);
+  TR << pose.fold_tree() << std::endl;
 
   ConstraintSetOP constraints = new ConstraintSet();
   setup_constraints(pose, aligned, constraints);
@@ -188,17 +192,17 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
   ScoreFunctionOP score = new ScoreFunction();
   score->set_weight(core::scoring::coordinate_constraint, 1);
 
-  // Sampling options
-  const Size num_fragments = option[OptionKeys::cm::sanitize::num_fragments]();
-  const Size cycles = static_cast<Size>(option[OptionKeys::abinitio::increase_cycles]() * 5000);
+  // Sampling parameters
   const Real temp = option[OptionKeys::abinitio::temperature]();
+  const Size num_fragments = option[OptionKeys::cm::sanitize::num_fragments]();
+  const Size num_cycles = static_cast<Size>(aligned->nr_residues() * 100 * option[OptionKeys::abinitio::increase_cycles]());
 
   vector1<double> probs;
   setup_sampling_probs(pose.total_residue() - 1, pose.fold_tree(), aligned, &probs);
 
   PolicyOP policy = PolicyFactory::get_policy("uniform", fragments_, num_fragments);
   MoverOP fragment_mover = new BiasedFragmentMover(policy, probs);
-  RationalMonteCarlo mover(fragment_mover, score, cycles, temp, true);
+  RationalMonteCarlo mover(fragment_mover, score, num_cycles, temp, true);
   mover.apply(pose);
 
   // Housekeeping
