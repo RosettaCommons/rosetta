@@ -363,7 +363,7 @@ option.add( basic::options::OptionKeys::run::suppress_checkpoints, "Override & s
 option.add( basic::options::OptionKeys::run::checkpoint, "Turn checkpointing on" );
 option.add( basic::options::OptionKeys::run::delete_checkpoints, "delete the checkpoints after use" ).def(true);
 option.add( basic::options::OptionKeys::run::checkpoint_interval, "Checkpoint time interval in seconds" ).lower(10).def(600);
-option.add( basic::options::OptionKeys::run::protocol, "Which protocol to run, for Rosetta@home wrapper" ).legal("abrelax").legal("broker").legal("vf_abrelax").legal("ligand_dock").legal("relax").legal("symdock").legal("nonlocal_abinitio").legal("loophash").legal("looprelax").legal("threading").legal("rbsegmentrelax").legal("boinc_debug").legal("parser").legal("jd2_scripting").legal("cm").legal("flxbb").legal("rna").legal("ddg").legal("canonical_sampling").legal("nonlocal_frags").legal("medal").legal("medal_abinitio").legal("medal_exchange").legal("star").def("abrelax");
+option.add( basic::options::OptionKeys::run::protocol, "Which protocol to run, for Rosetta@home wrapper" ).legal("abrelax").legal("broker").legal("vf_abrelax").legal("ligand_dock").legal("relax").legal("symdock").legal("nonlocal_abinitio").legal("loophash").legal("looprelax").legal("threading").legal("rbsegmentrelax").legal("boinc_debug").legal("parser").legal("jd2_scripting").legal("cm").legal("flxbb").legal("rna").legal("ddg").legal("canonical_sampling").legal("nonlocal_frags").legal("medal").legal("medal_exchange").legal("star").def("abrelax");
 option.add( basic::options::OptionKeys::run::remove_ss_length_screen, "Sets the use_ss_length_screen flag in the Fragment Mover to false" );
 option.add( basic::options::OptionKeys::run::min_type, "type of minimizer to use" ).def("dfpmin");
 option.add( basic::options::OptionKeys::run::min_tolerance, "minimizer tolerance" ).def(0.000001);
@@ -587,10 +587,10 @@ option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of res
 option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
+option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
-option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
@@ -1173,11 +1173,11 @@ option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusi
 option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
 option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs to exclude" ).def("");
 option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);
+option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
+option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
-option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
-option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
 option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
@@ -1517,6 +1517,10 @@ option.add( basic::options::OptionKeys::fldsgn::run_flxbb, "run flxbb at the giv
 option.add( basic::options::OptionKeys::rna::rna, "rna option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rna::minimize_rounds, "The number of rounds of minimization." ).def(2);
 option.add( basic::options::OptionKeys::cm::cm, "cm option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cm::sanitize::sanitize, "sanitize option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cm::sanitize::bound_delta, "Distance in Angstroms from aligned position before a penalty is incurred" ).def(0.5);
+option.add( basic::options::OptionKeys::cm::sanitize::bound_sd, "Value of standard deviation in bound func" ).def(1.0);
+option.add( basic::options::OptionKeys::cm::sanitize::num_fragments, "Use the top k fragments at each position during sanitization" ).def(25);
 option.add( basic::options::OptionKeys::cm::start_models_only, "Make starting models only!" ).def(false);
 option.add( basic::options::OptionKeys::cm::aln_format, "No description" ).legal("grishin").legal("general").def("general");
 option.add( basic::options::OptionKeys::cm::recover_side_chains, "recover side-chains" ).def(false);
@@ -1758,10 +1762,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");

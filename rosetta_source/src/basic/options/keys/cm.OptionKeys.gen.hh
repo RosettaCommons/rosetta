@@ -22,6 +22,10 @@ namespace options {
 namespace OptionKeys {
 
 namespace cm { extern BooleanOptionKey const cm; }
+namespace cm { namespace sanitize { extern BooleanOptionKey const sanitize; } }
+namespace cm { namespace sanitize { extern RealOptionKey const bound_delta; } }
+namespace cm { namespace sanitize { extern RealOptionKey const bound_sd; } }
+namespace cm { namespace sanitize { extern IntegerOptionKey const num_fragments; } }
 namespace cm { extern BooleanOptionKey const start_models_only; }
 namespace cm { extern StringOptionKey const aln_format; }
 namespace cm { extern BooleanOptionKey const recover_side_chains; }

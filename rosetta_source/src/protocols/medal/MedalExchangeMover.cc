@@ -18,117 +18,204 @@
 #include <string>
 
 // Utility headers
-#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
+#include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/jumps.OptionKeys.gen.hh>
-#include <basic/options/keys/rigid.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
+#include <numeric/prob_util.hh>
+#include <utility/vector1.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/id/AtomID.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/BoundConstraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/fragment/FragmentIO.hh>
+#include <core/fragment/FragSet.hh>
+#include <core/fragment/SecondaryStructure.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
-#include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/nonlocal/StarTreeBuilder.hh>
+#include <protocols/medal/util.hh>
+#include <protocols/nonlocal/BiasedFragmentMover.hh>
+#include <protocols/nonlocal/Policy.hh>
+#include <protocols/nonlocal/PolicyFactory.hh>
+#include <protocols/nonlocal/TreeBuilder.hh>
+#include <protocols/nonlocal/TreeBuilderFactory.hh>
 #include <protocols/nonlocal/util.hh>
-
-//Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector1.hh>
-
+#include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
+#include <protocols/star/Extender.hh>
 
 namespace protocols {
 namespace medal {
 
+using core::Real;
+using core::Size;
+using core::scoring::constraints::ConstraintSet;
+using core::scoring::constraints::ConstraintSetOP;
+using core::scoring::constraints::ConstraintSetCOP;
+using protocols::loops::Loop;
+using protocols::loops::Loops;
+using protocols::loops::LoopsOP;
+using protocols::loops::LoopsCOP;
+using utility::vector1;
+
 static basic::Tracer TR("protocols.medal.MedalExchangeMover");
 
-MedalExchangeMover::MedalExchangeMover() : MedalMover() {}
+void to_centroid(core::pose::Pose* pose) {
+  assert(pose);
+  if (!pose->is_centroid())
+    core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
+}
+
+/// @detail Combines both sets of loops, sorting the result in increasing order of start position
+protocols::loops::LoopsCOP combine_loops(LoopsCOP aligned, LoopsCOP unaligned) {
+  assert(aligned);
+  assert(unaligned);
+
+  LoopsOP combined = new Loops();
+
+  for (Loops::const_iterator i = aligned->begin(); i != aligned->end(); ++i)
+    combined->add_loop(*i);
+
+  for (Loops::const_iterator i = unaligned->begin(); i != unaligned->end(); ++i)
+    combined->add_loop(*i);
+
+  combined->sequential_order();
+  return combined;
+}
+
+void MedalExchangeMover::setup_constraints(const core::pose::Pose& pose, LoopsCOP aligned, ConstraintSetOP constraints) const {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::PointPosition;
+  using core::conformation::Residue;
+  using core::id::AtomID;
+  using core::scoring::constraints::BoundFunc;
+  using core::scoring::constraints::ConstraintCOP;
+  using core::scoring::constraints::CoordinateConstraint;
+  using core::scoring::constraints::FuncOP;
+  assert(aligned);
+  assert(constraints);
+
+  const Real delta = option[OptionKeys::cm::sanitize::bound_delta]();
+  const Real sd = option[OptionKeys::cm::sanitize::bound_sd]();
+
+  // Fixed reference position
+  const AtomID fixed_atom(1, pose.total_residue());
+  const PointPosition& fixed_coords = pose.xyz(fixed_atom);
+
+  for (Size i = 1; i <= aligned->size(); ++i) {
+    const Loop& region = (*aligned)[i];
+
+    for (Size j = region.start(); j <= region.stop(); ++j) {
+      const Residue& residue = pose.conformation().residue(j);
+      const AtomID ca_atom(residue.atom_index("CA"), j);
+      const PointPosition& ca_coords = pose.xyz(ca_atom);
+
+      Real distance = ca_coords.distance(fixed_coords);
+      FuncOP function = new BoundFunc(distance - delta, distance + delta, sd, "");
+      ConstraintCOP constraint = new CoordinateConstraint(ca_atom, fixed_atom, fixed_coords, function);
+      constraints->add_constraint(constraint);
+    }
+  }
+}
+
+void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kinematics::FoldTree& tree, LoopsCOP aligned, vector1<double>* probs) const {
+  assert(probs);
+  assert(aligned);
+
+  probs->resize(num_residues, 0);
+
+  for (Loops::const_iterator i = aligned->begin(); i != aligned->end(); ++i) {
+    for (Size j = i->start(); j <= i->stop(); ++j) {
+      (*probs)[j] = 1;
+    }
+  }
+
+  protocols::medal::invalidate_residues_spanning_cuts(tree, fragments_->max_frag_length(), probs);
+  numeric::normalize(probs->begin(), probs->end());
+  numeric::print_probabilities(*probs, TR);
+}
 
 void MedalExchangeMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::pose::PoseOP;
+  using core::id::AtomID;
+  using core::scoring::ScoreFunction;
   using core::scoring::ScoreFunctionOP;
-  using core::scoring::methods::EnergyMethodOptions;
   using protocols::comparative_modeling::ThreadingJob;
-  using protocols::comparative_modeling::LoopRelaxThreadingMover;
-  using protocols::loops::Loops;
-  using namespace protocols::moves;
-  using namespace protocols::nonlocal;
+  using protocols::moves::MoverOP;
+  using protocols::nonlocal::BiasedFragmentMover;
+  using protocols::nonlocal::PolicyOP;
+  using protocols::nonlocal::PolicyFactory;
+  using protocols::nonlocal::TreeBuilderOP;
+  using protocols::nonlocal::TreeBuilderFactory;
+  using protocols::simple_moves::rational_mc::RationalMonteCarlo;
+  using protocols::star::Extender;
 
-  // Information about the current set of inputs
   ThreadingJob const * const job = protocols::nonlocal::current_job();
-  const unsigned num_residues = pose.total_residue();
+  to_centroid(&pose);
 
-  // Load the native structure (if available) to compute trajectory analytics
-  PoseOP native;
-  if (option[OptionKeys::in::file::native].user())
-    native = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
+  Extender extender(job->alignment().clone(), pose.total_residue());
+  extender.set_secondary_structure(pred_ss_);
+  extender.extend_unaligned(&pose);
 
-  // Build up a threading model
-  LoopRelaxThreadingMover closure;
-  closure.setup();
-  closure.apply(pose);
+  LoopsCOP aligned = extender.aligned();
+  LoopsCOP unaligned = extender.unaligned();
+  LoopsCOP combined = combine_loops(aligned, unaligned);
+  TR << "Aligned:" << std::endl << *aligned << std::endl;
 
-  // Configure the score functions used in the simulation
-  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
+  TreeBuilderOP builder = TreeBuilderFactory::get_builder("star");
+  builder->set_up(*combined, &pose);
 
-  // Decompose the structure into chunks
-  Loops chunks;
-  decompose_structure(pose, &chunks);
+  ConstraintSetOP constraints = new ConstraintSet();
+  setup_constraints(pose, aligned, constraints);
+  pose.constraint_set(constraints);
 
-  StarTreeBuilder builder;
-  builder.set_up(chunks, &pose);
-  TR << pose.fold_tree() << std::endl;
+  ScoreFunctionOP score = new ScoreFunction();
+  score->set_weight(core::scoring::coordinate_constraint, 1);
 
-  // Compute per-residue sampling probabilities
-  Probabilities probs;
-  compute_per_residue_probabilities(num_residues, job->alignment(), chunks, pose.fold_tree(), *fragments_sm_, &probs);
+  // Sampling options
+  const Size num_fragments = option[OptionKeys::cm::sanitize::num_fragments]();
+  const Size cycles = option[OptionKeys::abinitio::increase_cycles]() * 5000;
+  const Real temp = option[OptionKeys::abinitio::temperature]();
 
-  // Fragment insertion with short range constraints and no chainbreak
-  core::util::add_cutpoint_variants(&pose);
-  ScoreFunctionOP score = score_function();
-  EnergyMethodOptions options(score->energy_method_options());
+  vector1<double> probs;
+  setup_sampling_probs(pose.total_residue() - 1, pose.fold_tree(), aligned, &probs);
 
-  options.cst_max_seq_sep(option[OptionKeys::rigid::short_range_seqsep]());
-  score->set_energy_method_options(options);
-  MoverOP stage1 = create_fragment_mover(native, score, fragments_sm_, probs, "uniform", 25);
-  stage1->apply(pose);
+  PolicyOP policy = PolicyFactory::get_policy("uniform", fragments_, num_fragments);
+  MoverOP fragment_mover = new BiasedFragmentMover(policy, probs);
+  RationalMonteCarlo mover(fragment_mover, score, cycles, temp, true);
+  mover.apply(pose);
 
-  // Fragment insertion with medium range constraints and no chainbreak
-  options.cst_max_seq_sep(option[OptionKeys::rigid::medium_range_seqsep]());
-  score->set_energy_method_options(options);
-  MoverOP stage2 = create_fragment_mover(native, score, fragments_sm_, probs, "uniform", 25);
-  stage2->apply(pose);
+  // Housekeeping
+  pose.remove_constraints();
+  builder->tear_down(&pose);
+}
 
-  // Fragment insertion with long range constraints and chainbreak
-  options.cst_max_seq_sep(num_residues);
-  score->set_energy_method_options(options);
-  score->set_weight(core::scoring::linear_chainbreak, 2 * option[OptionKeys::jumps::increase_chainbreak]());
-  MoverOP stage3 = create_fragment_and_rigid_mover(pose, native, score, fragments_sm_, probs, "uniform", 25);
-  stage3->apply(pose);
+MedalExchangeMover::MedalExchangeMover() {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::fragment::FragmentIO;
+  using core::fragment::FragSetOP;
+  using core::fragment::SecondaryStructure;
 
-  // Loop closure
-  builder.tear_down(&pose);
-  do_loop_closure(&pose);
-  core::util::remove_cutpoint_variants(&pose);
-
-  // Return to centroid representation and rescore
-  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  score->show(TR, pose);
+  FragmentIO io;
+  fragments_ = io.read_data(option[in::file::frag3]());
+  pred_ss_ = new SecondaryStructure(*fragments_);
 }
 
 std::string MedalExchangeMover::get_name() const {

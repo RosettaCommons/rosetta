@@ -1,5 +1,3 @@
-namespace lh { RealOptionKey const min_bbrms( "lh:min_bbrms" );  }
-namespace lh { RealOptionKey const max_bbrms( "lh:max_bbrms" );  }
 namespace lh { RealOptionKey const min_rms( "lh:min_rms" );  }
 namespace lh { RealOptionKey const max_rms( "lh:max_rms" );  }
 namespace lh { BooleanOptionKey const filter_by_phipsi( "lh:filter_by_phipsi" );  }
@@ -340,6 +338,10 @@ namespace fldsgn { IntegerOptionKey const run_flxbb( "fldsgn:run_flxbb" );  }
 namespace rna { BooleanOptionKey const rna( "rna" );  }
 namespace rna { IntegerOptionKey const minimize_rounds( "rna:minimize_rounds" );  }
 namespace cm { BooleanOptionKey const cm( "cm" );  }
+namespace cm { namespace sanitize { BooleanOptionKey const sanitize( "cm:sanitize" );  } }
+namespace cm { namespace sanitize { RealOptionKey const bound_delta( "cm:sanitize:bound_delta" );  } }
+namespace cm { namespace sanitize { RealOptionKey const bound_sd( "cm:sanitize:bound_sd" );  } }
+namespace cm { namespace sanitize { IntegerOptionKey const num_fragments( "cm:sanitize:num_fragments" );  } }
 namespace cm { BooleanOptionKey const start_models_only( "cm:start_models_only" );  }
 namespace cm { StringOptionKey const aln_format( "cm:aln_format" );  }
 namespace cm { BooleanOptionKey const recover_side_chains( "cm:recover_side_chains" );  }
@@ -581,4 +583,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoPr
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
 namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }

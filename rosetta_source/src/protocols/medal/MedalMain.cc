@@ -48,9 +48,6 @@ void check_required_common() {
 
   if (!option[in::file::frag3].user())
     utility_exit_with_message(ERROR_PREFIX + "-in:file:frag3");
-
-  if (!option[in::file::frag9].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:frag9");
 }
 
 /// @detail Comparative modeling options
