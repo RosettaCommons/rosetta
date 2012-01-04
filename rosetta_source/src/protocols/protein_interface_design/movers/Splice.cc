@@ -19,6 +19,7 @@
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/AA.hh>
+#include <protocols/protein_interface_design/filters/TorsionFilter.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 // Package headers
@@ -57,6 +58,7 @@ namespace protein_interface_design {
 namespace movers {
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.Splice" );
+static basic::Tracer TR_ccd( "protocols.protein_interface_design.movers.Splice_ccd" );
 static numeric::random::RandomGenerator RG( 78289 );
 std::string
 SpliceCreator::keyname() const
@@ -112,7 +114,7 @@ Splice::apply( core::pose::Pose & pose )
 	runtime_assert( to_res() > from_res() );
 	core::pose::Pose source_pose;
 	core::Size nearest_to_from( 0 ), nearest_to_to( 0 ); // residues on source_pose that are nearest to from_res and to_res
-	utility::vector1< BBDofs > dofs;
+	ResidueBBDofs dofs;
 	dofs.clear();
 	if( torsion_database_fname_ == "" ){ // read dofs from source pose rather than database
 		using namespace protocols::rosetta_scripts;
@@ -174,7 +176,7 @@ Splice::apply( core::pose::Pose & pose )
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
 	protocols::loops::FoldTreeFromLoops ffl;
 	using namespace utility;
-	core::Size cut_site( to_res() );
+	core::Size cut_site( dofs.cut_site() ? dofs.cut_site() + from_res() - 1: to_res() );
 	if( randomize_cut() ){
 		core::scoring::dssp::Dssp dssp( source_pose );
 		dssp.dssp_reduced(); // switch to simplified H E L notation
@@ -242,6 +244,14 @@ Splice::apply( core::pose::Pose & pose )
 	TaskFactoryOP tf = new TaskFactory;
 	tf->push_back( new operation::InitializeFromCommandline );
 	tf->push_back( tso );
+	DesignAroundOperationOP dao = new DesignAroundOperation;
+	dao->design_shell( 5 ); // threaded sequence operation needs to design, and will restrict design to the loop only
+	dao->repack_shell( 8.0 );
+	for( core::Size i = from_res() - 3; i <= from_res() + total_residue_new + 2; ++i ){
+		if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
+			dao->include_residue( i );
+	}
+	tf->push_back( dao );
 
 	if( ccd() ){
 /// Set ccd to minimize 4 residues at each loop terminus including the first residue of the loop. This way,
@@ -253,10 +263,6 @@ Splice::apply( core::pose::Pose & pose )
 		ccd_mover.temp_initial( 1.5 );
 		ccd_mover.temp_final( 0.5 );
 		core::kinematics::MoveMapOP mm;
-		DesignAroundOperationOP dao = new DesignAroundOperation;
-		dao->design_shell( 5 ); // threaded sequence operation needs to design, and will restrict design to the loop only
-		dao->repack_shell( 8.0 );
-
 		mm = new core::kinematics::MoveMap;
 		mm->set_chi( false ); mm->set_bb( false ); mm->set_jump( false );
 	/// First look for disulfides. Those should never be moved.
@@ -282,11 +288,6 @@ Splice::apply( core::pose::Pose & pose )
 			mm->set_chi( i, true );
 			mm->set_bb( i, true );
 		}
-		for( core::Size i = from_res() - 3; i <= from_res() + total_residue_new + 2; ++i ){
-			if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
-				dao->include_residue( i );
-		}
-		tf->push_back( dao );
 		ccd_mover.set_task_factory( tf );
 		ccd_mover.move_map( mm );
 		ccd_mover.apply( pose );
@@ -305,6 +306,17 @@ Splice::apply( core::pose::Pose & pose )
 				return;
 			}
 		}
+		TaskFactoryOP tf_dofs = new TaskFactory;
+		DesignAroundOperationOP dao_dofs = new DesignAroundOperation;
+		for( core::Size i = from_res(); i <= from_res() + total_residue_new - 1; ++i )
+			dao_dofs->include_residue( i );
+		dao_dofs->design_shell( 0 );/// only include the loop residues
+		tf_dofs->push_back( dao_dofs );
+		protocols::protein_interface_design::filters::Torsion torsion;
+		torsion.task_factory( tf_dofs );
+		torsion.task_factory_set( true );
+		torsion.apply( pose );
+		TR_ccd << "cut at (relative to start): "<<cut_site - from_res()+1<<std::endl;
 	}// fi ccd
 	else{ // if no ccd, still need to thread sequence
 		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
@@ -348,6 +360,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	runtime_assert( !(tag->hasOption( "torsion_database" ) && tag->hasOption( "rms_cutoff" )) ); // torsion database doesn't specify coordinates so no point in computing rms
 	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
 	randomize_cut( tag->getOption< bool >( "randomize_cut", false ) );
+	runtime_assert( tag->hasOption( "randomize_cut" ) && tag->hasOption( "source_pose" ) || !tag->hasOption( "source_pose" ) );
 	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<std::endl;
 }
 
@@ -385,18 +398,25 @@ Splice::read_torsion_database(){
   std::string line;
   while( getline( data, line ) ) {
     std::istringstream line_stream( line );
-		utility::vector1< BBDofs > bbdof_entry;
+		ResidueBBDofs bbdof_entry;
 		bbdof_entry.clear();
   	while( !line_stream.eof() ){
 			core::Real phi, psi, omega;
 			std::string resn;
 			line_stream >> phi >> psi >> omega >> resn;
-			bbdof_entry.push_back( BBDofs( 0/*resid*/, phi, psi, omega, resn ) );
+			if( resn == "cut" || resn == "CUT" )
+				bbdof_entry.cut_site( (core::Size) phi ); //// ugly
+			else
+				bbdof_entry.push_back( BBDofs( 0/*resid*/, phi, psi, omega, resn ) );
 		}
 		torsion_database_.push_back( bbdof_entry );
 	}
 	TR<<"Finished reading torsion database with "<<torsion_database_.size()<<" entries"<<std::endl;
 }
+
+BBDofs::~BBDofs() {}
+
+ResidueBBDofs::~ResidueBBDofs() {}
 
 } //movers
 } //protein_interface_design

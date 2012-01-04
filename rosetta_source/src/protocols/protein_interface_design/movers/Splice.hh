@@ -43,11 +43,38 @@ class BBDofs : public utility::pointer::ReferenceCount
 		void psi( core::Real const p ){ psi_ = p; }
 		void omega( core::Real const o ){ omega_ = o; }
 		void resn( std::string const r ){ resn_ = r; }
+		~BBDofs();
 	private:
 		core::Size resid_;
 		core::Real phi_, psi_, omega_;
 		std::string resn_;
 };
+
+//@ container for BBDofs
+class ResidueBBDofs : public utility::pointer::ReferenceCount
+{
+	public:
+		typedef utility::vector1< BBDofs > bbdof_list;
+		typedef bbdof_list::iterator iterator;
+		typedef bbdof_list::const_iterator const_iterator;
+
+		ResidueBBDofs() : cut_site_( 0 ){ clear(); }
+		~ResidueBBDofs();
+		void cut_site( core::Size const c ){ cut_site_ = c; }
+		core::Size cut_site() const { return cut_site_; }
+		void clear() { bbdofs_.clear(); }
+		void push_back( BBDofs const b ){ bbdofs_.push_back( b ); }
+		const_iterator begin() const{ return bbdofs_.begin(); }
+		const_iterator end() const{ return bbdofs_.end(); }
+		iterator begin(){ return bbdofs_.begin(); }
+		iterator end(){ return bbdofs_.end(); }
+		core::Size size() const{ return bbdofs_.size(); }
+		BBDofs & operator[]( int const i ) { return bbdofs_[ i ]; }
+	private:
+		core::Size cut_site_;
+		bbdof_list bbdofs_;
+};
+
 
 /// @brief designs alanine residues in place of the residue identities at the interface. Retains interface glycines and prolines.
 class Splice : public protocols::moves::Mover
@@ -85,8 +112,8 @@ public:
 	core::Size database_entry()const {return database_entry_; }
 	void database_entry( core::Size const d ){ database_entry_ = d; }
 	void read_torsion_database();
-	utility::vector1< utility::vector1< BBDofs > > torsion_database() const{ return torsion_database_; }
-	void torsion_database( utility::vector1< utility::vector1< BBDofs > > const d ){ torsion_database_ = d; }
+	utility::vector1< ResidueBBDofs > torsion_database() const{ return torsion_database_; }
+	void torsion_database( utility::vector1< ResidueBBDofs > const d ){ torsion_database_ = d; }
 
 private:
 	core::Size from_res_, to_res_;
@@ -99,7 +126,7 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_; // dflt NULL; Another access point to setting which residues to splice. This works at present only with one segment, so you set designable residues and Splice will then determine the first and last residues among these and splice that section out.
 	std::string torsion_database_fname_; //dflt ""; set to true in order to read directly from a torsion database
 	core::Size database_entry_; //dflt 0; in which case tests a random entry in each apply
-	utility::vector1< utility::vector1< BBDofs > > torsion_database_;
+	utility::vector1< ResidueBBDofs > torsion_database_;
 };
 
 
