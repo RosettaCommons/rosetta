@@ -269,10 +269,10 @@ JobDistributor::go_main( protocols::moves::MoverOP mover ) {
 		//guaruntee it's been read in before the Parser gets a stab at it
 		pose.data().clear();
 		try{
-            // Can we add the PyMOL mover here?
-            if ( option[ OptionKeys::run::show_simulation_in_pymol ].user() && option[ OptionKeys::run::show_simulation_in_pymol ]() == true ){
-                moves::AddPyMolObserver( pose, true, core::Real( 5.0 ) );
-            }
+			// Can we add the PyMOL mover here?
+			if ( option[ OptionKeys::run::show_simulation_in_pymol ].user() && option[ OptionKeys::run::show_simulation_in_pymol ].value() > 0.0 ){
+				moves::AddPyMolObserver( pose, true, option[ OptionKeys::run::show_simulation_in_pymol ].value() );
+			}
 			job_inputter_->pose_from_job( pose, current_job_ );
 
 #ifdef BOINC_GRAPHICS

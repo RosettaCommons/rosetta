@@ -391,7 +391,7 @@ option.add( basic::options::OptionKeys::run::condor, "if condor say yes -- proc_
 option.add( basic::options::OptionKeys::run::nproc, "number of process... needed if proc_id is specified" ).def(0);
 option.add( basic::options::OptionKeys::run::proc_id, "give process number... Jobdistributor will only work on proc_id mod nproc part of work " ).def(0);
 option.add( basic::options::OptionKeys::run::exit_if_missing_heavy_atoms, "quit if heavy atoms missing in pdb" ).def(false);
-option.add( basic::options::OptionKeys::run::show_simulation_in_pymol, "Attach PyMOL observer to pose at the beginning of the simulation. Open PyMOL with the PyMOLPyRosettaServer.py script." ).def(false);
+option.add( basic::options::OptionKeys::run::show_simulation_in_pymol, "Attach PyMOL observer to pose at the beginning of the simulation. Refreshes pose every [argument] seconds, default 5.  Don't forget to run the PyMOLPyRosettaServer.py script within PyMOL!" ).def(5.0);
 option.add( basic::options::OptionKeys::jd2::jd2, "jd2 option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::jd2::pose_input_stream, "Use PoseInputStream classes for Pose input" ).def(false);
 option.add( basic::options::OptionKeys::jd2::lazy_silent_file_reader, "use lazy silent file reader in job distributor, read in a structure only when you need to" ).def(false);

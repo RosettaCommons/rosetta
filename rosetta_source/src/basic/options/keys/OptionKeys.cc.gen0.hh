@@ -386,7 +386,7 @@ namespace run { BooleanOptionKey const condor( "run:condor" );  }
 namespace run { IntegerOptionKey const nproc( "run:nproc" );  }
 namespace run { IntegerOptionKey const proc_id( "run:proc_id" );  }
 namespace run { BooleanOptionKey const exit_if_missing_heavy_atoms( "run:exit_if_missing_heavy_atoms" );  }
-namespace run { BooleanOptionKey const show_simulation_in_pymol( "run:show_simulation_in_pymol" );  }
+namespace run { RealOptionKey const show_simulation_in_pymol( "run:show_simulation_in_pymol" );  }
 namespace jd2 { BooleanOptionKey const jd2( "jd2" );  }
 namespace jd2 { BooleanOptionKey const pose_input_stream( "jd2:pose_input_stream" );  }
 namespace jd2 { BooleanOptionKey const lazy_silent_file_reader( "jd2:lazy_silent_file_reader" );  }

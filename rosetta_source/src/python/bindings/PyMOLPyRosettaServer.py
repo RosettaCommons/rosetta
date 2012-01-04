@@ -13,6 +13,11 @@
 ## @author Sergey Lyskov, Johns Hopkins University
 
 
+# This is the script to run to let you want Rosetta runs inside PyMOL.  To run it:
+# 1) Open pymol
+# 2) run /path/to/this/script/PyMOLPyRosettaServer.py
+# 3) Start a Rosetta run with the flag -show_simulation_in_pymol X, where X is how many seconds pass between PyMOL updates.  5 is default; low values may overload your computer.
+
 import time, socket, gzip, bz2, threading
 from cStringIO import StringIO
 from array import array
@@ -29,8 +34,8 @@ class PR_UDPServer:
         try:
             self.socket.bind( (udp_ip, udp_port) )
         except:
-            print 'FAILD TO START PyRosetta-PyMOL server, do you already have another instance of it running?'
-            raise 'FAILD TO START PyRosetta-PyMOL server, do you already have another instance of it running?'
+            print 'FAILED TO START PyRosetta-PyMOL server, do you already have another instance of it running?'
+            raise 'FAILED TO START PyRosetta-PyMOL server, do you already have another instance of it running?'
         self.buf = {}
         self.last_cleanup_time = time.time()
 
