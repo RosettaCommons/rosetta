@@ -521,7 +521,8 @@ read_topology_file(
 			}
 
 			// set icoor
-			rsd->set_icoor( child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom );
+			rsd->set_icoor( i, child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom );
+
 
 		} // loop over file lines looking for ICOOR_INTERNAL lines
 

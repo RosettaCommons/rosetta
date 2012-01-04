@@ -426,10 +426,10 @@ int main(int argc, char* argv[])
 
 
 //resync processes after table setup
+
 #ifdef USEMPI
 		MPI_Barrier( MPI_COMM_WORLD );
 #endif
-
 
 	for(core::Size cycle = 1; cycle <= 10; ++cycle)
 	{
@@ -437,11 +437,18 @@ int main(int argc, char* argv[])
 		setup_grid_manager(current_weights);
 		protocols::moves::MoverOP mover(setup_lowres_protocol());
 		protocols::jd2::JobDistributor::get_instance()->mpi_finalize(false);
+		roc_tracer << "starting docking for cycle " << cycle << std::endl;
 		protocols::jd2::JobDistributor::get_instance()->go(mover);
-		//go() calls MPI_Finalize() at the end, so processes are synced when they get here
+
+#ifdef USEMPI
+		MPI_Barrier( MPI_COMM_WORLD );
+#endif
+
+
 
 		if(mpi_rank == 0)
 		{
+			roc_tracer << "starting roc optimization for cycle " << cycle << std::endl;
 			protocols::qsar::qsarOptFunc qsar_func(db_session,current_weights.get_multivec(),current_weights.get_indices());
 			numeric::RocCurve curve(setup_roc_curve(db_session,0.0));
 			curve.generate_roc_curve();

@@ -46,7 +46,7 @@
 #include <core/chemical/ResidueDatabaseIO.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/io/izstream.hh>
 // Project headers
 #include <basic/database/sql_utils.hh>
 #include <basic/database/open.hh>
@@ -227,24 +227,56 @@ ChemicalManager::residue_type_set( std::string const & tag )
 			{
 				std::string database_name = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database];
 				std::string database_mode = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_mode];
-				utility::sql_database::sessionOP db_session(basic::database::get_db_session(database_name,database_mode,true,false));
 
-				ResidueDatabaseIO residue_database_interface;
-				utility::vector1<std::string> residue_names_in_database( residue_database_interface.get_all_residues_in_database(db_session));
-				for(Size index =1; index <= residue_names_in_database.size();++index)
+				utility::sql_database::sessionOP db_session;
+
+				if(database_mode=="sqlite3")
 				{
-					ResidueTypeOP new_residue(
-						residue_database_interface.read_residuetype_from_database(
-							atom_types,
-							elements,
-							mm_atom_types,
-							orbital_types,
-							"fa_standard",
-							residue_names_in_database[index],
-							db_session));
-					extra_residues.push_back(new_residue);
+					db_session = basic::database::get_db_session(database_name,database_mode,true,false);
+				}else
+				{
+					db_session = basic::database::get_db_session(database_name,database_mode,false,false);
 				}
+				ResidueDatabaseIO residue_database_interface;
 
+				if(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_resname_list].user())
+				{
+					utility::file::FileName residue_list = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_resname_list];
+					utility::io::izstream residue_name_file(residue_list);
+					std::string residue_name;
+					while(residue_name_file >> residue_name)
+					{
+						//residue_name_file >> residue_name;
+						//tr <<residue_name <<std::endl;
+						ResidueTypeOP new_residue(
+							residue_database_interface.read_residuetype_from_database(
+								atom_types,
+								elements,
+								mm_atom_types,
+								orbital_types,
+								"fa_standard",
+								residue_name,
+								db_session));
+						extra_residues.push_back(new_residue);
+					}
+
+				}else
+				{
+					utility::vector1<std::string> residue_names_in_database( residue_database_interface.get_all_residues_in_database(db_session));
+					for(Size index =1; index <= residue_names_in_database.size();++index)
+					{
+						ResidueTypeOP new_residue(
+							residue_database_interface.read_residuetype_from_database(
+								atom_types,
+								elements,
+								mm_atom_types,
+								orbital_types,
+								"fa_standard",
+								residue_names_in_database[index],
+								db_session));
+						extra_residues.push_back(new_residue);
+					}
+				}
 			}
 
 

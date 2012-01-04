@@ -33,6 +33,7 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 // AUTO-REMOVED #include <utility/excn/Exceptions.hh>
+#include <basic/Tracer.hh>
 
 
 // C++ Headers
@@ -44,6 +45,9 @@
 #include <utility/excn/EXCN_Base.hh>
 namespace protocols{
 namespace features{
+
+basic::Tracer TR("protocols.features.DatabaseFilters");
+
 
 core::Real get_current_model_score(core::pose::Pose const & pose, core::Size score_type_id){
 	//Set up to pull scores out of the energy map
@@ -100,7 +104,7 @@ WriteDeletePair get_write_delete_pair(
 		score_type_id = get_score_type_id_from_score_term(db_session,protocol_id,score_term);
 	}catch(utility::excn::EXCN_Base &)
 	{
-		std::cout << "no score type term, looking in the job data map" <<std::endl;
+		TR << "no score type term, looking in the job data map" <<std::endl;
 	}
 	//Some applications (most ligand docking) store score terms in the job data.
 	//If this is the case score_type_id will return 0

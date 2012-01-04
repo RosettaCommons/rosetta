@@ -1757,6 +1757,56 @@ ResidueType::update_actcoord( conformation::Residue & rot ) const
 
 void
 ResidueType::set_icoor(
+	Size const & index,
+	std::string const & atm,
+	Real const phi,
+	Real const theta,
+	Real const d,
+	std::string const & stub_atom1,
+	std::string const & stub_atom2,
+	std::string const & stub_atom3,
+	bool const update_xyz // = false
+)
+{
+	ICoorAtomID id( atm, *this );
+	AtomICoor const ic( index, phi, theta, d, stub_atom1, stub_atom2, stub_atom3, *this );
+
+	Size const atomno( id.atomno() );
+	switch ( id.type() ) {
+	case ICoorAtomID::INTERNAL:
+		if ( icoor_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
+		icoor_[ atomno ] = ic;
+		// update atom_base?
+		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
+				 ( atom_base_.size() < atomno || atom_base_[ atomno ] == 0 || atom_base_[ atomno ] == atomno ) ) {
+			set_atom_base( atm, stub_atom1 );
+		}
+		if ( update_xyz ) {
+			set_xyz( atm, ic.build( *this ) );
+// 			std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
+// 				ic.build(*this)(1) << ' ' <<
+// 				ic.build(*this)(2) << ' ' <<
+// 				ic.build(*this)(3) << std::endl;
+		}
+		break;
+	case ICoorAtomID::CONNECT:
+		residue_connections_[ atomno ].icoor( ic );
+		break;
+	case ICoorAtomID::POLYMER_LOWER:
+		assert( lower_connect_id_ != 0 );
+		residue_connections_[ lower_connect_id_ ].icoor( ic );
+		break;
+	case ICoorAtomID::POLYMER_UPPER:
+		assert( upper_connect_id_ != 0 );
+		residue_connections_[ upper_connect_id_ ].icoor( ic );
+		break;
+	default:
+		utility_exit_with_message( "unrecognized stub atom id type!" );
+	}
+}
+
+void
+ResidueType::set_icoor(
 	std::string const & atm,
 	Real const phi,
 	Real const theta,

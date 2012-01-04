@@ -1059,7 +1059,19 @@ public:
 		bool const update_xyz = false
 	);
 
-
+	/// @brief set AtomICoor for an atom
+	void
+	set_icoor(
+		Size const & index,
+		std::string const & atm,
+		Real const phi,
+		Real const theta,
+		Real const d,
+		std::string const & stub_atom1,
+		std::string const & stub_atom2,
+		std::string const & stub_atom3,
+		bool const update_xyz = false
+	);
 
 	void assign_neighbor_atom();
 

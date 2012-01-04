@@ -48,7 +48,7 @@ public:
 	void write_residuetype_to_database(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	core::chemical::ResidueTypeOP read_residuetype_from_database(
 		chemical::AtomTypeSetCAP atom_types,
@@ -57,9 +57,9 @@ public:
 		chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
-	utility::vector1<std::string> get_all_residues_in_database(utility::sql_database::sessionOP db_session) const;
+	utility::vector1<std::string> get_all_residues_in_database(utility::sql_database::sessionOP db_session) ;
 
 private:
 
@@ -67,143 +67,144 @@ private:
 	get_atom_name_from_database_atom_index(
 		std::string residue_name,
 		core::Size atom_index,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 
 	void
 	report_residue_type(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	report_residue_type_atom(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type_atom(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	report_residue_type_bond(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type_bond(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 	void
 	report_residue_type_cut_bond(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type_cut_bond(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	report_residue_type_chi(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type_chi(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	report_residue_type_chi_rotamer(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type_chi_rotamer(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	report_residue_type_proton_chi(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type_proton_chi(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	report_residue_type_properties(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type_properties(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 
 	void
 	report_residue_type_variant(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type_variant(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	report_residue_type_icoor(
 		std::string const & residue_type_set_name,
 		core::chemical::ResidueType const & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 	void
 	read_residue_type_icoor(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
 		core::chemical::ResidueType & res_type,
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) ;
 
 
 private:
 	core::Real version_;
 
+	std::map<std::pair<std::string,core::Size>, std::string > atom_name_id_cache_;
 
 };
 

@@ -56,6 +56,7 @@ namespace in { namespace file { FileVectorOptionKey const extra_res_fa( "in:file
 namespace in { namespace file { FileVectorOptionKey const extra_res_mol( "in:file:extra_res_mol" );  } }
 namespace in { namespace file { StringOptionKey const extra_res_database( "in:file:extra_res_database" );  } }
 namespace in { namespace file { StringOptionKey const extra_res_database_mode( "in:file:extra_res_database_mode" );  } }
+namespace in { namespace file { FileOptionKey const extra_res_database_resname_list( "in:file:extra_res_database_resname_list" );  } }
 namespace in { namespace file { FileVectorOptionKey const extra_res_cen( "in:file:extra_res_cen" );  } }
 namespace in { namespace file { PathVectorOptionKey const extra_res_path( "in:file:extra_res_path" );  } }
 namespace in { namespace file { StringOptionKey const frag3( "in:file:frag3" );  } }

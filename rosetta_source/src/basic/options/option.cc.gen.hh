@@ -60,7 +60,8 @@ option.add( basic::options::OptionKeys::in::file::frag_sizes, "Fragment file siz
 option.add( basic::options::OptionKeys::in::file::extra_res_fa, ".params file(s) for new fullatom residue types (e.g. ligands)" );
 option.add( basic::options::OptionKeys::in::file::extra_res_mol, ".mol file(s) for new fullatom residue types (e.g. ligands)" );
 option.add( basic::options::OptionKeys::in::file::extra_res_database, "the name of a database containing fullatom residue types (e.g. ligands)" );
-option.add( basic::options::OptionKeys::in::file::extra_res_database_mode, "The type of database drivert o use for -in:file:extra_res_database.  Acceptable values are 'mysql' or 'sqlite3'" ).def("sqlite3");
+option.add( basic::options::OptionKeys::in::file::extra_res_database_mode, "The type of database driver to use for -in:file:extra_res_database.  Acceptable values are 'mysql' or 'sqlite3'" ).def("sqlite3");
+option.add( basic::options::OptionKeys::in::file::extra_res_database_resname_list, "Path to a list of residue names to be read in from the residue database.  The list should have one residue name per line" );
 option.add( basic::options::OptionKeys::in::file::extra_res_cen, ".params file(s) for new centroid residue types (e.g. ligands)" );
 option.add( basic::options::OptionKeys::in::file::extra_res_path, "directories with .params files.  Only files containing 'param' will be chosen" );
 option.add( basic::options::OptionKeys::in::file::frag3, "No description" );
@@ -1175,10 +1176,10 @@ option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs
 option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);
 option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
+option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
-option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
 option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
 option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(10);
@@ -1762,11 +1763,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");

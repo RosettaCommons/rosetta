@@ -583,3 +583,4 @@ namespace lh { StringOptionKey const homo_file( "lh:homo_file" );  }
 namespace lh { RealVectorOptionKey const createdb_rms_cutoff( "lh:createdb_rms_cutoff" );  }
 namespace lh { RealOptionKey const min_bbrms( "lh:min_bbrms" );  }
 namespace lh { RealOptionKey const max_bbrms( "lh:max_bbrms" );  }
+namespace lh { RealOptionKey const min_rms( "lh:min_rms" );  }

@@ -59,7 +59,7 @@ sources = {
 	],
 	"pilot/delucasl" : [
 		#"roc_test",
-		#"roc_optimizer",
+		"roc_optimizer",
 		#"RotamerDump",
 		#"process_mdl",
 		"ligands_to_database",

@@ -265,8 +265,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-extra_res_database_mode</b> \<String\><dt>
-<dd>The type of database drivert o use for -in:file:extra_res_database.  Acceptable values are 'mysql' or 'sqlite3'</dd><br>
+<dd>The type of database driver to use for -in:file:extra_res_database.  Acceptable values are 'mysql' or 'sqlite3'</dd><br>
 <dd>Default: "sqlite3"</dd><br>
+</dl>
+<dl>
+<dt><b>-extra_res_database_resname_list</b> \<File\><dt>
+<dd>Path to a list of residue names to be read in from the residue database.  The list should have one residue name per line</dd><br>
 </dl>
 <dl>
 <dt><b>-extra_res_cen</b> \<FileVector\><dt>

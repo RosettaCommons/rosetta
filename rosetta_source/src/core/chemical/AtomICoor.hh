@@ -171,6 +171,7 @@ class AtomICoor {
 public:
 	/// default constructor
 	AtomICoor():
+		index_(0),
 		phi_(0.0),
 		theta_(0.0),
 		d_(0.0),
@@ -189,6 +190,26 @@ public:
 		std::string const & stub_atom3_name,
 		ResidueType const & rsd_type
 	):
+		index_(0),
+		phi_( phi_in ),
+		theta_( theta_in ),
+		d_( d_in ),
+		stub_atom1_( stub_atom1_name, rsd_type ),
+		stub_atom2_( stub_atom2_name, rsd_type ),
+		stub_atom3_( stub_atom3_name, rsd_type )
+	{}
+
+	AtomICoor(
+		Size const index,
+		Real const phi_in,
+		Real const theta_in,
+		Real const d_in,
+		std::string const & stub_atom1_name,
+		std::string const & stub_atom2_name,
+		std::string const & stub_atom3_name,
+		ResidueType const & rsd_type
+	):
+		index_(index),
 		phi_( phi_in ),
 		theta_( theta_in ),
 		d_( d_in ),
@@ -296,6 +317,16 @@ public:
 		return stub_atom1_;
 	}
 
+	void index(core::Size index)
+	{
+		index_ = index;
+	}
+
+	Size index()
+	{
+		return index_;
+	}
+
 public:
 
 	Vector
@@ -317,6 +348,7 @@ public:
 	build( conformation::Residue const & rsd ) const;
 
 private:
+	Size index_;
 	Real phi_;
 	Real theta_;
 	Real d_;
