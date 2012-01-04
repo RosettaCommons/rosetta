@@ -190,7 +190,7 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
 
   // Sampling options
   const Size num_fragments = option[OptionKeys::cm::sanitize::num_fragments]();
-  const Size cycles = option[OptionKeys::abinitio::increase_cycles]() * 5000;
+  const Size cycles = static_cast<Size>(option[OptionKeys::abinitio::increase_cycles]() * 5000);
   const Real temp = option[OptionKeys::abinitio::temperature]();
 
   vector1<double> probs;
