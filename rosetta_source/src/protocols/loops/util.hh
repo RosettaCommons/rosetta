@@ -21,7 +21,7 @@
 #include <protocols/loops/Loops.fwd.hh>
 
 #include <utility/vector1.hh>
-
+#include <string>
 
 namespace protocols {
 namespace loops {
@@ -70,7 +70,43 @@ loops_from_string( std::string const loop_str, core::pose::Pose const & pose );
 // not scored are loops with 4 or more residues, short helices (<=5) that terminate a loop are not scored, too
 void define_scorable_core_from_secondary_structure( core::fragment::SecondaryStructure const&, protocols::loops::Loops& score_core );
 
+/// @brief Extract secondary structure chunks from the pose, using multiple secondary structure types
+/// this function requires that the pose object already have secstruct information
+/// to get this information from structure (DSSP), call
+/// protocols::jumping::Dssp dssp_obj( *pose );	dssp_obj.insert_ss_into_pose( *pose );
+/// or from secondary structure prediction (psipred_ss2 file), call
+///	core::pose::read_psipred_ss2_file(pose);
+protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
+														   std::string extracted_ss_types = "HE",
+														   core::Size gap_size = 1,
+														   core::Size minimum_length_of_chunk_helix = 5,
+														   core::Size minimum_length_of_chunk_strand = 3,
+														   core::Real CA_CA_distance_cutoff = 4);
 
+/// @brief Extract secondary structure chunks from the pose, using a given secondary structure type
+protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
+														   char const extracted_ss_type);
+
+protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose);
+protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose,
+										protocols::loops::Loops const & input_chunks);
+
+// TODO(cmiles) deduplicate
+/// @brief Split into separate chunks if CA-CA distance is over the cutoff
+protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
+											protocols::loops::Loops const & input_chunks,
+											core::Real const CA_CA_distance_cutoff = 4);
+
+/// @brief If two chunks are separated by a small gap of size <= <gap_size>, combine them
+protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_chunks, core::Size gap_size = 1);
+
+/// @brief Remove small chunks
+protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & input_chunks, core::Size min_length = 3);
+
+protocols::loops::Loops extract_conti_chunks(core::pose::Pose const & pose,
+											 core::Size const minimum_size = 3,
+											 core::Real const CA_CA_distance_cutoff = 4);
+		
 } //loops
 } //protocols
 

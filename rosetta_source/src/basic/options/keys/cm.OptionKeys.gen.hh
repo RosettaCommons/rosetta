@@ -49,6 +49,14 @@ namespace cm { extern IntegerOptionKey const nn; }
 namespace cm { extern RealOptionKey const fr_temperature; }
 namespace cm { extern FileVectorOptionKey const ev_map; }
 namespace cm { extern FileVectorOptionKey const hh_map; }
+namespace cm { namespace hybridize { extern BooleanOptionKey const hybridize; } }
+namespace cm { namespace hybridize { extern FileVectorOptionKey const templates; } }
+namespace cm { namespace hybridize { extern StringOptionKey const ss; } }
+namespace cm { namespace hybridize { extern IntegerOptionKey const max_registry_shift; } }
+namespace cm { namespace hybridize { extern BooleanOptionKey const alignment_from_template_seqpos; } }
+namespace cm { namespace hybridize { extern IntegerVectorOptionKey const alignment_from_chunk_mapping; } }
+namespace cm { namespace hybridize { extern BooleanOptionKey const virtual_loops; } }
+namespace cm { namespace hybridize { extern BooleanOptionKey const revert_real_loops; } }
 
 } // namespace OptionKeys
 } // namespace options

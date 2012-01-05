@@ -7481,6 +7481,45 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Input file that maps pdbChains to hhsearch probabilities</dd><br>
 </dl>
  </li>
+<li><h2>cm:hybridize</h2>
+<dl>
+<dt><b>-hybridize</b> \<Boolean\><dt>
+<dd>hybridize option group</dd><br>
+</dl>
+<dl>
+<dt><b>-templates</b> \<FileVector\><dt>
+<dd>Input list of template files</dd><br>
+</dl>
+<dl>
+<dt><b>-ss</b> \<String\><dt>
+<dd>secondary structure elements used to split the pose</dd><br>
+<dd>Default: "HE"</dd><br>
+</dl>
+<dl>
+<dt><b>-max_registry_shift</b> \<Integer\><dt>
+<dd>maximum registry shift</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-alignment_from_template_seqpos</b> \<Boolean\><dt>
+<dd>alignment from template resSeq</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-alignment_from_chunk_mapping</b> \<IntegerVector\><dt>
+<dd>alignment from secondary structure mapping</dd><br>
+</dl>
+<dl>
+<dt><b>-virtual_loops</b> \<Boolean\><dt>
+<dd>use virtual loops</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-revert_real_loops</b> \<Boolean\><dt>
+<dd>revert back to non-virtual loops</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
 <li><h2>ms</h2>
 <dl>
 <dt><b>-ms</b> \<Boolean\><dt>

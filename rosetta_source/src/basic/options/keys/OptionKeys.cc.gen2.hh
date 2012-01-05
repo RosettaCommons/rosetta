@@ -364,6 +364,14 @@ namespace cm { IntegerOptionKey const nn( "cm:nn" );  }
 namespace cm { RealOptionKey const fr_temperature( "cm:fr_temperature" );  }
 namespace cm { FileVectorOptionKey const ev_map( "cm:ev_map" );  }
 namespace cm { FileVectorOptionKey const hh_map( "cm:hh_map" );  }
+namespace cm { namespace hybridize { BooleanOptionKey const hybridize( "cm:hybridize" );  } }
+namespace cm { namespace hybridize { FileVectorOptionKey const templates( "cm:hybridize:templates" );  } }
+namespace cm { namespace hybridize { StringOptionKey const ss( "cm:hybridize:ss" );  } }
+namespace cm { namespace hybridize { IntegerOptionKey const max_registry_shift( "cm:hybridize:max_registry_shift" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const alignment_from_template_seqpos( "cm:hybridize:alignment_from_template_seqpos" );  } }
+namespace cm { namespace hybridize { IntegerVectorOptionKey const alignment_from_chunk_mapping( "cm:hybridize:alignment_from_chunk_mapping" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const virtual_loops( "cm:hybridize:virtual_loops" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const revert_real_loops( "cm:hybridize:revert_real_loops" );  } }
 namespace ms { BooleanOptionKey const ms( "ms" );  }
 namespace ms { BooleanOptionKey const share_data( "ms:share_data" );  }
 namespace ms { BooleanOptionKey const verbose( "ms:verbose" );  }

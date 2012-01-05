@@ -29,9 +29,10 @@ namespace hybridize {
 class WeightedFragmentTrialMover : public protocols::moves::Mover
 {
 public:
-	WeightedFragmentTrialMover(utility::vector1< core::fragment::FragSetOP > frag_libs,
-							   utility::vector1< core::Real > residue_weights);
-
+	WeightedFragmentTrialMover(utility::vector1< core::fragment::FragSetOP > const frag_libs,
+							   utility::vector1< core::Real > const residue_weights);
+	void update_sampler_weights( utility::vector1< core::Real > const residue_weights );
+	
 	void apply(core::pose::Pose & pose);
 	std::string get_name() const;
 	

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file
-/// @brief Align a random jump to template
+/// @brief Wrapper for InsertChunkMover. It can take a random template and steal coordinates of all chunks or a random one
 /// @detailed
 /// @author Yifan Song
 
@@ -24,9 +24,7 @@
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-
-#include <protocols/nonlocal/StarTreeBuilder.hh>
-#include <protocols/nonlocal/util.hh>
+#include <protocols/loops/util.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <numeric/xyz.functions.hh>
@@ -42,7 +40,7 @@
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static numeric::random::RandomGenerator RG(482136);
+static numeric::random::RandomGenerator RG(57029435);
 
 namespace protocols {
 namespace comparative_modeling {
@@ -53,7 +51,6 @@ using namespace core::kinematics;
 using namespace ObjexxFCL;
 using namespace protocols::moves;
 using namespace protocols::loops;
-using namespace protocols::nonlocal;
 using namespace numeric::model_quality;
 using namespace id;
 using namespace basic::options;
@@ -171,12 +168,12 @@ void
 ChunkTrialMover::apply(core::pose::Pose & pose) {
 	max_registry_shift_.resize(pose.num_jump(), max_registry_shift_input_);
 
-	// pick a random template
-	pick_random_template();
-	align_chunk_.set_template(template_poses_[template_number_], sequence_alignments_[template_number_]);
-	
 	// random chunk or loop all chunks
 	if (align_option_ == random_chunk) {
+		// pick a random template
+		pick_random_template();
+		align_chunk_.set_template(template_poses_[template_number_], sequence_alignments_[template_number_]);
+		
 		// pick a random jump
 		pick_random_chunk(pose);
 		align_chunk_.set_aligned_chunk(pose, jump_number_);
@@ -188,6 +185,8 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 		align_chunk_.apply(pose);
 	}
 	else {
+		align_chunk_.set_template(template_poses_[template_number_], sequence_alignments_[template_number_]);
+
 		// loop over all jumps
 		for (core::Size jump_number=1; jump_number<=pose.num_jump(); ++jump_number) {
 			align_chunk_.set_aligned_chunk(pose, jump_number);

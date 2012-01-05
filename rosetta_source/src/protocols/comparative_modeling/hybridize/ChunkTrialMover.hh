@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file
-/// @brief Align a random jump to template
+/// @brief Wrapper for InsertChunkMover. It can take a random template and steal coordinates of all chunks or a random one
 /// @detailed
 /// @author Yifan Song
 

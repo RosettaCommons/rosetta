@@ -18,18 +18,24 @@
 
 #include <numeric/random/random.hh>
 
-static numeric::random::RandomGenerator RG(482136);
+static numeric::random::RandomGenerator RG(8401848);
 
 namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 
-WeightedFragmentTrialMover::WeightedFragmentTrialMover(utility::vector1< core::fragment::FragSetOP > frag_libs,
-													   utility::vector1< core::Real > residue_weights)
+WeightedFragmentTrialMover::WeightedFragmentTrialMover( utility::vector1< core::fragment::FragSetOP > const frag_libs,
+													    utility::vector1< core::Real > const residue_weights )
 {
 	frag_libs_ = frag_libs;
-	
 	weighted_sampler_.resize(frag_libs.size());
+	update_sampler_weights(residue_weights);
+}
+
+void WeightedFragmentTrialMover::update_sampler_weights(
+														utility::vector1< core::Real > const residue_weights
+														)
+{
 	for (Size i_frag_set = 1; i_frag_set<=frag_libs_.size(); ++i_frag_set) {
 		utility::vector1< core::Real > frame_weights(frag_libs_[i_frag_set]->nr_frames(), 0.0);
 		for (Size i_frame = 1; i_frame <= frag_libs_[i_frag_set]->nr_frames(); ++i_frame) {
@@ -44,7 +50,7 @@ WeightedFragmentTrialMover::WeightedFragmentTrialMover(utility::vector1< core::f
 		weighted_sampler_[i_frag_set].weights(frame_weights);
 	}
 }
-
+	
 void WeightedFragmentTrialMover::apply(core::pose::Pose & pose)
 {
 	// pick fragment set

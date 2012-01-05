@@ -54,9 +54,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-
-#include <protocols/nonlocal/StarTreeBuilder.hh>
-#include <protocols/nonlocal/util.hh>
+#include <protocols/loops/util.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <numeric/xyz.functions.hh>
@@ -85,17 +83,21 @@ using namespace ObjexxFCL;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::loops;
-using namespace protocols::nonlocal;
 using namespace numeric::model_quality;
 using namespace id;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 	
 	
-FoldTreeHybridize::FoldTreeHybridize( utility::vector1 < core::pose::PoseOP > const & template_poses )
+FoldTreeHybridize::FoldTreeHybridize( core::pose::PoseOP const initial_template, utility::vector1 < core::pose::PoseOP > const & template_poses,
+									  utility::vector1 < core::fragment::FragSetOP > & frag_libs)
 {
 	//initialize template structures
+	initial_template_ = initial_template;
 	template_poses_ = template_poses;
+	
+	// abinitio frag9,frag3 flags
+	frag_libs_ = frag_libs;
 }
 	
 void
@@ -198,8 +200,7 @@ FoldTreeHybridize::gap_distance(Size Seq_gap)
 			break;
 		case 3:
 			return gap_torr_3;
-			break;
-		case 4:
+			case 4:
 			return gap_torr_4;
 			break;
 		case 5:
@@ -276,7 +277,7 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
  */
 
 void
-FoldTreeHybridize::setup_startree(core::pose::Pose & pose) {
+FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	std::string cut_point_decision("middle");
 	
 	basic::Tracer TR("pilot.yfsong.util");
@@ -296,16 +297,17 @@ FoldTreeHybridize::setup_startree(core::pose::Pose & pose) {
 	ss_chunks_pose_ = extract_secondary_structure_chunks( pose, option[cm::hybridize::ss](), gap_size, minimum_length_of_chunk_helix,minimum_length_of_chunk_strand );
 
 	ss_chunks_pose_.sequential_order();
-	TR.Debug << "Target secondary chunks:" << std::endl;
-	TR.Debug << ss_chunks_pose_ << std::endl;
+	//TR.Debug << "Target secondary chunks:" << std::endl;
+	//TR.Debug << ss_chunks_pose_ << std::endl;
+
 	loops_pose_ = ss_chunks_pose_.invert(pose.total_residue());
-	TR.Debug << "Target loops: " << pose.total_residue() << std::endl;
-	TR.Debug << loops_pose_ << std::endl;
-	TR.flush();
+	//TR.Debug << "Target loops: " << pose.total_residue() << std::endl;
+	//TR.Debug << loops_pose_ << std::endl;
+	//TR.flush();
 	
-	//if (option[challenge::virtual_loops]()) {
+	if (option[cm::hybridize::virtual_loops]()) {
 		set_loops_to_virt_ala(pose, loops_pose_);
-	//}
+	}
 	
 	// complete the chunks to cover the whole protein and customize cutpoints
 	// cutpoints in the middle of the loop
@@ -401,9 +403,23 @@ Loops FoldTreeHybridize::loops() {
 	return loops_pose_;	
 }
 
+utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops(core::pose::Pose & pose)
+{
+	utility::vector1< core::Real > residue_weights(pose.total_residue());
+	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+		if (loops_pose_.has(ires) ) {
+			residue_weights[ires] = 1.0;
+		}
+		else {
+			residue_weights[ires] = 0.0;
+		}
+	}
+	return residue_weights;
+}
+
 void
 FoldTreeHybridize::apply(core::pose::Pose & pose) {
-	setup_startree(pose);
+	setup_foldtree(pose);
 	
 	// Initialize the structure
 	ChunkTrialMover initialize_chunk_mover(template_poses_, ss_chunks_pose_, all_chunks);
@@ -412,15 +428,13 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	
 	Size max_registry_shift = option[cm::hybridize::max_registry_shift]();
 	ChunkTrialMoverOP random_sample_chunk_mover(
-													  new ChunkTrialMover(template_poses_, ss_chunks_pose_, random_chunk, max_registry_shift) );
+												new ChunkTrialMover(template_poses_, ss_chunks_pose_, random_chunk, max_registry_shift)
+												);
 	
-	utility::vector1 < core::fragment::FragSetOP > frag_lib;
-	frag_lib.push_back(fragments3_); frag_lib.push_back(fragments9_);
-	utility::vector1< core::Real > residue_weights;
-	
+	utility::vector1< core::Real > residue_weights( get_residue_weights_from_loops(pose) );
 	WeightedFragmentTrialMoverOP fragment_trial_mover(
-												   new WeightedFragmentTrialMover(frag_lib, residue_weights)
-												   );
+													  new WeightedFragmentTrialMover(frag_libs_, residue_weights)
+													  );
 	
 	for (Size i=1;i<=8;++i) {
 		if (i>=3) {

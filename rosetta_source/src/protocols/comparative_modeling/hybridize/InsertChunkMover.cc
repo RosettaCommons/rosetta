@@ -17,6 +17,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -45,7 +46,7 @@
 
 #include <basic/Tracer.hh>
 
-static numeric::random::RandomGenerator RG(482136);
+static numeric::random::RandomGenerator RG(1183103);
 static basic::Tracer TR( "protocols.comparative_modeling.hybridize.InsertChunkMover" );
 
 namespace protocols {

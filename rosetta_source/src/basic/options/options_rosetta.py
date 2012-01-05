@@ -3230,7 +3230,17 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option(
 			'hh_map','FileVector', desc='Input file that maps pdbChains to hhsearch probabilities'
 		),
-	),
+		Option_Group( 'hybridize', # tempalate hybridization
+			Option( 'templates',          'FileVector', desc='Input list of template files'),
+			Option( 'template_list',          'File', desc='Input list of templates, constaints, cluster, and weights'),
+			Option( 'ss',       'String',     desc='secondary structure elements used to split the pose', default='HE' ),
+			Option( 'max_registry_shift', 'Integer',    desc='maximum registry shift', default='0' ),
+			Option( 'alignment_from_template_seqpos', 'Boolean',    desc='alignment from template resSeq', default='true' ),
+			Option( 'alignment_from_chunk_mapping', 'IntegerVector',    desc='alignment from secondary structure mapping' ),
+			Option( 'virtual_loops', 'Boolean',    desc='use virtual loops', default='false' ),
+			Option( 'revert_real_loops', 'Boolean',    desc='revert back to non-virtual loops', default='false' ),
+		), # hybridize
+	), # cm
 	Option_Group( 'ms' , # multistate_design
 
 		Option( 'share_data',                    'Boolean',          desc='share rotamers and energies between states -- valid only if state variability is defined rotamerically', default='false' ),
@@ -3251,7 +3261,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'gz',             'Boolean',                  desc='compress checkpoing files with gzip', default='false' ),
 			Option( 'rename',             'Boolean',                  desc='rename checkpoint files after genetic algorithm completes', default='false' ),
 		),
-		), # cm
+	),
 
 	Option_Group( 'loops',
 		Option( 'loops', 'Boolean', desc='loop modeling option group', legal=['true','false'], default='true'),

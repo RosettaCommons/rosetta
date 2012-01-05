@@ -1180,7 +1180,9 @@ option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0)
 
 }
 inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
-option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
 option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(10);
 option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
@@ -1545,6 +1547,14 @@ option.add( basic::options::OptionKeys::cm::nn, "number of neighbors to include 
 option.add( basic::options::OptionKeys::cm::fr_temperature, "temperature to use during fragment-based refinement of structures" ).def(2.0);
 option.add( basic::options::OptionKeys::cm::ev_map, "Input file that maps pdbChains to blast e-values" );
 option.add( basic::options::OptionKeys::cm::hh_map, "Input file that maps pdbChains to hhsearch probabilities" );
+option.add( basic::options::OptionKeys::cm::hybridize::hybridize, "hybridize option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cm::hybridize::templates, "Input list of template files" );
+option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure elements used to split the pose" ).def("HE");
+option.add( basic::options::OptionKeys::cm::hybridize::max_registry_shift, "maximum registry shift" ).def(0);
+option.add( basic::options::OptionKeys::cm::hybridize::alignment_from_template_seqpos, "alignment from template resSeq" ).def(true);
+option.add( basic::options::OptionKeys::cm::hybridize::alignment_from_chunk_mapping, "alignment from secondary structure mapping" );
+option.add( basic::options::OptionKeys::cm::hybridize::virtual_loops, "use virtual loops" ).def(false);
+option.add( basic::options::OptionKeys::cm::hybridize::revert_real_loops, "revert back to non-virtual loops" ).def(false);
 option.add( basic::options::OptionKeys::ms::ms, "ms option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ms::share_data, "share rotamers and energies between states -- valid only if state variability is defined rotamerically" ).def(false);
 option.add( basic::options::OptionKeys::ms::verbose, "" ).def(false);
@@ -1762,8 +1772,6 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa,
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 
 }
