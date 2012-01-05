@@ -19,24 +19,27 @@
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-// Utility Headers
+//project headers
 #include <numeric/random/random.hh>
-#include <utility/tag/Tag.hh>
-
-#include <utility/exit.hh>
-
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-
 #include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
-#include <protocols/jobdist/Jobs.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
+
+// Utility Headers
+
+#include <utility/tag/Tag.hh>
+#include <utility/exit.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
+#include <utility/string_util.hh>
 
-//Auto Headers
+// Boost headers
+#include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -119,19 +122,35 @@ StartFrom::parse_my_tag(
 		if ( ! child_tag->hasOption("y") ) utility_exit_with_message("'StartFrom' mover requires 'y' coordinates option");
 		if ( ! child_tag->hasOption("z") ) utility_exit_with_message("'StartFrom' mover requires 'z' coordinates option");
 
+		std::string pdb_tag = "default";
+		if(child_tag->hasOption("pdb_tag"))
+		{
+			pdb_tag = child_tag->getOption<std::string>("pdb_tag");
+		}
+
 		core::Vector v(
 				child_tag->getOption<core::Real>("x"),
 				child_tag->getOption<core::Real>("y"),
 				child_tag->getOption<core::Real>("z")
 		);
 
-		starting_points_.push_back(v);
+		coords(v,pdb_tag);
 	}
 }
 
-void StartFrom::coords(core::Vector const & coords)
+void StartFrom::coords(core::Vector const & coords,std::string const & pdb_tag)
 {
-	starting_points_.push_back(coords);
+	std::map< std::string, utility::vector1<core::Vector> >::iterator start_point_it = starting_points_.find(pdb_tag);
+
+	if(start_point_it == starting_points_.end())
+	{
+		utility::vector1<core::Vector> new_point_set;
+		new_point_set.push_back(coords);
+		starting_points_.insert(std::make_pair(pdb_tag,new_point_set));
+	}else
+	{
+		start_point_it->second.push_back(coords);
+	}
 }
 
 void StartFrom::chain(std::string const & chain)
@@ -142,7 +161,34 @@ void StartFrom::chain(std::string const & chain)
 void StartFrom::apply(core::pose::Pose & pose){
 	assert(!starting_points_.empty());
 	int const starting_point_index= numeric::random::RG.random_range(1, starting_points_.size());
-	core::Vector desired_centroid = starting_points_[starting_point_index];
+
+	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+	std::list<std::string> component_tags(utility::split_to_list(input_tag));
+
+	utility::vector1<core::Vector> centroid_points;
+
+	for(std::list<std::string>::iterator tag_it = component_tags.begin(); tag_it != component_tags.end();++tag_it)
+	{
+		std::map< std::string, utility::vector1<core::Vector> >::iterator tag_points( starting_points_.find(*tag_it));
+		if(tag_points != starting_points_.end())
+		{
+			centroid_points = tag_points->second;
+			break;
+		}else
+		{
+			tag_points = starting_points_.find("default");
+			if(tag_points == starting_points_.end())
+			{
+				utility_exit_with_message("There are no default starting coordinates specified in the StartFrom mover, and none of the specified coordinates match the current tag");
+			}
+			centroid_points = tag_points->second;
+			break;
+		}
+	}
+
+	assert(centroid_points.size());
+
+	core::Vector desired_centroid = centroid_points[starting_point_index];
 
 	core::Size jump_id = core::pose::get_jump_id_from_chain(chain_, pose);
 	move_ligand_to_desired_centroid(jump_id, desired_centroid, pose);

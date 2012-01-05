@@ -24,6 +24,7 @@
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
+#include <map>
 
 namespace core {
 namespace chemical {

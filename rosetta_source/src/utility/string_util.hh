@@ -25,6 +25,7 @@
 
 // C++ headers
 #include <list>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -50,6 +51,9 @@ std::string join(std::string const & string_w_spaces, std::string const & connec
 
 /// @brief split given std::string using ' ' symbol.
 std::list< std::string > split_to_list(const std::string &s);
+
+/// @brief split given std::string to a set using ' ' symbol.
+std::set< std::string > split_to_set(std::string const & s);
 
 /// @details split to vector< std::string > using arbitrary split character
 std::vector< std::string >

@@ -52,7 +52,7 @@ public:
 		core::pose::Pose const &
 	);
 
-	void coords(core::Vector const & coords);
+	void coords(core::Vector const & coords,std::string const & pdb_tag);
 
 	void chain(std::string const & chain);
 
@@ -63,7 +63,7 @@ public:
 
 private:
 	std::string chain_;
-	utility::vector1<core::Vector> starting_points_;
+	std::map< std::string, utility::vector1<core::Vector> > starting_points_;
 };
 
 void move_ligand_to_desired_centroid(

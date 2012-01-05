@@ -121,6 +121,26 @@ std::list< std::string > split_to_list(const std::string &s) {
 	return r;
 }
 
+/// @details split given std::string using ' ' symbol.
+std::set< std::string > split_to_set(const std::string &s) {
+	std::set<std::string> r;
+	unsigned int start=0, i=0;
+	while( start < s.size() ) {
+		if( s[i] == ' ' /*|| i==s.size()-1 */) {
+			std::string add(s.begin()+start, s.begin()+i);
+			if( add.size() != 0 ) r.insert( add );
+			start = i+1;
+		}
+		i++;
+		if( i == s.size() ) {
+			std::string add(s.begin()+start, s.begin()+i);
+			if( add.size() != 0 ) r.insert( add );
+			break;
+		}
+	}
+	return r;
+}
+
 /// @details split to vector< std::string > using arbitrary split character
 /// @author ashworth
 std::vector< std::string >
