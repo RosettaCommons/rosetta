@@ -41,7 +41,10 @@ void check_lengths(PoseCOP reference, const vector1<PoseCOP>& models) {
   const Size n = reference->total_residue();
 
   for (Size i = 1; i <= models.size(); ++i) {
-    if (models[i]->total_residue() != n) {
+    const Size m = models[i]->total_residue();
+    if (m != n) {
+      std::cerr << "Residues in reference: " << n << std::endl;
+      std::cerr << "Residues in model[" << i << "]: " << m << std::endl;
       utility_exit_with_message("Reference structure and model have unequal number of residues");
     }
   }
