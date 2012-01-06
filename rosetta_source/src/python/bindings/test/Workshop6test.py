@@ -23,9 +23,20 @@ pack_mover = PackRotamersMover(scorefxn, task_pack)
 
 pack_mover.apply(pose)
 
+
+import os, tempfile
+
 # Design
-generate_resfile_from_pdb("test/data/workshops/1YY8.clean.pdb", "test/data/workshops/1YY8.resfile")
-generate_resfile_from_pose(pose, "test/data/workshops/1YY8.resfile")
+
+# work around for windows permission problem
+YY8_resfile1 = tempfile.mkstemp()[1]
+YY8_resfile2 = tempfile.mkstemp()[1]
+
+generate_resfile_from_pdb("test/data/workshops/1YY8.clean.pdb", YY8_resfile1)
+generate_resfile_from_pose(pose, YY8_resfile2)
 
 task_design = TaskFactory.create_packer_task(pose)
-parse_resfile(pose, task_design, "test/data/workshops/1YY8.resfile")
+parse_resfile(pose, task_design, YY8_resfile2)
+
+#os.remove(YY8_resfile1)
+#os.remove(YY8_resfile2)

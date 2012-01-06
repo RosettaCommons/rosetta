@@ -49,7 +49,11 @@ loops.add_loop(loop2)
 # Loop Building
 reference_pose = pose_from_pdb("test/data/test_in.pdb")
 score = create_score_function("standard")
-jd = PyJobDistributor("output", 1, score)
+
+import tempfile
+output = tempfile.mkstemp()[1]
+
+jd = PyJobDistributor(output, 1, score)
 
 lrms = loop_rmsd(pose, reference_pose, loops, True)
 jd.additional_decoy_info = " LRMSD: " + str(lrms)

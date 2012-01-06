@@ -142,5 +142,5 @@ loop_refine = LoopMover_Refine_KIC( my_loops )
 loop_refine.apply( p ) # won't show in Pymol for efficiency
 pymol.apply( p ) # just show refined model
 
-print "outputting decoy test_kic.pdb"
-p.dump_pdb( "test/output/test_kic.pdb" )
+print "outputting decoy .test_kic.pdb"
+p.dump_pdb( ".test_kic.pdb" )

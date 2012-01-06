@@ -72,7 +72,10 @@ print CA_rmsd(pose, pose_low)
 print calc_Lrmsd(pose, pose_low, Vector1([1]))
 
 # Job Distributor
-jd = PyJobDistributor("output", 10, scorefxn_low)
+import tempfile
+output = tempfile.mkstemp()[1]
+
+jd = PyJobDistributor(output, 10, scorefxn_low)
 
 native_pose = pose_from_pdb("test/data/workshops/complex.high.pdb")
 jd.native_pose = native_pose
