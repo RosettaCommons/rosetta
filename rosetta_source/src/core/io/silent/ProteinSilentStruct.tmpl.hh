@@ -42,6 +42,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedStubID.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -798,23 +799,8 @@ void ProteinSilentStruct_Template<T>::fill_pose(
 		}
 	} //Profile scope
 
-	// disulfides
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	if ( option[ in::detect_disulf ].user() ?
-			option[ in::detect_disulf ]() : // detect_disulf true
-			fullatom() // detect_disulf default but fa pose
-		)
-	{
-		pose.conformation().detect_disulfides();
-	}
-	// Fix disulfides if a file is given
-	if ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
-		core::io::raw_data::DisulfideFile ds_file( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ]() );
-		utility::vector1< std::pair<Size,Size> > disulfides;
-		ds_file.disulfides(disulfides, pose);
-		pose.conformation().fix_disulfides( disulfides );
-	}
+	core::pose::initialize_disulfide_bonds(pose);
+
 	finish_pose( pose );
 } // fill_pose
 

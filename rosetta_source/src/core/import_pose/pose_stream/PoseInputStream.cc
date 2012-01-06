@@ -15,6 +15,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 #include <basic/options/option.hh>
 
@@ -47,21 +48,7 @@ void PoseInputStream::preprocess_pose( core::pose::Pose & pose ) {
 
 	if ( option[ james::debug ]() ) return;
 
-	// detect disulfides
-	if ( option[ in::detect_disulf ].user() ?
-			option[ in::detect_disulf ]() : // detect_disulf true
-			pose.is_fullatom()	// detect_disulf default but fa pose
-	) {
-		pose.conformation().detect_disulfides();
-	}
-
-	// Fix disulfides if a file is given
-	if ( option[ in::fix_disulf ].user() ) {
-		core::io::raw_data::DisulfideFile ds_file( option[ in::fix_disulf ]() );
-		utility::vector1< std::pair<Size,Size> > disulfides;
-		ds_file.disulfides(disulfides, pose);
-		pose.conformation().fix_disulfides( disulfides );
-	}
+	core::pose::initialize_disulfide_bonds(pose);
 
 	// add constraints if specified by the user.
 	// do this in a mover instead!

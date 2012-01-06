@@ -311,6 +311,7 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 	return file_data_map;
 }
 
+//TODO: move this with rest of disulfide code
 std::string
 CS2ndShift::also_check_fix_disulf( std::string instring ) {
 	if (option[in::fix_disulf].user()) {

@@ -601,6 +601,12 @@ void
 initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation, T const & value );
 
 
+/// @brief detect and fix disulfide bonds
+void
+initialize_disulfide_bonds(
+	Pose & pose);
+
+
 } // pose
 } // core
 

@@ -266,6 +266,13 @@ ResfileContents::parse_body_line(
 			found_commands = true;
 		}
 	} else if (id_type == ResfileContents::CHAIN_RESID) {
+		if(!pose.pdb_info()) {
+			stringstream err_msg;
+			err_msg
+				<< "On line " << lineno << ", "
+				<< "attemting to set task for all residues in a chain, however the pose does not have a PdbInfo object, which is used to look up which residues are part of which chain. Often the PdbInfo object is setup when the pose is intialized. Please check your protocol.";
+			utility_exit_with_message(err_msg.str());
+		}
 		bool found_a_residue_on_chain(false);
 		while ( which_token <= ntokens ) {
 			if (comment_begin(tokens, which_token)) break;

@@ -948,6 +948,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 		sfd.get_structure( curr_job->input_tag() ).fill_pose( pose );
 		set_ss_from_phipsi( pose );
 
+		//mjo TODO: verify that the disulfides are correct coming out of fill_pose() and then delete this code
 		// Fix disulfides if a file is given
      if ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
 			 utility::vector1< std::pair<Size, Size> > disulfides;

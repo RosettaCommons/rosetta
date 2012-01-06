@@ -14,6 +14,7 @@
 // Unit Headers
 #include <protocols/features/DatabaseJobInputter.hh>
 #include <protocols/features/DatabaseJobInputterCreator.hh>
+#include <protocols/features/ProteinSilentReport.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
@@ -22,12 +23,14 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/mysql.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
+#include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
+#include <core/scoring/ScoreFunction.hh>
+
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -41,20 +44,9 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-// AUTO-REMOVED #include <cppdb/errors.h>
-
 
 // C++ headers
 #include <string>
-
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/features/ProteinSilentReport.hh>
-
-//Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
-
-
 
 static basic::Tracer tr("protocols.features.DatabaseJobInputter");
 
@@ -64,6 +56,7 @@ namespace features {
 using std::string;
 using std::endl;
 using core::Size;
+using core::pose::initialize_disulfide_bonds;
 using core::pose::Pose;
 using core::pose::symmetry::is_symmetric;
 using core::pose::symmetry::make_asymmetric_pose;
@@ -245,6 +238,10 @@ DatabaseJobInputter::pose_from_job(
 
 	// TODO: Move to pose.clear()
 	if (is_symmetric(pose)) make_asymmetric_pose( pose );
+
+
+	initialize_disulfide_bonds(pose);
+
 }
 
 /// @details this function determines what jobs exist

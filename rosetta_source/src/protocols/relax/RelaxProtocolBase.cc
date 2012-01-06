@@ -262,6 +262,9 @@ RelaxProtocolBase::get_task_factory() const
 	return task_factory_;
 }
 
+
+//mjo TODO: please move this with the rest of the disulfide code
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // apply_disulfides
 //  this is really just "repack disulfides", where a repack is called using only the FA disulfide score

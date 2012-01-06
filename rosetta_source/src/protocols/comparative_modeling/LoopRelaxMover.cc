@@ -407,6 +407,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		);
 	}
 
+	// mjo TODO: check if pose.conformation().detect_disulfides needs to be called.  If it does consider replacing this with core/pose/initialize_disulfide_bonds().
+
 	// read in disulfides if specified by user
 	if ( option[ in::fix_disulf ].user() ) {
 		using std::pair;

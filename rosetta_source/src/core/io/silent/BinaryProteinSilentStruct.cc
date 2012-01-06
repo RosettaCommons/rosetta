@@ -613,24 +613,7 @@ void BinaryProteinSilentStruct::fill_pose (
   }
 
 
-	// disulfides
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	if ( option[ in::detect_disulf ].user() ?
-			option[ in::detect_disulf ]() : // detect_disulf true
-			residue_set.name() == core::chemical::FA_STANDARD // detect_disulf default but fa pose
-		)
-	{
-		pose.conformation().detect_disulfides();
-	}
-
-	// Fix disulfides if a file is given
-	if ( option[ in::fix_disulf ].user() ) {
-		core::io::raw_data::DisulfideFile ds_file( option[ in::fix_disulf ]() );
-		utility::vector1< std::pair<Size,Size> > disulfides;
-		ds_file.disulfides(disulfides, pose);
-		pose.conformation().fix_disulfides( disulfides );
-	}
+	core::pose::initialize_disulfide_bonds(pose);
 
 	finish_pose( pose );
 } // fill_pose
