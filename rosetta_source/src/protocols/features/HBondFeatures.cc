@@ -36,7 +36,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
+#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -53,7 +53,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-// AUTO-REMOVED #include <cppdb/errors.h>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -104,6 +103,7 @@ using core::scoring::hbonds::HBondTypeManager;
 using core::scoring::hbonds::get_hb_don_chem_type;
 using core::scoring::hbonds::get_hb_acc_chem_type;
 using core::scoring::hbonds::make_hbBasetoAcc_unitvector;
+using core::scoring::hbonds::hb_eval_type_weight;
 using core::scoring::hbonds::HBond;
 using core::scoring::hbonds::HBondCOP;
 using core::scoring::hbonds::HBondSet;
@@ -258,6 +258,7 @@ HBondFeatures::schema() const {
 		"	HBEvalType INTEGER,\n"
 		"	energy REAL,\n"
 		"	envWeight REAL,\n"
+		"	score_weight REAL,\n"
 		"	donRank INTEGER,\n"
 		"	accRank INTEGER,\n"
 		"	FOREIGN KEY(struct_id, don_id)\n"
@@ -650,9 +651,11 @@ HBondFeatures::insert_hbond_row(
 	Size const HBEvalType( hbond.eval_type() );
 	Real const energy( hbond.energy() );
 	Real const envWeight( hbond.weight() );
+	Real const score_weight(
+		hb_eval_type_weight(hbond.eval_type(), scfxn_->weights()));
 
 	statement stmt = (*db_session)
-		<< "INSERT INTO hbonds VALUES (?,?,?,?,?,?,?,?,?);"
+		<< "INSERT INTO hbonds VALUES (?,?,?,?,?,?,?,?,?,?);"
 		<< struct_id
 		<< hbond_id
 		<< don_id
@@ -660,6 +663,7 @@ HBondFeatures::insert_hbond_row(
 		<< HBEvalType
 		<< energy
 		<< envWeight
+		<< score_weight
 		<< donRank
 		<< accRank;
 	basic::database::safely_write_to_database(stmt);
