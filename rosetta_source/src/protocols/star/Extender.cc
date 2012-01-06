@@ -53,11 +53,16 @@ Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_resid
 
   SequenceMapping mapping = alignment->sequence_mapping(1, 2);
 
+  // Chunk boundaries are defined by unaligned residues and discontinuities
   vector1<int> unaligned_res;
-  for (int i = 1; i <= num_residues; ++i) {
-    if (!mapping[i]) {
+  for (int i = 1; i < num_residues; ++i) {
+    if (!mapping[i] || mapping[i+1] != mapping[i] + 1) {
       unaligned_res.push_back(i);
     }
+  }
+
+  if (!mapping[num_residues]) {  // last residue
+    unaligned_res.push_back(num_residues);
   }
 
   int min_len = option[OptionKeys::abinitio::star::min_unaligned_len]();
