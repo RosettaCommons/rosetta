@@ -52,11 +52,12 @@ Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_resid
   assert(num_residues > 0);
 
   SequenceMapping mapping = alignment->sequence_mapping(1, 2);
-
-  // Chunk boundaries are defined by unaligned residues and discontinuities
   vector1<int> unaligned_res;
+
   for (int i = 1; i < num_residues; ++i) {
-    if (!mapping[i] || mapping[i+1] != mapping[i] + 1) {
+    bool unaligned = !mapping[i];
+    bool discontinuous = mapping[i + 1] != (mapping[i] + 1);
+    if (unaligned || discontinuous) {
       unaligned_res.push_back(i);
     }
   }
