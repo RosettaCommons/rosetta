@@ -13,13 +13,16 @@
 #ifndef PROTOCOLS_MEDAL_UTIL_HH_
 #define PROTOCOLS_MEDAL_UTIL_HH_
 
+// External headers
+#include <boost/unordered_set.hpp>
+
 // Utility headers
 #include <utility/vector1.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 
@@ -52,6 +55,12 @@ void end_bias_probabilities(const unsigned num_residues, Probabilities* p);
 void invalidate_residues_spanning_cuts(const core::kinematics::FoldTree& tree,
                                        const core::Size fragment_len,
                                        Probabilities* probs);
+
+/// @brief Populates a hash table with the residues contained in loops
+void as_set(protocols::loops::LoopsCOP loops, boost::unordered_set<core::Size>* s);
+
+void to_centroid(core::pose::Pose* pose);
+
 }  // namespace medal
 }  // namespace protocols
 

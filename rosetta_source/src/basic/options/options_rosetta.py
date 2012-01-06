@@ -3116,6 +3116,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		  Option('bound_delta', 'Real', desc = 'Distance in Angstroms from aligned position before a penalty is incurred', default = '0.5'),
 			Option('bound_sd', 'Real', desc = 'Value of standard deviation in bound func', default = '1.0'),
 			Option('num_fragments', 'Integer', desc = 'Use the top k fragments at each position during sanitization', default = '25'),
+			Option('cst_weight_pair', 'Real', desc = 'atom_pair_constraint weight', default = '1.0'),
+			Option('cst_weight_coord', 'Real', desc = 'coordinate_constraint weight', default = '1.0'),
     ),
 
 		Option( 'start_models_only',   'Boolean',    desc='Make starting models only!', default='false' ),

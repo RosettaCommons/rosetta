@@ -17,6 +17,9 @@
 #include <cmath>
 #include <set>
 
+// External headers
+#include <boost/unordered/unordered_set.hpp>
+
 // Utility headers
 #include <numeric/prob_util.hh>
 #include <utility/iter_util.hh>
@@ -24,9 +27,12 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
 #include <core/sequence/SequenceAlignment.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -114,6 +120,25 @@ void invalidate_residues_spanning_cuts(const core::kinematics::FoldTree& tree,
       (*probs)[j] = 0;
     }
   }
+}
+
+void as_set(protocols::loops::LoopsCOP loops, boost::unordered_set<core::Size>* s) {
+  assert(s);
+  assert(loops);
+
+  s->clear();
+
+  for (protocols::loops::Loops::const_iterator i = loops->begin(); i != loops->end(); ++i) {
+    for (core::Size j = i->start(); j <= i->stop(); ++j) {
+      s->insert(j);
+    }
+  }
+}
+
+void to_centroid(core::pose::Pose* pose) {
+  assert(pose);
+  if (!pose->is_centroid())
+    core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
 }
 
 }  // namespace medal

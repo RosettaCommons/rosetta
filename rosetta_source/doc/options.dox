@@ -7374,6 +7374,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Use the top k fragments at each position during sanitization</dd><br>
 <dd>Default: 25</dd><br>
 </dl>
+<dl>
+<dt><b>-cst_weight_pair</b> \<Real\><dt>
+<dd>atom_pair_constraint weight</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-cst_weight_coord</b> \<Real\><dt>
+<dd>coordinate_constraint weight</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
  </li>
 <li><h2>cm</h2>
 <dl>

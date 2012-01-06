@@ -1,4 +1,3 @@
-namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_radius" );  }
 namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
@@ -337,6 +336,8 @@ namespace cm { namespace sanitize { BooleanOptionKey const sanitize( "cm:sanitiz
 namespace cm { namespace sanitize { RealOptionKey const bound_delta( "cm:sanitize:bound_delta" );  } }
 namespace cm { namespace sanitize { RealOptionKey const bound_sd( "cm:sanitize:bound_sd" );  } }
 namespace cm { namespace sanitize { IntegerOptionKey const num_fragments( "cm:sanitize:num_fragments" );  } }
+namespace cm { namespace sanitize { RealOptionKey const cst_weight_pair( "cm:sanitize:cst_weight_pair" );  } }
+namespace cm { namespace sanitize { RealOptionKey const cst_weight_coord( "cm:sanitize:cst_weight_coord" );  } }
 namespace cm { BooleanOptionKey const start_models_only( "cm:start_models_only" );  }
 namespace cm { StringOptionKey const aln_format( "cm:aln_format" );  }
 namespace cm { BooleanOptionKey const recover_side_chains( "cm:recover_side_chains" );  }

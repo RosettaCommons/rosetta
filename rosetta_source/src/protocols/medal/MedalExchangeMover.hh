@@ -28,7 +28,6 @@
 #include <core/fragment/SecondaryStructure.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -50,15 +49,6 @@ class MedalExchangeMover : public protocols::moves::Mover {
   std::string get_name() const;
 
  private:
-  /// @brief Creates a coordinate constraint between a fixed virtual atom and the
-  /// CA atom of each aligned residue. The constraint is evaluated using a BoundFunc
-  /// functional form, with lower bound set to the initial distance - delta and
-  /// upper bound set to the initial distance + delta. The value of delta, as well
-  /// as the standard deviation, are controllable via the command line.
-  void setup_constraints(const core::pose::Pose& pose,
-                         protocols::loops::LoopsCOP aligned,
-                         core::scoring::constraints::ConstraintSetOP constraints) const;
-
   /// @brief Computes the probability of selecting each residue as a candidate
   /// for fragment insertion. P(unaligned) = 0, P(aligned) > 0.
   void setup_sampling_probs(core::Size num_residues,

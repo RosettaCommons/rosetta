@@ -586,3 +586,4 @@ namespace lh { RealOptionKey const max_rms( "lh:max_rms" );  }
 namespace lh { BooleanOptionKey const filter_by_phipsi( "lh:filter_by_phipsi" );  }
 namespace lh { IntegerOptionKey const max_radius( "lh:max_radius" );  }
 namespace lh { IntegerOptionKey const max_struct( "lh:max_struct" );  }
+namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_radius" );  }

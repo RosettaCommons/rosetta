@@ -1182,10 +1182,10 @@ option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.
 option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
 option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(10);
+option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
-option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
@@ -1523,6 +1523,8 @@ option.add( basic::options::OptionKeys::cm::sanitize::sanitize, "sanitize option
 option.add( basic::options::OptionKeys::cm::sanitize::bound_delta, "Distance in Angstroms from aligned position before a penalty is incurred" ).def(0.5);
 option.add( basic::options::OptionKeys::cm::sanitize::bound_sd, "Value of standard deviation in bound func" ).def(1.0);
 option.add( basic::options::OptionKeys::cm::sanitize::num_fragments, "Use the top k fragments at each position during sanitization" ).def(25);
+option.add( basic::options::OptionKeys::cm::sanitize::cst_weight_pair, "atom_pair_constraint weight" ).def(1.0);
+option.add( basic::options::OptionKeys::cm::sanitize::cst_weight_coord, "coordinate_constraint weight" ).def(1.0);
 option.add( basic::options::OptionKeys::cm::start_models_only, "Make starting models only!" ).def(false);
 option.add( basic::options::OptionKeys::cm::aln_format, "No description" ).legal("grishin").legal("general").def("general");
 option.add( basic::options::OptionKeys::cm::recover_side_chains, "recover side-chains" ).def(false);

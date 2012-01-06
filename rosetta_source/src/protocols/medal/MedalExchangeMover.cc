@@ -22,6 +22,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <numeric/prob_util.hh>
@@ -29,13 +30,13 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/fragment/FragmentIO.hh>
@@ -45,7 +46,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/util/kinematics_util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -64,6 +64,7 @@ namespace medal {
 
 using core::Real;
 using core::Size;
+using core::pose::Pose;
 using core::scoring::constraints::ConstraintSet;
 using core::scoring::constraints::ConstraintSetOP;
 using core::scoring::constraints::ConstraintSetCOP;
@@ -74,12 +75,6 @@ using protocols::loops::LoopsCOP;
 using utility::vector1;
 
 static basic::Tracer TR("protocols.medal.MedalExchangeMover");
-
-void to_centroid(core::pose::Pose* pose) {
-  assert(pose);
-  if (!pose->is_centroid())
-    core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
-}
 
 /// @detail Combines both sets of loops, sorting the result in increasing order of start position
 protocols::loops::LoopsCOP combine_loops(LoopsCOP aligned, LoopsCOP unaligned) {
@@ -98,7 +93,8 @@ protocols::loops::LoopsCOP combine_loops(LoopsCOP aligned, LoopsCOP unaligned) {
   return combined;
 }
 
-void MedalExchangeMover::setup_constraints(const core::pose::Pose& pose, LoopsCOP aligned, ConstraintSetOP constraints) const {
+/// @detail Create coordinate constraints restraining aligned residues to their initial positions
+void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, ConstraintSetOP constraints) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::PointPosition;
@@ -108,8 +104,6 @@ void MedalExchangeMover::setup_constraints(const core::pose::Pose& pose, LoopsCO
   using core::scoring::constraints::ConstraintCOP;
   using core::scoring::constraints::CoordinateConstraint;
   using core::scoring::constraints::FuncOP;
-  assert(aligned);
-  assert(constraints);
 
   const Real delta = option[OptionKeys::cm::sanitize::bound_delta]();
   const Real sd = option[OptionKeys::cm::sanitize::bound_sd]();
@@ -132,9 +126,56 @@ void MedalExchangeMover::setup_constraints(const core::pose::Pose& pose, LoopsCO
       constraints->add_constraint(constraint);
     }
   }
+}
 
-  constraints->show(TR.Debug);
-  TR.flush_all_channels();
+/// @detail Include user-specified atom_pair_constraints operating on pairs of aligned residues
+void setup_atom_pair_constraints(const Pose& pose, LoopsCOP aligned, ConstraintSetOP constraints) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::id::AtomID;
+  using core::scoring::constraints::ConstraintCOP;
+  using core::scoring::constraints::ConstraintCOPs;
+  using core::scoring::constraints::ConstraintIO;
+
+  if (option[OptionKeys::constraints::cst_file].user()) {
+    boost::unordered_set<Size> valid;
+    as_set(aligned, &valid);
+
+    const vector1<std::string>& filenames = option[OptionKeys::constraints::cst_file]();
+    if (filenames.size() > 1) {
+      TR.Warning << "Multiple constraint files specified; using first" << std::endl;
+    }
+
+    ConstraintSetOP additional = ConstraintIO::get_instance()->read_constraints(filenames[1], new ConstraintSet(), pose);
+    ConstraintCOPs cst_list = additional->get_all_constraints();
+
+    for (ConstraintCOPs::const_iterator i = cst_list.begin(); i != cst_list.end(); ++i) {
+      ConstraintCOP c = *i;
+
+      if (c->score_type() != core::scoring::atom_pair_constraint)
+        continue;
+
+      const Size res1 = c->atom(1).rsd();
+      const Size res2 = c->atom(2).rsd();
+      if (valid.find(res1) == valid.end() || valid.find(res2) == valid.end()) {
+        continue;
+      }
+
+      constraints->add_constraint(c);
+    }
+  }
+}
+
+/// @brief Creates a coordinate constraint between a fixed virtual atom and the
+/// CA atom of each aligned residue. The constraint is evaluated using a BoundFunc
+/// functional form, with lower bound set to the initial distance - delta and
+/// upper bound set to the initial distance + delta. The value of delta, as well
+/// as the standard deviation, are controllable via the command line.
+void setup_constraints(const Pose& pose, LoopsCOP aligned, ConstraintSetOP constraints) {
+  assert(aligned);
+  assert(constraints);
+  setup_atom_pair_constraints(pose, aligned, constraints);
+  setup_coordinate_constraints(pose, aligned, constraints);
 }
 
 void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kinematics::FoldTree& tree, LoopsCOP aligned, vector1<double>* probs) const {
@@ -154,10 +195,9 @@ void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kin
   numeric::print_probabilities(*probs, TR.Debug);
 }
 
-void MedalExchangeMover::apply(core::pose::Pose& pose) {
+void MedalExchangeMover::apply(Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::id::AtomID;
   using core::scoring::Energies;
   using core::scoring::ScoreFunction;
   using core::scoring::ScoreFunctionOP;
@@ -181,7 +221,9 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
   LoopsCOP aligned = extender.aligned();
   LoopsCOP unaligned = extender.unaligned();
   LoopsCOP combined = combine_loops(aligned, unaligned);
+  assert(combined->size() == (aligned->size() + unaligned->size()));
   TR << "Aligned:" << std::endl << *aligned << std::endl;
+  TR << "Unaligned:" << std::endl << *unaligned << std::endl;
 
   TreeBuilderOP builder = TreeBuilderFactory::get_builder("star");
   builder->set_up(*combined, &pose);
@@ -192,7 +234,8 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
   pose.constraint_set(constraints);
 
   ScoreFunctionOP score = new ScoreFunction();
-  score->set_weight(core::scoring::coordinate_constraint, 1);
+  score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::cm::sanitize::cst_weight_pair]());
+  score->set_weight(core::scoring::coordinate_constraint, option[OptionKeys::cm::sanitize::cst_weight_coord]());
 
   // Sampling parameters
   const Real temp = option[OptionKeys::abinitio::temperature]();
@@ -223,7 +266,6 @@ MedalExchangeMover::MedalExchangeMover() {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::fragment::FragmentIO;
-  using core::fragment::FragSetOP;
   using core::fragment::SecondaryStructure;
 
   FragmentIO io;
