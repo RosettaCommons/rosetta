@@ -7491,6 +7491,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Input list of template files</dd><br>
 </dl>
 <dl>
+<dt><b>-template_list</b> \<File\><dt>
+<dd>Input list of templates, constaints, cluster, and weights</dd><br>
+</dl>
+<dl>
 <dt><b>-ss</b> \<String\><dt>
 <dd>secondary structure elements used to split the pose</dd><br>
 <dd>Default: "HE"</dd><br>

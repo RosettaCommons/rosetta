@@ -103,7 +103,7 @@ protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_
 /// @brief Remove small chunks
 protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & input_chunks, core::Size min_length = 3);
 
-protocols::loops::Loops extract_conti_chunks(core::pose::Pose const & pose,
+protocols::loops::Loops extract_continuous_chunks(core::pose::Pose const & pose,
 											 core::Size const minimum_size = 3,
 											 core::Real const CA_CA_distance_cutoff = 4);
 		

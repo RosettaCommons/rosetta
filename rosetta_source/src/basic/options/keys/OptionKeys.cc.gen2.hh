@@ -1,7 +1,3 @@
-namespace lh { RealOptionKey const max_rms( "lh:max_rms" );  }
-namespace lh { BooleanOptionKey const filter_by_phipsi( "lh:filter_by_phipsi" );  }
-namespace lh { IntegerOptionKey const max_radius( "lh:max_radius" );  }
-namespace lh { IntegerOptionKey const max_struct( "lh:max_struct" );  }
 namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_radius" );  }
 namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
@@ -366,6 +362,7 @@ namespace cm { FileVectorOptionKey const ev_map( "cm:ev_map" );  }
 namespace cm { FileVectorOptionKey const hh_map( "cm:hh_map" );  }
 namespace cm { namespace hybridize { BooleanOptionKey const hybridize( "cm:hybridize" );  } }
 namespace cm { namespace hybridize { FileVectorOptionKey const templates( "cm:hybridize:templates" );  } }
+namespace cm { namespace hybridize { FileOptionKey const template_list( "cm:hybridize:template_list" );  } }
 namespace cm { namespace hybridize { StringOptionKey const ss( "cm:hybridize:ss" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const max_registry_shift( "cm:hybridize:max_registry_shift" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const alignment_from_template_seqpos( "cm:hybridize:alignment_from_template_seqpos" );  } }
@@ -589,6 +586,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "Deno
 namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
 namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
-namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }

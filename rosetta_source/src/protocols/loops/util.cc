@@ -647,7 +647,7 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	return secondary_structure_chunks;
 }
 	
-protocols::loops::Loops extract_conti_chunks(core::pose::Pose const & pose,
+protocols::loops::Loops extract_continuous_chunks(core::pose::Pose const & pose,
 														   core::Size const minimum_size,
 														   core::Real const CA_CA_distance_cutoff) {
 	

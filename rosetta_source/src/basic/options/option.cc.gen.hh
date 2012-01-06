@@ -589,11 +589,11 @@ option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each
 option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
+option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
@@ -1177,15 +1177,13 @@ option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff use
 option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
 option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
+option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
+option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
 option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(10);
-option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
 option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
@@ -1549,6 +1547,7 @@ option.add( basic::options::OptionKeys::cm::ev_map, "Input file that maps pdbCha
 option.add( basic::options::OptionKeys::cm::hh_map, "Input file that maps pdbChains to hhsearch probabilities" );
 option.add( basic::options::OptionKeys::cm::hybridize::hybridize, "hybridize option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::hybridize::templates, "Input list of template files" );
+option.add( basic::options::OptionKeys::cm::hybridize::template_list, "Input list of templates, constaints, cluster, and weights" );
 option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure elements used to split the pose" ).def("HE");
 option.add( basic::options::OptionKeys::cm::hybridize::max_registry_shift, "maximum registry shift" ).def(0);
 option.add( basic::options::OptionKeys::cm::hybridize::alignment_from_template_seqpos, "alignment from template resSeq" ).def(true);
@@ -1772,10 +1771,12 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa,
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");

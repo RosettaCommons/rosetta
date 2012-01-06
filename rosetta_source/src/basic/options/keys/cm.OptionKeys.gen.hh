@@ -51,6 +51,7 @@ namespace cm { extern FileVectorOptionKey const ev_map; }
 namespace cm { extern FileVectorOptionKey const hh_map; }
 namespace cm { namespace hybridize { extern BooleanOptionKey const hybridize; } }
 namespace cm { namespace hybridize { extern FileVectorOptionKey const templates; } }
+namespace cm { namespace hybridize { extern FileOptionKey const template_list; } }
 namespace cm { namespace hybridize { extern StringOptionKey const ss; } }
 namespace cm { namespace hybridize { extern IntegerOptionKey const max_registry_shift; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const alignment_from_template_seqpos; } }

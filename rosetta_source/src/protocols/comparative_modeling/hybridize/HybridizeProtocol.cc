@@ -79,6 +79,7 @@ namespace comparative_modeling {
 namespace hybridize {
 
 using namespace core;
+using namespace kinematics;
 using namespace sequence;
 using namespace pack;
 using namespace task;
@@ -94,23 +95,8 @@ HybridizeProtocol::HybridizeProtocol() :
 	//read templates
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	//read_template_structures( option[cm::hybridize::template_list]() );
-
-	//break templates into chunks
-	template_chunks_.clear();
-	template_chunks_.resize(templates_.size());
-	for (core::Size i_template=1; i_template<=templates_.size(); ++i_template) {
-		// find ss chunks in template
-		template_chunks_[i_template] = protocols::loops::extract_secondary_structure_chunks(*templates_[i_template]); // add split by residue numbering in this function -ys
-	}
 	
-	//break templates into contigs
-	template_contigs_.clear();
-	template_contigs_.resize(templates_.size());
-	for (core::Size i_template=1; i_template<=templates_.size(); ++i_template) {
-		// find ss chunks in template
-		// template_contigs_[i_template] = extract_continuous_chunks(*templates_[i_template]); 
-	}
+	read_template_structures( option[cm::hybridize::template_list]() );
 	
 	//read fragments
 	if ( option[ in::file::frag9 ].user() ) {
@@ -170,8 +156,6 @@ void HybridizeProtocol::add_template(std::string template_fn, std::string cst_fn
 	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 	core::pose::PoseOP template_pose = new core::pose::Pose();
 	core::import_pose::pose_from_pdb( *template_pose, *residue_set, template_fn );
-	core::scoring::dssp::Dssp dssp_obj( *template_pose );
-	dssp_obj.insert_ss_into_pose( *template_pose );
 
 	core::scoring::constraints::ConstraintSetOP constraint_set;
 	if (cst_fn != "") {
@@ -185,11 +169,23 @@ void HybridizeProtocol::add_template(core::pose::PoseOP template_in,
 				  core::scoring::constraints::ConstraintSetOP cst_in,
 				  core::Real weight,
 				  core::Size clusterID )
-{
+{   
+    // add secondary structure information to the template pose
+    core::scoring::dssp::Dssp dssp_obj( *template_in );
+	dssp_obj.insert_ss_into_pose( *template_in );
+	
+	// find ss chunks in template
+	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_in); // add split by residue numbering in this function -ys
+	
+	//break templates into contigs
+	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_in); 
+	
 	templates_.push_back(template_in);
 	template_csts_.push_back(cst_in);
 	template_weights_.push_back(weight);
 	template_clusterID_.push_back(clusterID);
+    template_chunks_.push_back(chunks);
+    template_contigs_.push_back(contigs);
 }
 
 void HybridizeProtocol::read_template_structures(utility::file::FileName template_list)
@@ -279,6 +275,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	utility::vector1 < protocols::loops::Loops > template_contigs_icluster;
 	pick_starting_template(initial_template_index, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster);
 
+    // FoldTree ft(pose.fold_tree());
+    
 	// apply constraints
 	pose.constraint_set( template_csts_[initial_template_index] );
 	
@@ -288,6 +286,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	FoldTreeHybridizeOP ft_hybridize( new FoldTreeHybridize(initial_template, templates_,  frag_libs) ) ;
 	ft_hybridize->apply(pose);
 	
+	// pose.fold_tree(ft);
 	CartesianHybridizeOP cart_hybridize ( new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_,template_contigs_, fragments9_, fragments3_ ) );
 	cart_hybridize->apply(pose);
 
