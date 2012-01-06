@@ -36,7 +36,7 @@ Plotting the log(FeatureDensity + 1) allows high density and low density
 aspects of the distribution to be included in roughly the same scale. In other
 words, the subplot with the highest density sets the scale for all the plots.
 If there is a highly concentrated region this can set the scale large to see
-low density aspects of the distribution.  The '+ 1' acts a pseudo-count,
+low density aspects of the distribution. The '+ 1' acts a pseudo-count,
 making the logarithm of never go below zero. Other choices for the value of the
 pseudo count would control minimum value.
 
@@ -51,17 +51,19 @@ sele <- "
 SELECT
 	don_atoms.base_x AS dx, don_atoms.base_y AS dy, don_atoms.base_z AS dz,
 	acc_atoms.atm_x  AS ax, acc_atoms.atm_y  AS ay, acc_atoms.atm_z  AS az,
-	don.HBChemType AS don_chem_type,
-	acc.HBChemType AS acc_chem_type
+	don.HBChemType AS don_chem_type, acc.HBChemType AS acc_chem_type
 FROM
 	hbonds AS hb,
-	hbond_sites AS don,
-	hbond_sites AS acc,
-	hbond_site_atoms AS don_atoms,
-	hbond_site_atoms AS acc_atoms
+	hbond_sites AS don, hbond_sites AS acc,
+	hbond_site_pdb AS don_pdb, hbond_site_pdb AS acc_pdb,
+	hbond_site_atoms AS don_atoms, hbond_site_atoms AS acc_atoms
 WHERE
 	don.struct_id = hb.struct_id AND don.site_id =hb.don_id AND
 	acc.struct_id = hb.struct_id AND acc.site_id =hb.acc_id AND
+	don_pdb.struct_id = hb.struct_id AND don_pdb.site_id = hb.don_id AND
+	don_pdb.heavy_atom_temperature < 30 AND
+	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id AND
+	acc_pdb.heavy_atom_temperature < 30 AND
 	don_atoms.struct_id = hb.struct_id AND don_atoms.site_id = hb.don_id AND
 	acc_atoms.struct_id = hb.struct_id AND acc_atoms.site_id = hb.acc_id;"
 
@@ -74,8 +76,6 @@ f <- query_sample_sources(sample_sources, sele)
 f <- transform(f,
 	ADdist = vector_distance(cbind(dx, dy, dz), cbind(ax, ay, az)))
 
-
-# This is deprecated please use the hbond_chem_types table for the lables instead
 # Order the plots better and give more descriptive labels
 f$don_chem_type <- factor(f$don_chem_type,
 	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
@@ -83,7 +83,6 @@ f$don_chem_type <- factor(f$don_chem_type,
 	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
 		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
 # Order the plots better and give more descriptive labels
 f$acc_chem_type <- factor(f$acc_chem_type,
 	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
@@ -95,7 +94,7 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 f <- f[f$ADdist <= 3.5,]
 
 # Compute density estimation for over the A-D distance grouping by the
-# donor type, acceptor type and sample source.  Apply the radial 3d
+# donor type, acceptor type and sample source. Apply the radial 3d
 # normalization. This corrects for the fact that there is more volume
 # in a spherical shell at a farther distance then a closer distance.
 dens <- estimate_density_1d(f,
@@ -103,16 +102,14 @@ dens <- estimate_density_1d(f,
 	"ADdist", radial_3d_normalization)
 
 # Generate a lattice of density plots for each donor and acceptor type
-plot_id <- "ADdist_chem_type"
+plot_id <- "hbond_ADdist_chem_type"
 p <- ggplot(dens) + theme_bw() +
 	geom_line(aes(x, y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "Hydrogen Bonds A-D Distance by Chemical Type\n(normalized for equal volume per unit distance)") +
-	scale_x_continuous(expression(paste('Acceptor -- Donor Distance (', ring(A), ')')), breaks=c(2.3, 2.8, 3.3)) +
-	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +
-	opts(strip.text.x=theme_text(size=7)) +
-	opts(strip.text.y=theme_text(size=7, angle=270))
+	opts(title = "Hydrogen Bond A-D Distance by Chemical Type, B-Factor < 30\n(normalized for equal volume per unit distance)") +
+	scale_x_ADdist +
+	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5))
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }

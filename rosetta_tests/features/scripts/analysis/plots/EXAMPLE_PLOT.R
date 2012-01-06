@@ -20,8 +20,7 @@
 #
 # It will generate:
 #
-#   mini/test/scientific/cluster/features/build/print_pdf/EXAMPLE_PLOT_<date_code>_<sample_source_id1>[_<sample_source_id2> ...].pdf
-#   mini/test/scientific/cluster/features/build/web/EXAMPLE_PLOT_<date_code>_<sample_source_id1>[_<sample_source_id2> ...].png
+#   rosetta_tests/features/build/output_web_raster/EXAMPLE_PLOT_<date_code>_<sample_source_id1>[_<sample_source_id2> ...].png
 #
 
 check_setup()
@@ -37,14 +36,14 @@ features <- query_sample_sources(sample_sources, sele)
 
 # The ggplot plotting system maps the columns of the data.frame to aesthetic parts of the plot
 # see http://had.co.nz/ggplot2/
-plot <- ggplot(features)
+plot <- ggplot(data=features)
+
+# theme_bw is a clean black and white theme
+plot <- plot + theme_bw()
 
 #geom_bar is a bar graph layer, here the sample_source and
 #num_residues are mapped to the x, y, and color aesthetics.
 plot <- plot + geom_bar(aes(x=sample_source, y=num_residues, fill=sample_source))
-
-# theme_bw is a clean black and white theme
-plot <- plot + theme_bw()
 
 # Set title and axis labels
 plot <- plot + opts(title="Dataset Size") + labs(x="Number of Residues", y="Count")

@@ -18,6 +18,8 @@ estimate_density_1d <-function(
   n_pts=200,
   histogram=FALSE,
   ...){
+	density.args <- list(...)
+	data <- as.data.frame(data)
 	if(!(class(data) == "data.frame")){
 		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
 	}
@@ -44,9 +46,9 @@ estimate_density_1d <-function(
         d <- weighted.hist(x=factor_df[,variable], w=weights, plot=FALSE)
         return(data.frame(x=d$mids, y=d$density, counts=nrow(factor_df)))
       } else {
-        d <- density(x=factor_df[,variable], from=xlim[1], to=xlim[2], n=n_pts,
-          weights=weights,
-          ...)
+        d <- do.call(density,
+					c(list(x=factor_df[,variable], from=xlim[1], to=xlim[2], n=n_pts,
+          weights=weights), density.args))
           return(data.frame(x=d$x, y=d$y, counts=nrow(factor_df)))
       }
 
@@ -64,6 +66,7 @@ estimate_density_1d_wrap <-function(
   n_pts=200,
 	xlim=c(0,360),
   ...){
+	density.args <- list(...)
 	if(!(class(data) == "data.frame")){
 		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
 	}
@@ -92,9 +95,9 @@ estimate_density_1d_wrap <-function(
       return( data.frame(x=seq(xlim[1], xlim[2], length.out=n_pts), y=0))
     } else {
       weights <- weight_fun(factor_df[,variable])
-			d <- density(x=factor_df[,variable], from=xlim[1], to=xlim[2], n=extended_n_pts,
-				weights=weights,
-        ...)
+			d <- do.call(density,
+				c(list(x=factor_df[,variable], from=xlim[1], to=xlim[2], n=extended_n_pts,
+					weights=weights), density.args))
       return(data.frame(
 				x=d$x[xlim[1] <= d$x & d$x <= xlim[2]],
 				y=d$y[xlim[1] <= d$x & d$x <= xlim[2]]*3,

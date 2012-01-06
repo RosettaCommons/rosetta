@@ -9,9 +9,6 @@
 
 check_setup()
 
-
-
-
 #           RESi
 #     ---ACC1-DON2 -----<
 #    /    |    |

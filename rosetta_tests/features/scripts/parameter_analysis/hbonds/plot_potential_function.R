@@ -33,15 +33,17 @@ library("ggplot2")
 # parse command line options
 library("optparse")
 
-source("scripts/methods.R")
+source("scripts/parameter_analysis/hbonds/methods/methods.R")
 
 ##### Setup command line options #########
 option_list <- list(
+	make_option(c("--database"),
+		help="Path to rosetta_database [default: $ROSETTA3_DB]"),
   make_option(c("--parameter_set"), default="standard_params",
 		help="Parameter set where the polynomial is defined [default: %default]"),
 	make_option(c("--polynomial"), default="poly_AHdist_3",
 		help="Name of the polynomial to plot [default: %default]"),
-  make_option(c("--output_prefix"), default="polynomial_potential_",
+  make_option(c("--output_prefix"), default="build/polynomial_potential_",
 		help="Prefix of filename where the plot is saved [default: %default]"),
 	make_option(c("--output_suffix"), default=".png",
 		help="Suffix of filename where the plot is saved [default: %default]"),
@@ -49,20 +51,10 @@ option_list <- list(
 		help="List all polynomials for specified parameter set and exit"))
 opt <- parse_args(OptionParser(option_list=option_list))
 
+opt$database <- valid_rosetta_database_path(opt$database)
 
-##### Validate input ##########
-cwd <- getwd();
-if(substr(cwd, nchar(cwd)-29,nchar(cwd)) != "scoring/score_functions/hbonds"){
-	stop("ERROR: Please run this script from $ROSETTA3_DB/scoring/score_functions/hbonds.")
-}
-
-if(!file.exists(opt$parameter_set)){
-	stop(paste("Parameter set, ", opt$parameter_set, ", is not recognized.",sep=""))
-}
-
-convert_parameter_set_into_database(opt$parameter_set)
-
-polynomials <- get_polynomials(opt$parameter_set)
+convert_parameter_set_into_database(opt$database, opt$parameter_set)
+polynomials <- get_polynomials(opt$database, opt$parameter_set)
 
 # If the user request the --list option, make the table and then exit.
 if(opt$list){

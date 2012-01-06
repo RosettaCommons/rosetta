@@ -75,7 +75,7 @@ prepare_feature_instances <- function(
 		feature_atoms, full_instances_dir)
 
 	cat(
-		"Generated ", nrow(feature_atoms), " feature instances in ",
+		"Generated ", length(unique(feature_atoms$id)), " feature instances in ",
 		length(unique(feature_atoms$tag)), " structures.\n",
 		"To run:\n",
 		"\n",
@@ -115,9 +115,11 @@ extract_structures_to_pdbs <- function(
 		"-out:no_nstruct_label",
 		"-out:suffix ''",
 		"-overwrite",
+		"-ignore_unrecognized_res",
 		"-run:no_scorefile")
+	cat(command, file=file.path(output_dir, "extract_pdbs.log"), sep="\n")
 	log <- system(command, intern=T)
-	cat(log, file=file.path(output_dir, "extract_pdbs.log"), sep="\n")
+	cat(log, file=file.path(output_dir, "extract_pdbs.log"), sep="\n", append=TRUE)
 }
 
 generate_pymol_script <- function(

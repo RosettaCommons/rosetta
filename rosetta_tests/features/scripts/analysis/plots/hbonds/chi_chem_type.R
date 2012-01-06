@@ -12,9 +12,9 @@ check_setup()
 sele <-"
 SELECT
 	geom.chi,
-	acc_site.HBChemType AS acc_chem_type,
-	don_site.HBChemType AS don_chem_type,
-  CASE acc_site.HBChemType
+	acc.HBChemType AS acc_chem_type,
+	don.HBChemType AS don_chem_type,
+  CASE acc.HBChemType
 		WHEN 'hbacc_IMD' THEN 'ring' WHEN 'hbacc_IME' THEN 'ring'
 		WHEN 'hbacc_AHX' THEN 'sp3'  WHEN 'hbacc_HXL' THEN 'sp3'
 		WHEN 'hbacc_CXA' THEN 'sp2'  WHEN 'hbacc_CXL' THEN 'sp2'
@@ -24,16 +24,21 @@ SELECT
 	acc_atoms.atm_x   AS ax,   acc_atoms.atm_y   AS ay,   acc_atoms.atm_z   AS az,   -- acceptor atom
 	don_atoms.atm_x   AS hx,   don_atoms.atm_y   AS hy,   don_atoms.atm_z   AS hz    -- hydrogen atom
 FROM
+	hbonds AS hb,
 	hbond_geom_coords AS geom,
-	hbonds AS hbond,
-	hbond_sites AS don_site, hbond_sites AS acc_site,
+	hbond_sites AS don, hbond_sites AS acc,
+	hbond_site_pdb AS don_pdb, hbond_site_pdb AS acc_pdb
 	hbond_site_atoms AS don_atoms, hbond_site_atoms AS acc_atoms
 WHERE
-	hbond.struct_id = geom.struct_id AND hbond.hbond_id   = geom.hbond_id AND
-	hbond.struct_id = don_site.struct_id AND hbond.don_id = don_site.site_id AND
-	hbond.struct_id = acc_site.struct_id AND hbond.acc_id = acc_site.site_id AND
-	don_atoms.struct_id = hbond.struct_id AND don_atoms.site_id = hbond.don_id AND
-	acc_atoms.struct_id = hbond.struct_id AND acc_atoms.site_id = hbond.acc_id;"
+	geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
+	don.struct_id = hb.struct_id AND don.site_id = hb.don_id AND
+	acc.struct_id = hb.struct_id AND acc.site_id = hb.acc_id AND
+	don_pdb.struct_id = hb.struct_id AND don_pdb.site_id = hb.don_id AND
+	don_pdb.heavy_atom_temperature < 30 AND
+	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id AND
+	acc_pdb.heavy_atom_temperature < 30 AND
+	don_atoms.struct_id = hb.struct_id AND don_atoms.site_id = hb.don_id AND
+	acc_atoms.struct_id = hb.struct_id AND acc_atoms.site_id = hb.acc_id;"
 f <- query_sample_sources(sample_sources, sele)
 
 alt_chi_dihedral_angle <- function(ab2, ab, a, h){
@@ -50,7 +55,6 @@ f[f$hybrid %in% c("sp3", "ring"), "chi"] <-
 #Convert from radians to degrees
 f$chi <- (f$chi*180/pi)
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
 # Order the plots better and give more descriptive labels
 f$don_chem_type <- factor(f$don_chem_type,
 	levels=c("hbdon_IMD", "hbdon_GDE", "hbdon_HXL", "hbdon_PBA",
@@ -73,13 +77,13 @@ potential <- data.frame( x=seq(0,360,length.out=200))
 potential$y <- exp(-1*cos_potential(potential$x))/(12.5803 *180/pi)
 
 l_ply(levels(dens$hybrid), function(hybrid){
-	plot_id = paste("chi_", hybrid, sep="")
+	plot_id = paste("hbond_chi_", hybrid, "_acceptor_by_don_chem_type", sep="")
 	ggplot(data=dens[dens$hybrid==hybrid,]) + theme_bw() +
-		geom_line(data=potential, aes(x=x, y=y*1000), size=1, colour="lightgray") +
-		geom_line(aes(x=x, y=y*1000, colour=sample_source)) +
+#		geom_line(data=potential, aes(x=x, y=y*1000), size=1, colour="lightgray") +
+		geom_line(aes(x=x, y=y, colour=sample_source)) +
 		geom_indicator(aes(indicator=counts, colour=sample_source)) +
 		facet_wrap( ~ don_chem_type) +
-		opts(title = paste("HBonds with", hybrid, "Acceptors: CHI Angle\n(Normalized for Equal Volume per Unit Distance)")) +
+		opts(title = paste("HBonds CHI Angle for ", hybrid, " acceptors and B-Factor < 30\n(Normalized for Equal Volume per Unit Distance)")) +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 		scale_y_continuous('Feature Density') +
 		opts(legend.position=c(.58,.35)) +
@@ -88,13 +92,11 @@ l_ply(levels(dens$hybrid), function(hybrid){
 })
 
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
 # Order the plots better and give more descriptive labels
 f$don_chem_type <- factor(f$don_chem_type,
 	levels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
 		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
 # Order the plots better and give more descriptive labels
 f$acc_chem_type <- factor(f$acc_chem_type,
 	levels=c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
@@ -102,14 +104,14 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
-plot_id = "chi_chem_type"
+plot_id = "hbond_chi_chem_type"
 dens <- estimate_density_1d_wrap(
 	f, c("sample_source", "acc_chem_type", "don_chem_type"), "chi")
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=y*1000, colour=sample_source)) +
+	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "Hydrogen Bonds CHI Angle by Chemical Types\n(normalized for equal volume per unit distance)") +
+	opts(title = "HBonds CHI Angle by Chemical Types, B-Factor < 30\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 	scale_y_continuous('Feature Density')
 

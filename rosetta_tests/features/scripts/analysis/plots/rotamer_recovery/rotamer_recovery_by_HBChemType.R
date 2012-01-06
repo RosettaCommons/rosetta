@@ -42,7 +42,7 @@ plot_id <- "rotamer_recovery_by_HBChemType"
 ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=log(x+1), y=log(y+1), colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, color=sample_source)) +
-	geom_indicator(aes(indicator=mean, color=sample_source, xpos=.2)) +
+	geom_indicator(aes(indicator=mean, color=sample_source, xpos="left")) +
 	facet_wrap( ~ hb_chem_type ) +
 	opts(title = "Rotamer Recovery by Hydrogen Bond Chemical Type") +
 	labs(x="<- better      log(Automorphic RMSD + 1)      worse ->",

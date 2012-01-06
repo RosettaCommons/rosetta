@@ -13,30 +13,30 @@ plot_id <- "AHdist_bbbb"
 
 sele <-"
 SELECT
-  geom.AHdist,
-  CASE don_site.resNum - acc_site.resNum
-    WHEN -1 THEN '-1' WHEN -2 THEN '-2' WHEN -3 THEN '-3' WHEN -4 THEN '-4'
-    WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4'
-    ELSE 'long' END AS seq_sep
+	geom.AHdist,
+	CASE don_site.resNum - acc_site.resNum
+		WHEN -1 THEN '-1' WHEN -2 THEN '-2' WHEN -3 THEN '-3' WHEN -4 THEN '-4'
+		WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4'
+		ELSE 'long' END AS seq_sep
 FROM
-  hbond_geom_coords AS geom,
-  hbonds AS hbond,
-  hbond_sites AS don_site,
-  hbond_sites AS acc_site
+	hbond_geom_coords AS geom,
+	hbonds AS hbond,
+	hbond_sites AS don_site,
+	hbond_sites AS acc_site
 WHERE
-  hbond.struct_id = geom.struct_id AND
-  hbond.hbond_id =  geom.hbond_id AND
-  hbond.struct_id = don_site.struct_id AND
-  hbond.don_id = don_site.site_id AND
-  hbond.struct_id = acc_site.struct_id AND
-  hbond.acc_id = acc_site.site_id AND
+	hbond.struct_id = geom.struct_id AND
+	hbond.hbond_id =  geom.hbond_id AND
+	hbond.struct_id = don_site.struct_id AND
+	hbond.don_id = don_site.site_id AND
+	hbond.struct_id = acc_site.struct_id AND
+	hbond.acc_id = acc_site.site_id AND
 	acc_site.HBChemType == 'hbacc_PBA' AND
 	don_site.HBChemType == 'hbdon_PBA';"
 f <- query_sample_sources(sample_sources, sele)
 
 dens <- estimate_density_1d(
-  f, c("sample_source", "seq_sep"),
-  "AHdist", weight_fun = radial_3d_normalization)
+	f, c("sample_source", "seq_sep"),
+	"AHdist", weight_fun = radial_3d_normalization)
 
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +

@@ -27,7 +27,7 @@ FROM
   hbonds AS hbond,
   hbond_geom_coords AS geom,
   hbond_sites AS don, hbond_sites AS acc,
-	hbond_site_pdb AS don_pdb, hbond_site_pdb AS acc_pdb,
+	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb,
   residue_secondary_structure AS don_ss, residue_secondary_structure AS acc_ss
 WHERE
   hbond.struct_id = s.struct_id AND

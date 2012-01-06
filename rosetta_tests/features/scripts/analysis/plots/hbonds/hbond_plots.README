@@ -1,0 +1,107 @@
+#Support Files
+hbond_geo_dim_scales.R
+geo_dim_parametrization.R
+
+#Null Models
+hbond_null.R
+
+#HBond Summary
+num_hbonds.R
+energy_chem_type.R
+
+# 1D Geometric Dimensions
+ADdist_chem_type.R
+AHdist_chem_type.R
+chi_chem_type.R
+cosBAH_chem_type.R
+cosAHD_chem_type.R
+cosB2AH_chem_type.R
+cosBAH_acc_chem_type.R
+sp3_acceptor_angle_geometry.R
+
+# 1D Geometric Dimensions Conditional
+AHdist_by_chem_type_signal.R
+AHdist_by_rank.R
+AHdist_by_resolution.R
+AHdist_seqsep6_chemtype_bfac30.R
+AHdist_chemtype_bfac30.R
+angle_dependence_on_AHdist.R
+AHdist_CXL_ARG_bfac20.R
+cosAHD_chem_type_bfac30.R
+chi_chem_type_long_range.R
+chi_fit_cos_cosBAH_long_range.R
+chi_fit_cos_long_range_BAH_bins.R
+chi_fit_cos_long_range_bb_sc.R
+chi_fit_cos_lr_bb_ssAnddon.R
+cosB2AH_sp3_acceptors.R
+cosBAH_by_resolution.R
+cosBAH_chem_type_AHcut2p4.R
+cosBAH_chem_type_bfac30.R
+cosBAH_dAH2p4cut_chem_type.R
+cosBAH_hbacc_HXLAXL_hist.R
+cosBAH_hbacc_HXLAXL.R
+OHacceptor_chi.R
+OHdonor.R
+
+
+#2D Geometric Dimesnsions
+geo_dim_pairs.R
+geo_dim_pairs_density_chem_type.R
+geo_dim_pairs_scatter_chem_type.R
+chi_BAH_eq_polar_density_bb_by_ss_long_range.R
+chi_BAH_eq_polar_density_bb_by_ss.R
+chi_BAH_eq_polar_density_HXLtoCXL2.R
+chi_BAH_eq_polar_density_HXLtoCXL.R
+chi_BAH_eq_polar_density_PBAtoPBA2.R
+chi_BAH_eq_polar_density_PBAtoPBA.R
+chi_BAH_eq_polar_density.R
+chi_BAH_eq_polar_density_sp2sc.R
+chi_BAH_eq_polar_density_srPBAtoPBA.R
+chiBAH_eqpoldens_bbbb.R
+chi_BAH_eqpoldens_scatter_lrbbbbhbonds.R
+chi_BAH_eqpoldens_scatter_scsp2.R
+chi_BAH_lt150_aBB_dSC.R
+chi_sinBAH_polar_scatter_AHdis2p0_by_chem_type_dcut.R
+chi_sinBAH_polar_scatter_bb_by_ss.R
+chi_sinBAH_polar_scatter_by_chem_type_long_range.R
+chi_sinBAH_polar_scatter_by_chem_type.R
+AHchi_AHD_eq_polar_density_chem_type.R
+AHchi_AHD_eq_polar_density_chem_type.R_instances
+AHchi_AHD_eq_polar_density_PBAtoPBA.R
+
+#Strange Bumps
+fade_bump.R
+hbond_backbone_backbone_cosAHD_bump.R
+
+#Model Fitting
+hbond_cosAHD_regression.R
+cosAHD_beta_regression.R
+cosBAH_regression.R
+hbond_regression.R
+hbond_AHdist_cosAHD_regression.R
+hbond_AHdist_regression.R
+OHdonor_AHdist_morse_fit.R
+
+#Bifurcated
+bifurcated_at_acceptor.R
+bifurcated_at_donor.R
+
+#Backbone Backbone
+AHdist_bbbb.R
+backbone_backbone_hbond_AHdist.R
+backbone_backbone_hbond_chi.R
+backbone_backbone_hbond_cosAHD.R
+backbone_backbone_hbond_cosBAH.R
+backbone_backbone_hbond.R
+
+# Out of Plane
+hdist_out_of_sp2plane.R
+his_inplane.R
+
+#Motifs
+scbb_bbbb_motifs_by_seq_sep.R
+
+
+#pattern recognition
+kmeans_cluster.R
+hbond_backbone_correlation.R

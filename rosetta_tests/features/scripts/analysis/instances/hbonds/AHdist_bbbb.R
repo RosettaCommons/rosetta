@@ -17,13 +17,13 @@ SELECT
 	acc.resNum,
 	'CA' AS CA, 'C' AS C, 'O' AS O,
   CASE don.resNum - acc.resNum
-    WHEN -1 THEN '-1' WHEN -2 THEN '-2' WHEN -3 THEN '-3' WHEN -4 THEN '-4'
-    WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4'
-    ELSE 'long' END AS seq_sep
+		WHEN -1 THEN '-1' WHEN -2 THEN '-2' WHEN -3 THEN '-3' WHEN -4 THEN '-4'
+		WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4'
+		ELSE 'long' END AS seq_sep
 FROM
 	structures as struct,
-  hbonds AS hbond,
-  hbond_sites AS don, hbond_sites AS acc
+	hbonds AS hbond,
+	hbond_sites AS don, hbond_sites AS acc
 WHERE
 	hbond.struct_id = struct.struct_id AND
 	don.struct_id = struct.struct_id AND don.site_id = hbond.don_id AND
@@ -31,15 +31,31 @@ WHERE
 	acc.HBChemType == 'hbacc_PBA' AND don.HBChemType == 'hbdon_PBA'
 LIMIT 15;"
 f <- query_sample_sources(sample_sources, sele)
+ss_ids <- as.character(unique(f$sample_source))
+g <- cast(f, tag + chain + resNum + CA + C + O + res_type ~ sample_source, value = "divergence")
+g$rel_div <- g[,ss_ids[1]] - g[,ss_ids[2]]
+g <- g[order(g$rel_div),]
+g$id <- 1:nrow(g)
 
 
-f <- melt(f,
+dens <- estimate_density_1d(
+	data = g, ids = c(), variable = "rel_div", n_pts=500)
+
+plot_id <- "rotamer_recovery_LYS_relative_divergence"
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=x, y=log(y+1))) +
+	opts(title = paste("Lysine Relative Rotamer Recovery\nbetween ", paste(ss_ids, collapse=" and "),", B-Factor < 20", sep="")) +
+	labs(x="Automorphic RMSD_1 - Automorphic RMSD_2", y="log(FeatureDensity + 1)")
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(plot_id, sample_sources[sample_sources$sample_source %in% ss_ids,], output_dir, output_formats)
+
+n_examples <- 50
+gm <- melt(g[g$id <= n_examples,],
 	id.vars=c("sample_source", "tag", "id", "chain", "resNum"),
 	measure.vars=c("CA", "C", "O"),
 	variable_name = "atom")
 
-
 instances_id <- "AHdist_bbbb"
-
-print
-prepare_feature_instances(instances_id, sample_sources, f)
+prepare_feature_instances(instances_id, sample_sources, gm)

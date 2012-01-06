@@ -9,6 +9,9 @@
 
 check_setup()
 
+description <-
+"This script addresses the question: Are the hydrogen bond geometries on either side of the backbone correlated?"
+
 # Organization of joins to form query
 #rsd
 #	acc_site
@@ -57,8 +60,6 @@ f <- query_sample_sources(sample_sources, sele)
 f <- ddply(f, c("sample_source", "dssp"), transform,
 					 counts = length(sample_source),
 					 correlation = cor(acc_AHdist, don_AHdist))
-
-
 
 f$dssp <- factor(f$dssp,
 	levels = c("H", "E", "T", "G", "B", "S", "I", " "),

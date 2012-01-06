@@ -35,7 +35,7 @@ GeomIndicator <- proto(Geom, {
       ypos <- .97
     } 
 
-    if("xjust" %in% names(data)){
+    if(!is.null(data$xjust[1])){
       if(data$xjust[1] %in% c("left", "center", "right")){
         xjust <- data$xjust[1]
       } else {
@@ -51,7 +51,7 @@ GeomIndicator <- proto(Geom, {
        }
     }
 
-    if("yjust" %in% names(data)){
+    if(!is.null(data$yjust[1])){
       if(data$yjust[1] %in% c("top", "center", "bottom")){
         yjust <- data$yjust[1]
       } else {
@@ -78,7 +78,7 @@ GeomIndicator <- proto(Geom, {
         colour <- data$colour[1]
     	textGrob(indicator_display_value,
              unit(xpos, "npc"), unit(ypos, "npc") - unit(level, "line"),
-             just=c(xjust, yjust), hjust=1, vjust=1,
+             just=c(xjust, yjust),
              gp=gpar(col=colour, cex=.75))
     }
   }
@@ -87,7 +87,7 @@ GeomIndicator <- proto(Geom, {
   icon <- function(.) textGrob("text", gp=gpar(cex=1.2))
   desc <- "Count Instances"
   required_aes <- c("indicator")
-  default_aes <- function(.) aes(colour="black", xpos="right", ypos="top", xjust="right", yjust="top", size=5)
+  default_aes <- function(.) aes(colour="black", xpos="right", ypos="top", xjust=NULL, yjust=NULL, size=5)
   guide_geom <- function(x) "text"
   example <- function(.){
     data <- rbind(

@@ -16,6 +16,7 @@
 			<feature name=PoseCommentsFeatures/>
 			<feature name=PoseConformationFeatures/>
 			<feature name=ProteinBackboneAtomAtomPairFeatures/>
+			<feature name=ProteinBackboneTorsionAngleFeatures/>
 			<feature name=ProteinResidueConformationFeatures/>
 			<feature name=RadiusOfGyrationFeatures/>
 			<feature name=ResidueBurialFeatures/>

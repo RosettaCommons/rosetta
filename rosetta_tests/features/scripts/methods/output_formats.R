@@ -78,8 +78,8 @@ output_print_vector <- data.frame(
 output_print_pdf <- data.frame(
   id="output_print_pdf",
   extensions = ".pdf",
-  height=15,
-  width=18,
+  height=8,
+  width=10.5,
   dpi=300,
   scale=1)
 
@@ -103,8 +103,8 @@ output_huge_vector <- data.frame(
 output_huge_pdf <- data.frame(
   id="output_huge_pdf",
   extensions = ".pdf",
-  height=8,
-  width=10.5,
+  height=15,
+  width=18,
   dpi=300,
   scale=1)
 

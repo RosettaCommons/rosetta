@@ -32,6 +32,5 @@ HOW TO RUN FEATURE SCIENTIFIC BENCHMARK
   
   * Run the analysis scripts from this directory
       - ./compare_sample_sources.R --help
-      - or run the analysis scripts interactively with compare_sample_sources_interactive.R 
 
   * Look for results in build/

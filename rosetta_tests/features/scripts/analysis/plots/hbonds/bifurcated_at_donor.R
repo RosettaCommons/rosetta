@@ -32,7 +32,7 @@ WHERE
 	hbond.struct_id = geom.struct_id AND hbond.hbond_id = geom.hbond_id AND
 	don.struct_id = don_pdb.struct_id AND don.site_id = don_pdb.site_id AND
 	acc.struct_id = acc_pdb.struct_id AND acc.site_id = acc_pdb.site_id AND
-	don_pdb.heavy_atom_temperature < 20 AND acc_pdb.heavy_atom_temperature < 20 AND
+	don_pdb.heavy_atom_temperature < 30 AND acc_pdb.heavy_atom_temperature < 30 AND
 	don_ss.struct_id = don.struct_id AND don_ss.resNum = don.resNum;
 
 CREATE INDEX hbs_struct_id_don_site_id ON hbs(struct_id, don_site_id);
@@ -103,7 +103,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	sub_f <- ddply(sub_f, .(acc_chem_type_name1, acc_chem_type_name2),
 		transform, counts = length(sample_source))
 	ggplot(sub_f) + plot_parts +
-		opts(title = paste("HBond Pairs Bifurcated at Donor; bFact < 20  ss_id:",ss_id))
+		opts(title = paste("HBond Pairs Bifurcated at Donor; bFact < 30  ss_id:",ss_id))
 	save_plots(
 		plot_id,
 		sample_sources[sample_sources$sample_source == ss_id,],
@@ -120,7 +120,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		ggplot(sub_sub_f) + plot_parts +
 			opts(title = paste(
 				"HBond Pairs Bifurcated at ", don_chem_type_name, ";",
-				" bFact < 20    ss_id:",ss_id))
+				" bFact < 30    ss_id:",ss_id))
 		save_plots(
 			plot_id,
 			sample_sources[sample_sources$sample_source == ss_id,],
@@ -136,7 +136,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	ggplot(sub_sub_f) + plot_parts + facet_wrap(~don_ss) +
 		opts(title = paste(
 			"HBond Backbone Donor Bifurcated to 2 Backbone acceptors;",
-			" bFact < 20    ss_id:",ss_id))
+			" bFact < 30    ss_id:",ss_id))
 	save_plots(
 		plot_id,
 		sample_sources[sample_sources$sample_source == ss_id,],

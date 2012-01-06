@@ -1,7 +1,6 @@
 #
 #
 -score:weights standard
--score:patch score12
 #
 # The chi term correction
 -score::hb_sp2_chipen

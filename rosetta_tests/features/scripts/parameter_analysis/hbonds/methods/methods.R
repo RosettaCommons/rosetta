@@ -10,13 +10,26 @@
 
 require(polynom)
 
+valid_rosetta_database_path <- function(rosetta_database_path) {
+	if(is.null(rosetta_database_path)){
+		rosetta_database_path <- Sys.getenv("ROSETTA3_DB")
+	}
+	if(is.null(rosetta_database_path) || !file.exists(rosetta_database_path)){
+		stop("Please specify the rosetta_database path via the --database command line argument or set the $ROSETTA3_DB environment variable.")
+	}
+	rosetta_database_path
+}
+
+
+
 #It's necessary to actually go into the folder because schema.sql
 #tries to import the .csv files with in the current directory.
 convert_parameter_set_into_database <- function(
 	rosetta_database_path, parameter_set, debug=FALSE){
+
 	parameter_set_path <- paste(rosetta_database_path, "scoring", "score_functions", "hbonds", parameter_set, sep="/")
 	if(!file.exists(parameter_set_path)){
-		stop(paste("Attempting to convert the hbond parameter set'",
+		stop(paste("Attempting to convert the hbond parameter set '",
 			parameter_set_path, "' ",
 			"set into a database, but it does not exist.", sep=""))
 	}
@@ -31,9 +44,9 @@ convert_parameter_set_into_database <- function(
 #################  Polynomial Functions ###################
 
 # return the HBPoly1D table
-get_polynomials <- function(database_path, parameter_set, debug=FALSE){
+get_polynomials <- function(rosetta_database_path, parameter_set, debug=FALSE){
 	con <- dbConnect("SQLite",
-	paste(database_path, "scoring", "score_functions", "hbonds", parameter_set_path, "params.db3", sep="/"))
+	paste(rosetta_database_path, "scoring", "score_functions", "hbonds", parameter_set, "params.db3", sep="/"))
 	poly_params <- dbGetQuery(con, "SELECT * FROM HBPoly1D;")
 
 	if(debug){
@@ -64,8 +77,41 @@ get_1d_polynomial <- function(polynomials, name){
 		p <- df[1,c("c_i","c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")],
 		p <- df[1,c("c_j","c_i","c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")],
 		p <- df[1,c("c_k","c_j","c_i","c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")])
+
+	polynomial(p)
+
+
+}
+
+get_1d_polynomial_from_types <- function(polynomials, sample_source, acc_chem_type, don_chem_type, separation, dimension){
+	df <- polynomials[
+		polynomials$sample_source == as.character(sample_source) &
+		polynomials$don_chem_type == as.character(don_chem_type) &
+		polynomials$acc_chem_type == as.character(acc_chem_type) &
+		polynomials$separation == as.character(separation) &
+		polynomials$dimension == as.character(dimension),]
+	if(nrow(df) != 1){
+		print("ERROR: in get_1d_polynomial_from_types")
+		print(paste(sample_source, don_chem_type, acc_chem_type, separation, dimension))
+		print(polynomials)
+		print(df)
+	}
+	switch(df$degree,
+		p <- df[1,c("c_a")],
+		p <- df[1,c("c_b","c_a")],
+		p <- df[1,c("c_c","c_b","c_a")],
+		p <- df[1,c("c_d","c_c","c_b","c_a",)],
+		p <- df[1,c("c_e","c_d","c_c","c_b","c_a")],
+		p <- df[1,c("c_f","c_e","c_d","c_c","c_b","c_a")],
+		p <- df[1,c("c_g","c_f","c_e","c_d","c_c","c_b","c_a")],
+		p <- df[1,c("c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")],
+		p <- df[1,c("c_i","c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")],
+		p <- df[1,c("c_j","c_i","c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")],
+		p <- df[1,c("c_k","c_j","c_i","c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")])
 	polynomial(p)
 }
+
+
 
 polynomial_range <- function(polynomials, name){
 	if(!(name %in% polynomials$name)){
@@ -77,16 +123,18 @@ polynomial_range <- function(polynomials, name){
 display_polynomials <- function(parameter_set_path, polynomials){
 	polynomials <- adply(polynomials, 1, function(polynomial){
 		name <- polynomial[1, "name"]
-		polynomial$equation <- as.character(signif(get_1d_polynomial_by_name(polynomials,name), digits=4), decreasing=TRUE)
+		polynomial$equation <- as.character(signif(get_1d_polynomial(polynomials,name), digits=4), decreasing=TRUE)
 		polynomial
 	})
-	cat("Plynomials defined in the parameter set ", parameter_set_path,"\n")
+	cat("Plynomials defined in the parameter set '", parameter_set_path,"'\n", sep="")
 	print(polynomials[,c("name", "equation")], right=FALSE)
 }
 
 evaluate_polynomial <- function(params, name){
-	x <- seq(params[2], params[3], length.out=100)
-	data.frame(name=name, x=x, y=aaply(x, 1, eval_poly, params))
+	poly <- params[params$name == name,]
+	x <- seq(poly$xmin, poly$xmax, length.out=100)
+	p <- get_1d_polynomial(params, name)
+	data.frame(name=name, x=x, y=aaply(x, 1, as.function(p)))
 }
 
 #################  Fade Interval Functions ###################

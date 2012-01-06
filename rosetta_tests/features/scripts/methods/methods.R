@@ -46,6 +46,17 @@ check_setup <- function(){
 	})
 }
 
+
+ggplot_footer <- function(text){
+	seekViewport("background")
+	popViewport("footer")
+	pushViewport(viewport(name="footer", x=.99, y=.01, just=c(1,0), width=.4, height=.04))
+	#grid.rect(gp=gpar(col="red"))
+	grid.text(text, x=1, hjust=1, gp=gpar(fontsize=5, col="lightgray"))
+	upViewport(0)
+}
+
+
 save_plots <- function(
   plot_id,
   sample_sources,
@@ -53,6 +64,7 @@ save_plots <- function(
   output_formats,
   ...
 ) {
+
   a_ply(output_formats, 1, function(fmt){
     if(!file.exists(file.path(output_dir, fmt$id))){
       dir.create(file.path(output_dir, fmt$id), recursive=TRUE)
@@ -120,6 +132,85 @@ query_sample_sources <- function(
   }
 	features
 }
+
+query_sample_sources_against_ref <- function(
+  sample_sources,
+  sele,
+  cache_size=db_cache_size){
+  tryCatch(sele,error=function(e){
+    cat("ERROR: The select statement ", sele, " is not defined.\n")
+  })
+
+	if(nrow(sample_sources) < 2) {
+		stop(paste("Please provide 2 or more sample sources.
+
+sample_sources provided:
+	'", paste(sample_sources$sample_source_ids, collapse= "',\n\t'"), "'
+
+This function will execute the query for all but the first sample source
+  The first sample source will be available as a database named 'ref'
+  The second sample source will be available as a database named 'new'.
+
+In the returned data.frame the there will be the following columns:
+  'ref_sample_source' -> id of ref sample_source
+  'new_sample_source' -> id of new sample_source
+", sep=""))
+	}
+
+	ref_ss <- sample_sources[1,]
+	con <- dbConnect(engine)
+	set_db_cache_size(con, cache_size);
+	dbSendQuery(con, paste("ATTACH DATABASE '", ref_ss$fname, "' AS ref;", sep=""))
+
+  features <- ddply(sample_sources[seq(2,nrow(sample_sources)),], c("sample_source"), function(ss){
+    tryCatch(c(ss),error=function(e){
+      cat("ERROR: The specified sample source is not defined.\n")
+    })
+    cat("loading: ref:", as.character(ref_ss$sample_source), " new:", as.character(ss$sample_source), " ... ", sep="")
+    if( is.na(ss$sample_source[1]) ){
+      stop("Specified sample source is not defined")
+    }
+		dbSendQuery(con, paste("ATTACH DATABASE '", ss$fname, "' AS new;", sep=""))
+
+		timing <- system.time({
+	    #Allow select statements to be prefaced with arbitrary statements.
+	    #This allows the creation of temporary tables, indices, etc.
+	    sele_split <- paste(strsplit(sele, ";\\W*", perl=TRUE)[[1]], ";", sep="")
+	    l_ply(sele_split[-length(sele_split)], function(sele){
+	      dbSendQuery(con, sele)
+	    })
+	    last_stmt <- sele_split[length(sele_split)]
+	    df <- dbGetQuery(con, last_stmt)
+		})
+		dbSendQuery(con, "DETACH DATABASE new;")
+		cat(as.character(timing[3]),"s\n")
+    df
+  })
+	for(col in names(features)){
+	  if(is.character(features[,col])){
+		  features[,col] <- factor(features[,col])
+    }
+  }
+	data.frame(
+		ref_sample_source = factor(ref_ss$sample_source[1]),
+		new_sample_source = factor(features$sample_source),
+		subset(features, select= -sample_source))
+}
+
+# Add a column to the data.frame called "counts" that for the total
+# number of rows in each group, where the groups are determined by
+# having the same values in the id.vars columns
+add_group_counts <- function(f, id.vars) {
+	ddply(f, id.vars, transform, counts = length(names(f)[1]))
+}
+
+# Add a column to the data.frame called "mean" that has the mean value
+# of the measure.var, where the groups are determined by having the
+# same values in the id.vars columns
+add_group_means <- function(f, id.vars, measure.var, precision=4) {
+	ddply(f, id.vars, transform, mean =  round(mean(names(f)[1])))
+}
+
 
 locate_rosetta_application <- function(
 	app_name,

@@ -24,9 +24,8 @@ do_query <- function(dOH_clause, sample_source){
          (", dOH_clause, ");", sep="")
 
 	f <- query_sample_sources(sample_source, sele)
-	# This is deprecated please use the hbond_chem_types table for the
-	# lables instead Order the plots better and give more descriptive
-	# labels
+
+	# give more descriptive plot labels
 	f$acc_chem_type <- factor(f$acc_chem_type,
 		levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
 			"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
