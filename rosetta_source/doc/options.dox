@@ -2103,6 +2103,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>will compute RPF score with distance cutoff 5 and store in column rpf_score</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-window_size</b> \<Integer\><dt>
+<dd>Window size for local RMSD calculations in windowed_rmsd app</dd><br>
+<dd>Default: 5</dd><br>
+</dl>
  </li>
 <li><h2>filters</h2>
 <dl>

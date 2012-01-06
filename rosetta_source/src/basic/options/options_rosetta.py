@@ -1128,6 +1128,7 @@ Options = Option_Group( '',
 		Option( 'score_sscore_short_helix', 'Integer', desc='defines the maximum length of a helix that is not scored if it terminates a loop', default='5' ),
 		Option( 'score_sscore_maxloop', 'Integer', desc='defines the maximum length of a loop that is still considered for the sscore - score', default='3' ),
 		Option( 'rpf', 'Boolean', desc='will compute RPF score with distance cutoff 5 and store in column rpf_score', default='false' ),
+		Option( 'window_size', 'Integer', desc='Window size for local RMSD calculations in windowed_rmsd app', default='5'),
 	),
 
 	# Filter Options -----------------------------------------------------------

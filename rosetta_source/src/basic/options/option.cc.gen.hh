@@ -447,6 +447,7 @@ option.add( basic::options::OptionKeys::evaluation::score_exclude_res, "Calculat
 option.add( basic::options::OptionKeys::evaluation::score_sscore_short_helix, "defines the maximum length of a helix that is not scored if it terminates a loop" ).def(5);
 option.add( basic::options::OptionKeys::evaluation::score_sscore_maxloop, "defines the maximum length of a loop that is still considered for the sscore - score" ).def(3);
 option.add( basic::options::OptionKeys::evaluation::rpf, "will compute RPF score with distance cutoff 5 and store in column rpf_score" ).def(false);
+option.add( basic::options::OptionKeys::evaluation::window_size, "Window size for local RMSD calculations in windowed_rmsd app" ).def(5);
 option.add( basic::options::OptionKeys::filters::filters, "filters option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::filters::disable_all_filters, "turn off all centroid filters: RG, CO, and Sheet" ).def(false);
 option.add( basic::options::OptionKeys::filters::disable_rg_filter, "turn off RG filter" ).def(false);
