@@ -39,7 +39,7 @@ void compute_windowed_rama(PoseCOP pose, FragSetCOP fragments, Size window, vect
   using core::chemical::AA;
   using core::scoring::Ramachandran;
   assert(pose);
-  assert(rmsds);
+  assert(ramas);
   assert(fragments);
 
   const Size k = (window - 1) / 2;
