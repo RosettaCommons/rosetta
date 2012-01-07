@@ -62,16 +62,11 @@ void compute_windowed_rmsd(const Pose& reference, const Pose& model, Size window
 }
 
 void show(const string& filename, const vector1<Real>& rmsds) {
-  using std::cout;
-  using std::endl;
-
-  cout << "Local RMSDs for " << filename << endl;
-
   for (Size i = 1; i <= rmsds.size(); ++i) {
-    cout << "rmsd(" << i << ") = " << rmsds[i] << endl;
+    std::cout << "rmsd " << i << " " << rmsds[i] << std::endl;
   }
 
-  cout << "---" << endl;
+  std::cout << "---" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
