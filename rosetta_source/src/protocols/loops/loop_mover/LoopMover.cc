@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/loops/IndependentLoopMover.cc
+/// @file protocols/loops/loop_mover/LoopMover.cc
 /// @brief  loop mover base class
 /// @author Mike Tyka
 
-#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
@@ -64,13 +64,12 @@ namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUT
 
 namespace protocols {
 namespace loops {
+namespace loop_mover {
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
-
-basic::Tracer tr("protocol.loops.LoopMover");
 
 LoopMover::LoopMover() : Mover()
 {
@@ -171,7 +170,7 @@ void LoopMover::set_extended_torsions(
 
 	static int counter = 0;
 
-	tr.Debug << "Extending loop torsions" << loop.start() << " " << loop.stop()
+	tr().Debug << "Extending loop torsions" << loop.start() << " " << loop.stop()
 		<< std::endl;
 
 	idealize_loop(pose, loop );
@@ -213,7 +212,7 @@ LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 		for( core::Size i = 1; i <= segments.size(); ++i ){
 			core::Size loop_end = segments[i].second - 1; //segment convention
 			if( loop_end <= segments[i].first ) continue; //safeguard against faulty or segments of length 1
-			tr << "Setting loop from observer cache between seqpos " << segments[i].first << " and " << loop_end << "." << std::endl;
+			tr() << "Setting loop from observer cache between seqpos " << segments[i].first << " and " << loop_end << "." << std::endl;
 			loops_->add_loop( segments[i].first, loop_end, numeric::random::random_range( int(segments[i].first), int(loop_end)  ) );
 		}
 	}
@@ -261,5 +260,6 @@ void LoopMover::initForEqualOperatorAndCopyConstructor(LoopMover & lhs, LoopMove
     lhs.false_movemap_ = rhs.false_movemap_;
 }
 
+} // namespace loop_mover
 } // namespace loops
 } // namespace protocols

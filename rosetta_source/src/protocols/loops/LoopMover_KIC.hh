@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_loops_LoopMover_KIC_hh
 
 
-#include <protocols/loops/IndependentLoopMover.hh>
+#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
@@ -38,7 +38,7 @@
 namespace protocols {
 namespace loops {
 
-class LoopMover_Perturb_KIC: public IndependentLoopMover {
+class LoopMover_Perturb_KIC: public loop_mover::IndependentLoopMover {
 public:
 
 	LoopMover_Perturb_KIC();
@@ -67,21 +67,26 @@ public:
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const;
 
-	LoopResult model_loop(
-		core::pose::Pose & pose,
-		protocols::loops::Loop const & loop
-	);
-
+	
 private:
 
 	core::Size max_seglen_; // maximum KIC segment length
 	bool recover_low_;
 	core::Size max_kic_build_attempts_;
 	core::Size remodel_kic_attempts_;
+
+protected:
+
+    virtual loop_mover::LoopResult model_loop(
+		core::pose::Pose & pose,
+		protocols::loops::Loop const & loop
+	);
+
+    virtual basic::Tracer & tr() const;
 };
 
 
-class LoopMover_Refine_KIC: public LoopMover {
+class LoopMover_Refine_KIC: public loop_mover::LoopMover {
 public:
 	//constructors
 	LoopMover_Refine_KIC(
@@ -140,6 +145,7 @@ protected:
 
 	core::pack::task::TaskFactoryOP task_factory;
 	bool redesign_loop_;
+    virtual basic::Tracer & tr() const;
 
 private:
 

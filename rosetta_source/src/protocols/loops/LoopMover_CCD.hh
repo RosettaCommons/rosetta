@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_loops_LoopMover_CCD_hh
 
 
-#include <protocols/loops/IndependentLoopMover.hh>
+#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
@@ -47,7 +47,7 @@ namespace loops {
 /// ab initio loop modeling in real practice. The loop has to be long enough for
 /// inserting certain length of fragments.
 /////////////////////////////////////////////////////////////////////////////////////////
-class LoopMover_Perturb_CCD: public IndependentLoopMover {
+class LoopMover_Perturb_CCD: public loop_mover::IndependentLoopMover {
 public:
 	//constructor
 	LoopMover_Perturb_CCD();
@@ -77,15 +77,19 @@ public:
 
 	void set_default_settings(){}
 
-	LoopResult model_loop( core::pose::Pose & pose,
-	                 protocols::loops::Loop const & loop );
+	
 
 protected:
 	std::vector< core::fragment::FragSetOP > frag_libs_;
+    
+    virtual loop_mover::LoopResult model_loop( core::pose::Pose & pose,
+	                 protocols::loops::Loop const & loop );
+                     
+    virtual basic::Tracer & tr() const;
 
 };
 
-class LoopMover_Refine_CCD: public LoopMover {
+class LoopMover_Refine_CCD: public loop_mover::LoopMover {
 public:
 
 	// empty constructor
@@ -148,6 +152,7 @@ protected:
 
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool redesign_loop_;
+    virtual basic::Tracer & tr() const;
 
 private:
 	// parameters with local defaults

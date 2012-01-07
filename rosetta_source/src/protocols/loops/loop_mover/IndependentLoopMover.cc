@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/loops/IndependentLoopMover.cc
+/// @file protocols/loops/loop_mover/IndependentLoopMover.cc
 /// @brief  loop mover base class
 /// @author Mike Tyka
 /// @author James Thompson
 
-#include <protocols/loops/IndependentLoopMover.hh>
+#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
@@ -73,6 +73,7 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_mover {
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
@@ -98,15 +99,14 @@ void IndependentLoopMover::set_defaults() {
 void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	basic::Tracer tr("protocol.loops." + get_name() );
 
  	// Select Loops to be built
 	all_loops_closed_ = true;
-	tr.Info << "ALL_LOOPS:" << *loops() << std::endl;
+	tr().Info << "ALL_LOOPS:" << *loops() << std::endl;
 
 	Loops selected_loops;
 	select_loops( selected_loops );
-	tr.Info << "SELECTEDLOOPS:" << selected_loops << std::endl;
+	tr().Info << "SELECTEDLOOPS:" << selected_loops << std::endl;
 
 
 	kinematics::FoldTree f_orig=pose.fold_tree();
@@ -129,7 +129,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		if ( buildloop.is_extended() ){
 			// store starting fold tree and cut pose_initial
 			set_single_loop_fold_tree( pose_initial, buildloop );
-			tr.Info << "Setting extended torsions: " << buildloop << std::endl;
+			tr().Info << "Setting extended torsions: " << buildloop << std::endl;
 			if (  option[ OptionKeys::loops::debug ]() ) pose_initial.dump_pdb("just_before_set_extended_torsions.pdb");
 			set_extended_torsions( pose_initial, buildloop );
 			if (  option[ OptionKeys::loops::debug ]() ) pose_initial.dump_pdb("just_after_set_extended_torsions.pdb");
@@ -141,7 +141,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		Size nfailure = 0;
 		//Size nrmsfail = 0;
 
-		tr.Info << "Building Loop: " << buildloop << std::endl;
+		tr().Info << "Building Loop: " << buildloop << std::endl;
 		result_of_loopModel = Failure;
 
 		pose::Pose best_pose = pose_initial;
@@ -154,7 +154,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
                 loops()->grow_loop_away_from_sheets( pose, buildloop, 1.0 );
 			}
 			for ( int build_attempt = 0; build_attempt < build_attempts_; build_attempt ++ ){
-				tr.Info << "Building Loop attempt: " << build_attempt << std::endl;
+				tr().Info << "Building Loop attempt: " << build_attempt << std::endl;
 				pose = pose_initial;
 
 				if (  option[ OptionKeys::loops::debug ]() ) pose.dump_pdb("just_before_rebuild.pdb");
@@ -201,7 +201,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 						best_pose = pose;
 						best_score = pose_score;
 						best_count ++;
-						tr.Debug << "Adding a " << best_score << std::endl;
+						tr().Debug << "Adding a " << best_score << std::endl;
 					}
 					if ( best_count >= (Size)select_best_loop_from ) break;
 					continue;
@@ -222,7 +222,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 						get_checkpoints()->checkpoint( pose, curr_job_tag, checkname + "_C", true );
 					}
 					get_checkpoints()->debug(  curr_job_tag, checkname, -2);
-					tr.Error << "Unable to build this loop - a critical error occured. Moving on .. " << std::endl;
+					tr().Error << "Unable to build this loop - a critical error occured. Moving on .. " << std::endl;
 					break;
 				}
 			} // for build_attempts
@@ -236,7 +236,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 			if ( strict_loops_ ) break;
 		}
 
-		tr.Info << "result of loop closure:0 success, 3 failure " << result_of_loopModel << std::endl;
+		tr().Info << "result of loop closure:0 success, 3 failure " << result_of_loopModel << std::endl;
 		if(result_of_loopModel != Success){
 			all_loops_closed_ = false;
 			break; //no need to check the rest of the loops if one can't be closed the result will be an open structure.
@@ -252,7 +252,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		int time_end = time(NULL);
 		float time_per_build = float(time_end - time_start) / float(nfailure+1);
 
-		tr.Info   << "Loopstat: "
+		tr().Info   << "Loopstat: "
 			<< "  " << I(3,it->start())
 			<< "  " << I(3,it->stop())
 			<< "  " << I(3,buildloop.start() )
@@ -339,5 +339,6 @@ IndependentLoopMover::get_name() const {
 	return "IndependentLoopMover";
 }
 
+} // namepsace loop_mover
 } // namespace loops
 } // namespace protocols

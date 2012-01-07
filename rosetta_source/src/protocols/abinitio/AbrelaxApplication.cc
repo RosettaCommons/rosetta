@@ -155,7 +155,7 @@
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/loops/FASelectSlidingWindowLoopClosure.hh>
-#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Exceptions.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/simple_filters/RGFilter.hh>

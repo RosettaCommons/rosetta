@@ -14,7 +14,7 @@
 //// Unit Headers
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loop_build/LoopMover_SlidingWindow.hh>
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
@@ -57,7 +57,7 @@
 namespace protocols {
 namespace loop_build {
 
-static basic::Tracer tr("protocols.loop_build.LoopMover_SlidingWindow");
+static basic::Tracer TR("protocols.loop_build.LoopMover_SlidingWindow");
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
@@ -105,7 +105,7 @@ LoopMover_SlidingWindow::LoopMover_SlidingWindow(
 }
 
 
-loops::LoopResult LoopMover_SlidingWindow::model_loop(
+loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	core::pose::Pose & pose,
   protocols::loops::Loop const & loop
 ){
@@ -183,22 +183,27 @@ loops::LoopResult LoopMover_SlidingWindow::model_loop(
 																	(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
 
 		core::Real chain_break_tol = option[ basic::options::OptionKeys::loops::chain_break_tol ]();
-		tr.Info << "Chainbreak: " << chain_break_score << " Max: " << chain_break_tol << std::endl;
+		tr().Info << "Chainbreak: " << chain_break_score << " Max: " << chain_break_tol << std::endl;
 
-		if( chain_break_score > (chain_break_tol*10) ) return loops::ExtendFailure;   // if we have a really bad chain break, go  and extend
-		if( chain_break_score > chain_break_tol )      return loops::Failure;         // if we only have a slight chainbreak problem, try again
+		if( chain_break_score > (chain_break_tol*10) ) return loops::loop_mover::ExtendFailure;   // if we have a really bad chain break, go  and extend
+		if( chain_break_score > chain_break_tol )      return loops::loop_mover::Failure;         // if we only have a slight chainbreak problem, try again
 	}
 
 	// return to original fold tree
 	loops::remove_cutpoint_variants( pose );
 	pose.fold_tree( f_orig );
 
-	return loops::Success;
+	return loops::loop_mover::Success;
 }
 
 std::string
 LoopMover_SlidingWindow::get_name() const {
 	return "LoopMover_SlidingWindow";
+}
+
+basic::Tracer & LoopMover_SlidingWindow::tr() const
+{
+    return TR;
 }
 
 } // namespace loop_build

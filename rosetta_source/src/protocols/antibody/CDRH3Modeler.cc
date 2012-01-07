@@ -52,8 +52,8 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover.fwd.hh>
-#include <protocols/loops/LoopMover.hh>
+//#include <protocols/loops/LoopMover.fwd.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -289,9 +289,11 @@ void CDRH3Modeler::build_centroid_loop() {
 	// silly hack to make extended loops to work
 	loops::LoopsOP cdr_h3_loop_list = new loops::Loops();
 	cdr_h3_loop_list->add_loop( cdr_h3 );
-	loops::LoopMoverOP my_loop_move =  new loops::LoopMover( cdr_h3_loop_list );
+    /* Commented out by BDW with JX's consent
+	loops::loop_mover::LoopMoverOP my_loop_move =  new loops::loop_mover::LoopMover( cdr_h3_loop_list );
 	my_loop_move->set_extended_torsions( antibody_in_.Fv, cdr_h3 );
 	my_loop_move->apply( antibody_in_.Fv );
+    */
 
 	Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
 	core::import_pose::pose_from_pdb( template_pose_, "hfr.pdb" );

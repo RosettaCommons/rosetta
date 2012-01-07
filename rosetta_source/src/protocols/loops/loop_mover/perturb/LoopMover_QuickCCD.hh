@@ -11,11 +11,12 @@
 /// @brief
 /// @author Mike Tyka
 
-#ifndef INCLUDED_protocols_loops_LoopMover_QuickCCD_hh
-#define INCLUDED_protocols_loops_LoopMover_QuickCCD_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_QuickCCD_hh
+#define INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_QuickCCD_hh
 
 // package headers
-#include <protocols/loops/IndependentLoopMover.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.fwd.hh>
+#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/moves/Mover.hh>
 
 // project headers
@@ -33,7 +34,8 @@
 
 namespace protocols {
 namespace loops {
-
+namespace loop_mover {
+namespace perturb {
 
 /// @brief LoopMover utilizing fragment insertion, ccd loop closure, and
 /// minimization
@@ -113,11 +115,13 @@ public: // mutators
 protected: // virtual loop operations
 
 	/// @brief loop modeling protocol implementation
-	LoopResult model_loop(
+	virtual LoopResult model_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop
 	);
-
+    
+    virtual basic::Tracer & tr() const;
+    
 protected: // data. should be private!
 
 	/// @brief randomize loops prior to performing loop modeling?
@@ -131,7 +135,9 @@ void fast_ccd_close_loops(
 	core::kinematics::MoveMap & mm
 );
 
+} //namespace perturb
+} //namespace loop_mover
 } //namespace loops
 } //namespace protocols
 
-#endif //INCLUDED_protocols_loops_LoopMover_QuickCCD_HH
+#endif //INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_QuickCCD_hh

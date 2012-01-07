@@ -11,7 +11,7 @@
 /// @brief Implmentation of interaction motifs
 
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover_Backrub.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_Backrub.hh>
 #include <protocols/motifs/IRCollection.hh>
 #include <protocols/motifs/Motif.hh>
 #include <protocols/motifs/MotifLibrary.hh>
@@ -154,7 +154,7 @@ namespace motifs {
 		hb_options->use_hb_env_dep( false );
 		options.hbond_options( *hb_options );
 		score_fxn->set_energy_method_options( options );
-		protocols::loops::LoopMover_Refine_Backrub pre_loop_refine( flexible_regions, score_fxn );
+		protocols::loops::loop_mover::refine::LoopMover_Refine_Backrub pre_loop_refine( flexible_regions, score_fxn );
 		pre_loop_refine.apply( pose );
 
 		pose.dump_pdb( "alanine.pdb" );
@@ -333,7 +333,7 @@ namespace motifs {
 		irt << "Before backbone refinement constraints score is " << pose.energies().total_energies()[ coordinate_constraint ] / num_inverse_rotamers << std::endl;
 
 		// Perform some kind of loop relaxation
-		protocols::loops::LoopMover_Refine_Backrub loop_refine( flexible_regions, score_fxn );
+		protocols::loops::loop_mover::refine::LoopMover_Refine_Backrub loop_refine( flexible_regions, score_fxn );
 
 		loop_refine.apply( pose );
 
@@ -367,7 +367,7 @@ namespace motifs {
 		(*score_fxn)(pose);
 		irt << "Before sidechain refinement constraints score is " << pose.energies().total_energies()[ coordinate_constraint ] / num_inverse_rotamers << std::endl;
 
-		protocols::loops::LoopMover_Refine_Backrub sc_loop_refine( flexible_regions, score_fxn );
+		protocols::loops::loop_mover::refine::LoopMover_Refine_Backrub sc_loop_refine( flexible_regions, score_fxn );
 
 		sc_loop_refine.apply( pose );
 

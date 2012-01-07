@@ -49,7 +49,7 @@
 
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
 
 #include <utility/vector1.hh>
@@ -391,7 +391,7 @@ void rebuild_loops_until_closed(
 
 	bool closed( false );
 	for ( core::Size iter = 1; !closed && iter <= max_rebuild; iter++ ) {
-		loops::LoopMoverOP loop_mover = protocols::loops::LoopMoverFactory::get_instance()->create_loop_mover(
+		loops::loop_mover::LoopMoverOP loop_mover = protocols::loops::LoopMoverFactory::get_instance()->create_loop_mover(
 			loop_mover_name, my_loops
 		);
 		loop_mover->apply( query_pose );

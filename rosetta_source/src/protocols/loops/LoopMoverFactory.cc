@@ -13,7 +13,7 @@
 
 // Unit Headers
 #include <protocols/loops/LoopMoverFactory.hh>
-#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/MoverFactory.hh>
 
 // Package Headers
@@ -64,7 +64,7 @@ LoopMoverFactory::get_instance()
 }
 
 
-LoopMoverOP
+loop_mover::LoopMoverOP
 LoopMoverFactory::create_loop_mover(
 	std::string const & type_name_in,
 	LoopsOP const loops
@@ -87,7 +87,7 @@ LoopMoverFactory::create_loop_mover(
 	}
 
 	tr.Trace << "generate LoopMover of type " << type_name << std::endl;
-	LoopMoverOP loop_mover( dynamic_cast<LoopMover *>((moves::MoverFactory::get_instance()->newMover(type_name)).get()));
+	loop_mover::LoopMoverOP loop_mover( dynamic_cast<loop_mover::LoopMover *>((moves::MoverFactory::get_instance()->newMover(type_name)).get()));
 	if(!loop_mover){
 		stringstream error_msg;
 		error_msg

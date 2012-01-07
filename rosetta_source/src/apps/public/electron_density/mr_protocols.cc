@@ -22,9 +22,9 @@
 #include <protocols/electron_density/util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover.fwd.hh>
-#include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/LoopMover_QuickCCD.hh>
+//#include <protocols/loops/LoopMover.fwd.hh>
+//#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_CCD.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMoverFactory.hh>
@@ -232,7 +232,7 @@ public:
 			if ( chainbreak_present ) {
 				core::kinematics::MoveMapOP mm_one_loop = new core::kinematics::MoveMap();
 				set_move_map_for_centroid_loop( buildloop, *mm_one_loop );
-				fast_ccd_close_loops( pose, buildloop,  *mm_one_loop );
+				loop_mover::perturb::fast_ccd_close_loops( pose, buildloop,  *mm_one_loop );
 			}
 
 			//  --> restore foldtree

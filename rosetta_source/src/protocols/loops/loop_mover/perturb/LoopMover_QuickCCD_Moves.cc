@@ -7,14 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/loops/LoopMover_Perturb_QuickCCD_Moves.cc
+/// @file protocols/loops/loop_mover/independent_loop_mover/LoopMover_Perturb_QuickCCD_Moves.cc
 /// @brief kinematic loop closure main protocols
 /// @author Mike Tyka
 
 //// Unit Headers
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
+//#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_Moves.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_MovesCreator.hh>
 #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -84,10 +85,12 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_mover {
+namespace perturb {
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
-extern basic::Tracer tr;
+static basic::Tracer TR("protocols.loops.loop_mover.perturb.LoopMover_Perturb_QuickCCD_Moves");
 
 
 static numeric::random::RandomGenerator RG(42862);
@@ -131,7 +134,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	using namespace basic::options::OptionKeys;
 	using namespace numeric::random;
 
-	tr << "***** DOING CCD MOVES *****" << std::endl;
+	tr() << "***** DOING CCD MOVES *****" << std::endl;
 
 	core::Size const nres =  pose.total_residue();
 
@@ -150,7 +153,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	int const loop_size( loop.stop() - loop.start() + 1 );
 	core::Size cycles2 =  10;
 	core::Size cycles3 =  std::max( 30, int( 10*loop_size));
-	tr.Info << "Number of cycles: cycles2 and cycles3 " << cycles2 << " " << cycles3 << std::endl;
+	tr().Info << "Number of cycles: cycles2 and cycles3 " << cycles2 << " " << cycles3 << std::endl;
 
 	// special case ... vrt res at last position
 	//chainbreak_present &= ( loop.stop() != nres-1 || pose.residue( nres ).aa() != core::chemical::aa_vrt );
@@ -221,7 +224,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	mc_->set_temperature( temperature );
 
 	int   frag_count   = 0;
-	scorefxn()->show_line_headers( tr.Info );
+	scorefxn()->show_line_headers( tr().Info );
 
 	float final_chain_break_weight = 5.0;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -257,8 +260,8 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 
 		// score and print an info line
 		( *scorefxn() )(pose);
-		scorefxn()->show_line( tr , pose );
-		tr << std::endl;
+		scorefxn()->show_line( tr() , pose );
+		tr() << std::endl;
 
 		for ( core::Size c3 = 1; c3 <= cycles3; ++c3 ) {
 			if(( !chainbreak_present || uniform()*cycles2 > c2 ))
@@ -293,21 +296,21 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	if( ( chain_break_score > 0.1 ) && chainbreak_present )
 	{
 		mc_->recover_low( pose );
-		tr << "--" << std::endl;
+		tr() << "--" << std::endl;
 		( *scorefxn() )(pose);
-		scorefxn()->show_line( tr , pose );
-		tr << std::endl;
+		scorefxn()->show_line( tr() , pose );
+		tr() << std::endl;
 		Loop closeloop(std::max(loop.cut()-3,loop.start()),  std::min(loop.cut()+3,loop.stop()), loop.cut() );
 		fast_ccd_close_loops( pose, closeloop, *mm_one_loop );
 		( *scorefxn() )(pose);
-		scorefxn()->show_line( tr , pose );
-		tr << std::endl;
+		scorefxn()->show_line( tr() , pose );
+		tr() << std::endl;
 		mc_->reset( pose );
 	}
 
 	pose = mc_->lowest_score_pose();
 	//scorefxn_->show(  tr.Info , pose );
-	tr.Info << "-------------------------" << std::endl;
+	tr().Info << "-------------------------" << std::endl;
 	mc_->show_counters();
 
 	// CHeck chain break !
@@ -317,7 +320,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 																	(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
 
 		core::Real chain_break_tol = option[ basic::options::OptionKeys::loops::chain_break_tol ]();
-		tr.Info << "Chainbreak: " << chain_break_score << " Max: " << chain_break_tol << std::endl;
+		tr().Info << "Chainbreak: " << chain_break_score << " Max: " << chain_break_tol << std::endl;
 		if( chain_break_score > chain_break_tol ) return Failure;
 	}
 
@@ -327,7 +330,23 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	return Success;
 }
 
+basic::Tracer & LoopMover_Perturb_QuickCCD_Moves::tr() const
+{
+    return TR;
+}
+
+LoopMover_Perturb_QuickCCD_MovesCreator::~LoopMover_Perturb_QuickCCD_MovesCreator() {}
 
 
+moves::MoverOP LoopMover_Perturb_QuickCCD_MovesCreator::create_mover() const {
+  return new LoopMover_Perturb_QuickCCD_Moves();
+}
+
+std::string LoopMover_Perturb_QuickCCD_MovesCreator::keyname() const {
+  return "LoopMover_Perturb_QuickCCD_Moves";
+}
+
+} // namespace perturb
+} // namespace loop_mover
 } // namespace loops
 } // namespace protocols

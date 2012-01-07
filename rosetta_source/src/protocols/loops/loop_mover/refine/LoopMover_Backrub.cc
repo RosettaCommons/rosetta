@@ -12,8 +12,8 @@
 
 //// Unit Headers
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/LoopMover_Backrub.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_Backrub.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_BackrubCreator.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -66,13 +66,15 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_mover {
+namespace refine {
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
 static numeric::random::RandomGenerator RG(42678);
 
-extern basic::Tracer tr;
+static basic::Tracer TR("protocols.loops..LoopMover_Refine_Backrub");
 
 LoopMover_Refine_Backrub::LoopMover_Refine_Backrub() :
 	LoopMover()
@@ -204,7 +206,7 @@ void LoopMover_Refine_Backrub::apply(
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
 			// Note - resfile is obeyed, so use NATAA as default to maintain protocol behavior
 			task_factory->push_back( new core::pack::task::operation::ReadResfile );
-			tr << "Activating design" << std::endl;
+			tr() << "Activating design" << std::endl;
 		}
 	}
 	PackerTaskOP base_packer_task = task_factory->create_task_and_apply_taskoperations( pose );
@@ -233,7 +235,7 @@ void LoopMover_Refine_Backrub::apply(
 
 	std::string backrub_move_type = backrubmover.type();
 	for (int i=1; i<=outer_cycles; ++i) {
-		tr << "loopmover backrub outer refinement cycle " << i << std::endl;
+		tr() << "loopmover backrub outer refinement cycle " << i << std::endl;
 		mc.score_function( *scorefxn );
 		mc.recover_low( pose );
 
@@ -270,6 +272,22 @@ LoopMover_Refine_Backrub::get_name() const {
 	return "LoopMover_Refine_Backrub";
 }
 
+basic::Tracer & LoopMover_Refine_Backrub::tr() const
+{
+    return TR;
+}
 
+LoopMover_Refine_BackrubCreator::~LoopMover_Refine_BackrubCreator() {}
+
+moves::MoverOP LoopMover_Refine_BackrubCreator::create_mover() const {
+  return new LoopMover_Refine_Backrub();
+}
+
+std::string LoopMover_Refine_BackrubCreator::keyname() const {
+  return "LoopMover_Refine_Backrub";
+}
+
+} // namespace refine
+} // namespace loop_mover
 } // namespace loops
 } // namespace protocols

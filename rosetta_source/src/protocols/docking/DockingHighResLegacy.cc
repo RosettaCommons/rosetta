@@ -67,9 +67,9 @@
 
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover.fwd.hh>
+#include <protocols/loops/loop_mover/LoopMover.fwd.hh>
 #include <protocols/loops/LoopMover_KIC.hh>
-#include <protocols/loops/LoopMover_Backrub.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_Backrub.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 
 // ObjexxFCL Headers
@@ -473,7 +473,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 			Real interface_dist = option[ OptionKeys::docking::flexible_bb_docking_interface_dist ];
 			define_loops( pose_for_loop_defn, loop_set, interface_dist );
 
-			loops::LoopMoverOP loop_refine;
+			loops::loop_mover::LoopMoverOP loop_refine;
 			if ( flex_bb_docking_type == "ccd" ) {
 				// jk CCD loop refinement (fullatom only)
 				TR << "Setting up for ccd loop modeling" << std::endl;
@@ -493,7 +493,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 				// note: this assumes that the termini are not allowed to move (and in define_loops they aren't)
 				loop_fold_tree.simple_tree( pose.total_residue() );
 				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
-				loop_refine = new loops::LoopMover_Refine_Backrub( loop_set, scorefxn_pack()->clone() );
+				loop_refine = new loops::loop_mover::refine::LoopMover_Refine_Backrub( loop_set, scorefxn_pack()->clone() );
 			}
 
 			moves::ChangeFoldTreeMoverOP get_loop_ft = new moves::ChangeFoldTreeMover( loop_fold_tree );

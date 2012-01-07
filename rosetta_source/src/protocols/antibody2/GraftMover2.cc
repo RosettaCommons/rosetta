@@ -36,8 +36,8 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/loops/LoopMover.fwd.hh>
-#include <protocols/loops/LoopMover.hh>
+//#include <protocols/loops/LoopMover.fwd.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/antibody2/CDRH3Modeler2.hh>
 #include <protocols/antibody2/GraftOneMover.fwd.hh>
 #include <protocols/antibody2/GraftOneMover.hh>
@@ -202,9 +202,10 @@ void GraftMover2::apply( pose::Pose & pose )
 		// silly hack to make extended loops work
 		loops::LoopsOP loop_list = new loops::Loops();
 		loop_list->add_loop( cdr_h3 );
-
-		loops::LoopMoverOP my_loop_move = new loops::LoopMover( loop_list );
+        /* Commented out by BDW with JX's consent
+		loops::loop_mover::LoopMoverOP my_loop_move = new loops::loop_mover::LoopMover( loop_list );
 		my_loop_move->set_extended_torsions( pose, cdr_h3 );
+        */
 	}
 
 	std::cout<<"I am here 7.6"<<std::endl;

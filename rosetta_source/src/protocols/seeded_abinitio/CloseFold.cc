@@ -30,11 +30,11 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/LoopMover_QuickCCD.hh>
-#include <protocols/loops/LoopMover_CCD.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
-#include <protocols/loops/LoopMoverFactory.hh>
+//#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
+//#include <protocols/loops/LoopMover_CCD.hh>
+//#include <protocols/loops/LoopMover_KIC.hh>
+//#include <protocols/loops/LoopMoverFactory.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
@@ -313,7 +313,7 @@ CloseFold::fast_loopclose( core::pose::Pose &pose, protocols::loops::LoopsOP con
 			std::cout<<"start fast ccd closure " << std::endl;
 			core::kinematics::MoveMapOP mm_one_loop = new core::kinematics::MoveMap();
 			set_move_map_for_centroid_loop( buildloop, *mm_one_loop );
-			fast_ccd_close_loops( pose, buildloop,  *mm_one_loop );
+			loops::loop_mover::perturb::fast_ccd_close_loops( pose, buildloop,  *mm_one_loop );
 		}
 		// restore foldtree
 		pose.fold_tree( f_orig );

@@ -11,11 +11,11 @@
 /// @brief
 /// @author Mike Tyka
 
-#ifndef INCLUDED_protocols_loops_LoopMover_QuickCCD_Moves_hh
-#define INCLUDED_protocols_loops_LoopMover_QuickCCD_Moves_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_QuickCCD_Moves_hh
+#define INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_QuickCCD_Moves_hh
 
 
-#include <protocols/loops/LoopMover_QuickCCD.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
@@ -32,8 +32,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {
-
-
+namespace loop_mover {
+namespace perturb {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ///@details The Old stuff from Looprelax
@@ -59,18 +59,21 @@ public:
 		return new LoopMover_Perturb_QuickCCD_Moves(*this);
 	}
 
-	LoopResult model_loop(
+	
+
+protected:
+    
+    virtual LoopResult model_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop
 	);
-
-protected:
+    
+    virtual basic::Tracer & tr() const;
 };
 
-
-
-
+} //namespace perturb
+} //namespace loop_mover
 } //namespace loops
 } //namespace protocols
 
-#endif //INCLUDED_protocols_loops_LoopMover_QuickCCD_Moves_HH
+#endif //INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_QuickCCD_Moves_hh

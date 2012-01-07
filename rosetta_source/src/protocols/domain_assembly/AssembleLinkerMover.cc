@@ -18,7 +18,7 @@
 // AUTO-REMOVED #include <protocols/docking/stateless/SaneDockingProtocol.hh>
 // AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
-#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -108,7 +108,7 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 		Loop loop( loop_start, loop_stop, 0, 0, false );
 		LoopsOP loops = new Loops();
 		loops->add_loop(loop);
-		LoopMoverOP loop_mover = LoopMoverFactory::get_instance()->create_loop_mover(
+		loop_mover::LoopMoverOP loop_mover = LoopMoverFactory::get_instance()->create_loop_mover(
 			loop_mover_name_, loops
 		);
 		for ( Size ii = 1; ii <= frag_libs_.size(); ++ii ) {

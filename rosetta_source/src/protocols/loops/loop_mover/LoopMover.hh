@@ -11,10 +11,10 @@
 /// @brief
 /// @author Mike Tyka
 
-#ifndef INCLUDED_protocols_loops_LoopMover_hh
-#define INCLUDED_protocols_loops_LoopMover_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_LoopMover_hh
+#define INCLUDED_protocols_loops_loop_mover_LoopMover_hh
 
-#include <protocols/loops/LoopMover.fwd.hh>
+#include <protocols/loops/loop_mover/LoopMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
@@ -26,6 +26,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
 #include <utility/vector1.fwd.hh>
+#include <basic/Tracer.fwd.hh>
 
 #ifdef WIN32
 	//#include <core/fragment/FragData.hh>
@@ -39,7 +40,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {
-
+namespace loop_mover {
 
 enum LoopResult { Success, CriticalFailure, Failure, ExtendFailure };
 
@@ -121,6 +122,8 @@ protected: // movemap management
 
     bool const use_loops_from_observer_cache() const;
     void set_use_loops_from_observer_cache( bool const loops_from_observer_cache );
+    
+    virtual basic::Tracer & tr() const = 0;
 
 private: // data
 
@@ -144,7 +147,8 @@ private: // data
 void
 loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, core::Size const round = 1 );
 
+} //namespace loop_mover
 } //namespace loops
 } //namespace protocols
 
-#endif //INCLUDED_protocols_loops_LoopMover_HH
+#endif //INCLUDED_protocols_loops_loop_mover_LoopMover_HH

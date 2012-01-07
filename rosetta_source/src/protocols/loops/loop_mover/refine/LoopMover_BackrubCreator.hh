@@ -7,39 +7,34 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/loops/LoopMover_QuickCCD_MovesCreator.hh
-/// @brief  Header for LoopMover_QuickCCD_MovesCreator
+/// @file   protocols/loops/loop_mover/refine/LoopMover_BackrubCreator.hh
+/// @brief  Header for LoopMover_BackrubCreator
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_loops_LoopMover_QuickCCD_MovesCreator_hh
-#define INCLUDED_protocols_loops_LoopMover_QuickCCD_MovesCreator_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_refine_LoopMover_BackrubCreator_hh
+#define INCLUDED_protocols_loops_loop_mover_refine_LoopMover_BackrubCreator_hh
 
 // Unit Headers
 #include <protocols/moves/MoverCreator.hh>
-
-#include <protocols/loops/Loops.fwd.hh>
-
-#include <core/types.hh>
-#include <utility/vector1.hh>
-
-
 namespace protocols {
 namespace loops {
+namespace loop_mover {
+namespace refine {
 
-/// @brief creator for the LoopMover_Perturb_QuickCCD_MovesCreator class
-class LoopMover_Perturb_QuickCCD_MovesCreator : public moves::MoverCreator
+/// @brief creator for the LoopMover_Refine_BackrubCreator class
+class LoopMover_Refine_BackrubCreator : public moves::MoverCreator
 {
 public:
-  LoopMover_Perturb_QuickCCD_MovesCreator() {};
-  virtual ~LoopMover_Perturb_QuickCCD_MovesCreator();
+  virtual ~LoopMover_Refine_BackrubCreator();
 
   virtual moves::MoverOP create_mover() const;
-
   virtual std::string keyname() const;
 
 };
 
-} //namespace
-} //namespace
+} //namespace refine
+} //namepace loop_mover
+} //namespace loops
+} //namespace protocols
 
-#endif
+#endif //INCLUDED_protocols_loops_loop_mover_refine_LoopMover_BackrubCreator_hh

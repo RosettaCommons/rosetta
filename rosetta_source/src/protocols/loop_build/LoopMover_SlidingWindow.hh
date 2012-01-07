@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_loop_build_LoopMover_SlidingWindow_hh
 
 // package headers
-#include <protocols/loops/IndependentLoopMover.hh>
+#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/moves/Mover.hh>
 
 // project headers
@@ -39,7 +39,7 @@ namespace loop_build {
 
 
 /// @brief LoopMover utilizing fragment insertion, ccd loop closure, and minimization
-class LoopMover_SlidingWindow: public loops::IndependentLoopMover {
+class LoopMover_SlidingWindow: public loops::loop_mover::IndependentLoopMover {
 
 
 public: // construct/destruct
@@ -113,11 +113,12 @@ protected: // virtual loop operations
 
 
 	/// @brief loop modeling protocol implementation
-	loops::LoopResult model_loop(
+	virtual loops::loop_mover::LoopResult model_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop
 	);
 
+    virtual basic::Tracer & tr() const;
 
 protected: // data
 

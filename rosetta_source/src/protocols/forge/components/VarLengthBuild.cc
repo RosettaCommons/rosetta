@@ -55,7 +55,7 @@
 #include <basic/Tracer.hh>
 #include <core/fragment/picking_old/vall/util.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/IndependentLoopMover.hh>
+#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
 
 // utility headers
@@ -623,7 +623,7 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 {
 	using protocols::forge::remodel::RemodelLoopMover;
 	using protocols::forge::remodel::RemodelLoopMoverOP;
-	using protocols::loops::IndependentLoopMover;
+	using protocols::loops::loop_mover::IndependentLoopMover;
 	using protocols::loops::LoopMoverFactory;
 
 	typedef utility::pointer::owning_ptr< IndependentLoopMover > IndependentLoopMoverOP;

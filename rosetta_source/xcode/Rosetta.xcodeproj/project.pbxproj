@@ -1200,21 +1200,11 @@
 		496D260EA66CD8EBC54947E0 /* CcdLoopClosureMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 70C410307483C1F0D5337933 /* CcdLoopClosureMover.cc */; };
 		A64B135E31703CD3D6CEBE40 /* FASelectSlidingWindowLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 56A14DE77C5930E04B7FE6E8 /* FASelectSlidingWindowLoopClosure.cc */; };
 		97A1BF461ACCC078983B1AAC /* FoldTreeFromLoopsWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 27C1413862AE4D20675A768C /* FoldTreeFromLoopsWrapper.cc */; };
-		A65A5AFB3FCB4B1703451DD4 /* IndependentLoopMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = DAD1E9519111D4EF237CAB55 /* IndependentLoopMover.cc */; };
 		A6BBDDAC8920ECD74EAE7CFD /* Loop.cc in Sources */ = {isa = PBXBuildFile; fileRef = B24AED784757B7649E3FB2BD /* Loop.cc */; };
 		191501DBECA4C4E14AC2D39C /* LoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0D2BCE59B3C18610A0DAC946 /* LoopClosure.cc */; };
-		268C2E6EE1C48D2D6605D374 /* LoopMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = DF30D3C560840CE842CA7C1E /* LoopMover.cc */; };
 		69251577A27115EBC0C54B74 /* LoopMoverFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 393395EC7851954896B9CAA7 /* LoopMoverFactory.cc */; };
-		B5D968F3502C27CA8D71B022 /* LoopMover_Backrub.cc in Sources */ = {isa = PBXBuildFile; fileRef = FD2466A3691208D6F639D7B4 /* LoopMover_Backrub.cc */; };
-		7772EBF73AAC0C7522D6368A /* LoopMover_BackrubCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5E4538E7B119BAD1780E19F0 /* LoopMover_BackrubCreator.cc */; };
 		DFB7D976CD6A9A42D942187B /* LoopMover_CCD.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A9DDBD28767043B3E666390 /* LoopMover_CCD.cc */; };
-		872931F204AA22AC2BD7D115 /* LoopMover_CCDCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 37F6D67098379910400C1D7F /* LoopMover_CCDCreator.cc */; };
 		FE0D583E3CEA38FE3A378711 /* LoopMover_KIC.cc in Sources */ = {isa = PBXBuildFile; fileRef = 70EB1225A70C2B21DDD8175F /* LoopMover_KIC.cc */; };
-		0E7DE3620D88A134D175FB78 /* LoopMover_KICCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = EB39F381AE67028D866401F4 /* LoopMover_KICCreator.cc */; };
-		C27DCCDF9552210E03A56BED /* LoopMover_QuickCCD.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1D4F244FD3B0961CD7B9094C /* LoopMover_QuickCCD.cc */; };
-		807DD25E9337F6276B1214A6 /* LoopMover_QuickCCDCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2E9C16CE1996F8992D41B447 /* LoopMover_QuickCCDCreator.cc */; };
-		CD20AB0EB2B3C06B3E52B438 /* LoopMover_QuickCCD_Moves.cc in Sources */ = {isa = PBXBuildFile; fileRef = F01E2664E1412CDC7F01CF4F /* LoopMover_QuickCCD_Moves.cc */; };
-		7BB1AEA15D6AFBE4BB8C72F4 /* LoopMover_QuickCCD_MovesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 08CCEAE23FC539E153DC0CDC /* LoopMover_QuickCCD_MovesCreator.cc */; };
 		58437074668E1D82DEA31512 /* Loops.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4D27106EFA83F4300BE954D5 /* Loops.cc */; };
 		88B1745525BC137B8101F79A /* ShortLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = E2289498E2F05DDA55F2C670 /* ShortLoopClosure.cc */; };
 		FC839D67E0836B71DF1DF524 /* SlidingWindowLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 220BE918EEAB11969799374E /* SlidingWindowLoopClosure.cc */; };
@@ -1228,6 +1218,11 @@
 		FA1959F6D9798D136C12D4E6 /* KinematicMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0CC3E0460306DAB1ED16FE9E /* KinematicMover.cc */; };
 		622FDF6B3D60078B07542217 /* KinematicPerturber.cc in Sources */ = {isa = PBXBuildFile; fileRef = B34038BD5C447DAFA571C96F /* KinematicPerturber.cc */; };
 		5A6488B34C34CEB83E3655B2 /* KinematicWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1EE715D084F4D9726DDD5036 /* KinematicWrapper.cc */; };
+		B5351E5FD715261518078D99 /* IndependentLoopMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = F0EC617EB869C947417BD85F /* IndependentLoopMover.cc */; };
+		C074516A98882735BC2128CD /* LoopMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 38620C20FFCE4B0B28B962A9 /* LoopMover.cc */; };
+		2D117E448DD33AE6DB83E5D1 /* LoopMover_QuickCCD.cc in Sources */ = {isa = PBXBuildFile; fileRef = D2BDAE15658EAC68037D12BE /* LoopMover_QuickCCD.cc */; };
+		2055B931F67912A91AA21124 /* LoopMover_QuickCCD_Moves.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0831026AD2FA5C78CC92F512 /* LoopMover_QuickCCD_Moves.cc */; };
+		DE48B7226A0D470636AFDCEC /* LoopMover_Backrub.cc in Sources */ = {isa = PBXBuildFile; fileRef = A80942A3C105CA6CB4D0BDF4 /* LoopMover_Backrub.cc */; };
 		8C61889A5CBAE27E9786066B /* ClassicRelax.cc in Sources */ = {isa = PBXBuildFile; fileRef = 43BC3D3B926F4B185585A46D /* ClassicRelax.cc */; };
 		89F23D9470050008ED7F0CDB /* FastRelax.cc in Sources */ = {isa = PBXBuildFile; fileRef = 62701C1F74F3B74BE2CC4582 /* FastRelax.cc */; };
 		30647529A8FBA53469C941E1 /* MiniRelax.cc in Sources */ = {isa = PBXBuildFile; fileRef = CD836E4BC5AADB22D1DA05AA /* MiniRelax.cc */; };
@@ -10048,41 +10043,21 @@
 		D0E609232DDFC0DA5A64EEF6 /* FoldTreeFromLoopsWrapper.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FoldTreeFromLoopsWrapper.fwd.hh; path = ../src/protocols/loops/FoldTreeFromLoopsWrapper.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6965BF1D6094B7ACD8500987 /* FoldTreeFromLoopsWrapper.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FoldTreeFromLoopsWrapper.hh; path = ../src/protocols/loops/FoldTreeFromLoopsWrapper.hh; sourceTree = SOURCE_ROOT; };
 		152E6516A44FA66C82CC4C7B /* FoldTreeFromLoopsWrapperCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FoldTreeFromLoopsWrapperCreator.hh; path = ../src/protocols/loops/FoldTreeFromLoopsWrapperCreator.hh; sourceTree = SOURCE_ROOT; };
-		DAD1E9519111D4EF237CAB55 /* IndependentLoopMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IndependentLoopMover.cc; path = ../src/protocols/loops/IndependentLoopMover.cc; sourceTree = SOURCE_ROOT; };
-		8A941C8AED4F1BF063C166B1 /* IndependentLoopMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = IndependentLoopMover.fwd.hh; path = ../src/protocols/loops/IndependentLoopMover.fwd.hh; sourceTree = SOURCE_ROOT; };
-		E1BCAC2212566A9BF9D3004C /* IndependentLoopMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = IndependentLoopMover.hh; path = ../src/protocols/loops/IndependentLoopMover.hh; sourceTree = SOURCE_ROOT; };
 		B24AED784757B7649E3FB2BD /* Loop.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Loop.cc; path = ../src/protocols/loops/Loop.cc; sourceTree = SOURCE_ROOT; };
 		7E55F322A30EBB01C69D9E12 /* Loop.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loop.fwd.hh; path = ../src/protocols/loops/Loop.fwd.hh; sourceTree = SOURCE_ROOT; };
 		B96A5E0813FDF734A47CE2C5 /* Loop.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loop.hh; path = ../src/protocols/loops/Loop.hh; sourceTree = SOURCE_ROOT; };
 		0D2BCE59B3C18610A0DAC946 /* LoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopClosure.cc; path = ../src/protocols/loops/LoopClosure.cc; sourceTree = SOURCE_ROOT; };
 		F28B3591F048482117C16998 /* LoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopClosure.fwd.hh; path = ../src/protocols/loops/LoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
 		198521FC7A4138552D174350 /* LoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopClosure.hh; path = ../src/protocols/loops/LoopClosure.hh; sourceTree = SOURCE_ROOT; };
-		DF30D3C560840CE842CA7C1E /* LoopMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover.cc; path = ../src/protocols/loops/LoopMover.cc; sourceTree = SOURCE_ROOT; };
-		720AB9D2412643C9BF545C35 /* LoopMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover.fwd.hh; path = ../src/protocols/loops/LoopMover.fwd.hh; sourceTree = SOURCE_ROOT; };
-		24F238F97EF6673FFA19A467 /* LoopMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover.hh; path = ../src/protocols/loops/LoopMover.hh; sourceTree = SOURCE_ROOT; };
 		393395EC7851954896B9CAA7 /* LoopMoverFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMoverFactory.cc; path = ../src/protocols/loops/LoopMoverFactory.cc; sourceTree = SOURCE_ROOT; };
 		A637E461CE379C040960CD9E /* LoopMoverFactory.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMoverFactory.fwd.hh; path = ../src/protocols/loops/LoopMoverFactory.fwd.hh; sourceTree = SOURCE_ROOT; };
 		7F1393F1235F5E0693E960E7 /* LoopMoverFactory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMoverFactory.hh; path = ../src/protocols/loops/LoopMoverFactory.hh; sourceTree = SOURCE_ROOT; };
-		FD2466A3691208D6F639D7B4 /* LoopMover_Backrub.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_Backrub.cc; path = ../src/protocols/loops/LoopMover_Backrub.cc; sourceTree = SOURCE_ROOT; };
-		0CC9319CDCCC20EAC768A399 /* LoopMover_Backrub.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_Backrub.hh; path = ../src/protocols/loops/LoopMover_Backrub.hh; sourceTree = SOURCE_ROOT; };
-		5E4538E7B119BAD1780E19F0 /* LoopMover_BackrubCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_BackrubCreator.cc; path = ../src/protocols/loops/LoopMover_BackrubCreator.cc; sourceTree = SOURCE_ROOT; };
-		9536E0A2FCA76A619CCD98C9 /* LoopMover_BackrubCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_BackrubCreator.hh; path = ../src/protocols/loops/LoopMover_BackrubCreator.hh; sourceTree = SOURCE_ROOT; };
 		5A9DDBD28767043B3E666390 /* LoopMover_CCD.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_CCD.cc; path = ../src/protocols/loops/LoopMover_CCD.cc; sourceTree = SOURCE_ROOT; };
 		D310E72D8C3E98F9DCAAF07B /* LoopMover_CCD.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_CCD.hh; path = ../src/protocols/loops/LoopMover_CCD.hh; sourceTree = SOURCE_ROOT; };
-		37F6D67098379910400C1D7F /* LoopMover_CCDCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_CCDCreator.cc; path = ../src/protocols/loops/LoopMover_CCDCreator.cc; sourceTree = SOURCE_ROOT; };
 		AD5633173F2682B3CFFB339C /* LoopMover_CCDCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_CCDCreator.hh; path = ../src/protocols/loops/LoopMover_CCDCreator.hh; sourceTree = SOURCE_ROOT; };
 		70EB1225A70C2B21DDD8175F /* LoopMover_KIC.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_KIC.cc; path = ../src/protocols/loops/LoopMover_KIC.cc; sourceTree = SOURCE_ROOT; };
 		A6A91E602033B77A3F3FE60C /* LoopMover_KIC.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_KIC.hh; path = ../src/protocols/loops/LoopMover_KIC.hh; sourceTree = SOURCE_ROOT; };
-		EB39F381AE67028D866401F4 /* LoopMover_KICCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_KICCreator.cc; path = ../src/protocols/loops/LoopMover_KICCreator.cc; sourceTree = SOURCE_ROOT; };
 		98E52BE07F934284E7FBAB81 /* LoopMover_KICCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_KICCreator.hh; path = ../src/protocols/loops/LoopMover_KICCreator.hh; sourceTree = SOURCE_ROOT; };
-		1D4F244FD3B0961CD7B9094C /* LoopMover_QuickCCD.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_QuickCCD.cc; path = ../src/protocols/loops/LoopMover_QuickCCD.cc; sourceTree = SOURCE_ROOT; };
-		4A2A217E03B04E1BD738453C /* LoopMover_QuickCCD.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCD.hh; path = ../src/protocols/loops/LoopMover_QuickCCD.hh; sourceTree = SOURCE_ROOT; };
-		2E9C16CE1996F8992D41B447 /* LoopMover_QuickCCDCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_QuickCCDCreator.cc; path = ../src/protocols/loops/LoopMover_QuickCCDCreator.cc; sourceTree = SOURCE_ROOT; };
-		B71D95C523FDC2EE65B2A5C8 /* LoopMover_QuickCCDCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCDCreator.hh; path = ../src/protocols/loops/LoopMover_QuickCCDCreator.hh; sourceTree = SOURCE_ROOT; };
-		F01E2664E1412CDC7F01CF4F /* LoopMover_QuickCCD_Moves.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_QuickCCD_Moves.cc; path = ../src/protocols/loops/LoopMover_QuickCCD_Moves.cc; sourceTree = SOURCE_ROOT; };
-		CC07041E7B829C87FF46FA0C /* LoopMover_QuickCCD_Moves.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCD_Moves.hh; path = ../src/protocols/loops/LoopMover_QuickCCD_Moves.hh; sourceTree = SOURCE_ROOT; };
-		08CCEAE23FC539E153DC0CDC /* LoopMover_QuickCCD_MovesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_QuickCCD_MovesCreator.cc; path = ../src/protocols/loops/LoopMover_QuickCCD_MovesCreator.cc; sourceTree = SOURCE_ROOT; };
-		E16A83883E58B5F55525B0CC /* LoopMover_QuickCCD_MovesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCD_MovesCreator.hh; path = ../src/protocols/loops/LoopMover_QuickCCD_MovesCreator.hh; sourceTree = SOURCE_ROOT; };
 		4D27106EFA83F4300BE954D5 /* Loops.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Loops.cc; path = ../src/protocols/loops/Loops.cc; sourceTree = SOURCE_ROOT; };
 		65378443F5478B1DB14446E5 /* Loops.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.fwd.hh; path = ../src/protocols/loops/Loops.fwd.hh; sourceTree = SOURCE_ROOT; };
 		40C65BF9BBA03ED2583821A7 /* Loops.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.hh; path = ../src/protocols/loops/Loops.hh; sourceTree = SOURCE_ROOT; };
@@ -10115,6 +10090,24 @@
 		1EE715D084F4D9726DDD5036 /* KinematicWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KinematicWrapper.cc; path = ../src/protocols/loops/kinematic_closure/KinematicWrapper.cc; sourceTree = SOURCE_ROOT; };
 		53AF9D8D6EE4149B234D4ADB /* KinematicWrapper.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicWrapper.fwd.hh; path = ../src/protocols/loops/kinematic_closure/KinematicWrapper.fwd.hh; sourceTree = SOURCE_ROOT; };
 		37229467A2514C31A457A735 /* KinematicWrapper.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicWrapper.hh; path = ../src/protocols/loops/kinematic_closure/KinematicWrapper.hh; sourceTree = SOURCE_ROOT; };
+		F0EC617EB869C947417BD85F /* IndependentLoopMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IndependentLoopMover.cc; path = ../src/protocols/loops/loop_mover/IndependentLoopMover.cc; sourceTree = SOURCE_ROOT; };
+		1D03F1FED9210D4190C878BE /* IndependentLoopMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = IndependentLoopMover.fwd.hh; path = ../src/protocols/loops/loop_mover/IndependentLoopMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		4C0E0BF0698AC1ED7E5D6D0D /* IndependentLoopMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = IndependentLoopMover.hh; path = ../src/protocols/loops/loop_mover/IndependentLoopMover.hh; sourceTree = SOURCE_ROOT; };
+		38620C20FFCE4B0B28B962A9 /* LoopMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover.cc; path = ../src/protocols/loops/loop_mover/LoopMover.cc; sourceTree = SOURCE_ROOT; };
+		30D9E2611CB609B75E80D464 /* LoopMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover.fwd.hh; path = ../src/protocols/loops/loop_mover/LoopMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		BB15DD8D886D2BA4BDF0C887 /* LoopMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover.hh; path = ../src/protocols/loops/loop_mover/LoopMover.hh; sourceTree = SOURCE_ROOT; };
+		D2BDAE15658EAC68037D12BE /* LoopMover_QuickCCD.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_QuickCCD.cc; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.cc; sourceTree = SOURCE_ROOT; };
+		420F68767EB174A4BAD5CC0D /* LoopMover_QuickCCD.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCD.fwd.hh; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.fwd.hh; sourceTree = SOURCE_ROOT; };
+		E4810E96C31E809F9988CF57 /* LoopMover_QuickCCD.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCD.hh; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh; sourceTree = SOURCE_ROOT; };
+		1154FF39EC9FD8FD073D94E3 /* LoopMover_QuickCCDCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCDCreator.hh; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_QuickCCDCreator.hh; sourceTree = SOURCE_ROOT; };
+		0831026AD2FA5C78CC92F512 /* LoopMover_QuickCCD_Moves.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_QuickCCD_Moves.cc; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_Moves.cc; sourceTree = SOURCE_ROOT; };
+		2E9D8DA1074F49477B42F951 /* LoopMover_QuickCCD_Moves.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCD_Moves.fwd.hh; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_Moves.fwd.hh; sourceTree = SOURCE_ROOT; };
+		A5654130FC19898B04373E79 /* LoopMover_QuickCCD_Moves.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCD_Moves.hh; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_Moves.hh; sourceTree = SOURCE_ROOT; };
+		9C802883F0BF393D07308399 /* LoopMover_QuickCCD_MovesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCD_MovesCreator.hh; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_MovesCreator.hh; sourceTree = SOURCE_ROOT; };
+		A80942A3C105CA6CB4D0BDF4 /* LoopMover_Backrub.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover_Backrub.cc; path = ../src/protocols/loops/loop_mover/refine/LoopMover_Backrub.cc; sourceTree = SOURCE_ROOT; };
+		6E54D96E5FF2FA673FCAAFE0 /* LoopMover_Backrub.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_Backrub.fwd.hh; path = ../src/protocols/loops/loop_mover/refine/LoopMover_Backrub.fwd.hh; sourceTree = SOURCE_ROOT; };
+		1E7338B2164862DC6A07D9E2 /* LoopMover_Backrub.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_Backrub.hh; path = ../src/protocols/loops/loop_mover/refine/LoopMover_Backrub.hh; sourceTree = SOURCE_ROOT; };
+		2B72640AA2F321B359D2BD1C /* LoopMover_BackrubCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_BackrubCreator.hh; path = ../src/protocols/loops/loop_mover/refine/LoopMover_BackrubCreator.hh; sourceTree = SOURCE_ROOT; };
 		43BC3D3B926F4B185585A46D /* ClassicRelax.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ClassicRelax.cc; path = ../src/protocols/relax/ClassicRelax.cc; sourceTree = SOURCE_ROOT; };
 		6DFA2B538478DBA13D7C75F2 /* ClassicRelax.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ClassicRelax.hh; path = ../src/protocols/relax/ClassicRelax.hh; sourceTree = SOURCE_ROOT; };
 		62701C1F74F3B74BE2CC4582 /* FastRelax.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FastRelax.cc; path = ../src/protocols/relax/FastRelax.cc; sourceTree = SOURCE_ROOT; };
@@ -18524,6 +18517,7 @@
 			isa = PBXGroup;
 			children = (
 				A67C26D952DEB874D9486C28 /* kinematic_closure */,
+				917D9433FB57AB1AF9737A5D /* loop_mover */,
 				70C410307483C1F0D5337933 /* CcdLoopClosureMover.cc */,
 				C87ADA860BD560D8C27087A9 /* CcdLoopClosureMover.hh */,
 				ABD5D4A49F1BA91F64C4A8F7 /* Exceptions.hh */,
@@ -18533,41 +18527,21 @@
 				D0E609232DDFC0DA5A64EEF6 /* FoldTreeFromLoopsWrapper.fwd.hh */,
 				6965BF1D6094B7ACD8500987 /* FoldTreeFromLoopsWrapper.hh */,
 				152E6516A44FA66C82CC4C7B /* FoldTreeFromLoopsWrapperCreator.hh */,
-				DAD1E9519111D4EF237CAB55 /* IndependentLoopMover.cc */,
-				8A941C8AED4F1BF063C166B1 /* IndependentLoopMover.fwd.hh */,
-				E1BCAC2212566A9BF9D3004C /* IndependentLoopMover.hh */,
 				B24AED784757B7649E3FB2BD /* Loop.cc */,
 				7E55F322A30EBB01C69D9E12 /* Loop.fwd.hh */,
 				B96A5E0813FDF734A47CE2C5 /* Loop.hh */,
 				0D2BCE59B3C18610A0DAC946 /* LoopClosure.cc */,
 				F28B3591F048482117C16998 /* LoopClosure.fwd.hh */,
 				198521FC7A4138552D174350 /* LoopClosure.hh */,
-				DF30D3C560840CE842CA7C1E /* LoopMover.cc */,
-				720AB9D2412643C9BF545C35 /* LoopMover.fwd.hh */,
-				24F238F97EF6673FFA19A467 /* LoopMover.hh */,
 				393395EC7851954896B9CAA7 /* LoopMoverFactory.cc */,
 				A637E461CE379C040960CD9E /* LoopMoverFactory.fwd.hh */,
 				7F1393F1235F5E0693E960E7 /* LoopMoverFactory.hh */,
-				FD2466A3691208D6F639D7B4 /* LoopMover_Backrub.cc */,
-				0CC9319CDCCC20EAC768A399 /* LoopMover_Backrub.hh */,
-				5E4538E7B119BAD1780E19F0 /* LoopMover_BackrubCreator.cc */,
-				9536E0A2FCA76A619CCD98C9 /* LoopMover_BackrubCreator.hh */,
 				5A9DDBD28767043B3E666390 /* LoopMover_CCD.cc */,
 				D310E72D8C3E98F9DCAAF07B /* LoopMover_CCD.hh */,
-				37F6D67098379910400C1D7F /* LoopMover_CCDCreator.cc */,
 				AD5633173F2682B3CFFB339C /* LoopMover_CCDCreator.hh */,
 				70EB1225A70C2B21DDD8175F /* LoopMover_KIC.cc */,
 				A6A91E602033B77A3F3FE60C /* LoopMover_KIC.hh */,
-				EB39F381AE67028D866401F4 /* LoopMover_KICCreator.cc */,
 				98E52BE07F934284E7FBAB81 /* LoopMover_KICCreator.hh */,
-				1D4F244FD3B0961CD7B9094C /* LoopMover_QuickCCD.cc */,
-				4A2A217E03B04E1BD738453C /* LoopMover_QuickCCD.hh */,
-				2E9C16CE1996F8992D41B447 /* LoopMover_QuickCCDCreator.cc */,
-				B71D95C523FDC2EE65B2A5C8 /* LoopMover_QuickCCDCreator.hh */,
-				F01E2664E1412CDC7F01CF4F /* LoopMover_QuickCCD_Moves.cc */,
-				CC07041E7B829C87FF46FA0C /* LoopMover_QuickCCD_Moves.hh */,
-				08CCEAE23FC539E153DC0CDC /* LoopMover_QuickCCD_MovesCreator.cc */,
-				E16A83883E58B5F55525B0CC /* LoopMover_QuickCCD_MovesCreator.hh */,
 				4D27106EFA83F4300BE954D5 /* Loops.cc */,
 				65378443F5478B1DB14446E5 /* Loops.fwd.hh */,
 				40C65BF9BBA03ED2583821A7 /* Loops.hh */,
@@ -18611,6 +18585,50 @@
 			);
 			name = kinematic_closure;
 			path = ../src/protocols/loops/kinematic_closure/;
+			sourceTree = SOURCE_ROOT;
+		};
+		917D9433FB57AB1AF9737A5D /* loop_mover */ = {
+			isa = PBXGroup;
+			children = (
+				6A8CB63B6B9EB2BEBFEE0A3F /* perturb */,
+				9A7CEF29A4A3B70B17EAA95D /* refine */,
+				F0EC617EB869C947417BD85F /* IndependentLoopMover.cc */,
+				1D03F1FED9210D4190C878BE /* IndependentLoopMover.fwd.hh */,
+				4C0E0BF0698AC1ED7E5D6D0D /* IndependentLoopMover.hh */,
+				38620C20FFCE4B0B28B962A9 /* LoopMover.cc */,
+				30D9E2611CB609B75E80D464 /* LoopMover.fwd.hh */,
+				BB15DD8D886D2BA4BDF0C887 /* LoopMover.hh */,
+			);
+			name = loop_mover;
+			path = ../src/protocols/loops/loop_mover/;
+			sourceTree = SOURCE_ROOT;
+		};
+		6A8CB63B6B9EB2BEBFEE0A3F /* perturb */ = {
+			isa = PBXGroup;
+			children = (
+				D2BDAE15658EAC68037D12BE /* LoopMover_QuickCCD.cc */,
+				420F68767EB174A4BAD5CC0D /* LoopMover_QuickCCD.fwd.hh */,
+				E4810E96C31E809F9988CF57 /* LoopMover_QuickCCD.hh */,
+				1154FF39EC9FD8FD073D94E3 /* LoopMover_QuickCCDCreator.hh */,
+				0831026AD2FA5C78CC92F512 /* LoopMover_QuickCCD_Moves.cc */,
+				2E9D8DA1074F49477B42F951 /* LoopMover_QuickCCD_Moves.fwd.hh */,
+				A5654130FC19898B04373E79 /* LoopMover_QuickCCD_Moves.hh */,
+				9C802883F0BF393D07308399 /* LoopMover_QuickCCD_MovesCreator.hh */,
+			);
+			name = perturb;
+			path = ../src/protocols/loops/loop_mover/perturb/;
+			sourceTree = SOURCE_ROOT;
+		};
+		9A7CEF29A4A3B70B17EAA95D /* refine */ = {
+			isa = PBXGroup;
+			children = (
+				A80942A3C105CA6CB4D0BDF4 /* LoopMover_Backrub.cc */,
+				6E54D96E5FF2FA673FCAAFE0 /* LoopMover_Backrub.fwd.hh */,
+				1E7338B2164862DC6A07D9E2 /* LoopMover_Backrub.hh */,
+				2B72640AA2F321B359D2BD1C /* LoopMover_BackrubCreator.hh */,
+			);
+			name = refine;
+			path = ../src/protocols/loops/loop_mover/refine/;
 			sourceTree = SOURCE_ROOT;
 		};
 		49DECE6331018FC5CDF977D1 /* relax */ = {
@@ -24024,21 +24042,11 @@
 				496D260EA66CD8EBC54947E0 /* CcdLoopClosureMover.cc in Sources */,
 				A64B135E31703CD3D6CEBE40 /* FASelectSlidingWindowLoopClosure.cc in Sources */,
 				97A1BF461ACCC078983B1AAC /* FoldTreeFromLoopsWrapper.cc in Sources */,
-				A65A5AFB3FCB4B1703451DD4 /* IndependentLoopMover.cc in Sources */,
 				A6BBDDAC8920ECD74EAE7CFD /* Loop.cc in Sources */,
 				191501DBECA4C4E14AC2D39C /* LoopClosure.cc in Sources */,
-				268C2E6EE1C48D2D6605D374 /* LoopMover.cc in Sources */,
 				69251577A27115EBC0C54B74 /* LoopMoverFactory.cc in Sources */,
-				B5D968F3502C27CA8D71B022 /* LoopMover_Backrub.cc in Sources */,
-				7772EBF73AAC0C7522D6368A /* LoopMover_BackrubCreator.cc in Sources */,
 				DFB7D976CD6A9A42D942187B /* LoopMover_CCD.cc in Sources */,
-				872931F204AA22AC2BD7D115 /* LoopMover_CCDCreator.cc in Sources */,
 				FE0D583E3CEA38FE3A378711 /* LoopMover_KIC.cc in Sources */,
-				0E7DE3620D88A134D175FB78 /* LoopMover_KICCreator.cc in Sources */,
-				C27DCCDF9552210E03A56BED /* LoopMover_QuickCCD.cc in Sources */,
-				807DD25E9337F6276B1214A6 /* LoopMover_QuickCCDCreator.cc in Sources */,
-				CD20AB0EB2B3C06B3E52B438 /* LoopMover_QuickCCD_Moves.cc in Sources */,
-				7BB1AEA15D6AFBE4BB8C72F4 /* LoopMover_QuickCCD_MovesCreator.cc in Sources */,
 				58437074668E1D82DEA31512 /* Loops.cc in Sources */,
 				88B1745525BC137B8101F79A /* ShortLoopClosure.cc in Sources */,
 				FC839D67E0836B71DF1DF524 /* SlidingWindowLoopClosure.cc in Sources */,
@@ -24052,6 +24060,11 @@
 				FA1959F6D9798D136C12D4E6 /* KinematicMover.cc in Sources */,
 				622FDF6B3D60078B07542217 /* KinematicPerturber.cc in Sources */,
 				5A6488B34C34CEB83E3655B2 /* KinematicWrapper.cc in Sources */,
+				B5351E5FD715261518078D99 /* IndependentLoopMover.cc in Sources */,
+				C074516A98882735BC2128CD /* LoopMover.cc in Sources */,
+				2D117E448DD33AE6DB83E5D1 /* LoopMover_QuickCCD.cc in Sources */,
+				2055B931F67912A91AA21124 /* LoopMover_QuickCCD_Moves.cc in Sources */,
+				DE48B7226A0D470636AFDCEC /* LoopMover_Backrub.cc in Sources */,
 				8C61889A5CBAE27E9786066B /* ClassicRelax.cc in Sources */,
 				89F23D9470050008ED7F0CDB /* FastRelax.cc in Sources */,
 				30647529A8FBA53469C941E1 /* MiniRelax.cc in Sources */,

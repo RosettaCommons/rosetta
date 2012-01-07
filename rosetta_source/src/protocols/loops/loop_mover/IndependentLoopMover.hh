@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/loops/IndependentLoopMover.hh
+/// @file protocols/loops/loop_mover/IndependentLoopMover.hh
 /// @brief
 /// @author Mike Tyka
 /// @author James Thompson
 
-#ifndef INCLUDED_protocols_loops_IndependentLoopMover_hh
-#define INCLUDED_protocols_loops_IndependentLoopMover_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_IndependentLoopMover_hh
+#define INCLUDED_protocols_loops_loop_mover_IndependentLoopMover_hh
 
-#include <protocols/loops/IndependentLoopMover.fwd.hh>
+#include <protocols/loops/loop_mover/IndependentLoopMover.fwd.hh>
 
-#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -30,6 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {
+namespace loop_mover {
 
 // A subclass where all the loops are modelled independently from each
 // other.  Deriving classes should not overload apply but instead
@@ -61,10 +62,6 @@ public:
 	/// @brief Apply the loop-build protocol to the input pose
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-
-	virtual LoopResult model_loop(
-		core::pose::Pose & pose, protocols::loops::Loop const & loop
-	) = 0;
 
 	/// Accessors:
 
@@ -113,10 +110,15 @@ private:
 	bool all_loops_closed_;
 	/// Loop combine rate
 	core::Real loop_combine_rate_;
+    
+protected:
+    virtual LoopResult model_loop(
+		core::pose::Pose & pose, protocols::loops::Loop const & loop ) = 0;
 
 };
 
+} //namespace loop_mover
 } //namespace loops
 } //namespace protocols
 
-#endif //INCLUDED_protocols_loops_LoopMover_HH
+#endif //INCLUDED_protocols_loops_loop_mover_IndependentLoopMover_hh

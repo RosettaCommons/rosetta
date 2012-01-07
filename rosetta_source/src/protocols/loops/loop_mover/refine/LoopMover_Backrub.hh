@@ -10,12 +10,12 @@
 /// @brief
 /// @author J. Karanicolas
 
-#ifndef INCLUDED_protocols_loops_LoopMover_Backrub_hh
-#define INCLUDED_protocols_loops_LoopMover_Backrub_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_refine_LoopMover_Backrub_hh
+#define INCLUDED_protocols_loops_loop_mover_refine_LoopMover_Backrub_hh
 
-
-#include <protocols/loops/LoopMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_Backrub.fwd.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
+//#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -28,7 +28,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {
-
+namespace loop_mover {
+namespace refine {
 
 class LoopMover_Refine_Backrub: public LoopMover {
 public:
@@ -69,11 +70,12 @@ protected:
 
 	core::pack::task::TaskFactoryOP task_factory;
 	bool redesign_loop;
+    virtual basic::Tracer & tr() const;
 };
 
-
-
+} //namespace refine
+} //namespace loop_mover
 } //namespace loops
 } //namespace protocols
 
-#endif //INCLUDED_protocols_loops_LoopMover_Backrub_HH
+#endif //INCLUDED_protocols_loops_loop_mover_refine_LoopMover_Backrub_hh

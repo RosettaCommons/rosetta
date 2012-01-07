@@ -61,13 +61,13 @@
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/loops/IndependentLoopMover.hh>
+#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
-#include <protocols/loops/LoopMover.fwd.hh>
-#include <protocols/loops/LoopMover.hh>
+//#include <protocols/loops/LoopMover.fwd.hh>
+//#include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/LoopMover_KIC.hh>
-#include <protocols/loops/LoopMover_QuickCCD.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
 #include <protocols/loops/looprelax_protocols.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
@@ -356,7 +356,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_initial_build.pdb");
 
 			runtime_assert( frag_libs().size() > 0 );
-			loops::LoopMover_Perturb_QuickCCD quick_ccd( loops );
+			loops::loop_mover::perturb::LoopMover_Perturb_QuickCCD quick_ccd( loops );
 			for ( Size i = 1; i <= frag_libs().size(); ++i ) {
 				quick_ccd.add_fragments( frag_libs()[i] );
 			}
@@ -466,7 +466,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
           }
  */
           // DJM: need to cast this as IndependentLoopMover to set strict loops to true.
-					loops::IndependentLoopMoverOP remodel_mover( static_cast< loops::IndependentLoopMover * >
+					loops::loop_mover::IndependentLoopMoverOP remodel_mover( static_cast< loops::loop_mover::IndependentLoopMover * >
 						( loops::LoopMoverFactory::get_instance()->create_loop_mover( remodel(), loops ).get() ) );
 					core::kinematics::FoldTree f_orig=pose.fold_tree();
 					if ( !remodel_mover ) {
@@ -1142,7 +1142,7 @@ void LoopRelaxMover::set_defaults_() {
 
 	// use score4L by default (will be symm if needed)
 	cen_scorefxn_ = loops::get_cen_scorefxn();
-	loops::loops_set_chainbreak_weight(  cen_scorefxn_, 1 );
+	loops::loop_mover::loops_set_chainbreak_weight(  cen_scorefxn_, 1 );
 
 	// get cmd line scorefxn by default (will be symm if needed)
 	fa_scorefxn_ = loops::get_fa_scorefxn();
@@ -1168,7 +1168,7 @@ LoopRelaxMover::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filter
 	fa_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score12" ) );
 	cen_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score4L" ) );
 	//cen_scorefxn_->set_weight( core::scoring::chainbreak, 10.0 / 3.0 );
-	loops::loops_set_chainbreak_weight(  cen_scorefxn_, 1 );
+	loops::loop_mover::loops_set_chainbreak_weight(  cen_scorefxn_, 1 );
 
 	utility::vector1< std::string > const loops_vec( utility::string_split( tag->getOption< std::string >( "loops" ), ',' ) );
 

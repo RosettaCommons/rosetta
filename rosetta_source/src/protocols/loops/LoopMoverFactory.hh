@@ -19,7 +19,7 @@
 #include <protocols/loops/LoopMoverFactory.fwd.hh>
 
 // Project Headers
-#include <protocols/loops/LoopMover.fwd.hh>
+#include <protocols/loops/loop_mover/LoopMover.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 
 // Platform Headers
@@ -52,7 +52,7 @@ public:
 
 	static LoopMoverFactory * get_instance();
 
-	LoopMoverOP create_loop_mover(std::string const & type_name, LoopsOP const  loops );
+	loop_mover::LoopMoverOP create_loop_mover(std::string const & type_name, LoopsOP const  loops );
 
 private:
 

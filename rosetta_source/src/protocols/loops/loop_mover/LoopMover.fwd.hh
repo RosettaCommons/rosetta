@@ -7,18 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/loops/LoopMover.fwd.hh
+/// @file   protocols/loops/loop_mover/LoopMover.fwd.hh
 /// @brief  LoopMover base classes
 /// @author Mike Tyka
 
 
-#ifndef INCLUDED_protocols_loops_LoopMover_fwd_hh
-#define INCLUDED_protocols_loops_LoopMover_fwd_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_LoopMover_fwd_hh
+#define INCLUDED_protocols_loops_loop_mover_LoopMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
 namespace loops{
+namespace loop_mover{
 
 // Forward
 class LoopMover;
@@ -37,8 +38,9 @@ class SingleLoopMover;
 typedef utility::pointer::owning_ptr< SingleLoopMover > SingleLoopMoverOP;
 typedef utility::pointer::owning_ptr< SingleLoopMover const > SingleLoopMoverCOP;
 
+} //namespace loop_mover
 } //namespace loops
 } //namespace protocols
 
-#endif //INCLUDED_protocols_LoopMover_FWD_HH
+#endif //INCLUDED_protocols_loops_loop_mover_LoopMover_FWD_HH
 

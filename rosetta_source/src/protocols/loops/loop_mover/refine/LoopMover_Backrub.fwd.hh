@@ -7,26 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/loops/IndependentLoopMover.fwd.hh
-/// @brief  IndependentLoopMover base classes
-/// @author James Thompson
+/// @file   protocols/loops/loop_mover/refine/LoopMover_Backrub.fwd.hh
+/// @brief  LoopMover_Backrub forward declaration
+/// @author Brian Weitzner
 
-#ifndef INCLUDED_protocols_loops_IndependentLoopMover_fwd_hh
-#define INCLUDED_protocols_loops_IndependentLoopMover_fwd_hh
+
+#ifndef INCLUDED_protocols_loops_loop_mover_refine_LoopMover_Backrub_fwd_hh
+#define INCLUDED_protocols_loops_loop_mover_refine_LoopMover_Backrub_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace loops {
+namespace loop_mover {
+namespace refine {
 
 // Forward
-class IndependentLoopMover;
+class LoopMover_Refine_Backrub;
 
-typedef utility::pointer::owning_ptr< IndependentLoopMover > IndependentLoopMoverOP;
-typedef utility::pointer::owning_ptr< IndependentLoopMover const > IndependentLoopMoverCOP;
+typedef utility::pointer::owning_ptr< LoopMover_Refine_Backrub > LoopMover_Refine_BackrubOP;
+typedef utility::pointer::owning_ptr< LoopMover_Refine_Backrub const > LoopMover_Refine_BackrubCOP;
 
+} //namespace refine
+} //namespace loop_mover
 } //namespace loops
 } //namespace protocols
 
-#endif //INCLUDED_protocols_IndependentLoopMover_FWD_HH
+#endif //INCLUDED_protocols_loops_loop_mover_refine_LoopMover_Backrub_fwd_hh
 

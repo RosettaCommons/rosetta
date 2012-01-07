@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/loops/LoopMover_Perturb_QuickCCD.cc
+/// @file protocols/loops/loop_mover/perturb/LoopMover_Perturb_QuickCCD.cc
 /// @brief kinematic loop closure main protocols
 /// @author Mike Tyka
 /// @author James Thompson
@@ -15,8 +15,8 @@
 //// Unit Headers
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/LoopMover_QuickCCD.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCDCreator.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
@@ -66,11 +66,13 @@
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
-
 namespace protocols {
 namespace loops {
+namespace loop_mover {
+namespace perturb {
 
-extern basic::Tracer tr;
+static basic::Tracer TR("protocols.loops.loop_mover.perturb.LoopMover_Perturb_QuickCCD");
+
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
@@ -156,7 +158,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	using namespace basic::options::OptionKeys;
 	using namespace numeric::random;
 
-	tr.Info << "***** CCD CLOSURE *****" << std::endl;
+	tr().Info << "***** CCD CLOSURE *****" << std::endl;
 	bool debug = option[ basic::options::OptionKeys::loops::debug ]();
 
 	core::Size const nres =  pose.total_residue();
@@ -179,7 +181,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	// Maximum of 5*15 cycles;
 	int base_cycles( std::max( 15, static_cast<int>( 5*std::min(loop_size,15) )));
 	int cycles3 = base_cycles;
-	tr.Info << "Number of cycles: cycles2 and cycles3 "
+	tr().Info << "Number of cycles: cycles2 and cycles3 "
 		<< cycles2 << " " << cycles3
 		<< std::endl;
 
@@ -259,8 +261,8 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 
   int   starttime    = time(NULL);
   int   frag_count   = 0;
-	scorefxn()->show_line_headers( tr.Info );
-	tr.Info << std::endl;
+	scorefxn()->show_line_headers( tr().Info );
+	tr().Info << std::endl;
 
 	core::Real const final_temp( 1.0 );
 	core::Real const gamma = std::pow(
@@ -293,8 +295,8 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 		}
 
 		( *scorefxn() )(pose);
-		if ( tr.visible() ) { scorefxn()->show_line( tr.Info , pose ); }
-		tr.Info << std::endl;
+		if ( tr().visible() ) { scorefxn()->show_line( tr().Info , pose ); }
+		tr().Info << std::endl;
 		mc_->score_function( *scorefxn() );
 
 		for ( int c3 = 1; c3 <= cycles3; ++c3 ) {
@@ -316,19 +318,19 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 
 			if ( debug ) {
 				( *scorefxn() )(pose);
-				scorefxn()->show_line( tr.Info , pose );
-				tr.Info << std::endl;
+				scorefxn()->show_line( tr().Info , pose );
+				tr().Info << std::endl;
 			}
 		} // for c3 in cycles3
 	} // for c2 in cycles2
 
 	int looptime = time(NULL) - starttime;
-	tr << "FragCount: " << frag_count << std::endl;
-	tr << "Looptime " << looptime << std::endl;
+	tr() << "FragCount: " << frag_count << std::endl;
+	tr() << "Looptime " << looptime << std::endl;
 
 	pose = mc_->lowest_score_pose();
-	scorefxn()->show(  tr.Info , pose );
-	tr.Info << "-------------------------" << std::endl;
+	scorefxn()->show(  tr().Info , pose );
+	tr().Info << "-------------------------" << std::endl;
 	mc_->show_counters();
 
 	// restore original CB wt if symmetric
@@ -347,7 +349,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 
 		core::Real chain_break_tol
 			= option[ basic::options::OptionKeys::loops::chain_break_tol ]();
-		tr.Info << "Chainbreak: " << chain_break_score << " Max: "
+		tr().Info << "Chainbreak: " << chain_break_score << " Max: "
 			<< chain_break_tol << std::endl;
 
 		//remove cutpoints before all return statements because the code is now determining loop failure without cutpoints.
@@ -363,6 +365,22 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	pose.fold_tree( f_orig );
 	return Success;
 }
+
+basic::Tracer & LoopMover_Perturb_QuickCCD::tr() const
+{
+    return TR;
+}
+
+LoopMover_Perturb_QuickCCDCreator::~LoopMover_Perturb_QuickCCDCreator() {}
+
+moves::MoverOP LoopMover_Perturb_QuickCCDCreator::create_mover() const {
+  return new LoopMover_Perturb_QuickCCD();
+}
+
+std::string LoopMover_Perturb_QuickCCDCreator::keyname() const {
+  return "LoopMover_Perturb_QuickCCD";
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 /// @details  CCD close the loop [loop_begin,loop_end].  Wraps
@@ -400,7 +418,7 @@ void fast_ccd_close_loops(
 	}
 }
 
-
-
+} // namespace perturb
+} // namespace loop_mover
 } // namespace loops
 } // namespace protocols

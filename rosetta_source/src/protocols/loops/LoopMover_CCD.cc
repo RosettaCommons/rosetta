@@ -14,7 +14,7 @@
 
 //// Unit Headers
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/LoopMover.hh>
+//#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 #include <protocols/loops/LoopMover_CCDCreator.hh>
 #include <protocols/loops/Loops.hh>
@@ -88,7 +88,8 @@ namespace loops {
 using namespace core;
 
 static numeric::random::RandomGenerator RG(42478);
-extern basic::Tracer tr;
+static basic::Tracer TR_perturb("protocols.loops..LoopMover_Perturb_CCD");
+static basic::Tracer TR_refine("protocols.loops.LoopMover_Refine_CCD");
 
 //constructors
 LoopMover_Perturb_CCD::LoopMover_Perturb_CCD() :
@@ -159,7 +160,7 @@ protocols::moves::MoverOP LoopMover_Perturb_CCD::clone() const {
 		return new LoopMover_Perturb_CCD(*this);
 	}
 
-LoopResult LoopMover_Perturb_CCD::model_loop(
+loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	core::pose::Pose & pose,
   protocols::loops::Loop const & loop
 ) {
@@ -219,7 +220,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
   //// 		if ( !found_any_frags ) skip_long_frags = false;
   //// 	}
 
-	tr << "perturb_one_loop_with_ccd: " << loop_begin << ' ' << loop_size << std::endl;
+	tr() << "perturb_one_loop_with_ccd: " << loop_begin << ' ' << loop_size << std::endl;
 
 	Real const init_phi  ( -150.0 );
 	Real const init_psi  (  150.0 );
@@ -240,7 +241,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies(pose);
 		scorefxn()->show( out );
 		out << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
-		tr << "before cen_perturb: "
+		tr() << "before cen_perturb: "
 							<< pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 		out << pose.energies();
 	}
@@ -249,12 +250,12 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 	utility::vector1<bool> allow_sc_move( pose.total_residue(), false );
 	loops_set_move_map( one_loop_loops, allow_sc_move, mm_one_loop);
 
-	tr << "loop rmsd before initial fragment perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
+	tr() << "loop rmsd before initial fragment perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
 	if ( loop.is_extended() ) {
 		if (local_debug) {
 			pose.dump_pdb("tmp_cen_preidl.pdb");
 			( *scorefxn() )(pose);
-			tr << "preidl: "
+			tr() << "preidl: "
 				 << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 		}
 
@@ -272,7 +273,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 		if (local_debug) {
 			pose.dump_pdb("tmp_cen_endidl.pdb");
 			( *scorefxn() )(pose);
-			tr << "endidl: "
+			tr() << "endidl: "
 				 << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 		}
 
@@ -283,7 +284,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 		if (local_debug) {
 			pose.dump_pdb("tmp_cen_postidl.pdb");
 			( *scorefxn() )(pose);
-			tr << "postidl: "
+			tr() << "postidl: "
 				 << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 		}
 
@@ -297,7 +298,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 		if (local_debug) {
 			pose.dump_pdb("tmp_cen_init.pdb");
 			( *scorefxn() )(pose);
-			tr << "extended: "
+			tr() << "extended: "
 								<< pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 		}
 
@@ -312,11 +313,11 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 		if (local_debug) {
 			pose.dump_pdb("tmp_cen_ran.pdb");
 			( *scorefxn() )(pose);
-			tr << "random frags: "
+			tr() << "random frags: "
 								<< pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 		}
 	}
-	tr << "loop rmsd after initial fragment perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
+	tr() << "loop rmsd after initial fragment perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
 
 	// scheduler
 	bool const fast = option[OptionKeys::loops::fast];
@@ -331,7 +332,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 	float temperature = init_temp;
 	if ( local_debug ) { // hacking
 		( *scorefxn() )(pose);
-		tr << "before mc ctor: "
+		tr() << "before mc ctor: "
 							<< pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 	}
 
@@ -355,7 +356,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 		// recover low
 		if ( local_debug) { // debug
 			( *scorefxn() )( pose );
-			tr << "befor rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
+			tr() << "befor rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 				" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
 		}
 
@@ -363,7 +364,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 
 		if ( local_debug) { // debug
 			( *scorefxn() )( pose );
-			tr << "after rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
+			tr() << "after rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 				" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
 		}
 
@@ -382,13 +383,13 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 
 				//if ( loop_size < frag_size || ( skip_long_frags && loop_size < frag_size * 2 + 1 ) ) continue;
 				// monte carlo fragment ccd minimization
-				if ( verbose ) tr << "perturb out/in/frag: "
+				if ( verbose ) tr() << "perturb out/in/frag: "
 												  << i << "/" << outer_cycles << " "
 												  << j << "/" << inner_cycles << std::endl;
 
 				if ( local_debug) { // debug
 					( *scorefxn() )( pose );
-					tr << "befor frag: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
+					tr() << "befor frag: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 						" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
 				}
 
@@ -397,7 +398,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 
 				if ( local_debug) { // debug
 					( *scorefxn() )( pose );
-					tr << "after frag: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
+					tr() << "after frag: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 						" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
 				}
 
@@ -405,7 +406,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 
 				if ( local_debug) { // debug
 					( *scorefxn() )( pose );
-					tr << "after ccd:  " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
+					tr() << "after ccd:  " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 						" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
 				}
 
@@ -413,7 +414,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 
 				if ( local_debug) { // debug
 					( *scorefxn() )( pose );
-					tr << "after min:  " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
+					tr() << "after min:  " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 						" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
 				}
 
@@ -435,10 +436,24 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 
 	// return to original fold tree
 	pose.fold_tree( f_orig );
-	return Success;
+	return loop_mover::Success;
 
 }
 
+basic::Tracer & LoopMover_Perturb_CCD::tr() const
+{
+    return TR_perturb;
+}
+
+LoopMover_Perturb_CCDCreator::~LoopMover_Perturb_CCDCreator() {}
+
+moves::MoverOP LoopMover_Perturb_CCDCreator::create_mover() const {
+  return new loops::LoopMover_Perturb_CCD();
+}
+
+std::string LoopMover_Perturb_CCDCreator::keyname() const {
+  return "LoopMover_Perturb_CCD";
+}
 
 //constructors
 LoopMover_Refine_CCD::LoopMover_Refine_CCD()
@@ -509,7 +524,7 @@ void LoopMover_Refine_CCD::set_default_settings()
 		redesign_loop_ = false;
 		packing_isolated_to_active_loops_ = false;
 }
-LoopMover::MoveMapOP LoopMover_Refine_CCD::move_map() const
+loop_mover::LoopMover::MoveMapOP LoopMover_Refine_CCD::move_map() const
 { 
     return move_map_; 
 }
@@ -741,11 +756,11 @@ void LoopMover_Refine_CCD::apply(
 		// recover low
 		mc.recover_low( pose );
 		// score info
-		if ( verbose ) tr << "cycle: " << i << "  " << (*scorefxn)(pose) << std::endl;
+		if ( verbose ) tr() << "cycle: " << i << "  " << (*scorefxn)(pose) << std::endl;
 		for ( Size j=1; j<=inner_cycles; ++j ) {
 			temperature *= gamma;
 			mc.set_temperature( temperature );
-			if ( verbose ) tr << "refinement cycle (outer/inner): "
+			if ( verbose ) tr() << "refinement cycle (outer/inner): "
 								<< i << "/" << outer_cycles_ << " "
 								<< j << "/" << inner_cycles << " "
 								<< std::endl;
@@ -758,8 +773,8 @@ void LoopMover_Refine_CCD::apply(
 				setup_movemap( pose, one_loop, allow_repacked, mm_one_loop );
 
 				if (local_debug) {
-					tr << "chutmp-debug small_move-0: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr << "small_move-0: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-0: " << "  " << (*scorefxn)(pose) << std::endl;
+					tr() << "small_move-0: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-0.pdb");
 				}
@@ -768,8 +783,8 @@ void LoopMover_Refine_CCD::apply(
 				small_moves.apply( pose );
 
 				if (local_debug) {
-					tr << "chutmp-debug small_move-1: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr << "small_move-1: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-1: " << "  " << (*scorefxn)(pose) << std::endl;
+					tr() << "small_move-1: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-1.pdb");
 					std::ofstream out("score.small_move_1");
@@ -781,8 +796,8 @@ void LoopMover_Refine_CCD::apply(
 				if (! it->is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *mm_one_loop);
 
 				if (local_debug) {
-					tr << "chutmp-debug small_move-2: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr << "small_move-2: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-2: " << "  " << (*scorefxn)(pose) << std::endl;
+					tr() << "small_move-2: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-2.pdb");
 					std::ofstream out("score.small_move_2");
@@ -794,8 +809,8 @@ void LoopMover_Refine_CCD::apply(
 				pack::rotamer_trials( pose, *scorefxn, this_packer_task );
 
 				if (local_debug) {
-					tr << "chutmp-debug small_move-3: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr << "small_move-3: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-3: " << "  " << (*scorefxn)(pose) << std::endl;
+					tr() << "small_move-3: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-3.pdb");
 				}
@@ -804,8 +819,8 @@ void LoopMover_Refine_CCD::apply(
 				minimizer->run( pose, *mm_all_loops, *scorefxn, options );
 
 				if (local_debug) {
-					tr << "chutmp-debug small_move-4: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr << "small_move-4: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-4: " << "  " << (*scorefxn)(pose) << std::endl;
+					tr() << "small_move-4: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-4.pdb");
 				}
@@ -814,8 +829,8 @@ void LoopMover_Refine_CCD::apply(
 				mc.boltzmann( pose, move_type );
 
 				if (local_debug) {
-					tr << "chutmp-debug small_move-5: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr << "small_move-5: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-5: " << "  " << (*scorefxn)(pose) << std::endl;
+					tr() << "small_move-5: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-5.pdb");
 				}
@@ -855,7 +870,7 @@ void LoopMover_Refine_CCD::apply(
 					mc.show_scores();
 				}
 			}
-			if ( verbose || local_debug ) tr << std::flush;
+			if ( verbose || local_debug ) tr() << std::flush;
 		} //inner_cycle
 	} //outer_cycle
 
@@ -892,6 +907,21 @@ void LoopMover_Refine_CCD::setup_movemap(
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
 		core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 	}
+}
+
+basic::Tracer & LoopMover_Refine_CCD::tr() const
+{
+    return TR_refine;
+}
+
+LoopMover_Refine_CCDCreator::~LoopMover_Refine_CCDCreator() {}
+
+moves::MoverOP LoopMover_Refine_CCDCreator::create_mover() const {
+  return new loops::LoopMover_Refine_CCD();
+}
+
+std::string LoopMover_Refine_CCDCreator::keyname() const {
+  return "LoopMover_Refine_CCD";
 }
 
 

@@ -14,7 +14,7 @@
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
 
 #include <core/types.hh>
@@ -380,7 +380,7 @@ void ThreadingMover::apply(
 			using core::util::switch_to_residue_type_set;
 			core::util::switch_to_residue_type_set( query_pose, core::chemical::CENTROID );
 
-			loops::LoopMoverOP loop_mover = protocols::loops::LoopMoverFactory::get_instance()->create_loop_mover(
+			loops::loop_mover::LoopMoverOP loop_mover = protocols::loops::LoopMoverFactory::get_instance()->create_loop_mover(
 				option[ cm::loop_mover ](), query_loops
 			);
 			for ( Size ii = 1; ii <= frag_libs().size(); ++ii ) {
