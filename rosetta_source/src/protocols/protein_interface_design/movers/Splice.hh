@@ -70,8 +70,12 @@ class ResidueBBDofs : public utility::pointer::ReferenceCount
 		iterator end(){ return bbdofs_.end(); }
 		core::Size size() const{ return bbdofs_.size(); }
 		BBDofs & operator[]( int const i ) { return bbdofs_[ i ]; }
+		core::Size start_loop() const{ return start_loop_; }
+		void start_loop( core::Size const s ){ start_loop_ = s; }
+		core::Size stop_loop() const{ return stop_loop_; }
+		void stop_loop( core::Size const s ){ stop_loop_ = s; }
 	private:
-		core::Size cut_site_;
+		core::Size cut_site_, start_loop_, stop_loop_;
 		bbdof_list bbdofs_;
 };
 

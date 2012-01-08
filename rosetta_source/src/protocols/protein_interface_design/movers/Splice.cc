@@ -99,8 +99,10 @@ Splice::~Splice() {}
 void
 Splice::apply( core::pose::Pose & pose )
 {
-	core::pose::Pose const in_pose_copy( pose );
+	using namespace protocols::rosetta_scripts;
 	using core::chemical::DISULFIDE;
+
+	core::pose::Pose const in_pose_copy( pose );
 	pose.conformation().detect_disulfides();
 
 	TR<<"Starting splice apply"<<std::endl;
@@ -116,9 +118,8 @@ Splice::apply( core::pose::Pose & pose )
 	core::Size nearest_to_from( 0 ), nearest_to_to( 0 ); // residues on source_pose that are nearest to from_res and to_res
 	ResidueBBDofs dofs;
 	dofs.clear();
+	core::Size cut_site( 0 );
 	if( torsion_database_fname_ == "" ){ // read dofs from source pose rather than database
-		using namespace protocols::rosetta_scripts;
-
 		core::import_pose::pose_from_pdb( source_pose, source_pdb_ );
 		nearest_to_from = find_nearest_res( source_pose, pose, from_res() );
 		nearest_to_to = find_nearest_res( source_pose, pose, to_res() );
@@ -150,6 +151,7 @@ Splice::apply( core::pose::Pose & pose )
 
 			dofs.push_back( residue_dofs );
 		}// for i nearest_to_from..nearest_to_to
+		cut_site = dofs.cut_site() ? dofs.cut_site() + from_res() - 1: to_res();
 	}// fi torsion_database_fname==NULL
 	else{/// read from dbase
 		core::Size dbase_entry( database_entry() );
@@ -171,12 +173,15 @@ Splice::apply( core::pose::Pose & pose )
 		}/// foreach resdof
 		nearest_to_to = dofs.size(); /// nearest_to_to and nearest_to_from are used below to compute the difference in residue numbers...
 		nearest_to_from = 1;
+		from_res( dofs.start_loop() );
+		to_res( dofs.stop_loop() );
+		cut_site = dofs.cut_site();
+		runtime_assert( from_res() && to_res() && cut_site );
   }// read from dbase
 
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
 	protocols::loops::FoldTreeFromLoops ffl;
 	using namespace utility;
-	core::Size cut_site( dofs.cut_site() ? dofs.cut_site() + from_res() - 1: to_res() );
 	if( randomize_cut() ){
 		core::scoring::dssp::Dssp dssp( source_pose );
 		dssp.dssp_reduced(); // switch to simplified H E L notation
@@ -308,7 +313,7 @@ Splice::apply( core::pose::Pose & pose )
 		}
 		TaskFactoryOP tf_dofs = new TaskFactory;
 		DesignAroundOperationOP dao_dofs = new DesignAroundOperation;
-		for( core::Size i = from_res(); i <= from_res() + total_residue_new - 1; ++i )
+		for( core::Size i = startn; i <= startc + res_move() - 1; ++i )
 			dao_dofs->include_residue( i );
 		dao_dofs->design_shell( 0 );/// only include the loop residues
 		tf_dofs->push_back( dao_dofs );
@@ -316,7 +321,10 @@ Splice::apply( core::pose::Pose & pose )
 		torsion.task_factory( tf_dofs );
 		torsion.task_factory_set( true );
 		torsion.apply( pose );
-		TR_ccd << "cut at (relative to start): "<<cut_site - from_res()+1<<std::endl;
+
+		core::Size const stop_on_template( startc + res_move() - 1 - residue_diff );
+
+		TR_ccd << "start, stop, cut: "<<startn<<" "<<stop_on_template<<" "<<cut_site<<std::endl;
 	}// fi ccd
 	else{ // if no ccd, still need to thread sequence
 		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
@@ -404,8 +412,11 @@ Splice::read_torsion_database(){
 			core::Real phi, psi, omega;
 			std::string resn;
 			line_stream >> phi >> psi >> omega >> resn;
-			if( resn == "cut" || resn == "CUT" )
-				bbdof_entry.cut_site( (core::Size) phi ); //// ugly
+			if( resn == "cut" || resn == "CUT" ){ /// ugly!!!
+				bbdof_entry.start_loop( (core::Size ) phi );
+				bbdof_entry.stop_loop( (core::Size ) psi );
+				bbdof_entry.cut_site( (core::Size ) omega );
+			}
 			else
 				bbdof_entry.push_back( BBDofs( 0/*resid*/, phi, psi, omega, resn ) );
 		}
