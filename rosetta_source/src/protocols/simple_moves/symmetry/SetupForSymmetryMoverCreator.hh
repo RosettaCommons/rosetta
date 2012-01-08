@@ -36,6 +36,14 @@ public:
 	static  std::string mover_name();
 };
 
+class ExtractAsymmetricPoseMoverCreator : public moves::MoverCreator {
+public:
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static  std::string mover_name();
+};
+
+
 }
 }
 }

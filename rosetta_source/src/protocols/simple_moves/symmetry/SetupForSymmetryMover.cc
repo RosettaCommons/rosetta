@@ -80,6 +80,24 @@ ExtractAsymmetricUnitMoverCreator::mover_name() {
 
 ////////////////////
 
+std::string
+ExtractAsymmetricPoseMoverCreator::keyname() const {
+	return ExtractAsymmetricPoseMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+ExtractAsymmetricPoseMoverCreator::create_mover() const {
+	return new ExtractAsymmetricPoseMover;
+}
+
+std::string
+ExtractAsymmetricPoseMoverCreator::mover_name() {
+	return "ExtractAsymmetricPose";
+}
+
+////////////////////
+
+
 SetupForSymmetryMover::SetupForSymmetryMover()
 	: protocols::moves::Mover("SetupForSymmetryMover"), slide_(false), symmdef_file_("") { }
 
@@ -156,6 +174,36 @@ std::string
 ExtractAsymmetricUnitMover::get_name() const {
 	return ExtractAsymmetricUnitMoverCreator::mover_name();
 }
+
+/////////////////
+
+ExtractAsymmetricPoseMover::ExtractAsymmetricPoseMover()
+	: protocols::moves::Mover("ExtractAsymmetricPoseMover") { }
+
+ExtractAsymmetricPoseMover::~ExtractAsymmetricPoseMover(){}
+
+
+void
+ExtractAsymmetricPoseMover::apply( core::pose::Pose & pose )
+{
+	// If we are not symmetric do nothing
+	if ( !core::pose::symmetry::is_symmetric( pose ) ) return;
+
+	core::pose::symmetry::make_asymmetric_pose( pose );
+}
+
+void ExtractAsymmetricPoseMover::parse_my_tag(
+			utility::tag::TagPtr const tag,
+			moves::DataMap & /*data*/,
+			filters::Filters_map const & /*filters*/,
+			moves::Movers_map const & /*movers*/,
+			core::pose::Pose const & /*pose*/ ) { }
+
+std::string
+ExtractAsymmetricPoseMover::get_name() const {
+	return ExtractAsymmetricPoseMoverCreator::mover_name();
+}
+
 
 } //symmetry
 } // simple_moves

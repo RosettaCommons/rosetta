@@ -205,6 +205,7 @@ static MoverRegistrator< simple_moves::sidechain_moves::PerturbRotamerSidechainM
 static MoverRegistrator< simple_moves::sidechain_moves::PerturbChiSidechainMoverCreator > reg_PerturbChiSidechainMoverCreator;
 
 static MoverRegistrator< simple_moves::symmetry::ExtractAsymmetricUnitMoverCreator > reg_ExtractAsymmetricUnitMoverCreator;
+static MoverRegistrator< simple_moves::symmetry::ExtractAsymmetricPoseMoverCreator > reg_ExtractAsymmetricPoseMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SetupForSymmetryMoverCreator > reg_SetupForSymmetryMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SetupNCSMoverCreator > reg_SetupNCSMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SymMinMoverCreator > reg_SymMinMoverCreator;

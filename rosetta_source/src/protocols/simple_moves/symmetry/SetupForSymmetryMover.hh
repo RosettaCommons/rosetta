@@ -86,6 +86,29 @@ public:
 	virtual std::string get_name() const;
 };
 
+class ExtractAsymmetricPoseMover : public protocols::moves::Mover
+{
+public:
+
+	// default constructor
+	ExtractAsymmetricPoseMover();
+
+	~ExtractAsymmetricPoseMover();
+
+	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new ExtractAsymmetricPoseMover( *this ) ) ); }
+
+	virtual void apply( core::pose::Pose & pose );
+	virtual void parse_my_tag(
+			utility::tag::TagPtr const tag,
+			moves::DataMap &data,
+			filters::Filters_map const &filters,
+			moves::Movers_map const &movers,
+			core::pose::Pose const & pose );
+
+	virtual std::string get_name() const;
+};
+
+
 }
 } // symmetric_docking
 } // rosetta

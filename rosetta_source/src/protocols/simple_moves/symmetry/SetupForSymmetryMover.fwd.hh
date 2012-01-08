@@ -32,6 +32,11 @@ class ExtractAsymmetricUnitMover;
 typedef utility::pointer::owning_ptr< SetupForSymmetryMover > ExtractAsymmetricUnitMoverOP;
 typedef utility::pointer::owning_ptr< SetupForSymmetryMover const > ExtractAsymmetricUnitMoverCOP;
 
+class ExtractAsymmetricPoseMover;
+typedef utility::pointer::owning_ptr< ExtractAsymmetricPoseMover > ExtractAsymmetricPoseMoverOP;
+typedef utility::pointer::owning_ptr< ExtractAsymmetricPoseMover const > ExtractAsymmetricPoseMoverCOP;
+
+
 }
 } // symmetric_docking
 } // rosetta
