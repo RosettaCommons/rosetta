@@ -30,6 +30,9 @@
 #define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
 #include <protocols/protein_interface_design/movers/DumpPdb.hh>
+#include <core/pose/symmetry/util.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.cc>
+#include <protocols/simple_moves/PackRotamersMover.cc>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -154,7 +157,13 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 			pack->nonconst_residue_task( i ).restrict_absent_canonical_aas( allowed_aas );
 		}
 	}//for i=1->total_residue
-	core::pack::pack_rotamers( *copy_pose, *scorefxn(), pack );
+	using namespace protocols::simple_moves;
+	PackRotamersMoverOP prm;
+	if( core::pose::symmetry::is_symmetric( *copy_pose ) )
+		prm = new symmetry::SymPackRotamersMover( scorefxn(), pack );
+	else
+		prm = new PackRotamersMover( scorefxn(), pack );
+	prm->apply( *copy_pose );
 	relax_mover()->apply( *copy_pose );
 	return( copy_pose );
 }
@@ -200,15 +209,16 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	TR << "RelativePoseFilter"<<std::endl;
 	std::string const pose_fname( tag->getOption< std::string >( "pdb_name" ) );
 	pose( core::import_pose::pose_from_pdb( pose_fname, false /*read foldtree*/ ) );
+	relax_mover( parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
 	filter( parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
 	baseline( tag->getOption< bool >( "baseline", 1 ));
 	if( baseline() ){
+		relax_mover()->apply( *pose() );
 		baseline_val( filter()->report_sm( *pose() ) );
 		TR<<"The baseline value for the pose read from disk is: "<<baseline_val()<<std::endl;
 	}
 	else
 		TR<<"Baseline turned off. Is that intended?"<<std::endl;
-	relax_mover( parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
 	dump_pose_fname( tag->getOption< std::string >( "dump_pose", "" ) );
 	if( tag->hasOption( "alignment" ) ){
 		utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "alignment", "" ), ',' ) );
@@ -219,7 +229,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		}
 	}
 	else{
-		runtime_assert( pose()->total_residue() == p.total_residue() );
+//		runtime_assert( pose()->total_residue() == p.total_residue() || core::pose::symmetry::is_symmetric( p ) );
 		for( core::Size i=1; i<=p.total_residue(); ++i )
 			alignment_[ i ] = i;
 	}
