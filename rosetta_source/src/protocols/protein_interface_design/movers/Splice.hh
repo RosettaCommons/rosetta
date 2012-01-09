@@ -118,9 +118,14 @@ public:
 	void read_torsion_database();
 	utility::vector1< ResidueBBDofs > torsion_database() const{ return torsion_database_; }
 	void torsion_database( utility::vector1< ResidueBBDofs > const d ){ torsion_database_ = d; }
+	std::string template_file() const{ return template_file_; }
+	void template_file( std::string const s ){ template_file_ = s; }
 
 private:
-	core::Size from_res_, to_res_;
+	void save_values(); // call at beginning of apply
+	void retrieve_values(); // call at end of apply
+
+	core::Size from_res_, to_res_, saved_from_res_, saved_to_res_;
 	std::string source_pdb_;
 	bool ccd_;//dflt true; do ccd?
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12 with reweighted sheet weight
@@ -131,6 +136,7 @@ private:
 	std::string torsion_database_fname_; //dflt ""; set to true in order to read directly from a torsion database
 	core::Size database_entry_; //dflt 0; in which case tests a random entry in each apply
 	utility::vector1< ResidueBBDofs > torsion_database_;
+	std::string template_file_; //dflt ""; which source file to use as the template to determine what from_res() and to_res() refer to. The input structure may change during a trajectory and so from_res() and to_res() might lose their sense. If this is "", the input file is taken to be template
 };
 
 

@@ -81,6 +81,8 @@ Splice::Splice() :
 	Mover( SpliceCreator::mover_name() ),
 	from_res_( 0 ),
 	to_res_( 0 ),
+	saved_from_res_( 0 ),
+	saved_to_res_( 0 ),
 	source_pdb_( "" ),
 	ccd_( true ),
 	rms_cutoff_( 999999 ),
@@ -88,7 +90,8 @@ Splice::Splice() :
 	randomize_cut_( false ),
 	task_factory_( NULL ),
 	torsion_database_fname_( "" ),
-	database_entry_( 0 )
+	database_entry_( 0 ),
+	template_file_( "" )
 {
 	torsion_database_.clear();
 }
@@ -102,8 +105,23 @@ Splice::apply( core::pose::Pose & pose )
 	using namespace protocols::rosetta_scripts;
 	using core::chemical::DISULFIDE;
 
+	save_values();
+
+	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
+		core::pose::Pose template_pose;
+
+		core::import_pose::pose_from_pdb( template_pose, template_file_ );
+		core::Size const new_from_res( find_nearest_res( pose, template_pose, from_res()));
+		core::Size const new_to_res(   find_nearest_res( pose, template_pose, to_res()  ));
+
+		runtime_assert( new_from_res );
+		runtime_assert( new_to_res );
+		from_res( new_from_res );
+		to_res( new_to_res );
+	}// fi template_file != ""
+
 	core::pose::Pose const in_pose_copy( pose );
-	pose.conformation().detect_disulfides();
+	pose.conformation().detect_disulfides(); // just in case
 
 	TR<<"Starting splice apply"<<std::endl;
 	if( from_res() == 0 && to_res() == 0 ){/// set the splice site dynamically according to the task factory
@@ -126,12 +144,14 @@ Splice::apply( core::pose::Pose & pose )
 		if( nearest_to_from == 0 || nearest_to_to == 0 ){
 			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
 			set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+			retrieve_values();
 			return;
 		}
 		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
 		  if( source_pose.residue( i ).has_variant_type( DISULFIDE ) ){
 				TR<<"Residue "<<i<<" is a disulfide. Failing"<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+				retrieve_values();
 				return;
 			}
 /// Feed the source_pose dofs into the BBDofs array
@@ -163,6 +183,7 @@ Splice::apply( core::pose::Pose & pose )
 			if( resdofs.resn() == "CYD" ){// at one point it would be a good idea to use disfulfides rather than bail out on them...
 				TR<<"Residue "<<resdofs.resid()<<" is a disulfide. Failing"<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+				retrieve_values();
 				return;
 			}
 			std::stringstream ss; std::string s;
@@ -308,6 +329,7 @@ Splice::apply( core::pose::Pose & pose )
 			if( average_rms >= rms_cutoff() ){
 				TR<<"Failing."<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_RETRY );
+				retrieve_values();
 				return;
 			}
 		}
@@ -331,6 +353,19 @@ Splice::apply( core::pose::Pose & pose )
 		protocols::simple_moves::PackRotamersMover prm( scorefxn(), ptask );
 		prm.apply( pose );
 	}
+	retrieve_values();
+}
+
+void
+Splice::save_values(){
+	saved_from_res_ = from_res();
+	saved_to_res_ = to_res();
+}
+
+void
+Splice::retrieve_values(){
+	from_res( saved_from_res_ );
+	to_res( saved_to_res_ );
 }
 
 std::string
