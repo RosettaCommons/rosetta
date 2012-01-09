@@ -21,7 +21,7 @@
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
-// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
+#include <core/sequence/SWAligner.hh>
 #include <core/sequence/NWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
@@ -36,12 +36,12 @@
 #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+#include <core/pack/pack_rotamers.hh>
+#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/fragment/FragSet.hh>
@@ -49,12 +49,11 @@
 
 #include <protocols/relax/MiniRelax.cc>
 
-#include <protocols/loophash/FastGapMover.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/StealSideChainsMover.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/RecoverSideChainsMover.hh>
+#include <protocols/comparative_modeling/StealSideChainsMover.hh>
+#include <protocols/comparative_modeling/RecoverSideChainsMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -63,12 +62,12 @@
 #include <string>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
+#include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector0.hh>
 
 
 void restore_hack( core::pose::Pose & pose ) {
@@ -77,6 +76,65 @@ void restore_hack( core::pose::Pose & pose ) {
 	ss.fill_struct( pose );
 	ss.fill_pose( pose, *(core::chemical::rsd_set_from_cmd_line()) );
 }
+
+//class FullLengthPose {
+//public:
+//
+//void apply() {
+//		// make an alignment from the input pose to the full-length fasta
+//		ScoringSchemeOP ss( new SimpleScoringScheme( 6, 1, -4, -1 ) );
+//		SequenceOP full_length( new Sequence(
+//			sequence, "full_length", 1
+//		) );
+//		SequenceOP pdb_seq( new Sequence(
+//			start_pose.sequence(), "pdb", 1
+//		) );
+//		SequenceAlignment aln = sw_align.align( full_length, pdb_seq, ss );
+//		tr.Debug << "rebuilding pose with alignment: " << std::endl;
+//		tr.Debug << aln << std::endl;
+//		tr.flush();
+//
+//		// build a model using threading (close loops)
+//		ThreadingMover threader( aln, start_pose );
+//		threader.build_loops( true );
+//		if ( option[ cm::min_loop_size ]() ) {
+//			threader.min_loop_size( option[ cm::min_loop_size ]() );
+//		}
+//		core::pose::Pose full_length_pose;
+//		core::pose::make_pose_from_sequence( full_length_pose, sequence, *rsd_set );
+//		threader.frag_libs( frag_libs );
+//
+//		// repack rebuilt sidechains
+//		RecoverSideChainsMover mover( threader );
+//		mover.apply( full_length_pose );
+//		vector1< bool > residues_to_repack(
+//			full_length_pose.total_residue(), false
+//		);
+//		MoveMapOP mm( new MoveMap() );
+//		mm->set_bb (false);
+//		mm->set_chi(false);
+//		SequenceMapping map = aln.sequence_mapping(1,2);
+//		for ( core::Size ii = 1; ii <= full_length->length(); ++ii ) {
+//			if ( map[ii] == 0 ) {
+//				residues_to_repack[ii] = true;
+//				mm->set_bb ( ii, true );
+//				mm->set_chi( ii, true );
+//			}
+//		}
+//		StealSideChainsMover sc_mover( start_pose, map );
+//		sc_mover.apply( full_length_pose );
+//
+//		task::PackerTaskOP task
+//			= task::TaskFactory::create_packer_task( full_length_pose );
+//		task->initialize_from_command_line();
+//		task->restrict_to_repacking();
+//		task->restrict_to_residues(residues_to_repack);
+//		ScoreFunctionOP scorefxn(
+//			ScoreFunctionFactory::create_score_function( "standard", "score12" )
+//		);
+//		restore_hack( full_length_pose );
+//
+//};
 
 int
 main( int argc, char* argv [] ) {
@@ -98,13 +156,16 @@ main( int argc, char* argv [] ) {
 	// options, random initialization
 	devel::init( argc, argv );
 
-	protocols::loophash::FastGapMover fast_gap;
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
 	MetaPoseInputStream input = streams_from_cmd_line();
 	std::string sequence = core::sequence::read_fasta_file(
 		option[ in::file::fasta ]()[1]
 	)[1]->sequence();
-	NWAligner nw_align;
+	NWAligner sw_align;
+
+	// initialize fragments
+	utility::vector1< core::fragment::FragSetOP > frag_libs;
+	protocols::loops::read_loop_fragments( frag_libs );
 
 	while ( input.has_another_pose() ) {
 		core::pose::Pose start_pose;
@@ -118,27 +179,73 @@ main( int argc, char* argv [] ) {
 		SequenceOP pdb_seq( new Sequence(
 			start_pose.sequence(), "pdb", 1
 		) );
-		SequenceAlignment aln = nw_align.align( full_length, pdb_seq, ss );
+		SequenceAlignment aln = sw_align.align( full_length, pdb_seq, ss );
 		tr.Debug << "rebuilding pose with alignment: " << std::endl;
 		tr.Debug << aln << std::endl;
 		tr.flush();
 
-		// build a model using threading (copy aligned regions)
-		ThreadingMover threader(aln,start_pose);
-		threader.build_loops(false);
+		// build a model using threading (close loops)
+		ThreadingMover threader( aln, start_pose );
+		threader.build_loops( true );
+		if ( option[ cm::min_loop_size ]() ) {
+			threader.min_loop_size( option[ cm::min_loop_size ]() );
+		}
 		core::pose::Pose full_length_pose;
 		core::pose::make_pose_from_sequence( full_length_pose, sequence, *rsd_set );
-		threader.apply(full_length_pose);
+		threader.frag_libs( frag_libs );
 
-		full_length_pose.dump_pdb("here.pdb");
+		// repack rebuilt sidechains
+		RecoverSideChainsMover mover( threader );
+		mover.apply( full_length_pose );
+		vector1< bool > residues_to_repack(
+			full_length_pose.total_residue(), false
+		);
+		MoveMapOP mm( new MoveMap() );
+		mm->set_bb (false);
+		mm->set_chi(false);
+		core::id::SequenceMapping map = aln.sequence_mapping(1,2);
+		for ( core::Size ii = 1; ii <= full_length->length(); ++ii ) {
+			if ( map[ii] == 0 ) {
+				residues_to_repack[ii] = true;
+				mm->set_bb ( ii, true );
+				mm->set_chi( ii, true );
+			}
+		}
+		StealSideChainsMover sc_mover( start_pose, map );
+		sc_mover.apply( full_length_pose );
 
-		fast_gap.apply(full_length_pose);
+		task::PackerTaskOP task
+			= task::TaskFactory::create_packer_task( full_length_pose );
+		task->initialize_from_command_line();
+		task->restrict_to_repacking();
+		task->restrict_to_residues(residues_to_repack);
+		ScoreFunctionOP scorefxn(
+			ScoreFunctionFactory::create_score_function( "standard", "score12" )
+		);
+		restore_hack( full_length_pose );
+		//core::import_pose::pose_from_pdb( pose, *rsd_set, "debug.pdb" );
+
+		//(*scorefxn)(full_length_pose);
+		//pack_rotamers( full_length_pose, *scorefxn, task );
+		//full_length_pose.dump_pdb("debug.pdb");
+		alignment_into_pose( aln, full_length_pose );
+
+		if ( option[ relax::mini ]() ) {
+			protocols::relax::MiniRelax relax( scorefxn );
+			mm->show( std::cout, full_length_pose.total_residue() );
+			//relax.set_movemap(mm);
+			relax.apply(full_length_pose);
+		}
 
 		std::string output_prefix( core::pose::tag_from_pose(start_pose) );
 		// output PDB
-		alignment_into_pose( aln, full_length_pose );
 		utility::io::ozstream output( output_prefix + "_full_length.pdb" );
 		output << "REMARK REBUILT_RESIDUES";
+		for ( Size ii = 1; ii <= residues_to_repack.size(); ++ii ) {
+			if ( residues_to_repack[ii] ) {
+				output << " " << ii;
+			}
+		}
 		output << std::endl;
 		output << "REMARK query_aln    " << aln.sequence(1)->to_string() << std::endl;
 		output << "REMARK template_aln " << aln.sequence(2)->to_string()<< std::endl;
