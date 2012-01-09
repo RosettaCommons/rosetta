@@ -21,6 +21,7 @@ sources = {
 		"FragID",
 		"FragID_Iterator",
 		"FragmentIO",
+                "FragmentRmsd",
 		"FragSet",
 		"FragSetCollection",
 		"Frame",

@@ -50,6 +50,7 @@ sources = {
 		#"contact_map_from_homologs",
 	],
 	"pilot/cmiles" : [
+                #"fragment_rmsd",
                 #"helix_rotate",
 		"medal",
 		"medal_exchange",
