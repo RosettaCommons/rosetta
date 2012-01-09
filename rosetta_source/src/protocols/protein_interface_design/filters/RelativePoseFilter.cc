@@ -31,8 +31,8 @@
 #include <utility/string_util.hh>
 #include <protocols/protein_interface_design/movers/DumpPdb.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.cc>
-#include <protocols/simple_moves/PackRotamersMover.cc>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
