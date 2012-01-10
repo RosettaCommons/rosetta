@@ -36,6 +36,8 @@ public:
 	Real Wradius;
 	Real lj_switch_dis2sigma;
 	bool disable_polar_desolvation;
+	Real lj_hbond_OH_donor_dis;
+	Real lj_hbond_hdis;
 
 private:
 

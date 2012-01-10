@@ -97,9 +97,9 @@ Etable::Etable(
 	lj_use_lj_deriv_slope     ( true ),
 	lj_slope_intercept        ( 0.0 ),
 	lj_use_hbond_radii        ( true ),
-	lj_hbond_OH_donor_dis     ( option[corrections::score::lj_hbond_OH_donor_dis] ),
+	lj_hbond_OH_donor_dis     ( options.lj_hbond_OH_donor_dis ),
 	lj_hbond_dis              ( 3.0 ),
-	lj_hbond_hdis             ( option[corrections::score::lj_hbond_hdis] ),
+	lj_hbond_hdis             ( options.lj_hbond_hdis ),
 	lj_hbond_accOch_dis       ( 2.80 ), // unused
 	lj_hbond_accOch_hdis      ( 1.75 ), // unused
 	lj_use_water_radii        ( true ),

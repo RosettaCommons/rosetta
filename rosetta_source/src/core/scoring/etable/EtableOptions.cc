@@ -22,6 +22,7 @@
 // option key includes
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 
@@ -35,7 +36,9 @@ EtableOptions::EtableOptions() :
 	bins_per_A2( 20 ),
 	Wradius( 1.0 ),
 	lj_switch_dis2sigma( 0.6 ),
-	disable_polar_desolvation( false )
+	disable_polar_desolvation( false ),
+	lj_hbond_OH_donor_dis(3.0),
+	lj_hbond_hdis(1.95)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -47,6 +50,10 @@ EtableOptions::EtableOptions() :
 	if ( option[ score::no_lk_polar_desolvation ] ) {
 		disable_polar_desolvation = false;
 	}
+
+	lj_hbond_OH_donor_dis = option[ corrections::score::lj_hbond_OH_donor_dis ];
+	lj_hbond_hdis = option[ corrections::score::lj_hbond_hdis ];
+
 }
 
 } // etable
