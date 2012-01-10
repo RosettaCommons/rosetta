@@ -1,7 +1,7 @@
 Generated HBond parameters by Matthew O'Meara and Andrew Leaver-Fay (OLF) in 2011 
 
 
-These are the OLF_params_6i set.
+These are the OLF_params_7ab set.
 
 README.txt: this file
 schema.sql: sql schema definition for tables
