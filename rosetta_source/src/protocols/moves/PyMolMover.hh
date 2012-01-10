@@ -289,6 +289,9 @@ public:
 	/// @brief Send specified energy to PyMOL.
 	void send_energy(Pose const &, core::scoring::ScoreType stype = core::scoring::total_score);
 
+	/// @brief Send specified energy to PyMOL.
+	void send_energy(Pose const &, std::string const & stype);
+
 	/// @brief Send RAW energy array for coloring by PyMOL
     void send_RAW_Energies(Pose const &, std::string energyType, utility::vector1<int> const & energies);
 

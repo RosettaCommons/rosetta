@@ -16,6 +16,8 @@
 
 #include <protocols/moves/PyMolMover.hh>
 
+#include <core/scoring/ScoreTypeManager.hh>
+
 //#ifndef WIN_PYROSETTA  // CL compiler got horribly confused if our numeric header got included after <winsock2.h>
 
 // AUTO-REMOVED #include <numeric/random/random.hh>
@@ -317,6 +319,13 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 		link_.sendMessage(message);
 	}
 }
+
+/// Send specified energy to PyMOL.
+void PyMolMover::send_energy(Pose const &pose, std::string const & stype)
+{
+	send_energy(pose, core::scoring::ScoreTypeManager::score_type_from_name(stype) );
+}
+
 
 void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors, X11Colors default_color)
 {
