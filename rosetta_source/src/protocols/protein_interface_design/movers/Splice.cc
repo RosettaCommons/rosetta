@@ -38,6 +38,7 @@
 #include <utility/io/izstream.hh>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
@@ -107,17 +108,24 @@ Splice::apply( core::pose::Pose & pose )
 
 	save_values();
 
+	core::pose::Pose template_pose;
 	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
-		core::pose::Pose template_pose;
+		static core::Size template_from_res( 0 ), template_to_res( 0 );
+		static bool first_pass( true ); /// let's not read from disk more than necessary
 
-		core::import_pose::pose_from_pdb( template_pose, template_file_ );
-		core::Size const new_from_res( find_nearest_res( pose, template_pose, from_res()));
-		core::Size const new_to_res(   find_nearest_res( pose, template_pose, to_res()  ));
+		if( first_pass ){
+			core::import_pose::pose_from_pdb( template_pose, template_file_ );
+			if( from_res() && to_res() ){
+				template_from_res = find_nearest_res( pose, template_pose, from_res());
+				template_to_res   = find_nearest_res( pose, template_pose, to_res()  );
+				runtime_assert( template_from_res );
+				runtime_assert( template_to_res );
+			}
+		}/// fi first_pass
 
-		runtime_assert( new_from_res );
-		runtime_assert( new_to_res );
-		from_res( new_from_res );
-		to_res( new_to_res );
+		from_res( template_from_res );
+		to_res( template_to_res );
+		first_pass = false;
 	}// fi template_file != ""
 
 	core::pose::Pose const in_pose_copy( pose );
@@ -194,10 +202,20 @@ Splice::apply( core::pose::Pose & pose )
 		}/// foreach resdof
 		nearest_to_to = dofs.size(); /// nearest_to_to and nearest_to_from are used below to compute the difference in residue numbers...
 		nearest_to_from = 1;
-		from_res( dofs.start_loop() );
-		to_res( dofs.stop_loop() );
-		cut_site = dofs.cut_site();
-		runtime_assert( from_res() && to_res() && cut_site );
+
+		if( template_file_ != "" ){
+			from_res( find_nearest_res( pose, template_pose, dofs.start_loop() ) );
+			to_res(   find_nearest_res( pose, template_pose, dofs.stop_loop()  ) );
+			runtime_assert( from_res() );
+			runtime_assert( to_res() );
+			cut_site = dofs.cut_site() - dofs.start_loop() + from_res();
+		} // fi template_file != ""
+		else{
+			from_res( dofs.start_loop() );
+			to_res( dofs.stop_loop() );
+			cut_site = dofs.cut_site();
+			runtime_assert( from_res() && to_res() && cut_site );
+		}
   }// read from dbase
 
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
@@ -219,7 +237,7 @@ Splice::apply( core::pose::Pose & pose )
 		TR<<"Cut placed at: "<<cut_site<<std::endl;
   }// fi randomize_cut
 
-	protocols::loops::Loop loop( from_res() - 6/*start*/, to_res() + 6/*stop*/, cut_site/*cut*/ );
+	protocols::loops::Loop loop( std::max( (core::Size) 2, from_res() - 6 )/*start*/, std::min( pose.total_residue()-1, to_res() + 6 )/*stop*/, cut_site/*cut*/ );
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
 	loops->push_back( loop );
 	ffl.loops( loops );
@@ -376,12 +394,12 @@ Splice::get_name() const {
 void
 Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
-	runtime_assert( tag->hasOption( "task_operations" ) != (tag->hasOption( "from_res" ) || tag->hasOption( "to_res" ) ) ); // it makes no sense to activate both taskoperations and from_res/to_res.
+	runtime_assert( tag->hasOption( "task_operations" ) != (tag->hasOption( "from_res" ) || tag->hasOption( "to_res" ) ) || tag->hasOption( "torsion_database" ) ); // it makes no sense to activate both taskoperations and from_res/to_res.
 	runtime_assert( tag->hasOption( "torsion_database" ) != tag->hasOption( "source_pdb" ) );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	if( !tag->hasOption( "task_operations" ) ){
-		from_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "from_res" ), pose ) );
-		to_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "to_res" ), pose ) );
+		from_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "from_res", "0" ), pose ) );
+		to_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "to_res", "0" ), pose ) );
 	}
 	if( tag->hasOption( "torsion_database" ) ){
 		torsion_database_fname( tag->getOption< std::string >( "torsion_database" ) );
@@ -404,7 +422,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
 	randomize_cut( tag->getOption< bool >( "randomize_cut", false ) );
 	runtime_assert( tag->hasOption( "randomize_cut" ) && tag->hasOption( "source_pose" ) || !tag->hasOption( "source_pose" ) );
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<std::endl;
+	template_file( tag->getOption< std::string >( "template_file", "" ) );
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
 }
 
 protocols::moves::MoverOP
