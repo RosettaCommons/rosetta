@@ -51,7 +51,6 @@ d_ply(f, .(sample_source), function(sub_f){
 		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
 		stat_density2d(
 			aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
-		polar_equal_area_grids_bw() +
 		geom_indicator(aes(indicator=counts), color="white") +
 		facet_grid(acc_chem_type ~ don_chem_type) +
 		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +

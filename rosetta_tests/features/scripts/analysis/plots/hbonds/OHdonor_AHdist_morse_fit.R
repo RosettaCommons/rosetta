@@ -24,7 +24,7 @@ estimate_densities <- function(dOH_clause){
          don.struct_id = hb.struct_id AND don.site_id  = hb.don_id AND
          acc.struct_id = hb.struct_id AND acc.site_id  = hb.acc_id AND
          geo.AHdist < 2.6 AND
-         ", dOH_clause, ");", sep="")
+         ", dOH_clause, ";", sep="")
 	f <- query_sample_sources(sample_sources, sele)
 
 	cat("estimate_density\n")

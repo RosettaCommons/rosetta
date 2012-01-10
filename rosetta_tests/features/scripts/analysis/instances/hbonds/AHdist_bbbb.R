@@ -16,7 +16,7 @@ SELECT
 	'' AS chain,
 	acc.resNum,
 	'CA' AS CA, 'C' AS C, 'O' AS O,
-  CASE don.resNum - acc.resNum
+	CASE don.resNum - acc.resNum
 		WHEN -1 THEN '-1' WHEN -2 THEN '-2' WHEN -3 THEN '-3' WHEN -4 THEN '-4'
 		WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4'
 		ELSE 'long' END AS seq_sep

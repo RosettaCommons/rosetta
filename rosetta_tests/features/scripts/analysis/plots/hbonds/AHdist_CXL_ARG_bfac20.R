@@ -165,8 +165,6 @@ write.csv(f, "arg_cxl_salt_bridges_examples.csv")
 #  hbond.hbond_id =  geom.hbond_id;
 
 
-print(summary(f))
-
 # This is deprecated please use the hbond_chem_types table for the lables instead
 # Order the plots better and give more descriptive labels
 #f$don_chem_type <- factor(f$don_chem_type,

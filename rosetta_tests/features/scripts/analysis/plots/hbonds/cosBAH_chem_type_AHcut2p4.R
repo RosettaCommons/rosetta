@@ -23,8 +23,8 @@ FROM
 WHERE
 	geom.AHdist < 2.4 AND
   geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
-  don_site.struct_id = hb.struct_id AND don_site.site_id = hb.don_id AND
-  hb.struct_id = acc_site.struct_id AND acc_site.site_id = hb.acc_id AND
+  don.struct_id = hb.struct_id AND don.site_id = hb.don_id AND
+  acc.struct_id = hb.struct_id AND acc.site_id = hb.acc_id AND
 	don_atoms.struct_id = hb.struct_id AND don_atoms.site_id = hb.don_id AND
 	acc_atoms.struct_id = hb.struct_id AND acc_atoms.site_id = hb.acc_id;"
 

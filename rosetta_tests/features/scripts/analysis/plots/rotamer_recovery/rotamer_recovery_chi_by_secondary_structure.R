@@ -74,7 +74,7 @@ FROM
 WHERE
 	nchi > 0
 GROUP BY
-	res_type, dssp;"b
+	res_type, dssp;"
 
 f <- query_sample_sources(sample_sources, sele)
 

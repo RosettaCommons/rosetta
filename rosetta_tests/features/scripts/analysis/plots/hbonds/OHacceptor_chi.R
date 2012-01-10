@@ -27,7 +27,7 @@ FROM
 	hbond_geom_coords AS geom,
 	hbonds AS hbond,
 	hbond_sites AS don_site, hbond_sites AS acc_site,
-	hbond_site_atoms AS don_atoms, hbond_site_atoms AS acc_atoms,
+	hbond_site_atoms AS don_atoms, hbond_site_atoms AS acc_atoms
 WHERE
 	hbond.struct_id = geom.struct_id AND hbond.hbond_id = geom.hbond_id AND
 	hbond.struct_id = don_site.struct_id AND hbond.don_id = don_site.site_id AND

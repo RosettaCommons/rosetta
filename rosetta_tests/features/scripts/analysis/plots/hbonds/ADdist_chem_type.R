@@ -55,7 +55,7 @@ SELECT
 FROM
 	hbonds AS hb,
 	hbond_sites AS don, hbond_sites AS acc,
-	hbond_site_pdb AS don_pdb, hbond_site_pdb AS acc_pdb,
+	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb,
 	hbond_site_atoms AS don_atoms, hbond_site_atoms AS acc_atoms
 WHERE
 	don.struct_id = hb.struct_id AND don.site_id =hb.don_id AND

@@ -43,10 +43,9 @@ d_ply(f, .(sample_source), function(sub_f){
 	ss <- sample_sources[sample_sources$sample_source == ss_id, ]
 
 	ggplot(data=sub_f) + theme_bw() +
-		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
 		stat_density2d(
 			aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
-		polar_equal_area_grids_bw() +
+		polar_equal_area_grids_bw(bgcolor="#00007F") +
 		geom_indicator(aes(indicator=counts), color="white") +
 		facet_grid(acc_chem_type ~ don_chem_type) +
 		opts(title =

@@ -43,7 +43,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	  stat_density2d(
 			aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 		polar_equal_area_grids_bw() +
-		geom_indicator(aes(indicator=counts), color="white"),
+		geom_indicator(aes(indicator=counts), color="white") +
 		facet_grid(acc_chem_type ~ don_chem_type) +
 		opts(title =
 			paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\n",

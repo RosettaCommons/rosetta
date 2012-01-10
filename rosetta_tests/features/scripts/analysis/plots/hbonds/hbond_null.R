@@ -42,7 +42,7 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=normalization) +
 	geom_indicator(indicator=counts, colour=normalization) +
 	opts(title = "3D Radial Length null Model by Normalization.") +
-	labs(x=expression(paste('Distance to Origin'),
+	labs(x=expression(paste('Distance to Origin')),
 	     y="FeatureDensity"))
 save_plots(plot_id, sample_sources, output_dir, output_formats)
 

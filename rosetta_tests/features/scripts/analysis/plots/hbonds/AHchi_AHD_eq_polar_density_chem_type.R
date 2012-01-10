@@ -90,10 +90,9 @@ capy_limits <- capx_limits
 
 plot_parts <- list(
 	theme_bw(),
-	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F"),
 	stat_density2d(
 		aes(x=capx,y=capy, fill=log(..density..+1)), geom="tile", contour=FALSE),
-	polar_equal_area_grids_bw(),
+	polar_equal_area_grids_bw(bgcolor="#00007F"),
 	geom_indicator(aes(indicator=counts), color="white"),
 	scale_x_continuous('2*sin(AHD/2) * cos(AHchi)', limits=capx_limits, breaks=c(-1, 0, 1)),
 	scale_y_continuous('2*sin(AHD/2) * sin(AHchi)', limits=capy_limits, breaks=c(-1, 0, 1)),

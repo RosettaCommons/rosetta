@@ -52,7 +52,7 @@ plot_parts <- list(
 	facet_grid(don_chem_type ~ acc_chem_type),
 	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F"),
 	stat_density2d(aes(fill=log(..density..+100)), geom="tile", contour=FALSE),
-	polar_equal_area_grids_bw(),
+	polar_equal_area_grids_bw(bgcolor="#00007F"),
 	geom_indicator(aes(indicator=counts), color="white"),
 	scale_fill_gradientn('Density', colour=jet.colors(10)))
 

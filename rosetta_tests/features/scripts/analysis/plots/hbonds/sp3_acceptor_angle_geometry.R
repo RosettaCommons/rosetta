@@ -63,6 +63,7 @@ f <- transform(f,
 		cbind(b2x, b2y, b2z), cbind(bx, by, bz),
 		cbind(ax, ay, az), cbind(hx, hy, hz)))
 
+print(summary(f))
 
 cosB2AH_dens <- estimate_density_1d(
   data = f, ids = c("sample_source", "seq_sep"), variable = "cosB2AH")

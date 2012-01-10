@@ -35,8 +35,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 
   plot_id = "hbond_sinBAH_eq_polar_scatter_by_chem_type"
   ggplot(data=f) + theme_bw() +
-		polar_equal_area_grids_bw() +
-		opts(panel.grid.major =theme_blank(), panel.grid.minor=theme_blank()) +
+		polar_equal_area_grids_bw(bgcolor="#00007F") +
     geom_point(aes(x=capx, y=capy), size=.5) +
 		stat_density2d(aes(x=capx, y=capy), size=.2) +
 		facet_grid(acc_chem_type ~ don_chem_type) +

@@ -12,7 +12,7 @@ check_setup()
 
 sele <- "
 SELECT
-  geo.AHdist, geo.cosBAH, geo.cosAHD, geo.chi
+  geo.AHdist, geo.cosBAH, geo.cosAHD, geo.chi,
   don.HBChemType AS don_chem_type,
   acc.HBChemType AS acc_chem_type
 FROM

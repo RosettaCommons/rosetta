@@ -80,7 +80,7 @@ prepare_feature_instances <- function(
 		"To run:\n",
 		"\n",
 		"    cd ", full_instances_dir, "\n",
-		"    pymol instances.pml\n", sep ="")
+		"    pymol instancer.pml\n", sep ="")
 }
 
 extract_structures_to_pdbs <- function(

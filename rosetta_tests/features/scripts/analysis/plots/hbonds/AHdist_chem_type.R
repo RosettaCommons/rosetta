@@ -12,16 +12,16 @@ check_setup()
 sele <-"
 SELECT
 	geom.AHdist,
-	don.HBChemType AS acc_chem_type, acc.HBChemType AS don_chem_type
+	don.HBChemType AS don_chem_type, acc.HBChemType AS acc_chem_type
 FROM
 	hbonds AS hb,
 	hbond_geom_coords AS geom,
 	hbond_sites AS don, hbond_sites AS acc,
-	hbond_site_pdb AS don_pdb, hbond_site_pdb AS acc_pdb
+	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb
 WHERE
 	geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
-	don.struct_id = hb.struct_id AND don.site_id = hbond.don_id AND
-	acc.struct_id = hb.struct_id AND acc.site_id = hbond.acc_id AND
+	don.struct_id = hb.struct_id AND don.site_id = hb.don_id AND
+	acc.struct_id = hb.struct_id AND acc.site_id = hb.acc_id AND
 	don_pdb.struct_id = hb.struct_id AND don_pdb.site_id = hb.don_id AND
 	don_pdb.heavy_atom_temperature < 30 AND
 	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id AND

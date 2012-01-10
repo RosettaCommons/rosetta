@@ -7,7 +7,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-
 two_sided_ttest <- function(a, b){
   tryCatch({
     z <- t.test(a, b)
@@ -41,6 +40,11 @@ histogram_kl_divergence <- function(a, b, nbins=50){
 	ad <- hist(a, breaks, plot=F)$density
 	bd <- hist(b, breaks, plot=F)$density
 	data.frame("KL Divergence"=sum(ad * log(ad / (bd+.0001)), na.rm = T))
+}
+
+anderson_darling_2_sample <- function(a, b){
+	z <- adk.test(a,b)
+	data.frame("Anderson Darling"=z$adk[2,2]) # P-value, adjust for ties
 }
 
 # Evaluate a two sample tests between different classes of samples

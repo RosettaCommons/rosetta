@@ -122,8 +122,8 @@ dihedral <- function(df){
 #  print(paste("p1", p1))
 #  print(paste("p2", p2))
 #  print(paste("p3", p3))
-#  print(paste("p4", p4))  
-  
+#  print(paste("p4", p4))
+
   a <- normalize(p2-p1)
   b <- normalize(p3-p2)
   c <- normalize(p4-p3)
@@ -131,12 +131,12 @@ dihedral <- function(df){
 #  print(paste("a", a))
 #  print(paste("b", b))
 #  print(paste("c", c))
-  
+
   x = -sum(a*c) + (sum(a*b) * sum(b*c))
 #  print(paste("x", x))
 
 #  print(cross(b,c))
-  
+
   y = sum(a*cross(b,c))
 #  print(paste("y", y))
 
@@ -176,6 +176,3 @@ ggplot(data=dens) + theme_bw() +
   scale_x_continuous('Acceptor -- Donor Torsion (degrees)') +
   scale_y_continuous('Feature Density')
 save_plots(plot_id, sample_sources, output_dir, output_formats)
-
-
-           
