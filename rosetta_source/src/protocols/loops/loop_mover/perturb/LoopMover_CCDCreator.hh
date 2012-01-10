@@ -7,17 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/loops/LoopMover_CCDCreator.hh
+/// @file   protocols/loops/loop_mover/perturb/LoopMover_CCDCreator.hh
 /// @brief  Header for LoopMover_CCDCreator
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_loops_LoopMover_CCDCreator_hh
-#define INCLUDED_protocols_loops_LoopMover_CCDCreator_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_CCDCreator_hh
+#define INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_CCDCreator_hh
 
 // Unit Headers
 #include <protocols/moves/MoverCreator.hh>
 namespace protocols {
 namespace loops {
+namespace loop_mover {
+namespace perturb {
 
 /// @brief creator for the LoopMover_Perturb_CCDCreator class
 class LoopMover_Perturb_CCDCreator : public moves::MoverCreator
@@ -30,19 +32,9 @@ public:
 
 };
 
-/// @brief creator for the LoopMover_Refine_CCDCreator class
-class LoopMover_Refine_CCDCreator : public moves::MoverCreator
-{
-public:
-  virtual ~LoopMover_Refine_CCDCreator();
+} //namespace perturb
+} //namespace loop_mover
+} //namespace loops
+} //namespace protocols
 
-  virtual moves::MoverOP create_mover() const;
-  virtual std::string keyname() const;
-
-};
-
-
-} //namespace
-} //namespace
-
-#endif
+#endif //INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_CCDCreator_hh

@@ -38,7 +38,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 // AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/loops/loopfinder.hh>
 #include <protocols/loops/kinematic_closure/KinematicMover.hh>
@@ -159,7 +159,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 			}
 
 
-			protocols::loops::LoopMover_Refine_KIC refine_alc( loops, relaxfxn_ );
+			protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine_alc( loops, relaxfxn_ );
 			//			refine_alc.set_native_pose( native_pose );
 			refine_alc.apply( pose );
 

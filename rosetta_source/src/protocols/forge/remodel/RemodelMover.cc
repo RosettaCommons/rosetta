@@ -70,8 +70,8 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/LoopMover_CCD.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
@@ -958,7 +958,7 @@ bool RemodelMover::design_refine_seq_relax(
 	using protocols::forge::build::SegmentInsert;
 	using namespace protocols::loops;
 	using protocols::loops::Loops;
-	using protocols::loops::LoopMover_Refine_CCD;
+	using protocols::loops::loop_mover::refine::LoopMover_Refine_CCD;
 	using protocols::simple_moves::PackRotamersMover;
 	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
 	using namespace core::scoring::constraints;
@@ -1099,7 +1099,7 @@ bool RemodelMover::design_refine(
 	using protocols::forge::build::SegmentInsert;
 	using namespace protocols::loops;
 	using protocols::loops::Loops;
-	using protocols::loops::LoopMover_Refine_CCD;
+	using protocols::loops::loop_mover::refine::LoopMover_Refine_CCD;
 	using protocols::simple_moves::PackRotamersMover;
 	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
 
@@ -1185,7 +1185,7 @@ bool RemodelMover::design_refine(
 			refine.apply( pose );
 		}
 		else {
-			LoopMover_Refine_KIC KIC(loops);
+			loop_mover::refine::LoopMover_Refine_KIC KIC(loops);
 			KIC.apply(pose);
 		}
 
@@ -1265,7 +1265,7 @@ bool RemodelMover::confirm_sequence(core::pose::Pose & pose ) {
 	refine_tf->push_back( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) );
 	refine_tf->push_back( new RestrictToRepacking() );
 
-	LoopMover_Refine_CCD refine( confirmation_loops, fullatom_sfx_ );
+	loop_mover::refine::LoopMover_Refine_CCD refine( confirmation_loops, fullatom_sfx_ );
 			core::kinematics::MoveMapOP combined_mm = new core::kinematics::MoveMap();
 
 		////// fix dna
@@ -1288,7 +1288,7 @@ bool RemodelMover::confirm_sequence(core::pose::Pose & pose ) {
 		}
 		else {
 		TR << "REFINE USING KIC" << std::endl;
-			LoopMover_Refine_KIC KIC(confirmation_loops);
+			loop_mover::refine::LoopMover_Refine_KIC KIC(confirmation_loops);
 			KIC.apply(pose);
 		}
 

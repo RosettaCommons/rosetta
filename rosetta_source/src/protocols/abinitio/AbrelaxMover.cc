@@ -34,7 +34,7 @@
 #include <protocols/loops/Exceptions.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/relax/ClassicRelax.hh>
@@ -440,7 +440,7 @@ void AbrelaxMover::close_with_idealization( pose::Pose &pose) {
 
 		protocols::relax::RelaxProtocolBaseCOP relax_prot = relax_protocol();
 		core::scoring::ScoreFunctionOP refine_scorefxn = relax_prot->get_scorefxn()->clone();
-		protocols::loops::LoopMover_Refine_KIC refine_kic( cloops, refine_scorefxn );
+		protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( cloops, refine_scorefxn );
 		refine_kic.apply( pose );
 
 		// Return fold tree to normal state

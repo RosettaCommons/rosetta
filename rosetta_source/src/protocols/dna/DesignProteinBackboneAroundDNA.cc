@@ -33,7 +33,7 @@
 #include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover_CCD.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/make_loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/backrub/BackrubMover.hh>
@@ -297,7 +297,7 @@ DesignProteinBackboneAroundDNA::ccd(
 	TaskFactoryCOP task_factory2
 )
 {
-	loops::LoopMover_Refine_CCD refine_ccd( loops, score_function()->clone() );
+	loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( loops, score_function()->clone() );
 	refine_ccd.outer_cycles( cycles_outer_ );
 	refine_ccd.max_inner_cycles( cycles_inner_ );
 	refine_ccd.repack_period( repack_rate_ );

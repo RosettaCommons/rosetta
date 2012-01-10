@@ -57,7 +57,7 @@
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -1940,7 +1940,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 					protocols::loops::fold_tree_from_loops( fold_pose, *cloops, f_new, true /* include terminal cutpoints */);
 					fold_pose.fold_tree( f_new );
 					core::scoring::ScoreFunctionOP refine_scorefxn = fullatom_scorefxn->clone();
-					protocols::loops::LoopMover_Refine_KIC refine_kic( cloops, refine_scorefxn );
+					protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( cloops, refine_scorefxn );
 					refine_kic.apply( fold_pose );
 
 					// Return fold tree to norml state

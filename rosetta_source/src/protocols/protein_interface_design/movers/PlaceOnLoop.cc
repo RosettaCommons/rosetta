@@ -37,7 +37,7 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
@@ -135,7 +135,7 @@ PlaceOnLoop::minimize_toward_stub( core::pose::Pose & pose ) const
 		pose.fold_tree( saved_ft );
 		return( false );
 	}
-	LoopMover_Refine_KIC refine( loops, hires_scorefxn_ );
+	loop_mover::refine::LoopMover_Refine_KIC refine( loops, hires_scorefxn_ );
 	using namespace core::pack::task;
 	using namespace protocols::toolbox::task_operations;
 	core::pack::task::TaskFactoryOP tf = new TaskFactory;

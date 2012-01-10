@@ -43,7 +43,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover_CCD.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -1466,7 +1466,7 @@ void LoopRefine::apply(
 	pose.fold_tree( f );
 
 	//protocols::loops::refine_loops_with_ccd( pose, pose, LoopsToRefine );
-	LoopMover_Refine_CCD refine_ccd( LoopsToRefine );
+	loop_mover::refine::LoopMover_Refine_CCD refine_ccd( LoopsToRefine );
 	refine_ccd.set_native_pose( new pose::Pose ( pose ) );
 	refine_ccd.apply( pose );
 

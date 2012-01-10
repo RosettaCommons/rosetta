@@ -68,9 +68,9 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/LoopMover.fwd.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_Backrub.hh>
-#include <protocols/loops/LoopMover_CCD.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -479,13 +479,13 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 				TR << "Setting up for ccd loop modeling" << std::endl;
 				protocols::loops::fold_tree_from_loops( pose, *loop_set, loop_fold_tree );
 				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
-				loop_refine = new loops::LoopMover_Refine_CCD( loop_set, scorefxn_pack()->clone() );
+				loop_refine = new loops::loop_mover::refine::LoopMover_Refine_CCD( loop_set, scorefxn_pack()->clone() );
 			} else if ( flex_bb_docking_type == "kic" ) {
 				// jk KIC loop refinement (fullatom only)
 				TR << "Setting up for kinematic (kic) loop modeling" << std::endl;
 				protocols::loops::fold_tree_from_loops( pose, *loop_set, loop_fold_tree );
 				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
-				loop_refine = new loops::LoopMover_Refine_KIC( loop_set, scorefxn_pack()->clone() );
+				loop_refine = new loops::loop_mover::refine::LoopMover_Refine_KIC( loop_set, scorefxn_pack()->clone() );
 			} else if ( flex_bb_docking_type == "backrub" ) {
 				// jk backrub loop refinement (fullatom only)
 				TR << "Setting up for backrub loop modeling" << std::endl;

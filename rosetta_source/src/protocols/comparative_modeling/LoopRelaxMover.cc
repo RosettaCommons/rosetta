@@ -62,11 +62,11 @@
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
-#include <protocols/loops/LoopMover_CCD.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
 //#include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
 #include <protocols/loops/looprelax_protocols.hh>
 #include <protocols/loops/Loops.hh>
@@ -905,13 +905,13 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_refine.pdb");
 			if ( refine() == "refine_ccd" ) {
-				loops::LoopMover_Refine_CCD refine_ccd( loops, fa_scorefxn_ );
+				loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( loops, fa_scorefxn_ );
 				refine_ccd.set_native_pose( new core::pose::Pose ( native_pose ) );
 				refine_ccd.apply( pose );
 			} else
 			if ( refine() == "refine_kic" ) {
 				//loops.remove_terminal_loops( pose );
-				loops::LoopMover_Refine_KIC refine_kic( loops, fa_scorefxn_ );
+				loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( loops, fa_scorefxn_ );
 				refine_kic.set_native_pose( new core::pose::Pose ( native_pose ) );
 				refine_kic.apply( pose );
 			}

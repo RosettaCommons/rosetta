@@ -12,10 +12,10 @@
 /// @author Mike Tyka
 /// @author Daniel J. Mandell
 
-#ifndef INCLUDED_protocols_loops_LoopMover_KIC_hh
-#define INCLUDED_protocols_loops_LoopMover_KIC_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_refine_LoopMover_KIC_hh
+#define INCLUDED_protocols_loops_loop_mover_refine_LoopMover_KIC_hh
 
-
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.fwd.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -37,59 +37,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {
-
-class LoopMover_Perturb_KIC: public loop_mover::IndependentLoopMover {
-public:
-
-	LoopMover_Perturb_KIC();
-
-	LoopMover_Perturb_KIC(
-		protocols::loops::LoopsOP loops_in
-	);
-
-	LoopMover_Perturb_KIC(
-		protocols::loops::LoopsOP  loops_in,
-		core::scoring::ScoreFunctionOP  scorefxn
-	);
-
-	//destructor
-	~LoopMover_Perturb_KIC();
-
-	virtual std::string get_name() const;
-
-	virtual void  set_extended_torsions(
-		core::pose::Pose & pose,
-		Loop const & loop
-	);
-
-	void set_default_settings();
-
-	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const;
-
-	
-private:
-
-	core::Size max_seglen_; // maximum KIC segment length
-	bool recover_low_;
-	core::Size max_kic_build_attempts_;
-	core::Size remodel_kic_attempts_;
-
-protected:
-
-    virtual loop_mover::LoopResult model_loop(
-		core::pose::Pose & pose,
-		protocols::loops::Loop const & loop
-	);
-
-    virtual basic::Tracer & tr() const;
-};
-
+namespace loop_mover {
+namespace refine {
 
 class LoopMover_Refine_KIC: public loop_mover::LoopMover {
 public:
 	//constructors
-	LoopMover_Refine_KIC(
+	LoopMover_Refine_KIC();
+    
+    LoopMover_Refine_KIC(
 		protocols::loops::LoopsOP  loops_in
 	);
 
@@ -100,7 +56,8 @@ public:
 
 	//destructor
 	~LoopMover_Refine_KIC();
-
+    
+    void init( core::scoring::ScoreFunctionCOP  scorefxn );
 	void set_default_settings();
 
 	void set_redesign_loop( bool value = true ){ redesign_loop_ = value; }
@@ -158,9 +115,9 @@ private:
 													      // KIC move but only within the neighbor_dist of the KIC segment
 };
 
-
-
+} //namespace refine
+} //namespace loop_mover
 } //namespace loops
 } //namespace protocols
 
-#endif //INCLUDED_protocols_loops_LoopMover_KIC_HH
+#endif //INCLUDED_protocols_loops_loop_mover_refne_LoopMover_KIC_HH

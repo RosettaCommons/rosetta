@@ -21,9 +21,11 @@
 // Project headers
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
-#include <protocols/loops/LoopMover_CCD.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
 #include <protocols/loops/Loops.hh>
 
@@ -193,14 +195,14 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
 		if( protocol_ == "kinematic" ) {
 						if( perturb_ ) {
-							protocols::loops::LoopMover_Perturb_KIC perturb(single_loop, lores_score_ );
+							protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb(single_loop, lores_score_ );
 							perturb.set_native_pose( new core::pose::Pose ( native_pose ) );
 							perturb.apply( pose );
 						}
 						core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 						retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
 						if( refine_ ) {
-							protocols::loops::LoopMover_Refine_KIC refine( single_loop, hires_score_ );
+							protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine( single_loop, hires_score_ );
 							refine.set_redesign_loop(false); // design?
 							refine.set_native_pose( new core::pose::Pose ( native_pose ) );
 							pose.update_residue_neighbors();
@@ -218,7 +220,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 						utility::vector1< core::fragment::FragSetOP > frag_libs;
 						protocols:loops:read_loop_fragments( frag_libs );
 							if( perturb_ ) {
-								protocols::loops::LoopMover_Perturb_CCD perturb(single_loop, lores_score_ );
+								protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD perturb(single_loop, lores_score_ );
 								for ( core::Size i = 1; i <= frag_libs.size(); ++i ) {
 									perturb.add_fragments( frag_libs[i] );
 								}
@@ -229,7 +231,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 						core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 						retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
 						if( refine_ ) {
-							protocols::loops::LoopMover_Refine_CCD refine(single_loop, hires_score_ );
+							protocols::loops::loop_mover::refine::LoopMover_Refine_CCD refine(single_loop, hires_score_ );
 							for ( core::Size i = 1; i <= frag_libs.size(); ++i ) {
 									refine.add_fragments( frag_libs[i] );
 							}

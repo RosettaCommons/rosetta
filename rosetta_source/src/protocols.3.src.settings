@@ -80,8 +80,6 @@ sources = {
 		"Loop",
 		"LoopClosure",
 		"loopfinder",
-		"LoopMover_CCD",
-		"LoopMover_KIC",
 		"LoopMoverFactory",
 		"looprelax_protocols",
 		"Loops",
@@ -102,11 +100,15 @@ sources = {
 	    "LoopMover",
 	],
 	"protocols/loops/loop_mover/perturb": [
+	    "LoopMover_CCD",
+	    "LoopMover_KIC",
 	    "LoopMover_QuickCCD",
 	    "LoopMover_QuickCCD_Moves",
 	],
 	"protocols/loops/loop_mover/refine": [
 	    "LoopMover_Backrub",
+	    "LoopMover_CCD",
+	    "LoopMover_KIC",
 	],
 	"protocols/relax": [
 		"ClassicRelax",

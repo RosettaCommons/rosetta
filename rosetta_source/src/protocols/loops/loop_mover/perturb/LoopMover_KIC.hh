@@ -1,0 +1,95 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file
+/// @brief
+/// @author Mike Tyka
+/// @author Daniel J. Mandell
+
+#ifndef INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_KIC_hh
+#define INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_KIC_hh
+
+#include <protocols/loops/loop_mover/perturb/LoopMover_KIC.fwd.hh>
+#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
+#include <protocols/moves/Mover.hh>
+
+#include <core/types.hh>
+// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.fwd.hh>
+
+#include <utility/vector1.hh>
+
+
+// C++ Headers
+
+
+///////////////////////////////////////////////////////////////////////////////
+namespace protocols {
+namespace loops {
+namespace loop_mover {
+namespace perturb {
+
+class LoopMover_Perturb_KIC: public loop_mover::IndependentLoopMover {
+public:
+
+	LoopMover_Perturb_KIC();
+
+	LoopMover_Perturb_KIC(
+		protocols::loops::LoopsOP loops_in
+	);
+
+	LoopMover_Perturb_KIC(
+		protocols::loops::LoopsOP  loops_in,
+		core::scoring::ScoreFunctionOP  scorefxn
+	);
+
+	//destructor
+	~LoopMover_Perturb_KIC();
+
+	virtual std::string get_name() const;
+
+	virtual void  set_extended_torsions(
+		core::pose::Pose & pose,
+		Loop const & loop
+	);
+
+	void set_default_settings();
+
+	/// @brief Clone this object
+	virtual protocols::moves::MoverOP clone() const;
+
+	
+private:
+
+	core::Size max_seglen_; // maximum KIC segment length
+	bool recover_low_;
+	core::Size max_kic_build_attempts_;
+	core::Size remodel_kic_attempts_;
+
+protected:
+
+    virtual loop_mover::LoopResult model_loop(
+		core::pose::Pose & pose,
+		protocols::loops::Loop const & loop
+	);
+
+    virtual basic::Tracer & tr() const;
+};
+
+} //namespace perturb
+} //namespace loop_mover
+} //namespace loops
+} //namespace protocols
+
+#endif //INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_KIC_HH

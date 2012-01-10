@@ -11,18 +11,16 @@
 /// @brief  Header for LoopMover_KICCreator
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_loops_LoopMover_KICCreator_hh
-#define INCLUDED_protocols_loops_LoopMover_KICCreator_hh
+#ifndef INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_KICCreator_hh
+#define INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_KICCreator_hh
 
 // Unit Headers
 #include <protocols/moves/MoverCreator.hh>
 
-#include <core/types.hh>
-#include <utility/vector1.hh>
-
-
 namespace protocols {
 namespace loops {
+namespace loop_mover {
+namespace perturb {
 
 /// @brief creator for the LoopMover_Perturb_KICCreator class
 class LoopMover_Perturb_KICCreator : public moves::MoverCreator {
@@ -36,10 +34,9 @@ public:
 
 };
 
+} //namespace perturb
+} //namespace loop_mover
+} //namespace loops
+} //namespace protocols
 
-
-
-} //namespace
-} //namespace
-
-#endif
+#endif //INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_KICCreator_hh
