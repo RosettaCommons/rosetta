@@ -37,7 +37,8 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 
-#include <protocols/comparative_modeling/ThreadingMover.hh>
+#include <protocols/comparative_modeling/PartialThreadingMover.hh>
+#include <protocols/comparative_modeling/coord_util.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -51,25 +52,19 @@
 
 #include <numeric/model_quality/rms.hh>
 
-// C++ headers
 #include <map>
 #include <iostream>
 #include <string>
-
-// option key includes
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -87,25 +82,6 @@ using namespace basic;
 using namespace core::sequence;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-
-class FastThreadingMover : public protocols::comparative_modeling::ThreadingMover {
-
-public:
-	FastThreadingMover(
-		core::sequence::SequenceAlignment aln,
-		core::pose::Pose templ
-	) : ThreadingMover( aln, templ ) {}
-
-	void apply( core::pose::Pose & query_pose ) {
-		// don't rebuild loops
-		build_loops( false );
-		repack_query( false );
-		ThreadingMover::apply( query_pose );
-	}
-
-private:
-	core::pose::Pose native_pose;
-};
 
 std::map< std::string, core::pose::Pose >
 poses_from_cmd_line(
@@ -197,7 +173,6 @@ void save_per_residue_scores(
 
 int
 main( int argc, char* argv [] ) {
-
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -225,7 +200,8 @@ main( int argc, char* argv [] ) {
 	}
 
 	vector1< std::string > align_fns = option[ in::file::alignment ]();
-
+	//std::string fasta_seq = core::sequence::read_fasta_file_return_str( option[ in::file::fasta ](1) );
+	std::string fasta_seq = read_fasta_file_str(option[ in::file::fasta ](1))[1] ;
 	Pose native_pose;
 	bool have_native( false );
 	if ( option[ in::file::native ].user() ) {
@@ -309,13 +285,8 @@ main( int argc, char* argv [] ) {
 
 			if ( have_native ) {
 				// calc rmsd/gdt stats
-
 				Pose query_pose, template_pose;
-				core::pose::make_pose_from_sequence(
-					query_pose,
-					ungapped_query,
-					*(rsd_set_from_cmd_line())
-				);
+				core::pose::make_pose_from_sequence(query_pose, fasta_seq, *(rsd_set_from_cmd_line()));
 
 				map< string, Pose >::iterator pose_it = poses.find( template_id );
 				if ( pose_it == poses.end() ) {
@@ -328,72 +299,39 @@ main( int argc, char* argv [] ) {
 				} else {
 					template_pose = pose_it->second;
 
-					static string const atm( "CA" );
-					core::id::SequenceMapping mapping = it->sequence_mapping(1,2);
 					using utility::vector1;
-					using numeric::xyzVector;
 					using numeric::model_quality::calc_rms;
 					using numeric::model_quality::rms_wrapper;
 					using core::scoring::xyz_gdtmm;
-					vector1< xyzVector< Real > > native_coords, template_coords;
 
-					int natoms(0);
-					for ( Size ii = 1; ii <= native_pose.total_residue(); ++ii ) {
-						Size const templ_ii( mapping[ii] );
-						bool skip(
-							templ_ii == 0 ||
-							ii > native_pose.total_residue() ||
-							templ_ii > template_pose.total_residue()
-						);
-						if ( !skip ) ++natoms;
-					}
-
+					int natoms = 0;
 					ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
 					ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
-					Size n_gap(0);
-					for ( Size ii = 1; ii <= native_pose.total_residue(); ++ii ) {
-						Size const templ_ii( mapping[ii] );
-						bool skip(
-							templ_ii == 0 ||
-							ii > native_pose.total_residue() ||
-							templ_ii > template_pose.total_residue()
-						);
-						if ( skip ) {
-							n_gap++;
-							continue;
-						}
 
-						core::Vector native_xyz  ( native_pose.residue(ii).xyz(atm) );
-						core::Vector template_xyz( template_pose.residue(templ_ii).xyz(atm) );
-						native_coords.push_back(native_xyz);
-						template_coords.push_back(template_xyz);
-						for ( Size jj = 1; jj <= 3; ++jj ) {
-							p1a(jj,ii - n_gap) = native_xyz  [jj-1];
-							p2a(jj,ii - n_gap) = template_xyz[jj-1];
-						}
-					}
-					runtime_assert( native_coords.size() == template_coords.size() );
+					protocols::comparative_modeling::PartialThreadingMover pt(*it,template_pose);
+					pt.apply(query_pose);
+					SequenceAlignment aln = core::sequence::align_poses_naive(query_pose,native_pose);
 
-					//Real const debug_rmsd_ali( calc_rms( native_coords, template_coords ) );
-					Real const rmsd_ali ( rms_wrapper( natoms, p1a, p2a ) );
-					Real const gdtmm_ali( xyz_gdtmm( p1a, p2a ) );
-					Real const coverage(
-						(Real) native_coords.size() / (Real) native_pose.total_residue()
+					protocols::comparative_modeling::gather_coords(
+						query_pose, native_pose, aln,
+						natoms, p1a, p2a
 					);
+
+					Real const rmsd_ali  = rms_wrapper( natoms, p1a, p2a );
+					Real const gdtmm_ali = xyz_gdtmm( p1a, p2a );
+					Real const coverage  = (Real) natoms / (Real) native_pose.total_residue();
 					Real const gdtmm_overall( gdtmm_ali * coverage );
 
-					//Real const gdtmm_ali( 1.0 );
 					ss_out->add_energy( "coverage", coverage );
 					ss_out->add_energy( "rmsd_ali", rmsd_ali );
 					ss_out->add_energy( "gdtmm_ali", gdtmm_ali );
 					ss_out->add_energy( "gdtmm_overall", gdtmm_overall );
+					ss_out->add_energy( "n_ali_query", natoms );
 					ss_out->add_energy( "nres_query", native_pose.total_residue() );
-					//ss_out->add_energy( "debug_rmsd_ali", debug_rmsd_ali );
 				} // template pdb check
 			} // have native
 			ss_out->scoreline_prefix( "" );
 			ss_out->decoy_tag( it->sequence(2)->id() );
-			ss_out->add_energy( "n_ali_query", ungapped_query.length() );
 			ss_out->add_string_value( "template", template_id );
 			sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
 		} // alns
