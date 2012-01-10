@@ -308,6 +308,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
     TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
 
     // cartesian fragment hybridize
+    pose.constraint_set( constraint_set );
 	CartesianHybridizeOP cart_hybridize ( new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_, fragments3_ ) );
     core::scoring::ScoreFunctionOP scorefxn_stage2 = core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage2_patch]());
     cart_hybridize->set_scorefunction(scorefxn_stage2);

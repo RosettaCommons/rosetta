@@ -60,6 +60,8 @@ apply_transform(
 	
 void align_chunk(core::pose::Pose & pose);
 
+void set_bb_xyz_aligned(core::pose::Pose & pose);
+
 bool success() {
     return success_;
 }

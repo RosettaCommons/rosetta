@@ -22,6 +22,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 #include <core/util/kinematics_util.hh>
 
 #include <core/fragment/Frame.hh>
@@ -230,7 +231,8 @@ void InsertChunkMover::steal_torsion_from_template(core::pose::Pose & pose) {
 		TR.Debug << "torsion: " << I(4,ires_pose) << F(8,3, pose.phi(ires_pose)) << F(8,3, pose.psi(ires_pose)) << std::endl;
 	}
 }
-	
+    
+
 bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 								int registry_shift,
 								Size MAX_TRIAL)
@@ -312,8 +314,65 @@ InsertChunkMover::apply(core::pose::Pose & pose) {
 	success_ = get_local_sequence_mapping(pose, registry_shift_);
 	if (!success_) return;
 	
-	steal_torsion_from_template(pose);
-	align_chunk(pose);
+	//steal_torsion_from_template(pose);
+	//align_chunk(pose);
+    set_bb_xyz_aligned(pose);
+}
+    
+void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
+    utility::vector1< core::id::AtomID > ids;
+	utility::vector1< numeric::xyzVector<core::Real> > positions;
+    utility::vector1< core::id::AtomID > sch_ids;
+	utility::vector1< numeric::xyzVector<core::Real> > sch_positions;
+
+    utility::vector1< core::Size > non_aligned_residues;
+
+    for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
+		if (sequence_alignment_local_.find(ires_pose) != sequence_alignment_local_.end()) {
+			core::Size jres_template = sequence_alignment_local_.find(ires_pose)->second;
+
+            for ( Size iatom=1; iatom <= pose.residue_type(ires_pose).last_backbone_atom(); ++iatom ) { // use residue_type to prevent internal coord update
+                std::string atom_name(pose.residue_type(ires_pose).atom_name(iatom));
+                if (template_pose_->residue_type(jres_template).has(atom_name)) {
+                    Size jatom = template_pose_->residue_type(jres_template).atom_index(atom_name);
+                    ids.push_back(core::id::AtomID(iatom,ires_pose));
+                    positions.push_back(template_pose_->xyz(core::id::AtomID(jatom,jres_template)));
+                }
+                else {
+                    sch_ids.push_back(core::id::AtomID(iatom,ires_pose));
+                }
+            }
+
+            for ( Size iatom=pose.residue_type(ires_pose).last_backbone_atom()+1;
+                 iatom<= pose.residue_type(ires_pose).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
+                sch_ids.push_back(core::id::AtomID(iatom,ires_pose));
+            }
+            
+			while (ires_pose > align_trial_counter_.size()) {
+				align_trial_counter_.push_back(0);
+			}
+			++align_trial_counter_[ires_pose];
+		}
+        else {
+            non_aligned_residues.push_back(ires_pose);
+        }
+	}
+	pose.batch_set_xyz(ids,positions);
+
+    for (Size iatom = 1; iatom <= sch_ids.size(); ++iatom) {
+        sch_positions.push_back(
+                                pose.residue(sch_ids[iatom].rsd()).build_atom_ideal(
+                                                                                    sch_ids[iatom].atomno(),
+                                                                                    pose.conformation()
+                                                                                    )
+                                );
+    }
+    pose.batch_set_xyz(sch_ids,sch_positions);
+    /*
+    for (Size ires = 1; ires <= non_aligned_residues.size(); ++ires) {
+        core::conformation::idealize_position(non_aligned_residues[ires], pose.conformation());
+    }
+     */
 }
 	
 std::string

@@ -36,9 +36,6 @@
 
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover.fwd.hh>
-#include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/LoopMover_QuickCCD.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/sequence/util.hh>

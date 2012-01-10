@@ -478,7 +478,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	
 	for (Size i=1;i<=8;++i) {
 		if (i>=4) {
-			int gap_edge_shift = 8-i;
+			int gap_edge_shift = i-5;
 			add_gap_constraints_to_pose(pose, ss_chunks_pose_, gap_edge_shift);
 		}
 		
