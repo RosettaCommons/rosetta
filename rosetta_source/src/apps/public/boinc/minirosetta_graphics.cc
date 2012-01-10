@@ -31,7 +31,7 @@
 #include <core/init.hh>
 
 // avoid having to create the static protocol movers
-//#include <devel/init.hh>
+//#include <protocols/init/init.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/boinc.OptionKeys.gen.hh>

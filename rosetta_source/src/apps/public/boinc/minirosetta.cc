@@ -42,11 +42,11 @@
 
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
-#include <devel/init.hh>
+#include <protocols/init/init.hh>
 #endif
 
 #ifdef WIN32
-#include <devel/init.hh>
+#include <protocols/init/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #endif
