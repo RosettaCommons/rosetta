@@ -1,4 +1,5 @@
 # required options
+-in:file:fasta input/T0523.fasta
 -in:file:template_pdb input/2gj3A.pdb input/2wkqA.pdb input/2z6dA.pdb
 -in:file:alignment input/alignment.filt
 -cm:aln_format grishin
