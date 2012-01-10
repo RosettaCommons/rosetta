@@ -57,28 +57,24 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 	
 ChunkTrialMover::ChunkTrialMover(
-							 utility::vector1 < core::pose::PoseCOP > const & template_poses,
-							 Loops ss_chunks_pose,
-							 AlignOption align_option,
-							 Size max_registry_shift) :
-template_poses_(template_poses),
-align_option_(align_option),
-align_chunk_(),
-max_registry_shift_input_(max_registry_shift)
+                                 utility::vector1 < core::pose::PoseCOP > const & template_poses,
+                                 utility::vector1 < protocols::loops::Loops > const & template_chunks,
+                                 Loops ss_chunks_pose,
+                                 bool random_template,
+                                 AlignOption align_option,
+                                 Size max_registry_shift ) :
+    template_poses_(template_poses),
+    template_chunks_(template_chunks),
+    random_template_(random_template),
+    align_option_(align_option),
+    align_chunk_(),
+    max_registry_shift_input_(max_registry_shift)
 {
 	bool alignment_from_template = option[cm::hybridize::alignment_from_template_seqpos]();
 	
-	// set up secstruct chunks
-	template_ss_chunks_.clear();
-	template_ss_chunks_.resize(template_poses_.size());
-	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
-		// find ss chunks in template
-		template_ss_chunks_[i_template] = extract_secondary_structure_chunks(*template_poses_[i_template]);
-	}
-	
 	Size count = 0;
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
-		if (template_ss_chunks_[i_template].size() != 0) ++count;
+		if (template_chunks_[i_template].size() != 0) ++count;
 	}
 	if (count == 0) {
 		utility_exit_with_message("Template structures need at least one secondary structure for this protocol");
@@ -98,7 +94,7 @@ max_registry_shift_input_(max_registry_shift)
 				}
 			}
 			
-			get_alignment_from_chunk_mapping(chunk_mapping, template_ss_chunks_[i_template], ss_chunks_pose, sequence_alignment);
+			get_alignment_from_chunk_mapping(chunk_mapping, template_chunks_[i_template], ss_chunks_pose, sequence_alignment);
 		}
 		sequence_alignments_.push_back(sequence_alignment);
 	}
@@ -111,7 +107,6 @@ ChunkTrialMover::get_alignment_from_template(core::pose::PoseCOP const template_
 		seqpos_alignment[template_pose->pdb_info()->number(ires)] = ires;
 	}
 }
-
 	
 void
 ChunkTrialMover::get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk_mapping,
@@ -146,16 +141,27 @@ ChunkTrialMover::get_alignment_from_chunk_mapping(std::map <core::Size, core::Si
 	}
 }
 	
-void ChunkTrialMover::pick_random_template() {
+void ChunkTrialMover::pick_random_template()
+{
 	assert(template_poses_.size() != 0);
-	
-	template_number_ = 0;
-	while (!template_number_) {
-		template_number_ = RG.random_range(1, template_poses_.size());
-		if (template_ss_chunks_[template_number_].size() == 0) template_number_ = 0;
+
+    set_template(0);
+	while (!template_number()) {
+		set_template( RG.random_range(1, template_poses_.size()) );
+		if (template_chunks_[template_number()].size() == 0) set_template(0);
 	}
 }
 
+void ChunkTrialMover::set_template(core::Size const template_number)
+{
+    template_number_ = template_number;
+}
+
+core::Size ChunkTrialMover::template_number()
+{
+    return template_number_;
+}
+    
 void ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
 	jump_number_ = RG.random_range(1, pose.num_jump());
 }
@@ -168,12 +174,14 @@ void
 ChunkTrialMover::apply(core::pose::Pose & pose) {
 	max_registry_shift_.resize(pose.num_jump(), max_registry_shift_input_);
 
-	// random chunk or loop all chunks
+    // pick a random template
+    if (random_template_) {
+        pick_random_template();
+    }
+    align_chunk_.set_template(template_poses_[template_number()], sequence_alignments_[template_number()]);
+
+    // random chunk or loop all chunks
 	if (align_option_ == random_chunk) {
-		// pick a random template
-		pick_random_template();
-		align_chunk_.set_template(template_poses_[template_number_], sequence_alignments_[template_number_]);
-		
 		// pick a random jump
 		pick_random_chunk(pose);
 		align_chunk_.set_aligned_chunk(pose, jump_number_);
@@ -185,8 +193,6 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 		align_chunk_.apply(pose);
 	}
 	else {
-		align_chunk_.set_template(template_poses_[template_number_], sequence_alignments_[template_number_]);
-
 		// loop over all jumps
 		for (core::Size jump_number=1; jump_number<=pose.num_jump(); ++jump_number) {
 			align_chunk_.set_aligned_chunk(pose, jump_number);
@@ -195,6 +201,9 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 			int registry_shift = RG.random_range(-max_registry_shift_[jump_number], max_registry_shift_[jump_number]);
 			align_chunk_.set_registry_shift(registry_shift);
 			align_chunk_.apply(pose);
+            if (!align_chunk_.success()) {
+                
+            }
 		}
 	}
 }

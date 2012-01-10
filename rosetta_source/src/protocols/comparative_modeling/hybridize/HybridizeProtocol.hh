@@ -42,12 +42,18 @@ public:
 		
 	void read_template_structures(utility::file::FileName template_list);
 	void read_template_structures(utility::vector1 < utility::file::FileName > const & template_filenames);
-	core::Real get_gdtmm( core::pose::Pose & pose );
+
+    void add_template( core::pose::PoseOP template_in, std::string cst_fn, core::Real weight = 1., core::Size cluster_id = 1 );
+	void add_template( std::string template_fn, std::string cst_fn, core::Real weight = 1., core::Size cluster_id = 1);
+
+    core::Real get_gdtmm( core::pose::Pose & pose );
 
 	void check_options();
 
 	void pick_starting_template(core::Size & initial_template_index,
-								utility::vector1 < core::pose::PoseOP > & templates_icluster,
+								core::Size & initial_template_index_icluster,
+                                utility::vector1 < core::Size > template_index_icluster,
+                                utility::vector1 < core::pose::PoseOP > & templates_icluster,
 								utility::vector1 < core::Real > & weights_icluster,
 								utility::vector1 < protocols::loops::Loops > & template_chunks_icluster,
 								utility::vector1 < protocols::loops::Loops > & template_contigs_icluster);
@@ -61,13 +67,11 @@ public:
 	//virtual void
 	//parse_my_tag( TagPtr const, DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
-	void add_template( core::pose::PoseOP template_in, core::scoring::constraints::ConstraintSetOP cst_in = NULL, core::Real weight = 1., core::Size clusterID = 1 );
-	void add_template( std::string template_fn, std::string cst_fn = "", core::Real weight = 1., core::Size cluster_id = 1);
-
 private:
 	// created by template initialization
 	utility::vector1 < core::pose::PoseOP > templates_;
-	utility::vector1 < core::scoring::constraints::ConstraintSetOP > template_csts_;
+	//utility::vector1 < core::scoring::constraints::ConstraintSetOP > template_csts_;
+	utility::vector1 < std::string > template_cst_fn_;
 	utility::vector1 < core::Real > template_weights_;
 	utility::vector1 < core::Size > template_clusterID_;
 	utility::vector1 < protocols::loops::Loops > template_chunks_;

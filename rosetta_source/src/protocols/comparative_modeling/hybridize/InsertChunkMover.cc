@@ -58,7 +58,7 @@ using namespace id;
 using namespace ObjexxFCL;
 
 InsertChunkMover::InsertChunkMover() : 
-registry_shift_(0), reset_torsion_unaligned_(true), align_to_ss_only_(true), copy_ss_torsion_only_(false), secstruct_('L')
+registry_shift_(0), reset_torsion_unaligned_(false), align_to_ss_only_(false), copy_ss_torsion_only_(false), secstruct_('L')
 {
 	align_trial_counter_.clear();
 }
@@ -68,10 +68,10 @@ InsertChunkMover::~InsertChunkMover(){}
 // atom_map: from mod_pose to ref_pose
 void
 InsertChunkMover::get_superposition_transformation(
-								 pose::Pose const & mod_pose,
-								 pose::Pose const & ref_pose,
-								 id::AtomID_Map< id::AtomID > const & atom_map,
-								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT )
+                                                   pose::Pose const & mod_pose,
+                                                   pose::Pose const & ref_pose,
+                                                   id::AtomID_Map< id::AtomID > const & atom_map,
+                                                   numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT )
 {
 	// count number of atoms for the array
 	Size total_mapped_atoms(0);
@@ -257,9 +257,9 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 		core::Size atom_map_count = 0;
 		for (Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose) {
 			int jres_template = ires_pose + seqpos_template - seqpos_pose;
+			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if (discontinued_upper(*template_pose_,jres_template)) break;
 
-			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if(copy_ss_torsion_only_) {
 				if (template_pose_->secstruct(jres_template) == 'L') continue;
@@ -273,9 +273,9 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 		}
 		for (Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose) {
 			int jres_template = ires_pose + seqpos_template - seqpos_pose;
+			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if (discontinued_lower(*template_pose_,jres_template)) break;
 			
-			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if(copy_ss_torsion_only_) {
 				if (template_pose_->secstruct(jres_template) == 'L') continue;
@@ -309,8 +309,8 @@ Size InsertChunkMover::trial_counter(Size ires) {
 void
 InsertChunkMover::apply(core::pose::Pose & pose) {
 	// apply alignment
-	bool success = get_local_sequence_mapping(pose, registry_shift_);
-	if (!success) return;
+	success_ = get_local_sequence_mapping(pose, registry_shift_);
+	if (!success_) return;
 	
 	steal_torsion_from_template(pose);
 	align_chunk(pose);

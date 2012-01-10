@@ -23,6 +23,10 @@
 #include <core/util/kinematics_util.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
+#include <core/kinematics/FoldTree.hh>
+
+#include <core/scoring/ScoreFunction.hh>
+
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -57,7 +61,11 @@ class FoldTreeHybridize: public protocols::moves::Mover
 	
 public:
 
-	FoldTreeHybridize(core::pose::PoseOP const initial_template, utility::vector1 < core::pose::PoseOP > const & template_poses, utility::vector1 < core::fragment::FragSetOP > & frag_libs);
+	FoldTreeHybridize(core::Size const initial_template_index,
+                      utility::vector1 < core::pose::PoseOP > const & template_poses,
+                      utility::vector1 < protocols::loops::Loops > const & template_chunks,
+                      utility::vector1 < protocols::loops::Loops > const & template_contigs,
+                      utility::vector1 < core::fragment::FragSetOP > & frag_libs);
 
 	void revert_loops_to_original(core::pose::Pose & pose, Loops loops);
 
@@ -67,6 +75,9 @@ public:
 	gap_distance(Size Seq_gap);
 
 	void add_gap_constraints_to_pose(core::pose::Pose & pose, Loops const & chunks, int gap_edge_shift=0, Real stdev=0.1);
+
+    void backup_original_foldtree(core::pose::Pose const & pose);
+    void restore_original_foldtree(core::pose::Pose & pose);
 
 	void
 	setup_foldtree(core::pose::Pose & pose);
@@ -78,19 +89,28 @@ public:
 	utility::vector1< core::Real > get_residue_weights_from_loops(core::pose::Pose & pose);
 
 	Loops loops();
-
+    inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) {
+        scorefxn_ = scorefxn;
+    }
+    
 	void apply(core::pose::Pose & pose);
 
 	std::string	get_name() const;
 	
 private:
-	core::pose::PoseCOP initial_template_;
+    core::Size initial_template_index_;
+    core::scoring::ScoreFunctionOP scorefxn_;
 	utility::vector1 < core::pose::PoseCOP > template_poses_;
+	utility::vector1 < protocols::loops::Loops > template_chunks_;
+	utility::vector1 < protocols::loops::Loops > template_contigs_;
 	utility::vector1 < core::fragment::FragSetOP > frag_libs_;
 
 	Loops ss_chunks_pose_;
-	Loops loops_pose_;
+	//Loops loops_pose_;
 	
+    // backup original info
+    core::kinematics::FoldTree orig_ft_;
+    Size orig_n_residue_;
 }; //class FoldTreeHybridize
 	
 } // hybridize 

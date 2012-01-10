@@ -16,7 +16,7 @@
 
 #include <devel/init.hh>
 
-#include <protocols/viewer/viewers.hh>
+//#include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -111,7 +111,7 @@ CartesianHybridize::CartesianHybridize(
 		utility::vector1 < protocols::loops::Loops > const & template_chunks_in, 
 		utility::vector1 < protocols::loops::Loops > const & template_contigs_in,
 		core::fragment::FragSetOP fragments9_in,
-		core::fragment::FragSetOP fragments3_in ) {
+		core::fragment::FragSetOP fragments3_in ) : ncycles_(400) {
 	templates_ = templates_in;
 	template_wts_ = template_wts_in;
 	template_chunks_ = template_chunks_in;
@@ -136,6 +136,15 @@ CartesianHybridize::CartesianHybridize(
 	for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
 		core::Size position = (*i)->start();
 		library_[position] = **i;
+	}
+
+	TR.Debug << "template_chunks:" << std::endl;
+	for (int i=1; i<= template_chunks_.size(); ++i) {
+		TR.Debug << "templ. " << i << std::endl << template_chunks_[i] << std::endl;
+	}
+	TR.Debug << "template_contigs:" << std::endl;
+	for (int i=1; i<= template_contigs_.size(); ++i) {
+		TR.Debug << "templ. " << i << std::endl << template_contigs_[i] << std::endl;
 	}
 }
 
@@ -334,8 +343,8 @@ CartesianHybridize::apply( Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::simple_moves::ConstraintSetMoverOP cst_mover( new protocols::simple_moves::ConstraintSetMover() );
-	cst_mover->apply( pose );
+	//protocols::viewer::add_conformation_viewer(  pose.conformation(), "hybridize" );
+
 	protocols::moves::MoverOP tocen =
 		new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
 	tocen->apply( pose );
@@ -386,6 +395,7 @@ sampler:
 		lowres_scorefxn_->set_weight( core::scoring::atom_pair_constraint, cst_weight );
 		lowres_scorefxn_->set_weight( core::scoring::vdw, vdw_weight );
 
+		(*min_scorefxn_)(pose);
 		(*lowres_scorefxn_)(pose);
 		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 2.0 );
 
@@ -491,6 +501,7 @@ sampler:
 			}
 
 			if (n%100 == 0) {
+				TR << "Step " << n << std::endl;
 				mc->show_scores();
 				mc->show_counters();
 			}

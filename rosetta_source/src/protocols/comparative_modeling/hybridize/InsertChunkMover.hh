@@ -59,7 +59,11 @@ apply_transform(
 				);
 	
 void align_chunk(core::pose::Pose & pose);
-	
+
+bool success() {
+    return success_;
+}
+    
 void set_template(core::pose::PoseCOP template_pose,
 				  std::map <core::Size, core::Size> const & sequence_alignment );
 
@@ -88,6 +92,7 @@ private:
 	Size jump_number_; // the jump to be realigned
 	Size seqpos_start_; // start and end seqpose of the chunk
 	Size seqpos_stop_;
+    bool success_;
 	int registry_shift_;
 	char secstruct_;
 

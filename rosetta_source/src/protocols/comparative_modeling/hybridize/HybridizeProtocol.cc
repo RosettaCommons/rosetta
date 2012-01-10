@@ -44,7 +44,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 
-#include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 // task operation
 #include <core/pack/task/TaskFactory.hh>
@@ -56,6 +56,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/WeightedSampler.hh>
+#include <ObjexxFCL/format.hh>
 
 // evaluation
 #include <core/scoring/rms_util.hh>
@@ -123,8 +124,6 @@ HybridizeProtocol::HybridizeProtocol() :
 		native_ = new core::pose::Pose;
 		core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
 	}
-	
-
 
 }
 	
@@ -151,37 +150,34 @@ core::Real HybridizeProtocol::get_gdtmm( core::pose::Pose &pose ) {
 	
 HybridizeProtocol::~HybridizeProtocol(){}
 
-void HybridizeProtocol::add_template(std::string template_fn, std::string cst_fn, core::Real weight, core::Size cluster_id)
+    void HybridizeProtocol::add_template(std::string template_fn, std::string cst_fn, core::Real weight, core::Size cluster_id)
 {
 	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 	core::pose::PoseOP template_pose = new core::pose::Pose();
 	core::import_pose::pose_from_pdb( *template_pose, *residue_set, template_fn );
 
-	core::scoring::constraints::ConstraintSetOP constraint_set;
-	if (cst_fn != "") {
-		ConstraintIO::get_instance()->read_constraints_new( cst_fn, new ConstraintSet, *template_pose );
-	}
-	add_template(template_pose, constraint_set, weight, cluster_id);
+	add_template(template_pose, cst_fn, weight, cluster_id);
 	
 }
 
 void HybridizeProtocol::add_template(core::pose::PoseOP template_in,
-				  core::scoring::constraints::ConstraintSetOP cst_in,
-				  core::Real weight,
-				  core::Size clusterID )
+                                     //core::scoring::constraints::ConstraintSetOP cst_in,
+                                     std::string cst_fn,
+                                     core::Real weight,
+                                     core::Size clusterID )
 {   
     // add secondary structure information to the template pose
     core::scoring::dssp::Dssp dssp_obj( *template_in );
 	dssp_obj.insert_ss_into_pose( *template_in );
 	
 	// find ss chunks in template
-	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_in); // add split by residue numbering in this function -ys
+	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_in); 
 	
 	//break templates into contigs
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_in); 
 	
 	templates_.push_back(template_in);
-	template_csts_.push_back(cst_in);
+	template_cst_fn_.push_back(cst_fn);
 	template_weights_.push_back(weight);
 	template_clusterID_.push_back(clusterID);
     template_chunks_.push_back(chunks);
@@ -202,7 +198,7 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 		core::Size cluster_id;
 		core::Real weight;
 		str_stream >> template_fn >> cst_fn >> cluster_id >> weight;
-
+        TR << template_fn << " " << cst_fn << " " << cluster_id << " " << weight << std::endl;
 		add_template(template_fn, cst_fn, weight, cluster_id);
 	}
 	f_stream.close();
@@ -234,12 +230,15 @@ void HybridizeProtocol::check_options()
 }
 	
 void HybridizeProtocol::pick_starting_template(core::Size & initial_template_index,
-							utility::vector1 < core::pose::PoseOP > & templates_icluster,
-							utility::vector1 < core::Real > & weights_icluster,
-							utility::vector1 < protocols::loops::Loops > & template_chunks_icluster,
-							utility::vector1 < protocols::loops::Loops > & template_contigs_icluster)
+                            core::Size & initial_template_index_icluster,
+                            utility::vector1 < core::Size > template_index_icluster,
+                            utility::vector1 < core::pose::PoseOP > & templates_icluster,
+                            utility::vector1 < core::Real > & weights_icluster,
+                            utility::vector1 < protocols::loops::Loops > & template_chunks_icluster,
+                            utility::vector1 < protocols::loops::Loops > & template_contigs_icluster )
 {
-	templates_icluster.clear();
+	template_index_icluster.clear();
+    templates_icluster.clear();
 	weights_icluster.clear();
 	template_chunks_icluster.clear();
 	template_contigs_icluster.clear();
@@ -252,44 +251,78 @@ void HybridizeProtocol::pick_starting_template(core::Size & initial_template_ind
 	
 	for (Size i_template = 1; i_template <= template_clusterID_.size(); ++i_template) {
 		if ( cluster_id == template_clusterID_[i_template] ) {
+            template_index_icluster.push_back(i_template);
 			templates_icluster.push_back(templates_[i_template]);
 			weights_icluster.push_back(template_weights_[i_template]);
 			template_chunks_icluster.push_back(template_chunks_[i_template]);
 			template_contigs_icluster.push_back(template_contigs_[i_template]);
+            
+            if (i_template == initial_template_index) {
+                initial_template_index_icluster = template_index_icluster.size();
+            }
 		}
 	}
-	
 }
 	
 void HybridizeProtocol::apply( core::pose::Pose & pose )
 {
 	using namespace protocols::moves;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	//SequenceMoverOP whole_sequence( new SequenceMover() );
 	
 	// pick starting template
 	core::Size initial_template_index;
-    core::pose::PoseOP initial_template;
+	core::Size initial_template_index_icluster; // index in the cluster
+	utility::vector1 < core::Size > template_index_icluster; // index look back
 	utility::vector1 < core::pose::PoseOP > templates_icluster;
 	utility::vector1 < core::Real > weights_icluster;
 	utility::vector1 < protocols::loops::Loops > template_chunks_icluster;
 	utility::vector1 < protocols::loops::Loops > template_contigs_icluster;
-	pick_starting_template(initial_template_index, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster);
+	pick_starting_template(initial_template_index, initial_template_index_icluster, template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster);
 
-    // FoldTree ft(pose.fold_tree());
     
 	// apply constraints
-	pose.constraint_set( template_csts_[initial_template_index] );
+    core::scoring::constraints::ConstraintSetOP constraint_set;
+    std::string cst_fn = template_cst_fn_[initial_template_index];
+	if (!cst_fn.empty()) {
+		constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_fn, new ConstraintSet, pose );
+	}
+    pose.constraint_set( constraint_set );
 	
+    // fold tree hybridize
 	utility::vector1 < core::fragment::FragSetOP > frag_libs;
 	frag_libs.push_back(fragments3_);
 	frag_libs.push_back(fragments9_);
-	FoldTreeHybridizeOP ft_hybridize( new FoldTreeHybridize(initial_template, templates_,  frag_libs) ) ;
+    core::scoring::ScoreFunctionOP scorefxn_stage1 = core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage1_patch]());
+	FoldTreeHybridizeOP ft_hybridize( new FoldTreeHybridize(initial_template_index_icluster, templates_icluster, template_chunks_icluster, template_contigs_icluster,  frag_libs) ) ;
+    ft_hybridize->set_scorefunction(scorefxn_stage1);
 	ft_hybridize->apply(pose);
-	
-	// pose.fold_tree(ft);
-	CartesianHybridizeOP cart_hybridize ( new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_,template_contigs_, fragments9_, fragments3_ ) );
-	cart_hybridize->apply(pose);
 
+    //utility::vector1< core::Size > fragment_history = ft_hybridize->get_fragment_history(); // fragment indexed within the cluster
+    
+    //write gdtmm to output
+    using namespace ObjexxFCL::fmt;
+    core::Real gdtmm = get_gdtmm(pose);
+    core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
+    TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
+
+    // cartesian fragment hybridize
+	CartesianHybridizeOP cart_hybridize ( new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_, fragments3_ ) );
+    core::scoring::ScoreFunctionOP scorefxn_stage2 = core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage2_patch]());
+    cart_hybridize->set_scorefunction(scorefxn_stage2);
+    //cart_hybridize->set_fragment_history(fragment_history);
+	cart_hybridize->apply(pose);
+    //fragment_history = cart_hybridize->get_fragment_history(); // fragment indexed within the cluster
+
+    //look back
+
+    //write gdtmm to output
+    gdtmm = get_gdtmm(pose);
+    core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
+    TR << "GDTMM_after_stage2" << F(8,3,gdtmm) << std::endl;
+    
+    (*scorefxn_stage2)(pose);
 }
 
 
