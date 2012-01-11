@@ -55,16 +55,27 @@ Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_resid
   vector1<int> unaligned_res;
 
   for (int i = 1; i < num_residues; ++i) {
-    bool unaligned = !mapping[i];
-    bool discontinuous = mapping[i + 1] != (mapping[i] + 1);
-    if (unaligned || discontinuous) {
+    // unaligned: current residue doesn't map to any residue in the template
+    // broke: current residue and next residue are both aligned, but not to consecutive residues in the template
+    bool curr_aligned = mapping[i];
+    bool next_aligned = mapping[i + 1];
+    bool broke = (mapping[i] + 1 != mapping[i + 1]) && next_aligned;
+
+    if (!curr_aligned) {
       unaligned_res.push_back(i);
+    } else if (broke) {
+      unaligned_res.push_back(i);
+      unaligned_res.push_back(i+1);
     }
   }
 
   if (!mapping[num_residues]) {  // last residue
     unaligned_res.push_back(num_residues);
   }
+
+  std::sort(unaligned_res.begin(), unaligned_res.end());
+  utility::vector1<int>::const_iterator i = std::unique(unaligned_res.begin(), unaligned_res.end());
+  unaligned_res.resize(i - unaligned_res.begin());
 
   int min_len = option[OptionKeys::abinitio::star::min_unaligned_len]();
   unaligned_ = protocols::comparative_modeling::pick_loops_unaligned(num_residues, unaligned_res, min_len);
