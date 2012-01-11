@@ -58,6 +58,8 @@
 #include <utility/options/keys/FileOptionKey.hh>
 #include <utility/options/keys/FileVectorOptionKey.fwd.hh>
 #include <utility/options/keys/FileVectorOptionKey.hh>
+#include <utility/options/keys/BooleanOptionKey.fwd.hh>
+#include <utility/options/keys/BooleanOptionKey.hh>
 
 
 #include <devel/init.hh>
@@ -93,7 +95,7 @@ using core::pose::Pose;
 
 namespace minimalCstHomology {
   basic::options::FileVectorOptionKey coordCstFiles("minimalCstHomology:coordCstFiles");
-	basic::options::IntegerOptionKey cstMode("minimalCstHomology:cstMode");
+	basic::options::BooleanOptionKey only_res_out("minimalCstHomology:only_res_out");
 }
 
 void output_alignments(vector1 <SequenceAlignment> alns, std::ostream & out){
@@ -115,7 +117,7 @@ map<string,std::set<Size> > input_coordCstsMapped(vector1< std::string >const & 
 	    std::set<Size> tmp_coordCsts = input_coordCsts(*it);
 			coordCsts.insert(std::pair<string , std::set<Size> >(pdbid,tmp_coordCsts));
 		}
-	}		     
+	}
 	return(coordCsts);
 }
 //gets the poses from the cmd line.
@@ -192,7 +194,7 @@ std::set< Size > removeConstraintsNearGap(std::set< Size > caAtomsToConstrainAll
 
 
 //one alignment and coord csts for each protein and r
-bool calc_outputCoordCsts(SequenceOP fastaSequenceOP, map<string,SequenceAlignment> alnData, map< string, Pose > poseData, map<string, set<Size> > coordCstsData, Size nResFromGapExclude, Size minNumCoordCsts){
+bool calc_outputCoordCsts(SequenceOP fastaSequenceOP, map<string,SequenceAlignment> alnData, map< string, Pose > poseData, map<string, set<Size> > coordCstsData, Size nResFromGapExclude, Size minNumCoordCsts, bool only_res_out ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace devel::cstEnergyBalance;
@@ -215,18 +217,19 @@ bool calc_outputCoordCsts(SequenceOP fastaSequenceOP, map<string,SequenceAlignme
 		alns.push_back(location_aln->second);
 		output_alignments(alns,alnOut);
 		alnOut.close();
-		std::string outCoordCstsName = alnName+".coordCsts";
+		//orig name : std::string outCoordCstsName = alnName+".coordCsts";
+		std::string outCoordCstsName = location_aln->second.sequence(2)->id() + ".coordCsts";
 		std::ofstream coordCstsOut( outCoordCstsName .c_str() );
 		std::set< Size > caAtomsToConstrainAll = location_caAtomsToConstrain->second;
 		Pose templatePose =location_pdb->second;
-		
+
 		std::set<Size> caAtomsToConstrain;
-		if(caAtomsToConstrainAll.size()>minNumCoordCsts) //if there are <= 3 coordinate constraints then we choose a lobe of a larger protein and the coordinate constraints are not useful. 
+		if(caAtomsToConstrainAll.size()>minNumCoordCsts) //if there are <= 3 coordinate constraints then we choose a lobe of a larger protein and the coordinate constraints are not useful.
 			caAtomsToConstrain = removeConstraintsNearGap(caAtomsToConstrainAll,alns[1],nResFromGapExclude);
-		output_coordCsts(caAtomsToConstrain,coordCstsOut,templatePose,alns[1],fastaSequenceOP->sequence());
+		output_coordCsts(caAtomsToConstrain,coordCstsOut,templatePose,alns[1],fastaSequenceOP->sequence(),only_res_out);
 		location_aln++;
 	}
-}	
+}
 
 
 int main( int argc, char * argv [] ) {
@@ -239,7 +242,7 @@ int main( int argc, char * argv [] ) {
   using namespace core::import_pose::pose_stream;
   using utility::file_basename;
 	option.add (minimalCstHomology::coordCstFiles, "coordinate cst files");
-	option.add (minimalCstHomology::cstMode, "which way to make coordinate constraints").def(1);
+	option.add (minimalCstHomology::only_res_out, "which way to make coordinate constraints").def(false);
   devel::init(argc, argv);
 	Size N_RES_FROM_GAP_EXCLUDE = 4;
 	Size MIN_NUM_COORDCSTS = 3;
@@ -251,5 +254,5 @@ int main( int argc, char * argv [] ) {
 																										 option[ in::file::template_pdb ]());
 	vector1< SequenceOP > fastaSequenceOP = read_fasta_file(option[ in::file::fasta ]()[1]);
 	//calc coordinate constraints
-	calc_outputCoordCsts(fastaSequenceOP[1],alnDataMapped,poseData,coordCstData,N_RES_FROM_GAP_EXCLUDE,MIN_NUM_COORDCSTS);
+	calc_outputCoordCsts(fastaSequenceOP[1],alnDataMapped,poseData,coordCstData,N_RES_FROM_GAP_EXCLUDE,MIN_NUM_COORDCSTS,option[minimalCstHomology::only_res_out]());
 }

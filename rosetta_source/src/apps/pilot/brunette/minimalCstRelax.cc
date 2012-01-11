@@ -10,7 +10,7 @@
 /// @file   apps/pilot/brunette/minimalCstRelax.cc
 ///
 /// @brief  For the first structure in the alignment compare the deviation between native and the relaxed native structure. Then constraints are modified and coordinate constraints are added. If an alignment is given only the residues from the beginning to end of the alignment are used.
- 
+
 /// @usage: -in:file:s <pdb files> [options: -minimalCstRelax:coordinate_cst_gap in first round of relax gap between CA coordinate constraints] -in::file::alignmen [alignment.filt file]
 /// @author TJ Brunette
 
@@ -30,6 +30,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.fwd.hh>
+#include <core/sequence/SequenceAlignment.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
@@ -126,7 +127,7 @@ void get_poseToRelax(core::pose::PoseOP & toRelax_poseOP, core::pose::PoseOP & i
 ///@brief: outputs the ca atoms to constrain either with taking account the offset
 void output_caAtomsToConstraint(const std::set< Size> caAtomsToConstrain,const Size offset,const string coordCstFile, const core::pose::PoseOP input_poseOP){
 	using namespace devel::cstEnergyBalance;
-	std::set < Size > adjusted_caAtomsToConstrain; 
+	std::set < Size > adjusted_caAtomsToConstrain;
 	std::set < Size >::iterator caAtomsToConstrain_iter;
 	std::ofstream out( coordCstFile.c_str() );
 	if (offset == 0){
@@ -163,7 +164,7 @@ int main( int argc, char * argv [] ) {
 	const Real COORDINATE_CST_WT = 1;
 	SilentFileData sfd;
 	SilentStructOP ss(new core::io::silent::ScoreFileSilentStruct);
-	Size gapBtwConstrainedResidues = option[ minimalCstRelax::coordinate_cst_gap]();		
+	Size gapBtwConstrainedResidues = option[ minimalCstRelax::coordinate_cst_gap]();
 	//Get input pdbs---------------------------------------------------------------
 	MetaPoseInputStream input = streams_from_cmd_line();
 	std::map<string,SequenceAlignment> alns = input_alignmentsMapped(true);
@@ -188,7 +189,7 @@ int main( int argc, char * argv [] ) {
 			finalRelax_poseOP->constraint_set(cst_set);
 			FastRelax relaxer3( scorefxn_w_csts_,5,"NO CST RAMPING" );
 			relaxer3.apply(*finalRelax_poseOP);
-			delete_virtual_residues(*finalRelax_poseOP);	
+			delete_virtual_residues(*finalRelax_poseOP);
 			ss->fill_struct(*finalRelax_poseOP);
 			ss->decoy_tag(pose_tag);
 			Real gdtmm = core::scoring::CA_gdtmm(*finalRelax_poseOP,*toRelax_poseOP);

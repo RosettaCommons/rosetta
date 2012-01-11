@@ -43,8 +43,8 @@ sources = {
 		#"disulfide_scorer", # /* Spencer Bliven,Documentation Location,Demo Location */
 	],
 	"pilot/brunette" : [
-		#"minimalCstRelax",
-		#"minimalCstHomology",
+		"minimalCstRelax",
+		"minimalCstHomology",
 		#"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
 		#"identify_homolog_inaccuracies",
 		#"contact_map_from_homologs",

@@ -40,7 +40,7 @@ numeric::xyzVector< core::Real > get_centerOfMass(const core::pose::Pose& pose )
 /// CA that are being constrained.
 core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordCsts(std::set< core::Size > caAtomsToConstrain,const core::pose::Pose& pose);
 
-///@brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions 
+///@brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions
 std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviationThresh, Pose& relaxed_pose, const Pose& unmodified_pose);
 
 /// @brief Generates a list of core residues to constrain. The residues chosen are the number of residues to constrain closest to the center of mass
@@ -55,11 +55,11 @@ std::set< core::Size> get_residuesToConstrain(const core::Size coordinate_cst_ga
 /// @brief Same as above but with defaults for gap size and gdt_thresh
 std::set<core::Size> get_residuesToConstrain(core::pose::Pose& pose);
 
-/// @brief Outputs coordinate contraints in standard coordinate constraint format
+/// @brief Outputs coordinate contraints
 void output_coordCsts(const std::set< core::Size > caAtomsToConstrain,std::ostream & out, core::pose::Pose& pose);
 
-/// @brief Outputs coordinate contraints in standard coordinate constraint format
-void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,string query_sequence);
+/// @brief Outputs coordinate contraints
+void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,string query_sequence, bool only_res_out);
 
 /// @brief input coordinate constraints from file in standard coordinate constraint format. I assume everything is CA constraints
 std::set< core::Size > input_coordCsts(const std::string inputFileName);

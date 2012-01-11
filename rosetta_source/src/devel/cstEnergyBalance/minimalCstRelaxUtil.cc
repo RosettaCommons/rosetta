@@ -125,7 +125,7 @@ numeric::xyzVector< Real > get_centerOfMass(const Pose& pose ){
 	}
 	massSum /= nAtms;
 	return massSum;
-} 
+}
 
 ///@brief Gets the x,y,z center of mass from a partial thread.
 numeric::xyzVector< Real > get_centerOfMass(const Pose& templatePose, const SequenceAlignment aln,const string query_sequence){
@@ -144,7 +144,7 @@ numeric::xyzVector< Real > get_centerOfMass(const Pose& templatePose, const Sequ
 	mover.randomize_loop_coords( option[OptionKeys::nonlocal::randomize_missing]() );
 	mover.repack_query( false );
 	mover.apply( query_pose );
-	
+
 	addVirtualResAsRoot(query_pose);
 	atomLocation = query_pose.residue(query_pose.fold_tree().root()).xyz(1);
 	return(atomLocation);
@@ -224,7 +224,7 @@ std::set<Size> get_distDeviationResiduesToConstrain(const Real distDeviationThre
 	return residuesToConstrain;
 }
 
-///@brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions 
+///@brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions
 std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviationThresh, Pose& relaxed_pose, const Pose& unmodified_pose){
 	//get all residues to constrain
 	std::set< Size >::iterator resSet_iter,tmp_resSet_iter;
@@ -275,7 +275,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 			}
 			resSet_iter++;
 		}
-		//post loop wrap up the final two cases. 
+		//post loop wrap up the final two cases.
 		if(lastContigRes-firstContigRes >= 3){
 			//The case where the residues were contiguous
 			tmp_residuesToConstrain.clear();
@@ -347,7 +347,7 @@ std::set<Size> get_residuesToConstrain(const Size coordCstGapInitial, const Real
 			tr.Debug << "gdtmm" << gdtmm << std::endl;
 			std::set< Size > tmp_caAtomsToConstrain;
 			std::set< Size > distDeviationResiduesToConstrain = get_distDeviationResiduesToConstrain(dist_deviation_thresh,0,*rd2relaxed_poseOP, pose);//on the second rounds and later gap size is always set to 0. That way this doesn't limits the number of loops
-			tr.Debug << "empty?" << distDeviationResiduesToConstrain.empty() << std::endl; 
+			tr.Debug << "empty?" << distDeviationResiduesToConstrain.empty() << std::endl;
 			if(!distDeviationResiduesToConstrain.empty()){
 				std::set_union(caAtomsToConstrain.begin(), caAtomsToConstrain.end(), distDeviationResiduesToConstrain.begin(), distDeviationResiduesToConstrain.end(), std::inserter(tmp_caAtomsToConstrain, tmp_caAtomsToConstrain.begin()));
 				caAtomsToConstrain = tmp_caAtomsToConstrain;
@@ -366,7 +366,7 @@ std::set<Size> get_residuesToConstrain(const Size coordCstGapInitial, const Real
 	}
 	return(caAtomsToConstrain);
 }
-	
+
 /// @brief Same as above but with defaults for gap size and gdt_thresh
 std::set<Size> get_residuesToConstrain(Pose& pose){
 		return get_residuesToConstrain(0,.99,pose);
@@ -381,7 +381,7 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 		numeric::xyzVector< core::Real > atomLocation(0.0,0.0,0.0);
 		caAtomsToConstrain_start = caAtomsToConstrain.begin();
 		while(caAtomsToConstrain_start != caAtomsToConstrain.end()){
-			Size residue_id = *caAtomsToConstrain_start;	
+			Size residue_id = *caAtomsToConstrain_start;
 			atomLocation = pose.residue(residue_id).xyz("CA");
 			out << "CoordinateConstraint  CA " << residue_id <<" N " << virtualRes_id  << " " << atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
 			caAtomsToConstrain_start++;
@@ -390,30 +390,42 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 		out << "CoordinateConstraint N " << virtualRes_id << " N " << virtualRes_id << " " << virtualResLocation.x() << " " << virtualResLocation.y() << " " << virtualResLocation.z() << " HARMONIC 0 1" << std::endl;
 	}
 }
-	
-// @brief Outputs coordinate contraints in standard coordinate constraint 
-// uses the partial thread and places the constraint in the center of mass 
+
+// @brief Outputs coordinate contraints in standard coordinate constraint
+// uses the partial thread and places the constraint in the center of mass
 // of mass of the partial thread.
-void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,const string query_sequence){
+void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,const string query_sequence, bool only_res_out){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
 	std::set< Size >::iterator caAtomsToConstrain_start,caAtomsToConstrain_stop;
 	if(caAtomsToConstrain.size() > 0){
-		numeric::xyzVector< core::Real > atomLocation(0.0,0.0,0.0);
-		//getting center of mass
-		Real virtualRes_id = query_sequence.size()+1;
-		atomLocation = get_centerOfMass(pose,aln,query_sequence);
-		out << "CoordinateConstraint ORIG " << virtualRes_id << " ORIG " << virtualRes_id << " " <<  atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
-		caAtomsToConstrain_start = caAtomsToConstrain.begin();
-		while(caAtomsToConstrain_start != caAtomsToConstrain.end()){
-			Size templateResidue_id = aln.sequence_mapping(2,1)[*caAtomsToConstrain_start]; //The remaped CA position
-			if(templateResidue_id !=0){
-				Size residue_id =*caAtomsToConstrain_start;
-				atomLocation = pose.residue(residue_id).xyz("CA");
-				out << "CoordinateConstraint  CA " << templateResidue_id <<" ORIG " << virtualRes_id  << " " << atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
+		if(only_res_out){
+			caAtomsToConstrain_start = caAtomsToConstrain.begin();
+			while(caAtomsToConstrain_start != caAtomsToConstrain.end()){
+				Size templateResidue_id = aln.sequence_mapping(2,1)[*caAtomsToConstrain_start]; //The remaped CA position
+				if(templateResidue_id !=0){
+					out << templateResidue_id << std::endl;
+				}
+				caAtomsToConstrain_start++;
 			}
-			caAtomsToConstrain_start++;
+		}
+		else{
+			numeric::xyzVector< core::Real > atomLocation(0.0,0.0,0.0);
+			//getting center of mass
+			Real virtualRes_id = query_sequence.size()+1;
+			atomLocation = get_centerOfMass(pose,aln,query_sequence);
+			out << "CoordinateConstraint ORIG " << virtualRes_id << " ORIG " << virtualRes_id << " " <<  atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
+			caAtomsToConstrain_start = caAtomsToConstrain.begin();
+			while(caAtomsToConstrain_start != caAtomsToConstrain.end()){
+				Size templateResidue_id = aln.sequence_mapping(2,1)[*caAtomsToConstrain_start]; //The remaped CA position
+				if(templateResidue_id !=0){
+					Size residue_id =*caAtomsToConstrain_start;
+					atomLocation = pose.residue(residue_id).xyz("CA");
+					out << "CoordinateConstraint  CA " << templateResidue_id <<" ORIG " << virtualRes_id  << " " << atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
+				}
+				caAtomsToConstrain_start++;
+			}
 		}
 	}
 }
@@ -421,7 +433,7 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 
 
 /// @brief input coordinate constraints from file in standard coordinate
-/// constraint format saves the data as a list of CA to constrain. 
+/// constraint format saves the data as a list of CA to constrain.
 ///For this particular implementation of reading the constraints in I only
 /// care about the residue id's
 std::set< Size > input_coordCsts(const string inputFileName){
@@ -438,7 +450,7 @@ std::set< Size > input_coordCsts(const string inputFileName){
 		std::string type;
 		numeric::xyzVector< Real > xyz_target(0.0,0.0,0.0);
 		std::istringstream line_stream( line );
-		line_stream >> cstType  
+		line_stream >> cstType
 								>> name1 >> res1
 								>> name2 >> res2
 								>> xyz_target.x()
@@ -469,29 +481,30 @@ map<string,SequenceAlignment> input_alignmentsMapped(bool mapToPdbid){
   using namespace basic::options::OptionKeys;
   map<string,SequenceAlignment> alns;
   map<string,SequenceAlignment>::iterator location_alns;
-  vector1< std::string > align_fns = option[ in::file::alignment ]();
-  for ( Size ii = 1; ii <= align_fns.size(); ++ii ) {
-    vector1< SequenceAlignment > tmp_alns = core::sequence::read_aln(
+	if(option[ in::file::alignment ].user()){
+		vector1< std::string > align_fns = option[ in::file::alignment ]();
+		for ( Size ii = 1; ii <= align_fns.size(); ++ii ) {
+			vector1< SequenceAlignment > tmp_alns = core::sequence::read_aln(
 				  option[ cm::aln_format ](), align_fns[ii]
 				  );
-    for ( Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
-			string mapToName;
-			if(mapToPdbid == true){
-				string aln_id = tmp_alns[jj].sequence(2)->id();
-				string pdbid = aln_id.substr(0,5);
-				std::cout << "A:" << pdbid << "," << aln_id << std::endl;
-				mapToName = pdbid;
+			for ( Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
+				string mapToName;
+				if(mapToPdbid == true){
+					string aln_id = tmp_alns[jj].sequence(2)->id();
+					string pdbid = aln_id.substr(0,5);
+					mapToName = pdbid;
+				}
+				else{
+					std::stringstream numbConvert;
+					string alnBaseName = utility::file_basename(option[ in::file::alignment ]()[ii]);
+					numbConvert << alnBaseName << "_" << jj;
+					string aln_id = numbConvert.str();
+					mapToName = aln_id;
+				}
+				alns.insert(std::pair<string,SequenceAlignment>(mapToName,tmp_alns[jj]));
 			}
-			else{
-				std::stringstream numbConvert;
-				string alnBaseName = utility::file_basename(option[ in::file::alignment ]()[ii]);
-				numbConvert << alnBaseName << "_" << jj;
-				string aln_id = numbConvert.str();
-				mapToName = aln_id;
-					}
-			alns.insert(std::pair<string,SequenceAlignment>(mapToName,tmp_alns[jj]));
-    }
-  }
+		}
+	}
   return(alns);
 }
 
@@ -521,7 +534,7 @@ void get_terminal_aln_res(const SequenceAlignment aln,const Size alnIdx, Size & 
 		}
 	}
 }
-	
+
 
 
 
