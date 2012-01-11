@@ -28,9 +28,6 @@
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
 
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray5D.hh>
-
 // External Headers
 #include <cppdb/frontend.h>
 
@@ -73,18 +70,27 @@ ProteinBackboneAtomAtomPairFeatures::schema() const {
 		"	N_Ca_dist REAL,\n"
 		"	N_C_dist REAL,\n"
 		"	N_O_dist REAL,\n"
+		" N_Ha_dist REAL,\n"
 		"	Ca_N_dist REAL,\n"
 		"	Ca_Ca_dist REAL,\n"
 		"	Ca_C_dist REAL,\n"
 		"	Ca_O_dist REAL,\n"
+		" Ca_Ha_dist REAL,\n"
 		"	C_N_dist REAL,\n"
 		"	C_Ca_dist REAL,\n"
 		"	C_C_dist REAL,\n"
 		"	C_O_dist REAL,\n"
+		" C_Ha_dist REAL,\n"
 		"	O_N_dist REAL,\n"
 		"	O_Ca_dist REAL,\n"
 		"	O_C_dist REAL,\n"
 		"	O_O_dist REAL,\n"
+		"	O_Ha_dist REAL,\n"
+		"	Ha_N_dist REAL,\n"
+		"	Ha_Ca_dist REAL,\n"
+		"	Ha_C_dist REAL,\n"
+		"	Ha_O_dist REAL,\n"
+		"	Ha_Ha_dist REAL,\n"
 		"	FOREIGN KEY (struct_id)\n"
 		"		REFERENCES structures (struct_id)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
@@ -109,7 +115,7 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 ){
 	TenANeighborGraph const & tenA(pose.energies().tenA_neighbor_graph());
 
-	std::string statement_string = "INSERT INTO protein_backbone_atom_atom_pairs VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO protein_backbone_atom_atom_pairs VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
@@ -121,6 +127,10 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 		Vector const & Ca1(res1.xyz("CA"));
 		Vector const & C1(res1.xyz("C"));
 		Vector const & O1(res1.xyz("O"));
+		// For glysine, use the hydrogen that is in the same chiral
+		// position as HA on other amino acids
+		Vector const & HA1(
+			res1.aa() != core::chemical::aa_gly ? res1.xyz("HA") : res1.xyz("2HA"));
 
 		for ( Graph::EdgeListConstIter
 			ir  = tenA.get_node( resNum1 )->const_edge_list_begin(),
@@ -135,6 +145,10 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 			Vector const & Ca2(res2.xyz("CA"));
 			Vector const & C2(res2.xyz("C"));
 			Vector const & O2(res2.xyz("O"));
+			// For glysine, use the hydrogen that is in the same chiral
+			// position as HA on other amino acids
+			Vector const & HA2(
+				res2.aa() != core::chemical::aa_gly ? res2.xyz("HA") : res2.xyz("2HA"));
 
 			stmt.bind(1,struct_id);
 			stmt.bind(2,resNum1);
@@ -143,18 +157,28 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 			stmt.bind(5,N1.distance(Ca2));
 			stmt.bind(6,N1.distance(C2));
 			stmt.bind(7,N1.distance(O2));
-			stmt.bind(8,Ca1.distance(N2));
-			stmt.bind(9,Ca1.distance(Ca2));
-			stmt.bind(10,Ca1.distance(C2));
-			stmt.bind(11,Ca1.distance(O2));
-			stmt.bind(12,C1.distance(N2));
-			stmt.bind(13,C1.distance(Ca2));
-			stmt.bind(14,C1.distance(C2));
-			stmt.bind(15,C1.distance(O2));
-			stmt.bind(16,O1.distance(N2));
-			stmt.bind(17,O1.distance(Ca2));
-			stmt.bind(18,O1.distance(C2));
-			stmt.bind(19,O1.distance(O2));
+			stmt.bind(8,N1.distance(HA2));
+			stmt.bind(9,Ca1.distance(N2));
+			stmt.bind(10,Ca1.distance(Ca2));
+			stmt.bind(11,Ca1.distance(C2));
+			stmt.bind(12,Ca1.distance(O2));
+			stmt.bind(13,Ca1.distance(HA2));
+			stmt.bind(14,C1.distance(N2));
+			stmt.bind(15,C1.distance(Ca2));
+			stmt.bind(16,C1.distance(C2));
+			stmt.bind(17,C1.distance(O2));
+			stmt.bind(18,C1.distance(HA2));
+			stmt.bind(19,O1.distance(N2));
+			stmt.bind(20,O1.distance(Ca2));
+			stmt.bind(21,O1.distance(C2));
+			stmt.bind(22,O1.distance(O2));
+			stmt.bind(23,O1.distance(HA2));
+			stmt.bind(24,HA1.distance(N2));
+			stmt.bind(25,HA1.distance(Ca2));
+			stmt.bind(26,HA1.distance(C2));
+			stmt.bind(27,HA1.distance(O2));
+			stmt.bind(28,HA1.distance(HA2));
+
 
 			basic::database::safely_write_to_database(stmt);
 		} //res2
