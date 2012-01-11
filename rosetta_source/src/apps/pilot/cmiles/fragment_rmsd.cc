@@ -42,10 +42,11 @@ int main(int argc, char* argv[]) {
 
   const Size last = fragments->max_pos() - fragments->max_frag_length() + 1;
 
+  std::cout << "position frag_idx rmsd" << std::endl;
   FragmentRmsd calc(fragments);
   for (Size pos = 1; pos <= last; ++pos) {
     for (Size k = 1; k <= 200; ++k) {
-      std::cout << "position " << pos << " fragment " << k << " rmsd " << calc.rmsd(pos, k, *pose) << std::endl;
+      std::cout << pos << " " << k << " " << calc.rmsd(pos, k, *pose) << std::endl;
     }
   }
 }

@@ -63,10 +63,8 @@ void compute_windowed_rmsd(const Pose& reference, const Pose& model, Size window
 
 void show(const string& filename, const vector1<Real>& rmsds) {
   for (Size i = 1; i <= rmsds.size(); ++i) {
-    std::cout << "rmsd " << i << " " << rmsds[i] << std::endl;
+    std::cout << filename << " " << i << " " << rmsds[i] << std::endl;
   }
-
-  std::cout << "---" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -80,6 +78,7 @@ int main(int argc, char* argv[]) {
 
   const Size window = option[OptionKeys::evaluation::window_size]();
 
+  std::cout << "filename resi rmsd" << std::endl;
   for (Size i = 1; i <= models.size(); ++i) {
     const string& filename = option[OptionKeys::in::file::s]()[i];
     const Pose& model = *(models[i]);
