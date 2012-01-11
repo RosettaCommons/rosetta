@@ -45,7 +45,8 @@ for _i in range(10):
 
 		break
 
-	except rosetta.PyRosettaException: pass
+	#except rosetta.PyRosettaException: pass
+	except RuntimeError: pass
 
 else:
 	print 'Was not able to finish min_mover in 10 tries, failing...'

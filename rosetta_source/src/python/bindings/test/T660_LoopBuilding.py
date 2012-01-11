@@ -8,6 +8,9 @@
 ## @author Sergey Lyskov
 
 from rosetta import *
+
+import rosetta.protocols.loops.loop_mover.refine
+
 rosetta.init()
 
 
@@ -39,6 +42,6 @@ print loop_p.fold_tree()
 
 scorefxn = create_score_function_ws_patch('standard', 'score12')
 scorefxn(loop_p)
-loop_refine = LoopMover_Refine_CCD( loops, scorefxn )
+loop_refine = rosetta.protocols.loops.loop_mover.refine.LoopMover_Refine_CCD( loops, scorefxn )
 loop_refine.max_inner_cycles(10)
 loop_refine.apply(loop_p)

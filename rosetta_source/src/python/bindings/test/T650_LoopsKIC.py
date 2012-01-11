@@ -10,6 +10,8 @@ from rosetta import *
 
 from rosetta.protocols.loops.kinematic_closure import *
 
+import rosetta.protocols.loops.loop_mover.refine
+
 from sys import exit
 from random import randrange
 import math
@@ -138,7 +140,7 @@ to_fullatom.apply( p )
 recover_sidechains.apply( p )
 pack.apply( p )
 
-loop_refine = LoopMover_Refine_KIC( my_loops )
+loop_refine = rosetta.protocols.loops.loop_mover.refine.LoopMover_Refine_KIC( my_loops )
 loop_refine.apply( p ) # won't show in Pymol for efficiency
 pymol.apply( p ) # just show refined model
 
