@@ -63,6 +63,28 @@ calc_rms(
 	return rms_wrapper( natoms, p1a, p2a );
 }
 
+numeric::Real
+rms_wrapper_slow_and_correct(
+	int natoms,
+	FArray2D< numeric::Real > p1a,
+	FArray2D< numeric::Real > p2a
+) {
+	// rotate and translate coordinates to minimize rmsd
+	FArray1D< numeric::Real > ww(natoms,1.0);
+	Real bogus = 0;
+	rmsfitca2(natoms,p1a,p2a,ww,natoms,bogus);
+
+	// manually calculate rmsd
+	numeric::Real tot = 0;
+	for ( int i = 1; i <= natoms; ++i ) {
+		for ( int j = 1; j <= 3; ++j ) {
+			tot += std::pow( p1a(i,j) - p2a(i,j), 2 );
+		}
+	}
+
+	return std::sqrt(tot/natoms);
+}
+
 // Calculate an RMS based on aligned set of points in p1a and p2a composed
 // each representing a list of natoms.
 numeric::Real
@@ -70,12 +92,14 @@ rms_wrapper(
 	int natoms,
 	FArray2D< numeric::Real > p1a,
 	FArray2D< numeric::Real > p2a
-)
-{
+) {
 	FArray1D< numeric::Real > ww( natoms, 1.0 );
 	FArray2D< numeric::Real > uu( 3, 3, 0.0 );
 	numeric::Real ctx;
 
+	if ( natoms <= 5 ) {
+		return rms_wrapper_slow_and_correct(natoms,p1a,p2a);
+	}
 	findUU( p1a, p2a, ww, natoms, uu, ctx );
 	float fast_rms;
 	calc_rms_fast( fast_rms, p1a, p2a, ww, natoms, ctx );

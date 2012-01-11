@@ -43,6 +43,13 @@ rms_wrapper (
 	ObjexxFCL::FArray2D< numeric::Real > p2a
 );
 
+numeric::Real
+rms_wrapper_slow_and_correct(
+	int natoms,
+	ObjexxFCL::FArray2D< numeric::Real > p1a,
+	ObjexxFCL::FArray2D< numeric::Real > p2a
+);
+
 void
 BlankMatrixMult(
 	ObjexxFCL::FArray2A< numeric::Real > A,
