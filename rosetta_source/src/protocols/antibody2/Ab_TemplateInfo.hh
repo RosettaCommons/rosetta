@@ -21,7 +21,6 @@
 #include <core/pose/Pose.hh>
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace antibody2 {
@@ -42,7 +41,8 @@ public:
     pose::Pose get_one_template_pose(std::string template_name);
         
     
-	void show( std::ostream & out=std::cout );
+	//void show( std::ostream & out=std::cout );
+	void show( std::ostream & out );
 	friend std::ostream & operator<<(std::ostream& out, const Ab_TemplateInfo & ab_t_info );
 
         
