@@ -28,8 +28,6 @@
 #include <protocols/loops/Loops.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/nonlocal/StarTreeBuilder.hh>
-#include <protocols/nonlocal/util.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <numeric/random/random.hh>
@@ -51,7 +49,6 @@ namespace hybridize {
 using namespace core;
 using namespace protocols::moves;
 using namespace protocols::loops;
-using namespace protocols::nonlocal;
 	
 enum AlignOption { all_chunks, random_chunk };
 	

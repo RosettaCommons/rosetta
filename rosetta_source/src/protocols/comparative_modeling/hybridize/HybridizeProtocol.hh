@@ -42,8 +42,6 @@ public:
 		
 	void read_template_structures(utility::file::FileName template_list);
 	void read_template_structures(utility::vector1 < utility::file::FileName > const & template_filenames);
-
-    void add_template( core::pose::PoseOP template_in, std::string cst_fn, core::Real weight = 1., core::Size cluster_id = 1 );
 	void add_template( std::string template_fn, std::string cst_fn, core::Real weight = 1., core::Size cluster_id = 1);
 
     core::Real get_gdtmm( core::pose::Pose & pose );
@@ -70,7 +68,7 @@ public:
 private:
 	// created by template initialization
 	utility::vector1 < core::pose::PoseOP > templates_;
-	//utility::vector1 < core::scoring::constraints::ConstraintSetOP > template_csts_;
+	utility::vector1 < std::string > template_fn_;
 	utility::vector1 < std::string > template_cst_fn_;
 	utility::vector1 < core::Real > template_weights_;
 	utility::vector1 < core::Size > template_clusterID_;

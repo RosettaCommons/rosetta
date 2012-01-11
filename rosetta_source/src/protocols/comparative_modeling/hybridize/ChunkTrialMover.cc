@@ -41,6 +41,7 @@
 #include <basic/Tracer.hh>
 
 static numeric::random::RandomGenerator RG(57029435);
+static basic::Tracer TR( "protocols.comparative_modeling.hybridize.ChunkTrialMover" );
 
 namespace protocols {
 namespace comparative_modeling {
@@ -83,6 +84,8 @@ ChunkTrialMover::ChunkTrialMover(
 	sequence_alignments_.clear();
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		std::map <core::Size, core::Size> sequence_alignment;
+        //TR << "template: " << i_template << std::endl;
+        sequence_alignment.clear();
 		if (alignment_from_template) {
 			get_alignment_from_template(template_poses_[i_template], sequence_alignment);
 		}
@@ -104,6 +107,7 @@ void
 ChunkTrialMover::get_alignment_from_template(core::pose::PoseCOP const template_pose, std::map <core::Size, core::Size> & seqpos_alignment) {
 	// specific to this case, alignment comes from residue number
 	for (core::Size ires=1; ires<=template_pose->total_residue(); ++ires) {
+        //TR << "Sequence aln: " << template_pose->pdb_info()->number(ires) << " " << ires << std::endl;
 		seqpos_alignment[template_pose->pdb_info()->number(ires)] = ires;
 	}
 }
@@ -178,6 +182,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
     if (random_template_) {
         pick_random_template();
     }
+    //TR << "templ number: " << template_number() << std::endl;
     align_chunk_.set_template(template_poses_[template_number()], sequence_alignments_[template_number()]);
 
     // random chunk or loop all chunks

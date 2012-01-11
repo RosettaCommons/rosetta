@@ -175,15 +175,16 @@ void HybridizeProtocol::add_template(core::pose::PoseOP template_in,
 	dssp_obj.insert_ss_into_pose( *template_in );
 	
 	// find ss chunks in template
-	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_in); 
+	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose); 
 	
 	//break templates into contigs
-	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_in); 
+	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose); 
 	
-	templates_.push_back(template_in);
+	template_fn_.push_back(template_fn);
+	templates_.push_back(template_pose);
 	template_cst_fn_.push_back(cst_fn);
 	template_weights_.push_back(weight);
-	template_clusterID_.push_back(clusterID);
+	template_clusterID_.push_back(cluster_id);
 	template_chunks_.push_back(chunks);
 	template_contigs_.push_back(contigs);
 }
@@ -194,6 +195,7 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 	std::string line;
 	while (!f_stream.eof()) {
 		getline(f_stream, line);
+        
 		if (line.size() == 0) continue;
 		
 		std::istringstream str_stream(line);

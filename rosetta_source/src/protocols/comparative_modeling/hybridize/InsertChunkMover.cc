@@ -25,6 +25,8 @@
 #include <core/conformation/util.hh>
 #include <core/util/kinematics_util.hh>
 
+//#include <core/kinematics/FoldTree.hh>
+
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 
@@ -231,7 +233,7 @@ void InsertChunkMover::steal_torsion_from_template(core::pose::Pose & pose) {
 		TR.Debug << "torsion: " << I(4,ires_pose) << F(8,3, pose.phi(ires_pose)) << F(8,3, pose.psi(ires_pose)) << std::endl;
 	}
 }
-    
+
 
 bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 								int registry_shift,
@@ -244,10 +246,11 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 		core::pose::initialize_atomid_map( atom_map_, pose, core::id::BOGUS_ATOM_ID );
 		
 		core::Size seqpos_pose = RG.random_range(seqpos_start_, seqpos_stop_);
-
 		if (sequence_alignment_.find(seqpos_pose+registry_shift) == sequence_alignment_.end()) continue;
 		core::Size seqpos_template = sequence_alignment_.find(seqpos_pose+registry_shift)->second;
-		
+
+        //TR << "local_align: " << seqpos_pose << " " << seqpos_template << " " << registry_shift << " " << seqpos_start_ << " " << seqpos_stop_ << std::endl;
+
 		if(align_to_ss_only_) {
 			if (template_pose_->secstruct(seqpos_template) == 'L') continue;
 		}
@@ -258,7 +261,8 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 		
 		core::Size atom_map_count = 0;
 		for (Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose) {
-			int jres_template = ires_pose + seqpos_template - seqpos_pose;
+    		if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+    		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if (discontinued_upper(*template_pose_,jres_template)) break;
 
@@ -274,7 +278,8 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 			++atom_map_count;
 		}
 		for (Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose) {
-			int jres_template = ires_pose + seqpos_template - seqpos_pose;
+    		if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+    		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if (discontinued_lower(*template_pose_,jres_template)) break;
 			
@@ -325,9 +330,38 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
     utility::vector1< core::id::AtomID > sch_ids;
 	utility::vector1< numeric::xyzVector<core::Real> > sch_positions;
 
+    utility::vector1< core::Size > aligned_residues;
     utility::vector1< core::Size > non_aligned_residues;
+    bool aligned;
+    Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
+    if (sequence_alignment_local_.find(jump_residue_pose) != sequence_alignment_local_.end()) {
+        aligned = true;
+    }
+    else {
+        return;
+    }
+    
+    bool all_aligned_lower = true;
+    Size non_aligned_lower_start(seqpos_stop_);
+    for (Size ires_pose=jump_residue_pose; ires_pose<=seqpos_stop_; ++ires_pose) {
+		if (sequence_alignment_local_.find(ires_pose) == sequence_alignment_local_.end()) {
+            all_aligned_lower = false;
+            non_aligned_lower_start = ires_pose;
+            break;
+        }
+    }
+    bool all_aligned_upper = true;
+    Size non_aligned_upper_end(seqpos_start_);
+    for (Size ires_pose=jump_residue_pose; ires_pose>=seqpos_start_; --ires_pose) {
+		if (sequence_alignment_local_.find(ires_pose) == sequence_alignment_local_.end()) {
+            all_aligned_upper = false;
+            non_aligned_upper_end = ires_pose;
+            break;
+        }
+    }
 
-    for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
+    
+    for (Size ires_pose=non_aligned_upper_end+1; ires_pose<=non_aligned_lower_start-1; ++ires_pose) {
 		if (sequence_alignment_local_.find(ires_pose) != sequence_alignment_local_.end()) {
 			core::Size jres_template = sequence_alignment_local_.find(ires_pose)->second;
 
@@ -353,9 +387,6 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 			}
 			++align_trial_counter_[ires_pose];
 		}
-        else {
-            non_aligned_residues.push_back(ires_pose);
-        }
 	}
 	pose.batch_set_xyz(ids,positions);
 
@@ -368,11 +399,15 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
                                 );
     }
     pose.batch_set_xyz(sch_ids,sch_positions);
-    /*
-    for (Size ires = 1; ires <= non_aligned_residues.size(); ++ires) {
-        core::conformation::idealize_position(non_aligned_residues[ires], pose.conformation());
+    
+    if (!all_aligned_upper) {
+        core::conformation::idealize_position(non_aligned_upper_end+1, pose.conformation());
+        core::conformation::idealize_position(non_aligned_upper_end, pose.conformation());
     }
-     */
+    if (!all_aligned_lower) {
+        core::conformation::idealize_position(non_aligned_lower_start-1, pose.conformation());
+        core::conformation::idealize_position(non_aligned_lower_start, pose.conformation());
+    }
 }
 	
 std::string

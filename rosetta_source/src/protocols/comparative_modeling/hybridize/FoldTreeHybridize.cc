@@ -69,6 +69,9 @@
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+#include <numeric/random/DistributionSampler.hh>
+#include <numeric/util.hh>
+
 static numeric::random::RandomGenerator RG(42136);
 
 namespace protocols {
@@ -334,6 +337,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	// complete the chunks to cover the whole protein and customize cutpoints
 	// cutpoints in the middle of the loop
 	Loops chunks(combined_chunks);
+    utility::vector1 < core::Size > anchor_positions;
 	for (Size i=1; i<=chunks.num_loop(); ++i) {
 		if ( cut_point_decision == "middle") {
 			if (i==1) {
@@ -366,19 +370,39 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 				chunks[i].set_stop(pose.total_residue());
 			}
 		}
+        anchor_positions.push_back( choose_anchor_position(combined_chunks[i]) );
 	}
 	//add_gap_constraints_to_pose(pose, 4, chunks);
 	
 	TR.Debug << "Chunks: " << pose.total_residue() << std::endl;
 	TR.Debug << chunks << std::endl;
 	
-	StarTreeBuilder builder;
+	HybridizeFoldtreeMover foldtree_mover;
 	TR.Debug << pose.fold_tree() << std::endl;
 	if (chunks.num_loop() > 0) {
-		builder.set_up(chunks, &pose);
+        
+		foldtree_mover.set_chunks(chunks, anchor_positions);
+		foldtree_mover.initialize(pose);
 	}
 	TR.Debug << pose.fold_tree() << std::endl;
 	core::util::add_cutpoint_variants(&pose);
+}
+
+/// mu- midpoint of the chunk
+/// sigma- linear function of chunk length
+core::Size FoldTreeHybridize::choose_anchor_position(const protocols::loops::Loop & chunk) const {
+    using boost::math::normal;
+    using core::Size;
+    using numeric::random::DistributionSampler;
+    
+    double mu = chunk.start() + chunk.length() / 2.0;
+    double sigma = chunk.length() / 5.0;
+    normal distribution(mu, sigma);
+    DistributionSampler<normal> sampler(distribution);
+    
+    // Clamp insertion position to closed interval [start, stop]
+    Size position = static_cast<Size>(sampler.sample());
+    return numeric::clamp<core::Size>(position, chunk.start(), chunk.stop());;
 }
 
 numeric::xyzVector<Real>
@@ -478,7 +502,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	
 	for (Size i=1;i<=8;++i) {
 		if (i>=4) {
-			int gap_edge_shift = i-5;
+			int gap_edge_shift = i-4;
 			add_gap_constraints_to_pose(pose, ss_chunks_pose_, gap_edge_shift);
 		}
 		
@@ -501,6 +525,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		*/
         for (Size i = 1; i<= 500; ++i) {
             random_mover->apply(pose);
+						pose.dump_pdb("test.pdb");
             (*scorefxn_)(pose);
             mc->boltzmann(pose);
             if ( mc->mc_accepted() ) {

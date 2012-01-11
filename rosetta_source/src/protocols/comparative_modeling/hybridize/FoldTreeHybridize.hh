@@ -17,6 +17,7 @@
 
 #include <protocols/comparative_modeling/hybridize/InsertChunkMover.hh>
 #include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.fwd.hh>
+#include <protocols/comparative_modeling/hybridize/HybridizeFoldtreeMover.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -31,8 +32,6 @@
 #include <protocols/loops/Loops.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/nonlocal/StarTreeBuilder.hh>
-#include <protocols/nonlocal/util.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <numeric/random/random.hh>
@@ -54,7 +53,6 @@ namespace hybridize {
 using namespace core;
 using namespace protocols::moves;
 using namespace protocols::loops;
-using namespace protocols::nonlocal;
 	
 class FoldTreeHybridize: public protocols::moves::Mover
 {
@@ -81,6 +79,8 @@ public:
 
 	void
 	setup_foldtree(core::pose::Pose & pose);
+
+    core::Size choose_anchor_position(const protocols::loops::Loop & chunk) const;
 
 	numeric::xyzVector<Real> center_of_mass(core::pose::Pose const & pose);
 
