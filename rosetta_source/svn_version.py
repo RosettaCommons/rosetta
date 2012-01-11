@@ -18,7 +18,7 @@ def svn_version():
     # If svnversion is not found, returns "" -> "unknown"
     # These commands work correctly because our current working directory is the Mini root.
     ver = os.popen("svnversion .").read().strip() or "unknown"
-	url = "unknown"
+    url = "unknown"
 
     #if we aren't in an svn repository, try git
     if ver == "unknown" or ver == "exported":
