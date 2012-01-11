@@ -7515,6 +7515,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "HE"</dd><br>
 </dl>
 <dl>
+<dt><b>-stage1_weights</b> \<String\><dt>
+<dd>weight for fold tree hybridize stage</dd><br>
+<dd>Default: "score3"</dd><br>
+</dl>
+<dl>
+<dt><b>-stage1_patch</b> \<String\><dt>
+<dd>weight patch for fold tree hybridize stage</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-stage2_weights</b> \<String\><dt>
+<dd>weight for cartesian fragment hybridize stage</dd><br>
+<dd>Default: "score4_smooth_cart"</dd><br>
+</dl>
+<dl>
+<dt><b>-stage2_patch</b> \<String\><dt>
+<dd>weight patch for cartesian fragment hybridize stage</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
 <dt><b>-max_registry_shift</b> \<Integer\><dt>
 <dd>maximum registry shift</dd><br>
 <dd>Default: 0</dd><br>

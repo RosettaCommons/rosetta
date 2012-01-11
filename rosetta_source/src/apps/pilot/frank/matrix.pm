@@ -242,7 +242,7 @@ sub is_inverse {
 #
 sub is_identity {
 	my $testR = shift;
-	my $tol = 1e-5;
+	my $tol = 1e-3;
 	if (scalar( @_ ) >= 1) {
 		$tol = shift;
 	}

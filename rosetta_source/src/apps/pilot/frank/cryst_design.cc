@@ -57,7 +57,7 @@
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/protein_interface_design/movers/ddG.hh>
+#include <protocols/simple_moves/ddG.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -545,7 +545,7 @@ public:
 			new_sc(pose_for_design, sa1,sc1,sa2,sc2);
 
 			// Calculate the ddG of the monomer in the assembled and unassembled states
-			protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(score12, 1, true);
+			protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
 			ddG_mover.calculate(pose_for_design);
 			Real ddG = ddG_mover.sum_ddG();
 

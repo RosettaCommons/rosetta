@@ -177,7 +177,7 @@ if ($symm_order != 3 && $symm_order != 4 && $symm_order != 6) {
 
 my $outer_symm_order = $symm_order;
 if ($symm_order == 3) {
-	$outer_symm_order = 6;
+	$outer_symm_order = 3;
 }
 
 

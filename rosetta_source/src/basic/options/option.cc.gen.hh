@@ -592,10 +592,10 @@ option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with in
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
@@ -1183,11 +1183,11 @@ option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" )
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
 option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(10);
 option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
+option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
+option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
-option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
-option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
@@ -1552,6 +1552,10 @@ option.add( basic::options::OptionKeys::cm::hybridize::hybridize, "hybridize opt
 option.add( basic::options::OptionKeys::cm::hybridize::templates, "Input list of template files" );
 option.add( basic::options::OptionKeys::cm::hybridize::template_list, "Input list of templates, constaints, cluster, and weights" );
 option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure elements used to split the pose" ).def("HE");
+option.add( basic::options::OptionKeys::cm::hybridize::stage1_weights, "weight for fold tree hybridize stage" ).def("score3");
+option.add( basic::options::OptionKeys::cm::hybridize::stage1_patch, "weight patch for fold tree hybridize stage" ).def("");
+option.add( basic::options::OptionKeys::cm::hybridize::stage2_weights, "weight for cartesian fragment hybridize stage" ).def("score4_smooth_cart");
+option.add( basic::options::OptionKeys::cm::hybridize::stage2_patch, "weight patch for cartesian fragment hybridize stage" ).def("");
 option.add( basic::options::OptionKeys::cm::hybridize::max_registry_shift, "maximum registry shift" ).def(0);
 option.add( basic::options::OptionKeys::cm::hybridize::alignment_from_template_seqpos, "alignment from template resSeq" ).def(true);
 option.add( basic::options::OptionKeys::cm::hybridize::alignment_from_chunk_mapping, "alignment from secondary structure mapping" );
@@ -1773,10 +1777,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, 
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);

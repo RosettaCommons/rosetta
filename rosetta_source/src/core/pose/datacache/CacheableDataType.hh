@@ -52,6 +52,7 @@ enum Enum {
 	SCORE_LINE_STRINGS, // score entries composed of a pair< string, string >
 	HOLES_POSE_INFO,
 	SEQUENCE_PROFILE,
+	TEMPLATE_HYBRIDIZATION_HISTORY,  // during template hybridization, the source id for each residue
 	DAB_SASA_POSE_INFO,
 	DAB_SEV_POSE_INFO,
 	RESIDUAL_DIPOLAR_COUPLING_DATA,//NMR Residual Dipolar Coupling data

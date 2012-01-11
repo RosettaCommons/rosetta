@@ -1,5 +1,3 @@
-namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
-namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
 namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
@@ -365,6 +363,10 @@ namespace cm { namespace hybridize { BooleanOptionKey const hybridize( "cm:hybri
 namespace cm { namespace hybridize { FileVectorOptionKey const templates( "cm:hybridize:templates" );  } }
 namespace cm { namespace hybridize { FileOptionKey const template_list( "cm:hybridize:template_list" );  } }
 namespace cm { namespace hybridize { StringOptionKey const ss( "cm:hybridize:ss" );  } }
+namespace cm { namespace hybridize { StringOptionKey const stage1_weights( "cm:hybridize:stage1_weights" );  } }
+namespace cm { namespace hybridize { StringOptionKey const stage1_patch( "cm:hybridize:stage1_patch" );  } }
+namespace cm { namespace hybridize { StringOptionKey const stage2_weights( "cm:hybridize:stage2_weights" );  } }
+namespace cm { namespace hybridize { StringOptionKey const stage2_patch( "cm:hybridize:stage2_patch" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const max_registry_shift( "cm:hybridize:max_registry_shift" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const alignment_from_template_seqpos( "cm:hybridize:alignment_from_template_seqpos" );  } }
 namespace cm { namespace hybridize { IntegerVectorOptionKey const alignment_from_chunk_mapping( "cm:hybridize:alignment_from_chunk_mapping" );  } }
@@ -586,4 +588,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "Denov
 namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
-namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }

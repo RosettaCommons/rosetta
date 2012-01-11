@@ -1,4 +1,3 @@
-namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
@@ -587,3 +586,5 @@ namespace lh { BooleanOptionKey const filter_by_phipsi( "lh:filter_by_phipsi" );
 namespace lh { IntegerOptionKey const max_radius( "lh:max_radius" );  }
 namespace lh { IntegerOptionKey const max_struct( "lh:max_struct" );  }
 namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_radius" );  }
+namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
+namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }

@@ -55,6 +55,10 @@ namespace cm { namespace hybridize { extern BooleanOptionKey const hybridize; } 
 namespace cm { namespace hybridize { extern FileVectorOptionKey const templates; } }
 namespace cm { namespace hybridize { extern FileOptionKey const template_list; } }
 namespace cm { namespace hybridize { extern StringOptionKey const ss; } }
+namespace cm { namespace hybridize { extern StringOptionKey const stage1_weights; } }
+namespace cm { namespace hybridize { extern StringOptionKey const stage1_patch; } }
+namespace cm { namespace hybridize { extern StringOptionKey const stage2_weights; } }
+namespace cm { namespace hybridize { extern StringOptionKey const stage2_patch; } }
 namespace cm { namespace hybridize { extern IntegerOptionKey const max_registry_shift; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const alignment_from_template_seqpos; } }
 namespace cm { namespace hybridize { extern IntegerVectorOptionKey const alignment_from_chunk_mapping; } }

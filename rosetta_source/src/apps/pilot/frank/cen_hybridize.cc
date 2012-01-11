@@ -5,22 +5,26 @@
 
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
-
+#include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/relax/FastRelax.hh>
+#include <protocols/relax/util.hh>
+
+#include <protocols/simple_moves/FragmentMover.hh>
 
 #include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/rigid/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
-#include <protocols/evaluation/Align_RmsdEvaluator.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loops.hh>
+
 #include <core/scoring/rms_util.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -35,6 +39,7 @@
 
 #include <core/pose/util.hh>
 
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -61,6 +66,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
+#include <core/fragment/FragData.hh>
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/file_sys_util.hh>
@@ -74,17 +80,25 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+
+#include <basic/Tracer.hh>
 
 #include <boost/unordered/unordered_map.hpp>
 
+static basic::Tracer TR("cen_hyb");
+
 OPT_1GRP_KEY(FileVector, fpd, templates)
 OPT_1GRP_KEY(FileVector, fpd, fragments)
+OPT_1GRP_KEY(File, fpd, frag3)
 OPT_1GRP_KEY(File, fpd, frag9)
+OPT_1GRP_KEY(String, fpd, weights)
 OPT_1GRP_KEY(Integer, fpd, ncycles)
 OPT_1GRP_KEY(Integer, fpd, nmacrocycles)
 OPT_1GRP_KEY(Integer, fpd, subfraglen)
 OPT_1GRP_KEY(Integer, fpd, minfraglen)
-OPT_1GRP_KEY(Boolean, fpd, movie)
+OPT_1GRP_KEY(Boolean, fpd, relax)
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -103,6 +117,11 @@ public:
 			core::pose::PoseOP pose_i = new core::pose::Pose();
 			core::import_pose::pose_from_pdb( *pose_i, *residue_set, files[i].name() );
 			pose1s_.push_back( pose_i );
+
+			// since each model will be initialized with a different template, we might as well preload all loopfiles
+			protocols::loops::LoopsOP loops_i = new protocols::loops::Loops;
+			loops_i->read_loop_file( files[i].vol()+files[i].path()+files[i].base()+".loops" );
+			loop1s_.push_back( loops_i );
 		}
 
 		// load all the fragments for insertion
@@ -113,10 +132,12 @@ public:
 			core::import_pose::pose_from_pdb( *pose_i, *residue_set, files[i].name() );
 			if (pose_i->total_residue() >= MINFRAGLEN) {
 				pose2s_.push_back( pose_i );
-				std::cout << "PDB " << files[i].name() << " insert point " << pose_i->pdb_info()->number(1) << std::endl;
+				TR << "PDB " << files[i].name() << " insert point " << pose_i->pdb_info()->number(1) << std::endl;
 			}
 		}
 
+		//fpd ----------------------------------------
+		//fpd -- need to test if this is worthwhile --
 		// default chunking on remaining long fragments
 		// int FRAGLEN = option[ fpd::subfraglen ]();
 		// core::Size nfrags = pose1s_.size();
@@ -128,52 +149,50 @@ public:
 		// 			core::pose::PoseOP pose_j = new core::pose::Pose( *pose_i, j, j+FRAGLEN );
 		// 			pose2s_.push_back( pose_j );
 		// 			pose2_insert_points_.push_back( pose1_insert_points_[i]+j-1 );
-		// 			std::cout << "Created " << pose_j->total_residue() << "-residue subfragment"
+		// 			TR << "Created " << pose_j->total_residue() << "-residue subfragment"
 		// 					  << " from PDB " << files[i].name() 
 		// 					  << " insert point " << pose_i->pdb_info()->number(j) << std::endl;
 		// 		}
 		// 	}
 		// }
+		//fpd ----------------------------------------
 
 		// screfunction init
-		lowres_scorefxn_ = core::scoring::getScoreFunction();
+		lowres_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( option[ fpd::weights ]() );
 
+		// force ideal
 		min1_scorefxn_ = new core::scoring::ScoreFunction();
 		min1_scorefxn_->set_weight( core::scoring::vdw, lowres_scorefxn_->get_weight( core::scoring::vdw ) );
 		min1_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
 
-		min2_scorefxn_ = new core::scoring::ScoreFunction();
-		min2_scorefxn_->set_weight( core::scoring::vdw, lowres_scorefxn_->get_weight( core::scoring::vdw ) );
-		min2_scorefxn_->set_weight( core::scoring::hbond_lr_bb, lowres_scorefxn_->get_weight( core::scoring::hbond_lr_bb ) );
-		min2_scorefxn_->set_weight( core::scoring::hbond_sr_bb, lowres_scorefxn_->get_weight( core::scoring::hbond_sr_bb ) );
-		min2_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
-		min2_scorefxn_->set_weight( core::scoring::rama, lowres_scorefxn_->get_weight( core::scoring::rama ) );
-		min2_scorefxn_->set_weight( core::scoring::omega, lowres_scorefxn_->get_weight( core::scoring::omega ) );
+		min2_scorefxn_ = lowres_scorefxn_->clone();
+		min2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.0 );
 
-		min3_scorefxn_ = new core::scoring::ScoreFunction();
-		min3_scorefxn_->set_weight( core::scoring::vdw, lowres_scorefxn_->get_weight( core::scoring::vdw ) );
-		min3_scorefxn_->set_weight( core::scoring::hbond_lr_bb, lowres_scorefxn_->get_weight( core::scoring::hbond_lr_bb ) );
-		min3_scorefxn_->set_weight( core::scoring::hbond_sr_bb, lowres_scorefxn_->get_weight( core::scoring::hbond_sr_bb ) );
-		min3_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
-		min3_scorefxn_->set_weight( core::scoring::rama, lowres_scorefxn_->get_weight( core::scoring::rama ) );
-		min3_scorefxn_->set_weight( core::scoring::omega, lowres_scorefxn_->get_weight( core::scoring::omega ) );
-		min3_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-			0.1*lowres_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) );
+		min3_scorefxn_ = lowres_scorefxn_->clone();
+
+		// chainbreak score set in apply()
+		lr_scorefxn_ = lowres_scorefxn_->clone();
+		lr_scorefxn_->set_weight( core::scoring::cart_bonded, 0.0 );
 
 		// change VDW set
-		core::scoring::methods::EnergyMethodOptions lowres_options(lowres_scorefxn_->energy_method_options());
-		lowres_options.atom_vdw_atom_type_set_name("centroid_min");
-		min1_scorefxn_->set_energy_method_options(lowres_options);
-		min2_scorefxn_->set_energy_method_options(lowres_options);
-		min3_scorefxn_->set_energy_method_options(lowres_options);
-
+		// not needed with score4_smooth
+		//core::scoring::methods::EnergyMethodOptions lowres_options(lowres_scorefxn_->energy_method_options());
+		//lowres_options.atom_vdw_atom_type_set_name("centroid_min");
+		//min1_scorefxn_->set_energy_method_options(lowres_options);
 		if ( option[ OptionKeys::fpd::frag9 ].user() ) {
 			using namespace core::fragment;
-			fragments_ = new ConstantLengthFragSet( 9 );
-			fragments_ = FragmentIO().read_data( option[ OptionKeys::fpd::frag9 ]().name() );
-
-			// code shamelessly stolen from nonlocal/SingleFragmentMover.cc
-			for (core::fragment::FrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
+			fragments9_ = new ConstantLengthFragSet( 9 );
+			fragments9_ = FragmentIO().read_data( option[ OptionKeys::fpd::frag9 ]().name() );
+			for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
+				core::Size position = (*i)->start();
+				library_[position] = **i;
+			}
+		}
+		if ( option[ OptionKeys::fpd::frag3 ].user() ) {
+			using namespace core::fragment;
+			fragments3_ = new ConstantLengthFragSet( 3 );
+			fragments3_ = FragmentIO().read_data( option[ OptionKeys::fpd::frag3 ]().name() );
+			for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
 				core::Size position = (*i)->start();
 				library_[position] = **i;
 			}
@@ -185,6 +204,26 @@ public:
 			core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
 		}
 	}
+
+	core::Real get_gdtmm( core::pose::Pose &pose ) {
+		core::Real gdtmm = 0;
+		if ( native_ && native_->total_residue() > 0) {
+			if ( !aln_ ) {
+				core::sequence::SequenceOP model_seq ( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
+				core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native_->sequence(), "native", 1 ) );
+				aln_ = new core::sequence::SequenceAlignment;
+				*aln_ = align_naive(model_seq,native_seq);
+			}
+
+			int n_atoms;
+			ObjexxFCL::FArray2D< core::Real > p1a, p2a;
+			protocols::comparative_modeling::gather_coords( pose, *native_, *aln_, n_atoms, p1a, p2a );
+	
+			core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
+			gdtmm = core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
+		}
+		return gdtmm;
+	}	
 
 	void superpose( core::pose::Pose &frag, core::pose::Pose &pose, 
 	                numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT) {
@@ -249,13 +288,20 @@ public:
 
 	///////////////////////////
 	///////////////////////////
+
 	void apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame ) {
 		core::Size start = frame.start(),len = frame.length();
 
-		int aln_len = 4;
+		// we might want to tune this
+		// it might make sense to change this based on gap width
+		// for really large gaps make it one sided to emulate fold-tree fragment insertion
+		int aln_len = 3;
 	
 		bool nterm = (start == 1);
 		bool cterm = (start == pose.total_residue()-8);
+
+		if (pose.residue(pose.total_residue()).aa() == core::chemical::aa_vrt)
+			cterm = (start == pose.total_residue()-9);
 
 		// insert frag
 		core::pose::Pose pose_copy = pose;
@@ -318,16 +364,13 @@ public:
 				for ( int j=0; j<3; ++j ) final_coords(j+1,ii+1) -= com2[j];
 			}
 	
-			// get optimal superposition
-			// rotate >final< to >init<
 			numeric::Real ctx;
 			float rms;
 
 			numeric::model_quality::findUU( final_coords, init_coords, ww, 2*4*aln_len, uu, ctx );
 			numeric::model_quality::calc_rms_fast( rms, final_coords, init_coords, ww, 2*4*aln_len, ctx );
 
-			//std::cout << "try " << tries << " rms " << rms << std::endl;
-
+			//fpd another place where we might want to tune parameters
 			if (rms < 0.5) break;
 			if (tries >= 20 && rms < 1) break;
 			if (tries >= 40 && rms < 2) break;
@@ -354,18 +397,32 @@ public:
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
+		core::Size NRES = pose.total_residue();
+
+		if (option[ constraints::cst_file ].user() ) {
+			protocols::simple_moves::ConstraintSetMoverOP cst_mover( new protocols::simple_moves::ConstraintSetMover() );
+			cst_mover->apply( pose );
+		}
+
+		// density
+		if ( option[ OptionKeys::edensity::mapfile ].user() ) {
+			protocols::electron_density::SetupForDensityScoringMoverOP dens( new protocols::electron_density::SetupForDensityScoringMover );
+			dens->apply(pose);
+		}
+
+		protocols::moves::MoverOP tocen =
+			new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+		tocen->apply( pose );
+
 		// minimizer
 		core::optimization::MinimizerOptions options( "linmin", 0.01, true, false, false );
 		core::optimization::MinimizerOptions options_minilbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-		options_minilbfgs.max_iter(10);
+		options_minilbfgs.max_iter(5);
 		core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-		options_lbfgs.max_iter(200);
+		options_lbfgs.max_iter(500);
 		core::optimization::CartesianMinimizer minimizer;
 		core::kinematics::MoveMap mm;
 		mm.set_bb  ( true ); mm.set_chi ( true ); mm.set_jump( true );
-
-		protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
-		tocen->apply( pose );
 
 		core::Real max_cart = lowres_scorefxn_->get_weight( core::scoring::cart_bonded );
 		core::Real max_cst  = lowres_scorefxn_->get_weight( core::scoring::atom_pair_constraint );
@@ -374,13 +431,100 @@ public:
 		// for i = 1 to n cycles
 		core::Size ncycles = option[ fpd::ncycles ]();
 		core::Size nmacrocycles = option[ fpd::nmacrocycles ]();
-		std::cout << "RUNNING FOR " << nmacrocycles << " MACROCYCLES" << std::endl;
+		TR << "RUNNING FOR " << nmacrocycles << " MACROCYCLES" << std::endl;
 		
 		if (nmacrocycles > 0) {
-			for (int m=1; m<=std::min((int)nmacrocycles,5); m+=1) {
+		sampler:
+			// do cycle 1
+			{
+				// pick a fragment at random
+				core::Size frag_id = numeric::random::random_range(1, pose1s_.size() );
+				core::pose::PoseOP frag = pose1s_[frag_id];
+				protocols::loops::LoopsOP loops = loop1s_[frag_id];
+	
+				// xyz copy starting model
+				for (int i=1; i<=NRES; ++i)
+				for (int j=1; j<=frag->residue(i).natoms(); ++j) {
+					core::id::AtomID src(j,i), tgt(j, frag->pdb_info()->number(i));
+					pose.set_xyz( tgt, frag->xyz( src ) );
+				}
+
+				if (loops->size() != 0) {
+					// set foldtree + variants
+					loops->auto_choose_cutpoints(pose);
+					core::kinematics::FoldTree f_in=pose.fold_tree(), f_new;
+					protocols::loops::fold_tree_from_loops( pose, *loops, f_new);
+					pose.fold_tree( f_new );
+					protocols::loops::add_cutpoint_variants( pose );
+	
+					// set movemap
+					core::kinematics::MoveMapOP mm_loop = new core::kinematics::MoveMap();
+					for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
+						for( Size i=it->start(); i<=it->stop(); ++i ) {
+							mm_loop->set_bb(i, true);
+							mm_loop->set_chi(i, true); // chi of loop residues
+						}
+					}
+	
+					// setup fragment movers
+					protocols::simple_moves::ClassicFragmentMoverOP frag3mover, frag9mover;
+					frag3mover = new protocols::simple_moves::ClassicFragmentMover( fragments3_, mm_loop );
+					frag3mover->set_check_ss( false );frag3mover->enable_end_bias_check( false );
+					frag9mover = new protocols::simple_moves::ClassicFragmentMover( fragments9_, mm_loop );
+					frag9mover->set_check_ss( false );frag9mover->enable_end_bias_check( false );
+	
+					// extend + idealize loops
+					for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
+						protocols::loops::set_extended_torsions( pose, *it );
+					}
+	
+					// setup MC
+					lr_scorefxn_->set_weight( core::scoring::linear_chainbreak, 0.5 );
+					(*lr_scorefxn_)(pose);
+					protocols::moves::MonteCarloOP mc1 = new protocols::moves::MonteCarlo( pose, *lr_scorefxn_, 2.0 );
+	
+					core::Size neffcycles = 2*ncycles;
+					for (int n=1; n<=neffcycles; ++n) {
+						frag9mover->apply( pose ); (*lr_scorefxn_)(pose); mc1->boltzmann( pose , "frag9" );
+						frag3mover->apply( pose ); (*lr_scorefxn_)(pose); mc1->boltzmann( pose , "frag3" );
+	
+						if (n%100 == 0) {
+							mc1->show_scores();
+							mc1->show_counters();
+						}
+					}
+					mc1->recover_low( pose );
+
+					lr_scorefxn_->set_weight( core::scoring::linear_chainbreak, 2.0 );
+					lr_scorefxn_->set_weight( core::scoring::chainbreak, 0.0 );
+					(*lr_scorefxn_)(pose);
+					protocols::moves::MonteCarloOP mc2 = new protocols::moves::MonteCarlo( pose, *lr_scorefxn_, 2.0 );
+					for (int n=1; n<=neffcycles; ++n) {
+						frag9mover->apply( pose ); (*lr_scorefxn_)(pose); mc2->boltzmann( pose , "frag9" );
+						frag3mover->apply( pose ); (*lr_scorefxn_)(pose); mc2->boltzmann( pose , "frag3" );
+	
+						if (n%100 == 0) {
+							mc2->show_scores();
+							mc2->show_counters();
+						}
+					}
+
+					// restore input ft
+					mc2->recover_low( pose );
+					protocols::loops::remove_cutpoint_variants( pose );
+					pose.fold_tree( f_in );
+				}
+
+				// GDTMM
+				core::Real gdtmm = get_gdtmm( pose );
+				TR << "CYCLE 1  GDTMM = " << gdtmm << std::endl;
+				core::pose::setPoseExtraScores( pose, "GDTMM_0", gdtmm);
+			}
+
+			for (int m=2; m<=std::min((int)nmacrocycles,5); m+=1) {
 				core::Real bonded_weight = 0;
-				if (m==1) bonded_weight = 0;
-				if (m==2) bonded_weight = 0;
+				if (m==1) bonded_weight = 0.0*max_cart;
+				if (m==2) bonded_weight = 0.0*max_cart;
 				if (m==3) bonded_weight = 0.01*max_cart;
 				if (m==4) bonded_weight = 0.1*max_cart;
 				if (m==5) bonded_weight = max_cart;
@@ -394,23 +538,20 @@ public:
 				if (m==3)  vdw_weight = 0.1*max_vdw;
 				if (m==4)  vdw_weight = 0.1*max_vdw;
 	
-				std::cout << "CYCLE " << m << std::endl;
-				std::cout << "  setting bonded weight = " << bonded_weight << std::endl;
-				std::cout << "  setting cst    weight = " << cst_weight << std::endl;
-				std::cout << "  setting vdw    weight = " << vdw_weight << std::endl;
+				TR << "CYCLE " << m << std::endl;
+				TR << "  setting bonded weight = " << bonded_weight << std::endl;
+				TR << "  setting cst    weight = " << cst_weight << std::endl;
+				TR << "  setting vdw    weight = " << vdw_weight << std::endl;
+
 				lowres_scorefxn_->set_weight( core::scoring::cart_bonded, bonded_weight );
 				lowres_scorefxn_->set_weight( core::scoring::atom_pair_constraint, cst_weight );
 				lowres_scorefxn_->set_weight( core::scoring::vdw, vdw_weight );
 	
 				(*lowres_scorefxn_)(pose);
 				protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 2.0 );
-				protocols::moves::MonteCarloOP mc_inner
-					= new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 0.0 );
 	
-				core::Size neffcycles = option[ fpd::ncycles ]();
-
-				if (m==1) neffcycles = 1;
-
+				core::Size neffcycles = ncycles;
+				if (m==5) neffcycles /=2;
 				for (int n=1; n<=neffcycles; ++n) {
 					// superimpose frag
 					numeric::xyzMatrix< core::Real > R;
@@ -418,17 +559,14 @@ public:
 					R.xx() = R.yy() = R.zz() = 1;
 					R.xy() = R.yx() = R.zx() = R.zy() = R.yz() = R.xz() = 0;
 	
-					// 1 - insert homologue frag, don't superpose
-					// 2 - insert homologue subfrag, don't superpose
-					// 3 - insert homologue frag, superpose
-					// 4 - insert homologue subfrag, superpose
+					// 1 - insert homologue template, global frame
+					// 2 - insert homologue subfrag, global frame
+					// 3 - insert homologue frag, local frame
+					// 4 - insert homologue subfrag, local frame
 					// 5 - insert sequence frag
 					core::Real action_picker = numeric::random::uniform();
 					core::Size action = 0;
-	
-					if (m==1) {
-						action = 1;
-					} else if (m==2) {
+					if (m==2) {
 						action = 2;
 						if (action_picker < 0.2) action = 5;
 					} else if (m==3) {
@@ -450,10 +588,10 @@ public:
 	
 					if (action == 5) {
 						// pick an insert position
-						utility::vector1<core::Real> residuals( pose.total_residue() , 0.0 );
+						utility::vector1<core::Real> residuals( NRES , 0.0 );
 						utility::vector1<core::Real> max_residuals(3,0);
 						utility::vector1<int> max_poses(4,-1);
-						for (int i=1; i<pose.total_residue(); ++i) {
+						for (int i=1; i<NRES; ++i) {
 							numeric::xyzVector< core::Real > c0 , n1;
 							c0 = pose.residue(i).atom(" C  ").xyz();
 							n1 = pose.residue(i+1).atom(" N  ").xyz();
@@ -472,7 +610,7 @@ public:
 						}
 	
 						// 25% chance of random position
-						max_poses[ 4 ] = numeric::random::random_range(1,pose.total_residue());
+						max_poses[ 4 ] = numeric::random::random_range(1,NRES);
 						int select_position = numeric::random::random_range(1,4);
 						if (select_position == 4)
 							action_string = action_string+"_rand";
@@ -480,20 +618,17 @@ public:
 	
 						// select random pos in [i-8,i]
 						core::Size insert_pos = max_pos - numeric::random::random_range(3,5);
-						insert_pos = std::min( insert_pos, pose.total_residue()-8);
+						insert_pos = std::min( insert_pos, NRES-8);
 						insert_pos = std::max( (int)insert_pos, 1);
 	
-						//core::Size insert_pos = numeric::random::random_range(1, pose.total_residue()-8);
-						//std::cerr << "type 3 insert at pos " << insert_pos << std::endl;
 						apply_frame (pose, library_[insert_pos]);
-	
 					} else {
 						// pick a fragment at random
 						core::Size frag_set = (action == 2 || action == 4) ? 2 : 1;
 						core::Size frag_id = numeric::random::random_range(1, frag_set==1 ? pose1s_.size():pose2s_.size() );
 						core::pose::PoseOP frag = (frag_set==1) ? pose1s_[frag_id] : pose2s_[frag_id];
 						//int insert_pt = (frag_set==1) ? pose1_insert_points_[frag_id] : pose2_insert_points_[frag_id];
-	
+
 						if (frag_set == 2)
 							if (frag->total_residue() > 14)
 								action_string = action_string+"_15+";
@@ -521,120 +656,82 @@ public:
 					// //////   //
 					try {
 						(*min3_scorefxn_)(pose);
-						minimizer.run( pose, mm, *min3_scorefxn_, options );
+						if (m<5)
+							minimizer.run( pose, mm, *min3_scorefxn_, options );
+						else
+							minimizer.run( pose, mm, *min3_scorefxn_, options_minilbfgs );
 	
 						mc->boltzmann( pose , action_string );
 					} catch( utility::excn::EXCN_Base& excn ) {
-						mc->recover_low(pose);
+						//fpd hbond shit 
+						mc->recover_low( pose );
 					}
 					if (n%100 == 0) {
 						mc->show_scores();
 						mc->show_counters();
 					}
-
 				}
 				mc->recover_low(pose);
 	
 	
-				// evaluator
-				if ( option[ in::file::native ].user() && native_) {
-					// align first time
-					if ( !aln_ ) {
-						core::sequence::SequenceOP model_seq ( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
-						core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native_->sequence(), "native", 1 ) );
-						aln_ = new core::sequence::SequenceAlignment;
-						*aln_ = align_naive(model_seq,native_seq);
-					}
-	
-					int n_atoms;
-					ObjexxFCL::FArray2D< core::Real > p1a, p2a;
-					protocols::comparative_modeling::gather_coords( pose, *native_, *aln_, n_atoms, p1a, p2a );
-	
-					core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
-					core::Real gdtmm = core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
-					std::cout << "CYCLE " << m << "  GDTMM = " << gdtmm
-							  << " (" << m_1_1 << "," << m_2_2 << "," << m_3_3 << "," << m_4_3 << "," << m_7_4 << ")" << std::endl;
-				}
-	
+				// GDTMM
+				core::Real gdtmm = get_gdtmm( pose );
+				TR << "CYCLE " << m << "  GDTMM = " << gdtmm << std::endl;
+
+				// final minimization	
 				if (m==5) {
 					(*min3_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
-					(*min2_scorefxn_)(pose); minimizer.run( pose, mm, *min2_scorefxn_, options_lbfgs );
-					(*min1_scorefxn_)(pose); minimizer.run( pose, mm, *min1_scorefxn_, options_lbfgs );
-					(*min2_scorefxn_)(pose); minimizer.run( pose, mm, *min2_scorefxn_, options_lbfgs );
+					(*min2_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
+					(*min1_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
 					(*min3_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
 	
-					// evaluator
-					if ( option[ in::file::native ].user() && native_) {
-						// align first time
-						if ( !aln_ ) {
-							core::sequence::SequenceOP model_seq ( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
-							core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native_->sequence(), "native", 1 ) );
-							aln_ = new core::sequence::SequenceAlignment;
-							*aln_ = align_naive(model_seq,native_seq);
-						}
-		
-						int n_atoms;
-						ObjexxFCL::FArray2D< core::Real > p1a, p2a;
-						protocols::comparative_modeling::gather_coords( pose, *native_, *aln_, n_atoms, p1a, p2a );
-		
-						core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
-						core::Real gdtmm = core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
-						std::cout << "CYCLE " << m << "+min  GDTMM = " << gdtmm
-								  << " (" << m_1_1 << "," << m_2_2 << "," << m_3_3 << "," << m_4_3 << "," << m_7_4 << ")" << std::endl;
-					}
+					core::Real gdtmm = get_gdtmm( pose );
+					TR << "CYCLE " << m << "+min  GDTMM = " << gdtmm << std::endl;
+
+					//fpd write to output
+					core::pose::setPoseExtraScores( pose, "GDTMM_cen", gdtmm);
 				}
-			}
-		} else { // nmacrocycles==0
-			if ( option[ in::file::native ].user() && native_) {
-				if ( !aln_ ) {
-					core::sequence::SequenceOP model_seq ( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
-					core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native_->sequence(), "native", 1 ) );
-					aln_ = new core::sequence::SequenceAlignment;
-					*aln_ = align_naive(model_seq,native_seq);
-				}
-
-				int n_atoms;
-				ObjexxFCL::FArray2D< core::Real > p1a, p2a;
-				protocols::comparative_modeling::gather_coords( pose, *native_, *aln_, n_atoms, p1a, p2a );
-
-				core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
-				core::Real gdtmm = core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
-				std::cout << "FINAL GDTMM = " << gdtmm
-						  << " (" << m_1_1 << "," << m_2_2 << "," << m_3_3 << "," << m_4_3 << "," << m_7_4 << ")" << std::endl;
-			}
-
-			(*min3_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
-			(*min2_scorefxn_)(pose); minimizer.run( pose, mm, *min2_scorefxn_, options_lbfgs );
-			(*min1_scorefxn_)(pose); minimizer.run( pose, mm, *min1_scorefxn_, options_lbfgs );
-			(*min2_scorefxn_)(pose); minimizer.run( pose, mm, *min2_scorefxn_, options_lbfgs );
-			(*min3_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
-
-			if ( option[ in::file::native ].user() && native_) {
-				int n_atoms;
-				ObjexxFCL::FArray2D< core::Real > p1a, p2a;
-				protocols::comparative_modeling::gather_coords( pose, *native_, *aln_, n_atoms, p1a, p2a );
-
-				core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
-				core::Real gdtmm = core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
-				std::cout << "FINAL+min  GDTMM = " << gdtmm
-						  << " (" << m_1_1 << "," << m_2_2 << "," << m_3_3 << "," << m_4_3 << "," << m_7_4 << ")" << std::endl;
 			}
 		}
 
-		lowres_scorefxn_->set_weight( core::scoring::cart_bonded, max_cart );
-		(*lowres_scorefxn_)(pose);
+		if (option[ fpd::relax ]()) {
+			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
+			tofa->apply( pose );
+			protocols::relax::RelaxProtocolBaseOP relax_prot = protocols::relax::generate_relax_from_cmd();
+			relax_prot->set_min_type("lbfgs_armijo_nonmonotone");
+			relax_prot->apply( pose );
+		} else {
+			lowres_scorefxn_->set_weight( core::scoring::cart_bonded, max_cart );
+			lowres_scorefxn_->set_weight( core::scoring::atom_pair_constraint, max_cst );
+			lowres_scorefxn_->set_weight( core::scoring::vdw, max_vdw );
+			(*lowres_scorefxn_)(pose);
+		}
+
+		core::Real gdtmm = get_gdtmm( pose );
+		TR << "relax GDTMM = " << gdtmm << std::endl;
+		core::pose::setPoseExtraScores( pose, "GDTMM_final", gdtmm);
 	}
 
 	virtual std::string get_name() const {
 		return "CustomMover";
 	}
+	protocols::moves::MoverOP
+	clone() const {
+		return new CustomMover( *this );
+	}
+	protocols::moves::MoverOP
+	fresh_instance() const {
+		return new CustomMover();
+	}
+
 
 private:
 	utility::vector1< core::pose::PoseOP > pose1s_,pose2s_;
-	//utility::vector1< int > pose1_insert_points_, pose2_insert_points_;
+	utility::vector1< protocols::loops::LoopsOP > loop1s_;
 	core::scoring::ScoreFunctionOP lowres_scorefxn_, min1_scorefxn_, min2_scorefxn_, min3_scorefxn_;
+	core::scoring::ScoreFunctionOP lr_scorefxn_;
 
-	core::fragment::FragSetOP fragments_;
+	core::fragment::FragSetOP fragments9_, fragments3_;
 	boost::unordered_map<core::Size, core::fragment::Frame> library_;
 
 	// native pose, aln
@@ -650,13 +747,8 @@ my_main( void* ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	SequenceMoverOP seq( new SequenceMover() );
-	//seq->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
-	seq->add_mover( new protocols::simple_moves::ConstraintSetMover() );
-	seq->add_mover( new CustomMover() );
-
 	try{
-		protocols::jd2::JobDistributor::get_instance()->go( seq );
+		protocols::jd2::JobDistributor::get_instance()->go( new CustomMover() );
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
@@ -671,12 +763,14 @@ int
 main( int argc, char * argv [] ) {
 	NEW_OPT(fpd::templates, "templates", utility::vector1<utility::file::FileName >(0));
 	NEW_OPT(fpd::fragments, "fragments", utility::vector1<utility::file::FileName >(0));
+	NEW_OPT(fpd::frag3, "frag3", "");
 	NEW_OPT(fpd::frag9, "frag9", "");
+	NEW_OPT(fpd::weights, "weights", "score4_smooth_cart");
 	NEW_OPT(fpd::ncycles, "ncycles", 500);
 	NEW_OPT(fpd::nmacrocycles, "nmacrocycles", 5);
 	NEW_OPT(fpd::subfraglen, "subfraglen", 9);
 	NEW_OPT(fpd::minfraglen, "minfraglen", 4);
-	NEW_OPT(fpd::movie, "movie", false);
+	NEW_OPT(fpd::relax, "relax", false);
 
 	devel::init( argc, argv );
 

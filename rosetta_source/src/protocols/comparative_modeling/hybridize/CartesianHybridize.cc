@@ -407,7 +407,7 @@ sampler:
 			core::Size action = 0;
 			if (m==1) {
 				action = 1;
-				if (action_picker < 0.2) action = 5;
+				if (action_picker < 0.2) action = 3;
 			} else if (m==2) {
 				action = 2;
 				if (action_picker < 0.2) action = 3;

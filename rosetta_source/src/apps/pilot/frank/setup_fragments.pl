@@ -11,9 +11,11 @@ require "matrix.pm";
 
 my $dssp                 = "/work/dimaio/bin/dssp";
 
-my @RMS_CUTOFFS = (10,7,4,3,2.5,2,1.5,1);
-my $RMSCUTOFF = 8;
+my @RMS_CUTOFFS = (7,4,3,2.5,2,1.5,1);
+my $RMSCUTOFF = 999;
 my $ALIGNCUTOFF = 0.2;
+
+my $CLUSTERCUTOFF = 0.4;
 
 
 ###############################
@@ -29,13 +31,15 @@ my %one_to_three = (
 ###############################
 ###############################
 
-if ($#ARGV < 1) {
-	print STDERR "usage: $0 <fastafile> <pdb>*\n";
+if ($#ARGV < 2) {
+	print STDERR "usage: $0 <fastafile> <alifile> <pdb>*\n";
 	exit -1;
 }
 
-# read sequence
 my $fastafile = shift @ARGV;
+my $alifile = shift @ARGV;
+
+# read sequence
 open (FASTA, $fastafile) || print STDERR "Cannot open $_";
 my @fastalines = <FASTA>;
 close FASTA;
@@ -50,6 +54,22 @@ $seq =~ s/\s//g; #remove whitespace
 my $nres = length( $seq );
 print STDERR "Read sequence: $seq\n";
 
+## read ali file to get seeds
+my @seeds;
+if ($alifile ne "X") {
+	open (ALI, $alifile) || print STDERR "Cannot open $_";
+	my @alilines = <ALI>;
+	close ALI;
+	foreach my $line (@alilines) {
+		chomp $line;
+		if ($line =~ /^##/) {
+			my @fields = split / /, $line;
+			push @seeds, $fields[$#fields];
+		}
+	}
+	print STDERR "Using seed templates: @seeds\n";
+}
+
 my $currfrag_lines;
 my $currfrag_ids;
 my %allfrags;
@@ -62,7 +82,8 @@ my %ss;
 my $minres = 9999;
 my $maxres = 0;
 foreach my $pdb (@ARGV) {
-	open (PDB, $pdb) || print STDERR "Cannot open $_";
+	print STDERR $pdb."\n";
+	open (PDB, $pdb) || print STDERR "Cannot open $pdb";
 
 	my $start_new_frag = 0;
 	$bbatoms{$pdb} = {};
@@ -80,7 +101,7 @@ foreach my $pdb (@ARGV) {
 		if ($line =~ /^TER/) {
 			$start_new_frag = 1;
 		}
-		next if (! $line =~ /^ATOM/);
+		next if ($line !~ /^ATOM/);
 
 		my $atom = substr ($line, 12, 4);
 		my $chain = substr($line, 21, 1);
@@ -210,10 +231,11 @@ foreach my $pdb (@ARGV) {
 my $npdbs = @ARGV;
 my $rmsds = [];
 my $nalignlen = [];
-my $overlapscore = [];
 my $Rs = [];
 my $comis = [];
 my $comjs = [];
+
+my $overlapscore = []; # for clustering
 
 foreach my $i (0..$#ARGV) {
 foreach my $j ($i..$#ARGV) {
@@ -224,6 +246,13 @@ foreach my $j ($i..$#ARGV) {
 	}
 	my $ncommon_atoms = scalar( @common_atoms );
 
+	if ($ncommon_atoms < 6) {
+		$rmsds->[$i][$j] = 9999;
+		$Rs->[$i][$j] = [[1,0,0],[0,1,0],[0,0,1]];
+		$nalignlen->[$i][$j] = scalar(@common_atoms);
+		next;
+	}
+
 	# atom lists
 	my $atoms_i = [];
 	my $atoms_j = [];
@@ -232,9 +261,13 @@ foreach my $j ($i..$#ARGV) {
 		push @{ $atoms_j }, deep_copy( $bbatoms{$ARGV[$j]}->{$_} );
 	}
 
+	#print STDERR "Align( ".$ARGV[$i]." , ".$ARGV[$j]." )\n";
+	#print STDERR " size1 = ".scalar( ( @{ $atoms_i } ))."\n";
+	#print STDERR " size2 = ".scalar( ( @{ $atoms_j } ))."\n";
 	# initial alignment
 	($Rs->[$i][$j], $rmsds->[$i][$j], $comis->[$i][$j], $comjs->[$i][$j]) = rms_align( $atoms_i , $atoms_j );
 	$nalignlen->[$i][$j] = scalar(@common_atoms);
+	#print STDERR " rms = ".$rmsds->[$i][$j]."\n";
 
 	next if ($i==$j);
 
@@ -253,6 +286,11 @@ foreach my $j ($i..$#ARGV) {
 				push @{ $atoms_i }, deep_copy( $bbatoms{$ARGV[$i]}->{$_} );
 				push @{ $atoms_j }, deep_copy( $bbatoms{$ARGV[$j]}->{$_} );
 			}
+		}
+
+		# cluster assignment
+		if ($RMS_ALIGN == $RMS_CUTOFFS[0]) {
+			$overlapscore->[$i][$j] = scalar( @new_common_atoms ) / $ncommon_atoms;
 		}
 
 		if ( scalar( @new_common_atoms ) > $ncommon_atoms*$ALIGNCUTOFF ) {
@@ -275,27 +313,54 @@ foreach my $j (0..$i-1) {
 	 $comis->[$i][$j] =  vadd( $comis->[$j][$i], $comjs->[$j][$i] );
 	 $comjs->[$i][$j] =  vscale( -1 , $comjs->[$j][$i] );
 	 $nalignlen->[$i][$j] = $nalignlen->[$j][$i];
+	 $overlapscore->[$i][$j] = $overlapscore->[$j][$i];
 }
 }
 
-# find lowest average RMS to serve as seed
+# align seeds ... all in cluster 1
+my @seedmask= (0) x scalar( @ARGV );
+my $nseedsfound = 0;
+foreach my $i (0..$#ARGV) {
+foreach my $j (@seeds) {
+	if ($ARGV[$i] =~ /\/$j/) {
+		$seedmask[$i] = 1;
+		$nseedsfound++;
+	}
+}
+}
+
+if ($nseedsfound == 0) {
+	foreach my $i (0..$#ARGV) {
+		$seedmask[$i] = 1;
+	}
+}
+
+print STDERR "Found $nseedsfound seeds\n";
+
+
 my @rmsSUM = (0) x scalar( @ARGV );
 foreach my $i (0..$#ARGV) {
 foreach my $j ($i+1..$#ARGV) {
+	next if ($seedmask[$i] == 0 || $seedmask[$j] == 0 );
 	$rmsSUM[$i] += $rmsds->[$i][$j];
 	$rmsSUM[$j] += $rmsds->[$i][$j];
 }
 }
-
 my $minRMS = 99999;
 my $minI = -1;
 my $minJ;
 foreach my $i (0..$#ARGV) {
+	next if ($seedmask[$i] == 0);
 	if ($rmsSUM[$i] < $minRMS) {
 		$minRMS = $rmsSUM[$i];
 		$minI = $i;
 	}
 }
+
+my $nextclusterid = 1;
+my $clusterid = [];
+$clusterid->[$minI] = $nextclusterid;
+$nextclusterid++;
 
 # use i's coordinate frame
 my $globalRs = [];
@@ -305,7 +370,7 @@ $preTs->[$minI] = deep_copy( $comis->[$minI][$minI] );
 my $postTs = [];
 $postTs->[$minI] = $preTs->[$minI];
 
-# for i = 2 to $#ARGV find best alignment to already-aligned model
+# for remaining structs find best alignment to already-aligned model
 my @aligned = (0) x scalar(@ARGV);
 $aligned[$minI] = 1;
 
@@ -333,6 +398,14 @@ foreach my $cycle (1..$#ARGV) {
 	print STDERR "ALIGN ".$ARGV[$minJ]." (from".$ARGV[$minI].")\n";
 	$globalRs->[$minJ] = mmult( $globalRs->[$minI], $Rs->[$minI][$minJ]  );
 	$preTs->[$minJ] = deep_copy( $comis->[$minI][$minJ] );
+
+	# check to see if this belongs in a new cluster
+	if ($overlapscore->[$minI][$minJ] >= $CLUSTERCUTOFF || $seedmask[$minJ] == 1) {
+		$clusterid->[$minJ] = $clusterid->[$minI];
+	} else {
+		$clusterid->[$minJ] = $nextclusterid;
+		$nextclusterid++;
+	}
 
 	# post-rotation translation is a bit tricky
 	# we need to transform to j's coordinate frame, 
@@ -363,6 +436,7 @@ foreach my $i (0..$#ARGV) {
 	my $outpdb = $pdb;
 	$outpdb =~ s/.*\///;
 	$outpdb =~ s/\.pdb$/_aln.$i.pdb/;
+	$outpdb = "cl".$clusterid->[$i].".".$outpdb;
 	print STDERR "writing aligned_templates/$outpdb\n";
 	open (PDBF, ">aligned_templates/$outpdb") || print STDERR "Cannot open $_";
 
@@ -373,6 +447,7 @@ foreach my $i (0..$#ARGV) {
 
 		$outfile =~ s/.*\///;
 		$outfile =~ s/\.pdb$/_$frag.$i.pdb/;
+		$outfile = "cl".$clusterid->[$i].".".$outfile;
 		open (PDB, ">fragments/$outfile") || print STDERR "Cannot open $_";
 
 		foreach my $line (@{ $allfrags{$pdb}->[$frag] }) {
@@ -392,6 +467,20 @@ foreach my $i (0..$#ARGV) {
 	close PDBF;
 }
 
+# find the most complete model in each cluster to use as input (will be overwritten by protocol anyway)
+my @inputseed;
+
+foreach my $clst (1..$nextclusterid-1) {
+	my $maxcount = 0;
+	foreach my $mdl (0..$#ARGV) {
+		my $pdb = $ARGV[$mdl];
+		my $count = keys(%{ $bbatoms{$pdb} });
+		if ($clusterid->[$mdl] == $clst && $maxcount<$count) {
+			$inputseed[$clst] = $mdl;
+			$maxcount = $mdl;
+		}
+	}
+}
 
 # fill gaps
 mkdir "rebuilt_templates";
@@ -399,7 +488,7 @@ foreach my $mdl (0..$#ARGV) {
 	my $pdb = $ARGV[$mdl];
 	my @pseudotrace;
 	my @gaps;
-	my $last_ungapped = 0;
+	my $last_ungapped = 1;
 	foreach my $i (1..$nres) {
 		my $id = " CA "."A".$i;
 	
@@ -462,11 +551,58 @@ foreach my $mdl (0..$#ARGV) {
 		}
 	}
 		
+	# write loopfile
+	my $outloops = $pdb;
+	$outloops =~ s/.*\///;
+	$outloops =~ s/\.pdb$/_rebuild.$mdl.loops/;
+	$outloops = "cl".$clusterid->[$mdl].".".$outloops;
+	print STDERR "writing rebuilt_templates/$outloops\n";
+	open (LOOPS, ">rebuilt_templates/$outloops") || print STDERR "Cannot open $_";
+	my $loopstart=1;
+	my $loopstop;
+	my $inloop = 0;
+	if ($gaps[1] != 0) { $inloop = 1; }
+
+	# fpd remove 1 and 2 residue "segments"
+	foreach my $i (1..$nres-3) {
+		if ($gaps[$i] > 0 && $gaps[$i+1]==0 && $gaps[$i+2]>0) {
+			$gaps[$i+1] = 1;
+		} elsif($gaps[$i] > 0 && $gaps[$i+1]==0 && $gaps[$i+2]==0 && $gaps[$i+3]==1 ) {
+			$gaps[$i+1] = 1;
+			$gaps[$i+2] = 1;
+		}
+	}
 	
+
+	foreach my $i (2..$nres) {
+		if ($gaps[$i] == 0 && $inloop == 1) {
+			# end loop
+			$inloop = 0;
+			$loopstop = $i-1;
+			while ($loopstop - $loopstart < 2) {
+				$loopstart-- if ($loopstart>1);
+				$loopstop++ if ($loopstop<$nres);
+			}
+			print LOOPS "LOOP $loopstart $loopstop 0\n";
+		} elsif ($gaps[$i] == 1 && $inloop == 0) {
+			# start loop
+			$inloop = 1;
+			$loopstart = $i;
+		}
+	}
+	if ($inloop) {
+		# end loop
+		$loopstop = $nres;
+		while ($loopstop - $loopstart < 2) { $loopstart--; }
+		print LOOPS "LOOP $loopstart $loopstop 0\n";
+	}
+	close(LOOPS);
+
 	# write model
 	my $outpdb = $pdb;
 	$outpdb =~ s/.*\///;
 	$outpdb =~ s/\.pdb$/_rebuild.$mdl.pdb/;
+	$outpdb = "cl".$clusterid->[$mdl].".".$outpdb;
 	print STDERR "writing rebuilt_templates/$outpdb\n";
 	open (PDB, ">rebuilt_templates/$outpdb") || print STDERR "Cannot open $_";
 	my $atmidx = 1;
@@ -480,15 +616,20 @@ foreach my $mdl (0..$#ARGV) {
 	}
 	close(PDB);
 
-	if ($mdl==$seedPDB) {
-		$atmidx = 1;
-		foreach my $i (1..$nres) {
-			my $restype = $one_to_three{ substr($seq, $i-1, 1) };
-			foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
-				my $x = $pseudotrace[$i]->{$atm};
-				printf "ATOM   %4d %s %s %s %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 
-					   $atmidx++, $atm, $restype, 'A', $i, $x->[0], $x->[1], $x->[2];
+	foreach my $clst (1..$nextclusterid-1) {
+		if ($mdl==$inputseed[$clst]) {
+			my $outpdb = "cl$clst.input.pdb";
+			open (PDB, ">$outpdb") || print STDERR "Cannot open $_";
+			$atmidx = 1;
+			foreach my $i (1..$nres) {
+				my $restype = $one_to_three{ substr($seq, $i-1, 1) };
+				foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
+					my $x = $pseudotrace[$i]->{$atm};
+					printf PDB "ATOM   %4d %s %s %s %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 
+						   $atmidx++, $atm, $restype, 'A', $i, $x->[0], $x->[1], $x->[2];
+				}
 			}
+			close (PDB);
 		}
 	}
 }

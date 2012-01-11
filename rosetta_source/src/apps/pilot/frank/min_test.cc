@@ -34,7 +34,7 @@
 #include <basic/database/open.hh>
 #include <devel/init.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/electron_density/util.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 #include <core/io/pdb/pose_io.hh>
