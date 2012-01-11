@@ -33,9 +33,11 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
@@ -587,6 +589,19 @@ if (working_model.manager.size()!= 0){
 			designMover.scorefunction(fullatom_sfx_);
 		}
 
+		if (basic::options::option[ OptionKeys::constraints::cst_file ].user()){
+				//safety
+				pose.remove_constraints();
+
+        protocols::simple_moves::ConstraintSetMoverOP constraint = new protocols::simple_moves::ConstraintSetMover();
+        constraint->apply( pose );
+
+				fullatom_sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
+				fullatom_sfx_->set_weight(core::scoring::dihedral_constraint, 1.0);
+    }
+	
+ 			
+
 		if (basic::options::option[OptionKeys::remodel::build_disulf].user()){
 			utility::vector1<std::pair <Size, Size> > disulf_partners;
 			bool disulfPass = false;
@@ -610,7 +625,10 @@ if (working_model.manager.size()!= 0){
 				//for now, accept all disulf build, as it is hard enough to do
 				//already.  Accept instead of cst filter?
 				//accumulator.apply(disulf_copy_pose);
-				if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
+				if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() || 
+							basic::options::option[ OptionKeys::constraints::cst_file ].user()
+			 	)
+				{
 					ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint, 10 );
 					bool CScore(pose_constraint.apply( disulf_copy_pose ));
 					if (!CScore){  // if didn't pass, rebuild
