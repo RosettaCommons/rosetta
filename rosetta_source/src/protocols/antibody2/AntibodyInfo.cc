@@ -27,7 +27,15 @@
 //Auto Headers
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
+#include <core/import_pose/import_pose.hh>
 
+#include <iostream>
+#include <fstream>
+
+// ObjexxFCL Headers
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/format.hh>
+#include <utility/exit.hh>
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 
@@ -38,62 +46,108 @@ namespace antibody2{
 
 /// default constructor
 AntibodyInfo::AntibodyInfo() {
-	set_default( false );
+	set_default( false/*camelid*/ );
 
-	for( core::Size i = 0; i <= 6; i++ )
-		hfr_[i][0] = hfr_[i][1] = hfr_[i][2] = 0;
+	for( core::Size i = 0; i <= 6; i++ ) hfr_[i][0] = hfr_[i][1] = hfr_[i][2] = 0;
+    obtain_loop_info();
 }
 
 
 /// constructor with arguments
 AntibodyInfo::AntibodyInfo( core::pose::Pose & pose ) {
-	setup_loops( pose, false );
+	setup_loops( pose, false/*camelid*/ );
+    obtain_loop_info();
 }
 
 /// constructor with arguments
 AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, bool camelid ) {
 	setup_loops( pose, camelid );
+    obtain_loop_info();
 }
 
+    
+    
 /// constructor with arguments
 AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, std::string cdr_name )
 {
-	set_default( false );
+	set_default( false/*camelid*/ );
+    using namespace std;
+    ifstream inf;
+    std::string temp;
 
 	if( !camelid_ ) {
 		if( cdr_name == "l1" ) {
 			L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 24 ), pose.pdb_info()->pdb2pose( 'L', 34 ) );
 			current_start = L1_->start();
 			current_end = L1_->stop();
+            
+            inf.open("query.l1");
+            if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l1' file!!");}
+            inf>>temp; inf>>L1_seq_;
+            inf.close();
 		}
 		else if( cdr_name == "l2" ) {
 			L2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 50 ), pose.pdb_info()->pdb2pose( 'L', 56 ) );
 			current_start = L2_->start();
 			current_end = L2_->stop();
+            
+            inf.open("query.l2"); 
+            if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l2' file!!");}
+            inf>>temp; inf>>L2_seq_;
+            inf.close();
 		}
 		else if( cdr_name == "l3" ) {
 			L3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 89 ), pose.pdb_info()->pdb2pose( 'L', 97 ) );
 			current_start = L3_->start();
 			current_end = L3_->stop();
+            
+            inf.open("query.l3"); 
+            if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l3' file!!");}
+            inf>>temp; inf>>L3_seq_;
+            inf.close();
 		}
 	}
 	if( cdr_name == "h1" ) {
 		H1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 26 ), pose.pdb_info()->pdb2pose( 'H', 35 ) );
 		current_start = H1_->start();
 		current_end = H1_->stop();
+        
+        inf.open("query.h1"); 
+        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h1' file!!");}
+        inf>>temp; inf>>H1_seq_;
+        inf.close();
 	}
 	else if( cdr_name == "h2" ) {
 		H2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 50 ), pose.pdb_info()->pdb2pose( 'H', 65 ) );
 		current_start = H2_->start();
 		current_end = H2_->stop();
+        
+        inf.open("query.h2"); 
+        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h2' file!!");}
+        inf>>temp; inf>>H2_seq_;
+        inf.close();
 	}
 	else if( cdr_name == "h3" ) {
 		H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 ) );
 		current_start = H3_->start();
 		current_end = H3_->stop();
+        
+        inf.open("query.h3"); 
+        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h3' file!!");}
+        inf>>temp; inf>>H3_seq_;
+        inf.close();
 	}
+    
+    
 } // constructor with arguments
 
+    
+    
+    
+    
+    
+    
+    
 void
 AntibodyInfo::set_default( bool camelid )
 {
@@ -105,11 +159,18 @@ AntibodyInfo::set_default( bool camelid )
 }
 
 
+    
+    
+    
+    
+    
 void
 AntibodyInfo::setup_loops( core::pose::Pose & pose, bool camelid ) {
-	TR<<"sequence of the pose is "<< pose.sequence()<<std::endl;
+
+    
+    
 	set_default( camelid );
-	TR<<"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"<<std::endl;
+    
 	if( !camelid_ ) {
 		L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 24 ), pose.pdb_info()->pdb2pose( 'L', 34 ) );
 		L1_->set_cut( L1_->start() + core::Size( ( ( L1_->stop() - L1_->start() ) + 1 ) / 2 ) );
@@ -124,7 +185,7 @@ AntibodyInfo::setup_loops( core::pose::Pose & pose, bool camelid ) {
 		all_cdr_loops_.add_loop( *L3_ );
 		loops_.insert( std::pair<std::string, loops::LoopOP>("l3", L3_) );
 	}
-	TR<<"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"<<std::endl;
+
 	H1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 26 ), pose.pdb_info()->pdb2pose( 'H', 35 ) );
 	H1_->set_cut( H1_->start() + core::Size( ( ( H1_->stop() - H1_->start() ) + 1 ) / 2 ) );
 	all_cdr_loops_.add_loop( *H1_ );
@@ -133,11 +194,15 @@ AntibodyInfo::setup_loops( core::pose::Pose & pose, bool camelid ) {
 	H2_->set_cut( H2_->start() + core::Size( ( ( H2_->stop() - H2_->start() ) + 1 ) / 2 ) );
 	all_cdr_loops_.add_loop( *H2_ );
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h2", H2_) );
-	H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 )+1 );
-	H3_->set_cut( H3_->start() + 1 );
+//	H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 )+1 );
+//	H3_->set_cut( H3_->start() + 1 );
+//  JQX: don't understand why the perl script has one less residue in the end of h3.pdb for deep graft option
+//       don't understand this +1, either, temporary remove    CHECK LATER !!!
+    H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 ) );
+    H3_->set_cut( H3_->start() + 1 );  // why this is different compared to other cuts of other loops? Aroop seems did this in his old R3 code, CHECK LATER !!!
 	all_cdr_loops_.add_loop( *H3_ );
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h3", H3_) );
-	TR<<"QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"<<std::endl;
+
 	hfr_[1][1] = pose.pdb_info()->pdb2pose( 'H', 5 );
 	hfr_[1][2] = pose.pdb_info()->pdb2pose( 'H', 6 );
 	hfr_[2][1] = pose.pdb_info()->pdb2pose( 'H', 10 );
@@ -151,6 +216,7 @@ AntibodyInfo::setup_loops( core::pose::Pose & pose, bool camelid ) {
 	hfr_[6][1] = pose.pdb_info()->pdb2pose( 'H', 103 );
 	hfr_[6][2] = pose.pdb_info()->pdb2pose( 'H', 110 );
 
+
 	all_cdr_loops_.sequential_order();
 
 	all_cdr_fold_tree( pose );
@@ -159,15 +225,26 @@ AntibodyInfo::setup_loops( core::pose::Pose & pose, bool camelid ) {
 		Fv_sequence_.push_back( pose.residue(i).name1() );
 
 	detect_CDR_H3_stem_type( pose );
-	TR<<"RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"<<std::endl;
+
 } // set_defaults
 
-loops::LoopOP
-AntibodyInfo::get_loop( std::string loop ) {
+    
+    
+    
+    
+    
+    
+    
+loops::LoopOP AntibodyInfo::get_loop( std::string loop ) {
 	LoopMap::iterator iter = loops_.begin();
 	iter = loops_.find(loop);
 	if ( iter != loops_.end() ) {return iter->second;}
 }
+    
+    
+    
+    
+    
 
 void AntibodyInfo::align_to_native( core::pose::Pose & pose, antibody2::AntibodyInfo & native, core::pose::Pose & native_pose ) {
 
@@ -190,6 +267,12 @@ void AntibodyInfo::align_to_native( core::pose::Pose & pose, antibody2::Antibody
 
 } // align_to_native()
 
+    
+    
+    
+    
+    
+    
 void
 AntibodyInfo::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	if( camelid_ )
@@ -199,6 +282,9 @@ AntibodyInfo::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	return;
 } // detect_CDR_H3_stem_type
 
+    
+    
+    
 void
 AntibodyInfo::detect_camelid_CDR_H3_stem_type() {
 	TR << "AC Detecting Camelid CDR H3 Stem Type" << std::endl;
@@ -235,6 +321,8 @@ AntibodyInfo::detect_camelid_CDR_H3_stem_type() {
 } // detect_camelid_CDR_H3_stem_type()
 
 
+    
+    
 void
 AntibodyInfo::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
@@ -318,6 +406,15 @@ AntibodyInfo::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 		 << "Kink: " << kinked_ << " Extended: " << extended_ << std::endl;
 } // detect_regular_CDR_H3_stem_type()
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
 void
 AntibodyInfo::all_cdr_fold_tree( core::pose::Pose & pose ) {
 	using namespace core::kinematics;
@@ -350,6 +447,104 @@ AntibodyInfo::all_cdr_fold_tree( core::pose::Pose & pose ) {
 
 } // all_cdr_fold_tree()
 
+    
+    
+    
+    
+/// @details  Show the complete setup of the docking protocol
+void
+AntibodyInfo::show( std::ostream & out ) {
+    //      if ( !flags_and_objects_are_in_sync_ ){
+    //              sync_objects_with_flags();
+    //      }
+    out << *this;
+}
+    
+std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )
+{
+        using namespace ObjexxFCL::fmt;
+        // All output will be 80 characters - 80 is a nice number, don't you think?
+        std::string line_marker = "///";
+        out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+        out << line_marker << A( 47, "Rosetta Antibody Info" ) << space( 27 ) << line_marker << std::endl;
+        out << line_marker << space( 74 ) << line_marker << std::endl;
+        // Display the movable jumps that will be used in docking
+
+        out << line_marker << " L1 info: "<<std::endl;
+        out << line_marker << "           length:  "<<ab_info.L1_seq_.size() <<std::endl;
+        out << line_marker << "         sequence:  "<<ab_info.L1_seq_ <<std::endl;
+        out << line_marker << "        loop_info:  "<<*ab_info.L1_<<std::endl;
+        
+        out << line_marker << " L2 info: "<<std::endl;
+        out << line_marker << "           length:  "<<ab_info.L2_seq_.size()<<std::endl;
+        out << line_marker << "         sequence:  "<<ab_info.L2_seq_ <<std::endl;
+        out << line_marker << "        loop_info:  "<<*ab_info.L2_<<std::endl;
+        
+        out << line_marker << " L3 info: "<<std::endl;
+        out << line_marker << "           length:  "<<ab_info.L3_seq_.size()<<std::endl;
+        out << line_marker << "         sequence:  "<<ab_info.L3_seq_<<std::endl;
+        out << line_marker << "        loop_info:  "<<*ab_info.L3_<<std::endl;
+        
+        out << line_marker << " H1 info: "<<std::endl;
+        out << line_marker << "           length:  "<<ab_info.H1_seq_.size()<<std::endl;
+        out << line_marker << "         sequence:  "<<ab_info.H1_seq_<<std::endl;
+        out << line_marker << "        loop_info:  "<<*ab_info.H1_<<std::endl;
+        
+        out << line_marker << " H2 info: "<<std::endl;
+        out << line_marker << "           length:  "<<ab_info.H2_seq_.size()<<std::endl;
+        out << line_marker << "         sequence:  "<<ab_info.H2_seq_<<std::endl;
+        out << line_marker << "        loop_info:  "<<*ab_info.H2_<<std::endl;
+        
+        out << line_marker << " H3 info: "<<std::endl;
+        out << line_marker << "           length:  "<<ab_info.H3_seq_.size()<<std::endl;
+        out << line_marker << "         sequence:  "<<ab_info.H3_seq_<<std::endl;
+        out << line_marker << "        loop_info:  "<<*ab_info.H3_<<std::endl;
+        
+        // Close the box I have drawn
+        out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+        return out;
+}
+
+    
+void AntibodyInfo::obtain_loop_info(){
+        
+        using namespace std;
+        ifstream inf;
+        std::string temp;
+    
+        inf.open("query.l1");
+        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l1' file!!");}
+        inf>>temp; inf>>L1_seq_;
+        inf.close();
+        
+        inf.open("query.l2");
+        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l2' file!!");}
+        inf>>temp; inf>>L2_seq_;
+        inf.close();
+    
+        inf.open("query.l3"); 
+        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l3' file!!");}
+        inf>>temp; inf>>L3_seq_; 
+        inf.close();
+        
+        inf.open("query.h1"); 
+        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h1' file!!");}
+        inf>>temp; inf>>H1_seq_; 
+        inf.close();
+        
+        inf.open("query.h2"); 
+        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h2' file!!");}
+        inf>>temp; inf>>H2_seq_; 
+        inf.close();
+        
+        inf.open("query.h3"); 
+        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h3' file!!");}
+        inf>>temp; inf>>H3_seq_; 
+        inf.close();
+}
+  
+    
+    
 
 } // namespace antibody2
 } // namespace protocols

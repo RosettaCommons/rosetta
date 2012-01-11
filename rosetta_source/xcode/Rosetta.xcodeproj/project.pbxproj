@@ -1770,6 +1770,7 @@
 		D086FDF2122AF1290C91EEC7 /* CDRH3Modeler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1E1F34C9ED2DF6E5DE987ED0 /* CDRH3Modeler.cc */; };
 		DFB32426B92B6970F5DBDC9A /* GraftMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 51901BF40D7E78D5DBE1A3C5 /* GraftMover.cc */; };
 		69FA4E1F884085189F46A00D /* Ubiquitin_E2C_Modeler.cc in Sources */ = {isa = PBXBuildFile; fileRef = FF0B204891E653454ABCA79F /* Ubiquitin_E2C_Modeler.cc */; };
+		13C9B41E208F4FBE7E34CFB1 /* Ab_TemplateInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = BF526A7B224B68C5C1ED5211 /* Ab_TemplateInfo.cc */; };
 		24EBC38EC7FD6E29AA8E09D2 /* AntibodyInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = FE4E794F05114B242DBF3427 /* AntibodyInfo.cc */; };
 		A1180A8F466C38ED04EA6B75 /* AntibodyModeler2.cc in Sources */ = {isa = PBXBuildFile; fileRef = 62C74C84287D3623B13AAEFF /* AntibodyModeler2.cc */; };
 		95D0DFF369698C8503086322 /* CDRH3Modeler2.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED376DCFD4E48E92CADBACA9 /* CDRH3Modeler2.cc */; };
@@ -11739,6 +11740,15 @@
 		FF0B204891E653454ABCA79F /* Ubiquitin_E2C_Modeler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ubiquitin_E2C_Modeler.cc; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.cc; sourceTree = SOURCE_ROOT; };
 		22C0936648E1ABE51F7FD644 /* Ubiquitin_E2C_Modeler.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ubiquitin_E2C_Modeler.fwd.hh; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.fwd.hh; sourceTree = SOURCE_ROOT; };
 		50657841228B7F3CC57123E3 /* Ubiquitin_E2C_Modeler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ubiquitin_E2C_Modeler.hh; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.hh; sourceTree = SOURCE_ROOT; };
+		FDB20DC37C7CD7639AF5D4EF /* ._Ab_TemplateInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._Ab_TemplateInfo.fwd.hh; path = ../src/protocols/antibody2/._Ab_TemplateInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
+		B17C44F0DFE55205D246E86F /* ._Ab_TemplateInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._Ab_TemplateInfo.hh; path = ../src/protocols/antibody2/._Ab_TemplateInfo.hh; sourceTree = SOURCE_ROOT; };
+		E0EF70BB7779B565C9581E99 /* ._AntibodyInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._AntibodyInfo.hh; path = ../src/protocols/antibody2/._AntibodyInfo.hh; sourceTree = SOURCE_ROOT; };
+		AD62087D670FEB63F11AF50C /* ._AntibodyModeler2.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._AntibodyModeler2.hh; path = ../src/protocols/antibody2/._AntibodyModeler2.hh; sourceTree = SOURCE_ROOT; };
+		1AEF3B9E524E98E4A1C8981C /* ._GraftMover2.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._GraftMover2.hh; path = ../src/protocols/antibody2/._GraftMover2.hh; sourceTree = SOURCE_ROOT; };
+		0BA72147DF15DFB69B8A4B1B /* ._GraftOneMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._GraftOneMover.hh; path = ../src/protocols/antibody2/._GraftOneMover.hh; sourceTree = SOURCE_ROOT; };
+		BF526A7B224B68C5C1ED5211 /* Ab_TemplateInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_TemplateInfo.cc; path = ../src/protocols/antibody2/Ab_TemplateInfo.cc; sourceTree = SOURCE_ROOT; };
+		C1B5F55917A764C796D59C3A /* Ab_TemplateInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_TemplateInfo.fwd.hh; path = ../src/protocols/antibody2/Ab_TemplateInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
+		F2C2FDF3EC8DFB2F2F804F2E /* Ab_TemplateInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_TemplateInfo.hh; path = ../src/protocols/antibody2/Ab_TemplateInfo.hh; sourceTree = SOURCE_ROOT; };
 		FE4E794F05114B242DBF3427 /* AntibodyInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AntibodyInfo.cc; path = ../src/protocols/antibody2/AntibodyInfo.cc; sourceTree = SOURCE_ROOT; };
 		4A7C2D5109C74CF12023225B /* AntibodyInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyInfo.fwd.hh; path = ../src/protocols/antibody2/AntibodyInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D5C39E7C59BE80BD64B15F95 /* AntibodyInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyInfo.hh; path = ../src/protocols/antibody2/AntibodyInfo.hh; sourceTree = SOURCE_ROOT; };
@@ -20849,6 +20859,15 @@
 		6445E0E7F22FA5EC55670177 /* antibody2 */ = {
 			isa = PBXGroup;
 			children = (
+				FDB20DC37C7CD7639AF5D4EF /* ._Ab_TemplateInfo.fwd.hh */,
+				B17C44F0DFE55205D246E86F /* ._Ab_TemplateInfo.hh */,
+				E0EF70BB7779B565C9581E99 /* ._AntibodyInfo.hh */,
+				AD62087D670FEB63F11AF50C /* ._AntibodyModeler2.hh */,
+				1AEF3B9E524E98E4A1C8981C /* ._GraftMover2.hh */,
+				0BA72147DF15DFB69B8A4B1B /* ._GraftOneMover.hh */,
+				BF526A7B224B68C5C1ED5211 /* Ab_TemplateInfo.cc */,
+				C1B5F55917A764C796D59C3A /* Ab_TemplateInfo.fwd.hh */,
+				F2C2FDF3EC8DFB2F2F804F2E /* Ab_TemplateInfo.hh */,
 				FE4E794F05114B242DBF3427 /* AntibodyInfo.cc */,
 				4A7C2D5109C74CF12023225B /* AntibodyInfo.fwd.hh */,
 				D5C39E7C59BE80BD64B15F95 /* AntibodyInfo.hh */,
@@ -24572,6 +24591,7 @@
 				D086FDF2122AF1290C91EEC7 /* CDRH3Modeler.cc in Sources */,
 				DFB32426B92B6970F5DBDC9A /* GraftMover.cc in Sources */,
 				69FA4E1F884085189F46A00D /* Ubiquitin_E2C_Modeler.cc in Sources */,
+				13C9B41E208F4FBE7E34CFB1 /* Ab_TemplateInfo.cc in Sources */,
 				24EBC38EC7FD6E29AA8E09D2 /* AntibodyInfo.cc in Sources */,
 				A1180A8F466C38ED04EA6B75 /* AntibodyModeler2.cc in Sources */,
 				95D0DFF369698C8503086322 /* CDRH3Modeler2.cc in Sources */,

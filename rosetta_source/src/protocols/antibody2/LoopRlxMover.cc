@@ -65,15 +65,22 @@ LoopRlxMover::LoopRlxMover( Size query_start, Size query_end ) : Mover( "LoopRlx
 	set_default();
 } // LoopRlxMover default constructor
 
+    
+    
+    
+    
 void LoopRlxMover::set_default() {
+    //score12 scoring function, added two new terms "chainbreak=1.0" and "overlap_chainbreak=10/3"
 	highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" );
-	highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
-	highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
+	highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );               
+	highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );    
 
+    // JQX: default: everything on the protein fixed
 	movemap_= new kinematics::MoveMap();
 	movemap_->set_chi( false );
 	movemap_->set_bb( false );
 
+    // JQX: default: mc object with T=0.8
 	mc_ = new moves::MonteCarlo( *highres_scorefxn_, 0.8 );
 	tf_ = new core::pack::task::TaskFactory;
 
@@ -85,29 +92,39 @@ void LoopRlxMover::set_default() {
 	temperature_ = init_temp;
 } // LoopRlxMover::set_default
 
+    
+    
+    
+    
+    
+    
+    
+    
 void LoopRlxMover::setup_objects( pose::Pose & pose ) {
 	using namespace protocols::moves;
 	using namespace protocols::loops;
 
-	//setting MoveMap
-	utility::vector1< bool> allow_bb_move( pose.total_residue(), false );
-	for( Size ii = loop_start_; ii <= loop_end_; ii++ )
-		allow_bb_move[ ii ] = true;
+	//setting MoveMap: allow the bb of loop residues to be flexible
+	utility::vector1< bool>  allow_bb_move( pose.total_residue(), false );
+	for( Size ii = loop_start_; ii <= loop_end_; ii++ )  allow_bb_move[ ii ] = true;
 	movemap_->set_bb( allow_bb_move );
 	movemap_->set_jump( 1, false );
 
 	Size loop_size = ( loop_end_ - loop_start_ ) + 1;
-	Size cutpoint = loop_start_ + int(loop_size/2);
+	Size cutpoint  =  loop_start_ + int(loop_size/2); 
 
 	one_loop_ = new Loop( loop_start_, loop_end_, cutpoint, 0, false );
 	simple_one_loop_fold_tree( pose, *one_loop_ );
 
 	// set cutpoint variants for correct chainbreak scoring
 	if( !pose.residue( cutpoint ).is_upper_terminus() ) {
-		if( !pose.residue( cutpoint ).has_variant_type( chemical::CUTPOINT_LOWER ) ) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint );
-		if( !pose.residue( cutpoint + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint + 1 );
+		if( !pose.residue( cutpoint ).has_variant_type( chemical::CUTPOINT_LOWER ) ) 
+            core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint );
+		if( !pose.residue( cutpoint + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) 
+            core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint + 1 );
 	}
 
+    // set up the min mover!
 	Real min_tolerance = 0.001;
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = "dfpmin_armijo_nonmonotone";
@@ -144,6 +161,17 @@ void LoopRlxMover::setup_objects( pose::Pose & pose ) {
 }
 
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 /// @brief relaxes the region specified
 /// @detailed This is all done in high resolution.Hence there are no rigid
 ///           body moves relative to the docking partners. Only small moves
@@ -162,11 +190,8 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	using namespace pack::task;
 	using namespace pack::task::operation;
 
-	TRL<<"I am here 7.4.3"<<std::endl;
-	TRL << "LoopRlxMover: Apply" << std::endl;
 
-	if ( !pose_in.is_fullatom() )
-		utility_exit_with_message("Fullatom poses only");
+	if ( !pose_in.is_fullatom() ) utility_exit_with_message("Fullatom poses only");
 
 	setup_objects( pose_in );
 

@@ -40,23 +40,32 @@ using namespace core;
 CloseOneMover::CloseOneMover( ) : Mover( "CloseOneMover" ) {
 	set_default();
 	cdr_loop_start_ = 0;
-	cdr_loop_end_ = 0;
+	cdr_loop_end_   = 0;
 	loop_start_ = 0-flanking_residues_;
-	loop_end_ = 0+flanking_residues_;
+	loop_end_   = 0+flanking_residues_;
 } // CloseOneMover default constructor
 
+    
 
 CloseOneMover::CloseOneMover( Size query_start, Size query_end ) : Mover( "CloseOneMover" ) {
 	set_default();
 	cdr_loop_start_ = query_start;
-	cdr_loop_end_ = query_end;
+	cdr_loop_end_   = query_end;
 	loop_start_ = query_start-flanking_residues_;
-	loop_end_ = query_end+flanking_residues_;
+	loop_end_   = query_end+flanking_residues_;
 } // CloseOneMover default constructor
 
+    
+    
+    
 // GraftOneMover default destructor
 CloseOneMover::~CloseOneMover() {}
 
+    
+    
+    
+    
+    
 void CloseOneMover::set_default()
 {
 	allowed_separation_ = 1.9;
@@ -67,23 +76,33 @@ void CloseOneMover::set_default()
 	pymol_ = new protocols::moves::PyMolMover();
 } // CloseOneMover::set_default
 
+    
+    
+    
 std::string
 CloseOneMover::get_name() const { return "CloseOneMover"; }
 
+    
+    
 void CloseOneMover::set_pymol( protocols::moves::PyMolMoverOP pymol )
 {
     pymol_ = pymol;
 }
 
+    
+    
+    
+    
 
 void CloseOneMover::apply( pose::Pose & pose_in )
 {
-	TRC<<"step 2         I am here 7.4.2"<<std::endl;
+
 	Size const N ( 1 ); // N atom
 	Size const C ( 3 ); // C atom
 
 	// Coordinates of the C and N atoms at stem
 	numeric::xyzVector_float peptide_C, peptide_N;
+    
 	// N-terminal
 	peptide_C = pose_in.residue( cdr_loop_start_ - 1 ).xyz( C );
 	peptide_N = pose_in.residue( cdr_loop_start_ ).xyz( N );
@@ -98,9 +117,11 @@ void CloseOneMover::apply( pose::Pose & pose_in )
 	Real nter_separation=peptide_C.distance(peptide_N);
 	Real cter_separation=peptide_C.distance(peptide_N);
 
+    
 	// save the starting foldtree
 	core::kinematics::FoldTree f( pose_in.fold_tree() );
 
+    
 	// setup movemap to only loop residues
 	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
 	for ( Size i=loop_start_; i<= loop_end_; ++i )

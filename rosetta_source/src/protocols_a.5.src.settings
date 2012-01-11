@@ -18,6 +18,7 @@ sources = {
 		"Ubiquitin_E2C_Modeler",
 	],
 	"protocols/antibody2": [
+		"Ab_TemplateInfo",
 		"AntibodyInfo",
 		"AntibodyModeler2",
 		"CDRH3Modeler2",

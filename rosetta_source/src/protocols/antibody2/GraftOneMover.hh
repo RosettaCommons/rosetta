@@ -33,7 +33,7 @@ namespace antibody2 {
 
 		// constructor with arguments
 		GraftOneMover( core::Size query_start, core::Size query_end, std::string template_name, core::scoring::ScoreFunctionOP scorefxn );
-
+//		GraftOneMover( core::Size query_start, core::Size query_end, std::string template_name);
 		// default destructor
 		~GraftOneMover();
 

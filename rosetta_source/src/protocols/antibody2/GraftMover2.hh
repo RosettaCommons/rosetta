@@ -32,6 +32,8 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/antibody2/AntibodyInfo.hh>
+#include <protocols/antibody2/AntibodyInfo.fwd.hh>
+#include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -52,12 +54,14 @@ namespace antibody2 {
 		GraftMover2();
 
 		/// @brief constructor with arguments
-		GraftMover2( bool l1, bool l2, bool l3, bool h1, bool h2, bool h3, bool camelid, bool benchmark );
+		GraftMover2(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool camelid,bool benchmark);
 
+        
+        GraftMover2(AntibodyInfoCOP ab_info, Ab_TemplateInfoCOP ab_template);
 		// default destructor
 		~GraftMover2();
 
-		void init( bool l1, bool l2, bool l3, bool h1, bool h2, bool h3, bool camelid, bool benchmark );
+		void init(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool camelid,bool benchmark);
 
 		inline void enable_graft_l1( bool setting ) { graft_l1_ = setting; }
 		inline void enable_graft_l2( bool setting ) { graft_l2_ = setting; }
@@ -110,7 +114,7 @@ namespace antibody2 {
 
 		core::scoring::ScoreFunctionOP scorefxn_;
 
-		void finalize_setup( AntibodyInfo & ab_info );
+		void finalize_setup( core::pose::Pose & framework, AntibodyInfo & ab_info );
 		void set_packer_default( core::pose::Pose & pose, bool include_current );
         void initForEqualOperatorAndCopyConstructor(GraftMover2 & lhs, GraftMover2 const & rhs);
 	}; // class GraftMover2

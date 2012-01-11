@@ -98,9 +98,7 @@ public:
 	  core::scoring::ScoreFunctionOP pack_scorefxn,
 		utility::vector1< bool> is_flexible );
 
-	void snugfit_mcm_protocol(
-		core::pose::Pose & pose_in,
-		loops::Loops loops_in );
+	void snugfit_mcm_protocol(core::pose::Pose & pose_in, loops::Loops loops_in );
 
 	void setup_packer_task( core::pose::Pose & pose_in );
 
@@ -109,6 +107,16 @@ public:
 	void read_and_store_fragments( core::pose::Pose & pose );
 
 	void display_constraint_residues( core::pose::Pose & pose );
+
+    
+    
+    void show( std::ostream & out=std::cout );
+    friend std::ostream & operator<<(std::ostream& out, const AntibodyModeler2 & ab_m_2 );
+    
+    
+    /// @brief Associates relevant options with the AntibodyModeler class
+    static void register_options();
+    
 
 
 public:
@@ -141,7 +149,7 @@ public:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 	// external objects
-	antibody2::AntibodyInfo antibody_in_;
+	AntibodyInfo ab_info_;
 	utility::vector1< core::fragment::FragSetOP > offset_frags_;
 
 	//packer task
@@ -155,8 +163,6 @@ public:
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();
 
-	/// @brief Associates relevant options with the DockingProtocol class
-	static void register_options();
 
 	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
 	void finalize_setup( core::pose::Pose & pose );
@@ -169,6 +175,11 @@ public:
 
 }; // class AntibodyModeler2
 
+    
+    
+    
+    
 } // namespace antibody2
 } // namespace protocols
+
 #endif

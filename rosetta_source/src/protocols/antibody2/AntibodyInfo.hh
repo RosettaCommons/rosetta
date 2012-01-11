@@ -17,6 +17,7 @@
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
@@ -64,12 +65,22 @@ public:
 	utility::vector1< char > Fv_sequence_;
 
 	loops::Loops all_cdr_loops_;
-
+    
+    
+    
+    
+    void show( std::ostream & out=std::cout );
+    friend std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info );
+    
+    
 //private:
 private:
 	// cdr loops
 	LoopMap loops_;
 	loops::LoopOP L1_, L2_, L3_, H1_, H2_, H3_;
+    std::string L1_seq_, L2_seq_, L3_seq_, H1_seq_,H2_seq_,H3_seq_;
+    core::pose::PoseOP ab_pose_;
+    
 	core::Size hfr_[7][3]; // array of framework residues for alignment
 
 	bool camelid_;
@@ -78,6 +89,7 @@ private:
 	bool kinked_;
 	bool extended_;
 
+    void obtain_loop_info();
 
 	void set_default( bool camelid );
 	void detect_CDR_H3_stem_type( core::pose::Pose & pose );

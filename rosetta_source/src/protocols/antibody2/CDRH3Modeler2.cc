@@ -755,16 +755,10 @@ CDRH3Modeler2::get_name() const {
 
 			// set cutpoint variants for correct chainbreak scoring
 			if( !pose_in.residue( trimmed_cdr_h3.cut() ).is_upper_terminus() ) {
-				if( !pose_in.residue( trimmed_cdr_h3.cut() ).has_variant_type(
-						chemical::CUTPOINT_LOWER))
-					core::pose::add_variant_type_to_pose_residue( pose_in,
-																										  chemical::CUTPOINT_LOWER,
-																											trimmed_cdr_h3.cut() );
-				if( !pose_in.residue( trimmed_cdr_h3.cut() + 1 ).has_variant_type(
-						chemical::CUTPOINT_UPPER ) )
-					core::pose::add_variant_type_to_pose_residue( pose_in,
-																											chemical::CUTPOINT_UPPER,
-																											trimmed_cdr_h3.cut() + 1 );
+				if( !pose_in.residue( trimmed_cdr_h3.cut() ).has_variant_type(chemical::CUTPOINT_LOWER))
+					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, trimmed_cdr_h3.cut() );
+				if( !pose_in.residue( trimmed_cdr_h3.cut() + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) )
+					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, trimmed_cdr_h3.cut() + 1 );
 			}
 
 
@@ -820,8 +814,7 @@ CDRH3Modeler2::get_name() const {
 				// insert random fragments over the whole loop
 				for(Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop()
 							- ( buffer + (frag_size - 1 ) ); ii++ ) {
-					ClassicFragmentMoverOP cfm = new ClassicFragmentMover( frags_to_use,
-																																 cdrh3_map);
+					ClassicFragmentMoverOP cfm = new ClassicFragmentMover( frags_to_use, cdrh3_map);
 					cfm->set_check_ss( false );
 					cfm->enable_end_bias_check( false );
 					cfm->define_start_window( ii );
@@ -833,8 +826,7 @@ CDRH3Modeler2::get_name() const {
 				Size local_h3_attempts(0);
 				for ( Size c2 = 1; c2 <= cycles2; ++c2 ) {
 					// apply a random fragment
-					ClassicFragmentMoverOP cfm = new ClassicFragmentMover( frags_to_use,
-																																 cdrh3_map);
+					ClassicFragmentMoverOP cfm = new ClassicFragmentMover( frags_to_use, cdrh3_map);
 					cfm->set_check_ss( false );
 					cfm->enable_end_bias_check( false );
 					cfm->apply( pose_in );
@@ -1011,8 +1003,9 @@ CDRH3Modeler2::get_name() const {
 
 			// Rule 1b for standard extended form
 			if ( ( aa_name[ aa_name.size() - 3 ] == "ASP" ) &&
-					( ( aa_name[1] != "LYS" ) && ( aa_name[1] != "ARG" ) )&&
-					 ( is_H3 != true ) ) {
+					( ( aa_name[1] != "LYS" ) && ( aa_name[1] != "ARG" ) ) &&
+                    ( is_H3 != true ) )     {
+                
 				if( ( base_dihedral > extended_lower_bound ) &&
 						( base_dihedral < extended_upper_bound) ) {
 					// std::cout << "EXTENDED Found" << std::endl; // aroop_temp remove
@@ -1031,10 +1024,8 @@ CDRH3Modeler2::get_name() const {
 					}
 
 					if(!is_basic) {
-						Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(
-											                   light_chain, 49 );
-						std::string let3_code_L49 =
-              pose_in.residue( rosetta_number_of_L49 ).name3();
+						Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(light_chain, 49 );
+						std::string let3_code_L49 = pose_in.residue( rosetta_number_of_L49 ).name3();
 						if( let3_code_L49 == "ARG" || let3_code_L49 == "LYS")
 							is_basic = true;
 					}
@@ -1064,12 +1055,10 @@ CDRH3Modeler2::get_name() const {
 					bool is_basic(false); // Special basic residue exception flag
 					Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose(
 						light_chain, 46 );
-					std::string let3_code_L46 =
-            pose_in.residue( rosetta_number_of_L46 ).name3();
-					if( let3_code_L46 == "ARG" || let3_code_L46 == "LYS")
-						is_basic = true;
+					std::string let3_code_L46 = pose_in.residue( rosetta_number_of_L46 ).name3();
+					if( let3_code_L46 == "ARG" || let3_code_L46 == "LYS") is_basic = true;
 					if( is_basic && (base_dihedral > extended_lower_bound ) &&
-							( base_dihedral < extended_upper_bound ) ) {
+                      ( base_dihedral < extended_upper_bound ) ) {
 						// aroop_temp remove
 						// std::cout << "EXTENDED (special 1c) Found" << std::endl;
 						is_extended = true;
@@ -1092,8 +1081,7 @@ CDRH3Modeler2::get_name() const {
 				}
 			}
 
-			TR <<  "H3M Finished Checking Kink/Extended CDR H3 Base Angle: "
-				 << is_H3 << std::endl;
+			TR <<  "H3M Finished Checking Kink/Extended CDR H3 Base Angle: " << is_H3 << std::endl;
 
 			return is_H3;
 		} // CDR_H3_filter
@@ -1203,7 +1191,7 @@ CDRH3Modeler2::get_name() const {
 													loop_end + h3_flank_ + 1 );
 				with_flank_fold_tree = new ChangeFoldTreeMover( pose_in.fold_tree() );
 				for( Size i = 1; i <= pose_in.total_residue(); i++ )
-					if( (i >= (loop_begin - h3_flank_)) && (i <= (loop_end + h3_flank_)))
+					if(  (i >= (loop_begin - h3_flank_)) && (i <= (loop_end + h3_flank_))   )
 						flank_allow_bb_move[i] = true;
 			}
 			else
@@ -1211,16 +1199,10 @@ CDRH3Modeler2::get_name() const {
 
 			// set cutpoint variants for correct chainbreak scoring
 			if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
-				if( !pose_in.residue( cutpoint ).has_variant_type(
-						chemical::CUTPOINT_LOWER))
-					core::pose::add_variant_type_to_pose_residue( pose_in,
-																										  chemical::CUTPOINT_LOWER,
-																											cutpoint );
-				if( !pose_in.residue( cutpoint + 1 ).has_variant_type(
-						chemical::CUTPOINT_UPPER ) )
-					core::pose::add_variant_type_to_pose_residue( pose_in,
-																											chemical::CUTPOINT_UPPER,
-																											cutpoint + 1 );
+				if( !pose_in.residue( cutpoint ).has_variant_type(chemical::CUTPOINT_LOWER))
+					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, cutpoint );
+				if( !pose_in.residue( cutpoint + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) )
+					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, cutpoint + 1 );
 			}
 
 
@@ -1260,12 +1242,8 @@ CDRH3Modeler2::get_name() const {
 
 			Real high_move_temp = 2.00;
 			// minimize amplitude of moves if correct parameter is set
-			BackboneMoverOP small_mover = new SmallMover( cdrh3_map,
-																										high_move_temp,
-																										n_small_moves );
-			BackboneMoverOP shear_mover = new ShearMover( cdrh3_map,
-																										high_move_temp,
-																										n_small_moves );
+			BackboneMoverOP small_mover = new SmallMover( cdrh3_map, high_move_temp, n_small_moves );
+			BackboneMoverOP shear_mover = new ShearMover( cdrh3_map, high_move_temp, n_small_moves );
 			if( min_base_relax_ ) {
 				small_mover->angle_max( 'H', 0.5 );
 				small_mover->angle_max( 'E', 0.5 );
@@ -1307,8 +1285,7 @@ CDRH3Modeler2::get_name() const {
 			setup_packer_task( start_pose_ );
 			( *highres_scorefxn_ )( pose_in );
 			tf_->push_back( new RestrictToInterface( allow_repack ) );
-			RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
-																					 highres_scorefxn_, tf_ );
+			RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
 
 			pack_rottrial->apply( pose_in );
 
@@ -1349,8 +1326,7 @@ CDRH3Modeler2::get_name() const {
 					setup_packer_task( start_pose_ );
 					( *highres_scorefxn_ )( pose_in );
 					tf_->push_back( new RestrictToInterface( allow_repack ) );
-					RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
-																							 highres_scorefxn_, tf_ );
+					RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
 					pack_rottrial->apply( pose_in );
 
 					bool relaxed_H3_found_current(false);
@@ -1492,14 +1468,10 @@ CDRH3Modeler2::get_name() const {
 			if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
 				if( !pose_in.residue( cutpoint ).has_variant_type(
 						chemical::CUTPOINT_LOWER))
-					core::pose::add_variant_type_to_pose_residue( pose_in,
-																										  chemical::CUTPOINT_LOWER,
-																											cutpoint );
+					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, cutpoint );
 				if( !pose_in.residue( cutpoint + 1 ).has_variant_type(
 						chemical::CUTPOINT_UPPER ) )
-					core::pose::add_variant_type_to_pose_residue( pose_in,
-																											chemical::CUTPOINT_UPPER,
-																											cutpoint + 1 );
+					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, cutpoint + 1 );
 			}
 
 
@@ -1508,8 +1480,7 @@ CDRH3Modeler2::get_name() const {
 			if( benchmark_ ) min_tolerance = 1.0;
 			std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 			bool nb_list = true;
-			MinMoverOP loop_min_mover = new MinMover( loop_map,
-				lowres_scorefxn_, min_type, min_tolerance, nb_list );
+			MinMoverOP loop_min_mover = new MinMover( loop_map, lowres_scorefxn_, min_type, min_tolerance, nb_list );
 
 			// more params
 			Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
@@ -1527,12 +1498,8 @@ CDRH3Modeler2::get_name() const {
 
 			Real high_move_temp = 2.00;
 			// minimize amplitude of moves if correct parameter is set
-			BackboneMoverOP small_mover = new SmallMover( loop_map,
-																										high_move_temp,
-																										n_small_moves );
-			BackboneMoverOP shear_mover = new ShearMover( loop_map,
-																										high_move_temp,
-																										n_small_moves );
+			BackboneMoverOP small_mover = new SmallMover( loop_map, high_move_temp, n_small_moves );
+			BackboneMoverOP shear_mover = new ShearMover( loop_map, high_move_temp, n_small_moves );
 			small_mover->angle_max( 'H', 2.0 );
 			small_mover->angle_max( 'E', 5.0 );
 			small_mover->angle_max( 'L', 6.0 );

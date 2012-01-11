@@ -28,9 +28,10 @@
 // option key includes
 #include <basic/options/option.hh>
 #include <string>
+#include <basic/Tracer.hh>
 
 
-
+static basic::Tracer TR("protocols.antibody2");
 
 
 int
@@ -47,7 +48,8 @@ main( int argc, char * argv [] )
 
 
 	AntibodyModeler2OP abm = new AntibodyModeler2();
-
+    TR<<abm<<std::endl;
+//    exit(-1);
 
 	JobDistributor::get_instance()->go(abm);
 

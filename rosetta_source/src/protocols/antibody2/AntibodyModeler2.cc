@@ -103,7 +103,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.AntibodyModeler2");
+static basic::Tracer TR("protocols.antibody2.AntibodyModeler2");
 using namespace core;
 
 namespace protocols {
@@ -124,15 +124,26 @@ AntibodyModeler2::clone() const {
 	return( new AntibodyModeler2() );
 }
 
+    
+    
+    
+    
+    
+    
+    
 void AntibodyModeler2::init() {
 	Mover::type( "AntibodyModeler2" );
 
 	// setup all the booleans with default values
 	// they will get overwritten by the options and/or passed values
+    
 	set_default();
+    
 	register_options();
+    
 	init_from_options();
 
+    
 //	if ( ab_model_score() == NULL ) { //<- use this if we want to pass in score functions
 		// score functions
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" );
@@ -142,27 +153,39 @@ void AntibodyModeler2::init() {
 //	}
 
 	setup_objects();
-//	exit(-1);
+
 }
 
+    
+    
+    
+    
+    
+    
 void
 AntibodyModeler2::set_default()
 {
-	TR <<  "Setting up default settings" << std::endl;
-	model_h3_ = false;
-	snugfit_ = true;
-	graft_l1_ = true;
-	graft_l2_ = true;
-	graft_l3_ = true;
-	graft_h1_ = true;
-	graft_h2_ = true;
-	graft_h3_ = false;
+	TR <<  "Setting up default settings to all FALSE" << std::endl;
+	model_h3_  = false;
+	snugfit_   = false;
+	graft_l1_  = false;
+	graft_l2_  = false;
+	graft_l3_  = false;
+	graft_h1_  = false;
+	graft_h2_  = false;
+	graft_h3_  = false;
 	benchmark_ = false;
-	camelid_ = false;
+	camelid_   = false;
 	camelid_constraints_ = false;
 
 }
 
+    
+    
+    
+    
+    
+    
 void
 AntibodyModeler2::register_options()
 {
@@ -183,37 +206,37 @@ AntibodyModeler2::register_options()
 	option.add_relevant( OptionKeys::in::file::native );
 }
 
+    
+    
+    
+    
 void
 AntibodyModeler2::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	TR <<  "Reading Options" << std::endl;
 	if ( option[ OptionKeys::antibody::model_h3 ].user() )
-		set_model_h3( option[ OptionKeys::antibody::model_h3 ]() );
+                set_model_h3( option[ OptionKeys::antibody::model_h3 ]() );
 	if ( option[ OptionKeys::antibody::snugfit ].user() )
-		set_snugfit( option[ OptionKeys::antibody::snugfit ]() );
-
-	if ( option[ OptionKeys::antibody::graft_l1 ].user() ) {
-		std::cout<<"    ******** graft_l1 flag is on **********  "<<std::endl;
-		set_graft_l1( option[ OptionKeys::antibody::graft_l1 ]() );
-	}
+                set_snugfit( option[ OptionKeys::antibody::snugfit ]() );
+	if ( option[ OptionKeys::antibody::graft_l1 ].user() )
+                set_graft_l1( option[ OptionKeys::antibody::graft_l1 ]() );
 	if ( option[ OptionKeys::antibody::graft_l2 ].user() )
-		set_graft_l2( option[ OptionKeys::antibody::graft_l2 ]() );
+                set_graft_l2( option[ OptionKeys::antibody::graft_l2 ]() );
 	if ( option[ OptionKeys::antibody::graft_l3 ].user() )
-		set_graft_l3( option[ OptionKeys::antibody::graft_l3 ]() );
+                set_graft_l3( option[ OptionKeys::antibody::graft_l3 ]() );
 	if ( option[ OptionKeys::antibody::graft_h1 ].user() )
-		set_graft_h1( option[ OptionKeys::antibody::graft_h1 ]() );
+                set_graft_h1( option[ OptionKeys::antibody::graft_h1 ]() );
 	if ( option[ OptionKeys::antibody::graft_h2 ].user() )
-		set_graft_h2( option[ OptionKeys::antibody::graft_h2 ]() );
+                set_graft_h2( option[ OptionKeys::antibody::graft_h2 ]() );
 	if ( option[ OptionKeys::antibody::graft_h3 ].user() )
-		set_graft_h3( option[ OptionKeys::antibody::graft_h3 ]() );
+                set_graft_h3( option[ OptionKeys::antibody::graft_h3 ]() );
 	if ( option[ OptionKeys::antibody::camelid ].user() )
-		set_camelid( option[ OptionKeys::antibody::camelid ]() );
+                set_camelid( option[ OptionKeys::antibody::camelid ]() );
 	if ( option[ OptionKeys::antibody::camelid_constraints ].user() )
-		set_camelid_constraints( option[ OptionKeys::antibody::camelid_constraints ]() );
-
+                set_camelid_constraints( option[ OptionKeys::antibody::camelid_constraints ]() );
 	if ( option[ OptionKeys::run::benchmark ].user() )
-		set_benchmark( option[ OptionKeys::run::benchmark ]() );
+                set_benchmark( option[ OptionKeys::run::benchmark ]() );
 
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
@@ -221,97 +244,113 @@ AntibodyModeler2::init_from_options() {
 		core::import_pose::pose_from_pdb( *native_pose, option[ OptionKeys::in::file::native ]() );
 		set_native_pose( native_pose );
 	}
-	else
+	else{
 		set_native_pose(NULL);
-
+	}
+    
+    
 	cst_weight_ = option[ OptionKeys::constraints::cst_weight ]();
+    
 	if( camelid_ ) {
 		graft_l1_ = false;
 		graft_l2_ = false;
 		graft_l3_ = false;
 		snugfit_ = false;
 	}
+    
 	if( camelid_constraints_ )
 		model_h3_ = false;
 
 }
 
+    
+    
+    
+    
+    
+    
+    
+    
 void
 AntibodyModeler2::setup_objects() {
 	sync_objects_with_flags();
 }
-
 void
 AntibodyModeler2::sync_objects_with_flags() {
 
 	using namespace protocols::moves;
-	TR<<"I am here 1"<<std::endl;
 
 	// add movers to sequence mover depending on the flags that were set
-	graft_move_ =  new  protocols::antibody2::GraftMover2( graft_l1_, graft_l2_, graft_l3_, graft_h1_, graft_h2_, graft_h3_, camelid_, benchmark_ );
-	TR<<"I am here 2"<<std::endl;
-	graft_move_->set_native_pose( get_native_pose() );
-	TR<<"I am here 3"<<std::endl;
+	graft_move_ =  new  GraftMover2( graft_l1_, graft_l2_, graft_l3_, 
+                                     graft_h1_, graft_h2_, graft_h3_, 
+                                     camelid_, benchmark_ );
 
-	if ( model_h3_ ){
-		model_cdrh3_ = new protocols::antibody2::CDRH3Modeler2( model_h3_, true, true, camelid_, benchmark_ );
-		TR<<"I am here 4"<<std::endl;
-	}
-	else
-		model_cdrh3_ = NULL;
+	graft_move_->set_native_pose( get_native_pose() );
+
+
+	if ( model_h3_ ){model_cdrh3_ = new CDRH3Modeler2( model_h3_, true, true, camelid_, benchmark_ );}
+	else            {model_cdrh3_ = NULL;}
 
 	flags_and_objects_are_in_sync_ = true;
 	first_apply_with_current_setup_ = true;
 }
 
 
+    
+    
+    
+    
+    
+    
 
+    
 
 void
-AntibodyModeler2::finalize_setup( pose::Pose & pose ) {
+AntibodyModeler2::finalize_setup( pose::Pose & frame_pose ) {
 
-	TR<<"AAAAAAAAAAAAAAAAAAAAAAA"<<std::endl;
+    
+
 	TR<<"AAAAAAAA     model_h3: "<<model_h3_<<std::endl;
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
 	if( model_h3_ && ( cst_weight_ != 0.00 ) ) {
-		protocols::simple_moves::ConstraintSetMoverOP cdr_constraint = new protocols::simple_moves::ConstraintSetMover();
-		TR<<"AAAAAAAAAAAAABBBBBBBBBBBBB " <<std::endl;
-		cdr_constraint->apply( pose );
-		TR<<"AAAAAAAAAAAAACCCCCCCCCCCCC " <<std::endl;
+		simple_moves::ConstraintSetMoverOP cdr_constraint = new simple_moves::ConstraintSetMover();
+		cdr_constraint->apply( frame_pose );
 	}
 
-	TR<<"BBBBBBBBBBBBBBBBBBBBBBB"<<std::endl;
 	// check for native and input pose
 	if ( !get_input_pose() ) {
-		core::pose::PoseOP input_pose = new core::pose::Pose(pose);
-		set_input_pose( input_pose );
+		pose::PoseOP input_pose = new pose::Pose(frame_pose);  //JQX: QUESTION: why owning pointer here
+		set_input_pose( input_pose );   // JQX: pass the input_pose to the mover.input_pose_
 	}
 
-	TR<<"CCCCCCCCCCCCCCCCCCCCCCC"<<std::endl;
-	core::pose::PoseOP native_pose;
+
+	pose::PoseOP native_pose;
 	if ( !get_native_pose() ) {
 		TR << "Danger Will Robinson! Native is an impostor!" << std::endl;
-		native_pose = new core::pose::Pose(pose);
+        TR << "   'native_pose' is just a copy of the 'input_pose'    " << std::endl;
+        TR << "    since you didn't sepcifiy the native pdb name"<<std::endl;
+		native_pose = new pose::Pose(frame_pose);
 	} else {
-		native_pose = new core::pose::Pose( *get_native_pose() );
+		native_pose = new pose::Pose( *get_native_pose() );
 	}
-	TR<<"DDDDDDDDDDDDDDDDDDDDDDD"<<std::endl;
-	pose::set_ss_from_phipsi( *native_pose );
-	TR<<"EEEEEEEEEEEEEEEEEEEEEEE"<<std::endl;
-	set_native_pose( native_pose );
 
-	TR<<"*****FFFFFFFFFFFFFF****"<<std::endl;
-	antibody_in_.setup_loops( pose, camelid_ );
-	TR<<"*****GGGGGGGGGGGGGG****"<<std::endl;
+	pose::set_ss_from_phipsi( *native_pose ); // JQX: this is the secondary structure from the native pose
+
+	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
+
+	ab_info_.setup_loops( frame_pose, camelid_ );
+            TR<< " Check ab_info object !!!!!    "<<std::endl;
+            TR<<ab_info_<<std::endl;
+
 
 	if( model_h3_ ) {
 		// Read standard Rosetta fragments file
 		exit(-1);
-		read_and_store_fragments( pose );
+		read_and_store_fragments( frame_pose );
 
 		// Read in CDR H3 C-terminal fragment file
 		utility::vector1< core::fragment::FragData > H3_base_library;
-		read_H3_cter_fragment( antibody_in_, H3_base_library, camelid_);
+		read_H3_cter_fragment( ab_info_, H3_base_library, camelid_);
 		model_cdrh3_->set_offset_frags( offset_frags_ );
 		model_cdrh3_->store_H3_cter_fragment( H3_base_library );
 		model_cdrh3_->set_native_pose( get_native_pose() );
@@ -324,34 +363,50 @@ AntibodyModeler2::finalize_setup( pose::Pose & pose ) {
 
 
 
-void AntibodyModeler2::apply( pose::Pose & pose ) {
+void AntibodyModeler2::apply( pose::Pose & frame_pose ) {
 
-	using namespace chemical;
-	using namespace id;
-	using namespace fragment;
-	using namespace scoring;
-	using namespace core::scoring::constraints;
-	using namespace protocols::moves;
+    using namespace chemical;
+    using namespace id;
+    using namespace fragment;
+    using namespace scoring;
+    using namespace core::scoring::constraints;
+    using namespace protocols::moves;
 
-	TR<<"I am here 5"<<std::endl;
-	protocols::moves::PyMolMover pymol;
-	if ( !flags_and_objects_are_in_sync_ ){ sync_objects_with_flags(); }
-	TR<<"I am here 5.5"<<std::endl;
-	if ( first_apply_with_current_setup_ ){ finalize_setup(pose);  first_apply_with_current_setup_=false; }
+//  I assume the pose is from the job distributor, which can take the -s flag to get the pose
+    // the below test proves that the inital secstruct is all "L"   !!!!!!!!!!!!!
+/*    TR<<"JQX:    this is the 1st time that the 'pose' is used in the code: "<<std::endl;
+    TR<<pose<<std::endl;
+    for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+            TR<<"JQX:   residue: "<<i<<"       secstruct: "<<pose.secstruct(i)<<std::endl;
+    }
+    exit(-1);   */
+    
+    
+    
+    protocols::moves::PyMolMover pymol;
+    if ( !flags_and_objects_are_in_sync_ ){ 
+       sync_objects_with_flags(); 
+    }
+    
+    if ( first_apply_with_current_setup_ ){ 
+        finalize_setup(frame_pose);  
+        first_apply_with_current_setup_=false; 
+    }
 
-	TR<<"I am here 6"<<std::endl;
+
 
 	basic::prof_reset();
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 
-	pose::set_ss_from_phipsi( pose );
-	pymol.apply( pose );
-	pymol.send_energy( pose );
+	pose::set_ss_from_phipsi( frame_pose );
+    
+	pymol.apply( frame_pose );
+	pymol.send_energy( frame_pose );
 
 	// display constraints and return
 	if( camelid_constraints_ ) {
-		display_constraint_residues( pose );
+		display_constraint_residues( frame_pose );
 		return;
 	}
 
@@ -359,11 +414,11 @@ void AntibodyModeler2::apply( pose::Pose & pose ) {
 
 
 	// graft loops
-	TR<<"I am here 7"<<std::endl;
-	graft_move_->apply( pose );
-	TR<<"I am here 8"<<std::endl;
-	pymol.apply( pose );
-	pymol.send_energy( pose );
+
+	graft_move_->apply( frame_pose );
+
+	pymol.apply( frame_pose );
+	pymol.send_energy( frame_pose );
 
 	exit(-1);
 
@@ -371,72 +426,72 @@ void AntibodyModeler2::apply( pose::Pose & pose ) {
 	if ( model_h3_ ) {
 		// centroid
 		// high res
-		model_cdrh3_->apply( pose );
-		pymol.apply( pose );
-		pymol.send_energy( pose );
+		model_cdrh3_->apply( frame_pose );
+		pymol.apply( frame_pose );
+		pymol.send_energy( frame_pose );
 		// if not snugfit, relax cdr
-		if ( !snugfit_ ) relax_cdrs( pose );
-		pymol.apply( pose );
-		pymol.send_energy( pose );
+		if ( !snugfit_ ) relax_cdrs( frame_pose );
+		pymol.apply( frame_pose );
+		pymol.send_energy( frame_pose );
 	}
 
 	// snugfit
 	if ( !camelid_ && snugfit_ ) {
-		all_cdr_VL_VH_fold_tree( pose, antibody_in_.all_cdr_loops_ );
-		relax_cdrs( pose );
-		pymol.apply( pose );
-		pymol.send_energy( pose );
-		repulsive_ramp ( pose, antibody_in_.all_cdr_loops_ );
-		pymol.apply( pose );
-		pymol.send_energy( pose );
-		snugfit_mcm_protocol ( pose, antibody_in_.all_cdr_loops_ );
-		pymol.apply( pose );
-		pymol.send_energy( pose );
+		all_cdr_VL_VH_fold_tree( frame_pose, ab_info_.all_cdr_loops_ );
+		relax_cdrs( frame_pose );
+		pymol.apply( frame_pose );
+		pymol.send_energy( frame_pose );
+		repulsive_ramp ( frame_pose, ab_info_.all_cdr_loops_ );
+		pymol.apply( frame_pose );
+		pymol.send_energy( frame_pose );
+		snugfit_mcm_protocol ( frame_pose, ab_info_.all_cdr_loops_ );
+		pymol.apply( frame_pose );
+		pymol.send_energy( frame_pose );
 
 		// align pose to native pose
 		pose::Pose native_pose = *get_native_pose();
 		antibody2::AntibodyInfo native_ab( native_pose, camelid_ );
-//		antibody_in_.align_to_native( pose, native_ab, native_pose );
+//		ab_info_.align_to_native( pose, native_ab, native_pose );
 	}
-	pymol.apply( pose );
-	pymol.send_energy( pose );
+	pymol.apply( frame_pose );
+	pymol.send_energy( frame_pose );
 
 	// remove cutpoints variants for all cdrs
 	// "true" forces removal of variants even from non-cutpoints
-	loops::remove_cutpoint_variants( pose, true );
+	loops::remove_cutpoint_variants( frame_pose, true );
 
 	// Define CDR H3 loop
-	Size frag_size = (antibody_in_.get_loop("h3")->stop()-antibody_in_.get_loop("h3")->start()) + 3;
-	Size cutpoint =  antibody_in_.get_loop("h3")->start() + int( frag_size / 2 );
-	loops::Loop cdr_h3( antibody_in_.get_loop("h3")->start(), antibody_in_.get_loop("h3")->stop(), cutpoint, 0, false );
+	Size frag_size   = (ab_info_.get_loop("h3")->stop()  - ab_info_.get_loop("h3")->start()) + 3;
+	Size cutpoint    =  ab_info_.get_loop("h3")->start() + int( frag_size / 2 );
+	loops::Loop cdr_h3( ab_info_.get_loop("h3")->start(), ab_info_.get_loop("h3")->stop(), cutpoint, 0, false );
 
 	// Fold Tree
-	antibody2::simple_one_loop_fold_tree( pose, cdr_h3 );
+	antibody2::simple_one_loop_fold_tree( frame_pose, cdr_h3 );
 
 	// Redefining CDR H3 cutpoint variants
-	loops::add_single_cutpoint_variant( pose, cdr_h3 );
+	loops::add_single_cutpoint_variant( frame_pose, cdr_h3 );
 
 	// add scores to map for outputting constraint score
-	( *scorefxn_ )( pose );
+	( *scorefxn_ )( frame_pose );
 
-	Real constraint_score = pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
+	Real constraint_score = frame_pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
 
 	// removing constraint score
 	scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.00 );
 	// add scores to map for output
-	( *scorefxn_ )( pose );
+	( *scorefxn_ )( frame_pose );
 
-	job->add_string_real_pair("AA_H3", global_loop_rmsd( pose, *get_native_pose(), "h3" ));
-	job->add_string_real_pair("AB_H2", global_loop_rmsd( pose, *get_native_pose(), "h2" ));
-	job->add_string_real_pair("AC_H1", global_loop_rmsd( pose, *get_native_pose(), "h1" ));
+	job->add_string_real_pair("AA_H3", global_loop_rmsd( frame_pose, *get_native_pose(), "h3" ));
+	job->add_string_real_pair("AB_H2", global_loop_rmsd( frame_pose, *get_native_pose(), "h2" ));
+	job->add_string_real_pair("AC_H1", global_loop_rmsd( frame_pose, *get_native_pose(), "h1" ));
 	if( !camelid_ ) {
-		job->add_string_real_pair("AC_L3", global_loop_rmsd( pose, *get_native_pose(), "l3" ));
-		job->add_string_real_pair("AD_L2", global_loop_rmsd( pose, *get_native_pose(), "l2" ));
-		job->add_string_real_pair("AE_L1", global_loop_rmsd( pose, *get_native_pose(), "l1" ));
+		job->add_string_real_pair("AC_L3", global_loop_rmsd( frame_pose, *get_native_pose(), "l3" ));
+		job->add_string_real_pair("AD_L2", global_loop_rmsd( frame_pose, *get_native_pose(), "l2" ));
+		job->add_string_real_pair("AE_L1", global_loop_rmsd( frame_pose, *get_native_pose(), "l1" ));
 	}
 	job->add_string_real_pair("AF_constraint", constraint_score);
 
-	set_last_move_status( protocols::moves::MS_SUCCESS );
+	set_last_move_status( protocols::moves::MS_SUCCESS );   
 
 	basic::prof_show();
 
@@ -478,10 +533,10 @@ AntibodyModeler2::get_name() const {
 
 		protocols::loops::read_loop_fragments( frag_libs );
 
-		Size frag_size = (antibody_in_.get_loop("h3")->stop()-antibody_in_.get_loop("h3")->start()) + 3;
-		Size cutpoint =  antibody_in_.get_loop("h3")->start() + int( frag_size / 2 );
-		setup_simple_fold_tree(  antibody_in_.get_loop("h3")->start() - 1, cutpoint,
-														 antibody_in_.get_loop("h3")->stop() + 1,
+		Size frag_size = (ab_info_.get_loop("h3")->stop()-ab_info_.get_loop("h3")->start()) + 3;
+		Size cutpoint =  ab_info_.get_loop("h3")->start() + int( frag_size / 2 );
+		setup_simple_fold_tree(  ab_info_.get_loop("h3")->start() - 1, cutpoint,
+														 ab_info_.get_loop("h3")->stop() + 1,
 														 pose.total_residue(),
 														 pose );
 
@@ -495,7 +550,7 @@ AntibodyModeler2::get_name() const {
 						eit = loop_3mer_frames.end(); it!=eit; ++it ) {
 			FrameOP short_frame = (*it)->clone_with_frags();
 			offset++;
-			short_frame->shift_to( ( antibody_in_.get_loop("h3")->start() - 2 ) + offset  );
+			short_frame->shift_to( ( ab_info_.get_loop("h3")->start() - 2 ) + offset  );
 			offset_3mer_frags->add( short_frame );
 		}
 
@@ -509,7 +564,7 @@ AntibodyModeler2::get_name() const {
 						eit = loop_9mer_frames.end(); it!=eit; ++it ) {
 			FrameOP short_frame = (*it)->clone_with_frags();
 			offset++;
-			short_frame->shift_to( ( antibody_in_.get_loop("h3")->start() - 2 ) + offset  );
+			short_frame->shift_to( ( ab_info_.get_loop("h3")->start() - 2 ) + offset  );
 			offset_9mer_frags->add( short_frame );
 		}
 
@@ -594,7 +649,7 @@ AntibodyModeler2::get_name() const {
 		kinematics::FoldTree const input_tree( pose.fold_tree() );
 
 		// changing to all cdr fold tree
-		antibody_in_.all_cdr_fold_tree( pose );
+		ab_info_.all_cdr_fold_tree( pose );
 
 		// adding cutpoint variants for chainbreak score computation
 		loops::add_cutpoint_variants( pose );
@@ -609,12 +664,12 @@ AntibodyModeler2::get_name() const {
 		allcdr_map->set_bb( false );
 		utility::vector1< bool> is_flexible( nres, false );
 		bool include_neighbors( false );
-		select_loop_residues( pose, antibody_in_.all_cdr_loops_, include_neighbors, is_flexible );
+		select_loop_residues( pose, ab_info_.all_cdr_loops_, include_neighbors, is_flexible );
 		allcdr_map->set_bb( is_flexible );
 		include_neighbors = true;
-		select_loop_residues( pose, antibody_in_.all_cdr_loops_, include_neighbors, is_flexible );
+		select_loop_residues( pose, ab_info_.all_cdr_loops_, include_neighbors, is_flexible );
 		allcdr_map->set_chi( is_flexible );
-		for( Size ii = 1; ii <= antibody_in_.all_cdr_loops_.num_loop(); ii++ )
+		for( Size ii = 1; ii <= ab_info_.all_cdr_loops_.num_loop(); ii++ )
 			allcdr_map->set_jump( ii, false );
 
 		// score functions
@@ -1056,11 +1111,9 @@ AntibodyModeler2::get_name() const {
 
 		// incorporating Ian's UnboundRotamer operation.
 		// note that nothing happens if unboundrot option is inactive!
-		pack::rotamer_set::UnboundRotamersOperationOP unboundrot =
-			new pack::rotamer_set::UnboundRotamersOperation();
+		pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
 		unboundrot->initialize_from_command_line();
-		operation::AppendRotamerSetOP unboundrot_operation =
-			new operation::AppendRotamerSet( unboundrot );
+		operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
 		tf_->push_back( unboundrot_operation );
 		// adds scoring bonuses for the "unbound" rotamers, if any
 		core::pack::dunbrack::load_unboundrot( pose_in );
@@ -1079,7 +1132,7 @@ AntibodyModeler2::get_name() const {
 
 		using namespace scoring;
 
-		loops::LoopOP current_loop = antibody_in_.get_loop( cdr_type );
+		loops::LoopOP current_loop = ab_info_.get_loop( cdr_type );
 		Size loop_start = current_loop->start();
 		Size loop_end = current_loop->stop();
 
@@ -1100,37 +1153,94 @@ AntibodyModeler2::get_name() const {
 
 		Size H1_Cys(0), H3_Cys(0);
 
-		if( pose.residue( pose.pdb_info()->pdb2pose( 'H',
-				32 ) ).name3() == "CYS" )
+		if(      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" )
 			H1_Cys = pose.pdb_info()->pdb2pose( 'H', 32 );
-		else if( pose.residue( pose.pdb_info()->pdb2pose(
-		   'H', 33 ) ).name3() == "CYS" )
+		else if( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" )
 			H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
 
-		for( Size ii = antibody_in_.get_loop("h3")->start(); ii <= antibody_in_.get_loop("h3")->stop();
-				 ii++ )
-			if( pose.residue(ii).name3() == "CYS" )
-				H3_Cys = ii;
+		for( Size ii = ab_info_.get_loop("h3")->start(); ii <= ab_info_.get_loop("h3")->stop(); ii++ )
+			if( pose.residue(ii).name3() == "CYS" ) H3_Cys = ii;
 
 		if( ( H1_Cys != 0 ) && ( H3_Cys != 0 ) )
-			TR << "CONSTRAINTS: "
-				 << "AtomPair CA " << H1_Cys << " CA " << H3_Cys
+			TR << "CONSTRAINTS: "<< "AtomPair CA " << H1_Cys << " CA " << H3_Cys
 				 << " BOUNDED 4.0 6.1 0.6 BOND; mean 5.6 sd 0.6" << std::endl;
 
 		// Specifying extended kink
 
 		Size hfr_46(0), h3_closest(0);
 		hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
-		if( antibody_in_.is_extended() )
-			h3_closest = antibody_in_.get_loop("h3")->stop() - 5;
+		if( ab_info_.is_extended() ) h3_closest = ab_info_.get_loop("h3")->stop() - 5;
 		if( h3_closest != 0 )
-			TR << "CONSTRAINTS: "
-				 << "AtomPair CA " << hfr_46 << " CA " << h3_closest
+			TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest
 				 << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;
 
 		return;
 	} // display_constraint_residues
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+/// @details  Show the complete setup of the docking protocol
+void
+AntibodyModeler2::show( std::ostream & out ) {
+    if ( !flags_and_objects_are_in_sync_ ){
+        sync_objects_with_flags();
+    }
+    out << *this;
+}
+    
+std::ostream & operator<<(std::ostream& out, const AntibodyModeler2 & ab_m_2 )
+{
+    using namespace ObjexxFCL::fmt;
+        
+    // All output will be 80 characters - 80 is a nice number, don't you think?
+    std::string line_marker = "///";
+    out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+    out << line_marker << A( 47, "Rosetta 3 Antibody Modeler" ) << space( 27 ) << line_marker << std::endl;
+    out << line_marker << space( 74 ) << line_marker << std::endl;
+    // Display the movable jumps that will be used in docking
+    out << line_marker << " Dockable Jumps: ";
+        
+        
+        
+    // Display the state of the low resolution docking protocol that will be used
+    out << line_marker << " Graft_l1:  " << ab_m_2.graft_l1_<<std::endl;
+    out << line_marker << " Graft_l2:  " << ab_m_2.graft_l2_<<std::endl;
+    out << line_marker << " Graft_l3:  " << ab_m_2.graft_l3_<<std::endl;
+    out << line_marker << " Graft_h1:  " << ab_m_2.graft_h1_<<std::endl;
+    out << line_marker << " Graft_h2:  " << ab_m_2.graft_h2_<<std::endl;
+    out << line_marker << " Graft_h3:  " << ab_m_2.graft_h3_<<std::endl;
+    out << line_marker << "  camelid:  " << ab_m_2.camelid_ <<std::endl;
+    out << line_marker << " model_h3:  " << ab_m_2.model_h3_<<std::endl;
+    out << line_marker << "  snugfit:  " << ab_m_2.snugfit_ <<std::endl;
+        
+        
+    // Display the state of the low resolution docking protocol that will be used
+        
+        
+    // Close the box I have drawn
+    out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+    return out;
+}
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 } // end antibody2
 } // end protocols
