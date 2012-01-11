@@ -154,25 +154,15 @@ core::Real HybridizeProtocol::get_gdtmm( core::pose::Pose &pose ) {
 	
 HybridizeProtocol::~HybridizeProtocol(){}
 
-	void HybridizeProtocol::add_template(std::string template_fn, std::string cst_fn, core::Real weight, core::Size cluster_id)
+void HybridizeProtocol::add_template(std::string template_fn, std::string cst_fn, core::Real weight, core::Size cluster_id)
 {
 	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 	core::pose::PoseOP template_pose = new core::pose::Pose();
 	core::import_pose::pose_from_pdb( *template_pose, *residue_set, template_fn );
 
-	add_template(template_pose, cst_fn, weight, cluster_id);
-	
-}
-
-void HybridizeProtocol::add_template(core::pose::PoseOP template_in,
-									 //core::scoring::constraints::ConstraintSetOP cst_in,
-									 std::string cst_fn,
-									 core::Real weight,
-									 core::Size clusterID )
-{   
 	// add secondary structure information to the template pose
-	core::scoring::dssp::Dssp dssp_obj( *template_in );
-	dssp_obj.insert_ss_into_pose( *template_in );
+	core::scoring::dssp::Dssp dssp_obj( *template_pose );
+	dssp_obj.insert_ss_into_pose( *template_pose );
 	
 	// find ss chunks in template
 	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose); 
@@ -287,8 +277,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	utility::vector1 < protocols::loops::Loops > template_contigs_icluster;
 	pick_starting_template(initial_template_index, initial_template_index_icluster, template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster);
 
-	//using namespace ObjexxFCL::fmt;
-	TR << "Using template: " << initial_template_index << std::endl;
+    using namespace ObjexxFCL::fmt;
+    TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
 
 	// initialize template history
 	TemplateHistoryOP history = new TemplateHistory(pose);
@@ -325,9 +315,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	CartesianHybridizeOP cart_hybridize (
 		new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_, fragments3_ ) );
 	core::scoring::ScoreFunctionOP scorefxn_stage2 =
-	core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage2_patch]());
+	core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage2_weights](), option[cm::hybridize::stage2_patch]());
 	cart_hybridize->set_scorefunction(scorefxn_stage2);
 	cart_hybridize->apply(pose);
+    //fragment_history = cart_hybridize->get_fragment_history(); // fragment indexed within the cluster
 
 	// get fragment history
 	runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );

@@ -75,6 +75,8 @@ void set_reset_torsion_unaligned(bool reset_torsion_unaligned);
 	
 void steal_torsion_from_template(core::pose::Pose & pose);
 	
+void steal_torsion_and_bonds_from_template(core::pose::Pose & pose);
+	
 bool get_local_sequence_mapping(core::pose::Pose const & pose,
 								int registry_shift = 0,
 								Size MAX_TRIAL = 10 );

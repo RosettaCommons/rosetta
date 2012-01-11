@@ -235,6 +235,62 @@ void InsertChunkMover::steal_torsion_from_template(core::pose::Pose & pose) {
 }
 
 
+void InsertChunkMover::steal_torsion_and_bonds_from_template(core::pose::Pose & pose) {
+	using namespace ObjexxFCL::fmt;
+	for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
+		if (reset_torsion_unaligned_) {
+			pose.set_omega(ires_pose, 180);
+			
+			if (secstruct_ == 'H') {
+				pose.set_phi(ires_pose,	 -60);
+				pose.set_psi(ires_pose,	 -45);
+			}
+			else {
+				pose.set_phi(ires_pose,	 -110);
+				pose.set_psi(ires_pose,	  130);
+			}
+		}
+		
+		if (sequence_alignment_local_.find(ires_pose) != sequence_alignment_local_.end()) {
+			core::Size jres_template = sequence_alignment_local_.find(ires_pose)->second;
+			if ( !discontinued_upper(*template_pose_,jres_template) ) {
+				TR.Debug << "template phi: " << I(4,jres_template) << F(8,2, template_pose_->phi(jres_template)) << std::endl;
+				pose.set_phi(ires_pose,	template_pose_->phi(jres_template));
+			}
+			if ( !discontinued_lower(*template_pose_,jres_template) ) {
+				TR.Debug << "template psi: " << I(4,jres_template) << F(8,2, template_pose_->psi(jres_template)) << std::endl;
+				pose.set_psi(ires_pose,	template_pose_->psi(jres_template));
+			}
+			pose.set_omega(ires_pose,	template_pose_->omega(jres_template));
+			
+			//fpd  bondlengths and angles
+			core::conformation::Residue const &res = template_pose_->residue(jres_template);
+			for ( unsigned int j = 1; j <= res.natoms(); ++j ) {
+				core::id::AtomID atm_ij     ( j, ires_pose);
+				core::id::AtomID atm_ijtempl( j, jres_template );
+				core::id::DOF_ID theta_ij     (  atm_ij, core::id::THETA );
+				core::id::DOF_ID theta_ijtempl(  atm_ijtempl, core::id::THETA );
+				core::id::DOF_ID d_ij     (  atm_ij, core::id::D );
+				core::id::DOF_ID d_ijtempl(  atm_ijtempl, core::id::D );
+				if ( template_pose_->has_dof(theta_ijtempl) && pose.has_dof(theta_ij) ) {
+					pose.set_dof( theta_ij, template_pose_->dof(theta_ijtempl) );
+				}
+				if ( template_pose_->has_dof(d_ijtempl) && pose.has_dof(d_ij) ) {
+					pose.set_dof( d_ij, template_pose_->dof(d_ijtempl) );
+				}
+			}
+	
+			while (ires_pose > align_trial_counter_.size()) {
+				align_trial_counter_.push_back(0);
+			}
+			++align_trial_counter_[ires_pose];
+		}
+		TR.Debug << "torsion: " << I(4,ires_pose) << F(8,3, pose.phi(ires_pose)) << F(8,3, pose.psi(ires_pose)) << std::endl;
+
+	}
+}
+
+
 bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 								int registry_shift,
 								Size MAX_TRIAL)
@@ -321,7 +377,9 @@ InsertChunkMover::apply(core::pose::Pose & pose) {
 	
 	//steal_torsion_from_template(pose);
 	//align_chunk(pose);
-    set_bb_xyz_aligned(pose);
+  //set_bb_xyz_aligned(pose);
+	steal_torsion_and_bonds_from_template(pose);
+	align_chunk(pose);
 }
     
 void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {

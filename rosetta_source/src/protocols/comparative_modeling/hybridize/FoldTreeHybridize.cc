@@ -525,7 +525,6 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		*/
         for (Size i = 1; i<= 500; ++i) {
             random_mover->apply(pose);
-						pose.dump_pdb("test.pdb");
             (*scorefxn_)(pose);
             mc->boltzmann(pose);
             if ( mc->mc_accepted() ) {
