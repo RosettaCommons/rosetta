@@ -310,7 +310,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	FoldTreeHybridizeOP ft_hybridize(
 		new FoldTreeHybridize(initial_template_index_icluster, templates_icluster, template_chunks_icluster, template_contigs_icluster,  frag_libs) ) ;
 	ft_hybridize->set_scorefunction(scorefxn_stage1);
-		ft_hybridize->apply(pose);
+	ft_hybridize->apply(pose);
 	
 	//write gdtmm to output
 	using namespace ObjexxFCL::fmt;
@@ -319,7 +319,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
 
 	// cartesian fragment hybridize
-	pose.constraint_set( constraint_set );
+	pose.constraint_set( constraint_set );  //reset constraints
 	CartesianHybridizeOP cart_hybridize (
 		new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_, fragments3_ ) );
 	core::scoring::ScoreFunctionOP scorefxn_stage2 =
@@ -331,14 +331,21 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 	history = *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
 
-	//look back
-
 	//write gdtmm to output
 	gdtmm = get_gdtmm(pose);
 	core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
 	TR << "GDTMM_after_stage2" << F(8,3,gdtmm) << std::endl;
 	
+	//look back and apply constraints
+	TR << "History :";
+	for (int i=1; i<= history->size(); ++i ) {
+		TR << " " << history->get(i);
+	}
+	TR << std::endl;
+
 	(*scorefxn_stage2)(pose);
+
+	// optional relax
 }
 
 

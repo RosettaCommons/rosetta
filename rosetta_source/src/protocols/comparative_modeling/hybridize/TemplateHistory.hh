@@ -38,6 +38,7 @@ public:
 	void setall( int template_id );
 	void set( core::Size res_start, core::Size res_stop, int template_id );
 	int get( core::Size resid );
+	core::Size size() { return history_.size(); }
 
 private:
 	utility::vector1< int > history_;

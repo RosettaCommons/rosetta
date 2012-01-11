@@ -14,6 +14,10 @@
 
 #include <protocols/comparative_modeling/hybridize/CartesianHybridize.hh>
 
+#include <protocols/comparative_modeling/hybridize/TemplateHistory.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
+
 #include <devel/init.hh>
 
 //#include <protocols/viewer/viewers.hh>
@@ -339,6 +343,7 @@ void
 CartesianHybridize::apply( Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace core::pose::datacache;
 
 	//protocols::viewer::add_conformation_viewer(  pose.conformation(), "hybridize" );
 
@@ -442,6 +447,14 @@ sampler:
 					action_string = action_string+"_5-14";
 
 				apply_frag( pose, *templates_[templ_id], *frag, (action==2) );
+
+				if (action == 1) {
+					//fpd assume this was initialized elsewhere
+					runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
+					TemplateHistory &history = 
+						*( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
+					history.set( frag->start(), frag->stop(), templ_id );
+				}
 			}
 
 			if (action == 3) {
