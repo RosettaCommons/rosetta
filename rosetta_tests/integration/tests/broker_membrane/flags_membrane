@@ -1,8 +1,8 @@
 -broker:setup input/setup_membrane.tpb
--abinitio::stage2_patch  input/membrane/score_membrane_s2.wts_patch
--abinitio::stage3a_patch input/membrane/score_membrane_s3a.wts_patch
--abinitio::stage3b_patch input/membrane/score_membrane_s3b.wts_patch
--abinitio::stage4_patch  input/membrane/score_membrane_s4.wts_patch
+-abinitio:stage2_patch  input/membrane/score_membrane_s2.wts_patch
+-abinitio:stage3a_patch input/membrane/score_membrane_s3a.wts_patch
+-abinitio:stage3b_patch input/membrane/score_membrane_s3b.wts_patch
+-abinitio:stage4_patch  input/membrane/score_membrane_s4.wts_patch
 
 -score:weights membrane_highres_Menv_smooth.wts
 

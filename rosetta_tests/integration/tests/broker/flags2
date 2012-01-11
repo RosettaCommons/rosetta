@@ -18,7 +18,7 @@
 -in:file:silent_struct_type binary
 -out:file:silent result2.out
 -run:intermediate_structures
--abinitio::stage1_patch input/xyz_patch
+-abinitio:stage1_patch input/xyz_patch
 -nstruct 1
 -out:level 300
 -out:file:scorefile score2.fsc
