@@ -33,12 +33,11 @@
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/SecondaryStructure.hh>
@@ -78,16 +77,15 @@ static basic::Tracer TR("protocols.medal.MedalExchangeMover");
 
 /// @detail Combines both sets of loops, sorting the result in increasing order of start position
 protocols::loops::LoopsCOP combine_loops(LoopsCOP aligned, LoopsCOP unaligned) {
-  assert(aligned);
-  assert(unaligned);
-
   LoopsOP combined = new Loops();
 
-  for (Loops::const_iterator i = aligned->begin(); i != aligned->end(); ++i)
+  for (Loops::const_iterator i = aligned->begin(); i != aligned->end(); ++i) {
     combined->add_loop(*i);
+  }
 
-  for (Loops::const_iterator i = unaligned->begin(); i != unaligned->end(); ++i)
+  for (Loops::const_iterator i = unaligned->begin(); i != unaligned->end(); ++i) {
     combined->add_loop(*i);
+  }
 
   combined->sequential_order();
   return combined;
@@ -100,10 +98,10 @@ void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, Constraint
   using core::PointPosition;
   using core::conformation::Residue;
   using core::id::AtomID;
-  using core::scoring::constraints::BoundFunc;
   using core::scoring::constraints::ConstraintCOP;
   using core::scoring::constraints::CoordinateConstraint;
   using core::scoring::constraints::FuncOP;
+  using core::scoring::constraints::HarmonicFunc;
 
   const Real delta = option[OptionKeys::cm::sanitize::bound_delta]();
   const Real sd = option[OptionKeys::cm::sanitize::bound_sd]();
@@ -121,14 +119,14 @@ void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, Constraint
       const PointPosition& ca_coords = pose.xyz(ca_atom);
 
       Real distance = ca_coords.distance(fixed_coords);
-      FuncOP function = new BoundFunc(distance - delta, distance + delta, sd, "");
+      FuncOP function = new HarmonicFunc(distance, 5);
       ConstraintCOP constraint = new CoordinateConstraint(ca_atom, fixed_atom, fixed_coords, function);
       constraints->add_constraint(constraint);
     }
   }
 }
 
-/// @detail Include user-specified atom_pair_constraints operating on pairs of aligned residues
+/// @detail Retain user-specified distance restraints that operate on pairs of aligned residues
 void setup_atom_pair_constraints(const Pose& pose, LoopsCOP aligned, ConstraintSetOP constraints) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -166,22 +164,14 @@ void setup_atom_pair_constraints(const Pose& pose, LoopsCOP aligned, ConstraintS
   }
 }
 
-/// @brief Creates a coordinate constraint between a fixed virtual atom and the
-/// CA atom of each aligned residue. The constraint is evaluated using a BoundFunc
-/// functional form, with lower bound set to the initial distance - delta and
-/// upper bound set to the initial distance + delta. The value of delta, as well
-/// as the standard deviation, are controllable via the command line.
 void setup_constraints(const Pose& pose, LoopsCOP aligned, ConstraintSetOP constraints) {
-  assert(aligned);
-  assert(constraints);
   setup_atom_pair_constraints(pose, aligned, constraints);
   setup_coordinate_constraints(pose, aligned, constraints);
 }
 
+/// @detail Computes the probability of selecting a residue for fragment insertion.
+/// P(unaligned) = 0. P(aligned) = 1 / #aligned.
 void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kinematics::FoldTree& tree, LoopsCOP aligned, vector1<double>* probs) const {
-  assert(probs);
-  assert(aligned);
-
   probs->resize(num_residues, 0);
 
   for (Loops::const_iterator i = aligned->begin(); i != aligned->end(); ++i) {
@@ -217,11 +207,11 @@ void MedalExchangeMover::apply(Pose& pose) {
   Extender extender(job->alignment().clone(), pose.total_residue());
   extender.set_secondary_structure(pred_ss_);
   extender.extend_unaligned(&pose);
+  pose.dump_pdb("extended.pdb");
 
   LoopsCOP aligned = extender.aligned();
   LoopsCOP unaligned = extender.unaligned();
   LoopsCOP combined = combine_loops(aligned, unaligned);
-  assert(combined->size() == (aligned->size() + unaligned->size()));
   TR << "Aligned:" << std::endl << *aligned << std::endl;
   TR << "Unaligned:" << std::endl << *unaligned << std::endl;
 
@@ -231,24 +221,34 @@ void MedalExchangeMover::apply(Pose& pose) {
 
   ConstraintSetOP constraints = new ConstraintSet();
   setup_constraints(pose, aligned, constraints);
-  pose.constraint_set(constraints);
+
+  // Minimal score function used during initial replacement
+  ScoreFunctionOP minimal = new ScoreFunction();
+  //minimal->set_weight(core::scoring::vdw, 1);
 
   ScoreFunctionOP score = new ScoreFunction();
+  //score->set_weight(core::scoring::vdw, 1);
   score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::cm::sanitize::cst_weight_pair]());
   score->set_weight(core::scoring::coordinate_constraint, option[OptionKeys::cm::sanitize::cst_weight_coord]());
-
-  // Sampling parameters
-  const Real temp = option[OptionKeys::abinitio::temperature]();
-  const Size num_fragments = option[OptionKeys::cm::sanitize::num_fragments]();
-  const Size num_cycles = static_cast<Size>(aligned->nr_residues() * 100 * option[OptionKeys::abinitio::increase_cycles]());
 
   vector1<double> probs;
   setup_sampling_probs(pose.total_residue() - 1, pose.fold_tree(), aligned, &probs);
 
+  // Sampling parameters
+  const Real temp = option[OptionKeys::abinitio::temperature]();
+  const Size num_fragments = option[OptionKeys::cm::sanitize::num_fragments]();
+  const Size num_cycles = static_cast<Size>(aligned->nr_residues() * 50 * option[OptionKeys::abinitio::increase_cycles]());
+
   PolicyOP policy = PolicyFactory::get_policy("uniform", fragments_, num_fragments);
   MoverOP fragment_mover = new BiasedFragmentMover(policy, probs);
-  RationalMonteCarlo mover(fragment_mover, score, num_cycles, temp, false);
-  mover.apply(pose);
+
+  RationalMonteCarlo replace(fragment_mover, minimal, 1000, 2.0, false);
+  RationalMonteCarlo exchange(fragment_mover, score, num_cycles, temp, true);
+
+  replace.apply(pose);
+  pose.dump_pdb("replaced.pdb");
+  pose.constraint_set(constraints);
+  exchange.apply(pose);
 
   // Removing the virtual residue introduced by the star fold tree invalidates
   // the pose's cached energies. Doing so causes the score line in the silent
@@ -258,7 +258,6 @@ void MedalExchangeMover::apply(Pose& pose) {
   // Housekeeping
   pose.remove_constraints();
   builder->tear_down(&pose);
-
   pose.set_new_energies_object(new Energies(energies));
 }
 
