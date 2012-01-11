@@ -124,7 +124,8 @@ automorphic_rmsd(
 	core::conformation::Residue const & rsd1,
 	core::conformation::Residue const & rsd2,
 	bool superimpose
-) {
+)
+{
 	using namespace core;
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -201,22 +202,6 @@ automorphic_rmsd(
 	return best_rms;
 }
 
-Real
-automorphic_all_atom_rmsd(
-	core::pose::Pose const & pose1,
-	core::pose::Pose const & pose2
-) {
-	core::pose::Pose copy1(pose1);
-	calpha_superimpose_pose(copy1,pose2);
-
-	runtime_assert( pose1.sequence() == pose2.sequence() );
-	Real dev_tot = 0.0;
-	for ( Size ii = 1; ii <= pose1.total_residue(); ++ii ) {
-		dev_tot += std::pow(automorphic_rmsd(copy1.residue(ii),pose2.residue(ii),false), 2);
-	}
-
-	return std::sqrt(dev_tot);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 // Predicate functions to use with rmsd_no_super() and rmsd_with_super()
