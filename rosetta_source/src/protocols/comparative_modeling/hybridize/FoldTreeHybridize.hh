@@ -17,7 +17,6 @@
 
 #include <protocols/comparative_modeling/hybridize/InsertChunkMover.hh>
 #include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.fwd.hh>
-#include <protocols/comparative_modeling/hybridize/HybridizeFoldtreeMover.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -60,7 +59,7 @@ class FoldTreeHybridize: public protocols::moves::Mover
 public:
 
 	FoldTreeHybridize(core::Size const initial_template_index,
-                      utility::vector1 < core::pose::PoseOP > const & template_poses,
+                      utility::vector1 < core::pose::PoseCOP > const & template_poses,
                       utility::vector1 < protocols::loops::Loops > const & template_chunks,
                       utility::vector1 < protocols::loops::Loops > const & template_contigs,
                       utility::vector1 < core::fragment::FragSetOP > & frag_libs);

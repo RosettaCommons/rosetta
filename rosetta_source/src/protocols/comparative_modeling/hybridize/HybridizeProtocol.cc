@@ -331,8 +331,13 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	
 	//look back and apply constraints
 	TR << "History :";
+    for (int i=1; i<= history->size(); ++i ) {
+		TR << I(4,i);
+	}
+	TR << std::endl;
+	TR << "History :";
 	for (int i=1; i<= history->size(); ++i ) {
-		TR << " " << history->get(i);
+		TR << I(4, history->get(i));
 	}
 	TR << std::endl;
 

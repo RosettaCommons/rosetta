@@ -103,6 +103,7 @@ sources = {
 		#"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"cen_hybridize", # /* Frank Dimaio,Documentation Location,Demo Location */
+ 		#"cen_hybridize_ft", # /* Frank Dimaio,Documentation Location,Demo Location */
 	],
 	"pilot/grant" : [
 		#"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */

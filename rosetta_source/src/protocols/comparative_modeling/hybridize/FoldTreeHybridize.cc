@@ -15,6 +15,7 @@
 #include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.hh>
 #include <protocols/comparative_modeling/hybridize/ChunkTrialMover.hh>
 #include <protocols/comparative_modeling/hybridize/WeightedFragmentTrialMover.hh>
+#include <protocols/comparative_modeling/hybridize/HybridizeFoldtreeDynamic.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -73,6 +74,7 @@
 #include <numeric/util.hh>
 
 static numeric::random::RandomGenerator RG(42136);
+static basic::Tracer TR( "protocols.comparative_modeling.hybridize.FoldTreeHybridize" );
 
 namespace protocols {
 namespace comparative_modeling {
@@ -92,7 +94,7 @@ using namespace basic::options::OptionKeys;
 	
 	
 FoldTreeHybridize::FoldTreeHybridize( core::Size const initial_template_index,
-                                     utility::vector1 < core::pose::PoseOP > const & template_poses,
+                                     utility::vector1 < core::pose::PoseCOP > const & template_poses,
                                      utility::vector1 < protocols::loops::Loops > const & template_chunks,
                                      utility::vector1 < protocols::loops::Loops > const & template_contigs,
                                      utility::vector1 < core::fragment::FragSetOP > & frag_libs)
@@ -287,8 +289,6 @@ void
 FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	std::string cut_point_decision("middle");
 	
-	basic::Tracer TR("pilot.yfsong.util");
-	
 	if (!option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
 		utility_exit_with_message("Error in reading psipred_ss2 file, is the -in:file:psipred_ss2 flag set correctly?");
 	}
@@ -300,109 +300,26 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	core::Size minimum_length_of_chunk_helix = 4;
 	core::Size minimum_length_of_chunk_strand = 2;
 	
-	// Build the star fold tree, identify jumps
-	//ss_chunks_pose_ = extract_secondary_structure_chunks( pose, option[cm::hybridize::ss](), gap_size, minimum_length_of_chunk_helix,minimum_length_of_chunk_strand );
-	//ss_chunks_pose_.sequential_order();
+	// extract secondary structure chunks from target psipred
+	ss_chunks_pose_ = extract_secondary_structure_chunks( pose, option[cm::hybridize::ss](), gap_size, minimum_length_of_chunk_helix,minimum_length_of_chunk_strand );
+	ss_chunks_pose_.sequential_order();
     
     // combine chunk definition from secondary structure and template
-    protocols::loops::Loops starting_template_chunks = template_contigs_[initial_template_index_];
-    Loops combined_chunks(starting_template_chunks);
-    for (Size i=1; i<=starting_template_chunks.num_loop(); ++i) {
-        {
-            Size seqpos_start_templ = starting_template_chunks[i].start();
-            Size seqpos_start_target = template_poses_[initial_template_index_]->pdb_info()->number(seqpos_start_templ);
-            combined_chunks[i].set_start( seqpos_start_target );
-        }
-        {
-            Size seqpos_stop_templ = starting_template_chunks[i].stop();
-            Size seqpos_stop_target = template_poses_[initial_template_index_]->pdb_info()->number(seqpos_stop_templ);
-            combined_chunks[i].set_stop( seqpos_stop_target );
+    utility::vector1 < protocols::loops::Loops > renumbered_template_contigs(template_contigs_);
+	for (core::Size icontigs = 1; icontigs<=template_contigs_.size(); ++icontigs) {
+        for (core::Size ichunk = 1; ichunk<=template_contigs_[icontigs].num_loop(); ++ichunk) {
+            Size seqpos_start_templ = template_contigs_[icontigs][ichunk].start();
+            Size seqpos_start_target = template_poses_[icontigs]->pdb_info()->number(seqpos_start_templ);
+            renumbered_template_contigs[icontigs][ichunk].set_start( seqpos_start_target );
+
+            Size seqpos_stop_templ = template_contigs_[icontigs][ichunk].stop();
+            Size seqpos_stop_target = template_poses_[icontigs]->pdb_info()->number(seqpos_stop_templ);
+            renumbered_template_contigs[icontigs][ichunk].set_stop( seqpos_stop_target );
         }
     }
-    ss_chunks_pose_ = combined_chunks;
-	TR.Debug << "Target secondary chunks:" << std::endl;
-	TR.Debug << combined_chunks << std::endl;
-
-	//loops_pose_ = ss_chunks_pose_.invert(pose.total_residue());
-	//TR.Debug << "Target loops: " << pose.total_residue() << std::endl;
-	//TR.Debug << loops_pose_ << std::endl;
-	//TR.flush();
-	
-    /*
-	if (option[cm::hybridize::virtual_loops]()) {
-		set_loops_to_virt_ala(pose, loops_pose_);
-	}
-     */
-	
-	// complete the chunks to cover the whole protein and customize cutpoints
-	// cutpoints in the middle of the loop
-	Loops chunks(combined_chunks);
-    utility::vector1 < core::Size > anchor_positions;
-	for (Size i=1; i<=chunks.num_loop(); ++i) {
-		if ( cut_point_decision == "middle") {
-			if (i==1) {
-				chunks[i].set_start(1);
-			}
-			else {
-				Size new_start = (combined_chunks[i-1].stop() + combined_chunks[i].start() + 1) / 2;
-				//Size new_start = (combined_chunks[i-1].stop() + 1);
-				chunks[i].set_start( new_start );
-			}
-			
-			if (i==chunks.num_loop()) {
-				chunks[i].set_stop(pose.total_residue());
-			}
-			else {
-				Size new_stop = (combined_chunks[i].stop() + combined_chunks[i+1].start() - 1) / 2;
-				chunks[i].set_stop( new_stop );
-			}
-		}
-		else if ( cut_point_decision == "beginning" ) {
-			if (i==1) {
-				chunks[i].set_start(1);
-			}
-			else {
-				Size new_start = (combined_chunks[i-1].stop() + 1);
-				chunks[i].set_start( new_start );
-			}
-			
-			if (i==chunks.num_loop()) {
-				chunks[i].set_stop(pose.total_residue());
-			}
-		}
-        anchor_positions.push_back( choose_anchor_position(combined_chunks[i]) );
-	}
-	//add_gap_constraints_to_pose(pose, 4, chunks);
-	
-	TR.Debug << "Chunks: " << pose.total_residue() << std::endl;
-	TR.Debug << chunks << std::endl;
-	
-	HybridizeFoldtreeMover foldtree_mover;
+    HybridizeFoldtreeDynamic foldtree_mover(renumbered_template_contigs);
+    foldtree_mover.initialize(pose, ss_chunks_pose_); // combine psipred and template contigs for chunk initialization
 	TR.Debug << pose.fold_tree() << std::endl;
-	if (chunks.num_loop() > 0) {
-        
-		foldtree_mover.set_chunks(chunks, anchor_positions);
-		foldtree_mover.initialize(pose);
-	}
-	TR.Debug << pose.fold_tree() << std::endl;
-	core::util::add_cutpoint_variants(&pose);
-}
-
-/// mu- midpoint of the chunk
-/// sigma- linear function of chunk length
-core::Size FoldTreeHybridize::choose_anchor_position(const protocols::loops::Loop & chunk) const {
-    using boost::math::normal;
-    using core::Size;
-    using numeric::random::DistributionSampler;
-    
-    double mu = chunk.start() + chunk.length() / 2.0;
-    double sigma = chunk.length() / 5.0;
-    normal distribution(mu, sigma);
-    DistributionSampler<normal> sampler(distribution);
-    
-    // Clamp insertion position to closed interval [start, stop]
-    Size position = static_cast<Size>(sampler.sample());
-    return numeric::clamp<core::Size>(position, chunk.start(), chunk.stop());;
 }
 
 numeric::xyzVector<Real>
@@ -502,7 +419,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	
 	for (Size i=1;i<=8;++i) {
 		if (i>=4) {
-			int gap_edge_shift = i-4;
+			int gap_edge_shift = i-6;
 			add_gap_constraints_to_pose(pose, ss_chunks_pose_, gap_edge_shift);
 		}
 		

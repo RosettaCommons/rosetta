@@ -65,7 +65,10 @@ ChunkTrialMover(
 				Size max_registry_shift = 0);
 
 void
-	get_alignment_from_template(core::pose::PoseCOP const template_pose, std::map <core::Size, core::Size> & seqpos_alignment);
+	get_alignment_from_template(
+                                core::pose::PoseCOP  template_pose,
+                                std::map <core::Size, core::Size> & seqpos_alignment
+                                );
 
 	
 void

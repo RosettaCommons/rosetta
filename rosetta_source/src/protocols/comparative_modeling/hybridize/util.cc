@@ -78,7 +78,7 @@ downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_num
 	residue_list.unique();
 	return residue_list;
 }
-
+    
 } // hybridize 
 } // comparative_modeling 
 } // protocols

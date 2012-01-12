@@ -39,6 +39,18 @@ sources = {
 		"SSFeature",
 		"TorsionFeature",
 	],
+	"protocols/comparative_modeling/hybridize" : [
+		"CartesianHybridize",
+		"ChunkTrialMover",
+		"FoldTreeHybridize",
+		"HybridizeFoldtreeBase",
+		"HybridizeFoldtreeDynamic",
+		"HybridizeProtocol",
+		"InsertChunkMover",
+		"TemplateHistory",
+		"WeightedFragmentTrialMover",
+		"util",
+	],
 	"protocols/domain_assembly": [
 		"AddAssemblyConstraints",
 		"AssembleLinkerMover",

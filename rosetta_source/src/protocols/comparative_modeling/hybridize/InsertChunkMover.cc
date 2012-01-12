@@ -313,11 +313,10 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 		if (template_pose_->secstruct(seqpos_template) != 'L') {
 			secstruct_ = template_pose_->secstruct(seqpos_template);
 		}
-
 		
 		core::Size atom_map_count = 0;
 		for (Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose) {
-    		if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+    		//if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
     		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if (discontinued_upper(*template_pose_,jres_template)) break;
@@ -334,7 +333,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 			++atom_map_count;
 		}
 		for (Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose) {
-    		if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+    		//if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
     		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if (discontinued_lower(*template_pose_,jres_template)) break;

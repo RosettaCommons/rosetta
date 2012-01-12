@@ -104,7 +104,10 @@ ChunkTrialMover::ChunkTrialMover(
 }
 
 void
-ChunkTrialMover::get_alignment_from_template(core::pose::PoseCOP const template_pose, std::map <core::Size, core::Size> & seqpos_alignment) {
+ChunkTrialMover::get_alignment_from_template(
+                                             core::pose::PoseCOP template_pose,
+                                             std::map <core::Size, core::Size> & seqpos_alignment
+                                             ) {
 	// specific to this case, alignment comes from residue number
 	for (core::Size ires=1; ires<=template_pose->total_residue(); ++ires) {
         //TR << "Sequence aln: " << template_pose->pdb_info()->number(ires) << " " << ires << std::endl;
