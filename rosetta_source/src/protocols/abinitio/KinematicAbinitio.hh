@@ -44,7 +44,7 @@
 
 #include <core/fragment/FragSet.fwd.hh>
 
-#include <protocols/loops/SlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 
 #include <core/types.hh>
 
@@ -134,7 +134,7 @@ public:
 
 	///@brief set the closure_protocol... if not set no closure...
 	void
-	closure_protocol( loops::SlidingWindowLoopClosureOP closure_protocol ) {
+	closure_protocol( loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol ) {
 		closure_protocol_ = closure_protocol;
 	}
 
@@ -172,7 +172,7 @@ private:
 	bool bOverlapChainbreaks_;
 
 	//@brief if set we attempt loop-closing
-	loops::SlidingWindowLoopClosureOP closure_protocol_;
+	loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol_;
 
 	core::scoring::constraints::ConstraintSetOP full_constraint_set_;
 

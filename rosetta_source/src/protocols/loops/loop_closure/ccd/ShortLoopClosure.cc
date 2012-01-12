@@ -15,7 +15,7 @@
 
 
 // Unit Headers
-#include <protocols/loops/ShortLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/ShortLoopClosure.hh>
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
@@ -64,11 +64,13 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 using namespace core;
 using namespace pose;
 
-static basic::Tracer tr("protocols.loops");
+static basic::Tracer tr("protocols.loops.loop_closure.ccd.ShortLoopClosure");
 
 //static numeric::random::RandomGenerator RG(1341412);  // <- Magic number, do not change it!
 
@@ -150,6 +152,7 @@ void ShortLoopClosure::catch_fragment( Pose const& short_pose ) {
   aFrame->shift_to( orig_loop_.start() );
 }
 
-
-}
-}
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols

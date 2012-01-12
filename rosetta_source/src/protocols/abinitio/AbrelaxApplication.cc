@@ -152,9 +152,9 @@
 #include <protocols/simple_filters/PoseMetricEvaluator.hh>
 #include <protocols/evaluation/util.hh>
 // AUTO-REMOVED #include <protocols/evaluation/ChemicalShiftEvaluator.hh>
-#include <protocols/loops/SlidingWindowLoopClosure.hh>
-#include <protocols/loops/WidthFirstSlidingWindowLoopClosure.hh>
-#include <protocols/loops/FASelectSlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/FASelectSlidingWindowLoopClosure.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Exceptions.hh>
 #include <protocols/filters/Filter.hh>
@@ -331,8 +331,8 @@ void protocols::abinitio::AbrelaxApplication::register_options() {
 	// ClassicAbinitio, FoldConstraints, JumpingFoldConstraints
 	KinematicAbinitio::register_options();
 	Templates::register_options();
-	loops::WidthFirstSlidingWindowLoopClosure::register_options();
-	loops::FASelectSlidingWindowLoopClosure::register_options();
+	loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure::register_options();
+	loops::loop_closure::ccd::FASelectSlidingWindowLoopClosure::register_options();
 
 	// here we should have
 	// ClassicRelax::register_options();
@@ -543,12 +543,12 @@ bool AbrelaxApplication::close_loops( pose::Pose &pose, core::scoring::ScoreFunc
 
 		// a weird bug occurs if we make a copy of a copy of the pose and set the new fold-tree
 		// the behaviour is very different from setting the same fold-tree into the copy of the pose
-		loops::SlidingWindowLoopClosureOP closure_protocol =
-			new loops::SlidingWindowLoopClosure( fragset_small_, scorefxn, movemap );
+		loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol =
+			new loops::loop_closure::ccd::SlidingWindowLoopClosure( fragset_small_, scorefxn, movemap );
 
 		if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
 			closure_protocol =
-				new loops::WidthFirstSlidingWindowLoopClosure( fragset_small_, scorefxn, movemap );
+				new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure( fragset_small_, scorefxn, movemap );
 		}
 
 		// set options here if you like
@@ -1537,16 +1537,16 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 		sampler->init( res_switch.start_pose() );
 
 		if ( option[ OptionKeys::abinitio::close_loops ]() ) {
-			loops::SlidingWindowLoopClosureOP closure_protocol = new loops::SlidingWindowLoopClosure;
+			loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol = new loops::loop_closure::ccd::SlidingWindowLoopClosure;
 
 			if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
 				closure_protocol =
-					new loops::WidthFirstSlidingWindowLoopClosure;
+					new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure;
 			}
 
 			if ( option[ OptionKeys::loops::fa_closure_protocol ]() ) {
-				loops::FASelectSlidingWindowLoopClosure* prot;
-				closure_protocol = prot = new loops::FASelectSlidingWindowLoopClosure;
+				loops::loop_closure::ccd::FASelectSlidingWindowLoopClosure* prot;
+				closure_protocol = prot = new loops::loop_closure::ccd::FASelectSlidingWindowLoopClosure;
 				//spaeter kann man hier einen ResolutionSwitcher uebergeben.
 				runtime_assert( extended_pose.is_fullatom() );
 				prot->set_fullatom_pose( extended_pose );

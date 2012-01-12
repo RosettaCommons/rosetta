@@ -18,11 +18,11 @@
 ///
 
 
-#ifndef INCLUDED_protocols_loops_LoopClosure_hh
-#define INCLUDED_protocols_loops_LoopClosure_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_ccd_LoopClosure_hh
+#define INCLUDED_protocols_loops_loop_closure_ccd_LoopClosure_hh
 
 // Unit Headers
-#include <protocols/loops/LoopClosure.fwd.hh>
+#include <protocols/loops/loop_closure/ccd/LoopClosure.fwd.hh>
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
@@ -58,6 +58,8 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 class LoopClosure : public utility::pointer::ReferenceCount {
 public:
@@ -197,7 +199,9 @@ protected:
 	core::Real final_weight_overlap_chainbreak_;
 };
 
-} // loops
-} // protocols
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 
-#endif
+#endif //INCLUDED_protocols_loops_loop_closure_ccd_LoopClosure_hh

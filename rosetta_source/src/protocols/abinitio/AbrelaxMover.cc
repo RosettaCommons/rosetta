@@ -36,7 +36,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/WidthFirstSlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/util.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
@@ -98,9 +98,9 @@ void AbrelaxMover::set_defaults() {
 	using namespace basic::options;
 	using protocols::idealize::IdealizeMover;
 	using protocols::idealize::IdealizeMoverOP;
-	using protocols::loops::SlidingWindowLoopClosure;
-	using protocols::loops::SlidingWindowLoopClosureOP;
-	using protocols::loops::WidthFirstSlidingWindowLoopClosure;
+	using protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure;
+	using protocols::loops::loop_closure::ccd::SlidingWindowLoopClosureOP;
+	using protocols::loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure;
 
 	b_return_unrelaxed_fullatom_ = false;
 
@@ -175,7 +175,7 @@ relax::RelaxProtocolBaseOP AbrelaxMover::relax_protocol() {
 	return relax_protocol_;
 }
 
-loops::SlidingWindowLoopClosureOP AbrelaxMover::closure_protocol() {
+loops::loop_closure::ccd::SlidingWindowLoopClosureOP AbrelaxMover::closure_protocol() {
 	return loop_closure_protocol_;
 }
 
@@ -187,7 +187,7 @@ void AbrelaxMover::relax_protocol( relax::RelaxProtocolBaseOP set ) {
 	relax_protocol_ = set;
 }
 
-void AbrelaxMover::closure_protocol( loops::SlidingWindowLoopClosureOP set ) {
+void AbrelaxMover::closure_protocol( loops::loop_closure::ccd::SlidingWindowLoopClosureOP set ) {
 	loop_closure_protocol_ = set;
 }
 
@@ -267,7 +267,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 
 	// Make sure score columns always the same.
 	relax::ClassicRelax().setPoseExtraScores( pose );
-	protocols::loops::SlidingWindowLoopClosure::setPoseExtraScores( pose );
+	protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure::setPoseExtraScores( pose );
 
 	if ( pre_loop_closure_protocol_ ) {
 		tr.Info << "abrelax_stage: pre_loopclosing (i.e., idealize) for " << get_current_tag() << std::endl;

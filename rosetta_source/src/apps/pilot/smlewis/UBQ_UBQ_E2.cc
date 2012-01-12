@@ -56,8 +56,8 @@
 #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
 #include <protocols/simple_moves/TorsionDOFMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
-#include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/rigid/RotateJumpAxisMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
@@ -452,16 +452,16 @@ public:
 		///////////////////////////loop movement/////////////////////////////////////////////////////
 		if( loop_.stop() - loop_.start() >= 3 ) { //empty loop; skip it!
 			//make kinematic mover
-			using protocols::loops::kinematic_closure::KinematicMoverOP;
-			using protocols::loops::kinematic_closure::KinematicMover;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 			KinematicMoverOP kin_mover( new KinematicMover() );
 			kin_mover->set_temperature( 0.8 );
 			kin_mover->set_vary_bondangles( true );
 			kin_mover->set_sample_nonpivot_torsions( true );
 			kin_mover->set_rama_check( true );
 
-			using protocols::loops::kinematic_closure::KinematicWrapperOP;
-			using protocols::loops::kinematic_closure::KinematicWrapper;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapperOP;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapper;
 			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, loop_));
 
 			backbone_mover->add_mover(kin_wrapper, 5);

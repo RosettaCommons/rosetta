@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/loops/kinematic_closure/KinematicPerturber.hh
+/// @file   protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh
 /// @brief  Header file for KinematicPerturbers used by the kineamtic mover
 /// @author Florian Richter, floric@u.washington.edu, march 2009
 
-#ifndef INCLUDED_protocols_loops_kinematic_closure_KinematicPerturber_hh
-#define INCLUDED_protocols_loops_kinematic_closure_KinematicPerturber_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicPerturber_hh
+#define INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicPerturber_hh
 
-#include <protocols/loops/kinematic_closure/KinematicMover.fwd.hh>
-#include <protocols/loops/kinematic_closure/KinematicPerturber.fwd.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.fwd.hh>
 
 // Rosetta Headers
 #include <core/types.hh>
@@ -34,6 +34,7 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
 namespace kinematic_closure {
 
 /// @brief pure virtual base class for KinematicPerturber.  KinematicPerturbers determine HOW loops should be perturbed.  The base class contains a provision for determining WHERE they should be perturbed: MoveMap sensitivity.
@@ -215,11 +216,9 @@ private:
 
 };
 
+} // namespace kinematic_closure
+} // namespace loop_closure
+} // namespace moves
+} // namespace protocols
 
-
-} // end namespace kinematic_closure
-} // end namespace moves
-} // end namespace protocols
-
-
-#endif
+#endif //INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicPerturber_hh

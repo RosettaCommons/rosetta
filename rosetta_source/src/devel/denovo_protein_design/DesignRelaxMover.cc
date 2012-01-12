@@ -41,8 +41,8 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 // AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/loops/loopfinder.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
-#include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -236,12 +236,12 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 	// i should do this in a monte carlo setting
 	// now that we have a sequence we like - we may want to optimize the loop conformation
 	  if( option[ OptionKeys::DenovoProteinDesign::optimize_loops ].user() ){
-		  protocols::loops::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::kinematic_closure::KinematicMover());
+		  protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover());
 		  kin_moverOP->set_vary_bondangles( true );
 		  kin_moverOP->set_temperature( 2.0 );
 		  for( protocols::loops::Loops::const_iterator it= loops->begin(), it_end=loops->end();
 				 it != it_end; ++it ){
-			  protocols::loops::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 1000);
+			  protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 1000);
 			  kinwrapper.apply(pose);
 		  }
 	  }

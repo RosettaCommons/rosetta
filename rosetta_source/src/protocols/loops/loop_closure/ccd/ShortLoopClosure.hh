@@ -15,21 +15,21 @@
 /// with the hope that things are speeded up... which may or may not be true!
 /// only the linear chainbreak score is used.
 
-#ifndef INCLUDED_protocols_loops_ShortLoopClosure_hh
-#define INCLUDED_protocols_loops_ShortLoopClosure_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_ccd_ShortLoopClosure_hh
+#define INCLUDED_protocols_loops_loop_closure_ccd_ShortLoopClosure_hh
 
 // Unit Headers
+#include <protocols/loops/loop_closure/ccd/ShortLoopClosure.fwd.hh>
 
 // Package Headers
-#include <protocols/loops/LoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/LoopClosure.hh>
 
 #include <utility/vector1.hh>
 
-
-
-
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 class ShortLoopClosure : public LoopClosure {
   typedef LoopClosure Parent;
@@ -52,7 +52,10 @@ private:
   Loop orig_loop_;
 };
 
-}
-}
-#endif
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
+
+#endif //INCLUDED_protocols_loops_loop_closure_ccd_ShortLoopClosure_hh
 

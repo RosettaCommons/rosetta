@@ -1,3 +1,6 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
@@ -9,8 +12,8 @@
 /// @author Oliver Lange
 
 
-#ifndef INCLUDED_protocols_loops_LoopClosure_fwd_hh
-#define INCLUDED_protocols_loops_LoopClosure_fwd_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_fwd_hh
+#define INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_fwd_hh
 
 
 // Utility headers
@@ -19,18 +22,19 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
 
 // Forward
 //class BaseJumpSetup;
-class LoopClosure;
+class WidthFirstSlidingWindowLoopClosure;
 
 // Types
-typedef  utility::pointer::owning_ptr< LoopClosure >  LoopClosureOP;
-typedef  utility::pointer::owning_ptr< LoopClosure const >  LoopClosureCOP;
+typedef  utility::pointer::owning_ptr< WidthFirstSlidingWindowLoopClosure >  WidthFirstSlidingWindowLoopClosureOP;
+typedef  utility::pointer::owning_ptr< WidthFirstSlidingWindowLoopClosure const >  WidthFirstSlidingWindowLoopClosureCOP;
 
 
-
+} // namespace loop_closure
 } // namespace loops
 } // namespace protocols
 
-#endif
+#endif //INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_fwd_hh

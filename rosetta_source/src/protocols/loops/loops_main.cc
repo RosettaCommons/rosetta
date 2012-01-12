@@ -17,7 +17,7 @@
 #include <protocols/loops/loops_main.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_CCD.hh>
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
@@ -835,7 +835,7 @@ ccd_close_loops(
 		Size const loop_end = it->stop();
 		Size const cutpoint = it->cut();
 		// ccd close this loop
-		fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles,
+		loop_closure::ccd::fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles,
 			ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
 			max_total_delta_strand, max_total_delta_loop, forward_deviation,
 			backward_deviation, torsion_delta, rama_delta );

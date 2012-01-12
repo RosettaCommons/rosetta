@@ -44,7 +44,7 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/loops/Loops.hh>
 
 
@@ -434,7 +434,7 @@ insert_pose_into_pose(
 	//combined.dump_pdb("combined_preclose_cen.pdb");
 
 	//create CCD mover, smallmover
-	protocols::loops::CcdLoopClosureMover close( *(loops.begin()), movemap );
+	protocols::loops::loop_closure::ccd::CcdLoopClosureMover close( *(loops.begin()), movemap );
 	protocols::simple_moves::SmallMover small(movemap, 10, 200); //huge moves for sampling
 	small.angle_max( 'H', 180.0 );
 	small.angle_max( 'E', 180.0 );

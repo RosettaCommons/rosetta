@@ -22,7 +22,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.fwd.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -62,7 +62,7 @@ private:
 	core::Size host_chain_;
 	protocols::hotspot_hashing::HotspotStubSetOP stub_set_;
 	bool minimize_toward_stub_;
-	protocols::loops::kinematic_closure::KinematicMoverOP kinematic_mover_;
+	protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kinematic_mover_;
 };
 
 } // movers

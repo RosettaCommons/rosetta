@@ -7,26 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/loops/kinematic_closure/KinematicWrapper.fwd.hh
+/// @file   protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.fwd.hh
 /// @brief  KinematicWrapper forward declarations header
 /// @author Steven Lewis (smlewi@unc.edu)
 
-#ifndef INCLUDED_protocols_loops_kinematic_closure_KinematicWrapper_fwd_hh
-#define INCLUDED_protocols_loops_kinematic_closure_KinematicWrapper_fwd_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicWrapper_fwd_hh
+#define INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicWrapper_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
 namespace kinematic_closure {
 
 class KinematicWrapper;
 typedef utility::pointer::owning_ptr< KinematicWrapper > KinematicWrapperOP;
 typedef utility::pointer::owning_ptr< KinematicWrapper const > KinematicWrapperCOP;
 
-}//kinematic_closure
-}//loops
-}//protocols
+} // namespace kinematic_closure
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 
-#endif //INCLUDED_protocols_loops_kinematic_closure_KinematicWrapper_FWD_HH
+#endif //INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicWrapper_fwd_hh

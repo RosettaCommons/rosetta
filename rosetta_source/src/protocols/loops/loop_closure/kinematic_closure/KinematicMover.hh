@@ -15,12 +15,12 @@
 ///
 
 
-#ifndef protocols_loops_kinematic_closure_KinematicMover_HH
-#define protocols_loops_kinematic_closure_KinematicMover_HH
+#ifndef protocols_loops_loop_closure_kinematic_closure_KinematicMover_HH
+#define protocols_loops_loop_closure_kinematic_closure_KinematicMover_HH
 
 // Unit Headers
-#include <protocols/loops/kinematic_closure/KinematicMover.fwd.hh>
-#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.fwd.hh>
 
 // Package Headers
 #include <protocols/moves/Mover.hh>
@@ -32,15 +32,13 @@
 #include <utility/LexicographicalIterator.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/loops/kinematic_closure/KinematicPerturber.fwd.hh>
 #include <utility/vector1.hh>
 
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
 namespace kinematic_closure {
-
-//class KinematicMover;
 
 ///@brief A mover class for performing kinematic loop closure on a peptide segment
 ///@detail
@@ -203,8 +201,9 @@ private:
 
 };
 
-} // end namespace kinematic_closure
-} // end namespace loops
-} // end namespace protocols
+} // namespace kinematic_closure
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 
 #endif

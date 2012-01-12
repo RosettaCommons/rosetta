@@ -43,7 +43,7 @@
 
 #include <protocols/antibody/AntibodyClass.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -539,6 +539,9 @@ return "CloseOneMover";
 void CloseOneMover::close_one_loop_stem ( pose::Pose & pose_in, Size cutpoint_in, bool nter ) {
 	using namespace protocols;
 	using namespace protocols::loops;
+    
+    using loop_closure::ccd::CcdMover;
+    using loop_closure::ccd::CcdMoverOP;
 
 	// storing starting fold tree
 	kinematics::FoldTree tree_in( pose_in.fold_tree() );
@@ -686,6 +689,8 @@ void CloseOneMover::close_one_loop_stem ( pose::Pose & pose_in, Size cutpoint_in
 void CloseOneMover::close_one_loop_stem ( pose::Pose & pose_in, Size loop_begin, Size loop_end, Size cutpoint ) {
 	using namespace protocols;
 	using namespace protocols::loops;
+    using loop_closure::ccd::CcdMover;
+    using loop_closure::ccd::CcdMoverOP;
 
 	// storing starting fold tree
 	kinematics::FoldTree tree_in( pose_in.fold_tree() );
@@ -854,6 +859,9 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;
+    
+    using loop_closure::ccd::CcdMover;
+    using loop_closure::ccd::CcdMoverOP;
 
 	TR << "LoopRlxMover: Apply" << std::endl;
 

@@ -16,13 +16,13 @@
 
 
 // Unit Headers
-#include <protocols/loops/WidthFirstSlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
-#include <protocols/loops/LoopClosure.hh>
-#include <protocols/loops/ShortLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/LoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/ShortLoopClosure.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Exceptions.hh>
 
@@ -59,32 +59,15 @@
 #include <core/fragment/FragData.hh>
 #include <utility/vector1.hh>
 
-
-
 //numeric headers
 
 
-static basic::Tracer tr("protocols.loops");
-
-
-void protocols::loops::WidthFirstSlidingWindowLoopClosure::register_options() {
-  using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	option.add_relevant(  fast_loops::window_accept_ratio );
-  option.add_relevant(  fast_loops::nr_scored_sampling_passes );
-  option.add_relevant(  fast_loops::nr_scored_fragments );
-  option.add_relevant(  fast_loops::min_breakout_good_loops );
-  option.add_relevant(  fast_loops::min_breakout_fast_loops );
-  option.add_relevant(  fast_loops::min_good_loops );
-  option.add_relevant(  fast_loops::min_fast_loops );
-  option.add_relevant(  fast_loops::vdw_delta );
-  option.add_relevant(  fast_loops::give_up );
-}
-
+static basic::Tracer tr("protocols.loops.loop_closure.ccd.WidthFirstSlidingWindowLoopClosure");
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 using namespace core;
 using namespace pose;
@@ -128,6 +111,20 @@ void WidthFirstSlidingWindowLoopClosure::set_defaults() {
   tr.Info << "WidthFirstSlidingWindowLoopClosure::defaults " << std::endl;
 }
 
+void WidthFirstSlidingWindowLoopClosure::register_options() {
+    using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+    option.add_relevant(  fast_loops::window_accept_ratio );
+    option.add_relevant(  fast_loops::nr_scored_sampling_passes );
+    option.add_relevant(  fast_loops::nr_scored_fragments );
+    option.add_relevant(  fast_loops::min_breakout_good_loops );
+    option.add_relevant(  fast_loops::min_breakout_fast_loops );
+    option.add_relevant(  fast_loops::min_good_loops );
+    option.add_relevant(  fast_loops::min_fast_loops );
+    option.add_relevant(  fast_loops::vdw_delta );
+    option.add_relevant(  fast_loops::give_up );
+}
 
 void
 WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
@@ -302,7 +299,7 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
   }
 } //sample_loops
 
-
-
-} //loops
-} //protocols
+} // namespace ccd
+} // namesapce loop_closure
+} // namespace loops
+} // namespace protocols

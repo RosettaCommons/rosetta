@@ -39,7 +39,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -713,7 +713,7 @@ void RemodelLoopMover::simultaneous_stage(
  	using namespace basic::options;
   using namespace OptionKeys::remodel;
 	using protocols::loops::add_cutpoint_variants;
-	using protocols::loops::ccd_moves;
+	using protocols::loops::loop_closure::ccd::ccd_moves;
 	using protocols::loops::remove_cutpoint_variants;
 	using numeric::random::random_permutation;
 
@@ -893,7 +893,7 @@ void RemodelLoopMover::independent_stage(
 	using protocols::loops::add_cutpoint_variants;
 	using namespace basic::options;
 	using namespace OptionKeys::remodel;
-	using protocols::loops::ccd_moves;
+	using protocols::loops::loop_closure::ccd::ccd_moves;
 	using protocols::loops::remove_cutpoint_variants;
 
 	TR << "** independent_stage" << std::endl;
@@ -1095,7 +1095,7 @@ void RemodelLoopMover::boost_closure_stage(
 	using protocols::loops::add_cutpoint_variants;
 	using namespace basic::options;
 	using namespace OptionKeys::remodel;
-	using protocols::loops::ccd_moves;
+	using protocols::loops::loop_closure::ccd::ccd_moves;
 	using protocols::loops::remove_cutpoint_variants;
 
 	TR << "** boost_closure_stage" << std::endl;

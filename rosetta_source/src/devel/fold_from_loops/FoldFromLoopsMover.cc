@@ -40,8 +40,8 @@
 
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <protocols/abinitio/FoldConstraints.hh>
-#include <protocols/loops/SlidingWindowLoopClosure.hh>
-#include <protocols/loops/SlidingWindowLoopClosure.fwd.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh>
 #include <protocols/jumping/util.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 #include <protocols/loops/Exceptions.hh>
@@ -232,7 +232,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 
 
-					protocols::loops::SlidingWindowLoopClosureOP closure_protocol = new protocols::loops::SlidingWindowLoopClosure( frag_small_, scorefxn_centr, movemap );
+					protocols::loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol = new protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure( frag_small_, scorefxn_centr, movemap );
 
 
 					closure_protocol->scored_frag_cycle_ratio( 0.2 );

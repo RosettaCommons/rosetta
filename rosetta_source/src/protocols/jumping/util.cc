@@ -39,7 +39,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 
-#include <protocols/loops/SlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/Exceptions.hh>
 
 #include <protocols/checkpoint/CheckPointer.hh>
@@ -80,7 +80,7 @@ static basic::Tracer tr("protocols.jumping");
 // if false pose does still contain jumps in the fold-tree
 void
 close_chainbreaks(
-	loops::SlidingWindowLoopClosureOP closure_protocol,
+	loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol,
 	Pose& open_pose,
 	protocols::checkpoint::CheckPointer &checkpoint,
 	const std::string &decoy_tag,

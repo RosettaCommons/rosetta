@@ -41,7 +41,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
@@ -756,7 +756,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 				} else {
 					//do ccd_moves here
 					if( ! option[OptionKeys::loops::skip_ccd_moves ]() ){
-						protocols::loops::ccd_moves(5, pose, mm_one_loop, loop_begin, loop_end, cutpoint );
+						loop_closure::ccd::ccd_moves(5, pose, mm_one_loop, loop_begin, loop_end, cutpoint );
 					}
 				}
 				mc_->boltzmann( pose, "ccd_moves" );
@@ -820,7 +820,7 @@ void LoopRebuild::fast_ccd_close_loops(
 	//Real const bond_angle2( pose.residue( cutpoint+1 ).lower_connect().icoor().theta() ); // C=N-CA bond angle
 	//Real const bond_length( pose.residue( cutpoint+1 ).lower_connect().icoor().d() ); // C=N distance
 
-	protocols::loops::fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles,
+	loop_closure::ccd::fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles,
 																			 ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
 																			 max_total_delta_strand, max_total_delta_loop, forward_deviation,
 																			 backward_deviation, torsion_delta, rama_delta );

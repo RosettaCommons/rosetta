@@ -12,8 +12,8 @@
 /// @author
 
 
-#ifndef INCLUDED_protocols_loops_ccd_closure_hh
-#define INCLUDED_protocols_loops_ccd_closure_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_ccd_ccd_closure_hh
+#define INCLUDED_protocols_loops_loop_closure_ccd_ccd_closure_hh
 
 
 // Package headers
@@ -23,21 +23,10 @@
 
 #include <utility/vector1.hh>
 
-
-
-// ObjexxFCL Headers
-
-// // C++ Headers
-
-
-// //Utility Headers
-// #include "utility/basic_sys_util.h"
-
-// Forward declarations
-
 namespace protocols {
 namespace loops {
-
+namespace loop_closure {
+namespace ccd {
 
 int
 fast_ccd_loop_closure(
@@ -69,7 +58,9 @@ ccd_moves(
 	int const cutpoint
 );
 
-} // loops
-} // protocols
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 
-#endif
+#endif //INCLUDED_protocols_loops_loop_closure_ccd_ccd_closure_hh

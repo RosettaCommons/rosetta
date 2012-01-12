@@ -45,7 +45,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <basic/Tracer.hh> // tracer output
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 
 //Utility Headers
 #include <numeric/random/random.hh>
@@ -403,7 +403,7 @@ void fast_ccd_close_loops(
 	// output for ccd_closure
 	Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
 	Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
-	protocols::loops::fast_ccd_loop_closure(
+	loop_closure::ccd::fast_ccd_loop_closure(
 		pose, mm, loop.start() , loop.stop(), loop.cut(), ccd_cycles,
 		ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
 		max_total_delta_strand, max_total_delta_loop, forward_deviation,

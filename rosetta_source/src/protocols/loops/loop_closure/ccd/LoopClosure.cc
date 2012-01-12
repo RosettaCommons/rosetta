@@ -15,11 +15,11 @@
 
 
 // Unit Headers
-#include <protocols/loops/LoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/LoopClosure.hh>
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 
 // Project Headers
@@ -62,12 +62,14 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 using namespace core;
 using namespace pose;
 
 static numeric::random::RandomGenerator RG(9781212);  // <- Magic number, do not change it!
-static basic::Tracer tr("protocols.loops");
+static basic::Tracer tr("protocols.loops.loop_closure.ccd.LoopClosure");
 
 LoopClosure::LoopClosure(
   fragment::FragSetCOP fragset,
@@ -238,6 +240,7 @@ LoopClosure::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) {
 	init_mc();
 }
 
-
-}
-}
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols

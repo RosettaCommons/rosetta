@@ -41,7 +41,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <core/pose/util.hh>
 
@@ -103,6 +103,10 @@ void LoopRlxMover::set_default() {
 void LoopRlxMover::setup_objects( pose::Pose & pose ) {
 	using namespace protocols::moves;
 	using namespace protocols::loops;
+    
+    using loop_closure::ccd::CcdMover;
+    using loop_closure::ccd::CcdMoverOP;
+    
 
 	//setting MoveMap: allow the bb of loop residues to be flexible
 	utility::vector1< bool>  allow_bb_move( pose.total_residue(), false );

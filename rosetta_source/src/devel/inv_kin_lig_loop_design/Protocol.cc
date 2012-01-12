@@ -24,7 +24,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 
 
 #include <core/pack/task/TaskFactory.hh>
@@ -260,10 +260,11 @@ namespace devel {
 					*/
 
 					if( loop.to ) {
+                        using protocols::loops::loop_closure::ccd::fast_ccd_loop_closure;
 						core::Real fdev, rdev, tdelta, rdelta;
-						protocols::loops::fast_ccd_loop_closure(*pose,move_map, loop.lo-1, loop.to-1, loop.lo, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
+						fast_ccd_loop_closure(*pose,move_map, loop.lo-1, loop.to-1, loop.lo, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
 						//cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
-						protocols::loops::fast_ccd_loop_closure(*pose,move_map, loop.to+1, loop.hi+1, loop.hi, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
+						fast_ccd_loop_closure(*pose,move_map, loop.to+1, loop.hi+1, loop.hi, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
 						//cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
 
 						(*score_fxn_lores)( *pose );
@@ -295,6 +296,8 @@ namespace devel {
     }
 
     void Protocol::phase_hires() {
+      
+      using protocols::loops::loop_closure::ccd::fast_ccd_loop_closure;
 
       // let's do this in a random order
       vector<Loop> loops_shuffled = loops;
@@ -344,9 +347,9 @@ namespace devel {
 
 							if( loop.to ) {
 								core::Real fdev, rdev, tdelta, rdelta;
-								protocols::loops::fast_ccd_loop_closure(*pose,move_map, loop.lo-1, loop.to-1, loop.lo, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
+								fast_ccd_loop_closure(*pose,move_map, loop.lo-1, loop.to-1, loop.lo, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
 								cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
-								protocols::loops::fast_ccd_loop_closure(*pose,move_map, loop.to+1, loop.hi+1, loop.hi, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
+								fast_ccd_loop_closure(*pose,move_map, loop.to+1, loop.hi+1, loop.hi, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
 								cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
 
 							}
@@ -418,9 +421,9 @@ namespace devel {
 								//cout << "calling ccd on: " << a << " " << loop.to << " " << b << endl;
 
 								core::Real fdev, rdev, tdelta, rdelta;
-								protocols::loops::fast_ccd_loop_closure(*pose,move_map, loop.lo-1, loop.to-1, loop.lo, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
+								fast_ccd_loop_closure(*pose,move_map, loop.lo-1, loop.to-1, loop.lo, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
 								//cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
-								protocols::loops::fast_ccd_loop_closure(*pose,move_map, loop.to+1, loop.hi+1, loop.hi, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
+								fast_ccd_loop_closure(*pose,move_map, loop.to+1, loop.hi+1, loop.hi, 100, 0.1, true, 5.0, 5.0, 5.0, 5.0, fdev, rdev, tdelta, rdelta );
 								//cout << "fdev=" << fdev << " rdev=" << rdev << " tdelta=" << tdelta << " rdelta=" << rdelta << endl;
 
 							}

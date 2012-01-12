@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file /protocols/loops/kinematic_closure/KinematicWrapper.hh
+/// @file /protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh
 /// @brief wrapper for KinematicMover - useful when only apply() is available
 /// @author Steven Lewis
 
-#ifndef INCLUDED_protocols_loops_kinematic_closure_KinematicWrapper_hh
-#define INCLUDED_protocols_loops_kinematic_closure_KinematicWrapper_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicWrapper_hh
+#define INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicWrapper_hh
 
 // Unit Headers
-#include <protocols/loops/kinematic_closure/KinematicWrapper.fwd.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.fwd.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.fwd.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -36,8 +36,8 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
 namespace kinematic_closure {
-
 
 ///@details This class extends KinematicMover by composition (has-a KinematicMover).  The idea is to make KinematicMover useful when ONLY the apply() function is available (as in MoverContainers, etc.).  It will reapply KinematicMover until the KinematicMover reports a success.  This class uses searches through loop begin/middle/end points while searching for solutions.  You can pass a MoveMap; it will refuse to put pivots where the MoveMap is not mobile.
 class KinematicWrapper : public protocols::moves::Mover {
@@ -45,14 +45,14 @@ class KinematicWrapper : public protocols::moves::Mover {
 public:
 	///@brief ctor with Loop
 	KinematicWrapper(
-		protocols::loops::kinematic_closure::KinematicMoverOP kinmover_in,
+		KinematicMoverOP kinmover_in,
 		protocols::loops::Loop loop,
 		core::Size cycles = 0 //0 is sentinel value to check options system
 	);
 
 	///@brief ctor with explicit loop begin/end
 	KinematicWrapper(
-		protocols::loops::kinematic_closure::KinematicMoverOP kinmover_in,
+		KinematicMoverOP kinmover_in,
 		core::Size loop_begin,
 		core::Size loop_end,
 		core::Size cycles = 0 //0 is sentinel value to check options system
@@ -76,7 +76,7 @@ private:
 	void init_allowed_pos();
 
 	///@brief OP for KinematicMover
-	protocols::loops::kinematic_closure::KinematicMoverOP kinmover_;
+	KinematicMoverOP kinmover_;
 
 	///@brief the loop this object-instance remodels
 	core::Size const loop_begin_;
@@ -90,8 +90,9 @@ private:
 	utility::vector1<core::Size> allowed_positions_;
 };//end KinematicWrapper
 
-}//namespace kinematic_closure
-}//namespace loops
-}//namespace protocols
+} // namespace kinematic_closure
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 
-#endif // INCLUDED_protocols_loops_KinematicWrapper_HH
+#endif // INCLUDED_protocols_loops_loop_closure_KinematicWrapper_HH

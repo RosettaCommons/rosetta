@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/loops/kinematic_closure/KinematicPerturber.cc
+/// @file   protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.cc
 /// @brief  implementations for KinematicPerturbers used by the kinematic mover
 /// @author Florian Richter, floric@u.washington.edu, march 2009
 /// @author Rhiju Das, rhiju@stanford.edu, 2011 -- options of cis/trans prolines, and turn off ca bond geometry variation.
 
 //Unit headers
-#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 
 // Project headers
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 
 // Rosetta Headers
 #include <core/chemical/AA.hh>
@@ -44,10 +44,11 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
 namespace kinematic_closure {
 
 static numeric::random::RandomGenerator RG(43134);
-static basic::Tracer TR("protocols.moves.kinematic_closure.KinematicPerturber");
+static basic::Tracer TR("protocols.loops.loop_closure.kinematic_closure.KinematicPerturber");
 
 KinematicPerturber::KinematicPerturber()
 	: max_sample_iterations_( basic::options::option[ basic::options::OptionKeys::loops::max_kic_perturber_samples ]() )
@@ -264,6 +265,7 @@ TorsionSweepingKinematicPerturber::perturb_chain(
 	++sweep_iterator_;
 } //TorsionSweepingKinematicPerturber::perturb_chain(
 
-} // end namespace kinematic_closure
-} // end namespace loops
-} // end namespace protocols
+} // namespace kinematic_closure
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols

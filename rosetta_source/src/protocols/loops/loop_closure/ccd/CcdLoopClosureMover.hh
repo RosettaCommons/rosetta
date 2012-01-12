@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/abinitio/CcdLoopClosureMover.hh
+/// @file src/protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh
 /// @brief header file for CcdLoopClosureMover protocol
 /// @detailed
 ///	  Contains currently: Classic Abinitio
@@ -16,11 +16,11 @@
 /// @author Oliver Lange
 
 
-
-#ifndef INCLUDED_protocols_loops_CcdLoopClosureMover_hh
-#define INCLUDED_protocols_loops_CcdLoopClosureMover_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_ccd_CcdLoopClosureMover_hh
+#define INCLUDED_protocols_loops_loop_closure_ccd_CcdLoopClosureMover_hh
 
 // Unit Headers
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.fwd.hh>
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
@@ -47,6 +47,8 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 /// Move these forward declarations to CcdLoopClosureMover.fwd.hh
 class CcdLoopClosureMover;
@@ -133,7 +135,9 @@ private:
 	core::kinematics::MoveMapCOP movemap_;
 };
 
-}
-}
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 
-#endif
+#endif //INCLUDED_protocols_loops_loop_closure_ccd_CcdLoopClosureMover_hh

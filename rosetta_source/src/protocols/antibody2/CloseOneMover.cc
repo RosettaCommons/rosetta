@@ -20,7 +20,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
 //#include <protocols/loops/LoopMover.hh>
 #include <core/conformation/Conformation.hh>
@@ -96,7 +96,9 @@ void CloseOneMover::set_pymol( protocols::moves::PyMolMoverOP pymol )
 
 void CloseOneMover::apply( pose::Pose & pose_in )
 {
-
+    using loops::loop_closure::ccd::CcdMover;
+    using loops::loop_closure::ccd::CcdMoverOP;
+    
 	Size const N ( 1 ); // N atom
 	Size const C ( 3 ); // C atom
 
@@ -134,7 +136,7 @@ void CloseOneMover::apply( pose::Pose & pose_in )
 	if( nter_separation > allowed_separation_ ) {
 		loops::Loop one_loop( loop_start_, cdr_loop_start_, cdr_loop_start_-1, 0, false );
 		simple_one_loop_fold_tree( pose_in, one_loop );
-		loops::CcdMoverOP ccd_moves = new loops::CcdMover( one_loop, movemap_ );
+		CcdMoverOP ccd_moves = new CcdMover( one_loop, movemap_ );
 		ccd_moves->apply( pose_in );
 		pymol_->apply( pose_in );
 	}
@@ -142,7 +144,7 @@ void CloseOneMover::apply( pose::Pose & pose_in )
 	if( cter_separation > allowed_separation_ ) {
 		loops::Loop one_loop( cdr_loop_end_, loop_end_, cdr_loop_end_+1, 0, false );
 		simple_one_loop_fold_tree( pose_in, one_loop );
-		loops::CcdMoverOP ccd_moves = new loops::CcdMover( one_loop, movemap_ );
+		CcdMoverOP ccd_moves = new CcdMover( one_loop, movemap_ );
 		ccd_moves->apply( pose_in );
 		pymol_->apply( pose_in );
 	}
@@ -156,7 +158,7 @@ void CloseOneMover::apply( pose::Pose & pose_in )
 		if( separation > allowed_separation_ ) {
 			Size cutpoint = ii;
 			loops::Loop one_loop( loop_start_, loop_end_, cutpoint, 0, false );
-			loops::CcdMoverOP ccd_moves = new loops::CcdMover( one_loop, movemap_ );
+			CcdMoverOP ccd_moves = new CcdMover( one_loop, movemap_ );
 			ccd_moves->apply( pose_in );
 			pymol_->apply( pose_in );
 		}

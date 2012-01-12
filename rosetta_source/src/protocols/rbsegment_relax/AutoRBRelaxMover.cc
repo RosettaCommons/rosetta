@@ -28,7 +28,7 @@
 #include <protocols/rbsegment_relax/RBSegmentMover.hh>
 #include <protocols/rbsegment_relax/RBSegment.hh>
 #include <protocols/rbsegment_relax/util.hh>
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -83,7 +83,7 @@ public:
 		cut_(cut) { }
 
 	void apply( Pose & pose ) {
-		protocols::loops::ccd_moves(25, pose, *movemap_, start_, stop_, cut_ );
+		protocols::loops::loop_closure::ccd::ccd_moves(25, pose, *movemap_, start_, stop_, cut_ );
 	}
 
 	virtual std::string get_name() const {
@@ -240,7 +240,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 					random_move.apply(pose);
 				} else {
 					protocols::loops::Loops::const_iterator it( loops_.one_random_loop() );
-					protocols::loops::ccd_moves(5, pose, *movemap_, it->start(), it->stop(), it->cut() );
+					protocols::loops::loop_closure::ccd::ccd_moves(5, pose, *movemap_, it->start(), it->stop(), it->cut() );
 				}
 
 				mc_->boltzmann( pose );

@@ -38,7 +38,7 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/loops_main.hh>
 
 #include <protocols/viewer/viewers.hh>
@@ -2191,7 +2191,7 @@ ccd_test()
 	{ // ccd closure
 
 		Real fwd,bwd,tor_delta, rama_delta;
-		protocols::loops::fast_ccd_loop_closure( pose, mm, 15, 22, cutpoint, 100, 0.05, true, 100, 100, 100, 100,
+		protocols::loops::loop_closure::ccd::fast_ccd_loop_closure( pose, mm, 15, 22, cutpoint, 100, 0.05, true, 100, 100, 100, 100,
 																	fwd, bwd, tor_delta, rama_delta );
 
 		dump_pdb( pose, "tmp_after_ccd.pdb" );

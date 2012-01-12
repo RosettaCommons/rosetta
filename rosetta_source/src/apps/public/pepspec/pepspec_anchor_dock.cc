@@ -35,7 +35,7 @@
  #include <protocols/simple_moves/RotamerTrialsMover.hh>
  #include <protocols/moves/RepeatMover.hh>
 
- #include <protocols/loops/ccd_closure.hh>
+ //#include <protocols/loops/ccd_closure.hh>
  #include <protocols/loops/loops_main.hh>
 
  #include <protocols/viewer/viewers.hh>

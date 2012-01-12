@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/loops/kinematic_closure/KinematicWrapper.cc
+/// @file protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.cc
 /// @brief KinematicWrapper methods implemented - this is a mover which simplifies use of KinematicMover loop modeling
 /// @author Steven Lewis
 
 // Unit Headers
-#include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 
 // Package Headers
 
@@ -46,11 +46,12 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.loops.kinematic_closure.KinematicWrapper" );
+static basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicWrapper" );
 static numeric::random::RandomGenerator RG(171528);
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
 namespace kinematic_closure {	
 
 /// @details the responsiblity of apply() is to use the underlying
@@ -143,7 +144,7 @@ void KinematicWrapper::respect_this_movemap( core::kinematics::MoveMapCOP mm )
 using namespace basic::options;
 ///@brief ctor with Loop
 KinematicWrapper::KinematicWrapper(
-                                   protocols::loops::kinematic_closure::KinematicMoverOP kinmover_in,
+                                   KinematicMoverOP kinmover_in,
                                    protocols::loops::Loop loop_in,
 																	 core::Size cycles
 ) : Mover(), kinmover_(kinmover_in), loop_begin_(loop_in.start()), loop_end_(loop_in.stop()),
@@ -154,7 +155,7 @@ KinematicWrapper::KinematicWrapper(
 
 ///@brief ctor with explicit loop begin/end
 KinematicWrapper::KinematicWrapper(
-                                   protocols::loops::kinematic_closure::KinematicMoverOP kinmover_in,
+                                   KinematicMoverOP kinmover_in,
 																	 core::Size loop_begin,
 																	 core::Size loop_end,
 																	 core::Size cycles
@@ -184,7 +185,8 @@ void KinematicWrapper::init_allowed_pos(){
 
 KinematicWrapper::~KinematicWrapper(){}
 
-}//kinematic_closure
-}//loops
-}//protocols
+} // namespace kinematic_closure
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 

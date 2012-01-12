@@ -15,8 +15,8 @@
 
 
 // Unit Headers
-#include <protocols/loops/CcdLoopClosureMover.hh>
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <core/kinematics/MoveMap.hh>
 // Package Headers
 
@@ -30,10 +30,13 @@
 
 
 //last boolean causes this tracer to be muted by default
-static basic::Tracer TR_loop("protocols.loops.CcdLoopClosureMover", basic::t_info, true);
+static basic::Tracer TR_loop("protocols.loops.loop_closure.ccd.CcdLoopClosureMover", basic::t_info, true);
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
+
 using namespace core;
 
 CcdLoopClosureMover::CcdLoopClosureMover(
@@ -148,6 +151,7 @@ CcdMover::get_name() const {
 	return "CcdMover";
 }
 
-
-}
-}
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols

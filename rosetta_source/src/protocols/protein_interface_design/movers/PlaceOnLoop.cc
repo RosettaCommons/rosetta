@@ -33,7 +33,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/loops/Loop.hh>
@@ -42,7 +42,7 @@
 // AUTO-REMOVED #include <basic/options/option.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 // AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStub.hh>
-#include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <protocols/loops/loops_main.hh>
@@ -99,7 +99,7 @@ PlaceOnLoop::PlaceOnLoop() :
 {
 	delta_length_.clear();
 	delta_length_.push_back( 0 );
-	kinematic_mover_ = new protocols::loops::kinematic_closure::KinematicMover;
+	kinematic_mover_ = new protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 	set_kinematic_defaults();
 }
 
@@ -128,7 +128,7 @@ PlaceOnLoop::minimize_toward_stub( core::pose::Pose & pose ) const
 	loops::fold_tree_from_loops( pose, *loops, f_new, true /* include terminal cutpoints */);
 	pose.fold_tree( f_new );
 	pose.update_residue_neighbors();
-	protocols::loops::kinematic_closure::KinematicWrapper kinwrap( kinematic_mover_, loop, chain_closing_attempts_ );
+	protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrap( kinematic_mover_, loop, chain_closing_attempts_ );
 	kinwrap.apply( pose );
 	if( kinwrap.get_last_move_status() != MS_SUCCESS ){
 		TR<<"Kinematic loop closure failed to close loop."<<std::endl;

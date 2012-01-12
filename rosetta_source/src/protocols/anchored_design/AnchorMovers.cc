@@ -65,10 +65,10 @@
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
-#include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
-#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 
@@ -874,9 +874,9 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 		//option 3: kinematic; no perturbation or closure needed
 		if( internal && !perturb_KIC_off_){
 			//make kinematic mover
-			using protocols::loops::kinematic_closure::KinematicMoverOP;
-			using protocols::loops::kinematic_closure::KinematicMoverCAP;
-			using protocols::loops::kinematic_closure::KinematicMover;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 			KinematicMoverOP kin_mover( new KinematicMover() );//temperature, default 0.8
 			KinematicMoverCAP kin_mover_cap(*kin_mover);
 			kin_mover->set_temperature( perturb_temp_ );
@@ -888,14 +888,14 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			kin_mover->set_idealize_loop_first( false );
 
 			//make kinematic perturber
-			using protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturber;
-			using protocols::loops::kinematic_closure::KinematicPerturberOP;
+			using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicPerturberOP;
 			KinematicPerturberOP TsamplingKP( new TorsionSamplingKinematicPerturber(kin_mover_cap));
 			TsamplingKP->set_movemap(interface_->movemap_cen(i));
 			kin_mover->set_perturber(TsamplingKP);
 
-			using protocols::loops::kinematic_closure::KinematicWrapperOP;
-			using protocols::loops::kinematic_closure::KinematicWrapper;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapperOP;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapper;
 			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, interface_->loop(i)));
 			kin_wrapper->respect_this_movemap(interface_->movemap_cen(i));
 			oneloop_random->add_mover(kin_wrapper, 1);
@@ -937,7 +937,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			//now we need to add on closure, if the loop is not terminal and we didn't use KinematicMover above
 			if( internal && !perturb_CCD_off_ ){
 				///////////////////////////generate CCD close mover///////////////////////////////
-				using protocols::loops::CcdLoopClosureMover;
+				using protocols::loops::loop_closure::ccd::CcdLoopClosureMover;
 				oneloop_subsequence->add_mover(new CcdLoopClosureMover(interface_->loop(i), interface_->movemap_cen_omegafixed(i)));
 				T_perturb << "creating CCD-closure after perturbation for loop " << loop_start << " " << loop_end << std::endl;
 
@@ -1234,9 +1234,9 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 		//option 3: kinematic; no perturbation or closure needed
 		if( internal && !refine_KIC_off_){
 			//make kinematic mover
-			using protocols::loops::kinematic_closure::KinematicMoverOP;
-			using protocols::loops::kinematic_closure::KinematicMoverCAP;
-			using protocols::loops::kinematic_closure::KinematicMover;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 			KinematicMoverOP kin_mover( new KinematicMover() );//temperature, default 0.8
 			KinematicMoverCAP kin_mover_cap(*kin_mover);
 			kin_mover->set_temperature( refine_temp_ );
@@ -1248,16 +1248,16 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			kin_mover->set_idealize_loop_first( false );
 
 			//make kinematic perturber
-			using protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturber;
-			using protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturberOP;
+			using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber;
+			using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP;
 			TorsionSamplingKinematicPerturberOP TsamplingKP( new TorsionSamplingKinematicPerturber(kin_mover_cap));
 			TsamplingKP->set_movemap(interface_->movemap_fa(i));
 			TsamplingKP->set_sample_vicinity( vicinity_sampling_ );
 			TsamplingKP->set_degree_vicinity( vicinity_degree_ );
 			kin_mover->set_perturber(TsamplingKP);
 
-			using protocols::loops::kinematic_closure::KinematicWrapperOP;
-			using protocols::loops::kinematic_closure::KinematicWrapper;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapperOP;
+			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapper;
 			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, interface_->loop(i)));
 			kin_wrapper->respect_this_movemap(interface_->movemap_fa(i));
 			oneloop_random->add_mover(kin_wrapper, 1);
@@ -1281,7 +1281,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 			//if not a terminal loop
 			if (internal && !refine_CCD_off_) {
-				using protocols::loops::CcdLoopClosureMover;
+				using protocols::loops::loop_closure::ccd::CcdLoopClosureMover;
 				using protocols::moves::MoverOP;
 				MoverOP CCD_mover = new CcdLoopClosureMover(interface_->loop(i), interface_->movemap_fa_omegafixed(i));
 				oneloop_subsequence->add_mover(CCD_mover);

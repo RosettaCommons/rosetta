@@ -47,7 +47,7 @@
 #include <protocols/jumping/PairingLibrary.hh>
 #include <protocols/jumping/util.hh>
 
-#include <protocols/loops/SlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/Exceptions.hh>
 
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>

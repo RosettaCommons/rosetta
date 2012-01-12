@@ -11,7 +11,7 @@
 /// @author Daniel J. Mandell
 
 // Unit Headers
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 //#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
@@ -51,7 +51,7 @@
 
 #include <core/chemical/AtomType.hh>
 #include <core/id/TorsionID.hh>
-#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
 #include <boost/foreach.hpp>
@@ -59,7 +59,7 @@
 //Auto Headers
 #define foreach BOOST_FOREACH
 static numeric::random::RandomGenerator RG(43135);
-static basic::Tracer TR("protocols.moves.KinematicMover");
+static basic::Tracer TR("protocols.loops.loop_closure.kinematic_closure.KinematicMover");
 
 using namespace numeric::kinematic_closure;
 using namespace core;
@@ -68,6 +68,7 @@ using namespace core::scoring;
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
 namespace kinematic_closure {
 
 // default constructor
@@ -827,6 +828,7 @@ KinematicMover::set_defaults() {
 	return;
 }
 
-} // end namespace kinematic_closure
-} // end namespace loops
-} // end namespace protocols
+} // namespace kinematic_closure
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols

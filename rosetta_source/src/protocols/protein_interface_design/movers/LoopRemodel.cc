@@ -19,8 +19,8 @@
 // Package headers
 
 // Project headers
-#include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD.hh>
@@ -204,7 +204,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 							// make a temporary loop/loops set to use in this scope
 							Loop loop( *it );
 
-							loops::kinematic_closure::KinematicMoverOP kinmover = new loops::kinematic_closure::KinematicMover;
+							loops::loop_closure::kinematic_closure::KinematicMoverOP kinmover = new loops::loop_closure::kinematic_closure::KinematicMover;
 							if( perturb_ ) kinmover->set_idealize_loop_first( true );
 							core::Size const cycles = 100;
 							kinmover->set_temperature( mc_kt );
@@ -213,7 +213,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 							kinmover->set_sample_nonpivot_torsions( true );
 							kinmover->set_rama_check( true );
 
-							protocols::loops::kinematic_closure::KinematicWrapper kinwrapper( kinmover, loop, cycles );
+							protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrapper( kinmover, loop, cycles );
 							kinwrapper.apply( pose );
 						} // for all loops
 						inner_mc.boltzmann( pose );

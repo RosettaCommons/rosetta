@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/loops/kinematic_closure/KinematicPerturber.fwd.hh
+/// @file   protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.fwd.hh
 /// @brief  KinematicPerturber forward declarations header
 /// @author Florian Richter (floric@u.washington.edu), march 2009
 
 
-#ifndef INCLUDED_protocols_loops_kinematic_closure_KinematicPerturber_fwd_hh
-#define INCLUDED_protocols_loops_kinematic_closure_KinematicPerturber_fwd_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicPerturber_fwd_hh
+#define INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicPerturber_fwd_hh
 
 
 // Utility headers
@@ -22,6 +22,7 @@
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
 namespace kinematic_closure {
 
 //Forwards and OP typedefs
@@ -37,9 +38,9 @@ class TorsionSweepingKinematicPerturber;
 typedef utility::pointer::owning_ptr< TorsionSweepingKinematicPerturber > TorsionSweepingKinematicPerturberOP;
 typedef utility::pointer::owning_ptr< TorsionSweepingKinematicPerturber const > TorsionSweepingKinematicPerturberCOP;
 
+} // namespace kinematic_closure
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 
-}//kinematic_closure
-}//moves
-}//protocols
-
-#endif //INCLUDED_protocols_moves_kinematic_closure_KinematicPerturber_FWD_HH
+#endif //INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicPerturber_FWD_HH

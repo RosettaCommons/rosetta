@@ -22,7 +22,7 @@
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <core/conformation/Residue.hh>
@@ -70,7 +70,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/pose/util.hh>
-#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
@@ -314,10 +314,10 @@ void LoopMover_Refine_KIC::apply(
 
 	// setup kinematic mover
 	//protocols::loops::kinematic_closure::KinematicMover myKinematicMover( init_temp );
-	protocols::loops::kinematic_closure::KinematicMover myKinematicMover;
+	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
 
-	protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-		new protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+	loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
+		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
 	if (option[ OptionKeys::loops::vicinity_sampling ]()) {
 		perturber->set_sample_vicinity( true );
 		perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );

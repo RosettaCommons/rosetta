@@ -17,11 +17,11 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_protocols_loops_SlidingWindowLoopClosure_hh
-#define INCLUDED_protocols_loops_SlidingWindowLoopClosure_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_ccd_SlidingWindowLoopClosure_hh
+#define INCLUDED_protocols_loops_loop_closure_ccd_SlidingWindowLoopClosure_hh
 
 // Unit Headers
-#include <protocols/loops/SlidingWindowLoopClosure.fwd.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh>
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
@@ -62,18 +62,12 @@
 
 namespace protocols {
 namespace loops {
-
+namespace loop_closure {
+namespace ccd {
 
 extern std::string const VDW_FRAG_STORE;
 extern std::string const SCORE_FRAG_STORE;
 extern std::string const RMSD_FRAG_STORE;
-
-
-/// Move these forward declarations to SlidingWindowLoopClosure.fwd.hh
-class SlidingWindowLoopClosure;
-typedef utility::pointer::owning_ptr< SlidingWindowLoopClosure > SlidingWindowLoopClosureOP;
-typedef utility::pointer::owning_ptr< SlidingWindowLoopClosure const > SlidingWindowLoopClosureCOP;
-
 
 class SlidingWindowLoopClosure : public moves::Mover {
 public:
@@ -272,7 +266,9 @@ protected:
 
 };
 
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 
-}
-}
-#endif
+#endif //INCLUDED_protocols_loops_loop_closure_ccd_SlidingWindowLoopClosure_hh

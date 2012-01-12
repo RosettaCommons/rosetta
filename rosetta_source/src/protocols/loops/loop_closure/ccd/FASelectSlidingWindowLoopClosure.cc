@@ -15,7 +15,7 @@
 
 
 // Unit Headers
-#include <protocols/loops/FASelectSlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/FASelectSlidingWindowLoopClosure.hh>
 
 // Package Headers
 #include <protocols/loops/loops_main.hh>
@@ -77,12 +77,14 @@ OPT_1GRP_KEY( Real, fast_loops, rmsd_dump )
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 using namespace core;
 using namespace pose;
 
 //static numeric::random::RandomGenerator RG(4189);  // <- Magic number, do not change it!
-static basic::Tracer tr("protocols.loops");
+static basic::Tracer tr("protocols.loops.loop_closure.ccd.FASelectSlidingWindowLoopClosure");
 
 const Real REALLY_BAD_SCORE ( 1000000000.0 );
 
@@ -114,7 +116,7 @@ FASelectSlidingWindowLoopClosure::set_defaults() {
 	keep_fragments(); //we need this... not only for debug
 }
 
-void protocols::loops::FASelectSlidingWindowLoopClosure::register_options() {
+void FASelectSlidingWindowLoopClosure::register_options() {
   using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	NEW_OPT( fast_loops::rmsd_dump, "dump all pdbs for loops that are below in rmsd", 2.0 );
@@ -269,6 +271,7 @@ void FASelectSlidingWindowLoopClosure::set_fullatom_pose( core::pose::Pose& fa_p
 	fa_pose_ = new core::pose::Pose( fa_pose );
 }
 
-
-}
-}
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols

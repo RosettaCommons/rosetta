@@ -1198,25 +1198,25 @@
 		224121FCE2C72E79BAC8E4C1 /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3787EB869237A79B10EE49D /* util.cc */; };
 		C699CB65B406C4491BB5E846 /* SetupForFibrilMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = B213410DEDAB56D0A3B01037 /* SetupForFibrilMover.cc */; };
 		4E1487EC4AB6D2B10F4DA9F2 /* fibril_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 45FC1D968719B1DF7F6D73D3 /* fibril_util.cc */; };
-		496D260EA66CD8EBC54947E0 /* CcdLoopClosureMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 70C410307483C1F0D5337933 /* CcdLoopClosureMover.cc */; };
-		A64B135E31703CD3D6CEBE40 /* FASelectSlidingWindowLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 56A14DE77C5930E04B7FE6E8 /* FASelectSlidingWindowLoopClosure.cc */; };
 		97A1BF461ACCC078983B1AAC /* FoldTreeFromLoopsWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 27C1413862AE4D20675A768C /* FoldTreeFromLoopsWrapper.cc */; };
 		A6BBDDAC8920ECD74EAE7CFD /* Loop.cc in Sources */ = {isa = PBXBuildFile; fileRef = B24AED784757B7649E3FB2BD /* Loop.cc */; };
-		191501DBECA4C4E14AC2D39C /* LoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0D2BCE59B3C18610A0DAC946 /* LoopClosure.cc */; };
 		69251577A27115EBC0C54B74 /* LoopMoverFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 393395EC7851954896B9CAA7 /* LoopMoverFactory.cc */; };
 		58437074668E1D82DEA31512 /* Loops.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4D27106EFA83F4300BE954D5 /* Loops.cc */; };
-		88B1745525BC137B8101F79A /* ShortLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = E2289498E2F05DDA55F2C670 /* ShortLoopClosure.cc */; };
-		FC839D67E0836B71DF1DF524 /* SlidingWindowLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 220BE918EEAB11969799374E /* SlidingWindowLoopClosure.cc */; };
-		E47CEB2122A7D4D87C444364 /* WidthFirstSlidingWindowLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3423FA32AF7AF6AB9A9CCF83 /* WidthFirstSlidingWindowLoopClosure.cc */; };
-		DD3B904CAD3D73E5D12432CA /* ccd_closure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4348A812226810B087671B96 /* ccd_closure.cc */; };
 		6AE14AF1ECF55FAF78092264 /* loopfinder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4AB6932F136EF60F743F16B5 /* loopfinder.cc */; };
 		A28F17DEBA68748028DDA3B3 /* looprelax_protocols.cc in Sources */ = {isa = PBXBuildFile; fileRef = 42C38C0718A8028E29BB6DE4 /* looprelax_protocols.cc */; };
 		FBB274983A9AB98F92DF11F4 /* loops_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 23F82DA3D1A6AF46BD3DF3C7 /* loops_main.cc */; };
 		7B0FEE5DF17BA6ADDB801872 /* make_loops.cc in Sources */ = {isa = PBXBuildFile; fileRef = F122015B595DF0E703A4B67C /* make_loops.cc */; };
 		9260AE526C5065A77070FB17 /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = A6FC865DE9FDA869F742EB4F /* util.cc */; };
-		FA1959F6D9798D136C12D4E6 /* KinematicMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0CC3E0460306DAB1ED16FE9E /* KinematicMover.cc */; };
-		622FDF6B3D60078B07542217 /* KinematicPerturber.cc in Sources */ = {isa = PBXBuildFile; fileRef = B34038BD5C447DAFA571C96F /* KinematicPerturber.cc */; };
-		5A6488B34C34CEB83E3655B2 /* KinematicWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1EE715D084F4D9726DDD5036 /* KinematicWrapper.cc */; };
+		B35C3BA0AA9F9278E0CADD93 /* CcdLoopClosureMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = B607C92266868D0D4C333B0D /* CcdLoopClosureMover.cc */; };
+		CBC37694ED69F1326350F26A /* FASelectSlidingWindowLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = CB3D811C84DB9D519B0783B6 /* FASelectSlidingWindowLoopClosure.cc */; };
+		D9F377557766E57A5A2E4E91 /* LoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 486EE0E068696B74D5C1CB0F /* LoopClosure.cc */; };
+		3959B384394AAF2B40BCEA8B /* ShortLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 59DFAE771A8E43A6A1D30152 /* ShortLoopClosure.cc */; };
+		832BEA43403D41CD3ACB62D1 /* SlidingWindowLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0F06F5B26553EE0599EBFF48 /* SlidingWindowLoopClosure.cc */; };
+		1A4F33C36D96FF11B4F725B7 /* WidthFirstSlidingWindowLoopClosure.cc in Sources */ = {isa = PBXBuildFile; fileRef = CAD9780DD1F5DEE4A461ADC8 /* WidthFirstSlidingWindowLoopClosure.cc */; };
+		7F4FC38C81E65F9758D49569 /* ccd_closure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4DFAAE5292AFFF8C08AD8248 /* ccd_closure.cc */; };
+		08CA4A7B94CF10C28AA8C916 /* KinematicMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 832ABFE886F4A1300B8B7FC0 /* KinematicMover.cc */; };
+		EDE3FB710F687DD912E20626 /* KinematicPerturber.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7E875B61EFF81F0B768F06BD /* KinematicPerturber.cc */; };
+		873E02839FA39E92CBA0C073 /* KinematicWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1289FFD3921921AEF2FA35C7 /* KinematicWrapper.cc */; };
 		B5351E5FD715261518078D99 /* IndependentLoopMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = F0EC617EB869C947417BD85F /* IndependentLoopMover.cc */; };
 		C074516A98882735BC2128CD /* LoopMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 38620C20FFCE4B0B28B962A9 /* LoopMover.cc */; };
 		6FBD10BC63BF9F098F63050D /* LoopMover_CCD.cc in Sources */ = {isa = PBXBuildFile; fileRef = FA96C02586714C7272C9A463 /* LoopMover_CCD.cc */; };
@@ -10041,11 +10041,7 @@
 		9176641A80D566A195AAEBF5 /* SetupForFibrilMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SetupForFibrilMover.hh; path = ../src/protocols/fibril/SetupForFibrilMover.hh; sourceTree = SOURCE_ROOT; };
 		45FC1D968719B1DF7F6D73D3 /* fibril_util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = fibril_util.cc; path = ../src/protocols/fibril/fibril_util.cc; sourceTree = SOURCE_ROOT; };
 		C80B794179D379B55D747236 /* fibril_util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = fibril_util.hh; path = ../src/protocols/fibril/fibril_util.hh; sourceTree = SOURCE_ROOT; };
-		70C410307483C1F0D5337933 /* CcdLoopClosureMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CcdLoopClosureMover.cc; path = ../src/protocols/loops/CcdLoopClosureMover.cc; sourceTree = SOURCE_ROOT; };
-		C87ADA860BD560D8C27087A9 /* CcdLoopClosureMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CcdLoopClosureMover.hh; path = ../src/protocols/loops/CcdLoopClosureMover.hh; sourceTree = SOURCE_ROOT; };
 		ABD5D4A49F1BA91F64C4A8F7 /* Exceptions.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Exceptions.hh; path = ../src/protocols/loops/Exceptions.hh; sourceTree = SOURCE_ROOT; };
-		56A14DE77C5930E04B7FE6E8 /* FASelectSlidingWindowLoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FASelectSlidingWindowLoopClosure.cc; path = ../src/protocols/loops/FASelectSlidingWindowLoopClosure.cc; sourceTree = SOURCE_ROOT; };
-		FEA511EABDC5FF8D43BB3014 /* FASelectSlidingWindowLoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FASelectSlidingWindowLoopClosure.hh; path = ../src/protocols/loops/FASelectSlidingWindowLoopClosure.hh; sourceTree = SOURCE_ROOT; };
 		27C1413862AE4D20675A768C /* FoldTreeFromLoopsWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FoldTreeFromLoopsWrapper.cc; path = ../src/protocols/loops/FoldTreeFromLoopsWrapper.cc; sourceTree = SOURCE_ROOT; };
 		D0E609232DDFC0DA5A64EEF6 /* FoldTreeFromLoopsWrapper.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FoldTreeFromLoopsWrapper.fwd.hh; path = ../src/protocols/loops/FoldTreeFromLoopsWrapper.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6965BF1D6094B7ACD8500987 /* FoldTreeFromLoopsWrapper.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FoldTreeFromLoopsWrapper.hh; path = ../src/protocols/loops/FoldTreeFromLoopsWrapper.hh; sourceTree = SOURCE_ROOT; };
@@ -10053,25 +10049,12 @@
 		B24AED784757B7649E3FB2BD /* Loop.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Loop.cc; path = ../src/protocols/loops/Loop.cc; sourceTree = SOURCE_ROOT; };
 		7E55F322A30EBB01C69D9E12 /* Loop.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loop.fwd.hh; path = ../src/protocols/loops/Loop.fwd.hh; sourceTree = SOURCE_ROOT; };
 		B96A5E0813FDF734A47CE2C5 /* Loop.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loop.hh; path = ../src/protocols/loops/Loop.hh; sourceTree = SOURCE_ROOT; };
-		0D2BCE59B3C18610A0DAC946 /* LoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopClosure.cc; path = ../src/protocols/loops/LoopClosure.cc; sourceTree = SOURCE_ROOT; };
-		F28B3591F048482117C16998 /* LoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopClosure.fwd.hh; path = ../src/protocols/loops/LoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
-		198521FC7A4138552D174350 /* LoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopClosure.hh; path = ../src/protocols/loops/LoopClosure.hh; sourceTree = SOURCE_ROOT; };
 		393395EC7851954896B9CAA7 /* LoopMoverFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMoverFactory.cc; path = ../src/protocols/loops/LoopMoverFactory.cc; sourceTree = SOURCE_ROOT; };
 		A637E461CE379C040960CD9E /* LoopMoverFactory.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMoverFactory.fwd.hh; path = ../src/protocols/loops/LoopMoverFactory.fwd.hh; sourceTree = SOURCE_ROOT; };
 		7F1393F1235F5E0693E960E7 /* LoopMoverFactory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMoverFactory.hh; path = ../src/protocols/loops/LoopMoverFactory.hh; sourceTree = SOURCE_ROOT; };
 		4D27106EFA83F4300BE954D5 /* Loops.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Loops.cc; path = ../src/protocols/loops/Loops.cc; sourceTree = SOURCE_ROOT; };
 		65378443F5478B1DB14446E5 /* Loops.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.fwd.hh; path = ../src/protocols/loops/Loops.fwd.hh; sourceTree = SOURCE_ROOT; };
 		40C65BF9BBA03ED2583821A7 /* Loops.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.hh; path = ../src/protocols/loops/Loops.hh; sourceTree = SOURCE_ROOT; };
-		E2289498E2F05DDA55F2C670 /* ShortLoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ShortLoopClosure.cc; path = ../src/protocols/loops/ShortLoopClosure.cc; sourceTree = SOURCE_ROOT; };
-		6E17CB9B52358E31F40C4B59 /* ShortLoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShortLoopClosure.hh; path = ../src/protocols/loops/ShortLoopClosure.hh; sourceTree = SOURCE_ROOT; };
-		220BE918EEAB11969799374E /* SlidingWindowLoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SlidingWindowLoopClosure.cc; path = ../src/protocols/loops/SlidingWindowLoopClosure.cc; sourceTree = SOURCE_ROOT; };
-		C36BFD46EEBEAF8EB5855B9A /* SlidingWindowLoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SlidingWindowLoopClosure.fwd.hh; path = ../src/protocols/loops/SlidingWindowLoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
-		8CFC99779789FA71157B3209 /* SlidingWindowLoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SlidingWindowLoopClosure.hh; path = ../src/protocols/loops/SlidingWindowLoopClosure.hh; sourceTree = SOURCE_ROOT; };
-		3423FA32AF7AF6AB9A9CCF83 /* WidthFirstSlidingWindowLoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WidthFirstSlidingWindowLoopClosure.cc; path = ../src/protocols/loops/WidthFirstSlidingWindowLoopClosure.cc; sourceTree = SOURCE_ROOT; };
-		24E5AE2507B39E85699AFD16 /* WidthFirstSlidingWindowLoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WidthFirstSlidingWindowLoopClosure.fwd.hh; path = ../src/protocols/loops/WidthFirstSlidingWindowLoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
-		8F2BAE2F02B91947BFFBC38C /* WidthFirstSlidingWindowLoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WidthFirstSlidingWindowLoopClosure.hh; path = ../src/protocols/loops/WidthFirstSlidingWindowLoopClosure.hh; sourceTree = SOURCE_ROOT; };
-		4348A812226810B087671B96 /* ccd_closure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ccd_closure.cc; path = ../src/protocols/loops/ccd_closure.cc; sourceTree = SOURCE_ROOT; };
-		6D34FD766B1084275D5E2149 /* ccd_closure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ccd_closure.hh; path = ../src/protocols/loops/ccd_closure.hh; sourceTree = SOURCE_ROOT; };
 		4AB6932F136EF60F743F16B5 /* loopfinder.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = loopfinder.cc; path = ../src/protocols/loops/loopfinder.cc; sourceTree = SOURCE_ROOT; };
 		8632CB1BB53599C094882ABC /* loopfinder.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = loopfinder.hh; path = ../src/protocols/loops/loopfinder.hh; sourceTree = SOURCE_ROOT; };
 		42C38C0718A8028E29BB6DE4 /* looprelax_protocols.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = looprelax_protocols.cc; path = ../src/protocols/loops/looprelax_protocols.cc; sourceTree = SOURCE_ROOT; };
@@ -10082,15 +10065,35 @@
 		03BEAFAED597DE96C31D9C69 /* make_loops.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = make_loops.hh; path = ../src/protocols/loops/make_loops.hh; sourceTree = SOURCE_ROOT; };
 		A6FC865DE9FDA869F742EB4F /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/protocols/loops/util.cc; sourceTree = SOURCE_ROOT; };
 		545F68FBB6B342E7C26DAECB /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/protocols/loops/util.hh; sourceTree = SOURCE_ROOT; };
-		0CC3E0460306DAB1ED16FE9E /* KinematicMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KinematicMover.cc; path = ../src/protocols/loops/kinematic_closure/KinematicMover.cc; sourceTree = SOURCE_ROOT; };
-		C754F869AACDDF3601D27549 /* KinematicMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicMover.fwd.hh; path = ../src/protocols/loops/kinematic_closure/KinematicMover.fwd.hh; sourceTree = SOURCE_ROOT; };
-		8F11566D11F03A2BA91AF425 /* KinematicMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicMover.hh; path = ../src/protocols/loops/kinematic_closure/KinematicMover.hh; sourceTree = SOURCE_ROOT; };
-		B34038BD5C447DAFA571C96F /* KinematicPerturber.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KinematicPerturber.cc; path = ../src/protocols/loops/kinematic_closure/KinematicPerturber.cc; sourceTree = SOURCE_ROOT; };
-		AA5CCDE68BAD29C017E43127 /* KinematicPerturber.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicPerturber.fwd.hh; path = ../src/protocols/loops/kinematic_closure/KinematicPerturber.fwd.hh; sourceTree = SOURCE_ROOT; };
-		CDC6F4210DE96AF6AD84C9AD /* KinematicPerturber.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicPerturber.hh; path = ../src/protocols/loops/kinematic_closure/KinematicPerturber.hh; sourceTree = SOURCE_ROOT; };
-		1EE715D084F4D9726DDD5036 /* KinematicWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KinematicWrapper.cc; path = ../src/protocols/loops/kinematic_closure/KinematicWrapper.cc; sourceTree = SOURCE_ROOT; };
-		53AF9D8D6EE4149B234D4ADB /* KinematicWrapper.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicWrapper.fwd.hh; path = ../src/protocols/loops/kinematic_closure/KinematicWrapper.fwd.hh; sourceTree = SOURCE_ROOT; };
-		37229467A2514C31A457A735 /* KinematicWrapper.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicWrapper.hh; path = ../src/protocols/loops/kinematic_closure/KinematicWrapper.hh; sourceTree = SOURCE_ROOT; };
+		B607C92266868D0D4C333B0D /* CcdLoopClosureMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CcdLoopClosureMover.cc; path = ../src/protocols/loops/loop_closure/ccd/CcdLoopClosureMover.cc; sourceTree = SOURCE_ROOT; };
+		201DA2EFB36156FEC24E9AB4 /* CcdLoopClosureMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CcdLoopClosureMover.fwd.hh; path = ../src/protocols/loops/loop_closure/ccd/CcdLoopClosureMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		1BE1418A1098B274F8BCF17E /* CcdLoopClosureMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CcdLoopClosureMover.hh; path = ../src/protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh; sourceTree = SOURCE_ROOT; };
+		CB3D811C84DB9D519B0783B6 /* FASelectSlidingWindowLoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FASelectSlidingWindowLoopClosure.cc; path = ../src/protocols/loops/loop_closure/ccd/FASelectSlidingWindowLoopClosure.cc; sourceTree = SOURCE_ROOT; };
+		E30A38BD526B41F18E1C4219 /* FASelectSlidingWindowLoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FASelectSlidingWindowLoopClosure.fwd.hh; path = ../src/protocols/loops/loop_closure/ccd/FASelectSlidingWindowLoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
+		A6BB7F51AF335257BE534475 /* FASelectSlidingWindowLoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FASelectSlidingWindowLoopClosure.hh; path = ../src/protocols/loops/loop_closure/ccd/FASelectSlidingWindowLoopClosure.hh; sourceTree = SOURCE_ROOT; };
+		486EE0E068696B74D5C1CB0F /* LoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopClosure.cc; path = ../src/protocols/loops/loop_closure/ccd/LoopClosure.cc; sourceTree = SOURCE_ROOT; };
+		365112EECDA2C89DA925CD03 /* LoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopClosure.fwd.hh; path = ../src/protocols/loops/loop_closure/ccd/LoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
+		2D34669D2A405E236E8F601D /* LoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopClosure.hh; path = ../src/protocols/loops/loop_closure/ccd/LoopClosure.hh; sourceTree = SOURCE_ROOT; };
+		59DFAE771A8E43A6A1D30152 /* ShortLoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ShortLoopClosure.cc; path = ../src/protocols/loops/loop_closure/ccd/ShortLoopClosure.cc; sourceTree = SOURCE_ROOT; };
+		02F86526F6336A828692DB54 /* ShortLoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShortLoopClosure.fwd.hh; path = ../src/protocols/loops/loop_closure/ccd/ShortLoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
+		9ED92429ED7643F16FA1FF0D /* ShortLoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShortLoopClosure.hh; path = ../src/protocols/loops/loop_closure/ccd/ShortLoopClosure.hh; sourceTree = SOURCE_ROOT; };
+		0F06F5B26553EE0599EBFF48 /* SlidingWindowLoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SlidingWindowLoopClosure.cc; path = ../src/protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.cc; sourceTree = SOURCE_ROOT; };
+		2EA6C4045714CFC525EF2798 /* SlidingWindowLoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SlidingWindowLoopClosure.fwd.hh; path = ../src/protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
+		5F270CB1CA0EC26BF0E6DC9C /* SlidingWindowLoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SlidingWindowLoopClosure.hh; path = ../src/protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh; sourceTree = SOURCE_ROOT; };
+		CAD9780DD1F5DEE4A461ADC8 /* WidthFirstSlidingWindowLoopClosure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WidthFirstSlidingWindowLoopClosure.cc; path = ../src/protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.cc; sourceTree = SOURCE_ROOT; };
+		E69BBE8FAF5A5AA2D9EAE46E /* WidthFirstSlidingWindowLoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WidthFirstSlidingWindowLoopClosure.fwd.hh; path = ../src/protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
+		BF284CC3ED5E8DA468B02F51 /* WidthFirstSlidingWindowLoopClosure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WidthFirstSlidingWindowLoopClosure.hh; path = ../src/protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh; sourceTree = SOURCE_ROOT; };
+		4DFAAE5292AFFF8C08AD8248 /* ccd_closure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ccd_closure.cc; path = ../src/protocols/loops/loop_closure/ccd/ccd_closure.cc; sourceTree = SOURCE_ROOT; };
+		9044CD788887A199EF78B3C8 /* ccd_closure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ccd_closure.hh; path = ../src/protocols/loops/loop_closure/ccd/ccd_closure.hh; sourceTree = SOURCE_ROOT; };
+		832ABFE886F4A1300B8B7FC0 /* KinematicMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KinematicMover.cc; path = ../src/protocols/loops/loop_closure/kinematic_closure/KinematicMover.cc; sourceTree = SOURCE_ROOT; };
+		A31B95D42AC80608AAE163FC /* KinematicMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicMover.fwd.hh; path = ../src/protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		745E8B3224E3211A5C0BDC01 /* KinematicMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicMover.hh; path = ../src/protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh; sourceTree = SOURCE_ROOT; };
+		7E875B61EFF81F0B768F06BD /* KinematicPerturber.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KinematicPerturber.cc; path = ../src/protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.cc; sourceTree = SOURCE_ROOT; };
+		BDCCB0B6A967B1CF2426B85B /* KinematicPerturber.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicPerturber.fwd.hh; path = ../src/protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.fwd.hh; sourceTree = SOURCE_ROOT; };
+		867ECCD08C78C46DEDEA0EC1 /* KinematicPerturber.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicPerturber.hh; path = ../src/protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh; sourceTree = SOURCE_ROOT; };
+		1289FFD3921921AEF2FA35C7 /* KinematicWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KinematicWrapper.cc; path = ../src/protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.cc; sourceTree = SOURCE_ROOT; };
+		B38E818EA7F087FAF14403C7 /* KinematicWrapper.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicWrapper.fwd.hh; path = ../src/protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.fwd.hh; sourceTree = SOURCE_ROOT; };
+		2ED3C0BB20A3B5EF00DC5ED8 /* KinematicWrapper.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KinematicWrapper.hh; path = ../src/protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh; sourceTree = SOURCE_ROOT; };
 		F0EC617EB869C947417BD85F /* IndependentLoopMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IndependentLoopMover.cc; path = ../src/protocols/loops/loop_mover/IndependentLoopMover.cc; sourceTree = SOURCE_ROOT; };
 		1D03F1FED9210D4190C878BE /* IndependentLoopMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = IndependentLoopMover.fwd.hh; path = ../src/protocols/loops/loop_mover/IndependentLoopMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4C0E0BF0698AC1ED7E5D6D0D /* IndependentLoopMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = IndependentLoopMover.hh; path = ../src/protocols/loops/loop_mover/IndependentLoopMover.hh; sourceTree = SOURCE_ROOT; };
@@ -18545,13 +18548,9 @@
 		A259CFCEF5ED1FF87968FEA6 /* loops */ = {
 			isa = PBXGroup;
 			children = (
-				A67C26D952DEB874D9486C28 /* kinematic_closure */,
+				A32B291F181E053AA62F9D27 /* loop_closure */,
 				917D9433FB57AB1AF9737A5D /* loop_mover */,
-				70C410307483C1F0D5337933 /* CcdLoopClosureMover.cc */,
-				C87ADA860BD560D8C27087A9 /* CcdLoopClosureMover.hh */,
 				ABD5D4A49F1BA91F64C4A8F7 /* Exceptions.hh */,
-				56A14DE77C5930E04B7FE6E8 /* FASelectSlidingWindowLoopClosure.cc */,
-				FEA511EABDC5FF8D43BB3014 /* FASelectSlidingWindowLoopClosure.hh */,
 				27C1413862AE4D20675A768C /* FoldTreeFromLoopsWrapper.cc */,
 				D0E609232DDFC0DA5A64EEF6 /* FoldTreeFromLoopsWrapper.fwd.hh */,
 				6965BF1D6094B7ACD8500987 /* FoldTreeFromLoopsWrapper.hh */,
@@ -18559,25 +18558,12 @@
 				B24AED784757B7649E3FB2BD /* Loop.cc */,
 				7E55F322A30EBB01C69D9E12 /* Loop.fwd.hh */,
 				B96A5E0813FDF734A47CE2C5 /* Loop.hh */,
-				0D2BCE59B3C18610A0DAC946 /* LoopClosure.cc */,
-				F28B3591F048482117C16998 /* LoopClosure.fwd.hh */,
-				198521FC7A4138552D174350 /* LoopClosure.hh */,
 				393395EC7851954896B9CAA7 /* LoopMoverFactory.cc */,
 				A637E461CE379C040960CD9E /* LoopMoverFactory.fwd.hh */,
 				7F1393F1235F5E0693E960E7 /* LoopMoverFactory.hh */,
 				4D27106EFA83F4300BE954D5 /* Loops.cc */,
 				65378443F5478B1DB14446E5 /* Loops.fwd.hh */,
 				40C65BF9BBA03ED2583821A7 /* Loops.hh */,
-				E2289498E2F05DDA55F2C670 /* ShortLoopClosure.cc */,
-				6E17CB9B52358E31F40C4B59 /* ShortLoopClosure.hh */,
-				220BE918EEAB11969799374E /* SlidingWindowLoopClosure.cc */,
-				C36BFD46EEBEAF8EB5855B9A /* SlidingWindowLoopClosure.fwd.hh */,
-				8CFC99779789FA71157B3209 /* SlidingWindowLoopClosure.hh */,
-				3423FA32AF7AF6AB9A9CCF83 /* WidthFirstSlidingWindowLoopClosure.cc */,
-				24E5AE2507B39E85699AFD16 /* WidthFirstSlidingWindowLoopClosure.fwd.hh */,
-				8F2BAE2F02B91947BFFBC38C /* WidthFirstSlidingWindowLoopClosure.hh */,
-				4348A812226810B087671B96 /* ccd_closure.cc */,
-				6D34FD766B1084275D5E2149 /* ccd_closure.hh */,
 				4AB6932F136EF60F743F16B5 /* loopfinder.cc */,
 				8632CB1BB53599C094882ABC /* loopfinder.hh */,
 				42C38C0718A8028E29BB6DE4 /* looprelax_protocols.cc */,
@@ -18593,21 +18579,59 @@
 			path = ../src/protocols/loops/;
 			sourceTree = SOURCE_ROOT;
 		};
-		A67C26D952DEB874D9486C28 /* kinematic_closure */ = {
+		A32B291F181E053AA62F9D27 /* loop_closure */ = {
 			isa = PBXGroup;
 			children = (
-				0CC3E0460306DAB1ED16FE9E /* KinematicMover.cc */,
-				C754F869AACDDF3601D27549 /* KinematicMover.fwd.hh */,
-				8F11566D11F03A2BA91AF425 /* KinematicMover.hh */,
-				B34038BD5C447DAFA571C96F /* KinematicPerturber.cc */,
-				AA5CCDE68BAD29C017E43127 /* KinematicPerturber.fwd.hh */,
-				CDC6F4210DE96AF6AD84C9AD /* KinematicPerturber.hh */,
-				1EE715D084F4D9726DDD5036 /* KinematicWrapper.cc */,
-				53AF9D8D6EE4149B234D4ADB /* KinematicWrapper.fwd.hh */,
-				37229467A2514C31A457A735 /* KinematicWrapper.hh */,
+				45768CD125B78486D24FAA44 /* ccd */,
+				54BF00EC0CBE6566C1EAEBF7 /* kinematic_closure */,
+			);
+			name = loop_closure;
+			path = ../src/protocols/loops/loop_closure/;
+			sourceTree = SOURCE_ROOT;
+		};
+		45768CD125B78486D24FAA44 /* ccd */ = {
+			isa = PBXGroup;
+			children = (
+				B607C92266868D0D4C333B0D /* CcdLoopClosureMover.cc */,
+				201DA2EFB36156FEC24E9AB4 /* CcdLoopClosureMover.fwd.hh */,
+				1BE1418A1098B274F8BCF17E /* CcdLoopClosureMover.hh */,
+				CB3D811C84DB9D519B0783B6 /* FASelectSlidingWindowLoopClosure.cc */,
+				E30A38BD526B41F18E1C4219 /* FASelectSlidingWindowLoopClosure.fwd.hh */,
+				A6BB7F51AF335257BE534475 /* FASelectSlidingWindowLoopClosure.hh */,
+				486EE0E068696B74D5C1CB0F /* LoopClosure.cc */,
+				365112EECDA2C89DA925CD03 /* LoopClosure.fwd.hh */,
+				2D34669D2A405E236E8F601D /* LoopClosure.hh */,
+				59DFAE771A8E43A6A1D30152 /* ShortLoopClosure.cc */,
+				02F86526F6336A828692DB54 /* ShortLoopClosure.fwd.hh */,
+				9ED92429ED7643F16FA1FF0D /* ShortLoopClosure.hh */,
+				0F06F5B26553EE0599EBFF48 /* SlidingWindowLoopClosure.cc */,
+				2EA6C4045714CFC525EF2798 /* SlidingWindowLoopClosure.fwd.hh */,
+				5F270CB1CA0EC26BF0E6DC9C /* SlidingWindowLoopClosure.hh */,
+				CAD9780DD1F5DEE4A461ADC8 /* WidthFirstSlidingWindowLoopClosure.cc */,
+				E69BBE8FAF5A5AA2D9EAE46E /* WidthFirstSlidingWindowLoopClosure.fwd.hh */,
+				BF284CC3ED5E8DA468B02F51 /* WidthFirstSlidingWindowLoopClosure.hh */,
+				4DFAAE5292AFFF8C08AD8248 /* ccd_closure.cc */,
+				9044CD788887A199EF78B3C8 /* ccd_closure.hh */,
+			);
+			name = ccd;
+			path = ../src/protocols/loops/loop_closure/ccd/;
+			sourceTree = SOURCE_ROOT;
+		};
+		54BF00EC0CBE6566C1EAEBF7 /* kinematic_closure */ = {
+			isa = PBXGroup;
+			children = (
+				832ABFE886F4A1300B8B7FC0 /* KinematicMover.cc */,
+				A31B95D42AC80608AAE163FC /* KinematicMover.fwd.hh */,
+				745E8B3224E3211A5C0BDC01 /* KinematicMover.hh */,
+				7E875B61EFF81F0B768F06BD /* KinematicPerturber.cc */,
+				BDCCB0B6A967B1CF2426B85B /* KinematicPerturber.fwd.hh */,
+				867ECCD08C78C46DEDEA0EC1 /* KinematicPerturber.hh */,
+				1289FFD3921921AEF2FA35C7 /* KinematicWrapper.cc */,
+				B38E818EA7F087FAF14403C7 /* KinematicWrapper.fwd.hh */,
+				2ED3C0BB20A3B5EF00DC5ED8 /* KinematicWrapper.hh */,
 			);
 			name = kinematic_closure;
-			path = ../src/protocols/loops/kinematic_closure/;
+			path = ../src/protocols/loops/loop_closure/kinematic_closure/;
 			sourceTree = SOURCE_ROOT;
 		};
 		917D9433FB57AB1AF9737A5D /* loop_mover */ = {
@@ -24087,25 +24111,25 @@
 				224121FCE2C72E79BAC8E4C1 /* util.cc in Sources */,
 				C699CB65B406C4491BB5E846 /* SetupForFibrilMover.cc in Sources */,
 				4E1487EC4AB6D2B10F4DA9F2 /* fibril_util.cc in Sources */,
-				496D260EA66CD8EBC54947E0 /* CcdLoopClosureMover.cc in Sources */,
-				A64B135E31703CD3D6CEBE40 /* FASelectSlidingWindowLoopClosure.cc in Sources */,
 				97A1BF461ACCC078983B1AAC /* FoldTreeFromLoopsWrapper.cc in Sources */,
 				A6BBDDAC8920ECD74EAE7CFD /* Loop.cc in Sources */,
-				191501DBECA4C4E14AC2D39C /* LoopClosure.cc in Sources */,
 				69251577A27115EBC0C54B74 /* LoopMoverFactory.cc in Sources */,
 				58437074668E1D82DEA31512 /* Loops.cc in Sources */,
-				88B1745525BC137B8101F79A /* ShortLoopClosure.cc in Sources */,
-				FC839D67E0836B71DF1DF524 /* SlidingWindowLoopClosure.cc in Sources */,
-				E47CEB2122A7D4D87C444364 /* WidthFirstSlidingWindowLoopClosure.cc in Sources */,
-				DD3B904CAD3D73E5D12432CA /* ccd_closure.cc in Sources */,
 				6AE14AF1ECF55FAF78092264 /* loopfinder.cc in Sources */,
 				A28F17DEBA68748028DDA3B3 /* looprelax_protocols.cc in Sources */,
 				FBB274983A9AB98F92DF11F4 /* loops_main.cc in Sources */,
 				7B0FEE5DF17BA6ADDB801872 /* make_loops.cc in Sources */,
 				9260AE526C5065A77070FB17 /* util.cc in Sources */,
-				FA1959F6D9798D136C12D4E6 /* KinematicMover.cc in Sources */,
-				622FDF6B3D60078B07542217 /* KinematicPerturber.cc in Sources */,
-				5A6488B34C34CEB83E3655B2 /* KinematicWrapper.cc in Sources */,
+				B35C3BA0AA9F9278E0CADD93 /* CcdLoopClosureMover.cc in Sources */,
+				CBC37694ED69F1326350F26A /* FASelectSlidingWindowLoopClosure.cc in Sources */,
+				D9F377557766E57A5A2E4E91 /* LoopClosure.cc in Sources */,
+				3959B384394AAF2B40BCEA8B /* ShortLoopClosure.cc in Sources */,
+				832BEA43403D41CD3ACB62D1 /* SlidingWindowLoopClosure.cc in Sources */,
+				1A4F33C36D96FF11B4F725B7 /* WidthFirstSlidingWindowLoopClosure.cc in Sources */,
+				7F4FC38C81E65F9758D49569 /* ccd_closure.cc in Sources */,
+				08CA4A7B94CF10C28AA8C916 /* KinematicMover.cc in Sources */,
+				EDE3FB710F687DD912E20626 /* KinematicPerturber.cc in Sources */,
+				873E02839FA39E92CBA0C073 /* KinematicWrapper.cc in Sources */,
 				B5351E5FD715261518078D99 /* IndependentLoopMover.cc in Sources */,
 				C074516A98882735BC2128CD /* LoopMover.cc in Sources */,
 				6FBD10BC63BF9F098F63050D /* LoopMover_CCD.cc in Sources */,

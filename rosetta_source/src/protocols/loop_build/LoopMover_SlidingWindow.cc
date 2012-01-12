@@ -17,8 +17,8 @@
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loop_build/LoopMover_SlidingWindow.hh>
-#include <protocols/loops/SlidingWindowLoopClosure.hh>
-#include <protocols/loops/WidthFirstSlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 //
 //
 //// Rosetta Headers
@@ -154,12 +154,12 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	else                             { fragset_small_ = frag_libs_[ frag_libs_.size() - 2]; }
 
 
-	loops::SlidingWindowLoopClosureOP closure_protocol;
+	loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol;
 
 	if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
-		closure_protocol = new loops::WidthFirstSlidingWindowLoopClosure;
+		closure_protocol = new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure;
 	}else{
-		closure_protocol = new loops::SlidingWindowLoopClosure;
+		closure_protocol = new loops::loop_closure::ccd::SlidingWindowLoopClosure;
 	}
 
 	closure_protocol->scored_frag_cycle_ratio( option[ OptionKeys::loops::scored_frag_cycles ]() );

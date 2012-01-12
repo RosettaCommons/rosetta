@@ -21,7 +21,7 @@
 // AUTO-REMOVED #include <protocols/Protocol.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/loops/SlidingWindowLoopClosure.fwd.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh>
 #include <core/types.hh>
 #include <core/fragment/JumpingFrame.fwd.hh>
 // AUTO-REMOVED #include <protocols/checkpoint/CheckPointer.hh>
@@ -50,7 +50,7 @@ bool remove_cut(
 
 //@brief remove all cutpoints, close loops using the supplied closure_protocol
 void close_chainbreaks(
-  loops::SlidingWindowLoopClosureOP closure_protocol,
+  loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol,
   core::pose::Pose& pose,
 	checkpoint::CheckPointer &checkpoint,
 	const std::string &decoy_tag,

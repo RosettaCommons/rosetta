@@ -60,7 +60,7 @@
 
 // AUTO-REMOVED #include <basic/prof.hh> // profiling
 #include <basic/Tracer.hh> // tracer output
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 
 //Utility Headers
 #include <numeric/random/random.hh>
@@ -281,7 +281,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 			} else {
 				//do ccd_moves here
 				if( ! option[OptionKeys::loops::skip_ccd_moves ]() ){
-					protocols::loops::ccd_moves(5, pose, *mm_one_loop, loop.start(), loop.stop(), loop.cut() );
+					loop_closure::ccd::ccd_moves(5, pose, *mm_one_loop, loop.start(), loop.stop(), loop.cut() );
 				}
 			}
 			mc_->boltzmann( pose, "QuickCCD_Moves" );

@@ -15,13 +15,13 @@
 
 
 // Unit Headers
-#include <protocols/loops/SlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 
 // Package Headers
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
-#include <protocols/loops/LoopClosure.hh>
-#include <protocols/loops/ShortLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/LoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/ShortLoopClosure.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Exceptions.hh>
 
@@ -84,12 +84,14 @@ namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUT
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 using namespace core;
 using namespace pose;
 
 //static numeric::random::RandomGenerator RG(423489);  // <- Magic number, do not change it!
-static basic::Tracer tr("protocols.loops");
+static basic::Tracer tr("protocols.loops.loop_closure.ccd.SlidingWindowLoopClosure");
 
 std::string const VDW_FRAG_STORE( "closure_loop_vdw" );
 std::string const SCORE_FRAG_STORE( "closure_loop_score" );
@@ -615,5 +617,7 @@ SlidingWindowLoopClosure::generate_window_list( Size loop_size, WindowList& wind
  }
 }
 
-}
-}
+} // namespace ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols

@@ -25,7 +25,7 @@
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
@@ -108,7 +108,7 @@ bool WobbleMover::ccd_closure(
 	int const cutpoint = it->cut();
 
 	// ccd close this loop
-	protocols::loops::fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles,
+	protocols::loops::loop_closure::ccd::fast_ccd_loop_closure( pose, mm, loop_begin, loop_end, cutpoint, ccd_cycles,
 		ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
 		max_total_delta_strand, max_total_delta_loop, forward_deviation,
 		backward_deviation, torsion_delta, rama_delta );

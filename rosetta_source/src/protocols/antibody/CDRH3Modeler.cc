@@ -48,7 +48,7 @@
 #include <numeric/xyz.functions.hh>
 
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -690,6 +690,10 @@ void CDRH3Modeler::scored_frag_close (
 	using namespace protocols;
 	using namespace protocols::simple_moves;
 	using namespace protocols::loops;
+    using loop_closure::ccd::CcdMover;
+    using loop_closure::ccd::CcdMoverOP;
+    using loop_closure::ccd::CcdLoopClosureMover;
+    using loop_closure::ccd::CcdLoopClosureMoverOP;
 
 	TR <<  "H3M Fragments based centroid CDR H3 loop building" << std::endl;
 
@@ -1076,6 +1080,8 @@ void CDRH3Modeler::loop_fa_relax(
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;
+    using loop_closure::ccd::CcdMover;
+    using loop_closure::ccd::CcdMoverOP;
 
 	TR << "H3M Relaxing CDR H3 Loop" << std::endl;
 
@@ -1404,6 +1410,8 @@ void CDRH3Modeler::loop_centroid_relax(
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;
+    using loop_closure::ccd::CcdMover;
+    using loop_closure::ccd::CcdMoverOP;
 
 	TR << "H3M Centroid Relaxing Loop" << std::endl;
 

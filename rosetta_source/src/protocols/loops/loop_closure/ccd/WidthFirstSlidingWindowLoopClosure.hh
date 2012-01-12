@@ -17,12 +17,12 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_protocols_loops_WidthFirstSlidingWindowLoopClosure_hh
-#define INCLUDED_protocols_loops_WidthFirstSlidingWindowLoopClosure_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_hh
+#define INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_hh
 
 // Unit Headers
-#include <protocols/loops/WidthFirstSlidingWindowLoopClosure.fwd.hh>
-#include <protocols/loops/SlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.fwd.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
@@ -50,10 +50,10 @@
 
 #include <utility/vector1.hh>
 
-
-
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 ///@detail
 // ths derivation from SlidingWindowLoopClosure changes the order of sampling... instead of all attempts with a certain window size first
@@ -95,7 +95,9 @@ protected:
   core::Size give_up_;
 };
 
-} // loops
-} // protocols
+} // nameaspce ccd
+} // namespace loop_closure
+} // namespace loops
+} // namespace protocols
 
-#endif
+#endif //INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_hh

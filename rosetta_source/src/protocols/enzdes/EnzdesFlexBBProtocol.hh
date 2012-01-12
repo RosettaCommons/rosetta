@@ -24,7 +24,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
 
 #include <protocols/backrub/BackrubMover.fwd.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.fwd.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh>
 #include <protocols/simple_moves/MinMover.fwd.hh>
 
 #include <core/pose/Pose.hh> /// Replace pack_region_ala_pose_ with a PoseOP to remove this header
@@ -166,7 +166,7 @@ private:
 	utility::vector1< core::Real > native_fragment_bb_energies_;
 
 	protocols::backrub::BackrubMoverOP brub_mover_;
-	protocols::loops::kinematic_closure::KinematicMoverOP kinematic_mover_;
+	protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kinematic_mover_;
 
 	core::Real mc_kt_low_, mc_kt_high_;
 	core::Size brub_min_atoms_;

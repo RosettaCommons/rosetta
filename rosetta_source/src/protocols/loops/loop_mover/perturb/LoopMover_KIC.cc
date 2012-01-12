@@ -22,7 +22,7 @@
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <core/conformation/Residue.hh>
@@ -70,7 +70,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/pose/util.hh>
-#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
@@ -271,9 +271,9 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	// perform the initial perturbation
 	// setup the kinematic mover
 	//protocols::loops::kinematic_closure::KinematicMover myKinematicMover( temperature );
-	protocols::loops::kinematic_closure::KinematicMover myKinematicMover;
-	protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-		new protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
+	loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
+		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
 	perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 	myKinematicMover.set_perturber( perturber );
 

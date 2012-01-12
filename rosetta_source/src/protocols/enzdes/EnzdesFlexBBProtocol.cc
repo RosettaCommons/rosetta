@@ -58,7 +58,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
 // AUTO-REMOVED #include <core/scoring/TwelveANeighborGraph.hh>
@@ -92,7 +92,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/util.hh>
-#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -675,7 +675,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 		brub_mover_ = new protocols::backrub::BackrubMover();
 		//brub_mover_->set_native_pose( & pose );
 	}
-	kinematic_mover_ = new protocols::loops::kinematic_closure::KinematicMover();
+	kinematic_mover_ = new protocols::loops::loop_closure::kinematic_closure::KinematicMover();
 
 	(*reduced_scorefxn())( pose );
 
@@ -714,7 +714,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	kinematic_mover_->set_pivots(rbegin, rmid, rend);
 
-	protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber = new protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturber( &(*kinematic_mover_) );
+	protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber = new protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &(*kinematic_mover_) );
 
 	if ( basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
 

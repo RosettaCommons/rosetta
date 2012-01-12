@@ -26,7 +26,7 @@
 #include <protocols/abinitio/AbrelaxMover.fwd.hh>
 // AUTO-REMOVED #include <protocols/abinitio/FragmentSampler.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/loops/SlidingWindowLoopClosure.fwd.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh>
 #include <protocols/relax/RelaxProtocolBase.fwd.hh>
 
 // Package Headers
@@ -69,13 +69,13 @@ public:
 
 	relax::RelaxProtocolBaseOP relax_protocol();
 
-	loops::SlidingWindowLoopClosureOP closure_protocol();
+	loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol();
 
 	void sampling_protocol( FragmentSamplerOP set);
 
 	void relax_protocol( relax::RelaxProtocolBaseOP set );
 
-	void closure_protocol( loops::SlidingWindowLoopClosureOP set );
+	void closure_protocol( loops::loop_closure::ccd::SlidingWindowLoopClosureOP set );
 
 	void post_loop_closure_protocol( moves::MoverOP move );  //e.g. to idealize after loop-closing
 
@@ -89,7 +89,7 @@ private:
 	topology_broker::TopologyBrokerOP topology_broker_;
 
 	FragmentSamplerOP sampling_protocol_;
-	loops::SlidingWindowLoopClosureOP loop_closure_protocol_;
+	loops::loop_closure::ccd::SlidingWindowLoopClosureOP loop_closure_protocol_;
 	relax::RelaxProtocolBaseOP relax_protocol_;
 	moves::MoverOP post_loop_closure_protocol_;
 	moves::MoverOP pre_loop_closure_protocol_;

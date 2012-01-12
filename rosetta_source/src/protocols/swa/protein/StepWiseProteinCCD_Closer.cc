@@ -40,7 +40,7 @@
 #include <core/kinematics/Jump.hh>
 
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
@@ -163,7 +163,7 @@ namespace protein {
 		Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
 		Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
 
-		protocols::loops::fast_ccd_loop_closure(
+		protocols::loops::loop_closure::ccd::fast_ccd_loop_closure(
 																						pose, mm_, loop_.start() , loop_.stop(), loop_.cut(), ccd_cycles,
 																						ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
 																						max_total_delta_strand, max_total_delta_loop, forward_deviation,

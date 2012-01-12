@@ -12,7 +12,7 @@
 /// @author Phil Bradley
 
 
-#include <protocols/loops/ccd_closure.hh>
+#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 
 // Rosetta Headers
 #include <core/types.hh>
@@ -46,12 +46,14 @@ using namespace ObjexxFCL::fmt;
 
 namespace protocols {
 namespace loops {
+namespace loop_closure {
+namespace ccd {
 
 using namespace core;
 using utility::vector1;
 typedef numeric::xyzMatrix< Real > Matrix;
 
-basic::Tracer tccd( "protocols.loops.ccd_closure" );
+basic::Tracer tccd( "protocols.loops.loop_closure.ccd.ccd_closure" );
 
 /////////////////////////////////////////////////////////////////////////////////
 /// @brief copy mainchain atoms xyz and torsions from pose to coords and torsions
@@ -1057,5 +1059,7 @@ ccd_moves(
 
 }
 
+} // namespace ccd
+} // namespace loop_closure
 } // namespace loops
 } // namespace protocols
