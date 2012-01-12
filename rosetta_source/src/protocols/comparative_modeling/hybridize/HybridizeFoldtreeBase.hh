@@ -36,38 +36,38 @@ class HybridizeFoldtreeBase {
  public:
   HybridizeFoldtreeBase();
 
-    // initialize pose fold tree with chunks, add virtual residue
-    void initialize(core::pose::Pose & pose);
-    // update pose fold tree with chunks, no adding virtual residue
-    void update(core::pose::Pose & pose);
-    
-    void save_foldtree(core::pose::Pose const & pose);
+	// initialize pose fold tree with chunks, add virtual residue
+	void initialize(core::pose::Pose & pose);
 
-    /// @brief Restore to the saved foldtree, remove the virtual residue added to the end of the pose
-    void restore_foldtree(core::pose::Pose & pose);
+	// update pose fold tree with chunks, no adding virtual residue
+	void update(core::pose::Pose & pose);
 
-    void set_chunks(const protocols::loops::Loops & chunks,
-                    const utility::vector1 < core::Size > & anchor_positions);
-    void update(core::pose::Pose const & pose);
+	void save_foldtree(core::pose::Pose const & pose);
+
+	/// @brief Restore to the saved foldtree, remove the virtual residue added to the end of the pose
+	void restore_foldtree(core::pose::Pose & pose);
+
+	void set_chunks(const protocols::loops::Loops & chunks,
+	                const utility::vector1 < core::Size > & anchor_positions);
 
 protected:
   /// @brief Stochastically selects an anchor position
   //core::Size choose_anchor_position(const protocols::loops::Loop& chunk) const;
 
 private:
-    /// @brief Index of the virtual residue we added to the pose in set_up()
-    int virtual_res_;
-    core::Size num_nonvirt_residues_;
-    
-    protocols::loops::Loops chunks_last_; 
-    utility::vector1 < core::Size > anchor_positions_last_;
-    
-    protocols::loops::Loops chunks_; 
-    utility::vector1 < core::Size > anchor_positions_;
-    
-    // backup original info
-    core::kinematics::FoldTree saved_ft_;
-    core::Size saved_n_residue_;
+	/// @brief Index of the virtual residue we added to the pose in set_up()
+	int virtual_res_;
+	core::Size num_nonvirt_residues_;
+	
+	protocols::loops::Loops chunks_last_; 
+	utility::vector1 < core::Size > anchor_positions_last_;
+	
+	protocols::loops::Loops chunks_; 
+	utility::vector1 < core::Size > anchor_positions_;
+	
+	// backup original info
+	core::kinematics::FoldTree saved_ft_;
+	core::Size saved_n_residue_;
 
 };
 

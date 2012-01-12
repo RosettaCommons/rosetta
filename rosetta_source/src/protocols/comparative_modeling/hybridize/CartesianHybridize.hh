@@ -62,8 +62,7 @@ public:
 		utility::vector1 < core::Real > const & template_wts_in,
 		utility::vector1 < protocols::loops::Loops > const & template_chunks_in, 
 		utility::vector1 < protocols::loops::Loops > const & template_contigs_in,
-		core::fragment::FragSetOP fragments9_in,
-		core::fragment::FragSetOP fragments3_in );
+		core::fragment::FragSetOP fragments9_in );
 
 	// run the protocol
 	void apply(core::pose::Pose & pose);
@@ -89,7 +88,7 @@ private:
 	utility::vector1 < core::pose::PoseOP > templates_;
 	utility::vector1 < core::Real > template_wts_;
 	utility::vector1 < protocols::loops::Loops > template_chunks_, template_contigs_;
-	core::fragment::FragSetOP fragments9_, fragments3_;
+	core::fragment::FragSetOP fragments9_;
 	boost::unordered_map<core::Size, core::fragment::Frame> library_;
 
 	// scorefunctions

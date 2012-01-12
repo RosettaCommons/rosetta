@@ -50,80 +50,82 @@ namespace hybridize {
 HybridizeFoldtreeBase::HybridizeFoldtreeBase() : virtual_res_(-1) {}
 
 void HybridizeFoldtreeBase::save_foldtree(core::pose::Pose const & pose) {
-    saved_ft_ = pose.conformation().fold_tree();
-    saved_n_residue_ = pose.total_residue();
+	saved_ft_ = pose.conformation().fold_tree();
+	saved_n_residue_ = pose.total_residue();
 }
-    
+	
 void HybridizeFoldtreeBase::restore_foldtree(core::pose::Pose & pose) {
-    if (pose.total_residue() > saved_n_residue_) {
-        pose.conformation().delete_residue_range_slow(saved_n_residue_+1, pose.total_residue());
-    }
-    pose.conformation().fold_tree( saved_ft_ );
+	if (pose.total_residue() > saved_n_residue_) {
+		pose.conformation().delete_residue_range_slow(saved_n_residue_+1, pose.total_residue());
+	}
+	pose.conformation().fold_tree( saved_ft_ );
 }
 
 
-void HybridizeFoldtreeBase::set_chunks(const protocols::loops::Loops & chunks,
-                                        const utility::vector1 < core::Size > & anchor_positions ) {
-    chunks_last_ = chunks_;
-    anchor_positions_last_ = anchor_positions_;
-    
-    chunks_ = chunks;
-    anchor_positions_ = anchor_positions;
+void HybridizeFoldtreeBase::set_chunks(
+	const protocols::loops::Loops & chunks,
+	const utility::vector1 < core::Size > & anchor_positions )
+{
+	chunks_last_ = chunks_;
+	anchor_positions_last_ = anchor_positions_;
+	
+	chunks_ = chunks;
+	anchor_positions_ = anchor_positions;
 }
-    
+
 void HybridizeFoldtreeBase::update(core::pose::Pose & pose) {
-    using core::Size;
-    using core::Real;
-    using protocols::loops::Loop;
-    using protocols::loops::Loops;
-    using utility::vector1;
-    
-    assert(chunks_.num_loop());
-    
-    // Define jumps, cuts
-    vector1<int> cuts;
-    vector1<std::pair<int, int> > jumps;
-    for (Size i = 1; i <= chunks_.num_loop(); ++i) {
-        const Loop& chunk = chunks_[i];
-        const Size cut_point  = chunk.stop();
-        const Size jump_point = anchor_positions_[i];
-        
-        cuts.push_back(cut_point);
-        jumps.push_back(std::make_pair(virtual_res_, jump_point));
-    }
-    
-    // Remember to include the original cutpoint at the end of the chain
-    // (before the virtual residue)
-    cuts.push_back(num_nonvirt_residues_);
-    
-    ObjexxFCL::FArray2D_int ft_jumps(2, jumps.size());
-    for (Size i = 1; i <= jumps.size(); ++i) {
-        ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
-        ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
-    }
-    
-    ObjexxFCL::FArray1D_int ft_cuts(cuts.size());
-    for (Size i = 1; i <= cuts.size(); ++i) {
-        ft_cuts(i) = cuts[i];
-    }
-    
-    // Construct the star fold tree from the set of jumps and cuts above.
-    // Reorder the resulting fold tree so that <virtual_res> is the root.
-    core::kinematics::FoldTree tree(pose.fold_tree());
-    bool status = tree.tree_from_jumps_and_cuts(virtual_res_,   // nres_in
-                                                jumps.size(),   // num_jump_in
-                                                ft_jumps,       // jump_point
-                                                ft_cuts,        // cuts
-                                                virtual_res_);  // root
-    if (!status) {
-        utility_exit_with_message("HybridizeFoldtreeBase: failed to build fold tree from cuts and jumps");
-    }
-    
-    // Update the pose's fold tree
-    pose.fold_tree(tree);
+	using core::Size;
+	using core::Real;
+	using protocols::loops::Loop;
+	using protocols::loops::Loops;
+	using utility::vector1;
+	
+	assert(chunks_.num_loop());
+	
+	// Define jumps, cuts
+	vector1<int> cuts;
+	vector1<std::pair<int, int> > jumps;
+	for (Size i = 1; i <= chunks_.num_loop(); ++i) {
+		const Loop& chunk = chunks_[i];
+		const Size cut_point  = chunk.stop();
+		const Size jump_point = anchor_positions_[i];
+		
+		cuts.push_back(cut_point);
+		jumps.push_back(std::make_pair(virtual_res_, jump_point));
+	}
+	
+	// Remember to include the original cutpoint at the end of the chain
+	// (before the virtual residue)
+	cuts.push_back(num_nonvirt_residues_);
+	
+	ObjexxFCL::FArray2D_int ft_jumps(2, jumps.size());
+	for (Size i = 1; i <= jumps.size(); ++i) {
+		ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
+		ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
+	}
+	
+	ObjexxFCL::FArray1D_int ft_cuts(cuts.size());
+	for (Size i = 1; i <= cuts.size(); ++i) {
+		ft_cuts(i) = cuts[i];
+	}
+	
+	// Construct the star fold tree from the set of jumps and cuts above.
+	// Reorder the resulting fold tree so that <virtual_res> is the root.
+	core::kinematics::FoldTree tree(pose.fold_tree());
+	bool status = tree.tree_from_jumps_and_cuts(virtual_res_,   // nres_in
+												jumps.size(),   // num_jump_in
+												ft_jumps,	   // jump_point
+												ft_cuts,		// cuts
+												virtual_res_);  // root
+	if (!status) {
+		utility_exit_with_message("HybridizeFoldtreeBase: failed to build fold tree from cuts and jumps");
+	}
+	
+	// Update the pose's fold tree
+	pose.fold_tree(tree);
 }
 
-    
+	
 /// Note: assumes <chunks> are sorted in increasing order of start position
 void HybridizeFoldtreeBase::initialize(core::pose::Pose & pose) {
   using core::Size;
@@ -147,10 +149,10 @@ void HybridizeFoldtreeBase::initialize(core::pose::Pose & pose) {
   // <num_residues>
   virtual_res_ = pose.total_residue();
 
-    update(pose);
+	update(pose);
 	core::util::add_cutpoint_variants(&pose);
-    
 }
+
 
 }  //  namespace comparative_modeling
 }  //  namespace hybridize

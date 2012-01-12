@@ -35,41 +35,39 @@ namespace hybridize {
 
 class HybridizeFoldtreeDynamic:  public HybridizeFoldtreeBase {
 public:
-    HybridizeFoldtreeDynamic(                                                                                                                                   utility::vector1 < protocols::loops::Loops > template_contigs
-                             );
-    
-    void set_core_chunks(const protocols::loops::Loops & chunks);
+	HybridizeFoldtreeDynamic( );
 
-    protocols::loops::Loops make_complete_chunks( utility::vector1 < core::Size > cut_positions );
+	void set_core_chunks(const protocols::loops::Loops & chunks);
 
-    void set_complete_chunks(const protocols::loops::Loops & chunks);
+	protocols::loops::Loops make_complete_chunks( utility::vector1 < core::Size > cut_positions );
 
-    void initialize(
-                    core::pose::Pose & pose,
-                    protocols::loops::Loops const & core_chunks
-                    );
-    
-    utility::vector1 < core::Size > decide_cuts(core::Size n_residues);
-    void choose_anchors();
-    protocols::loops::Loops make_complete_chunks(utility::vector1 < core::Size > cut_positions,
-                              core::Size n_residues);
+	void set_complete_chunks(const protocols::loops::Loops & chunks);
+
+	void initialize( core::pose::Pose & pose, protocols::loops::Loops const & core_chunks );
+	
+	utility::vector1 < core::Size > decide_cuts(core::Size n_residues);
+
+	void choose_anchors();
+
+	protocols::loops::Loops make_complete_chunks(
+		utility::vector1 < core::Size > cut_positions,
+		core::Size n_residues);
 
 protected:
-    /// @brief Stochastically selects an anchor position
-    core::Size choose_anchor_position(const protocols::loops::Loop& chunk) const;
-    
+	/// @brief Stochastically selects an anchor position
+	core::Size choose_anchor_position(const protocols::loops::Loop& chunk) const;
+	
 private:
-    //utility::vector1 < protocols::loops::Loops > template_chunks_; // needs to be target numbering
-	utility::vector1 < protocols::loops::Loops > template_contigs_;  // needs to be target numbering
+	utility::vector1 < core::Size > anchor_positions_;
 
-    utility::vector1 < core::Size > anchor_positions_;
+	// segment the entire pose, defining cutpoints
+	protocols::loops::Loops complete_chunks_last_;
+	protocols::loops::Loops complete_chunks_;
 
-    protocols::loops::Loops complete_chunks_last_; 
-    protocols::loops::Loops complete_chunks_; 
-
-    protocols::loops::Loops core_chunks_last_; 
-    protocols::loops::Loops core_chunks_; 
-    
+	// segment pose into "core regions" where anchors may lie
+	protocols::loops::Loops core_chunks_last_; 
+	protocols::loops::Loops core_chunks_; 
+	
 };
 
 }  //  namespace comparative_modeling

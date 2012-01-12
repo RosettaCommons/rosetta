@@ -262,7 +262,7 @@ void InsertChunkMover::steal_torsion_and_bonds_from_template(core::pose::Pose & 
 				pose.set_psi(ires_pose,	template_pose_->psi(jres_template));
 			}
 			pose.set_omega(ires_pose,	template_pose_->omega(jres_template));
-			
+
 			//fpd  bondlengths and angles
 			core::conformation::Residue const &res = template_pose_->residue(jres_template);
 			for ( unsigned int j = 1; j <= res.natoms(); ++j ) {
@@ -272,21 +272,31 @@ void InsertChunkMover::steal_torsion_and_bonds_from_template(core::pose::Pose & 
 				core::id::DOF_ID theta_ijtempl(  atm_ijtempl, core::id::THETA );
 				core::id::DOF_ID d_ij     (  atm_ij, core::id::D );
 				core::id::DOF_ID d_ijtempl(  atm_ijtempl, core::id::D );
-				if ( template_pose_->has_dof(theta_ijtempl) && pose.has_dof(theta_ij) ) {
-					pose.set_dof( theta_ij, template_pose_->dof(theta_ijtempl) );
-				}
+
+				if (discontinued_upper(*template_pose_,jres_template) && j == 1) continue; // don't steal bond distance/angle across jump
 				if ( template_pose_->has_dof(d_ijtempl) && pose.has_dof(d_ij) ) {
 					pose.set_dof( d_ij, template_pose_->dof(d_ijtempl) );
 				}
+
+				if (discontinued_upper(*template_pose_,jres_template) && j == 2) continue; // don't steal bond distance/angle across jump
+				if (discontinued_lower(*template_pose_,jres_template) && j == 3) continue; // don't steal bond distance/angle across jump
+				if ( template_pose_->has_dof(theta_ijtempl) && pose.has_dof(theta_ij) ) {
+					pose.set_dof( theta_ij, template_pose_->dof(theta_ijtempl) );
+				}
+
+				//fpd make sure we're not inserting improper bonds
+				if (template_pose_->has_dof(d_ijtempl) && template_pose_->dof(d_ijtempl) > 2.5 && j != 6) {
+					TR << "WARNING! Inserting long bond "
+					   << template_pose_->dof(d_ijtempl) << " at atom " << j << " res " << ires_pose << " from templ res " << jres_template << std::endl;
+				}
 			}
-	
+
 			while (ires_pose > align_trial_counter_.size()) {
 				align_trial_counter_.push_back(0);
 			}
 			++align_trial_counter_[ires_pose];
 		}
-		TR.Debug << "torsion: " << I(4,ires_pose) << F(8,3, pose.phi(ires_pose)) << F(8,3, pose.psi(ires_pose)) << std::endl;
-
+		//TR.Debug << "torsion: " << I(4,ires_pose) << F(8,3, pose.phi(ires_pose)) << F(8,3, pose.psi(ires_pose)) << std::endl;
 	}
 }
 

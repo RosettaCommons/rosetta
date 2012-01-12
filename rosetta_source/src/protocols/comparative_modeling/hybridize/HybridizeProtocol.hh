@@ -42,19 +42,24 @@ public:
 		
 	void read_template_structures(utility::file::FileName template_list);
 	void read_template_structures(utility::vector1 < utility::file::FileName > const & template_filenames);
-	void add_template( std::string template_fn, std::string cst_fn, core::Real weight = 1., core::Size cluster_id = 1);
+	void add_template(
+		std::string template_fn,
+		std::string cst_fn,
+		core::Real weight = 1.,
+		core::Size cluster_id = 1,
+		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0) );
 
-    core::Real get_gdtmm( core::pose::Pose & pose );
+	core::Real get_gdtmm( core::pose::Pose & pose );
 
 	void check_options();
 
 	void pick_starting_template(core::Size & initial_template_index,
-								core::Size & initial_template_index_icluster,
-                                utility::vector1 < core::Size > template_index_icluster,
-                                utility::vector1 < core::pose::PoseOP > & templates_icluster,
-								utility::vector1 < core::Real > & weights_icluster,
-								utility::vector1 < protocols::loops::Loops > & template_chunks_icluster,
-								utility::vector1 < protocols::loops::Loops > & template_contigs_icluster);
+		core::Size & initial_template_index_icluster,
+		utility::vector1 < core::Size > & template_index_icluster,
+		utility::vector1 < core::pose::PoseOP > & templates_icluster,
+		utility::vector1 < core::Real > & weights_icluster,
+		utility::vector1 < protocols::loops::Loops > & template_chunks_icluster,
+		utility::vector1 < protocols::loops::Loops > & template_contigs_icluster);
 	
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;
@@ -74,6 +79,7 @@ private:
 	utility::vector1 < core::Size > template_clusterID_;
 	utility::vector1 < protocols::loops::Loops > template_chunks_;
 	utility::vector1 < protocols::loops::Loops > template_contigs_;
+	utility::vector1 < utility::vector1<core::Size> > template_cst_reses_;
 	core::Real template_weights_sum_;
 
 	std::map< Size, utility::vector1 < Size > > clusterID_map_;

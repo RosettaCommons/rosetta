@@ -92,19 +92,27 @@ using namespace id;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 	
-	
-FoldTreeHybridize::FoldTreeHybridize( core::Size const initial_template_index,
-                                     utility::vector1 < core::pose::PoseCOP > const & template_poses,
-                                     utility::vector1 < protocols::loops::Loops > const & template_chunks,
-                                     utility::vector1 < protocols::loops::Loops > const & template_contigs,
-                                     utility::vector1 < core::fragment::FragSetOP > & frag_libs)
+
+FoldTreeHybridize::FoldTreeHybridize (
+		core::Size const initial_template_index,
+		utility::vector1 < core::pose::PoseCOP > const & template_poses,
+		utility::vector1 < core::Real > const & template_wts,
+		utility::vector1 < protocols::loops::Loops > const & template_chunks,
+		utility::vector1 < protocols::loops::Loops > const & template_contigs,
+		utility::vector1 < core::fragment::FragSetOP > & frag_libs)
 {
 	//initialize template structures
 	initial_template_index_ = initial_template_index;
 	template_poses_ = template_poses;
-    template_chunks_ = template_chunks;
-    template_contigs_ = template_contigs;
-	
+	template_wts_ = template_wts;
+	template_chunks_ = template_chunks;
+	template_contigs_ = template_contigs;
+
+	// normalize weights
+	core::Real weight_sum = 0.0;
+	for (int i=1; i<=template_poses_.size(); ++i) weight_sum += template_wts_[i];
+	for (int i=1; i<=template_poses_.size(); ++i) template_wts_[i] /= weight_sum;
+
 	// abinitio frag9,frag3 flags
 	frag_libs_ = frag_libs;
 }
@@ -234,7 +242,7 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
 	basic::Tracer TR("pilot.yfsong.util");
 	using namespace ObjexxFCL::fmt;
 	for (Size i=1; i<chunks.num_loop(); ++i) {
-		int gap_start = chunks[i].stop()    + gap_edge_shift;
+		int gap_start = chunks[i].stop()	+ gap_edge_shift;
 		int gap_stop  = chunks[i+1].start() - gap_edge_shift;
 		int gap_size = gap_stop - gap_start - 1;
 		if (gap_size < 0) continue;
@@ -284,26 +292,26 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
  }
  }
  */
-    
+	
 protocols::loops::Loops FoldTreeHybridize::renumber_template_chunks(
-                                                 protocols::loops::Loops & template_chunk,
-                                                 core::pose::PoseCOP template_pose
-                                                 )
+												 protocols::loops::Loops & template_chunk,
+												 core::pose::PoseCOP template_pose
+												 )
 {
-    protocols::loops::Loops renumbered_template_chunks(template_chunk);
-    for (core::Size ichunk = 1; ichunk<=template_chunk.num_loop(); ++ichunk) {
-        Size seqpos_start_templ = template_chunk[ichunk].start();
-        Size seqpos_start_target = template_pose->pdb_info()->number(seqpos_start_templ);
-        renumbered_template_chunks[ichunk].set_start( seqpos_start_target );
-        
-        Size seqpos_stop_templ = template_chunk[ichunk].stop();
-        Size seqpos_stop_target = template_pose->pdb_info()->number(seqpos_stop_templ);
-        renumbered_template_chunks[ichunk].set_stop( seqpos_stop_target );
-    }
-    return renumbered_template_chunks;
+	protocols::loops::Loops renumbered_template_chunks(template_chunk);
+	for (core::Size ichunk = 1; ichunk<=template_chunk.num_loop(); ++ichunk) {
+		Size seqpos_start_templ = template_chunk[ichunk].start();
+		Size seqpos_start_target = template_pose->pdb_info()->number(seqpos_start_templ);
+		renumbered_template_chunks[ichunk].set_start( seqpos_start_target );
+		
+		Size seqpos_stop_templ = template_chunk[ichunk].stop();
+		Size seqpos_stop_target = template_pose->pdb_info()->number(seqpos_stop_templ);
+		renumbered_template_chunks[ichunk].set_stop( seqpos_stop_target );
+	}
+	return renumbered_template_chunks;
 }
 
-
+/*
 void
 FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	std::string cut_point_decision("middle");
@@ -322,24 +330,93 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	// extract secondary structure chunks from target psipred
 	ss_chunks_pose_ = extract_secondary_structure_chunks( pose, option[cm::hybridize::ss](), gap_size, minimum_length_of_chunk_helix,minimum_length_of_chunk_strand );
 	ss_chunks_pose_.sequential_order();
-    
-    // combine chunk definition from secondary structure and template
-    utility::vector1 < protocols::loops::Loops > renumbered_template_contigs(template_contigs_);
+	
+	// combine chunk definition from secondary structure and template
+	utility::vector1 < protocols::loops::Loops > renumbered_template_contigs(template_contigs_);
 	for (core::Size icontigs = 1; icontigs<=template_contigs_.size(); ++icontigs) {
-        for (core::Size ichunk = 1; ichunk<=template_contigs_[icontigs].num_loop(); ++ichunk) {
-            Size seqpos_start_templ = template_contigs_[icontigs][ichunk].start();
-            Size seqpos_start_target = template_poses_[icontigs]->pdb_info()->number(seqpos_start_templ);
-            renumbered_template_contigs[icontigs][ichunk].set_start( seqpos_start_target );
+		for (core::Size ichunk = 1; ichunk<=template_contigs_[icontigs].num_loop(); ++ichunk) {
+			Size seqpos_start_templ = template_contigs_[icontigs][ichunk].start();
+			Size seqpos_start_target = template_poses_[icontigs]->pdb_info()->number(seqpos_start_templ);
+			renumbered_template_contigs[icontigs][ichunk].set_start( seqpos_start_target );
 
-            Size seqpos_stop_templ = template_contigs_[icontigs][ichunk].stop();
-            Size seqpos_stop_target = template_poses_[icontigs]->pdb_info()->number(seqpos_stop_templ);
-            renumbered_template_contigs[icontigs][ichunk].set_stop( seqpos_stop_target );
-        }
-    }
-    HybridizeFoldtreeDynamic foldtree_mover(renumbered_template_contigs);
-    foldtree_mover.initialize(pose, ss_chunks_pose_); // combine psipred and template contigs for chunk initialization
+			Size seqpos_stop_templ = template_contigs_[icontigs][ichunk].stop();
+			Size seqpos_stop_target = template_poses_[icontigs]->pdb_info()->number(seqpos_stop_templ);
+			renumbered_template_contigs[icontigs][ichunk].set_stop( seqpos_stop_target );
+		}
+	}
+	HybridizeFoldtreeDynamic foldtree_mover(renumbered_template_contigs);
+	foldtree_mover.initialize(pose, ss_chunks_pose_); // combine psipred and template contigs for chunk initialization
 	TR.Debug << pose.fold_tree() << std::endl;
 }
+*/
+
+void
+FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
+	// combine:
+	// (a) contigs in the current template
+	utility::vector1< bool > template_mask( pose.total_residue(), false );
+	protocols::loops::Loops my_chunks(template_contigs_[initial_template_index_]);
+
+	for (core::Size icontig = 1; icontig<=template_contigs_[initial_template_index_].num_loop(); ++icontig) {
+		Size seqpos_start_target = template_poses_[initial_template_index_]->pdb_info()->number(
+			template_contigs_[initial_template_index_][icontig].start());
+		my_chunks[icontig].set_start( seqpos_start_target );
+		Size seqpos_stop_target = template_poses_[initial_template_index_]->pdb_info()->number(
+			template_contigs_[initial_template_index_][icontig].stop());
+		my_chunks[icontig].set_stop( seqpos_stop_target );
+
+		for (Size j=seqpos_start_target; j<=seqpos_stop_target; ++j) template_mask[j] = true;
+	}
+
+	// (b) probabilistically sampled chunks from all other templates _outside_ these residues
+	utility::vector1< std::pair< core::Real, protocols::loops::Loop > >  wted_insertions_to_consider;
+	for (core::Size itempl = 1; itempl<=template_chunks_.size(); ++itempl) {
+		if (itempl == initial_template_index_)
+			continue;
+		for (core::Size icontig = 1; icontig<=template_chunks_[itempl].num_loop(); ++icontig) {
+			// remap
+			Size seqpos_start_target = template_poses_[itempl]->pdb_info()->number(template_chunks_[itempl][icontig].start());
+			Size seqpos_stop_target = template_poses_[itempl]->pdb_info()->number(template_chunks_[itempl][icontig].stop());
+
+			bool uncovered = true;
+			for (Size j=seqpos_start_target; j<=seqpos_stop_target && uncovered ; ++j) 
+				uncovered &= !template_mask[j];
+
+			if (uncovered) {
+				protocols::loops::Loop new_loop = template_chunks_[itempl][icontig];
+				new_loop.set_start( seqpos_start_target );
+				new_loop.set_stop( seqpos_stop_target );
+				wted_insertions_to_consider.push_back( std::pair< core::Real, protocols::loops::Loop >( template_wts_[itempl] , new_loop ) );
+			}
+		}
+	}
+
+	// (c) randomly shuffle, then add each with given prob
+	TR << "Chunks from template: " << my_chunks << std::endl;
+	std::random_shuffle ( wted_insertions_to_consider.begin(), wted_insertions_to_consider.end() );
+	for (int i=1; i<=wted_insertions_to_consider.size(); ++i) {
+		// ensure the insert is still valid
+		bool uncovered = true;
+		for (Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop() && uncovered ; ++j) 
+			uncovered &= !template_mask[j];
+
+		if (!uncovered) continue;
+
+		core::Real selector = numeric::random::uniform();
+		TR << "Consider " << wted_insertions_to_consider[i].second.start() << "," << wted_insertions_to_consider[i].second.stop() << std::endl;
+		if (selector <= wted_insertions_to_consider[i].first) {
+			TR << " ====> taken!" << std::endl;
+			my_chunks.add_loop( wted_insertions_to_consider[i].second );
+			for (Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop(); ++j) template_mask[j] = true;
+		}
+	}
+	my_chunks.sequential_order();
+
+	HybridizeFoldtreeDynamic foldtree_mover;
+	foldtree_mover.initialize(pose, my_chunks);
+	TR.Debug << pose.fold_tree() << std::endl;
+}
+
 
 numeric::xyzVector<Real>
 FoldTreeHybridize::center_of_mass(core::pose::Pose const & pose) {
@@ -387,58 +464,55 @@ Loops FoldTreeHybridize::loops() {
 }
 */
 
-utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops(core::pose::Pose & pose)
-{
+utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops(core::pose::Pose & pose) {
 	utility::vector1< core::Real > residue_weights(pose.total_residue());
-    protocols::loops::Loops renumbered_template_chunks
-    = renumber_template_chunks( template_chunks_[initial_template_index_],
-                               template_poses_[initial_template_index_]);
-    
+	protocols::loops::Loops renumbered_template_chunks = renumber_template_chunks(
+		template_contigs_[initial_template_index_], template_poses_[initial_template_index_]);
+
 	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
-		if (! renumbered_template_chunks.has(ires) ) {
+		if (! renumbered_template_chunks.has(ires) )
 			residue_weights[ires] = 1.0;
-		}
-		else {
+		else
 			residue_weights[ires] = 0.0;
-		}
 	}
 	return residue_weights;
 }
 
 void FoldTreeHybridize::backup_original_foldtree(core::pose::Pose const & pose) {
-    orig_ft_ = pose.conformation().fold_tree();
-    orig_n_residue_ = pose.total_residue();
+	orig_ft_ = pose.conformation().fold_tree();
+	orig_n_residue_ = pose.total_residue();
 }
+
 void FoldTreeHybridize::restore_original_foldtree(core::pose::Pose & pose) {
-    if (pose.total_residue() > orig_n_residue_) {
-        pose.conformation().delete_residue_range_slow(orig_n_residue_+1, pose.total_residue());
-    }
-    pose.conformation().fold_tree( orig_ft_ );
+	if (pose.total_residue() > orig_n_residue_) {
+		pose.conformation().delete_residue_range_slow(orig_n_residue_+1, pose.total_residue());
+	}
+	pose.conformation().fold_tree( orig_ft_ );
 }
 
 void
 FoldTreeHybridize::apply(core::pose::Pose & pose) {
-    backup_original_foldtree(pose);
+	backup_original_foldtree(pose);
 	setup_foldtree(pose);
 	
 	// Initialize the structure
-    bool use_random_template = false;
+	bool use_random_template = false;
 	ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks);
-    initialize_chunk_mover.set_template(initial_template_index_);
+	initialize_chunk_mover.set_template(initial_template_index_);
 	initialize_chunk_mover.apply(pose);
 	translate_virt_to_CoM(pose);
 	// pose.dump_pdb("after_init.pdb");
-    
-    use_random_template = true;
+	
+	use_random_template = true;
 	Size max_registry_shift = option[cm::hybridize::max_registry_shift]();
 	ChunkTrialMoverOP random_sample_chunk_mover(
-												new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, max_registry_shift)
-												);
+		new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, max_registry_shift)
+	);
 	
 	utility::vector1< core::Real > residue_weights( get_residue_weights_from_loops(pose) );
 	WeightedFragmentTrialMoverOP fragment_trial_mover(
-													  new WeightedFragmentTrialMover(frag_libs_, residue_weights)
-													  );
+		new WeightedFragmentTrialMover(frag_libs_, residue_weights)
+	);
 	
 	for (Size i=1;i<=8;++i) {
 		if (i>=4) {
@@ -451,37 +525,19 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		random_mover->add_mover(random_sample_chunk_mover, 1. - weight);
 		random_mover->add_mover(fragment_trial_mover, weight);
 		//random_mover->add_mover(new HelixMover(RG));
-		
-        (*scorefxn_)(pose);
-        protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
 
-        /*
-		MoverOP sampling_mover = new protocols::simple_moves::rational_mc::RationalMonteCarlo(
-														random_mover,
-														scorefxn_,
-														500,
-														2.0,
-														true );
-		*/
-        for (Size i = 1; i<= 500; ++i) {
-            random_mover->apply(pose);
-            (*scorefxn_)(pose);
-            mc->boltzmann(pose);
-            if ( mc->mc_accepted() ) {
-                
-            }
-                
-        }
-        mc->recover_low(pose);
-	}
-	
-    /*
-	if (option[cm::hybridize::revert_real_loops]()) {
-		revert_loops_to_original(pose, loops_pose_);
-	}
-     */
+		(*scorefxn_)(pose);
+		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
 
-    restore_original_foldtree(pose);
+		for (Size i = 1; i<= 500; ++i) {
+			random_mover->apply(pose);
+			(*scorefxn_)(pose);
+			mc->boltzmann(pose);
+		}
+		mc->recover_low(pose);
+	}
+
+	restore_original_foldtree(pose);
 
 	basic::Tracer TR("pilot.yfsong.util");
 	for (Size ires=1; ires<=pose.total_residue(); ++ires) {

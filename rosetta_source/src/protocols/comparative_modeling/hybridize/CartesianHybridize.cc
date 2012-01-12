@@ -18,8 +18,6 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-#include <devel/init.hh>
-
 //#include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -111,14 +109,12 @@ CartesianHybridize::CartesianHybridize(
 		utility::vector1 < core::Real > const & template_wts_in,
 		utility::vector1 < protocols::loops::Loops > const & template_chunks_in, 
 		utility::vector1 < protocols::loops::Loops > const & template_contigs_in,
-		core::fragment::FragSetOP fragments9_in,
-		core::fragment::FragSetOP fragments3_in ) : ncycles_(400) {
+		core::fragment::FragSetOP fragments9_in ) : ncycles_(400) {
 	templates_ = templates_in;
 	template_wts_ = template_wts_in;
 	template_chunks_ = template_chunks_in;
 	template_contigs_ = template_contigs_in;
 	fragments9_ = fragments9_in;
-	fragments3_ = fragments3_in;
 
 	// make sure all data is there
 	runtime_assert( templates_.size() == template_wts_.size() );
