@@ -54,7 +54,8 @@ f <- f[!is.na(f$acc_ss_name),]
 f <- transform(f,
 	capx = 2*sin(acos(cosBAH)/2)*cos(chi),
 	capy = 2*sin(acos(cosBAH)/2)*sin(chi))
-capx_limits <- range(f$capx); capy_limits <- range(f$capy)
+#capx_limits <- range(f$capx); capy_limits <- range(f$capy
+capx_limits <- c(-1.5,1.5); capy_limits <- capx_limits;
 
 
 f <- ddply(f, c("sample_source", "don_ss_name", "acc_ss_name"),

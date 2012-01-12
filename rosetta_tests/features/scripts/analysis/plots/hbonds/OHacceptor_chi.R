@@ -62,7 +62,8 @@ f[f$hybrid == "sp3", "cosBAH"] <- with(f[f$hybrid == "sp3",], alt_sp3_cosBAH(
 f <- transform(f,
 	capx = 2*sin(acos(cosBAH)/2)*cos(chi),
 	capy = 2*sin(acos(cosBAH)/2)*sin(chi))
-capx_limits <- range(f$capx); capy_limits <- range(f$capy)
+#capx_limits <- range(f$capx); capy_limits <- range(f$capy)
+capx_limits <- c(-1.5,1.5); capy_limits <- capx_limits;
 
 l_ply(levels(f$hybrid), function(hybrid){
 	plot_id = paste("hbond_chi_BAH_polar_density_", hybrid, "_by_don_chem_type", sep="")

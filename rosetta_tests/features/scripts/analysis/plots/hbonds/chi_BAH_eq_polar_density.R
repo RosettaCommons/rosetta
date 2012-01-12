@@ -61,8 +61,10 @@ f <- transform(f,
 	capx = 2*sin(acos(cosBAH)/2)*cos(chi),
 	capy = 2*sin(acos(cosBAH)/2)*sin(chi))
 
-capx_limits <- range(f$capx)
-capy_limits <- range(f$capy)
+#capx_limits <- range(f$capx)
+#capy_limits <- range(f$capy)
+capx_limits <- c(-1.5,1.5)
+capy_limits <- c(-1.5,1.5)
 
 narrow_output_formats <- transform(output_formats, width=height)
 
@@ -82,8 +84,8 @@ plot_parts <- list(
 		axis.text.y=theme_blank(),
 		axis.title.x=theme_blank(),
 		axis.title.y=theme_blank(),
-		axis.ticks.x = theme.blank(),
-		axis.ticks.y = theme.blank()))
+		axis.ticks.x = theme_blank(),
+		axis.ticks.y = theme_blank()))
 
 
 f <- ddply(f, c("sample_source", "hybrid"),
