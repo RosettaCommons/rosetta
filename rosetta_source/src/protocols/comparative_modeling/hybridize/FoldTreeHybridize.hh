@@ -86,6 +86,11 @@ public:
 	void translate_virt_to_CoM(core::pose::Pose & pose);
 
 	utility::vector1< core::Real > get_residue_weights_from_loops(core::pose::Pose & pose);
+    
+    protocols::loops::Loops renumber_template_chunks(
+                                                     protocols::loops::Loops & template_chunk,
+                                                     core::pose::PoseCOP template_pose
+                                                     );
 
 	Loops loops();
     inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) {

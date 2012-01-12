@@ -48,10 +48,12 @@ namespace comparative_modeling {
 namespace hybridize {
 
 HybridizeFoldtreeDynamic::HybridizeFoldtreeDynamic(
+                                                   //utility::vector1 < protocols::loops::Loops > template_chunks,
                                                    utility::vector1 < protocols::loops::Loops > template_contigs
                                                    )
 {
-    template_contigs_ = template_contigs;
+    //template_chunks_ = template_chunks; // target numbering
+    template_contigs_ = template_contigs; // target numbering
 }
     
 void HybridizeFoldtreeDynamic::choose_anchors() {

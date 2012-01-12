@@ -35,7 +35,7 @@ namespace hybridize {
 
 class HybridizeFoldtreeDynamic:  public HybridizeFoldtreeBase {
 public:
-    HybridizeFoldtreeDynamic(                                                   utility::vector1 < protocols::loops::Loops > template_contigs
+    HybridizeFoldtreeDynamic(                                                                                                                                   utility::vector1 < protocols::loops::Loops > template_contigs
                              );
     
     void set_core_chunks(const protocols::loops::Loops & chunks);
@@ -59,8 +59,8 @@ protected:
     core::Size choose_anchor_position(const protocols::loops::Loop& chunk) const;
     
 private:
-    utility::vector1 < protocols::loops::Loops > template_chunks_;
-	utility::vector1 < protocols::loops::Loops > template_contigs_;
+    //utility::vector1 < protocols::loops::Loops > template_chunks_; // needs to be target numbering
+	utility::vector1 < protocols::loops::Loops > template_contigs_;  // needs to be target numbering
 
     utility::vector1 < core::Size > anchor_positions_;
 

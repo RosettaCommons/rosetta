@@ -284,6 +284,25 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
  }
  }
  */
+    
+protocols::loops::Loops FoldTreeHybridize::renumber_template_chunks(
+                                                 protocols::loops::Loops & template_chunk,
+                                                 core::pose::PoseCOP template_pose
+                                                 )
+{
+    protocols::loops::Loops renumbered_template_chunks(template_chunk);
+    for (core::Size ichunk = 1; ichunk<=template_chunk.num_loop(); ++ichunk) {
+        Size seqpos_start_templ = template_chunk[ichunk].start();
+        Size seqpos_start_target = template_pose->pdb_info()->number(seqpos_start_templ);
+        renumbered_template_chunks[ichunk].set_start( seqpos_start_target );
+        
+        Size seqpos_stop_templ = template_chunk[ichunk].stop();
+        Size seqpos_stop_target = template_pose->pdb_info()->number(seqpos_stop_templ);
+        renumbered_template_chunks[ichunk].set_stop( seqpos_stop_target );
+    }
+    return renumbered_template_chunks;
+}
+
 
 void
 FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
@@ -371,8 +390,12 @@ Loops FoldTreeHybridize::loops() {
 utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops(core::pose::Pose & pose)
 {
 	utility::vector1< core::Real > residue_weights(pose.total_residue());
+    protocols::loops::Loops renumbered_template_chunks
+    = renumber_template_chunks( template_chunks_[initial_template_index_],
+                               template_poses_[initial_template_index_]);
+    
 	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
-		if (! ss_chunks_pose_.has(ires) ) {
+		if (! renumbered_template_chunks.has(ires) ) {
 			residue_weights[ires] = 1.0;
 		}
 		else {
