@@ -19,6 +19,7 @@
 
 #include <map>
 #include <core/pose/Pose.hh>
+#include <iostream>
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,3 +86,6 @@ private:
 
 
 #endif
+
+
+
