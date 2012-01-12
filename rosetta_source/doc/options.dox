@@ -7535,6 +7535,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
+<dt><b>-relax</b> \<Boolean\><dt>
+<dd>perform relax at end</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-max_registry_shift</b> \<Integer\><dt>
 <dd>maximum registry shift</dd><br>
 <dd>Default: 0</dd><br>
