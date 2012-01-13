@@ -96,66 +96,55 @@ void GraftMover::apply( pose::Pose & pose_in )
 {
 	TR <<  "Grafting designated CDRs" << std::endl;
 
-
-
-
-	graft_l2_=false;
-	graft_l3_=false;
-	graft_h1_=false;
-	graft_h2_=false;
-	graft_h3_=false;
-
-	TR<<"graft_l1_="<<graft_l1_<<std::endl;
-	TR<<"graft_l2_="<<graft_l2_<<std::endl;
-	TR<<"graft_l3_="<<graft_l3_<<std::endl;
-
-	TR<<"graft_h1_="<<graft_h1_<<std::endl;
-	TR<<"graft_h2_="<<graft_h2_<<std::endl;
-	TR<<"graft_h3_="<<graft_h3_<<std::endl;
-
 	antibody::Antibody antibody_in( pose_in, camelid_ );
 	SequenceMoverOP graft_sequence ( new SequenceMover() );
 	Size nres = pose_in.total_residue();
 
 	// Storing secondary structure
 	utility::vector1<char> secondary_struct_storage;
-	for( Size i = 1; i <= nres; i++ ) secondary_struct_storage.push_back( pose_in.secstruct( i ) );
+	for( Size i = 1; i <= nres; i++ )
+		secondary_struct_storage.push_back( pose_in.secstruct( i ) );
 
 	if( !camelid_ ) {
 		if ( graft_l1_ ) {
-			GraftOneMoverOP graftone_l1( new GraftOneMover( antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2],"l1" ));
+			GraftOneMoverOP graftone_l1( new GraftOneMover(
+	 antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2],"l1" ));
 			graftone_l1->enable_benchmark_mode( benchmark_ );
 			graft_sequence->add_mover( graftone_l1 );
 		}
 		if ( graft_l2_ ) {
-			GraftOneMoverOP graftone_l2( new GraftOneMover( antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2],"l2" ));
+			GraftOneMoverOP graftone_l2( new GraftOneMover(
+	 antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2],"l2" ));
 			graftone_l2->enable_benchmark_mode( benchmark_ );
 			graft_sequence->add_mover( graftone_l2 );
 		}
 		if ( graft_l3_ ) {
-			GraftOneMoverOP graftone_l3( new GraftOneMover( antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2],"l3" ));
+			GraftOneMoverOP graftone_l3( new GraftOneMover(
+		 antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2],"l3" ));
 			graftone_l3->enable_benchmark_mode( benchmark_ );
 			graft_sequence->add_mover( graftone_l3 );
 		}
 	}
 	if ( graft_h1_ ) {
-		GraftOneMoverOP graftone_h1( new GraftOneMover( antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2],"h1" ));
+		GraftOneMoverOP graftone_h1( new GraftOneMover(
+  antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2],"h1" ));
 		graftone_h1->enable_benchmark_mode( benchmark_ );
 		graft_sequence->add_mover( graftone_h1 );
 	}
 	if ( graft_h2_ ) {
-		GraftOneMoverOP graftone_h2( new GraftOneMover( antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2],"h2" ));
+		GraftOneMoverOP graftone_h2( new GraftOneMover(
+  antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2],"h2" ));
 		graftone_h2->enable_benchmark_mode( benchmark_ );
 		graft_sequence->add_mover( graftone_h2 );
 	}
 	if ( graft_h3_ ) {
-		GraftOneMoverOP graftone_h3( new GraftOneMover( antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2],"h3" ));
+		GraftOneMoverOP graftone_h3( new GraftOneMover(
+  antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2],"h3" ));
 		graftone_h3->enable_benchmark_mode( benchmark_ );
 		graft_sequence->add_mover( graftone_h3 );
 	}
 
 	graft_sequence->apply(pose_in);
-	exit(-1);
 
 	if ( !graft_h3_ ) {
 		TR << "Extending CDR H3" << std::endl;
@@ -163,7 +152,8 @@ void GraftMover::apply( pose::Pose & pose_in )
 		Size framework_loop_begin( antibody_in.cdrh_[3][1] - 1 );
 		Size frmrk_loop_end_plus_one( antibody_in.cdrh_[3][2] + 1 );
 		Size cutpoint = framework_loop_begin + 1;
-		loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one, cutpoint,	0, false );
+		loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one,
+												cutpoint,	0, false );
 		simple_one_loop_fold_tree( pose_in, cdr_h3);
 
 		// silly hack to make extended loops work
@@ -175,20 +165,24 @@ void GraftMover::apply( pose::Pose & pose_in )
         */
 	}
 
-	if( graft_l1_ || graft_l2_ || graft_l3_ || graft_h1_ || graft_h2_ || graft_h3_ ) {
+	if( graft_l1_ || graft_l2_ || graft_l3_ ||
+			graft_h1_ || graft_h2_ || graft_h3_ ) {
 		// disallowing bogus sidechains while repacking using include_current
 		utility::vector1<bool> allow_repack( nres, false );
 		for( Size i = 1; i <= nres; i++ ) {
 			if( pose_in.secstruct(i) == 'X' )
 				allow_repack[i] = true;
-			if ( !graft_h2_ && ( i >= antibody_in.cdrh_[2][1] ) && ( i <= antibody_in.cdrh_[2][2] ) )
+			if ( !graft_h2_ && ( i >= antibody_in.cdrh_[2][1] ) &&
+					 ( i <= antibody_in.cdrh_[2][2] ) )
 				allow_repack[i] = true;
-			if ( !graft_h3_ && ( i >= antibody_in.cdrh_[3][1] ) && ( i <= antibody_in.cdrh_[3][2] ) )
+			if ( !graft_h3_ && ( i >= antibody_in.cdrh_[3][1] ) &&
+					 ( i <= antibody_in.cdrh_[3][2] ) )
 				allow_repack[i] = true;
 		}
 
 		// Recover secondary structures
-		for( Size i = 1; i <= nres; i++ ) pose_in.set_secstruct( i, secondary_struct_storage[ i ] );
+		for( Size i = 1; i <= nres; i++ )
+			pose_in.set_secstruct( i, secondary_struct_storage[ i ] );
 		// saving sidechains for use of include_current
 		pose::Pose saved_sidechains( pose_in );
 
@@ -198,11 +192,14 @@ void GraftMover::apply( pose::Pose & pose_in )
 		to_centroid.apply( pose_in );
 		to_full_atom.apply( pose_in );
 		//recover sidechains from starting structures
-		protocols::simple_moves::ReturnSidechainMover recover_sidechains( saved_sidechains );
+		protocols::simple_moves::ReturnSidechainMover recover_sidechains(
+			saved_sidechains );
 		recover_sidechains.apply( pose_in );
 		bool include_current( false );
 		// High resolution scores
-		scoring::ScoreFunctionOP antibody_score( scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS ) );
+		scoring::ScoreFunctionOP antibody_score(
+			scoring::ScoreFunctionFactory::create_score_function(
+		scoring::STANDARD_WTS ) );
 		set_packer_default( pose_in, antibody_score, include_current );
 		packer_->apply( pose_in );
 
@@ -213,13 +210,16 @@ void GraftMover::apply( pose::Pose & pose_in )
 		// coordinates, grab them from a repacked version of the pose
 		// generated without using include_current
 		for( Size i = 1; i <= nres; i++ ) {
-			conformation::Residue const & original_rsd( saved_sidechains.residue( i ) );
-			conformation::Residue const & packed_rsd( pose_in.residue( i ) );
+			conformation::Residue const & original_rsd(
+				saved_sidechains.residue( i ) );
+			conformation::Residue const & packed_rsd(
+				pose_in.residue( i ) );
 			if( !allow_repack[i] ) {
 				for( Size j=1; j <= packed_rsd.natoms(); ++j ) {
 					std::string const & atom_name( packed_rsd.atom_name(j) );
 					if( original_rsd.type().has_atom_name( atom_name ) )
-						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index( atom_name),i), original_rsd.xyz( atom_name ) );
+						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index(
+							atom_name),i), original_rsd.xyz( atom_name ) );
 				}
 			}
 		}
@@ -230,33 +230,39 @@ void GraftMover::apply( pose::Pose & pose_in )
 		SequenceMoverOP close_grafted_loops ( new SequenceMover() );
 		if( !camelid_ ) {
 			if ( graft_l1_ ) {
-				CloseOneMoverOP closeone_l1( new CloseOneMover( antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2]) );
+				CloseOneMoverOP closeone_l1( new CloseOneMover(
+		  antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2]) );
 				closeone_l1->enable_benchmark_mode( benchmark_ );
 				close_grafted_loops->add_mover( closeone_l1 );
 			}
 			if ( graft_l2_ ) {
-				CloseOneMoverOP closeone_l2( new CloseOneMover( antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2]) );
+				CloseOneMoverOP closeone_l2( new CloseOneMover(
+				  antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2]) );
 				closeone_l2->enable_benchmark_mode( benchmark_ );
 				close_grafted_loops->add_mover( closeone_l2 );
 			}
 			if ( graft_l3_ ) {
-				CloseOneMoverOP closeone_l3( new CloseOneMover( antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2]) );
+				CloseOneMoverOP closeone_l3( new CloseOneMover(
+				  antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2]) );
 				closeone_l3->enable_benchmark_mode( benchmark_ );
 				close_grafted_loops->add_mover( closeone_l3 );
 			}
 		}
 		if ( graft_h1_ ) {
-			CloseOneMoverOP closeone_h1( new CloseOneMover( antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2]) );
+			CloseOneMoverOP closeone_h1( new CloseOneMover(
+			  antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2]) );
 			closeone_h1->enable_benchmark_mode( benchmark_ );
 			close_grafted_loops->add_mover( closeone_h1 );
 		}
 		if ( graft_h2_ ) {
-			CloseOneMoverOP closeone_h2( new CloseOneMover( antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2]) );
+			CloseOneMoverOP closeone_h2( new CloseOneMover(
+				antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2]) );
 			closeone_h2->enable_benchmark_mode( benchmark_ );
 			close_grafted_loops->add_mover( closeone_h2 );
 		}
 		if ( graft_h3_ ) {
-			CloseOneMoverOP closeone_h3( new CloseOneMover( antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2]) );
+			CloseOneMoverOP closeone_h3( new CloseOneMover(
+				antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2]) );
 			closeone_h3->enable_benchmark_mode( benchmark_ );
 			close_grafted_loops->add_mover( closeone_h3 );
 		}
@@ -279,13 +285,16 @@ void GraftMover::apply( pose::Pose & pose_in )
 		// coordinates, grab them from a repacked version of the pose
 		// generated without using include_current
 		for( Size i = 1; i <= nres; i++ ) {
-			conformation::Residue const & original_rsd( saved_sidechains.residue( i ) );
-			conformation::Residue const & packed_rsd( pose_in.residue( i ) );
+			conformation::Residue const & original_rsd(
+				saved_sidechains.residue( i ) );
+			conformation::Residue const & packed_rsd(
+				pose_in.residue( i ) );
 			if( !allow_repack[i] ) {
 				for( Size j=1; j <= packed_rsd.natoms(); ++j ) {
 					std::string const & atom_name( packed_rsd.atom_name(j) );
 					if( original_rsd.type().has_atom_name( atom_name ) )
-						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index( atom_name),i), original_rsd.xyz( atom_name ) );
+						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index(
+							atom_name),i), original_rsd.xyz( atom_name ) );
 				}
 			}
 		}
@@ -352,7 +361,8 @@ GraftOneMover::GraftOneMover(
 } // GraftOneMover default constructor
 
 void GraftOneMover::set_default() {
-	TRO << "Reading in template: " << template_name_ << ".pdb " << std::endl;
+	TRO << "Reading in template: " << template_name_ << ".pdb "
+			<< std::endl;
 	core::import_pose::pose_from_pdb( template_pose_, template_name_ + ".pdb" );
 	antibody::Antibody antibody( template_pose_, template_name_ );
 	template_start_ = antibody.current_start;
@@ -371,62 +381,63 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 	truncated_pose = pose_in;
 
 	// create a sub pose with  5 flanking residues on either side of CDR loop
-	truncated_pose.conformation().delete_residue_range_slow( query_end_ + 5, nres);
-	truncated_pose.conformation().delete_residue_range_slow( 1, query_start_ - 5);
-	truncated_pose.conformation().delete_residue_range_slow( 5, ( query_size - 1 ) + 5 );
-
-
-	TRO<<"*******  truncated_pose  *****************"<<std::endl;
-	TRO<<truncated_pose<<std::endl;
-	TRO<<"******************************************"<<std::endl;
-	TRO<<"*******  template_pose  *****************"<<std::endl;
-	TRO<<template_pose_<<std::endl;
-	TRO<<"******************************************"<<std::endl;
+	truncated_pose.conformation().delete_residue_range_slow(
+  query_end_ + 5, nres);
+	truncated_pose.conformation().delete_residue_range_slow(
+  1, query_start_ - 5);
+	truncated_pose.conformation().delete_residue_range_slow(
+  5, ( query_size - 1 ) + 5 );
 
 	// create atom map for superimposing 2 flanking resiudes
 	id::AtomID_Map< id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, template_pose_, id::BOGUS_ATOM_ID );
+	core::pose::initialize_atomid_map( atom_map, template_pose_,
+												id::BOGUS_ATOM_ID );
 
 	Size flank = 2; // default 2
 	for( Size start_stem = 4 - (flank-1); start_stem <= 4; start_stem++ ) {
 		for( Size j=1; j <= 4; j++ ) {
-			TRO<<" j="<<j <<"    start_stem="<<start_stem <<"  start_stem="<< start_stem << std::endl;
 			id::AtomID const id1( j, start_stem );
 			id::AtomID const id2( j, start_stem );
 			atom_map[ id1 ] = id2;
 		}
 	}
-	for( Size end_stem = 4 + query_size + 1; end_stem <= 4+query_size+flank; end_stem++ ) {
+	for( Size end_stem = 4 + query_size + 1; end_stem <= 4+query_size+flank;
+			 end_stem++ ) {
 		for( Size j=1; j <= 4; j++ ) {
-			TRO<<"  j="<<j<< "   end_stem="<<end_stem <<"  end_stem-query_size="<< end_stem-query_size << std::endl;
 			id::AtomID const id1( j, end_stem );
 			id::AtomID const id2( j, end_stem - query_size );
 			atom_map[ id1 ] = id2;
 		}
 	}
-	exit(-1);
-	scoring::superimpose_pose( template_pose_, truncated_pose, atom_map );
+	scoring::superimpose_pose( template_pose_, truncated_pose,
+																	 atom_map );
 
 
 	// copy coordinates of properly oriented template to framework
 	for( Size i = query_start_; i <= query_end_; ++i ) {
 		conformation::Residue const & orientable_rsd(pose_in.residue(i));
-		conformation::Residue const & template_rsd( template_pose_. residue( i - (query_start_ - 5) ) );
+		conformation::Residue const & template_rsd( template_pose_.
+	 residue( i - (query_start_ - 5) ) );
 		// keeping track of missing rotamers
-		if( template_rsd.name() != orientable_rsd.name() ) pose_in.set_secstruct( i, 'X' );
+		if( template_rsd.name() != orientable_rsd.name() )
+			pose_in.set_secstruct( i, 'X' );
 		for( Size j=1; j <= template_rsd.natoms(); ++j ) {
 			std::string const & atom_name( template_rsd.atom_name(j) );
 			if( orientable_rsd.type().has_atom_name( atom_name ) )
-				pose_in.set_xyz( id::AtomID( orientable_rsd.atom_index( atom_name),i), template_rsd.xyz( atom_name ) );
+				pose_in.set_xyz( id::AtomID( orientable_rsd.atom_index(
+																					 atom_name),i), template_rsd.xyz(
+													  atom_name ) );
 			// hack for generating coordinates of amide hydrogen for target
 			// residues whose template was a Proline residue (Proline residues
 			// do not have the amide hydrogen found ubiquitously in all other
 			// amino acids)
-			if( template_rsd.name() == "PRO" && orientable_rsd.name() != "PRO" && atom_name == " CD " ){
+			if( template_rsd.name() == "PRO" && orientable_rsd.name() != "PRO"
+					&& atom_name == " CD " ){
 				id::AtomID_Mask missing( false );
 				// dimension the missing-atom mask
 				core::pose::initialize_atomid_map( missing, pose_in );
-				missing[ id::AtomID( pose_in.residue_type(i).atom_index("H"), i ) ] = true;
+				missing[ id::AtomID(
+					pose_in.residue_type(i).atom_index("H"), i ) ] = true;
 				pose_in.conformation().fill_missing_atoms( missing );
 			}
 		}
@@ -456,7 +467,11 @@ void GraftMover::relax_optimized_CDR_grafts( pose::Pose & pose_in ) {
 } // GraftMover::relax_optimized_CDR_grafts
 
 
-CloseOneMover::CloseOneMover( Size query_start, Size query_end ) : Mover( "CloseOneMover" )
+CloseOneMover::CloseOneMover(
+	Size query_start,
+	Size query_end
+)
+	: Mover( "CloseOneMover" )
 {
 	loop_start_ = query_start;
 	loop_end_ = query_end;
@@ -536,12 +551,17 @@ CloseOneMover::get_name() const {
 return "CloseOneMover";
 }
 
-void CloseOneMover::close_one_loop_stem ( pose::Pose & pose_in, Size cutpoint_in, bool nter ) {
+void CloseOneMover::close_one_loop_stem (
+ pose::Pose & pose_in,
+	Size cutpoint_in,
+	bool nter
+) {
 	using namespace protocols;
 	using namespace protocols::loops;
-    
+
     using loop_closure::ccd::CcdMover;
     using loop_closure::ccd::CcdMoverOP;
+
 
 	// storing starting fold tree
 	kinematics::FoldTree tree_in( pose_in.fold_tree() );
@@ -686,11 +706,19 @@ void CloseOneMover::close_one_loop_stem ( pose::Pose & pose_in, Size cutpoint_in
 	return;
 } // CloseOneMover::close_one_loop_stem
 
-void CloseOneMover::close_one_loop_stem ( pose::Pose & pose_in, Size loop_begin, Size loop_end, Size cutpoint ) {
+void CloseOneMover::close_one_loop_stem (
+ pose::Pose & pose_in,
+	Size loop_begin,
+	Size loop_end,
+	Size cutpoint
+)
+{
 	using namespace protocols;
 	using namespace protocols::loops;
+
     using loop_closure::ccd::CcdMover;
     using loop_closure::ccd::CcdMoverOP;
+
 
 	// storing starting fold tree
 	kinematics::FoldTree tree_in( pose_in.fold_tree() );
@@ -813,7 +841,11 @@ void CloseOneMover::close_one_loop_stem ( pose::Pose & pose_in, Size loop_begin,
 	return;
 } // CloseOneMover::close_one_loop_stem
 
-LoopRlxMover::LoopRlxMover( Size query_start, Size query_end ) : Mover( "LoopRlxMover" ) {
+LoopRlxMover::LoopRlxMover(
+	Size query_start,
+	Size query_end
+) : Mover( "LoopRlxMover" )
+{
 	loop_start_ = query_start;
 	loop_end_ = query_end;
 	set_default();
@@ -859,7 +891,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;
-    
+
     using loop_closure::ccd::CcdMover;
     using loop_closure::ccd::CcdMoverOP;
 
@@ -894,9 +926,14 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
 		if( !pose_in.residue( cutpoint ).has_variant_type(
 				chemical::CUTPOINT_LOWER))
-			core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, cutpoint );
-		if( !pose_in.residue( cutpoint + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) )
-			core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, cutpoint + 1 );
+			core::pose::add_variant_type_to_pose_residue( pose_in,
+																								  chemical::CUTPOINT_LOWER,
+																									cutpoint );
+		if( !pose_in.residue( cutpoint + 1 ).has_variant_type(
+				chemical::CUTPOINT_UPPER ) )
+			core::pose::add_variant_type_to_pose_residue( pose_in,
+																									chemical::CUTPOINT_UPPER,
+																									cutpoint + 1 );
 	}
 
 	utility::vector1< bool> allow_repack( pose_in.total_residue(), false );
@@ -904,8 +941,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 												allow_repack);
 	loop_map->set_chi( allow_repack );
 
-	protocols::simple_moves::PackRotamersMoverOP loop_repack = 
-                            new protocols::simple_moves::PackRotamersMover(highres_scorefxn_);
+	protocols::simple_moves::PackRotamersMoverOP loop_repack=new protocols::simple_moves::PackRotamersMover(highres_scorefxn_);
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
 	tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );

@@ -216,7 +216,8 @@ void AntibodyModeler::apply( pose::Pose & pose_in ){
 	using namespace protocols::moves;
 
 	if( model_h3_ && ( cst_weight_ != 0.00 ) ) {
-		protocols::simple_moves::ConstraintSetMoverOP cdr_constraint = new protocols::simple_moves::ConstraintSetMover();
+		protocols::simple_moves::ConstraintSetMoverOP cdr_constraint =
+			new protocols::simple_moves::ConstraintSetMover();
 		cdr_constraint->apply( pose_in );
 	}
 	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
@@ -326,7 +327,8 @@ void AntibodyModeler::apply( pose::Pose & pose_in ){
 	// Define CDR H3 loop
 	Size frag_size = (antibody_in_.cdrh_[3][2]-antibody_in_.cdrh_[3][1]) + 3;
 	Size cutpoint =  antibody_in_.cdrh_[3][1] + int( frag_size / 2 );
-	loops::Loop cdr_h3( antibody_in_.cdrh_[3][1], antibody_in_.cdrh_[3][2], cutpoint,	0, false );
+	loops::Loop cdr_h3( antibody_in_.cdrh_[3][1], antibody_in_.cdrh_[3][2],
+											cutpoint,	0, false );
 
 	// Fold Tree
 	simple_one_loop_fold_tree( pose_in, cdr_h3 );
@@ -336,7 +338,8 @@ void AntibodyModeler::apply( pose::Pose & pose_in ){
 
 	// score functions
 	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::ScoreFunctionFactory:: create_score_function( "standard", "score12" );
+	scorefxn = core::scoring::ScoreFunctionFactory::
+		create_score_function( "standard", "score12" );
 	scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
 	scorefxn->set_weight( core::scoring::overlap_chainbreak, 10./3. );
 	scorefxn->set_weight( core::scoring::atom_pair_constraint, 1.00 );
@@ -363,7 +366,8 @@ void AntibodyModeler::apply( pose::Pose & pose_in ){
 	score_map_[ "AF_constraint" ] = constraint_score;
 
 	//using pose::datacache::CacheableDataType::SCORE_MAP;
-	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, new basic::datacache:: DiagnosticData(score_map_));
+	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, new basic::datacache::
+											DiagnosticData(score_map_));
 }// end apply
 
 std::string
@@ -887,21 +891,25 @@ AntibodyModeler::snugfit_mcm_protocol(
 	using namespace core::pack::task::operation;
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( nres, false );
-	for( Size i = 1; i <= nres; i++ ) loop_residues( i ) = is_flexible[ i ]; // check mapping
+	for( Size i = 1; i <= nres; i++ )
+		loop_residues( i ) = is_flexible[ i ]; // check mapping
 	using namespace protocols::toolbox::task_operations;
 	tf_->push_back( new RestrictToInterface( rb_jump, loop_residues ) );
 
 
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover( pack_scorefxn, tf_ );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
+												 pack_scorefxn, tf_ );
 
-	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover( pack_scorefxn );
+	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover(
+														  pack_scorefxn );
 	pack_interface_repack->task_factory(tf_);
 
 	Real temperature = 0.8;
 	MonteCarloOP mc = new MonteCarlo( pose_in, *scorefxn, temperature );
 
-	TrialMoverOP pack_interface_trial = new TrialMover(pack_interface_repack, mc );
+	TrialMoverOP pack_interface_trial = new TrialMover(pack_interface_repack,
+																										 mc );
 
 	protocols::docking::SidechainMinMoverOP scmin_mover = new
 	protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionCOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
@@ -911,7 +919,8 @@ AntibodyModeler::snugfit_mcm_protocol(
 	rb_mover->add_mover( rb_perturb );
 	rb_mover->add_mover( pack_rottrial );
 
-	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover, scorefxn, min_threshold);
+	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover,
+																									scorefxn, min_threshold);
 	TrialMoverOP rb_mover_min_trial = new TrialMover( rb_mover_min, mc  );
 
 	SequenceMoverOP repack_step = new SequenceMover;
@@ -936,8 +945,10 @@ AntibodyModeler::snugfit_mcm_protocol(
 	RepeatMoverOP mcm_four_cycles = new RepeatMover( rb_mover_min_trial, 4 );
 
 	Size cycles = 3;
-	if ( benchmark_ ) cycles = 1;
-	RepeatMoverOP mcm_final_cycles = new RepeatMover( rb_mover_min_trial_repack, cycles );
+	if ( benchmark_ )
+		cycles = 1;
+	RepeatMoverOP mcm_final_cycles = new RepeatMover(
+  rb_mover_min_trial_repack, cycles );
 
 	SequenceMoverOP snugfit_mcm = new SequenceMover;
 	snugfit_mcm->add_mover( initial_repack );
@@ -967,7 +978,8 @@ AntibodyModeler::setup_packer_task(
 
 	TR << "AbModeler Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
+	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT,
+									new ResidueLacksProperty("PROTEIN") ) );
 	tf_->push_back( new InitializeFromCommandline );
 	tf_->push_back( new IncludeCurrent );
 	tf_->push_back( new RestrictToRepacking );
@@ -975,9 +987,11 @@ AntibodyModeler::setup_packer_task(
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
-	pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
+	pack::rotamer_set::UnboundRotamersOperationOP unboundrot =
+		new pack::rotamer_set::UnboundRotamersOperation();
 	unboundrot->initialize_from_command_line();
-	operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
+	operation::AppendRotamerSetOP unboundrot_operation =
+		new operation::AppendRotamerSet( unboundrot );
 	tf_->push_back( unboundrot_operation );
 	// adds scoring bonuses for the "unbound" rotamers, if any
 	core::pack::dunbrack::load_unboundrot( pose_in );
@@ -1038,12 +1052,15 @@ AntibodyModeler::display_constraint_residues() {
 
 	Size H1_Cys(0), H3_Cys(0);
 
-	if( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 32 ) ).name3() == "CYS" )
+	if( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose( 'H',
+			32 ) ).name3() == "CYS" )
 		H1_Cys = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 32 );
-	else if( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 33 ) ).name3() == "CYS" )
+	else if( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose(
+			'H', 33 ) ).name3() == "CYS" )
 		H1_Cys = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 33 );
 
-	for( Size ii = antibody_in_.cdrh_[3][1]; ii <= antibody_in_.cdrh_[3][2]; ii++ )
+	for( Size ii = antibody_in_.cdrh_[3][1]; ii <= antibody_in_.cdrh_[3][2];
+			 ii++ )
 		if( antibody_in_.Fv.residue(ii).name3() == "CYS" )
 			H3_Cys = ii;
 
