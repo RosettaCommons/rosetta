@@ -24,11 +24,12 @@
 #define foreach BOOST_FOREACH
 // Package headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/DataMap.hh>
@@ -92,13 +93,48 @@ Splice::Splice() :
 	task_factory_( NULL ),
 	torsion_database_fname_( "" ),
 	database_entry_( 0 ),
-	template_file_( "" )
+	template_file_( "" ),
+	poly_ala_( true ),
+	equal_length_( false )
 {
 	torsion_database_.clear();
 }
 
 
 Splice::~Splice() {}
+/* this doesnt quite work, and is superseded by copy_stretch
+void
+remove_cutpoint_variants_in_interval( core::pose::Pose & pose, core::Size const from_res, core::Size const to_res ){
+	using namespace core::chemical;
+	using namespace core::pose;
+
+	const core::kinematics::FoldTree& tree(pose.fold_tree());
+	for( core::Size resi = from_res + 1; resi<to_res; ++resi ) {
+//		if (!tree.is_cutpoint(resi) || resi >= (pose.total_residue() - 1))
+//			continue;
+		if( pose.residue( resi ).is_lower_terminus() ){
+			core::conformation::idealize_position( resi, pose.conformation() );
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, resi );
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, resi + 1 );
+			TR<<"removing cut at "<<resi<<std::endl;
+		}
+	}
+}
+*/
+
+/// @brief copy a stretch of aligned residues from source to target. No repacking no nothing.
+void
+copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res ){
+	core::pose::ResMap res_map;
+	using namespace core::pose;
+	using namespace protocols::rosetta_scripts;
+	core::Size const from_nearest_on_source( find_nearest_res( source, target, from_res ) );
+	core::Size const to_nearest_on_source( find_nearest_res( source, target, to_res ) );
+
+	for( core::Size i = 0; i < to_res - from_res; ++i )
+		res_map.insert( std::pair< core::Size, core::Size >( from_res + i, from_nearest_on_source + i ) );
+	copy_dofs( target, source, res_map );
+}
 
 void
 Splice::apply( core::pose::Pose & pose )
@@ -108,10 +144,10 @@ Splice::apply( core::pose::Pose & pose )
 
 	save_values();
 
-	core::pose::Pose template_pose;
+	static core::pose::Pose template_pose;
+	static bool first_pass( true ); /// let's not read from disk more than necessary
 	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
 		static core::Size template_from_res( 0 ), template_to_res( 0 );
-		static bool first_pass( true ); /// let's not read from disk more than necessary
 
 		if( first_pass ){
 			core::import_pose::pose_from_pdb( template_pose, template_file_ );
@@ -125,21 +161,18 @@ Splice::apply( core::pose::Pose & pose )
 
 		from_res( template_from_res );
 		to_res( template_to_res );
-		first_pass = false;
 	}// fi template_file != ""
 
 	core::pose::Pose const in_pose_copy( pose );
 	pose.conformation().detect_disulfides(); // just in case
 
 	TR<<"Starting splice apply"<<std::endl;
-	if( from_res() == 0 && to_res() == 0 ){/// set the splice site dynamically according to the task factory
+	if( torsion_database_fname_ == "" && from_res() == 0 && to_res() == 0 ){/// set the splice site dynamically according to the task factory
 		utility::vector1< core::Size > designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
 		std::sort( designable.begin(), designable.end() );
 		from_res( designable[ 1 ] );
 		to_res( designable[ designable.size() ] );
 	}
-	TR<<"From res: "<<from_res()<<" to_res: "<<to_res()<<std::endl;
-	runtime_assert( to_res() > from_res() );
 	core::pose::Pose source_pose;
 	core::Size nearest_to_from( 0 ), nearest_to_to( 0 ); // residues on source_pose that are nearest to from_res and to_res
 	ResidueBBDofs dofs;
@@ -183,9 +216,26 @@ Splice::apply( core::pose::Pose & pose )
 	}// fi torsion_database_fname==NULL
 	else{/// read from dbase
 		core::Size dbase_entry( database_entry() );
-		if( dbase_entry == 0 )/// randomize entry
-			dbase_entry = (core::Size) ( RG.uniform() * torsion_database_.size() + 1);
-		dofs = torsion_database_[ dbase_entry ];
+		if( dbase_entry == 0 ){/// randomize entry
+			core::Size rand_trials( 0 );
+			core::Size pose_residues( 0 );
+			do{
+				dbase_entry = (core::Size) ( RG.uniform() * torsion_database_.size() + 1);
+				dofs = torsion_database_[ dbase_entry ];
+				rand_trials++;
+				core::Size const nearest_to_entry_start_on_pose( find_nearest_res( pose, template_pose, dofs.start_loop() ) );
+				core::Size const nearest_to_entry_stop_on_pose( find_nearest_res( pose, template_pose, dofs.stop_loop() ) );
+			  pose_residues = nearest_to_entry_stop_on_pose - nearest_to_entry_start_on_pose + 1;
+			} while( equal_length() && dofs.size() != pose_residues && rand_trials < torsion_database_.size() * 10/*prevent infinite loops*/ );
+			if( rand_trials >=  torsion_database_.size() * 10 ){
+				TR<<"Loop of appropriate length not found in database. Returning"<<std::endl;
+				return;
+			}
+			else
+				TR<<"Randomly chose dbase entry "<<dbase_entry<<" with loop start: "<<dofs.start_loop()<<" loop_stop: "<<dofs.stop_loop()<<" total_residues: "<<dofs.size()<<std::endl;
+		}
+		else
+			dofs = torsion_database_[ dbase_entry ];
 		foreach( BBDofs & resdofs, dofs ){/// transform 3-letter code to 1-letter code
 			using namespace core::chemical;
 			if( resdofs.resn() == "CYD" ){// at one point it would be a good idea to use disfulfides rather than bail out on them...
@@ -217,7 +267,12 @@ Splice::apply( core::pose::Pose & pose )
 			runtime_assert( from_res() && to_res() && cut_site );
 		}
   }// read from dbase
-
+	TR<<"From res: "<<from_res()<<" to_res: "<<to_res()<<std::endl;
+	runtime_assert( to_res() > from_res() );
+	if( !first_pass )
+		copy_stretch( pose, *saved_pose_, std::max( ( core::Size ) 2, from_res() - 6 ), std::min( to_res() + 6, pose.total_residue()-1 ) );
+//		remove_cutpoint_variants_in_interval( pose, std::max( ( core::Size ) 2, from_res() - 6 ), std::min( to_res() + 6, pose.total_residue()-1 ) ); //from_res(), to_res() );
+	first_pass = false;
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
 	protocols::loops::FoldTreeFromLoops ffl;
 	using namespace utility;
@@ -274,8 +329,19 @@ Splice::apply( core::pose::Pose & pose )
 		core::Size const nearest_in_copy( protocols::rosetta_scripts::find_nearest_res( in_pose_copy, pose, pose_resi ) );
 		if( ( nearest_in_copy > 0 && dofs_resn[ 0 ] == in_pose_copy.residue( nearest_in_copy ).name1() )  || dofs_resn == "G" || dofs_resn == "P" )
 			threaded_seq += dofs_resn;
-		else
-			threaded_seq += "A";
+		else{
+			if( poly_ala() )
+				threaded_seq += "A";
+			else{
+				char orig_residue( 0 );
+				if( nearest_in_copy )
+					orig_residue = in_pose_copy.residue( nearest_in_copy ).name1();
+				if( orig_residue == 0 || orig_residue == 'G' || orig_residue == 'P' )
+					threaded_seq += 'x'; // residues that were originally Gly/Pro can be designed now
+				else
+					threaded_seq += ' '; // only repack
+			}
+		}
 	}
 
 	using namespace protocols::toolbox::task_operations;
@@ -289,13 +355,17 @@ Splice::apply( core::pose::Pose & pose )
 	tf->push_back( new operation::InitializeFromCommandline );
 	tf->push_back( tso );
 	DesignAroundOperationOP dao = new DesignAroundOperation;
-	dao->design_shell( 5 ); // threaded sequence operation needs to design, and will restrict design to the loop only
+	dao->design_shell( 1.0 ); // threaded sequence operation needs to design, and will restrict design to the loop only
 	dao->repack_shell( 8.0 );
 	for( core::Size i = from_res() - 3; i <= from_res() + total_residue_new + 2; ++i ){
 		if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
 			dao->include_residue( i );
 	}
 	tf->push_back( dao );
+	operation::RestrictAbsentCanonicalAASOP racaas = new operation::RestrictAbsentCanonicalAAS;
+	racaas->keep_aas( "ADEFIKLMNQRSTVWY" ); /// disallow pro/gly/cys/his
+	racaas->include_residue( 0 ); /// restrict all residues
+	tf->push_back( racaas);
 
 	if( ccd() ){
 /// Set ccd to minimize 4 residues at each loop terminus including the first residue of the loop. This way,
@@ -423,6 +493,9 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	randomize_cut( tag->getOption< bool >( "randomize_cut", false ) );
 	runtime_assert( tag->hasOption( "randomize_cut" ) && tag->hasOption( "source_pose" ) || !tag->hasOption( "source_pose" ) );
 	template_file( tag->getOption< std::string >( "template_file", "" ) );
+	equal_length( tag->getOption< bool >( "equal_length", false ) );
+	poly_ala( tag->getOption< bool >( "thread_ala", true ) );
+	saved_pose_ = new core::pose::Pose( pose );
 	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
 }
 

@@ -120,6 +120,10 @@ public:
 	void torsion_database( utility::vector1< ResidueBBDofs > const d ){ torsion_database_ = d; }
 	std::string template_file() const{ return template_file_; }
 	void template_file( std::string const s ){ template_file_ = s; }
+	void poly_ala( bool const p ){ poly_ala_ = p; }
+	bool poly_ala() const{ return poly_ala_; }
+	void equal_length( bool const e ){ equal_length_ = e; }
+	bool equal_length() const{ return equal_length_; }
 
 private:
 	void save_values(); // call at beginning of apply
@@ -137,6 +141,9 @@ private:
 	core::Size database_entry_; //dflt 0; in which case tests a random entry in each apply
 	utility::vector1< ResidueBBDofs > torsion_database_;
 	std::string template_file_; //dflt ""; which source file to use as the template to determine what from_res() and to_res() refer to. The input structure may change during a trajectory and so from_res() and to_res() might lose their sense. If this is "", the input file is taken to be template
+	bool poly_ala_; /// dflt true; thread ala residues in each position other than Gly/Pro or conserved in the source pdb. If false, keeps the input sequence (except Gly/Pro, which are replaced)
+	bool equal_length_; // dflt false; restrict threading to loops equal in length to the original
+	core::pose::PoseOP saved_pose_;
 };
 
 
