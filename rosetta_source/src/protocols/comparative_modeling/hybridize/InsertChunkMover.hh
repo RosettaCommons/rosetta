@@ -66,6 +66,10 @@ bool success() {
     return success_;
 }
     
+void reset_torsion(bool reset_torsion_unaligned) {
+    reset_torsion_unaligned_ = reset_torsion_unaligned;
+}
+
 void set_template(core::pose::PoseCOP template_pose,
 				  std::map <core::Size, core::Size> const & sequence_alignment );
 

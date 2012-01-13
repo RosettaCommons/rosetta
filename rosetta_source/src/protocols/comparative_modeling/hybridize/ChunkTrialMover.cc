@@ -202,6 +202,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 	}
 	else {
 		// loop over all jumps
+        align_chunk_.reset_torsion(true);
 		for (core::Size jump_number=1; jump_number<=pose.num_jump(); ++jump_number) {
 			align_chunk_.set_aligned_chunk(pose, jump_number);
 			
