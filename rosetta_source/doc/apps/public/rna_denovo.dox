@@ -20,11 +20,7 @@ The central code for the <em>rna_denovo</em> application is in <code>src/protoco
 
 For a 'minimal' demo example of the RNA fragment assembly and full-atom minimization protocol and input files, see
 
-<code>rosetta_tests/integration/tests/rna_denovo/</code>
-
-or
-
-<code>rosetta_demos/RNA_Denovo</code>  [in the public release]
+<code>rosetta_demos/public/RNA_Denovo</code>
 
 
 @section refs References

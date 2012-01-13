@@ -20,7 +20,7 @@ This code allows the modeling of large RNAs with multiple helices, by assembling
 
 For the full workflow check out:
 
-<code>rosetta_demos/RNA_Assembly</code>
+<code>rosetta_demos/public/RNA_Assembly</code>
 
 For a 'minimal' demo example of the final step (RNA assembly from prebuilt parts saved in 'silent files'), see
 
