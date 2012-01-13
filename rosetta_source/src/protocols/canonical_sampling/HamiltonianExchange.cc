@@ -325,7 +325,7 @@ HamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 	}
 	runtime_assert( r<n_temp_levels() );
 #else
-	Size r( -1 );
+	Size r( 0 );
 #endif
 	partner = r;
 	is_master = rank() < partner;
