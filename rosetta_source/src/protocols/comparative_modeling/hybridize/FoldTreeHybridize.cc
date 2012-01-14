@@ -355,14 +355,14 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	// combine:
 	// (a) contigs in the current template
 	utility::vector1< bool > template_mask( pose.total_residue(), false );
-	protocols::loops::Loops my_chunks(template_contigs_[initial_template_index_]);
+	protocols::loops::Loops my_chunks(template_chunks_[initial_template_index_]);
 
-	for (core::Size icontig = 1; icontig<=template_contigs_[initial_template_index_].num_loop(); ++icontig) {
+	for (core::Size icontig = 1; icontig<=template_chunks_[initial_template_index_].num_loop(); ++icontig) {
 		Size seqpos_start_target = template_poses_[initial_template_index_]->pdb_info()->number(
-			template_contigs_[initial_template_index_][icontig].start());
+			template_chunks_[initial_template_index_][icontig].start());
 		my_chunks[icontig].set_start( seqpos_start_target );
 		Size seqpos_stop_target = template_poses_[initial_template_index_]->pdb_info()->number(
-			template_contigs_[initial_template_index_][icontig].stop());
+			template_chunks_[initial_template_index_][icontig].stop());
 		my_chunks[icontig].set_stop( seqpos_stop_target );
 
 		for (Size j=seqpos_start_target; j<=seqpos_stop_target; ++j) template_mask[j] = true;
@@ -414,7 +414,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 	HybridizeFoldtreeDynamic foldtree_mover;
 	foldtree_mover.initialize(pose, my_chunks);
-	TR.Debug << pose.fold_tree() << std::endl;
+	TR << pose.fold_tree() << std::endl;
 }
 
 
@@ -501,8 +501,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	initialize_chunk_mover.set_template(initial_template_index_);
 	initialize_chunk_mover.apply(pose);
 	translate_virt_to_CoM(pose);
-	// pose.dump_pdb("after_init.pdb");
-	
+
 	use_random_template = true;
 	Size max_registry_shift = option[cm::hybridize::max_registry_shift]();
 	ChunkTrialMoverOP random_sample_chunk_mover(
@@ -514,12 +513,10 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		new WeightedFragmentTrialMover(frag_libs_, residue_weights)
 	);
 	
-	for (Size i=1;i<=8;++i) {
-		if (i>=4) {
-			int gap_edge_shift = i-6;
-			add_gap_constraints_to_pose(pose, ss_chunks_pose_, gap_edge_shift);
-		}
-		
+	for (Size i=1;i<=4;++i) {
+		if (i==3) scorefxn_->set_weight( core::scoring::linear_chainbreak, 0.5 );
+		if (i==4) scorefxn_->set_weight( core::scoring::linear_chainbreak, 2.0 );
+
 		RandomMoverOP random_mover( new RandomMover() );
 		Real weight = 0.05 * (Real)i;
 		random_mover->add_mover(random_sample_chunk_mover, 1. - weight);
