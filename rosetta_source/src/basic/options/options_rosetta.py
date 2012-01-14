@@ -3239,6 +3239,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'ss',       'String',     desc='secondary structure elements used to split the pose', default='HE' ),
 			Option( 'stage1_weights',     'String',     desc='weight for fold tree hybridize stage', default='score3' ),
 			Option( 'stage1_patch',       'String',     desc='weight patch for fold tree hybridize stage', default='' ),
+			Option( 'skip_stage2',  'Boolean',    desc='skip cartesian fragment hybridize stage', default='false' ),
 			Option( 'stage2_weights',     'String',     desc='weight for cartesian fragment hybridize stage', default='score4_smooth_cart' ),
 			Option( 'stage2_patch',       'String',     desc='weight patch for cartesian fragment hybridize stage', default='' ),
 			Option( 'relax',       'Boolean',     desc='perform relax at end', default='false' ),

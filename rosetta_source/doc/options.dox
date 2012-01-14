@@ -7525,6 +7525,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
+<dt><b>-skip_stage2</b> \<Boolean\><dt>
+<dd>skip cartesian fragment hybridize stage</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-stage2_weights</b> \<String\><dt>
 <dd>weight for cartesian fragment hybridize stage</dd><br>
 <dd>Default: "score4_smooth_cart"</dd><br>

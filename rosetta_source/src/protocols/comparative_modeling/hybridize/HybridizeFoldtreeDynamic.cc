@@ -61,7 +61,7 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::Size
 	// complete the chunks to cover the whole protein and customize cutpoints
 	// cutpoints in the middle of the loop
 	// cut number is the residue before the cut
-	std::string cut_point_decision = "combine";
+	std::string cut_point_decision = "middle";
 
 	utility::vector1<bool> cut_options(n_residues, true);
 

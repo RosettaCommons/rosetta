@@ -1554,6 +1554,7 @@ option.add( basic::options::OptionKeys::cm::hybridize::template_list, "Input lis
 option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure elements used to split the pose" ).def("HE");
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_weights, "weight for fold tree hybridize stage" ).def("score3");
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_patch, "weight patch for fold tree hybridize stage" ).def("");
+option.add( basic::options::OptionKeys::cm::hybridize::skip_stage2, "skip cartesian fragment hybridize stage" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::stage2_weights, "weight for cartesian fragment hybridize stage" ).def("score4_smooth_cart");
 option.add( basic::options::OptionKeys::cm::hybridize::stage2_patch, "weight patch for cartesian fragment hybridize stage" ).def("");
 option.add( basic::options::OptionKeys::cm::hybridize::relax, "perform relax at end" ).def(false);
@@ -1776,10 +1777,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "re
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);

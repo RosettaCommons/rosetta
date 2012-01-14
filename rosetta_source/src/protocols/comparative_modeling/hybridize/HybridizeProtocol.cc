@@ -335,12 +335,15 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 	// cartesian fragment hybridize
 	pose.constraint_set( constraint_set );  //reset constraints
-	CartesianHybridizeOP cart_hybridize (
-		new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_ ) );
+    CartesianHybridizeOP cart_hybridize (
+                                         new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_ ) );
 	core::scoring::ScoreFunctionOP scorefxn_stage2 =
 	core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage2_weights](), option[cm::hybridize::stage2_patch]());
-	cart_hybridize->set_scorefunction(scorefxn_stage2);
-	cart_hybridize->apply(pose);
+    cart_hybridize->set_scorefunction(scorefxn_stage2);
+
+    if (!option[cm::hybridize::skip_stage2]()) {
+        cart_hybridize->apply(pose);
+	}
 
 	// get fragment history
 	runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );

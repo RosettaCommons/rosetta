@@ -352,6 +352,12 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 void
 FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
+    if (!option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
+		utility_exit_with_message("Error in reading psipred_ss2 file, is the -in:file:psipred_ss2 flag set correctly?");
+	}
+	bool check_psipred = set_secstruct_from_psipred_ss2(pose);
+	assert (check_psipred);
+
 	// combine:
 	// (a) contigs in the current template
 	utility::vector1< bool > template_mask( pose.total_residue(), false );

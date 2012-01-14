@@ -298,6 +298,7 @@ void InsertChunkMover::steal_torsion_and_bonds_from_template(core::pose::Pose & 
 		}
 		//TR.Debug << "torsion: " << I(4,ires_pose) << F(8,3, pose.phi(ires_pose)) << F(8,3, pose.psi(ires_pose)) << std::endl;
 	}
+    TR.Debug << "End " << std::endl;
 }
 
 
@@ -323,27 +324,23 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 		if (template_pose_->secstruct(seqpos_template) != 'L') {
 			secstruct_ = template_pose_->secstruct(seqpos_template);
 		}
-		
-		core::Size atom_map_count = 0;
+
+        // collect local alignment for stealing torsion
 		for (Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose) {
-    		//if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+    		if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) continue;
     		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if (discontinued_upper(*template_pose_,jres_template)) break;
-
+            
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if(copy_ss_torsion_only_) {
 				if (template_pose_->secstruct(jres_template) == 'L') continue;
 			}
 			
 			sequence_alignment_local_[ires_pose] = jres_template;
-			core::id::AtomID const id1( pose.residue_type(ires_pose).atom_index("CA"), ires_pose );
-			core::id::AtomID const id2( template_pose_->residue_type(jres_template).atom_index("CA"), jres_template );
-			atom_map_[ id1 ] = id2;
-			++atom_map_count;
 		}
 		for (Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose) {
-    		//if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+    		if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) continue;
     		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if (discontinued_lower(*template_pose_,jres_template)) break;
@@ -354,6 +351,37 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 			}
 			
 			sequence_alignment_local_[ires_pose] = jres_template;
+		}
+        
+        // collect atom_map for superposition
+		core::Size atom_map_count = 0;
+		for (Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose) {
+    		if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+    		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
+			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
+			if (discontinued_upper(*template_pose_,jres_template)) break;
+
+			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
+			if(copy_ss_torsion_only_) {
+				if (template_pose_->secstruct(jres_template) == 'L') continue;
+			}
+			
+            core::id::AtomID const id1( pose.residue_type(ires_pose).atom_index("CA"), ires_pose );
+			core::id::AtomID const id2( template_pose_->residue_type(jres_template).atom_index("CA"), jres_template );
+			atom_map_[ id1 ] = id2;
+			++atom_map_count;
+		}
+		for (Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose) {
+    		if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+    		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
+			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
+			if (discontinued_lower(*template_pose_,jres_template)) break;
+			
+			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
+			if(copy_ss_torsion_only_) {
+				if (template_pose_->secstruct(jres_template) == 'L') continue;
+			}
+			
 			core::id::AtomID const id1( pose.residue_type(ires_pose).atom_index("CA"), ires_pose );
 			core::id::AtomID const id2( template_pose_->residue_type(jres_template).atom_index("CA"), jres_template );
 			atom_map_[ id1 ] = id2;
@@ -361,9 +389,12 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose const & pose,
 		}
 		
 		if (atom_map_count >=3) {
+            //TR << sequence_alignment_local_ << std::endl;
 			return true;
 		}
 	}
+    TR << sequence_alignment_local_ << std::endl;
+    sequence_alignment_local_.clear();
 	return false;	
 }
 	
