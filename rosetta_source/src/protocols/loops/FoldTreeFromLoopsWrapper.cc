@@ -19,23 +19,78 @@
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <utility/vector1.hh>
 #include <protocols/loops/util.hh>
-
-//Auto Headers
-#include <utility/vector0.hh>
 
 namespace protocols {
 namespace loops {
 
-using namespace std;
-using namespace core::kinematics;
-
 static basic::Tracer TR( "protocols.loops.FoldTreeFromLoopsWrapper" );
+
+FoldTreeFromLoops::FoldTreeFromLoops() :
+	Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
+{
+	loops_ = new Loops;
+	loops_->clear();
+}
+
+
+FoldTreeFromLoops::~FoldTreeFromLoops() {}
+
+protocols::moves::MoverOP FoldTreeFromLoops::clone() const 
+{
+    return protocols::moves::MoverOP( new FoldTreeFromLoops( *this ) );
+}
+
+protocols::moves::MoverOP FoldTreeFromLoops::fresh_instance() const
+{
+    return protocols::moves::MoverOP( new FoldTreeFromLoops );
+}
+
+void
+FoldTreeFromLoops::apply( core::pose::Pose & pose )
+{
+	if( loops()->empty() )
+		loops( loops_from_string( loop_str(), pose ) );
+	core::kinematics::FoldTree f;
+	fold_tree_from_loops( pose, *loops(), f );
+	TR<<"old foldtree "<<pose.fold_tree()<<"\nNew foldtree ";
+	pose.fold_tree( f );
+	TR<<pose.fold_tree()<<std::endl;
+}
+
+std::string
+FoldTreeFromLoops::get_name() const {
+	return FoldTreeFromLoopsCreator::mover_name();
+}
+
+void
+FoldTreeFromLoops::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+{
+	loop_str( tag->getOption< std::string >( "loops" ) );
+
+	TR<<"FoldTreeFromLoops with loops "<<loop_str()<<std::endl;
+}
+
+void FoldTreeFromLoops::loop_str( std::string const str )
+{
+    loop_str_ = str;
+}
+std::string FoldTreeFromLoops::loop_str() const 
+{
+    return loop_str_;
+}
+
+void FoldTreeFromLoops::loops( LoopsOP const l ) 
+{ 
+    loops_ = l; 
+}
+
+LoopsOP FoldTreeFromLoops::loops() const
+{ 
+    return loops_; 
+}
 
 std::string
 FoldTreeFromLoopsCreator::keyname() const
@@ -54,42 +109,5 @@ FoldTreeFromLoopsCreator::mover_name()
 	return "FoldTreeFromLoops";
 }
 
-FoldTreeFromLoops::FoldTreeFromLoops() :
-	Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
-{
-	loops_ = new Loops;
-	loops_->clear();
-}
-
-
-FoldTreeFromLoops::~FoldTreeFromLoops() {}
-
-void
-FoldTreeFromLoops::apply( core::pose::Pose & pose )
-{
-	if( loops()->empty() )
-		loops( loops_from_string( loop_str(), pose ) );
-	FoldTree f;
-	fold_tree_from_loops( pose, *loops(), f );
-	TR<<"old foldtree "<<pose.fold_tree()<<"\nNew foldtree ";
-	pose.fold_tree( f );
-	TR<<pose.fold_tree()<<std::endl;
-}
-
-std::string
-FoldTreeFromLoops::get_name() const {
-	return FoldTreeFromLoopsCreator::mover_name();
-}
-
-void
-FoldTreeFromLoops::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
-{
-	using namespace protocols::rosetta_scripts;
-
-	loop_str( tag->getOption< string >( "loops" ) );
-
-	TR<<"FoldTreeFromLoops with loops "<<loop_str()<<std::endl;
-}
-
-} //loops
-} //protocols
+} // namespace loops
+} // namespace protocols

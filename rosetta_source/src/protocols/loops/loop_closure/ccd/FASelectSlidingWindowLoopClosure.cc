@@ -63,10 +63,13 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/moves/MoverStatistics.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
+
+//Auto Headers
+
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

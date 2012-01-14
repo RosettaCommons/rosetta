@@ -20,7 +20,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
-#include <boost/foreach.hpp>
+// AUTO-REMOVED #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
 // Rosetta Headers
@@ -39,15 +39,15 @@
 #include <core/fragment/FragSet.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
-#include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/moves/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/BackboneMover.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
@@ -59,7 +59,7 @@
 
 //Utility and numeric Headers
 #include <numeric/random/random.hh>
-#include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <iostream>
@@ -68,7 +68,7 @@
 
 // option key includes
 
-#include <basic/options/keys/MonteCarlo.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/MonteCarlo.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <core/pose/util.hh>
@@ -76,6 +76,9 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
+
+//Auto Headers
+
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

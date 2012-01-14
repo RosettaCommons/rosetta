@@ -1673,6 +1673,16 @@
 		ACBF0B5F1508026CDFD13B31 /* ResidueFeatureFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9C834F49DAA903453C1BD315 /* ResidueFeatureFactory.cc */; };
 		25B2E211830BFA5C91E49F77 /* SSFeature.cc in Sources */ = {isa = PBXBuildFile; fileRef = F1788642EDAE4EB454184698 /* SSFeature.cc */; };
 		2BC0BA14793CB4856E5063B9 /* TorsionFeature.cc in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D9E275CC4296B5170471 /* TorsionFeature.cc */; };
+		BD3DE84B7CB6D3A99521F885 /* CartesianHybridize.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0AA3194CB149826BEED70226 /* CartesianHybridize.cc */; };
+		D2F15493645A846F027F19D3 /* ChunkTrialMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = FC53C995827CE3912FDCA848 /* ChunkTrialMover.cc */; };
+		F4DEC4A7CA34375B7EEF8670 /* FoldTreeHybridize.cc in Sources */ = {isa = PBXBuildFile; fileRef = B556B93C2823ECB427FE25DD /* FoldTreeHybridize.cc */; };
+		F52FF150E715F2F33097A46B /* HybridizeFoldtreeBase.cc in Sources */ = {isa = PBXBuildFile; fileRef = 192B5231E1B4BE12D0191F3D /* HybridizeFoldtreeBase.cc */; };
+		1812579FB9C7268C583F8859 /* HybridizeFoldtreeDynamic.cc in Sources */ = {isa = PBXBuildFile; fileRef = 245D7F7176058AD6713CA771 /* HybridizeFoldtreeDynamic.cc */; };
+		CB3DB6CB17C9CB60CC803E10 /* HybridizeProtocol.cc in Sources */ = {isa = PBXBuildFile; fileRef = 71B3444D9C40223FF309B185 /* HybridizeProtocol.cc */; };
+		F05002A8F774BF00548F5DD8 /* InsertChunkMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = D73F6944264E8644F60F0385 /* InsertChunkMover.cc */; };
+		6C78C14AC120C31F246B8DDF /* TemplateHistory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 023D455F0C0098A8AB2C2D70 /* TemplateHistory.cc */; };
+		C8DDEA04417E0E6BD48DCD38 /* WeightedFragmentTrialMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E6DE57DF6A7EC0EC5EED24BC /* WeightedFragmentTrialMover.cc */; };
+		6A9F9DE784C084B44D4F658F /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 346DB1A563745B75A2686300 /* util.cc */; };
 		86FF0EA516908833AE9A4FDB /* AddAssemblyConstraints.cc in Sources */ = {isa = PBXBuildFile; fileRef = D92D336976C8A23DB89076CE /* AddAssemblyConstraints.cc */; };
 		1D0448F2551C567DD42E7278 /* AssembleLinkerMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 689FB60C6D2C460F4F198B95 /* AssembleLinkerMover.cc */; };
 		720227352A8421B8F465B0C5 /* CombineChainsMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = A299B1FBA86225AC6C7AC150 /* CombineChainsMover.cc */; };
@@ -11446,6 +11456,34 @@
 		79F6D9E275CC4296B5170471 /* TorsionFeature.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TorsionFeature.cc; path = ../src/protocols/comparative_modeling/features/TorsionFeature.cc; sourceTree = SOURCE_ROOT; };
 		EA4AB07A882B598281923C46 /* TorsionFeature.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TorsionFeature.fwd.hh; path = ../src/protocols/comparative_modeling/features/TorsionFeature.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4B514BBDCEB8E553B26CB3A6 /* TorsionFeature.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TorsionFeature.hh; path = ../src/protocols/comparative_modeling/features/TorsionFeature.hh; sourceTree = SOURCE_ROOT; };
+		0AA3194CB149826BEED70226 /* CartesianHybridize.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CartesianHybridize.cc; path = ../src/protocols/comparative_modeling/hybridize/CartesianHybridize.cc; sourceTree = SOURCE_ROOT; };
+		91BF0B53528161E97D08D376 /* CartesianHybridize.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CartesianHybridize.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/CartesianHybridize.fwd.hh; sourceTree = SOURCE_ROOT; };
+		B2CC86A6AD7CAB30A0C5BAC1 /* CartesianHybridize.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CartesianHybridize.hh; path = ../src/protocols/comparative_modeling/hybridize/CartesianHybridize.hh; sourceTree = SOURCE_ROOT; };
+		FC53C995827CE3912FDCA848 /* ChunkTrialMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ChunkTrialMover.cc; path = ../src/protocols/comparative_modeling/hybridize/ChunkTrialMover.cc; sourceTree = SOURCE_ROOT; };
+		8216ABA44F075064257EEA99 /* ChunkTrialMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ChunkTrialMover.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/ChunkTrialMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		CCCADF8FBE44F23CA3166C3F /* ChunkTrialMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ChunkTrialMover.hh; path = ../src/protocols/comparative_modeling/hybridize/ChunkTrialMover.hh; sourceTree = SOURCE_ROOT; };
+		B556B93C2823ECB427FE25DD /* FoldTreeHybridize.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FoldTreeHybridize.cc; path = ../src/protocols/comparative_modeling/hybridize/FoldTreeHybridize.cc; sourceTree = SOURCE_ROOT; };
+		85F73648761D75FA13115FD4 /* FoldTreeHybridize.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FoldTreeHybridize.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/FoldTreeHybridize.fwd.hh; sourceTree = SOURCE_ROOT; };
+		C1A774EEB1A1F85832BC5BD1 /* FoldTreeHybridize.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FoldTreeHybridize.hh; path = ../src/protocols/comparative_modeling/hybridize/FoldTreeHybridize.hh; sourceTree = SOURCE_ROOT; };
+		192B5231E1B4BE12D0191F3D /* HybridizeFoldtreeBase.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HybridizeFoldtreeBase.cc; path = ../src/protocols/comparative_modeling/hybridize/HybridizeFoldtreeBase.cc; sourceTree = SOURCE_ROOT; };
+		AEAAAFC8B6330C9DE85ACD51 /* HybridizeFoldtreeBase.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridizeFoldtreeBase.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/HybridizeFoldtreeBase.fwd.hh; sourceTree = SOURCE_ROOT; };
+		EB88CB1A718CFFF1B7FAE0D2 /* HybridizeFoldtreeBase.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridizeFoldtreeBase.hh; path = ../src/protocols/comparative_modeling/hybridize/HybridizeFoldtreeBase.hh; sourceTree = SOURCE_ROOT; };
+		245D7F7176058AD6713CA771 /* HybridizeFoldtreeDynamic.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HybridizeFoldtreeDynamic.cc; path = ../src/protocols/comparative_modeling/hybridize/HybridizeFoldtreeDynamic.cc; sourceTree = SOURCE_ROOT; };
+		0DA1A26B6675C0EF2BCC4C42 /* HybridizeFoldtreeDynamic.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridizeFoldtreeDynamic.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/HybridizeFoldtreeDynamic.fwd.hh; sourceTree = SOURCE_ROOT; };
+		67A9E9684045C5431CDBC2F8 /* HybridizeFoldtreeDynamic.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridizeFoldtreeDynamic.hh; path = ../src/protocols/comparative_modeling/hybridize/HybridizeFoldtreeDynamic.hh; sourceTree = SOURCE_ROOT; };
+		71B3444D9C40223FF309B185 /* HybridizeProtocol.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HybridizeProtocol.cc; path = ../src/protocols/comparative_modeling/hybridize/HybridizeProtocol.cc; sourceTree = SOURCE_ROOT; };
+		6103E24135B8A3CC643C9231 /* HybridizeProtocol.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridizeProtocol.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/HybridizeProtocol.fwd.hh; sourceTree = SOURCE_ROOT; };
+		C0694BDFA6DC7499BB35BBC5 /* HybridizeProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridizeProtocol.hh; path = ../src/protocols/comparative_modeling/hybridize/HybridizeProtocol.hh; sourceTree = SOURCE_ROOT; };
+		D73F6944264E8644F60F0385 /* InsertChunkMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = InsertChunkMover.cc; path = ../src/protocols/comparative_modeling/hybridize/InsertChunkMover.cc; sourceTree = SOURCE_ROOT; };
+		EC7593FB16BA84B707836D4E /* InsertChunkMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = InsertChunkMover.hh; path = ../src/protocols/comparative_modeling/hybridize/InsertChunkMover.hh; sourceTree = SOURCE_ROOT; };
+		023D455F0C0098A8AB2C2D70 /* TemplateHistory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateHistory.cc; path = ../src/protocols/comparative_modeling/hybridize/TemplateHistory.cc; sourceTree = SOURCE_ROOT; };
+		2F25BE44E3AB9C85D55D6494 /* TemplateHistory.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TemplateHistory.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/TemplateHistory.fwd.hh; sourceTree = SOURCE_ROOT; };
+		BF0E9E5339438D4BD0D9E739 /* TemplateHistory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TemplateHistory.hh; path = ../src/protocols/comparative_modeling/hybridize/TemplateHistory.hh; sourceTree = SOURCE_ROOT; };
+		E6DE57DF6A7EC0EC5EED24BC /* WeightedFragmentTrialMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WeightedFragmentTrialMover.cc; path = ../src/protocols/comparative_modeling/hybridize/WeightedFragmentTrialMover.cc; sourceTree = SOURCE_ROOT; };
+		EF0DB49E21D80189B60EE428 /* WeightedFragmentTrialMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WeightedFragmentTrialMover.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/WeightedFragmentTrialMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		8D36CA38C5A295626FEB4CBE /* WeightedFragmentTrialMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WeightedFragmentTrialMover.hh; path = ../src/protocols/comparative_modeling/hybridize/WeightedFragmentTrialMover.hh; sourceTree = SOURCE_ROOT; };
+		346DB1A563745B75A2686300 /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/protocols/comparative_modeling/hybridize/util.cc; sourceTree = SOURCE_ROOT; };
+		FA48F10E5E2894937486C705 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/protocols/comparative_modeling/hybridize/util.hh; sourceTree = SOURCE_ROOT; };
 		D92D336976C8A23DB89076CE /* AddAssemblyConstraints.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AddAssemblyConstraints.cc; path = ../src/protocols/domain_assembly/AddAssemblyConstraints.cc; sourceTree = SOURCE_ROOT; };
 		4253EF47E5CE43DCC5514F06 /* AddAssemblyConstraints.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AddAssemblyConstraints.fwd.hh; path = ../src/protocols/domain_assembly/AddAssemblyConstraints.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C3BFA31D4A50B0EE0A9CF191 /* AddAssemblyConstraints.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AddAssemblyConstraints.hh; path = ../src/protocols/domain_assembly/AddAssemblyConstraints.hh; sourceTree = SOURCE_ROOT; };
@@ -11743,12 +11781,6 @@
 		FF0B204891E653454ABCA79F /* Ubiquitin_E2C_Modeler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ubiquitin_E2C_Modeler.cc; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.cc; sourceTree = SOURCE_ROOT; };
 		22C0936648E1ABE51F7FD644 /* Ubiquitin_E2C_Modeler.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ubiquitin_E2C_Modeler.fwd.hh; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.fwd.hh; sourceTree = SOURCE_ROOT; };
 		50657841228B7F3CC57123E3 /* Ubiquitin_E2C_Modeler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ubiquitin_E2C_Modeler.hh; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.hh; sourceTree = SOURCE_ROOT; };
-		FDB20DC37C7CD7639AF5D4EF /* ._Ab_TemplateInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._Ab_TemplateInfo.fwd.hh; path = ../src/protocols/antibody2/._Ab_TemplateInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
-		B17C44F0DFE55205D246E86F /* ._Ab_TemplateInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._Ab_TemplateInfo.hh; path = ../src/protocols/antibody2/._Ab_TemplateInfo.hh; sourceTree = SOURCE_ROOT; };
-		E0EF70BB7779B565C9581E99 /* ._AntibodyInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._AntibodyInfo.hh; path = ../src/protocols/antibody2/._AntibodyInfo.hh; sourceTree = SOURCE_ROOT; };
-		AD62087D670FEB63F11AF50C /* ._AntibodyModeler2.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._AntibodyModeler2.hh; path = ../src/protocols/antibody2/._AntibodyModeler2.hh; sourceTree = SOURCE_ROOT; };
-		1AEF3B9E524E98E4A1C8981C /* ._GraftMover2.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._GraftMover2.hh; path = ../src/protocols/antibody2/._GraftMover2.hh; sourceTree = SOURCE_ROOT; };
-		0BA72147DF15DFB69B8A4B1B /* ._GraftOneMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._GraftOneMover.hh; path = ../src/protocols/antibody2/._GraftOneMover.hh; sourceTree = SOURCE_ROOT; };
 		BF526A7B224B68C5C1ED5211 /* Ab_TemplateInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_TemplateInfo.cc; path = ../src/protocols/antibody2/Ab_TemplateInfo.cc; sourceTree = SOURCE_ROOT; };
 		C1B5F55917A764C796D59C3A /* Ab_TemplateInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_TemplateInfo.fwd.hh; path = ../src/protocols/antibody2/Ab_TemplateInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
 		F2C2FDF3EC8DFB2F2F804F2E /* Ab_TemplateInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_TemplateInfo.hh; path = ../src/protocols/antibody2/Ab_TemplateInfo.hh; sourceTree = SOURCE_ROOT; };
@@ -20395,6 +20427,7 @@
 			isa = PBXGroup;
 			children = (
 				DFCE4E8C77ABB3C58C095E01 /* features */,
+				4BD46669D747D3AD3EE99C18 /* hybridize */,
 				A3A35F65AF970E0D6457ED83 /* AlignRmsdTargetEvaluatorCreator.cc */,
 				24AB813A047521DD639EA1EC /* AlignRmsdTargetEvaluatorCreator.hh */,
 				FAE23AC5F4C6D86BCC5DE51C /* Align_RmsdEvaluator.cc */,
@@ -20476,6 +20509,42 @@
 			);
 			name = features;
 			path = ../src/protocols/comparative_modeling/features/;
+			sourceTree = SOURCE_ROOT;
+		};
+		4BD46669D747D3AD3EE99C18 /* hybridize */ = {
+			isa = PBXGroup;
+			children = (
+				0AA3194CB149826BEED70226 /* CartesianHybridize.cc */,
+				91BF0B53528161E97D08D376 /* CartesianHybridize.fwd.hh */,
+				B2CC86A6AD7CAB30A0C5BAC1 /* CartesianHybridize.hh */,
+				FC53C995827CE3912FDCA848 /* ChunkTrialMover.cc */,
+				8216ABA44F075064257EEA99 /* ChunkTrialMover.fwd.hh */,
+				CCCADF8FBE44F23CA3166C3F /* ChunkTrialMover.hh */,
+				B556B93C2823ECB427FE25DD /* FoldTreeHybridize.cc */,
+				85F73648761D75FA13115FD4 /* FoldTreeHybridize.fwd.hh */,
+				C1A774EEB1A1F85832BC5BD1 /* FoldTreeHybridize.hh */,
+				192B5231E1B4BE12D0191F3D /* HybridizeFoldtreeBase.cc */,
+				AEAAAFC8B6330C9DE85ACD51 /* HybridizeFoldtreeBase.fwd.hh */,
+				EB88CB1A718CFFF1B7FAE0D2 /* HybridizeFoldtreeBase.hh */,
+				245D7F7176058AD6713CA771 /* HybridizeFoldtreeDynamic.cc */,
+				0DA1A26B6675C0EF2BCC4C42 /* HybridizeFoldtreeDynamic.fwd.hh */,
+				67A9E9684045C5431CDBC2F8 /* HybridizeFoldtreeDynamic.hh */,
+				71B3444D9C40223FF309B185 /* HybridizeProtocol.cc */,
+				6103E24135B8A3CC643C9231 /* HybridizeProtocol.fwd.hh */,
+				C0694BDFA6DC7499BB35BBC5 /* HybridizeProtocol.hh */,
+				D73F6944264E8644F60F0385 /* InsertChunkMover.cc */,
+				EC7593FB16BA84B707836D4E /* InsertChunkMover.hh */,
+				023D455F0C0098A8AB2C2D70 /* TemplateHistory.cc */,
+				2F25BE44E3AB9C85D55D6494 /* TemplateHistory.fwd.hh */,
+				BF0E9E5339438D4BD0D9E739 /* TemplateHistory.hh */,
+				E6DE57DF6A7EC0EC5EED24BC /* WeightedFragmentTrialMover.cc */,
+				EF0DB49E21D80189B60EE428 /* WeightedFragmentTrialMover.fwd.hh */,
+				8D36CA38C5A295626FEB4CBE /* WeightedFragmentTrialMover.hh */,
+				346DB1A563745B75A2686300 /* util.cc */,
+				FA48F10E5E2894937486C705 /* util.hh */,
+			);
+			name = hybridize;
+			path = ../src/protocols/comparative_modeling/hybridize/;
 			sourceTree = SOURCE_ROOT;
 		};
 		60E847C57510B05AF38DB2C8 /* domain_assembly */ = {
@@ -20883,12 +20952,6 @@
 		6445E0E7F22FA5EC55670177 /* antibody2 */ = {
 			isa = PBXGroup;
 			children = (
-				FDB20DC37C7CD7639AF5D4EF /* ._Ab_TemplateInfo.fwd.hh */,
-				B17C44F0DFE55205D246E86F /* ._Ab_TemplateInfo.hh */,
-				E0EF70BB7779B565C9581E99 /* ._AntibodyInfo.hh */,
-				AD62087D670FEB63F11AF50C /* ._AntibodyModeler2.hh */,
-				1AEF3B9E524E98E4A1C8981C /* ._GraftMover2.hh */,
-				0BA72147DF15DFB69B8A4B1B /* ._GraftOneMover.hh */,
 				BF526A7B224B68C5C1ED5211 /* Ab_TemplateInfo.cc */,
 				C1B5F55917A764C796D59C3A /* Ab_TemplateInfo.fwd.hh */,
 				F2C2FDF3EC8DFB2F2F804F2E /* Ab_TemplateInfo.hh */,
@@ -25099,6 +25162,16 @@
 				ACBF0B5F1508026CDFD13B31 /* ResidueFeatureFactory.cc in Sources */,
 				25B2E211830BFA5C91E49F77 /* SSFeature.cc in Sources */,
 				2BC0BA14793CB4856E5063B9 /* TorsionFeature.cc in Sources */,
+				BD3DE84B7CB6D3A99521F885 /* CartesianHybridize.cc in Sources */,
+				D2F15493645A846F027F19D3 /* ChunkTrialMover.cc in Sources */,
+				F4DEC4A7CA34375B7EEF8670 /* FoldTreeHybridize.cc in Sources */,
+				F52FF150E715F2F33097A46B /* HybridizeFoldtreeBase.cc in Sources */,
+				1812579FB9C7268C583F8859 /* HybridizeFoldtreeDynamic.cc in Sources */,
+				CB3DB6CB17C9CB60CC803E10 /* HybridizeProtocol.cc in Sources */,
+				F05002A8F774BF00548F5DD8 /* InsertChunkMover.cc in Sources */,
+				6C78C14AC120C31F246B8DDF /* TemplateHistory.cc in Sources */,
+				C8DDEA04417E0E6BD48DCD38 /* WeightedFragmentTrialMover.cc in Sources */,
+				6A9F9DE784C084B44D4F658F /* util.cc in Sources */,
 				86FF0EA516908833AE9A4FDB /* AddAssemblyConstraints.cc in Sources */,
 				1D0448F2551C567DD42E7278 /* AssembleLinkerMover.cc in Sources */,
 				720227352A8421B8F465B0C5 /* CombineChainsMover.cc in Sources */,

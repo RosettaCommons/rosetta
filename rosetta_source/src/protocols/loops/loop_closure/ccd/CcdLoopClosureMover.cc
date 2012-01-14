@@ -28,6 +28,9 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+
+
 
 //last boolean causes this tracer to be muted by default
 static basic::Tracer TR_loop("protocols.loops.loop_closure.ccd.CcdLoopClosureMover", basic::t_info, true);

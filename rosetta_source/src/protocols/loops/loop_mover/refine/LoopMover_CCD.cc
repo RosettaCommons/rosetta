@@ -26,7 +26,7 @@
 // Rosetta Headers
 #include <core/chemical/VariantType.hh>
 
-#include <core/conformation/util.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -36,8 +36,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/fragment/FragSet.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -76,6 +76,9 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
+
+//Auto Headers
+
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

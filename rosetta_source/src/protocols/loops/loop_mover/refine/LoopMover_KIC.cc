@@ -32,13 +32,13 @@
 #include <core/chemical/VariantType.hh>
 
 #include <core/id/TorsionID.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/symmetry/util.hh>
@@ -73,12 +73,14 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <fstream>
+
+//Auto Headers
+
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end
 
 

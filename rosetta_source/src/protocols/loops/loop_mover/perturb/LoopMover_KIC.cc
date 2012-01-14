@@ -46,11 +46,11 @@
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 
 #include <basic/Tracer.hh>
 
@@ -66,7 +66,7 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/pose/util.hh>
@@ -75,6 +75,9 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
+
+//Auto Headers
+
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS

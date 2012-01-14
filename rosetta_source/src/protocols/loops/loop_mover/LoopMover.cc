@@ -50,9 +50,12 @@
 
 // AUTO-REMOVED #include <basic/options/option.hh>
 #include <numeric/random/random.hh>
+
+//Auto Headers
+
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
-#include <utility/vector1.hh>
+// Auto-header: duplicate removed #include <utility/vector1.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

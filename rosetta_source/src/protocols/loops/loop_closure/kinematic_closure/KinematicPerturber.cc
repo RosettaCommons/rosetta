@@ -41,6 +41,9 @@
 #include <core/kinematics/MoveMap.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+
+
 
 namespace protocols {
 namespace loops {

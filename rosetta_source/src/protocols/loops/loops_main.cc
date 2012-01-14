@@ -23,7 +23,7 @@
 //#include <protocols/simple_moves/BackboneMover.hh>
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
 
 // Rosetta Headers
@@ -89,7 +89,7 @@
 #include <ObjexxFCL/format.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/conformation/Conformation.hh>
 
 
 

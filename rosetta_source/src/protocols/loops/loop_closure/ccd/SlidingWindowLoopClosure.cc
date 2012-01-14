@@ -76,6 +76,9 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+
+
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end

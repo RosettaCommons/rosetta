@@ -21,7 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh> // tracer output
 
-#include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
 
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -45,27 +45,9 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
 #include <ObjexxFCL/format.hh>
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <complex>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <iomanip>
-#include <iosfwd>
-#include <istream>
-#include <limits>
-#include <list>
-#include <ostream>
-#include <set>
-#include <sstream>
-#include <utility>
-#include <vector>
 #include <basic/options/option.hh>
 
 

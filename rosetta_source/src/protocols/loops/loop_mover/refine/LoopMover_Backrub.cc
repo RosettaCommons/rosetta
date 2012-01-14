@@ -22,7 +22,7 @@
 //// Rosetta Headers
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
@@ -62,6 +62,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/keys/Key3Vector.hh>
+
+//Auto Headers
+
 
 
 namespace protocols {

@@ -29,7 +29,7 @@
 // AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
@@ -67,13 +67,15 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
-#include <protocols/rosetta_scripts/util.hh>
-#include <utility/string_util.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/id/AtomID_Map.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <utility/string_util.hh>
+#include <utility/vector1.hh>
+#include <boost/foreach.hpp>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

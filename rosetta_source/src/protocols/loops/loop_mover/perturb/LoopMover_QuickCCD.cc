@@ -66,6 +66,9 @@
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+
+
 namespace protocols {
 namespace loops {
 namespace loop_mover {
