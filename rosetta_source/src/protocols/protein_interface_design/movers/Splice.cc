@@ -95,7 +95,8 @@ Splice::Splice() :
 	database_entry_( 0 ),
 	template_file_( "" ),
 	poly_ala_( true ),
-	equal_length_( false )
+	equal_length_( false ),
+	saved_pose_( NULL )
 {
 	torsion_database_.clear();
 }
@@ -357,7 +358,7 @@ Splice::apply( core::pose::Pose & pose )
 	DesignAroundOperationOP dao = new DesignAroundOperation;
 	dao->design_shell( 1.0 ); // threaded sequence operation needs to design, and will restrict design to the loop only
 	dao->repack_shell( 8.0 );
-	for( core::Size i = from_res() - 3; i <= from_res() + total_residue_new + 2; ++i ){
+	for( core::Size i = from_res() - 1; i <= from_res() + total_residue_new + 1; ++i ){
 		if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
 			dao->include_residue( i );
 	}
