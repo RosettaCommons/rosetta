@@ -49,6 +49,7 @@
 //#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/TenANeighborGraph.hh>
