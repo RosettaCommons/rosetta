@@ -21,6 +21,7 @@
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -58,6 +59,10 @@ void PartialThreadingMover::apply(
 
 	SequenceMapping query_to_pdbseq = get_qt_mapping(query_pose);
 
+	//fpd update PDBinfo to have correct residue numbering
+	utility::vector1< int > pdb_numbering;
+	utility::vector1< char > pdb_chains;
+
 	// iterate backwards as we change downstream sequence numbering with deletions
 	tr.Debug << "current sequence is " << query_pose.sequence() << std::endl;
 	for ( Size resi = query_pose.total_residue(); resi >= 1; --resi ) {
@@ -65,13 +70,23 @@ void PartialThreadingMover::apply(
 
 		if ( t_resi == 0 && query_pose.total_residue() > 1 ) {
 			query_pose.conformation().delete_residue_slow(resi);
+		} else {
+			pdb_numbering.push_back( resi );
+			pdb_chains.push_back( 'A' );
 		}
 	} // for resi
 	tr.Debug << "final sequence is " << query_pose.sequence() << std::endl;
 
+	std::reverse(pdb_numbering.begin(), pdb_numbering.end());
+	core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo(query_pose,true) );
+	new_pdb_info->set_numbering( pdb_numbering );
+	new_pdb_info->set_chains( pdb_chains );
+	query_pose.pdb_info( new_pdb_info );
+	query_pose.pdb_info()->obsolete( false );
+
 	tr.flush_all_channels();
 } // apply
-
+ 
 void PartialThreadingMover::parse_my_tag(
 	utility::tag::TagPtr const tag,
 	protocols::moves::DataMap & /* data */,
