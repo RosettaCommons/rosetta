@@ -15,18 +15,12 @@
 #include <protocols/rosetta_scripts/ParsedProtocolCreator.hh>
 #include <protocols/moves/NullMover.hh>
 
-#include <protocols/viewer/viewers.hh>
 // Project Headers
-//#include <protocols/moves/ResidueMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/moves/MoverStatus.hh>
 
 #include <core/kinematics/Jump.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-
-
 #include <basic/Tracer.hh>
 
 
@@ -95,11 +89,7 @@ ParsedProtocolCreator::mover_name()
 void
 ParsedProtocol::apply( Pose & pose )
 {
-//	runtime_assert( movers_.size() );
-
 	protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY );
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "start_pose" );
-
 	pose.update_residue_neighbors();
 
 	//fpd search the mover-filter pairs backwards for movers that have remaining poses
