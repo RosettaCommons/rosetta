@@ -15,6 +15,7 @@
 #include <protocols/protein_interface_design/movers/Splice.hh>
 #include <protocols/protein_interface_design/movers/SpliceCreator.hh>
 #include <utility/string_util.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -24,7 +25,7 @@
 #define foreach BOOST_FOREACH
 // Package headers
 #include <core/pose/Pose.hh>
-//#include <core/pose/util.hh>
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -96,7 +97,8 @@ Splice::Splice() :
 	template_file_( "" ),
 	poly_ala_( true ),
 	equal_length_( false ),
-	saved_pose_( NULL )
+	template_pose_( NULL ),
+	saved_fold_tree_( NULL )
 {
 	torsion_database_.clear();
 }
@@ -128,10 +130,11 @@ void
 copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res ){
 	using namespace core::pose;
 	using namespace protocols::rosetta_scripts;
+	using namespace core::chemical;
 	core::Size const from_nearest_on_source( find_nearest_res( source, target, from_res ) );
 	core::Size const to_nearest_on_source( find_nearest_res( source, target, to_res ) );
 
-	for( core::Size i = 0; i < to_res - from_res; ++i ){
+	for( core::Size i = 0; i <= to_res - from_res; ++i ){
 		target.set_phi( from_res + i, source.phi( from_nearest_on_source + i ) );
 		target.set_psi( from_res + i, source.psi( from_nearest_on_source + i ) );
 		target.set_omega( from_res + i, source.omega( from_nearest_on_source + i ) );
@@ -145,21 +148,15 @@ Splice::apply( core::pose::Pose & pose )
 	using core::chemical::DISULFIDE;
 
 	save_values();
-
-	static core::pose::Pose template_pose;
-	static bool first_pass( true ); /// let's not read from disk more than necessary
 	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
-		static core::Size template_from_res( 0 ), template_to_res( 0 );
+		core::Size template_from_res( 0 ), template_to_res( 0 );
 
-		if( first_pass ){
-			core::import_pose::pose_from_pdb( template_pose, template_file_ );
-			if( from_res() && to_res() ){
-				template_from_res = find_nearest_res( pose, template_pose, from_res());
-				template_to_res   = find_nearest_res( pose, template_pose, to_res()  );
-				runtime_assert( template_from_res );
-				runtime_assert( template_to_res );
-			}
-		}/// fi first_pass
+		if( from_res() && to_res() ){
+			template_from_res = find_nearest_res( pose, *template_pose_, from_res());
+			template_to_res   = find_nearest_res( pose, *template_pose_, to_res()  );
+			runtime_assert( template_from_res );
+			runtime_assert( template_to_res );
+		}
 
 		from_res( template_from_res );
 		to_res( template_to_res );
@@ -225,12 +222,13 @@ Splice::apply( core::pose::Pose & pose )
 				dbase_entry = (core::Size) ( RG.uniform() * torsion_database_.size() + 1);
 				dofs = torsion_database_[ dbase_entry ];
 				rand_trials++;
-				core::Size const nearest_to_entry_start_on_pose( find_nearest_res( pose, template_pose, dofs.start_loop() ) );
-				core::Size const nearest_to_entry_stop_on_pose( find_nearest_res( pose, template_pose, dofs.stop_loop() ) );
+				core::Size const nearest_to_entry_start_on_pose( find_nearest_res( pose, *template_pose_, dofs.start_loop() ) );
+				core::Size const nearest_to_entry_stop_on_pose( find_nearest_res( pose, *template_pose_, dofs.stop_loop() ) );
 			  pose_residues = nearest_to_entry_stop_on_pose - nearest_to_entry_start_on_pose + 1;
 			} while( equal_length() && dofs.size() != pose_residues && rand_trials < torsion_database_.size() * 10/*prevent infinite loops*/ );
 			if( rand_trials >=  torsion_database_.size() * 10 ){
 				TR<<"Loop of appropriate length not found in database. Returning"<<std::endl;
+				retrieve_values();
 				return;
 			}
 			else
@@ -256,8 +254,8 @@ Splice::apply( core::pose::Pose & pose )
 		nearest_to_from = 1;
 
 		if( template_file_ != "" ){
-			from_res( find_nearest_res( pose, template_pose, dofs.start_loop() ) );
-			to_res(   find_nearest_res( pose, template_pose, dofs.stop_loop()  ) );
+			from_res( find_nearest_res( pose, *template_pose_, dofs.start_loop() ) );
+			to_res(   find_nearest_res( pose, *template_pose_, dofs.stop_loop()  ) );
 			runtime_assert( from_res() );
 			runtime_assert( to_res() );
 			cut_site = dofs.cut_site() - dofs.start_loop() + from_res();
@@ -271,10 +269,11 @@ Splice::apply( core::pose::Pose & pose )
   }// read from dbase
 	TR<<"From res: "<<from_res()<<" to_res: "<<to_res()<<std::endl;
 	runtime_assert( to_res() > from_res() );
-	if( !first_pass )
-		copy_stretch( pose, *saved_pose_, std::max( ( core::Size ) 2, from_res() - 6 ), std::min( to_res() + 6, pose.total_residue()-1 ) );
-//		remove_cutpoint_variants_in_interval( pose, std::max( ( core::Size ) 2, from_res() - 6 ), std::min( to_res() + 6, pose.total_residue()-1 ) ); //from_res(), to_res() );
-	first_pass = false;
+
+	if( saved_fold_tree_ )
+		pose.fold_tree( *saved_fold_tree_ );
+	copy_stretch( pose, *template_pose_, std::max( ( core::Size ) 2, from_res() - 6 ), std::min( to_res() + 6, pose.total_residue()-1 ) );
+
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
 	protocols::loops::FoldTreeFromLoops ffl;
 	using namespace utility;
@@ -299,6 +298,8 @@ Splice::apply( core::pose::Pose & pose )
 	loops->push_back( loop );
 	ffl.loops( loops );
 	ffl.apply( pose );
+
+
 	core::Size const residue_diff( nearest_to_to - nearest_to_from - ( to_res() - from_res()) );
 /// change the loop length
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
@@ -322,6 +323,7 @@ Splice::apply( core::pose::Pose & pose )
 		pose.set_omega( pose_resi, dofs[ i + 1 ].omega() );
 
 	}
+
 	std::string threaded_seq( "" );/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
 /// Now decide on residue identities: Alanine throughout except when the template pose has Gly, Pro or a residue that is the same as that in the original pose
 	for( core::Size i = 0; i < total_residue_new; ++i ){
@@ -441,8 +443,10 @@ Splice::apply( core::pose::Pose & pose )
 	else{ // if no ccd, still need to thread sequence
 		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
 		protocols::simple_moves::PackRotamersMover prm( scorefxn(), ptask );
+
 		prm.apply( pose );
 	}
+	saved_fold_tree_ = new core::kinematics::FoldTree( pose.fold_tree() );
 	retrieve_values();
 }
 
@@ -497,7 +501,13 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	template_file( tag->getOption< std::string >( "template_file", "" ) );
 	equal_length( tag->getOption< bool >( "equal_length", false ) );
 	poly_ala( tag->getOption< bool >( "thread_ala", true ) );
-	saved_pose_ = new core::pose::Pose( pose );
+
+	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
+		template_pose_ = new core::pose::Pose;
+		core::import_pose::pose_from_pdb( *template_pose_, template_file_ );
+		TR<<"loading tempalte_pose from "<<template_file_<<std::endl;
+	}
+
 	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
 }
 

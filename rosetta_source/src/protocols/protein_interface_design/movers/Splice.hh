@@ -22,6 +22,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -143,7 +144,8 @@ private:
 	std::string template_file_; //dflt ""; which source file to use as the template to determine what from_res() and to_res() refer to. The input structure may change during a trajectory and so from_res() and to_res() might lose their sense. If this is "", the input file is taken to be template
 	bool poly_ala_; /// dflt true; thread ala residues in each position other than Gly/Pro or conserved in the source pdb. If false, keeps the input sequence (except Gly/Pro, which are replaced)
 	bool equal_length_; // dflt false; restrict threading to loops equal in length to the original
-	core::pose::PoseOP saved_pose_;
+	core::pose::PoseOP template_pose_;
+	core::kinematics::FoldTreeOP saved_fold_tree_;
 };
 
 
