@@ -24,7 +24,7 @@
 #define foreach BOOST_FOREACH
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+//#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -123,18 +123,19 @@ remove_cutpoint_variants_in_interval( core::pose::Pose & pose, core::Size const 
 }
 */
 
-/// @brief copy a stretch of aligned residues from source to target. No repacking no nothing.
+/// @brief copy a stretch of aligned phi-psi dofs from source to target. No repacking no nothing.
 void
 copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res ){
-	core::pose::ResMap res_map;
 	using namespace core::pose;
 	using namespace protocols::rosetta_scripts;
 	core::Size const from_nearest_on_source( find_nearest_res( source, target, from_res ) );
 	core::Size const to_nearest_on_source( find_nearest_res( source, target, to_res ) );
 
-	for( core::Size i = 0; i < to_res - from_res; ++i )
-		res_map.insert( std::pair< core::Size, core::Size >( from_res + i, from_nearest_on_source + i ) );
-	copy_dofs( target, source, res_map );
+	for( core::Size i = 0; i < to_res - from_res; ++i ){
+		target.set_phi( from_res + i, source.phi( from_nearest_on_source + i ) );
+		target.set_psi( from_res + i, source.psi( from_nearest_on_source + i ) );
+		target.set_omega( from_res + i, source.omega( from_nearest_on_source + i ) );
+	}
 }
 
 void
