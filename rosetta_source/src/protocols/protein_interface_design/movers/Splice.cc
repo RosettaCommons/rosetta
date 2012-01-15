@@ -503,9 +503,16 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	poly_ala( tag->getOption< bool >( "thread_ala", true ) );
 
 	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
-		template_pose_ = new core::pose::Pose;
-		core::import_pose::pose_from_pdb( *template_pose_, template_file_ );
-		TR<<"loading tempalte_pose from "<<template_file_<<std::endl;
+		if( data.has( "poses", template_file_ ) ){
+			template_pose_ = data.get< core::pose::Pose * >( "poses", template_file_ );
+			TR<<"using template pdb from datamap"<<std::endl;
+		}
+		else{
+			template_pose_ = new core::pose::Pose;
+			core::import_pose::pose_from_pdb( *template_pose_, template_file_ );
+			data.add( "poses", template_file_, template_pose_ );
+			TR<<"loading template_pose from "<<template_file_<<std::endl;
+		}
 	}
 
 	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
