@@ -68,7 +68,7 @@
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
-#include <protocols/rna/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <protocols/rna/MultipleDomainMover.hh>
 #include <protocols/rna/RNA_ChunkLibrary.hh>
 #include <protocols/rna/RNA_DataReader.hh>
@@ -589,7 +589,7 @@ general_initialize( 	pose::Pose & pose,
 											protocols::rna::RNA_StructureParametersOP & rna_structure_parameters_,
 											protocols::coarse_rna::CoarseRNA_LoopCloserOP & rna_loop_closer_,
 											protocols::rna::RNA_ChunkLibraryOP & rna_chunk_library_,
-											protocols::rna::AllowInsertOP &  allow_insert_
+											protocols::toolbox::AllowInsertOP &  allow_insert_
 ){
 
 	using namespace core::chemical;
@@ -675,6 +675,7 @@ coarse_rb_test(){
 	using namespace protocols::coarse_rna;
 	using namespace protocols::rna;
 	using namespace protocols::moves;
+	using namespace protocols::toolbox;
 	using namespace core::pose;
 
 	// create extended coarse grained pose.
@@ -767,7 +768,7 @@ get_ideal_angle_sets(  	 utility::vector1< utility::vector1< Real > > & angle_se
 //////////////////////////////////////////////////////////////////////////////////////
 void
 get_angle_sets(  pose::Pose const & pose,
-								 protocols::rna::AllowInsertOP allow_insert,
+								 protocols::toolbox::AllowInsertOP allow_insert,
 								 utility::vector1< utility::vector1< Real > > & angle_sets,
 								 utility::vector1< utility::vector1< core::id::AtomID > > & angle_ids,
 								 bool const sample_angles_ ){
@@ -1321,6 +1322,7 @@ enumerate_map_test(){
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
 	using namespace protocols::rna;
+	using namespace protocols::toolbox;
 	using namespace core::pose;
 
 	// create extended coarse grained pose.
