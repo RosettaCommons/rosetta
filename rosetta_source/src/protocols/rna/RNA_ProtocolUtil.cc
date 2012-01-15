@@ -439,6 +439,9 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 		conformation::Residue const & rsd( pose.residue(i) );
 		if (!rsd.is_RNA() ) continue;
 
+		if (!rsd.type().has( " O1P")) continue;
+		if (!rsd.type().has( " O2P")) continue;
+
 		Vector const temp1 = rsd.xyz( " O1P" );
 		Vector const temp2 = rsd.xyz( " O2P" );
 		pose.set_xyz( id::AtomID( rsd.atom_index( " O1P" ), i ), temp2 );
