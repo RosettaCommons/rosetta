@@ -27,6 +27,7 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
+#include <protocols/viewer/viewers.hh>
 
 
 
@@ -40,12 +41,11 @@
 
 
 
-
-
-
-int
-main( int argc, char * argv [] )
+///////////////////////////////////////////////////////////////
+void*
+my_main( void* )
 {
+
 	using namespace basic::options;
 	using namespace protocols::docking;
 	using namespace protocols::jd2;
@@ -53,7 +53,7 @@ main( int argc, char * argv [] )
 	DockingProtocol::register_options();
 	protocols::jd2::register_options();
 	// initialize core
-	devel::init(argc, argv);
+
 //	devel::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
 	DockingProtocolOP dp = new DockingProtocol();
@@ -68,3 +68,13 @@ main( int argc, char * argv [] )
 	JobDistributor::get_instance()->go(dp);
 }
 
+
+///////////////////////////////////////////////////////////////
+int
+main( int argc, char * argv [] )
+{
+
+	devel::init(argc, argv);
+	protocols::viewer::viewer_main( my_main );
+
+}

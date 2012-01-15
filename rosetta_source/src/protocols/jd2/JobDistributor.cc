@@ -237,10 +237,6 @@ JobDistributor::go_main( protocols::moves::MoverOP mover ) {
       // attach boinc graphics pose observer
       protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
 #endif
-#ifdef GL_GRAPHICS
-		//nonboinc viewer
-		protocols::viewer::add_conformation_viewer( pose.conformation(), "start_pose" );
-#endif
 	while ( obtain_new_job() ) {
 		++tried_jobs; //yes, we tried at least one job
 
@@ -360,6 +356,10 @@ JobDistributor::go_main( protocols::moves::MoverOP mover ) {
       // attach boinc graphics pose observer
       // do it here because pose_from_job may replace the pose conformation
       protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
+#endif
+#ifdef GL_GRAPHICS
+		//nonboinc viewer
+		protocols::viewer::add_conformation_viewer( pose.conformation(), "start_pose" );
 #endif
 
 		} else {
