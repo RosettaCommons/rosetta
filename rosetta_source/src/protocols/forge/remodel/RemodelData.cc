@@ -287,7 +287,14 @@ protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile()
 			// but not making duplicates in the blueprint held by RemodelData
 			if (option[ OptionKeys::remodel::repeat_structure].user()){
 				for (int rep = 1; rep< option[ OptionKeys::remodel::repeat_structure ]; rep++){
-					oss << line.index + length*rep << " _ " ;
+								//chain defined by option, no chain by default
+								if (basic::options::option[ OptionKeys::run::chain].user()) {
+									std::string const chain (basic::options::option[ OptionKeys::run::chain]);
+									oss << line.index + length*rep << " " << chain << " " ;
+								}
+								else {
+													oss << line.index + length*rep << " _ " ;
+								}
 					for (int i = 3; i< (int)split_info.size();  i++){
 									if (split_info[i].substr(0,3) != "CST"){
 										oss << split_info[i] << " " ;

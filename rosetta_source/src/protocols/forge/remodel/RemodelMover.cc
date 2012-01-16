@@ -777,6 +777,9 @@ if (working_model.manager.size()!= 0){
 		filecount++;
 	}
 
+	// update PDBinfo
+  pose.pdb_info( new core::pose::PDBInfo( pose ));
+
 
 		// setup calculators
 		CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
