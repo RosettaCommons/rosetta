@@ -50,6 +50,8 @@ sources = {
 		#"contact_map_from_homologs",
 	],
 	"pilot/cmiles" : [
+                #"close_loops_cart",
+                #"close_loops_ccd",
                 #"fragment_rmsd",
                 #"helix_rotate",
 		"medal",
