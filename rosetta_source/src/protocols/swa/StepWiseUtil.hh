@@ -72,7 +72,9 @@ namespace swa {
 	void
 	Figure_out_moving_residues( kinematics::MoveMap & mm, pose::Pose const & pose,
 															utility::vector1< Size > const & fixed_res,
-															bool const move_takeoff_torsions = true	);
+															bool const move_takeoff_torsions = true,
+															bool const move_jumps_between_chains = false
+															);
 
 	void
 	pdbslice( core::pose::Pose & new_pose,

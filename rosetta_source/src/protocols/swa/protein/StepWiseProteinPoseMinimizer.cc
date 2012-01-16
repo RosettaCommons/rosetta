@@ -25,6 +25,7 @@
 //#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/constraints/util.hh>
@@ -65,6 +66,7 @@ namespace protein {
     moving_residues_( moving_residues ),
 		move_takeoff_torsions_( true ),
 		rescore_only_( false ),
+		move_jumps_between_chains_( false ),
 		silent_file_( "" ),
     fa_scorefxn_( core::scoring::getScoreFunction() ),
 		min_type_( "dfpmin_armijo_nonmonotone" ), // used to be dfpmin
@@ -108,8 +110,7 @@ namespace protein {
 
     kinematics::MoveMap mm_start, mm;
 		std::cout << "MOVE TAKEOFF TORSIONS: " << move_takeoff_torsions_ << std::endl;
-		protocols::swa::Figure_out_moving_residues( mm_start, pose, fixed_res_, move_takeoff_torsions_ );
-
+		protocols::swa::Figure_out_moving_residues( mm_start, pose, fixed_res_, move_takeoff_torsions_, move_jumps_between_chains_ );
 		mm = mm_start;
 
 		//		using namespace core::id;
@@ -210,7 +211,11 @@ namespace protein {
 				Size j( (*iter)->get_other_ind( i ) );
 				if ( pose.residue(j).has_variant_type( "VIRTUAL_RESIDUE" ) ) continue;
 
-				mm.set_chi( j, true );
+				if ( pose.residue(j).is_protein() ){
+					mm.set_chi( j, true );
+				} else if ( pose.residue(j).is_RNA() ){
+					mm.set( id::TorsionID( j, id::CHI, 4), true ); // 2'-OH.
+				}
 
 			}
 		}

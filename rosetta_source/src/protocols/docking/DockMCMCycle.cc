@@ -83,6 +83,9 @@ using basic::T;
 #include <utility/options/IntegerVectorOption.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
+
 
 using basic::Error;
 using basic::Warning;
@@ -159,6 +162,9 @@ DockMCMCycle::set_task_factory( core::pack::task::TaskFactoryCOP tf )
 void DockMCMCycle::set_default()
 {
 
+  using namespace basic::options; //quick hack by rhiju
+  using namespace basic::options::OptionKeys::docking; // quick hack by rhiju -- later feed this in through dockingprotocol
+
 	trans_magnitude_ = 0.1;
 	rot_magnitude_ = 5.0;
 
@@ -175,6 +181,18 @@ void DockMCMCycle::set_default()
 	for ( DockJumps::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
 		movemap_->set_jump( *it, true );
 	}
+
+	// perhaps call this dock_minimize_bb_res or something.
+	if ( option[ bb_min_res ].user() ){
+	  utility::vector1< Size > const & min_res = option[ bb_min_res ]();
+	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[n], true );
+	}
+	if ( option[ sc_min_res ].user() ){
+	  utility::vector1< Size > const & min_res = option[ sc_min_res ]();
+	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[n], true );
+	}
+
+
 
 	// setup values for minimization
 	min_tolerance_ = 0.01;

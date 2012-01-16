@@ -29,6 +29,9 @@
 
 #include <utility/vector1.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
+
 
 using namespace protocols::moves;
 using namespace core;
@@ -59,9 +62,9 @@ DockMinMover::DockMinMover(
 	minimize_trial_ = new TrialMover( min_mover, mc_ );
 }
 
-	
-	
-//JQX: made a new constructor, which can take the mc_ object	
+
+
+//JQX: made a new constructor, which can take the mc_ object
 DockMinMover::DockMinMover(
 	DockJumps const movable_jumps,
 	core::scoring::ScoreFunctionCOP scorefxn,
@@ -74,11 +77,11 @@ DockMinMover::DockMinMover(
 			    ( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ );
 	minimize_trial_ = new TrialMover( min_mover, mc_ );
 }
-	
-	
-	
-	
-	
+
+
+
+
+
 DockMinMover::DockMinMover(
 	DockJumps const movable_jumps,
 	core::kinematics::MoveMapOP movemap,
@@ -101,6 +104,10 @@ DockMinMover::DockMinMover(
 DockMinMover::~DockMinMover(){}
 
 void DockMinMover::set_default() {
+
+  using namespace basic::options; //quick hack by rhiju
+  using namespace basic::options::OptionKeys::docking; // quick hack by rhiju -- later feed this in through dockingprotocol
+
 	//sets up default movemap
 	movemap_ = new kinematics::MoveMap();
 	movemap_->set_chi( false );
@@ -108,6 +115,18 @@ void DockMinMover::set_default() {
 	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
 		movemap_->set_jump( *it, true );
 	}
+
+
+	// perhaps call this dock_minimize_bb_res or something.
+	if ( option[ bb_min_res ].user() ){
+	  utility::vector1< Size > const & min_res = option[ bb_min_res ]();
+	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[n], true );
+	}
+	if ( option[ sc_min_res ].user() ){
+	  utility::vector1< Size > const & min_res = option[ sc_min_res ]();
+	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[n], true );
+	}
+
 
 	//sets up minimization parameters
 //	min_tolerance_ = 1.0; /////was 0.01, in r++ docking, it is actually 1.0!! with 0.02 as the "tight" tolerance

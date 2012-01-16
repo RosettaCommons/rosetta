@@ -54,6 +54,9 @@ namespace protein {
 		utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_set_lists() const;
 		utility::vector1< core::id::TorsionID > const & which_torsions() const;
 
+		void
+		set_ccd_close_res( Size const value ){ ccd_close_res_ = value;}
+
 	private:
 
 		bool
@@ -87,6 +90,7 @@ namespace protein {
 		utility::vector1< Size > working_bridge_res_;
 		utility::vector1< Size > moving_residues_;
 		utility::vector1< bool > is_pre_proline_;
+		Size ccd_close_res_;
 
 		loops::Loop loop_;
 		core::kinematics::MoveMap mm_;

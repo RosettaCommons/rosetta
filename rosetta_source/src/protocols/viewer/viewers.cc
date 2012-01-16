@@ -873,6 +873,8 @@ display_residues_wireframe(
 				if ( width.length_squared() ) width.normalize();
 				width *= graphics::protein_wireframeScale;
 
+				if ( rsd.atom_type(m).is_hydrogen() ) width *= 0.5;
+
 				glColor3fxyz( color1 );
 
 				if ( prev_set[ m ] ) {
@@ -1852,13 +1854,28 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 	glPushMatrix();
 	glTranslatef(-center.x(), -center.y(), -center.z());
 
-	if ( total_residue > 0 && residues[1]->is_RNA() ) {
+	utility::vector1< conformation::ResidueCOP > residues_protein, other_residues;
+	for (Size n = 1; n <= residues.size(); n++ ){
+		conformation::ResidueCOP rsd = residues[ n ];
+		if ( rsd->is_protein() ) {
+			residues_protein.push_back( rsd );
+		} else {
+			other_residues.push_back( rsd );
+		}
+	}
+
+
+	if  ( residues_protein.size() > 0 ){
+		draw_backbone( gs, residues_protein, ss );
+		draw_sidechains( gs, residues_protein, 1, residues_protein.size() );
+		draw_sphere( gs, residues_protein );
+	}
+
+	if ( other_residues.size() > 0 ){
+		ColorMode colormode_save = gs.Color_mode;
 		gs.Color_mode = RHIJU_COLOR;
-		display_residues_wireframe( gs, residues, center );
-	} else {
-		draw_backbone( gs, residues, ss );
-		draw_sidechains( gs, residues, 1, total_residue );
-		draw_sphere( gs, residues );
+		display_residues_wireframe( gs, other_residues, Vector( 0.0, 0.0, 0.0) );
+		gs.Color_mode = colormode_save;
 	}
 
 	glPopMatrix();

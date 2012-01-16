@@ -86,6 +86,7 @@ namespace protein {
 		working_bridge_res_( job_parameters->working_bridge_res() ),
 		moving_residues_( job_parameters->working_moving_res_list() ),
 		is_pre_proline_( job_parameters->is_pre_proline() ),
+		ccd_close_res_( 0 ),
 		verbose_( true )
   {
 		Mover::type("StepWiseProteinCCD_Closer");
@@ -224,17 +225,32 @@ namespace protein {
 
 		Size loop_start( 0 ), loop_end( 0 ), cutpoint( 0 );
 
-		// find the cutpoint...
-		for ( Size n = 1; n < pose.total_residue(); n++ ){
-			if ( pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) &&
-					 pose.residue_type( n+1 ).has_variant_type( CUTPOINT_UPPER ) ){
-				if ( cutpoint > 0 ) utility_exit_with_message( "Cannot specify more than one closed cutpoint in StepWiseProteinCCD_Closer!" );
-				cutpoint = n;
-			}
-		}
-		if ( cutpoint == 0 ) utility_exit_with_message( "Must specify one closed cutpoint in StepWiseProteinCCD_Closer!" );
-
 		Size const num_bridge_res = working_bridge_res_.size();
+
+		if ( ccd_close_res_ > 0 ) {
+
+			cutpoint = ccd_close_res_;
+			if ( !pose.residue_type( cutpoint ).has_variant_type( CUTPOINT_LOWER ) ||
+					 !pose.residue_type( cutpoint+1 ).has_variant_type( CUTPOINT_UPPER ) ) utility_exit_with_message( "ccd_close_res needs to be specified as a cutpoint_closed!" );
+
+		} else {
+
+			// find the cutpoint...
+			for ( Size n = 1; n <= pose.total_residue() ; n++ ){
+
+				if ( num_bridge_res > 0  &&  ( (n < working_bridge_res_[1]-1) || (n > working_bridge_res_[num_bridge_res] ) ) ) continue;
+
+				if ( pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) &&
+						 pose.residue_type( n+1 ).has_variant_type( CUTPOINT_UPPER ) ){
+					if ( cutpoint > 0 ) utility_exit_with_message( "Cannot specify more than one closed cutpoint inside the bridge_residues in StepWiseProteinCCD_Closer! Consider using -ccd_close_res to specify, or else stick to one cutpoint_closed." );
+					cutpoint = n;
+				}
+			}
+
+		}
+
+		if ( cutpoint == 0 ) utility_exit_with_message( "Must specify one closed cutpoint within bridge_res in StepWiseProteinCCD_Closer!" );
+
 		if ( num_bridge_res  == 0 ) {
 			// could be just twiddling torsions at cutpoint.
 			loop_start = cutpoint;
@@ -242,8 +258,9 @@ namespace protein {
 		} else {
 			loop_start = working_bridge_res_[1]-1;
 			loop_end   = working_bridge_res_[num_bridge_res]+1;
-			if ( cutpoint < loop_start || cutpoint >= loop_end ) utility_exit_with_message( "cutpoint must lie within bridge_res" );
 		}
+
+		if ( cutpoint < loop_start || cutpoint >= loop_end ) utility_exit_with_message( "cutpoint must lie within loop" );
 
 		loop_ = Loop( loop_start, loop_end, cutpoint );
 

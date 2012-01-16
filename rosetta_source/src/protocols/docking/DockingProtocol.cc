@@ -170,6 +170,10 @@ void DockingProtocol::init(
 	core::scoring::ScoreFunctionCOP docking_score_high
 )
 {
+
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+
 	Mover::type( "DockingProtocol" );
 	movable_jumps_ = movable_jumps;
 
@@ -202,6 +206,15 @@ void DockingProtocol::init(
 		docking_scorefxn_high_ = docking_score_high;
 		docking_scorefxn_pack_ = docking_score_high;
 		docking_scorefxn_output_ = docking_score_high;
+	}
+
+	if ( option[ score::weights ].user() ){
+		docking_scorefxn_high_ = core::scoring::ScoreFunctionFactory::create_score_function( option[ score::weights ]() );
+		docking_scorefxn_output_ = docking_scorefxn_high_;
+	}
+
+	if ( option[ score::pack_weights ].user() ){
+		docking_scorefxn_pack_ = core::scoring::ScoreFunctionFactory::create_score_function( option[ score::pack_weights ]() );
 	}
 
 	// set up objects based on the boolean values defined above

@@ -1541,8 +1541,15 @@ setup_atom_id_map_match_atom_names(
 			if ( ! rsd_type2.has( atom_name1 ) ) continue;
 
 			// protein backbone atoms -- for homology modeling. Good to copy H, O, CB (just off of the mainchain) since they encode information on phi, psi, omega.
-			if ( backbone_only && !( atom_name1 == " N  " || atom_name1 == " CA " || atom_name1 == " C  " || atom_name1 == " H  " ||  atom_name1 == " O  " || atom_name1 == " CB " ) ) continue;
-			//			if ( backbone_only && !( atom_name1 == " N  " || atom_name1 == " CA " || atom_name1 == " C  " ) ) continue;
+			//			if ( backbone_only &&
+			//					 !( atom_name1 == " N  " || atom_name1 == " CA " || atom_name1 == " C  " || atom_name1 == " H  " ||  atom_name1 == " O  " || atom_name1 == " CB " )  &&
+			//					 !( atom_name1 == " P  " || atom_name1 == " O1P" || atom_name1 == " O2P" || atom_name1 == " O5*" || atom_name1 == " C5*" || atom_name1 == " C4*" || atom_name1 == " O4*" || atom_name1 == " C3*" || atom_name1 == " O3*" || atom_name1 == " C1*" || atom_name1 == " C2*" || atom_name1 == " O2*" || atom_name1 == "1H5*" || atom_name1 == "2H5*" || atom_name1 == " H4*" || atom_name1 == " H3*" || atom_name1 == "1H2*" || atom_name1 == "2HO*" ) ) continue;
+
+			// Following is generic...
+			if ( backbone_only &&
+					 !( j1 <= rsd_type1.last_backbone_atom() ) &&
+					 !( j1 > rsd_type1.nheavyatoms()   && j1 < rsd_type1.first_sidechain_hydrogen() )	 ) continue;
+
 
 			Size const j2 = rsd_type2.atom_index( atom_name1 );
 

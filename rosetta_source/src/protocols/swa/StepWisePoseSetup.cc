@@ -181,7 +181,6 @@ return "StepWisePoseSetup";
 		job_parameters_->set_working_bridge_res(  apply_full_to_sub_mapping( bridge_res_ ) );
 
 
-
 		/////////////////////////////////
 		// More fold tree stuff.
 		reroot_fold_tree( pose );
@@ -374,7 +373,7 @@ return "StepWisePoseSetup";
 			// If there are two input poses, make sure their
 			// rigid body arrangment is sampled --> no jumps between these
 			// different regions!
-			//			std::cout << "CHAIN " << n << ". Considering jump:  " << i << "  to  " << j << ". WORKING_RES: " << is_working_res(i) << " " << is_working_res(j) << std::endl;
+			std::cout << "CHAIN " << n << ". Considering jump:  " << i << "  to  " << j << ". WORKING_RES: " << is_working_res(i) << " " << is_working_res(j) << std::endl;
  			if ( is_working_res( i ) == 1 &&
 					 is_working_res( j ) == 2 ) continue;
 			if ( is_working_res( j ) == 1 &&
@@ -382,7 +381,7 @@ return "StepWisePoseSetup";
 			if ( is_working_res( i ) == BRIDGE_RES_ ) continue;
 			if ( is_working_res( j ) == BRIDGE_RES_ ) continue;
 
-			//			std::cout << "Adding potential jump! " << std::endl;
+			std::cout << "Adding potential jump! " << std::endl;
 
 			std::pair< Size, Size > jump_pair = std::make_pair( full_to_sub[ i ], full_to_sub[ j ] );
 			if ( !Contain_seq_num( i, moving_res_list_ ) && !Contain_seq_num( j, moving_res_list_ ) ){
@@ -402,10 +401,10 @@ return "StepWisePoseSetup";
 		for ( Size n = 1; n <= potential_jump_partners.size(); n++ ) {
 			potential_chain_partners.push_back(  std::make_pair( which_chain( potential_jump_partners[n].first ),
 																													 which_chain( potential_jump_partners[n].second ) ) );
-			//			std::cout << "POTENTIAL JUMPS: " << potential_jump_partners[n].first << " "
-			//								<< potential_jump_partners[n].second << "   chain: "
-			//								<< which_chain( potential_jump_partners[n].first ) << ' '
-			//								<< which_chain( potential_jump_partners[n].second ) << std::endl;
+			std::cout << "POTENTIAL JUMPS: " << potential_jump_partners[n].first << " "
+								<< potential_jump_partners[n].second << "   chain: "
+								<< which_chain( potential_jump_partners[n].first ) << ' '
+								<< which_chain( potential_jump_partners[n].second ) << std::endl;
 		}
 
 
@@ -418,13 +417,13 @@ return "StepWisePoseSetup";
 
 		while ( chain_partners.size() < (num_chains-1) && ntries++ < 10000 ){
 			for ( Size n = 1; n <= potential_jump_partners.size(); n++ ){
-				//				std::cout << "Going to test jump: " << potential_jump_partners[ n ].first << " "
-				//									<< potential_jump_partners[ n ].second << "? " << already_connected( potential_chain_partners[ n ], chain_partners ) << std::endl;
+				std::cout << "Going to test jump: " << potential_jump_partners[ n ].first << " "
+									<< potential_jump_partners[ n ].second << "? " << already_connected( potential_chain_partners[ n ], chain_partners ) << std::endl;
 
 				if (  already_connected( potential_chain_partners[ n ], chain_partners ) ) continue;
 				chain_partners.push_back( potential_chain_partners[ n ] );
 				jump_partners_.push_back( potential_jump_partners[ n ] );
-				//				std::cout << "ADDING JUMP: " << potential_jump_partners[n].first << ' ' << potential_jump_partners[n].second << std::endl;
+				std::cout << "ADDING JUMP: " << potential_jump_partners[n].first << ' ' << potential_jump_partners[n].second << std::endl;
 				break;
 			}
 		}
@@ -580,15 +579,11 @@ return "StepWisePoseSetup";
 			Residue const & rsd1( pose.residue( k ) );
 			Residue const & rsd2( pose.residue( m ) );
 
-			if ( rsd1.is_RNA() && rsd2.is_RNA() ) {
-				f.set_jump_atoms( i, rsd1.atom_name( rsd1.chi_atoms(1)[4] ), rsd2.atom_name( rsd2.chi_atoms(1)[4] ) ); //Base atoms...
-			} else if ( rsd1.is_protein() && rsd2.is_protein() ){
-				f.set_jump_atoms( i, " CA ", " CA ", true /*bKeepStubInResidue. I think this is still protein-centric*/ );
-			} else {
-				utility_exit_with_message( "Cannot deal with mixed protein/RNA poses yet." );
-			}
+			bool const KeepStubInResidue( true ); //rsd1.is_protein() & rsd2.is_protein() );
+			f.set_jump_atoms( i, get_swa_jump_atom( rsd1 ), get_swa_jump_atom( rsd2 ),  KeepStubInResidue );
 
 		}
+
 		f.reassign_atoms_for_intra_residue_stubs(); // it seems silly that we need to do this separately.
 
 		pose.fold_tree( f );
@@ -633,6 +628,19 @@ return "StepWisePoseSetup";
 		// this is not showing up right...
 		std::cout << "AFTER DISULF: " << pose.annotated_sequence( true ) << std::endl;
 
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	std::string
+	StepWisePoseSetup::get_swa_jump_atom( core::conformation::Residue const & rsd ){
+
+		//if (rsd.is_RNA() ) return rsd.atom_name( rsd.chi_atoms(1)[4] );
+		if (rsd.is_RNA() ) return " C4*";
+
+		if (rsd.is_protein() ) return " CA ";
+
+		utility_exit_with_message( "Cannot deal with pose that is not RNA or protein yet." );
+		return "";
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -685,6 +693,7 @@ return "StepWisePoseSetup";
 		}
 	}
 
+
 	///////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWisePoseSetup::save_phi_psi_offsets(
@@ -721,6 +730,22 @@ return "StepWisePoseSetup";
 
 	///////////////////////////////////////////////////////////////////////////////////
 	void
+	StepWisePoseSetup::copy_rna_chi( pose::Pose & pose,
+																	 pose::Pose const import_pose,
+																	 utility::vector1< core::Size > const & input_res,
+																	 utility::vector1< core::Size > const & slice_res ){
+
+		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
+
+		for ( Size n = 1; n <= input_res.size(); n++ ) {
+			if (!import_pose.residue( slice_res[ n ] ).is_RNA()) continue;
+			pose.set_chi( 1, full_to_sub[ input_res[ n ] ],  import_pose.chi( 1, slice_res[n] ) );
+		}
+
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////
+	void
 	StepWisePoseSetup::initialize_pose_from_streams( pose::Pose & pose )
 	{
 
@@ -738,6 +763,8 @@ return "StepWisePoseSetup";
 
 		for ( Size i = 1; i <= input_streams_with_residue_info_.size(); i++ ){
 
+ 			if ( i > 1) align_pose_to_import_pose = false;
+
 			InputStreamWithResidueInfoOP & stream = input_streams_with_residue_info_[ i ];
 			stream->set_full_to_sub( job_parameters_->full_to_sub() );
 			stream->set_rsd_set( rsd_set_ );
@@ -745,11 +772,10 @@ return "StepWisePoseSetup";
  			stream->copy_next_pose_segment( pose, import_pose, true /*check_sequence_matches*/, align_pose_to_import_pose );
 
 			save_phi_psi_offsets( import_pose,  stream->input_res(), stream->slice_res() );
+			copy_rna_chi( pose, import_pose,  stream->input_res(), stream->slice_res() ); //hope this is OK.
 
 			if (dump_) pose.dump_pdb( "after_copy_dofs"+ObjexxFCL::string_of(i)+".pdb" );
 			if (dump_) import_pose.dump_pdb( "import"+ObjexxFCL::string_of(i)+".pdb" );
-
- 			if ( i > 1) align_pose_to_import_pose = false;
 
 		}
 
@@ -1083,6 +1109,24 @@ return "StepWisePoseSetup";
 			pose::add_variant_type_to_pose_residue( pose, "BULGE", 	full_to_sub[ bulge_res_[ n ] ] );
 		}
 
+
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//applies terminus variants to any internal residues. Note that
+	void
+	StepWisePoseSetup::apply_terminus_variants_at_protein_rna_boundaries( pose::Pose & pose ) const {
+		using namespace core::conformation;
+		using namespace core::pose;
+
+		for ( Size n = 1; n <= pose.total_residue()-1; n++ ) {
+			if ( pose.residue( n ).is_RNA() && pose.residue( n+1).is_protein()  ||
+					 pose.residue( n ).is_protein() && pose.residue( n+1).is_RNA() ){
+				pose::add_variant_type_to_pose_residue( pose, "UPPER_TERMINUS", 	n  );
+				pose::add_variant_type_to_pose_residue( pose, "LOWER_TERMINUS", 	n+1 );
+			}
+		}
 
 	}
 

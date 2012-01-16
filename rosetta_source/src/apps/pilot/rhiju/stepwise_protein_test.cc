@@ -198,6 +198,7 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( Boolean, big_bins )
 OPT_KEY( Boolean, repack )
+OPT_KEY( Boolean, move_jumps_between_chains )
 OPT_KEY( Boolean, rebuild )
 OPT_KEY( Boolean, cluster_test )
 OPT_KEY( Boolean, cluster_by_all_atom_rmsd )
@@ -256,6 +257,7 @@ OPT_KEY( Boolean, global_optimize )
 OPT_KEY( Boolean, disallow_backbone_sampling )
 OPT_KEY( Boolean, disable_sampling_of_loop_takeoff )
 OPT_KEY( Boolean, ccd_close )
+OPT_KEY( Integer, ccd_close_res )
 OPT_KEY( IntegerVector, bridge_res )
 
 void
@@ -463,6 +465,7 @@ rebuild_test(){
 			// Involves 5 residues: takeoff - bridge_res1 - bridge_res2 -bridge_res3 - landing
 			if ( job_parameters->working_bridge_res().size() >= 3 ) utility_exit_with_message( "cannot specify more than 2 bridge_res for CCD loop closure" );
 			StepWiseProteinCCD_Closer stepwise_ccd_closer( sample_generator, job_parameters );
+			stepwise_ccd_closer.set_ccd_close_res( option[ ccd_close_res ]() );
 			stepwise_ccd_closer.apply( pose );
 
 			which_torsions = stepwise_ccd_closer.which_torsions();
@@ -564,6 +567,7 @@ rebuild_test(){
 	minimize_scorefxn->set_weight( linear_chainbreak, 150.0 );
 	stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
 	if( option[ dump ] ) stepwise_pose_minimizer.set_silent_file( silent_file_minimize );
+	stepwise_pose_minimizer.set_move_jumps_between_chains( option[ move_jumps_between_chains ]() );
 	//stepwise_pose_minimizer.set_constraint_set( cst_set );
 	stepwise_pose_minimizer.set_native_pose( job_parameters->working_native_pose() );
 	stepwise_pose_minimizer.set_calc_rms_res( job_parameters->working_calc_rms_res() ); // used for calculating rmsds to native.
@@ -1025,6 +1029,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
 	NEW_OPT( big_bins, "Check out big bin assignment for an input pdb", false );
 	NEW_OPT( ccd_close, "Close loops with CCD", false );
+	NEW_OPT( move_jumps_between_chains, "Move all jumps", false );
+	NEW_OPT( ccd_close_res, "Position at which to close loops with CCD [optional if there is only one cutpoint_closed]", 0);
 	NEW_OPT( bridge_res, "instead of enumerative sampling of backbone torsions, combine silent files that contains pieces of loops", blank_size_vector );
 	NEW_OPT( rmsd_screen, "keep sampled residues within this rmsd from the native pose", 0.0 );
 

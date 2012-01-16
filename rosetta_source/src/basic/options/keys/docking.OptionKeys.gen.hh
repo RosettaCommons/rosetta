@@ -49,6 +49,8 @@ namespace docking { extern BooleanOptionKey const dock_rtmin; }
 namespace docking { extern BooleanOptionKey const sc_min; }
 namespace docking { extern BooleanOptionKey const norepack1; }
 namespace docking { extern BooleanOptionKey const norepack2; }
+namespace docking { extern IntegerVectorOptionKey const bb_min_res; }
+namespace docking { extern IntegerVectorOptionKey const sc_min_res; }
 namespace docking { extern BooleanOptionKey const dock_ppk; }
 namespace docking { extern IntegerOptionKey const max_repeats; }
 namespace docking { extern RealVectorOptionKey const dock_lowres_filter; }

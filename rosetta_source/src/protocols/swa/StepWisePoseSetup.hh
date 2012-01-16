@@ -19,6 +19,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 // AUTO-REMOVED #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -204,6 +205,9 @@ namespace swa {
 		void
 		apply_bulge_variants( core::pose::Pose & pose ) const;
 
+		void
+		apply_terminus_variants_at_protein_rna_boundaries( core::pose::Pose & pose ) const;
+
 //		void
 //		slice_native();
 
@@ -248,10 +252,20 @@ namespace swa {
 		fix_phi_psi_offsets( core::pose::Pose & pose ) const;
 
 		void
+		copy_rna_chi( core::pose::Pose & pose,
+									core::pose::Pose const import_pose,
+									utility::vector1< core::Size > const & input_res,
+									utility::vector1< core::Size > const & slice_res );
+
+
+		void
 		check_superimpose_res( core::pose::Pose const & pose );
 
 		bool
 		is_working_cutpoint_closed( Size const res, std::map< Size, Size > & full_to_sub ) const;
+
+		std::string
+		get_swa_jump_atom( core::conformation::Residue const & rsd );
 
 	private:
 

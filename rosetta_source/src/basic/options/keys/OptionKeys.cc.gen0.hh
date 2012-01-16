@@ -261,6 +261,8 @@ namespace docking { BooleanOptionKey const dock_rtmin( "docking:dock_rtmin" );  
 namespace docking { BooleanOptionKey const sc_min( "docking:sc_min" );  }
 namespace docking { BooleanOptionKey const norepack1( "docking:norepack1" );  }
 namespace docking { BooleanOptionKey const norepack2( "docking:norepack2" );  }
+namespace docking { IntegerVectorOptionKey const bb_min_res( "docking:bb_min_res" );  }
+namespace docking { IntegerVectorOptionKey const sc_min_res( "docking:sc_min_res" );  }
 namespace docking { BooleanOptionKey const dock_ppk( "docking:dock_ppk" );  }
 namespace docking { IntegerOptionKey const max_repeats( "docking:max_repeats" );  }
 namespace docking { RealVectorOptionKey const dock_lowres_filter( "docking:dock_lowres_filter" );  }
@@ -587,4 +589,3 @@ namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_p
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
-namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }

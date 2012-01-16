@@ -266,13 +266,22 @@ return "StepWiseProteinPacker";
 		pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
 		pack_task_->restrict_to_repacking();
 		for (Size i = 1; i <= pose.total_residue(); i++) {
-			if ( !pose.residue(i).is_protein() ) continue;
+
 			pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
-			pack_task_->nonconst_residue_task(i).or_ex1( true );
-			pack_task_->nonconst_residue_task(i).or_ex2( true );
-			//			pack_task_->nonconst_residue_task(i).or_ex3( true );
-			//			pack_task_->nonconst_residue_task(i).or_ex4( true );
 			pack_task_->nonconst_residue_task(i).or_include_current( true );
+
+			if ( pose.residue(i).is_protein() ) {
+				pack_task_->nonconst_residue_task(i).or_ex1( true );
+				pack_task_->nonconst_residue_task(i).or_ex2( true );
+				//			pack_task_->nonconst_residue_task(i).or_ex3( true );
+				//			pack_task_->nonconst_residue_task(i).or_ex4( true );
+			} else if ( pose.residue(i).is_RNA() ) {
+			// Following could be useful...
+				pack_task_->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
+				// new -- in case RNA backbone only is input?
+				//pack_task_->nonconst_residue_task(i).sample_rna_chi( true );
+			}
+
 			if ( pose.residue(i).has_variant_type( "VIRTUAL_RESIDUE" ) ) pack_task_->nonconst_residue_task(i).prevent_repacking();
 		}
 
@@ -337,12 +346,17 @@ return "StepWiseProteinPacker";
 
 			//			std::cout << "PACKING ==> ";
 			for (Size i = 1; i <= pose.total_residue(); i++) {
-				if ( pose.residue(i).is_protein() && residues_allowed_to_be_packed[ i ] )  {
-					//					std::cout << i << " " ;
+				if (  residues_allowed_to_be_packed[ i ] )  {
 					pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
-					pack_task_->nonconst_residue_task(i).or_ex1( true );
-					pack_task_->nonconst_residue_task(i).or_ex2( true );
 					pack_task_->nonconst_residue_task(i).or_include_current( true );
+					if ( pose.residue(i).is_protein() ) {
+						pack_task_->nonconst_residue_task(i).or_ex1( true );
+						pack_task_->nonconst_residue_task(i).or_ex2( true );
+					} else if ( pose.residue(i).is_RNA() ){
+						pack_task_->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
+						// new -- in case RNA backbone only is input?
+						//pack_task_->nonconst_residue_task(i).sample_rna_chi( true );
+					}
 				} else {
 					pack_task_->nonconst_residue_task(i).prevent_repacking();
 				}

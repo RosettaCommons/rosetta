@@ -266,6 +266,8 @@ option.add( basic::options::OptionKeys::docking::dock_rtmin, "does rotamer trial
 option.add( basic::options::OptionKeys::docking::sc_min, "does sidechain minimization of interface residues" ).shortd( "does sidechain minimization of interface residues" ).def(false);
 option.add( basic::options::OptionKeys::docking::norepack1, "Do not repack the side-chains of partner 1." ).shortd( "Do not repack the side-chains of partner 1." ).def(false);
 option.add( basic::options::OptionKeys::docking::norepack2, "Do not repack the side-chains of partner 2." ).shortd( "Do not repack the side-chains of partner 2." ).def(false);
+option.add( basic::options::OptionKeys::docking::bb_min_res, "Minimize backbone at these positions." ).shortd( "Minimize backbone at these positions." );
+option.add( basic::options::OptionKeys::docking::sc_min_res, "Minimize backbone at these positions." ).shortd( "Minimize backbone at these positions." );
 option.add( basic::options::OptionKeys::docking::dock_ppk, "docking prepack mode" ).shortd( "docking prepack mode" ).def(false);
 option.add( basic::options::OptionKeys::docking::max_repeats, "If a decoy does not pass the low- and high-resolution filters, how many attempts to make before failur" ).shortd( "how many repeats to use" ).def(1000);
 option.add( basic::options::OptionKeys::docking::dock_lowres_filter, "manually sets the lowres docking filter: -dock_lowres_filter <INTERCHAIN_CONTACT CUTOFF> <INTERCHAIN_VDW CUTOFF> <RESTRAINT CUTOFF>. Default values for protein docking are 10.0 and 1.0" ).shortd( "manually sets the lowres docking filter: -dock_lowres_filter <INTERCHAIN_CONTACT CUTOFF> <INTERCHAIN_VDW CUTOFF> <RESTRAINT CUTOFF>" );
@@ -592,10 +594,10 @@ option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with in
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
@@ -695,6 +697,7 @@ option.add( basic::options::OptionKeys::chemical::exclude_patches, "Names of the
 option.add( basic::options::OptionKeys::score::score_pose_cutpoint_variants, "Include cutpoint variants in the pose during linear chainbreak" ).def(false);
 option.add( basic::options::OptionKeys::score::score, "scorefunction option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::weights, "Name of weights file (without extension .wts)" ).def("standard");
+option.add( basic::options::OptionKeys::score::pack_weights, "Name of packing weights file (without extension .wts)" ).def("standard");
 option.add( basic::options::OptionKeys::score::soft_wts, "Name of the 'soft' weights file, for protocols which use it." ).def("soft_rep");
 option.add( basic::options::OptionKeys::score::custom_atom_pair, "filename for custom atom pair constraints" ).def("empty");
 option.add( basic::options::OptionKeys::score::patch, "Name of patch file (without extension)" ).def("");
@@ -1184,10 +1187,10 @@ option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4
 option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(10);
 option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
 option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
-option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
+option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);

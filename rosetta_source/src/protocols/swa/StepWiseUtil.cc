@@ -180,7 +180,8 @@ namespace swa {
 	void
 	Figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose,
 															utility::vector1< core::Size > const & fixed_res,
-															bool const move_takeoff_torsions
+															bool const move_takeoff_torsions,
+															bool const move_jumps_between_chains
 															)
   {
 
@@ -234,13 +235,30 @@ namespace swa {
 		}
 		std::cout << std::endl;
 
+		utility::vector1< Size > chain_index;
+		Size chain_number( 0 );
+		for (Size n = 1; n <= pose.total_residue(); n++ ){
+			if ( pose.residue_type( n ).is_lower_terminus()  && !pose.residue_type( n ).has_variant_type( chemical::N_ACETYLATION ) ) chain_number++;
+			chain_index.push_back( chain_number );
+		}
+
+		//		for (Size n = 1; n <= pose.total_residue(); n++ ) std::cout << "CHAIN "<< n << ' ' << chain_index[ n ] << std::endl;
+
 		for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
 			Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
 			Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
+
 			if ( allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) ) 	 {
 				mm.set_jump( n, true );
-				std::cout << "ALLOWING JUMP " << n << " to move" << std::endl;
+				std::cout << "allow_insert ALLOWING JUMP " << n << " to move. It connects " << jump_pos1 << " and " << jump_pos2 << "." << std::endl;
 			}
+
+			if ( move_jumps_between_chains ){
+				if ( chain_index[ jump_pos1 ] != chain_index[ jump_pos2 ] ){
+					std::cout << "move_jumps_between_chains ALLOWING JUMP " << n << " to move. It connects " << jump_pos1 << " and " << jump_pos2 << "." << std::endl;
+				}
+			}
+
 		}
 
 	}
@@ -264,8 +282,8 @@ namespace swa {
 		for ( Size i = 1; i <= slice_res.size(); i++ ) {
 			//		std::cout << "About to append " << i << std::endl;
 			ResidueOP residue_to_add = pose.residue( slice_res[ i ] ).clone() ;
-			if ( i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 ) /*new segment*/ ){
-				if( residue_to_add->is_RNA() && new_pose.residue_type(i-1).is_RNA() ){
+			if ( i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 ) /*new segment*/ || residue_to_add->is_lower_terminus() ){
+				if( residue_to_add->is_RNA() && (i>1) && new_pose.residue_type(i-1).is_RNA() ){
 					new_pose.append_residue_by_jump(  *residue_to_add, i-1,
 																						chi1_torsion_atom( new_pose.residue(i-1) ),
 																						chi1_torsion_atom( *residue_to_add ) );

@@ -83,6 +83,8 @@ ConstraintOP AtomPairConstraint::remapped_clone( pose::Pose const& src, pose::Po
 		atom2.rsd() = (*smap)[ atom2_.rsd() ];
 	}
 
+	if ( atom1.rsd() == 0 || atom2.rsd() == 0 ) return NULL;
+
 	//get AtomIDs for target pose
 	id::AtomID id1( named_atom_id_to_atom_id( atom1, dest ) );
 	id::AtomID id2( named_atom_id_to_atom_id( atom2, dest ) );

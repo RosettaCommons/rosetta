@@ -446,6 +446,8 @@ namespace rna {
 
 			conformation::Conformation const & conformation( pose.conformation() );
 
+			if ( !pose.residue_type( torsion_id.rsd() ).is_RNA() ) return false;
+
 			// Check that torsion is intraresidue.
 			id::AtomID id1,id2,id3,id4;
 			if  ( conformation.get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 ) ) return false;
@@ -500,10 +502,9 @@ namespace rna {
 
 			Size const seqpos = current_seqpos + offset;
 
-			//Should we check that residue at seqpos is a RNA??? Parin Mar 28, 2010
-
 			if (seqpos < 1 ) continue;
 			if (seqpos > nres ) continue;
+			if ( !pose.residue_type( seqpos ).is_RNA() ) continue;
 
 			conformation::Residue const & rsd( pose.residue( seqpos ) );
 
@@ -919,6 +920,8 @@ namespace rna {
 		conformation::Residue const & rsd_2=pose.residue(id2.rsd());
 		conformation::Residue const & rsd_3=pose.residue(id3.rsd());
 		conformation::Residue const & rsd_4=pose.residue(id4.rsd());
+
+		if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() || !rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;
 
 		bool Is_virtual_torsion=( rsd_1.is_virtual(id1.atomno()) || rsd_2.is_virtual(id2.atomno()) || rsd_3.is_virtual(id3.atomno()) || rsd_4.is_virtual(id4.atomno()) );
 
