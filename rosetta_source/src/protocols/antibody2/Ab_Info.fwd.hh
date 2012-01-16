@@ -7,23 +7,32 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
+/// @file   protocols/antibody2/Ab_Info.fwd.hh
+/// @brief  Ab_Info class forward declarations header
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_CloseOneMover_fwd_hh
-#define INCLUDED_protocols_antibody2_CloseOneMover_fwd_hh
 
+#ifndef INCLUDED_protocols_antibody2_Ab_Info_fwd_hh
+#define INCLUDED_protocols_antibody2_Ab_Info_fwd_hh
+
+
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace antibody2 {
 
-class CloseOneMover;
-typedef utility::pointer::owning_ptr< CloseOneMover > CloseOneMoverOP;
-typedef utility::pointer::owning_ptr< CloseOneMover const > CloseOneMoverCOP;
+// C++ Headers
+namespace protocols{
+namespace antibody2{
 
-} // antibody2
-} // protocols
+// Forward
+class Ab_Info;
 
-#endif
+typedef utility::pointer::owning_ptr< Ab_Info > Ab_InfoOP;
+typedef utility::pointer::owning_ptr< Ab_Info const > Ab_InfoCOP;
+
+
+
+} //namespace antibody2
+} //namespace protocols
+
+#endif //INCLUDED_protocols_Ab_Info_FWD_HH

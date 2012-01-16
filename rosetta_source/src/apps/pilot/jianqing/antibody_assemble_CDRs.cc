@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/apps/pilot/jianqing/antibody2.cc
+/// @file src/apps/pilot/jianqing/antibody_assemble_CDRs.cc
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 /// 09/09/2011
 
 
 
-#include <protocols/antibody2/AntibodyModeler2.hh>
+#include <protocols/antibody2/Ab_AssembleCDRs.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
@@ -41,17 +41,19 @@ main( int argc, char * argv [] )
 	using namespace protocols::antibody2;
 	using namespace protocols::jd2;
 
-	AntibodyModeler2::register_options();
+	Ab_AssembleCDRs::register_options();
 	protocols::jd2::register_options();
 	// initialize core
 	devel::init(argc, argv);
 
 
-	AntibodyModeler2OP abm = new AntibodyModeler2();
+	Ab_AssembleCDRsOP abm = new Ab_AssembleCDRs();
     TR<<abm<<std::endl;
 //    exit(-1);
 
 	JobDistributor::get_instance()->go(abm);
 
 }
+
+
 

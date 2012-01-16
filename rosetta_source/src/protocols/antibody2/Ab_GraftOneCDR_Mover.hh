@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody2/GraftOneMover.hh
+/// @file protocols/antibody2/Ab_GraftOneCDR_Mover.hh
 /// @brief grafts a cdr onto the template of an antibody framework
 /// @detailed
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-#ifndef INCLUDED_protocols_antibody2_GraftOneMover_hh
-#define INCLUDED_protocols_antibody2_GraftOneMover_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_GraftOneCDR_Mover_hh
+#define INCLUDED_protocols_antibody2_Ab_GraftOneCDR_Mover_hh
 
 
-#include <protocols/antibody2/GraftOneMover.fwd.hh>
+#include <protocols/antibody2/Ab_GraftOneCDR_Mover.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>  // Needs to be the full header so the scorefxn can default to NULL
 #include <protocols/moves/Mover.hh>
@@ -26,16 +26,16 @@ namespace protocols {
 namespace antibody2 {
 
 	/// @brief Grafts only one CDR onto a framework
-	class GraftOneMover : public protocols::moves::Mover {
+	class Ab_GraftOneCDR_Mover : public protocols::moves::Mover {
 	public:
 		// default constructor
-		GraftOneMover();
+		Ab_GraftOneCDR_Mover();
 
 		// constructor with arguments
-		GraftOneMover( core::Size query_start, core::Size query_end, std::string template_name, core::scoring::ScoreFunctionOP scorefxn );
-//		GraftOneMover( core::Size query_start, core::Size query_end, std::string template_name);
+		Ab_GraftOneCDR_Mover( core::Size query_start, core::Size query_end, std::string template_name, core::scoring::ScoreFunctionOP scorefxn );
+//		Ab_GraftOneCDR_Mover( core::Size query_start, core::Size query_end, std::string template_name);
 		// default destructor
-		~GraftOneMover();
+		~Ab_GraftOneCDR_Mover();
 
 		void set_default( std::string template_name );
 		virtual void apply( core::pose::Pose & pose_in );
@@ -43,10 +43,10 @@ namespace antibody2 {
 
 
         ///@brief copy ctor
-    	GraftOneMover( GraftOneMover const & rhs );
+    	Ab_GraftOneCDR_Mover( Ab_GraftOneCDR_Mover const & rhs );
 
     	///@brief assignment operator
-    	GraftOneMover & operator=( GraftOneMover const & rhs );
+    	Ab_GraftOneCDR_Mover & operator=( Ab_GraftOneCDR_Mover const & rhs );
 
 
 		/// @brief enable benchmark mode
@@ -70,9 +70,9 @@ namespace antibody2 {
 		bool benchmark_;
 
 		core::scoring::ScoreFunctionOP scorefxn_;
-        void initForEqualOperatorAndCopyConstructor(GraftOneMover & lhs, GraftOneMover const & rhs);
+        void initForEqualOperatorAndCopyConstructor(Ab_GraftOneCDR_Mover & lhs, Ab_GraftOneCDR_Mover const & rhs);
 
-	}; // class GraftOneMover
+	}; // class Ab_GraftOneCDR_Mover
 
 
 

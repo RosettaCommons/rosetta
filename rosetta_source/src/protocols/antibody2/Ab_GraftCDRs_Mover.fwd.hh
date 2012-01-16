@@ -7,32 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/antibody2/AntibodyInfo.fwd.hh
-/// @brief  AntibodyInfo class forward declarations header
+/// @file
+/// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
+#ifndef INCLUDED_protocols_antibody2_Ab_GraftCDRs_Mover_fwd_hh
+#define INCLUDED_protocols_antibody2_Ab_GraftCDRs_Mover_fwd_hh
 
-#ifndef INCLUDED_protocols_antibody2_AntibodyInfo_fwd_hh
-#define INCLUDED_protocols_antibody2_AntibodyInfo_fwd_hh
-
-
-// Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
+namespace protocols {
+namespace antibody2 {
 
-// C++ Headers
-namespace protocols{
-namespace antibody2{
+class Ab_GraftCDRs_Mover;
+typedef utility::pointer::owning_ptr< Ab_GraftCDRs_Mover > Ab_GraftCDRs_MoverOP;
+typedef utility::pointer::owning_ptr< Ab_GraftCDRs_Mover const > Ab_GraftCDRs_MoverCOP;
 
-// Forward
-class AntibodyInfo;
+} // antibody2
+} // protocols
 
-typedef utility::pointer::owning_ptr< AntibodyInfo > AntibodyInfoOP;
-typedef utility::pointer::owning_ptr< AntibodyInfo const > AntibodyInfoCOP;
-
-
-
-} //namespace antibody2
-} //namespace protocols
-
-#endif //INCLUDED_protocols_AntibodyInfo_FWD_HH
+#endif

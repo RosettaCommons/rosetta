@@ -32,7 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/antibody2/AntibodyInfo.hh>
+#include <protocols/antibody2/Ab_Info.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -234,7 +234,7 @@ private:
 
 	core::Size max_cycle_;
 
-	antibody2::AntibodyInfo antibody_in_;
+	antibody2::Ab_Info antibody_in_;
 
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;
@@ -252,7 +252,7 @@ private:
 
 // read CDR H3 C-terminal fragments (size: 4)
 void read_H3_cter_fragment(
-	antibody2::AntibodyInfo & antibody_in,
+	antibody2::Ab_Info & antibody_in,
 	utility::vector1< core::fragment::FragData > & H3_base_library,
 	bool is_camelid
 );

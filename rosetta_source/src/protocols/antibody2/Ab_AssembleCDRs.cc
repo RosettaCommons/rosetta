@@ -68,8 +68,8 @@ using namespace ObjexxFCL::fmt;
 
 #include <protocols/jd2/ScoreMap.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/AntibodyModeler2.hh>
+#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/Ab_AssembleCDRs.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -78,7 +78,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody2/CDRH3Modeler2.hh>
-#include <protocols/antibody2/GraftMover2.hh>
+#include <protocols/antibody2/Ab_GraftCDRs_Mover.hh>
 
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
@@ -103,25 +103,25 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.AntibodyModeler2");
+static basic::Tracer TR("protocols.antibody2.Ab_AssembleCDRs");
 using namespace core;
 
 namespace protocols {
 namespace antibody2 {
 
 // default constructor
-AntibodyModeler2::AntibodyModeler2() : Mover() {
+Ab_AssembleCDRs::Ab_AssembleCDRs() : Mover() {
 	user_defined_ = false;
 	init();
 }
 
 // default destructor
-AntibodyModeler2::~AntibodyModeler2() {}
+Ab_AssembleCDRs::~Ab_AssembleCDRs() {}
 
 //clone
 protocols::moves::MoverOP
-AntibodyModeler2::clone() const {
-	return( new AntibodyModeler2() );
+Ab_AssembleCDRs::clone() const {
+	return( new Ab_AssembleCDRs() );
 }
 
     
@@ -131,8 +131,8 @@ AntibodyModeler2::clone() const {
     
     
     
-void AntibodyModeler2::init() {
-	Mover::type( "AntibodyModeler2" );
+void Ab_AssembleCDRs::init() {
+	Mover::type( "Ab_AssembleCDRs" );
 
 	// setup all the booleans with default values
 	// they will get overwritten by the options and/or passed values
@@ -163,7 +163,7 @@ void AntibodyModeler2::init() {
     
     
 void
-AntibodyModeler2::set_default()
+Ab_AssembleCDRs::set_default()
 {
 	TR <<  "Setting up default settings to all FALSE" << std::endl;
 	model_h3_  = false;
@@ -187,7 +187,7 @@ AntibodyModeler2::set_default()
     
     
 void
-AntibodyModeler2::register_options()
+Ab_AssembleCDRs::register_options()
 {
 	using namespace basic::options;
 
@@ -211,7 +211,7 @@ AntibodyModeler2::register_options()
     
     
 void
-AntibodyModeler2::init_from_options() {
+Ab_AssembleCDRs::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	TR <<  "Reading Options" << std::endl;
@@ -272,16 +272,16 @@ AntibodyModeler2::init_from_options() {
     
     
 void
-AntibodyModeler2::setup_objects() {
+Ab_AssembleCDRs::setup_objects() {
 	sync_objects_with_flags();
 }
 void
-AntibodyModeler2::sync_objects_with_flags() {
+Ab_AssembleCDRs::sync_objects_with_flags() {
 
 	using namespace protocols::moves;
 
 	// add movers to sequence mover depending on the flags that were set
-	graft_move_ =  new  GraftMover2( graft_l1_, graft_l2_, graft_l3_, 
+	graft_move_ =  new  Ab_GraftCDRs_Mover( graft_l1_, graft_l2_, graft_l3_, 
                                      graft_h1_, graft_h2_, graft_h3_, 
                                      camelid_, benchmark_ );
 
@@ -306,7 +306,7 @@ AntibodyModeler2::sync_objects_with_flags() {
     
 
 void
-AntibodyModeler2::finalize_setup( pose::Pose & frame_pose ) {
+Ab_AssembleCDRs::finalize_setup( pose::Pose & frame_pose ) {
 
     
 
@@ -363,7 +363,7 @@ AntibodyModeler2::finalize_setup( pose::Pose & frame_pose ) {
 
 
 
-void AntibodyModeler2::apply( pose::Pose & frame_pose ) {
+void Ab_AssembleCDRs::apply( pose::Pose & frame_pose ) {
 
     using namespace chemical;
     using namespace id;
@@ -450,7 +450,7 @@ void AntibodyModeler2::apply( pose::Pose & frame_pose ) {
 
 		// align pose to native pose
 		pose::Pose native_pose = *get_native_pose();
-		antibody2::AntibodyInfo native_ab( native_pose, camelid_ );
+		antibody2::Ab_Info native_ab( native_pose, camelid_ );
 //		ab_info_.align_to_native( pose, native_ab, native_pose );
 	}
 	pymol.apply( frame_pose );
@@ -509,8 +509,8 @@ void AntibodyModeler2::apply( pose::Pose & frame_pose ) {
 
 
 std::string
-AntibodyModeler2::get_name() const {
-	return "AntibodyModeler2";
+Ab_AssembleCDRs::get_name() const {
+	return "Ab_AssembleCDRs";
 }
 
 
@@ -519,7 +519,7 @@ AntibodyModeler2::get_name() const {
 
 
 	void
-	AntibodyModeler2::read_and_store_fragments( core::pose::Pose & pose ) {
+	Ab_AssembleCDRs::read_and_store_fragments( core::pose::Pose & pose ) {
 		using namespace chemical;
 		using namespace id;
 		using namespace fragment;
@@ -583,7 +583,7 @@ AntibodyModeler2::get_name() const {
 
 
 	void
-	AntibodyModeler2::setup_simple_fold_tree(
+	Ab_AssembleCDRs::setup_simple_fold_tree(
 		Size jumppoint1,
 		Size cutpoint,
 		Size jumppoint2,
@@ -637,7 +637,7 @@ AntibodyModeler2::get_name() const {
 	/// @last_modified 02/15/2010
 	///////////////////////////////////////////////////////////////////////////
 	void
-	AntibodyModeler2::relax_cdrs( core::pose::Pose & pose )
+	Ab_AssembleCDRs::relax_cdrs( core::pose::Pose & pose )
 	{
 		using namespace pack;
 		using namespace pack::task;
@@ -725,7 +725,7 @@ AntibodyModeler2::get_name() const {
 	/// @last_modified 07/13/2010
 	///////////////////////////////////////////////////////////////////////////
 	void
-	AntibodyModeler2::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) {
+	Ab_AssembleCDRs::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) {
 
 		using namespace kinematics;
 
@@ -824,7 +824,7 @@ AntibodyModeler2::get_name() const {
 	/// @last_modified 07/13/2010
 	///////////////////////////////////////////////////////////////////////////
 	void
-	AntibodyModeler2::repulsive_ramp(
+	Ab_AssembleCDRs::repulsive_ramp(
 		pose::Pose & pose_in,
 		loops::Loops loops_in ) {
 
@@ -900,7 +900,7 @@ AntibodyModeler2::get_name() const {
 	} // repulsive_ramp
 
 	void
-	AntibodyModeler2::snugfit_MC_min (
+	Ab_AssembleCDRs::snugfit_MC_min (
 		pose::Pose & pose_in,
 		kinematics::MoveMapOP cdr_dock_map,
 		Size cycles,
@@ -949,7 +949,7 @@ AntibodyModeler2::get_name() const {
 	} // snugfit_MC_min
 
 	void
-	AntibodyModeler2::snugfit_mcm_protocol(
+	Ab_AssembleCDRs::snugfit_mcm_protocol(
 		pose::Pose & pose_in,
 		loops::Loops loops_in ) {
 
@@ -1088,7 +1088,7 @@ AntibodyModeler2::get_name() const {
 	} // snugfit_mcm_protocol
 
 	void
-	AntibodyModeler2::setup_packer_task(
+	Ab_AssembleCDRs::setup_packer_task(
 		pose::Pose & pose_in ) {
 		using namespace pack::task;
 		using namespace pack::task::operation;
@@ -1125,7 +1125,7 @@ AntibodyModeler2::get_name() const {
 	} // setup_packer_task
 
 	Real
-	AntibodyModeler2::global_loop_rmsd (
+	Ab_AssembleCDRs::global_loop_rmsd (
 	  const pose::Pose & pose_in,
 		const pose::Pose & native_pose,
 		std::string cdr_type ) {
@@ -1147,7 +1147,7 @@ AntibodyModeler2::get_name() const {
 	} // global_loop_rmsd
 
 	void
-	AntibodyModeler2::display_constraint_residues( core::pose::Pose & pose ) {
+	Ab_AssembleCDRs::display_constraint_residues( core::pose::Pose & pose ) {
 
 		// Detecting di-sulfide bond
 
@@ -1189,14 +1189,14 @@ AntibodyModeler2::get_name() const {
     
 /// @details  Show the complete setup of the docking protocol
 void
-AntibodyModeler2::show( std::ostream & out ) {
+Ab_AssembleCDRs::show( std::ostream & out ) {
     if ( !flags_and_objects_are_in_sync_ ){
         sync_objects_with_flags();
     }
     out << *this;
 }
     
-std::ostream & operator<<(std::ostream& out, const AntibodyModeler2 & ab_m_2 )
+std::ostream & operator<<(std::ostream& out, const Ab_AssembleCDRs & ab_m_2 )
 {
     using namespace ObjexxFCL::fmt;
         

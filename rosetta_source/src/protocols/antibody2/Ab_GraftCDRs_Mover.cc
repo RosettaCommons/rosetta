@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file antibody2/GraftMover2.cc
+/// @file antibody2/Ab_GraftCDRs_Mover.cc
 /// @brief grafts a cdr onto the template of an antibody framework
 /// @detailed
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
 // Rosetta Headers
-#include <protocols/antibody2/GraftMover2.hh>
+#include <protocols/antibody2/Ab_GraftCDRs_Mover.hh>
 
 
 #include <core/conformation/Conformation.hh>
@@ -35,16 +35,16 @@
 #include <basic/Tracer.hh>
 #include <core/kinematics/FoldTree.hh>
 
-#include <protocols/antibody2/AntibodyInfo.hh>
+#include <protocols/antibody2/Ab_Info.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
 //#include <protocols/loops/LoopMover.hh>
 #include <protocols/antibody2/CDRH3Modeler2.hh>
-#include <protocols/antibody2/GraftOneMover.fwd.hh>
-#include <protocols/antibody2/GraftOneMover.hh>
-#include <protocols/antibody2/CloseOneMover.fwd.hh>
-#include <protocols/antibody2/CloseOneMover.hh>
-#include <protocols/antibody2/LoopRlxMover.fwd.hh>
-#include <protocols/antibody2/LoopRlxMover.hh>
+#include <protocols/antibody2/Ab_GraftOneCDR_Mover.fwd.hh>
+#include <protocols/antibody2/Ab_GraftOneCDR_Mover.hh>
+#include <protocols/antibody2/Ab_CloseOneCDR_Mover.fwd.hh>
+#include <protocols/antibody2/Ab_CloseOneCDR_Mover.hh>
+#include <protocols/antibody2/Ab_RelaxCDRs_Mover.fwd.hh>
+#include <protocols/antibody2/Ab_RelaxCDRs_Mover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -70,7 +70,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.antibody2.GraftMover2");
+static basic::Tracer TR("protocols.antibody2.Ab_GraftCDRs_Mover");
 
 
 
@@ -78,20 +78,20 @@ namespace protocols {
 namespace antibody2 {
 using namespace core;
 
-GraftMover2::GraftMover2() : moves::Mover()
+Ab_GraftCDRs_Mover::Ab_GraftCDRs_Mover() : moves::Mover()
 {
 	user_defined_ = false;
 	init( false, false, false, false, false, false, false, false );
-} // GraftMover2 default constructor
+} // Ab_GraftCDRs_Mover default constructor
 
     
-GraftMover2::GraftMover2(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool camelid,bool benchmark ) : Mover() {
+Ab_GraftCDRs_Mover::Ab_GraftCDRs_Mover(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool camelid,bool benchmark ) : Mover() {
 	user_defined_ = true;
 	init(l1,l2,l3,h1,h2,h3,camelid,benchmark );
 }
 
 
-GraftMover2::GraftMover2(AntibodyInfoCOP ab_info, Ab_TemplateInfoCOP ab_template): Mover(){
+Ab_GraftCDRs_Mover::Ab_GraftCDRs_Mover(Ab_InfoCOP ab_info, Ab_TemplateInfoCOP ab_template): Mover(){
     user_defined_ = true;
 //    init(l1,l2,l3,h1,h2,h3,camelid,benchmark );
 }
@@ -99,8 +99,8 @@ GraftMover2::GraftMover2(AntibodyInfoCOP ab_info, Ab_TemplateInfoCOP ab_template
     
     
     
-// GraftMover2 default destructor
-GraftMover2::~GraftMover2() {}
+// Ab_GraftCDRs_Mover default destructor
+Ab_GraftCDRs_Mover::~Ab_GraftCDRs_Mover() {}
 
     
     
@@ -108,8 +108,8 @@ GraftMover2::~GraftMover2() {}
     
     
     
-void GraftMover2::init(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool camelid,bool benchmark){
-	Mover::type("GraftMover2");
+void Ab_GraftCDRs_Mover::init(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool camelid,bool benchmark){
+	Mover::type("Ab_GraftCDRs_Mover");
 
 	// setup all the booleans with default values
 	// they will get overwritten by the options and/or passed values
@@ -159,7 +159,7 @@ void GraftMover2::init(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool came
     
     
 void
-GraftMover2::set_default() {
+Ab_GraftCDRs_Mover::set_default() {
 	TR <<  "Setting up default settings, setting everything to false" << std::endl;
 	graft_l1_=graft_l2_=graft_l3_=graft_h1_=graft_h2_=graft_h3_=false;
     camelid_  = false;
@@ -168,7 +168,7 @@ GraftMover2::set_default() {
 	scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS );
 
 	first_apply_with_current_setup_ = true;
-} // GraftMover2 set_default
+} // Ab_GraftCDRs_Mover set_default
 
     
     
@@ -176,7 +176,7 @@ GraftMover2::set_default() {
     
     
     
-void GraftMover2::finalize_setup(core::pose::Pose & frame_pose, AntibodyInfo & ab_info )
+void Ab_GraftCDRs_Mover::finalize_setup(core::pose::Pose & frame_pose, Ab_Info & ab_info )
 {
     graft_sequence_ = new moves::SequenceMover();
     relax_sequence_ = new moves::SequenceMover();
@@ -191,7 +191,7 @@ void GraftMover2::finalize_setup(core::pose::Pose & frame_pose, AntibodyInfo & a
                     TR << "                  start (chothia): "<<ab_info.get_loop(it->first)->start()<<std::endl;
                     TR << "                   stop (chothia): "<<ab_info.get_loop(it->first)->stop()<<std::endl;
             
-                GraftOneMoverOP graftone ( new GraftOneMover( ab_info.get_loop(it->first)->start(), 
+                Ab_GraftOneCDR_MoverOP graftone ( new Ab_GraftOneCDR_Mover( ab_info.get_loop(it->first)->start(), 
                                                               ab_info.get_loop(it->first)->stop(), 
                                                               it->first, scorefxn_ )   );
 
@@ -202,7 +202,7 @@ void GraftMover2::finalize_setup(core::pose::Pose & frame_pose, AntibodyInfo & a
                 
             
                 /*
-                CloseOneMoverOP closeone( new CloseOneMover( ab_info.get_loop(it->first)->start(),
+                Ab_CloseOneCDR_MoverOP closeone( new Ab_CloseOneCDR_Mover( ab_info.get_loop(it->first)->start(),
                                                              ab_info.get_loop(it->first)->stop()   )     );
                 closeone->enable_benchmark_mode( benchmark_ );
                 closeone->set_pymol( pymol_ );
@@ -211,7 +211,7 @@ void GraftMover2::finalize_setup(core::pose::Pose & frame_pose, AntibodyInfo & a
                  */
             
 
-                LoopRlxMoverOP rlx_one_loop(new LoopRlxMover( ab_info.get_loop(it->first)->start(),
+                Ab_RelaxCDRs_MoverOP rlx_one_loop(new Ab_RelaxCDRs_Mover( ab_info.get_loop(it->first)->start(),
                                                               ab_info.get_loop(it->first)->stop()   )    );
                 rlx_one_loop->enable_benchmark_mode( benchmark_ );
                 relax_sequence_->add_mover( rlx_one_loop );
@@ -236,12 +236,12 @@ void GraftMover2::finalize_setup(core::pose::Pose & frame_pose, AntibodyInfo & a
     
     
     
-void GraftMover2::apply( pose::Pose & frame_pose )
+void Ab_GraftCDRs_Mover::apply( pose::Pose & frame_pose )
 {
 	TR <<  "Grafting designated CDRs" << std::endl;
 
 
-	AntibodyInfo ab_info( frame_pose, camelid_ );
+	Ab_Info ab_info( frame_pose, camelid_ );
 
 	if ( first_apply_with_current_setup_ ){ 
 	    finalize_setup(frame_pose, ab_info ); 
@@ -294,11 +294,11 @@ void GraftMover2::apply( pose::Pose & frame_pose )
 	if( get_native_pose() ) native_pose = *get_native_pose();
 	else                    native_pose = frame_pose;
     
-	AntibodyInfo native_ab( native_pose, camelid_ );
+	Ab_Info native_ab( native_pose, camelid_ );
 
 
 	ab_info.align_to_native( frame_pose, native_ab, native_pose );
-} // GraftMover2::apply()
+} // Ab_GraftCDRs_Mover::apply()
 
     
     
@@ -313,15 +313,15 @@ void GraftMover2::apply( pose::Pose & frame_pose )
     
     
 std::string
-GraftMover2::get_name() const { return "GraftMover2"; }
+Ab_GraftCDRs_Mover::get_name() const { return "Ab_GraftCDRs_Mover"; }
 
 // copy ctor
-GraftMover2::GraftMover2( GraftMover2 const & rhs ) {
+Ab_GraftCDRs_Mover::Ab_GraftCDRs_Mover( Ab_GraftCDRs_Mover const & rhs ) {
     initForEqualOperatorAndCopyConstructor(*this, rhs);
 }
 
 ///@brief assignment operator
-GraftMover2 & GraftMover2::operator=( GraftMover2 const & rhs ){
+Ab_GraftCDRs_Mover & Ab_GraftCDRs_Mover::operator=( Ab_GraftCDRs_Mover const & rhs ){
     //abort self-assignment
     if (this == &rhs) return *this;
     Mover::operator=(rhs);
@@ -329,7 +329,7 @@ GraftMover2 & GraftMover2::operator=( GraftMover2 const & rhs ){
     return *this;
 }
 
-void GraftMover2::initForEqualOperatorAndCopyConstructor(GraftMover2 & lhs, GraftMover2 const & rhs)
+void Ab_GraftCDRs_Mover::initForEqualOperatorAndCopyConstructor(Ab_GraftCDRs_Mover & lhs, Ab_GraftCDRs_Mover const & rhs)
 {
     lhs.graft_l1_ = rhs.graft_l1_;
     lhs.graft_l2_ = rhs.graft_l2_;
@@ -360,7 +360,7 @@ void GraftMover2::initForEqualOperatorAndCopyConstructor(GraftMover2 & lhs, Graf
     
     
     
-void GraftMover2::set_packer_default(pose::Pose & pose, bool include_current) {
+void Ab_GraftCDRs_Mover::set_packer_default(pose::Pose & pose, bool include_current) {
 
 	//set up packer
 	pack::task::PackerTaskOP task;
@@ -369,7 +369,7 @@ void GraftMover2::set_packer_default(pose::Pose & pose, bool include_current) {
 	task->or_include_current( include_current );
 	packer_ = new simple_moves::PackRotamersMover( scorefxn_, task );
 
-} // GraftMover2 set_packer_default
+} // Ab_GraftCDRs_Mover set_packer_default
 
     
     
@@ -385,7 +385,7 @@ void GraftMover2::set_packer_default(pose::Pose & pose, bool include_current) {
     
     
     
-void GraftMover2::relax_optimized_CDR_grafts( pose::Pose & pose ) {
+void Ab_GraftCDRs_Mover::relax_optimized_CDR_grafts( pose::Pose & pose ) {
 	Size loop_begin(0), loop_end(0);
 	bool detect_flag( false );
 	for( Size ii = 1; ii <= pose.total_residue(); ii++ ) {
@@ -398,14 +398,14 @@ void GraftMover2::relax_optimized_CDR_grafts( pose::Pose & pose ) {
 			detect_flag = false;
 		}
 		if((detect_flag == false) && (loop_begin != 0) && (loop_end != 0 )) {
-			LoopRlxMoverOP rlx_one_loop(new LoopRlxMover( loop_begin, loop_end));
+			Ab_RelaxCDRs_MoverOP rlx_one_loop(new Ab_RelaxCDRs_Mover( loop_begin, loop_end));
 			rlx_one_loop->enable_benchmark_mode( benchmark_ );
 			rlx_one_loop->apply( pose );
 			loop_begin = 0;
 			loop_end = 0;
 		}
 	} // for ii <= nres
-} // GraftMover2::relax_optimized_CDR_grafts
+} // Ab_GraftCDRs_Mover::relax_optimized_CDR_grafts
 
 
 

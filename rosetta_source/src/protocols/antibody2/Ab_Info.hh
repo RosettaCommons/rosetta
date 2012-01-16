@@ -11,8 +11,8 @@
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_AntibodyInfo_hh
-#define INCLUDED_protocols_antibody2_AntibodyInfo_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_Info_hh
+#define INCLUDED_protocols_antibody2_Ab_Info_hh
 
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
@@ -31,17 +31,17 @@ namespace protocols {
 namespace antibody2 {
 
 /// antibody2 definition
-class AntibodyInfo {
+class Ab_Info {
 
 public:
 	typedef std::map < std::string, loops::LoopOP > LoopMap;
 	/// default constructor
-	AntibodyInfo();
+	Ab_Info();
 
 	/// constructor with arguments
-	AntibodyInfo( core::pose::Pose & pose );
-	AntibodyInfo( core::pose::Pose & pose, bool camelid );
-	AntibodyInfo( core::pose::Pose & pose, std::string cdr_name );
+	Ab_Info( core::pose::Pose & pose );
+	Ab_Info( core::pose::Pose & pose, bool camelid );
+	Ab_Info( core::pose::Pose & pose, std::string cdr_name );
 
 	void setup_loops( core::pose::Pose & pose, bool camelid );
 
@@ -56,7 +56,7 @@ public:
 	bool is_extended() { return extended_; }
 
 	/// align current Fv to native.Fv
-	void align_to_native( core::pose::Pose & pose, antibody2::AntibodyInfo & native, core::pose::Pose & native_pose );
+	void align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & native, core::pose::Pose & native_pose );
 
 	// Start coordinates of active loop
 	core::Size current_start;
@@ -70,7 +70,7 @@ public:
     
     
     void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info );
+    friend std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info );
     
     
 //private:
@@ -102,4 +102,4 @@ private:
 } //namespace protocols
 
 
-#endif //INCLUDED_protocols_loops_AntibodyInfo_HH
+#endif //INCLUDED_protocols_loops_Ab_Info_HH

@@ -8,16 +8,16 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file antibody2/moves/GraftMover2.hh
+/// @file antibody2/moves/Ab_GraftCDRs_Mover.hh
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
 
-#ifndef INCLUDED_protocols_antibody2_moves_GraftMover2_hh
-#define INCLUDED_protocols_antibody2_moves_GraftMover2_hh
+#ifndef INCLUDED_protocols_antibody2_moves_Ab_GraftCDRs_Mover_hh
+#define INCLUDED_protocols_antibody2_moves_Ab_GraftCDRs_Mover_hh
 
-#include <protocols/antibody2/GraftMover2.fwd.hh>
+#include <protocols/antibody2/Ab_GraftCDRs_Mover.fwd.hh>
 
 // Rosetta headers
 #include <core/pose/Pose.hh>
@@ -31,8 +31,8 @@
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/AntibodyInfo.fwd.hh>
+#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 
 // ObjexxFCL Headers
@@ -47,19 +47,19 @@ namespace antibody2 {
 	//////////////////////////////////////////////////////////////////////////
 	/// @brief Grafts a series of CDR onto a framework
 	/// @details
-	class GraftMover2 : public protocols::moves::Mover {
+	class Ab_GraftCDRs_Mover : public protocols::moves::Mover {
 	public:
 		typedef std::map < std::string, bool > GraftMap;
 		// default constructor
-		GraftMover2();
+		Ab_GraftCDRs_Mover();
 
 		/// @brief constructor with arguments
-		GraftMover2(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool camelid,bool benchmark);
+		Ab_GraftCDRs_Mover(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool camelid,bool benchmark);
 
         
-        GraftMover2(AntibodyInfoCOP ab_info, Ab_TemplateInfoCOP ab_template);
+        Ab_GraftCDRs_Mover(Ab_InfoCOP ab_info, Ab_TemplateInfoCOP ab_template);
 		// default destructor
-		~GraftMover2();
+		~Ab_GraftCDRs_Mover();
 
 		void init(bool l1,bool l2,bool l3,bool h1,bool h2,bool h3,bool camelid,bool benchmark);
 
@@ -72,10 +72,10 @@ namespace antibody2 {
 		inline void set_camelid( bool setting ) { camelid_ = setting; }
 
 	        ///@brief copy ctor
-        	GraftMover2( GraftMover2 const & rhs );
+        	Ab_GraftCDRs_Mover( Ab_GraftCDRs_Mover const & rhs );
 
         	///@brief assignment operator
-        	GraftMover2 & operator=( GraftMover2 const & rhs );
+        	Ab_GraftCDRs_Mover & operator=( Ab_GraftCDRs_Mover const & rhs );
         
 		/// @brief enable benchmark mode
 		inline void enable_benchmark_mode( bool setting ) {
@@ -114,10 +114,10 @@ namespace antibody2 {
 
 		core::scoring::ScoreFunctionOP scorefxn_;
 
-		void finalize_setup( core::pose::Pose & framework, AntibodyInfo & ab_info );
+		void finalize_setup( core::pose::Pose & framework, Ab_Info & ab_info );
 		void set_packer_default( core::pose::Pose & pose, bool include_current );
-        void initForEqualOperatorAndCopyConstructor(GraftMover2 & lhs, GraftMover2 const & rhs);
-	}; // class GraftMover2
+        void initForEqualOperatorAndCopyConstructor(Ab_GraftCDRs_Mover & lhs, Ab_GraftCDRs_Mover const & rhs);
+	}; // class Ab_GraftCDRs_Mover
 
 
 

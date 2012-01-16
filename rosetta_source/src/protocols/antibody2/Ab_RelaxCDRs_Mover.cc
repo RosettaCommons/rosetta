@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody2/LoopRlxMover.cc
+/// @file protocols/antibody2/Ab_RelaxCDRs_Mover.cc
 /// @brief grafts a cdr onto the template of an antibody framework
 /// @detailed
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-#include <protocols/antibody2/LoopRlxMover.hh>
+#include <protocols/antibody2/Ab_RelaxCDRs_Mover.hh>
 
 #include <basic/Tracer.hh>
 
@@ -57,19 +57,19 @@ namespace protocols {
 namespace antibody2 {
 using namespace core;
 
-static basic::Tracer TRL("protocols.antibody2.LoopRlxMover");
+static basic::Tracer TRL("protocols.antibody2.Ab_RelaxCDRs_Mover");
 
-LoopRlxMover::LoopRlxMover( Size query_start, Size query_end ) : Mover( "LoopRlxMover" ) {
+Ab_RelaxCDRs_Mover::Ab_RelaxCDRs_Mover( Size query_start, Size query_end ) : Mover( "Ab_RelaxCDRs_Mover" ) {
 	loop_start_ = query_start;
 	loop_end_ = query_end;
 	set_default();
-} // LoopRlxMover default constructor
+} // Ab_RelaxCDRs_Mover default constructor
 
     
     
     
     
-void LoopRlxMover::set_default() {
+void Ab_RelaxCDRs_Mover::set_default() {
     //score12 scoring function, added two new terms "chainbreak=1.0" and "overlap_chainbreak=10/3"
 	highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" );
 	highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );               
@@ -90,7 +90,7 @@ void LoopRlxMover::set_default() {
 	outer_cycles_ = 2;
 	gamma_ = std::pow( (last_temp/init_temp), (1.0/inner_cycles_));
 	temperature_ = init_temp;
-} // LoopRlxMover::set_default
+} // Ab_RelaxCDRs_Mover::set_default
 
     
     
@@ -100,7 +100,7 @@ void LoopRlxMover::set_default() {
     
     
     
-void LoopRlxMover::setup_objects( pose::Pose & pose ) {
+void Ab_RelaxCDRs_Mover::setup_objects( pose::Pose & pose ) {
 	using namespace protocols::moves;
 	using namespace protocols::loops;
     
@@ -186,7 +186,7 @@ void LoopRlxMover::setup_objects( pose::Pose & pose ) {
 /// @global_read none
 /// @global_write none
 
-void LoopRlxMover::apply( pose::Pose & pose_in ) {
+void Ab_RelaxCDRs_Mover::apply( pose::Pose & pose_in ) {
 	using namespace protocols;
 	using namespace protocols::loops;
 	using namespace protocols::moves;
@@ -266,21 +266,21 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	// Restoring pose stuff
 	pose_in.fold_tree( tree_in ); // Tree
 
-	TRL << "LoopRlxMover: Finished Apply" << std::endl;
-} // LoopRlxMover::apply
+	TRL << "Ab_RelaxCDRs_Mover: Finished Apply" << std::endl;
+} // Ab_RelaxCDRs_Mover::apply
 
 std::string
-LoopRlxMover::get_name() const { return "LoopRlxMover"; }
+Ab_RelaxCDRs_Mover::get_name() const { return "Ab_RelaxCDRs_Mover"; }
 
 
 
 void
-LoopRlxMover::setup_packer_task( pose::Pose & pose_in ) {
+Ab_RelaxCDRs_Mover::setup_packer_task( pose::Pose & pose_in ) {
 	using namespace pack::task;
 	using namespace pack::task::operation;
 	tf_ = new TaskFactory;
 
-	TRL << "LoopRlxMover Setting Up Packer Task" << std::endl;
+	TRL << "Ab_RelaxCDRs_Mover Setting Up Packer Task" << std::endl;
 
 	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
 	tf_->push_back( new InitializeFromCommandline );
@@ -297,9 +297,9 @@ LoopRlxMover::setup_packer_task( pose::Pose & pose_in ) {
 	// adds scoring bonuses for the "unbound" rotamers, if any
 	core::pack::dunbrack::load_unboundrot( pose_in );
 
-	TRL << "LoopRlxMover Done: Setting Up Packer Task" << std::endl;
+	TRL << "Ab_RelaxCDRs_Mover Done: Setting Up Packer Task" << std::endl;
 
-} // LoopRlxMover::setup_packer_task
+} // Ab_RelaxCDRs_Mover::setup_packer_task
 
 } // antibody2
 } // protocols

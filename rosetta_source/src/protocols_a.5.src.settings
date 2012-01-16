@@ -18,14 +18,14 @@ sources = {
 		"Ubiquitin_E2C_Modeler",
 	],
 	"protocols/antibody2": [
-		"Ab_TemplateInfo",
-		"AntibodyInfo",
-		"AntibodyModeler2",
-		"CDRH3Modeler2",
-		"GraftMover2",
-		"GraftOneMover",
-		"CloseOneMover",
-		"LoopRlxMover",
+                "Ab_TemplateInfo",
+                "Ab_Info",
+                "Ab_AssembleCDRs",
+                "CDRH3Modeler2",
+                "Ab_GraftCDRs_Mover",
+                "Ab_GraftOneCDR_Mover",
+                "Ab_CloseOneCDR_Mover",
+                "Ab_RelaxCDRs_Mover",
 	],
 }
 include_path = [

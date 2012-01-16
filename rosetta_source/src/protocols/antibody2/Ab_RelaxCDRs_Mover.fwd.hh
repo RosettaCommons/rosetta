@@ -11,17 +11,18 @@
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_GraftOneMover_fwd_hh
-#define INCLUDED_protocols_antibody2_GraftOneMover_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_RelaxCDRs_Mover_fwd_hh
+#define INCLUDED_protocols_antibody2_Ab_RelaxCDRs_Mover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
 
-class GraftOneMover;
-typedef utility::pointer::owning_ptr< GraftOneMover > GraftOneMoverOP;
-typedef utility::pointer::owning_ptr<const GraftOneMover> GraftOneMoverCOP;
+class Ab_RelaxCDRs_Mover;
+typedef utility::pointer::owning_ptr< Ab_RelaxCDRs_Mover > Ab_RelaxCDRs_MoverOP;
+typedef utility::pointer::owning_ptr< Ab_RelaxCDRs_Mover const > Ab_RelaxCDRs_MoverCOP;
+
 } // antibody2
 } // protocols
 

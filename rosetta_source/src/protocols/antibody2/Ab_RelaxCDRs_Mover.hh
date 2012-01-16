@@ -8,14 +8,14 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/LoopRlxMover.hh
+/// @file protocols/antibody2/Ab_RelaxCDRs_Mover.hh
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_LoopRlxMover_hh
-#define INCLUDED_protocols_antibody2_LoopRlxMover_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_RelaxCDRs_Mover_hh
+#define INCLUDED_protocols_antibody2_Ab_RelaxCDRs_Mover_hh
 
-#include <protocols/antibody2/LoopRlxMover.fwd.hh>
+#include <protocols/antibody2/Ab_RelaxCDRs_Mover.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.hh>  // Needs to be the full header so the scorefxn can default to NULL
@@ -30,12 +30,12 @@ namespace protocols {
 namespace antibody2 {
 
 	/// @brief Closes only one CDR onto a framework
-	class LoopRlxMover : public protocols::moves::Mover {
+	class Ab_RelaxCDRs_Mover : public protocols::moves::Mover {
 	public:
 		// default constructor
-		// LoopRlxMover();
+		// Ab_RelaxCDRs_Mover();
 		// constructor with arguments
-		LoopRlxMover( core::Size query_start, core::Size query_end  );
+		Ab_RelaxCDRs_Mover( core::Size query_start, core::Size query_end  );
 
 		void set_default();
 		void setup_objects( core::pose::Pose & pose );
@@ -73,7 +73,7 @@ namespace antibody2 {
 		core::pack::task::TaskFactoryOP tf_;
 
 
-	}; // class LoopRlxMover
+	}; // class Ab_RelaxCDRs_Mover
 
 } // antibody2
 } // protocols

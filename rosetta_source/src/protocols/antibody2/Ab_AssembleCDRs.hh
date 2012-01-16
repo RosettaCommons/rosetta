@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file AntibodyModeler2
+/// @file Ab_AssembleCDRs
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -16,8 +16,8 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-#ifndef INCLUDED_protocols_antibody2_AntibodyModeler2_hh
-#define INCLUDED_protocols_antibody2_AntibodyModeler2_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_AssembleCDRs_hh
+#define INCLUDED_protocols_antibody2_Ab_AssembleCDRs_hh
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
@@ -29,27 +29,27 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
-#include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/AntibodyModeler2.fwd.hh>
+#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/Ab_AssembleCDRs.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/antibody2/CDRH3Modeler2.fwd.hh>
-#include <protocols/antibody2/GraftMover2.fwd.hh>
+#include <protocols/antibody2/Ab_GraftCDRs_Mover.fwd.hh>
 
 #include <utility/vector1.hh>
 
 namespace protocols {
 namespace antibody2 {
 
-class AntibodyModeler2: public moves::Mover {
+class Ab_AssembleCDRs: public moves::Mover {
 public:
 
 	// default constructor
-	AntibodyModeler2();
+	Ab_AssembleCDRs();
 
 	// default destructor
-	~AntibodyModeler2();
+	~Ab_AssembleCDRs();
 
 	virtual protocols::moves::MoverOP clone() const;
 
@@ -111,7 +111,7 @@ public:
     
     
     void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const AntibodyModeler2 & ab_m_2 );
+    friend std::ostream & operator<<(std::ostream& out, const Ab_AssembleCDRs & ab_m_2 );
     
     
     /// @brief Associates relevant options with the AntibodyModeler class
@@ -149,7 +149,7 @@ public:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 	// external objects
-	AntibodyInfo ab_info_;
+	Ab_Info ab_info_;
 	utility::vector1< core::fragment::FragSetOP > offset_frags_;
 
 	//packer task
@@ -157,7 +157,7 @@ public:
 	core::pack::task::TaskFactoryOP init_task_factory_;
 
 	// movers
-	protocols::antibody2::GraftMover2OP graft_move_;
+	protocols::antibody2::Ab_GraftCDRs_MoverOP graft_move_;
 	protocols::antibody2::CDRH3Modeler2OP model_cdrh3_;
 
 	/// @brief Assigns user specified values to primitive members using command line options
@@ -173,7 +173,7 @@ public:
 
 	void setup_objects();
 
-}; // class AntibodyModeler2
+}; // class Ab_AssembleCDRs
 
     
     

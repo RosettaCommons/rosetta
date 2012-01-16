@@ -1,5 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet;
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -7,25 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   AntibodyModeler2.fwd.hh
-///
-/// @brief forward declaration
+/// @file
+/// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_AntibodyModeler2_fwd_hh
-#define INCLUDED_protocols_antibody2_AntibodyModeler2_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_CloseOneCDR_Mover_fwd_hh
+#define INCLUDED_protocols_antibody2_Ab_CloseOneCDR_Mover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
 
-	class AntibodyModeler2;
-	typedef utility::pointer::owning_ptr< AntibodyModeler2 > AntibodyModeler2OP;
-	typedef utility::pointer::owning_ptr< AntibodyModeler2 const > AntibodyModeler2COP;
+class Ab_CloseOneCDR_Mover;
+typedef utility::pointer::owning_ptr< Ab_CloseOneCDR_Mover > Ab_CloseOneCDR_MoverOP;
+typedef utility::pointer::owning_ptr< Ab_CloseOneCDR_Mover const > Ab_CloseOneCDR_MoverCOP;
 
-}
-}
+} // antibody2
+} // protocols
 
 #endif
-

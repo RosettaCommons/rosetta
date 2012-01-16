@@ -21,7 +21,7 @@
 #include <basic/Tracer.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <protocols/antibody2/AntibodyInfo.hh>
+#include <protocols/antibody2/Ab_Info.hh>
 #include <protocols/loops/Loops.hh>
 
 //Auto Headers
@@ -39,13 +39,13 @@
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-static basic::Tracer TR("antibody2.AntibodyInfo");
+static basic::Tracer TR("antibody2.Ab_Info");
 
 namespace protocols{
 namespace antibody2{
 
 /// default constructor
-AntibodyInfo::AntibodyInfo() {
+Ab_Info::Ab_Info() {
 	set_default( false/*camelid*/ );
 
 	for( core::Size i = 0; i <= 6; i++ ) hfr_[i][0] = hfr_[i][1] = hfr_[i][2] = 0;
@@ -54,13 +54,13 @@ AntibodyInfo::AntibodyInfo() {
 
 
 /// constructor with arguments
-AntibodyInfo::AntibodyInfo( core::pose::Pose & pose ) {
+Ab_Info::Ab_Info( core::pose::Pose & pose ) {
 	setup_loops( pose, false/*camelid*/ );
     obtain_loop_info();
 }
 
 /// constructor with arguments
-AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, bool camelid ) {
+Ab_Info::Ab_Info( core::pose::Pose & pose, bool camelid ) {
 	setup_loops( pose, camelid );
     obtain_loop_info();
 }
@@ -68,7 +68,7 @@ AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, bool camelid ) {
     
     
 /// constructor with arguments
-AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, std::string cdr_name )
+Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 {
 	set_default( false/*camelid*/ );
     using namespace std;
@@ -149,7 +149,7 @@ AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, std::string cdr_name )
     
     
 void
-AntibodyInfo::set_default( bool camelid )
+Ab_Info::set_default( bool camelid )
 {
 	camelid_ = camelid;
 	current_start = 0;
@@ -165,7 +165,7 @@ AntibodyInfo::set_default( bool camelid )
     
     
 void
-AntibodyInfo::setup_loops( core::pose::Pose & pose, bool camelid ) {
+Ab_Info::setup_loops( core::pose::Pose & pose, bool camelid ) {
 
     
     
@@ -235,7 +235,7 @@ AntibodyInfo::setup_loops( core::pose::Pose & pose, bool camelid ) {
     
     
     
-loops::LoopOP AntibodyInfo::get_loop( std::string loop ) {
+loops::LoopOP Ab_Info::get_loop( std::string loop ) {
 	LoopMap::iterator iter = loops_.begin();
 	iter = loops_.find(loop);
 	if ( iter != loops_.end() ) {return iter->second;}
@@ -246,7 +246,7 @@ loops::LoopOP AntibodyInfo::get_loop( std::string loop ) {
     
     
 
-void AntibodyInfo::align_to_native( core::pose::Pose & pose, antibody2::AntibodyInfo & native, core::pose::Pose & native_pose ) {
+void Ab_Info::align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & native, core::pose::Pose & native_pose ) {
 
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
@@ -274,7 +274,7 @@ void AntibodyInfo::align_to_native( core::pose::Pose & pose, antibody2::Antibody
     
     
 void
-AntibodyInfo::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
+Ab_Info::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	if( camelid_ )
 		detect_camelid_CDR_H3_stem_type();
 	else
@@ -286,7 +286,7 @@ AntibodyInfo::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
     
     
 void
-AntibodyInfo::detect_camelid_CDR_H3_stem_type() {
+Ab_Info::detect_camelid_CDR_H3_stem_type() {
 	TR << "AC Detecting Camelid CDR H3 Stem Type" << std::endl;
 
 	// extract single letter aa codes for the chopped loop residues
@@ -324,7 +324,7 @@ AntibodyInfo::detect_camelid_CDR_H3_stem_type() {
     
     
 void
-AntibodyInfo::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
+Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
 
 	bool is_H3( false );
@@ -416,7 +416,7 @@ AntibodyInfo::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
     
     
 void
-AntibodyInfo::all_cdr_fold_tree( core::pose::Pose & pose ) {
+Ab_Info::all_cdr_fold_tree( core::pose::Pose & pose ) {
 	using namespace core::kinematics;
 
 	all_cdr_loops_.sequential_order();
@@ -453,14 +453,14 @@ AntibodyInfo::all_cdr_fold_tree( core::pose::Pose & pose ) {
     
 /// @details  Show the complete setup of the docking protocol
 void
-AntibodyInfo::show( std::ostream & out ) {
+Ab_Info::show( std::ostream & out ) {
     //      if ( !flags_and_objects_are_in_sync_ ){
     //              sync_objects_with_flags();
     //      }
     out << *this;
 }
     
-std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )
+std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info )
 {
         using namespace ObjexxFCL::fmt;
         // All output will be 80 characters - 80 is a nice number, don't you think?
@@ -506,7 +506,7 @@ std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )
 }
 
     
-void AntibodyInfo::obtain_loop_info(){
+void Ab_Info::obtain_loop_info(){
         
         using namespace std;
         ifstream inf;

@@ -292,7 +292,7 @@ void CDRH3Modeler2::set_default()
 				H3_filter_ = false;
 				bool closed_cutpoints( false );
 
-				antibody2::AntibodyInfo starting_antibody;
+				antibody2::Ab_Info starting_antibody;
 				starting_antibody = antibody_in_;
 
 				Size cycle (1 );
@@ -351,7 +351,7 @@ CDRH3Modeler2::get_name() const {
 			std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
 			core::import_pose::pose_from_pdb( template_pose_, path+"hfr.pdb" );
 			std::string template_name = "h3";
-			antibody2::AntibodyInfo hfr_template( template_pose_, template_name );
+			antibody2::Ab_Info hfr_template( template_pose_, template_name );
 			unaligned_cdr_loop_begin = hfr_template.current_start;
 			unaligned_cdr_loop_end = hfr_template.current_end;
 
@@ -364,7 +364,7 @@ CDRH3Modeler2::get_name() const {
 			loops::Loop trimmed_cdr_h3( antibody_in_.get_loop("h3")->start(),
 				modified_framework_loop_end, cutpoint, 0, true );
 
-			antibody2::AntibodyInfo starting_antibody;
+			antibody2::Ab_Info starting_antibody;
 			starting_antibody = antibody_in_;
 			bool closed_cutpoints( false );
 
@@ -400,7 +400,7 @@ CDRH3Modeler2::get_name() const {
 
 			TR <<  "H3M Modeling Fullatom CDR H3 loop" << std::endl;
 
-			antibody2::AntibodyInfo starting_antibody;
+			antibody2::Ab_Info starting_antibody;
 			starting_antibody = antibody_in_;
 			bool closed_cutpoints( false );
 
@@ -491,7 +491,7 @@ CDRH3Modeler2::get_name() const {
 		} // simple_fold_tree
 
 		void read_H3_cter_fragment(
-			antibody2::AntibodyInfo & antibody_in,
+			antibody2::Ab_Info & antibody_in,
 			utility::vector1< fragment::FragData > & H3_base_library,
 			bool is_camelid ) {
 			using namespace fragment;

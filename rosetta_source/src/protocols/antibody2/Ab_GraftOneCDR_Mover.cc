@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody2/GraftOneMover.cc
+/// @file protocols/antibody2/Ab_GraftOneCDR_Mover.cc
 /// @brief grafts a cdr onto the template of an antibody framework
 /// @detailed
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#include <protocols/antibody2/GraftOneMover.hh>
+#include <protocols/antibody2/Ab_GraftOneCDR_Mover.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/antibody2/AntibodyInfo.hh>
+#include <protocols/antibody2/Ab_Info.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
 
 #include <core/pack/task/PackerTask.hh>
@@ -35,7 +35,7 @@
 #include <basic/Tracer.hh>
 
 
-static basic::Tracer TRG("protocols.antibody2.GraftOneMover");
+static basic::Tracer TRG("protocols.antibody2.Ab_GraftOneCDR_Mover");
 
 namespace protocols {
 namespace antibody2 {
@@ -43,17 +43,17 @@ using namespace core;
 
 
 
-GraftOneMover::GraftOneMover(){}
+Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover(){}
 
-GraftOneMover::GraftOneMover( Size query_start, Size query_end, std::string template_name, scoring::ScoreFunctionOP scorefxn ) : Mover( "GraftOneMover" ), scorefxn_( scorefxn )
+Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover( Size query_start, Size query_end, std::string template_name, scoring::ScoreFunctionOP scorefxn ) : Mover( "Ab_GraftOneCDR_Mover" ), scorefxn_( scorefxn )
 {
 	query_start_ = query_start;
 	query_end_   = query_end;
 	set_default( template_name );
-} // GraftOneMover default constructor
+} // Ab_GraftOneCDR_Mover default constructor
 
 
-//GraftOneMover::GraftOneMover( Size query_start, Size query_end, std::string template_name) : Mover( "GraftOneMover" )
+//Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover( Size query_start, Size query_end, std::string template_name) : Mover( "Ab_GraftOneCDR_Mover" )
 //{
 //    query_start_ = query_start;
 //	query_end_ = query_end;
@@ -61,12 +61,12 @@ GraftOneMover::GraftOneMover( Size query_start, Size query_end, std::string temp
 //}
     
 
-// GraftOneMover default destructor
-GraftOneMover::~GraftOneMover() {}
+// Ab_GraftOneCDR_Mover default destructor
+Ab_GraftOneCDR_Mover::~Ab_GraftOneCDR_Mover() {}
 
 
 
-void GraftOneMover::set_default( std::string template_name )
+void Ab_GraftOneCDR_Mover::set_default( std::string template_name )
 {
 //	std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
 //	TRG << "Reading in template: " << path << template_name << ".pdb " << std::endl;
@@ -87,22 +87,22 @@ void GraftOneMover::set_default( std::string template_name )
   */  
     
     
-	AntibodyInfo ab_info( template_pose_, template_name );
+	Ab_Info ab_info( template_pose_, template_name );
 	template_start_ = ab_info.current_start;
 	template_end_   = ab_info.current_end;
 	template_name_  = template_name;
 } 
 
 std::string
-GraftOneMover::get_name() const { return "GraftOneMover"; }
+Ab_GraftOneCDR_Mover::get_name() const { return "Ab_GraftOneCDR_Mover"; }
 
 // copy ctor
-GraftOneMover::GraftOneMover( GraftOneMover const & rhs ) {
+Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover( Ab_GraftOneCDR_Mover const & rhs ) {
     initForEqualOperatorAndCopyConstructor(*this, rhs);
 }
 
 ///@brief assignment operator
-GraftOneMover & GraftOneMover::operator=( GraftOneMover const & rhs ){
+Ab_GraftOneCDR_Mover & Ab_GraftOneCDR_Mover::operator=( Ab_GraftOneCDR_Mover const & rhs ){
     //abort self-assignment
     if (this == &rhs) return *this;
     Mover::operator=(rhs);
@@ -110,13 +110,13 @@ GraftOneMover & GraftOneMover::operator=( GraftOneMover const & rhs ){
     return *this;
 }
 
-void GraftOneMover::initForEqualOperatorAndCopyConstructor(GraftOneMover & lhs, GraftOneMover const & rhs) {
+void Ab_GraftOneCDR_Mover::initForEqualOperatorAndCopyConstructor(Ab_GraftOneCDR_Mover & lhs, Ab_GraftOneCDR_Mover const & rhs) {
 
 }
 
 
 
-void GraftOneMover::apply( pose::Pose & pose_in )
+void Ab_GraftOneCDR_Mover::apply( pose::Pose & pose_in )
 {
 
     
@@ -212,7 +212,7 @@ void GraftOneMover::apply( pose::Pose & pose_in )
     pose_in.dump_pdb(template_name_+"_graft");
 
     
-} // GraftOneMover::apply
+} // Ab_GraftOneCDR_Mover::apply
 
 
     
