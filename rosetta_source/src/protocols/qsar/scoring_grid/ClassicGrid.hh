@@ -34,8 +34,8 @@ public:
 	void parse_my_tag(utility::tag::TagPtr const tag);
 
 private:
-	core::Size atr_radius_;
-	core::Size rep_radius_;
+	core::Real atr_radius_;
+	core::Real rep_radius_;
 };
 
 }
