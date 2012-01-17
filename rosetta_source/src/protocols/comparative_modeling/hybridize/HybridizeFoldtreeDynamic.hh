@@ -39,12 +39,12 @@ public:
 
 	void set_core_chunks(const protocols::loops::Loops & chunks);
 
-	protocols::loops::Loops make_complete_chunks( utility::vector1 < core::Size > cut_positions );
+	// Undefined, commenting out to fix PyRosetta build  protocols::loops::Loops make_complete_chunks( utility::vector1 < core::Size > cut_positions );
 
-	void set_complete_chunks(const protocols::loops::Loops & chunks);
+	// Undefined, commenting out to fix PyRosetta build  void set_complete_chunks(const protocols::loops::Loops & chunks);
 
 	void initialize( core::pose::Pose & pose, protocols::loops::Loops const & core_chunks );
-	
+
 	utility::vector1 < core::Size > decide_cuts(core::Size n_residues);
 
 	void choose_anchors();
@@ -56,7 +56,7 @@ public:
 protected:
 	/// @brief Stochastically selects an anchor position
 	core::Size choose_anchor_position(const protocols::loops::Loop& chunk) const;
-	
+
 private:
 	utility::vector1 < core::Size > anchor_positions_;
 
@@ -65,9 +65,9 @@ private:
 	protocols::loops::Loops complete_chunks_;
 
 	// segment pose into "core regions" where anchors may lie
-	protocols::loops::Loops core_chunks_last_; 
-	protocols::loops::Loops core_chunks_; 
-	
+	protocols::loops::Loops core_chunks_last_;
+	protocols::loops::Loops core_chunks_;
+
 };
 
 }  //  namespace comparative_modeling

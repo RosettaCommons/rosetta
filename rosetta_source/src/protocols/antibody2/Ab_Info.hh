@@ -14,6 +14,8 @@
 #ifndef INCLUDED_protocols_antibody2_Ab_Info_hh
 #define INCLUDED_protocols_antibody2_Ab_Info_hh
 
+#include <protocols/antibody2/Ab_Info.fwd.hh>
+
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
@@ -32,7 +34,7 @@ namespace protocols {
 namespace antibody2 {
 
 /// antibody2 definition
-class Ab_Info {
+class Ab_Info : public utility::pointer::ReferenceCount {
 
 public:
 	typedef std::map < std::string, loops::LoopOP > LoopMap;
@@ -66,14 +68,14 @@ public:
 	utility::vector1< char > Fv_sequence_;
 
 	loops::Loops all_cdr_loops_;
-    
-    
-    
-    
+
+
+
+
     void show( std::ostream & out=std::cout );
     friend std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info );
-    
-    
+
+
 //private:
 private:
 	// cdr loops
@@ -81,7 +83,7 @@ private:
 	loops::LoopOP L1_, L2_, L3_, H1_, H2_, H3_;
     std::string L1_seq_, L2_seq_, L3_seq_, H1_seq_,H2_seq_,H3_seq_;
     core::pose::PoseOP ab_pose_;
-    
+
 	core::Size hfr_[7][3]; // array of framework residues for alignment
 
 	bool camelid_;

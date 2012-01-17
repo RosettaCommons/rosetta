@@ -70,24 +70,20 @@ public:
 
 	///@brief get what criteria should be used to define what
 	///constitutes a hydrogen bond
-	HBDefType
-	definition_type() const;
+	// Undefined, commenting out to fix PyRosetta build  HBDefType definition_type() const;
 
 	///@brief set what criteria should be used to define what
 	///constitutes a hydrogen bond
-	void
-	definition_type( HBDefType definition_type );
+	// Undefined, commenting out to fix PyRosetta build  void definition_type( HBDefType definition_type );
 
 
 	///@brief get the definition threshold that should be
 	///used to define what constitutes a hydrogen bond
-	core::Real
-	definition_threshold() const;
+	// Undefined, commenting out to fix PyRosetta build  core::Real definition_threshold() const;
 
 	///@brief set the definition threshold that should be
 	///used to define what constitutes a hydrogen bond
-	void
-	definition_threshold( core::Real definition_threshold );
+	// Undefined, commenting out to fix PyRosetta build  void definition_threshold( core::Real definition_threshold );
 
 	virtual
 	void

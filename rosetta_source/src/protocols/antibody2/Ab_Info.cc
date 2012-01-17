@@ -12,6 +12,8 @@
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
+#include <protocols/antibody2/Ab_Info.hh>
+
 // Rosetta Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
@@ -21,7 +23,6 @@
 #include <basic/Tracer.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <protocols/antibody2/Ab_Info.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -66,8 +67,8 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, bool camelid ) {
     obtain_loop_info();
 }
 
-    
-    
+
+
 /// constructor with arguments
 Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 {
@@ -81,7 +82,7 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 			L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 24 ), pose.pdb_info()->pdb2pose( 'L', 34 ) );
 			current_start = L1_->start();
 			current_end = L1_->stop();
-            
+
             inf.open("query.l1");
             if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l1' file!!");}
             inf>>temp; inf>>L1_seq_;
@@ -91,8 +92,8 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 			L2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 50 ), pose.pdb_info()->pdb2pose( 'L', 56 ) );
 			current_start = L2_->start();
 			current_end = L2_->stop();
-            
-            inf.open("query.l2"); 
+
+            inf.open("query.l2");
             if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l2' file!!");}
             inf>>temp; inf>>L2_seq_;
             inf.close();
@@ -101,8 +102,8 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 			L3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 89 ), pose.pdb_info()->pdb2pose( 'L', 97 ) );
 			current_start = L3_->start();
 			current_end = L3_->stop();
-            
-            inf.open("query.l3"); 
+
+            inf.open("query.l3");
             if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l3' file!!");}
             inf>>temp; inf>>L3_seq_;
             inf.close();
@@ -112,8 +113,8 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 		H1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 26 ), pose.pdb_info()->pdb2pose( 'H', 35 ) );
 		current_start = H1_->start();
 		current_end = H1_->stop();
-        
-        inf.open("query.h1"); 
+
+        inf.open("query.h1");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h1' file!!");}
         inf>>temp; inf>>H1_seq_;
         inf.close();
@@ -122,8 +123,8 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 		H2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 50 ), pose.pdb_info()->pdb2pose( 'H', 65 ) );
 		current_start = H2_->start();
 		current_end = H2_->stop();
-        
-        inf.open("query.h2"); 
+
+        inf.open("query.h2");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h2' file!!");}
         inf>>temp; inf>>H2_seq_;
         inf.close();
@@ -132,23 +133,23 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 		H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 ) );
 		current_start = H3_->start();
 		current_end = H3_->stop();
-        
-        inf.open("query.h3"); 
+
+        inf.open("query.h3");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h3' file!!");}
         inf>>temp; inf>>H3_seq_;
         inf.close();
 	}
-    
-    
+
+
 } // constructor with arguments
 
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
 void
 Ab_Info::set_default( bool camelid )
 {
@@ -160,18 +161,18 @@ Ab_Info::set_default( bool camelid )
 }
 
 
-    
-    
-    
-    
-    
+
+
+
+
+
 void
 Ab_Info::setup_loops( core::pose::Pose & pose, bool camelid ) {
 
-    
-    
+
+
 	set_default( camelid );
-    
+
 	if( !camelid_ ) {
 		L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 24 ), pose.pdb_info()->pdb2pose( 'L', 34 ) );
 		L1_->set_cut( L1_->start() + core::Size( ( ( L1_->stop() - L1_->start() ) + 1 ) / 2 ) );
@@ -229,23 +230,23 @@ Ab_Info::setup_loops( core::pose::Pose & pose, bool camelid ) {
 
 } // set_defaults
 
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
 loops::LoopOP Ab_Info::get_loop( std::string loop ) {
 	LoopMap::iterator iter = loops_.begin();
 	iter = loops_.find(loop);
 	if ( iter != loops_.end() ) {return iter->second;}
 }
-    
-    
-    
-    
-    
+
+
+
+
+
 
 void Ab_Info::align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & native, core::pose::Pose & native_pose ) {
 
@@ -268,12 +269,12 @@ void Ab_Info::align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & nat
 
 } // align_to_native()
 
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 void
 Ab_Info::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	if( camelid_ )
@@ -283,9 +284,9 @@ Ab_Info::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	return;
 } // detect_CDR_H3_stem_type
 
-    
-    
-    
+
+
+
 void
 Ab_Info::detect_camelid_CDR_H3_stem_type() {
 	TR << "AC Detecting Camelid CDR H3 Stem Type" << std::endl;
@@ -322,8 +323,8 @@ Ab_Info::detect_camelid_CDR_H3_stem_type() {
 } // detect_camelid_CDR_H3_stem_type()
 
 
-    
-    
+
+
 void
 Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
@@ -407,15 +408,15 @@ Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 		 << "Kink: " << kinked_ << " Extended: " << extended_ << std::endl;
 } // detect_regular_CDR_H3_stem_type()
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
 void
 Ab_Info::all_cdr_fold_tree( core::pose::Pose & pose ) {
 	using namespace core::kinematics;
@@ -448,10 +449,10 @@ Ab_Info::all_cdr_fold_tree( core::pose::Pose & pose ) {
 
 } // all_cdr_fold_tree()
 
-    
-    
-    
-    
+
+
+
+
 /// @details  Show the complete setup of the docking protocol
 void
 Ab_Info::show( std::ostream & out ) {
@@ -460,7 +461,7 @@ Ab_Info::show( std::ostream & out ) {
     //      }
     out << *this;
 }
-    
+
 std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info )
 {
         using namespace ObjexxFCL::fmt;
@@ -475,77 +476,77 @@ std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info )
         out << line_marker << "           length:  "<<ab_info.L1_seq_.size() <<std::endl;
         out << line_marker << "         sequence:  "<<ab_info.L1_seq_ <<std::endl;
         out << line_marker << "        loop_info:  "<<*ab_info.L1_<<std::endl;
-        
+
         out << line_marker << " L2 info: "<<std::endl;
         out << line_marker << "           length:  "<<ab_info.L2_seq_.size()<<std::endl;
         out << line_marker << "         sequence:  "<<ab_info.L2_seq_ <<std::endl;
         out << line_marker << "        loop_info:  "<<*ab_info.L2_<<std::endl;
-        
+
         out << line_marker << " L3 info: "<<std::endl;
         out << line_marker << "           length:  "<<ab_info.L3_seq_.size()<<std::endl;
         out << line_marker << "         sequence:  "<<ab_info.L3_seq_<<std::endl;
         out << line_marker << "        loop_info:  "<<*ab_info.L3_<<std::endl;
-        
+
         out << line_marker << " H1 info: "<<std::endl;
         out << line_marker << "           length:  "<<ab_info.H1_seq_.size()<<std::endl;
         out << line_marker << "         sequence:  "<<ab_info.H1_seq_<<std::endl;
         out << line_marker << "        loop_info:  "<<*ab_info.H1_<<std::endl;
-        
+
         out << line_marker << " H2 info: "<<std::endl;
         out << line_marker << "           length:  "<<ab_info.H2_seq_.size()<<std::endl;
         out << line_marker << "         sequence:  "<<ab_info.H2_seq_<<std::endl;
         out << line_marker << "        loop_info:  "<<*ab_info.H2_<<std::endl;
-        
+
         out << line_marker << " H3 info: "<<std::endl;
         out << line_marker << "           length:  "<<ab_info.H3_seq_.size()<<std::endl;
         out << line_marker << "         sequence:  "<<ab_info.H3_seq_<<std::endl;
         out << line_marker << "        loop_info:  "<<*ab_info.H3_<<std::endl;
-        
+
         // Close the box I have drawn
         out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
         return out;
 }
 
-    
+
 void Ab_Info::obtain_loop_info(){
-        
+
         using namespace std;
         ifstream inf;
         std::string temp;
-    
+
         inf.open("query.l1");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l1' file!!");}
         inf>>temp; inf>>L1_seq_;
         inf.close();
-        
+
         inf.open("query.l2");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l2' file!!");}
         inf>>temp; inf>>L2_seq_;
         inf.close();
-    
-        inf.open("query.l3"); 
+
+        inf.open("query.l3");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l3' file!!");}
-        inf>>temp; inf>>L3_seq_; 
+        inf>>temp; inf>>L3_seq_;
         inf.close();
-        
-        inf.open("query.h1"); 
+
+        inf.open("query.h1");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h1' file!!");}
-        inf>>temp; inf>>H1_seq_; 
+        inf>>temp; inf>>H1_seq_;
         inf.close();
-        
-        inf.open("query.h2"); 
+
+        inf.open("query.h2");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h2' file!!");}
-        inf>>temp; inf>>H2_seq_; 
+        inf>>temp; inf>>H2_seq_;
         inf.close();
-        
-        inf.open("query.h3"); 
+
+        inf.open("query.h3");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h3' file!!");}
-        inf>>temp; inf>>H3_seq_; 
+        inf>>temp; inf>>H3_seq_;
         inf.close();
 }
-  
-    
-    
+
+
+
 
 } // namespace antibody2
 } // namespace protocols

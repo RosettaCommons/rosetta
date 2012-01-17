@@ -52,9 +52,9 @@ namespace hybridize {
 using namespace core;
 using namespace protocols::moves;
 using namespace protocols::loops;
-	
+
 class FoldTreeHybridize: public protocols::moves::Mover {
-	
+
 public:
 
 	FoldTreeHybridize(
@@ -78,7 +78,7 @@ public:
 
 	void setup_foldtree(core::pose::Pose & pose);
 
-	core::Size choose_anchor_position(const protocols::loops::Loop & chunk) const;
+	// Undefined, commenting out to fix PyRosetta build  core::Size choose_anchor_position(const protocols::loops::Loop & chunk) const;
 
 	numeric::xyzVector<Real> center_of_mass(core::pose::Pose const & pose);
 
@@ -90,15 +90,16 @@ public:
 	          protocols::loops::Loops & template_chunk,
 	          core::pose::PoseCOP template_pose);
 
-	Loops loops();
+	// Undefined, commenting out to fix PyRosetta build  Loops loops();
+
 	inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) {
 		scorefxn_ = scorefxn;
 	}
-	
+
 	void apply(core::pose::Pose & pose);
 
 	std::string	get_name() const;
-	
+
 private:
 	core::Size initial_template_index_;
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -109,14 +110,14 @@ private:
 	utility::vector1 < core::fragment::FragSetOP > frag_libs_;
 
 	Loops ss_chunks_pose_;
-	
+
 	// backup original info
 	core::kinematics::FoldTree orig_ft_;
 	Size orig_n_residue_;
 }; //class FoldTreeHybridize
-	
-} // hybridize 
-} // comparative_modeling 
+
+} // hybridize
+} // comparative_modeling
 } // protocols
 
 #endif
