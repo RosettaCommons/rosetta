@@ -108,6 +108,10 @@ class SymmData : public utility::pointer::ReferenceCount
 	read_symmetry_data_from_file(
 		std::string filename
 	);
+	void
+	read_symmetry_data_from_stream(
+		std::istream & infile
+	);
 
 	//void read_symmetry_name();
 

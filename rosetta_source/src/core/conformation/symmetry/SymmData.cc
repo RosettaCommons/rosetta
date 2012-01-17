@@ -534,6 +534,15 @@ SymmData::read_symmetry_data_from_file(
 	if (!infile.good()) {
 		utility_exit_with_message( "[ERROR] Error opening symmetry file '" + filename + "'" );
 	}
+
+	read_symmetry_data_from_stream(infile);
+}
+
+void
+SymmData::read_symmetry_data_from_stream(
+	std::istream & infile
+)
+{
 	std::string line;
 	int linecount( 0 );
 	bool read_virtual_coords (false);         // Find out when to start reading virtual coordinates
