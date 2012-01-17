@@ -23,12 +23,10 @@
 #include <boost/function.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
-// Utility headers
-#include <utility/vector1.hh>
-
 // Project headers
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/Pose.hh>
 
 // Package headers
 #include <protocols/moves/MonteCarlo.hh>
@@ -40,7 +38,7 @@ namespace rational_mc {
 
 /// @brief Trigger API definition
 typedef boost::function<void(const core::pose::Pose&)> RationalMonteCarloTrigger;
-typedef boost::unordered_map<int, RationalMonteCarloTrigger> Triggers;
+typedef boost::unordered_map<core::Size, RationalMonteCarloTrigger> Triggers;
 
 /// @class Trial-based Monte Carlo minization primitive. Do not modify this
 /// class; almost anything you could possibly want to add is a bad idea.
@@ -51,56 +49,50 @@ class RationalMonteCarlo : public protocols::moves::Mover {
  public:
   RationalMonteCarlo(moves::MoverOP mover,
                      ScoreFunctionOP score,
-                     unsigned num_trials,
-                     double temperature,
+                     core::Size num_trials,
+                     core::Real temperature,
                      bool recover_low);
 
   /// @brief Applies the underlying mover to <pose> the specified number of times
   void apply(Pose& pose);
 
-  /// @brief Returns the number of trials to be attempted in calls to apply()
-  unsigned num_trials() const;
-
-  /// @brief Returns true if we should recover the low scoring pose at the end
-  /// of apply, false otherwise.
-  bool recover_low() const;
-
   /// @brief Returns this mover's name
   std::string get_name() const;
 
+  // -- Accessors -- //
+  bool recover_low() const;
+  moves::MoverOP mover() const;
+  core::Size num_trials() const;
+  core::Real temperature() const;
+  const core::scoring::ScoreFunction& score_function() const;
+
+  const core::pose::Pose& lowest_score_pose() const;
+  const core::pose::Pose& last_accepted_pose() const;
+
+  // -- Mutators -- //
+  void set_mover(moves::MoverOP mover);
+  void set_recover_low(bool recover_low);
+  void set_num_trials(core::Size num_trials);
+  void set_temperature(core::Real temperature);
+
+  /// @brief Updates the score function. Before calling this method, make sure
+  /// that apply() has been called at least once on a non-empty pose.
+  void set_score_function(core::scoring::ScoreFunctionOP score);
 
   // -- Triggers -- //
 
   /// @brief Registers the specified trigger with this instance. Returns a unique
-  /// identifier for referring to this trigger for subsequent operations (e.g. remove).
-  int add_trigger(const RationalMonteCarloTrigger& trigger);
+  /// identifier for referring to this trigger in subsequent operations.
+  core::Size add_trigger(const RationalMonteCarloTrigger& trigger);
 
-  /// @brief Unregisters the specified trigger, warning the user if one is not found.
-  void remove_trigger(int trigger_id);
-
-
-  // -- Analytics -- //
-
-  /// @brief Sets the native pose, enabling a variety of analytics to be collected.
-  /// Clears the contents of gdtmss() and rmsds().
-  void set_native(const core::pose::Pose& native);
-
-  /// @brief Returns gdtmm as a function of time. Requires a native structure.
-  const utility::vector1<double>& gdtmms() const;
-
-  /// @brief Returns rmsd as a function of time. Requires a native structure.
-  const utility::vector1<double>& rmsds() const;
-
+  /// @brief Unregisters the trigger with the given unique identifier
+  void remove_trigger(core::Size trigger_id);
 
  protected:
   /// @brief Executes all triggers attached to this instance. The order of trigger
   /// execution is undefined. Do not assume, depend, or in any way rely upon a
   /// partiular ordering.
   void fire_all_triggers(const Pose& pose);
-
-  /// @brief Built-in trigger for computing analytics given the native structure
-  void compute_analytics(const core::pose::Pose& pose);
-
 
  private:
   /// @brief Underlying mover
@@ -111,7 +103,7 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   moves::MonteCarloOP mc_;
 
   /// @brief Number of times to execute the underlying mover in calls to apply()
-  unsigned num_trials_;
+  core::Size num_trials_;
 
   /// @brief Determines whether the low scoring pose should be recovered at the
   /// conclusion of the apply() method
@@ -121,16 +113,7 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   Triggers triggers_;
 
   /// @brief Next trigger id to be assigned
-  unsigned next_trigger_id_;
-
-  /// @brief Native structure
-  Pose native_;
-
-  /// @brief Tracks gdtmm as a function of time if a native was provided
-  utility::vector1<double> gdtmms_;
-
-  /// @brief Tracks rmsd as a function of time if a native was provided
-  utility::vector1<double> rmsds_;
+  core::Size next_trigger_id_;
 };
 
 }  // namespace rational_mc

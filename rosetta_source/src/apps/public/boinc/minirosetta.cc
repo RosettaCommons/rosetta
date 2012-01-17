@@ -25,7 +25,6 @@
 #include <protocols/abinitio/BrokerMain.hh>
 #include <protocols/comparative_modeling/cm_main.hh>
 #include <protocols/medal/MedalMain.hh>
-#include <protocols/nonlocal/NonlocalAbinitioMain.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/rbsegment_relax/RBSegmentRelax_main.hh>
 #include <protocols/loop_build/LoopBuild.hh>
@@ -210,8 +209,6 @@ main( int argc, char * argv [] )
 			protocols::loop_build::LoopBuild_main( true );
 		} else if ( option[ run::protocol ]() == "threading" ) {
 			protocols::comparative_modeling::cm_main();
-		} else if ( option[ run::protocol ]() == "nonlocal_abinitio" ) {
-			protocols::nonlocal::NonlocalAbinitio_main(NULL);
 		} else if ( option[ run::protocol ]() == "medal" ) {
 			protocols::medal::Medal_main(NULL);
 		} else if ( option[ run::protocol ]() == "medal_exchange" ) {

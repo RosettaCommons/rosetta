@@ -56,7 +56,6 @@ sources = {
                 #"helix_rotate",
 		"medal",
 		"medal_exchange",
-		"nonlocal_abinitio",
                 #"sheet_translate",
                 "star_abinitio",
                 "windowed_rama",

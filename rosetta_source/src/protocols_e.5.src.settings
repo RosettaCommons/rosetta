@@ -18,11 +18,8 @@ sources = {
 	],
 	"protocols/nonlocal": [
 		"BiasedFragmentMover",
-		"BrokenFold",
 		"Chunk",
 		"HelixRotate",
-		"NonlocalAbinitio",
-		"NonlocalAbinitioMain",
 		"PolicyFactory",
 		"Region",
 		"SheetTranslate",

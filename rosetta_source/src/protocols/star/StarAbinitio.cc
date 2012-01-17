@@ -45,10 +45,11 @@
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/util.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/util.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/util/ChainbreakUtil.hh>
 #include <core/util/kinematics_util.hh>
@@ -209,6 +210,29 @@ void relax(core::pose::Pose* pose) {
   emit_intermediate(*pose, "star_relaxed.pdb");
 }
 
+/// @detail Configures the specified RationalMonteCarlo instance
+void configure(protocols::moves::MoverOP mover,
+               core::scoring::ScoreFunctionOP score,
+               unsigned cycles,
+               double temp,
+               bool recover,
+               protocols::simple_moves::rational_mc::RationalMonteCarlo* rmc) {
+  using core::pose::Pose;
+  rmc->set_mover(mover);
+  rmc->set_temperature(temp);
+  rmc->set_num_trials(cycles);
+  rmc->set_recover_low(recover);
+
+  // Replacing the score function triggers a reevaluation of cached low/last poses,
+  // which fails if none exist.
+  const Pose& low = rmc->lowest_score_pose();
+  const Pose& last = rmc->last_accepted_pose();
+
+  if (low.total_residue() && last.total_residue()) {
+    rmc->set_score_function(score);
+  }
+}
+
 void StarAbinitio::setup_kinematics(const protocols::loops::Loops& aligned,
                                     const utility::vector1<unsigned>& interior_cuts,
                                     core::pose::Pose* pose) const {
@@ -264,6 +288,7 @@ void StarAbinitio::setup_kinematics(const protocols::loops::Loops& aligned,
 
 void StarAbinitio::apply(core::pose::Pose& pose) {
   using core::kinematics::ShortestPathInFoldTree;
+  using core::scoring::Energies;
   using core::scoring::ScoreFunctionOP;
   using protocols::comparative_modeling::ThreadingJob;
   using protocols::loops::Loops;
@@ -332,19 +357,25 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
   // Stage 1
   TR << "Stage 1" << std::endl;
   update_sequence_separation(seq_sep[1], &pose);
-  RationalMonteCarlo stage1a(fragments_lg_uni, score1, static_cast<unsigned>(m * 2000), t, false);
-  RationalMonteCarlo stage1b(fragments_sm_uni, score1, static_cast<unsigned>(m * 2000), t, false);
-  stage1a.apply(pose);
-  stage1b.apply(pose);
+
+  RationalMonteCarlo stage_mover(fragments_lg_uni, score1, static_cast<unsigned>(m * 2000), t, false);  // 1a
+  stage_mover.apply(pose);
+
+  configure(fragments_sm_uni, score1, static_cast<unsigned>(m * 2000), t, false, &stage_mover);  // 1b
+  stage_mover.apply(pose);
+
   emit_intermediate(pose, "star_stage_1.pdb");
 
   // Stage 2
   TR << "Stage 2" << std::endl;
   update_sequence_separation(seq_sep[2], &pose);
-  RationalMonteCarlo stage2a(fragments_lg_uni, score2, static_cast<unsigned>(m * 4000), t, true);
-  RationalMonteCarlo stage2b(fragments_sm_uni, score2, static_cast<unsigned>(m * 4000), t, true);
-  stage2a.apply(pose);
-  stage2b.apply(pose);
+
+  configure(fragments_lg_uni, score2, static_cast<unsigned>(m * 4000), t, true, &stage_mover);  // 2a
+  stage_mover.apply(pose);
+
+  configure(fragments_sm_uni, score2, static_cast<unsigned>(m * 4000), t, true, &stage_mover);  // 2b
+  stage_mover.apply(pose);
+
   emit_intermediate(pose, "star_stage_2.pdb");
 
   // Stage 3
@@ -352,31 +383,36 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
   update_sequence_separation(seq_sep[3], &pose);
   for (unsigned i = 1; i <= 10; ++i) {
     ScoreFunctionOP score = ((i % 2) == 0 && i <= 7) ? score3a : score3b;
-    RationalMonteCarlo stage3a(fragments_lg_uni, score, static_cast<unsigned>(m * 4000), t, true);
-    RationalMonteCarlo stage3b(fragments_sm_uni, score, static_cast<unsigned>(m * 4000), t, true);
-    stage3a.apply(pose);
-    stage3b.apply(pose);
+
+    configure(fragments_lg_uni, score, static_cast<unsigned>(m * 4000), t, true, &stage_mover);  // 3a
+    stage_mover.apply(pose);
+
+    configure(fragments_sm_uni, score, static_cast<unsigned>(m * 4000), t, true, &stage_mover);  // 3b
+    stage_mover.apply(pose);
   }
   emit_intermediate(pose, "star_stage_3.pdb");
 
   // Stage 4
   TR << "Stage 4" << std::endl;
   update_sequence_separation(seq_sep[4], &pose);
+  configure(fragments_sm_smo, score4, static_cast<unsigned>(m * 800), t, true, &stage_mover);
   for (unsigned i = 1; i <= 3; ++i) {
-    RationalMonteCarlo stage4(fragments_sm_smo, score4, static_cast<unsigned>(m * 8000), t, true);
-    stage4.apply(pose);
+    stage_mover.apply(pose);  // 4
   }
   emit_intermediate(pose, "star_stage_4.pdb");
 
+  // Removing the virtual residue introduced by the star fold tree invalidates
+  // the pose's cached energies. Doing so causes the score line in the silent
+  // file to be 0.
+  Energies energies = pose.energies();
+
   // Housekeeping
+  tear_down_constraints(&pose);
   tear_down_kinematics(&pose);
   close_remaining_loops(&pose);
   relax(&pose);
 
-  // Rescore with a consistent energy function to normalize output
-  to_centroid(&pose);
-  score4->score(pose);
-  tear_down_constraints(&pose);
+  pose.set_new_energies_object(new Energies(energies));
 }
 
 void StarAbinitio::tear_down_kinematics(core::pose::Pose* pose) const {
@@ -389,7 +425,6 @@ void StarAbinitio::tear_down_kinematics(core::pose::Pose* pose) const {
   core::util::remove_cutpoint_variants(pose);
 }
 
-// TODO(cmiles) check usage
 void StarAbinitio::close_remaining_loops(core::pose::Pose* pose) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;

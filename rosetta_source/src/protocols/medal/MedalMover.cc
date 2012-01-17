@@ -347,9 +347,6 @@ protocols::moves::MoverOP MedalMover::create_fragment_mover(
     if (option[OptionKeys::rigid::log_accepted_moves]())
       mover->add_trigger(boost::bind(&on_pose_accept, _1));
 
-    if (native)
-      mover->set_native(*native);
-
     return mover;
 }
 
@@ -382,9 +379,6 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
   // Optionally record accepted moves
   if (option[OptionKeys::rigid::log_accepted_moves]())
     mover->add_trigger(boost::bind(&on_pose_accept, _1));
-
-  if (native)
-    mover->set_native(*native);
 
   return mover;
 }
@@ -419,9 +413,6 @@ protocols::moves::MoverOP MedalMover::create_small_mover(core::pose::PoseOP nati
   // Optionally record accepted moves
   if (option[OptionKeys::rigid::log_accepted_moves]())
     mover->add_trigger(boost::bind(&on_pose_accept, _1));
-
-  if (native)
-    mover->set_native(*native);
 
   return mover;
 }
