@@ -519,7 +519,10 @@ output_to_silent( Size const count,
 		s.add_energy( "backbone_rms", rmsd_no_super( pose, *native_pose, is_protein_backbone_including_O ) );
 	}
 
+	//silent_file_data.write_silent_struct( s, silent_file_out, true /*just scores*/ );
 	silent_file_data.write_silent_struct( s, silent_file_out, true /*just scores*/ );
+	silent_file_data.add_structure( s );
+
 }
 
 
@@ -565,8 +568,9 @@ enumerate_closure_test(){
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
-	SilentFileData silent_file_data;
+	SilentFileDataOP silent_file_data = new SilentFileData;
 	std::string const silent_file_out = option[ out::file::silent]();
+	std::string const score_all_file_out = "SCORE_ALL_" + silent_file_out;
 
 	Real const bin_size( option[ bin_width]()  );
 	Size const num_bins = static_cast<Size>(360.0/bin_size);
@@ -575,10 +579,11 @@ enumerate_closure_test(){
 
 	Size count( 0 );
 	(*scorefxn)( pose );
-	output_to_silent( count, pose, 0, sample_residue, loop_residues, native_pose, silent_file_data, silent_file_out  );
+	output_to_silent( count, pose, 0, sample_residue, loop_residues, native_pose, *silent_file_data, score_all_file_out  );
 
 	for ( Size i = 1; i <= num_bins; i++ ){
 
+		std::cout << "Scanning " << i << " out of " << num_bins << std::endl;
 		Real const phi  = i * ( 360.0 / num_bins );
 		pose.set_phi( sample_residue, phi );
 
@@ -599,11 +604,29 @@ enumerate_closure_test(){
 
 					Real const score = (*scorefxn)( *pose_list[n] );
 					count++;
-					output_to_silent( count, *pose_list[n], nsol, sample_residue, loop_residues, native_pose, silent_file_data, silent_file_out  );
+					output_to_silent( count, *pose_list[n], nsol, sample_residue, loop_residues, native_pose, *silent_file_data, score_all_file_out  );
 				}
 
 		}
 	}
+
+	StepWiseClusterer stepwise_clusterer( silent_file_data );
+	Size max_decoys( 400 );
+	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	stepwise_clusterer.set_max_decoys( max_decoys );
+	utility::vector1< Size > calc_rms_res;
+	calc_rms_res.push_back( sample_residue );
+	for ( Size n = 1; n <= loop_residues.size(); n++ ) calc_rms_res.push_back( loop_residues[n] );
+	stepwise_clusterer.set_calc_rms_res( calc_rms_res );
+	Real cluster_radius( 0.25 );
+	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
+	stepwise_clusterer.set_cluster_radius( cluster_radius	);
+	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
+
+	// Do it!
+	stepwise_clusterer.cluster();
+	stepwise_clusterer.output_silent_file( silent_file_out );
+
 
 }
 
