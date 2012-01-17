@@ -7,23 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/AtomAtomPairFeatures.hh
+/// @file   protocols/features/AtomInResidueAtomInResiduePairFeatures.hh
 /// @brief  report atom-atom pair geometry and scores to features Statistics Scientific Benchmark
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_features_AtomAtomPairFeatures_hh
-#define INCLUDED_protocols_features_AtomAtomPairFeatures_hh
+#ifndef INCLUDED_protocols_features_AtomInResidueAtomInResiduePairFeatures_hh
+#define INCLUDED_protocols_features_AtomInResidueAtomInResiduePairFeatures_hh
 
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
-#include <protocols/features/AtomAtomPairFeatures.fwd.hh>
+#include <protocols/features/AtomInResidueAtomInResiduePairFeatures.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
 #include <string>
@@ -34,13 +33,13 @@
 namespace protocols{
 namespace features{
 
-class AtomAtomPairFeatures : public protocols::features::FeaturesReporter {
+class AtomInResidueAtomInResiduePairFeatures : public protocols::features::FeaturesReporter {
 public:
-	AtomAtomPairFeatures();
+	AtomInResidueAtomInResiduePairFeatures();
 
-	AtomAtomPairFeatures( AtomAtomPairFeatures const & src );
+	AtomInResidueAtomInResiduePairFeatures( AtomInResidueAtomInResiduePairFeatures const & src );
 
-	virtual ~AtomAtomPairFeatures();
+	virtual ~AtomInResidueAtomInResiduePairFeatures();
 
 	///@brief return string with class name
 	std::string
@@ -50,14 +49,6 @@ public:
 	std::string
 	schema() const;
 
-	void
-	parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & /*data*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/);
-
 	///@brief collect all the feature data for the pose
 	core::Size
 	report_features(
@@ -66,22 +57,17 @@ public:
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session);
 
+	///@brief Similar to radial density distributions defined in
+	///Lu H, Skolnick J. A distance-dependent atomic knowledge-based
+	///potential for improved protein structure
+	///selection. Proteins. 2001;44(3):223-32. Available at:
+	///http://www.ncbi.nlm.nih.gov/pubmed/11455595.
 	void
 	report_atom_pairs(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session);
-
-private:
-
-	core::Real min_dist_;
-	core::Real max_dist_;
-	core::Real nbins_;
-
-	utility::vector1<std::string> relevant_atom_names_;
-	std::map<core::Size, core::Size> atom_index_to_relevant_atom_index_;
-	std::map<std::string, core::Size> relevant_elements_;
 
 };
 

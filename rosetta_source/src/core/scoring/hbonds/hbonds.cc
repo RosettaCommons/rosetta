@@ -46,6 +46,10 @@
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 
 //#include <core/scoring/Energies.hh>
 
@@ -153,6 +157,73 @@ fill_hbond_set(
 		}
 	} // res1
 }
+
+void
+fill_hbond_set_by_AHdist_threshold(
+	core::pose::Pose const & pose,
+	Real const AHdist_threshold,
+	HBondSet & hbond_set
+) {
+
+	hbond_set.clear();
+	HBondDatabase const & database( * HBondDatabase::get_database(hbond_set.hbond_options().params_database_tag()));
+
+	// need to know which residues are neighbors
+	// and what the neighbor-numbers are for each residue since some of the
+	// weights are environment-dependent.
+	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
+
+	// loop over all nbr-pairs
+	for ( Size acc_rsd_num = 1; acc_rsd_num <= pose.total_residue(); ++acc_rsd_num ) {
+		core::conformation::Residue const & acc_rsd( pose.residue( acc_rsd_num ) );
+		int const n_acc_nbrs = tenA_neighbor_graph.get_node( acc_rsd_num )->num_neighbors_counting_self_static();
+
+		for ( graph::Graph::EdgeListConstIter
+				iru = energy_graph.get_node(acc_rsd_num)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(acc_rsd_num)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
+			int const don_rsd_num( (*iru)->get_second_node_ind() );
+			core::conformation::Residue const & don_rsd(pose.residue(don_rsd_num));
+			int const n_don_nbrs = tenA_neighbor_graph.get_node(don_rsd_num)->num_neighbors_counting_self_static();
+
+			if (hbond_set.hbond_options().exclude_DNA_DNA() &&
+				acc_rsd.is_DNA() && don_rsd.is_DNA() ) continue;
+
+			foreach(Size const hatm, don_rsd.Hpos_polar()){
+				Size const datm(don_rsd.atom_base(hatm));
+				Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
+				Vector const & datm_xyz(don_rsd.atom(datm).xyz());
+
+				foreach(Size const aatm, acc_rsd.accpt_pos()){
+					if(hatm_xyz.distance( acc_rsd.xyz( aatm )) > AHdist_threshold) continue;
+
+					HBEvalType hbe_type(hbond_evaluation_type(datm, don_rsd, aatm, acc_rsd));
+					int const base ( acc_rsd.atom_base( aatm ) );
+					int const base2( acc_rsd.abase2( aatm ) );
+
+					Real unweighted_energy( 0.0 );
+					hb_energy_deriv(database, hbond_set.hbond_options(),
+						hbe_type, datm_xyz, hatm_xyz,
+						acc_rsd.atom(aatm ).xyz(),
+						acc_rsd.atom(base ).xyz(),
+						acc_rsd.atom(base2).xyz(),
+						unweighted_energy, false, DUMMY_DERIVS);
+
+					Real environmental_weight
+						(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
+							get_environment_dependent_weight(hbe_type, n_don_nbrs, n_acc_nbrs, hbond_set.hbond_options()));
+
+					hbond_set.append_hbond(
+						hatm, don_rsd, aatm, acc_rsd, hbe_type, unweighted_energy, environmental_weight, DUMMY_DERIVS );
+				}
+			}
+		}
+	}
+
+}
+
+
 
 /// @brief  Get the f1 and f2 contributions from all hbonds involving this atom
 /*void
@@ -471,22 +542,11 @@ identify_hbonds_1way_membrane(
 
 			if (unweighted_energy >= MAX_HB_ENERGY) continue;
 
-			Real environmental_weight
-				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
-				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options()));
-
-			//pba membrane depth dependent correction to the environmental_weight 
-
-			Real membrane_depth_dependent_weight(
+			//pba membrane depth dependent correction to the environmental_weight
+			Real environmental_weight(
 				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz()));
 
-			/*if (acc_rsd.seqpos() == 3 && don_rsd.seqpos() == 6) {
-				std::cout << "in 1: acc " << acc_rsd.seqpos() << " don " << don_rsd.seqpos() << " mbhb_weight "
-				 << membrane_depth_dependent_weight << std::endl;
-			}*/
-
-			environmental_weight = membrane_depth_dependent_weight;
 			//////
 			// now we have identified a hbond -> put it into the hbond_set
 
@@ -576,23 +636,11 @@ identify_hbonds_1way_membrane(
 
 			if (unweighted_energy >= MAX_HB_ENERGY) continue;
 
-			Real environmental_weight
-				(!options.use_hb_env_dep() ? 1 :
-				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, options));
-
 			//pba membrane depth dependent weight
 
-			Real membrane_depth_dependent_weight(
+			Real environmental_weight(
 				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz()));
-
-			/*if ((acc_rsd.seqpos() == 7 && don_rsd.seqpos() == 113) || (acc_rsd.seqpos() == 26 
-				&& don_rsd.seqpos() == 83) || (acc_rsd.seqpos() == 50 && don_rsd.seqpos() == 58)) {
-				std::cout << "in 2: acc " << acc_rsd.seqpos() << " don " << don_rsd.seqpos() << " mbhb_weight " 
-				 << membrane_depth_dependent_weight << std::endl;
-			}*/
-
-			environmental_weight = membrane_depth_dependent_weight;
 
 			////////
 			// now we have identified an hbond -> accumulate its energy

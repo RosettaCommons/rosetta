@@ -13,6 +13,8 @@ sources = {
 	"protocols/features": [
 		"AtomAtomPairFeatures",
 		"AtomAtomPairFeaturesCreator",
+		"AtomInResidueAtomInResiduePairFeatures",
+		"AtomInResidueAtomInResiduePairFeaturesCreator",
 		"DatabaseFilters",
 		"DatabaseJobInputter",
 		"DatabaseJobOutputter",

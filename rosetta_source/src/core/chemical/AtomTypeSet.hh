@@ -71,6 +71,11 @@ public:
 
 public:
 
+	/// @brief the name of the AtomTypeSet
+	std::string
+	name() const;
+
+
 	/// @brief number of atom types in the set
 	Size
 	n_atomtypes() const

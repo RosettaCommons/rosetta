@@ -90,6 +90,10 @@ class AtomTypeSetTests : public CxxTest::TestSuite {
 
 	// --------------- Test Cases --------------- //
 
+	void test_atom_type_set_name() {
+		TS_ASSERT_EQUALS(atomtypeset->name(), "chemical");
+	}
+
 	void test_n_atomtypes() {
 		TS_ASSERT_EQUALS( atomtypeset->n_atomtypes(), 7 );
 	}

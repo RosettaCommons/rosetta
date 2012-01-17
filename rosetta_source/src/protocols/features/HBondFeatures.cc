@@ -27,6 +27,7 @@
 #include <core/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/sasa.hh>
@@ -50,6 +51,7 @@
 #include <utility/vector1.hh>
 #include <utility/assert.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/vector0.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -61,12 +63,10 @@
 // C++ Headers
 #include <cmath>
 #include <algorithm>
-// AUTO-REMOVED #include <stdlib.h>
 
-#include <utility/vector0.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+
 
 namespace protocols{
 namespace features{
@@ -129,12 +129,16 @@ HBondFeatures::HBondFeatures() :
 
 HBondFeatures::HBondFeatures(
 	ScoreFunctionOP scfxn) :
-	scfxn_(scfxn)
+	scfxn_(scfxn),
+	definition_type_(hbdef_ENERGY),
+	definition_threshold_(0)
 {}
 
 HBondFeatures::HBondFeatures(HBondFeatures const & src) :
 	FeaturesReporter(),
-	scfxn_(src.scfxn_)
+	scfxn_(src.scfxn_),
+	definition_type_(src.definition_type_),
+	definition_threshold_(src.definition_threshold_)
 {}
 
 HBondFeatures::~HBondFeatures() {}
@@ -321,7 +325,7 @@ HBondFeatures::parse_my_tag(
 	Pose const & /*pose*/
 ) {
 	if(tag->hasOption("scorefxn")){
-		string scorefxn_name = tag->getOption<string>("scorefxn");
+		string const scorefxn_name(tag->getOption<string>("scorefxn"));
 		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
 	} else {
 		stringstream error_msg;
@@ -331,6 +335,26 @@ HBondFeatures::parse_my_tag(
 			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
 		utility_exit_with_message(error_msg.str());
 	}
+
+	string const definition_type(
+		tag->getOption<string>("definition_type", "energy"));
+	if(definition_type == "energy"){
+		definition_type_ = hbdef_ENERGY;
+	} else if(definition_type == "AHdist"){
+		definition_type_ = hbdef_AHDIST;
+	} else {
+		stringstream error_msg;
+		error_msg
+			<< "The hbond definition type '" << definition_type << "' is not recognized." << endl
+			<< "Available hbond definition types are:" << endl
+			<< "	'energy' => A polar-polar contact is an hbond when energy is below the definition_threshold." << endl
+			<< "  'AHdist' => A polar-polar contact is an hbond when the Acceptor-Hydrogen distance is less than the definition_threshold." << endl;
+		utility_exit_with_message(error_msg.str());
+	}
+
+	definition_threshold_ =
+		tag->getOption<Real>("definition_threshold", 0);
+
 }
 
 Size
@@ -347,7 +371,14 @@ HBondFeatures::report_features(
 		 !pose.conformation().structure_moved() &&
 		 pose.energies().residue_neighbors_updated());
 
-	hbond_set.setup_for_residue_pair_energies( pose, false, false );
+
+	if(definition_type_ == hbdef_ENERGY){
+		hbond_set.setup_for_residue_pair_energies( pose, false, false );
+	} else if(definition_type_ == hbdef_AHDIST){
+		fill_hbond_set_by_AHdist_threshold(pose, definition_threshold_, hbond_set);
+	} else {
+		utility_exit_with_message("Unrecognized hbond definition type.");
+	}
 
 	TR << "Number of hydrogen bonds found: " << hbond_set.nhbonds() << endl;
 

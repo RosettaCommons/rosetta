@@ -15,8 +15,12 @@
 #include <protocols/features/AtomAtomPairFeatures.hh>
 
 // Project Headers
+#include <basic/Tracer.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/graph/Graph.hh>
@@ -25,11 +29,13 @@
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
+#include <protocols/moves/DataMap.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray5D.hh>
+#include <ObjexxFCL/FArray3D.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -37,29 +43,96 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-//Auto Headers
+// C++ Headers
+#include <algorithm>
+#include <map>
+
 namespace protocols{
 namespace features{
 
+using std::map;
 using std::string;
+using std::endl;
+using std::upper_bound;
 using core::chemical::num_canonical_aas;
+using core::chemical::AtomTypeSetCAP;
 using core::chemical::AtomIndices;
+using core::chemical::ChemicalManager;
 using core::pose::Pose;
 using core::Size;
+using core::Real;
 using core::Distance;
 using core::Vector;
 using core::graph::Graph;
 using core::conformation::Residue;
 using core::scoring::TenANeighborGraph;
-using ObjexxFCL::FArray5D;
+using protocols::filters::Filters_map;
+using protocols::moves::DataMap;
+using protocols::moves::Movers_map;
+using utility::tag::TagPtr;
 using utility::sql_database::sessionOP;
 using utility::vector1;
+using basic::Tracer;
+using basic::database::safely_write_to_database;
+using basic::database::safely_prepare_statement;
+using ObjexxFCL::FArray3D;
 using cppdb::statement;
 
-AtomAtomPairFeatures::AtomAtomPairFeatures(){}
+static Tracer TR("protocols.features.AtomAtomPairFeatures");
 
-AtomAtomPairFeatures::AtomAtomPairFeatures( AtomAtomPairFeatures const & ) :
-	FeaturesReporter()
+AtomAtomPairFeatures::AtomAtomPairFeatures() :
+	min_dist_(0.0),
+	max_dist_(10.0),
+	nbins_(15)
+{
+	relevant_atom_names_.push_back("CAbb");
+	relevant_atom_names_.push_back("CObb");
+	relevant_atom_names_.push_back("OCbb");
+	relevant_atom_names_.push_back("CNH2");
+	relevant_atom_names_.push_back("COO" );
+	relevant_atom_names_.push_back("CH1" );
+	relevant_atom_names_.push_back("CH2" );
+	relevant_atom_names_.push_back("CH3" );
+	relevant_atom_names_.push_back("aroC");
+	relevant_atom_names_.push_back("Nbb" );
+	relevant_atom_names_.push_back("Ntrp");
+	relevant_atom_names_.push_back("Nhis");
+	relevant_atom_names_.push_back("NH2O");
+	relevant_atom_names_.push_back("Nlys");
+	relevant_atom_names_.push_back("Narg");
+	relevant_atom_names_.push_back("Npro");
+	relevant_atom_names_.push_back("OH"  );
+	relevant_atom_names_.push_back("ONH2");
+	relevant_atom_names_.push_back("OOC" );
+	relevant_atom_names_.push_back("Oaro");
+	relevant_atom_names_.push_back("Hpol");
+	relevant_atom_names_.push_back("Hapo");
+	relevant_atom_names_.push_back("Haro");
+	relevant_atom_names_.push_back("HNbb");
+	relevant_atom_names_.push_back("HOH" );
+	relevant_atom_names_.push_back("S"   );
+
+	AtomTypeSetCAP atom_type_set(ChemicalManager::get_instance()->atom_type_set("fa_standard"));
+
+	for(Size i=1; i <= relevant_atom_names_.size(); ++i){
+		atom_index_to_relevant_atom_index_[
+			atom_type_set->atom_type_index(relevant_atom_names_[i])] = i;
+	}
+
+	relevant_elements_["C"] = 1;
+	relevant_elements_["N"] = 2;
+	relevant_elements_["O"] = 3;
+	relevant_elements_["H"] = 4;
+
+}
+
+AtomAtomPairFeatures::AtomAtomPairFeatures(AtomAtomPairFeatures const & src) :
+	min_dist_(src.min_dist_),
+	max_dist_(src.max_dist_),
+	nbins_(src.nbins_),
+	relevant_atom_names_(src.relevant_atom_names_),
+	atom_index_to_relevant_atom_index_(src.atom_index_to_relevant_atom_index_),
+	relevant_elements_(src.relevant_elements_)
 {}
 
 AtomAtomPairFeatures::~AtomAtomPairFeatures(){}
@@ -72,18 +145,34 @@ AtomAtomPairFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS atom_pairs (\n"
 		"	struct_id INTEGER,\n"
-		"	resType1 TEXT,\n"
-		"	atmType1 TEXT,\n"
-		"	resType2 TEXT,\n"
-		"	atmType2 TEXT,\n"
-		"	distBin TEXT,\n"
+		"	atom_type TEXT,\n"
+		"	element TEXT,\n"
+		"	lower_break REAL,\n"
+		"	upper_break REAL,\n"
 		"	count INTEGER,\n"
 		"	FOREIGN KEY (struct_id)\n"
 		"		REFERENCES structures (struct_id)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	CONSTRAINT dist_is_nonnegative CHECK (count >= 0),\n"
-		"	PRIMARY KEY (struct_id, resType1, atmType1, resType2, atmType2, distBin));";
+		"	PRIMARY KEY (struct_id, atom_type, element, lower_break));";
 }
+
+void
+AtomAtomPairFeatures::parse_my_tag(
+	TagPtr const tag,
+	DataMap & /*data*/,
+	Filters_map const & /*filters*/,
+	Movers_map const & /*movers*/,
+	Pose const & /*pose*/
+) {
+	min_dist_ = tag->getOption<Real>("min_dist", 0.0);
+	max_dist_ = tag->getOption<Real>("max_dist", 10.0);
+	nbins_ = tag->getOption<Size>("nbins", 15);
+	if(nbins_ < 1){
+		utility_exit_with_message("The parameter 'nbins' must be an integer greater than 0.");
+	}
+}
+
+
 Size
 AtomAtomPairFeatures::report_features(
 	Pose const & pose,
@@ -94,21 +183,6 @@ AtomAtomPairFeatures::report_features(
 	report_atom_pairs(pose, relevant_residues, struct_id, db_session);
 	return 0;
 }
-
-/// @detail This is very similar in spirit to the potential described in
-///
-///﻿Lu H, Skolnick J. A distance-dependent atomic knowledge-based potential for improved protein structure selection. Proteins. 2001;44(3):223-32. Available at: http://www.ncbi.nlm.nih.gov/pubmed/11455595.
-///
-/// However, they use different distance bins.  Here, [0,1), ...,
-/// [9,10) are used because they are easy and as they report the the
-/// paper, most of the signal comes in the 3.5-6.5 range.  To get the
-/// molar fraction of atom types--since the types are unique within
-/// each residue type, there is exactly one per residue of that type.
-/// Therefore this information can be extracted from the Residues
-/// table when needed.  It may make sense to include it here if it
-/// turns to to be too cumbersom to get those quantities.
-///
-/// TODO: Expand for not just canonical residue types
 
 
 void
@@ -124,62 +198,86 @@ AtomAtomPairFeatures::report_atom_pairs(
 		 !pose.conformation().structure_moved() &&
 		 pose.energies().residue_neighbors_updated());
 
-	Size const max_res(num_canonical_aas);
-	Size const max_atm(30); // check this
-	Size const dist_bins(15);
-	FArray5D< Size > counts;
-	counts.dimension(max_res, max_atm, max_res, max_atm, dist_bins, 1);
+	if(pose.total_residue() ==0){
+		return;
+	}
 
-	TenANeighborGraph const & tenA( pose.energies().tenA_neighbor_graph() );
+	if(pose.residue(1).type().atom_type_set().name() != "fa_standard"){
+		TR.Warning
+			<< "Currently AtomAtomPairFeatures only works "
+			<< "for the 'fa_standard' AtomTypeSet. This pose has AtomTypeSet '"
+			<< pose.residue(1).type().atom_type_set().name() << "'.";
+		utility_exit();
+	}
 
 
-	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
-		Residue res1( pose.residue(resNum1) );
-		if(!relevant_residues[resNum1]) continue;
+	vector1<Distance> bin_breaks;
+	Distance const bin_width((max_dist_-min_dist_)/nbins_);
+	for(Size i=0; i <= nbins_; ++i){
+		bin_breaks.push_back(i*bin_width + min_dist_);
+	}
 
-		for ( Graph::EdgeListConstIter
-			ir  = tenA.get_node( resNum1 )->const_edge_list_begin(),
-			ire = tenA.get_node( resNum1 )->const_edge_list_end();
-			ir != ire; ++ir ) {
-			Size resNum2( (*ir)->get_other_ind(resNum1) );
-			if(!relevant_residues[resNum2]) continue;
+	FArray3D< Size > counts;
+	counts.dimension(
+		relevant_atom_names_.size(), relevant_elements_.size(), nbins_, 1);
 
-			Residue res2( pose.residue(resNum2) );
+	for(Size res_num1=1; res_num1 <= pose.total_residue(); ++res_num1){
+		if(!relevant_residues[res_num1]) continue;
+		Residue res1(pose.residue(res_num1));
 
-			for(Size atmNum1=1; atmNum1 <= res1.natoms(); ++atmNum1){
-				Vector const & atm1_xyz( res1.xyz(atmNum1) );
+		for(Size atom_num1=1; atom_num1 <= res1.natoms(); ++atom_num1){
+			Vector const & atom1_xyz( res1.xyz(atom_num1) );
 
-				for(Size atmNum2=1; atmNum2 <= res2.natoms(); ++atmNum2){
-					Vector const & atm2_xyz( res2.xyz(atmNum2) );
+			Size const atom_index1(res1.type().atom_type_index(atom_num1));
+			map<Size, Size>::const_iterator const i_relevant_atom_index1(
+				atom_index_to_relevant_atom_index_.find(atom_index1));
+			if(i_relevant_atom_index1 == atom_index_to_relevant_atom_index_.end()){
+				continue;
+			}
 
-					Size const dist_bin(static_cast<Size>(ceil(atm1_xyz.distance(atm2_xyz))));
-					if(dist_bin < 15){
-						counts(res1.aa(), atmNum1, res2.aa(), atmNum2, dist_bin) += 1;
-					}
+			for(Size res_num2=1; res_num2 <= pose.total_residue(); ++res_num2){
+				if(!relevant_residues[res_num2]) continue;
+				Residue res2( pose.residue(res_num2) );
+
+				for(Size atom_num2=1; atom_num2 <= res2.natoms(); ++atom_num2){
+					string const elem_name2(res2.type().atom_type(atom_num2).element());
+					map< string const, Size>::const_iterator i_elem2(
+						relevant_elements_.find(elem_name2));
+					if(i_elem2 == relevant_elements_.end()) continue;
+
+					Vector const & atom2_xyz( res2.xyz(atom_num2) );
+					Distance dist(atom1_xyz.distance(atom2_xyz));
+					if(dist <= min_dist_ || dist > max_dist_) continue;
+
+
+					Size const dist_bin(
+						static_cast<Size>(ceil(
+								(dist-min_dist_)*nbins_/(max_dist_-min_dist_))));
+					counts(i_relevant_atom_index1->second, i_elem2->second, dist_bin) += 1;
 				}
 			}
 		}
 	}
 
-	std::string stmt_string = "INSERT INTO atom_pairs VALUES (?,?,?,?,?,?,?);";
-	cppdb::statement stmt(basic::database::safely_prepare_statement(stmt_string,db_session));
+	string stmt_string = "INSERT INTO atom_pairs VALUES (?,?,?,?,?,?);";
+	statement stmt(safely_prepare_statement(stmt_string,db_session));
 
-	for(Size aa1=1; aa1 <= max_res; ++aa1){
-		for(Size aa2=1; aa2 <= max_res; ++aa2){
-			for(Size atmNum1=1; atmNum1 <= max_atm; ++atmNum1){
-				for(Size atmNum2=1; atmNum2 <= max_atm; ++atmNum2){
-					for(Size dist_bin=1; dist_bin <= 15; ++dist_bin){
-						Size const count(counts(aa1, atmNum1, aa2, atmNum2, dist_bin));
-						stmt.bind(1,struct_id);
-						stmt.bind(2,aa1);
-						stmt.bind(3,atmNum1);
-						stmt.bind(4,aa2);
-						stmt.bind(5,atmNum2);
-						stmt.bind(6,dist_bin);
-						stmt.bind(7,count);
-						basic::database::safely_write_to_database(stmt);
-					}
-				}
+
+	for(Size i_atom1=1; i_atom1 <= relevant_atom_names_.size(); ++i_atom1){
+		for(map<string const, Size>::const_iterator
+					i_elem2=relevant_elements_.begin(),
+					ie_elem2=relevant_elements_.end(); i_elem2 != ie_elem2; ++i_elem2){
+			for(Size dist_bin=1; dist_bin <= nbins_; ++dist_bin){
+				Size const lower_break(min_dist_ + (dist_bin - 1)*bin_width);
+				Size const upper_break(min_dist_ + dist_bin * bin_width);
+				Size const count(counts(i_atom1,i_elem2->second, dist_bin));
+				stmt.bind(1, struct_id);
+				stmt.bind(2, relevant_atom_names_[i_atom1]);
+				stmt.bind(3, i_elem2->first);
+				stmt.bind(4, lower_break);
+				stmt.bind(5, upper_break);
+				stmt.bind(6, count);
+				safely_write_to_database(stmt);
 			}
 		}
 	}

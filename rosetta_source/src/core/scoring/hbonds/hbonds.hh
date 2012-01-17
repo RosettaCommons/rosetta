@@ -41,6 +41,15 @@ fill_hbond_set(
 	bool const exclude_scb = false,
 	bool const exclude_sc  = false);
 
+///@breif Fill HBondSet using the distance between the acceptor and
+///hydrogen atoms as the definitional cutoff. Do not exclude any
+///contacts and do not evaluate derivatives.
+void
+fill_hbond_set_by_AHdist_threshold(
+	pose::Pose const & pose,
+	Real const AHdist_threshold,
+	HBondSet & hbond_set);
+
 void
 get_hbond_energies(
 	HBondSet const & hbond_set,
@@ -93,7 +102,23 @@ get_environment_dependent_weight(
 	int const acc_nb,
 	HBondOptions const & options);
 
-//pba
+// TODO: clean up this code duplication:
+
+//The membrane version of identify_hbonds_1way use the MembraneEmbed
+//object cached with the pose to compute a membrane-aware
+//environmental dependence hydrogen bonding potential.
+// See for example http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2694939/
+
+//One way to clean this up is to do the following
+//  create a base class HBondEnvironment
+//  Derive -> HBondNeighborCountEnvironment which has the number of neighbors for the donor and acceptor residues
+//  Derive -> HBondMembraneEnvironment which stores the MembraneEmbed or some subset of it
+//  extend the interface to hbond_set to get a HBondEnvironment.  This will require adding additional member data to the hbond_set
+//  modify the identify_hbonds_1way interface to take a reference to an HBondEnvironment
+//  use the passed in HBondEnvironment to compute the environmental weight in identify_hbonds_1way
+//  Note: care will have to be taken to not create and destroy lots of copies of HBondEnvironment objects
+
+// Once this has been done, please remove all traces of the identify_hbonds_1way_membrane functions.
 void
 identify_hbonds_1way_membrane(
 	HBondDatabase const & database,

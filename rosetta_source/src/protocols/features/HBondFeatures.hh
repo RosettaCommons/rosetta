@@ -31,14 +31,23 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
-
 
 // C++ Headers
 #include <string>
 
 namespace protocols{
 namespace features{
+
+/// @brief How a hydrogen bond should be defined See note for
+/// definition_type_ below.
+enum HBDefType {
+	hbdef_NONE = 1,
+	hbdef_ENERGY, // define what constitutes a hydrogen bond by its energy
+	hbdef_AHDIST, // define what constitutes a hydrogen bond by the A-H distance
+	hbdef_MAX = hbdef_AHDIST
+};
+
+
 
 class HBondFeatures : public protocols::features::FeaturesReporter {
 public:
@@ -58,6 +67,27 @@ public:
 	///@brief return sql statements that setup the right tables
 	std::string
 	schema() const;
+
+	///@brief get what criteria should be used to define what
+	///constitutes a hydrogen bond
+	HBDefType
+	definition_type() const;
+
+	///@brief set what criteria should be used to define what
+	///constitutes a hydrogen bond
+	void
+	definition_type( HBDefType definition_type );
+
+
+	///@brief get the definition threshold that should be
+	///used to define what constitutes a hydrogen bond
+	core::Real
+	definition_threshold() const;
+
+	///@brief set the definition threshold that should be
+	///used to define what constitutes a hydrogen bond
+	void
+	definition_threshold( core::Real definition_threshold );
 
 	virtual
 	void
@@ -157,6 +187,14 @@ private:
 
 	core::scoring::ScoreFunctionOP scfxn_;
 
+	// The standard Rosetta definition of a hydrogen bond is when the
+	// hbond energy < 0.  However, to detect the distribution around
+	// this threhsold it can be useful to define hydrogen bonds
+	// differently, either by a higher energy thershold or using some
+	// other threshold, like the distance between the acceptor and the
+	// hydrogen.
+	HBDefType definition_type_;
+	core::Real definition_threshold_;
 };
 
 } // namespace

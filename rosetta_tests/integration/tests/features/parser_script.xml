@@ -8,7 +8,8 @@
 	<MOVERS>
 		<SavePoseMover name=init_struct reference_name=init_struct/>
 		<ReportToDB name=features_reporter db="features_IntegrationTest.db3" sample_source="Test the whole feature generation code stack." task_operations=all>
-			<feature name=HBondFeatures scorefxn=s/>
+			<feature name=AtomAtomPairFeatures min_dist=0, max_dist=3, nbins=2/>
+			<feature name=HBondFeatures scorefxn=s definition_type=AHdist definition_threshold=1.8/>
                   	<feature name=GeometricSolvationFeatures/>
 			<feature name=HBondParameterFeatures scorefxn=s/>
 			<feature name=PairFeatures/>

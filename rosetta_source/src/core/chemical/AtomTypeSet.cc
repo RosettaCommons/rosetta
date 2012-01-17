@@ -71,7 +71,19 @@ AtomTypeSet::AtomTypeSet( std::string const & directory )
 
 }
 
+/// @detail  The directory is like '$ROSETTA3_DB/rosetta_database/chemical/atom_type_sets/<atom_type_set_name>/'
+/// Return 'atom_type_set_name'
+/// Note: strip off the trailing slash, if it exists
+std::string
+AtomTypeSet::name() const {
+	Size const last_char_pos(directory_.find_last_not_of('/'));
+	if(last_char_pos == std::string::npos || last_char_pos == 0) return directory_;
 
+	Size first_char_pos(directory_.find_last_of('/', last_char_pos - 1) + 1);
+	if(first_char_pos == std::string::npos) first_char_pos = 0;
+
+	return directory_.substr(first_char_pos, last_char_pos - first_char_pos + 1);
+}
 
 /// @brief file I/O
 ///

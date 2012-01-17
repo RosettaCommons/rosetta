@@ -226,10 +226,10 @@ SaltBridgeFeatures::report_features(
 				assert(d.atom_name(8) == " NE ");
 				PointPosition const & n0(d.atom(8).xyz());
 
-				assert(d.atom_name(10) == " NH1 ");
+				assert(d.atom_name(10) == " NH1");
 				PointPosition const & n1(d.atom(10).xyz());
 
-				assert(d.atom_name(11) == " NH2 ");
+				assert(d.atom_name(11) == " NH2");
 				PointPosition const & n2(d.atom(11).xyz());
 
 				n = n0.distance(o) < n1.distance(o) ?

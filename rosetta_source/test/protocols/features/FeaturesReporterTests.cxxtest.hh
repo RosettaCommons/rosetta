@@ -18,6 +18,7 @@
 
 // Unit Headers
 #include <protocols/features/AtomAtomPairFeatures.hh>
+#include <protocols/features/AtomInResidueAtomInResiduePairFeatures.hh>
 #include <protocols/features/GeometricSolvationFeatures.hh>
 #include <protocols/features/HBondFeatures.hh>
 #include <protocols/features/HBondParameterFeatures.hh>
@@ -91,6 +92,7 @@ public:
 		score_function_->score(*pose_1ten_);
 
 		features_reporters_.push_back(new AtomAtomPairFeatures());
+		features_reporters_.push_back(new AtomInResidueAtomInResiduePairFeatures());
 		features_reporters_.push_back(new GeometricSolvationFeatures());
 		features_reporters_.push_back(new HBondFeatures(score_function_));
 		features_reporters_.push_back(new HBondParameterFeatures(score_function_));
