@@ -21,6 +21,9 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 		<rep grid_type="RepGrid" weight="1.0"/>
 		<hba grid_type="HbaGrid" weight="1.0"/>
 		<hbd grid_type="HbdGrid" weight="1.0"/>
+		<vdw grid_type="VdwGrid" weight="1.0"/>
+		<classic grid_type="ClassicGrid" weight="1.0"/>
+		
 	</SCORINGGRIDS>
 	<LIGAND_AREAS>
 		<docking_sidechain chain=X cutoff=6.0 add_nbr_radius=true all_atom_mode=true minimize_ligand=10/>
@@ -50,6 +53,8 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 		<RenderGridsToKinemage name="kineRep" file_name="output.kin" grid_name="rep" color="0.0,1.0,0.0" stride="5"/>
 		<RenderGridsToKinemage name="kineHba" file_name="output.kin" grid_name="hba" low_color="1.0,1.0,1.0" high_color="1.0,0.0,0.0" stride="5"/>
 		<RenderGridsToKinemage name="kineHbd" file_name="output.kin" grid_name="hbd" low_color="1.0,1.0,1.0" high_color="1.0,1.0,0.0" stride="5"/>
+		<RenderGridsToKinemage name="kineVdw" file_name="output.kin" grid_name="vdw" low_color="1.0,1.0,1.0" high_color= "1.0,0.0,1.0" stride="5"/>
+		<RenderGridsToKinemage name="kineClassic" file_name="output.kin" grid_name="classic" low_color="0.0,1.0,0.0" high_color = "0.0,0.0,1.0" stride="5"/>
 		<ParsedProtocol name=low_res_dock>
 			<Add mover_name=start_from/>
 			<Add mover_name=transform/>
@@ -59,6 +64,8 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 			<Add mover_name="kineRep"/>
 			<Add mover_name="kineHba"/>
 			<Add mover_name="kineHbd"/>
+			<Add mover_name="kineVdw"/>
+			<Add mover_name="kineClassic"/>
 		</ParsedProtocol>
 	</MOVERS>
 	<PROTOCOLS>

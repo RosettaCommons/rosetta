@@ -90,6 +90,7 @@ sources = {
 		"GridCreator",
 		"GridFactory",
 		"GridManager",
+        "ClassicGrid",
 		"HbaGrid",
 		"HbdGrid",
 		"polarizGrid",
