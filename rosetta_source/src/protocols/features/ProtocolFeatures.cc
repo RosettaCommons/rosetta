@@ -16,14 +16,10 @@
 
 // Project Headers
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
-
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/svn_version.hh>
 
@@ -126,6 +122,14 @@ ProtocolFeatures::schema() const {
 		return "";
 	}
 }
+
+utility::vector1<std::string>
+ProtocolFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	return dependencies;
+}
+
+
 
 string
 ProtocolFeatures::indices() const {

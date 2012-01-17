@@ -92,6 +92,14 @@ StructureFeatures::schema() const {
 	}
 }
 
+utility::vector1<std::string>
+StructureFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ProtocolFeatures");
+	return dependencies;
+}
+
+
 Size
 StructureFeatures::report_features(
 	Pose const & pose,

@@ -7,45 +7,51 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/ProteinResidueConformationFeatures.hh
-/// @brief  report idealized torsional DOFs Statistics Scientific Benchmark
+/// @file   protocols/features/ResidueScoresFeatures.hh
+/// @brief  report residue scores to features Statistics Scientific Benchmark
 /// @author Matthew O'Meara
-/// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_features_ResidueConformationFeatures_hh
-#define INCLUDED_protocols_features_ResidueConformationFeatures_hh
+#ifndef INCLUDED_protocols_features_ResidueScoresFeatures_hh
+#define INCLUDED_protocols_features_ResidueScoresFeatures_hh
 
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
-#include <protocols/features/ResidueConformationFeatures.fwd.hh>
+#include <protocols/features/ResidueScoresFeatures.fwd.hh>
 
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.fwd.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
 #include <utility/vector1.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
 #include <string>
 
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 
 
 namespace protocols{
 namespace features{
 
-class ResidueConformationFeatures : public protocols::features::FeaturesReporter {
+class ResidueScoresFeatures : public protocols::features::FeaturesReporter {
 public:
-	ResidueConformationFeatures(){}
+	ResidueScoresFeatures();
 
-	ResidueConformationFeatures(
-		ResidueConformationFeatures const & ) :
-		FeaturesReporter()
-	{}
+	ResidueScoresFeatures(
+		core::scoring::ScoreFunctionOP scfxn);
 
-	virtual ~ResidueConformationFeatures(){}
+	ResidueScoresFeatures(ResidueScoresFeatures const & src);
+
+	virtual ~ResidueScoresFeatures();
+
+	///@brief return string with class name
+	std::string
+	type_name() const;
 
 	///@brief return sql statements that setup the right tables
 	std::string
@@ -56,9 +62,14 @@ public:
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief return string with class name
-	std::string
-	type_name() const;
+	void
+	parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap & data,
+		protocols::filters::Filters_map const & /*filters*/,
+		protocols::moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & /*pose*/);
+
 
 	///@brief collect all the feature data for the pose
 	core::Size
@@ -69,34 +80,20 @@ public:
 		utility::sql_database::sessionOP db_session);
 
 	void
-	delete_record(
-		core::Size sturct_id,
-		utility::sql_database::sessionOP);
+	insert_residue_scores_rows(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		core::Size const struct_id,
+		utility::sql_database::sessionOP db_session);
 
-	void
-	load_into_pose(
-		utility::sql_database::sessionOP db_session,
-		core::Size struct_id,
-		core::pose::Pose & pose);
-
-	void
-	load_conformation(
-		utility::sql_database::sessionOP db_session,
-		core::Size struct_id,
-		core::pose::Pose & pose);
 
 private:
-	void
-	set_coords_for_residue(
-		utility::sql_database::sessionOP db_session,
-		core::Size struct_id,
-		core::Size seqpos,
-		core::pose::Pose & pose);
 
+	core::scoring::ScoreFunctionOP scfxn_;
 
 };
 
-} // features
-} // protocols
+} // namespace
+} // namespace
 
 #endif // include guard

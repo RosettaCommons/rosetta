@@ -73,8 +73,8 @@ ResidueConformationFeatures::schema() const {
 			"	phi REAL,\n"
 			"	psi REAL,\n"
 			"	omega REAL,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
+			"	FOREIGN KEY (struct_id, seqpos)\n"
+			"		REFERENCES residues (struct_id, resNum)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
@@ -83,8 +83,8 @@ ResidueConformationFeatures::schema() const {
 			"	seqpos INTEGER,\n"
 			"	chinum INTEGER,\n"
 			"	chiangle REAL,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
+			"	FOREIGN KEY (struct_id, seqpos)\n"
+			"		REFERENCES residues (struct_id, resNum)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
 			"\n"
@@ -95,8 +95,8 @@ ResidueConformationFeatures::schema() const {
 			"	x REAL,\n"
 			"	y REAL,\n"
 			"	z REAL,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
+			"	FOREIGN KEY (struct_id, seqpos)\n"
+			"		REFERENCES residues (struct_id, resNum)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY (struct_id, seqpos, atomno));\n";
 	}else if(db_mode == "mysql")
@@ -108,7 +108,7 @@ ResidueConformationFeatures::schema() const {
 			"	phi DOUBLE,\n"
 			"	psi DOUBLE,\n"
 			"	omega DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),"
+			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
 			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
@@ -116,7 +116,7 @@ ResidueConformationFeatures::schema() const {
 			"	seqpos INTEGER,\n"
 			"	chinum INTEGER,\n"
 			"	chiangle DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),"
+			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
 			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
@@ -126,13 +126,20 @@ ResidueConformationFeatures::schema() const {
 			"	x DOUBLE,\n"
 			"	y DOUBLE,\n"
 			"	z DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),"
+			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
 			"	PRIMARY KEY (struct_id, seqpos, atomno));";
 	}else
 	{
 		return "";
 	}
 
+}
+
+utility::vector1<std::string>
+ResidueConformationFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
 }
 
 Size

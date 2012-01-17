@@ -60,6 +60,8 @@ sources = {
 		"ResidueConformationFeaturesCreator",
 		"ResidueFeatures",
 		"ResidueFeaturesCreator",
+		"ResidueScoresFeatures",
+		"ResidueScoresFeaturesCreator",
 		"ResidueSecondaryStructureFeatures",
 		"ResidueSecondaryStructureFeaturesCreator",
 		"ResidueTypesFeatures",

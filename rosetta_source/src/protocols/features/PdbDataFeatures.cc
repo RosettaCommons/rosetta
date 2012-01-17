@@ -134,6 +134,14 @@ string PdbDataFeatures::schema() const
 	}
 }
 
+utility::vector1<std::string>
+PdbDataFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("StructureFeatures");
+	return dependencies;
+}
+
+
 Size PdbDataFeatures::report_features(
 	Pose const & pose,
 	vector1<bool> const & relevant_residues,

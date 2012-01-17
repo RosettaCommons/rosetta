@@ -34,19 +34,19 @@
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/RadiusOfGyrationFeatures.hh>
 #include <protocols/features/ResidueFeatures.hh>
+#include <protocols/features/ResidueScoresFeatures.hh>
 #include <protocols/features/ResidueTypesFeatures.hh>
 #include <protocols/features/ResidueBurialFeatures.hh>
 #include <protocols/features/ResidueSecondaryStructureFeatures.hh>
 #include <protocols/features/RotamerBoltzmannWeightFeatures.hh>
 #include <protocols/features/RotamerRecoveryFeatures.hh>
-// AUTO-REMOVED #include <protocols/features/SaltBridgeFeatures.hh>
+#include <protocols/features/SaltBridgeFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
 
 
 // Project Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/init.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -107,12 +107,14 @@ public:
 		features_reporters_.push_back(new ProteinResidueConformationFeatures());
 		features_reporters_.push_back(new ProteinRMSDFeatures(pose_1ten_));
 		features_reporters_.push_back(new RadiusOfGyrationFeatures());
-		features_reporters_.push_back(new ResidueFeatures(score_function_));
+		features_reporters_.push_back(new ResidueFeatures());
+		features_reporters_.push_back(new ResidueScoresFeatures(score_function_));
 		features_reporters_.push_back(new ResidueTypesFeatures());
 		features_reporters_.push_back(new ResidueBurialFeatures());
 		features_reporters_.push_back(new ResidueSecondaryStructureFeatures());
 		features_reporters_.push_back(new RotamerBoltzmannWeightFeatures(score_function_));
 		features_reporters_.push_back(new RotamerRecoveryFeatures(score_function_));
+		features_reporters_.push_back(new SaltBridgeFeatures());
 		features_reporters_.push_back(new StructureFeatures());
 		features_reporters_.push_back(new StructureScoresFeatures(score_function_));
 
@@ -122,9 +124,9 @@ public:
 			"features_reporter_tests.db3");
 	}
 
-	void test_RotamerRecovery_main() {
+	void test_main() {
 		do_test_schema();
-
+    do_test_type_name();
 	}
 
 	void do_test_schema() {
@@ -136,6 +138,13 @@ public:
 			schema.exec();
 		}
 	}
+
+  void do_test_type_name() {
+    using protocols::features::FeaturesReporterOP;
+    foreach(FeaturesReporterOP const & reporter, features_reporters_){
+      TS_ASSERT_DIFFERS(reporter->type_name(), "Unknown_FeaturesReporter");
+    }
+  }
 
 	void do_test_report_features() {
 		using protocols::features::FeaturesReporterOP;

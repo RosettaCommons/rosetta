@@ -16,6 +16,7 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
+#include <basic/database/sql_utils.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -36,10 +37,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-// AUTO-REMOVED #include <cppdb/errors.h>
 
 // C++ Headers
 #include <string>
+#include <sstream>
 #include <iostream>
 
 #include <utility/vector0.hh>
@@ -62,8 +63,10 @@ using protocols::moves::DataMap;
 using protocols::moves::Movers_map;
 using std::endl;
 using std::string;
+using std::stringstream;
 using utility::tag::TagPtr;
-
+using basic::database::safely_prepare_statement;
+using basic::database::safely_write_to_database;
 using utility::trim;
 using utility::vector1;
 using utility::sql_database::sessionOP;
@@ -143,6 +146,18 @@ FeaturesReporter::find_tag(
 		}
 	}
 	return name;
+}
+
+void
+FeaturesReporter::delete_records_from_table(
+	string const & table_name,
+	Size struct_id,
+	sessionOP db_session){
+	stringstream sql;
+	sql << "DELETE FROM " << table_name << " WHERE struct_id = ?;";
+	statement stmt(safely_prepare_statement(sql.str(), db_session));
+	stmt.bind(1, struct_id);
+	safely_write_to_database(stmt);
 }
 
 } // namespace

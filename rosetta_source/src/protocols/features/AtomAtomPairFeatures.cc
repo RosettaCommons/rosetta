@@ -156,6 +156,13 @@ AtomAtomPairFeatures::schema() const {
 		"	PRIMARY KEY (struct_id, atom_type, element, lower_break));";
 }
 
+utility::vector1<std::string>
+AtomAtomPairFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("StructureFeatures");
+	return dependencies;
+}
+
 void
 AtomAtomPairFeatures::parse_my_tag(
 	TagPtr const tag,

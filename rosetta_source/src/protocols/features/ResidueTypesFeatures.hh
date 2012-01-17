@@ -21,9 +21,6 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -54,6 +51,11 @@ public:
 	///@brief return sql statements that setup the right tables
 	std::string
 	schema() const;
+
+	///@brief return the set of features reporters that are required to
+	///also already be extracted by the time this one is used.
+	utility::vector1<std::string>
+	features_reporter_dependencies() const;
 
 	///@brief collect all the feature data for the pose
 	core::Size

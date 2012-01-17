@@ -83,6 +83,14 @@ PairFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, resNum1, resNum2));";
 }
 
+utility::vector1<std::string>
+PairFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
+
 Size
 PairFeatures::report_features(
 	Pose const & pose,

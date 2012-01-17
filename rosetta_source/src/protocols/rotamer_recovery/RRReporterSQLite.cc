@@ -160,6 +160,9 @@ RRReporterSQLite::schema(
 			"	struct_id INTEGER,\n"
 			"	resNum INTEGER,\n"
 			"	divergence REAL,\n"
+			"	FOREIGN KEY (struct_id, resNum)\n"
+			"		REFERENCES residues (struct_id, resNum)\n"
+			"		DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY(struct_id, resNum));\n";
 		break;
 

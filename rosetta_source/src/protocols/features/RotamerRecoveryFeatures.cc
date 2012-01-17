@@ -19,8 +19,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
@@ -119,6 +117,14 @@ RotamerRecoveryFeatures::schema() const {
 	return RRReporterSQLite::schema(
 		RRReporterSQLite::OutputLevel::features );
 }
+
+utility::vector1<std::string>
+RotamerRecoveryFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
 
 void
 RotamerRecoveryFeatures::parse_my_tag(

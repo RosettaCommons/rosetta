@@ -65,6 +65,13 @@ ProteinBackboneTorsionAngleFeatures::schema() const {
 		"	PRIMARY KEY (struct_id, resNum));";
 }
 
+utility::vector1<std::string>
+ProteinBackboneTorsionAngleFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
 Size
 ProteinBackboneTorsionAngleFeatures::report_features(
 	Pose const & pose,

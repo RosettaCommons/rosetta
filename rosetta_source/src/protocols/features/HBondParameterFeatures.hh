@@ -20,16 +20,13 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // C++ Headers
 #include <string>
@@ -59,7 +56,11 @@ public:
 	std::string
 	schema() const;
 
-	virtual
+	///@brief return the set of features reporters that are required to
+	///also already be extracted by the time this one is used.
+	utility::vector1<std::string>
+	features_reporter_dependencies() const;
+
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,

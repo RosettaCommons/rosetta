@@ -13,3 +13,10 @@ cd %(workdir)s
 
 echo hi > result
 #test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+
+
+# To aid understanding of test failures, only store the database dump
+if type -P sqlite3 &>/dev/null; then
+   sqlite3 ligand_parameters.db3 '.dump' > ligand_parameters.db3.dump
+   rm ligand_parameters.db3
+fi

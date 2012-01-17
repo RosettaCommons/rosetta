@@ -49,6 +49,11 @@ public:
 	std::string
 	schema() const;
 
+	///@brief return the set of features reporters that are required to
+	///also already be extracted by the time this one is used.
+	utility::vector1<std::string>
+	features_reporter_dependencies() const;
+
 	///@brief return sql statements that setup helpful indices on the tables
 	std::string
 	indices() const;

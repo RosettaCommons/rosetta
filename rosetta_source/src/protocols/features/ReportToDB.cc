@@ -375,11 +375,57 @@ ReportToDB::parse_my_tag(
 			utility_exit();
 		}
 
-		features_reporters_.push_back(
+		FeaturesReporterOP features_reporter(
 			features_reporter_factory_->get_features_reporter(
 				feature_tag, data, filters, movers, pose));
+
+		check_features_reporter_dependencies(features_reporter);
+
+		// TODO IMPLMENT THIS:
+		//check_multiple_features_reporter_definitions(features_reporter);
+
+		features_reporters_.push_back(features_reporter);
+
 	}
 
+}
+
+
+void
+ReportToDB::check_features_reporter_dependencies(
+	FeaturesReporterOP test_features_reporter
+) const {
+
+	foreach(string const dependency,
+		test_features_reporter->features_reporter_dependencies()){
+
+		// These are defined by default
+		if(dependency == "ProtocolFeatures" || dependency == "StructureFeatures"){
+			continue;
+		}
+
+		bool exists(false);
+		foreach(FeaturesReporterOP features_reporter, features_reporters_){
+			if(features_reporter->type_name() == dependency){
+				exists = true;
+				break;
+			}
+		}
+		if(!exists){
+			stringstream error_msg;
+			error_msg
+				<< "The dependencies for the '" << test_features_reporter->type_name() << "'"
+				<< " reporter are not satisfied because the '" << dependency << "' has not been defined yet." << endl
+				<< "These are the FeaturesReporters that have been defined:" << endl
+				<< "\tProtocolFeatures (included by default)" << endl
+				<< "\tStructureFeatures (included by default)" << endl;
+			foreach(FeaturesReporterOP features_reporter, features_reporters_){
+				error_msg
+					<< "\t" << features_reporter->type_name() << endl;
+			}
+			utility_exit_with_message(error_msg.str());
+		}
+	}
 }
 
 void

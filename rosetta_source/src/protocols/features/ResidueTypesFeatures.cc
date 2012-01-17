@@ -77,6 +77,13 @@ ResidueTypesFeatures::schema() const {
 	return residue_dbio_.schema();
 }
 
+utility::vector1<std::string>
+ResidueTypesFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	return dependencies;
+}
+
+
 Size
 ResidueTypesFeatures::report_features(
 	Pose const & pose,

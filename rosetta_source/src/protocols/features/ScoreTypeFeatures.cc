@@ -17,30 +17,25 @@
 // Platform Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/graph/Graph.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
+#include <core/graph/Graph.fwd.hh>
+#include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
+
 // External Headers
 #include <cppdb/frontend.h>
 
 // C++ Headers
 #include <sstream>
 #include <string>
-
-#include <core/graph/Graph.fwd.hh>
-#include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 
 namespace protocols{
@@ -130,6 +125,14 @@ ScoreTypeFeatures::schema() const {
 	}
 
 }
+
+utility::vector1<std::string>
+ScoreTypeFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ProtocolFeatures");
+	return dependencies;
+}
+
 
 Size
 ScoreTypeFeatures::report_features(

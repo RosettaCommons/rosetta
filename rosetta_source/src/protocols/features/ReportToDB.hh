@@ -102,7 +102,6 @@ public:
 
 	// Undefinded, commenting out to fix PyRosetta build  void parse_feature_tag(utility::tag::TagPtr const tag, protocols::moves::DataMap & data, core::pose::Pose const & pose );
 
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,
@@ -110,6 +109,12 @@ public:
 		Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose );
+
+	void
+	check_features_reporter_dependencies(
+		FeaturesReporterOP test_feature_reporter
+	) const;
+
 
 	void
 	initialize_reporters();

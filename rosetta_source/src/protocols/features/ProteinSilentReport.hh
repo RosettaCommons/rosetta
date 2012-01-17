@@ -27,6 +27,7 @@
 #include <protocols/features/PoseConformationFeatures.fwd.hh>
 #include <protocols/features/PoseCommentsFeatures.fwd.hh>
 #include <protocols/features/ProteinResidueConformationFeatures.fwd.hh>
+#include <protocols/features/ResidueFeatures.fwd.hh>
 #include <protocols/features/ResidueConformationFeatures.fwd.hh>
 #include <protocols/features/JobDataFeatures.fwd.hh>
 #include <protocols/features/DatabaseFilters.fwd.hh>
@@ -122,6 +123,7 @@ private:
 	protocols::features::PoseConformationFeaturesOP pose_conformation_features_;
 	protocols::features::PoseCommentsFeaturesOP pose_comments_features_;
 	protocols::features::ProteinResidueConformationFeaturesOP protein_residue_conformation_features_;
+	protocols::features::ResidueFeaturesOP residue_features_;
 	protocols::features::ResidueConformationFeaturesOP residue_conformation_features_;
 	protocols::features::JobDataFeaturesOP job_data_features_;
 

@@ -25,12 +25,11 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 // C++ Headers
 #include <string>
+#include <set>
 
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
@@ -53,6 +52,16 @@ public:
 	virtual
 	std::string
 	schema() const { return "";}
+
+	///@brief return the set of features reporters that are required to
+	///also already be extracted by the time this one is used.
+	virtual
+	utility::vector1<std::string>
+	features_reporter_dependencies() const {
+		utility::vector1<std::string> dependencies;
+		return dependencies;
+	}
+
 
 	///@brief convience function to write the schema to a database.
 	///There is no need to overload this in the derived class.
@@ -89,12 +98,33 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
 
+	virtual
+	void
+	load_into_pose(
+		utility::sql_database::sessionOP db_session,
+		core::Size struct_id,
+		core::pose::Pose & pose) {}
+
+	virtual
+	void
+	delete_record(
+		core::Size struct_id,
+		utility::sql_database::sessionOP db_session) {}
+
 protected:
 
 	std::string
 	find_tag(
 		core::pose::Pose const & pose
 	) const;
+
+	///@brief a helper function for deleting data associated with a given structure from  feature database
+	///WARNING table_name must be sanitized!
+	void
+	delete_records_from_table(
+		std::string const & table_name,
+		core::Size struct_id,
+		utility::sql_database::sessionOP db_session);
 
 };
 

@@ -75,7 +75,7 @@ PoseCommentsFeatures::schema() const {
 		return
 			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
 			"	struct_id INTEGER,\n"
-			"	comment_key TEXT,\n" //This used to just be 'key', but 'key' is a reserved word in mysql
+			"	comment_key TEXT,\n"
 			"	value TEXT,\n"
 			"	FOREIGN KEY (struct_id)\n"
 			"		REFERENCES structures (struct_id)\n"
@@ -96,6 +96,14 @@ PoseCommentsFeatures::schema() const {
 	}
 
 }
+
+utility::vector1<std::string>
+PoseCommentsFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("StructureFeatures");
+	return dependencies;
+}
+
 
 Size
 PoseCommentsFeatures::report_features(

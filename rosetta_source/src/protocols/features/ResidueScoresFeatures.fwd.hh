@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/ResidueFeatures.fwd.hh
-/// @brief  report residue features to features Statistics Scientific Benchmark
+/// @file   protocols/features/ResidueScoresFeatures.fwd.hh
+/// @brief  report residue scores to features Statistics Scientific Benchmark
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_features_ResidueFeatures_fwd_hh
-#define INCLUDED_protocols_features_ResidueFeatures_fwd_hh
+#ifndef INCLUDED_protocols_features_ResidueScoresFeatures_fwd_hh
+#define INCLUDED_protocols_features_ResidueScoresFeatures_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -20,11 +20,11 @@
 namespace protocols{
 namespace features{
 
-class ResidueFeatures;
-typedef utility::pointer::owning_ptr< ResidueFeatures > ResidueFeaturesOP;
-typedef utility::pointer::owning_ptr< ResidueFeatures const > ResidueFeaturesCOP;
+class ResidueScoresFeatures;
+typedef utility::pointer::owning_ptr< ResidueScoresFeatures > ResidueScoresFeaturesOP;
+typedef utility::pointer::owning_ptr< ResidueScoresFeatures const > ResidueScoresFeaturesCOP;
 
 }//features
 }//protocols
 
-#endif //INCLUDED_protocols_features_ResidueFeatures_fwd_hh
+#endif //INCLUDED_protocols_features_ResidueScoresFeatures_fwd_hh

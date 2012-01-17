@@ -84,6 +84,14 @@ AtomInResidueAtomInResiduePairFeatures::schema() const {
 		"	CONSTRAINT dist_is_nonnegative CHECK (count >= 0),\n"
 		"	PRIMARY KEY (struct_id, residue_type1, atom_type1, residue_type2, atom_type2, distance_bin));";
 }
+
+utility::vector1<std::string>
+AtomInResidueAtomInResiduePairFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
 Size
 AtomInResidueAtomInResiduePairFeatures::report_features(
 	Pose const & pose,

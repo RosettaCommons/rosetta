@@ -102,6 +102,13 @@ HBondParameterFeatures::schema() const {
 	return hb_database->report_parameter_features_schema();
 }
 
+utility::vector1<std::string>
+HBondParameterFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("HBondFeatures");
+	return dependencies;
+}
+
 void
 HBondParameterFeatures::parse_my_tag(
 	TagPtr const tag,

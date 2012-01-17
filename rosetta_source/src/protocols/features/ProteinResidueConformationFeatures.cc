@@ -79,8 +79,8 @@ ProteinResidueConformationFeatures::schema() const {
 			"	chi2 REAL,\n"
 			"	chi3 REAL,\n"
 			"	chi4 REAL,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
+			"	FOREIGN KEY (struct_id, seqpos)\n"
+			"		REFERENCES residues (struct_id, resNum)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
@@ -91,8 +91,8 @@ ProteinResidueConformationFeatures::schema() const {
 			"	x REAL,\n"
 			"	y REAL,\n"
 			"	z REAL,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
+			"	FOREIGN KEY (struct_id, seqpos)\n"
+			"		REFERENCES residues (struct_id, resNum)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY (struct_id, seqpos, atomno));\n";
 	}else if(db_mode == "mysql")
@@ -109,7 +109,7 @@ ProteinResidueConformationFeatures::schema() const {
 			"	chi2 DOUBLE,\n"
 			"	chi3 DOUBLE,\n"
 			"	chi4 DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),"
+			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
 			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
@@ -119,7 +119,7 @@ ProteinResidueConformationFeatures::schema() const {
 			"	x DOUBLE,\n"
 			"	y DOUBLE,\n"
 			"	z DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),"
+			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
 			"	PRIMARY KEY (struct_id, seqpos, atomno));";
 	}else
 	{
@@ -127,6 +127,14 @@ ProteinResidueConformationFeatures::schema() const {
 	}
 
 }
+
+utility::vector1<std::string>
+ProteinResidueConformationFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
 
 Size
 ProteinResidueConformationFeatures::report_features(

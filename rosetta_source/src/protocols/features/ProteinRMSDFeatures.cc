@@ -18,7 +18,6 @@
 #include <core/pose/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 
 // Platform Headers
@@ -141,6 +140,13 @@ ProteinRMSDFeatures::schema() const {
 	}else {
 		return "";
 	}
+}
+
+utility::vector1<std::string>
+ProteinRMSDFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("StructureFeatures");
+	return dependencies;
 }
 
 void

@@ -16,8 +16,6 @@
 #include <core/scoring/methods/RG_Energy_Fast.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
 
@@ -47,6 +45,8 @@ RadiusOfGyrationFeatures::RadiusOfGyrationFeatures( RadiusOfGyrationFeatures con
 
 RadiusOfGyrationFeatures::~RadiusOfGyrationFeatures(){}
 
+string
+RadiusOfGyrationFeatures::type_name() const { return "RadiusOfGyrationFeatures"; }
 
 string
 RadiusOfGyrationFeatures::schema() const {
@@ -58,6 +58,13 @@ RadiusOfGyrationFeatures::schema() const {
 		"		REFERENCES structures(struct_id)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
 		"	PRIMARY KEY(struct_id));";
+}
+
+utility::vector1<std::string>
+RadiusOfGyrationFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("StructureFeatures");
+	return dependencies;
 }
 
 Size

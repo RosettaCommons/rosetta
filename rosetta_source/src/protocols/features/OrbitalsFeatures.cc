@@ -123,6 +123,14 @@ OrbitalsFeatures::schema() const {
 
 }
 
+utility::vector1<std::string>
+OrbitalsFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
+
 Size
 OrbitalsFeatures::report_features(
 		Pose const & pose,

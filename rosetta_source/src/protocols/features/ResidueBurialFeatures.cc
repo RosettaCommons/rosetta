@@ -93,6 +93,14 @@ ResidueBurialFeatures::schema() const {
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
 		"	PRIMARY KEY (struct_id, resNum));\n";
 }
+
+utility::vector1<std::string>
+ResidueBurialFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
 Size
 ResidueBurialFeatures::report_features(
 	Pose const & pose,

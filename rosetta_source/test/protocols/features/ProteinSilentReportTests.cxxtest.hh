@@ -21,11 +21,9 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/init.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -74,7 +72,7 @@ public:
 		db_session_ = DatabaseSessionManager::get_instance()->get_session(db_fname);
 	}
 
-	void test_RotamerRecovery_main() {
+	void test_main() {
 		write_schema();
     write_pose_to_db();
     read_pose_from_db();

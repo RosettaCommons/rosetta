@@ -56,8 +56,8 @@ std::string JobDataFeatures::schema() const
 				"	struct_id INTEGER,\n"
 				"	data_key TEXT,\n"
 				"	FOREIGN KEY (struct_id)\n"
-				"	REFERENCES structures(struct_id)\n"
-				"	DEFERRABLE INITIALLY DEFERRED,\n"
+				"		REFERENCES structures(struct_id)\n"
+				"		DEFERRABLE INITIALLY DEFERRED,\n"
 				"	PRIMARY KEY (struct_id,data_key));\n"
 				"\n"
 				"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
@@ -65,8 +65,8 @@ std::string JobDataFeatures::schema() const
 				"	data_key TEXT,\n"
 				"	data_value TEXT,\n"
 				"	FOREIGN KEY (struct_id)\n"
-				"	REFERENCES structures(struct_id)\n"
-				"	DEFERRABLE INITIALLY DEFERRED,\n"
+				"		REFERENCES structures(struct_id)\n"
+				"		DEFERRABLE INITIALLY DEFERRED,\n"
 				"	PRIMARY KEY (struct_id,data_key));\n"
 				"\n"
 				"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
@@ -74,8 +74,8 @@ std::string JobDataFeatures::schema() const
 				"	data_key TEXT,\n"
 				"	data_value REAL,\n"
 				"	FOREIGN KEY (struct_id)\n"
-				"	REFERENCES structures(struct_id)\n"
-				"	DEFERRABLE INITIALLY DEFERRED,\n"
+				"		REFERENCES structures(struct_id)\n"
+				"		DEFERRABLE INITIALLY DEFERRED,\n"
 				"	PRIMARY KEY (struct_id, data_key));";
 	}else if(db_mode == "mysql")
 	{
@@ -105,6 +105,14 @@ std::string JobDataFeatures::schema() const
 	}
 
 }
+
+utility::vector1<std::string>
+JobDataFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("StructureFeatures");
+	return dependencies;
+}
+
 
 core::Size
 JobDataFeatures::report_features(

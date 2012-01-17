@@ -26,6 +26,7 @@
 #include <protocols/features/PoseCommentsFeatures.hh>
 #include <protocols/features/PoseConformationFeatures.hh>
 #include <protocols/features/ProteinResidueConformationFeatures.hh>
+#include <protocols/features/ResidueFeatures.hh>
 #include <protocols/features/ResidueConformationFeatures.hh>
 #include <protocols/features/JobDataFeatures.hh>
 #include <protocols/features/DatabaseFilters.hh>
@@ -82,6 +83,7 @@ ProteinSilentReport::ProteinSilentReport() :
 	pose_conformation_features_( new PoseConformationFeatures() ),
 	pose_comments_features_( new PoseCommentsFeatures() ),
 	protein_residue_conformation_features_( new ProteinResidueConformationFeatures() ),
+	residue_features_ (new ResidueFeatures() ),
 	residue_conformation_features_ (new ResidueConformationFeatures() ),
 	job_data_features_ (new JobDataFeatures() )
 {
@@ -106,6 +108,7 @@ ProteinSilentReport::ProteinSilentReport(ProteinSilentReport const & src) :
 	pose_conformation_features_(src.pose_conformation_features_),
 	pose_comments_features_(src.pose_comments_features_),
 	protein_residue_conformation_features_(src.protein_residue_conformation_features_),
+	residue_features_(src.residue_features_),
 	residue_conformation_features_ (src.residue_conformation_features_ ),
 	job_data_features_ ( src.job_data_features_)
 {}
@@ -127,6 +130,7 @@ ProteinSilentReport::write_schema_to_db(
 	pose_conformation_features_->write_schema_to_db(db_session);
 	pose_comments_features_->write_schema_to_db(db_session);
 	protein_residue_conformation_features_->write_schema_to_db(db_session);
+	residue_features_->write_schema_to_db(db_session);
 	residue_conformation_features_->write_schema_to_db(db_session);
 	job_data_features_->write_schema_to_db(db_session);
 }
@@ -238,10 +242,12 @@ ProteinSilentReport::write_full_report(
 		pose, relevant_residues, struct_id, db_session);
 	protein_residue_conformation_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);
+	residue_features_->report_features(
+		pose, relevant_residues, struct_id, db_session);
 	residue_conformation_features_->report_features(
-		pose, relevant_residues, struct_id,db_session);
+		pose, relevant_residues, struct_id, db_session);
 	job_data_features_->report_features(
-		pose, relevant_residues,struct_id,db_session);
+		pose, relevant_residues, struct_id, db_session);
 
 
 	transact_guard.commit();

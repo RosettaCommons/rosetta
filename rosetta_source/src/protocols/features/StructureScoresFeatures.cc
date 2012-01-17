@@ -17,16 +17,13 @@
 // Platform Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <protocols/moves/DataMap.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -126,12 +123,6 @@ StructureScoresFeatures::schema() const {
 	}else if(db_mode == "mysql")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS score_types (\n"
-			"	protocol_id INTEGER REFERENCES protocols (protocol_id),\n"
-			"	score_type_id INTEGER PRIMARY KEY,\n"
-			"	score_type_name TEXT);\n"
-			//"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));\n"
-			"\n"
 			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
 			"	struct_id INTEGER,\n"
 			"	score_type_id INTEGER,\n"
@@ -146,6 +137,13 @@ StructureScoresFeatures::schema() const {
 
 }
 
+utility::vector1<std::string>
+StructureScoresFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("StructureFeatures");
+	dependencies.push_back("ScoreTypeFeatures");
+	return dependencies;
+}
 
 void
 StructureScoresFeatures::parse_my_tag(

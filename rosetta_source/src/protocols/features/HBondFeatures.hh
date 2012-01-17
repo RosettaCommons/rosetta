@@ -68,6 +68,11 @@ public:
 	std::string
 	schema() const;
 
+	///@brief return the set of features reporters that are required to
+	///also already be extracted by the time this one is used.
+	utility::vector1<std::string>
+	features_reporter_dependencies() const;
+
 	///@brief get what criteria should be used to define what
 	///constitutes a hydrogen bond
 	// Undefined, commenting out to fix PyRosetta build  HBDefType definition_type() const;
@@ -85,7 +90,6 @@ public:
 	///used to define what constitutes a hydrogen bond
 	// Undefined, commenting out to fix PyRosetta build  void definition_threshold( core::Real definition_threshold );
 
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,

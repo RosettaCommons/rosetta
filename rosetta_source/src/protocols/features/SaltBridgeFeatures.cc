@@ -137,6 +137,15 @@ SaltBridgeFeatures::schema() const {
 	}
 }
 
+utility::vector1<std::string>
+SaltBridgeFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	dependencies.push_back("HBondFeatures");
+	return dependencies;
+}
+
+
 //Donald JE, Kulp DW, DeGrado WF. Salt bridges: Geometrically
 //specific, designable interactions. Proteins: Structure, Function,
 //and Bioinformatics. 2010

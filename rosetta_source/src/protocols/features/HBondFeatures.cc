@@ -316,6 +316,14 @@ HBondFeatures::schema() const {
 
 }
 
+utility::vector1<std::string>
+HBondFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
+
 void
 HBondFeatures::parse_my_tag(
 	TagPtr const tag,

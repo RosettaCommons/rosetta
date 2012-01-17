@@ -92,13 +92,21 @@ GeometricSolvationFeatures::schema() const {
 			"	struct_id INTEGER,\n"
 			"	hbond_site_id INTEGER,\n"
 			"	geometric_solvation_exact TEXT,\n"
-			"	FOREIGN KEY (struct_id, hbond_site_id) REFERENCES hbond_sites (struct_id, site_id),\n"
+			"	FOREIGN KEY (struct_id, hbond_site_id),\n"
+			"		REFERENCES hbond_sites (struct_id, site_id),\n"
 			"	PRIMARY KEY(struct_id, hbond_site_id));";
 	}else
 	{
 		return "";
 	}
 
+}
+
+utility::vector1<std::string>
+GeometricSolvationFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("HBondFeatures");
+	return dependencies;
 }
 
 Size

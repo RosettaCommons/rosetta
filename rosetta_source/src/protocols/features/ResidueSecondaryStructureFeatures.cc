@@ -85,6 +85,13 @@ ResidueSecondaryStructureFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, resNum));\n";
 }
 
+utility::vector1<std::string>
+ResidueSecondaryStructureFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
 Size
 ResidueSecondaryStructureFeatures::report_features(
 	Pose const & pose,

@@ -91,12 +91,21 @@ ProteinBackboneAtomAtomPairFeatures::schema() const {
 		"	Ha_C_dist REAL,\n"
 		"	Ha_O_dist REAL,\n"
 		"	Ha_Ha_dist REAL,\n"
-		"	FOREIGN KEY (struct_id)\n"
-		"		REFERENCES structures (struct_id)\n"
+		"	FOREIGN KEY (struct_id, resNum1)\n"
+		"		REFERENCES residues (struct_id, resNum)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	FOREIGN KEY (struct_id, resNum2)\n"
+		"		REFERENCES residues (struct_id, resNum)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
 		"	PRIMARY KEY (struct_id, resNum1, resNum2));\n";
 }
 
+utility::vector1<std::string>
+ProteinBackboneAtomAtomPairFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
 
 /// @details These atom-atom pairs follow the analysis done in:
 ///
