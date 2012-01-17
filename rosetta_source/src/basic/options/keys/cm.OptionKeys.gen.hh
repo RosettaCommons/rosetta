@@ -60,6 +60,7 @@ namespace cm { namespace hybridize { extern StringOptionKey const stage1_patch; 
 namespace cm { namespace hybridize { extern BooleanOptionKey const skip_stage2; } }
 namespace cm { namespace hybridize { extern StringOptionKey const stage2_weights; } }
 namespace cm { namespace hybridize { extern StringOptionKey const stage2_patch; } }
+namespace cm { namespace hybridize { extern BooleanOptionKey const nohybridize_stage1; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const relax; } }
 namespace cm { namespace hybridize { extern IntegerOptionKey const max_registry_shift; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const alignment_from_template_seqpos; } }

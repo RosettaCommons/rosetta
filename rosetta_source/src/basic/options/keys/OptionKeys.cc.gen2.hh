@@ -369,6 +369,7 @@ namespace cm { namespace hybridize { StringOptionKey const stage1_patch( "cm:hyb
 namespace cm { namespace hybridize { BooleanOptionKey const skip_stage2( "cm:hybridize:skip_stage2" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage2_weights( "cm:hybridize:stage2_weights" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage2_patch( "cm:hybridize:stage2_patch" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const nohybridize_stage1( "cm:hybridize:nohybridize_stage1" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const relax( "cm:hybridize:relax" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const max_registry_shift( "cm:hybridize:max_registry_shift" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const alignment_from_template_seqpos( "cm:hybridize:alignment_from_template_seqpos" );  } }
@@ -588,4 +589,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoPro
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_surface( "DenovoProteinDesign:redesign_surface" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "DenovoProteinDesign:redesign_complete" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }

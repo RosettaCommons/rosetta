@@ -60,7 +60,16 @@ public:
 		utility::vector1 < core::Real > & weights_icluster,
 		utility::vector1 < protocols::loops::Loops > & template_chunks_icluster,
 		utility::vector1 < protocols::loops::Loops > & template_contigs_icluster);
-	
+
+	//fpd optionally do not hybridize in stage 1
+	void
+	initialize_and_sample_loops(
+		core::pose::Pose &pose,
+		core::pose::PoseOP chosen_templ,
+		protocols::loops::Loops template_contigs_icluster,
+		core::scoring::ScoreFunctionOP scorefxn);
+
+
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;
 

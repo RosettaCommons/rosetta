@@ -3251,6 +3251,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'skip_stage2',  'Boolean',    desc='skip cartesian fragment hybridize stage', default='false' ),
 			Option( 'stage2_weights',     'String',     desc='weight for cartesian fragment hybridize stage', default='score4_smooth_cart' ),
 			Option( 'stage2_patch',       'String',     desc='weight patch for cartesian fragment hybridize stage', default='' ),
+			Option( 'nohybridize_stage1',     'Boolean',     desc='don\'t hybridize in stage 1', default='false' ),
 			Option( 'relax',       'Boolean',     desc='perform relax at end', default='false' ),
 			Option( 'max_registry_shift', 'Integer',    desc='maximum registry shift', default='0' ),
 			Option( 'alignment_from_template_seqpos', 'Boolean',    desc='alignment from template resSeq', default='true' ),

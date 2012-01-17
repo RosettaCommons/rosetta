@@ -87,7 +87,8 @@ private:
 	// fragments
 	utility::vector1 < core::pose::PoseOP > templates_;
 	utility::vector1 < core::Real > template_wts_;
-	utility::vector1 < protocols::loops::Loops > template_chunks_, template_contigs_;
+	//utility::vector1 < protocols::loops::Loops > template_chunks_, template_contigs_;
+	utility::vector1 < protocols::loops::Loops > template_contigs_;
 	core::fragment::FragSetOP fragments9_;
 	boost::unordered_map<core::Size, core::fragment::Frame> library_;
 

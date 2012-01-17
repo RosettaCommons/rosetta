@@ -7540,6 +7540,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
+<dt><b>-nohybridize_stage1</b> \<Boolean\><dt>
+<dd>don't hybridize in stage 1</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-relax</b> \<Boolean\><dt>
 <dd>perform relax at end</dd><br>
 <dd>Default: false</dd><br>

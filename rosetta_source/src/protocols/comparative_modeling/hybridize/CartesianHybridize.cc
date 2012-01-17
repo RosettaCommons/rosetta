@@ -112,13 +112,12 @@ CartesianHybridize::CartesianHybridize(
 		core::fragment::FragSetOP fragments9_in ) : ncycles_(400) {
 	templates_ = templates_in;
 	template_wts_ = template_wts_in;
-	template_chunks_ = template_chunks_in;
+	//template_chunks_ = template_chunks_in;
 	template_contigs_ = template_contigs_in;
 	fragments9_ = fragments9_in;
 
 	// make sure all data is there
 	runtime_assert( templates_.size() == template_wts_.size() );
-	runtime_assert( templates_.size() == template_chunks_.size() );
 	runtime_assert( templates_.size() == template_contigs_.size() );
 
 	// normalize weights
@@ -135,9 +134,35 @@ CartesianHybridize::CartesianHybridize(
 		library_[position] = **i;
 	}
 
-	TR.Debug << "template_chunks:" << std::endl;
-	for (int i=1; i<= template_chunks_.size(); ++i) {
-		TR.Debug << "templ. " << i << std::endl << template_chunks_[i] << std::endl;
+	// use chunks to subdivide contigs
+	core::Size ntempls = templates_.size();
+	for( int tmpl = 1; tmpl <= ntempls; ++tmpl) {
+		core::Size ncontigs = template_contigs_[tmpl].size();  // contigs to start
+		for (int i=1; i<=ncontigs; ++i) {
+			core::Size cstart = template_contigs_[tmpl][i].start(), cstop = template_contigs_[tmpl][i].stop();
+			bool spilt_chunk=false;
+
+			// assumes sorted
+			for (int j=2; j<=template_chunks_in[tmpl].size(); ++j) {
+				core::Size j0start = template_chunks_in[tmpl][j-1].start(), j0stop = template_chunks_in[tmpl][j-1].stop();
+				core::Size j1start = template_chunks_in[tmpl][j].start(), j1stop = template_chunks_in[tmpl][j].stop();
+	
+				bool j0incontig = ((j0start>=cstart) && (j0stop<=cstop));
+				bool j1incontig = ((j1start>=cstart) && (j1stop<=cstop));
+	
+				if (j0incontig && j1incontig) {
+					spilt_chunk=true;
+					core::Size cutpoint = (j0stop+j1start)/2;
+					template_contigs_[tmpl].add_loop( cstart, cutpoint-1 );
+					TR << "Make subfrag " << cstart << " , " << cutpoint-1 << std::endl;
+					cstart=cutpoint;
+				} else if(spilt_chunk && j0incontig && !j1incontig) {
+					spilt_chunk=false;
+					template_contigs_[tmpl].add_loop( cstart, cstop );
+					TR << "Make subfrag " << cstart << " , " << cstop << std::endl;
+				}
+			}
+		}
 	}
 	TR.Debug << "template_contigs:" << std::endl;
 	for (int i=1; i<= template_contigs_.size(); ++i) {
@@ -210,13 +235,13 @@ CartesianHybridize::apply_frag( core::pose::Pose &pose, core::pose::Pose &templ,
 					final_coords(j+1,i) -= postT[j];
 				}
 			}
-	
+
 			// get optimal superposition
 			// rotate >init< to >final<
 			ObjexxFCL::FArray1D< numeric::Real > ww( 4*len, 1.0 );
 			ObjexxFCL::FArray2D< numeric::Real > uu( 3, 3, 0.0 );
 			numeric::Real ctx;
-		
+
 			numeric::model_quality::findUU( init_coords, final_coords, ww, 4*len, uu, ctx );
 			R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
 			R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
@@ -367,6 +392,9 @@ CartesianHybridize::apply( Pose & pose ) {
 
 	Pose pose_in = pose;
 
+	// 10% of the time, skip moves in the global frame 
+	bool no_ns_moves = false; // (numeric::random::uniform() <= 0.1);
+
 sampler:
 	for (int m=1; m<=NMACROCYCLES; m+=1) {
 		core::Real bonded_weight = max_cart;
@@ -407,7 +435,7 @@ sampler:
 			core::Real action_picker = numeric::random::uniform();
 			core::Size action = 0;
 			if (m==1) {
-				action = 1;
+				action = no_ns_moves?2:1;
 				if (action_picker < 0.2) action = 3;
 			} else if (m==2) {
 				action = 2;
@@ -426,14 +454,19 @@ sampler:
 
 			if (action == 1 || action == 2) {
 				// uniform sampling of templates ... change this for weighted sampling
+				// core::Size templ_id = numeric::random::random_range( 1, templates_.size() );
+				// core::Size nfrags = template_chunks_[templ_id].num_loop() + template_contigs_[templ_id].num_loop();
+				// core::Size frag_id = numeric::random::random_range( 1, nfrags );
+				// protocols::loops::LoopOP frag =  new protocols::loops::Loop (
+				// 	(frag_id <= template_chunks_[templ_id].num_loop()) ? 
+				// 			template_chunks_[templ_id][frag_id]
+				// 		: template_contigs_[templ_id][frag_id - template_chunks_[templ_id].num_loop()]
+				// 	);
+
 				core::Size templ_id = numeric::random::random_range( 1, templates_.size() );
-				core::Size nfrags = template_chunks_[templ_id].num_loop() + template_contigs_[templ_id].num_loop();
+				core::Size nfrags = template_contigs_[templ_id].num_loop();
 				core::Size frag_id = numeric::random::random_range( 1, nfrags );
-				protocols::loops::LoopOP frag =  new protocols::loops::Loop (
-					(frag_id <= template_chunks_[templ_id].num_loop()) ? 
-						  template_chunks_[templ_id][frag_id]
-						: template_contigs_[templ_id][frag_id - template_chunks_[templ_id].num_loop()]
-					);
+				protocols::loops::LoopOP frag =  new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] );
 
 				if (frag->size() > 14)
 					action_string = action_string+"_15+";
@@ -515,6 +548,12 @@ sampler:
 		}
 		mc->recover_low(pose);
 	}
+
+	//for (int i=1; i<=templates_.size(); ++i) {
+	//	std::ostringstream oss;
+	//	oss << "templ"<<i<<".pdb";
+	//	templates_[i]->dump_pdb( oss.str() );
+	//}
 
 	// final minimization	
 	try {
