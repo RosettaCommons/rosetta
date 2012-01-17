@@ -28,6 +28,7 @@
 
 // ObjexxFCL formating
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <algorithm>
@@ -35,6 +36,7 @@
 #include <list>
 #include <sstream>
 #include <string>
+#include <iostream>
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
@@ -2579,6 +2581,18 @@ void FoldTree::reassign_atoms_for_intra_residue_stubs() {
 		// C-->CA-->N
 		std::string root = "N";
 		TR.Debug << "set anchor and root atom for jump " << jump_nr << " to " << anchor << " and " << root << std::endl;
+
+		std::string const upstream_atom_name = ObjexxFCL::strip_whitespace( jump_edge( jump_nr ).upstream_atom() );
+		if ( upstream_atom_name != "" && upstream_atom_name != "N" && upstream_atom_name != "C" && upstream_atom_name != "CA"  ) {
+			std::cout << "UPSTREAM_ATOM_NAME" <<  upstream_atom_name << std::endl;
+			anchor = upstream_atom_name;
+		}
+		std::string const downstream_atom_name = ObjexxFCL::strip_whitespace( jump_edge( jump_nr ).downstream_atom() );
+		if ( downstream_atom_name != "" && downstream_atom_name != "N" && downstream_atom_name != "C" && downstream_atom_name != "CA"  ){
+			std::cout << "DOWNSTREAM_ATOM_NAME" <<  downstream_atom_name << std::endl;
+			root = downstream_atom_name;
+		}
+
 		set_jump_atoms( jump_nr, anchor, root, true /* keep_stub_in_residue */ );
 	} // for loop
 }
