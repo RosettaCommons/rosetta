@@ -111,7 +111,8 @@ ConstraintSetMover::apply( Pose & pose )
 		else if ( cst_file_ == "none" ) constraint_set_low_res_ = new ConstraintSet;
 		else {
 			constraint_set_low_res_ =
-				ConstraintIO::get_instance()->read_constraints_new( cst_file_, new ConstraintSet, pose );
+				ConstraintIO::get_instance()->read_constraints( cst_file_, new ConstraintSet, pose );
+			//ConstraintIO::get_instance()->read_constraints_new( cst_file_, new ConstraintSet, pose );
 		}
 	}
 
@@ -122,7 +123,8 @@ ConstraintSetMover::apply( Pose & pose )
 		else if ( cst_fa_file_ == "none" ) constraint_set_high_res_ = new ConstraintSet;
 		else {
 			constraint_set_high_res_ =
-				ConstraintIO::get_instance()->read_constraints_new( cst_fa_file_, new ConstraintSet, pose );
+				ConstraintIO::get_instance()->read_constraints( cst_fa_file_, new ConstraintSet, pose );
+			//ConstraintIO::get_instance()->read_constraints_new( cst_fa_file_, new ConstraintSet, pose );
 		}
 	}
 
