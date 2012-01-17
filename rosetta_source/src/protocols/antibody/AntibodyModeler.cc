@@ -73,6 +73,7 @@ using namespace ObjexxFCL::fmt;
 // AUTO-REMOVED #include <protocols/jd2/Job.hh>
 // AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody/CDRH3Modeler.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>

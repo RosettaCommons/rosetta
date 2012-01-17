@@ -31,6 +31,7 @@
 #include <fstream>
 
 #include <core/id/SequenceMapping.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 #include <map>

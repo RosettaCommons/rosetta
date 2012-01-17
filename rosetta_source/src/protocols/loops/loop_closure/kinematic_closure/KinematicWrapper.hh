@@ -25,7 +25,7 @@
 
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/Loop.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>

@@ -24,6 +24,7 @@
 #include <protocols/rbsegment_relax/RBSegmentMover.hh>
 #include <protocols/rbsegment_relax/util.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
 // Protocol headers

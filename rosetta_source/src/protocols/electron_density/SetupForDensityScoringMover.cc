@@ -56,6 +56,7 @@
 //
 #include <basic/Tracer.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

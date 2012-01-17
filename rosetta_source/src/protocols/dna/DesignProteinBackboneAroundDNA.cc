@@ -32,6 +32,7 @@
 
 #include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/make_loops.hh>

@@ -23,6 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>

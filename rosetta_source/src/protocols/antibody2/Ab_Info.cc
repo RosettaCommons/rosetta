@@ -22,6 +22,7 @@
 #include <core/id/AtomID_Map.hh>
 
 #include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 //Auto Headers

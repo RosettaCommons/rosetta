@@ -24,6 +24,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/graph/DisjointSets.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 // AUTO-REMOVED #include <core/pack/task/ResfileReader.fwd.hh>

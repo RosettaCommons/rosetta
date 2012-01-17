@@ -36,6 +36,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>

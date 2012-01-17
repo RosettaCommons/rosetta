@@ -26,6 +26,7 @@
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/pose/Pose.hh>
 

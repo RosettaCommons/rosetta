@@ -38,6 +38,7 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 #include <basic/options/option.hh>

@@ -25,6 +25,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.tmpl.hh>
 // #include <core/kinematics/MoveMap.hh>
 // #include <core/fragment/FragSet.hh>
 // #include <protocols/simple_moves/FragmentMover.hh>

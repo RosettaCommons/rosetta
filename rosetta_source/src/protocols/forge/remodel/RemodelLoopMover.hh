@@ -26,6 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <core/fragment/FragSet.hh>

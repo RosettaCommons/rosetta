@@ -36,7 +36,7 @@
 #include <core/chemical/ResidueType.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-
+#include <protocols/loops/Loop.hh>
 
 
 

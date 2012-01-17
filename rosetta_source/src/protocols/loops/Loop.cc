@@ -21,51 +21,32 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 
-// C++ Headers
-#include <string>
-#include <iostream>
-
 // Utility Headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-#include <utility/exit.hh>
-#include <numeric/random/random.fwd.hh>
-#include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 #include <basic/Tracer.hh>
-
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
+#include <numeric/random/random.hh>
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <utility/vector1.hh>
-
-//Auto Headers
-
-
-
 namespace protocols {
 namespace loops {
 
-using namespace core;
-using namespace ObjexxFCL;
-
-static basic::Tracer tr("loops");
-static numeric::random::RandomGenerator RG(429);  // <- Magic number, do not change it (and dont try and use it anywhere else)
+static basic::Tracer tr("protocols.loops.Loop");
+static numeric::random::RandomGenerator RG(429);  // <- Magic number, do not change it (and don't try and use it anywhere else)
 
 /// @brief switch DOF_Type for residues in loop. id::CHI, id::BB --- don't use
 /// with id::JUMP
 void
 Loop::switch_movemap(
-   kinematics::MoveMap& movemap,
-	 id::TorsionType id,
+   core::kinematics::MoveMap& movemap,
+	 core::id::TorsionType id,
 	 bool allow_moves
 ) const {
 	for ( Size pos = start(); pos <= stop(); pos++ ) {
-		movemap.set( kinematics::MoveMap::MoveMapTorsionID( pos, id ), allow_moves );
+		movemap.set( core::kinematics::MoveMap::MoveMapTorsionID( pos, id ), allow_moves );
 	}
 }
 
@@ -86,7 +67,7 @@ Loop::choose_cutpoint( core::pose::Pose const & pose ) {
 	// the loop, so that the splice-rmsds are calculated between idealized atoms
 	// so also only use chainbreak_overlap = 1
 	Size const      n_cut_s ( loop_size - 1 );
-	FArray1D_float cut_weight( n_cut_s );
+	ObjexxFCL::FArray1D_float cut_weight( n_cut_s );
 	core::Real     total_cut_weight( 0 );
 	for ( Size i = 1; i <= n_cut_s; ++i ) {
 		// eg: for a 7 rsd loop: 1 2 3 4 3 2 1
@@ -152,7 +133,7 @@ void Loop::get_residues( utility::vector1< Size>& selection ) const {
 /// @details  Detect a terminal loop, logic is more complicated for multi-chain
 /// poses. Returns TRUE for terminal loops.
 bool
-Loop::is_terminal( pose::Pose const & pose ) const
+Loop::is_terminal( core::pose::Pose const & pose ) const
 {
 	if ( start() == 1 )                  return true;     // loop start at first residue
 	if ( stop() == pose.total_residue() ) return true;     // loop end at last residue

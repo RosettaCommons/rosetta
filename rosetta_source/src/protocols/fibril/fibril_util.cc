@@ -25,6 +25,7 @@
 #include <core/kinematics/FoldTree.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 // AUTO-REMOVED #include <core/init.hh>

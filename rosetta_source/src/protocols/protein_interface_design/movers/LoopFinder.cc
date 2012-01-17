@@ -25,6 +25,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.fwd.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/loops/loopfinder.hh>

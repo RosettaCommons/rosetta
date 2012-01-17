@@ -16,6 +16,7 @@
 //#include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_Moves.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_MovesCreator.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MonteCarlo.hh>

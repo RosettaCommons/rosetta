@@ -21,6 +21,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
 //#include <protocols/loops/LoopMover.hh>

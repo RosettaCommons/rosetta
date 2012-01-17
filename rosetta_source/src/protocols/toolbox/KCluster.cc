@@ -13,6 +13,7 @@
 
 #include <protocols/toolbox/KCluster.hh>
 #include <protocols/toolbox/superimpose.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 // AUTO-REMOVED #include <core/init.hh>

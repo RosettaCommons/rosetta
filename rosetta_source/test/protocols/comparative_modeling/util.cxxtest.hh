@@ -27,6 +27,7 @@
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/comparative_modeling/util.hh>
 

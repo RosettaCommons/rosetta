@@ -42,6 +42,7 @@
 // AUTO-REMOVED #include <core/conformation/util.hh> //idealize
 
 #include <protocols/loops/util.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
 // ObjexxFCL Headers

@@ -40,7 +40,7 @@
 
 #include <core/conformation/util.hh> //idealize
 
-// AUTO-REMOVED #include <protocols/loops/util.hh>
+#include <protocols/loops/Loop.hh>
 
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>

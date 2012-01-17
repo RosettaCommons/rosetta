@@ -14,6 +14,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_Backrub.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_BackrubCreator.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>

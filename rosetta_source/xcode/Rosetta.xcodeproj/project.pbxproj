@@ -1780,14 +1780,14 @@
 		D086FDF2122AF1290C91EEC7 /* CDRH3Modeler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1E1F34C9ED2DF6E5DE987ED0 /* CDRH3Modeler.cc */; };
 		DFB32426B92B6970F5DBDC9A /* GraftMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 51901BF40D7E78D5DBE1A3C5 /* GraftMover.cc */; };
 		69FA4E1F884085189F46A00D /* Ubiquitin_E2C_Modeler.cc in Sources */ = {isa = PBXBuildFile; fileRef = FF0B204891E653454ABCA79F /* Ubiquitin_E2C_Modeler.cc */; };
+		1E834914286F3098D2BD7DB1 /* Ab_AssembleCDRs.cc in Sources */ = {isa = PBXBuildFile; fileRef = B2089A2175AE6E3D84A4386E /* Ab_AssembleCDRs.cc */; };
+		CD85D7FF3ABC18E72C3FD1CF /* Ab_CloseOneCDR_Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = AAA0D47A9EEF2BD58D017B92 /* Ab_CloseOneCDR_Mover.cc */; };
+		C554BB4EED19C4DC20D672A1 /* Ab_GraftCDRs_Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 861B595E30E50532E86B6ECA /* Ab_GraftCDRs_Mover.cc */; };
+		B5C40E87507027439DAC1E9A /* Ab_GraftOneCDR_Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4674698F003DC70D3D93C96A /* Ab_GraftOneCDR_Mover.cc */; };
+		137D85FA47FA2EFC00901603 /* Ab_Info.cc in Sources */ = {isa = PBXBuildFile; fileRef = C80161969A1DC4A037BBE61C /* Ab_Info.cc */; };
+		CAACD6A42EBA3333A4073F36 /* Ab_RelaxCDRs_Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 86BFB48DCF0610068F6668A6 /* Ab_RelaxCDRs_Mover.cc */; };
 		13C9B41E208F4FBE7E34CFB1 /* Ab_TemplateInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = BF526A7B224B68C5C1ED5211 /* Ab_TemplateInfo.cc */; };
-		24EBC38EC7FD6E29AA8E09D2 /* AntibodyInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = FE4E794F05114B242DBF3427 /* AntibodyInfo.cc */; };
-		A1180A8F466C38ED04EA6B75 /* AntibodyModeler2.cc in Sources */ = {isa = PBXBuildFile; fileRef = 62C74C84287D3623B13AAEFF /* AntibodyModeler2.cc */; };
 		95D0DFF369698C8503086322 /* CDRH3Modeler2.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED376DCFD4E48E92CADBACA9 /* CDRH3Modeler2.cc */; };
-		4182B1382716CBC63EFCA3C6 /* CloseOneMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = FA671C6453E4C6B80E75884A /* CloseOneMover.cc */; };
-		C366ED6EA5CE36B36FB68C23 /* GraftMover2.cc in Sources */ = {isa = PBXBuildFile; fileRef = B56224CB1B46E2A4AD1D4E2D /* GraftMover2.cc */; };
-		3049749AF722EF41956FB90B /* GraftOneMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6C60FC1941D0ECCAD462E77F /* GraftOneMover.cc */; };
-		EB699EA12B7DC2F6E126E483 /* LoopRlxMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4A891B15C493393E96F0DA77 /* LoopRlxMover.cc */; };
 		6FBD59621DBE94AC89FD50F2 /* AbrelaxApplication.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9A20198B00E009B62B54D66C /* AbrelaxApplication.cc */; };
 		E896ABB0E9C8B59BF98FA289 /* AbrelaxMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B92B345E57B06E3BCE054 /* AbrelaxMover.cc */; };
 		48C5A2376496C61E187635E6 /* BrokerMain.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6236E3D14129645CC77B6389 /* BrokerMain.cc */; };
@@ -11781,30 +11781,32 @@
 		FF0B204891E653454ABCA79F /* Ubiquitin_E2C_Modeler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ubiquitin_E2C_Modeler.cc; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.cc; sourceTree = SOURCE_ROOT; };
 		22C0936648E1ABE51F7FD644 /* Ubiquitin_E2C_Modeler.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ubiquitin_E2C_Modeler.fwd.hh; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.fwd.hh; sourceTree = SOURCE_ROOT; };
 		50657841228B7F3CC57123E3 /* Ubiquitin_E2C_Modeler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ubiquitin_E2C_Modeler.hh; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.hh; sourceTree = SOURCE_ROOT; };
+		B2089A2175AE6E3D84A4386E /* Ab_AssembleCDRs.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_AssembleCDRs.cc; path = ../src/protocols/antibody2/Ab_AssembleCDRs.cc; sourceTree = SOURCE_ROOT; };
+		8C9645786234E54CF4708F0E /* Ab_AssembleCDRs.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_AssembleCDRs.fwd.hh; path = ../src/protocols/antibody2/Ab_AssembleCDRs.fwd.hh; sourceTree = SOURCE_ROOT; };
+		763DE8423D42B2E4D569CF90 /* Ab_AssembleCDRs.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_AssembleCDRs.hh; path = ../src/protocols/antibody2/Ab_AssembleCDRs.hh; sourceTree = SOURCE_ROOT; };
+		AAA0D47A9EEF2BD58D017B92 /* Ab_CloseOneCDR_Mover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_CloseOneCDR_Mover.cc; path = ../src/protocols/antibody2/Ab_CloseOneCDR_Mover.cc; sourceTree = SOURCE_ROOT; };
+		656206858B9FB780A6523F0D /* Ab_CloseOneCDR_Mover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_CloseOneCDR_Mover.fwd.hh; path = ../src/protocols/antibody2/Ab_CloseOneCDR_Mover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		B4660E5F52C5B0C3B66CD84A /* Ab_CloseOneCDR_Mover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_CloseOneCDR_Mover.hh; path = ../src/protocols/antibody2/Ab_CloseOneCDR_Mover.hh; sourceTree = SOURCE_ROOT; };
+		861B595E30E50532E86B6ECA /* Ab_GraftCDRs_Mover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_GraftCDRs_Mover.cc; path = ../src/protocols/antibody2/Ab_GraftCDRs_Mover.cc; sourceTree = SOURCE_ROOT; };
+		6156509B79D5C4479F4C1661 /* Ab_GraftCDRs_Mover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_GraftCDRs_Mover.fwd.hh; path = ../src/protocols/antibody2/Ab_GraftCDRs_Mover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		2B705E087590A4E30BF5C418 /* Ab_GraftCDRs_Mover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_GraftCDRs_Mover.hh; path = ../src/protocols/antibody2/Ab_GraftCDRs_Mover.hh; sourceTree = SOURCE_ROOT; };
+		4674698F003DC70D3D93C96A /* Ab_GraftOneCDR_Mover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_GraftOneCDR_Mover.cc; path = ../src/protocols/antibody2/Ab_GraftOneCDR_Mover.cc; sourceTree = SOURCE_ROOT; };
+		EAA8175E13966444A1C67BCC /* Ab_GraftOneCDR_Mover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_GraftOneCDR_Mover.fwd.hh; path = ../src/protocols/antibody2/Ab_GraftOneCDR_Mover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		D3285F45ADDA2E1D42A2BF06 /* Ab_GraftOneCDR_Mover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_GraftOneCDR_Mover.hh; path = ../src/protocols/antibody2/Ab_GraftOneCDR_Mover.hh; sourceTree = SOURCE_ROOT; };
+		C80161969A1DC4A037BBE61C /* Ab_Info.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_Info.cc; path = ../src/protocols/antibody2/Ab_Info.cc; sourceTree = SOURCE_ROOT; };
+		28EB2A496EDB9B8B81F01B48 /* Ab_Info.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_Info.fwd.hh; path = ../src/protocols/antibody2/Ab_Info.fwd.hh; sourceTree = SOURCE_ROOT; };
+		265C091048880CD91232DDC9 /* Ab_Info.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_Info.hh; path = ../src/protocols/antibody2/Ab_Info.hh; sourceTree = SOURCE_ROOT; };
+		9BA263151ECA35CA6B3394BA /* Ab_ModelCDRH3.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_ModelCDRH3.fwd.hh; path = ../src/protocols/antibody2/Ab_ModelCDRH3.fwd.hh; sourceTree = SOURCE_ROOT; };
+		2CEB0556EB48B887211FD527 /* Ab_ModelCDRH3.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_ModelCDRH3.hh; path = ../src/protocols/antibody2/Ab_ModelCDRH3.hh; sourceTree = SOURCE_ROOT; };
+		86BFB48DCF0610068F6668A6 /* Ab_RelaxCDRs_Mover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_RelaxCDRs_Mover.cc; path = ../src/protocols/antibody2/Ab_RelaxCDRs_Mover.cc; sourceTree = SOURCE_ROOT; };
+		FBBC683D3A64DEBA27898871 /* Ab_RelaxCDRs_Mover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_RelaxCDRs_Mover.fwd.hh; path = ../src/protocols/antibody2/Ab_RelaxCDRs_Mover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		79B0BE23133E42CEAECDC1A0 /* Ab_RelaxCDRs_Mover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_RelaxCDRs_Mover.hh; path = ../src/protocols/antibody2/Ab_RelaxCDRs_Mover.hh; sourceTree = SOURCE_ROOT; };
 		BF526A7B224B68C5C1ED5211 /* Ab_TemplateInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_TemplateInfo.cc; path = ../src/protocols/antibody2/Ab_TemplateInfo.cc; sourceTree = SOURCE_ROOT; };
 		C1B5F55917A764C796D59C3A /* Ab_TemplateInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_TemplateInfo.fwd.hh; path = ../src/protocols/antibody2/Ab_TemplateInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
 		F2C2FDF3EC8DFB2F2F804F2E /* Ab_TemplateInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_TemplateInfo.hh; path = ../src/protocols/antibody2/Ab_TemplateInfo.hh; sourceTree = SOURCE_ROOT; };
-		FE4E794F05114B242DBF3427 /* AntibodyInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AntibodyInfo.cc; path = ../src/protocols/antibody2/AntibodyInfo.cc; sourceTree = SOURCE_ROOT; };
-		4A7C2D5109C74CF12023225B /* AntibodyInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyInfo.fwd.hh; path = ../src/protocols/antibody2/AntibodyInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
-		D5C39E7C59BE80BD64B15F95 /* AntibodyInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyInfo.hh; path = ../src/protocols/antibody2/AntibodyInfo.hh; sourceTree = SOURCE_ROOT; };
-		62C74C84287D3623B13AAEFF /* AntibodyModeler2.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AntibodyModeler2.cc; path = ../src/protocols/antibody2/AntibodyModeler2.cc; sourceTree = SOURCE_ROOT; };
-		6AA20960A8E10C60312ABECF /* AntibodyModeler2.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyModeler2.fwd.hh; path = ../src/protocols/antibody2/AntibodyModeler2.fwd.hh; sourceTree = SOURCE_ROOT; };
-		9E5B69BB8A86B36950888CD6 /* AntibodyModeler2.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyModeler2.hh; path = ../src/protocols/antibody2/AntibodyModeler2.hh; sourceTree = SOURCE_ROOT; };
 		ED376DCFD4E48E92CADBACA9 /* CDRH3Modeler2.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CDRH3Modeler2.cc; path = ../src/protocols/antibody2/CDRH3Modeler2.cc; sourceTree = SOURCE_ROOT; };
 		243258C2AAA8A9263DBA245B /* CDRH3Modeler2.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CDRH3Modeler2.fwd.hh; path = ../src/protocols/antibody2/CDRH3Modeler2.fwd.hh; sourceTree = SOURCE_ROOT; };
 		A7DAB8D3C48B28D9A8E8793B /* CDRH3Modeler2.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CDRH3Modeler2.hh; path = ../src/protocols/antibody2/CDRH3Modeler2.hh; sourceTree = SOURCE_ROOT; };
-		FA671C6453E4C6B80E75884A /* CloseOneMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CloseOneMover.cc; path = ../src/protocols/antibody2/CloseOneMover.cc; sourceTree = SOURCE_ROOT; };
-		39396E3E757CCF29C81A6699 /* CloseOneMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CloseOneMover.fwd.hh; path = ../src/protocols/antibody2/CloseOneMover.fwd.hh; sourceTree = SOURCE_ROOT; };
-		049DC020DDE8CFC8377B3A94 /* CloseOneMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CloseOneMover.hh; path = ../src/protocols/antibody2/CloseOneMover.hh; sourceTree = SOURCE_ROOT; };
-		B56224CB1B46E2A4AD1D4E2D /* GraftMover2.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GraftMover2.cc; path = ../src/protocols/antibody2/GraftMover2.cc; sourceTree = SOURCE_ROOT; };
-		4F55ED5328065E66FCA8A3DF /* GraftMover2.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GraftMover2.fwd.hh; path = ../src/protocols/antibody2/GraftMover2.fwd.hh; sourceTree = SOURCE_ROOT; };
-		2AA13E112596C5A2A252C8C3 /* GraftMover2.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GraftMover2.hh; path = ../src/protocols/antibody2/GraftMover2.hh; sourceTree = SOURCE_ROOT; };
-		6C60FC1941D0ECCAD462E77F /* GraftOneMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GraftOneMover.cc; path = ../src/protocols/antibody2/GraftOneMover.cc; sourceTree = SOURCE_ROOT; };
-		324BD0BD913C9E9105A45E53 /* GraftOneMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GraftOneMover.fwd.hh; path = ../src/protocols/antibody2/GraftOneMover.fwd.hh; sourceTree = SOURCE_ROOT; };
-		7AF4A89EE6123A331F347CBB /* GraftOneMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GraftOneMover.hh; path = ../src/protocols/antibody2/GraftOneMover.hh; sourceTree = SOURCE_ROOT; };
-		4A891B15C493393E96F0DA77 /* LoopRlxMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopRlxMover.cc; path = ../src/protocols/antibody2/LoopRlxMover.cc; sourceTree = SOURCE_ROOT; };
-		66F05186D527DE0AD2C21CCA /* LoopRlxMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRlxMover.fwd.hh; path = ../src/protocols/antibody2/LoopRlxMover.fwd.hh; sourceTree = SOURCE_ROOT; };
-		9F2748207BA1E3E078BDF3F3 /* LoopRlxMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRlxMover.hh; path = ../src/protocols/antibody2/LoopRlxMover.hh; sourceTree = SOURCE_ROOT; };
 		9A20198B00E009B62B54D66C /* AbrelaxApplication.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AbrelaxApplication.cc; path = ../src/protocols/abinitio/AbrelaxApplication.cc; sourceTree = SOURCE_ROOT; };
 		C2772D57C79AE1D0B4200453 /* AbrelaxApplication.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AbrelaxApplication.hh; path = ../src/protocols/abinitio/AbrelaxApplication.hh; sourceTree = SOURCE_ROOT; };
 		5B9B92B345E57B06E3BCE054 /* AbrelaxMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AbrelaxMover.cc; path = ../src/protocols/abinitio/AbrelaxMover.cc; sourceTree = SOURCE_ROOT; };
@@ -20952,30 +20954,32 @@
 		6445E0E7F22FA5EC55670177 /* antibody2 */ = {
 			isa = PBXGroup;
 			children = (
+				B2089A2175AE6E3D84A4386E /* Ab_AssembleCDRs.cc */,
+				8C9645786234E54CF4708F0E /* Ab_AssembleCDRs.fwd.hh */,
+				763DE8423D42B2E4D569CF90 /* Ab_AssembleCDRs.hh */,
+				AAA0D47A9EEF2BD58D017B92 /* Ab_CloseOneCDR_Mover.cc */,
+				656206858B9FB780A6523F0D /* Ab_CloseOneCDR_Mover.fwd.hh */,
+				B4660E5F52C5B0C3B66CD84A /* Ab_CloseOneCDR_Mover.hh */,
+				861B595E30E50532E86B6ECA /* Ab_GraftCDRs_Mover.cc */,
+				6156509B79D5C4479F4C1661 /* Ab_GraftCDRs_Mover.fwd.hh */,
+				2B705E087590A4E30BF5C418 /* Ab_GraftCDRs_Mover.hh */,
+				4674698F003DC70D3D93C96A /* Ab_GraftOneCDR_Mover.cc */,
+				EAA8175E13966444A1C67BCC /* Ab_GraftOneCDR_Mover.fwd.hh */,
+				D3285F45ADDA2E1D42A2BF06 /* Ab_GraftOneCDR_Mover.hh */,
+				C80161969A1DC4A037BBE61C /* Ab_Info.cc */,
+				28EB2A496EDB9B8B81F01B48 /* Ab_Info.fwd.hh */,
+				265C091048880CD91232DDC9 /* Ab_Info.hh */,
+				9BA263151ECA35CA6B3394BA /* Ab_ModelCDRH3.fwd.hh */,
+				2CEB0556EB48B887211FD527 /* Ab_ModelCDRH3.hh */,
+				86BFB48DCF0610068F6668A6 /* Ab_RelaxCDRs_Mover.cc */,
+				FBBC683D3A64DEBA27898871 /* Ab_RelaxCDRs_Mover.fwd.hh */,
+				79B0BE23133E42CEAECDC1A0 /* Ab_RelaxCDRs_Mover.hh */,
 				BF526A7B224B68C5C1ED5211 /* Ab_TemplateInfo.cc */,
 				C1B5F55917A764C796D59C3A /* Ab_TemplateInfo.fwd.hh */,
 				F2C2FDF3EC8DFB2F2F804F2E /* Ab_TemplateInfo.hh */,
-				FE4E794F05114B242DBF3427 /* AntibodyInfo.cc */,
-				4A7C2D5109C74CF12023225B /* AntibodyInfo.fwd.hh */,
-				D5C39E7C59BE80BD64B15F95 /* AntibodyInfo.hh */,
-				62C74C84287D3623B13AAEFF /* AntibodyModeler2.cc */,
-				6AA20960A8E10C60312ABECF /* AntibodyModeler2.fwd.hh */,
-				9E5B69BB8A86B36950888CD6 /* AntibodyModeler2.hh */,
 				ED376DCFD4E48E92CADBACA9 /* CDRH3Modeler2.cc */,
 				243258C2AAA8A9263DBA245B /* CDRH3Modeler2.fwd.hh */,
 				A7DAB8D3C48B28D9A8E8793B /* CDRH3Modeler2.hh */,
-				FA671C6453E4C6B80E75884A /* CloseOneMover.cc */,
-				39396E3E757CCF29C81A6699 /* CloseOneMover.fwd.hh */,
-				049DC020DDE8CFC8377B3A94 /* CloseOneMover.hh */,
-				B56224CB1B46E2A4AD1D4E2D /* GraftMover2.cc */,
-				4F55ED5328065E66FCA8A3DF /* GraftMover2.fwd.hh */,
-				2AA13E112596C5A2A252C8C3 /* GraftMover2.hh */,
-				6C60FC1941D0ECCAD462E77F /* GraftOneMover.cc */,
-				324BD0BD913C9E9105A45E53 /* GraftOneMover.fwd.hh */,
-				7AF4A89EE6123A331F347CBB /* GraftOneMover.hh */,
-				4A891B15C493393E96F0DA77 /* LoopRlxMover.cc */,
-				66F05186D527DE0AD2C21CCA /* LoopRlxMover.fwd.hh */,
-				9F2748207BA1E3E078BDF3F3 /* LoopRlxMover.hh */,
 			);
 			name = antibody2;
 			path = ../src/protocols/antibody2/;
@@ -24678,14 +24682,14 @@
 				D086FDF2122AF1290C91EEC7 /* CDRH3Modeler.cc in Sources */,
 				DFB32426B92B6970F5DBDC9A /* GraftMover.cc in Sources */,
 				69FA4E1F884085189F46A00D /* Ubiquitin_E2C_Modeler.cc in Sources */,
+				1E834914286F3098D2BD7DB1 /* Ab_AssembleCDRs.cc in Sources */,
+				CD85D7FF3ABC18E72C3FD1CF /* Ab_CloseOneCDR_Mover.cc in Sources */,
+				C554BB4EED19C4DC20D672A1 /* Ab_GraftCDRs_Mover.cc in Sources */,
+				B5C40E87507027439DAC1E9A /* Ab_GraftOneCDR_Mover.cc in Sources */,
+				137D85FA47FA2EFC00901603 /* Ab_Info.cc in Sources */,
+				CAACD6A42EBA3333A4073F36 /* Ab_RelaxCDRs_Mover.cc in Sources */,
 				13C9B41E208F4FBE7E34CFB1 /* Ab_TemplateInfo.cc in Sources */,
-				24EBC38EC7FD6E29AA8E09D2 /* AntibodyInfo.cc in Sources */,
-				A1180A8F466C38ED04EA6B75 /* AntibodyModeler2.cc in Sources */,
 				95D0DFF369698C8503086322 /* CDRH3Modeler2.cc in Sources */,
-				4182B1382716CBC63EFCA3C6 /* CloseOneMover.cc in Sources */,
-				C366ED6EA5CE36B36FB68C23 /* GraftMover2.cc in Sources */,
-				3049749AF722EF41956FB90B /* GraftOneMover.cc in Sources */,
-				EB699EA12B7DC2F6E126E483 /* LoopRlxMover.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,6 +13,7 @@
 /// @author James Thompson
 
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>

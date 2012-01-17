@@ -15,6 +15,7 @@
 #include <protocols/analysis/LoopAnalyzerMover.hh>
 
 // Package Headers
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 // Project Headers

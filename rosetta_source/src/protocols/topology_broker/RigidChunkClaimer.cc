@@ -26,7 +26,8 @@
 #include <core/sequence/SequenceAlignment.hh>
 #include <protocols/comparative_modeling/util.hh>
 // AUTO-REMOVED #include <core/kinematics/Exceptions.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.tmpl.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <core/chemical/ChemicalManager.hh>

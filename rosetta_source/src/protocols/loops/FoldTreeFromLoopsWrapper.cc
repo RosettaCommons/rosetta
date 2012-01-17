@@ -14,14 +14,20 @@
 // Unit headers
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
 #include <protocols/loops/FoldTreeFromLoopsWrapperCreator.hh>
+
 // Package headers
-#include <core/pose/Pose.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
+
+// Project headers
+#include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
+
+// Utility headers
+#include <basic/Tracer.hh>
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace loops {

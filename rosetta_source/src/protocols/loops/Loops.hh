@@ -18,14 +18,8 @@
 // Unit header
 #include <protocols/loops/Loops.fwd.hh>
 
-// C/C++ headers
-#include <iostream>
-#include <string>
-
-// Utility headers
-#include <numeric/xyzVector.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.hh>
+// Package headers
+#include <protocols/loops/Loop.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -33,8 +27,14 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// Package headers
-#include <protocols/loops/Loop.hh>
+// Utility headers
+#include <numeric/xyzVector.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.fwd.hh>
+
+// C/C++ headers
+#include <ostream>
+#include <string>
 
 namespace protocols {
 namespace loops {
@@ -50,28 +50,25 @@ public:
 
 
 public:
-	bool empty() const {
-		return num_loop() == 0;
-	}
-
-	inline core::Size num_loop() const { return loops_.size(); }
-	inline const_iterator begin() const { return loops_.begin(); }
-	inline const_iterator end() const { return loops_.end(); }
-	inline iterator v_begin() { return loops_.begin(); }
-	inline iterator v_end() { return loops_.end(); }
+	bool empty() const;
+	core::Size num_loop() const;
+	const_iterator begin() const;
+	const_iterator end() const;
+	iterator v_begin();
+	iterator v_end();
 
 	//constructor
-	Loops(){};
-	//copy constructor
-	Loops( const Loops & src ):
-		utility::pointer::ReferenceCount(),
-		loops_(src.loops_) {}
-	//operator
-	Loops & operator =( Loops const & src ) {
-		loops_ = src.loops_;
-		return *this;
-	}
-
+	Loops();
+	
+    //copy constructor
+	Loops( const Loops & src );
+    
+    // assignment operator
+	Loops & operator =( Loops const & src );
+    
+    // destructor
+    ~Loops();
+    
 	friend std::ostream & operator<<( std::ostream & os, const Loops & loops );
 
 	void read_loop_file(
@@ -111,17 +108,15 @@ public:
 
 	void
 	add_loop(
-		const Loops::const_iterator & it
+		const const_iterator & it
 	);
 
 	void
 	add_loop(
-		const Loops::iterator & it
+		const iterator & it
 	);
 
-	void push_back( Loop loop ) {
-		add_loop( loop );
-	}
+	void push_back( Loop loop );
 
 	void
 	push_back(
@@ -130,9 +125,7 @@ public:
 		core::Size const cut = 0,
 		core::Real skip_rate = 0.0,
 		bool const extended = false
-	) {
-		add_loop( start, stop, cut, skip_rate, extended );
-	}
+	);
 
 	void
 	add_overlap_loop(
@@ -158,32 +151,24 @@ public:
 	) const;
 
 	///@brief return number of residues in all loops of this definition -- sum_i( loop_size( i ) )
-	core::Size
-	loop_size() const;
+	core::Size loop_size() const;
 
-	core::Size size() const {
-		return loops_.size();
-	}
+	core::Size size() const;
 
-	core::Size nr_residues() const {
-		return loop_size();
-	}
+	core::Size nr_residues() const;
 
 	void sequential_order();
 
 	void clear();
 
-	LoopList const& loops() const { return loops_; }
+	LoopList const & loops() const;
 
 	/// @brief  Is seqpos contained in any of my loops?
 	bool
 	is_loop_residue( core::Size const seqpos, int const offset = 0 ) const;
 
 	/// @brief is seqpos a residue in this Loops container ?
-	bool
-	has( core::Size const seqpos, int const offset = 0 ) const {
-		return is_loop_residue( seqpos, offset );
-	}
+	bool has( core::Size const seqpos, int const offset = 0 ) const;
 
 	void set_extended( bool input );
 
@@ -266,27 +251,16 @@ public:
 
 	///@brief add all residues within this loop definition into selection
 	void get_residues( utility::vector1< Size>& selection ) const;
+    
 	// i know this encourages old style for-loops (i.e. without iterators) but so much of the code
 	// already used such loops, i opted for safety.
-	inline
-	const Loop&
-	operator[] ( core::Size const i ) const
-	{
-		return loops_[i];
-	}
+	const Loop & operator[] ( core::Size const i ) const;
 
-	inline
-	Loop&
-	operator[] ( core::Size const i )
-	{
-		return loops_[i];
-	}
+	Loop & operator[] ( core::Size const i );
 
 	bool operator==( Loops const& other ) const;
 
-	bool operator!=( Loops const& other ) const {
-		return !( *this == other);
-	}
+	bool operator!=( Loops const& other ) const;
 
 private:
 	LoopList loops_;
@@ -295,17 +269,6 @@ private:
 Loops get_loops_from_file();
 std::string get_loop_file_name();
 
-template< class T >
-void Loops::transfer_to_residue_vector( utility::vector1< T > & vector, T val ) {
-	core::Size nres = vector.size();
-	for ( const_iterator it = begin(); it  != end(); ++it ) {
-		if ( it->start() <= nres ) {
-			for ( core::Size pos = it->start(); pos <= std::min( it->stop(), nres ); pos++ ) {
-				vector[ pos ] = val;
-			}
-		}
-	}
-}
 
 } //namespace loops
 } //namespace protocols

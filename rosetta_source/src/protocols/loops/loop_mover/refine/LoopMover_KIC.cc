@@ -21,6 +21,7 @@
 //// Unit Headers
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MonteCarlo.hh>

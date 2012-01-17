@@ -14,16 +14,8 @@
 #define INCLUDED_protocols_loops_FoldTreeFromLoops_hh
 
 #include <protocols/loops/FoldTreeFromLoopsWrapper.fwd.hh>
-//#include <core/types.hh>
-//#include <core/pose/Pose.fwd.hh>
-//#include <utility/tag/Tag.fwd.hh>
-//#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-//#include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
-
-//Auto Headers
-//#include <utility/vector1.hh>
 
 namespace protocols {
 namespace loops {

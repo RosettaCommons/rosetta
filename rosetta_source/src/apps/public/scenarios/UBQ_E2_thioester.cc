@@ -48,6 +48,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 

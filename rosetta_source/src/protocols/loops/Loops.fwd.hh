@@ -21,7 +21,6 @@ namespace protocols {
 namespace loops {
 
 // Forward
-class Loop;
 class Loops;
 
 typedef utility::pointer::owning_ptr< Loops > LoopsOP;

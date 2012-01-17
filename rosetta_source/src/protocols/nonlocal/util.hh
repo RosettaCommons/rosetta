@@ -31,6 +31,7 @@
 // Package headers
 #include <core/scoring/ScoreType.hh>
 
+#include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 
 

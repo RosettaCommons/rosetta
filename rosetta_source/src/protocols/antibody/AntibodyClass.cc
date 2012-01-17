@@ -21,6 +21,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/antibody/AntibodyClass.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 #include <core/chemical/AtomType.hh>

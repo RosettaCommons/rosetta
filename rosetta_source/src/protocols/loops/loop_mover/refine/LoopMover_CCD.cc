@@ -17,6 +17,7 @@
 //#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCDCreator.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>

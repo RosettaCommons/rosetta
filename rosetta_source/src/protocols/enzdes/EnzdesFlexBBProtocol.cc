@@ -53,6 +53,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/simple_filters/ScoreCutoffFilter.hh> // for filtering kinematic mover
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh> //input file reading
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>

@@ -33,6 +33,7 @@
 #include <protocols/toolbox/Cluster.hh>
 #include <protocols/toolbox/Cluster.impl.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>

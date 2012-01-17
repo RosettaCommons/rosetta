@@ -30,12 +30,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-#include <algorithm>
 #include <ostream>
-#include <functional>
+//#include <functional>
 
-//Auto Headers
-#include <utility/vector1.hh>
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {

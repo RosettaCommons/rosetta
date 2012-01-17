@@ -18,7 +18,7 @@
 
 // Project Headers
 // AUTO-REMOVED #include <core/fragment/FragID.hh>  // REQUIRED FOR WINDOWS
-
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 #include <core/kinematics/MoveMap.hh>

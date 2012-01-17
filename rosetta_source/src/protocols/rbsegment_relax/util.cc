@@ -13,6 +13,7 @@
 /// @author Srivatsan Raman
 #include <protocols/rbsegment_relax/RBSegmentMover.hh>
 #include <protocols/rbsegment_relax/util.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/dssp/Dssp.hh>
 

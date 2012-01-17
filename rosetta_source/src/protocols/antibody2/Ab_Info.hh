@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 // C++ Headers

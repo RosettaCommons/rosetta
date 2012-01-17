@@ -32,6 +32,7 @@
 
 #include <core/kinematics/util.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <protocols/loops/Loop.hh>
 // AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>

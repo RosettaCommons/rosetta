@@ -72,6 +72,7 @@
 #include <protocols/simple_filters/ScoreEvaluator.hh>
 #include <protocols/evaluation/util.hh>
 #include <protocols/loops/util.hh>
+#include <protocols/loops/Loop.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 

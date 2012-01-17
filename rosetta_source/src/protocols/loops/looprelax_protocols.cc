@@ -42,6 +42,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/simple_moves/FragmentMover.hh>

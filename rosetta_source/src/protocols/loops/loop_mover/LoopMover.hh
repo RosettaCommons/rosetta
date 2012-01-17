@@ -22,6 +22,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <protocols/checkpoint/CheckPointer.fwd.hh>

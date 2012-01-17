@@ -22,6 +22,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loop.hh>
+
 #include <core/scoring/Energies.hh>
 
 #include <protocols/rbsegment_relax/AutoRBRelaxMover.hh>

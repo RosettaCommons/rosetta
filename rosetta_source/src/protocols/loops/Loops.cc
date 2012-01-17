@@ -15,9 +15,14 @@
 // Unit header
 #include <protocols/loops/Loops.hh>
 
-// C++ Headers
-#include <iostream>
-#include <string>
+// Package headers
+#include <protocols/loops/Loop.hh>
+
+// Project Headers
+#include <core/types.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -29,19 +34,11 @@
 #include <utility/exit.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
-
-// Project Headers
-#include <core/types.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh>
-
-// Package headers
-#include <protocols/loops/Loop.hh>
-
 #include <utility/vector1.hh>
 
-//Auto Headers
+// C++ Headers
+#include <iostream>
+#include <string>
 
 
 
@@ -79,6 +76,20 @@ Loops get_loops_from_file() {
 	return Loops(); // return empty loop definition if neither option is defined.
 }
 
+Loops::Loops(){};
+
+Loops::Loops( const Loops & src ): utility::pointer::ReferenceCount(), loops_(src.loops_) {}
+
+// destructor
+Loops::~Loops(){}
+
+bool Loops::empty() const { return num_loop() == 0; }
+core::Size Loops::num_loop() const { return loops_.size(); }
+Loops::const_iterator Loops::begin() const { return loops_.begin(); }
+Loops::const_iterator Loops::end() const { return loops_.end(); }
+Loops::iterator Loops::v_begin() { return loops_.begin(); }
+Loops::iterator Loops::v_end() { return loops_.end(); }
+
 void Loops::center_of_mass(const core::pose::Pose& pose,
                            numeric::xyzVector<core::Real>* center) const {
   using core::Real;
@@ -107,7 +118,7 @@ Loops::switch_movemap(
 	 id::TorsionType id,
 	 bool allow_moves
 ) const {
-	for ( const_iterator it = begin(), eit = end(); it != eit; ++it ) {
+	for ( Loops::const_iterator it = begin(), eit = end(); it != eit; ++it ) {
 		it->switch_movemap( movemap, id, allow_moves );
 	}
 }
@@ -220,6 +231,21 @@ Loops::add_loop( const Loops::iterator & it ) {
 		it->skip_rate(), it->is_extended() );
 }
 /////////////////////////////////////////////////////////////////////////////
+void 
+Loops::push_back( Loop loop ) {
+    add_loop( loop );
+}
+/////////////////////////////////////////////////////////////////////////////
+void
+Loops::push_back(
+		core::Size const start,
+		core::Size const stop,
+		core::Size const cut,
+		core::Real skip_rate,
+		bool const extended	) {
+    add_loop( start, stop, cut, skip_rate, extended );
+}
+/////////////////////////////////////////////////////////////////////////////
 void
 Loops::add_overlap_loop( Loops loops ) {
 	for( Loops::const_iterator it = loops.begin(), it_end = loops.end();
@@ -327,6 +353,14 @@ Loops::loop_size() const {
 	return size;
 }
 /////////////////////////////////////////////////////////////////////////////
+core::Size Loops::size() const {
+    return loops_.size();
+}
+/////////////////////////////////////////////////////////////////////////////
+core::Size Loops::nr_residues() const {
+    return loop_size();
+}
+/////////////////////////////////////////////////////////////////////////////
 bool
 Loops::is_loop_residue( Size const seqpos, int const offset ) const
 {
@@ -381,6 +415,7 @@ Loops::clear(){
 	loops_.clear();
 }
 
+Loops::LoopList const & Loops::loops() const { return loops_; }
 
 void Loops::read_stream_to_END( std::istream &is, bool strict_looprelax_checks, std::string filename /*for error reports*/, std::string LOOP_token ) {
 	std::string line;
@@ -532,6 +567,10 @@ Loops Loops::invert(core::Size num_residues) const {
   return inv;
 }
 
+bool Loops::has( core::Size const seqpos, int const offset ) const {
+    return is_loop_residue( seqpos, offset );
+}
+    
 void Loops::set_extended( bool input ) {
   for( Loops::iterator it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
 		it->set_extended( input );
@@ -741,18 +780,40 @@ void Loops::grow_loop(
 
 void Loops::get_residues( utility::vector1< Size>& selection ) const {
 	selection.clear();
-	for ( LoopList::const_iterator it = loops_.begin(); it != loops_.end(); ++it ) {
+	for ( const_iterator it = loops_.begin(); it != loops_.end(); ++it ) {
 		it->get_residues( selection );
 	}
 }
 
-bool Loops::operator== ( Loops const& other ) const {
+const Loop & Loops::operator[] ( core::Size const i ) const
+{
+    return loops_[i];
+}
+
+Loop & Loops::operator[] ( core::Size const i )
+{
+    return loops_[i];
+}
+
+Loops & Loops::operator =( Loops const & src )
+{
+    loops_ = src.loops_;
+    return *this;
+}
+
+bool Loops::operator== ( Loops const& other ) const
+{
 	if ( other.size() != size() ) return false;
-	LoopList::const_iterator other_it = other.loops_.begin();
-	for ( LoopList::const_iterator it = loops_.begin(); it != loops_.end(); ++it, ++other_it ) {
+	const_iterator other_it = other.loops_.begin();
+	for ( const_iterator it = loops_.begin(); it != loops_.end(); ++it, ++other_it ) {
 		if ( *other_it != *it ) return false;
 	}
 	return true;
+}
+
+bool Loops::operator!=( Loops const& other ) const 
+{
+	return !( *this == other);
 }
 
 void

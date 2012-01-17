@@ -76,6 +76,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody2/CDRH3Modeler2.hh>
 #include <protocols/antibody2/Ab_GraftCDRs_Mover.hh>

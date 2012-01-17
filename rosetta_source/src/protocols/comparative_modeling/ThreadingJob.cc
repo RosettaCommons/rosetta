@@ -21,6 +21,7 @@
 // AUTO-REMOVED #include <core/sequence/util.hh>
 
 #include <protocols/comparative_modeling/util.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 #include <basic/Tracer.hh>
