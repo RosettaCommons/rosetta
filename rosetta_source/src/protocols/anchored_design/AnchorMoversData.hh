@@ -20,6 +20,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh> //ultimately, non OPed loop objects are contained
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
