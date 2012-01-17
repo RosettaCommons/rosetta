@@ -19,7 +19,7 @@
 // Package headers
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 
 #include <basic/database/open.hh>
@@ -43,7 +43,6 @@
 namespace core {
 namespace scoring {
 namespace carbon_hbonds {
-
 
 /// @details ctor, reads data file. Need to configure to allow alternate tables/atom_sets
 CarbonHBondPotential::CarbonHBondPotential():
@@ -95,8 +94,8 @@ CarbonHBondPotential::read_potential()
 	// I wasn't so lazy, I'd make it figure out the
 	// dimensions based on the input file.
 	for (Size i = 1; i <= num_carbon_donor_atoms_; i++ ){
-		ObjexxFCL::FArray1D<Real> * new_array =   new ObjexxFCL::FArray1D< Real> ;
-		carbon_hbond_parameter_.push_back( *new_array );
+		ObjexxFCL::FArray1D<Real> new_array; // =   new ObjexxFCL::FArray1D< Real> ;
+		carbon_hbond_parameter_.push_back( new_array );
 		carbon_hbond_parameter_[ i ].dimension( num_bins_ );
 		carbon_hbond_parameter_[ i ] = 0.0;
 	}
@@ -127,7 +126,10 @@ CarbonHBondPotential::read_potential()
 	//	for (Size i = 1; i <= num_carbon_donor_atoms_; i++ ) carbon_hbond_parameter_[i]( num_bins_ ) = 0.0;
 
 	//Now read in atom type set, and lookup strings.
-	chemical::AtomTypeSet atom_type_set( basic::database::full_name( "chemical/atom_type_sets/fa_standard" ) );
+	core::chemical::AtomTypeSetCAP atom_type_set_cap =
+		core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+	chemical::AtomTypeSet const & atom_type_set = *atom_type_set_cap;
+
 	standard_atomtype_to_carbon_donor_index_.dimension( atom_type_set.n_atomtypes() );
 	standard_atomtype_to_carbon_donor_index_ = 0;
 	for (Size i = 1; i <= num_carbon_donor_atoms_; i++ ){

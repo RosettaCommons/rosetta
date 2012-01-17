@@ -366,7 +366,8 @@ Patch::apply( ResidueType const & rsd_type ) const
 							iter_end = types_.end(); iter != iter_end; ++iter ) {
 						patched_rsd_type->add_variant_type( *iter );
 					}
-					patched_rsd_type->name( patched_rsd_type->name()+patch_linker+name_ );
+					std::string name_new = patched_rsd_type->name() + patch_linker + name_;
+					patched_rsd_type->name( name_new );
 				}
 				tr.Debug << "successfully patched: " << rsd_type.name() << " to: " << patched_rsd_type->name() << std::endl;
 				return patched_rsd_type;
