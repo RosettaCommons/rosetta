@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "AHdist_chem_type",
+filename = "scripts/analysis/plots/hbonds/AHdist_chem_type.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -46,13 +53,39 @@ dens <- estimate_density_1d(
 	f, c("sample_source", "acc_chem_type", "don_chem_type"),
 	"AHdist", weight_fun = radial_3d_normalization)
 
+#library(earthmovdist)
+#z <- comparison_statistics(f, c("don_chem_type", "acc_chem_type"), "AHdist", earth_mover_distance_L1)
+
+z <- smooth_comparison_statistics(dens, c("don_chem_type", "acc_chem_type"), smooth_kl_divergence)
+
+plot_id <- "emd_sample_size_correlation"
+p <- ggplot(data=z) + theme_bw() +
+	geom_point(aes(x=log(sample.size), y=log(statistic))) +
+	stat_smooth(aes(x=log(sample.size), y=log(statistic)), method="lm", se=F) +
+	opts(title = "Earth Mover's Distance as a function of Sample Size") +
+	scale_x_continuous("log(Sample Size)") +
+	scale_y_continuous("log(Earth Mover's Distance)")
+save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+plot_id <- "emd_sample_size_correlation"
+p <- ggplot(data=z[!(z$don_chem_type == "hbdon_PBA" & z$acc_chem_type == "hbacc_PBA"),]) + theme_bw() +
+	geom_point(aes(x=sample.size, y=statistic)) +
+	stat_smooth(aes(x=sample.size, y=statistic), method="lm", se=F) +
+	opts(title = "Earth Mover's Distance as a function of Sample Size") +
+	scale_x_continuous("Sample Size") +
+	scale_y_continuous("Earth Mover's Distance")
+save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+
 plot_id <- "hbond_AHdist_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(data=z, aes(indicator=round(statistic,2), colour=new_sample_source), xpos="left") +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance") +
-	scale_y_continuous("FeatureDensity)", limits=c(0,6), breaks=c(1,3,5)) +
+	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 if(nrow(sample_sources) <= 3){
@@ -60,3 +93,6 @@ if(nrow(sample_sources) <= 3){
 }
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

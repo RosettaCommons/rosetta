@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "num_hbonds",
+filename = "scripts/analysis/plots/hbonds/num_hbonds.R",
+author = "Matthew O'Meara",
+brief_description = "Count the number of hydrogen bonds formed conditional on the donor and acceptor chemical types.",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -69,3 +76,7 @@ ggplot(f, aes(don_chem_type, log(don_chem_type_count))) + theme_bw() +
   opts(title = "HBond Counts for Each Donor Type") +
   labs(x="Donor Type", y="log(Counts)")
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+
+})) # end FeatureAnalysis

@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "sp3_acceptor_angle_geometry",
+filename = "scripts/analysis/plots/hbonds/sp3_acceptor_angle_geometry.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -91,3 +98,6 @@ d_ply(data=dens_angles, .(sample_source), function(sub_da){
 		opts(legend.position=c(.7, .35))
 	save_plots(plot_id, ss, output_dir, output_formats)
 })
+
+
+})) # end FeatureAnalysis

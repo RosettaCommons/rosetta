@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "angle_dependence_on_AHdist",
+filename = "scripts/analysis/plots/hbonds/angle_dependence_on_AHdist.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -82,3 +89,6 @@ d_ply(f, .variables=("sample_source"), function(sub_f){
 		opts(title = paste("Hydrogen Bond Base-Acceptor Torsion Angle by Chemical Type and AHdist Quantile\nss_id: ", ss_id, sep=""))
 	save_plots(plot_id, sample_sources, output_dir, output_formats)
 })
+
+
+})) # end FeatureAnalysis

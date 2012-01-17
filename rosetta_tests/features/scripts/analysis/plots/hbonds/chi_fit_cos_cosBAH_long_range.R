@@ -8,14 +8,19 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "chi_fit_cos_cosBAH_long_range",
+filename = "scripts/analysis/plots/hbonds/chi_fit_cos_cosBAH_long_range.R",
+author = "Matthew O'Meara",
+brief_description = "",
+long_description = "
+These are example of asp/glu acceptors with his donors with long sequence
+separation and the chi angle between 160 and 200 -> which is the syn
+orbital sorted by hbond energy.",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 
-
-
-
-# These are example of asp/glu acceptors with his donors with long sequence
-# separation and the chi angle between 160 and 200 -> which is the syn
-# orbital sorted by hbond energy.
 examples_sele <-"
 SELECT
   structure.tag,
@@ -156,3 +161,6 @@ ggplot(data=dens) + theme_bw() +
   opts(title = "Hydrogen Bonds CHI Angle by Acceptor types with sequence separation at least 6\n(normalized for equal volume per unit distance)") +
   scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

@@ -8,21 +8,30 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "hbond_cosAHD_regression",
+filename = "scripts/analysis/plots/hbonds/hbond_cosAHD_regression.R",
+author = "Matthew O'Meara",
+brief_description = "",
+long_description = "
+The cosAHD angle in a hydrogen bond is the cosine of the angle at
+the hydrogen.  Usually the hydrogen is placed close to the line
+connecting the acceptor and donor atoms. To model this, the beta
+function is used. The beta function goes from 0 to 1 where the first
+parameter conceptually controls the angle on the left and the second
+parameter controls the angle on the right.
 
-# The cosAHD angle in a hydrogen bond is the cosine of the angle at
-# the hydrogen.  Usually the hydrogen is placed close to the line
-# connecting the acceptor and donor atoms. To model this, the beta
-# function is used. The beta function goes from 0 to 1 where the first
-# parameter conceptually controls the angle on the left and the second
-# parameter controls the angle on the right.
+This script generates 4 plots grouping the hydrogen bonds different ways:
+  1) All the hydrogen bonds together
+  2) Conditional on the donor chemical type
+  3) Conditional on the acceptor chemical type
+  4) Conditional on both the donor and acceptor chemical types
 
-# This script generates 4 plots grouping the hydrogen bonds different ways:
-#   1) All the hydrogen bonds together
-#   2) Conditional on the donor chemical type
-#   3) Conditional on the acceptor chemical type
-#   4) Conditional on both the donor and acceptor chemical types
+Currently this is only setup for a single sample source at a time.",
 
-# Currently this is only setup for a single sample source at a time
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
+
 
 sele <-"
 SELECT
@@ -174,3 +183,6 @@ ggplot(data=each_dens, aes(x=x)) + theme_bw() + facet_grid( don_chem_type ~ acc_
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

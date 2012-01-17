@@ -9,8 +9,13 @@
 
 
 check_setup()
-
-plot_id <- "zero_score_cusp"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "zero_score_cusp",
+filename = "scripts/analysis/plots/scores/zero_score_cusp.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("ResidueFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -43,6 +48,7 @@ dens <- estimate_density_1d(
   ids = c("sample_source", "score_type"),
   variable = "score_value")
 
+plot_id <- "zero_score_cusp"
 p <- ggplot(data=dens, aes(x=x, y=log(y+1), colour=sample_source, indicator=counts))
 p <- p + geom_line()
 p <- p + geom_indicator()
@@ -53,3 +59,5 @@ p <- p + labs(x=expression(paste('Acceptor -- Donor Distance (', ring(A), ')')),
 p <- p + theme_bw()
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

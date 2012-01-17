@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "solvation_vs_hbonding",
+filename = "scripts/analysis/plots/solvation/solvation_vs_hbonding.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures", "GeometricSolvationFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -40,3 +47,5 @@ ggplot(data=dens) + theme_bw() +
 	labs(x="(Geometric Solvation)*(Hydrogen Bonding)",
 	     y="log(FeatureDensity + 1)")
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

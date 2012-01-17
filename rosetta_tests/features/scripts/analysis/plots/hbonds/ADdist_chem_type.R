@@ -7,18 +7,18 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-####################################################################
-# DESCRIPTION:                                                     #
-#                                                                  #
-# Measure the distance between acceptor heavy atoms and the donor  #
-# heavy atoms for hydrogen bonds.                                  #
-#                                                                  #
-####################################################################
+source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
-check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "ADdist_chem_type",
+filename = "scripts/analysis/plots/hbonds/ADdist_chem_type.R",
+author = "Matthew O'Meara",
 
-description <-
-"Hydrogen Bonds are chemical contacts between a negatively charged
+brief_description = "Measure the distance between acceptor heavy atoms and the donor heavy atoms for hydrogen bonds.",
+
+
+long_description = "
+Hydrogen Bonds are chemical contacts between a negatively charged
 acceptor group and a positively charged donor group. This script measures
 the distance between pairs of donor and acceptor atoms. The A-D distance
 can be computed from the coordinates of the atoms, which are stored in the
@@ -45,7 +45,11 @@ each group for each sample source. For example, the red number in the
 ('aAHX: y', 'dPBA: bb') cell is the number of hydrogen bonds in the
 sample source corresponding to the red distribution with an aromatic
 hydroxyl acceptor (e.g., in a tyrosine) a protein backbone donor
-(i.e., the N-H group of a protein backbone)."
+(i.e., the N-H group of a protein backbone).",
+
+feature_reporter_dependencies = c("HBondFeatures"),
+
+run=function(){
 
 sele <- "
 SELECT
@@ -115,3 +119,6 @@ if(nrow(sample_sources) <= 3){
 }
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

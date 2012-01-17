@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "OHdonor_AHdist_morse_fit",
+filename = "scripts/analysis/plots/hbonds/OHdonor_AHdist_morse_fit.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 morse_fn <- function(x, D_a, a, r_0, min_e){
 	D_a*(1+exp(-2*a*(x-r_0))-2*exp(-a*(x-r_0)))+min_e
@@ -101,3 +108,6 @@ dens <- estimate_densities(
 ggplot(dens) + plot_parts +
 	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type for AHX or HXL donors with IMD or IME acceptors\nnormalized for equal weight per unit distance")
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

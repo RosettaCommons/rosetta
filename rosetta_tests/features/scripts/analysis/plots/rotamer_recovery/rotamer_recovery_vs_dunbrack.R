@@ -9,6 +9,15 @@
 
 check_setup()
 
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_vs_dunbrack",
+filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_vs_dunbrack.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RotamerRecoveryFeatures"),
+run=function(){
+
+
 sele <- "
 SELECT
   rr.divergence AS divergence,
@@ -26,11 +35,11 @@ WHERE
   sc.score_type = 'fa_dun' AND
   sc.score_value < 30;"
 
-all <-  query_sample_sources(sample_sources, sele)
+f <-  query_sample_sources(sample_sources, sele)
 
 plot_id <- "rotamer_recovery_vs_dunbrack"
 p <- ggplot(
-  data=all,
+  data=f,
   aes(x=score_value, y=divergence))
 p <- p + geom_point(size=.3)
 p <- p + facet_wrap( ~ res_type )
@@ -40,3 +49,6 @@ p <- p + labs(x="Score",
 p <- p + theme_bw()
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

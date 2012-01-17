@@ -9,6 +9,13 @@
 
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "kmeans_cluster",
+filename = "scripts/analysis/plots/hbonds/kmeans_cluster.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <- "
 SELECT
@@ -28,16 +35,12 @@ WHERE
 # Execute the SQL query on each sample source.
 f <- query_sample_sources(sample_sources, sele)
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
 f$don_chem_type <- factor(f$don_chem_type,
 	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
 		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
 	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
 		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
 f$acc_chem_type <- factor(f$acc_chem_type,
 	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
 		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
@@ -45,5 +48,8 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
 
-k <- kmeans(f[,c("AHdist", "cosBAH", "cosAHD", "chi")], 2, iter.max=10, nstarts=10)
+#k <- kmeans(f[,c("AHdist", "cosBAH", "cosAHD", "chi")], 2, iter.max=10, nstarts=10)
 
+
+
+})) # end FeatureAnalysis

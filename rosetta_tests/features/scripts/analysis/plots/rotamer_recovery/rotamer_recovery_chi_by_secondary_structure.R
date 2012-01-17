@@ -9,7 +9,15 @@
 
 check_setup()
 
-plot_id <- "rotamer_recovery_by_secondary_structure"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_by_secondary_structure",
+filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_by_secondary_structure.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RotamerRecoveryFeatures"),
+run=function(){
+
+
 
 sele <-"
 DROP TABLE IF EXISTS nchi;
@@ -86,3 +94,5 @@ g <- f[order(f$dssp, f$res_type, f$sample_source, f$first),]
 g <- cast(g, dssp + res_type ~ sample_source, value="first")
 g$diff <- g$top8000_olf_r45890_111114 - g$top8000_r45890_111114
 print(ascii(g))
+
+})) # end FeatureAnalysis

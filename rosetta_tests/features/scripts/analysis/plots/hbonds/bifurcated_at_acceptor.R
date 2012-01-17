@@ -8,10 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-description <-
-"The rank of a hydrogen bond at donor site or acceptor site is rank of the
-relative Rosetta HBond energy of the hydrogen bond at the site."
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "bifurcated_at_acceptor",
+filename = "scripts/analysis/plots/hbonds/bifurcated_at_acceptor.R",
+author = "Matthew O'Meara",
+brief_description = "The rank of a hydrogen bond at donor site or acceptor site is rank of the relative Rosetta HBond energy of the hydrogen bond at the site.",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 CREATE TEMPORARY TABLE hbs AS SELECT
@@ -87,3 +90,6 @@ d_ply(f, .(sample_source), function(sub_f){
                   opts(title = paste("HBond Pairs Bifurcated at Acceptor   ss_id:",ss_id))
 	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)
 })
+
+
+})) # end FeatureAnalysis

@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "chi_sinBAH_polar_scatter_by_chem_type_long_range",
+filename = "scripts/analysis/plots/hbonds/chi_sinBAH_polar_scatter_by_chem_type_long_range.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
   ss <- sample_source[1,"sample_source"]
@@ -133,3 +140,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
   save_plots(plot_id, sample_source, output_dir, output_formats)
 
 })
+
+
+
+})) # end FeatureAnalysis

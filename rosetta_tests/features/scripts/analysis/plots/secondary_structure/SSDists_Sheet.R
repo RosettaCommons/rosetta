@@ -8,8 +8,45 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "SSDists_Sheet",
+filename = "scripts/analysis/plots/secondary_structure/SSDists_Sheet.R",
+author = "Matthew O'Meara",
+brief_description = "",
+long_description = "
 
-plot_id <- "SSDists_Sheet_seqsep_gt1"
+       RESi
+  ---ACC1-DON2 -----<
+ /    |    |
+|    HB1  HB2             ANTI-PARALLEL HBonding
+ \    |    |
+  ---DON1-ACC2------>
+       RESj
+
+
+          ||              ||
+          ||      Bres1   Ares1
+  ------- Ri+1 -- Ri ---- Ri-1 -------<
+ /               /||    /               CLOSE Carbon HBond
+|            O_Ca || Ca_O               Geometry in anti-parallel sheets
+ \           /    || /
+  ------- Rj-1 -- Rj ---- Rj+1 -------->
+          Bres2   Ares2   ||
+          ||              ||
+
+
+         |               |
+         |      RESi     |
+----Ca---|---DON1--ACC2--|--Ca-------->
+     \      /      /  \      \
+      \   HB1     /   HB2     \         PARALLEL HBonding
+       \  /      /      \      \
+--DON--ACC1--|--Ca---|---DON2--ACC---->
+   RESj-1    |  RESj |     RESj+1
+             |       |
+",
+feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures", "ProteinBackboneAtomPairFeatures"),
+run=function(){
 
 # new idiom: union select
 sele <-"
@@ -92,6 +129,8 @@ dens <- estimate_density_1d(
   f, c("sample_source", "at1", "at2"),
   "dist", weight_fun = radial_3d_normalization)
 
+
+plot_id <- "SSDists_Sheet_seqsep_gt1"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
@@ -105,3 +144,5 @@ if(nrow(sample_sources) <= 3){
 }
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

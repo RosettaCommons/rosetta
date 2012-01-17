@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "fade_bump",
+filename = "scripts/analysis/plots/hbonds/fade_bump.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <- "
 SELECT
@@ -197,3 +204,6 @@ ggplot(data=dens) +
   opts(title = "Hydrogen Bond A-H Distance Fade Range by Chem Type\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(1.9, 2.3))
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

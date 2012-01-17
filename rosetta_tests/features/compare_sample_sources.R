@@ -29,11 +29,13 @@ includes <- c(
 	"scripts/methods/sample_sources.R",
 	"scripts/methods/methods.R",
 	"scripts/methods/density_estimation.R",
+	"scripts/methods/feature_analysis.R",
 	"scripts/methods/ggplot2_geom_indicator.R",
 	"scripts/methods/ggplot2_scales.R",
 	"scripts/methods/instancer.R",
 	"scripts/methods/output_formats.R",
 	"scripts/methods/coordinate_normalizations.R",
+	"scripts/methods/comparison_statistics.R",
 	"scripts/methods/vector_math.R",
 	"scripts/methods/color_palettes.R")
 for(inc in includes) source(paste(base_dir, inc, sep="/"))
@@ -73,7 +75,9 @@ option_list <- list(
 	make_option(c("--output_huge_pdf"), action="store_true", type="logical", default=FALSE, dest="output_huge_pdf",
 							help="Generate output plots suitable for hugeing in .pdf format.  [Default \"%default\"]"),
 	make_option(c("--db_cache_size"), action="store_true", type="integer", default=10000, dest="db_cache_size",
-							help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]"))
+							help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]"),
+	make_option(c("--dry_run"), action="store_true", type="integer", default=10000, dest="dry_run",
+							help="Debug the analysis scripts but do not run them.  [Default \"%default\"]"))
 
 opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TRUE)
 
@@ -166,12 +170,25 @@ iscript_output_formats(output_formats)
 db_cache_size <- opt$options$db_cache_size
 iscript_db_cache_size(db_cache_size)
 
-iscript_scripts(analysis_scripts)
-l_ply(analysis_scripts, function(analysis_script){
-	cat(paste("Begin running '", analysis_script,"'.\n", sep=""))
+#Read in all the feature analysis scripts
+iscript_source_scripts(analysis_scripts)
+
+# This is a vector of FeatureAnalysis objects that are defined each feature analysis script
+feature_analyses <- c()
+for(analysis_script in analysis_scripts){
 	tryCatch(source(analysis_script), error=function(e){
 		cat(paste("ERROR: The analysis script '",analysis_script,"' failed with error:\n",e,sep=""))
 	})
-	cat("\n")
-})
+}
 
+
+#Run all the feature analysis scripts
+iscript_run_feature_analyses(feature_analyses)
+if(!opt$options$dry_run){
+	cat("run feature analyses\n")
+	for(feature_analysis in feature_analyses){
+
+		feature_analysis@run()
+		cat("\n")
+	}
+}

@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "hbond_AHdist_regression",
+filename = "scripts/analysis/plots/hbonds/hbond_AHdist_regression.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -261,3 +268,6 @@ a_ply(sample_sources, 1, function(sample_source){
 #		scale_y_continuous("log(FeatureDensity)")
 #	save_plots(plot_id, sample_sources, output_dir, output_formats)
 #})
+
+
+})) # end FeatureAnalysis

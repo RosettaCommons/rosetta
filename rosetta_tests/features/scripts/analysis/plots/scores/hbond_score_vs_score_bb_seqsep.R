@@ -9,9 +9,15 @@
 
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "hbond_scores_vs_score_bb_seqsep",
+filename = "scripts/analysis/plots/scores/hbond_score_hbond_score_vs_score_bb_seqsep.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("ResidueFeatures", "HBondFeatures"),
+run=function(){
 
 sele <- "
-
 CREATE TEMPORARY TABLE ref_hbonds (
 	tag TEXT,
 	don_resNum INTEGER,
@@ -156,3 +162,4 @@ if(nrow(sample_sources) <= 3){
 save_plots(plot_id, sample_sources, output_dir, output_formats)
 
 
+})) # end FeatureAnalysis

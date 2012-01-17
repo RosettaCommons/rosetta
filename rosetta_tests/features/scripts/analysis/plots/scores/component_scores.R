@@ -9,6 +9,14 @@
 
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "component_scores",
+filename = "scripts/analysis/plots/scores/component_scores.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("ResidueFeatures"),
+run=function(){
+
 
 sele_1b <-"
 SELECT score_type, score_value
@@ -35,13 +43,14 @@ dens <- estimate_density_1d(
   variable = "score_value")
 
 plot_id <- "component_scores"
-p <- ggplot(data=dens,
-  aes(x=x, y=log(y+1), colour=sample_source, indicator=counts))
-p <- p + geom_line() + geom_indicator()
-p <- p + facet_wrap( ~ score_type, ncol = 4)
-p <- p + opts(title = "Rosetta Component Scores")
-p <- p + labs(x="Rosetta Energy Units", y="log(FeatureDensity + 1)")
-p <- p + theme_bw()
-p <- p + scale_y_continuous(breaks=c(0, .3, .6))
-
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=x, y=log(y+1), colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	facet_wrap( ~ score_type, ncol = 4) +
+	opts(title = "Rosetta Component Scores") +
+	labs(x="Rosetta Energy Units") +
+	scale_y_continuous("log(FeatureDensity + 1)", breaks=c(0, .3, .6))
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

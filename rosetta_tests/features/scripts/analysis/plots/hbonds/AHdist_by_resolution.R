@@ -8,8 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-plot_id <- "AHdist_chem_type"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "AHdist_by_resolution",
+filename = "scripts/analysis/plots/hbonds/AHdist_by_resolution.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -58,6 +63,8 @@ dens <- estimate_density_1d(
   f, c("resolution_q", "don_chem_type", "acc_chem_type"),
   "AHdist", weight_fun = radial_3d_normalization)
 
+
+plot_id <- "AHdist_by_resolution"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=log(y+1), colour=resolution_q)) +
 	geom_indicator(aes(indicator=counts, colour=resolution_q)) +
@@ -67,3 +74,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+
+})) # end FeatureAnalysis

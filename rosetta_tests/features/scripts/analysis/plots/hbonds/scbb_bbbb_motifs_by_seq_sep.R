@@ -7,9 +7,18 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-check_setup()
 
 source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
+
+
+check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "scbb_bbbb_motifs_by_seq_sep",
+filename = "scripts/analysis/plots/hbonds/scbb_bbbb_motifs_by_seq_sep.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 #st motif
 sele <-"
@@ -60,3 +69,6 @@ p <- ggplot(f) + theme_bw() +
   scale_x_log_pos_neg("Sequence Separation", breaks=c(-200,-25,-4,0,4,25,200)) +
   scale_y_log10("Count")
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

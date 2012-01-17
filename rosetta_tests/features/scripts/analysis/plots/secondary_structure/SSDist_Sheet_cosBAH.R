@@ -8,40 +8,45 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "SSDist_Sheet_cosBAH",
+filename = "scripts/analysis/plots/secondary_structure/SSDist_Sheet_cosBAH.R",
+author = "Matthew O'Meara",
+brief_description = "",
+long_description = "
+
+       RESi
+  ---ACC1-DON2 -----<
+ /    |    |
+|    HB1  HB2             ANTI-PARALLEL HBonding
+ \    |    |
+  ---DON1-ACC2------>
+       RESj
 
 
+          ||              ||
+          ||      Bres1   Ares1
+  ------- Ri+1 -- Ri ---- Ri-1 -------<
+ /               /||    /               CLOSE Carbon HBond
+|            O_Ca || Ca_O               Geometry in anti-parallel sheets
+ \           /    || /
+  ------- Rj-1 -- Rj ---- Rj+1 -------->
+          Bres2   Ares2   ||
+          ||              ||
 
 
-#           RESi
-#     ---ACC1-DON2 -----<
-#    /    |    |
-#   |    HB1  HB2             ANTI-PARALLEL HBonding
-#    \    |    |
-#     ---DON1-ACC2------>
-#          RESj
-
-
-#            ||              ||
-#            ||      Bres1   Ares1
-#    ------- Ri+1 -- Ri ---- Ri-1 -------<
-#   /               /||    /               CLOSE Carbon HBond
-#  |            O_Ca || Ca_O               Geometry in anti-parallel sheets
-#   \           /    || /
-#    ------- Rj-1 -- Rj ---- Rj+1 -------->
-#            Bres2   Ares2   ||
-#            ||              ||
-
-
-#           |               |
-#           |      RESi     |
-#  ----Ca---|---DON1--ACC2--|--Ca-------->
-#       \      /      /  \      \
-#        \   HB1     /   HB2     \         PARALLEL HBonding
-#         \  /      /      \      \
-#  --DON--ACC1--|--Ca---|---DON2--ACC---->
-#     RESj-1    |  RESj |     RESj+1
-#               |       |
-
+         |               |
+         |      RESi     |
+----Ca---|---DON1--ACC2--|--Ca-------->
+     \      /      /  \      \
+      \   HB1     /   HB2     \         PARALLEL HBonding
+       \  /      /      \      \
+--DON--ACC1--|--Ca---|---DON2--ACC---->
+   RESj-1    |  RESj |     RESj+1
+             |       |
+",
+feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures", "HBondFeatures"),
+run=function(){
 
 sele <-"
 CREATE TEMPORARY TABLE ee_bb_bb_hbonds AS
@@ -157,3 +162,5 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #}
 #
 #save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

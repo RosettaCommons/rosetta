@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "cosBAH_hbacc_HXLAXL",
+filename = "scripts/analysis/plots/hbonds/cosBAH_hbacc_HXLAXL.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -45,3 +52,6 @@ ggplot(data=dens) +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 	scale_y_continuous("FeatureDensity")
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

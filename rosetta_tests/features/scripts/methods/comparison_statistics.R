@@ -39,25 +39,86 @@ histogram_kl_divergence <- function(a, b, nbins=50){
 	breaks <- seq(min(a, b), max(a, b), length.out=nbins)
 	ad <- hist(a, breaks, plot=F)$density
 	bd <- hist(b, breaks, plot=F)$density
-	data.frame("KL Divergence"=sum(ad * log(ad / (bd+.0001)), na.rm = T))
+	data.frame(
+		statistic_name=factor("KL Divergence"),
+		statistic=sum(ad * log(ad / (bd+.0001)), na.rm = T),
+		p.value = NA)
 }
 
-anderson_darling_2_sample <- function(a, b){
-	z <- adk.test(a,b)
-	data.frame("Anderson Darling"=z$adk[2,2]) # P-value, adjust for ties
+# Here the inputs are probabilities over the sample space
+#assume evenly spaced partition of points
+smooth_kl_divergence <- function(x, ad, bd){
+	z <- sum(ad*log((ad+.0001)/(bd+.0001)))
+	data.frame(
+		statistic_name=factor("KL Divergence"),
+		statistic=z, na.rm=T,
+		p.value=NA)
 }
+
+
+anderson_darling_2_sample <- function(a, b, nsamples=1000){
+	require(adk) # this requires the adk package
+	if(length(a) >= nsamples){
+		print(length(a))
+		print(nsamples)
+		a_sub <- sample(a, nsamples)
+	} else {
+		a_sub <- a
+	}
+
+	if(length(b) >= nsamples){
+		b_sub <- sample(b, nsamples)
+	} else {
+		b_sub <- b
+	}
+
+	z <- adk.test(a_sub,b_sub)
+	data.frame(
+		statistic_name=factor("Anderson Darling"),
+		statistic=NA,
+		p.value=z$adk[2,2]) # P-value, adjust for ties
+}
+
+#EXPERIMENTAL:
+# require(earthmovdist)
+earth_mover_distance_L1 <- function(a, b){
+
+
+	a <- sample(a, 5000, replace=T)
+	b <- sample(b, 5000, replace=T)
+
+#
+#	#The earthmovdist implementation of the earth mover distance
+#	#requires the samples to be of the same length.  Is it better to
+#	#subsample the longer one or resample the shorter one?
+#	na <- length(a)
+#	nb <- length(b)
+#	if(na==nb){
+#		# ok
+#	} else if(na > nb){
+#		b <- sample(b, na, replace=T)
+#		n <- na
+#	} else {
+#		a <- sample(a, nb, replace=T)
+#		n <- nb
+#	}
+	z <- emdL1(a, b)
+
+	data.frame(
+		statistic_name=factor("Earth Mover Distance L1"),
+		statistic=exp(log(z) - 2434*log(length(a))),
+		sample.size=length(a),
+		p.value=NA)
+}
+
+
 
 # Evaluate a two sample tests between different classes of samples
 # conditional on distinct groups of identifying variables.
 #   The class.vars is used to identify the classes of the samples
 #   The id.vars is used to split the classes in to comparison groups
 comparison_statistics <- function(
-	f, class.vars, id.vars, measure.vars, comp_fun){
-	for(var in class.vars){
-		if( !(var %in% names(f))){
-			stop(paste("class.vars variable '", var, "', must be a column of f.\n\tnames(f) = c('", paste(names(f), collapse="', '"), "')", sep=""))
-		}
-	}
+	f, id.vars, measure.vars, comp_fun){
 
 	for(var in id.vars){
 		if( !(var %in% names(f))){
@@ -71,19 +132,44 @@ comparison_statistics <- function(
 		}
 	}
 
-	ref.class.vars <- class.vars
-  names(ref.class.vars) <- paste("ref_", class.vars, sep="")
-  new.class.vars <- class.vars
-  names(new.class.vars) <- paste("new_", class.vars, sep="")
-
   ddply(f, .variables = id.vars, function(sub_f){
-    ddply(sub_f, .variables = ref.class.vars, function(ref_f){
-      ddply(sub_f, .variables = new.class.vars, function(new_f){
+    ddply(sub_f, c("ref_sample_source" = "sample_source"), function(ref_f){
+      ddply(sub_f, c("new_sample_source" = "sample_source"), function(new_f){
+				if(as.numeric(new_f$sample_source[1]) <= as.numeric(ref_f$sample_source[1])) {
+					return(data.frame())
+				}
         comp_fun(ref_f[,measure.vars], new_f[,measure.vars])
       })
     })
   })
 }
+
+# Evaluate a two sample tests between different classes of samples
+# conditional on distinct groups of identifying variables.
+#   The class.vars is used to identify the classes of the samples
+#   The id.vars is used to split the classes in to comparison groups
+smooth_comparison_statistics <- function(
+	dens, id.vars, comp_fun){
+
+	for(var in id.vars){
+		if( !(var %in% names(f))){
+			stop(paste("id.vars variable '", var, "', must be a column of f.\n\tnames(f) = c('", paste(names(f), collapse="', '"), "')", sep=""))
+		}
+	}
+
+  ddply(dens, .variables = id.vars, function(sub_dens){
+    ddply(sub_dens, c("ref_sample_source" = "sample_source"), function(ref_dens){
+      ddply(sub_dens, c("new_sample_source" = "sample_source"), function(new_dens){
+				if(as.numeric(new_dens$sample_source[1]) <= as.numeric(ref_dens$sample_source[1])) {
+					return(data.frame())
+				}
+        comp_fun(ref_dens$x, ref_dens$y, new_dens$y)
+      })
+    })
+  })
+}
+
+
 
 # Evaluate a two sample tests between different classes of samples
 # conditional on distinct groups of identifying variables.

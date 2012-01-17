@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "angle_dependence_on_orbital_hydrogen_dist",
+filename = "scripts/analysis/plots/orbitals/angle_dependence_on_orbital_hydrogen_dist.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("OrbitalFeatures"),
+run=function(){
 
 
 #########################   POLAR   #############################################################
@@ -52,7 +59,7 @@ function(df){
 
 }
 	ss_id <- sub_f[1, "sample_source"]
-	
+
 	plot_id <- paste("HPOL_cosAOrbH_OrbHdist_quantiles_", ss_id, "_by_orbital_type",sep="")
 	dens <- estimate_density_1d(sub_f,
 		c("orb_type", "htype2", "OrbHdist_quantile"), "AOH_angle")
@@ -172,4 +179,4 @@ function(df){
 })
 
 
-
+})) # end FeatureAnalysis

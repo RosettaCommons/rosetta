@@ -10,6 +10,14 @@
 check_setup()
 
 require(logspline)
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "orbitals_cos_angle",
+filename = "scripts/analysis/plots/orbitals/orbitals_cos_angle.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("OrbitalFeatures"),
+run=function(){
+
 
 ###### HPOL_sc_H_sc_orb ######
 sele <-"
@@ -31,3 +39,5 @@ function(df){
   d <-data.frame(x=x, y=y, counts=nrow(df))
   return(d)
 })
+
+})) # end FeatureAnalysis

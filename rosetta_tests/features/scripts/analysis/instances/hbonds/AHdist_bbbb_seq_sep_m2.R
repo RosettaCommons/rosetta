@@ -8,13 +8,19 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-
-description <-
-"Backbone-backbone hbonds with sequence separation
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "AHdist_bbbb_seq_sep_m2",
+filename = "scripts/analysis/instances/hbonds/AHdist_bbbb_seq_sep_m2.R",
+author = "Matthew O'Meara",
+brief_description = "",
+long_description = "
+Backbone-backbone hbonds with sequence separation
 (don.resNum-acc.resNum) -2, are predominately in turns and have the
 residue in between with phi~-80 and psi ~(50, 80). It is a little
-strained but it there are plenty of examples in the natives."
+strained but it there are plenty of examples in the natives.",
+
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -47,3 +53,5 @@ f <- melt(f,
 instances_id <- "AHdist_bbbb_seq_sep_m2"
 
 prepare_feature_instances(instances_id, sample_sources, f)
+
+})) # end FeatureAnalysis

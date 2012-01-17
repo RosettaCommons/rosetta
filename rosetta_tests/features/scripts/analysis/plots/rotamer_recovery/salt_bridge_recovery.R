@@ -9,6 +9,15 @@
 
 check_setup()
 
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "salt_bridge_recovery",
+filename = "scripts/analysis/plots/rotamer_recovery/salt_bridge_recovery.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RotamerRecoveryFeatures", "HBondFeatures"),
+run=function(){
+
+
 sele <-"
 CREATE TEMPORARY TABLE max_residue_bfactors AS
 SELECT
@@ -232,3 +241,5 @@ if(nrow(sample_sources) <= 3){
 }
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

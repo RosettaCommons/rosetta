@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "chi_BAH_eq_polar_density_bb_by_ss",
+filename = "scripts/analysis/plots/hbonds/chi_BAH_eq_polar_density_bb_by_ss.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -75,3 +82,6 @@ d_ply(sample_sources, .(sample_source), function(sample_source){
 		scale_fill_gradientn('log(Density)', colour=jet.colors(15))
 	save_plots(plot_id, sample_source, output_dir, output_formats)
 })
+
+
+})) # end FeatureAnalysis

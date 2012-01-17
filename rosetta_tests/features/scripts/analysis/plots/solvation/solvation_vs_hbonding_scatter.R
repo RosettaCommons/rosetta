@@ -8,8 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-plot_id <- "solvation_vs_hbonding_scatter"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "solvation_vs_hbonding_scatter",
+filename = "scripts/analysis/plots/solvation/solvation_vs_hbonding_scatter.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures", "GeometricSolvationFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -32,6 +37,7 @@ LIMIT
 
 f <- query_sample_sources(sample_sources, sele)
 
+plot_id <- "solvation_vs_hbonding_scatter"
 ggplot(data=f) + theme_bw() +
 	geom_point(aes(x=geometric_solvation, y=hbond_energy, colour=sample_source), size=.8) +
 	facet_wrap( ~ hb_chem_type) +
@@ -39,3 +45,5 @@ ggplot(data=f) + theme_bw() +
 	labs(x="Geometric Solvation Score",
 	     y="Hydrogen Bond Score") +
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

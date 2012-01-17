@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "cosBAH_hbacc_HXLAXL_hist",
+filename = "scripts/analysis/plots/hbonds/cosBAH_hbacc_HXLAXL_hist.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -28,18 +35,10 @@ WHERE
   hbond.struct_id = acc_site.struct_id AND
   hbond.acc_id = acc_site.site_id;"
 
-all_geom <- query_sample_sources(sample_sources, sele)
-
-#dens <- estimate_density_1d(
-#  data = all_geom,
-#  ids = c("sample_source" ),
-#  variable = "cosBAH")
-
-# The 'hbdon_' part of the donor labels doesn't fit so strip them out
-# dens$don_chem_type <- sub("^hbdon_", '', dens$don_chem_type)
+f <- query_sample_sources(sample_sources, sele)
 
 plot_id = "cosBAHhist_hydroxyl_acc"
-ggplot(data=all_geom) +
+ggplot(data=f) +
 	#geom_line(aes(x=(pi-acos(x))*180/pi, y=y, colour=sample_source)) +
 	#stat_bin(aes(x=(pi-acos(cosBAH))*180/pi, colour=sample_source)) +
 	geom_bar(aes(x=(pi-acos(cosBAH))*180/pi, fill=sample_source), position="dodge") +
@@ -51,3 +50,6 @@ ggplot(data=all_geom) +
 	#scale_gradientn()
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

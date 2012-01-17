@@ -8,8 +8,12 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-description <- "
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "pi_helices",
+filename = "scripts/analysis/plots/secondary_structure/pi_helices.R",
+author = "Matthew O'Meara",
+brief_description = "",
+long_description = "
    Following IUPAC-IUB 1970 Rule 6.3, a pi-helix is a regular 4.4_{16} helix consisting of at least 2 i<-i+5 hydrogen bonds. The first helical residue is the first whose CO group is regularly hydrogen bonded to NH along the helix and the last helical residue is the last whose NH is regularly hydrogen bonded to the CO along the helix.
 
   In establishing where a pi-helix begins and ends, DSSP takes 'regular' to mean not bifurcated, while Fodje, and Al-Kardaghi allow bifurcation as long as the strongest one is forming the i<i+5 interaction.
@@ -27,8 +31,11 @@ Questions:
   * Does backbone-backbone i<-i+5 residues have specific geometry?
   * Does Rosetta form pi-helices too often or to rarely?
   * Does Rosetta recapitulate the hydrogen bond geometry that form pi-helices?
-  * Does Rosetta recapitulate the geometry of backbone-backbone i<-i+5 hydrogen bonds?
-"
+  * Does Rosetta recapitulate the geometry of backbone-backbone i<-i+5 hydrogen bonds?",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
+
+
 
 sele <-"
 CREATE TEMPORARY TABLE seq_sep_5_hbs AS SELECT
@@ -189,3 +196,5 @@ d_ply(f, .(sample_source), function(sub_f){
 
 	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)
 })
+
+})) # end FeatureAnalysis

@@ -95,13 +95,24 @@ iscript_db_cache_size <- function(db_cache_size){
   cat("\n", file=iscript_fname, append=TRUE)
 }
 
-iscript_scripts <- function(scripts){
+iscript_source_scripts <- function(scripts){
   cat("\n", file=iscript_fname, append=TRUE)
-  cat("#Run these scripts:\n",
+  cat("#Source these analysis scripts:\n",
       file=iscript_fname, append=TRUE)
+	cat("feature_analyses <- c()\n",
+			file=iscript_fname, append=TRUE)
   for(script in scripts){
     cat("source(\"", script, "\")\n",
         file=iscript_fname, sep="", append=TRUE)
   }
+}
+
+iscript_run_feature_analyses <- function(){
   cat("\n", file=iscript_fname, append=TRUE)
+	cat("#Run these feature_analyses:\n",
+			file=iscript_fname, append=TRUE)
+	cat("for(feature_analysis in feature_analyses){
+	feature_analysis@run()
+}\n\n",
+			file=iscript_fname, append=TRUE)
 }

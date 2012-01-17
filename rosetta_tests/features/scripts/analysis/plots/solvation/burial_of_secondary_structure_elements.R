@@ -8,8 +8,14 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "burial_of_secondary_structure_elements",
+filename = "scripts/analysis/plots/solvation/burial_of_secondary_structure_elements.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("APSAFeatures"),
+run=function(){
 
-plot_id <- "burial_of_secondary_structure_elements"
 
 sele <-"
 SELECT DISTINCT
@@ -22,13 +28,14 @@ WHERE
   rp.struct_id = ss.struct_id AND
   rp.resNum1 = ss.resNum;"
 
-all_geom <-  query_sample_sources(sample_sources, sele)
+f <-  query_sample_sources(sample_sources, sele)
 
 dens <- estimate_density_1d(
-  data = all_geom,
+  data = f,
   ids = c("sample_source", "secondary_struct"),
   variable = "nbrs")
 
+plot_id <- "burial_of_secondary_structure_elements"
 p <- ggplot(data=dens, aes(x=log(x+1), y=log(y+1), color=secondary_struct, indicator=counts))
 p <- p + geom_line()
 p <- p + geom_indicator()
@@ -40,3 +47,5 @@ p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

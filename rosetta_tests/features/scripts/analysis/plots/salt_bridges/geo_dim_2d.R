@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_by_secondary_structure",
+filename = "scripts/analysis/plots/salt_bridges/geo_dim_1d.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("SaltBridgeFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -246,3 +253,6 @@ d_ply(f, .(sample_source), function(sub_f){
 #	}
 #	save_plots(plot_id, sample_sources, output_dir, output_formats)
 })
+
+
+})) # end FeatureAnalysis

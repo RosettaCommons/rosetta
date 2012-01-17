@@ -9,6 +9,14 @@
 
 check_setup()
 
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_by_secondary_structure",
+filename = "scripts/analysis/plots/salt_bridges/lys_rotamer_hbond_interaction.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("SaltBridgeFeatures", "HBondFeatures"),
+run=function(){
+
 sele <-"
 SELECT
   geom.AHdist, geom.cosBAH, geom.cosAHD, geom.chi,
@@ -62,3 +70,4 @@ ggplot(f, aes(y=acos(cosAHD)*180/pi)) + plot_parts +
 save_plots(plot_id, sample_sources, output_dir, output_formats)
 
 
+})) # end FeatureAnalysis

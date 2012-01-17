@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "chi_kl_divergence",
+filename = "scripts/analysis/statistics/hbonds/chi_kl_divergence.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -112,3 +119,5 @@ ggplot(comp) + theme_bw() +
   opts(title = "Hydrogen Bonds CHI Angle Cross Entropy with sequence separation > 5\n(normalized for equal volume per unit distance)") +
   coord_flip()
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

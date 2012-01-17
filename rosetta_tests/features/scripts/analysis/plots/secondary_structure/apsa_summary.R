@@ -8,8 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-plot_id <- "apsa_summary"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "apsa_summary",
+filename = "scripts/analysis/plots/secondary_structure/apsa_summary.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("APSAFeatures"),
+run=function(){
 
 sele <- "
 SELECT
@@ -20,9 +25,10 @@ FROM
 GROUP BY
   secondary_struct;"
 
-all <-  query_sample_sources(sample_sources, sele)
+f <-  query_sample_sources(sample_sources, sele)
 
-p <- ggplot(data=all, aes(x=secondary_struct, y=count, fill=sample_source))
+plot_id <- "apsa_summary"
+p <- ggplot(data=f, aes(x=secondary_struct, y=count, fill=sample_source))
 p <- p + geom_bar(position="dodge") + coord_flip()
 p <- p + opts(title = "Secondary Structure Diversity\nAutomated Protein Structure Analysis Method")
 p <- p + labs(x = "Type of Secondary Structure",
@@ -30,3 +36,5 @@ p <- p + labs(x = "Type of Secondary Structure",
 p <- p + theme_bw()
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

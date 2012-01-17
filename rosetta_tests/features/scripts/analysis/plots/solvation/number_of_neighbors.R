@@ -8,8 +8,14 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "number_of_neighbors",
+filename = "scripts/analysis/plots/solvation/number_of_neighbors.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("ResidueFeatures", "ResidueBurialFeatures"),
+run=function(){
 
-plot_id <- "number_of_neighbors"
 
 # for now find # neighbors through the residue pair table
 sele <-"
@@ -22,13 +28,14 @@ FROM
 WHERE
   bur.struct_id == res.struct_id AND bur.resNum == res.resNum;"
 
-all_geom <-  query_sample_sources(sample_sources, sele)
+f <-  query_sample_sources(sample_sources, sele)
 
 dens <- estimate_density_1d(
-  data = all_geom,
+  data = f,
   ids = c("sample_source", "res_type"),
   variable = "nbrs")
 
+plot_id <- "number_of_neighbors"
 p <- ggplot(data=dens, aes(x=x, y=log(y+1), color=sample_source, indicator=counts))
 p <- p + geom_line()
 p <- p + geom_indicator()
@@ -40,3 +47,5 @@ p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

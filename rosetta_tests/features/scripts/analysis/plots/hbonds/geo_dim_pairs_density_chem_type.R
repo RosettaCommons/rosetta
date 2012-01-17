@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "geo_dim_pairs_density_chem_type",
+filename = "scripts/analysis/plots/hbonds/geo_dim_pairs_density_chem_type.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -99,3 +106,6 @@ plot_each_ss <- function(sub_f){
 runtime <- system.time(d_ply(f, .(sample_source), .fun=plot_each_ss))
 print(paste("Plot Generation Time: ", runtime, sep=""))
 
+
+
+})) # end FeatureAnalysis

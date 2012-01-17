@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "radius_of_gyration",
+filename = "scripts/analysis/plots/solvation/radius_of_gyration.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RadiusOfGyrationFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -41,3 +48,5 @@ ggplot(data=dens) + theme_bw() +
   opts(title = "Normalized Radius of Gyration") +
   labs(x="Radius of Gyration / Number of Residues", y="Feature Density")
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

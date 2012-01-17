@@ -20,7 +20,7 @@
 
 output_web_raster <- data.frame(
   id="output_web_raster",
-  extensions = ".png",
+  extension = ".png",
   height=8,
   width=10.5,
   dpi=300,
@@ -28,7 +28,7 @@ output_web_raster <- data.frame(
 
 output_web_vector <- data.frame(
   id="output_web_vector",
-  extensions = ".svg",
+  extension = ".svg",
   height=8,
   width=10.5,
   dpi=300,
@@ -60,7 +60,7 @@ output_slide_pdf <- data.frame(
 
 output_print_raster <- data.frame(
   id="output_print_raster",
-  extensions = ".png",
+  extension = ".png",
   height=8,
   width=10.5,
   dpi=300,
@@ -68,7 +68,7 @@ output_print_raster <- data.frame(
 
 output_print_vector <- data.frame(
   id="output_print_vector",
-  extensions = ".svg",
+  extension = ".svg",
   height=8,
   width=10.5,
   dpi=300,
@@ -77,7 +77,7 @@ output_print_vector <- data.frame(
 
 output_print_pdf <- data.frame(
   id="output_print_pdf",
-  extensions = ".pdf",
+  extension = ".pdf",
   height=8,
   width=10.5,
   dpi=300,
@@ -85,7 +85,7 @@ output_print_pdf <- data.frame(
 
 output_huge_raster <- data.frame(
   id="output_huge_raster",
-  extensions = ".png",
+  extension = ".png",
   height=15,
   width=18,
   dpi=300,
@@ -93,7 +93,7 @@ output_huge_raster <- data.frame(
 
 output_huge_vector <- data.frame(
   id="output_huge_vector",
-  extensions = ".svg",
+  extension = ".svg",
   height=15,
   width=18,
   dpi=300,
@@ -102,7 +102,7 @@ output_huge_vector <- data.frame(
 
 output_huge_pdf <- data.frame(
   id="output_huge_pdf",
-  extensions = ".pdf",
+  extension = ".pdf",
   height=15,
   width=18,
   dpi=300,

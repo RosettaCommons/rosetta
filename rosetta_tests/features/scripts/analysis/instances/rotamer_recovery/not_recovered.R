@@ -8,8 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-plot_id <- "rotamer_recovery_by_res_type"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "not_recovered",
+filename = "scripts/analysis/instances/rotamer_recovery/not_recovered.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RotaermRecoveryFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -58,3 +63,5 @@ g <- melt(f[f$id <= n_examples,],
 
 instances_id <- "rotamer_recovery_LYS_max_diff_divergence"
 prepare_feature_instances(instances_id, sample_sources, g)
+
+})) # end FeatureAnalysis

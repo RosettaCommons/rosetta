@@ -8,8 +8,14 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_by_secondary_structure",
+filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_by_secondary_structure.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RotamerRecoveryFeatures"),
+run=function(){
 
-plot_id <- "rotamer_recovery_by_secondary_structure"
 
 sele <-"
 SELECT
@@ -22,13 +28,14 @@ WHERE
   ss.struct_id  = rr.struct_id AND
   ss.resNum = rr.resNum;"
 
-all_geom <- query_sample_sources(sample_sources, sele)
+f <- query_sample_sources(sample_sources, sele)
 
 dens <- estimate_density_1d(
-  data = all_geom,
+  data = f,
   ids = c("secondary_struct"),
   variable = "divergence")
 
+plot_id <- "rotamer_recovery_by_secondary_structure"
 p <- ggplot(data=dens, aes(x=log(x+1), y=log(y+1), color=secondary_struct, indicator=counts))
 p <- p + geom_line()
 p <- p + geom_indicator()
@@ -38,3 +45,5 @@ p <- p + labs(x="<- better      log(Automorphic RMSD + 1)      worse ->",
 p <- p + theme_bw()
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

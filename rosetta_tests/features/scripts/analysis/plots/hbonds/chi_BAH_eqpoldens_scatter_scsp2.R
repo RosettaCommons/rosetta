@@ -8,13 +8,20 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "chi_BAH_eqpoldens_scatter_scsp2",
+filename = "scripts/analysis/plots/hbonds/chi_BAH_eqpoldens_scatter_scsp2.R",
+author = "Matthew O'Meara",
+brief_description = "The rank of a hydrogen bond at donor site or acceptor site is rank of the relative Rosetta HBond energy of the hydrogen bond at the site.",
 
-description <-
-	"The plot is of hydrogen bonds with sidechain donor groups and Sp2 sidechain acceptors (eg. in proteins, Asp, Glu, Asn or Gln), filtered for so the sequence separation between the residues of the donor and acceptor groups is greater than 5.
+long_description = "
+The plot is of hydrogen bonds with sidechain donor groups and Sp2 sidechain acceptors (eg. in proteins, Asp, Glu, Asn or Gln), filtered for so the sequence separation between the residues of the donor and acceptor groups is greater than 5.
 
 Dimensions of the plot is the direction of the Hydrogen atom from the Acceptor atom. This direction is projected via the Lambert Azmuthal projection with the center point where the Acceptor Base, the Acceptor and the Hydrogen are colinear, the positive X axis is the Anti orbital and the negative X axis is the Syn orbital.T he Syn orbital is in the Acceptor Sp2 plane the Acceptor Base 2, Acceptor Base, Acceptor, and Orbital positions form a trans dihedral angle.
 
-The plot organization is a smooth 2D density for the first sample source and then put points on to it from the second sample source. This is useful, for example, when one wants to determine the likelihood that a few samples (the first sample source) came from the a larger sample source (the second sample source)."
+The plot organization is a smooth 2D density for the first sample source and then put points on to it from the second sample source. This is useful, for example, when one wants to determine the likelihood that a few samples (the first sample source) came from the a larger sample source (the second sample source).",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -63,3 +70,6 @@ ggplot(data=f_first) + theme_bw() +
 	coord_fixed(ratio = 1) +
 	scale_fill_gradientn('Density', colour=jet.colors(10))
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

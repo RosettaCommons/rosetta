@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "AHdist_bbbb",
+filename = "scripts/analysis/instances/hbonds/AHdist_bbbb.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -32,7 +39,7 @@ WHERE
 LIMIT 15;"
 f <- query_sample_sources(sample_sources, sele)
 ss_ids <- as.character(unique(f$sample_source))
-g <- cast(f, tag + chain + resNum + CA + C + O + res_type ~ sample_source, value = "divergence")
+g <- cast(f, tag + chain + resNum + CA + C + O ~ sample_source, value = "divergence")
 g$rel_div <- g[,ss_ids[1]] - g[,ss_ids[2]]
 g <- g[order(g$rel_div),]
 g$id <- 1:nrow(g)
@@ -59,3 +66,5 @@ gm <- melt(g[g$id <= n_examples,],
 
 instances_id <- "AHdist_bbbb"
 prepare_feature_instances(instances_id, sample_sources, gm)
+
+})) # end FeatureAnalysis

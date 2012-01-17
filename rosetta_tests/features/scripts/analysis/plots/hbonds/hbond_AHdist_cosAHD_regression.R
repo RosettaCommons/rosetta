@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "hbond_AHdist_cosAHD_regression",
+filename = "scripts/analysis/plots/hbonds/hbond_AHdist_cosAHD_regression.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -48,3 +55,7 @@ ggplot(data=d, aes(x=x, y=y, fill=-log(z+1))) + theme_bw() +
   labs(x=expression(paste('cos(Acceptor -- Hydrogen -- Donor)')),
        y=expression(paste('(Acceptor -- Proton Distance)(', ring(A), ')')))
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+
+})) # end FeatureAnalysis

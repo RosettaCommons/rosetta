@@ -8,8 +8,14 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_hbond_geometry",
+filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_hbond_geometry.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RotamerRecoveryFeatures", "HBondFeatures"),
+run=function(){
 
-plot_id <- "rotamer_recovery_by_secondary_structure"
 
 sele <-"
 CREATE TEMPORARY TABLE IF NOT EXISTS chi_recovered (
@@ -196,3 +202,4 @@ ascii(g, header=F, digits=4)
 #|============================================================================================================================================================== 
 
 
+})) # end FeatureAnalysis

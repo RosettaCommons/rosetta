@@ -8,8 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-plot_id <- "AHdist_chem_type"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "his_inplane",
+filename = "scripts/analysis/plots/hbonds/his_inplane.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -176,3 +181,6 @@ ggplot(data=dens) + theme_bw() +
   scale_x_continuous('Acceptor -- Donor Torsion (degrees)') +
   scale_y_continuous('Feature Density')
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

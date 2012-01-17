@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "hbond_null",
+filename = "scripts/analysis/plots/hbonds/hbond_null.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 n_pts=10000
 
@@ -97,7 +104,7 @@ dens <- estimate_density_1d(
 
 plot_id = "hbond_cosAHD_spherical_null_model"
 ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=y) +
+	geom_line(aes(x=x, y=y)) +
 	geom_indicator(indicator=counts) +
 	opts(title = "Cosine of spherical Angle Null Model") +
 	labs(x=expression(paste('Cosine(Central Angle)')),
@@ -105,3 +112,6 @@ ggplot(data=dens) + theme_bw() +
 save_plots(plot_id, sample_sources, output_dir, output_formats)
 
 
+
+
+})) # end FeatureAnalysis

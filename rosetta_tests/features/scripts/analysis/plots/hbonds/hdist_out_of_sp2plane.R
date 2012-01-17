@@ -8,8 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-plot_id <- "AHdist_chem_type"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "hdist_out_of_sp2plane",
+filename = "scripts/analysis/plots/hbonds/hdist_out_of_sp2plane.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -48,8 +53,6 @@ f$doop <- with(f, ooplane(
 	cbind(ab2x, ab2y, ab2z), cbind(abx, aby, abz),
 	cbind(ax, ay, az), cbind(hx, hy, hz)))
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
 f$don_chem_type <- factor(f$don_chem_type,
 	levels=c("hbdon_IMD", "hbdon_GDE", "hbdon_HXL", "hbdon_PBA",
 		"hbdon_IME", "hbdon_GDH", "hbdon_AHX", "hbdon_IND",
@@ -71,3 +74,6 @@ ggplot(data=dens) + theme_bw() +
 	opts(legend.position=c(.58,.35)) +
 	opts(legend.justification=c("left", "top"))
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

@@ -8,8 +8,12 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-description <-"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_by_secondary_structure",
+filename = "scripts/analysis/plots/salt_bridges/geo_dim_1d.R",
+author = "Matthew O'Meara",
+brief_description = "",
+long_description = "
 The purpose of this script is to assess how accurately
 distributions generated from rosetta decoys represent
 distributions of from rosetta decoys in general. The strategy is
@@ -19,7 +23,10 @@ training set of features.
 
 A consern is that decoys generated for the same sequence are
 similar. Therefore the cross validation grouping will be done over
-the input sequences."
+the input sequences.",
+
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -48,16 +55,12 @@ WHERE
 
 f <- query_sample_sources(sample_sources, sele)
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
 f$don_chem_type <- factor(f$don_chem_type,
 	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
 		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
 	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
 		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
 f$acc_chem_type <- factor(f$acc_chem_type,
 	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
 		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
@@ -154,3 +157,5 @@ d_ply(f, .(sample_source), function(sub_f){
 
 	save_plots(plot_id, sample_sources, output_dir, output_formats)
 })
+
+})) # end FeatureAnalysis

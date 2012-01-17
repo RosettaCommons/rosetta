@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "geo_dim_pairs",
+filename = "scripts/analysis/plots/hbonds/geo_dim_pairs.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 do_query <- function(dOH_clause, sample_source){
 	sele <- paste("
@@ -197,3 +204,6 @@ d_ply(sample_sources, .(sample_source), function(ss){
 		opts(title = paste("Hydrogen Bonds cosAHD vs AHdist for AHX or HXL acceptors with SC donors\nss_id: ", ss_id, sep=""))
 	save_plots(plot_id, ss, output_dir, output_formats)
 })
+
+
+})) # end FeatureAnalysis

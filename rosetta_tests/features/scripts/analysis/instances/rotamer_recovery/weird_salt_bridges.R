@@ -8,8 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-plot_id <- "rotamer_recovery_by_res_type"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "weird_salt_bridges",
+filename = "scripts/analysis/instances/rotamer_recovery/weird_salt_bridges.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RotaermRecoveryFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -59,7 +64,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	ss_id <- sub_f$sample_source[1]
 	ss <- sample_sources[sample_sources$sample_source == ss_id, ]
 
-        sub_f$counts <- sum(sub_f$instance)
+	sub_f$counts <- sum(sub_f$instance)
 	plot_id <- "salt_bridge_instances_psi_rho_LYS_CXL"
 	p <- ggplot(data=sub_f, aes(x=psi, y=rho)) + plot_parts +
 		opts(title = paste("Salt Bridge LYS donor D/E acceptor, PSI vs RHO by Acceptor\nss_id: ", ss_id,sep="")) +
@@ -78,3 +83,5 @@ g <- melt(g[g$id <= n_examples,],
 
 instances_id <- "salt_bridge_instances_psi_rho_LYS_CXL"
 prepare_feature_instances(instances_id, sample_sources, g)
+
+})) # end FeatureAnalysis

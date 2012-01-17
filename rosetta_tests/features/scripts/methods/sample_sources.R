@@ -14,11 +14,8 @@ get_sample_source_meta_data <- function(fname){
 	con <- dbConnect("SQLite", fname)
 	df <- dbGetQuery(con, "SELECT * FROM sample_source;")
 	dbDisconnect(con)
-	if(nrow(df) != 1)
-		print(paste("Table 'sample_source'",
-			" in database '",fname,
-			"' has ", nrow(df),
-			" rows. Using meta_data from the first row.", sep=""))
+
+	# get the meta data from the first row of the sample sources table
 	return( df[1,] )
 }
 
@@ -58,3 +55,45 @@ get_sample_sources <- function(data_sources){
 sample_source_titles <- function(sample_sources){
 	paste(laply(sample_sources, function(ss) ss$sample_source), collapse=" ")
 }
+
+
+add_sample_sources_to_analysis_manager <- function(
+	con, sample_sources){
+
+	sql <- "INSERT INTO sample_sources (?,?,?,?);"
+	dbBeginTransaction(con)
+	l_ply(sample_sources, function(ss) dbGetPreparedQuery(sql, ss))
+	dbCommit(con)
+
+}
+
+add_feature_reporters_to_analysis_manager <- function(
+		con, sample_sources){
+
+	dbBeginTransaction(con)
+	l_ply(sample_sources, function(ss) {
+		dbSendPreparedQuery(con,
+			"INSERT OR IGNORE INTO sample_sources VALUES (?,?,?,?);", ss);
+		#TODO sanitize ss$fname and ss$sample_source
+		sql <- paste("
+ATTACH DATABASE '", ss$fname, "' AS ss;
+
+INSERT OR IGNORE INTO feature_reporters
+	SELECT * FROM ss.feature_reporters;
+
+INSERT OR IGNORE INTO feature_analysis_tables
+	SELECT * FROM ss.feature_analysis_tables;
+
+INSERT OR IGNORE INTO sample_source_feature_reporters
+	SELECT
+		'", ss$sample_source, "',
+		feature_reporter.feature_reporter_id
+	FROM feature_reporters AS feature_reporter;
+
+DETACH DATABASE ss;", sep="")
+
+		dbSendQuery(con, sql)
+	})
+	dbCommit(con)
+}
+

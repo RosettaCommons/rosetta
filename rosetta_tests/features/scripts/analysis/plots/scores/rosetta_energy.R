@@ -8,6 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rosetta_energy",
+filename = "scripts/analysis/plots/scores/rosetta_energy.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -23,16 +30,12 @@ WHERE
   hbond.struct_id = acc_site.struct_id AND hbond.acc_id = acc_site.site_id;"
 f <- query_sample_sources(sample_sources, sele)
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
 f$don_chem_type <- factor(f$don_chem_type,
 	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
 		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
 	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
 		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
 f$acc_chem_type <- factor(f$acc_chem_type,
 	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
 		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
@@ -55,3 +58,5 @@ if(nrow(sample_sources) <= 3){
 }
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

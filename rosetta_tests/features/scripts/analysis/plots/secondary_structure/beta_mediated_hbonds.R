@@ -9,9 +9,19 @@
 
 check_setup()
 
-# example of how to condition down to specific types of interactions.
-# In this case, hydrogen bonds that are forming beta sheet mediated
-# protein-protein interfaces.
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "beta_mediated_hbonds",
+filename = "scripts/analysis/plots/secondary_structure/beta_mediated_hbonds.R",
+author = "Matthew O'Meara",
+brief_description = "",
+long_description = "
+example of how to condition down to specific types of interactions.
+In this case, hydrogen bonds that are forming beta sheet mediated
+protein-protein interfaces.",
+
+feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures", "HBondFeatures"),
+run=function(){
+
 
 sele <-"
 SELECT
@@ -60,3 +70,5 @@ ggplot(data=dens) + theme_bw() +
 	scale_y_continuous(limits=c(0,2.9), breaks=0:2) +
 	scale_x_continuous(limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6)) +
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

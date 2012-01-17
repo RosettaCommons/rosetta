@@ -9,6 +9,15 @@
 
 check_setup()
 
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_by_secondary_structure",
+filename = "scripts/analysis/plots/salt_bridges/geo_dim_1d.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("SaltBridgeFeatures"),
+run=function(){
+
+
 sele <-"
 SELECT
 	sb.psi, sb.theta, sb.rho, sb.orbital,
@@ -266,3 +275,5 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

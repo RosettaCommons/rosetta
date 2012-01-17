@@ -9,7 +9,13 @@
 
 check_setup()
 
-plot_id <- "rotamer_recovery_vs_score"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_vs_score",
+filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_vs_score.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RotamerRecoveryFeatures"),
+run=function(){
 
 
 res_types <- c(
@@ -69,6 +75,7 @@ ldply(res_types, function(res_type){
 
 	some <- ddply(all, c("score_type"), function(df) sample_rows( df, 4000 ) )
 
+	plot_id <- "rotamer_recovery_vs_score"
   p <- ggplot(
     data=some,
     aes(x=score_value, y=log(divergence + 1)))
@@ -81,3 +88,5 @@ ldply(res_types, function(res_type){
 
   save_plots(subplot_id, sample_sources, output_dir, output_formats)
 })
+
+})) # end FeatureAnalysis

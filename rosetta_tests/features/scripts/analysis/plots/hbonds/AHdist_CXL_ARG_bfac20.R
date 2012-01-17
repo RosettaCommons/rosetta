@@ -8,8 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-plot_id <- "AHdist_CXL_ARG_bcut20"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "AHdist_CXL_ARG_bfac20",
+filename = "scripts/analysis/plots/hbonds/AHdist_CXL_ARG_bfac20.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 CREATE TEMPORARY TABLE max_residue_bfactors AS
@@ -185,6 +190,7 @@ dens <- estimate_density_1d(
   f, c("sample_source", "num_sc_hbs" ),
   "AHdist", weight_fun = radial_3d_normalization)
 
+plot_id <- "AHdist_CXL_ARG_bcut20"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
@@ -198,3 +204,6 @@ if(nrow(sample_sources) <= 3){
 }
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

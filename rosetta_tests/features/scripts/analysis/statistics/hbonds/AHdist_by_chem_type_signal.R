@@ -8,6 +8,14 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "AHdist_by_chem_type_signal",
+filename = "scripts/analysis/statistics/hbonds/AHdist_by_chem_type_signal.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
+
 
 sele <-"
 SELECT
@@ -76,3 +84,5 @@ d_ply(new_dens, .(sample_source), function(sub_dens){
 		sample_sources$sample_source == ref_ss_id,]
 	save_plots(plot_id, ref_new_sample_sources, output_dir, output_formats)
 })
+
+})) # end FeatureAnalysis

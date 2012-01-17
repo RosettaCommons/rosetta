@@ -8,8 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-plot_id <- "rotamer_recovery_by_res_type"
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "rotamer_recovery_by_res_type",
+filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_by_res_type.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("RotamerRecoveryFeatures"),
+run=function(){
 
 sele <-"
 CREATE TEMPORARY TABLE max_residue_bfactors AS
@@ -55,6 +60,7 @@ WHERE
 
 f <- query_sample_sources(sample_sources, sele)
 
+plot_id <- "rotamer_recovery_by_res_type"
 p <- ggplot(data=f) + theme_bw() +
 	geom_histogram(aes(x=divergence, y=log(..count..), fill=sample_source), breaks=c(0, 1, 2, 3, 4), position="dodge") +
 #	geom_indicator(aes(indicator=counts, colour=sample_source)) +
@@ -91,3 +97,5 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+})) # end FeatureAnalysis

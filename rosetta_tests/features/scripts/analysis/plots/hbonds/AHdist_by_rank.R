@@ -8,14 +8,23 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-
-description <-
-"The rank of a hydrogen bond at donor site or acceptor site is rank of the
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "AHdist_by_rank",
+filename = "scripts/analysis/plots/hbonds/AHdist_by_rank.R",
+author = "Matthew O'Meara",
+brief_description = "",
+long_description = "
+The rank of a hydrogen bond at donor site or acceptor site is rank of the
 relative Rosetta HBond energy of the hydrogen bond at the site. A rank of
 0 indicates the hydrogen bond is the only hydrogen bond at the site.
 
 The indicator in each subplot counts the number of hbonds in each group for
-each sample sample source."
+each sample sample source.",
+
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
+
+description <-
 
 sele <-"
 SELECT
@@ -98,3 +107,6 @@ ggplot(d, aes(colour=sample_source)) + plot_parts +
   facet_grid( don_chem_type ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds A-H Distance, Donor Rank=1\nnormalized for equal weight per unit distance")
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

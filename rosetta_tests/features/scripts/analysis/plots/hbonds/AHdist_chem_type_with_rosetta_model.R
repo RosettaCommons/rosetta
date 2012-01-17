@@ -7,10 +7,17 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-check_setup()
-
 source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 source("scripts/parameter_analysis/hbonds/methods/methods.R")
+
+check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "AHdist_chem_type_with_rosetta_model",
+filename = "scripts/analysis/plots/hbonds/AHdist_chem_type_with_rosetta_model.R",
+author = "Matthew O'Meara",
+brief_description = "",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
 sele <-"
 SELECT
@@ -113,3 +120,6 @@ if(nrow(sample_sources) <= 3){
 }
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis

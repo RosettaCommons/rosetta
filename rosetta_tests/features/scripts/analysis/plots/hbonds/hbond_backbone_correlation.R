@@ -8,20 +8,26 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "hbond_backbone_correlation",
+filename = "scripts/analysis/plots/hbonds/hbond_backbone_correlation.R",
+author = "Matthew O'Meara",
+brief_description = "This script addresses the question: Are the hydrogen bond geometries on either side of the backbone correlated?",
+long_description = "
+ Organization of joins to form query
+rsd
+	acc_site
+		acc_hb
+			acc_geom
+		acc_env
+	don_site
+		don_hb
+			don_geom
+		don_env
+",
+feature_reporter_dependencies = c("HBondFeatures"),
+run=function(){
 
-description <-
-"This script addresses the question: Are the hydrogen bond geometries on either side of the backbone correlated?"
-
-# Organization of joins to form query
-#rsd
-#	acc_site
-#		acc_hb
-#			acc_geom
-#		acc_env
-#	don_site
-#		don_hb
-#			don_geom
-#		don_env
 sele <- "
 CREATE INDEX IF NOT EXISTS hbond_sites_struct_id_resNum ON
 	hbond_sites(struct_id, resNum);
@@ -86,3 +92,6 @@ d_ply(f, .(sample_source), function(sub_f){
 		plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, output_formats)
 })
+
+
+})) # end FeatureAnalysis

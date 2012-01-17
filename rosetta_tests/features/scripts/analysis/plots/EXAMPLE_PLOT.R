@@ -7,23 +7,26 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#########################
-# DESCRIPTION:
-#
-# Demonstrate simple plotting functionality.  Make a bar graph of the
-# number of residues in each supplied sample source
-########################
 
-# This script can be run like this:
-#
-#   mini/test/scientific/cluster/features/compare_sample_sources.R --script scripts/analysis/plots/EXAMPLE_PLOT.R features_<sample_source_id1>.db3 ...
-#
-# It will generate:
-#
-#   rosetta_tests/features/build/output_web_raster/EXAMPLE_PLOT_<date_code>_<sample_source_id1>[_<sample_source_id2> ...].png
-#
+feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+id = "EXAMPLE_PLOT",
+filename = "scripts/analysis/plots/EXAMPLE_PLOT.R",
+author = "Matthew O'Meara",
 
-check_setup()
+brief_description = "A simple demonstration of the Grammar of Graphics plotting functionality.  Make a bar graph of the number of residues in each supplied sample source",
+
+long_description = "
+ This script can be run like this:
+
+   mini/test/scientific/cluster/features/compare_sample_sources.R --script scripts/analysis/plots/EXAMPLE_PLOT.R features_<sample_source_id1>.db3 ...
+
+ It will generate:
+
+   rosetta_tests/features/build/output_web_raster/EXAMPLE_PLOT_<date_code>_<sample_source_id1>[_<sample_source_id2> ...].png",
+
+feature_reporter_dependencies = c("ResidueFeatures"),
+
+run=function(){
 
 # The SQL query is applied to each sample source and the resulting
 # tables are appended together with an additional sample_source column
@@ -53,3 +56,6 @@ plot_id <- "EXAMPLE_PLOT"
 
 # See './compare_sample_sources.R --help' about specifying the output_dir and output_formats.
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeatureAnalysis
