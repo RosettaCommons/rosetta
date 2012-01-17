@@ -13,10 +13,10 @@
 
 // Unit headers
 #include <protocols/protein_interface_design/movers/Splice.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <protocols/protein_interface_design/movers/SpliceCreator.hh>
 #include <utility/string_util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Edge.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -372,6 +372,7 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 	TR<<"Threading sequence: "<<threaded_seq<<" starting from "<<from_res()<<std::endl;
 	TaskFactoryOP tf = new TaskFactory;
 	tf->push_back( new operation::InitializeFromCommandline );
+	tf->push_back( new operation::NoRepackDisulfides );
 	tf->push_back( tso );
 	DesignAroundOperationOP dao = new DesignAroundOperation;
 	dao->design_shell( 1.0 ); // threaded sequence operation needs to design, and will restrict design to the loop only
