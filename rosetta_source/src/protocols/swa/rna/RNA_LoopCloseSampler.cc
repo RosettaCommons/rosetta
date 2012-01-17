@@ -96,6 +96,7 @@ namespace rna {
 		torsion_range_( 20.0 ),
 		torsion_increment_( 5.0 ),
 		center_around_native_( false ),
+		center_around_Aform_( false ),
 		calculate_jacobian_( false ),
 		save_torsion_info_( false ),
 		just_output_score_( false ),
@@ -182,13 +183,27 @@ namespace rna {
 
 		// move this to its own function?
 		PoseCOP native_pose = get_native_pose();
-		if ( center_around_native_ ){
-			if (!native_pose) utility_exit_with_message( "must supply -native" );
+		if ( center_around_native_ || center_around_Aform_ ){
 
-			epsilon1_center            = pose.torsion( TorsionID( moving_suite_  , id::BB, EPSILON ) );
-			Real const zeta1_center    = pose.torsion( TorsionID( moving_suite_  , id::BB, ZETA ) );
-			Real const alpha1_center   = pose.torsion( TorsionID( moving_suite_+1, id::BB, ALPHA ) );
-			Real const alpha2_center   = pose.torsion( TorsionID( chainbreak_suite_+1, id::BB, ALPHA ) );
+			Real zeta1_center, alpha1_center, alpha2_center;
+
+			if ( center_around_native_ ){
+
+				if (!native_pose) utility_exit_with_message( "must supply -native" );
+
+				epsilon1_center = pose.torsion( TorsionID( moving_suite_  , id::BB, EPSILON ) );
+				zeta1_center    = pose.torsion( TorsionID( moving_suite_  , id::BB, ZETA ) );
+				alpha1_center   = pose.torsion( TorsionID( moving_suite_+1, id::BB, ALPHA ) );
+				alpha2_center   = pose.torsion( TorsionID( chainbreak_suite_+1, id::BB, ALPHA ) );
+
+			} else {
+
+				assert( center_around_Aform_ );
+				zeta1_center    = -71.45;
+				alpha1_center   = -64.11;
+				alpha2_center   = -64.11;
+
+			}
 
 			epsilon1_min = epsilon1_center - torsion_range_;
 			epsilon1_max = epsilon1_center + torsion_range_;

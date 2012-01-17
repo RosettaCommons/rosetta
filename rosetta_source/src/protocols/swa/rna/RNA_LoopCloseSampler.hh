@@ -60,6 +60,7 @@ namespace rna {
 		void set_torsion_increment( Real const torsion_increment ){ torsion_increment_ = torsion_increment; }
 
 		void set_center_around_native( bool const setting ){ center_around_native_ = setting; }
+		void set_center_around_Aform( bool const setting ){ center_around_Aform_ = setting; }
 		void set_calculate_jacobian( bool const setting ){ calculate_jacobian_ = setting; }
 		void set_save_torsion_info( bool const setting ){ save_torsion_info_ = setting; }
 		void set_just_output_score( bool const setting ){ just_output_score_ = setting; }
@@ -126,7 +127,7 @@ namespace rna {
 		Size bin_size_;
 		Real const epsilon_range_;
 		Real rep_cutoff_, torsion_range_, torsion_increment_;
-		bool center_around_native_, calculate_jacobian_, save_torsion_info_, just_output_score_;
+		bool center_around_native_, center_around_Aform_, calculate_jacobian_, save_torsion_info_, just_output_score_;
 		utility::vector1< Real > rbs_new_pair_;
 
 		utility::vector1< Real > torsion_info_;
