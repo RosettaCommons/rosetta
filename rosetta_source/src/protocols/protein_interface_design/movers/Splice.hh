@@ -125,6 +125,7 @@ public:
 	bool poly_ala() const{ return poly_ala_; }
 	void equal_length( bool const e ){ equal_length_ = e; }
 	bool equal_length() const{ return equal_length_; }
+	void fold_tree( core::pose::Pose & pose, core::Size const start, core::Size const stop, core::Size const cut ) const;
 
 private:
 	void save_values(); // call at beginning of apply
@@ -144,7 +145,7 @@ private:
 	std::string template_file_; //dflt ""; which source file to use as the template to determine what from_res() and to_res() refer to. The input structure may change during a trajectory and so from_res() and to_res() might lose their sense. If this is "", the input file is taken to be template
 	bool poly_ala_; /// dflt true; thread ala residues in each position other than Gly/Pro or conserved in the source pdb. If false, keeps the input sequence (except Gly/Pro, which are replaced)
 	bool equal_length_; // dflt false; restrict threading to loops equal in length to the original
-	core::pose::PoseOP template_pose_;
+	core::pose::PoseOP template_pose_, start_pose_; // template - relative to what is the torsion dbase computed (1x9q); start - the starting pose for replacing the torsions at the start
 	core::kinematics::FoldTreeOP saved_fold_tree_;
 };
 

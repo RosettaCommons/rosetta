@@ -16,16 +16,19 @@
 #include <protocols/protein_interface_design/movers/SpliceCreator.hh>
 #include <utility/string_util.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Edge.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/AA.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilter.hh>
 #include <boost/foreach.hpp>
+#include <protocols/rigid/RB_geometry.hh>
 #define foreach BOOST_FOREACH
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -98,6 +101,7 @@ Splice::Splice() :
 	poly_ala_( true ),
 	equal_length_( false ),
 	template_pose_( NULL ),
+	start_pose_( NULL ),
 	saved_fold_tree_( NULL )
 {
 	torsion_database_.clear();
@@ -133,12 +137,17 @@ copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::
 	using namespace core::chemical;
 	core::Size const from_nearest_on_source( find_nearest_res( source, target, from_res ) );
 	core::Size const to_nearest_on_source( find_nearest_res( source, target, to_res ) );
+TR<<"target: "<<from_res<<" "<<to_res<<" source: "<<from_nearest_on_source<<" "<<to_nearest_on_source<<std::endl;
+	runtime_assert( from_nearest_on_source && to_nearest_on_source );
+	core::Size const residue_diff( to_nearest_on_source - from_nearest_on_source - (to_res - from_res ));
+	protocols::protein_interface_design::movers::LoopLengthChange llc;
+	llc.loop_start( from_res );
+	llc.loop_end( to_res );
+	llc.delta( residue_diff );
+	llc.apply( target );
 
-	for( core::Size i = 0; i <= to_res - from_res; ++i ){
-		target.set_phi( from_res + i, source.phi( from_nearest_on_source + i ) );
-		target.set_psi( from_res + i, source.psi( from_nearest_on_source + i ) );
-		target.set_omega( from_res + i, source.omega( from_nearest_on_source + i ) );
-	}
+	target.copy_segment( to_nearest_on_source - from_nearest_on_source + 1, source, from_res, from_nearest_on_source );
+	target.update_residue_neighbors();
 }
 
 void
@@ -173,7 +182,7 @@ Splice::apply( core::pose::Pose & pose )
 		to_res( designable[ designable.size() ] );
 	}
 	core::pose::Pose source_pose;
-	core::Size nearest_to_from( 0 ), nearest_to_to( 0 ); // residues on source_pose that are nearest to from_res and to_res
+	core::Size nearest_to_from( 0 ), nearest_to_to( 0 ), residue_diff( 0 ); // residues on source_pose that are nearest to from_res and to_res
 	ResidueBBDofs dofs;
 	dofs.clear();
 	core::Size cut_site( 0 );
@@ -181,6 +190,7 @@ Splice::apply( core::pose::Pose & pose )
 		core::import_pose::pose_from_pdb( source_pose, source_pdb_ );
 		nearest_to_from = find_nearest_res( source_pose, pose, from_res() );
 		nearest_to_to = find_nearest_res( source_pose, pose, to_res() );
+		residue_diff = nearest_to_to - nearest_to_from - ( to_res() - from_res() );
 		if( nearest_to_from == 0 || nearest_to_to == 0 ){
 			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
 			set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
@@ -232,7 +242,7 @@ Splice::apply( core::pose::Pose & pose )
 				return;
 			}
 			else
-				TR<<"Randomly chose dbase entry "<<dbase_entry<<" with loop start: "<<dofs.start_loop()<<" loop_stop: "<<dofs.stop_loop()<<" total_residues: "<<dofs.size()<<std::endl;
+				TR<<"Randomly chose dbase entry "<<dbase_entry<<" with loop start: "<<dofs.start_loop()<<" loop_stop: "<<dofs.stop_loop()<<" cut: "<<dofs.cut_site()<<" total_residues: "<<dofs.size()<<std::endl;
 		}
 		else
 			dofs = torsion_database_[ dbase_entry ];
@@ -255,7 +265,7 @@ Splice::apply( core::pose::Pose & pose )
 
 		if( template_file_ != "" ){
 			from_res( find_nearest_res( pose, *template_pose_, dofs.start_loop() ) );
-			to_res(   find_nearest_res( pose, *template_pose_, dofs.stop_loop()  ) );
+			to_res( from_res() + dofs.size() -1); //  find_nearest_res( pose, *template_pose_, dofs.stop_loop()  ) );
 			runtime_assert( from_res() );
 			runtime_assert( to_res() );
 			cut_site = dofs.cut_site() - dofs.start_loop() + from_res();
@@ -266,16 +276,22 @@ Splice::apply( core::pose::Pose & pose )
 			cut_site = dofs.cut_site();
 			runtime_assert( from_res() && to_res() && cut_site );
 		}
+		residue_diff = dofs.size() - ( dofs.stop_loop() - dofs.start_loop()  + 1 );
   }// read from dbase
 	TR<<"From res: "<<from_res()<<" to_res: "<<to_res()<<std::endl;
 	runtime_assert( to_res() > from_res() );
-
 	if( saved_fold_tree_ )
 		pose.fold_tree( *saved_fold_tree_ );
-	copy_stretch( pose, *template_pose_, std::max( ( core::Size ) 2, from_res() - 6 ), std::min( to_res() + 6, pose.total_residue()-1 ) );
+
+	core::Size const s1( std::max( (core::Size) 2, from_res() - 6 ) );
+	core::Size const s2( std::min( to_res() + 6, pose.conformation().chain_end( 1 ) - 1 ) );
+
+	fold_tree( pose, s1, s2, to_res()  );
+TR<<"new_foldtree: "<<pose.fold_tree();
+	copy_stretch( pose, *template_pose_, from_res(), to_res() );
+
 
 /// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
-	protocols::loops::FoldTreeFromLoops ffl;
 	using namespace utility;
 	if( randomize_cut() ){
 		core::scoring::dssp::Dssp dssp( source_pose );
@@ -293,20 +309,15 @@ Splice::apply( core::pose::Pose & pose )
 		TR<<"Cut placed at: "<<cut_site<<std::endl;
   }// fi randomize_cut
 
-	protocols::loops::Loop loop( std::max( (core::Size) 2, from_res() - 6 )/*start*/, std::min( pose.total_residue()-1, to_res() + 6 )/*stop*/, cut_site/*cut*/ );
-	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
-	loops->push_back( loop );
-	ffl.loops( loops );
-	ffl.apply( pose );
-
-
-	core::Size const residue_diff( nearest_to_to - nearest_to_from - ( to_res() - from_res()) );
+	fold_tree( pose, from_res(), to_res(), cut_site ); /// **** used to be s1 s2
+//	core::Size const residue_diff( dofs.size() - ( dofs.stop_loop() - dofs.start_loop() + 1 ) );
 /// change the loop length
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res() );
 	llc.loop_end( cut_site );
 	llc.delta( residue_diff );
 	llc.apply( pose );
+
 	protocols::protein_interface_design::movers::AddChainBreak acb;
 	acb.resnum( utility::to_string( cut_site + residue_diff ) );
 	acb.find_automatically( false );
@@ -315,15 +326,19 @@ Splice::apply( core::pose::Pose & pose )
 	TR<<"Adding chainbreak at: "<<cut_site<<std::endl;
 
 /// set torsions
-	core::Size const total_residue_new( nearest_to_to - nearest_to_from + 1 );
+	core::Size const total_residue_new( dofs.size() );// nearest_to_to - nearest_to_from + 1 );
+	TR<<"Changing dofs for resi: ";
 	for( core::Size i = 0; i < total_residue_new; ++i ){
 		core::Size const pose_resi( from_res() + i );
 		pose.set_phi( pose_resi, dofs[ i + 1 ].phi() );
 		pose.set_psi( pose_resi, dofs[ i + 1 ].psi() );
 		pose.set_omega( pose_resi, dofs[ i + 1 ].omega() );
-
+		TR<<pose_resi<<",";
+//		char f[ 10];
+//		sprintf( f, "b%d.pdb", i );
 	}
-
+	pose.conformation().detect_disulfides();
+	TR<<std::endl;
 	std::string threaded_seq( "" );/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
 /// Now decide on residue identities: Alanine throughout except when the template pose has Gly, Pro or a residue that is the same as that in the original pose
 	for( core::Size i = 0; i < total_residue_new; ++i ){
@@ -372,6 +387,11 @@ Splice::apply( core::pose::Pose & pose )
 	tf->push_back( racaas);
 
 	if( ccd() ){
+		using namespace protocols::loops;
+		Loop loop( std::max( (core::Size) 2, from_res() - 6 )/*start*/, std::min( pose.total_residue()-1, to_res() + 6 )/*stop*/, cut_site/*cut*/ );
+		LoopsOP loops = new Loops();
+		loops->push_back( loop );
+
 /// Set ccd to minimize 4 residues at each loop terminus including the first residue of the loop. This way,
 /// the torsion in the loop are maintained. Allow repacking around the loop.
 /// If disulfide occurs in the range that is allowed to minimize, adjust that region to not include disulf
@@ -470,6 +490,7 @@ Splice::get_name() const {
 void
 Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
+	start_pose_ = new core::pose::Pose( pose );
 	runtime_assert( tag->hasOption( "task_operations" ) != (tag->hasOption( "from_res" ) || tag->hasOption( "to_res" ) ) || tag->hasOption( "torsion_database" ) ); // it makes no sense to activate both taskoperations and from_res/to_res.
 	runtime_assert( tag->hasOption( "torsion_database" ) != tag->hasOption( "source_pdb" ) );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
@@ -507,13 +528,15 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 			template_pose_ = data.get< core::pose::Pose * >( "poses", template_file_ );
 			TR<<"using template pdb from datamap"<<std::endl;
 		}
-		else{
+		else if( tag->hasOption( "template_file" ) ){
 			template_pose_ = new core::pose::Pose;
 			core::import_pose::pose_from_pdb( *template_pose_, template_file_ );
 			data.add( "poses", template_file_, template_pose_ );
 			TR<<"loading template_pose from "<<template_file_<<std::endl;
 		}
 	}
+	else
+		template_pose_ = new core::pose::Pose( pose );
 
 	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
 }
@@ -569,6 +592,51 @@ Splice::read_torsion_database(){
 		torsion_database_.push_back( bbdof_entry );
 	}
 	TR<<"Finished reading torsion database with "<<torsion_database_.size()<<" entries"<<std::endl;
+}
+
+void
+Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size const stop, core::Size const cut ) const{
+	using namespace protocols::loops;
+	core::conformation::Conformation const & conf( pose.conformation() );
+	core::Size const s1 = std::max( (core::Size) 2, start - 6 );
+	core::Size const s2 = std::min( conf.chain_end( 1 ) - 1, stop + 6 );
+	if( conf.num_chains() == 1 ){
+		FoldTreeFromLoops ffl;
+		Loop loop( s1, s2, cut/*cut*/ );
+		LoopsOP loops = new Loops();
+		loops->push_back( loop );
+		ffl.loops( loops );
+		ffl.apply( pose );
+		return;
+	}
+	core::Size from_res( 0 ), to_res( 0 );
+	for( core::Size resi = conf.chain_begin( 1 ); resi <= conf.chain_end( 1 ); ++resi ){
+		 if( pose.residue( resi ).has_variant_type( core::chemical::DISULFIDE ) ){
+			from_res = resi;
+			break;
+		}
+	}
+	to_res = protocols::geometry::residue_center_of_mass( pose, conf.chain_begin( 2 ), conf.chain_end( 2 ) );
+	core::kinematics::FoldTree ft;
+	ft.clear();
+	core::Size const first = std::min( s1, from_res );
+	core::Size const second = std::max( s1, from_res );
+//	ft.add_edge( 1, from_res, -1 );
+//	ft.add_edge( from_res, s1, -1 );
+	ft.add_edge( 1, s1, -1 );
+	ft.add_edge( s1, cut, -1 );
+	ft.add_edge( s2, cut + 1, -1 );
+	ft.add_edge( s1, s2, 1 );
+	ft.add_edge( s2, conf.chain_end( 1 ), -1 );
+	ft.add_edge( 1, conf.chain_begin( 2 ), 2 );
+	ft.add_edge( conf.chain_begin( 2 ), conf.chain_end( 2 ), -1 );
+//	ft.add_edge( from_res, to_res, 2 );
+//	ft.add_edge( to_res, conf.chain_begin( 2 ), -1 );
+//	ft.add_edge( to_res, conf.chain_end( 2 ), -1 );
+	ft.reorder(1);
+	TR<<"Previous ft: "<<pose.fold_tree()<<std::endl;
+	pose.fold_tree( ft );
+	TR<<"Current ft: "<<pose.fold_tree()<<std::endl;
 }
 
 BBDofs::~BBDofs() {}
