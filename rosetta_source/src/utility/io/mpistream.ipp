@@ -37,7 +37,7 @@ namespace mpi_stream {
 		bool append
 	) :	m_buffer( buffer_size_, 0 ), master_rank_( master_rank )
 	{
-		//find comm_tag_;
+		//find channel_id_;
 		this->setp( &(m_buffer[0]), &(m_buffer[m_buffer.size()-1]) );
 
 #ifdef USEMPI
@@ -56,7 +56,7 @@ namespace mpi_stream {
 	MPI_Status stat;
 
 	MPI_Recv(&buf, 2, MPI_INT, master_rank_, MPI_STREAM_TAG, MPI_COMM_WORLD, &stat );
-	comm_tag_ = buf[ 0 ];
+	channel_id_ = buf[ 0 ];
 	file_status_ = buf[ 1 ];
 	//	std::cout << "mpistream: opening succeeded --- status: " << file_status_ << std::endl;
 #endif
@@ -76,12 +76,12 @@ void
 		buf[ 0 ] = my_rank_;
 		buf[ 1 ] = header.size();
 		buf[ 2 ] = MPI_STREAM_SEND;
-		buf[ 3 ] = comm_tag_;
-		int master_rank_ = 0;
-		int comm_tag_ = 42;
+		buf[ 3 ] = channel_id_;
+		int master_rank = 0;
+
 		//		std::cerr << "sending from client " << my_rank_ << std::endl;
-		MPI_Send(buf, 4, MPI_INT, master_rank_, comm_tag_, MPI_COMM_WORLD );
-		MPI_Send(const_cast<char*> (header.data()), header.size(), MPI_CHAR, master_rank_, comm_tag_, MPI_COMM_WORLD ); //MPI_CHAR OR MPI_INT ?
+		MPI_Send(buf, 4, MPI_INT, master_rank, MPI_STREAM_TAG, MPI_COMM_WORLD );
+		MPI_Send(const_cast<char*> (header.data()), header.size(), MPI_CHAR, master_rank, MPI_STREAM_TAG, MPI_COMM_WORLD ); //MPI_CHAR OR MPI_INT ?
 		#endif
 	}
 
@@ -177,12 +177,12 @@ buffer_
 		buf[ 0 ] = my_rank_;
 		buf[ 1 ] = avail_out;
 		buf[ 2 ] = MPI_STREAM_SEND;
-		buf[ 3 ] = comm_tag_;
-		int master_rank_ = 0;
-		int comm_tag_ = 42;
+		buf[ 3 ] = channel_id_;
+		int master_rank = 0;
+
 		//		std::cerr << "sending from client " << my_rank_ << std::endl;
-		MPI_Send(buf, 4, MPI_INT, master_rank_, comm_tag_, MPI_COMM_WORLD );
-		MPI_Send(next_out, avail_out, MPI_CHAR, master_rank_, comm_tag_, MPI_COMM_WORLD ); //MPI_CHAR OR MPI_INT ?
+		MPI_Send(buf, 4, MPI_INT, master_rank, MPI_STREAM_TAG, MPI_COMM_WORLD );
+		MPI_Send(next_out, avail_out, MPI_CHAR, master_rank, MPI_STREAM_TAG, MPI_COMM_WORLD ); //MPI_CHAR OR MPI_INT ?
  		return true; // success detection ?
 
 #else
@@ -217,7 +217,7 @@ buffer_
   buf[ 0 ] = my_rank_;
   buf[ 1 ] = 0;
 	buf[ 2 ] = final ? MPI_STREAM_CLOSE : MPI_STREAM_FLUSH;
-	buf[ 3 ] = comm_tag_;
+	buf[ 3 ] = channel_id_;
 
   MPI_Send(buf, 4, MPI_INT, master_rank_, MPI_STREAM_TAG, MPI_COMM_WORLD );
 

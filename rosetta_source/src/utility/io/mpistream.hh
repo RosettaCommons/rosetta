@@ -121,7 +121,7 @@ private:
 
 	char_vector_type m_buffer;
 
-	int comm_tag_;
+	int channel_id_;
 	int my_rank_;
 	int master_rank_;
 	int file_status_;
