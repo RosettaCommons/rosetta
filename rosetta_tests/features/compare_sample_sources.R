@@ -76,7 +76,7 @@ option_list <- list(
 							help="Generate output plots suitable for hugeing in .pdf format.  [Default \"%default\"]"),
 	make_option(c("--db_cache_size"), action="store_true", type="integer", default=10000, dest="db_cache_size",
 							help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]"),
-	make_option(c("--dry_run"), action="store_true", type="integer", default=10000, dest="dry_run",
+	make_option(c("--dry_run"), action="store_true", type="logical", default=FALSE, dest="dry_run",
 							help="Debug the analysis scripts but do not run them.  [Default \"%default\"]"))
 
 opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TRUE)
@@ -183,7 +183,7 @@ for(analysis_script in analysis_scripts){
 
 
 #Run all the feature analysis scripts
-iscript_run_feature_analyses(feature_analyses)
+iscript_run_feature_analyses()
 if(!opt$options$dry_run){
 	cat("run feature analyses\n")
 	for(feature_analysis in feature_analyses){
