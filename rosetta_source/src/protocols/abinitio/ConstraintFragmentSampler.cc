@@ -169,7 +169,7 @@ void ConstraintFragmentSampler::replace_scorefxn(core::pose::Pose& pose,
 		} else if ( stage == STAGE_4 ) {
 			setting = (1.5*intra_stage_progress+2.5 ) * ( 1.0/3);
 		}
-		set_current_weight( scoring::linear_chainbreak, setting * option[ jumps::increase_chainbreak ] );
+		set_current_weight( scoring::linear_chainbreak, setting * option[ jumps::increase_chainbreak ] ); //default 1.0
 		if ( bRampCoordConstraints_ ) {
 			set_current_weight( scoring::coordinate_constraint, setting * option[ jumps::increase_chainbreak ] );
 		}
@@ -317,7 +317,7 @@ void ConstraintFragmentSampler::do_stage1_cycles( pose::Pose& pose ) {
 		for ( Size jk = 3; jk <= seq_sep_stage( total_res( pose ), seq_sep_stage1_); jk += 2 ) {
 			set_max_seq_sep( pose, jk);
 			if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
-			if ( old_constraint_score == evaluate_constraint_energy ( pose, mc().score_function() ) ) continue;
+			if ( std::abs( old_constraint_score - evaluate_constraint_energy ( pose, mc().score_function() ) ) < 0.01 ) continue;
 			for ( Size j = 1; j <= stage1_cycles(); ++j ) {
 				if ( numeric::mod( j, (Size) 10 ) == 0 && bSkipOnNoViolation_ && pose.constraint_set()->show_violations( tr, pose, 0 ) == 0 ) break;
 				trial->apply( pose );
