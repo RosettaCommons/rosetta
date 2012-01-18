@@ -224,9 +224,12 @@ AtomAtomPairFeatures::report_atom_pairs(
 		bin_breaks.push_back(i*bin_width + min_dist_);
 	}
 
+	int const dim1(relevant_atom_names_.size());
+	int const dim2(relevant_elements_.size());
+	int const dim3(nbins_);
+	Size const initial_value(0);
 	FArray3D< Size > counts;
-	counts.dimension(
-		relevant_atom_names_.size(), relevant_elements_.size(), nbins_, 1);
+	counts.dimension(dim1, dim2, dim3, initial_value);
 
 	for(Size res_num1=1; res_num1 <= pose.total_residue(); ++res_num1){
 		if(!relevant_residues[res_num1]) continue;
@@ -275,8 +278,8 @@ AtomAtomPairFeatures::report_atom_pairs(
 					i_elem2=relevant_elements_.begin(),
 					ie_elem2=relevant_elements_.end(); i_elem2 != ie_elem2; ++i_elem2){
 			for(Size dist_bin=1; dist_bin <= nbins_; ++dist_bin){
-				Size const lower_break(min_dist_ + (dist_bin - 1)*bin_width);
-				Size const upper_break(min_dist_ + dist_bin * bin_width);
+				Real const lower_break(min_dist_ + (dist_bin - 1)*bin_width);
+				Real const upper_break(min_dist_ + dist_bin * bin_width);
 				Size const count(counts(i_atom1,i_elem2->second, dist_bin));
 				stmt.bind(1, struct_id);
 				stmt.bind(2, relevant_atom_names_[i_atom1]);
