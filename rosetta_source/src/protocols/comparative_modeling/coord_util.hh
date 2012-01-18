@@ -14,8 +14,6 @@
 #define INCLUDE_src_protocols_comparative_modeling_coord_util_hh
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 #include <core/types.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
@@ -32,10 +30,11 @@ void gather_coords(
 	core::sequence::SequenceAlignment const & aln,
 	int & natoms,
 	ObjexxFCL::FArray2D< core::Real > & p1a,
-	ObjexxFCL::FArray2D< core::Real > & p2a
+	ObjexxFCL::FArray2D< core::Real > & p2a,
+	std::string const & atom_name = "CA"
 );
 
-} // comaprative_modeling
+} // comparative_modeling
 } // protocols
 
 #endif

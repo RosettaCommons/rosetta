@@ -10,16 +10,9 @@
 /// @file src/protocols/comparative_modeling/coord_util.cc
 /// @author James Thompson
 
-// Unit Headers
-
-// Package Headers
-
-// Project Headers
 // AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
-// Utility headers
-// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/conformation/Residue.hh>
@@ -40,9 +33,9 @@ void gather_coords(
 	core::sequence::SequenceAlignment const & aln,
 	int & natoms,
 	ObjexxFCL::FArray2D< core::Real > & p1a,
-	ObjexxFCL::FArray2D< core::Real > & p2a
+	ObjexxFCL::FArray2D< core::Real > & p2a,
+	std::string const & atom_name = "CA"
 ) {
-	static std::string atm("CA");
 	using core::Size;
 	using namespace core::id;
 	using namespace core::sequence;
@@ -64,7 +57,7 @@ void gather_coords(
 	Size n_gap(0);
 	for ( Size ii = 1; ii <= model.total_residue(); ++ii ) {
 		if (!model.residue(ii).is_protein()) continue;
-		Size const native_ii( mapping[ii] );
+		Size const native_ii(mapping[ii]);
 		bool skip(
 			native_ii == 0 ||
 			native_ii > native.total_residue()
@@ -73,8 +66,8 @@ void gather_coords(
 			n_gap++;
 		} else {
 			using core::Real;
-			numeric::xyzVector< Real > model_xyz ( model.residue(ii).xyz(atm) );
-			numeric::xyzVector< Real > native_xyz( native.residue(native_ii).xyz(atm) );
+			numeric::xyzVector< Real > model_xyz ( model.residue(ii).xyz(atom_name) );
+			numeric::xyzVector< Real > native_xyz( native.residue(native_ii).xyz(atom_name) );
 			for ( Size jj = 1; jj <= 3; ++jj ) {
 				p1a(jj,ii - n_gap) = native_xyz[jj-1];
 				p2a(jj,ii - n_gap) = model_xyz [jj-1];
