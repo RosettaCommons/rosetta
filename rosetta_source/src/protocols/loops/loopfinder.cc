@@ -22,61 +22,19 @@
 #include <protocols/loops/Loops.hh>
 
 // Project Headers
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
+#include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-//#include <core/pose/util.hh>
-
-//#include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-//#include <core/conformation/util.hh>
-//#include <protocols/loops/SlidingWindowLoopClosure.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh> //for getting ss from dssp
 #include <core/scoring/dssp/Dssp.hh>
 
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
-
-// AUTO-REMOVED #include <core/conformation/util.hh> //idealize
-// AUTO-REMOVED #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/FrameList.hh>
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif
-// AUTO-REMOVED #include <core/pose/util.hh>
-//
-#include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
-
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-
-//numeric headers
-
-//// C++ headers
-// #include <string>
-// AUTO-REMOVED #include <list>
-
-#include <core/conformation/Conformation.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

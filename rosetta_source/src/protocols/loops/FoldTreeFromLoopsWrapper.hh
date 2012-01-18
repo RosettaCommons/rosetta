@@ -10,11 +10,14 @@
 /// @file protocols/loops/FoldTreeFromLoops.hh
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 
-#ifndef INCLUDED_protocols_loops_FoldTreeFromLoops_hh
-#define INCLUDED_protocols_loops_FoldTreeFromLoops_hh
+#ifndef INCLUDED_protocols_loops_FoldTreeFromLoops_HH
+#define INCLUDED_protocols_loops_FoldTreeFromLoops_HH
 
+// Unit headers
 #include <protocols/loops/FoldTreeFromLoopsWrapper.fwd.hh>
 #include <protocols/moves/Mover.hh>
+
+// Package headers
 #include <protocols/loops/Loops.fwd.hh>
 
 namespace protocols {
@@ -22,8 +25,6 @@ namespace loops {
 
 class FoldTreeFromLoops : public protocols::moves::Mover
 {
-public:
-	//typedef core::pose::Pose Pose;
 public:
 	FoldTreeFromLoops();
     virtual ~FoldTreeFromLoops();

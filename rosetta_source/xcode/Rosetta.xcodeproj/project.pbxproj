@@ -1544,6 +1544,8 @@
 		5969CF80961D97AB2023688D /* PocketGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = D377DC420E7D88AC0D23B43F /* PocketGrid.cc */; };
 		DA62EB3061074046421101D9 /* AtomAtomPairFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2C352DED6D04985950BECF3D /* AtomAtomPairFeatures.cc */; };
 		AAAB97D3231CA26126021FEF /* AtomAtomPairFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = DA1BC1652E661E2A37E81E0A /* AtomAtomPairFeaturesCreator.cc */; };
+		2269B581E8EC1007768C77E5 /* AtomInResidueAtomInResiduePairFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5E9085631B357EFEC15E7AAF /* AtomInResidueAtomInResiduePairFeatures.cc */; };
+		530464B580E02DBB569DF693 /* AtomInResidueAtomInResiduePairFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C7AF47B42DCC9A87F675F /* AtomInResidueAtomInResiduePairFeaturesCreator.cc */; };
 		905D508D95F087D2A326D228 /* DatabaseFilters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 28D22D33A62DECE4B220AE4F /* DatabaseFilters.cc */; };
 		8989C2BF1FD8925E30E1C0EC /* DatabaseJobInputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 74E3DFD510FE9A5A4D8F69FA /* DatabaseJobInputter.cc */; };
 		2F62017BA89B5E0B087CB4BA /* DatabaseJobOutputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 23B05565562DBB3FEE28ACB7 /* DatabaseJobOutputter.cc */; };
@@ -1759,6 +1761,7 @@
 		87AA730529C064D7F77E6784 /* qsarMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7AF352D51E1584CCCE6BA589 /* qsarMover.cc */; };
 		8477366E238D9121764226C7 /* qsarOptFunc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 99399AAFEC3BCB4949B63299 /* qsarOptFunc.cc */; };
 		95C34011CDD1697CAFB9F733 /* AtrGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = B7BFB3E432A1D9DDE632FF17 /* AtrGrid.cc */; };
+		CCF7135F02A0E450A4C5C77E /* ClassicGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1FB112DF030ADA182392E119 /* ClassicGrid.cc */; };
 		FCDD1F498ECB979137D3FC2A /* GridBase.cc in Sources */ = {isa = PBXBuildFile; fileRef = B739A8595D745F8F8D127AC5 /* GridBase.cc */; };
 		12ABCBD3653EB42AE1DEA5D6 /* GridCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 302CEB8894BAF4B69406B1B1 /* GridCreator.cc */; };
 		C6485306C4B53733F2B847EE /* GridFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 04AD0ED33BFF6220EB6CFF16 /* GridFactory.cc */; };
@@ -1962,11 +1965,8 @@
 		095B7C329D28DB82581C15EC /* MedalMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 099AE53C636459976ED0706B /* MedalMover.cc */; };
 		6566DCB0D68956F87112296D /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = CBEAF04DB55E0A23CA399423 /* util.cc */; };
 		43A1691036CCC8371903CFF6 /* BiasedFragmentMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E4CC4CCD52C3932A33715D10 /* BiasedFragmentMover.cc */; };
-		06893A3BF88820CA1376740F /* BrokenFold.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0E5845FF83D689771432F6D1 /* BrokenFold.cc */; };
 		10540E6C6DDA8C111AFCFF3F /* Chunk.cc in Sources */ = {isa = PBXBuildFile; fileRef = 72BDBE366677D7358CD88010 /* Chunk.cc */; };
 		3B764A20D21E36B027528098 /* HelixRotate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7F10004ECB5B67A5EFFFAC66 /* HelixRotate.cc */; };
-		AF9CD8E45CE45EA4DB3AA27A /* NonlocalAbinitio.cc in Sources */ = {isa = PBXBuildFile; fileRef = A86FD50F482CE1FCB25BFEEA /* NonlocalAbinitio.cc */; };
-		8A7A683357B8CA102CB5C9E3 /* NonlocalAbinitioMain.cc in Sources */ = {isa = PBXBuildFile; fileRef = CF9DDD6661CF26471BF362E4 /* NonlocalAbinitioMain.cc */; };
 		5A7750302281A060919FA729 /* PolicyFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 129BF087433EBFB8A54A0CB3 /* PolicyFactory.cc */; };
 		B7D10DEA57ED2C87406220D4 /* Region.cc in Sources */ = {isa = PBXBuildFile; fileRef = FB232D62DE3DA94589DF1F5A /* Region.cc */; };
 		9A160A7CD8AEEE7C7E660BE1 /* SheetTranslate.cc in Sources */ = {isa = PBXBuildFile; fileRef = EC6EEB51F4F9F2547E5DEBF7 /* SheetTranslate.cc */; };
@@ -10065,6 +10065,7 @@
 		4D27106EFA83F4300BE954D5 /* Loops.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Loops.cc; path = ../src/protocols/loops/Loops.cc; sourceTree = SOURCE_ROOT; };
 		65378443F5478B1DB14446E5 /* Loops.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.fwd.hh; path = ../src/protocols/loops/Loops.fwd.hh; sourceTree = SOURCE_ROOT; };
 		40C65BF9BBA03ED2583821A7 /* Loops.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.hh; path = ../src/protocols/loops/Loops.hh; sourceTree = SOURCE_ROOT; };
+		AA247D7FFCC70DFD18BFC9C5 /* Loops.tmpl.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.tmpl.hh; path = ../src/protocols/loops/Loops.tmpl.hh; sourceTree = SOURCE_ROOT; };
 		4AB6932F136EF60F743F16B5 /* loopfinder.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = loopfinder.cc; path = ../src/protocols/loops/loopfinder.cc; sourceTree = SOURCE_ROOT; };
 		8632CB1BB53599C094882ABC /* loopfinder.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = loopfinder.hh; path = ../src/protocols/loops/loopfinder.hh; sourceTree = SOURCE_ROOT; };
 		42C38C0718A8028E29BB6DE4 /* looprelax_protocols.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = looprelax_protocols.cc; path = ../src/protocols/loops/looprelax_protocols.cc; sourceTree = SOURCE_ROOT; };
@@ -11107,6 +11108,11 @@
 		166DFFAB201512A253F481F4 /* AtomAtomPairFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomAtomPairFeatures.hh; path = ../src/protocols/features/AtomAtomPairFeatures.hh; sourceTree = SOURCE_ROOT; };
 		DA1BC1652E661E2A37E81E0A /* AtomAtomPairFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomAtomPairFeaturesCreator.cc; path = ../src/protocols/features/AtomAtomPairFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
 		7B992AB12519C26282E2BA79 /* AtomAtomPairFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomAtomPairFeaturesCreator.hh; path = ../src/protocols/features/AtomAtomPairFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
+		5E9085631B357EFEC15E7AAF /* AtomInResidueAtomInResiduePairFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomInResidueAtomInResiduePairFeatures.cc; path = ../src/protocols/features/AtomInResidueAtomInResiduePairFeatures.cc; sourceTree = SOURCE_ROOT; };
+		F164C647272190F715F29E24 /* AtomInResidueAtomInResiduePairFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomInResidueAtomInResiduePairFeatures.fwd.hh; path = ../src/protocols/features/AtomInResidueAtomInResiduePairFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
+		C3D7ABFAA3E25F5DD5724128 /* AtomInResidueAtomInResiduePairFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomInResidueAtomInResiduePairFeatures.hh; path = ../src/protocols/features/AtomInResidueAtomInResiduePairFeatures.hh; sourceTree = SOURCE_ROOT; };
+		5E6C7AF47B42DCC9A87F675F /* AtomInResidueAtomInResiduePairFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomInResidueAtomInResiduePairFeaturesCreator.cc; path = ../src/protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
+		132E9A19D1B3D5DE8CC1F1B0 /* AtomInResidueAtomInResiduePairFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomInResidueAtomInResiduePairFeaturesCreator.hh; path = ../src/protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
 		28D22D33A62DECE4B220AE4F /* DatabaseFilters.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseFilters.cc; path = ../src/protocols/features/DatabaseFilters.cc; sourceTree = SOURCE_ROOT; };
 		B9C96E63F716BE0E1FC7CAA1 /* DatabaseFilters.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DatabaseFilters.fwd.hh; path = ../src/protocols/features/DatabaseFilters.fwd.hh; sourceTree = SOURCE_ROOT; };
 		32EB136A2054CC36C1BC14C8 /* DatabaseFilters.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DatabaseFilters.hh; path = ../src/protocols/features/DatabaseFilters.hh; sourceTree = SOURCE_ROOT; };
@@ -11717,6 +11723,10 @@
 		0DDF4BAECB3EAFAC259810D2 /* AtrGrid.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtrGrid.fwd.hh; path = ../src/protocols/qsar/scoring_grid/AtrGrid.fwd.hh; sourceTree = SOURCE_ROOT; };
 		ED201DD68AFA627E9BCB6BE4 /* AtrGrid.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtrGrid.hh; path = ../src/protocols/qsar/scoring_grid/AtrGrid.hh; sourceTree = SOURCE_ROOT; };
 		8B18E5FB6D0F60D3F9DB411D /* AtrGridCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtrGridCreator.hh; path = ../src/protocols/qsar/scoring_grid/AtrGridCreator.hh; sourceTree = SOURCE_ROOT; };
+		1FB112DF030ADA182392E119 /* ClassicGrid.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ClassicGrid.cc; path = ../src/protocols/qsar/scoring_grid/ClassicGrid.cc; sourceTree = SOURCE_ROOT; };
+		02FDBA9324D7944E7834C11B /* ClassicGrid.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ClassicGrid.fwd.hh; path = ../src/protocols/qsar/scoring_grid/ClassicGrid.fwd.hh; sourceTree = SOURCE_ROOT; };
+		B7D7FEC53002C723B125C3CD /* ClassicGrid.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ClassicGrid.hh; path = ../src/protocols/qsar/scoring_grid/ClassicGrid.hh; sourceTree = SOURCE_ROOT; };
+		FF44AFD624E2C174FCBEDDC9 /* ClassicGridCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ClassicGridCreator.hh; path = ../src/protocols/qsar/scoring_grid/ClassicGridCreator.hh; sourceTree = SOURCE_ROOT; };
 		B739A8595D745F8F8D127AC5 /* GridBase.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GridBase.cc; path = ../src/protocols/qsar/scoring_grid/GridBase.cc; sourceTree = SOURCE_ROOT; };
 		5D7E33BA9354E42034BF94CE /* GridBase.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GridBase.fwd.hh; path = ../src/protocols/qsar/scoring_grid/GridBase.fwd.hh; sourceTree = SOURCE_ROOT; };
 		369BEEBE029AF5F563D8A4BC /* GridBase.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GridBase.hh; path = ../src/protocols/qsar/scoring_grid/GridBase.hh; sourceTree = SOURCE_ROOT; };
@@ -12287,20 +12297,12 @@
 		E4CC4CCD52C3932A33715D10 /* BiasedFragmentMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BiasedFragmentMover.cc; path = ../src/protocols/nonlocal/BiasedFragmentMover.cc; sourceTree = SOURCE_ROOT; };
 		4E4A4565368C4A9CD52A3DFE /* BiasedFragmentMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BiasedFragmentMover.fwd.hh; path = ../src/protocols/nonlocal/BiasedFragmentMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D3D164B8B1C0C415C0F0C69B /* BiasedFragmentMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BiasedFragmentMover.hh; path = ../src/protocols/nonlocal/BiasedFragmentMover.hh; sourceTree = SOURCE_ROOT; };
-		0E5845FF83D689771432F6D1 /* BrokenFold.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BrokenFold.cc; path = ../src/protocols/nonlocal/BrokenFold.cc; sourceTree = SOURCE_ROOT; };
-		06D836438B51520A96787EF0 /* BrokenFold.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BrokenFold.fwd.hh; path = ../src/protocols/nonlocal/BrokenFold.fwd.hh; sourceTree = SOURCE_ROOT; };
-		F76D71830C39D81507D36B06 /* BrokenFold.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BrokenFold.hh; path = ../src/protocols/nonlocal/BrokenFold.hh; sourceTree = SOURCE_ROOT; };
 		72BDBE366677D7358CD88010 /* Chunk.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Chunk.cc; path = ../src/protocols/nonlocal/Chunk.cc; sourceTree = SOURCE_ROOT; };
 		E026A9300883DE8D6F47BEFF /* Chunk.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Chunk.fwd.hh; path = ../src/protocols/nonlocal/Chunk.fwd.hh; sourceTree = SOURCE_ROOT; };
 		8EF903614A0F220698126190 /* Chunk.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Chunk.hh; path = ../src/protocols/nonlocal/Chunk.hh; sourceTree = SOURCE_ROOT; };
 		7F10004ECB5B67A5EFFFAC66 /* HelixRotate.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HelixRotate.cc; path = ../src/protocols/nonlocal/HelixRotate.cc; sourceTree = SOURCE_ROOT; };
 		788F1173FC21BEBA9EF7E397 /* HelixRotate.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HelixRotate.fwd.hh; path = ../src/protocols/nonlocal/HelixRotate.fwd.hh; sourceTree = SOURCE_ROOT; };
 		2AADD4933DBBFFEE5E61D0CD /* HelixRotate.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HelixRotate.hh; path = ../src/protocols/nonlocal/HelixRotate.hh; sourceTree = SOURCE_ROOT; };
-		A86FD50F482CE1FCB25BFEEA /* NonlocalAbinitio.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NonlocalAbinitio.cc; path = ../src/protocols/nonlocal/NonlocalAbinitio.cc; sourceTree = SOURCE_ROOT; };
-		59AD932D6EEDEE8EB66470A9 /* NonlocalAbinitio.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NonlocalAbinitio.fwd.hh; path = ../src/protocols/nonlocal/NonlocalAbinitio.fwd.hh; sourceTree = SOURCE_ROOT; };
-		9851D63E035E54457F6AD939 /* NonlocalAbinitio.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NonlocalAbinitio.hh; path = ../src/protocols/nonlocal/NonlocalAbinitio.hh; sourceTree = SOURCE_ROOT; };
-		CF9DDD6661CF26471BF362E4 /* NonlocalAbinitioMain.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NonlocalAbinitioMain.cc; path = ../src/protocols/nonlocal/NonlocalAbinitioMain.cc; sourceTree = SOURCE_ROOT; };
-		05972D34BDC9E89F192214A8 /* NonlocalAbinitioMain.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NonlocalAbinitioMain.hh; path = ../src/protocols/nonlocal/NonlocalAbinitioMain.hh; sourceTree = SOURCE_ROOT; };
 		AC1B39213A3E7972BF817693 /* Policy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Policy.fwd.hh; path = ../src/protocols/nonlocal/Policy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		AE9D5DA053BF4124CC0EBC39 /* Policy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Policy.hh; path = ../src/protocols/nonlocal/Policy.hh; sourceTree = SOURCE_ROOT; };
 		129BF087433EBFB8A54A0CB3 /* PolicyFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PolicyFactory.cc; path = ../src/protocols/nonlocal/PolicyFactory.cc; sourceTree = SOURCE_ROOT; };
@@ -18598,6 +18600,7 @@
 				4D27106EFA83F4300BE954D5 /* Loops.cc */,
 				65378443F5478B1DB14446E5 /* Loops.fwd.hh */,
 				40C65BF9BBA03ED2583821A7 /* Loops.hh */,
+				AA247D7FFCC70DFD18BFC9C5 /* Loops.tmpl.hh */,
 				4AB6932F136EF60F743F16B5 /* loopfinder.cc */,
 				8632CB1BB53599C094882ABC /* loopfinder.hh */,
 				42C38C0718A8028E29BB6DE4 /* looprelax_protocols.cc */,
@@ -20008,6 +20011,11 @@
 				166DFFAB201512A253F481F4 /* AtomAtomPairFeatures.hh */,
 				DA1BC1652E661E2A37E81E0A /* AtomAtomPairFeaturesCreator.cc */,
 				7B992AB12519C26282E2BA79 /* AtomAtomPairFeaturesCreator.hh */,
+				5E9085631B357EFEC15E7AAF /* AtomInResidueAtomInResiduePairFeatures.cc */,
+				F164C647272190F715F29E24 /* AtomInResidueAtomInResiduePairFeatures.fwd.hh */,
+				C3D7ABFAA3E25F5DD5724128 /* AtomInResidueAtomInResiduePairFeatures.hh */,
+				5E6C7AF47B42DCC9A87F675F /* AtomInResidueAtomInResiduePairFeaturesCreator.cc */,
+				132E9A19D1B3D5DE8CC1F1B0 /* AtomInResidueAtomInResiduePairFeaturesCreator.hh */,
 				28D22D33A62DECE4B220AE4F /* DatabaseFilters.cc */,
 				B9C96E63F716BE0E1FC7CAA1 /* DatabaseFilters.fwd.hh */,
 				32EB136A2054CC36C1BC14C8 /* DatabaseFilters.hh */,
@@ -20856,6 +20864,10 @@
 				0DDF4BAECB3EAFAC259810D2 /* AtrGrid.fwd.hh */,
 				ED201DD68AFA627E9BCB6BE4 /* AtrGrid.hh */,
 				8B18E5FB6D0F60D3F9DB411D /* AtrGridCreator.hh */,
+				1FB112DF030ADA182392E119 /* ClassicGrid.cc */,
+				02FDBA9324D7944E7834C11B /* ClassicGrid.fwd.hh */,
+				B7D7FEC53002C723B125C3CD /* ClassicGrid.hh */,
+				FF44AFD624E2C174FCBEDDC9 /* ClassicGridCreator.hh */,
 				B739A8595D745F8F8D127AC5 /* GridBase.cc */,
 				5D7E33BA9354E42034BF94CE /* GridBase.fwd.hh */,
 				369BEEBE029AF5F563D8A4BC /* GridBase.hh */,
@@ -21629,20 +21641,12 @@
 				E4CC4CCD52C3932A33715D10 /* BiasedFragmentMover.cc */,
 				4E4A4565368C4A9CD52A3DFE /* BiasedFragmentMover.fwd.hh */,
 				D3D164B8B1C0C415C0F0C69B /* BiasedFragmentMover.hh */,
-				0E5845FF83D689771432F6D1 /* BrokenFold.cc */,
-				06D836438B51520A96787EF0 /* BrokenFold.fwd.hh */,
-				F76D71830C39D81507D36B06 /* BrokenFold.hh */,
 				72BDBE366677D7358CD88010 /* Chunk.cc */,
 				E026A9300883DE8D6F47BEFF /* Chunk.fwd.hh */,
 				8EF903614A0F220698126190 /* Chunk.hh */,
 				7F10004ECB5B67A5EFFFAC66 /* HelixRotate.cc */,
 				788F1173FC21BEBA9EF7E397 /* HelixRotate.fwd.hh */,
 				2AADD4933DBBFFEE5E61D0CD /* HelixRotate.hh */,
-				A86FD50F482CE1FCB25BFEEA /* NonlocalAbinitio.cc */,
-				59AD932D6EEDEE8EB66470A9 /* NonlocalAbinitio.fwd.hh */,
-				9851D63E035E54457F6AD939 /* NonlocalAbinitio.hh */,
-				CF9DDD6661CF26471BF362E4 /* NonlocalAbinitioMain.cc */,
-				05972D34BDC9E89F192214A8 /* NonlocalAbinitioMain.hh */,
 				AC1B39213A3E7972BF817693 /* Policy.fwd.hh */,
 				AE9D5DA053BF4124CC0EBC39 /* Policy.hh */,
 				129BF087433EBFB8A54A0CB3 /* PolicyFactory.cc */,
@@ -24545,6 +24549,8 @@
 			files = (
 				DA62EB3061074046421101D9 /* AtomAtomPairFeatures.cc in Sources */,
 				AAAB97D3231CA26126021FEF /* AtomAtomPairFeaturesCreator.cc in Sources */,
+				2269B581E8EC1007768C77E5 /* AtomInResidueAtomInResiduePairFeatures.cc in Sources */,
+				530464B580E02DBB569DF693 /* AtomInResidueAtomInResiduePairFeaturesCreator.cc in Sources */,
 				905D508D95F087D2A326D228 /* DatabaseFilters.cc in Sources */,
 				8989C2BF1FD8925E30E1C0EC /* DatabaseJobInputter.cc in Sources */,
 				2F62017BA89B5E0B087CB4BA /* DatabaseJobOutputter.cc in Sources */,
@@ -24826,11 +24832,8 @@
 				095B7C329D28DB82581C15EC /* MedalMover.cc in Sources */,
 				6566DCB0D68956F87112296D /* util.cc in Sources */,
 				43A1691036CCC8371903CFF6 /* BiasedFragmentMover.cc in Sources */,
-				06893A3BF88820CA1376740F /* BrokenFold.cc in Sources */,
 				10540E6C6DDA8C111AFCFF3F /* Chunk.cc in Sources */,
 				3B764A20D21E36B027528098 /* HelixRotate.cc in Sources */,
-				AF9CD8E45CE45EA4DB3AA27A /* NonlocalAbinitio.cc in Sources */,
-				8A7A683357B8CA102CB5C9E3 /* NonlocalAbinitioMain.cc in Sources */,
 				5A7750302281A060919FA729 /* PolicyFactory.cc in Sources */,
 				B7D10DEA57ED2C87406220D4 /* Region.cc in Sources */,
 				9A160A7CD8AEEE7C7E660BE1 /* SheetTranslate.cc in Sources */,
@@ -25259,6 +25262,7 @@
 				87AA730529C064D7F77E6784 /* qsarMover.cc in Sources */,
 				8477366E238D9121764226C7 /* qsarOptFunc.cc in Sources */,
 				95C34011CDD1697CAFB9F733 /* AtrGrid.cc in Sources */,
+				CCF7135F02A0E450A4C5C77E /* ClassicGrid.cc in Sources */,
 				FCDD1F498ECB979137D3FC2A /* GridBase.cc in Sources */,
 				12ABCBD3653EB42AE1DEA5D6 /* GridCreator.cc in Sources */,
 				C6485306C4B53733F2B847EE /* GridFactory.cc in Sources */,

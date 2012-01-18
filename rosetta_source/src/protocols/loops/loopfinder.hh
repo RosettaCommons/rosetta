@@ -13,16 +13,14 @@
 /// @author
 
 
-#ifndef INCLUDED_protocols_loops_loopfinder_hh
-#define INCLUDED_protocols_loops_loopfinder_hh
+#ifndef INCLUDED_protocols_loops_loopfinder_HH
+#define INCLUDED_protocols_loops_loopfinder_HH
 
-// Project Headers
-#include <core/pose/Pose.fwd.hh>
+// Package headers
 #include <protocols/loops/Loops.fwd.hh>
-#include <core/types.hh>
 
-#include <utility/vector1.hh>
-
+// Project headers
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace loops {
@@ -33,4 +31,4 @@ void loopfinder(  core::pose::Pose & pose , loops::Loops & loops );
 } //loops
 } //protocols
 
-#endif
+#endif //INCLUDED_protocols_loops_loopfinder_HH

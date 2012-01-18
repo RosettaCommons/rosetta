@@ -12,8 +12,8 @@
 /// @author Chu Wang
 /// @author Mike Tyka
 
-#ifndef INCLUDED_protocols_loops_Loops_hh
-#define INCLUDED_protocols_loops_Loops_hh
+#ifndef INCLUDED_protocols_loops_Loops_HH
+#define INCLUDED_protocols_loops_Loops_HH
 
 // Unit header
 #include <protocols/loops/Loops.fwd.hh>
@@ -237,12 +237,12 @@ public:
 		core::Real mag_right
 	);
 
-  /// @brief Computes the center of mass of the Ca atoms specified by this
-  /// instance, writing the result to <center>. Assumes there is no missing
-  /// backbone density.
-  ///
-  /// Note: if this method is called on an instance without any Loop's, returns (0,0,0).
-  void center_of_mass(const core::pose::Pose& pose, numeric::xyzVector<core::Real>* center) const;
+    /// @brief Computes the center of mass of the Ca atoms specified by this
+    /// instance, writing the result to <center>. Assumes there is no missing
+    /// backbone density.
+    ///
+    /// Note: if this method is called on an instance without any Loop's, returns (0,0,0).
+    void center_of_mass(const core::pose::Pose& pose, numeric::xyzVector<core::Real>* center) const;
 
 	///@brief set each loop-residue in the vector to val.
 	/// input vector of nres length ( if shorter last residues of loop are ignored )

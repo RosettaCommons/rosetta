@@ -15,17 +15,11 @@
 /// @author Oliver Lange
 
 
-#ifndef INCLUDED_protocols_loops_Exceptions_hh
-#define INCLUDED_protocols_loops_Exceptions_hh
+#ifndef INCLUDED_protocols_loops_Exceptions_HH
+#define INCLUDED_protocols_loops_Exceptions_HH
 
-
-// Unit Headers
-//#include <protocols/topology_broker/Exceptions.fwd.hh>
-
-// Utility Headers
-
+// Utility headers
 #include <utility/excn/Exceptions.hh>
-
 
 namespace protocols {
 namespace loops {
@@ -36,10 +30,7 @@ public:
   EXCN_Loop_not_closed( std::string msg = "") : EXCN_Msg_Exception( "failed to close loop " + msg ){};
 };
 
+} // namespace loops
+} // namespace protocols
 
-
-
-}
-}
-
-#endif
+#endif //INCLUDED_protocols_loops_Exceptions_HH

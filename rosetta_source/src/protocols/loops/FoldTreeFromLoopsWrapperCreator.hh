@@ -11,8 +11,8 @@
 /// @brief  Declaration of the MoverCreator class for the FoldTreeFromLoops
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
-#ifndef INCLUDED_protocols_loops_FoldTreeFromLoopsCreator_hh
-#define INCLUDED_protocols_loops_FoldTreeFromLoopsCreator_hh
+#ifndef INCLUDED_protocols_loops_FoldTreeFromLoopsCreator_HH
+#define INCLUDED_protocols_loops_FoldTreeFromLoopsCreator_HH
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
@@ -29,7 +29,7 @@ public:
 
 };
 
-}
-}
+} // namespace loops
+} // namespace protocols
 
-#endif
+#endif //INCLUDED_protocols_loops_FoldTreeFromLoopsCreator_HH

@@ -12,8 +12,8 @@
 /// @author Chu Wang
 
 
-#ifndef INCLUDED_protocols_loops_Loop_fwd_hh
-#define INCLUDED_protocols_loops_Loop_fwd_hh
+#ifndef INCLUDED_protocols_loops_Loop_FWD_HH
+#define INCLUDED_protocols_loops_Loop_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 

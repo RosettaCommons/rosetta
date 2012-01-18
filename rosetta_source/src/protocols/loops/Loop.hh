@@ -13,8 +13,8 @@
 /// @author Mike Tyka
 /// @author James Thompson
 
-#ifndef INCLUDED_protocols_loops_Loop_hh
-#define INCLUDED_protocols_loops_Loop_hh
+#ifndef INCLUDED_protocols_loops_Loop_HH
+#define INCLUDED_protocols_loops_Loop_HH
 
 // Unit headers
 #include <protocols/loops/Loop.fwd.hh>
@@ -31,7 +31,6 @@
 
 // C++ headers
 #include <ostream>
-//#include <functional>
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
