@@ -8,7 +8,7 @@
 
 from rosetta import *
 
-from rosetta.protocols.loops.kinematic_closure import *
+from rosetta.protocols.loops.loop_closure.kinematic_closure import *
 
 import rosetta.protocols.loops.loop_mover.refine
 
