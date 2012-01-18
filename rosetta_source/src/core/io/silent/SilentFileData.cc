@@ -306,6 +306,8 @@ SilentStructOP SilentFileData::operator[] (std::string tag) {
 void SilentFileData::write_all(
 	std::string const & filename, bool bWriteScoreOnly
 ) const {
+	if ( begin() == end() ) return;
+
 	utility::io::ozstream output;
 
 	if ( begin() != end() )	{
