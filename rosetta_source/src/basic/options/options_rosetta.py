@@ -1087,6 +1087,7 @@ Options = Option_Group( '',
 		Option( 'no_output', 'Boolean', desc='use NoOutputJobOutputter; do not store the pose after a run (no silent or scorefile)', default='false'),
 		Option( 'enzdes_out', 'Boolean', desc='causes an enzdes-style scorefile (with information about catalytic res and some pose metric stuff ) to be written instead of the regular scorefile', default='false'),
 		Option( 'buffer_silent_output', 'Integer', default = '1', desc = 'write structures to silent-files in blocks of N structures to', ),
+		Option( 'buffer_flush_frequency', 'Real', default = '1.0', desc = 'when N structures (buffer_silent_output) are collected dump to file with probability X' ),
 		Option( 'delete_old_poses', 'Boolean', default = 'false', desc = 'Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.', ),# NOTE: This option should probably be used by default, however it may have issues with special uses of the job distributor.  Once these issues are resolved, either enable it by default, or just do it with out asking.
 	), # jd2
 
@@ -1108,6 +1109,7 @@ Options = Option_Group( '',
 		Option( 'predicted_burial_fn', 'String', desc='file for burial predictions', default = '' ),
 		Option( 'pool', 'File', desc='find closest matching structure in this pool and report tag and rmsd' ),
 		Option( 'rmsd', 'FileVector', desc='[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)'),
+		Option( 'chirmsd', 'FileVector', desc='[vector/tripletts]: rmsd_target (or NATIVE / IRMS ) col_name selection_file ( or FULL) '),
 		Option( 'gdtmm', 'Boolean', desc='for each rmsd evaluator also a gdtmm evaluator is created', default='false'),
 		Option( 'score_with_rmsd','Boolean', desc='score the pose on the same subset of atoms as in the rmsd poses'),
 		Option( 'constraints', 'FileVector', desc='[vector] evaluate against these constraint sets'),

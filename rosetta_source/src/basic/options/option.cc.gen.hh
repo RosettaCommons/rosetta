@@ -409,6 +409,7 @@ option.add( basic::options::OptionKeys::jd2::generic_job_name, "job name when us
 option.add( basic::options::OptionKeys::jd2::no_output, "use NoOutputJobOutputter; do not store the pose after a run (no silent or scorefile)" ).def(false);
 option.add( basic::options::OptionKeys::jd2::enzdes_out, "causes an enzdes-style scorefile (with information about catalytic res and some pose metric stuff ) to be written instead of the regular scorefile" ).def(false);
 option.add( basic::options::OptionKeys::jd2::buffer_silent_output, "write structures to silent-files in blocks of N structures to" ).def(1);
+option.add( basic::options::OptionKeys::jd2::buffer_flush_frequency, "when N structures (buffer_silent_output) are collected dump to file with probability X" ).def(1.0);
 option.add( basic::options::OptionKeys::jd2::delete_old_poses, "Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful." ).def(false);
 option.add( basic::options::OptionKeys::evaluation::evaluation, "evaluation option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::evaluation::rmsd_target, "[vector] determine rmsd against this/these structure(s)" );
@@ -424,6 +425,7 @@ option.add( basic::options::OptionKeys::evaluation::align_rmsd_format, "format f
 option.add( basic::options::OptionKeys::evaluation::predicted_burial_fn, "file for burial predictions" ).def("");
 option.add( basic::options::OptionKeys::evaluation::pool, "find closest matching structure in this pool and report tag and rmsd" );
 option.add( basic::options::OptionKeys::evaluation::rmsd, "[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)" );
+option.add( basic::options::OptionKeys::evaluation::chirmsd, "[vector/tripletts]: rmsd_target (or NATIVE / IRMS ) col_name selection_file ( or FULL) " );
 option.add( basic::options::OptionKeys::evaluation::gdtmm, "for each rmsd evaluator also a gdtmm evaluator is created" ).def(false);
 option.add( basic::options::OptionKeys::evaluation::score_with_rmsd, "score the pose on the same subset of atoms as in the rmsd poses" );
 option.add( basic::options::OptionKeys::evaluation::constraints, "[vector] evaluate against these constraint sets" );
@@ -593,10 +595,10 @@ option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for ea
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
@@ -1780,10 +1782,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "red
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);

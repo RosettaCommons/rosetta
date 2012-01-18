@@ -35,6 +35,7 @@ namespace evaluation { extern StringOptionKey const align_rmsd_format; }
 namespace evaluation { extern StringOptionKey const predicted_burial_fn; }
 namespace evaluation { extern FileOptionKey const pool; }
 namespace evaluation { extern FileVectorOptionKey const rmsd; }
+namespace evaluation { extern FileVectorOptionKey const chirmsd; }
 namespace evaluation { extern BooleanOptionKey const gdtmm; }
 namespace evaluation { extern BooleanOptionKey const score_with_rmsd; }
 namespace evaluation { extern FileVectorOptionKey const constraints; }

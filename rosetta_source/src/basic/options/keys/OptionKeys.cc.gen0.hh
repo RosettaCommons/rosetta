@@ -404,6 +404,7 @@ namespace jd2 { StringOptionKey const generic_job_name( "jd2:generic_job_name" )
 namespace jd2 { BooleanOptionKey const no_output( "jd2:no_output" );  }
 namespace jd2 { BooleanOptionKey const enzdes_out( "jd2:enzdes_out" );  }
 namespace jd2 { IntegerOptionKey const buffer_silent_output( "jd2:buffer_silent_output" );  }
+namespace jd2 { RealOptionKey const buffer_flush_frequency( "jd2:buffer_flush_frequency" );  }
 namespace jd2 { BooleanOptionKey const delete_old_poses( "jd2:delete_old_poses" );  }
 namespace evaluation { BooleanOptionKey const evaluation( "evaluation" );  }
 namespace evaluation { FileVectorOptionKey const rmsd_target( "evaluation:rmsd_target" );  }
@@ -419,6 +420,7 @@ namespace evaluation { StringOptionKey const align_rmsd_format( "evaluation:alig
 namespace evaluation { StringOptionKey const predicted_burial_fn( "evaluation:predicted_burial_fn" );  }
 namespace evaluation { FileOptionKey const pool( "evaluation:pool" );  }
 namespace evaluation { FileVectorOptionKey const rmsd( "evaluation:rmsd" );  }
+namespace evaluation { FileVectorOptionKey const chirmsd( "evaluation:chirmsd" );  }
 namespace evaluation { BooleanOptionKey const gdtmm( "evaluation:gdtmm" );  }
 namespace evaluation { BooleanOptionKey const score_with_rmsd( "evaluation:score_with_rmsd" );  }
 namespace evaluation { FileVectorOptionKey const constraints( "evaluation:constraints" );  }
@@ -588,4 +590,3 @@ namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty"
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
-namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }

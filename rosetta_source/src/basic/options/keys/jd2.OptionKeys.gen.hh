@@ -35,6 +35,7 @@ namespace jd2 { extern StringOptionKey const generic_job_name; }
 namespace jd2 { extern BooleanOptionKey const no_output; }
 namespace jd2 { extern BooleanOptionKey const enzdes_out; }
 namespace jd2 { extern IntegerOptionKey const buffer_silent_output; }
+namespace jd2 { extern RealOptionKey const buffer_flush_frequency; }
 namespace jd2 { extern BooleanOptionKey const delete_old_poses; }
 
 } // namespace OptionKeys

@@ -26,6 +26,7 @@ static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::Co
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::NativeEvaluatorCreator> NativeEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::PoolEvaluatorCreator> PoolEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RmsdEvaluatorCreator> RmsdEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::ChiWellRmsdEvaluatorCreator> ChiWellRmsdEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcTargetEvaluatorCreator> RdcTargetEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcSelectEvaluatorCreator> RdcSelectEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcEvaluatorCreator> RdcEvaluatorCreator_registrator;

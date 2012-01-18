@@ -32,6 +32,7 @@
 #include <protocols/simple_filters/RdcSelectEvaluatorCreator.hh>
 #include <protocols/simple_filters/RdcTargetEvaluatorCreator.hh>
 #include <protocols/simple_filters/RmsdEvaluatorCreator.hh>
+#include <protocols/simple_filters/ChiWellRmsdEvaluatorCreator.hh>
 #include <protocols/simple_filters/RmsdTargetEvaluatorCreator.hh>
 #include <protocols/simple_filters/StructureSimilarityEvaluatorCreator.hh>
 

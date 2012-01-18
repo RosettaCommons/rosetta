@@ -222,6 +222,8 @@ sources = {
 		"RGFilter",
 		"RmsdEvaluator",
 		"RmsdEvaluatorCreator",
+		"ChiWellRmsdEvaluator",
+		"ChiWellRmsdEvaluatorCreator",
 		"RmsdTargetEvaluatorCreator",
 		"RotamerBoltzmannWeight",
 		"SAXSScoreFilter",
