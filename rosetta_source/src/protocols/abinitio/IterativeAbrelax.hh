@@ -83,6 +83,8 @@ public:
   virtual bool restore_from_file();
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& );
 	virtual void read_structures( core::io::silent::SilentFileData&, jd2::archive::Batch const& batch );
+
+	void set_manager( jd2::archive::ArchiveManagerAP manager );
 	//	virtual void gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom = false );
 
 private:

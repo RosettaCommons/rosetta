@@ -100,6 +100,7 @@ public:
 		return *manager_;
 	}
 
+	virtual
 	void set_manager( ArchiveManagerAP manager ) {
 		manager_=manager;
 	}

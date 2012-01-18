@@ -491,6 +491,11 @@ void IterativeBase::increment_stage() {
 	while ( max_nstruct_list_[ stage_ ] < 0 && stage_ < finish_stage_ ) {
 		stage_ = IterationStage( 1 + (int) stage_ );
 	}
+	if ( !manager_ptr() ) {
+		tr.Info << "start with stage " << stage_ << std::endl;
+		return;
+	}
+	tr.Info << "manager_ptr() " << manager_ptr() << " logical " << !manager_ptr() << std::endl;
 	tr.Info << "switched to stage: " << stage_ << std::endl;
 
 	//safe status and reset counters

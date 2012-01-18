@@ -101,7 +101,7 @@ ArchiveBase::ArchiveBase( ArchiveManagerAP ptr ) :
 
 	//for debugging --- make archive smaller
 	if ( ( option[ run::test_cycles ]() || option[ run::dry_run ]() ) && !option[ run::memory_test_cycles ]() ) {
-		//		max_nstruct_ = 10;
+		max_nstruct_ = 20;
 	}
 
 	nstruct_ = max_nstruct_;
