@@ -78,6 +78,8 @@ using basic::Tracer;
 using basic::Error;
 using basic::Warning;
 using basic::datacache::CacheableString;
+using basic::database::safely_prepare_statement;
+using basic::database::safely_write_to_database;
 using core::Size;
 using core::pack::task::PackerTaskCOP;
 using core::pack::task::TaskFactory;
@@ -441,12 +443,38 @@ ReportToDB::initialize_database(
 	utility::sql_database::sessionOP db_session
 ){
 	if (!initialized){
+
+		write_features_reporters_table(db_session);
+
 		protocol_features_->write_schema_to_db(db_session);
 		structure_features_->write_schema_to_db(db_session);
 		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
 			reporter->write_schema_to_db(db_session);
 		}
+
 		initialized = true;
+	}
+
+}
+
+void
+ReportToDB::write_features_reporters_table(
+	utility::sql_database::sessionOP db_session
+) const {
+	string sql("CREATE TABLE IF NOT EXISTS features_reporters (\n"
+		"	type_name TEXT,\n"
+		"	PRIMARY KEY(type_name));\n"
+		"\n"
+		"INSERT OR IGNORE INTO feature_reporters VALUES ('ProtocolFeatures');\n"
+		"INSERT OR IGNORE INTO feature_reporters VALUES ('StructureFeatures');");
+	statement stmt(safely_prepare_statement(sql, db_session));
+	safely_write_to_database(stmt);
+
+	sql = "INSERT OR IGNORE INTO features_reporters VALUES (?);";
+	stmt = safely_prepare_statement(sql, db_session);
+	foreach(FeaturesReporterOP const & reporter, features_reporters_){
+		stmt.bind(1, reporter->type_name());
+		safely_write_to_database(stmt);
 	}
 
 }

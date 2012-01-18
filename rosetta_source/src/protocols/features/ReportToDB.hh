@@ -123,7 +123,10 @@ public:
 	initialize_database(
 		utility::sql_database::sessionOP db_session);
 
-	virtual
+	void
+	write_features_reporters_table(
+		utility::sql_database::sessionOP db_session) const;
+
 	void
 	apply(
 		Pose& pose);
