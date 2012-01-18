@@ -1248,6 +1248,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-bb_min_res</b> \<IntegerVector\><dt>
+<dd>Minimize backbone at these positions.</dd><br>
+</dl>
+<dl>
+<dt><b>-sc_min_res</b> \<IntegerVector\><dt>
+<dd>Minimize backbone at these positions.</dd><br>
+</dl>
+<dl>
 <dt><b>-dock_ppk</b> \<Boolean\><dt>
 <dd>docking prepack mode</dd><br>
 <dd>Default: false</dd><br>
@@ -1932,6 +1940,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1</dd><br>
 </dl>
 <dl>
+<dt><b>-buffer_flush_frequency</b> \<Real\><dt>
+<dd>when N structures (buffer_silent_output) are collected dump to file with probability X</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
 <dt><b>-delete_old_poses</b> \<Boolean\><dt>
 <dd>Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.</dd><br>
 <dd>Default: false</dd><br>
@@ -1995,6 +2008,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-rmsd</b> \<FileVector\><dt>
 <dd>[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)</dd><br>
+</dl>
+<dl>
+<dt><b>-chirmsd</b> \<FileVector\><dt>
+<dd>[vector/tripletts]: rmsd_target (or NATIVE / IRMS ) col_name selection_file ( or FULL) </dd><br>
 </dl>
 <dl>
 <dt><b>-gdtmm</b> \<Boolean\><dt>
@@ -3320,6 +3337,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-weights</b> \<String\><dt>
 <dd>Name of weights file (without extension .wts)</dd><br>
+<dd>Default: "standard"</dd><br>
+</dl>
+<dl>
+<dt><b>-pack_weights</b> \<String\><dt>
+<dd>Name of packing weights file (without extension .wts)</dd><br>
 <dd>Default: "standard"</dd><br>
 </dl>
 <dl>

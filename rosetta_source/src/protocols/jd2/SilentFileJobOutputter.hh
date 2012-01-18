@@ -147,6 +147,10 @@ private: // members
 
 	// used for buffering output.
 	core::Size n_to_buffer_;
+
+	// when n_to_buffer_ is reached write all structures with a probability of ... (default 1)
+	core::Real random_flush_frequency_;
+
 	//utility::vector1< core::io::silent::SilentStructOP > saved_structs_;
 	utility::vector1< std::pair< core::io::silent::SilentStructOP, utility::file::FileName > > saved_structs_;
 }; // SilentFileJobOutputter

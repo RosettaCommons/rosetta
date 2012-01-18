@@ -43,9 +43,12 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
+#include <numeric/random/random.hh>
+
 #include <string>
 #include <algorithm>
 
+static numeric::random::RandomGenerator RG(10321155);  // Magic Number
 static basic::Tracer tr("protocols.jd2.SilentFileJobOutputter");
 
 namespace protocols {
@@ -70,9 +73,9 @@ void SilentFileJobOutputter::write_all_structs() {
 	using utility::file::FileName;
 	using core::io::silent::SilentStructOP;
 
-	core::io::silent::SilentFileData sfd;
+	typedef std::map< std::string, core::io::silent::SilentFileData > SFD_MAP;
 	typedef vector1< std::pair< SilentStructOP, FileName > >::iterator iter;
-
+	SFD_MAP sfds;
 	// Only write structures if the user hasn't disabled it - otherwise it totally breaks
 	// the user's expectation.
 	if( !bWriteNoStructures_ ){
@@ -83,7 +86,10 @@ void SilentFileJobOutputter::write_all_structs() {
 			//tr.Debug << "writing struct " << ss->decoy_tag() << std::endl;
 			//tr.Debug << "writing struct " << (*it->first)->decoy_tag() << std::endl;
 			//SilentStructOP ss = it->first;
-			sfd.write_silent_struct( (*it->first), it->second );
+			sfds[ it->second ].add_structure( (*it->first) );
+		}
+		for ( SFD_MAP::iterator it = sfds.begin(); it!=sfds.end(); ++it ) {
+			it->second.write_all( it->first );
 		}
 	}
 	// very important to clear after writing!
@@ -128,6 +134,7 @@ void SilentFileJobOutputter::set_defaults() {
 
 	//default is 1
 	n_to_buffer_ = option[ basic::options::OptionKeys::jd2::buffer_silent_output ]();
+	random_flush_frequency_ = option[ basic::options::OptionKeys::jd2::buffer_flush_frequency ]();
 
 	bWriteIntermediateFiles_ = (
 		option[ run::intermediate_scorefiles ]() ||
@@ -246,7 +253,10 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 	add_silent_struct( ss, filename );
 	tr.Debug << "adding struct " << ss->decoy_tag() << std::endl;
 	tr.Debug << "have " << saved_structs_.size() << ", buffering " << n_to_buffer_ << std::endl;
-	if ( saved_structs_.size() >= n_to_buffer_ ) {
+	core::Real rand;
+	if ( random_flush_frequency_ < 1.0 ) rand=RG.uniform();
+	else rand=0.0;
+	if ( saved_structs_.size() >= n_to_buffer_ && random_flush_frequency_ >= rand ) {
 		write_all_structs();
 	}
 
