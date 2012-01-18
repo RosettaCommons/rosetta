@@ -679,12 +679,13 @@ void JobDistributor::jd2_signal_handler(int signal_)
 	if( signal_ == SIGABRT ) std::cout << "Process was aborted!" << std::endl;
 	if( signal_ == SIGTERM ) std::cout << "Process was terminated!" << std::endl;
 
-	#ifndef WIN32
-		if( signal_ == SIGKILL ) std::cout << "Process was SIGKILL!" << std::endl;
-		if( signal_ == SIGQUIT ) std::cout << "Process was SIGQUIT!" << std::endl;
-	#endif
+#ifndef WIN32
+	if( signal_ == SIGKILL ) std::cout << "Process was SIGKILL!" << std::endl;
+	if( signal_ == SIGQUIT ) std::cout << "Process was SIGQUIT!" << std::endl;
+#endif
 
-	jd2::JobDistributor::get_instance()->handle_interrupt();
+	if ( get_instance()->job_outputter_ ) get_instance()->job_outputter_->flush(); //This call forces out any unprinted but finished data
+	get_instance()->handle_interrupt();
 
 	//utility_exit_with_status(1);
 	std::exit( 1 ); // Using pure exit instead of utility_exit_with_status to avoid recursion when compile with EXIT_THROWS_EXCEPTION
