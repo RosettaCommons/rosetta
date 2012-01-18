@@ -2,6 +2,9 @@
 # List of commands used in PyRosetts Workshop #2
 
 from rosetta import *
+from rosetta.protocols.loops.loop_closure.ccd import *
+from rosetta.protocols.loops.loop_mover.refine import *
+
 init()
 
 pose = pose_from_pdb("test/data/test_in.pdb")
