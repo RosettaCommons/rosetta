@@ -259,10 +259,26 @@ void NoesyModule::assign( Size cycle ) {
   using namespace OptionKeys;
 
   core::io::silent::SilentFileData sfd;
+	std::string file_name("NO_FILE");
   if ( !option[ noesy::no_decoys ]() ) {
-		if ( option[ noesy::in::decoys ].user() ) sfd.read_file( option[ noesy::in::decoys ]() );
-		if ( sfd.size() == 0 && option[ OptionKeys::in::file::silent ].user() ) sfd.read_file( option[ OptionKeys::in::file::silent ]()[ 1 ] );
-  }
+		if ( option[ noesy::in::decoys ].user() ) {
+			file_name = option[ noesy::in::decoys ]();
+			sfd.read_file( file_name );
+		}
+		if ( sfd.size() == 0 && option[ OptionKeys::in::file::silent ].user() ) {
+			file_name = option[ OptionKeys::in::file::silent ]()[ 1 ];
+			sfd.read_file( file_name );
+		}
+	}
+	if ( sfd.begin() != sfd.end() ) {
+		if ( sfd.begin()->sequence().one_letter_sequence() != resonances().sequence() ) {
+			std::ostringstream str;
+			str << "Sequence of input structures in file " << file_name << " does not match the sequence in resonance file and fasta-file\n";
+			str << "Resonances: " << resonances().sequence() << "\n";
+			str << "Ensemble: " << sfd.begin()->sequence().one_letter_sequence();
+			utility_exit_with_message( str.str() );
+		}
+	}
   assign( sfd.begin(), sfd.end(), cycle );
 }
 

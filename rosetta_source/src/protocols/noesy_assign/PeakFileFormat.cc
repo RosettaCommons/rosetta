@@ -261,6 +261,8 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
       //ERROR
     }
   } //while
+
+	tr.Debug << "finished with header found " << dim << " dimensions" << std::endl;
 	using namespace basic::options;
   using namespace basic::options::OptionKeys;
 	Real const default_tolerance_h( (dim < 4) ?
@@ -285,7 +287,10 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 		if ( HN_column_labels && cyana_string != "none" ) {
 			atom_names[ i ]=cyana_string[ i-1 ];
 		}
-    if ( atom_names[ i ] == "h" || ( HN_column_labels && atom_names[ i ]=="H" ) ) {  //indirect in 3D
+    if ( atom_names[ i ] == "h"
+			|| ( HN_column_labels && atom_names[ i ]=="H" )
+			|| ( atom_names[ i ]=="H" && i==2 && dim==2 && col2proton_[ 1 ] == 1 )
+		) {  //indirect in 3D
       col2proton_[ i ] = 2;
 			if ( tolerances[ i ]==0.0 ) tolerances[ i ]=default_tolerance_h;
       if ( !info2_ ) {
@@ -325,6 +330,8 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 	if ( !info2_  || !info1_ ) {
 		throw utility::excn::EXCN_BadInput(" problem reading peak file, no or errorenous header ");
 	}
+
+	tr.Debug << " cross-peak infos: " << *info1_ << " and " << *info2_ << std::endl;
 
 	if ( col2proton_.size() == 3 ) { //only one label.. make sure that it is with proton 1
 		output_diagnosis( tr.Debug );

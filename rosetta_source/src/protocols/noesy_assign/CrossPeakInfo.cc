@@ -60,6 +60,19 @@ using namespace basic;
 namespace protocols {
 namespace noesy_assign {
 
+void CrossPeakInfo::show( std::ostream& os ) const {
+	os << "CROSSPEAK: "
+		 << proton_atom_name_ << " " << label_atom_type_ << " "
+		 << "TOL: " << proton_tolerance_ << " " << label_tolerance_
+		 << " from file " << filename_;
+}
+
+std::ostream& operator<< ( std::ostream& os, CrossPeakInfo const& cpi ) {
+	cpi.show( os );
+	return os;
+}
+
+
 std::string CrossPeakInfo::label_atom_name( std::string const& proton_name, core::chemical::AA aa ) const {
   using namespace core::chemical; //for AA
   if ( label_atom_type_ == "N" ) {

@@ -110,6 +110,9 @@ void CrossPeakList::read_from_stream( std::istream& is, PeakFileFormat& input_ad
 		input_adaptor.read_header( is, new_peak_line );
 		input_adaptor.output_diagnosis( tr.Debug );
 		CrossPeakOP cp;
+		if ( !is.good() ) {
+			utility_exit_with_message( "nothing to read after peak-file header" );
+		}
 		while ( is.good() && ( cp = input_adaptor.read_peak( is, new_peak_line )) ) {
 			cp->set_resonances( resonances );
 			input_adaptor.write_peak( tr.Debug, cp->peak_id(), *cp );
@@ -120,7 +123,6 @@ void CrossPeakList::read_from_stream( std::istream& is, PeakFileFormat& input_ad
 			}
 			peaks_.push_back( cp );
 		}
-
 	}
 
   if ( is.fail() && is.eof() && is.bad() ) {

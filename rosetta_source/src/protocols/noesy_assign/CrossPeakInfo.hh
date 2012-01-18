@@ -87,6 +87,7 @@ public:
     return filename_;
   }
 
+  void show( std::ostream& ) const;
 
 private:
   std::string proton_atom_name_;
@@ -95,6 +96,8 @@ private:
   core::Real label_tolerance_;
   std::string filename_;
 };
+
+std::ostream& operator<< ( std::ostream&, CrossPeakInfo const& );
 
 }
 }
