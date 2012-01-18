@@ -82,7 +82,7 @@ private:
 
 	core::Real min_dist_;
 	core::Real max_dist_;
-	core::Real nbins_;
+	core::Size nbins_;
 
 	utility::vector1<std::string> relevant_atom_names_;
 	std::map<core::Size, core::Size> atom_index_to_relevant_atom_index_;
