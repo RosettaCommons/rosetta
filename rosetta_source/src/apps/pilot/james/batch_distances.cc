@@ -19,14 +19,12 @@
 #include <core/types.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <devel/init.hh>
 
 // Objexx
@@ -79,6 +77,7 @@ int main( int argc, char* argv [] ) {
 	core::import_pose::pose_stream::MetaPoseInputStream input
 		= core::import_pose::pose_stream::streams_from_cmd_line();
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+
 	output 	<< A( 10, "resi_idx" )
 					<< A( 10, "resj_idx" )
 					<< A(  6, "resi"     )
