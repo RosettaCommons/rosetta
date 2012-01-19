@@ -347,7 +347,7 @@ std::set<Size> get_residuesToConstrain(const Size coordCstGapInitial, const Real
 			tr.Debug << "gdtmm" << gdtmm << std::endl;
 			std::set< Size > tmp_caAtomsToConstrain;
 			std::set< Size > distDeviationResiduesToConstrain = get_distDeviationResiduesToConstrain(dist_deviation_thresh,0,*rd2relaxed_poseOP, pose);//on the second rounds and later gap size is always set to 0. That way this doesn't limits the number of loops
-			tr.Debug << "empty?" << distDeviationResiduesToConstrain.empty() << std::endl;
+			tr.Debug << "empty ?" << distDeviationResiduesToConstrain.empty() << std::endl;
 			if(!distDeviationResiduesToConstrain.empty()){
 				std::set_union(caAtomsToConstrain.begin(), caAtomsToConstrain.end(), distDeviationResiduesToConstrain.begin(), distDeviationResiduesToConstrain.end(), std::inserter(tmp_caAtomsToConstrain, tmp_caAtomsToConstrain.begin()));
 				caAtomsToConstrain = tmp_caAtomsToConstrain;

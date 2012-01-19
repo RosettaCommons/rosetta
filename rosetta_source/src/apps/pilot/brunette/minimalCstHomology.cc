@@ -181,13 +181,20 @@ std::set< Size > removeConstraintsNearGap(std::set< Size > caAtomsToConstrainAll
 	caAtomsToConstrainAll_stop = caAtomsToConstrainAll.end();
 	while(caAtomsToConstrainAll_start != caAtomsToConstrainAll_stop){
 		bool gap_exists = false;
+		//check for residues near a gap or within a gap
 		for(int ii = -1*(int)gapSize; ii<=(int)gapSize; ii++){
 			if(unaligned_residues.find(*caAtomsToConstrainAll_start+ii) !=unaligned_residues.end())
 				gap_exists = true;
 		}
-		if(!gap_exists)
+		//check for residues not in the alignment but first remap. A position of 0 is not in the template
+		Size templateResidue_id = aln.sequence_mapping(2,1)[*caAtomsToConstrainAll_start];
+		if(!gap_exists && (templateResidue_id ==0))
+			gap_exists = true;
+		if(!gap_exists){
 			caAtomsToConstrain.insert(*caAtomsToConstrainAll_start);
+		}
 		caAtomsToConstrainAll_start++;
+
 	}
 	return caAtomsToConstrain;
 }
@@ -224,9 +231,9 @@ bool calc_outputCoordCsts(SequenceOP fastaSequenceOP, map<string,SequenceAlignme
 		Pose templatePose =location_pdb->second;
 
 		std::set<Size> caAtomsToConstrain;
-		if(caAtomsToConstrainAll.size()>minNumCoordCsts) //if there are <= 3 coordinate constraints then we choose a lobe of a larger protein and the coordinate constraints are not useful.
-			caAtomsToConstrain = removeConstraintsNearGap(caAtomsToConstrainAll,alns[1],nResFromGapExclude);
-		output_coordCsts(caAtomsToConstrain,coordCstsOut,templatePose,alns[1],fastaSequenceOP->sequence(),only_res_out);
+		caAtomsToConstrain = removeConstraintsNearGap(caAtomsToConstrainAll,alns[1],nResFromGapExclude);
+		if(caAtomsToConstrain.size()>minNumCoordCsts) //if there are <= 3 coordinate constraints then coordinate constraints are not useful.
+			output_coordCsts(caAtomsToConstrain,coordCstsOut,templatePose,alns[1],fastaSequenceOP->sequence(),only_res_out);
 		location_aln++;
 	}
 }

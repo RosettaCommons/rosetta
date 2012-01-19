@@ -159,7 +159,7 @@ int main( int argc, char * argv [] ) {
 	using namespace core::scoring::constraints;
  	using utility::file_basename;
 	option.add (minimalCstRelax::coordinate_cst_gap, "gap between residues with a coordinate constraint").def(4);
-	option.add (minimalCstRelax::relax_pdb, "should a final relax be completed").def(true);
+	option.add (minimalCstRelax::relax_pdb, "should a final relax be completed").def(false);
 	devel::init(argc, argv);
 	const Real COORDINATE_CST_WT = 1;
 	SilentFileData sfd;
