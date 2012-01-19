@@ -634,6 +634,7 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 		// this order might be the best to deal with chain breaks in the middle of secondary structure chunk
 		secondary_structure_chunks_this_ss = extract_secondary_structure_chunks(pose, ss);
 		secondary_structure_chunks_this_ss = remove_small_gaps(secondary_structure_chunks_this_ss, gap_size);
+		secondary_structure_chunks_this_ss = split_by_resSeq(pose, secondary_structure_chunks_this_ss);
 		secondary_structure_chunks_this_ss = split_by_ca_ca_dist(pose, secondary_structure_chunks_this_ss, CA_CA_distance_cutoff);
 		if (ss == 'H') {
 			secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk_helix);

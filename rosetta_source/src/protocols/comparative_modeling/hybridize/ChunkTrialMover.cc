@@ -211,7 +211,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 			align_chunk_.set_registry_shift(registry_shift);
 			align_chunk_.apply(pose);
             if (!align_chunk_.success()) {
-                
+                TR.Debug << "Warning! This chunk might not be aligned, jump number " << jump_number << std::endl;
             }
 		}
 	}

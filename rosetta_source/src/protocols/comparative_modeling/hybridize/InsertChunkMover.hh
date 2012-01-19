@@ -81,9 +81,14 @@ void steal_torsion_from_template(core::pose::Pose & pose);
 	
 void steal_torsion_and_bonds_from_template(core::pose::Pose & pose);
 	
-bool get_local_sequence_mapping(core::pose::Pose const & pose,
+bool get_local_sequence_mapping(core::pose::Pose & pose,
 								int registry_shift = 0,
-								Size MAX_TRIAL = 10 );
+								Size MAX_TRIAL = 100 );
+	
+void change_anchor(core::pose::Pose & pose,
+				   Size jump_number,
+				   Size new_anchor_seqpos);
+	void check_overlap(core::pose::Pose & pose);
 	
 void set_registry_shift(int registry_shift);
 	

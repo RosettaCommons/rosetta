@@ -328,10 +328,13 @@ void HybridizeProtocol::add_template(
 	dssp_obj.insert_ss_into_pose( *template_pose );
 	
 	// find ss chunks in template
-	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose); 
+	//protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose); 
+	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
+	TR.Debug << "Chunks from template\n" << chunks << std::endl;
 
 	// break templates into contigs
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose); 
+	TR.Debug << "Contigs from template\n" << contigs << std::endl;
 
 	template_fn_.push_back(template_fn);
 	templates_.push_back(template_pose);
@@ -355,20 +358,29 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 		std::istringstream str_stream(line);
 		std::string template_fn;
 		std::string cst_fn;
-		core::Size cluster_id;
-		core::Real weight;
-		str_stream >> template_fn >> cst_fn >> cluster_id >> weight;
-		TR << template_fn << " " << cst_fn << " " << cluster_id << " " << weight << std::endl;
+		core::Size cluster_id(0);
+		core::Real weight(1.);
+		if (!str_stream.eof()) {
+			str_stream >> template_fn;
+			if (template_fn.empty()) continue;
+			if (template_fn[0] == '#') continue;
 
-		std::string cst_reses_str;
-		utility::vector1<core::Size> cst_reses;
-		if ( str_stream >> cst_reses_str ) {
-			std::vector<std::string> cst_reses_parsed = utility::string_split( cst_reses_str , ',' ) ;
-			for (int i=0; i< cst_reses_parsed.size(); ++i ) {
-				cst_reses.push_back( (core::Size) std::atoi( cst_reses_parsed[i].c_str() ) );
+			if (!str_stream.eof()) str_stream >> cst_fn;
+			if (!str_stream.eof()) str_stream >> cluster_id;
+			if (!str_stream.eof()) str_stream >> weight;
+		
+			TR << template_fn << " " << cst_fn << " " << cluster_id << " " << weight << std::endl;
+			
+			std::string cst_reses_str;
+			utility::vector1<core::Size> cst_reses;
+			if ( str_stream >> cst_reses_str ) {
+				std::vector<std::string> cst_reses_parsed = utility::string_split( cst_reses_str , ',' ) ;
+				for (int i=0; i< cst_reses_parsed.size(); ++i ) {
+					cst_reses.push_back( (core::Size) std::atoi( cst_reses_parsed[i].c_str() ) );
+				}
 			}
+			add_template(template_fn, cst_fn, weight, cluster_id, cst_reses);
 		}
-		add_template(template_fn, cst_fn, weight, cluster_id, cst_reses);
 	}
 	f_stream.close();
 }
@@ -461,7 +473,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	// apply constraints
 	core::scoring::constraints::ConstraintSetOP constraint_set;
 	std::string cst_fn = template_cst_fn_[initial_template_index];
-	if (!cst_fn.empty()) {
+	if (!cst_fn.empty() && cst_fn != "NONE") {
 		constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_fn, new ConstraintSet, pose );
 	}
 	pose.constraint_set( constraint_set );
@@ -493,7 +505,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
 
 	//pose.dump_pdb( "after_stage1.pdb" );
-
+	
 	// cartesian fragment hybridize
 	pose.constraint_set( constraint_set );  //reset constraints
 	CartesianHybridizeOP cart_hybridize ( new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_ ) );

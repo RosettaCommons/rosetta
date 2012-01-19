@@ -373,6 +373,10 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 		for (Size j=seqpos_start_target; j<=seqpos_stop_target; ++j) template_mask[j] = true;
 	}
+	TR.Debug << "Chunks of initial template: " << initial_template_index_ << std::endl;
+	TR.Debug << template_chunks_[initial_template_index_] << std::endl;
+	TR.Debug << "Chunks from initial template: " << std::endl;
+	TR.Debug << my_chunks << std::endl;
 
 	// (b) probabilistically sampled chunks from all other templates _outside_ these residues
 	utility::vector1< std::pair< core::Real, protocols::loops::Loop > >  wted_insertions_to_consider;
@@ -398,7 +402,8 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	}
 
 	// (c) randomly shuffle, then add each with given prob
-	TR << "Chunks from template: " << my_chunks << std::endl;
+	TR.Debug << "Chunks from all template: " << std::endl;
+	TR.Debug << my_chunks << std::endl;
 	std::random_shuffle ( wted_insertions_to_consider.begin(), wted_insertions_to_consider.end() );
 	for (int i=1; i<=wted_insertions_to_consider.size(); ++i) {
 		// ensure the insert is still valid
@@ -417,6 +422,8 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 		}
 	}
 	my_chunks.sequential_order();
+	TR << "Chunks used for foldtree setup: " << std::endl;
+	TR << my_chunks << std::endl;
 
 	HybridizeFoldtreeDynamic foldtree_mover;
 	foldtree_mover.initialize(pose, my_chunks);
@@ -474,13 +481,17 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops
 	utility::vector1< core::Real > residue_weights(pose.total_residue());
 	protocols::loops::Loops renumbered_template_chunks = renumber_template_chunks(
 		template_contigs_[initial_template_index_], template_poses_[initial_template_index_]);
-
+	TR.Debug << "Insert fragment for these residues:";
 	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
-		if (! renumbered_template_chunks.has(ires) )
+		if (! renumbered_template_chunks.has(ires) ) {
 			residue_weights[ires] = 1.0;
-		else
+			TR.Debug << " " << ires;
+		}
+		else {
 			residue_weights[ires] = 0.0;
+		}
 	}
+	TR.Debug << std::endl;
 	return residue_weights;
 }
 
@@ -507,7 +518,9 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	initialize_chunk_mover.set_template(initial_template_index_);
 	initialize_chunk_mover.apply(pose);
 	translate_virt_to_CoM(pose);
-
+	
+	//pose.dump_pdb("after_init.pdb");
+	
 	use_random_template = true;
 	Size max_registry_shift = option[cm::hybridize::max_registry_shift]();
 	ChunkTrialMoverOP random_sample_chunk_mover(
@@ -519,6 +532,18 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		new WeightedFragmentTrialMover(frag_libs_, residue_weights)
 	);
 	
+	// just fragment mover
+	(*scorefxn_)(pose);
+	protocols::moves::MonteCarloOP mc_frag = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
+	for (Size i = 1; i<= 2000; ++i) {
+		fragment_trial_mover->apply(pose);
+		(*scorefxn_)(pose);
+		mc_frag->boltzmann(pose);
+	}
+	mc_frag->recover_low(pose);
+	
+	//utility_exit_with_message("debugging");
+
 	for (Size i=1;i<=4;++i) {
 		if (i==3) scorefxn_->set_weight( core::scoring::linear_chainbreak, 0.5 );
 		if (i==4) scorefxn_->set_weight( core::scoring::linear_chainbreak, 2.0 );
