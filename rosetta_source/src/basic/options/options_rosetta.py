@@ -3134,7 +3134,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'start_models_only',   'Boolean',    desc='Make starting models only!', default='false' ),
 		Option(
 			'aln_format', 'String', legal = ['grishin','general'],
-			default='general'
+			default='grishin'
 		),
 		Option(
 			'recover_side_chains', 'Boolean', desc='recover side-chains',

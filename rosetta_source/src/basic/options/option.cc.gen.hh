@@ -1531,7 +1531,7 @@ option.add( basic::options::OptionKeys::cm::sanitize::num_fragments, "Use the to
 option.add( basic::options::OptionKeys::cm::sanitize::cst_weight_pair, "atom_pair_constraint weight" ).def(1.0);
 option.add( basic::options::OptionKeys::cm::sanitize::cst_weight_coord, "coordinate_constraint weight" ).def(1.0);
 option.add( basic::options::OptionKeys::cm::start_models_only, "Make starting models only!" ).def(false);
-option.add( basic::options::OptionKeys::cm::aln_format, "No description" ).legal("grishin").legal("general").def("general");
+option.add( basic::options::OptionKeys::cm::aln_format, "No description" ).legal("grishin").legal("general").def("grishin");
 option.add( basic::options::OptionKeys::cm::recover_side_chains, "recover side-chains" ).def(false);
 option.add( basic::options::OptionKeys::cm::steal_extra_residues, "list of template extra residues (ie ligands) to add to query pose in comparative modeling" );
 option.add( basic::options::OptionKeys::cm::loop_mover, "No description" ).legal("quick_ccd").legal("quick_ccd_moves").legal("perturb_ccd").legal("perturb_kic").legal("sdwindow").def("quick_ccd");
