@@ -145,15 +145,14 @@ make_symmetric_fibril(
     pose::Pose monomer_pose;
 		core::import_pose::pose_from_pdb( monomer_pose, option[ in::file::native ]().name() );
     protocols::loops::Loops loop1, loop2;
-		if(  option[ OptionKeys::loops::loop_file ].user() ) {
-			std::string loop_file ( option[ OptionKeys::loops::loop_file ].name() ) ;
-			loop1.read_loop_file( loop_file );
-		} else {
+    bool default_loop_file_is_present = option[ OptionKeys::loops::loop_file ].user();
+    loop1 = protocols::loops::Loops( default_loop_file_is_present );
+		if(  !default_loop_file_is_present ) {
 			//make for monomer_pose
 			loop1.push_back( protocols::loops::Loop( 1, monomer_pose.total_residue(), 0,  0.0, false) );
 		}
 		if( option[ OptionKeys::loops::extended_loop_file ].user() ) {
-			loop2.read_loop_file( option[ OptionKeys::loops::extended_loop_file ]() );
+			loop2 = protocols::loops::Loops( option[ OptionKeys::loops::extended_loop_file ]() );
 		} else {
 			loop2 = loop1;
 		}

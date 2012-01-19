@@ -291,7 +291,7 @@ public:
 		//setup loop
 		std::set< core::Size > loop_posns;
 		if ( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].user() ) {
-			loop_ = *(protocols::loops::get_loops_from_file().begin());
+			loop_ = *(protocols::loops::Loops( true ).begin());
 			TR << "loop " <<  loop_ << std::endl;
 			//set up interface-plus-neighbors-positions operation
 			for (core::Size j(loop_.start()), end(loop_.stop()); j <= end; ++j){

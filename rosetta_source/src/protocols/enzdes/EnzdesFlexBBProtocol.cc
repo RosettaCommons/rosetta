@@ -589,14 +589,12 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 	//is there a regular loops file?
 	else if( basic::options::option[basic::options::OptionKeys::loops::loop_file].user() ){
 
-		std::string filename = loops::get_loop_file_name();
-		tr << "reading information from loops file " << filename << ": loops are " ;
+        // we're hijacking the loop file reader
+		loops::Loops loops_helper( true );
 
-		// we're hijacking the loop file reader
-		loops::Loops loops_helper;
+		tr << "reading information from loops file " << loops_helper.loop_file_name() << ": loops are " ;
 
-		loops_helper.read_loop_file( filename );
-
+		
 		for( utility::vector1< loops::Loop >::const_iterator lit = loops_helper.v_begin(); lit != loops_helper.v_end(); ++lit){
 			no_flex_regions++;
 			core::Size lstart( lit->start() ), lstop( lit->stop() );

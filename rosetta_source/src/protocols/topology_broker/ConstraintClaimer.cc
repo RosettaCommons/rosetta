@@ -147,8 +147,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) {
 	std::string const new_sequence ( pose.annotated_sequence( true ) );
 	if ( bCmdFlag_ && option[ OptionKeys::constraints::combine_exclude_region ].user() && combine_exclude_res_.size() == 0 && sequence_ != new_sequence ) {
 		std::string const file( option[ OptionKeys::constraints::combine_exclude_region ]() );
-		loops::Loops rigid_core;
-		rigid_core.read_loop_file( file, false /*no strict looprlx checking*/, "RIGID" );
+		loops::Loops rigid_core( file, false /*no strict looprlx checking*/, "RIGID" );
 		combine_exclude_res_.resize( pose.total_residue(), false );
 		rigid_core.transfer_to_residue_vector( combine_exclude_res_, true );
 	}

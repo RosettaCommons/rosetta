@@ -63,6 +63,8 @@ public:
     //copy constructor
 	Loops( const Loops & src );
     
+    Loops( bool const read_loops_file, bool const strict_looprelax_checks = true, std::string const & token = "LOOP" );
+    Loops( std::string filename, bool const strict_looprelax_checks = true, std::string const & token = "LOOP" );
     // assignment operator
 	Loops & operator =( Loops const & src );
     
@@ -70,18 +72,12 @@ public:
     ~Loops();
     
 	friend std::ostream & operator<<( std::ostream & os, const Loops & loops );
+    
+    void read_loops_options();
 
-	void read_loop_file(
-		std::string filename,
-		bool strict_looprelax_checks = true,
-		std::string token = "LOOP"
-	);
-	void read_stream_to_END(
-    std::istream &is,
-		bool strict_looprelax_checks,
-		std::string filename, /*for error msg */
-		std::string token = "LOOP"
-	);
+    // I kind of wish this method was private
+	void read_stream_to_END( std::istream & is );
+    
 	void
 	write_loops_to_file(
 		std::string const & filename,
@@ -236,6 +232,15 @@ public:
 		core::Real mag_left,
 		core::Real mag_right
 	);
+    
+    std::string const & loop_file_name();
+    void set_loop_file_name_and_reset( std::string const & loop_filename );
+    
+    bool strict_looprelax_checks();
+    void set_strict_looprelax_checks( bool const check );
+    
+    std::string const & file_reading_token();
+    void set_file_reading_token( std::string const & token );
 
     /// @brief Computes the center of mass of the Ca atoms specified by this
     /// instance, writing the result to <center>. Assumes there is no missing
@@ -263,12 +268,21 @@ public:
 	bool operator!=( Loops const& other ) const;
 
 private:
+    void init(
+        LoopList const & loops_in,
+        bool const read_loop_file_from_options = false,
+        bool const strict_looprelax_checks = true,
+        std::string const & token = "LOOP",
+        std::string const & passed_in_filename = ""
+    );
+
+    void read_loop_file();
+    
+    bool strict_looprelax_checks_on_file_reads_;
 	LoopList loops_;
+    std::string loop_filename_;
+    std::string file_reading_token_;
 }; // Loops
-
-Loops get_loops_from_file();
-std::string get_loop_file_name();
-
 
 } //namespace loops
 } //namespace protocols

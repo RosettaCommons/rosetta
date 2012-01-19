@@ -89,12 +89,16 @@ bool FibrilModelingClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "sequence_shift" ) {
 		is >> sequence_shift_ ;
 	} else if ( tag == "REGION" ) {
-		rigid_core_.read_stream_to_END( is, false /*no strict checking */, type(), "RIGID" );
+		rigid_core_.set_strict_looprelax_checks( false /*no strict checking */ );
+        rigid_core_.set_file_reading_token( "RIGID" );
+        rigid_core_.read_stream_to_END( is );
 		input_rigid_core_ = rigid_core_;
 		input_rigid_core_.make_sequence_shift(sequence_shift_);
 	} else if ( tag == "INPUT_REGION" ) {
 		input_rigid_core_.clear();
-		input_rigid_core_.read_stream_to_END( is, false /*no strict checking */, type(), "RIGID" );
+        input_rigid_core_.set_strict_looprelax_checks( false /*no strict checking */ );
+        input_rigid_core_.set_file_reading_token( "RIGID" );
+		input_rigid_core_.read_stream_to_END( is );
 	} else return Parent::read_tag( tag, is );
 	return true;
 }

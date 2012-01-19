@@ -130,10 +130,10 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
   }
   loops::Loops flexible_part( rigid_core.invert( pose.total_residue() ) );
 
-  loops::Loops mmloops;
-  if( option[ OptionKeys::loops::mm_loop_file ].user() ) {
-    mmloops.read_loop_file( option[ OptionKeys::loops::mm_loop_file ]() );
-  }else{
+  bool loop_file_is_present = option[ OptionKeys::loops::mm_loop_file ].user();  
+  loops::Loops mmloops( loop_file_is_present ) ;
+  
+  if( !loop_file_is_present ) {
     mmloops = flexible_part;
   }
 

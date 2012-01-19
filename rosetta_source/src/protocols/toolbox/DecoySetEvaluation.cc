@@ -459,7 +459,7 @@ using namespace basic::options::OptionKeys;
 	Real const grow_fact_lb( option[ dist_cst::grow_fact_lb ] );
 	loops::Loops rigid;
 	if ( option[ dist_cst::excl_rigid ].user() ) {
-		rigid.read_loop_file( option[ dist_cst::excl_rigid ](), false, "RIGID" );
+		rigid = loops::Loops( option[ dist_cst::excl_rigid ](), false, "RIGID" );
 	}
 	//	utility::vector1< core::Real > dist_sorted;
 	for ( Size i = 1; i <= n_atoms(); i++ ) {

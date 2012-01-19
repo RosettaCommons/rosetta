@@ -459,7 +459,7 @@ CanonicalSamplingMover::apply(Pose & pose){
   loops::Loops loops;
   if( option[basic::options::OptionKeys::loops::loop_file].user() ) {
     std::string loopfile = option[basic::options::OptionKeys::loops::loop_file]()[1];
-    loops.read_loop_file( loopfile );
+    loops = loops::Loops( loopfile );
   }
   //add constraints if specified
   if( option[ constraints::cst_file ].user() ) {

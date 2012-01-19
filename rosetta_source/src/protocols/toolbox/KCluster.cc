@@ -186,7 +186,7 @@ nfile_(0)
     using namespace basic::options::OptionKeys;
 		using namespace protocols::loops;
 
-    Loops loops(get_loops_from_file());
+    Loops loops( true );
     natom_ = loops.loop_size();
     if (natom_>0)
     {

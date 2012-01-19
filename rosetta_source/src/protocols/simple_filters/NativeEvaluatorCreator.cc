@@ -121,8 +121,7 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 		if ( !option[ in::file::native ].user() ) utility_exit_with_message( "need to specify in:file:native together with rmsd_select " );
 
 	  for ( Size ct = 1; ct <= rmsd_core.size(); ct ++ ) {
-			loops::Loops core;
-			core.read_loop_file( rmsd_core[ ct ], false, "RIGID" );
+			loops::Loops core( rmsd_core[ ct ], false, "RIGID" );
 			utility::vector1< Size> selection;
 			core.get_residues( selection );
 			if ( native_pose ) eval.add_evaluation( new simple_filters::SelectRmsdEvaluator( native_pose, selection, rmsd_core[ ct ].base() ) );

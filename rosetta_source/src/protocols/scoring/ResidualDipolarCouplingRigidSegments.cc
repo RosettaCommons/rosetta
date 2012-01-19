@@ -218,7 +218,7 @@ extern ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(co
 
 
 	void ResidualDipolarCouplingRigidSegments::read_RDC_segment_file(std::string const& filename){
-		segment_definitions_.read_loop_file(filename, false,"RDC_SEGMENT");
+		segment_definitions_ = protocols::loops::Loops(filename, false,"RDC_SEGMENT");
 	}
 
 	core::scoring::ResidualDipolarCoupling::RDC_lines ResidualDipolarCouplingRigidSegments::read_RDCs_from_cmdline()const {

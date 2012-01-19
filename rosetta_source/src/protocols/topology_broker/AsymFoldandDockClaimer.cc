@@ -108,8 +108,7 @@ bool AsymFoldandDockClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "loop_file" || tag == "LOOP_FILE" ) {
 		std::string file;
 		is >> file;
-		protocols::loops::Loops loop_defs;
-		loop_defs.read_loop_file( file, false /*no strict looprlx checking*/, "LOOP" );  // <==
+		protocols::loops::Loops loop_defs( file, false /*no strict looprlx checking*/ ); // <==
 //		loop_defs = loop_defs.invert( input_pose_.total_residue() );
 		tr << "Flexible residues: " << input_pose_.total_residue() << std::endl << loop_defs << std::endl;
 		moving_res_ = loop_defs;

@@ -107,14 +107,16 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 
 
 	// make decision about what loops may be rebuilt
-	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
-	// we need this for the rama term
+    bool loop_file_is_present = option[ OptionKeys::loops::loop_file].user();
+    // read in loops from a file if given
+	protocols::loops::LoopsOP loops = new protocols::loops::Loops( loop_file_is_present );
+	
+    // we need this for the rama term
 	basic::options::option[ basic::options::OptionKeys::loops::nonpivot_torsion_sampling ].value(true);
-	if( option[ OptionKeys::loops::loop_file].user() ){
-		// read in loops from a file if given
-		std::string loop_filename( protocols::loops::get_loop_file_name() );
-		loops->read_loop_file( loop_filename );
-	}else{ protocols::loops::loopfinder( pose, *loops ); }
+	if( !loop_file_is_present )
+    {
+        protocols::loops::loopfinder( pose, *loops );
+    }
 
 	// set up variables to control designrelaxcycles
 	core::Size designrelaxcycles(1);

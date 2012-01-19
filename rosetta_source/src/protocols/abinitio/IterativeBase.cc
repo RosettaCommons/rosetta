@@ -289,7 +289,7 @@ IterativeBase::IterativeBase(std::string name )
 
 
 	if (  option[ OptionKeys::iterative::force_scored_region ].user() ) {
-		scored_core_.read_loop_file( option[ OptionKeys::iterative::force_scored_region ](), false, "RIGID" );
+		scored_core_= loops::Loops( option[ OptionKeys::iterative::force_scored_region ](), false, "RIGID" );
 	}
 
 	mem_tr << "setup cen-scorefxn" << std::endl;
@@ -962,7 +962,7 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 	if ( stage_ >= STAGE2_RESAMPLING && !scored_core_initialized_
 		&& ( option[ OptionKeys::iterative::scored_ss_core ]() || option[ OptionKeys::iterative::force_scored_region ].user() ) ) {
 		if (  option[ OptionKeys::iterative::force_scored_region ].user() ) {
-			scored_core_.read_loop_file( option[ OptionKeys::iterative::force_scored_region ](), false, "RIGID" );
+			scored_core_ = loops::Loops( option[ OptionKeys::iterative::force_scored_region ](), false, "RIGID" );
 		} else {
 			tr.Debug << "use refined secondary structure information to select scored_core " << std::endl;
 			// obtain secondary structure from fragments
@@ -1639,7 +1639,9 @@ void IterativeBase::restore_status( std::istream& is ) {
 	compute_cores();
 	is >> tag;
 	if ( is.good() && tag == "SCORED_CORE:" ) {
-		scored_core_.read_stream_to_END( is, false, name()+"STATUS file", "RIGID" );
+		scored_core_.set_strict_looprelax_checks( false );
+        scored_core_.set_file_reading_token( "RIGID" );
+        scored_core_.read_stream_to_END( is );
 	  scored_core_initialized_ = true;
 	}
 	is >> tag;

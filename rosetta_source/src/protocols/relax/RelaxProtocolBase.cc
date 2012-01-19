@@ -354,7 +354,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 
 	protocols::loops::Loops coordconstraint_segments_;
 	if( constrain_relax_segments_ ){
-		coordconstraint_segments_.read_loop_file(  option[ OptionKeys::relax::constrain_relax_segments ]() );
+		coordconstraint_segments_ = protocols::loops::Loops(  option[ OptionKeys::relax::constrain_relax_segments ]() );
 	}else{
 		coordconstraint_segments_.add_loop( protocols::loops::Loop( 1, pose.total_residue(), 1 ) );
 	}

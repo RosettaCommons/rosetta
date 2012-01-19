@@ -136,7 +136,7 @@ void MedalMover::compute_per_residue_probabilities(
 }
 
 void MedalMover::decompose_structure(const core::pose::Pose& pose,
-                                     protocols::loops::Loops* chunks) const {
+                                     protocols::loops::LoopsOP & chunks) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   assert(chunks);
@@ -148,7 +148,7 @@ void MedalMover::decompose_structure(const core::pose::Pose& pose,
   }
 
   // Override automatic chunk selection
-  chunks->read_loop_file(option[OptionKeys::nonlocal::chunks]());
+  chunks = new protocols::loops::Loops( option[OptionKeys::nonlocal::chunks]() );
 }
 
 MedalMover::MedalMover() {
@@ -193,16 +193,16 @@ void MedalMover::apply(core::pose::Pose& pose) {
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
 
   // Decompose the structure into chunks
-  Loops chunks;
-  decompose_structure(pose, &chunks);
+  loops::LoopsOP chunks;
+  decompose_structure(pose, chunks);
 
   StarTreeBuilder builder;
-  builder.set_up(chunks, &pose);
+  builder.set_up(*chunks, &pose);
   TR << pose.fold_tree() << std::endl;
 
   // Compute per-residue sampling probabilities
   Probabilities probs;
-  compute_per_residue_probabilities(num_residues, job->alignment(), chunks, pose.fold_tree(), *fragments_sm_, &probs);
+  compute_per_residue_probabilities(num_residues, job->alignment(), *chunks, pose.fold_tree(), *fragments_sm_, &probs);
 
   // Alternating rigid body and fragment insertion moves with increasing linear_chainbreak weight.
   // Early stages select fragments uniformly from the top 25, later stages select fragments according

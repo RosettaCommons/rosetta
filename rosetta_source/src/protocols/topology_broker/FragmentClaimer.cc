@@ -225,11 +225,13 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& 
 
 bool FragmentClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "REGION" ) {
-		region_.read_stream_to_END( is, false /*no strict checking */, type(), "RIGID" );
+        region_.set_strict_looprelax_checks( false /*no strict checking */ );
+        region_.set_file_reading_token( "RIGID" );
+		region_.read_stream_to_END( is );
 	} else if ( tag == "region_file" || tag == "REGION_FILE" ) {
 		std::string file;
 		is >> file;
-		region_.read_loop_file( file, false /*no strict looprlx checking*/, "RIGID" );  // <==
+		region_ = loops::Loops( file, false /*no strict looprlx checking*/, "RIGID" );  // <==
 	} else if ( tag == "SEQUENCE_REGION" ) {
 		std::string label;
 		is >> label;

@@ -217,8 +217,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose
 	anchor_ = new protocols::anchored_design::Anchor(pose);
 
 	// read loops file
-	protocols::loops::Loops loops;
-	loops_.read_loop_file( loop_file_ );
+    loops_ = protocols::loops::Loops( loop_file_ );
 	//we do not need to check if the anchor and loop are compatible here; pick_new_cutpoints will take care of it later
 
 	//this will overwrite anchor_ and loops_ with modified versions of themselves, and fill in movemaps, etc

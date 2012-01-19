@@ -130,8 +130,7 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 				select_string = option[ OptionKeys::evaluation::extra_score_select ]()[ ct ];
 			}
 			if ( select_string != "SELECT_ALL" ) {
-				loops::Loops core;
-				core.read_loop_file( select_string, false, "RIGID" );
+				loops::Loops core( select_string, false, "RIGID" );
 				utility::vector1< Size> selection;
 				core.get_residues( selection );
 				eval.add_evaluation( new simple_filters::TruncatedScoreEvaluator( tag, selection, scfxn ) );

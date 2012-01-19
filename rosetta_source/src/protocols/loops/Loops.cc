@@ -51,37 +51,66 @@ using namespace ObjexxFCL;
 static basic::Tracer tr("loops");
 static numeric::random::RandomGenerator RG(430);  // <- Magic number, do not change it (and dont try and use it anywhere else)
 
-std::string get_loop_file_name() {
-	using namespace basic::options;
-	if ( option[ OptionKeys::loops::loop_file ].user() ) {
-		utility::vector1< std::string>  loop_files = option[ OptionKeys::loops::loop_file]();
-		if( loop_files.size() == 1 ) return loop_files[1];
-		core::Size choice=core::Size( RG.random_range(1,(loop_files.size())  ));
-		tr.Error << "Loop choice: " << loop_files[choice] << "  " << choice << std::endl;
-		return loop_files[choice];
-	}
-	return std::string("");
+Loops::Loops() : utility::pointer::ReferenceCount()
+{
+    init( LoopList() );
 }
 
-Loops get_loops_from_file() {
-	using namespace basic::options;
-
-	Loops my_loops;
-
-	if ( option[ OptionKeys::loops::loop_file ].user() ) {
-		my_loops.read_loop_file( get_loop_file_name() );
-		return my_loops;
-	}
-
-	return Loops(); // return empty loop definition if neither option is defined.
+Loops::Loops( const Loops & src ) : utility::pointer::ReferenceCount()
+{
+    init( src.loops() );
 }
 
-Loops::Loops(){};
+Loops::Loops( bool const read_loops_file, bool const strict_looprelax_checks, std::string const & token ): utility::pointer::ReferenceCount() 
+{
+    //read_loop_file( get_loop_file_name() );
+    init( LoopList(), read_loops_file, strict_looprelax_checks, token );
+}
 
-Loops::Loops( const Loops & src ): utility::pointer::ReferenceCount(), loops_(src.loops_) {}
-
+Loops::Loops( std::string filename, bool const strict_looprelax_checks, std::string const & token )
+{
+    init( LoopList(), false, strict_looprelax_checks, token, filename );
+}
 // destructor
 Loops::~Loops(){}
+
+void Loops::init( LoopList const & loops_in, bool const read_loop_file_from_options, bool const strict_looprelax_checks, std::string const & token, std::string const & passed_in_filename )
+{
+    loops_ = loops_in;
+    strict_looprelax_checks_on_file_reads_ = strict_looprelax_checks;
+    file_reading_token_ = token;
+    
+    if ( read_loop_file_from_options )
+    {
+        read_loops_options();
+        return;
+    }
+    if ( passed_in_filename.compare( "" ) != 0 )
+    {
+        set_loop_file_name_and_reset( passed_in_filename );
+        return;
+    }
+    loop_filename_ = "";
+}
+
+void Loops::read_loops_options()
+{
+    using namespace basic::options;
+    if ( option[ OptionKeys::loops::loop_file ].user() ) {
+		utility::vector1< std::string>  loop_files = option[ OptionKeys::loops::loop_file]();
+		if( loop_files.size() == 1 )
+        {
+            set_loop_file_name_and_reset( loop_files[ 1 ] );
+            return;
+        }
+		core::Size choice = core::Size( RG.random_range(1,( loop_files.size() ) ));
+        // Why is this tr.Error and not like... tr.Info?
+		tr.Error << "Loop choice: " << loop_files[ choice ] << "  " << choice << std::endl;
+		set_loop_file_name_and_reset( loop_files[ choice ] );
+        return;
+	}
+	loop_filename_ = "";
+}
 
 bool Loops::empty() const { return num_loop() == 0; }
 core::Size Loops::num_loop() const { return loops_.size(); }
@@ -417,7 +446,7 @@ Loops::clear(){
 
 Loops::LoopList const & Loops::loops() const { return loops_; }
 
-void Loops::read_stream_to_END( std::istream &is, bool strict_looprelax_checks, std::string filename /*for error reports*/, std::string LOOP_token ) {
+void Loops::read_stream_to_END( std::istream & is ) {
 	std::string line;
 	int linecount=0;
 	int errcount=50; //if we reach 0 we bail!
@@ -427,12 +456,12 @@ void Loops::read_stream_to_END( std::istream &is, bool strict_looprelax_checks, 
 
 		if( tokens.size() > 0 ) {
 			if ( tokens[0].substr(0,3) == "END" ) break;
-			if ( tokens[0] == LOOP_token ) {
+			if ( tokens[0] == file_reading_token() ) {
 				if ( tokens.size() < 3 ) {
-					utility_exit_with_message( "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Minimum of 3 tokens necessary (begin, end, cutpoint)"  );
+					utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Minimum of 3 tokens necessary (begin, end, cutpoint)"  );
 				}
 				if ( tokens.size() > 6 ) {
-					utility_exit_with_message( "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Maximum of 6 tokens allowed (LOOP begin end cutpoint skiprate extended)"  );
+					utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Maximum of 6 tokens allowed (LOOP begin end cutpoint skiprate extended)"  );
 				}
 				core::Size start_res = (core::Size) atoi(tokens[1].c_str());
 				core::Size end_res   = (core::Size) atoi(tokens[2].c_str());
@@ -447,11 +476,11 @@ void Loops::read_stream_to_END( std::istream &is, bool strict_looprelax_checks, 
 					skip_rate = atof(tokens[4].c_str());
 				if (tokens.size() > 5){
 					if( tokens[5] == "X" ){
-						tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
+						tr.Error << "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
 						extend_loop = true;
 						if ( errcount > 0 ) errcount--;
 						else {
-							utility_exit_with_message( "too many errors in loop-file " + filename );
+							utility_exit_with_message( "too many errors in loop-file " + loop_file_name() );
 						}
 					}else{
 						int extended_token = atoi(tokens[5].c_str());
@@ -459,18 +488,18 @@ void Loops::read_stream_to_END( std::istream &is, bool strict_looprelax_checks, 
 						else                      extend_loop = true;
 					}
 				}
-				if ( start_res > end_res || ( start_res==end_res && strict_looprelax_checks ) ) {
-					utility_exit_with_message( "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Invalid loop definition (start residue " + ( strict_looprelax_checks ? ">=" : ">" )  + " end residue) - ERROR"  );
+				if ( start_res > end_res || ( start_res==end_res && strict_looprelax_checks() ) ) {
+					utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Invalid loop definition (start residue " + ( strict_looprelax_checks() ? ">=" : ">" )  + " end residue) - ERROR"  );
 				} else {
 					loops_.push_back( Loop(start_res, end_res, cutpt,  skip_rate, extend_loop) );
 				}
 			} else if ( tokens[0][0] != '#' ) {
 				if (tokens.size() >= 2) {
-					tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "DEPRECATED r++ style loopfile" << std::endl;
+					tr.Error << "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "DEPRECATED r++ style loopfile" << std::endl;
 
 					if ( errcount>0 ) errcount--;
 					else {
-						utility_exit_with_message( "too many errors in loop-file " + filename );
+						utility_exit_with_message( "too many errors in loop-file " + loop_file_name() );
 					}
 
 					core::Size start_res = (core::Size) atoi(tokens[0].c_str());
@@ -484,7 +513,7 @@ void Loops::read_stream_to_END( std::istream &is, bool strict_looprelax_checks, 
 						skip_rate = atof(tokens[3].c_str());
 					if (tokens.size() > 4){
 						if( tokens[4] == "X" ){
-							tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
+							tr.Error << "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
 							extend_loop = true;
 						} else {
 							int extended_token = atoi(tokens[4].c_str());
@@ -494,8 +523,8 @@ void Loops::read_stream_to_END( std::istream &is, bool strict_looprelax_checks, 
 					}
 
 
-					if ( start_res > end_res || ( start_res==end_res && strict_looprelax_checks ) ) {
-						utility_exit_with_message( "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Invalid loop definition (start residue " + ( strict_looprelax_checks ? ">=" : ">" ) + "end residue) - ERROR"  );
+					if ( start_res > end_res || ( start_res==end_res && strict_looprelax_checks() ) ) {
+						utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Invalid loop definition (start residue " + ( strict_looprelax_checks() ? ">=" : ">" ) + "end residue) - ERROR"  );
 					}
 
 					loops_.push_back( Loop(start_res, end_res, cutpt,  skip_rate, extend_loop) );
@@ -510,19 +539,16 @@ void Loops::read_stream_to_END( std::istream &is, bool strict_looprelax_checks, 
 	std::sort( loops_.begin(), loops_.end(), Loop_lt() );
 }
 
-void Loops::read_loop_file(
-													 std::string filename,
-													 bool strict_looprelax_checks,
-													 std::string LOOP_token
-) {
+void Loops::read_loop_file()
+{
 	clear();
-	std::ifstream infile( filename.c_str() );
+	std::ifstream infile( loop_file_name().c_str() );
 
 	if (!infile.good()) {
-		utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + filename + "'" );
+		utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + loop_file_name() + "'" );
 	}
 
-	read_stream_to_END( infile, strict_looprelax_checks, filename, LOOP_token );
+	read_stream_to_END( infile );
 
 	tr.Warning << "LOOP formats were recently reconciled - with *some* backwards compatibility. Please check your definition files!" << std::endl;
 	tr.Warning << "Please check that this is what you intended to read in: " << std::endl;
@@ -783,6 +809,35 @@ void Loops::get_residues( utility::vector1< Size>& selection ) const {
 	for ( const_iterator it = loops_.begin(); it != loops_.end(); ++it ) {
 		it->get_residues( selection );
 	}
+}
+std::string const & Loops::loop_file_name()
+{
+    return loop_filename_; 
+}
+void Loops::set_loop_file_name_and_reset( std::string const & loop_filename )
+{
+    loop_filename_ = loop_filename;
+    read_loop_file();
+}
+
+bool Loops::strict_looprelax_checks()
+{
+    return strict_looprelax_checks_on_file_reads_;
+}
+
+void Loops::set_strict_looprelax_checks( bool const check )
+{
+    strict_looprelax_checks_on_file_reads_ = check;
+}
+
+std::string const & Loops::file_reading_token()
+{
+    return file_reading_token_;
+}
+
+void Loops::set_file_reading_token( std::string const & token )
+{
+    file_reading_token_ = token;
 }
 
 const Loop & Loops::operator[] ( core::Size const i ) const

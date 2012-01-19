@@ -177,7 +177,7 @@ KinematicControlOP LoopJumpFoldCst::new_kinematics( pose::Pose &pose ) {
 
   loops::Loops mmloops;
   if( option[ OptionKeys::loops::mm_loop_file ].user() ) {
-    mmloops.read_loop_file( option[ OptionKeys::loops::mm_loop_file ]() );
+    mmloops = loops::Loops( option[ OptionKeys::loops::mm_loop_file ]() );
   }else{
     mmloops = loops;
   }

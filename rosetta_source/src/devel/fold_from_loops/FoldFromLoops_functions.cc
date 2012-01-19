@@ -260,7 +260,7 @@ using namespace basic::options::OptionKeys;
 
 			std::string  clear_cst_file = option[ OptionKeys::fold_from_loops::clear_csts]();
 
-			clear_loops_seg.read_loop_file(clear_cst_file);
+			clear_loops_seg = protocols::loops::Loops(clear_cst_file);
 
 		}
 
@@ -359,7 +359,7 @@ using namespace basic::options::OptionKeys;
 
 		std::string  clear_cst_file = option[ OptionKeys::fold_from_loops::clear_csts]();
 
-		clear_loops_seg.read_loop_file(clear_cst_file);
+		clear_loops_seg = protocols::loops::Loops(clear_cst_file);
 
 	}
 

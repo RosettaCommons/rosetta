@@ -128,16 +128,17 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is ) {
 			file );
 		runtime_assert( input_pose_.is_fullatom() );
 	} else if ( tag == "REGION" ) {
-		rigid_core_.read_stream_to_END( is, false /*no strict checking */, type(), "RIGID" );
+		rigid_core_.set_strict_looprelax_checks( false /*no strict checking */ );
+        rigid_core_.set_file_reading_token( "RIGID" );
+        rigid_core_.read_stream_to_END( is );
 	} else if ( tag == "region_file" || tag == "REGION_FILE" ) {
 		std::string file;
 		is >> file;
-		rigid_core_.read_loop_file( file, false /*no strict looprlx checking*/, "RIGID" );  // <==
+		rigid_core_ = loops::Loops( file, false /*no strict looprlx checking*/, "RIGID" );  // <==
 	} else if ( tag == "loop_file" || tag == "LOOP_FILE" ) {
 		std::string file;
 		is >> file;
-		protocols::loops::Loops loop_defs;
-		loop_defs.read_loop_file( file, false /*no strict looprlx checking*/, "LOOP" );  // <==
+		protocols::loops::Loops loop_defs( file, false /*no strict looprlx checking*/, "LOOP" );  // <==
 		loop_defs = loop_defs.invert( input_pose_.total_residue() );
 		tr << "Rigid core: " << input_pose_.total_residue() << std::endl << loop_defs << std::endl;
 		rigid_core_ = loop_defs;

@@ -58,13 +58,13 @@ namespace nonlocal {
 
 static basic::Tracer TR("protocols.nonlocal.util");
 
-void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Loops* chunks) {
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   chunks_by_CA_CA_distance(pose, chunks, option[OptionKeys::rigid::max_ca_ca_dist]());
 }
 
-void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Loops* chunks, double threshold) {
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks, double threshold) {
   using core::Size;
   using core::id::NamedAtomID;
   using numeric::xyzVector;

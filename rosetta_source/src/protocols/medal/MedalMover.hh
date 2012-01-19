@@ -65,7 +65,7 @@ class MedalMover : public protocols::moves::Mover {
 
   /// @brief Partitions the structure into non-overlapping chunks
   void decompose_structure(const core::pose::Pose& pose,
-                           protocols::loops::Loops* chunks) const;
+                           protocols::loops::LoopsOP & chunks) const;
 
   /// @brief Configures a mover for biased fragment insertion
   protocols::moves::MoverOP create_fragment_mover(

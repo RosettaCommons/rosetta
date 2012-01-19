@@ -901,7 +901,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 		add_evaluation( run_time = new evaluation::TimeEvaluator ); //just don't use this in integration tests!
 	}
 
-	loops_in_ = protocols::loops::get_loops_from_file();
+	loops_in_ = protocols::loops::Loops( true );
 
 	// get input tags
 	SilentFileData sfd;
@@ -1499,7 +1499,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	if ( option[ OptionKeys::loopfcst::use_general_protocol ] ) {
 		// parse loops file Loops
 		if ( option[  OptionKeys::loops::loop_file ].user() ) {
-			loops_in_ = protocols::loops::get_loops_from_file();
+			loops_in_ = protocols::loops::Loops( true );
 		}
 		core::chemical::ResidueTypeSetCAP rsd_set;
 		// if full-atom load starting structure as full-atom to recover sidechains later
@@ -1570,9 +1570,8 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 
 		LoopJumpFoldCstOP controller;
 		if ( option[  OptionKeys::loops::extended_loop_file ].user() ) {
-			loops::Loops extended_loops_in;
 			std::string filename( option[ OptionKeys::loops::extended_loop_file ]().name() );
-			extended_loops_in.read_loop_file( filename );  // <== TODO: select these using density score
+            loops::Loops extended_loops_in( filename ); // <== TODO: select these using density score
 			extended_loops_in.verify_against( extended_pose );
 			KinematicAbinitioOP stage1_sampler = new KinematicAbinitio( *sampler );
 			sampler->bSkipStage1_ = true;

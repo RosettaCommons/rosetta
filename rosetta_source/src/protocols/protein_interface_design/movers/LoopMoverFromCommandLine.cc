@@ -160,8 +160,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 	using namespace protocols::loops;
 	core::pose::Pose native_pose = pose;
 	loops::set_secstruct_from_psipred_ss2( pose );
-	LoopsOP loops = new protocols::loops::Loops();
-	loops->read_loop_file(loop_file_name_);
+	LoopsOP loops = new protocols::loops::Loops( loop_file_name_ );
 	loops->verify_against(pose);
 	loops->auto_choose_cutpoints(pose);
 	if( loops->size() == 0)  {

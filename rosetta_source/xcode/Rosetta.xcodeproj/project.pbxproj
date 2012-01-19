@@ -1287,6 +1287,8 @@
 		AF13F4309E1DDF33053308BD /* COFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = DA4F1009C7910656D89AEC3E /* COFilter.cc */; };
 		E0AB5172840FCC5B9B3AFC2D /* CamShiftEvaluator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CA59FF44CCB91AD21086C /* CamShiftEvaluator.cc */; };
 		8F3B1EFDFD44762BC5A39757 /* CamShiftEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3BDFD87CAE6FB1B48372A702 /* CamShiftEvaluatorCreator.cc */; };
+		327DDACF2BA5A3AFF74A364F /* ChiWellRmsdEvaluator.cc in Sources */ = {isa = PBXBuildFile; fileRef = E21282D07D911355C17CA1B5 /* ChiWellRmsdEvaluator.cc */; };
+		9C0F200A305D64F50AAD0F8D /* ChiWellRmsdEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8C1E3E703DAF977ECE72C870 /* ChiWellRmsdEvaluatorCreator.cc */; };
 		592D44648C4F9A886BB3DAA6 /* ConservedPosMutationFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = B4DA536F595240882C55DFD7 /* ConservedPosMutationFilter.cc */; };
 		4C8458C0DCD724DC450347F0 /* ContactMapEvaluator.cc in Sources */ = {isa = PBXBuildFile; fileRef = F66A225C72D58F3D0CC3D47A /* ContactMapEvaluator.cc */; };
 		325BD97750B4FAF1951EA47A /* ContactMapEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = AA90E2B102BBC28C3477A26D /* ContactMapEvaluatorCreator.cc */; };
@@ -1591,6 +1593,8 @@
 		9AB81F71B61E41A097D8C33F /* ResidueConformationFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = B0F26252486AE42CD5E78CFA /* ResidueConformationFeaturesCreator.cc */; };
 		DA731B3654466D6FAF61184A /* ResidueFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5749EC5B3AACC1086A5D6405 /* ResidueFeatures.cc */; };
 		23D03BE3E1479AA8EAACC17B /* ResidueFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 42C69118C25DA3B19D4669D4 /* ResidueFeaturesCreator.cc */; };
+		62444A929DBD243D9860E7BF /* ResidueScoresFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3A648ADFD46ED4C3303CC6B5 /* ResidueScoresFeatures.cc */; };
+		6C2E84C56C0BCA5FA062AA8B /* ResidueScoresFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = B849498EA9965B9DB9C7E57D /* ResidueScoresFeaturesCreator.cc */; };
 		9F8638EFD7EBF821DE908A37 /* ResidueSecondaryStructureFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9A485B2E2C33F6CBA7823194 /* ResidueSecondaryStructureFeatures.cc */; };
 		88170F0CE4CC55C432D86431 /* ResidueSecondaryStructureFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 543AA53F234826287EAA1F61 /* ResidueSecondaryStructureFeaturesCreator.cc */; };
 		F96F2649FF493305605F68F3 /* ResidueTypesFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9F76F7C3E743E6CD346B073F /* ResidueTypesFeatures.cc */; };
@@ -10319,6 +10323,10 @@
 		0847B3B337043D6156A4AF39 /* CamShiftEvaluator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CamShiftEvaluator.hh; path = ../src/protocols/simple_filters/CamShiftEvaluator.hh; sourceTree = SOURCE_ROOT; };
 		3BDFD87CAE6FB1B48372A702 /* CamShiftEvaluatorCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CamShiftEvaluatorCreator.cc; path = ../src/protocols/simple_filters/CamShiftEvaluatorCreator.cc; sourceTree = SOURCE_ROOT; };
 		BE9888C57632148CC2C20BD1 /* CamShiftEvaluatorCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CamShiftEvaluatorCreator.hh; path = ../src/protocols/simple_filters/CamShiftEvaluatorCreator.hh; sourceTree = SOURCE_ROOT; };
+		E21282D07D911355C17CA1B5 /* ChiWellRmsdEvaluator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ChiWellRmsdEvaluator.cc; path = ../src/protocols/simple_filters/ChiWellRmsdEvaluator.cc; sourceTree = SOURCE_ROOT; };
+		AC98724A115BB306B2522AF4 /* ChiWellRmsdEvaluator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ChiWellRmsdEvaluator.hh; path = ../src/protocols/simple_filters/ChiWellRmsdEvaluator.hh; sourceTree = SOURCE_ROOT; };
+		8C1E3E703DAF977ECE72C870 /* ChiWellRmsdEvaluatorCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ChiWellRmsdEvaluatorCreator.cc; path = ../src/protocols/simple_filters/ChiWellRmsdEvaluatorCreator.cc; sourceTree = SOURCE_ROOT; };
+		A1A2E382AD2D4DB89206F8DE /* ChiWellRmsdEvaluatorCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ChiWellRmsdEvaluatorCreator.hh; path = ../src/protocols/simple_filters/ChiWellRmsdEvaluatorCreator.hh; sourceTree = SOURCE_ROOT; };
 		C84ADB5AE44212BF8AD944E5 /* ClashEvaluator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ClashEvaluator.hh; path = ../src/protocols/simple_filters/ClashEvaluator.hh; sourceTree = SOURCE_ROOT; };
 		B4DA536F595240882C55DFD7 /* ConservedPosMutationFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConservedPosMutationFilter.cc; path = ../src/protocols/simple_filters/ConservedPosMutationFilter.cc; sourceTree = SOURCE_ROOT; };
 		DE7EDC297FF83086F9D00FCF /* ConservedPosMutationFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ConservedPosMutationFilter.fwd.hh; path = ../src/protocols/simple_filters/ConservedPosMutationFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -11236,6 +11244,11 @@
 		D3B411442AEBA2EA676747F4 /* ResidueFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidueFeatures.hh; path = ../src/protocols/features/ResidueFeatures.hh; sourceTree = SOURCE_ROOT; };
 		42C69118C25DA3B19D4669D4 /* ResidueFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ResidueFeaturesCreator.cc; path = ../src/protocols/features/ResidueFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
 		758AF6F83A3ECAE2E976699D /* ResidueFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidueFeaturesCreator.hh; path = ../src/protocols/features/ResidueFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
+		3A648ADFD46ED4C3303CC6B5 /* ResidueScoresFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ResidueScoresFeatures.cc; path = ../src/protocols/features/ResidueScoresFeatures.cc; sourceTree = SOURCE_ROOT; };
+		79428D8337417E14F3CC2E1F /* ResidueScoresFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidueScoresFeatures.fwd.hh; path = ../src/protocols/features/ResidueScoresFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
+		B60005152EDAC66AC144D215 /* ResidueScoresFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidueScoresFeatures.hh; path = ../src/protocols/features/ResidueScoresFeatures.hh; sourceTree = SOURCE_ROOT; };
+		B849498EA9965B9DB9C7E57D /* ResidueScoresFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ResidueScoresFeaturesCreator.cc; path = ../src/protocols/features/ResidueScoresFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
+		8B0C765C95414EBE5005BE85 /* ResidueScoresFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidueScoresFeaturesCreator.hh; path = ../src/protocols/features/ResidueScoresFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
 		9A485B2E2C33F6CBA7823194 /* ResidueSecondaryStructureFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ResidueSecondaryStructureFeatures.cc; path = ../src/protocols/features/ResidueSecondaryStructureFeatures.cc; sourceTree = SOURCE_ROOT; };
 		BBFAC6C53D3241BBA666200F /* ResidueSecondaryStructureFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidueSecondaryStructureFeatures.fwd.hh; path = ../src/protocols/features/ResidueSecondaryStructureFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		662413AF86C472F1E032C960 /* ResidueSecondaryStructureFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidueSecondaryStructureFeatures.hh; path = ../src/protocols/features/ResidueSecondaryStructureFeatures.hh; sourceTree = SOURCE_ROOT; };
@@ -18974,6 +18987,10 @@
 				0847B3B337043D6156A4AF39 /* CamShiftEvaluator.hh */,
 				3BDFD87CAE6FB1B48372A702 /* CamShiftEvaluatorCreator.cc */,
 				BE9888C57632148CC2C20BD1 /* CamShiftEvaluatorCreator.hh */,
+				E21282D07D911355C17CA1B5 /* ChiWellRmsdEvaluator.cc */,
+				AC98724A115BB306B2522AF4 /* ChiWellRmsdEvaluator.hh */,
+				8C1E3E703DAF977ECE72C870 /* ChiWellRmsdEvaluatorCreator.cc */,
+				A1A2E382AD2D4DB89206F8DE /* ChiWellRmsdEvaluatorCreator.hh */,
 				C84ADB5AE44212BF8AD944E5 /* ClashEvaluator.hh */,
 				B4DA536F595240882C55DFD7 /* ConservedPosMutationFilter.cc */,
 				DE7EDC297FF83086F9D00FCF /* ConservedPosMutationFilter.fwd.hh */,
@@ -20139,6 +20156,11 @@
 				D3B411442AEBA2EA676747F4 /* ResidueFeatures.hh */,
 				42C69118C25DA3B19D4669D4 /* ResidueFeaturesCreator.cc */,
 				758AF6F83A3ECAE2E976699D /* ResidueFeaturesCreator.hh */,
+				3A648ADFD46ED4C3303CC6B5 /* ResidueScoresFeatures.cc */,
+				79428D8337417E14F3CC2E1F /* ResidueScoresFeatures.fwd.hh */,
+				B60005152EDAC66AC144D215 /* ResidueScoresFeatures.hh */,
+				B849498EA9965B9DB9C7E57D /* ResidueScoresFeaturesCreator.cc */,
+				8B0C765C95414EBE5005BE85 /* ResidueScoresFeaturesCreator.hh */,
 				9A485B2E2C33F6CBA7823194 /* ResidueSecondaryStructureFeatures.cc */,
 				BBFAC6C53D3241BBA666200F /* ResidueSecondaryStructureFeatures.fwd.hh */,
 				662413AF86C472F1E032C960 /* ResidueSecondaryStructureFeatures.hh */,
@@ -24271,6 +24293,8 @@
 				AF13F4309E1DDF33053308BD /* COFilter.cc in Sources */,
 				E0AB5172840FCC5B9B3AFC2D /* CamShiftEvaluator.cc in Sources */,
 				8F3B1EFDFD44762BC5A39757 /* CamShiftEvaluatorCreator.cc in Sources */,
+				327DDACF2BA5A3AFF74A364F /* ChiWellRmsdEvaluator.cc in Sources */,
+				9C0F200A305D64F50AAD0F8D /* ChiWellRmsdEvaluatorCreator.cc in Sources */,
 				592D44648C4F9A886BB3DAA6 /* ConservedPosMutationFilter.cc in Sources */,
 				4C8458C0DCD724DC450347F0 /* ContactMapEvaluator.cc in Sources */,
 				325BD97750B4FAF1951EA47A /* ContactMapEvaluatorCreator.cc in Sources */,
@@ -24596,6 +24620,8 @@
 				9AB81F71B61E41A097D8C33F /* ResidueConformationFeaturesCreator.cc in Sources */,
 				DA731B3654466D6FAF61184A /* ResidueFeatures.cc in Sources */,
 				23D03BE3E1479AA8EAACC17B /* ResidueFeaturesCreator.cc in Sources */,
+				62444A929DBD243D9860E7BF /* ResidueScoresFeatures.cc in Sources */,
+				6C2E84C56C0BCA5FA062AA8B /* ResidueScoresFeaturesCreator.cc in Sources */,
 				9F8638EFD7EBF821DE908A37 /* ResidueSecondaryStructureFeatures.cc in Sources */,
 				88170F0CE4CC55C432D86431 /* ResidueSecondaryStructureFeaturesCreator.cc in Sources */,
 				F96F2649FF493305605F68F3 /* ResidueTypesFeatures.cc in Sources */,

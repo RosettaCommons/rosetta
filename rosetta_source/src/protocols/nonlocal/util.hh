@@ -72,11 +72,11 @@ protocols::comparative_modeling::ThreadingJob const * const current_job();
 /// @brief Computes the distance between consecutive CA atoms. If the distance exceeds
 /// a user-specified threshold, creates a new chunk and adds it to <chunks>. CA-CA
 /// distance threshold is retrieved from the option system (rigid::max_ca_ca_dist).
-void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Loops* chunks);
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks);
 
 /// @brief Computes the distance between consecutive CA atoms. If the distance exceeds
 /// <threshold>, creates a new chunk and adds it to <chunks>.
-void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Loops* chunks, double threshold);
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks, double threshold);
 	
 /// @brief Returns the unweighted score of the ScoreType for the given residue. Assumes that the Pose has recently been scored by ScoreFunction with non-zero weight for the ScoreType.
 core::Real get_per_residue_score(

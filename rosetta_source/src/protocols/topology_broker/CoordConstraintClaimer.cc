@@ -373,11 +373,13 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "CST_FILE" ) {
 		is >> cst_filename_;
 	} else if ( tag == "REGION" ) {
-		rigid_.read_stream_to_END( is, false /*no strict checking */, type(), "RIGID" );
+        rigid_.set_strict_looprelax_checks( false /*no strict checking */ );
+        rigid_.set_file_reading_token( "RIGID" );
+		rigid_.read_stream_to_END( is );
 	} else if ( tag == "region_file" ) {
 		std::string file;
 		is >> file;
-		rigid_.read_loop_file( file, false /*no strict looprlx file*/, "RIGID" );  // <==
+		rigid_ = loops::Loops( file, false /*no strict looprlx file*/, "RIGID" );  // <==
 	} else if ( tag == "ROOT" ) {
 		is >> root_;
 	} else if ( tag == "ASK_FOR_ROOT" ) {
@@ -397,11 +399,13 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "SUPERIMPOSE" ) {
 		bSuperimpose_ = true;
 	} else if ( tag == "SUPERIMPOSE_REGION" ) {
-		superimpose_regions_.read_stream_to_END( is, false /*no strict checking */, type(), "RIGID" );
+        superimpose_regions_.set_strict_looprelax_checks( false /*no strict checking */ );
+        superimpose_regions_.set_file_reading_token( "RIGID" );
+		superimpose_regions_.read_stream_to_END( is );
 	} else if ( tag == "SUPERIMPOSE_REGION_FILE" ) {
 		std::string file;
 		is >> file;
-		superimpose_regions_.read_loop_file( file, false /*no strict looprlx checking*/, "RIGID" );  // <==
+		superimpose_regions_ = loops::Loops( file, false /*no strict looprlx checking*/, "RIGID" );  // <==
 	} else if ( tag == "POTENTIAL" ) {
 		std::string func_type;
 		is >> func_type;

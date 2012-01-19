@@ -513,9 +513,9 @@ public:
 
 		// if a loopfile is given, use it
 		// otherwise, use model
-		protocols::loops::LoopsOP to_rebuild = new protocols::loops::Loops();
+		protocols::loops::LoopsOP to_rebuild;
 		if ( option[ OptionKeys::loops::loop_file ].user() ) {
-			to_rebuild->read_loop_file( option[ OptionKeys::loops::loop_file ]()[1] );
+			to_rebuild = new protocols::loops::Loops( true );
 		} else {
 			// autoselect
 			if (fadens_scorefxn_->get_weight(core::scoring::patterson_cc) > 0) {

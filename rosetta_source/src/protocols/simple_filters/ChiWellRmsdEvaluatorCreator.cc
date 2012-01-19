@@ -162,8 +162,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 					} //error condition
 				}
 			} else if ( selection_file != "FULL" ) {
-				loops::Loops core;
-				core.read_loop_file( selection_file, false, "RIGID" );
+				loops::Loops core( selection_file, false, "RIGID" );
 				core.get_residues( selection );
 			}
 			if ( invert ) {

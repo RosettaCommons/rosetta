@@ -140,7 +140,7 @@ main( int argc, char * argv [] ) {
 	ClusterPhilStyleOP clustering;
 
 	if ( option[ basic::options::OptionKeys::cluster::loops ]() ) {
-		loops::Loops loops = protocols::loops::get_loops_from_file();
+		loops::Loops loops( true );
 		clustering = new ClusterPhilStyle_Loop(loops );
 	} else {
 		clustering = new ClusterPhilStyle();

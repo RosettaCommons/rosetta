@@ -207,8 +207,7 @@ void run() {
 	FArray1D_double input_weights( rmsf_tool->eval_.n_atoms(), 1.0 );
 
 	if ( option[ rigid::in ].user() ) {
-			loops::Loops rigid;
-			rigid.read_loop_file( option[ rigid::in ](), false, "RIGID" );
+			loops::Loops rigid = loops::Loops( option[ rigid::in ](), false, "RIGID" );
 			for ( Size i=1;i<=rmsf_tool->eval_.n_atoms(); ++i ) {
 				if (rigid.is_loop_residue( i ) ) weights( i )=1.0;
 				else weights( i )=0.0;

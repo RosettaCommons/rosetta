@@ -121,7 +121,7 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 				} else if ( key == "superimpose") {
 					superimpose_for_looprms = (value=="yes");
 				} else if ( key == "core" ) {
-					core.read_loop_file( value, false, "RIGID" );
+					core = loops::Loops( value, false, "RIGID" );
 			} else {
 					utility_exit_with_message( "key not recognized: "+key+" possible keys: { heavy }" );
 				}
@@ -180,10 +180,9 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 				}
 			} else if ( selection_file != "FULL" ) {
 				if ( loop_rms ) {
-					loops.read_loop_file( selection_file, false, "LOOP" );
+					loops = loops::Loops( selection_file, false, "LOOP" );
 				} else {
-					loops::Loops core;
-					core.read_loop_file( selection_file, false, "RIGID" );
+					loops::Loops core( selection_file, false, "RIGID" );
 					core.get_residues( selection );
 				}
 			}

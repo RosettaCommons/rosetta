@@ -184,8 +184,7 @@ ScoreMover::apply( Pose & pose ) {
 		} else	{
 			native_pose = pose;
 		}
-		protocols::loops::Loops my_loops;
-		my_loops.read_loop_file( option[ OptionKeys::loops::loopscores]() );
+		protocols::loops::Loops my_loops( option[ OptionKeys::loops::loopscores]() );
 		protocols::loops::addScoresForLoopParts( pose, my_loops, (*score_function_), native_pose, my_loops.size() );
 	}
 
