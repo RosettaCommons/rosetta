@@ -18,7 +18,6 @@
 #include <basic/options/option.hh>
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
