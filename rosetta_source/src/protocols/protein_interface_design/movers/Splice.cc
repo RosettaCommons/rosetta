@@ -314,16 +314,11 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 /// change the loop length
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res() );
-	llc.loop_end( cut_site );
+	llc.loop_end( cut_site + residue_diff < from_res() ? to_res() : cut_site );
 	llc.delta( residue_diff );
+
 	llc.apply( pose );
 
-	protocols::protein_interface_design::movers::AddChainBreak acb;
-	acb.resnum( utility::to_string( cut_site + residue_diff ) );
-	acb.find_automatically( false );
-	acb.change_foldtree( false );
-	acb.apply( pose );
-	TR<<"Adding chainbreak at: "<<cut_site<<std::endl;
 
 /// set torsions
 	core::Size const total_residue_new( dofs.size() );// nearest_to_to - nearest_to_from + 1 );
@@ -337,6 +332,7 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 //		char f[ 10];
 //		sprintf( f, "b%d.pdb", i );
 	}
+
 	pose.conformation().detect_disulfides();
 	TR<<std::endl;
 	std::string threaded_seq( "" );/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
@@ -386,6 +382,13 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 	racaas->keep_aas( "ADEFIKLMNQRSTVWY" ); /// disallow pro/gly/cys/his
 	racaas->include_residue( 0 ); /// restrict all residues
 	tf->push_back( racaas);
+
+	protocols::protein_interface_design::movers::AddChainBreak acb;
+	acb.resnum( utility::to_string( cut_site + residue_diff ) );
+	acb.find_automatically( false );
+	acb.change_foldtree( false );
+	acb.apply( pose );
+	TR<<"Adding chainbreak at: "<<cut_site<<std::endl;
 
 	if( ccd() ){
 		using namespace protocols::loops;
