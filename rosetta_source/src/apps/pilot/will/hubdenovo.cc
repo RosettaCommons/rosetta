@@ -33,6 +33,7 @@
 #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/make_symmetric_task.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -226,6 +227,32 @@ std::ostream & operator<<(std::ostream & out, CST const & c) {
 	return out;
 }
 typedef utility::vector1<CST> CSTs;
+
+class SymRBMover : public protocols::moves::Mover {
+public:
+	int jump_;
+	core::Real rot_mag_,trans_mag_;
+	SymRBMover(core::pose::Pose const & pose, core::Real rot_mag, core::Real trans_mag) : rot_mag_(rot_mag), trans_mag_(trans_mag) {
+		using namespace core::conformation::symmetry;
+		using namespace core::pose::symmetry;		
+		std::map<Size,SymDof> const & dofs = symmetry_info(pose)->get_dofs();
+		for(std::map<Size,SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
+			jump_ = i->first;
+		}		
+	}
+	void apply( core::pose::Pose & pose ) {
+		core::kinematics::Jump j = pose.jump(jump_);
+		Real g = numeric::random::gaussian();
+		if( 0.5 < numeric::random::uniform() ) {
+			j.set_rotation(rotation_matrix(Vec(1,0,0),g*rot_mag_)*j.get_rotation());
+		} else {
+			j.set_translation(j.get_translation()+Vec(g*trans_mag_,0,0));
+		}
+		pose.set_jump(jump_,j);
+	}
+	virtual std::string get_name() const { return "SymRBMover"; }
+};
+
 
 // fixed SS
 struct ConstraintConfig {
@@ -613,6 +640,8 @@ struct ConstraintConfig {
 									if(template_map.back().count(*i)==0) utility_exit_with_message("BACKBONE: template "+tpdb+" residue "+str(*i)+" not mapped to design residue!");
 									Size dri = template_map.back()[*i];
 									dres.push_back(dri);
+									seq[dri].resize(1);
+									seq[dri][1] = templates_cen.back()->residue(*i).name1();									
 								}
 								bbgrp++;
 								for(Size i = 1; i <= tres.size(); ++i) {
@@ -664,7 +693,7 @@ struct ConstraintConfig {
 		for(CSTs::iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) {
 			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) && (!earlycst || numeric::random::uniform() > Real(nres)/6.0/Real(nintercst)) ) continue;
 			if(i->active) continue; else i->active = true;
-			if(hub_seq_sep(i->dres1,i->dres2) != ssep) tr << "early cst!!!" << endl;
+			//if(hub_seq_sep(i->dres1,i->dres2) != ssep) tr << "early cst!!!" << endl;
 			Pose & t(*templates_cen[i->tplt]);
 			for(Size an1 = 1; an1 <= anames.size(); ++an1) {
 				if(!p.residue(i->dres1).has(anames[an1]) || !t.residue(i->tres1).has(anames[an1])) continue;
@@ -689,7 +718,7 @@ struct ConstraintConfig {
 			}
 			AtomID id1( p.residue(i->rsd1).atom_index(i->atm1), i->rsd1 );
 			AtomID id2( p.residue(i->rsd2).atom_index(i->atm2), i->rsd2 );
-			//tr << "DCST " << i->atm1 << " " << i->rsd1 << " " << i->atm2 << " " << i->rsd2 << " " << i->d << " " << i->sd << endl;
+			tr << "DCST " << i->atm1 << " " << i->rsd1 << " " << i->atm2 << " " << i->rsd2 << " " << i->d << " " << i->sd << endl;
 			add_sym_cst( p, id1, id2, i->d, i->sd );
 		}
 	}
@@ -754,6 +783,12 @@ struct ConstraintConfig {
 		if(p.is_centroid()) apply_cen_csts(p,ssep,earlycst);
 		if(p.is_fullatom()) apply_fa_csts(p,ssep);
 	}
+	void reset_csts() {
+		for(CSTs::iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) i->active = false;
+		for(CSTs::iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) i->active = false;
+		for(vector1<DCST>::iterator i = dcst.begin(); i != dcst.end(); ++i) i->active = false;
+		
+	}
 	std::string pick_sequence() const {
 		string s = "Z";
 		for(Size i = 2; i <= nres; ++i) {
@@ -792,7 +827,6 @@ struct ConstraintConfig {
 	}	
 };
 
-
 struct HubDenovo {
 	Pose hub;
 	ConstraintConfig cfg;
@@ -810,7 +844,7 @@ struct HubDenovo {
 		sfsym  = getScoreFunction();
 		sfsymnocst  = getScoreFunction();
 		sfasym = new ScoreFunction(*sfsym);
-		sfsym->set_weight(atom_pair_constraint,cstwt);
+		sfsym->set_weight(atom_pair_constraint,4*cstwt);
 		core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
 		std::map<string, vector1<core::fragment::FragDataOP> > fds( get_frags_map() );
@@ -821,8 +855,8 @@ struct HubDenovo {
 		fraginsL  = new protocols::simple_moves::ClassicFragmentMover(fragsl);
 		{
 		  	protocols::moves::RandomMoverOP tmp = new protocols::moves::RandomMover;
-		  	tmp->add_mover(fragins3,0.5);
-		  	tmp->add_mover(fraginsL,0.5);
+		  	tmp->add_mover(fragins3,0.7);
+		  	tmp->add_mover(fraginsL,0.3);
 		  	fragins = tmp;
 		}
 		des      = new protocols::flxbb::FlxbbDesign( sfsym, sfsym );
@@ -868,7 +902,7 @@ struct HubDenovo {
 
 	}
 
-	bool cen_fold(Pose & p) {
+	bool cen_fold(Pose & p) {		
 		
 		// set up movemap and min mover
 		using core::conformation::symmetry::SymDof;
@@ -878,14 +912,23 @@ struct HubDenovo {
 	  movemap->set_jump(false);
 	  movemap->set_bb(true);
 	  movemap->set_chi(true);
+	
 		for(std::map<Size,SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
-			cout << "sym dof jump: " << i->first << endl;
+			//cout << "sym dof jump: " << i->first << endl;
 	  	movemap->set_jump(i->first,true);
+			core::kinematics::Jump j = p.jump(i->first);
+			//j.set_rotation(rotation_matrix(Vec(1,0,0),numeric::random::gaussian()*6.3)*j.get_rotation());
+			j.set_translation(j.get_translation()+Vec(  (numeric::random::uniform()*15.0+5.0)*numeric::sign(numeric::random::uniform()-0.5)   -10,0,0));
+			p.set_jump(i->first,j);
+			break;
 		}
 		cenmin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false );
 		
 		Size STOP = cfg.get_highest_intrahub_seqsep() + 4;
-		tr << "rnd 1 ssep STOP " << STOP << endl;
+		//tr << "rnd 1 ssep STOP " << STOP << endl;
+		protocols::moves::RandomMoverOP mymover = new protocols::moves::RandomMover; 
+		mymover->add_mover(fragins,0.8);
+		mymover->add_mover(new SymRBMover(p,0.1,0.4),0.2);	
 		
 		Real temp = 2.0;
 		Pose last_cor_ori = p;
@@ -893,33 +936,34 @@ struct HubDenovo {
 			cfg.apply_csts(p,icst,icst > 15);
 			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
 			mc->set_autotemp( true, temp );	mc->set_temperature( temp );
-			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 4000/cfg.nres ).apply( p );
+			protocols::moves::RepeatMover( new protocols::moves::TrialMover( mymover, mc ), 4000/cfg.nres ).apply( p );
 			mc->reset( p );
 			if(icst%5==0) {
-				tr << "cen min" << endl;
 				cenmin->apply(p);
-				sf3->show(p);
+				tr << "cen " << icst << " " << sf3->score(p) << endl;
+				//sf3->show(p);
 				//if( option[OptionKeys::hub_cen_energy_cut]()*4.0 < sf3->score(p) ) return false;
 			}
 			if( center_of_geom(p).z() < 0.0 ) p = last_cor_ori;
 			else                              last_cor_ori = p;
-			tr << icst << " " << sf3->score(p) << endl;
+			//tr << icst << " " << sf3->score(p) << endl;
 		}
 		for(Size icst = STOP+1; icst <= cfg.nsub*cfg.nres; ++icst) {
 			cfg.apply_csts(p,icst);
 		}
-		Real cstwt = sf3->get_weight(core::scoring::atom_pair_constraint);
+		//Real cstwt = sf3->get_weight(core::scoring::atom_pair_constraint);
 		for(Size i = 1; i < 5; ++i) {
-			sf3->set_weight(core::scoring::atom_pair_constraint,cstwt/Real(i*i));
-			tr << i << " fin " << sf3->score(p) << endl;
+			//sf3->set_weight(core::scoring::atom_pair_constraint,cstwt/Real(i*i));
 			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
 			mc->set_autotemp( true, temp );	mc->set_temperature( temp );
-			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 400 ).apply( p );
+			protocols::moves::RepeatMover( new protocols::moves::TrialMover( mymover, mc ), 400 ).apply( p );
 			mc->reset( p );
 			cenmin->apply(p);
-			sf3->show(p);			
+			tr <<"fin " << i <<" "<<  sf3->score(p) << endl;
 			//if( option[OptionKeys::hub_cen_energy_cut]()*4.0 < sf3->score(p) ) return false;
 		}
+		sf3->show(p);			
+		//sf3->set_weight(core::scoring::atom_pair_constraint,cstwt);
 		return true;
 	}
 
@@ -944,9 +988,25 @@ struct HubDenovo {
 		sf->set_weight(core::scoring::    angle_constraint,1.0);
 	}
 
+	void design(Pose & p) {
+	  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	  core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(p);
+    task->initialize_extra_rotamer_flags_from_command_line();
+		for(vector1<CST>::iterator i = cfg.cst_sc.begin(); i != cfg.cst_sc.end(); ++i) {
+			task->nonconst_residue_task(i->dres1).prevent_repacking();
+			task->nonconst_residue_task(i->dres2).prevent_repacking();			
+		}
+		core::pack::make_symmetric_PackerTask(p,task);
+	  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		tr << "predes: " << sf->score(p) << std::endl;
+	  repack.apply(p);
+		tr << "postdes: " << sf->score(p) << std::endl;	
+	}
+
 	void run(Size NITER = 9999999999) {
 		using namespace core::scoring;
 		for(int iter = 1; iter < NITER; ++iter) {
+			std::cout << "!!!!!!!!!!!!!!!!!!! " << iter << " " << sf3->get_weight(core::scoring::atom_pair_constraint) << std::endl;
 			Pose tmp = make_start_pose();
 			
 			if(basic::options::option[basic::options::OptionKeys::hub_graphics]()) {
@@ -955,12 +1015,14 @@ struct HubDenovo {
 			
 			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 
+			cfg.reset_csts();
+
 			if(!cen_fold(tmp)) continue;
 
 			{
 				core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
-			  	ss_out->fill_struct(tmp,fn);
-			  	sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]()+"_cen.sc" );
+			  ss_out->fill_struct(tmp,fn);
+			  sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]()+"_cen.sc" );
 			}
 
 			if(tmp.energies().total_energy() > option[OptionKeys::hub_cen_energy_cut]() ) {
@@ -973,41 +1035,44 @@ struct HubDenovo {
 			if(!option[OptionKeys::hub_no_fa]()) {
 				tmp.dump_pdb(fn+"_cen.pdb.gz");
 
+				// FA and reapply csts
 				core::util::switch_to_residue_type_set(tmp,"fa_standard");
-				// reapply csts
 				tmp.remove_constraints();
+				cfg.reset_csts();				
 				cfg.apply_csts(tmp);
 
 				{
-					sfsym->set_weight(core::scoring::atom_pair_constraint,10.0);
-					sfsym->set_weight(core::scoring::    angle_constraint,10.0);
-					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-				  	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
+					// sfsym->set_weight(core::scoring::atom_pair_constraint,10.0);
+					// sfsym->set_weight(core::scoring::    angle_constraint,10.0);
+					// core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+					// 				  	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
 					rlxcst->apply(tmp); // no cst
+					tr << "rlx w/cst " << sfsym->score(tmp) << std::endl;
 					// protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(tmp);
-					sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
-					sfsym->set_weight(core::scoring::    angle_constraint,1.0);
+					// sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
+					// sfsym->set_weight(core::scoring::    angle_constraint,1.0);
 					// min_as_poly_ala(tmp,sfsym,hocsts,cfg.nres);
 					sfsym->show(tmp);
 					//tmp.dump_pdb(fn+"_min.pdb.gz");
-					tmp.constraint_set()->show_violations(tr,tmp,1,1.0);
+					// tmp.constraint_set()->show_violations(tr,tmp,1,1.0);
 				}
 				// Real cstsc = tmp.energies().total_energies()[core::scoring::atom_pair_constraint];
 				// tmp.remove_constraints();
 				tmp.dump_pdb(fn+"_cst.pdb.gz");
 
-				tr << "rlx nocst" << endl;
-				rlxnocst->apply(tmp); // no cst
-
-				sfsym->score(tmp); // rescore with cst
+				tmp.remove_constraints();
+				design(tmp);
+				// rlxnocst->apply(tmp); // no cst
+				// tr << "rlx nocst " << sfsym->score(tmp) << std::endl;
+				// sfsymnocst->score(tmp); // rescore with cst
 			}
 
 			tmp.dump_pdb(fn);
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 			// ss_out->add_energy("cstsc",cstsc);
-		  	ss_out->fill_struct(tmp,fn);
+		  ss_out->fill_struct(tmp,fn);
 
-		  	sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
+		  sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
 
 		}
 
@@ -1015,17 +1080,11 @@ struct HubDenovo {
 
 };
 
-
-
-
-
 void * run(void *) {
 	string cstcfg = option[OptionKeys::hub_cst_cfg]();
 	HubDenovo hd(cstcfg);
 	hd.run();
 }
-
-
 
 int main(int argc, char *argv[]) {
 	register_options();
