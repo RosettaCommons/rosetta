@@ -116,11 +116,21 @@ ThreadingJobInputter::ThreadingJobInputter() :
 		typedef utility::vector1< pose::PoseOP > PoseOPvec;
 		PoseOPvec poses = core::import_pose::poseOPs_from_pdbs( template_pdb_filenames );
 
-		/// put template-pdbs into map --- use filename as key --- this is used to match pdb and alignment
+		/// Put template pdbs into map, keyed by filename up to the first underscore (_).
+		/// This key is used to match templates with alignments.
 		for ( PoseOPvec::const_iterator it = poses.begin(); it != poses.end(); ++it ) {
 			utility::file::FileName fn( (*it)->pdb_info()->name() );
 			std::string const base_fn( static_cast< std::string > (fn.base()) );
-			std::string const match( ObjexxFCL::uppercased( base_fn.substr(0,5) ) );
+
+			size_t pos = base_fn.find('_');
+
+			std::string match;
+			if (pos == std::string::npos) {  // fallback
+				match = ObjexxFCL::uppercased(base_fn.substr(0, 5));
+			} else {
+				match = ObjexxFCL::uppercased(base_fn.substr(0, pos - 1));
+			}
+
 			tr.Trace << "add template " << match << std::endl;
 			template_poses_[ match ].push_back( *it );
 		}
