@@ -482,7 +482,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	core::scoring::ScoreFunctionOP scorefxn_stage1 = 
 		core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage1_patch]());
 
-	if (option[cm::hybridize::nohybridize_stage1]()) {
+	if (RG.uniform() < option[cm::hybridize::stage1_probability]()) {
 		core::pose::PoseOP chosen_templ = templates_icluster[initial_template_index_icluster];
 		protocols::loops::Loops chosen_contigs = template_contigs_icluster[initial_template_index_icluster];
 		initialize_and_sample_loops(pose, chosen_templ, chosen_contigs, scorefxn_stage1);

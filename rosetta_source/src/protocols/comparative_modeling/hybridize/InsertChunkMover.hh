@@ -103,8 +103,11 @@ private:
 	std::map <core::Size, core::Size> sequence_alignment_;
 
 	Size jump_number_; // the jump to be realigned
-	Size seqpos_start_; // start and end seqpose of the chunk
+	Size seqpos_start_; // start and end seqpose of the chunk, downstream of the jump
 	Size seqpos_stop_;
+	Size seqpos_aligned_start_; // start and end seqpose of the aligned piece
+	Size seqpos_aligned_stop_; 
+
     bool success_;
 	int registry_shift_;
 	char secstruct_;

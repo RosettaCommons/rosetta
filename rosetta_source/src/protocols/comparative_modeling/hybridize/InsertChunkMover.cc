@@ -38,9 +38,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/rigid.OptionKeys.gen.hh>
+#include <basic/options/keys/cm.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -353,6 +351,8 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 		}
 
         // collect local alignment for stealing torsion
+		seqpos_aligned_start_ = seqpos_pose;
+		seqpos_aligned_stop_ = seqpos_pose;
 		for (Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose) {
     		if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
     		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
@@ -364,7 +364,8 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			}
 			
 			sequence_alignment_local_[ires_pose] = jres_template;
-
+			seqpos_aligned_start_ = ires_pose;
+			
 			if (discontinued_upper(*template_pose_,jres_template)) {
 				TR.Debug << "Disconnect upper: " << ires_pose << " "  << jres_template << std::endl;
 				break;
@@ -381,6 +382,8 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			}
 			
 			sequence_alignment_local_[ires_pose] = jres_template;
+			seqpos_aligned_stop_ = ires_pose;
+			
 			if (discontinued_lower(*template_pose_,jres_template)) {
 				TR.Debug << "Disconnect lower: " << ires_pose << " "  << jres_template << std::endl;
 				break;
@@ -425,7 +428,11 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 		
 		if (atom_map_count >=3) {
             TR.Debug << sequence_alignment_local_ << std::endl;
-			change_anchor(pose, jump_number_, seqpos_pose);
+			using namespace basic::options;
+			using namespace basic::options::OptionKeys;
+			if ( option[cm::hybridize::move_anchor]() ) {
+				change_anchor(pose, jump_number_, seqpos_pose);
+			}
 			return true;
 		}
 	}
@@ -520,6 +527,7 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
     Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
 	TR.Debug << "Jump residue: " << jump_residue_pose << std::endl;
 
+	/*
     if (sequence_alignment_local_.find(jump_residue_pose) != sequence_alignment_local_.end()) {
         aligned = true;
     }
@@ -528,7 +536,7 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
     }
     
     bool all_aligned_lower = true;
-    Size non_aligned_lower_start(seqpos_stop_+1);
+	Size non_aligned_lower_start(seqpos_stop_+1);
     for (Size ires_pose=jump_residue_pose; ires_pose<=seqpos_stop_; ++ires_pose) {
 		if (sequence_alignment_local_.find(ires_pose) == sequence_alignment_local_.end()) {
             all_aligned_lower = false;
@@ -545,9 +553,10 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
             break;
         }
     }
-
-    
-    for (Size ires_pose=non_aligned_upper_end+1; ires_pose<=non_aligned_lower_start-1; ++ires_pose) {
+    */
+	
+	// copy xyz of the backbone
+    for (Size ires_pose=seqpos_aligned_start_; ires_pose<=seqpos_aligned_stop_; ++ires_pose) {
 		if (sequence_alignment_local_.find(ires_pose) != sequence_alignment_local_.end()) {
 			core::Size jres_template = sequence_alignment_local_.find(ires_pose)->second;
 			TR.Debug << "Copy xyz of residue " << ires_pose << std::endl;
@@ -576,6 +585,7 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 	}
 	pose.batch_set_xyz(ids,positions);
 
+	// idealize sidechains
     for (Size iatom = 1; iatom <= sch_ids.size(); ++iatom) {
         sch_positions.push_back(
                                 pose.residue(sch_ids[iatom].rsd()).build_atom_ideal(
@@ -586,13 +596,14 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
     }
     pose.batch_set_xyz(sch_ids,sch_positions);
     
-    if (!all_aligned_upper) {
-        core::conformation::idealize_position(non_aligned_upper_end+1, pose.conformation());
-        core::conformation::idealize_position(non_aligned_upper_end, pose.conformation());
+	// idealize the connection between copied and uncopied region
+    if (seqpos_aligned_start_ > seqpos_start_) {
+        core::conformation::idealize_position(seqpos_aligned_start_, pose.conformation());
+        core::conformation::idealize_position(seqpos_aligned_start_-1, pose.conformation());
     }
-    if (!all_aligned_lower) {
-        core::conformation::idealize_position(non_aligned_lower_start-1, pose.conformation());
-        core::conformation::idealize_position(non_aligned_lower_start, pose.conformation());
+    if (seqpos_aligned_stop_ < seqpos_stop_) {
+        core::conformation::idealize_position(seqpos_aligned_stop_, pose.conformation());
+        core::conformation::idealize_position(seqpos_aligned_stop_+1, pose.conformation());
     }
 }
 	

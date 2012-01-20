@@ -7416,7 +7416,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-aln_format</b> \<String\><dt>
 <dd>No description</dd><br>
-<dd>Default: "general"</dd><br>
+<dd>Default: "grishin"</dd><br>
 </dl>
 <dl>
 <dt><b>-recover_side_chains</b> \<Boolean\><dt>
@@ -7532,9 +7532,19 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Input list of templates, constaints, cluster, and weights</dd><br>
 </dl>
 <dl>
+<dt><b>-add_non_init_chunks</b> \<Boolean\><dt>
+<dd>non chunks from templates other than the initial one</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-ss</b> \<String\><dt>
 <dd>secondary structure elements used to split the pose</dd><br>
 <dd>Default: "HE"</dd><br>
+</dl>
+<dl>
+<dt><b>-stage1_probability</b> \<Real\><dt>
+<dd>Probability of running stage 1, 0=never, 1=always</dd><br>
+<dd>Default: 0.5</dd><br>
 </dl>
 <dl>
 <dt><b>-stage1_weights</b> \<String\><dt>
@@ -7545,6 +7555,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-stage1_patch</b> \<String\><dt>
 <dd>weight patch for fold tree hybridize stage</dd><br>
 <dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-move_anchor</b> \<Boolean\><dt>
+<dd>move anchor residue when copying xyz in stage 1</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-skip_stage2</b> \<Boolean\><dt>
@@ -7560,11 +7575,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-stage2_patch</b> \<String\><dt>
 <dd>weight patch for cartesian fragment hybridize stage</dd><br>
 <dd>Default: ""</dd><br>
-</dl>
-<dl>
-<dt><b>-nohybridize_stage1</b> \<Boolean\><dt>
-<dd>don't hybridize in stage 1</dd><br>
-<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-relax</b> \<Boolean\><dt>

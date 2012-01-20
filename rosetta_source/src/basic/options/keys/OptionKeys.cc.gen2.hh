@@ -363,13 +363,15 @@ namespace cm { FileVectorOptionKey const hh_map( "cm:hh_map" );  }
 namespace cm { namespace hybridize { BooleanOptionKey const hybridize( "cm:hybridize" );  } }
 namespace cm { namespace hybridize { FileVectorOptionKey const templates( "cm:hybridize:templates" );  } }
 namespace cm { namespace hybridize { FileOptionKey const template_list( "cm:hybridize:template_list" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const add_non_init_chunks( "cm:hybridize:add_non_init_chunks" );  } }
 namespace cm { namespace hybridize { StringOptionKey const ss( "cm:hybridize:ss" );  } }
+namespace cm { namespace hybridize { RealOptionKey const stage1_probability( "cm:hybridize:stage1_probability" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage1_weights( "cm:hybridize:stage1_weights" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage1_patch( "cm:hybridize:stage1_patch" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const move_anchor( "cm:hybridize:move_anchor" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const skip_stage2( "cm:hybridize:skip_stage2" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage2_weights( "cm:hybridize:stage2_weights" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage2_patch( "cm:hybridize:stage2_patch" );  } }
-namespace cm { namespace hybridize { BooleanOptionKey const nohybridize_stage1( "cm:hybridize:nohybridize_stage1" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const relax( "cm:hybridize:relax" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const max_registry_shift( "cm:hybridize:max_registry_shift" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const alignment_from_template_seqpos( "cm:hybridize:alignment_from_template_seqpos" );  } }
@@ -588,5 +590,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "Den
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_surface( "DenovoProteinDesign:redesign_surface" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "DenovoProteinDesign:redesign_complete" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }

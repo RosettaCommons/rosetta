@@ -378,6 +378,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	TR.Debug << "Chunks from initial template: " << std::endl;
 	TR.Debug << my_chunks << std::endl;
 
+	if ( option[cm::hybridize::add_non_init_chunks]() ) {
 	// (b) probabilistically sampled chunks from all other templates _outside_ these residues
 	utility::vector1< std::pair< core::Real, protocols::loops::Loop > >  wted_insertions_to_consider;
 	for (core::Size itempl = 1; itempl<=template_chunks_.size(); ++itempl) {
@@ -421,6 +422,8 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 			for (Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop(); ++j) template_mask[j] = true;
 		}
 	}
+	}
+	
 	my_chunks.sequential_order();
 	TR << "Chunks used for foldtree setup: " << std::endl;
 	TR << my_chunks << std::endl;
