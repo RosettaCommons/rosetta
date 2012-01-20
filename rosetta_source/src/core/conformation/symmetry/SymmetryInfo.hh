@@ -79,19 +79,6 @@ public:
 		std::string const & type = "simple"
 	);
 
-	/* SymmetryInfo(
-		Size const nres_monomer,
-		Size const njump_monomer,
-		Size const N,
-		std::map< Size, Clones > jump_clones,
-		std::map< Size, SymDof > dofs,
-		Size const score_subunit,
-		utility::vector1< Size > score_multiply,
-		SymSlideInfo slide_info,
-		Size const num_interfaces = 1,
-		std::string const & type = "simple"
-	); */
-
 	SymmetryInfoOP clone() const;
 
 	void
@@ -127,24 +114,25 @@ public:
 
 	bool operator!= ( SymmetryInfo const & s );
 
+	//fpd  bb_* and chi_* stuff should get merged at some point since they are always equivalent
 	Size bb_follows( Size const seqpos ) const;
-
 	Size chi_follows( Size const seqpos ) const;
-
 	Size jump_follows( Size const seqpos ) const;
 
-	std::vector < std::pair < Size, Size > >
-	map_symmetric_res_pairs( Size res1, Size res2 );
+	std::vector < std::pair < Size, Size > > map_symmetric_res_pairs( Size res1, Size res2 );
 
 	bool bb_is_independent( Size const seqpos ) const;
-
 	bool chi_is_independent( Size const seqpos ) const;
-
 	bool fa_is_independent( Size const seqpos ) const;
-
 	bool jump_is_independent( Size const seqpos ) const;
 
 	bool is_virtual( Size const seqpos ) const;
+
+	//fpd  resize the asymm unit to contain nres_new residues
+	void resize_asu( Size nres_new );
+
+	//fpd  resize the asymm unit to contain nmonomer_new internal jumps
+	void update_nmonomer_jumps( Size nmonomer_new );
 
 	Size subunits() const;
 
@@ -155,118 +143,71 @@ public:
 	utility::vector1< bool >
 	independent_residues() const;
 
-	void update_nmonomer_jumps( Size nmonomer );
-
 	Size num_bb_clones() const;
-
 	Size num_chi_clones() const;
-
 	Size num_jump_clones() const;
 
 	Size num_independent_residues() const;
-
 	Size num_total_residues() const;
-
 	Size num_total_residues_with_pseudo() const;
-
 	Size num_total_residues_without_pseudo() const;
-
 	Size num_interfaces() const;
-
 	Size num_virtuals() const;
 
-	//bool scoring_residue( core::Size residue ) const;
+	Size get_nres_subunit() const;  //fpd same as num_independent_residues?
+	Size get_njumps_subunit() const;
 
 	// accessors for Torsion/DOF IDs
-	bool
-	dof_is_independent( DOF_ID const & id, Conformation const & conf ) const;
+	bool dof_is_independent( DOF_ID const & id, Conformation const & conf ) const;
 
 	// get a weight for derivative calculations
 	// weights are 1 for indep DOFs, 0 for dependent NON-JUMP DOFs
 	//    and may be any real for dependent jump dofs
-	core::Real
-	get_dof_derivative_weight( DOF_ID const & id, Conformation const & conf ) const;
+	core::Real get_dof_derivative_weight( DOF_ID const & id, Conformation const & conf ) const;
 
-	bool
-	torsion_is_independent( TorsionID const & id ) const;
-
-	bool
-	atom_is_independent( AtomID const & id ) const;
+	bool torsion_is_independent( TorsionID const & id ) const;
+	bool atom_is_independent( AtomID const & id ) const;
 
 	/// @brief  Returns a list of dofs that depend on id. Inefficient -- creates list anew each time.
-	DOF_IDs
-	dependent_dofs( DOF_ID const & id, Conformation const & conf ) const;
+	DOF_IDs dependent_dofs( DOF_ID const & id, Conformation const & conf ) const;
 
 	/// @brief  Returns a list of dofs that depend on id. Inefficient -- creates list anew each time.
-	TorsionIDs
-	dependent_torsions( TorsionID const & id ) const;
-
-	AtomIDs
-	dependent_atoms( AtomID const & id ) const;
+	TorsionIDs dependent_torsions( TorsionID const & id ) const;
+	AtomIDs dependent_atoms( AtomID const & id ) const;
 
 	// clone list accessors
-	Clones const &
-	bb_clones( Size const seqpos ) const;
+	Clones const & bb_clones( Size const seqpos ) const;
+	Clones const & chi_clones( Size const seqpos ) const;
+	Clones const & jump_clones( Size const base_jump ) const;
 
-	Clones const &
-	chi_clones( Size const seqpos ) const;
+	void add_bb_clone( Size const base_pos, Size const clone_pos );
+	void add_chi_clone( Size const base_pos, Size const clone_pos );
+	void add_jump_clone( Size const base_pos, Size const clone_jump, Real const wt );
 
-	Clones const &
-	jump_clones( Size const base_jump ) const;
+	std::map< Size, SymDof > get_dofs() const;
 
-	void
-	add_bb_clone( Size const base_pos, Size const clone_pos );
+	void set_dofs( std::map< Size, SymDof > dofs );
 
-	void
-	add_chi_clone( Size const base_pos, Size const clone_pos );
+	Size interface_number( Size const res1, Size const res2 ) const;
 
-	void
-	add_jump_clone( Size const base_pos, Size const clone_jump, Real const wt );
+	// score multiply factors
+	Size score_multiply( Size const res1, Size const res2 ) const;
+	void set_score_multiply_from_subunit_factors( utility::vector1< Size > const & score_multiply_vector_subunit, Size const nres_subunit, Size const n_subunits );
+	void set_score_multiply( Size const res, Size const factor );
+	bool get_use_symmetry() const;
 
-	std::map< Size, SymDof >
-	get_dofs() const;
+	void set_use_symmetry( bool setting );  //fpd is this used???
 
-	void
-	set_dofs( std::map< Size, SymDof > dofs );
+	bool cp_weighting_during_minimization() const;
+	void set_cp_weighting_during_minimization( bool setting );
 
-	Size
-	score_multiply( Size const res1, Size const res2 ) const;
+	SymSlideInfo get_slide_info() const;
 
-	Size
-	interface_number( Size const res1, Size const res2 ) const;
+	//fpd  these should be unnecessary given *_is_independent & get_*_clone functions
+	bool is_asymmetric_seqpos( Size const res ) const;
+	Size get_asymmetric_seqpos( Size const res ) const;
 
-	void
-	set_score_multiply_from_subunit_factors( utility::vector1< Size > const & score_multiply_vector_subunit, Size const nres_subunit, Size const n_subunits );
-
-	void
-	set_score_multiply( Size const res, Size const factor );
-
-	Size
-	get_nres_subunit() const;
-
-	bool
-	get_use_symmetry() const;
-
-	void
-	set_use_symmetry( bool setting );
-
-	bool
-	cp_weighting_during_minimization() const;
-
-	void
-	set_cp_weighting_during_minimization( bool setting );
-
-	SymSlideInfo
-	get_slide_info() const;
-
-	bool
-	is_asymmetric_seqpos( Size const res ) const;
-
-	Size
-	get_asymmetric_seqpos( Size const res ) const;
-
-	void
-	update_score_multiply_factor();
+	void update_score_multiply_factor();
 
 	// io
 	friend std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo );
@@ -320,7 +261,6 @@ private:
 
 	// Slide info
 	SymSlideInfo slide_info_;
-
 }; // SymmetryInfo
 
 

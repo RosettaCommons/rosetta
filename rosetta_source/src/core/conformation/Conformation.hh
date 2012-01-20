@@ -308,6 +308,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Append a new residue by a jump.
+	virtual
 	void
 	append_residue_by_jump(
 		conformation::Residue const & new_rsd,
@@ -412,6 +413,7 @@ public:
 
 
   /// @brief  Insert one conformation into another. See FoldTree::insert_fold_tree_by_jump
+	virtual
   void
   insert_conformation_by_jump(
     Conformation const & conf,             // the conformation to be inserted

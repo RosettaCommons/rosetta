@@ -195,6 +195,29 @@ public:
 	virtual
 	~SymmetricConformation();
 
+	/// @brief Append a new residue by a jump; clones this append to all copies
+	void
+	append_residue_by_jump(
+		conformation::Residue const & new_rsd,
+		Size const anchor_residue,
+		std::string const& anchor_atom = "", // the atom in the anchor_residue
+		std::string const& root_atom = "", // the atom in the new residue
+		bool const start_new_chain = false
+	);
+
+	/// @brief Append a new conformation by a jump; clones this append to all copies
+  void
+  insert_conformation_by_jump(
+    Conformation const & conf,             // the conformation to be inserted
+    Size const insert_seqpos,              // rsd 1 in conf goes here
+    Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+    Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+    Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+    std::string const & anchor_atom = "",  // "" means take default anchor atom
+    std::string const & root_atom   = ""   // "" means take default root   atom
+  );
+
+	//fpd eventually we should have symmetric implementations of all the insert/append/delete residue functions
 
 private:
 

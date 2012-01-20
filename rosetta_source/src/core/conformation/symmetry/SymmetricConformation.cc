@@ -465,8 +465,6 @@ void
 SymmetricConformation::replace_residue( Size const seqpos,
                  Residue const & new_rsd,
                  utility::vector1< std::pair< std::string, std::string > > const & atom_pairs )  {
-	TR.Debug << "SymmetricConformation: replace_residue: " << seqpos << std::endl;
-
 	core::Size parent_rsd;
 
 	if ( !symm_info_->bb_is_independent( seqpos ) ) {
@@ -652,11 +650,95 @@ SymmetricConformation::recalculate_transforms( ) {
 		// 				 << "     Y =  (" << Y[0] << "," << Y[1] << "," << Y[2] << ")" << std::endl
 		// 				 << "     Z =  (" << Z[0] << "," << Z[1] << "," << Z[2] << ")" << std::endl
 		// 				 << "  orig =  (" << orig[0] << "," << orig[1] << "," << orig[2] << ")" << std::endl;
-
-		// we can't assume the VRT is "proper" (orthogonal and normal)
 		Tsymm_.push_back( HomogeneousTransform< core::Real>( orig-Y,orig-Z, orig ) );
 	}
 }
+
+
+//fpd 
+void
+SymmetricConformation::append_residue_by_jump(
+	conformation::Residue const & new_rsd,
+	Size const anchor_pos,
+	std::string const& anchor_atom, // could be zero
+	std::string const& root_atom, // ditto
+	bool const start_new_chain // default false
+)
+{
+	if (start_new_chain) {
+		TR.Warning << "SymmetricConformation::append_residue_by_jump ignores start_new_chain" << std::endl;
+	}
+
+	core::Size nmonomer_jumps = symm_info_->get_njumps_subunit();
+	core::Size nres_monomer = symm_info_->get_nres_subunit();
+	core::Size nsubunits = symm_info_->subunits();
+	core::Size asymm_anchor = ((anchor_pos-1)%nres_monomer) + 1;
+
+	// add to the end of each subunit
+	// transform to the coordinate frame of the scoring subunit
+	// go from last->first so we don't have to worry about offsets
+	for ( int i=nsubunits; i>=1; --i ) {
+		core::Size seqpos = i*nres_monomer;
+		core::Size anchor_pos = (i-1)*nres_monomer+asymm_anchor;
+		Residue new_new_rsd = new_rsd;
+		if ( !symm_info_->bb_is_independent( seqpos ) ) {
+			// transform coords
+			for (int j=1; j<=(int)new_new_rsd.natoms(); ++j) {
+				new_new_rsd.set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, seqpos ) );
+			}
+		}
+		insert_residue_by_jump( new_new_rsd, seqpos+1, anchor_pos, anchor_atom, root_atom );
+	}
+
+	// update symminfo
+	symm_info_->resize_asu( nres_monomer + 1 );
+	symm_info_->update_nmonomer_jumps( nmonomer_jumps + 1 );
+}
+
+void
+SymmetricConformation::insert_conformation_by_jump(
+	Conformation const & new_conf,
+	Size const insert_seqpos,
+	Size const insert_jumppos,
+	Size const anchor_pos,
+	Size const anchor_jump_number,
+	std::string const & anchor_atom,
+	std::string const & root_atom
+) {
+	if (anchor_jump_number != 0) {
+		TR.Warning << "SymmetricConformation::insert_conformation_by_jump ignores anchor_jump_number" << std::endl;
+	}
+
+	core::Size nmonomer_jumps = symm_info_->get_njumps_subunit();
+	core::Size nres_monomer = symm_info_->get_nres_subunit();
+	core::Size nsubunits = symm_info_->subunits();
+	core::Size asymm_insert = ((insert_seqpos-2)%nres_monomer) + 2;  //?
+	core::Size asymm_anchor = ((anchor_pos-1)%nres_monomer) + 1;
+
+	// insert at the end of each subunit
+	// transform to the coordinate frame of the scoring subunit
+	// go from last->first so we don't have to worry about offsets
+	for ( int i=nsubunits; i>=1; --i ) {
+		core::Size insert_i = (i-1)*nres_monomer+asymm_insert;
+		core::Size anchor_i = (i-1)*nres_monomer+asymm_anchor;
+
+		Conformation new_new_conf = new_conf;
+		if ( !symm_info_->bb_is_independent( anchor_i ) ) {
+			// transform coords
+			for (int j=1; j<=new_new_conf.size(); ++j) {
+				for (int k=1; k<=(int)new_new_conf.residue(j).natoms(); ++k) {
+					new_new_conf.set_xyz(core::id::AtomID(k,j) , apply_transformation( new_conf.residue(j).xyz(k), nres_monomer, anchor_i ) );
+				}
+			}
+		}
+		Conformation::insert_conformation_by_jump( new_new_conf, insert_i, nmonomer_jumps+i, anchor_i, 0, anchor_atom, root_atom );
+	}
+
+	// update symminfo
+	symm_info_->resize_asu( nres_monomer + new_conf.size() );
+	symm_info_->update_nmonomer_jumps( nmonomer_jumps + new_conf.fold_tree().num_jump() + 1 );
+}
+
 
 }
 } // conformation
