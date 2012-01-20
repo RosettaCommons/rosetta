@@ -177,15 +177,16 @@ void tear_down_constraints(core::pose::Pose* pose) {
 void emit_intermediate(const core::pose::Pose& pose, const std::string& filename) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-
-  if (option[OptionKeys::abinitio::debug]())
+  if (option[OptionKeys::abinitio::debug]()) {
     pose.dump_pdb(filename);
+  }
 }
 
 void to_centroid(core::pose::Pose* pose) {
   assert(pose);
-  if (!pose->is_centroid())
+  if (!pose->is_centroid()) {
     core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
+  }
 }
 
 /// @detail Restores simple kinematics to pose
@@ -395,7 +396,7 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
   // Stage 4
   TR << "Stage 4" << std::endl;
   update_sequence_separation(seq_sep[4], &pose);
-  configure(fragments_sm_smo, score4, static_cast<unsigned>(m * 800), t, true, &stage_mover);
+  configure(fragments_sm_smo, score4, static_cast<unsigned>(m * 8000), t, true, &stage_mover);
   for (unsigned i = 1; i <= 3; ++i) {
     stage_mover.apply(pose);  // 4
   }
@@ -418,7 +419,7 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
 void StarAbinitio::tear_down_kinematics(core::pose::Pose* pose) const {
   assert(pose);
 
-  unsigned vres = pose->total_residue();
+  core::Size vres = pose->total_residue();
   pose->conformation().delete_residue_slow(vres);
 
   simple_fold_tree(pose);
@@ -468,7 +469,13 @@ StarAbinitio::StarAbinitio() {
   fragments_lg_ = io.read_data(option[in::file::frag9]());
   fragments_sm_ = io.read_data(option[in::file::frag3]());
 
-  pred_ss_ = new SecondaryStructure(*fragments_sm_);
+  // Approximate secondary structure from fragments when psipred isn't available
+  if (option[in::file::psipred_ss2].user()) {
+    pred_ss_ = new SecondaryStructure();
+    pred_ss_->read_psipred_ss2(option[in::file::psipred_ss2]());
+  } else {
+    pred_ss_ = new SecondaryStructure(*fragments_sm_);
+  }
 }
 
 std::string StarAbinitio::get_name() const {
