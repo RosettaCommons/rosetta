@@ -74,6 +74,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // utility
+#include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
@@ -460,14 +461,15 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	utility::vector1 < core::Real > weights_icluster;
 	utility::vector1 < protocols::loops::Loops > template_chunks_icluster;
 	utility::vector1 < protocols::loops::Loops > template_contigs_icluster;
-	pick_starting_template(initial_template_index, initial_template_index_icluster, template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster);
+	pick_starting_template(initial_template_index, initial_template_index_icluster,
+	                      template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster);
 
 	using namespace ObjexxFCL::fmt;
 	TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
 
 	// initialize template history
 	TemplateHistoryOP history = new TemplateHistory(pose);
-	history->setall( initial_template_index );
+	history->setall( initial_template_index_icluster );
 	pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
 	
 	// apply constraints
@@ -566,7 +568,18 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// do relax _without_ ramping down coordinate constraints
 		protocols::relax::FastRelax relax_prot( fa_scorefxn, option[ basic::options::OptionKeys::relax::default_repeats ]() ,"NO CST RAMPING" );
 		relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
-		relax_prot.apply(pose);
+
+		core::pose::Pose pose_pre_relax = pose;
+
+relaxing:
+		// fpd more nan problems with torsion derivs
+		try {
+			relax_prot.apply(pose);
+		} catch( utility::excn::EXCN_Base& excn ) {
+			//fpd hbond fail? start over
+			pose = pose_pre_relax;
+			goto relaxing;
+		}
 
 		gdtmm = get_gdtmm(pose);
 		core::pose::setPoseExtraScores( pose, "GDTMM_final", gdtmm);
