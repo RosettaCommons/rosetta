@@ -28,7 +28,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-//@brief lightweight class containing bb torsions
+//@brief lightweight class containing bb torsions and residue identities
 class BBDofs : public utility::pointer::ReferenceCount
 {
 	public:
@@ -46,12 +46,13 @@ class BBDofs : public utility::pointer::ReferenceCount
 		void resn( std::string const r ){ resn_ = r; }
 		~BBDofs();
 	private:
-		core::Size resid_;
+		core::Size resid_; /// this is currently not used in splice
 		core::Real phi_, psi_, omega_;
 		std::string resn_;
 };
 
-//@ container for BBDofs
+///@brief container for BBDofs, providing a convenient operator [], size, other methods and iterators that allow splice to treat
+/// ResidueBBDofs as a simple vector (even though it contains other elements as well)
 class ResidueBBDofs : public utility::pointer::ReferenceCount
 {
 	public:
@@ -59,7 +60,7 @@ class ResidueBBDofs : public utility::pointer::ReferenceCount
 		typedef bbdof_list::iterator iterator;
 		typedef bbdof_list::const_iterator const_iterator;
 
-		ResidueBBDofs() : cut_site_( 0 ){ clear(); }
+		ResidueBBDofs() : cut_site_( 0 ), start_loop_( 0 ), stop_loop_( 0 ) { clear(); }
 		~ResidueBBDofs();
 		void cut_site( core::Size const c ){ cut_site_ = c; }
 		core::Size cut_site() const { return cut_site_; }
@@ -128,7 +129,7 @@ public:
 	void fold_tree( core::pose::Pose & pose, core::Size const start, core::Size const stop, core::Size const cut ) const;
 
 private:
-	void save_values(); // call at beginning of apply
+	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
 
 	core::Size from_res_, to_res_, saved_from_res_, saved_to_res_;

@@ -156,7 +156,11 @@ Splice::apply( core::pose::Pose & pose )
 	using namespace protocols::rosetta_scripts;
 	using core::chemical::DISULFIDE;
 
+	TR<<"Starting splice apply"<<std::endl;
 	save_values();
+
+/// from_res() and to_res() can be determined directly on the tag, through a taskfactory, or through a template file. If through a template file,
+/// we start by translating from_res/to_res from the template file to the in coming pose as in the following paragraph
 	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
 		core::Size template_from_res( 0 ), template_to_res( 0 );
 
@@ -172,9 +176,10 @@ Splice::apply( core::pose::Pose & pose )
 	}// fi template_file != ""
 
 	core::pose::Pose const in_pose_copy( pose );
-	pose.conformation().detect_disulfides(); // just in case
+	pose.conformation().detect_disulfides(); // just in case; but I think it's unnecessary
 
-	TR<<"Starting splice apply"<<std::endl;
+
+/// from_res/to_res can also be determined through task factory, by identifying the first and last residues that are allowed to design in this tf
 	if( torsion_database_fname_ == "" && from_res() == 0 && to_res() == 0 ){/// set the splice site dynamically according to the task factory
 		utility::vector1< core::Size > designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
 		std::sort( designable.begin(), designable.end() );
@@ -182,8 +187,8 @@ Splice::apply( core::pose::Pose & pose )
 		to_res( designable[ designable.size() ] );
 	}
 	core::pose::Pose source_pose;
-	core::Size nearest_to_from( 0 ), nearest_to_to( 0 ), residue_diff( 0 ); // residues on source_pose that are nearest to from_res and to_res
-	ResidueBBDofs dofs;
+	core::Size nearest_to_from( 0 ), nearest_to_to( 0 ), residue_diff( 0 ); // residues on source_pose that are nearest to from_res and to_res; what is the difference in residue numbers between incoming pose and source pose
+	ResidueBBDofs dofs; /// used to store the torsion/resid dofs from any of the input files
 	dofs.clear();
 	core::Size cut_site( 0 );
 	if( torsion_database_fname_ == "" ){ // read dofs from source pose rather than database
@@ -198,7 +203,7 @@ Splice::apply( core::pose::Pose & pose )
 			return;
 		}
 		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
-		  if( source_pose.residue( i ).has_variant_type( DISULFIDE ) ){
+		  if( source_pose.residue( i ).has_variant_type( DISULFIDE ) ){/// in future, using disulfides would be a great boon as it rigidifies loops.
 				TR<<"Residue "<<i<<" is a disulfide. Failing"<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 				retrieve_values();
@@ -221,14 +226,14 @@ Splice::apply( core::pose::Pose & pose )
 
 			dofs.push_back( residue_dofs );
 		}// for i nearest_to_from..nearest_to_to
-		cut_site = dofs.cut_site() ? dofs.cut_site() + from_res() - 1: to_res();
+		cut_site = dofs.cut_site() ? dofs.cut_site() + from_res() - 1: to_res(); // isn't this always going to be to_res()? I think so...
 	}// fi torsion_database_fname==NULL
 	else{/// read from dbase
 		core::Size dbase_entry( database_entry() );
 		if( dbase_entry == 0 ){/// randomize entry
 			core::Size rand_trials( 0 );
-			core::Size pose_residues( 0 );
-			do{
+			core::Size pose_residues( 0 );/// number of residues in loop on incoming pose
+			do{/// choose random dbase entry. If equal_length is on then make sure the random entry has the same length
 				dbase_entry = (core::Size) ( RG.uniform() * torsion_database_.size() + 1);
 				dofs = torsion_database_[ dbase_entry ];
 				rand_trials++;
@@ -244,11 +249,11 @@ Splice::apply( core::pose::Pose & pose )
 			else
 				TR<<"Randomly chose dbase entry "<<dbase_entry<<" with loop start: "<<dofs.start_loop()<<" loop_stop: "<<dofs.stop_loop()<<" cut: "<<dofs.cut_site()<<" total_residues: "<<dofs.size()<<std::endl;
 		}
-		else
+		else /// don't randomize entry, pick the one stated on the tag.
 			dofs = torsion_database_[ dbase_entry ];
 		foreach( BBDofs & resdofs, dofs ){/// transform 3-letter code to 1-letter code
 			using namespace core::chemical;
-			if( resdofs.resn() == "CYD" ){// at one point it would be a good idea to use disfulfides rather than bail out on them...
+			if( resdofs.resn() == "CYD" ){// at one point it would be a good idea to use disfulfides rather than bail out on them...; I think disulfided cysteins wouldn't be written as CYD. This requires something more clever...
 				TR<<"Residue "<<resdofs.resid()<<" is a disulfide. Failing"<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 				retrieve_values();
@@ -258,19 +263,18 @@ Splice::apply( core::pose::Pose & pose )
 			ss << oneletter_code_from_aa( aa_from_name( resdofs.resn() ) );
 			ss >> s;
 			resdofs.resn( s );
-// postpone decision on what to do with residue identities until we know the coordinates of the residues (after set torsion)
 		}/// foreach resdof
 		nearest_to_to = dofs.size(); /// nearest_to_to and nearest_to_from are used below to compute the difference in residue numbers...
 		nearest_to_from = 1;
-
-		if( template_file_ != "" ){
+ /// set from_res/to_res/cut_site on the incoming pose
+		if( template_file_ != "" ){/// according to the template pose
 			from_res( find_nearest_res( pose, *template_pose_, dofs.start_loop() ) );
-			to_res( from_res() + dofs.size() -1); //  find_nearest_res( pose, *template_pose_, dofs.stop_loop()  ) );
+			to_res( from_res() + dofs.size() -1);
 			runtime_assert( from_res() );
 			runtime_assert( to_res() );
 			cut_site = dofs.cut_site() - dofs.start_loop() + from_res();
 		} // fi template_file != ""
-		else{
+		else{/// according to the dofs array (taken from the dbase)
 			from_res( dofs.start_loop() );
 			to_res( dofs.stop_loop() );
 			cut_site = dofs.cut_site();
@@ -280,20 +284,19 @@ Splice::apply( core::pose::Pose & pose )
   }// read from dbase
 	TR<<"From res: "<<from_res()<<" to_res: "<<to_res()<<std::endl;
 	runtime_assert( to_res() > from_res() );
-	if( saved_fold_tree_ )
+	if( saved_fold_tree_ )/// is saved_fold_tree_ being used?
 		pose.fold_tree( *saved_fold_tree_ );
 
-	core::Size const s1( std::max( (core::Size) 2, from_res() - 6 ) );
-	core::Size const s2( std::min( to_res() + 6, pose.conformation().chain_end( 1 ) - 1 ) );
-
-	fold_tree( pose, s1, s2, to_res()  );
-TR<<"new_foldtree: "<<pose.fold_tree();
+/// The database is computed with respect to the template pose, so before applying dofs from the dbase it's important to make that stretch identical to
+/// the template. from_res() and to_res() were previously computed to be with respect to the incoming pose, so within this subroutine the refer to pose rather
+/// than template_pose (this is a bit confusing, but it works!)
 	copy_stretch( pose, *template_pose_, from_res(), to_res() );
 
-
-/// make fold tree compatible with the loop (starts and ends 6 residue away from the start points, cuts at loop terminus
 	using namespace utility;
+/// randomize_cut() should not be invoked with a database entry, b/c the dbase already specified the cut sites.
+/// this is important b/c nearest_to_from/nearest_to_to are degenerate if the dbase is used.
 	if( randomize_cut() ){
+/// choose cutsite randomly within loop residues on the loop (no 2ary structure)
 		core::scoring::dssp::Dssp dssp( source_pose );
 		dssp.dssp_reduced(); // switch to simplified H E L notation
 		std::vector< core::Size > loop_positions_in_source;
@@ -309,19 +312,16 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 		TR<<"Cut placed at: "<<cut_site<<std::endl;
   }// fi randomize_cut
 
-	fold_tree( pose, from_res(), to_res(), cut_site ); /// **** used to be s1 s2
-//	core::Size const residue_diff( dofs.size() - ( dofs.stop_loop() - dofs.start_loop() + 1 ) );
+	fold_tree( pose, from_res(), to_res(), cut_site );/// the fold_tree routine will actually set the fold tree to surround the loop
 /// change the loop length
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res() );
 	llc.loop_end( cut_site + residue_diff < from_res() ? to_res() : cut_site );
 	llc.delta( residue_diff );
-
 	llc.apply( pose );
 
-
 /// set torsions
-	core::Size const total_residue_new( dofs.size() );// nearest_to_to - nearest_to_from + 1 );
+	core::Size const total_residue_new( dofs.size() );
 	TR<<"Changing dofs for resi: ";
 	for( core::Size i = 0; i < total_residue_new; ++i ){
 		core::Size const pose_resi( from_res() + i );
@@ -333,7 +333,7 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 //		sprintf( f, "b%d.pdb", i );
 	}
 
-	pose.conformation().detect_disulfides();
+	pose.conformation().detect_disulfides();/// probably unnecessary
 	TR<<std::endl;
 	std::string threaded_seq( "" );/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
 /// Now decide on residue identities: Alanine throughout except when the template pose has Gly, Pro or a residue that is the same as that in the original pose
@@ -341,7 +341,7 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 		core::Size const pose_resi( from_res() + i );
 		std::string const dofs_resn( dofs[ i + 1 ].resn() );
 		runtime_assert( dofs_resn.length() == 1 );
-		core::Size const nearest_in_copy( protocols::rosetta_scripts::find_nearest_res( in_pose_copy, pose, pose_resi ) );
+		core::Size const nearest_in_copy( find_nearest_res( in_pose_copy, pose, pose_resi ) );
 		if( ( nearest_in_copy > 0 && dofs_resn[ 0 ] == in_pose_copy.residue( nearest_in_copy ).name1() )  || dofs_resn == "G" || dofs_resn == "P" )
 			threaded_seq += dofs_resn;
 		else{
@@ -399,8 +399,7 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 /// Set ccd to minimize 4 residues at each loop terminus including the first residue of the loop. This way,
 /// the torsion in the loop are maintained. Allow repacking around the loop.
 /// If disulfide occurs in the range that is allowed to minimize, adjust that region to not include disulf
-		core::scoring::ScoreFunctionOP scorefxn_local( scorefxn()->clone() );
-//		scorefxn_local->set_weight( core::scoring::sheet, 5.0 );
+		core::scoring::ScoreFunctionOP scorefxn_local( scorefxn()->clone() );/// in case you want to modify the scorefxn. Currently not used
 		protocols::loops::loop_mover::refine::LoopMover_Refine_CCD ccd_mover( loops, scorefxn_local );
 		ccd_mover.temp_initial( 1.5 );
 		ccd_mover.temp_final( 0.5 );
@@ -434,6 +433,7 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 		ccd_mover.move_map( mm );
 		ccd_mover.apply( pose );
 
+/// following ccd, compute rmsd to source loop to ensure that you haven't moved too much. This is pretty decent filter
 		if( torsion_database_fname_ == "" ){ // no use computing rms if coming from a database (no coordinates)
 			core::Real rms( 0 );
 			for( core::Size i = 0; i <= total_residue_new - 1; ++i ){
@@ -449,6 +449,8 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 				return;
 			}
 		}
+/// tell us what the torsions of the new (closed) loop are. This is used for dbase construction. At one point, might be a good idea to make the mover
+/// output the dofs directly to a dbase file rather than to a log file.
 		TaskFactoryOP tf_dofs = new TaskFactory;
 		DesignAroundOperationOP dao_dofs = new DesignAroundOperation;
 		for( core::Size i = startn; i <= startc + res_move() - 1; ++i )
@@ -459,10 +461,8 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 		torsion.task_factory( tf_dofs );
 		torsion.task_factory_set( true );
 		torsion.apply( pose );
-
 		core::Size const stop_on_template( startc + res_move() - 1 - residue_diff );
-
-		TR_ccd << "start, stop, cut: "<<startn<<" "<<stop_on_template<<" "<<cut_site<<std::endl;
+		TR_ccd << "start, stop, cut: "<<startn<<" "<<stop_on_template<<" "<<cut_site<<std::endl; /// used for the dbase
 	}// fi ccd
 	else{ // if no ccd, still need to thread sequence
 		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
@@ -474,6 +474,8 @@ TR<<"new_foldtree: "<<pose.fold_tree();
 	retrieve_values();
 }
 
+/// splice apply might change the from_res/to_res internals since they sometimes refer to the template file. If that happens, we want the values to
+/// revert to their original values before the end of the apply function (so retrieve_values) below must be called before return.
 void
 Splice::save_values(){
 	saved_from_res_ = from_res();
@@ -566,6 +568,9 @@ Splice::task_factory() const{ return task_factory_; }
 void
 Splice::task_factory( core::pack::task::TaskFactoryOP tf ){ task_factory_ = tf; }
 
+
+/// the torsion dbase should have the following structure:
+/// each line represents a single loop. Each four values represent <phi> <psi> <omega> <3-let resid>; the last entry in a line represents <loop start> <loop stop> <cut site> cut; where cut signifies that this is the loop designator
 void
 Splice::read_torsion_database(){
 	using namespace std;
@@ -591,13 +596,15 @@ Splice::read_torsion_database(){
 				bbdof_entry.cut_site( (core::Size ) omega );
 			}
 			else
-				bbdof_entry.push_back( BBDofs( 0/*resid*/, phi, psi, omega, resn ) );
+				bbdof_entry.push_back( BBDofs( 0/*resid*/, phi, psi, omega, resn ) ); /// resid may one day be used. Currently it isn't
 		}
 		torsion_database_.push_back( bbdof_entry );
 	}
 	TR<<"Finished reading torsion database with "<<torsion_database_.size()<<" entries"<<std::endl;
 }
 
+///@brief set the fold tree around start/stop/cut sites.
+/// presently makes a simple fold tree, but at one point may be a more complicated function to include two poses
 void
 Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size const stop, core::Size const cut ) const{
 	using namespace protocols::loops;
