@@ -269,7 +269,8 @@ Splice::apply( core::pose::Pose & pose )
  /// set from_res/to_res/cut_site on the incoming pose
 		if( template_file_ != "" ){/// according to the template pose
 			from_res( find_nearest_res( pose, *template_pose_, dofs.start_loop() ) );
-			to_res( from_res() + dofs.size() -1);
+			to_res( find_nearest_res( pose, *template_pose_, dofs.stop_loop() ) );
+//			to_res( from_res() + dofs.size() -1);
 			runtime_assert( from_res() );
 			runtime_assert( to_res() );
 			cut_site = dofs.cut_site() - dofs.start_loop() + from_res();
