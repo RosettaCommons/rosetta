@@ -1561,6 +1561,7 @@ option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure 
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_probability, "Probability of running stage 1, 0=never, 1=always" ).def(0.5);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_weights, "weight for fold tree hybridize stage" ).def("score3");
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_patch, "weight patch for fold tree hybridize stage" ).def("");
+option.add( basic::options::OptionKeys::cm::hybridize::frag_weight_aligned, "Probability of fragment insertion in the aligned region" ).def(0.);
 option.add( basic::options::OptionKeys::cm::hybridize::move_anchor, "move anchor residue when copying xyz in stage 1" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::skip_stage2, "skip cartesian fragment hybridize stage" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::stage2_weights, "weight for cartesian fragment hybridize stage" ).def("score4_smooth_cart");
@@ -1782,10 +1783,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_co
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );

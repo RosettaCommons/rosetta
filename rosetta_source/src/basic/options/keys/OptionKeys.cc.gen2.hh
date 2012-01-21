@@ -368,6 +368,7 @@ namespace cm { namespace hybridize { StringOptionKey const ss( "cm:hybridize:ss"
 namespace cm { namespace hybridize { RealOptionKey const stage1_probability( "cm:hybridize:stage1_probability" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage1_weights( "cm:hybridize:stage1_weights" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage1_patch( "cm:hybridize:stage1_patch" );  } }
+namespace cm { namespace hybridize { RealOptionKey const frag_weight_aligned( "cm:hybridize:frag_weight_aligned" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const move_anchor( "cm:hybridize:move_anchor" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const skip_stage2( "cm:hybridize:skip_stage2" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage2_weights( "cm:hybridize:stage2_weights" );  } }
@@ -589,4 +590,3 @@ namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noi
 namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "DenovoProteinDesign" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_surface( "DenovoProteinDesign:redesign_surface" );  }

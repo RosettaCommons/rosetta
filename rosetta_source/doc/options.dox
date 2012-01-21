@@ -7557,6 +7557,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
+<dt><b>-frag_weight_aligned</b> \<Real\><dt>
+<dd>Probability of fragment insertion in the aligned region</dd><br>
+<dd>Default: 0.</dd><br>
+</dl>
+<dl>
 <dt><b>-move_anchor</b> \<Boolean\><dt>
 <dd>move anchor residue when copying xyz in stage 1</dd><br>
 <dd>Default: false</dd><br>

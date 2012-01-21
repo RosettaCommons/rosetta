@@ -3252,6 +3252,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'stage1_probability',     'Real',     desc='Probability of running stage 1, 0=never, 1=always', default='0.5' ),
 			Option( 'stage1_weights',     'String',     desc='weight for fold tree hybridize stage', default='score3' ),
 			Option( 'stage1_patch',       'String',     desc='weight patch for fold tree hybridize stage', default='' ),
+			Option( 'frag_weight_aligned',     'Real',     desc='Probability of fragment insertion in the aligned region', default='0.' ),
 			Option( 'move_anchor',       'Boolean',     desc='move anchor residue when copying xyz in stage 1', default='false' ),
 			Option( 'skip_stage2',  'Boolean',    desc='skip cartesian fragment hybridize stage', default='false' ),
 			Option( 'stage2_weights',     'String',     desc='weight for cartesian fragment hybridize stage', default='score4_smooth_cart' ),

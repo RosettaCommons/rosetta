@@ -491,7 +491,7 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops
 			TR.Debug << " " << ires;
 		}
 		else {
-			residue_weights[ires] = 0.0;
+			residue_weights[ires] = option[cm::hybridize::frag_weight_aligned]();
 		}
 	}
 	TR.Debug << std::endl;

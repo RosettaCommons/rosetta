@@ -59,6 +59,7 @@ namespace cm { namespace hybridize { extern StringOptionKey const ss; } }
 namespace cm { namespace hybridize { extern RealOptionKey const stage1_probability; } }
 namespace cm { namespace hybridize { extern StringOptionKey const stage1_weights; } }
 namespace cm { namespace hybridize { extern StringOptionKey const stage1_patch; } }
+namespace cm { namespace hybridize { extern RealOptionKey const frag_weight_aligned; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const move_anchor; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const skip_stage2; } }
 namespace cm { namespace hybridize { extern StringOptionKey const stage2_weights; } }
