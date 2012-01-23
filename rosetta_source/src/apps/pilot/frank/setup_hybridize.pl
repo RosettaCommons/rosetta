@@ -13,16 +13,18 @@ require "matrix.pm";
 ###############################
 ###############################
 ## CST files
-my $CSTFILENAMES = "constraints/cluster_best.filt.dist_csts";
+my $CSTFILENAMES = "../align_new/cluster%d.filt.dist_csts";
+#my $CSTFILENAMES = "NONE";
 
 ###############################
 ###############################
 ## alignment parameters
-my @RMS_CUTOFFS = (7,4,3,2.5,2,1.5,1);
+my @RMS_CUTOFFS = (10,5,4,3,2,1.5,1);
 my $RMSCUTOFF = 999;
 
-my $ALIGNCUTOFF = 0.2;
-my $CLUSTERCUTOFF = 0.35;
+my $CLUSTERCUTOFF = 0.40;
+my $ALIGNCUTOFF   = 0.2;  # to get better superpositions, trade coverage for alignment
+
 
 ###############################
 ###############################
@@ -87,7 +89,7 @@ close CL;
 foreach my $line (@cllines) {
 	chomp $line;
 	my @fields = split / /, $line;
-	if ($#fields > 1) {
+	if ($#fields > 0) {
 		if (scalar keys %james_clustermap == 0) {
 			$firstcluster = $fields[0];
 		}
@@ -255,13 +257,9 @@ foreach my $j ($i..$#ARGV) {
 		push @{ $atoms_j }, deep_copy( $bbatoms{$ARGV[$j]}->{$_} );
 	}
 
-	#print STDERR "Align( ".$ARGV[$i]." , ".$ARGV[$j]." )\n";
-	#print STDERR " size1 = ".scalar( ( @{ $atoms_i } ))."\n";
-	#print STDERR " size2 = ".scalar( ( @{ $atoms_j } ))."\n";
 	# initial alignment
 	($Rs->[$i][$j], $rmsds->[$i][$j], $comis->[$i][$j], $comjs->[$i][$j]) = rms_align( $atoms_i , $atoms_j );
 	$nalignlen->[$i][$j] = scalar(@common_atoms);
-	#print STDERR " rms = ".$rmsds->[$i][$j]."\n";
 
 	next if ($i==$j);
 
@@ -282,16 +280,19 @@ foreach my $j ($i..$#ARGV) {
 			}
 		}
 
-		if ($RMS_ALIGN == $RMS_CUTOFFS[0]) {
-			$overlapscore->[$i][$j] = scalar( @new_common_atoms ) / $ncommon_atoms;
+		my $natoms_tot = min( scalar(keys %{ $bbatoms{$ARGV[$i]} }),  scalar(keys %{ $bbatoms{$ARGV[$j]} }) );
+		if ($RMS_ALIGN == $RMS_CUTOFFS[1]) {
+			#$overlapscore->[$i][$j] = scalar( @new_common_atoms ) / $ncommon_atoms;
+			$overlapscore->[$i][$j] = scalar( @new_common_atoms ) / $natoms_tot;
+			print STDERR "overlap(".$ARGV[$i].",".$ARGV[$j].") over ".@common_atoms."/".$natoms_tot." atoms is ".$overlapscore->[$i][$j]."\n";
 		}
 
-		if ( scalar( @new_common_atoms ) > $ncommon_atoms*$ALIGNCUTOFF ) {
+		if ( scalar( @new_common_atoms ) > $natoms_tot*$ALIGNCUTOFF ) {
 			@common_atoms = @new_common_atoms;
 			($Rs->[$i][$j], $rmsds->[$i][$j], $comis->[$i][$j], $comjs->[$i][$j]) = rms_align( $atoms_i , $atoms_j );
 			$nalignlen->[$i][$j] = scalar(@common_atoms);
 		} else {
-			print STDERR "RMS(".$ARGV[$i].",".$ARGV[$j].") over ".@common_atoms." atoms is ".$rmsds->[$i][$j]."\n";
+			#print STDERR "RMS(".$ARGV[$i].",".$ARGV[$j].") over ".@common_atoms." atoms is ".$rmsds->[$i][$j]."\n";
 			last;
 		}
 	}
@@ -350,16 +351,22 @@ my $seedPDB = $minI;
 
 my $minJ;
 my $minRMS;
+my $maxOverlap;
 foreach my $cycle (1..$#ARGV) {
 	$minRMS = 999;
+	$maxOverlap = 0;
 	$minI = -1; $minJ = -1;
 	foreach my $i (0..$#ARGV) {
 	foreach my $j (0..$#ARGV) {
 		next if ($i==$j);
 		next if ($aligned[$i] == 0 || $aligned[$j] == 1);
 		# i is aligned, j is not
-		if ( $rmsds->[$i][$j] < $minRMS ) {
-			$minRMS = $rmsds->[$i][$j];
+		#if ( $rmsds->[$i][$j] < $minRMS ) {
+		#	$minRMS = $rmsds->[$i][$j];
+		#	$minI = $i; $minJ = $j;
+		#}
+		if ( $overlapscore->[$i][$j] > $maxOverlap ) {
+			$maxOverlap = $overlapscore->[$i][$j];
 			$minI = $i; $minJ = $j;
 		}
 	}
@@ -386,11 +393,16 @@ foreach my $cycle (1..$#ARGV) {
 
 		# find the closest aligned thing to 'minJ'
 		$minRMS = 999; $minI = -1;
+		$maxOverlap = 0;
 		foreach my $i (0..$#ARGV) {
 			next if ($i==$minJ || $aligned[$i] == 0);
 			# i is aligned, j is not
-			if ( $rmsds->[$i][$minJ] < $minRMS ) {
-				$minRMS = $rmsds->[$i][$minJ];
+			#if ( $rmsds->[$i][$minJ] < $minRMS ) {
+			#	$minRMS = $rmsds->[$i][$minJ];
+			#	$minI = $i;
+			#}
+			if ( $overlapscore->[$i][$minJ] > $maxOverlap ) {
+				$maxOverlap = $overlapscore->[$i][$minJ];
 				$minI = $i;
 			}
 		}
@@ -559,11 +571,13 @@ foreach my $i (0..$#ARGV) {
 	next if ($aligned[$i] == 0);
 	my $dir = getcwd;
 	my $id = $ARGV[$i];
-	#$id =~ s/.*\///;
+	$id =~ s/.*\///;
 	$id =~ s/\.pdb$/_aln.$i.pdb/;
 	$id = "$dir/aligned_templates/$id";
 	my $cstfile = sprintf $CSTFILENAMES, $james_clusterid[$i];
-	$cstfile = $dir."/$cstfile";
+	if ($cstfile ne "NULL") {
+		$cstfile = $dir."/$cstfile";
+	}
 	my $clusterid = $clusterid->[$i];
 	my $tag = $ARGV[$i]; $tag =~ s/.*_(\d\d\d).*/$1/;
 	my $prob = $template_probs{ $tag };
@@ -584,3 +598,7 @@ sub dist {
 	my $z = [ $x->[0]-$y->[0] , $x->[1]-$y->[1] , $x->[2]-$y->[2] ];
 	return sqrt( $z->[0]*$z->[0] + $z->[1]*$z->[1] + $z->[2]*$z->[2] );
 }
+
+sub max ($$) { $_[$_[0] < $_[1]] }
+sub min ($$) { $_[$_[0] > $_[1]] }
+

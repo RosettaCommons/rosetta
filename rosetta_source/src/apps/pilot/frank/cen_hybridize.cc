@@ -24,6 +24,7 @@
 
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loop.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/sequence/util.hh>
@@ -119,8 +120,7 @@ public:
 			pose1s_.push_back( pose_i );
 
 			// since each model will be initialized with a different template, we might as well preload all loopfiles
-			protocols::loops::LoopsOP loops_i = new protocols::loops::Loops;
-			loops_i->read_loop_file( files[i].vol()+files[i].path()+files[i].base()+".loops" );
+			protocols::loops::LoopsOP loops_i = new protocols::loops::Loops( files[i].vol()+files[i].path()+files[i].base()+".loops" );
 			loop1s_.push_back( loops_i );
 		}
 
@@ -223,7 +223,7 @@ public:
 			gdtmm = core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
 		}
 		return gdtmm;
-	}	
+	}
 
 	void superpose( core::pose::Pose &frag, core::pose::Pose &pose, 
 	                numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT) {

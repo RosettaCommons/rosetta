@@ -209,61 +209,71 @@ foreach my $X_i (@chaintrace) {
 
 
 # do the symmetric expansion
+#my $Ts_expand = [ 
+#	[-1,-1,-1],[-1,-1,0],[-1,-1,1],  [-1,0,-1],[-1,0,0],[-1,0,1],  [-1,1,-1],[-1,1,0],[-1,1,1],
+#    [0,-1,-1] ,[0,-1,0] ,[0,-1,1] ,  [0,0,-1] ,        ,[0,0,1] ,  [0,1,-1] ,[0,1,0] ,[0,1,1],
+#	[1,-1,-1] ,[1,-1,0] ,[1,-1,1] ,  [1,0,-1] ,[1,0,0] ,[1,0,1] ,  [1,1,-1] ,[1,1,0] ,[1,1,1] 
+#];
+
 my $Ts_expand = [ 
-	[-1,-1,-1],[-1,-1,0],[-1,-1,1],  [-1,0,-1],[-1,0,0],[-1,0,1],  [-1,1,-1],[-1,1,0],[-1,1,1],
-    [0,-1,-1] ,[0,-1,0] ,[0,-1,1] ,  [0,0,-1] ,        ,[0,0,1] ,  [0,1,-1] ,[0,1,0] ,[0,1,1],
-	[1,-1,-1] ,[1,-1,0] ,[1,-1,1] ,  [1,0,-1] ,[1,0,0] ,[1,0,1] ,  [1,1,-1] ,[1,1,0] ,[1,1,1] 
+	[-3,-3,0],[-3,-2,0],[-3,-1,0],[-3,0,0],[-3,1,0],[-3,2,0],[-3,3,0],
+	[-2,-3,0],[-2,-2,0],[-2,-1,0],[-2,0,0],[-2,1,0],[-2,2,0],[-2,3,0],
+	[-1,-3,0],[-1,-2,0],[-1,-1,0],[-1,0,0],[-1,1,0],[-1,2,0],[-1,3,0],
+	[ 0,-3,0],[ 0,-2,0],[ 0,-1,0]         ,[ 0,1,0],[ 0,2,0],[ 0,3,0],
+	[ 1,-3,0],[ 1,-2,0],[ 1,-1,0],[ 1,0,0],[ 1,1,0],[ 1,2,0],[ 1,3,0],
+	[ 2,-3,0],[ 2,-2,0],[ 2,-1,0],[ 2,0,0],[ 2,1,0],[ 2,2,0],[ 2,3,0],
+	[ 3,-3,0],[ 3,-2,0],[ 3,-1,0],[ 3,0,0],[ 3,1,0],[ 3,2,0],[ 3,3,0],
 ];
 
+
 my %symminterface = ();
+
+# frac CoM
+my $fCoM = mapply( $c2f , $CoM );
+my $monomerRadius = 50;
+
 foreach my $j_symm (0..($nsymm-1)) {
-	## TO DO: early stop
-	foreach my $fY_i (@fchaintrace) {
-		my $fY_j = vadd( mapply($Rs->[$j_symm],$fY_i) , $Ts->[$j_symm] );
-		foreach my $fX_i (@fchaintrace) {
-			my $delfXY = vsub( $fY_j,$fX_i );
-			my $delfXY_min = vminmod( $delfXY , [1.0,1.0,1.0] );
-			#my $delfXY_min = $delfXY;
+	my $fY_i = $fCoM;
+	my $fY_j = vadd( mapply($Rs->[$j_symm],$fY_i) , $Ts->[$j_symm] );
+	my $fX_i = $fCoM;
+	my $delfXY = vsub( $fY_j,$fX_i );
+	my $delfXY_min = vminmod( $delfXY , [1.0,1.0,1.0] );
+	#my $delfXY_min = $delfXY;
+
+	my $delXY = mapply( $f2c, $delfXY_min );
+	my $dist2XY = vnorm2( $delXY );
+
+	if ( sqrt($dist2XY) <= 2*$monomerRadius + $interact_dist ) {
+		my $shiftXY = vsub( $delfXY_min , $delfXY );  # should be all integers
+
+		# we have a hit! tag symmop $jsymm and offset $shiftXY as a symmetic interface!
+		my $id = $j_symm."_".floor($shiftXY->[0]+0.5)."_".floor($shiftXY->[1]+0.5)."_".floor($shiftXY->[2]+0.5);
+		if (!defined $symminterface{ $id }) {
+			$symminterface{ $id } = $j_symm+vnorm2($shiftXY);
+		}
+
+		# for really small unit cells (e.g. 1YJP) it may be there is
+		#    another offset within the interaction radius
+		#    but not closer than this offset for every (i,j) pair
+		# explicitly search these offsets
+		foreach my $T_offset (@{ $Ts_expand }) {
+			my $delfXY_min_shift = vadd( $delfXY_min , $T_offset );
 
 			# distance check ...
-			my $delXY = mapply( $f2c, $delfXY_min );
-			my $dist2XY = vnorm2( $delXY );
-
+			$delXY = mapply( $f2c, $delfXY_min_shift );
+			$dist2XY = vnorm2( $delXY );
 			if ($dist2XY < $interact_dist*$interact_dist) {
-				my $shiftXY = vsub( $delfXY_min , $delfXY );  # should be all integers
-
-				# we have a hit! tag symmop $jsymm and offset $shiftXY as a symmetic interface!
-				my $id = $j_symm."_".floor($shiftXY->[0]+0.5)."_".floor($shiftXY->[1]+0.5)."_".floor($shiftXY->[2]+0.5);
+				my $newShiftXY = vadd( $T_offset, $shiftXY );
+				$id = $j_symm."_".floor($newShiftXY->[0]+0.5)."_".
+								  floor($newShiftXY->[1]+0.5)."_".
+								  floor($newShiftXY->[2]+0.5);
 				if (!defined $symminterface{ $id }) {
-					$symminterface{ $id } = $j_symm+vnorm2($shiftXY);
+					$symminterface{ $id } = $j_symm+vnorm2($newShiftXY);
 				}
-
-				# ok ... for really small unit cells (e.g. 1YJP) it may be there is 
-				#    another offset within the interaction radius
-				#    but not closer than this offset for every (i,j) pair
-				# explicitly search these offsets
-				foreach my $T_offset (@{ $Ts_expand }) {
-					my $delfXY_min_shift = vadd( $delfXY_min , $T_offset );
-
-					# distance check ...
-					$delXY = mapply( $f2c, $delfXY_min_shift );
-					$dist2XY = vnorm2( $delXY );
-					if ($dist2XY < $interact_dist*$interact_dist) {
-						my $newShiftXY = vadd( $T_offset, $shiftXY );
-						$id = $j_symm."_".floor($newShiftXY->[0]+0.5)."_".
-						                  floor($newShiftXY->[1]+0.5)."_".
-						                  floor($newShiftXY->[2]+0.5);
-						if (!defined $symminterface{ $id }) {
-							$symminterface{ $id } = $j_symm+vnorm2($newShiftXY);
-						}
-					}
-				}
-
 			}
 		}
 	}
 }
-
 
 # symmetric interfaces may come in pairs
 # find these pairs and place in syminterfaces_paired like [0, 1, 1', 2, 2', ...]
@@ -459,7 +469,12 @@ if ($outpdb =~ /\.pdb$/) {
 open (OUTPDB, ">$outpdb");
 my $chnidx = 0;
 my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+my $chains = $chains."ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+my $chains = $chains."ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+my $chains = $chains."ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+my $chains = $chains."ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 foreach my $symmkey (@syminterfaces_all) {
+	print OUTPDB "MODEL ".($chnidx+1)."\n";
 	my ($j_symm,$shiftX,$shiftY,$shiftZ) = split '_',$symmkey;
 	foreach my $line (@filebuf) {
 		my $linecopy = $line;
@@ -478,6 +493,7 @@ foreach my $symmkey (@syminterfaces_all) {
 		print OUTPDB $linecopy."\n";
 	}
 	print OUTPDB "TER   \n";
+	print OUTPDB "ENDMDL\n";
 	$chnidx++;
 }
 close(OUTPDB);

@@ -11,10 +11,10 @@ require "matrix.pm";
 
 my $dssp                 = "/work/dimaio/bin/dssp";
 
-my @RMS_CUTOFFS = (7,4,3,2.5,2,1.5,1);
+my @RMS_CUTOFFS = (10,6,3,2.5,2,1.5,1);
 my $RMSCUTOFF = 999;
-my $ALIGNCUTOFF = 0.2;
 
+my $ALIGNCUTOFF = 0.2;
 my $CLUSTERCUTOFF = 0.4;
 
 
@@ -175,7 +175,7 @@ foreach my $pdb (@ARGV) {
 					$in_strand = 1;
 					$ss_start = $ii;
 				}
-				if ($ss{$ii} eq 'H' && $in_helix==1)  { # helix start
+				if ($ss{$ii} eq 'H' && $in_helix==0)  { # helix start
 					$in_helix = 1;
 					$ss_start = $ii;
 				}
