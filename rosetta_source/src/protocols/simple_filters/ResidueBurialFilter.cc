@@ -32,6 +32,20 @@ namespace simple_filters {
 
 static basic::Tracer residue_burial_filter_tracer( "protocols.simple_filters.ResidueBurialFilter" );
 
+ResidueBurialFilter::ResidueBurialFilter() :
+	Filter( "ResidueBurial" ),
+	target_residue_( 0 ),
+	neighbors_( 1 ),
+	distance_threshold_( 8.0 ),
+	task_factory_( NULL ) {}
+
+ResidueBurialFilter::ResidueBurialFilter( core::Size const target_residue, core::Size const neighbors, core::Real const distance_threshold ) :
+	    Filter( "ResidueBurial" ),
+			target_residue_( target_residue ),
+			neighbors_( neighbors ),
+			distance_threshold_( distance_threshold ),
+			task_factory_( NULL ) {}
+
 protocols::filters::FilterOP
 ResidueBurialFilterCreator::create_filter() const { return new ResidueBurialFilter; }
 
@@ -119,6 +133,17 @@ residue_burial_filter_tracer<<"chain span "<<chain_begin<< " "<<chain_end<<std::
 	}
 	return( count_neighbors);
 }
+
+filters::FilterOP
+ResidueBurialFilter::clone() const {
+    return new ResidueBurialFilter( *this );
+}
+
+filters::FilterOP
+ResidueBurialFilter::fresh_instance() const{
+    return new ResidueBurialFilter();
+}
+
 
 }
 }

@@ -28,20 +28,14 @@ namespace simple_filters {
 class ResidueBurialFilter : public filters::Filter
 {
 public:
-	ResidueBurialFilter() : Filter( "ResidueBurial"  ), target_residue_( 0 ), neighbors_( 1 ), distance_threshold_( 8.0 ), task_factory_( NULL ) {}
-	ResidueBurialFilter( core::Size const target_residue, core::Size const neighbors, core::Real const distance_threshold ) :
-		Filter( "ResidueBurial" ), target_residue_( target_residue ), neighbors_( neighbors ), distance_threshold_( distance_threshold ), task_factory_( NULL ) {}
+	ResidueBurialFilter();
+	ResidueBurialFilter( core::Size const target_residue, core::Size const neighbors, core::Real const distance_threshold );
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Size compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
-		return new ResidueBurialFilter( *this );
-	}
-	filters::FilterOP fresh_instance() const{
-		return new ResidueBurialFilter();
-	}
-
+	filters::FilterOP clone() const;
+	filters::FilterOP fresh_instance() const;
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 
