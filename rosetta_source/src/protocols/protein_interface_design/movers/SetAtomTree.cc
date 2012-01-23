@@ -69,6 +69,7 @@ std::string connect_to("");
 SetAtomTree::SetAtomTree() :
 	protocols::moves::Mover( SetAtomTreeCreator::mover_name() ),
 	docking_ft_( false ),
+	simple_ft_( false ),
 	jump_( 1 ),
 	resnum_( "" ),
 	connect_to_( "" ),
@@ -88,6 +89,7 @@ void
 SetAtomTree::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	docking_ft_ = tag->getOption< bool >("docking_ft", 0 );
+	simple_ft( tag->getOption< bool >( "simple_ft", 0 ) );
 	jump_ = tag->getOption< core::Size >( "jump", 1);
 	if( docking_ft_ ) return;
 	/// resnum & pdb_num are now equivalent
@@ -166,7 +168,25 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		std::string const partners( "_" );
 		protocols::docking::setup_foldtree( pose, partners, jumps );
 		TR<<"Setting up docking foldtree over jump "<<jump_<<'\n';
-		TR<<"Docking foldtree: "<<pose.fold_tree();
+		TR<<"Docking foldtree: "<<pose.fold_tree()<<std::endl;
+		return;
+	}
+	if( simple_ft() ){
+		core::kinematics::FoldTree new_ft;
+		new_ft.clear();
+		core::conformation::Conformation const conf( pose.conformation() );
+		core::Size jump( 1 );
+		for( core::Size chain = 1; chain <= conf.num_chains(); ++chain ){
+			new_ft.add_edge( conf.chain_begin( chain ), conf.chain_end( chain ), -1 );
+			if( chain > 1 ){
+				new_ft.add_edge( conf.chain_begin( chain - 1 ), conf.chain_begin( chain ), jump );
+				jump++;
+			}
+		}
+		new_ft.reorder( 1 );
+		TR<<new_ft<<std::endl;
+		pose.fold_tree( new_ft );
+		TR<<"Simple tree: "<<pose.fold_tree()<<std::endl;
 		return;
 	}
 
