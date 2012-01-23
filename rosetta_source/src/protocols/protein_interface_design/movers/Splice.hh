@@ -127,7 +127,8 @@ public:
 	void equal_length( bool const e ){ equal_length_ = e; }
 	bool equal_length() const{ return equal_length_; }
 	void fold_tree( core::pose::Pose & pose, core::Size const start, core::Size const stop, core::Size const cut ) const;
-
+	bool design() const{ return design_; }
+	void design( bool const d ) { design_ = d; }
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -148,6 +149,7 @@ private:
 	bool equal_length_; // dflt false; restrict threading to loops equal in length to the original
 	core::pose::PoseOP template_pose_, start_pose_; // template - relative to what is the torsion dbase computed (1x9q); start - the starting pose for replacing the torsions at the start
 	core::kinematics::FoldTreeOP saved_fold_tree_;
+	bool design_; //dflt false; design all non-pro/gly residues in template
 };
 
 

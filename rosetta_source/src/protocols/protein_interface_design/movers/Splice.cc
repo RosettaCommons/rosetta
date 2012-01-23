@@ -102,7 +102,8 @@ Splice::Splice() :
 	equal_length_( false ),
 	template_pose_( NULL ),
 	start_pose_( NULL ),
-	saved_fold_tree_( NULL )
+	saved_fold_tree_( NULL ),
+	design_( false )
 {
 	torsion_database_.clear();
 }
@@ -342,6 +343,13 @@ Splice::apply( core::pose::Pose & pose )
 		core::Size const pose_resi( from_res() + i );
 		std::string const dofs_resn( dofs[ i + 1 ].resn() );
 		runtime_assert( dofs_resn.length() == 1 );
+		if( design() ){ // all non pro/gly residues in template are allowed to design
+			if( dofs_resn == "G" || dofs_resn == "P" )
+				threaded_seq += dofs_resn;
+			else
+				threaded_seq += 'x';
+			continue;
+		}
 		core::Size const nearest_in_copy( find_nearest_res( in_pose_copy, pose, pose_resi ) );
 		if( ( nearest_in_copy > 0 && dofs_resn[ 0 ] == in_pose_copy.residue( nearest_in_copy ).name1() )  || dofs_resn == "G" || dofs_resn == "P" )
 			threaded_seq += dofs_resn;
@@ -545,6 +553,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	else
 		template_pose_ = new core::pose::Pose( pose );
 
+	design( tag->getOption< bool >( "design", false ) );
 	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
 }
 
