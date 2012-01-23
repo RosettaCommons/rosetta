@@ -16,6 +16,7 @@
 #include <protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -54,7 +55,7 @@ using namespace std;
 
 RestrictToAlignedSegmentsOperation::RestrictToAlignedSegmentsOperation()
 {
-	source_pdb_.clear();
+	source_pose_.clear();
 	start_res_.clear();
 	stop_res_.clear();
 }
@@ -79,15 +80,9 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 
 	std::set< core::Size > designable;
 	designable.clear();
-	core::pose::Pose source_pose;
-	for( core::Size count = 1; count <= source_pdb_.size(); ++count ){
-		if( count == 1 || source_pdb_[ count ] != source_pdb_[ count - 1 ]){ // scrimp on reading from disk
-			core::import_pose::pose_from_pdb( source_pose, source_pdb_[ count ] );
-		}
-		core::Size const parsed_start( parse_resnum( start_res_[ count ], source_pose ) );
-		core::Size const parsed_stop ( parse_resnum( stop_res_[ count  ], source_pose ) );
-		core::Size const nearest_to_from = find_nearest_res( pose, source_pose, parsed_start );
-		core::Size const nearest_to_to = find_nearest_res( pose, source_pose, parsed_stop );
+	for( core::Size count = 1; count <= source_pose_.size(); ++count ){
+		core::Size const nearest_to_from = find_nearest_res( pose, *source_pose_[ count ], start_res_[ count ] );
+		core::Size const nearest_to_to = find_nearest_res( pose, *source_pose_[ count ], stop_res_[ count ] );
 
 		if( nearest_to_from == 0 || nearest_to_to == 0 ){
 			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
@@ -120,23 +115,37 @@ void
 RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 {
 	using namespace protocols::rosetta_scripts;
+	utility::vector1< std::string > pdb_names, start_res, stop_res;
+	pdb_names.clear(); start_res.clear(); stop_res.clear();
 	if( tag->hasOption( "source_pdb" ) )
-		source_pdb_.push_back( tag->getOption< std::string >( "source_pdb" ) );
+		pdb_names.push_back( tag->getOption< std::string >( "source_pdb" ) );
 	if( tag->hasOption( "start_res" ) )
-		start_res_.push_back( tag->getOption< std::string >( "start_res" ) );
+		start_res.push_back( tag->getOption< std::string >( "start_res" ) );
 	if( tag->hasOption( "stop_res" ) )
-		stop_res_.push_back( tag->getOption< std::string >( "stop_res" ) );
+		stop_res.push_back( tag->getOption< std::string >( "stop_res" ) );
 
 	if( tag->hasOption( "source_pdb" ) || tag->hasOption( "start_res" ) || tag->hasOption( "stop_res" ) ){
 		runtime_assert( tag->hasOption( "source_pdb" ) && tag->hasOption( "start_res" ) && tag->hasOption( "stop_res" ) );
-		runtime_assert( start_res_[ 1 ] < stop_res_[ 1 ] );
 	}
 
 	utility::vector0< TagPtr > const btags( tag->getTags() );
 	foreach( TagPtr const btag, btags ){
-		source_pdb_.push_back( btag->getOption< std::string >( "source_pdb" ) );
-		start_res_.push_back( btag->getOption< std::string >( "start_res" ) );
-		stop_res_.push_back( btag->getOption< std::string >( "stop_res" ) );
+		pdb_names.push_back( btag->getOption< std::string >( "source_pdb" ) );
+		start_res.push_back( btag->getOption< std::string >( "start_res" ) );
+		stop_res.push_back( btag->getOption< std::string >( "stop_res" ) );
+	}
+
+	for( core::Size i = 1; i <= pdb_names.size(); ++i ){
+		if( i == 1 || pdb_names[ i ] != pdb_names[ i - 1 ]){ // scrimp on reading from disk
+			source_pose_.push_back( new core::pose::Pose );
+			core::import_pose::pose_from_pdb( *source_pose_[ i ], pdb_names[ i ] );
+		}
+		else
+			source_pose_.push_back( source_pose_[ i - 1 ] );
+		core::Size const parsed_start( parse_resnum( start_res[ i ], *source_pose_[ i ] ) );
+		core::Size const parsed_stop ( parse_resnum( stop_res[ i ], *source_pose_[ i ] ) );
+		start_res_.push_back( parsed_start );
+		stop_res_. push_back( parsed_stop );
 	}
 }
 } //namespace protocols
