@@ -21,8 +21,11 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 #include <basic/Tracer.hh>
+#include <core/pack/task/TaskFactory.hh>
 
 namespace protocols{
 namespace simple_filters {
@@ -37,8 +40,27 @@ ResidueBurialFilterCreator::keyname() const { return "ResidueBurial"; }
 
 ResidueBurialFilter::~ResidueBurialFilter(){}
 
+void
+ResidueBurialFilter::task_factory( core::pack::task::TaskFactoryOP tf ){
+	task_factory_ = tf;
+}
+
+core::pack::task::TaskFactoryOP
+ResidueBurialFilter::task_factory() const{ return task_factory_; }
+
 bool
 ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
+	if( task_factory() ){//taskfactory is on, iterate over all designable residues and check whether any one passes the filter
+/// This looks like recursion but is really quite limited, b/c the call below to rbf.apply uses the functionality where task_factory() is off, so it goes by a different route, and could never go to a depth of more than 2
+		utility::vector1< core::Size > const target_residues( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
+		foreach( core::Size const resi, target_residues ){
+			ResidueBurialFilter const rbf( resi/*target_residue*/, neighbors_, distance_threshold_ );
+			if( rbf.apply( pose ) )
+				return true;
+		}
+		return false;
+	}
+
 	core::Size const count_neighbors( compute( pose ) );
 
 	residue_burial_filter_tracer<<"Number of interface neighbors of residue "<<pose.residue( target_residue_ ).name3()<<target_residue_<<" is "<<count_neighbors<<std::endl;
@@ -46,27 +68,34 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-ResidueBurialFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+ResidueBurialFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
-	target_residue_ = protocols::rosetta_scripts::get_resnum( tag, pose );
+	if( tag->hasOption( "res_num" ) || tag->hasOption( "pdb_num" ) )
+		target_residue_ = protocols::rosetta_scripts::get_resnum( tag, pose );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 	neighbors_ = tag->getOption<core::Size>( "neighbors", 1 );
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
 	residue_burial_filter_tracer<<"ResidueBurialFilter with distance threshold of "<<distance_threshold_<<" around residue "<<target_residue_<<" with "<<neighbors_<<" neighbors."<<std::endl;
 }
 
 void
 ResidueBurialFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
-	core::Size const count_neighbors( compute( pose ) );
+	if( !task_factory() ){
+		core::Size const count_neighbors( compute( pose ) );
 
-	out<<"Number of interface neighbors of residue "<<pose.residue( target_residue_ ).name3()<<target_residue_<<" is "<<count_neighbors<<'\n';
+		out<<"Number of interface neighbors of residue "<<pose.residue( target_residue_ ).name3()<<target_residue_<<" is "<<count_neighbors<<'\n';
+	}
 }
 
 core::Real
 ResidueBurialFilter::report_sm( core::pose::Pose const & pose ) const {
-	core::Size const count_neighbors( compute( pose ) );
+	if( !task_factory() ){
+		core::Size const count_neighbors( compute( pose ) );
 
-	return( count_neighbors );
+		return( count_neighbors );
+	}
+	else return( 0 );
 }
 
 /// @details counts the number of residues to target_residue_ across all chains in the pose, other than the one containing target_residue_
@@ -90,6 +119,6 @@ residue_burial_filter_tracer<<"chain span "<<chain_begin<< " "<<chain_end<<std::
 	}
 	return( count_neighbors);
 }
-	
+
 }
 }

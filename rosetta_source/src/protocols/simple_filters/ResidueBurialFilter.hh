@@ -20,16 +20,17 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 namespace protocols {
 namespace simple_filters {
-	
+
 class ResidueBurialFilter : public filters::Filter
 {
 public:
-	ResidueBurialFilter() : Filter( "ResidueBurial"  ) {}
+	ResidueBurialFilter() : Filter( "ResidueBurial"  ), target_residue_( 0 ), neighbors_( 1 ), distance_threshold_( 8.0 ), task_factory_( NULL ) {}
 	ResidueBurialFilter( core::Size const target_residue, core::Size const neighbors, core::Real const distance_threshold ) :
-		Filter( "ResidueBurial" ), target_residue_( target_residue ), neighbors_( neighbors ), distance_threshold_( distance_threshold ) {}
+		Filter( "ResidueBurial" ), target_residue_( target_residue ), neighbors_( neighbors ), distance_threshold_( distance_threshold ), task_factory_( NULL ) {}
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -41,12 +42,17 @@ public:
 		return new ResidueBurialFilter();
 	}
 
+	core::pack::task::TaskFactoryOP task_factory() const;
+	void task_factory( core::pack::task::TaskFactoryOP tf );
+
 	virtual ~ResidueBurialFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Size target_residue_;
 	core::Size neighbors_;
 	core::Real distance_threshold_;
+	core::pack::task::TaskFactoryOP task_factory_; /// used to determine which residues to check for burial dynamically. All designable residues will be checked, and if any of them is buried, returns true
+
 };
 
 }
