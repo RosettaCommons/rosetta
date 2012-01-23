@@ -16,6 +16,7 @@
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <protocols/protein_interface_design/movers/SpliceCreator.hh>
 #include <utility/string_util.hh>
+#include <utility/exit.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -588,8 +589,7 @@ Splice::read_torsion_database(){
   utility::io::izstream data( torsion_database_fname_ );
   if ( !data ) {
     TR << "cannot open torsion database " << torsion_database_fname_ << std::endl;
-		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
-		return;
+		utility_exit();
   }
   std::string line;
   while( getline( data, line ) ) {
