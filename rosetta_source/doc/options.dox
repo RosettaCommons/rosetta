@@ -11487,6 +11487,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0</dd><br>
 </dl>
 <dl>
+<dt><b>-ala_scan</b> \<Boolean\><dt>
+<dd>Specify whether to calculate RotamerBoltzmann probabilities or not</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
 <dt><b>-min_rb</b> \<Boolean\><dt>
 <dd>Specify whether to minimize the rigid body DOFs</dd><br>
 <dd>Default: 1</dd><br>

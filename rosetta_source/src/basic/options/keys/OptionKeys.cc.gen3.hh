@@ -586,6 +586,7 @@ namespace matdes { namespace design { IntegerOptionKey const grid_nsamp_radius( 
 namespace matdes { namespace design { RealOptionKey const fav_nat_bonus( "matdes:design:fav_nat_bonus" );  } }
 namespace matdes { namespace mutalyze { BooleanOptionKey const mutalyze( "matdes:mutalyze" );  } }
 namespace matdes { namespace mutalyze { BooleanOptionKey const calc_rot_boltz( "matdes:mutalyze:calc_rot_boltz" );  } }
+namespace matdes { namespace mutalyze { BooleanOptionKey const ala_scan( "matdes:mutalyze:ala_scan" );  } }
 namespace matdes { namespace mutalyze { BooleanOptionKey const min_rb( "matdes:mutalyze:min_rb" );  } }
 namespace gpu { BooleanOptionKey const gpu( "gpu" );  }
 namespace gpu { FileOptionKey const kernel( "gpu:kernel" );  }

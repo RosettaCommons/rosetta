@@ -216,23 +216,32 @@ void
 minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool move_bb, bool move_sc, bool move_rb) {
 
   // Initialize a MoveMap
+	// fpd 2-phase minimization
+	// 1 - minimize SC only
+	// 2 - minimize SC + RB (iff RB move enabled)
   core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-  movemap->set_jump(move_rb);
-  movemap->set_bb(false);
-  movemap->set_chi(false);
+   movemap->set_jump(false);
+   movemap->set_bb(false);
+   movemap->set_chi(false);
+ 
+   // Set allowable move types at interface positions
+   // Currently, only sc moves allowed
+   for (utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++) {
+     movemap->set_bb (*i, move_bb);
+     movemap->set_chi(*i, move_sc);
+   }
+ 
+   // Make MoveMap symmetric, apply it to minimize the pose
+   core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
+   protocols::simple_moves::symmetry::SymMinMover m1( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+   m1.apply(pose);
 
-  // Set allowable move types at interface positions
-  // Currently, only sc moves allowed
-  for (utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++) {
-    movemap->set_bb (*i, move_bb);
-    movemap->set_chi(*i, move_sc);
-  }
-
-  // Make MoveMap symmetric, apply it to minimize the pose
-  core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-  // print_movemap( *movemap );
-  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
-  m.apply(pose);
+	if (move_rb) {
+		movemap->set_jump(true);
+		core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
+ 	  protocols::simple_moves::symmetry::SymMinMover m2( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+		m2.apply(pose);
+	}
 } 
 
 utility::vector1<Real>
@@ -338,7 +347,7 @@ get_atom_packing_score (Pose const &pose, vector1<Size> intra_subs, Real cutoff=
 {
 
 	Pose sub_pose = get_neighbor_subs(pose, intra_subs);
-	core::scoring::packing::HolesParams hp(basic::database::full_name("rosettaholes/decoy15.params"));
+	core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
   Size nres_monomer = symm_info->num_independent_residues();
@@ -467,7 +476,10 @@ void
 	   	if (sym_jump == 0) {
 		 		sym_jump = jump_num;
 	   	} else {
-	   		utility_exit_with_message("Can only handle one subunit!");
+				TR << "Warning! Multiple symmetric DOFs found; not applying transformations in -matdes::radial_disp and -matdes::angle" << std::endl;
+				sym_jump = -1;
+				runtime_assert( option[matdes::num_subs_building_block]() == 1 );  //fpd  can't create unbound pose if this > 1 and multiple jumps
+	   		//utility_exit_with_message("Can only handle one subunit!");
 	   	}
 	 	}
 	 	if (sym_jump == 0) {
@@ -487,7 +499,9 @@ void
     // Get the total number of subunits
 		Size total_subs = 1;
     if (!option[matdes::num_subs_total].user()) {
-      utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_total");
+      //utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_total");
+			total_subs = sym_info->subunits();
+			TR << "Warning! -matdes::num_subs_total not specified.  Setting = " << total_subs << std::endl;
     } else {
 			total_subs = option[matdes::num_subs_total]();
     }
@@ -498,12 +512,20 @@ void
     // Move the pose to the correct docked configuration before designing
     utility::vector1<Real> radial_disps = option[matdes::radial_disp]();
     utility::vector1<Real> angles = option[matdes::angle]();
-    Mat init_rot = pose.jump(sym_jump).get_rotation();
+		runtime_assert (radial_disps.size() == angles.size() );
+
+    Mat init_rot;
+		if (sym_jump != -1) {
+			init_rot = pose.jump(sym_jump).get_rotation();
+		}
     for (Size iconfig=1; iconfig<=radial_disps.size(); iconfig++) {
-      core::kinematics::Jump j = pose.jump(sym_jump);
-      j.set_translation(Vec(radial_disps[iconfig],0,0));
-      j.set_rotation(Mat(numeric::x_rotation_matrix_degrees(angles[iconfig]) * init_rot));
-			pose.set_jump(sym_jump,j); // COMMENT OUT FOR WILLS PENTAMERS
+			core::kinematics::Jump j;
+			if (sym_jump != -1) {
+	      j = pose.jump(sym_jump);
+	      j.set_translation(Vec(radial_disps[iconfig],0,0));
+				j.set_rotation(Mat(numeric::x_rotation_matrix_degrees(angles[iconfig]) * init_rot));
+				pose.set_jump(sym_jump,j); // COMMENT OUT FOR WILLS PENTAMERS
+			}
 
 			// Design and get mutalyze_pos and ids
 			utility::vector1<Size> mutalyze_pos;
@@ -515,11 +537,11 @@ void
 		  }	
 	
 			// Repack and minimize using score12
-//			repack(pose, score12, mutalyze_pos);
+			// repack(pose, score12, mutalyze_pos);
 			bool min_rb = option[matdes::mutalyze::min_rb]();
 			minimize(pose, score12, mutalyze_pos, false, true, min_rb);
 			score12->score(pose);
-	
+
 			// Write the pdb file of the design
       std::ostringstream r_string;
       r_string << std::fixed << std::setprecision(1) << radial_disps[iconfig];
@@ -534,10 +556,19 @@ void
 	
 	    // Calculate the change in SASA upon complex formation
 	    Real bound_sasa = core::scoring::calc_total_sasa(pose, 1.4);
-	    j.set_translation(Vec(1000,0,0));
-//	    j.set_translation(Vec(1000,1000,1000));
-	    Pose unbound_pose = pose;
-	    unbound_pose.set_jump(sym_jump,j);
+  	  Pose unbound_pose;
+			if (intra_subs.size() == 1) {
+				core::pose::symmetry::extract_asymmetric_unit(pose, unbound_pose);
+				ScoreFunctionOP score12asymm( new ScoreFunction( *score12 ) );
+				(*score12asymm)(unbound_pose);
+			} else {
+				//fpd if there is ever a way to extract a symmetric subpose (e.g. trimer from tetrahedron)
+				//fpd  it can be done here for some speedup
+	    	j.set_translation(Vec(1000,0,0));
+	  	  Pose unbound_pose = pose;
+		    unbound_pose.set_jump(sym_jump,j);
+			}
+
 	    Real unbound_sasa = core::scoring::calc_total_sasa(unbound_pose, 1.4);
 			Real buried_sasa = (unbound_sasa-bound_sasa)/total_subs;
 
@@ -547,50 +578,24 @@ void
 
 	    // Calculate the Boltzmann probability for the rotamer at each designed position
 			if (option[matdes::mutalyze::calc_rot_boltz]() == 1) {
-/* THIS IS FASTER, BUT CRASHES ON DISULFIDES. INFO MUST BE LOST WHEN COPYING POSE?
-				// Frank's hack to create an asymmetric score function. Once I update my codebase, I should be able to use the Factory again, bc he updated it.
-	      ScoreFunctionOP score12asymm( new ScoreFunction );
-	      score12asymm->set_weight(core::scoring::fa_atr, 0.8);
-	      score12asymm->set_weight(core::scoring::fa_rep, 0.44);
-	      score12asymm->set_weight(core::scoring::fa_sol, 0.65);
-	      score12asymm->set_weight(core::scoring::fa_intra_rep, 0.004);
-	      score12asymm->set_weight(core::scoring::fa_pair, 0.49);
-	      score12asymm->set_weight(core::scoring::fa_dun, 0.56);
-	      score12asymm->set_weight(core::scoring::ref, 1);
-	      score12asymm->set_weight(core::scoring::hbond_lr_bb, 1.17);
-	      score12asymm->set_weight(core::scoring::hbond_sr_bb, 0.585);
-	      score12asymm->set_weight(core::scoring::hbond_bb_sc, 1.17);
-	      score12asymm->set_weight(core::scoring::hbond_sc, 1.1);
-	      score12asymm->set_weight(core::scoring::p_aa_pp, 0.32);
-	      score12asymm->set_weight(core::scoring::dslf_ss_dst, 0.5);
-	      score12asymm->set_weight(core::scoring::dslf_cs_ang, 2);
-	      score12asymm->set_weight(core::scoring::dslf_ss_dih, 5);
-	      score12asymm->set_weight(core::scoring::dslf_ca_dih, 5);
-	      score12asymm->set_weight(core::scoring::pro_close, 1.0);
-	      score12asymm->set_weight(core::scoring::rama,  0.2);
-	      score12asymm->set_weight(core::scoring::omega,  0.5);
-				Pose bb_pose;
-				for (Size isub = 0; isub < option[matdes::num_subs_building_block](); ++isub) {
-					bb_pose.append_residue_by_jump(pose.residue((nres_monomer*isub)+1),1);
-					for (Size ibb = 2; ibb <= nres_monomer; ++ibb) {
-						bb_pose.append_residue_by_bond(pose.residue((nres_monomer*isub)+ibb));
+				if (intra_subs.size() == 1) {
+					ScoreFunctionOP score12asymm( new ScoreFunction( *score12 ) );
+					(*score12asymm)(unbound_pose);
+					for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
+						protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
+						rbc.scorefxn(score12asymm);
+						Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
+						std::cout << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;
+					}
+				} else {
+					// intra_subs > 1
+					for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
+						protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
+						rbc.scorefxn(score12);
+						Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
+						TR << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;
 					}
 				}
-
-		    for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
-					protocols::protein_interface_design::filters::RotamerBoltzmannWeight rbc = protocols::protein_interface_design::filters::RotamerBoltzmannWeight();
-					rbc.scorefxn(score12asymm);
-			    Real rot_boltz = rbc.compute_Boltzmann_weight(bb_pose, mutalyze_pos[ipos]);
-		      TR << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;
-		    }
-*/
-		    for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
-					protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
-					rbc.scorefxn(score12);
-			    Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
-		      TR << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;
-		    }
-
 			}
 	
 	    // Calculate the surface area and surface complementarity for the interface

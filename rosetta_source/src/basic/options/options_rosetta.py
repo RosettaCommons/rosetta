@@ -4625,6 +4625,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		Option_Group( 'mutalyze',
 			Option('calc_rot_boltz', 'Boolean', desc='Specify whether to calculate RotamerBoltzmann probabilities or not', default='0'),
+			Option('ala_scan', 'Boolean', desc='Specify whether to calculate RotamerBoltzmann probabilities or not', default='0'),
 			Option('min_rb', 'Boolean', desc='Specify whether to minimize the rigid body DOFs', default='1'),
 		), # mutalyze
 
