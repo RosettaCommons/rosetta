@@ -29,6 +29,8 @@ sources = {
 		"HBondParameterFeaturesCreator",
 		"JobDataFeatures",
 		"JobDataFeaturesCreator",
+		"LoopAnchorFeatures",
+		"LoopAnchorFeaturesCreator",
 		"OrbitalsFeatures",
 		"OrbitalsFeaturesCreator",
 		"PairFeatures",

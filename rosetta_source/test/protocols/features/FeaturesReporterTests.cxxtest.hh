@@ -22,6 +22,8 @@
 #include <protocols/features/GeometricSolvationFeatures.hh>
 #include <protocols/features/HBondFeatures.hh>
 #include <protocols/features/HBondParameterFeatures.hh>
+#include <protocols/features/JobDataFeatures.hh>
+#include <protocols/features/LoopAnchorFeatures.hh>
 #include <protocols/features/OrbitalsFeatures.hh>
 #include <protocols/features/PairFeatures.hh>
 #include <protocols/features/PdbDataFeatures.hh>
@@ -96,6 +98,8 @@ public:
 		features_reporters_.push_back(new GeometricSolvationFeatures());
 		features_reporters_.push_back(new HBondFeatures(score_function_));
 		features_reporters_.push_back(new HBondParameterFeatures(score_function_));
+		features_reporters_.push_back(new JobDataFeatures());
+		features_reporters_.push_back(new LoopAnchorFeatures());
 		features_reporters_.push_back(new OrbitalsFeatures());
 		features_reporters_.push_back(new PairFeatures());
 		features_reporters_.push_back(new PdbDataFeatures());
