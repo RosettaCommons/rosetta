@@ -55,7 +55,8 @@ public:
 		void perturb( bool const setting ) { perturb_ = setting; }
 		bool refine() const { return refine_; }
 		void refine( bool const setting ) { refine_ = setting; }
-		void string_refine( std::string const setting ){ string_refine_ = setting;}
+		void refine( std::string const setting ){ string_refine_ = setting; }
+//		void string_refine( std::string const setting ){ string_refine_ = setting;}
 		std::string string_refine() const{ return string_refine_; }
 		void intermedrelax( std::string const setting ){ intermedrelax_ = setting;}
 		std::string intermedrelax() const{ return intermedrelax_; }

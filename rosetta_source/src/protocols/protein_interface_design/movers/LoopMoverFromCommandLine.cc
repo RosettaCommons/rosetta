@@ -149,7 +149,8 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 		refine_(refine),
 		intermedrelax_( "no" ),
 		remodel_( "no" ),
-		relax_( "no" )
+		relax_( "no" ),
+		string_refine_( "no" )
 {
 		hires_score_ = hires_score;
 		lores_score = new core::scoring::ScoreFunction ( *lores_score );
@@ -274,11 +275,13 @@ LoopMoverFromCommandLine::parse_my_tag( TagPtr const tag, protocols::moves::Data
 {
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
 	perturb_ = tag->getOption<bool>( "perturb", 1 );
-	refine_ = tag->getOption<bool>( "refine", 1 );
+	if( protocol_ == "automatic" ) // ugly, but LoopRemodelMover accepts string whereas the other movers accept bool
+		refine( tag->getOption< std::string >( "refine", "no" ) );
+	else
+		refine( tag->getOption<bool>( "refine", 1 ) );
 	intermedrelax( tag->getOption< std::string >( "intermedrelax", "no" ) );
 	remodel( tag->getOption< std::string >( "remodel", "no" ) );
 	relax( tag->getOption< std::string > ("relax", "no" ) );
-	string_refine( tag->getOption< std::string >( "string_refine", "no" ) );
 	std::string const hires_score( tag->getOption<std::string>( "refine_score", "score12" ) );
 	std::string const lores_score( tag->getOption<std::string>( "perturb_score", "score4L" ) );
 	hires_score_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", hires_score ));
