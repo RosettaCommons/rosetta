@@ -7,33 +7,33 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/feature/PoseCommentsFeaturesCreator.hh
-/// @brief  Header for PoseCommentsFeaturesCreator for the PoseCommentsFeatures load-time factory registration scheme
+/// @file   protocols/feature/LoopAnchorFeaturesCreator.hh
+/// @brief  Header for LoopAnchorFeaturesCreator for the LoopAnchorFeatures load-time factory registration scheme
 /// @author Matthew O'Meara
 
 // Unit Headers
-#include <protocols/features/PoseCommentsFeaturesCreator.hh>
+#include <protocols/features/LoopAnchorFeaturesCreator.hh>
 
 // Package Headers
 
 #include <protocols/features/FeaturesReporterCreator.hh>
 // AUTO-REMOVED #include <protocols/features/FeaturesReporterFactory.hh>
 
-#include <protocols/features/PoseCommentsFeatures.hh>
+#include <protocols/features/LoopAnchorFeatures.hh>
 #include <utility/vector1.hh>
 
 
 namespace protocols {
 namespace features {
 
-PoseCommentsFeaturesCreator::PoseCommentsFeaturesCreator() {}
-PoseCommentsFeaturesCreator::~PoseCommentsFeaturesCreator() {}
-FeaturesReporterOP PoseCommentsFeaturesCreator::create_features_reporter() const {
-	return new PoseCommentsFeatures;
+LoopAnchorFeaturesCreator::LoopAnchorFeaturesCreator() {}
+LoopAnchorFeaturesCreator::~LoopAnchorFeaturesCreator() {}
+FeaturesReporterOP LoopAnchorFeaturesCreator::create_features_reporter() const {
+	return new LoopAnchorFeatures;
 }
 
-std::string PoseCommentsFeaturesCreator::type_name() const {
-	return "PoseCommentsFeatures";
+std::string LoopAnchorFeaturesCreator::type_name() const {
+	return "LoopAnchorFeatures";
 }
 
 } //namespace features

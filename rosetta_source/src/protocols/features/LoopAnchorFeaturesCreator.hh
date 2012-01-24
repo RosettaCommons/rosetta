@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/PoseCommentsFeaturesCreator.hh
-/// @brief  Header for PoseCommentsFeaturesCreator for the PoseCommentsFeatures load-time factory registration scheme
+/// @file   protocols/features/LoopAnchorFeaturesCreator.hh
+/// @brief  Header for LoopAnchorFeaturesCreator for the LoopAnchorFeatures load-time factory registration scheme
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_features_PoseCommentsFeaturesCreator_hh
-#define INCLUDED_protocols_features_PoseCommentsFeaturesCreator_hh
+#ifndef INCLUDED_protocols_features_LoopAnchorFeaturesCreator_hh
+#define INCLUDED_protocols_features_LoopAnchorFeaturesCreator_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/features/PoseCommentsFeatures.hh>
+// AUTO-REMOVED #include <protocols/features/LoopAnchorFeatures.hh>
 #include <protocols/features/FeaturesReporterCreator.hh>
 
 // c++ headers
@@ -28,12 +28,12 @@
 namespace protocols {
 namespace features {
 
-/// @brief creator for the PoseCommentsFeatures class
-class PoseCommentsFeaturesCreator : public FeaturesReporterCreator
+/// @brief creator for the LoopAnchorFeatures class
+class LoopAnchorFeaturesCreator : public FeaturesReporterCreator
 {
 public:
-	PoseCommentsFeaturesCreator();
-	virtual ~PoseCommentsFeaturesCreator();
+	LoopAnchorFeaturesCreator();
+	virtual ~LoopAnchorFeaturesCreator();
 
 	virtual FeaturesReporterOP create_features_reporter() const;
 	virtual std::string type_name() const;
