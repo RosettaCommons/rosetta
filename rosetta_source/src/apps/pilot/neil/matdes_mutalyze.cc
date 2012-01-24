@@ -520,7 +520,8 @@ void
 		}
     for (Size iconfig=1; iconfig<=radial_disps.size(); iconfig++) {
 			core::kinematics::Jump j;
-			if (sym_jump != -1) {
+			//fpd if we have multiple symm DOFs or we have radial_disp==angle==0 then use input conformation
+			if (sym_jump != -1 && !(radial_disps[iconfig]==0 && angles[iconfig]==0)) {
 	      j = pose.jump(sym_jump);
 	      j.set_translation(Vec(radial_disps[iconfig],0,0));
 				j.set_rotation(Mat(numeric::x_rotation_matrix_degrees(angles[iconfig]) * init_rot));
@@ -565,7 +566,7 @@ void
 				//fpd if there is ever a way to extract a symmetric subpose (e.g. trimer from tetrahedron)
 				//fpd  it can be done here for some speedup
 	    	j.set_translation(Vec(1000,0,0));
-	  	  Pose unbound_pose = pose;
+	  	  unbound_pose = pose;
 		    unbound_pose.set_jump(sym_jump,j);
 			}
 
@@ -645,28 +646,30 @@ void
 
 			// Loop through the design positions and mutate each non-Gly/Pro residue to alanine, then
 			// calculate the ddG to get a measure of the contribution of each residue to the interface
-			Sizes pos;
-			utility::vector1<std::string> id;
-			for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
-				Pose pose_for_ala_scan = pose;
-				pos.clear();
-				id.clear();
-		    pos.push_back(mutalyze_pos[ipos]);
-				if ((mutalyze_ids[ipos] == "GLY") || (mutalyze_ids[ipos] == "PRO")) {
-					id.push_back(string_of(mutalyze_ids[ipos]));
-				} else {
-					id.push_back("ALA");
-				}
-
-				// Design
-		    design(pose_for_ala_scan, score12, pos, id);
+			if (option[matdes::mutalyze::ala_scan]() == 1) {
+				Sizes pos;
+				utility::vector1<std::string> id;
+				for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
+					Pose pose_for_ala_scan = pose;
+					pos.clear();
+					id.clear();
+					pos.push_back(mutalyze_pos[ipos]);
+					if ((mutalyze_ids[ipos] == "GLY") || (mutalyze_ids[ipos] == "PRO")) {
+						id.push_back(string_of(mutalyze_ids[ipos]));
+					} else {
+						id.push_back("ALA");
+					}
 	
-		    // Calculate the ddG of the monomer in the assembled and unassembled states
-		    protocols::simple_moves::ddG ddG_mover3 = protocols::simple_moves::ddG(score12, 1, true);
-		    ddG_mover3.calculate(pose_for_ala_scan);
-		    Real ddG3 = ddG_mover3.sum_ddG();
-		    TR << files[ifile] << " ddG for mutation " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << ddG3 << std::endl;
-		    ddG_mover3.report_ddG(TR);
+					// Design
+					design(pose_for_ala_scan, score12, pos, id);
+		
+					// Calculate the ddG of the monomer in the assembled and unassembled states
+					protocols::simple_moves::ddG ddG_mover3 = protocols::simple_moves::ddG(score12, 1, true);
+					ddG_mover3.calculate(pose_for_ala_scan);
+					Real ddG3 = ddG_mover3.sum_ddG();
+					TR << files[ifile] << " ddG for mutation " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << ddG3 << std::endl;
+					ddG_mover3.report_ddG(TR);
+				}
 			}
 		} // for iconfig in radial_disps
 			
