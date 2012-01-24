@@ -36,7 +36,7 @@
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
-			
+
 class LoopMoverFromCommandLine : public protocols::simple_moves::DesignRepackMover
 {
 public:
@@ -55,20 +55,30 @@ public:
 		void perturb( bool const setting ) { perturb_ = setting; }
 		bool refine() const { return refine_; }
 		void refine( bool const setting ) { refine_ = setting; }
+		void string_refine( std::string const setting ){ string_refine_ = setting;}
+		std::string string_refine() const{ return string_refine_; }
+		void intermedrelax( std::string const setting ){ intermedrelax_ = setting;}
+		std::string intermedrelax() const{ return intermedrelax_; }
+		void relax( std::string const setting ){ relax_ = setting; }
+		std::string relax() const{ return relax_; }
+	  void remodel( std::string const setting ){ remodel_ = setting; }
+		std::string remodel() const{ return remodel_; }
 		protocols::moves::MoverOP clone() const;
 		protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopMoverFromCommandLine ); }
 		void apply( core::pose::Pose & pose );
 		virtual std::string get_name() const;
 		void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 		virtual ~LoopMoverFromCommandLine();
+
 private:
 		std::string protocol_;
 		core::scoring::ScoreFunctionOP hires_score_, lores_score_;
-		bool perturb_, refine_ ;
+		bool perturb_, refine_;
 		std::string loop_file_name_;
 		protocols::loops::LoopsOP loops_;
+		std::string intermedrelax_, remodel_, relax_, string_refine_;
 };
-			
+
 } //moves
 } //protocols
 }

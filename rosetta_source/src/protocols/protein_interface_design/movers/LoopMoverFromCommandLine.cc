@@ -28,6 +28,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
 #include <protocols/loops/Loops.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
@@ -90,7 +91,7 @@
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
-	
+
 static basic::Tracer TR( "protocols.moves.LoopRemodelFromCommandLine" );
 static basic::Tracer TR_report( "protocols.moves.LoopRemodelFromCommandLine.REPORT" );
 
@@ -109,7 +110,7 @@ std::string	LoopMoverFromCommandLineCreator::mover_name()
 {
 	return "LoopMoverFromCommandLine";
 }
-	
+
 LoopMoverFromCommandLine::~LoopMoverFromCommandLine() {}
 
 
@@ -122,7 +123,11 @@ LoopMoverFromCommandLine::clone() const
 
 //call on empty constructor
 LoopMoverFromCommandLine::LoopMoverFromCommandLine() :
-	simple_moves::DesignRepackMover( LoopMoverFromCommandLineCreator::mover_name() )
+	simple_moves::DesignRepackMover( LoopMoverFromCommandLineCreator::mover_name() ),
+	intermedrelax_( "no" ),
+	remodel_( "no" ),
+	relax_( "no" ),
+	string_refine_( "no" )
 {
 	design(false);
 }
@@ -141,8 +146,10 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 		simple_moves::DesignRepackMover ( LoopMoverFromCommandLineCreator::mover_name()),
 		protocol_ ( protocol ),
 		perturb_( perturb),
-		refine_(refine)
-
+		refine_(refine),
+		intermedrelax_( "no" ),
+		remodel_( "no" ),
+		relax_( "no" )
 {
 		hires_score_ = hires_score;
 		lores_score = new core::scoring::ScoreFunction ( *lores_score );
@@ -192,6 +199,21 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		protocols::protein_interface_design::movers::SaveAndRetrieveSidechains retrieve_sc( pose );
 		retrieve_sc.allsc( true );
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
+		if( protocol_ == "automatic" ){
+			utility::vector1< core::fragment::FragSetOP > frag_libs;
+			protocols::loops::read_loop_fragments( frag_libs );
+
+			protocols::comparative_modeling::LoopRelaxMover lrm;
+			lrm.frag_libs( frag_libs );
+			lrm.loops( single_loop );
+			lrm.relax( relax() );
+			lrm.refine( string_refine() );
+			lrm.remodel( remodel() );
+			lrm.intermedrelax( intermedrelax() );
+			lrm.scorefxns( lores_score_, hires_score_ );
+			lrm.apply( pose );
+			return;
+		}
 		if( protocol_ == "kinematic" ) {
 						if( perturb_ ) {
 							protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb(single_loop, lores_score_ );
@@ -207,41 +229,41 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 							pose.update_residue_neighbors();
 							refine.apply( pose );
 						}
-					} // protocol == kinematic
-					else if( protocol_ == "ccd" ) {
-						TR << "Task Factory =" << task_factory;
-						TR << "ccd protocol" << std::endl;
-						pose.update_residue_neighbors();
-						core::scoring::dssp::Dssp dssp( pose );
-						dssp.insert_ss_into_pose( pose );
-						std::string const full_ss = pose.secstruct();
-						std::string const full_sequence = pose.sequence();
-						utility::vector1< core::fragment::FragSetOP > frag_libs;
-						protocols:loops:read_loop_fragments( frag_libs );
-							if( perturb_ ) {
-								protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD perturb(single_loop, lores_score_ );
-								for ( core::Size i = 1; i <= frag_libs.size(); ++i ) {
-									perturb.add_fragments( frag_libs[i] );
-								}
-								perturb.set_strict_loops( true );
-								perturb.set_native_pose( new core::pose::Pose ( native_pose ) );
-								perturb.apply( pose );
-							}
-						core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
-						retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
-						if( refine_ ) {
-							protocols::loops::loop_mover::refine::LoopMover_Refine_CCD refine(single_loop, hires_score_ );
-							for ( core::Size i = 1; i <= frag_libs.size(); ++i ) {
-									refine.add_fragments( frag_libs[i] );
-							}
-							//core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
-							refine.set_redesign_loop( false );
-							refine.set_native_pose( new core::pose::Pose ( native_pose ) );
-							refine.apply( pose );
-						}//refine
-				}//ccd
-			  }//end single loop
-			}//loops>0
+		} // protocol == kinematic
+		else if( protocol_ == "ccd" ) {
+			TR << "Task Factory =" << task_factory;
+			TR << "ccd protocol" << std::endl;
+			pose.update_residue_neighbors();
+			core::scoring::dssp::Dssp dssp( pose );
+			dssp.insert_ss_into_pose( pose );
+			std::string const full_ss = pose.secstruct();
+			std::string const full_sequence = pose.sequence();
+			utility::vector1< core::fragment::FragSetOP > frag_libs;
+			protocols:loops:read_loop_fragments( frag_libs );
+				if( perturb_ ) {
+					protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD perturb(single_loop, lores_score_ );
+					for ( core::Size i = 1; i <= frag_libs.size(); ++i ) {
+						perturb.add_fragments( frag_libs[i] );
+					}
+					perturb.set_strict_loops( true );
+					perturb.set_native_pose( new core::pose::Pose ( native_pose ) );
+					perturb.apply( pose );
+				}
+			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+			retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
+			if( refine_ ) {
+				protocols::loops::loop_mover::refine::LoopMover_Refine_CCD refine(single_loop, hires_score_ );
+				for ( core::Size i = 1; i <= frag_libs.size(); ++i ) {
+						refine.add_fragments( frag_libs[i] );
+				}
+				//core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
+				refine.set_redesign_loop( false );
+				refine.set_native_pose( new core::pose::Pose ( native_pose ) );
+				refine.apply( pose );
+			}//refine
+		}//ccd
+	  }//end single loop
+	}//loops>0
 }
 std::string
 LoopMoverFromCommandLine::get_name() const {
@@ -253,6 +275,10 @@ LoopMoverFromCommandLine::parse_my_tag( TagPtr const tag, protocols::moves::Data
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
 	perturb_ = tag->getOption<bool>( "perturb", 1 );
 	refine_ = tag->getOption<bool>( "refine", 1 );
+	intermedrelax( tag->getOption< std::string >( "intermedrelax", "no" ) );
+	remodel( tag->getOption< std::string >( "remodel", "no" ) );
+	relax( tag->getOption< std::string > ("relax", "no" ) );
+	string_refine( tag->getOption< std::string >( "string_refine", "no" ) );
 	std::string const hires_score( tag->getOption<std::string>( "refine_score", "score12" ) );
 	std::string const lores_score( tag->getOption<std::string>( "perturb_score", "score4L" ) );
 	hires_score_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", hires_score ));
