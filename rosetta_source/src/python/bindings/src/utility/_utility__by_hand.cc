@@ -375,7 +375,7 @@ void wrap__utility__by_hand()
 
     wrap_vector1<numeric::xyzVector_bool, CP_CNCR, CP_CCR>("vector1_xyzVector_bool");
 
-
+    wrap_vector1<core::pose::PoseOP,  CP_CNCR, CP_CCR>("vector1_PoseOP");
 
 
     //if( true ) { // This code never executed, but we need it so compilere create operator ostream << vector1[core::conformation::Atom]
