@@ -43,16 +43,20 @@ static basic::Tracer TR("symdock_enum");
 
 
 
-OPT_1GRP_KEY( Real	  , tcdock, clash_dis		)
-OPT_1GRP_KEY( Real	  , tcdock, contact_dis	)
-OPT_1GRP_KEY( Boolean , tcdock, intra	)
+OPT_1GRP_KEY( Real , tcdock, clash_dis		)
+OPT_1GRP_KEY( Real , tcdock, contact_dis	)
+OPT_1GRP_KEY( Real , tcdock, intra	)
+OPT_1GRP_KEY( Integer , tcdock, topx	)
+OPT_1GRP_KEY( Boolean , tcdock, reverse	)
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	OPT( in::file::s );
 	NEW_OPT( tcdock::clash_dis	 ,"max acceptable clash dis"	,	3.5 );
-	NEW_OPT( tcdock::contact_dis ,"max acceptable contact dis", 10.0 );	
-	NEW_OPT( tcdock::intra       ,"include intra 3-3 5-5 contacts", true );	
+	NEW_OPT( tcdock::contact_dis ,"max acceptable contact dis", 10.0 );
+	NEW_OPT( tcdock::intra       ,"include intra 3-3 5-5 contacts", 1.0 );
+	NEW_OPT( tcdock::topx        ,"output top X hits", 10 );
+	NEW_OPT( tcdock::reverse     ,"rev.", false );	
 }
 
 
@@ -168,7 +172,7 @@ sicsafe(
 				vector1<Vecf> const & cba,
 				vector1<Vecf> const & cbb,
 				Vecf ori,
-				int & cbcount,
+				float & cbcount,
 				bool debug = false
 ){
 	Real const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
@@ -204,7 +208,7 @@ sicsafe(
 			Vec const & vb = *ib;
 			Real d2 = vb.distance_squared( (va + mindis*ori ) );
 			if( d2 < CONTACT_D2 ) {
-				cbcount += 1.0;//sigmoid(d2, CLASH_D, CONTACT_D );
+				cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
 			}
 		}
 	}
@@ -219,10 +223,14 @@ sicfast(
 				vector1<Vecf> const & cba,
 				vector1<Vecf> const & cbb,
 				Vecf ori,
-				int & cbcount,
+				float & cbcount,
 				bool debug = false
 ){
-	double BIN = 2.0;
+	Real const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
+	Real const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
+	Real const CONTACT_D2 = sqr(CONTACT_D);
+	Real const CLASH_D2	 = sqr(CLASH_D);	
+	double const BIN = CLASH_D / 2.0;
 
 	// get points, rotated ro ori is 0,0,1, might already be done
 	Matf rot = Matf::identity();
@@ -250,8 +258,8 @@ sicfast(
 	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
 	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
 
-	// TR << "BOUNDS " << xmn << " " << xmx << " " << ymn << " " << ymx << std::endl;
-	// TR << "BOUNDS " << xlb << " " << xub << " " << ylb << " " << yub << std::endl;
+	// std::cerr << "BOUNDS " << xmn << " " << xmx << " " << ymn << " " << ymx << std::endl;
+	// std::cerr << "BOUNDS " << xlb << " " << xub << " " << ylb << " " << yub << std::endl;
 
 	// insert points into hashes
 	int const xsize = xub-xlb+1;
@@ -289,8 +297,8 @@ sicfast(
 					double const yb = hb(i+k,j+l).y();
 					double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
 
-					if( d2 < 16.0 ) {
-						double dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(16.0-d2);
+					if( d2 < CLASH_D2 ) {
+						double dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(CLASH_D2-d2);
 						if( dz < mindis ) {
 							mindis = dz;
 							imna = i;
@@ -323,11 +331,12 @@ sicfast(
 
 	cbcount = 0;
 	// utility::io::ozstream out("cb8.pdb");
-	// TR << "CB0 " << cbcount << std::endl;
+	// std::cerr << "CB0 " << cbcount << std::endl;
 	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
 		for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-			if( ib->distance_squared( (*ia) + (mindis*ori) ) < 100.0 ) {
-				cbcount++;
+			double d2 = ib->distance_squared( (*ia) + (mindis*ori) );
+			if( d2 < CONTACT_D2 ) {
+				cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
 				// Vec viz = (*ia) + (mindis*ori);
 				// out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 				// viz = *ib;
@@ -336,7 +345,7 @@ sicfast(
 		}
 	}
 	// out.close();
-	// TR << "CB1 " << cbcount << std::endl;
+	// std::cerr << "CB1 " << cbcount << std::endl;
 
 	// // rotate points back -- needed iff pa/pb come by reference
 	rot = rot.transposed();
@@ -385,7 +394,7 @@ double sicfast(
 							 Pose const & a,
 							 Pose const & b,
 							 Vecf ori_in,
-							 int & cbcount
+							 float & cbcount
 ){
 	// get points, rotated ro ori is 0,0,1
 	vector1<Vecf> pa,pb;
@@ -407,43 +416,89 @@ double sicfast(
 	return sicfast( pa, pb, cba, cbb, Vec(0,0,1), cbcount );
 }
 
+// void tri1_to_tri2_pose(core::pose::Pose & pose, Vecf triaxs_, Vecf triax2_) {
+// 	Matf r = rotation_matrix_degrees( triaxs_.cross(triax2_), angle_degrees(triaxs_,Vec(0,0,0),triax2_) );
+// 	r = r * rotation_matrix_degrees(triaxs_,60.0);
+// 	rot_pose(pose,r);
+// }
+void tri1_to_tri2(vector1<Vecf> & pts, Vecf triaxs_, Vecf triax2_) {
+	Matf r = rotation_matrix_degrees( triaxs_.cross(triax2_), angle_degrees(triaxs_,Vec(0,0,0),triax2_) );
+	r = r * rotation_matrix_degrees(triaxs_,60.0);
+	for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);
+}
+// void pnt1_to_pnt2_pose(core::pose::Pose & pose, Vecf pntaxs_, Vecf pntax2_) {
+// 	Matf r = rotation_matrix_degrees( pntaxs_.cross(pntax2_), angle_degrees(pntaxs_,Vec(0,0,0),pntax2_) );
+// 	r = r * rotation_matrix_degrees(pntaxs_,36.0);
+// 	rot_pose(pose,r);
+// }
+void pnt1_to_pnt2(vector1<Vecf> & pts, Vecf pntaxs_, Vecf pntax2_) {
+	Matf r = rotation_matrix_degrees( pntaxs_.cross(pntax2_), angle_degrees(pntaxs_,Vec(0,0,0),pntax2_) );
+	r = r * rotation_matrix_degrees(pntaxs_,36.0);
+	for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);
+}
+
 
 
 
 
 struct TCDock {
 
-	vector1<double>						pntmnpos3_,trimnpos3_;
-	vector1<double>						pntmnneg3_,trimnneg3_;
-	ObjexxFCL::FArray2D<int>	pntcbpos3_,tricbpos3_;
-	ObjexxFCL::FArray2D<int>	pntcbneg3_,tricbneg3_;
-	vector1<double>						pntmnpos1_,trimnpos1_;
-	vector1<double>						pntmnneg1_,trimnneg1_;
-	vector1<double>						pntdspos1_,tridspos1_;
-	vector1<double>						pntdsneg1_,tridsneg1_;
-	ObjexxFCL::FArray2D<int>	pntcbpos1_,tricbpos1_;
-	ObjexxFCL::FArray2D<int>	pntcbneg1_,tricbneg1_;
+	vector1<double>						  pntmnpos3_,trimnpos3_;
+	vector1<double>						  pntmnneg3_,trimnneg3_;
+	ObjexxFCL::FArray2D<float>	pntcbpos3_,tricbpos3_;
+	ObjexxFCL::FArray2D<float>	pntcbneg3_,tricbneg3_;
+	vector1<double>						  pntmnpos1_,trimnpos1_;
+	vector1<double>						  pntmnneg1_,trimnneg1_;
+	vector1<double>						  pntdspos1_,tridspos1_;
+	vector1<double>						  pntdsneg1_,tridsneg1_;
+	ObjexxFCL::FArray2D<float>	pntcbpos1_,tricbpos1_;
+	ObjexxFCL::FArray2D<float>	pntcbneg1_,tricbneg1_;
 
 	ObjexxFCL::FArray3D<float> gdis;
 	ObjexxFCL::FArray3D<float> gcbc;	
 
+	Vecf triaxs_;
+	Vecf triax2_;
+	Vecf pntaxs_;
+	Vecf pntax2_;
+	Real alpha_;
+
 	Pose tri_in_,pnt_in_;
+	std::string trifile,pntfile;
 	
-	TCDock() : 
-		pntmnpos3_(24,0)   ,trimnpos3_(40,0),
-		pntmnneg3_(24,0)   ,trimnneg3_(40,0),
-		pntcbpos3_(24,97,0),tricbpos3_(40,145,0),
-		pntcbneg3_(24,97,0),tricbneg3_(40,145,0),
-		pntmnpos1_(72,0)	 ,trimnpos1_(120,0),
-		pntmnneg1_(72,0)	 ,trimnneg1_(120,0),
-		pntdspos1_(72,0)	 ,tridspos1_(120,0),
-		pntdsneg1_(72,0)	 ,tridsneg1_(120,0),
-		pntcbpos1_(72,97,0),tricbpos1_(120,145,0), // axes moving out
-		pntcbneg1_(72,97,0),tricbneg1_(120,145,0),
-		gdis(72,120,360,-1),
-		gcbc(72,120,360,-1)
+	TCDock( Size itrifile, Size ipntfile ) : 
+		pntmnpos3_(24,0.0)   ,trimnpos3_(40,0.0),
+		pntmnneg3_(24,0.0)   ,trimnneg3_(40,0.0),
+		pntcbpos3_(24,97,0.0),tricbpos3_(40,145,0.0),
+		pntcbneg3_(24,97,0.0),tricbneg3_(40,145,0.0),
+		pntmnpos1_(72,0.0)	 ,trimnpos1_(120,0.0),
+		pntmnneg1_(72,0.0)	 ,trimnneg1_(120,0.0),
+		pntdspos1_(72,0.0)	 ,tridspos1_(120,0.0),
+		pntdsneg1_(72,0.0)	 ,tridsneg1_(120,0.0),
+		pntcbpos1_(72,97,0.0),tricbpos1_(120,145,0.0), // axes moving out
+		pntcbneg1_(72,97,0.0),tricbneg1_(120,145,0.0),
+		gdis(72,120,360,-1.0),
+		gcbc(72,120,360,-1.0)
 	
-	{}
+	{
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		core::chemical::ResidueTypeSetCAP crs=core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID);
+		core::import_pose::pose_from_pdb(tri_in_,*crs,option[in::file::s]()[itrifile]);
+		core::import_pose::pose_from_pdb(pnt_in_,*crs,option[in::file::s]()[ipntfile]);
+		trifile = utility::file_basename(option[in::file::s]()[itrifile]);
+		pntfile = utility::file_basename(option[in::file::s]()[ipntfile]);
+		make_trimer(tri_in_);
+		make_pentamer(pnt_in_);		
+		// set up geometry
+		triaxs_ = Vec( 0.000000, 0.000000,1.000000).normalized();
+		triax2_ = Vec(-0.333333,-0.577350,0.745356).normalized(); // 33.4458470159, 10.42594
+		pntaxs_ = Vec(-0.607226, 0.000000,0.794529).normalized();
+		pntax2_ = Vec(-0.491123,-0.850651,0.187593).normalized(); // 63.4311873349, 5.706642
+		alpha_ = angle_degrees(triaxs_,Vec(0,0,0),pntaxs_);
+		rot_pose(pnt_in_,Vec(0,1,0),-alpha_,Vec(0,0,0));
+		if(option[tcdock::reverse]()) rot_pose(tri_in_,Vec(0,1,0),180.0);
+	}
 
 	double
 	calc_iface(
@@ -481,67 +536,198 @@ struct TCDock {
 		for(Size i = 1; i <= t4.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
 		for(Size i = 1; i <= t5.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t5.residue(i),1); else pose.append_residue_by_bond(t5.residue(i));
 	}
-	void tri1_to_tri2(core::pose::Pose & pose, Vecf triaxs_, Vecf triax2_) {
-		Matf r = rotation_matrix_degrees( triaxs_.cross(triax2_), angle_degrees(triaxs_,Vec(0,0,0),triax2_) );
-		r = r * rotation_matrix_degrees(triaxs_,60.0);
-		rot_pose(pose,r);
+	
+	void precalc_1comp(
+		int Nangle,
+		int ANGLE_INCR,
+		core::pose::Pose const & init,
+		Vecf sicaxis,
+		vector1<double> & mn,
+		ObjexxFCL::FArray2D<int> & cb,
+		bool t_or_p
+	){
+		Real const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
+		Real const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
+		sicaxis.normalize();
+		#ifdef USE_OPENMP
+		#pragma omp parallel for schedule(dynamic,1)
+		#endif
+		for(int iangle = 0; iangle < Nangle; iangle+=ANGLE_INCR) {
+			Pose p;
+			#ifdef USE_OPENMP
+			#pragma omp critical
+			#endif
+			p = init;
+			rot_pose(p,(t_or_p?triaxs_:pntaxs_),iangle);
+			vector1<Vecf> ppnt,cbp; // precompute these
+			for(int i = 1; i <= (int)p.n_residue(); ++i) {
+				cbp.push_back(Vecf(p.residue(i).xyz(2)));
+				int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
+				for(int j = 1; j <= natom; ++j) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
+			}
+			vector1<Vecf> ppn2(ppnt),cb2(cbp);
+			if(t_or_p) tri1_to_tri2(ppn2,triaxs_,triax2_); else pnt1_to_pnt2(ppn2,pntaxs_,pntax2_);
+			if(t_or_p) tri1_to_tri2( cb2,triaxs_,triax2_); else pnt1_to_pnt2( cb2,pntaxs_,pntax2_);				
+			float cbcount = 0;
+			double const d = sicsafe(ppnt,ppn2,cbp,cb2,sicaxis,cbcount,false);
+			if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntpos! "+ObjexxFCL::string_of(iangle));
+			for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*sicaxis;
+			mn[iangle/ANGLE_INCR+1] = -d/2.0/sin( angle_radians((t_or_p?triax2_:pntax2_),Vec(0,0,0),(t_or_p?triaxs_:pntaxs_))/2.0 );
+			cb(iangle/ANGLE_INCR+1,1) = cbcount;
+			// std::cerr << "compute CB" << std::endl;
+			prune_cb_pairs_dis10(cbp,cb2);
+			for(int i = 2; i <= (t_or_p?97:145); ++i) {
+				for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) + 0.1*(t_or_p?triaxs_:pntaxs_);
+				for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1*(t_or_p?triax2_:pntax2_);
+				float cbc = 0.0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbp[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );;
+				cb(iangle/ANGLE_INCR+1,i) = cbc;
+				if(cbc==0) break;
+			}
+		}
+	
 	}
-	void tri1_to_tri2(vector1<Vecf> & pts, Vecf triaxs_, Vecf triax2_) {
-		Matf r = rotation_matrix_degrees( triaxs_.cross(triax2_), angle_degrees(triaxs_,Vec(0,0,0),triax2_) );
-		r = r * rotation_matrix_degrees(triaxs_,60.0);
-		for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);
-	}
-	void pnt1_to_pnt2(core::pose::Pose & pose, Vecf pntaxs_, Vecf pntax2_) {
-		Matf r = rotation_matrix_degrees( pntaxs_.cross(pntax2_), angle_degrees(pntaxs_,Vec(0,0,0),pntax2_) );
-		r = r * rotation_matrix_degrees(pntaxs_,36.0);
-		rot_pose(pose,r);
-	}
-	void pnt1_to_pnt2(vector1<Vecf> & pts, Vecf pntaxs_, Vecf pntax2_) {
-		Matf r = rotation_matrix_degrees( pntaxs_.cross(pntax2_), angle_degrees(pntaxs_,Vec(0,0,0),pntax2_) );
-		r = r * rotation_matrix_degrees(pntaxs_,36.0);
-		for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);
+	
+	
+	void dump_pdb(float apnt, float atri, float aori, std::string fname, bool sym=true) {
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		Pose p,t;
+		{
+			p = pnt_in_;
+			t = tri_in_;					
+		}
+		rot_pose(p,pntaxs_,apnt);
+		rot_pose(t,triaxs_,atri);
+
+		vector1<Vecf> pb,cbb; // precompute these
+		for(int i = 1; i <= (int)p.n_residue(); ++i) {
+			cbb.push_back(Vecf(p.residue(i).xyz(2)));
+			int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
+			for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
+		}
+		vector1<Vecf> pa,cba; // precompute these
+		for(int i = 1; i <= (int)t.n_residue(); ++i) {
+			cba.push_back(Vecf(t.residue(i).xyz(2)));
+			int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
+			for(int j = 1; j <= natom; ++j) pa.push_back(Vecf(t.residue(i).xyz(j)));
+		}
+		Vecf sicaxis = (rotation_matrix_degrees(-Vecf(0,1,0),(double)aori) * Vecf(0,0,1)).normalized();
+		float tmpcbc;
+		double d = sicsafe(pb,pa,cbb,cba,sicaxis,tmpcbc);
+
+		double theta = aori;
+		double gamma = theta-alpha_;
+		double x = d * sin(numeric::conversions::radians(gamma));
+		double y = d * cos(numeric::conversions::radians(gamma));
+		double w = x / sin(numeric::conversions::radians(alpha_));
+		double z = x / tan(numeric::conversions::radians(alpha_));
+		double dpnt = y+z;
+		double dtri = w;
+		double pntmn,trimn;
+		trans_pose(p,dpnt*pntaxs_);
+		trans_pose(t,dtri*triaxs_);
+
+		Pose symm;
+		{
+			symm.append_residue_by_jump(t.residue(1),1);
+			for(Size i = 2; i <= t.n_residue()/3; ++i) {
+				if(symm.residue(i-1).is_terminus()) symm.append_residue_by_jump(t.residue(i),1);
+				else                                symm.append_residue_by_bond(t.residue(i));
+			}
+			symm.append_residue_by_jump(p.residue(1),1);
+			for(Size i = 2; i <= p.n_residue()/5; ++i) {
+				if(symm.residue(symm.n_residue()).is_terminus()) symm.append_residue_by_jump(p.residue(i),1);
+				else                                             symm.append_residue_by_bond(p.residue(i));
+			}
+			// core::util::switch_to_residue_type_set(symm,"fa_standard");
+			// for(Size i = 1; i <= symm.n_residue(); ++i) core::pose::replace_pose_residue_copying_existing_coordinates(symm,i,rs->name_map("ALA"));
+			//std::cerr << "making symm" << std::endl;					
+		}
+		if(sym)	core::pose::symmetry::make_symmetric_pose(symm);				
+		core::io::pdb::dump_pdb(symm,option[out::file::o]()+"/"+fname);
+		
 	}
 
-	void run( Size itrifile, Size ipntfile ) {
+	float calc_cbc(int ipnt, int itri, int iori, int ANGLE_INCR) {
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+
+		vector1<Vecf> pb,cbb; // precompute these
+		vector1<Vecf> pa,cba; // precompute these
+		{
+			Pose p,t;
+			// #ifdef USE_OPENMP
+			// #prag	ma omp critical
+			// #endif
+			{
+				p = pnt_in_;
+				t = tri_in_;					
+			}
+			rot_pose(p,pntaxs_,(Real)ipnt);
+			rot_pose(t,triaxs_,(Real)itri);
+			for(int i = 1; i <= (int)p.n_residue(); ++i) {
+				cbb.push_back(Vecf(p.residue(i).xyz(2)));
+				int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
+				for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
+			}
+			for(int i = 1; i <= (int)t.n_residue(); ++i) {
+				cba.push_back(Vecf(t.residue(i).xyz(2)));
+				int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
+				for(int j = 1; j <= natom; ++j) pa.push_back(Vecf(t.residue(i).xyz(j)));
+			}
+		}
+		Vecf sicaxis = (rotation_matrix_degrees(-Vec(0,1,0),(Real)iori) * Vec(0,0,1)).normalized();
+		float tmpcbc;
+		double d = sicsafe(pb,pa,cbb,cba,sicaxis,tmpcbc);
+
+		double theta = iori;
+		double gamma = theta-alpha_;
+		double x = d * sin(numeric::conversions::radians(gamma));
+		double y = d * cos(numeric::conversions::radians(gamma));
+		double w = x / sin(numeric::conversions::radians(alpha_));
+		double z = x / tan(numeric::conversions::radians(alpha_));
+		double dpnt = y+z;
+		double dtri = w;
+		double pntmn,trimn;
+		if( w > 0 ) {
+			pntmn = pntmnpos1_[ipnt/ANGLE_INCR+1];
+			trimn = trimnpos1_[itri/ANGLE_INCR+1];
+			if( dpnt < pntmn ) utility_exit_with_message("BAD CONFIG");
+			if( dtri < trimn ) utility_exit_with_message("BAD CONFIG");
+			int dp = (int)(dpnt-pntmn)*10+1;
+			int dt = (int)(dtri-trimn)*10+1;
+			// if(ipnt==18 && itri==72 && iori==276)
+			//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos1_(ipnt/ANGLE_INCR+1,dp)
+			//		<< "		" << dt << " " << dtri << " " << trimn << " " << tricbpos1_(itri/ANGLE_INCR+1,dt) << std::endl;
+			if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbpos1_(ipnt/ANGLE_INCR+1,dp);
+			if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos1_(itri/ANGLE_INCR+1,dt);
+			// std::cerr << "CHK " << dpnt << " " << pntmn << "		" << dtri << " " << trimn << std::endl;
+		} else {
+			pntmn = pntmnneg1_[ipnt/ANGLE_INCR+1];
+			trimn = trimnneg1_[itri/ANGLE_INCR+1];
+			if( dpnt > pntmn ) utility_exit_with_message("BAD CONFIG");
+			if( dtri > trimn ) utility_exit_with_message("BAD CONFIG");
+			int dp = (int)(-dpnt+pntmn)*10+1;
+			int dt = (int)(-dtri+trimn)*10+1;
+			// if(ipnt==18 && itri==72 && iori==276)
+			//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg1_(ipnt/ANGLE_INCR+1,dp)
+			//		<< "		" << dt << " " << dtri << " " << trimn << " " << pntcbneg1_(itri/ANGLE_INCR+1,dt) << std::endl;
+			if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbneg1_(ipnt/ANGLE_INCR+1,dp);
+			if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg1_(itri/ANGLE_INCR+1,dt);
+		}
+		return tmpcbc;
+	}
+
+	void run() {
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
 		using namespace core::id;
 		using numeric::conversions::radians;
 
-		core::chemical::ResidueTypeSetCAP crs=core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID);
-
-		core::import_pose::pose_from_pdb(tri_in_,*crs,option[in::file::s]()[itrifile]);
-		core::import_pose::pose_from_pdb(pnt_in_,*crs,option[in::file::s]()[ipntfile]);
-		std::string trifile = utility::file_basename(option[in::file::s]()[itrifile]);
-		//TR << "make trimer and pentamer" << std::endl;
-		make_trimer(tri_in_);
-		//tri_in_.dump_pdb("trimer.pdb");
-		make_pentamer(pnt_in_);
-		//pnt_in_.dump_pdb("pentamer.pdb");
-		//std::exit(-1);
-		//Real sasa_tri = core::scoring::calc_total_sasa( tri_in_, 2.0 );
-		//Real sasa_pnt = core::scoring::calc_total_sasa( pnt_in_, 2.0 );	
-	
-
-		// set up geometry
-		Vecf triaxs_ = Vec( 0.000000, 0.000000,1.000000).normalized();
-		Vecf triax2_ = Vec(-0.333333,-0.577350,0.745356).normalized(); // 33.4458470159, 10.42594
-		Vecf pntaxs_ = Vec(-0.607226, 0.000000,0.794529).normalized();
-		Vecf pntax2_ = Vec(-0.491123,-0.850651,0.187593).normalized(); // 63.4311873349, 5.706642
-		Real alpha_ = angle_degrees(triaxs_,Vec(0,0,0),pntaxs_);
-		rot_pose(pnt_in_,Vec(0,1,0),-alpha_,Vec(0,0,0));
-
-
-		// Vecf tcom(0,0,0),pcom(0,0,0);
-		// for(Size i = 1; i <= tri_in_.n_residue()/3; ++i) for(Size j = 1; j <= 5; ++j) tcom += tri_in_.residue(i).xyz(j);
-		// tcom /= double(5*tri_in_.n_residue()/3);
-		// for(Size i = 1; i <= pnt_in_.n_residue()/5; ++i) for(Size j = 1; j <= 5; ++j) pcom += pnt_in_.residue(i).xyz(j);
-		// pcom /= double(5*tri_in_.n_residue()/5);
-		// rot_pose(tri_in_,triaxs_,dihedral_degrees(pntaxs_,Vec(0,0,0),triaxs_,tcom));
-		// rot_pose(pnt_in_,pntaxs_,dihedral_degrees(triaxs_,Vec(0,0,0),pntaxs_,pcom));
-		// tri_in_.dump_pdb("t0.pdb");
-		// pnt_in_.dump_pdb("p0.pdb");
-		// utility_exit_with_message("debug");
+		Real const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
+		Real const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
+		Real const CONTACT_D2 = sqr(CONTACT_D);
+		Real const CLASH_D2	 = sqr(CLASH_D);
 
 		Pose const triinit(tri_in_);
 		Pose const pntinit(pnt_in_);
@@ -550,16 +736,16 @@ struct TCDock {
 		if(ANGLE_INCR != 3) utility_exit_with_message("first ANGLE_INCR must be 3!!!");
 		{
 			// compute high/low min dis for pent and tri here, input to sicfast and don't allow any below
-			TR << "precomputing pent-pent and tri-tri interactions every 3°" << std::endl;
+			std::cerr << "precomputing pent-pent and tri-tri interactions every 3°" << std::endl;
 			{
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif
 				for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
 					Pose p;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
 					p = pntinit;
 					rot_pose(p,pntaxs_,ipnt);
 					vector1<Vecf> ppnt,cbp; // precompute these
@@ -571,7 +757,7 @@ struct TCDock {
 					vector1<Vecf> ppn2(ppnt),cb2(cbp);
 					pnt1_to_pnt2(ppn2,pntaxs_,pntax2_);
 					pnt1_to_pnt2( cb2,pntaxs_,pntax2_);				
-					int cbcount = 0;
+					float cbcount = 0.0;
 					double const d = sicsafe(ppnt,ppn2,cbp,cb2,(pntax2_-pntaxs_).normalized(),cbcount,false);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntpos! "+ObjexxFCL::string_of(ipnt));
 					for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(pntax2_-pntaxs_).normalized();
@@ -582,19 +768,19 @@ struct TCDock {
 					for(int i = 2; i <= 97; ++i) {
 						for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) + 0.1*pntaxs_;
 						for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1*pntax2_;
-						int cbc = 0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100) cbc++;
+						float cbc = 0.0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbp[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 						pntcbpos3_(ipnt/ANGLE_INCR+1,i) = cbc;
 						if(cbc==0) break;
 					}
 				}
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif
 				for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
 					Pose p;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
 					p = pntinit;
 					rot_pose(p,pntaxs_,ipnt);
 					vector1<Vecf> ppnt,cbp; // precompute these
@@ -606,7 +792,7 @@ struct TCDock {
 					vector1<Vecf> ppn2(ppnt),cb2(cbp);
 					pnt1_to_pnt2(ppn2,pntaxs_,pntax2_);
 					pnt1_to_pnt2( cb2,pntaxs_,pntax2_);
-					int cbcount = 0;
+					float cbcount = 0;
 					double const d = sicsafe(ppnt,ppn2,cbp,cb2,(pntaxs_-pntax2_).normalized(),cbcount,false);				
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntneg! "+ObjexxFCL::string_of(ipnt));
 					for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(pntaxs_-pntax2_).normalized();
@@ -617,19 +803,19 @@ struct TCDock {
 					for(int i = 2; i <= 97; ++i) {
 						for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) - 0.1*pntaxs_;
 						for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1*pntax2_;
-						int cbc = 0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100) cbc++;
+						float cbc = 0.0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbp[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 						pntcbneg3_(ipnt/ANGLE_INCR+1,i) = cbc;
 						if(cbc==0) break;
 					}
-				}
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif
+				}								
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif
 				for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
 					Pose t;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
 					t = triinit;
 					rot_pose(t,triaxs_,itri);
 					vector1<Vecf> ptri,cbt; // precompute these
@@ -641,7 +827,7 @@ struct TCDock {
 					vector1<Vecf> ptr2(ptri),cb2(cbt);
 					tri1_to_tri2(ptr2,triaxs_,triax2_);
 					tri1_to_tri2( cb2,triaxs_,triax2_);				
-					int cbcount = 0;
+					float cbcount = 0;
 					double const d = sicsafe(ptri,ptr2,cbt,cb2,(triax2_-triaxs_).normalized(),cbcount,false);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for tripos! "+ObjexxFCL::string_of(itri));
 					for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(triax2_-triaxs_).normalized();
@@ -652,19 +838,19 @@ struct TCDock {
 					for(int i = 2; i <= 145; ++i) {
 						for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) + 0.1*triaxs_;
 						for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1*triax2_;
-						int cbc = 0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100) cbc++;
+						float cbc = 0.0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbt[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 						tricbpos3_(itri/ANGLE_INCR+1,i) = cbc;
 						if(cbc==0) break;
 					}
 				}
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif
 				for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
 					Pose t;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
 					t = triinit;
 					rot_pose(t,triaxs_,itri);
 					vector1<Vecf> ptri,cbt; // precompute these
@@ -676,7 +862,7 @@ struct TCDock {
 					vector1<Vecf> ptr2(ptri),cb2(cbt);
 					tri1_to_tri2(ptr2,triaxs_,triax2_);
 					tri1_to_tri2( cb2,triaxs_,triax2_);				
-					int cbcount = 0;
+					float cbcount = 0;
 					double const d = sicsafe(ptri,ptr2,cbt,cb2,(triaxs_-triax2_).normalized(),cbcount,false);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for trineg! "+ObjexxFCL::string_of(itri));
 					for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(triaxs_-triax2_).normalized();
@@ -687,7 +873,7 @@ struct TCDock {
 					for(int i = 2; i <= 145; ++i) {
 						for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) - 0.1*triaxs_;
 						for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1*triax2_;
-						int cbc = 0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100) cbc++;
+						float cbc = 0.0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbt[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 						tricbneg3_(itri/ANGLE_INCR+1,i) = cbc;
 						if(cbc==0) break;
 					}
@@ -695,14 +881,14 @@ struct TCDock {
 			}
 		
 		
-			TR << "main loop 1 over ipnt, itri, iori every 3 degrees" << std::endl;
+			std::cerr << "main loop 1 over ipnt, itri, iori every 3 degrees" << std::endl;
 			// ObjexxFCL::FArray3D<int>	 cbcount((Size)floor(72.0/ANGLE_INCR),(Size)floor(120.0/ANGLE_INCR),(Size)floor(360.0/ANGLE_INCR),0);
 			// ObjexxFCL::FArray3D<float> surfdis3((Size)floor(72.0/ANGLE_INCR),(Size)floor(120.0/ANGLE_INCR),(Size)floor(360.0/ANGLE_INCR),0.0);
 			{
 				double mxd = 0;
-				int cbmax = 0, mxiori = 0, mxipnt = 0, mxitri = 0;
+				float cbmax = 0; int mxiori = 0, mxipnt = 0, mxitri = 0;
 				for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
-					if(ipnt%9==0 && ipnt!=0) TR << "	 loop1 " << trifile << " " << (100*ipnt)/72 << "\% done, cbmax:" << cbmax << std::endl;
+					if(ipnt%9==0 && ipnt!=0) std::cerr << "	 loop1 " << trifile << " " << (100*ipnt)/72 << "\% done, cbmax: " << cbmax << std::endl;
 					Pose p = pntinit;
 					rot_pose(p,pntaxs_,(Real)ipnt);
 					vector1<Vecf> pb,cbb; // precompute these
@@ -711,14 +897,14 @@ struct TCDock {
 						int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
 						for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
 					}
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp parallel for schedule(dynamic,1)
+					#endif
 					for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
 						Pose t;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+						#ifdef USE_OPENMP
+						#pragma omp critical
+						#endif
 						t = triinit;
 						rot_pose(t,triaxs_,(Real)itri);
 						vector1<Vecf> pa,cba; // precompute these
@@ -742,9 +928,9 @@ struct TCDock {
 								if( ori_stage == 1 || ori_stage == 3 ) iori += ANGLE_INCR;
 								if( ori_stage == 2 || ori_stage == 4 ) iori -= ANGLE_INCR;
 							}
-							// TR << "IORI " << iori << std::endl;
+							// std::cerr << "IORI " << iori << std::endl;
 							Vecf sicaxis = (rotation_matrix_degrees(-Vec(0,1,0),(Real)iori) * Vec(0,0,1)).normalized();
-							int tmpcbc;
+							float tmpcbc;
 							double d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
 
 							double theta = iori;
@@ -764,11 +950,11 @@ struct TCDock {
 								int dp = (int)(dpnt-pntmn)*10+1;
 								int dt = (int)(dtri-trimn)*10+1;
 								// if(ipnt==18 && itri==72 && iori==276)
-								//	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos3_(ipnt/ANGLE_INCR+1,dp)
+								//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos3_(ipnt/ANGLE_INCR+1,dp)
 								//		<< "		" << dt << " " << dtri << " " << trimn << " " << tricbpos3_(itri/ANGLE_INCR+1,dt) << std::endl;
-								if( option[tcdock::intra]() && dp <=  97	) tmpcbc += pntcbpos3_(ipnt/ANGLE_INCR+1,dp);
-								if( option[tcdock::intra]() && dt <= 145 ) tmpcbc += tricbpos3_(itri/ANGLE_INCR+1,dt);
-								// TR << "CHK " << dpnt << " " << pntmn << "		" << dtri << " " << trimn << std::endl;
+								if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbpos3_(ipnt/ANGLE_INCR+1,dp);
+								if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos3_(itri/ANGLE_INCR+1,dt);
+								// std::cerr << "CHK " << dpnt << " " << pntmn << "		" << dtri << " " << trimn << std::endl;
 							} else {
 								pntmn = pntmnneg3_[ipnt/ANGLE_INCR+1];
 								trimn = trimnneg3_[itri/ANGLE_INCR+1];
@@ -777,21 +963,21 @@ struct TCDock {
 								int dp = (int)(-dpnt+pntmn)*10+1;
 								int dt = (int)(-dtri+trimn)*10+1;
 								// if(ipnt==18 && itri==72 && iori==276)
-								//	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg3_(ipnt/ANGLE_INCR+1,dp)
+								//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg3_(ipnt/ANGLE_INCR+1,dp)
 								//		<< "		" << dt << " " << dtri << " " << trimn << " " << pntcbneg3_(itri/ANGLE_INCR+1,dt) << std::endl;
-								if( option[tcdock::intra]() && dp <=  97	) tmpcbc += pntcbneg3_(ipnt/ANGLE_INCR+1,dp);
-								if( option[tcdock::intra]() && dt <= 145 ) tmpcbc += tricbneg3_(itri/ANGLE_INCR+1,dt);
+								if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbneg3_(ipnt/ANGLE_INCR+1,dp);
+								if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg3_(itri/ANGLE_INCR+1,dt);
 							}
 
 							// surfdis3(ipnt/ANGLE_INCR+1,itri/ANGLE_INCR+1,iori/ANGLE_INCR+1) = d;
 							// cbcount(ipnt/ANGLE_INCR+1,itri/ANGLE_INCR+1,iori/ANGLE_INCR+1) = tmpcbc;
 							gdis(ipnt+1,itri+1,iori+1) = d;
 							gcbc(ipnt+1,itri+1,iori+1) = tmpcbc;
-							// d = sicfast(t,p,sicaxis,cbcount);
+							// d = sicsafe(t,p,sicaxis,cbcount);
 							//std::cerr << "trial " << ipnt << " " << itri << " " << iori << " " << d << " " << tmpcbc << std::endl;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+							#ifdef USE_OPENMP
+							#pragma omp critical
+							#endif
 							if(tmpcbc > cbmax) {
 								cbmax = tmpcbc;
 								mxiori = iori;
@@ -803,29 +989,30 @@ struct TCDock {
 						// utility_exit_with_message("testing");
 					}
 				}
-				if(cbmax==0) utility_exit_with_message("tri or pnt too large, no contacts!");
-				TR << "MAX3 " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << " " << mxd << std::endl;
-				// TR << "MAX " << mxipnt << " " << mxitri << " " << mxiori << " " << cbcount(mxipnt/ANGLE_INCR+1,mxitri/ANGLE_INCR+1,mxiori/ANGLE_INCR+1) << " " << surfdis3(mxipnt/ANGLE_INCR+1,mxitri/ANGLE_INCR+1,mxiori/ANGLE_INCR+1) << std::endl;
+				if(cbmax<0.00001) utility_exit_with_message("tri or pnt too large, no contacts!");
+				std::cerr << "MAX3 " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << " " << mxd << std::endl;
+				// std::cerr << "MAX " << mxipnt << " " << mxitri << " " << mxiori << " " << cbcount(mxipnt/ANGLE_INCR+1,mxitri/ANGLE_INCR+1,mxiori/ANGLE_INCR+1) << " " << surfdis3(mxipnt/ANGLE_INCR+1,mxitri/ANGLE_INCR+1,mxiori/ANGLE_INCR+1) << std::endl;
 			}
 
 		}
 
-		//TR << "main loop 2 over top 1000 3deg hits at 1deg" << std::endl;
-		vector1<int> hitpnt,hittri,hitori,hitcbc;
+		//std::cerr << "main loop 2 over top 1000 3deg hits at 1deg" << std::endl;
+		vector1<int> hitpnt,hittri,hitori;
+		vector1<float> hitcbc;
 		ANGLE_INCR = 1;
 		if(ANGLE_INCR != 1) utility_exit_with_message("second ANGLE_INCR must be 1!!!");
 		{
 			// compute high/low min dis for pent and tri here, input to sicfast and don't allow any below
-			TR << "precomputing pent-pent and tri-tri interactions every 1°" << std::endl;
+			std::cerr << "precomputing pent-pent and tri-tri interactions every 1°" << std::endl;
 			{
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif
 				for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
 					Pose p;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
 					p = pntinit;
 					rot_pose(p,pntaxs_,ipnt);
 					vector1<Vecf> ppnt,cbp; // precompute these
@@ -837,7 +1024,7 @@ struct TCDock {
 					vector1<Vecf> ppn2(ppnt),cb2(cbp);
 					pnt1_to_pnt2(ppn2,pntaxs_,pntax2_);
 					pnt1_to_pnt2( cb2,pntaxs_,pntax2_);				
-					int cbcount = 0;
+					float cbcount = 0;
 					double const d = sicsafe(ppnt,ppn2,cbp,cb2,(pntax2_-pntaxs_).normalized(),cbcount,false);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntpos! "+ObjexxFCL::string_of(ipnt));
 					for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(pntax2_-pntaxs_).normalized();
@@ -849,19 +1036,19 @@ struct TCDock {
 					for(int i = 2; i <= 97; ++i) {
 						for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) + 0.1*pntaxs_;
 						for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1*pntax2_;
-						int cbc = 0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100) cbc++;
+						float cbc = 0.0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbp[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 						pntcbpos1_(ipnt/ANGLE_INCR+1,i) = cbc;
 						if(cbc==0) break;
 					}
 				}
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif
 				for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
 					Pose p;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
 					p = pntinit;
 					rot_pose(p,pntaxs_,ipnt);
 					vector1<Vecf> ppnt,cbp; // precompute these
@@ -873,7 +1060,7 @@ struct TCDock {
 					vector1<Vecf> ppn2(ppnt),cb2(cbp);
 					pnt1_to_pnt2(ppn2,pntaxs_,pntax2_);
 					pnt1_to_pnt2( cb2,pntaxs_,pntax2_);				
-					int cbcount = 0;
+					float cbcount = 0;
 					double const d = sicsafe(ppnt,ppn2,cbp,cb2,(pntaxs_-pntax2_).normalized(),cbcount,false);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for pntneg! "+ObjexxFCL::string_of(ipnt));
 					for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(pntaxs_-pntax2_).normalized();
@@ -885,19 +1072,19 @@ struct TCDock {
 					for(int i = 2; i <= 97; ++i) {
 						for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) - 0.1*pntaxs_;
 						for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1*pntax2_;
-						int cbc = 0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100) cbc++;
+						float cbc = 0.0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbp[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 						pntcbneg1_(ipnt/ANGLE_INCR+1,i) = cbc;
 						if(cbc==0) break;
 					}
 				}
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif			
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif			
 				for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
 					Pose t;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
 					t = triinit;
 					rot_pose(t,triaxs_,itri);
 					vector1<Vecf> ptri,cbt; // precompute these
@@ -909,7 +1096,7 @@ struct TCDock {
 					vector1<Vecf> ptr2(ptri),cb2(cbt);
 					tri1_to_tri2(ptr2,triaxs_,triax2_);
 					tri1_to_tri2( cb2,triaxs_,triax2_);				
-					int cbcount = 0;
+					float cbcount = 0;
 					double const d = sicsafe(ptri,ptr2,cbt,cb2,(triax2_-triaxs_).normalized(),cbcount,false);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for tripos! "+ObjexxFCL::string_of(itri));
 					for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(triax2_-triaxs_).normalized();
@@ -921,19 +1108,19 @@ struct TCDock {
 					for(int i = 2; i <= 145; ++i) {
 						for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) + 0.1*triaxs_;
 						for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1*triax2_;
-						int cbc = 0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100) cbc++;
+						float cbc = 0.0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbt[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 						tricbpos1_(itri/ANGLE_INCR+1,i) = cbc;
 						if(cbc==0) break;
 					}
 				}
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif			
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif			
 				for(int itri = 0; itri < 120; itri+=ANGLE_INCR) {
 					Pose t;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
 					t = triinit;
 					rot_pose(t,triaxs_,itri);
 					vector1<Vecf> ptri,cbt; // precompute these
@@ -945,7 +1132,7 @@ struct TCDock {
 					vector1<Vecf> ptr2(ptri),cb2(cbt);
 					tri1_to_tri2(ptr2,triaxs_,triax2_);
 					tri1_to_tri2( cb2,triaxs_,triax2_);				
-					int cbcount = 0;
+					float cbcount = 0;
 					double const d = sicsafe(ptri,ptr2,cbt,cb2,(triaxs_-triax2_).normalized(),cbcount,false);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for trineg! "+ObjexxFCL::string_of(itri));
 					for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(triaxs_-triax2_).normalized();
@@ -957,14 +1144,14 @@ struct TCDock {
 					for(int i = 2; i <= 145; ++i) {
 						for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) - 0.1*triaxs_;
 						for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1*triax2_;
-						int cbc = 0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100) cbc++;
+						float cbc = 0.0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbt[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 						tricbneg1_(itri/ANGLE_INCR+1,i) = cbc;
 						if(cbc==0) break;
 					}
 				}
 				// {
 				// 	using utility::file_basename;
-				// 	TR << "dumping 1D stats: " << option[out::file::o]()+"/"+file_basename(option[in::file::s]()[ipntfile])+"_POS_1D.dat" << std::endl;
+				// 	std::cerr << "dumping 1D stats: " << option[out::file::o]()+"/"+file_basename(option[in::file::s]()[ipntfile])+"_POS_1D.dat" << std::endl;
 				// 	{ utility::io::ozstream out(option[out::file::o]()+"/"+file_basename(option[in::file::s]()[ipntfile])+"_POS_1D.dat");
 				// 		for(int i = 1; i <=	72; ++i) out << i << " " << pntdspos1_[i] << " " << pntcbpos1_(i,1) << std::endl;
 				// 		out.close(); }
@@ -981,13 +1168,13 @@ struct TCDock {
 			
 			}
 
-			int top1000_3 = 0;
+			float top1000_3 = 0;
 			{
-				vector1<int> cbtmp;
+				vector1<float> cbtmp;
 				for(Size i = 0; i < gcbc.size(); ++i) if(gcbc[i] > 0) cbtmp.push_back(gcbc[i]);
 				std::sort(cbtmp.begin(),cbtmp.end());
 				top1000_3 = cbtmp[max(1,(int)cbtmp.size()-499)];
-				TR << "scanning top1000 with cbcount3 >= " << top1000_3 << std::endl;
+				std::cerr << "scanning top1000 with cbcount3 >= " << top1000_3 << std::endl;
 			}
 			// assuming ANGLE_INCR = 1!!!!!!!!!!!
 			utility::vector1<vector1<int> > pntlmx,trilmx,orilmx;
@@ -1007,21 +1194,21 @@ struct TCDock {
 				}
 			}
 
-			{
-				int max1 = 0;
-	#ifdef USE_OPENMP
-	#pragma omp parallel for schedule(dynamic,1)
-	#endif
+			{ // loop 1deg lmx
+				float max1 = 0;
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif
 				for(Size ilmx = 1; ilmx <= pntlmx.size(); ++ilmx) {
-					if( (ilmx-1)%50==0 && ilmx!=1) TR << "	loop2 " << trifile << " " << (double(ilmx-1)/5) << "%% done, cbmax: " << max1 << std::endl;
-					// TR << "checking around local max # " << ilmx << std::endl;
-					int cbmax = 0, mxiori = 0, mxipnt = 0, mxitri = 0;
+					if( (ilmx-1)%50==0 && ilmx!=1) std::cerr << "	loop2 " << trifile << " " << (double(ilmx-1)/5) << "\% done, cbmax: " << max1 << std::endl;
+					// std::cerr << "checking around local max # " << ilmx << std::endl;
+					float cbmax = 0; int mxiori = 0, mxipnt = 0, mxitri = 0;
 					for(vector1<int>::const_iterator pipnt = pntlmx[ilmx].begin(); pipnt != pntlmx[ilmx].end(); ++pipnt) {
 						int ipnt = *pipnt;
 						Pose p;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+						#ifdef USE_OPENMP
+						#pragma omp critical
+						#endif
 						p = pntinit;
 						rot_pose(p,pntaxs_,(Real)ipnt);
 						vector1<Vecf> pb,cbb; // precompute these
@@ -1033,9 +1220,9 @@ struct TCDock {
 						for(vector1<int>::const_iterator pitri = trilmx[ilmx].begin(); pitri != trilmx[ilmx].end(); ++pitri) {
 							int itri = *pitri;
 							Pose t;
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+							#ifdef USE_OPENMP
+							#pragma omp critical
+							#endif
 							t = triinit;
 							rot_pose(t,triaxs_,(Real)itri);
 							vector1<Vecf> pa,cba; // precompute these
@@ -1046,10 +1233,12 @@ struct TCDock {
 							}
 							for(vector1<int>::const_iterator piori = orilmx[ilmx].begin(); piori != orilmx[ilmx].end(); ++piori) {
 								int iori = *piori;
+								
+								if( gdis(ipnt+1,itri+1,iori+1) > -0.5 ) continue; // already done
+								
 								Vecf sicaxis = (rotation_matrix_degrees(-Vec(0,1,0),(Real)iori) * Vec(0,0,1)).normalized();
-								int tmpcbc;
-
-								double d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
+								float tmpcbc;
+								double d = sicsafe(pb,pa,cbb,cba,sicaxis,tmpcbc);
 								double theta = iori;
 								double gamma = theta-alpha_;
 								double x = d * sin(numeric::conversions::radians(gamma));
@@ -1067,11 +1256,11 @@ struct TCDock {
 									int dp = (int)(dpnt-pntmn)*10+1;
 									int dt = (int)(dtri-trimn)*10+1;
 									// if(ipnt==18 && itri==72 && iori==276)
-									//	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos1_(ipnt/ANGLE_INCR+1,dp)
+									//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos1_(ipnt/ANGLE_INCR+1,dp)
 									//		<< "		" << dt << " " << dtri << " " << trimn << " " << tricbpos1_(itri/ANGLE_INCR+1,dt) << std::endl;
-									if( option[tcdock::intra]() && dp <= 97	) tmpcbc += pntcbpos1_(ipnt/ANGLE_INCR+1,dp);
-									if( option[tcdock::intra]() && dt <= 145 ) tmpcbc += tricbpos1_(itri/ANGLE_INCR+1,dt);
-									// TR << "CHK " << dpnt << " " << pntmn << "		" << dtri << " " << trimn << std::endl;
+									if( dp <= 97	) tmpcbc += option[tcdock::intra]()*pntcbpos1_(ipnt/ANGLE_INCR+1,dp);
+									if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos1_(itri/ANGLE_INCR+1,dt);
+									// std::cerr << "CHK " << dpnt << " " << pntmn << "		" << dtri << " " << trimn << std::endl;
 								} else {
 									pntmn = pntmnneg1_[ipnt/ANGLE_INCR+1];
 									trimn = trimnneg1_[itri/ANGLE_INCR+1];
@@ -1080,10 +1269,10 @@ struct TCDock {
 									int dp = (int)(-dpnt+pntmn)*10+1;
 									int dt = (int)(-dtri+trimn)*10+1;
 									// if(ipnt==18 && itri==72 && iori==276)
-									//	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg1_(ipnt/ANGLE_INCR+1,dp)
+									//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg1_(ipnt/ANGLE_INCR+1,dp)
 									//		<< "		" << dt << " " << dtri << " " << trimn << " " << pntcbneg1_(itri/ANGLE_INCR+1,dt) << std::endl;
-									if( option[tcdock::intra]() && dp <= 97	) tmpcbc += pntcbneg1_(ipnt/ANGLE_INCR+1,dp);
-									if( option[tcdock::intra]() && dt <= 145 ) tmpcbc += tricbneg1_(itri/ANGLE_INCR+1,dt);
+									if( dp <= 97	) tmpcbc += option[tcdock::intra]()*pntcbneg1_(ipnt/ANGLE_INCR+1,dp);
+									if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg1_(itri/ANGLE_INCR+1,dt);
 								}
 
 								gdis(ipnt+1,itri+1,iori+1) = d;
@@ -1101,9 +1290,9 @@ struct TCDock {
 
 						}
 					}
-	#ifdef USE_OPENMP
-	#pragma omp critical
-	#endif
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
 					{
 						hitpnt.push_back(mxipnt);
 						hittri.push_back(mxitri);
@@ -1111,20 +1300,20 @@ struct TCDock {
 						hitcbc.push_back(cbmax);
 						if(cbmax > max1) max1 = cbmax;
 					}
-					// TR << "HIT " << ilmx << " " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << std::endl;
+					// std::cerr << "HIT " << ilmx << " " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << std::endl;
 				}
 			}
 
-			int top10,max1;
+			float topX,max1;
 			{
-				vector1<int> hittmp = hitcbc;
+				vector1<float> hittmp = hitcbc;
 				std::sort(hittmp.begin(),hittmp.end());
 				max1	= hittmp[hittmp.size()  ];
-				top10 = hittmp[hittmp.size()-9];
-				TR << "top10 " << top10 << std::endl;
+				topX = hittmp[hittmp.size()-(option[tcdock::topx]()-1)];
+				std::cerr << "topX " << topX << std::endl;
 			}
 			for(Size ihit = 1; ihit <= hitcbc.size(); ++ihit) {
-				if(hitcbc[ihit]==max1)	TR << "MAX1 " << hitpnt[ihit] << " " << hittri[ihit] << " " << hitori[ihit] << " " << hitcbc[ihit] << std::endl;
+				if(hitcbc[ihit]==max1)	std::cerr << "MAX1 " << hitpnt[ihit] << " " << hittri[ihit] << " " << hitori[ihit] << " " << hitcbc[ihit] << std::endl;
 			}
 
 			core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
@@ -1132,129 +1321,125 @@ struct TCDock {
 	// #pragma omp parallel for schedule(dynamic,1)
 	// #endif		
 			for(Size ihit = 1; ihit <= hitcbc.size(); ++ihit) {
-				if(hitcbc[ihit] >= top10 ) {
+				if(hitcbc[ihit] == topX ) {
 				//if(hitcbc[ihit] >= max1 ) {				
+
+
+
+					std::cerr << "dumping grid 1 " << hitcbc[ihit] << std::endl;
+					vector1<numeric::xyzVector<int> > tocheck;
+					{
+						int ipnt = hitpnt[ihit];
+						int itri = hittri[ihit];
+						int iori = hitori[ihit];
+						for(int i = -8; i <= 8; ++i)
+						for(int j = -8; j <= 8; ++j)
+						for(int k = -2; k <= 2; ++k) {
+							tocheck.push_back( numeric::xyzVector<int>((ipnt+i+72)%72,(itri+j+120)%120,(iori+k+360)%360) );
+						}
+					}
+					ObjexxFCL::FArray3D<float> g11d(17,17,5,0.0),g11c(17,17,5,0.0);
+					// #ifdef USE_OPENMP
+					// #pragma omp parallel for schedule(dynamic,1)
+					// #endif					
+					for(int ic = 0; ic < tocheck.size(); ++ic)	{
+						int ipnt2 = tocheck[ic+1].x();
+						int itri2 = tocheck[ic+1].y();
+						int iori2 = tocheck[ic+1].z();
+						//std::cerr << "dumping grid " << ipnt2 << " " << itri2 << " " << iori2 << " " << ic << " " << g11d.size() << std::endl;
+						Pose p,t;
+						#ifdef USE_OPENMP
+						#pragma omp critical
+						#endif
+						{
+							p = pntinit;
+							t = triinit;
+						}
+						rot_pose(p,pntaxs_,(Real)ipnt2);
+						rot_pose(t,triaxs_,(Real)itri2);
+					
+						vector1<Vecf> pb,cbb; // precompute these
+						for(int i = 1; i <= (int)p.n_residue(); ++i) {
+							cbb.push_back(Vecf(p.residue(i).xyz(2)));
+							int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
+							for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
+						}
+						vector1<Vecf> pa,cba; // precompute these
+						for(int i = 1; i <= (int)t.n_residue(); ++i) {
+							cba.push_back(Vecf(t.residue(i).xyz(2)));
+							int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
+							for(int j = 1; j <= natom; ++j) pa.push_back(Vecf(t.residue(i).xyz(j)));
+						}
+						Vecf sicaxis = (rotation_matrix_degrees(-Vec(0,1,0),(Real)iori2) * Vec(0,0,1)).normalized();
+						float tmpcbc;
+						double d = sicsafe(pb,pa,cbb,cba,sicaxis,tmpcbc);
+						double theta = iori2;
+						double gamma = theta-alpha_;
+						double x = d * sin(numeric::conversions::radians(gamma));
+						double y = d * cos(numeric::conversions::radians(gamma));
+						double w = x / sin(numeric::conversions::radians(alpha_));
+						double z = x / tan(numeric::conversions::radians(alpha_));
+						double dpnt = y+z;
+						double dtri = w;
+						double pntmn,trimn;
+						int dp,dt;
+						if( w > 0 ) {
+							pntmn = pntmnpos1_[ipnt2+1];
+							trimn = trimnpos1_[itri2+1];
+							dp = (int)((dpnt-pntmn)*10.0)+1;
+							dt = (int)((dtri-trimn)*10.0)+1;
+							if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbpos1_(ipnt2+1,dp);
+							if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos1_(itri2+1,dt);
+							if( dpnt < pntmn || dtri < trimn ) {
+								g11d[ic] = 1.0/0.0; g11c[ic] = 1.0/0.0;
+							} else {
+								g11d[ic] = d; g11c[ic] = tmpcbc;
+							}
+						} else {
+							pntmn = pntmnneg1_[ipnt2+1];
+							trimn = trimnneg1_[itri2+1];
+							dp = (int)((-dpnt+pntmn)*10.0)+1;
+							dt = (int)((-dtri+trimn)*10.0)+1;
+							if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbneg1_(ipnt2+1,dp);
+							if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg1_(itri2+1,dt);
+							if( dpnt > pntmn || dtri > trimn ) {
+								g11d[ic] = 1.0/0.0; g11c[ic] = 1.0/0.0;
+							} else {
+								g11d[ic] = d; g11c[ic] = tmpcbc;
+							}
+						}
+						if(ipnt2==hitpnt[ihit] && itri2==hittri[ihit]) {
+							if(iori2-hitori[ihit] == 2 || iori2-hitori[ihit] == -2) dump_pdb(ipnt2,itri2,iori2,"test_ori"+ObjexxFCL::string_of(iori2)+".pdb.gz",false);
+							if( iori2-hitori[ihit] == 0 ) dump_pdb(ipnt2,itri2,iori2,"test_ori"+ObjexxFCL::string_of(iori2)+".pdb.gz",true);								
+						}
+						// trans_pose(p,dpnt*pntaxs_);
+						// trans_pose(t,dtri*triaxs_);
+						// std::cerr << ipnt2 << " " << itri2 << " " << iori2 << " " << tmpcbc << " " << d << " " << w << " " << dp << " " << pntcbneg1_(ipnt2+1,dp) << " " << dt << " " << tricbneg1_(itri2+1,dt) << std::endl;
+					}
+					
+					for(int i = 0; i < tocheck.size(); ++i) {
+						std::cout << g11d[i] << " " << g11c[i] << std::endl;
+					}
+					utility_exit_with_message("oarftn");
+										
+					
+					
 					int ipnt = hitpnt[ihit];
 					int itri = hittri[ihit];
 					int iori = hitori[ihit];
-
-					Pose p,t;
-	// #ifdef USE_OPENMP
-	// #pragma omp critical
-	// #endif
-					{
-						p = pntinit;
-						t = triinit;					
-					}
-					rot_pose(p,pntaxs_,(Real)ipnt);
-					rot_pose(t,triaxs_,(Real)itri);
-
-					vector1<Vecf> pb,cbb; // precompute these
-					for(int i = 1; i <= (int)p.n_residue(); ++i) {
-						cbb.push_back(Vecf(p.residue(i).xyz(2)));
-						int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
-						for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
-					}
-					vector1<Vecf> pa,cba; // precompute these
-					for(int i = 1; i <= (int)t.n_residue(); ++i) {
-						cba.push_back(Vecf(t.residue(i).xyz(2)));
-						int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
-						for(int j = 1; j <= natom; ++j) pa.push_back(Vecf(t.residue(i).xyz(j)));
-					}
-					Vecf sicaxis = (rotation_matrix_degrees(-Vec(0,1,0),(Real)iori) * Vec(0,0,1)).normalized();
-					int tmpcbc;
-					double d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
-
-					double theta = iori;
-					double gamma = theta-alpha_;
-					double x = d * sin(numeric::conversions::radians(gamma));
-					double y = d * cos(numeric::conversions::radians(gamma));
-					double w = x / sin(numeric::conversions::radians(alpha_));
-					double z = x / tan(numeric::conversions::radians(alpha_));
-					double dpnt = y+z;
-					double dtri = w;
-					double pntmn,trimn;
-					trans_pose(p,dpnt*pntaxs_);
-					trans_pose(t,dtri*triaxs_);
-					if( w > 0 ) {
-						pntmn = pntmnpos1_[ipnt/ANGLE_INCR+1];
-						trimn = trimnpos1_[itri/ANGLE_INCR+1];
-						if( dpnt < pntmn ) { TR << "WARNING: BAD HIT!!!"; continue; }
-						if( dtri < trimn ) { TR << "WARNING: BAD HIT!!!"; continue; }
-						int dp = (int)(dpnt-pntmn)*10+1;
-						int dt = (int)(dtri-trimn)*10+1;
-						// if(ipnt==18 && itri==72 && iori==276)
-						//	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos1_(ipnt/ANGLE_INCR+1,dp)
-						//		<< "		" << dt << " " << dtri << " " << trimn << " " << tricbpos1_(itri/ANGLE_INCR+1,dt) << std::endl;
-						if( option[tcdock::intra]() && dp <= 97	) tmpcbc += pntcbpos1_(ipnt/ANGLE_INCR+1,dp);
-						if( option[tcdock::intra]() && dt <= 145 ) tmpcbc += tricbpos1_(itri/ANGLE_INCR+1,dt);
-						// TR << "CHK " << dpnt << " " << pntmn << "		" << dtri << " " << trimn << std::endl;
-					} else {
-						pntmn = pntmnneg1_[ipnt/ANGLE_INCR+1];
-						trimn = trimnneg1_[itri/ANGLE_INCR+1];
-						if( dpnt > pntmn ) { TR << "WARNING: BAD HIT!!!"; continue; }
-						if( dtri > trimn ) { TR << "WARNING: BAD HIT!!!"; continue; }
-						int dp = (int)(-dpnt+pntmn)*10+1;
-						int dt = (int)(-dtri+trimn)*10+1;
-						// if(ipnt==18 && itri==72 && iori==276)
-						//	TR << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg1_(ipnt/ANGLE_INCR+1,dp)
-						//		<< "		" << dt << " " << dtri << " " << trimn << " " << pntcbneg1_(itri/ANGLE_INCR+1,dt) << std::endl;
-						if( option[tcdock::intra]() && dp <= 97	) tmpcbc += pntcbneg1_(ipnt/ANGLE_INCR+1,dp);
-						if( option[tcdock::intra]() && dt <= 145 ) tmpcbc += tricbneg1_(itri/ANGLE_INCR+1,dt);
-					}
-					//Real sizefac = sasa_pnt/5.0 + sasa_tri/3.0;
-					Real sizefac = tri_in_.n_residue() + pnt_in_.n_residue();
-
+					float sizefac = tri_in_.n_residue() + pnt_in_.n_residue();
 					std::string fname;
-					fname	= ObjexxFCL::lead_zero_string_of(Size(Real(tmpcbc)/sizefac*1000000),10);
+					fname	= ObjexxFCL::lead_zero_string_of(Size(hitcbc[ihit]/sizefac*1000000.0),7);
 					fname += "_" + utility::file_basename(option[in::file::s]()[1]);
 					fname += "_" + utility::file_basename(option[in::file::s]()[2]);
-					fname += "_" + ObjexxFCL::lead_zero_string_of(tmpcbc,4);
+					fname += "_" + ObjexxFCL::lead_zero_string_of(hitcbc[ihit],4);
 					fname += "_" + ObjexxFCL::lead_zero_string_of(ipnt,3);
 					fname += "_" + ObjexxFCL::lead_zero_string_of(itri,3);
 					fname += "_" + ObjexxFCL::lead_zero_string_of(iori,3);
 					fname += ".pdb.gz";
-					// continue;
-					Pose symm;
-	// #ifdef USE_OPENMP
-	// #pragma omp critical
-	// #endif
-					{
-						symm.append_residue_by_jump(t.residue(1),1);
-						for(Size i = 2; i <= t.n_residue()/3; ++i) {
-							if(symm.residue(i-1).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(symm,i-1);
-							if(	 t.residue(i	).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(t,i);
-							symm.append_residue_by_bond(t.residue(i));
-						}
-						symm.append_residue_by_jump(p.residue(1),1);
-						for(Size i = 2; i <= p.n_residue()/5; ++i) symm.append_residue_by_bond(p.residue(i));
-						// core::util::switch_to_residue_type_set(symm,"fa_standard");
-						// for(Size i = 1; i <= symm.n_residue(); ++i) core::pose::replace_pose_residue_copying_existing_coordinates(symm,i,rs->name_map("ALA"));
-						//TR << "making symm" << std::endl;					
-					}
 
-					//core::pose::symmetry::make_symmetric_pose(symm);				
-	// #ifdef USE_OPENMP
-	// #pragma omp critical
-	// #endif
-					{
-						//std::cerr << ihit << " dump " << fname << std::endl;				
-						//core::io::pdb::dump_pdb(symm,option[out::file::o]()+"/"+fname);
-						TR << "HIT " << " p" << ipnt << " t" << itri << " o" << iori << " c" << hitcbc[ihit] << " c" << tmpcbc << " " << Real(tmpcbc)/sizefac << std::endl;
-						TR << "    " << w << " "<< dtri << " " <<  trimnpos1_[itri/ANGLE_INCR+1] << " " << trimnneg1_[itri/ANGLE_INCR+1] << std::endl;
-						TR << "    " << w << " "<< dpnt << " " <<  pntmnpos1_[ipnt/ANGLE_INCR+1] << " " << pntmnneg1_[ipnt/ANGLE_INCR+1] << std::endl;				
-					}
-						// {
-						// 	std::cerr << trimnneg1_[itri/ANGLE_INCR+1] << " " << dtri << " " <<  triaxs_.length() << std::endl;
-						// 	Pose p(triinit),q(triinit);
-						// 	rot_pose(p,triaxs_,itri);
-						// 	rot_pose(q,triaxs_,itri);				
-						// 	tri1_to_tri2(q,triaxs_,triax2_);
-						// 	trans_pose(p,triaxs_*trimnneg1_[itri/ANGLE_INCR+1]);
-						// 	trans_pose(q,triax2_*trimnneg1_[itri/ANGLE_INCR+1]);				
-						// 	p.dump_pdb("test1.pdb");
-						// 	q.dump_pdb("test2.pdb");				
-						// }
+					std::cerr << "HIT " << " p" << ipnt << " t" << itri << " o" << iori << " c" << hitcbc[ihit] << " c" << hitcbc[ihit]/sizefac << std::endl;
+					dump_pdb(ipnt,itri,iori,fname);
 
 				}
 			}
@@ -1268,10 +1453,10 @@ int main (int argc, char *argv[]) {
 	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
 	for(Size i = 2; i <= basic::options::option[in::file::s]().size(); ++i) {
-		TCDock tcd;
-		tcd.run(i,1);
+		TCDock tcd(i,1);
+		tcd.run();
 	}
-	std::cout << "DONE testing refactoring away cbcount1" << std::endl;
+	std::cerr << "DONE testing refactoring percacl 1" << std::endl;
 }
 
 
