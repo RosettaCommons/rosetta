@@ -17,7 +17,6 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <devel/init.hh>
 #include <utility/exit.hh>
@@ -43,9 +42,6 @@ void check_required() {
 
   if (!option[in::file::frag9].user())
     utility_exit_with_message(ERROR_PREFIX + "-in:file:frag9");
-
-  if (!option[cm::aln_format].user())
-    utility_exit_with_message(ERROR_PREFIX + "-cm:aln_format");
 
   if (!option[in::file::alignment].user())
     utility_exit_with_message(ERROR_PREFIX + "-in:file:alignment");
