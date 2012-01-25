@@ -20,6 +20,8 @@
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
+#include <core/types.hh>
+
 namespace protocols {
 namespace toolbox {
 
@@ -82,9 +84,9 @@ public:
 
 	virtual SF_ReplicaOP clone() const { return 0; };
 
-	virtual Real operator ()( pose::Pose & pose ) const { return 0.0; };
+	virtual core::Real operator ()( pose::Pose & pose ) const { return 0.0; };
 
-	//Real operator []( ScoreType const & t ) const
+	//core::Real operator []( ScoreType const & t ) const
 	//{ return weights_[ t ]; }
 
 	//void show( std::ostream & out ) const;
