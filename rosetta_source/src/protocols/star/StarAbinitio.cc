@@ -95,7 +95,6 @@ void compute_per_residue_probabilities(unsigned num_residues,
   Probabilities p_end;
   protocols::medal::end_bias_probabilities(num_residues, &p_end);
 
-  // Product of probabilities
   numeric::product(probs->begin(), probs->end(), p_cut.begin(), p_cut.end());
   numeric::product(probs->begin(), probs->end(), p_end.begin(), p_end.end());
 
@@ -158,8 +157,6 @@ void update_sequence_separation(unsigned distance, core::pose::Pose* pose) {
 /// were not provided. Initial sequence separation threshold is 0.
 void setup_constraints(core::pose::Pose* pose) {
   assert(pose);
-
-  // Reads constraints from command line and adds them to pose
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(*pose);
   update_sequence_separation(0, pose);
 }
@@ -265,7 +262,6 @@ void StarAbinitio::setup_kinematics(const protocols::loops::Loops& aligned,
   assert(status);
   pose->fold_tree(tree);
   core::util::add_cutpoint_variants(pose);
-
   TR << pose->fold_tree() << std::endl;
 }
 
@@ -409,7 +405,6 @@ StarAbinitio::StarAbinitio() {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::fragment::FragmentIO;
-  using core::fragment::FragSetOP;
   using core::fragment::SecondaryStructure;
 
   FragmentIO io;
