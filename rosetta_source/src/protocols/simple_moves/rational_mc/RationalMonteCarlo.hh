@@ -66,6 +66,9 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   core::Real temperature() const;
   const core::scoring::ScoreFunction& score_function() const;
 
+  /// @brief Updates the last accepted and lowest scoring pose members of the
+  /// MonteCarlo member variable to the score of the specified pose
+  void reset(const core::pose::Pose& pose);
   const core::pose::Pose& lowest_score_pose() const;
   const core::pose::Pose& last_accepted_pose() const;
 

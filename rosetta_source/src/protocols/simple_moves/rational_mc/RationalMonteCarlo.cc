@@ -154,6 +154,10 @@ void RationalMonteCarlo::set_score_function(ScoreFunctionOP score) {
   mc_->score_function(*score);
 }
 
+void RationalMonteCarlo::reset(const Pose& pose) {
+  mc_->reset(pose);
+}
+
 }  // namespace rational_mc
 }  // namespace simple_moves
 }  // namespace protocols
