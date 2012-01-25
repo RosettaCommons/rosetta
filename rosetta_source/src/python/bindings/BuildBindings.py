@@ -391,7 +391,7 @@ def getCompilerOptions():
         if Options.compiler == 'clang': add_option = '-pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC'
         else: add_option = '-pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
-    add_option += ' -DBOOST_PYTHON_MAX_ARITY=20'
+    add_option += ' -DBOOST_PYTHON_MAX_ARITY=20 -DNDEBUG -DPYROSETTA'
     return add_option
 
 
@@ -608,7 +608,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
         s = '../external/' + s
 
         if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-            execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
+            execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
 
     latest = None
     for s in sources:
