@@ -700,7 +700,7 @@ MatchConstraintFileInfo::create_exgs() const
 
 MatchConstraintFileInfoList::MatchConstraintFileInfoList(
 	core::chemical::ResidueTypeSetCAP restype_set )
-	: active_mcfi_(0), restype_set_( restype_set )
+	: restype_set_( restype_set )
 {
 	mcfis_.clear();
 }
@@ -712,7 +712,7 @@ MatchConstraintFileInfoList::read_data( utility::io::izstream & data )
 {
 
 	//std::cerr << "calling read data for mcfi list " << std::endl;
-	active_mcfi_ = 1;
+	//active_mcfi_ = 1;
 
 	//mcfis_.clear();
 

@@ -118,6 +118,7 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 	EnzConstraintParametersOP parameters;
 	toolbox::match_enzdes_util::MatchConstraintFileInfoListOP mcfil;
 	cst_pairs_.clear();
+	mcfi_lists_.clear();
 
 	std::string line, key("");
 	core::Size counted_blocks(0);
@@ -144,7 +145,7 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 			}
 			in_variable_block = false;
 			parameters = new EnzConstraintParameters(counted_blocks, restype_set_, this);
-			parameters->set_mcfi_list( mcfil );
+			//parameters->set_mcfi_list( mcfil );
 			cst_pairs_.push_back( parameters );
 			mcfi_lists_.push_back( mcfil );
 		}
@@ -162,7 +163,7 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 
 				if( !in_variable_block ){
 					parameters = new EnzConstraintParameters(counted_blocks, restype_set_, this);
-					parameters->set_mcfi_list( mcfil );
+					//parameters->set_mcfi_list( mcfil );
 					cst_pairs_.push_back( parameters );
 					mcfi_lists_.push_back( mcfil );
 				}
@@ -197,7 +198,7 @@ EnzConstraintIO::mcfi_list( core::Size block ) const
 void
 EnzConstraintIO::process_pdb_header(
 	core::pose::Pose & pose,
-	bool accept_missing_blocks) const
+	bool accept_missing_blocks)
 {
 
 
@@ -232,7 +233,12 @@ EnzConstraintIO::process_pdb_header(
 		//if( tag == "TEMPLATE"){
 		if( split_up_remark_line( remark_line, resA_chain, resA_type, resA_num, resB_chain, resB_type, resB_num, cst_block, ex_geom_id ) ){
 
+			if( cst_block > cst_pairs_.size() ) utility_exit_with_message("The cst_block given in line:\n"+remark_line+"\n is larger than the number of blocks in the constraint file.");
+
+			if( ex_geom_id > mcfi_lists_[ cst_block ]->num_mcfis() ) utility_exit_with_message("The external geometry ID specified for cst block "+utility::to_string( cst_block)+" is larger than the number of sub-blocks for that block in the cst file.");
+
 			counted_blocks++;
+			cst_pairs_[ cst_block ]->set_mcfi( mcfi_lists_[ cst_block ]->mcfi( ex_geom_id ) );
 
 			//Size resA_pose_num(0), resB_pose_num(0);
 
@@ -328,6 +334,8 @@ EnzConstraintIO::process_pdb_header(
 		for( Size i = 1; i <= cst_pairs_.size(); ++i){
 
 			if( found_cst_blocks.find( i ) == found_cst_blocks.end() ){
+				//assuming it's mcfi 1 for now
+				cst_pairs_[ i ]->set_mcfi( mcfi_lists_[ i ]->mcfi( 1 ) );
 				bool resA_missing = !cst_pairs_[i]->nonconst_resA()->find_in_pose_if_missing_from_header( pose );
 				bool resB_missing = !cst_pairs_[i]->nonconst_resB()->find_in_pose_if_missing_from_header( pose );
 
@@ -388,7 +396,7 @@ EnzConstraintIO::add_constraints_to_pose(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionCOP scofx,
 	bool accept_blocks_missing_header
-) const
+)
 {
 	//tmp hack
 	EnzdesCstCacheOP cst_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();

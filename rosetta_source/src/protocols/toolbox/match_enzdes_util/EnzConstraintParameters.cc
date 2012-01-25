@@ -164,7 +164,8 @@ EnzConstraintParameters::EnzConstraintParameters(
 	core::chemical::ResidueTypeSetCAP src_restype_set,
 	EnzConstraintIOCAP src_enz_io
 )
-:
+: utility::pointer::ReferenceCount(),
+	mcfi_(NULL),
 	ndisAB_(0), nangleA_(0), nangleB_(0), ntorsionA_(0), ntorsionB_(0), ntorsionAB_(0),
 	restype_set_( src_restype_set), enz_io_( src_enz_io ), cst_block_(cst_block)
 {
@@ -176,7 +177,16 @@ EnzConstraintParameters::EnzConstraintParameters(
 	is_covalent_ = false;
 	empty_ = true;
 }
-EnzConstraintParameters::EnzConstraintParameters(){}
+EnzConstraintParameters::EnzConstraintParameters()
+: utility::pointer::ReferenceCount(),
+	resA_(NULL), resB_(NULL), mcfi_(NULL),disAB_(NULL),
+	angleA_(NULL), angleB_(NULL), torsionA_(NULL),
+	torsionB_(NULL), torsionAB_(NULL),
+	ndisAB_(0), nangleA_(0), nangleB_(0), ntorsionA_(0),
+	ntorsionB_(0), ntorsionAB_(0),
+	is_covalent_(false), empty_(true),
+	restype_set_( NULL), enz_io_( NULL), cst_block_(0)
+{}
 EnzConstraintParameters::~EnzConstraintParameters(){}
 
 /// @brief copy constructor
@@ -184,6 +194,7 @@ EnzConstraintParameters::~EnzConstraintParameters(){}
 EnzConstraintParameters::EnzConstraintParameters( EnzConstraintParameters const & other )
 :
 	utility::pointer::ReferenceCount(),
+	mcfi_(other.mcfi_),
 	disAB_(other.disAB_), angleA_(other.angleA_), angleB_(other.angleB_),
 	torsionA_(other.torsionA_), torsionB_(other.torsionB_), torsionAB_(other.torsionAB_),
 	ndisAB_(other.ndisAB_), nangleA_(other.nangleA_), nangleB_(other.nangleB_),
@@ -201,12 +212,14 @@ EnzConstraintParameters::EnzConstraintParameters( EnzConstraintParameters const 
 
 
 void
-EnzConstraintParameters::set_mcfi_list(
-		toolbox::match_enzdes_util::MatchConstraintFileInfoListCOP mcfi_list_in )
+EnzConstraintParameters::set_mcfi(
+ 	toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi )
 {
+	//if this mcfi has been previously set,
+	//we don't need to do anything
+	if( mcfi_ == mcfi ) return;
 
-
-	mcfi_ = mcfi_list_in->active_mcfi();
+	mcfi_ = mcfi;
 
 	resA_ = new EnzCstTemplateRes( mcfi_->enz_cst_template_res( 1 ), this );
 	resA_->set_param_index( 1 );
@@ -232,7 +245,8 @@ EnzConstraintParameters::set_mcfi_list(
 		disAB_ = new core::scoring::constraints::BoundFunc(
 			min_dis, max_dis,	sqrt(1/ force_k_dis),	"dis");
 
-		if( mcfi_->dis_U1D1()->periodicity() == 1.0 ) is_covalent_ = true;
+		//if( mcfi_->dis_U1D1()->periodicity() == 1.0 ) is_covalent_ = true;
+		if( mcfi->is_covalent() ) is_covalent_ = true;
 		else is_covalent_ = false;
 	}
 }

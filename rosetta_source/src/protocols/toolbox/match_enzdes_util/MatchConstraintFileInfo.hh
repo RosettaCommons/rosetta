@@ -359,9 +359,9 @@ public: //accessors
 	mcfi( core::Size which_mcfi ) const {
 		return mcfis_[ which_mcfi ]; }
 
-	MatchConstraintFileInfoCOP
-	active_mcfi() const {
-		return mcfis_[ active_mcfi_ ]; }
+	//MatchConstraintFileInfoCOP
+	//active_mcfi() const {
+	//return mcfis_[ active_mcfi_ ]; }
 
 	core::Size
 	num_mcfis() const {
@@ -393,7 +393,7 @@ protected:
 
 private:
 
-	core::Size active_mcfi_;
+	//core::Size active_mcfi_;
 
 	utility::vector1< MatchConstraintFileInfoOP > mcfis_;
 

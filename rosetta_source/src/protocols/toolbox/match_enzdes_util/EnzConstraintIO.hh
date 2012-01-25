@@ -96,7 +96,7 @@ public:
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunctionCOP scofx,
 		bool accept_blocks_missing_header
-	) const;
+	);
 
 
 	/// @brief BE CAREFUL when using this function, it generates constraints
@@ -156,7 +156,7 @@ public:
 	process_pdb_header(
 		core::pose::Pose & pose,
 		bool accept_missing_blocks
-	) const;
+	);
 
 	/// @brief are constraints specified for this position?
 	bool

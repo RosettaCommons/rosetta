@@ -49,7 +49,8 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
+//#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -219,7 +220,7 @@ ProcessorFactory::create_filters(
 		collfilt->set_num_geometric_constraints( matcher->n_geometric_constraints() );
 		for ( Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
 			collfilt->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
-			if ( mtask->enz_input_data()->enz_cst_params( ii )->is_covalent() ) {
+			if ( mtask->enz_input_data()->mcfi_list( ii )->mcfi(1)->is_covalent() ) {
 				collfilt->set_chemical_bond_from_upstream_to_downstream( ii );
 			}
 		}

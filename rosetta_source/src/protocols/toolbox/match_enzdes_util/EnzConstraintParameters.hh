@@ -98,8 +98,8 @@ class EnzConstraintParameters : public utility::pointer::ReferenceCount {
 public:
 
 	void
-	set_mcfi_list(
-		toolbox::match_enzdes_util::MatchConstraintFileInfoListCOP mcfi_list_in );
+	set_mcfi(
+		toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi );
 
 	EnzConstraintParameters();
 

@@ -47,7 +47,7 @@
 
 // Project headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
+//#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 #include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
@@ -1079,14 +1079,14 @@ void Matcher::initialize_from_file(
 								add_secondary_downstream_match_geometry_for_constraint(
 									ii, upres[ jj ], ll_downres,
 									candidate_atids, target_atids, jj_mcfis[ kk ], SecMatchStr, *upstream_pose_,
-									enz_data.enz_cst_params( ii )->is_covalent() );
+									jj_mcfis[kk]->is_covalent() );
 							}
 						} else {
 							add_external_geometry_samples_for_constraint(
 								ii, upres[ jj ], upstream_launch_atoms, downstream_3atoms, *exgs,
 								jj_mcfis[ kk ]->index(),
 								mtask.enumerate_ligand_rotamers(),
-								enz_data.enz_cst_params( ii )->is_covalent() );
+								jj_mcfis[kk]->is_covalent() );
 						}
 						++lex;
 					} //lex loop
