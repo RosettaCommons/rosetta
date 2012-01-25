@@ -22,9 +22,7 @@ namespace options {
 namespace OptionKeys {
 
 namespace abinitio { namespace star { extern BooleanOptionKey const star; } }
-namespace abinitio { namespace star { extern BooleanOptionKey const close_loops; } }
 namespace abinitio { namespace star { extern IntegerOptionKey const min_unaligned_len; } }
-namespace abinitio { namespace star { extern BooleanOptionKey const relax; } }
 namespace abinitio { namespace star { extern IntegerOptionKey const short_loop_len; } }
 namespace abinitio { extern RealOptionKey const prob_perturb_weights; }
 namespace abinitio { extern BooleanOptionKey const abinitio; }

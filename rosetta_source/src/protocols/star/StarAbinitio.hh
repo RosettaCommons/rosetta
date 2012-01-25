@@ -59,9 +59,6 @@ class StarAbinitio : public protocols::moves::Mover {
   /// @detail Removes virtual residue, cutpoint variants and restores simple kinematics
   void tear_down_kinematics(core::pose::Pose* pose) const;
 
-  /// @detail Closes any loops that remain after ab initio folding using CCD
-  void close_remaining_loops(core::pose::Pose* pose) const;
-
   core::fragment::FragSetOP fragments_lg_;
   core::fragment::FragSetOP fragments_sm_;
   core::fragment::SecondaryStructureOP pred_ss_;

@@ -55,7 +55,6 @@
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loop.hh>
@@ -68,8 +67,6 @@
 #include <protocols/nonlocal/PolicyFactory.hh>
 #include <protocols/nonlocal/SingleFragmentMover.hh>
 #include <protocols/nonlocal/util.hh>
-#include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/relax/util.hh>
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 
 // Package headers
@@ -194,21 +191,6 @@ void simple_fold_tree(core::pose::Pose* pose) {
   using core::kinematics::FoldTree;
   assert(pose);
   pose->fold_tree(FoldTree(pose->total_residue()));
-}
-
-/// @detail Optionally relaxes the pose
-void relax(core::pose::Pose* pose) {
-  using protocols::moves::MoverOP;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  assert(pose);
-
-  if (!option[OptionKeys::abinitio::star::relax]())
-    return;
-
-  MoverOP relax = protocols::relax::generate_relax_from_cmd();
-  relax->apply(*pose);
-  emit_intermediate(*pose, "star_relaxed.pdb");
 }
 
 /// @detail Configures the specified RationalMonteCarlo instance
@@ -410,9 +392,6 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
   // Housekeeping
   tear_down_constraints(&pose);
   tear_down_kinematics(&pose);
-  close_remaining_loops(&pose);
-  relax(&pose);
-
   pose.set_new_energies_object(new Energies(energies));
 }
 
@@ -424,38 +403,6 @@ void StarAbinitio::tear_down_kinematics(core::pose::Pose* pose) const {
 
   simple_fold_tree(pose);
   core::util::remove_cutpoint_variants(pose);
-}
-
-void StarAbinitio::close_remaining_loops(core::pose::Pose* pose) const {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using core::kinematics::FoldTree;
-  using core::util::ChainbreakUtil;
-  using protocols::comparative_modeling::LoopRelaxMover;
-  using protocols::loops::LoopsOP;
-  assert(pose);
-
-  if (!option[OptionKeys::abinitio::star::close_loops]() || !ChainbreakUtil::has_chainbreak(*pose))
-    return;
-
-  LoopsOP empty = new protocols::loops::Loops();
-  LoopRelaxMover closure;
-  closure.remodel("quick_ccd");
-  closure.intermedrelax("fast");
-  closure.refine("no");
-  closure.relax("fast");
-  closure.loops(empty);
-
-  utility::vector1<core::fragment::FragSetOP> fragments;
-  fragments.push_back(fragments_sm_);
-  closure.frag_libs(fragments);
-
-  // Use atom pair constraints when available
-  closure.cmd_line_csts(option[constraints::cst_fa_file].user());
-
-  simple_fold_tree(pose);
-  closure.apply(*pose);
-  emit_intermediate(*pose, "star_closed.pdb");
 }
 
 StarAbinitio::StarAbinitio() {
