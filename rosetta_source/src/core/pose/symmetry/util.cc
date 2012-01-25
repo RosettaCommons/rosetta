@@ -17,16 +17,14 @@
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/VirtualCoordinate.hh>
+#include <core/conformation/symmetry/util.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -36,10 +34,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/xyzTriple.hh>
 
 // Package Headers
 #include <core/kinematics/Edge.hh>
@@ -53,7 +49,6 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 #include <utility/vector1.hh>
 
@@ -768,118 +763,16 @@ rotate_anchor_to_x_axis( core::pose::Pose & pose ){
 	}
 }
 
-
+// a couple functions to transform between symmetric and asymmetric foldtrees
+// these do not require the symm data
 void
 symmetrize_fold_tree( core::pose::Pose const &p, kinematics::FoldTree &f ) {
-  if( !is_symmetric( p ) ) {
-		return;
-	}
-
-	// basic idea: grabs jumps and cuts from monomer, symmetrize them,
-	//    retain VRT jumps and cuts, generate a new fold tree
- 	kinematics::FoldTree f_orig = f;
-	//TR.Error << "symmetrize_fold_tree() called with " << f << std::endl;
-	//TR.Error << "reference fold tree =  " << p.fold_tree() << std::endl;
-
-  conformation::symmetry::SymmetricConformation const & symm_conf (
-        dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( p.conformation() ) );
-  conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-  Size nres_subunit ( symm_info->num_independent_residues() );
-  Size nsubunits ( symm_info->subunits() );
-	Size num_nonvrt = symm_info->num_total_residues_without_pseudo();
-
-	// 1 - Get monomer jumps, cuts, and anchor
-	Size new_anchor = 0;
-	utility::vector1< Size > new_cuts;
-	utility::vector1< std::pair<Size,Size> > new_jumps;
-
-	for ( Size i = 1; i<= f_orig.num_jump(); ++i ) {
-		Size down ( f_orig.downstream_jump_residue(i) );
-		Size up ( f_orig.upstream_jump_residue(i) );
-		if ( up > nres_subunit ) {
-			new_anchor = down;
-			TR << "symmetrize_fold_tree(): setting anchor to " << new_anchor << std::endl;
-		} else {
-			// add this jump in each subunit
-			for ( Size j=0;  j<nsubunits; ++j) {
-				// dont worry about order, they get sorted later
-				new_jumps.push_back( std::pair<int,int>( j*nres_subunit+down, j*nres_subunit+up ) );
-			}
-		}
-	}
-	utility::vector1< int > cuts_vector( f_orig.cutpoints() );
-
-	// 1A - symmetrize
-	for ( Size i = 0;  i<nsubunits; ++i) {
-		for ( Size j = 1; j<=cuts_vector.size(); ++j ) {
-			if (i*nres_subunit + cuts_vector[j] != num_nonvrt)
-				new_cuts.push_back( i*nres_subunit + cuts_vector[j] );
-		}
-	}
-
-	// 2 - Get symmetic jumps cuts and anchor
-	// inter-VRT jumps
-	kinematics::FoldTree const &f_pose = p.fold_tree();
-	for ( Size i = 1; i<= f_pose.num_jump(); ++i ) {
-		Size down ( f_pose.downstream_jump_residue(i) );
-		Size up ( f_pose.upstream_jump_residue(i) );
-		// connections between VRTs are unchanged
-		if ( up > num_nonvrt && down > num_nonvrt) {
-			new_jumps.push_back( std::pair<Size,Size>(up,down) );
-		}
-		// jumps to new anchor
-		if ( up > num_nonvrt && down <= num_nonvrt) {
-			int subunit_i = symm_info->subunit_index(down);
-			new_jumps.push_back( std::pair<Size,Size>( up, (subunit_i-1)*nres_subunit + new_anchor ) );
-		}
-		// jumps from new anchor
-		if ( up <= num_nonvrt && down > num_nonvrt) {
-			int subunit_i = symm_info->subunit_index(up);
-			new_jumps.push_back( std::pair<Size,Size>( (subunit_i-1)*nres_subunit + new_anchor , down ) );
-		}
-	}
-
-	// cuts
-	cuts_vector = f_pose.cutpoints();
-	for ( Size i = 1; i<=cuts_vector.size(); ++i ) {
-		if ( cuts_vector[i] >= (int) num_nonvrt)
-			new_cuts.push_back( cuts_vector[i] );
-	}
-
-	// 3 - combine
-	ObjexxFCL::FArray1D_int cuts( new_cuts.size() );
-	ObjexxFCL::FArray2D_int jumps( 2, new_jumps.size() );
-	// Initialize jumps
-	for ( Size i = 1; i<= new_jumps.size(); ++i ) {
-		jumps(1,i) = std::min( (int)new_jumps[i].first, (int)new_jumps[i].second);
-		jumps(2,i) = std::max( (int)new_jumps[i].first, (int)new_jumps[i].second);
-		// DEBUG -- PRINT JUMPS AND CUTS
-		//TR.Error << " jump " << i << " : " << jumps(1,i) << " , " << jumps(2,i) << std::endl;
-	}
-	for ( Size i = 1; i<= new_cuts.size(); ++i ) {
-		cuts(i) = (int)new_cuts[i];
-		//TR.Error << " cut " << i << " : " << cuts(i) << std::endl;
-	}
-
-	// 4 make the foldtree
-	f.clear();
-	f.tree_from_jumps_and_cuts( p.total_residue(), new_jumps.size(), jumps, cuts, f_pose.root(), false ); // true );
-	//TR.Error << "symmetrize_fold_tree() before reorder " << f << std::endl;
-	//f.reorder( f_pose.root() );
-	//TR.Error << "symmetrize_fold_tree() returning with " << f << std::endl;
+	core::conformation::symmetry::symmetrize_fold_tree( p.conformation(), f );
 }
-
 
 void
 set_asymm_unit_fold_tree( core::pose::Pose &p, kinematics::FoldTree const &f) {
-  if( !is_symmetric( p ) ) {
-		return p.fold_tree( f );
-	}
-
-	kinematics::FoldTree f_new = f;
-	symmetrize_fold_tree( p, f_new );
-
-	p.fold_tree( f_new );
+	core::conformation::symmetry::set_asymm_unit_fold_tree( p.conformation(), f );
 }
 
 

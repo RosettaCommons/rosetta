@@ -693,6 +693,11 @@ SymmetricConformation::append_residue_by_jump(
 	// update symminfo
 	symm_info_->resize_asu( nres_monomer + 1 );
 	symm_info_->update_nmonomer_jumps( nmonomer_jumps + 1 );
+
+	// update ft
+	FoldTree f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( *this );
+	core::conformation::symmetry::symmetrize_fold_tree( *this, f_in );
+	fold_tree( f_in );
 }
 
 void
@@ -737,6 +742,11 @@ SymmetricConformation::insert_conformation_by_jump(
 	// update symminfo
 	symm_info_->resize_asu( nres_monomer + new_conf.size() );
 	symm_info_->update_nmonomer_jumps( nmonomer_jumps + new_conf.fold_tree().num_jump() + 1 );
+
+	// update ft
+	FoldTree f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( *this );
+	core::conformation::symmetry::symmetrize_fold_tree( *this, f_in );
+	fold_tree( f_in );
 }
 
 

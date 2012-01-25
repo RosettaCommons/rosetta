@@ -17,14 +17,9 @@
 // Unit headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
-//#include <core/scoring/Energies.fwd.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-//#include <core/pose/Pose.fwd.hh>
-//#include <core/pack/task/PackerTask.fwd.hh>
-//#include <core/pose/PDBInfo.fwd.hh>
 #include <core/types.hh>
 
 
@@ -32,20 +27,11 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-//bool
-//is_symmetric( pose::Pose const & pose );
-
-//bool
-//is_symmetric( scoring::Energies const & energies );
-
 bool
 is_symmetric( conformation::Conformation const & conf );
 
 bool
 is_symmetric( conformation::symmetry::SymmetryInfo const & symminfo );
-
-//conformation::symmetry::SymmetryInfoCOP
-//symmetry_info( pose::Pose const & pose );
 
 conformation::symmetry::SymmetricConformationOP
 setup_symmetric_conformation(
@@ -66,41 +52,6 @@ replaced_symmetric_foldtree_with_new_monomer(
 	kinematics::FoldTree monomer_f
 );
 
-//void
-//make_symmetric_pose(
-//	pose::Pose & pose,
-//	conformation::symmetry::SymmetryInfo symmetry_info
-//);
-
-//void
-//make_symmetric_pose(
-//  pose::Pose & pose,
-//  conformation::symmetry::SymmData & symmdata
-//);
-
-//void
-//make_symmetric_pose(
-//  pose::Pose & pose
-//);
-
-//void
-//make_asymmetric_pose(
-//  pose::Pose & pose
-//);
-
-//core::pose::Pose
-//get_asymmetric_pose_copy_from_symmetric_pose(
-//  pose::Pose const & pose
-///);
-
-// @details make symmetric PDBIinfo
-//void
-//make_symmetric_pdb_info(
-//	pose::Pose const & pose,
-//	pose::PDBInfoOP pdb_info_src,
-//	pose::PDBInfoOP pdb_info_target
-//);
-
 void
 recenter(
   conformation::Conformation & src_conformation,
@@ -114,43 +65,15 @@ shift_jump_numbers_in_dofs(
   Size shift
 );
 
-//void
-//make_symmetric_movemap(
-//  pose::Pose const & pose,
-//  kinematics::MoveMap & movemap
-//);
-
-//int
-//find_symmetric_basejump_anchor(
-//	pose::Pose & pose );
-
-//int
-//find_symmetric_basejump_anchor( pose::Pose & pose );
-
-//void
-//find_new_symmetric_jump_residues( core::pose::Pose & pose );
-
-//void
-//rotate_anchor_to_x_axis( core::pose::Pose & pose );
-
-// find symm axis
-//numeric::xyzVector< core::Real >
-//get_symm_axis( core::pose::Pose & pose );
-
-// a couple functions to transform between symmetric and asymmetric foldtrees
-// these do not require the symm data
-//void
-//symmetrize_fold_tree( core::pose::Pose const &p, kinematics::FoldTree &f );
-
-//void
-//set_asymm_unit_fold_tree( core::pose::Pose &p, kinematics::FoldTree const &f);
-
 kinematics::FoldTree
 get_asymm_unit_fold_tree( core::conformation::Conformation const &conf );
 
-// make a residue mask (like that used to restrict residues to repack) symmetric
-//void
-//make_residue_mask_symmetric( core::pose::Pose const &p, utility::vector1< bool > & msk );
+void
+symmetrize_fold_tree( core::conformation::Conformation const &conf, kinematics::FoldTree &f );
+
+void
+set_asymm_unit_fold_tree( core::conformation::Conformation &p, kinematics::FoldTree const &f);
+
 
 int
 residue_center_of_mass(
@@ -166,12 +89,6 @@ return_nearest_residue(
 	int const end,
 	core::Vector center
 );
-
-//void
-//make_symmetric_PackerTask(
-//  pose::Pose const & pose,
-//  pack::task::PackerTaskOP task
-//);
 
 
 } // symmetry
