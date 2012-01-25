@@ -21,6 +21,7 @@
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
@@ -132,6 +133,7 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 
 		if( key == "VARIABLE_CST::BEGIN" ){
 			in_variable_block = true;
+			counted_blocks++;
 			mcfil = new toolbox::match_enzdes_util::MatchConstraintFileInfoList( restype_set_ );
 		}
 
@@ -149,9 +151,11 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 
 		if( key == "CST::BEGIN" ) {
 
-			counted_blocks++;
 
-			if( !in_variable_block) mcfil = new toolbox::match_enzdes_util::MatchConstraintFileInfoList( restype_set_ );
+			if( !in_variable_block){
+				mcfil = new toolbox::match_enzdes_util::MatchConstraintFileInfoList( restype_set_ );
+				counted_blocks++;
+			}
 
 
 			if( mcfil->read_data( data ) ){
@@ -214,26 +218,28 @@ EnzConstraintIO::process_pdb_header(
 	//std::cerr << "There are " << pose_remarks->size() << " remark lines." << std::endl;
 	for( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(); remark_it != pose_remarks.end(); remark_it++) {
 
-		line_stream.clear();
-		line_stream.str( remark_it->value );
+		//line_stream.clear();
+		//line_stream.str( remark_it->value );
 
 		//std::cerr << "this remark string is: " << remark_it->value << std::endl;
 		//std::cerr << "and the number is: " << remark_it->num << std::endl;
 
-		line_stream >> buffer >> tag;
-		if( tag == "TEMPLATE"){
+		//line_stream >> buffer >> tag;
+		std::string remark_line( remark_it->value), resA_type(""), resB_type("");
+		int resA_num(0), resB_num(0);
+		Size pose_resnumA(0), pose_resnumB(0), ex_geom_id(0);
+		std::string resA_chain(""),resB_chain("");
+		//if( tag == "TEMPLATE"){
+		if( split_up_remark_line( remark_line, resA_chain, resA_type, resA_num, resB_chain, resB_type, resB_num, cst_block, ex_geom_id ) ){
 
-			std::string resA_type(""), resB_type("");
-			Size resA_num(0), resB_num(0), pose_resnumA(0), pose_resnumB(0);
-			std::string resA_chain(""),resB_chain("");
 			counted_blocks++;
 
 			//Size resA_pose_num(0), resB_pose_num(0);
 
-			line_stream >> resA_chain >> resA_type >> resA_num;
-			line_stream >> buffer >> buffer >> resB_chain >> resB_type >> resB_num >> cst_block;
-			if( resA_type.size() == 2 ) resA_type = " " + resA_type;
-			if( resB_type.size() == 2 ) resB_type = " " + resB_type;
+			//line_stream >> resA_chain >> resA_type >> resA_num;
+			//line_stream >> buffer >> buffer >> resB_chain >> resB_type >> resB_num >> cst_block;
+			//if( resA_type.size() == 2 ) resA_type = " " + resA_type;
+			//if( resB_type.size() == 2 ) resB_type = " " + resB_type;
 			//note: if the chain is '_', this means the pose doesn't have a chain info.
 			//we'll set the chain to ' ' to prevent a crash
 			if(resA_chain[0] == '_' ) resA_chain[0] = ' ';
