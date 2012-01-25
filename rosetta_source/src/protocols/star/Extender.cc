@@ -200,8 +200,6 @@ int Extender::choose_cutpoint(int start, int stop) const {
 
   vector1<int> samples;
   sampler.samples(&samples);
-
-  assert(sampler.num_considered());
   return samples[1];
 }
 
