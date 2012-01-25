@@ -149,7 +149,7 @@ public:
 
 		TS_ASSERT( found_his && found_his_d );
 
-		TS_ASSERT_EQUALS( mcfil1->active_mcfi()->is_covalent(), true );
+		TS_ASSERT_EQUALS( mcfil1->mcfi(1)->is_covalent(), true );
 
 		//done w stuff for residue 1
 
@@ -159,7 +159,7 @@ public:
 		//TO DO
 
 
-		utility::vector1< std::string > const & algo_strings = mcfil2->active_mcfi()->algorithm_inputs().find( "test" )->second;
+		utility::vector1< std::string > const & algo_strings = mcfil2->mcfi(1)->algorithm_inputs().find( "test" )->second;
 
 		TS_ASSERT_EQUALS( algo_strings.size(), 3 );
 		TS_ASSERT_EQUALS( algo_strings[2], "  not so fat after all" );
@@ -175,7 +175,7 @@ public:
 		//3. asserting stuff for residue 3
 		MatchConstraintFileInfoListCOP mcfil3 = enz_io->mcfi_list( 3 );
 
-		TS_ASSERT_EQUALS( mcfil3->active_mcfi()->create_exgs(), 0 );
+		TS_ASSERT_EQUALS( mcfil3->mcfi(1)->create_exgs(), 0 );
 
 		TS_ASSERT_EQUALS( mcfil3->mcfi(2)->tor_U1D3()->num_steps(), 4 );
 		TS_ASSERT_EQUALS( mcfil3->mcfi(2)->template_atom_inds( 2, 1, const_residue_set->name_map("THR") )[1], const_residue_set->name_map("THR").atom_index("OG1") );
@@ -191,7 +191,7 @@ public:
 		TS_ASSERT_EQUALS( up_res4.size(), 3 );
 
 
-		utility::vector1< core::Size > const & down_res4_at1 = mcfil4->active_mcfi()->template_atom_inds( 1, 1, const_residue_set->name_map("D2MX") );
+		utility::vector1< core::Size > const & down_res4_at1 = mcfil4->mcfi(1)->template_atom_inds( 1, 1, const_residue_set->name_map("D2MX") );
 
 		TS_ASSERT_EQUALS( down_res4_at1.size(), 1 );
 
