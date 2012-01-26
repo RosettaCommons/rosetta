@@ -222,12 +222,13 @@ ParsedProtocol::parse_my_tag(
 	TR<<"ParsedProtocol mover with the following movers and filters\n";
 
 	mode_=tag->getOption<string>("mode", "sequence");
-
 	if(mode_ != "sequence" && mode_ != "random_order" && mode_ != "single_random"){
 		utility_exit_with_message("Error: mode must be sequence, random_order, or single_random");
 	}
 
 	utility::vector0< TagPtr > const dd_tags( tag->getTags() );
+	utility::vector1< core::Real > a_probability( dd_tags.size(), 1.0/dd_tags.size() );
+	core::Size count( 1 );
 	for( utility::vector0< TagPtr >::const_iterator dd_it=dd_tags.begin(); dd_it!=dd_tags.end(); ++dd_it ) {
 		TagPtr const tag_ptr = *dd_it;
 
@@ -282,7 +283,14 @@ ParsedProtocol::parse_my_tag(
 		}
 		add_mover( mover_to_add, filter_to_add );
 		TR << "added mover \"" << mover_name << "\" with filter \"" << filter_name << "\"\n";
+		if( mode_ == "single_random" ){
+			a_probability[ count ] = tag_ptr->getOption< core::Real >( "apply_probability", 1.0/dd_tags.size() );
+			TR<<"and execution probability of "<<a_probability[ count ]<<'\n';
+		}
+		count++;
 	}
+	if( mode_ == "single_random" )
+		apply_probability( a_probability );
 	TR.flush();
 }
 
@@ -429,10 +437,36 @@ void ParsedProtocol::random_order_protocol(Pose & pose){
 	finish_protocol( pose );
 }
 
+utility::vector1< core::Real >
+ParsedProtocol::apply_probability() {
+	core::Real sum( 0 );
+	foreach( core::Real const prob, apply_probability_ )
+		sum += prob;
+	runtime_assert( sum >= 0.999 && sum <= 1.001 );
+	return apply_probability_;
+}
+
+void
+ParsedProtocol::apply_probability( utility::vector1< core::Real > a ){
+	apply_probability_ = a;
+	runtime_assert( apply_probability_.size() == movers_.size() );
+	core::Real sum( 0 );
+	foreach( core::Real const prob, apply_probability_ )
+		sum += prob;
+	runtime_assert( sum >= 0.999 && sum <= 1.001 );
+}
 
 void ParsedProtocol::random_single_protocol(Pose & pose){
-	core::Size index=RG.random_range(1,movers_.size());
-	if(!apply_mover_filter_pair(pose, movers_[index])) {
+	core::Real const random_num( RG.uniform() );
+	core::Real sum( 0.0 );
+	core::Size mover_index( 0 );
+	foreach( core::Real const probability, apply_probability() ){
+		sum += probability; mover_index++;
+		if( sum >= random_num )
+			break;
+	}
+	last_attempted_mover_idx( mover_index );
+	if(!apply_mover_filter_pair(pose, movers_[mover_index])) {
 		return;
 	}
 
