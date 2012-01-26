@@ -31,6 +31,7 @@
 #include <numeric/xyzVector.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
+#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // Project headers
@@ -48,7 +49,6 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -126,11 +126,12 @@ void update_sequence_separation(Size distance, Pose* pose) {
   TR << "max_seq_sep => " << distance << std::endl;
 }
 
-/// @detail Creates a sequence separation dependent constraint set from restraints
-/// specified on the command line and adds it to pose. Additionally, creates a dense
-/// network of short range restraints between aligned residues.
+/// @detail Adds constraints between contacting residues in different
+/// aligned chunks, as well as those specified on the command line via
+/// -constraints:cst_file. Call this *after* kinematics are in place.
 void setup_constraints(const Loops& aligned, Pose* pose) {
   using core::id::AtomID;
+  using core::kinematics::ShortestPathInFoldTree;
   using core::scoring::constraints::AtomPairConstraint;
   using core::scoring::constraints::HarmonicFunc;
   using namespace basic::options;
@@ -138,7 +139,7 @@ void setup_constraints(const Loops& aligned, Pose* pose) {
 
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(*pose);
 
-	Size n_csts = 0;
+  Size n_csts = 0;
   for (Size i = 1; i <= aligned.size(); ++i) {
     const Loop& ci = aligned[i];
 
@@ -157,13 +158,21 @@ void setup_constraints(const Loops& aligned, Pose* pose) {
           if (distance <= option[OptionKeys::abinitio::star::initial_dist_cutoff]()) {
             pose->add_constraint(new AtomPairConstraint(ai, aj, new HarmonicFunc(distance, 2)));
             TR << "Added constraint between residues " << k << " and " << l << std::endl;
-						++n_csts;
+            ++n_csts;
           }
         }
       }
     }
   }
-	assert(n_csts);
+
+  if (!n_csts) {
+    TR.Error << "Failed to define constraints between chunks in the non-local pairing" << std::endl;
+    TR.Error << "Check -abinitio:star:initial_dist_cutoff" << std::endl;
+    utility_exit();
+  }
+
+  Size max_dist_ft = ShortestPathInFoldTree(pose->fold_tree()).max_dist();
+  update_sequence_separation(max_dist_ft, pose);
 }
 
 void tear_down_constraints(Pose* pose) {
@@ -172,27 +181,25 @@ void tear_down_constraints(Pose* pose) {
 
 /// @detail Instantiates a score function by name and sets constraint terms to
 /// the value specified by the options system (-constraints:cst_weight)
-ScoreFunctionOP setup_score(const std::string& weights, core::Real cb) {
+ScoreFunctionOP setup_score(const std::string& weights, Real cb) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+
   ScoreFunctionOP score = ScoreFunctionFactory::create_score_function(weights);
   score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
-	score->set_weight(core::scoring::linear_chainbreak, cb);
+  score->set_weight(core::scoring::linear_chainbreak, cb);
   return score;
 }
 
+/// @detail Updates RationalMonteCarlo instance.
+/// Calling this method twice without scoring a pose in between will trigger a
+/// runtime assertion in core/pose/Pose.cc.
 void configure_rmc(MoverOP mover, ScoreFunctionOP score, Size num_cycles, Real temperature, bool recover_low, RationalMonteCarlo* rmc) {
   rmc->set_mover(mover);
+  rmc->set_score_function(score);
   rmc->set_num_trials(num_cycles);
   rmc->set_temperature(temperature);
-
-  // Replacing the score function triggers a reevaluation of cached low/last poses,
-  // which fails if none exist.
-  const Pose& low = rmc->lowest_score_pose();
-  const Pose& last = rmc->last_accepted_pose();
-  if (low.total_residue() && last.total_residue()) {
-    rmc->set_score_function(score);
-  }
+  rmc->set_recover_low(recover_low);
 }
 
 void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned>& interior_cuts, Pose* pose) const {
@@ -242,8 +249,6 @@ void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned
 void StarAbinitio::apply(Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::kinematics::ShortestPathInFoldTree;
-  using core::scoring::Energies;
   using protocols::comparative_modeling::ThreadingJob;
   using protocols::nonlocal::BiasedFragmentMover;
   using protocols::nonlocal::PolicyFactory;
@@ -267,8 +272,6 @@ void StarAbinitio::apply(Pose& pose) {
   setup_kinematics(aligned, extender.cutpoints(), &pose);
   setup_constraints(aligned, &pose);
 
-  const Size max_dist_ft = ShortestPathInFoldTree(pose.fold_tree()).max_dist();
-
   Probabilities probs_sm, probs_lg;
   compute_per_residue_probabilities(num_residues, fragments_sm_->max_frag_length(), pose.fold_tree(), &probs_sm);
   compute_per_residue_probabilities(num_residues, fragments_lg_->max_frag_length(), pose.fold_tree(), &probs_lg);
@@ -277,10 +280,10 @@ void StarAbinitio::apply(Pose& pose) {
   MoverOP fragments_sm_uni = new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_sm_), probs_sm);
   MoverOP fragments_sm_smo = new BiasedFragmentMover(PolicyFactory::get_policy("smooth", fragments_sm_), probs_sm);
 
-	// Simulation parameters
+  // Simulation parameters
   const Real mult = option[OptionKeys::abinitio::increase_cycles]();
   const Real temperature = option[OptionKeys::abinitio::temperature]();
-	const Real chainbreak = option[OptionKeys::jumps::increase_chainbreak]();
+  const Real chainbreak = option[OptionKeys::jumps::increase_chainbreak]();
 
   ScoreFunctionOP score_stage_1  = setup_score("score0", 0.10 * chainbreak);
   ScoreFunctionOP score_stage_2  = setup_score("score1", 0.25 * chainbreak);
@@ -288,41 +291,32 @@ void StarAbinitio::apply(Pose& pose) {
   ScoreFunctionOP score_stage_3b = setup_score("score5", 0.75 * chainbreak);
   ScoreFunctionOP score_stage_4  = setup_score("score3", 1.00 * chainbreak);
 
-
-  // Folding
-  RationalMonteCarlo rmc(fragments_lg_uni, score_stage_1, 0, 0, true);
-
-	// Stage 1
+  // Stage 1
   TR << "Stage 1" << std::endl;
-  update_sequence_separation(max_dist_ft, &pose);
-  configure_rmc(fragments_lg_uni, score_stage_1, static_cast<unsigned>(mult * 1000), temperature, true, &rmc);  // 1a
+  RationalMonteCarlo rmc(fragments_lg_uni, score_stage_1, static_cast<Size>(mult * 1000), temperature, true);
   rmc.apply(pose);
 
-  configure_rmc(fragments_sm_uni, score_stage_1, static_cast<unsigned>(mult * 1000), temperature, true, &rmc);  // 1b
+  configure_rmc(fragments_sm_uni, score_stage_1, static_cast<Size>(mult * 1000), temperature, true, &rmc);
   rmc.apply(pose);
-
-	emit_intermediate(pose, "star_stage_1.pdb");
+  emit_intermediate(pose, "star_stage_1.pdb");
 
   // Stage 2
   TR << "Stage 2" << std::endl;
-
-  configure_rmc(fragments_lg_uni, score_stage_2, static_cast<unsigned>(mult * 4000), temperature, true, &rmc);  // 2a
+  configure_rmc(fragments_lg_uni, score_stage_2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
   rmc.apply(pose);
 
-  configure_rmc(fragments_sm_uni, score_stage_2, static_cast<unsigned>(mult * 4000), temperature, true, &rmc);  // 2b
+  configure_rmc(fragments_sm_uni, score_stage_2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
   rmc.apply(pose);
-
   emit_intermediate(pose, "star_stage_2.pdb");
 
   // Stage 3
   TR << "Stage 3" << std::endl;
-  for (unsigned i = 1; i <= 10; ++i) {
+  for (Size i = 1; i <= 10; ++i) {
     ScoreFunctionOP score = ((i % 2) == 0 && i <= 7) ? score_stage_3a : score_stage_3b;
-
-    configure_rmc(fragments_lg_uni, score, static_cast<unsigned>(mult * 4000), temperature, true, &rmc);  // 3a
+    configure_rmc(fragments_lg_uni, score, static_cast<Size>(mult * 4000), temperature, true, &rmc);
     rmc.apply(pose);
 
-    configure_rmc(fragments_sm_uni, score, static_cast<unsigned>(mult * 4000), temperature, true, &rmc);  // 3b
+    configure_rmc(fragments_sm_uni, score, static_cast<Size>(mult * 4000), temperature, true, &rmc);
     rmc.apply(pose);
   }
   emit_intermediate(pose, "star_stage_3.pdb");
