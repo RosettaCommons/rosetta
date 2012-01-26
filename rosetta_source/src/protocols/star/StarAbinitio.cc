@@ -285,41 +285,49 @@ void StarAbinitio::apply(Pose& pose) {
   const Real temperature = option[OptionKeys::abinitio::temperature]();
   const Real chainbreak = option[OptionKeys::jumps::increase_chainbreak]();
 
-  ScoreFunctionOP score_stage_1  = setup_score("score0", 0.10 * chainbreak);
-  ScoreFunctionOP score_stage_2  = setup_score("score1", 0.25 * chainbreak);
-  ScoreFunctionOP score_stage_3a = setup_score("score2", 0.50 * chainbreak);
-  ScoreFunctionOP score_stage_3b = setup_score("score5", 0.75 * chainbreak);
-  ScoreFunctionOP score_stage_4  = setup_score("score3", 1.00 * chainbreak);
+  ScoreFunctionOP score_stage1  = setup_score("score0", 0.10 * chainbreak);
+  ScoreFunctionOP score_stage2  = setup_score("score1", 0.25 * chainbreak);
+  ScoreFunctionOP score_stage3a = setup_score("score2", 0.50 * chainbreak);
+  ScoreFunctionOP score_stage3b = setup_score("score5", 0.75 * chainbreak);
+  ScoreFunctionOP score_stage4  = setup_score("score3", 1.00 * chainbreak);
 
   // Stage 1
   TR << "Stage 1" << std::endl;
-  RationalMonteCarlo rmc(fragments_lg_uni, score_stage_1, static_cast<Size>(mult * 1000), temperature, true);
+  RationalMonteCarlo rmc(fragments_lg_uni, score_stage1, static_cast<Size>(mult * 1000), temperature, true);
   rmc.apply(pose);
 
-  configure_rmc(fragments_sm_uni, score_stage_1, static_cast<Size>(mult * 1000), temperature, true, &rmc);
+  configure_rmc(fragments_sm_uni, score_stage1, static_cast<Size>(mult * 1000), temperature, true, &rmc);
   rmc.apply(pose);
-  emit_intermediate(pose, "star_stage_1.pdb");
+  emit_intermediate(pose, "star_stage1.pdb");
 
   // Stage 2
   TR << "Stage 2" << std::endl;
-  configure_rmc(fragments_lg_uni, score_stage_2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
+  configure_rmc(fragments_lg_uni, score_stage2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
   rmc.apply(pose);
 
-  configure_rmc(fragments_sm_uni, score_stage_2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
+  configure_rmc(fragments_sm_uni, score_stage2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
   rmc.apply(pose);
-  emit_intermediate(pose, "star_stage_2.pdb");
+  emit_intermediate(pose, "star_stage2.pdb");
 
   // Stage 3
   TR << "Stage 3" << std::endl;
   for (Size i = 1; i <= 10; ++i) {
-    ScoreFunctionOP score = ((i % 2) == 0 && i <= 7) ? score_stage_3a : score_stage_3b;
+    ScoreFunctionOP score = ((i % 2) == 0 && i <= 7) ? score_stage3a : score_stage3b;
     configure_rmc(fragments_lg_uni, score, static_cast<Size>(mult * 4000), temperature, true, &rmc);
     rmc.apply(pose);
 
     configure_rmc(fragments_sm_uni, score, static_cast<Size>(mult * 4000), temperature, true, &rmc);
     rmc.apply(pose);
   }
-  emit_intermediate(pose, "star_stage_3.pdb");
+  emit_intermediate(pose, "star_stage3.pdb");
+
+  // Stage 4
+  TR << "Stage 4" << std::endl;
+  configure_rmc(fragments_sm_smo, score_stage4, static_cast<Size>(mult * 8000), temperature, true, &rmc);
+  for (Size i = 1; i <= 3; ++i) {
+    rmc.apply(pose);  // 4
+  }
+  emit_intermediate(pose, "star_stage4.pdb");
 }
 
 void StarAbinitio::tear_down_kinematics(Pose* pose) const {
