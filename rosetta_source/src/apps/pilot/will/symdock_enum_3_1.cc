@@ -5,43 +5,31 @@
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <devel/init.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-
-//Auto Headers
+#include <utility/string_util.hh>
 #include <utility/vector1.hh>
+
 static basic::Tracer TR("symdock_enum");
 
-// #ifdef USE_OPENMP
-// #pragma omp parallel for schedule(dynamic,1)
-// #endif
-// #ifdef USE_OPENMP
-// #pragma omp critical
-// #endif
 
-
+long SICFAST_FAIL = 0;
+long SICFAST_COUNT = 0;
 
 OPT_1GRP_KEY( Real , tcdock, clash_dis		)
 OPT_1GRP_KEY( Real , tcdock, contact_dis	)
@@ -85,7 +73,6 @@ inline double sigmoid( double const & sqdist, double const & start, double const
 		return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
 	}
 }
-
 void trans_pose( Pose & pose, Vecf const & trans ) {
 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
@@ -94,7 +81,6 @@ void trans_pose( Pose & pose, Vecf const & trans ) {
 		}
 	}
 }
-
 void rot_pose( Pose & pose, Mat const & rot ) {
 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
@@ -103,22 +89,17 @@ void rot_pose( Pose & pose, Mat const & rot ) {
 		}
 	}
 }
-
 void rot_pose( Pose & pose, Mat const & rot, Vecf const & cen ) {
 	trans_pose(pose,-cen);
 	rot_pose(pose,rot);
 	trans_pose(pose,cen);
 }
-
 void rot_pose( Pose & pose, Vecf const & axis, double const & ang ) {
 	rot_pose(pose,rotation_matrix_degrees(axis,ang));
 }
-
 void rot_pose( Pose & pose, Vecf const & axis, double const & ang, Vecf const & cen ) {
 	rot_pose(pose,rotation_matrix_degrees(axis,ang),cen);
 }
-
-
 void alignaxis(Pose & pose, Vecf newaxis, Vecf oldaxis, Vecf cen = Vecf(0,0,0) ) {
 	newaxis.normalize();
 	oldaxis.normalize();
@@ -126,7 +107,6 @@ void alignaxis(Pose & pose, Vecf newaxis, Vecf oldaxis, Vecf cen = Vecf(0,0,0) )
 	double ang = (double)-acos(numeric::max((double)-1.0,numeric::min((double)1.0,newaxis.dot(oldaxis))))*(double)180.0/numeric::constants::f::pi;
 	rot_pose(pose,axis,ang,cen);
 }
-
 int cbcount_vec(vector1<Vecf> & cba, vector1<Vecf> & cbb) {
 	int cbcount = 0;
 	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia)
@@ -134,7 +114,6 @@ int cbcount_vec(vector1<Vecf> & cba, vector1<Vecf> & cbb) {
 			if( ib->distance_squared(*ia) < 100.0 ) cbcount++;
 	return cbcount;
 }
-
 void prune_cb_pairs_dis10(vector1<Vecf> & cba, vector1<Vecf> & cbb) {
 	vector1<Vecf> a,b;
 	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
@@ -148,7 +127,6 @@ void prune_cb_pairs_dis10(vector1<Vecf> & cba, vector1<Vecf> & cbb) {
 	cba = a;
 	cbb = b;
 }
-
 int pose_cbcount(Pose const & a, Pose const & b) {
 	int count = 0;
 	for(Size i = 1; i <= a.n_residue(); ++i) {
@@ -179,11 +157,12 @@ sicsafe(
 	double const CLASH_D2	 = sqr(CLASH_D);
 	ori.normalize();
 	Vecf axis = Vecf(0,0,1).cross(ori);
-	Matf R = rotation_matrix( axis, (double)-acos(numeric::max((double)-1.0,numeric::min((double)1.0,Vecf(0,0,1).dot(ori)))) );
+	Matf R = Matf::identity();
+	if( axis.length() > 0.000001 )
+		R = rotation_matrix( axis, (double)-acos(numeric::max((double)-1.0,numeric::min((double)1.0,Vecf(0,0,1).dot(ori)))) );
+
 	double mindis = 9e9;
 	int mni,mnj;
-	// for(vector1<Vecf>::const_iterator i = pa.begin(); i != pa.end(); ++i) {
-	// for(vector1<Vecf>::const_iterator j = pb.begin(); j != pb.end(); ++j) {
 	for(int ii = 1; ii <= pa.size(); ++ii) {
 		Vecf const i = R * pa[ii];
 		for(int jj = 1; jj <= pb.size(); ++jj) {		
@@ -210,19 +189,19 @@ sicsafe(
 			}
 		}
 	}
+
 	return mindis;
 	
 }
 
 double
-sicfast(
+sicfast_check(
 				vector1<Vecf>	pa,
 				vector1<Vecf>	pb,
 				vector1<Vecf> const & cba,
 				vector1<Vecf> const & cbb,
 				Vecf ori,
-				double & cbcount,
-				bool debug = false
+				double & cbcount
 ){
 	double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
 	double const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
@@ -256,24 +235,17 @@ sicfast(
 	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
 	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
 
-	// std::cerr << "BOUNDS " << xmn << " " << xmx << " " << ymn << " " << ymx << std::endl;
-	// std::cerr << "BOUNDS " << xlb << " " << xub << " " << ylb << " " << yub << std::endl;
-
 	// insert points into hashes
 	int const xsize = xub-xlb+1;
 	int const ysize = yub-ylb+1;
 	ObjexxFCL::FArray2D<Vecf> ha(xsize,ysize,Vecf(0,0,-9e9)),hb(xsize,ysize,Vecf(0,0,9e9));
 	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-		// int const ix = min(xsize,max(1,(int)ceil(ia->x()/BIN)-xlb));
-		// int const iy = min(ysize,max(1,(int)ceil(ia->y()/BIN)-ylb));
 		int const ix = (int)ceil(ia->x()/BIN)-xlb;
 		int const iy = (int)ceil(ia->y()/BIN)-ylb;
 		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
 		if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
 	}
 	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-		// int const ix = min(xsize,max(1,(int)ceil(ib->x()/BIN)-xlb));
-		// int const iy = min(ysize,max(1,(int)ceil(ib->y()/BIN)-ylb));
 		int const ix = (int)ceil(ib->x()/BIN)-xlb;
 		int const iy = (int)ceil(ib->y()/BIN)-ylb;
 		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
@@ -310,108 +282,248 @@ sicfast(
 		}
 	}
 
-	// {
-	//	utility::io::ozstream out("cba.pdb");
-	//	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
-	//		Vecf viz = (*ia) + (mindis*ori);
-	//		out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	//	}
-	//	out.close();
-	// }
-	// {
-	//	utility::io::ozstream out("cbb.pdb");
-	//	for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-	//		Vecf viz = (*ib);
-	//		out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	//	}
-	//	out.close();
-	// }
+	Vecf mna = ha(imna,jmna) + (mindis*Vec(0,0,1));
+	Vecf mnb = hb(imnb,jmnb);
+	double xchkmn = min(mna.x(),mnb.x())-CLASH_D;
+	double xchkmx = max(mna.x(),mnb.x())+CLASH_D;
+	double ychkmn = min(mna.y(),mnb.y())-CLASH_D;
+	double ychkmx = max(mna.y(),mnb.y())+CLASH_D;
+	double zchkmn = min(mna.z(),mnb.z())-CLASH_D-mindis;
+	double zchkmx = max(mna.z(),mnb.z())+CLASH_D;
+	// std::cerr << mna.x() << " " << mna.y() << " " << mna.z() << std::endl;
+	// std::cerr << mnb.x() << " " << mnb.y() << " " << mnb.z() << std::endl;
+	// std::cerr << xchkmn << " " 
+	// 		 			<< xchkmx << " " 
+	// 		 			<< ychkmn << " " 
+	// 		 			<< ychkmx << " " 
+	// 		 			<< zchkmn << " " 
+	// 		 			<< zchkmx << std::endl;
+	vector1<Vecf> chka,chkb;
+	for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia){
+		if( xchkmn <= ia->x() && ia->x() <= xchkmx && 
+		    ychkmn <= ia->y() && ia->y() <= ychkmx && 
+		    zchkmn <= ia->z()
+		){
+			chka.push_back(*ia);
+		}
+	}
+	for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+		if( xchkmn <= ib->x() && ib->x() <= xchkmx && 
+		    ychkmn <= ib->y() && ib->y() <= ychkmx && 
+		                         ib->z() <= zchkmx 
+		){
+			chkb.push_back(*ib);
+		}
+	}
+	// std::cerr << chka.size() << " " << chkb.size() << std::endl;
+	double mindis2=9e9, mind2=9e9, mind2f=9e9;
+	for(vector1<Vecf>::iterator ia = chka.begin(); ia != chka.end(); ++ia){
+		for(vector1<Vecf>::iterator ib = chkb.begin(); ib != chkb.end(); ++ib) {
+			double const dxy2 = (ia->x()-ib->x())*(ia->x()-ib->x()) + (ia->y()-ib->y())*(ia->y()-ib->y());
+			if( dxy2 >= CLASH_D2 ) continue;
+			double const dz = ib->z() - ia->z() - sqrt(CLASH_D2-dxy2);
+			if( dz < mindis2) {
+				mindis2 = dz;
+				// double d2 = ib->distance_squared(*ia+Vecf(0,0,mindis2));
+				// if( d2 < mind2) mind2 = d2;
+				double d2f = ib->distance_squared(*ia+Vecf(0,0,mindis));
+				if( d2f < mind2f) mind2f = d2f;
+			}
+		}
+	}
+	mindis = mindis2;
+	
+	double tmpcbc;
+	double mindisreal = sicsafe(pa,pb,cba,cbb,Vecf(0,0,1),tmpcbc);	
+	SICFAST_COUNT++;
+	if( fabs(mindisreal-mindis) > 0.001 ) {
+		SICFAST_FAIL++;
+		std::cerr << mindis << " " << mindisreal << std::endl;
+		std::cerr << SICFAST_COUNT << " " << SICFAST_FAIL << " " << (double)SICFAST_COUNT/(double)SICFAST_FAIL << std::endl;		
+		utility_exit_with_message("FOO!");
+	}
 
 	cbcount = 0;
-	// utility::io::ozstream out("cb8.pdb");
-	// std::cerr << "CB0 " << cbcount << std::endl;
 	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
 		for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
 			double d2 = ib->distance_squared( (*ia) + (mindis*ori) );
 			if( d2 < CONTACT_D2 ) {
 				cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
-				// Vecf viz = (*ia) + (mindis*ori);
-				// out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-				// viz = *ib;
-				// out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"B"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 			}
 		}
 	}
-	// out.close();
-	// std::cerr << "CB1 " << cbcount << std::endl;
-
-	// // rotate points back -- needed iff pa/pb come by reference
-	rot = rot.transposed();
-	// if( rot != Matf::identity() ) {
-	//	for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-	//	for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
-	// }
-
-	// uncomment this to get hashes in local space
-	// rot = Matf::identity();
-	// ori = Vecf(0,0,1);
-
-	if(debug){
-		{
-			utility::io::ozstream out("hasha.pdb");
-			for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-				for(int j = 2; j <= ysize-1; ++j) {
-					Vecf viz = rot*ha(i,j) + mindis*ori;
-					if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
-					out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100+j)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-				}
-			}
-			Vecf viz = rot*ha(imna,jmna) + mindis*ori;
-			out<<"HETATM"<<I(5,1000+imna)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"B"<<I(4,100+jmna)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out.close();
-		}
-		{
-			utility::io::ozstream out("hashb.pdb");
-			for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-				for(int j = 2; j <= ysize-1; ++j) {
-					Vecf viz = rot*hb(i,j);
-					if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
-					out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"C"<<I(4,100+j)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-				}
-			}
-			Vecf viz = rot*hb(imnb,jmnb);
-			out<<"HETATM"<<I(5,1000+imnb)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"C"<<I(4,100+jmnb)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out.close();
-		}
-	}
-
 	return mindis;
 }
 
-double sicfast(
-							 Pose const & a,
-							 Pose const & b,
-							 Vecf ori_in,
-							 double & cbcount
+struct Vecf2 {
+	Vecf a,b;
+	Vecf2() {}
+	Vecf2(Vecf _a, Vecf _b) : a(_a),b(_b) {}
+};
+
+double
+sicfast(
+				vector1<Vecf>	pa,
+				vector1<Vecf>	pb,
+				vector1<Vecf> const & cba,
+				vector1<Vecf> const & cbb,
+				Vecf ori,
+				double & cbcount
 ){
-	// get points, rotated ro ori is 0,0,1
-	vector1<Vecf> pa,pb;
-	vector1<Vecf> cba,cbb;
-	Vecf ori = ori_in.normalized();
+	double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
+	double const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
+	double const CONTACT_D2 = sqr(CONTACT_D);
+	double const CLASH_D2	 = sqr(CLASH_D);	
+	double const BIN = CLASH_D / 2.0;
+
+	// get points, rotated ro ori is 0,0,1, might already be done
 	Matf rot = Matf::identity();
-	if		 ( ori.dot(Vecf(0,0,1)) < -0.999 ) rot = rotation_matrix( Vecf(1,0,0).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
-	else if( ori.dot(Vecf(0,0,1)) <	0.999 ) rot = rotation_matrix( Vecf(0,0,1).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
-	for(int i = 1; i <= (int)a.n_residue(); ++i) {
-		cba.push_back(rot*Vecf(a.residue(i).xyz(2)));
-		int const natom = (a.residue(i).name3()=="GLY") ? 4 : 5;
-		for(int j = 1; j <= natom; ++j) pa.push_back(rot*Vecf(a.residue(i).xyz(j)));
+	if		 ( ori.dot(Vecf(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vecf(1,0,0).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
+	else if( ori.dot(Vecf(0,0,1)) <	 0.99999 ) rot = rotation_matrix( Vecf(0,0,1).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
+	if( rot != Matf::identity() ) {
+		for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
+		for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
 	}
-	for(int i = 1; i <= (int)b.n_residue(); ++i) {
-		cbb.push_back(rot*Vecf(b.residue(i).xyz(2)));
-		int const natom = (b.residue(i).name3()=="GLY") ? 4 : 5;
-		for(int j = 1; j <= natom; ++j) pb.push_back(rot*Vecf(b.residue(i).xyz(j)));
+
+	// get bounds for plane hashes
+	double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
+	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
+		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
 	}
-	return sicfast( pa, pb, cba, cbb, Vecf(0,0,1), cbcount );
+	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
+		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
+	}
+	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
+	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
+
+
+	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
+	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
+
+	// insert points into hashes
+	int const xsize = xub-xlb+1;
+	int const ysize = yub-ylb+1;
+	ObjexxFCL::FArray2D<Vecf2> ha(xsize,ysize,Vecf2(Vecf(0,0,-9e9),Vecf(0,0,-9e9))),hb(xsize,ysize,Vecf2(Vecf(0,0,9e9),Vecf(0,0,9e9)));
+	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+		int const ix = (int)ceil(ia->x()/BIN)-xlb;
+		int const iy = (int)ceil(ia->y()/BIN)-ylb;
+		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+		if( ha(ix,iy).a.z() < ia->z() ) {
+			ha(ix,iy).b = ha(ix,iy).a;
+			ha(ix,iy).a = *ia;
+		} else
+		if( ha(ix,iy).b.z() < ia->z() ) {
+			ha(ix,iy).b = *ia;			
+		}
+	}
+	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+		int const ix = (int)ceil(ib->x()/BIN)-xlb;
+		int const iy = (int)ceil(ib->y()/BIN)-ylb;
+		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+		if( hb(ix,iy).a.z() > ib->z() ) {
+			hb(ix,iy).b = hb(ix,iy).a;
+			hb(ix,iy).a = *ib;			
+		} else 
+		if( hb(ix,iy).b.z() > ib->z() ) {
+			hb(ix,iy).b = *ib;
+		}
+	}
+
+	// check hashes for min dis
+	int imna=0,jmna=0,imnb=0,jmnb=0;
+	double mindis = 9e9;
+	for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+		for(int j = 1; j <= ysize; ++j) {
+			for(int k = -2; k <= 2; ++k) {
+				if(i+k < 1 || i+k > xsize) continue;
+				for(int l = -2; l <= 2; ++l) {
+					if(j+l < 1 || j+l > ysize) continue;
+					{
+						double const xa = ha(i	,j	).a.x();
+						double const ya = ha(i	,j	).a.y();
+						double const xb = hb(i+k,j+l).a.x();
+						double const yb = hb(i+k,j+l).a.y();
+						double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
+						if( d2 < CLASH_D2 ) {
+							double dz = hb(i+k,j+l).a.z() - ha(i,j).a.z() - sqrt(CLASH_D2-d2);
+							if( dz < mindis ) {
+								mindis = dz;
+								imna = i;
+								jmna = j;
+								imnb = i+k;
+								jmnb = j+l;
+							}
+						}
+					}
+					{
+						double const xa = ha(i	,j	).a.x();
+						double const ya = ha(i	,j	).a.y();
+						double const xb = hb(i+k,j+l).b.x();
+						double const yb = hb(i+k,j+l).b.y();
+						double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
+						if( d2 < CLASH_D2 ) {
+							double dz = hb(i+k,j+l).b.z() - ha(i,j).a.z() - sqrt(CLASH_D2-d2);
+							if( dz < mindis ) {
+								mindis = dz;
+								imna = i;
+								jmna = j;
+								imnb = i+k;
+								jmnb = j+l;
+							}
+						}
+					}
+					{
+						double const xa = ha(i	,j	).b.x();
+						double const ya = ha(i	,j	).b.y();
+						double const xb = hb(i+k,j+l).a.x();
+						double const yb = hb(i+k,j+l).a.y();
+						double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
+						if( d2 < CLASH_D2 ) {
+							double dz = hb(i+k,j+l).a.z() - ha(i,j).b.z() - sqrt(CLASH_D2-d2);
+							if( dz < mindis ) {
+								mindis = dz;
+								imna = i;
+								jmna = j;
+								imnb = i+k;
+								jmnb = j+l;
+							}
+						}
+					}
+					{
+						double const xa = ha(i	,j	).b.x();
+						double const ya = ha(i	,j	).b.y();
+						double const xb = hb(i+k,j+l).b.x();
+						double const yb = hb(i+k,j+l).b.y();
+						double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
+						if( d2 < CLASH_D2 ) {
+							double dz = hb(i+k,j+l).b.z() - ha(i,j).b.z() - sqrt(CLASH_D2-d2);
+							if( dz < mindis ) {
+								mindis = dz;
+								imna = i;
+								jmna = j;
+								imnb = i+k;
+								jmnb = j+l;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	cbcount = 0;
+	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
+		for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
+			double d2 = ib->distance_squared( (*ia) + (mindis*ori) );
+			if( d2 < CONTACT_D2 ) {
+				cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
+			}
+		}
+	}
+	return mindis;
 }
 
 // void tri1_to_tri2_pose(core::pose::Pose & pose, Vecf triaxs_, Vecf triax2_) {
@@ -1058,6 +1170,8 @@ struct TCDock {
 					}
 				}
 			}
+
+
 
 			{ // loop 1deg lmx
 				double max1 = 0;
