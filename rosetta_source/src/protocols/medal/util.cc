@@ -52,7 +52,7 @@ void end_bias_probabilities(const unsigned num_residues, Probabilities* p) {
   p->clear();
   for (unsigned i = 1; i <= num_residues; ++i) {
     bool near_terminus = i <= offset_left || i >= offset_right;
-    p->push_back(near_terminus ? 0.1 : 0.9);
+    p->push_back(near_terminus ? 0.2 : 0.8);
   }
   numeric::normalize(p->begin(), p->end());
 }
@@ -104,7 +104,7 @@ void cutpoint_probabilities(const unsigned num_residues, const core::kinematics:
   for (unsigned residue = 1; residue <= num_residues; ++residue) {
     const double nearest_cutpoint = *utility::find_closest(cutpoints.begin(), cutpoints.end(), residue);
     const double distance = std::abs(nearest_cutpoint - residue);
-    p->push_back(std::pow(distance + 1, -1.5));
+    p->push_back(std::pow(distance + 1, -3));
   }
   numeric::normalize(p->begin(), p->end());
 }

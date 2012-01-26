@@ -2463,6 +2463,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>star option group</dd><br>
 </dl>
 <dl>
+<dt><b>-initial_dist_cutoff</b> \<Real\><dt>
+<dd>Maximum distance cutoff for restraints that constrain aligned residues to their initial positions</dd><br>
+<dd>Default: 8.0</dd><br>
+</dl>
+<dl>
 <dt><b>-min_unaligned_len</b> \<Integer\><dt>
 <dd>Minimum length of an unaligned region</dd><br>
 <dd>Default: 3</dd><br>

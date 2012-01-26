@@ -34,26 +34,29 @@
 #include <utility/vector1.hh>
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
+#include <core/types.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/SecondaryStructure.hh>
-#include <core/id/SequenceMapping.hh>
+#include <core/id/AtomID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
+#include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/util/ChainbreakUtil.hh>
 #include <core/util/kinematics_util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <protocols/comparative_modeling/util.hh>
@@ -65,12 +68,13 @@
 #include <protocols/nonlocal/BiasedFragmentMover.hh>
 #include <protocols/nonlocal/Policy.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
-#include <protocols/nonlocal/SingleFragmentMover.hh>
 #include <protocols/nonlocal/util.hh>
+#include <protocols/simple_moves/SaneMinMover.hh>
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 
 // Package headers
 #include <protocols/star/Extender.hh>
+#include <protocols/star/util.hh>
 
 namespace protocols {
 namespace star {
@@ -79,73 +83,43 @@ static basic::Tracer TR("protocols.star.StarAbinitio");
 
 typedef utility::vector1<double> Probabilities;
 
-void compute_per_residue_probabilities(unsigned num_residues,
-                                       unsigned fragment_len,
-                                       const protocols::loops::Loops& aligned,
-                                       const core::kinematics::FoldTree& tree,
-                                       Probabilities* probs) {
-  assert(probs);
+using core::Real;
+using core::Size;
+using core::kinematics::FoldTree;
+using core::pose::Pose;
+using core::scoring::ScoreFunctionOP;
+using core::scoring::ScoreFunctionFactory;
+using numeric::xyzVector;
+using protocols::loops::Loop;
+using protocols::loops::Loops;
+using protocols::moves::MoverOP;
+using protocols::simple_moves::rational_mc::RationalMonteCarlo;
+using utility::vector1;
+
+void compute_per_residue_probabilities(Size num_residues, Size fragment_len, const FoldTree& tree, Probabilities* probs) {
   probs->resize(num_residues, 1);
 
-  // Sampling probability proportional to distance from nearest cut
   Probabilities p_cut;
   protocols::medal::cutpoint_probabilities(num_residues, tree, &p_cut);
 
-  // Lower sampling probability near termini
   Probabilities p_end;
   protocols::medal::end_bias_probabilities(num_residues, &p_end);
 
   numeric::product(probs->begin(), probs->end(), p_cut.begin(), p_cut.end());
   numeric::product(probs->begin(), probs->end(), p_end.begin(), p_end.end());
 
-  // Zero-out probabilities of aligned residues and preceding torsions that
-  // would cause them to move
-  for (unsigned i = 1; i <= aligned.num_loop(); ++i) {
-    unsigned stop = aligned[i].stop();
-    unsigned start = aligned[i].start() - fragment_len + 1;
-    if (start < 1) {
-      start = 1;
-    }
-
-    for (unsigned j = start; j <= stop; ++j) {
-      (*probs)[j] = 0;
-    }
-  }
-  numeric::normalize(probs->begin(), probs->end());
-
-  // Zero-out probabilities of residues that would allow folding across the cut
   protocols::medal::invalidate_residues_spanning_cuts(tree, fragment_len, probs);
   numeric::normalize(probs->begin(), probs->end());
-  numeric::print_probabilities(*probs, TR.Debug);
-}
-
-void update_chainbreak(core::scoring::ScoreFunctionOP score, double weight) {
-  assert(score);
-  assert(weight >= 0);
-  score->set_weight(core::scoring::linear_chainbreak, weight);
-}
-
-/// @detail Utility method for creating a score function of the given type,
-/// adding constraints, and updating the linear_chainbreak term
-core::scoring::ScoreFunctionOP setup_score(const std::string& weights, double cb) {
-  using core::scoring::ScoreFunctionOP;
-  using core::scoring::ScoreFunctionFactory;
-
-  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function(weights);
-  core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score);
-  update_chainbreak(score, cb);
-  return score;
+  numeric::print_probabilities(*probs, TR);
 }
 
 /// @detail Regulates the application of constraints during folding based on
 /// distance between residues in the fold tree. The MonteCarlo object should
 /// be reset after calling this function.
-void update_sequence_separation(unsigned distance, core::pose::Pose* pose) {
-  assert(pose);
+void update_sequence_separation(Size distance, Pose* pose) {
   using protocols::constraints_additional::MaxSeqSepConstraintSet;
   using protocols::constraints_additional::MaxSeqSepConstraintSetOP;
 
-  // Regulate application of constraints based on distance between residues in the fold tree
   MaxSeqSepConstraintSetOP new_cst = new MaxSeqSepConstraintSet(*pose->constraint_set(), pose->fold_tree());
   new_cst->set_max_seq_sep(distance);
   pose->constraint_set(new_cst);
@@ -153,88 +127,87 @@ void update_sequence_separation(unsigned distance, core::pose::Pose* pose) {
 }
 
 /// @detail Creates a sequence separation dependent constraint set from restraints
-/// specified on the command line and adds it to pose. Takes no action if restraints
-/// were not provided. Initial sequence separation threshold is 0.
-void setup_constraints(core::pose::Pose* pose) {
-  assert(pose);
+/// specified on the command line and adds it to pose. Additionally, creates a dense
+/// network of short range restraints between aligned residues.
+void setup_constraints(const Loops& aligned, Pose* pose) {
+  using core::id::AtomID;
+  using core::scoring::constraints::AtomPairConstraint;
+  using core::scoring::constraints::HarmonicFunc;
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(*pose);
-  update_sequence_separation(0, pose);
+
+	Size n_csts = 0;
+  for (Size i = 1; i <= aligned.size(); ++i) {
+    const Loop& ci = aligned[i];
+
+    for (Size j = i + 1; j <= aligned.size(); ++j) {
+      const Loop& cj = aligned[j];
+
+      for (Size k = ci.start(); k <= ci.stop(); ++k) {
+        const AtomID ai(pose->conformation().residue(k).atom_index("CA"), k);
+        const xyzVector<Real>& p = pose->xyz(ai);
+
+        for (Size l = cj.start(); l <= cj.stop(); ++l) {
+          const AtomID aj(pose->conformation().residue(l).atom_index("CA"), l);
+          const xyzVector<Real>& q = pose->xyz(aj);
+
+          Real distance = p.distance(q);
+          if (distance <= option[OptionKeys::abinitio::star::initial_dist_cutoff]()) {
+            pose->add_constraint(new AtomPairConstraint(ai, aj, new HarmonicFunc(distance, 2)));
+            TR << "Added constraint between residues " << k << " and " << l << std::endl;
+						++n_csts;
+          }
+        }
+      }
+    }
+  }
+	assert(n_csts);
 }
 
-/// @detail If provided, removes restraints from pose.
-void tear_down_constraints(core::pose::Pose* pose) {
-  assert(pose);
+void tear_down_constraints(Pose* pose) {
   pose->remove_constraints();
 }
 
-/// @detail Writes pose to disk if debug mode enabled
-void emit_intermediate(const core::pose::Pose& pose, const std::string& filename) {
+/// @detail Instantiates a score function by name and sets constraint terms to
+/// the value specified by the options system (-constraints:cst_weight)
+ScoreFunctionOP setup_score(const std::string& weights, core::Real cb) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  if (option[OptionKeys::abinitio::debug]()) {
-    pose.dump_pdb(filename);
-  }
+  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function(weights);
+  score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
+	score->set_weight(core::scoring::linear_chainbreak, cb);
+  return score;
 }
 
-void to_centroid(core::pose::Pose* pose) {
-  assert(pose);
-  if (!pose->is_centroid()) {
-    core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
-  }
-}
-
-/// @detail Restores simple kinematics to pose
-void simple_fold_tree(core::pose::Pose* pose) {
-  using core::kinematics::FoldTree;
-  assert(pose);
-  pose->fold_tree(FoldTree(pose->total_residue()));
-}
-
-/// @detail Configures the specified RationalMonteCarlo instance
-void configure(protocols::moves::MoverOP mover,
-               core::scoring::ScoreFunctionOP score,
-               unsigned cycles,
-               double temp,
-               bool recover,
-               protocols::simple_moves::rational_mc::RationalMonteCarlo* rmc) {
-  using core::pose::Pose;
+void configure_rmc(MoverOP mover, ScoreFunctionOP score, Size num_cycles, Real temperature, bool recover_low, RationalMonteCarlo* rmc) {
   rmc->set_mover(mover);
-  rmc->set_temperature(temp);
-  rmc->set_num_trials(cycles);
-  rmc->set_recover_low(recover);
+  rmc->set_num_trials(num_cycles);
+  rmc->set_temperature(temperature);
 
   // Replacing the score function triggers a reevaluation of cached low/last poses,
   // which fails if none exist.
   const Pose& low = rmc->lowest_score_pose();
   const Pose& last = rmc->last_accepted_pose();
-
   if (low.total_residue() && last.total_residue()) {
     rmc->set_score_function(score);
   }
 }
 
-void StarAbinitio::setup_kinematics(const protocols::loops::Loops& aligned,
-                                    const utility::vector1<unsigned>& interior_cuts,
-                                    core::pose::Pose* pose) const {
-  using core::kinematics::FoldTree;
-  using numeric::xyzVector;
-  using protocols::loops::Loop;
-  using protocols::loops::Loops;
-  using utility::vector1;
-
-  assert(pose);
+void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned>& interior_cuts, Pose* pose) const {
   assert(aligned.num_loop() >= 2);
   assert(interior_cuts.size() == (aligned.num_loop() - 1));
 
-  const unsigned num_residues = pose->total_residue();
-  const unsigned vres = num_residues + 1;
+  const Size num_residues = pose->total_residue();
+  const Size vres = num_residues + 1;
 
   xyzVector<double> center;
   aligned.center_of_mass(*pose, &center);
   core::pose::addVirtualResAsRoot(center, *pose);
 
   vector1<std::pair<int, int> > jumps;
-  for (unsigned i = 1; i <= aligned.num_loop(); ++i) {
+  for (Size i = 1; i <= aligned.num_loop(); ++i) {
     jumps.push_back(std::make_pair(vres, aligned[i].midpoint()));
   }
 
@@ -242,13 +215,13 @@ void StarAbinitio::setup_kinematics(const protocols::loops::Loops& aligned,
   cuts.push_back(num_residues);
 
   ObjexxFCL::FArray2D_int ft_jumps(2, jumps.size());
-  for (unsigned i = 1; i <= jumps.size(); ++i) {
+  for (Size i = 1; i <= jumps.size(); ++i) {
     ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
     ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
   }
 
   ObjexxFCL::FArray1D_int ft_cuts(cuts.size());
-  for (unsigned i = 1; i <= cuts.size(); ++i) {
+  for (Size i = 1; i <= cuts.size(); ++i) {
     ft_cuts(i) = cuts[i];
   }
 
@@ -262,27 +235,21 @@ void StarAbinitio::setup_kinematics(const protocols::loops::Loops& aligned,
   assert(status);
   pose->fold_tree(tree);
   core::util::add_cutpoint_variants(pose);
+
   TR << pose->fold_tree() << std::endl;
 }
 
-void StarAbinitio::apply(core::pose::Pose& pose) {
-  using core::kinematics::ShortestPathInFoldTree;
-  using core::scoring::Energies;
-  using core::scoring::ScoreFunctionOP;
-  using protocols::comparative_modeling::ThreadingJob;
-  using protocols::loops::Loops;
-  using protocols::loops::LoopsOP;
-  using protocols::moves::MoverOP;
-  using protocols::nonlocal::BiasedFragmentMover;
-  using protocols::nonlocal::PolicyOP;
-  using protocols::nonlocal::PolicyFactory;
-  using protocols::simple_moves::rational_mc::RationalMonteCarlo;
-  using utility::vector1;
+void StarAbinitio::apply(Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+  using core::kinematics::ShortestPathInFoldTree;
+  using core::scoring::Energies;
+  using protocols::comparative_modeling::ThreadingJob;
+  using protocols::nonlocal::BiasedFragmentMover;
+  using protocols::nonlocal::PolicyFactory;
+  using protocols::nonlocal::PolicyOP;
 
   ThreadingJob const * const job = protocols::nonlocal::current_job();
-  assert(job);
 
   to_centroid(&pose);
   emit_intermediate(pose, "star_initial.pdb");
@@ -295,110 +262,76 @@ void StarAbinitio::apply(core::pose::Pose& pose) {
   const Loops& aligned = *(extender.aligned());
   const Loops& unaligned = *(extender.unaligned());
   TR << "Aligned: " << aligned << std::endl;
-  TR << "Unaligned: " << unaligned << std::endl;
 
-  // Prepare the pose
-  const unsigned num_residues = pose.total_residue();
+  const Size num_residues = pose.total_residue();
   setup_kinematics(aligned, extender.cutpoints(), &pose);
-  setup_constraints(&pose);
+  setup_constraints(aligned, &pose);
+
+  const Size max_dist_ft = ShortestPathInFoldTree(pose.fold_tree()).max_dist();
 
   Probabilities probs_sm, probs_lg;
-  compute_per_residue_probabilities(num_residues, fragments_sm_->max_frag_length(), aligned, pose.fold_tree(), &probs_sm);
-  compute_per_residue_probabilities(num_residues, fragments_lg_->max_frag_length(), aligned, pose.fold_tree(), &probs_lg);
+  compute_per_residue_probabilities(num_residues, fragments_sm_->max_frag_length(), pose.fold_tree(), &probs_sm);
+  compute_per_residue_probabilities(num_residues, fragments_lg_->max_frag_length(), pose.fold_tree(), &probs_lg);
 
-  // Simulation parameters
-  const int num_stages = 4;
-  const double t = option[OptionKeys::abinitio::temperature]();
-  const double m = option[OptionKeys::abinitio::increase_cycles]();
-  const double c = option[OptionKeys::jumps::increase_chainbreak]();
-
-  // Compute ramping schedules
-  ShortestPathInFoldTree ft_dist(pose.fold_tree());
-  int max_dist = ft_dist.max_dist();
-
-  vector1<int> seq_sep(num_stages);
-  for (int i = 1; i <= num_stages; ++i) {
-    seq_sep[i] = static_cast<int>(numeric::linear_interpolate<int>(0, max_dist, i, num_stages));
-  }
-
-  // Movers
   MoverOP fragments_lg_uni = new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_lg_), probs_lg);
   MoverOP fragments_sm_uni = new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_sm_), probs_sm);
   MoverOP fragments_sm_smo = new BiasedFragmentMover(PolicyFactory::get_policy("smooth", fragments_sm_), probs_sm);
 
-  // Scores
-  ScoreFunctionOP score1  = setup_score("score0", c * 0.10);
-  ScoreFunctionOP score2  = setup_score("score1", c * 0.25);
-  ScoreFunctionOP score3a = setup_score("score2", c * 0.50);
-  ScoreFunctionOP score3b = setup_score("score5", c * 0.75);
-  ScoreFunctionOP score4  = setup_score("score3", c * 1.00);
+	// Simulation parameters
+  const Real mult = option[OptionKeys::abinitio::increase_cycles]();
+  const Real temperature = option[OptionKeys::abinitio::temperature]();
+	const Real chainbreak = option[OptionKeys::jumps::increase_chainbreak]();
 
-  // Stage 1
+  ScoreFunctionOP score_stage_1  = setup_score("score0", 0.10 * chainbreak);
+  ScoreFunctionOP score_stage_2  = setup_score("score1", 0.25 * chainbreak);
+  ScoreFunctionOP score_stage_3a = setup_score("score2", 0.50 * chainbreak);
+  ScoreFunctionOP score_stage_3b = setup_score("score5", 0.75 * chainbreak);
+  ScoreFunctionOP score_stage_4  = setup_score("score3", 1.00 * chainbreak);
+
+
+  // Folding
+  RationalMonteCarlo rmc(fragments_lg_uni, score_stage_1, 0, 0, true);
+
+	// Stage 1
   TR << "Stage 1" << std::endl;
-  update_sequence_separation(seq_sep[1], &pose);
+  update_sequence_separation(max_dist_ft, &pose);
+  configure_rmc(fragments_lg_uni, score_stage_1, static_cast<unsigned>(mult * 1000), temperature, true, &rmc);  // 1a
+  rmc.apply(pose);
 
-  RationalMonteCarlo stage_mover(fragments_lg_uni, score1, static_cast<unsigned>(m * 2000), t, false);  // 1a
-  stage_mover.apply(pose);
+  configure_rmc(fragments_sm_uni, score_stage_1, static_cast<unsigned>(mult * 1000), temperature, true, &rmc);  // 1b
+  rmc.apply(pose);
 
-  configure(fragments_sm_uni, score1, static_cast<unsigned>(m * 2000), t, false, &stage_mover);  // 1b
-  stage_mover.apply(pose);
-
-  emit_intermediate(pose, "star_stage_1.pdb");
+	emit_intermediate(pose, "star_stage_1.pdb");
 
   // Stage 2
   TR << "Stage 2" << std::endl;
-  update_sequence_separation(seq_sep[2], &pose);
 
-  configure(fragments_lg_uni, score2, static_cast<unsigned>(m * 4000), t, true, &stage_mover);  // 2a
-  stage_mover.apply(pose);
+  configure_rmc(fragments_lg_uni, score_stage_2, static_cast<unsigned>(mult * 4000), temperature, true, &rmc);  // 2a
+  rmc.apply(pose);
 
-  configure(fragments_sm_uni, score2, static_cast<unsigned>(m * 4000), t, true, &stage_mover);  // 2b
-  stage_mover.apply(pose);
+  configure_rmc(fragments_sm_uni, score_stage_2, static_cast<unsigned>(mult * 4000), temperature, true, &rmc);  // 2b
+  rmc.apply(pose);
 
   emit_intermediate(pose, "star_stage_2.pdb");
 
   // Stage 3
   TR << "Stage 3" << std::endl;
-  update_sequence_separation(seq_sep[3], &pose);
   for (unsigned i = 1; i <= 10; ++i) {
-    ScoreFunctionOP score = ((i % 2) == 0 && i <= 7) ? score3a : score3b;
+    ScoreFunctionOP score = ((i % 2) == 0 && i <= 7) ? score_stage_3a : score_stage_3b;
 
-    configure(fragments_lg_uni, score, static_cast<unsigned>(m * 4000), t, true, &stage_mover);  // 3a
-    stage_mover.apply(pose);
+    configure_rmc(fragments_lg_uni, score, static_cast<unsigned>(mult * 4000), temperature, true, &rmc);  // 3a
+    rmc.apply(pose);
 
-    configure(fragments_sm_uni, score, static_cast<unsigned>(m * 4000), t, true, &stage_mover);  // 3b
-    stage_mover.apply(pose);
+    configure_rmc(fragments_sm_uni, score, static_cast<unsigned>(mult * 4000), temperature, true, &rmc);  // 3b
+    rmc.apply(pose);
   }
   emit_intermediate(pose, "star_stage_3.pdb");
-
-  // Stage 4
-  TR << "Stage 4" << std::endl;
-  update_sequence_separation(seq_sep[4], &pose);
-  configure(fragments_sm_smo, score4, static_cast<unsigned>(m * 8000), t, true, &stage_mover);
-  for (unsigned i = 1; i <= 3; ++i) {
-    stage_mover.apply(pose);  // 4
-  }
-  emit_intermediate(pose, "star_stage_4.pdb");
-
-  // Removing the virtual residue introduced by the star fold tree invalidates
-  // the pose's cached energies. Doing so causes the score line in the silent
-  // file to be 0.
-  Energies energies = pose.energies();
-
-  // Housekeeping
-  tear_down_constraints(&pose);
-  tear_down_kinematics(&pose);
-  pose.set_new_energies_object(new Energies(energies));
 }
 
-void StarAbinitio::tear_down_kinematics(core::pose::Pose* pose) const {
-  assert(pose);
-
-  core::Size vres = pose->total_residue();
-  pose->conformation().delete_residue_slow(vres);
-
-  simple_fold_tree(pose);
+void StarAbinitio::tear_down_kinematics(Pose* pose) const {
+  pose->conformation().delete_residue_slow(pose->total_residue());
   core::util::remove_cutpoint_variants(pose);
+  simple_fold_tree(pose);
 }
 
 StarAbinitio::StarAbinitio() {
@@ -406,6 +339,11 @@ StarAbinitio::StarAbinitio() {
   using namespace basic::options::OptionKeys;
   using core::fragment::FragmentIO;
   using core::fragment::SecondaryStructure;
+  using core::optimization::MinimizerOptions;
+  using core::optimization::MinimizerOptionsOP;
+  using core::kinematics::MoveMap;
+  using core::kinematics::MoveMapOP;
+  using protocols::simple_moves::SaneMinMover;
 
   FragmentIO io;
   fragments_lg_ = io.read_data(option[in::file::frag9]());
@@ -418,6 +356,20 @@ StarAbinitio::StarAbinitio() {
   } else {
     pred_ss_ = new SecondaryStructure(*fragments_sm_);
   }
+
+  // Cartesian minimizer
+  ScoreFunctionOP min_score = ScoreFunctionFactory::create_score_function("score4_smooth_cart");
+  min_score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
+
+  MinimizerOptionsOP min_options = new MinimizerOptions("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
+  min_options->max_iter(100);
+
+  MoveMapOP mm = new MoveMap();
+  mm->set_bb(true);
+  mm->set_chi(true);
+  mm->set_jump(true);
+
+  minimizer_ = new SaneMinMover(mm, min_score, min_options, true);
 }
 
 std::string StarAbinitio::get_name() const {

@@ -1,3 +1,4 @@
+namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
 namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
@@ -589,4 +590,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "Den
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_surface( "DenovoProteinDesign:redesign_surface" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "DenovoProteinDesign:redesign_complete" );  }

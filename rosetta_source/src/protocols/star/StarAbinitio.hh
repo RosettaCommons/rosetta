@@ -28,6 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/simple_moves/SaneMinMover.hh>
 
 namespace protocols {
 namespace star {
@@ -62,6 +63,7 @@ class StarAbinitio : public protocols::moves::Mover {
   core::fragment::FragSetOP fragments_lg_;
   core::fragment::FragSetOP fragments_sm_;
   core::fragment::SecondaryStructureOP pred_ss_;
+  protocols::simple_moves::SaneMinMoverOP minimizer_;
 };
 
 }  // namespace star

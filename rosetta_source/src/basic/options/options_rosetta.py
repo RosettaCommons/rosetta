@@ -1324,6 +1324,7 @@ Options = Option_Group( '',
 	# Ab initio mode -----------------------------------------------------------
 	Option_Group( 'abinitio',
     Option_Group('star',
+				Option('initial_dist_cutoff', 'Real', desc = 'Maximum distance cutoff for restraints that constrain aligned residues to their initial positions', default = '8.0'),
 				Option('min_unaligned_len', 'Integer', desc = 'Minimum length of an unaligned region', default = '3'),
 				Option('short_loop_len', 'Integer', desc = 'StarAbinitio treats short loops differently from long ones. If the sequence separation between the consecutive aligned regions is <= short_loop_len, it is considered short, otherwise it is considered long.', default = '18'),
     ),

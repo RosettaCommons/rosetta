@@ -36,6 +36,7 @@ sources = {
                 "Extender",
 		"StarAbinitio",
                 "StarAbinitioMain",
+                "util",
 	],
 	"protocols/nonlocal/frag_picker": [
 		"NonlocalFrags",
