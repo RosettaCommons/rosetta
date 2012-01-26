@@ -11,8 +11,8 @@
 /// @brief  MinMover forward declarations header
 /// @author
 
-#ifndef INCLUDED_protocols_simple_moves_MinMover_fwd_hh
-#define INCLUDED_protocols_simple_moves_MinMover_fwd_hh
+#ifndef INCLUDED_protocols_simple_moves_SaneMinMover_fwd_hh
+#define INCLUDED_protocols_simple_moves_SaneMinMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -21,11 +21,11 @@ namespace protocols{
 namespace simple_moves{
 
 //Forwards and OP typedefs
-class MinMover;
-typedef utility::pointer::owning_ptr< MinMover > MinMoverOP;
-typedef utility::pointer::owning_ptr< MinMover const > MinMoverCOP;
+class SaneMinMover;
+typedef utility::pointer::owning_ptr< SaneMinMover > SaneMinMoverOP;
+typedef utility::pointer::owning_ptr< SaneMinMover const > SaneMinMoverCOP;
 
 }//moves
 }//protocols
 
-#endif //INCLUDED_protocols_simple_moves_MinMover_FWD_HH
+#endif //INCLUDED_protocols_simple_moves_SaneMinMover_FWD_HH
