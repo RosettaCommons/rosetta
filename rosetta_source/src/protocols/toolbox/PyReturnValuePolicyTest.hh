@@ -84,7 +84,7 @@ public:
 
 	virtual SF_ReplicaOP clone() const { return 0; };
 
-	virtual core::Real operator ()( pose::Pose & pose ) const { return 0.0; };
+	virtual core::Real operator ()( core::pose::Pose & pose ) const { return 0.0; };
 
 	//core::Real operator []( ScoreType const & t ) const
 	//{ return weights_[ t ]; }
