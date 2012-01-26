@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/LoopAnchorFeaturesCreator.hh
-/// @brief  Header for LoopAnchorFeaturesCreator for the LoopAnchorFeatures load-time factory registration scheme
-/// @author Matthew O'Meara
+/// @file   protocols/features/BetaTurnDetectionFeaturesCreator.hh
+/// @brief  Header for BetaTurnDetectionFeaturesCreator for the BetaTurnDetectionFeatures load-time factory registration scheme
+/// @author Brian Weitzner
 
-#ifndef INCLUDED_protocols_features_LoopAnchorFeaturesCreator_hh
-#define INCLUDED_protocols_features_LoopAnchorFeaturesCreator_hh
+#ifndef INCLUDED_protocols_features_BetaTurnDetectionFeaturesCreator_hh
+#define INCLUDED_protocols_features_BetaTurnDetectionFeaturesCreator_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/features/LoopAnchorFeatures.hh>
+// AUTO-REMOVED #include <protocols/features/BetaTurnDetectionFeatures.hh>
 #include <protocols/features/FeaturesReporterCreator.hh>
 
 // c++ headers
@@ -28,12 +28,12 @@
 namespace protocols {
 namespace features {
 
-/// @brief creator for the LoopAnchorFeatures class
-class LoopAnchorFeaturesCreator : public FeaturesReporterCreator
+/// @brief creator for the BetaTurnDetectionFeatures class
+class BetaTurnDetectionFeaturesCreator : public FeaturesReporterCreator
 {
 public:
-	LoopAnchorFeaturesCreator();
-	virtual ~LoopAnchorFeaturesCreator();
+	BetaTurnDetectionFeaturesCreator();
+	virtual ~BetaTurnDetectionFeaturesCreator();
 
 	virtual FeaturesReporterOP create_features_reporter() const;
 	virtual std::string type_name() const;
@@ -42,4 +42,4 @@ public:
 } //namespace features
 } //namespace protocols
 
-#endif //INCLUDED_protocols_features_LoopAnchorFeaturesCreator_hh
+#endif //INCLUDED_protocols_features_BetaTurnDetectionFeaturesCreator_hh

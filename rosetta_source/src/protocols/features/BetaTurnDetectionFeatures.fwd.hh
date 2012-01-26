@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/LoopAnchorFeatures.fwd.hh
+/// @file   protocols/features/BetaTurnDetectionFeatures.fwd.hh
 /// @brief  report residue level geometry and scores to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Brian Weitzner
 
-#ifndef INCLUDED_protocols_features_LoopAnchorFeatures_fwd_hh
-#define INCLUDED_protocols_features_LoopAnchorFeatures_fwd_hh
+#ifndef INCLUDED_protocols_features_BetaTurnDetectionFeatures_fwd_hh
+#define INCLUDED_protocols_features_BetaTurnDetectionFeatures_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -20,11 +20,11 @@
 namespace protocols{
 namespace features{
 
-class LoopAnchorFeatures;
-typedef utility::pointer::owning_ptr< LoopAnchorFeatures > LoopAnchorFeaturesOP;
-typedef utility::pointer::owning_ptr< LoopAnchorFeatures const > LoopAnchorFeaturesCOP;
+class BetaTurnDetectionFeatures;
+typedef utility::pointer::owning_ptr< BetaTurnDetectionFeatures > BetaTurnDetectionFeaturesOP;
+typedef utility::pointer::owning_ptr< BetaTurnDetectionFeatures const > BetaTurnDetectionFeaturesCOP;
 
 }//features
 }//protocols
 
-#endif //INCLUDED_protocols_features_LoopAnchorFeatures_fwd_hh
+#endif //INCLUDED_protocols_features_BetaTurnDetectionFeatures_fwd_hh

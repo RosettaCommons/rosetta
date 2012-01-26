@@ -11,8 +11,8 @@
 /// @brief  report comments stored with each pose
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_features_LoopAnchorFeatures_hh
-#define INCLUDED_protocols_features_LoopAnchorFeatures_hh
+#ifndef INCLUDED_protocols_features_BetaTurnDetectionFeatures_hh
+#define INCLUDED_protocols_features_BetaTurnDetectionFeatures_hh
 
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
@@ -35,58 +35,52 @@
 namespace protocols{
 namespace features{
 
-class LoopAnchorFeatures : public FeaturesReporter {
+class BetaTurnDetectionFeatures : public FeaturesReporter {
 public:
-	LoopAnchorFeatures();
+	BetaTurnDetectionFeatures();
 
-	LoopAnchorFeatures(LoopAnchorFeatures const & );
+	BetaTurnDetectionFeatures( BetaTurnDetectionFeatures const & );
 
-	virtual ~LoopAnchorFeatures();
+	virtual ~BetaTurnDetectionFeatures();
 
 	///@brief return string with class name
-	std::string
+	virtual std::string
 	type_name() const;
 
 	///@brief return sql statements that setup the right tables
-	std::string
+	virtual std::string
 	schema() const;
 
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
-	utility::vector1<std::string>
+	virtual utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	void
-	parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & /*data*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/);
-
 	///@brief collect all the feature data for the pose
-	core::Size
+	virtual core::Size
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & /*relevant_residues*/,
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session);
 private:
+	static void setup_conformation_to_turn_type_map();
+	
+    bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, Size first_residue ) const;
+    
+    bool residue_range_is_relevant( utility::vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const;
 
-	numeric::HomogeneousTransform<core::Real>
-	compute_anchor_transform(
-		core::pose::Pose const & pose,
-		core::Size residue_begin,
-		core::Size residue_end);
-
+    bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
+    
+    std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
+	std::string determine_ramachandran_hash( Size phi, Size psi, Size omega ) const;
+	
 private:
-
-	core::Size min_loop_length_;
-	core::Size max_loop_length_;
+	static std::map< std::string, std::string > conformation_to_turn_type_;
 
 };
 
 } // features namespace
 } // protocols namespace
 
-#endif //INCLUDED_protocols_features_LoopAnchorFeatures_hh
+#endif //INCLUDED_protocols_features_BetaTurnDetectionFeatures_hh

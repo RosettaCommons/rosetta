@@ -123,19 +123,20 @@ LoopAnchorFeatures::schema() const {
 			"	phi REAL,\n"
 			"	psi REAL,\n"
 			"	theta REAL,\n"
-			"FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
-			"	REFERENCES loop_anchors (struct_id, residue_begin, residue_end)\n"
-			"	DEFERRABLE INITIALLY DEFERRED,\n"
-			"PRIMARY KEY(struct_id, residue_begin, residue_end));";
+			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
+			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end)\n"
+			"       DEFERRABLE INITIALLY DEFERRED,\n"
+			"   PRIMARY KEY(struct_id, residue_begin, residue_end));";
 	}else if(db_mode == "mysql")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS  (\n"
+			"CREATE TABLE IF NOT EXISTS loop_anchors (\n"
 			"	struct_id INTEGER,\n"
 			"	residue_begin INTEGER,\n"
 			"	residue_end INTEGER,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-			"	PRIMARY KEY(struct_id, anchor_id));"
+            "   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
+            "       REFERENCES residues (struct_id, resNum),\n"
+			"	PRIMARY KEY(struct_id, residue_begin, residue_end));"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms (\n"
 			"	struct_id INTEGER,\n"
@@ -147,9 +148,9 @@ LoopAnchorFeatures::schema() const {
 			"	phi REAL,\n"
 			"	psi REAL,\n"
 			"	theta REAL,\n"
-			"FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
-			"	REFERENCES loop_anchors (struct_id, residue_begin, residue_end),\n"
-			"PRIMARY KEY(struct_id, residue_begin, residue_end));";
+			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
+			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end),\n"
+			"   PRIMARY KEY(struct_id, residue_begin, residue_end));";
 	} else {
 		return "";
 	}
