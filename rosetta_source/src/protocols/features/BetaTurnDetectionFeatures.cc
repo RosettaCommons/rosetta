@@ -244,7 +244,7 @@ string const & BetaTurnDetectionFeatures::beta_turn_type( Pose const & pose, Siz
 	return conformation_to_turn_type_[ rama_hash ];
 }
 
-string BetaTurnDetectionFeatures::determine_ramachandran_hash( Size phi, Size psi, Size omega ) const
+string BetaTurnDetectionFeatures::determine_ramachandran_hash( Real phi, Real psi, Real omega ) const
 {
 	
 	// This method uses extremely crude partitioning of Ramachandran space.  

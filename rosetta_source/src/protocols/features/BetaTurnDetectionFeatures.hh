@@ -73,7 +73,7 @@ private:
     bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
     
     std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
-	std::string determine_ramachandran_hash( Size phi, Size psi, Size omega ) const;
+	std::string determine_ramachandran_hash( core::Real phi, core::Real psi, core::Real omega ) const;
 	
 private:
 	static std::map< std::string, std::string > conformation_to_turn_type_;
