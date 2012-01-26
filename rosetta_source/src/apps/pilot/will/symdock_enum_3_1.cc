@@ -195,7 +195,7 @@ sicsafe(
 }
 
 double
-sicfast_check(
+sicfast(
 				vector1<Vecf>	pa,
 				vector1<Vecf>	pb,
 				vector1<Vecf> const & cba,
@@ -282,67 +282,6 @@ sicfast_check(
 		}
 	}
 
-	Vecf mna = ha(imna,jmna) + (mindis*Vec(0,0,1));
-	Vecf mnb = hb(imnb,jmnb);
-	double xchkmn = min(mna.x(),mnb.x())-CLASH_D;
-	double xchkmx = max(mna.x(),mnb.x())+CLASH_D;
-	double ychkmn = min(mna.y(),mnb.y())-CLASH_D;
-	double ychkmx = max(mna.y(),mnb.y())+CLASH_D;
-	double zchkmn = min(mna.z(),mnb.z())-CLASH_D-mindis;
-	double zchkmx = max(mna.z(),mnb.z())+CLASH_D;
-	// std::cerr << mna.x() << " " << mna.y() << " " << mna.z() << std::endl;
-	// std::cerr << mnb.x() << " " << mnb.y() << " " << mnb.z() << std::endl;
-	// std::cerr << xchkmn << " " 
-	// 		 			<< xchkmx << " " 
-	// 		 			<< ychkmn << " " 
-	// 		 			<< ychkmx << " " 
-	// 		 			<< zchkmn << " " 
-	// 		 			<< zchkmx << std::endl;
-	vector1<Vecf> chka,chkb;
-	for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia){
-		if( xchkmn <= ia->x() && ia->x() <= xchkmx && 
-		    ychkmn <= ia->y() && ia->y() <= ychkmx && 
-		    zchkmn <= ia->z()
-		){
-			chka.push_back(*ia);
-		}
-	}
-	for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-		if( xchkmn <= ib->x() && ib->x() <= xchkmx && 
-		    ychkmn <= ib->y() && ib->y() <= ychkmx && 
-		                         ib->z() <= zchkmx 
-		){
-			chkb.push_back(*ib);
-		}
-	}
-	// std::cerr << chka.size() << " " << chkb.size() << std::endl;
-	double mindis2=9e9, mind2=9e9, mind2f=9e9;
-	for(vector1<Vecf>::iterator ia = chka.begin(); ia != chka.end(); ++ia){
-		for(vector1<Vecf>::iterator ib = chkb.begin(); ib != chkb.end(); ++ib) {
-			double const dxy2 = (ia->x()-ib->x())*(ia->x()-ib->x()) + (ia->y()-ib->y())*(ia->y()-ib->y());
-			if( dxy2 >= CLASH_D2 ) continue;
-			double const dz = ib->z() - ia->z() - sqrt(CLASH_D2-dxy2);
-			if( dz < mindis2) {
-				mindis2 = dz;
-				// double d2 = ib->distance_squared(*ia+Vecf(0,0,mindis2));
-				// if( d2 < mind2) mind2 = d2;
-				double d2f = ib->distance_squared(*ia+Vecf(0,0,mindis));
-				if( d2f < mind2f) mind2f = d2f;
-			}
-		}
-	}
-	mindis = mindis2;
-	
-	double tmpcbc;
-	double mindisreal = sicsafe(pa,pb,cba,cbb,Vecf(0,0,1),tmpcbc);	
-	SICFAST_COUNT++;
-	if( fabs(mindisreal-mindis) > 0.001 ) {
-		SICFAST_FAIL++;
-		std::cerr << mindis << " " << mindisreal << std::endl;
-		std::cerr << SICFAST_COUNT << " " << SICFAST_FAIL << " " << (double)SICFAST_COUNT/(double)SICFAST_FAIL << std::endl;		
-		utility_exit_with_message("FOO!");
-	}
-
 	cbcount = 0;
 	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
 		for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
@@ -362,7 +301,7 @@ struct Vecf2 {
 };
 
 double
-sicfast(
+sicfast2(
 				vector1<Vecf>	pa,
 				vector1<Vecf>	pb,
 				vector1<Vecf> const & cba,
