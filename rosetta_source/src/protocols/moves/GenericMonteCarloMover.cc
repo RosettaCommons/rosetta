@@ -29,12 +29,14 @@
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
 #define foreach BOOST_FOREACH
+#include <algorithm>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 #include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
+#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -94,12 +96,14 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 	boltz_rank_( false ),
   last_accepted_pose_( NULL ),
   lowest_score_pose_( NULL ),
-	stopping_condition_( NULL )
+	stopping_condition_( NULL ),
+	adaptive_movers_( false ),
+	adaptation_period_( 0 )
 {
   initialize();
 }
 
- 
+
 /// @brief value constructor without a score function
 
 GenericMonteCarloMover::GenericMonteCarloMover(
@@ -595,8 +599,47 @@ GenericMonteCarloMover::apply( Pose & pose )
 	reset( pose ); //(re)initialize MC statistics
   MoverStatus ms( FAIL_RETRY );
 	core::Size accept( 0 ), reject( 0 );
+	using namespace protocols::rosetta_scripts;
+	ParsedProtocolOP mover_pp( dynamic_cast< ParsedProtocol * >( mover_() ) );
+	if( adaptive_movers() ){
+		bool is_single_random( mover_pp->mode() == "single_random" );
+		if( mover_pp && !is_single_random ){ // dig in one level (at most) to find the correct ParsedProtocol; if this becomes more generally useful then it would make sense to generatlize this to look for all parsedprotocols of type single_random that are being called by the MC mover. A simple recursion could do it, but I'm not sure how useful this would be
+			foreach( ParsedProtocol::mover_filter_pair const mfp, *mover_pp ){
+				ParsedProtocolOP tmp( dynamic_cast< ParsedProtocol * >( mfp.first() ) );
+				if( tmp && tmp->mode() == "single_random" ){/// the parsedprotocol mover must be run in mode single_random for the apply_probabilities to be modified
+					mover_pp = tmp;
+					is_single_random = true;
+				}
+			}//foreach mfp
+		}//fi mover_pp && is_single_random
+		runtime_assert( is_single_random ); /// yes, we found a single-random parsedprotocol mover somewhere; notice that this part boils down to finding the first parsed protocol of single-random mode up to a depth level of 2
+	}//fi adaptive_movers()
+	utility::vector1< core::Size > mover_accepts;// count how many accepts each mover in the parsedprotocol made
+	mover_accepts.clear();
+	if( adaptive_movers() ){
+		runtime_assert( mover_pp );
+		runtime_assert( mover_pp->mode() == "single_random" );
+		mover_accepts = utility::vector1< core::Size >( mover_pp->size(), 1 ); /// each mover gets a pseudocount of 1. This ensures that the running probability of each mover never goes to 0
+	}
   for( Size i=1; i<=maxtrials_; i++ ){
     TR.Debug <<"Trial number: "<<i<<std::endl;
+		if( i > 1 && adaptive_movers() && i % adaptation_period() == 0 ){
+/// The probability for each mover within a single-random parsedprotocol is determined by the number of accepts it had during the previous adaptation period:
+/// each mover is assigned a pseducount of 1, and then any additional accept favors it over others. At the adaptation stage, the total number of accepts (including pseudocounts) is used to normalize the individual movers' number of accepts and the probability is the mover's accepts / by the total accepts
+			core::Size sum_prev_accepts( 0 );
+			foreach( core::Size const a, mover_accepts )
+				sum_prev_accepts += a;
+			utility::vector1< core::Real > new_probabilities;
+			new_probabilities = utility::vector1< core::Real >( mover_accepts.size(), 0.0 );
+			TR<<"Adapting running probabilities: old/new probabilities per mover\n";
+			for( core::Size ma = 1; ma<= mover_accepts.size(); ma++ ){
+				new_probabilities[ ma ] = ( core::Real )mover_accepts[ ma ] / ( core::Real )sum_prev_accepts;
+				TR<<mover_pp->apply_probability()[ ma ]<<"/"<<new_probabilities[ ma ]<<'\n';
+			}
+			TR.flush();
+			mover_pp->apply_probability( new_probabilities );
+			mover_accepts = utility::vector1< core::Size >( mover_accepts.size(), 1 );
+		}
 		bool const stop( stopping_condition()->apply( pose ) );
 		if( stop ){
 			TR<<"MC stopping condition met at trial "<<i<<std::endl;
@@ -622,7 +665,11 @@ GenericMonteCarloMover::apply( Pose & pose )
         pose = *last_accepted_pose();
 				reject++;
       }
-			else accept++;
+			else{
+				accept++;
+				if( adaptive_movers() )
+					mover_accepts[ mover_pp->last_attempted_mover_idx() ]++;
+			}
     }
     if( !drift_ ){
       pose = (*initial_pose); // set back pose to initial one, of course this is not way of Monte Carlo
@@ -663,8 +710,12 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	maxtrials_ = tag->getOption< core::Size >( "trials", 10 );
 	temperature_ = tag->getOption< Real >( "temperature", 0.0 );
 	task_scaling_ = tag->getOption< core::Size >( "task_scaling", 5 );
+	adaptive_movers( tag->getOption< bool >( "adaptive_movers", false ) );
+	if( adaptive_movers() )
+		adaptation_period( tag->getOption< core::Size >( "adaptation_period", std::max( (int) maxtrials_ / 10, 10 ) ) );
 
 	String const  mover_name( tag->getOption< String >( "mover_name" ,""));
+
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
 	Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
 	Filters_map::const_iterator find_filter( filters.find( filter_name ));
@@ -678,6 +729,10 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	}
 	if( mover_name != "" )
 		mover_ = find_mover->second;
+
+	if( adaptive_movers() ) /// adaptive movers only works if the mover being called is of type parsedprotocol
+		runtime_assert( dynamic_cast< protocols::rosetta_scripts::ParsedProtocol * >( mover_() ));
+
 	bool const adaptive( tag->getOption< bool >( "adaptive", true ) );
 	add_filter( find_filter->second->clone(), adaptive, temperature_, sample_type_ );
 	String const sfxn ( tag->getOption< String >( "scorefxn_name", "" ) );

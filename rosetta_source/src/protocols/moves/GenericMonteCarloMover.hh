@@ -262,6 +262,10 @@ public:
 
 	void stopping_condition( protocols::filters::FilterOP filter );
 	protocols::filters::FilterOP stopping_condition() const;
+	void adaptive_movers( bool const a ){ adaptive_movers_ = a; }
+	bool adaptive_movers() const{ return adaptive_movers_; }
+	void adaptation_period( core::Size const a ) { adaptation_period_ = a; }
+	core::Size adaptation_period() const{ return adaptation_period_; }
 private:
 	/// @brief evalute pose by ScoreFunctionOP or FilterOP
 	Real scoring( Pose & pose );
@@ -371,6 +375,8 @@ private:
 	/// @brief Collection of function callbacks
 	boost::unordered_map<Size, GenericMonteCarloMoverTrigger> triggers_;
 	protocols::filters::FilterOP stopping_condition_; //dflt false_filter; use this to stop an MC trajectory before maxtrials_ (if filter evaluates to true)
+	bool adaptive_movers_; //dflt false; change the mover probabilities according to the accept rates?; only works if the mover is a ParsedProtocol type with mode=single_random
+	core::Size adaptation_period_; /// dflt max( 10, trials/10 ); only works with adaptive; how often should the run probabilities be adapted?
 };
 
 } // namespace moves
