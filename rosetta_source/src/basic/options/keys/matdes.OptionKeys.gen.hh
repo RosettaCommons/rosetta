@@ -43,6 +43,7 @@ namespace matdes { namespace design { extern RealOptionKey const fav_nat_bonus; 
 namespace matdes { namespace mutalyze { extern BooleanOptionKey const mutalyze; } }
 namespace matdes { namespace mutalyze { extern BooleanOptionKey const calc_rot_boltz; } }
 namespace matdes { namespace mutalyze { extern BooleanOptionKey const ala_scan; } }
+namespace matdes { namespace mutalyze { extern BooleanOptionKey const revert_scan; } }
 namespace matdes { namespace mutalyze { extern BooleanOptionKey const min_rb; } }
 
 } // namespace OptionKeys

@@ -129,8 +129,8 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
 	using namespace chemical;
 
 	// Set allowed AAs.
-//110919  vector1<bool> allowed_aas(20, true);
-  vector1<bool> allowed_aas(20, false); // Basically dock, repack, and score the input sequence
+  vector1<bool> allowed_aas(20, true);
+//  vector1<bool> allowed_aas(20, false); // Basically dock, repack, and score the input sequence
   allowed_aas[aa_cys] = false;
   allowed_aas[aa_gly] = false;
 	allowed_aas[aa_pro] = false;
@@ -627,7 +627,7 @@ void
 						}
 		
 						// Here we filter the residues that we are selecting for design
-						// to get rid of those that make inter-building block interactions
+						// to get rid of those that make intra-building block interactions
 						Sizes nontrimer_pos;
 						Real all_atom_contact_thresh2 = 5.0*5.0;
 						sf->score(pose_for_design);
@@ -730,7 +730,7 @@ void
 		        new_sc(pose_for_design, intra_subs, int_area, sc);
 		
 		        // Get the packing score
-//		        Real packing = get_atom_packing_score(pose_for_design, intra_subs, 9.0);
+		        Real packing = get_atom_packing_score(pose_for_design, intra_subs, 9.0);
 	
 						// Calculate the ddG of the monomer in the assembled and unassembled states
 				    protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
@@ -759,7 +759,7 @@ void
 						ss_out->add_energy("air_fa_rep", em[core::scoring::fa_rep] / design_pos.size());
 						ss_out->add_energy("air_fa_dun", em[core::scoring::fa_dun] / design_pos.size());
 						ss_out->add_energy("des_pos", design_pos.size());
-//						ss_out->add_energy("packing", packing);
+						ss_out->add_energy("packing", packing);
 						ss_out->add_energy("avg_deg", avg_deg);
 						ss_out->add_energy("int_area", int_area);
 						ss_out->add_energy("sc", sc);

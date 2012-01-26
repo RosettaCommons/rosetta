@@ -11483,8 +11483,13 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-ala_scan</b> \<Boolean\><dt>
-<dd>Specify whether to calculate RotamerBoltzmann probabilities or not</dd><br>
-<dd>Default: 0</dd><br>
+<dd>Specify whether to calculate ddGs for alanine-scanning mutants at the designed interface</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-revert_scan</b> \<Boolean\><dt>
+<dd>Specify whether to calculate ddGs for reversion mutants at the designed interface</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-min_rb</b> \<Boolean\><dt>

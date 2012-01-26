@@ -2372,7 +2372,8 @@ option.add( basic::options::OptionKeys::matdes::design::grid_nsamp_radius, "The 
 option.add( basic::options::OptionKeys::matdes::design::fav_nat_bonus, "Bonus to be awarded to native residues" ).def(0.0);
 option.add( basic::options::OptionKeys::matdes::mutalyze::mutalyze, "mutalyze option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::matdes::mutalyze::calc_rot_boltz, "Specify whether to calculate RotamerBoltzmann probabilities or not" ).def(0);
-option.add( basic::options::OptionKeys::matdes::mutalyze::ala_scan, "Specify whether to calculate RotamerBoltzmann probabilities or not" ).def(0);
+option.add( basic::options::OptionKeys::matdes::mutalyze::ala_scan, "Specify whether to calculate ddGs for alanine-scanning mutants at the designed interface" ).def(1);
+option.add( basic::options::OptionKeys::matdes::mutalyze::revert_scan, "Specify whether to calculate ddGs for reversion mutants at the designed interface" ).def(1);
 option.add( basic::options::OptionKeys::matdes::mutalyze::min_rb, "Specify whether to minimize the rigid body DOFs" ).def(1);
 option.add( basic::options::OptionKeys::gpu::gpu, "gpu option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::gpu::kernel, "kernel src" );

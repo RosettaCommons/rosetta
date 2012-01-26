@@ -46,6 +46,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -610,9 +611,14 @@ void
 			Real interface_energy = 0;
 			core::scoring::EnergyMap em;
 			Real avg_interface_energy = 0;
+			Size mutations = 0;
 	    for (Size index=1; index<=mutalyze_pos.size(); index++) {
 				interface_energy += pose.energies().residue_total_energy(mutalyze_pos[index]);
 				em += pose.energies().residue_total_energies(mutalyze_pos[index]);
+				// Also, while we're looping, count the number of mutations from the input protein
+				if (pose.residue(mutalyze_pos[index]).name3() != original_pose.residue(mutalyze_pos[index]).name3()) {
+					mutations++;
+				}
 	    }
 			avg_interface_energy = interface_energy / mutalyze_pos.size();
 			// Multiply those energies by the weights
@@ -622,9 +628,9 @@ void
 	   	protocols::simple_moves::ddG ddG_mover2 = protocols::simple_moves::ddG(score12, 1, true);
 	    ddG_mover2.calculate(pose);
 	    Real ddG2 = ddG_mover2.sum_ddG();
-	    TR << files[ifile] << " mutalyzed ddG = " << ddG2 << std::endl;
+	    TR << files[ifile] << " mutalyzed_ddG = " << ddG2 << std::endl;
 	    ddG_mover2.report_ddG(TR);
-	
+
 			// Create a scorefile struct, add custom metrics to it
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 			ss_out->fill_struct(pose,fn);
@@ -635,6 +641,7 @@ void
 			ss_out->add_energy("air_fa_dun", em[core::scoring::fa_dun] / mutalyze_pos.size());
 			ss_out->add_energy("unsat_pols", buried_unsat_polars);
 			ss_out->add_energy("des_pos", mutalyze_pos.size());
+			ss_out->add_energy("mutations", mutations);
 			ss_out->add_energy("packing", packing);
 			ss_out->add_energy("avg_deg", avg_deg);
 			ss_out->add_energy("sasa_int_area", buried_sasa);
@@ -667,10 +674,43 @@ void
 					protocols::simple_moves::ddG ddG_mover3 = protocols::simple_moves::ddG(score12, 1, true);
 					ddG_mover3.calculate(pose_for_ala_scan);
 					Real ddG3 = ddG_mover3.sum_ddG();
-					TR << files[ifile] << " ddG for mutation " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << ddG3 << std::endl;
+					TR << files[ifile] << " ala_scan_ddG for mutation " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << ddG3 << std::endl;
 					ddG_mover3.report_ddG(TR);
 				}
 			}
+
+			// Loop through each designed position, revert to the native residue, and decide if the reversion is
+			// well-tolerated. If so, revert that residue.
+			if (option[matdes::mutalyze::revert_scan]() == 1) {
+        Sizes pos;
+        utility::vector1<std::string> id;
+        for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
+          Pose pose_for_revert_scan = pose;
+          pos.clear();
+          id.clear();
+          pos.push_back(mutalyze_pos[ipos]);
+          if ((mutalyze_ids[ipos] == "GLY") || (mutalyze_ids[ipos] == "PRO")) {
+            id.push_back(string_of(mutalyze_ids[ipos]));
+          } else {
+            id.push_back(original_pose.residue(mutalyze_pos[ipos]).name3());
+          }
+
+          // Design
+          design(pose_for_revert_scan, score12, pos, id);
+
+          // Calculate the ddG of the monomer in the assembled and unassembled states
+          protocols::simple_moves::ddG ddG_mover4 = protocols::simple_moves::ddG(score12, 1, true);
+          ddG_mover4.calculate(pose_for_revert_scan);
+          Real ddG4 = ddG_mover4.sum_ddG();
+					if ((ddG2-ddG4) >= -0.5) {
+	          TR << files[ifile] << " rev_scan_ddG for reversion " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << ddG4 << std::endl;
+	          ddG_mover4.report_ddG(TR);
+					} else {
+						TR << files[ifile] << " rev_scan_ddG for reversion " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << 999999 << std::endl;
+					}
+        }
+      }
+
 		} // for iconfig in radial_disps
 			
 	} // ifile
