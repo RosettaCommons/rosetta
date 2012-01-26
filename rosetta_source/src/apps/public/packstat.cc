@@ -63,7 +63,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-
+#include <protocols/jd2/JobDistributor.hh>
 
 
 using core::Real;
@@ -337,8 +337,9 @@ int main (int argc, char *argv[]) {
 
 	if( option[ in::file::silent ].user() ) {
 
-		protocols::analysis::PackStatMover m;
-		protocols::jobdist::universal_main(m);
+		protocols::analysis::PackStatMoverOP pack_mover;
+		//protocols::jobdist::universal_main(m);
+		protocols::jd2::JobDistributor::get_instance()->go(pack_mover);
 
 	} else {
 

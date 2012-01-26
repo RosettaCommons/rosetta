@@ -24,7 +24,7 @@
 
 #include <utility/vector1.hh>
 
-
+#include <protocols/analysis/PackStatMover.fwd.hh>
 
 namespace protocols {
 namespace analysis {

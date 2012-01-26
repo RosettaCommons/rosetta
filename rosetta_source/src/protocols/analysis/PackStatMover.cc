@@ -16,7 +16,9 @@
 
 #include <core/scoring/packstat/compute_sasa.hh>
 
-#include <protocols/jobdist/standard_mains.hh>
+//#include <protocols/jobdist/standard_mains.hh>
+
+#include <core/pose/PDBInfo.hh>
 
 #include <basic/options/option.hh>
 
@@ -24,7 +26,7 @@
 
 #include <core/types.hh>
 
-
+#include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 using basic::T;
 
@@ -59,8 +61,8 @@ PackStatMover::PackStatMover() : moves::Mover() {
 	include_water_                    = option[ OptionKeys::packstat::include_water ]();
 	surface_accessibility_            = option[ OptionKeys::packstat::surface_accessibility ]();
 	residue_scores_                   = option[ OptionKeys::packstat::residue_scores ]();
-	cavity_burial_probe_radius_ = option[ OptionKeys::packstat::cavity_burial_probe_radius ]();
-	oversample_                        = option[ OptionKeys::packstat::oversample ]();
+	cavity_burial_probe_radius_       = option[ OptionKeys::packstat::cavity_burial_probe_radius ]();
+	oversample_                       = option[ OptionKeys::packstat::oversample ]();
 
 }
 
@@ -69,7 +71,7 @@ void
 PackStatMover::apply( pose::Pose & pose )
 {
 	using namespace core::scoring::packstat;
-  using namespace std;
+	using namespace std;
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -77,7 +79,8 @@ PackStatMover::apply( pose::Pose & pose )
 	using namespace numeric;
 	using namespace utility;
 
-	std::string fname = protocols::jobdist::extract_tag_from_pose( pose );
+	std::string fname = pose.pdb_info()->name();
+
 
 	PosePackData pd = pose_to_pack_data( pose, include_water_ );
 

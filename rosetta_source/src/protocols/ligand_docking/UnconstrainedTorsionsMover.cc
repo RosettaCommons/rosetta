@@ -22,7 +22,6 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
 
 #define foreach BOOST_FOREACH

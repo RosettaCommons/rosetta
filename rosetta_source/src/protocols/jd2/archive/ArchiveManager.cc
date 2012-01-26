@@ -72,7 +72,7 @@
 
 //Auto Headers
 #include <protocols/checkpoint/CheckPointer.hh>
-#include <protocols/jobdist/Jobs.hh>
+//#include <protocols/jobdist/Jobs.hh>
 //#include <protocols/noesy_assign/CrossPeak.hh>
 #include <utility/vector1.hh>
 #include <boost/bind.hpp>
