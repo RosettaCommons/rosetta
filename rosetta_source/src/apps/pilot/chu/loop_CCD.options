@@ -1,0 +1,27 @@
+-database /Users/chu/rosetta/src/branches/minirosetta_database/
+-loops
+-loops:remodel perturb_ccd
+-loops:refine refine_ccd
+-loops:relax no
+-in::file::native /Users/chu/rosetta/src/branches/mini/demo/chu/loop_input/4fxn.pdb
+-loops::input_pdb /Users/chu/rosetta/src/branches/mini/demo/chu/loop_input/4fxn.start.pdb
+-loops::loop_file /Users/chu/rosetta/src/branches/mini/demo/chu/loop_input/4fxn.loop
+-in::file::fullatom
+-out::file::fullatom
+#-loops::refine_only
+#-loops::fix_natsc
+-loops::frag_sizes 9 3 1
+-loops::frag_files \
+	/Users/chu/rosetta/src/branches/mini/demo/chu/loop_input/cc4fxn_09_05.200_v1_3.gz \
+	/Users/chu/rosetta/src/branches/mini/demo/chu/loop_input/cc4fxn_03_05.200_v1_3.gz \
+	none
+-loops::vall_file /scratch/shared/nnmake_database/vall.dat.2001-02-02
+-in::file::psipred_ss2 /Users/chu/rosetta/src/branches/mini/demo/chu/loop_input/4fxn_.psipred_ss2
+#-constant_seed
+#-packing
+#-ex1
+#-ex2
+-loops::fast
+-loops::output_pdb 4fxn
+-out::prefix aa
+-out::nstruct 2
