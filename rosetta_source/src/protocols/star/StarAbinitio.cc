@@ -98,16 +98,6 @@ using utility::vector1;
 
 void compute_per_residue_probabilities(Size num_residues, Size fragment_len, const FoldTree& tree, Probabilities* probs) {
   probs->resize(num_residues, 1);
-
-  Probabilities p_cut;
-  protocols::medal::cutpoint_probabilities(num_residues, tree, &p_cut);
-
-  Probabilities p_end;
-  protocols::medal::end_bias_probabilities(num_residues, &p_end);
-
-  numeric::product(probs->begin(), probs->end(), p_cut.begin(), p_cut.end());
-  numeric::product(probs->begin(), probs->end(), p_end.begin(), p_end.end());
-
   protocols::medal::invalidate_residues_spanning_cuts(tree, fragment_len, probs);
   numeric::normalize(probs->begin(), probs->end());
   numeric::print_probabilities(*probs, TR);
@@ -157,7 +147,7 @@ void setup_constraints(const Loops& aligned, Pose* pose) {
           Real distance = p.distance(q);
           if (distance <= option[OptionKeys::abinitio::star::initial_dist_cutoff]()) {
             pose->add_constraint(new AtomPairConstraint(ai, aj, new HarmonicFunc(distance, 2)));
-            TR << "Added constraint between residues " << k << " and " << l << std::endl;
+            TR << "AtomPair CA " << k << " CA " << l << " HARMONIC " << distance << " 2" << std::endl;
             ++n_csts;
           }
         }
@@ -285,18 +275,18 @@ void StarAbinitio::apply(Pose& pose) {
   const Real temperature = option[OptionKeys::abinitio::temperature]();
   const Real chainbreak = option[OptionKeys::jumps::increase_chainbreak]();
 
-  ScoreFunctionOP score_stage1  = setup_score("score0", 0.10 * chainbreak);
-  ScoreFunctionOP score_stage2  = setup_score("score1", 0.25 * chainbreak);
-  ScoreFunctionOP score_stage3a = setup_score("score2", 0.50 * chainbreak);
-  ScoreFunctionOP score_stage3b = setup_score("score5", 0.75 * chainbreak);
-  ScoreFunctionOP score_stage4  = setup_score("score3", 1.00 * chainbreak);
+  ScoreFunctionOP score_stage1  = setup_score("score0", 0.01 * chainbreak);
+  ScoreFunctionOP score_stage2  = setup_score("score1", 0.05 * chainbreak);
+  ScoreFunctionOP score_stage3a = setup_score("score2", 0.10 * chainbreak);
+  ScoreFunctionOP score_stage3b = setup_score("score5", 0.15 * chainbreak);
+  ScoreFunctionOP score_stage4  = setup_score("score3", 0.20 * chainbreak);
 
   // Stage 1
   TR << "Stage 1" << std::endl;
-  RationalMonteCarlo rmc(fragments_lg_uni, score_stage1, static_cast<Size>(mult * 1000), temperature, true);
+  RationalMonteCarlo rmc(fragments_lg_uni, score_stage1, static_cast<Size>(mult * 2000), temperature, true);
   rmc.apply(pose);
 
-  configure_rmc(fragments_sm_uni, score_stage1, static_cast<Size>(mult * 1000), temperature, true, &rmc);
+  configure_rmc(fragments_sm_uni, score_stage1, static_cast<Size>(mult * 2000), temperature, true, &rmc);
   rmc.apply(pose);
   emit_intermediate(pose, "star_stage1.pdb");
 
@@ -325,7 +315,7 @@ void StarAbinitio::apply(Pose& pose) {
   TR << "Stage 4" << std::endl;
   configure_rmc(fragments_sm_smo, score_stage4, static_cast<Size>(mult * 8000), temperature, true, &rmc);
   for (Size i = 1; i <= 3; ++i) {
-    rmc.apply(pose);  // 4
+    rmc.apply(pose);
   }
   emit_intermediate(pose, "star_stage4.pdb");
 }
