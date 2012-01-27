@@ -8,6 +8,7 @@
 	<MOVERS>
 		<SavePoseMover name=init_struct reference_name=init_struct/>
 		<ReportToDB name=features_reporter db="features_IntegrationTest.db3" sample_source="Test the whole feature generation code stack." task_operations=all>
+			The following FeatureReporters are listed such that dependencies precede the FeatureReporters that depend on them.
 			<feature name=PdbDataFeatures/>
 			<feature name=PoseCommentsFeatures/>
 			<feature name=PoseConformationFeatures/>
@@ -16,6 +17,7 @@
 			<feature name=AtomAtomPairFeatures min_dist=0, max_dist=3, nbins=2/>
 			<feature name=ResidueFeatures/>
 			<feature name=LoopAnchorFeatures min_loop_length=5 max_loop_length=7/>
+			<feature name=BetaTurnDetectionFeatures/>
 			<feature name=ResidueScoresFeatures scorefxn=s/>
 			<feature name=PairFeatures/>
 			<feature name=ProteinBackboneTorsionAngleFeatures/>
@@ -25,7 +27,7 @@
 			<feature name=ResidueSecondaryStructureFeatures/>
 			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolRTMin comparer=RRComparerAutomorphicRMSD/>
 			<feature name=HBondFeatures scorefxn=s definition_type=AHdist definition_threshold=1.8/>
-                  	<feature name=GeometricSolvationFeatures/>
+            		<feature name=GeometricSolvationFeatures/>
 			<feature name=HBondParameterFeatures scorefxn=s/>
 			<feature name=SaltBridgeFeatures/>
                 </ReportToDB>
