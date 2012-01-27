@@ -221,13 +221,13 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	}
 
 
-	PDBInfoOP pdb_info(pose.pdb_info());
-	if(!pdb_info) pdb_info = new PDBInfo(pose.total_residue());
+	if(!pose.pdb_info()){
+		pose.pdb_info(new PDBInfo(pose.total_residue()));
+	}
 
-	pdb_info->set_numbering(pdb_numbers);
-	pdb_info->set_chains(pdb_chains);
-	pdb_info->set_icodes(insertion_codes);
-
+	pose.pdb_info()->set_numbering(pdb_numbers);
+	pose.pdb_info()->set_chains(pdb_chains);
+	pose.pdb_info()->set_icodes(insertion_codes);
 }
 
 void PdbDataFeatures::insert_residue_pdb_identification_rows(
