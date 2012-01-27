@@ -19,6 +19,7 @@
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray4D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/io/ozstream.hh>
@@ -46,7 +47,7 @@ void register_options() {
 		using namespace basic::options::OptionKeys;
 		OPT( in::file::s );
 		NEW_OPT( tcdock::clash_dis	 ,"max acceptable clash dis"	,	3.5 );
-		NEW_OPT( tcdock::contact_dis ,"max acceptable contact dis", 10.0 );
+		NEW_OPT( tcdock::contact_dis ,"max acceptable contact dis", 12 );
 		NEW_OPT( tcdock::intra       ,"include intra 3-3 5-5 contacts", 1.0 );
 		NEW_OPT( tcdock::topx        ,"output top X hits", 10 );
 		NEW_OPT( tcdock::reverse     ,"rev.", false );	
@@ -59,7 +60,8 @@ inline double sigmoid( double const & sqdist, double const & start, double const
 		return 1.0;
 	} else {
 		double dist = sqrt( sqdist );
-		return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
+		return (stop-dist)/(stop-start);
+		//return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
 	}
 }
 void trans_pose( Pose & pose, Vecf const & trans ) {
@@ -298,17 +300,22 @@ void pnt1_to_pnt2(vector1<Vecf> & pts, Vecf pntaxs_, Vecf pntax2_) {
 	r = r * rotation_matrix_degrees(pntaxs_,(double)36.0);
 	for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);
 }
+struct LMAX {
+	double score,radius;
+	int ipnt,itri,iori;
+	LMAX() :	score(0),radius(0),ipnt(0),itri(0),iori(0) {}
+	LMAX(double _score, double _radius, int _ipnt, int _itri, int _iori) :
+		score(_score),radius(_radius),ipnt(_ipnt),itri(_itri),iori(_iori) {}
+};
+int compareLMAX(const LMAX a,const LMAX b) {
+	return a.score > b.score;
+}
 struct TCDock {
-	vector1<double> pntmnpos_,trimnpos_;
-	vector1<double> pntmnneg_,trimnneg_;
-	vector1<double> pntdspos_,tridspos_;
-	vector1<double> pntdsneg_,tridsneg_;
-	ObjexxFCL::FArray2D<double>	pntcbpos_,tricbpos_;
-	ObjexxFCL::FArray2D<double>	pntcbneg_,tricbneg_;
-	ObjexxFCL::FArray3D<double> gdis;
-	ObjexxFCL::FArray3D<double> gcbc;	
+	vector1<double> pntmnpos_,trimnpos_,pntmnneg_,trimnneg_,pntdspos_,tridspos_,pntdsneg_,tridsneg_;
+	ObjexxFCL::FArray2D<double> pntcbpos_,tricbpos_,pntcbneg_,tricbneg_;
+	ObjexxFCL::FArray3D<double> gradii,gscore;	
 	Vecf triaxs_,triax2_,pntaxs_,pntax2_;
-	double alpha_;
+	double alpha_,sin_alpha_,tan_alpha_;
 	core::pose::Pose tri_in_,pnt_in_;
 	vector1<Vecf> tri_pts_,tri_cbs_,pnt_pts_,pnt_cbs_;
 	std::string trifile_,pntfile_;
@@ -316,7 +323,7 @@ struct TCDock {
 		pntmnpos_(72,0.0),trimnpos_(120,0.0),pntmnneg_(72,0.0),trimnneg_(120,0.0),
 		pntdspos_(72,0.0),tridspos_(120,0.0),pntdsneg_(72,0.0),tridsneg_(120,0.0),
 		pntcbpos_(72,97,0.0),tricbpos_(120,145,0.0),pntcbneg_(72,97,0.0),tricbneg_(120,145,0.0),
-		gdis(72,120,360,-1.0),gcbc(72,120,360,-1.0)
+		gradii(72,120,360,-9e9),gscore(72,120,360,-9e9)
 	{
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
@@ -333,6 +340,8 @@ struct TCDock {
 		pntaxs_ = Vecf(-0.607226, 0.000000,0.794529).normalized();
 		pntax2_ = Vecf(-0.491123,-0.850651,0.187593).normalized(); // 63.4311873349, 5.706642
 		alpha_ = angle_degrees(triaxs_,Vecf(0,0,0),pntaxs_);
+		sin_alpha_ = sin(numeric::conversions::radians(alpha_));
+		tan_alpha_ = tan(numeric::conversions::radians(alpha_));
 		rot_pose(pnt_in_,Vecf(0,1,0),-alpha_,Vecf(0,0,0));
 		if(option[tcdock::reverse]()) rot_pose(tri_in_,Vecf(0,1,0),180.0);
 		
@@ -387,7 +396,10 @@ struct TCDock {
 			for(int i = 2; i <= 97; ++i) {
 				for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) + 0.1f*pntaxs_;
 				for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1f*pntax2_;
-				double cbc = 0.0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbp[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
+				double cbc = 0.0;
+				for(Size j = 1; j <= cbp.size(); ++j) 
+					if(cbp[j].distance_squared(cb2[j]) < 100.0) 
+						cbc += sigmoid(cbp[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 				pntcbpos_(ipnt+1,i) = cbc;
 				if(cbc==0) break;
 			}
@@ -413,7 +425,10 @@ struct TCDock {
 			for(int i = 2; i <= 97; ++i) {
 				for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) - 0.1f*pntaxs_;
 				for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1f*pntax2_;
-				double cbc = 0.0; for(Size j = 1; j <= cbp.size(); ++j) if(cbp[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbp[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
+				double cbc = 0.0; 
+				for(Size j = 1; j <= cbp.size(); ++j) 
+					if(cbp[j].distance_squared(cb2[j]) < 100.0) 
+						cbc += sigmoid(cbp[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 				pntcbneg_(ipnt+1,i) = cbc;
 				if(cbc==0) break;
 			}
@@ -439,7 +454,10 @@ struct TCDock {
 			for(int i = 2; i <= 145; ++i) {
 				for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) + 0.1f*triaxs_;
 				for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) + 0.1f*triax2_;
-				double cbc = 0.0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbt[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
+				double cbc = 0.0; 
+				for(Size j = 1; j <= cbt.size(); ++j) 
+					if(cbt[j].distance_squared(cb2[j]) < 100.0) 
+						cbc += sigmoid(cbt[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 				tricbpos_(itri+1,i) = cbc;
 				if(cbc==0) break;
 			}
@@ -465,7 +483,10 @@ struct TCDock {
 			for(int i = 2; i <= 145; ++i) {
 				for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) - 0.1f*triaxs_;
 				for(vector1<Vecf>::iterator iv = cb2.begin(); iv != cb2.end(); ++iv) *iv = (*iv) - 0.1f*triax2_;
-				double cbc = 0.0; for(Size j = 1; j <= cbt.size(); ++j) if(cbt[j].distance_squared(cb2[j]) < 100.0) cbc += sigmoid(cbt[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
+				double cbc = 0.0; 
+				for(Size j = 1; j <= cbt.size(); ++j) 
+					if(cbt[j].distance_squared(cb2[j]) < 100.0) 
+						cbc += sigmoid(cbt[j].distance_squared(cb2[j]), CLASH_D, CONTACT_D );
 				tricbneg_(itri+1,i) = cbc;
 				if(cbc==0) break;
 			}
@@ -518,17 +539,12 @@ struct TCDock {
 
 		Vecf sicaxis = (rotation_matrix_degrees(-Vecf(0,1,0),(double)aori) * Vecf(0,0,1)).normalized();
 		double tmpcbc;
-		double d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
-		double theta = aori;
-		double gamma = theta-alpha_;
-		double x = d * sin(numeric::conversions::radians(gamma));
-		double y = d * cos(numeric::conversions::radians(gamma));
-		double w = x / sin(numeric::conversions::radians(alpha_));
-		double z = x / tan(numeric::conversions::radians(alpha_));
-		double dpnt = y+z;
-		double dtri = w;
+		double const d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
+		if(d > 0) utility_exit_with_message("ZERO!!");
+		double const theta=aori, gamma=numeric::conversions::radians(theta-alpha_);
+		double const sin_gamma=sin(gamma), cos_gamma=cos(gamma), x=d*sin_gamma, y=d*cos_gamma, w=x/sin_alpha_, z=x/tan_alpha_;
+		double const dpnt = y+z, dtri = w;
 		double pntmn,trimn;
-
 		Pose t,p,symm;
 		#ifdef USE_OPENMP
 		#pragma omp critical
@@ -552,11 +568,8 @@ struct TCDock {
 				if(symm.residue(symm.n_residue()).is_terminus()) symm.append_residue_by_jump(p.residue(i),1);
 				else                                             symm.append_residue_by_bond(p.residue(i));
 			}
-			// core::util::switch_to_residue_type_set(symm,"fa_standard");
-			// for(Size i = 1; i <= symm.n_residue(); ++i) core::pose::replace_pose_residue_copying_existing_coordinates(symm,i,rs->name_map("ALA"));
-			//std::cerr << "making symm" << std::endl;					
 		}
-		if(sym)	core::pose::symmetry::make_symmetric_pose(symm);				
+		if(sym) core::pose::symmetry::make_symmetric_pose(symm);				
 		core::io::pdb::dump_pdb(symm,option[out::file::o]()+"/"+fname);
 		
 	}
@@ -578,55 +591,56 @@ struct TCDock {
 			for(int i = 1; i <= 120; ++i) out << i << " " << tridsneg_[i] << " " << tricbneg_(i,1) << std::endl;
 			out.close(); }
 	}
-	double calc_cbc(int ipnt, int itri, int iori, int ANGLE_INCR, double & dpnt, double & dtri, bool safe=true) {
-		using basic::options::option;
-		using namespace basic::options::OptionKeys;
-
-		vector1<Vecf> pb,cbb; // precompute these
-		vector1<Vecf> pa,cba; // precompute these
-		get_tri(itri,pa,cba);
-		get_pnt(ipnt,pb,cbb);		
-		Vecf sicaxis = (rotation_matrix_degrees(-Vecf(0,1,0),(double)iori) * Vecf(0,0,1)).normalized();
-		double tmpcbc,d;
-		if(safe) d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
-		else     d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
-
-		double theta = iori;
-		double gamma = theta-alpha_;
-		double x = d * sin(numeric::conversions::radians(gamma));
-		double y = d * cos(numeric::conversions::radians(gamma));
-		double w = x / sin(numeric::conversions::radians(alpha_));
-		double z = x / tan(numeric::conversions::radians(alpha_));
-		dpnt = y+z;
-		dtri = w;
-		double pntmn,trimn;
-		if( w > 0 ) {
-			pntmn = pntmnpos_[ipnt/ANGLE_INCR+1];
-			trimn = trimnpos_[itri/ANGLE_INCR+1];
-			if( dpnt < pntmn ) utility_exit_with_message("BAD CONFIG");
-			if( dtri < trimn ) utility_exit_with_message("BAD CONFIG");
-			int dp = (int)(dpnt-pntmn)*10+1;
-			int dt = (int)(dtri-trimn)*10+1;
-			// if(ipnt==18 && itri==72 && iori==276)
-			//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos_(ipnt/ANGLE_INCR+1,dp)
-			//		<< "		" << dt << " " << dtri << " " << trimn << " " << tricbpos_(itri/ANGLE_INCR+1,dt) << std::endl;
-			if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbpos_(ipnt/ANGLE_INCR+1,dp);
-			if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos_(itri/ANGLE_INCR+1,dt);
-			// std::cerr << "CHK " << dpnt << " " << pntmn << "		" << dtri << " " << trimn << std::endl;
-		} else {
-			pntmn = pntmnneg_[ipnt/ANGLE_INCR+1];
-			trimn = trimnneg_[itri/ANGLE_INCR+1];
-			if( dpnt > pntmn ) utility_exit_with_message("BAD CONFIG");
-			if( dtri > trimn ) utility_exit_with_message("BAD CONFIG");
-			int dp = (int)(-dpnt+pntmn)*10+1;
-			int dt = (int)(-dtri+trimn)*10+1;
-			// if(ipnt==18 && itri==72 && iori==276)
-			//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg_(ipnt/ANGLE_INCR+1,dp)
-			//		<< "		" << dt << " " << dtri << " " << trimn << " " << pntcbneg_(itri/ANGLE_INCR+1,dt) << std::endl;
-			if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbneg_(ipnt/ANGLE_INCR+1,dp);
-			if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg_(itri/ANGLE_INCR+1,dt);
+	double calc_cbc(int ipnt, int itri, int iori, double & dpnt, double & dtri, double & icbc, double & pntcbc, double & tricbc, bool cache=false) {
+		if(!cache || gscore(ipnt+1,itri+1,iori+1) == -9e9 ) {
+			using basic::options::option;
+			using namespace basic::options::OptionKeys;
+			icbc=0; pntcbc=0; tricbc=0;
+			vector1<Vecf> pb,cbb, pa,cba; get_tri(itri,pa,cba); get_pnt(ipnt,pb,cbb);		
+			Vecf sicaxis = (rotation_matrix_degrees(-Vecf(0,1,0),(double)iori) * Vecf(0,0,1)).normalized();
+			double const d = sicfast(pb,pa,cbb,cba,sicaxis,icbc);
+			if(d > 0) utility_exit_with_message("ZERO!!");
+			double const theta=iori, gamma=numeric::conversions::radians(theta-alpha_);
+			double const sin_gamma=sin(gamma), cos_gamma=cos(gamma), x=d*sin_gamma, y=d*cos_gamma, w=x/sin_alpha_, z=x/tan_alpha_;
+			dpnt = y+z;  dtri = w;
+			if( w > 0 ) {
+				double const pntmn = pntmnpos_[ipnt+1];
+				double const trimn = trimnpos_[itri+1];
+				if( dtri < trimn || dpnt < pntmn ) { 
+					double const dmnpnt = pntmn/(cos_gamma+sin_gamma/tan_alpha_);
+					double const dmntri = trimn*sin_alpha_/sin_gamma;
+					gradii(ipnt+1,itri+1,iori+1) = min(dmnpnt,dmntri);
+					gscore(ipnt+1,itri+1,iori+1) = 0;
+					return 0;
+				}
+				int dp = (int)(dpnt-pntmn)*10+1;
+				int dt = (int)(dtri-trimn)*10+1;
+				if( 0 < dp && dp <=  97 ) tricbc = pntcbpos_(ipnt+1,dp);
+				if( 0 < dt && dt <= 145 ) pntcbc = tricbpos_(itri+1,dt);
+			} else {
+				double const pntmn = pntmnneg_[ipnt+1];
+				double const trimn = trimnneg_[itri+1];
+				if( dtri > trimn || dpnt > pntmn ) { 
+					double const dmnpnt = pntmn/(cos_gamma+sin_gamma/tan_alpha_);
+					double const dmntri = trimn*sin_alpha_/sin_gamma;
+					gradii(ipnt+1,itri+1,iori+1) = min(dmnpnt,dmntri);
+					gscore(ipnt+1,itri+1,iori+1) = 0;
+					return 0;
+				}
+				int dp = (int)(-dpnt+pntmn)*10+1;
+				int dt = (int)(-dtri+trimn)*10+1;
+				if( 0 < dp && dp <=  97 ) tricbc = pntcbneg_(ipnt+1,dp);
+				if( 0 < dt && dt <= 145 ) pntcbc = tricbneg_(itri+1,dt);
+			}
+			// #ifdef USE_OPENMP
+			// #pragma omp critical
+			// #endif
+			// {
+				gscore(ipnt+1,itri+1,iori+1) = icbc+option[tcdock::intra]()*(pntcbc+tricbc);
+				gradii(ipnt+1,itri+1,iori+1) = d;
+			// }
 		}
-		return tmpcbc;
+		return gscore(ipnt+1,itri+1,iori+1);
 	}
 	void run() {
 		using basic::options::option;
@@ -636,12 +650,11 @@ struct TCDock {
 		double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
 		double const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
 		double const CONTACT_D2 = sqr(CONTACT_D);
-		double const CLASH_D2	 = sqr(CLASH_D);
+		double const CLASH_D2	= sqr(CLASH_D);
 		Pose const triinit(tri_in_);
 		Pose const pntinit(pnt_in_);
 		precompute_intra();
-		std::cerr << "main loop 1 over ipnt, itri, iori every 3 degrees" << std::endl;
-		{ // 3deg loop 
+		std::cerr << "main loop 1 over ipnt, itri, iori every 3 degrees" << std::endl; { // 3deg loop 
 			double mxd = 0;
 			double cbmax = 0; int mxiori = 0, mxipnt = 0, mxitri = 0;
 			for(int ipnt = 0; ipnt < 72; ipnt+=3) {
@@ -669,38 +682,42 @@ struct TCDock {
 						}
 						Vecf sicaxis = (rotation_matrix_degrees(-Vecf(0,1,0),(double)iori) * Vecf(0,0,1)).normalized();
 						double tmpcbc;
-						double d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
-						double theta = iori;
-						double gamma = theta-alpha_;
-						double x = d * sin(numeric::conversions::radians(gamma));
-						double y = d * cos(numeric::conversions::radians(gamma));
-						double w = x / sin(numeric::conversions::radians(alpha_));
-						double z = x / tan(numeric::conversions::radians(alpha_));
-						double dpnt = y+z;
-						double dtri = w;
-						double pntmn,trimn;
-						if( w > 0 ) {
-							pntmn = pntmnpos_[ipnt+1];
-							trimn = trimnpos_[itri+1];
-							if( dtri < trimn ) { ori_stage++; newstage=true; continue; };
-							if( dpnt < pntmn ) { ori_stage++; newstage=true; continue; };
-							int dp = (int)(dpnt-pntmn)*10+1;
-							int dt = (int)(dtri-trimn)*10+1;
-							if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbpos_(ipnt+1,dp);
-							if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos_(itri+1,dt);
+						double const d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
+						if(d > 0) utility_exit_with_message("ZERO!!");
+						double const theta=iori, gamma=numeric::conversions::radians(theta-alpha_);
+						double const sin_gamma=sin(gamma), cos_gamma=cos(gamma), x=d*sin_gamma, y=d*cos_gamma, w=x/sin_alpha_, z=x/tan_alpha_;
+						double const dpnt = y+z, dtri = w;
+						if( w > 0 ) {							
+							double const pntmn = pntmnpos_[ipnt+1], trimn = trimnpos_[itri+1];
+							if( dtri < trimn || dpnt < pntmn ) { 
+								double const dmnpnt = pntmn/(cos_gamma+sin_gamma/tan_alpha_);
+								double const dmntri = trimn*sin_alpha_/sin_gamma;
+								gradii(ipnt+1,itri+1,iori+1) = min(dmnpnt,dmntri);
+								gscore(ipnt+1,itri+1,iori+1) = 0;
+								ori_stage++;
+								newstage=true;
+								continue;
+							}
+							int dp = (int)(dpnt-pntmn)*10+1, dt = (int)(dtri-trimn)*10+1;
+							if( 0 < dp && dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbpos_(ipnt+1,dp);
+							if( 0 < dt && dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos_(itri+1,dt);
 						} else {
-							pntmn = pntmnneg_[ipnt+1];
-							trimn = trimnneg_[itri+1];
-							if( dtri > trimn ) { ori_stage++; newstage=true; continue; };
-							if( dpnt > pntmn ) { ori_stage++; newstage=true; continue; };
-							int dp = (int)(-dpnt+pntmn)*10+1;
-							int dt = (int)(-dtri+trimn)*10+1;
-							if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbneg_(ipnt+1,dp);
-							if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg_(itri+1,dt);
+							double const pntmn = pntmnneg_[ipnt+1], trimn = trimnneg_[itri+1];
+							if( dtri > trimn || dpnt > pntmn ) {
+								double const dmnpnt = pntmn/(cos_gamma+sin_gamma/tan_alpha_);
+								double const dmntri = trimn*sin_alpha_/sin_gamma;
+								gradii(ipnt+1,itri+1,iori+1) = min(dmnpnt,dmntri);
+								gscore(ipnt+1,itri+1,iori+1) = 0;
+								ori_stage++;
+								newstage=true;
+								continue;
+							}
+							int dp = (int)(-dpnt+pntmn)*10+1, dt = (int)(-dtri+trimn)*10+1;
+							if( 0 < dp && dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbneg_(ipnt+1,dp);
+							if( 0 < dt && dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg_(itri+1,dt);
 						}
-
-						gdis(ipnt+1,itri+1,iori+1) = d;
-						gcbc(ipnt+1,itri+1,iori+1) = tmpcbc;
+						gradii(ipnt+1,itri+1,iori+1) = d;
+						gscore(ipnt+1,itri+1,iori+1) = tmpcbc;
 						#ifdef USE_OPENMP
 						#pragma omp critical
 						#endif
@@ -716,22 +733,19 @@ struct TCDock {
 			}
 			if(cbmax<0.00001) utility_exit_with_message("tri or pnt too large, no contacts!");
 			std::cerr << "MAX3 " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << " " << mxd << std::endl;
-			// std::cerr << "MAX " << mxipnt << " " << mxitri << " " << mxiori << " " << cbcount(mxipnt/3+1,mxitri/3+1,mxiori/3+1) << " " << surfdis3(mxipnt/3+1,mxitri/3+1,mxiori/3+1) << std::endl;
 		}
-		vector1<int> hitpnt,hittri,hitori;
-		vector1<double> hitcbc;			
 		double topX=0,max1=0;
 		utility::vector1<vector1<int> > pntlmx,trilmx,orilmx; { // set up work for main loop 2 
 			double top1000_3 = 0;
 			vector1<double> cbtmp;
-			for(Size i = 0; i < gcbc.size(); ++i) if(gcbc[i] > 0) cbtmp.push_back(gcbc[i]);
+			for(Size i = 0; i < gscore.size(); ++i) if(gscore[i] > 0) cbtmp.push_back(gscore[i]);
 			std::sort(cbtmp.begin(),cbtmp.end());
 			top1000_3 = cbtmp[max(1,(int)cbtmp.size()-999)];
 			std::cerr << "scanning top1000 with cbcount3 >= " << top1000_3 << std::endl;
 			for(int ipnt = 0; ipnt < 72; ipnt+=3) {
 				for(int itri = 0; itri < 120; itri+=3) {
 					for(int iori = 0; iori < 360; iori+=3) {
-						if( gcbc(ipnt+1,itri+1,iori+1) >= top1000_3) {
+						if( gscore(ipnt+1,itri+1,iori+1) >= top1000_3) {
 							vector1<int> pnt,tri,ori;
 							for(int i = -1; i <= 1; ++i) pnt.push_back( (ipnt+i+ 72)% 72 );
 							for(int j = -1; j <= 1; ++j) tri.push_back( (itri+j+120)%120 );
@@ -747,68 +761,62 @@ struct TCDock {
 		#ifdef USE_OPENMP
 		#pragma omp parallel for schedule(dynamic,1)
 		#endif
-		for(Size ilmx = 1; ilmx <= pntlmx.size(); ++ilmx)  { //  MAIN LOOP 2 
-			if( (ilmx-1)%100==0 && ilmx!=1) std::cerr << "	loop2 " << trifile_ << " " << (double(ilmx-1)/10) << "\% done, cbmax: " << max1 << std::endl;
-			// std::cerr << "checking around local max # " << ilmx << std::endl;
+		for(Size ilmx = 1; ilmx <= pntlmx.size(); ++ilmx)  {       //  MAIN LOOP 2                                      
+			if( (ilmx-1)%100==0 && ilmx!=1) std::cerr << "	loop2 " << trifile_ 
+			         << " " << (double(ilmx-1)/10) << "\% done, cbmax: " << max1 << std::endl;
 			double cbmax = 0; int mxiori = 0, mxipnt = 0, mxitri = 0;
 			for(vector1<int>::const_iterator pipnt = pntlmx[ilmx].begin(); pipnt != pntlmx[ilmx].end(); ++pipnt) {
-				int ipnt = *pipnt;
-				vector1<Vecf> pb,cbb; // precompute these
-				get_pnt(ipnt,pb,cbb);
+				int ipnt = *pipnt; vector1<Vecf> pb,cbb; get_pnt(ipnt,pb,cbb);
 				for(vector1<int>::const_iterator pitri = trilmx[ilmx].begin(); pitri != trilmx[ilmx].end(); ++pitri) {
-					int itri = *pitri;
-					vector1<Vecf> pa,cba; // precompute these
-					get_tri(itri,pa,cba);
+					int itri = *pitri; vector1<Vecf> pa,cba; get_tri(itri,pa,cba);
 					for(vector1<int>::const_iterator piori = orilmx[ilmx].begin(); piori != orilmx[ilmx].end(); ++piori) {
 						int iori = *piori;								
-						if( gdis(ipnt+1,itri+1,iori+1) < -0.5 ) {								
+						// if( gradii(ipnt+1,itri+1,iori+1) == -9e9 ) {
 							Vecf sicaxis = (rotation_matrix_degrees(-Vecf(0,1,0),(double)iori) * Vecf(0,0,1)).normalized();
 							double tmpcbc;
-							double d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
-							double theta = iori;
-							double gamma = theta-alpha_;
-							double x = d * sin(numeric::conversions::radians(gamma));
-							double y = d * cos(numeric::conversions::radians(gamma));
-							double w = x / sin(numeric::conversions::radians(alpha_));
-							double z = x / tan(numeric::conversions::radians(alpha_));
-							double dpnt = y+z;
-							double dtri = w;
-							double pntmn,trimn;
+							double const d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
+							if(d > 0) utility_exit_with_message("ZERO!!");
+							double const theta=iori, gamma=numeric::conversions::radians(theta-alpha_);
+							double const sin_gamma=sin(gamma), cos_gamma=cos(gamma), x=d*sin_gamma, y=d*cos_gamma, w=x/sin_alpha_, z=x/tan_alpha_;
+							double const dpnt = y+z, dtri = w;
 							if( w > 0 ) {
-								pntmn = pntmnpos_[ipnt+1];
-								trimn = trimnpos_[itri+1];
-								if( dpnt < pntmn ) continue;
-								if( dtri < trimn ) continue;								
+								double const pntmn = pntmnpos_[ipnt+1];
+								double const trimn = trimnpos_[itri+1];
+								if( dpnt < pntmn || dtri < trimn ) {
+									double const dmnpnt = pntmn/(cos_gamma+sin_gamma/tan_alpha_);
+									double const dmntri = trimn*sin_alpha_/sin_gamma;
+									gradii(ipnt+1,itri+1,iori+1) = min(dmnpnt,dmntri);
+									gscore(ipnt+1,itri+1,iori+1) = 0;
+									continue;								
+								}
 								int dp = (int)(dpnt-pntmn)*10+1;
 								int dt = (int)(dtri-trimn)*10+1;
-								// if(ipnt==18 && itri==72 && iori==276)
-								//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbpos_(ipnt+1,dp)
-								//		<< "		" << dt << " " << dtri << " " << trimn << " " << tricbpos_(itri+1,dt) << std::endl;
-								if( dp <= 97	) tmpcbc += option[tcdock::intra]()*pntcbpos_(ipnt+1,dp);
-								if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos_(itri+1,dt);
-								// std::cerr << "CHK " << dpnt << " " << pntmn << "		" << dtri << " " << trimn << std::endl;
+								if( 0 < dp && dp <= 97  ) tmpcbc += option[tcdock::intra]()*pntcbpos_(ipnt+1,dp);
+								if( 0 < dt && dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos_(itri+1,dt);
 							} else {
-								pntmn = pntmnneg_[ipnt+1];
-								trimn = trimnneg_[itri+1];
-								if( dpnt > pntmn ) continue;
-								if( dtri > trimn ) continue;
+								double const pntmn = pntmnneg_[ipnt+1];
+								double const trimn = trimnneg_[itri+1];
+								if( dpnt > pntmn || dtri > trimn ){
+									double const dmnpnt = pntmn/(cos_gamma+sin_gamma/tan_alpha_);
+									double const dmntri = trimn*sin_alpha_/sin_gamma;
+									gradii(ipnt+1,itri+1,iori+1) = min(dmnpnt,dmntri);
+									gscore(ipnt+1,itri+1,iori+1) = 0;
+									continue;
+								}
 								int dp = (int)(-dpnt+pntmn)*10+1;
 								int dt = (int)(-dtri+trimn)*10+1;
-								// if(ipnt==18 && itri==72 && iori==276)
-								//	std::cerr << "DP " << dp << " " << dpnt << " " << pntmn << " " << pntcbneg_(ipnt+1,dp)
-								//		<< "		" << dt << " " << dtri << " " << trimn << " " << pntcbneg_(itri+1,dt) << std::endl;
-								if( dp <= 97	) tmpcbc += option[tcdock::intra]()*pntcbneg_(ipnt+1,dp);
-								if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg_(itri+1,dt);
+								if( 0 < dp && dp <= 97  ) tmpcbc += option[tcdock::intra]()*pntcbneg_(ipnt+1,dp);
+								if( 0 < dt && dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg_(itri+1,dt);
 							}
-							gdis(ipnt+1,itri+1,iori+1) = d;
-							gcbc(ipnt+1,itri+1,iori+1) = tmpcbc;
-						}
+							gradii(ipnt+1,itri+1,iori+1) = d;
+							gscore(ipnt+1,itri+1,iori+1) = tmpcbc;
+						//}
 
 						#ifdef USE_OPENMP
 						#pragma omp critical
 						#endif
-						if(gcbc(ipnt+1,itri+1,iori+1) > cbmax) {
-							cbmax = gcbc(ipnt+1,itri+1,iori+1);
+						if(gscore(ipnt+1,itri+1,iori+1) > cbmax) {
+							cbmax = gscore(ipnt+1,itri+1,iori+1);
 							mxiori = iori;
 							mxipnt = ipnt;
 							mxitri = itri;
@@ -820,158 +828,87 @@ struct TCDock {
 			#ifdef USE_OPENMP
 			#pragma omp critical
 			#endif
-			{
-				hitpnt.push_back(mxipnt);
-				hittri.push_back(mxitri);
-				hitori.push_back(mxiori);
-				hitcbc.push_back(cbmax);
-				if(cbmax > max1) max1 = cbmax;
-			}
-			// std::cerr << "HIT " << ilmx << " " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << std::endl;
+			if(cbmax > max1) max1 = cbmax;
 		}
-		vector1<std::pair<double,Size> > hits;             { // mark top X hits 
-			vector1<double> hittmp = hitcbc;
-			std::sort(hittmp.begin(),hittmp.end());
-			max1	= hittmp[hittmp.size()  ];
-			topX = hittmp[hittmp.size()-(option[tcdock::topx]()-1)];
-			std::cerr << "topX " << topX << std::endl;
-			for(Size ihit = 1; ihit <= hitcbc.size(); ++ihit) {
-				if(hitcbc[ihit]==max1)	std::cerr << "MAX1 " << hitpnt[ihit] << " " << hittri[ihit] << " " << hitori[ihit] << " " << hitcbc[ihit] << std::endl;
-			}
-
-			for(Size ihit = 1; ihit <= hitcbc.size(); ++ihit) {
-				if(hitcbc[ihit] >= topX ) {
-					hits.push_back(std::pair<double,Size>(hitcbc[ihit],ihit));
+				vector1<LMAX> local_maxima; {                        // get local radial disp maxima (minima, really)     
+			double mn=9e9,mx=-9e9;
+			LMAX highscore; highscore.score = -9e9;
+			// vector1<int> ehist(26,0);
+			for(int i = 1; i <= gradii.size1(); ++i){
+				for(int j = 1; j <= gradii.size2(); ++j){
+					for(int k = 1; k <= gradii.size3(); ++k){
+						double const val = gradii(i,j,k);
+						if( val < -9e8 ) continue;
+						double nbmax = -9e9;
+						int nedge = 0;
+						for(int di = -1; di <= 1; ++di){
+							for(int dj = -1; dj <= 1; ++dj){
+								for(int dk = -1; dk <= 1; ++dk){
+									if(di==0 && dj==0 && dk==0) continue;
+									int i2 = (i+di+gradii.size1()-1)%gradii.size1()+1;
+									int j2 = (j+dj+gradii.size2()-1)%gradii.size2()+1;
+									int k2 = (k+dk+gradii.size3()-1)%gradii.size3()+1;
+									double const nbval = gradii(i2,j2,k2);
+									nbmax = max(nbmax,nbval);
+								}
+							}
+						}
+						if( nbmax != -9e9 && val >= nbmax ) {
+							local_maxima.push_back( LMAX(gscore(i,j,k),gradii(i,j,k),i-1,j-1,k-1) );
+							mx = max(val,mx);
+							mn = min(val,mn);
+						}
+					}
 				}
 			}
-			std::sort(hits.begin(),hits.end());
+			std::sort(local_maxima.begin(),local_maxima.end(),compareLMAX);
+			std::cerr << "N local max (tri-pent disp.) " << local_maxima.size() << std::endl;					
 		}
-		for(Size ihiti = 1; ihiti <= hits.size(); ++ihiti) { // dump top hit info 
-			Size ihit = hits[ihiti].second;
-			double dpnt,dtri,apnt=hitpnt[ihit],atri=hittri[ihit];
-			double cbc = calc_cbc(hitpnt[ihit],hittri[ihit],hitori[ihit],1,dpnt,dtri,true);
-			if( hitcbc[ihit] < topX ) continue;
-			std::cerr << "HIT " << F(7,3,hitcbc[ihit]) << " " << F(7,3,cbc) << " " 
-			          << pntfile_ << " " << pnt_in_.n_residue() << " " << apnt << " " << dpnt << " "
-			          << utility::file_basename(trifile_) << " " << tri_in_.n_residue() << " " << atri << " " << dtri << " "
+		for(Size ilm = 1; ilm <= min(local_maxima.size(),(Size)option[tcdock::topx]()); ++ilm) { // dump top hit info 
+			LMAX const & h(local_maxima[ilm]);
+			double dpnt,dtri,icbc,tricbc,pntcbc;
+			ObjexxFCL::FArray3D<double> grid(35,35,35,0.0);
+			#ifdef USE_OPENMP
+			#pragma omp parallel for schedule(dynamic,1)
+			#endif			
+			for(int di = -17; di <= 17; ++di) {
+				for(int dj = -17; dj <= 17; ++dj) {
+					for(int dk = -17; dk <= 17; ++dk) {
+						int i = (h.ipnt+di+gscore.size1())%gscore.size1();
+						int j = (h.itri+dj+gscore.size2())%gscore.size2();
+						int k = (h.iori+dk+gscore.size3())%gscore.size3();
+						calc_cbc(i,j,k,dpnt,dtri,icbc,pntcbc,tricbc,true);
+						grid(di+18,dj+18,dk+18) = gradii(i+1,j+1,k+1);
+					}
+				}
+			}
+			std::ofstream o(("out/grid_"+ObjexxFCL::string_of(ilm)+".dat").c_str());
+			for(int i = 1; i <= grid.size1(); ++i) {
+				for(int j = 1; j <= grid.size2(); ++j) {
+					for(int k = 1; k <= grid.size3(); ++k) {
+						o << grid(i,j,k) << std::endl;
+					}
+				}
+			}
+			o.close();
+			double cbc = calc_cbc(h.ipnt,h.itri,h.iori,dpnt,dtri,icbc,pntcbc,tricbc,false);
+			std::cerr << "HIT " 
+			          << F(7,3,h.score) << " "
+			          << F(7,3,cbc) << " " 
+			          << F(7,3,icbc) << " " 
+			          << F(7,3,pntcbc) << " " 
+			          << F(7,3,tricbc) << " " 
+			          << pntfile_ << " " 
+			          << I(4,pnt_in_.n_residue()) << " " 
+			          << I(2,h.ipnt) << " " 
+			          << F(7,3,dpnt) << " "
+			          << trifile_ << " " 
+			          << I(4,tri_in_.n_residue()) << " " 
+			          << I(3,h.itri) << " " 
+			          << F(7,3,dtri) << " "
+			          << I(3,h.iori) << " " 
 			          << std::endl;
-		}
-		for(Size ihiti = 1; ihiti <= hits.size(); ++ihiti) { // grid testing 
-			Size ihit = hits[ihiti].second;
-
-			// std::cerr << "dumping grid 1 " << hitcbc[ihit] << std::endl;
-			// vector1<numeric::xyzVector<int> > tocheck;
-			// {
-			// 	int ipnt = hitpnt[ihit];
-			// 	int itri = hittri[ihit];
-			// 	int iori = hitori[ihit];
-			// 	for(int i = -8; i <= 8; ++i)
-			// 	for(int j = -8; j <= 8; ++j)
-			// 	for(int k = -2; k <= 2; ++k) {
-			// 		tocheck.push_back( numeric::xyzVector<int>((ipnt+i+72)%72,(itri+j+120)%120,(iori+k+360)%360) );
-			// 	}
-			// }
-			// ObjexxFCL::FArray3D<double> g11d(17,17,5,0.0),g11c(17,17,5,0.0);
-			// // #ifdef USE_OPENMP
-			// // #pragma omp parallel for schedule(dynamic,1)
-			// // #endif					
-			// for(int ic = 0; ic < tocheck.size(); ++ic)	{
-			// 	int ipnt2 = tocheck[ic+1].x();
-			// 	int itri2 = tocheck[ic+1].y();
-			// 	int iori2 = tocheck[ic+1].z();
-			// 	//std::cerr << "dumping grid " << ipnt2 << " " << itri2 << " " << iori2 << " " << ic << " " << g11d.size() << std::endl;
-			// 	Pose p,t;
-			// 	#ifdef USE_OPENMP
-			// 	#pragma omp critical
-			// 	#endif
-			// 	{
-			// 		p = pntinit;
-			// 		t = triinit;
-			// 	}
-			// 	rot_pose(p,pntaxs_,(double)ipnt2);
-			// 	rot_pose(t,triaxs_,(double)itri2);
-			// 
-			// 	vector1<Vecf> pb,cbb; // precompute these
-			// 	for(int i = 1; i <= (int)p.n_residue(); ++i) {
-			// 		cbb.push_back(Vecf(p.residue(i).xyz(2)));
-			// 		int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
-			// 		for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
-			// 	}
-			// 	vector1<Vecf> pa,cba; // precompute these
-			// 	for(int i = 1; i <= (int)t.n_residue(); ++i) {
-			// 		cba.push_back(Vecf(t.residue(i).xyz(2)));
-			// 		int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
-			// 		for(int j = 1; j <= natom; ++j) pa.push_back(Vecf(t.residue(i).xyz(j)));
-			// 	}
-			// 	Vecf sicaxis = (rotation_matrix_degrees(-Vecf(0,1,0),(double)iori2) * Vecf(0,0,1)).normalized();
-			// 	double tmpcbc;
-			// 	double d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
-			// 	double theta = iori2;
-			// 	double gamma = theta-alpha_;
-			// 	double x = d * sin(numeric::conversions::radians(gamma));
-			// 	double y = d * cos(numeric::conversions::radians(gamma));
-			// 	double w = x / sin(numeric::conversions::radians(alpha_));
-			// 	double z = x / tan(numeric::conversions::radians(alpha_));
-			// 	double dpnt = y+z;
-			// 	double dtri = w;
-			// 	double pntmn,trimn;
-			// 	int dp,dt;
-			// 	if( w > 0 ) {
-			// 		pntmn = pntmnpos_[ipnt2+1];
-			// 		trimn = trimnpos_[itri2+1];
-			// 		dp = (int)((dpnt-pntmn)*10.0)+1;
-			// 		dt = (int)((dtri-trimn)*10.0)+1;
-			// 		if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbpos_(ipnt2+1,dp);
-			// 		if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbpos_(itri2+1,dt);
-			// 		if( dpnt < pntmn || dtri < trimn ) {
-			// 			g11d[ic] = 1.0/0.0; g11c[ic] = 1.0/0.0;
-			// 		} else {
-			// 			g11d[ic] = d; g11c[ic] = tmpcbc;
-			// 		}
-			// 	} else {
-			// 		pntmn = pntmnneg_[ipnt2+1];
-			// 		trimn = trimnneg_[itri2+1];
-			// 		dp = (int)((-dpnt+pntmn)*10.0)+1;
-			// 		dt = (int)((-dtri+trimn)*10.0)+1;
-			// 		if( dp <=  97 ) tmpcbc += option[tcdock::intra]()*pntcbneg_(ipnt2+1,dp);
-			// 		if( dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg_(itri2+1,dt);
-			// 		if( dpnt > pntmn || dtri > trimn ) {
-			// 			g11d[ic] = 1.0/0.0; g11c[ic] = 1.0/0.0;
-			// 		} else {
-			// 			g11d[ic] = d; g11c[ic] = tmpcbc;
-			// 		}
-			// 	}
-			// 	if(ipnt2==hitpnt[ihit] && itri2==hittri[ihit]) {
-			// 		if(iori2-hitori[ihit] == 2 || iori2-hitori[ihit] == -2) dump_pdb(ipnt2,itri2,iori2,"test_ori"+ObjexxFCL::string_of(iori2)+".pdb.gz",false);
-			// 		if( iori2-hitori[ihit] == 0 ) dump_pdb(ipnt2,itri2,iori2,"test_ori"+ObjexxFCL::string_of(iori2)+".pdb.gz",true);								
-			// 	}
-			// 	// trans_pose(p,dpnt*pntaxs_);
-			// 	// trans_pose(t,dtri*triaxs_);
-			// 	// std::cerr << ipnt2 << " " << itri2 << " " << iori2 << " " << tmpcbc << " " << d << " " << w << " " << dp << " " << pntcbneg_(ipnt2+1,dp) << " " << dt << " " << tricbneg_(itri2+1,dt) << std::endl;
-			// }
-			// 
-			// for(int i = 0; i < tocheck.size(); ++i) {
-			// 	std::cout << g11d[i] << " " << g11c[i] << std::endl;
-			// }
-			// utility_exit_with_message("oarftn");
-								
-			// int ipnt = hitpnt[ihit];
-			// int itri = hittri[ihit];
-			// int iori = hitori[ihit];
-			// double sizefac = tri_in_.n_residue() + pnt_in_.n_residue();
-			// std::string fname;
-			// fname	= ObjexxFCL::lead_zero_string_of(Size(hitcbc[ihit]/sizefac*1000000.0),7);
-			// fname += "_" + pntfile_;
-			// fname += "_" + utility::file_basename(trifile_);
-			// fname += "_" + ObjexxFCL::lead_zero_string_of(hitcbc[ihit],4);
-			// fname += "_" + ObjexxFCL::lead_zero_string_of(ipnt,3);
-			// fname += "_" + ObjexxFCL::lead_zero_string_of(itri,3);
-			// fname += "_" + ObjexxFCL::lead_zero_string_of(iori,3);
-			// fname += ".pdb.gz";
-			// 
-			// std::cerr << "HIT " << " p" << ipnt << " t" << itri << " o" << iori << " c" << hitcbc[ihit] << " c" << hitcbc[ihit]/sizefac << std::endl;
-			// dump_pdb(ipnt,itri,iori,fname);
-
+			dump_pdb(h.ipnt,h.itri,h.iori,"test_"+ObjexxFCL::string_of(cbc)+".pdb");
 		}
 	}
 
@@ -984,5 +921,5 @@ int main (int argc, char *argv[]) {
 		TCDock tcd(i,1);
 		tcd.run();
 	}
-	std::cerr << "DONE testing refactoring MISC" << std::endl;
+	std::cerr << "DONE testing grid" << std::endl;
 }
