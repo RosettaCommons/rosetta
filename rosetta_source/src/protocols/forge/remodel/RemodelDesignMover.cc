@@ -540,11 +540,12 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 		int i = 1;
 		for (utility::vector1_bool::iterator itr=modeled_clusters.begin(), end=modeled_clusters.end();  itr !=end; itr++){
 			*itr = false;
-			if ( i == remodel_data_.disulfMobileRange[0]){
+			if ( i == remodel_data_.disulfMobileRange[0] ){
 				*itr=true;
 				TR << "Use disulf mobile range start: " << i << std::endl;
-			}
-			if ( i == remodel_data_.disulfMobileRange[1]){
+		 	} else if (i > remodel_data_.disulfMobileRange[0] && i < remodel_data_.disulfMobileRange[1]){
+        *itr=true;
+			} else if ( i == remodel_data_.disulfMobileRange[1] ){
 				*itr=true;
 				TR << "Use disulf mobile range stop: " << i << std::endl;
 			}
