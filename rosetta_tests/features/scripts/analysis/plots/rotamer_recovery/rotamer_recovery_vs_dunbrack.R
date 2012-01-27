@@ -9,13 +9,13 @@
 
 check_setup()
 
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_vs_dunbrack",
 filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_vs_dunbrack.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotamerRecoveryFeatures"),
-run=function(){
+run=function(self){
 
 
 sele <- "
@@ -48,7 +48,7 @@ p <- p + labs(x="Score",
               y="AutomorphicRMSD")
 p <- p + theme_bw()
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

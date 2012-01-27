@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "pi_helices",
 filename = "scripts/analysis/plots/secondary_structure/pi_helices.R",
 author = "Matthew O'Meara",
@@ -33,7 +33,7 @@ Questions:
   * Does Rosetta recapitulate the hydrogen bond geometry that form pi-helices?
   * Does Rosetta recapitulate the geometry of backbone-backbone i<-i+5 hydrogen bonds?",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 
 
@@ -100,7 +100,7 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -122,7 +122,7 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -142,7 +142,7 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 f$chi_deg <- f$chi*180/pi
@@ -162,7 +162,7 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -194,7 +194,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 	}
 
-	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)
 })
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

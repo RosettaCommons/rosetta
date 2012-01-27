@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_differences_salt_bridge",
 filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_salt_bridge.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotamerRecoveryFeatures", "SaltBridgeFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -81,7 +81,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	p <- ggplot(data=sub_f, aes(x=psi, y=rho, color=don_rr)) + plot_parts +
 		opts(title = paste("Salt Bridge PSI vs RHO, B-Factor < 30\nss_id: ", ss_id,sep="")) +
 		scale_x_continuous("Angle Around Donor (Degrees)")
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "rotamer_recovery_donor_salt_bridge_psi_rho_by_acc_type_don_res_type"
 	sub_f <- ddply(sub_f, .(acc_type, don_res_type), transform, length(sample_source))
@@ -89,7 +89,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		opts(title = paste("Salt Bridge PSI vs RHO, B-Factor < 30\nss_id: ", ss_id, sep="")) +
 		facet_grid( acc_type ~ don_res_type ) +
 		scale_x_continuous("Angle Around Donor (Degrees)")
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "rotamer_recovery_donor_salt_bridge_psi_rho_by_seq_sep_don_res_type"
 	sub_f <- ddply(sub_f, .(seq_sep, don_res_type), transform, length(sample_source))
@@ -97,7 +97,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		opts(title = paste("Salt Bridge PSI vs RHO, B-Factor < 30\nss_id: ", ss_id, sep="")) +
 		facet_grid( seq_sep ~ don_res_type ) +
 		scale_x_continuous("Angle Around Donor")
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 
 
@@ -111,7 +111,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	p <- ggplot(data=sub_f, aes(x=theta, y=rho, color=don_rr)) + plot_parts +
 		opts(title = paste("Salt Bridge THETA vs RHO, B-Factor < 30\nss_id: ", ss_id, sep="")) +
 		scale_x_continuous("Angle Out of Donor Plane")
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 
 	plot_id <- "rotamer_recovery_donor_salt_bridge_theta_rho_by_acc_type_don_res_type"
@@ -120,7 +120,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		opts(title = paste("Salt Bridge THETA vs RHO, B-Factor < 30\nss_id: ", ss_id, sep="")) +
 		facet_grid( acc_type ~ don_res_type ) +
 		scale_x_continuous("Angle Out of Donor Plane (Degrees)")
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 
 	plot_id <- "rotamer_recovery_donor_salt_bridge_theta_rho_by_seq_sep_don_res_type"
@@ -129,7 +129,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		opts(title = paste("Salt Bridge THETA vs RHO, B-Factor < 30\nss_id: ", ss_id, sep=""))+
 		facet_grid( seq_sep ~ don_res_type ) +
 		scale_x_continuous("Angle Out of Donor Plane")
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 })
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

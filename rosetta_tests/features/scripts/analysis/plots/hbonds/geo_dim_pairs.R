@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "geo_dim_pairs",
 filename = "scripts/analysis/plots/hbonds/geo_dim_pairs.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 do_query <- function(dOH_clause, sample_source){
 	sele <- paste("
@@ -85,13 +85,13 @@ d_ply(sample_sources, .(sample_source), function(ss){
 	ggplot(f, aes(x=cosBAH)) + plot_parts_scatter +
 	  labs(x="cos(Base -- Acceptor -- Hydrogen)") +
 		opts(title = paste("Hydrogen Bonds cosBAH vs AHdist for AHX donors with AHX, HXL, CXA, CXL, or PBA acceptors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_scatter_dOH_1_cosAHD", ss_id, sep="_")
 	ggplot(f, aes(x=cosAHD)) + plot_parts_scatter +
 	  labs(x="cos(Acceptor -- Hydrogen -- Donor)") +
 		opts(title = paste("Hydrogen Bonds cosAHD vs AHdist for AHX donors with AHX, HXL, CXA, CXL, or PBA acceptors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	quantile_ranges <-
 	    data.frame(xmin=c(1.579960, 1.653311, 1.676390, 1.698214, 1.717584, 1.733008, 1.748605, 1.768427, 1.791709, 1.863508),
@@ -103,14 +103,14 @@ d_ply(sample_sources, .(sample_source), function(ss){
 	ggplot(dens, aes(x=acos(x)*180/pi)) + plot_parts_window +
 		labs(x='Base -- Acceptor -- Hydrogen (degrees)') +
 		opts(title = paste("Hydrogen Bonds cosBAH by AHdist windows for AHX donors with AHX, HXL, CXA, CXL, or PBA acceptors\nnormalized for equal weight per unit distance\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_sliding_window_dOH_1_cosAHD", ss_id, sep="_")
 	dens <- estimate_density(f, "cosAHD", quantile_ranges)
 	ggplot(dens, aes(x=acos(x)*180/pi)) + plot_parts_window +
 	  labs(x='Acceptor -- Hydrogen -- Donor (degrees)') +
 		opts(title = paste("Hydrogen Bonds cosAHD by AHdist windows for AHX donors with AHX, HXL, CXA, CXL, or PBA acceptors\nnormalized for equal weight per unit distanc\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 
 	################## dOH_2 ####################################
@@ -124,13 +124,13 @@ d_ply(sample_sources, .(sample_source), function(ss){
 	ggplot(f, aes(x=cosBAH)) + plot_parts_scatter +
 	  labs(x="cos(Base -- Acceptor -- Hydrogen)") +
 		opts(title = paste("Hydrogen Bonds cosBAH vs AHdist for HXL donors with AHX, HXL, CXA, CXL, or PBA acceptors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_scatter_dOH_2_cosAHD", ss_id, sep="_")
 	ggplot(f, aes(x=cosAHD)) + plot_parts_scatter +
 	  labs(x="cos(Acceptor -- Hydrogen -- Donor)") +
 		opts(title = paste("Hydrogen Bonds cosAHD vs AHdist for HXL donors with AHX, HXL, CXA, CXL, or PBA acceptors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	quantile_ranges <-
 	    data.frame(xmin=c(1.577235, 1.674924, 1.714609, 1.737923, 1.760393, 1.788916, 1.825436, 1.877424, 1.956450, 2.100728),
@@ -141,14 +141,14 @@ d_ply(sample_sources, .(sample_source), function(ss){
 	ggplot(dens, aes(x=acos(x)*180/pi)) + plot_parts_window +
 		labs(x='Base -- Acceptor -- Hydrogen (degrees)') +
 	  opts(title = paste("Hydrogen Bonds cosBAH by AHdist windows for HXL donors with AXL, HXL, CXA, CXL, or PBA acceptors\nnormalized for equal weight per unit distance\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_sliding_window_dOH_2_cosAHD", ss_id, sep="_")
 	dens <- estimate_density(f, "cosAHD", quantile_ranges)
 	ggplot(dens, aes(x=acos(x)*180/pi)) + plot_parts_window +
 	  labs(x='Acceptor -- Hydrogen -- Donor (degrees)') +
 	  opts(title = paste("Hydrogen Bonds cosAHD by AHdist windows for HXL donors with AXL, HXL, CXA, CXL, or PBA acceptors\nnormalized for equal weight per unit distance\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 
 	################## dOH_3 ####################################
@@ -160,13 +160,13 @@ d_ply(sample_sources, .(sample_source), function(ss){
 	ggplot(f, aes(x=cosBAH)) + plot_parts_scatter +
 	  labs(x="cos(Base -- Acceptor -- Hydrogen)") +
 		opts(title = paste("Hydrogen Bonds cosBAH vs AHdist for AHX or HXL donors with IMD or IME acceptors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_scatter_dOH_3_cosAHD", ss_id, sep="_")
 	ggplot(f, aes(x=cosAHD)) + plot_parts_scatter +
 	  labs(x="cos(Acceptor -- Hydrogen -- Donor)") +
 		opts(title = paste("Hydrogen Bonds cosAHD vs AHdist for AHX or HXL donors with IMD or IME acceptors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	quantile_ranges <-
 	    data.frame(xmin=c(1.834432, 1.901671, 1.921783, 1.936392, 1.948883, 1.965945, 1.991784, 2.065187, 2.282928, 2.351500),
@@ -177,14 +177,14 @@ d_ply(sample_sources, .(sample_source), function(ss){
 	ggplot(dens, aes(x=acos(x)*180/pi)) + plot_parts_window +
 		labs(x='Base -- Acceptor -- Hydrogen (degrees)') +
 	  opts(title =paste( "Hydrogen Bonds cosBAH by AHdist windows for AHX or HXL donors with IMD or IME acceptors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <-paste( "geo_dim_sliding_window_dOH_3_cosAHD", ss_id, sep="_")
 	dens <- estimate_density(f, "cosAHD", quantile_ranges)
 	ggplot(dens, aes(x=acos(x)*180/pi)) + plot_parts_window +
 	  labs(x='Acceptor -- Hydrogen -- Donor (degrees)') +
 	  opts(title = paste("Hydrogen Bonds cosAHD by AHdist windows for AHX or HXL donors with IMD or IME acceptors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 
 	################## aOHsc ####################################
@@ -196,14 +196,14 @@ d_ply(sample_sources, .(sample_source), function(ss){
 	ggplot(f, aes(x=cosBAH)) + plot_parts_scatter +
 	  labs(x="cos(Base -- Acceptor -- Hydrogen)") +
 		opts(title = paste("Hydrogen Bonds cosBAH vs AHdist for AHX or HXL acceptors with SC donors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_scatter_aOHsc_cosAHD", ss_id, sep="_")
 	ggplot(f, aes(x=cosAHD)) + plot_parts_scatter +
 	  labs(x="cos(Acceptor -- Hydrogen -- Donor)") +
 		opts(title = paste("Hydrogen Bonds cosAHD vs AHdist for AHX or HXL acceptors with SC donors\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 })
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

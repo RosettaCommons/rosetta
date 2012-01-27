@@ -7,9 +7,9 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-setClass("FeatureAnalysis",
+setClass("FeaturesAnalysis",
 	representation(
-		# Unique identifier for the feature analysis
+		# Unique identifier for the features analysis
 		# e.g. if unspecified use the filename instead
 		id = "character",
 
@@ -33,30 +33,30 @@ setClass("FeatureAnalysis",
 
 		# Which FeatureReporter objects need to be extracted
 		# into the feature database for each sample source in
-		# order to run this feature analysis
+		# order to run this features analysis
 		# See https://wiki.rosettacommons.org/index.php/FeaturesDatabaseSchema
 		feature_reporter_dependencies = "vector",
 
-		# The feature analysis to be run
+		# The features analysis to be run
 		run="function"),
 	prototype(
 		id = "",
 		filename="",
 		author="",
-		brief_description = "Class for feature analysis script.",
-		long_description = "Instantiate this class to create feature a feature analysis.  This is usually done in a feature analysis script. See scripts/analysis/plots/EXAMPLE_PLOT.R",
+		brief_description = "Class for features analysis script.",
+		long_description = "Instantiate this class to create feature a features analysis.  This is usually done in a features analysis script. See scripts/analysis/plots/EXAMPLE_PLOT.R",
 		keywords = NA,
 		feature_reporter_dependencies = NA,
-		run=function(){print("Implement this function to preform the feature analysis script")}))
+		run=function(self){print("Implement this function to preform the features analysis script")}))
 
 
 
-# Here is an example of how to create a FeatureAnalysis object
-#z <- new("FeatureAnalysis",
-#	id ="test_feature_analysis",
+# Here is an example of how to create a FeaturesAnalysis object
+#z <- new("FeaturesAnalysis",
+#	id ="test_features_analysis",
 #	brief_description="breif_description",
 #	long_description="long_description",
 #	feature_reporter_dependencies=c("abc"),
-#	run=function(){print("Running test feature analysis")})
+#	run=function(self){print("Running test features analysis")})
 
 

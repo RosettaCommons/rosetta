@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "dssp_content",
 filename = "scripts/analysis/plots/secondary_structure/dssp_content.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -52,6 +52,6 @@ ggplot(data=f) + theme_bw() +
 	coord_flip() +
 	opts(legend.position="none") +
         labs(y="Fraction of All Residues in Each Sample Source")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

@@ -9,13 +9,13 @@
 
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "zero_score_cusp",
 filename = "scripts/analysis/plots/scores/zero_score_cusp.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResidueFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -58,6 +58,6 @@ p <- p + labs(x=expression(paste('Acceptor -- Donor Distance (', ring(A), ')')),
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

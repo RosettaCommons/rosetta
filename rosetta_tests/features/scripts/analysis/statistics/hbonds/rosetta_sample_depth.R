@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_by_secondary_structure",
 filename = "scripts/analysis/plots/salt_bridges/geo_dim_1d.R",
 author = "Matthew O'Meara",
@@ -26,7 +26,7 @@ similar. Therefore the cross validation grouping will be done over
 the input sequences.",
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -83,7 +83,7 @@ p <- ggplot(z) + theme_bw() +
 	opts(title=paste("Kullback-Leibler divergence of full cross validation of number of Rosetta predictions per sequence\nComputed for HBond A-H distances for sidechain-sidechain bonds with seq. sep. > 5")) +
 	scale_x_continuous("Number of Rosetta predictions per Sequence") +
 	scale_y_continuous("KL-Divergence (50 bin)")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 nstruct <- seq(5, 120, 5)
 z <- adply(nstruct, 1, function(n){
@@ -101,7 +101,7 @@ p <- ggplot(z) + theme_bw() +
 	opts(title=paste("Kullback-Leibler divergence of full cross validation of number of Rosetta predictions per sequence\nComputed for HBond A-H distances for sidechain-sidechain bonds with seq. sep. > 5")) +
 	scale_x_continuous("Number of Rosetta predictions per Sequence") +
 	scale_y_continuous("KL-Divergence (50 bin)")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -121,7 +121,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		opts(title = paste("Hydrogen Bonds A-H Distance by Cross Validation Group\nnormalized for equal weight per unit distance ss_id:", ss_id)) +
 		scale_y_continuous("KL Divergence (50 bins)")
 		scale_x_continuous("Donor and Acceptor Chemical Type")
-	save_plots(plot_id, sample_sources, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 })
 
 
@@ -155,7 +155,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 	}
 
-	save_plots(plot_id, sample_sources, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 })
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

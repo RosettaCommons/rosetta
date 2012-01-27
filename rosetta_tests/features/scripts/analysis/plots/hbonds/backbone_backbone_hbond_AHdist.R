@@ -79,7 +79,7 @@
 #p <- p + theme_bw()
 #p <- p + scale_x_continuous(limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 #
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
 #
 #dens <- estimate_density_1d(
@@ -98,7 +98,7 @@
 #p <- p + theme_bw()
 #p <- p + scale_x_continuous(limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 #
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
 #dens <- estimate_density_1d(
 #  data = all,
@@ -117,4 +117,4 @@
 #p <- p + theme_bw()
 #p <- p + scale_x_continuous(limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 #
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)

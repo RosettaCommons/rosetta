@@ -58,6 +58,12 @@ iscript_includes <- function(includes){
 }
 
 
+iscript_setup_analysis_manager <- function(analysis_manager_db){
+	cat("analysis_manager_con <- initialize_analysis_manager_db(\n",
+		"	\"", analysis_manager_db, "\")\n\n",
+		file=iscript_fname, append=TRUE, sep="")
+}
+
 iscript_sample_sources <- function(sample_sources){
   cat("#directory were the .db3 feature database are located\n",
       file=iscript_fname, append=TRUE)
@@ -111,8 +117,16 @@ iscript_run_feature_analyses <- function(){
   cat("\n", file=iscript_fname, append=TRUE)
 	cat("#Run these feature_analyses:\n",
 			file=iscript_fname, append=TRUE)
-	cat("for(feature_analysis in feature_analyses){
-	feature_analysis@run()
+	cat("for(features_analysis in feature_analyses){
+
+	# In order to assist in running the script interactively, rather
+	# than just running it, setup the input parameters in the current
+	# evironment and then evaluate the body of the function in the
+	# current frame as well..
+
+	self <- features_analysis
+	eval(body(features_analysis@run))
+
 }\n\n",
 			file=iscript_fname, append=TRUE)
 }

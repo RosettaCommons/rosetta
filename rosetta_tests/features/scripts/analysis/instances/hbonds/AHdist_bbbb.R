@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_bbbb",
 filename = "scripts/analysis/instances/hbonds/AHdist_bbbb.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -38,33 +38,42 @@ WHERE
 	acc.HBChemType == 'hbacc_PBA' AND don.HBChemType == 'hbdon_PBA'
 LIMIT 15;"
 f <- query_sample_sources(sample_sources, sele)
-ss_ids <- as.character(unique(f$sample_source))
-g <- cast(f, tag + chain + resNum + CA + C + O ~ sample_source, value = "divergence")
-g$rel_div <- g[,ss_ids[1]] - g[,ss_ids[2]]
-g <- g[order(g$rel_div),]
-g$id <- 1:nrow(g)
+
+#TODO fix bug:
 
 
-dens <- estimate_density_1d(
-	data = g, ids = c(), variable = "rel_div", n_pts=500)
+#Error in `[.data.frame`(sort_df(data, variables), , c(variables, "value"),  : 
+#  undefined columns selected
+#Calls: <Anonymous> ... lapply -> is.vector -> condense -> [ -> [.data.frame
+#Execution halted
 
-plot_id <- "rotamer_recovery_LYS_relative_divergence"
-p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=log(y+1))) +
-	opts(title = paste("Lysine Relative Rotamer Recovery\nbetween ", paste(ss_ids, collapse=" and "),", B-Factor < 20", sep="")) +
-	labs(x="Automorphic RMSD_1 - Automorphic RMSD_2", y="log(FeatureDensity + 1)")
-if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
-}
-save_plots(plot_id, sample_sources[sample_sources$sample_source %in% ss_ids,], output_dir, output_formats)
+#ss_ids <- as.character(unique(f$sample_source))
+#g <- cast(f, tag + chain + resNum + CA + C + O ~ sample_source, value = "divergence")
+#g$rel_div <- g[,ss_ids[1]] - g[,ss_ids[2]]
+#g <- g[order(g$rel_div),]
+#g$id <- 1:nrow(g)
+#
+#
+#dens <- estimate_density_1d(
+#	data = g, ids = c(), variable = "rel_div", n_pts=500)
+#
+#plot_id <- "rotamer_recovery_LYS_relative_divergence"
+#p <- ggplot(data=dens) + theme_bw() +
+#	geom_line(aes(x=x, y=log(y+1))) +
+#	opts(title = paste("Lysine Relative Rotamer Recovery\nbetween ", paste(ss_ids, collapse=" and "),", B-Factor < 20", sep="")) +
+#	labs(x="Automorphic RMSD_1 - Automorphic RMSD_2", y="log(FeatureDensity + 1)")
+#if(nrow(sample_sources) <= 3){
+#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+#}
+#save_plots(self, plot_id, sample_sources[sample_sources$sample_source %in% ss_ids,], output_dir, output_formats)
+#
+#n_examples <- 50
+#gm <- melt(g[g$id <= n_examples,],
+#	id.vars=c("sample_source", "tag", "id", "chain", "resNum"),
+#	measure.vars=c("CA", "C", "O"),
+#	variable_name = "atom")
+#
+#instances_id <- "AHdist_bbbb"
+#prepare_feature_instances(instances_id, sample_sources, gm)
 
-n_examples <- 50
-gm <- melt(g[g$id <= n_examples,],
-	id.vars=c("sample_source", "tag", "id", "chain", "resNum"),
-	measure.vars=c("CA", "C", "O"),
-	variable_name = "atom")
-
-instances_id <- "AHdist_bbbb"
-prepare_feature_instances(instances_id, sample_sources, gm)
-
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "dehydron",
 filename = "scripts/analysis/plots/solvation/dehydron.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 
 ### BY ENERGY ####
@@ -58,9 +58,9 @@ ggplot(data=dens) + theme_bw() +
 	opts(title = "Backbone Backbone Hydrogen Bond Energy by Dehydron Wrapping Count") +
 	labs(x="Rosetta Predicted Energy(lower is better geometry)",
 	     y="FeatureDensity") +
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #print(cov(all_geom$energy, all_geom$wrapping_count))
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

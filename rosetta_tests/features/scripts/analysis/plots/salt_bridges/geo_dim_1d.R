@@ -9,13 +9,13 @@
 
 check_setup()
 
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_by_secondary_structure",
 filename = "scripts/analysis/plots/salt_bridges/geo_dim_1d.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("SaltBridgeFeatures"),
-run=function(){
+run=function(self){
 
 
 sele <-"
@@ -73,7 +73,7 @@ p <- ggplot(data=dens) + plot_parts +
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 plot_id <- "salt_bridge_psi_by_acc_type_don_res_type"
@@ -85,7 +85,7 @@ p <- ggplot(data=dens) + plot_parts +
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #plot_id <- "salt_bridge_psi_by_orbital_don_res_type"
@@ -97,7 +97,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #if(nrow(sample_sources) <= 3){
 #	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #plot_id <- "salt_bridge_psi_by_acc_chem_type_don_res_type"
@@ -109,7 +109,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #if(nrow(sample_sources) <= 3){
 #	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 #plot_id <- "salt_bridge_psi_by_orbital_acc_chem_type"
 #dens <- estimate_density_1d_wrap(f, c("sample_source", "orbital", "acc_chem_type"), "psi", xlim=c(-180, 180), adjust=.2)
@@ -120,7 +120,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #if(nrow(sample_sources) <= 3){
 #	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_psi_by_seq_sep_don_res_type"
 dens <- estimate_density_1d(f, c("sample_source", "seq_sep", "don_res_type"), "psi", xlim=c(-180, 180), adjust=.2)
@@ -131,7 +131,7 @@ p <- ggplot(data=dens) + plot_parts +
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -148,7 +148,7 @@ p <- ggplot(data=dens) + plot_parts +
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 plot_id <- "salt_bridge_theta_by_acc_type_don_res_type"
@@ -160,7 +160,7 @@ p <- ggplot(data=dens) + plot_parts +
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #plot_id <- "salt_bridge_theta_by_orbital_don_res_type"
@@ -172,7 +172,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #if(nrow(sample_sources) <= 3){
 #	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
 #
 #plot_id <- "salt_bridge_theta_by_acc_chem_type_don_res_type"
@@ -184,7 +184,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #if(nrow(sample_sources) <= 3){
 #	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
 #plot_id <- "salt_bridge_theta_by_orbital_acc_chem_type"
 #dens <- estimate_density_1d(f, c("sample_source", "orbital", "acc_chem_type"), "theta")
@@ -195,7 +195,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #if(nrow(sample_sources) <= 3){
 #	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_theta_by_seq_sep_don_res_type"
 dens <- estimate_density_1d(f, c("sample_source", "seq_sep", "don_res_type"), "theta")
@@ -206,7 +206,7 @@ p <- ggplot(data=dens) + plot_parts +
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -228,7 +228,7 @@ p <- ggplot(data=dens) + plot_parts +
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 plot_id <- "salt_bridge_rho_by_acc_type_don_res_type"
@@ -240,7 +240,7 @@ p <- ggplot(data=dens) + plot_parts +
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #plot_id <- "salt_bridge_rho_by_acc_chem_type_don_res_type"
@@ -252,7 +252,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #if(nrow(sample_sources) <= 3){
 #	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
 #plot_id <- "salt_bridge_rho_by_orbital_acc_chem_type"
 #dens <- estimate_density_1d(f, c("sample_source", "orbital", "acc_chem_type"), "rho", radial_3d_normalization)
@@ -263,7 +263,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #if(nrow(sample_sources) <= 3){
 #	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_rho_by_seq_sep_don_res_type"
 dens <- estimate_density_1d(f, c("sample_source", "seq_sep", "don_res_type"), "rho", radial_3d_normalization)
@@ -274,6 +274,6 @@ p <- ggplot(data=dens) + plot_parts +
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

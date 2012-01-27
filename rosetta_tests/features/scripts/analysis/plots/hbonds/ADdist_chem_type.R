@@ -9,7 +9,7 @@
 
 source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "ADdist_chem_type",
 filename = "scripts/analysis/plots/hbonds/ADdist_chem_type.R",
 author = "Matthew O'Meara",
@@ -49,7 +49,7 @@ hydroxyl acceptor (e.g., in a tyrosine) a protein backbone donor
 
 feature_reporter_dependencies = c("HBondFeatures"),
 
-run=function(){
+run=function(self){
 
 sele <- "
 SELECT
@@ -118,7 +118,7 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

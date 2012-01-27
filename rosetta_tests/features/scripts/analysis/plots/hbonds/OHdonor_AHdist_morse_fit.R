@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "OHdonor_AHdist_morse_fit",
 filename = "scripts/analysis/plots/hbonds/OHdonor_AHdist_morse_fit.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 morse_fn <- function(x, D_a, a, r_0, min_e){
 	D_a*(1+exp(-2*a*(x-r_0))-2*exp(-a*(x-r_0)))+min_e
@@ -78,7 +78,7 @@ dens <- estimate_densities(
 	"(don.HBChemType='hbdon_AHX' OR don.HBChemType='hbdon_HXL')")
 ggplot(dens) + plot_parts +
 	opts(title = "Hydrogen Bonds A-H Distance for HXL or AHX donors\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 plot_id <- "AHdist_dOH_1_fit_energy"
@@ -89,7 +89,7 @@ dens <- estimate_densities(
    acc.HBChemType='hbacc_PBA')")
 ggplot(dens) + plot_parts +
 	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type for AHX donors with AHX, HXL, CXA, CXL, or PBA acceptors\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "AHdist_dOH_2_fit_energy"
 dens <- estimate_densities(
@@ -99,7 +99,7 @@ dens <- estimate_densities(
    acc.HBChemType='hbacc_PBA')")
 ggplot(dens) + plot_parts +
 	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type for HXL donors with AXL, HXL, CXA, CXL, or PBA acceptors\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "AHdist_dOH_3_fit_energy"
 dens <- estimate_densities(
@@ -107,7 +107,7 @@ dens <- estimate_densities(
 	 (acc.HBChemType='hbacc_IMD' OR acc.HBChemType='hbacc_IME')")
 ggplot(dens) + plot_parts +
 	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type for AHX or HXL donors with IMD or IME acceptors\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

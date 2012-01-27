@@ -9,13 +9,13 @@
 
 check_setup()
 
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_vs_score",
 filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_vs_score.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotamerRecoveryFeatures"),
-run=function(){
+run=function(self){
 
 
 res_types <- c(
@@ -86,7 +86,7 @@ ldply(res_types, function(res_type){
                 y="log(AutomorphicRMSD + 1)")
   p <- p + theme_bw()
 
-  save_plots(subplot_id, sample_sources, output_dir, output_formats)
+  save_plots(self, subplot_id, sample_sources, output_dir, output_formats)
 })
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

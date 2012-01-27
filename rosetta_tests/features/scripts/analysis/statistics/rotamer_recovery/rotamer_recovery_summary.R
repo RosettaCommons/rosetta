@@ -8,17 +8,17 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_summary",
 filename = "scripts/analysis/statistics/rotamer_recovery/rotamer_recovery_summary.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "
-This feature analysis requires the comparison to be the RRComparerRotBins
+This features analysis requires the comparison to be the RRComparerRotBins
 ",
 
 feature_reporter_dependencies = c("RotamerRecoveryFeatures", "PdbDataFeatures"),
-run=function(){
+run=function(self){
 
 library(ascii)
 
@@ -119,4 +119,4 @@ print(ascii(g, caption="Recovery of Chi Angle Rotamers after applying MinPack by
 
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

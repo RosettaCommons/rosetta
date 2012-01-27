@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chi_chem_type_long_range",
 filename = "scripts/analysis/plots/hbonds/chi_chem_type_long_range.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -93,7 +93,7 @@ l_ply(levels(dens$hybrid), function(hybrid){
 		scale_y_continuous('Feature Density') +
 		opts(legend.position=c(.58,.35)) +
 		opts(legend.justification=c("left", "top"))
-	save_plots(plot_id, sample_sources, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 })
 
 
@@ -126,7 +126,7 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_backbone_backbone_cosAHD_bump",
 filename = "scripts/analysis/plots/hbonds/hbond_backbone_backbone_cosAHD_bump.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <- "
 SELECT
@@ -55,7 +55,7 @@ dens <- estimate_density_1d(
 	f, c("sample_source"), "cosAHD", adjust=.1, histogram=TRUE)
 ggplot(data=dens) + plot_parts +
 	opts(title = "Backbone Backbone Hydrogen Bond AHD Angle\nNormalized for equal Weight per Unit Angle") +
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "hbond_backbone_backbon_cosAHD_bump_by_don_res_type"
 dens <- estimate_density_1d(
@@ -63,7 +63,7 @@ dens <- estimate_density_1d(
 ggplot(data=dens) + plot_parts +
 	facet_wrap( ~ don_res_type) +
 	opts(title = "Backbone Backbone Hydrogen Bond AHD Angle by donor and acceptor residue types\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "hbond_backbone_backbon_cosAHD_bump_by_acc_res_type"
 dens <- estimate_density_1d(
@@ -71,7 +71,7 @@ dens <- estimate_density_1d(
 ggplot(data=dens) + plot_parts +
 	facet_wrap(~acc_res_type) +
 	opts(title = "Backbone Backbone Hydrogen Bond AHD Angle by donor and acceptor residue types\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #dens <- estimate_density_1d(
@@ -83,7 +83,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #ggplot(data=dens) + plot_parts +
 #	facet_grid(don_res_type ~ acc_res_type) +
 #	opts(title = "Backbone Backbone Hydrogen Bond AHdist by donor and acceptor residue types (restricted to cosAHD bump)\nnormalized for equal weight per unit distance")
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

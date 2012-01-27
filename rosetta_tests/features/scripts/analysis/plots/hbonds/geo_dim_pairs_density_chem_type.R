@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "geo_dim_pairs_density_chem_type",
 filename = "scripts/analysis/plots/hbonds/geo_dim_pairs_density_chem_type.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -75,32 +75,32 @@ plot_each_ss <- function(sub_f){
 	plot_id <- "geo_dim_pairs_density_cosBAH_AHdist_chem_type"
 	p <- ggplot(data=sub_f, aes(x=cosBAH, y=AHdist)) + plot_parts +
 		scale_x_cosBAH + scale_y_AHdist + set_plot_title("cosBAH", "AHdist", ss_id)
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_cosAHD_AHdist_chem_type"
 	p <- ggplot(data=sub_f, aes(x=cosAHD, y=AHdist)) + plot_parts +
 		scale_x_cosAHD + scale_y_AHdist + set_plot_title("cosAHD", "AHdist", ss_id)
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_chi_AHdist_chem_type"
 	p <- ggplot(data=sub_f, aes(x=chi, y=AHdist)) + plot_parts +
 		scale_x_chi + scale_y_AHdist + set_plot_title("CHI", "AHdist", ss_id)
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_cosAHD_cosBAH_chem_type"
 	p <- ggplot(data=sub_f, aes(x=cosAHD, y=cosBAH)) + plot_parts +
 		scale_x_cosAHD + scale_y_cosBAH + set_plot_title("cosAHD", "cosBAH", ss_id)
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_chi_cosBAH_chem_type"
 	p <- ggplot(data=sub_f, aes(x=chi, y=cosBAH)) + plot_parts +
 		scale_x_chi + scale_y_cosBAH + set_plot_title("CHI", "cosBAH", ss_id)
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_chi_cosAHD_chem_type"
 	p <- ggplot(data=sub_f, aes(x=chi, y=cosAHD)) + plot_parts +
 		scale_x_chi + scale_y_cosAHD + set_plot_title("CHI", "cosAHD", ss_id)
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 }
 
 runtime <- system.time(d_ply(f, .(sample_source), .fun=plot_each_ss))
@@ -108,4 +108,4 @@ print(paste("Plot Generation Time: ", runtime, sep=""))
 
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

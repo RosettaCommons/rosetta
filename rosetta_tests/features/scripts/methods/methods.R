@@ -57,6 +57,7 @@ ggplot_footer <- function(text){
 
 
 save_plots <- function(
+	features_analysis,
 	plot_id,
 	sample_sources,
 	output_dir,
@@ -69,10 +70,12 @@ save_plots <- function(
 			dir.create(file.path(output_dir, fmt$id), recursive=TRUE)
 		}
 		ss_ids <- paste(sample_sources$sample_source,collapse="_")
-		fname <- paste(plot_id, date_code(), "with", ss_ids, sep="_")
+		date <- date_code()
+		fname <- paste(plot_id, date, "with", ss_ids, sep="_")
 		full_path <- file.path(output_dir, fmt$id, paste(fname, fmt$extension, sep=""))
 		cat("Saving Plot: ", full_path, "\n")
 #		p <- last_plot() + ggplot_footer(analysis_script)
+		add_features_analysis_plot(features_analysis, plot_id, sample_sources, date, fname, fmt)
 		ggsave(
 			filename=full_path,
 			width=fmt$width,
@@ -80,13 +83,13 @@ save_plots <- function(
 			dpi=fmt$dpi,
 			scale=fmt$scale,
 			...)
+
 	})
 }
 
 set_db_cache_size <- function(con, cache_size){
-	res <- dbSendQuery(con,
+	dbGetQuery(con,
 		paste("PRAGMA cache_size=",as.integer(cache_size),";",sep=""))
-	dbClearResult(res)
 }
 
 
@@ -106,21 +109,19 @@ query_sample_sources <- function(
 		if( is.na(ss$sample_source[1]) ){
 			stop("Specified sample source is not defined")
 		}
-		con <- dbConnect(engine, as.character(ss$fname))
-
-		set_db_cache_size(con, cache_size);
-
 		timing <- system.time({
+			con <- dbConnect(engine, as.character(ss$fname))
+			set_db_cache_size(con, cache_size);
+
 			#Allow select statements to be prefaced with arbitrary statements.
 			#This allows the creation of temporary tables, indices, etc.
 			sele_split <- paste(strsplit(sele, ";\\W*", perl=TRUE)[[1]], ";", sep="")
 			l_ply(sele_split[-length(sele_split)], function(sele){
-	#			report_query_plan(con,sele);
-				dbSendQuery(con, sele)
+				dbGetQuery(con, sele)
 			})
 			last_stmt <- sele_split[length(sele_split)]
-	#		report_query_plan(con, last_stmt)
 			df <- dbGetQuery(con, last_stmt)
+			dbDisconnect(con)
 		})
 		cat(as.character(timing[3]),"s\n")
 		df
@@ -160,32 +161,35 @@ In the returned data.frame the there will be the following columns:
 	ref_ss <- sample_sources[1,]
 	con <- dbConnect(engine)
 	set_db_cache_size(con, cache_size);
-	dbSendQuery(con, paste("ATTACH DATABASE '", ref_ss$fname, "' AS ref;", sep=""))
+	dbGetQuery(con, paste("ATTACH DATABASE '", ref_ss$fname, "' AS ref;", sep=""))
 
 	features <- ddply(sample_sources[seq(2,nrow(sample_sources)),], c("sample_source"), function(ss){
 		tryCatch(c(ss),error=function(e){
 			cat("ERROR: The specified sample source is not defined.\n")
 		})
-		cat("loading: ref:", as.character(ref_ss$sample_source), " new:", as.character(ss$sample_source), " ... ", sep="")
+		cat("loading: ref:", as.character(ref_ss$sample_source),
+				" new:", as.character(ss$sample_source), " ... ", sep="")
 		if( is.na(ss$sample_source[1]) ){
 			stop("Specified sample source is not defined")
 		}
-		dbSendQuery(con, paste("ATTACH DATABASE '", ss$fname, "' AS new;", sep=""))
-
 		timing <- system.time({
+			dbGetQuery(con, paste("ATTACH DATABASE '", ss$fname, "' AS new;", sep=""))
+
 			#Allow select statements to be prefaced with arbitrary statements.
 			#This allows the creation of temporary tables, indices, etc.
 			sele_split <- paste(strsplit(sele, ";\\W*", perl=TRUE)[[1]], ";", sep="")
 			l_ply(sele_split[-length(sele_split)], function(sele){
-				dbSendQuery(con, sele)
+				dbGetQuery(con, sele)
 			})
 			last_stmt <- sele_split[length(sele_split)]
 			df <- dbGetQuery(con, last_stmt)
 		})
-		dbSendQuery(con, "DETACH DATABASE new;")
+		dbGetQuery(con, "DETACH DATABASE new;")
 		cat(as.character(timing[3]),"s\n")
 		df
 	})
+	dbDisconnect(con)
+
 	for(col in names(features)){
 		if(is.character(features[,col])){
 			features[,col] <- factor(features[,col])

@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "SSDist_Sheet_cosBAH",
 filename = "scripts/analysis/plots/secondary_structure/SSDist_Sheet_cosBAH.R",
 author = "Matthew O'Meara",
@@ -46,7 +46,7 @@ long_description = "
              |       |
 ",
 feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures", "HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 CREATE TEMPORARY TABLE ee_bb_bb_hbonds AS
@@ -143,7 +143,7 @@ p <- ggplot() + theme_bw() +
 if(nrow(sample_sources) <= 3){
   p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #ylims <- c(.1,5)
@@ -161,6 +161,6 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #  p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
 #
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

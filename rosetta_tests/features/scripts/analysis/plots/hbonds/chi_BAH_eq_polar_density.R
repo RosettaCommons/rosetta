@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chi_BAH_eq_polar_density",
 filename = "scripts/analysis/plots/hbonds/chi_BAH_eq_polar_density.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -115,7 +115,7 @@ plot_parts <- list(
 #		scale_x_continuous('', limits=capx_limits, breaks=c()) +
 #		scale_y_continuous('', limits=capy_limits, breaks=c()) +
 #		scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(15))
-#	save_plots(sub_plot_id, sample_sources[sample_sources$sample_source == ss_id,],
+#	save_plots(self, sub_plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 #		output_dir, narrow_output_formats)
 #})
 #
@@ -133,7 +133,7 @@ f <- ddply(f, c("sample_source", "acc_chem_type", "don_chem_type"),
 #		scale_x_continuous('', limits=capx_limits, breaks=c()) +
 #		scale_y_continuous('', limits=capy_limits, breaks=c()) +
 #		scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(15))
-#	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss,], output_dir, output_formats)
+#	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss,], output_dir, output_formats)
 #})
 
 plot_id = "chi_BAH_eq_polar_density"
@@ -150,9 +150,9 @@ d_ply(f, .(sample_source, don_chem_type, acc_chem_type), function(sub_f){
 			"Don:", sub_f$don_chem_type_name[1], " ",
 			"Acc:", sub_f$acc_chem_type_name[1], "\n",
 			"Equal Coordinate Projection   Sample Source: ", ss_id, sep=""))
-	save_plots(sub_plot_id, sample_sources[sample_sources$sample_source == ss_id,],
+	save_plots(self, sub_plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, output_formats)
 })
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

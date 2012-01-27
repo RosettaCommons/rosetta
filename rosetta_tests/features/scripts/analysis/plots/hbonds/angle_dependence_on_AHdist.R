@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "angle_dependence_on_AHdist",
 filename = "scripts/analysis/plots/hbonds/angle_dependence_on_AHdist.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -70,7 +70,7 @@ d_ply(f, .variables=("sample_source"), function(sub_f){
 	ggplot(data=dens, aes(acos(x)*180/pi, log(y+1))) + plot_parts +
 			scale_x_continuous('Base -- Acceptor -- Hydrogen (degrees)') +
 			opts(title = paste("Hydrogen Bond Angle at the Acceptor by Chemical Type and AHdist Quantile\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, sample_sources, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 	plot_id <- paste("cosAHD_AHdist_quantiles_", ss_id, "_by_chem_type", sep="")
 	dens <- estimate_density_1d_reflect_boundary(sub_f,
@@ -79,7 +79,7 @@ d_ply(f, .variables=("sample_source"), function(sub_f){
 	ggplot(data=dens, aes(acos(x)*180/pi, log(y+1))) + plot_parts +
 		scale_x_continuous('Acceptor -- Hydrogen -- Donor (degrees)') +
 		opts(title = paste("Hydrogen Bond Angle at the Hydrogen by Chemical Type and AHdist Quantile\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, sample_sources, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 	plot_id <- paste("chi_AHdist_quantiles_", ss_id, "_by_chem_type", sep="")
 	dens <- estimate_density_1d(sub_f,
@@ -87,8 +87,8 @@ d_ply(f, .variables=("sample_source"), function(sub_f){
 	ggplot(data=dens, aes(x, log(y+1))) + plot_parts +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,180, 270)) +
 		opts(title = paste("Hydrogen Bond Base-Acceptor Torsion Angle by Chemical Type and AHdist Quantile\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, sample_sources, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 })
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

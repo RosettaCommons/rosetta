@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_null",
 filename = "scripts/analysis/plots/hbonds/hbond_null.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 n_pts=10000
 
@@ -51,7 +51,7 @@ ggplot(data=dens) + theme_bw() +
 	opts(title = "3D Radial Length null Model by Normalization.") +
 	labs(x=expression(paste('Distance to Origin')),
 	     y="FeatureDensity"))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 # refine ggplot2::plotmatrix to use smaller sized points
@@ -86,7 +86,7 @@ plot_id = "3D_ball_null_model"
 plotmatrix(data=null.ball[,c("x", "y", "z")]) + theme_bw() +
 	opts(title = "3D Ball Null Model.") +
 	coord_equal(ratio=1)
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 gaussian.ball <- data.frame(x=rnorm(n_pts),y=rnorm(n_pts), z=rnorm(n_pts))
@@ -109,9 +109,9 @@ ggplot(data=dens) + theme_bw() +
 	opts(title = "Cosine of spherical Angle Null Model") +
 	labs(x=expression(paste('Cosine(Central Angle)')),
 	     y="FeatureDensity")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

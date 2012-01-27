@@ -9,7 +9,7 @@
 
 check_setup()
 
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "beta_mediated_hbonds",
 filename = "scripts/analysis/plots/secondary_structure/beta_mediated_hbonds.R",
 author = "Matthew O'Meara",
@@ -20,7 +20,7 @@ In this case, hydrogen bonds that are forming beta sheet mediated
 protein-protein interfaces.",
 
 feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures", "HBondFeatures"),
-run=function(){
+run=function(self){
 
 
 sele <-"
@@ -69,6 +69,6 @@ ggplot(data=dens) + theme_bw() +
 	     y="log(FeatureDensity + 1)") +
 	scale_y_continuous(limits=c(0,2.9), breaks=0:2) +
 	scale_x_continuous(limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6)) +
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

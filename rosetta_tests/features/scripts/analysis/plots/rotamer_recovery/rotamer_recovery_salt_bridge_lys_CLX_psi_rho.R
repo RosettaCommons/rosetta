@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_salt_bridge_lys_CLX_psi_rho",
 filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_salt_bridge_lys_CLX_psi_rho.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("SaltBridgeFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -82,7 +82,7 @@ d_ply(g, .(sample_source), function(sub_g){
 		facet_wrap( ~ acc_rr ) +
 		opts(title = paste("Salt Bridge LYS donor D/E acceptor, PSI vs RHO by Acceptor Rotamer Recovery\nB-Factor < 30 ss_id: ", ss_id,sep="")) +
 		scale_x_continuous("Angle Around Donor (Degrees)")
-	save_plots(plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, ss, output_dir, output_formats)
 })
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

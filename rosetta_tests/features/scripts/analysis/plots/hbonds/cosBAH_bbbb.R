@@ -9,7 +9,17 @@
 
 check_setup()
 
-plot_id <- "cosBAH_bbbb"
+
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
+id = "cosBAH_bbbb",
+filename = "scripts/analysis/plots/hbonds/cosBAH_bbbb.R",
+author = "Matthew O'Meara",
+
+brief_description = "Measure the Acceptor_Base--Acceptor--Hydrogen angle for backbone-backbone hydrogen bond interactions by sequence separation.",
+
+feature_reporter_dependencies = c("HBondFeatures"),
+
+run=function(self){
 
 sele <-"
 SELECT
@@ -38,6 +48,8 @@ dens <- estimate_density_1d(
   f, c("sample_source", "seq_sep"),
   "cosBAH" )
 
+plot_id <- "cosBAH_bbbb"
+
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-(180/pi*acos(x)), y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
@@ -50,4 +62,7 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
+})) # end FeaturesAnalysis

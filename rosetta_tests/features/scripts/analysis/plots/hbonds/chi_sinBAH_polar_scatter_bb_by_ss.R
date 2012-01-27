@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chi_sinBAH_polar_scatter_bb_by_ss",
 filename = "scripts/analysis/plots/hbonds/chi_sinBAH_polar_scatter_bb_by_ss.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 	ss <- sample_source[1,"sample_source"]
@@ -118,7 +118,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 		opts(title = paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
 		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', breaks=c(-1, 0, 1)) +
 		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', breaks=c(-1, 0, 1))
-	save_plots(plot_id, sample_source, output_dir, output_formats)
+	save_plots(self, plot_id, sample_source, output_dir, output_formats)
 
 	#orthographic projection
 	f <- transform(f,
@@ -135,8 +135,8 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 		opts(title = paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nOrthographic Projection   Sample Source: ", ss, sep="")) +
 		scale_x_continuous('sin(BAH) * cos(CHI)', breaks=c(-1, 0, 1)) +
 		scale_y_continuous('sin(BAH) * sin(CHI)', breaks=c(-1, 0, 1))
-	save_plots(plot_id, sample_source, output_dir, output_formats)
+	save_plots(self, plot_id, sample_source, output_dir, output_formats)
 })
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

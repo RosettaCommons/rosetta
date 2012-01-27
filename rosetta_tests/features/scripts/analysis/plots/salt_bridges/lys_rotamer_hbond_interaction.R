@@ -9,13 +9,13 @@
 
 check_setup()
 
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_by_secondary_structure",
 filename = "scripts/analysis/plots/salt_bridges/lys_rotamer_hbond_interaction.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("SaltBridgeFeatures", "HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -55,19 +55,19 @@ plot_id <- "lys_rotamer_hbond_interaction_AHdist"
 ggplot(f, aes(y=AHdist)) + plot_parts +
   opts(title = "Lysine Rotamer vs HBond AHdist Length") +
   labs(y=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "lys_rotamer_hbond_interaction_cosBAH"
 ggplot(f, aes(y=acos(cosBAH)*180/pi)) + plot_parts +
   opts(title = "Lysine Rotamer vs HBond Interaction cosBAH Angle") +
   labs(y=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "lys_rotamer_hbond_interaction_cosAHD"
 ggplot(f, aes(y=acos(cosAHD)*180/pi)) + plot_parts +
   opts(title = "Lysine Rotamer vs HBond Interaction cosAHD Angle") +
   labs(y=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

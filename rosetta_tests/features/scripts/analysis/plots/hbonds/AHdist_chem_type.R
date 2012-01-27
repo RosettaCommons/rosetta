@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_chem_type",
 filename = "scripts/analysis/plots/hbonds/AHdist_chem_type.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -58,23 +58,23 @@ dens <- estimate_density_1d(
 
 z <- smooth_comparison_statistics(dens, c("don_chem_type", "acc_chem_type"), smooth_kl_divergence)
 
-plot_id <- "emd_sample_size_correlation"
-p <- ggplot(data=z) + theme_bw() +
-	geom_point(aes(x=log(sample.size), y=log(statistic))) +
-	stat_smooth(aes(x=log(sample.size), y=log(statistic)), method="lm", se=F) +
-	opts(title = "Earth Mover's Distance as a function of Sample Size") +
-	scale_x_continuous("log(Sample Size)") +
-	scale_y_continuous("log(Earth Mover's Distance)")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
-
-plot_id <- "emd_sample_size_correlation"
-p <- ggplot(data=z[!(z$don_chem_type == "hbdon_PBA" & z$acc_chem_type == "hbacc_PBA"),]) + theme_bw() +
-	geom_point(aes(x=sample.size, y=statistic)) +
-	stat_smooth(aes(x=sample.size, y=statistic), method="lm", se=F) +
-	opts(title = "Earth Mover's Distance as a function of Sample Size") +
-	scale_x_continuous("Sample Size") +
-	scale_y_continuous("Earth Mover's Distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+#plot_id <- "emd_sample_size_correlation"
+#p <- ggplot(data=z) + theme_bw() +
+#	geom_point(aes(x=log(sample.size), y=log(statistic))) +
+#	stat_smooth(aes(x=log(sample.size), y=log(statistic)), method="lm", se=F) +
+#	opts(title = "Earth Mover's Distance as a function of Sample Size") +
+#	scale_x_continuous("log(Sample Size)") +
+#	scale_y_continuous("log(Earth Mover's Distance)")
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+#
+#plot_id <- "emd_sample_size_correlation"
+#p <- ggplot(data=z[!(z$don_chem_type == "hbdon_PBA" & z$acc_chem_type == "hbacc_PBA"),]) + theme_bw() +
+#	geom_point(aes(x=sample.size, y=statistic)) +
+#	stat_smooth(aes(x=sample.size, y=statistic), method="lm", se=F) +
+#	opts(title = "Earth Mover's Distance as a function of Sample Size") +
+#	scale_x_continuous("Sample Size") +
+#	scale_y_continuous("Earth Mover's Distance")
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -92,7 +92,7 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

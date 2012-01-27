@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_differences_by_secondary_structure",
 filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_differences_by_secondary_structure.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotamerRecoveryFeatures", "ResidueSecondaryStructureFeatures"),
-run=function(){
+run=function(self){
 
 
 sele <-"
@@ -70,7 +70,7 @@ d_ply(f, .(sample_source), function(sub_f) {
 		labs(x="New Rotamer Recovery Score - Ref Recovery Score", y="log(Density + 1)") +
 		opts(legend.position=c(.8, .25)) +
 		opts(legend.justification=c("left", "top"))
-	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)
 })
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

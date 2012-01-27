@@ -46,15 +46,16 @@ convert_parameter_set_into_database <- function(
 # return the HBPoly1D table
 get_polynomials <- function(rosetta_database_path, parameter_set, debug=FALSE){
 	con <- dbConnect("SQLite",
-	paste(rosetta_database_path, "scoring", "score_functions", "hbonds", parameter_set, "params.db3", sep="/"))
+		paste(rosetta_database_path,
+			"scoring/score_functions/hbonds", parameter_set, "params.db3", sep="/"))
 	poly_params <- dbGetQuery(con, "SELECT * FROM HBPoly1D;")
+	dbDisconnect(con)
 
 	if(debug){
 		cat("poly_params:\n")
 		print(poly_params)
 	}
 	poly_params
-
 }
 
 #return a polynom::polynomial object that represents the polynomial
@@ -143,7 +144,8 @@ evaluate_polynomial <- function(params, name){
 get_fade_intervals <- function(parameter_set_path, debug=FALSE){
 	con <- dbConnect("SQLite", paste(parameter_set_path, "/params.db3", sep=""))
 	fade_params <- dbGetQuery(con, "SELECT * FROM HBFadeIntervals;")
-
+	dbDisconnect(con)
+	
 	if(debug){
 		cat("fade_params:\n")
 		print(fade_params)
@@ -234,12 +236,15 @@ WHERE
 		p$which_poly <- which_poly
 		p
 	}
-	data.matrix(rbind(
+
+	params <- data.matrix(rbind(
 		poly_params("AHdist"),
 		poly_params("cosBAH_short"),
 		poly_params("cosBAH_long"),
 		poly_params("cosAHD_short"),
 		poly_params("cosAHD_long")))
+	dbDisconnect(con)
+	params
 }
 
 get_fade_parameters <- function(
@@ -262,11 +267,13 @@ WHERE
 		f$which_fade = which_fade
 		f
 	}
-	data.matrix(rbind(
+	params <- data.matrix(rbind(
 		fade_params("AHdist_short_fade"),
 		fade_params("AHdist_long_fade"),
 		fade_params("cosBAH_fade"),
 		fade_params("cosAHD_fade")))
+	dbDisconnect(con)
+	params
 }
 
 
@@ -317,6 +324,7 @@ WHERE name='",separation,"';", sep=""))
 			acc_chem_type: '", acc_chem_type, "'
 			separation:    '", separation, "'", sep=""))
 	}
+	dbDisconnect(con)
 	eval_type
 }
 

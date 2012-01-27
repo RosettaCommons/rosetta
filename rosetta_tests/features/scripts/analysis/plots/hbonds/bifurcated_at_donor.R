@@ -8,14 +8,14 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "bifurcated_at_donor",
 filename = "scripts/analysis/plots/hbonds/bifurcated_at_donor.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "The rank of a hydrogen bond at donor site or acceptor site is rank of the relative Rosetta HBond energy of the hydrogen bond at the site.",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 CREATE TEMPORARY TABLE hbs AS SELECT
@@ -108,7 +108,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		transform, counts = length(sample_source))
 	ggplot(sub_f) + plot_parts +
 		opts(title = paste("HBond Pairs Bifurcated at Donor; bFact < 30  ss_id:",ss_id))
-	save_plots(
+	save_plots(self, 
 		plot_id,
 		sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir,
@@ -125,7 +125,7 @@ d_ply(f, .(sample_source), function(sub_f){
 			opts(title = paste(
 				"HBond Pairs Bifurcated at ", don_chem_type_name, ";",
 				" bFact < 30    ss_id:",ss_id))
-		save_plots(
+		save_plots(self, 
 			plot_id,
 			sample_sources[sample_sources$sample_source == ss_id,],
 			output_dir, output_formats)
@@ -141,7 +141,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		opts(title = paste(
 			"HBond Backbone Donor Bifurcated to 2 Backbone acceptors;",
 			" bFact < 30    ss_id:",ss_id))
-	save_plots(
+	save_plots(self, 
 		plot_id,
 		sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, output_formats)
@@ -149,4 +149,4 @@ d_ply(f, .(sample_source), function(sub_f){
 })
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

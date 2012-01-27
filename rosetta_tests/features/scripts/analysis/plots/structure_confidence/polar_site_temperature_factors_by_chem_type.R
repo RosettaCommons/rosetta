@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "polar_site_temperature_factors_by_chem_type",
 filename = "scripts/analysis/plots/structure_confidence/polar_site_temperature_factors_by_chem_type.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <- "
 SELECT
@@ -49,7 +49,7 @@ ggplot(data=temperature_quantiles) + theme_bw() +
   opts(title = "Cumulative distribution of H-Bond heavy atom temperature factor by chemical type") +
 	scale_x_continuous("Temperature Factor", limit=c(0, 60)) +
 	scale_y_continuous("Fraction of polar sites less than temperature factor cut off")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -71,6 +71,6 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 #}
 #
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

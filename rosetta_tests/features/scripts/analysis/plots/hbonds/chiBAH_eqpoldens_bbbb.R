@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chiBAH_eqpoldens_bbbb",
 filename = "scripts/analysis/plots/hbonds/chiBAH_eqpoldens_bbbb.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -70,7 +70,7 @@ d_ply(f, .(sample_source), function(sub_f){
     coord_fixed(ratio = 1) +
     scale_fill_gradientn('log(Density+1)', colour=jet.colors(10)) +
 #         opts(legend.position="bottom", legend.direction="horizontal")
-  save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
+  save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,],
     output_dir, narrow_output_formats)
 
   plot_id = "chiBAH_eqpoldens_bbbb"
@@ -89,9 +89,9 @@ d_ply(f, .(sample_source), function(sub_f){
     coord_fixed(ratio = 1) +
     scale_fill_gradientn('Density', colour=jet.colors(10), limits=c(0,3)) +
 #         opts(legend.position="bottom", legend.direction="horizontal")
-  save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
+  save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,],
     output_dir, narrow_output_formats)
 })
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

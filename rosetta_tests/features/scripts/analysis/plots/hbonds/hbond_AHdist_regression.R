@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_AHdist_regression",
 filename = "scripts/analysis/plots/hbonds/hbond_AHdist_regression.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -137,7 +137,7 @@ by_chem_dens <- estimate_density_1d(
 #	facet_wrap(~sample_source, ncol=1) +
 #	scale_y_continuous("-log(FeatureDensity)", limits=c(-2,5), breaks=((0:15)/2-2.5))
 #	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.5,2.6), breaks=c(1.6, 1.9, 2.2, 2.5))
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 param.grid <- expand.grid(list(
@@ -192,7 +192,7 @@ plotmatrix(data=m.chem_type[,c("d", "a", "r", "m")], aes(colour=don_chem_type)) 
 	theme_bw() +
 	opts(title = "Parameters for Morse Potential fit to Hydrogen Bond AHdist Densities\nGrouped by Donor and Acceptor Chemical Types\nd*(1 + exp(-2*a*(x - r)) - 2*exp(-a*(x - r))) + m") +
 	coord_equal(ratio=1)
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 print(summary(dens.morse_fitted))
 plot_id <- "AHdist_morse_regression_residuals_by_chem_type"
@@ -206,7 +206,7 @@ a_ply(sample_sources, 1, function(sample_source){
 		     y="log(FeatureDensity + 1)") +
 		scale_y_continuous(limits=c(-5,10), breaks=c(0,10)) +
 		scale_x_continuous(limits=c(1.5,2.6), breaks=c(1.6, 1.9, 2.2, 2.5))
-	save_plots(plot_id, sample_source, output_dir, output_formats)
+	save_plots(self, plot_id, sample_source, output_dir, output_formats)
 })
 
 dens.poly_fitted <- ddply(by_chem_dens,
@@ -255,7 +255,7 @@ a_ply(sample_sources, 1, function(sample_source){
 		scale_y_continuous(limits=c(-.8,1.3)) +
 	#	scale_y_continuous(limits=c(-2,5), breaks=c(-2,0,2,4)) +
 		scale_x_continuous(limits=c(1.5,2.6), breaks=c(1.6, 1.9, 2.2, 2.5))
-	save_plots(plot_id, sample_source, output_dir, output_formats)
+	save_plots(self, plot_id, sample_source, output_dir, output_formats)
 })
 
 #l_ply(by_chem_dens, aes("don_chem_type", "acc_chem_type"), function(dens){
@@ -266,8 +266,8 @@ a_ply(sample_sources, 1, function(sample_source){
 #		opts(title = paste("HBond AHdist Fitted with Morse Function and Polynomial\nnormalized for equal weight per unit distance Donor:", don_chem_type, " Acceptor:", acc_chem_type, sep="")) +
 #		scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.5,2.6), breaks=c(1.6, 1.9, 2.2, 2.5)) +
 #		scale_y_continuous("log(FeatureDensity)")
-#	save_plots(plot_id, sample_sources, output_dir, output_formats)
+#	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #})
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

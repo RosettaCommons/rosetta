@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "EXAMPLE_PLOT",
 filename = "scripts/analysis/plots/EXAMPLE_PLOT.R",
 author = "Matthew O'Meara",
@@ -24,9 +24,10 @@ long_description = "
 
    rosetta_tests/features/build/output_web_raster/EXAMPLE_PLOT_<date_code>_<sample_source_id1>[_<sample_source_id2> ...].png",
 
+keywords = c("bar_chart"),
 feature_reporter_dependencies = c("ResidueFeatures"),
 
-run=function(){
+run=function(self){
 
 # The SQL query is applied to each sample source and the resulting
 # tables are appended together with an additional sample_source column
@@ -55,7 +56,7 @@ plot <- plot + opts(title="Dataset Size") + labs(x="Number of Residues", y="Coun
 plot_id <- "EXAMPLE_PLOT"
 
 # See './compare_sample_sources.R --help' about specifying the output_dir and output_formats.
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "SSDists_Sheet_O_O",
 filename = "scripts/analysis/plots/secondary_structure/SSDists_Sheet_O_O.R",
 author = "Matthew O'Meara",
@@ -46,7 +46,7 @@ long_description = "
              |       |
 ",
 feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures", "HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 CREATE TEMPORARY TABLE ee_bb_bb_hbonds AS
@@ -155,7 +155,7 @@ if(nrow(sample_sources) <= 3){
   p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 # zooom in on the anti_parallel peak
@@ -172,7 +172,7 @@ if(nrow(sample_sources) <= 3){
   p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 # zooom in on the parallel-minus peak
@@ -189,7 +189,7 @@ if(nrow(sample_sources) <= 3){
   p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 # zooom in on the parallel-plus peak
@@ -206,7 +206,7 @@ if(nrow(sample_sources) <= 3){
   p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

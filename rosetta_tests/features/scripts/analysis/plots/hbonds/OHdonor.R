@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "OHdonor",
 filename = "scripts/analysis/plots/hbonds/OHdonor.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -56,7 +56,7 @@ p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
 p <- p + scale_y_continuous(limits=c(0,2.9), breaks=0:2)
 p <- p + scale_x_continuous(limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "OHdonor_cosBAH_all_acceptor_types"
 dens <- estimate_density_1d(
@@ -71,7 +71,7 @@ p <- p + labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "OHdonor_cosAHD_all_acceptor_types"
 dens <- estimate_density_1d(
@@ -86,7 +86,7 @@ p <- p + labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "OHdonor_chi_all_acceptor_types"
 dens <- estimate_density_1d_wrap(
@@ -101,7 +101,7 @@ p <- p + labs(x=expression(paste('Acceptor Base -- Acceptor Torsion (degrees)'))
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -123,7 +123,7 @@ p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
 p <- p + scale_y_continuous(limits=c(0,2.9), breaks=0:2)
 p <- p + scale_x_continuous(limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "OHdonor_cosBAH_sidechain_acceptor_types"
 dens <- estimate_density_1d(
@@ -138,7 +138,7 @@ p <- p + labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "OHdonor_cosAHD_sidechain_acceptor_types"
 dens <- estimate_density_1d(
@@ -153,7 +153,7 @@ p <- p + labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "OHdonor_chi_sidechain_acceptor_types"
 dens <- estimate_density_1d_logspline(
@@ -168,9 +168,9 @@ p <- p + labs(x=expression(paste('Acceptor Base -- Acceptor Torsion (degrees)'))
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()
 p <- p + opts(axis.text.y=theme_blank())
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

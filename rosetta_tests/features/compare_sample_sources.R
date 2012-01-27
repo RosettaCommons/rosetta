@@ -19,7 +19,7 @@ iscript_header()
 
 # load_packages() will help the user to install the packages if they are missing
 source(paste(base_dir, "scripts/methods/load_packages.R", sep="/"))
-libraries <- c("optparse", "ggplot2", "RSQLite", "logspline", "plotrix", "plyr", "polynom")
+libraries <- c("reshape", "plyr", "optparse", "ggplot2", "RSQLite", "logspline", "plotrix", "polynom")
 load_packages(libraries)
 iscript_libraries(libraries)
 
@@ -29,7 +29,8 @@ includes <- c(
 	"scripts/methods/sample_sources.R",
 	"scripts/methods/methods.R",
 	"scripts/methods/density_estimation.R",
-	"scripts/methods/feature_analysis.R",
+	"scripts/methods/features_analysis.R",
+	"scripts/methods/analysis_manager.R",
 	"scripts/methods/ggplot2_geom_indicator.R",
 	"scripts/methods/ggplot2_scales.R",
 	"scripts/methods/instancer.R",
@@ -41,15 +42,28 @@ includes <- c(
 for(inc in includes) source(paste(base_dir, inc, sep="/"))
 iscript_includes(includes)
 
-option_list <- list(
+
+#Setup options
+option_list <- list()
+
+# Run level options
+option_list <- c(option_list, list(
 	make_option(c("-v", "--verbose"), action="store_true", default=FALSE, dest="verbose",
 							help="Print extra output [default]"),
+	make_option(c("--dry_run"), action="store_true", type="logical", default=FALSE, dest="dry_run",
+							help="Debug the analysis scripts but do not run them.  [Default \"%default\"]"),
+	make_option(c("--db_cache_size"), action="store_true", type="integer", default=10000, dest="db_cache_size",
+							help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]")))
+
+# Which analysis scripts should be run
+option_list <- c(option_list, list(
 	make_option(c("-i", "--script"), action="store", type="character", default=NULL, dest="script",
 							help="Path to a single analysis script.  [Default \"%default\"]"),
 	make_option(c("-a", "--analysis_dir"), type="character", default="scripts/analysis", dest="analysis_dir",
-							help="Directory where the analysis scripts are located. The supplied directory is searched recursively for files of the form \"*.R\".  [Default \"%default\"]"),
-	make_option(c("-s", "--sample_source_dir"), type="character", default="sample_sources", dest="sample_source_dir",
-							help="Directory where the feature databases are located. The supplied directory is searched recursively for SQLite database files of the form \"features_<sample_source_id>_<date_code>.db3\".  [Default \"%default\"]"),
+							help="Directory where the analysis scripts are located. The supplied directory is searched recursively for files of the form \"*.R\".  [Default \"%default\"]")))
+
+# Where should the results be stored?
+option_list <- c(option_list, list(
 	make_option(c("-o", "--output_dir"), type="character", default="build", dest="output_dir",
 							help="Directory where the output plots and statistics will be generated.  [Default \"%default\"]"),
 	make_option(c("--output_web_raster"), action="store_true", type="logical", default=TRUE, dest="output_web_raster",
@@ -73,21 +87,27 @@ option_list <- list(
 	make_option(c("--output_huge_vector"), action="store_true", type="logical", default=FALSE, dest="output_huge_vector",
 							help="Generate output plots suitable for hugeing in .svg format.  [Default \"%default\"]"),
 	make_option(c("--output_huge_pdf"), action="store_true", type="logical", default=FALSE, dest="output_huge_pdf",
-							help="Generate output plots suitable for hugeing in .pdf format.  [Default \"%default\"]"),
-	make_option(c("--db_cache_size"), action="store_true", type="integer", default=10000, dest="db_cache_size",
-							help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]"),
-	make_option(c("--dry_run"), action="store_true", type="logical", default=FALSE, dest="dry_run",
-							help="Debug the analysis scripts but do not run them.  [Default \"%default\"]"))
+							help="Generate output plots suitable for hugeing in .pdf format.  [Default \"%default\"]")))
+
+# Analysis manager options
+option_list <- c(option_list, list(
+	make_option(c("--analysis_manager_db"), type="character", default="analysis_manager.db3", dest="analysis_manager_db",
+							help="Store information about the results of the features analysis in the analysis manager database.  [Default \"<output_dir>/%default\"]"),
+	make_option(c("--store_plots_in_analysis_manager_db"), action="store_true", type="logical", default=FALSE, dest="store_plots_analysis_manager_db",
+							help="Should the plots themselves be stored in the the analysis manager database?  [Default \"%default\"]")))
 
 opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TRUE)
 
+#Setup analysis manager
+analysis_manager_db_path <- paste(
+	opt$options$output_dir, opt$options$analysis_manager_db, sep="/")
+iscript_setup_analysis_manager(analysis_manager_db_path)
+analysis_manager_con <- initialize_analysis_manager_db(
+	analysis_manager_db_path)
 
 #Setup sample sources
-if(length(opt$args) > 0){
-  #use feature databases specified as positional arguments
-	cat("Using supplied feature databases", opt$args, "\n")
-	data_sources <- opt$args
-} else {
+data_sources <- opt$args
+if(length(data_sources) == 0){
 	cat(
 		"ERROR: No sample_source databases were supplied",
 		"",
@@ -122,7 +142,12 @@ if(length(opt$args) > 0){
   quit()
 }
 sample_sources <- get_sample_sources(data_sources)
+add_sample_sources_to_analysis_manager(analysis_manager_con, sample_sources)
 iscript_sample_sources(sample_sources)
+cat("Comparing the following sample sources:\n")
+a_ply(sample_sources,1, function(ss){
+	cat("   ", as.character(ss$sample_source), " <- ", as.character(ss$fname), "\n")
+})
 
 #Setup analysis_scripts
 if("script" %in% names(opt$options)){
@@ -149,7 +174,6 @@ cat(paste(analysis_scripts, sep="", colapse="\n  "))
 cat("\n")
 
 
-
 #Validate ouput_dir
 if(!file.exists(opt$options$output_dir)){
 	print(paste("Creating output directory: '",opt$options$output_dir,"'...",sep=""))
@@ -170,25 +194,42 @@ iscript_output_formats(output_formats)
 db_cache_size <- opt$options$db_cache_size
 iscript_db_cache_size(db_cache_size)
 
-#Read in all the feature analysis scripts
+#Read in all the features analysis scripts
 iscript_source_scripts(analysis_scripts)
 
-# This is a vector of FeatureAnalysis objects that are defined each feature analysis script
+# This is a vector of FeaturesAnalysis objects that are defined each features analysis script
 feature_analyses <- c()
 for(analysis_script in analysis_scripts){
 	tryCatch(source(analysis_script), error=function(e){
-		cat(paste("ERROR: The analysis script '",analysis_script,"' failed with error:\n",e,sep=""))
+		cat(paste("ERROR: Failed to parse the Features Analysis '",analysis_script,"' with the following error message:\n",e,sep=""))
 	})
 }
 
 
-#Run all the feature analysis scripts
+#Run all the features analysis scripts
 iscript_run_feature_analyses()
 if(!opt$options$dry_run){
-	cat("run feature analyses\n")
-	for(feature_analysis in feature_analyses){
+	for(features_analysis in feature_analyses){
+		cat(paste("Features Analysis: ", features_analysis@id, "\n", sep=""))
 
-		feature_analysis@run()
+		tryCatch({
+			add_features_analysis_to_analysis_manager(
+				analysis_manager_con, features_analysis)
+		}, error=function(e){
+			cat(paste("ERROR: Failed to store the Features Analysis '", features_analysis@id, "' in the analysis manager and it failed wih the following error message:\n", e, sep=""))
+		})
+
+		tryCatch({
+			features_analysis@run(features_analysis)
+		}, error=function(e){
+			cat(paste("ERROR: Failed to run the Features Analysis '", features_analysis@id, "' with the follwing error message:\n", e, sep=""))
+		})
 		cat("\n")
 	}
+}
+
+# close connection to the analysis manager
+result <- dbDisconnect(analysis_manager_con)
+if(!result){
+	cat("ERROR: Failed to close the analysis manager database connection.\n")
 }

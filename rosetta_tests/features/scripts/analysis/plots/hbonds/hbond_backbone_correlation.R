@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_backbone_correlation",
 filename = "scripts/analysis/plots/hbonds/hbond_backbone_correlation.R",
 author = "Matthew O'Meara",
@@ -26,7 +26,7 @@ rsd
 		don_env
 ",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <- "
 CREATE INDEX IF NOT EXISTS hbond_sites_struct_id_resNum ON
@@ -88,10 +88,10 @@ d_ply(f, .(sample_source), function(sub_f){
 		labs(x=expression(paste('Backbone is Acceptor: Acceptor -- Proton Distance (', ring(A), ')')),
 			y=expression(paste('Backbone is Donor: Acceptor -- Proton Distance (', ring(A), ')')))
 
-	save_plots(
+	save_plots(self, 
 		plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, output_formats)
 })
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

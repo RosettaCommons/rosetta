@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "cosBAH_regression",
 filename = "scripts/analysis/plots/hbonds/cosBAH_regression.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -57,7 +57,7 @@ plot_id <- "hbond_cosBAH_regression_unified"
 ggplot(dens) + plot_parts +
   geom_line(aes(x=x, y=neg_log_y, color=sample_source)) +
   opts(title = "Hydrogen Bonds cosBAH\nnormalized for equal weight per unit distance") +
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #####  Fit by hybrid and sequence separation####
@@ -72,7 +72,7 @@ ggplot(dens) + plot_parts +
   geom_indicator(aes(indicator=counts, colour=sample_source)) +
   facet_grid(seq_sep_geq_6 ~ hybrid) +
   opts(title = "Hydrogen Bonds cosBAH by Hybridization and Sequence Separation\nnormalized for equal weight per unit distance") +
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 #####  Fit by hybrid and sequence separation####
 
@@ -90,9 +90,9 @@ d_ply(f, c("sample_source"), function(s_f){
 	  facet_grid(seq_sep_geq_6 ~ hybrid) +
 	  opts(title = paste("Hydrogen Bonds cosBAH by Hybridization and Sequence Separation\nnormalized for equal weight per unit distance  Sample Source: ", ss, sep="")) +
 		scale_y_continuous("-log(FeatureDensity)", limits=c(-2, 3))
-	save_plots(plot_id, sample_sources[sample_sources$sample_source==ss,], output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources[sample_sources$sample_source==ss,], output_dir, output_formats)
 })
 
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

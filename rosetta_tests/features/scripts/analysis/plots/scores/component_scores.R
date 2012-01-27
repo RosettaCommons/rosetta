@@ -9,13 +9,13 @@
 
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "component_scores",
 filename = "scripts/analysis/plots/scores/component_scores.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResidueFeatures"),
-run=function(){
+run=function(self){
 
 
 sele_1b <-"
@@ -50,7 +50,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	opts(title = "Rosetta Component Scores") +
 	labs(x="Rosetta Energy Units") +
 	scale_y_continuous("log(FeatureDensity + 1)", breaks=c(0, .3, .6))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

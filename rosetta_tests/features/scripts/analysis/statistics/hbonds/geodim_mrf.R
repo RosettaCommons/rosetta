@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "geodim_mrf",
 filename = "scripts/analysis/statistics/hbonds/geodim_mrf.R",
 author = "Matthew O'Meara",
@@ -19,7 +19,7 @@ compute a markov random field a collection of geometric features
 This is quite rough, and is a work in progress
 ",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 
 # number of folds to do cross validation
@@ -211,4 +211,4 @@ run <- function(nbins,k){
 
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

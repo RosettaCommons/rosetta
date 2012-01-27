@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_by_HBChemType",
 filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_by_HBChemType.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotamerRecoveryFeatures", "HBondFeatures"),
-run=function(){
+run=function(self){
 
 
 sele <-"
@@ -55,6 +55,6 @@ ggplot(data=dens) + theme_bw() +
 	opts(title = "Rotamer Recovery by Hydrogen Bond Chemical Type") +
 	labs(x="<- better      log(Automorphic RMSD + 1)      worse ->",
 			 y="log(FeatureDensity + 1)")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

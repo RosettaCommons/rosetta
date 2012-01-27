@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_by_rank",
 filename = "scripts/analysis/plots/hbonds/AHdist_by_rank.R",
 author = "Matthew O'Meara",
@@ -22,7 +22,7 @@ The indicator in each subplot counts the number of hbonds in each group for
 each sample sample source.",
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 description <-
 
@@ -84,21 +84,21 @@ d <- estimate_density_1d(f, c("sample_source", "donRank"), "AHdist", radial_3d_n
 ggplot(d, aes(colour=donRank)) + plot_parts +
   facet_wrap( ~ sample_source, ncol=1) +
   opts(title = "Hydrogen Bonds A-H Distance by Donor Rank\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "AHdist_by_accRank"
 d <- estimate_density_1d(f, c("sample_source", "accRank"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=accRank)) + plot_parts +
   facet_wrap( ~ sample_source, ncol=1) +
   opts(title = "Hydrogen Bonds A-H Distance by Acceptor Rank\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$donRank==1,]
 plot_id <- "AHdist_donRank_is_1"
 d <- estimate_density_1d(f1, c("sample_source"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=sample_source)) + plot_parts +
   opts(title = "Hydrogen Bonds A-H Distance, Primary HBond at Bifuracted Donor\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$donRank==1,]
 plot_id <- "AHdist_chem_type_donRank_is_1"
@@ -106,7 +106,7 @@ d <- estimate_density_1d(f1, c("sample_source", "don_chem_type", "acc_chem_type"
 ggplot(d, aes(colour=sample_source)) + plot_parts +
   facet_grid( don_chem_type ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds A-H Distance, Donor Rank=1\nnormalized for equal weight per unit distance")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

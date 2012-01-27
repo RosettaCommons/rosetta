@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chi_fit_cos_cosBAH_long_range",
 filename = "scripts/analysis/plots/hbonds/chi_fit_cos_cosBAH_long_range.R",
 author = "Matthew O'Meara",
@@ -18,7 +18,7 @@ These are example of asp/glu acceptors with his donors with long sequence
 separation and the chi angle between 160 and 200 -> which is the syn
 orbital sorted by hbond energy.",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 
 examples_sele <-"
@@ -132,7 +132,7 @@ ggplot(data=dens) + theme_bw() +
 	scale_y_continuous("Feature Density") +
 	opts(legend.position=c(.58,.35)) +
 	opts(legend.justification=c("left", "top"))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 #plot_id = "chi_cosBAH_chem_type_sp2_long_range_polar"
 #p <- ggplot(data=dens)
@@ -145,7 +145,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #p <- p + coord_polar(theta="x")
 #p <- p + scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270))
 #
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 dens <- estimate_density_1d_wrap(
@@ -160,7 +160,7 @@ ggplot(data=dens) + theme_bw() +
   facet_grid(don_chem_type ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds CHI Angle by Acceptor types with sequence separation at least 6\n(normalized for equal volume per unit distance)") +
   scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

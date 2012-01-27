@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "solvation_vs_hbonding_scatter",
 filename = "scripts/analysis/plots/solvation/solvation_vs_hbonding_scatter.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures", "GeometricSolvationFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -44,6 +44,6 @@ ggplot(data=f) + theme_bw() +
 	opts(title = "Geometric Solvation score vs HBonding score for Polar Sites") +
 	labs(x="Geometric Solvation Score",
 	     y="Hydrogen Bond Score") +
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

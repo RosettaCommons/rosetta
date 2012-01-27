@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_regression",
 filename = "scripts/analysis/plots/hbonds/hbond_regression.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 
 sele <-"
@@ -81,7 +81,7 @@ ggplot(all_dens) + theme_bw() +
        y="-log(FeatureDensity)") +
   scale_y_continuous(limits=c(-2,5), breaks=((0:30)/4-2.5))
   scale_x_continuous(limits=c(1.5,3), breaks=c(1.6, 1.9, 2.2, 2.6))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -130,9 +130,9 @@ ggplot(dens) + theme_bw() +
        y="log(FeatureDensity)") +
   scale_y_continuous(limits=c(-2,5), breaks=c(-2,0,2,4)) +
   scale_x_continuous(limits=c(1.5,3), breaks=c(1.6, 1.9, 2.2, 2.6)) +
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

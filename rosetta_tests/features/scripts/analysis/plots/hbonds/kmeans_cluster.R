@@ -9,13 +9,13 @@
 
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "kmeans_cluster",
 filename = "scripts/analysis/plots/hbonds/kmeans_cluster.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <- "
 SELECT
@@ -52,4 +52,4 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

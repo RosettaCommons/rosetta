@@ -14,7 +14,7 @@
 #
 #Then at at a feature plot script:
 # 
-#   save_plots()
+#   save_plots(self, )
 #
 
 
@@ -116,7 +116,7 @@ output_huge_pdf <- data.frame(
 # $output_web_vector
 # [1] TRUE
 #OUTPUT:
-# data.frame with output_formats suitable for passing to save_plots(...)
+# data.frame with output_formats suitable for passing to save_plots(self, ...)
 get_output_formats <- function(opt){
   output_formats <- NULL
   if(opt$output_web_raster) output_formats <- rbind(output_formats, output_web_raster)

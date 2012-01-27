@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "apsa_summary",
 filename = "scripts/analysis/plots/secondary_structure/apsa_summary.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("APSAFeatures"),
-run=function(){
+run=function(self){
 
 sele <- "
 SELECT
@@ -35,6 +35,6 @@ p <- p + labs(x = "Type of Secondary Structure",
               y = "Count")
 p <- p + theme_bw()
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

@@ -9,13 +9,13 @@
 
 check_setup()
 
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "residue_type_counts",
 filename = "scripts/analysis/plots/sample_source_summary/residue_type_counts.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResidueFeatures"),
-run=function(){
+run=function(self){
 
 
 sele <- "
@@ -36,6 +36,6 @@ p <- ggplot(data=f) + theme_bw() +
 	opts(title = "Residue Types") +
 	labs(x = "Residue Type", y = "Count")
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

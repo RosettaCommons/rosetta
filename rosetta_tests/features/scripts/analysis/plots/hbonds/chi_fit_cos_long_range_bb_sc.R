@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chi_fit_cos_long_range_bb_sc",
 filename = "scripts/analysis/plots/hbonds/chi_fit_cos_long_range_bb_sc.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -81,7 +81,7 @@ ggplot(data=dens) + theme_bw() +
 	scale_y_continuous('Feature Density') +
 	opts(legend.position=c(.7, .35)) +
 	opts(legend.justification=c("left", "top"))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 plot_id = "chi_long_range_acc_ss_by_rank"
@@ -98,7 +98,7 @@ l_ply(levels(f$sample_source), function(ss){
 		scale_y_continuous('Feature Density') +
 		opts(legend.position=c(.7, .35)) +
 		opts(legend.justification=c("left", "top"))
-	save_plots(plot_id, subset(sample_sources, ss %in% sample_source), output_dir, output_formats)
+	save_plots(self, plot_id, subset(sample_sources, ss %in% sample_source), output_dir, output_formats)
 
 })
 
@@ -117,9 +117,9 @@ l_ply(levels(dens$acc_ss), function(ss){
 		opts(title = paste("Hydrogen Bonds CHI Angle for Backbone Acceptors and Sidechain Donors with Sequence Separation > 5\nBy Acceptor DSSP Secondary Structure Type: ", ss_name, sep="")) +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 		scale_y_continuous('Feature Density', limits=ylim) +
-	save_plots(plot_id, sample_sources, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 })
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

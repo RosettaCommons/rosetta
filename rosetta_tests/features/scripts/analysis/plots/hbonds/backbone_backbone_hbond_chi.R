@@ -77,7 +77,7 @@
 #              y="log(FeatureDensity + 1)")
 #p <- p + theme_bw()
 #
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
 #
 #dens <- estimate_density_1d(
@@ -94,7 +94,7 @@
 #              y="log(FeatureDensity + 1)")
 #p <- p + theme_bw()
 #
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
 #dens <- estimate_density_1d(
 #  data = all,
@@ -111,4 +111,4 @@
 #              y="log(FeatureDensity + 1)")
 #p <- p + theme_bw()
 #
-#save_plots(plot_id, sample_sources, output_dir, output_formats)
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)

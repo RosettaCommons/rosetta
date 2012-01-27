@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_cosAHD_regression",
 filename = "scripts/analysis/plots/hbonds/hbond_cosAHD_regression.R",
 author = "Matthew O'Meara",
@@ -30,7 +30,7 @@ This script generates 4 plots grouping the hydrogen bonds different ways:
 Currently this is only setup for a single sample source at a time.",
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(){
+run=function(self){
 
 
 sele <-"
@@ -84,7 +84,7 @@ ggplot(data=all_dens, aes(x=x)) + theme_bw() +
   opts(title = "Hydrogen Bonds AHD Angle Fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -114,7 +114,7 @@ ggplot(data=don_dens, aes(x=x)) + theme_bw() + facet_wrap( ~ don_chem_type ) +
   opts(title = "Hydrogen Bonds AHD Angle by Don Chemical Type fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -147,7 +147,7 @@ ggplot(data=acc_dens, aes(x=x)) + theme_bw() + facet_wrap( ~ acc_chem_type ) +
   opts(title = "Hydrogen Bonds AHD Angle by Acceptor Chemical Type fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
@@ -182,7 +182,7 @@ ggplot(data=each_dens, aes(x=x)) + theme_bw() + facet_grid( don_chem_type ~ acc_
   opts(title = "Hydrogen Bonds AHD Angle by Chemical Type fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

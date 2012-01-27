@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "angle_dependence_on_orbital_hydrogen_dist",
 filename = "scripts/analysis/plots/orbitals/angle_dependence_on_orbital_hydrogen_dist.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
-run=function(){
+run=function(self){
 
 
 #########################   POLAR   #############################################################
@@ -66,7 +66,7 @@ function(df){
 	ggplot(data=dens, aes(x=x, y=log(y+1))) + plot_parts +
 		scale_x_continuous('Aceptor -- Orbital -- Hydrogen (cos(angle))') +
 		opts(title = paste("HPOL Cos(aceptor, orbital, hydrogen) and OrbHdist quantile\nss_id: ", ss_id, sep=""))
-	save_plots(plot_id, sample_sources, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 })
@@ -94,7 +94,7 @@ function(df){
   ggplot(data=dens, aes(x=x, y=log(y+1))) + plot_parts +
     scale_x_continuous('Donor -- Hydrogen -- Orbital (cos(angle))') +
     opts(title = paste("Cos(donor, hydrogen, orbital) and OrbHdist quantile\nss_id: ", ss_id, sep=""))
-  save_plots(plot_id, sample_sources, output_dir, output_formats)
+  save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 })
@@ -147,7 +147,7 @@ function(df){
   ggplot(data=dens, aes(x=x, y=log(y+1))) + plot_parts +
     scale_x_continuous('Aceptor -- Orbital -- Hydrogen (cos(angle))') +
     opts(title = paste("HARO Cos(aceptor, orbital, hydrogen) and OrbHdist quantile\nss_id: ", ss_id, sep=""))
-  save_plots(plot_id, sample_sources, output_dir, output_formats)
+  save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 })
@@ -173,10 +173,10 @@ function(df){
   ggplot(data=dens, aes(x=x, y=log(y+1))) + plot_parts +
     scale_x_continuous('Donor -- Hydrogen -- Orbital (cos(angle))') +
     opts(title = paste("HARO Cos(donor, hydrogen, orbital) and OrbHdist quantile\nss_id: ", ss_id, sep=""))
-  save_plots(plot_id, sample_sources, output_dir, output_formats)
+  save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 })
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

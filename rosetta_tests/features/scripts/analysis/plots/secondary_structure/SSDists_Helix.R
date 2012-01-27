@@ -8,7 +8,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "SSDists_Helix",
 filename = "scripts/analysis/plots/secondary_structure/SSDists_Helix.R",
 author = "Matthew O'Meara",
@@ -46,7 +46,7 @@ long_description = "
              |       |
 ",
 feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures", "ProteinBackboneAtomPairFeatures"),
-run=function(){
+run=function(self){
 
 
 # new idiom: union select
@@ -145,7 +145,7 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #sele <-
@@ -186,4 +186,4 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #
 #LIMIT 10000;
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis
