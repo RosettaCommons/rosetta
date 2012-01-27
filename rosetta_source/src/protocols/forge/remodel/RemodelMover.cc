@@ -150,7 +150,7 @@ RemodelMover::RemodelMover() :
 	centroid_loop_mover_str_( "RemodelLoopMover" ),
 	redesign_loop_neighborhood_( false ),
 	dr_cycles_( basic::options::option[basic::options::OptionKeys::remodel::dr_cycles] ),
-	centroid_sfx_( core::scoring::ScoreFunctionFactory::create_score_function( "remodel_cen" )),
+	centroid_sfx_( core::scoring::ScoreFunctionFactory::create_score_function( basic::options::option[basic::options::OptionKeys::remodel::cen_sfxn]  )),
 	fullatom_sfx_( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH ) )
 {
 	register_user_options();
@@ -597,7 +597,8 @@ if (working_model.manager.size()!= 0){
         constraint->apply( pose );
 
 				fullatom_sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
-				fullatom_sfx_->set_weight(core::scoring::dihedral_constraint, 1.0);
+				fullatom_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0);
+				designMover.scorefunction(fullatom_sfx_);
     }
 	
  			
@@ -678,7 +679,9 @@ if (working_model.manager.size()!= 0){
 
 			designMover.apply(pose);
 
-			if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
+			if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ||
+					 basic::options::option[ OptionKeys::constraints::cst_file ].user()
+			){
 						ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint, 10 );
 						bool CScore(pose_constraint.apply( pose ));
 						if (!CScore){  // if didn't pass, rebuild
@@ -1149,6 +1152,10 @@ bool RemodelMover::design_refine(
 	// define the score function
 	ScoreFunctionOP sfx = fullatom_sfx_->clone();
 
+//turning on weights, for paranoya
+  sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
+  sfx->set_weight(core::scoring::dihedral_constraint, 10.0 ); // 1.0 originally
+
 	// setup the refine TaskFactory
 	TaskFactoryOP refine_tf = generic_taskfactory();
 	refine_tf->push_back( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) );
@@ -1221,6 +1228,10 @@ bool RemodelMover::design_refine(
 //	SS << "RefineStage" << i << ".pdb";
 //	pose.dump_pdb(SS.str());
 	}
+
+//turning off weights, for paranoya
+  sfx->set_weight(core::scoring::atom_pair_constraint, 0.0 );
+  sfx->set_weight(core::scoring::dihedral_constraint, 0.0 ); // 1.0 originally
 
 	// must score one last time since we've removed variants and set
 	// new topology, otherwise component energies not correct for

@@ -180,6 +180,7 @@ namespace remodel { BooleanOptionKey const help( "remodel:help" );  }
 namespace remodel { BooleanOptionKey const autopilot( "remodel:autopilot" );  }
 namespace remodel { FileOptionKey const blueprint( "remodel:blueprint" );  }
 namespace remodel { FileOptionKey const cstfile( "remodel:cstfile" );  }
+namespace remodel { StringOptionKey const cen_sfxn( "remodel:cen_sfxn" );  }
 namespace remodel { IntegerOptionKey const num_trajectory( "remodel:num_trajectory" );  }
 namespace remodel { IntegerOptionKey const save_top( "remodel:save_top" );  }
 namespace remodel { BooleanOptionKey const swap_refine_confirm_protocols( "remodel:swap_refine_confirm_protocols" );  }

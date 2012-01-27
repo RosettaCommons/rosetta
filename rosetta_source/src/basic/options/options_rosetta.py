@@ -3917,6 +3917,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
   	Option(  'autopilot', 'Boolean', desc='autopilot'),
 		Option(  'blueprint', 'File', desc='blueprint file name'),
 		Option(  'cstfile', 'File', desc='description'),
+		Option( 'cen_sfxn', 'String', desc = 'centroid score function to be used for building', default='remodel_cen'),
 		Option(  'num_trajectory', 'Integer', desc='Number of remodel trajectories.', default = '10'),
                 Option(  'save_top' , 'Integer', desc= 'the number of final low scoring pdbs to keep.', default = '5'),
                 Option(  'swap_refine_confirm_protocols' , 'Boolean', desc= 'swapping the protocols used refinement and confirmation', default = 'false'),

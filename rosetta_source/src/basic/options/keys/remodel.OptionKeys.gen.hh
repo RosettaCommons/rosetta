@@ -26,6 +26,7 @@ namespace remodel { extern BooleanOptionKey const help; }
 namespace remodel { extern BooleanOptionKey const autopilot; }
 namespace remodel { extern FileOptionKey const blueprint; }
 namespace remodel { extern FileOptionKey const cstfile; }
+namespace remodel { extern StringOptionKey const cen_sfxn; }
 namespace remodel { extern IntegerOptionKey const num_trajectory; }
 namespace remodel { extern IntegerOptionKey const save_top; }
 namespace remodel { extern BooleanOptionKey const swap_refine_confirm_protocols; }

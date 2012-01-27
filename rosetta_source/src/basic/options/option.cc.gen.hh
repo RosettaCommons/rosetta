@@ -1967,6 +1967,7 @@ option.add( basic::options::OptionKeys::remodel::help, "help menu." );
 option.add( basic::options::OptionKeys::remodel::autopilot, "autopilot" );
 option.add( basic::options::OptionKeys::remodel::blueprint, "blueprint file name" );
 option.add( basic::options::OptionKeys::remodel::cstfile, "description" );
+option.add( basic::options::OptionKeys::remodel::cen_sfxn, "centroid score function to be used for building" ).def("remodel_cen");
 option.add( basic::options::OptionKeys::remodel::num_trajectory, "Number of remodel trajectories." ).def(10);
 option.add( basic::options::OptionKeys::remodel::save_top, "the number of final low scoring pdbs to keep." ).def(5);
 option.add( basic::options::OptionKeys::remodel::swap_refine_confirm_protocols, "swapping the protocols used refinement and confirmation" ).def(false);

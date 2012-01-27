@@ -39,6 +39,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
+
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
@@ -580,6 +583,18 @@ bool VarLengthBuild::centroid_build(
     cstOP->apply(pose);
     cstOP->enable_constraint_scoreterms(sfx_);
   }
+
+	if (basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user()){
+				//safety
+				pose.remove_constraints();
+
+				protocols::simple_moves::ConstraintSetMoverOP constraint = new protocols::simple_moves::ConstraintSetMover();
+				constraint->apply( pose );
+
+				sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
+				sfx_->set_weight(core::scoring::dihedral_constraint, 10.0);
+  }
+
 
 	// setup loop building protocol
 	MoverOP loop_mover = loop_mover_instance( loops, manager_.movemap() );
