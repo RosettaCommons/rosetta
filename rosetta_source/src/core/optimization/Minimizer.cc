@@ -571,7 +571,7 @@ Minimizer::lbfgs(
 	int const ITMAX
 ) const {
 	 int const N( X.size() );
-	 static int M( basic::options::option[ basic::options::OptionKeys::optimization::lbfgs_M ]() );// default 6 (?)
+	 static int M( basic::options::option[ basic::options::OptionKeys::optimization::lbfgs_M ]() );
 	 int const PAST( line_min->nonmonotone() ? 3 : 1 );
 	 Real const EPS( 1.E-5 );
 
@@ -643,11 +643,11 @@ Minimizer::lbfgs(
 			// X is returned as new pt, and D is returned as the change
 			FRET = (*line_min)( X, D );
 
-			if ( converge_test( FRET, prior_func_value ) ) {
+			if ( converge_test( FRET, prior_func_value ) || line_min->_last_accepted_step == 0) {
 				 if (Gmax<=1.0) {
 						return;
 				 } else {
-						if (std::abs( FRET - prior_func_value ) <= EPS || line_min->_last_accepted_step == 0) {
+						if (line_min->_last_accepted_step == 0) { // failed line search
 							 //Real Dnorm = 0.0;
 							 //for ( int i = 1; i <= N; ++i ) {
 							 //	Dnorm += D[i]*D[i];

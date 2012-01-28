@@ -634,7 +634,7 @@ CartesianBondedEnergy::residue_pair_energy(
 		}
 
 		/// finally, compute the bondlength across the interface
-		Real const length =
+		Real length =
 			( rsd2.atom( resconn_atomno2 ).xyz() - rsd1.atom( resconn_atomno1 ).xyz() ).length();
 
 		// lookup Ktheta and theta0
@@ -818,6 +818,11 @@ CartesianBondedEnergy::eval_atom_derivative(
 		chemical::dihedral_atom_set const & ii_dihed( restype.dihedral( diheds[ ii ] ) );
 		assert( ii_dihed.key1() == atomno || ii_dihed.key2() == atomno || ii_dihed.key3() == atomno  || ii_dihed.key4() == atomno );
 
+		// lookup Kphi and phi0
+		Real Kphi, phi0, phi_step;
+		db_torsion_->lookup( res.type(), ii_dihed.key1(), ii_dihed.key2(), ii_dihed.key3(), ii_dihed.key4(), Kphi, phi0, phi_step);
+		if (Kphi == 0.0) continue;
+
 		Vector f1(0.0), f2(0.0);
 		Real phi(0.0);
 		if ( ii_dihed.key1() == atomno ) {
@@ -849,11 +854,6 @@ CartesianBondedEnergy::eval_atom_derivative(
 				res.xyz( ii_dihed.key1() ),
 				phi, f1, f2 );
 		}
-
-		// lookup Kphi and phi0
-		Real Kphi, phi0, phi_step;
-		db_torsion_->lookup( res.type(), ii_dihed.key1(), ii_dihed.key2(), ii_dihed.key3(), ii_dihed.key4(), Kphi, phi0, phi_step);
-		if (Kphi == 0.0) continue;
 
 		Real del_phi = basic::subtract_radian_angles(phi, phi0);
 		if (phi_step>0) del_phi = basic::periodic_range( del_phi, phi_step );
@@ -921,7 +921,6 @@ CartesianBondedEnergy::eval_atom_derivative(
 		Real d=0;
 		numeric::deriv::distance_f1_f2_deriv( res.xyz( atomno ), res.xyz( atm2 ), d, f1, f2 );
 
-
 		Real dE_dd;
 
 		if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
@@ -978,7 +977,6 @@ CartesianBondedEnergy::eval_atom_derivative(
 				theta, f1, f2 );
 		}
 
-
 		Real dE_dtheta;
 		if (linear_bonded_potential_  && std::fabs(theta - theta0)>1 ) {
 			dE_dtheta = weights[ cart_bonded ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
@@ -1031,7 +1029,6 @@ CartesianBondedEnergy::eval_atom_derivative(
 				neighb_res.xyz( neighb_atom1 ),
 				neighb_res.xyz( neighb_atom2 ),
 				theta, f1, f2 );
-
 
 			Real dE_dtheta;
 			if (linear_bonded_potential_ && std::fabs(theta - theta0)>1) {
