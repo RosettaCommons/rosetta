@@ -146,7 +146,7 @@ add_sample_sources_to_analysis_manager(analysis_manager_con, sample_sources)
 iscript_sample_sources(sample_sources)
 cat("Comparing the following sample sources:\n")
 a_ply(sample_sources,1, function(ss){
-	cat("   ", as.character(ss$sample_source), " <- ", as.character(ss$fname), "\n")
+	cat("   ", as.character(ss$sample_source), " <- ", as.character(ss$fname), "\n", sep="")
 })
 
 #Setup analysis_scripts

@@ -38,18 +38,30 @@ Currently the atoms extracted for hydrogen bond sites are the atm, base, bbase, 
      |      |
       \    /
        \ _/
-         
+
   proton_chi = DIHEDRAL(CE2, CZ, OH, HH)
   hbond_chi = DIHEDRAL(CE2, CZ, OH, H)
 ",
 
-                                            
+
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self){
 
 sele <-"
 SELECT
 	don_site.HBChemType AS don_chem_type,
+	CASE don_site.HBChemType
+		WHEN 'hbdon_IMD' THEN 'imidazol: h'
+		WHEN 'hbdon_IME' THEN 'imidazol: h'
+		WHEN 'hbdon_IND' THEN 'indol: w'
+		WHEN 'hbdon_AHX' THEN 'hydroxyl: s,t,y'
+		WHEN 'hbdon_HXL' THEN 'hydroxyl: s,t,y'
+		WHEN 'hbdon_GDE' THEN 'other'
+		WHEN 'hbdon_GDH' THEN 'other'
+		WHEN 'hbdon_PBA' THEN 'other'
+		WHEN 'hbdon_CXA' THEN 'other'
+		WHEN 'hbdon_AMO' THEN 'other'
+END AS don_hybrid,
 	acc_atoms.bbase_x AS CE2x, acc_atoms.bbase_y AS CE2y, acc_atoms.bbase_z AS CE2z,
  	acc_atoms.base_x  AS CZx,  acc_atoms.base_y  AS CZy,  acc_atoms.base_z  AS CZz,
 	acc_atoms.atm_x   AS OHx,  acc_atoms.atm_y   AS OHy,  acc_atoms.atm_z   AS OHz,
@@ -72,11 +84,11 @@ WHERE
 	acc_pdb.heavy_atom_temperature < 30;"
 f <- query_sample_sources(sample_sources, sele)
 
-f$hbond_chi <- with(f, 
+f$hbond_chi <- with(f,
 	vector_dihedral(cbind(CE2x, CE2y, CE2z), cbind(CZx, CZy, CZz),
 	cbind(OHx, OHy, OHz), cbind(Hx, Hy, Hz)))
 
-                                            
+
 f$don_chem_type <- factor(f$don_chem_type,
 	levels=c("hbdon_IMD", "hbdon_GDE", "hbdon_HXL", "hbdon_PBA",
 		"hbdon_IME", "hbdon_GDH", "hbdon_AHX", "hbdon_IND",
@@ -93,11 +105,27 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_wrap( ~ don_chem_type ) +
-	opts(title = "HBond Torsional angle for Tyrosine Acceptors") +
+	opts(title = "HBond Torsional Angle for Tyrosine Acceptors") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
 	scale_y_continuous('Feature Density') +
 	opts(legend.position=c(.58,.35)) +
 	opts(legend.justification=c("left", "top"))
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+dens <- estimate_density_1d_wrap(f,
+  c("sample_source", "don_hybrid"), "hbond_chi", xlim=c(-pi, pi), adjust=.2)
+
+plot_id = "tyr_hbond_chi_by_hybrid"
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	facet_wrap( ~ don_hybrid ) +
+	opts(title = "HBond Torsional Angle for Tyrosine Acceptors") +
+	scale_x_continuous('HBond Torsional Angle (degrees)') +
+	scale_y_continuous('Feature Density')
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
