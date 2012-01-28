@@ -30,6 +30,7 @@ using core::pose::Pose;
 using utility::vector1;
 using ObjexxFCL::fmt::I;
 using ObjexxFCL::fmt::F;
+using ObjexxFCL::fmt::RJ;
 using numeric::min;
 using numeric::max;
 typedef numeric::xyzVector<core::Real> Vec;
@@ -41,6 +42,8 @@ OPT_1GRP_KEY( Real , tcdock, clash_dis		)
 OPT_1GRP_KEY( Real , tcdock, contact_dis	)
 OPT_1GRP_KEY( Real , tcdock, intra	)
 OPT_1GRP_KEY( Integer , tcdock, topx	)
+OPT_1GRP_KEY( Integer , tcdock, peak_grid_size)
+OPT_1GRP_KEY( Integer , tcdock, peak_grid_smooth)
 OPT_1GRP_KEY( Boolean , tcdock, reverse	)
 void register_options() {
 		using namespace basic::options;
@@ -50,6 +53,8 @@ void register_options() {
 		NEW_OPT( tcdock::contact_dis ,"max acceptable contact dis", 12 );
 		NEW_OPT( tcdock::intra       ,"include intra 3-3 5-5 contacts", 1.0 );
 		NEW_OPT( tcdock::topx        ,"output top X hits", 10 );
+		NEW_OPT( tcdock::peak_grid_size   ,"peak detect grid size (2*N+1)", 24 );		
+		NEW_OPT( tcdock::peak_grid_smooth ,"peak detect grid smooth (0+)", 1 );		
 		NEW_OPT( tcdock::reverse     ,"rev.", false );	
 	}
 template<typename T> inline T sqr(T x) { return x*x; }
@@ -300,6 +305,18 @@ void pnt1_to_pnt2(vector1<Vecf> & pts, Vecf pntaxs_, Vecf pntax2_) {
 	r = r * rotation_matrix_degrees(pntaxs_,(double)36.0);
 	for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);
 }
+int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t) {
+	if( grid(i,j,k) <= t ) return 0;
+	grid(i,j,k) = t;
+	int nmark = 1;
+	if(i>1           ) nmark += flood_fill3D(i-1,j  ,k  ,grid,t);
+	if(i<grid.size1()) nmark += flood_fill3D(i+1,j  ,k  ,grid,t);	
+	if(j>1           ) nmark += flood_fill3D(i  ,j-1,k  ,grid,t);
+	if(j<grid.size2()) nmark += flood_fill3D(i  ,j+1,k  ,grid,t);	
+	if(k>1           ) nmark += flood_fill3D(i  ,j  ,k-1,grid,t);
+	if(k<grid.size3()) nmark += flood_fill3D(i  ,j  ,k+1,grid,t);	
+	return nmark;
+}
 struct LMAX {
 	double score,radius;
 	int ipnt,itri,iori;
@@ -332,6 +349,10 @@ struct TCDock {
 		core::import_pose::pose_from_pdb(pnt_in_,*crs,option[in::file::s]()[ipntfile]);
 		trifile_ = utility::file_basename(option[in::file::s]()[itrifile]);
 		pntfile_ = utility::file_basename(option[in::file::s]()[ipntfile]);
+		if(trifile_.substr(trifile_.size()-3)==".gz" ) trifile_ = trifile_.substr(0,trifile_.size()-3);
+		if(pntfile_.substr(pntfile_.size()-3)==".gz" ) pntfile_ = pntfile_.substr(0,pntfile_.size()-3);		
+		if(trifile_.substr(trifile_.size()-4)==".pdb") trifile_ = trifile_.substr(0,trifile_.size()-4);
+		if(pntfile_.substr(pntfile_.size()-4)==".pdb") pntfile_ = pntfile_.substr(0,pntfile_.size()-4);		
 		make_trimer(tri_in_);
 		make_pentamer(pnt_in_);		
 		// set up geometry
@@ -374,7 +395,7 @@ struct TCDock {
 		double const CONTACT_D2 = sqr(CONTACT_D);
 		double const CLASH_D2	 = sqr(CLASH_D);
 		// compute high/low min dis for pent and tri here, input to sicfast and don't allow any below
-		std::cerr << "precomputing pent-pent and tri-tri interactions every 1°" << std::endl;
+		std::cout << "precomputing pent-pent and tri-tri interactions every 1°" << std::endl;
 		#ifdef USE_OPENMP
 		#pragma omp parallel for schedule(dynamic,1)
 		#endif
@@ -391,7 +412,7 @@ struct TCDock {
 			pntmnpos_[ipnt+1] = -d/2.0/sin( angle_radians(pntax2_,Vecf(0,0,0),pntaxs_)/2.0 );
 			pntdspos_[ipnt+1] = -d;
 			pntcbpos_(ipnt+1,1) = cbcount;
-			// std::cerr << "compute CB" << std::endl;
+			// std::cout << "compute CB" << std::endl;
 			prune_cb_pairs_dis10(cbp,cb2);
 			for(int i = 2; i <= 97; ++i) {
 				for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) + 0.1f*pntaxs_;
@@ -420,7 +441,7 @@ struct TCDock {
 			pntmnneg_[ipnt+1] = d/2.0/sin( angle_radians(pntax2_,Vecf(0,0,0),pntaxs_)/2.0 );
 			pntdsneg_[ipnt+1] = d;
 			pntcbneg_(ipnt+1,1) = cbcount;
-			// std::cerr << "compute CB" << std::endl;
+			// std::cout << "compute CB" << std::endl;
 			prune_cb_pairs_dis10(cbp,cb2);
 			for(int i = 2; i <= 97; ++i) {
 				for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) - 0.1f*pntaxs_;
@@ -449,7 +470,7 @@ struct TCDock {
 			trimnpos_[itri+1] = -d/2.0/sin( angle_radians(triax2_,Vecf(0,0,0),triaxs_)/2.0 );
 			tridspos_[itri+1] = -d;
 			tricbpos_(itri+1,1) = cbcount;
-			// std::cerr << "compute CB" << std::endl;
+			// std::cout << "compute CB" << std::endl;
 			prune_cb_pairs_dis10(cbt,cb2);
 			for(int i = 2; i <= 145; ++i) {
 				for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) + 0.1f*triaxs_;
@@ -478,7 +499,7 @@ struct TCDock {
 			trimnneg_[itri+1] = d/2.0/sin( angle_radians(triax2_,Vecf(0,0,0),triaxs_)/2.0 );
 			tridsneg_[itri+1] = d;
 			tricbneg_(itri+1,1) = cbcount;
-			// std::cerr << "compute CB" << std::endl;
+			// std::cout << "compute CB" << std::endl;
 			prune_cb_pairs_dis10(cbt,cb2);
 			for(int i = 2; i <= 145; ++i) {
 				for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) - 0.1f*triaxs_;
@@ -577,7 +598,7 @@ struct TCDock {
 		using	namespace	basic::options;
 		using	namespace	basic::options::OptionKeys;		
 		using utility::file_basename;
-		std::cerr << "dumping 1D stats: " << option[out::file::o]()+"/"+pntfile_+"_POS_1D.dat" << std::endl;
+		std::cout << "dumping 1D stats: " << option[out::file::o]()+"/"+pntfile_+"_POS_1D.dat" << std::endl;
 		{ utility::io::ozstream out(option[out::file::o]()+"/"+pntfile_+"_POS_1D.dat");
 			for(int i = 1; i <=	72; ++i) out << i << " " << pntdspos_[i] << " " << pntcbpos_(i,1) << std::endl;
 			out.close(); }
@@ -654,11 +675,11 @@ struct TCDock {
 		Pose const triinit(tri_in_);
 		Pose const pntinit(pnt_in_);
 		precompute_intra();
-		std::cerr << "main loop 1 over ipnt, itri, iori every 3 degrees" << std::endl; { // 3deg loop 
+		std::cout << "main loop 1 over ipnt, itri, iori every 3 degrees" << std::endl; { // 3deg loop 
 			double mxd = 0;
 			double cbmax = 0; int mxiori = 0, mxipnt = 0, mxitri = 0;
 			for(int ipnt = 0; ipnt < 72; ipnt+=3) {
-				if(ipnt%9==0 && ipnt!=0) std::cerr << "	 loop1 " << trifile_ << " " << (100*ipnt)/72 << "\% done, cbmax: " << cbmax << std::endl;
+				if(ipnt%9==0 && ipnt!=0) std::cout << "	 loop1 " << trifile_ << " " << (100*ipnt)/72 << "\% done, cbmax: " << cbmax << std::endl;
 				vector1<Vecf> pb,cbb; // precompute these
 				get_pnt(ipnt,pb,cbb);
 				#ifdef USE_OPENMP
@@ -732,7 +753,7 @@ struct TCDock {
 				}
 			}
 			if(cbmax<0.00001) utility_exit_with_message("tri or pnt too large, no contacts!");
-			std::cerr << "MAX3 " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << " " << mxd << std::endl;
+			std::cout << "MAX3 " << mxipnt << " " << mxitri << " " << mxiori << " " << cbmax << " " << mxd << std::endl;
 		}
 		double topX=0,max1=0;
 		utility::vector1<vector1<int> > pntlmx,trilmx,orilmx; { // set up work for main loop 2 
@@ -741,7 +762,7 @@ struct TCDock {
 			for(Size i = 0; i < gscore.size(); ++i) if(gscore[i] > 0) cbtmp.push_back(gscore[i]);
 			std::sort(cbtmp.begin(),cbtmp.end());
 			top1000_3 = cbtmp[max(1,(int)cbtmp.size()-999)];
-			std::cerr << "scanning top1000 with cbcount3 >= " << top1000_3 << std::endl;
+			std::cout << "scanning top1000 with cbcount3 >= " << top1000_3 << std::endl;
 			for(int ipnt = 0; ipnt < 72; ipnt+=3) {
 				for(int itri = 0; itri < 120; itri+=3) {
 					for(int iori = 0; iori < 360; iori+=3) {
@@ -762,7 +783,7 @@ struct TCDock {
 		#pragma omp parallel for schedule(dynamic,1)
 		#endif
 		for(Size ilmx = 1; ilmx <= pntlmx.size(); ++ilmx)  {       //  MAIN LOOP 2                                      
-			if( (ilmx-1)%100==0 && ilmx!=1) std::cerr << "	loop2 " << trifile_ 
+			if( (ilmx-1)%100==0 && ilmx!=1) std::cout << "	loop2 " << trifile_ 
 			         << " " << (double(ilmx-1)/10) << "\% done, cbmax: " << max1 << std::endl;
 			double cbmax = 0; int mxiori = 0, mxipnt = 0, mxitri = 0;
 			for(vector1<int>::const_iterator pipnt = pntlmx[ilmx].begin(); pipnt != pntlmx[ilmx].end(); ++pipnt) {
@@ -851,7 +872,19 @@ struct TCDock {
 									double const nbval = gradii(i2,j2,k2);
 									nbmax = max(nbmax,nbval);
 								}
+								int dp = (int)(-dpnt+pntmn)*10+1;
+								int dt = (int)(-dtri+trimn)*10+1;
+								if( 0 < dp && dp <= 97  ) tmpcbc += option[tcdock::intra]()*pntcbneg_(ipnt+1,dp);
+								if( 0 < dt && dt <= 145 ) tmpcbc += option[tcdock::intra]()*tricbneg_(itri+1,dt);
 							}
+						#ifdef USE_OPENMP
+						#pragma omp critical
+						#endif
+						if(gscore(ipnt+1,itri+1,iori+1) > cbmax) {
+							cbmax = gscore(ipnt+1,itri+1,iori+1);
+							mxiori = iori;
+							mxipnt = ipnt;
+							mxitri = itri;
 						}
 						if( nbmax != -9e9 && val >= nbmax ) {
 							local_maxima.push_back( LMAX(gscore(i,j,k),gradii(i,j,k),i-1,j-1,k-1) );
@@ -862,42 +895,80 @@ struct TCDock {
 				}
 			}
 			std::sort(local_maxima.begin(),local_maxima.end(),compareLMAX);
-			std::cerr << "N local max (tri-pent disp.) " << local_maxima.size() << std::endl;					
+			std::cout << "N local max (tri-pent disp.) " << local_maxima.size() << std::endl;					
 		}
+
+		std::cout << " NUM   score pscore tscore    pentamer npnt pa      pr      trimer ntri  ta      tr ori  v0.2 v0.4 v0.6  v0.8  v1.0  v1.2  v1.4  v1.6  v1.8  v2.0  v2.2  v2.4  v2.6  v2.8  v3.0  v3.2  v3.4  v3.6  v3.8  v4.0  v4.2  v4.4  v4.6  v4.8  v5.0" << std::endl;
 		for(Size ilm = 1; ilm <= min(local_maxima.size(),(Size)option[tcdock::topx]()); ++ilm) { // dump top hit info 
 			LMAX const & h(local_maxima[ilm]);
 			double dpnt,dtri,icbc,tricbc,pntcbc;
-			ObjexxFCL::FArray3D<double> grid(35,35,35,0.0);
+			int N = option[tcdock::peak_grid_size]();
+			ObjexxFCL::FArray3D<double> grid(2*N+1,2*N+1,2*N+1,0.0);
 			#ifdef USE_OPENMP
 			#pragma omp parallel for schedule(dynamic,1)
 			#endif			
-			for(int di = -17; di <= 17; ++di) {
-				for(int dj = -17; dj <= 17; ++dj) {
-					for(int dk = -17; dk <= 17; ++dk) {
-						int i = (h.ipnt+di+gscore.size1())%gscore.size1();
-						int j = (h.itri+dj+gscore.size2())%gscore.size2();
-						int k = (h.iori+dk+gscore.size3())%gscore.size3();
-						calc_cbc(i,j,k,dpnt,dtri,icbc,pntcbc,tricbc,true);
-						grid(di+18,dj+18,dk+18) = gradii(i+1,j+1,k+1);
+			for(int di = -N; di <= N; ++di) {
+				for(int dj = -N; dj <= N; ++dj) {
+					for(int dk = -N; dk <= N; ++dk) {
+						if( Vecf(di,dj,dk).length() > (double)N+0.5 ) {
+							grid(di+N+1,dj+N+1,dk+N+1) = -9e9;
+						} else {
+							int i = (h.ipnt+di+gscore.size1())%gscore.size1();
+							int j = (h.itri+dj+gscore.size2())%gscore.size2();
+							int k = (h.iori+dk+gscore.size3())%gscore.size3();
+							calc_cbc(i,j,k,dpnt,dtri,icbc,pntcbc,tricbc,true);
+							grid(di+N+1,dj+N+1,dk+N+1) = gradii(i+1,j+1,k+1);
+						}
 					}
 				}
 			}
-			std::ofstream o(("out/grid_"+ObjexxFCL::string_of(ilm)+".dat").c_str());
-			for(int i = 1; i <= grid.size1(); ++i) {
-				for(int j = 1; j <= grid.size2(); ++j) {
-					for(int k = 1; k <= grid.size3(); ++k) {
-						o << grid(i,j,k) << std::endl;
+
+			vector1<double> ffhist(25,0);
+			int ifh;
+			for(ifh = 0; ifh < ffhist.size(); ++ifh) {
+				flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
+
+				double count = 0;
+				int Nedge = option[tcdock::peak_grid_smooth]();
+				ObjexxFCL::FArray3D<double> grid2(grid);
+				for(int i = 1+Nedge; i <= grid.size1()-Nedge; ++i) {
+					for(int j = 1+Nedge; j <= grid.size2()-Nedge; ++j) {
+						for(int k = 1+Nedge; k <= grid.size3()-Nedge; ++k) {
+							bool allgood = true;
+							for(int di = -Nedge; di <= Nedge; ++di) {
+								for(int dj = -Nedge; dj <= Nedge; ++dj) {
+									for(int dk = -Nedge; dk <= Nedge; ++dk) {
+										allgood &= grid(i+di,j+dj,k+dk) == grid(N+1,N+1,N+1);
+									}
+								}
+							}
+							double w = max(0.0, 1.0 - Vecf(N+1-i,N+1-j,N+1-k).length() / (double)N );
+							if( allgood ) count += w;
+							grid2(i,j,k) += allgood;
+						}
 					}
 				}
+				ffhist[ifh+1] = pow(count,1.0/3.0);
+				if(ilm==1) {
+					std::ofstream o(("out/grid_"+ObjexxFCL::string_of(ilm)+"_"+ObjexxFCL::string_of(ifh)+".dat").c_str());
+					for(int i = 1; i <= grid.size1(); ++i) {
+						for(int j = 1; j <= grid.size2(); ++j) {
+							for(int k = 1; k <= grid.size3(); ++k) {
+								o << grid2(i,j,k) << std::endl;
+							}
+						}
+					}
+					o.close();
+					dump_pdb(h.ipnt,h.itri,h.iori,"test_"+ObjexxFCL::string_of(ilm)+".pdb");					
+				}
 			}
-			o.close();
+			for(ifh; ifh < ffhist.size(); ++ifh) ffhist[ifh+1] = (2*N+1)*(2*N+1)*(2*N+1);
+			
 			double cbc = calc_cbc(h.ipnt,h.itri,h.iori,dpnt,dtri,icbc,pntcbc,tricbc,false);
-			std::cerr << "HIT " 
-			          << F(7,3,h.score) << " "
-			          << F(7,3,cbc) << " " 
+			std::cout << "| " << I(2,ilm) << " "
 			          << F(7,3,icbc) << " " 
-			          << F(7,3,pntcbc) << " " 
-			          << F(7,3,tricbc) << " " 
+			          << F(6,2,pntcbc) << " " 
+			          << F(6,2,tricbc) << " " 
 			          << pntfile_ << " " 
 			          << I(4,pnt_in_.n_residue()) << " " 
 			          << I(2,h.ipnt) << " " 
@@ -906,9 +977,11 @@ struct TCDock {
 			          << I(4,tri_in_.n_residue()) << " " 
 			          << I(3,h.itri) << " " 
 			          << F(7,3,dtri) << " "
-			          << I(3,h.iori) << " " 
-			          << std::endl;
-			dump_pdb(h.ipnt,h.itri,h.iori,"test_"+ObjexxFCL::string_of(cbc)+".pdb");
+						 << I(3,h.iori) << " ";
+			for(int ifh = 1; ifh <= ffhist.size(); ++ifh) {
+				std::cout << " " << F((ifh<4)?4:5,2,ffhist[ifh]);
+			}
+			std::cout << std::endl;
 		}
 	}
 
@@ -921,5 +994,5 @@ int main (int argc, char *argv[]) {
 		TCDock tcd(i,1);
 		tcd.run();
 	}
-	std::cerr << "DONE testing grid" << std::endl;
+	std::cout << "DONE testing grid" << std::endl;
 }
