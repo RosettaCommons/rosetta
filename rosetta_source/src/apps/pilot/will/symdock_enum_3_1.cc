@@ -28,39 +28,64 @@
 #ifdef USE_OPENMP
 #include <omp.h>
 #endif
-
 using core::Size;
 using core::pose::Pose;
+using std::string;
 using utility::vector1;
 using ObjexxFCL::fmt::I;
 using ObjexxFCL::fmt::F;
 using ObjexxFCL::fmt::RJ;
 using numeric::min;
 using numeric::max;
+using std::cout;
+using std::cerr;
+using std::endl;
 typedef numeric::xyzVector<core::Real> Vec;
 typedef numeric::xyzMatrix<core::Real> Mat;
 typedef numeric::xyzVector<double> Vecf;
 typedef numeric::xyzMatrix<double> Matf;
 static basic::Tracer TR("symdock_enum");
-OPT_1GRP_KEY( Real , tcdock, clash_dis		)
-OPT_1GRP_KEY( Real , tcdock, contact_dis	)
-OPT_1GRP_KEY( Real , tcdock, intra	)
-OPT_1GRP_KEY( Integer , tcdock, topx	)
-OPT_1GRP_KEY( Integer , tcdock, peak_grid_size)
-OPT_1GRP_KEY( Integer , tcdock, peak_grid_smooth)
-OPT_1GRP_KEY( Boolean , tcdock, reverse	)
+OPT_1GRP_KEY( Real , ttc, clash_dis	)
+OPT_1GRP_KEY( Real , ttc, contact_dis )
+OPT_1GRP_KEY( Real , ttc, intra )
+OPT_1GRP_KEY( Integer , ttc, nsamp1 )
+OPT_1GRP_KEY( Integer , ttc, topx )
+OPT_1GRP_KEY( Integer , ttc, peak_grid_size)
+OPT_1GRP_KEY( Integer , ttc, peak_grid_smooth)
+OPT_1GRP_KEY( Boolean , ttc, reverse )
+OPT_1GRP_KEY( Boolean , ttc, dump_pdb )
+OPT_1GRP_KEY( Boolean , ttc, dump_grids )
+OPT_2GRP_KEY( FileVector, ttc, icos, c2 )
+OPT_2GRP_KEY( FileVector, ttc, icos, c3 )
+OPT_2GRP_KEY( FileVector, ttc, icos, c5 )
+OPT_2GRP_KEY( FileVector, ttc, octa, c2 )
+OPT_2GRP_KEY( FileVector, ttc, octa, c3 )
+OPT_2GRP_KEY( FileVector, ttc, octa, c4 )
+OPT_2GRP_KEY( FileVector, ttc, tetr ,c2 )
+OPT_2GRP_KEY( FileVector, ttc, tetr ,c3 )
 void register_options() {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		OPT( in::file::s );
-		NEW_OPT( tcdock::clash_dis	 ,"max acceptable clash dis"	,	3.5 );
-		NEW_OPT( tcdock::contact_dis ,"max acceptable contact dis", 12 );
-		NEW_OPT( tcdock::intra       ,"include intra 3-3 5-5 contacts", 1.0 );
-		NEW_OPT( tcdock::topx        ,"output top X hits", 10 );
-		NEW_OPT( tcdock::peak_grid_size   ,"peak detect grid size (2*N+1)", 24 );		
-		NEW_OPT( tcdock::peak_grid_smooth ,"peak detect grid smooth (0+)", 1 );		
-		NEW_OPT( tcdock::reverse     ,"rev.", false );	
-	}
+		NEW_OPT( ttc::clash_dis	 ,"max acceptable clash dis",	3.5 );
+		NEW_OPT( ttc::contact_dis ,"max acceptable contact dis", 12 );
+		NEW_OPT( ttc::intra       ,"include intra 3-3 5-5 contacts", 1.0 );
+		NEW_OPT( ttc::nsamp1      ,"output top X hits", 2000 );
+		NEW_OPT( ttc::topx        ,"output top X hits", 10 );
+		NEW_OPT( ttc::peak_grid_size   ,"peak detect grid size (2*N+1)", 24 );		
+		NEW_OPT( ttc::peak_grid_smooth ,"peak detect grid smooth (0+)", 1 );		
+		NEW_OPT( ttc::reverse     ,"rev.", false );	
+		NEW_OPT( ttc::dump_pdb,  "dump pdb", false );	
+		NEW_OPT( ttc::dump_grids,"dump grids", false );
+		NEW_OPT( ttc::icos::c2,"file(s) for icos 2fold trimer", "" );
+		NEW_OPT( ttc::icos::c3,"file(s) for icos 3fold trimer", "" );
+		NEW_OPT( ttc::icos::c5,"file(s) for icos 5fold trimer", "" );
+		NEW_OPT( ttc::octa::c2,"file(s) for octa 2fold trimer", "" );
+		NEW_OPT( ttc::octa::c3,"file(s) for octa 3fold trimer", "" );
+		NEW_OPT( ttc::octa::c4,"file(s) for octa 4fold trimer", "" );
+		NEW_OPT( ttc::tetr::c2,"file(s) for tetr 2fold trimer", "" );
+		NEW_OPT( ttc::tetr::c3,"file(s) for tetr 3fold trimer", "" );
+}
 template<typename T> inline T sqr(T x) { return x*x; }
 inline double sigmoid( double const & sqdist, double const & start, double const & stop ) {
 	if( sqdist > stop*stop ) {
@@ -143,162 +168,121 @@ struct Vecf2 {
 	Vecf2() {}
 	Vecf2(Vecf _a, Vecf _b) : a(_a),b(_b) {}
 };
-double sicfast( vector1<Vecf> pa, vector1<Vecf> pb, vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double & cbcount){ 
-	double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
-	double const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
-	double const CONTACT_D2 = sqr(CONTACT_D);
-	double const CLASH_D2	 = sqr(CLASH_D);	
-	double const BIN = CLASH_D / 2.0;
 
-	// get points, rotated ro ori is 0,0,1, might already be done
-	Matf rot = Matf::identity();
-	if		 ( ori.dot(Vecf(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vecf(1,0,0).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
-	else if( ori.dot(Vecf(0,0,1)) <	 0.99999 ) rot = rotation_matrix( Vecf(0,0,1).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
-	if( rot != Matf::identity() ) {
-		for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-		for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
+
+struct SICFast {
+	double xmx1,xmn1,ymx1,ymn1,xmx,xmn,ymx,ymn;
+	double const CTD,CLD,CTD2,CLD2,BIN;
+	int xlb,ylb,xub,yub;
+	SICFast() : 
+		CTD(basic::options::option[basic::options::OptionKeys::ttc::contact_dis]()),
+		CLD(basic::options::option[basic::options::OptionKeys::ttc::clash_dis]()),
+		CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD/2.0)
+	{}
+	void rotate_points(vector1<Vecf> & pa, vector1<Vecf> & pb, Vecf ori) {
+		// get points, rotated ro ori is 0,0,1, might already be done
+		Matf rot = Matf::identity();
+		if		 ( ori.dot(Vecf(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vecf(1,0,0).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
+		else if( ori.dot(Vecf(0,0,1)) <	0.99999 ) rot = rotation_matrix( Vecf(0,0,1).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
+		if( rot != Matf::identity() ) {
+			for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
+			for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
+		}		
 	}
-
-	// get bounds for plane hashes
-	double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
-	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
-		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
-	}
-	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
-		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
-	}
-	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
-	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
-
-
-	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
-	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
-
-	// insert points into hashes
-	int const xsize = xub-xlb+1;
-	int const ysize = yub-ylb+1;
-	ObjexxFCL::FArray2D<Vecf2> ha(xsize,ysize,Vecf2(Vecf(0,0,-9e9),Vecf(0,0,-9e9))),hb(xsize,ysize,Vecf2(Vecf(0,0,9e9),Vecf(0,0,9e9)));
-	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-		int const ix = (int)ceil(ia->x()/BIN)-xlb;
-		int const iy = (int)ceil(ia->y()/BIN)-ylb;
-		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-		if( ha(ix,iy).a.z() < ia->z() ) {
-			ha(ix,iy).b = ha(ix,iy).a;
-			ha(ix,iy).a = *ia;
-		} else
-		if( ha(ix,iy).b.z() < ia->z() ) {
-			ha(ix,iy).b = *ia;			
+	void get_bounds(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+		// get bounds for plane hashes
+		xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
+		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+			xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
+			ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
 		}
-	}
-	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-		int const ix = (int)ceil(ib->x()/BIN)-xlb;
-		int const iy = (int)ceil(ib->y()/BIN)-ylb;
-		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-		if( hb(ix,iy).a.z() > ib->z() ) {
-			hb(ix,iy).b = hb(ix,iy).a;
-			hb(ix,iy).a = *ib;			
-		} else 
-		if( hb(ix,iy).b.z() > ib->z() ) {
-			hb(ix,iy).b = *ib;
+		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+			xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
+			ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
 		}
+		xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
+		ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
+		xlb = (int)floor(xmn/BIN)-2; xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
+		ylb = (int)floor(ymn/BIN)-2; yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
 	}
-
-	// check hashes for min dis
-	int imna=0,jmna=0,imnb=0,jmnb=0;
-	double mindis = 9e9;
-	for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-		for(int j = 1; j <= ysize; ++j) {
-			for(int k = -2; k <= 2; ++k) {
-				if(i+k < 1 || i+k > xsize) continue;
-				for(int l = -2; l <= 2; ++l) {
-					if(j+l < 1 || j+l > ysize) continue;
-					{
-						double const xa = ha(i	,j	).a.x();
-						double const ya = ha(i	,j	).a.y();
-						double const xb = hb(i+k,j+l).a.x();
-						double const yb = hb(i+k,j+l).a.y();
-						double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
-						if( d2 < CLASH_D2 ) {
-							double dz = hb(i+k,j+l).a.z() - ha(i,j).a.z() - sqrt(CLASH_D2-d2);
-							if( dz < mindis ) {
-								mindis = dz;
-								imna = i;
-								jmna = j;
-								imnb = i+k;
-								jmnb = j+l;
-							}
-						}
-					}
-					{
-						double const xa = ha(i	,j	).a.x();
-						double const ya = ha(i	,j	).a.y();
-						double const xb = hb(i+k,j+l).b.x();
-						double const yb = hb(i+k,j+l).b.y();
-						double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
-						if( d2 < CLASH_D2 ) {
-							double dz = hb(i+k,j+l).b.z() - ha(i,j).a.z() - sqrt(CLASH_D2-d2);
-							if( dz < mindis ) {
-								mindis = dz;
-								imna = i;
-								jmna = j;
-								imnb = i+k;
-								jmnb = j+l;
-							}
-						}
-					}
-					{
-						double const xa = ha(i	,j	).b.x();
-						double const ya = ha(i	,j	).b.y();
-						double const xb = hb(i+k,j+l).a.x();
-						double const yb = hb(i+k,j+l).a.y();
-						double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
-						if( d2 < CLASH_D2 ) {
-							double dz = hb(i+k,j+l).a.z() - ha(i,j).b.z() - sqrt(CLASH_D2-d2);
-							if( dz < mindis ) {
-								mindis = dz;
-								imna = i;
-								jmna = j;
-								imnb = i+k;
-								jmnb = j+l;
-							}
-						}
-					}
-					{
-						double const xa = ha(i	,j	).b.x();
-						double const ya = ha(i	,j	).b.y();
-						double const xb = hb(i+k,j+l).b.x();
-						double const yb = hb(i+k,j+l).b.y();
-						double const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
-						if( d2 < CLASH_D2 ) {
-							double dz = hb(i+k,j+l).b.z() - ha(i,j).b.z() - sqrt(CLASH_D2-d2);
-							if( dz < mindis ) {
-								mindis = dz;
-								imna = i;
-								jmna = j;
-								imnb = i+k;
-								jmnb = j+l;
-							}
-						}
+	void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb, ObjexxFCL::FArray2D<Vecf2> & ha, ObjexxFCL::FArray2D<Vecf2> & hb) {
+		// insert points into hashes
+		int const xsize = xub-xlb+1;
+		int const ysize = yub-ylb+1;
+		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+			int const ix = (int)ceil(ia->x()/BIN)-xlb;
+			int const iy = (int)ceil(ia->y()/BIN)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( ha(ix,iy).a.z() < ia->z() ) {
+				ha(ix,iy).b = ha(ix,iy).a;
+				ha(ix,iy).a = *ia;
+			} else
+			if( ha(ix,iy).b.z() < ia->z() ) {
+				ha(ix,iy).b = *ia;			
+			}
+		}
+		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+			int const ix = (int)ceil(ib->x()/BIN)-xlb;
+			int const iy = (int)ceil(ib->y()/BIN)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( hb(ix,iy).a.z() > ib->z() ) {
+				hb(ix,iy).b = hb(ix,iy).a;
+				hb(ix,iy).a = *ib;			
+			} else 
+			if( hb(ix,iy).b.z() > ib->z() ) {
+				hb(ix,iy).b = *ib;
+			}
+		}
+		
+	}
+	double get_mindis_with_plane_hashes(ObjexxFCL::FArray2D<Vecf2> & ha, ObjexxFCL::FArray2D<Vecf2> & hb) {
+		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+		int imna=0,jmna=0,imnb=0,jmnb=0;
+		double m = 9e9;
+		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+			for(int j = 1; j <= ysize; ++j) {
+				for(int k = -2; k <= 2; ++k) {
+					if(i+k < 1 || i+k > xsize) continue;
+					for(int l = -2; l <= 2; ++l) {
+						if(j+l < 1 || j+l > ysize) continue;
+						double const xa1=ha(i,j).a.x(),ya1=ha(i,j).a.y(),xb1=hb(i+k,j+l).a.x(),yb1=hb(i+k,j+l).a.y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+						double const xa2=ha(i,j).a.x(),ya2=ha(i,j).a.y(),xb2=hb(i+k,j+l).b.x(),yb2=hb(i+k,j+l).b.y(),d22=(xa2-xb2)*(xa2-xb2)+(ya2-yb2)*(ya2-yb2); 
+						double const xa3=ha(i,j).b.x(),ya3=ha(i,j).b.y(),xb3=hb(i+k,j+l).a.x(),yb3=hb(i+k,j+l).a.y(),d23=(xa3-xb3)*(xa3-xb3)+(ya3-yb3)*(ya3-yb3);
+						double const xa4=ha(i,j).b.x(),ya4=ha(i,j).b.y(),xb4=hb(i+k,j+l).b.x(),yb4=hb(i+k,j+l).b.y(),d24=(xa4-xb4)*(xa4-xb4)+(ya4-yb4)*(ya4-yb4);
+						if(d21<CLD2){ double const dz1=hb(i+k,j+l).a.z()-ha(i,j).a.z()-sqrt(CLD2-d21); if(dz1<m){ m=dz1; imna=i; jmna=j; imnb=i+k; jmnb=j+l; } }
+						if(d22<CLD2){ double const dz2=hb(i+k,j+l).b.z()-ha(i,j).a.z()-sqrt(CLD2-d22); if(dz2<m){ m=dz2; imna=i; jmna=j; imnb=i+k; jmnb=j+l; } }
+						if(d23<CLD2){ double const dz3=hb(i+k,j+l).a.z()-ha(i,j).b.z()-sqrt(CLD2-d23); if(dz3<m){ m=dz3; imna=i; jmna=j; imnb=i+k; jmnb=j+l; } }
+						if(d24<CLD2){ double const dz4=hb(i+k,j+l).b.z()-ha(i,j).b.z()-sqrt(CLD2-d24); if(dz4<m){ m=dz4; imna=i; jmna=j; imnb=i+k; jmnb=j+l; } }
 					}
 				}
 			}
 		}
+		return m;
 	}
-
-
-	cbcount = 0;
-	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
-		for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-			double d2 = ib->distance_squared( (*ia) + (mindis*ori) );
-			if( d2 < CONTACT_D2 ) {
-				cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
+	double get_score(vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double mindis) {
+		double cbcount = 0.0;
+		for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
+			for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
+				double d2 = ib->distance_squared( (*ia) + (mindis*ori) );
+				if( d2 < CTD2 ) {
+					cbcount += sigmoid(d2, CLD, CTD );
+				}
 			}
 		}
+		return cbcount;
 	}
-	return mindis;
-}
+	double slide_into_contact( vector1<Vecf> pa, vector1<Vecf> pb, vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double & cbcount){ 
+		rotate_points(pa,pb,ori);
+		get_bounds(pa,pb);
+		ObjexxFCL::FArray2D<Vecf2> ha(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
+		ObjexxFCL::FArray2D<Vecf2> hb(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
+		fill_plane_hash(pa,pb,ha,hb);
+		// check hashes for min dis
+		double mindis = get_mindis_with_plane_hashes(ha,hb);
+		if(cbcount != -12345.0)	cbcount = get_score(cba,cbb,ori,mindis);
+		return mindis;
+	}
+};
 void cmp11_to_cmp12(vector1<Vecf> & pts, Vecf cmp1axs_, Vecf cmp1ax2_) { 
 	Matf r = rotation_matrix_degrees( cmp1axs_.cross(cmp1ax2_), angle_degrees(cmp1axs_,Vecf(0,0,0),cmp1ax2_) );
 	r = r * rotation_matrix_degrees(cmp1axs_,(double)60.0);
@@ -339,25 +323,26 @@ struct TCDock {
 	double alpha_,sin_alpha_,tan_alpha_;
 	core::pose::Pose cmp1_in_,cmp2_in_;
 	vector1<Vecf> cmp1_pts_,cmp1_cbs_,cmp2_pts_,cmp2_cbs_;
-	std::string cmp1file_,cmp2file_;
-	TCDock( Size icmp1file, Size icmp2file ) : 
+	string comp1name_,comp2name_,comp1type_,comp2type_;
+	TCDock( string comp1pdb, string comp2pdb, string comp1type, string comp2type ) :
 		cmp2mnpos_(72,0.0),cmp1mnpos_(120,0.0),cmp2mnneg_(72,0.0),cmp1mnneg_(120,0.0),
 		cmp2dspos_(72,0.0),cmp1dspos_(120,0.0),cmp2dsneg_(72,0.0),cmp1dsneg_(120,0.0),
 		cmp2cbpos_(72,97,0.0),cmp1cbpos_(120,145,0.0),cmp2cbneg_(72,97,0.0),cmp1cbneg_(120,145,0.0),
-		gradii(72,120,360,-9e9),gscore(72,120,360,-9e9)
+		gradii(72,120,360,-9e9),gscore(72,120,360,-9e9),
+		comp1type_(comp1type),comp2type_(comp2type)
 	{
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
 		core::chemical::ResidueTypeSetCAP crs=core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID);
-		core::import_pose::pose_from_pdb(cmp1_in_,*crs,option[in::file::s]()[icmp1file]);
-		core::import_pose::pose_from_pdb(cmp2_in_,*crs,option[in::file::s]()[icmp2file]);
-		cmp1file_ = utility::file_basename(option[in::file::s]()[icmp1file]);
-		cmp2file_ = utility::file_basename(option[in::file::s]()[icmp2file]);
-		if(cmp1file_.substr(cmp1file_.size()-3)==".gz" ) cmp1file_ = cmp1file_.substr(0,cmp1file_.size()-3);
-		if(cmp2file_.substr(cmp2file_.size()-3)==".gz" ) cmp2file_ = cmp2file_.substr(0,cmp2file_.size()-3);		
-		if(cmp1file_.substr(cmp1file_.size()-4)==".pdb") cmp1file_ = cmp1file_.substr(0,cmp1file_.size()-4);
-		if(cmp2file_.substr(cmp2file_.size()-4)==".pdb") cmp2file_ = cmp2file_.substr(0,cmp2file_.size()-4);		
-		make_cmp1mer(cmp1_in_);
+		core::import_pose::pose_from_pdb(cmp1_in_,*crs,comp1pdb);
+		core::import_pose::pose_from_pdb(cmp2_in_,*crs,comp2pdb);
+		comp1name_ = utility::file_basename(comp1pdb);
+		comp2name_ = utility::file_basename(comp2pdb);
+		if(comp1name_.substr(comp1name_.size()-3)==".gz" ) comp1name_ = comp1name_.substr(0,comp1name_.size()-3);
+		if(comp2name_.substr(comp2name_.size()-3)==".gz" ) comp2name_ = comp2name_.substr(0,comp2name_.size()-3);		
+		if(comp1name_.substr(comp1name_.size()-4)==".pdb") comp1name_ = comp1name_.substr(0,comp1name_.size()-4);
+		if(comp2name_.substr(comp2name_.size()-4)==".pdb") comp2name_ = comp2name_.substr(0,comp2name_.size()-4);		
+		make_trimer(cmp1_in_);
 		make_pentamer(cmp2_in_);		
 		// set up geometry
 
@@ -375,7 +360,7 @@ struct TCDock {
 		sin_alpha_ = sin(numeric::conversions::radians(alpha_));
 		tan_alpha_ = tan(numeric::conversions::radians(alpha_));
 		rot_pose(cmp2_in_,Vecf(0,1,0),-alpha_,Vecf(0,0,0));
-		if(option[tcdock::reverse]()) rot_pose(cmp1_in_,Vecf(0,1,0),180.0);
+		if(option[ttc::reverse]()) rot_pose(cmp1_in_,Vecf(0,1,0),180.0);
 
 		for(Size i = 1; i <= cmp1_in_.n_residue(); ++i) {
 			cmp1_cbs_.push_back(Vecf(cmp1_in_.residue(i).xyz(2)));
@@ -390,12 +375,12 @@ struct TCDock {
 		
 	}
 	void precompute_intra() {
-		double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
-		double const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
+		double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::ttc::contact_dis]();
+		double const CLASH_D		= basic::options::option[basic::options::OptionKeys::ttc::	clash_dis]();
 		double const CONTACT_D2 = sqr(CONTACT_D);
 		double const CLASH_D2	 = sqr(CLASH_D);
 		// compute high/low min dis for pent and cmp1 here, input to sicfast and don't allow any below
-		std::cout << "precomputing pent-pent and cmp1-cmp1 interactions every 1°" << std::endl;
+		cout << "precomputing pent-pent and cmp1-cmp1 interactions every 1°" << endl;
 		#ifdef USE_OPENMP
 		#pragma omp parallel for schedule(dynamic,1)
 		#endif
@@ -406,13 +391,13 @@ struct TCDock {
 			cmp21_to_cmp22(ppn2,cmp2axs_,cmp2ax2_);
 			cmp21_to_cmp22( cb2,cmp2axs_,cmp2ax2_);				
 			double cbcount = 0;
-			double const d = sicfast(pcmp2,ppn2,cbp,cb2,(cmp2ax2_-cmp2axs_).normalized(),cbcount);
+			double const d = SICFast().slide_into_contact(pcmp2,ppn2,cbp,cb2,(cmp2ax2_-cmp2axs_).normalized(),cbcount);
 			if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmp2pos! "+ObjexxFCL::string_of(icmp2));
 			for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(cmp2ax2_-cmp2axs_).normalized();
 			cmp2mnpos_[icmp2+1] = -d/2.0/sin( angle_radians(cmp2ax2_,Vecf(0,0,0),cmp2axs_)/2.0 );
 			cmp2dspos_[icmp2+1] = -d;
 			cmp2cbpos_(icmp2+1,1) = cbcount;
-			// std::cout << "compute CB" << std::endl;
+			// cout << "compute CB" << endl;
 			prune_cb_pairs_dis10(cbp,cb2);
 			for(int i = 2; i <= 97; ++i) {
 				for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) + 0.1f*cmp2axs_;
@@ -435,13 +420,13 @@ struct TCDock {
 			cmp21_to_cmp22(ppn2,cmp2axs_,cmp2ax2_);
 			cmp21_to_cmp22( cb2,cmp2axs_,cmp2ax2_);				
 			double cbcount = 0;
-			double const d = sicfast(pcmp2,ppn2,cbp,cb2,(cmp2axs_-cmp2ax2_).normalized(),cbcount);
+			double const d = SICFast().slide_into_contact(pcmp2,ppn2,cbp,cb2,(cmp2axs_-cmp2ax2_).normalized(),cbcount);
 			if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmp2neg! "+ObjexxFCL::string_of(icmp2));
 			for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(cmp2axs_-cmp2ax2_).normalized();
 			cmp2mnneg_[icmp2+1] = d/2.0/sin( angle_radians(cmp2ax2_,Vecf(0,0,0),cmp2axs_)/2.0 );
 			cmp2dsneg_[icmp2+1] = d;
 			cmp2cbneg_(icmp2+1,1) = cbcount;
-			// std::cout << "compute CB" << std::endl;
+			// cout << "compute CB" << endl;
 			prune_cb_pairs_dis10(cbp,cb2);
 			for(int i = 2; i <= 97; ++i) {
 				for(vector1<Vecf>::iterator iv = cbp.begin(); iv != cbp.end(); ++iv) *iv = (*iv) - 0.1f*cmp2axs_;
@@ -464,13 +449,13 @@ struct TCDock {
 			cmp11_to_cmp12(ptr2,cmp1axs_,cmp1ax2_);
 			cmp11_to_cmp12( cb2,cmp1axs_,cmp1ax2_);				
 			double cbcount = 0;
-			double const d = sicfast(pcmp1,ptr2,cbt,cb2,(cmp1ax2_-cmp1axs_).normalized(),cbcount);
+			double const d = SICFast().slide_into_contact(pcmp1,ptr2,cbt,cb2,(cmp1ax2_-cmp1axs_).normalized(),cbcount);
 			if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmp1pos! "+ObjexxFCL::string_of(icmp1));
 			for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(cmp1ax2_-cmp1axs_).normalized();
 			cmp1mnpos_[icmp1+1] = -d/2.0/sin( angle_radians(cmp1ax2_,Vecf(0,0,0),cmp1axs_)/2.0 );
 			cmp1dspos_[icmp1+1] = -d;
 			cmp1cbpos_(icmp1+1,1) = cbcount;
-			// std::cout << "compute CB" << std::endl;
+			// cout << "compute CB" << endl;
 			prune_cb_pairs_dis10(cbt,cb2);
 			for(int i = 2; i <= 145; ++i) {
 				for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) + 0.1f*cmp1axs_;
@@ -493,13 +478,13 @@ struct TCDock {
 			cmp11_to_cmp12(ptr2,cmp1axs_,cmp1ax2_);
 			cmp11_to_cmp12( cb2,cmp1axs_,cmp1ax2_);				
 			double cbcount = 0;
-			double const d = sicfast(pcmp1,ptr2,cbt,cb2,(cmp1axs_-cmp1ax2_).normalized(),cbcount);
+			double const d = SICFast().slide_into_contact(pcmp1,ptr2,cbt,cb2,(cmp1axs_-cmp1ax2_).normalized(),cbcount);
 			if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmp1neg! "+ObjexxFCL::string_of(icmp1));
 			for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = (*i) - d*(cmp1axs_-cmp1ax2_).normalized();
 			cmp1mnneg_[icmp1+1] = d/2.0/sin( angle_radians(cmp1ax2_,Vecf(0,0,0),cmp1axs_)/2.0 );
 			cmp1dsneg_[icmp1+1] = d;
 			cmp1cbneg_(icmp1+1,1) = cbcount;
-			// std::cout << "compute CB" << std::endl;
+			// cout << "compute CB" << endl;
 			prune_cb_pairs_dis10(cbt,cb2);
 			for(int i = 2; i <= 145; ++i) {
 				for(vector1<Vecf>::iterator iv = cbt.begin(); iv != cbt.end(); ++iv) *iv = (*iv) - 0.1f*cmp1axs_;
@@ -532,12 +517,21 @@ struct TCDock {
 		rot_pose(t2,Vecf(0,0,1),180.0);
 		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
 	}
-	void make_cmp1mer(core::pose::Pose & pose) {
+	void make_trimer(core::pose::Pose & pose) {
 		core::pose::Pose t2(pose),t3(pose);
 		rot_pose(t2,Vecf(0,0,1),120.0);
 		rot_pose(t3,Vecf(0,0,1),240.0);
 		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
 		for(Size i = 1; i <= t3.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
+	}
+	void make_tetramer(core::pose::Pose & pose) {
+		core::pose::Pose t2(pose),t3(pose),t4(pose);
+		rot_pose(t2,Vecf(0,0,1), 90.0);
+		rot_pose(t3,Vecf(0,0,1),180.0);
+		rot_pose(t4,Vecf(0,0,1),270.0);
+		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+		for(Size i = 1; i <= t3.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
+		for(Size i = 1; i <= t4.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
 	}
 	void make_pentamer(core::pose::Pose & pose) {
 		core::pose::Pose t2(pose),t3(pose),t4(pose),t5(pose);
@@ -550,7 +544,7 @@ struct TCDock {
 		for(Size i = 1; i <= t4.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
 		for(Size i = 1; i <= t5.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t5.residue(i),1); else pose.append_residue_by_bond(t5.residue(i));
 	}
-	void dump_pdb(double acmp2, double acmp1, double aori, std::string fname, bool sym=true) {
+	void dump_pdb(double acmp2, double acmp1, double aori, string fname, bool sym=true) {
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
 
@@ -560,7 +554,7 @@ struct TCDock {
 
 		Vecf sicaxis = (rotation_matrix_degrees(-Vecf(0,1,0),(double)aori) * Vecf(0,0,1)).normalized();
 		double tmpcbc;
-		double const d = sicfast(pb,pa,cbb,cba,sicaxis,tmpcbc);
+		double const d = SICFast().slide_into_contact(pb,pa,cbb,cba,sicaxis,tmpcbc);
 		if(d > 0) utility_exit_with_message("ZERO!!");
 		double const theta=aori, gamma=numeric::conversions::radians(theta-alpha_);
 		double const sin_gamma=sin(gamma), cos_gamma=cos(gamma), x=d*sin_gamma, y=d*cos_gamma, w=x/sin_alpha_, z=x/tan_alpha_;
@@ -598,28 +592,28 @@ struct TCDock {
 		using	namespace	basic::options;
 		using	namespace	basic::options::OptionKeys;		
 		using utility::file_basename;
-		std::cout << "dumping 1D stats: " << option[out::file::o]()+"/"+cmp2file_+"_POS_1D.dat" << std::endl;
-		{ utility::io::ozstream out(option[out::file::o]()+"/"+cmp2file_+"_POS_1D.dat");
-			for(int i = 1; i <=	72; ++i) out << i << " " << cmp2dspos_[i] << " " << cmp2cbpos_(i,1) << std::endl;
+		cout << "dumping 1D stats: " << option[out::file::o]()+"/"+comp2name_+"_POS_1D.dat" << endl;
+		{ utility::io::ozstream out(option[out::file::o]()+"/"+comp2name_+"_POS_1D.dat");
+			for(int i = 1; i <=	72; ++i) out << i << " " << cmp2dspos_[i] << " " << cmp2cbpos_(i,1) << endl;
 			out.close(); }
-		{ utility::io::ozstream out(option[out::file::o]()+"/"+cmp2file_+"_NEG_1D.dat");
-			for(int i = 1; i <=	72; ++i) out << i << " " << cmp2dsneg_[i] << " " << cmp2cbneg_(i,1) << std::endl;
+		{ utility::io::ozstream out(option[out::file::o]()+"/"+comp2name_+"_NEG_1D.dat");
+			for(int i = 1; i <=	72; ++i) out << i << " " << cmp2dsneg_[i] << " " << cmp2cbneg_(i,1) << endl;
 			out.close(); }
-		{ utility::io::ozstream out(option[out::file::o]()+"/"+cmp1file_+"_POS_1D.dat");
-			for(int i = 1; i <= 120; ++i) out << i << " " << cmp1dspos_[i] << " " << cmp1cbpos_(i,1) << std::endl;
+		{ utility::io::ozstream out(option[out::file::o]()+"/"+comp1name_+"_POS_1D.dat");
+			for(int i = 1; i <= 120; ++i) out << i << " " << cmp1dspos_[i] << " " << cmp1cbpos_(i,1) << endl;
 			out.close(); }
-		{ utility::io::ozstream out(option[out::file::o]()+"/"+cmp1file_+"_NEG_1D.dat");
-			for(int i = 1; i <= 120; ++i) out << i << " " << cmp1dsneg_[i] << " " << cmp1cbneg_(i,1) << std::endl;
+		{ utility::io::ozstream out(option[out::file::o]()+"/"+comp1name_+"_NEG_1D.dat");
+			for(int i = 1; i <= 120; ++i) out << i << " " << cmp1dsneg_[i] << " " << cmp1cbneg_(i,1) << endl;
 			out.close(); }
 	}
-	double calc_cbc(int icmp2,int icmp1,int iori,double&dori,double&dcmp2,double&dcmp1,double&icbc,double&cmp2cbc,double&cmp1cbc,bool cache=true){
-		if(!cache || gscore(icmp2+1,icmp1+1,iori+1)==-9e9 ) {
+	double __dock_base__(int icmp2,int icmp1,int iori,double&dori,double&dcmp2,double&dcmp1,double&icbc,double&cmp2cbc,double&cmp1cbc,bool cache=true){
+		if(!cache || gradii(icmp2+1,icmp1+1,iori+1)==-9e9 ) {
 			using basic::options::option;
 			using namespace basic::options::OptionKeys;
-			icbc=0; cmp2cbc=0; cmp1cbc=0;
+			cmp2cbc=0; cmp1cbc=0;
 			vector1<Vecf> pb,cbb, pa,cba; get_cmp1(icmp1,pa,cba); get_cmp2(icmp2,pb,cbb);		
 			Vecf sicaxis = (rotation_matrix_degrees(-Vecf(0,1,0),(double)iori) * Vecf(0,0,1)).normalized();
-			double const d = sicfast(pb,pa,cbb,cba,sicaxis,icbc);
+			double const d = SICFast().slide_into_contact(pb,pa,cbb,cba,sicaxis,icbc);
 			dori = d;
 			if(d > 0) utility_exit_with_message("ZERO!!");
 			double const theta=iori, gamma=numeric::conversions::radians(theta-alpha_);
@@ -654,32 +648,48 @@ struct TCDock {
 				if( 0 < dp && dp <=  97 ) cmp1cbc = cmp2cbneg_(icmp2+1,dp);
 				if( 0 < dt && dt <= 145 ) cmp2cbc = cmp1cbneg_(icmp1+1,dt);
 			}
-			gscore(icmp2+1,icmp1+1,iori+1) = icbc+option[tcdock::intra]()*(cmp2cbc+cmp1cbc);
+			if(icbc!=-12345.0) gscore(icmp2+1,icmp1+1,iori+1) = icbc+option[ttc::intra]()*(cmp2cbc+cmp1cbc);
 			gradii(icmp2+1,icmp1+1,iori+1) = d;
 		}
 		return gscore(icmp2+1,icmp1+1,iori+1);
 	}
+
+	void dock_no_score(int icmp2,int icmp1,int iori){
+		double dori,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc;
+		icbc = -12345.0;
+		__dock_base__(icmp2,icmp1,iori,dori,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc,true);
+	}
+	double dock_score(int icmp2,int icmp1,int iori,double&icbc,double&cmp2cbc,double&cmp1cbc){
+		double dori,dcmp2,dcmp1;
+		return __dock_base__(icmp2,icmp1,iori,dori,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc,false);
+	}
+	double dock_score(int icmp2,int icmp1,int iori){
+		double dori,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc;
+		return __dock_base__(icmp2,icmp1,iori,dori,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc,false);
+	}
+	double dock_get_geom(int icmp2,int icmp1,int iori,double&dori,double&dcmp2,double&dcmp1,double&icbc,double&cmp2cbc,double&cmp1cbc){
+		return __dock_base__(icmp2,icmp1,iori,dori,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc,false);
+	}	
 	void run() {
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
 		using namespace core::id;
 		using numeric::conversions::radians;
-		double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
-		double const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
+		double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::ttc::contact_dis]();
+		double const CLASH_D		= basic::options::option[basic::options::OptionKeys::ttc::	clash_dis]();
 		double const CONTACT_D2 = sqr(CONTACT_D);
 		double const CLASH_D2	= sqr(CLASH_D);
 		Pose const cmp1init(cmp1_in_);
 		Pose const cmp2init(cmp2_in_);
 		double max1=0;
 		precompute_intra();
-		// std::cout << "greetings from thread: " << omp_get_thread_num() << " of " << omp_get_num_threads() << std::endl
+		// cout << "greetings from thread: " << omp_get_thread_num() << " of " << omp_get_num_threads() << endl
 		
 		{ // 3deg loop 
-			std::cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << std::endl; 
-			double mxd = 0;
-			double cbmax = 0; int mxiori = 0, mxicmp2 = 0, mxicmp1 = 0;
+			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl; 
+			double max_score = 0;
 			for(int icmp2 = 0; icmp2 < 72; icmp2+=3) {
-				if(icmp2%9==0 && icmp2!=0) std::cout<<"	 loop1 "<<cmp1file_<<" "<<(100*icmp2)/72<<"\% done, cbmax: "<<cbmax<<std::endl;
+				if(icmp2%9==0 && icmp2!=0) cout<<" lowres dock "<<comp1name_<<" "<<(100*icmp2)/72<<"\% done, max_score: "<<F(14,9,max_score)<<endl;
 				vector1<Vecf> pb,cbb; get_cmp2(icmp2,pb,cbb);
 				#ifdef USE_OPENMP
 				#pragma omp parallel for schedule(dynamic,1)
@@ -696,31 +706,30 @@ struct TCDock {
 						} else {
 							iori += (stg%2==0) ? -3 : 3;
 						}						
-						double d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc;
-						icbc = calc_cbc(icmp2,icmp1,iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
-						if( 0.0==icbc ) { stg++; newstage=true;	continue; }
+						double const score = dock_score(icmp2,icmp1,iori);
+						if( 0.0==score ) { stg++; newstage=true;	continue; }
 						#ifdef USE_OPENMP
 						#pragma omp critical
 						#endif
-						if(icbc > cbmax) { cbmax = icbc; mxiori = iori; mxicmp2 = icmp2; mxicmp1 = icmp1; mxd = d;	}
+						if(score > max_score) max_score = score;
 					}
 				}
 			}
-			if(cbmax<0.00001) utility_exit_with_message("cmp1 or cmp2 too large, no contacts!");
-			std::cout << "MAX3 " << mxicmp2 << " " << mxicmp1 << " " << mxiori << " " << cbmax << " " << mxd << std::endl;
+			if(max_score<0.00001) utility_exit_with_message("cmp1 or cmp2 too large, no contacts!");
+			cout << "MAX3 " << max_score << endl;
 		}
 
 		utility::vector1<vector1<int> > cmp2lmx,cmp1lmx,orilmx; { // set up work for main loop 2 
-			double top1000_3 = 0;
+			double topX_3 = 0;
 			vector1<double> cbtmp;
 			for(Size i = 0; i < gscore.size(); ++i) if(gscore[i] > 0) cbtmp.push_back(gscore[i]);
 			std::sort(cbtmp.begin(),cbtmp.end());
-			top1000_3 = cbtmp[max(1,(int)cbtmp.size()-999)];
-			std::cout << "scanning top1000 with cbcount3 >= " << top1000_3 << std::endl;
+			topX_3 = cbtmp[max(1,(int)cbtmp.size()-option[ttc::nsamp1]()+1)];
+			cout << "scanning top "<<option[ttc::nsamp1]()<<" with cbcount3 >= " << topX_3 << endl;
 			for(int icmp2 = 0; icmp2 < 72; icmp2+=3) {
 				for(int icmp1 = 0; icmp1 < 120; icmp1+=3) {
 					for(int iori = 0; iori < 360; iori+=3) {
-						if( gscore(icmp2+1,icmp1+1,iori+1) >= top1000_3) {
+						if( gscore(icmp2+1,icmp1+1,iori+1) >= topX_3) {
 							vector1<int> cmp2,cmp1,ori;
 							for(int i = -1; i <= 1; ++i) cmp2.push_back( (icmp2+i+ 72)% 72 );
 							for(int j = -1; j <= 1; ++j) cmp1.push_back( (icmp1+j+120)%120 );
@@ -738,36 +747,24 @@ struct TCDock {
 			#ifdef USE_OPENMP
 			#pragma omp parallel for schedule(dynamic,1)
 			#endif
-			for(Size ilmx = 1; ilmx <= cmp2lmx.size(); ++ilmx)  {       //  MAIN LOOP 2                                      
-				if( (ilmx-1)%100==0 && ilmx!=1) std::cout<<"	loop2 "<<cmp1file_<<" "<<(double(ilmx-1)/10)<<"\% done, cbmax: "<<max1<<std::endl;
-				double cbmax = 0; int mxiori = 0, mxicmp2 = 0, mxicmp1 = 0;
+			for(Size ilmx = 1; ilmx <= cmp2lmx.size(); ++ilmx)  {       //  MAIN LOOP 2
+				if( (ilmx-1)%(option[ttc::nsamp1]()/10)==0 && ilmx!=1) 
+					cout<<" highres dock "<<comp1name_<<" "<<(double(ilmx-1)/(option[ttc::nsamp1]()/100))<<"\% done"<<endl;
 				for(vector1<int>::const_iterator picmp2 = cmp2lmx[ilmx].begin(); picmp2 != cmp2lmx[ilmx].end(); ++picmp2) {
 					int icmp2 = *picmp2; vector1<Vecf> pb,cbb; get_cmp2(icmp2,pb,cbb);
 					for(vector1<int>::const_iterator picmp1 = cmp1lmx[ilmx].begin(); picmp1 != cmp1lmx[ilmx].end(); ++picmp1) {
 						int icmp1 = *picmp1; vector1<Vecf> pa,cba; get_cmp1(icmp1,pa,cba);
 						for(vector1<int>::const_iterator piori = orilmx[ilmx].begin(); piori != orilmx[ilmx].end(); ++piori) {
 							int iori = *piori;								
-							double d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc;
-							icbc = calc_cbc(icmp2,icmp1,iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
-							if( 0.0==icbc ) continue;
-							#ifdef USE_OPENMP
-							#pragma omp critical
-							#endif
-							if(icbc > cbmax) { cbmax = icbc; mxiori = iori; mxicmp2 = icmp2; mxicmp1 = icmp1; }
+							dock_no_score(icmp2,icmp1,iori);
 						}
 					}
 				}
-				#ifdef USE_OPENMP
-				#pragma omp critical
-				#endif
-				if(cbmax > max1) max1 = cbmax;
 			}
 		}		
 				
 		vector1<LMAX> local_maxima; {                        // get local radial disp maxima (minima, really)     
-			double mn=9e9,mx=-9e9;
-			LMAX highscore; highscore.score = -9e9;
-			// vector1<int> ehist(26,0);
+			double highscore = -9e9;
 			for(int i = 1; i <= gradii.size1(); ++i){
 				for(int j = 1; j <= gradii.size2(); ++j){
 					for(int k = 1; k <= gradii.size3(); ++k){
@@ -788,24 +785,24 @@ struct TCDock {
 							}
 						}
 						if( nbmax != -9e9 && val >= nbmax ) {
-							local_maxima.push_back( LMAX(gscore(i,j,k),gradii(i,j,k),i-1,j-1,k-1) );
-							mx = max(val,mx);
-							mn = min(val,mn);
+							double score = dock_score(i-1,j-1,k-1);
+							local_maxima.push_back( LMAX(score,gradii(i,j,k),i-1,j-1,k-1) );
+							highscore = max(score,highscore);
 						}
 					}
 				}
 			}
 			std::sort(local_maxima.begin(),local_maxima.end(),compareLMAX);
-			std::cout << "N local max (comp1-comp2 disp.) " << local_maxima.size() << std::endl;					
+			cout << "N maxima: " << local_maxima.size() << ", best score: " << highscore << endl;					
 		}
 
-		std::cout << " NUM   score pscore tscore        cmp1 ncm1  a1      r1        cmp2 ncm2 a2      r2 ori  v0.2 v0.4 v0.6";
-		std::cout << "  v0.8  v1.0  v1.2  v1.4  v1.6  v1.8  v2.0  v2.2  v2.4  v2.6  v2.8  v3.0  v3.2  v3.4  v3.6  v3.8  v4.0 ";
-		std::cout << " v4.2  v4.4  v4.6  v4.8  v5.0" << std::endl;
-		for(Size ilm = 1; ilm <= min(local_maxima.size(),(Size)option[tcdock::topx]()); ++ilm) { // dump top hit info 
+		cout << " NUM   score pscore tscore        cmp1 ncm1  a1       r1        cmp2 ncm2  a2       r2 ori  v0.2  v0.4  v0.6";
+		cout << "  v0.8  v1.0  v1.2  v1.4  v1.6  v1.8  v2.0  v2.2  v2.4  v2.6  v2.8  v3.0  v3.2  v3.4  v3.6  v3.8  v4.0 ";
+		cout << " v4.2  v4.4  v4.6  v4.8  v5.0" << endl;
+		for(Size ilm = 1; ilm <= min(local_maxima.size(),(Size)option[ttc::topx]()); ++ilm) { // dump top hit info 
 			LMAX const & h(local_maxima[ilm]);
 			double d,dcmp2,dcmp1,icbc,cmp1cbc,cmp2cbc;
-			int N = option[tcdock::peak_grid_size]();
+			int N = option[ttc::peak_grid_size]();
 			ObjexxFCL::FArray3D<double> grid(2*N+1,2*N+1,2*N+1,0.0);
 			#ifdef USE_OPENMP
 			#pragma omp parallel for schedule(dynamic,1)
@@ -818,8 +815,8 @@ struct TCDock {
 						} else {
 							int i = (h.icmp2+di+gscore.size1())%gscore.size1();
 							int j = (h.icmp1+dj+gscore.size2())%gscore.size2();
-							int k = (h.iori+dk+gscore.size3())%gscore.size3();
-							calc_cbc(i,j,k,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc,true);
+							int k = (h.iori +dk+gscore.size3())%gscore.size3();
+							dock_no_score(i,j,k);
 							grid(di+N+1,dj+N+1,dk+N+1) = gradii(i+1,j+1,k+1);
 						}
 					}
@@ -832,7 +829,7 @@ struct TCDock {
 				flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
 
 				double count = 0;
-				int Nedge = option[tcdock::peak_grid_smooth]();
+				int Nedge = option[ttc::peak_grid_smooth]();
 				ObjexxFCL::FArray3D<double> grid2(grid);
 				for(int i = 1+Nedge; i <= grid.size1()-Nedge; ++i) {
 					for(int j = 1+Nedge; j <= grid.size2()-Nedge; ++j) {
@@ -852,39 +849,40 @@ struct TCDock {
 					}
 				}
 				ffhist[ifh+1] = pow(count,1.0/3.0);
-				// if(true) {
-				// 	std::ofstream o(("out/grid_"+ObjexxFCL::string_of(ilm)+"_"+ObjexxFCL::string_of(ifh)+".dat").c_str());
-				// 	for(int i = 1; i <= grid.size1(); ++i) {
-				// 		for(int j = 1; j <= grid.size2(); ++j) {
-				// 			for(int k = 1; k <= grid.size3(); ++k) {
-				// 				o << grid2(i,j,k) << std::endl;
-				// 			}
-				// 		}
-				// 	}
-				// 	o.close();
-				// 	dump_pdb(h.icmp2,h.icmp1,h.iori,"test_"+ObjexxFCL::string_of(ilm)+".pdb");					
-				// }
+				if( ilm==6 || ilm==2 ) {
+					utility::io::ozstream o(("out/grid_"+ObjexxFCL::string_of(ilm)+"_"+ObjexxFCL::string_of(ifh)+".dat.gz"));
+					for(int i = 1; i <= grid.size1(); ++i) {
+						for(int j = 1; j <= grid.size2(); ++j) {
+							for(int k = 1; k <= grid.size3(); ++k) {
+								o << grid2(i,j,k) << endl;
+							}
+						}
+					}
+					o.close();
+					dump_pdb(h.icmp2,h.icmp1,h.iori,"test_"+ObjexxFCL::string_of(ilm)+".pdb");					
+				}
 			}
 			for(ifh; ifh < ffhist.size(); ++ifh) ffhist[ifh+1] = (2*N+1)*(2*N+1)*(2*N+1);
 			
-			double cbc = calc_cbc(h.icmp2,h.icmp1,h.iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc,false);
-			std::cout << "| " << I(2,ilm) << " "
+			double cbc = dock_get_geom(h.icmp2,h.icmp1,h.iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
+			cout << "| " << I(2,ilm) << " "
 			          << F(7,3,icbc) << " " 
 			          << F(6,2,cmp1cbc) << " " 
 			          << F(6,2,cmp2cbc) << " " 
-			          << cmp1file_ << " " 
+			          << comp1name_ << " " 
 			          << I(4,cmp1_in_.n_residue()) << " " 
 			          << I(3,h.icmp1) << " " 
-			          << F(7,3,dcmp1) << " "
-			          << cmp2file_ << " " 
+			          << F(8,3,dcmp1) << " "
+			          << comp2name_ << " " 
 			          << I(4,cmp2_in_.n_residue()) << " " 
-			          << I(2,h.icmp2) << " " 
-			          << F(7,3,dcmp2) << " "
-						 << I(3,h.iori) << " ";
+			          << I(3,h.icmp2) << " " 
+			          << F(8,3,dcmp2) << " "
+						 << I(3,h.iori);
 			for(int ifh = 1; ifh <= ffhist.size(); ++ifh) {
-				std::cout << " " << F((ifh<4)?4:5,2,ffhist[ifh]);
+				cout << " " << F(5,2,ffhist[ifh]);
 			}
-			std::cout << std::endl;
+			cout << endl;
+			if(option[ttc::dump_pdb]()) dump_pdb(h.icmp2,h.icmp1,h.iori,"test_"+ObjexxFCL::string_of(ilm)+".pdb");
 		}
 	}
 
@@ -892,10 +890,26 @@ struct TCDock {
 int main (int argc, char *argv[]) {
 	register_options();
 	devel::init(argc,argv);
+	using basic::options::option;
 	using namespace basic::options::OptionKeys;
-	for(Size i = 2; i <= basic::options::option[in::file::s]().size(); ++i) {
-		TCDock tcd(i,1);
-		tcd.run();
+	vector1<string> compkind;
+	vector1<vector1<string> > compfiles;
+	if( option[ttc::icos::c2].user() ) { compkind.push_back("icos/c2"); compfiles.push_back(option[ttc::icos::c2]()); }
+	if( option[ttc::icos::c3].user() ) { compkind.push_back("icos/c3"); compfiles.push_back(option[ttc::icos::c3]()); }
+	if( option[ttc::icos::c5].user() ) { compkind.push_back("icos/c5"); compfiles.push_back(option[ttc::icos::c5]()); }		
+	if( option[ttc::octa::c2].user() ) { compkind.push_back("octa/c2"); compfiles.push_back(option[ttc::octa::c2]()); }
+	if( option[ttc::octa::c3].user() ) { compkind.push_back("octa/c3"); compfiles.push_back(option[ttc::octa::c3]()); }
+	if( option[ttc::octa::c4].user() ) { compkind.push_back("octa/c4"); compfiles.push_back(option[ttc::octa::c4]()); }		
+	if( option[ttc::tetr::c2].user() ) { compkind.push_back("tetr/c2"); compfiles.push_back(option[ttc::tetr::c2]()); }
+	if( option[ttc::tetr::c3].user() ) { compkind.push_back("tetr/c3"); compfiles.push_back(option[ttc::tetr::c3]()); }
+	if(compkind.size()!=2) utility_exit_with_message("must specify two components!");
+	if(compkind[1].substr(0,4)!=compkind[2].substr(0,4)) utility_exit_with_message("components must be of same sym icos, tetra or octa");
+
+	for(Size i = 1; i <= compfiles[1].size(); ++i) {
+		for(Size j = 1; j <= compfiles[2].size(); ++j) {
+			TCDock tcd(compfiles[1][i],compfiles[2][i],compkind[1],compkind[2]);
+			tcd.run();
+		}
 	}
-	std::cout << "DONE testing grid" << std::endl;
+	cout << "DONE testing refactor __dock_base__" << endl;
 }
