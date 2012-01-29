@@ -439,7 +439,16 @@ bool BinaryProteinSilentStruct::init_from_lines(
 					swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 				}
 			}
-			detect_fullatom( currpos, natoms, fullatom_, fullatom_well_defined );
+
+			if ( !symmetry_info()->get_use_symmetry() || currpos <=symmetry_info()->num_independent_residues()  ) {
+				// always run this if we're not dealing with a symmetric pose, or, if we're dealing with a symmetric pose
+				// and we're still reading in data for the assymetric unit.  But if we're reading in a symmetric pose
+				// and currpos > the number of residues in the asymmetric unit (i.e. we're reading in a virtual residue),
+				// then DON'T use a count of the number of atoms in the given residue as an indication of whether we're dealing
+				// with a fullatom structure.
+				detect_fullatom( currpos, natoms, fullatom_, fullatom_well_defined );
+			}
+
 			atm_coords_[currpos].resize( natoms ); // allocate space for coords
 			for (int j=1; j<=natoms; ++j) {
 				atm_coords_[currpos][j] = atm_buff[j];
