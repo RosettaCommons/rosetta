@@ -275,11 +275,11 @@ void StarAbinitio::apply(Pose& pose) {
   const Real temperature = option[OptionKeys::abinitio::temperature]();
   const Real chainbreak = option[OptionKeys::jumps::increase_chainbreak]();
 
-  ScoreFunctionOP score_stage1  = setup_score("score0", 0.01 * chainbreak);
-  ScoreFunctionOP score_stage2  = setup_score("score1", 0.05 * chainbreak);
-  ScoreFunctionOP score_stage3a = setup_score("score2", 0.10 * chainbreak);
-  ScoreFunctionOP score_stage3b = setup_score("score5", 0.15 * chainbreak);
-  ScoreFunctionOP score_stage4  = setup_score("score3", 0.20 * chainbreak);
+  ScoreFunctionOP score_stage1  = setup_score("score0", 0.1 * chainbreak);
+  ScoreFunctionOP score_stage2  = setup_score("score1", 0.2 * chainbreak);
+  ScoreFunctionOP score_stage3a = setup_score("score2", 0.4 * chainbreak);
+  ScoreFunctionOP score_stage3b = setup_score("score5", 0.4 * chainbreak);
+  ScoreFunctionOP score_stage4  = setup_score("score3", 0.6 * chainbreak);
 
   // Stage 1
   TR << "Stage 1" << std::endl;
