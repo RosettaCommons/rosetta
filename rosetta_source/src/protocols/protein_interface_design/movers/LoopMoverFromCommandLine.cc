@@ -29,6 +29,7 @@
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
 #include <protocols/loops/Loops.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
@@ -166,6 +167,7 @@ void
 LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 {
 	using namespace protocols::loops;
+	pose.conformation().detect_disulfides(); // I don't think that this is important but just in case
 	core::pose::Pose native_pose = pose;
 	loops::set_secstruct_from_psipred_ss2( pose );
 	LoopsOP loops = new protocols::loops::Loops( loop_file_name_ );
@@ -199,7 +201,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		//protocols::moves::MonteCarlo mc( pose, *scorefxn_repack_, mc_kt );
 		protocols::protein_interface_design::movers::SaveAndRetrieveSidechains retrieve_sc( pose );
 		retrieve_sc.allsc( true );
-		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
+
 		if( protocol_ == "automatic" ){
 			utility::vector1< core::fragment::FragSetOP > frag_libs;
 			protocols::loops::read_loop_fragments( frag_libs );
@@ -215,6 +217,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 			lrm.apply( pose );
 			return;
 		}
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
 		if( protocol_ == "kinematic" ) {
 						if( perturb_ ) {
 							protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb(single_loop, lores_score_ );
