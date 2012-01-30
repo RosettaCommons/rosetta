@@ -71,6 +71,7 @@ MetricRecorder::MetricRecorder() :
 	stride_(1),
 	cumulate_jobs_(false),
 	cumulate_replicas_(false),
+	prepend_output_name_(false),
 	step_count_(0),
 	last_flush_(0)
 {}
@@ -85,6 +86,7 @@ MetricRecorder::MetricRecorder(
 	stride_(other.stride_),
 	cumulate_jobs_(other.cumulate_jobs_),
 	cumulate_replicas_(other.cumulate_replicas_),
+	prepend_output_name_(other.prepend_output_name_),
 	step_count_(other.step_count_),
 	file_name_(other.file_name_),
 	torsion_ids_(other.torsion_ids_),
@@ -129,6 +131,7 @@ MetricRecorder::parse_my_tag(
 	stride_ = tag->getOption< core::Size >( "stride", 100 );
 	cumulate_jobs_ = tag->getOption< bool >( "cumulate_jobs", false );
 	cumulate_replicas_ = tag->getOption< bool >( "cumulate_replicas", false );
+	prepend_output_name_ = tag->getOption< bool >( "prepend_output_name", false );
 	file_name_ = tag->getOption< std::string >( "filename", "metrics.txt" );
 
 	utility::vector0< utility::tag::TagPtr > const subtags( tag->getTags() );
@@ -211,6 +214,20 @@ MetricRecorder::cumulate_replicas(
 	cumulate_replicas_ = cumulate_replicas;
 }
 
+bool
+MetricRecorder::prepend_output_name() const
+{
+	return prepend_output_name_;
+}
+
+void
+MetricRecorder::prepend_output_name(
+	bool prepend_output_name
+)
+{
+	prepend_output_name_ = prepend_output_name;
+}
+
 void
 MetricRecorder::add_torsion(
 	core::id::TorsionID const & torsion_id,
@@ -274,7 +291,14 @@ MetricRecorder::update_after_boltzmann(
 	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
 )
 {
-	if (recorder_stream_.filename() == "") recorder_stream_.open(file_name_);
+	if (recorder_stream_.filename() == "") {
+		std::ostringstream file_name_stream;
+		if (prepend_output_name_ && !metropolis_hastings_mover) {
+			file_name_stream << protocols::jd2::JobDistributor::get_instance()->current_output_name() << '_';
+		}
+		file_name_stream << file_name_;
+		recorder_stream_.open(file_name_stream.str());
+	}
 
 	protocols::jd2::JobCOP job( protocols::jd2::get_current_job() );
 	core::Size nstruct_index( job ? job->nstruct_index() : 1 );

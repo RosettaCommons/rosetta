@@ -128,6 +128,10 @@ public: // Methods
 		core::pose::Pose const & pose
 	);
 
+	virtual
+	bool
+	reinitialize_for_each_job() const { return true; };
+
 	std::string const &
 	file_name() const;
 
@@ -158,6 +162,14 @@ public: // Methods
 	void
 	cumulate_replicas(
 		bool cumulate_replicas
+	);
+
+	bool
+	prepend_output_name() const;
+	
+	void
+	prepend_output_name(
+		bool prepend_output_name
 	);
 
 	void
@@ -233,6 +245,7 @@ private: // Fields
 	core::Size stride_;
 	bool cumulate_jobs_;
 	bool cumulate_replicas_;
+	bool prepend_output_name_;
 	core::Size step_count_;
 	utility::io::ozstream recorder_stream_;
 	utility::vector1<std::pair<core::id::TorsionID, std::string> > torsion_ids_;
