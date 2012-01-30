@@ -99,6 +99,10 @@ public:
 
 	virtual protocols::moves::MoverOP clone() const;
 
+	virtual protocols::moves::MoverOP fresh_instance() const;
+
+	///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+	virtual bool reinitialize_for_new_input() const;// {return true;};
 
 	///@brief copy ctor
 	DockingProtocol( DockingProtocol const & rhs );

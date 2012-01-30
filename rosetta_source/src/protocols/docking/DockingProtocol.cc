@@ -593,6 +593,18 @@ DockingProtocol::clone() const {
 	//return( new DockingProtocol( movable_jumps_, low_res_protocol_only_, docking_local_refine_, autofoldtree_, docking_scorefxn_low_, docking_scorefxn_high_ ) ); This is bad do not clone this way.
 	return new DockingProtocol(*this);
 }
+
+///@brief fresh_instance returns a default-constructed object for the JD2
+protocols::moves::MoverOP
+DockingProtocol::fresh_instance() const {
+	return new DockingProtocol();
+}
+
+///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+bool DockingProtocol::reinitialize_for_new_input() const {
+	return true;
+}
+
 ///@brief copy ctor
 DockingProtocol::DockingProtocol( DockingProtocol const & rhs ) :
 	Mover(rhs)
