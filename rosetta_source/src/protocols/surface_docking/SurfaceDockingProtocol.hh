@@ -14,7 +14,7 @@
 
 /// @file SurfaceDocking.hh
 /// @brief <add a description of the class>
-/// @author Robin A Thottungal (raugust1@jhu.edu)
+/// @author Robin A Thottungal (rathottungal@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_SurfaceDockingProtocol_hh
 #define INCLUDED_protocols_surface_docking_SurfaceDockingProtocol_hh
@@ -31,11 +31,19 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-// AUTO-REMOVED #include <protocols/surface_docking/SurfaceParameters.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+#include <protocols/surface_docking/SurfaceParameters.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 // ObjexxFCL Headers
+
+// for adding data to pose
+#include <basic/datacache/BasicDataCache.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -46,7 +54,8 @@
 #include <map>
 #include <list>
 
-#include <utility/vector1.hh>
+//Auto Headers
+#include <sstream>
 
 
 namespace protocols {
@@ -67,6 +76,14 @@ public:
 
 	void setupFoldTree(core::pose::Pose & pose);
 
+	void CalcSecondayStruct(core::pose::Pose & pose);
+
+	void SetSecondayStruct(core::pose::Pose & pose);
+
+	void CalcSecondayStruct_withSurface(core::pose::Pose & pose);
+
+	void abinitio (core::pose::Pose & pose);
+
 	//virtual void setup_list( core::pose::Pose & ) = 0;
 
 	//virtual void set_angles( core::Real ) = 0;
@@ -74,8 +91,9 @@ public:
 	//virtual bool make_move( core::pose::Pose & ) = 0;
 
 private:
-
-
+	core::scoring::ScoreFunctionOP score_sidechain_pack_;
+	std::string SecStruct_;
+	protocols::surface_docking::SurfaceParametersOP surfaceParameters_;
 };
 
 

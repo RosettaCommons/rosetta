@@ -14,7 +14,7 @@
 
 /// @file CentroidRelaxMover.hh
 /// @brief <add a description of the class>
-/// @author Robin A Thottungal (raugust1@jhu.edu)
+/// @author Robin A Thottungal (rathottungal@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_CentroidRelaxMover_hh
 #define INCLUDED_protocols_surface_docking_CentroidRelaxMover_hh
@@ -32,16 +32,18 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/BackboneMover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.fwd.hh>
+#include <protocols/moves/TrialMover.hh>
+#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/surface_docking/CentroidRelaxMover.fwd.hh>
+#include <core/types.hh>
 
+#include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 // ObjexxFCL Headers
 
@@ -54,10 +56,11 @@
 #include <map>
 #include <list>
 
-#include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
-#include <protocols/moves/TrialMover.fwd.hh>
-#include <utility/vector1.hh>
+//Auto Headers
+#include <sstream>
+
+//@Robin Added
+#include <utility/vector1_bool.hh>
 
 namespace protocols {
 namespace surface_docking {
@@ -87,9 +90,9 @@ public:
 
 	void setup_defaults();
 
-	//void setup_shearTrialMover();
+	void setup_shearTrialMover();
 
-	//void setup_smallTrialMover();
+	void setup_smallTrialMover();
 
 	void FinalizeMovers(core::pose::Pose &);
 
@@ -127,12 +130,12 @@ private:
 	moves::MonteCarloOP  shearmonteCarlo_;
 
 	simple_moves::SmallMoverOP smallmover_;
-	protocols::simple_moves::MinMoverOP smallminmover_;
+	simple_moves::MinMoverOP smallminmover_;
 	moves::SequenceMoverOP smallsequenceMover_;
 	moves::TrialMoverOP small_trial_min_mover_;
 
 	simple_moves::ShearMoverOP shearmover_;
-	protocols::simple_moves::MinMoverOP shearminmover_;
+	simple_moves::MinMoverOP shearminmover_;
 	moves::SequenceMoverOP shearsequenceMover_;
 	moves::TrialMoverOP shear_trial_min_mover_;
 

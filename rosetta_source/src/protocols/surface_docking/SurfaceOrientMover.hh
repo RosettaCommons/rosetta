@@ -26,8 +26,8 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
 #include <protocols/moves/Mover.hh>
 
 // Utility Headers
@@ -37,10 +37,7 @@
 #include <string>
 #include <map>
 #include <list>
-// AUTO-REMOVED #include <sstream>
-
-#include <utility/vector1.hh>
-
+#include <sstream>
 
 
 namespace protocols {

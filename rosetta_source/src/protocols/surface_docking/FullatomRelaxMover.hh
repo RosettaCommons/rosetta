@@ -14,7 +14,7 @@
 
 /// @file FullatomRelaxMover.hh
 /// @brief
-/// @author Robin A Thottungal (raugust1@jhu.edu)
+/// @author Robin A Thottungal  (rathottungal@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_FullatomRelaxMover_hh
 #define INCLUDED_protocols_surface_docking_FullatomRelaxMover_hh
@@ -22,7 +22,7 @@
 // Unit Headers
 #include <protocols/surface_docking/FullatomRelaxMover.fwd.hh>
 // Package headers
-
+#include <protocols/surface_docking/SurfaceParameters.fwd.hh>
 // Project headers
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -31,17 +31,19 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
+#include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/BackboneMover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.fwd.hh>
+#include <protocols/moves/TrialMover.hh>
+#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-// AUTO-REMOVED #include <protocols/docking/DockingHighRes.hh>
+#include <protocols/docking/DockingHighRes.hh>
+#include <core/types.hh>
 #include <utility/vector1_bool.hh>
 
 
@@ -54,10 +56,8 @@
 #include <map>
 #include <list>
 
-#include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
-#include <protocols/moves/TrialMover.fwd.hh>
-#include <utility/vector1.hh>
+//Auto Headers
+#include <sstream>
 
 
 
@@ -85,17 +85,17 @@ public:
 
 	//virtual bool make_move( core::pose::Pose & ) = 0;
 
-	//void angle_max(const core::Real);
+	void angle_max(const core::Real);
 
-	//void angle_max(const char,const core::Real);
+	void angle_max(const char,const core::Real);
 
 	void set_nmoves(const core::Size);
 
 	void setup_defaults();
 
-	//void setup_shearTrialMover();
+	void setup_shearTrialMover();
 
-	//void setup_smallTrialMover();
+	void setup_smallTrialMover();
 
 	void setupMovers();
 
@@ -108,6 +108,11 @@ public:
 	void set_ljrepulsion_weight(core::Real weight_scale);
 
 	void set_ecounter(core::Size ecount);
+
+	void CalcSecondayStruct(core::pose::Pose & pose);
+
+
+	std::string getSecondayStruct();
 
 public:
 	typedef core::Real Real;
@@ -140,16 +145,18 @@ private:
 	moves::MonteCarloOP  shearmonteCarlo_;
 
 	simple_moves::SmallMoverOP smallmover_;
-	protocols::simple_moves::MinMoverOP smallminmover_;
+	simple_moves::MinMoverOP smallminmover_;
 	moves::SequenceMoverOP smallsequenceMover_;
 	moves::TrialMoverOP small_trial_min_mover_;
 
 	simple_moves::ShearMoverOP shearmover_;
-	protocols::simple_moves::MinMoverOP shearminmover_;
+	simple_moves::MinMoverOP shearminmover_;
 	moves::SequenceMoverOP shearsequenceMover_;
 	moves::TrialMoverOP shear_trial_min_mover_;
 
+
 	//protocols::docking::DockingHighResOP dockingHigh_res_;
+	std::string SecStruct_;
     };
 
 

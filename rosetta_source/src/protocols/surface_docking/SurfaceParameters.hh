@@ -15,13 +15,12 @@
 
 /// @file   SurfaceParameters.hh
 /// @brief
-/// @author Robin A Thottungal (raugust1@jhu.edu)
+/// @author Robin A Thottungal (rathottungal@gmail.com)
 #ifndef INCLUDED_protocols_surface_docking_SurfaceParameters_hh
 #define INCLUDED_protocols_surface_docking_SurfaceParameters_hh
 
 // Project header
-
-// Package Headers
+#include <core/pose/datacache/CacheableDataType.hh> //dono if I need this
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
@@ -30,12 +29,19 @@
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyz.io.hh>
+
+
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/exit.hh>
+
 
 // C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <map>
+#include <map>
 #include <string>
 
 
@@ -46,11 +52,16 @@ using namespace core;
 namespace protocols {
 namespace surface_docking {
 
-class SurfaceParameters : public basic::datacache::CacheableData {
+//class SurfaceParameters: public utility::pointer::ReferenceCount  {
+
+class SurfaceParameters: public basic::datacache::CacheableData   {
 
 public:
 	///@brief default constructor to initialize all values
 	SurfaceParameters(); //:
+
+	SurfaceParameters(std::string strSURFA0,
+			std::string strSURFA1, std::string strSURFA2);
 
 	// Require for CacheableData Copy ctor
 	// @details Copy constructors must copy all data, not just some...
@@ -59,16 +70,17 @@ public:
 	// Require for CacheableData, Leaving this makes this class abstract class
 	//~SurfaceParameters();
 
-	// Require for CacheableData
-	basic::datacache::CacheableDataOP clone() const;
 
-	//void clear();
+	basic::datacache::CacheableDataOP
+		clone() const
+		{
+			return new  SurfaceParameters( *this );
+		}
 
 	void GenerateSurfaceParameters( Vector SurfCG );
 
 	Vector CalcNormalVector ( Vector Apoint , Vector Bpoint , Vector Cpoint );
 
-	// Jeff does not like the name..still working to find an alternative
 	Vector CalcAxisIntersect ( Vector point1 , Vector point2 , Vector Bvector ,
 															Vector Cvector );
 
@@ -81,6 +93,7 @@ public:
 	//overloading to use in surfaceOrientMover
 	Vector PlanePointIntersection( Vector Point );
 
+	Vector SplitSurfaceVectorString( std::string surfVectString );
 	// Need to write a print operator for the class
 // Not a good idea keeping the members private, temporary fix
 public:

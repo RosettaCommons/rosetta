@@ -13,7 +13,7 @@
 
 /// @file DockingProtocol.fwd.hh
 /// @brief
-/// @author Robin A Thottungal (raugust1@jhu.edu)
+/// @author Robin A Thottungal (rathottungal@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_CentroidRelaxMover_fwd_hh
 #define INCLUDED_protocols_surface_docking_CentroidRelaxMover_fwd_hh

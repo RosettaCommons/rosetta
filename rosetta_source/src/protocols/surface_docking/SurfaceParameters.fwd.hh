@@ -20,10 +20,6 @@
 #ifndef INCLUDED_protocols_surface_docking_SurfaceParameters_fwd_hh
 #define INCLUDED_protocols_surface_docking_SurfaceParameters_fwd_hh
 
-//#include <basic/datacache/CacheableData.hh>
-//#include <basic/datacache/BasicDataCache.hh>
-//#include <basic/datacache/CacheableData.hh>
-
 #include <utility/pointer/owning_ptr.hh>
 
 
@@ -31,7 +27,6 @@ namespace protocols {
 namespace surface_docking {
 class SurfaceParameters;
 typedef utility::pointer::owning_ptr< SurfaceParameters > SurfaceParametersOP;
-//typedef basic::datacache::CacheableData < SurfaceParameters > SurfaceParametersOP;
 
 }
 }

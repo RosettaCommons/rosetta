@@ -12,22 +12,27 @@
 // (c) addressed to University of Washington UW TechTransfer,
 //     email: license@u.washington.edu.
 
-/// @file SurfaceDocking.fwd.hh
+/// @file SurfaceOrientMover.hh
 /// @brief <add a description of the class>
-/// @author Robin A Thottungal (rathottungal@gmail.com)
+/// @author Robin A Thottungal (raugust1@jhu.edu)
 
-#ifndef INCLUDED_protocols_surface_docking_SurfaceDockingProtocol_fwd_hh
-#define INCLUDED_protocols_surface_docking_SurfaceDockingProtocol_fwd_hh
+#ifndef INCLUDED_protocols_surface_docking_SurfaceOrientMover_fwd_hh
+#define INCLUDED_protocols_surface_docking_SurfaceOrientMover_fwd_hh
+
+
+// Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace surface_docking {
 
-class SurfaceDockingProtocol;
-typedef utility::pointer::owning_ptr< SurfaceDockingProtocol > SurfaceDockingProtocolOP;
+class SurfaceOrientMover;
+typedef utility::pointer::owning_ptr< SurfaceOrientMover > SurfaceOrientMoverOP;
 
-}
-}
+
+} // surfaceDockingProtocols
+} // protocols
 
 #endif
+
 

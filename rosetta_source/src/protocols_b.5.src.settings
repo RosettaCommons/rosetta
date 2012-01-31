@@ -76,6 +76,14 @@ sources = {
 		"StructureIndependentPeakCalibrator",
 		"util",
 	],
+        "protocols/surface_docking": [
+                "CentroidRelaxMover",
+                "FullatomRelaxMover",
+                "SlideIntoSurface",
+                "SurfaceDockingProtocol",
+                "SurfaceOrientMover",
+                "SurfaceParameters",
+        ],
 	"protocols/symmetric_docking": [
 		"SymDockBaseProtocol",
 		"SymDockingHiRes",

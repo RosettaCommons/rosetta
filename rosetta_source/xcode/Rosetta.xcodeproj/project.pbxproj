@@ -322,6 +322,7 @@
 		5F303AA135272320B0724DA4 /* OrbitalType.cc in Sources */ = {isa = PBXBuildFile; fileRef = 950C768C8BC4D4CF177B3B28 /* OrbitalType.cc */; };
 		28DF5DB4ABA24F50FBB8DD7C /* OrbitalTypeMapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C89ADC567556AB5677B4C7B /* OrbitalTypeMapper.cc */; };
 		04FEA19C514B1B789C4DE7BA /* OrbitalTypeSet.cc in Sources */ = {isa = PBXBuildFile; fileRef = B94A44DC53525E6581086F15 /* OrbitalTypeSet.cc */; };
+		F4DCA8924F35AAAF224E1911 /* RNA_ResidueType.cc in Sources */ = {isa = PBXBuildFile; fileRef = A7E76FAE3494A1D1F44CD133 /* RNA_ResidueType.cc */; };
 		5FE9A511A423E0045FB37E7B /* MolData.cc in Sources */ = {isa = PBXBuildFile; fileRef = 85EC721CA7E1341533B0A9F7 /* MolData.cc */; };
 		5151D37900267F2B0307DDBF /* ctab_base.cc in Sources */ = {isa = PBXBuildFile; fileRef = C2100F5C715633695F7DE992 /* ctab_base.cc */; };
 		CFA11B2AB5049730C0784BAA /* ctab_typer.cc in Sources */ = {isa = PBXBuildFile; fileRef = D0C63545908D333B49AED3B5 /* ctab_typer.cc */; };
@@ -738,6 +739,7 @@
 		106A40E0C69C2B776F47DCE9 /* SAXSEnergyCreatorFA.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8AED854CFC3F5C90E1DB8054 /* SAXSEnergyCreatorFA.cc */; };
 		C90A49240F1F2C66D6A043DA /* SinXOverX.cc in Sources */ = {isa = PBXBuildFile; fileRef = 61501D67530B6B51D0739890 /* SinXOverX.cc */; };
 		3D130DCD8839C82C6254F852 /* ShapeComplementarityCalculator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3543C247C8776BB17F8520C6 /* ShapeComplementarityCalculator.cc */; };
+		6E9EF69445891321BE03B43C /* SurfaceEnergies.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4AE7342FDC212260DC31B675 /* SurfaceEnergies.cc */; };
 		2E1F7A1455CAB188623CCA81 /* symE.cc in Sources */ = {isa = PBXBuildFile; fileRef = 27CD6067498488E1DD76AB5A /* symE.cc */; };
 		3DCA316FADEC8A31EC817102 /* SymmetricEnergies.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1272CFE4339214F76BBBBA7 /* SymmetricEnergies.cc */; };
 		1DFDCA90A4915FD0DF7B0455 /* SymmetricScoreFunction.cc in Sources */ = {isa = PBXBuildFile; fileRef = CF4773CBAC275E56D3FC76F7 /* SymmetricScoreFunction.cc */; };
@@ -1813,12 +1815,6 @@
 		2CBB94854D14F8232EDB9A00 /* ScoringGridLoader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB33C504C9E8A39FDC10F3 /* ScoringGridLoader.cc */; };
 		0A7CF3203D826C2252E27C15 /* VdwGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = 23C9637D12AF211CEEEC000D /* VdwGrid.cc */; };
 		9470E84A149E836EDC54E906 /* polarizGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = CA7445561440B976955D6F39 /* polarizGrid.cc */; };
-		875A70EF083848EDCCA5B1F2 /* CentroidRelaxMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED6A1FD2340E6D44D0C2BAC0 /* CentroidRelaxMover.cc */; };
-		22B1E7874143DE99855994AC /* FullatomRelaxMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8214243CB343E50943318F04 /* FullatomRelaxMover.cc */; };
-		9DFB53BB308EAC1DAA006A46 /* SlideIntoSurface.cc in Sources */ = {isa = PBXBuildFile; fileRef = AEE6A76ED6EBC18F2F7B7E30 /* SlideIntoSurface.cc */; };
-		B856C3D6FD171BBB3C719908 /* SurfaceDockingProtocol.cc in Sources */ = {isa = PBXBuildFile; fileRef = BEA887F31268130EB887D50A /* SurfaceDockingProtocol.cc */; };
-		CE3243F636C37C16B75DF814 /* SurfaceOrientMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = F50984EB2408C46C95BA6A83 /* SurfaceOrientMover.cc */; };
-		89EADAE4C9BAE8596487567B /* SurfaceParameters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2DB99E5244263DBF65E5F933 /* SurfaceParameters.cc */; };
 		D6BC95DC37E2E63AE96D0F03 /* AntibodyClass.cc in Sources */ = {isa = PBXBuildFile; fileRef = C75004C59FC1DE830DC158C1 /* AntibodyClass.cc */; };
 		E4B80E679C2E693B59DED737 /* AntibodyModeler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 02F285C5862B7252D90648F6 /* AntibodyModeler.cc */; };
 		D086FDF2122AF1290C91EEC7 /* CDRH3Modeler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1E1F34C9ED2DF6E5DE987ED0 /* CDRH3Modeler.cc */; };
@@ -1890,6 +1886,12 @@
 		5EC6D07E2FC73203269AAD46 /* StructureDependentPeakCalibrator.cc in Sources */ = {isa = PBXBuildFile; fileRef = B50D70A7B0CC9B90D54D7E4D /* StructureDependentPeakCalibrator.cc */; };
 		7A7B9CD945C9D3EBB5E68E3C /* StructureIndependentPeakCalibrator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1048ACCB617510487E65F549 /* StructureIndependentPeakCalibrator.cc */; };
 		E938597E0E0530B9CCF1AB7F /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 35255AB8954623DDB79DC214 /* util.cc */; };
+		A64F75A38D3EF516F1466996 /* CentroidRelaxMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7F188E5E0D19795BDAFB6495 /* CentroidRelaxMover.cc */; };
+		79F90F94479CDAC466BDF90D /* FullatomRelaxMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 147D5E2D854B53D9E3EBCCEA /* FullatomRelaxMover.cc */; };
+		4854D3894A5414DE5C4D90B4 /* SlideIntoSurface.cc in Sources */ = {isa = PBXBuildFile; fileRef = 74DB15C1EBEE56FF319E9A32 /* SlideIntoSurface.cc */; };
+		9227B9414D54D71801144DA8 /* SurfaceDockingProtocol.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4590E6FC8A659966BDF87525 /* SurfaceDockingProtocol.cc */; };
+		A08F1DCD1C2ADC773EB45030 /* SurfaceOrientMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E09F71A4744DE31980E6BB85 /* SurfaceOrientMover.cc */; };
+		6DD08297C54A6576F6EFCAD0 /* SurfaceParameters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9F55BC9FEC1E91327F069A4B /* SurfaceParameters.cc */; };
 		BC2DCB5F2473194D58B2F25D /* SymDockBaseProtocol.cc in Sources */ = {isa = PBXBuildFile; fileRef = 87FDA68ABCCB1AB843DDF5A7 /* SymDockBaseProtocol.cc */; };
 		E95ED6C50294EFA7D9C88C11 /* SymDockProtocol.cc in Sources */ = {isa = PBXBuildFile; fileRef = E97D42AD577C1F4B27413CF4 /* SymDockProtocol.cc */; };
 		652459B936511A997DB260B4 /* SymDockingHiRes.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4E529607704516E006F81F56 /* SymDockingHiRes.cc */; };
@@ -2024,6 +2026,7 @@
 		342637067594E0E4558112CE /* Extender.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2C5D9C005B8067A8BA45E9D5 /* Extender.cc */; };
 		C6EC2BD71CA429CB2ED175A1 /* StarAbinitio.cc in Sources */ = {isa = PBXBuildFile; fileRef = A0F243A19F33AA52086AC95D /* StarAbinitio.cc */; };
 		82B647CA20DE69EDE88925EA /* StarAbinitioMain.cc in Sources */ = {isa = PBXBuildFile; fileRef = 981BD4E22321DF5AD173247B /* StarAbinitioMain.cc */; };
+		1A5193752DB7DF812C17B05A /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4BA343EDED0C4EC6B6EC486A /* util.cc */; };
 		3C4CCA30C857EC819F6D3F02 /* BluePrintBDR.cc in Sources */ = {isa = PBXBuildFile; fileRef = EE6AB4D8F2075AD9533E51FE /* BluePrintBDR.cc */; };
 		A9DFCD6E30A631BABBF49A72 /* CircularPermutation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A524BC2D30C50BC980DAE /* CircularPermutation.cc */; };
 		52114372B77BE2CE0BF9CB48 /* NcontactsCalculator.cc in Sources */ = {isa = PBXBuildFile; fileRef = D32141F6D91FFB47038B9717 /* NcontactsCalculator.cc */; };
@@ -7460,6 +7463,9 @@
 		B94A44DC53525E6581086F15 /* OrbitalTypeSet.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = OrbitalTypeSet.cc; path = ../src/core/chemical/orbitals/OrbitalTypeSet.cc; sourceTree = SOURCE_ROOT; };
 		122048E9890E597A42C4E315 /* OrbitalTypeSet.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OrbitalTypeSet.fwd.hh; path = ../src/core/chemical/orbitals/OrbitalTypeSet.fwd.hh; sourceTree = SOURCE_ROOT; };
 		CCD55F712277D84E1D6CCC6D /* OrbitalTypeSet.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OrbitalTypeSet.hh; path = ../src/core/chemical/orbitals/OrbitalTypeSet.hh; sourceTree = SOURCE_ROOT; };
+		A7E76FAE3494A1D1F44CD133 /* RNA_ResidueType.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_ResidueType.cc; path = ../src/core/chemical/rna/RNA_ResidueType.cc; sourceTree = SOURCE_ROOT; };
+		2318EC2D41A7D0E3560D31F0 /* RNA_ResidueType.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ResidueType.fwd.hh; path = ../src/core/chemical/rna/RNA_ResidueType.fwd.hh; sourceTree = SOURCE_ROOT; };
+		84C545A751F97D2E1EB36FDB /* RNA_ResidueType.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ResidueType.hh; path = ../src/core/chemical/rna/RNA_ResidueType.hh; sourceTree = SOURCE_ROOT; };
 		85EC721CA7E1341533B0A9F7 /* MolData.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MolData.cc; path = ../src/core/chemical/sdf/MolData.cc; sourceTree = SOURCE_ROOT; };
 		D4ED6B3B5A9E78C260F25BA9 /* MolData.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MolData.fwd.hh; path = ../src/core/chemical/sdf/MolData.fwd.hh; sourceTree = SOURCE_ROOT; };
 		2A6956817C4B3CE32AF60A96 /* MolData.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MolData.hh; path = ../src/core/chemical/sdf/MolData.hh; sourceTree = SOURCE_ROOT; };
@@ -8833,6 +8839,9 @@
 		C0587944E949489F734C9DEE /* ShapeComplementarityCalculator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShapeComplementarityCalculator.fwd.hh; path = ../src/core/scoring/sc/ShapeComplementarityCalculator.fwd.hh; sourceTree = SOURCE_ROOT; };
 		3F63CBDF62D7133E665FDF5F /* ShapeComplementarityCalculator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShapeComplementarityCalculator.hh; path = ../src/core/scoring/sc/ShapeComplementarityCalculator.hh; sourceTree = SOURCE_ROOT; };
 		82C2BA7F2B13CF7A631115F6 /* ShapeComplementarityCalculator_Private.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShapeComplementarityCalculator_Private.hh; path = ../src/core/scoring/sc/ShapeComplementarityCalculator_Private.hh; sourceTree = SOURCE_ROOT; };
+		4AE7342FDC212260DC31B675 /* SurfaceEnergies.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceEnergies.cc; path = ../src/core/scoring/solid_surface/SurfaceEnergies.cc; sourceTree = SOURCE_ROOT; };
+		01CD389E8CF8B0F22DC13AC1 /* SurfaceEnergies.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceEnergies.fwd.hh; path = ../src/core/scoring/solid_surface/SurfaceEnergies.fwd.hh; sourceTree = SOURCE_ROOT; };
+		8EE4D4DCAC399C1DD5070B18 /* SurfaceEnergies.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceEnergies.hh; path = ../src/core/scoring/solid_surface/SurfaceEnergies.hh; sourceTree = SOURCE_ROOT; };
 		27CD6067498488E1DD76AB5A /* symE.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = symE.cc; path = ../src/core/scoring/sym_e/symE.cc; sourceTree = SOURCE_ROOT; };
 		76FB33ADF5A5B495F4FD37F7 /* symE.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = symE.fwd.hh; path = ../src/core/scoring/sym_e/symE.fwd.hh; sourceTree = SOURCE_ROOT; };
 		7DAD2C076A805F13382B7064 /* symE.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = symE.hh; path = ../src/core/scoring/sym_e/symE.hh; sourceTree = SOURCE_ROOT; };
@@ -10181,6 +10190,7 @@
 		09F3C85F6656817F54E8BEE9 /* LoopAnalyzerMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopAnalyzerMover.fwd.hh; path = ../src/protocols/analysis/LoopAnalyzerMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		DC9E1FF64649BF200E5C60B2 /* LoopAnalyzerMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopAnalyzerMover.hh; path = ../src/protocols/analysis/LoopAnalyzerMover.hh; sourceTree = SOURCE_ROOT; };
 		E0393F7966F95F857C215784 /* PackStatMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PackStatMover.cc; path = ../src/protocols/analysis/PackStatMover.cc; sourceTree = SOURCE_ROOT; };
+		121069D20BF615C6B22C7EF7 /* PackStatMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackStatMover.fwd.hh; path = ../src/protocols/analysis/PackStatMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		49838FDCDF263BABA0BE99DC /* PackStatMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackStatMover.hh; path = ../src/protocols/analysis/PackStatMover.hh; sourceTree = SOURCE_ROOT; };
 		599C5CAE012E0BC58173CE6C /* BackrubMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BackrubMover.cc; path = ../src/protocols/backrub/BackrubMover.cc; sourceTree = SOURCE_ROOT; };
 		F17250DBAE0D607990D5614B /* BackrubMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BackrubMover.fwd.hh; path = ../src/protocols/backrub/BackrubMover.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -12049,22 +12059,6 @@
 		D2B9478BA9AC05C3B6703548 /* polarizGrid.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = polarizGrid.fwd.hh; path = ../src/protocols/qsar/scoring_grid/polarizGrid.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4FEF1B9765B956986CB05FA7 /* polarizGrid.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = polarizGrid.hh; path = ../src/protocols/qsar/scoring_grid/polarizGrid.hh; sourceTree = SOURCE_ROOT; };
 		A2F96186C787B1EDD1F281B4 /* polarizGridCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = polarizGridCreator.hh; path = ../src/protocols/qsar/scoring_grid/polarizGridCreator.hh; sourceTree = SOURCE_ROOT; };
-		ED6A1FD2340E6D44D0C2BAC0 /* CentroidRelaxMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CentroidRelaxMover.cc; path = ../src/protocols/surface_docking/CentroidRelaxMover.cc; sourceTree = SOURCE_ROOT; };
-		C6E391179FAB1B2F07D53B95 /* CentroidRelaxMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CentroidRelaxMover.fwd.hh; path = ../src/protocols/surface_docking/CentroidRelaxMover.fwd.hh; sourceTree = SOURCE_ROOT; };
-		30F5968AA0BE66D48B7E3072 /* CentroidRelaxMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CentroidRelaxMover.hh; path = ../src/protocols/surface_docking/CentroidRelaxMover.hh; sourceTree = SOURCE_ROOT; };
-		8214243CB343E50943318F04 /* FullatomRelaxMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FullatomRelaxMover.cc; path = ../src/protocols/surface_docking/FullatomRelaxMover.cc; sourceTree = SOURCE_ROOT; };
-		FBDCD076DED5FDA9BB2E11FC /* FullatomRelaxMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FullatomRelaxMover.fwd.hh; path = ../src/protocols/surface_docking/FullatomRelaxMover.fwd.hh; sourceTree = SOURCE_ROOT; };
-		E738A65CE60D5F3A610791B6 /* FullatomRelaxMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FullatomRelaxMover.hh; path = ../src/protocols/surface_docking/FullatomRelaxMover.hh; sourceTree = SOURCE_ROOT; };
-		AEE6A76ED6EBC18F2F7B7E30 /* SlideIntoSurface.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SlideIntoSurface.cc; path = ../src/protocols/surface_docking/SlideIntoSurface.cc; sourceTree = SOURCE_ROOT; };
-		5200196D5B9F8E660A2B1B92 /* SlideIntoSurface.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SlideIntoSurface.hh; path = ../src/protocols/surface_docking/SlideIntoSurface.hh; sourceTree = SOURCE_ROOT; };
-		BEA887F31268130EB887D50A /* SurfaceDockingProtocol.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceDockingProtocol.cc; path = ../src/protocols/surface_docking/SurfaceDockingProtocol.cc; sourceTree = SOURCE_ROOT; };
-		4F825F06B20191BBE0BE789C /* SurfaceDockingProtocol.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceDockingProtocol.fwd.hh; path = ../src/protocols/surface_docking/SurfaceDockingProtocol.fwd.hh; sourceTree = SOURCE_ROOT; };
-		58E07A56E8AA6950D02F0078 /* SurfaceDockingProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceDockingProtocol.hh; path = ../src/protocols/surface_docking/SurfaceDockingProtocol.hh; sourceTree = SOURCE_ROOT; };
-		F50984EB2408C46C95BA6A83 /* SurfaceOrientMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceOrientMover.cc; path = ../src/protocols/surface_docking/SurfaceOrientMover.cc; sourceTree = SOURCE_ROOT; };
-		AD3C939FFF730FB324F1B1B6 /* SurfaceOrientMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceOrientMover.hh; path = ../src/protocols/surface_docking/SurfaceOrientMover.hh; sourceTree = SOURCE_ROOT; };
-		2DB99E5244263DBF65E5F933 /* SurfaceParameters.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceParameters.cc; path = ../src/protocols/surface_docking/SurfaceParameters.cc; sourceTree = SOURCE_ROOT; };
-		F9C7D571137F96B7393B9BF7 /* SurfaceParameters.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceParameters.fwd.hh; path = ../src/protocols/surface_docking/SurfaceParameters.fwd.hh; sourceTree = SOURCE_ROOT; };
-		9BD79C5B24111B177C116BD5 /* SurfaceParameters.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceParameters.hh; path = ../src/protocols/surface_docking/SurfaceParameters.hh; sourceTree = SOURCE_ROOT; };
 		C75004C59FC1DE830DC158C1 /* AntibodyClass.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AntibodyClass.cc; path = ../src/protocols/antibody/AntibodyClass.cc; sourceTree = SOURCE_ROOT; };
 		CD47209AC6FD6B138D3D6AF7 /* AntibodyClass.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyClass.fwd.hh; path = ../src/protocols/antibody/AntibodyClass.fwd.hh; sourceTree = SOURCE_ROOT; };
 		84A57BCCB58A2AB036C9F4C7 /* AntibodyClass.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyClass.hh; path = ../src/protocols/antibody/AntibodyClass.hh; sourceTree = SOURCE_ROOT; };
@@ -12263,6 +12257,23 @@
 		2178461D0FBE032A3CD60033 /* StructureIndependentPeakCalibrator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StructureIndependentPeakCalibrator.hh; path = ../src/protocols/noesy_assign/StructureIndependentPeakCalibrator.hh; sourceTree = SOURCE_ROOT; };
 		35255AB8954623DDB79DC214 /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/protocols/noesy_assign/util.cc; sourceTree = SOURCE_ROOT; };
 		22EB1BA3DCF86AE6BCF489D0 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/protocols/noesy_assign/util.hh; sourceTree = SOURCE_ROOT; };
+		7F188E5E0D19795BDAFB6495 /* CentroidRelaxMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CentroidRelaxMover.cc; path = ../src/protocols/surface_docking/CentroidRelaxMover.cc; sourceTree = SOURCE_ROOT; };
+		562177E63BA9FC0CA2CEE8D2 /* CentroidRelaxMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CentroidRelaxMover.fwd.hh; path = ../src/protocols/surface_docking/CentroidRelaxMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		43DD719AABAD80AF2BE13E48 /* CentroidRelaxMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CentroidRelaxMover.hh; path = ../src/protocols/surface_docking/CentroidRelaxMover.hh; sourceTree = SOURCE_ROOT; };
+		147D5E2D854B53D9E3EBCCEA /* FullatomRelaxMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FullatomRelaxMover.cc; path = ../src/protocols/surface_docking/FullatomRelaxMover.cc; sourceTree = SOURCE_ROOT; };
+		338B99D506A981C41D761DBF /* FullatomRelaxMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FullatomRelaxMover.fwd.hh; path = ../src/protocols/surface_docking/FullatomRelaxMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		741F56339151D66E50FEE5A4 /* FullatomRelaxMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FullatomRelaxMover.hh; path = ../src/protocols/surface_docking/FullatomRelaxMover.hh; sourceTree = SOURCE_ROOT; };
+		74DB15C1EBEE56FF319E9A32 /* SlideIntoSurface.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SlideIntoSurface.cc; path = ../src/protocols/surface_docking/SlideIntoSurface.cc; sourceTree = SOURCE_ROOT; };
+		AFDCB74C6F1E3BEE396CF17F /* SlideIntoSurface.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SlideIntoSurface.hh; path = ../src/protocols/surface_docking/SlideIntoSurface.hh; sourceTree = SOURCE_ROOT; };
+		4590E6FC8A659966BDF87525 /* SurfaceDockingProtocol.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceDockingProtocol.cc; path = ../src/protocols/surface_docking/SurfaceDockingProtocol.cc; sourceTree = SOURCE_ROOT; };
+		D153D52CCE859413BDEC6061 /* SurfaceDockingProtocol.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceDockingProtocol.fwd.hh; path = ../src/protocols/surface_docking/SurfaceDockingProtocol.fwd.hh; sourceTree = SOURCE_ROOT; };
+		BC005643F24A7CA085F276CC /* SurfaceDockingProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceDockingProtocol.hh; path = ../src/protocols/surface_docking/SurfaceDockingProtocol.hh; sourceTree = SOURCE_ROOT; };
+		E09F71A4744DE31980E6BB85 /* SurfaceOrientMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceOrientMover.cc; path = ../src/protocols/surface_docking/SurfaceOrientMover.cc; sourceTree = SOURCE_ROOT; };
+		BB759BB8D146F874D35E556F /* SurfaceOrientMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceOrientMover.fwd.hh; path = ../src/protocols/surface_docking/SurfaceOrientMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		D10671858D79A5599AD41FC2 /* SurfaceOrientMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceOrientMover.hh; path = ../src/protocols/surface_docking/SurfaceOrientMover.hh; sourceTree = SOURCE_ROOT; };
+		9F55BC9FEC1E91327F069A4B /* SurfaceParameters.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceParameters.cc; path = ../src/protocols/surface_docking/SurfaceParameters.cc; sourceTree = SOURCE_ROOT; };
+		A687A93A1A50AC2D57F12473 /* SurfaceParameters.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceParameters.fwd.hh; path = ../src/protocols/surface_docking/SurfaceParameters.fwd.hh; sourceTree = SOURCE_ROOT; };
+		95A6192AA46978E1D0D6333F /* SurfaceParameters.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceParameters.hh; path = ../src/protocols/surface_docking/SurfaceParameters.hh; sourceTree = SOURCE_ROOT; };
 		87FDA68ABCCB1AB843DDF5A7 /* SymDockBaseProtocol.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SymDockBaseProtocol.cc; path = ../src/protocols/symmetric_docking/SymDockBaseProtocol.cc; sourceTree = SOURCE_ROOT; };
 		123D5264C0EE9ADE4C694939 /* SymDockBaseProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymDockBaseProtocol.hh; path = ../src/protocols/symmetric_docking/SymDockBaseProtocol.hh; sourceTree = SOURCE_ROOT; };
 		E97D42AD577C1F4B27413CF4 /* SymDockProtocol.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SymDockProtocol.cc; path = ../src/protocols/symmetric_docking/SymDockProtocol.cc; sourceTree = SOURCE_ROOT; };
@@ -12633,6 +12644,8 @@
 		2307CBA78EE09A6C4FAE7719 /* StarAbinitio.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StarAbinitio.hh; path = ../src/protocols/star/StarAbinitio.hh; sourceTree = SOURCE_ROOT; };
 		981BD4E22321DF5AD173247B /* StarAbinitioMain.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StarAbinitioMain.cc; path = ../src/protocols/star/StarAbinitioMain.cc; sourceTree = SOURCE_ROOT; };
 		FCF80023AB30DA346E080912 /* StarAbinitioMain.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StarAbinitioMain.hh; path = ../src/protocols/star/StarAbinitioMain.hh; sourceTree = SOURCE_ROOT; };
+		4BA343EDED0C4EC6B6EC486A /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/protocols/star/util.cc; sourceTree = SOURCE_ROOT; };
+		C0FB97D02269DBF5828EF8E7 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/protocols/star/util.hh; sourceTree = SOURCE_ROOT; };
 		EE6AB4D8F2075AD9533E51FE /* BluePrintBDR.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BluePrintBDR.cc; path = ../src/protocols/fldsgn/BluePrintBDR.cc; sourceTree = SOURCE_ROOT; };
 		A7BA4A755946863CDF1C2674 /* BluePrintBDR.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BluePrintBDR.fwd.hh; path = ../src/protocols/fldsgn/BluePrintBDR.fwd.hh; sourceTree = SOURCE_ROOT; };
 		09623651D1163F08E9B363AA /* BluePrintBDR.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BluePrintBDR.hh; path = ../src/protocols/fldsgn/BluePrintBDR.hh; sourceTree = SOURCE_ROOT; };
@@ -14815,6 +14828,7 @@
 			isa = PBXGroup;
 			children = (
 				6F68631152E220B3F8EBC684 /* orbitals */,
+				E531A8803E1D627574409C74 /* rna */,
 				D7048D8E73C1452A21E9504B /* sdf */,
 				6E6CA37A9595C2D32EDBB261 /* AA.cc */,
 				04BD42493F99CBEDFD8862B7 /* AA.hh */,
@@ -14909,6 +14923,17 @@
 			);
 			name = orbitals;
 			path = ../src/core/chemical/orbitals/;
+			sourceTree = SOURCE_ROOT;
+		};
+		E531A8803E1D627574409C74 /* rna */ = {
+			isa = PBXGroup;
+			children = (
+				A7E76FAE3494A1D1F44CD133 /* RNA_ResidueType.cc */,
+				2318EC2D41A7D0E3560D31F0 /* RNA_ResidueType.fwd.hh */,
+				84C545A751F97D2E1EB36FDB /* RNA_ResidueType.hh */,
+			);
+			name = rna;
+			path = ../src/core/chemical/rna/;
 			sourceTree = SOURCE_ROOT;
 		};
 		D7048D8E73C1452A21E9504B /* sdf */ = {
@@ -15415,6 +15440,7 @@
 				5850B51959826B76CF6ACCB0 /* rna */,
 				0925F664A32126E72A1108BB /* saxs */,
 				0D94C15C435D32CB6453BB88 /* sc */,
+				6D6DED49161FB75245747F13 /* solid_surface */,
 				0CF7A70C179551177CED04D4 /* sym_e */,
 				79ADE8CC0DCACDE869F42F27 /* symmetry */,
 				5004586F46197D34E38B610A /* trie */,
@@ -16722,6 +16748,17 @@
 			);
 			name = sc;
 			path = ../src/core/scoring/sc/;
+			sourceTree = SOURCE_ROOT;
+		};
+		6D6DED49161FB75245747F13 /* solid_surface */ = {
+			isa = PBXGroup;
+			children = (
+				4AE7342FDC212260DC31B675 /* SurfaceEnergies.cc */,
+				01CD389E8CF8B0F22DC13AC1 /* SurfaceEnergies.fwd.hh */,
+				8EE4D4DCAC399C1DD5070B18 /* SurfaceEnergies.hh */,
+			);
+			name = solid_surface;
+			path = ../src/core/scoring/solid_surface/;
 			sourceTree = SOURCE_ROOT;
 		};
 		0CF7A70C179551177CED04D4 /* sym_e */ = {
@@ -18708,6 +18745,7 @@
 				09F3C85F6656817F54E8BEE9 /* LoopAnalyzerMover.fwd.hh */,
 				DC9E1FF64649BF200E5C60B2 /* LoopAnalyzerMover.hh */,
 				E0393F7966F95F857C215784 /* PackStatMover.cc */,
+				121069D20BF615C6B22C7EF7 /* PackStatMover.fwd.hh */,
 				49838FDCDF263BABA0BE99DC /* PackStatMover.hh */,
 			);
 			name = analysis;
@@ -20952,7 +20990,6 @@
 				D56360086ABF60D7CF506FC8 /* docking */,
 				3E828B35B5FAC0E4099BD63F /* ligand_docking */,
 				E63436A3904C1A3809E7A1F9 /* qsar */,
-				827E64ADBC2B690C455D654A /* surface_docking */,
 			);
 			name = protocols_h.4;
 			path = ../src/protocols//;
@@ -21254,30 +21291,6 @@
 			path = ../src/protocols/qsar/scoring_grid/;
 			sourceTree = SOURCE_ROOT;
 		};
-		827E64ADBC2B690C455D654A /* surface_docking */ = {
-			isa = PBXGroup;
-			children = (
-				ED6A1FD2340E6D44D0C2BAC0 /* CentroidRelaxMover.cc */,
-				C6E391179FAB1B2F07D53B95 /* CentroidRelaxMover.fwd.hh */,
-				30F5968AA0BE66D48B7E3072 /* CentroidRelaxMover.hh */,
-				8214243CB343E50943318F04 /* FullatomRelaxMover.cc */,
-				FBDCD076DED5FDA9BB2E11FC /* FullatomRelaxMover.fwd.hh */,
-				E738A65CE60D5F3A610791B6 /* FullatomRelaxMover.hh */,
-				AEE6A76ED6EBC18F2F7B7E30 /* SlideIntoSurface.cc */,
-				5200196D5B9F8E660A2B1B92 /* SlideIntoSurface.hh */,
-				BEA887F31268130EB887D50A /* SurfaceDockingProtocol.cc */,
-				4F825F06B20191BBE0BE789C /* SurfaceDockingProtocol.fwd.hh */,
-				58E07A56E8AA6950D02F0078 /* SurfaceDockingProtocol.hh */,
-				F50984EB2408C46C95BA6A83 /* SurfaceOrientMover.cc */,
-				AD3C939FFF730FB324F1B1B6 /* SurfaceOrientMover.hh */,
-				2DB99E5244263DBF65E5F933 /* SurfaceParameters.cc */,
-				F9C7D571137F96B7393B9BF7 /* SurfaceParameters.fwd.hh */,
-				9BD79C5B24111B177C116BD5 /* SurfaceParameters.hh */,
-			);
-			name = surface_docking;
-			path = ../src/protocols/surface_docking/;
-			sourceTree = SOURCE_ROOT;
-		};
 		3D5BA0301492D6AD00524FBB /* protocols_a.5 */ = {
 			isa = PBXGroup;
 			children = (
@@ -21350,6 +21363,7 @@
 				8779B2BA911274CA81EDA953 /* jumping */,
 				084B17D7D9303E09DD24B0FA /* loop_build */,
 				5238E414D00BB0253FDA716E /* noesy_assign */,
+				7464F0DD53350B18BBDA8FED /* surface_docking */,
 				A572E1E7D0652C637EE38B81 /* symmetric_docking */,
 				23C6356D8654FFE290F2D9C2 /* topology_broker */,
 			);
@@ -21546,6 +21560,31 @@
 			);
 			name = noesy_assign;
 			path = ../src/protocols/noesy_assign/;
+			sourceTree = SOURCE_ROOT;
+		};
+		7464F0DD53350B18BBDA8FED /* surface_docking */ = {
+			isa = PBXGroup;
+			children = (
+				7F188E5E0D19795BDAFB6495 /* CentroidRelaxMover.cc */,
+				562177E63BA9FC0CA2CEE8D2 /* CentroidRelaxMover.fwd.hh */,
+				43DD719AABAD80AF2BE13E48 /* CentroidRelaxMover.hh */,
+				147D5E2D854B53D9E3EBCCEA /* FullatomRelaxMover.cc */,
+				338B99D506A981C41D761DBF /* FullatomRelaxMover.fwd.hh */,
+				741F56339151D66E50FEE5A4 /* FullatomRelaxMover.hh */,
+				74DB15C1EBEE56FF319E9A32 /* SlideIntoSurface.cc */,
+				AFDCB74C6F1E3BEE396CF17F /* SlideIntoSurface.hh */,
+				4590E6FC8A659966BDF87525 /* SurfaceDockingProtocol.cc */,
+				D153D52CCE859413BDEC6061 /* SurfaceDockingProtocol.fwd.hh */,
+				BC005643F24A7CA085F276CC /* SurfaceDockingProtocol.hh */,
+				E09F71A4744DE31980E6BB85 /* SurfaceOrientMover.cc */,
+				BB759BB8D146F874D35E556F /* SurfaceOrientMover.fwd.hh */,
+				D10671858D79A5599AD41FC2 /* SurfaceOrientMover.hh */,
+				9F55BC9FEC1E91327F069A4B /* SurfaceParameters.cc */,
+				A687A93A1A50AC2D57F12473 /* SurfaceParameters.fwd.hh */,
+				95A6192AA46978E1D0D6333F /* SurfaceParameters.hh */,
+			);
+			name = surface_docking;
+			path = ../src/protocols/surface_docking/;
 			sourceTree = SOURCE_ROOT;
 		};
 		A572E1E7D0652C637EE38B81 /* symmetric_docking */ = {
@@ -22052,6 +22091,8 @@
 				2307CBA78EE09A6C4FAE7719 /* StarAbinitio.hh */,
 				981BD4E22321DF5AD173247B /* StarAbinitioMain.cc */,
 				FCF80023AB30DA346E080912 /* StarAbinitioMain.hh */,
+				4BA343EDED0C4EC6B6EC486A /* util.cc */,
+				C0FB97D02269DBF5828EF8E7 /* util.hh */,
 			);
 			name = star;
 			path = ../src/protocols/star/;
@@ -25164,6 +25205,12 @@
 				5EC6D07E2FC73203269AAD46 /* StructureDependentPeakCalibrator.cc in Sources */,
 				7A7B9CD945C9D3EBB5E68E3C /* StructureIndependentPeakCalibrator.cc in Sources */,
 				E938597E0E0530B9CCF1AB7F /* util.cc in Sources */,
+				A64F75A38D3EF516F1466996 /* CentroidRelaxMover.cc in Sources */,
+				79F90F94479CDAC466BDF90D /* FullatomRelaxMover.cc in Sources */,
+				4854D3894A5414DE5C4D90B4 /* SlideIntoSurface.cc in Sources */,
+				9227B9414D54D71801144DA8 /* SurfaceDockingProtocol.cc in Sources */,
+				A08F1DCD1C2ADC773EB45030 /* SurfaceOrientMover.cc in Sources */,
+				6DD08297C54A6576F6EFCAD0 /* SurfaceParameters.cc in Sources */,
 				BC2DCB5F2473194D58B2F25D /* SymDockBaseProtocol.cc in Sources */,
 				E95ED6C50294EFA7D9C88C11 /* SymDockProtocol.cc in Sources */,
 				652459B936511A997DB260B4 /* SymDockingHiRes.cc in Sources */,
@@ -25253,6 +25300,7 @@
 				342637067594E0E4558112CE /* Extender.cc in Sources */,
 				C6EC2BD71CA429CB2ED175A1 /* StarAbinitio.cc in Sources */,
 				82B647CA20DE69EDE88925EA /* StarAbinitioMain.cc in Sources */,
+				1A5193752DB7DF812C17B05A /* util.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25676,12 +25724,6 @@
 				2CBB94854D14F8232EDB9A00 /* ScoringGridLoader.cc in Sources */,
 				0A7CF3203D826C2252E27C15 /* VdwGrid.cc in Sources */,
 				9470E84A149E836EDC54E906 /* polarizGrid.cc in Sources */,
-				875A70EF083848EDCCA5B1F2 /* CentroidRelaxMover.cc in Sources */,
-				22B1E7874143DE99855994AC /* FullatomRelaxMover.cc in Sources */,
-				9DFB53BB308EAC1DAA006A46 /* SlideIntoSurface.cc in Sources */,
-				B856C3D6FD171BBB3C719908 /* SurfaceDockingProtocol.cc in Sources */,
-				CE3243F636C37C16B75DF814 /* SurfaceOrientMover.cc in Sources */,
-				89EADAE4C9BAE8596487567B /* SurfaceParameters.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25948,6 +25990,7 @@
 				5F303AA135272320B0724DA4 /* OrbitalType.cc in Sources */,
 				28DF5DB4ABA24F50FBB8DD7C /* OrbitalTypeMapper.cc in Sources */,
 				04FEA19C514B1B789C4DE7BA /* OrbitalTypeSet.cc in Sources */,
+				F4DCA8924F35AAAF224E1911 /* RNA_ResidueType.cc in Sources */,
 				5FE9A511A423E0045FB37E7B /* MolData.cc in Sources */,
 				5151D37900267F2B0307DDBF /* ctab_base.cc in Sources */,
 				CFA11B2AB5049730C0784BAA /* ctab_typer.cc in Sources */,
@@ -26371,6 +26414,7 @@
 				106A40E0C69C2B776F47DCE9 /* SAXSEnergyCreatorFA.cc in Sources */,
 				C90A49240F1F2C66D6A043DA /* SinXOverX.cc in Sources */,
 				3D130DCD8839C82C6254F852 /* ShapeComplementarityCalculator.cc in Sources */,
+				6E9EF69445891321BE03B43C /* SurfaceEnergies.cc in Sources */,
 				2E1F7A1455CAB188623CCA81 /* symE.cc in Sources */,
 				3DCA316FADEC8A31EC817102 /* SymmetricEnergies.cc in Sources */,
 				1DFDCA90A4915FD0DF7B0455 /* SymmetricScoreFunction.cc in Sources */,

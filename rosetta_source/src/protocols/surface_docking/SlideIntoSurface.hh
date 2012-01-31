@@ -14,7 +14,7 @@
 
 /// @file SurfaceOrientMover.hh
 /// @brief <add a description of the class>
-/// @author Robin A Thottungal (raugust1@jhu.edu)
+/// @author Robin A Thottungal (rathottungal@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_SlideIntoSurface_hh
 #define INCLUDED_protocols_surface_docking_SlideIntoSurface_hh
@@ -22,6 +22,7 @@
 // Unit Headers
 
 // Package headers
+#include <protocols/surface_docking/SurfaceParameters.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -38,7 +39,8 @@
 #include <map>
 #include <list>
 
-#include <utility/vector1.hh>
+//Auto Headers
+#include <sstream>
 
 namespace protocols {
 namespace surface_docking {
@@ -75,6 +77,7 @@ class FaSlideIntoSurface : public moves::Mover
 public:
 	FaSlideIntoSurface();
 	FaSlideIntoSurface( core::Size const rb_jump);
+			//protocols::surface_docking::SurfaceParametersOP surfParams);
 
 	//destructor
 	~FaSlideIntoSurface();
@@ -86,6 +89,28 @@ private:
 	core::Size rb_jump_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real tolerance_; ///< how accurate do you want to be?
+	protocols::surface_docking::SurfaceParametersOP surfaceParams_;
+};
+
+
+/// @brief Moves the protein away from the surface.
+/// @details
+class FaSlideAwayFromSurface : public moves::Mover
+{
+public:
+	FaSlideAwayFromSurface();
+	FaSlideAwayFromSurface( core::Size const rb_jump);
+
+	//destructor
+	~FaSlideAwayFromSurface();
+
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+
+private:
+	core::scoring::ScoreFunctionOP scorefxn_;
+	core::Size rb_jump_;
+	core::Real tolerance_;
 
 };
 

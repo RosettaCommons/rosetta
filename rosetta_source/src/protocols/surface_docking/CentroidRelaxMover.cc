@@ -13,14 +13,7 @@
 //     email: license@u.washington.edu.
 
 /// @file CentroidRelaxMover.cc
-/// @author Robin A Thottungal (raugust1@jhu.edu)
-/**
-   Robin To Do:
-		1. Some of Dave's Setting Still missing (details in rosetta code book)
-		2. Need to think about the recover structure code placement
-		3. add a pymol movers setter
-
-**/
+/// @author Robin A Thottungal  (rathottungal@gmail.com)
 
 // Unit Headers
 #include <protocols/surface_docking/CentroidRelaxMover.hh>
@@ -28,32 +21,26 @@
 // Package Headers
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
+#include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/PyMolMover.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <protocols/jobdist/Jobs.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //Utility Headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
-
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-
+#include <basic/prof.hh>
+#include <basic/Tracer.hh>
 
 
 using basic::T;
@@ -72,7 +59,7 @@ using namespace protocols::moves;
 //constructor
 CentroidRelaxMover::CentroidRelaxMover() : Mover(){
 	// initilized here to avoid warning!
-	nmoves_=1;
+	nmoves_=2;
 	temperature_=0.5;
 	kT_=0.5;
 	Mover::type( "CentroidRelaxMover");
@@ -90,7 +77,7 @@ void CentroidRelaxMover::setup_defaults(){
 	// rosetta++
 	score_low_res_ =
 			scoring::ScoreFunctionFactory::
-			              create_score_function("cen_std.wts");
+					create_score_function("RS_centroid.wts");//("cen_std.wts");
 	smallmin_type_="linmin";
 	shearmin_type_="dfpmin";
 	benchmark_=false;
@@ -118,7 +105,7 @@ void CentroidRelaxMover::setupMovers(){
 	smallmover_=new simple_moves::SmallMover(moveMapOP_,temperature_,nmoves_/2);
 	smallmover_->angle_max(30); // max angle deviation.
 	//Default Values copied from  MinMover.cc
-	smallminmover_= new protocols::simple_moves::MinMover(moveMapOP_,
+	smallminmover_= new simple_moves::MinMover(moveMapOP_,
                       score_low_res_,smallmin_type_,tolerance,true,false,false);
         //smallsequenceMover_ =
 	///     new moves::SequenceMover(smallmover_,smallminmover_);
@@ -130,15 +117,15 @@ void CentroidRelaxMover::setupMovers(){
 	//Creating smallMove; temperature_ : explanation;
 	//nnmoves_ : number of residues to move
 	shearmover_=new simple_moves::ShearMover(moveMapOP_,temperature_,nmoves_);
-	shearmover_->angle_max(30); // need to enable after testing!!
+	shearmover_->angle_max(30);
 	//Default Values copied from  MinMover.cc
-	shearminmover_= new protocols::simple_moves::MinMover(moveMapOP_,score_low_res_,
+	shearminmover_= new simple_moves::MinMover(moveMapOP_,score_low_res_,
 	                 shearmin_type_,tolerance,true,false,false);
 	//shearsequenceMover_ =
         //new moves::SequenceMover(shearmover_,shearminmover_);
 	shearsequenceMover_= new moves::SequenceMover;
 	shearsequenceMover_->add_mover(shearmover_);
-        shearsequenceMover_->add_mover(shearminmover_);
+    shearsequenceMover_->add_mover(shearminmover_);
 
 }
 
@@ -163,12 +150,9 @@ void CentroidRelaxMover::FinalizeMovers(pose::Pose & pose){
 
 void CentroidRelaxMover::apply(pose::Pose & pose){
 	FinalizeMovers(pose);
-	//AddPyMolObserver(pose, false);
 	TR << "Starting CentroidRelax" << std::endl;
-	Size innerLoopCycle= 3; //pose.total_residue();-> changed for testing
+	Size innerLoopCycle= pose.total_residue();
 	Size outerLoopCycle=6;
-	// Robin thinks fine tuning this will help in improving
-	// code running time. I feels the time scales linearly currently..!!!
 	for ( Size outerLoop = 1; outerLoop <= outerLoopCycle; ++outerLoop ){
             TR << "OuterLoop Execution Number:"<< outerLoop << std::endl;
             monteCarlo_->recover_low(pose);
@@ -178,6 +162,7 @@ void CentroidRelaxMover::apply(pose::Pose & pose){
                 small_trial_min_mover_->apply(pose);
             }
 	}
+	monteCarlo_->show_counters();
 	monteCarlo_->recover_low(pose);
 }
 

@@ -19,20 +19,23 @@
 
 // Package Headers
 #include <protocols/surface_docking/SurfaceParameters.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
 
-//#include <core/pose/datacache/CacheableDataType.hh>
-//#include <basic/datacache/BasicDataCache.hh>
+// Numeric Headers
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyz.io.hh>
+#include <numeric/xyzVector.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
+#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/xyzVector.io.hh>
-
-
+// C++ headers
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 
 static basic::Tracer TR("protocols.surfaceDocking.SurfaceParameters");
 
@@ -51,9 +54,21 @@ SurfaceParameters::SurfaceParameters() {
 	vecAB=0;
 }
 
+SurfaceParameters::SurfaceParameters(std::string strSURFA0,
+			std::string strSURFA1, std::string strSURFA2 ) {
+	SURFA0=SplitSurfaceVectorString(strSURFA0);
+	SURFA1=SplitSurfaceVectorString(strSURFA1);
+	SURFA2=SplitSurfaceVectorString(strSURFA2);
+	TR<<"Surface Vectors value inside constructor:"<<std::endl;
+	TR<<"SURFA0:"<<SURFA0<<std::endl;
+	TR<<"SURFA1:"<<SURFA1<<std::endl;
+	TR<<"SURFA2:"<<SURFA2<<std::endl;
+	vecAB=0;
+	vecAB=0;
+}
 
 SurfaceParameters::SurfaceParameters( SurfaceParameters const & src ):
-	basic::datacache::CacheableData() {
+	CacheableData() {
 	// Setting up the values for caching data
 
 	SURFA0=src.SURFA0;
@@ -76,9 +91,8 @@ SurfaceParameters::SurfaceParameters( SurfaceParameters const & src ):
 	slideaxis=src.slideaxis;
 }
 
-basic::datacache::CacheableDataOP SurfaceParameters::clone() const{
-	return new SurfaceParameters( *this );
-	}
+// removed for making class child of CacheableData
+//SurfaceParameters::~SurfaceParameters(){}
 
 void SurfaceParameters::GenerateSurfaceParameters( Vector SurfCG ) {
 	SurfaceCG=SurfCG;
@@ -171,5 +185,27 @@ Vector SurfaceParameters::PlanePointIntersection
 	return point_intersection;
 }
 
-}// namespace scoring
-}// namespace core
+Vector SurfaceParameters::SplitSurfaceVectorString( std::string str ){
+  //std::istringstream oss (str);
+  //std::string word;
+  //std::string tmp[4];
+  //Size i=0;
+  //while(oss >> word) {
+  ///	tmp[i]=word;
+  ///	i=i+1;
+  //	}
+  if ( str.size() >= 52 ) {
+    utility::vector1< std::string > tmp(3);
+    tmp[1] = str.substr( 30, 7 );
+    tmp[2] = str.substr( 38, 7 );
+    tmp[3] = str.substr( 46, 7 );
+    Vector coords( atof( tmp[1].c_str() ), atof( tmp[2].c_str() ), atof( tmp[3].c_str() ));
+    return coords;
+  } else {
+    utility_exit_with_message("Unable to convert remark '" + str + "' into surface vector" );
+  }
+  return Vector(0.0);  // appease compiler
+}
+
+}// namespace surface_docking
+}// namespace protocols

@@ -98,14 +98,6 @@ sources = {
 		"ScoringGridLoader",
 		"VdwGrid",
 	],
-	"protocols/surface_docking": [
-		"CentroidRelaxMover",
-		"FullatomRelaxMover",
-		"SlideIntoSurface",
-		"SurfaceDockingProtocol",
-		"SurfaceOrientMover",
-		"SurfaceParameters",
-	],
 }
 include_path = [
 ]

@@ -65,6 +65,7 @@ enum Enum {
 	MEMBRANE_FAEMBED, //pba high reslution membrane embedding info
 	POSITION_CONSERVED_RESIDUES,
 	STRUCTURAL_CONSERVATION,
+    SURFACE_PARAMS,
 
 	// *** IMPORTANT ***
 	// The 'num_cacheable_data_types' below must be the last enum, and must
