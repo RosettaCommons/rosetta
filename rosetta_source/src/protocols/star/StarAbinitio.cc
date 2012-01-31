@@ -266,9 +266,9 @@ void StarAbinitio::apply(Pose& pose) {
   compute_per_residue_probabilities(num_residues, fragments_sm_->max_frag_length(), pose.fold_tree(), &probs_sm);
   compute_per_residue_probabilities(num_residues, fragments_lg_->max_frag_length(), pose.fold_tree(), &probs_lg);
 
-  MoverOP fragments_lg_uni = new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_lg_), probs_lg);
-  MoverOP fragments_sm_uni = new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_sm_), probs_sm);
-  MoverOP fragments_sm_smo = new BiasedFragmentMover(PolicyFactory::get_policy("smooth", fragments_sm_), probs_sm);
+  MoverOP fragments_lg_uni = new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_lg_, 25), probs_lg);
+  MoverOP fragments_sm_uni = new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_sm_, 200), probs_sm);
+  MoverOP fragments_sm_smo = new BiasedFragmentMover(PolicyFactory::get_policy("smooth", fragments_sm_, 200), probs_sm);
 
   // Simulation parameters
   const Real mult = option[OptionKeys::abinitio::increase_cycles]();
