@@ -19,9 +19,11 @@
 #define INCLUDED_core_conformation_find_neighbors_hh
 
 // Package Headers
-// AUTO-REMOVED #include <core/conformation/PointGraph.fwd.hh>
+#include <core/conformation/PointGraph.fwd.hh>
 #include <core/conformation/find_neighbors.fwd.hh>
 #include <core/types.hh>
+#include <core/conformation/PointGraphData.hh>
+#include <core/graph/UpperEdgeGraph.hh>
 
 
 
@@ -908,7 +910,45 @@ get_nearest_neighbor(
 	return min_node_index;
 }
 
+template <class Vertex, class Edge>
+void
+find_neighbors_naive_surface(
+	utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	core::Real neighbor_cutoff,
+	utility::vector1< std::pair< Size, Size > > const & non_surface_ranges,
+	utility::vector1< bool > const & is_surface
+)
+{
+	//std::cout<<"finding neighbors...../n";
+	// Constants
+	core::Size const n_points( point_graph->num_vertices() );
+	if ( n_points == 0 ) return;
+	core::Real neighbor_cutoff_sq = neighbor_cutoff * neighbor_cutoff;
+
+	// Exclusion checks
+	if ( n_points <= 1 ) return; // Nothing to do
+
+	// Naive method: O( R^2 ) for R residues but faster for small, compact conformations
+	//std::cout<<"Protein Start Location:"<<conformation.num_jump();
+	for ( Size ii = 1; ii <= non_surface_ranges.size(); ++ii ) {
+		for ( Size jj = non_surface_ranges[ ii ].first, jjend = non_surface_ranges[ ii ].second; jj <= jjend; ++jj ) {
+			PointPosition const & jj_pos( point_graph->get_vertex(jj).data().xyz() );
+			for ( Size kk = 1; kk <= n_points; ++kk ) {
+				if ( ! is_surface[ kk ] && kk <= jj ) continue;
+				Real const d_sq( jj_pos.distance_squared( point_graph->get_vertex( kk ).data().xyz() ) );
+				if ( d_sq <= neighbor_cutoff_sq ) {
+					Size lower = kk < jj ? kk : jj;
+					Size upper = kk < jj ? jj : kk;
+					point_graph->add_edge( lower, upper, Edge( d_sq ) );
+					//point_graph->add_edge( jj, kk, Edge( d_sq ) );
+				}
+			}
+		}
+	}
 }
-}
+
+
+} //conformation
+} //core
 
 #endif

@@ -484,6 +484,9 @@ sources = {
 		"format_converter",
 		#"hbond_param_sweep",
 	],
+	"pilot/mpacella" : [
+                "surface_docking_jd2",
+        ],
 	"pilot/sarel" : [
 		"hotspot_stub_constraint_test", # /* Sarel Fleishman,Documentation Location,Demo Location */
 		#"test_revert", # /* Sarel Fleishman,Documentation Location,Demo Location */

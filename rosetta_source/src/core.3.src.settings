@@ -452,6 +452,9 @@ sources = {
 		"SAXSEnergyCreatorFA",
 		"SinXOverX",
 	],
+	"core/scoring/solid_surface" : [
+		"SurfaceEnergies"
+	],
 	"core/scoring/sc": [
 		"ShapeComplementarityCalculator",
 		"ShapeComplementarityCalculator_GPUKernels.cu",
