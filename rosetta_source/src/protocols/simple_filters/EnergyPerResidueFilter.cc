@@ -22,6 +22,10 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/scoring/Interface.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -49,7 +53,8 @@ EnergyPerResidueFilter::EnergyPerResidueFilter(
 	core::Real const threshold,
 	bool const whole_interface,
 	core::Size const rb_jump,
-	core::Real const interface_distance_cutoff
+	core::Real const interface_distance_cutoff,
+	bool const bb_bb
 	) : 
 	filters::Filter( "EnergyPerResidue" ),
 	resnum_( resnum ),
@@ -57,7 +62,8 @@ EnergyPerResidueFilter::EnergyPerResidueFilter(
 	threshold_( threshold ),
 	whole_interface_ ( whole_interface ),
 	rb_jump_ ( rb_jump ),
-	interface_distance_cutoff_ ( interface_distance_cutoff )
+	interface_distance_cutoff_ ( interface_distance_cutoff ),
+	bb_bb_ ( bb_bb )
 	{
 		using namespace core::scoring;
 
@@ -77,7 +83,8 @@ EnergyPerResidueFilter::EnergyPerResidueFilter( EnergyPerResidueFilter const &in
 	threshold_( init.threshold_ ),
 	whole_interface_ (init.whole_interface_),
 	rb_jump_ (init.rb_jump_),
-	interface_distance_cutoff_ ( init.interface_distance_cutoff_)
+	interface_distance_cutoff_ ( init.interface_distance_cutoff_),
+	bb_bb_ ( init.bb_bb_ )
 {
 	using namespace core::scoring;
 	if( init.scorefxn_ ) scorefxn_ = new core::scoring::ScoreFunction( *init.scorefxn_ );
@@ -97,7 +104,8 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Dat
 	whole_interface_ = tag->getOption<bool>( "whole_interface" , 0 );
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 1 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
-
+	bb_bb_ = tag->getOption< bool >("bb_bb", 0 );
+	
 	if (whole_interface_==1 ) {
 		resnum_ = 1;
 		energy_per_residue_filter_tracer<<"energies for all interface residues with a distance cutoff of "
@@ -116,8 +124,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 {
 	using namespace core::scoring;
 
-	if ( whole_interface_)
-	{
+	if ( whole_interface_)	{
 		if ( pose.conformation().num_chains() < 2 ) {
 			energy_per_residue_filter_tracer << "pose must contain at least two chains!" << std::endl;
 			return false;
@@ -128,9 +135,8 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 			return true;
 		}
 	}
-	else
-	{
 
+	else	{
 
 	core::Real const energy( compute( pose ) );
 	energy_per_residue_filter_tracer<<"Scoretype "<<name_from_score_type( score_type_ )<<" for residue: " << pose.pdb_info()->number(resnum_)<<" " <<pose.residue( resnum_).name3() <<" is "<<energy<<". ";
@@ -144,14 +150,11 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 
 
 void
-EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
-
-{
+EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
 	using namespace core::scoring;
 	using ObjexxFCL::FArray1D_bool;
 
-	if( whole_interface_ )
-	{
+	if( whole_interface_ ) {
 		core::pose::Pose in_pose = pose;
 		FArray1D_bool partner1_( in_pose.total_residue(), false );
 		in_pose.fold_tree().partition_by_jump( rb_jump_, partner1_);
@@ -253,6 +256,14 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose ) const
 	core::Real weighted_score;
 	if( score_type_ == total_score ) weighted_score = in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( score_type_ )];
 	else {
+		
+		if( bb_bb_ ){
+			energy_per_residue_filter_tracer << "decomposing bb hydrogen bond terms" << std::endl;
+    	core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()));
+    	energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
+    	scorefxn_->set_energy_method_options(*energy_options);
+		}
+
 		core::Real const weight( (*scorefxn_)[ ScoreType( score_type_ ) ] );
 		core::Real const score( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( score_type_ ) ]);
 		weighted_score = weight * score ;
