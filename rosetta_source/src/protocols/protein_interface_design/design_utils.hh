@@ -152,7 +152,7 @@ void SymMinimizeInterface( core::pose::Pose & pose, core::scoring::ScoreFunction
 // residue
 std::list< core::Size >
 hbonded( core::pose::Pose const & pose, core::Size const target_residue, std::set< core::Size > const & binders,
-		 bool const bb, bool const sc, core::Real const energy_thres );
+		 bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false );
 
 #endif /*INCLUDED_DESIGN_UTILS_H_*/
 

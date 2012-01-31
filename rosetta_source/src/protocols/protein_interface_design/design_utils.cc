@@ -37,6 +37,8 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
@@ -526,7 +528,7 @@ bool const simultaneous_minimization/* = false */ )
 std::list< core::Size >
 hbonded(
 	Pose const & in_pose, core::Size const target_residue, std::set< core::Size > const & binders,
-	bool const bb, bool const sc, core::Real const energy_thres )
+	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb )
 {
 
 	using namespace core::scoring::hbonds;
@@ -539,6 +541,13 @@ hbonded(
 	HBondSet background_hbond_set;
 	background_hbond_set.setup_for_residue_pair_energies( pose, false/*calculate_derivative*/, true/*backbone_only*/ );
 	HBondDatabaseCOP hb_database( HBondDatabase::get_database( background_hbond_set.hbond_options().params_database_tag()));
+
+  if( bb_bb ){
+      TR << "decomposing bb hydrogen bond terms" << std::endl;
+      core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn->energy_method_options()));
+      energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
+      scorefxn->set_energy_method_options(*energy_options);
+  }
 	
 	EnergyMap hbond_emap;
 	core::conformation::Residue const resi( pose.residue( target_residue ));
@@ -568,14 +577,14 @@ hbonded(
 		// effecting hbond_energy_threshold_ which is calibrated for
 		// unweighted hbond energies. Since STANDARD_WTS + SCORE12_PATCH
 		// is hard coded, use this instead:
-		hbond_emap[ hbond_sr_bb_sc ] = 0;
-		hbond_emap[ hbond_lr_bb_sc ] = 0;
+//		hbond_emap[ hbond_sr_bb_sc ] = 0;
+//		hbond_emap[ hbond_lr_bb_sc ] = 0;
 		
 		core::Real total_hbond_energy( hbond_emap.sum() );
 		
 		
-		// SJF If we want a special category for satisfying only backbone atoms on the target residue, this will
-		// have to be reworked, b/c here, all of the bb / sc energies are lumped together
+		// all of the bb / sc energies are lumped together
+		// but it can be controlled whether bb - bb are included or not
 		
 		// counting the number of hbonds between the two residues
 		if( total_hbond_energy <= energy_thres ) {
@@ -583,6 +592,7 @@ hbonded(
 			for( core::Size i=1; i<=pair_hbond_set.nhbonds(); ++i ){
 				using namespace core::scoring::hbonds;
 				HBond const & hb( pair_hbond_set.hbond( i ) );
+
 				if( !bb && ( hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) ) continue;
 				if( !sc && ( !hb.don_hatm_is_protein_backbone() || !hb.acc_atm_is_protein_backbone() ) ) continue;
 				

@@ -75,7 +75,7 @@ public :
 private:
 	Size resnum_, partners_;
 	Real energy_cutoff_;
-	bool backbone_, sidechain_;
+	bool backbone_, sidechain_, bb_bb_;
 };
 
 }

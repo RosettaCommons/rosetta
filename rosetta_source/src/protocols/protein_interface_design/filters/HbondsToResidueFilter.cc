@@ -111,6 +111,7 @@ HbondsToResidueFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Data
 {
 	partners_ = tag->getOption<core::Size>( "partners" );
 	energy_cutoff_ = tag->getOption<core::Real>( "energy_cutoff", -0.5 );
+	bb_bb_ = tag->getOption<bool>( "bb_bb", 0 );
 	backbone_ = tag->getOption<bool>( "backbone", 0 );
 	sidechain_ = tag->getOption<bool>( "sidechain", 1 );
 	resnum_ = protocols::rosetta_scripts::get_resnum( tag, pose );
@@ -137,8 +138,7 @@ HbondsToResidueFilter::compute( Pose const & pose ) const {
 	typedef core::Real Real;
 
 	core::pose::Pose temp_pose( pose );
-	core::scoring::ScoreFunctionOP scorefxn(
-											ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	core::scoring::ScoreFunctionOP scorefxn(ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
 	(*scorefxn)(temp_pose);
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( temp_pose );
 
@@ -153,7 +153,7 @@ HbondsToResidueFilter::compute( Pose const & pose ) const {
 	std::set<Size> binders;
 	for( Size i=partner_begin; i<=partner_end; ++i ) binders.insert( i );
 
-	std::list< Size> hbonded_res( hbonded( temp_pose, resnum_, binders, backbone_, sidechain_, energy_cutoff_ ) );
+	std::list< Size> hbonded_res( hbonded( temp_pose, resnum_, binders, backbone_, sidechain_, energy_cutoff_, bb_bb_) );
 
 	return( hbonded_res.size() );
 }
