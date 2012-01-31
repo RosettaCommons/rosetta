@@ -430,7 +430,7 @@ void
 optimize_linkers_rna_fullatom_mode(
   kinematics::MoveMapOP & mm,
 	pose::Pose & full_pose,
-	rna::RNA_FragmentsOP & all_rna_fragments,
+	protocols::rna::RNA_FragmentsOP & all_rna_fragments,
 	utility::vector1< std::pair< Size, Size > > linker_rna
 )
 {

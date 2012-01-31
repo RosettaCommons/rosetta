@@ -54,7 +54,7 @@
 
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
-
+#include <core/chemical/rna/RNA_ResidueType.hh>
 // Package headers
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AA.hh>
@@ -1738,6 +1738,17 @@ public:
 		return within2bonds_sets_for_atom_[ atomid ];
 	}
 
+	///////////////////////////////////////////////////////////////
+	core::chemical::rna::RNA_ResidueType const &
+	RNA_type() const{
+
+		return rna_residuetype_;
+
+	}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
 
 public:
 	////////////////////////////////////////////////////////////////////////////
@@ -1909,6 +1920,7 @@ private:
 
 	/// ideal xyz coordinates
 	utility::vector1< Vector > xyz_;
+
 	/// ideal orbital xyz coordinates
 	utility::vector1< Vector      > orbital_xyz_;
 	/// atom parents
@@ -2141,6 +2153,8 @@ private:
 	/// atom indices forced to be considered backbone
 	AtomIndices force_bb_;
 
+	////////////////
+	core::chemical::rna::RNA_ResidueType rna_residuetype_;
 
 	////////////////
 	/// status

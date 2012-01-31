@@ -1793,7 +1793,11 @@ public:
 			Vector v
 	);
 
-
+	/// @brief Return the RNA_residueType object. This is RNA specific.
+	core::chemical::rna::RNA_ResidueType const &
+	RNA_type() const{
+		return rsd_type_.RNA_type();
+	}
 
 	/////////////////////////////////////////////////////////////////////////////
 	// private methods

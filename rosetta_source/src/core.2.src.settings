@@ -35,6 +35,12 @@ sources = {
 		"util",
 		"VariantType",
 	],
+
+	"core/chemical/rna": [
+		"RNA_ResidueType",
+	],
+
+
 	"core/chemical/orbitals": [
 		"AssignOrbitals",
 		"ICoorOrbitalData",
