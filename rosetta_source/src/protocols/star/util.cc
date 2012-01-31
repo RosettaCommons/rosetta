@@ -13,13 +13,20 @@
 // C/C++ headers
 #include <string>
 
+// External headers
+#include <boost/format.hpp>
+
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 
 // Project headers
+#include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -27,12 +34,25 @@
 namespace protocols {
 namespace star {
 
-void emit_intermediate(const core::pose::Pose& pose, const std::string& filename) {
+void emit_intermediate(const core::pose::Pose& pose, const std::string& silent_filename) {
+  using core::Size;
+  using core::io::silent::SilentFileData;
+  using core::io::silent::SilentStructFactory;
+  using core::io::silent::SilentStructOP;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  if (option[OptionKeys::abinitio::debug]()) {
-    pose.dump_pdb(filename);
+
+  if (!option[OptionKeys::abinitio::debug]()) {
+    return;
   }
+
+  static Size num_structures = 0;
+
+  SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out();
+  silent->fill_struct(pose, str(boost::format("model_%d") % ++num_structures));
+
+  SilentFileData sfd;
+  sfd.write_silent_struct(*silent, silent_filename);
 }
 
 void simple_fold_tree(core::pose::Pose* pose) {

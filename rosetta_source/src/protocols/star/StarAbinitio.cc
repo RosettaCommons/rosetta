@@ -247,12 +247,12 @@ void StarAbinitio::apply(Pose& pose) {
   ThreadingJob const * const job = protocols::nonlocal::current_job();
 
   to_centroid(&pose);
-  emit_intermediate(pose, "star_initial.pdb");
+  emit_intermediate(pose, "star_initial.out");
 
   Extender extender(job->alignment().clone(), pose.total_residue());
   extender.set_secondary_structure(pred_ss_);
   extender.extend_unaligned(&pose);
-  emit_intermediate(pose, "star_extended.pdb");
+  emit_intermediate(pose, "star_extended.out");
 
   const Loops& aligned = *(extender.aligned());
   const Loops& unaligned = *(extender.unaligned());
@@ -288,7 +288,7 @@ void StarAbinitio::apply(Pose& pose) {
 
   configure_rmc(fragments_sm_uni, score_stage1, static_cast<Size>(mult * 2000), temperature, true, &rmc);
   rmc.apply(pose);
-  emit_intermediate(pose, "star_stage1.pdb");
+  emit_intermediate(pose, "star_stage1.out");
 
   // Stage 2
   TR << "Stage 2" << std::endl;
@@ -297,7 +297,7 @@ void StarAbinitio::apply(Pose& pose) {
 
   configure_rmc(fragments_sm_uni, score_stage2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
   rmc.apply(pose);
-  emit_intermediate(pose, "star_stage2.pdb");
+  emit_intermediate(pose, "star_stage2.out");
 
   // Stage 3
   TR << "Stage 3" << std::endl;
@@ -309,7 +309,7 @@ void StarAbinitio::apply(Pose& pose) {
     configure_rmc(fragments_sm_uni, score, static_cast<Size>(mult * 4000), temperature, true, &rmc);
     rmc.apply(pose);
   }
-  emit_intermediate(pose, "star_stage3.pdb");
+  emit_intermediate(pose, "star_stage3.out");
 
   // Stage 4
   TR << "Stage 4" << std::endl;
@@ -317,7 +317,7 @@ void StarAbinitio::apply(Pose& pose) {
   for (Size i = 1; i <= 3; ++i) {
     rmc.apply(pose);
   }
-  emit_intermediate(pose, "star_stage4.pdb");
+  emit_intermediate(pose, "star_stage4.out");
 }
 
 void StarAbinitio::tear_down_kinematics(Pose* pose) const {
@@ -349,7 +349,7 @@ StarAbinitio::StarAbinitio() {
     pred_ss_ = new SecondaryStructure(*fragments_sm_);
   }
 
-  // Cartesian minimizer
+  // Configure the minimizer
   ScoreFunctionOP min_score = ScoreFunctionFactory::create_score_function("score4_smooth_cart");
   min_score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
 

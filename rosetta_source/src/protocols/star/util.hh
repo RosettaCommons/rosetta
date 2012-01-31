@@ -23,7 +23,7 @@ namespace protocols {
 namespace star {
 
 /// @brief Writes pose to disk with the specified filename if -abinitio:debug is enabled
-void emit_intermediate(const core::pose::Pose& pose, const std::string& filename);
+void emit_intermediate(const core::pose::Pose& pose, const std::string& silent_filename);
 
 /// @brief Restores simple kinematics to pose
 void simple_fold_tree(core::pose::Pose* pose);
