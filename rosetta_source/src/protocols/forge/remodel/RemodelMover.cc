@@ -79,6 +79,7 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 // AUTO-REMOVED #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 // AUTO-REMOVED #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
@@ -526,11 +527,8 @@ if (working_model.manager.size()!= 0){
 	while ( i > 0){
 
 		//cache the modified pose first for REPEAT
-		Pose cached_modified_pose;
+		Pose cached_modified_pose( pose );
 
-		if (option[ OptionKeys::remodel::repeat_structure].user()) {
-			cached_modified_pose = pose;
-		}
 		// do centroid build
 		TR << "BUILD CYCLE REMAINING " << i << std::endl;
 		core::kinematics::FoldTree originalTree = pose.fold_tree();
@@ -546,8 +544,8 @@ if (working_model.manager.size()!= 0){
 			//should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
 			for (Size res = 1; res <= cached_modified_pose.n_residue(); res++){
 				cached_modified_pose.set_phi(res, pose.phi(res));
-				cached_modified_pose.set_psi(res, pose.phi(res));
-				cached_modified_pose.set_omega(res, pose.phi(res));
+				cached_modified_pose.set_psi(res, pose.psi(res));
+				cached_modified_pose.set_omega(res, pose.omega(res));
 			}
 		}
 
@@ -1396,12 +1394,14 @@ RemodelMover::TaskFactoryOP RemodelMover::generic_taskfactory() {
 	using core::pack::task::operation::ReadResfileOP;
 	using core::pack::task::TaskFactory;
 	using core::pack::task::operation::NoRepackDisulfides;
+	using protocols::toolbox::task_operations::LimitAromaChi2Operation;
 
 	TaskFactoryOP tf = new TaskFactory();
 
 	tf->push_back( new InitializeFromCommandline() ); // also inits -ex options
 	tf->push_back( new IncludeCurrent() ); // enforce keeping of input sidechains
 	tf->push_back( new NoRepackDisulfides() );
+	tf->push_back( new LimitAromaChi2Operation() );
 
 	// load resfile op only if requested
 /*	if ( !resfile_.empty() ) {

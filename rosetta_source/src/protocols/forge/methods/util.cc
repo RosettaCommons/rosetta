@@ -36,6 +36,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/loops/Loops.hh>
 
 #include <core/pose/PDBPoseMap.hh>
@@ -431,12 +432,14 @@ remodel_generic_taskfactory(){
   using core::pack::task::operation::IncludeCurrent;
   using core::pack::task::operation::InitializeFromCommandline;
   using core::pack::task::operation::NoRepackDisulfides;
+  using protocols::toolbox::task_operations::LimitAromaChi2Operation;
 
   core::pack::task::TaskFactoryOP TF = new core::pack::task::TaskFactory();
 
   TF->push_back( new InitializeFromCommandline() ); // also inits -ex options
   TF->push_back( new IncludeCurrent() ); // enforce keeping of input sidechains
   TF->push_back( new NoRepackDisulfides() );
+  TF->push_back( new LimitAromaChi2Operation() );
 
 	return TF;
 }
