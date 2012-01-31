@@ -105,6 +105,7 @@ put links to commonly referred to documentation pages here.
 	- @ref pepspec "Documentation for the pepspec application"
 	- @ref comparative_modeling "Documentation for the comparative modeling application"
 	- @ref pmut_scan_parallel "Documentation for the point mutant scan application"
+	- @ref remodel "Documentation for RosettaRemodel"
 
 @section mainpage_namespaces Important Namespaces
 
