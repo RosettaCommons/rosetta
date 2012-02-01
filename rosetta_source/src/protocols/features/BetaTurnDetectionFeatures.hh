@@ -69,6 +69,8 @@ private:
     bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, Size first_residue ) const;
     
     bool residue_range_is_relevant( utility::vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const;
+    
+    bool residue_range_is_protein( core::pose::Pose const & pose, Size range_begin, Size range_end ) const;
 
     bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
     
