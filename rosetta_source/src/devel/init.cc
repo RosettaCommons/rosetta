@@ -16,17 +16,36 @@
 #include <devel/init.hh>
 #include <protocols/init/init.hh>
 
+// Factories
 #include <protocols/moves/MoverFactory.hh>
+#include <protocols/jd2/parser/DataLoaderFactory.hh>
+//#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
+//#include <devel/constrained_sequence_design/ConstrainedDesignMoverCreator.hh>
 
+// dataloader creators
+//#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
+
+// SequenceConstraint creators
+//#include <devel/constrained_sequence_design/constraints/MaximunNumberPerResidueTypeConstraintCreator.hh>
+
+// Utility Headers
 #include <utility/vector1.hh>
 
 
 namespace devel {
 
+// movers
 static protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;
+//static protocols::moves::MoverRegistrator< constrained_sequence_design::ConstrainedDesignMoverCreator > reg_ConstrainedDesignMoverCreator;
+
+// SequenceConstraints
+//static constrained_sequence_design::SequenceConstraintRegistrator< constrained_sequence_design::constraints::MaximunNumberPerResidueTypeConstraintCreator > reg_MaximunNumberPerResidueTypeConstraint;
+
+// data loaders
+//static protocols::jd2::parser::DataLoaderRegistrator< constrained_sequence_design::SequenceConstraintLoaderCreator > reg_SequenceConstraintLoaderCreator;
 
 void init( int argc, char * argv [] )
 {
@@ -36,7 +55,7 @@ void init( int argc, char * argv [] )
 void init( utility::vector1< std::string > const & args )
 {
 	protocols::init::init( args );
-}
+} // init
 
-}
+} // devel
 
