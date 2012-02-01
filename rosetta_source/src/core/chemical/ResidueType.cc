@@ -1519,14 +1519,14 @@ ResidueType::update_derived_data()
 	}
 
 
-	if(is_RNA_){ //update RNA derived data.
+	if(is_RNA_){ //reinitialize and RNA derived data.
 
+		//Reinitialize rna_residuetype_ object! This also make sure rna_residuetype_ didn't inherit anything from the previous update!
 		//It appears that the rna_residuetype_ is shared across multiple ResidueType object, if the rna_residuetype_ is not reinitialized here!	
-		//TO DO: To prevent this behavior, best to change rna_residuetype_ to a object instead of a pointer! (OK DID THIS!)
-		//OK STILL DECIDE TO CREATE A FRESH COPY, this make sure rna_residuetype_ didn't inherit anything from the previous update!
+
 		rna_residuetype_=*(new core::chemical::rna::RNA_ResidueType);
 
-		//RNA require special treatment: Parin Sripakdeevong, June 26, 2011
+		//update_last_controlling_chi is treated seperately for RNA case. Parin Sripakdeevong, June 26, 2011
 		rna_residuetype_.rna_update_last_controlling_chi(this, last_controlling_chi_, atoms_last_controlled_by_chi_);
 
 		rna_residuetype_.update_derived_rna_data(this);

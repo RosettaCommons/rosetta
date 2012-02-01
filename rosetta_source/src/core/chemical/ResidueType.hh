@@ -54,7 +54,6 @@
 
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
 // Package headers
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AA.hh>
@@ -66,6 +65,7 @@
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/sdf/MolData.hh>
+#include <core/chemical/rna/RNA_ResidueType.hh>
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 // Project headers

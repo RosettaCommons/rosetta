@@ -14,16 +14,11 @@
 #ifndef INCLUDED_core_chemical_rna_RNA_ResidueType_fwd_hh
 #define INCLUDED_core_chemical_rna_RNA_ResidueType_fwd_hh
 
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-
 namespace core {
 namespace chemical {
 namespace rna {
 
 class RNA_ResidueType;
-
-typedef  utility::pointer::owning_ptr< RNA_ResidueType > RNA_ResidueTypeOP;
 
 }
 }

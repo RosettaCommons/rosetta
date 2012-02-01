@@ -9,60 +9,32 @@
 
 /// @file
 /// @brief
-/// @author Phil Bradley
+/// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 // Unit headers
 #include <core/chemical/rna/RNA_ResidueType.hh>
-
-
-// Package Headers
-#include <core/conformation/Residue.hh>
-
-// Project Headers
-#include <core/chemical/ResidueSupport.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
-
-#include <core/scoring/ScoringManager.hh>
+#include <core/chemical/ResidueType.hh>
 
 // ObjexxFCL headers
+#include <core/chemical/ResidueSupport.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomType.hh>
+
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <basic/Tracer.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
 
 namespace core {
 namespace chemical {
 namespace rna {
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
 
 static basic::Tracer tr("core.chemical.rna.RNA_ResidueType");
 
-////////////////////////////////RNA specific stuff...maybe move function into its own class?///////////
-///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011///////////
-
-
-
 ////////////////////////////////////////////////////////////
-/*
-if(rna_check_){
-	if(Is_virtual_atom_list_[atomno]){
-		if( atom_type( atomno ).name() !="VIRT" ) utility_exit_with_message("atom_type( atomno ).name()=" + atom_type( atomno ).name() + "!=\"VIRT\""); 
-		if(	atom_type( atomno ).lj_radius() > 0.001) utility_exit_with_message("	atom_type( atomno  ).lj_radius() > 0.001"); 
-	}else{
-		if( atom_type( atomno ).name() =="VIRT" ) utility_exit_with_message("atom_type( atomno ).name()=" + atom_type( atomno ).name() + "==\"VIRT\""); 
-		if(	atom_type( atomno ).lj_radius() < 0.001) utility_exit_with_message("atom_type( atomno  ).lj_radius() < 0.001"); 
-	}
-}
-*/
-
 
 //Could perhaps find an atom index in term of its chemical position along the chain.
 //For example could call chi_atoms( chi_torsion_# ) to get the atom_index of the atoms that define this torsion and then deduce the atom_index of the desired atom.
@@ -75,7 +47,7 @@ if(rna_check_){
 //         mainchain_atoms_[5] is o3star_atom_index_
 //         mainchain_atoms_[6] is o4star_atom_index_
 
-//////Could instead pass in the ResidueType Self pointer...this will avoid passing in multiple variables/////
+////////////////////////////////////////////////////////////////////////
 RNA_ResidueType::RNA_ResidueType():
 	o2star_index_( 0 ),
 	ho2star_index_( 0 ),
@@ -94,6 +66,12 @@ RNA_ResidueType::RNA_ResidueType():
 	Is_phosphate_atom_list_.clear();
 }
 
+
+////////////////////////////////////////////////////////////////////////
+RNA_ResidueType::~RNA_ResidueType(){}
+
+
+////////////////////////////////////////////////////////////////////////
 
 void
 RNA_ResidueType::update_derived_rna_data(ResidueTypeCOP const residue_type_in){

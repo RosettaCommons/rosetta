@@ -7,43 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin ResidueType
+/// @begin RNA_residueType
 ///
 /// @brief
-/// A class for defining residue
+/// RNA specific properties
 ///
-/// @detailed
-/// This class contains the "chemical" information for residues. This does not contain the actual
-/// xyz coordinates of the class (xyz found in core/conformation/Residue.hh). A residue in Rosetta
-/// can be a ligand, DNA, amino acid, or basically anything. A residue is read in through residue_io.cc
-/// and read from parameter files, generally located in the database chemical/residuetypes. For ligands,
-/// or anything that is not the natural 20 aa, a parameter has to be provided to rosetta through the -extra_res_fa
-/// flag. Residue_io sets private member data in ResidueType. The primary data that are set are: atoms, mmatoms, orbitals,
-/// properties of residues. These properties can be modified through patches, which is controlled through PatchOperations.cc. If
-/// the residuetype is modified, the indices of atoms and mmatoms and everything associated with those indices must be redefined. This
-/// redordering of indices is taken care of with the function reorder_primary_data().
-///
-/// Setting of primary data and then reordering is important. Primary data for the following are described:
-///
-/// atoms: setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps,
-/// saving the associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc. Since everything is
-/// allocated into vectors, it is easy to reorder those vectors. On any given residue, the heavy atoms are put into the vector
-/// first (their indices are first) and hydrogens are put in last.
-///
-/// properties: properties of a residue include things like DNA, PROTEIN, SC_ORBITALS, CHARGED, etc. These properties
-/// indicate the type of residue it is and what properties that are asscociated with the residue. They
-/// are set when read in. Several lines of code must be modified to get them to work, all found in residuetype.cc
-///
-/// orbitals: orbitals are indexed seperate from atoms. They function much the same way as atoms, except for some
-/// key differences. To find atoms bonded to orbitals, you must provide the atom index, not the orbital index. I
-/// havent figured out how to get the reverse to work because of the seperate indices. Orbital xyz coordinates are not updated when atom coordinates are.
-/// This is to keep speed consistent with just having atoms. To output the orbitals, use the flag -output_orbitals
-///
-/// @authors
-/// Phil Bradley
-/// Steven Combs - these comments
-///
-///
+/// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 ////////////////////////////////////////////////////////////////////////
 
 
@@ -51,34 +20,17 @@
 #ifndef INCLUDED_core_chemical_rna_RNA_ResidueType_hh
 #define INCLUDED_core_chemical_rna_RNA_ResidueType_hh
 
-// Package headers
-#include <core/chemical/rna/RNA_ResidueType.fwd.hh>
-#include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/Adduct.hh>
-#include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/MMAtomType.fwd.hh>
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <core/chemical/ResidueConnection.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
+// Package headers
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/rna/RNA_ResidueType.fwd.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <utility/keys/Key4Tuple.hh>
-#include <utility/keys/Key3Tuple.hh>
 
 // C++ headers
-#include <map>
-
-#include <core/chemical/VariantType.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -95,7 +47,7 @@ class RNA_ResidueType : public utility::pointer::ReferenceCount {
 
 	RNA_ResidueType();
 
-	~RNA_ResidueType(){};
+	~RNA_ResidueType();
 
 	///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
 	private:
@@ -201,8 +153,6 @@ class RNA_ResidueType : public utility::pointer::ReferenceCount {
 	//AtomIndices base_heavy_atoms_;
 	//AtomIndices base_hydrogen_atoms_;
 	
-	/// atom index lookup by atom name string
-
 	ResidueTypeCOP residue_type_; //Pointer to the main ResidueType object that this RNA_ResidueType object belongs to.
 
 }; //RNA_ResidueType
