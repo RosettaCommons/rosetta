@@ -9,9 +9,10 @@
 
 /// @file   src/protocols/features/PdbDataFeatures.hh
 /// @author Sam DeLuca
+/// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_features_PdbDataFeatures_HH_
-#define INCLUDED_protocols_features_PdbDataFeatures_HH_
+#ifndef INCLUDED_protocols_features_PdbDataFeatures_HH
+#define INCLUDED_protocols_features_PdbDataFeatures_HH
 
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
@@ -74,12 +75,27 @@ public:
 
 private:
 
+	void load_residue_pdb_identification(
+		utility::sql_database::sessionOP db_session,
+		core::Size struct_id,
+		core::pose::Pose & pose);
+
 	void insert_residue_pdb_identification_rows(
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose);
 
-	void load_residue_pdb_identification(
+	///@brief load the temperature and occupancy information into the
+	///PDBInfo object. Backbone atoms are assigned max_bb_temperature
+	///and min_bb_occupancy while sidechain atoms are assigned
+	///max_sc_temperature and min_sc_occupancy.
+
+	///Note: The information stored in the residue_pdb_confidence table
+	///is at the residue level not atom level. Since the temperature and
+	///occupancy is usually at the atom level, writing data to the
+	///database and reading it back in will result in a loss of
+	///information.
+	void load_residue_pdb_confidence(
 		utility::sql_database::sessionOP db_session,
 		core::Size struct_id,
 		core::pose::Pose & pose);
@@ -89,13 +105,12 @@ private:
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose);
 
-	// don't load residue_pdb_confidence because we're not extracting it
-	// at the atomic level
+
 
 };
 
-}
-}
+} // namespace
+} // namespace
 
 
-#endif /* PDBDATAFEATURES_HH_ */
+#endif // include guard

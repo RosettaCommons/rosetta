@@ -47,6 +47,7 @@ using core::pose::Pose;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using basic::database::safely_read_from_database;
+using basic::database::safely_prepare_statement;
 using basic::database::safely_write_to_database;
 using basic::database::table_exists;
 using cppdb::result;
@@ -157,15 +158,16 @@ void PdbDataFeatures::delete_record(
 	Size struct_id,
 	sessionOP db_session)
 {
-	std::string id_statement_string = "DELETE FROM residue_pdb_identification WHERE struct_id = ?;\n";
-	statement id_stmt(basic::database::safely_prepare_statement(id_statement_string,db_session));
+	string id_statement_string = "DELETE FROM residue_pdb_identification WHERE struct_id = ?;\n";
+	statement id_stmt(safely_prepare_statement(id_statement_string,db_session));
 	id_stmt.bind(1,struct_id);
-	basic::database::safely_write_to_database(id_stmt);
+	safely_write_to_database(id_stmt);
 
-	std::string confidence_statement_string = "DELETE FROM residue_pdb_confidence WHERE struct_id = ?;\n";
-	statement confidence_stmt(basic::database::safely_prepare_statement(confidence_statement_string,db_session));
+	string confidence_statement_string = "DELETE FROM residue_pdb_confidence WHERE struct_id = ?;\n";
+	statement confidence_stmt(
+		safely_prepare_statement(confidence_statement_string, db_session));
 	confidence_stmt.bind(1,struct_id);
-	basic::database::safely_write_to_database(confidence_stmt);
+	safely_write_to_database(confidence_stmt);
 }
 
 void PdbDataFeatures::load_into_pose(
@@ -173,12 +175,8 @@ void PdbDataFeatures::load_into_pose(
 	Size struct_id,
 	Pose & pose)
 {
-	load_residue_pdb_identification(db_session,struct_id,pose);
-
-	// Currently temperature/occupancy information is only extracted at
-	// the residue level rather than at the atom level. So, don't try to
-	// put that information back into the AtomRecords in the PDBInfo
-	// object.
+	load_residue_pdb_identification(db_session, struct_id, pose);
+	load_residue_pdb_confidence(db_session, struct_id, pose);
 }
 
 void PdbDataFeatures::load_residue_pdb_identification(
@@ -191,7 +189,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	vector1<int> pdb_numbers;
 	vector1<char> pdb_chains;
 	vector1<char> insertion_codes;
-	std::string statement_string =
+	string statement_string =
 		"SELECT\n"
 		"	r_id.residue_number,\n"
 		"	r_id.chain_id,\n"
@@ -202,7 +200,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 		"WHERE\n"
 		"	r_id.struct_id=?;";
 
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	statement stmt(safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	result res(safely_read_from_database(stmt));
 
@@ -237,7 +235,7 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 {
 	Size res_num(pose.n_residue());
 	std::string statement_string = "INSERT INTO residue_pdb_identification VALUES (?,?,?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	statement stmt(safely_prepare_statement(statement_string,db_session));
 	for(Size index =1 ; index <= res_num; ++index)
 	{
 		string chain_id(& pose.pdb_info()->chain(index),1);
@@ -253,6 +251,73 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	}
 }
 
+
+void PdbDataFeatures::load_residue_pdb_confidence(
+	sessionOP db_session,
+	Size struct_id,
+	Pose & pose)
+{
+	if(!table_exists(db_session, "residue_pdb_confidence")) return;
+
+	if(!pose.pdb_info()){
+		pose.pdb_info(new PDBInfo(pose.total_residue()));
+	}
+
+	std::string statement_string =
+		"SELECT\n"
+		"	r_conf.residue_number,\n"
+		"	r_conf.max_bb_temperature,\n"
+		"	r_conf.max_sc_temperature,\n"
+		"	r_conf.min_bb_occupancy,\n"
+		"	r_conf.min_sc_occupancy\n"
+		"FROM\n"
+		"	residue_pdb_confidence AS r_conf\n"
+		"WHERE\n"
+		"	r_conf.struct_id=?;";
+
+	statement stmt(safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
+	result res(safely_read_from_database(stmt));
+
+	while(res.next()) {
+		Size residue_number;
+		Real max_bb_temperature;
+		Real max_sc_temperature;
+		Real min_bb_occupancy;
+		Real min_sc_occupancy;
+
+		res
+			>> residue_number
+			>> max_bb_temperature
+			>> max_sc_temperature
+			>> min_bb_occupancy
+			>> min_sc_occupancy;
+
+		Residue const & residue(pose.residue(residue_number));
+
+		pose.pdb_info()->resize_atom_records(
+			residue_number, residue.nheavyatoms(), false);
+
+		for(
+			Size atom_index=1;
+			atom_index <= residue.last_backbone_atom();
+			++atom_index){
+			pose.pdb_info()->temperature(
+				residue_number, atom_index, max_bb_temperature);
+			pose.pdb_info()->occupancy(
+				residue_number, atom_index, min_bb_occupancy);
+		}
+		for(
+			Size atom_index = residue.first_sidechain_atom();
+			atom_index <= residue.nheavyatoms();
+			++atom_index){
+			pose.pdb_info()->temperature(
+				residue_number, atom_index, max_sc_temperature);
+			pose.pdb_info()->occupancy(
+				residue_number, atom_index, min_sc_occupancy);
+		}
+	}
+}
 
 
 void PdbDataFeatures::insert_residue_pdb_confidence_rows(
