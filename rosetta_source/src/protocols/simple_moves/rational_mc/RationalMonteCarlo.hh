@@ -78,6 +78,9 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   void set_num_trials(core::Size num_trials);
   void set_temperature(core::Real temperature);
 
+  void enable_autotemp(core::Real quench);
+  void disable_autotemp();
+
   /// @brief Updates the score function. Before calling this method, make sure
   /// that apply() has been called at least once on a non-empty pose.
   void set_score_function(core::scoring::ScoreFunctionOP score);

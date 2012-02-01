@@ -158,6 +158,14 @@ void RationalMonteCarlo::reset(const Pose& pose) {
   mc_->reset(pose);
 }
 
+void RationalMonteCarlo::enable_autotemp(core::Real quench) {
+	mc_->set_autotemp(true, quench);
+}
+
+void RationalMonteCarlo::disable_autotemp() {
+	mc_->set_autotemp(false, 0);
+}
+
 }  // namespace rational_mc
 }  // namespace simple_moves
 }  // namespace protocols

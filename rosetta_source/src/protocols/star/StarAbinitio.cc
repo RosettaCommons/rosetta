@@ -293,6 +293,7 @@ void StarAbinitio::apply(Pose& pose) {
   // Stage 2
   TR << "Stage 2" << std::endl;
   configure_rmc(fragments_lg_uni, score_stage2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
+  rmc.enable_autotemp(temperature);
   rmc.apply(pose);
 
   configure_rmc(fragments_sm_uni, score_stage2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
