@@ -582,7 +582,8 @@ namespace rna {
 		coordinate_matrix.zz( cos(E.beta));
 
 		Real determinant=coordinate_matrix.det();
-		if(determinant>1.00000000000001 || determinant<0.99999999999999){
+		//if(determinant>1.00000000000001 || determinant<0.99999999999999){ //Feb 12, 2012 This might lead to server-test error at R47200 
+		if(determinant>1.000001 || determinant<0.999999){ //Feb 12, 2012 This might lead to server-test error at R47200 
 			utility_exit_with_message( "determinant != 1.00 !!!" );
 		}
 

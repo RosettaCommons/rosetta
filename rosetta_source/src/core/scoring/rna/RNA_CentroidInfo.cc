@@ -57,8 +57,10 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 
 ///////////////////////////////////////////////////////////////////////////////
 Vector
-RNA_CentroidInfo::get_base_centroid( conformation::Residue const & rsd , bool verbose) const
+RNA_CentroidInfo::get_base_centroid( conformation::Residue const & rsd ) const
 {
+	bool const verbose = false;
+
 	return get_rna_base_centroid( rsd, verbose);	
 }
 

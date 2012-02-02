@@ -275,7 +275,7 @@ get_watson_crick_base_pair_atoms(
 
 //////////////////////////////////////////////////////
 bool
-is_rna_chainbreak( core::pose::Pose const & pose, Size const & i ) {
+is_rna_chainbreak( core::pose::Pose const & pose, Size const i ) {
 
 	static Real const CHAINBREAK_CUTOFF2 ( 2.5 * 2.5 );
 

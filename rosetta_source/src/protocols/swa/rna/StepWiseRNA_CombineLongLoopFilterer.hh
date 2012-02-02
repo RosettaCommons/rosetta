@@ -48,7 +48,8 @@ namespace rna {
 		Combine_Tags_Info():
 			side_one_tag( "" ),
 			side_two_tag( "" ),
-			combine_score( 999999999999.99 )
+			//combine_score( 999999999999.99 ) //Feb 12, 2012 This might lead to server-test error at R47200 
+			combine_score( 999999.9) //Feb 12, 2012
 		{
 		}
 

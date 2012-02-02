@@ -132,7 +132,8 @@ namespace rna {
 		include_syn_chi_(false),
 		allow_syn_pyrimidine_(false), //New option Nov 15, 2010
 		distinguish_pucker_(true), 
-		current_score_cutoff_(99999999999.9999), //New option May 12, 2010
+		current_score_cutoff_(999999.9), //Feb 12, 2012
+		//current_score_cutoff_(99999999999.9999), //New option May 12, 2010, Feb 02, 2012; This might lead to server-test error at R47200 
 		finer_sampling_at_chain_closure_(false), //New option Jun 10 2010
 		PBP_clustering_at_chain_closure_(false), //New option Aug 15 2010
 		reinitialize_CCD_torsions_(false), //New option Aug 15 2010 //Reinitialize_CCD_torsion to zero before every CCD chain closure
@@ -474,7 +475,8 @@ namespace rna {
 	  //////////////////////////////////////////Setup Atr_rep_screening/////////////////////////////////////////////////
 		//This is getting annoying...need to move this up here since it create a chainbreak conflict with setup_chain_break_jump_point) below.. 
 
-		Real base_rep_score(-9999999999), base_atr_score(-9999999999);
+		//Real base_rep_score(-9999999999), base_atr_score(-9999999999); //Feb 12, 2012 This might lead to server-test error at R47200 
+		Real base_rep_score(-999999), base_atr_score(-999999); //Feb 12, 2012
 		get_base_atr_rep_score(pose, base_atr_score, base_rep_score); 
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -684,7 +686,7 @@ namespace rna {
 
 			//	Real distance_square=( base_info.v - pose.residue(reference_res).xyz(" C5*") ).length_squared();
 			//Fix on Jan 15 , 2011..how did I let allow this error to exist for so long!
-			Real const distance_square=( base_info.v - core::scoring::rna::get_rna_base_centroid(pose.residue(reference_res) ) ).length_squared();
+			Real const distance_square=( base_info.v - core::scoring::rna::get_rna_base_centroid(pose.residue(reference_res) , false ) ).length_squared();
 		
 
 			Real const distance=std::sqrt(distance_square);
@@ -1243,7 +1245,9 @@ namespace rna {
 			pose = pose_with_virtual_O2star_hydrogen;
 		}
 
-		Real base_rep_score(-9999999999), base_atr_score(-9999999999);
+		//Real base_rep_score(-9999999999), base_atr_score(-9999999999); //Feb 12, 2012 This might lead to server-test error at R47200
+		Real base_rep_score(-999999), base_atr_score(-999999); //Feb 12, 2012
+
 
 		get_base_atr_rep_score(pose_with_virtual_O2star_hydrogen, base_atr_score, base_rep_score);
 	  //////////////////////////////////////////Setup Atr_rep_screening/////////////////////////////////////////////////
@@ -1869,10 +1873,12 @@ namespace rna {
 		if(rebuild_bulge_mode_) return false; //Hacky want to output sample diverse bulge conformation
 
 //		static Real const atr_cutoff_for_bulge( -1.0 );
-
-		static Real const atr_cutoff_for_bulge( -9999999999999999999.0 );
 //		static Real const atr_cutoff_for_bulge( -1.0 );
 //		static Real const atr_cutoff_for_bulge( 0.0 );
+
+		//static Real const atr_cutoff_for_bulge( -9999999999999999999.0 ); //Feb 12, 2012 This might lead to server-test error at R47200
+		static Real const atr_cutoff_for_bulge( -999999.0 ); //Feb 12, 2012 
+
 
 
 //		Size const five_prime_chain_break_res = job_parameters_->five_prime_chain_break_res();
@@ -2037,7 +2043,10 @@ namespace rna {
 		if(pose_data_list.size()>=num_pose_kept_){
 			current_score_cutoff_=pose_data_list[num_pose_kept_].score;
 		}else{
-			current_score_cutoff_=99999999999.9999; //keep on adding pose to list if there are still not enough clusters
+			//keep on adding pose to list if there are still not enough clusters
+
+			//current_score_cutoff_=99999999999.9999; //Feb 12, 2012 This might lead to server-test error at R47200 
+			current_score_cutoff_=999999.9; //Feb 12, 2012 
 		}
 		////////////////////////////////////////////
 		

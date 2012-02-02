@@ -101,7 +101,8 @@ namespace rna {
 		perform_o2star_pack_(true), 
 		output_before_o2star_pack_(false), 
 		skip_minimize_(false), 
-		num_pose_minimize_(99999999999), 
+		//num_pose_minimize_(99999999999),  //New option May 12, 2010, Feb 02, 2012; This lead to server-test error at R47200 
+		num_pose_minimize_(999999), //Feb 02, 2012
 		minimize_and_score_sugar_(true) 
   {
 		set_native_pose( job_parameters_->working_native_pose() );

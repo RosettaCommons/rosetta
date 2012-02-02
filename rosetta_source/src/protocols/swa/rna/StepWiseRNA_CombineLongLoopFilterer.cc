@@ -239,7 +239,8 @@ namespace rna {
 
 		//////////////////////////////////////////////////////////////////
 
-		input_pose_TWO_last_prepended_res_=9999999;
+		//input_pose_TWO_last_prepended_res_=9999999; //Feb 02, 2012: This might lead to server-test error at R47200 
+		input_pose_TWO_last_prepended_res_=999999;  //Feb 02, 2012
 
 		if(input_pose_TWO_prepended_res_list_.size()==0) utility_exit_with_message("input_pose_TWO_prepended_res_list_.size()==0");
 

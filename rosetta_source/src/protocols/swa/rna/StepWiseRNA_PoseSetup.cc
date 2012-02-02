@@ -574,7 +574,8 @@ namespace rna {
 		using namespace ObjexxFCL;
 
 
-		Real nearest_dist_SQ=9999999999999.99;
+		//Real nearest_dist_SQ=9999999999999.99; //Feb 12, 2012 This might lead to server-test error at R47200 
+		Real nearest_dist_SQ=99999999.9; //Feb 12, 2012
 
 		conformation::Residue const & input_pose_O2star_rsd=input_pose.residue(O2star_seq_num);
 	
