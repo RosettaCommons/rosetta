@@ -198,6 +198,8 @@ HybridizeProtocol::initialize_and_sample_loops(
 	TR << "CONTIGS" << std::endl << template_contigs_icluster << std::endl;
 	core::Size ncontigs = template_contigs_icluster.size();
 	core::Size nres_tgt = pose.total_residue();
+	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops;
 	utility::vector1< bool > templ_coverage(nres_tgt, false);
 
@@ -336,11 +338,13 @@ void HybridizeProtocol::add_template(
 	
 	// find ss chunks in template
 	//protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose); 
-	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
-	TR.Debug << "Chunks from template\n" << chunks << std::endl;
-
-	// break templates into contigs
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose); 
+	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
+
+	if (chunks.num_loop() == 0)
+		chunks = contigs;
+
+	TR.Debug << "Chunks from template\n" << chunks << std::endl;
 	TR.Debug << "Contigs from template\n" << contigs << std::endl;
 
 	template_fn_.push_back(template_fn);

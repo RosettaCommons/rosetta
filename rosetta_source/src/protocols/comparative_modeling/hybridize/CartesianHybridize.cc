@@ -103,23 +103,26 @@ namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 
+const core::Size DEFAULT_NCYCLES=400;
+
 static basic::Tracer TR("protocols.comparitive_modeling.hybridize.CartesianHybridize");
+
+CartesianHybridize::CartesianHybridize( ) : ncycles_(DEFAULT_NCYCLES) {
+	init();
+}
 
 CartesianHybridize::CartesianHybridize(
 		utility::vector1 < core::pose::PoseOP > const & templates_in,
 		utility::vector1 < core::Real > const & template_wts_in,
 		utility::vector1 < protocols::loops::Loops > const & template_chunks_in, 
 		utility::vector1 < protocols::loops::Loops > const & template_contigs_in,
-		core::fragment::FragSetOP fragments9_in ) : ncycles_(400) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		core::fragment::FragSetOP fragments9_in ) : ncycles_(DEFAULT_NCYCLES) {
+	init();
 
 	templates_ = templates_in;
 	template_wts_ = template_wts_in;
 	template_contigs_ = template_contigs_in;
 	fragments9_ = fragments9_in;
-
-	increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
 
 	// make sure all data is there
 	runtime_assert( templates_.size() == template_wts_.size() );
@@ -129,9 +132,6 @@ CartesianHybridize::CartesianHybridize(
 	core::Real weight_sum = 0.0;
 	for (int i=1; i<=templates_.size(); ++i) weight_sum += template_wts_[i];
 	for (int i=1; i<=templates_.size(); ++i) template_wts_[i] /= weight_sum;
-
-	// default scorefunction
-	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
 
 	// map resids to frames
 	for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
@@ -173,6 +173,19 @@ CartesianHybridize::CartesianHybridize(
 	for (int i=1; i<= template_contigs_.size(); ++i) {
 		TR.Debug << "templ. " << i << std::endl << template_contigs_[i] << std::endl;
 	}
+}
+
+void
+CartesianHybridize::init() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
+	no_global_frame_ = option[cm::hybridize::no_global_frame]();
+	linmin_only_ = option[cm::hybridize::linmin_only]();
+
+	// default scorefunction
+	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
 }
 
 void
@@ -402,7 +415,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
 
 	// 10% of the time, skip moves in the global frame 
-	bool no_ns_moves = option[cm::hybridize::no_global_frame](); // (numeric::random::uniform() <= 0.1);
+	bool no_ns_moves = no_global_frame_; // (numeric::random::uniform() <= 0.1);
 
 sampler:
 	for (int m=1; m<=NMACROCYCLES; m+=1) {
@@ -536,7 +549,7 @@ sampler:
 			// MC
 			try {
 				(*min_scorefxn_)(pose);
-				if ( m<4 || option[cm::hybridize::linmin_only]() )
+				if ( m<4 || linmin_only_ )
 					minimizer.run( pose, mm, *min_scorefxn_, options );
 				else
 					minimizer.run( pose, mm, *min_scorefxn_, options_minilbfgs );

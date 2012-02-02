@@ -55,7 +55,7 @@ using namespace protocols::loops;
 	
 class CartesianHybridize: public protocols::moves::Mover {
 public:
-	CartesianHybridize() : ncycles_(400) {};
+	CartesianHybridize();
 
 	CartesianHybridize(
 		utility::vector1 < core::pose::PoseOP > const & templates_in,
@@ -64,11 +64,19 @@ public:
 		utility::vector1 < protocols::loops::Loops > const & template_contigs_in,
 		core::fragment::FragSetOP fragments9_in );
 
+	// initialize options to defaults
+	void init();
+
 	// run the protocol
 	void apply(core::pose::Pose & pose);
 
 	// set the centroid scorefunction
 	void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in);
+
+	// set options
+	void set_increase_cycles(core::Real increase_cycles_in) { increase_cycles_=increase_cycles_in; }
+	void set_no_global_frame(bool no_global_frame_in) { no_global_frame_=no_global_frame_in; }
+	void set_linmin_only(core::Real linmin_only_in) { linmin_only_=linmin_only_in; }
 
 	//
 	std::string	get_name() const { return "CartesianHybridize"; }
@@ -84,6 +92,7 @@ private:
 	// parameters
 	core::Real increase_cycles_;
 	core::Size ncycles_;
+	bool no_global_frame_, linmin_only_;
 
 	// fragments
 	utility::vector1 < core::pose::PoseOP > templates_;
