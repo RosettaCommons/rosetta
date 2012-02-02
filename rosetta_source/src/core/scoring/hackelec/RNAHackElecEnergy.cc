@@ -242,6 +242,8 @@ bool is_base( conformation::Residue const & rsd, Size const i )
 }
 
 //////////////////////////////////////////////////////////////////////////////////
+// July 22 2011. OK could potentially optimize by calculating the energy for the atom-atom pairs in which the weight term is non-zero.
+// For example, for standard weight only hack_elec_rna_phos_phos weight is non-zero. So for this case can skip non-phosphate atoms.
 // Following copies a little code, but at least separates out this inelegant and
 // probably useless RNA stuff from the usual stuff.
 Real

@@ -48,13 +48,23 @@ public:
 
 	virtual std::string get_name() const;
 
-	void deriv_check( bool const setting ){ deriv_check_ = setting; };
+	void deriv_check( bool const setting ){ deriv_check_ = setting; }
 
-	void use_coordinate_constraints( bool const setting ){ use_coordinate_constraints_ = setting; };
+	void use_coordinate_constraints( bool const setting ){ use_coordinate_constraints_ = setting; }
 
-	void skip_o2star_trials( bool const setting ){ skip_o2star_trials_ = setting; };
+	void skip_o2star_trials( bool const setting ){ skip_o2star_trials_ = setting; }
 
-	void vary_bond_geometry( bool const setting ){ vary_bond_geometry_ = setting; };
+	void set_perform_minimizer_run( bool const setting ){ perform_minimizer_run_ = setting; }
+
+	void vary_bond_geometry( bool const setting ){ vary_bond_geometry_ = setting; }
+
+	void set_include_default_linear_chainbreak( bool const setting){ include_default_linear_chainbreak_ = setting; }
+
+	void set_verbose( bool const setting){ verbose_ = setting; }
+
+	void set_do_dump_pdb( bool const setting){ do_dump_pdb_ = setting; }
+
+	void set_min_type( std::string const setting){ min_type_ = setting; }
 
 	void
 	set_allow_insert(toolbox::AllowInsertOP allow_insert  );
@@ -69,8 +79,7 @@ private:
 
 	// Make this a Mover?
 	void
-	o2star_trials( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn,
-		bool const do_pack_instead_of_rotamer_trials = false ) const;
+	o2star_trials( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn ) const;
 
 	void
 	setup_movemap( core::kinematics::MoveMap & mm, core::pose::Pose & pose );
@@ -91,11 +100,17 @@ private:
 	bool deriv_check_;
 	bool use_coordinate_constraints_;
 	bool skip_o2star_trials_;
+	bool perform_minimizer_run_;
 	bool vary_bond_geometry_;
+	bool include_default_linear_chainbreak_;
+	bool verbose_;
+	bool do_dump_pdb_;
+	std::string min_type_;
 
-toolbox::AllowInsertOP allow_insert_;
+	toolbox::AllowInsertOP allow_insert_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
+
 
 }; // class RNA_Minimizer
 

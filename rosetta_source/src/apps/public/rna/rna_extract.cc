@@ -14,62 +14,44 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED
 #include <core/chemical/ChemicalManager.hh>
-
-//#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_ScoringInfo.hh>
-
-// AUTO-REMOVED #include <protocols/rna/RNA_ProtocolUtil.hh>
-
-// AUTO-REMOVED #include <core/sequence/util.hh>
+#include <core/pose/util.hh> 
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-
-#include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
-
-#include <protocols/viewer/viewers.hh>
+#include <core/io/pdb/pose_io.hh>
 
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
-#include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
-// AUTO-REMOVED #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+#include <basic/options/option.hh>
+#include <protocols/viewer/viewers.hh>
+
+#include <devel/init.hh>
+
+#include <utility/vector1.hh>
+
 #include <ObjexxFCL/string.functions.hh>
 
 
 // C++ headers
-//#include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
 
 // option key includes
-
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
 
 
 using namespace core;
 using namespace protocols;
-using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
+
+OPT_KEY( Boolean, remove_variant_cutpoint_atoms )
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Basically stolen from James' protein silent file extractor.
@@ -97,13 +79,6 @@ extract_pdbs_test()
 
 	core::pose::Pose pose;
 
-	pose::Pose ideal_pose;
-	//	bool const use_input_pose = option[ in::file::s ].active();
-	//	if ( use_input_pose ) {
-	//		std::string ideal_pdb_file  = option[ in::file::s ][1];
-	//		core::import_pose::pose_from_pdb( ideal_pose, *rsd_set, ideal_pdb_file );
-	//		protocols::rna::ensure_phosphate_nomenclature_matches_mini( ideal_pose );
-	//	}
 
 	bool use_tags = false;
 	std::set< std::string > desired_tags;
@@ -120,10 +95,19 @@ extract_pdbs_test()
 
 		std::cout << "Extracting: " << tag << std::endl;
 
-		//		if (use_input_pose) pose = ideal_pose;
 		iter->fill_pose( pose, *rsd_set );
 
 		std::cout << "debug_rmsd(" << tag << ") = " << iter->get_debug_rmsd() << " over " << pose.total_residue() << " residues... \n";
+
+
+		if( option[ remove_variant_cutpoint_atoms ]()==true ){
+			for ( Size n = 1; n <= pose.total_residue(); n++  ) {
+				pose::remove_variant_type_from_pose_residue( pose, "CUTPOINT_LOWER", n );
+				pose::remove_variant_type_from_pose_residue( pose, "CUTPOINT_UPPER", n );
+			}
+		}
+
+
 		pose.dump_pdb( tag + ".pdb" );
 
 	}
@@ -142,6 +126,10 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+
+	using namespace basic::options;
+
+	NEW_OPT( remove_variant_cutpoint_atoms , "remove_variant_cutpoint_atoms", false );
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////

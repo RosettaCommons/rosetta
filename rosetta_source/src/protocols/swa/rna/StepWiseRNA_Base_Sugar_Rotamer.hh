@@ -16,9 +16,8 @@
 #ifndef INCLUDED_protocols_swa_SWA_RNA_Base_Sugar_Rotamer_HH
 #define INCLUDED_protocols_swa_SWA_RNA_Base_Sugar_Rotamer_HH
 
-#include <protocols/swa/rna/StepWiseRNA_Classes.hh>
-// AUTO-REMOVED #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh> 
+#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh> 
 //#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh>
 
 #include <core/types.hh>
@@ -29,7 +28,7 @@
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 
 #include <string>
-// AUTO-REMOVED #include <map>
+#include <map>
 
 namespace protocols {
 namespace swa {
@@ -37,13 +36,13 @@ namespace rna {
 
 	class StepWiseRNA_Base_Sugar_Rotamer: public utility::pointer::ReferenceCount {
 	public:
+
 		//constructor!
 		StepWiseRNA_Base_Sugar_Rotamer(
-											BaseState const & base_state,
-											PuckerState const & pucker_state,
+											BaseState const & base_state, 
+											PuckerState const & pucker_state, 
 											core::scoring::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
-											core::Size const bin_size,
-											core::Size const bins4);
+											core::Size const bin_size=20); 
 
     ~StepWiseRNA_Base_Sugar_Rotamer();
 
@@ -51,12 +50,17 @@ namespace rna {
 
 		bool get_next_rotamer();
 
-		PuckerState const & current_pucker_state() const;
+		PuckerState const & current_pucker_state() const; 
+		std::string const current_base_state() const;
+		std::string const current_tag() const;	
 
 		core::Real const & chi()   const {return chi_;}
 		core::Real const & delta() const {return delta_;}
 		core::Real const & nu2() 	 const {return nu2_;}
 		core::Real const & nu1() 	 const {return nu1_;}
+
+		void set_extra_syn_chi( bool const setting){ extra_syn_chi_ =setting; }
+		void set_extra_anti_chi( bool const setting){ extra_anti_chi_ =setting; }
 
 	private:
 
@@ -66,21 +70,30 @@ namespace rna {
 		BaseState const base_state_;
 		PuckerState const pucker_state_;
 		core::scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info_;
-		core::Size const bin_size_; // must be 20, 10, or 5
-		core::Size const num_base_std_ID_;
+		core::Size const inputted_bin_size_; // must be 20, 10, or 5
+		core::Size bin_size_; 
+		core::Size num_base_std_ID_; 
 
 		core::Size num_base_ID_;  //Should make this a const
 		utility::vector1 < PuckerState > pucker_state_list_; //Should make this a const
+		utility::vector1 < BaseState > base_state_list_; //April 30, 2011
 
 		core::Size pucker_ID_;
-		core::Size pucker_ID_old_;
 		core::Size base_ID_;
 		core::Size base_std_ID_;
+
+		core::Size pucker_ID_old_;
+		core::Size base_ID_old_;
+		core::Size base_std_ID_old_;
 
 		core::Real chi_;
 		core::Real delta_;
 		core::Real nu2_;
 		core::Real nu1_;
+
+		core::Real total_variation_;
+		bool extra_anti_chi_;
+		bool extra_syn_chi_;
 	};
 }
 } //swa

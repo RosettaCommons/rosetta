@@ -19,7 +19,9 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-
+#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
+#include <core/kinematics/Stub.hh>
 #include <utility/vector1.hh>
 
 
@@ -45,7 +47,13 @@ convert_acgu_to_1234( char const c );
 
 char get_edge_from_num( Size const num );
 
+std::string get_full_edge_from_num( Size const num );
+
 char get_orientation_from_num( Size const num );
+
+std::string get_full_orientation_from_num( Size const num );
+
+std::string get_full_LW_orientation_from_num( Size const num );
 
 ///////////////////////////////////////////////////////////////////////////////
 std::string const	first_base_atom( conformation::Residue const & rsd );
@@ -78,7 +86,7 @@ get_watson_crick_base_pair_atoms(
 	 utility::vector1< std::string > & atom_ids2	 );
 
 bool
-is_rna_chainbreak( core::pose::Pose & pose, Size const & i );
+is_rna_chainbreak( core::pose::Pose const & pose, Size const & i );
 
 
 void
@@ -103,15 +111,25 @@ apply_ideal_c2endo_sugar_coords(
 	//		core::Size const & i,
 	//		utility::vector1< Real > const & rna_torsions	);
 
-	void
-	get_fade_correction(
-											Real const z,
-											Real const cutoff_lower,
-											Real const cutoff_upper,
-											Real const fade_zone,
-											Real & fade_value,
-											Real & fade_deriv );
+void
+get_fade_correction(
+										Real const z,
+										Real const cutoff_lower,
+										Real const cutoff_upper,
+										Real const fade_zone,
+										Real & fade_value,
+										Real & fade_deriv );
 
+
+//Copied from Parin SRC on Dec 23, 2011.
+numeric::xyzVector<core::Real>
+get_rna_base_centroid( core::conformation::Residue const & rsd , bool verbose=false);
+
+numeric::xyzMatrix< core::Real >
+get_rna_base_coordinate_system( core::conformation::Residue const & rsd, numeric::xyzVector<core::Real> const & centroid );
+
+bool
+Is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2);
 
 } //ns rna
 } //ns scoring

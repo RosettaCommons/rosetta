@@ -970,6 +970,19 @@ copy_dofs(
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+copy_dofs_match_atom_names( //Parin Sripakdeevong Dec 27, 2011.
+					pose::Pose & pose,
+					MiniPose const & chunk_pose,
+					core::pose::ResMap const & res_map )
+{
+
+	std::map < id::AtomID , id::AtomID > atom_id_map;
+	setup_atom_id_map_match_atom_names( atom_id_map, res_map, pose, chunk_pose ); // note that this is CAREFUL about atom names, etc.
+	copy_dofs( pose, chunk_pose, atom_id_map );
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -1566,6 +1579,42 @@ setup_atom_id_map_match_atom_names(
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong 
+									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
+									ResMap const & res_map,
+									core::pose::Pose const & pose,
+									MiniPose const & chunk_pose ){
+	using namespace core::id;
+
+	for ( ResMap::const_iterator it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
+
+		Size const full_seq_num = it->first; //Index in full pose.
+		Size const chunk_seq_num = it->second; // Index in the little "chunk" or "scratch" pose
+
+		chemical::ResidueType const & rsd_type1( pose.residue_type( full_seq_num ) );
+		
+		utility::vector1< utility::vector1< std::string > > const & chunk_atom_names_list = chunk_pose.atom_names_list();
+
+		for(Size j1 = 1; j1 <= rsd_type1.natoms(); j1++ ) {
+			for(Size j2=1; j2<=chunk_atom_names_list[chunk_seq_num].size(); j2++){
+
+				std::string const & atom_name1 = rsd_type1.atom_name( j1 );
+				std::string const & atom_name2 = chunk_atom_names_list[chunk_seq_num][j2];
+
+				if(atom_name1==atom_name2){ //found matching atom_name!
+					atom_id_map[  AtomID( j1, full_seq_num ) ] = AtomID( j2, chunk_seq_num );
+					break;
+				}
+			}
+		}
+
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 id::NamedAtomID
 atom_id_to_named_atom_id(

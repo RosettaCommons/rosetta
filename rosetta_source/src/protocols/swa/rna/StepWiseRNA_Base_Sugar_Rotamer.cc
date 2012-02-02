@@ -16,19 +16,17 @@
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.hh>
 #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
+#include <core/scoring/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <numeric/angle.functions.hh> 
 
 #include <string>
-
-//Auto Headers
-#include <utility/vector1.hh>
 
 using namespace core;
 using core::Real;
@@ -46,26 +44,34 @@ namespace rna {
 											BaseState const & base_state, 
 											PuckerState const & pucker_state, 
 											core::scoring::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
-											core::Size const bin_size, 
-											core::Size const bins4): //This is the bin for chi and epsilon, these two torsion angles vary from -20+mean to 20+mean
+											core::Size const bin_size): //This is to determine the bin value for chi
 		base_state_(base_state),
 		pucker_state_(pucker_state),
 		rna_fitted_torsion_info_(rna_fitted_torsion_info),
-		bin_size_( bin_size ), // must be 20, 10, or 5
-		num_base_std_ID_( bins4 ) 
+		inputted_bin_size_( bin_size ), // must be 20, 10, or 5
+		extra_anti_chi_(false),	
+		extra_syn_chi_(false)	
 	{
 		reset();
 
+//		num_base_std_ID_act_= (1 + 40/bin_size_) 
+
+
+		base_state_list_.clear(); //April 30, 2011
 		if(base_state_== BOTH){
-			num_base_ID_= 2; 
+			base_state_list_.push_back(ANTI); 
+			base_state_list_.push_back(SYN); 
 		}else if(base_state_== ANTI){
-			num_base_ID_= 1;
+			base_state_list_.push_back(ANTI); 
+		}else if(base_state == SYN){
+			base_state_list_.push_back(SYN); 
 		}else if(base_state == NONE){
-			num_base_ID_= 0;
+			//std::cout << "BLAH: base_state == NONE" << std::endl;
 		}else{
-			utility_exit_with_message( "Invalid pucker_state_" );
+			utility_exit_with_message( "Invalid base_state_=" + ObjexxFCL::string_of(base_state_) );
 		}
 
+		//WARNING..DO NOT TRY TO INTRODUCE "NONE" value. pucker_state needs alway be defined even if not sampled, since EPSILON (in Rotamer Generator) depends on value of pucker_state! April 30, 2011
 		pucker_state_list_.clear();
 		if(pucker_state_ == ALL){
 			pucker_state_list_.push_back(NORTH);
@@ -75,10 +81,9 @@ namespace rna {
 		}else if(pucker_state_ == SOUTH ){
 			pucker_state_list_.push_back(SOUTH);
 		}else{
-			utility_exit_with_message( "Invalid pucker_state_" );
+			utility_exit_with_message( "Invalid pucker_state_=" + ObjexxFCL::string_of(pucker_state_) );
 		}
 
-		if(num_base_std_ID_ != (1 + 40/bin_size_) ) utility_exit_with_message( "chi_bin_ != (1 + 40/bin_size_)" );
 	}
 
   //////////////////////////////////////////////////////////////////////////
@@ -92,33 +97,81 @@ namespace rna {
 
 		if(pucker_ID_ > pucker_state_list_.size()) return false;
 
-		//This pucker_ID_old is always consistent the stored chi_ value
+		//old_ID is always consistent the stored chi_/delta_ value
 		pucker_ID_old_=pucker_ID_;
+		base_ID_old_=base_ID_;
+		base_std_ID_old_=base_std_ID_;
 
 		PuckerState const & curr_pucker_state=current_pucker_state();
 
+
+		Size base_center_ID=99;
+		if(base_state_list_.size()!=0){
+			if( ( extra_anti_chi_ && (base_state_list_[base_ID_]==ANTI) ) || ( extra_syn_chi_ && (base_state_list_[base_ID_]==SYN) ) ){ 
+	//			total_variation_=60; //+-30 Aug_29 to Sept 15 2010 //Mod out on May 06, 2011
+	//			total_variation_=100; //+-50 //testing on Sept 15 2010
+	//			bin_size_= std::min(int(inputted_bin_size_), 10); // Aug_29 to Sept 15 2010 //Mod out on May 06, 2011
+
+				total_variation_=80;
+				bin_size_=inputted_bin_size_;				
+				num_base_std_ID_=(1 + (total_variation_/bin_size_) ); //-40,-20,0,20,40
+			}else{
+				total_variation_=40;	//+-20
+				bin_size_=inputted_bin_size_;
+				num_base_std_ID_=(1 + (total_variation_/bin_size_) ); //-20,0,20
+			}
+
+			if(base_state_list_[base_ID_]==ANTI){
+				base_center_ID=1;
+			}else if(base_state_list_[base_ID_]==SYN){
+				base_center_ID=2;
+			}else{
+				utility_exit_with_message( "Invalid current_base_state" + ObjexxFCL::string_of(base_state_list_[base_ID_] ) );
+			}
+		}
+
 		if (curr_pucker_state == NORTH) {
+
+			if(base_state_list_.size()!=0){
+				chi_ = rna_fitted_torsion_info_.gaussian_parameter_set_chi_north()[ base_center_ID ].center + bin_size_*(base_std_ID_-1) - (total_variation_/2);
+			}
+
 			delta_ = rna_fitted_torsion_info_.ideal_delta_north();
-			chi_ = rna_fitted_torsion_info_.gaussian_parameter_set_chi_north()[ base_ID_ ].center + bin_size_*(base_std_ID_-1) - 20;
 			nu2_ = rna_fitted_torsion_info_.ideal_nu2_north();
 			nu1_ = rna_fitted_torsion_info_.ideal_nu1_north();
 		}	else if(curr_pucker_state == SOUTH) {
-			delta_ = rna_fitted_torsion_info_.ideal_delta_south();
-			chi_ = rna_fitted_torsion_info_.gaussian_parameter_set_chi_south()[ base_ID_ ].center + bin_size_*(base_std_ID_-1) - 20;
-			nu2_ = rna_fitted_torsion_info_.ideal_nu2_south();
-			nu1_ = rna_fitted_torsion_info_.ideal_nu1_south();
+
+			if(base_state_list_.size()!=0){
+				chi_ = rna_fitted_torsion_info_.gaussian_parameter_set_chi_south()[ base_center_ID ].center + bin_size_*(base_std_ID_-1) - (total_variation_/2);
+			}
+
+			delta_ = rna_fitted_torsion_info_.ideal_delta_south(); //default
+			nu2_ = rna_fitted_torsion_info_.ideal_nu2_south(); //default
+			nu1_ = rna_fitted_torsion_info_.ideal_nu1_south(); //default
+
+//			delta_ =rna_fitted_torsion_info_.gaussian_parameter_set_delta_south()[ 1 ].center;
+//			nu2_ = rna_fitted_torsion_info_.gaussian_parameter_set_nu2_south()[ 1 ].center;
+//			nu1_ = rna_fitted_torsion_info_.gaussian_parameter_set_nu1_south()[ 1 ].center;
+//			nu2_ = -38.9; //2eew res A_19 torsion value
+//			nu1_ = 161.8; //2eew res A_19 torsion value
+//	    delta_= 146.8; //1q9a res G_9 torsion value
+//			nu2_ = -41.6; //1q9a res G_9 torsion value
+//			nu1_ = 167.2; //1q9a res G_9 torsion value
+
 		}else{
-			utility_exit_with_message( "Invalid current_pucker_state!" );
+			utility_exit_with_message( "Invalid current_pucker_state!" + ObjexxFCL::string_of(curr_pucker_state) );
 		}
 
 		base_std_ID_++;
 
-		if(base_std_ID_ > num_base_std_ID_){
-			base_std_ID_=1;
-			base_ID_++;
+		if(base_state_list_.size()!=0){
+			if(base_std_ID_ > num_base_std_ID_){
+				base_std_ID_=1;
+				base_ID_++;
+			}
 		}
 
-		if(base_ID_ > num_base_ID_){
+		if(base_ID_ > base_state_list_.size()){
 			base_ID_ = 1;
 			pucker_ID_++;
 		}
@@ -134,20 +187,69 @@ namespace rna {
 //		std::cout << "pucker_state_list_.size()= " << pucker_state_list_.size() << std::endl;		
 
 		PuckerState const & pucker_state=pucker_state_list_[pucker_ID_old_];
-		if(pucker_state==ALL){
-			utility_exit_with_message( "pucker_state should not equal ALL!" );
-		}
+
+		if(pucker_state!=NORTH && pucker_state!=SOUTH) utility_exit_with_message( "pucker_state should equal NORTH or SOUTH!" );
+
 		return pucker_state;
 	}
 
+  //////////////////////////////////////////////////////////////////////////
+
+	std::string const 
+	StepWiseRNA_Base_Sugar_Rotamer::current_base_state() const { 
+
+		using namespace ObjexxFCL;
+		
+		Real const principal_chi=numeric::principal_angle_degrees(chi_);
+		std::string base_state_string;
+
+		if(base_state_list_.size()==0){
+			base_state_string="ZZ";
+		}else{
+
+			if(principal_chi>0.0){
+				if(base_state_list_[base_ID_old_]!=ANTI) utility_exit_with_message( "principal_chi>0 but base_state_list_(base_ID_old_)!=ANTI" );
+				base_state_string="A"; //anti 	
+			}else{
+				if(base_state_list_[base_ID_old_]!=SYN ) utility_exit_with_message( "principal_chi<=0 but base_state_list_(base_ID_old_)!=SYN" );
+				base_state_string="S"; //syn	
+			}
+
+			base_state_string+=string_of(base_std_ID_old_);
+		}
+
+		return base_state_string;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	std::string const
+	StepWiseRNA_Base_Sugar_Rotamer::current_tag() const { 
+
+		std::string tag=current_base_state();
+
+		if(current_pucker_state()==NORTH){
+			tag+="N";
+		}else if(current_pucker_state()==SOUTH){
+			tag+="S";
+		}else{
+			utility_exit_with_message( "Invalid current_pucker_state!" );
+		}
+
+		return tag;
+
+	}
   //////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_Base_Sugar_Rotamer::reset() { 
 
 		pucker_ID_=1;
-		pucker_ID_old_=pucker_ID_;
 		base_ID_=1;
 		base_std_ID_=1;
+
+		pucker_ID_old_=pucker_ID_;
+		base_ID_old_=base_ID_;
+		base_std_ID_old_=base_std_ID_;
+
 
 		chi_=0.0;
 		delta_=0.0;
@@ -155,6 +257,9 @@ namespace rna {
 		nu1_=0.0;
 
 	}
+
+  //////////////////////////////////////////////////////////////////////////
+
 
 
 }

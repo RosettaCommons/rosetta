@@ -107,6 +107,13 @@ public:
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const { return true; }
 
+
+	/// @brief Jan 10, 2012. Parin Sripakdeevon (sripakpa@stanford.edu)
+	/// Returns "false" to overwrite the behavior in the parent class (HackElecEnergy)! 
+	virtual
+	bool
+	use_extended_residue_pair_energy_interface() const { return false; }
+
 	virtual
 	void
 	eval_intrares_energy(

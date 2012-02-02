@@ -403,21 +403,79 @@ create_rna_vall_torsions( pose::Pose & pose, std::string const outfile )
 //////////////////////////////////////////////////////////////////////////////////////
 Real
 get_o1p_o2p_sign( pose::Pose const & pose ) {
-	Real sign( 0 );
+
+	Real sign= 0;
+	bool found_valid_sign=false;
+
 	for (Size i = 2; i <= pose.total_residue(); i++ ) {
 
 		conformation::Residue const & rsd( pose.residue(i)  );
 		if (!rsd.is_RNA() ) continue;
 
-		sign = dot( rsd.xyz( " O5*" ) - rsd.xyz( " P  " ),
-				 cross( rsd.xyz( " O2P" ) - rsd.xyz( " P  " ),
-								rsd.xyz( " O1P" ) - rsd.xyz( " P  " ) ) );
+		sign = dot( rsd.xyz( " O5*" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " O2P" ) - rsd.xyz( " P  " ), rsd.xyz( " O1P" ) - rsd.xyz( " P  " ) ) );
+
+		found_valid_sign=true;
+
 		break;
 	}
+
+	if(found_valid_sign==false) utility_exit_with_message("found_valid_sign==false");
+
 	return sign;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
+//This version used to be called get_o1p_o2p_sign_parin()
+Real
+get_o1p_o2p_sign( pose::Pose const & pose , Size res_num) {
+
+	if(res_num > pose.total_residue()) utility_exit_with_message("res_num > pose.total_residue()");
+
+	conformation::Residue const & rsd( pose.residue(res_num)  );
+
+	if(rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false!");
+
+	Real const sign = dot( rsd.xyz( " O5*" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " O2P" ) - rsd.xyz( " P  " ), rsd.xyz( " O1P" ) - rsd.xyz( " P  " ) ) );
+
+	return sign;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose){
+
+	runtime_assert( pose.total_residue() > 1 );
+
+	for(Size res_num=1; res_num<=pose.total_residue(); res_num++){
+
+		Real sign1 = get_o1p_o2p_sign( pose,  res_num);
+
+		pose::Pose mini_pose; //Could move this part outside the for loop
+		make_pose_from_sequence( mini_pose, "aa", pose.residue(res_num).residue_type_set() );
+		Real const sign2 = get_o1p_o2p_sign( mini_pose);
+
+		if ( sign1 * sign2 < 0 ) {
+
+			std::cout << "In the assert_phosphate_nomenclature_matches_mini function: phosphate_nomenclature_matches does not match mini! " << std::endl;
+			utility_exit_with_message("In the assert_phosphate_nomenclature_matches_mini function: phosphate_nomenclature_matches does not match mini!");
+
+			conformation::Residue const & rsd( pose.residue(res_num) );
+
+			if(rsd.is_RNA()==false){ //Consistency check!
+				std::cout << "residue # " << res_num << " should be a RNA nucleotide" << std::endl;
+				utility_exit_with_message("residue # " + string_of(res_num)+ " should be a RNA nucleotide!");
+			};
+
+
+		}
+	}
+}
+
+
 ////////////////////////////////////////////////////////////////
+//Jan 08, 2012 Parin S:
+//To Rhiju, I think this version is buggy and should be deprecated (use make_phosphate_nomenclature_matches_mini instead!)
 void
 ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 {
@@ -450,90 +508,31 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
-Real
-get_o1p_o2p_sign_parin( pose::Pose const & pose , Size res_num) {
-	Real sign( 0 );
-
-		conformation::Residue const & rsd( pose.residue(res_num)  );
-
-//		std::cout << "O3*= " << rsd.xyz( " O3*" );
-//		std::cout << "  O2P= " << rsd.xyz( " O2P" );
-//		std::cout << "  O1P= " << rsd.xyz( " O1P" );
-//		std::cout << "  P= " << rsd.xyz( " P  " ) << std::endl;
-
-		sign = dot( rsd.xyz( " O5*" ) - rsd.xyz( " P  " ),
-				 cross( rsd.xyz( " O2P" ) - rsd.xyz( " P  " ),
-								rsd.xyz( " O1P" ) - rsd.xyz( " P  " ) ) );
-
-
-	return sign;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
 void
-assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose){
-
-	runtime_assert( pose.total_residue() > 1 );
-
-	for(Size res_num=1; res_num<=pose.total_residue(); res_num++){
-
-
-		Real sign1 = get_o1p_o2p_sign_parin( pose,  res_num);
-
-		pose::Pose mini_pose;
-		make_pose_from_sequence( mini_pose, "aa", pose.residue(res_num).residue_type_set() );
-		Real sign2 = get_o1p_o2p_sign( mini_pose);
-
-		if ( sign1 * sign2 < 0 ) {
-
-			std::cout << " In the assert_phosphate_nomenclature_matches_mini function, phosphate_nomenclature_matches does not match mini! " << std::endl;
-			exit(1);
-
-			conformation::Residue const & rsd( pose.residue(res_num) );
-			if (!rsd.is_RNA() ) {
-				std::cout << " residue is not a RNA" << std::endl;
-				exit (1);
-			};
-
-		}
-	}
-}
-
-
-void
-ensure_phosphate_nomenclature_matches_mini_parin( pose::Pose & pose)
+make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 {
 
-
-	//std::cout << "Enter ensure_phosphate_nomenclature_matches_mini_parin function" << std::endl;
-
-	//	runtime_assert( pose.total_residue() > 1 );
-
-	bool figure_out_reference_sign( false );
-	Real sign2( 0.0 );
 
 	for(Size res_num=1; res_num<=pose.total_residue(); res_num++){
 
 		if ( !pose.residue( res_num ).is_RNA() ) continue;
 
-		if ( !figure_out_reference_sign ) {
-			pose::Pose mini_pose;
-			make_pose_from_sequence( mini_pose, "aa", pose.residue( res_num ).residue_type_set() );
-			sign2 = get_o1p_o2p_sign( mini_pose);
-			figure_out_reference_sign = true;
-		}
+		pose::Pose mini_pose; //Could move this part outside of the for loop
+		make_pose_from_sequence( mini_pose, "aa", pose.residue( res_num ).residue_type_set());
+		Real const sign2 = get_o1p_o2p_sign( mini_pose);
 
-		Real sign1 = get_o1p_o2p_sign_parin( pose,  res_num);
+		Real sign1 = get_o1p_o2p_sign( pose,  res_num);
 
 		if ( sign1 * sign2 < 0 ) {
 
-			std::cout << " Flipping O1P <--> O2P " << "res_num " << res_num << "sign1: " << sign1 << "sign2: " << sign2 << std::endl;
+			//std::cout << " Flipping O1P <--> O2P " << "res_num " << res_num << " | sign1: " << sign1 << " | sign2: " << sign2 << std::endl;
 
 			conformation::Residue const & rsd( pose.residue(res_num) );
-			if (!rsd.is_RNA() ) {
-				std::cout << " residue is not a RNA" << std::endl;
-				exit (1);
+
+			if(rsd.is_RNA()==false){ //Consistency check!
+				std::cout << "residue # " << res_num << " should be a RNA nucleotide!" << std::endl;
+				utility_exit_with_message("residue # " + string_of(res_num)+ " should be a RNA nucleotide!");
 			};
 
 			Vector const temp1 = rsd.xyz( " O1P" );

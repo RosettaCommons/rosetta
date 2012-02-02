@@ -194,6 +194,9 @@ public:
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required ) const;
 
+	bool
+	use_orientation_dep_rna_ch_o_bonds(conformation::Residue const & don_rsd, conformation::Residue const & acc_rsd) const;
+
 private:
 
 	bool

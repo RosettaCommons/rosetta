@@ -277,6 +277,14 @@ copy_dofs(
 					core::pose::ResMap const & res_map );
 
 void
+copy_dofs_match_atom_names( //Parin Sripakdeevong Dec 27, 2011.
+					pose::Pose & pose,
+					MiniPose const & chunk_pose,
+					core::pose::ResMap const & res_map );
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
 copy_dofs(
 					pose::Pose & pose,
 					pose::Pose const & scratch_pose,
@@ -334,6 +342,14 @@ setup_atom_id_map(
 									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
 									core::pose::ResMap const & res_map,
 									core::pose::Pose const & pose );
+
+///////////////////////////////////////////////////////////////////
+void
+setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong 
+									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
+									ResMap const & res_map,
+									core::pose::Pose const & pose,
+									MiniPose const & chunk_pose );
 
 ///////////////////////////////////////////////////////////////////
 void

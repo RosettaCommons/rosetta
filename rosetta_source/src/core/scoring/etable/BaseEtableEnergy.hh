@@ -43,6 +43,7 @@ CoarseEtable can be shared between threads
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 
+#include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh>
 
 // Project headers
 #include <core/conformation/Atom.hh>
@@ -85,6 +86,8 @@ public:
 		ScoreType st_sol
 	);
 
+
+	friend class core::scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentTwoBodyEnergies

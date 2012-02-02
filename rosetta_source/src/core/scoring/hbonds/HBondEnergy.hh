@@ -239,6 +239,18 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
+
+	virtual
+	void
+	eval_intrares_derivatives(
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & min_data,
+		pose::Pose const & pose,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & atom_derivs
+	) const;
+
+
 	//pba
 	//virtual
 	void
@@ -256,6 +268,7 @@ public:
 		utility::vector1< DerivVectorPair > & don_atom_derivs,
 		utility::vector1< DerivVectorPair > & acc_atom_derivs
 	) const;
+
 
 	///@brief Evaluates the interaction between the backbone of rsd1 and the
 	/// backbone of rsd2 and accumulates the unweighted energy.
@@ -367,7 +380,7 @@ public:
 
 	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
+	defines_intrares_energy( EnergyMap const & weights ) const;
 
 	virtual
 	void
@@ -465,6 +478,8 @@ private:
 	// so that the data may be retrieved from within the trie-vs-trie and trie-vs-path calls.
 	mutable EnergyMap weights_;
 	mutable int rotamer_seq_sep_;
+	mutable int res1_;
+	mutable int res2_;
 	mutable int res1_nb_;
 	mutable int res2_nb_;
 

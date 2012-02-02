@@ -106,12 +106,8 @@ public:
 	void
 	add_sugar_ring_closure_constraints( conformation::Residue const & rsd, constraints::ConstraintSet & cst_set ) const;
 
-
 	// data
 private:
-
-	virtual
-	core::Size version() const;
 
 	// Ribose closure
 	Real const scale_rna_torsion_tether_;
@@ -129,6 +125,9 @@ private:
 	constraints::HarmonicFuncOP c4star_o4star_c1star_angle_harm_func_;
 
 	mutable constraints::ConstraintSetOP rna_sugar_close_constraints_;
+
+	virtual
+	core::Size version() const;
 
 
 };

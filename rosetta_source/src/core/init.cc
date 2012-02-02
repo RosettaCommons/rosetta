@@ -81,6 +81,7 @@
 //XRW_E_T1
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/GeometricSolEnergyCreator.hh>
+#include <core/scoring/geometric_solvation/ContextIndependentGeometricSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergy_onebodyCreator.hh>
 #include <core/scoring/hackelec/HackElecEnergyCreator.hh>
@@ -139,6 +140,7 @@
 #include <core/scoring/rna/RNA_SugarCloseEnergyCreator.hh>
 #include <core/scoring/rna/RNA_TorsionEnergyCreator.hh>
 #include <core/scoring/rna/RNA_VDW_EnergyCreator.hh>
+#include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.hh>
 #include <core/scoring/sym_e/symECreator.hh>
 #include <core/scoring/saxs/FastSAXSEnergyCreator.hh>
 #include <core/scoring/saxs/SAXSEnergyCreator.hh>
@@ -282,6 +284,7 @@ static EnergyMethodRegistrator< scoring::electron_density::PattersonCorrEnergyCr
 //XRW_E_T1
 static EnergyMethodRegistrator< scoring::geometric_solvation::ExactOccludedHbondSolEnergyCreator > ExactOccludedHbondSolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::geometric_solvation::GeometricSolEnergyCreator > GeometricSolEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::geometric_solvation::ContextIndependentGeometricSolEnergyCreator > ContextIndependentGeometricSolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::geometric_solvation::OccludedHbondSolEnergyCreator > OccludedHbondSolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::geometric_solvation::OccludedHbondSolEnergy_onebodyCreator > OccludedHbondSolEnergy_onebodyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hackelec::HackElecEnergyCreator > HackElecEnergyCreator_registrator;
@@ -336,6 +339,7 @@ static EnergyMethodRegistrator< scoring::rna::RNA_PairwiseLowResolutionEnergyCre
 static EnergyMethodRegistrator< scoring::rna::RNA_SugarCloseEnergyCreator > RNA_SugarCloseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_TorsionEnergyCreator > RNA_TorsionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_VDW_EnergyCreator > RNA_VDW_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator > RNA_FullAtomVDW_BasePhosphateCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PoissonBoltzmannEnergyCreator > PoissonBoltzmannEnergyCreator_registrator;
 

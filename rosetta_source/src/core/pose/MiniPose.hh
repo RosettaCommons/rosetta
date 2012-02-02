@@ -9,7 +9,7 @@
 
 /// @file   core/pose/MiniPose.hh
 /// @brief  MiniPose class
-/// @author Rhiju Das
+/// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 
 #ifndef INCLUDED_core_pose_MiniPose_HH
@@ -18,6 +18,7 @@
 
 // type headers
 #include <core/pose/MiniPose.fwd.hh>
+#include <core/chemical/VariantType.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -55,6 +56,10 @@ namespace pose {
 
 		utility::vector1< utility::vector1< PointPosition > > const & coords() const;
 
+		utility::vector1< utility::vector1< std::string > > const & atom_names_list() const;
+
+		utility::vector1< utility::vector1< core::chemical::VariantType > > const & variant_types_list() const;
+
 		Size size() const;
 
 		Size total_residue() const;
@@ -63,9 +68,17 @@ namespace pose {
 
 		PointPosition const & xyz( core::id::AtomID atom_id ) const;
 
+		std::string const & atom_name( core::id::AtomID atom_id ) const;
+
+		utility::vector1< core::chemical::VariantType > const & variant_types( Size const seq_num) const;
+
+	private: //data
+
  		utility::vector1< utility::vector1< PointPosition > > coords_;
 		core::kinematics::FoldTree fold_tree_;
 		std::string sequence_;
+		utility::vector1< utility::vector1< std::string > > atom_names_list_;
+		utility::vector1< utility::vector1< core::chemical::VariantType > > variant_types_list_;
 
 	};
 

@@ -15,22 +15,23 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_hh
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_hh
+#ifndef INCLUDED_protocols_swa_SWA_RNA_JobParameters_HH
+#define INCLUDED_protocols_swa_SWA_RNA_JobParameters_HH
+
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh> 
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
 #include <string>
 #include <map>
-
-//Auto Headers
-
 
 namespace protocols {
 namespace swa {
@@ -45,20 +46,32 @@ namespace rna {
 	  //destructor -- necessary?
     ~StepWiseRNA_JobParameters();
 
-		std::string const & sequence() const;
+		bool const & Is_simple_full_length_job_params() const;
+
+		std::string const & full_sequence() const;
 		std::string const & working_sequence() const;
 
 		Size const & moving_res() const;
 		Size const & working_moving_res() const;
+		utility::vector1< core::Size > const & working_moving_res_list() const;
+		Size working_reference_res() const;
+
 		Size const & working_moving_suite() const;
+		utility::vector1< core::Size > const & working_moving_suite_list() const;
 
 		Size actually_moving_res() const;
 
-		ObjexxFCL::FArray1D< core::Size > const & is_working_res() const;
+		utility::vector1< core::Size >  const & is_working_res() const;
 		std::map< core::Size, core::Size > & full_to_sub();
+		std::map< core::Size, core::Size > & sub_to_full();
+		std::map< core::Size, core::Size > const & const_full_to_sub() const;
+		std::map< core::Size, core::Size > const & const_sub_to_full() const;
+		core::kinematics::FoldTree const & fold_tree() const;
+		std::map< core::Size, bool > const & Is_prepend_map() const;
+
 
 		utility::vector1< std::pair< core::Size, core::Size > > const & chain_boundaries() const;
-		Size const & which_chain_has_moving_res() const;
+		//Size const & which_chain_has_moving_res() const;
 		Size const & gap_size() const;
 		Size const & five_prime_chain_break_res() const;
 
@@ -68,20 +81,54 @@ namespace rna {
 		ObjexxFCL::FArray1D< bool > const & partition_definition() const;
 
 		utility::vector1< core::Size > const &  working_fixed_res() const;
+		utility::vector1< core::Size > const &  rmsd_res_list() const;
 		utility::vector1< core::Size > const &  working_terminal_res() const;
-		utility::vector1< core::Size > const &  moving_pos() const;
+		utility::vector1< core::Size > const &  working_moving_partition_pos() const;
 
-		void set_sequence( std::string const & setting );
-		void set_working_sequence( std::string const & setting );
+		utility::vector1< utility::vector1< core::Size > > const & input_res_vectors() const;
+		utility::vector1< core::Size > const & cutpoint_closed_list() const;
+		utility::vector1< core::Size > const & working_best_alignment() const;
+
+
+		utility::vector1< core::Size > const & native_alignment() const; 
+		utility::vector1< core::Size > const & working_native_alignment() const; 
+
+	 
+		utility::vector1< core::Size > const & global_sample_res_list() const;
+		utility::vector1< core::Size > const & working_global_sample_res_list() const;
+
+		utility::vector1< core::Size > const & force_syn_chi_res_list() const;
+		utility::vector1< core::Size > const & working_force_syn_chi_res_list() const;
+
+		utility::vector1< core::Size > const & force_north_ribose_list() const;
+		utility::vector1< core::Size > const & working_force_north_ribose_list() const;
+
+		utility::vector1< core::Size > const & force_south_ribose_list() const;
+		utility::vector1< core::Size > const & working_force_south_ribose_list() const;
+
+		utility::vector1< core::Size > const & protonated_H1_adenosine_list() const;
+		utility::vector1< core::Size > const & working_protonated_H1_adenosine_list() const;
+
+		void set_Is_simple_full_length_job_params( bool const & setting );
+
+		void set_full_sequence( std::string const & setting );
+		//void set_working_sequence( std::string const & setting );
 		void set_moving_res( Size const & setting );
-		void set_working_moving_res( Size const & setting );
-		void set_working_moving_suite( Size const & setting );
+		void set_working_moving_res_list( utility::vector1< core::Size > const & setting );
 
-		void set_is_working_res( ObjexxFCL::FArray1D< core::Size > const & setting );
-		void set_full_to_sub( std::map< core::Size, core::Size > & setting );
+		//void set_working_moving_res( Size const & setting );
+		//void set_working_moving_suite_list( utility::vector1< core::Size > const & setting );
+		//void set_working_moving_suite( Size const & setting );
+
+		void set_is_working_res( utility::vector1< core::Size > const & setting );
+		void set_full_to_sub( std::map< core::Size, core::Size > const & setting );
+
+		void set_fold_tree(core::kinematics::FoldTree const & setting);
+		void set_Is_prepend_map( std::map< core::Size, bool > const & setting );
+
 
 		void set_chain_boundaries( utility::vector1< std::pair< core::Size, core::Size > > const & setting );
-		void set_which_chain_has_moving_res( Size const & setting );
+		//void set_which_chain_has_moving_res( Size const & setting );
 		void set_gap_size( Size const & setting );
 		void set_five_prime_chain_break_res( Size const & setting );
 
@@ -91,26 +138,55 @@ namespace rna {
 
 		void set_working_native_pose( core::pose::PoseOP & pose );
 		void set_working_fixed_res(	utility::vector1< core::Size > const & working_fixed_res);
+		void set_rmsd_res_list(	utility::vector1< core::Size > const & rmsd_res_list);
 		void set_working_terminal_res(	utility::vector1< core::Size > const & working_terminal_res);
-		void set_moving_pos(	utility::vector1< core::Size > const & moving_pos);
+		void set_working_moving_partition_pos(	utility::vector1< core::Size > const & working_moving_partition_pos);
+		void set_input_res_vectors(	utility::vector1< utility::vector1< Size > > const & setting);
+		void set_cutpoint_closed_list( utility::vector1< core::Size >  const & setting);
+		void set_working_best_alignment(utility::vector1< core::Size > const & setting);
+
+		void set_native_alignment( utility::vector1< core::Size > const & setting);
+		void set_working_native_alignment( utility::vector1< core::Size > const & setting); 
+
+		void set_global_sample_res_list( utility::vector1< core::Size > const & setting);
+		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting);
+		void set_force_north_ribose_list( utility::vector1< core::Size > const & setting);
+		void set_force_south_ribose_list( utility::vector1< core::Size > const & setting);
+		void set_protonated_H1_adenosine_list( utility::vector1< core::Size > const & setting);
+	
 
 
 		core::pose::PoseCOP	working_native_pose() const;
 
+
+
 	private:
 
-		std::string sequence_;
+		void update_working_moving_suite();
+		void update_working_sequence();
+
+		std::map< core::Size, core::Size > create_sub_to_full_map(std::map< core::Size, core::Size > const & full_to_sub) const;
+
+	private:
+
+		bool Is_simple_full_length_job_params_;
+
+		std::string full_sequence_;
 		std::string working_sequence_;
 
 		Size moving_res_;
+		utility::vector1< core::Size > working_moving_res_list_;
+		utility::vector1< core::Size > working_moving_suite_list_;
 		Size working_moving_res_;
 		Size working_moving_suite_;
 
-		ObjexxFCL::FArray1D< core::Size > is_working_res_;
+		utility::vector1< core::Size >  is_working_res_;
 		std::map< core::Size, core::Size > full_to_sub_;
+		std::map< core::Size, core::Size > sub_to_full_;
+		std::map< core::Size, bool > Is_prepend_map_;
 
 		utility::vector1< std::pair< core::Size, core::Size > > chain_boundaries_;
-		Size which_chain_has_moving_res_;
+		//Size which_chain_has_moving_res_;
 		Size gap_size_;
 		Size five_prime_chain_break_res_;
 
@@ -122,8 +198,33 @@ namespace rna {
 		core::pose::PoseOP working_native_pose_;
 
 		utility::vector1< core::Size > working_fixed_res_;
+		utility::vector1< core::Size > rmsd_res_list_;
 		utility::vector1< core::Size > working_terminal_res_;
-		utility::vector1< core::Size > moving_pos_;
+		utility::vector1< core::Size > working_moving_partition_pos_;
+		core::kinematics::FoldTree fold_tree_;
+		utility::vector1< utility::vector1< core::Size > > input_res_vectors_;
+		utility::vector1< core::Size > cutpoint_closed_list_;
+		utility::vector1< core::Size > working_best_alignment_;
+
+		utility::vector1< core::Size > native_alignment_;
+		utility::vector1< core::Size > working_native_alignment_;
+
+		utility::vector1< core::Size > global_sample_res_list_;
+		utility::vector1< core::Size > working_global_sample_res_list_;
+
+		utility::vector1< core::Size > force_syn_chi_res_list_;
+		utility::vector1< core::Size > working_force_syn_chi_res_list_;
+
+		utility::vector1< core::Size > force_north_ribose_list_;
+		utility::vector1< core::Size > working_force_north_ribose_list_;
+
+		utility::vector1< core::Size > force_south_ribose_list_;
+		utility::vector1< core::Size > working_force_south_ribose_list_;
+
+
+		utility::vector1< core::Size > protonated_H1_adenosine_list_;
+		utility::vector1< core::Size > working_protonated_H1_adenosine_list_;
+
 
   };
 

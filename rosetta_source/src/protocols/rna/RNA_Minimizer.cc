@@ -10,11 +10,13 @@
 /// @file relax_protocols
 /// @brief protocols that are specific to RNA_Minimizer
 /// @detailed
-/// @author Rhiju Das
+/// @author Rhiju Das (rhiju@stanford.edu), Parin Sripakdeevong (sripakpa@stanford.edu)
 
 
 #include <protocols/rna/RNA_Minimizer.hh>
 #include <protocols/toolbox/AllowInsert.hh>
+
+#include <protocols/swa/rna/StepWiseRNA_Util.hh> //Parin Sripakdeevong
 // AUTO-REMOVED #include <protocols/rna/RNA_ProtocolUtil.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/conformation/Residue.hh>
@@ -109,7 +111,12 @@ RNA_Minimizer::RNA_Minimizer():
 	deriv_check_( false ),
   use_coordinate_constraints_( true ),
 	skip_o2star_trials_( false ),
-	vary_bond_geometry_( false )
+	perform_minimizer_run_( true ),
+	vary_bond_geometry_( false ),
+	include_default_linear_chainbreak_( true ),
+	verbose_( false ), //Parin S. Jan 07, 2012
+	do_dump_pdb_( false ),
+	min_type_( "dfpmin" ) //Parin S. Jan 12, 2012
 {
 	Mover::type("RNA_Minimizer");
 	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
@@ -132,6 +139,20 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 	TR << "Check it! SEQUENCE " << pose.sequence() << std::endl;
 
+	if(verbose_){
+		std::cout << "In protocols.rna.rna_minimizer.apply()" << std::endl;
+		std::cout << "min_type_=" << min_type_ << std::endl;
+		protocols::swa::rna::Output_boolean("deriv_check_: ", deriv_check_ ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("use_coordinate_constraints_: ", use_coordinate_constraints_ ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("skip_o2star_trials_: ", skip_o2star_trials_ ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("perform_minimizer_run_: ", perform_minimizer_run_); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("vary_bond_geometry_: ", vary_bond_geometry_ ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("include_default_linear_chainbreak_: ", include_default_linear_chainbreak_ ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("do_dump_pdb_: ", do_dump_pdb_ ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("verbose_: ", verbose_ ); std::cout << std::endl;
+	}
+
+
 	time_t pdb_start_time = time(NULL);
 
 	//	protocols::viewer::add_conformation_viewer( pose.conformation(), "minimizer", 400, 400 );
@@ -145,8 +166,10 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 		scorefxn_->set_weight( rna_bond_geometry, 1.0 );
 	}
 
-	// New as of 2011 (based on results with minimizing in SWA work
-	scorefxn_->set_weight( linear_chainbreak, 5.0 );
+	if( include_default_linear_chainbreak_ ){
+		// New as of 2011 (based on results with minimizing in SWA work
+		scorefxn_->set_weight( linear_chainbreak, 5.0 );
+	}
 
 	(*scorefxn_)(pose);
 	//scorefxn_->show( std::cout, pose );
@@ -162,30 +185,31 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
-	MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, deriv_check_, deriv_check_ );
+	MinimizerOptions options( min_type_, dummy_tol, use_nblist, deriv_check_, deriv_check_ ); 
+
 	//	MinimizerOptions options( "dfpmin_armijo_nonmonotone", dummy_tol, use_nblist, deriv_check_, deriv_check_ );
-	options.nblist_auto_update( true );
+	options.nblist_auto_update( true ); 
+
 
 	kinematics::MoveMap mm;
 
 	if (!allow_insert_) allow_insert_ = new toolbox::AllowInsert( pose ); // initialized to let all dofs move.
 	setup_movemap( mm, pose );
 
-// 	mm.set_bb( false );
-// 	mm.set_chi( false );
-// 	mm.set_jump( false );
-// 	//id::TorsionID torsion_id( 1, id::CHI, 1 );
-// 	id::TorsionID torsion_id( 1, id::BB, 3 );
-// 	id::DOF_ID dof_id( pose.conformation().dof_id_from_torsion_id( torsion_id) );
-// 	mm.set( dof_id, true );
-
 	//Could/should be private data.
 	Real const coord_cst_weight = 0.1;
 	Size const rounds( option[ basic::options::OptionKeys::rna::minimize_rounds ] );
 	Real const fa_rep_final( scorefxn_->get_weight( fa_rep ) );
 
+
+	///////////////////////////////
+	if(verbose_) std::cout << "----------Before minimizing:----------" << std::endl;
+
 	(*scorefxn_)( pose );
 	scorefxn_->show( std::cout, pose );
+
+	if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_START.pdb" );
+	///////////////////////////////
 
 	for (Size r = 1; r <= rounds; r++ ) {
 
@@ -194,20 +218,23 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 		Real const suppress = static_cast<Real>(r)/rounds;
 		minimize_scorefxn_->set_weight( fa_rep, fa_rep_final * suppress  );
 
-		//		pose.dump_pdb( "before_o2star_trials.pdb" );
-		if (!skip_o2star_trials_) o2star_trials( pose, minimize_scorefxn_ );
-		//		pose.dump_pdb( "after_o2star_trials.pdb" );
+		if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) + "_before_o2star_trials.pdb" );
 
-		//scorefxn_->show( std::cout, pose );
+		if (!skip_o2star_trials_) o2star_trials( pose, minimize_scorefxn_ );
+
+		if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) +"_after_o2star_trials.pdb" );
+
 
 		//Prevent explosions on first minimize.
 		if (r == 1 && use_coordinate_constraints_) minimize_scorefxn_->set_weight( coordinate_constraint, coord_cst_weight );
-		TR << "Minimizing..." << std::endl;
+		TR << "Minimizing...round= " << r << std::endl;
 
-		minimizer.run( pose, mm, *minimize_scorefxn_, options );
+		if(perform_minimizer_run_) minimizer.run( pose, mm, *minimize_scorefxn_, options );
+
+		if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) + "_after_minimizer_run.pdb" );
 
 		//		io::pdb::dump_pdb( pose, "minimize_round"+string_of( r)+".pdb" );
-		//minimize_scorefxn_->show( std::cout, pose );
+		if(verbose_) minimize_scorefxn_->show( std::cout, pose );
 
 	}
 
@@ -217,8 +244,12 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 	pose.constraint_set( save_pose_constraints );
 
+	if(verbose_) std::cout << "----------After minimizing:----------" << std::endl;
+
 	(*scorefxn_)( pose );
 	scorefxn_->show( std::cout, pose );
+
+	if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_FINISH.pdb" );
 
 	TR << "RNA minimizer finished in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 
@@ -239,30 +270,24 @@ RNA_Minimizer::get_name() const {
 void
 RNA_Minimizer::o2star_trials(
   core::pose::Pose & pose,
-	core::scoring::ScoreFunctionOP const & packer_scorefxn_,
-	bool const do_pack_instead_of_rotamer_trials /* = false */ ) const
+	core::scoring::ScoreFunctionOP const & packer_scorefxn_ ) const
 {
 
-	//TR << "Repacking 2'-OH ... " << std::endl;
-
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-	task->initialize_from_command_line();
+	//task->initialize_from_command_line(); //Jan 20, 2012 Testing.
 
 	for (Size i = 1; i <= pose.total_residue(); i++) {
 		if ( !pose.residue(i).is_RNA() ) continue;
+
 		task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
-		//		task->nonconst_residue_task(i).or_ex4( true );
 		task->nonconst_residue_task(i).or_include_current( true );
-		// How about bump check?
+
 	}
 
 	TR << "Orienting 2' hydroxyls..." << std::endl;
 
-	if (do_pack_instead_of_rotamer_trials ){
-		pack::pack_rotamers( pose, *packer_scorefxn_, task);
-	} else {
-		pack::rotamer_trials( pose, *packer_scorefxn_, task);
-	}
+	pack::rotamer_trials( pose, *packer_scorefxn_, task);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

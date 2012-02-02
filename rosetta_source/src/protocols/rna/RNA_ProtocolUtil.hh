@@ -70,17 +70,17 @@ create_rna_vall_torsions( core::pose::Pose & pose, std::string const outfile );
 core::Real
 get_o1p_o2p_sign( core::pose::Pose const & pose );
 
-void
-ensure_phosphate_nomenclature_matches_mini( core::pose::Pose & pose );
-
 core::Real
-get_o1p_o2p_sign_parin( core::pose::Pose const & pose , core::Size res_num);
+get_o1p_o2p_sign( core::pose::Pose const & pose , core::Size res_num);
 
 void
 assert_phosphate_nomenclature_matches_mini( core::pose::Pose const & pose);
 
 void
-ensure_phosphate_nomenclature_matches_mini_parin ( core::pose::Pose & pose);
+ensure_phosphate_nomenclature_matches_mini( core::pose::Pose & pose );
+
+void
+make_phosphate_nomenclature_matches_mini( core::pose::Pose & pose );
 
 void
 export_packer_results(

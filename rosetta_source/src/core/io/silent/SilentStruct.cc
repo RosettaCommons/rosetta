@@ -833,6 +833,84 @@ void SilentStruct::detect_fullatom( core::Size pos, core::Size natoms, bool& ful
 	}
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+void
+SilentStruct::print_parent_remarks( std::ostream & out ) const {
+	using std::map;
+	using std::string;
+	string const remark( "PARENT REMARK" );
+
+	typedef map< string, string >::const_iterator c_iter;
+	for ( c_iter it = parent_remarks_map_.begin(), end = parent_remarks_map_.end(); it != end; ++it) {
+		out << remark << ' ' << it->first << ' ' << it->second << std::endl;
+	}
+} 
+
+///////////////////////////////////////////////////////////////////////////
+
+std::string 
+SilentStruct::get_parent_remark( std::string const & name ) const {
+
+	if(parent_remarks_map_.count(name)==0) utility_exit_with_message( "The key (" + name +") doesn't exist in the parent_remarks_map_!");
+
+	std::map< std::string, std::string >::const_iterator entry= parent_remarks_map_.find( name );
+
+	if ( entry == parent_remarks_map_.end() ) {
+		utility_exit_with_message( "entry == parent_remarks_map_.end()  for the the key (" + name +").");	
+	}
+
+	std::string const parent_remark = entry->second;
+
+	return parent_remark;
+}
+
+///////////////////////////////////////////////////////////////////////////
+bool SilentStruct::has_parent_remark( std::string const & name ) const {
+	return ( parent_remarks_map_.find( name ) != parent_remarks_map_.end() );
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+void 
+SilentStruct::add_parent_remark( std::string const name, std::string const value ){
+
+	if(parent_remarks_map_.count(name)>0) utility_exit_with_message( "The key (" + name +") already exist in the parent_remarks_map_!");
+
+	parent_remarks_map_.insert( std::make_pair( name, value ) );
+}
+///////////////////////////////////////////////////////////////////////////
+
+void 
+SilentStruct::get_parent_remark_from_line( std::string const line ){
+
+	std::istringstream line_stream( line );
+
+	std::string key, val, remark_tag;
+	line_stream >> remark_tag;
+	line_stream >> key;
+	line_stream >> val;
+
+	if ( line_stream.fail() )  utility_exit_with_message("[ERROR] reading REMARK from line: " + line );
+
+	if(remark_tag!="REMARK") utility_exit_with_message(remark_tag!="REMARK"); //Extra precaution!
+
+	std::string dummy;
+
+	line_stream >> dummy;
+	while( line_stream.good() ) {
+		std::cout << "Extra characters in REMARK LINE!" << std::endl;
+		std::cout << "remark_tag= " << remark_tag << std::endl;
+		std::cout << "key= " << key << std::endl;
+		std::cout << "val= " << val << std::endl;
+		std::cout << "dummy= " << dummy << std::endl;
+		utility_exit_with_message("Extra characters in REMARK LINE!");
+	}
+
+	add_parent_remark( key, val );
+}
+///////////////////////////////////////////////////////////////////////////
+
 } // namespace silent
 } // namespace io
 } // namespace core

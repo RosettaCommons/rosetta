@@ -63,22 +63,28 @@ sources = {
 		"StepWiseProteinScreener",
 		"StepWiseProteinUtil",
 	],
+
 	"protocols/swa/rna": [
-		"determinants",
-		"rigid_body_settings",
-		"RNA_AnalyticLoopCloser",
-		"RNA_LoopCloseSampler",
-		"StepWiseRNA_Base_Sugar_Rotamer",
 		"StepWiseRNA_BaseCentroidScreener",
+		"StepWiseRNA_Base_Sugar_Rotamer",
 		"StepWiseRNA_Clusterer",
-		"StepWiseRNA_Dinucleotide_Sampler_Util",
+		"StepWiseRNA_CombineLongLoopFilterer", 
+		"StepWiseRNA_FloatingBase_Sampler_Util",
+		"StepWiseRNA_JobParameters_Setup",
+		"StepWiseRNA_JobParameters",
 		"StepWiseRNA_Minimizer",
+		"StepWiseRNA_OutputData", 
+		"StepWiseRNA_PoseSetup",
 		"StepWiseRNA_ResidueInfo",
 		"StepWiseRNA_ResidueSampler",
 		"StepWiseRNA_RotamerGenerator",
 		"StepWiseRNA_RotamerGenerator_Wrapper",
 		"StepWiseRNA_Util",
+		"StepWiseRNA_VDW_Bin_Screener",
+		"StepWiseRNA_VirtualRiboseSampler", 
 	],
+
+
 }
 include_path = [
 ]

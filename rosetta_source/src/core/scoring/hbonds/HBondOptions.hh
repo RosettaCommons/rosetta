@@ -72,6 +72,14 @@ public:
 	void
 	exclude_DNA_DNA( bool const setting );
 
+  ///
+  bool
+  include_intra_res_RNA() const;
+
+  ///
+  void
+  include_intra_res_RNA( bool const setting );
+
 	///
 	bool
 	use_hb_env_dep_DNA() const;
@@ -164,6 +172,7 @@ public:
 private:
 
 	bool exclude_DNA_DNA_;
+	bool include_intra_res_RNA_;
 	bool exclude_self_hbonds_;
 	bool use_hb_env_dep_;
 	bool use_hb_env_dep_DNA_;

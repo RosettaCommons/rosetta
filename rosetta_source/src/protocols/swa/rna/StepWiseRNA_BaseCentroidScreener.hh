@@ -22,7 +22,8 @@
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.fwd.hh>
-#include <protocols/swa/StepWiseJobParameters.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <ObjexxFCL/FArray1D.hh> /* for some reason, can't get away with just .fwd.hh */
@@ -30,10 +31,7 @@
 
 
 #include <string>
-
-//Auto Headers
-// APL -- needed? #include <map>
-
+#include <map>
 
 namespace protocols {
 namespace swa {
@@ -43,14 +41,15 @@ namespace rna {
 	public:
 
 	// Constructor
-		StepWiseRNA_BaseCentroidScreener( core::pose::Pose const & pose, StepWiseJobParametersCOP & job_parameters );
+		StepWiseRNA_BaseCentroidScreener( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters );
 
 		~StepWiseRNA_BaseCentroidScreener();
 
 		bool
-		Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose );
+		Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose , SillyCountStruct & count_data);
 
-		// Undefinded, commenting out to fix PyRosetta build  bool non_adjacent_and_stack_base(core::pose::Pose const & pose,  Size const & pos1, Size const & pos2, bool const verbose = false  );
+		bool
+		non_adjacent_and_stack_base(core::pose::Pose const & pose,  Size const & pos1, Size const & pos2, bool const verbose = false  );
 
 		bool
 		Update_base_stub_list_and_Check_that_terminal_res_are_unstacked( core::pose::Pose const & pose, bool const reinitialize = false );
@@ -58,9 +57,13 @@ namespace rna {
 		bool
 		Check_that_terminal_res_are_unstacked( bool const verbose = false );
 
-		// Undefinded, commenting out to fix PyRosetta build  utility::vector1< core::Size > const & 	moving_residues() const;
+		utility::vector1< core::Size > const &
+		moving_residues() const;
 
 	private:
+
+		void
+		Initialize_is_virtual_base( core::pose::Pose const & pose, bool const verbose = false );
 
 		void
 		Initialize_base_stub_list( core::pose::Pose const & pose, bool const verbose = false );
@@ -78,7 +81,7 @@ namespace rna {
 		check_base_pairing( core::kinematics::Stub const & rebuild_residue_base_stub, core::kinematics::Stub const & base_stub   ) const;
 
 		bool
-		Check_centroid_interaction() const;
+		Check_centroid_interaction(SillyCountStruct & count_data) const;
 
 		void
 		Update_base_stub_list( core::pose::Pose const & pose );
@@ -86,7 +89,7 @@ namespace rna {
 
 	private:
 
-		StepWiseJobParametersCOP job_parameters_;
+		StepWiseRNA_JobParametersCOP job_parameters_;
 		core::scoring::rna::RNA_CentroidInfoOP rna_centroid_info_;
 
 		core::Real const base_stack_dist_cutoff_;
@@ -110,6 +113,7 @@ namespace rna {
 		ObjexxFCL::FArray1D< bool > is_terminal_res_;
 		ObjexxFCL::FArray1D< bool > is_fixed_res_;
 		ObjexxFCL::FArray1D< bool > is_moving_res_;
+		ObjexxFCL::FArray1D< bool > is_virtual_base_; //Parin Mar 6
 		ObjexxFCL::FArray2D< bool > stacked_on_terminal_res_in_original_pose_;
   };
 

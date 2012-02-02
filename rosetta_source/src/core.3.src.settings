@@ -258,6 +258,7 @@ sources = {
 		"DatabaseOccSolEne",
 		"ExactOccludedHbondSolEnergy",
 		"GeometricSolEnergy",
+		"ContextIndependentGeometricSolEnergy",
 		"non_scorefxn_exact_model",
 		"OccludedHbondSolEnergy",
 		"OccludedHbondSolEnergy_onebody",
@@ -442,6 +443,7 @@ sources = {
 		"RNA_TorsionPotential",
 		"RNA_Util",
 		"RNA_VDW_Energy",
+		"RNA_FullAtomVDW_BasePhosphate",
 	],
 	"core/scoring/saxs": [
 		"FastSAXSEnergy",

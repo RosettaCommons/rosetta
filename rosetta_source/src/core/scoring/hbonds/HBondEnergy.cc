@@ -224,6 +224,7 @@ HBondEnergyCreator::score_types_for_method() const {
 	sts.push_back( hbond_sr_bb_sc );
 	sts.push_back( hbond_lr_bb_sc );
 	sts.push_back( hbond_sc );
+	sts.push_back( hbond_intra ); //Currently affects only RNA.
 	return sts;
 }
 
@@ -684,7 +685,19 @@ HBondEnergy::hbond_derivs_1way(
 {
 	EnergyMap emap;
 
-	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+	//assert( don_rsd.seqpos() != acc_rsd.seqpos() ); Commented out by Parin Sripakdeevong (sripakpa@stanford.edu) on 12/26/2011 
+
+	bool is_intra_res=(don_rsd.seqpos()==acc_rsd.seqpos());
+
+	if(is_intra_res){
+
+		if(don_rsd.is_RNA()==false) return;
+
+		if(don_rsd.is_RNA()!=acc_rsd.is_RNA()) utility_exit_with_message("don_rsd.is_RNA()!=acc_rsd.is_RNA()");
+
+		if(hbond_set.hbond_options().include_intra_res_RNA()==false) return;
+
+	}
 
 	// <f1,f2> -- derivative vectors
 	HBondDerivs deriv;
@@ -699,10 +712,24 @@ HBondEnergy::hbond_derivs_1way(
 		Vector const & hatm_xyz( don_rsd.atom(hatm).xyz() );
 		Vector const & datm_xyz( don_rsd.atom(datm).xyz() );
 
+		if(is_intra_res){ //Must be RNA (see above early return condition)
+			if( don_rsd.RNA_type().is_RNA_base_atom( datm )==false ) continue;
+	 		if( don_rsd.is_virtual(hatm) ) continue; //Is this necessary?
+	 		if( don_rsd.is_virtual(datm) ) continue; //Is this necessary?
+		}
+
 		for ( chemical::AtomIndices::const_iterator
 				anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
 				anum != anume; ++anum ) {
+
 			Size const aatm( *anum );
+
+			if(is_intra_res){ //Must be RNA (see above early return condition)
+				if( acc_rsd.RNA_type().atom_is_phosphate(aatm)==false) continue;
+				if( acc_rsd.path_distance( aatm, datm ) < 4) utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
+		 		if( acc_rsd.is_virtual(aatm) ) continue; //Is this necessary?
+			}
+
 			if ( acc_rsd.atom_is_backbone(aatm)){
 				if ( ! datm_is_bb && exclude_bsc ) continue; // if the donor is sc, the acceptor bb, and exclude_b(a)sc(d)
 			} else {
@@ -732,13 +759,13 @@ HBondEnergy::hbond_derivs_1way(
 			Real weighted_energy = // evn weight * weight-set[ hbtype ] weight
 				(! hbond_set.hbond_options().use_hb_env_dep() ? 1 :
 				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options() )) *
-				hb_eval_type_weight( hbe_type, weights);
+				hb_eval_type_weight( hbe_type, weights, is_intra_res);
 
 			//pba membrane specific correction
 			if ( options_->Mbhbond()) {
 				weighted_energy = get_membrane_depth_dependent_weight(normal_, center_, thickness_,
 				steepness_, don_nb, acc_nb, hatm_xyz, acc_rsd.atom(aatm ).xyz()) *
-				hb_eval_type_weight( hbe_type, weights);
+				hb_eval_type_weight( hbe_type, weights, is_intra_res);
 			}
 
 			/// Only accumulate h and acc derivs for now; soon, don, h, acc, a-base and abase2 derivs
@@ -836,6 +863,31 @@ HBondEnergy::setup_for_derivatives_for_residue_pair(
 	}
 
 }*/
+
+///WORKING| MODELED AFTER THE VERSION IN OccludedHbondSolEnergy...Need to make sure that this is correct!: Parin Sripakdeevong/////
+void
+HBondEnergy::eval_intrares_derivatives(
+	conformation::Residue const & rsd,
+	ResSingleMinimizationData const & min_data,
+	pose::Pose const & pose,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & atom_derivs
+) const
+{
+
+	if(options_->include_intra_res_RNA() && rsd.is_RNA()){
+
+		using EnergiesCacheableDataType::HBOND_SET;
+
+		HBondSet const & hbondset = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
+
+		bool exclude_scb=false;
+
+		hbond_derivs_1way( weights, hbondset, database_, rsd, rsd, 1, 1, exclude_scb, exclude_scb, atom_derivs, atom_derivs );
+
+	}
+}
+///WORKING| MODELED AFTER THE VERSION IN OccludedHbondSolEnergy...Need to make sure that this is correct!: Parin Sripakdeevong/////
 
 
 void
@@ -1145,6 +1197,9 @@ HBondEnergy::evaluate_rotamer_pair_energies(
 	// save weight information so that its available during tvt execution
 	// and also the neighbor counts for the two residues.
 	weights_ = weights;
+	res1_ = set1.resid();
+	res2_ = set2.resid();
+
 	rotamer_seq_sep_ = pose.residue( set2.resid() ).polymeric_oriented_sequence_distance( pose.residue( set1.resid() ) );
 
 	if ( true ) { // super_hacky
@@ -1230,6 +1285,8 @@ HBondEnergy::evaluate_rotamer_background_energies(
 
 	// save weight information so that its available during tvt execution
 	weights_ = weights;
+	res1_ = set.resid();      //Added by Parin Sripakdeevong (sripakpa@stanford.edu)
+	res2_ = residue.seqpos(); //Added by Parin Sripakdeevong (sripakpa@stanford.edu)
 	rotamer_seq_sep_ = pose.residue( residue.seqpos() ).polymeric_oriented_sequence_distance( pose.residue( set.resid() ) );
 
 	if ( true ) { // super_hacky
@@ -1322,6 +1379,7 @@ HBondEnergy::finalize_total_energy(
 	Real original_sr_bb_sc = totals[ hbond_sr_bb_sc ];
 	Real original_lr_bb_sc = totals[ hbond_lr_bb_sc ];
 	Real original_sc = totals[ hbond_sc ];
+	Real original_intra = totals[hbond_intra];
 	// end replicate
 
 	get_hbond_energies( hbond_set, totals );
@@ -1331,6 +1389,7 @@ HBondEnergy::finalize_total_energy(
 	totals[ hbond_sr_bb_sc ] = original_sr_bb_sc;
 	totals[ hbond_lr_bb_sc ] = original_lr_bb_sc;
 	totals[ hbond_sc ]       = original_sc;
+	totals[ hbond_intra ]    = original_intra;
 	// end replicate
 
 }
@@ -1392,18 +1451,32 @@ HBondEnergy::indicate_required_context_graphs(
 }
 
 bool
-HBondEnergy::defines_intrares_energy( EnergyMap const & /*weights*/ ) const
+HBondEnergy::defines_intrares_energy( EnergyMap const & weights ) const
 {
-	return false;
+
+	bool condition_1= (weights[hbond_intra]>0.0001) ? true : false;	
+
+	bool condition_2= (options_->include_intra_res_RNA()) ? true: false;
+
+	return (condition_1 && condition_2);
+
 }
+
 
 void
 HBondEnergy::eval_intrares_energy(
-	conformation::Residue const & ,
-	pose::Pose const & ,
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	ScoreFunction const & ,
-	EnergyMap &
-) const {}
+	EnergyMap & emap
+) const
+{ 
+
+	if(options_->include_intra_res_RNA() && rsd.is_RNA()){
+		identify_intra_res_hbonds( *database_, rsd, false /*calculate_derivative*/, *options_, emap);
+	}
+
+}
 
 void
 create_rotamer_descriptor(
@@ -1627,7 +1700,7 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 		envweight = membrane_depth_dependent_weight;
 	}
 
-	Real weighted_energy(hb_eval_type_weight(hbe_type, weights_) * hbenergy * envweight);
+	Real weighted_energy(hb_eval_type_weight(hbe_type, weights_, res1_==res2_) * hbenergy * envweight);
 
 	//std::cout << "weighted energy: " << weighted_energy << " " << hbenergy << " " << envweight << std::endl;
 	return weighted_energy;

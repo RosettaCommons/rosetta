@@ -6,23 +6,20 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-/// @file   core/pose/Pose.fwd.hh
-/// @brief  Various OPS for various classes.
-/// @author Rhiju Das
+/// @author Rhiju Das (rhiju@stanford.edu, Parin Sripakdeevong (sripakap@stanford.edu)
 
 #include <utility/pointer/owning_ptr.hh>
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_FWD_HH
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_FWD_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_fwd_hh
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_fwd_hh
 
 namespace protocols{
 namespace swa{
 namespace rna{
 
-class StepWiseRNA_RotamerGenerator;
-typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator > StepWiseRNA_RotamerGeneratorOP;
-typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator const > StepWiseRNA_RotamerGeneratorCOP;
+	class StepWiseRNA_RotamerGenerator;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator > StepWiseRNA_RotamerGeneratorOP;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator const > StepWiseRNA_RotamerGeneratorCOP;
 
 }
 }

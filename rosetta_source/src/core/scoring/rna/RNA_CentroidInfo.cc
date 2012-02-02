@@ -29,7 +29,7 @@
 #include <numeric/xyzMatrix.hh>
 
 #include <utility/vector1.hh>
-
+#include <core/scoring/rna/RNA_Util.hh>
 
 
 // C++
@@ -54,124 +54,20 @@ RNA_CentroidInfo::RNA_CentroidInfo( RNA_CentroidInfo const & src ) :
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
+
 ///////////////////////////////////////////////////////////////////////////////
-// Note that, in principle, the centroid could be a virtual atom,
-// and I could let the atom-tree folding machinery figure out where the hell it is.
-//
-// Also, this copies some code from Phil's dna/base_geometry.cc
-//
-//Comments (Parin Sep 23 ,2009)...possible problem if every atoms in the nucleotide is virtual...in that case numatoms=0....will this crash the code??
-
 Vector
-RNA_CentroidInfo::get_base_centroid( conformation::Residue const & rsd ) const
+RNA_CentroidInfo::get_base_centroid( conformation::Residue const & rsd , bool verbose) const
 {
-  assert( rsd.is_RNA() );
-
-  Vector centroid( 0.0 );
-  Size numatoms = 0;
-
-//	std::cout << "In RNA_CentroidInfo::get_base_centroid: Base atoms" << std::endl; //Parin Sep 23, 2009
-  for ( Size i=rsd.first_sidechain_atom()+1; i<= rsd.nheavyatoms(); ++i ) {
-
-/*		/////////////////////////////////////////////////////////////////////Parin Sep 23, 2009/////////////////////////////////////////////////////
-		std::cout << "atom " << i  << " " << 	"name= " << rsd.type().atom_name(i) << " type= " << rsd.atom_type(i).name()  << " " << rsd.atom_type_index(i) << " " << rsd.atomic_charge(i);
-
-		if(rsd.is_virtual(i)){
-			std::cout << "  Virtual type: Ignore! " << std::endl;
-			continue;
-		}
-		std::cout << std::endl;
-*/		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    centroid += rsd.xyz(i);
-    numatoms++;
-  }
-  centroid /= static_cast< Real >( numatoms );
-
-  return centroid;
+	return get_rna_base_centroid( rsd, verbose);	
 }
 
 
-
-//My local version Sep 23, 2009
-/*
-
-Vector
-get_base_centroid( conformation::Residue const & rsd , bool verbose=false)
-{
-  assert( rsd.is_RNA() );
-
-  Vector centroid( 0.0 );
-  Size numatoms = 0;
-
-	if(verbose)  std::cout << "Base atoms" << std::endl;
-  for ( Size i=rsd.first_sidechain_atom()+1; i<= rsd.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2star oxygen.
-
-		if(verbose) std::cout << "atom " << i  << " " << 	"name= " << rsd.type().atom_name(i) << " type= " << rsd.atom_type(i).name()  << " " << rsd.atom_type_index(i) << " " << rsd.atomic_charge(i);
-
-		if(rsd.is_virtual(i)){
-			if(verbose) std::cout << "  Virtual type: Ignore! " << std::endl;
-			continue;
-		}
-		if(verbose) std::cout << std::endl;
-
-    centroid += rsd.xyz(i);
-    numatoms++;
-  }
-  centroid /= static_cast< Real >( numatoms );
-  return centroid;
-}
-*/
-///////////////////////////////////////////////////////////////////////////////
 kinematics::Stub
 RNA_CentroidInfo::get_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid ) const
 {
-  using namespace chemical;
-  Size res_type = rsd.aa();
-
-  assert( rsd.is_RNA() );
-
-  Vector x,y,z;
-
-	if ( rsd.has( " CEN" ) ) {
-		x = rsd.xyz(" X  ") - rsd.xyz(" CEN" );
-		y = rsd.xyz(" Y  ") - rsd.xyz(" CEN" );
-		z = cross( x, y );
-	} else {
-
-		// Make an axis pointing from base centroid to Watson-Crick edge.
-		std::string WC_atom;
-		if ( res_type == na_rad ) WC_atom = " N1 ";
-		if ( res_type == na_rcy ) WC_atom = " N3 ";
-		if ( res_type == na_rgu ) WC_atom = " N1 ";
-		if ( res_type == na_ura ) WC_atom = " N3 ";
-
-		Vector const WC_coord (rsd.xyz( WC_atom ) );
-		x = WC_coord - centroid;
-		x.normalize();
-
-		// Make a perpendicular axis pointing from centroid towards
-		// Hoogstein edge (e.g., major groove in a double helix).
-		std::string H_atom;
-		if ( res_type == na_rad ) H_atom = "N7";
-		if ( res_type == na_rcy ) H_atom = "C5";
-		if ( res_type == na_rgu ) H_atom = "N7";
-		if ( res_type == na_ura ) H_atom = "C5";
-
-		Vector const H_coord (rsd.xyz( H_atom ) );
-		y = H_coord - centroid; //not orthonormal yet...
-		z = cross(x, y);
-		z.normalize(); // Should point roughly 5' to 3' if in a double helix.
-
-		y = cross(z, x);
-		y.normalize(); //not necessary but doesn't hurt.
-
-		//  std::cout << "WC : " << WC_coord << "   H : " << H_coord << "    centroid: " << centroid << std::endl;
-	}
-
-  return kinematics::Stub( Matrix::cols( x, y, z ), centroid );
+  return kinematics::Stub(get_rna_base_coordinate_system(rsd, centroid), centroid );
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////
 void

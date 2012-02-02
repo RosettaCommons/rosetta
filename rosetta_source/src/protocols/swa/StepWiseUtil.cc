@@ -319,9 +319,9 @@ namespace swa {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  	id::AtomID_Map< id::AtomID >
- 	create_alignment_id_map(	pose::Pose & mod_pose,
-														pose::Pose const & ref_pose,
-														utility::vector1< core::Size > const & superimpose_res ){
+ 	create_alignment_id_map(	pose::Pose const & mod_pose,
+													pose::Pose const & ref_pose,
+													utility::vector1< core::Size > const & superimpose_res ){
 
 		std::map< core::Size, core::Size > res_map;
 
@@ -339,9 +339,9 @@ namespace swa {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  	id::AtomID_Map< id::AtomID >
- 	create_alignment_id_map(	pose::Pose & mod_pose,
-														pose::Pose const & ref_pose,
-														std::map< core::Size, core::Size > res_map ){
+ 	create_alignment_id_map(	pose::Pose const & mod_pose,
+													pose::Pose const & ref_pose,
+													std::map< core::Size, core::Size > res_map ){
 
  		using namespace chemical;
  		using namespace protocols::swa::protein;
@@ -355,7 +355,8 @@ namespace swa {
 
 			if ( mod_pose.residue( seq_num ).is_RNA() && res_map.find( seq_num ) != res_map.end() && res_map[ seq_num ] > 0) {
 				// Parin please update this function!!! Can't we just superimpose over C4*?
-				setup_suite_atom_id_map( mod_pose, ref_pose, seq_num,  res_map[ seq_num ],  false /*Is_prepend*/, atom_ID_map);
+				setup_suite_atom_id_map( mod_pose, ref_pose, seq_num,  res_map[ seq_num ], atom_ID_map);
+
 			} else if ( mod_pose.residue( seq_num ).is_protein() ){ // superimpose over CA.
 				setup_protein_backbone_atom_id_map( mod_pose, ref_pose, seq_num, res_map[ seq_num ], atom_ID_map); // This will superimpose over N, C-alpha, C
 			}

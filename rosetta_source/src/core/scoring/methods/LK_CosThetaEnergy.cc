@@ -23,6 +23,7 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/rna/RNA_Util.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -62,6 +63,8 @@ LK_CosThetaEnergyCreator::score_types_for_method() const {
 	sts.push_back( lk_costheta );
 	sts.push_back( lk_polar );
 	sts.push_back( lk_nonpolar );
+	sts.push_back( lk_polar_intra_RNA );
+	sts.push_back( lk_nonpolar_intra_RNA );
 	return sts;
 }
 
@@ -77,6 +80,38 @@ LK_CosThetaEnergy::LK_CosThetaEnergy( etable::Etable const & etable_in) :
 	get_bins_per_A2_( etable_in.get_bins_per_A2()),
 	verbose_( false )
 {}
+
+
+
+bool
+LK_CosThetaEnergy::defines_intrares_energy( EnergyMap const & weights ) const 
+{ 
+	bool method_1= (weights[lk_polar_intra_RNA]>0.0 || weights[lk_nonpolar_intra_RNA]>0.0) ? true : false;
+	
+	return method_1;
+}
+
+
+
+void
+LK_CosThetaEnergy::eval_intrares_energy(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	ScoreFunction const & ,
+	EnergyMap & emap
+) const{
+
+	if(rsd.is_RNA()==false) return;
+
+	Real lk_polar_intra_RNA_score, lk_nonpolar_intra_RNA_score, lk_costheta_intra_RNA_score;
+
+	get_residue_energy_RNA_intra( rsd, pose, lk_polar_intra_RNA_score, lk_nonpolar_intra_RNA_score, lk_costheta_intra_RNA_score );
+	emap[ lk_polar_intra_RNA ]    += lk_polar_intra_RNA_score;
+	emap[ lk_nonpolar_intra_RNA ] += lk_nonpolar_intra_RNA_score;
+
+}
+
+
 
 Distance
 LK_CosThetaEnergy::atomic_interaction_cutoff() const
@@ -170,6 +205,130 @@ LK_CosThetaEnergy::get_base_vector( conformation::Residue const & rsd1, Size con
 	return res1_base_vector_norm;
 }
 
+////////////////////////////////////////////////
+void
+LK_CosThetaEnergy::get_residue_energy_RNA_intra(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	Real & lk_polar_intra_RNA_score,
+	Real & lk_nonpolar_intra_RNA_score,
+	Real & lk_costheta_intra_RNA_score
+) const
+{
+
+	using namespace etable::count_pair;
+
+	lk_polar_intra_RNA_score =  0.0;
+	lk_nonpolar_intra_RNA_score =  0.0;
+	lk_costheta_intra_RNA_score =  0.0;
+
+	conformation::Residue const & rsd1=rsd; //Assume rsd1 contributes polar atoms.
+	conformation::Residue const & rsd2=rsd; //Assume rsd2 contributes occluding atoms.
+
+	//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+
+	CountPairFunctionOP cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4); //intra_res version!
+
+	/*Comment this out after testing (Updated on Dec 24 ,2011)!////
+		///Testing make sure that this works for intra_res!///
+		for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
+
+			for ( Size j = 1, j_end = rsd2.nheavyatoms(); j <= j_end; ++j ) {
+				Real cp_weight = 1.0;
+				Size path_dist( 0 );
+				std::cout << "cpfxn->count(" << i << " [" << rsd1.atom_name( i)  <<  "] " << ", " << j << " [" <<  rsd2.atom_name( j )  <<  "] " << ")= " << cpfxn->count( i, j, cp_weight, path_dist );
+				std::cout << " cp_weight= " << cp_weight << " path_dist= " << path_dist << std::endl;
+			}
+		}
+	////Comment this out after testing!*/
+
+	for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
+
+		Vector const heavy_atom_i( rsd1.xyz( i ) );
+
+		//Just compute cos(theta) for polars.
+		bool is_polar( false );
+		if ( rsd1.atom_type(i).is_acceptor() || rsd1.atom_type(i).is_donor()) is_polar = true;
+
+		//Need to figure out "direction"...
+		Vector const res1_base_vector_norm = is_polar ? get_base_vector( rsd1, i, pose ) : Vector( 0.0 );
+
+		for ( Size j = 1, j_end = rsd2.nheavyatoms(); j <= j_end; ++j ) {
+
+			Real cp_weight = 1.0;
+			Size path_dist( 0 );
+			if ( cpfxn->count( i, j, cp_weight, path_dist ) ) {
+
+				if(core::scoring::rna::Is_base_phosphate_atom_pair(rsd1, rsd2, i, j)==false) continue;
+
+				Vector const heavy_atom_j( rsd2.xyz( j ) );
+
+				Vector const d_ij = heavy_atom_j - heavy_atom_i;
+				Real const d2 = d_ij.length_squared();
+
+				if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+
+				Real dotprod( 1.0 );
+				Real dummy_deriv( 0.0 );
+				Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), d2, dummy_deriv);
+
+				Real const START_lk_polar_intra_RNA_score=lk_polar_intra_RNA_score;
+				Real const START_lk_costheta_intra_RNA_score=lk_costheta_intra_RNA_score;
+				Real const START_lk_nonpolar_intra_RNA_score=lk_nonpolar_intra_RNA_score;
+
+
+				if ( is_polar ) {
+					lk_polar_intra_RNA_score += temp_score;
+
+					Vector const d_ij = heavy_atom_j - heavy_atom_i;
+					Vector const d_ij_norm = d_ij.normalized();
+					dotprod = dot( res1_base_vector_norm, d_ij_norm );
+					temp_score *= dotprod;
+					lk_costheta_intra_RNA_score += temp_score;
+
+					if ( verbose_ && std::abs( temp_score ) > 0.1 ){
+						std::cout << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( i ) << " covered by " <<
+							rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(j) << " ==> " << F(8,3,temp_score) << ' ' << F(8,3,dotprod) << std::endl;
+					}
+
+				} else {
+					lk_nonpolar_intra_RNA_score += temp_score;
+				}
+
+
+				//consistency check!
+				if(rsd.is_virtual(i) || rsd.is_virtual(j)){
+
+					Real const diff_polar     =lk_polar_intra_RNA_score-START_lk_polar_intra_RNA_score;
+					Real const diff_costheta  =lk_costheta_intra_RNA_score-START_lk_costheta_intra_RNA_score;
+					Real const diff_non_polar =lk_nonpolar_intra_RNA_score-START_lk_nonpolar_intra_RNA_score;
+
+					if(diff_polar>0.001 || diff_polar<-0.001){
+						std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
+						std::cout << " but diff_polar= " << diff_polar << " is non-zero!" <<std::endl; 
+						utility_exit_with_message("diff_polar>0.001 || diff_polar<-0.001");
+					}
+
+					if(diff_costheta>0.001 || diff_costheta<-0.001){
+						std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
+						std::cout << " but diff_costheta= " << diff_costheta << " is non-zero!" <<std::endl;  
+						utility_exit_with_message("diff_costheta>0.001 || diff_costheta<-0.001");
+					}
+
+					if(diff_non_polar>0.001 || diff_non_polar<-0.001){
+						std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
+						std::cout << " but diff_non_polar= " << diff_non_polar << " is non-zero!" <<std::endl;  
+						utility_exit_with_message("diff_non_polar>0.001 || diff_non_polar<-0.001");
+					}
+				}
+
+
+			} // cp
+
+		} // j
+	} // i
+
+}
 
 ////////////////////////////////////////////////
 void
@@ -304,6 +463,179 @@ LK_CosThetaEnergy::eval_lk(
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
+LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
+	id::AtomID const & atom_id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const & domain_map,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
+) const
+{
+
+
+	bool do_eval_intra_RNA= (weights[lk_polar_intra_RNA]>0.0 || weights[lk_nonpolar_intra_RNA]>0.0) ? true : false;
+	
+	if(do_eval_intra_RNA==false) return; //early return.
+
+	Size const i( atom_id.rsd() );
+	Size const j( atom_id.rsd() );
+
+	conformation::Residue const & rsd1( pose.residue( i ) );
+	conformation::Residue const & rsd2( pose.residue( j ) );
+
+	if(rsd1.is_RNA()==false) return;
+	if(rsd2.is_RNA()==false) return; //no effect!
+
+	Size const m( atom_id.atomno() );
+
+	if ( m > rsd1.nheavyatoms() ) return;
+
+	if(verbose_){
+		std::cout << "Start LK_CosThetaEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
+	}
+
+	bool const pos1_fixed( domain_map( i ) != 0 );
+
+	//if( pos1_fixed && domain_map(i) == domain_map(j) ){ //MOD OUT ON July 19th, 2011...THIS MIGHT BE BUGGY!
+		 //std::cout << "LK_CosThetaEnergy::eval_atom_derivative early return since pos1_fixed && domain_map(i=" << i << ") == domain_map(j=" << j << ")" << std::endl; 
+	//	 return; //Fixed w.r.t. one another.
+	//}
+
+	Vector const heavy_atom_i( rsd1.xyz( m ) );
+
+	// cached energies object
+	Energies const & energies( pose.energies() );
+
+	// the neighbor/energy links
+	EnergyGraph const & energy_graph( energies.energy_graph() );
+
+	Real deriv( 0.0 );
+	Vector const res1_base_vector_norm = get_base_vector( rsd1, m, pose );
+
+	using namespace etable::count_pair;
+
+	CountPairFunctionOP cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_4); //intra_res version!
+
+	bool atom1_is_polar( false );
+	if (rsd1.atom_type(m).is_acceptor() || rsd1.atom_type(m).is_donor() ) atom1_is_polar = true;
+
+	for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
+
+		Real cp_weight = 1.0;
+		Size path_dist( 0 );
+		if ( cpfxn->count(m, n, cp_weight, path_dist ) ) {
+
+			if(core::scoring::rna::Is_base_phosphate_atom_pair(rsd1, rsd2, m, n)==false) continue;
+
+			Vector const heavy_atom_j( rsd2.xyz( n ) );
+			Vector const d_ij = heavy_atom_j - heavy_atom_i;
+			Real const d2 = d_ij.length_squared();
+			Real const d = std::sqrt( d2 );
+			Vector const d_ij_norm = d_ij.normalized();
+
+			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+
+			bool atom2_is_polar( false );
+			if (rsd2.atom_type(n).is_acceptor() || rsd2.atom_type(n).is_donor() ) atom2_is_polar = true;
+
+			Vector const res2_base_vector_norm = get_base_vector( rsd2, n, pose );
+
+			// Real const dist_ij = d_ij.length();
+
+			Vector f1_fwd( 0.0 ), f2_fwd( 0.0 ), f1_bkd( 0.0 ), f2_bkd( 0.0 );
+			Real lk_score1( 0.0 ), lk_score2( 0.0 );
+			Real dotprod_fwd( 1.0 ), dotprod_bkd( 1.0 );
+
+			//Forward direction first.
+			lk_score1 = cp_weight * eval_lk( rsd1.atom(m), rsd2.atom(n), d2, deriv );
+
+			f2_fwd =   -1.0 * cp_weight * deriv * d_ij_norm;
+			f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
+
+			if ( atom1_is_polar ) {
+
+				F1 += weights[ lk_polar_intra_RNA ] * f1_fwd;
+				F2 += weights[ lk_polar_intra_RNA ] * f2_fwd;
+
+				dotprod_fwd = dot( res1_base_vector_norm, d_ij_norm );
+
+				f2_fwd *= dotprod_fwd;
+				f2_fwd -= lk_score1 * ( 1/d ) *  (res1_base_vector_norm  - dotprod_fwd * d_ij_norm );
+
+				f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
+
+				//F1 += weights[ lk_costheta ] * f1_fwd;
+				//F2 += weights[ lk_costheta ] * f2_fwd;
+
+				lk_score1 *= dotprod_fwd; //to check later (verbose)
+			} else {
+
+				F1 += weights[ lk_nonpolar_intra_RNA  ] * f1_fwd;
+				F2 += weights[ lk_nonpolar_intra_RNA  ] * f2_fwd;
+
+			}
+
+			/////////////////////////////////
+			// Backwards
+			Vector d_ji_norm = -d_ij_norm;
+
+			lk_score2 = cp_weight * eval_lk( rsd2.atom(n), rsd1.atom(m),  d2, deriv );
+
+			f2_bkd =   -1.0 * deriv * cp_weight * d_ji_norm;
+			f1_bkd =   1.0 * cross( f2_bkd, heavy_atom_i );
+
+
+			if ( atom2_is_polar ){
+
+				F1 -= weights[ lk_polar_intra_RNA ] * f1_bkd;
+				F2 -= weights[ lk_polar_intra_RNA ] * f2_bkd;
+
+				dotprod_bkd = dot( res2_base_vector_norm, d_ji_norm );
+
+				f2_bkd *= dotprod_bkd;
+				f2_bkd -= lk_score2 * ( 1/d ) *  (res2_base_vector_norm  - dotprod_bkd * d_ji_norm );
+
+				f1_bkd =   1.0 * cross( f2_bkd, heavy_atom_i );
+
+				//F1 -= weights[ lk_costheta ] * f1_bkd;
+				//F2 -= weights[ lk_costheta ] * f2_bkd;
+
+				lk_score2 *= dotprod_bkd; //to check later (verbose)
+			} else {
+
+				F1 -= weights[ lk_nonpolar_intra_RNA ] * f1_bkd;
+				F2 -= weights[ lk_nonpolar_intra_RNA  ] * f2_bkd;
+
+			}
+
+			if ( verbose_  &&  (std::abs( lk_score1 ) > 0.1 || std::abs( lk_score2 ) > 0.1 ) ) {
+				std::cout << "Occlusion penalty: " << rsd1.name1() << rsd1.seqpos() << " " << rsd1.atom_name( m ) << " covered by " <<
+					rsd2.name1() << rsd2.seqpos() << " " << rsd2.atom_name(n) <<
+					" " << F(8,3,lk_score1) << " " << F(8,3,lk_score2) <<
+					" ==> " << " DERIV " <<
+					F(8,6,f2_fwd( 1 ) ) <<  ' ' << F(8,6,f2_bkd(1) ) <<
+					' ' << std::sqrt( d2 )	<< " " << cp_weight << " " <<
+					F(8,3,dotprod_fwd) << " " << F(8,3,dotprod_bkd) << std::endl;
+			}
+
+
+    }
+
+
+  }
+
+	if(verbose_){
+		std::cout << "LK_CosThetaEnergy::eval_atom_derivative, intra_res :";
+	 	std::cout << " F1= " << F1[0] << " " << F1[1] << " " << F1[2];
+	 	std::cout << " F2= " << F2[0] << " " << F2[1] << " " << F2[2] << std::endl;
+		std::cout << "Finish LK_CosThetaEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
+	}
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+void
 LK_CosThetaEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
@@ -314,6 +646,8 @@ LK_CosThetaEnergy::eval_atom_derivative(
 	Vector & F2
 ) const
 {
+
+	eval_atom_derivative_intra_RNA(atom_id, pose, domain_map, weights, F1, F2);
 
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );

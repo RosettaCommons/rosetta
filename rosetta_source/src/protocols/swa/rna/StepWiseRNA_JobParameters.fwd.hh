@@ -13,9 +13,6 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-//Auto Headers
-
-
 #ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_fwd_hh
 #define INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_fwd_hh
 

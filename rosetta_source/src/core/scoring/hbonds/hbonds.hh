@@ -32,6 +32,13 @@ namespace scoring {
 namespace hbonds {
 
 void
+fill_intra_res_hbond_set(
+	pose::Pose const & pose,
+	bool const calculate_derivative,
+	HBondSet & hbond_set
+);
+
+void
 fill_hbond_set(
 	pose::Pose const & pose,
 	bool const calculate_derivative,
@@ -94,6 +101,21 @@ identify_hbonds_1way(
 	EnergyMap & emap
 );
 
+void
+identify_intra_res_hbonds(
+	HBondDatabase const & database,
+  conformation::Residue const & rsd,
+  bool const evaluate_derivative,
+	HBondSet & hbond_set);
+
+
+void
+identify_intra_res_hbonds( 
+	HBondDatabase const & database,
+	conformation::Residue const & rsd, 
+	bool const evaluate_derivative, 
+	HBondOptions const & options,
+	EnergyMap & emap);
 
 Real
 get_environment_dependent_weight(
@@ -177,8 +199,10 @@ get_membrane_depth_dependent_weight(
 
 Real
 hb_eval_type_weight(
-	HBEvalType const &hbe_type,
-	EnergyMap const & emap);
+  HBEvalType const &hbe_type,
+	EnergyMap const & emap,
+	bool const intra_res=false);
+
 
 bool
 nonzero_hbond_weight( ScoreFunction const & scorefxn );

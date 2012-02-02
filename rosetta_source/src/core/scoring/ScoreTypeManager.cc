@@ -280,6 +280,19 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_fa_atr_base"] = rna_fa_atr_base;
 	name2score_type_[ "rna_fa_rep_base"] = rna_fa_rep_base;
 
+	////////////Intra-res RNA specific score terms//////////////////
+	name2score_type_[ "lk_polar_intra_RNA" ] = lk_polar_intra_RNA;       
+	name2score_type_[ "lk_nonpolar_intra_RNA" ] = lk_nonpolar_intra_RNA; 
+	name2score_type_[ "fa_intra_RNA_base_phos_atr" ] = fa_intra_RNA_base_phos_atr;  
+	name2score_type_[ "fa_intra_RNA_base_phos_rep" ] = fa_intra_RNA_base_phos_rep;  
+	name2score_type_[ "fa_intra_RNA_base_phos_sol" ] = fa_intra_RNA_base_phos_sol;  
+	name2score_type_[ "hbond_intra" ] = hbond_intra; //Currently affects only RNA.
+	name2score_type_[ "geom_sol_intra_RNA"    ] = geom_sol_intra_RNA;
+	name2score_type_[ "CI_geom_sol"    ] = CI_geom_sol;
+	name2score_type_[ "CI_geom_sol_intra_RNA"    ] = CI_geom_sol_intra_RNA;
+
+
+
 	name2score_type_[ "chainbreak" ] = chainbreak;
 	name2score_type_[ "linear_chainbreak" ] = linear_chainbreak;
 	name2score_type_[ "overlap_chainbreak" ] = overlap_chainbreak;

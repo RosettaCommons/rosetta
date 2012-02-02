@@ -93,12 +93,6 @@ private:
 	void
 	init_fade_functions();
 
-	void
-	init_potentials_from_gaussian_parameters();
-
-	void
-	initialize_potential( core::scoring::constraints::FuncOP & func, Gaussian_parameter_set const & gaussian_parameter_set );
-
 	bool
 	Should_score_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id) const;
 
@@ -110,24 +104,28 @@ private:
 	Output_boolean(std::string const & tag, bool boolean) const;
 
 	bool
-	Is_chain_break_close_atom(core::conformation::Residue const & rsd, core::id::AtomID const & id) const;
+	Is_cutpoint_closed_atom(core::conformation::Residue const & rsd, core::id::AtomID const & id) const;
+
+	void
+	print_torsion_info(core::pose::Pose const & pose, id::TorsionID const & torsion_id) const;
 
 	bool
-	Is_chain_break_close_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id) const;
+	Is_cutpoint_closed_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id) const;
 
-	std::string const path_to_torsion_files_;
+	std::string path_to_torsion_files_;
 
 	// alpha, beta, gamma, delta, epsilon, zeta
 	bool const rna_tight_torsions_;
 	Real const delta_fade_;
 	Real const alpha_fade_;
 
-	core::scoring::constraints::FuncOP alpha_potential_, beta_potential_, gamma_potential_, delta_north_potential_, delta_south_potential_, epsilon_north_potential_, epsilon_south_potential_, zeta_alpha_sc_minus_potential_, zeta_alpha_sc_plus_potential_, zeta_alpha_ap_potential_, chi_north_potential_, chi_south_potential_, nu2_north_potential_, nu2_south_potential_, nu1_north_potential_, nu1_south_potential_;
+	core::scoring::constraints::FuncOP alpha_potential_, beta_potential_, gamma_potential_, delta_north_potential_, delta_south_potential_, epsilon_north_potential_, epsilon_south_potential_, zeta_alpha_sc_minus_potential_, zeta_alpha_sc_plus_potential_, zeta_alpha_ap_potential_, chi_north_potential_others_, chi_south_potential_others_, chi_north_potential_guanosine_, chi_south_potential_guanosine_, nu2_north_potential_, nu2_south_potential_, nu1_north_potential_, nu1_south_potential_;
 
 	core::scoring::constraints::FuncOP fade_delta_north_, fade_delta_south_;
 	core::scoring::constraints::FuncOP fade_alpha_sc_minus_, fade_alpha_sc_plus_;
 	core::scoring::constraints::SumFuncOP fade_alpha_ap_;
 
+	bool const skip_chainbreak_torsions_;
 	bool const verbose_;
 
 };

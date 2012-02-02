@@ -94,6 +94,10 @@ RNA_BulgeEnergy::residue_energy(
 		emap[ rna_bulge ] += bulge_bonus;
 	}
 
+	if ( rsd.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+		emap[ rna_bulge ] += bulge_bonus;
+	}
+
 }
 
 

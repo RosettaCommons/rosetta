@@ -45,6 +45,7 @@ namespace hbonds {
 
 HBondOptions::HBondOptions( std::string params_db_tag ):
 	exclude_DNA_DNA_( true ),
+	include_intra_res_RNA_( false ),
 	exclude_self_hbonds_( true ),
 	use_hb_env_dep_ ( true ),
 	use_hb_env_dep_DNA_( true ),
@@ -70,6 +71,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 
 HBondOptions::HBondOptions():
 	exclude_DNA_DNA_( true ),
+	include_intra_res_RNA_( false ),
 	exclude_self_hbonds_( true ),
 	use_hb_env_dep_ ( true ),
 	use_hb_env_dep_DNA_( true ),
@@ -109,6 +111,7 @@ HBondOptions const &
 HBondOptions::operator=( HBondOptions const & src )
 {
 	exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
+	include_intra_res_RNA_=src.include_intra_res_RNA_;
 	exclude_self_hbonds_ = src.exclude_self_hbonds_;
 	use_hb_env_dep_ = src.use_hb_env_dep_;
 	use_hb_env_dep_DNA_ = src.use_hb_env_dep_DNA_;
@@ -136,6 +139,19 @@ HBondOptions::exclude_DNA_DNA( bool const setting )
 	exclude_DNA_DNA_ = setting;
 }
 
+///
+bool
+HBondOptions::include_intra_res_RNA() const
+{
+	return include_intra_res_RNA_;
+}
+
+///
+void
+HBondOptions::include_intra_res_RNA( bool const setting )
+{
+	include_intra_res_RNA_ = setting; 
+}
 
 ///
 bool
@@ -281,6 +297,7 @@ bool
 operator==( HBondOptions const & a, HBondOptions const & b )
 {
 	return ( ( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
+		( a.include_intra_res_RNA_ == b.include_intra_res_RNA_	 ) &&
 		( a.exclude_self_hbonds_ == b.exclude_self_hbonds_ ) &&
 		( a.use_hb_env_dep_ == b.use_hb_env_dep_ ) &&
 		( a.use_hb_env_dep_DNA_ == b.use_hb_env_dep_DNA_ ) &&
@@ -311,6 +328,8 @@ HBondOptions::show( std::ostream & out ) const
 {
 	out <<"HBondOptions::show: exclude_DNA_DNA: "
 		<<( exclude_DNA_DNA_ ? "true" : "false" ) << std::endl;
+   out <<"HBondOptions::show: include_intra_res_RNA_: "
+		<<( include_intra_res_RNA_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: exclude_self_hbonds: "
 		<<( exclude_self_hbonds_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: use_hb_env_dep: "

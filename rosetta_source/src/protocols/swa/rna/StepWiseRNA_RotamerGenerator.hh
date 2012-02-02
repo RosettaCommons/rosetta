@@ -15,10 +15,10 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_RNA_RotamerGenerator_HH
-#define INCLUDED_protocols_swa_SWA_RNA_RotamerGenerator_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_hh
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_hh
 
-#include <protocols/swa/rna/StepWiseRNA_Classes.hh>
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh> 
 
 #include <core/types.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -27,9 +27,9 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#ifdef WIN32
-	#include <core/id/TorsionID.hh>
-#endif
+#include <string>
+#include <map>
+
 
 
 namespace protocols {
@@ -39,14 +39,11 @@ namespace rna {
 	class StepWiseRNA_RotamerGenerator: public utility::pointer::ReferenceCount {
 	public:
 
-    StepWiseRNA_RotamerGenerator(
-																	core::pose::Pose const & pose,
-																	Size const moving_suite,
-																	PuckerState const & pucker1,
-																	PuckerState const & pucker2,
-																	bool const & Is_bulge=false,
-																	core::Real const binsize = 20.0
-																	);
+    StepWiseRNA_RotamerGenerator( Size const moving_suite,
+																bool const sample_lower_sugar_and_base,
+																bool const sample_upper_sugar_and_base,
+																PuckerState const pucker1,
+																PuckerState const pucker2); 
 
 
     ~StepWiseRNA_RotamerGenerator();
@@ -63,8 +60,31 @@ namespace rna {
 
 //		void set_Is_bulge( bool const & setting ){ Is_bulge_ = setting; }
 
-		void set_sample_extra_rotamers( bool const & setting ){ sample_extra_rotamers_ = setting; }
-		void set_fast( bool const & setting ){ fast_ = setting; }
+		void set_sample_extra_rotamers( bool const setting ){ sample_extra_rotamers_ = setting; }
+
+		void set_fast( bool const setting ){ fast_ = setting; }
+
+		void set_sample_chi_torsion( bool const setting) { sample_chi_torsion_= setting; }
+
+		void set_include_syn_chi( bool const setting){ include_syn_chi_=setting; }
+
+		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting){ force_syn_chi_res_list_ = setting; } //April 29, 2011
+
+		void set_bin_size( core::Size const setting){ bin_size_=setting;} 
+
+		void set_extra_epsilon( bool const setting){ extra_epsilon_ =setting; }
+
+		void set_extra_beta( bool const setting){ extra_beta_ =setting; }
+
+		void set_extra_anti_chi( bool const setting){ extra_anti_chi_ =setting; }
+
+		void set_extra_syn_chi( bool const setting){ extra_syn_chi_ =setting; }
+
+		void set_exclude_alpha_beta_gamma_sampling(  bool const setting){ exclude_alpha_beta_gamma_sampling_ =setting; }
+
+		void set_allow_syn_pyrimidine(  bool const setting){ allow_syn_pyrimidine_ =setting; }
+
+		void initialize_rotamer_generator(core::pose::Pose const & pose);
 
 		core::Size num_rotamer_centers();
 		core::Size const & group_rotamer();
@@ -72,6 +92,7 @@ namespace rna {
 		core::Size const & moving_suite();
 
 		PuckerState	pucker_state(std::string const which_sugar);
+
 
 
 	private:
@@ -83,7 +104,7 @@ namespace rna {
 											 bool const & sample_sugar_and_base2 );
 */
 		void
-		initialize_syn_chi( core::pose::Pose const & pose );
+		initialize_sample_base_states( core::pose::Pose const & pose );
 
 		void
 		initialize_rotamers();
@@ -91,30 +112,25 @@ namespace rna {
 		void
 		initialize_extra_rotamer_perturbations();
 
-		void
+		void 
 		add_torsion_id(core::id::TorsionID const torsion_id);
-
-		void
-		print_pucker_state(PuckerState const & pucker_state, std::string const tag) const;
-
-		void
-		print_base_state(BaseState const & base_state, std::string const tag) const;
 
 	private:
 
 		core::Size const moving_suite_;
-		bool const Is_bulge_;
 
-		PuckerState pucker1_specified_;
-		PuckerState pucker2_specified_;
-		bool sample_syn_chi1_;
-		bool sample_syn_chi2_;
+		bool const sample_lower_sugar_and_base_;
+		bool const sample_upper_sugar_and_base_;
+
+		PuckerState const pucker1_specified_; 
+		PuckerState const pucker2_specified_;
+
 
 		bool sample_extra_rotamers_;
 		bool fast_;
 
 		core::Size bin_size_;
-		int bins1_, bins2_, bins3_, bins4_; //int because they are compared to ints in torsion definition loops.
+		int bins1_, bins2_, bins3_, eps_bins_, beta_bins_; //int because they are compared to ints in torsion definition loops.
 		bool verbose_;
 
 		utility::vector1< core::id::TorsionID > torsion_ids_;
@@ -127,9 +143,21 @@ namespace rna {
 		core::Size subgroup_rotamer_;
 
 		utility::vector1< Torsion_Info > rotamer_list_;
+		bool sample_chi_torsion_;
+		bool include_syn_chi_;
+		utility::vector1< core::Size > force_syn_chi_res_list_; //April 29, 2011
+		bool extra_epsilon_;
+		bool extra_beta_;
+		bool extra_anti_chi_;
+		bool extra_syn_chi_;
+		bool exclude_alpha_beta_gamma_sampling_;
+		bool allow_syn_pyrimidine_;
+		BaseState lower_base_state_;
+		BaseState upper_base_state_;
+
   };
 
-}
+} //rna
 } //swa
 } // protocols
 

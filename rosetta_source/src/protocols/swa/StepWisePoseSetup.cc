@@ -1199,7 +1199,7 @@ return "StepWisePoseSetup";
 		assert( working_pose.sequence() == working_sequence );
 
 		// RNA thing.
-		protocols::rna::ensure_phosphate_nomenclature_matches_mini_parin( working_pose );
+		protocols::rna::make_phosphate_nomenclature_matches_mini( working_pose );
 
 
 		//also carry over disulfides?

@@ -33,6 +33,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
+#include <ObjexxFCL/format.hh>
 
 
 // C++
@@ -155,48 +156,49 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 
 	Size const & i( rsd.seqpos() );
 
-	//String lookups are slow, but needed here to be careful.
-	id::AtomID o4star_id( rsd.atom_index( " O4*" ), i );
-	id::AtomID c1star_id( rsd.atom_index( " C1*" ), i );
-	id::AtomID c2star_id( rsd.atom_index( " C2*" ), i );
-	id::AtomID c4star_id( rsd.atom_index( " C4*" ), i );
-	id::AtomID first_base_atom_id( first_base_atom_index( rsd ),  i );
+	//fast look up!
+	Size const o4star_index=rsd.RNA_type().o4star_atom_index();
+	Size const c1star_index=rsd.RNA_type().c1star_atom_index();
+	Size const c2star_index=rsd.RNA_type().c2star_atom_index();
+	Size const c4star_index=rsd.RNA_type().c4star_atom_index(); 
 
-	constraints::ConstraintOP dist_cst = new constraints::AtomPairConstraint( o4star_id,
-																																						c1star_id,
-																																						o4star_c1star_dist_harm_func_,
-																																						rna_sugar_close );
+	//consistency_check
+	if(o4star_index!=7)  utility_exit_with_message("o4star_id="+ObjexxFCL::string_of(o4star_index) + "!=7");
+	if(c1star_index!=10) utility_exit_with_message("c1star_id="+ObjexxFCL::string_of(c1star_index) +"!=10");
+	if(c2star_index!=11) utility_exit_with_message("c2star_id="+ObjexxFCL::string_of(c2star_index) +"!=11");
+	if(c4star_index!=6)  utility_exit_with_message("c4star_id="+ObjexxFCL::string_of(c4star_index) +"!=16");
+
+	id::AtomID const o4star_id( o4star_index, i );
+	id::AtomID const c1star_id( c1star_index, i );
+	id::AtomID const c2star_id( c2star_index, i );
+	id::AtomID const c4star_id( c4star_index, i );
+	id::AtomID const first_base_atom_id( first_base_atom_index( rsd ),  i );
+
+
+	constraints::ConstraintOP dist_cst = 
+												new constraints::AtomPairConstraint( o4star_id, c1star_id, o4star_c1star_dist_harm_func_, rna_sugar_close );
+
+
+
+	constraints::ConstraintOP angle1 = 
+													new constraints::AngleConstraint( o4star_id, c1star_id, c2star_id, o4star_c1star_c2star_angle_harm_func_, rna_sugar_close );
+
+
+	constraints::ConstraintOP angle2 = 
+													new constraints::AngleConstraint( c4star_id, o4star_id, c1star_id, c4star_o4star_c1star_angle_harm_func_, rna_sugar_close );
+
+
+
+	constraints::ConstraintOP angle3 = 
+													new constraints::AngleConstraint( o4star_id, c1star_id, first_base_atom_id, o4star_c1star_first_base_angle_harm_func_, rna_sugar_close );
 
 	cst_set.add_constraint( dist_cst );
-	//	std::cout << "O4*-C1* distance" << rsd.seqpos() << ' ' << o4star_c1star_dist_harm_func_->func( (rsd.xyz(" O4*") - rsd.xyz( " C1*" )).length() ) << std::endl;
-
-
-	constraints::ConstraintOP angle1 = new constraints::AngleConstraint( o4star_id,
-																																			 c1star_id,
-																																			 c2star_id,
-																																			 o4star_c1star_c2star_angle_harm_func_,
-																																			 rna_sugar_close );
-
-	constraints::ConstraintOP angle2 = new constraints::AngleConstraint( c4star_id,
-																																			 o4star_id,
-																																			 c1star_id,
-																																			 c4star_o4star_c1star_angle_harm_func_,
-																																			 rna_sugar_close );
+	cst_set.add_constraint( angle1 ); //Note to Rhiju (12/25/2011): Previously in Trunk version, angle1 was not added to the cst_set!
 	cst_set.add_constraint( angle2 );
-	//	std::cout << "C4*-O4*-C1* angle" << rsd.seqpos() <<	 ' '<< c4star_o4star_c1star_angle_harm_func_->func( angle_radians( rsd.xyz( " C4*" ), rsd.xyz( " O4*" ), rsd.xyz( " C1*" ) ) ) << std::endl;
-
-
-	Size const first_base_index = first_base_atom_index( rsd );
-	constraints::ConstraintOP angle3 = new constraints::AngleConstraint( o4star_id,
-																																			 c1star_id,
-																																			 first_base_atom_id,
-																																			 o4star_c1star_first_base_angle_harm_func_,
-																																			 rna_sugar_close );
-
 	cst_set.add_constraint( angle3 );
-	//	std::cout << "O4*-C1*-FIRSTBASE angle" << rsd.seqpos() <<	 ' ' << o4star_c1star_first_base_angle_harm_func_->func( angle_radians( rsd.xyz( " O4*" ), rsd.xyz( " C1*" ), rsd.xyz( first_base_index ) ) ) << std::endl;
 
 }
+
 
 
 void RNA_SugarCloseEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) const{}

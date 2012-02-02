@@ -32,8 +32,8 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/chemical/AtomType.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
+#include <core/chemical/AtomType.hh> 
+
 
 // Utility headers
 
@@ -182,20 +182,13 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
   for ( Size m = rsd1.first_sidechain_atom(); m <= rsd1.nheavyatoms(); ++m ) {
 	//Need to be careful nheavyatoms count includes hydrogen! when the hydrogen is made virtual..
 
-		if(rsd1.atom_type(m).name()=="VIRT"){
-			continue;
-		}
+		if(rsd1.is_virtual(m)) continue;
 
-//		if(rsd1.type().atom_name(m) ==" O2*"){
-//				continue;
-//		}
 		if(m==rsd1.first_sidechain_atom()){
 			//Consistency check
 			if(rsd1.type().atom_name(m) !=" O2*") utility_exit_with_message( "m==rsd1.first_sidechain_atom() but rsd1.type().atom_name(m) !=\" O2*\" ");
 			continue;
 		}
-
-
 
     Vector const heavy_atom_i( rsd1.xyz( m ) );
 
@@ -204,13 +197,8 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 
     for ( Size n = atom_num_start; n <= rsd2.nheavyatoms(); ++n ) {
 
-			if(rsd2.atom_type(n).name()=="VIRT"){
-				continue;
-			}
+			if(rsd2.is_virtual(n)) continue;
 
-//			if(rsd2.type().atom_name(n) ==" O2*" && base_base_only_){
-//				continue;
-//			}
 			if(n==rsd2.first_sidechain_atom() && base_base_only_){
 				//Consistency check
 				if(rsd2.type().atom_name(n) !=" O2*") utility_exit_with_message( "n==rsd2.first_sidechain_atom() but rsd2.type().atom_name(n) !=\" O2*\" ");
@@ -322,15 +310,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
 
-		if(rsd1.atom_type(m).name()=="VIRT"){
-//			conformation::Residue const & residue_object=rsd1;
-//			Size atomno=m;
-//			std::cout << "THREE  ";
-//			std::cout << "res_name= " << residue_object.name();
-//			std::cout << " res_seqpos= " << residue_object.seqpos();
-//			std::cout << " atom " << atomno  << " " << 	"name= " << residue_object.type().atom_name(atomno) << " type= " << residue_object.atom_type(atomno).name()  << " " << residue_object.atom_type_index(atomno) << " " << residue_object.atomic_charge(atomno) << std::endl;
-			return;
-		}
+	if(rsd1.is_virtual(m)) return;
 
 
 	if ( m > rsd1.nheavyatoms() ) return;
@@ -373,15 +353,8 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 
 		for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 
-			if(rsd2.atom_type(n).name()=="VIRT"){
-//				conformation::Residue const & residue_object=rsd2;
-//				Size atomno=n;
-//				std::cout << "FOUR  ";
-//				std::cout << "res_name= " << residue_object.name();
-//				std::cout << " res_seqpos= " << residue_object.seqpos();
-//				std::cout << " atom " << atomno  << " " << 	"name= " << residue_object.type().atom_name(atomno) << " type= " << residue_object.atom_type(atomno).name()  << " " << residue_object.atom_type_index(atomno) << " " << residue_object.atomic_charge(atomno) << std::endl;
-				continue;
-			}
+
+			if(rsd2.is_virtual(n)) continue;
 
 			if ( !check_base_base_OK( rsd1, rsd2, m, n ) && !check_base_base_OK( rsd2, rsd1, n, m ) ) continue; //This screen for nonbase atoms
 

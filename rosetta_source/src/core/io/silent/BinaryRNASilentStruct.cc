@@ -232,8 +232,13 @@ bool BinaryRNASilentStruct::init_from_lines(
 
 		//		std::cout << (*iter) << std::endl;
 
-		if ( iter->substr(0,6) == "REMARK" )
-			continue;  // skip comments
+		if ( iter->substr(0,6) == "REMARK" ){
+			get_parent_remark_from_line( line_stream.str() );
+			continue;  // skip comments if record_old_remarks==false
+		}
+
+
+
 		if ( iter->substr(0,7) == "SCORE: " ) {
 			// SCORE: line with values from this structure.
 			Size nres = one_letter_sequence().length();

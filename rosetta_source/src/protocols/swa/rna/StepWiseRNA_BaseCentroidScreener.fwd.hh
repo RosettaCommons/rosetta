@@ -13,16 +13,16 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_BaseCentroidScreener_FWD_HH
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_BaseCentroidScreener_FWD_HH
+#ifndef INCLUDED_protocols_STEPWISE_RNA_BaseCentroidScreener_FWD_HH
+#define INCLUDED_protocols_STEPWISE_RNA_BaseCentroidScreener_FWD_HH
 
-namespace protocols {
-namespace swa {
-namespace rna {
+namespace protocols{
+namespace swa{
+namespace rna{
 
-class StepWiseRNA_BaseCentroidScreener;
-typedef utility::pointer::owning_ptr< StepWiseRNA_BaseCentroidScreener > StepWiseRNA_BaseCentroidScreenerOP;
-typedef utility::pointer::owning_ptr< StepWiseRNA_BaseCentroidScreener const > StepWiseRNA_BaseCentroidScreenerCOP;
+	class StepWiseRNA_BaseCentroidScreener;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_BaseCentroidScreener > StepWiseRNA_BaseCentroidScreenerOP;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_BaseCentroidScreener const > StepWiseRNA_BaseCentroidScreenerCOP;
 
 }
 }

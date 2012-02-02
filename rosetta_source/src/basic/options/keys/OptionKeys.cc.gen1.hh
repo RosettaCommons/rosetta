@@ -120,9 +120,9 @@ namespace score { RealOptionKey const symE_bonus( "score:symE_bonus" );  }
 namespace score { RealOptionKey const NV_lbound( "score:NV_lbound" );  }
 namespace score { RealOptionKey const NV_ubound( "score:NV_ubound" );  }
 namespace score { StringOptionKey const NV_table( "score:NV_table" );  }
-namespace score { RealOptionKey const syn_chi_penalty( "score:syn_chi_penalty" );  }
 namespace score { BooleanOptionKey const disable_orientation_dependent_rna_ch_o_bonds( "score:disable_orientation_dependent_rna_ch_o_bonds" );  }
 namespace score { StringOptionKey const rna_torsion_potential( "score:rna_torsion_potential" );  }
+namespace score { BooleanOptionKey const rna_torsion_skip_chainbreak( "score:rna_torsion_skip_chainbreak" );  }
 namespace score { BooleanOptionKey const include_neighbor_base_stacks( "score:include_neighbor_base_stacks" );  }
 namespace score { BooleanOptionKey const find_neighbors_3dgrid( "score:find_neighbors_3dgrid" );  }
 namespace score { StringOptionKey const seqdep_refene_fname( "score:seqdep_refene_fname" );  }

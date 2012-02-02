@@ -63,6 +63,18 @@ public:
 		ScoreFunction const & scfxn
 	) const;
 
+
+	void
+	eval_atom_derivative_intra_RNA( //Called by eval_atom_derivative, specific case for RNA intra_res. Parin Sripakdeevong June 27, 2011.
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const & domain_map,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
+
+
 	/// called during gradient-based minimization inside dfunc
 	/**
 		 F1 and F2 are not zeroed -- contributions from this atom are
@@ -93,16 +105,18 @@ public:
 
 	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & weights ) const;
+
 
 	virtual
 	void
 	eval_intrares_energy(
-		conformation::Residue const &,
-		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
-	) const {}
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & ,
+		EnergyMap & emap
+	) const;
+
 
 	virtual
 	Distance
@@ -124,6 +138,15 @@ private:
 
 	Vector
 	get_base_vector( conformation::Residue const & rsd1, Size const i, pose::Pose const & pose ) const;
+
+	void
+	get_residue_energy_RNA_intra(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		Real & lk_polar_intra_RNA_score,
+		Real & lk_nonpolar_intra_RNA_score,
+		Real & lk_costheta_intra_RNA_score
+	) const;
 
 	void
 	get_residue_pair_energy_one_way(

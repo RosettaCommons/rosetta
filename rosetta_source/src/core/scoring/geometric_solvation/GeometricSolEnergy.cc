@@ -29,6 +29,7 @@
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/TenANeighborGraph.hh>
+#include <core/scoring/rna/RNA_Util.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -85,6 +86,7 @@ ScoreTypes
 GeometricSolEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( geom_sol );
+	sts.push_back( geom_sol_intra_RNA );
 	return sts;
 }
 
@@ -135,6 +137,7 @@ GeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & 
 	// to have a "calculated" flag.
 	// But, anyway, the geometric sol calcs take way longer than this.
 	pose.update_residue_neighbors();
+
 	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
 	hbond_set->setup_for_residue_pair_energies( pose );
 	pose.energies().data().set( HBOND_SET, hbond_set );
@@ -151,7 +154,6 @@ GeometricSolEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction cons
 // flag to save the computation ... but the geometric sol. calculation takes so
 // much longer that this initial hbond loop isn't too bad.
  	pose.update_residue_neighbors();
-
 
 	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
 	hbonds::fill_hbond_set( pose, true /*calc derivs*/, *hbond_set );
@@ -533,6 +535,11 @@ GeometricSolEnergy::get_atom_atom_geometric_solvation_for_donor(
 	// Note: In current implementation, intraresidue pairs aren't checked...
 	if ( ( don_rsd.seqpos() == occ_rsd.seqpos() ) && ( occ_atm == don_base_atm ) ) return;
 
+	////////////////06/26/2011: Parin Sripakdeevong (sripakpa@stanford.edu)/////////////////////
+	if(occ_rsd.is_virtual(occ_atm)) return;
+	if(don_rsd.is_virtual(don_h_atm)) return;
+	////////////////////////////////////////////////////////////////////////////////////////////
+
 	// if a backbone donor participates in a backbone-backbone Hbond,
 	// nothing is allowed to occlude solvent except a backbone acceptor
 	bool const don_h_atm_is_protein_backbone
@@ -628,8 +635,11 @@ GeometricSolEnergy::get_atom_atom_geometric_solvation_for_acceptor(
 
 	// Virtual atom (e.g., Andrew Leaver-Fay's NV in proline) don't count.
 	// Maybe this should be a helper function inside residue.
-	chemical::AtomTypeSet const & atom_type_set( occ_rsd.atom_type_set() );
-	if (	occ_rsd.is_virtual( occ_atm ) ) return;
+
+	////////////////06/26/2011: Parin Sripakdeevong (sripakpa@stanford.edu)/////////////////////
+	if(occ_rsd.is_virtual(occ_atm)) return;
+	if(acc_rsd.is_virtual(acc_atm)) return;
+	////////////////////////////////////////////////////////////////////////////////////////////
 
 	// the base atom isn't allowed to occlude solvent
 	// Note: In current implementation, intraresidue pairs aren't checked...
@@ -759,6 +769,97 @@ GeometricSolEnergy::atom_is_heavy( conformation::Residue const & rsd, Size const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+GeometricSolEnergy::eval_atom_derivative_intra_RNA(
+		 id::AtomID const & atom_id,
+		 pose::Pose const & pose,
+		 EnergyMap const & weights,
+		 Vector & F1,
+		 Vector & F2
+) const
+{ 
+
+	Size const i( atom_id.rsd() );
+
+	conformation::Residue const & current_rsd( pose.residue( i ) );
+	conformation::Residue const &   other_rsd( pose.residue( i ) );
+
+	//Ok right now intrares energy is define only for the RNA case. Parin Sripakdeevong, June 26, 2011.
+	if(current_rsd.is_RNA()==false) return; 
+	if(other_rsd.is_RNA()==false) return; //no effect!
+
+	static bool const update_deriv( true );
+
+	Real energy( 0.0 );
+	hbonds::HBondDerivs deriv;
+
+	Size const current_atm( atom_id.atomno() );
+
+	if(verbose_) std::cout << "Start eval_atom_derivative, intra_res case, res= " << i << " atomno= " << current_atm << "[" << current_rsd.atom_name(current_atm) <<  "]" << std::endl;
+
+	// If this atom is a donor, go over heavy atoms in other residue.
+	if ( atom_is_donor_h( current_rsd, current_atm ) ) {
+		for (Size m = 1; m <= other_rsd.nheavyatoms(); m++ ){
+
+			if(core::scoring::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, m)==false) continue;
+
+			get_atom_atom_geometric_solvation_for_donor( current_atm, current_rsd, m, other_rsd, pose, energy, update_deriv, deriv );
+
+			F1 += weights[ geom_sol_intra_RNA ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+			F2 += weights[ geom_sol_intra_RNA ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+		}
+	}
+
+	// If this atom is an acceptor, go over heavy atoms in other residue.
+	if ( atom_is_acceptor( current_rsd, atom_id.atomno() ) ) {
+		for (Size m = 1; m <= other_rsd.nheavyatoms(); m++ ){
+
+			if(core::scoring::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, m)==false) continue;
+
+			get_atom_atom_geometric_solvation_for_acceptor( current_atm, current_rsd, m, other_rsd, pose, energy, update_deriv, deriv );
+
+			F1 += weights[ geom_sol_intra_RNA ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+			F2 += weights[ geom_sol_intra_RNA ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+		}
+	}
+
+	//Treat atom as occluder if its heavy.
+	if ( atom_is_heavy( current_rsd, atom_id.atomno() ) ) {
+		//			Go over donors in other atom.
+		for ( chemical::AtomIndices::const_iterator hnum  = other_rsd.Hpos_polar().begin(), hnume = other_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+			Size const don_h_atm( *hnum );
+
+			if(core::scoring::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, don_h_atm)==false) continue;
+
+			get_atom_atom_geometric_solvation_for_donor( don_h_atm, other_rsd, atom_id.atomno(), current_rsd, pose, energy, update_deriv, deriv );
+
+			F1 -= weights[ geom_sol_intra_RNA ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+			F2 -= weights[ geom_sol_intra_RNA ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+		}
+
+		// Go over acceptors in other atom.
+		for ( chemical::AtomIndices::const_iterator anum  = other_rsd.accpt_pos().begin(), anume = other_rsd.accpt_pos().end(); anum != anume; ++anum ) {
+			Size const acc_atm ( *anum );
+
+			if(core::scoring::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, acc_atm)==false) continue;
+
+			get_atom_atom_geometric_solvation_for_acceptor( acc_atm, other_rsd, atom_id.atomno(), current_rsd, pose, energy, update_deriv, deriv );
+
+			F1 -= weights[ geom_sol_intra_RNA ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+			F2 -= weights[ geom_sol_intra_RNA ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+		}
+	}
+
+	if(verbose_){
+		std::cout << "eval_atom_derivative, intra_res :";
+	 	std::cout << " F1= " << F1[0] << " " << F1[1] << " " << F1[2];
+	 	std::cout << " F2= " << F2[0] << " " << F2[1] << " " << F2[2] << std::endl;
+		std::cout << "Finish eval_atom_derivative, intra_res case, res= " << i << " atomno= " << current_atm << "[" << current_rsd.atom_name(current_atm) <<  "]" << std::endl;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // Note that this computes every interaction *twice* -- three times if you
 //  note that the score calculation above does most of the computation already.
 // Oh well -- we currently assume derivative calculation doesn't happen to often!
@@ -778,6 +879,8 @@ GeometricSolEnergy::eval_atom_derivative(
 	Real energy( 0.0 );
 	hbonds::HBondDerivs deriv;
 
+	eval_atom_derivative_intra_RNA(atom_id, pose, weights, F1, F2);
+
 	conformation::Residue const & current_rsd( pose.residue( atom_id.rsd() ) );
 
 	Size const i( atom_id.rsd() );
@@ -795,9 +898,7 @@ GeometricSolEnergy::eval_atom_derivative(
 
 		Size j( (*iter)->get_other_ind( i ) );
 
-		//As above disallow contribution within a residue. Is this OK? Sure there shouldn't be an "intra" term?
-		// anyway list of neighbors does not include i==j.
-		if ( i == j ) continue;
+		if ( i == j ) continue; //Parin S. Already dealt with above for the intra_RNA case! Plus I think a edge doesn't point to itself!
 
 		conformation::Residue const & other_rsd( pose.residue( j ) );
 
@@ -809,10 +910,7 @@ GeometricSolEnergy::eval_atom_derivative(
 					pose, energy, update_deriv, deriv );
 				F1 += weights[ geom_sol ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
 				F2 += weights[ geom_sol ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
-// 				std::cout << "DERIV1 "
-// 									<< I(3,atom_id.rsd()) << " " << I(3,atom_id.atomno()) << "; "
-// 									<< I(3,            i) << " " << I(3,               m) << " "
-// 									<< energy << " " << F(8,3,deriv.first(1)) << F(8,3,deriv.second(1))	<< std::endl;
+
  			}
  		}
 
@@ -824,11 +922,7 @@ GeometricSolEnergy::eval_atom_derivative(
 					pose, energy, update_deriv, deriv );
 				F1 += weights[ geom_sol ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
 				F2 += weights[ geom_sol ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
- // 				if (energy > 0.0 )
-// 					std::cout << "DERIV1 "
-// 										<< I(3,atom_id.rsd()) << " " << I(3,atom_id.atomno()) << "; "
-//  										<< I(3,            i) << " " << I(3,               m) << " "
-//  										<< energy << " " << F(8,3,deriv.first(1)) << F(8,3,deriv.second(1))	<< std::endl;
+
  			}
  		}
 
@@ -844,10 +938,7 @@ GeometricSolEnergy::eval_atom_derivative(
 																										 pose, energy, update_deriv, deriv );
 				F1 -= weights[ geom_sol ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
 				F2 -= weights[ geom_sol ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
-	// 			std::cout << "DERIV2 "
-// 									<< I(3,            i) << " " << I(3,       don_h_atm) << "; "
-// 									<< I(3,atom_id.rsd()) << " " << I(3,atom_id.atomno()) << " "
-// 									<< energy << " " << F(8,3,deriv.first(1)) << F(8,3,deriv.second(1))	<< std::endl;
+
 			}
 
 			// Go over acceptors in other atom.
@@ -860,11 +951,7 @@ GeometricSolEnergy::eval_atom_derivative(
 					pose, energy, update_deriv, deriv );
 				F1 -= weights[ geom_sol ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
 				F2 -= weights[ geom_sol ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
-// 	 			if (energy > 0.0 )
-//  					std::cout << "DERIV2 "
-//  										<< I(3,            i) << " " << I(3,       acc_atm) << "; "
-//  										<< I(3,atom_id.rsd()) << " " << I(3,atom_id.atomno()) << " "
-//  										<< energy << " " << F(8,3,deriv.first(1)) << F(8,3,deriv.second(1))	<< std::endl;
+
 			}
  		}
 
@@ -987,20 +1074,92 @@ GeometricSolEnergy::atomic_interaction_cutoff() const
 	return MAX_R + 1.35; // MAGIC NUMBER
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 bool
-GeometricSolEnergy::defines_intrares_energy( EnergyMap const & /*weights*/ ) const
+GeometricSolEnergy::defines_intrares_energy( EnergyMap const & weights ) const
 {
-	return false;
+	bool condition_1= (weights[geom_sol_intra_RNA]>0.0) ? true : false;
+	
+	return condition_1;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void
 GeometricSolEnergy::eval_intrares_energy(
-	conformation::Residue const & ,
-	pose::Pose const & ,
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	ScoreFunction const & ,
-	EnergyMap &
-) const {}
+	EnergyMap & emap
+) const{ 
 
+	if(rsd.is_RNA()==false) return;
+
+		Real geo_solE_intra_RNA =
+			   donorRes_occludingRes_geometric_sol_RNA_intra( rsd, pose ) +
+			acceptorRes_occludingRes_geometric_sol_RNA_intra( rsd, pose );
+
+	// store the energies
+	emap[ geom_sol_intra_RNA ] += geo_solE_intra_RNA;
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+Real
+GeometricSolEnergy::donorRes_occludingRes_geometric_sol_RNA_intra(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose ) const
+{
+
+
+	Real res_solE( 0.0 ), energy( 0.0 );
+
+	conformation::Residue const & don_rsd=rsd;
+	conformation::Residue const & occ_rsd=rsd;
+
+	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
+	for ( chemical::AtomIndices::const_iterator hnum  = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+		Size const don_h_atm( *hnum );
+		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+
+			if(core::scoring::rna::Is_base_phosphate_atom_pair(rsd, rsd, occ_atm, don_h_atm)==false) continue;
+			
+			get_atom_atom_geometric_solvation_for_donor( don_h_atm, don_rsd, occ_atm, occ_rsd, pose, energy );
+			res_solE += energy;
+		}
+	}
+
+	return res_solE;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+Real
+GeometricSolEnergy::acceptorRes_occludingRes_geometric_sol_RNA_intra(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose ) const
+{
+
+	conformation::Residue const & acc_rsd=rsd;
+	conformation::Residue const & occ_rsd=rsd;
+
+
+	Real res_solE( 0.0 ), energy( 0.0 );
+
+	for ( chemical::AtomIndices::const_iterator anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
+		Size const acc_atm( *anum );
+		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+
+			if(core::scoring::rna::Is_base_phosphate_atom_pair(rsd, rsd, occ_atm, acc_atm)==false) continue;
+
+			get_atom_atom_geometric_solvation_for_acceptor( acc_atm, acc_rsd, occ_atm, occ_rsd, pose, energy);
+			res_solE += energy;
+
+		}
+	}
+
+	return res_solE;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
 
 ///@brief GeometricSolEnergy is context sensitive
 void

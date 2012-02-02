@@ -14,28 +14,26 @@
 
 
 //////////////////////////////////
+#include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
+#include <core/id/TorsionID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <basic/Tracer.hh>
-#include <protocols/swa/StepWiseJobParameters.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-// AUTO-REMOVED #include <numeric/xyz.functions.hh> // APL TEMP
-
 #include <string>
 
-//Auto Headers
-#include <utility/vector1.hh>
-
 using namespace core;
+using basic::T;
 using core::Real;
 using ObjexxFCL::fmt::F;
 
@@ -47,14 +45,14 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// Constructor
-	StepWiseRNA_BaseCentroidScreener::StepWiseRNA_BaseCentroidScreener( core::pose::Pose const & pose, StepWiseJobParametersCOP & job_parameters ):
+	StepWiseRNA_BaseCentroidScreener::StepWiseRNA_BaseCentroidScreener( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters ):
 		job_parameters_( job_parameters ),
 		rna_centroid_info_( new core::scoring::rna::RNA_CentroidInfo ),
 		base_stack_dist_cutoff_( 6.364 ),
 		base_stack_z_offset_max_( 4.5 ),
 		base_stack_z_offset_min_( 2.5 ),
-		base_stack_axis_cutoff_( 0.650 /*allow more slop than parin (0.707) */ ),
-		base_stack_planarity_cutoff_( 0.5 /*allow more slop than parin (0.707) */ ),
+		base_stack_axis_cutoff_( 0.707 /*Rhiju value is 0.650*/),
+		base_stack_planarity_cutoff_( 0.707 /*Rhiju value is 0.5*/),
 		base_pair_dist_min_( 5.0 ),
 		base_pair_dist_max_( 12.0 ),
 		base_pair_z_offset_cutoff_( 3.0 ),
@@ -63,12 +61,35 @@ namespace rna {
 		base_pair_rho_min_( 5 ),
 		base_pair_rho_max_( 10 )
 	{
-		Initialize_base_stub_list( pose, false /*verbose*/ );
+		Initialize_is_virtual_base( pose,  true /*verbose*/);
+		Initialize_base_stub_list( pose, true /*verbose*/ );
 		Initialize_terminal_res( pose );
 	}
-
 	////////////////////////////////////////////////////////////////////////
 	StepWiseRNA_BaseCentroidScreener::~StepWiseRNA_BaseCentroidScreener(){}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_BaseCentroidScreener::Initialize_is_virtual_base( pose::Pose const & pose, bool const verbose ){
+
+		Size const & nres = pose.total_residue();
+		is_virtual_base_.dimension( nres, false );
+
+		for (Size seq_num=1; seq_num <= nres; seq_num++){
+
+			conformation::Residue const & residue_object=pose.residue( seq_num );
+
+			if(residue_object.has_variant_type( "VIRTUAL_RNA_RESIDUE" )){
+				std::cout << "Residue " << seq_num << " is a VIRTUAL_RNA_RESIDUE!" << std::endl;
+				is_virtual_base_( seq_num ) = true;
+			}
+
+			if(residue_object.has_variant_type( "BULGE" )){
+				std::cout << "Residue " << seq_num << " is a BULGE!" << std::endl;
+				is_virtual_base_( seq_num ) = true;
+			}
+		}
+	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
@@ -81,6 +102,7 @@ namespace rna {
 		fixed_residues_.clear();
 		base_stub_list_.clear();
 
+
 		Size const & nres = pose.total_residue();
 		is_moving_res_.dimension( nres, false );
 		is_fixed_res_.dimension( nres, false );
@@ -89,18 +111,18 @@ namespace rna {
 
 			conformation::Residue const & residue_object=pose.residue( seq_num );
 
-			Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object);
-			core::kinematics::Stub base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );
+			core::kinematics::Stub base_stub;
+
+			if(is_virtual_base_( seq_num )==true){
+				base_stub=core::kinematics::Stub();	//"default" tub, this will never be called			
+			}else{
+				Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object);
+				base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );
+			}
+
 			base_stub_list_.push_back( base_stub );
 
-			if(residue_object.has_variant_type( "VIRTUAL_RNA_RESIDUE" )){
-				if (verbose ) std::cout << "Residue " << seq_num << " is a VIRTUAL_RNA_RESIDUE!" << std::endl;
-				continue;
-			}
-			//			if(residue_object.has_variant_type( "BULGE" )){
-			//				std::cout << "Residue " << seq_num << " is a BULGE!" << std::endl;
-			//				continue;
-			//			}
+			if(is_virtual_base_( seq_num )==true) continue;
 
 			if ( partition_definition( seq_num ) == root_partition ) {
 				// This is a "fixed" residue -- on the ssame side of the moving suite as the root.
@@ -114,7 +136,13 @@ namespace rna {
 			}
 		}
 
-		assert( moving_residues_ == job_parameters_->moving_pos() );
+
+//		moving_residues_ does not necessarily equal job_parameters_->working_moving_partition_pos since job_parameters_->working_moving_partition_pos include virtual residues. May 25, 2010
+//		if(Is_equivalent_vector(moving_residues_,job_parameters_->working_moving_partition_pos())==false){
+//			Output_seq_num_list("moving_residues_= " , moving_residues_, 50);
+//			Output_seq_num_list("job_parameters_->working_moving_partition_pos()= " , job_parameters_->working_moving_partition_pos(), 50);
+//			utility_exit_with_message( "moving_residues_,job_parameters_->working_moving_partition_pos()) ==false ");
+//		}
 
 	}
 
@@ -122,6 +150,9 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_BaseCentroidScreener::Initialize_terminal_res( pose::Pose const & pose ){
+
+		using namespace ObjexxFCL;
+
 
 		terminal_res_ = job_parameters_->working_terminal_res();
 
@@ -133,6 +164,11 @@ namespace rna {
 
 			//			std::cout << "NRES " << pose.total_residue() << " " << is_terminal_res_.size() << "      " << terminal_res_[ n ] << std::endl;
 			Size const terminal_res = terminal_res_[ n ];
+
+			if(is_virtual_base_( terminal_res )==true){
+				utility_exit_with_message( "working_res: " + string_of(terminal_res) + " is a terminal res but has a virtual! ");
+			}
+			
 			is_terminal_res_( terminal_res ) = true;
 
 			for ( Size m = 1; m <= nres; m++ ) {
@@ -149,7 +185,6 @@ namespace rna {
 
 				}
 			}
-
 		}
 
 	}
@@ -214,7 +249,7 @@ namespace rna {
 
 		Real base_axis_one=base_z_offset_one/centroid_distance;
 		Real base_axis_two=base_z_offset_two/centroid_distance;
-		if ( base_axis_one> base_pair_axis_cutoff_ && base_axis_two> base_pair_axis_cutoff_) return false;
+		if ( base_axis_one> base_pair_axis_cutoff_ && base_axis_two> base_pair_axis_cutoff_) return false; //This is a stronger condition compare to baze_z_offset check
 
 		Real base_planarity=std::abs(dot( rebuild_z_vector, other_z_vector));
 		if ( base_planarity < base_pair_planarity_cutoff_ ) return false;
@@ -236,9 +271,9 @@ namespace rna {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_BaseCentroidScreener::Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose ){
+	StepWiseRNA_BaseCentroidScreener::Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose , SillyCountStruct & count_data){
 		Update_base_stub_list( pose );
-		return Check_centroid_interaction();
+		return Check_centroid_interaction(count_data);
 	}
 
 
@@ -263,7 +298,7 @@ namespace rna {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_BaseCentroidScreener::Check_centroid_interaction() const{
+	StepWiseRNA_BaseCentroidScreener::Check_centroid_interaction(SillyCountStruct & count_data) const{
 
 		bool stack_base( false ), base_pairing( false );
 
@@ -277,8 +312,6 @@ namespace rna {
 				if ( stack_base ) break;
 			}
 
-			if ( stack_base ) break; // found an interaction!
-
 			base_pairing=false;
 
 			for(Size i = 1; i <= fixed_residues_.size(); i++ ) {
@@ -286,10 +319,13 @@ namespace rna {
 				if ( base_pairing ) break;
 			}
 
-			if ( base_pairing ) break;
+			if ( base_pairing || stack_base) break; // found an interaction!
 
 		}
 
+		if(base_pairing) count_data.base_pairing_count++;
+		if(stack_base) count_data.base_stack_count++;
+		if(base_pairing || stack_base) count_data.pass_base_centroid_screen++;
 
 		//		if ( stack_base ) count_data_.base_stack_count++;
 		//		if ( base_pairing ) count_data_.base_pairing_count++;
@@ -318,6 +354,10 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	StepWiseRNA_BaseCentroidScreener::check_stack_base( Size const & pos1, Size const & pos2, bool const verbose /* = false */  ) {
+
+		if(is_virtual_base_( pos1 )== true || is_virtual_base_( pos2 )== true){
+			utility_exit_with_message( "is_virtual_base_( pos1 )== true || is_virtual_base_( pos2 )== true !");
+		}
 
 		if ( pos1 == pos2 ) return true;
 		return check_stack_base(  base_stub_list_[ pos1 ], base_stub_list_[ pos2 ], verbose );

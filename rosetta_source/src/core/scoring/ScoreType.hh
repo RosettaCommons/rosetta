@@ -147,6 +147,19 @@ enum ScoreType {
 	//	fa_stack_pyrimidine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PYRIMIDINE
 	fa_stack_aro,
 
+	////////////Intra-res RNA specific score terms//////////////////
+	fa_intra_RNA_base_phos_atr, //RNA specific score term
+	fa_intra_RNA_base_phos_rep, //RNA specific score term
+	fa_intra_RNA_base_phos_sol, //RNA specific score term
+	lk_polar_intra_RNA,    //RNA specific score term
+	lk_nonpolar_intra_RNA, //RNA specific score term
+	hbond_intra,           //Currently effects only RNA
+	geom_sol_intra_RNA,    //RNA specific score term
+	CI_geom_sol,           //Context independent version. Currently tested only for RNA case.
+	CI_geom_sol_intra_RNA, //RNA specific score term
+
+
+
 	fa_cust_pair_dist,  // custom short range 2b
 	custom_atom_pair,
 

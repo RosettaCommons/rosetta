@@ -273,6 +273,21 @@ namespace silent {
 
 		virtual core::Size mem_footprint() const { return 0; }
 
+		//By Parin Sripakdeevong (sripakpa@stanford.edu). 
+		void print_parent_remarks( std::ostream & out ) const;
+
+		//By Parin Sripakdeevong (sripakpa@stanford.edu).
+		std::string get_parent_remark( std::string const & name ) const;
+
+		//By Parin Sripakdeevong (sripakpa@stanford.edu).
+		bool has_parent_remark( std::string const & name ) const;
+
+		//By Parin Sripakdeevong (sripakpa@stanford.edu).
+		void add_parent_remark( std::string const name, std::string const value );
+
+		//By Parin Sripakdeevong (sripakpa@stanford.edu).
+		void get_parent_remark_from_line( std::string const line ); 
+
 	protected:
 
 		///@ brief helper to detect fullatom input
@@ -291,9 +306,13 @@ namespace silent {
 		std::string decoy_tag_;
 		core::sequence::AnnotatedSequence sequence_;
 
+		std::map< std::string, std::string > parent_remarks_map_; //Similar to silent_comments_ but this doesn't get outputted back to the silent_file.
+
+
 		// output-related data
 		std::map< std::string, std::string > silent_comments_;
 		utility::vector1< SilentEnergy > silent_energies_;
+
 
 	private:
 		/// @brief Updates the "score" entry in the silent_energies.

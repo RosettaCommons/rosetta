@@ -12,7 +12,7 @@
 /// @author Phil Bradley
 /// @author Andrew Leaver-Fay
 /// @author Rhiju Das
-
+/// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 // Unit Headers
 #include <core/scoring/carbon_hbonds/CarbonHBondEnergy.hh>
@@ -35,8 +35,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <core/chemical/AtomType.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
+#include <core/chemical/AtomType.hh>
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
@@ -447,7 +446,7 @@ CarbonHBondEnergy::res_res_carbon_hbond_derivs_one_way(
 {
 	bool const eval_bbbb( weights[ ch_bond ] != 0.0 || weights[ ch_bond_bb_bb ] != 0.0 );
 	bool const eval_bbsc( weights[ ch_bond ] != 0.0 || weights[ ch_bond_bb_sc ] != 0.0 );
-	bool const eval_scsc( weights[ ch_bond ] != 0.0 || weights[ ch_bond_bb_sc ] != 0.0 );
+	bool const eval_scsc( weights[ ch_bond ] != 0.0 || weights[ ch_bond_bb_sc ] != 0.0 ); //Mistake on this line? Parin S. (sripakpa@stanford.edu) Jan 11, 2012
 	bool const eval_bb( eval_bbsc || eval_bbbb );
 	bool const eval_sc( eval_bbsc || eval_scsc );
 
@@ -504,19 +503,34 @@ CarbonHBondEnergy::res_res_carbon_hbond_derivs_one_way(
 					f2 *= weights[ ch_bond ] + weights[ ch_bond_bb_sc ];
 				}
 
-				/// 2. f2 is the force vector on the hydrogen; compute f1 by taking the cross product
-				/// with the coordinate of the acceptor atom
-				don_atom_derivs[ don_h_atm ].f2() += f2;
-				Vector f1_H = cross( f2, acc_rsd.xyz( acc_atm )  );
-				don_atom_derivs[ don_h_atm ].f1() += f1_H;
+				if( use_orientation_dep_rna_ch_o_bonds(don_rsd, acc_rsd) ){
+					//The standard code doesn't appear to work properly for the RNA case (i.e. fail the numerical_derivative_check() test)
+					//I am including a special version for RNA. Parin S. (sripakpa@stanford.edu).  Jan 11, 2012
 
-				/// 3. Since f2 is the force vector on the hydrogen, negate it to get the force
-				/// vector on the acceptor; compute f1 by taking the cross product
-				/// with the coordinate of the hydrogen atom
-				f2 *= -1;
-				acc_atom_derivs[ acc_atm ].f2() += f2;
-				Vector f1_Acc = cross( f2, don_rsd.xyz( don_h_atm ) );
-				acc_atom_derivs[ acc_atm ].f1() += f1_Acc;
+					Vector const f1 = cross( f2, acc_rsd.xyz( acc_atm ) );
+
+					don_atom_derivs[ don_h_atm ].f2() += f2;
+					don_atom_derivs[ don_h_atm ].f1() += f1 ;
+
+					acc_atom_derivs[ acc_atm ].f2() -= f2;
+					acc_atom_derivs[ acc_atm ].f1() -= f1;
+
+				}else{
+
+					/// 2. f2 is the force vector on the hydrogen; compute f1 by taking the cross product
+					/// with the coordinate of the acceptor atom
+					don_atom_derivs[ don_h_atm ].f2() += f2;
+					Vector f1_H = cross( f2, acc_rsd.xyz( acc_atm )  );
+					don_atom_derivs[ don_h_atm ].f1() += f1_H;
+
+					/// 3. Since f2 is the force vector on the hydrogen, negate it to get the force
+					/// vector on the acceptor; compute f1 by taking the cross product
+					/// with the coordinate of the hydrogen atom
+					f2 *= -1;
+					acc_atom_derivs[ acc_atm ].f2() += f2;
+					Vector f1_Acc = cross( f2, don_rsd.xyz( don_h_atm ) );
+					acc_atom_derivs[ acc_atm ].f1() += f1_Acc;
+				}
 
 				/*std::cout << "  chbond deriv: " << energy << " " << don_rsd.seqpos() << " " << don_h_atm << " " << don_rsd.atom_name(don_h_atm) << " "
 					<< acc_rsd.seqpos() << " " << acc_atm <<  " " << acc_rsd.atom_name( acc_atm ) << " " << don_h_bb << " " << acc_bb << std::endl;
@@ -551,57 +565,16 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 
 	if ( !path_distance_OK( don_rsd, acc_rsd, don_atm, acc_atm ) ) return false; // Look more than four atoms away.
 
-	//Change by Parin on July 26, before I line have acc_rsd and acc_atm in the line BELOW, which I think is a mistake since should be donor...
-	//The hydrogen of the C5' are virtual atom what virtual phosphate type is turned on, would not have returned
-	//Also change from 1e-2 to 1e-3. The ATOM  C3* have charge 0.01, however this is ok since C3* does not participate in carbon hydrogen bond.
-	//Also what is don_h_atm and base_
 
-//Before July 26 look like this:
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//No virtual atom seem to reach to point, probably becuase virtual_atom is neither Hpos_apolar nor accpt_atom.
+	//But should still have these checks here just to be safe. [Parin S. (sripakpa@stanford.edu) Jan 11, 2012]
+	if( acc_rsd.is_virtual( acc_atm ) ) return false;
 
-//	if ( std::abs( acc_rsd.atomic_charge( acc_atm ) ) < 1e-3 ) return false; //Acceptor atom is virtual!
-//  if ( std::abs( acc_rsd.atomic_charge( acc_atm ) ) < 1e-3 ) return false; //Acceptor atom is virtual! Duplicate!!!
+	if( don_rsd.is_virtual( don_atm ) ) return false;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Between July 26 and Sep 3 look like this
-//	if ( std::abs( acc_rsd.atomic_charge( acc_atm ) ) < 1e-3 ) return false; //Acceptor atom is virtual!
-//	if ( std::abs( don_rsd.atomic_charge( don_atm ) ) < 1e-3 ) return false; //Donor base_atom is virtual!
-//	if ( std::abs( don_rsd.atomic_charge( don_h_atm ) ) < 1e-3 ) return false; //Donor hydrogen_atom is virtual ?? Is my understanding correct?
-/*
-	if ( std::abs( acc_rsd.atomic_charge( acc_atm ) ) < 1e-3 ) {std::cout << "VIRTUAL ACCEPTOR" << std::endl; return false;}
-	if ( std::abs( don_rsd.atomic_charge( don_atm ) ) < 1e-3 ) {std::cout << "VIRTUAL DONOR BASE" << std::endl; return false;}
-	if ( std::abs( don_rsd.atomic_charge( don_h_atm ) ) < 1e-3 ) {std::cout << "VIRTUAL DONOR HYDRO" << std::endl; return false;}
-*/
+	if( don_rsd.is_virtual( don_h_atm) ) return false;
 
-		//For some reason, the Virtual atom were screened and never reach this point.
-	if ( acc_rsd.is_virtual( acc_atm ) ){
-			conformation::Residue const & residue_object=acc_rsd;
-			Size atomno=acc_atm;
-			tr << "ACCEPTOR    ";
-			tr << "res_name= " << residue_object.name();
-			tr << " res_seqpos= " << residue_object.seqpos();
-			tr << " atom " << atomno  << " " << 	"name= " << residue_object.type().atom_name(atomno) << " type= " << residue_object.atom_type(atomno).name()  << " " << residue_object.atom_type_index(atomno) << " " << residue_object.atomic_charge(atomno) << std::endl;
-			return false;
-		}
-
-	if ( don_rsd.is_virtual( don_atm ) ){
-			conformation::Residue const & residue_object=don_rsd;
-			Size atomno=don_atm;
-			tr << "DONOR_BASE  ";
-			tr << "res_name= " << residue_object.name();
-			tr << " res_seqpos= " << residue_object.seqpos();
-			tr << " atom " << atomno  << " " << 	"name= " << residue_object.type().atom_name(atomno) << " type= " << residue_object.atom_type(atomno).name()  << " " << residue_object.atom_type_index(atomno) << " " << residue_object.atomic_charge(atomno) << std::endl;
-			return false;
-		}
-
-	if ( don_rsd.is_virtual( don_h_atm) ){
-			conformation::Residue const & residue_object=don_rsd;
-			Size atomno=don_h_atm;
-			tr << "DONOR_HYDR  ";
-			tr << "res_name= " << residue_object.name();
-			tr << " res_seqpos= " << residue_object.seqpos();
-			tr << " atom " << atomno  << " " << 	"name= " << residue_object.type().atom_name(atomno) << " type= " << residue_object.atom_type(atomno).name()  << " " << residue_object.atom_type_index(atomno) << " " << residue_object.atomic_charge(atomno) << std::endl;
-			return false;
-		}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -616,7 +589,8 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 	Vector D_H_vector = don_h_atm_xyz - don_atm_xyz;
 	Vector B_A_vector = acc_atm_xyz - base_atm_xyz;
 
-	if ( orientation_dep_rna_ch_o_bonds_ && don_rsd.is_RNA() && acc_rsd.is_RNA() ) {
+
+	if( use_orientation_dep_rna_ch_o_bonds(don_rsd, acc_rsd) ){
 
 		Vector const r_H_A( acc_atm_xyz  - don_h_atm_xyz );
 		Vector const z_D_H( ( don_h_atm_xyz - don_atm_xyz ).normalize() );
@@ -920,6 +894,15 @@ CarbonHBondEnergy::version() const
 	return 1; // Initial versioning
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////
+bool
+CarbonHBondEnergy::use_orientation_dep_rna_ch_o_bonds(conformation::Residue const & don_rsd, conformation::Residue const & acc_rsd) const 
+{
+
+	return ( orientation_dep_rna_ch_o_bonds_ && don_rsd.is_RNA() && acc_rsd.is_RNA() );
+
+}
+////////////////////////////////////////////////////////////////////////////////////////////
 
 } // carbon_hbonds
 } // scoring

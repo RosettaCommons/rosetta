@@ -11,17 +11,17 @@
 /// @brief
 /// @detailed
 ///
+/// @author Parin Sripakdeevong
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_PoseSetup_hh
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_PoseSetup_hh
+#ifndef INCLUDED_protocols_swa_SWA_PoseSetup_hh
+#define INCLUDED_protocols_swa_SWA_PoseSetup_hh
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
-//#include <protocols/rna/RNA_StructureParameters.hh> //how about using a fwd file?
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
@@ -31,127 +31,137 @@
 #include <string>
 #include <map>
 
+
 namespace protocols {
 namespace swa {
 namespace rna {
 
-//	typedef std::map< std::string, core::pose::PoseOP > PoseList;
+	//	typedef std::map< std::string, core::pose::PoseOP > PoseList;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-class StepWiseRNA_PoseSetup: public protocols::moves::Mover {
-public:
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  class StepWiseRNA_PoseSetup: public protocols::moves::Mover {
+  public:
 
-	//constructor!
-	StepWiseRNA_PoseSetup( Size const & moving_res,
-		std::string const & desired_sequence,
-		utility::vector1< std::string > const & input_tags,
-		utility::vector1< std::string > const & silent_files_in,
-		utility::vector1< core::Size > const & input_res,
-		utility::vector1< core::Size > const & input_res2,
-		utility::vector1< core::Size > const & cutpoint_open,
-		Size const & cutpoint_closed
-	);
+    //constructor!
+		StepWiseRNA_PoseSetup(StepWiseRNA_JobParametersOP & job_parameters);
 
-	//destructor -- necessary?
-	~StepWiseRNA_PoseSetup();
+    //destructor -- necessary?
+    ~StepWiseRNA_PoseSetup();
 
-	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+		/////////////////////////////////////////////////////////////////////////
 
-	virtual std::string get_name() const;
+	  virtual void apply( core::pose::Pose & pose);    
 
-	StepWiseRNA_JobParametersOP & job_parameters();
+		virtual std::string get_name() const;
 
-	void
-	set_fixed_res(utility::vector1 < core::Size > const & fixed_res );
+		void
+		set_input_tags( utility::vector1< std::string > const & setting){ input_tags_=setting; } //Only called if COPY_DOF is true
 
-	void
-	set_terminal_res(utility::vector1 < core::Size > const & terminal_res );
+		void
+		set_silent_files_in( utility::vector1< std::string > const & setting){ silent_files_in_= setting; } //Only called if COPY_DOF is true
 
-	void
-	set_bulge_res(utility::vector1 < core::Size > const & bulge_res );
+		void
+		set_parin_favorite_output( bool const setting){ parin_favorite_output_=setting; }
 
-private:
+		void
+		set_bulge_res( utility::vector1 < core::Size > const & bulge_res ){ bulge_res_ = bulge_res; }
 
-	void
-	Import_pose( Size const & i, core::pose::Pose & import_pose) const;
+		void
+		set_virtual_res( utility::vector1 < core::Size > const & virtual_res_list){ virtual_res_list_ = virtual_res_list; } 	
 
-	void
-	check_moving_res_in_chain( Size const & start_chain, Size const & end_chain,
-														 Size const & num_chains, Size & which_chain_has_moving_res  );
+		void
+		set_native_virtual_res( utility::vector1 < core::Size > const & native_virtual_res_list ){ native_virtual_res_list_ = native_virtual_res_list; } //Parin Mar 22, 2010
 
-	void
-	figure_out_working_sequence_and_mapping();
+		void
+		set_copy_DOF( bool const setting){ copy_DOF_=setting;} //Parin Mar 29, 2010
 
-	void
-	figure_out_jump_partners();
+		void
+		set_verbose( bool const setting){ verbose_=setting;}
+		
+		void
+		setup_native_pose( core::pose::Pose const & pose );
 
-	void
-	figure_out_cuts();
+		//void
+		//set_sampler_native_rmsd_screen( bool const setting) { sampler_native_rmsd_screen_= setting; }
+
+		void
+		set_FARFAR_start_pdb( std::string const setting){ FARFAR_start_pdb_= setting; }
+
+		void
+		set_rebuild_bulge_mode( bool const setting){ rebuild_bulge_mode_=setting;}
+
+		void
+		set_output_pdb( bool const setting){ output_pdb_=setting;}
+
+  	private:
+
+		void
+		Import_pose( Size const & i, core::pose::Pose & import_pose) const; //Only called if COPY_DOF is true
+
+		void
+		make_pose( core::pose::Pose & pose ); //Only called if COPY_DOF is true
+
+		void
+		read_input_pose_and_copy_dofs( core::pose::Pose & pose ); //Only called if COPY_DOF is true
+
+		void
+		apply_cutpoint_variants( core::pose::Pose & pose , core::pose::Pose & pose_without_cutpoints);
+
+		void
+		check_close_chain_break( core::pose::Pose const & pose ) const;
+
+		void
+		apply_bulge_variants( core::pose::Pose & pose ) const;
+
+		void
+		apply_virtual_phosphate_variants( core::pose::Pose & pose ) const;
+
+		void
+		add_terminal_res_repulsion( core::pose::Pose & pose ) const;
+
+ 		void
+ 		apply_virtual_res_variant(core::pose::Pose & pose ) const;
+
+		void
+		correctly_copy_HO2star_positions( core::pose::Pose & full_pose , utility::vector1<core::pose::Pose> const & start_pose_list);
+
+		core::Real
+		get_nearest_dist_to_O2star( core::Size const O2star_seq_num, core::pose::Pose const & input_pose, utility::vector1< core::Size > const input_res_list , utility::vector1< core::Size > const & common_res_list);
+
+		//void 
+		//ensure_idealize_bond_length_bond_angle_at_cutpoint( core::pose::Pose & working_pose);
+
+		void
+		add_protonated_H1_adenosine_variants( core::pose::Pose & pose ) const;
+
+		void
+		verify_protonated_H1_adenosine_variants( core::pose::Pose & pose ) const;
+
+	private:
+
+//		utility::vector1< utility::vector1< Size > > input_res_vectors_;
+
+		core::chemical::ResidueTypeSetCAP rsd_set_;
+		utility::vector1< std::string > input_tags_;
+		utility::vector1< std::string > silent_files_in_;
+		StepWiseRNA_JobParametersOP job_parameters_;
+		bool copy_DOF_;
+		bool verbose_;
+
+		bool parin_favorite_output_;
 
 
-	void
-	make_pose( core::pose::Pose & pose );
+		utility::vector1< Size > bulge_res_;
+		utility::vector1< Size > virtual_res_list_;
+		utility::vector1< Size > native_virtual_res_list_;
 
-	void
-	read_input_pose_and_copy_dofs( core::pose::Pose & pose );
+		//bool sampler_native_rmsd_screen_;
+		std::string FARFAR_start_pdb_;
+		bool rebuild_bulge_mode_; 
+		bool output_pdb_;
 
-
-	void
-	figure_out_Prepend_Internal( core::pose::Pose const & pose );
-
-	void
-	figure_out_partition_definition( core::pose::Pose const & pose );
-
-	void
-	figure_out_gap_size_and_five_prime_chain_break_res();
-
-	void
-	reroot_fold_tree( core::pose::Pose & pose );
-
-	void
-	apply_cutpoint_variants( core::pose::Pose & pose ) const;
-
-	void
-	check_close_chain_break( core::pose::Pose const & pose ) const;
-
-	void
-	apply_bulge_variants( core::pose::Pose & pose ) const;
-
-	void
-	slice_native();
-
-	utility::vector1< Size > const
-	apply_full_to_sub_mapping( utility::vector1< Size > & res_vector) const;
-
-	void
-	apply_virtual_phosphate_variants( core::pose::Pose & pose ) const;
-
-
-private:
-
-	Size const moving_res_;
-	std::string const desired_sequence_;
-	core::chemical::ResidueTypeSetCAP rsd_set_;
-
-	utility::vector1< std::string > const input_tags_;
-	utility::vector1< std::string > const silent_files_in_;
-	utility::vector1< utility::vector1< Size > > input_res_vectors_;
-	utility::vector1< Size > const cutpoint_open_;
-	utility::vector1< Size > fixed_res_;
-	utility::vector1< Size > terminal_res_;
-	utility::vector1< Size > bulge_res_;
-	Size const cutpoint_closed_;
-	ObjexxFCL::FArray1D< bool > is_cutpoint_;
-
-	utility::vector1< std::pair< core::Size, core::Size > > jump_partners_;
-	utility::vector1< core::Size > cuts_;
-
-	StepWiseRNA_JobParametersOP job_parameters_;
-
-	bool const virtualize_5prime_phosphates_;
-};
+	};
 
 }
 } //swa

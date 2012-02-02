@@ -85,6 +85,15 @@ public:
 		EnergyMap & emap
 	) const;
 
+	void
+	eval_atom_derivative_intra_RNA(
+		 id::AtomID const & atom_id,
+		 pose::Pose const & pose,
+		 EnergyMap const & weights,
+		 Vector & F1,
+		 Vector & F2
+	) const;
+
 	/// f1 and f2 are zeroed
 	virtual
 	void
@@ -115,14 +124,14 @@ public:
 
 	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
+	defines_intrares_energy( EnergyMap const & weights ) const;
 
 	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
+		ScoreFunction const & ,
 		EnergyMap & emap
 	) const;
 
@@ -228,6 +237,16 @@ private:
 		bool const update_deriv = false,
 		hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
 	) const;
+
+	Real
+	donorRes_occludingRes_geometric_sol_RNA_intra(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose ) const;
+
+	Real
+	acceptorRes_occludingRes_geometric_sol_RNA_intra(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose ) const;
 
 private:
 

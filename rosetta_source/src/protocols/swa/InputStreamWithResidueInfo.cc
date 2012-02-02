@@ -297,7 +297,7 @@ namespace swa {
 
 		using namespace core::chemical;
 
-		protocols::rna::ensure_phosphate_nomenclature_matches_mini_parin( import_pose );
+		protocols::rna::make_phosphate_nomenclature_matches_mini( import_pose );
 
 		// No virtual anything!
 		utility::vector1< std::string > remove_variants;

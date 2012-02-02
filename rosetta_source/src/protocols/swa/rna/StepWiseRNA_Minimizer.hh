@@ -20,9 +20,11 @@
 //#include <numeric/xyzMatrix.hh>
 //#include <numeric/xyzVector.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/StepWiseJobParameters.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
+#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -32,7 +34,6 @@
 #include <string>
 #include <map>
 
-//Auto Headers
 namespace protocols {
 namespace swa {
 namespace rna {
@@ -48,7 +49,7 @@ namespace rna {
     //constructor!
     StepWiseRNA_Minimizer(
             utility::vector1 <pose_data_struct2> const & pose_data_list,
-						protocols::swa::StepWiseJobParametersCOP & job_parameters );
+						StepWiseRNA_JobParametersCOP & job_parameters );
 
     //destructor -- necessary?
     ~StepWiseRNA_Minimizer();
@@ -56,8 +57,7 @@ namespace rna {
     /// @brief Apply the minimizer to one pose
     virtual void apply( core::pose::Pose & pose_to_visualize );
 
-	virtual std::string get_name() const;
-
+		virtual std::string get_name() const;
 
     void
 		set_silent_file( std::string const & silent_file );
@@ -74,35 +74,81 @@ namespace rna {
 		set_base_centroid_screener( StepWiseRNA_BaseCentroidScreenerOP & screener );
 
 		void
-		set_minimize_rounds( Size const value ){ minimize_rounds_ = value; }
+		set_verbose( bool const setting){verbose_=setting;} 
+
+		void
+		set_centroid_screen(bool const setting){centroid_screen_=setting;} //For testing purposes.
+
+		void
+		set_perform_o2star_pack(bool const setting){ perform_o2star_pack_=setting;} //For testing purposes.
+
+		void
+		set_output_before_o2star_pack(bool const setting){output_before_o2star_pack_=setting;} //For testing purposes.
+
+		void
+		set_skip_minimize(bool const setting){skip_minimize_=setting;} //For testing purposes.
+
+		void
+		set_num_pose_minimize(Size const setting){num_pose_minimize_=setting;} 
+
+		void
+		set_minimize_and_score_sugar(bool const setting){minimize_and_score_sugar_=setting;}
+
+		void
+		set_native_rmsd_screen( bool const & setting ){native_screen_=setting;}
+
+		void
+		set_native_screen_rmsd_cutoff( core::Real const & setting ){native_screen_rmsd_cutoff_=setting;}
+
+		void
+		set_user_input_VDW_bin_screener(StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
 
   private:
 
 		utility::vector1 <core::kinematics::MoveMap>
 		Get_default_movemap( core::pose::Pose const & pose ) const;
 
+		void
+		Figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const;
+
 		bool
 		Pose_screening(core::pose::Pose & pose, std::string tag, core::io::silent::SilentFileData & silent_file_data) const;
+
+		void
+		Freeze_sugar_torsions(core::kinematics::MoveMap & mm, Size const nres) const;
 
 	private:
 
 		utility::vector1 <pose_data_struct2> const pose_data_list_;
-		protocols::swa::StepWiseJobParametersCOP job_parameters_;
+		StepWiseRNA_JobParametersCOP job_parameters_;
 
 		core::io::silent::SilentFileDataOP sfd_;
 		utility::vector1 <core::kinematics::MoveMap> move_map_list_;
 		core::scoring::ScoreFunctionOP scorefxn_;
 		std::string silent_file_;
-		bool const verbose_;
-		bool const native_screen_;
-		bool const rmsd_cutoff_;
+		bool verbose_;
+		bool screen_verbose_;
+		bool native_screen_;
+		core::Real native_screen_rmsd_cutoff_;
+
+		bool centroid_screen_; //for testing purposes
+
+		bool perform_o2star_pack_; //Jan 19, 2012
+		bool output_before_o2star_pack_; //for testing purposes
+
+		bool skip_minimize_; //for testing purposes
+
+		core::Size num_pose_minimize_; 
+		bool minimize_and_score_sugar_; 
+
 		std::map< core::id::AtomID, core::id::AtomID > pose_to_native_map_;
 
 		utility::vector1< core::Size > fixed_res_;
 
 		StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 
-		Size minimize_rounds_;
+		StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;
+
 
   };
 

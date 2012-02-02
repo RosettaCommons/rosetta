@@ -1,0 +1,11 @@
+Jan 05, 2012: 
+	--> moved rna_loop_hires_04092010.wts CD_geom_sol_rna_loop_hires_04092010.wts (Context depedent geometric solvation version |SLOW)
+  --> moved rna_loop_hires_07232011.wts rna_loop_hires_04092010.wts             (Context indepedent geometric solvation version|FAST)
+
+Conclusion:
+CD_geom_sol_rna_loop_hires_04092010.wts is the original score file used to run the SWA loop benchmark.
+rna_loop_hires_04092010.wts (new) is basically the same file but with geom_sol replaced by CI_geom_sol (Context indepedent version)
+---------------------------------------------------------------------------------------------------------------------
+Jan 09, 2012:
+In rna_hires_07232011_with_intra_base_phosphate.wts,
+   --> changed geom_sol_intra_RNA           0.62 to   CI_geom_sol_intra_RNA        0.62
