@@ -44,6 +44,7 @@ namespace star {
 using core::Real;
 using core::Size;
 using core::pose::Pose;
+using utility::vector1;
 
 static const Real EXT_PHI = -150;
 static const Real EXT_PSI = +150;
@@ -77,7 +78,6 @@ Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_resid
     : alignment_(alignment), num_residues_(num_residues) {
   using core::id::SequenceMapping;
   using protocols::loops::Loops;
-  using utility::vector1;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
@@ -107,7 +107,7 @@ Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_resid
   }
 
   std::sort(unaligned_res.begin(), unaligned_res.end());
-  utility::vector1<int>::const_iterator i = std::unique(unaligned_res.begin(), unaligned_res.end());
+  vector1<int>::const_iterator i = std::unique(unaligned_res.begin(), unaligned_res.end());
   unaligned_res.resize(i - unaligned_res.begin());
 
   int min_len = option[OptionKeys::abinitio::star::min_unaligned_len]();
@@ -144,15 +144,12 @@ void Extender::extend_unaligned(Pose* pose) {
   pose->fold_tree(r2l);
   copy_residues(reference, f1.start(), f1.stop(), pose);
   core::conformation::idealize_position(f1.start() - 1, pose->conformation());
-  pose->dump_pdb("pose_a.pdb");
 
   pose->fold_tree(l2r);
   core::conformation::idealize_position(f1.stop(), pose->conformation());
-  pose->dump_pdb("pose_b.pdb");
 
   copy_residues(reference, f2.start(), f2.stop(), pose);
   core::conformation::idealize_position(f2.stop(), pose->conformation());
-  pose->dump_pdb("pose_c.pdb");
 
   unsigned cut = choose_cutpoint(f1.stop() + 1, f2.start() - 1);
   cutpoints_.push_back(cut);
@@ -160,8 +157,6 @@ void Extender::extend_unaligned(Pose* pose) {
 
 int Extender::choose_cutpoint(int start, int stop) const {
   using numeric::random::WeightedReservoirSampler;
-  using utility::vector1;
-
   assert(start > 0);
   assert(start <= stop);
 

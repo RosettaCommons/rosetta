@@ -67,17 +67,10 @@ class Extender : private boost::noncopyable {
   }
 
  protected:
-  /// @brief Helper method for settings the torsion angles of a contiguous set
-  /// of residues to their extended values and idealizing bond length and angle.
-  void extend_section(int start, int stop, core::pose::Pose* pose) const;
-
   /// @detail Selects a cutpoint on the closed interval [start, stop] using
   /// weighted reservoir sampling. Each residue's weight is proportional to its
   /// likelihood of being a loop.
   int choose_cutpoint(int start, int stop) const;
-
-  /// @detail Replaces pose's fold tree with a simple fold tree of num_residues.
-  void simple_fold_tree(core::pose::Pose* pose) const;
 
  private:
   core::sequence::SequenceAlignmentCOP alignment_;
