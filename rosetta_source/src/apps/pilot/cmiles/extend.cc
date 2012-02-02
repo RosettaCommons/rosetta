@@ -5,13 +5,11 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <devel/init.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
@@ -24,16 +22,13 @@
 #include <core/scoring/rms_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 
-using namespace std;
-using namespace core;
-using namespace core::kinematics;
-using namespace core::pose;
-using namespace protocols::loops;
+using core::Size;
+using core::pose::Pose;
+using core::pose::PoseOP;
 
-void generate_extended_pose(Pose* extended_pose, const string& sequence) {
-  core::pose::make_pose_from_sequence(*extended_pose, sequence, *(chemical::ChemicalManager::get_instance()->residue_type_set(chemical::CENTROID)));
+void generate_extended_pose(Pose* extended_pose, const std::string& sequence) {
+  core::pose::make_pose_from_sequence(*extended_pose, sequence, "centroid");
 
   for (Size i = 1; i <= extended_pose->total_residue(); ++i) {
     extended_pose->set_phi(i, -150);
@@ -43,12 +38,11 @@ void generate_extended_pose(Pose* extended_pose, const string& sequence) {
 }
 
 void copy_residues(const Pose& src, Size start, Size stop, Pose* dst) {
-  using namespace core::conformation;
-  using namespace core::id;
+  using core::id::AtomID;
+  using core::conformation::Residue;
 
   for (Size i = start; i <= stop; ++i) {
     const Residue& r = src.conformation().residue(i);
-    const Residue& s = dst->conformation().residue(i);
 
     for (Size j = 1; j <= r.natoms(); ++j) {
       AtomID id(j, i);
@@ -58,13 +52,15 @@ void copy_residues(const Pose& src, Size start, Size stop, Pose* dst) {
 }
 
 int main(int argc, char* argv[]) {
+  using core::kinematics::FoldTree;
+  using protocols::loops::Loop;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   devel::init(argc, argv);
 
   // structure to borrow from
   PoseOP reference = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
-  core::util::switch_to_residue_type_set(*reference, core::chemical::CENTROID);
+  core::util::switch_to_residue_type_set(*reference, "centroid");
   reference->dump_pdb("reference.pdb");
 
   Pose pose;
