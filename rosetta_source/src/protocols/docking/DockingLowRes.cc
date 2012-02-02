@@ -178,12 +178,16 @@ void DockingLowRes::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
 
 void DockingLowRes::set_ensemble1( DockingEnsembleOP ensemble1 )
 {
-	if ( ensemble1 ) ensemble1_mover_ = new protocols::docking::ConformerSwitchMover( ensemble1 );
+	if ( ensemble1 ){
+		ensemble1_mover_ = new protocols::docking::ConformerSwitchMover( ensemble1 );
+	}
 }
 
 void DockingLowRes::set_ensemble2( DockingEnsembleOP ensemble2 )
 {
-	if ( ensemble2 ) ensemble2_mover_= new protocols::docking::ConformerSwitchMover( ensemble2 );
+	if ( ensemble2 ){
+		ensemble2_mover_= new protocols::docking::ConformerSwitchMover( ensemble2 );
+	}
 }
 
 void DockingLowRes::finalize_setup( core::pose::Pose & pose){
@@ -238,7 +242,7 @@ void DockingLowRes::apply( core::pose::Pose & pose )
 
 	show( TR );
 
-	TR << "::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::\n";
+	TR << "::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::" << std::endl;
 
 	for ( core::Size i=1; i<=outer_cycles_; ++i) {
 		rigid_body_trial( pose );

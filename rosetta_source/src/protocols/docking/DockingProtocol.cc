@@ -505,7 +505,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		core::Size const rb_jump = movable_jumps_[1];
 		Size start_res(1), end_res(1), cutpoint(pose.fold_tree().cutpoint_by_jump( rb_jump ));
 
-		lowres_inner_cycles_ = 25;
+		//lowres_inner_cycles_ = 25;	// Should be 50 (default value for traditional docking); modified by DK
 
 		TR << "Ensemble 1: " << ensemble1_filename_ << std::endl;
 		start_res = 1;

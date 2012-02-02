@@ -125,6 +125,13 @@ void DockingEnsemble::load_ensemble()
 	}
 
 	ensemble_list_ = core::import_pose::poses_from_pdbs( pdb_filenames_ );
+	ensemble_list_cen_ = core::import_pose::poses_from_pdbs( pdb_filenames_ );	// Add by DK
+
+	//Add by DK
+	for (Size i = 1; i <= ensemble_list_cen_.size(); i++){
+		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+		to_centroid.apply( ensemble_list_cen_[i] );
+	}
 }
 
 void DockingEnsemble::recover_conformer_sidechains( core::pose::Pose & pose )

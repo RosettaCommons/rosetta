@@ -88,8 +88,9 @@ public:
 	void set_current_confnum( core::Size conf_num ) { conf_num_ = conf_num; }
 	core::Size get_current_confnum() { return conf_num_; }
 
-	// @brief return a pose from the ensemble
+	// @brief return a pose from the ensemble (Either fullatom or centroid)
 	core::pose::Pose & get_conformer( core::Size conf_num ) { return ensemble_list_[conf_num]; }
+	core::pose::Pose & get_conformer_cen( core::Size conf_num ) { return ensemble_list_cen_[conf_num]; }	// Add by DK
 
 	// @brief simple getters
 	core::Size size() { return ensemble_size_; }
@@ -118,6 +119,7 @@ private:
 	core::scoring::ScoreFunctionCOP scorefxn_low_, scorefxn_high_;
 	utility::vector1< std::string > pdb_filenames_;
 	utility::vector1< core::pose::Pose > ensemble_list_;
+	utility::vector1< core::pose::Pose > ensemble_list_cen_;
 	utility::vector1< core::Real > lowres_reference_energies_, highres_reference_energies_;
 
 	protocols::moves::SequenceMoverOP pack_operations_;

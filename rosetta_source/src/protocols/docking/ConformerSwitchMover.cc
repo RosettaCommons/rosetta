@@ -98,6 +98,7 @@ ConformerSwitchMover::ConformerSwitchMover(
 	temperature_(0.8)
 {
 	ensemble_ = ensemble;
+
 	lowres_filter_ = new protocols::docking::DockingLowResFilter();
 }
 
@@ -126,6 +127,7 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 	}
 
 	TR << "Switching partner with conformer: " << conf_num << std::endl;
+
 	switch_conformer( pose, conf_num );
 	ensemble_->set_current_confnum( conf_num );
 
@@ -184,11 +186,13 @@ void ConformerSwitchMover::switch_conformer(
 	core::Size conf_num
 	)
 {
-	core::pose::Pose new_conf = ensemble_->get_conformer(conf_num);
+//	core::pose::Pose new_conf = ensemble_->get_conformer(conf_num);		// new_conf is fullatom
+	core::pose::Pose new_conf = ensemble_->get_conformer_cen(conf_num);	// new_conf is centroid; Add by DK
 
-	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
-	to_centroid.apply( new_conf );
-
+// Comment out by DK for speed up
+//	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+//	to_centroid.apply( new_conf );
+//
 	(*(ensemble_->scorefxn_low()))(pose);
 	scoring::Interface interface( ensemble_->jump_id() );
 
@@ -210,8 +214,8 @@ void ConformerSwitchMover::switch_conformer(
 	core::pose::initialize_atomid_map( atom_map, new_conf, core::id::BOGUS_ATOM_ID ); // maps every atomid to bogus
 
 	for (Size i = 1; i <= conf_interface.size(); i++){
-		 Size new_conf_resnum = conf_interface[i]-ensemble_->start_res()+1;
-		 Size pose_resnum = conf_interface[i];
+		Size new_conf_resnum = conf_interface[i]-ensemble_->start_res()+1;
+		Size pose_resnum = conf_interface[i];
 		core::id::AtomID const id1( new_conf.residue(new_conf_resnum).atom_index("CA"), new_conf_resnum );
 		core::id::AtomID const id2( pose.residue(pose_resnum).atom_index("CA"), pose_resnum );
 		atom_map[ id1 ] = id2;
