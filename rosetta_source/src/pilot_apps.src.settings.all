@@ -477,10 +477,7 @@ sources = {
 		#"rna_protein_test", # /* Rhiju Das, private app*/
 		#"pdbstats_test" # /* Rhiju Das, private app*/
 	],
-	"pilot/swa_rna" : [
-		#"rna_swa_test", # /* Das Lab, private app*/
-	],
-	 "pilot/momeara" : [
+	"pilot/momeara" : [
 		"hbonds_test", # /* Matt O'Meara,Documentation Location,Demo Location */
 		"format_converter",
 		#"hbond_param_sweep",
