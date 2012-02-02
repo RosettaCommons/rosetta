@@ -378,6 +378,7 @@ sources = {
 		"RestrictOperationsBase",
 		"RestrictResiduesToRepackingOperation",
 		"RestrictToAlignedSegments",
+		"RestrictToCDRH3Loop",
 		"RestrictToInterface",
 		"RestrictToInterfaceOperation",
 		"RestrictToInterfaceVectorOperation",

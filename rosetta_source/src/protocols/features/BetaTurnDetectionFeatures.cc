@@ -74,8 +74,9 @@ using utility::tag::TagPtr;
 using cppdb::statement;
 using cppdb::result;
 
-static Size const beta_turn_length = 3;
-static core::Real const beta_turn_distance_cutoff = 7.0;
+bool BetaTurnDetectionFeatures::initialized_( false );
+Size const BetaTurnDetectionFeatures::beta_turn_length = 3;
+core::Real const BetaTurnDetectionFeatures::beta_turn_distance_cutoff = 7.0;
 map< string, string > BetaTurnDetectionFeatures::conformation_to_turn_type_;
 
 BetaTurnDetectionFeatures::BetaTurnDetectionFeatures() :
@@ -166,6 +167,9 @@ BetaTurnDetectionFeatures::report_features(
 
 void BetaTurnDetectionFeatures::setup_conformation_to_turn_type_map()
 {
+    if ( initialized_ ) return;
+    initialized_ = true;
+    
 	// These turn types are well characterized
 	conformation_to_turn_type_[ "AA" ] = "I";	
 	conformation_to_turn_type_[ "LL" ] = "I'";

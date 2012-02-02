@@ -78,8 +78,11 @@ private:
 	std::string determine_ramachandran_hash( core::Real phi, core::Real psi, core::Real omega ) const;
 	
 private:
-	static std::map< std::string, std::string > conformation_to_turn_type_;
-
+    static bool initialized_;
+	static Size const beta_turn_length;
+    static core::Real const beta_turn_distance_cutoff;
+    static std::map< std::string, std::string > conformation_to_turn_type_;
+    
 };
 
 } // features namespace
