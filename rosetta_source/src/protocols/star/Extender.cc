@@ -19,14 +19,19 @@
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/WeightedReservoirSampler.hh>
+#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // Project headers
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/rms_util.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loop.hh>
@@ -36,9 +41,37 @@
 namespace protocols {
 namespace star {
 
-static const double EXT_PHI = -150;
-static const double EXT_PSI = +150;
-static const double EXT_OMG = +180;
+using core::Real;
+using core::Size;
+using core::pose::Pose;
+
+static const Real EXT_PHI = -150;
+static const Real EXT_PSI = +150;
+static const Real EXT_OMG = +180;
+
+void generate_extended_pose(Pose* extended_pose, const std::string& sequence) {
+  core::pose::make_pose_from_sequence(*extended_pose, sequence, "centroid");
+
+  for (Size i = 1; i <= extended_pose->total_residue(); ++i) {
+    extended_pose->set_phi(i, EXT_PHI);
+    extended_pose->set_psi(i, EXT_PSI);
+    extended_pose->set_omega(i, EXT_OMG);
+  }
+}
+
+void copy_residues(const Pose& src, Size start, Size stop, Pose* dst) {
+  using core::id::AtomID;
+  using core::conformation::Residue;
+
+  for (Size i = start; i <= stop; ++i) {
+    const Residue& r = src.conformation().residue(i);
+
+    for (Size j = 1; j <= r.natoms(); ++j) {
+      AtomID id(j, i);
+      dst->set_xyz(id, src.xyz(id));
+    }
+  }
+}
 
 Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_residues)
     : alignment_(alignment), num_residues_(num_residues) {
@@ -85,99 +118,44 @@ Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_resid
   aligned_->sequential_order();
 }
 
-void Extender::extend_section(int start, int stop, core::pose::Pose* pose) const {
-  using protocols::loops::Loop;
-  using protocols::loops::Loops;
-
-  assert(pose);
-  assert(start > 0);
-  assert(start <= stop);
-  assert(stop <= num_residues_);
-
-  Loops region;
-  region.add_loop(Loop(start, stop));
-  protocols::loops::set_extended_torsions_and_idealize_loops(*pose, region);
-}
-
-void Extender::extend_unaligned(core::pose::Pose* pose) {
+void Extender::extend_unaligned(Pose* pose) {
   using core::kinematics::FoldTree;
   using protocols::loops::Loop;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
 
-  assert(pose);
-  assert(aligned_->num_loop() >= 2);
+  if (aligned_->num_loop() != 2) {
+    utility_exit_with_message("Unsupported operation");
+  }
 
   // Keep track of the cutpoints we introduce
   cutpoints_.clear();
 
-  const Loop& first = (*aligned_)[1];
-  const Loop& last = (*aligned_)[aligned_->num_loop()];
+  const Pose reference = *pose;
 
-  bool has_preceding_region = first.start() > 1;
-  bool has_trailing_region = last.stop() < num_residues_;
+  generate_extended_pose(pose, reference.sequence());
+  core::scoring::calpha_superimpose_pose(*pose, reference);
 
-  // beginning
-  if (has_preceding_region) {
-    extend_section(1, first.start() - 1, pose);
-    pose->set_phi(first.start(), EXT_PHI);
-    core::conformation::idealize_position(first.start(), pose->conformation());
-  }
+  const Loop& f1 = (*aligned_)[1];
+  const Loop& f2 = (*aligned_)[2];
 
-  // end
-  if (has_trailing_region) {
-    simple_fold_tree(pose);
-    extend_section(last.stop() + 1, num_residues_, pose);
-    pose->set_omega(last.stop(), EXT_OMG);
-    core::conformation::idealize_position(last.stop(), pose->conformation());
-  }
+  FoldTree l2r, r2l;
+  l2r.add_edge(1, pose->total_residue(), core::kinematics::Edge::PEPTIDE);
+  r2l.add_edge(pose->total_residue(), 1, core::kinematics::Edge::PEPTIDE);
 
-  // interior
-  for (unsigned i = 2; i <= aligned_->num_loop(); ++i) {
-    const Loop& prev = (*aligned_)[i - 1];
-    const Loop& curr = (*aligned_)[i];
+  pose->fold_tree(r2l);
+  copy_residues(reference, f1.start(), f1.stop(), pose);
+  core::conformation::idealize_position(f1.start() - 1, pose->conformation());
+  pose->dump_pdb("pose_a.pdb");
 
-    // If the sequence separation between consecutive aligned regions <= x,
-    // chain the unaligned residues off the first aligned region. Otherwise,
-    // split the unaligned residues between the two aligned regions.
-    unsigned separation = curr.start() - prev.stop();
+  pose->fold_tree(l2r);
+  core::conformation::idealize_position(f1.stop(), pose->conformation());
+  pose->dump_pdb("pose_b.pdb");
 
-    if (separation <= option[OptionKeys::abinitio::star::short_loop_len]()) {
-      FoldTree tree(num_residues_);
-      tree.new_jump(1, curr.start(), curr.start() - 1);
-      pose->fold_tree(tree);
-      extend_section(prev.stop(), curr.start() - 2, pose);
+  copy_residues(reference, f2.start(), f2.stop(), pose);
+  core::conformation::idealize_position(f2.stop(), pose->conformation());
+  pose->dump_pdb("pose_c.pdb");
 
-      // Since we chained the unaligned residues off one side (i.e. `prev`),
-      // set the cutpoint before the first residue on the other side (i.e. `curr`)
-      cutpoints_.push_back(curr.start() - 1);
-    } else {
-      unsigned cut = choose_cutpoint(prev.stop() + 1, curr.start() - 1);
-      cutpoints_.push_back(cut);
-
-      FoldTree tree(num_residues_);
-      tree.new_jump(1, curr.start() + 1, cut);
-      pose->fold_tree(tree);
-
-      // Extend torsions left of the cut-- incr order toward cut
-      for (unsigned i = prev.stop(); i < cut; ++i) {
-        pose->set_phi(i, EXT_PHI);
-        pose->set_psi(i, EXT_PSI);
-        pose->set_omega(i, EXT_OMG);
-        core::conformation::idealize_position(i, pose->conformation());
-      }
-
-      // Extend torsions right of the cut-- decr order toward cut
-      for (unsigned i = curr.start(); i >= cut; --i) {
-        pose->set_phi(i, EXT_PHI);
-        pose->set_psi(i, EXT_PSI);
-        pose->set_omega(i, EXT_OMG);
-        core::conformation::idealize_position(i, pose->conformation());
-      }
-    }
-  }
-
-  simple_fold_tree(pose);
+  unsigned cut = choose_cutpoint(f1.stop() + 1, f2.start() - 1);
+  cutpoints_.push_back(cut);
 }
 
 int Extender::choose_cutpoint(int start, int stop) const {
@@ -201,12 +179,6 @@ int Extender::choose_cutpoint(int start, int stop) const {
   vector1<int> samples;
   sampler.samples(&samples);
   return samples[1];
-}
-
-void Extender::simple_fold_tree(core::pose::Pose* pose) const {
-  assert(pose);
-  core::kinematics::FoldTree tree(num_residues_);
-  pose->fold_tree(tree);
 }
 
 }  // namespace star
