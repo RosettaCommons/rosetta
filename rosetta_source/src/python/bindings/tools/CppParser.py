@@ -770,7 +770,9 @@ class CppClass:
     #def getCallbackClassName(self): return 'PY_'+ self.name
     def getCallbackClassName(self): return self.name
 
-    def getExposerName(self, name): return name.replace(' ', '_').replace('<', '_T_').replace('>', '_T').replace('::', '_').replace(',', '_') + '_exposer'
+    def getMangledName(self, name): return name.replace(' ', '_').replace('<', '_T_').replace('>', '_T').replace('::', '_').replace(',', '_')
+
+    def getExposerName(self, name): return self.getMangledName(name) + '_exposer'
 
     def wrap_prefix_code(self, indent=''):
         r = ''
@@ -830,13 +832,15 @@ class CppClass:
         if use_callback_struct: heldTypeBase = callback
         else: heldTypeBase = self.context+self.name
 
-        D = dict(name=self.name, class_name=class_name, context=self.context, exposer=exposer, callback=callback, heldType=self.getHeldType(heldTypeBase), doc=doxygen.getDoxygenComment(self.file_, self.line))
+        D = dict(name=self.name, class_name=class_name, context=self.context, mangled_class_name=self.getMangledName(class_name), exposer=exposer,
+                 callback=callback, heldType=self.getHeldType(heldTypeBase), doc=doxygen.getDoxygenComment(self.file_, self.line))
 
         r = '\n{ // %(context)s%(class_name)s \n' % D
 
         r += self.write_implicitly_convertible_code(use_callback_struct, D)
 
-        r += '  utility::wrap_access_pointer< %(context)s%(name)s >("%(class_name)s");\n' % D
+        #r += '  utility::wrap_access_pointer< %(context)s%(name)s >("%(class_name)s");\n' % D
+        r += '  utility::wrap_access_pointer< %(context)s%(name)s >("%(mangled_class_name)s");\n' % D
 
         if use_callback_struct: r += '  boost::python::class_< %s, boost::noncopyable >("__CPP_%s__", "", boost::python::no_init);\n\n' % (self.getHeldType(), self.name)
 
@@ -852,13 +856,14 @@ class CppClass:
                 default_constructor_args = '< %s >()' % default_constructor.getSimpleArgsType(constructor=True)
 
         #print ' default_constructor and self.isCreatable()...........', default_constructor, self.isCreatable()
-
+        #r += '// mark 1 \n'
         if (default_constructor and self.isCreatable())  or (default_constructor and self.isCreatable(with_callback_struct=use_callback_struct)) :
-            r += '  %(exposer)s_type %(exposer)s("%(class_name)s", "%(doc)s", boost::python::init %(default_constructor_args)s );\n' %  dict(D.items(), default_constructor_args=default_constructor_args )
+            r += '  %(exposer)s_type %(exposer)s("%(mangled_class_name)s", "%(doc)s", boost::python::init %(default_constructor_args)s );\n' %  dict(D.items(), default_constructor_args=default_constructor_args )
         elif self.isCreatable() or self.isCreatable(with_callback_struct=use_callback_struct):
-            r += '  %(exposer)s_type %(exposer)s("%(class_name)s", "%(doc)s" );\n' %  D
+            r += '  %(exposer)s_type %(exposer)s("%(mangled_class_name)s", "%(doc)s" );\n' %  D
         else:
-            r += '  %(exposer)s_type %(exposer)s("%(class_name)s", "%(doc)s", boost::python::no_init );\n' %  D
+            r += '  %(exposer)s_type %(exposer)s("%(mangled_class_name)s", "%(doc)s", boost::python::no_init );\n' %  D
+        #r += '// mark 2 \n'
 
         if default_constructor and self.isCreatable():
             for c in self.constructors:
@@ -1143,9 +1148,11 @@ def sortObjects(l):
                     swap(i, j); f = True; break
 
 
-def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size):
+def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size, by_hand_beginning='', by_hand_ending=''):
     ''' Template for creating one module, and wrapping each elelemnts... (each elements must have .wrap)
     '''
+    #print 'by_hand_beginning=%s, by_hand_ending=%s' % (by_hand_beginning, by_hand_ending)
+
 
     objects = []
     for n in name_spaces:
@@ -1175,14 +1182,24 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
             code.append( module_addon+'%s\n\n%s\nvoid %s_partial_%s(void)\n{\n%s\n}\n\n' % (generateIncludes(includes), prefix_code, name, len(code), s)  )
             s, prefix_code, includes = '', '', []
 
+    r += by_hand_beginning + by_hand_ending
     r += '%s\n\n%s\nBOOST_PYTHON_MODULE( %s ){\n' % (generateIncludes(includes), prefix_code, name)
+
+    if by_hand_beginning:
+        print '\033[33m\033[1mAdding by_hand_beginning code for %s::%s\033[0m' % (name_spaces, name)
+        r += '__%s_by_hand_beginning__();\n\n' % name_spaces[0].split('::')[-2]
+
+    if by_hand_ending:
+        print '\033[33m\033[1mAdding by_hand_ending code for %s::%s\033[0m' % (name_spaces, name)
+        s += s + '\n' + '__%s_by_hand_ending__();\n' % name_spaces[0].split('::')[-2]
+
     #r += '%s\n\n%s\n#ifndef __PYROSETTA_ONE_LIB__\n  BOOST_PYTHON_MODULE( %s ) {\n#else\n  void __wrap%s() {\n#endif\n' % (generateIncludes(includes), prefix_code, name, name_spaces[0].replace('::', '__'))
     for i in range( len(code) ): r += '\n  %s_partial_%s();\n' % (name, i)
     r += '\n' + s + '}\n'
     return code+[r]
 
 
-def parseAndWrapModule(module_name, namespaces_to_wrap, xml_source, relevant_files_list, ParserType=GccXML, max_funcion_size=1024*1024*1024):
+def parseAndWrapModule(module_name, namespaces_to_wrap, xml_source, relevant_files_list, ParserType=GccXML, max_funcion_size=1024*1024*1024, by_hand_beginning='', by_hand_ending=''):
     print 'Wrapping %s... with file list as: %s...' % (namespaces_to_wrap, relevant_files_list)
     for f in relevant_files_list[:] :  relevant_files_list.append('./'+f)
 
@@ -1198,7 +1215,7 @@ def parseAndWrapModule(module_name, namespaces_to_wrap, xml_source, relevant_fil
     cxml = ParserType(dom)
     cxml.parse(relevantFilesList=relevant_files_list)
     #return wrapModule(module_name, cxml.Contexts[namespace_to_wrap], cxml.Contexts)
-    res = wrapModule(module_name, namespaces_to_wrap, cxml.Contexts, relevant_files_list, max_funcion_size)
+    res = wrapModule(module_name, namespaces_to_wrap, cxml.Contexts, relevant_files_list, max_funcion_size, by_hand_beginning=by_hand_beginning, by_hand_ending=by_hand_ending)
 
     del cxml  # trying to save memory...
     del dom

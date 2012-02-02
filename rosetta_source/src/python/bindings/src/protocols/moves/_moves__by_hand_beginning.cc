@@ -66,7 +66,7 @@ void QQQ_SubclassTester2(protocols::moves::MoverOP m, core::pose::PoseOP pose)
 	m->apply(*pose);
 }
 
-void wrap__moves__by_hand()
+void __moves_by_hand_beginning__()
 {
 	// Debug
 	bp::def("QQQ_CreateMinMover", QQQ_CreateMinMover);

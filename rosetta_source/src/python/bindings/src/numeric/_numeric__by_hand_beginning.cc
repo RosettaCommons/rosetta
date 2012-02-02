@@ -2906,7 +2906,7 @@ struct AtomXYZ {
   XYZ const & operator()(core::conformation::Atom * a) { return a->xyz(); }
 };
 
-void wrap__numeric__by_hand() {
+void __numeric_by_hand_beginning__() {
 
 
   instantiate_numeric_funs<double>("double");

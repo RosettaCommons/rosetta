@@ -54,7 +54,7 @@ utility::vector1<std::string> get_file_vector_option(std::string const & id)
 }
 
 
-void wrap__core__by_hand()
+void __core_by_hand_beginning__()
 {
 	bp::def("get_boolean_option", &get_option< bool,        utility::options::BooleanOptionKey> );
 	bp::def("get_integer_option", &get_option< int,         utility::options::IntegerOptionKey> );

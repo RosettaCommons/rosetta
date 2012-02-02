@@ -874,7 +874,14 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
     #if Options.compiler != 'gcc': add_option += ' -Wno-local-type-template-args'
     add_loption = getLinkerOptions()
 
-    by_hand_code = dest+ '/../src/' + path + '/_%s__by_hand.cc' % path.split('/')[-1]
+    #by_hand_code = dest+ '/../src/' + path + '/_%s__by_hand.cc' % path.split('/')[-1]
+    by_hand_beginning_file = dest+ '/../src/' + path + '/_%s__by_hand_beginning.cc' % path.split('/')[-1]
+    by_hand_ending_file = dest+ '/../src/' + path + '/_%s__by_hand_ending.cc' % path.split('/')[-1]
+
+    by_hand_beginning = file(by_hand_beginning_file).read() if os.path.isfile(by_hand_beginning_file) else ''
+    by_hand_ending = file(by_hand_ending_file).read() if os.path.isfile(by_hand_ending_file) else ''
+
+    #print '_______________ by_hand_ending=', by_hand_ending
 
     if Options.one_lib_file:
         all_at_once_base = '__' + path.split('/')[-1] + '_all_at_once_'
@@ -912,11 +919,17 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
                 if fl == headers[0]:  # for first header we additionaly check if 'by_hand' code is up to date
                     #print '__checking for:', by_hand_code
                     if Options.one_lib_file:
-                        if os.path.isfile(by_hand_code) and os.path.getmtime(by_hand_code) > os.path.getmtime(all_at_once_lib):
-                            raise os.error
+                        #if os.path.isfile(by_hand_code) and os.path.getmtime(by_hand_code) > os.path.getmtime(all_at_once_lib):
+                        #    raise os.error
+
+                        if os.path.isfile(by_hand_beginning_file) and os.path.getmtime(by_hand_beginning_file) > os.path.getmtime(all_at_once_lib): raise os.error
+                        if os.path.isfile(by_hand_ending_file) and os.path.getmtime(by_hand_ending_file) > os.path.getmtime(all_at_once_lib): raise os.error
+
                     else:
-                        if os.path.isfile(by_hand_code) and os.path.getmtime(by_hand_code) > os.path.getmtime(dst_name):
-                            raise os.error
+                        #if os.path.isfile(by_hand_code) and os.path.getmtime(by_hand_code) > os.path.getmtime(dst_name): raise os.error
+
+                        if os.path.isfile(by_hand_beginning_file) and os.path.getmtime(by_hand_beginning_file) > os.path.getmtime(dst_name): raise os.error
+                        if os.path.isfile(by_hand_ending_file) and os.path.getmtime(by_hand_ending_file) > os.path.getmtime(dst_name): raise os.error
 
                 if Options.one_lib_file:
                     if os.path.getmtime(fl) > os.path.getmtime(all_at_once_lib):
@@ -963,7 +976,9 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         # Temporary injecting Mover in to protocols level
         #if path == 'protocols': namespaces_to_wrap.append('::protocols::moves::')
 
-        code = tools.CppParser.parseAndWrapModule('_'+hbase, namespaces_to_wrap,  xml_name, [source_fwd_hh, source_hh, source_cc])
+        code = tools.CppParser.parseAndWrapModule('_'+hbase, namespaces_to_wrap,  xml_name, [source_fwd_hh, source_hh, source_cc],
+                                                  by_hand_beginning = by_hand_beginning if fl==headers[0] else '',
+                                                  by_hand_ending= by_hand_ending if fl==headers[-1] else '')
         if len(code) != 1:
             print 'Whats going on???'
             sys.exit(1)
@@ -977,7 +992,8 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         #mb.code_creator.user_defined_directories.append( os.path.abspath('.') )  # make include relative
         #mb.write_module( os.path.join( os.path.abspath('.'), fname ) )
 
-        exclude.finalize(fname, dest, path, None, module_name='_'+hbase, add_by_hand = (fl==headers[0]), files=[fl], add_includes=True)
+        #exclude.finalize(fname, dest, path, None, module_name='_'+hbase, add_by_hand = (fl==headers[0]), files=[fl], add_includes=True)
+        exclude.finalize(fname, dest, path, None, module_name='_'+hbase, add_by_hand = False, files=[fl], add_includes=True)
         finalize_init(fname)
 
         if not Options.one_lib_file:
@@ -1035,7 +1051,8 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
             # Temporary injecting Mover in to protocols level
             #if path == 'protocols': namespaces_to_wrap.append('::protocols::moves::')
 
-            code = tools.CppParser.parseAndWrapModule(all_at_once_base, namespaces_to_wrap,  all_at_once_xml, all_at_once_relative_files, max_funcion_size=Options.max_function_size)
+            code = tools.CppParser.parseAndWrapModule(all_at_once_base, namespaces_to_wrap,  all_at_once_xml, all_at_once_relative_files, max_funcion_size=Options.max_function_size,
+                                                      by_hand_beginning=by_hand_beginning, by_hand_ending=by_hand_ending)
 
             objs_list = []
             for i in range( len(code) ):
@@ -1048,7 +1065,9 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
 
                 f = file(all_at_once_N_cpp, 'w');  f.write(code[i]);  f.close()
 
-                exclude.finalize(all_at_once_N_cpp, dest, path, None, module_name=all_at_once_base, add_by_hand = (i == len(code)-1), files=headers, add_includes=True)
+                #exclude.finalize(all_at_once_N_cpp, dest, path, None, module_name=all_at_once_base, add_by_hand = (i == len(code)-1), files=headers, add_includes=True)
+                exclude.finalize(all_at_once_N_cpp, dest, path, None, module_name=all_at_once_base, add_by_hand = False, files=headers, add_includes=True)
+
                 #finalize_init(all_at_once_N_cpp)
 
                 # -fPIC

@@ -12,7 +12,7 @@ core::scoring::constraints::ConstraintCOP rtest_COP( core::scoring::constraints:
 }
 
 
-void wrap__constraints__by_hand()
+void __constraints_by_hand_beginning__()
 {
     bp::class_<core::scoring::constraints::Constraint,
                utility::pointer::owning_ptr< core::scoring::constraints::Constraint >, boost::noncopyable >

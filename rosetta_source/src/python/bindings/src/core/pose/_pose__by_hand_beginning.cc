@@ -143,7 +143,7 @@ void PosePyObserverTesterFunction()
 
 
 
-void wrap__pose__by_hand()
+void __pose_by_hand_beginning__()
 {   /*
 	bp::class_< PosePyObserver >("PosePyObserverBase")
 		.def("link", &PosePyObserver::link)

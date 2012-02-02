@@ -26,7 +26,7 @@ protocols::simple_moves::ClassicFragmentMoverOP create_ClassicFragmentMover_CL(c
 }
 
 
-void wrap__abinitio__by_hand()
+void __abinitio_by_hand_beginning__()
 {
     bp::def("create_ClassicFragmentMover", create_ClassicFragmentMover);
     bp::def("create_ClassicFragmentMover", create_ClassicFragmentMover_CL);

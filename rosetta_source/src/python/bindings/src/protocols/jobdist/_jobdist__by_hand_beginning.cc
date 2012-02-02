@@ -104,7 +104,7 @@ void wrap_vector1_part(char * name) {
 
 // begin blatant code duplication from _utility__by_hand.cc
 
-void wrap__jobdist__by_hand()
+void __jobdist_by_hand_beginning__()
 {
 	using namespace pointer;
 	typedef bp::return_value_policy< bp::reference_existing_object > CP_REF;

@@ -27,7 +27,7 @@ T * getCAP( utility::pointer::access_ptr<T> rs ) {
 }
 
 
-void wrap__orbitals__by_hand()
+void __orbitals_by_hand_beginning__()
 {
 	boost::python::class_< utility::pointer::access_ptr< core::chemical::orbitals::OrbitalTypeSet const> >("core___chemical___orbitals__OrbitalTypeSetCAP");
 

@@ -13,18 +13,19 @@
 namespace bp = boost::python;
 
 using namespace core::import_pose;
-
+/*
 void
 my_dump_pdb( core::pose::Pose const & pose,	std::string const & filename ) {
   dump_pdb(pose,filename);
 }
+*/
 
-
-void wrap__import_pose__by_hand()
+void __import_pose_by_hand_beginning__()
 {
-
+/*
   bp::def("core___io___pdb___pose_from_pdb", ( void (*)(core::pose::Pose &, std::string const &, bool) )( &pose_from_pdb) );
   bp::def("core___io___pdb___pose_from_pdb", ( void (*)(core::pose::Pose &, core::chemical::ResidueTypeSet const &, std::string const &, bool)  )( &pose_from_pdb) );
 
   bp::def("core___io___pdb___dump_pdb", &my_dump_pdb );
+  */
 }

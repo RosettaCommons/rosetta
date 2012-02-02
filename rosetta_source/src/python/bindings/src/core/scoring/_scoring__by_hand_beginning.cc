@@ -34,7 +34,7 @@ namespace bp = boost::python;
 //BOOST_PYTHON_FUNCTION_OVERLOADS(create_scoring_function_overloads, create_scoring_function, 1, 2)
 
 
-void wrap__scoring__by_hand()
+void __scoring_by_hand_beginning__()
 {
     bp::def("create_score_function", create_scoring_function);
     bp::def("create_score_function_ws_patch", create_scoring_function_ws_patch);
