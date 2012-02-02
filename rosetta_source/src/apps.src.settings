@@ -139,8 +139,8 @@ sources = {
 		"rna_score",
 	],
 	"public/swa_rna": [
-		"swa_rna_main",
-		"swa_rna_util",
+		#"swa_rna_main", #Not yet ready for release!
+		#"swa_rna_util", #Not yet ready for release!
 	],
 	"public/rosetta_scripts": [
 		"revert_design_to_native",

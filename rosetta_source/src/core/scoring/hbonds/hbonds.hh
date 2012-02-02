@@ -201,7 +201,7 @@ Real
 hb_eval_type_weight(
   HBEvalType const &hbe_type,
 	EnergyMap const & emap,
-	bool const intra_res=false);
+	bool const intra_res);
 
 
 bool

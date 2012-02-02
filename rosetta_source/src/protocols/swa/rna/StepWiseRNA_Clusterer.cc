@@ -104,8 +104,10 @@ namespace rna {
 		input_  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
 		input_->set_order_by_energy( true );
 
-		max_decoys_ = 9999999999; 
-		score_diff_cut_ = 1000000000.0;
+		//max_decoys_ = 9999999999; Feb 02, 2012; This lead to server-test error at R47198 
+		//score_diff_cut_ = 1000000000.0; Feb 02, 2012; This might lead to server-test error at R47198
+		max_decoys_ = 999999; //Feb 02, 2012;
+		score_diff_cut_ = 100000.0; //Feb 02, 2012;
 		perform_score_diff_cut_ = false; //Jan 23, 2012: I rarely use score_diff_cut_ in SWA RNA, so PLEASE leave this false as DEFAULT to be safe!
 
 		whole_struct_cluster_radius_ = 0.5;
@@ -1272,7 +1274,8 @@ namespace rna {
 
 		//bool const ignore_min_decoys=true; //Over the keep min_decoy mode...Comment out on Dec 11, 2011.
 
-		float best_score=9999999999999;
+		//float best_score=9999999999999; //lead to server-test build error at R47198; Feb 02, 2012
+		//Real best_score=999999999; //Should Fix server-test build error BUT yet not tested; Feb 02, 2012 
 
 		std::map< core::Size, bool > Is_prepend_map;
 		Is_prepend_map.clear();
@@ -1301,7 +1304,7 @@ namespace rna {
 
 			//This kinda weird in that setup_native_pose actually set the working_native_pose in the job_parameters...this interdependency is not good!
 			if(Is_valid_first_struct){
-				best_score = score;
+				//best_score = score;
 				stepwise_rna_pose_setup->setup_native_pose( pose ); //Setup native_pose;	
 				Is_full_length_pose=( pose.total_residue()==full_sequence.size()) ? true : false;
 				Output_boolean("Is_full_length_pose= ", Is_full_length_pose); std::cout << std::endl;

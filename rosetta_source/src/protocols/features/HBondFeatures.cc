@@ -691,7 +691,7 @@ HBondFeatures::insert_hbond_row(
 	Real const energy( hbond.energy() );
 	Real const envWeight( hbond.weight() );
 	Real const score_weight(
-		hb_eval_type_weight(hbond.eval_type(), scfxn_->weights()));
+		hb_eval_type_weight(hbond.eval_type(), scfxn_->weights(), false /*intra_res*/ ));
 
 	statement stmt = (*db_session)
 		<< "INSERT INTO hbonds VALUES (?,?,?,?,?,?,?,?,?,?);"

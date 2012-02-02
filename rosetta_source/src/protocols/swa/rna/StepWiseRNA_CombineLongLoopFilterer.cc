@@ -99,8 +99,10 @@ namespace rna {
 		total_input_struct_pair_(0),
 		pass_screen_struct_pair_(0),
 		output_filename_("filter_struct.txt"), //will have to change later...perhap pass in this from the python script?
-		best_combine_score_(99999999.99),
-		worst_combine_score_(-99999999.99),
+		//best_combine_score_(99999999.99),   //Feb 02, 2012; This might lead to server-test error at R47198
+		//worst_combine_score_(-99999999.99), //Feb 02, 2012; This might lead to server-test error at R47198
+		best_combine_score_(999999.99), //Feb 02, 2012;
+		worst_combine_score_(-999999.99), //Feb 02, 2012;
 		//score_diff_cut_(1000000.0), //Remove all score filtering on Jan 12, 2012
 		contact_dist_cutoff_(-1.0), //two atoms are considered in contact if their VDW radius edge is within 1.0 Angstrom of each other
 		clash_dist_cutoff_(0.8),    //two atoms are considered clash if their VDW radius edge overlap by 0.8 Angstrom. 
@@ -114,7 +116,8 @@ namespace rna {
 		side_TWO_NUM_pose_list_(0),
 		side_ONE_pose_list_id_(1),
 		side_TWO_pose_list_id_(1),
-		max_decoys_(9999999999),
+		//max_decoys_(9999999999), //Feb 02, 2012; This might lead to server-test error at R47198
+		max_decoys_(999999), //Feb 02, 2012;
 		combine_helical_silent_file_(combine_helical_silent_file) //Hacky mode to build VC_two 3 way junction
   {
 
