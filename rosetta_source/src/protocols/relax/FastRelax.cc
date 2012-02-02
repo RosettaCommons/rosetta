@@ -904,7 +904,9 @@ struct SRelaxPose {
 };
 
 
-void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
+void FastRelax::batch_apply(
+		std::vector < SilentStructOP > & input_structs,
+		core::scoring::constraints::ConstraintSetOP input_csts /* =NULL */ ){
 	using namespace basic::options;
 	using namespace core::scoring;
 	using namespace core::conformation;
@@ -951,6 +953,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 		SRelaxPose new_relax_decoy;
 
 		input_structs[i]->fill_pose( pose );
+		if ( input_csts ) pose.constraint_set( input_csts );
 		// 432mb
 		if( !pose.is_fullatom() ){
 			TR.Debug << "Switching struct to fullatom" << std::endl;
@@ -1074,6 +1077,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
+				if ( input_csts ) pose.constraint_set( input_csts );
 				pack_full_repack_->apply( pose );
 				core::Real score = (*local_scorefxn)(pose);
 				relax_decoys[index].current_score = score;
@@ -1088,6 +1092,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
+				if ( input_csts ) pose.constraint_set( input_csts );
         do_minimize( pose, cmd.param1, local_movemap, local_scorefxn  );
 				core::Real score = (*local_scorefxn)(pose);
 				relax_decoys[index].current_score = score;
@@ -1123,6 +1128,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 				clock_t starttime = clock();
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
+				if ( input_csts ) pose.constraint_set( input_csts );
 				if( total_repeat_count > 1 && repeat_count > 2 ){
 					if( cmd.param1 < 0.2 ){
 						if( do_rama_repair ){
@@ -1182,6 +1188,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
+				if ( input_csts ) pose.constraint_set( input_csts );
 				core::Real score = (*local_scorefxn)( pose );
 				TR.Debug << "Comparison: " << score << " " << relax_decoys[index].best_score << std::endl;
 
@@ -1191,6 +1198,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 
 					core::pose::Pose pose_check;
 					relax_decoys[index].best_struct->fill_pose( pose_check );
+					if ( input_csts ) pose.constraint_set( input_csts );
 					core::Real score_check = (*local_scorefxn)( pose_check );
 					TR.Debug << "Sanity: "<< score << " ==  " << score_check << std::endl;
 				}
@@ -1252,6 +1260,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 	// Finally return all the scores;
 	for( core::Size index=0; index < relax_decoys.size(); ++ index ){
 		relax_decoys[index].best_struct->fill_pose( pose );
+		if ( input_csts ) pose.constraint_set( input_csts );
 		setPoseExtraScores( pose, "giveup", relax_decoys[index].accept_count  );
 		core::Real rms = 0;
 		core::Real gdtmm = 0;

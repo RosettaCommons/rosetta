@@ -29,8 +29,13 @@
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
 
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
+
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
+
+#include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentStruct.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -87,9 +92,11 @@
 
 // option
 #include <basic/options/option.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 #include <string>
@@ -177,6 +184,9 @@ HybridizeProtocol::initialize_and_sample_loops(
 		protocols::loops::Loops template_contigs_icluster,
 		core::scoring::ScoreFunctionOP scorefxn)
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	// xyz copy starting model
 	for (int i=1; i<=chosen_templ->total_residue(); ++i)
 		for (int j=1; j<=chosen_templ->residue(i).natoms(); ++j) {
@@ -190,11 +200,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 	core::Size nres_tgt = pose.total_residue();
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops;
 	utility::vector1< bool > templ_coverage(nres_tgt, false);
-//	for (int i=1; i<=ncontigs; ++i) {
-//		core::Size cstart = chosen_templ->pdb_info()->number(template_contigs_icluster[i].start());
-//		core::Size cstop = chosen_templ->pdb_info()->number(template_contigs_icluster[i].stop());
-//		for (int j=cstart; j<=cstop; ++j) templ_coverage[j] = true;
-//	}
+
 	for (int i=1; i<=chosen_templ->total_residue(); ++i) {
 		core::Size cres = chosen_templ->pdb_info()->number(i);
 		templ_coverage[cres] = true;
@@ -277,7 +283,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		(*scorefxn)(pose);
 		protocols::moves::MonteCarloOP mc1 = new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 );
 
-		core::Size neffcycles = 1000;  //fpd  to do: base on # of loop residues
+		core::Size neffcycles = (core::Size)(1000*option[cm::hybridize::stage1_increase_cycles]());
 		for (int n=1; n<=neffcycles; ++n) {
 			frag9mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag9" );
 			frag3mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag3" );
@@ -406,9 +412,9 @@ void HybridizeProtocol::check_options()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	if ( !basic::options::option[ cm::hybridize::template_list ].user() ) {
-		utility_exit_with_message("Error! Need the -cm::hybridize::template_list for input template structures.");
-	}
+	//if ( !basic::options::option[ cm::hybridize::template_list ].user() ) {
+	//	utility_exit_with_message("Error! Need the -cm::hybridize::template_list for input template structures.");
+	//}
 }
 	
 void HybridizeProtocol::pick_starting_template(core::Size & initial_template_index,
@@ -452,141 +458,179 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
-	
-	// pick starting template
-	core::Size initial_template_index;
-	core::Size initial_template_index_icluster; // index in the cluster
-	utility::vector1 < core::Size > template_index_icluster; // index look back
-	utility::vector1 < core::pose::PoseOP > templates_icluster;
-	utility::vector1 < core::Real > weights_icluster;
-	utility::vector1 < protocols::loops::Loops > template_chunks_icluster;
-	utility::vector1 < protocols::loops::Loops > template_contigs_icluster;
-	pick_starting_template(initial_template_index, initial_template_index_icluster,
-	                      template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster);
-
+	using namespace core::io::silent;
 	using namespace ObjexxFCL::fmt;
-	TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
 
-	// initialize template history
-	TemplateHistoryOP history = new TemplateHistory(pose);
-	history->setall( initial_template_index_icluster );
-	pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
+	// set pose for density scoring if a map was input
+	//fpd eventually this should be moved to after pose initialization
+	if ( option[ OptionKeys::edensity::mapfile ].user() ) {
+		MoverOP dens( new protocols::electron_density::SetupForDensityScoringMover );
+		dens->apply( pose );
+	}
+
+	// starting structure pool
+	std::vector < SilentStructOP > post_centroid_structs;
+	bool need_more_samples = true;
+
+	core::Real gdtmm = 0.0;
+	while(need_more_samples) {
+		need_more_samples = false;
+
+		// pick starting template
+		core::Size initial_template_index;
+		core::Size initial_template_index_icluster; // index in the cluster
+		utility::vector1 < core::Size > template_index_icluster; // index look back
+		utility::vector1 < core::pose::PoseOP > templates_icluster;
+		utility::vector1 < core::Real > weights_icluster;
+		utility::vector1 < protocols::loops::Loops > template_chunks_icluster;
+		utility::vector1 < protocols::loops::Loops > template_contigs_icluster;
+		pick_starting_template(initial_template_index, initial_template_index_icluster,
+			template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster);
 	
-	// apply constraints
-	core::scoring::constraints::ConstraintSetOP constraint_set;
-	std::string cst_fn = template_cst_fn_[initial_template_index];
-	if (!cst_fn.empty() && cst_fn != "NONE") {
-		constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_fn, new ConstraintSet, pose );
-	}
-	pose.constraint_set( constraint_set );
+		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
 	
-	// fold tree hybridize
-	core::scoring::ScoreFunctionOP scorefxn_stage1 = 
-		core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage1_patch]());
-
-	if (RG.uniform() < option[cm::hybridize::stage1_probability]()) {
-		core::pose::PoseOP chosen_templ = templates_icluster[initial_template_index_icluster];
-		protocols::loops::Loops chosen_contigs = template_contigs_icluster[initial_template_index_icluster];
-		initialize_and_sample_loops(pose, chosen_templ, chosen_contigs, scorefxn_stage1);
-	} else {
-		// package up fragments
-		utility::vector1 < core::fragment::FragSetOP > frag_libs;
-		frag_libs.push_back(fragments3_);
-		frag_libs.push_back(fragments9_);
-
-		FoldTreeHybridizeOP ft_hybridize(
-			new FoldTreeHybridize(initial_template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster,  frag_libs) ) ;
-		ft_hybridize->set_scorefunction(scorefxn_stage1);
-		ft_hybridize->apply(pose);
-	}
-
-	//write gdtmm to output
-	using namespace ObjexxFCL::fmt;
-	core::Real gdtmm = get_gdtmm(pose);
-	core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
-	TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
-
-	//pose.dump_pdb( "after_stage1.pdb" );
-	
-	// cartesian fragment hybridize
-	pose.constraint_set( constraint_set );  //reset constraints
-	CartesianHybridizeOP cart_hybridize ( new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_ ) );
-	core::scoring::ScoreFunctionOP scorefxn_stage2 =
-	core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage2_weights](), option[cm::hybridize::stage2_patch]());
-	cart_hybridize->set_scorefunction(scorefxn_stage2);
-
-	if (!option[cm::hybridize::skip_stage2]()) {
-		cart_hybridize->apply(pose);
-	}
-
-	// get fragment history
-	runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
-	history = *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
-
-	//write gdtmm to output
-	gdtmm = get_gdtmm(pose);
-	core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
-	TR << "GDTMM_after_stage2" << F(8,3,gdtmm) << std::endl;
-	
-	//look back and apply constraints
-	TR << "History :";
-	for (int i=1; i<= history->size(); ++i ) {
-		TR << I(4,i);
-	}
-	TR << std::endl;
-	TR << "History :";
-	for (int i=1; i<= history->size(); ++i ) {
-		TR << I(4, history->get(i));
-	}
-	TR << std::endl;
-
-	// optional relax
-	if (option[ cm::hybridize::relax ]()) {
-		protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
-		tofa->apply(pose);
-
-		// add constraints
-		core::pose::addVirtualResAsRoot(pose);
-		core::Size rootres = pose.fold_tree().root();
-		Real const coord_sdev( 1 ); // this should be an option perhaps
-		for ( core::Size i=1; i<pose.total_residue(); ++i ) {
-			if ( !pose.residue(i).is_polymer() ) continue;
-			utility::vector1<core::Size> const &source_list = template_cst_reses_[ template_index_icluster[ history->get(i) ] ];
-			if ( std::find( source_list.begin(), source_list.end(), i ) != source_list.end() ) {
-				TR << "Constrain residue " << i << std::endl;
-				core::Size ii = pose.residue(i).atom_index(" CA ");
-				pose.add_constraint(
-					new CoordinateConstraint(
-						core::id::AtomID(ii,i), core::id::AtomID(1,rootres), pose.xyz( core::id::AtomID(ii,i) ), new HarmonicFunc( 0.0, coord_sdev ) ) );
-			}
+		// initialize template history
+		TemplateHistoryOP history = new TemplateHistory(pose);
+		history->setall( initial_template_index_icluster );
+		pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
+		
+		// apply constraints
+		core::scoring::constraints::ConstraintSetOP constraint_set;
+		std::string cst_fn = template_cst_fn_[initial_template_index];
+		if (!cst_fn.empty() && cst_fn != "NONE") {
+			constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_fn, new ConstraintSet, pose );
 		}
-
-		// get scorefunction, add cst weight from commandline
-		core::scoring::ScoreFunctionOP fa_scorefxn = core::scoring::getScoreFunction();
-		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn );
-
-		// do relax _without_ ramping down coordinate constraints
-		protocols::relax::FastRelax relax_prot( fa_scorefxn, option[ basic::options::OptionKeys::relax::default_repeats ]() ,"NO CST RAMPING" );
-		relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
-
-		core::pose::Pose pose_pre_relax = pose;
-
-relaxing:
-		// fpd more nan problems with torsion derivs
-		try {
-			relax_prot.apply(pose);
-		} catch( utility::excn::EXCN_Base& excn ) {
-			//fpd hbond fail? start over
-			pose = pose_pre_relax;
-			goto relaxing;
+		pose.constraint_set( constraint_set );
+		
+		// fold tree hybridize
+		core::scoring::ScoreFunctionOP scorefxn_stage1 = 
+			core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage1_patch]());
+	
+		if (RG.uniform() < option[cm::hybridize::stage1_probability]()) {
+			// package up fragments
+			utility::vector1 < core::fragment::FragSetOP > frag_libs;
+			frag_libs.push_back(fragments3_);
+			frag_libs.push_back(fragments9_);
+	
+			FoldTreeHybridizeOP ft_hybridize(
+				new FoldTreeHybridize(initial_template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster,  frag_libs) ) ;
+			ft_hybridize->set_scorefunction(scorefxn_stage1);
+			ft_hybridize->apply(pose);
+		} else {
+			// just do frag insertion in unaligned regions
+			core::pose::PoseOP chosen_templ = templates_icluster[initial_template_index_icluster];
+			protocols::loops::Loops chosen_contigs = template_contigs_icluster[initial_template_index_icluster];
+			initialize_and_sample_loops(pose, chosen_templ, chosen_contigs, scorefxn_stage1);
 		}
-
+	
+		//write gdtmm to output
+		using namespace ObjexxFCL::fmt;
 		gdtmm = get_gdtmm(pose);
-		core::pose::setPoseExtraScores( pose, "GDTMM_final", gdtmm);
-		TR << "GDTMM_final" << F(8,3,gdtmm) << std::endl;
-	} else {
-		(*scorefxn_stage2)(pose);
+		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
+		TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
+	
+		//pose.dump_pdb( "after_stage1.pdb" );
+	
+		// cartesian fragment hybridize
+		pose.constraint_set( constraint_set );  //reset constraints
+		CartesianHybridizeOP cart_hybridize (
+			new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_ ) );
+		core::scoring::ScoreFunctionOP scorefxn_stage2 =
+		core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage2_weights](), option[cm::hybridize::stage2_patch]());
+		cart_hybridize->set_scorefunction(scorefxn_stage2);
+	
+		if (!option[cm::hybridize::skip_stage2]()) {
+			option[ score::linear_bonded_potential ].value( true );  //fpd hack
+			cart_hybridize->apply(pose);
+			if (option[ cm::hybridize::relax ]()) option[ score::linear_bonded_potential ].value( false ); //fpd hack
+		}
+	
+		// get fragment history
+		runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
+		history = *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
+	
+		//write gdtmm to output
+		gdtmm = get_gdtmm(pose);
+		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
+		TR << "GDTMM_after_stage2" << F(8,3,gdtmm) << std::endl;
+	
+		//look back and apply constraints
+		TR << "History :";
+		for (int i=1; i<= history->size(); ++i ) {
+			TR << I(4,i);
+		}
+		TR << std::endl;
+		TR << "History :";
+		for (int i=1; i<= history->size(); ++i ) {
+			TR << I(4, history->get(i));
+		}
+		TR << std::endl;
+	
+		// optional relax
+		if (option[ cm::hybridize::relax ]() > 0) {
+			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
+			tofa->apply(pose);
+	
+			// get scorefunction, add cst weight from commandline
+			core::scoring::ScoreFunctionOP fa_scorefxn = core::scoring::getScoreFunction();
+			core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn );
+	
+			if (option[ cm::hybridize::relax ]() == 1) {
+				// add constraints
+				core::pose::addVirtualResAsRoot(pose);
+				core::Size rootres = pose.fold_tree().root();
+				Real const coord_sdev( 1 ); // this should be an option perhaps
+				for ( core::Size i=1; i<pose.total_residue(); ++i ) {
+					if ( !pose.residue(i).is_polymer() ) continue;
+					utility::vector1<core::Size> const &source_list = template_cst_reses_[ template_index_icluster[ history->get(i) ] ];
+					if ( std::find( source_list.begin(), source_list.end(), i ) != source_list.end() ) {
+						TR << "Constrain residue " << i << std::endl;
+						core::Size ii = pose.residue(i).atom_index(" CA ");
+						pose.add_constraint(
+							new CoordinateConstraint(
+								core::id::AtomID(ii,i), core::id::AtomID(1,rootres), pose.xyz( core::id::AtomID(ii,i) ), new HarmonicFunc( 0.0, coord_sdev ) ) );
+					}
+				}
+		
+				// standard relax
+				// do relax _without_ ramping down coordinate constraints
+				protocols::relax::FastRelax relax_prot( fa_scorefxn, option[ basic::options::OptionKeys::relax::default_repeats ]() ,"NO CST RAMPING" );
+				relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
+				relax_prot.apply(pose);
+			} else {
+				// batch relax
+				// add stucture to queue
+				SilentStructOP new_struct = SilentStructFactory::get_instance()->get_silent_struct("binary");
+				new_struct->fill_struct( pose );
+				new_struct->energies_from_pose( pose );
+				post_centroid_structs.push_back( new_struct );
+
+				if (post_centroid_structs.size() == option[ cm::hybridize::relax ]()) {
+					protocols::relax::FastRelax relax_prot( fa_scorefxn );
+					relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
+					relax_prot.set_force_nonideal("true");
+					relax_prot.set_script_to_batchrelax_default( option[ basic::options::OptionKeys::relax::default_repeats ]() );
+
+					// notice! this assumes all poses in a set have the same constraints!
+					relax_prot.batch_apply(post_centroid_structs, pose.constraint_set()->clone());
+
+					// reinflate pose
+					post_centroid_structs[0]->fill_pose( pose );
+				} else {
+					protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+					tocen->apply(pose);
+					need_more_samples = true;
+				}
+			}
+		} else {
+			// no fullatom sampling
+			(*scorefxn_stage2)(pose);
+		}
 	}
+
+	gdtmm = get_gdtmm(pose);
+	core::pose::setPoseExtraScores( pose, "GDTMM_final", gdtmm);
+	TR << "GDTMM_final" << F(8,3,gdtmm) << std::endl;
 }
 
 

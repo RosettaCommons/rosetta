@@ -94,6 +94,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/cm.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 #include <boost/unordered/unordered_map.hpp>
@@ -110,11 +111,15 @@ CartesianHybridize::CartesianHybridize(
 		utility::vector1 < protocols::loops::Loops > const & template_chunks_in, 
 		utility::vector1 < protocols::loops::Loops > const & template_contigs_in,
 		core::fragment::FragSetOP fragments9_in ) : ncycles_(400) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	templates_ = templates_in;
 	template_wts_ = template_wts_in;
-	//template_chunks_ = template_chunks_in;
 	template_contigs_ = template_contigs_in;
 	fragments9_ = fragments9_in;
+
+	increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
 
 	// make sure all data is there
 	runtime_assert( templates_.size() == template_wts_.size() );
@@ -268,8 +273,10 @@ CartesianHybridize::apply_frame( core::pose::Pose & pose, core::fragment::Frame 
 	// for really large gaps make it one sided to emulate fold-tree fragment insertion
 	int aln_len = 3;
 	
+	core::Size nres = pose.total_residue();
+	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
 	bool nterm = (start == 1);
-	bool cterm = (start == pose.total_residue()-8);
+	bool cterm = (start == nres-8);
 
 	// insert frag
 	core::pose::Pose pose_copy = pose;
@@ -391,9 +398,11 @@ CartesianHybridize::apply( Pose & pose ) {
 	TR << "RUNNING FOR " << NMACROCYCLES << " MACROCYCLES" << std::endl;
 
 	Pose pose_in = pose;
+	core::Size nres = pose.total_residue();
+	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
 
 	// 10% of the time, skip moves in the global frame 
-	bool no_ns_moves = false; // (numeric::random::uniform() <= 0.1);
+	bool no_ns_moves = option[cm::hybridize::no_global_frame](); // (numeric::random::uniform() <= 0.1);
 
 sampler:
 	for (int m=1; m<=NMACROCYCLES; m+=1) {
@@ -425,7 +434,7 @@ sampler:
 		(*lowres_scorefxn_)(pose);
 		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 2.0 );
 
-		core::Size neffcycles = ncycles_;
+		core::Size neffcycles = (core::Size)(ncycles_*increase_cycles_);
 		if (m==4) neffcycles /=2;
 		for (int n=1; n<=neffcycles; ++n) {
 			// possible actions:
@@ -488,10 +497,10 @@ sampler:
 
 			if (action == 3) {
 				// pick an insert position based on gap
-				utility::vector1<core::Real> residuals( pose.total_residue() , 0.0 );
+				utility::vector1<core::Real> residuals( nres , 0.0 );
 				utility::vector1<core::Real> max_residuals(3,0);
 				utility::vector1<int> max_poses(4,-1);
-				for (int i=1; i<pose.total_residue(); ++i) {
+				for (int i=1; i<nres; ++i) {
 					numeric::xyzVector< core::Real > c0 , n1;
 					c0 = pose.residue(i).atom(" C  ").xyz();
 					n1 = pose.residue(i+1).atom(" N  ").xyz();
@@ -510,7 +519,7 @@ sampler:
 				}
 
 				// 25% chance of random position
-				max_poses[ 4 ] = numeric::random::random_range(1,pose.total_residue());
+				max_poses[ 4 ] = numeric::random::random_range(1,nres);
 				int select_position = numeric::random::random_range(1,4);
 				if (select_position == 4)
 					action_string = action_string+"_rand";
@@ -518,7 +527,7 @@ sampler:
 
 				// select random pos in [i-8,i]
 				core::Size insert_pos = max_pos - numeric::random::random_range(3,5);
-				insert_pos = std::min( insert_pos, pose.total_residue()-8);
+				insert_pos = std::min( insert_pos, nres-8);
 				insert_pos = std::max( (int)insert_pos, 1);
 
 				apply_frame (pose, library_[insert_pos]);
@@ -527,7 +536,7 @@ sampler:
 			// MC
 			try {
 				(*min_scorefxn_)(pose);
-				if (m<4)
+				if ( m<4 || option[cm::hybridize::linmin_only]() )
 					minimizer.run( pose, mm, *min_scorefxn_, options );
 				else
 					minimizer.run( pose, mm, *min_scorefxn_, options_minilbfgs );

@@ -78,8 +78,6 @@ public:
 
 	void setup_foldtree(core::pose::Pose & pose);
 
-	// Undefined, commenting out to fix PyRosetta build  core::Size choose_anchor_position(const protocols::loops::Loop & chunk) const;
-
 	numeric::xyzVector<Real> center_of_mass(core::pose::Pose const & pose);
 
 	void translate_virt_to_CoM(core::pose::Pose & pose);
@@ -90,8 +88,6 @@ public:
 	          protocols::loops::Loops & template_chunk,
 	          core::pose::PoseCOP template_pose);
 
-	// Undefined, commenting out to fix PyRosetta build  Loops loops();
-
 	inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) {
 		scorefxn_ = scorefxn;
 	}
@@ -101,6 +97,8 @@ public:
 	std::string	get_name() const;
 
 private:
+	core::Real increase_cycles_;
+
 	core::Size initial_template_index_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	utility::vector1 < core::Real > template_wts_;

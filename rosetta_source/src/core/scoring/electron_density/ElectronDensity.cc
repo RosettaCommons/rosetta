@@ -2419,16 +2419,18 @@ core::Real ElectronDensity::matchRes(
 		core::conformation::Residue const &rsd_i( pose.residue(i) );
 
 		// calc neighbor residues
-		for ( graph::Graph::EdgeListConstIter
-						iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-						irue = energy_graph.get_node(i)->const_edge_list_end();
-						iru != irue; ++iru ) {
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-			Size const e1( edge->get_first_node_ind() );
-			Size const e2( edge->get_second_node_ind() );
-			Size const j = (e1==i) ? e2 : e1;
-			if (j<win_start || j>win_stop) {
-				neighborResids.insert( j );
+		if ( basic::options::option[ basic::options::OptionKeys::edensity::score_sliding_window_context ]() ) {
+			for ( graph::Graph::EdgeListConstIter
+							iru  = energy_graph.get_node(i)->const_edge_list_begin(),
+							irue = energy_graph.get_node(i)->const_edge_list_end();
+							iru != irue; ++iru ) {
+				EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+				Size const e1( edge->get_first_node_ind() );
+				Size const e2( edge->get_second_node_ind() );
+				Size const j = (e1==i) ? e2 : e1;
+				if (j<win_start || j>win_stop) {
+					neighborResids.insert( j );
+				}
 			}
 		}
 

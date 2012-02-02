@@ -5,46 +5,55 @@ use POSIX qw(ceil floor);
 
 use lib (".");
 use File::Basename;
+use File::Path qw(rmtree);
 use Cwd;
+use Storable qw(dclone);
 use lib dirname(__FILE__);
 require "kabsch.pm";
 require "matrix.pm";
 
 ###############################
 ###############################
-## CST files
-my $CSTFILENAMES = "../align_new/cluster%d.filt.dist_csts";
-#my $CSTFILENAMES = "NONE";
+## programs
+my $PARTIALTHREAD_APP = "/work/dimaio/rosetta/rosetta_source/bin/partial_thread.default.linuxgccrelease".
+                        " -database /work/dimaio/rosetta/rosetta_database ".
+						"-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm";
+my $CSTGEN_APP =   "/work/tex/src/cm_scripts/bin/predict_distances.pl";
+my $PDBFILEDIR = "/lab/databases/wwpdb/";
+my $DENSGENAPP = "/work/dimaio/EMAN/bin/pdb2mrc";
+my $DENSGENARGS = "res=5.0 apix=2.0 box=96";
 
-###############################
-###############################
-## alignment parameters
+## paths
+my $NATIVEDIR        = "native/";
+my $TEMPLATEDIR      = "templates/";
+my $PARTIALTHREADDIR = "partial_threads/";
+my $COORDCSTDIR      = "coordCsts_resOnly/";
+my $FRAG3FILE      = "fragments/%s_templatesvall.200.3mers";
+my $FRAG9FILE      = "fragments/%s_templatesvall.200.9mers";
+my $SSPREDFILE      = "fragments/t000_.psipred_ss2";
+
+## structure alignments
 my @RMS_CUTOFFS = (10,5,4,3,2,1.5,1);
-my $RMSCUTOFF = 999;
-
 my $CLUSTERCUTOFF = 0.40;
-my $ALIGNCUTOFF   = 0.2;  # to get better superpositions, trade coverage for alignment
+my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
 
-
-###############################
-###############################
 ## probability correct
 my %template_probs =  (
-	401 => 0.16318, 201 => 0.15481, 301 => 0.13389,
-	302 => 0.09623, 303 => 0.05858, 304 => 0.05439,
-	403 => 0.05021, 402 => 0.03766, 202 => 0.03347,
-	305 => 0.02929, 203 => 0.02510, 404 => 0.02092,
-	405 => 0.01674, 309 => 0.01255, 308 => 0.01255,
-	409 => 0.01255, 408 => 0.01255, 407 => 0.01255,
-	410 => 0.01255, 204 => 0.01255, 306 => 0.00837,
-	310 => 0.00837, 205 => 0.00837, 307 => 0.00418,
-	406 => 0.00418, 206 => 0.00418,
-	0 => 0.00209    # default
+	201 => 0.15481, 301 => 0.13389, 401 => 0.16318,
+	202 => 0.03347, 302 => 0.09623, 402 => 0.03766, 
+	203 => 0.02510, 303 => 0.05858, 403 => 0.05021,
+	204 => 0.01255, 304 => 0.05439, 404 => 0.02092,
+	205 => 0.00837, 305 => 0.02929, 405 => 0.01674,
+	206 => 0.00418, 306 => 0.00837, 406 => 0.00418, 
+	                307 => 0.00418, 407 => 0.01255,
+	                308 => 0.01255, 408 => 0.01255,
+	                309 => 0.01255, 409 => 0.01255,
+	                310 => 0.00837, 410 => 0.01255,
+	0 => 0.00418    # default
 );
+my $template_M_EST = 0.010; # favor lower-ranked alignments a bit more in sampling (and cst-gen?)
 
-###############################
-###############################
-## amino acids
+## amino acid map
 my %one_to_three = ( 
 	'G' => 'GLY', 'A' => 'ALA', 'V' => 'VAL', 'L' => 'LEU',
 	'I' => 'ILE', 'P' => 'PRO', 'C' => 'CYS', 'M' => 'MET',
@@ -52,19 +61,47 @@ my %one_to_three = (
 	'N' => 'ASN', 'Q' => 'GLN', 'S' => 'SER', 'T' => 'THR',
 	'K' => 'LYS', 'R' => 'ARG', 'D' => 'ASP', 'E' => 'GLU' );
 
+my %three_to_one = (
+	'GLY' => 'G', 'ALA' => 'A', 'VAL' => 'V', 'LEU' => 'L', 'ILE' => 'I',
+	'PRO' => 'P', 'CYS' => 'C', 'MET' => 'M', 'HIS' => 'H', 'PHE' => 'F',
+	'TYR' => 'Y', 'TRP' => 'W', 'ASN' => 'N', 'GLN' => 'Q', 'SER' => 'S',
+	'THR' => 'T', 'LYS' => 'K', 'ARG' => 'R', 'ASP' => 'D', 'GLU' => 'E',
+	# nonstd
+	'5HP' => 'Q', 'ABA' => 'C', 'AGM' => 'R', 'CEA' => 'C', 'CGU' => 'E',
+	'CME' => 'C', 'CSB' => 'C', 'CSE' => 'C', 'CSD' => 'C', 'CSO' => 'C',
+	'CSP' => 'C', 'CSS' => 'C', 'CSW' => 'C', 'CSX' => 'C', 'CXM' => 'M',
+	'CYM' => 'C', 'CYG' => 'C', 'DOH' => 'D', 'FME' => 'M', 'GL3' => 'G',
+	'HYP' => 'P', 'KCX' => 'K', 'LLP' => 'K', 'LYZ' => 'K', 'MEN' => 'N',
+	'MGN' => 'Q', 'MHS' => 'H', 'MIS' => 'S', 'MLY' => 'K', 'MSE' => 'M',
+	'NEP' => 'H', 'OCS' => 'C', 'PCA' => 'Q', 'PTR' => 'Y', 'SAC' => 'S',
+	'SEP' => 'S', 'SMC' => 'C', 'STY' => 'Y', 'SVA' => 'S', 'TPO' => 'T',
+	'TPQ' => 'Y', 'TRN' => 'W', 'TRO' => 'W', 'YOF' => 'Y'
+);
+
 ###############################
 ###############################
 ## main()
 if ($#ARGV < 2) {
-	print STDERR "usage: $0 <fasta-file> <cluster-file> <pdb>*\n";
+	print STDERR "usage: $0 <fasta-file> <ali-file> <evmap> <working-dir>\n";
 	exit -1;
 }
 
 my $fastafile = shift @ARGV;
-my $clusterfile = shift @ARGV;
+my $alifile   = shift @ARGV;
+my $evmapfile = shift @ARGV;
+my $WORKDIR   = shift @ARGV;
+
+# paths inside WORKDIR
+my $PCORRFILENAMES  = "$WORKDIR/p_correct%d.txt";
+my $ALNFILENAMES  = "$WORKDIR/cluster%d.filt";
+my $CSTFILENAMES  = "$WORKDIR/cluster%d.filt.dist_csts";
+my $FLAGFILENAMES = "$WORKDIR/flags%d";
+my $CFGFILENAMES  = "$WORKDIR/hybrid%d.config";
+my $MAPFILENAMES  = "$WORKDIR/templates%d.mrc";
+my $ALNTEMPLATEDIR  = "$WORKDIR/aligned_templates";
 
 ## read sequence
-open (FASTA, $fastafile) || print STDERR "Cannot open $_";
+open (FASTA, $fastafile) || die "Cannot open $_";
 my @fastalines = <FASTA>;
 close FASTA;
 my $seq="";
@@ -79,47 +116,101 @@ my $nres = length( $seq );
 print STDERR "Read sequence: $seq\n";
 
 
-## read cluster file to get seeds
-## remember which constraint file each refers to
-my %james_clustermap;
-my $firstcluster;
-open (CL, $clusterfile) || print STDERR "Cannot open $_";
-my @cllines = <CL>;
-close CL;
-foreach my $line (@cllines) {
-	chomp $line;
-	my @fields = split / /, $line;
-	if ($#fields > 0) {
-		if (scalar keys %james_clustermap == 0) {
-			$firstcluster = $fields[0];
+## real ali file
+open (ALI, $alifile) || die "Cannot open $_";
+my @alilines = <ALI>;
+close ALI;
+my %alimap = ();
+my @currbuff; 
+my $currtag = "";
+foreach my $line (@alilines) {
+	if ($line =~ /^##/) {
+		chomp $line;
+		if ($currtag ne "") {
+			$alimap {$currtag} = dclone(\@currbuff);
 		}
-		foreach my $i (1..$#fields) {
-			$james_clustermap{ $fields[$i] } = $fields[0];
+		my @fields = split / /, $line;
+		$currtag = $fields[$#fields];
+		@currbuff = ( $line."\n" );
+	} else {
+		push @currbuff, $line;
+	}
+}
+if ($currtag ne "") {
+	$alimap {$currtag} = dclone(\@currbuff);
+}
+
+###############################
+###############################
+## STAGE 0 -- make output directories if they don't exist
+#rmtree($TEMPLATEDIR);
+rmtree($PARTIALTHREADDIR);
+rmtree($WORKDIR);
+mkdir $TEMPLATEDIR;
+mkdir $PARTIALTHREADDIR;
+mkdir $WORKDIR;
+
+
+###############################
+###############################
+## STAGE 1 -- generate partial threads
+## (a) grab+sanitize templates
+foreach my $tag (keys %alimap) {
+	my $template = substr($tag,0,5);
+	my $pdbout = $TEMPLATEDIR."/".$template.".pdb";
+	if ( ! -f $pdbout ) {
+		print STDERR "trying to get $pdbout!\n";
+		my $pdbid = substr( $template, 0, 4 );
+		my $chain = substr( $template, 4, 1 );
+		my $dirid = substr( $template, 1, 2 );
+		open (PDB, $PDBFILEDIR."/".$dirid."/".$pdbid.".pdb") || die "Cannot open $_";
+		my @pdblines = <PDB>;
+		close PDB;
+		open (PDBOUT, ">$pdbout") || die "Cannot open $_";
+		my $linecount = 0;
+		foreach my $line (@pdblines) {
+			last if ($line =~ /^ENDMDL/ && $linecount>0);
+			next if ($line !~/^ATOM  / && $line !~/^HETATM/);
+			my $chainid = substr($line,21,1);
+			next if ($chainid ne $chain);
+			my $resname = substr($line,17,3);
+			next if (!defined $three_to_one{ $resname });
+			my $conf = substr($line,16,1);
+			next if ($conf ne " " && $conf ne "A");
+			# sanitization
+			substr($line,0,6) = "ATOM  ";
+			substr($line,17,3) = $one_to_three{ $three_to_one{ $resname } };
+			# MSE
+			if ($resname eq "MSE") {
+				my $atomname = substr ($line,12,4);
+				if ($atomname eq "SE  ") {
+					substr ($line,12,4) = " SD ";
+				}
+			}
+			# all other non-standard ... throw away sidechain
+			elsif (substr($line,17,3) ne $resname) {
+				my $atomname = substr ($line,12,4);
+				next if ($atomname ne " C  " && $atomname ne " CA "  && $atomname ne " O  "  && $atomname ne " N  "  && $atomname ne " CB ");
+			}
+			print PDBOUT $line;
+			$linecount++;
 		}
+		close PDBOUT
 	}
 }
 
-print STDERR "First cluster : $firstcluster\n";
+## (b) partial threading app
+chdir $PARTIALTHREADDIR;
+my $cmd = "$PARTIALTHREAD_APP -in::file::fasta ../$fastafile -in::file::alignment ../$alifile -in::file::template_pdb ../$TEMPLATEDIR/*.pdb";
+print STDERR $cmd."\n";
+system($cmd);
+chdir "..";
 
-# initialize "james cluster" assignments
-my @james_clusterid = (-1) x ($#ARGV+1);
-foreach my $member (keys %james_clustermap) {
-	my $membertag = $member;
-	$membertag =~ s/\.pdb//;
-	foreach my $i (0..$#ARGV) {
-		if ($ARGV[$i] =~ /$membertag/) {
-			$james_clusterid[$i] = $james_clustermap{ $member };
-		}
-	}
-}
-print STDERR "Cluster assignments: ";
-print STDERR join ' ',@james_clusterid;
-print STDERR "\n";
-
-
+###############################
+###############################
+## STAGE 2 -- clustering + alignment
 ##
-my $currfrag_lines;
-my $currfrag_ids;
+my @THREADED_MDLS=<$PARTIALTHREADDIR/*.pdb>;
 my %allfrags;
 my %bbatoms;
 my %resids;
@@ -129,24 +220,18 @@ my %ss;
 # read in all PDBs
 my $minres = 9999;
 my $maxres = 0;
-foreach my $pdb (@ARGV) {
+foreach my $pdb (@THREADED_MDLS) {
 	print STDERR $pdb."\n";
-	open (PDB, $pdb) || print STDERR "Cannot open $pdb";
+	open (PDB, $pdb) || die "Cannot open $pdb";
 
-	my $start_new_frag = 0;
 	$bbatoms{$pdb} = {};
 	$resids{$pdb} = {};
-	$currfrag_lines = [];
-	$currfrag_ids = [];
 	$allfrags{$pdb} = [];
 
 	my $curr_frag_start = -999;
 	my $last_res_read = -999;
 	while (my $line = <PDB>) {
-		if ($line =~ /^TER/) {
-			$start_new_frag = 1;
-		}
-		next if (! $line =~ /^ATOM/);
+		next if ($line !~ /^ATOM/);
 
 		my $atom = substr ($line, 12, 4);
 		my $chain = substr($line, 21, 1);
@@ -154,10 +239,6 @@ foreach my $pdb (@ARGV) {
 		my $res = int( substr($line, 22, 4) );
 		$minres = min($minres,$res);
 		$maxres = max($maxres,$res);
-
-		if ($curr_frag_start == -999) {
-			$curr_frag_start = $minres;
-		}
 
 		# only care about bb heavy atoms + CB
 		next if ($atom ne " CA " && $atom ne " C  " && $atom ne " O  " && $atom ne " N  " && $atom ne " CB ");
@@ -169,76 +250,24 @@ foreach my $pdb (@ARGV) {
 		my $id = $atom.$chain.$res;
 		$bbatoms{$pdb}->{ $id } = [$x,$y,$z];
 		$resids{$pdb}->{ $id } = $resid;
-
-		# check for chainbreaks
-		if ($atom eq " N  ") {
-			if ($start_new_frag != 1) { # no TER just read
-				my $previd = " C  ".$chain.($res-1);
-				if (!defined $bbatoms{$pdb}->{ $previd }) { # no previous residue
-					$start_new_frag = 1;
-				} else {
-					my $dist = dist($bbatoms{$pdb}->{ $id },$bbatoms{$pdb}->{ $previd });
-					if ($dist > 2.5) { # ????
-						$start_new_frag = 1;
-					} else {
-						$start_new_frag = 0;
-					}
-				}
-			}
-		} else {
-			$start_new_frag = 0;
-		}
-
-		if ($start_new_frag && scalar @{ $currfrag_lines } > 0) {
-			push @{ $allfrags{$pdb} }, $currfrag_lines;
-			foreach my $id_i (@{ $currfrag_ids }) {
-				$fraglens{$pdb}->{ $id_i } = scalar @{ $currfrag_ids };
-			}
-
-			$curr_frag_start = $res;
-			$currfrag_lines = [];
-			$currfrag_ids = [];
-		}
-
-		$last_res_read = $res;
-
-		push @{ $currfrag_lines }, $line;
-		push @{ $currfrag_ids }, $id;
+		push @{$allfrags{$pdb}}, $line;
 	}
-
-	if (scalar(@{ $currfrag_lines }) > 0) {
-		push @{ $allfrags{$pdb} }, $currfrag_lines;
-		foreach my $id_i (@{ $currfrag_ids }) {
-			$fraglens{$pdb}->{ $id_i } = scalar @{ $currfrag_ids };
-		}
-		$currfrag_lines = [];
-		$currfrag_ids = [];
-	}
-
-	print STDERR "Built ".scalar( @{ $allfrags{$pdb} } )." fragments from ".$pdb."\n";
 
 	close (PDB);
 }
 
-############
 # align all->all
-############
-
-my $npdbs = @ARGV;
-my $rmsds = [];
-my $nalignlen = [];
-my $Rs = [];
-my $comis = [];
-my $comjs = [];
-
+my $npdbs = @THREADED_MDLS;
+my $rmsds = []; my $nalignlen = []; my $Rs = [];
+my $comis = []; my $comjs = [];
 my $overlapscore = []; # for clustering
 
-foreach my $i (0..$#ARGV) {
-foreach my $j ($i..$#ARGV) {
+foreach my $i (0..$#THREADED_MDLS) {
+foreach my $j ($i..$#THREADED_MDLS) {
 	# intersection of $bbatoms{i} and {j}
 	my @common_atoms = ();
-	foreach ( keys %{ $bbatoms{$ARGV[$i]} } ) {
-		push @common_atoms, $_ if exists $bbatoms{$ARGV[$j]}->{$_};
+	foreach ( keys %{ $bbatoms{$THREADED_MDLS[$i]} } ) {
+		push @common_atoms, $_ if exists $bbatoms{$THREADED_MDLS[$j]}->{$_};
 	}
 	my $ncommon_atoms = scalar( @common_atoms );
 
@@ -253,8 +282,8 @@ foreach my $j ($i..$#ARGV) {
 	my $atoms_i = [];
 	my $atoms_j = [];
 	foreach ( @common_atoms ) {
-		push @{ $atoms_i }, deep_copy( $bbatoms{$ARGV[$i]}->{$_} );
-		push @{ $atoms_j }, deep_copy( $bbatoms{$ARGV[$j]}->{$_} );
+		push @{ $atoms_i }, deep_copy( $bbatoms{$THREADED_MDLS[$i]}->{$_} );
+		push @{ $atoms_j }, deep_copy( $bbatoms{$THREADED_MDLS[$j]}->{$_} );
 	}
 
 	# initial alignment
@@ -263,43 +292,43 @@ foreach my $j ($i..$#ARGV) {
 
 	next if ($i==$j);
 
+
 	# realign after trimming outliers
 	foreach my $RMS_ALIGN (@RMS_CUTOFFS) {
 		my @new_common_atoms = ();
 		$atoms_i = [];
 		$atoms_j = [];
 		foreach ( @common_atoms ) {
-			my $x = $bbatoms{$ARGV[$i]}->{$_};
-			my $y = vadd( mapply( $Rs->[$i][$j] , vsub( $bbatoms{$ARGV[$j]}->{$_} , $comis->[$i][$j] ) ), 
+			my $x = $bbatoms{$THREADED_MDLS[$i]}->{$_};
+			my $y = vadd( mapply( $Rs->[$i][$j] , vsub( $bbatoms{$THREADED_MDLS[$j]}->{$_} , $comis->[$i][$j] ) ), 
 			              vadd($comis->[$i][$j] , $comjs->[$i][$j]) );
 			my $dist = dist( $x,$y );
 			if ($dist <= $RMS_ALIGN) {
 				push @new_common_atoms, $_;
-				push @{ $atoms_i }, deep_copy( $bbatoms{$ARGV[$i]}->{$_} );
-				push @{ $atoms_j }, deep_copy( $bbatoms{$ARGV[$j]}->{$_} );
+				push @{ $atoms_i }, deep_copy( $bbatoms{$THREADED_MDLS[$i]}->{$_} );
+				push @{ $atoms_j }, deep_copy( $bbatoms{$THREADED_MDLS[$j]}->{$_} );
 			}
 		}
 
-		my $natoms_tot = min( scalar(keys %{ $bbatoms{$ARGV[$i]} }),  scalar(keys %{ $bbatoms{$ARGV[$j]} }) );
-		if ($RMS_ALIGN == $RMS_CUTOFFS[1]) {
-			#$overlapscore->[$i][$j] = scalar( @new_common_atoms ) / $ncommon_atoms;
+		$ncommon_atoms = scalar( @new_common_atoms );
+
+		my $natoms_tot = min( scalar(keys %{ $bbatoms{$THREADED_MDLS[$i]} }),  scalar(keys %{ $bbatoms{$THREADED_MDLS[$j]} }) );
+		if ($RMS_ALIGN == $RMS_CUTOFFS[2]) {
 			$overlapscore->[$i][$j] = scalar( @new_common_atoms ) / $natoms_tot;
-			print STDERR "overlap(".$ARGV[$i].",".$ARGV[$j].") over ".@common_atoms."/".$natoms_tot." atoms is ".$overlapscore->[$i][$j]."\n";
+			print STDERR "overlap(".$THREADED_MDLS[$i].",".$THREADED_MDLS[$j].") over ".@common_atoms."/".$natoms_tot." atoms is ".$overlapscore->[$i][$j]."\n";
 		}
 
-		if ( scalar( @new_common_atoms ) > $natoms_tot*$ALIGNCUTOFF ) {
-			@common_atoms = @new_common_atoms;
-			($Rs->[$i][$j], $rmsds->[$i][$j], $comis->[$i][$j], $comjs->[$i][$j]) = rms_align( $atoms_i , $atoms_j );
-			$nalignlen->[$i][$j] = scalar(@common_atoms);
-		} else {
-			#print STDERR "RMS(".$ARGV[$i].",".$ARGV[$j].") over ".@common_atoms." atoms is ".$rmsds->[$i][$j]."\n";
-			last;
-		}
+		last if ($ncommon_atoms < 6); #overlap == 0
+		last if (($ncommon_atoms < ($ALIGNCUTOFF*$natoms_tot)) && ($RMS_ALIGN<=$RMS_CUTOFFS[2]));
+
+		@common_atoms = @new_common_atoms;
+		($Rs->[$i][$j], $rmsds->[$i][$j], $comis->[$i][$j], $comjs->[$i][$j]) = rms_align( $atoms_i , $atoms_j );
+		$nalignlen->[$i][$j] = scalar(@common_atoms);
 	}
 }
 }
 
-foreach my $i (0..$#ARGV) {
+foreach my $i (0..$#THREADED_MDLS) {
 foreach my $j (0..$i-1) {
 	 $Rs->[$i][$j] =  minv( $Rs->[$j][$i] );
 	 $rmsds->[$i][$j] =  deep_copy( $rmsds->[$j][$i] );
@@ -313,23 +342,19 @@ foreach my $j (0..$i-1) {
 # clustering
 my $clusterid = [];
 
-
-# start with highest probability member of first cluster as the "seed"
+# start with highest probability member as the seed
 my $maxprob = 0;
 my $minI = -1;
-foreach my $i (0..$#ARGV) {
-	if ($james_clusterid[$i] == $firstcluster) {
-		my $tag = $ARGV[$i]; $tag =~ s/.*_(\d\d\d).*/$1/;
-		my $prob = $template_probs{ $tag };
-		$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
-		if ($prob > $maxprob) {
-			$maxprob = $prob;
-			$minI = $i;
-		}
+foreach my $i (0..$#THREADED_MDLS) {
+	my $tag = $THREADED_MDLS[$i]; $tag =~ s/.*_(\d\d\d).*/$1/;
+	my $prob = $template_probs{ $tag };
+	$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
+	if ($prob > $maxprob) {
+		$maxprob = $prob;
+		$minI = $i;
 	}
 }
-print STDERR "SEED $minI (".$ARGV[$minI].") with probability $maxprob\n";
-
+print STDERR "SEED $minI (".$THREADED_MDLS[$minI].") with probability $maxprob\n";
 
 my $nextclusterid = 1;
 $clusterid->[$minI] = $nextclusterid;
@@ -341,10 +366,10 @@ $globalRs->[$minI] = [[1,0,0],[0,1,0],[0,0,1]];
 my $preTs = [];
 $preTs->[$minI] = deep_copy( $comis->[$minI][$minI] );
 my $postTs = [];
-$postTs->[$minI] = $preTs->[$minI];
+$postTs->[$minI] = [0,0,0];  # center at origin
 
 # for remaining structs find best alignment to already-aligned model
-my @aligned = (0) x scalar(@ARGV);
+my @aligned = (0) x scalar(@THREADED_MDLS);
 $aligned[$minI] = 1;
 
 my $seedPDB = $minI;
@@ -352,19 +377,15 @@ my $seedPDB = $minI;
 my $minJ;
 my $minRMS;
 my $maxOverlap;
-foreach my $cycle (1..$#ARGV) {
+foreach my $cycle (1..$#THREADED_MDLS) {
 	$minRMS = 999;
 	$maxOverlap = 0;
 	$minI = -1; $minJ = -1;
-	foreach my $i (0..$#ARGV) {
-	foreach my $j (0..$#ARGV) {
+	foreach my $i (0..$#THREADED_MDLS) {
+	foreach my $j (0..$#THREADED_MDLS) {
 		next if ($i==$j);
 		next if ($aligned[$i] == 0 || $aligned[$j] == 1);
 		# i is aligned, j is not
-		#if ( $rmsds->[$i][$j] < $minRMS ) {
-		#	$minRMS = $rmsds->[$i][$j];
-		#	$minI = $i; $minJ = $j;
-		#}
 		if ( $overlapscore->[$i][$j] > $maxOverlap ) {
 			$maxOverlap = $overlapscore->[$i][$j];
 			$minI = $i; $minJ = $j;
@@ -372,54 +393,10 @@ foreach my $cycle (1..$#ARGV) {
 	}
 	}
 
-	if ($overlapscore->[$minI][$minJ] < $CLUSTERCUTOFF) {
-		$maxprob = 0;
-		$minJ = -1;
-		# find the highest prob model from 'james_cluster' still not placed
-		foreach my $i (0..$#ARGV) {
-			if ($james_clusterid[$i] != -1 && $aligned[$i] == 0) {
-				my $tag = $ARGV[$i]; $tag =~ s/.*_(\d\d\d).*/$1/;
-				my $prob = $template_probs{ $tag };
-				$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
-				if ($prob > $maxprob) {
-					$maxprob = $prob;
-					$minJ = $i;
-				}
-			}
-		}
-
-		print STDERR "Adding new cluster $minJ with prob $maxprob\n";
-		last if ($minJ == -1); # we're done!
-
-		# find the closest aligned thing to 'minJ'
-		$minRMS = 999; $minI = -1;
-		$maxOverlap = 0;
-		foreach my $i (0..$#ARGV) {
-			next if ($i==$minJ || $aligned[$i] == 0);
-			# i is aligned, j is not
-			#if ( $rmsds->[$i][$minJ] < $minRMS ) {
-			#	$minRMS = $rmsds->[$i][$minJ];
-			#	$minI = $i;
-			#}
-			if ( $overlapscore->[$i][$minJ] > $maxOverlap ) {
-				$maxOverlap = $overlapscore->[$i][$minJ];
-				$minI = $i;
-			}
-		}
-	}
-
 	# add j to alignment
-	print STDERR "ALIGN ".$ARGV[$minJ]." (from".$ARGV[$minI].")\n";
+	print STDERR "ALIGN ".$THREADED_MDLS[$minJ]." (from ".$THREADED_MDLS[$minI].") with overlap ".$overlapscore->[$minI][$minJ]."\n";
 	$globalRs->[$minJ] = mmult( $globalRs->[$minI], $Rs->[$minI][$minJ]  );
 	$preTs->[$minJ] = deep_copy( $comis->[$minI][$minJ] );
-
-	# james cluster id
-	# since we only seed with things that have a james_cluster id, we will never have minI => -1 and minJ => -1
-	if ($james_clusterid[$minJ] == -1 && $james_clusterid[$minI] >= 0) {
-		$james_clusterid[$minJ] = $james_clusterid[$minI];
-	} elsif ($james_clusterid[$minI] == -1 && $james_clusterid[$minJ] >= 0) {
-		$james_clusterid[$minI] = $james_clusterid[$minJ];
-	}
 
 	# check to see if this belongs in a new cluster
 	if ($overlapscore->[$minI][$minJ] >= $CLUSTERCUTOFF) {
@@ -430,8 +407,7 @@ foreach my $cycle (1..$#ARGV) {
 	}
 
 	# post-rotation translation is a bit tricky
-	# we need to transform to j's coordinate frame,
-	#   then apply j's transformation to this result
+	# we need to transform to j's coordinate frame, then apply j's transformation to this result
 	my $post_to_j = vadd( $comjs->[$minI][$minJ], $preTs->[$minJ] );
 	my $post_j_to_global = vadd( mapply( $globalRs->[$minI] , vsub( $post_to_j , $preTs->[$minI]) ) , 
 	                             $postTs->[$minI] );
@@ -440,152 +416,228 @@ foreach my $cycle (1..$#ARGV) {
 	$aligned[$minJ] = 1;
 }
 
-foreach my $i (0..$#ARGV) {
-	if ($aligned[$i] == 0) {
-		print STDERR "ELIMINATED ".$ARGV[$i]."\n";
+# sort clusters by p(correct)
+my %cluster_members;
+my @clusterprobs;
+foreach my $i (1..$nextclusterid) {
+	my @currclust = ();
+	$clusterprobs[$i-1] = 0;
+	foreach my $j (0..$#THREADED_MDLS) {
+		if ($clusterid->[$j] == $i) {
+			push @currclust, $j;
+			my $tag = $THREADED_MDLS[$j]; $tag =~ s/.*_(\d\d\d).*/$1/;
+			my $prob = $template_probs{ $tag };
+			$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
+			$clusterprobs[$i-1] += $prob;
+		}
+	}
+	$cluster_members{ $clusterprobs[$i-1] } = \@currclust;
+}
+
+# find out how many clusters to use
+@clusterprobs = sort {$b <=> $a} @clusterprobs;
+my $counter = 0;
+my $nclust = 0;
+foreach my $prob (@clusterprobs) {
+	foreach my $member (@{ $cluster_members{ $prob } }) {
+		my $filename = $THREADED_MDLS[ $member ];
+		$filename =~ s/.*\///;
+		if ( $filename =~ /201/ || $filename =~ /301/ || $filename =~ /401/ ) {
+			$nclust = $counter;
+		}
+	}
+	$counter++;
+}
+print STDERR "Using $nclust clusters\n";
+
+# store new cluster assignments
+foreach my $j (0..$#THREADED_MDLS) {
+	$clusterid->[$j] = -1;
+}
+foreach my $i (0..$nclust) {
+	my $prob = $clusterprobs[$i];
+	foreach my $member (@{ $cluster_members{ $prob } }) {
+		$clusterid->[ $member ] = $i;
 	}
 }
 
-# apply transformation; dump aligned templates
-mkdir "aligned_templates";
-foreach my $i (0..$#ARGV) {
-	next if ($aligned[$i] == 0);
+###############################
+###############################
+## STAGE 3 -- output
+mkdir ($WORKDIR);
 
-	my $pdb = $ARGV[$i];
+# (a) per-cluster alignment files
+#      + normalized p-correct
+foreach my $i (0..$nclust) {
+	my $clstfile = sprintf $ALNFILENAMES, $i;
+	open (CLST, ">$clstfile") || die "Cannot open $_";
+	my $pcorrect = sprintf $PCORRFILENAMES, $i;
+	open (PCORR, ">$pcorrect") || die "Cannot open $_";
+
+	foreach my $j (0..$#THREADED_MDLS) {
+		next if ($clusterid->[$j] != $i);
+
+		my $filename = $THREADED_MDLS[ $j ];
+		$filename =~ s/.*\///;
+		foreach my $alnline ( @{$alimap {substr($filename,0,9)}} ) {
+			print CLST $alnline;
+		}
+
+		my $tag = $filename; $tag =~ s/.*_(\d\d\d).*/$1/;
+		my $prob = $template_probs{ $tag };
+		$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
+		$prob = $prob / $clusterprobs[$i];
+		print PCORR "$tag $prob\n";
+	}
+	$counter++;
+
+	close CLST;
+	close PCORR;
+
+	# (b) constraint files
+	#chdir $TEMPLATEDIR;
+	mkdir "temp";
+	chdir "temp";
+	#~tex/src/cm_scripts/bin/predict_distances.pl $file $pdb/alignment/$pdb.fasta -aln_format grishin -weights_file /work/tex/src/cm_scripts/bin/p-correct.txt
+	my $cmd = "$CSTGEN_APP ../$clstfile ../$fastafile -aln_format grishin -weights_file ../$pcorrect"; ## -ev_map_file ../$evmapfile";
+	print STDERR $cmd."\n";
+	system($cmd);
+	chdir "..";
+	rmtree("temp");
+}
+
+# (c) aligned templates
+mkdir ($ALNTEMPLATEDIR);
+foreach my $i (0..$#THREADED_MDLS) {
+	next if ($clusterid->[$i] == -1);
+	my $clid = $clusterid->[$i];
+
+	my $pdb = $THREADED_MDLS[$i];
 	my $nfrags = scalar( @{ $allfrags{$pdb} } );
 
 	my $outpdb = $pdb;
 	$outpdb =~ s/.*\///;
-	$outpdb =~ s/\.pdb$/_aln.$i.pdb/;
-	#$outpdb = "cl".$clusterid->[$i].".".$outpdb;
+	$outpdb =~ s/\.pdb$/_aln.cl$clid.pdb/;
 	print STDERR "writing aligned_templates/$outpdb\n";
-	open (PDBF, ">aligned_templates/$outpdb") || print STDERR "Cannot open $_";
+	open (PDBF, ">$ALNTEMPLATEDIR/$outpdb") || die "Cannot open $_";
 
-	foreach my $frag (0..$nfrags-1) {
-		my $outfile = $pdb;
-		next if scalar( @{ $allfrags{$pdb}->[$frag] } <=5 );
-		foreach my $line (@{ $allfrags{$pdb}->[$frag] }) {
-			my $newX = [ substr ($line, 30, 8), substr ($line, 38, 8), substr ($line, 46, 8) ];
-			$newX = vsub( $newX, $preTs->[$i]);
-			$newX = mapply( $globalRs->[$i], $newX );
-			$newX = vadd( $newX, $postTs->[$i]);
-
-			substr ($line, 30, 8) = sprintf ("%8.3f", $newX->[0]);
-			substr ($line, 38, 8) = sprintf ("%8.3f", $newX->[1]);
-			substr ($line, 46, 8) = sprintf ("%8.3f", $newX->[2]);
-			print PDBF $line;
-		}
-		close PDB;
+	foreach my $line (@{ $allfrags{$pdb} }) {
+		my $newX = [ substr ($line, 30, 8), substr ($line, 38, 8), substr ($line, 46, 8) ];
+		$newX = vsub( $newX, $preTs->[$i]);
+		$newX = mapply( $globalRs->[$i], $newX );
+		$newX = vadd( $newX, $postTs->[$i]);
+		substr ($line, 30, 8) = sprintf ("%8.3f", $newX->[0]);
+		substr ($line, 38, 8) = sprintf ("%8.3f", $newX->[1]);
+		substr ($line, 46, 8) = sprintf ("%8.3f", $newX->[2]);
+		print PDBF $line;
 	}
 	close PDBF;
 }
 
+# (d) template density maps
+foreach my $i (0..$nclust) {
+	my $mapfile = sprintf $MAPFILENAMES , $i;
+	my $temppdb = $mapfile;
+	$temppdb =~ s/\.mrc/.pdb/g;
+	open (PDBCAT, ">$temppdb") || die "Cannot open $_";
 
-# make full-length input file
-# use seed
-my $pdb = $ARGV[$seedPDB];
-my @pseudotrace;
-my @gaps;
-my $last_ungapped = 1;
-foreach my $i (1..$nres) {
-	my $id = " CA "."A".$i;
-	
-	# add it to pseudotrace
-	if (defined $bbatoms{$pdb}->{$id} && $fraglens{$pdb}->{ $id } > 5 ) {
-		$gaps[$i] = 0;
-		$last_ungapped = $i;
-		foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
-			my $x;
-			$x = $bbatoms{$pdb}->{$atm."A".$i};
-			$x = vsub( $x, $preTs->[$seedPDB]);
-			$x = mapply( $globalRs->[$seedPDB], $x );
-			$x = vadd( $x, $postTs->[$seedPDB]);
-			$pseudotrace[$i]->{$atm} = $x;
-		}
-	} else {
-		$gaps[$i] = 999;
-		if ($i>1) {
-			$gaps[$i] = $gaps[$i-1]+1; # right extension distance
-		}
-	}
-}
+	foreach my $j (0..$#THREADED_MDLS) {
+		next if ($clusterid->[$j] != $i);
 
-# fill in gaps
-my $maxgap = $gaps[$nres];
-for (my $i=$last_ungapped-1; $i >= 1; $i--) {
-	$gaps[$i] = min( $gaps[$i+1]+1, $gaps[$i] );
-	$maxgap = max($maxgap, $gaps[$i]);
-}
-foreach my $i (1..$nres) { print STDERR $gaps[$i]; } print STDERR "\n";
-for my $cycle (1..$maxgap) {
-	# extend
-	foreach my $i (1..$nres) {
-		if ($gaps[$i] == $cycle) {
-			my $dir=-1; # extend backwards
-			if ( ($i != $nres && $gaps[$i+1] < $cycle)) {
-				$dir=1; #extend forwards
-			}
-			print STDERR "Rebuild $i ($dir)...\n";
+		my $tmpl_filename = $THREADED_MDLS[ $j ];
+		$tmpl_filename =~ s/$PARTIALTHREADDIR/$TEMPLATEDIR/g;
+		$tmpl_filename =~ s/_\d\d\d//g;
 
-			my $Xp1=[];
-			my $Xp2=[];
-			foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
-				push @{$Xp1}, deep_copy($pseudotrace[$i+1*$dir]->{$atm});
-				push @{$Xp2}, deep_copy($pseudotrace[$i+2*$dir]->{$atm});
-			}
-
-			# align xp2->xp1
-			my ($R21, $rmsd21, $com2, $com1) = rms_align( $Xp1 , $Xp2 );
-
-			# apply to xp1
-			foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
-				my $newX = vsub( $pseudotrace[$i+1*$dir]->{$atm}, $com2);
-				$newX = mapply( $R21, $newX );
-				$newX = vadd( $newX, $com2);
-				$newX = vadd( $newX, $com1);
-				$pseudotrace[$i]->{$atm} = $newX;
-			}
+		open (TEMPLPDB, "$tmpl_filename") || die "Cannot open $_";
+		my @templatepdb_lines = <TEMPLPDB>;
+		close TEMPLPDB;
+		foreach my $line (@templatepdb_lines) {
+			next if ($line !~ /^ATOM/);
+			my $newX = [ substr ($line, 30, 8), substr ($line, 38, 8), substr ($line, 46, 8) ];
+			$newX = vsub( $newX, $preTs->[$j]);
+			$newX = mapply( $globalRs->[$j], $newX );
+			$newX = vadd( $newX, $postTs->[$j]);
+			substr ($line, 30, 8) = sprintf ("%8.3f", $newX->[0]);
+			substr ($line, 38, 8) = sprintf ("%8.3f", $newX->[1]);
+			substr ($line, 46, 8) = sprintf ("%8.3f", $newX->[2]);
+			print PDBCAT $line;
 		}
 	}
+	close PDBCAT;
+
+	my $cmd = "$DENSGENAPP $temppdb $mapfile $DENSGENARGS";
+	print STDERR $cmd."\n";
+	system($cmd);
 }
-		
-# write model
-print STDERR "writing input.pdb\n";
-open (PDB, ">input.pdb") || print STDERR "Cannot open $_";
-my $atmidx = 1;
-foreach my $i (1..$nres) {
-	my $restype = $one_to_three{ substr($seq, $i-1, 1) };
-	foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
-		my $x = $pseudotrace[$i]->{$atm};
-		printf PDB "ATOM   %4d %s %s %s %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 
-			   $atmidx++, $atm, $restype, 'A', $i, $x->[0], $x->[1], $x->[2];
-	}
-}
-close(PDB);
 
 
+# (e) config/flags file
 
-# write config file
-#open (HYB, ">hybrid.config") || print STDERR "Cannot open $_";
-foreach my $i (0..$#ARGV) {
-	next if ($aligned[$i] == 0);
-	my $dir = getcwd;
-	my $id = $ARGV[$i];
-	$id =~ s/.*\///;
-	$id =~ s/\.pdb$/_aln.$i.pdb/;
-	$id = "$dir/aligned_templates/$id";
-	my $cstfile = sprintf $CSTFILENAMES, $james_clusterid[$i];
-	if ($cstfile ne "NULL") {
+my $dir = getcwd;
+# local hack
+$dir =~ s/\/gpfs\/DS3524-1//g;
+$dir =~ s/WORK/work/g;
+my $dirtag = $dir;
+$dirtag =~ s/.*\/([^\/]+$)/$1/g;
+
+foreach my $i (0..$nclust) {
+	my $cfgfile = sprintf $CFGFILENAMES, $i;
+	my $flagfile = sprintf $FLAGFILENAMES, $i;
+	open (HYB, ">$cfgfile") || die "Cannot open $_";
+	open (FLAGS, ">$flagfile") || die "Cannot open $_";
+
+	foreach my $j (0..$#THREADED_MDLS) {
+		next if ($clusterid->[$j] != $i);
+
+		my $id = $THREADED_MDLS[$j];
+		$id =~ s/.*\///;
+		$id =~ s/\.pdb$/_aln.cl$i.pdb/;
+		$id = "$dir/$ALNTEMPLATEDIR/$id";
+
+		my $cstfile = sprintf $CSTFILENAMES, $i;
 		$cstfile = $dir."/$cstfile";
-	}
-	my $clusterid = $clusterid->[$i];
-	my $tag = $ARGV[$i]; $tag =~ s/.*_(\d\d\d).*/$1/;
-	my $prob = $template_probs{ $tag };
-	$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
 
-	my $outline = sprintf "%20s %30s %4d %.5f\n", $id, $cstfile, $clusterid, $prob;
-	#print HYB $outline;
-	print $outline;
+		my $tag = $THREADED_MDLS[$j]; $tag =~ s/.*_(\d\d\d).*/$1/;
+		my $prob = $template_probs{ $tag };
+		$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
+		$prob += $template_M_EST;
+
+	 	my $outline = sprintf "%20s %30s %4d %.5f  ", $id, $cstfile, $i, $prob;
+
+		# load coord csts
+		my $coordcstfile = $COORDCSTDIR."/".substr( $id,0,9 ).".coordCsts";
+
+		# stupid renumbering issue
+		my $coordcstfileAlt = $coordcstfile;
+		my $newtag = $tag-1;
+		$coordcstfileAlt =~ s/_$tag/_$newtag/g;
+
+		if (-e $coordcstfile) {
+			open (RSD, $coordcstfile) || die "Cannot open $_";
+			my @resids = <RSD>;
+			close RSD;
+			chomp (@resids);
+			$outline = $outline.(join ',',@resids);
+		} elsif (-e $coordcstfileAlt) {
+			open (RSD, $coordcstfileAlt) || die "Cannot open $_";
+			my @resids = <RSD>;
+			close RSD;
+			chomp (@resids);
+			$outline = $outline.(join ',',@resids);
+		}
+		print HYB $outline."\n";
+	}
+
+	# finally write flags
+	print FLAGS "-in:file:fasta $dir/$fastafile\n";
+	print FLAGS "-out:prefix $dirtag\n";
+	print FLAGS "-out:file:silent $dir/../$dirtag.cl$i.silent\n";
+	print FLAGS "-in:file:native $dir/$NATIVEDIR/$dirtag.pdb\n";
+	print FLAGS "-cm::hybridize::template_list $dir/$cfgfile\n";
+	printf FLAGS "-in::file::frag3 $dir/$FRAG3FILE\n", $dirtag;
+	printf FLAGS "-in::file::frag9 $dir/$FRAG9FILE\n", $dirtag;
+	printf FLAGS "-edensity::mapfile $dir/$MAPFILENAMES\n", $i;
+	print FLAGS "-in:file:psipred_ss2 $SSPREDFILE\n";
 }
 
 exit 0;
@@ -598,7 +650,3 @@ sub dist {
 	my $z = [ $x->[0]-$y->[0] , $x->[1]-$y->[1] , $x->[2]-$y->[2] ];
 	return sqrt( $z->[0]*$z->[0] + $z->[1]*$z->[1] + $z->[2]*$z->[2] );
 }
-
-sub max ($$) { $_[$_[0] < $_[1]] }
-sub min ($$) { $_[$_[0] > $_[1]] }
-

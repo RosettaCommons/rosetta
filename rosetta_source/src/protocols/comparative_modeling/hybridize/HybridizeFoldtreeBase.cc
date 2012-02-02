@@ -141,7 +141,6 @@ void HybridizeFoldtreeBase::initialize(core::pose::Pose & pose) {
 
   // Add a virtual residue at the center of mass (updates the fold tree)
   numeric::xyzVector<Real> center;
-  chunks_.center_of_mass(pose, &center);
   core::pose::addVirtualResAsRoot(center, pose);
 
   // Initialize member variable <virtual_res_> with the index of the newly added

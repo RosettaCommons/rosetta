@@ -168,14 +168,18 @@ core::Size HybridizeFoldtreeDynamic::choose_anchor_position(const protocols::loo
 	return numeric::clamp<core::Size>(position, chunk.start(), chunk.stop());;
 }
 
+
 void HybridizeFoldtreeDynamic::initialize(
 	core::pose::Pose & pose,
 	protocols::loops::Loops const & core_chunks
 ) {
+	core::Size nres = pose.total_residue();
+	while (!pose.residue(nres).is_protein()) nres--;
+
 	set_core_chunks(core_chunks);
 	choose_anchors();
 	utility::vector1 < core::Size > cut_positions = decide_cuts(pose.total_residue());
-	protocols::loops::Loops complete_chunks = make_complete_chunks(cut_positions, pose.total_residue());
+	protocols::loops::Loops complete_chunks = make_complete_chunks(cut_positions, nres);
 	
 	HybridizeFoldtreeBase::set_chunks(complete_chunks, anchor_positions_);
 	HybridizeFoldtreeBase::initialize(pose); // initialize foldtree based on complete_chunks

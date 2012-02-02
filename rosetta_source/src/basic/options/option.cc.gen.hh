@@ -595,11 +595,11 @@ option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with in
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
-option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
@@ -1189,13 +1189,13 @@ option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(1
 option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
 option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
+option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
@@ -1557,15 +1557,19 @@ option.add( basic::options::OptionKeys::cm::hybridize::templates, "Input list of
 option.add( basic::options::OptionKeys::cm::hybridize::template_list, "Input list of templates, constaints, cluster, and weights" );
 option.add( basic::options::OptionKeys::cm::hybridize::add_non_init_chunks, "non chunks from templates other than the initial one" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure elements used to split the pose" ).def("HE");
-option.add( basic::options::OptionKeys::cm::hybridize::stage1_probability, "Probability of running stage 1, 0=never, 1=always" ).def(0.5);
+option.add( basic::options::OptionKeys::cm::hybridize::stage1_increase_cycles, "Scale stage 1 cycles" ).def(1.0);
+option.add( basic::options::OptionKeys::cm::hybridize::stage2_increase_cycles, "Scale stage 2 cycles" ).def(1.0);
+option.add( basic::options::OptionKeys::cm::hybridize::stage1_probability, "Probability of running stage 1, 0=never, 1=always" ).def(1.0);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_weights, "weight for fold tree hybridize stage" ).def("score3");
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_patch, "weight patch for fold tree hybridize stage" ).def("");
-option.add( basic::options::OptionKeys::cm::hybridize::frag_weight_aligned, "Probability of fragment insertion in the aligned region" ).def(0.);
-option.add( basic::options::OptionKeys::cm::hybridize::move_anchor, "move anchor residue when copying xyz in stage 1" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::skip_stage2, "skip cartesian fragment hybridize stage" ).def(false);
+option.add( basic::options::OptionKeys::cm::hybridize::no_global_frame, "no global-frame fragment insertions" ).def(false);
+option.add( basic::options::OptionKeys::cm::hybridize::linmin_only, "linmin only in stage 2" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::stage2_weights, "weight for cartesian fragment hybridize stage" ).def("score4_smooth_cart");
 option.add( basic::options::OptionKeys::cm::hybridize::stage2_patch, "weight patch for cartesian fragment hybridize stage" ).def("");
-option.add( basic::options::OptionKeys::cm::hybridize::relax, "perform relax at end" ).def(false);
+option.add( basic::options::OptionKeys::cm::hybridize::relax, "if n==1, perform relax at end; if n>1 perform batch relax over n centroids" ).def(0);
+option.add( basic::options::OptionKeys::cm::hybridize::frag_weight_aligned, "Probability of fragment insertion in the aligned region" ).def(0.);
+option.add( basic::options::OptionKeys::cm::hybridize::move_anchor, "move anchor residue when copying xyz in stage 1" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::max_registry_shift, "maximum registry shift" ).def(0);
 option.add( basic::options::OptionKeys::cm::hybridize::alignment_from_template_seqpos, "alignment from template resSeq" ).def(true);
 option.add( basic::options::OptionKeys::cm::hybridize::alignment_from_chunk_mapping, "alignment from secondary structure mapping" );
@@ -1783,11 +1787,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
@@ -1819,6 +1823,7 @@ option.add( basic::options::OptionKeys::edensity::centroid_density_mass, "No des
 option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);
 option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window_wt, "wt of edens sliding-window score" ).def(0.0);
+option.add( basic::options::OptionKeys::edensity::score_sliding_window_context, "when using sl. win. density fit, include neighbor atoms (slows trajectory)" ).def(false);
 option.add( basic::options::OptionKeys::edensity::whole_structure_ca_wt, "wt of edens centroid (CA-only) scoring" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::whole_structure_allatom_wt, "wt of edens centroid (allatom) scoring" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::no_edens_in_minimizer, "exclude density score from minimizer" ).def(false);

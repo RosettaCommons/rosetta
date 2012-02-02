@@ -16,11 +16,11 @@
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
-// AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
+#include <core/scoring/electron_density/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
@@ -273,12 +273,23 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 		align = option[ OptionKeys::edensity::realign ]();
 
 	// minimization
-//	core::scoring::ScoreFunctionOP scorefxn_dens = new core::scoring::ScoreFunction();
-//	if ( core::pose::symmetry::is_symmetric(pose) )
-//		scorefxn_dens = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_dens );
-//	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn_dens );
+	core::scoring::ScoreFunctionOP scorefxn_dens = new core::scoring::ScoreFunction();
+	if ( core::pose::symmetry::is_symmetric(pose) )
+		scorefxn_dens = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_dens );
+	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn_dens );
 
-	core::scoring::ScoreFunctionOP scorefxn_dens = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn_input = core::scoring::getScoreFunction();
+	core::Real dens_patt = scorefxn_input->get_weight( core::scoring::patterson_cc );
+	core::Real dens_wind = scorefxn_input->get_weight( core::scoring::elec_dens_window );
+	core::Real dens_allca = scorefxn_input->get_weight( core::scoring::elec_dens_whole_structure_ca );
+	core::Real dens_allatom = scorefxn_input->get_weight( core::scoring::elec_dens_whole_structure_allatom );
+	core::Real dens_fast = scorefxn_input->get_weight( core::scoring::elec_dens_fast );
+
+	if (dens_patt>0)    scorefxn_dens->set_weight( core::scoring::patterson_cc, dens_patt );
+	if (dens_wind>0)    scorefxn_dens->set_weight( core::scoring::elec_dens_window, dens_wind );
+	if (dens_allca>0)   scorefxn_dens->set_weight( core::scoring::elec_dens_whole_structure_ca, dens_allca );
+	if (dens_allatom>0) scorefxn_dens->set_weight( core::scoring::elec_dens_whole_structure_allatom, dens_allatom );
+	if (dens_fast>0)    scorefxn_dens->set_weight( core::scoring::elec_dens_fast, dens_fast );
 
 	// make sure at least 1 density term is on
 	core::Real dens_score_sum =
@@ -286,8 +297,10 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 		scorefxn_dens->get_weight( core::scoring::elec_dens_window ) +
 		scorefxn_dens->get_weight( core::scoring::elec_dens_whole_structure_ca ) +
 		scorefxn_dens->get_weight( core::scoring::elec_dens_whole_structure_allatom );
+		scorefxn_dens->get_weight( core::scoring::elec_dens_fast );
+
 	if (align != "no" && align != "random" && dens_score_sum==0 ) {
-		scorefxn_dens->set_weight( core::scoring::elec_dens_whole_structure_allatom, 1.0 );
+		scorefxn_dens->set_weight( core::scoring::elec_dens_fast, 1.0 );
 	}
 
 	core::Real dens_score = 0.0;

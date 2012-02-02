@@ -7537,9 +7537,19 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "HE"</dd><br>
 </dl>
 <dl>
+<dt><b>-stage1_increase_cycles</b> \<Real\><dt>
+<dd>Scale stage 1 cycles</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-stage2_increase_cycles</b> \<Real\><dt>
+<dd>Scale stage 2 cycles</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
 <dt><b>-stage1_probability</b> \<Real\><dt>
 <dd>Probability of running stage 1, 0=never, 1=always</dd><br>
-<dd>Default: 0.5</dd><br>
+<dd>Default: 1.0</dd><br>
 </dl>
 <dl>
 <dt><b>-stage1_weights</b> \<String\><dt>
@@ -7552,18 +7562,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
-<dt><b>-frag_weight_aligned</b> \<Real\><dt>
-<dd>Probability of fragment insertion in the aligned region</dd><br>
-<dd>Default: 0.</dd><br>
-</dl>
-<dl>
-<dt><b>-move_anchor</b> \<Boolean\><dt>
-<dd>move anchor residue when copying xyz in stage 1</dd><br>
+<dt><b>-skip_stage2</b> \<Boolean\><dt>
+<dd>skip cartesian fragment hybridize stage</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-skip_stage2</b> \<Boolean\><dt>
-<dd>skip cartesian fragment hybridize stage</dd><br>
+<dt><b>-no_global_frame</b> \<Boolean\><dt>
+<dd>no global-frame fragment insertions</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-linmin_only</b> \<Boolean\><dt>
+<dd>linmin only in stage 2</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -7577,8 +7587,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
-<dt><b>-relax</b> \<Boolean\><dt>
-<dd>perform relax at end</dd><br>
+<dt><b>-relax</b> \<Integer\><dt>
+<dd>if n==1, perform relax at end; if n>1 perform batch relax over n centroids</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-frag_weight_aligned</b> \<Real\><dt>
+<dd>Probability of fragment insertion in the aligned region</dd><br>
+<dd>Default: 0.</dd><br>
+</dl>
+<dl>
+<dt><b>-move_anchor</b> \<Boolean\><dt>
+<dd>move anchor residue when copying xyz in stage 1</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -8838,6 +8858,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.0</dd><br>
 </dl>
 <dl>
+<dt><b>-score_sliding_window_context</b> \<Boolean\><dt>
+<dd>when using sl. win. density fit, include neighbor atoms (slows trajectory)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-whole_structure_ca_wt</b> \<Real\><dt>
 <dd>wt of edens centroid (CA-only) scoring</dd><br>
 <dd>Default: 0.0</dd><br>
@@ -9520,6 +9545,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-cstfile</b> \<File\><dt>
 <dd>description</dd><br>
+</dl>
+<dl>
+<dt><b>-cen_sfxn</b> \<String\><dt>
+<dd>centroid score function to be used for building</dd><br>
+<dd>Default: "remodel_cen"</dd><br>
 </dl>
 <dl>
 <dt><b>-num_trajectory</b> \<Integer\><dt>

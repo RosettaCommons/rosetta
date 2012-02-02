@@ -22,13 +22,11 @@
 #include <protocols/checkpoint/CheckPointer.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverCreator.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 
 //// C++ headers
 #include <string>
@@ -127,7 +125,9 @@ public:
 
 
   /// @brief Batch Relax, a new even faster way to relax entire batches of structures.
-	void batch_apply( std::vector < core::io::silent::SilentStructOP > &  input_structs );
+	void batch_apply( 
+		std::vector < core::io::silent::SilentStructOP > &  input_structs,
+		core::scoring::constraints::ConstraintSetOP input_csts = NULL );
 
 protected:
 

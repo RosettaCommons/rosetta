@@ -1,5 +1,3 @@
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "DenovoProteinDesign:redesign_complete" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
 namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
@@ -32,6 +30,7 @@ namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centro
 namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_window" );  }
 namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
 namespace edensity { RealOptionKey const sliding_window_wt( "edensity:sliding_window_wt" );  }
+namespace edensity { BooleanOptionKey const score_sliding_window_context( "edensity:score_sliding_window_context" );  }
 namespace edensity { RealOptionKey const whole_structure_ca_wt( "edensity:whole_structure_ca_wt" );  }
 namespace edensity { RealOptionKey const whole_structure_allatom_wt( "edensity:whole_structure_allatom_wt" );  }
 namespace edensity { BooleanOptionKey const no_edens_in_minimizer( "edensity:no_edens_in_minimizer" );  }

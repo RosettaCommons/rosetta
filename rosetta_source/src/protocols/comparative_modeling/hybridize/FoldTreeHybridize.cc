@@ -115,6 +115,8 @@ FoldTreeHybridize::FoldTreeHybridize (
 
 	// abinitio frag9,frag3 flags
 	frag_libs_ = frag_libs;
+
+	increase_cycles_ = option[cm::hybridize::stage1_increase_cycles]();
 }
 	
 void
@@ -123,24 +125,6 @@ FoldTreeHybridize::set_loops_to_virt_ala(core::pose::Pose & pose, Loops loops)
 	chemical::ResidueTypeSet const& restype_set( pose.residue(1).residue_type_set() );
 	
 	for (Size iloop=1; iloop<=loops.num_loop(); ++iloop) {
-		/*
-		 if ( loops[iloop].start() == 1 ) {
-		 if (loops[iloop].stop() <=2) continue;
-		 }
-		 else if (loops[iloop].stop() - loops[iloop].start() <= 3) {
-		 continue;
-		 }
-		 else {
-		 Size nres(pose.total_residue());
-		 while (pose.residue_type(nres).is_virtual_residue()) {
-		 --nres;
-		 }
-		 if ( loops[iloop].stop() == nres ) {
-		 if (loops[iloop].start() >=nres-1) continue;
-		 }
-		 }
-		 */
-		
 		for (Size ires=loops[iloop].start(); ires<=loops[iloop].stop(); ++ires) {
 			
 			// Create the new residue and replace it
@@ -163,23 +147,6 @@ FoldTreeHybridize::revert_loops_to_original(core::pose::Pose & pose, Loops loops
 	chemical::ResidueTypeSet const& restype_set( pose.residue(1).residue_type_set() );
 	
 	for (Size iloop=1; iloop<=loops.num_loop(); ++iloop) {
-		/*
-		 if ( loops[iloop].start() == 1 ) {
-		 if (loops[iloop].stop() <=2) continue;
-		 }
-		 else if (loops[iloop].stop() - loops[iloop].start() <= 3) {
-		 continue;
-		 }
-		 else {
-		 Size nres(pose.total_residue());
-		 while (pose.residue_type(nres).is_virtual_residue()) {
-		 --nres;
-		 }
-		 if ( loops[iloop].stop() == nres ) {
-		 if (loops[iloop].start() >=nres-1) continue;
-		 }
-		 }
-		 */
 		for (Size ires=loops[iloop].start(); ires<=loops[iloop].stop(); ++ires) {
 			utility::vector1< VariantType > variant_types = pose.residue_type(ires).variant_types();
 			MutateResidue mutate_mover(ires, sequence[ires-1]);
@@ -207,31 +174,23 @@ FoldTreeHybridize::gap_distance(Size Seq_gap)
 	
 	switch (Seq_gap) {
 		case 0:
-			return gap_torr_0;
-			break;
+			return gap_torr_0; break;
 		case 1:
-			return gap_torr_1;
-			break;
+			return gap_torr_1; break;
 		case 2:
-			return gap_torr_2;
-			break;
+			return gap_torr_2; break;
 		case 3:
-			return gap_torr_3;
-			case 4:
-			return gap_torr_4;
-			break;
+			return gap_torr_3; break;
+		case 4:
+			return gap_torr_4; break;
 		case 5:
-			return gap_torr_5;
-			break;
+			return gap_torr_5; break;
 		case 6:
-			return gap_torr_6;
-			break;
+			return gap_torr_6; break;
 		case 7:
-			return gap_torr_7;
-			break;
+			return gap_torr_7; break;
 		case 8:
-			return gap_torr_8;
-			break;
+			return gap_torr_8; break;
 		default:
 			return 9999.;
 	}
@@ -263,36 +222,6 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
 	}
 }
 
-/*
- void add_gap_constraints_to_pose_extend_gap(core::pose::Pose & pose, Size seq_distance_to_gap, Loops const & chunks, Real stdev=0.1) {
- basic::Tracer TR("pilot.yfsong.util");
- using namespace ObjexxFCL::fmt;
- 
- // add constraints
- Real boundary(gap_distance(seq_distance_to_gap*2));
- 
- for (Size i=1; i<chunks.num_loop(); ++i) {
- int gap_start = chunks[i].stop() - seq_distance_to_gap;
- int gap_end   = chunks[i+1].start() + seq_distance_to_gap;
- 
- if ( gap_start >= 1 && gap_end <= pose.total_residue() ) {
- if (!pose.residue_type(gap_start).is_protein()) continue;
- if (!pose.residue_type(gap_end).is_protein()) continue;
- Size iatom = pose.residue_type(gap_start).atom_index("CA");
- Size jatom = pose.residue_type(gap_end).atom_index("CA");
- 
- TR << "Add constraint to residue " << I(4,gap_start) << " and residue " << I(4,gap_end) << std::endl;
- pose.add_constraint(
- new core::scoring::constraints::AtomPairConstraint(
- core::id::AtomID(iatom,gap_start),
- core::id::AtomID(jatom,gap_end),
- new core::scoring::constraints::BoundFunc( 0, boundary, stdev, "gap" ) )
- );
- }
- }
- }
- */
-	
 protocols::loops::Loops FoldTreeHybridize::renumber_template_chunks(
 												 protocols::loops::Loops & template_chunk,
 												 core::pose::PoseCOP template_pose
@@ -311,52 +240,14 @@ protocols::loops::Loops FoldTreeHybridize::renumber_template_chunks(
 	return renumbered_template_chunks;
 }
 
-/*
-void
-FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
-	std::string cut_point_decision("middle");
-	
-	if (!option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
-		utility_exit_with_message("Error in reading psipred_ss2 file, is the -in:file:psipred_ss2 flag set correctly?");
-	}
-	
-	bool check_psipred = set_secstruct_from_psipred_ss2(pose);
-	assert (check_psipred);
-	
-	core::Size gap_size = RG.random_range(0,2);
-	core::Size minimum_length_of_chunk_helix = 4;
-	core::Size minimum_length_of_chunk_strand = 2;
-	
-	// extract secondary structure chunks from target psipred
-	ss_chunks_pose_ = extract_secondary_structure_chunks( pose, option[cm::hybridize::ss](), gap_size, minimum_length_of_chunk_helix,minimum_length_of_chunk_strand );
-	ss_chunks_pose_.sequential_order();
-	
-	// combine chunk definition from secondary structure and template
-	utility::vector1 < protocols::loops::Loops > renumbered_template_contigs(template_contigs_);
-	for (core::Size icontigs = 1; icontigs<=template_contigs_.size(); ++icontigs) {
-		for (core::Size ichunk = 1; ichunk<=template_contigs_[icontigs].num_loop(); ++ichunk) {
-			Size seqpos_start_templ = template_contigs_[icontigs][ichunk].start();
-			Size seqpos_start_target = template_poses_[icontigs]->pdb_info()->number(seqpos_start_templ);
-			renumbered_template_contigs[icontigs][ichunk].set_start( seqpos_start_target );
-
-			Size seqpos_stop_templ = template_contigs_[icontigs][ichunk].stop();
-			Size seqpos_stop_target = template_poses_[icontigs]->pdb_info()->number(seqpos_stop_templ);
-			renumbered_template_contigs[icontigs][ichunk].set_stop( seqpos_stop_target );
-		}
-	}
-	HybridizeFoldtreeDynamic foldtree_mover(renumbered_template_contigs);
-	foldtree_mover.initialize(pose, ss_chunks_pose_); // combine psipred and template contigs for chunk initialization
-	TR.Debug << pose.fold_tree() << std::endl;
-}
-*/
 
 void
 FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
-    if (!option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
-		utility_exit_with_message("Error in reading psipred_ss2 file, is the -in:file:psipred_ss2 flag set correctly?");
-	}
-	bool check_psipred = set_secstruct_from_psipred_ss2(pose);
-	assert (check_psipred);
+	//if (!option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
+	//	utility_exit_with_message("Error in reading psipred_ss2 file, is the -in:file:psipred_ss2 flag set correctly?");
+	//}
+	//bool check_psipred = set_secstruct_from_psipred_ss2(pose);
+	//assert (check_psipred);
 
 	// combine:
 	// (a) contigs in the current template
@@ -474,12 +365,6 @@ FoldTreeHybridize::translate_virt_to_CoM(core::pose::Pose & pose) {
 	pose.batch_set_xyz(ids,positions);
 }
 
-/*
-Loops FoldTreeHybridize::loops() {
-	return loops_pose_;	
-}
-*/
-
 utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops(core::pose::Pose & pose) {
 	utility::vector1< core::Real > residue_weights(pose.total_residue());
 	protocols::loops::Loops renumbered_template_chunks = renumber_template_chunks(
@@ -522,8 +407,6 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	initialize_chunk_mover.apply(pose);
 	translate_virt_to_CoM(pose);
 	
-	//pose.dump_pdb("after_init.pdb");
-	
 	use_random_template = true;
 	Size max_registry_shift = option[cm::hybridize::max_registry_shift]();
 	ChunkTrialMoverOP random_sample_chunk_mover(
@@ -538,15 +421,15 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// just fragment mover
 	(*scorefxn_)(pose);
 	protocols::moves::MonteCarloOP mc_frag = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
-	for (Size i = 1; i<= 2000; ++i) {
+	core::Size nfragcycles =  (core::Size)(2000*increase_cycles_);
+	for (Size i = 1; i<= nfragcycles; ++i) {
 		fragment_trial_mover->apply(pose);
 		(*scorefxn_)(pose);
 		mc_frag->boltzmann(pose);
 	}
 	mc_frag->recover_low(pose);
 	
-	//utility_exit_with_message("debugging");
-
+	core::Size ncycles =  (core::Size)(500*increase_cycles_);
 	for (Size i=1;i<=4;++i) {
 		if (i==3) scorefxn_->set_weight( core::scoring::linear_chainbreak, 0.5 );
 		if (i==4) scorefxn_->set_weight( core::scoring::linear_chainbreak, 2.0 );
@@ -560,7 +443,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		(*scorefxn_)(pose);
 		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
 
-		for (Size i = 1; i<= 500; ++i) {
+		for (Size i = 1; i <= ncycles; ++i) {
 			random_mover->apply(pose);
 			(*scorefxn_)(pose);
 			mc->boltzmann(pose);

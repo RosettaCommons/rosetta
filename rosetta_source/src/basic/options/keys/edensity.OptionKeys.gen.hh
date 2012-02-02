@@ -30,6 +30,7 @@ namespace edensity { extern RealOptionKey const centroid_density_mass; }
 namespace edensity { extern IntegerOptionKey const sliding_window; }
 namespace edensity { extern RealOptionKey const fastdens_wt; }
 namespace edensity { extern RealOptionKey const sliding_window_wt; }
+namespace edensity { extern BooleanOptionKey const score_sliding_window_context; }
 namespace edensity { extern RealOptionKey const whole_structure_ca_wt; }
 namespace edensity { extern RealOptionKey const whole_structure_allatom_wt; }
 namespace edensity { extern BooleanOptionKey const no_edens_in_minimizer; }
