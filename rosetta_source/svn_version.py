@@ -65,4 +65,10 @@ std::string minirosetta_svn_url() { return "%(url)s"; }
 ''' % vars())
     f.close()
 
+# Run with timing
+import sys, time
+starttime = time.time()
+sys.stdout.write("Running versioning script ... ")
+sys.stdout.flush() # Make sure it gets dumped before running the function.
 svn_version()
+sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )

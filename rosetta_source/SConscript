@@ -9,7 +9,17 @@ Import("build")
 
 # Generate .cc file with svn revision number/range.
 # Provide empty dictionaries so local environment is not modified.
-execfile("svn_version.py", {}, {})
+AddOption('--nover',
+          dest='nover',
+          action="store_true", default=False,
+          help="Don't run the versioning script.")
+
+if GetOption("help"):
+    pass
+elif GetOption("nover"):
+    print "Skipping versioning script. (Hopefully src/core/svn_version.cc is already up-to-date.)"
+else:
+    execfile("svn_version.py", {}, {})
 
 
 for kind in build.options.cat:
