@@ -322,7 +322,7 @@ make_symmetric_pdb_info(
 {
 	using namespace core::conformation::symmetry;
 
-	std::string chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
+	std::string chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$^&.<>?]{}|-_\\~`\"')=%" );
 
 	runtime_assert( is_symmetric( pose ) );
 	runtime_assert( pdb_info_target->nres() == pose.total_residue() );
