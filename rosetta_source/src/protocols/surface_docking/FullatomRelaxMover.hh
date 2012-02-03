@@ -85,17 +85,17 @@ public:
 
 	//virtual bool make_move( core::pose::Pose & ) = 0;
 
-	void angle_max(const core::Real);
+	// Undefined, commenting out to fix PyRosetta build  void angle_max(const core::Real);
 
-	void angle_max(const char,const core::Real);
+	// Undefined, commenting out to fix PyRosetta build  void angle_max(const char,const core::Real);
 
 	void set_nmoves(const core::Size);
 
 	void setup_defaults();
 
-	void setup_shearTrialMover();
+	// Undefined, commenting out to fix PyRosetta build  void setup_shearTrialMover();
 
-	void setup_smallTrialMover();
+	// Undefined, commenting out to fix PyRosetta build  void setup_smallTrialMover();
 
 	void setupMovers();
 

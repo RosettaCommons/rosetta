@@ -90,9 +90,9 @@ public:
 
 	void setup_defaults();
 
-	void setup_shearTrialMover();
+	// Undefined, commenting out to fix PyRosetta build   void setup_shearTrialMover();
 
-	void setup_smallTrialMover();
+	// Undefined, commenting out to fix PyRosetta build  void setup_smallTrialMover();
 
 	void FinalizeMovers(core::pose::Pose &);
 
