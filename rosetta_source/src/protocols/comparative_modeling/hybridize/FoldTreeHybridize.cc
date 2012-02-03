@@ -93,6 +93,10 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 	
 
+FoldTreeHybridize::FoldTreeHybridize( ) {
+	init();
+}
+
 FoldTreeHybridize::FoldTreeHybridize (
 		core::Size const initial_template_index,
 		utility::vector1 < core::pose::PoseCOP > const & template_poses,
@@ -101,6 +105,8 @@ FoldTreeHybridize::FoldTreeHybridize (
 		utility::vector1 < protocols::loops::Loops > const & template_contigs,
 		utility::vector1 < core::fragment::FragSetOP > & frag_libs)
 {
+	init();
+
 	//initialize template structures
 	initial_template_index_ = initial_template_index;
 	template_poses_ = template_poses;
@@ -119,6 +125,20 @@ FoldTreeHybridize::FoldTreeHybridize (
 	increase_cycles_ = option[cm::hybridize::stage1_increase_cycles]();
 }
 	
+void
+FoldTreeHybridize::init() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	increase_cycles_ = option[cm::hybridize::stage1_increase_cycles]();
+	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
+	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
+	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
+
+	// default scorefunction
+	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ) );
+}
+
 void
 FoldTreeHybridize::set_loops_to_virt_ala(core::pose::Pose & pose, Loops loops)
 {
@@ -269,7 +289,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	TR.Debug << "Chunks from initial template: " << std::endl;
 	TR.Debug << my_chunks << std::endl;
 
-	if ( option[cm::hybridize::add_non_init_chunks]() ) {
+	if ( add_non_init_chunks_ ) {
 	// (b) probabilistically sampled chunks from all other templates _outside_ these residues
 	utility::vector1< std::pair< core::Real, protocols::loops::Loop > >  wted_insertions_to_consider;
 	for (core::Size itempl = 1; itempl<=template_chunks_.size(); ++itempl) {
@@ -376,7 +396,7 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops
 			TR.Debug << " " << ires;
 		}
 		else {
-			residue_weights[ires] = option[cm::hybridize::frag_weight_aligned]();
+			residue_weights[ires] = frag_weight_aligned_;
 		}
 	}
 	TR.Debug << std::endl;
@@ -408,7 +428,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	translate_virt_to_CoM(pose);
 	
 	use_random_template = true;
-	Size max_registry_shift = option[cm::hybridize::max_registry_shift]();
+	Size max_registry_shift = max_registry_shift_;
 	ChunkTrialMoverOP random_sample_chunk_mover(
 		new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, max_registry_shift)
 	);
@@ -419,6 +439,9 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	);
 	
 	// just fragment mover
+	core::Real chainbreak_wts_orig = scorefxn_->get_weight( core::scoring::linear_chainbreak );
+
+	scorefxn_->set_weight( core::scoring::linear_chainbreak, chainbreak_wts_orig * 0.25 );
 	(*scorefxn_)(pose);
 	protocols::moves::MonteCarloOP mc_frag = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
 	core::Size nfragcycles =  (core::Size)(2000*increase_cycles_);
@@ -428,11 +451,12 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		mc_frag->boltzmann(pose);
 	}
 	mc_frag->recover_low(pose);
+	scorefxn_->set_weight( core::scoring::linear_chainbreak, 0. );
 	
 	core::Size ncycles =  (core::Size)(500*increase_cycles_);
 	for (Size i=1;i<=4;++i) {
-		if (i==3) scorefxn_->set_weight( core::scoring::linear_chainbreak, 0.5 );
-		if (i==4) scorefxn_->set_weight( core::scoring::linear_chainbreak, 2.0 );
+		if (i==3) scorefxn_->set_weight( core::scoring::linear_chainbreak, chainbreak_wts_orig * 0.25 );
+		if (i==4) scorefxn_->set_weight( core::scoring::linear_chainbreak, chainbreak_wts_orig );
 
 		RandomMoverOP random_mover( new RandomMover() );
 		Real weight = 0.05 * (Real)i;
@@ -459,7 +483,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		TR.Debug << "Trial counter:" << I(4,ires) << I(8, random_sample_chunk_mover->trial_counter(ires)) << std::endl;
 	}
 }
-	
+
 std::string FoldTreeHybridize::get_name() const
 {
 	return "FoldTreeHybridize";

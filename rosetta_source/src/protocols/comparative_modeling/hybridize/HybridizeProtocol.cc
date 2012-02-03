@@ -8,9 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file
-/// @brief Add constraints to the current pose conformation.
 /// @author Yifan Song
 
+#include <protocols/comparative_modeling/hybridize/HybridizeProtocolCreator.hh>
 #include <protocols/comparative_modeling/hybridize/HybridizeProtocol.hh>
 #include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.hh>
 #include <protocols/comparative_modeling/hybridize/CartesianHybridize.hh>
@@ -22,6 +22,8 @@
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
+
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/util.hh>
@@ -78,6 +80,8 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <protocols/moves/DataMap.hh>
+
 // utility
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
@@ -108,6 +112,7 @@ namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 
+//
 using namespace core;
 using namespace kinematics;
 using namespace sequence;
@@ -117,35 +122,77 @@ using namespace operation;
 using namespace scoring;
 using namespace constraints;
 
+
+/////////////
+// creator
+std::string
+HybridizeProtocolCreator::keyname() const {
+	return HybridizeProtocolCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+HybridizeProtocolCreator::create_mover() const {
+	return new HybridizeProtocol;
+}
+
+std::string
+HybridizeProtocolCreator::mover_name() {
+	return "Hybridize";
+}
+
+
+
+/////////////
+// mover
 HybridizeProtocol::HybridizeProtocol() :
 	template_weights_sum_(0)
 {
-	check_options();
-	
-	//read templates
+	init();
+}
+
+HybridizeProtocol::HybridizeProtocol(std::string template_list_file) {
+	init();
+	read_template_structures(template_list_file);
+}
+
+// sets default options
+void
+HybridizeProtocol::init() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
-	read_template_structures( option[cm::hybridize::template_list]() );
-	
-	//read fragments
+
+	stage1_probability_ = option[cm::hybridize::stage1_probability]();
+	stage1_increase_cycles_ = option[cm::hybridize::stage1_increase_cycles]();
+	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
+	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
+	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
+
+	stage2_increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
+	no_global_frame_ = option[cm::hybridize::no_global_frame]();
+	linmin_only_ = option[cm::hybridize::linmin_only]();
+
+	// default scorefunction
+	stage1_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( 
+		option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage1_patch]() );
+	stage2_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( 
+		option[cm::hybridize::stage2_weights](), option[cm::hybridize::stage2_patch]() );
+
+	fa_scorefxn_ = core::scoring::getScoreFunction();
+	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn_ );
+
+	batch_relax_ = option[ cm::hybridize::relax ]();
+	relax_repeats_ = option[ basic::options::OptionKeys::relax::default_repeats ]();
+
+	// read fragments
 	if ( option[ in::file::frag9 ].user() ) {
 		using namespace core::fragment;
 		fragments9_ = new ConstantLengthFragSet( 9 );
 		fragments9_ = FragmentIO().read_data( option[ in::file::frag9 ]() );
-		for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
-			core::Size position = (*i)->start();
-			//library_[position] = **i;
-		}
 	}
 	if ( option[ in::file::frag3 ].user() ) {
 		using namespace core::fragment;
 		fragments3_ = new ConstantLengthFragSet( 3 );
 		fragments3_ = FragmentIO().read_data( option[ in::file::frag3 ]() );
-		for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
-			core::Size position = (*i)->start();
-			//library_[position] = **i;
-		}
 	}
 	
 	// native
@@ -153,8 +200,8 @@ HybridizeProtocol::HybridizeProtocol() :
 		native_ = new core::pose::Pose;
 		core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
 	}
-
 }
+
 	
 core::Real HybridizeProtocol::get_gdtmm( core::pose::Pose &pose ) {
 	core::Real gdtmm = 0;
@@ -319,8 +366,6 @@ HybridizeProtocol::initialize_and_sample_loops(
 
 
 
-HybridizeProtocol::~HybridizeProtocol(){}
-
 void HybridizeProtocol::add_template(
 	std::string template_fn,
 	std::string cst_fn,
@@ -412,15 +457,6 @@ void HybridizeProtocol::read_template_structures(utility::vector1 < utility::fil
 	}
 }
 
-void HybridizeProtocol::check_options()
-{
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	//if ( !basic::options::option[ cm::hybridize::template_list ].user() ) {
-	//	utility_exit_with_message("Error! Need the -cm::hybridize::template_list for input template structures.");
-	//}
-}
-	
 void HybridizeProtocol::pick_starting_template(core::Size & initial_template_index,
 							core::Size & initial_template_index_icluster,
 							utility::vector1 < core::Size > & template_index_icluster,
@@ -429,6 +465,9 @@ void HybridizeProtocol::pick_starting_template(core::Size & initial_template_ind
 							utility::vector1 < protocols::loops::Loops > & template_chunks_icluster,
 							utility::vector1 < protocols::loops::Loops > & template_contigs_icluster )
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	template_index_icluster.clear();
 	templates_icluster.clear();
 	weights_icluster.clear();
@@ -488,16 +527,17 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		utility::vector1 < core::Real > weights_icluster;
 		utility::vector1 < protocols::loops::Loops > template_chunks_icluster;
 		utility::vector1 < protocols::loops::Loops > template_contigs_icluster;
-		pick_starting_template(initial_template_index, initial_template_index_icluster,
-			template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster);
-	
+		pick_starting_template(
+			initial_template_index, initial_template_index_icluster,
+			template_index_icluster, templates_icluster, weights_icluster,
+			template_chunks_icluster, template_contigs_icluster);
 		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
-	
+
 		// initialize template history
 		TemplateHistoryOP history = new TemplateHistory(pose);
 		history->setall( initial_template_index_icluster );
 		pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
-		
+
 		// apply constraints
 		core::scoring::constraints::ConstraintSetOP constraint_set;
 		std::string cst_fn = template_cst_fn_[initial_template_index];
@@ -505,59 +545,62 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_fn, new ConstraintSet, pose );
 		}
 		pose.constraint_set( constraint_set );
-		
+
 		// fold tree hybridize
-		core::scoring::ScoreFunctionOP scorefxn_stage1 = 
-			core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage1_patch]());
-	
-		if (RG.uniform() < option[cm::hybridize::stage1_probability]()) {
+		if (RG.uniform() < stage1_probability_) {
 			// package up fragments
 			utility::vector1 < core::fragment::FragSetOP > frag_libs;
 			frag_libs.push_back(fragments3_);
 			frag_libs.push_back(fragments9_);
 	
 			FoldTreeHybridizeOP ft_hybridize(
-				new FoldTreeHybridize(initial_template_index_icluster, templates_icluster, weights_icluster, template_chunks_icluster, template_contigs_icluster,  frag_libs) ) ;
-			ft_hybridize->set_scorefunction(scorefxn_stage1);
+				new FoldTreeHybridize(
+					initial_template_index_icluster, templates_icluster, weights_icluster,
+					template_chunks_icluster, template_contigs_icluster, frag_libs) ) ;
+			ft_hybridize->set_scorefunction( stage1_scorefxn_ );
+			ft_hybridize->set_increase_cycles( stage1_increase_cycles_ );
+			ft_hybridize->set_add_non_init_chunks( add_non_init_chunks_ );
+			ft_hybridize->set_frag_weight_aligned( frag_weight_aligned_ );
+			ft_hybridize->set_max_registry_shift( max_registry_shift_ );
 			ft_hybridize->apply(pose);
 		} else {
 			// just do frag insertion in unaligned regions
 			core::pose::PoseOP chosen_templ = templates_icluster[initial_template_index_icluster];
 			protocols::loops::Loops chosen_contigs = template_contigs_icluster[initial_template_index_icluster];
-			initialize_and_sample_loops(pose, chosen_templ, chosen_contigs, scorefxn_stage1);
+			initialize_and_sample_loops(pose, chosen_templ, chosen_contigs, stage1_scorefxn_);
 		}
-	
+
 		//write gdtmm to output
-		using namespace ObjexxFCL::fmt;
 		gdtmm = get_gdtmm(pose);
 		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
 		TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
-	
-		//pose.dump_pdb( "after_stage1.pdb" );
-	
+
 		// cartesian fragment hybridize
 		pose.constraint_set( constraint_set );  //reset constraints
-		CartesianHybridizeOP cart_hybridize (
-			new CartesianHybridize( templates_icluster, weights_icluster,template_chunks_icluster,template_contigs_icluster, fragments9_ ) );
-		core::scoring::ScoreFunctionOP scorefxn_stage2 =
-		core::scoring::ScoreFunctionFactory::create_score_function(option[cm::hybridize::stage2_weights](), option[cm::hybridize::stage2_patch]());
-		cart_hybridize->set_scorefunction(scorefxn_stage2);
-	
 		if (!option[cm::hybridize::skip_stage2]()) {
+			CartesianHybridizeOP cart_hybridize (
+				new CartesianHybridize(
+					templates_icluster, weights_icluster, 
+					template_chunks_icluster,template_contigs_icluster, fragments9_ ) );
+			cart_hybridize->set_scorefunction( stage2_scorefxn_);
+			cart_hybridize->set_increase_cycles( stage2_increase_cycles_ );
+			cart_hybridize->set_no_global_frame( no_global_frame_ );
+			cart_hybridize->set_linmin_only( linmin_only_ );
 			option[ score::linear_bonded_potential ].value( true );  //fpd hack
 			cart_hybridize->apply(pose);
-			if (option[ cm::hybridize::relax ]()) option[ score::linear_bonded_potential ].value( false ); //fpd hack
+			if (batch_relax_>0)
+				option[ score::linear_bonded_potential ].value( false ); //fpd hack
 		}
-	
+
 		// get fragment history
 		runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 		history = *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
-	
+
 		//write gdtmm to output
 		gdtmm = get_gdtmm(pose);
 		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
 		TR << "GDTMM_after_stage2" << F(8,3,gdtmm) << std::endl;
-	
+
 		//look back and apply constraints
 		TR << "History :";
 		for (int i=1; i<= history->size(); ++i ) {
@@ -569,17 +612,13 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			TR << I(4, history->get(i));
 		}
 		TR << std::endl;
-	
+
 		// optional relax
-		if (option[ cm::hybridize::relax ]() > 0) {
+		if (batch_relax_ > 0) {
 			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
 			tofa->apply(pose);
-	
-			// get scorefunction, add cst weight from commandline
-			core::scoring::ScoreFunctionOP fa_scorefxn = core::scoring::getScoreFunction();
-			core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn );
-	
-			if (option[ cm::hybridize::relax ]() == 1) {
+
+			if (batch_relax_ == 1) {
 				// add constraints
 				core::pose::addVirtualResAsRoot(pose);
 				core::Size rootres = pose.fold_tree().root();
@@ -595,10 +634,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 								core::id::AtomID(ii,i), core::id::AtomID(1,rootres), pose.xyz( core::id::AtomID(ii,i) ), new HarmonicFunc( 0.0, coord_sdev ) ) );
 					}
 				}
-		
+
 				// standard relax
 				// do relax _without_ ramping down coordinate constraints
-				protocols::relax::FastRelax relax_prot( fa_scorefxn, option[ basic::options::OptionKeys::relax::default_repeats ]() ,"NO CST RAMPING" );
+				protocols::relax::FastRelax relax_prot( fa_scorefxn_, relax_repeats_ ,"NO CST RAMPING" );
 				relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
 				relax_prot.apply(pose);
 			} else {
@@ -609,11 +648,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				new_struct->energies_from_pose( pose );
 				post_centroid_structs.push_back( new_struct );
 
-				if (post_centroid_structs.size() == option[ cm::hybridize::relax ]()) {
-					protocols::relax::FastRelax relax_prot( fa_scorefxn );
+				if (post_centroid_structs.size() == batch_relax_) {
+					protocols::relax::FastRelax relax_prot( fa_scorefxn_ );
 					relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
 					relax_prot.set_force_nonideal("true");
-					relax_prot.set_script_to_batchrelax_default( option[ basic::options::OptionKeys::relax::default_repeats ]() );
+					relax_prot.set_script_to_batchrelax_default( relax_repeats_ );
 
 					// notice! this assumes all poses in a set have the same constraints!
 					relax_prot.batch_apply(post_centroid_structs, pose.constraint_set()->clone());
@@ -628,7 +667,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			}
 		} else {
 			// no fullatom sampling
-			(*scorefxn_stage2)(pose);
+			(*stage2_scorefxn_)(pose);
 		}
 	}
 
@@ -644,6 +683,77 @@ protocols::moves::MoverOP HybridizeProtocol::fresh_instance() const { return new
 std::string
 HybridizeProtocol::get_name() const {
 	return "HybridizeProtocol";
+}
+
+void
+HybridizeProtocol::parse_my_tag(
+	utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const & , moves::Movers_map const & , core::pose::Pose const & pose )
+{
+	// config file
+	if( tag->hasOption( "config_file" ) )
+		read_template_structures( tag->getOption< std::string >( "config_file" ) );
+
+	// basic options
+	stage1_increase_cycles_ = tag->getOption< core::Real >( "stage1_increase_cycles", 1. );
+	stage2_increase_cycles_ = tag->getOption< core::Real >( "stage2_increase_cycles", 1. );
+	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
+
+	if( tag->hasOption( "stage1_probability" ) )
+		stage1_probability_ = tag->getOption< core::Real >( "stage1_probability" );
+	if( tag->hasOption( "add_non_init_chunks" ) )
+		add_non_init_chunks_ = tag->getOption< bool >( "add_non_init_chunks" );
+	if( tag->hasOption( "frag_weight_aligned" ) )
+		frag_weight_aligned_ = tag->getOption< core::Real >( "frag_weight_aligned" );
+	if( tag->hasOption( "max_registry_shift" ) )
+		max_registry_shift_ = tag->getOption< core::Size >( "max_registry_shift" );
+	if( tag->hasOption( "no_global_frame" ) )
+		no_global_frame_ = tag->getOption< bool >( "no_global_frame" );
+	if( tag->hasOption( "linmin_only" ) )
+		linmin_only_ = tag->getOption< bool >( "linmin_only" );
+	if( tag->hasOption( "repeats" ) )
+		relax_repeats_ = tag->getOption< core::Size >( "repeats" );
+
+	// scorfxns
+	if( tag->hasOption( "stage1_scorefxn" ) ) {
+		std::string const scorefxn_name( tag->getOption<std::string>( "stage1_scorefxn" ) );
+		stage1_scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	}
+	if( tag->hasOption( "stage2_scorefxn" ) ) {
+		std::string const scorefxn_name( tag->getOption<std::string>( "stage2_scorefxn" ) );
+		stage2_scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	}
+	if( tag->hasOption( "fa_scorefxn" ) ) {
+		std::string const scorefxn_name( tag->getOption<std::string>( "fa_scorefxn" ) );
+		fa_scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	}
+
+	// fragments
+	utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );
+	utility::vector1< utility::tag::TagPtr >::const_iterator tag_it;
+	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
+		if ( (*tag_it)->getName() == "Fragments" ) {
+			using namespace core::fragment;
+
+			fragments3_ = new ConstantLengthFragSet( 3 );
+			fragments3_ = FragmentIO().read_data( (*tag_it)->getOption<std::string>( "3mers" )  );
+			fragments9_ = new ConstantLengthFragSet( 9 );
+			fragments9_ = FragmentIO().read_data( (*tag_it)->getOption<std::string>( "9mers" ) );
+		}
+
+		if ( (*tag_it)->getName() == "Template" ) {
+			using namespace core::fragment;
+			std::string template_fn = (*tag_it)->getOption<std::string>( "pdb" );
+			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "NONE" );
+			core::Real weight = (*tag_it)->getOption<core::Real>( "weight", 1 );
+			core::Size cluster_id = (*tag_it)->getOption<core::Size>( "cluster_id", 1 );
+			utility::vector1<core::Size> cst_reses;
+			if ((*tag_it)->hasOption( "constrain_res" ))
+				 cst_reses = protocols::rosetta_scripts::get_resnum_list_ordered( (*tag_it)->getOption<std::string>("constrain_res"), pose );
+
+			add_template(template_fn, cst_fn, weight, cluster_id, cst_reses);
+		}
+
+	}
 }
 
 } // hybridize 

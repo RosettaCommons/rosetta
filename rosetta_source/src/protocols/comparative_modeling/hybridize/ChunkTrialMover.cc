@@ -186,7 +186,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
         pick_random_template();
     }
     //TR << "templ number: " << template_number() << std::endl;
-    align_chunk_.set_template(template_poses_[template_number()], sequence_alignments_[template_number()]);
+    align_chunk_.set_template(template_poses_[template_number()], template_number(), sequence_alignments_[template_number()]);
 
     // random chunk or loop all chunks
 	if (align_option_ == random_chunk) {

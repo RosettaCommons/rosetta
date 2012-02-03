@@ -56,6 +56,7 @@ using namespace protocols::loops;
 class FoldTreeHybridize: public protocols::moves::Mover {
 
 public:
+    FoldTreeHybridize();
 
 	FoldTreeHybridize(
 		core::Size const initial_template_index,
@@ -64,6 +65,9 @@ public:
 		utility::vector1 < protocols::loops::Loops > const & template_chunks,
 		utility::vector1 < protocols::loops::Loops > const & template_contigs,
 		utility::vector1 < core::fragment::FragSetOP > & frag_libs);
+
+	// initialize options to defaults
+	void init();
 
 	void revert_loops_to_original(core::pose::Pose & pose, Loops loops);
 
@@ -88,6 +92,11 @@ public:
 	          protocols::loops::Loops & template_chunk,
 	          core::pose::PoseCOP template_pose);
 
+	void set_increase_cycles(core::Real increase_cycles_in) { increase_cycles_=increase_cycles_in; }
+	void set_add_non_init_chunks(bool add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
+	void set_frag_weight_aligned(core::Real frag_weight_aligned_in) { frag_weight_aligned_=frag_weight_aligned_in; }
+	void set_max_registry_shift(core::Size max_registry_shift_in) { max_registry_shift_=max_registry_shift_in; }
+	
 	inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) {
 		scorefxn_ = scorefxn;
 	}
@@ -98,6 +107,9 @@ public:
 
 private:
 	core::Real increase_cycles_;
+	bool add_non_init_chunks_;
+	core::Real frag_weight_aligned_;
+	core::Size max_registry_shift_;
 
 	core::Size initial_template_index_;
 	core::scoring::ScoreFunctionOP scorefxn_;

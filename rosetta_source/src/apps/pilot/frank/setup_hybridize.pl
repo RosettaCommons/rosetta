@@ -18,7 +18,7 @@ require "matrix.pm";
 my $PARTIALTHREAD_APP = "/work/dimaio/rosetta/rosetta_source/bin/partial_thread.default.linuxgccrelease".
                         " -database /work/dimaio/rosetta/rosetta_database ".
 						"-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm";
-my $CSTGEN_APP =   "/work/tex/src/cm_scripts/bin/predict_distances.pl";
+my $CSTGEN_APP =   "/work/dimaio/rosetta/cm_scripts/bin/predict_distances.pl";
 my $PDBFILEDIR = "/lab/databases/wwpdb/";
 my $DENSGENAPP = "/work/dimaio/EMAN/bin/pdb2mrc";
 my $DENSGENARGS = "res=5.0 apix=2.0 box=96";

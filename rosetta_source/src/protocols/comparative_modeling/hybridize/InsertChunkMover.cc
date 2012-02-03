@@ -28,6 +28,12 @@
 
 //#include <core/kinematics/FoldTree.hh>
 
+// history
+#include <protocols/comparative_modeling/hybridize/TemplateHistory.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
+
+//
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 
@@ -176,9 +182,10 @@ void InsertChunkMover::align_chunk(core::pose::Pose & pose) {
 	apply_transform( pose, residue_list, R, preT, postT );
 }
 	
-void InsertChunkMover::set_template(core::pose::PoseCOP template_pose,
+void InsertChunkMover::set_template(core::pose::PoseCOP template_pose, core::Size template_id,
 				  std::map <core::Size, core::Size> const & sequence_alignment ) {
 	template_pose_ = template_pose;
+	template_id_ = template_id;
 	sequence_alignment_ = sequence_alignment;
 }
 
@@ -605,6 +612,11 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
         core::conformation::idealize_position(seqpos_aligned_stop_, pose.conformation());
         core::conformation::idealize_position(seqpos_aligned_stop_+1, pose.conformation());
     }
+	
+	runtime_assert( pose.data().has( core::pose::datacache::CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
+	TemplateHistory &history = 
+	*( static_cast< TemplateHistory* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
+	history.set( seqpos_start_, seqpos_stop_, template_id_ );
 }
 	
 void InsertChunkMover::check_overlap(core::pose::Pose & pose) {

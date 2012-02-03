@@ -8,13 +8,22 @@
 #include <protocols/viewer/viewers.hh>
 #include <utility/excn/Exceptions.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/cm.OptionKeys.gen.hh>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
 void*
 my_main( void* ) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	try{
-		protocols::jd2::JobDistributor::get_instance()->go( new protocols::comparative_modeling::hybridize::HybridizeProtocol() );
+		protocols::jd2::JobDistributor::get_instance()->go(
+			new protocols::comparative_modeling::hybridize::HybridizeProtocol( option[cm::hybridize::template_list]() )
+		);
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );

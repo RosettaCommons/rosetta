@@ -70,7 +70,7 @@ void reset_torsion(bool reset_torsion_unaligned) {
     reset_torsion_unaligned_ = reset_torsion_unaligned;
 }
 
-void set_template(core::pose::PoseCOP template_pose,
+void set_template(core::pose::PoseCOP template_pose, core::Size template_id,
 				  std::map <core::Size, core::Size> const & sequence_alignment );
 
 void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number);
@@ -100,6 +100,7 @@ std::string get_name() const;
 	
 private:
 	core::pose::PoseCOP template_pose_;
+	core::Size template_id_;
 	std::map <core::Size, core::Size> sequence_alignment_;
 
 	Size jump_number_; // the jump to be realigned
