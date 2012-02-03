@@ -64,11 +64,13 @@ std::string minirosetta_svn_url() { return "%(url)s"; }
 } // namespace core
 ''' % vars())
     f.close()
+def main():
+    # Run with timing
+    import sys, time
+    starttime = time.time()
+    sys.stdout.write("Running versioning script ... ")
+    sys.stdout.flush() # Make sure it gets dumped before running the function.
+    svn_version()
+    sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )
 
-# Run with timing
-import sys, time
-starttime = time.time()
-sys.stdout.write("Running versioning script ... ")
-sys.stdout.flush() # Make sure it gets dumped before running the function.
-svn_version()
-sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )
+if __name__ == "__main__" or __name__ == "__builtin__": main()

@@ -574,6 +574,7 @@
 		79D1C17BBDFC0034B3E0C112 /* TrieCountPairAll.cc in Sources */ = {isa = PBXBuildFile; fileRef = 48A75C3F770BB2B5FC2E7BAA /* TrieCountPairAll.cc */; };
 		31489E5FC73F016D68338A0A /* TrieCountPairGeneric.cc in Sources */ = {isa = PBXBuildFile; fileRef = 67326E69C7511473245D37E7 /* TrieCountPairGeneric.cc */; };
 		601926916F84166E6965AD5C /* TrieCountPairNone.cc in Sources */ = {isa = PBXBuildFile; fileRef = AA5F712246306B280E15D9A2 /* TrieCountPairNone.cc */; };
+		4530676D10A87AB28657A5BB /* ContextIndependentGeometricSolEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 715F9EF8E14B6D7DCC739DE6 /* ContextIndependentGeometricSolEnergy.cc */; };
 		05D60A6B4C828317AB37F45A /* DatabaseOccSolEne.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9FE135C89CB4BC736F5B6CD7 /* DatabaseOccSolEne.cc */; };
 		8FE25B38FCB24C1EB7DDD82B /* ExactOccludedHbondSolEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 24F4B79D616C963102753CE5 /* ExactOccludedHbondSolEnergy.cc */; };
 		7EEF0F84440D400E3A565A43 /* GeometricSolEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = AFBF45E169329922F0E9DA5B /* GeometricSolEnergy.cc */; };
@@ -721,6 +722,7 @@
 		09D292807A0988B2E676C5FA /* RNA_FilteredBaseBaseInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = B7B5300D9E9EF866944023D3 /* RNA_FilteredBaseBaseInfo.cc */; };
 		D460C1E50EF20300CE31B768 /* RNA_FittedTorsionInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = A58C3FFACC1D63648944C5F0 /* RNA_FittedTorsionInfo.cc */; };
 		4814D611CC99E3046C8A2F5F /* RNA_FullAtomStackingEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = AA2F019A903DE88ECA35C23A /* RNA_FullAtomStackingEnergy.cc */; };
+		4CF276D0021AC236FE7BACCB /* RNA_FullAtomVDW_BasePhosphate.cc in Sources */ = {isa = PBXBuildFile; fileRef = E7829855D98FC995B2C4672B /* RNA_FullAtomVDW_BasePhosphate.cc */; };
 		FFB95BEBBCA7040E2E0EB208 /* RNA_LJ_BaseEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 72294D1DF51D437FE3D9BD76 /* RNA_LJ_BaseEnergy.cc */; };
 		021781D9F8670F2726D678E6 /* RNA_LowResolutionPotential.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0176624C7226E395DBE1CBCC /* RNA_LowResolutionPotential.cc */; };
 		A0C727E10E9E6D4868E21F68 /* RNA_PairwiseLowResolutionEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6D60E709008D69AEC7879493 /* RNA_PairwiseLowResolutionEnergy.cc */; };
@@ -1990,20 +1992,23 @@
 		CC6301B4C0E6D8BE91684361 /* StepWiseProteinResidueSampler.cc in Sources */ = {isa = PBXBuildFile; fileRef = D137429006115031991ACA66 /* StepWiseProteinResidueSampler.cc */; };
 		7F2179F36B624DC06B80ACD0 /* StepWiseProteinScreener.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED4AF3CE75EFD370704EEC83 /* StepWiseProteinScreener.cc */; };
 		617C8EE8D44CA682ABD5B824 /* StepWiseProteinUtil.cc in Sources */ = {isa = PBXBuildFile; fileRef = A0989618F7FD29AF56D472DB /* StepWiseProteinUtil.cc */; };
-		EB13E7CF7B87B51B60488725 /* RNA_AnalyticLoopCloser.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4C68C85C969B8FF634C70933 /* RNA_AnalyticLoopCloser.cc */; };
-		24EA52B3D89A12A66BB0CB37 /* RNA_LoopCloseSampler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8403137DADA23CC493A99ADC /* RNA_LoopCloseSampler.cc */; };
 		C243D48EC98BC2221A286035 /* StepWiseRNA_BaseCentroidScreener.cc in Sources */ = {isa = PBXBuildFile; fileRef = D89B202DAC985DF6153CF4B2 /* StepWiseRNA_BaseCentroidScreener.cc */; };
 		6CB3647440833278E7717841 /* StepWiseRNA_Base_Sugar_Rotamer.cc in Sources */ = {isa = PBXBuildFile; fileRef = D3C42CEBD29BFC08E34010A6 /* StepWiseRNA_Base_Sugar_Rotamer.cc */; };
 		CD011A7A0A4D7D00562ED861 /* StepWiseRNA_Clusterer.cc in Sources */ = {isa = PBXBuildFile; fileRef = C7D37999EC51BC5046D33F83 /* StepWiseRNA_Clusterer.cc */; };
-		35215B62236B5A0B758765C1 /* StepWiseRNA_Dinucleotide_Sampler_Util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0BF821EA5BFC181E75659428 /* StepWiseRNA_Dinucleotide_Sampler_Util.cc */; };
+		263DBAA3217689EA9ED726C2 /* StepWiseRNA_CombineLongLoopFilterer.cc in Sources */ = {isa = PBXBuildFile; fileRef = BF239E1214EFB3A272CF817E /* StepWiseRNA_CombineLongLoopFilterer.cc */; };
+		DAC6880E514F18B21DD06878 /* StepWiseRNA_FloatingBase_Sampler_Util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 426E0A6EEE4DD34DB8E3DB69 /* StepWiseRNA_FloatingBase_Sampler_Util.cc */; };
+		AEAA0B87E4ADD2878F5F8282 /* StepWiseRNA_JobParameters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 24BF6C5BFB0974458F2375F7 /* StepWiseRNA_JobParameters.cc */; };
+		0F8D49F0B7E3876E89897DE1 /* StepWiseRNA_JobParameters_Setup.cc in Sources */ = {isa = PBXBuildFile; fileRef = 770783A5826353DF07E93469 /* StepWiseRNA_JobParameters_Setup.cc */; };
 		47EDC6B432659896F99C651B /* StepWiseRNA_Minimizer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 90BABEAE9867BA1D439E1F43 /* StepWiseRNA_Minimizer.cc */; };
+		6A8A7D66E61037E9345A513C /* StepWiseRNA_OutputData.cc in Sources */ = {isa = PBXBuildFile; fileRef = 333F7FC82F435D452FAA828C /* StepWiseRNA_OutputData.cc */; };
+		DAF4F402EDC7E342D9B99EF7 /* StepWiseRNA_PoseSetup.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5B962711468F7DC6551DF488 /* StepWiseRNA_PoseSetup.cc */; };
 		CF12CAC0908C60B5726F507D /* StepWiseRNA_ResidueInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = BB3CE483D1E49015BCE9492D /* StepWiseRNA_ResidueInfo.cc */; };
 		23CC4A07307DFDB627AB44E2 /* StepWiseRNA_ResidueSampler.cc in Sources */ = {isa = PBXBuildFile; fileRef = ECB3128788C51F3391AA5FC6 /* StepWiseRNA_ResidueSampler.cc */; };
 		059A2578F7E70789F44B0FD1 /* StepWiseRNA_RotamerGenerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5B7EF47C412E6679A9A738CE /* StepWiseRNA_RotamerGenerator.cc */; };
 		01BF759FBF08D48C2E9627C5 /* StepWiseRNA_RotamerGenerator_Wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 85212DD7D500A7E9CE2549DF /* StepWiseRNA_RotamerGenerator_Wrapper.cc */; };
 		6B4131551FC9FFEEB5AD4B83 /* StepWiseRNA_Util.cc in Sources */ = {isa = PBXBuildFile; fileRef = B33622F473F42EC8D9FAE362 /* StepWiseRNA_Util.cc */; };
-		CD6E22C496AD9394126B4506 /* determinants.cc in Sources */ = {isa = PBXBuildFile; fileRef = 104C26EDFE6DA32EFB525661 /* determinants.cc */; };
-		BA91FBF3277DE3554E9899BD /* rigid_body_settings.cc in Sources */ = {isa = PBXBuildFile; fileRef = BAE718FC349EA626BD397FC3 /* rigid_body_settings.cc */; };
+		B0F55D496960DD6678B67FA5 /* StepWiseRNA_VDW_Bin_Screener.cc in Sources */ = {isa = PBXBuildFile; fileRef = 422096BF1B1956E9BDB86A08 /* StepWiseRNA_VDW_Bin_Screener.cc */; };
+		E816A65C95C9C46961FECB61 /* StepWiseRNA_VirtualRiboseSampler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1A84C27C3FF9D5D7948F3AE1 /* StepWiseRNA_VirtualRiboseSampler.cc */; };
 		152E0324C0406E2348F83B4E /* MedalExchangeMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6B1F0B4E12C36DE78ABA8A09 /* MedalExchangeMover.cc */; };
 		0BD8A15040A0FD5F298F5C07 /* MedalMain.cc in Sources */ = {isa = PBXBuildFile; fileRef = F972949A4A41D58A0EA3D7CA /* MedalMain.cc */; };
 		095B7C329D28DB82581C15EC /* MedalMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 099AE53C636459976ED0706B /* MedalMover.cc */; };
@@ -8263,6 +8268,10 @@
 		AA5F712246306B280E15D9A2 /* TrieCountPairNone.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TrieCountPairNone.cc; path = ../src/core/scoring/etable/etrie/TrieCountPairNone.cc; sourceTree = SOURCE_ROOT; };
 		64E3993C7D2D9FB9451B0A3A /* TrieCountPairNone.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TrieCountPairNone.fwd.hh; path = ../src/core/scoring/etable/etrie/TrieCountPairNone.fwd.hh; sourceTree = SOURCE_ROOT; };
 		A693253D2FD074E5936513A5 /* TrieCountPairNone.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TrieCountPairNone.hh; path = ../src/core/scoring/etable/etrie/TrieCountPairNone.hh; sourceTree = SOURCE_ROOT; };
+		715F9EF8E14B6D7DCC739DE6 /* ContextIndependentGeometricSolEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ContextIndependentGeometricSolEnergy.cc; path = ../src/core/scoring/geometric_solvation/ContextIndependentGeometricSolEnergy.cc; sourceTree = SOURCE_ROOT; };
+		163C3FFFA534FFF3A4929E41 /* ContextIndependentGeometricSolEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ContextIndependentGeometricSolEnergy.fwd.hh; path = ../src/core/scoring/geometric_solvation/ContextIndependentGeometricSolEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
+		DB79A1C326767B32B8981DFB /* ContextIndependentGeometricSolEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ContextIndependentGeometricSolEnergy.hh; path = ../src/core/scoring/geometric_solvation/ContextIndependentGeometricSolEnergy.hh; sourceTree = SOURCE_ROOT; };
+		6635FA09A32CBD0B18A7E179 /* ContextIndependentGeometricSolEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ContextIndependentGeometricSolEnergyCreator.hh; path = ../src/core/scoring/geometric_solvation/ContextIndependentGeometricSolEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		9FE135C89CB4BC736F5B6CD7 /* DatabaseOccSolEne.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseOccSolEne.cc; path = ../src/core/scoring/geometric_solvation/DatabaseOccSolEne.cc; sourceTree = SOURCE_ROOT; };
 		57E31F7C6C2186493B8030E1 /* DatabaseOccSolEne.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DatabaseOccSolEne.fwd.hh; path = ../src/core/scoring/geometric_solvation/DatabaseOccSolEne.fwd.hh; sourceTree = SOURCE_ROOT; };
 		A3A7128FD3DCAB93E8CDDB68 /* DatabaseOccSolEne.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DatabaseOccSolEne.hh; path = ../src/core/scoring/geometric_solvation/DatabaseOccSolEne.hh; sourceTree = SOURCE_ROOT; };
@@ -8779,6 +8788,11 @@
 		7745A598BAB511EC43374821 /* RNA_FullAtomStackingEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomStackingEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_FullAtomStackingEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C99D4703455DE7F796925B9E /* RNA_FullAtomStackingEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomStackingEnergy.hh; path = ../src/core/scoring/rna/RNA_FullAtomStackingEnergy.hh; sourceTree = SOURCE_ROOT; };
 		375F98C97F669900087EDDAA /* RNA_FullAtomStackingEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomStackingEnergyCreator.hh; path = ../src/core/scoring/rna/RNA_FullAtomStackingEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
+		E7829855D98FC995B2C4672B /* RNA_FullAtomVDW_BasePhosphate.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_FullAtomVDW_BasePhosphate.cc; path = ../src/core/scoring/rna/RNA_FullAtomVDW_BasePhosphate.cc; sourceTree = SOURCE_ROOT; };
+		36C9C956428B48402F728172 /* RNA_FullAtomVDW_BasePhosphate.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomVDW_BasePhosphate.fwd.hh; path = ../src/core/scoring/rna/RNA_FullAtomVDW_BasePhosphate.fwd.hh; sourceTree = SOURCE_ROOT; };
+		FDB8D8732228A9AFEA3171B3 /* RNA_FullAtomVDW_BasePhosphate.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomVDW_BasePhosphate.hh; path = ../src/core/scoring/rna/RNA_FullAtomVDW_BasePhosphate.hh; sourceTree = SOURCE_ROOT; };
+		27DA7A0D3BB428117CA6A456 /* RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh; path = ../src/core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh; sourceTree = SOURCE_ROOT; };
+		C688B5B3C0B3F1A156BECB04 /* RNA_FullAtomVDW_BasePhosphateCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomVDW_BasePhosphateCreator.hh; path = ../src/core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.hh; sourceTree = SOURCE_ROOT; };
 		72294D1DF51D437FE3D9BD76 /* RNA_LJ_BaseEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_LJ_BaseEnergy.cc; path = ../src/core/scoring/rna/RNA_LJ_BaseEnergy.cc; sourceTree = SOURCE_ROOT; };
 		A66981257F23BD4633D86221 /* RNA_LJ_BaseEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LJ_BaseEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_LJ_BaseEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		5E68D395145870E7CFD23FAE /* RNA_LJ_BaseEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LJ_BaseEnergy.hh; path = ../src/core/scoring/rna/RNA_LJ_BaseEnergy.hh; sourceTree = SOURCE_ROOT; };
@@ -12549,11 +12563,6 @@
 		6024CDC48228F626E1A7F911 /* StepWiseProteinScreener.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseProteinScreener.hh; path = ../src/protocols/swa/protein/StepWiseProteinScreener.hh; sourceTree = SOURCE_ROOT; };
 		A0989618F7FD29AF56D472DB /* StepWiseProteinUtil.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseProteinUtil.cc; path = ../src/protocols/swa/protein/StepWiseProteinUtil.cc; sourceTree = SOURCE_ROOT; };
 		F28E2A7CB0A6E8D5632BD775 /* StepWiseProteinUtil.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseProteinUtil.hh; path = ../src/protocols/swa/protein/StepWiseProteinUtil.hh; sourceTree = SOURCE_ROOT; };
-		4C68C85C969B8FF634C70933 /* RNA_AnalyticLoopCloser.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_AnalyticLoopCloser.cc; path = ../src/protocols/swa/rna/RNA_AnalyticLoopCloser.cc; sourceTree = SOURCE_ROOT; };
-		9496B8DCE5C8EB9FB008C38F /* RNA_AnalyticLoopCloser.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_AnalyticLoopCloser.fwd.hh; path = ../src/protocols/swa/rna/RNA_AnalyticLoopCloser.fwd.hh; sourceTree = SOURCE_ROOT; };
-		536D96487BDAF4C7999A6380 /* RNA_AnalyticLoopCloser.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_AnalyticLoopCloser.hh; path = ../src/protocols/swa/rna/RNA_AnalyticLoopCloser.hh; sourceTree = SOURCE_ROOT; };
-		8403137DADA23CC493A99ADC /* RNA_LoopCloseSampler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_LoopCloseSampler.cc; path = ../src/protocols/swa/rna/RNA_LoopCloseSampler.cc; sourceTree = SOURCE_ROOT; };
-		CB890DF1BBFB1220EF51BDC9 /* RNA_LoopCloseSampler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LoopCloseSampler.hh; path = ../src/protocols/swa/rna/RNA_LoopCloseSampler.hh; sourceTree = SOURCE_ROOT; };
 		D89B202DAC985DF6153CF4B2 /* StepWiseRNA_BaseCentroidScreener.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_BaseCentroidScreener.cc; path = ../src/protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.cc; sourceTree = SOURCE_ROOT; };
 		B32949FB44EEC51A8C175641 /* StepWiseRNA_BaseCentroidScreener.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_BaseCentroidScreener.fwd.hh; path = ../src/protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh; sourceTree = SOURCE_ROOT; };
 		101B5882BB9DAE7CD18F224C /* StepWiseRNA_BaseCentroidScreener.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_BaseCentroidScreener.hh; path = ../src/protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh; sourceTree = SOURCE_ROOT; };
@@ -12563,12 +12572,22 @@
 		2FBFF6073EAA94DA866A3F16 /* StepWiseRNA_Classes.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_Classes.hh; path = ../src/protocols/swa/rna/StepWiseRNA_Classes.hh; sourceTree = SOURCE_ROOT; };
 		C7D37999EC51BC5046D33F83 /* StepWiseRNA_Clusterer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_Clusterer.cc; path = ../src/protocols/swa/rna/StepWiseRNA_Clusterer.cc; sourceTree = SOURCE_ROOT; };
 		9839CEC5779A8828A41345ED /* StepWiseRNA_Clusterer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_Clusterer.hh; path = ../src/protocols/swa/rna/StepWiseRNA_Clusterer.hh; sourceTree = SOURCE_ROOT; };
-		0BF821EA5BFC181E75659428 /* StepWiseRNA_Dinucleotide_Sampler_Util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_Dinucleotide_Sampler_Util.cc; path = ../src/protocols/swa/rna/StepWiseRNA_Dinucleotide_Sampler_Util.cc; sourceTree = SOURCE_ROOT; };
-		C58D78FAA7CC9913C849DA12 /* StepWiseRNA_Dinucleotide_Sampler_Util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_Dinucleotide_Sampler_Util.hh; path = ../src/protocols/swa/rna/StepWiseRNA_Dinucleotide_Sampler_Util.hh; sourceTree = SOURCE_ROOT; };
+		BF239E1214EFB3A272CF817E /* StepWiseRNA_CombineLongLoopFilterer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_CombineLongLoopFilterer.cc; path = ../src/protocols/swa/rna/StepWiseRNA_CombineLongLoopFilterer.cc; sourceTree = SOURCE_ROOT; };
+		D9476B8BA77BEA75803C784B /* StepWiseRNA_CombineLongLoopFilterer.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_CombineLongLoopFilterer.fwd.hh; path = ../src/protocols/swa/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh; sourceTree = SOURCE_ROOT; };
+		43D4B85FA6F3503765480F1E /* StepWiseRNA_CombineLongLoopFilterer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_CombineLongLoopFilterer.hh; path = ../src/protocols/swa/rna/StepWiseRNA_CombineLongLoopFilterer.hh; sourceTree = SOURCE_ROOT; };
+		426E0A6EEE4DD34DB8E3DB69 /* StepWiseRNA_FloatingBase_Sampler_Util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_FloatingBase_Sampler_Util.cc; path = ../src/protocols/swa/rna/StepWiseRNA_FloatingBase_Sampler_Util.cc; sourceTree = SOURCE_ROOT; };
+		7B79A5A361D70C691F6AFDCB /* StepWiseRNA_FloatingBase_Sampler_Util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_FloatingBase_Sampler_Util.hh; path = ../src/protocols/swa/rna/StepWiseRNA_FloatingBase_Sampler_Util.hh; sourceTree = SOURCE_ROOT; };
+		24BF6C5BFB0974458F2375F7 /* StepWiseRNA_JobParameters.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_JobParameters.cc; path = ../src/protocols/swa/rna/StepWiseRNA_JobParameters.cc; sourceTree = SOURCE_ROOT; };
 		0A9376DAC9949C79C80DA606 /* StepWiseRNA_JobParameters.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_JobParameters.fwd.hh; path = ../src/protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D8FE89EE57F77D13F2F816B6 /* StepWiseRNA_JobParameters.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_JobParameters.hh; path = ../src/protocols/swa/rna/StepWiseRNA_JobParameters.hh; sourceTree = SOURCE_ROOT; };
+		770783A5826353DF07E93469 /* StepWiseRNA_JobParameters_Setup.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_JobParameters_Setup.cc; path = ../src/protocols/swa/rna/StepWiseRNA_JobParameters_Setup.cc; sourceTree = SOURCE_ROOT; };
+		CF710811B3DF94D38223D5BC /* StepWiseRNA_JobParameters_Setup.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_JobParameters_Setup.hh; path = ../src/protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh; sourceTree = SOURCE_ROOT; };
 		90BABEAE9867BA1D439E1F43 /* StepWiseRNA_Minimizer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_Minimizer.cc; path = ../src/protocols/swa/rna/StepWiseRNA_Minimizer.cc; sourceTree = SOURCE_ROOT; };
 		FC2ADA24CC0D411AE38DF8A5 /* StepWiseRNA_Minimizer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_Minimizer.hh; path = ../src/protocols/swa/rna/StepWiseRNA_Minimizer.hh; sourceTree = SOURCE_ROOT; };
+		333F7FC82F435D452FAA828C /* StepWiseRNA_OutputData.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_OutputData.cc; path = ../src/protocols/swa/rna/StepWiseRNA_OutputData.cc; sourceTree = SOURCE_ROOT; };
+		FA61FBA4A5C769D95E0AF461 /* StepWiseRNA_OutputData.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_OutputData.hh; path = ../src/protocols/swa/rna/StepWiseRNA_OutputData.hh; sourceTree = SOURCE_ROOT; };
+		5B962711468F7DC6551DF488 /* StepWiseRNA_PoseSetup.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_PoseSetup.cc; path = ../src/protocols/swa/rna/StepWiseRNA_PoseSetup.cc; sourceTree = SOURCE_ROOT; };
+		AD3D40F367D862969670B8CA /* StepWiseRNA_PoseSetup.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_PoseSetup.fwd.hh; path = ../src/protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh; sourceTree = SOURCE_ROOT; };
 		1EFDF65CE2F32434B21B9408 /* StepWiseRNA_PoseSetup.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_PoseSetup.hh; path = ../src/protocols/swa/rna/StepWiseRNA_PoseSetup.hh; sourceTree = SOURCE_ROOT; };
 		BB3CE483D1E49015BCE9492D /* StepWiseRNA_ResidueInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_ResidueInfo.cc; path = ../src/protocols/swa/rna/StepWiseRNA_ResidueInfo.cc; sourceTree = SOURCE_ROOT; };
 		8CB0FC464976B192EC0EF9A8 /* StepWiseRNA_ResidueInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_ResidueInfo.hh; path = ../src/protocols/swa/rna/StepWiseRNA_ResidueInfo.hh; sourceTree = SOURCE_ROOT; };
@@ -12582,11 +12601,11 @@
 		76235BA10645029CF9A5D152 /* StepWiseRNA_RotamerGenerator_Wrapper.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_RotamerGenerator_Wrapper.hh; path = ../src/protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.hh; sourceTree = SOURCE_ROOT; };
 		B33622F473F42EC8D9FAE362 /* StepWiseRNA_Util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_Util.cc; path = ../src/protocols/swa/rna/StepWiseRNA_Util.cc; sourceTree = SOURCE_ROOT; };
 		A2C8482D971EF961C4CBE695 /* StepWiseRNA_Util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_Util.hh; path = ../src/protocols/swa/rna/StepWiseRNA_Util.hh; sourceTree = SOURCE_ROOT; };
-		6EB9C99CD65B8369C766FAEA /* StepWiseResidueSampler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseResidueSampler.hh; path = ../src/protocols/swa/rna/StepWiseResidueSampler.hh; sourceTree = SOURCE_ROOT; };
-		104C26EDFE6DA32EFB525661 /* determinants.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = determinants.cc; path = ../src/protocols/swa/rna/determinants.cc; sourceTree = SOURCE_ROOT; };
-		D350DC01C50EF02B348601F8 /* determinants.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = determinants.hh; path = ../src/protocols/swa/rna/determinants.hh; sourceTree = SOURCE_ROOT; };
-		BAE718FC349EA626BD397FC3 /* rigid_body_settings.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = rigid_body_settings.cc; path = ../src/protocols/swa/rna/rigid_body_settings.cc; sourceTree = SOURCE_ROOT; };
-		E6ADE0F4A5E21FC4A8BCCE72 /* rigid_body_settings.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = rigid_body_settings.hh; path = ../src/protocols/swa/rna/rigid_body_settings.hh; sourceTree = SOURCE_ROOT; };
+		422096BF1B1956E9BDB86A08 /* StepWiseRNA_VDW_Bin_Screener.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_VDW_Bin_Screener.cc; path = ../src/protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.cc; sourceTree = SOURCE_ROOT; };
+		15D294C2A0952C9396125A0E /* StepWiseRNA_VDW_Bin_Screener.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_VDW_Bin_Screener.fwd.hh; path = ../src/protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh; sourceTree = SOURCE_ROOT; };
+		DE4FBC17530D8D147B1341DD /* StepWiseRNA_VDW_Bin_Screener.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_VDW_Bin_Screener.hh; path = ../src/protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh; sourceTree = SOURCE_ROOT; };
+		1A84C27C3FF9D5D7948F3AE1 /* StepWiseRNA_VirtualRiboseSampler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_VirtualRiboseSampler.cc; path = ../src/protocols/swa/rna/StepWiseRNA_VirtualRiboseSampler.cc; sourceTree = SOURCE_ROOT; };
+		2B50C5DC731FC2877AFCBB99 /* StepWiseRNA_VirtualRiboseSampler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_VirtualRiboseSampler.hh; path = ../src/protocols/swa/rna/StepWiseRNA_VirtualRiboseSampler.hh; sourceTree = SOURCE_ROOT; };
 		6B1F0B4E12C36DE78ABA8A09 /* MedalExchangeMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MedalExchangeMover.cc; path = ../src/protocols/medal/MedalExchangeMover.cc; sourceTree = SOURCE_ROOT; };
 		7CDB1E49D47AE6772D749645 /* MedalExchangeMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MedalExchangeMover.fwd.hh; path = ../src/protocols/medal/MedalExchangeMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6F713FF7C6378B13459A2E6D /* MedalExchangeMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MedalExchangeMover.hh; path = ../src/protocols/medal/MedalExchangeMover.hh; sourceTree = SOURCE_ROOT; };
@@ -16034,6 +16053,10 @@
 		32D62C8E6220D96298899578 /* geometric_solvation */ = {
 			isa = PBXGroup;
 			children = (
+				715F9EF8E14B6D7DCC739DE6 /* ContextIndependentGeometricSolEnergy.cc */,
+				163C3FFFA534FFF3A4929E41 /* ContextIndependentGeometricSolEnergy.fwd.hh */,
+				DB79A1C326767B32B8981DFB /* ContextIndependentGeometricSolEnergy.hh */,
+				6635FA09A32CBD0B18A7E179 /* ContextIndependentGeometricSolEnergyCreator.hh */,
 				9FE135C89CB4BC736F5B6CD7 /* DatabaseOccSolEne.cc */,
 				57E31F7C6C2186493B8030E1 /* DatabaseOccSolEne.fwd.hh */,
 				A3A7128FD3DCAB93E8CDDB68 /* DatabaseOccSolEne.hh */,
@@ -16673,6 +16696,11 @@
 				7745A598BAB511EC43374821 /* RNA_FullAtomStackingEnergy.fwd.hh */,
 				C99D4703455DE7F796925B9E /* RNA_FullAtomStackingEnergy.hh */,
 				375F98C97F669900087EDDAA /* RNA_FullAtomStackingEnergyCreator.hh */,
+				E7829855D98FC995B2C4672B /* RNA_FullAtomVDW_BasePhosphate.cc */,
+				36C9C956428B48402F728172 /* RNA_FullAtomVDW_BasePhosphate.fwd.hh */,
+				FDB8D8732228A9AFEA3171B3 /* RNA_FullAtomVDW_BasePhosphate.hh */,
+				27DA7A0D3BB428117CA6A456 /* RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh */,
+				C688B5B3C0B3F1A156BECB04 /* RNA_FullAtomVDW_BasePhosphateCreator.hh */,
 				72294D1DF51D437FE3D9BD76 /* RNA_LJ_BaseEnergy.cc */,
 				A66981257F23BD4633D86221 /* RNA_LJ_BaseEnergy.fwd.hh */,
 				5E68D395145870E7CFD23FAE /* RNA_LJ_BaseEnergy.hh */,
@@ -21956,11 +21984,6 @@
 		B8E940DF18D0E112774FC946 /* rna */ = {
 			isa = PBXGroup;
 			children = (
-				4C68C85C969B8FF634C70933 /* RNA_AnalyticLoopCloser.cc */,
-				9496B8DCE5C8EB9FB008C38F /* RNA_AnalyticLoopCloser.fwd.hh */,
-				536D96487BDAF4C7999A6380 /* RNA_AnalyticLoopCloser.hh */,
-				8403137DADA23CC493A99ADC /* RNA_LoopCloseSampler.cc */,
-				CB890DF1BBFB1220EF51BDC9 /* RNA_LoopCloseSampler.hh */,
 				D89B202DAC985DF6153CF4B2 /* StepWiseRNA_BaseCentroidScreener.cc */,
 				B32949FB44EEC51A8C175641 /* StepWiseRNA_BaseCentroidScreener.fwd.hh */,
 				101B5882BB9DAE7CD18F224C /* StepWiseRNA_BaseCentroidScreener.hh */,
@@ -21970,12 +21993,22 @@
 				2FBFF6073EAA94DA866A3F16 /* StepWiseRNA_Classes.hh */,
 				C7D37999EC51BC5046D33F83 /* StepWiseRNA_Clusterer.cc */,
 				9839CEC5779A8828A41345ED /* StepWiseRNA_Clusterer.hh */,
-				0BF821EA5BFC181E75659428 /* StepWiseRNA_Dinucleotide_Sampler_Util.cc */,
-				C58D78FAA7CC9913C849DA12 /* StepWiseRNA_Dinucleotide_Sampler_Util.hh */,
+				BF239E1214EFB3A272CF817E /* StepWiseRNA_CombineLongLoopFilterer.cc */,
+				D9476B8BA77BEA75803C784B /* StepWiseRNA_CombineLongLoopFilterer.fwd.hh */,
+				43D4B85FA6F3503765480F1E /* StepWiseRNA_CombineLongLoopFilterer.hh */,
+				426E0A6EEE4DD34DB8E3DB69 /* StepWiseRNA_FloatingBase_Sampler_Util.cc */,
+				7B79A5A361D70C691F6AFDCB /* StepWiseRNA_FloatingBase_Sampler_Util.hh */,
+				24BF6C5BFB0974458F2375F7 /* StepWiseRNA_JobParameters.cc */,
 				0A9376DAC9949C79C80DA606 /* StepWiseRNA_JobParameters.fwd.hh */,
 				D8FE89EE57F77D13F2F816B6 /* StepWiseRNA_JobParameters.hh */,
+				770783A5826353DF07E93469 /* StepWiseRNA_JobParameters_Setup.cc */,
+				CF710811B3DF94D38223D5BC /* StepWiseRNA_JobParameters_Setup.hh */,
 				90BABEAE9867BA1D439E1F43 /* StepWiseRNA_Minimizer.cc */,
 				FC2ADA24CC0D411AE38DF8A5 /* StepWiseRNA_Minimizer.hh */,
+				333F7FC82F435D452FAA828C /* StepWiseRNA_OutputData.cc */,
+				FA61FBA4A5C769D95E0AF461 /* StepWiseRNA_OutputData.hh */,
+				5B962711468F7DC6551DF488 /* StepWiseRNA_PoseSetup.cc */,
+				AD3D40F367D862969670B8CA /* StepWiseRNA_PoseSetup.fwd.hh */,
 				1EFDF65CE2F32434B21B9408 /* StepWiseRNA_PoseSetup.hh */,
 				BB3CE483D1E49015BCE9492D /* StepWiseRNA_ResidueInfo.cc */,
 				8CB0FC464976B192EC0EF9A8 /* StepWiseRNA_ResidueInfo.hh */,
@@ -21989,11 +22022,11 @@
 				76235BA10645029CF9A5D152 /* StepWiseRNA_RotamerGenerator_Wrapper.hh */,
 				B33622F473F42EC8D9FAE362 /* StepWiseRNA_Util.cc */,
 				A2C8482D971EF961C4CBE695 /* StepWiseRNA_Util.hh */,
-				6EB9C99CD65B8369C766FAEA /* StepWiseResidueSampler.hh */,
-				104C26EDFE6DA32EFB525661 /* determinants.cc */,
-				D350DC01C50EF02B348601F8 /* determinants.hh */,
-				BAE718FC349EA626BD397FC3 /* rigid_body_settings.cc */,
-				E6ADE0F4A5E21FC4A8BCCE72 /* rigid_body_settings.hh */,
+				422096BF1B1956E9BDB86A08 /* StepWiseRNA_VDW_Bin_Screener.cc */,
+				15D294C2A0952C9396125A0E /* StepWiseRNA_VDW_Bin_Screener.fwd.hh */,
+				DE4FBC17530D8D147B1341DD /* StepWiseRNA_VDW_Bin_Screener.hh */,
+				1A84C27C3FF9D5D7948F3AE1 /* StepWiseRNA_VirtualRiboseSampler.cc */,
+				2B50C5DC731FC2877AFCBB99 /* StepWiseRNA_VirtualRiboseSampler.hh */,
 			);
 			name = rna;
 			path = ../src/protocols/swa/rna/;
@@ -25568,20 +25601,23 @@
 				CC6301B4C0E6D8BE91684361 /* StepWiseProteinResidueSampler.cc in Sources */,
 				7F2179F36B624DC06B80ACD0 /* StepWiseProteinScreener.cc in Sources */,
 				617C8EE8D44CA682ABD5B824 /* StepWiseProteinUtil.cc in Sources */,
-				EB13E7CF7B87B51B60488725 /* RNA_AnalyticLoopCloser.cc in Sources */,
-				24EA52B3D89A12A66BB0CB37 /* RNA_LoopCloseSampler.cc in Sources */,
 				C243D48EC98BC2221A286035 /* StepWiseRNA_BaseCentroidScreener.cc in Sources */,
 				6CB3647440833278E7717841 /* StepWiseRNA_Base_Sugar_Rotamer.cc in Sources */,
 				CD011A7A0A4D7D00562ED861 /* StepWiseRNA_Clusterer.cc in Sources */,
-				35215B62236B5A0B758765C1 /* StepWiseRNA_Dinucleotide_Sampler_Util.cc in Sources */,
+				263DBAA3217689EA9ED726C2 /* StepWiseRNA_CombineLongLoopFilterer.cc in Sources */,
+				DAC6880E514F18B21DD06878 /* StepWiseRNA_FloatingBase_Sampler_Util.cc in Sources */,
+				AEAA0B87E4ADD2878F5F8282 /* StepWiseRNA_JobParameters.cc in Sources */,
+				0F8D49F0B7E3876E89897DE1 /* StepWiseRNA_JobParameters_Setup.cc in Sources */,
 				47EDC6B432659896F99C651B /* StepWiseRNA_Minimizer.cc in Sources */,
+				6A8A7D66E61037E9345A513C /* StepWiseRNA_OutputData.cc in Sources */,
+				DAF4F402EDC7E342D9B99EF7 /* StepWiseRNA_PoseSetup.cc in Sources */,
 				CF12CAC0908C60B5726F507D /* StepWiseRNA_ResidueInfo.cc in Sources */,
 				23CC4A07307DFDB627AB44E2 /* StepWiseRNA_ResidueSampler.cc in Sources */,
 				059A2578F7E70789F44B0FD1 /* StepWiseRNA_RotamerGenerator.cc in Sources */,
 				01BF759FBF08D48C2E9627C5 /* StepWiseRNA_RotamerGenerator_Wrapper.cc in Sources */,
 				6B4131551FC9FFEEB5AD4B83 /* StepWiseRNA_Util.cc in Sources */,
-				CD6E22C496AD9394126B4506 /* determinants.cc in Sources */,
-				BA91FBF3277DE3554E9899BD /* rigid_body_settings.cc in Sources */,
+				B0F55D496960DD6678B67FA5 /* StepWiseRNA_VDW_Bin_Screener.cc in Sources */,
+				E816A65C95C9C46961FECB61 /* StepWiseRNA_VirtualRiboseSampler.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26259,6 +26295,7 @@
 				79D1C17BBDFC0034B3E0C112 /* TrieCountPairAll.cc in Sources */,
 				31489E5FC73F016D68338A0A /* TrieCountPairGeneric.cc in Sources */,
 				601926916F84166E6965AD5C /* TrieCountPairNone.cc in Sources */,
+				4530676D10A87AB28657A5BB /* ContextIndependentGeometricSolEnergy.cc in Sources */,
 				05D60A6B4C828317AB37F45A /* DatabaseOccSolEne.cc in Sources */,
 				8FE25B38FCB24C1EB7DDD82B /* ExactOccludedHbondSolEnergy.cc in Sources */,
 				7EEF0F84440D400E3A565A43 /* GeometricSolEnergy.cc in Sources */,
@@ -26406,6 +26443,7 @@
 				09D292807A0988B2E676C5FA /* RNA_FilteredBaseBaseInfo.cc in Sources */,
 				D460C1E50EF20300CE31B768 /* RNA_FittedTorsionInfo.cc in Sources */,
 				4814D611CC99E3046C8A2F5F /* RNA_FullAtomStackingEnergy.cc in Sources */,
+				4CF276D0021AC236FE7BACCB /* RNA_FullAtomVDW_BasePhosphate.cc in Sources */,
 				FFB95BEBBCA7040E2E0EB208 /* RNA_LJ_BaseEnergy.cc in Sources */,
 				021781D9F8670F2726D678E6 /* RNA_LowResolutionPotential.cc in Sources */,
 				A0C727E10E9E6D4868E21F68 /* RNA_PairwiseLowResolutionEnergy.cc in Sources */,

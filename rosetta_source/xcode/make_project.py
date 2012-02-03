@@ -4,11 +4,18 @@ import hashlib, os, string, sys
 #sys.path.append(PATH_TO_ROOT + 'script/')
 import build_util, xcode_util
 
+sys.path.append( '..' )
+import svn_version
+
+# generate new svn_version file
+#os.popen( 'cd ..; python svn_version.py' )
+starting_directory = os.path.basename( os.getcwd() )
+os.chdir( '..' )
+svn_version.svn_version()
+os.chdir( starting_directory )
+
 def project_callback(project, project_path, project_files):
-	# generate new svn_version file
-	
-	os.popen( 'cd ..; python svn_version.py' )
-	
+		
 	# get keys
 
 	group_key = xcode_util.PROJECT_KEYS[project][0]
