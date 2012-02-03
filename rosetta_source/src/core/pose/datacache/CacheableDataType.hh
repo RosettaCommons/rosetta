@@ -71,7 +71,7 @@ enum Enum {
 	// The 'num_cacheable_data_types' below must be the last enum, and must
 	// always be set equal to the (last-1) enum.  If you append a new enum
 	// to the list, remember to change the value below!
-  num_cacheable_data_types = STRUCTURAL_CONSERVATION
+  num_cacheable_data_types = SURFACE_PARAMS
 };
 
 }; // class CacheableDataType
