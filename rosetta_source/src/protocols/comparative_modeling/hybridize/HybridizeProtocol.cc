@@ -147,10 +147,19 @@ HybridizeProtocolCreator::mover_name() {
 HybridizeProtocol::HybridizeProtocol() :
 	template_weights_sum_(0)
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	init();
+
+	// initialization may come from command line or from RS
+	if (option[cm::hybridize::template_list].user()) {
+		read_template_structures( option[cm::hybridize::template_list]() );
+	}
 }
 
-HybridizeProtocol::HybridizeProtocol(std::string template_list_file) {
+HybridizeProtocol::HybridizeProtocol(std::string template_list_file) :
+	template_weights_sum_(0) {
 	init();
 	read_template_structures(template_list_file);
 }

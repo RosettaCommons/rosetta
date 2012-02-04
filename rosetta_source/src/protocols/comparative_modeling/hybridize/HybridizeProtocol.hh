@@ -110,10 +110,6 @@ private:
 	utility::vector1 < utility::vector1<core::Size> > template_cst_reses_;
 	core::Real template_weights_sum_;
 	std::map< Size, utility::vector1 < Size > > clusterID_map_;
-	
-	// options
-    
-	
 };
 
 } // hybridize 

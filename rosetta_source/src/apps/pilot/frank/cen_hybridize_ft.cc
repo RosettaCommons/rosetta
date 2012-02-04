@@ -22,7 +22,7 @@ my_main( void* ) {
 
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go(
-			new protocols::comparative_modeling::hybridize::HybridizeProtocol( option[cm::hybridize::template_list]() )
+			new protocols::comparative_modeling::hybridize::HybridizeProtocol( )
 		);
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
