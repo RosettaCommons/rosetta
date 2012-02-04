@@ -29,9 +29,10 @@
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>  // for is_virtual()
 // AUTO-REMOVED #include <core/chemical/util.hh>  // for is_virtual()
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/chemical/AA.hh>
 #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
+#include <core/id/TorsionID.hh>
 
 #include <core/scoring/PeptideBondedEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
@@ -115,8 +116,8 @@ namespace methods {
 static basic::Tracer TR("core.scoring.CartesianBondedEnergy");
 
 // default spring constants
-static const Real K_ANGLE=450.0;
-static const Real K_BOND=150.0;
+static const Real K_BOND=300.0;
+static const Real K_ANGLE=150.0;
 static const Real K_TORSION=100.0;
 static const Real K_TORSION_PROTON=30.0;  // proton chi
 
@@ -166,6 +167,7 @@ BondLengthDatabase::BondLengthDatabase(Real k_bond_in) {
 	} else {
 		k_bond = K_BOND;
 	}
+	TR.Debug << "Set Kbond to " << k_bond << std::endl;
 }
 
 BondAngleDatabase::BondAngleDatabase(Real k_angle_in) {
@@ -178,6 +180,7 @@ BondAngleDatabase::BondAngleDatabase(Real k_angle_in) {
 	} else {
 		k_angle = K_ANGLE;
 	}
+	TR.Debug << "Set Kangle to " << k_angle << std::endl;
 }
 
 TorsionDatabase::TorsionDatabase(Real k_tors_in, Real k_prot_tors_in) {
@@ -193,6 +196,9 @@ TorsionDatabase::TorsionDatabase(Real k_tors_in, Real k_prot_tors_in) {
 		k_torsion = k_tors_in;
 	if (k_prot_tors_in >= 0)
 		k_torsion_proton = k_prot_tors_in;
+
+	TR.Debug << "Set Ktors to " << k_torsion << std::endl;
+	TR.Debug << "Set Ktorsprot to " << k_torsion_proton << std::endl;
 }
 
 
@@ -233,10 +239,34 @@ TorsionDatabase::lookup(
 	core::pose::Pose newpose;
 	newpose.append_residue_by_bond(*newres);
 
-	// check if this corresponds to a DOF_ID
-	if ( newpose.atom_tree().torsion_angle_dof_id(
+
+	// figure out if we need to constrain this torsion
+	id::DOF_ID dof = newpose.atom_tree().torsion_angle_dof_id(
 				 id::AtomID(atm1,1),id::AtomID(atm2,1),id::AtomID(atm3,1),id::AtomID(atm4,1)
-			 ) != id::BOGUS_DOF_ID) {
+			 );
+	bool need_to_constrain = (dof == id::BOGUS_DOF_ID);
+
+	if (!need_to_constrain) {
+		// check if this torsion does not correspond to a torsionID
+		id::AtomID n1,n2,n3,n4;
+
+		// mainchain
+		for ( Size j=1, j_end = newres->mainchain_torsions().size(); j<= j_end; ++j ) {
+			newpose.conformation().get_torsion_angle_atom_ids( id::TorsionID(1,id::BB,j) ,n1,n2,n3,n4);
+			if ( (n2.atomno() == atm2 && n3.atomno() == atm3) || (n2.atomno() == atm3 && n3.atomno() == atm2) )
+				need_to_constrain = false;
+		}
+	
+		// chi
+		for ( Size j=1, j_end = newres->nchi(); j<= j_end; ++j ) {
+			newpose.conformation().get_torsion_angle_atom_ids( id::TorsionID(1,id::CHI,j) ,n1,n2,n3,n4);
+			if ( (n2.atomno() == atm2 && n3.atomno() == atm3) || (n2.atomno() == atm3 && n3.atomno() == atm2) )
+				need_to_constrain = false;
+		}
+	}
+
+	// check if this corresponds to a DOF_ID
+	if ( !need_to_constrain ) {
 		Kphi=0.0;
 		phi0=0.0;
 	} else {
@@ -249,34 +279,22 @@ TorsionDatabase::lookup(
 	
 		phi0 = numeric::dihedral_radians ( x,y,z,w );
 
-		////////
 		//////// exceptions!
-	
 		// fpd ignore proline C-ND which is handled by pro_close
 		if (restype.aa() == core::chemical::aa_pro) {
 			bool hasCD = (restype.atom_name(atm1)==" CD ") || (restype.atom_name(atm2)==" CD ")
-								 || (restype.atom_name(atm3)==" CD ") || (restype.atom_name(atm4)==" CD ");
+			          || (restype.atom_name(atm3)==" CD ") || (restype.atom_name(atm4)==" CD ");
 			bool hasN = (restype.atom_name(atm1)==" N  ") || (restype.atom_name(atm2)==" N  ")
-								|| (restype.atom_name(atm3)==" N  ") || (restype.atom_name(atm4)==" N  ");
+			         || (restype.atom_name(atm3)==" N  ") || (restype.atom_name(atm4)==" N  ");
 			if (hasCD && hasN)
 			Kphi=0.0;
 			phi0=0.0;
-		}
-	
-		//fpd  torsion_angle_dof_id should pick these up (?)
-		if ( restype.aa()==core::chemical::aa_trp || restype.aa()==core::chemical::aa_phe
-				 || restype.aa()==core::chemical::aa_tyr || restype.aa()==core::chemical::aa_his ) {
-			if ( ( restype.atom_name(atm2) == " CB " && restype.atom_name(atm3) == " CG ") ||
-					 ( restype.atom_name(atm3) == " CB " && restype.atom_name(atm2) == " CG ") ) {
-				Kphi=0.0;
-				phi0=0.0;
-			}
 		}
 
 		//fpd  cutpoint variants
 		if ( restype.has_variant_type(chemical::CUTPOINT_UPPER) &&
 				 ( ( restype.atom_name(atm2) == " N  " && restype.atom_name(atm3) == " CA ") ||
-					 ( restype.atom_name(atm3) == " N  " && restype.atom_name(atm2) == " CA ")  ) ) {
+			     ( restype.atom_name(atm3) == " N  " && restype.atom_name(atm2) == " CA ")  ) ) {
 			Kphi=0.0;
 			phi0=0.0;
 		}
@@ -287,33 +305,28 @@ TorsionDatabase::lookup(
 			phi0=0.0;
 		}
 
+		// ignore N terminal hydrogens
+		if ( restype.has_variant_type(chemical::LOWER_TERMINUS) && 
+		     ( ( restype.atom_name(atm2) == " N  " && restype.atom_name(atm3) == " CA ") ||
+		       ( restype.atom_name(atm3) == " N  " && restype.atom_name(atm2) == " CA ")  ) ) {
+			Kphi=0.0;
+			phi0=0.0;
+		}
+
+		if ( restype.aa()==core::chemical::aa_trp || restype.aa()==core::chemical::aa_phe
+		  || restype.aa()==core::chemical::aa_tyr || restype.aa()==core::chemical::aa_his ) {
+		if ( ( restype.atom_name(atm2) == " CB " && restype.atom_name(atm3) == " CG ") ||
+		     ( restype.atom_name(atm3) == " CB " && restype.atom_name(atm2) == " CG ") ) {
+				Kphi=0.0;
+				phi0=0.0;
+			}
+		}
+
 		//fpd  proton CHIs
-		if ( restype.aa()==core::chemical::aa_cys && 
-				 ( ( restype.atom_name(atm2) == " CB " && restype.atom_name(atm3) == " SG ") ||
-					 ( restype.atom_name(atm3) == " CB " && restype.atom_name(atm2) == " SG ")  ) ) {
-			phi_step = numeric::constants::f::pi_2_over_3;
-			torsion_steps_[ tuple ] = phi_step;
-			Kphi=k_torsion_proton;
-		}
-		if (restype.aa()==core::chemical::aa_thr &&
-				 ( ( restype.atom_name(atm2) == " CB " && restype.atom_name(atm3) == " OG1") ||
-					 ( restype.atom_name(atm3) == " CB " && restype.atom_name(atm2) == " OG1")  ) ) {
-			phi_step = numeric::constants::f::pi_2_over_3;
-			torsion_steps_[ tuple ] = phi_step;
-			Kphi=k_torsion_proton;
-		}
-		if (restype.aa()==core::chemical::aa_ser &&
-				 ( ( restype.atom_name(atm2) == " CB " && restype.atom_name(atm3) == " OG ") ||
-					 ( restype.atom_name(atm3) == " CB " && restype.atom_name(atm2) == " OG ")  ) ) {
-			phi_step = numeric::constants::f::pi_2_over_3;
-			torsion_steps_[ tuple ] = phi_step;
-			Kphi=k_torsion_proton;
-		}
 		if (restype.aa()==core::chemical::aa_tyr &&
 				 ( ( restype.atom_name(atm2) == " CZ " && restype.atom_name(atm3) == " OH ") ||
-					 ( restype.atom_name(atm3) == " OH " && restype.atom_name(atm2) == " CZ ")  ) ) {
-			phi_step = numeric::constants::f::pi;
-			torsion_steps_[ tuple ] = phi_step;
+		       ( restype.atom_name(atm3) == " OH " && restype.atom_name(atm2) == " CZ ")  ) ) {
+			torsion_steps_[ tuple ] = phi_step = numeric::constants::f::pi;
 			Kphi=k_torsion_proton;
 		}
 	}
@@ -322,6 +335,8 @@ TorsionDatabase::lookup(
 
 	return;
 }
+
+
 //////////////////////
 /// BondAngle Database
 // lookup ideal bondangle; insert in DB if not there

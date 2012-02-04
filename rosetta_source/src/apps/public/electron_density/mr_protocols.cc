@@ -6,14 +6,12 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <protocols/relax/util.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -26,9 +24,6 @@
 //#include <protocols/loops/LoopMover.fwd.hh>
 //#include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_CCD.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMoverFactory.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
 #include <protocols/relax/RelaxProtocolBase.hh>
@@ -36,23 +31,17 @@
 #include <protocols/rbsegment_relax/AutoRBRelaxMover.hh>
 #include <protocols/rbsegment_relax/util.hh>
 
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/ThreadingMover.hh>
-
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/util.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/electron_density/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <core/fragment/Frame.hh>
@@ -63,42 +52,28 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
-
 
 #include <core/sequence/Sequence.hh>
-// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
-
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
-
-// #include <devel/Gaussian/BBGaussianMover.hh>
 
 //options
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
 #include <basic/Tracer.hh>
 
 //
@@ -125,6 +100,7 @@
 
 OPT_1GRP_KEY(Integer, MR, max_gaplength_to_model)
 OPT_1GRP_KEY(Integer, MR, nrebuildcycles)
+OPT_1GRP_KEY(Real, MR, cen_dens_wt)
 OPT_1GRP_KEY(Boolean, MR, debug)
 OPT_1GRP_KEY(Boolean, MR, smart_foldtree)
 OPT_1GRP_KEY(String, MR, mode)
@@ -159,6 +135,10 @@ public:
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *fadens_scorefxn_ );
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *densonly_scorefxn_ );
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *cendens_scorefxn_ );
+
+		// use fastdens
+		if (option[ OptionKeys::edensity::mapfile ].user())
+			cen_scorefxn_->set_weight( core::scoring::elec_dens_fast, option[ OptionKeys::MR::cen_dens_wt ]() );
 
 		// set cst weight (fa only)
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *cen_scorefxn_  );
@@ -250,8 +230,8 @@ public:
 		lr_mover->n_rebuild_tries( 10 );
 		lr_mover->copy_sidechains( true );
 		lr_mover->set_current_tag( get_current_tag() );
-		lr_mover->apply( pose );
-		remove_cutpoint_variants( pose );
+		//lr_mover->apply( pose );
+		//remove_cutpoint_variants( pose );
 
 		// to fullatom
 		protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
@@ -291,9 +271,27 @@ public:
 		//
 		for (int i=1; i<=(int)loops.size(); ++i) {
 			if (loops[i].size() > max_gaplength ) {
-				for (int j=(int)loops[i].start(); j<= (int)loops[i].stop(); ++j) {
+				for (int j=(int)loops[i].start()+1; j<= (int)loops[i].stop()-1; ++j) {
 					to_trim[j] = true;
 				}
+				//fpd check bb connectivity
+				bool trim_start, trim_stop;
+				trim_stop  = loops[i].stop() == query_pose.total_residue() || query_pose.fold_tree().is_cutpoint(loops[i].stop());
+				trim_start = loops[i].start() == 1 || query_pose.fold_tree().is_cutpoint(loops[i].start()-1);
+				if (!trim_start) {
+					numeric::xyzVector< core::Real > x0 = query_pose.residue( loops[i].start() ).atom( "N" ).xyz();
+					numeric::xyzVector< core::Real > x1 = query_pose.residue( loops[i].start()-1 ).atom( "C" ).xyz();
+					if ( (x0-x1).length() > 4 )
+						trim_start = true;
+				}
+				if (!trim_stop) {
+					numeric::xyzVector< core::Real > x0 = query_pose.residue( loops[i].stop() ).atom( "C" ).xyz();
+					numeric::xyzVector< core::Real > x1 = query_pose.residue( loops[i].stop()+1 ).atom( "N" ).xyz();
+					if ( (x0-x1).length() > 4 )
+						trim_stop = true;
+				}
+				to_trim[loops[i].start()] = trim_start;
+				to_trim[loops[i].stop()] = trim_stop;
 			} else {
 				new_loops.push_back( loops[i] );
 			}
@@ -314,10 +312,12 @@ public:
 		// build new pose, generate seq mapping
 		core::Size old_root = query_pose.fold_tree().root();
 		core::pose::Pose new_query_pose;
+
 		Size out_ctr=1;
 		bool add_by_jump = true;
 		core::id::SequenceMapping new_mapping(new_nres, query_pose.total_residue());
 		core::id::SequenceMapping new_invmapping(query_pose.total_residue() , new_nres);
+
 		for ( Size i = 1; i <= query_pose.total_residue(); ++i ) {
 			if (!to_trim[i]) {
 				if (add_by_jump) {
@@ -340,9 +340,7 @@ public:
 				} else {
 					new_query_pose.append_residue_by_bond( query_pose.residue(i), false );
 				}
-				//for ( Size j = 1; j <= new_query_pose.residue(out_ctr).natoms(); ++j ) {
-					//new_query_pose.set_xyz( core::id::AtomID(j,out_ctr), query_pose.xyz( core::id::AtomID(j,i) ) );
-				//}
+
 				new_mapping[out_ctr] = i;
 				new_invmapping[i] = out_ctr;
 				out_ctr++;
@@ -357,6 +355,28 @@ public:
 		core::kinematics::FoldTree f = new_query_pose.fold_tree();
 		if (new_invmapping[old_root] != 0)
 			f.reorder( new_invmapping[old_root] );
+
+		//PDBInfo stuff
+		core::pose::PDBInfoOP pdb_info( query_pose.pdb_info() );
+		core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo(new_nres) );
+		utility::vector1< int > pdb_numbering;
+		utility::vector1< char > pdb_chains;
+
+		for ( Size i(1); i <= query_pose.total_residue(); ++i ) {
+			int resid_num;
+			if (new_invmapping[i] != 0) {
+				pdb_numbering.push_back( i );
+				pdb_chains.push_back( 'A' );
+			}
+		}
+	
+		// set pdb-wide information
+		new_pdb_info->set_numbering( pdb_numbering );
+		new_pdb_info->set_chains( pdb_chains );
+		new_query_pose.pdb_info( new_pdb_info );
+
+		/////
+		//new_query_pose.conformation().fill_missing_atoms( missing );
 
 		// if pose is rooted on VRT update jump point
 		if ( new_query_pose.residue( f.root() ).aa() == core::chemical::aa_vrt ) {
@@ -470,7 +490,6 @@ public:
 			guess_rbsegs_from_pose( pose, rigid_segs, rb_chunks, loops );
 			jumps = setup_pose_rbsegs_keep_loops( pose,  rigid_segs , loops,  movemap );
 		}
-
 
 		if ( option[ OptionKeys::edensity::mapfile ].user() ) {
 			protocols::moves::MoverOP dens_dock( new protocols::electron_density::SetupForDensityScoringMover );
@@ -685,6 +704,9 @@ public:
 			TR.Error << "UNKNOWN MODE " << mode << std::endl;
 		}
 	}
+
+	protocols::moves::MoverOP clone() const { return new MRMover( *this ); }
+	protocols::moves::MoverOP fresh_instance() const { return new MRMover; }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -695,11 +717,8 @@ my_main( void* ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	SequenceMoverOP seq( new SequenceMover() );
-	seq->add_mover( new MRMover() );
-
 	try{
-		protocols::jd2::JobDistributor::get_instance()->go( seq );
+		protocols::jd2::JobDistributor::get_instance()->go( new MRMover() );
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
@@ -715,6 +734,7 @@ main( int argc, char * argv [] ) {
 	// initialize option and random number system
 	NEW_OPT(MR::max_gaplength_to_model, "max gaplength to rebuild", true);
     NEW_OPT(MR::mode, "mode", "cm");
+    NEW_OPT(MR::cen_dens_wt, "centroid density weight", 4.0);
     NEW_OPT(MR::smart_foldtree, "mode", false);
 	NEW_OPT(MR::debug, "output debug pdbs?", false);
 	devel::init( argc, argv );

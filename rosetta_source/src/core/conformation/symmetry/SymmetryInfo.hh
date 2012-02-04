@@ -196,7 +196,7 @@ public:
 	void set_score_multiply( Size const res, Size const factor );
 	bool get_use_symmetry() const;
 
-	void set_use_symmetry( bool setting );  //fpd is this used???
+	void set_use_symmetry( bool setting );  //fpd  used in silent file reading(?)
 
 	bool cp_weighting_during_minimization() const;
 	void set_cp_weighting_during_minimization( bool setting );
