@@ -107,6 +107,8 @@ Splice::Splice() :
 	design_( false )
 {
 	torsion_database_.clear();
+	delta_lengths_.clear();
+	delta_lengths_.push_back( 0 );
 }
 
 
@@ -235,6 +237,7 @@ Splice::apply( core::pose::Pose & pose )
 		if( dbase_entry == 0 ){/// randomize entry
 			core::Size rand_trials( 0 );
 			core::Size pose_residues( 0 );/// number of residues in loop on incoming pose
+			bool found( false );
 			do{/// choose random dbase entry. If equal_length is on then make sure the random entry has the same length
 				dbase_entry = (core::Size) ( RG.uniform() * torsion_database_.size() + 1);
 				dofs = torsion_database_[ dbase_entry ];
@@ -242,7 +245,9 @@ Splice::apply( core::pose::Pose & pose )
 				core::Size const nearest_to_entry_start_on_pose( find_nearest_res( pose, *template_pose_, dofs.start_loop() ) );
 				core::Size const nearest_to_entry_stop_on_pose( find_nearest_res( pose, *template_pose_, dofs.stop_loop() ) );
 			  pose_residues = nearest_to_entry_stop_on_pose - nearest_to_entry_start_on_pose + 1;
-			} while( equal_length() && dofs.size() != pose_residues && rand_trials < torsion_database_.size() * 10/*prevent infinite loops*/ );
+				int const delta( dofs.size() - pose_residues );
+				found = std::find( delta_lengths_.begin(), delta_lengths_.end(), delta ) != delta_lengths_.end();
+			} while( equal_length() && found && rand_trials < torsion_database_.size() * 10/*prevent infinite loops*/ );
 			if( rand_trials >=  torsion_database_.size() * 10 ){
 				TR<<"Loop of appropriate length not found in database. Returning"<<std::endl;
 				retrieve_values();
@@ -287,8 +292,8 @@ Splice::apply( core::pose::Pose & pose )
   }// read from dbase
 	TR<<"From res: "<<from_res()<<" to_res: "<<to_res()<<std::endl;
 	runtime_assert( to_res() > from_res() );
-	if( saved_fold_tree_ )/// is saved_fold_tree_ being used?
-		pose.fold_tree( *saved_fold_tree_ );
+//	if( saved_fold_tree_ )/// is saved_fold_tree_ being used?
+//		pose.fold_tree( *saved_fold_tree_ );
 
 /// The database is computed with respect to the template pose, so before applying dofs from the dbase it's important to make that stretch identical to
 /// the template. from_res() and to_res() were previously computed to be with respect to the incoming pose, so within this subroutine the refer to pose rather
@@ -538,6 +543,21 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	template_file( tag->getOption< std::string >( "template_file", "" ) );
 	equal_length( tag->getOption< bool >( "equal_length", false ) );
 	poly_ala( tag->getOption< bool >( "thread_ala", true ) );
+
+  typedef utility::vector1< std::string > StringVec;
+	std::string delta;
+	delta_lengths_.push_back( 0 );
+	if( tag->hasOption( "delta_lengths" ) ){
+		delta = tag->getOption< std::string >( "delta_lengths" );
+  	StringVec const lengths_keys( utility::string_split( delta, ',' ) );
+		foreach( std::string const delta, lengths_keys ){
+			if( delta == "" ) continue;
+			int const delta_i( -1 * atoi( delta.c_str() ) );
+			delta_lengths_.push_back( delta_i );
+		}
+	}
+	std::sort( delta_lengths_.begin(), delta_lengths_.end() );
+	std::unique( delta_lengths_.begin(), delta_lengths_.end() );
 
 	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
 		if( data.has( "poses", template_file_ ) ){

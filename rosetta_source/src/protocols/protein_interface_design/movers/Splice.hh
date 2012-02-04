@@ -129,6 +129,8 @@ public:
 	void fold_tree( core::pose::Pose & pose, core::Size const start, core::Size const stop, core::Size const cut ) const;
 	bool design() const{ return design_; }
 	void design( bool const d ) { design_ = d; }
+	void delta_lengths( utility::vector1< int > const dl ){ delta_lengths_ = dl; }
+	utility::vector1< int > delta_lengths() { return delta_lengths_; }
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -150,6 +152,7 @@ private:
 	core::pose::PoseOP template_pose_, start_pose_; // template - relative to what is the torsion dbase computed (1x9q); start - the starting pose for replacing the torsions at the start
 	core::kinematics::FoldTreeOP saved_fold_tree_;
 	bool design_; //dflt false; design all non-pro/gly residues in template
+	utility::vector1< int > delta_lengths_; // dflt empty; change loop length by how much? 0 is always assumed
 };
 
 
