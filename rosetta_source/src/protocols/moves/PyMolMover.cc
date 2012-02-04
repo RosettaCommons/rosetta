@@ -51,6 +51,11 @@
 #endif
 */
 
+#ifndef _WIN32
+	#include "pthread.h"
+#endif
+
+
 namespace protocols {
 namespace moves {
 
@@ -77,11 +82,14 @@ numeric::random::uniform_RG_OP getRG()
 UDPSocketClient::UDPSocketClient() : sentCount_(0)
 {
 #ifndef NATCL
+    /*
 	#ifdef __APPLE__
 		max_packet_size_ = 8192-512-2;  // ← MacOS X kernel can send only small packets even locally.
 	#else
-		max_packet_size_ = 64512; /* 1024*63*/
-	#endif
+		max_packet_size_ = 64512; // 1024*63
+	#endif */
+
+	max_packet_size_ = 8192-512-2;  // Choosing max pocket size seems to be less obvious when we have cross OS link, we have to pick less common denominator
 
 	//#ifndef WIN_PYROSETTA
 	// generating random uuid by hands
@@ -117,7 +125,15 @@ void UDPSocketClient::sendMessage(std::string msg)
 	for(int i=0; i<count; i++) {
 		unsigned int last = (i+1)*max_packet_size_;
 		if( last>msg.size() ) last = msg.size();
-		 sendRAWMessage(sentCount_, i, count, &msg[i*max_packet_size_], &msg[last] );
+		sendRAWMessage(sentCount_, i, count, &msg[i*max_packet_size_], &msg[last] );
+		if(count > 1) {
+			#ifdef _WIN32
+				Sleep(1); // Sleep function takes milliseconds.
+			#else
+				timespec ts;  ts.tv_sec=0;  ts.tv_nsec=1000000; //time to sleep in nanoseconds, we want to take a nap for ~0.001sec
+				nanosleep(&ts, NULL);
+			#endif
+		}
 	}
 
 	sentCount_++;
