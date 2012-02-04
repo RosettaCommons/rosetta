@@ -98,7 +98,7 @@ namespace swa {
 		void
 		do_some_clustering();
 
-		bool
+		Size
 		check_for_closeness( core::pose::PoseOP const & pose_op );
 
 		void
@@ -107,6 +107,8 @@ namespace swa {
 		void
 		recluster_current_pose_list();
 
+		void
+		initialize_auto_tune_cluster_rmsds();
 
 		utility::vector1< std::string > silent_files_;
 		Size max_decoys_;
@@ -125,6 +127,7 @@ namespace swa {
 		utility::vector1< core::pose::PoseOP > pose_output_list_;
 		utility::vector1< std::string > tag_output_list_;
 		utility::vector1< core::io::silent::SilentStructOP > silent_struct_output_list_;
+		utility::vector1< core::Size > num_pose_in_cluster_;
 
 		core::import_pose::pose_stream::SilentFilePoseInputStreamOP input_;
 

@@ -739,10 +739,10 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 			N_NWC++;
 		}
 	}
-	s.add_energy( "N_WC", N_WC );
-	s.add_energy( "N_NWC", N_NWC );
+	s.add_string_value( "N_WC", ObjexxFCL::fmt::I( 8, N_WC) );
+	s.add_string_value( "N_NWC", ObjexxFCL::fmt::I( 8, N_NWC ) );
 
-	s.add_energy( "N_BS", get_number_base_stacks( pose ) );
+	s.add_string_value( "N_BS", ObjexxFCL::fmt::I( 8, get_number_base_stacks( pose ) ) );
 }
 
 /////////////////////////////////////////////////////////////////////

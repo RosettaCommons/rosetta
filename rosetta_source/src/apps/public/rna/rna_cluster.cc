@@ -49,6 +49,7 @@ using utility::vector1;
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( Real, score_diff_cut )
+OPT_KEY( Boolean, auto_tune )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -78,6 +79,7 @@ cluster_test(){
 	stepwise_clusterer.set_score_diff_cut( option[ score_diff_cut ] );
 	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
 	stepwise_clusterer.set_rsd_type_set( "rna" );
+	stepwise_clusterer.set_auto_tune( option[ auto_tune ] );
 
 	stepwise_clusterer.cluster();
 
@@ -108,6 +110,7 @@ main( int argc, char * argv [] )
 	utility::vector1< Size > blank_size_vector;
 
 	NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
+	NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
 
 
 	////////////////////////////////////////////////////////////////////////////

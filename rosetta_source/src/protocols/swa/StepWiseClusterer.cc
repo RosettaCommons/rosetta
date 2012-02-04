@@ -42,6 +42,7 @@
 
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/format.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
@@ -108,12 +109,13 @@ namespace swa {
 		input_  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
 		input_->set_order_by_energy( true );
 
-		cluster_rmsds_to_try_with_auto_tune_ = utility::tools::make_vector1( 0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0, 1.2, 1.5, 1.75, 2.0 );
+		initialize_auto_tune_cluster_rmsds();
 		hit_score_cutoff_ = false;
 		initialized_atom_id_map_for_rmsd_ = false;
 
 		rsd_type_set_ = option[ in::file::residue_type_set ]();
 	}
+
 
   //////////////////////////////////////////////////////////////////////////
 	void
@@ -143,9 +145,9 @@ namespace swa {
 	StepWiseClusterer::initialize_corresponding_atom_id_map( core::pose::Pose const & pose ){
 		using namespace core::scoring;
 
-			// Only need to do this once!!!
+		// Only need to do this once!!!
 		if( cluster_by_all_atom_rmsd_ ) {
-			setup_matching_heavy_atoms( pose, pose, corresponding_atom_id_map_ );
+			setup_matching_heavy_atoms( pose,	pose, corresponding_atom_id_map_ );
 		} else {
 			setup_matching_protein_backbone_heavy_atoms( pose, pose, corresponding_atom_id_map_ );
 		}
@@ -181,14 +183,16 @@ namespace swa {
 			std::string tag( silent_struct->decoy_tag() );
 			TR << "CHECKING " << tag << " with score " << score << " against list of size " << pose_output_list_.size();
 
-			bool const OK = check_for_closeness( pose_op );
-			if ( OK )  {
+			Size const found_close_cluster = check_for_closeness( pose_op );
+			if ( found_close_cluster == 0 )  {
 				TR << " ... added. " << std::endl;
 				if ( pose_output_list_.size() >= max_decoys_ ) break;
 				tag_output_list_.push_back(  tag );
 				pose_output_list_.push_back(  pose_op );
 				silent_struct_output_list_.push_back(  silent_struct  );
+				num_pose_in_cluster_.push_back( 1 );
 			} else{
+				num_pose_in_cluster_[ found_close_cluster ]++;
 				TR << " ... not added. " << std::endl;
 			}
 		}
@@ -206,6 +210,7 @@ namespace swa {
 		pose_output_list_.clear();
 		tag_output_list_.clear();
 		silent_struct_output_list_.clear();
+		num_pose_in_cluster_.clear();
 
 		score_min_ =  0.0 ;
 		score_min_defined_ = false;
@@ -226,9 +231,17 @@ namespace swa {
 
 			do_some_clustering();
 
-			if ( hit_score_cutoff_ ) break;
-			if ( !input_->has_another_pose() ) break;
+			if ( hit_score_cutoff_ ) {
+				std::cout << "Hit score cutoff: " << score_diff_cut_ << std::endl;
+				break;
+			}
+			if ( !input_->has_another_pose() ) {
+				std::cout << "Done with pose list. " << std::endl;
+				break;
+			}
 		}
+
+		std::cout << "Clustering radius after auto_tune: " << cluster_radius_ << std::endl;
 
 	}
 
@@ -240,6 +253,7 @@ namespace swa {
 		utility::vector1< core::pose::PoseOP > old_pose_output_list = pose_output_list_;
 		utility::vector1< std::string > old_tag_output_list = tag_output_list_;
 		utility::vector1< core::io::silent::SilentStructOP > old_silent_struct_output_list = silent_struct_output_list_;
+		utility::vector1< core::Size > old_num_pose_in_cluster = num_pose_in_cluster_;
 
 		pose_output_list_.clear();
 		tag_output_list_.clear();
@@ -249,11 +263,14 @@ namespace swa {
 
 			core::pose::PoseOP pose_op = old_pose_output_list[ i ];
 
-			bool const OK = check_for_closeness( pose_op );
-			if ( OK )  {
+			Size const found_close_cluster = check_for_closeness( pose_op );
+			if ( found_close_cluster == 0 )  {
 				tag_output_list_.push_back(  old_tag_output_list[ i ] );
 				pose_output_list_.push_back(  old_pose_output_list[ i ] );
 				silent_struct_output_list_.push_back(  old_silent_struct_output_list[ i ]  );
+				num_pose_in_cluster_.push_back( old_num_pose_in_cluster[ i ] );
+			} else {
+				num_pose_in_cluster_[ found_close_cluster ] += old_num_pose_in_cluster[ i ];
 			}
 
 		}
@@ -265,7 +282,7 @@ namespace swa {
 
 
 	///////////////////////////////////////////////////////////////
-	bool
+	Size
 	StepWiseClusterer::check_for_closeness( core::pose::PoseOP const & pose_op )
 	{
 		using namespace core::scoring;
@@ -295,10 +312,10 @@ namespace swa {
 			if ( rmsd < cluster_radius_ )	{
 				//std::cout << "[ " << rmsd << " inside cutoff " << cluster_radius_ << " ] " ;
 				//				std::cout << "FAIL! " << n << " " << rmsd << " " << cluster_radius_ << std::endl;
-				return false;
+				return n;
 			}
 		}
-		return true;
+		return 0;
 	}
 
 
@@ -313,6 +330,7 @@ namespace swa {
 		for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 
 			SilentStructOP & s( silent_struct_output_list_[ n ] );
+			s->add_string_value( "nclust", ObjexxFCL::fmt::I(8,num_pose_in_cluster_[ n ]) );
 
 			if ( rename_tags_ ){
 				s->add_comment( "PARENT_TAG", s->decoy_tag() );
@@ -363,6 +381,48 @@ namespace swa {
 	void
 	StepWiseClusterer::set_silent_file_data( core::io::silent::SilentFileDataOP & sfd ){
 		input_->set_silent_file_data( sfd );
+	}
+
+  //////////////////////////////////////////////////////////////////////////
+	void
+  StepWiseClusterer::initialize_auto_tune_cluster_rmsds(){
+		cluster_rmsds_to_try_with_auto_tune_.clear();
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 0.1 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 0.2 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 0.25 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 0.3 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 0.4 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 0.5 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 0.6 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 0.8 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 1.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 1.2 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 1.5 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 1.75 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 2.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 2.25 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 2.5 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 2.75 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 3.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 3.5 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 4.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 4.5 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 5.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 6.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 7.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 8.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 9.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 10 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 12.5 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 15.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 17.5 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 20.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 25.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 30.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 35.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 40.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 45.0 );
+		cluster_rmsds_to_try_with_auto_tune_.push_back( 50.0 );
 	}
 
 
