@@ -67,7 +67,7 @@ class Tester:
     # Try to identity plaform by using scons compiliation feature.
     def getPlatformID(self):
         self.log( "Identifying platform...\n")
-        cmd_str = "./scons.py Abracadabra log=platform"
+        cmd_str = "./scons.py unit_test_platform_only log=platform"
         if Options.extras:
             cmd_str += " extras=%s" % (Options.extras)
         if Options.mode:

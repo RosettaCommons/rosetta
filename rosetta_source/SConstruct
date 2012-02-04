@@ -24,6 +24,8 @@ def print_build(build):
             print "Platform:",
             Settings.write(build.platform)
             print "\n"
+            if 'unit_test_platform_only' in build.targets:
+                sys.exit()
         if "projects" in build.options.log:
             print "Projects:",
             Settings.write(build.projects, 1)
