@@ -247,7 +247,7 @@ Splice::apply( core::pose::Pose & pose )
 			  pose_residues = nearest_to_entry_stop_on_pose - nearest_to_entry_start_on_pose + 1;
 				int const delta( dofs.size() - pose_residues );
 				found = std::find( delta_lengths_.begin(), delta_lengths_.end(), delta ) != delta_lengths_.end();
-			} while( equal_length() && found && rand_trials < torsion_database_.size() * 10/*prevent infinite loops*/ );
+			} while( !found && rand_trials < torsion_database_.size() * 10/*prevent infinite loops*/ );
 			if( rand_trials >=  torsion_database_.size() * 10 ){
 				TR<<"Loop of appropriate length not found in database. Returning"<<std::endl;
 				retrieve_values();
