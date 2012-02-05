@@ -1,10 +1,11 @@
 #
 #
--score:weights standard
--score:patch score12
+-score:weights sp2_correction
 #
 # The chi term correction
 -score:hb_sp2_chipen
+-score:hb_sp2_peak_height_above_trough 2.0
+-score:hb_sp2_amp 2.0
 #
 #
 # HBond OH donor correction
@@ -14,10 +15,16 @@
 #ref_SER -= 0.1; ref_THR -= 0.1;
 #
 #
--hbond_params OLF_params
+-hbond_params sp2_params
 #
 -options
  -user
+#
+#
+#Deleting old poses subsantialy reduces the memory requirements for
+#for runs with a large number of structures
+-jd2
+ -delete_old_poses
 #
 #
 #

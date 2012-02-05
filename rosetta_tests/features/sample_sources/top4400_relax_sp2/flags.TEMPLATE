@@ -1,6 +1,22 @@
 #
--score:weights score12prime
 #
+-score:weights sp2_correction
+#
+# The chi term correction
+-score::hb_sp2_chipen
+-score:hb_sp2_peak_height_above_trough 2.0
+-score:hb_sp2_amp 2.0
+#
+#
+#
+# HBond OH donor correction
+-lj_hbond_hdis 1.75
+-lj_hbond_OH_donor_dis 2.6
+#
+#ref_SER -= 0.1; ref_THR -= 0.1;
+#
+#
+-hbond_params sp2_params
 #
 -options
  -user
@@ -30,10 +46,3 @@
  -delete_old_poses
 #
 #
-#
-#
--mute core.io.pdb.file_data
--mute core.scoring.etable
--mute core.io.database
--mute core.pack.task
--mute protocols.ProteinInterfaceDesign.DockDesign

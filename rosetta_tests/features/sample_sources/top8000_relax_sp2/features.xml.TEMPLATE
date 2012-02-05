@@ -9,22 +9,25 @@
 		<SavePoseMover name=init_struct reference_name=init_struct/>
 		<FastRelax name=fast_relax scorefxn=s/>
 		<ReportToDB name=features_reporter db="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="%(sample_source_description)s" task_operations=relevant_chain>
-			<feature name=HBondFeatures scorefxn=s/>
-			<feature name=HBondParameterFeatures scorefxn=s/>
-			<feature name=PairFeatures/>
-			<feature name=PdbDataFeatures/>
+			<feature name=ScoreTypeFeatures/>
+			<feature name=StructureScoresFeatures scorefxn=s/>
 			<feature name=PoseCommentsFeatures/>
 			<feature name=PoseConformationFeatures/>
+			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
+			<feature name=RadiusOfGyrationFeatures/>
+			<feature name=AtomAtomPairFeatures/>
+			<feature name=ResidueTypesFeatures/>
+			<feature name=ResidueFeatures/>
+			<feature name=ResidueScoresFeatures scorefxn=s/>
+			<feature name=PairFeatures/>
+			<feature name=ResidueBurialFeatures/>
+			<feature name=ResidueSecondaryStructureFeatures/>
 			<feature name=ProteinBackboneAtomAtomPairFeatures/>
 			<feature name=ProteinBackboneTorsionAngleFeatures/>
 			<feature name=ProteinResidueConformationFeatures/>
-			<feature name=RadiusOfGyrationFeatures/>
-			<feature name=ResidueBurialFeatures/>
-			<feature name=ResidueFeatures/>
-			<feature name=ResidueSecondaryStructureFeatures/>
-			<feature name=ResidueTypesFeatures/>
+			<feature name=HBondFeatures scorefxn=s/>
+			<feature name=HBondParameterFeatures scorefxn=s/>
 			<feature name=SaltBridgeFeatures/>
-			<feature name=StructureScoresFeatures scorefxn=s/>
                 </ReportToDB>
         </MOVERS>
         <PROTOCOLS>

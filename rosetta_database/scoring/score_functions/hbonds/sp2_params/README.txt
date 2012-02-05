@@ -1,7 +1,7 @@
-Generated HBond parameters by Matthew O'Meara and Andrew Leaver-Fay (OLF) in 2011 
+Generated HBond parameters by Matthew O'Meara and Andrew Leaver-Fay in 2011-2012 
 
 
-These are the OLF_params_7ab set.
+This is the 8b parameter set.
 
 README.txt: this file
 schema.sql: sql schema definition for tables
@@ -25,6 +25,4 @@ Reading in the schema file will load all csv data files into the the database.
 # Utility scripts
 sqlite3_io.py: script to transform flatfile database data to sqlite database data and visa-versa 
 convert_names_to_ids.py
-
-
 

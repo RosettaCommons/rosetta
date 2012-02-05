@@ -1,0 +1,27 @@
+#
+#
+-score:weights score12prime
+#
+#
+-overwrite
+#
+-options
+ -user
+#
+#
+-in
+ -path %(sample_source_path)s/inputdecoys
+ -file
+  -l %(sample_source_path)s/inputdecoys/input.list
+#
+-out
+ -nooutput
+#
+#Deleting old poses subsantialy reduces the memory requirements for
+#for runs with a large number of structures
+-jd2
+ -delete_old_poses
+#
+-parser
+ -protocol %(output_dir)s/%(sample_source_id)s/features.xml
+#

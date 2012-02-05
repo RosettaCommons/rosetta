@@ -1,26 +1,20 @@
 #
 #
--score:weights standard
-#
-# The chi term correction
--score::hb_sp2_chipen
+-score:weights score12prime
 #
 #
-# HBond OH donor correction
--lj_hbond_hdis 1.75
--lj_hbond_OH_donor_dis 2.6
-#
-#ref_SER -= 0.1; ref_THR -= 0.1;
-#
-#
--hbond_params OLF_params
-#
+# packing flags for rotamer recovery
+-ex1
+-ex2
 #
 -options
  -user
 #
 #
 -ignore_unrecognized_res
+#
+# Use Reduce placed hydrogen atoms
+-no_optH
 #
 #
 -in
@@ -39,10 +33,17 @@
 -jd2
  -delete_old_poses
 #
+#Read in pronation states from input data (use with
+#caution for runs that do more than extract features)
+#-pH
+# -pH_mode
 #
 -parser
  -protocol %(output_dir)s/%(sample_source_id)s/features.xml
 #
+#for runs with a large number of structures
+-jd2
+ -delete_old_poses
 #
 -mute protocols.jd2
 -mute core.io.pdb.file_data

@@ -1,11 +1,15 @@
+#packing flags for rotamer recovery
+-ex1
+-ex2
+-extrachi_cutoff 1
 #
 #
--score:weights standard
--score:patch score12
+-score:weights sp2_correction
 #
 # The chi term correction
 -score::hb_sp2_chipen
-#
+-score:hb_sp2_peak_height_above_trough 2.0
+-score:hb_sp2_amp 2.0
 #
 #
 # HBond OH donor correction
@@ -15,7 +19,8 @@
 #ref_SER -= 0.1; ref_THR -= 0.1;
 #
 #
--hbond_params OLF_params_4m
+-hbond_params sp2_params
+#
 #
 -options
  -user
@@ -23,9 +28,12 @@
 #
 -ignore_unrecognized_res
 #
+# Use Reduce placed hydrogen atoms
+-no_optH
+#
 #
 -in
- -path %(sample_source_path)s/input/top4400pdbs_rosetta_named_hydrogens
+ -path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens
  -file
   -l %(sample_source_path)s/input/all_pdbs.list
 #
@@ -35,20 +43,17 @@
  -nooutput
 #
 #
--parser
- -protocol %(output_dir)s/%(sample_source_id)s/features.xml
-#
-#
 #Deleting old poses subsantialy reduces the memory requirements for
 #for runs with a large number of structures
 -jd2
  -delete_old_poses
 #
+#Read in pronation states from input data (use with
+#caution for runs that do more than extract features)
+#-pH
+# -pH_mode
+#
+-parser
+ -protocol %(output_dir)s/%(sample_source_id)s/features.xml
 #
 #
-#
--mute core.io.pdb.file_data
--mute core.scoring.etable
--mute core.io.database
--mute core.pack.task
--mute protocols.ProteinInterfaceDesign.DockDesign
