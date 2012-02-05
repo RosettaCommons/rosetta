@@ -569,6 +569,8 @@ build_pose_from_pdb_as_is(
 
 }
 
+
+
 //void
 //build_pose_as_is1( io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set, id::AtomID_Mask & missing )
 void
@@ -617,6 +619,10 @@ build_pose_as_is1(
 	std::string::const_iterator const entities_begin = chains_whose_residues_are_separate_chemical_entities.begin();
 	std::string::const_iterator const entities_end = chains_whose_residues_are_separate_chemical_entities.end();
 
+	//mjo do not add residue by bond if the last residue was not
+	//recognized
+	bool last_residue_was_recognized(true);
+
 	for ( int i=1; i<= nres_pdb; ++i ) {
 		ResidueInformation const & rinfo = rinfos[i];
 		std::string const & pdb_name = rinfo.resName;
@@ -634,37 +640,13 @@ build_pose_as_is1(
 		ResidueTemps  const & rtemp = rinfo.temps;
 
 		ResidueTypeCAPs const & rsd_type_list( residue_set.name3_map( pdb_name ) );
-		if ( rsd_type_list.empty() ) {
-			using namespace basic::options;
-			if( !(option[ OptionKeys::in::  ignore_unrecognized_res ]() ||
-					option[ OptionKeys::in::remember_unrecognized_res ]() ||
-					(pdb_name == "HOH" && option[OptionKeys::in::ignore_waters ]())) ) {
-				// We should fail fast on unrecognized input rather than produce bad results!
-				utility_exit_with_message(" unrecognized aa " + pdb_name );
-			}
-
-			if( !option[ OptionKeys::in::remember_unrecognized_water ]() ) {
-				// don't bother with water
-				if( pdb_name == "HOH" ) continue;
-			}
-
-			if( option[ OptionKeys::in::remember_unrecognized_res ] ) {
-				for( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-					if( UA_res_nums.size() > 5000 ) {
-						utility_exit_with_message("can't handle more than 5000 atoms worth of unknown residues\n");
-					}
-					TR << "remember unrecognized atom " << i << " " << pdb_name << " " << local_strip_whitespace(iter->first)
-						<< " temp " << rtemp.find(iter->first)->second << std::endl;
-					UA_res_nums.push_back( i );
-					UA_res_names.push_back( pdb_name );
-					UA_atom_names.push_back( local_strip_whitespace(iter->first) );
-					UA_coords.push_back( iter->second );
-					UA_temps.push_back( rtemp.find(iter->first)->second );
-				}
-			}
-
+		if(!is_residue_type_recognized(
+				i, pdb_name, rsd_type_list, xyz, rtemp,
+				UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps)) {
+			last_residue_was_recognized = false;
 			continue;
 		}
+
 
 		// look for best match:
 		// rsd_type should have all the atoms present in xyz
@@ -713,96 +695,92 @@ build_pose_as_is1(
 // 			}
 		} // j=1,rsd_type_list.size()
 
-		if ( best_index ) {
-			ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
-			//TR << "match: " << i << ' ' << rsd_type.name() << ' ' << best_xyz_missing << "\n";
-
-			if ( best_rsd_missing ) {
-				TR << "[ WARNING ] discarding " << best_rsd_missing << " atoms at position " << i <<
-					" in file " << fd.filename << ". Best match rsd_type:  " << rsd_type.name() << std::endl;
-			}
-
-
-			// check for missing mainchain atoms:
-			if ( rsd_type.is_polymer() ) {
-				AtomIndices const & mainchain( rsd_type.mainchain_atoms() );
-				Size const nbb( mainchain.size() );
-				if ( nbb >= 3 ) {
-					bool mainchain_core_present( false );
-					for ( Size k=1; k<= nbb-2; ++k ) {
-						if ( xyz.count( rsd_type.atom_name(mainchain[k  ])) &&
-							xyz.count( rsd_type.atom_name(mainchain[k+1])) &&
-							xyz.count( rsd_type.atom_name(mainchain[k+2])) ) {
-							mainchain_core_present = true;
-							break;
-						}
-					}
-					if ( !mainchain_core_present ) {
-						TR << "[ WARNING ] skipping pdb residue b/c its missing too many mainchain atoms: " << resid <<
-							' ' << pdb_name << ' ' << rsd_type.name() << std::endl;
-						for ( Size k=1; k<= nbb; ++k ) {
-							if ( !xyz.count( rsd_type.atom_name(mainchain[k] ) ) ) {
-								TR << "missing: " << rsd_type.atom_name( mainchain[k] ) << std::endl;
-							}
-						}
-						if( basic::options::option[ basic::options::OptionKeys::run::exit_if_missing_heavy_atoms ].value() == true ) {
-							utility_exit_with_message("quitting due to missing heavy atoms");
-						}
-						continue;
-					}
-				}
-			}
-
-			// found a match, now fill in the coords
-			ResidueOP new_rsd( ResidueFactory::create_residue( rsd_type ) );
-
-			for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-				if ( new_rsd->has( local_strip_whitespace(iter->first) ) ) {
-					// offsetting all coordinates by a small constant prevents problems with atoms located
-					// at position (0,0,0).
-					// This is a bit of a dirty hack but it fixes the major problem of reading in rosetta
-					// pdbs which suually start at 0,0,0. However the magnitude of this offset is so small
-					// that the output pdbs should still match input pdbs. hopefully. yes. aehm.
-
-					double offset = 1e-250; /// coordinates now double, so we can use _really_ small offset.
-					new_rsd->atom( local_strip_whitespace(iter->first) ).xyz( iter->second + offset );
-				}
-				//else runtime_assert( iter->first == " H  " && rsd_type.is_terminus() ); // special casee
-			}
-
-
-			// fill in b-factor from pdb file
-			// for ( ResidueTemps::const_iterator iter=res_temps.begin(), iter_end = res_temps.end();
-			// 			iter != iter_end;
-			// 			++iter ) {
-			// 	if ( new_rsd->has( local_strip_whitespace(iter->first) ) ) {
-			// 		new_rsd->atom( local_strip_whitespace(iter->first) ).temperature( iter->second );
-			// 	}
-			// }
-			Size const old_nres( pose.total_residue() );
-
-			if ( old_nres && ( is_lower_terminus  || !new_rsd->is_polymer() || !pose.residue_type( old_nres ).is_polymer() ) ) {
-				//std::cout << "append_residue_by_jump: " << old_nres << ' ' << new_rsd->name() << std::endl;
-				pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
-			} else {
-				//std::cout << "append_residue_by_bond: " << old_nres << ' ' << new_rsd->name() << std::endl;
-				pose.append_residue_by_bond( *new_rsd );
-				//if ( rsd_type.is_polymer() && pose.total_residue() >= 2 ) {
-				//	pose.conformation().set_polymeric_connection( pose.total_residue() - 1, pose.total_residue() );
-				//}
-			}
-			pose_to_rinfo.push_back( Size(i) );
-			pose_resids.push_back( rinfo.resid );
-			pose_temps.push_back( rinfo.temps );
-		} else {
-			// unforgiving for testing purposes
+		if(!best_index){
 			utility_exit_with_message( "Unrecognized residue: " + pdb_name );
 		}
+		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
+		//TR << "match: " << i << ' ' << rsd_type.name() << ' ' << best_xyz_missing << "\n";
+
+		if ( best_rsd_missing ) {
+			TR << "[ WARNING ] discarding " << best_rsd_missing << " atoms at position " << i <<
+				" in file " << fd.filename << ". Best match rsd_type:  " << rsd_type.name() << std::endl;
+		}
+
+
+		// check for missing mainchain atoms:
+		if ( rsd_type.is_polymer() ) {
+			AtomIndices const & mainchain( rsd_type.mainchain_atoms() );
+			Size const nbb( mainchain.size() );
+			if ( nbb >= 3 ) {
+				bool mainchain_core_present( false );
+				for ( Size k=1; k<= nbb-2; ++k ) {
+					if ( xyz.count( rsd_type.atom_name(mainchain[k  ])) &&
+						xyz.count( rsd_type.atom_name(mainchain[k+1])) &&
+						xyz.count( rsd_type.atom_name(mainchain[k+2])) ) {
+						mainchain_core_present = true;
+						break;
+					}
+				}
+				if ( !mainchain_core_present ) {
+					TR << "[ WARNING ] skipping pdb residue b/c its missing too many mainchain atoms: " << resid <<
+						' ' << pdb_name << ' ' << rsd_type.name() << std::endl;
+					for ( Size k=1; k<= nbb; ++k ) {
+						if ( !xyz.count( rsd_type.atom_name(mainchain[k] ) ) ) {
+							TR << "missing: " << rsd_type.atom_name( mainchain[k] ) << std::endl;
+						}
+					}
+					if( basic::options::option[ basic::options::OptionKeys::run::exit_if_missing_heavy_atoms ].value() == true ) {
+						utility_exit_with_message("quitting due to missing heavy atoms");
+					}
+					continue;
+				}
+			}
+		}
+
+		// found a match, now fill in the coords
+		ResidueOP new_rsd( ResidueFactory::create_residue( rsd_type ) );
+
+		for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
+			if ( new_rsd->has( local_strip_whitespace(iter->first) ) ) {
+				// offsetting all coordinates by a small constant prevents problems with atoms located
+				// at position (0,0,0).
+				// This is a bit of a dirty hack but it fixes the major problem of reading in rosetta
+				// pdbs which suually start at 0,0,0. However the magnitude of this offset is so small
+				// that the output pdbs should still match input pdbs. hopefully. yes. aehm.
+
+				double offset = 1e-250; /// coordinates now double, so we can use _really_ small offset.
+				new_rsd->atom( local_strip_whitespace(iter->first) ).xyz( iter->second + offset );
+			}
+			//else runtime_assert( iter->first == " H  " && rsd_type.is_terminus() ); // special casee
+		}
+
+
+		// fill in b-factor from pdb file
+		// for ( ResidueTemps::const_iterator iter=res_temps.begin(), iter_end = res_temps.end();
+		// 			iter != iter_end;
+		// 			++iter ) {
+		// 	if ( new_rsd->has( local_strip_whitespace(iter->first) ) ) {
+		// 		new_rsd->atom( local_strip_whitespace(iter->first) ).temperature( iter->second );
+		// 	}
+		// }
+		Size const old_nres( pose.total_residue() );
+
+		if ( old_nres && ( is_lower_terminus  || !new_rsd->is_polymer() || !pose.residue_type( old_nres ).is_polymer() || !last_residue_was_recognized) ) {
+			pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
+		} else {
+			pose.append_residue_by_bond( *new_rsd );
+		}
+		pose_to_rinfo.push_back( Size(i) );
+		pose_resids.push_back( rinfo.resid );
+		pose_temps.push_back( rinfo.temps );
+
 
 		// update the pose-internal chain label if necessary
 		if ( is_lower_terminus && pose.total_residue() > 1 ) {
 			pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
 		}
+
+		last_residue_was_recognized = true;
 
 	} // i=1,nres_pdb
 
@@ -958,6 +936,64 @@ build_pose_as_is1(
 	// mark PDBInfo as ok and store in Pose
 	pdb_info->obsolete( false );
 	pose.pdb_info( pdb_info );
+}
+
+///@detail The input rsd_type_list are all the residue types that have
+///the same 3 letter code as pdb_name. Return true if the list is
+///non-empty and false otherwise.  If no residue types match, then
+///either exit, ignore or remember the residue based on the following
+///options in the option system:
+///
+/// -in:ignore_waters
+/// -in:ignore_unrecognized_res
+/// -in:remember_unrecognized_waters
+/// -in:remember_unrecognized_res
+bool is_residue_type_recognized(
+	Size const pdb_residue_index,
+	std::string const & pdb_name,
+	core::chemical::ResidueTypeCAPs const & rsd_type_list,
+	std::map< std::string, Vector > const & xyz,
+	std::map< std::string, double > const & rtemp,
+	utility::vector1<Size> & UA_res_nums,
+	utility::vector1<std::string> & UA_res_names,
+	utility::vector1<std::string> & UA_atom_names,
+	utility::vector1<numeric::xyzVector<Real> > & UA_coords,
+	utility::vector1<core::Real> & UA_temps){
+
+	if(!rsd_type_list.empty()){
+		return true;
+	}
+
+	using namespace basic::options;
+	if( !(option[ OptionKeys::in::ignore_unrecognized_res ]() ||
+			option[ OptionKeys::in::remember_unrecognized_res ]() ||
+			(pdb_name == "HOH" && option[OptionKeys::in::ignore_waters ]())) ) {
+		// We should fail fast on unrecognized input rather than produce bad results!
+		utility_exit_with_message(" unrecognized aa " + pdb_name );
+	}
+
+	if( !option[ OptionKeys::in::remember_unrecognized_water ]() ) {
+		// don't bother with water
+		if( pdb_name == "HOH" ){
+			return false;
+		}
+	}
+
+	if( option[ OptionKeys::in::remember_unrecognized_res ] ) {
+		for(std::map<std::string, Vector>::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
+			if( UA_res_nums.size() > 5000 ) {
+				utility_exit_with_message("can't handle more than 5000 atoms worth of unknown residues\n");
+			}
+			TR << "remember unrecognized atom " << pdb_residue_index << " " << pdb_name << " " << local_strip_whitespace(iter->first)
+			<< " temp " << rtemp.find(iter->first)->second << std::endl;
+			UA_res_nums.push_back( pdb_residue_index );
+			UA_res_names.push_back( pdb_name );
+			UA_atom_names.push_back( local_strip_whitespace(iter->first) );
+			UA_coords.push_back( iter->second );
+			UA_temps.push_back( rtemp.find(iter->first)->second );
+		}
+	}
+	return false;
 }
 
 void

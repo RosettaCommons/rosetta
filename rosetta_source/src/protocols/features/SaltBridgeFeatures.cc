@@ -192,64 +192,56 @@ SaltBridgeFeatures::report_features(
 		Residue const & a(pose.residue(acc_resNum));
 		PointPosition const & o = a.atom(acc_atmNum).xyz();
 
+		//MJO NOTE: It is necessary to look up the atoms by name rather
+		//then using atom numbering directly because residue type patches
+		//can insert or delete atoms to modify atom numbering. For
+		//instance, the CtermProteinFull patch inserts the OXT atom after
+		//the O at position 5 for otherwise unmodified protein backbones.
 		switch(d.aa()){
 		case aa_lys:
-			assert(d.atom_name(9) == " NZ ");
-			n = d.atom(9).xyz();
-			c = d.atom(9).xyz();
+			n = d.atom(d.atom_index(" NZ ")).xyz();
+			c = d.atom(d.atom_index(" NZ ")).xyz();
 			rho = c.distance(o);
 			if(rho > distance_cutoff_) continue;
 
-			assert(d.atom_name(7) == " CD ");
-			bb = d.atom(7).xyz();
-
-			assert(d.atom_name(8) == " CE ");
-			b = d.atom(8).xyz();
+			bb = d.atom(d.atom_index(" CD ")).xyz();
+			b = d.atom(d.atom_index(" CE ")).xyz();
 
 			psi = dihedral_radians(bb, b, c, o);
 			theta = angle_of(b, c, o) - pi/2;
 			break;
 		case aa_his:
-			assert(d.atom_name(7) == " ND1");
-			n = d.atom(7).xyz();
+			n = d.atom(d.atom_index(" ND1")).xyz();
 
-			assert(d.atom_name(10) == " NE2");
-			c = (n + d.atom(10).xyz())/2;
+			c = (n + d.atom(d.atom_index(" NE2")).xyz())/2;
 			rho = c.distance(o);
 			if(rho > distance_cutoff_) continue;
 
-			assert(d.atom_name(6) == " CG ");
-			b = d.atom(6).xyz();
+			b = d.atom(d.atom_index(" CG ")).xyz();
 			don_frame.from_four_points(c,c,b,n);
 			local_o = xyz_to_spherical(don_frame.global2local(o));
 			psi = local_o.phi()*pi_over_180;
 			theta = local_o.theta()*pi_over_180 - pi_over_2;
 			break;
 		case aa_arg:
-			assert(d.atom_name(9) == " CZ ");
-			c = d.atom(9).xyz();
+			c = d.atom(d.atom_index(" CZ ")).xyz();
 			rho = c.distance(o);
 			if(rho > distance_cutoff_) continue;
 
+			b = d.atom(d.atom_index(" NE ")).xyz();
+
 			{
-				assert(d.atom_name(8) == " NE ");
-				PointPosition const & n0(d.atom(8).xyz());
-
-				assert(d.atom_name(10) == " NH1");
-				PointPosition const & n1(d.atom(10).xyz());
-
-				assert(d.atom_name(11) == " NH2");
-				PointPosition const & n2(d.atom(11).xyz());
+				PointPosition const & n0(d.atom(d.atom_index(" NE ")).xyz());
+				PointPosition const & n1(d.atom(d.atom_index(" NH1")).xyz());
+				PointPosition const & n2(d.atom(d.atom_index(" NH2")).xyz());
 
 				n = n0.distance(o) < n1.distance(o) ?
 					(n0.distance(o) < n2.distance(o) ? n0 : n2) :
 					(n1.distance(o) < n2.distance(o) ? n1 : n2);
+
+				don_frame.from_four_points(c,c,b,n1);
 			}
 
-			assert(d.atom_name(8) == " NE ");
-			b = d.atom(8).xyz();
-
-			don_frame.from_four_points(c,c,b,n);
 			local_o = xyz_to_spherical(don_frame.global2local(o));
 			psi = local_o.phi()*pi_over_180;
 			theta = local_o.theta()*pi_over_180 - pi_over_2;

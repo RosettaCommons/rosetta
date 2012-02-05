@@ -4,7 +4,7 @@ NAME K
 IO_STRING   K X
 TYPE LIGAND
 AA UNK
-ATOM K    K1p   X    1.00
+ATOM  K   K1p   X    1.00
 ATOM  V1  VIRT  X    0.00
 ATOM  V2  VIRT  X    0.00
 BOND  K    V1 

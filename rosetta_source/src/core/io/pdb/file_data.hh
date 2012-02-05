@@ -25,6 +25,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -262,6 +263,20 @@ build_pose_as_is1(
 	chemical::ResidueTypeSet const & residue_set,
 	id::AtomID_Mask & missing
 );
+
+bool
+is_residue_type_recognized(
+	Size const pdb_residue_index,
+	std::string const & pdb_name,
+	core::chemical::ResidueTypeCAPs const & rsd_type_list,
+	std::map< std::string, Vector > const & xyz,
+	std::map< std::string, double > const & rtemp,
+	utility::vector1<Size> & UA_res_nums,
+	utility::vector1<std::string> & UA_res_names,
+	utility::vector1<std::string> & UA_atom_names,
+	utility::vector1<numeric::xyzVector<Real> > & UA_coords,
+	utility::vector1<core::Real> & UA_temps);
+
 
 void
 pose_from_pose(
