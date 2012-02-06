@@ -644,9 +644,12 @@ RNA_StructureParameters::sample_alternative_chain_connection( pose::Pose & pose,
 																										jump_points, cuts, 1, false /*verbose*/ );
 	}
 
+	fill_in_default_jump_atoms( fold_tree, pose );
+
 	//	tr << "Changing fold_tree ==> " << fold_tree << std::endl;
 
 	if (success) pose.fold_tree( fold_tree );
+
 
 }
 
@@ -837,14 +840,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	// Hold on to torsion angles in case we need to set up chainbreak residues...
 	pose::Pose pose_copy = pose;
 
-	// default atoms for jump connections.
-	for (Size i = 1; i <= f.num_jump(); i++ ){
-		Size const jump_pos1( f.upstream_jump_residue( i ) );
-		Size const jump_pos2( f.downstream_jump_residue( i ) );
-		f.set_jump_atoms( i,
-											scoring::rna::default_jump_atom( pose.residue( jump_pos1 ) ),
-											scoring::rna::default_jump_atom( pose.residue( jump_pos2) ) );
-	}
+	fill_in_default_jump_atoms( f, pose );
 
 	if ( virtual_anchor_attachment_points_.size() > 0 ){
 		f.reorder( pose.total_residue() ); //reroot so that virtual residue is fixed.
@@ -863,6 +859,23 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	}
 }
 
+
+
+///////////////////////////////////////////////////////////////
+void
+RNA_StructureParameters::fill_in_default_jump_atoms( kinematics::FoldTree & f, pose::Pose const & pose ) const
+{
+
+	// default atoms for jump connections.
+	for (Size i = 1; i <= f.num_jump(); i++ ){
+		Size const jump_pos1( f.upstream_jump_residue( i ) );
+		Size const jump_pos2( f.downstream_jump_residue( i ) );
+		f.set_jump_atoms( i,
+											scoring::rna::default_jump_atom( pose.residue( jump_pos1 ) ),
+											scoring::rna::default_jump_atom( pose.residue( jump_pos2) ) );
+	}
+
+}
 
 ///////////////////////////////////////////////////////////////
 void

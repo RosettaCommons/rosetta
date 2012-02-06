@@ -213,9 +213,9 @@ namespace rna{
 
 		figure_out_chunk_coverage();
 
-		std::cout << "INPUT_RES: ";
-		for ( Size n = 1; n <= input_res.size(); n++ ) std::cout << ' ' << input_res[ n ];
-		std::cout << std::endl;
+		//std::cout << "INPUT_RES: ";
+		//		for ( Size n = 1; n <= input_res.size(); n++ ) std::cout << ' ' << input_res[ n ];
+		//		std::cout << std::endl;
 
 	}
 

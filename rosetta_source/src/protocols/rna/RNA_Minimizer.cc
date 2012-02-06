@@ -185,10 +185,10 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
-	MinimizerOptions options( min_type_, dummy_tol, use_nblist, deriv_check_, deriv_check_ ); 
+	MinimizerOptions options( min_type_, dummy_tol, use_nblist, deriv_check_, deriv_check_ );
 
 	//	MinimizerOptions options( "dfpmin_armijo_nonmonotone", dummy_tol, use_nblist, deriv_check_, deriv_check_ );
-	options.nblist_auto_update( true ); 
+	options.nblist_auto_update( true );
 
 
 	kinematics::MoveMap mm;

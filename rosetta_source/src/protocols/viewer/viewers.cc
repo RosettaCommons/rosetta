@@ -826,23 +826,23 @@ display_residues_wireframe(
 			Vector const xyz2(      rsd.xyz( atom2 ) - center );
 
 			Vector const bond( xyz2 - xyz1 );
-			//if (bond.length_squared() > graphics::BOND_LENGTH_CUTOFF2 ) continue;
+			if (bond.length_squared() <= graphics::BOND_LENGTH_CUTOFF2 )  {
 
-			Vector width( cross( bond, z ) );
-			if ( width.length_squared() ) width.normalize();
-			width *= graphics::protein_wireframeScale;
+				Vector width( cross( bond, z ) );
+				if ( width.length_squared() ) width.normalize();
+				width *= graphics::protein_wireframeScale;
 
-			// also need to draw the elbow?
-			//			if (bond.length_squared() < 9.0 ){
-			glColor3fxyz( color1 );
-			glBegin(GL_POLYGON);
-			glVertex3fxyz ( xyz1 + width );
-			glVertex3fxyz ( xyz1 - width );
-			glColor3fxyz( color2 );
-			glVertex3fxyz ( xyz2 - width );
-			glVertex3fxyz ( xyz2 + width );
-			glEnd();
-			//			}
+				// also need to draw the elbow?
+				//			if (bond.length_squared() < 9.0 ){
+				glColor3fxyz( color1 );
+				glBegin(GL_POLYGON);
+				glVertex3fxyz ( xyz1 + width );
+				glVertex3fxyz ( xyz1 - width );
+				glColor3fxyz( color2 );
+				glVertex3fxyz ( xyz2 - width );
+				glVertex3fxyz ( xyz2 + width );
+				glEnd();
+			}
 		}
 
 		// draw the atom bonds

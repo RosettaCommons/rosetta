@@ -15,6 +15,7 @@
 #define INCLUDED_protocols_rna_RNA_StructureParameters_HH
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/rna/RNA_JumpLibrary.fwd.hh>
 #include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/kinematics/Jump.hh>
@@ -146,6 +147,9 @@ toolbox::AllowInsertOP
 
 	void
 	insert_base_pair_jumps( core::pose::Pose & pose, bool & success ) const;
+
+	void
+	fill_in_default_jump_atoms( core::kinematics::FoldTree & f, core::pose::Pose const & pose ) const;
 
 private:
 	RNA_JumpLibraryOP rna_jump_library_;
