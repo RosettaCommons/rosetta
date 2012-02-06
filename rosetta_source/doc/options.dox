@@ -3441,11 +3441,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "scoring/score_functions/NV/neighbor_vector_score.histogram"</dd><br>
 </dl>
 <dl>
-<dt><b>-syn_chi_penalty</b> \<Real\><dt>
-<dd>penalty for syn/chi conformation</dd><br>
-<dd>Default: 0.0</dd><br>
-</dl>
-<dl>
 <dt><b>-disable_orientation_dependent_rna_ch_o_bonds</b> \<Boolean\><dt>
 <dd>Do not use orientation-dependent potential for RNA carbon hydrogen bonds</dd><br>
 <dd>Default: false</dd><br>
@@ -3453,7 +3448,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-rna_torsion_potential</b> \<String\><dt>
 <dd>In RNA torsion calculation, directory containing 1D torsional potentials</dd><br>
-<dd>Default: "FINAL_Mar_24_2010_new_delta_zeta_chi"</dd><br>
+<dd>Default: "BLAHBLAHBLAH"</dd><br>
+</dl>
+<dl>
+<dt><b>-rna_torsion_skip_chainbreak</b> \<Boolean\><dt>
+<dd>Don't score RNA torsions located at the chain_breaks (aside from the ones that will be closed)</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-include_neighbor_base_stacks</b> \<Boolean\><dt>

@@ -723,7 +723,7 @@ option.add( basic::options::OptionKeys::score::NV_ubound, "Upper Bound for neigh
 option.add( basic::options::OptionKeys::score::NV_table, "Location of path to potential lookup table" ).def("scoring/score_functions/NV/neighbor_vector_score.histogram");
 option.add( basic::options::OptionKeys::score::disable_orientation_dependent_rna_ch_o_bonds, "Do not use orientation-dependent potential for RNA carbon hydrogen bonds" ).def(false);
 option.add( basic::options::OptionKeys::score::rna_torsion_potential, "In RNA torsion calculation, directory containing 1D torsional potentials" ).def("BLAHBLAHBLAH");
-option.add( basic::options::OptionKeys::score::rna_torsion_skip_chainbreak, "Don't score RNA torsions located at the chain_breaks (aside from the ones that will be closed)" ).def(true); 
+option.add( basic::options::OptionKeys::score::rna_torsion_skip_chainbreak, "Don't score RNA torsions located at the chain_breaks (aside from the ones that will be closed)" ).def(true);
 option.add( basic::options::OptionKeys::score::include_neighbor_base_stacks, "In RNA score calculation, include stacks between i,i+1" ).def(false);
 option.add( basic::options::OptionKeys::score::find_neighbors_3dgrid, "Use a 3D lookup table for doing neighbor calculations.  For spherical, well-distributed conformations, O(N) neighbor detection instead of general O(NlgN)" ).def(false);
 option.add( basic::options::OptionKeys::score::seqdep_refene_fname, "Filename for table containing sequence-dependent reference energies" );
