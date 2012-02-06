@@ -18,7 +18,11 @@ enum xyzStripeHashPoseMode {
 
 class xyzStripeHashPose : public xyzStripeHash<double> {
 public:
-  xyzStripeHashPose(double radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : xyzStripeHash<double>(radius) { // makes copy
+  xyzStripeHashPose(double radius) : xyzStripeHash<double>(radius) {}
+  xyzStripeHashPose(double radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : xyzStripeHash<double>(radius) {
+	  init_with_pose(p,BB);
+  }
+  void init_with_pose(core::pose::Pose p, xyzStripeHashPoseMode m = BB) {
     int natom = 0;
     for(int ir = 1; ir <= p.n_residue(); ++ir) {
       core::conformation::Residue const & r(p.residue(ir));
