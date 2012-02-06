@@ -130,8 +130,10 @@ make_symmetric_pose(
 		pdb_info = new pose::PDBInfo( *(pose.pdb_info()) );
 	}
 	pose.pdb_info( pdb_info );
-	
+
 	assert( is_symmetric( pose ) );
+
+	pose.conformation().detect_bonds();
 }
 
 /// @details constructs a symmetric pose with a symmetric conformation and energies object from a monomeric pose
@@ -159,6 +161,8 @@ make_symmetric_pose(
 	pose.pdb_info( pdb_info );
 
 	assert( is_symmetric( pose ) );
+
+	pose.conformation().detect_bonds();
 }
 
 /// @details constructs a symmetric pose with a symmetric conformation and energies object from a monomeric pose
