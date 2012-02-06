@@ -52,6 +52,7 @@ sources = {
 		"relax",
 		"sequence_tolerance",
 		"SymDock",
+		"vip",
 	],
 	"public/analysis": [
 		"InterfaceAnalyzer",
