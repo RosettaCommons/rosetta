@@ -129,8 +129,7 @@ public:
 	Distance
 	atomic_interaction_cutoff() const;
 
-	Real
-	hydrogen_interaction_cutoff2() const;
+	// Undefined, commenting out to fix PyRosetta build  Real hydrogen_interaction_cutoff2() const;
 
 	///@brief ContextIndependentGeometricSolEnergy is NOT context sensitive
 	virtual
