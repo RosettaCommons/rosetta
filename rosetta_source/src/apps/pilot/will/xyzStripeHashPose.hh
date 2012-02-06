@@ -17,9 +17,9 @@ enum xyzStripeHashPoseMode {
   ALL
 };
 
-class xyzStripeHashPose : public xyzStripeHash<float,float> {
+class xyzStripeHashPose : public xyzStripeHash<float> {
 public:
-  xyzStripeHashPose(float radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : xyzStripeHash<float,float>(radius) { // makes copy
+  xyzStripeHashPose(float radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : xyzStripeHash<float>(radius) { // makes copy
     int natom = 0;
     for(int ir = 1; ir <= p.n_residue(); ++ir) {
       core::conformation::Residue const & r(p.residue(ir));
@@ -29,7 +29,7 @@ public:
       if( ALL==m ) natom += r.natoms();
     }
     utility::vector1<numeric::xyzVector<float> > atoms(natom);
-    utility::vector1<float>                      meta (natom);
+    // utility::vector1<float>                      meta (natom);
     uint count = 0;
     for(int ir = 1; ir <= p.n_residue(); ++ir) {
       core::conformation::Residue const & r(p.residue(ir));
@@ -37,27 +37,27 @@ public:
         int ia = r.nbr_atom();
         core::id::AtomID const aid(ia,ir);;
         atoms[++count] = p.xyz(aid);
-        meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );
+        // meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );
       } else if(BB==m) {
-        if(r.has( "N")){ atoms[++count]=r.xyz( "N"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "N"),ir),r.atom_type(r.atom_index( "N")).lj_radius()); }
-        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius()); }
-        if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius()); }
-        if(r.has( "O")){ atoms[++count]=r.xyz( "O"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "O"),ir),r.atom_type(r.atom_index( "O")).lj_radius()); }
-        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius()); }
+        if(r.has( "N")){ atoms[++count]=r.xyz( "N"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "N"),ir),r.atom_type(r.atom_index( "N")).lj_radius());*/ }
+        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius());*/ }
+        if(r.has( "C")){ atoms[++count]=r.xyz( "C"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius());*/ }
+        if(r.has( "O")){ atoms[++count]=r.xyz( "O"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "O"),ir),r.atom_type(r.atom_index( "O")).lj_radius());*/ }
+        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius());*/ }
       } else if(BB==m) {
-        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius()); }
-        if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius()); }
-        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius()); }
+        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius());*/ }
+		if(r.has( "C")){ atoms[++count]=r.xyz( "C"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius());*/ }
+        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius());*/ }
       } else {
         int natom = (ALL==m) ? r.natoms() : r.nheavyatoms();;
         for(int ia = 1; ia <= natom; ++ia) {
           core::id::AtomID const aid(ia,ir);
           atoms[++count] = p.xyz(aid);
-          meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );
+          // meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );
         }
       }
     }
-    init(atoms,meta);
+    init(atoms);
   }
 
 };

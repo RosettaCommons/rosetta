@@ -12,6 +12,7 @@
 #include <core/pose/util.hh>
 #include <devel/init.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/random/random.hh>
 #include <numeric/xyz.io.hh>
 #include <fstream>
 
@@ -71,16 +72,11 @@ int main(int argc, char *argv[]) {
 	register_options();
 	devel::init(argc,argv);
 
-	core::kinematics::Stub s(Vec(0,0,0),Vec(-1,0,0),Vec(1,1,0));
-	std::cout << s.M << std::endl;
-	std::cout << s.v << std::endl;
-	utility_exit_with_message("oairstne");
-
 	Real const DIST(4.0);
 	Real const DIST2(DIST*DIST);	
-
-  core::pose::Pose p;
-  core::import_pose::pose_from_pdb(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
+	
+	core::pose::Pose p;
+	core::import_pose::pose_from_pdb(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
 	if(true) {
 		for(Size ir = 1; ir <= p.n_residue(); ++ir) {
 			if( p.residue(ir).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(p,ir);
@@ -88,7 +84,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-  xyzStripeHashPose xyzhash(DIST,p,ALL);
+	xyzStripeHashPose xyzhash(DIST,p,ALL);
 	xyzhash.sanity_check();
 
 	if(basic::options::option[basic::options::OptionKeys::dump_hash]()) {
