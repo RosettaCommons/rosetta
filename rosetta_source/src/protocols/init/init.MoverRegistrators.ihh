@@ -152,6 +152,7 @@ static MoverRegistrator< protein_interface_design::movers::SetTemperatureFactorC
 static MoverRegistrator< protein_interface_design::movers::SetupHotspotConstraintsMoverCreator > reg_SetupHotspotConstraintsMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::SpinMoverCreator > reg_SpinMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::SpliceCreator > reg_SpliceCreator;
+static MoverRegistrator< protein_interface_design::movers::TaskAwareCstsCreator > reg_TaskAwareCstsCreator;
 static MoverRegistrator< protein_interface_design::movers::SubroutineMoverCreator > reg_SubroutineCreator;
 static MoverRegistrator< protein_interface_design::movers::TryRotamersCreator > reg_TryRotamersCreator;
 static MoverRegistrator< protein_interface_design::movers::VLBCreator > reg_VLBCreator;
