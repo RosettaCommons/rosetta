@@ -69,6 +69,7 @@ namespace docking { namespace ligand { extern BooleanOptionKey const old_estat; 
 namespace docking { namespace ligand { extern BooleanOptionKey const random_conformer; } }
 namespace docking { namespace ligand { extern IntegerOptionKey const improve_orientation; } }
 namespace docking { namespace ligand { extern BooleanOptionKey const mutate_same_name3; } }
+namespace docking { namespace ligand { extern RealOptionKey const subset_to_keep; } }
 namespace docking { namespace ligand { extern RealOptionKey const min_rms; } }
 namespace docking { namespace ligand { extern IntegerOptionKey const max_poses; } }
 namespace docking { namespace ligand { extern BooleanOptionKey const minimize_ligand; } }

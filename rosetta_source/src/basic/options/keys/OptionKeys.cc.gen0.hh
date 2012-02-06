@@ -281,6 +281,7 @@ namespace docking { namespace ligand { BooleanOptionKey const old_estat( "dockin
 namespace docking { namespace ligand { BooleanOptionKey const random_conformer( "docking:ligand:random_conformer" );  } }
 namespace docking { namespace ligand { IntegerOptionKey const improve_orientation( "docking:ligand:improve_orientation" );  } }
 namespace docking { namespace ligand { BooleanOptionKey const mutate_same_name3( "docking:ligand:mutate_same_name3" );  } }
+namespace docking { namespace ligand { RealOptionKey const subset_to_keep( "docking:ligand:subset_to_keep" );  } }
 namespace docking { namespace ligand { RealOptionKey const min_rms( "docking:ligand:min_rms" );  } }
 namespace docking { namespace ligand { IntegerOptionKey const max_poses( "docking:ligand:max_poses" );  } }
 namespace docking { namespace ligand { BooleanOptionKey const minimize_ligand( "docking:ligand:minimize_ligand" );  } }
@@ -591,4 +592,3 @@ namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
-namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }

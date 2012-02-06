@@ -166,7 +166,7 @@ sources = {
 	"pilot/ian" : [
 		#"ligdock_confidence", # /* Ian Davis,Documentation Location,Demo Location */
 		#"cluster_ligand_poses", # /* Ian Davis,Documentation Location,Demo Location */
-		"select_best_unique_ligand_poses", # /* Ian Davis,Documentation Location,Demo Location */
+		"select_best_unique_ligand_poses_jd1", # /* Ian Davis,Documentation Location,Demo Location */
 	],
 	"pilot/liz" : [
 		#"test_scmcmover",

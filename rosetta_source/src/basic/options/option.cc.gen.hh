@@ -286,6 +286,7 @@ option.add( basic::options::OptionKeys::docking::ligand::old_estat, "Emulate Ros
 option.add( basic::options::OptionKeys::docking::ligand::random_conformer, "Start from a random ligand rotamer chosen from the library" ).def(false);
 option.add( basic::options::OptionKeys::docking::ligand::improve_orientation, "Do N cycles of randomization to minimize clashes with backbone" );
 option.add( basic::options::OptionKeys::docking::ligand::mutate_same_name3, "Allow ligand to 'design' to residue types with same name3?  Typically used for protonation states / tautomers." ).def(false);
+option.add( basic::options::OptionKeys::docking::ligand::subset_to_keep, "When selecting a subset of ligand poses, what fraction (number if > 1.0) to keep?" ).def(0.05);
 option.add( basic::options::OptionKeys::docking::ligand::min_rms, "When selecting a subset of ligand poses, all must differ by at least this amount." ).def(0.8);
 option.add( basic::options::OptionKeys::docking::ligand::max_poses, "When selecting a subset of ligand poses, select as most this many." ).def(50);
 option.add( basic::options::OptionKeys::docking::ligand::minimize_ligand, "Allow ligand torsions to minimize?" ).def(false);
@@ -596,10 +597,10 @@ option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling 
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
+option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
@@ -1192,10 +1193,10 @@ option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No descripti
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
-option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
@@ -1788,10 +1789,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "red
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);

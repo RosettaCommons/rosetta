@@ -142,7 +142,6 @@ private:
 
 }; // class AtomTreeDiff
 
-
 ///@brief Helper function for writing entries -- not usually called by clients.
 void dump_score_line(
 	std::ostream & out,
@@ -209,6 +208,12 @@ void rms_error_with_noise(
 	int sc_precision = 4
 );
 
+///@brief Test if given file is an atom_tree_diff
+bool file_is_atom_tree_diff( std::string const & filename );
+
+///@brief Test if given stream is an atom_tree_diff
+///@details If everything goes right, after the call, the read position should be at the same place it was to start with
+bool file_is_atom_tree_diff( std::istream & in );
 
 } // silent
 } // io

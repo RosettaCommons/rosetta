@@ -1,3 +1,4 @@
+namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
 namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
@@ -591,4 +592,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoPro
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_surface( "DenovoProteinDesign:redesign_surface" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "DenovoProteinDesign:redesign_complete" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }

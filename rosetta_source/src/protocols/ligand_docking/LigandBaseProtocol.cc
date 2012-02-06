@@ -209,31 +209,36 @@ LigandBaseProtocol::make_tweaked_scorefxn(
 	return sfxn;
 }
 
-
 /// @details First discards ligands that aren't touching, then takes the top 5% by total_score.
+/// (Take given number of poses if to_keep > 1.0).
 void select_best_poses(
-	core::import_pose::atom_tree_diffs::AtomTreeDiff const & atdiff,
+	core::import_pose::atom_tree_diffs::ScoresPairList const & scores_in,
 	core::import_pose::atom_tree_diffs::ScoresPairList & scores_out,
-	core::Real frac_to_keep /* = 0.05*/
+	core::Real to_keep /* = 0.05 */
 )
 {
-	core::import_pose::atom_tree_diffs::ScoresPairList const & scores_list = atdiff.scores();
 	// Keep only the top 5% by total score
-	//scores_out.reserve( scores_list.size() );
-	//std::cout << "scores_list.size() = " << scores_out.size() << "\n";
+	//scores_out.reserve( scores_in.size() );
+	//std::cout << "scores_in.size() = " << scores_in.size() << "\n";
 	//std::cout << "scores_out.size() = " << scores_out.size() << " (0)\n";
-	for(core::Size ii = 1; ii <= scores_list.size(); ++ii) {
+	for(core::Size ii = 1; ii <= scores_in.size(); ++ii) {
 		// Drop out cases where the ligand isn't touching the protein
-		core::import_pose::atom_tree_diffs::Scores scores = scores_list[ii].second;
+		core::import_pose::atom_tree_diffs::Scores scores = scores_in[ii].second;
 		if( scores.find("ligand_is_touching") == scores.end()
 		||  scores["ligand_is_touching"] != 0 ) {
-			scores_out.push_back( scores_list[ii] );
+			scores_out.push_back( scores_in[ii] );
 		}
 	}
 	//std::cout << "scores_out.size() = " << scores_out.size() << " (1)\n";
 	core::import_pose::atom_tree_diffs::AtomTreeDiff::sort_by("total_score", scores_out);
 	//std::cout << "scores_out.size() = " << scores_out.size() << " (2)\n";
-	scores_out.resize( (core::Size) std::ceil(frac_to_keep * scores_out.size()) );
+	if( to_keep <= 1.0  && to_keep >= 0.0 ) {
+		scores_out.resize( (core::Size) std::ceil(to_keep * scores_out.size()) );
+	} else if ( to_keep > 1.0 && scores_out.size() > to_keep ){
+		scores_out.resize( (core::Size) std::ceil(to_keep) );
+	} else {
+		utility_exit_with_message("Cannot select a negative quantity of poses.");
+	}
 	//std::cout << "scores_out.size() = " << scores_out.size() << " (3)\n";
 	// Although not everyone will care, this is useful for some applications.
 	core::import_pose::atom_tree_diffs::AtomTreeDiff::sort_by("interface_delta", scores_out);
@@ -241,6 +246,15 @@ void select_best_poses(
 	//	std::cout << "Best structure: " << scores_out[jj].first << '\n';
 }
 
+void select_best_poses(
+	core::import_pose::atom_tree_diffs::AtomTreeDiff const & atdiff,
+	core::import_pose::atom_tree_diffs::ScoresPairList & scores_out,
+	core::Real to_keep /* = 0.05*/
+)
+{
+	core::import_pose::atom_tree_diffs::ScoresPairList const & scores_list = atdiff.scores();
+	select_best_poses(scores_list, scores_out, to_keep);
+}
 
 void select_best_poses(
 	core::import_pose::atom_tree_diffs::AtomTreeDiff const & atdiff,
@@ -254,7 +268,6 @@ void select_best_poses(
 		tags_out.insert( scores_list2[ii].first );
 	}
 }
-
 
 /// @details Currently considers only heavy atoms, not hydrogens.
 void frac_atoms_within(

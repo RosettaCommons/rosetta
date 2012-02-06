@@ -37,6 +37,7 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
 #include <utility/vector1.hh>
+#include <utility/io/izstream.hh>
 
 #include <algorithm>
 #include <set>
@@ -687,7 +688,25 @@ void rms_error_with_noise(
 		<< std::endl;
 }
 
+///@brief Test if given file is an atom_tree_diff
+bool file_is_atom_tree_diff( std::string const & filename ) {
+	utility::io::izstream infile( filename );
+	return file_is_atom_tree_diff( infile );
+}
 
-} // silent
+///@brief Test if given stream is an atom_tree_diff
+///@details If everything goes right, after the call, the read position should be at the same place it was to start with
+bool file_is_atom_tree_diff( std::istream & in ) {
+	bool retval = false;
+	std::streampos startpos(in.tellg());
+	std::string ignored_pose_tag;
+	Scores ignored_scores;
+	// There's probably a better heuristic
+	retval = header_from_atom_tree_diff(in, ignored_pose_tag, ignored_scores);
+	in.seekg(startpos);
+	return retval;
+}
+
+} // atom_tree_diffs
 } // import_pose
 } // core

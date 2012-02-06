@@ -108,6 +108,7 @@ sources = {
 		"extract_atomtree_diffs",
 		"ligand_dock",
 		"ligand_rpkmin",
+                "select_best_unique_ligand_poses", # /* Ian Davis/Rocco Moretti, doc/apps/public/ligand_dock.dox, test/integration/tests/select_best_unique_ligand_poses/ */
 	],
 	"public/loop_modeling": [
 		"loopmodel",

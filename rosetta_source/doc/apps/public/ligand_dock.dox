@@ -392,10 +392,36 @@ I've gotten good results with the following ranking scheme.  I first discard any
 If the initial position of the ligand is meaningful (e.g. benchmarking to reproduce a known binding mode), the you can plot interface_delta for these top-scoring structures against ligand_auto_rms_no_super and you should get a nice docking funnel.  The ligand_auto_rms_with_super can be used to see how much ligand conformational variation you're getting in the output structures.  (The difference is whether or not the ligands are superimposed;  the "auto" is short for "automorphism", which means certain kinds of chemical symmetry are accounted for when calculating the RMS.)
 
 
-@section clustering Clustering ligand poses (PRELIMINARY)
+@section clustering Clustering ligand poses
 
 By clustering ligand poses, and choosing the best model from each low energy cluster, one can curate a small set of possible binding modes for further investigation.
-A clustering application has been written within the Rosetta framework.  Documentation for "cluster" is found <a href="http://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/app_cluster.html">here</a>
+
+Although there is a clustering application within the Rosetta framework (the "cluster" application - see @ref cluster_commands "the documentation"), it is written to work primarily with protein structures, and by default works with C-alpha rmsd as the distance metric. Given that the Rosetta ligand_dock application performs only limited backbone movement, and that most ligands do not have C-alpha atoms, the clusters thus obtained are unlikely to be relevant.
+
+A better alternative is to use the ligand-docking specific "select_best_unique_ligand_poses" application. This is a greedy algorithm clustering approach, which first filters structures by ligand_is_touching/total_score as in the @ref analysis "Analysis of outputs" section above. It then ranks structures by the interface_delta metric, going down the list and outputting structures which are at least a given threshold of ligand-only rmsd away from any of the structures that have been output so far, up to a given maximum. It will also produce a file "cluster_rms.tab" in the running directory giving the rmsd values between the output structures.
+
+The select_best_unique_ligand_poses application uses the "jd2-style" options to control input and output. Note that the ligand_is_touching/total_score/interface_delta metrics are taken from the input files and not recomputed, so only atom_tree_diff and silent file inputs coming from the ligand_dock application make sense as inputs.
+
+@verbatim
+General Options:
+   -database                       Path to rosetta databases
+	 -extra_res_fa                   Location of param files for ligand and cofactors
+   -in:file:atom_tree_diff         Input file in atom_tree_diff format
+	 -in:file:silent                 Input silent file (*1)
+	 -out:file:atom_tree_diff        Output file for atom_tree_diff format output (default)
+	 -out:pdb                        Output best unique ligand poses as PDBs instead
+	 -out:path:pdb                   Directory to place output PDBs in
+   -out:file:silent                Output silent structures instead of atom_tree_diffs/PDBs (*2)
+	 -out:file:silent_struct_type    Type of silent file output ("binary" recommended)
+Program-specific Options:
+	 -docking:ligand:max_poses       Number of structures to output (default 50)
+   -docking:ligand:subset_to_keep  Fraction of top total_score structures to keep (default 0.05) (*3)
+	 -docking:ligand:min_rms         Ignore structure if rmsd to previously output structure is less than this (default 0.8)
+@endverbatim
+
+(*1) For backwards compatability with previous versions of select_best_unique_ligand_poses, if the file passed to -in:file:silent looks like an atom_tree_diff, it will be treated as one. Explicitly set -in:file:silent_struct_type with the appropirate value to override this behavior.
+(*2) For backwards compatability, if -out:file:silent_strcut_type is not set, the filename passed to -out:file:silent will be treated as if it were passed to -out:file:atom_tree_diff
+(*3) If -docking:ligand:subset_to_keep is greater than 1.0, it will be interpreted as the number of top total_score to keep, rather than a fraction.
 
 @section confidence Estimating docking confidence (PRELIMINARY)
 

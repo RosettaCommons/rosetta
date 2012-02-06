@@ -48,15 +48,21 @@ void select_best_poses(
 	std::set< std::string > & tags_out
 );
 
-
 /// @brief Selects the best ligand docking results from a silent file
 /// and appends their scores to the supplied list.
 void select_best_poses(
 	core::import_pose::atom_tree_diffs::AtomTreeDiff const & atdiff,
 	core::import_pose::atom_tree_diffs::ScoresPairList & scores_out,
-	core::Real frac_to_keep = 0.05
+	core::Real to_keep = 0.05
 );
 
+/// @brief Trims scores_in based on ligand_is_touching (if present) and
+/// then by total_score.
+void select_best_poses(
+	core::import_pose::atom_tree_diffs::ScoresPairList const & scores_in,
+	core::import_pose::atom_tree_diffs::ScoresPairList & scores_out,
+	core::Real to_keep = 0.05
+);
 
 /// @brief Without superimposing, automorphically computes the fraction of atoms
 /// in these residues that are within the given cutoff(s) of each other.
