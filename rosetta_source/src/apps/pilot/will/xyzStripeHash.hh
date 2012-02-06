@@ -6,16 +6,17 @@
 #include <numeric/xyzVector.hh>
 #include <ObjexxFCL/format.hh>
 
-template<typename T>
+template<typename T, typename M>
 class xyzStripeHash {
 public:
-  typedef struct { T x,y,z; } float3;
-  typedef unsigned short ushort;
+  typedef struct { T x,y,z,w; } float4;
+	//typedef unsigned int uint;
+	typedef unsigned short ushort;
   typedef struct { ushort x,y; } ushort2;
 private:
   T const grid_size_,grid_size2_;
   int natom_;
-  float3  const * grid_atoms_;
+  float4  const * grid_atoms_;
   ushort2 const * grid_stripe_;
   int xdim_,ydim_,zdim_;
 	T xmx_,ymx_,zmx_;
@@ -24,18 +25,29 @@ private:
 public:
 
   xyzStripeHash( T grid_size ) : grid_size_(grid_size), grid_size2_(grid_size*grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
-               /*rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))*/ {}
-  xyzStripeHash( T grid_size, utility::vector1<numeric::xyzVector<T> > const & atoms) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
+                           /*rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))*/ {}
+  xyzStripeHash( T grid_size,
+           utility::vector1<numeric::xyzVector<T> > const & atoms,
+           utility::vector1<M> const & meta
+           ) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
                /*rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))*/
   {
-    init(atoms);
+    init(atoms,meta);
   }
 
-  void init( utility::vector1<numeric::xyzVector<T> > const & atoms )
+  void init(
+            utility::vector1<numeric::xyzVector<T> > const & atoms,
+            utility::vector1<M> const & meta
+            )
   {
+    if( sizeof(T) < sizeof(M) ) utility_exit_with_message("octree metadata must fit in sizeof(T)!");
+    if( atoms.size() != meta.size() ) utility_exit_with_message("must be metadata for each point!");
     if( atoms.size() > 65535 ) utility_exit_with_message("xyzStripeHash con only handle < 65535 atoms!");
+
 #define FUDGE 0.0f
+
     natom_ = atoms.size();
+
     T xmn= 9e9,ymn= 9e9,zmn= 9e9;
     T xmx=-9e9,ymx=-9e9,zmx=-9e9;
     for(int i = 1; i <= natom_; ++i) {
@@ -46,6 +58,15 @@ public:
       ymx = numeric::max(ymx,atoms[i].y());
       zmx = numeric::max(zmx,atoms[i].z());
     }
+    //TR<<xmx-xmn<<" "<<ymx-ymn<<" "<<zmx-zmn<<std::endl;
+    // for(int i = 0; i < natom_; ++i) {
+    //   atoms[i].x -= xmn-FUDGE;
+    //   atoms[i].y -= ymn-FUDGE;
+    //   atoms[i].z -= zmn-FUDGE;
+    // }
+
+		//std::cout << "xyzStripeHash: " << xmn << " "  << ymn << " "  << zmn << " " << xmx << " "  << ymx << " "  << zmx << std::endl;
+
     xdim_ = ceil((xmx-xmn+0.0001)/grid_size_);
     ydim_ = ceil((ymx-ymn+0.0001)/grid_size_);
     zdim_ = ceil((zmx-zmn+0.0001)/grid_size_);
@@ -79,8 +100,8 @@ public:
     //       int i = ix+xdim_*iy+xdim_*ydim_*iz;
     //       TR<<ix<<" "<<iy<<" "<<iz<<" "<<I(3,gindex[i].x)<<" "<<I(3,gindex[i].y) <<" "<<I(3,grid_stripe_[i].x)<<" "<<I(3,grid_stripe_[i].y)<<std::endl;
     //     }
-    float3 *gatom = new float3[natom_+4]; // space for 4 overflow atoms
-    for(int i=0;i<4;++i) {gatom[natom_+i].x=9e9;gatom[natom_+i].y=9e9;gatom[natom_+i].z=9e9;}
+    float4 *gatom = new float4[natom_+4]; // space for 4 overflow atoms
+    for(int i=0;i<4;++i) {gatom[natom_+i].x=9e9;gatom[natom_+i].y=9e9;gatom[natom_+i].z=9e9;gatom[natom_+i].w=9e9;}
     ushort *gridc = new ushort[gsize];
     for(int i = 0; i < gsize; ++i) gridc[i] = 0;
     for(int i = 1; i <= natom_; ++i) {
@@ -92,6 +113,7 @@ public:
       gatom[ idx ].x = atoms[i].x()-xmn+FUDGE;
       gatom[ idx ].y = atoms[i].y()-ymn+FUDGE;
       gatom[ idx ].z = atoms[i].z()-zmn+FUDGE;
+      gatom[ idx ].w = *((float*)(&meta[i]));
       ++(gridc[ig]);
     }
     grid_atoms_ = gatom;
@@ -163,7 +185,7 @@ public:
         int const igl = grid_stripe_[ig].x;
         int const igu = grid_stripe_[ig].y;
         for(int i = igl; i < igu; ++i) {
-          float3 const a2 = grid_atoms_[i];
+          float4 const a2 = grid_atoms_[i];
           float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
           if( d2 <= grid_size2_ ) {
             ++count;
@@ -192,7 +214,7 @@ public:
         int const igl = grid_stripe_[ig].x;
         int const igu = grid_stripe_[ig].y;
         for(int i = igl; i < igu; ++i) {
-          float3 const a2 = grid_atoms_[i];
+          float4 const a2 = grid_atoms_[i];
           float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
           if( d2 <= grid_size_*grid_size_ ) {
             float const r = 4.0 / sqrt(d2);
@@ -208,7 +230,7 @@ public:
     return e;
   }
 
-  inline float3  const * grid_atoms() const { return grid_atoms_; }
+  inline float4  const * grid_atoms() const { return grid_atoms_; }
   inline ushort2 const * grid_stripe() const { return grid_stripe_; }
   inline int const natom() const { return natom_; }
   inline int const xdim () const { return  xdim_; }
