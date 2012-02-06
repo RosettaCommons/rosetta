@@ -244,7 +244,7 @@ residue_types/water/TP5.params
 #residue_types/d-ncaa/d-trifluoro-leucine.params
 
 ## L-NCAA Types
-residue_types/l-ncaa/ABA.params
+#residue_types/l-ncaa/ABA.params
 #residue_types/l-ncaa/APA.params
 residue_types/l-ncaa/HLU.params
 #residue_types/l-ncaa/HPR.params
