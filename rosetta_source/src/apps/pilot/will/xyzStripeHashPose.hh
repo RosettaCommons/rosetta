@@ -2,7 +2,6 @@
 #define INCLUDED_apps_pilot_will_xyzStripeHashPose_hh
 
 #include <apps/pilot/will/xyzStripeHash.hh>
-#include <apps/pilot/will/gpu/gpu_bit_utils.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/chemical/AtomType.hh>
@@ -17,9 +16,9 @@ enum xyzStripeHashPoseMode {
   ALL
 };
 
-class xyzStripeHashPose : public xyzStripeHash<float> {
+class xyzStripeHashPose : public xyzStripeHash<double> {
 public:
-  xyzStripeHashPose(float radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : xyzStripeHash<float>(radius) { // makes copy
+  xyzStripeHashPose(double radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : xyzStripeHash<double>(radius) { // makes copy
     int natom = 0;
     for(int ir = 1; ir <= p.n_residue(); ++ir) {
       core::conformation::Residue const & r(p.residue(ir));
@@ -28,8 +27,8 @@ public:
       if( HVY==m ) natom += r.nheavyatoms();
       if( ALL==m ) natom += r.natoms();
     }
-    utility::vector1<numeric::xyzVector<float> > atoms(natom);
-    // utility::vector1<float>                      meta (natom);
+    utility::vector1<numeric::xyzVector<double> > atoms(natom);
+    utility::vector1<double>                      meta (natom);
     uint count = 0;
     for(int ir = 1; ir <= p.n_residue(); ++ir) {
       core::conformation::Residue const & r(p.residue(ir));
@@ -37,27 +36,27 @@ public:
         int ia = r.nbr_atom();
         core::id::AtomID const aid(ia,ir);;
         atoms[++count] = p.xyz(aid);
-        // meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );
+        meta [  count] = r.atom_type(ia).lj_radius();
       } else if(BB==m) {
-        if(r.has( "N")){ atoms[++count]=r.xyz( "N"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "N"),ir),r.atom_type(r.atom_index( "N")).lj_radius());*/ }
-        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius());*/ }
-        if(r.has( "C")){ atoms[++count]=r.xyz( "C"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius());*/ }
-        if(r.has( "O")){ atoms[++count]=r.xyz( "O"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "O"),ir),r.atom_type(r.atom_index( "O")).lj_radius());*/ }
-        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius());*/ }
+        if(r.has( "N")){ atoms[++count]=r.xyz( "N"); meta[count]=r.atom_type(r.atom_index( "N")).lj_radius(); }
+        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=r.atom_type(r.atom_index("CA")).lj_radius(); }
+        if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=r.atom_type(r.atom_index( "C")).lj_radius(); }
+        if(r.has( "O")){ atoms[++count]=r.xyz( "O"); meta[count]=r.atom_type(r.atom_index( "O")).lj_radius(); }
+        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=r.atom_type(r.atom_index("CB")).lj_radius(); }
       } else if(BB==m) {
-        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius());*/ }
-		if(r.has( "C")){ atoms[++count]=r.xyz( "C"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius());*/ }
-        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); /*meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius());*/ }
+        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=r.atom_type(r.atom_index("CA")).lj_radius(); }
+		if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=r.atom_type(r.atom_index( "C")).lj_radius(); }
+        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=r.atom_type(r.atom_index("CB")).lj_radius(); }
       } else {
         int natom = (ALL==m) ? r.natoms() : r.nheavyatoms();;
         for(int ia = 1; ia <= natom; ++ia) {
           core::id::AtomID const aid(ia,ir);
           atoms[++count] = p.xyz(aid);
-          // meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );
+          meta [  count] = r.atom_type(ia).lj_radius();
         }
       }
     }
-    init(atoms);
+    init(atoms,meta);
   }
 
 };

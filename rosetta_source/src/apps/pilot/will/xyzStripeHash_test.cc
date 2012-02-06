@@ -23,8 +23,6 @@ using core::Size;
 using core::id::AtomID;
 typedef numeric::xyzVector<core::Real> Vec;
 
-
-
 #include <time.h>
 #include <sys/time.h>
 #include <stdio.h>

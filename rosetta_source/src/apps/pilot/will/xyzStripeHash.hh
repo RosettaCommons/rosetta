@@ -6,7 +6,7 @@
 #include <numeric/xyzVector.hh>
 #include <ObjexxFCL/format.hh>
 
-template<typename T, typename M>
+template<typename T>
 class xyzStripeHash {
 public:
   typedef struct { T x,y,z,w; } float4;
@@ -28,7 +28,7 @@ public:
                            /*rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))*/ {}
   xyzStripeHash( T grid_size,
            utility::vector1<numeric::xyzVector<T> > const & atoms,
-           utility::vector1<M> const & meta
+           utility::vector1<T> const & meta
            ) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
                /*rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))*/
   {
@@ -37,10 +37,10 @@ public:
 
   void init(
             utility::vector1<numeric::xyzVector<T> > const & atoms,
-            utility::vector1<M> const & meta
+            utility::vector1<T> const & meta
             )
   {
-    if( sizeof(T) < sizeof(M) ) utility_exit_with_message("octree metadata must fit in sizeof(T)!");
+    // if( sizeof(T) < sizeof(M) ) utility_exit_with_message("octree metadata must fit in sizeof(T)!");
     if( atoms.size() != meta.size() ) utility_exit_with_message("must be metadata for each point!");
     if( atoms.size() > 65535 ) utility_exit_with_message("xyzStripeHash con only handle < 65535 atoms!");
 
@@ -113,7 +113,7 @@ public:
       gatom[ idx ].x = atoms[i].x()-xmn+FUDGE;
       gatom[ idx ].y = atoms[i].y()-ymn+FUDGE;
       gatom[ idx ].z = atoms[i].z()-zmn+FUDGE;
-      gatom[ idx ].w = *((float*)(&meta[i]));
+      gatom[ idx ].w = meta[i];
       ++(gridc[ig]);
     }
     grid_atoms_ = gatom;
