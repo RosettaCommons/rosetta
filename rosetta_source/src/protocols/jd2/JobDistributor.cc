@@ -514,6 +514,12 @@ JobDistributor::job_succeeded( core::pose::Pose & pose, core::Real run_time ) {
 	return;
 }
 
+/// @details no-op implementation in the base class
+void
+JobDistributor::job_failed( core::pose::Pose & /*pose*/, bool /*will_retry*/ )
+{}
+
+
 void JobDistributor::mark_job_as_completed( core::Size job_id, core::Real run_time ) {
 	jobs_[ job_id ]->set_completed();
 	tr.Info << job_outputter_->output_name( jobs_[ job_id ] ) << " reported success in " << run_time << " seconds" << std::endl;

@@ -46,6 +46,7 @@ core::Size const MPI_JOB_DIST_TAG ( 1542 ); //keep unique
 core::Size const NEW_JOB_ID = 1;
 core::Size const BAD_INPUT = 2;
 core::Size const JOB_SUCCESS = 3;
+core::Size const JOB_FAILED_NO_RETRY = 4;
 
 ///@details This JobDistributor is intended for machines where you have a large number of processors.
 /// two dedicated processes are used to handle JobDistribution and File-IO.
@@ -91,26 +92,30 @@ public:
 
 
 	///@brief dummy for master/slave version
-  virtual
-  core::Size
-  get_new_job_id();
+	virtual
+	core::Size
+	get_new_job_id();
 
 	///@brief dummy for master/slave version
-  virtual
-  void
-  mark_current_job_id_for_repetition();
+	virtual
+	void
+	mark_current_job_id_for_repetition();
 
 	///@brief dummy for master/slave version
-  virtual
-  void
-  remove_bad_inputs_from_job_list();
+	virtual
+	void
+	remove_bad_inputs_from_job_list();
 
 	///@brief dummy for master/slave version
 	virtual
 	void
 	job_succeeded(core::pose::Pose & pose, core::Real run_time);
 
-  friend class JobDistributorFactory; //ctor access
+	virtual
+	void
+	job_failed( core::pose::Pose & pose, bool will_retry );
+
+	friend class JobDistributorFactory; //ctor access
 
 protected:
 

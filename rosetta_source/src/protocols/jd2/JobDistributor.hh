@@ -180,11 +180,11 @@ protected:
 	void
 	job_succeeded( core::pose::Pose & pose, core::Real run_time );
 
-	/// @brief This function is called when we five up on the job;  it has been virtualized so BOINC and MPI can delay/protect output
+	/// @brief This function is called when we give up on the job;  it has been virtualized so BOINC and MPI can delay/protect output
 	///base implementation is just a call to the job outputter
 	virtual
 	void
-	job_failed( core::pose::Pose & /*pose*/, bool /*will_retry*/ ) {};
+	job_failed( core::pose::Pose & /*pose*/, bool /*will_retry*/ );
 
 	/// @brief this function is called whenever a job "soft-fails" and needs to be retried.  Generally it should ensure
 	///that the subsequent call to obtain_new_job returns this job over again.

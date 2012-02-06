@@ -204,6 +204,10 @@ MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size s
 		mark_job_as_completed( slave_job_id, slave_batch_id, run_time );
 		++jobs_returned_;
 		break;
+	case JOB_FAILED_NO_RETRY :
+		++jobs_returned_;
+		break;
+		
 	default:
 		tr.Error << "[ERROR] from " << slave_rank << " tag: "  << msg_tag << " " << slave_job_id << std::endl;
 		utility_exit_with_message(" unknown tag "+ ObjexxFCL::string_of( msg_tag ) +" in master_loop of MPIFileBufJobDistributor ");
@@ -473,6 +477,21 @@ MPIFileBufJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_
     slave_job_succeeded( pose );
   }
 }
+
+void
+MPIFileBufJobDistributor::job_failed(
+	core::pose::Pose &,
+	bool will_retry
+)
+{
+	assert( rank_ >= min_client_rank_ );
+	if ( ! will_retry ) {
+		// tell the master node that this job has failed and will not be
+		// re-attempted
+		slave_to_master( JOB_FAILED_NO_RETRY );
+	}
+}
+
 
 void
 MPIFileBufJobDistributor::master_job_succeeded(core::pose::Pose & /*pose*/)
