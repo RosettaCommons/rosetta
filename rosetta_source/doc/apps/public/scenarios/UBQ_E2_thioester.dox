@@ -13,7 +13,7 @@
 @page UBQ_E2_thioester Documentation for UBQ_E2_thioester application
 
 @section metadata Metadata
-Last edited 12/22/11.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+Last edited 2/6/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
 The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/UBQ_E2_thioester/</code>; there's an integration test+demo at <code>rosetta/rosetta_source/test/integration/tests/UBQ_E2_thioester/</code>.  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
@@ -22,6 +22,9 @@ The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/UBQ_E2_thi
 @li Saha A, Kleiger G, Lewis S, Kuhlman B, Deshaies RJ. Essential role for ubiquitin-ubiquitin-conjugating enzyme interaction in ubiquitin discharge from Cdc34 to substrate. Molecular Cell. 2011 Apr 8;42(1):75-83.
 
 You may want to look at the online supplemental info for that paper for a different presentation of how the code works.
+
+For the (documentation-pending) UBQ_Gp series of executables:
+@li Baker R, Lewis SM, Wilkerson EM, Sasaki AT, Cantley LC, Kuhlman B, Dohlman HG, Campbell SL.  Site-Specific Monoubiquitination Activates Ras by Impeding GTPase Activating Protein Function.  Submitted.
 
 @section purpose Purpose
 This code was written for a relatively singular application: modeling the thioester-linked state of an E2 enzyme charged with ubiquitin.  It serves no other purpose.  We had hypotheses about what this state might look like and used this code to generate models to examine those hypotheses and generate testable mutations.  It is included in the release because it was published, not because it is expected to serve other purposes.
