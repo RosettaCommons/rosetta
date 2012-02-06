@@ -449,7 +449,8 @@ RNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::string 
 	using namespace core::scoring;
 
 	// Silent file setup?
-	static SilentFileData silent_file_data;
+	//static SilentFileData silent_file_data;
+	SilentFileData silent_file_data;
 
 	// What is all this rigamarole, making the silent struct data?
 	// Why do I need to supply the damn file name? That seems silly.
@@ -739,10 +740,14 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 			N_NWC++;
 		}
 	}
-	s.add_string_value( "N_WC", ObjexxFCL::fmt::I( 8, N_WC) );
-	s.add_string_value( "N_NWC", ObjexxFCL::fmt::I( 8, N_NWC ) );
 
-	s.add_string_value( "N_BS", ObjexxFCL::fmt::I( 8, get_number_base_stacks( pose ) ) );
+ 	s.add_string_value( "N_WC",  ObjexxFCL::fmt::I( 9, N_WC) );
+	s.add_string_value( "N_NWC", ObjexxFCL::fmt::I( 9, N_NWC ) );
+	s.add_string_value( "N_BS",  ObjexxFCL::fmt::I( 9, get_number_base_stacks( pose ) ) );
+
+ 	//s.add_energy( "N_WC",  N_WC );
+	//	s.add_energy( "N_NWC", N_NWC );
+	//	s.add_energy( "N_BS",  get_number_base_stacks( pose ) );
 }
 
 /////////////////////////////////////////////////////////////////////
