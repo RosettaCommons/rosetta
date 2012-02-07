@@ -2776,6 +2776,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'pcs_cluster_lowscoring', 'Boolean', default = 'true', desc="cluster lowest 20% against lowest 50%"),
 	),
 
+	Option_Group('cmiles',
+	  Option_Group('kcluster',
+      Option('num_clusters', 'Integer', desc = 'Number of clusters to use during k clustering')
+    ),
+  ),
+
 	##options for liz
 	#Option_Group('liz',
 	#  Option( 'score', 'Boolean', default='true'),

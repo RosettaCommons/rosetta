@@ -6024,6 +6024,22 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
  </li>
+<li><h2>cmiles</h2>
+<dl>
+<dt><b>-cmiles</b> \<Boolean\><dt>
+<dd>cmiles option group</dd><br>
+</dl>
+ </li>
+<li><h2>cmiles:kcluster</h2>
+<dl>
+<dt><b>-kcluster</b> \<Boolean\><dt>
+<dd>kcluster option group</dd><br>
+</dl>
+<dl>
+<dt><b>-num_clusters</b> \<Integer\><dt>
+<dd>Number of clusters to use during k clustering</dd><br>
+</dl>
+ </li>
 <li><h2>james</h2>
 <dl>
 <dt><b>-james</b> \<Boolean\><dt>

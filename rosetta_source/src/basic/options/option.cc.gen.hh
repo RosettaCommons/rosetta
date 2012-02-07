@@ -597,10 +597,10 @@ option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling 
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
-option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
@@ -1193,11 +1193,11 @@ option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No descripti
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
+option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
@@ -1246,6 +1246,9 @@ option.add( basic::options::OptionKeys::robert::pcs_maxsub_rmsd, "maxsub calcula
 option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No description" ).def(false);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster coverage required" ).def(0.3);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster lowest 20% against lowest 50%" ).def(true);
+option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());

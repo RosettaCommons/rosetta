@@ -55,6 +55,7 @@ sources = {
                 #"extend",
                 #"fragment_rmsd",
                 #"helix_rotate",
+                "kcluster",
 		"medal",
 		"medal_exchange",
                 #"sheet_translate",
