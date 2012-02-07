@@ -67,7 +67,4 @@ def project_callback(project, project_path, project_files):
 
 build_util.project_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_callback)
 
-print 'calling svn_version.py ...',
-t = timeit.Timer( 'update_svn_version()', 'from __main__ import update_svn_version' )
-result = t.repeat(1,1)
-print 'generated svn_version in ' + str(result[0]) + ' seconds.'
+update_svn_version()
