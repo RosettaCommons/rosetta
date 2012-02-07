@@ -332,3 +332,355 @@ mindis(
 	}
 	return sqrt(mndis2);
 }
+
+
+// struct SICFast  : public SICFastBase {
+// 	ObjexxFCL::FArray2D<Vecf2> ha,hb;
+// 	SICFast() : SICFastBase() {}
+// 	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+// 		xlb = (int)floor(xmn/BIN)-2; xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
+// 		ylb = (int)floor(ymn/BIN)-2; yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
+// 		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
+// 		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
+// 		// insert points into hashes
+// 		int const xsize = xub-xlb+1;
+// 		int const ysize = yub-ylb+1;
+// 		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+// 			int const ix = (int)ceil(ia->x()/BIN)-xlb;
+// 			int const iy = (int)ceil(ia->y()/BIN)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( ha(ix,iy).a.z() < ia->z() ) {
+// 				ha(ix,iy).b = ha(ix,iy).a;
+// 				ha(ix,iy).a = *ia;
+// 			} else
+// 			if( ha(ix,iy).b.z() < ia->z() ) {
+// 				ha(ix,iy).b = *ia;			
+// 			}
+// 		}
+// 		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+// 			int const ix = (int)ceil(ib->x()/BIN)-xlb;
+// 			int const iy = (int)ceil(ib->y()/BIN)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( hb(ix,iy).a.z() > ib->z() ) {
+// 				hb(ix,iy).b = hb(ix,iy).a;
+// 				hb(ix,iy).a = *ib;			
+// 			} else 
+// 			if( hb(ix,iy).b.z() > ib->z() ) {
+// 				hb(ix,iy).b = *ib;
+// 			}
+// 		}
+// 		
+// 	}
+// 	virtual double get_mindis_with_plane_hashes() {
+// 		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+// 		int imna=0,jmna=0,imnb=0,jmnb=0;
+// 		double m = 9e9;
+// 		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+// 			for(int j = 1; j <= ysize; ++j) {
+// 				for(int k = -2; k <= 2; ++k) {
+// 					if(i+k < 1 || i+k > xsize) continue;
+// 					for(int l = -2; l <= 2; ++l) {
+// 						if(j+l < 1 || j+l > ysize) continue;
+// 						double const xa1=ha(i,j).a.x(),ya1=ha(i,j).a.y(),xb1=hb(i+k,j+l).a.x(),yb1=hb(i+k,j+l).a.y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+// 						double const xa2=ha(i,j).a.x(),ya2=ha(i,j).a.y(),xb2=hb(i+k,j+l).b.x(),yb2=hb(i+k,j+l).b.y(),d22=(xa2-xb2)*(xa2-xb2)+(ya2-yb2)*(ya2-yb2); 
+// 						double const xa3=ha(i,j).b.x(),ya3=ha(i,j).b.y(),xb3=hb(i+k,j+l).a.x(),yb3=hb(i+k,j+l).a.y(),d23=(xa3-xb3)*(xa3-xb3)+(ya3-yb3)*(ya3-yb3);
+// 						double const xa4=ha(i,j).b.x(),ya4=ha(i,j).b.y(),xb4=hb(i+k,j+l).b.x(),yb4=hb(i+k,j+l).b.y(),d24=(xa4-xb4)*(xa4-xb4)+(ya4-yb4)*(ya4-yb4);
+// 						if(d21<CLD2){ double const dz1=hb(i+k,j+l).a.z()-ha(i,j).a.z()-sqrt(CLD2-d21); if(dz1<m){ m=dz1; imna=i; jmna=j; imnb=i+k; jmnb=j+l; } }
+// 						if(d22<CLD2){ double const dz2=hb(i+k,j+l).b.z()-ha(i,j).a.z()-sqrt(CLD2-d22); if(dz2<m){ m=dz2; imna=i; jmna=j; imnb=i+k; jmnb=j+l; } }
+// 						if(d23<CLD2){ double const dz3=hb(i+k,j+l).a.z()-ha(i,j).b.z()-sqrt(CLD2-d23); if(dz3<m){ m=dz3; imna=i; jmna=j; imnb=i+k; jmnb=j+l; } }
+// 						if(d24<CLD2){ double const dz4=hb(i+k,j+l).b.z()-ha(i,j).b.z()-sqrt(CLD2-d24); if(dz4<m){ m=dz4; imna=i; jmna=j; imnb=i+k; jmnb=j+l; } }
+// 					}
+// 				}
+// 			}
+// 		}
+// 		return m;
+// 	}
+// };
+// struct SICFast1 : public SICFastBase {
+// 	ObjexxFCL::FArray2D<Vecf> ha,hb;
+// 	SICFast1() : SICFastBase() {}
+// 	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+// 		xlb = (int)floor(xmn/CLD)-2; xub = (int)ceil(xmx/CLD)+2; // one extra on each side for correctness,
+// 		ylb = (int)floor(ymn/CLD)-2; yub = (int)ceil(ymx/CLD)+2; // and one extra for outside atoms
+// 		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf(0,0,-9e9));
+// 		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf(0,0, 9e9));
+// 		// insert points into hashes
+// 		int const xsize = xub-xlb+1;
+// 		int const ysize = yub-ylb+1;
+// 		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+// 			int const ix = (int)ceil(ia->x()/CLD)-xlb;
+// 			int const iy = (int)ceil(ia->y()/CLD)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( ha(ix,iy).z() < ia->z() ) {
+// 				ha(ix,iy) = *ia;	
+// 			}
+// 		}
+// 		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+// 			int const ix = (int)ceil(ib->x()/CLD)-xlb;
+// 			int const iy = (int)ceil(ib->y()/CLD)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( hb(ix,iy).z() > ib->z() ) {
+// 				hb(ix,iy) = *ib;
+// 			}
+// 		}
+// 		
+// 	}
+// 	virtual double get_mindis_with_plane_hashes() {
+// 		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+// 		int imna=0,jmna=0,imnb=0,jmnb=0;
+// 		double m = 9e9;
+// 		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+// 			for(int j = 1; j <= ysize; ++j) {
+// 				for(int k = -1; k <= 1; ++k) {
+// 					if(i+k < 1 || i+k > xsize) continue;
+// 					for(int l = -1; l <= 1; ++l) {
+// 						if(j+l < 1 || j+l > ysize) continue;
+// 						double const xa1=ha(i,j).x(),ya1=ha(i,j).y(),xb1=hb(i+k,j+l).x(),yb1=hb(i+k,j+l).y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+// 						if(d21<CLD2){ double const dz=hb(i+k,j+l).z()-ha(i,j).z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
+// 					}
+// 				}
+// 			}
+// 		}
+// 		return m;
+// 	}
+// };
+// struct SICFast2 : public SICFastBase {
+// 	ObjexxFCL::FArray2D<Vecf2> ha,hb;
+// 	SICFast2() : SICFastBase() {}
+// 	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+// 		xlb = (int)floor(xmn/CLD)-2; xub = (int)ceil(xmx/CLD)+2; // one extra on each side for correctness,
+// 		ylb = (int)floor(ymn/CLD)-2; yub = (int)ceil(ymx/CLD)+2; // and one extra for outside atoms
+// 		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
+// 		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
+// 		// insert points into hashes
+// 		int const xsize = xub-xlb+1;
+// 		int const ysize = yub-ylb+1;
+// 		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+// 			int const ix = (int)ceil(ia->x()/CLD)-xlb;
+// 			int const iy = (int)ceil(ia->y()/CLD)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( ha(ix,iy).a.z() < ia->z() ) {
+// 				ha(ix,iy).b = ha(ix,iy).a;
+// 				ha(ix,iy).a = *ia;	
+// 			} else if( ha(ix,iy).b.z() < ia->z() ) {
+// 				ha(ix,iy).b = *ia;
+// 			}
+// 		}
+// 		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+// 			int const ix = (int)ceil(ib->x()/CLD)-xlb;
+// 			int const iy = (int)ceil(ib->y()/CLD)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( hb(ix,iy).a.z() > ib->z() ) {
+// 				hb(ix,iy).b = hb(ix,iy).a;
+// 				hb(ix,iy).a = *ib;
+// 			} else if( hb(ix,iy).b.z() > ib->z() ) {
+// 				hb(ix,iy).b = *ib;
+// 			}
+// 		}
+// 		
+// 	}
+// 	virtual double get_mindis_with_plane_hashes() {
+// 		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+// 		int imna=0,jmna=0,imnb=0,jmnb=0;
+// 		double m = 9e9;
+// 		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+// 			for(int j = 1; j <= ysize; ++j) {
+// 				for(int k = -1; k <= 1; ++k) {
+// 					if(i+k < 1 || i+k > xsize) continue;
+// 					for(int l = -1; l <= 1; ++l) {
+// 						if(j+l < 1 || j+l > ysize) continue;
+// 						double const xa1=ha(i,j).a.x(),ya1=ha(i,j).a.y(),xb1=hb(i+k,j+l).a.x(),yb1=hb(i+k,j+l).a.y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+// 						double const xa2=ha(i,j).a.x(),ya2=ha(i,j).a.y(),xb2=hb(i+k,j+l).b.x(),yb2=hb(i+k,j+l).b.y(),d22=(xa2-xb2)*(xa2-xb2)+(ya2-yb2)*(ya2-yb2); 
+// 						double const xa3=ha(i,j).b.x(),ya3=ha(i,j).b.y(),xb3=hb(i+k,j+l).a.x(),yb3=hb(i+k,j+l).a.y(),d23=(xa3-xb3)*(xa3-xb3)+(ya3-yb3)*(ya3-yb3);
+// 						double const xa4=ha(i,j).b.x(),ya4=ha(i,j).b.y(),xb4=hb(i+k,j+l).b.x(),yb4=hb(i+k,j+l).b.y(),d24=(xa4-xb4)*(xa4-xb4)+(ya4-yb4)*(ya4-yb4); 
+// 						if(d21<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).a.z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
+// 						if(d22<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).a.z()-sqrt(CLD2-d22); if(dz<m) m=dz; }
+// 						if(d23<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).b.z()-sqrt(CLD2-d23); if(dz<m) m=dz; }
+// 						if(d24<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).b.z()-sqrt(CLD2-d24); if(dz<m) m=dz; }
+// 					}
+// 				}
+// 			}
+// 		}
+// 		return m;
+// 	}
+// };
+// struct SICFast3 : public SICFastBase {
+// 	ObjexxFCL::FArray2D<Vecf3> ha,hb;
+// 	SICFast3() : SICFastBase() {}
+// 	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+// 		xlb = (int)floor(xmn/CLD)-2; xub = (int)ceil(xmx/CLD)+2; // one extra on each side for correctness,
+// 		ylb = (int)floor(ymn/CLD)-2; yub = (int)ceil(ymx/CLD)+2; // and one extra for outside atoms
+// 		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf3(Vecf(0,0,-9e9),Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
+// 		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf3(Vecf(0,0, 9e9),Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
+// 		// insert points into hashes
+// 		int const xsize = xub-xlb+1;
+// 		int const ysize = yub-ylb+1;
+// 		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+// 			int const ix = (int)ceil(ia->x()/CLD)-xlb;
+// 			int const iy = (int)ceil(ia->y()/CLD)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( ha(ix,iy).a.z() < ia->z() ) {
+// 				ha(ix,iy).c = ha(ix,iy).b;
+// 				ha(ix,iy).b = ha(ix,iy).a;
+// 				ha(ix,iy).a = *ia;
+// 			} else if( ha(ix,iy).b.z() < ia->z() ) {
+// 				ha(ix,iy).c = ha(ix,iy).b;
+// 				ha(ix,iy).b = *ia;	
+// 			} else if( ha(ix,iy).c.z() < ia->z() ) {
+// 				ha(ix,iy).c = *ia;	
+// 			}
+// 		}
+// 		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+// 			int const ix = (int)ceil(ib->x()/CLD)-xlb;
+// 			int const iy = (int)ceil(ib->y()/CLD)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( hb(ix,iy).a.z() > ib->z() ) {
+// 				hb(ix,iy).c = hb(ix,iy).b;
+// 				hb(ix,iy).b = hb(ix,iy).a;
+// 				hb(ix,iy).a = *ib;			
+// 			} else if( hb(ix,iy).b.z() > ib->z() ) {
+// 				hb(ix,iy).c = hb(ix,iy).b;
+// 				hb(ix,iy).b = *ib;
+// 			} else if( hb(ix,iy).c.z() > ib->z() ) {
+// 				hb(ix,iy).c = *ib;
+// 			}
+// 		}
+// 		
+// 	}
+// 	virtual double get_mindis_with_plane_hashes() {
+// 		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+// 		int imna=0,jmna=0,imnb=0,jmnb=0;
+// 		double m = 9e9;
+// 		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+// 			for(int j = 1; j <= ysize; ++j) {
+// 				for(int k = -1; k <= 1; ++k) {
+// 					if(i+k < 1 || i+k > xsize) continue;
+// 					for(int l = -1; l <= 1; ++l) {
+// 						if(j+l < 1 || j+l > ysize) continue;
+// 						double const xa1=ha(i,j).a.x(),ya1=ha(i,j).a.y(),xb1=hb(i+k,j+l).a.x(),yb1=hb(i+k,j+l).a.y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+// 						double const xa2=ha(i,j).a.x(),ya2=ha(i,j).a.y(),xb2=hb(i+k,j+l).b.x(),yb2=hb(i+k,j+l).b.y(),d22=(xa2-xb2)*(xa2-xb2)+(ya2-yb2)*(ya2-yb2); 
+// 						double const xa3=ha(i,j).a.x(),ya3=ha(i,j).a.y(),xb3=hb(i+k,j+l).c.x(),yb3=hb(i+k,j+l).c.y(),d23=(xa3-xb3)*(xa3-xb3)+(ya3-yb3)*(ya3-yb3);
+// 						double const xa4=ha(i,j).b.x(),ya4=ha(i,j).b.y(),xb4=hb(i+k,j+l).a.x(),yb4=hb(i+k,j+l).a.y(),d24=(xa4-xb4)*(xa4-xb4)+(ya4-yb4)*(ya4-yb4); 
+// 						double const xa5=ha(i,j).b.x(),ya5=ha(i,j).b.y(),xb5=hb(i+k,j+l).b.x(),yb5=hb(i+k,j+l).b.y(),d25=(xa5-xb5)*(xa5-xb5)+(ya5-yb5)*(ya5-yb5); 
+// 						double const xa6=ha(i,j).b.x(),ya6=ha(i,j).b.y(),xb6=hb(i+k,j+l).c.x(),yb6=hb(i+k,j+l).c.y(),d26=(xa6-xb6)*(xa6-xb6)+(ya6-yb6)*(ya6-yb6);
+// 						double const xa7=ha(i,j).c.x(),ya7=ha(i,j).c.y(),xb7=hb(i+k,j+l).a.x(),yb7=hb(i+k,j+l).a.y(),d27=(xa7-xb7)*(xa7-xb7)+(ya7-yb7)*(ya7-yb7); 
+// 						double const xa8=ha(i,j).c.x(),ya8=ha(i,j).c.y(),xb8=hb(i+k,j+l).b.x(),yb8=hb(i+k,j+l).b.y(),d28=(xa8-xb8)*(xa8-xb8)+(ya8-yb8)*(ya8-yb8); 
+// 						double const xa9=ha(i,j).c.x(),ya9=ha(i,j).c.y(),xb9=hb(i+k,j+l).c.x(),yb9=hb(i+k,j+l).c.y(),d29=(xa9-xb9)*(xa9-xb9)+(ya9-yb9)*(ya9-yb9);
+// 						if(d21<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).a.z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
+// 						if(d22<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).a.z()-sqrt(CLD2-d22); if(dz<m) m=dz; }
+// 						if(d23<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).a.z()-sqrt(CLD2-d23); if(dz<m) m=dz; }
+// 						if(d24<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).b.z()-sqrt(CLD2-d24); if(dz<m) m=dz; }
+// 						if(d25<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).b.z()-sqrt(CLD2-d25); if(dz<m) m=dz; }
+// 						if(d26<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).b.z()-sqrt(CLD2-d26); if(dz<m) m=dz; }
+// 						if(d27<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).c.z()-sqrt(CLD2-d27); if(dz<m) m=dz; }
+// 						if(d28<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).c.z()-sqrt(CLD2-d28); if(dz<m) m=dz; }
+// 						if(d29<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).c.z()-sqrt(CLD2-d29); if(dz<m) m=dz; }
+// 					}
+// 				}
+// 			}
+// 		}
+// 		return m;
+// 	}
+// };
+// struct SICFast4 : public SICFastBase {
+// 	ObjexxFCL::FArray2D<Vecf4> ha,hb;
+// 	SICFast4() : SICFastBase() {}
+// 	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+// 		xlb = (int)floor(xmn/CLD)-2; xub = (int)ceil(xmx/CLD)+2; // one extra on each side for correctness,
+// 		ylb = (int)floor(ymn/CLD)-2; yub = (int)ceil(ymx/CLD)+2; // and one extra for outside atoms
+// 		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf4(Vecf(0,0,-9e9),Vecf(0,0,-9e9),Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
+// 		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf4(Vecf(0,0, 9e9),Vecf(0,0, 9e9),Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
+// 		// insert points into hashes
+// 		int const xsize = xub-xlb+1;
+// 		int const ysize = yub-ylb+1;
+// 		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+// 			int const ix = (int)ceil(ia->x()/CLD)-xlb;
+// 			int const iy = (int)ceil(ia->y()/CLD)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( ha(ix,iy).a.z() < ia->z() ) {
+// 				ha(ix,iy).d = ha(ix,iy).c;
+// 				ha(ix,iy).c = ha(ix,iy).b;
+// 				ha(ix,iy).b = ha(ix,iy).a;
+// 				ha(ix,iy).a = *ia;
+// 			} else if( ha(ix,iy).b.z() < ia->z() ) {
+// 				ha(ix,iy).d = ha(ix,iy).c;
+// 				ha(ix,iy).c = ha(ix,iy).b;
+// 				ha(ix,iy).b = *ia;	
+// 			} else if( ha(ix,iy).c.z() < ia->z() ) {
+// 				ha(ix,iy).d = ha(ix,iy).c;
+// 				ha(ix,iy).c = *ia;	
+// 			} else if( ha(ix,iy).d.z() < ia->z() ) {
+// 				ha(ix,iy).d = *ia;	
+// 			}
+// 		}
+// 		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+// 			int const ix = (int)ceil(ib->x()/CLD)-xlb;
+// 			int const iy = (int)ceil(ib->y()/CLD)-ylb;
+// 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 			if( hb(ix,iy).a.z() > ib->z() ) {
+// 				hb(ix,iy).d = hb(ix,iy).c;
+// 				hb(ix,iy).c = hb(ix,iy).b;
+// 				hb(ix,iy).b = hb(ix,iy).a;
+// 				hb(ix,iy).a = *ib;			
+// 			} else if( hb(ix,iy).b.z() > ib->z() ) {
+// 				hb(ix,iy).d = hb(ix,iy).c;
+// 				hb(ix,iy).c = hb(ix,iy).b;
+// 				hb(ix,iy).b = *ib;
+// 			} else if( hb(ix,iy).c.z() > ib->z() ) {
+// 				hb(ix,iy).d = hb(ix,iy).c;
+// 				hb(ix,iy).c = *ib;
+// 			} else if( hb(ix,iy).d.z() > ib->z() ) {
+// 				hb(ix,iy).d = *ib;
+// 			}
+// 		}
+// 		
+// 	}
+// 	virtual double get_mindis_with_plane_hashes() {
+// 		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+// 		int imna=0,jmna=0,imnb=0,jmnb=0;
+// 		double m = 9e9;
+// 		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+// 			for(int j = 1; j <= ysize; ++j) {
+// 				for(int k = -1; k <= 1; ++k) {
+// 					if(i+k < 1 || i+k > xsize) continue;
+// 					for(int l = -1; l <= 1; ++l) {
+// 						if(j+l < 1 || j+l > ysize) continue;
+// 						double const xa1=ha(i,j).a.x(),ya1=ha(i,j).a.y(),xb1=hb(i+k,j+l).a.x(),yb1=hb(i+k,j+l).a.y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+// 						double const xa2=ha(i,j).a.x(),ya2=ha(i,j).a.y(),xb2=hb(i+k,j+l).b.x(),yb2=hb(i+k,j+l).b.y(),d22=(xa2-xb2)*(xa2-xb2)+(ya2-yb2)*(ya2-yb2); 
+// 						double const xa3=ha(i,j).a.x(),ya3=ha(i,j).a.y(),xb3=hb(i+k,j+l).c.x(),yb3=hb(i+k,j+l).c.y(),d23=(xa3-xb3)*(xa3-xb3)+(ya3-yb3)*(ya3-yb3);
+// 						double const xa4=ha(i,j).a.x(),ya4=ha(i,j).a.y(),xb4=hb(i+k,j+l).d.x(),yb4=hb(i+k,j+l).d.y(),d24=(xa4-xb4)*(xa4-xb4)+(ya4-yb4)*(ya4-yb4); 
+// 						double const xa5=ha(i,j).b.x(),ya5=ha(i,j).b.y(),xb5=hb(i+k,j+l).a.x(),yb5=hb(i+k,j+l).a.y(),d25=(xa5-xb5)*(xa5-xb5)+(ya5-yb5)*(ya5-yb5); 
+// 						double const xa6=ha(i,j).b.x(),ya6=ha(i,j).b.y(),xb6=hb(i+k,j+l).b.x(),yb6=hb(i+k,j+l).b.y(),d26=(xa6-xb6)*(xa6-xb6)+(ya6-yb6)*(ya6-yb6); 
+// 						double const xa7=ha(i,j).b.x(),ya7=ha(i,j).b.y(),xb7=hb(i+k,j+l).c.x(),yb7=hb(i+k,j+l).c.y(),d27=(xa7-xb7)*(xa7-xb7)+(ya7-yb7)*(ya7-yb7);
+// 						double const xa8=ha(i,j).b.x(),ya8=ha(i,j).b.y(),xb8=hb(i+k,j+l).d.x(),yb8=hb(i+k,j+l).d.y(),d28=(xa8-xb8)*(xa8-xb8)+(ya8-yb8)*(ya8-yb8); 
+// 						double const xa9=ha(i,j).c.x(),ya9=ha(i,j).c.y(),xb9=hb(i+k,j+l).a.x(),yb9=hb(i+k,j+l).a.y(),d29=(xa9-xb9)*(xa9-xb9)+(ya9-yb9)*(ya9-yb9); 
+// 						double const xa0=ha(i,j).c.x(),ya0=ha(i,j).c.y(),xb0=hb(i+k,j+l).b.x(),yb0=hb(i+k,j+l).b.y(),d20=(xa0-xb0)*(xa0-xb0)+(ya0-yb0)*(ya0-yb0); 
+// 						double const xaa=ha(i,j).c.x(),yaa=ha(i,j).c.y(),xba=hb(i+k,j+l).c.x(),yba=hb(i+k,j+l).c.y(),d2a=(xaa-xba)*(xaa-xba)+(yaa-yba)*(yaa-yba);
+// 						double const xab=ha(i,j).c.x(),yab=ha(i,j).c.y(),xbb=hb(i+k,j+l).d.x(),ybb=hb(i+k,j+l).d.y(),d2b=(xab-xbb)*(xab-xbb)+(yab-ybb)*(yab-ybb); 
+// 						double const xac=ha(i,j).d.x(),yac=ha(i,j).d.y(),xbc=hb(i+k,j+l).a.x(),ybc=hb(i+k,j+l).a.y(),d2c=(xac-xbc)*(xac-xbc)+(yac-ybc)*(yac-ybc); 
+// 						double const xad=ha(i,j).d.x(),yad=ha(i,j).d.y(),xbd=hb(i+k,j+l).b.x(),ybd=hb(i+k,j+l).b.y(),d2d=(xad-xbd)*(xad-xbd)+(yad-ybd)*(yad-ybd); 
+// 						double const xae=ha(i,j).d.x(),yae=ha(i,j).d.y(),xbe=hb(i+k,j+l).c.x(),ybe=hb(i+k,j+l).c.y(),d2e=(xae-xbe)*(xae-xbe)+(yae-ybe)*(yae-ybe);
+// 						double const xaf=ha(i,j).d.x(),yaf=ha(i,j).d.y(),xbf=hb(i+k,j+l).d.x(),ybf=hb(i+k,j+l).d.y(),d2f=(xaf-xbf)*(xaf-xbf)+(yaf-ybf)*(yaf-ybf); 
+// 						if(d21<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).a.z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
+// 						if(d22<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).a.z()-sqrt(CLD2-d22); if(dz<m) m=dz; }
+// 						if(d23<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).a.z()-sqrt(CLD2-d23); if(dz<m) m=dz; }
+// 						if(d24<CLD2){ double const dz=hb(i+k,j+l).d.z()-ha(i,j).a.z()-sqrt(CLD2-d24); if(dz<m) m=dz; }
+// 						if(d25<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).b.z()-sqrt(CLD2-d25); if(dz<m) m=dz; }
+// 						if(d26<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).b.z()-sqrt(CLD2-d26); if(dz<m) m=dz; }
+// 						if(d27<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).b.z()-sqrt(CLD2-d27); if(dz<m) m=dz; }
+// 						if(d28<CLD2){ double const dz=hb(i+k,j+l).d.z()-ha(i,j).b.z()-sqrt(CLD2-d28); if(dz<m) m=dz; }
+// 						if(d29<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).c.z()-sqrt(CLD2-d29); if(dz<m) m=dz; }
+// 						if(d20<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).c.z()-sqrt(CLD2-d20); if(dz<m) m=dz; }
+// 						if(d2a<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).c.z()-sqrt(CLD2-d2a); if(dz<m) m=dz; }
+// 						if(d2b<CLD2){ double const dz=hb(i+k,j+l).d.z()-ha(i,j).c.z()-sqrt(CLD2-d2b); if(dz<m) m=dz; }
+// 						if(d2c<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).d.z()-sqrt(CLD2-d2c); if(dz<m) m=dz; }
+// 						if(d2d<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).d.z()-sqrt(CLD2-d2d); if(dz<m) m=dz; }
+// 						if(d2e<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).d.z()-sqrt(CLD2-d2e); if(dz<m) m=dz; }
+// 						if(d2f<CLD2){ double const dz=hb(i+k,j+l).d.z()-ha(i,j).d.z()-sqrt(CLD2-d2f); if(dz<m) m=dz; }
+// 					}
+// 				}
+// 			}
+// 		}
+// 		return m;
+// 	}
+// };
