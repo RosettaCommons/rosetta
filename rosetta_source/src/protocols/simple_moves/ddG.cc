@@ -89,12 +89,31 @@ using namespace core;
 using namespace protocols::simple_moves;
 using namespace core::scoring;
 
-ddG::ddG() : simple_moves::DesignRepackMover(ddGCreator::mover_name()) 
+ddG::ddG() :
+		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
+		bound_total_energy_(0.0),
+		unbound_total_energy_(0.0),
+		repeats_(0.0),
+		rb_jump_(0),
+		symmetry_(false),
+		per_residue_ddg_(false),
+		repack_(false)
 {
-	
+	bound_energies_.clear();
+	unbound_energies_.clear();
+	bound_per_residue_energies_.clear();
+	unbound_per_residue_energies_.clear();
 }
 	
-ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, bool const symmetry /*=false*/ ) : simple_moves::DesignRepackMover(ddGCreator::mover_name())
+ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, bool const symmetry /*=false*/ ) :
+		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
+		bound_total_energy_(0.0),
+		unbound_total_energy_(0.0),
+		repeats_(0.0),
+		rb_jump_(0),
+		symmetry_(false),
+		per_residue_ddg_(false),
+		repack_(false)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
 	rb_jump_ = jump;
@@ -103,6 +122,10 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1
 	repack_ = true;
 	repeats_ = 1;
 	
+	bound_energies_.clear();
+	unbound_energies_.clear();
+	bound_per_residue_energies_.clear();
+	unbound_per_residue_energies_.clear();
 }
 
 void ddG::parse_my_tag( 
@@ -182,6 +205,7 @@ void ddG::apply(Pose & pose)
 void
 ddG::fill_energy_vector( pose::Pose const & pose, std::map< ScoreType, core::Real > & energy_map )
 {
+	energy_map.clear();
 	using namespace core::scoring;
 	for ( int i=1; i<= n_score_types; ++i ) {
 		if ( (*scorefxn_)[ ScoreType(i) ] != 0.0 && ScoreType(i) != pro_close ) {
