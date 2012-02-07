@@ -555,23 +555,46 @@ foreach my $i (0..$#THREADED_MDLS) {
 
 # (d) template density maps
 foreach my $i (0..$nclust) {
-	my $inputpdbs = "";
- 	foreach my $j (0..$#THREADED_MDLS) {
+	my $mapfile = sprintf $MAPFILENAMES , $i;
+
+	my @input_pdbs = ();
+	foreach my $j (0..$#THREADED_MDLS) {
 		next if ($clusterid->[$j] != $i);
 
-		my $pdb = $THREADED_MDLS[$i];
-		my $nfrags = scalar( @{ $allfrags{$pdb} } );
+		my $temppdb = $mapfile;
+		$temppdb =~ s/\.mrc/.$j.pdb/g;
+		open (PDBCAT, ">$temppdb") || die "Cannot open $_";
 
-		my $outpdb = $pdb;
-		$outpdb =~ s/.*\///;
-		$outpdb =~ s/\.pdb$/_aln.cl$i.pdb/;
-		$inputpdbs = $inputpdbs." $ALNTEMPLATEDIR/$outpdb";
+		my $tmpl_filename = $THREADED_MDLS[ $j ];
+		$tmpl_filename =~ s/$PARTIALTHREADDIR/$TEMPLATEDIR/g;
+		$tmpl_filename =~ s/_\d\d\d//g;
+		open (TEMPLPDB, "$tmpl_filename") || die "Cannot open $_";
+		my @templatepdb_lines = <TEMPLPDB>;
+		close TEMPLPDB;
+
+		foreach my $line (@templatepdb_lines) {
+			next if ($line !~ /^ATOM/);
+			my $newX = [ substr ($line, 30, 8), substr ($line, 38, 8), substr ($line, 46, 8) ];
+			$newX = vsub( $newX, $preTs->[$j]);
+			$newX = mapply( $globalRs->[$j], $newX );
+			$newX = vadd( $newX, $postTs->[$j]);
+			substr ($line, 30, 8) = sprintf ("%8.3f", $newX->[0]);
+			substr ($line, 38, 8) = sprintf ("%8.3f", $newX->[1]);
+			substr ($line, 46, 8) = sprintf ("%8.3f", $newX->[2]);
+			print PDBCAT $line;
+		}
+		close PDBCAT;
+		push @input_pdbs, $temppdb;
 	}
-	my $outmap = sprintf $MAPFILENAMES, $i;
 
-	my $cmd = "$DENSGENAPP -s $inputpdbs -edensity::mapfile $outmap";
+	my $outmap = sprintf $MAPFILENAMES, $i;
+	my $cmd = "$DENSGENAPP -s ".(join ' ',@input_pdbs)." -edensity::mapfile $outmap";
 	print STDERR $cmd."\n";
 	system($cmd);
+
+	foreach my $file (@input_pdbs) {
+		unlink($file);
+	}
 }
 
 # (e) config/flags file
