@@ -12,16 +12,16 @@ use lib dirname(__FILE__);
 require "kabsch.pm";
 require "matrix.pm";
 
-###############################
-###############################
 ## programs
 my $PARTIALTHREAD_APP = "/work/dimaio/rosetta/rosetta_source/bin/partial_thread.default.linuxgccrelease".
                         " -database /work/dimaio/rosetta/rosetta_database ".
 						"-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm";
-my $CSTGEN_APP =   "/work/dimaio/rosetta/cm_scripts/bin/predict_distances.pl";
+my $DENSGENAPP = "/work/dimaio/rosetta/rosetta_source/bin/pdb_to_map.default.linuxgccrelease".
+                 " -database /work/dimaio/rosetta/rosetta_database ".
+                 " -edensity:mapreso 5.0 -edensity::grid_spacing 2.0 -in:file:centroid_input";
+my $CSTGEN_APP = "/work/dimaio/rosetta/cm_scripts/bin/predict_distances.pl";
 my $PDBFILEDIR = "/lab/databases/wwpdb/";
-my $DENSGENAPP = "/work/dimaio/EMAN/bin/pdb2mrc";
-my $DENSGENARGS = "res=5.0 apix=2.0 box=96";
+
 
 ## paths
 my $NATIVEDIR        = "native/";
@@ -32,12 +32,27 @@ my $FRAG3FILE      = "fragments/%s_templatesvall.200.3mers";
 my $FRAG9FILE      = "fragments/%s_templatesvall.200.9mers";
 my $SSPREDFILE      = "fragments/t000_.psipred_ss2";
 
+my $PCORRFILENAMES  = "p_correct%d.txt";
+my $ALNFILENAMES  = "cluster%d.filt";
+my $CSTFILENAMES  = "cluster%d.filt.dist_csts";
+my $FLAGFILENAMES = "flags%d";
+my $MAPFILENAMES  = "templates%d.mrc";
+my $ALNTEMPLATEDIR  = "aligned_templates";
+
+my $XMLFILENAMES = "hybridize%d.xml";
+my $RUNFILENAMES = "run%d.sh";
+my $HYBRIDIZEOPTIONS = "batch=16 stage1_increase_cycles=1.0 stage2_increase_cycles=0.25 linmin_only=1";
+
+#####
+#####
+
 ## structure alignments
 my @RMS_CUTOFFS = (10,5,4,3,2,1.5,1);
 my $CLUSTERCUTOFF = 0.40;
 my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
 
 ## probability correct
+## this could be read from a file
 my %template_probs =  (
 	201 => 0.15481, 301 => 0.13389, 401 => 0.16318,
 	202 => 0.03347, 302 => 0.09623, 402 => 0.03766, 
@@ -80,25 +95,28 @@ my %three_to_one = (
 
 ###############################
 ###############################
+
 ## main()
 if ($#ARGV < 2) {
-	print STDERR "usage: $0 <fasta-file> <ali-file> <evmap> <working-dir>\n";
+	#print STDERR "usage: $0 <fasta-file> <ali-file> <evmap> <working-dir>\n";
+	print STDERR "usage: $0 <fasta-file> <ali-file> <working-dir>\n";
 	exit -1;
 }
 
 my $fastafile = shift @ARGV;
 my $alifile   = shift @ARGV;
-my $evmapfile = shift @ARGV;
+#my $evmapfile = shift @ARGV;
 my $WORKDIR   = shift @ARGV;
 
-# paths inside WORKDIR
-my $PCORRFILENAMES  = "$WORKDIR/p_correct%d.txt";
-my $ALNFILENAMES  = "$WORKDIR/cluster%d.filt";
-my $CSTFILENAMES  = "$WORKDIR/cluster%d.filt.dist_csts";
-my $FLAGFILENAMES = "$WORKDIR/flags%d";
-my $CFGFILENAMES  = "$WORKDIR/hybrid%d.config";
-my $MAPFILENAMES  = "$WORKDIR/templates%d.mrc";
-my $ALNTEMPLATEDIR  = "$WORKDIR/aligned_templates";
+## files inside WORKDIR
+$PCORRFILENAMES  = "$WORKDIR/".$PCORRFILENAMES;
+$ALNFILENAMES  = "$WORKDIR/".$ALNFILENAMES;
+$CSTFILENAMES  = "$WORKDIR/".$CSTFILENAMES;
+$FLAGFILENAMES = "$WORKDIR/".$FLAGFILENAMES;
+$XMLFILENAMES  = "$WORKDIR/".$XMLFILENAMES;
+$MAPFILENAMES  = "$WORKDIR/".$MAPFILENAMES;
+$ALNTEMPLATEDIR  = "$WORKDIR/".$ALNTEMPLATEDIR;
+
 
 ## read sequence
 open (FASTA, $fastafile) || die "Cannot open $_";
@@ -275,6 +293,7 @@ foreach my $j ($i..$#THREADED_MDLS) {
 		$rmsds->[$i][$j] = 9999;
 		$Rs->[$i][$j] = [[1,0,0],[0,1,0],[0,0,1]];
 		$nalignlen->[$i][$j] = scalar(@common_atoms);
+	 	$overlapscore->[$i][$j] = 0;
 		next;
 	}
 
@@ -536,43 +555,26 @@ foreach my $i (0..$#THREADED_MDLS) {
 
 # (d) template density maps
 foreach my $i (0..$nclust) {
-	my $mapfile = sprintf $MAPFILENAMES , $i;
-	my $temppdb = $mapfile;
-	$temppdb =~ s/\.mrc/.pdb/g;
-	open (PDBCAT, ">$temppdb") || die "Cannot open $_";
-
-	foreach my $j (0..$#THREADED_MDLS) {
+	my $inputpdbs = "";
+ 	foreach my $j (0..$#THREADED_MDLS) {
 		next if ($clusterid->[$j] != $i);
 
-		my $tmpl_filename = $THREADED_MDLS[ $j ];
-		$tmpl_filename =~ s/$PARTIALTHREADDIR/$TEMPLATEDIR/g;
-		$tmpl_filename =~ s/_\d\d\d//g;
+		my $pdb = $THREADED_MDLS[$i];
+		my $nfrags = scalar( @{ $allfrags{$pdb} } );
 
-		open (TEMPLPDB, "$tmpl_filename") || die "Cannot open $_";
-		my @templatepdb_lines = <TEMPLPDB>;
-		close TEMPLPDB;
-		foreach my $line (@templatepdb_lines) {
-			next if ($line !~ /^ATOM/);
-			my $newX = [ substr ($line, 30, 8), substr ($line, 38, 8), substr ($line, 46, 8) ];
-			$newX = vsub( $newX, $preTs->[$j]);
-			$newX = mapply( $globalRs->[$j], $newX );
-			$newX = vadd( $newX, $postTs->[$j]);
-			substr ($line, 30, 8) = sprintf ("%8.3f", $newX->[0]);
-			substr ($line, 38, 8) = sprintf ("%8.3f", $newX->[1]);
-			substr ($line, 46, 8) = sprintf ("%8.3f", $newX->[2]);
-			print PDBCAT $line;
-		}
+		my $outpdb = $pdb;
+		$outpdb =~ s/.*\///;
+		$outpdb =~ s/\.pdb$/_aln.cl$i.pdb/;
+		$inputpdbs = $inputpdbs." $ALNTEMPLATEDIR/$outpdb";
 	}
-	close PDBCAT;
+	my $outmap = sprintf $MAPFILENAMES, $i;
 
-	my $cmd = "$DENSGENAPP $temppdb $mapfile $DENSGENARGS";
+	my $cmd = "$DENSGENAPP -s $inputpdbs -edensity::mapfile $outmap";
 	print STDERR $cmd."\n";
 	system($cmd);
 }
 
-
 # (e) config/flags file
-
 my $dir = getcwd;
 # local hack
 $dir =~ s/\/gpfs\/DS3524-1//g;
@@ -581,14 +583,58 @@ my $dirtag = $dir;
 $dirtag =~ s/.*\/([^\/]+$)/$1/g;
 
 foreach my $i (0..$nclust) {
-	my $cfgfile = sprintf $CFGFILENAMES, $i;
-	my $flagfile = sprintf $FLAGFILENAMES, $i;
-	open (HYB, ">$cfgfile") || die "Cannot open $_";
-	open (FLAGS, ">$flagfile") || die "Cannot open $_";
+	my $xmlfile = sprintf $XMLFILENAMES, $i;
+	open (XML, ">$xmlfile") || die "Cannot open $_";
 
-	foreach my $j (0..$#THREADED_MDLS) {
+	print XML  "<dock_design>\n";
+	print XML  "    <TASKOPERATIONS>\n";
+	print XML  "    </TASKOPERATIONS>\n";
+	print XML  "    <SCOREFXNS>\n";
+	print XML  "        <fullatom weights=score12_full>\n";
+	print XML  "   	        <Reweight scoretype=cart_bonded weight=0.5/>\n";
+	print XML  "   	        <Reweight scoretype=elec_dens_fast weight=2.0/>\n";
+	print XML  "	    </fullatom>\n";
+	print XML  "        <stage1>\n";
+	print XML  "   	        <Reweight scoretype=env weight=1.0/>\n";
+	print XML  "   	        <Reweight scoretype=pair weight=1.0/>\n";
+	print XML  "   	        <Reweight scoretype=cbeta weight=1.0/>\n";
+	print XML  "   	        <Reweight scoretype=cenpack weight=1.0/>\n";
+	print XML  "   	        <Reweight scoretype=hs_pair weight=2.0/>\n";
+	print XML  "   	        <Reweight scoretype=ss_pair weight=2.0/>\n";
+	print XML  "   	        <Reweight scoretype=rsigma weight=2.0/>\n";
+	print XML  "   	        <Reweight scoretype=sheet weight=2.0/>\n";
+	print XML  "   	        <Reweight scoretype=vdw weight=0.20/>\n";
+	print XML  "   	        <Reweight scoretype=rg weight=2.0/>\n";
+	print XML  "   	        <Reweight scoretype=rama weight=0.3/>\n";
+	print XML  "   	        <Reweight scoretype=atom_pair_constraint weight=1.0/>\n";
+	print XML  "   	        <Reweight scoretype=elec_dens_fast weight=2.0/>\n";
+	print XML  "	       </stage1>\n";
+	print XML  "        <stage2>\n";
+	print XML  "   	        <Reweight scoretype=hbond_sr_bb weight=2.0/>\n";
+	print XML  "   	        <Reweight scoretype=hbond_lr_bb weight=2.0/>\n";
+	print XML  "   	        <Reweight scoretype=rama weight=0.2/>\n";
+	print XML  "   	        <Reweight scoretype=omega weight=0.2/>\n";
+	print XML  "   	        <Reweight scoretype=rg weight=2.0/>\n";
+	print XML  "   	        <Reweight scoretype=cen_env_smooth weight=2.0/>\n";
+	print XML  "   	        <Reweight scoretype=cen_pair_smooth weight=1.0/>\n";
+	print XML  "   	        <Reweight scoretype=cbeta_smooth weight=1.0/>\n";
+	print XML  "   	        <Reweight scoretype=cenpack_smooth weight=1.0/>\n";
+	print XML  "   	        <Reweight scoretype=vdw weight=1.0/>\n";
+	print XML  "   	        <Reweight scoretype=atom_pair_constraint weight=0.5/>\n";
+	print XML  "   	        <Reweight scoretype=cart_bonded weight=0.05/>\n";
+	print XML  "   	        <Reweight scoretype=elec_dens_fast weight=2.0/>\n";
+	print XML  "        </stage2>\n";
+	print XML  "    </SCOREFXNS>\n";
+	print XML  "    <FILTERS>\n";
+	print XML  "    </FILTERS>\n";
+	print XML  "    <MOVERS>\n";
+	print XML  "        <Hybridize name=hybridize stage1_scorefxn=stage1 stage2_scorefxn=stage2 fa_scorefxn=fullatom $HYBRIDIZEOPTIONS>\n";
+ 	my $frag3filepath = sprintf "$dir/$FRAG3FILE", $dirtag;
+ 	my $frag9filepath = sprintf "$dir/$FRAG9FILE", $dirtag;
+	print XML  "            <Fragments 3mers=\"$frag3filepath\" 9mers=\"$frag9filepath\"/>\n";
+
+ 	foreach my $j (0..$#THREADED_MDLS) {
 		next if ($clusterid->[$j] != $i);
-
 		my $id = $THREADED_MDLS[$j];
 		$id =~ s/.*\///;
 		$id =~ s/\.pdb$/_aln.cl$i.pdb/;
@@ -602,43 +648,91 @@ foreach my $i (0..$nclust) {
 		$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
 		$prob += $template_M_EST;
 
-	 	my $outline = sprintf "%20s %30s %4d %.5f  ", $id, $cstfile, $i, $prob;
-
-		# load coord csts
-		my $coordcstfile = $COORDCSTDIR."/".substr( $id,0,9 ).".coordCsts";
-
-		# stupid renumbering issue
-		my $coordcstfileAlt = $coordcstfile;
-		my $newtag = $tag-1;
-		$coordcstfileAlt =~ s/_$tag/_$newtag/g;
-
-		if (-e $coordcstfile) {
-			open (RSD, $coordcstfile) || die "Cannot open $_";
-			my @resids = <RSD>;
-			close RSD;
-			chomp (@resids);
-			$outline = $outline.(join ',',@resids);
-		} elsif (-e $coordcstfileAlt) {
-			open (RSD, $coordcstfileAlt) || die "Cannot open $_";
-			my @resids = <RSD>;
-			close RSD;
-			chomp (@resids);
-			$outline = $outline.(join ',',@resids);
-		}
-		print HYB $outline."\n";
+	 	my $outline = sprintf "pdb=\"$id\" cst_file=\"$cstfile\" weight=$prob";
+		print XML  "			            <Template $outline/>\n";
 	}
+	print XML  "        </Hybridize>\n";
+	print XML  "    </MOVERS>\n";
+	print XML  "    <APPLY_TO_POSE>\n";
+	print XML  "    </APPLY_TO_POSE>\n";
+	print XML  "    <PROTOCOLS>\n";
+	print XML  "        <Add mover=hybridize/>\n";
+	print XML  "    </PROTOCOLS>\n";
+	print XML  "</dock_design>\n";
+	close(XML);
 
-	# finally write flags
-	print FLAGS "-in:file:fasta $dir/$fastafile\n";
-	print FLAGS "-out:prefix $dirtag\n";
-	print FLAGS "-out:file:silent $dir/../$dirtag.cl$i.silent\n";
-	print FLAGS "-in:file:native $dir/$NATIVEDIR/$dirtag.pdb\n";
-	print FLAGS "-cm::hybridize::template_list $dir/$cfgfile\n";
-	printf FLAGS "-in::file::frag3 $dir/$FRAG3FILE\n", $dirtag;
-	printf FLAGS "-in::file::frag9 $dir/$FRAG9FILE\n", $dirtag;
-	printf FLAGS "-edensity::mapfile $dir/$MAPFILENAMES\n", $i;
-	print FLAGS "-in:file:psipred_ss2 $SSPREDFILE\n";
+ 	# finally write flags
+ 	my $flagfile = sprintf $FLAGFILENAMES, $i;
+ 	open (FLAGS, ">$flagfile") || die "Cannot open $_";
+ 	print FLAGS "-in:file:fasta $dir/$fastafile\n";
+ 	print FLAGS "-out:prefix $dirtag\n";
+ 	print FLAGS "-out:file:silent $dir/../$dirtag.cl$i.silent\n";
+ 	print FLAGS "-in:file:native $dir/$NATIVEDIR/$dirtag.pdb\n";
+ 	print FLAGS "-parser:protocol $dir/$xmlfile\n";
+ 	printf FLAGS "-edensity::mapfile $dir/$MAPFILENAMES\n", $i;
 }
+
+
+
+# foreach my $i (0..$nclust) {
+# 	my $cfgfile = sprintf $CFGFILENAMES, $i;
+# 	my $flagfile = sprintf $FLAGFILENAMES, $i;
+# 	open (HYB, ">$cfgfile") || die "Cannot open $_";
+# 	open (FLAGS, ">$flagfile") || die "Cannot open $_";
+# 
+# 	foreach my $j (0..$#THREADED_MDLS) {
+# 		next if ($clusterid->[$j] != $i);
+# 
+# 		my $id = $THREADED_MDLS[$j];
+# 		$id =~ s/.*\///;
+# 		$id =~ s/\.pdb$/_aln.cl$i.pdb/;
+# 		$id = "$dir/$ALNTEMPLATEDIR/$id";
+# 
+# 		my $cstfile = sprintf $CSTFILENAMES, $i;
+# 		$cstfile = $dir."/$cstfile";
+# 
+# 		my $tag = $THREADED_MDLS[$j]; $tag =~ s/.*_(\d\d\d).*/$1/;
+# 		my $prob = $template_probs{ $tag };
+# 		$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
+# 		$prob += $template_M_EST;
+# 
+# 	 	my $outline = sprintf "%20s %30s %4d %.5f  ", $id, $cstfile, $i, $prob;
+# 
+# 		# load coord csts
+# 		my $coordcstfile = $COORDCSTDIR."/".substr( $id,0,9 ).".coordCsts";
+# 
+# 		# stupid renumbering issue
+# 		my $coordcstfileAlt = $coordcstfile;
+# 		my $newtag = $tag-1;
+# 		$coordcstfileAlt =~ s/_$tag/_$newtag/g;
+# 
+# 		if (-e $coordcstfile) {
+# 			open (RSD, $coordcstfile) || die "Cannot open $_";
+# 			my @resids = <RSD>;
+# 			close RSD;
+# 			chomp (@resids);
+# 			$outline = $outline.(join ',',@resids);
+# 		} elsif (-e $coordcstfileAlt) {
+# 			open (RSD, $coordcstfileAlt) || die "Cannot open $_";
+# 			my @resids = <RSD>;
+# 			close RSD;
+# 			chomp (@resids);
+# 			$outline = $outline.(join ',',@resids);
+# 		}
+# 		print HYB $outline."\n";
+# 	}
+# 
+# 	# finally write flags
+# 	print FLAGS "-in:file:fasta $dir/$fastafile\n";
+# 	print FLAGS "-out:prefix $dirtag\n";
+# 	print FLAGS "-out:file:silent $dir/../$dirtag.cl$i.silent\n";
+# 	print FLAGS "-in:file:native $dir/$NATIVEDIR/$dirtag.pdb\n";
+# 	print FLAGS "-cm::hybridize::template_list $dir/$cfgfile\n";
+# 	printf FLAGS "-in::file::frag3 $dir/$FRAG3FILE\n", $dirtag;
+# 	printf FLAGS "-in::file::frag9 $dir/$FRAG9FILE\n", $dirtag;
+# 	printf FLAGS "-edensity::mapfile $dir/$MAPFILENAMES\n", $i;
+# 	print FLAGS "-in:file:psipred_ss2 $SSPREDFILE\n";
+# }
 
 exit 0;
 
