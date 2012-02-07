@@ -1,7 +1,9 @@
 /*
 WISH LIST
+	grid output
 	buried unsats
 		scan for rotamers that cna make H-bonds
+		detect and penalize missing BB density
 	strand pairs
 	cen score components
 	disulfide-compatible positions
@@ -14,6 +16,7 @@ DONE
 	termini distance
 	contacts weight by avg. deg.
 */
+#include <apps/pilot/will/xyzStripeHashPose.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh> 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
@@ -62,64 +65,95 @@ typedef numeric::xyzMatrix<core::Real> Mat;
 typedef numeric::xyzVector<double> Vecf;
 typedef numeric::xyzMatrix<double> Matf;
 static basic::Tracer TR("symdock_enum");
-OPT_1GRP_KEY( Real , tcdock, clash_dis	)
-OPT_1GRP_KEY( Real , tcdock, contact_dis )
-OPT_1GRP_KEY( Real , tcdock, intra )
-OPT_1GRP_KEY( Real , tcdock, intra1 )
-OPT_1GRP_KEY( Real , tcdock, intra2 )
-OPT_1GRP_KEY( Real , tcdock, termini_weight )
-OPT_1GRP_KEY( Real , tcdock, termini_cutoff )
-OPT_1GRP_KEY( Integer , tcdock, termini_trim )
-OPT_1GRP_KEY( Integer , tcdock, nsamp1 )
-OPT_1GRP_KEY( Integer , tcdock, topx )
-OPT_1GRP_KEY( Integer , tcdock, peak_grid_size)
-OPT_1GRP_KEY( Integer , tcdock, peak_grid_smooth)
-OPT_1GRP_KEY( Boolean , tcdock, reverse )
-OPT_1GRP_KEY( Boolean , tcdock, dump_pdb )
-OPT_1GRP_KEY( IntegerVector , tcdock, dump_grids )
-OPT_1GRP_KEY( FileVector, tcdock, I2 )
-OPT_1GRP_KEY( FileVector, tcdock, I3 )
-OPT_1GRP_KEY( FileVector, tcdock, I5 )
-OPT_1GRP_KEY( FileVector, tcdock, O2 )
-OPT_1GRP_KEY( FileVector, tcdock, O3 )
-OPT_1GRP_KEY( FileVector, tcdock, O4 )
-OPT_1GRP_KEY( FileVector, tcdock, T2 )
-OPT_1GRP_KEY( FileVector, tcdock, T3 )
+OPT_1GRP_KEY( Real , tcdock, clash_dis	);
+OPT_1GRP_KEY( Real , tcdock, contact_dis );
+OPT_1GRP_KEY( Real , tcdock, intra );
+OPT_1GRP_KEY( Real , tcdock, intra1 );
+OPT_1GRP_KEY( Real , tcdock, intra2 );
+OPT_1GRP_KEY( Real , tcdock, termini_weight );
+OPT_1GRP_KEY( Real , tcdock, termini_cutoff );
+OPT_1GRP_KEY( Integer , tcdock, termini_trim );
+OPT_1GRP_KEY( Integer , tcdock, nsamp1 );
+OPT_1GRP_KEY( Integer , tcdock, topx );
+OPT_1GRP_KEY( Integer , tcdock, peak_grid_size);
+OPT_1GRP_KEY( Integer , tcdock, peak_grid_smooth);
+OPT_1GRP_KEY( Boolean , tcdock, reverse );
+OPT_1GRP_KEY( Boolean , tcdock, dump_pdb );
+OPT_1GRP_KEY( Boolean , tcdock, dump_pdb_grid );
+OPT_1GRP_KEY( IntegerVector , tcdock, dump_peak_grids );
+OPT_1GRP_KEY( IntegerVector , tcdock, justone );
+OPT_1GRP_KEY( FileVector, tcdock, I2 );
+OPT_1GRP_KEY( FileVector, tcdock, I3 );
+OPT_1GRP_KEY( FileVector, tcdock, I5 );
+OPT_1GRP_KEY( FileVector, tcdock, O2 );
+OPT_1GRP_KEY( FileVector, tcdock, O3 );
+OPT_1GRP_KEY( FileVector, tcdock, O4 );
+OPT_1GRP_KEY( FileVector, tcdock, T2 );
+OPT_1GRP_KEY( FileVector, tcdock, T3 );
 void register_options() {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		OPT( in::file::s );
-		NEW_OPT( tcdock::clash_dis	  ,"max acceptable clash dis",	3.5 );
+		NEW_OPT( tcdock::clash_dis	 ,"max acceptable clash dis", 3.5 );
 		NEW_OPT( tcdock::contact_dis ,"max acceptable contact dis", 12 );
-		NEW_OPT( tcdock::intra       ,"include intra contacts", 1.0 );
-		NEW_OPT( tcdock::intra1      ,"include intra contacts", 1.0 );
-		NEW_OPT( tcdock::intra2      ,"include intra contacts", 1.0 );
-		NEW_OPT( tcdock::nsamp1      ,"output top X hits", 2000 );
+		NEW_OPT( tcdock::intra       ,"weight for intra contacts", 1.0 );
+		NEW_OPT( tcdock::intra1      ,"weight for comp1 intra contacts", 1.0 );
+		NEW_OPT( tcdock::intra2      ,"weight for conp2 intra contacts", 1.0 );
+		NEW_OPT( tcdock::nsamp1      ,"check around X top lowres hits", 2000 );
 		NEW_OPT( tcdock::topx        ,"output top X hits", 10 );
 		NEW_OPT( tcdock::peak_grid_size   ,"peak detect grid size (2*N+1)", 24 );		
 		NEW_OPT( tcdock::peak_grid_smooth ,"peak detect grid smooth (0+)", 1 );		
-		NEW_OPT( tcdock::reverse     ,"rev.", false );	
-		NEW_OPT( tcdock::dump_pdb,  "dump pdb", false );	
-		NEW_OPT( tcdock::dump_grids,"dump grids", 0 );
-		NEW_OPT( tcdock::I2,"file(s) for icos 2fold trimer", "" );
+		NEW_OPT( tcdock::reverse     ,"reverse one component", false );	
+		NEW_OPT( tcdock::dump_pdb,  "dump pdbs", false );
+		NEW_OPT( tcdock::dump_pdb_grid,  "dump pdb design grids", false );
+		NEW_OPT( tcdock::dump_peak_grids,"dump specific grids grids", -1 );
+		NEW_OPT( tcdock::justone,"dump info on one structure", -1 );
+		NEW_OPT( tcdock::I2,"file(s) for icos 2fold dimer", "" );
 		NEW_OPT( tcdock::I3,"file(s) for icos 3fold trimer", "" );
-		NEW_OPT( tcdock::I5,"file(s) for icos 5fold trimer", "" );
-		NEW_OPT( tcdock::O2,"file(s) for octa 2fold trimer", "" );
+		NEW_OPT( tcdock::I5,"file(s) for icos 5fold pentamer", "" );
+		NEW_OPT( tcdock::O2,"file(s) for octa 2fold dimer", "" );
 		NEW_OPT( tcdock::O3,"file(s) for octa 3fold trimer", "" );
-		NEW_OPT( tcdock::O4,"file(s) for octa 4fold trimer", "" );
-		NEW_OPT( tcdock::T2,"file(s) for tetr 2fold trimer", "" );
+		NEW_OPT( tcdock::O4,"file(s) for octa 4fold tetramer", "" );
+		NEW_OPT( tcdock::T2,"file(s) for tetr 2fold dimer", "" );
 		NEW_OPT( tcdock::T3,"file(s) for tetr 3fold trimer", "" );
 		NEW_OPT( tcdock::termini_cutoff,"tscore = w*max(0,cut-x)", 20.0 );
 		NEW_OPT( tcdock::termini_weight,"tscore = w*max(0,cut-x)",  0.0 );
-		NEW_OPT( tcdock::termini_trim,"trim termini up to",  0 );
+		NEW_OPT( tcdock::termini_trim,"trim termini up to for termini score",  0 );
 }
 template<typename T> inline T sqr(T x) { return x*x; }
-void dump_points_pdb(utility::vector1<Vecf> & p, std::string fn) {
+void dump_points_pdb(utility::vector1<Vecf> const & p, std::string fn) {
 	using namespace ObjexxFCL::fmt;
 	std::ofstream o(fn.c_str());
 	for(Size i = 1; i <= p.size(); ++i) {
 		std::string rn = "VIZ";
 		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x())<<F(8,3,p[i].y())<<F(8,3,p[i].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	}
+	o.close();
+}
+void dump_points_pdb(utility::vector1<Vecf> const & p, Vec t, std::string fn) {
+	using namespace ObjexxFCL::fmt;
+	std::ofstream o(fn.c_str());
+	for(Size i = 1; i <= p.size(); ++i) {
+		std::string rn = "VIZ";
+		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x()+t.x())<<F(8,3,p[i].y()+t.y())<<F(8,3,p[i].z()+t.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	}
+	o.close();
+}
+void dump_points_pdb(xyzStripeHash<double>::float4 const *p, int n, Vec t, std::string fn) {
+	using namespace ObjexxFCL::fmt;
+	std::ofstream o(fn.c_str());
+	for(Size i = 0; i < n; ++i) {
+		std::string rn = "VIZ";
+		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x-t.x())<<F(8,3,p[i].y-t.y())<<F(8,3,p[i].z-t.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	}
+	o.close();
+}
+void dump_points_pdb(xyzStripeHash<double>::float4 const *p, int n, std::string fn) {
+	using namespace ObjexxFCL::fmt;
+	std::ofstream o(fn.c_str());
+	for(Size i = 0; i < n; ++i) {
+		std::string rn = "VIZ";
+		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x)<<F(8,3,p[i].y)<<F(8,3,p[i].z)<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 	}
 	o.close();
 }
@@ -134,32 +168,34 @@ inline double sigmoid( double const & sqdist, double const & start, double const
 		//return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
 	}
 }
-void trans_pose( Pose & pose, Vecf const & trans ) {
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+void trans_pose( Pose & pose, Vecf const & trans, Size start=1, Size end=0 ) {
+	if(0==end) end = pose.n_residue();
+	for(Size ir = start; ir <= end; ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, pose.xyz(aid) + (Vec)trans );
 		}
 	}
 }
-void rot_pose( Pose & pose, Mat const & rot ) {
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+void rot_pose( Pose & pose, Mat const & rot, Size start=1, Size end=0 ) {
+	if(0==end) end = pose.n_residue();
+	for(Size ir = start; ir <= end; ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
 		}
 	}
 }
-void rot_pose( Pose & pose, Mat const & rot, Vecf const & cen ) {
-	trans_pose(pose,-cen);
-	rot_pose(pose,rot);
-	trans_pose(pose,cen);
+void rot_pose( Pose & pose, Mat const & rot, Vecf const & cen, Size start=1, Size end=0 ) {
+	trans_pose(pose,-cen,start,end);
+	rot_pose(pose,rot,start,end);
+	trans_pose(pose,cen,start,end);
 }
-void rot_pose( Pose & pose, Vecf const & axis, double const & ang ) {
-	rot_pose(pose,rotation_matrix_degrees(axis,ang));
+void rot_pose( Pose & pose, Vecf const & axis, double const & ang, Size start=1, Size end=0 ) {
+	rot_pose(pose,rotation_matrix_degrees(axis,ang),start,end);
 }
-void rot_pose( Pose & pose, Vecf const & axis, double const & ang, Vecf const & cen ) {
-	rot_pose(pose,rotation_matrix_degrees(axis,ang),cen);
+void rot_pose( Pose & pose, Vecf const & axis, double const & ang, Vecf const & cen, Size start=1, Size end=0 ) {
+	rot_pose(pose,rotation_matrix_degrees(axis,ang),cen,start,end);
 }
 void alignaxis(Pose & pose, Vecf newaxis, Vecf oldaxis, Vecf cen = Vecf(0,0,0) ) {
 	newaxis.normalize();
@@ -170,13 +206,6 @@ void alignaxis(Pose & pose, Vecf newaxis, Vecf oldaxis, Vecf cen = Vecf(0,0,0) )
 		rot_pose(pose,axis,ang,cen);
 	}
 }
-// int cbcount_vec(vector1<Vecf> & cba, vector1<Vecf> & cbb) {
-// 	int cbcount = 0;
-// 	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia)
-// 		for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib)
-// 			if( ib->distance_squared(*ia) < CONTACT_D2 ) cbcount++;
-// 	return cbcount;
-// }
 void prune_cb_pairs(vector1<Vecf> & cba, vector1<Vecf> & cbb, vector1<double> & wa_in, vector1<double> & wb_in, double CTD2) {
 	vector1<Vecf> a,b;
 	vector1<double> wa,wb;
@@ -197,17 +226,6 @@ void prune_cb_pairs(vector1<Vecf> & cba, vector1<Vecf> & cbb, vector1<double> & 
 	wa_in = wa;
 	wb_in = wb;	
 }
-// int pose_cbcount(Pose const & a, Pose const & b) {
-// 	int count = 0;
-// 	for(Size i = 1; i <= a.n_residue(); ++i) {
-// 		for(Size j = 1; j <= b.n_residue(); ++j) {
-// 			if(a.residue(i).xyz(2).distance_squared(b.residue(j).xyz(2)) < CONTACT_D2) {
-// 				count++;
-// 			}
-// 		}
-// 	}
-// 	return count;
-// }
 int neighbor_count(Pose const &pose, int ires, double distance_threshold=10.0) {
 	core::conformation::Residue const resi( pose.residue( ires ) );
 	Size resi_neighbors( 0 );
@@ -220,32 +238,96 @@ int neighbor_count(Pose const &pose, int ires, double distance_threshold=10.0) {
 	}
 	return resi_neighbors;
 }
-
 struct Vecf2 {
 	Vecf a,b;
 	Vecf2() {}
 	Vecf2(Vecf _a, Vecf _b) : a(_a),b(_b) {}
 };
-struct SICFast {
+struct Vecf3 {
+	Vecf a,b,c;
+	Vecf3() {}
+	Vecf3(Vecf _a, Vecf _b, Vecf _c) : a(_a),b(_b),c(_c) {}
+};
+struct Vecf4 {
+	Vecf a,b,c,d;
+	Vecf4() {}
+	Vecf4(Vecf _a, Vecf _b, Vecf _c, Vecf _d) : a(_a),b(_b),c(_d),d(_d) {}
+};
+double brute_mindis(vector1<Vecf> const & pa, vector1<Vecf> const & pb, Vecf const ofst) {
+	double mindis = 9e9;
+	for(vector1<Vecf>::const_iterator i = pa.begin(); i != pa.end(); ++i) {
+		for(vector1<Vecf>::const_iterator j = pb.begin(); j != pb.end(); ++j) {
+			mindis = min( mindis, i->distance_squared(*j+ofst) );
+		}
+	}
+	return mindis;
+}
+struct SICFastBase {
 	double xmx1,xmn1,ymx1,ymn1,xmx,xmn,ymx,ymn;
-	double const CTD,CLD,CTD2,CLD2,BIN;
+	double CTD,CLD,CTD2,CLD2,BIN;
 	int xlb,ylb,xub,yub;
-	vector1<double> const & wa_,wb_;
-	SICFast( vector1<double> const & wa, vector1<double> const & wb) : 
+	xyzStripeHashPose xh1_bb_,xh2_bb_,xh1_cb_,xh2_cb_;	
+	vector1<double> w1_,w2_;
+	SICFastBase() : 
 		CTD(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]()),
 		CLD(basic::options::option[basic::options::OptionKeys::tcdock::clash_dis]()),
 		CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD/2.0),
-		wa_(wa),wb_(wb)
+		xh1_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+2.0),
+		xh2_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+2.0),
+		xh1_cb_(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]()),
+		xh2_cb_(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]())
 	{}
+	void init(
+		core::pose::Pose const & cmp1in, vector1<Vecf> cmp1cbs, vector1<double> const & cmp1wts, Vecf cmp1axs,
+		core::pose::Pose const & cmp2in, vector1<Vecf> cmp2cbs, vector1<double> const & cmp2wts, Vecf cmp2axs
+	) {
+		xh1_bb_.init_with_pose(cmp1in,BB); // default meta is radius
+		xh2_bb_.init_with_pose(cmp2in,BB);
+		xh1_cb_.init_with_pose(cmp1in,cmp1wts,CB);
+		xh2_cb_.init_with_pose(cmp2in,cmp2wts,CB);
+		w1_ = cmp1wts;
+		w2_ = cmp2wts;		
+		// Pose tmp1(cmp1in); trans_pose(tmp1,xh1_bb_.translation()); tmp1.dump_pdb("pose1.pdb");
+		// Pose tmp2(cmp2in); trans_pose(tmp2,xh2_bb_.translation()); tmp2.dump_pdb("pose2.pdb");
+		// dump_points_pdb(xh1_bb_.grid_atoms(),xh1_bb_.natom()                                            ,"xh1.pdb");
+		// dump_points_pdb(xh2_bb_.grid_atoms(),xh2_bb_.natom()                                            ,"xh2.pdb");
+		// dump_points_pdb(xh1_cb_.grid_atoms(),xh1_cb_.natom(),xh1_cb_.translation()-xh1_bb_.translation(),"xh1_cb.pdb");
+		// dump_points_pdb(xh2_cb_.grid_atoms(),xh2_cb_.natom(),xh2_cb_.translation()-xh2_bb_.translation(),"xh2_cb.pdb");
+		// dump_points_pdb(cmp1cbs                             ,xh1_bb_.translation()                      ,"cmp1cbs.pdb");
+		// dump_points_pdb(cmp2cbs                             ,xh2_bb_.translation()                      ,"cmp2cbs.pdb");
+		// cmp1in.dump_pdb("cmp1in.pdb");
+		// cmp2in.dump_pdb("cmp2in.pdb");
+		// utility_exit_with_message("hashes");
+		// double xmn=9e9,ymn=9e9,zmn=9e9;
+		// for(vector1<Vecf>::const_iterator i = cmp1cbs.begin(); i != cmp1cbs.end(); ++i) {
+		// 	xmn = min(i->x(),xmn);
+		// 	ymn = min(i->y(),ymn);
+		// 	zmn = min(i->z(),zmn);
+		// }
+		// cout << xmn << " " << ymn << " " << zmn << endl;
+		// xmn=9e9,ymn=9e9,zmn=9e9;
+		// for(vector1<Vecf>::const_iterator i = cmp2cbs.begin(); i != cmp2cbs.end(); ++i) {
+		// 	xmn = min(i->x(),xmn);
+		// 	ymn = min(i->y(),ymn);
+		// 	zmn = min(i->z(),zmn);
+		// }
+		// cout << xmn << " " << ymn << " " << zmn << endl;
+		// cout << xh1_cb_.translation() << endl;
+		// cout << xh2_cb_.translation() << endl;
+		// utility_exit_with_message("arst");
+	}
 	void rotate_points(vector1<Vecf> & pa, vector1<Vecf> & pb, Vecf ori) {
-		// get points, rotated ro ori is 0,0,1, might already be done
-		Matf rot = Matf::identity();
-		if		 ( ori.dot(Vecf(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vecf(1,0,0).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
-		else if( ori.dot(Vecf(0,0,1)) <	0.99999 ) rot = rotation_matrix( Vecf(0,0,1).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
-		if( rot != Matf::identity() ) {
-			for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-			for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
-		}		
+		// // get points, rotated ro ori is 0,0,1, might already be done
+		// Matf rot = Matf::identity();
+		// if     ( ori.dot(Vecf(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vecf(1,0,0).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
+		// else if( ori.dot(Vecf(0,0,1)) <  0.99999 ) rot = rotation_matrix( Vecf(0,0,1).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
+		// if( rot != Matf::identity() ) {
+		//         for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
+		//         for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
+		// }               
+		Matf rot = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
+		for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
+		for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
 	}
 	void get_bounds(vector1<Vecf> & pa, vector1<Vecf> & pb) {
 		// get bounds for plane hashes
@@ -260,10 +342,150 @@ struct SICFast {
 		}
 		xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
 		ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
+	}
+	double get_score(vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double mindis, 
+	                 double anga, double angb, Vecf axsa, Vecf axsb, bool cmp1or2_a, bool cmp1or2_b) 
+	{
+ 		vector1<double> const & wa = cmp1or2_a ? w1_ : w2_;
+		vector1<double> const & wb = cmp1or2_b ? w1_ : w2_;
+		xyzStripeHash<double> const & xh( cmp1or2_a ? xh1_cb_ : xh2_cb_);
+		Matf R = numeric::rotation_matrix_degrees(axsa,-anga);
+		float score = 0.0;
+		vector1<double>::const_iterator iwb = wb.begin();
+		for(vector1<Vecf>::const_iterator i = cbb.begin(); i != cbb.end(); ++i,++iwb) {
+			Vecf v = R*((*i)-mindis*ori) + xh.translation();
+			if( v.x() < -xh.grid_size_ || v.y() < -xh.grid_size_ || v.z() < -xh.grid_size_ ) continue; // worth it?
+			if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it? 
+			int const ix	 = (v.x()<0) ? 0 : numeric::min(xh.xdim_-1,(int)(v.x()/xh.grid_size_));
+			int const iy0	= (v.y()<0) ? 0 : v.y()/xh.grid_size_;
+			int const iz0	= (v.z()<0) ? 0 : v.z()/xh.grid_size_;
+			int const iyl = numeric::max(0,iy0-1);
+			int const izl = numeric::max(0,iz0-1);
+			int const iyu = numeric::min((int)xh.ydim_,		 iy0+2);
+			int const izu = numeric::min((int)xh.zdim_,(int)iz0+2);
+			for(int iy = iyl; iy < iyu; ++iy) {
+				for(int iz = izl; iz < izu; ++iz) {
+					int const ig = ix+xh.xdim_*iy+xh.xdim_*xh.ydim_*iz;
+					assert(ig < xh.xdim_*xh.ydim_*xh.zdim_ && ix < xh.xdim_ && iy < xh.ydim_ && iz < xh.zdim_);				
+					int const igl = xh.grid_stripe_[ig].x;
+					int const igu = xh.grid_stripe_[ig].y;
+					for(int i = igl; i < igu; ++i) {
+						xyzStripeHash<double>::float4 const & a2 = xh.grid_atoms_[i];
+						float const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
+						if( d2 <= xh.grid_size2_ ) {
+							score += sigmoid(d2, CLD, CTD ) * a2.w * (*iwb);
+						}
+					}
+				}
+			}
+		}		
+		// double cbcount = 0.0;
+		// vector1<double>::const_iterator iwa = wa.begin();
+		// for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia,++iwa) {
+		// 	vector1<double>::const_iterator iwb = wb.begin();
+		// 	for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib,++iwb) {
+		// 		double d2 = ib->distance_squared( (*ia) + (mindis*ori) );
+		// 		if( d2 < CTD2 ) {
+		// 			cbcount += sigmoid(d2, CLD, CTD ) * (*iwa) * (*iwb);
+		// 		}
+		// 	}
+		// }		
+		// if( fabs(cbcount-score) > 0.0001 ) {
+		// 	cout << "btute/hash score mismatch!!!! " << anga << " " << angb << " " << cbcount << " " << score << endl;
+		// }
+		return score;
+	}
+	double refine_mindis_with_xyzHash(vector1<Vecf> const & pa, vector1<Vecf> const & pb, double mindis, Vecf ori,
+	                                  double anga, double angb, Vecf axsa, Vecf axsb, bool cmp1or2_a, bool cmp1or2_b)
+	{
+
+		xyzStripeHashPose const & xh( cmp1or2_a ? xh1_bb_ : xh2_bb_ );
+		Matf Rori = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
+		Matf R    = numeric::rotation_matrix_degrees(axsa,-anga);
+		Matf Rinv = numeric::rotation_matrix_degrees(axsa, anga);		
+		while(true){
+			double correction_hash = 9e9;
+			for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+				Vecf const v = R*Rori*((*ib)-Vecf(0,0,mindis)) + xh.translation();
+				Vecf const b = Rori * Rinv * v;
+				if( v.x() < -xh.grid_size_ || v.y() < -xh.grid_size_ || v.z() < -xh.grid_size_ ) continue; // worth it?
+				if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it? 
+				int const ix  = (v.x()<0) ? 0 : numeric::min(xh.xdim_-1,(int)(v.x()/xh.grid_size_));
+				int const iy0 = (v.y()<0) ? 0 : v.y()/xh.grid_size_;
+				int const iz0 = (v.z()<0) ? 0 : v.z()/xh.grid_size_;
+				int const iyl = numeric::max(0,iy0-1);
+				int const izl = numeric::max(0,iz0-1);
+				int const iyu = numeric::min((int)xh.ydim_,     iy0+2);
+				int const izu = numeric::min((int)xh.zdim_,(int)iz0+2);
+				for(int iy = iyl; iy < iyu; ++iy) {
+					for(int iz = izl; iz < izu; ++iz) {
+						int const ig = ix+xh.xdim_*iy+xh.xdim_*xh.ydim_*iz;
+						assert(ig < xh.xdim_*xh.ydim_*xh.zdim_ && ix < xh.xdim_ && iy < xh.ydim_ && iz < xh.zdim_);				
+						int const igl = xh.grid_stripe_[ig].x;
+						int const igu = xh.grid_stripe_[ig].y;
+						for(int i = igl; i < igu; ++i) {
+							xyzStripeHash<double>::float4 const & a2 = xh.grid_atoms_[i];
+							float const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
+							Vecf const a = Rori * Rinv * Vecf(a2.x,a2.y,a2.z);
+							double const dxy2 = (a.x()-b.x())*(a.x()-b.x()) + (a.y()-b.y())*(a.y()-b.y());
+							if( dxy2 >= CLD2 ) continue;
+							double const dz = b.z() - a.z() - sqrt(CLD2-dxy2);
+							// cout << "HASH " << dz << endl;
+							correction_hash = min(dz,correction_hash);
+						}
+					}
+				}
+			}
+			mindis += correction_hash;
+			if( fabs(correction_hash) < 0.001 ) break;
+		}
+		// double correction_safe = 9e9;
+		// for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+		// 	Vecf const v = ((*ib)-Vecf(0,0,mindis));
+		// 	// dbg2.push_back(v);
+		// 	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+		// 		// correction_safe = min(correction_safe,ia->distance_squared(v));
+		// 		double const dxy2 = (ia->x()-v.x())*(ia->x()-v.x()) + (ia->y()-v.y())*(ia->y()-v.y());
+		// 		if( dxy2 >= CLD2 ) continue;
+		// 		// cout << "BRUTE " << dxy2 << endl;
+		// 		double const dz = v.z() - ia->z() - sqrt(CLD2-dxy2);
+		// 		if( dz < correction_safe) correction_safe = dz;
+		// 	}
+		// }
+		// #ifdef USE_OPENMP
+		// #pragma omp critical
+		// #endif
+		// if( fabs(correction_safe-correction_hash) > 0.01 ) {
+		// 	cout << F(9,5,correction_hash) << " " << F(9,5,correction_safe) << " " << mindis << endl;
+		// 	// utility_exit_with_message("FOO");
+		// }
+		
+		return mindis;
+	}
+	double slide_into_contact(vector1<Vecf> pa, vector1<Vecf> pb, vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double & score,
+	                          double anga, double angb, Vecf axsa, Vecf axsb, bool cmp1or2_a, bool cmp1or2_b)
+	{
+		rotate_points(pa,pb,ori);
+		get_bounds(pa,pb);
+		fill_plane_hash(pa,pb);
+		double mindis = get_mindis_with_plane_hashes();
+		mindis = refine_mindis_with_xyzHash(pa,pb,mindis,ori,anga,angb,axsa,axsb,cmp1or2_a,cmp1or2_b);
+		//cerr << brute_mindis(pa,pb,Vecf(0,0,-mindis)) << endl;
+		// if( fabs(CLD2-brute_mindis(pa,pb,Vecf(0,0,-mindis))) > 0.0001 ) utility_exit_with_message("DIAF!");
+		if(score != -12345.0) score = get_score(cba,cbb,ori,mindis,anga,angb,axsa,axsb,cmp1or2_a,cmp1or2_b);
+		return mindis;
+	}
+	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) = 0;
+	virtual double get_mindis_with_plane_hashes() = 0;
+};
+struct SICFast  : public SICFastBase {
+	ObjexxFCL::FArray2D<Vecf2> ha,hb;
+	SICFast() : SICFastBase() {}
+	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
 		xlb = (int)floor(xmn/BIN)-2; xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
 		ylb = (int)floor(ymn/BIN)-2; yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
-	}
-	void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb, ObjexxFCL::FArray2D<Vecf2> & ha, ObjexxFCL::FArray2D<Vecf2> & hb) {
+		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
+		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
 		// insert points into hashes
 		int const xsize = xub-xlb+1;
 		int const ysize = yub-ylb+1;
@@ -293,7 +515,7 @@ struct SICFast {
 		}
 		
 	}
-	double get_mindis_with_plane_hashes(ObjexxFCL::FArray2D<Vecf2> & ha, ObjexxFCL::FArray2D<Vecf2> & hb) {
+	virtual double get_mindis_with_plane_hashes() {
 		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
 		int imna=0,jmna=0,imnb=0,jmnb=0;
 		double m = 9e9;
@@ -317,30 +539,293 @@ struct SICFast {
 		}
 		return m;
 	}
-	double get_score(vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double mindis) {
-		double cbcount = 0.0;
-		vector1<double>::const_iterator iwa = wa_.begin();
-		for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia,++iwa) {
-			vector1<double>::const_iterator iwb = wb_.begin();
-			for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib,++iwb) {
-				double d2 = ib->distance_squared( (*ia) + (mindis*ori) );
-				if( d2 < CTD2 ) {
-					cbcount += sigmoid(d2, CLD, CTD ) * (*iwa) * (*iwb);
+};
+struct SICFast1 : public SICFastBase {
+	ObjexxFCL::FArray2D<Vecf> ha,hb;
+	SICFast1() : SICFastBase() {}
+	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+		xlb = (int)floor(xmn/CLD)-2; xub = (int)ceil(xmx/CLD)+2; // one extra on each side for correctness,
+		ylb = (int)floor(ymn/CLD)-2; yub = (int)ceil(ymx/CLD)+2; // and one extra for outside atoms
+		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf(0,0,-9e9));
+		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf(0,0, 9e9));
+		// insert points into hashes
+		int const xsize = xub-xlb+1;
+		int const ysize = yub-ylb+1;
+		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+			int const ix = (int)ceil(ia->x()/CLD)-xlb;
+			int const iy = (int)ceil(ia->y()/CLD)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( ha(ix,iy).z() < ia->z() ) {
+				ha(ix,iy) = *ia;	
+			}
+		}
+		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+			int const ix = (int)ceil(ib->x()/CLD)-xlb;
+			int const iy = (int)ceil(ib->y()/CLD)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( hb(ix,iy).z() > ib->z() ) {
+				hb(ix,iy) = *ib;
+			}
+		}
+		
+	}
+	virtual double get_mindis_with_plane_hashes() {
+		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+		int imna=0,jmna=0,imnb=0,jmnb=0;
+		double m = 9e9;
+		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+			for(int j = 1; j <= ysize; ++j) {
+				for(int k = -1; k <= 1; ++k) {
+					if(i+k < 1 || i+k > xsize) continue;
+					for(int l = -1; l <= 1; ++l) {
+						if(j+l < 1 || j+l > ysize) continue;
+						double const xa1=ha(i,j).x(),ya1=ha(i,j).y(),xb1=hb(i+k,j+l).x(),yb1=hb(i+k,j+l).y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+						if(d21<CLD2){ double const dz=hb(i+k,j+l).z()-ha(i,j).z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
+					}
 				}
 			}
 		}
-		return cbcount;
+		return m;
 	}
-	double slide_into_contact( vector1<Vecf> pa, vector1<Vecf> pb, vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double & score){ 
-		rotate_points(pa,pb,ori);
-		get_bounds(pa,pb);
-		ObjexxFCL::FArray2D<Vecf2> ha(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
-		ObjexxFCL::FArray2D<Vecf2> hb(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
-		fill_plane_hash(pa,pb,ha,hb);
-		// check hashes for min dis
-		double mindis = get_mindis_with_plane_hashes(ha,hb);
-		if(score != -12345.0) score = get_score(cba,cbb,ori,mindis);
-		return mindis;
+};
+struct SICFast2 : public SICFastBase {
+	ObjexxFCL::FArray2D<Vecf2> ha,hb;
+	SICFast2() : SICFastBase() {}
+	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+		xlb = (int)floor(xmn/CLD)-2; xub = (int)ceil(xmx/CLD)+2; // one extra on each side for correctness,
+		ylb = (int)floor(ymn/CLD)-2; yub = (int)ceil(ymx/CLD)+2; // and one extra for outside atoms
+		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
+		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf2(Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
+		// insert points into hashes
+		int const xsize = xub-xlb+1;
+		int const ysize = yub-ylb+1;
+		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+			int const ix = (int)ceil(ia->x()/CLD)-xlb;
+			int const iy = (int)ceil(ia->y()/CLD)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( ha(ix,iy).a.z() < ia->z() ) {
+				ha(ix,iy).b = ha(ix,iy).a;
+				ha(ix,iy).a = *ia;	
+			} else if( ha(ix,iy).b.z() < ia->z() ) {
+				ha(ix,iy).b = *ia;
+			}
+		}
+		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+			int const ix = (int)ceil(ib->x()/CLD)-xlb;
+			int const iy = (int)ceil(ib->y()/CLD)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( hb(ix,iy).a.z() > ib->z() ) {
+				hb(ix,iy).b = hb(ix,iy).a;
+				hb(ix,iy).a = *ib;
+			} else if( hb(ix,iy).b.z() > ib->z() ) {
+				hb(ix,iy).b = *ib;
+			}
+		}
+		
+	}
+	virtual double get_mindis_with_plane_hashes() {
+		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+		int imna=0,jmna=0,imnb=0,jmnb=0;
+		double m = 9e9;
+		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+			for(int j = 1; j <= ysize; ++j) {
+				for(int k = -1; k <= 1; ++k) {
+					if(i+k < 1 || i+k > xsize) continue;
+					for(int l = -1; l <= 1; ++l) {
+						if(j+l < 1 || j+l > ysize) continue;
+						double const xa1=ha(i,j).a.x(),ya1=ha(i,j).a.y(),xb1=hb(i+k,j+l).a.x(),yb1=hb(i+k,j+l).a.y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+						double const xa2=ha(i,j).a.x(),ya2=ha(i,j).a.y(),xb2=hb(i+k,j+l).b.x(),yb2=hb(i+k,j+l).b.y(),d22=(xa2-xb2)*(xa2-xb2)+(ya2-yb2)*(ya2-yb2); 
+						double const xa3=ha(i,j).b.x(),ya3=ha(i,j).b.y(),xb3=hb(i+k,j+l).a.x(),yb3=hb(i+k,j+l).a.y(),d23=(xa3-xb3)*(xa3-xb3)+(ya3-yb3)*(ya3-yb3);
+						double const xa4=ha(i,j).b.x(),ya4=ha(i,j).b.y(),xb4=hb(i+k,j+l).b.x(),yb4=hb(i+k,j+l).b.y(),d24=(xa4-xb4)*(xa4-xb4)+(ya4-yb4)*(ya4-yb4); 
+						if(d21<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).a.z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
+						if(d22<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).a.z()-sqrt(CLD2-d22); if(dz<m) m=dz; }
+						if(d23<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).b.z()-sqrt(CLD2-d23); if(dz<m) m=dz; }
+						if(d24<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).b.z()-sqrt(CLD2-d24); if(dz<m) m=dz; }
+					}
+				}
+			}
+		}
+		return m;
+	}
+};
+struct SICFast3 : public SICFastBase {
+	ObjexxFCL::FArray2D<Vecf3> ha,hb;
+	SICFast3() : SICFastBase() {}
+	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+		xlb = (int)floor(xmn/CLD)-2; xub = (int)ceil(xmx/CLD)+2; // one extra on each side for correctness,
+		ylb = (int)floor(ymn/CLD)-2; yub = (int)ceil(ymx/CLD)+2; // and one extra for outside atoms
+		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf3(Vecf(0,0,-9e9),Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
+		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf3(Vecf(0,0, 9e9),Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
+		// insert points into hashes
+		int const xsize = xub-xlb+1;
+		int const ysize = yub-ylb+1;
+		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+			int const ix = (int)ceil(ia->x()/CLD)-xlb;
+			int const iy = (int)ceil(ia->y()/CLD)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( ha(ix,iy).a.z() < ia->z() ) {
+				ha(ix,iy).c = ha(ix,iy).b;
+				ha(ix,iy).b = ha(ix,iy).a;
+				ha(ix,iy).a = *ia;
+			} else if( ha(ix,iy).b.z() < ia->z() ) {
+				ha(ix,iy).c = ha(ix,iy).b;
+				ha(ix,iy).b = *ia;	
+			} else if( ha(ix,iy).c.z() < ia->z() ) {
+				ha(ix,iy).c = *ia;	
+			}
+		}
+		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+			int const ix = (int)ceil(ib->x()/CLD)-xlb;
+			int const iy = (int)ceil(ib->y()/CLD)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( hb(ix,iy).a.z() > ib->z() ) {
+				hb(ix,iy).c = hb(ix,iy).b;
+				hb(ix,iy).b = hb(ix,iy).a;
+				hb(ix,iy).a = *ib;			
+			} else if( hb(ix,iy).b.z() > ib->z() ) {
+				hb(ix,iy).c = hb(ix,iy).b;
+				hb(ix,iy).b = *ib;
+			} else if( hb(ix,iy).c.z() > ib->z() ) {
+				hb(ix,iy).c = *ib;
+			}
+		}
+		
+	}
+	virtual double get_mindis_with_plane_hashes() {
+		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+		int imna=0,jmna=0,imnb=0,jmnb=0;
+		double m = 9e9;
+		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+			for(int j = 1; j <= ysize; ++j) {
+				for(int k = -1; k <= 1; ++k) {
+					if(i+k < 1 || i+k > xsize) continue;
+					for(int l = -1; l <= 1; ++l) {
+						if(j+l < 1 || j+l > ysize) continue;
+						double const xa1=ha(i,j).a.x(),ya1=ha(i,j).a.y(),xb1=hb(i+k,j+l).a.x(),yb1=hb(i+k,j+l).a.y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+						double const xa2=ha(i,j).a.x(),ya2=ha(i,j).a.y(),xb2=hb(i+k,j+l).b.x(),yb2=hb(i+k,j+l).b.y(),d22=(xa2-xb2)*(xa2-xb2)+(ya2-yb2)*(ya2-yb2); 
+						double const xa3=ha(i,j).a.x(),ya3=ha(i,j).a.y(),xb3=hb(i+k,j+l).c.x(),yb3=hb(i+k,j+l).c.y(),d23=(xa3-xb3)*(xa3-xb3)+(ya3-yb3)*(ya3-yb3);
+						double const xa4=ha(i,j).b.x(),ya4=ha(i,j).b.y(),xb4=hb(i+k,j+l).a.x(),yb4=hb(i+k,j+l).a.y(),d24=(xa4-xb4)*(xa4-xb4)+(ya4-yb4)*(ya4-yb4); 
+						double const xa5=ha(i,j).b.x(),ya5=ha(i,j).b.y(),xb5=hb(i+k,j+l).b.x(),yb5=hb(i+k,j+l).b.y(),d25=(xa5-xb5)*(xa5-xb5)+(ya5-yb5)*(ya5-yb5); 
+						double const xa6=ha(i,j).b.x(),ya6=ha(i,j).b.y(),xb6=hb(i+k,j+l).c.x(),yb6=hb(i+k,j+l).c.y(),d26=(xa6-xb6)*(xa6-xb6)+(ya6-yb6)*(ya6-yb6);
+						double const xa7=ha(i,j).c.x(),ya7=ha(i,j).c.y(),xb7=hb(i+k,j+l).a.x(),yb7=hb(i+k,j+l).a.y(),d27=(xa7-xb7)*(xa7-xb7)+(ya7-yb7)*(ya7-yb7); 
+						double const xa8=ha(i,j).c.x(),ya8=ha(i,j).c.y(),xb8=hb(i+k,j+l).b.x(),yb8=hb(i+k,j+l).b.y(),d28=(xa8-xb8)*(xa8-xb8)+(ya8-yb8)*(ya8-yb8); 
+						double const xa9=ha(i,j).c.x(),ya9=ha(i,j).c.y(),xb9=hb(i+k,j+l).c.x(),yb9=hb(i+k,j+l).c.y(),d29=(xa9-xb9)*(xa9-xb9)+(ya9-yb9)*(ya9-yb9);
+						if(d21<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).a.z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
+						if(d22<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).a.z()-sqrt(CLD2-d22); if(dz<m) m=dz; }
+						if(d23<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).a.z()-sqrt(CLD2-d23); if(dz<m) m=dz; }
+						if(d24<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).b.z()-sqrt(CLD2-d24); if(dz<m) m=dz; }
+						if(d25<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).b.z()-sqrt(CLD2-d25); if(dz<m) m=dz; }
+						if(d26<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).b.z()-sqrt(CLD2-d26); if(dz<m) m=dz; }
+						if(d27<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).c.z()-sqrt(CLD2-d27); if(dz<m) m=dz; }
+						if(d28<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).c.z()-sqrt(CLD2-d28); if(dz<m) m=dz; }
+						if(d29<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).c.z()-sqrt(CLD2-d29); if(dz<m) m=dz; }
+					}
+				}
+			}
+		}
+		return m;
+	}
+};
+struct SICFast4 : public SICFastBase {
+	ObjexxFCL::FArray2D<Vecf4> ha,hb;
+	SICFast4() : SICFastBase() {}
+	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+		xlb = (int)floor(xmn/CLD)-2; xub = (int)ceil(xmx/CLD)+2; // one extra on each side for correctness,
+		ylb = (int)floor(ymn/CLD)-2; yub = (int)ceil(ymx/CLD)+2; // and one extra for outside atoms
+		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf4(Vecf(0,0,-9e9),Vecf(0,0,-9e9),Vecf(0,0,-9e9),Vecf(0,0,-9e9)));
+		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf4(Vecf(0,0, 9e9),Vecf(0,0, 9e9),Vecf(0,0, 9e9),Vecf(0,0, 9e9)));
+		// insert points into hashes
+		int const xsize = xub-xlb+1;
+		int const ysize = yub-ylb+1;
+		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+			int const ix = (int)ceil(ia->x()/CLD)-xlb;
+			int const iy = (int)ceil(ia->y()/CLD)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( ha(ix,iy).a.z() < ia->z() ) {
+				ha(ix,iy).d = ha(ix,iy).c;
+				ha(ix,iy).c = ha(ix,iy).b;
+				ha(ix,iy).b = ha(ix,iy).a;
+				ha(ix,iy).a = *ia;
+			} else if( ha(ix,iy).b.z() < ia->z() ) {
+				ha(ix,iy).d = ha(ix,iy).c;
+				ha(ix,iy).c = ha(ix,iy).b;
+				ha(ix,iy).b = *ia;	
+			} else if( ha(ix,iy).c.z() < ia->z() ) {
+				ha(ix,iy).d = ha(ix,iy).c;
+				ha(ix,iy).c = *ia;	
+			} else if( ha(ix,iy).d.z() < ia->z() ) {
+				ha(ix,iy).d = *ia;	
+			}
+		}
+		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+			int const ix = (int)ceil(ib->x()/CLD)-xlb;
+			int const iy = (int)ceil(ib->y()/CLD)-ylb;
+			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+			if( hb(ix,iy).a.z() > ib->z() ) {
+				hb(ix,iy).d = hb(ix,iy).c;
+				hb(ix,iy).c = hb(ix,iy).b;
+				hb(ix,iy).b = hb(ix,iy).a;
+				hb(ix,iy).a = *ib;			
+			} else if( hb(ix,iy).b.z() > ib->z() ) {
+				hb(ix,iy).d = hb(ix,iy).c;
+				hb(ix,iy).c = hb(ix,iy).b;
+				hb(ix,iy).b = *ib;
+			} else if( hb(ix,iy).c.z() > ib->z() ) {
+				hb(ix,iy).d = hb(ix,iy).c;
+				hb(ix,iy).c = *ib;
+			} else if( hb(ix,iy).d.z() > ib->z() ) {
+				hb(ix,iy).d = *ib;
+			}
+		}
+		
+	}
+	virtual double get_mindis_with_plane_hashes() {
+		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
+		int imna=0,jmna=0,imnb=0,jmnb=0;
+		double m = 9e9;
+		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+			for(int j = 1; j <= ysize; ++j) {
+				for(int k = -1; k <= 1; ++k) {
+					if(i+k < 1 || i+k > xsize) continue;
+					for(int l = -1; l <= 1; ++l) {
+						if(j+l < 1 || j+l > ysize) continue;
+						double const xa1=ha(i,j).a.x(),ya1=ha(i,j).a.y(),xb1=hb(i+k,j+l).a.x(),yb1=hb(i+k,j+l).a.y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+						double const xa2=ha(i,j).a.x(),ya2=ha(i,j).a.y(),xb2=hb(i+k,j+l).b.x(),yb2=hb(i+k,j+l).b.y(),d22=(xa2-xb2)*(xa2-xb2)+(ya2-yb2)*(ya2-yb2); 
+						double const xa3=ha(i,j).a.x(),ya3=ha(i,j).a.y(),xb3=hb(i+k,j+l).c.x(),yb3=hb(i+k,j+l).c.y(),d23=(xa3-xb3)*(xa3-xb3)+(ya3-yb3)*(ya3-yb3);
+						double const xa4=ha(i,j).a.x(),ya4=ha(i,j).a.y(),xb4=hb(i+k,j+l).d.x(),yb4=hb(i+k,j+l).d.y(),d24=(xa4-xb4)*(xa4-xb4)+(ya4-yb4)*(ya4-yb4); 
+						double const xa5=ha(i,j).b.x(),ya5=ha(i,j).b.y(),xb5=hb(i+k,j+l).a.x(),yb5=hb(i+k,j+l).a.y(),d25=(xa5-xb5)*(xa5-xb5)+(ya5-yb5)*(ya5-yb5); 
+						double const xa6=ha(i,j).b.x(),ya6=ha(i,j).b.y(),xb6=hb(i+k,j+l).b.x(),yb6=hb(i+k,j+l).b.y(),d26=(xa6-xb6)*(xa6-xb6)+(ya6-yb6)*(ya6-yb6); 
+						double const xa7=ha(i,j).b.x(),ya7=ha(i,j).b.y(),xb7=hb(i+k,j+l).c.x(),yb7=hb(i+k,j+l).c.y(),d27=(xa7-xb7)*(xa7-xb7)+(ya7-yb7)*(ya7-yb7);
+						double const xa8=ha(i,j).b.x(),ya8=ha(i,j).b.y(),xb8=hb(i+k,j+l).d.x(),yb8=hb(i+k,j+l).d.y(),d28=(xa8-xb8)*(xa8-xb8)+(ya8-yb8)*(ya8-yb8); 
+						double const xa9=ha(i,j).c.x(),ya9=ha(i,j).c.y(),xb9=hb(i+k,j+l).a.x(),yb9=hb(i+k,j+l).a.y(),d29=(xa9-xb9)*(xa9-xb9)+(ya9-yb9)*(ya9-yb9); 
+						double const xa0=ha(i,j).c.x(),ya0=ha(i,j).c.y(),xb0=hb(i+k,j+l).b.x(),yb0=hb(i+k,j+l).b.y(),d20=(xa0-xb0)*(xa0-xb0)+(ya0-yb0)*(ya0-yb0); 
+						double const xaa=ha(i,j).c.x(),yaa=ha(i,j).c.y(),xba=hb(i+k,j+l).c.x(),yba=hb(i+k,j+l).c.y(),d2a=(xaa-xba)*(xaa-xba)+(yaa-yba)*(yaa-yba);
+						double const xab=ha(i,j).c.x(),yab=ha(i,j).c.y(),xbb=hb(i+k,j+l).d.x(),ybb=hb(i+k,j+l).d.y(),d2b=(xab-xbb)*(xab-xbb)+(yab-ybb)*(yab-ybb); 
+						double const xac=ha(i,j).d.x(),yac=ha(i,j).d.y(),xbc=hb(i+k,j+l).a.x(),ybc=hb(i+k,j+l).a.y(),d2c=(xac-xbc)*(xac-xbc)+(yac-ybc)*(yac-ybc); 
+						double const xad=ha(i,j).d.x(),yad=ha(i,j).d.y(),xbd=hb(i+k,j+l).b.x(),ybd=hb(i+k,j+l).b.y(),d2d=(xad-xbd)*(xad-xbd)+(yad-ybd)*(yad-ybd); 
+						double const xae=ha(i,j).d.x(),yae=ha(i,j).d.y(),xbe=hb(i+k,j+l).c.x(),ybe=hb(i+k,j+l).c.y(),d2e=(xae-xbe)*(xae-xbe)+(yae-ybe)*(yae-ybe);
+						double const xaf=ha(i,j).d.x(),yaf=ha(i,j).d.y(),xbf=hb(i+k,j+l).d.x(),ybf=hb(i+k,j+l).d.y(),d2f=(xaf-xbf)*(xaf-xbf)+(yaf-ybf)*(yaf-ybf); 
+						if(d21<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).a.z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
+						if(d22<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).a.z()-sqrt(CLD2-d22); if(dz<m) m=dz; }
+						if(d23<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).a.z()-sqrt(CLD2-d23); if(dz<m) m=dz; }
+						if(d24<CLD2){ double const dz=hb(i+k,j+l).d.z()-ha(i,j).a.z()-sqrt(CLD2-d24); if(dz<m) m=dz; }
+						if(d25<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).b.z()-sqrt(CLD2-d25); if(dz<m) m=dz; }
+						if(d26<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).b.z()-sqrt(CLD2-d26); if(dz<m) m=dz; }
+						if(d27<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).b.z()-sqrt(CLD2-d27); if(dz<m) m=dz; }
+						if(d28<CLD2){ double const dz=hb(i+k,j+l).d.z()-ha(i,j).b.z()-sqrt(CLD2-d28); if(dz<m) m=dz; }
+						if(d29<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).c.z()-sqrt(CLD2-d29); if(dz<m) m=dz; }
+						if(d20<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).c.z()-sqrt(CLD2-d20); if(dz<m) m=dz; }
+						if(d2a<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).c.z()-sqrt(CLD2-d2a); if(dz<m) m=dz; }
+						if(d2b<CLD2){ double const dz=hb(i+k,j+l).d.z()-ha(i,j).c.z()-sqrt(CLD2-d2b); if(dz<m) m=dz; }
+						if(d2c<CLD2){ double const dz=hb(i+k,j+l).a.z()-ha(i,j).d.z()-sqrt(CLD2-d2c); if(dz<m) m=dz; }
+						if(d2d<CLD2){ double const dz=hb(i+k,j+l).b.z()-ha(i,j).d.z()-sqrt(CLD2-d2d); if(dz<m) m=dz; }
+						if(d2e<CLD2){ double const dz=hb(i+k,j+l).c.z()-ha(i,j).d.z()-sqrt(CLD2-d2e); if(dz<m) m=dz; }
+						if(d2f<CLD2){ double const dz=hb(i+k,j+l).d.z()-ha(i,j).d.z()-sqrt(CLD2-d2f); if(dz<m) m=dz; }
+					}
+				}
+			}
+		}
+		return m;
 	}
 };
 int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t) {
@@ -371,20 +856,44 @@ struct TCDock {
 	ObjexxFCL::FArray3D<double> gradii,gscore;	
 	Vecf cmp1axs_,cmp2axs_;
 	double alpha_,sin_alpha_,tan_alpha_;
+	double cmp1diapos_,cmp1dianeg_,cmp2diapos_,cmp2dianeg_;
 	core::pose::Pose cmp1in_,cmp2in_;
 	vector1<Vecf> cmp1pts_,cmp1cbs_,cmp2pts_,cmp2cbs_;
 	vector1<double> cmp1wts_,cmp2wts_;
 	string cmp1name_,cmp2name_,cmp1type_,cmp2type_,symtype_;
 	int cmp1nangle_,cmp2nangle_,cmp1nsub_,cmp2nsub_;
 	std::map<string,Vecf> axismap_;
+	std::vector<SICFastBase*> sics_;
 	TCDock( string cmp1pdb, string cmp2pdb, string cmp1type, string cmp2type ) :
 		cmp1type_(cmp1type),cmp2type_(cmp2type)
 	{
+		#ifdef USE_OPENMP
+		cout << "OMP info: " << num_threads() << " " << thread_num() << endl;
+		#endif
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
 		core::chemical::ResidueTypeSetCAP crs=core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID);
 		core::import_pose::pose_from_pdb(cmp1in_,*crs,cmp1pdb);
 		core::import_pose::pose_from_pdb(cmp2in_,*crs,cmp2pdb);
+
+		cmp1diapos_=0.0,cmp1dianeg_=0.0,cmp2diapos_=0.0,cmp2dianeg_=0.0;
+		for(Size i = 1; i <= cmp1in_.n_residue(); ++i) {
+			int const natom = (cmp1in_.residue(i).name3()=="GLY") ? 4 : 5;
+			for(int j = 1; j <= natom; ++j) {
+				Vec const & v( cmp1in_.residue(i).xyz(j) );
+				cmp1diapos_ = max(cmp1diapos_, v.z());
+				cmp1dianeg_ = max(cmp1dianeg_,-v.z());
+			}
+		}
+		for(Size i = 1; i <= cmp2in_.n_residue(); ++i) {
+			int const natom = (cmp2in_.residue(i).name3()=="GLY") ? 4 : 5;
+			for(int j = 1; j <= natom; ++j) {
+				Vec const & v( cmp2in_.residue(i).xyz(j) );
+				cmp2diapos_ = max(cmp2diapos_, v.z());
+				cmp2dianeg_ = max(cmp2dianeg_,-v.z());
+			}
+		}
+		
 		if(cmp1type[1]=='2') { make_dimer   (cmp1in_); cmp1nsub_ = 2; }
 		if(cmp1type[1]=='3') { make_trimer  (cmp1in_); cmp1nsub_ = 3; }
 		if(cmp1type[1]=='4') { make_tetramer(cmp1in_); cmp1nsub_ = 4; }
@@ -394,7 +903,7 @@ struct TCDock {
 		if(cmp2type[1]=='4') { make_tetramer(cmp2in_); cmp2nsub_ = 4; }
 		if(cmp2type[1]=='5') { make_pentamer(cmp2in_); cmp2nsub_ = 5; }
 		if(option[tcdock::reverse]()) rot_pose(cmp1in_,Vecf(0,1,0),180.0);
-		
+				
 		cmp1name_ = utility::file_basename(cmp1pdb);
 		cmp2name_ = utility::file_basename(cmp2pdb);
 		if(cmp1name_.substr(cmp1name_.size()-3)==".gz" ) cmp1name_ = cmp1name_.substr(0,cmp1name_.size()-3);
@@ -434,33 +943,64 @@ struct TCDock {
 		// cmp2in_.dump_pdb("out/test2.pdb");		
 
 		for(Size i = 1; i <= cmp1in_.n_residue(); ++i) {
-			cmp1cbs_.push_back(Vecf(cmp1in_.residue(i).xyz(2)));
-			cmp1wts_.push_back(min(1.0,(double)neighbor_count(cmp1in_,i)/20.0));
+			if(cmp1in_.residue(i).has("CB")) {
+				cmp1cbs_.push_back(Vecf(cmp1in_.residue(i).xyz("CB")));
+				cmp1wts_.push_back(min(1.0,(double)neighbor_count(cmp1in_,i)/20.0));
+			}
 			int const natom = (cmp1in_.residue(i).name3()=="GLY") ? 4 : 5;
-			for(int j = 1; j <= natom; ++j) cmp1pts_.push_back(Vecf(cmp1in_.residue(i).xyz(j)));
+			for(int j = 1; j <= natom; ++j) {
+				Vec const & v( cmp1in_.residue(i).xyz(j) );
+				cmp1pts_.push_back(v);
+			}
 		}
 		for(Size i = 1; i <= cmp2in_.n_residue(); ++i) {
-			cmp2cbs_.push_back(Vecf(cmp2in_.residue(i).xyz(2)));
-			cmp2wts_.push_back(min(1.0,(double)neighbor_count(cmp2in_,i)/20.0));
+			if(cmp2in_.residue(i).has("CB")) {
+				cmp2cbs_.push_back(Vecf(cmp2in_.residue(i).xyz("CB")));
+				cmp2wts_.push_back(min(1.0,(double)neighbor_count(cmp2in_,i)/20.0));
+			}
 			int const natom = (cmp2in_.residue(i).name3()=="GLY") ? 4 : 5;
-			for(int j = 1; j <= natom; ++j) cmp2pts_.push_back(Vecf(cmp2in_.residue(i).xyz(j)));
-		}		
+			for(int j = 1; j <= natom; ++j) {
+				Vec const & v( cmp2in_.residue(i).xyz(j) );
+				cmp2pts_.push_back(v);
+			}
+		}
 		
-		cmp2mnpos_.resize(cmp2nangle_,0.0);
+		sics_.resize(num_threads());
+		for(int i = 0; i < num_threads(); ++i) sics_[i] = new SICFast1;
+		for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp1axs_,cmp2in_,cmp2cbs_,cmp2wts_,cmp2axs_);
+		
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
-		cmp2mnneg_.resize(cmp2nangle_,0.0);
+		cmp2mnpos_.resize(cmp2nangle_,0.0);
 		cmp1mnneg_.resize(cmp1nangle_,0.0);
-		cmp2dspos_.resize(cmp2nangle_,0.0);
+		cmp2mnneg_.resize(cmp2nangle_,0.0);
 		cmp1dspos_.resize(cmp1nangle_,0.0);
-		cmp2dsneg_.resize(cmp2nangle_,0.0);
+		cmp2dspos_.resize(cmp2nangle_,0.0);
 		cmp1dsneg_.resize(cmp1nangle_,0.0);
-		cmp2cbpos_.dimension(cmp2nangle_,200,0.0);
+		cmp2dsneg_.resize(cmp2nangle_,0.0);
 		cmp1cbpos_.dimension(cmp1nangle_,200,0.0);
-		cmp2cbneg_.dimension(cmp2nangle_,200,0.0);
+		cmp2cbpos_.dimension(cmp2nangle_,200,0.0);
 		cmp1cbneg_.dimension(cmp1nangle_,200,0.0);
+		cmp2cbneg_.dimension(cmp2nangle_,200,0.0);
 		gradii.dimension(cmp2nangle_,cmp1nangle_,360,-9e9);
 		gscore.dimension(cmp2nangle_,cmp1nangle_,360,-9e9);
 		
+	}
+	virtual ~TCDock() {
+		for(int i = 0; i < num_threads(); ++i) delete sics_[i];		
+	}
+	int num_threads() {
+		#ifdef USE_OPENMP
+			return omp_get_max_threads();
+		#else
+			return 1;
+		#endif
+	}
+	int thread_num() {
+		#ifdef USE_OPENMP
+			return omp_get_thread_num();
+		#else
+			return 0;
+		#endif
 	}
 	Vecf swap_axis(vector1<Vecf> & pts,string type) {
 		Vecf other_axis;
@@ -497,16 +1037,14 @@ struct TCDock {
 				#endif
 				for(int icmp = 0; icmp < (i12?cmp1nangle_:cmp2nangle_); icmp+=1) {
 					vector1<Vecf> ptsA,cbA;
-					if(i12) get_cmp1(icmp,ptsA,cbA);
-					else    get_cmp2(icmp,ptsA,cbA);
+					if(i12) get_cmp1(icmp,ptsA,cbA); else get_cmp2(icmp,ptsA,cbA);
 					vector1<Vecf> ptsB(ptsA),cbB(cbA);
-					assert( cbA.size() == cmpwts.size() );
-					assert( cbB.size() == cmpwts.size() );
+					assert( cbA.size() == cmpwts.size() && cbB.size() == cmpwts.size() );
 					/*              */ swap_axis(ptsB,i12?cmp1type_:cmp2type_);
 					Vecf const axis2 = swap_axis( cbB,i12?cmp1type_:cmp2type_);
 					Vecf const sicaxis = ipn ? (axis2-axis).normalized() : (axis-axis2).normalized();
 					double score = 0;
-					double const d = SICFast(cmpwts,cmpwts).slide_into_contact(ptsA,ptsB,cbA,cbB,sicaxis,score);
+					double const d = sics_[thread_num()]->slide_into_contact(ptsA,ptsB,cbA,cbB,sicaxis,score,icmp,icmp,axis,axis2,i12,i12);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmppos! "+ObjexxFCL::string_of(icmp));
 					(ipn?cmpmnpos:cmpmnneg)[icmp+1] = (ipn?-1.0:1.0) * d/2.0/sin( angle_radians(axis2,Vecf(0,0,0),axis)/2.0 );
 					(ipn?cmpdspos:cmpdsneg)[icmp+1] = (ipn?-1.0:1.0) * d;
@@ -558,7 +1096,7 @@ struct TCDock {
 		for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) (*i) = R*(*i);
 		for(vector1<Vecf>::iterator i = cbs.begin(); i != cbs.end(); ++i) (*i) = R*(*i);
 	}
-	void get_cmp2(double acmp2, vector1<Vecf> & pts, vector1<Vecf> & cbs ) {
+	void get_cmp2(double acmp2, vector1<Vecf> & pts, vector1<Vecf> & cbs ){
 		Matf R = rotation_matrix_degrees( cmp2axs_, acmp2 );
 		pts = cmp2pts_;
 		cbs = cmp2cbs_;		
@@ -633,6 +1171,17 @@ struct TCDock {
 			core::pose::symmetry::make_symmetric_pose(symm);
 		}
 		core::io::pdb::dump_pdb(symm,option[out::file::o]()+"/"+fname);
+		
+		for(int ia1 = -1; ia1 < 2; ++ia1){
+			for(int ia2 = -1; ia2 < 2; ++ia2){
+				for(int id1 = -1; id1 < 2; ++id1){
+					for(int id2 = -1; id2 < 2; ++id2){
+						;//TODO
+					}
+				}
+			}
+		}
+		
 	}
 	double __dock_base__(int icmp2,int icmp1,int iori,double&dori,double&dcmp2,double&dcmp1,double&icbc,double&cmp2cbc,double&cmp1cbc,bool cache=true){
 		if(!cache || gradii(icmp2+1,icmp1+1,iori+1)==-9e9 ) {
@@ -643,7 +1192,7 @@ struct TCDock {
 			Vecf sicaxis = rotation_matrix_degrees( cmp1axs_.cross(cmp2axs_) ,(double)iori) * (cmp1axs_+cmp2axs_).normalized();
 			// cerr << cmp1axs_.cross(cmp2axs_) << endl;
 			// utility_exit_with_message("arstio");
-			double const d = SICFast(cmp2wts_,cmp1wts_).slide_into_contact(pb,pa,cbb,cba,sicaxis,icbc);
+			double const d = sics_[thread_num()]->slide_into_contact(pb,pa,cbb,cba,sicaxis,icbc,icmp2,icmp1,cmp2axs_,cmp1axs_,false,true);
 			dori = d;
 			if(d > 0) utility_exit_with_message("ZERO!!");
 			double const theta=(double)iori;
@@ -744,25 +1293,116 @@ struct TCDock {
 		double td = min_termini_dis(d1,a1,d2,a2);
 		return option[tcdock::termini_weight]() * max(0.0,option[tcdock::termini_cutoff]()-td);
 	}
+	void justone(int icmp1, int icmp2, int iori) {
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		int ilm=0;
+		LMAX const h(0,0,icmp1,icmp2,iori);
+		double d,dcmp2,dcmp1,icbc,cmp1cbc,cmp2cbc;
+		int N = option[tcdock::peak_grid_size]();
+		ObjexxFCL::FArray3D<double> grid(2*N+1,2*N+1,2*N+1,0.0);
+		#ifdef USE_OPENMP
+		#pragma omp parallel for schedule(dynamic,1)
+		#endif			
+		for(int di = -N; di <= N; ++di) {
+			for(int dj = -N; dj <= N; ++dj) {
+				for(int dk = -N; dk <= N; ++dk) {
+					if( Vecf(di,dj,dk).length() > (double)N+0.5 ) {
+						grid(di+N+1,dj+N+1,dk+N+1) = -9e9;
+					} else {
+						int i = (h.icmp2+di+gscore.size1())%gscore.size1();
+						int j = (h.icmp1+dj+gscore.size2())%gscore.size2();
+						int k = (h.iori +dk+gscore.size3())%gscore.size3();
+						dock_no_score(i,j,k);
+						grid(di+N+1,dj+N+1,dk+N+1) = gradii(i+1,j+1,k+1);
+					}
+				}
+			}
+		}
+		vector1<double> ffhist(25,0);
+		// #ifdef USE_OPENMP
+		// #pragma omp parallel for schedule(dynamic,1)
+		// #endif			
+		for(int ifh = 0; ifh < ffhist.size(); ++ifh) {
+			flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
+			double count = 0;
+			int Nedge = option[tcdock::peak_grid_smooth]();
+			ObjexxFCL::FArray3D<double> grid2(grid);
+			for(int i = 1+Nedge; i <= grid.size1()-Nedge; ++i) {
+				for(int j = 1+Nedge; j <= grid.size2()-Nedge; ++j) {
+					for(int k = 1+Nedge; k <= grid.size3()-Nedge; ++k) {
+						if( grid(i,j,k)!=grid(N+1,N+1,N+1) ) continue;
+						int ninside = 0;
+						for(int di = -Nedge; di <= Nedge; ++di) {
+							for(int dj = -Nedge; dj <= Nedge; ++dj) {
+								for(int dk = -Nedge; dk <= Nedge; ++dk) {
+									ninside += grid(i+di,j+dj,k+dk)==grid(N+1,N+1,N+1);
+								}
+							}
+						}
+						double w = max(0.0, 1.0 - Vecf(N+1-i,N+1-j,N+1-k).length() / (double)N );
+						count += w*((double)ninside/(double)((2*Nedge+1)*(2*Nedge+1)*(2*Nedge+1)));
+						// cerr << F(7,3,((double)ninside/(double)((2*Nedge+1)*(2*Nedge+1)*(2*Nedge+1)))) << " " << F(5,3,w) << " " << I(2,ninside) << endl;
+						// grid2(i,j,k) += allgood;
+					}
+				}
+			}
+			ffhist[ifh+1] = pow(count,1.0/3.0);
+			vector1<int> dumpg = option[tcdock::dump_peak_grids]();
+			#ifdef USE_OPENMP
+			#pragma omp critical
+			#endif
+			if( std::find(dumpg.begin(),dumpg.end(),ilm)!=dumpg.end() ) {
+				utility::io::ozstream o(("out/grid_"+ObjexxFCL::string_of(ilm)+"_"+ObjexxFCL::string_of(ifh)+".dat.gz"));
+				for(int i = 1; i <= grid.size1(); ++i) {
+					for(int j = 1; j <= grid.size2(); ++j) {
+						for(int k = 1; k <= grid.size3(); ++k) {
+							o << grid2(i,j,k) << endl;
+						}
+					}
+				}
+				o.close();
+				dump_pdb(h.icmp2,h.icmp1,h.iori,"test_"+ObjexxFCL::string_of(ilm)+".pdb");					
+			}
+		}
+		double score = dock_get_geom(h.icmp2,h.icmp1,h.iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
+		string fn = cmp1name_+"_"+cmp2name_+"_"+(option[tcdock::reverse]()?"R":"F")+"_"+ObjexxFCL::string_of(ilm);
+		cout << "| " << fn << ((ilm<10)?"  ":" ")
+              << F(8,3,score) << " " 
+		     << F(6,2,2*max(fabs(dcmp1)+(dcmp1>0?cmp1diapos_:cmp1dianeg_),fabs(dcmp2)+(dcmp2>0?cmp2diapos_:cmp2dianeg_))) << " "
+		     << F(6,2, min_termini_dis(dcmp1,h.icmp1,dcmp2,h.icmp2) ) << " "
+              << F(7,3,icbc) << " " 
+		     << F(6,2,cmp1cbc) << " " 
+		     << F(6,2,cmp2cbc) << " " 
+		     << I(4,cmp1in_.n_residue()) << " " 
+		     << I(3,h.icmp1) << " " 
+		     << F(8,3,dcmp1) << " "
+		     << I(4,cmp2in_.n_residue()) << " " 
+		     << I(3,h.icmp2) << " " 
+		     << F(8,3,dcmp2) << " "
+			 << I(3,h.iori);
+		for(int ifh = 1; ifh <= ffhist.size(); ++ifh) {
+			cout << " " << F(5,2,ffhist[ifh]);
+		}
+		cout << endl;
+		if(option[tcdock::dump_pdb]()) dump_pdb(h.icmp2,h.icmp1,h.iori,fn+".pdb.gz");
+		
+	}
 	void run() {
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
 		using namespace core::id;
 		using numeric::conversions::radians;
-		double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
-		double const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
+		double const CONTACT_D  = basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
+		double const CLASH_D    = basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
 		double const CONTACT_D2 = sqr(CONTACT_D);
-		double const CLASH_D2	= sqr(CLASH_D);
+		double const CLASH_D2   = sqr(CLASH_D);
 		Pose const cmp1init(cmp1in_);
 		Pose const cmp2init(cmp2in_);
-		double max1=0;
-		precompute_intra();
-		// dump_onecomp();
-		// cout << "greetings from thread: " << omp_get_thread_num() << " of " << omp_get_num_threads() << endl
-		
-		
-		
-		{ // 3deg loop 
+		{                                                         // 3deg loop 
+			double max1=0;
+			// dump_onecomp();
+			precompute_intra();
 			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl; 
 			double max_score = 0;
 			for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
@@ -796,8 +1436,6 @@ struct TCDock {
 			if(max_score<0.00001) utility_exit_with_message("cmp1 or cmp2 too large, no contacts!");
 			cout << "MAX3 " << max_score << endl;
 		}
-		
-		
 		utility::vector1<vector1<int> > cmp2lmx,cmp1lmx,orilmx; { // set up work for main loop 2 
 			double topX_3 = 0;
 			vector1<double> cbtmp;
@@ -821,7 +1459,7 @@ struct TCDock {
 				}
 			}
 		}
-		{ //main loop 2
+		{                                                         //main loop 2
 			#ifdef USE_OPENMP
 			#pragma omp parallel for schedule(dynamic,1)
 			#endif
@@ -839,8 +1477,7 @@ struct TCDock {
 				}
 			}
 		}		
-		vector1<LMAX> local_maxima;
-		{                        // get local radial disp maxima (minima, really)     
+		vector1<LMAX> local_maxima;	{                             // get local radial disp maxima (minima, really)     
 			double highscore = -9e9;
 			for(int i = 1; i <= gradii.size1(); ++i){
 				for(int j = 1; j <= gradii.size2(); ++j){
@@ -871,12 +1508,12 @@ struct TCDock {
 			}
 			std::sort(local_maxima.begin(),local_maxima.end(),compareLMAX);
 			cout << "N maxima: " << local_maxima.size() << ", best score: " << highscore << endl;					
+			string nc1=cmp1type_.substr(1,1), nc2=cmp2type_.substr(1,1);
+			cout << "                          tag     score   diam   tdis   inter    ";
+			cout << "sc"+nc1+"    sc"+nc2+"  nr"+nc1+"  a"+nc1+"       r"+nc1+"  nr"+nc2+"  a"+nc2+"       r"+nc2+" ori";
+			cout << "  v0.2  v0.4  v0.6  v0.8  v1.0  v1.2  v1.4  v1.6  v1.8  v2.0";
+			cout << "  v2.2  v2.4  v2.6  v2.8  v3.0  v3.2  v3.4  v3.6  v3.8  v4.0  v4.2  v4.4  v4.6  v4.8  v5.0" << endl;
 		}
-		string nc1=cmp1type_.substr(1,1), nc2=cmp2type_.substr(1,1);
-		cout << "                          tag     score   diam   tdis   inter    ";
-		cout << "sc"+nc1+"    sc"+nc2+"  nr"+nc1+"  a"+nc1+"       r"+nc1+"  nr"+nc2+"  a"+nc2+"       r"+nc2+" ori";
-		cout << "  v0.2  v0.4  v0.6  v0.8  v1.0  v1.2  v1.4  v1.6  v1.8  v2.0";
-		cout << "  v2.2  v2.4  v2.6  v2.8  v3.0  v3.2  v3.4  v3.6  v3.8  v4.0  v4.2  v4.4  v4.6  v4.8  v5.0" << endl;
 		for(Size ilm = 1; ilm <= min(local_maxima.size(),(Size)option[tcdock::topx]()); ++ilm) { // dump top hit info 
 			LMAX const & h(local_maxima[ilm]);
 			double d,dcmp2,dcmp1,icbc,cmp1cbc,cmp2cbc;
@@ -929,7 +1566,7 @@ struct TCDock {
 					}
 				}
 				ffhist[ifh+1] = pow(count,1.0/3.0);
-				vector1<int> dumpg = option[tcdock::dump_grids]();
+				vector1<int> dumpg = option[tcdock::dump_peak_grids]();
 				#ifdef USE_OPENMP
 				#pragma omp critical
 				#endif
@@ -949,19 +1586,19 @@ struct TCDock {
 			double score = dock_get_geom(h.icmp2,h.icmp1,h.iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
 			string fn = cmp1name_+"_"+cmp2name_+"_"+(option[tcdock::reverse]()?"R":"F")+"_"+ObjexxFCL::string_of(ilm);
 			cout << "| " << fn << ((ilm<10)?"  ":" ")
-                   << F(8,3,score) << " " 
-			          << F(6,2,max(fabs(dcmp1),fabs(dcmp2))) << " "
-			          << F(6,2, min_termini_dis(dcmp1,h.icmp1,dcmp2,h.icmp2) ) << " "
-                   << F(7,3,icbc) << " " 
-			          << F(6,2,cmp1cbc) << " " 
-			          << F(6,2,cmp2cbc) << " " 
-			          << I(4,cmp1in_.n_residue()) << " " 
-			          << I(3,h.icmp1) << " " 
-			          << F(8,3,dcmp1) << " "
-			          << I(4,cmp2in_.n_residue()) << " " 
-			          << I(3,h.icmp2) << " " 
-			          << F(8,3,dcmp2) << " "
-						 << I(3,h.iori);
+                 << F(8,3,score) << " " 
+			     << F(6,2,2*max(fabs(dcmp1)+(dcmp1>0?cmp1diapos_:cmp1dianeg_),fabs(dcmp2)+(dcmp2>0?cmp2diapos_:cmp2dianeg_))) << " "
+			     << F(6,2, min_termini_dis(dcmp1,h.icmp1,dcmp2,h.icmp2) ) << " "
+                 << F(7,3,icbc) << " " 
+			     << F(6,2,cmp1cbc) << " " 
+			     << F(6,2,cmp2cbc) << " " 
+			     << I(4,cmp1in_.n_residue()) << " " 
+			     << I(3,h.icmp1) << " " 
+			     << F(8,3,dcmp1) << " "
+			     << I(4,cmp2in_.n_residue()) << " " 
+			     << I(3,h.icmp2) << " " 
+			     << F(8,3,dcmp2) << " "
+				 << I(3,h.iori);
 			for(int ifh = 1; ifh <= ffhist.size(); ++ifh) {
 				cout << " " << F(5,2,ffhist[ifh]);
 			}
@@ -973,14 +1610,7 @@ struct TCDock {
 };
 int main (int argc, char *argv[]) {
 	register_options();
-	devel::init(argc,argv);
-	
-	// static std::string const chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$\%^&.<>?]{}|-_\\~`\"')=" );
-	// for(int i = 0; i < chr_chains.size(); ++i){
-	// 	std::cerr << i << " " << chr_chains[i] << std::endl;
-	// }
-	// utility_exit_with_message(chr_chains);
-	
+	devel::init(argc,argv);	
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	vector1<string> compkind;
@@ -999,13 +1629,18 @@ int main (int argc, char *argv[]) {
 	for(Size i = 1; i <= compfiles[1].size(); ++i) {
 		for(Size j = 1; j <= compfiles[2].size(); ++j) {
 			TCDock tcd(compfiles[1][i],compfiles[2][i],compkind[1],compkind[2]);
-			tcd.run();
+			if(option[tcdock::justone].user()) {
+				int icm1 = option[tcdock::justone]()[1];
+				int icm2 = option[tcdock::justone]()[2];
+				int iori = option[tcdock::justone]()[3];
+				tcd.justone(icm2,icm1,iori);
+			} else {
+				tcd.run();
+			}
 		}
 	}
-	cout << "DONE testing 1comp" << endl;
+	// cout << "DONE testing: nothing really" << endl;
 }
-
-
 
 
 

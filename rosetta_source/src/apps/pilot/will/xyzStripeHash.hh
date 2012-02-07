@@ -13,7 +13,7 @@ public:
 	//typedef unsigned int uint;
 	typedef unsigned short ushort;
   typedef struct { ushort x,y; } ushort2;
-private:
+public:
   T const grid_size_,grid_size2_;
   int natom_;
   float4  const * grid_atoms_;
@@ -137,7 +137,7 @@ public:
     if(grid_stripe_) delete grid_stripe_;
   }
 
-  bool sanity_check() {
+  bool sanity_check() const {
 		using namespace ObjexxFCL::fmt;
     for(int ix = 0; ix < xdim_; ++ix) {
       for(int iy = 0; iy < ydim_; ++iy) {
@@ -164,7 +164,7 @@ public:
     return true;
   }
 
-  inline int const nbcount( float x, float y, float z ) {
+  inline int const nbcount( float x, float y, float z ) const {
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
 		if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff 
     int count = 0;
@@ -230,14 +230,14 @@ public:
     return e;
   }
 
-  inline float4  const * grid_atoms() const { return grid_atoms_; }
-  inline ushort2 const * grid_stripe() const { return grid_stripe_; }
-  inline int const natom() const { return natom_; }
-  inline int const xdim () const { return  xdim_; }
-  inline int const ydim () const { return  ydim_; }
-  inline int const zdim () const { return  zdim_; }
-  inline float const & grid_size() const { return  grid_size_; }
-	inline const numeric::xyzVector<numeric::Real> translation() { return translation_; }
+	inline float4  const * grid_atoms() const { return grid_atoms_; }
+	inline ushort2 const * grid_stripe() const { return grid_stripe_; }
+	inline int const natom() const { return natom_; }
+	inline int const xdim () const { return  xdim_; }
+	inline int const ydim () const { return  ydim_; }
+	inline int const zdim () const { return  zdim_; }
+	inline float const & grid_size() const { return  grid_size_; }
+	inline const numeric::xyzVector<numeric::Real> translation() const { return translation_; }
 
 private:
 	xyzStripeHash();
