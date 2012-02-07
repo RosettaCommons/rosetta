@@ -251,7 +251,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 
 				for(Size atom_num2=1; atom_num2 <= res2.natoms(); ++atom_num2){
 					string const elem_name2(res2.type().atom_type(atom_num2).element());
-					map< string const, Size>::const_iterator i_elem2(
+					map< string, Size>::const_iterator i_elem2(
 						relevant_elements_.find(elem_name2));
 					if(i_elem2 == relevant_elements_.end()) continue;
 
@@ -274,7 +274,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 
 
 	for(Size i_atom1=1; i_atom1 <= relevant_atom_names_.size(); ++i_atom1){
-		for(map<string const, Size>::const_iterator
+		for(map<string, Size>::const_iterator
 					i_elem2=relevant_elements_.begin(),
 					ie_elem2=relevant_elements_.end(); i_elem2 != ie_elem2; ++i_elem2){
 			for(Size dist_bin=1; dist_bin <= nbins_; ++dist_bin){

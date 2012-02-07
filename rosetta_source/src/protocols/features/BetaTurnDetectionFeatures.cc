@@ -267,15 +267,15 @@ string BetaTurnDetectionFeatures::determine_ramachandran_hash( Real phi, Real ps
 	// This method uses extremely crude partitioning of Ramachandran space.  
 	// THESE DEFINITIONS ARE TEMPORARY AND WILL BE UPDATED SOON.
 	string peptide_bond_isomerization;
-	if ( omega > -90 and omega <= 90 )
+	if ( omega > -90 && omega <= 90 )
 	{
 		peptide_bond_isomerization = "Cis";
 	}
 	
 	
-    if ( phi > 0. and phi <= 180. )
+    if ( phi > 0. && phi <= 180. )
 	{
-        if ( psi > -50. and psi <= 100. )
+        if ( psi > -50. && psi <= 100. )
 		{
             return "L" + peptide_bond_isomerization;
 		}
@@ -286,7 +286,7 @@ string BetaTurnDetectionFeatures::determine_ramachandran_hash( Real phi, Real ps
 	}
 	else 
 	{
-		if ( psi > -100. and psi <= 50. )
+		if ( psi > -100. && psi <= 50. )
 		{
 			return "A" + peptide_bond_isomerization;
 		}
