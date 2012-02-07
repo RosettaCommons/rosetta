@@ -15,6 +15,7 @@
 // Rosetta headers
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
+#include <core/types.hh>
 
 // ObjexxFCL headers
 
@@ -84,6 +85,26 @@ operator <<(
 )
 {
 	os << ScoreTypeManager::name_from_score_type( score_type );
+	return os;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+/// @brief output operator for ScoreTypes list type
+std::ostream &
+operator <<(
+	std::ostream & os,
+	ScoreTypes const & score_types
+)
+{
+	for (core::Size ii(1); ii <= score_types.size(); ++ii) {
+		if (ii == 1) {
+			os << "( ";
+		} else {
+			os << ", ";
+		}
+		os << score_types[ii];
+	}
+	os << " )";
 	return os;
 }
 

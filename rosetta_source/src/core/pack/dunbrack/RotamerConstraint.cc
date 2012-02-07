@@ -54,7 +54,7 @@ void load_unboundrot(pose::Pose & pose)
 	using namespace core::pose;
 	if( !option[ OptionKeys::packing::unboundrot ].active() ) return;
 
-	static utility::vector1< PoseCOP > unboundrot_poses;
+	static core::pose::PoseCOPs unboundrot_poses;
 	if( unboundrot_poses.empty() ) {
 		for(Size i = 1; i <= option[ OptionKeys::packing::unboundrot ]().size(); ++i) {
 			std::string filename = option[ OptionKeys::packing::unboundrot ]()[i].name();
@@ -66,6 +66,11 @@ void load_unboundrot(pose::Pose & pose)
 		}
 	}
 
+	load_unboundrot(pose, unboundrot_poses);
+}
+
+void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_poses)
+{
 	if( unboundrot_poses.empty() ) return; // guaranteed at least one pose now
 
 	using namespace std;
@@ -93,9 +98,7 @@ void load_unboundrot(pose::Pose & pose)
 			}
 		}
 	}
-
 }
-
 
 RotamerConstraint::RotamerConstraint(
 	pose::Pose const & pose,
@@ -116,15 +119,8 @@ RotamerConstraint::RotamerConstraint(
 		atom_ids_.push_back(AtomID( i, seqpos_ )); // atom, rsd
 	}
 
-	// Depends on neighbors' backbone, too, due to phi,psi dependence
-	// This could cause problems if neighbor residues went away / mutated radically?
-	for(Size conn = 1, conn_end = rsd.n_residue_connections(); conn <= conn_end; ++conn) {
-		Size const nbr_seqpos( rsd.connected_residue_at_resconn(conn) );
-		conformation::Residue const & nbr( pose.residue(nbr_seqpos) );
-		for(Size i = 1, i_end = nbr.type().last_backbone_atom(); i <= i_end; ++i) {
-			atom_ids_.push_back(AtomID( i, nbr_seqpos )); // atom, rsd
-		}
-	}
+	// Note: Although the Dunbrack score depends on phi & psi, it shouldn't need to depend on atoms of other residues,
+	// as the phi and psi angles are internalized within a residue to speed things.
 
 	add_residue( rsd );
 }

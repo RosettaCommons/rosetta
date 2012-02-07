@@ -31,6 +31,7 @@ typedef utility::pointer::access_ptr< Pose > PoseAP;
 typedef utility::pointer::access_ptr< Pose const > PoseCAP;
 
 typedef utility::vector1< PoseOP > PoseOPs;
+typedef utility::vector1< PoseCOP > PoseCOPs;
 
 } // namespace pose
 } // namespace core

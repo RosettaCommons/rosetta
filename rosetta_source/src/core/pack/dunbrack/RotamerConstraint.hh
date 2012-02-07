@@ -39,6 +39,10 @@ namespace dunbrack {
 /// the -unboundrot command line flag.
 void load_unboundrot(pose::Pose & pose);
 
+/// @brief Convenience function adds constraints to the supplied pose based on
+/// the list of provided poses.
+void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_poses);
+
 
 ///@brief This class favors a particular rotamer at a particular position by reducing its Dunbrack energy.
 ///

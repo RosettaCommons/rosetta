@@ -440,6 +440,9 @@ std::istream & operator >>( std::istream & is, ScoreType & t );
 	/// @brief output operator for ScoreType enum type
 std::ostream & operator <<( std::ostream & os, ScoreType const & t );
 
+	/// @brief output operator for ScoreTypes list
+std::ostream & operator <<( std::ostream & os, ScoreTypes const & score_types );
+
 } // namespace scoring
 } // namespace core
 
