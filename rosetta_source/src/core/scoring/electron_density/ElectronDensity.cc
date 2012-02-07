@@ -223,6 +223,146 @@ ElectronDensity::ElectronDensity() {
 }
 
 
+// "rho_calc" constructor
+ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, core::Real reso, core::Real apix ) {
+	core::Size nposes = poses.size();
+	this->reso = reso;
+
+	//1  get bounds
+	numeric::xyzVector< core::Real > d_min(0,0,0), d_max(0,0,0);
+	bool is_set = false;
+	const core::Real FLUFF = 10.0; // add a bounding box
+	for (int n=1; n<=nposes; ++n) {
+		core::pose::Pose &pose = *(poses[n]);
+		int nres = pose.total_residue();
+		core::Real nCoM=0;
+
+		for (int i=1 ; i<=nres; ++i) {
+			conformation::Residue const &rsd_i (pose.residue(i));
+			if ( (rsd_i.aa() == core::chemical::aa_vrt) || (scoring_mask_.find(i) != scoring_mask_.end()) ) continue;
+			int nheavyatoms = rsd_i.nheavyatoms();
+			for (int j=1 ; j<=nheavyatoms; ++j) {
+				numeric::xyzVector< core::Real > const &xyz_ij = rsd_i.atom(j).xyz();
+				if (is_missing_density( xyz_ij )) continue;
+				if (!is_set) {
+					d_min = d_max = xyz_ij;
+					is_set = true;
+				}
+				d_min[0] = std::min(d_min[0],xyz_ij[0]); d_min[1] = std::min(d_min[1],xyz_ij[1]); d_min[2] = std::min(d_min[2],xyz_ij[2]);
+				d_max[0] = std::max(d_max[0],xyz_ij[0]); d_max[1] = std::max(d_max[1],xyz_ij[1]); d_max[2] = std::max(d_max[2],xyz_ij[2]);
+			}
+		}
+	}
+
+	// figure out our grid
+	numeric::xyzVector< core::Real > extent = ( (d_max - d_min) + 2*FLUFF)/apix;
+	grid[0] = findSampling5(extent[0], 2);
+	grid[1] = findSampling5(extent[1], 2);
+	grid[2] = findSampling5(extent[2], 2);
+	numeric::xyzVector< core::Real > real_apix;
+	real_apix[0] = ( (d_max[0] - d_min[0]) + 2*FLUFF) / ((core::Real)grid[0]);
+	real_apix[1] = ( (d_max[1] - d_min[1]) + 2*FLUFF) / ((core::Real)grid[1]);
+	real_apix[2] = ( (d_max[2] - d_min[2]) + 2*FLUFF) / ((core::Real)grid[2]);
+
+	// make fake crystal data
+	cellAngles[0] = cellAngles[1] = cellAngles[2] = 90;
+	cellDimensions[0] = grid[0]*real_apix[0];
+	cellDimensions[1] = grid[1]*real_apix[1];
+	cellDimensions[2] = grid[2]*real_apix[2];
+	computeCrystParams();
+	TR << "    celldim: " << cellDimensions[0] << " x " << cellDimensions[1] << " x " << cellDimensions[2] << std::endl;
+	TR << " cellangles: " << cellAngles[0] << " x " << cellAngles[1] << " x " << cellAngles[2] << std::endl;
+
+	// find the origin
+	numeric::xyzVector< core::Real > frac_dmin = c2f*(d_min - FLUFF);
+	origin[0] = std::floor(frac_dmin[0]*grid[0]);
+	origin[1] = std::floor(frac_dmin[1]*grid[1]);
+	origin[2] = std::floor(frac_dmin[2]*grid[2]);
+	efforigin = origin;
+
+	// atom_mask
+	OneGaussianScattering cscat = get_A( "C" );
+	core::Real mask_min = 2.0 * sqrt( 2.0 / cscat.k(PattersonB,reso/2) ); //?
+	TR.Warning << "ATOM_MASK: " << mask_min << std::endl;
+	ATOM_MASK = mask_min;
+
+	// 2 rho_calc
+	density.dimension(grid[0],grid[1],grid[2]);
+	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) density[i]=0.0;
+	numeric::xyzVector< core::Real > cartX, fracX;
+	numeric::xyzVector< core::Real > atm_i, atm_j, del_ij;
+	const core::Real ATOM_MASK_PADDING = 1.5;
+	for (int n=1; n<=nposes; ++n) {
+		core::pose::Pose &pose = *(poses[n]);
+		int nres = pose.total_residue();
+		for (int i=1 ; i<=nres; ++i) {
+			conformation::Residue const &rsd_i (pose.residue(i));
+	
+			// skip vrts & masked reses
+			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+			if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
+			int nheavyatoms = rsd_i.nheavyatoms();
+			for (int j=1 ; j<=nheavyatoms; ++j) {
+				conformation::Atom const &atom_i( rsd_i.atom(j) );
+				chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+				std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+				OneGaussianScattering sig_j = get_A( elt_i );
+				core::Real k = sig_j.k( PattersonB, std::max( apix, reso/2 ) );
+				core::Real C = sig_j.C( k );
+
+				if ( is_missing_density( atom_i.xyz() ) ) continue;
+				if ( C < 1e-6 ) continue;
+	
+				cartX = atom_i.xyz() - getTransform();
+				fracX = c2f*cartX;
+				atm_i[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
+				atm_i[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
+				atm_i[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
+	
+				for (int z=1; z<=density.u3(); ++z) {
+					atm_j[2] = z;
+					del_ij[2] = (atm_i[2] - atm_j[2]) / grid[2];
+					// wrap-around??
+					if (del_ij[2] > 0.5) del_ij[2]-=1.0;
+					if (del_ij[2] < -0.5) del_ij[2]+=1.0;
+	
+					del_ij[0] = del_ij[1] = 0.0;
+					if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
+	
+					for (int y=1; y<=density.u2(); ++y) {
+						atm_j[1] = y;
+	
+						// early exit?
+						del_ij[1] = (atm_i[1] - atm_j[1]) / grid[1] ;
+						// wrap-around??
+						if (del_ij[1] > 0.5) del_ij[1]-=1.0;
+						if (del_ij[1] < -0.5) del_ij[1]+=1.0;
+						del_ij[0] = 0.0;
+						if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
+	
+						for (int x=1; x<=density.u1(); ++x) {
+							atm_j[0] = x;
+	
+							// early exit?
+							del_ij[0] = (atm_i[0] - atm_j[0]) / grid[0];
+							// wrap-around??
+							if (del_ij[0] > 0.5) del_ij[0]-=1.0;
+							if (del_ij[0] < -0.5) del_ij[0]+=1.0;
+	
+							numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
+							core::Real d2 = (cart_del_ij).length_squared();
+	
+							if (d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) {
+								core::Real atm = C*exp(-k*d2);
+								density(x,y,z) += atm;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
 
 // gradient of density
 numeric::xyzVector<core::Real> ElectronDensity::dens_grad (
@@ -775,10 +915,6 @@ core::Real ElectronDensity::matchPose(
 	numeric::xyzVector< core::Real > cartX, fracX;
 	numeric::xyzVector< core::Real > atm_i, atm_j, del_ij;
 
-	// compute RHO_C --> a gaussian at each CA
-	//core::Real k=square(M_PI/reso);
-	//core::Real C=pow(k/M_PI,1.5);
-
 	core::Real SC_scaling = basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ]();
 
 	// per-atom derivs
@@ -1283,7 +1419,7 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 void ElectronDensity::setup_patterson_first_time(core::pose::Pose const &pose) {
 	bool is_set=false;
 	int nres = pose.total_residue(); //reses.size();
-	static const core::Real FLUFF = 10.0;
+	const core::Real FLUFF = 10.0;
 	numeric::xyzVector< core::Real > CoM(0,0,0);
 	core::Real nCoM=0;
 
@@ -3694,7 +3830,11 @@ bool ElectronDensity::writeMRC(std::string mapfilename) {
 	outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
 
 	// origin
- 	outx.write(reinterpret_cast <char*>(&origin[0]), sizeof(int)*3);
+	int ori_int[3];
+	ori_int[0] = (int)std::floor( origin[0] );
+	ori_int[1] = (int)std::floor( origin[1] );
+	ori_int[2] = (int)std::floor( origin[2] );
+ 	outx.write(reinterpret_cast <char*>(ori_int), sizeof(int)*3);
 
  	// grid
  	outx.write(reinterpret_cast <char*>(&grid[0]), sizeof(int)*3);
@@ -3718,11 +3858,20 @@ bool ElectronDensity::writeMRC(std::string mapfilename) {
 	// symmops (to do!)
 	outx.write(reinterpret_cast <char*>(&symBytes), sizeof(int));
 
-	// 112 bytes junk
+	// 104 bytes junk
 	buff_i = 0;
-	for (int i=0; i<28; ++i) {
+	for (int i=0; i<25; ++i) {
 		outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
 	}
+
+	// alt origin (MRC)
+	float ori_float[3];
+	numeric::xyzVector<core::Real> origin_realspace;
+	idx2cart ( numeric::xyzVector<core::Real>(1,1,1), origin_realspace );
+	ori_float[0] = (float)( origin_realspace[0] );
+	ori_float[1] = (float)( origin_realspace[1] );
+	ori_float[2] = (float)( origin_realspace[2] );
+ 	outx.write(reinterpret_cast <char*>(ori_float), sizeof(float)*3);
 
 	// Write "MAP" at byte 208, indicating a CCP4 file.
 	char buff_s[80]; strcpy(buff_s, "MAP DD");

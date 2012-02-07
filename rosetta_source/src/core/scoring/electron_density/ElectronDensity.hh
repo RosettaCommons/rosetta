@@ -50,10 +50,10 @@ public:
 	/// @brief constructor
 	ElectronDensity();
 
-	/// @brief constructor
-	//ElectronDensity(std::string mapfile, core::Real reso=5.0);
+	/// @brief calulated density from a vector of poses
+	ElectronDensity( utility::vector1< core::pose::PoseOP > poses, core::Real reso, core::Real apix );
 
-	/// @brief constructor from an FArray3D (currently used for debugging only)
+	/// @brief constructor from an FArray3D (debugging only)
 	template<class T>
 	ElectronDensity( ObjexxFCL::FArray3D< T > const &map,
 	                 core::Real apix = 1.0,

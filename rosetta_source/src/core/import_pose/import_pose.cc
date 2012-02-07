@@ -243,9 +243,24 @@ utility::vector1< core::pose::PoseOP > poseOPs_from_pdbs(
 	utility::vector1< std::string > const & filenames,
 	bool read_fold_tree
 ) {
+	using basic::options::option;
 	using namespace chemical;
-	ResidueTypeSetCAP residue_set
-		( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	using namespace basic::options::OptionKeys;
+
+	bool want_centroid( option[ in::file::centroid_input ]()
+		|| option[ in::file::centroid ]()
+		|| ( option[ in::file::fullatom ].user() && !option[ in::file::fullatom ]() )
+		|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "centroid" ) );
+	if ( want_centroid &&
+		( option[ in::file::fullatom ]()
+			|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "fa_standard" ) ) ) {
+		TR.Warning << "conflicting command line flags for centroid/full-atom input. Choosing fullatom!" << std::endl;
+		want_centroid = false;
+	}
+	ResidueTypeSetCAP residue_set( want_centroid ?
+		ChemicalManager::get_instance()->residue_type_set( CENTROID ) :
+		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
+	);
 
 	return core::import_pose::poseOPs_from_pdbs( *residue_set, filenames, read_fold_tree );
 }
