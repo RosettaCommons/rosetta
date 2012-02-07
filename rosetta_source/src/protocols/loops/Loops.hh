@@ -19,7 +19,11 @@
 #include <protocols/loops/Loops.fwd.hh>
 
 // Package headers
+#ifdef WIN32
+#include <protocols/loops/Loop.hh>
+#else
 #include <protocols/loops/Loop.fwd.hh>
+#endif
 
 // Project headers
 #include <core/types.hh>

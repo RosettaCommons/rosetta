@@ -30,6 +30,10 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
+#ifdef WIN32
+#include <functional>
+#endif
+
 #include <ostream>
 
 ///////////////////////////////////////////////////////////////////////////////
