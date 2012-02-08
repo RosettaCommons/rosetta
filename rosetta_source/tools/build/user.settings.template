@@ -30,10 +30,12 @@ settings = {
         "appends" : {
             # Uncomment the line below and the "import os" line above
             # to let SCons find ICC (assuming it's on your PATH already)
+            # This is commented-out by default because it makes SCons
+            # sensitive to your entire path.  This is necessary in
+            # some environments, but has the unfortunate consequence
+            # that any change whatsoever to the PATH variable (or its
+            # contents) will force a complete recompile.
             #"program_path"  : os.environ["PATH"].split(":"),
-
-            # Uncomment the line below to begin building the "devel" project too.
-            #"projects": { "src" : [ "devel", ], },
         },
         "overrides" : {
         },
