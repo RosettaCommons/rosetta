@@ -348,7 +348,16 @@ JobDistributor::go_main( protocols::moves::MoverOP mover ) {
 			PROF_START( basic::JD2 );
 		} else if (using_parser) { //call the parser
 			tr.Trace << "Allowing the Parser to create a new Mover if desired" << std::endl;
-			parser_->generate_mover_from_job(current_job_, mover_copy, new_input);
+            try{
+                parser_->generate_mover_from_job(current_job_, mover_copy, new_input);
+            } catch( utility::excn::EXCN_Base& excn ) {
+                basic::Error() << "ERROR: Exception caught by JobDistributor while trying to get pose from job "
+							<< job_outputter_->output_name( current_job_ ) << excn << std::endl;
+                basic::Error() << "Treating failure as bad input; canceling similar jobs" << std::endl;
+                remove_bad_inputs_from_job_list();
+                job_failed( pose, false );
+                continue;
+            }
 			//the Parser might have modified the starting pose (with constraints) - so we'll refresh our copy
 			job_inputter_->pose_from_job( pose, current_job_ );
 
