@@ -720,6 +720,10 @@ class CppClass:
 
         bases = ''
         for b in self.bases:
+            # Special cases...
+            if b.type_.T() == '::core::scoring::etable::BaseEtableEnergy<core::scoring::etable::EtableEnergy>': continue
+            # ^^ special case, template use it self for initiate, we can't list as base class in Python because we will never be able to create it
+
             if b.type_.T() == '::utility::pointer::ReferenceCount': continue
             if b.type_.T().startswith('::utility::vector'): continue
             if b.type_.T().startswith('::std::iterator'): continue

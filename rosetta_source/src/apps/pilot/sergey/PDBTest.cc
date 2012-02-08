@@ -13,6 +13,8 @@
 /// @brief
 /// @author Sergey Lyskov (Sergey.Lyskov@jhu.edu)
 
+#include <core/pose/annotated_sequence.hh>
+
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 
@@ -159,12 +161,12 @@ int main( int argc, char * argv [] )
 
 	//devel::init(argc, argv);
 	devel::init(argc, argv);
-
+    /*
 	{
 		core::pose::Pose pose;
 		//core::import_pose::pose_from_pdb(pose, "src/python/bindings/test/data/test_in.pdb");
 		core::import_pose::pose_from_pdb(pose, "test_in.pdb");
-		
+
 		//core::scoring::ScoreFunction scorefxn;
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("standard");
 		T("Score:") << scorefxn->score(pose)  << std::endl;
@@ -172,6 +174,15 @@ int main( int argc, char * argv [] )
 		//scorefxn(pose);
 		pose.energies().residue_total_energies(1);
 		T("Scoring done!") << "---------------------" << std::endl;
+    } */
+    {
+		T("Testing pose_from_sequence...") << std::endl;
+		std::string sequence(40000, 'V');
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence(pose, sequence, "fa_standard");
+		T("Testing pose_from_sequence... Done!") << std::endl;
+
+		return 0;
 	}
 
 
