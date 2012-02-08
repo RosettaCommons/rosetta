@@ -56,7 +56,7 @@ dens <- estimate_density_1d(
 #library(earthmovdist)
 #z <- comparison_statistics(f, c("don_chem_type", "acc_chem_type"), "AHdist", earth_mover_distance_L1)
 
-z <- smooth_comparison_statistics(dens, c("don_chem_type", "acc_chem_type"), smooth_kl_divergence)
+#z <- smooth_comparison_statistics(dens, c("don_chem_type", "acc_chem_type"), smooth_kl_divergence)
 
 #plot_id <- "emd_sample_size_correlation"
 #p <- ggplot(data=z) + theme_bw() +
@@ -82,7 +82,7 @@ plot_id <- "hbond_AHdist_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
-	geom_indicator(data=z, aes(indicator=round(statistic,2), colour=new_sample_source), xpos="left") +
+#	geom_indicator(data=z, aes(indicator=round(statistic,2), colour=new_sample_source), xpos="left") +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +
@@ -96,3 +96,6 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 })) # end FeaturesAnalysis
+
+
+python merge_databases.py features_top8000_relax_r46954_120118.db3 features_top8000_relax_r46954_120118.db3_*

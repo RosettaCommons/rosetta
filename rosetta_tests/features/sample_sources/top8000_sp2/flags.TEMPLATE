@@ -7,8 +7,8 @@
 -score:weights sp2_correction
 #
 # The chi term correction
--score::hb_sp2_chipen
--score:hb_sp2_peak_height_above_trough 2.0
+-score:hb_sp2_chipen
+-score:hb_sp2_peak_heigh_above_trough 2.0
 -score:hb_sp2_amp 2.0
 #
 #

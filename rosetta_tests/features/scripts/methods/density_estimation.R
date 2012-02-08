@@ -169,7 +169,7 @@ estimate_density_1d_reflect_boundary <-function(
 			return(data.frame(
 				x=d$x[left_boundary <= d$x & d$x <= right_boundary],
 				y=d$y[left_boundary <= d$x & d$x <= right_boundary]*extended_factor,
-				counts=nrow(factor_df)/extended_factor))
+				counts=round(nrow(factor_df)/extended_factor),0))
     }
   }
 	ddply(data, ids, compute_density)

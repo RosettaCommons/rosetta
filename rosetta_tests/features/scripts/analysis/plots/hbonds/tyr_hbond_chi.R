@@ -9,8 +9,8 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "tyr_proton_chi",
-filename = "scripts/analysis/plots/hbonds/tyr_proton_chi.R",
+id = "tyr_hbond_chi",
+filename = "scripts/analysis/plots/hbonds/tyr_hbond_chi.R",
 author = "Matthew O'Meara",
 brief_description = "Measure the angle of the tyrosine dihedral angle of the hydroxyl hydrogen and the best hydrogen bonded hydrogen relative to the plane of the aromatic ring",
 
@@ -51,8 +51,8 @@ sele <-"
 SELECT
 	don_site.HBChemType AS don_chem_type,
 	CASE don_site.HBChemType
-		WHEN 'hbdon_IMD' THEN 'imidazol: h'
-		WHEN 'hbdon_IME' THEN 'imidazol: h'
+		WHEN 'hbdon_IMD' THEN 'imidazole: h'
+		WHEN 'hbdon_IME' THEN 'imidazole: h'
 		WHEN 'hbdon_IND' THEN 'indol: w'
 		WHEN 'hbdon_AHX' THEN 'hydroxyl: s,t,y'
 		WHEN 'hbdon_HXL' THEN 'hydroxyl: s,t,y'
@@ -61,7 +61,8 @@ SELECT
 		WHEN 'hbdon_PBA' THEN 'other'
 		WHEN 'hbdon_CXA' THEN 'other'
 		WHEN 'hbdon_AMO' THEN 'other'
-END AS don_hybrid,
+			END AS don_hybrid,
+	ABS(don_site.resNum - acc_site.resNum) AS seq_sep,
 	acc_atoms.bbase_x AS CE2x, acc_atoms.bbase_y AS CE2y, acc_atoms.bbase_z AS CE2z,
  	acc_atoms.base_x  AS CZx,  acc_atoms.base_y  AS CZy,  acc_atoms.base_z  AS CZz,
 	acc_atoms.atm_x   AS OHx,  acc_atoms.atm_y   AS OHy,  acc_atoms.atm_z   AS OHz,
@@ -127,6 +128,24 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
+dens <- estimate_density_1d_wrap(f[f$seq_sep > 5,],
+  c("sample_source", "don_hybrid"), "hbond_chi", xlim=c(-pi, pi), adjust=.2)
+
+plot_id = "tyr_hbond_chi_by_hybrid_seq_sep_5"
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	facet_wrap( ~ don_hybrid ) +
+	opts(title = "HBond Torsional Angle for Tyrosine Acceptors SeqSep > 5") +
+	scale_x_continuous('HBond Torsional Angle (degrees)') +
+	scale_y_continuous('Feature Density')
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
 
 
 })) # end FeaturesAnalysis

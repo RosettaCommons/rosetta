@@ -18,17 +18,20 @@ run=function(self){
 
 do_query <- function(dOH_clause, sample_source){
 	sele <- paste("
-	SELECT geo.AHdist, geo.cosBAH, geo.cosAHD,
-  	     don.HBChemType AS don_chem_type,
-         acc.HBChemType AS acc_chem_type
-  FROM   hbonds AS hb,
-         hbond_sites AS don,
-         hbond_sites AS acc,
-         hbond_geom_coords AS geo
-  WHERE  geo.struct_id = hb.struct_id AND geo.hbond_id = hb.hbond_id AND
-         don.struct_id = hb.struct_id AND don.site_id  = hb.don_id AND
-         acc.struct_id = hb.struct_id AND acc.site_id  = hb.acc_id AND
-         (", dOH_clause, ");", sep="")
+SELECT
+	geo.AHdist, geo.cosBAH, geo.cosAHD,
+	don.HBChemType AS don_chem_type,
+	acc.HBChemType AS acc_chem_type
+FROM
+	hbonds AS hb,
+	hbond_sites AS don,
+	hbond_sites AS acc,
+	hbond_geom_coords AS geo
+WHERE
+	geo.struct_id = hb.struct_id AND geo.hbond_id = hb.hbond_id AND
+	don.struct_id = hb.struct_id AND don.site_id  = hb.don_id AND
+	acc.struct_id = hb.struct_id AND acc.site_id  = hb.acc_id AND
+	(", dOH_clause, ");", sep="")
 
 	f <- query_sample_sources(sample_source, sele)
 

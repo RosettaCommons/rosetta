@@ -10,8 +10,26 @@
 #Each feature database contains a table sample_source with containing
 #meta data for the sample source.
 get_sample_source_meta_data <- function(fname){
-	con <- dbConnect("SQLite", fname)
-	df <- dbGetQuery(con, "SELECT * FROM sample_source LIMIT 1;")
+	if(!file.exists(fname)){
+		stop(paste("ERROR: The sample source SQLite database, '", fname, "', does not exist.", sep=""))
+	}
+
+	tryCatch({
+		con <- dbConnect("SQLite", fname)
+	}, error=function(e){
+		stop(paste("ERROR: Unable to connect with the sample source SQLite database, '", fname, "'.\nERROR: ", e, sep=""))
+	})
+
+	tryCatch({
+		df <- dbGetQuery(con, "SELECT * FROM sample_source LIMIT 1;")
+	}, error=function(e){
+		stop(paste("ERROR: Querying the 'sample_source' table in the sample source SQLite database '", fname, "' failed.\nERROR: ", e, sep=""))
+	})
+
+	if(nrow(df)==0){
+		stop(paste("ERROR: The sample source SQLite database, '", fname, "', has no rows in the sample_source table."))
+	}
+
 	dbDisconnect(con)
 	# get the meta-data from the first row of the sample sources table
 	return( df[1,] )
@@ -20,7 +38,7 @@ get_sample_source_meta_data <- function(fname){
 # this searchers for feature databases given a base directory
 get_data_sources <- function(sample_source_dir, extension=".db3"){
 	if(!file.exists(sample_source_dir)){
-		stop(paste("ERROR: Sample source directory, '", sample_source_dir, "', does not exist."))
+		stop(paste("ERROR: Sample source directory, '", sample_source_dir, "', does not exist.", sep=""))
 	}
 
 	full_sample_source_dir <- paste(getwd(), sample_source_dir, sep="/")

@@ -43,8 +43,8 @@ WHERE
 	hb.struct_id = acc_site.struct_id AND hb.acc_id = acc_site.site_id AND
 	don_atoms.struct_id = hb.struct_id AND don_atoms.site_id = hb.don_id AND
 	acc_atoms.struct_id = hb.struct_id AND acc_atoms.site_id = hb.acc_id AND
-	ABS(don_site.resNum - acc_site.resNum) > 5 AND
-  don_site.HBChemType == 'hbdon_HXL' AND acc_site.HBChemType == 'hbacc_PBA';";
+	ABS(don_site.resNum - acc_site.resNum) > 5;"
+
 f <- query_sample_sources(sample_sources, sele)
 
 f$don_chem_type_name <- factor(f$don_chem_type,
@@ -99,42 +99,42 @@ plot_parts <- list(
 		axis.ticks.y = theme_blank()))
 
 
-#f <- ddply(f, c("sample_source", "hybrid"),
-#	transform, counts = length(sample_source))
-#
-#plot_id <- "chi_BAH_eq_polar_density"
-#d_ply(f, .(sample_source, hybrid), function(sub_f){
-#	ss_id <- sub_f$sample_source[1]
-#	hybrid <- sub_f$hybrid[1]
-#	sub_plot_id <- paste(plot_id, hybrid, sep="_")
-#	ggplot(data=sub_f) + plot_parts +
-#		opts(title = paste(hybrid, " Acceptor Hydrogen Bonds seq_sep > 5: chi vs BAH\nEqual Coordinate Projection  ss_id: ", ss_id, sep="")) +
-#		coord_equal(ratio=1) +
-#		polar_equal_area_grids_bw() +
-#		geom_indicator(aes(indicator=counts), color="white") +
-#		scale_x_continuous('', limits=capx_limits, breaks=c()) +
-#		scale_y_continuous('', limits=capy_limits, breaks=c()) +
-#		scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(15))
-#	save_plots(self, sub_plot_id, sample_sources[sample_sources$sample_source == ss_id,],
-#		output_dir, narrow_output_formats)
-#})
-#
-#
+f <- ddply(f, c("sample_source", "hybrid"),
+	transform, counts = length(sample_source))
+
+plot_id <- "chi_BAH_eq_polar_density"
+d_ply(f, .(sample_source, hybrid), function(sub_f){
+	ss_id <- sub_f$sample_source[1]
+	hybrid <- sub_f$hybrid[1]
+	sub_plot_id <- paste(plot_id, hybrid, sep="_")
+	ggplot(data=sub_f) + plot_parts +
+		opts(title = paste(hybrid, " Acceptor Hydrogen Bonds seq_sep > 5: chi vs BAH\nEqual Coordinate Projection  ss_id: ", ss_id, sep="")) +
+		coord_equal(ratio=1) +
+		polar_equal_area_grids_bw() +
+		geom_indicator(aes(indicator=counts), color="white") +
+		scale_x_continuous('', limits=capx_limits, breaks=c()) +
+		scale_y_continuous('', limits=capy_limits, breaks=c()) +
+		scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(15))
+	save_plots(self, sub_plot_id, sample_sources[sample_sources$sample_source == ss_id,],
+		output_dir, narrow_output_formats)
+})
+
+
 f <- ddply(f, c("sample_source", "acc_chem_type", "don_chem_type"),
 	transform, counts = length(sample_source))
-#
-#plot_id = "chi_BAH_eq_polar_density_by_chem_type"
-#l_ply(levels(f$sample_source), function(ss){
-#	ggplot(data=f[f$sample_source == ss,]) + plot_parts +
-#		facet_grid(acc_chem_type_name ~ don_chem_type_name) +
-#		opts(title = paste("Hydrogen Bonds chi vs BAH Angles by Chemical Type Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
-#		coord_equal(ratio=1) +
-#		geom_indicator(aes(indicator=counts), color="white") +
-#		scale_x_continuous('', limits=capx_limits, breaks=c()) +
-#		scale_y_continuous('', limits=capy_limits, breaks=c()) +
-#		scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(15))
-#	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss,], output_dir, output_formats)
-#})
+
+plot_id = "chi_BAH_eq_polar_density_by_chem_type"
+l_ply(levels(f$sample_source), function(ss){
+	ggplot(data=f[f$sample_source == ss,]) + plot_parts +
+		facet_grid(acc_chem_type_name ~ don_chem_type_name) +
+		opts(title = paste("Hydrogen Bonds chi vs BAH Angles by Chemical Type Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
+		coord_equal(ratio=1) +
+		geom_indicator(aes(indicator=counts), color="white") +
+		scale_x_continuous('', limits=capx_limits, breaks=c()) +
+		scale_y_continuous('', limits=capy_limits, breaks=c()) +
+		scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(15))
+	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss,], output_dir, output_formats)
+})
 
 plot_id = "chi_BAH_eq_polar_density"
 d_ply(f, .(sample_source, don_chem_type, acc_chem_type), function(sub_f){

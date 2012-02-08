@@ -18,34 +18,33 @@ run=function(self){
 
 sele <-"
 SELECT
-  geom.cosAHD,
-  acc_site.HBChemType AS acc_chem_type,
-  don_site.HBChemType AS don_chem_type
+	geom.cosAHD,
+	acc_site.HBChemType AS acc_chem_type,
+	don_site.HBChemType AS don_chem_type
 FROM
-  hbond_geom_coords AS geom,
-  hbonds AS hbond,
-  hbond_sites AS don_site,
-  hbond_sites AS acc_site,
+	hbond_geom_coords AS geom,
+	hbonds AS hbond,
+	hbond_sites AS don_site,
+	hbond_sites AS acc_site,
 	hbond_sites_pdb AS don_site_pdb,
-  hbond_sites_pdb AS acc_site_pdb
+	hbond_sites_pdb AS acc_site_pdb
 WHERE
-  hbond.struct_id = geom.struct_id AND
-  hbond.hbond_id =  geom.hbond_id AND
-  hbond.struct_id = don_site.struct_id AND
-  hbond.don_id = don_site.site_id AND
-  hbond.struct_id = acc_site.struct_id AND
-  hbond.acc_id = acc_site.site_id AND
-  don_site_pdb.struct_id = hbond.struct_id AND
-	don_site_pdb.site_id   = don_site.site_id AND
+	hbond.struct_id = geom.struct_id AND
+	hbond.hbond_id = geom.hbond_id AND
+	hbond.struct_id = don_site.struct_id AND
+	hbond.don_id = don_site.site_id AND
+	hbond.struct_id = acc_site.struct_id AND
+	hbond.acc_id = acc_site.site_id AND
+	don_site_pdb.struct_id = hbond.struct_id AND
+	don_site_pdb.site_id = don_site.site_id AND
 	acc_site_pdb.struct_id = hbond.struct_id AND
-	acc_site_pdb.site_id   = acc_site.site_id AND
+	acc_site_pdb.site_id = acc_site.site_id AND
 	don_site_pdb.heavy_atom_temperature < 30 AND
 	acc_site_pdb.heavy_atom_temperature < 30 AND
-  abs( don_site.resNum - acc_site.resNum ) > 5;"
+	abs( don_site.resNum - acc_site.resNum ) > 5;"
 
 f <- query_sample_sources(sample_sources, sele)
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
 # Order the plots better and give more descriptive labels
 f$don_chem_type <- factor(f$don_chem_type,
 	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
@@ -53,7 +52,6 @@ f$don_chem_type <- factor(f$don_chem_type,
 	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
 		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
 # Order the plots better and give more descriptive labels
 f$acc_chem_type <- factor(f$acc_chem_type,
 	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
@@ -61,16 +59,16 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
-#coAHD goes from 0 to 1, where 1 is linear
-#since there is significant density at 1,
-#to accurately model a discontinuity, reflect
-#the data across the right boundary, in computing the density esitmation
+#coAHD goes from 0 to 1, where 1 is linear since there is significant
+#density at 1, to accurately model a discontinuity, reflect the data
+#across the right boundary, in computing the density esitmation
 dens <- estimate_density_1d_reflect_boundary(
- data=f,
- ids = c("sample_source", "acc_chem_type", "don_chem_type"),
- variable = "cosAHD",
- reflect_right=TRUE,
- right_boundary=1)
+	data=f,
+	ids = c("sample_source", "acc_chem_type", "don_chem_type"),
+	variable = "cosAHD",
+	reflect_right=TRUE,
+	right_boundary=1,
+	adjust=.4)
 
 plot_id = "cosAHD_chem_type_bfac30"
 p <- ggplot(data=dens) + theme_bw() +

@@ -64,6 +64,52 @@ save_plots <- function(
 	output_formats,
 	...
 ) {
+	tryCatch(plot_id, error=function(e){
+		stop(paste(
+			"ERROR: Unable to save the plot because ",
+			"the 'plot_id' is not specified.\n", e, sep=""))
+	})
+
+	tryCatch(features_analysis, error=function(e){
+		stop(paste(
+			"ERROR: Unable to save the plot '", plot_id,"' ",
+			"because the specified 'features_analysis' is not valid.\n",
+			e, sep=""))
+	})
+
+	tryCatch(sample_sources, error=function(e){
+		stop(paste(
+			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"because the specified 'sample_sources' is not valid.\n",
+			e, sep=""))
+	})
+
+	if(nrow(sample_sources)==0){
+		stop(paste(
+			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"because no sample_sources were specified.\n", e, sep=""))
+	}
+
+	tryCatch(output_dir, error=function(e){
+		stop(paste(
+			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"because the specified 'output_dir' ",
+			"is not a valid variable.\n",
+			e, sep=""))
+	})
+
+	tryCatch(output_formats, error=function(e){
+		stop(paste(
+			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"because the 'output_formats' parameter is not valid.\n",
+			e, sep=""))
+	})
+
+	if(nrow(output_formats)==0){
+		stop(paste(
+			"ERROR: Unable to save teh plot '", plot_id, "' ",
+			"because no output formats were specified.", e, sep=""))
+	}
 
 	a_ply(output_formats, 1, function(fmt){
 		if(!file.exists(file.path(output_dir, fmt$id))){
