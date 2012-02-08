@@ -120,7 +120,7 @@ void register_options() {
 		NEW_OPT( tcdock::termini_cutoff,"tscore = w*max(0,cut-x)", 20.0 );
 		NEW_OPT( tcdock::termini_weight,"tscore = w*max(0,cut-x)",  0.0 );
 		NEW_OPT( tcdock::termini_trim,"trim termini up to for termini score",  0 );
-		NEW_OPT( tcdock::hash_3D_vs_2D,"grid spacing top 2D hash", 1.5 );
+		NEW_OPT( tcdock::hash_3D_vs_2D,"grid spacing top 2D hash", 1.2 );
 }
 template<typename T> inline T sqr(T x) { return x*x; }
 void dump_points_pdb(utility::vector1<Vecf> const & p, std::string fn) {
@@ -359,12 +359,12 @@ struct SICFast {
 			Vecf v = R*((*i)-mindis*ori) + xh.translation();
 			if( v.x() < -xh.grid_size_ || v.y() < -xh.grid_size_ || v.z() < -xh.grid_size_ ) continue; // worth it?
 			if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it? 
-			int const ix	 = (v.x()<0) ? 0 : numeric::min(xh.xdim_-1,(int)(v.x()/xh.grid_size_));
-			int const iy0	= (v.y()<0) ? 0 : v.y()/xh.grid_size_;
-			int const iz0	= (v.z()<0) ? 0 : v.z()/xh.grid_size_;
+			int const ix	= (v.x()<0.0) ? 0 : (int)(numeric::min(xh.xdim_-1,(int)(v.x()/xh.grid_size_)));
+			int const iy0	= (v.y()<0.0) ? 0 : (int)(v.y()/xh.grid_size_);
+			int const iz0	= (v.z()<0.0) ? 0 : (int)(v.z()/xh.grid_size_);
 			int const iyl = numeric::max(0,iy0-1);
 			int const izl = numeric::max(0,iz0-1);
-			int const iyu = numeric::min((int)xh.ydim_,		 iy0+2);
+			int const iyu = numeric::min((int)xh.ydim_,     iy0+2);
 			int const izu = numeric::min((int)xh.zdim_,(int)iz0+2);
 			for(int iy = iyl; iy < iyu; ++iy) {
 				for(int iz = izl; iz < izu; ++iz) {
