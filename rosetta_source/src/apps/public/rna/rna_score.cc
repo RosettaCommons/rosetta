@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
+#include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -55,10 +55,7 @@ using namespace basic::options::OptionKeys;
 using utility::vector1;
 //using io::pdb::dump_pdb;
 
-//Definition of new OptionKeys
-// these will be available in the top-level OptionKey namespace:
-// i.e., OPT_KEY( Type, key ) -->  OptionKey::key
-// to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
+OPT_KEY( Boolean, just_calc_rmsd )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,7 +126,9 @@ rna_score_test()
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 		// do it
-		(*scorefxn)( pose );
+		if ( ! option[just_calc_rmsd]() ){
+			(*scorefxn)( pose );
+		}
 
 		// tag
 		std::string tag = tag_from_pose( pose );
@@ -137,7 +136,7 @@ rna_score_test()
 
 		if ( native_exists ){
 			Real const rmsd      = all_atom_rmsd( native_pose, pose );
-			std::cout << "All atom rmsd: " << rmsd << std::endl;
+			std::cout << "All atom rmsd: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
 		}
 
@@ -169,6 +168,8 @@ int
 main( int argc, char * argv [] )
 {
 	using namespace basic::options;
+
+	NEW_OPT( just_calc_rmsd, "Just calculate rmsd -- do not replace score.",false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
