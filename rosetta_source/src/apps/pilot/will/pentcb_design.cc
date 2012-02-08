@@ -14,7 +14,7 @@
 #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
-//#include <basic/options/keys/willmatch.OptionKeys.gen.hh>
+#include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
@@ -23,6 +23,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/SymDof.hh>
@@ -90,14 +91,16 @@ OPT_1GRP_KEY( Integer      , cxdock, sphere       )
 OPT_1GRP_KEY( IntegerVector, cxdock, syms         )
 OPT_1GRP_KEY( Real         , cxdock, clash_dis    )
 OPT_1GRP_KEY( Real         , cxdock, contact_dis  )
+OPT_1GRP_KEY( Real         , cxdock, hb_dis  )
 //OPT_1GRP_KEY( Real         , cxdock, num_contacts )
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	OPT( in::file::s );
-	NEW_OPT( cxdock::syms	 ,"CX symmitries", utility::vector1< Size >() );
-	NEW_OPT( cxdock::clash_dis   ,"min acceptable contact dis", 3.6 );
+	NEW_OPT( cxdock::syms	       ,"CX symmitries", utility::vector1< Size >() );
+	NEW_OPT( cxdock::clash_dis   ,"max acceptable clash dis", 3.6 );
 	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 6.0 );	
+	NEW_OPT( cxdock::hb_dis      ,"min acceptable hb dis", 4.5 );	
 	//NEW_OPT( cxdock::num_contacts ,"required no. contacts", 20.0 );
 	NEW_OPT( cxdock::sphere       ,"sph points", 8192 );
 }
@@ -371,7 +374,7 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
   vector1<Vecf> cb2 = cb1;
   for(vector1<Vecf>::iterator i = bb2.begin(); i != bb2.end(); ++i) *i = Rsym*(*i);
   for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym*(*i);
-  int cbc;
+  Real cbc;
   Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
 
   Pose p(init);
@@ -460,7 +463,7 @@ int main(int argc, char *argv[]) {
     fn = utility::file_basename(fn);
     TR <<" "<< fn <<" "<< iss <<" "<< ic <<" "<< nss <<" "<< irt <<" "<< cbc << endl;
 
-		option[OptionKeys::symmetry_definiton]("input/C6.sym");
+		option[OptionKeys::symmetry::symmetry_definition]("input/C6.sym");
 
     if(NSS != nss) utility_exit_with_message("wrong ssamp!!!");
     Pose pnat;

@@ -72,6 +72,7 @@ OPT_1GRP_KEY( Real , tcdock, intra1 );
 OPT_1GRP_KEY( Real , tcdock, intra2 );
 OPT_1GRP_KEY( Real , tcdock, termini_weight );
 OPT_1GRP_KEY( Real , tcdock, termini_cutoff );
+OPT_1GRP_KEY( Real , tcdock, hash_3D_vs_2D );
 OPT_1GRP_KEY( Integer , tcdock, termini_trim );
 OPT_1GRP_KEY( Integer , tcdock, nsamp1 );
 OPT_1GRP_KEY( Integer , tcdock, topx );
@@ -119,6 +120,7 @@ void register_options() {
 		NEW_OPT( tcdock::termini_cutoff,"tscore = w*max(0,cut-x)", 20.0 );
 		NEW_OPT( tcdock::termini_weight,"tscore = w*max(0,cut-x)",  0.0 );
 		NEW_OPT( tcdock::termini_trim,"trim termini up to for termini score",  0 );
+		NEW_OPT( tcdock::hash_3D_vs_2D,"grid spacing top 2D hash", 1.5 );
 }
 template<typename T> inline T sqr(T x) { return x*x; }
 void dump_points_pdb(utility::vector1<Vecf> const & p, std::string fn) {
@@ -272,7 +274,7 @@ struct SICFast {
 	SICFast() : 
 		CTD(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]()),
 		CLD(basic::options::option[basic::options::OptionKeys::tcdock::clash_dis]()),
-		CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD/2.0),
+		CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD*basic::options::option[basic::options::OptionKeys::tcdock::hash_3D_vs_2D]()),
 		xh1_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+2.0),
 		xh2_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+2.0),
 		xh1_cb_(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]()),
@@ -469,36 +471,35 @@ struct SICFast {
 		rotate_points(pa,pb,ori);
 		get_bounds(pa,pb);
 		fill_plane_hash(pa,pb);
-		double mindis = get_mindis_with_plane_hashes();
-		mindis = refine_mindis_with_xyzHash(pa,pb,mindis,ori,anga,angb,axsa,axsb,cmp1or2_a,cmp1or2_b);
+		double const mindis_approx = get_mindis_with_plane_hashes();
+		double const mindis = refine_mindis_with_xyzHash(pa,pb,mindis_approx,ori,anga,angb,axsa,axsb,cmp1or2_a,cmp1or2_b);
 		//cerr << brute_mindis(pa,pb,Vecf(0,0,-mindis)) << endl;
 		// if( fabs(CLD2-brute_mindis(pa,pb,Vecf(0,0,-mindis))) > 0.0001 ) utility_exit_with_message("DIAF!");
 		if(score != -12345.0) score = get_score(cba,cbb,ori,mindis,anga,angb,axsa,axsb,cmp1or2_a,cmp1or2_b);
 		return mindis;
 	}
 	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
-		xlb = (int)floor(xmn/CLD)-2; xub = (int)ceil(xmx/CLD)+2; // one extra on each side for correctness,
-		ylb = (int)floor(ymn/CLD)-2; yub = (int)ceil(ymx/CLD)+2; // and one extra for outside atoms
+		xlb = (int)(xmn/BIN)-2; xub = (int)(xmx/BIN+0.999999999)+2; // one extra on each side for correctness,
+		ylb = (int)(ymn/BIN)-2; yub = (int)(ymx/BIN+0.999999999)+2; // and one extra for outside atoms
 		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf(0,0,-9e9));
 		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf(0,0, 9e9));
-		// insert points into hashes
 		int const xsize = xub-xlb+1;
 		int const ysize = yub-ylb+1;
 		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-			int const ix = (int)(/*ceil*/(ia->x()/CLD)-xlb+0.999999999);
-			int const iy = (int)(/*ceil*/(ia->y()/CLD)-ylb+0.999999999);
+			int const ix = (int)((ia->x()/BIN)-xlb+0.999999999);
+			int const iy = (int)((ia->y()/BIN)-ylb+0.999999999);
 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-			if( ha(ix,iy).z() < ia->z() ) {
-				ha(ix,iy) = *ia;	
-			}
+			if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;	
+			// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize) && ha(ix,iy).z() < ia->z();
+			// ha(ix,iy) = test ? *ia : ha(ix,iy);
 		}
 		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-			int const ix = (int)(/*ceil*/(ib->x()/CLD)-xlb+0.999999999);
-			int const iy = (int)(/*ceil*/(ib->y()/CLD)-ylb+0.999999999);
+			int const ix = (int)((ib->x()/BIN)-xlb+0.999999999);
+			int const iy = (int)((ib->y()/BIN)-ylb+0.999999999);
 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-			if( hb(ix,iy).z() > ib->z() ) {
-				hb(ix,iy) = *ib;
-			}
+			if( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
+			// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) && hb(ix,iy).z() > ib->z();
+			// hb(ix,iy) = test ? *ib : hb(ix,iy);
 		}
 		
 	}

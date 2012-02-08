@@ -21,13 +21,15 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <devel/init.hh>
+#include <core/id/DOF_ID.hh>
 #include <core/io/pdb/pose_io.hh>
+#include <core/io/silent/ScoreFileSilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/pack/optimizeH.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+#include <core/pack/optimizeH.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
@@ -38,8 +40,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/io/silent/ScoreFileSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
+#include <devel/init.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -158,8 +159,8 @@ void run() {
 		core::pose::remove_upper_terminus_type_from_pose_residue(hsd,1);
 		core::pose::remove_upper_terminus_type_from_pose_residue(bpy,1);
 		core::pose::remove_upper_terminus_type_from_pose_residue(glu,1);
-		hsd.set_dof(DOF_ID(AtomID(hsd.residue(1).atom_index("HD1"),1),D),2.1);
-		hse.set_dof(DOF_ID(AtomID(hse.residue(1).atom_index("HE2"),1),D),2.1);
+		hsd.set_dof(DOF_ID(AtomID(hsd.residue(1).atom_index("HD1"),1),core::id::D),2.1);
+		hse.set_dof(DOF_ID(AtomID(hse.residue(1).atom_index("HE2"),1),core::id::D),2.1);
 		// hse.dump_pdb("hse.pdb");
 		// hsd.dump_pdb("hsd.pdb");
 		ObjexxFCL::FArray3D<Vec> chi2cen(2,CHI1.size(),CHI2.size()),chi2ori(2,CHI1.size(),CHI2.size());

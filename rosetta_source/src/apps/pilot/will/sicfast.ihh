@@ -19,6 +19,95 @@ sicfast(
 	vector1<Vec> const & pb,
 	vector1<Vec> const & cba,
 	vector1<Vec> const & cbb,
+	Real & cbcount
+) {
+	Real const CONTACT_D2 = sqr(basic::options::option[basic::options::OptionKeys::cxdock::contact_dis]());
+	Real const BIN        =     basic::options::option[basic::options::OptionKeys::cxdock::clash_dis]()/2.0;
+	// get bounds for plane hashes
+	Real xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
+	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
+		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
+	}
+	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
+		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
+	}
+	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
+	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
+	
+	
+	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
+	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
+	
+	// insert points into hashes
+	int const xsize = xub-xlb+1;
+	int const ysize = yub-ylb+1;
+	ObjexxFCL::FArray2D<Vec> ha(xsize,ysize,Vec(0,0,-9e9)),hb(xsize,ysize,Vec(0,0,9e9));
+	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+	  // int const ix = min(xsize,max(1,(int)ceil(ia->x()/BIN)-xlb));
+	  // int const iy = min(ysize,max(1,(int)ceil(ia->y()/BIN)-ylb));
+	  int const ix = (int)ceil(ia->x()/BIN)-xlb;
+	  int const iy = (int)ceil(ia->y()/BIN)-ylb;
+	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+	  if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
+	}
+	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+	  // int const ix = min(xsize,max(1,(int)ceil(ib->x()/BIN)-xlb));
+	  // int const iy = min(ysize,max(1,(int)ceil(ib->y()/BIN)-ylb));
+	  int const ix = (int)ceil(ib->x()/BIN)-xlb;
+	  int const iy = (int)ceil(ib->y()/BIN)-ylb;
+	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+	  if( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
+	}
+	
+	// check hashes for min dis
+	int imna=0,jmna=0,imnb=0,jmnb=0;
+	Real mindis = 9e9;
+	for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+	  for(int j = 1; j <= ysize; ++j) {
+	 	 for(int k = -2; k <= 2; ++k) {
+	 		 if(i+k < 1 || i+k > xsize) continue;
+	 		 for(int l = -2; l <= 2; ++l) {
+	 			 if(j+l < 1 || j+l > ysize) continue;
+	 			 Real const xa = ha(i	,j	).x();
+	 			 Real const ya = ha(i	,j	).y();
+	 			 Real const xb = hb(i+k,j+l).x();
+	 			 Real const yb = hb(i+k,j+l).y();
+	 			 Real const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
+	
+	 			 if( d2 < BIN*BIN*4.0 ) {
+	 				 Real dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(BIN*BIN*4.0-d2);
+	 				 if( dz < mindis ) {
+	 					 mindis = dz;
+	 					 imna = i;
+	 					 jmna = j;
+	 					 imnb = i+k;
+	 					 jmnb = j+l;
+	 				 }
+	 			 }
+	 		 }
+	 	 }
+	  }
+	}
+	cbcount = 0.0;
+	for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
+	  for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
+	 	 if( ib->distance_squared( (*ia + (mindis*Vec(0,0,1)) ) ) < CONTACT_D2 ) {
+	 		 cbcount += 1.0;
+	 	 }
+	  }
+	}
+	return mindis;
+}
+
+
+Real
+sicfast_hb(
+	vector1<Vec> const & pa,
+	vector1<Vec> const & pb,
+	vector1<Vec> const & cba,
+	vector1<Vec> const & cbb,
 	vector1<int> const & don,
 	vector1<int> const & acc,
 	Real & cbcount,
@@ -141,19 +230,19 @@ sicsafe(
 	// for(vector1<Vec>::const_iterator i = pa.begin(); i != pa.end(); ++i) {
 	// for(vector1<Vec>::const_iterator j = pb.begin(); j != pb.end(); ++j) {
 	for(int ii = 1; ii <= pa.size(); ++ii) {
-	Vec const *i = &pa[ii];
-	for(int jj = 1; jj <= pa.size(); ++jj) {		
-		Vec const *j = &pb[jj];		
+		Vec const *i = &pa[ii];
+		for(int jj = 1; jj <= pb.size(); ++jj) {		
+			Vec const *j = &pb[jj];		
 
-		Real const dxy2 = (i->x()-j->x())*(i->x()-j->x()) + (i->y()-j->y())*(i->y()-j->y());
-		if( dxy2 >= CLASH_D2 ) continue;
-		Real const dz = j->z() - i->z() - sqrt(CLASH_D2-dxy2);
-		if( dz < mindis) {
-			mindis = dz;
-			mni = ii;
-			mnj = jj;
-		}
-	}		
+			Real const dxy2 = (i->x()-j->x())*(i->x()-j->x()) + (i->y()-j->y())*(i->y()-j->y());
+			if( dxy2 >= CLASH_D2 ) continue;
+			Real const dz = j->z() - i->z() - sqrt(CLASH_D2-dxy2);
+			if( dz < mindis) {
+				mindis = dz;
+				mni = ii;
+				mnj = jj;
+			}
+		}		
 	}
 	CONTACTS.insert(mni);
 	CONTACTS.insert(mnj);	
@@ -171,148 +260,148 @@ sicsafe(
 	return mindis;
 }
 
-Real
-sicfast(
-	vector1<Vec> const & pa,
-	vector1<Vec> const & pb,
-	vector1<Vec> const & cba,
-	vector1<Vec> const & cbb,
-	Real & cbcount
-) {
-	Real const CONTACT_D2 = sqr(basic::options::option[basic::options::OptionKeys::cxdock::contact_dis]());
-	Real const CLASH_D2   = sqr(basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]());
-	Real const BIN        =     basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]() /2.0;
-
-	// get bounds for plane hashes
-	Real xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
-	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
-		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
-	}
-	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
-		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
-	}
-	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
-	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1); // bounds of grid
-	
-	
-	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
-	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
-	
-	// insert points into hashes
-	int const xsize = xub-xlb+1;
-	int const ysize = yub-ylb+1;
-	ObjexxFCL::FArray2D<Vec> ha(xsize,ysize,Vec(0,0,-9e9)),hb(xsize,ysize,Vec(0,0,9e9));
-	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-	  int const ix = (int)ceil(ia->x()/BIN)-xlb;
-	  int const iy = (int)ceil(ia->y()/BIN)-ylb;
-	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-	  if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
-	}
-	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-	  int const ix = (int)ceil(ib->x()/BIN)-xlb;
-	  int const iy = (int)ceil(ib->y()/BIN)-ylb;
-	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-	  if( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
-	}
-	
-	// check hashes for min dis
-	int imna=0,jmna=0,imnb=0,jmnb=0;
-	Real mindis = 9e9;
-	for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-	  for(int j = 1; j <= ysize; ++j) {
-	 	 for(int k = -2; k <= 2; ++k) {
-	 		 if(i+k < 1 || i+k > xsize) continue;
-	 		 for(int l = -2; l <= 2; ++l) {
-	 			 if(j+l < 1 || j+l > ysize) continue;
-	 			 Real const xa = ha(i	,j	).x();
-	 			 Real const ya = ha(i	,j	).y();
-	 			 Real const xb = hb(i+k,j+l).x();
-	 			 Real const yb = hb(i+k,j+l).y();
-	 			 Real const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
-	
-	 			 if( d2 < BIN*BIN*4.0 ) {
-	 				 Real dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(BIN*BIN*4.0-d2);
-	 				 if( dz < mindis ) {
-	 					 mindis = dz;
-	 					 imna = i;
-	 					 jmna = j;
-	 					 imnb = i+k;
-	 					 jmnb = j+l;
-	 				 }
-	 			 }
-	 		 }
-	 	 }
-	  }
-	}
-	
-	Real const CLASH_D = sqrt(CLASH_D2);
-	Real const CONTACT_D = sqrt(CONTACT_D2);	
-
-	cbcount = 0.0;
-	// utility::io::ozstream out("cb8.pdb");
-	// TR << "CB0 " << cbcount << std::endl;
-	for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
-	  for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-			Real d2 = ib->distance_squared( (*ia + (mindis*Vec(0,0,1)) ) );
-	 	 if( d2 < CONTACT_D2 ) {
-			// CHANGE ME!
-	 		 cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
-//	 		 cbcount += sigmoid(d2, 0.0, 2*CONTACT_D );
-//			cbcount++;
-	 		 // Vec viz = (*ia) + (mindis*ori);
-	 		 // out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	 		 // viz = *ib;
-	 		 // out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"B"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	 	 }
-	  }
-	}
-	// out.close();
-	// TR << "CB1 " << cbcount << std::endl;
-	
-	// // rotate points back -- needed iff pa/pb come by reference
-	//rot = rot.transposed();
-	// if( rot != Mat::identity() ) {
-	//	for(vector1<Vec>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-	//	for(vector1<Vec>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
-	// }
-	
-	// uncomment this to get hashes in local space
-	// rot = Mat::identity();
-	// ori = Vec(0,0,1);
-	
-	// if(debug){
-	//	 {
-	//		 utility::io::ozstream out("hasha.pdb");
-	//		 for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-	//			 for(int j = 2; j <= ysize-1; ++j) {
-	//				 Vec viz = rot*ha(i,j) + mindis*ori;
-	//				 if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
-	//				 out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100+j)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	//			 }
-	//		 }
-	//		 Vec viz = rot*ha(imna,jmna) + mindis*ori;
-	//		 out<<"HETATM"<<I(5,1000+imna)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"B"<<I(4,100+jmna)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	//		 out.close();
-	//	 }
-	//	 {
-	//		 utility::io::ozstream out("hashb.pdb");
-	//		 for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-	//			 for(int j = 2; j <= ysize-1; ++j) {
-	//				 Vec viz = rot*hb(i,j);
-	//				 if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
-	//				 out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"C"<<I(4,100+j)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	//			 }
-	//		 }
-	//		 Vec viz = rot*hb(imnb,jmnb);
-	//		 out<<"HETATM"<<I(5,1000+imnb)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"C"<<I(4,100+jmnb)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	//		 out.close();
-	//	 }
-	// }
-	
-	return mindis;
-}
+// Real
+// sicfast(
+// 	vector1<Vec> const & pa,
+// 	vector1<Vec> const & pb,
+// 	vector1<Vec> const & cba,
+// 	vector1<Vec> const & cbb,
+// 	Real & cbcount
+// ) {
+// 	Real const CONTACT_D2 = sqr(basic::options::option[basic::options::OptionKeys::cxdock::contact_dis]());
+// 	Real const CLASH_D2   = sqr(basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]());
+// 	Real const BIN        =     basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]() /2.0;
+// 
+// 	// get bounds for plane hashes
+// 	Real xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
+// 	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+// 		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
+// 		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
+// 	}
+// 	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+// 		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
+// 		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
+// 	}
+// 	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
+// 	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1); // bounds of grid
+// 	
+// 	
+// 	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
+// 	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
+// 	
+// 	// insert points into hashes
+// 	int const xsize = xub-xlb+1;
+// 	int const ysize = yub-ylb+1;
+// 	ObjexxFCL::FArray2D<Vec> ha(xsize,ysize,Vec(0,0,-9e9)),hb(xsize,ysize,Vec(0,0,9e9));
+// 	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+// 	  int const ix = (int)ceil(ia->x()/BIN)-xlb;
+// 	  int const iy = (int)ceil(ia->y()/BIN)-ylb;
+// 	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 	  if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
+// 	}
+// 	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+// 	  int const ix = (int)ceil(ib->x()/BIN)-xlb;
+// 	  int const iy = (int)ceil(ib->y()/BIN)-ylb;
+// 	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+// 	  if( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
+// 	}
+// 	
+// 	// check hashes for min dis
+// 	int imna=0,jmna=0,imnb=0,jmnb=0;
+// 	Real mindis = 9e9;
+// 	for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+// 	  for(int j = 1; j <= ysize; ++j) {
+// 	 	 for(int k = -2; k <= 2; ++k) {
+// 	 		 if(i+k < 1 || i+k > xsize) continue;
+// 	 		 for(int l = -2; l <= 2; ++l) {
+// 	 			 if(j+l < 1 || j+l > ysize) continue;
+// 	 			 Real const xa = ha(i	,j	).x();
+// 	 			 Real const ya = ha(i	,j	).y();
+// 	 			 Real const xb = hb(i+k,j+l).x();
+// 	 			 Real const yb = hb(i+k,j+l).y();
+// 	 			 Real const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
+// 	
+// 	 			 if( d2 < BIN*BIN*4.0 ) {
+// 	 				 Real dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(BIN*BIN*4.0-d2);
+// 	 				 if( dz < mindis ) {
+// 	 					 mindis = dz;
+// 	 					 imna = i;
+// 	 					 jmna = j;
+// 	 					 imnb = i+k;
+// 	 					 jmnb = j+l;
+// 	 				 }
+// 	 			 }
+// 	 		 }
+// 	 	 }
+// 	  }
+// 	}
+// 	
+// 	Real const CLASH_D = sqrt(CLASH_D2);
+// 	Real const CONTACT_D = sqrt(CONTACT_D2);	
+// 
+// 	cbcount = 0.0;
+// 	// utility::io::ozstream out("cb8.pdb");
+// 	// TR << "CB0 " << cbcount << std::endl;
+// 	for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
+// 	  for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
+// 			Real d2 = ib->distance_squared( (*ia + (mindis*Vec(0,0,1)) ) );
+// 	 	 if( d2 < CONTACT_D2 ) {
+// 			// CHANGE ME!
+// 	 		 cbcount += sigmoid(d2, CLASH_D, CONTACT_D );
+// //	 		 cbcount += sigmoid(d2, 0.0, 2*CONTACT_D );
+// //			cbcount++;
+// 	 		 // Vec viz = (*ia) + (mindis*ori);
+// 	 		 // out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+// 	 		 // viz = *ib;
+// 	 		 // out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"B"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+// 	 	 }
+// 	  }
+// 	}
+// 	// out.close();
+// 	// TR << "CB1 " << cbcount << std::endl;
+// 	
+// 	// // rotate points back -- needed iff pa/pb come by reference
+// 	//rot = rot.transposed();
+// 	// if( rot != Mat::identity() ) {
+// 	//	for(vector1<Vec>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
+// 	//	for(vector1<Vec>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
+// 	// }
+// 	
+// 	// uncomment this to get hashes in local space
+// 	// rot = Mat::identity();
+// 	// ori = Vec(0,0,1);
+// 	
+// 	// if(debug){
+// 	//	 {
+// 	//		 utility::io::ozstream out("hasha.pdb");
+// 	//		 for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+// 	//			 for(int j = 2; j <= ysize-1; ++j) {
+// 	//				 Vec viz = rot*ha(i,j) + mindis*ori;
+// 	//				 if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
+// 	//				 out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100+j)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+// 	//			 }
+// 	//		 }
+// 	//		 Vec viz = rot*ha(imna,jmna) + mindis*ori;
+// 	//		 out<<"HETATM"<<I(5,1000+imna)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"B"<<I(4,100+jmna)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+// 	//		 out.close();
+// 	//	 }
+// 	//	 {
+// 	//		 utility::io::ozstream out("hashb.pdb");
+// 	//		 for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+// 	//			 for(int j = 2; j <= ysize-1; ++j) {
+// 	//				 Vec viz = rot*hb(i,j);
+// 	//				 if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
+// 	//				 out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"C"<<I(4,100+j)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+// 	//			 }
+// 	//		 }
+// 	//		 Vec viz = rot*hb(imnb,jmnb);
+// 	//		 out<<"HETATM"<<I(5,1000+imnb)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"C"<<I(4,100+jmnb)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+// 	//		 out.close();
+// 	//	 }
+// 	// }
+// 	
+// 	return mindis;
+// }
 
 
 Real
