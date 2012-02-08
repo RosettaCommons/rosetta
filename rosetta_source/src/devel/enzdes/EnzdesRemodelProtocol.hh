@@ -131,6 +131,10 @@ public:
 
   core::id::SequenceMappingOP get_seq_mapping();
 
+    utility::vector1< core::Size > get_flex_region( ) const; 
+ 
+void set_target_inverse_rotamers(utility::vector1< std::list < core::conformation::ResidueCOP > > & inv_rot);
+
 protected:
 
 	/// @brief function to do proper setup if this mover is

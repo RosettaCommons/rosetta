@@ -383,6 +383,13 @@ Motif::apply_check(
 	Size const pos
 ) const
 {
+		if ( pose.residue(pos).is_DNA() )
+    {         
+				return(
+               utility::trimmed_compare(  protocols::dna::dna_full_name3(pose.residue( pos ).name3()), restype_name1_ ) ||
+               utility::trimmed_compare(  protocols::dna::dna_full_name3(pose.residue( pos ).name3()), restype_name2_ ) 
+               );
+    }
 	return( utility::trimmed_compare( pose.residue( pos ).name3(), restype_name1_ ) ||
 					utility::trimmed_compare( pose.residue( pos ).name3(), restype_name2_ ) );
 }

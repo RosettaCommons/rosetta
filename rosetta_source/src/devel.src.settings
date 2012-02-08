@@ -37,6 +37,8 @@ sources = {
 		"ProteinDNA_Relax",
 		"protocols",
 		"relax_util",
+		"MotifLoopBuild",
+		"util_motif_loop",
 		"util",
 	],
 	"devel/domain_assembly": [

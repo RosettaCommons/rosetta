@@ -558,6 +558,27 @@ EnzdesRemodelMover::remodel_pose(
 
 } //remodel_pose
 
+utility::vector1< core::Size >
+    EnzdesRemodelMover::get_flex_region( ) const 
+	{        
+        utility::vector1< core::Size> flex_pos;
+        for( core::Size i( flex_region_->start() );
+              i<=flex_region_->stop(); ++i)
+        {
+            flex_pos.push_back(i);
+        }
+        return flex_pos;
+ }
+
+
+
+void
+EnzdesRemodelMover::set_target_inverse_rotamers(utility::vector1< std::list < core::conformation::ResidueCOP > > & inv_rot)
+{
+        target_inverse_rotamers_.clear();
+        target_inverse_rotamers_=inv_rot;
+    tr << "New target inverse rotamers have been set via \"set_target_inverse_rotamers\"." << std::endl;
+}
 
 bool
 EnzdesRemodelMover::refine_pose(

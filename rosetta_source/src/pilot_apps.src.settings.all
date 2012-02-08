@@ -128,6 +128,9 @@ sources = {
 		#"nadeem_find_destabilizing_mutation",
 		#"nadeem_compensatory_mutation",
 	],
+	"pilot/josh" : [
+	"motif_loop_build",
+	],
 	"pilot/jstev" : [
 		#"collect_features",
 	],

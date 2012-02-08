@@ -44,6 +44,8 @@ enum ScoreType {
 	fa_intra_rep,
 	fa_intra_sol,
 	lk_hack,
+	lk_ball,
+	lk_ball_iso,
 	coarse_fa_atr,
 	coarse_fa_rep,
 	coarse_fa_sol,

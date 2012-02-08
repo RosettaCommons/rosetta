@@ -327,6 +327,8 @@ sources = {
 		"LinearChainbreakEnergyCreator",
 		"LK_CosThetaEnergy",
 		"LK_hack",
+		"LK_BallEnergy",
+		"LK_BallInfo",
 		"LongRangeTwoBodyEnergy",
 		"MembraneCbetaEnergy",
 		"MembraneCenPairEnergy",

@@ -19,9 +19,11 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-
+#include <core/pose/Pose.hh>
+#include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
 
+#include <sstream>
 
 // Utility Headers
 
@@ -48,6 +50,7 @@ MotifHit::MotifHit( MotifHit const & src ) :
 	utility::pointer::ReferenceCount( src ),
 	motifcop_( src.motifcop()->clone() ),
 	vbpos_( src.vbpos_ ),
+	final_test_( src.final_test_ ),
 	passed_automorphism_( src.passed_automorphism_ ),
 	build_rotamer_( src.build_rotamer()->clone() ),
 	target_conformer_( src.target_conformer()->clone() )
@@ -83,5 +86,15 @@ MotifHit::target_conformer(
 	target_conformer_ = target_conformer.clone();
 }
 
+void
+MotifHit::dump_motif_hit()
+{
+	core::pose::Pose pose_mh;
+	pose_mh.append_residue_by_jump( *target_conformer_, 1);
+	pose_mh.append_residue_by_jump( *build_rotamer_, 1);
+	std::stringstream pose_mh_name_full;
+	pose_mh_name_full << "MH_" << final_test_ << "_" << motifcop_->restype_name2()[0] << "_" << vbpos_ << "_" << motifcop_->restype_name1()  << "_" << motifcop_->remark() << ".pdb";
+	core::io::pdb::dump_pdb( pose_mh, pose_mh_name_full.str() );
+}
 } // namespace motifs
 } // namespace protocols
