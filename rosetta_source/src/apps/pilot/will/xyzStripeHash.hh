@@ -78,9 +78,9 @@ public:
     //TR<<"atom "<<natom_<<" grid1 "<<xdim_*ydim_*zdim_<<" "<<xdim_<<" "<<ydim_<<" "<<zdim_<<std::endl;
 
     for(int i = 1; i <= natom_; ++i) {
-      int ix = (int)(atoms[i].x()-xmn+FUDGE)/grid_size_;
-      int iy = (int)(atoms[i].y()-ymn+FUDGE)/grid_size_;
-      int iz = (int)(atoms[i].z()-zmn+FUDGE)/grid_size_;
+      int ix = (int)((atoms[i].x()-xmn+FUDGE)/grid_size_);
+      int iy = (int)((atoms[i].y()-ymn+FUDGE)/grid_size_);
+      int iz = (int)((atoms[i].z()-zmn+FUDGE)/grid_size_);
       assert(ix >= 0); assert(iy >= 0); assert(iz >= 0); assert(ix < xdim_); assert(iy < ydim_); assert(iz < zdim_);
       int ig = ix+xdim_*iy+xdim_*ydim_*iz;
       assert(ig>=0);assert(ig<9999999);
@@ -105,9 +105,9 @@ public:
     ushort *gridc = new ushort[gsize];
     for(int i = 0; i < gsize; ++i) gridc[i] = 0;
     for(int i = 1; i <= natom_; ++i) {
-      int const ix = (int)(atoms[i].x()-xmn+FUDGE)/grid_size_;
-      int const iy = (int)(atoms[i].y()-ymn+FUDGE)/grid_size_;
-      int const iz = (int)(atoms[i].z()-zmn+FUDGE)/grid_size_;
+      int const ix = (int)((atoms[i].x()-xmn+FUDGE)/grid_size_);
+      int const iy = (int)((atoms[i].y()-ymn+FUDGE)/grid_size_);
+      int const iz = (int)((atoms[i].z()-zmn+FUDGE)/grid_size_);
       int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
       int const idx = gindex[ig].x + gridc[ig];
       gatom[ idx ].x = atoms[i].x()-xmn+FUDGE;

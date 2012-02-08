@@ -80,7 +80,11 @@ OPT_1GRP_KEY( Integer , tcdock, peak_grid_size);
 OPT_1GRP_KEY( Integer , tcdock, peak_grid_smooth);
 OPT_1GRP_KEY( Boolean , tcdock, reverse );
 OPT_1GRP_KEY( Boolean , tcdock, dump_pdb );
-OPT_1GRP_KEY( Boolean , tcdock, dump_pdb_grid );
+OPT_1GRP_KEY( IntegerVector , tcdock, dump_pdb_grid );
+OPT_1GRP_KEY( Real , tcdock, grid_delta_rot );
+OPT_1GRP_KEY( Real , tcdock, grid_delta_disp );
+OPT_1GRP_KEY( Integer , tcdock, grid_size_rot );
+OPT_1GRP_KEY( Integer , tcdock, grid_size_disp );
 OPT_1GRP_KEY( IntegerVector , tcdock, dump_peak_grids );
 OPT_1GRP_KEY( IntegerVector , tcdock, justone );
 OPT_1GRP_KEY( FileVector, tcdock, I2 );
@@ -95,32 +99,36 @@ void register_options() {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		OPT( in::file::s );
-		NEW_OPT( tcdock::clash_dis	 ,"max acceptable clash dis", 3.5 );
-		NEW_OPT( tcdock::contact_dis ,"max acceptable contact dis", 12 );
-		NEW_OPT( tcdock::intra       ,"weight for intra contacts", 1.0 );
-		NEW_OPT( tcdock::intra1      ,"weight for comp1 intra contacts", 1.0 );
-		NEW_OPT( tcdock::intra2      ,"weight for conp2 intra contacts", 1.0 );
-		NEW_OPT( tcdock::nsamp1      ,"check around X top lowres hits", 2000 );
-		NEW_OPT( tcdock::topx        ,"output top X hits", 10 );
-		NEW_OPT( tcdock::peak_grid_size   ,"peak detect grid size (2*N+1)", 24 );		
-		NEW_OPT( tcdock::peak_grid_smooth ,"peak detect grid smooth (0+)", 1 );		
-		NEW_OPT( tcdock::reverse     ,"reverse one component", false );	
-		NEW_OPT( tcdock::dump_pdb,  "dump pdbs", false );
-		NEW_OPT( tcdock::dump_pdb_grid,  "dump pdb design grids", false );
-		NEW_OPT( tcdock::dump_peak_grids,"dump specific grids grids", -1 );
-		NEW_OPT( tcdock::justone,"dump info on one structure", -1 );
-		NEW_OPT( tcdock::I2,"file(s) for icos 2fold dimer", "" );
-		NEW_OPT( tcdock::I3,"file(s) for icos 3fold trimer", "" );
-		NEW_OPT( tcdock::I5,"file(s) for icos 5fold pentamer", "" );
-		NEW_OPT( tcdock::O2,"file(s) for octa 2fold dimer", "" );
-		NEW_OPT( tcdock::O3,"file(s) for octa 3fold trimer", "" );
-		NEW_OPT( tcdock::O4,"file(s) for octa 4fold tetramer", "" );
-		NEW_OPT( tcdock::T2,"file(s) for tetr 2fold dimer", "" );
-		NEW_OPT( tcdock::T3,"file(s) for tetr 3fold trimer", "" );
-		NEW_OPT( tcdock::termini_cutoff,"tscore = w*max(0,cut-x)", 20.0 );
-		NEW_OPT( tcdock::termini_weight,"tscore = w*max(0,cut-x)",  0.0 );
-		NEW_OPT( tcdock::termini_trim,"trim termini up to for termini score",  0 );
-		NEW_OPT( tcdock::hash_3D_vs_2D,"grid spacing top 2D hash", 1.2 );
+		NEW_OPT( tcdock::clash_dis	      ,"max acceptable clash dis"            ,  3.5   );
+		NEW_OPT( tcdock::contact_dis      ,"max acceptable contact dis"          , 12     );
+		NEW_OPT( tcdock::intra            ,"weight for intra contacts"           ,  1.0   );
+		NEW_OPT( tcdock::intra1           ,"weight for comp1 intra contacts"     ,  1.0   );
+		NEW_OPT( tcdock::intra2           ,"weight for conp2 intra contacts"     ,  1.0   );
+		NEW_OPT( tcdock::nsamp1           ,"check around X top lowres hits"      , 2000   );
+		NEW_OPT( tcdock::topx             ,"output top X hits"                   , 10     );
+		NEW_OPT( tcdock::peak_grid_size   ,"peak detect grid size (2*N+1)"       , 24     );		
+		NEW_OPT( tcdock::peak_grid_smooth ,"peak detect grid smooth (0+)"        ,  1     );		
+		NEW_OPT( tcdock::reverse          ,"reverse one component"               , false  );	
+		NEW_OPT( tcdock::dump_pdb         ,"dump pdbs"                           , false  );
+		NEW_OPT( tcdock::dump_pdb_grid    ,"dump pdb design grids"               , -1  );
+		NEW_OPT( tcdock::grid_delta_rot   ,"grid samp size theta"                ,  0.5   );
+		NEW_OPT( tcdock::grid_delta_disp  ,"grid samp size r"                    ,  0.5   );
+		NEW_OPT( tcdock::grid_size_rot    ,"grid nsamp theta +- (2*N+1 samp)"    ,  1     );
+		NEW_OPT( tcdock::grid_size_disp   ,"grid samp r"                         ,  5     );
+		NEW_OPT( tcdock::dump_peak_grids  ,"dump specific grids grids"           , -1     );
+		NEW_OPT( tcdock::justone          ,"dump info on one structure"          , -1     );
+		NEW_OPT( tcdock::I2               ,"file(s) for icos 2fold dimer"        , ""     );
+		NEW_OPT( tcdock::I3               ,"file(s) for icos 3fold trimer"       , ""     );
+		NEW_OPT( tcdock::I5               ,"file(s) for icos 5fold pentamer"     , ""     );
+		NEW_OPT( tcdock::O2               ,"file(s) for octa 2fold dimer"        , ""     );
+		NEW_OPT( tcdock::O3               ,"file(s) for octa 3fold trimer"       , ""     );
+		NEW_OPT( tcdock::O4               ,"file(s) for octa 4fold tetramer"     , ""     );
+		NEW_OPT( tcdock::T2               ,"file(s) for tetr 2fold dimer"        , ""     );
+		NEW_OPT( tcdock::T3               ,"file(s) for tetr 3fold trimer"       , ""     );
+		NEW_OPT( tcdock::termini_cutoff   ,"tscore = w*max(0,cut-x)"             , 20.0   );
+		NEW_OPT( tcdock::termini_weight   ,"tscore = w*max(0,cut-x)"             ,  0.0   );
+		NEW_OPT( tcdock::termini_trim     ,"trim termini up to for termini score",  0     );
+		NEW_OPT( tcdock::hash_3D_vs_2D    ,"grid spacing top 2D hash"            ,  1.3   );
 }
 template<typename T> inline T sqr(T x) { return x*x; }
 void dump_points_pdb(utility::vector1<Vecf> const & p, std::string fn) {
@@ -208,6 +216,9 @@ void alignaxis(Pose & pose, Vecf newaxis, Vecf oldaxis, Vecf cen = Vecf(0,0,0) )
 		rot_pose(pose,axis,ang,cen);
 	}
 }
+inline Vec projperp(Vec const & u, Vec const & v) {
+  return v - projection_matrix(u)*v;
+}
 void prune_cb_pairs(vector1<Vecf> & cba, vector1<Vecf> & cbb, vector1<double> & wa_in, vector1<double> & wb_in, double CTD2) {
 	vector1<Vecf> a,b;
 	vector1<double> wa,wb;
@@ -240,21 +251,6 @@ int neighbor_count(Pose const &pose, int ires, double distance_threshold=10.0) {
 	}
 	return resi_neighbors;
 }
-struct Vecf2 {
-	Vecf a,b;
-	Vecf2() {}
-	Vecf2(Vecf _a, Vecf _b) : a(_a),b(_b) {}
-};
-struct Vecf3 {
-	Vecf a,b,c;
-	Vecf3() {}
-	Vecf3(Vecf _a, Vecf _b, Vecf _c) : a(_a),b(_b),c(_c) {}
-};
-struct Vecf4 {
-	Vecf a,b,c,d;
-	Vecf4() {}
-	Vecf4(Vecf _a, Vecf _b, Vecf _c, Vecf _d) : a(_a),b(_b),c(_d),d(_d) {}
-};
 double brute_mindis(vector1<Vecf> const & pa, vector1<Vecf> const & pb, Vecf const ofst) {
 	double mindis = 9e9;
 	for(vector1<Vecf>::const_iterator i = pa.begin(); i != pa.end(); ++i) {
@@ -275,8 +271,8 @@ struct SICFast {
 		CTD(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]()),
 		CLD(basic::options::option[basic::options::OptionKeys::tcdock::clash_dis]()),
 		CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD*basic::options::option[basic::options::OptionKeys::tcdock::hash_3D_vs_2D]()),
-		xh1_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+2.0),
-		xh2_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+2.0),
+		xh1_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+0.5),
+		xh2_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+0.5),
 		xh1_cb_(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]()),
 		xh2_cb_(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]())
 	{}
@@ -414,8 +410,8 @@ struct SICFast {
 				if( v.x() < -xh.grid_size_ || v.y() < -xh.grid_size_ || v.z() < -xh.grid_size_ ) continue; // worth it?
 				if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it? 
 				int const ix  = (v.x()<0) ? 0 : numeric::min(xh.xdim_-1,(int)(v.x()/xh.grid_size_));
-				int const iy0 = (v.y()<0) ? 0 : v.y()/xh.grid_size_;
-				int const iz0 = (v.z()<0) ? 0 : v.z()/xh.grid_size_;
+				int const iy0 = (int)((v.y()<0) ? 0 : v.y()/xh.grid_size_);
+				int const iz0 = (int)((v.z()<0) ? 0 : v.z()/xh.grid_size_);
 				int const iyl = numeric::max(0,iy0-1);
 				int const izl = numeric::max(0,iz0-1);
 				int const iyu = numeric::min((int)xh.ydim_,     iy0+2);
@@ -558,9 +554,7 @@ struct TCDock {
 	int cmp1nangle_,cmp2nangle_,cmp1nsub_,cmp2nsub_;
 	std::map<string,Vecf> axismap_;
 	std::vector<SICFast*> sics_;
-	TCDock( string cmp1pdb, string cmp2pdb, string cmp1type, string cmp2type ) :
-		cmp1type_(cmp1type),cmp2type_(cmp2type)
-	{
+	TCDock( string cmp1pdb, string cmp2pdb, string cmp1type, string cmp2type ) : cmp1type_(cmp1type),cmp2type_(cmp2type) {
 		#ifdef USE_OPENMP
 		cout << "OMP info: " << num_threads() << " " << thread_num() << endl;
 		#endif
@@ -833,17 +827,20 @@ struct TCDock {
 		for(Size i = 1; i <= t4.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
 		for(Size i = 1; i <= t5.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t5.residue(i),1); else pose.append_residue_by_bond(t5.residue(i));
 	}
-	void dump_pdb(int icmp2, int icmp1, int iori, string fname, bool sym=true) {
+	void dump_pdb(int icmp2, int icmp1, int iori, string fname, int idx, bool sym=true) {
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
+		using ObjexxFCL::string_of;
 		double d,dcmp2,dcmp1,icbc,cmp1cbc,cmp2cbc;
 		dock_get_geom(icmp2,icmp1,iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
 		Pose p1,p2,symm;
 		#ifdef USE_OPENMP
 		#pragma omp critical
 		#endif
-		{	p1 = cmp1in_;
-			p2 = cmp2in_;		}
+		{
+			p1 = cmp1in_;
+			p2 = cmp2in_;
+		}
 		rot_pose  (p2,cmp2axs_,icmp2);
 		rot_pose  (p1,cmp1axs_,icmp1);
 		trans_pose(p2,dcmp2*cmp2axs_);
@@ -866,16 +863,56 @@ struct TCDock {
 		}
 		core::io::pdb::dump_pdb(symm,option[out::file::o]()+"/"+fname);
 		
-		for(int ia1 = -1; ia1 < 2; ++ia1){
-			for(int ia2 = -1; ia2 < 2; ++ia2){
-				for(int id1 = -1; id1 < 2; ++id1){
-					for(int id2 = -1; id2 < 2; ++id2){
-						;//TODO
-					}
+		// find contacts
+		
+		vector1<int> dumpg = option[tcdock::dump_pdb_grid]();
+		if( std::find(dumpg.begin(),dumpg.end(),idx)!=dumpg.end() ){
+		//if(option[tcdock::dump_pdb_grid]()) {
+			Pose asym;
+			#ifdef USE_OPENMP
+			#pragma omp critical
+			#endif
+			{
+				asym.append_residue_by_jump(p1.residue(1),1);
+				for(Size i = 2; i <= p1.n_residue(); ++i) {
+					if(asym.residue(i-1).is_terminus()) asym.append_residue_by_jump(p1.residue(i),1);
+					else                                asym.append_residue_by_bond(p1.residue(i));
+				}
+				asym.append_residue_by_jump(p2.residue(1),1);
+				for(Size i = 2; i <= p2.n_residue(); ++i) {
+					if(asym.residue(asym.n_residue()).is_terminus()) asym.append_residue_by_jump(p2.residue(i),1);
+					else                                             asym.append_residue_by_bond(p2.residue(i));
 				}
 			}
-		}
-		
+			double pr1=0.0,pr2=0.0;
+			for(vector1<Vecf>::const_iterator i = cmp1pts_.begin(); i != cmp1pts_.end(); ++i) pr1 = max(pr1,projperp(cmp1axs_,*i).length());
+			for(vector1<Vecf>::const_iterator i = cmp2pts_.begin(); i != cmp2pts_.end(); ++i) pr2 = max(pr2,projperp(cmp2axs_,*i).length());
+			int const na = option[tcdock::grid_size_rot]();			
+			int const nr = option[tcdock::grid_size_disp]();			
+			double const da1 = numeric::conversions::degrees(asin(option[tcdock::grid_delta_rot]()*1.2/pr1));
+			double const da2 = numeric::conversions::degrees(asin(option[tcdock::grid_delta_rot]()*1.2/pr1));
+			double const dr1 = -option[tcdock::grid_delta_disp]()*dcmp1/d;
+			double const dr2 = -option[tcdock::grid_delta_disp]()*dcmp2/d;
+			rot_pose(asym,cmp1axs_,-(na+1)*da1,               1, p1.n_residue());
+			rot_pose(asym,cmp2axs_, (na  )*da2,p1.n_residue()+1,asym.n_residue());
+			for(int ia1 = 0; ia1 < 2*na+1; ++ia1) {
+				rot_pose(asym,cmp1axs_,da1,1, p1.n_residue());
+				rot_pose(asym,cmp2axs_,-(2*na+1)*da2,p1.n_residue()+1,asym.n_residue());
+				for(int ia2 = 0; ia2 < 2*na+1; ++ia2) {
+					rot_pose(asym,cmp2axs_,da2,p1.n_residue()+1,asym.n_residue());
+					for(int ir = 0; ir < nr; ++ir) {
+						#ifdef USE_OPENMP
+						#pragma omp critical
+						#endif
+						core::io::pdb::dump_pdb(asym,option[out::file::o]()+"/"+fname+"_"+string_of(ia1)+"_"+string_of(ia2)+"_"+string_of(ir)+".pdb.gz");
+						trans_pose(asym,cmp1axs_*dr1,1, p1.n_residue());		
+						trans_pose(asym,cmp2axs_*dr2,p1.n_residue()+1,asym.n_residue());
+					}
+					trans_pose(asym,cmp1axs_*-nr*dr1,1, p1.n_residue());		
+					trans_pose(asym,cmp2axs_*-nr*dr2,p1.n_residue()+1,asym.n_residue());
+				}
+			}
+		}		
 	}
 	double __dock_base__(int icmp2,int icmp1,int iori,double&dori,double&dcmp2,double&dcmp1,double&icbc,double&cmp2cbc,double&cmp1cbc,bool cache=true){
 		if(!cache || gradii(icmp2+1,icmp1+1,iori+1)==-9e9 ) {
@@ -1056,16 +1093,16 @@ struct TCDock {
 					}
 				}
 				o.close();
-				dump_pdb(h.icmp2,h.icmp1,h.iori,"test_"+ObjexxFCL::string_of(ilm)+".pdb");					
+				dump_pdb(h.icmp2,h.icmp1,h.iori,"test_"+ObjexxFCL::string_of(ilm)+".pdb",0,true);
 			}
 		}
 		double score = dock_get_geom(h.icmp2,h.icmp1,h.iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
 		string fn = cmp1name_+"_"+cmp2name_+"_"+(option[tcdock::reverse]()?"R":"F")+"_"+ObjexxFCL::string_of(ilm);
 		cout << "| " << fn << ((ilm<10)?"  ":" ")
-              << F(8,3,score) << " " 
+             << F(8,3,score) << " " 
 		     << F(6,2,2*max(fabs(dcmp1)+(dcmp1>0?cmp1diapos_:cmp1dianeg_),fabs(dcmp2)+(dcmp2>0?cmp2diapos_:cmp2dianeg_))) << " "
 		     << F(6,2, min_termini_dis(dcmp1,h.icmp1,dcmp2,h.icmp2) ) << " "
-              << F(7,3,icbc) << " " 
+             << F(7,3,icbc) << " " 
 		     << F(6,2,cmp1cbc) << " " 
 		     << F(6,2,cmp2cbc) << " " 
 		     << I(4,cmp1in_.n_residue()) << " " 
@@ -1079,7 +1116,7 @@ struct TCDock {
 			cout << " " << F(5,2,ffhist[ifh]);
 		}
 		cout << endl;
-		if(option[tcdock::dump_pdb]()) dump_pdb(h.icmp2,h.icmp1,h.iori,fn+".pdb.gz");
+		if(option[tcdock::dump_pdb]() ) dump_pdb(h.icmp2,h.icmp1,h.iori,fn+".pdb.gz",0,true);
 		
 	}
 	void run() {
@@ -1274,7 +1311,6 @@ struct TCDock {
 						}
 					}
 					o.close();
-					dump_pdb(h.icmp2,h.icmp1,h.iori,"test_"+ObjexxFCL::string_of(ilm)+".pdb");					
 				}
 			}
 			double score = dock_get_geom(h.icmp2,h.icmp1,h.iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
@@ -1297,7 +1333,8 @@ struct TCDock {
 				cout << " " << F(5,2,ffhist[ifh]);
 			}
 			cout << endl;
-			if(option[tcdock::dump_pdb]()) dump_pdb(h.icmp2,h.icmp1,h.iori,fn+".pdb.gz");
+			vector1<int> dumpg = option[tcdock::dump_pdb_grid]();
+			if(option[tcdock::dump_pdb]() || std::find(dumpg.begin(),dumpg.end(),ilm)!=dumpg.end() ) dump_pdb(h.icmp2,h.icmp1,h.iori,fn+".pdb.gz",ilm,true);
 		}
 	}
 
@@ -1309,10 +1346,10 @@ int main (int argc, char *argv[]) {
 	using namespace basic::options::OptionKeys;
 	vector1<string> compkind;
 	vector1<vector1<string> > compfiles;
-	if( option[tcdock::I5].user() ) { compkind.push_back("I5"); compfiles.push_back(option[tcdock::I5]()); }		
+	if( option[tcdock::I5].user() ) { compkind.push_back("I5"); compfiles.push_back(option[tcdock::I5]()); }
 	if( option[tcdock::I3].user() ) { compkind.push_back("I3"); compfiles.push_back(option[tcdock::I3]()); }
 	if( option[tcdock::I2].user() ) { compkind.push_back("I2"); compfiles.push_back(option[tcdock::I2]()); }
-	if( option[tcdock::O4].user() ) { compkind.push_back("O4"); compfiles.push_back(option[tcdock::O4]()); }		
+	if( option[tcdock::O4].user() ) { compkind.push_back("O4"); compfiles.push_back(option[tcdock::O4]()); }
 	if( option[tcdock::O3].user() ) { compkind.push_back("O3"); compfiles.push_back(option[tcdock::O3]()); }
 	if( option[tcdock::O2].user() ) { compkind.push_back("O2"); compfiles.push_back(option[tcdock::O2]()); }
 	if( option[tcdock::T3].user() ) { compkind.push_back("T3"); compfiles.push_back(option[tcdock::T3]()); }
