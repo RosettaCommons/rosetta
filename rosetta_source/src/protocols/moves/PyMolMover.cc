@@ -128,7 +128,7 @@ void UDPSocketClient::sendMessage(std::string msg)
 		sendRAWMessage(sentCount_, i, count, &msg[i*max_packet_size_], &msg[last] );
 		if(count > 1) {
 			#ifdef _WIN32
-				Sleep(1); // Sleep function takes milliseconds.
+				Sleep(10); // Sleep function takes milliseconds.
 			#else
 				timespec ts;  ts.tv_sec=0;  ts.tv_nsec=1000000; //time to sleep in nanoseconds, we want to take a nap for ~0.001sec
 				nanosleep(&ts, NULL);

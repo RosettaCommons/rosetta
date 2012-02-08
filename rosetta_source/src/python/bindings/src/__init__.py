@@ -631,7 +631,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
 
 
 
-class __Deprecated_do_not_use_PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
+class WinPyMOL_Mover(rosetta.protocols.moves.PyMolMover):
     def __init__(self, keep_history=False, update_energy=False, energy_type='total_score'):
         rosetta.protocols.moves.PyMolMover.__init__(self)
         self.keep_history = keep_history
