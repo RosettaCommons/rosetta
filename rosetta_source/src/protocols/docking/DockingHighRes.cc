@@ -213,3 +213,4 @@ core::pack::task::TaskFactoryCOP DockingHighRes::task_factory()
 
 } // namespace docking
 } // namespace protocols
+

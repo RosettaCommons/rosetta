@@ -2197,6 +2197,7 @@
 		AA6BFB4C16D6EAD0936BC2BA /* SpinMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = DC50379ED798776950425DE6 /* SpinMover.cc */; };
 		D650DF8EB8D18C9E8EF4E718 /* Splice.cc in Sources */ = {isa = PBXBuildFile; fileRef = D0EA19CDCFD05D7C85BC6BBF /* Splice.cc */; };
 		9CE1843A0C511B82E4B17920 /* SubroutineMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 08A477E5D17CE2F057954A6D /* SubroutineMover.cc */; };
+		5C5A76A925F400B183D8280A /* TaskAwareCsts.cc in Sources */ = {isa = PBXBuildFile; fileRef = DFCDBE82188FE89BC3E8C294 /* TaskAwareCsts.cc */; };
 		3D0AEFB9C287FB80E555085D /* TryRotamers.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4A7008F83496ABDE92664418 /* TryRotamers.cc */; };
 		CE8BC43BA90CDA9AA9BB36ED /* VLB.cc in Sources */ = {isa = PBXBuildFile; fileRef = 47AD4A37E7FFF702767BDFF7 /* VLB.cc */; };
 		027ED3F4E77BFF68522A46E3 /* CAcstGenerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = D388D13C5BF69DB9706B473F /* CAcstGenerator.cc */; };
@@ -6742,6 +6743,7 @@
 		80E9A403B1AE6AE75414AA0B /* chunk.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = chunk.OptionKeys.gen.hh; path = ../src/basic/options/keys/chunk.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		8B35EE1109076990B48E7A39 /* cluster.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = cluster.OptionKeys.gen.hh; path = ../src/basic/options/keys/cluster.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		2DF494D4F75B46450B653934 /* cm.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = cm.OptionKeys.gen.hh; path = ../src/basic/options/keys/cm.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
+		6AC6F632ADC28E7093B1362B /* cmiles.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = cmiles.OptionKeys.gen.hh; path = ../src/basic/options/keys/cmiles.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		4E1503B570D32435BFC09D0E /* constraints.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = constraints.OptionKeys.gen.hh; path = ../src/basic/options/keys/constraints.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		270C0BB1A002AB7B92C35019 /* corrections.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = corrections.OptionKeys.gen.hh; path = ../src/basic/options/keys/corrections.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		2C59AA5A7903568693C27FF7 /* cp.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = cp.OptionKeys.gen.hh; path = ../src/basic/options/keys/cp.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
@@ -13210,6 +13212,10 @@
 		208ED50F5B1228C1DAA6BAAE /* SubroutineMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SubroutineMover.fwd.hh; path = ../src/protocols/protein_interface_design/movers/SubroutineMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		03FD8632E23BC31A9563519E /* SubroutineMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SubroutineMover.hh; path = ../src/protocols/protein_interface_design/movers/SubroutineMover.hh; sourceTree = SOURCE_ROOT; };
 		D9AE179A400C95EB42EBC38E /* SubroutineMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SubroutineMoverCreator.hh; path = ../src/protocols/protein_interface_design/movers/SubroutineMoverCreator.hh; sourceTree = SOURCE_ROOT; };
+		DFCDBE82188FE89BC3E8C294 /* TaskAwareCsts.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TaskAwareCsts.cc; path = ../src/protocols/protein_interface_design/movers/TaskAwareCsts.cc; sourceTree = SOURCE_ROOT; };
+		DCAC35873916FDFC53C15FD9 /* TaskAwareCsts.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskAwareCsts.fwd.hh; path = ../src/protocols/protein_interface_design/movers/TaskAwareCsts.fwd.hh; sourceTree = SOURCE_ROOT; };
+		B0EE48C55F81A30179C17672 /* TaskAwareCsts.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskAwareCsts.hh; path = ../src/protocols/protein_interface_design/movers/TaskAwareCsts.hh; sourceTree = SOURCE_ROOT; };
+		3C864742174B9F0A7F9AC183 /* TaskAwareCstsCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskAwareCstsCreator.hh; path = ../src/protocols/protein_interface_design/movers/TaskAwareCstsCreator.hh; sourceTree = SOURCE_ROOT; };
 		4A7008F83496ABDE92664418 /* TryRotamers.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TryRotamers.cc; path = ../src/protocols/protein_interface_design/movers/TryRotamers.cc; sourceTree = SOURCE_ROOT; };
 		5D76AD2051279E1840536DCE /* TryRotamers.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TryRotamers.hh; path = ../src/protocols/protein_interface_design/movers/TryRotamers.hh; sourceTree = SOURCE_ROOT; };
 		26F1FFD80ED7BA2A791AA58E /* TryRotamersCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TryRotamersCreator.hh; path = ../src/protocols/protein_interface_design/movers/TryRotamersCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -13949,6 +13955,7 @@
 				80E9A403B1AE6AE75414AA0B /* chunk.OptionKeys.gen.hh */,
 				8B35EE1109076990B48E7A39 /* cluster.OptionKeys.gen.hh */,
 				2DF494D4F75B46450B653934 /* cm.OptionKeys.gen.hh */,
+				6AC6F632ADC28E7093B1362B /* cmiles.OptionKeys.gen.hh */,
 				4E1503B570D32435BFC09D0E /* constraints.OptionKeys.gen.hh */,
 				270C0BB1A002AB7B92C35019 /* corrections.OptionKeys.gen.hh */,
 				2C59AA5A7903568693C27FF7 /* cp.OptionKeys.gen.hh */,
@@ -22828,6 +22835,10 @@
 				208ED50F5B1228C1DAA6BAAE /* SubroutineMover.fwd.hh */,
 				03FD8632E23BC31A9563519E /* SubroutineMover.hh */,
 				D9AE179A400C95EB42EBC38E /* SubroutineMoverCreator.hh */,
+				DFCDBE82188FE89BC3E8C294 /* TaskAwareCsts.cc */,
+				DCAC35873916FDFC53C15FD9 /* TaskAwareCsts.fwd.hh */,
+				B0EE48C55F81A30179C17672 /* TaskAwareCsts.hh */,
+				3C864742174B9F0A7F9AC183 /* TaskAwareCstsCreator.hh */,
 				4A7008F83496ABDE92664418 /* TryRotamers.cc */,
 				5D76AD2051279E1840536DCE /* TryRotamers.hh */,
 				26F1FFD80ED7BA2A791AA58E /* TryRotamersCreator.hh */,
@@ -25524,6 +25535,7 @@
 				AA6BFB4C16D6EAD0936BC2BA /* SpinMover.cc in Sources */,
 				D650DF8EB8D18C9E8EF4E718 /* Splice.cc in Sources */,
 				9CE1843A0C511B82E4B17920 /* SubroutineMover.cc in Sources */,
+				5C5A76A925F400B183D8280A /* TaskAwareCsts.cc in Sources */,
 				3D0AEFB9C287FB80E555085D /* TryRotamers.cc in Sources */,
 				CE8BC43BA90CDA9AA9BB36ED /* VLB.cc in Sources */,
 				027ED3F4E77BFF68522A46E3 /* CAcstGenerator.cc in Sources */,
