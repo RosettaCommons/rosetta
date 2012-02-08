@@ -102,10 +102,12 @@ public:
 
 	/// @brief Read an profile matrix from the given filename using the NCBI
 	/// PSSM format for a position-specific scoring matrix.
+	/// The resultant profile values will be boltzman weighted (strongly favored=1, strongly disfavored=0)
 	virtual void read_from_file( FileName const & fn );
 	virtual void read_from_file( FileName const & fn, core::Real temp );
 
 	/// @brief Generate the profile matrix from a sequence and a given substitution matrix
+	/// As with SequenceProfile::read_from_file(), the profile will be boltzman weighted (strongly favored=1, strongly disfavored=0)
 	virtual void generate_from_sequence( Sequence const & seq, std::string matrix="BLOSUM62" );
 
 	/// @brief Multiply all profile weights by factor

@@ -208,7 +208,6 @@ void SequenceProfile::read_from_file(
 	id( std::string(fn) );
 } // read_from_file
 
-/// @brief Generate the profile matrix from a sequence and a given substitution matrix
 void SequenceProfile::generate_from_sequence( Sequence const & seq, std::string matrix ) {
 	MatrixScoringScheme mat;
 	mat.read_from_database(matrix);
@@ -216,16 +215,14 @@ void SequenceProfile::generate_from_sequence( Sequence const & seq, std::string 
 	utility::vector1< utility::vector1< core::Real > > new_prof;
 	for (core::Size ii(1), end(seq.length()); ii <= end; ++ii) {
 		utility::vector1< Real > prof_row( mat.values_for_aa( seq[ii] ) );
-		prof_row.resize( core::chemical::num_canonical_aas, 0.0 );
-		//tr.Trace << "Position " << ii << ": " << seq[ii] << " ";
-		//for (core::Size ii(1); ii <= prof_row.size(); ++ii) tr.Trace << prof_row[ii] << ", ";
-		//tr.Trace << std::endl;
+		prof_row.resize( core::chemical::num_canonical_aas, -10000 );
+		scores_to_probs_( prof_row, 1.0 );
 		new_prof.push_back(prof_row);
 	}
 
 	sequence( seq.sequence() );
 	profile( new_prof );
-
+	profile_from_pssm_file_ = true;
 }
 
 /// @brief Returns the 2D vector1 of Real-values representing this profile.

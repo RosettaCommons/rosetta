@@ -151,6 +151,9 @@ sources = {
 #	"qsar" : [
 #		"qsarMap"
 #	],
+        "simple_moves" : [
+        	"FavorSequenceProfile",
+        ],
 	"toolbox/pose_metric_calculators" : [
 		"Neighbor_Calculators",
 #		SolubilityCalculator",
@@ -296,6 +299,7 @@ testinputfiles = [
 	"pmut_scan/mutants.txt",
 	"pmut_scan/shortloop.01.pdb.gz",
 	"pmut_scan/shortloop.02.pdb.gz",
+        "simple_moves/1bl0_auto.fasta.pssm",
 	"toolbox/task_operations/RestrictToInterfaceOperation.u",
 	"toolbox/task_operations/RestrictToInterfaceVectorOperation.u",
 	"toolbox/task_operations/RestrictToNeighborhoodOperation.u",

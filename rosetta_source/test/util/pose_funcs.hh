@@ -144,7 +144,9 @@ ubq_twores_string() {
 		"ATOM     17  NE2 GLN     2      25.562  32.733   1.806  1.00 19.49      1UBQ  87\n";
 }
 
-
+// For those playing along at home, this looks like it's the protien portion of 1BL0
+// (MarA, the alpha-CTD of RNA polymerase). That's chain A, residues 9-124, inclusive,
+// after hydrogen addition and flip_HNQ.
 inline
 std::string
 test_in_pdb_string()
