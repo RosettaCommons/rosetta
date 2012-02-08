@@ -19,7 +19,7 @@ iscript_header()
 
 # load_packages() will help the user to install the packages if they are missing
 source(paste(base_dir, "scripts/methods/load_packages.R", sep="/"))
-libraries <- c("reshape", "plyr", "optparse", "ggplot2", "RSQLite", "logspline", "plotrix", "polynom")
+libraries <- c("reshape", "plyr", "optparse", "ggplot2", "RSQLite", "logspline", "plotrix", "polynom", "xtable")
 load_packages(libraries)
 iscript_libraries(libraries)
 
@@ -98,6 +98,10 @@ option_list <- c(option_list, list(
 
 opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TRUE)
 
+#Setup output directory
+setup_output_directory(opt$options$output_dir)
+iscript_setup_output_directory(opt$options$output_dir)
+
 #Setup analysis manager
 analysis_manager_db_path <- paste(
 	opt$options$output_dir, opt$options$analysis_manager_db, sep="/")
@@ -154,7 +158,7 @@ if("script" %in% names(opt$options)){
 	if(file.exists(opt$options$script)){
 		analysis_scripts <- c(opt$options$script)
 	} else {
-		stop(paste("Analysis script '", opt$options$script, "', does not exist."))
+		stop(paste("Analysis script '", opt$options$script, "', does not exist.", sep=""))
 	}
 } else {
 	if(substr(opt$options$analysis_dir,1,1) == "/"){
@@ -163,7 +167,7 @@ if("script" %in% names(opt$options)){
 		analysis_dir <- paste(base_dir, opt$options$analysis_dir, sep="/")
 	}
 	if(!file.exists(analysis_dir)){
-		cat("ERROR: Analysis script directory, '", analysis_script_dir, "', does not exist.\n")
+		cat("ERROR: Analysis script directory, '", analysis_script_dir, "', does not exist.\n", sep="")
 		stop(1)
 	}
 	analysis_scripts <- dir(analysis_dir, "*.R$", full.names=TRUE, recursive=TRUE)

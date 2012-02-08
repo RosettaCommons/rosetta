@@ -35,7 +35,7 @@ generate_page_for_all_plots <- function(
 ) {
 
   if(!file.exists(directory)){
-    stop(paste("Attempting to generate all plots in the directory '",directory, "', but it does not exist."))
+    stop(paste("Attempting to generate all plots in the directory '",directory, "', but it does not exist.", sep=""))
   }
 
   cat(generate_page_header(), file=page_fname, append=F)

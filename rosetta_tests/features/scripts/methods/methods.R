@@ -14,6 +14,12 @@ sample_rows <- function(df, n=100){
 	df[sample(nrow(df),n),]
 }
 
+setup_output_directory <- function(output_dir){
+	if(!file.exists(file.path(output_dir))){
+		dir.create(file.path(output_dir), recursive=TRUE)
+	}
+}
+
 date_code <- function(d=NA){
 	# reference http://www.r-cookbook.com/node/17
 	if(is.na(d)) d <- Sys.Date()
@@ -55,7 +61,8 @@ ggplot_footer <- function(text){
 	upViewport(0)
 }
 
-
+# Save the last ggplot() object created. For each output format,
+# generate a plot and put in the output directory
 save_plots <- function(
 	features_analysis,
 	plot_id,
@@ -132,6 +139,7 @@ save_plots <- function(
 
 	})
 }
+
 
 set_db_cache_size <- function(con, cache_size){
 	dbGetQuery(con,

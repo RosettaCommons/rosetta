@@ -50,6 +50,12 @@ iscript_base_dir <- function(base_dir){
 	cat("base_dir <- \"", base_dir , "\"\n", file=iscript_fname, sep="", append=T)
 }
 
+iscript_setup_output_directory <- function(build_dir){
+	cat("if(!file.exists(", build_dir, "))){
+	dir.create(", build_dir, ", recursive=TRUE)
+}", file=iscript_fname, sep="", append=TRUE)
+}
+
 iscript_includes <- function(includes){
   for( inc in includes){
     cat("source(\"", inc, "\")\n", file=iscript_fname, sep="", append=TRUE)
