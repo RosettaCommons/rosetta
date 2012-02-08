@@ -11796,6 +11796,7 @@
 		71B3444D9C40223FF309B185 /* HybridizeProtocol.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HybridizeProtocol.cc; path = ../src/protocols/comparative_modeling/hybridize/HybridizeProtocol.cc; sourceTree = SOURCE_ROOT; };
 		6103E24135B8A3CC643C9231 /* HybridizeProtocol.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridizeProtocol.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/HybridizeProtocol.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C0694BDFA6DC7499BB35BBC5 /* HybridizeProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridizeProtocol.hh; path = ../src/protocols/comparative_modeling/hybridize/HybridizeProtocol.hh; sourceTree = SOURCE_ROOT; };
+		EA6D07501051E1ACDC35BC7A /* HybridizeProtocolCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridizeProtocolCreator.hh; path = ../src/protocols/comparative_modeling/hybridize/HybridizeProtocolCreator.hh; sourceTree = SOURCE_ROOT; };
 		D73F6944264E8644F60F0385 /* InsertChunkMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = InsertChunkMover.cc; path = ../src/protocols/comparative_modeling/hybridize/InsertChunkMover.cc; sourceTree = SOURCE_ROOT; };
 		EC7593FB16BA84B707836D4E /* InsertChunkMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = InsertChunkMover.hh; path = ../src/protocols/comparative_modeling/hybridize/InsertChunkMover.hh; sourceTree = SOURCE_ROOT; };
 		023D455F0C0098A8AB2C2D70 /* TemplateHistory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateHistory.cc; path = ../src/protocols/comparative_modeling/hybridize/TemplateHistory.cc; sourceTree = SOURCE_ROOT; };
@@ -20963,6 +20964,7 @@
 				71B3444D9C40223FF309B185 /* HybridizeProtocol.cc */,
 				6103E24135B8A3CC643C9231 /* HybridizeProtocol.fwd.hh */,
 				C0694BDFA6DC7499BB35BBC5 /* HybridizeProtocol.hh */,
+				EA6D07501051E1ACDC35BC7A /* HybridizeProtocolCreator.hh */,
 				D73F6944264E8644F60F0385 /* InsertChunkMover.cc */,
 				EC7593FB16BA84B707836D4E /* InsertChunkMover.hh */,
 				023D455F0C0098A8AB2C2D70 /* TemplateHistory.cc */,

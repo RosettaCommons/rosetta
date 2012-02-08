@@ -16,7 +16,7 @@
                BlueprintIdentifier = "3B7A001214977BC300905864"
                BuildableName = "librosetta_static.a"
                BlueprintName = "rosetta_static"
-               ReferencedContainer = "container:Rosetta.xcodeproj">
+               ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

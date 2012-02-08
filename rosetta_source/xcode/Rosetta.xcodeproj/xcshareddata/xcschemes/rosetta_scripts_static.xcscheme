@@ -16,7 +16,7 @@
                BlueprintIdentifier = "3B7A001D149782E500905864"
                BuildableName = "rosetta_scripts_static"
                BlueprintName = "rosetta_scripts_static"
-               ReferencedContainer = "container:Rosetta.xcodeproj">
+               ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,7 +34,7 @@
             BlueprintIdentifier = "3B7A001D149782E500905864"
             BuildableName = "rosetta_scripts_static"
             BlueprintName = "rosetta_scripts_static"
-            ReferencedContainer = "container:Rosetta.xcodeproj">
+            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,7 +52,7 @@
             BlueprintIdentifier = "3B7A001D149782E500905864"
             BuildableName = "rosetta_scripts_static"
             BlueprintName = "rosetta_scripts_static"
-            ReferencedContainer = "container:Rosetta.xcodeproj">
+            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -70,7 +70,7 @@
             BlueprintIdentifier = "3B7A001D149782E500905864"
             BuildableName = "rosetta_scripts_static"
             BlueprintName = "rosetta_scripts_static"
-            ReferencedContainer = "container:Rosetta.xcodeproj">
+            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

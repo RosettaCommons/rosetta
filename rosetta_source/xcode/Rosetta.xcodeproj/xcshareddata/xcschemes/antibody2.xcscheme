@@ -16,7 +16,7 @@
                BlueprintIdentifier = "3D9A16011492EAC2004F3648"
                BuildableName = "antibody2"
                BlueprintName = "antibody2"
-               ReferencedContainer = "container:Rosetta.xcodeproj">
+               ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,7 +34,7 @@
             BlueprintIdentifier = "3D9A16011492EAC2004F3648"
             BuildableName = "antibody2"
             BlueprintName = "antibody2"
-            ReferencedContainer = "container:Rosetta.xcodeproj">
+            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,7 +52,7 @@
             BlueprintIdentifier = "3D9A16011492EAC2004F3648"
             BuildableName = "antibody2"
             BlueprintName = "antibody2"
-            ReferencedContainer = "container:Rosetta.xcodeproj">
+            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -77,7 +77,7 @@
             BlueprintIdentifier = "3D9A16011492EAC2004F3648"
             BuildableName = "antibody2"
             BlueprintName = "antibody2"
-            ReferencedContainer = "container:Rosetta.xcodeproj">
+            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

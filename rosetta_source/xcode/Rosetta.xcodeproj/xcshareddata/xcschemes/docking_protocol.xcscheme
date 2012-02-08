@@ -16,7 +16,7 @@
                BlueprintIdentifier = "3DFB7A801405746F00EA18CE"
                BuildableName = "docking_protocol"
                BlueprintName = "docking_protocol"
-               ReferencedContainer = "container:Rosetta.xcodeproj">
+               ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,7 +34,7 @@
             BlueprintIdentifier = "3DFB7A801405746F00EA18CE"
             BuildableName = "docking_protocol"
             BlueprintName = "docking_protocol"
-            ReferencedContainer = "container:Rosetta.xcodeproj">
+            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,7 +52,7 @@
             BlueprintIdentifier = "3DFB7A801405746F00EA18CE"
             BuildableName = "docking_protocol"
             BlueprintName = "docking_protocol"
-            ReferencedContainer = "container:Rosetta.xcodeproj">
+            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>

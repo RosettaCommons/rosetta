@@ -37,6 +37,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/Tracer.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -60,6 +61,7 @@ using std::map;
 using basic::database::safely_write_to_database;
 using basic::database::safely_prepare_statement;
 using core::Size;
+using core::SSize;
 using core::Real;
 using core::pose::Pose;
 using core::conformation::Residue;
@@ -74,6 +76,7 @@ using utility::tag::TagPtr;
 using cppdb::statement;
 using cppdb::result;
 
+static basic::Tracer TR( "protocols.features.LoopAnchorFeatures" );
 
 LoopAnchorFeatures::LoopAnchorFeatures() :
 	FeaturesReporter(),
@@ -207,8 +210,8 @@ LoopAnchorFeatures::report_features(
 
 	vector1<Size>::const_iterator chain_ending(pose.conformation().chain_endings().begin());
 	vector1<Size>::const_iterator chain_ending_end(pose.conformation().chain_endings().end());
-
-	for(Size begin=1; begin < pose.total_residue() - min_loop_length_; ++begin){
+    
+	for(SSize begin=1; begin < SSize( pose.total_residue() - min_loop_length_ ); ++begin){
 
 		for(Size end=begin;
 				(end <= begin + max_loop_length_ + 1 && end <= pose.total_residue());

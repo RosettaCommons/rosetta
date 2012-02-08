@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/LoopAnchorFeatures.hh
 /// @brief  report comments stored with each pose
-/// @author Matthew O'Meara
+/// @author Brian D. Weitzner (brian.weitzner@gmail.com)
 
 #ifndef INCLUDED_protocols_features_BetaTurnDetectionFeatures_hh
 #define INCLUDED_protocols_features_BetaTurnDetectionFeatures_hh

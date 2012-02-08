@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/BetaTurnDetectionFeatures.cc
 /// @brief  report comments stored with each pose
-/// @author Matthew O'Meara
+/// @author Brian D. Weitzner (brian.weitzner@gmail.com)
 
 // Unit Headers
 #include <protocols/features/BetaTurnDetectionFeatures.hh>
@@ -60,6 +60,7 @@ using std::map;
 using basic::database::safely_write_to_database;
 using basic::database::safely_prepare_statement;
 using core::Size;
+using core::SSize;
 using core::Real;
 using core::pose::Pose;
 using core::conformation::Residue;
@@ -146,8 +147,8 @@ BetaTurnDetectionFeatures::report_features(
 	string beta_turns_stmt_string = "INSERT INTO beta_turns VALUES (?,?,?);";
 	statement beta_turns_stmt(
 		safely_prepare_statement(beta_turns_stmt_string, db_session));
-
-	for(Size begin=1; begin <= pose.total_residue() - beta_turn_length; ++begin){
+    
+	for(SSize begin=1; begin <= SSize( pose.total_residue() - beta_turn_length ); ++begin){
         Size end = begin + beta_turn_length;
         
         if ( !residue_range_is_relevant( relevant_residues, begin, end ) || !residue_range_is_protein( pose, begin, end ) || !all_turn_residues_are_on_the_same_chain( pose, begin ) || !beta_turn_present( pose, begin ) )
