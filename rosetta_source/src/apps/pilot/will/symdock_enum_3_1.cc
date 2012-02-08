@@ -485,16 +485,16 @@ struct SICFast {
 		int const xsize = xub-xlb+1;
 		int const ysize = yub-ylb+1;
 		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-			int const ix = (int)ceil(ia->x()/CLD)-xlb;
-			int const iy = (int)ceil(ia->y()/CLD)-ylb;
+			int const ix = (int)(/*ceil*/(ia->x()/CLD)-xlb+0.999999999);
+			int const iy = (int)(/*ceil*/(ia->y()/CLD)-ylb+0.999999999);
 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
 			if( ha(ix,iy).z() < ia->z() ) {
 				ha(ix,iy) = *ia;	
 			}
 		}
 		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-			int const ix = (int)ceil(ib->x()/CLD)-xlb;
-			int const iy = (int)ceil(ib->y()/CLD)-ylb;
+			int const ix = (int)(/*ceil*/(ib->x()/CLD)-xlb+0.999999999);
+			int const iy = (int)(/*ceil*/(ib->y()/CLD)-ylb+0.999999999);
 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
 			if( hb(ix,iy).z() > ib->z() ) {
 				hb(ix,iy) = *ib;
