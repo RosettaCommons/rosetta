@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<s weights=sp2_correction/>
+	</SCOREFXNS>		
+        <MOVERS>
+		<ReportToDB name=features_reporter db="outputs/features_sp2.db3" sample_source="Rotamer Recovery for the Sp2 Correction">
+			<feature name=ResidueFeatures/>
+			<feature name=PdbDataFeatures/>
+			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolMinPack comparer=RRComparerRotBins/>
+                </ReportToDB>
+        </MOVERS>
+        <PROTOCOLS>
+		<Add mover_name=features_reporter/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>

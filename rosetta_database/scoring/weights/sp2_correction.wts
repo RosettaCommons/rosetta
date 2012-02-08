@@ -1,10 +1,13 @@
-#Weights file to be used with the hbond sp2 correction version 7ab.
-#This is score12prime with the short range bb hbond not down weighted by a half and reference energies refit using OptE.
+#Weights file to be used with the hbond sp2 correction version 8b.
+#This is score12prime with
+# * the short range bb hbond not down weighted by a half
+# * reference energies refit using OptE
+# * the solvation term increased by a factor1.15
 METHOD_WEIGHTS ref 0.182376 -0.00903566 -0.49854 -0.639416 1.23698 -0.311401 0.905937 0.453663 -0.455506 0.215622 -0.104372 -0.77377 -0.631529 -0.750353 -0.808488 -0.379739 -0.295295 0.367512 1.38431 0.911042
 fa_atr 0.8
 fa_rep 0.44
 fa_intra_rep 0.004
-fa_sol 0.65
+fa_sol 0.7475
 pro_close 1
 fa_pair 0.49
 hbond_sr_bb 1.17

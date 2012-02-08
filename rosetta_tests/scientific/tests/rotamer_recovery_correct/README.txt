@@ -7,7 +7,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-## @file test/scientific/tests/rotamer_recovery/README.txt
+## @file test/scientific/tests/rotamer_recovery_correct/README.txt
 
 
 ____________________________________________________
@@ -36,12 +36,12 @@ ____________________________________________________
 3) Run test
 
    cd mini_base_dir/test/scientific
-   ./scientific.py rotamer_recovery -d mini_database_dir
+   ./scientific.py rotamer_recovery_correct -d mini_database_dir
 
 4) Investigate results
 
-   cd mini_base_dir/test/scientific/statistics/rotamer_recovery
-   -> outputs
+   cd mini_base_dir/test/scientific/statistics/rotamer_recovery_correct
+   -> outputs/
 
 ____________________________________________________
 
@@ -49,7 +49,7 @@ ABOUT
 ____________________________________________________
 
 
- Rotamer Recovery Scientific Benchmark
+Rotamer Recovery Scientific Benchmark
 
 The rotamer recovery scientific benchmark addresses the question,
 "Given the sequence identity and backbone conformation of a
@@ -59,6 +59,9 @@ Having an accurate answer will:
 
  a) Inform researchers on the trustworthiness of Rosetta as molecular modeler
  b) Guide tuning Rosetta to improve structural predictions
+
+
+Input Structures:
 
 The input structures is a selection of the Richardson's Top5200
 dataset.  The Top5200 set was constructed as follows.  Daniel Keedy

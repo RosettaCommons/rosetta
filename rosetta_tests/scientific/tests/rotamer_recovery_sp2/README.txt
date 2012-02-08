@@ -7,7 +7,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-## @file test/scientific/tests/rotamer_recovery/README.txt
+## @file test/scientific/tests/rotamer_recovery_sp2/README.txt
 
 
 ____________________________________________________
@@ -40,8 +40,8 @@ ____________________________________________________
 
 4) Investigate results
 
-   cd mini_base_dir/test/scientific/statistics/rotamer_recovery
-   -> outputs
+   cd mini_base_dir/test/scientific/statistics/rotamer_recovery_sp2
+   -> outputs/
 
 ____________________________________________________
 
