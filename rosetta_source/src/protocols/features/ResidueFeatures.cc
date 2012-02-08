@@ -15,6 +15,8 @@
 #include <protocols/features/ResidueFeatures.hh>
 
 // Project Headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -57,17 +59,33 @@ ResidueFeatures::type_name() const { return "ResidueFeatures"; }
 
 string
 ResidueFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS residues (\n"
-		"	struct_id INTEGER,\n"
-		"	resNum INTEGER,\n"
-		"	name3 TEXT,\n"
-		"	res_type TEXT,\n"
-		"	FOREIGN KEY (struct_id)\n"
-		"		REFERENCES structures (struct_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	CONSTRAINT resNum_is_positive CHECK (resNum >= 1),\n"
-		"	PRIMARY KEY(struct_id, resNum));";
+	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+
+	if(db_mode == "sqlite3")
+	{
+		return
+			"CREATE TABLE IF NOT EXISTS residues (\n"
+			"	struct_id INTEGER,\n"
+			"	resNum INTEGER,\n"
+			"	name3 TEXT,\n"
+			"	res_type TEXT,\n"
+			"	FOREIGN KEY (struct_id)\n"
+			"		REFERENCES structures (struct_id)\n"
+			"		DEFERRABLE INITIALLY DEFERRED,\n"
+			"	CONSTRAINT resNum_is_positive CHECK (resNum >= 1),\n"
+			"	PRIMARY KEY(struct_id, resNum));";
+	}else if(db_mode=="mysql")
+	{
+		return
+			"CREATE TABLE IF NOT EXISTS residues (\n"
+			"	struct_id INTEGER,\n"
+			"	resNum INTEGER,\n"
+			"	name3 TEXT,\n"
+			"	res_type TEXT,\n"
+			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
+			"	CONSTRAINT resNum_is_positive CHECK (resNum >= 1),\n"
+			"	PRIMARY KEY(struct_id, resNum));";
+	}
 }
 
 utility::vector1<std::string>

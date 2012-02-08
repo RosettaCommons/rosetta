@@ -124,9 +124,9 @@ ProteinSilentReport::write_schema_to_db(
 ) const {
 	protocol_features_->write_schema_to_db(db_session);
 	structure_features_->write_schema_to_db(db_session);
-	pdb_data_features_->write_schema_to_db(db_session);
-	structure_scores_features_->write_schema_to_db(db_session);
 	score_type_features_->write_schema_to_db(db_session);
+	structure_scores_features_->write_schema_to_db(db_session);
+	pdb_data_features_->write_schema_to_db(db_session);
 	pose_conformation_features_->write_schema_to_db(db_session);
 	pose_comments_features_->write_schema_to_db(db_session);
 	protein_residue_conformation_features_->write_schema_to_db(db_session);

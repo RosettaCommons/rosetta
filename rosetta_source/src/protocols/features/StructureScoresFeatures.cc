@@ -124,12 +124,10 @@ StructureScoresFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-			"	struct_id INTEGER,\n"
-			"	score_type_id INTEGER,\n"
+			"	struct_id INTEGER REFERENCES structures (struct_id),\n"
+			"	score_type_id INTEGER REFERENCES score_types (score_type_id),\n"
 			"	score_value INTEGER,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-			"	FOREIGN KEY (score_type_id) REFERENCES score_types (score_type_id),\n"
-			"	PRIMARY KEY (struct_id, score_type_id));";
+			"	PRIMARY KEY (struct_id, score_type_id));\n";
 	}else
 	{
 		return "";

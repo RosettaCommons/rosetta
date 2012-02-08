@@ -113,11 +113,10 @@ ScoreTypeFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS score_types (\n"
-			"	protocol_id INTEGER,\n"
+			"	protocol_id INTEGER REFERENCES protocols (protocol_id),\n"
 			"	score_type_id INTEGER,\n"
 			"	score_type_name TEXT,\n"
-			"   PRIMARY KEY (protocol_id, score_type_id),\n"
-			"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));\n"
+			"   PRIMARY KEY (protocol_id, score_type_id));\n"
 			"\n";
 	}else
 	{

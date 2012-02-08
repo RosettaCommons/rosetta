@@ -99,8 +99,8 @@ ProteinResidueConformationFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS protein_residue_conformation (\n"
-			"	struct_id INTEGER,\n"
-			"	seqpos INTEGER,\n"
+			"	struct_id INTEGER REFERENCES residues(struct_id),\n"
+			"	seqpos INTEGER REFERENCES residues(resNum),\n"
 			"	secstruct TEXT,\n"
 			"	phi DOUBLE,\n"
 			"	psi DOUBLE,\n"
@@ -109,17 +109,15 @@ ProteinResidueConformationFeatures::schema() const {
 			"	chi2 DOUBLE,\n"
 			"	chi3 DOUBLE,\n"
 			"	chi4 DOUBLE,\n"
-			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
 			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-			"	struct_id INTEGER,\n"
-			"	seqpos INTEGER,\n"
+			"	struct_id INTEGER REFERENCES residues(struct_id),\n"
+			"	seqpos INTEGER REFERENCES residues(resNum),\n"
 			"	atomno INTEGER,\n"
 			"	x DOUBLE,\n"
 			"	y DOUBLE,\n"
 			"	z DOUBLE,\n"
-			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
 			"	PRIMARY KEY (struct_id, seqpos, atomno));";
 	}else
 	{

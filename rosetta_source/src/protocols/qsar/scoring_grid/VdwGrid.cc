@@ -124,10 +124,10 @@ core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Rea
 			core::Real spline_score = 0.0;
 			core::Real spline_score_deriv = 0.0;
 
-			if(max_radius <= lj_spline_.get_lbx())
+			if( (max_radius - radius) <= lj_spline_.get_lbx())
 			{
 				spline_score = lj_spline_.get_lby();
-			}else if(max_radius >= lj_spline_.get_ubx())
+			}else if( (max_radius - radius) >= lj_spline_.get_ubx())
 			{
 				spline_score = 0.0;
 			}else
