@@ -69,6 +69,10 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+#include <protocols/antibody2/Ab_TemplateInfo.hh>
+#endif
+
 
 static basic::Tracer TR("protocols.antibody2.Ab_GraftCDRs_Mover");
 
