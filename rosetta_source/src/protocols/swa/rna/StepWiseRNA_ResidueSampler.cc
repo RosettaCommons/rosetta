@@ -454,7 +454,7 @@ namespace rna {
 		if(Is_dinucleotide==true && Is_internal==true) utility_exit_with_message( "Is_dinucleotide==true && Is_internal==true)!!" );
 		if(num_nucleotides!=1 && num_nucleotides!=2) utility_exit_with_message( "num_nucleotides!=1 and num_nucleotides!=2" );
 
-		if(Is_dinucleotide==true and allow_base_pair_only_centroid_screen_==true){
+		if(Is_dinucleotide==true && allow_base_pair_only_centroid_screen_==true){
 
 			Size const user_input_num_pose_kept=num_pose_kept_;
 			num_pose_kept_=4*num_pose_kept_;
@@ -1164,7 +1164,7 @@ namespace rna {
 
 		bool const Is_dinucleotide=(num_nucleotides==2);
 
-		if(Is_dinucleotide==true and allow_base_pair_only_centroid_screen_==true){
+		if(Is_dinucleotide==true && allow_base_pair_only_centroid_screen_==true){
 
 			Size const user_input_num_pose_kept=num_pose_kept_;
 			num_pose_kept_=4*num_pose_kept_;

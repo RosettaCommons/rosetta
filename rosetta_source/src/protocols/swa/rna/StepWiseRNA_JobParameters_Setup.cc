@@ -1528,7 +1528,7 @@ namespace rna {
 
 		for(Size n=1; n<=jump_point_pairs_string.size(); n++){
 
-			if( (n==1) and (jump_point_pairs_string[n]=="NOT_ASSERT_IN_FIXED_RES") ){
+			if( (n==1) && (jump_point_pairs_string[n]=="NOT_ASSERT_IN_FIXED_RES") ){
 				assert_in_fixed_res=false;
 				continue;
 			}

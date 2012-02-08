@@ -19,7 +19,7 @@
 #define INCLUDED_protocols_swa_SWA_RNA_RotamerGenerator_Wrapper_HH
 
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh> 
-//#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh> 
+#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh> 
 #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh> 
 
 #include <core/types.hh>
