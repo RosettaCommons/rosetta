@@ -89,16 +89,12 @@ void resample(
       ObjexxFCL::FArray3D< S > const &density,
       ObjexxFCL::FArray3D< T > &newDensity,
       numeric::xyzVector< core::Size > newDims ) {
-	extern basic::Tracer TR; // use the edensity tracer
-
 	if (density.u1() == newDims[0] && density.u2() == newDims[1] && density.u3() == newDims[2]) {
 		newDensity = density;
 		return;
 	}
 
 	newDensity.dimension( newDims[0], newDims[1], newDims[2] );
-	TR << "Resizing " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "
-										<< newDensity.u1() << "x" << newDensity.u2() << "x" << newDensity.u3() << std::endl;
 
 	// convert map to complex<double>
 	ObjexxFCL::FArray3D< std::complex<double> > Foldmap, Fnewmap;

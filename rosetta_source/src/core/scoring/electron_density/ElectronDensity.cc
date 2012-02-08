@@ -1301,6 +1301,8 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	fastorigin[2] = fastgrid[2]*origin[2] / ((core::Real)grid[2]);
 
 	resample( density, rho_obs_oversample, fastgrid );
+	TR << "Resizing " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "
+										<< rho_obs_oversample.u1() << "x" << rho_obs_oversample.u2() << "x" << rho_obs_oversample.u3() << std::endl;
 
 	// convolute with calculated density
 	ObjexxFCL::FArray3D< double > rhoc, drhoc_dx, drhoc_dy, drhoc_dz;
@@ -3928,6 +3930,8 @@ void ElectronDensity::resize( core::Real approxGridSpacing ) {
 	ObjexxFCL::FArray3D< double > newDensity;
 
 	resample( density, newDensity, newDims );
+	TR << "Resizing " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "
+										<< newDensity.u1() << "x" << newDensity.u2() << "x" << newDensity.u3() << std::endl;
 
 	// update density
 	density.dimension( newDims[0], newDims[1], newDims[2] );
