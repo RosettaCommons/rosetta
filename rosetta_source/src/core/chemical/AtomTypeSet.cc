@@ -32,18 +32,14 @@
 // Project headers
 #include <basic/Tracer.hh>
 
-// Utility headers
-// Commented by inclean daemon #include <utility/exit.hh>
-
-// C++ headers
-// Commented by inclean daemon #include <string>
-// Commented by inclean daemon #include <sstream>
 #include <fstream>
 #include <iostream>
 
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
+#include <basic/database/open.hh>
+#include <basic/database/sql_utils.hh>
 
 namespace core {
 namespace chemical {
@@ -71,6 +67,69 @@ AtomTypeSet::AtomTypeSet( std::string const & directory )
 
 }
 
+AtomTypeSet::AtomTypeSet(
+	std::string const & name,
+	utility::sql_database::sessionOP db_session) {
+
+	directory_ = basic::database::full_name( "chemical/atom_type_sets/" + name);
+
+	{ // add atom type to atom type set
+		std::string stmt_string =
+			"SELECT name FROM atom_types WHERE atom_type_set_name = ?;";
+		cppdb::statement stmt(
+			basic::database::safely_prepare_statement(stmt_string, db_session));
+		stmt.bind(1, name);
+		cppdb::result res(basic::database::safely_read_from_database(stmt));
+
+		std::string atom_type_name;
+		while(res.next()) {
+			res >> atom_type_name;
+			AtomType & atom_type(
+				create_atom_type_from_database(
+					name, atom_type_name, db_session));
+			read_atom_type_properties_table(
+				name, atom_type, db_session);
+			read_atom_type_extra_parameters_table(
+				name, atom_type, db_session);
+		}
+	}
+
+	{ // set the extra parameter indices
+		std::string stmt_string =
+			"SELECT DISTINCT\n"
+			"	parameter\n"
+			"FROM\n"
+			"	atom_type_extra_parameters\n"
+			"WHERE\n"
+			"	atom_type_set_name = ?\n"
+			"ORDER BY\n"
+			"	parameter\n";
+		cppdb::statement stmt(
+			basic::database::safely_prepare_statement(stmt_string, db_session));
+		stmt.bind(1, name);
+		cppdb::result res(
+			basic::database::safely_read_from_database(stmt));
+
+		Size extra_parameter_index(1);
+		std::string extra_parameter_name;
+		while(res.next()){
+			res >> extra_parameter_name;
+			extra_parameter_indices_[extra_parameter_name] = extra_parameter_index;
+			++extra_parameter_index;
+		}
+	}
+}
+
+
+AtomTypeSet::~AtomTypeSet() {
+	// The atoms in the atom type set are kept with raw pointers so they
+	// must be deleted to prevent memory leaks
+	for(Size i=1; i <= atom_type_index_.size(); ++i){
+		delete atoms_[i];
+	}
+}
+
+
 /// @detail  The directory is like '$ROSETTA3_DB/rosetta_database/chemical/atom_type_sets/<atom_type_set_name>/'
 /// Return 'atom_type_set_name'
 /// Note: strip off the trailing slash, if it exists
@@ -95,7 +154,7 @@ AtomTypeSet::name() const {
 void
 AtomTypeSet::read_file( std::string const & filename )
 {
-	utility::io::izstream data( filename.c_str() ); 
+	utility::io::izstream data( filename.c_str() );
 
 	if ( !data.good() ) utility_exit_with_message( "Unable to open atomset file: "+filename );
 
@@ -193,7 +252,6 @@ AtomTypeSet::get_default_parameter( std::string const & param_name, std::string 
 	return 0.0; // appease compiler
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 AtomTypeSet::add_parameters_from_file( std::string const & filename )
@@ -207,7 +265,7 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 	utility::vector1< std::string > default_parameter_names;
 	utility::vector1< std::string > lines;
 	{ // read all the lines from the file
-		utility::io::izstream data( filename.c_str() ); 
+		utility::io::izstream data( filename.c_str() );
 
 		if ( !data.good() ) utility_exit_with_message( "Unable to open atomset parameter file: "+filename );
 		std::string line, tag;
@@ -315,6 +373,125 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+
+AtomType &
+AtomTypeSet::create_atom_type_from_database(
+	std::string const & atom_type_set_name,
+	std::string const & atom_type_name,
+	utility::sql_database::sessionOP db_session
+) {
+	std::string stmt_string =
+		"SELECT\n"
+		"	element,\n"
+		"	lennard_jones_radius REAL,\n"
+		"	lennard_jones_well_depth REAL,\n"
+		"	lazaridis_karplus_lambda REAL,\n"
+		"	lazaridis_karplus_degrees_of_freedom REAL,\n"
+		"	lazaridis_karplus_volume REAL\n"
+		"FROM\n"
+		"	atom_types\n"
+		"WHERE\n"
+		"	atom_type_set_name = ? AND name = ?;";
+
+	cppdb::statement stmt(
+		basic::database::safely_prepare_statement(stmt_string, db_session));
+	stmt.bind(1, atom_type_set_name);
+	stmt.bind(2, atom_type_name);
+	cppdb::result res(basic::database::safely_read_from_database(stmt));
+
+	if(!res.next()) {
+		utility_exit_with_message(
+			"could not find atom '" + atom_type_name + "' in '" +
+			atom_type_set_name + "'.");
+	}
+
+	std::string element;
+	Real lennard_jones_radius;
+	Real lennard_jones_well_depth;
+	Real lazaridis_karplus_lambda;
+	Real lazaridis_karplus_degrees_of_freedom;
+	Real lazaridis_karplus_volume;
+
+	res
+		>> element
+		>> lennard_jones_radius
+		>> lennard_jones_well_depth
+		>> lazaridis_karplus_lambda
+		>> lazaridis_karplus_degrees_of_freedom
+		>> lazaridis_karplus_volume;
+
+	AtomType * atom_type_ptr(new AtomType(atom_type_name, element));
+	atom_type_ptr->set_parameter("LJ_RADIUS", lennard_jones_radius);
+	atom_type_ptr->set_parameter("LJ_WDEPTH", lennard_jones_well_depth);
+	atom_type_ptr->set_parameter("LK_LAMBDA", lazaridis_karplus_lambda);
+	atom_type_ptr->set_parameter("LK_DGFREE", lazaridis_karplus_degrees_of_freedom);
+	atom_type_ptr->set_parameter("LK_VOLUME", lazaridis_karplus_volume);
+
+	atoms_.push_back(atom_type_ptr);
+	atom_type_index_[atom_type_ptr->name()] = atoms_.size();
+	return *atom_type_ptr;
+}
+
+
+void
+AtomTypeSet::read_atom_type_properties_table(
+	std::string const & atom_type_set_name,
+	AtomType & atom_type,
+	utility::sql_database::sessionOP db_session
+) {
+	std::string stmt_string =
+		"SELECT\n"
+		"	property\n"
+		"FROM\n"
+		"	atom_type_properties\n"
+		"WHERE\n"
+		"	atom_type_set_name = ? AND name = ?;";
+
+	cppdb::statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
+	stmt.bind(1, atom_type_set_name);
+	stmt.bind(2, atom_type.name());
+	cppdb::result res(basic::database::safely_read_from_database(stmt));
+
+	std::string property;
+	while(res.next()){
+		res	>> property;
+		atom_type.add_property(property);
+	}
+}
+
+void
+AtomTypeSet::read_atom_type_extra_parameters_table(
+	std::string const & atom_type_set_name,
+	AtomType & atom_type,
+	utility::sql_database::sessionOP db_session
+) {
+	std::string stmt_string =
+		"SELECT\n"
+		"	value\n"
+		"FROM\n"
+		"	atom_type_extra_parameters\n"
+		"WHERE\n"
+		"	atom_type_set_name = ? AND name = ?\n"
+		"ORDER BY\n"
+		"	parameter;";
+
+	cppdb::statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
+	stmt.bind(1, atom_type_set_name);
+	stmt.bind(2, atom_type.name());
+	cppdb::result res(basic::database::safely_read_from_database(stmt));
+
+	std::string parameter;
+	Real value;
+	Size parameter_index(1);
+	while(res.next()){
+		res >> value;
+		atom_type.set_extra_parameter(parameter_index, value);
+		++parameter_index;
+	}
+}
+
+
 
 
 } // chemical

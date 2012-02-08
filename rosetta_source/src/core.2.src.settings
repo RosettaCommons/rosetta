@@ -16,6 +16,7 @@ sources = {
 		"adduct_util",
 		"AtomICoor",
 		"AtomType",
+		"AtomTypeDatabaseIO",
 		"AtomTypeSet",
 		"automorphism",
 		"ChemicalManager",

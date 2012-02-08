@@ -48,6 +48,7 @@ using std::string;
 using basic::datacache::CacheableString;
 using basic::database::safely_prepare_statement;
 using basic::database::safely_write_to_database;
+using basic::database::write_schema_to_database;
 using basic::Tracer;
 using core::Size;
 using core::Real;
@@ -136,9 +137,36 @@ RRReporterSQLite::schema(
 
 	case OutputLevel::full:
 		return
+			"CREATE TABLE IF NOT EXISTS nchi (\n"
+			"	name3 TEXT,\n"
+			"	nchi INTEGER,\n"
+			"	PRIMARY KEY (name3));\n"
+			"\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ARG', 4);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('LYS', 4);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('MET', 3);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('GLN', 3);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('GLU', 3);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('TYR', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ILE', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ASP', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('TRP', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('PHE', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('HIS', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ASN', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('THR', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('SER', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('PRO', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('CYS', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('VAL', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('LEU', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ALA', 0);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('GLY', 0);\n"
+			"\n"
 			"CREATE TABLE IF NOT EXISTS rotamer_recovery (\n"
 			"	struct1_name TEXT,\n"
-			"	aa TEXT,\n"
+			"	name1 TEXT,\n"
+			"	name3 TEXT,\n"
 			"	residue_type TEXT,\n"
 			"	chain1 TEXT,\n"
 			"	res1 INTEGER,\n"
@@ -156,10 +184,37 @@ RRReporterSQLite::schema(
 
 	case OutputLevel::features:
 		return
+			"CREATE TABLE IF NOT EXISTS nchi (\n"
+			"	name3 TEXT,\n"
+			"	nchi INTEGER,\n"
+			"	PRIMARY KEY (name3));\n"
+			"\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ARG', 4);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('LYS', 4);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('MET', 3);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('GLN', 3);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('GLU', 3);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('TYR', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ILE', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ASP', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('TRP', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('PHE', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('HIS', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ASN', 2);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('THR', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('SER', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('PRO', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('CYS', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('VAL', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('LEU', 1);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('ALA', 0);\n"
+			"INSERT OR IGNORE INTO nchi VALUES('GLY', 0);\n"
+			"\n"
 			"CREATE TABLE IF NOT EXISTS rotamer_recovery (\n"
 			"	struct_id INTEGER,\n"
 			"	resNum INTEGER,\n"
 			"	divergence REAL,\n"
+			"	recovered BOOLEAN,\n"
 			"	FOREIGN KEY (struct_id, resNum)\n"
 			"		REFERENCES residues (struct_id, resNum)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
@@ -238,6 +293,8 @@ RRReporterSQLite::db_session(){
 		db_session_ =
 			DatabaseSessionManager::get_instance()->get_session(database_fname_);
 
+		basic::database::write_schema_to_database(
+			schema(get_output_level()), db_session_);
 		statement stmt(
 			safely_prepare_statement(
 				schema(get_output_level()), db_session_));
@@ -267,7 +324,7 @@ RRReporterSQLite::report_rotamer_recovery(
 			pose1, pose2, res1, res2, score, recovered );
 		break;
 	case OutputLevel::features:
-		report_rotamer_recovery_features(struct_id1_, res1, score);
+		report_rotamer_recovery_features(struct_id1_, res1, score, recovered);
 		break;
 	case OutputLevel::none:
 		break;
@@ -310,23 +367,24 @@ RRReporterSQLite::report_rotamer_recovery_full(
 		struct2_name = JobDistributor::get_instance()->current_job()->input_tag();
 	}
 
-	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(safely_prepare_statement(statement_string,db_session()));
 
 	stmt.bind(1,struct1_name);
-	stmt.bind(2,string(res1.name1(),1));
-	stmt.bind(3,res1.type().name());
-	stmt.bind(4,res1.chain());
-	stmt.bind(5,res1.seqpos());
-	stmt.bind(6,struct2_name);
-	stmt.bind(7,res2.chain());
-	stmt.bind(8,res2.seqpos());
-	stmt.bind(9,protocol_name_);
-	stmt.bind(10,protocol_params_);
-	stmt.bind(11,comparer_name_);
-	stmt.bind(12,comparer_params_);
-	stmt.bind(13,score);
-	stmt.bind(14,recovered);
+	stmt.bind(2,string(1,res1.name1()));
+	stmt.bind(3,res1.name3());
+	stmt.bind(4,res1.type().name());
+	stmt.bind(5,res1.chain());
+	stmt.bind(6,res1.seqpos());
+	stmt.bind(7,struct2_name);
+	stmt.bind(8,res2.chain());
+	stmt.bind(9,res2.seqpos());
+	stmt.bind(10,protocol_name_);
+	stmt.bind(11,protocol_params_);
+	stmt.bind(12,comparer_name_);
+	stmt.bind(13,comparer_params_);
+	stmt.bind(14,score);
+	stmt.bind(15,recovered);
 	safely_write_to_database(stmt);
 
 }
@@ -335,16 +393,18 @@ void
 RRReporterSQLite::report_rotamer_recovery_features(
 	Size const struct_id1,
 	Residue const & res1,
-	Real const score
+	Real const score,
+	bool const recovered
 ){
 
 
-	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?);";
-	statement stmt(safely_prepare_statement(statement_string,db_session_));
+	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?);";
+	statement stmt(safely_prepare_statement(statement_string, db_session_));
 
-	stmt.bind(1,struct_id1);
-	stmt.bind(2,res1.seqpos());
-	stmt.bind(3,score);
+	stmt.bind(1, struct_id1);
+	stmt.bind(2, res1.seqpos());
+	stmt.bind(3, score);
+	stmt.bind(4, recovered);
 	safely_write_to_database(stmt);
 
 }

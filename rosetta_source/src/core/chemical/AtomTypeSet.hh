@@ -34,25 +34,18 @@
 // Unit headers
 #include <core/chemical/AtomTypeSet.fwd.hh>
 
-
-// Project headers
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
-
 // Utility headers
-// Commented by inclean daemon #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 
 // C++ headers
-// Commented by inclean daemon #include <string>
 #include <map>
 
 #include <core/types.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <utility/vector1_bool.hh>
-
-
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 namespace core {
 namespace chemical {
@@ -66,15 +59,25 @@ namespace chemical {
 class AtomTypeSet : public utility::pointer::ReferenceCount {
 
 public:
-	/// @brief c-tor from directory
+	/// @brief c-tor from directory in the rosetta_database This will go
+	/// through the directory, usually
+	/// "$ROSETTA3_DB/chemical/atom_type_sets/<atom_type_set_name>" and
+	/// initialize all the atom types defined in atom_properties.txt and
+	/// the extra parameters specified in extras.txt
 	AtomTypeSet( std::string const & directory );
+
+	// Construct the atom type set from an sql database
+	AtomTypeSet(
+		std::string const & name,
+		utility::sql_database::sessionOP db_session);
+
+	~AtomTypeSet();
 
 public:
 
 	/// @brief the name of the AtomTypeSet
 	std::string
 	name() const;
-
 
 	/// @brief number of atom types in the set
 	Size
@@ -83,14 +86,12 @@ public:
 		return atoms_.size();
 	}
 
-
 	/// @brief  Get the source directory, eg to open an additional file in that directory
 	std::string const &
 	directory() const
 	{
 		return directory_;
 	}
-
 
 	/// @brief lookup the atom_type by the atom_type_name string
 	int
@@ -126,6 +127,11 @@ public:
 		return iter->second;
 	}
 
+	std::map< std::string, int> const &
+	extra_parameter_indices() const {
+		return extra_parameter_indices_;
+	}
+
 	bool
 	has_extra_parameter( std::string const & name ) const
 	{
@@ -146,8 +152,30 @@ private:
 	Real
 	get_default_parameter( std::string const & param_name, std::string const & atm_name ) const;
 
-private:
 
+private: // helper methods for creating an atom type set from a database
+
+	///@brief create an atom type instance on the stack
+	AtomType &
+	create_atom_type_from_database(
+		std::string const & atom_type_set_name,
+		std::string const & atom_type_name,
+		utility::sql_database::sessionOP db_session);
+
+
+	void
+	read_atom_type_properties_table(
+		std::string const & atom_type_set_name,
+		chemical::AtomType & atom_type,
+		utility::sql_database::sessionOP db_session);
+
+	void
+	read_atom_type_extra_parameters_table(
+		std::string const & atom_type_set_name,
+		chemical::AtomType & atom_type,
+		utility::sql_database::sessionOP db_session);
+
+private:
 	/// lookup map: get atom_type_index by atom_type_name
 	std::map< std::string, int > atom_type_index_;
 
@@ -168,84 +196,3 @@ private:
 } // core
 
 #endif
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-// 	/// is this atom_type an hbond acceptor?
-// 	bool
-// 	is_acceptor( int const type ) const
-// 	{
-// 		return atoms_[ type ]->is_acceptor();
-// 	}
-
-
-// 	/// is this atom_type an hbond acceptor?
-// 	bool
-// 	is_donor( int const type ) const
-// 	{
-// 		return atoms_[ type ]->is_donor();
-// 	}
-
-
-// 	/// is this atom_type an hbond acceptor?
-// 	bool
-// 	is_h2o( int const type ) const
-// 	{
-// 		return atoms_[ type ]->is_h2o();
-// 	}
-
-
-// 	/// is this atom_type a polar_hydrogen?
-// 	bool
-// 	is_polar_hydrogen( int const type ) const
-// 	{
-// 		return atoms_[ type ]->is_polar_hydrogen();
-// 	}
-
-
-// 	/// is this atom_type a hydrogen?
-// 	bool
-// 	is_hydrogen( int const type ) const
-// 	{
-// 		return atoms_[ type ]->is_hydrogen();
-// 	}
-
-
-// 	///
-// 	Real
-// 	lk_lambda( int const type ) const
-// 	{
-// 		return atoms_[ type ]->lk_lambda();
-// 	}
-
-
-// 	///
-// 	Real
-// 	lk_dgfree( int const type ) const
-// 	{
-// 		return atoms_[ type ]->lk_dgfree();
-// 	}
-
-// 	///
-// 	Real
-// 	lk_volume( int const type ) const
-// 	{
-// 		return atoms_[ type ]->lk_volume();
-// 	}
-
-// 	///
-// 	Real
-// 	lj_radius( int const type ) const
-// 	{
-// 		return atoms_[ type ]->lj_radius();
-// 	}
-
-// 	///
-// 	Real
-// 	lj_wdepth( int const type ) const
-// 	{
-// 		return atoms_[ type ]->lj_wdepth();
-// 	}

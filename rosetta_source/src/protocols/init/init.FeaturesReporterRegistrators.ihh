@@ -18,6 +18,7 @@ namespace protocols {
 
 using namespace protocols::features;
 static FeaturesReporterRegistrator< AtomAtomPairFeaturesCreator > AtomAtomPairFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< AtomTypesFeaturesCreator > AtomTypesFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< AtomInResidueAtomInResiduePairFeaturesCreator > AtomInResidueAtomInResiduePairFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< BetaTurnDetectionFeaturesCreator > BetaTurnDetectionFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< GeometricSolvationFeaturesCreator > GeometricSolvationFeaturesCreator_registrator;

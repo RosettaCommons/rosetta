@@ -371,7 +371,7 @@ void write_schema_to_database(
 		if(trimmed_stmt_str.size()){
 			try{
 				cppdb::statement stmt = (*db_session) << trimmed_stmt_str + ";";
-				stmt.exec();
+				safely_write_to_database(stmt);
 			} catch (cppdb::cppdb_error e) {
 				TR.Error
 					<< "ERROR reading schema \n"

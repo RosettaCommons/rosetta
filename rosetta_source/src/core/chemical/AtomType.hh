@@ -38,25 +38,22 @@
 
 // Unit headers
 #include <core/chemical/AtomType.fwd.hh>
+#include <core/types.hh>
 
 // Package headers
 #include <core/chemical/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/vector1_bool.hh>
 
 // C++ headers
 #include <string>
 
-#include <core/types.hh>
-#include <utility/vector1_bool.hh>
-
-
 namespace core {
 namespace chemical {
 
-/// @brief Maximum distance between a heavy atom and a hydrogen atom to which it is chemically bound
-/// Set in .cc file.
+/// @brief Maximum distance between a heavy atom and a hydrogen atom
+/// to which it is chemically bound Set in .cc file.
 extern Real const MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH;
 
 
@@ -83,8 +80,27 @@ public:
 		atom_has_orbitals_(false),
 		atom_is_virtual_(false),
 		hybridization_( UNKNOWN_HYBRID )
-
 	{}
+
+	AtomType(AtomType const & src) :
+		name_(src.name_ ),
+		element_(src.element_),
+		is_acceptor_(src.is_acceptor_),
+		is_donor_(src.is_donor_),
+		is_polar_hydrogen_(src.is_polar_hydrogen_),
+		is_h2o_(src.is_h2o_),
+		is_aromatic_(src.is_aromatic_),
+		atom_has_orbitals_(src.atom_has_orbitals_),
+		atom_is_virtual_(src.atom_is_virtual_),
+		hybridization_(src.hybridization_)
+	{}
+
+	void
+	print( std::ostream & out ) const;
+
+	friend
+	std::ostream &
+	operator<< ( std::ostream & out, const AtomType & atom_type );
 
 	/// @brief Lazaridis and Karplus solvation parameter -- lambda
 	Real
@@ -212,6 +228,20 @@ public:
 		return hybridization_;
 	}
 
+	///@brief set all standard properties to false, set hybridization to
+	///UNKNOWN_HYBRID, and clear extra properties
+	///
+	void
+	clear_properties();
+
+	///@brief set standard property to true, or set the specified hybridization
+	void
+	add_property(
+		std::string const & property);
+
+	utility::vector1< std::string >
+	get_all_properties() const;
+
 	/// @brief returns the one- or two-letter element type
 	std::string
 	element() const
@@ -240,7 +270,13 @@ public:
 		extra_parameters_[ index ] = setting;
 	}
 
+	/// @set all the extra parameters at once
+	void
+	set_all_extra_parameters(
+		utility::vector1< Real > const & extra_parameters);
+
 	std::string const& name() const { return name_; };
+
 	// data
 private:
 

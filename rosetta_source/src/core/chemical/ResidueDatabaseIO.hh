@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/chemical/residue_dbio.hh
+/// @file   src/core/chemical/ResidueDatabaseIO.hh
 /// @author Sam DeLuca
-/// @author Matt O'Meara
+/// @author Matthew O'Meara
 
 #ifndef INCLUDED_core_chemical_ResidueDatabaseIO_hh
 #define INCLUDED_core_chemical_ResidueDatabaseIO_hh

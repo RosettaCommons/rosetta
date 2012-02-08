@@ -19,6 +19,7 @@
 // Unit Headers
 #include <protocols/features/AtomAtomPairFeatures.hh>
 #include <protocols/features/AtomInResidueAtomInResiduePairFeatures.hh>
+#include <protocols/features/AtomTypesFeatures.hh>
 #include <protocols/features/BetaTurnDetectionFeatures.hh>
 #include <protocols/features/GeometricSolvationFeatures.hh>
 #include <protocols/features/HBondFeatures.hh>
@@ -96,6 +97,7 @@ public:
 
 		features_reporters_.push_back(new AtomAtomPairFeatures());
 		features_reporters_.push_back(new AtomInResidueAtomInResiduePairFeatures());
+		features_reporters_.push_back(new AtomTypesFeatures());
 		features_reporters_.push_back(new BetaTurnDetectionFeatures());
 		features_reporters_.push_back(new GeometricSolvationFeatures());
 		features_reporters_.push_back(new HBondFeatures(score_function_));

@@ -16,6 +16,7 @@
 
 #include <protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.hh>
 #include <protocols/features/AtomAtomPairFeaturesCreator.hh>
+#include <protocols/features/AtomTypesFeaturesCreator.hh>
 #include <protocols/features/BetaTurnDetectionFeaturesCreator.hh>
 #include <protocols/features/GeometricSolvationFeaturesCreator.hh>
 #include <protocols/features/HBondFeaturesCreator.hh>

@@ -135,7 +135,8 @@ public: // public interface
 	report_rotamer_recovery_features(
 		core::Size struct_id1,
 		core::conformation::Residue const & res1,
-		core::Real score
+		core::Real score,
+		bool recovered
 	);
 
 	virtual

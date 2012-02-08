@@ -7,16 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/chemical/ResidueDatabaseIO.fwd.hh
-/// @author Sam DeLuca
+/// @file   src/core/chemical/AtomTypeDatabaseIO.fwd.hh
+/// @author Matthew O'Meara
 
-#ifndef INCLUDED_core_chemical_ResidueDatabaseIO_fwd_hh
-#define INCLUDED_core_chemical_ResidueDatabaseIO_fwd_hh
+#ifndef INCLUDED_core_chemical_AtomTypeDatabaseIO_fwd_hh
+#define INCLUDED_core_chemical_AtomTypeDatabaseIO_fwd_hh
+
+// Utility headers
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace chemical {
 
-class ResidueDatabaseIO;
+class AtomDatabaseIO;
+typedef utility::pointer::owning_ptr< AtomTypeDatabaseIO > AtomTypeDatabaseIOOP
+typedef utility::pointer::owning_ptr< AtomTypeDatabaseIO const > AtomTypeDatabaseIOCOP;
 
 }
 }

@@ -10,6 +10,7 @@
 sources = {
 	"chemical" : [
 		"AtomTypeSet",
+		"AtomTypeDatabaseIOTests",
                 "MMAtomTypeSet",
                 "automorphism",
                 "ResidueTypeBloatTests",

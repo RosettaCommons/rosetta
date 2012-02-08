@@ -28,15 +28,8 @@
 
 cd %(workdir)s
 
-#clean up generated files
-rm -f list.txt
-rm -f *out
-rm -f outputs/*
 
-
-# Generate list of input structures
-ls inputs | sed 's&^&inputs/&' > list.txt
-if [ ! -s list.txt ]
+if [ ! -s inputs/list.txt ]
 then
         echo No structures found in \'inputs\' directory
         echo To retrieve the structure execute the following:
@@ -48,32 +41,26 @@ then
         exit 1      
 fi
 
+nice %(bin)s/rosetta_scripts.%(binext)s @flags -database %(database)s >&1\
+	| egrep -v 'TIMING' \
+	| egrep -v 'Finished.+in [0-9]+ seconds.' \
+	> outputs/features_generation.log
 
-nice %(bin)s/rotamer_recovery.%(binext)s @rotamer_recovery.flags -database %(database)s >&1\
-    | egrep -v 'TIMING' \
-    | egrep -v 'Finished.+in [0-9]+ seconds.' \
-    >rotamer_recovery.log.out
+sqlite3 outputs/features_score12prime.db3 \
+	< average_rotamer_recovery_by_amino_acid.sql \
+	> outputs/rotamer_recovery_by_amino_acid.csv
 
-sqlite3 outputs/rotamer_recovery_results.db3 "select aa, avg(recovered) from rotamer_recovery group by aa;" > outputs/rotamer_recovery_by_amino_acid.out
-sqlite3 outputs/rotamer_recovery_results.db3 "select avg(recovered) from rotamer_recovery;" | sed "s/^/\{ 'RTMin_rotamer_recovery_rate' : /" | sed "s/$/, '_isTestPassed' : True \}/"  > .results.yaml
-
-
-
-
-
-#Attach feature statistics database to explore dependence on structural context. 
-#nice %(bin)s/rosetta_scripts.%(binext)s @feat_stats.flags -database %(database)s >&1\
-#    | egrep -v 'TIMING' \
-#    | egrep -v 'Finished.+in [0-9]+ seconds.' \
-#    >feature_statistics.log.out
+sqlite3 outputs/features_score12prime.db3 \
+	< average_rotamer_recovery.sql \
+	| sed "s/^/\{ 'RTMin_rotamer_recovery_rate' : /" \
+	| sed "s/$/, '_isTestPassed' : True \}/" \
+	> .results.yaml
 
 
-# Use crystallographic resolution as a predictor of rotamer recovery
-#echo "pdbFileName, nativeResolution" | join outputs/rotamer_recovery_results.out - -t "," > outputs/rotamer_recovery_results_with_resolutions.out
-#cat list.txt | xargs grep 'REMARK   2 RESOLUTION.' | sed 's/:/ /' | awk '{print $1 ", " $5}' | sort -k 1b,1 >> outputs/input_resolutions.out
-#sed 1,1d outputs/rotamer_recovery_results.out | sort -k 1b,1 > outputs/rotamer_recovery_results_sorted.out
-#join outputs/rotamer_recovery_results_sorted.out outputs/input_resolutions.out -t "," >> outputs/rotamer_recovery_results_with_resolutions.out
-#rm -rf outputs/rotamer_recovery_results_sorted.out outputs/input_resolutions.out
-
-
-R CMD BATCH rotamer_recovery_analysis.R outputs/rotamer_recovery_analysis.Rout
+minidir=%(minidir)s
+features_base_dir=${minidir%%source}tests/features
+nice $features_base_dir/compare_sample_sources.R \
+	--script $features_base_dir/scripts/analysis/statistics/rotamer_recovery/rotamer_recovery_summary.R \
+	--output_dir %(workdir)s/outputs \
+	%(workdir)s/outputs/features_score12prime.db3 \
+	&> %(workdir)s/outputs/rotamer_recovery_summary.log

@@ -15,6 +15,7 @@
 			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
 			<feature name=RadiusOfGyrationFeatures/>
 			<feature name=AtomAtomPairFeatures min_dist=0, max_dist=3, nbins=2/>
+			<feature name=AtomTypesFeatures/>
 			<feature name=ResidueFeatures/>
 			<feature name=LoopAnchorFeatures min_loop_length=5 max_loop_length=7/>
 			<feature name=BetaTurnDetectionFeatures/>

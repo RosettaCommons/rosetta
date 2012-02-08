@@ -24,13 +24,7 @@
 #include <test/core/init_util.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh> // for some reason, AtomTypeSet.fwd.hh does not #include owning_ptr.hh
-
-// C++ headers, for debugging your tests
-// AUTO-REMOVED #include <iostream>
-
-//Auto Headers
-
+#include <utility/pointer/owning_ptr.hh>
 
 using namespace core;
 using namespace core::chemical;
@@ -56,6 +50,9 @@ class AtomTypeSetTests : public CxxTest::TestSuite {
 
 		// Want to read the properties file in only once for all the tests in this suite
 		// so do it in the constructor for the test suite.
+
+		// note this reads the atom properties in the unit test directory
+		// not the rosetta_database
 		atomtypeset = new AtomTypeSet( "core/chemical/");
 		//atomtypeset->read_file( "core/chemical/atom_properties.txt" );
 	}

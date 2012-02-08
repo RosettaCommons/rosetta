@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<s weights=score12prime/>
+	</SCOREFXNS>		
+        <MOVERS>
+		<ReportToDB name=features_reporter db="outputs/features_score12prime.db3" sample_source="Rotamer Recovery for Score12prime">
+			<feature name=ResidueFeatures/>
+			<feature name=PdbDataFeatures/>
+			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolMinPack comparer=RRComparerRotBins/>
+                </ReportToDB>
+        </MOVERS>
+        <PROTOCOLS>
+		<Add mover_name=features_reporter/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>
