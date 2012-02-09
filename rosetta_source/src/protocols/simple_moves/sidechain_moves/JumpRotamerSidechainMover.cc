@@ -57,7 +57,7 @@ using namespace core;
 using namespace core::pose;
 
 static numeric::random::RandomGenerator RG(18451125);
-static basic::Tracer TR("protocols.simple_moves.sidechain_moves.JumpRotamerSidechainMover");
+static basic::Tracer tr("protocols.simple_moves.sidechain_moves.JumpRotamerSidechainMover");
 
 namespace protocols {
 namespace simple_moves {
@@ -141,6 +141,7 @@ JumpRotamerSidechainMover::make_chi_move(
 	utility::vector1< Real > rot_probs;
 	Real normalize;
 	bool is_tempered( std::abs( temperature() - 1.0 ) > 0.01 );
+	tr << "temperature() in jr is " << temperature() << std::endl;
 	if ( is_tempered ) {
 		compute_tempered_rotamer_probabilities( rotamers, temperature(), rot_probs, normalize );
 	}
@@ -148,15 +149,26 @@ JumpRotamerSidechainMover::make_chi_move(
 	/// select a random rotamer
  	Size rotnum;
 	Real rand = RG.uniform();
+	//if ( rand <=0 ){
+	//tr << "RG.uniform is " << rand << std::endl;}
 	Real const inv_nrot( 1.0/rotamers.size() );
-	for ( rotnum=1; rotnum < rotamers.size() && rand > 0; ++rotnum ) {
+	Real rot_prob_normalize (0);
+	runtime_assert( !is_tempered );
+	for ( rotnum=1; rotnum <=rotamers.size() &&rand > 0; ++rotnum ) {
+		rot_prob_normalize+=rotamers [rotnum].probability();
+	}
+	//tr << "rot_prob_normalized is" << rot_prob_normalize << std::endl;
+	for ( rotnum=1; rotnum <= rotamers.size() && rand > 0; ++rotnum ) {
 		if ( sample_rotwells_unif_ ) {
 			rand -= inv_nrot; //pick any rotamer with uniform probability
 		} else {
-			rand -= is_tempered ? rot_probs[ rotnum ]*normalize : rotamers[ rotnum ].probability();
+			rand -= ( is_tempered ? rot_probs[ rotnum ]*normalize : ( rotamers[ rotnum ].probability()/rot_prob_normalize ));
 		}
-  }
-
+	}
+	if ( rand <= 0 ) {
+		rotnum -= 1;
+	}
+	runtime_assert( rotnum >= 1 && rotnum <= rotamers.size() );
   //rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,RG);
   rotamers[rotnum].assign_random_chi( new_chi, RG, temperature() );
 }
@@ -196,6 +208,13 @@ JumpRotamerSidechainMover::compute_rotdensities(
 		compute_tempered_rotamer_probabilities( rotamers, temperature(), rot_probs, normalize );
 	}
 
+	Real norm_prob=0;
+	for ( RotamerList::const_iterator it = rotamers.begin(); it!=rotamers.end(); ++it ) {
+		norm_prob += it->probability();
+	}
+	if ( std::abs( norm_prob - 1.0 ) > 0.00001 ) {
+		tr.Warning << "ALARM: probs are not normalized correctly: " << norm_prob << std::endl;
+	}
 	Real const inv_nrot( 1.0 / rotamers.size() );
 	for ( Size ii = 1; ii <= rotamers.size(); ++ii ) {
 		//for each rotamer evaluate the density at our new chi angles
@@ -204,7 +223,7 @@ JumpRotamerSidechainMover::compute_rotdensities(
 		if ( sample_rotwells_unif_ ) {
 			rot_density += inv_nrot * within_well_prob;
 		} else {
-			Real const well_prot( is_tempered ? rot_probs[ ii ]*normalize : rotamers[ii].probability() );
+			Real const well_prot( is_tempered ? rot_probs[ ii ]*normalize : rotamers[ii].probability()/norm_prob );
 			rot_density += exp( log( well_prot ) + log( within_well_prob ) );
 		}
 	}

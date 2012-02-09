@@ -343,12 +343,12 @@ DunbrackRotamerSampleData::assign_random_chi(
 	assert( chi_angles.size() >= nchi() );
 
 	for ( core::Size ii = 1; ii <= nchi(); ++ii ) {
-		if ( chi_is_nonrotameric( ii ) ) {
+		//if ( chi_is_nonrotameric( ii ) ) {
 			// nonrotameric chi angles not currently supported
-			assert( false );
-		} else {
+			//runtime_assert( false );
+		//} else {
 			chi_angles[ ii ] = basic::periodic_range( chi_mean_[ii] + RG.gaussian() * chi_sd_[ii] * temperature, 360.0 );
-		}
+			//}
 	}
 
 	// set any remaining chi uniformly (proton chi)
@@ -368,16 +368,16 @@ DunbrackRotamerSampleData::chi_probability(
 	Real prob(1);
 
 	for ( Size ii = 1; ii <= nchi(); ++ii ) {
-		if ( chi_is_nonrotameric( ii ) ) {
+		//if ( chi_is_nonrotameric( ii ) ) {
 			// nonrotameric chi angles not currently supported
-			assert( false );
-		} else {
-			// Gaussian function with area 1 for rotameric angles
+			//runtime_assert( false );
+			//} else {
+ 			// Gaussian function with area 1 for rotameric angles
 			Real const angle_diff( chi_mean_[ii] - numeric::nearest_angle_degrees( chi_angles[ii], chi_mean_[ii] ) );
 			Real const sd ( chi_sd_[ii] * temperature );
 			Real const variance( sd*sd );
 			prob *= std::exp( -(angle_diff*angle_diff)/(2*variance) ) / sd / norm_gauss;
-		}
+			//}
 	}
 
 	for ( Size ii = nchi()+1; ii <= chi_angles.size(); ++ii ) {

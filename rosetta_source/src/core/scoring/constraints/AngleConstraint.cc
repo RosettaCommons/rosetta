@@ -50,6 +50,15 @@ void AngleConstraint::show( std::ostream & out ) const {
 	func_->show_definition(out);
 }
 
+void AngleConstraint::show_def( std::ostream& out, pose::Pose const& pose ) const {
+	out << type();
+	for ( Size i = 1; i <= natoms(); ++i ) {
+		AtomID const & id = atom(i);
+		out << ' ' <<  atom_id_to_named_atom_id( id, pose );
+	}
+	func_->show_definition( out );
+}
+
 /////////////////////////////////////////////////////////////////////////////
 ///@details one line definition "Angle atom1 res1 atom2 res2 atom3 res3 function_type function_definition"
 ///SML: It appears to be reading the angle in radians, because score ultimately uses std:acos, which returns radians.

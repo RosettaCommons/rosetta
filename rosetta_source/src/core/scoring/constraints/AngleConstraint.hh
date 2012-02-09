@@ -130,6 +130,8 @@ public:
 
 	virtual void show(std::ostream& out ) const;
 
+	void show_def( std::ostream& out, pose::Pose const& pose ) const;
+
 //private: /*functions*/
 
 public:

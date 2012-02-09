@@ -14,7 +14,7 @@
 
 #include <protocols/simple_moves/sidechain_moves/PerturbRotamerSidechainMover.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbRotamerSidechainMoverCreator.hh>
-
+#include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMover.hh>
 // Procols Headers
 #include <protocols/moves/DataMap.hh>
 
@@ -140,15 +140,23 @@ PerturbRotamerSidechainMover::make_chi_move(
 	// find the rotamer that has the highest probability of proposing the previous chi angles
 	Real max_rot_prob = 0;
 	Size max_rot_num = 0;
-	for (Size ii = 1; ii <= rotamers.size(); ++ii) {
-		Real rot_prob( rotamers[ii].chi_probability( old_chi, temperature_ )*rotamers[ii].probability() );
+	Real rot_prob_normalize (0);
+
+	for (Size ii = 1; ii <= rotamers.size() ; ++ii) {
+		//TR << "rotamer.size is " << rotamers.size() << "  rotamer number is " << ii << std::endl;
+		Real rot_prob( rotamers[ii].chi_probability( old_chi, temperature_ )*rotamers[ ii ].probability());
+		//Real rot_prob( rotamers[ii].chi_probability( old_chi, temperature_ ));
 		if ( rot_prob > max_rot_prob ) {
 			max_rot_num = ii;
 			max_rot_prob = rot_prob;
 		}
+		//TR << "number is " << ii << "  rot_prob is " << rot_prob << std::endl;
 	}
+
 	new_chi=old_chi;
-	rotamers[ max_rot_num ].assign_random_chi( new_chi, RG );
+	//TR << " max_rot_num is " << max_rot_num << std::endl;
+	rotamers[ max_rot_num ].assign_random_chi( new_chi, RG, temperature_ );
+	//TR << " new chi is " << new_chi << std::endl;
 }
 
 ///all angles in degree
@@ -159,14 +167,14 @@ Real PerturbRotamerSidechainMover::compute_proposal_density(
 	ChiVector const& old_chi /* in degree */
 ) const {
 
-utility::vector1<Real> const & new_chi( new_residue.chi() );
+	utility::vector1<Real> const & new_chi( new_residue.chi() );
 
 	RotamerList rotamers;
 	build_rotamer_list( new_residue, false /*no filtering*/, rotamers );
 
 	Real rot_density, within_rot_density;
+	//compute_rotdensities( rotamers, old_chi, new_chi, within_rot_density );
 	compute_rotdensities( rotamers, old_chi, new_chi, within_rot_density );
-
 	return within_rot_density;
 }
 
@@ -222,8 +230,16 @@ PerturbRotamerSidechainMover::compute_rotdensities(
 
 	Real max_new_rot_prob(0);
 	Real max_old_rot_prob(0);
-
+	Real norm_prob(0);
 	Real const inv_nrot( 1.0 / rotamers.size() );
+
+	for (Size jj=1; jj <= rotamers.size(); ++jj) {
+		norm_prob+=rotamers[jj].probability();
+	}
+	//if ( std::abs( norm_prob - 1.0 ) > 0.00001 ) {
+	//TR.Warning << "ALARM: probs are not normalized correctly: " << norm_prob << std::endl;
+		//}
+
 	for ( Size ii = 1; ii <= rotamers.size(); ++ii ) {
 		//for each rotamer evaluate the density at our new chi angles
 		Real well_prob( rotamers[ii].probability() );

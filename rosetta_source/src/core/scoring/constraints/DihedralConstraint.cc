@@ -490,6 +490,15 @@ void DihedralConstraint::show( std::ostream & out ) const {
 	func_->show_definition(out);
 }
 
+void DihedralConstraint::show_def( std::ostream& out, pose::Pose const& pose ) const {
+	out << type();
+	for ( Size i = 1; i <= natoms(); ++i ) {
+		AtomID const & id = atom(i);
+		out << ' ' <<  atom_id_to_named_atom_id( id, pose );
+	}
+	func_->show_definition( out );
+}
+
 
 Size DihedralConstraint::show_violations(
         std::ostream& out,

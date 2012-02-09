@@ -98,12 +98,12 @@ public:
 	}
 
 	core::Real temperature() const {
-		return temperature_;
+		return temperature_;//temperature_;
 	}
 
 protected:
 	void set_defaults();
-
+public:
 	typedef utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > RotamerList;
 	void build_rotamer_list(
     core::conformation::Residue const&,
@@ -118,6 +118,7 @@ protected:
 		ChiVector const& new_chi,
 		core::Real& within_rot_density
 	) const;
+
 
 private:
 	//the dunbrack rotamers std-deviation can be scaled ... this is similar to a temperature;
