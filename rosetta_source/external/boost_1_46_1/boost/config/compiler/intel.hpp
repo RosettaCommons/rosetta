@@ -27,7 +27,7 @@
 #endif
 
 // Flags determined by comparing output of 'icpc -dM -E' with and without '-std=c++0x'
-#if (!(defined(_WIN32) || defined(_WIN64)) && defined(__STDC_HOSTED__) && __STDC_HOSTED__) || defined(__GXX_EXPERIMENTAL_CPP0X__)
+#if (!(defined(_WIN32) || defined(_WIN64)) && defined(__STDC_HOSTED__) && (__STDC_HOSTED__ && (BOOST_INTEL_CXX_VERSION <= 1200)) ) || defined(__GXX_EXPERIMENTAL_CPP0X__)
 #  define BOOST_INTEL_STDCXX0X
 #endif
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
@@ -171,10 +171,10 @@ template<> struct assert_intrinsic_wchar_t<unsigned short> {};
 
 //
 // An attempt to value-initialize a pointer-to-member may trigger an
-// internal error on Intel <= 11.1 (last checked version), as was 
+// internal error on Intel <= 11.1 (last checked version), as was
 // reported by John Maddock, Intel support issue 589832, May 2010.
 // Moreover, according to test results from Huang-Vista-x86_32_intel,
-// intel-vc9-win-11.1 may leave a non-POD array uninitialized, in some 
+// intel-vc9-win-11.1 may leave a non-POD array uninitialized, in some
 // cases when it should be value-initialized.
 // (Niels Dekker, LKEB, May 2010)
 #if defined(__INTEL_COMPILER)
