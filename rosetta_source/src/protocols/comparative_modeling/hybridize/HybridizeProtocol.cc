@@ -77,7 +77,13 @@
 
 // task operation
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <core/pack/task/operation/OperateOnCertainResidues.hh>
+#include <core/pack/task/operation/ResFilters.hh>
+#include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <protocols/moves/DataMap.hh>
@@ -661,6 +667,14 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 					relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
 					relax_prot.set_force_nonideal("true");
 					relax_prot.set_script_to_batchrelax_default( relax_repeats_ );
+
+					// need to use a packer task factory to handle poses with different disulfide patterning
+					core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;
+					tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+					tf->push_back( new core::pack::task::operation::IncludeCurrent );
+					tf->push_back( new core::pack::task::operation::RestrictToRepacking );
+					//tf->push_back( new core::pack::task::operation::NoRepackDisulfides );
+					relax_prot.set_task_factory( tf );
 
 					// notice! this assumes all poses in a set have the same constraints!
 					relax_prot.batch_apply(post_centroid_structs, pose.constraint_set()->clone());

@@ -999,27 +999,32 @@ void FastRelax::batch_apply(
 		// 453 mb
 		if( i == 0 ){
 			if ( get_task_factory() != 0 ) {
-				task_ = get_task_factory()->create_task_and_apply_taskoperations( pose );
+				pack_full_repack_ = new protocols::simple_moves::PackRotamersMover();
+				if ( core::pose::symmetry::is_symmetric( pose ) )  {
+					pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover();
+				}
+				pack_full_repack_->score_function(local_scorefxn);
+				pack_full_repack_->task_factory(get_task_factory());
 			} else {
 				task_ = TaskFactory::create_packer_task( pose );
-			}
-			bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
-			utility::vector1<bool> allow_repack( pose.total_residue(), repack);
 
-			if ( !basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
-				for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
-					allow_repack[ pos ] = local_movemap->get_chi( pos );
+				bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
+				utility::vector1<bool> allow_repack( pose.total_residue(), repack);
+	
+				if ( !basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
+					for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+						allow_repack[ pos ] = local_movemap->get_chi( pos );
+					}
+				}
+	
+				task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
+				task_->or_include_current( true );
+				pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn, task_ );
+				if ( core::pose::symmetry::is_symmetric( pose ) )  {
+					pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
 				}
 			}
-
-			task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
-			task_->or_include_current( true );
-			pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn, task_ );
-			if ( core::pose::symmetry::is_symmetric( pose ) )  {
-				pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
-			}
 			(*local_scorefxn)( pose );
-
 
 			// Make sure we only allow symmetrical degrees of freedom to move
 			if ( core::pose::symmetry::is_symmetric( pose )  )  {
@@ -1105,13 +1110,13 @@ void FastRelax::batch_apply(
         if( cmd.command.substr(0,5) == "scale" ){
             // no input validation as of now, relax will just die
             scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(6));
-			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * cmd.param1 );
+            local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * cmd.param1 );
         }   else
 
         if( cmd.command.substr(0,6) == "weight" ){
             // no input validation as of now, relax will just die
             scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
-			local_scorefxn->set_weight( scale_param, cmd.param1 );
+            local_scorefxn->set_weight( scale_param, cmd.param1 );
             // I'm not too sure if the changing the default weight makes sense
             full_weights[ scale_param ] = cmd.param1;
         }   else

@@ -412,6 +412,7 @@ void FoldTreeHybridize::restore_original_foldtree(core::pose::Pose & pose) {
 	if (pose.total_residue() > orig_n_residue_) {
 		pose.conformation().delete_residue_range_slow(orig_n_residue_+1, pose.total_residue());
 	}
+	protocols::loops::remove_cutpoint_variants( pose );
 	pose.conformation().fold_tree( orig_ft_ );
 }
 
