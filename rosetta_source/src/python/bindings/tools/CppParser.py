@@ -229,9 +229,10 @@ class CppVariable:
 
     def wrap(self, indent='', wrappingScope='boost::python::'):
         if not self.public: return ''
-        print '________________ self.type_:', self.type_
-        if isinstance(self.type_, CppType_Fundamental): readwrite = 'readwrite'
-        else: readwrite = 'readonly'
+        #print '________________ self.type_:', self.type_
+        #if isinstance(self.type_, CppType_Fundamental): readwrite = 'readwrite'
+        #else: readwrite = 'readonly'
+        readwrite = 'readwrite'
 
         r = '  %sdef_%s("%s", &%s%s);\n' % (wrappingScope, readwrite, self.name, self.context, self.name)
         return  ('\n' + indent).join( r.split('\n') ) + '\n'
@@ -705,6 +706,12 @@ class CppClass:
             if b.type_.T() == '::boost::noncopyable_::noncopyable': return False
         return True
 
+    def isPublicMembersWrappable(self):
+        ''' Check if public data members are wrappable or not and return list of wrappable one...
+        '''
+        if self.context+self.name == '::core::scoring::etable::AtomPairEnergy': return self.dataMembers
+        else: return []
+
 
     def isHeldTypeOP(self):
         for b in self.bases:
@@ -916,8 +923,10 @@ class CppClass:
                     wrapped.append( f )
 
 
-        #for v in self.dataMembers:  r += v.wrap(indent='  ', wrappingScope=exposer + '.')
-        # commenting out for now because there is no reliable way check if object is wrappable or not
+        for v in self.isPublicMembersWrappable():
+            r += v.wrap(indent='  ', wrappingScope=exposer + '.')
+            #for v in self.dataMembers:  r += v.wrap(indent='  ', wrappingScope=exposer + '.')
+            # commenting out for now because there is no reliable way check if object is wrappable or not
 
         for i in statics.values():
             r += '\n' + i + '\n'

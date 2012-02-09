@@ -77,7 +77,13 @@ for i in range(1, rosetta.core.scoring.end_of_score_type_enumeration+1):
 # TODO-lowpriority: instead of using tab-completion, accomplish the above with:
 # print rosetta.core.scoring.ScoreType
 
+print
 print 'identifying hydrogen bonds in structure'
+
+pose = pose_from_pdb("test/data/test_in.pdb")
+scorefxn = create_score_function('standard')
+scorefxn(pose)
+
 hbond_set = rosetta.core.scoring.hbonds.HBondSet()
 pose.update_residue_neighbors();
 rosetta.core.scoring.hbonds.fill_hbond_set( pose, False, hbond_set )

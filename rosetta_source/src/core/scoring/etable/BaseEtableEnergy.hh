@@ -67,6 +67,17 @@ namespace core {
 namespace scoring {
 namespace etable {
 
+// PyRosetta: Python can't pass reference to value, so we have to create data holding structure for atom_pair_energy* functions.
+struct AtomPairEnergy {
+	Energy attractive;
+	Energy repulsive;
+	Energy solvation;
+	Energy bead_bead_interaction;
+	Real distance_squared;
+};
+
+
+
 template < class Derived >
 class BaseEtableEnergy : public methods::ContextIndependentTwoBodyEnergy
 {
@@ -540,6 +551,16 @@ public:
 		static_cast< Derived const* > (this) -> atom_pair_energy_(atom1,atom2,weight,atr,rep,solv,bb,dsq);
 	}
 
+	// PyRosetta friendly version
+	inline void atom_pair_energy(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real const weight,
+		AtomPairEnergy & ape)
+	const {
+			atom_pair_energy(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction, ape.distance_squared);
+	}
+
 
 	///
 	inline
@@ -555,6 +576,19 @@ public:
 	) const  {
 		return static_cast< Derived const* > (this) -> pair_energy_H_(atom1,atom2,weight,atr,rep,solv,bb);
 	};
+
+	// PyRosetta friendly version
+	inline
+	void
+	pair_energy_H(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real weight,
+		AtomPairEnergy & ape
+	) const {
+		ape.distance_squared = 0.0;
+		pair_energy_H(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction);
+	}
 
 	///
 	inline
