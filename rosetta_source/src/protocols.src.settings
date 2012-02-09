@@ -872,6 +872,7 @@ sources = {
                 "ExtendedPoseMoverCreator",
 		"FilterMover",
 		"FavorSequenceProfile",
+		"GreedyOptMutationMover",
 		"GenericMonteCarloMover",
                 "HelixRotate",
 		"MetricRecorder",
