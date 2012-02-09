@@ -4,9 +4,8 @@
 # any file system location. Use 'source SetPyRosettaEnvironment.sh' before starting to work with PyRosetta.
 
 OLD_PATH=`pwd`
-
-cd ${BASH_SOURCE[0]%/*}
-PYROSETTA=`pwd`
+PYROSETTA="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $PYROSETTA
 
 #echo "Setting PyRosetta root as:" $PYROSETTA
 
