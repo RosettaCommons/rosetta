@@ -78,7 +78,9 @@ class VIP_Mover
 		core::pose::Pose cavity_pose;
 		core::pose::Pose final_pose;
 		utility::vector1<core::pose::Pose> temp_poses;
+		utility::vector1<core::Size> temp_positions;
 		utility::vector1<core::pose::Pose> favorable_poses;
+		utility::vector1<core::Size> favorable_positions;
 		core::Size number_cavities;
 		utility::vector1<core::Size> cavity_balls;
 		utility::vector1<std::string> favorable_mutations;

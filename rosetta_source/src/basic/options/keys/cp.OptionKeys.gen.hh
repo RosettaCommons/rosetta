@@ -34,6 +34,7 @@ namespace cp { extern BooleanOptionKey const print_reports; }
 namespace cp { extern StringOptionKey const vipReportFile; }
 namespace cp { extern StringOptionKey const relax_mover; }
 namespace cp { extern BooleanOptionKey const skip_relax; }
+namespace cp { extern BooleanOptionKey const local_relax; }
 
 } // namespace OptionKeys
 } // namespace options

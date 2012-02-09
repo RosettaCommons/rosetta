@@ -1,6 +1,3 @@
-namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
-namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
 namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
@@ -438,6 +435,7 @@ namespace cp { BooleanOptionKey const print_reports( "cp:print_reports" );  }
 namespace cp { StringOptionKey const vipReportFile( "cp:vipReportFile" );  }
 namespace cp { StringOptionKey const relax_mover( "cp:relax_mover" );  }
 namespace cp { BooleanOptionKey const skip_relax( "cp:skip_relax" );  }
+namespace cp { BooleanOptionKey const local_relax( "cp:local_relax" );  }
 namespace archive { BooleanOptionKey const archive( "archive" );  }
 namespace archive { BooleanOptionKey const reread_all_structures( "archive:reread_all_structures" );  }
 namespace archive { IntegerOptionKey const completion_notify_frequency( "archive:completion_notify_frequency" );  }

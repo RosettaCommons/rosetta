@@ -1792,12 +1792,12 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "red
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
@@ -2229,11 +2229,12 @@ option.add( basic::options::OptionKeys::cp::pack_sfxn, "score function for mutat
 option.add( basic::options::OptionKeys::cp::minimizer_tol, "tolerance for minimization" ).def(.0001);
 option.add( basic::options::OptionKeys::cp::minimizer_score_fxn, "score function for initial minimization" ).def("score12_full");
 option.add( basic::options::OptionKeys::cp::output, "file where we want to dump the final pose" ).def("final_mutant.pdb");
-option.add( basic::options::OptionKeys::cp::ncycles, "how many cycles to run refinement for" ).def(1);
+option.add( basic::options::OptionKeys::cp::ncycles, "how many cycles to run refinement for" ).def(0);
 option.add( basic::options::OptionKeys::cp::print_reports, "print reports to text file?" ).def(false);
 option.add( basic::options::OptionKeys::cp::vipReportFile, "File to print reports to" ).def("reports.txt");
 option.add( basic::options::OptionKeys::cp::relax_mover, "relax w/o constraints=relax, w constraints=cst_relax" ).def("relax");
 option.add( basic::options::OptionKeys::cp::skip_relax, "Skip relax step... may reduce accurate identification of mutations" ).def(false);
+option.add( basic::options::OptionKeys::cp::local_relax, "Limit relax step to neighbors" ).def(false);
 option.add( basic::options::OptionKeys::archive::archive, "archive option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::archive::reread_all_structures, "ignore pool file... reread from batches" ).def(false);
 option.add( basic::options::OptionKeys::archive::completion_notify_frequency, "tell Archive every X completed decoys" ).def(100);

@@ -12,11 +12,18 @@
 
 
 
+#include "core/scoring/Energies.hh"
 #include "core/scoring/packstat/types.hh"
 #include "core/scoring/packstat/SimplePDB_Atom.hh"
 #include "core/scoring/packstat/SimplePDB.hh"
 #include "core/scoring/packstat/AtomRadiusMap.hh"
 #include "core/scoring/packstat/compute_sasa.hh"
+#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/TenANeighborGraph.hh>
+
+#include "core/kinematics/MoveMap.hh"
+
+#include "core/pose/Pose.hh"
 
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/analysis/PackStatMover.hh>
@@ -131,6 +138,38 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 
 
 	return packing_score;}
+
+
+	void
+	set_local_movemap(
+		core::pose::Pose & pose,
+		core::Size position,
+		core::kinematics::MoveMapOP mmap ) {
+
+		// This helper function sets up a movemap to only allow freedom for
+		// a position and its neighbors
+
+		core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+
+		// Defaulting to immobile
+		mmap->set_chi( false );
+		mmap->set_bb( false );
+		mmap->set_jump( false );
+
+    for ( core::graph::Graph::EdgeListConstIter
+        iru = energy_graph.get_node( position )->const_upper_edge_list_begin(),
+        irue = energy_graph.get_node( position )->const_upper_edge_list_end();
+        iru != irue; ++iru ) {
+      int const nbr_position( (*iru)->get_second_node_ind() );
+			//std::cout << "Neighbors for " << position << " include " << nbr_position << std::endl;
+
+			mmap->set_chi( nbr_position, true );
+			mmap->set_bb( nbr_position, true );
+		}
+	}
+
+
+
 }}
 
 

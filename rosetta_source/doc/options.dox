@@ -10802,7 +10802,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-ncycles</b> \<Integer\><dt>
 <dd>how many cycles to run refinement for</dd><br>
-<dd>Default: 1</dd><br>
+<dd>Default: 0</dd><br>
 </dl>
 <dl>
 <dt><b>-print_reports</b> \<Boolean\><dt>
@@ -10822,6 +10822,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-skip_relax</b> \<Boolean\><dt>
 <dd>Skip relax step... may reduce accurate identification of mutations</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-local_relax</b> \<Boolean\><dt>
+<dd>Limit relax step to neighbors</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>

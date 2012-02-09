@@ -18,6 +18,8 @@
 #include "core/scoring/packstat/AtomRadiusMap.hh"
 #include "core/scoring/packstat/compute_sasa.hh"
 
+#include "core/kinematics/MoveMap.fwd.hh"
+
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/analysis/PackStatMover.hh>
 
@@ -52,5 +54,6 @@ using namespace core::scoring::packstat;
 std::string base_name(const std::string& str);
 std::string get_out_tag(std::string fname);
 core::Real output_packstat( core::pose::Pose & );
+void set_local_movemap( core::pose::Pose & pose, core::Size position, core::kinematics::MoveMapOP mmap );
 
 }}

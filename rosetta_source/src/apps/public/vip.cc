@@ -41,55 +41,39 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	core::pose::Pose in_pose;
-        core::io::pdb::build_pose_from_pdb_as_is( in_pose, option[ OptionKeys::in::file::s ]().vector().front() );
-        core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
-        protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
+	core::io::pdb::build_pose_from_pdb_as_is( in_pose, option[ OptionKeys::in::file::s ]().vector().front() );
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
+	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
 	bool iterate = true;
 	core::Size it = 1;
+	core::Size const ncycles = option[ cp::ncycles ];
 
-if ( option[ cp::ncycles ] ) {
-
-	core::Size ncycles = option[ cp::ncycles ];
 	core::pose::Pose out_pose;
+	bool not_finished( true );
 
-	while( it <= ncycles ){
-        	scoreme.apply(in_pose);
-		core::Real old_energy = in_pose.energies().total_energy();
-
-        	protocols::vip::VIP_Mover();
-        	protocols::vip::VIP_Mover vip_mover;
-        		vip_mover.set_initial_pose( in_pose );
-        		vip_mover.apply();
-
-		out_pose = vip_mover.get_final_pose();
-        	core::Real new_energy = vip_mover.get_final_energy();
-
-        if( new_energy < old_energy ){
-                old_energy = new_energy;
-                in_pose = out_pose;
-                it++;}}
-                out_pose.dump_pdb( option[ cp::output ] );}
-
-else{
-	while( iterate == true ){
-        	scoreme.apply(in_pose);
+	while( not_finished ){
+		scoreme.apply(in_pose);
 		core::Real old_energy = in_pose.energies().total_energy();
 
 		protocols::vip::VIP_Mover();
 		protocols::vip::VIP_Mover vip_mover;
-			vip_mover.set_initial_pose( in_pose );
-			vip_mover.apply();
+		vip_mover.set_initial_pose( in_pose );
+		vip_mover.apply();
 
-		core::pose::Pose out_pose = vip_mover.get_final_pose();
+		out_pose = vip_mover.get_final_pose();
 		core::Real new_energy = vip_mover.get_final_energy();
 
-	if( new_energy < old_energy ){
-		old_energy = new_energy;
-		in_pose = out_pose;
-		iterate = true;}
-	else{
-		out_pose.dump_pdb( option[cp::output] );
-		iterate = false;}}}
+		std::cout << "Comparing new energy " << new_energy << " with old energy " << old_energy << std::endl;
+		bool improved( new_energy < old_energy ? true : false );
 
+		if( improved ){
+			old_energy = new_energy;
+			in_pose = out_pose;
+			it++;
+		}
+
+		not_finished = ( ncycles == 0 ? improved : it <= ncycles );
+	}
+	out_pose.dump_pdb( option[ cp::output ] );
 }
