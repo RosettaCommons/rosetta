@@ -153,8 +153,11 @@ public:
 	///the hydrogen bond.
 	void show(
 		pose::Pose const & pose,
-		bool const print_header=true,
-		std::ostream & out=std::cout) const;
+		bool const print_header,
+		std::ostream & out) const;
+
+	// PyRosetta friendly version
+	void show(pose::Pose const & pose, bool const print_header=true) const  { show(pose, print_header, std::cout); }
 
 	friend
 	std::ostream &
