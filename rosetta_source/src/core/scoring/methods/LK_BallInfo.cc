@@ -55,6 +55,10 @@
 
 // #include <utility/vector1.functions.hh> // HACK
 
+#ifdef WIN32
+#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
+#endif
+
 namespace core {
 namespace scoring {
 namespace methods {

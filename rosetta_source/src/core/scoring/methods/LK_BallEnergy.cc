@@ -64,6 +64,11 @@
 #include <numeric/xyz.functions.hh>
 
 #include <utility/vector1.functions.hh> // HACK
+
+#ifdef WIN32
+#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
+#endif
+
 /// LAZY using
 using core::pack::rotamer_set::RotamerSet;
 
