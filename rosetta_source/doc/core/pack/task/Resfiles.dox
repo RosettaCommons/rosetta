@@ -99,9 +99,9 @@ To determine which residues fall into the specified, range, the sequence of resi
 
 @paragraph Chain Identification
 To specify commands for all the residues of a specific chain, use the following form
-@code
+@verbatim
 * <CHAIN> <COMMANDS>
-@endcode
+@endverbatim
 
 See the section on specifying a single residue, above, for commends on the format for the <PDBNUM>, <ICODE>, and <CHAIN> identifiers.
 
@@ -111,23 +111,23 @@ See the section on specifying a single residue, above, for commends on the forma
 If a residue is specified at multiple levels, e.g. as a single residue, in a range and as part of a whole chain, then the specific specification supersedes the others. If a residue is specified multiple times at the same level, eg in multiple single residue commands, then all the commands are used together. Note: the order in which commands are specified is not important.
 
 For example,
-@code
+@verbatim
 NATRO
 START
 
 * A NATAA
 3C - 20 A APOLAR
 15 A PIKAA Y
-@endcode
+@endverbatim
 
 This task, sets residue 15 on chain A to be a tyrosine, all the residues in between residue 3C (PDBnum=3, icode='C') and residue 20 except residue 15 on chain A to be a-polar, the rest of the residues on chain A to be their native amino acid but packable, and the rest of the residues in the pose to keep their fixed rotamer.
 
 The body of the above resfile could have been written like this:
-@code
+@verbatim
 15 A PIKAA Y
 3C - 20 A APOLAR
 * A NATAA
-@endcode
+@endverbatim
 
 @section Commands
 
