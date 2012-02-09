@@ -158,6 +158,7 @@ sources = {
         "scoring/hbonds" : [
                 "HBondEnergy",
                 "HBonds",
+                "HBondsForDemos",
                 "polynomial",
                 "HBondDatabaseTest",
                 "HBondDerivTest",

@@ -144,9 +144,17 @@ public:
 	bool
 	atom_is_acceptor( id::AtomID const & atom ) const;
 
-	///
+	///@breif a bare bones description of the data contained in the hbond object
 	void
 	show( std::ostream & out ) const;
+
+	///@brief a prettier, more interpretable description of an hbond,
+	///including pdb identified residues and the geometric dimensions of
+	///the hydrogen bond.
+	void show(
+		pose::Pose const & pose,
+		bool const print_header=true,
+		std::ostream & out=std::cout) const;
 
 	friend
 	std::ostream &
@@ -203,6 +211,16 @@ public:
 	HBondSet( HBondOptions const & options );
 	HBondSet( HBondOptions const & options, Size const nres);
 
+	///@brief convenience constructor: Find all the hbonds in the pose.
+	HBondSet(
+		pose::Pose & pose);
+
+	///@brief convenience constructor: Find all the hbonds in the pose.
+	HBondSet(
+		HBondOptions const & options,
+		pose::Pose & pose);
+
+
 	HBondSet( HBondSet const & src );
 
 	HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude_list );
@@ -210,10 +228,6 @@ public:
 	HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask );
 
 	HBondSet( HBondSet const & src, Size seqpos );
-
-	// Public Service Announcement:
-	// If you are looking for a way to create an HBondSet from a pose,
-	// look at fill_hbond_set(...) in hbonds.cc
 
 	// typedefs
 	typedef id::AtomID AtomID;
@@ -323,16 +337,26 @@ public:
 	std::ostream &
 	operator<< ( std::ostream & out, const HBondSet & hbond_set );
 
-	/// @brief various show functions
-	void show(std::ostream & out) const;
+	/// @brief Print just the information stored in each individual
+	/// hbond.
+	void show(
+		std::ostream & out=std::cout) const;
 
-	/// @brief various show functions
-	void show(pose::Pose & pose, std::ostream & out) const;
+	/// @brief Print nicely formated summary of the hbonds and their geometry in the pose.
+	void show(
+		pose::Pose const & pose,
+		bool const print_header=true,
+		std::ostream & out=std::cout) const;
 
-	/// @brief This function proveded mostly to simplify usage of PyRosetta
-	void show(pose::Pose & pose) const { show(pose, std::cout); };
+	/// @brief Print nicely formated summary of all the hbonds to a
+	/// specific residue
+	void show(
+		pose::Pose const & pose,
+		Size const residue,
+		bool const print_header=true,
+		std::ostream & out=std::cout) const;
 
-	///
+	/// @brief equality operator
 	friend
 	bool
 	operator==(HBondSet const & a, HBondSet const & b);
@@ -346,7 +370,6 @@ private:
 
 	HBondOptionsCOP options_;
 
-	Size abc;
 	utility::vector1< HBondOP > hbonds_;
 	utility::vector1< bool > backbone_backbone_donor_;
 	utility::vector1< bool > backbone_backbone_acceptor_;

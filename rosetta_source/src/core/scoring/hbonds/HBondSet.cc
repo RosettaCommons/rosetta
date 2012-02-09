@@ -253,6 +253,75 @@ HBond::show( std::ostream & out ) const
 	//out << deriv_ << std::endl;
 }
 
+void
+HBond::show(
+	pose::Pose const & pose,
+	bool print_header,
+	std::ostream & out
+) const {
+
+	if(print_header){
+		out
+			<< "#Dch Dn Dres Da  Ach An Ares Aa  length AHDang BAHang  BAtor weight energy"
+			<< std::endl;
+	}
+
+	char const don_pdb_chain(pose.pdb_info()->chain(don_res()));
+	Size const don_pdb_number(pose.pdb_info()->number(don_res()));
+	char const don_pdb_icode(pose.pdb_info()->icode(don_res()));
+	Size const don_atomno(pose.residue(don_res()).atom_base(don_hatm()));
+	std::string const don_res_name(pose.residue(don_res()).type().name3());
+	std::string const don_atom_name(pose.residue(don_res()).atom_name(don_atomno));
+
+	Size const acc_pdb_chain(pose.pdb_info()->chain(acc_res()));
+	Size const acc_pdb_number(pose.pdb_info()->number(acc_res()));
+	char const acc_pdb_icode(pose.pdb_info()->icode(acc_res()));
+	Size const base_atomno(pose.residue(acc_res()).atom_base(acc_atm()));
+	Size const bbase_atomno(pose.residue(acc_res()).atom_base(base_atomno));
+	std::string const acc_res_name(pose.residue(acc_res()).type().name3());
+	std::string const acc_atom_name(pose.residue(acc_res()).atom_name(base_atomno));
+
+	PointPosition const Dxyz(pose.residue(don_res()).xyz(don_atomno));
+	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
+	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
+	PointPosition const Bxyz(pose.residue(acc_res()).xyz(base_atomno));
+	PointPosition const BBxyz(pose.residue(acc_res()).xyz(bbase_atomno));
+
+	Real const HAdist(Hxyz.distance(Axyz));
+	Real const AHDangle(numeric::angle_degrees(Axyz, Hxyz, Dxyz));
+	Real const BAHangle(numeric::angle_degrees(Bxyz, Axyz, Hxyz));
+	Real const BAtorsion(dihedral_degrees(BBxyz, Bxyz, Axyz, Hxyz));
+
+	// In the pdb format, a residue is uniquely identified by
+	// the chain, the residue number and the insertion code
+	out
+		<< "#"
+
+		// donor site
+		<< A(1, don_pdb_chain) << I(5, don_pdb_number) << A(1, don_pdb_icode)
+		<< I(4, don_res_name) << I(5, don_atom_name)
+
+		// acceptor site
+		<< A(1, acc_pdb_chain) << I(5, acc_pdb_number)  << A(1, acc_pdb_icode)
+		<< I(4, acc_res_name) << I(5, acc_atom_name)
+
+		// bond geometry:
+		<< F(6, 2, HAdist)
+
+		// These angles are go from [0, 180] in degrees
+		<< F(7, 1, AHDangle) << F(7, 1, BAHangle)
+
+		// The axis of rotation is around the base-acceptor bond and the
+		// zero angle in the plane of the base of the base of the
+		// acceptor. [-180, 180] in degrees.
+		<< F(7, 1, BAtorsion)
+
+		// The hbond score function weight and energy
+		<< F(7, 3, weight()) << F(7, 3, energy()) << std::endl;
+}
+
+
+
 std::ostream &
 operator<< ( std::ostream & out, const HBond & hbond ){
 	hbond.show( out );
@@ -320,6 +389,35 @@ HBondSet::HBondSet( HBondOptions const & opts, Size const nres):
 	atom_map_init_( false )
 {
 	resize_bb_donor_acceptor_arrays( nres );
+}
+
+///@brief convenience constructor. If you need more controlled
+///construction please use one of the other constructors
+///
+/// The pose must be non-const because the neighbor graph may need to
+/// be initialized.
+HBondSet::HBondSet(
+	pose::Pose & pose ) :
+	options_(new HBondOptions()),
+	atom_map_init_(false)
+{
+	pose.update_residue_neighbors();
+	setup_for_residue_pair_energies(pose, false);
+}
+
+///@brief convenience constructor. If you need more controlled
+///construction please use one of the other constructors
+///
+/// The pose must be non-const because the neighbor graph may need to
+/// be initialized.
+HBondSet::HBondSet(
+	HBondOptions const & opts,
+	pose::Pose & pose) :
+	options_( new HBondOptions(opts)),
+	atom_map_init_(false)
+{
+	pose.update_residue_neighbors();
+	setup_for_residue_pair_energies(pose, false);
 }
 
 
@@ -407,7 +505,6 @@ HBondSet::HBondSet(
 	// set this flag since we still have to setup the atommap
 	atom_map_init_ = false;
 }
-
 
 
 /// @brief clone this object
@@ -697,12 +794,13 @@ operator<< ( std::ostream & out, const HBondSet & hbond_set ){
 	return out;
 }
 
-/// @brief various show functions
 void
-HBondSet::show(std::ostream & out) const
-{
-	for ( core::Size i=1; i<=(core::Size)nhbonds(); ++i )
-		out << hbond((int)i) << std::endl;
+HBondSet::show(
+	std::ostream & out/*=std::cout*/
+) const {
+	for ( core::Size i=1; i<=nhbonds(); ++i ){
+		out << hbond(i);
+	}
 }
 
 ///
@@ -737,56 +835,46 @@ operator==(HBondSet const & a, HBondSet const & b)
 	return true;
 }
 
+///@detail Optionally print a header, and then a row for each hydrogen bond in the set using the iterprable version of the hbond show format formatted for easy parsing by R, Excel, etc.
 void
-HBondSet::show(pose::Pose & pose, std::ostream & out) const
-{
-	core::Size don_pos, acc_pos, don_res, acc_res;
-	std::string don_name, acc_name, don_atom_name, acc_atom_name;
-	core::Real weight;
-	core::Real hbE;
+HBondSet::show(
+	pose::Pose const & pose,
+	bool print_header/*=true*/,
+	std::ostream & out/*=std::cout*/
+) const {
 
-	// This version is formatted for easy parsing by R, Excel, etc.
+	for (Size i=1; i<= nhbonds(); ++i ) {
+		hbond(i).show(pose, i==1 && print_header, out);
+	}
 
-	out << "# donor res atom acpt res atom  dist angleD angleA weight energy" << std::endl;
-	for ( core::Size i=1; i<=(core::Size)nhbonds(); ++i ) {
-		if ( allow_hbond((int)i) ) {
-			don_pos = hbond((int)i).don_res();
-			don_res = pose.pdb_info()->number(don_pos);
-			don_name = pose.residue((int)don_pos).type().name3();
-			core::id::AtomID const datm ( hbond((int)i).don_hatm(), don_pos );
-			don_atom_name = pose.residue((int)don_pos).atom_name(datm.atomno());
+}
 
-			acc_pos = hbond((int)i).acc_res();
-			acc_res = pose.pdb_info()->number(acc_pos);
-			acc_name = pose.residue((int)acc_pos).type().name3();
-			core::id::AtomID const aatm ( hbond((int)i).acc_atm(), acc_pos );
-			acc_atom_name = pose.residue((int)acc_pos).atom_name(aatm.atomno());
-			core::Size don_hv_atomno = pose.residue((int)don_pos).atom_base( hbond((int)i).don_hatm() );
-			core::Size base_atomno   = pose.residue((int)acc_pos).atom_base( hbond((int)i).acc_atm() );
 
-			numeric::xyzVector < core::Real> Hxyz = pose.residue((int)don_pos).xyz(hbond((int)i).don_hatm());
-			numeric::xyzVector < core::Real> Axyz = pose.residue((int)acc_pos).xyz(hbond((int)i).acc_atm());
-			numeric::xyzVector < core::Real> Dxyz = pose.residue((int)don_pos).xyz(don_hv_atomno);
-			numeric::xyzVector < core::Real> Bxyz = pose.residue((int)acc_pos).xyz(base_atomno);
+///@detail Optionally print a header, and then a row for each hydrogen
+///bond in the set using the iterprable version of the hbond show
+///format formatted for easy parsing by R, Excel, etc.
+void
+HBondSet::show(
+	pose::Pose const & pose,
+	Size const residue_number,
+	bool const print_header /*=true*/,
+	std::ostream & out /*=std::cout*/
+) const {
 
-			core::Real HAdist = Hxyz.distance(Axyz);
-			core::Real DHAangle = numeric::angle_radians(Dxyz, Hxyz, Axyz);
-			numeric::conversions::to_degrees(DHAangle);
-			core::Real HABangle = numeric::angle_radians(Hxyz, Axyz, Bxyz);
-			numeric::conversions::to_degrees(HABangle);
+	bool first_found(true);
+	for (Size i=1; i<=nhbonds(); ++i ) {
+		if((hbond(i).don_res() == residue_number)
+			|| (hbond(i).acc_res() == residue_number)){
 
-			weight = hbond((int)i).weight();
-			hbE = hbond((int)i).energy();
-
-			out << "# " << I(5,don_res) << I(4,don_name) << I(5,don_atom_name)
-				<< I(5,acc_res) << I(4,acc_name) << I(5,acc_atom_name)
-				<< F(6,2,HAdist)
-				<< F(7,1,DHAangle) << F(7,1,HABangle)
-				<< F(7,3,weight) << F(7,3,hbE) << std::endl;
+			hbond(i).show(pose, print_header && first_found, out);
+			first_found = false;
 		}
 	}
-	out << "# end hbond info " << std::endl;
+
 }
+
+
+
 
 utility::vector1< HBondCOP > HBondSet::empty_list_of_hbonds_;
 
