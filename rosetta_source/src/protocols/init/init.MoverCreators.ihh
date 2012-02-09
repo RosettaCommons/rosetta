@@ -105,6 +105,7 @@
 #include <protocols/motifs/MotifDnaPackerCreator.hh>
 
 #include <protocols/moves/DsspMoverCreator.hh>
+#include <protocols/moves/GreedyOptMutationMoverCreator.hh>
 #include <protocols/moves/GenericMonteCarloMoverCreator.hh>
 #include <protocols/moves/IfMoverCreator.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>

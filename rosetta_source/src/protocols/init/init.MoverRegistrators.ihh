@@ -108,6 +108,7 @@ static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
 
 static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
+static MoverRegistrator< moves::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
 static MoverRegistrator< moves::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
