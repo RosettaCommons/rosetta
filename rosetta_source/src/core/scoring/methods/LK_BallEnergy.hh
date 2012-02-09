@@ -211,7 +211,7 @@ public:
 																			 EnergyMap & emap
 																			 ) const;
 
-	/* Undefined, commenting out to fix pyrosetta build  void
+	/* Undefined, commenting out to fix PyRosetta build  void
 	get_scorefxn_weights_for_derivatives(
 																			 Size const atom1,
 																			 conformation::Residue const & rsd1,
@@ -285,7 +285,7 @@ public:
 															) const;
 
 
-	void
+	/* Undefined, commenting out to fix PyRosetta build  void
 	residue_pair_energy(
 											conformation::Residue const & rsd1,
 											utility::vector1< Vectors > const & rsd1_waters,
@@ -294,7 +294,7 @@ public:
 											pose::Pose const & pose,
 											ScoreFunction const &,
 											EnergyMap & emap
-											) const;
+											) const; */
 
 	virtual
 	void
