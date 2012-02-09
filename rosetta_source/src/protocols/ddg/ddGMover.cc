@@ -1041,7 +1041,7 @@ ddGMover::relax_wildtype_structure(
 
 	if( option[OptionKeys::ddg::opt_input_structure].user() && option[OptionKeys::ddg::opt_input_structure]() ) {
 		PackerTaskOP norepacking(pack::task::TaskFactory::create_packer_task(pose));
-		norepacking->temporarily_fix_everything();
+		norepacking->fix_everything();
 		pose.constraint_set(min_cst_set_wt_);
 		minimize_with_constraints(pose,min_cst_sfxn_,norepacking);
 		pose.dump_pdb("input_pose.pdb");

@@ -255,7 +255,7 @@ get_opte_data(
 	pack::task::PackerTaskOP dummy_task = pack::task::TaskFactory::create_packer_task( pose );
 	dummy_task->set_bump_check( false );
 	dummy_task->or_include_current( true );
-	dummy_task->temporarily_fix_everything();
+	dummy_task->fix_everything();
 
 	scorefxn.setup_for_packing( pose, dummy_task->repacking_residues(), dummy_task->designing_residues() );
 

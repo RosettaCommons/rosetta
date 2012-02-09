@@ -122,7 +122,7 @@ argrot_dna_dis2(
 
 	PackerTaskOP ptask( TaskFactory::create_packer_task( pose ) );
 	ptask->set_bump_check( false );
-	ptask->temporarily_set_pack_residue( presid, true );
+	ptask->set_pack_residue( presid, true );
 
 	// use ex1 rotamers
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( presid ) );

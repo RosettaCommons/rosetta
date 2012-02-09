@@ -85,20 +85,20 @@ RRProtocolRTMin::run(
 	RTMin rtmin;
 
 	// I don't know if rtmin looks at more than pack_residue(..)
-	one_res_task->temporarily_fix_everything();
+	one_res_task->fix_everything();
 
 	// For each residue in the packer task,
 	// rtmin residue -> and measure recovery
 	for( Size ii = 1; ii <= pose.total_residue(); ++ii ){
 		if ( !packer_task.pack_residue(ii) ) continue;
 		Pose working_pose = pose;  // deep copy
-		one_res_task->temporarily_set_pack_residue( ii, true );
+		one_res_task->set_pack_residue( ii, true );
 		rtmin.rtmin( working_pose, score_function, one_res_task );
 		measure_rotamer_recovery(
 			comparer, reporter,
 			pose, working_pose,
 			pose.residue(ii), working_pose.residue(ii) );
-		one_res_task->temporarily_set_pack_residue( ii, false );
+		one_res_task->set_pack_residue( ii, false );
 	}
 }
 

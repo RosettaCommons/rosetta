@@ -388,9 +388,9 @@ public:
 	virtual Size total_residue() const;
 
 	///@brief turn off packing at all positions
-	virtual void temporarily_fix_everything();
+	virtual void fix_everything();
 	///@brief reset packer mutability arbitrarily for a given residue
-	virtual void temporarily_set_pack_residue( int resid, bool setting );
+	virtual void set_pack_residue( int resid, bool setting );
 
 	///@brief get function: can this position have a rotamer change?
 	virtual bool pack_residue( int resid ) const;

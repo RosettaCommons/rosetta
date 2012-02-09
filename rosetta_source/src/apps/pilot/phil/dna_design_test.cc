@@ -296,7 +296,7 @@ design_test()
 			for ( Size i=1; i<= nres; ++i ) {
 				if ( interface_dna[i] ) {
 					assert( !task->pack_residue( i ) );
-					task->temporarily_set_pack_residue( i, true );
+					task->set_pack_residue( i, true );
 					assert(  task->pack_residue( i ) );
 					assert( !task->design_residue( i ) );
 					pack::task::ResidueLevelTask & rtask( task->nonconst_residue_task(i) );
