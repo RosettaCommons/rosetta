@@ -10500,6 +10500,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Display constraints file for use with camelid H3 modeler</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-numbering_scheme</b> \<String\><dt>
+<dd>the numbering scheme such as chothia or aho</dd><br>
+<dd>Default: "chothia"</dd><br>
+</dl>
  </li>
 <li><h2>flexPepDocking</h2>
 <dl>

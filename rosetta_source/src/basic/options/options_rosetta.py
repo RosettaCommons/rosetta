@@ -4248,6 +4248,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'camelid_constraints','Boolean',
 			desc='Display constraints file for use with camelid H3 modeler',
 			default='false' ),
+		Option('numbering_scheme', 'String',
+			desc='the numbering scheme such as chothia or aho',
+			default='chothia'),
 	), # antibody
 
 	# FlexPepDocking Options -----------------------------------------------------------

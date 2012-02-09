@@ -371,6 +371,7 @@ namespace antibody { BooleanOptionKey const snug_loops( "antibody:snug_loops" );
 namespace antibody { FileOptionKey const input_fv( "antibody:input_fv" );  }
 namespace antibody { BooleanOptionKey const camelid( "antibody:camelid" );  }
 namespace antibody { BooleanOptionKey const camelid_constraints( "antibody:camelid_constraints" );  }
+namespace antibody { StringOptionKey const numbering_scheme( "antibody:numbering_scheme" );  }
 namespace flexPepDocking { BooleanOptionKey const flexPepDocking( "flexPepDocking" );  }
 namespace flexPepDocking { StringOptionKey const params_file( "flexPepDocking:params_file" );  }
 namespace flexPepDocking { IntegerOptionKey const peptide_anchor( "flexPepDocking:peptide_anchor" );  }
