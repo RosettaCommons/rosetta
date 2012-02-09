@@ -14,8 +14,8 @@ for i in range(1, 3):
 # Monte Carlo Side-Chain Packing
 task_pack = standard_packer_task(pose)
 task_pack.restrict_to_repacking()
-task_pack.fix_everything()
-task_pack.set_pack_residue(49, True)
+task_pack.temporarily_fix_everything()
+task_pack.temporarily_set_pack_residue(49, True)
 
 print task_pack
 

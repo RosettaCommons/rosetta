@@ -206,7 +206,7 @@ RTMin::rtmin(
 
 	input_task->set_bump_check( false );
 	input_task->or_include_current( true );
-	input_task->fix_everything();
+	input_task->temporarily_fix_everything();
 
 	/// in real rtmin, the active residues will be examined in a random order;
 	/// random_shuffle( active_residues );
@@ -222,7 +222,7 @@ RTMin::rtmin(
 
 		//pretend this is a repacking and only this residue is being repacked
 		//while all other residues are being held fixed.
-		input_task->set_pack_residue( iiresid, true );
+		input_task->temporarily_set_pack_residue( iiresid, true );
 
 		RotamerSetFactory rsf;
 		rotamer_set::RotamerSetOP iirotset = rsf.create_rotamer_set( trial_res );
@@ -474,7 +474,7 @@ RTMin::rtmin(
 	task::PackerTaskOP rottrial_task( input_task->clone() );
 	rottrial_task->set_bump_check( false );
 	rottrial_task->or_include_current( true );
-	rottrial_task->fix_everything();
+	rottrial_task->temporarily_fix_everything();
 
 	// this will call setup fxns for each scoring method, eg HBondEnergy will
 	// compute backbone hbonds to prepare for hbchecking,
@@ -494,7 +494,7 @@ RTMin::rtmin(
 
 		//pretend this is a repacking and only this residue is being repacked
 		//while all other residues are being held fixed.
-		rottrial_task->set_pack_residue( resid, true );
+		rottrial_task->temporarily_set_pack_residue( resid, true );
 
 		rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( trial_res );
 		rotset->set_resid( resid );
@@ -592,7 +592,7 @@ RTMin::rtmin(
 			scfxn.update_residue_for_packing( pose, resid );
 		}
 
-		rottrial_task->set_pack_residue( resid, false );
+		rottrial_task->temporarily_set_pack_residue( resid, false );
 	}
 	PROF_STOP ( basic::ROTAMER_TRIALS );
 }*/

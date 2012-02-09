@@ -484,8 +484,8 @@ Motif::build_rotamers(
 
 	PackerTaskOP task = TaskFactory::create_packer_task( pose );
 	task->set_bump_check( false );
-	task->fix_everything();
-	task->set_pack_residue( rotamer_build_position, true );
+	task->temporarily_fix_everything();
+	task->temporarily_set_pack_residue( rotamer_build_position, true );
 	utility::vector1< bool > aa_info( core::chemical::num_canonical_aas, false );
 
 	// Here's the aa to build

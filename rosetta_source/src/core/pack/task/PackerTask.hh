@@ -240,8 +240,8 @@ public:
 
 	virtual Size total_residue() const = 0;
 
-	virtual void fix_everything() = 0;
-	virtual void set_pack_residue( int resid, bool setting ) = 0;
+	virtual void temporarily_fix_everything() = 0;
+	virtual void temporarily_set_pack_residue( int resid, bool setting ) = 0;
 
 	virtual bool pack_residue( int resid ) const = 0;
 	virtual bool being_packed( Size resid ) const = 0;

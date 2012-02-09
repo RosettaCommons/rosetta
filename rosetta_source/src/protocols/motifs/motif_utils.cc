@@ -426,11 +426,11 @@ void mutate_loops_for_search(
 				alanize_task->nonconst_residue_task( ires ).restrict_absent_canonical_aas( allow_vector );
 			} else {
 				// Let prolines and glycines stay
-				alanize_task->set_pack_residue( ires, false );
+				alanize_task->temporarily_set_pack_residue( ires, false );
 			}
 		} else {
 			// Leave non-loop residues alone
-			alanize_task->set_pack_residue( ires, false );
+			alanize_task->temporarily_set_pack_residue( ires, false );
 		}
 	}
 
@@ -1201,8 +1201,8 @@ build_rotamers_lite(
 
 	PackerTaskOP task = TaskFactory::create_packer_task( pose );
 	task->set_bump_check( false );
-	task->fix_everything();
-	task->set_pack_residue( rotamer_build_position, true );
+	task->temporarily_fix_everything();
+	task->temporarily_set_pack_residue( rotamer_build_position, true );
 
 	task->nonconst_residue_task( rotamer_build_position ).restrict_absent_canonical_aas( aa_info );
 

@@ -294,7 +294,7 @@ RestrictDesignToProteinDNAInterface::apply(
 				if ( !pose.residue_type(dpos).is_DNA() ) continue;
 				dna_design_positions.push_back( dpos );
 				// turn off all DNA repacking (...?)
-				//ptask.set_pack_residue( dpos, false );
+				//ptask.temporarily_set_pack_residue( dpos, false );
 			}
 		} else {
 			// targeted dna design positions exist: limit interface to within the vicinity of these

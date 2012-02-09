@@ -109,7 +109,7 @@ rotamer_trials(
 
 	rottrial_task->set_bump_check( false );
 	rottrial_task->or_include_current( true );
-	rottrial_task->fix_everything();
+	rottrial_task->temporarily_fix_everything();
 
 	// this will call setup fxns for each scoring method, eg HBondEnergy will
 	// compute backbone hbonds to prepare for hbchecking,
@@ -133,7 +133,7 @@ rotamer_trials(
 
 		//pretend this is a repacking and only this residue is being repacked
 		//while all other residues are being held fixed.
-		rottrial_task->set_pack_residue( resid, true );
+		rottrial_task->temporarily_set_pack_residue( resid, true );
 
 		rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( trial_res );
 		rotset->set_resid( resid );
@@ -167,7 +167,7 @@ rotamer_trials(
 			TR.Trace << std::endl;
 		}
 
-		rottrial_task->set_pack_residue( resid, false );
+		rottrial_task->temporarily_set_pack_residue( resid, false );
 
 	}
 	//clock_t stoptime = clock();
@@ -221,7 +221,7 @@ symmetric_rotamer_trials(
 
 	rottrial_task->set_bump_check( false );
 	rottrial_task->or_include_current( true );
-	rottrial_task->fix_everything();
+	rottrial_task->temporarily_fix_everything();
 
 	// this will call setup fxns for each scoring method, eg HBondEnergy will
 	// compute backbone hbonds to prepare for hbchecking,
@@ -245,7 +245,7 @@ symmetric_rotamer_trials(
 
 		//pretend this is a repacking and only this residue is being repacked
 		//while all other residues are being held fixed.
-		rottrial_task->set_pack_residue( resid, true );
+		rottrial_task->temporarily_set_pack_residue( resid, true );
 
 		rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( trial_res );
 		rotset->set_resid( resid );
@@ -294,7 +294,7 @@ symmetric_rotamer_trials(
 			TR.Trace << std::endl;
 		}
 
-		rottrial_task->set_pack_residue( resid, false );
+		rottrial_task->temporarily_set_pack_residue( resid, false );
 
 	}
 	//clock_t stoptime = clock();

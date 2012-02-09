@@ -1046,7 +1046,7 @@ PackerTask_::clean_residue_task( conformation::Residue const & original_residue,
 
 ///@details turn off packing at all positions.
 ///This does not affect underlying ResidueLevelTasks, but at the moment there is no method for reversing
-void PackerTask_::fix_everything()
+void PackerTask_::temporarily_fix_everything()
 {
 	for ( Size ii = 1; ii <= nres_; ++ii )
 	{
@@ -1058,7 +1058,7 @@ void PackerTask_::fix_everything()
 
 ///@details arbitrarily set the packer mutability for a position
 ///reverse with same function, opposite bool input
-void PackerTask_::set_pack_residue( int resid, bool setting )
+void PackerTask_::temporarily_set_pack_residue( int resid, bool setting )
 {
 	if ( ! setting && pack_residue_[ resid ]) {
 		--n_to_be_packed_;
