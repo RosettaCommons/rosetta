@@ -264,6 +264,7 @@ void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_sessio
 
 	job_data_features_->delete_record(struct_id,db_session);
 	residue_conformation_features_->delete_record(struct_id,db_session);
+	residue_features_->delete_record(struct_id,db_session);
 	protein_residue_conformation_features_->delete_record(struct_id,db_session);
 	pose_comments_features_->delete_record(struct_id,db_session);
 	structure_scores_features_->delete_record(struct_id,db_session);
