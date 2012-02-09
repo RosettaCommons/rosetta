@@ -713,6 +713,15 @@ class CppClass:
         return False
 
 
+    def isSelfInherit(self):
+        for b in self.bases:
+            #if b.type_.T() == '::core::scoring::etable::BaseEtableEnergy<core::scoring::etable::EtableEnergy>': continue
+            _case1 = '::core::scoring::etable::BaseEtableEnergy<%s>' % (self.context+self.name)[2:]
+            # ^^ special case, template use it self for initiate, we can't list as base class in Python because we will never be able to create it
+            if b.type_.T() == _case1 : return _case1;
+        return ''
+
+
     def getHeldType(self, heldTypeBase=None):
         if not heldTypeBase: heldTypeBase = self.context+self.name
 
@@ -721,8 +730,8 @@ class CppClass:
         bases = ''
         for b in self.bases:
             # Special cases...
-            if b.type_.T() == '::core::scoring::etable::BaseEtableEnergy<core::scoring::etable::EtableEnergy>': continue
-            # ^^ special case, template use it self for initiate, we can't list as base class in Python because we will never be able to create it
+            #if b.type_.T() == '::core::scoring::etable::BaseEtableEnergy<core::scoring::etable::EtableEnergy>': continue
+            if b.type_.T() == self.isSelfInherit(): continue
 
             if b.type_.T() == '::utility::pointer::ReferenceCount': continue
             if b.type_.T().startswith('::utility::vector'): continue
@@ -886,7 +895,15 @@ class CppClass:
 
         wrapped = []
         statics = {}
-        for f in self.functions:
+
+        all_functions = self.functions
+        if self.isSelfInherit():
+            print '\033[35m\033[1mSelf inheritance detected! [%s]\033[0m' % self.isSelfInherit()
+            # if b.type_.T() in self.reference.Objects:  - skipping test for presense for now - objetc _must_ be there...
+            o = self.reference.Objects[ self.isSelfInherit() ]
+            all_functions = self.functions + o.functions
+
+        for f in all_functions:  #self.functions:
             r+= f.wrap(indent='  ', wrappingScope=exposer + '.', useCallbackStruct=['', callback][use_callback_struct])  #, overloaded=self.isOverloaded(f) )
             if f.static and f.isWrapable():  statics[f.name] = '  %(wrappingScope)sstaticmethod("%(py_name)s");\n' % dict(wrappingScope=exposer + '.', py_name=f.name)
             wrapped.append( str(f) )
