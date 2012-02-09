@@ -342,22 +342,38 @@ public:
 
 	/// @brief Print just the information stored in each individual
 	/// hbond.
-	void show(
-		std::ostream & out=std::cout) const;
+	void show(std::ostream & out) const;
+
+	// PyRosetta friendly version
+	void show() const { show(std::cout); };
+
 
 	/// @brief Print nicely formated summary of the hbonds and their geometry in the pose.
 	void show(
 		pose::Pose const & pose,
-		bool const print_header=true,
-		std::ostream & out=std::cout) const;
+		bool const print_header,
+		std::ostream & out) const;
+
+	// PyRosetta friendly version
+	void show(
+		pose::Pose const & pose,
+		bool const print_header=true) const { show(pose, print_header, std::cout); }
+
 
 	/// @brief Print nicely formated summary of all the hbonds to a
 	/// specific residue
 	void show(
 		pose::Pose const & pose,
 		Size const residue,
-		bool const print_header=true,
-		std::ostream & out=std::cout) const;
+		bool const print_header,
+		std::ostream & out) const;
+
+	// PyRosetta friendly version
+	void show(
+		pose::Pose const & pose,
+		Size const residue,
+		bool const print_header=true) const { show(pose, residue, print_header, std::cout); }
+
 
 	/// @brief equality operator
 	friend
