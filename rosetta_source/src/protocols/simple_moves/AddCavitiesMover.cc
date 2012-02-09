@@ -172,7 +172,7 @@ namespace simple_moves {
 																												 func ) );
 		  ++count;
 		}
-		std::cerr << "added " << count << " suckers" << std::endl;
+		//std::cerr << "added " << count << " suckers" << std::endl;
 
 	}
 	// strip off the suckers and virt res
