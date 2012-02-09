@@ -211,7 +211,7 @@ public:
 																			 EnergyMap & emap
 																			 ) const;
 
-	void
+	/* Undefined, commenting out to fix pyrosetta build  void
 	get_scorefxn_weights_for_derivatives(
 																			 Size const atom1,
 																			 conformation::Residue const & rsd1,
@@ -222,6 +222,7 @@ public:
 																			 Real & unoriented_weight,
 																			 Real & oriented_weight
 																			 ) const;
+																			 */
 
 	virtual
 	bool
