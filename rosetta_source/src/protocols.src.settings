@@ -873,7 +873,6 @@ sources = {
 		"FilterMover",
 		"FavorSequenceProfile",
 		"GenericMonteCarloMover",
-		"GreedyOptMutationMover",
                 "HelixRotate",
 		"MetricRecorder",
 		"MonteCarloTest",

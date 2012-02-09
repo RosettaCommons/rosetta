@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @author Sarel Fleishman (sarelf@uw.edu)
+/// @author Chris King (chrisk1@uw.edu)
 //#include <algorithm >
-#include <protocols/moves/GreedyOptMutationMover.hh>
-#include <protocols/moves/GreedyOptMutationMoverCreator.hh>
+#include <protocols/simple_moves/GreedyOptMutationMover.hh>
+#include <protocols/simple_moves/GreedyOptMutationMoverCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
@@ -51,9 +51,9 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 namespace protocols {
-namespace moves {
+namespace simple_moves {
 
-static basic::Tracer TR( "protocols.moves.GreedyOptMutationMover" );
+static basic::Tracer TR( "protocols.simple_moves.GreedyOptMutationMover" );
 using namespace core;
 using namespace chemical;
 

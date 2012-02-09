@@ -103,7 +103,6 @@ sources = {
 		"DsspMover",
 		"FilterMover",
 		"GenericMonteCarloMover",
-		"GreedyOptMutationMover",
 		"IfMover",
 		"IteratedConvergenceMover",
 		"JumpOutMover",

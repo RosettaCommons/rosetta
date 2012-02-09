@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file ./src/protocols/fldsgn/StateFilter.fwd.hh
+/// @file src/protocols/simple_moves/GreedyOptMutationMover.fwd.hh
 /// @brief
-/// @author Nobuyasu Koga ( nobuyasu@uw.edu )
+/// @author Chris King (chrisk1@uw.edu)
 
-#ifndef INCLUDED_protocols_moves_GreedyOptMutationMover_fwd_hh
-#define INCLUDED_protocols_moves_GreedyOptMutationMover_fwd_hh
+#ifndef INCLUDED_protocols_simple_moves_GreedyOptMutationMover_fwd_hh
+#define INCLUDED_protocols_simple_moves_GreedyOptMutationMover_fwd_hh
 
 
 // Utility headers
@@ -20,7 +20,7 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace moves {
+namespace simple_moves {
 
 class GreedyOptMutationMover;
 typedef utility::pointer::owning_ptr< GreedyOptMutationMover >  GreedyOptMutationMoverOP;

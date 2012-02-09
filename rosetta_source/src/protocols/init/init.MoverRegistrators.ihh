@@ -108,7 +108,6 @@ static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
 
 static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
-static MoverRegistrator< moves::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
 static MoverRegistrator< moves::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
@@ -179,6 +178,7 @@ static MoverRegistrator< seeded_abinitio::SeedFoldTreeCreator > SeedFoldTreeCrea
 static MoverRegistrator< seeded_abinitio::SeedSetupMoverCreator > SeedSetupMoverCreator;
 static MoverRegistrator< seeded_abinitio::SwapSegmentCreator > SwapSegmentCreator;
 
+static MoverRegistrator< simple_moves::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
 static MoverRegistrator< simple_moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
 static MoverRegistrator< simple_moves::ConstraintSetMoverCreator > reg_ConstraintSetMoverCreator;
 static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
