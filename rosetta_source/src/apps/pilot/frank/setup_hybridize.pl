@@ -39,6 +39,7 @@ my $FLAGFILENAMES = "flags%d";
 my $MAPFILENAMES  = "templates%d.mrc";
 my $ALNTEMPLATEDIR  = "aligned_templates";
 
+#my $CFGFILENAMES  = "hybrid%d.config";
 my $XMLFILENAMES = "hybridize%d.xml";
 my $RUNFILENAMES = "run%d.sh";
 my $HYBRIDIZEOPTIONS = "batch=16 stage1_increase_cycles=1.0 stage2_increase_cycles=0.25 linmin_only=1";
@@ -67,13 +68,13 @@ my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for al
 # 	0 => 0.00418    # default
 # );
 my %template_probs =  (
-201 =>0.1276504, 202 => 0.0535388, 203 => 0.0243316, 204 => 0.0128212, 205 => 0.0082849,
-206 =>0.0064972, 207 => 0.0057927, 208 => 0.0055150, 209 => 0.0054056, 210 => 0.0053625,
-301 =>0.1161114, 302 => 0.0838580, 303 => 0.0609236, 304 => 0.0446156, 305 => 0.0330195,
-306 =>0.0247739, 307 => 0.0189107, 308 => 0.0147415, 309 => 0.0117769, 310 => 0.0096689,
-401 =>0.1430503, 402 => 0.0770168, 403 => 0.0427618, 404 => 0.0249920, 405 => 0.0157738,
-406 =>0.0109919, 407 => 0.0085113, 408 => 0.0072245, 409 => 0.0065569, 410 => 0.0062107,
-0 => 0.005    # default
+	201 =>0.1276504, 202 => 0.0535388, 203 => 0.0243316, 204 => 0.0128212, 205 => 0.0082849,
+	206 =>0.0064972, 207 => 0.0057927, 208 => 0.0055150, 209 => 0.0054056, 210 => 0.0053625,
+	301 =>0.1161114, 302 => 0.0838580, 303 => 0.0609236, 304 => 0.0446156, 305 => 0.0330195,
+	306 =>0.0247739, 307 => 0.0189107, 308 => 0.0147415, 309 => 0.0117769, 310 => 0.0096689,
+	401 =>0.1430503, 402 => 0.0770168, 403 => 0.0427618, 404 => 0.0249920, 405 => 0.0157738,
+	406 =>0.0109919, 407 => 0.0085113, 408 => 0.0072245, 409 => 0.0065569, 410 => 0.0062107,
+	0 => 0.005    # default
 );
 my $template_M_EST = 0.01; # favor lower-ranked alignments a bit more in sampling
 
@@ -123,6 +124,7 @@ $ALNFILENAMES  = "$WORKDIR/".$ALNFILENAMES;
 $CSTFILENAMES  = "$WORKDIR/".$CSTFILENAMES;
 $FLAGFILENAMES = "$WORKDIR/".$FLAGFILENAMES;
 $XMLFILENAMES  = "$WORKDIR/".$XMLFILENAMES;
+#$CFGFILENAMES  = "$WORKDIR/".$CFGFILENAMES;
 $MAPFILENAMES  = "$WORKDIR/".$MAPFILENAMES;
 $ALNTEMPLATEDIR  = "$WORKDIR/".$ALNTEMPLATEDIR;
 
@@ -629,38 +631,10 @@ foreach my $i (0..$nclust) {
 	print XML  "    </TASKOPERATIONS>\n";
 	print XML  "    <SCOREFXNS>\n";
 	print XML  "        <fullatom weights=stage3_rlx>\n";
-#	print XML  "   	        <Reweight scoretype=cart_bonded weight=0.5/>\n";
-#	print XML  "   	        <Reweight scoretype=atom_pair_constraint weight=1.0/>\n";
 	print XML  "	    </fullatom>\n";
 	print XML  "        <stage1 weights=stage1>\n";
-#	print XML  "   	        <Reweight scoretype=env weight=1.0/>\n";
-#	print XML  "   	        <Reweight scoretype=pair weight=1.0/>\n";
-#	print XML  "   	        <Reweight scoretype=cbeta weight=1.0/>\n";
-#	print XML  "   	        <Reweight scoretype=cenpack weight=1.0/>\n";
-#	print XML  "   	        <Reweight scoretype=hs_pair weight=2.0/>\n";
-#	print XML  "   	        <Reweight scoretype=ss_pair weight=2.0/>\n";
-#	print XML  "   	        <Reweight scoretype=rsigma weight=2.0/>\n";
-#	print XML  "   	        <Reweight scoretype=sheet weight=2.0/>\n";
-#	print XML  "   	        <Reweight scoretype=vdw weight=0.20/>\n";
-#	print XML  "   	        <Reweight scoretype=rg weight=2.0/>\n";
-#	print XML  "   	        <Reweight scoretype=rama weight=0.3/>\n";
-#	print XML  "   	        <Reweight scoretype=atom_pair_constraint weight=1.0/>\n";
-#	print XML  "   	        <Reweight scoretype=elec_dens_fast weight=2.0/>\n";
 	print XML  "        </stage1>\n";
 	print XML  "        <stage2 weights=stage2>\n";
-#	print XML  "   	        <Reweight scoretype=hbond_sr_bb weight=2.0/>\n";
-#	print XML  "   	        <Reweight scoretype=hbond_lr_bb weight=2.0/>\n";
-#	print XML  "   	        <Reweight scoretype=rama weight=0.2/>\n";
-#	print XML  "   	        <Reweight scoretype=omega weight=0.2/>\n";
-#	print XML  "   	        <Reweight scoretype=rg weight=2.0/>\n";
-#	print XML  "   	        <Reweight scoretype=cen_env_smooth weight=2.0/>\n";
-#	print XML  "   	        <Reweight scoretype=cen_pair_smooth weight=1.0/>\n";
-#	print XML  "   	        <Reweight scoretype=cbeta_smooth weight=1.0/>\n";
-#	print XML  "   	        <Reweight scoretype=cenpack_smooth weight=1.0/>\n";
-#	print XML  "   	        <Reweight scoretype=vdw weight=1.0/>\n";
-#	print XML  "   	        <Reweight scoretype=atom_pair_constraint weight=0.5/>\n";
-#	print XML  "   	        <Reweight scoretype=cart_bonded weight=0.05/>\n";
-#	print XML  "   	        <Reweight scoretype=elec_dens_fast weight=2.0/>\n";
 	print XML  "        </stage2>\n";
 	print XML  "    </SCOREFXNS>\n";
 	print XML  "    <FILTERS>\n";
@@ -707,25 +681,27 @@ foreach my $i (0..$nclust) {
  	print FLAGS "-out:file:silent $dir/../$dirtag.cl$i.silent\n";
  	print FLAGS "-in:file:native $dir/$NATIVEDIR/$dirtag.pdb\n";
  	print FLAGS "-parser:protocol $dir/$xmlfile\n";
- 	print FLAGS "-cm::hybridize::template_list $dir/$cfgfile\n";
  	printf FLAGS "-edensity::mapfile $dir/$MAPFILENAMES\n", $i;
 
 	# write hybrid.config
-	foreach my $j (0..$#THREADED_MDLS) {
-		next if ($clusterid->[$j] != $i);
-		my $id = $THREADED_MDLS[$j];
-		$id =~ s/.*\///;
-		$id =~ s/\.pdb$/_aln.cl$i.pdb/;
-		$id = "$dir/$ALNTEMPLATEDIR/$id";
-		my $cstfile = sprintf $CSTFILENAMES, $i;
-		$cstfile = $dir."/$cstfile";
-		my $tag = $THREADED_MDLS[$j]; $tag =~ s/.*_(\d\d\d).*/$1/;
-		my $prob = $template_probs{ $tag };
-		$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
-		$prob += $template_M_EST;
-	 	my $outline = sprintf "%20s %30s %4d %.5f  ", $id, $cstfile, $i, $prob;
-		print HYB $outline."\n";
-	}	
+# 	my $cfgfile = sprintf $CFGFILENAMES, $i;
+#	print FLAGS "-cm::hybridize::template_list $dir/$cfgfile\n";
+# 	open (HYB, ">$cfgfile") || die "Cannot open $_";
+#	foreach my $j (0..$#THREADED_MDLS) {
+#		next if ($clusterid->[$j] != $i);
+#		my $id = $THREADED_MDLS[$j];
+#		$id =~ s/.*\///;
+#		$id =~ s/\.pdb$/_aln.cl$i.pdb/;
+#		$id = "$dir/$ALNTEMPLATEDIR/$id";
+#		my $cstfile = sprintf $CSTFILENAMES, $i;
+#		$cstfile = $dir."/$cstfile";
+#		my $tag = $THREADED_MDLS[$j]; $tag =~ s/.*_(\d\d\d).*/$1/;
+#		my $prob = $template_probs{ $tag };
+#		$prob = $template_probs{ 0 } if !defined $template_probs{ $tag };
+#		$prob += $template_M_EST;
+#	 	my $outline = sprintf "%20s %30s %4d %.5f  ", $id, $cstfile, $i, $prob;
+#		print HYB $outline."\n";
+#	}	
 }
 
 
