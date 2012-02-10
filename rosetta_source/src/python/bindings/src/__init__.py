@@ -32,6 +32,7 @@ import core.chemical.orbitals
 import core.scoring
 import core.scoring.methods
 import core.scoring.constraints
+import core.scoring.etable
 import core.kinematics
 
 import core.io.silent
@@ -1069,6 +1070,36 @@ class EnergyMethod:
         rosetta.core.scoring.methods.PyEnergyMethodRegistrator( _mem_EnergyCreators_[-1] )
 
         return original_class
+
+# --------------------------------------------------------------------------------------------------
+
+
+def atom_atom_pair_energy(atom1, atom2, sfxn):
+	score_manager=core.scoring.ScoringManager.get_instance()
+	etable_ptr=score_manager.etable('FA_STANDARD_DEFAULT')
+	etable=etable_ptr.get()
+	etable_energy=core.scoring.etable.EtableEnergy(etable,sfxn.energy_method_options())
+
+	#constructing AtomPairEnergy container to hold computed energies
+	ape=core.scoring.etable.AtomPairEnergy()
+
+	#setting all energies in the AtomPairEnergy to zero prior to calculation
+	ape.attractive, ape.bead_bead_interaction, ape.repulsive, ape.solvation=0.0, 0.0, 0.0, 0.0
+
+	#calculating distance squared and setting it in the AtomPairEnergy
+	ape.distance_squared = atom1.xyz().distance_squared(atom2.xyz())
+
+	#evaluate energies from pre-calculated etable, using a weight of 1.0
+	#in order to match the raw energies from eval_ci_2b
+	etable_energy.atom_pair_energy(atom1,atom2,1.0,ape)
+
+	#calculating atom_atom scores
+	lj_atr=ape.attractive
+	lj_rep=ape.repulsive
+	solv=ape.solvation
+
+	return lj_atr, lj_rep, solv
+
 
 
 
