@@ -29,6 +29,10 @@
 
 #include <utility/vector1_bool.hh>
 
+#ifdef WIN32
+	#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
+#endif
+
 
 namespace core {
 namespace pack {
