@@ -29,8 +29,8 @@ pert_mover.apply(pose)
 randomize1 = RigidBodyRandomizeMover(pose, jump_num, partner_upstream)
 randomize2 = RigidBodyRandomizeMover(pose, jump_num, partner_downstream)
 
-randomize1.apply(pose)
-randomize2.apply(pose)
+#randomize1.apply(pose)
+#randomize2.apply(pose)
 
 slide = DockingSlideIntoContact(jump_num)
 slide.apply(pose)
