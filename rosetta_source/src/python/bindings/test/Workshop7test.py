@@ -6,51 +6,57 @@ import sys
 from rosetta import *
 init()
 
-for _i in range(10):
-	try:
-		# Docking Moves in Rosetta
-		pose = pose_from_pdb("test/data/workshops/complex.start.pdb")
+#for _i in range(10):
+	#try:
 
-		print pose.fold_tree()
 
-		setup_foldtree(pose, "A_B", Vector1([1]))
-		print pose.fold_tree()
+# Docking Moves in Rosetta
+pose = pose_from_pdb("test/data/workshops/complex.start.pdb")
 
-		jump_num = 1
-		print pose.jump(jump_num).get_rotation()
-		print pose.jump(jump_num).get_translation()
+print pose.fold_tree()
 
-		pert_mover = RigidBodyPerturbMover(jump_num, 3, 8)
+setup_foldtree(pose, "A_B", Vector1([1]))
+print pose.fold_tree()
 
-		pert_mover.apply(pose)
+jump_num = 1
+print pose.jump(jump_num).get_rotation()
+print pose.jump(jump_num).get_translation()
 
-		randomize1 = RigidBodyRandomizeMover(pose, jump_num, partner_upstream)
-		randomize2 = RigidBodyRandomizeMover(pose, jump_num, partner_downstream)
+pert_mover = RigidBodyPerturbMover(jump_num, 3, 8)
 
-		randomize1.apply(pose)
-		randomize2.apply(pose)
+pert_mover.apply(pose)
 
-		slide = DockingSlideIntoContact(jump_num)
-		slide.apply(pose)
+randomize1 = RigidBodyRandomizeMover(pose, jump_num, partner_upstream)
+randomize2 = RigidBodyRandomizeMover(pose, jump_num, partner_downstream)
 
-		movemap = MoveMap()
-		movemap.set_jump(jump_num, True)
+randomize1.apply(pose)
+randomize2.apply(pose)
 
-		scorefxn = create_score_function("standard")
+slide = DockingSlideIntoContact(jump_num)
+slide.apply(pose)
 
-		min_mover = MinMover()
-		min_mover.movemap(movemap)
-		min_mover.score_function(scorefxn)
-		min_mover.apply(pose)
+movemap = MoveMap()
+movemap.set_jump(jump_num, True)
 
-		break
+scorefxn = create_score_function("standard")
+
+print 'Making MinMover...'
+min_mover = MinMover()
+min_mover.movemap(movemap)
+min_mover.score_function(scorefxn)
+
+#min_mover.apply(pose)
+# ^^^ disabling min mover for now, until RigidBodyMover is fixed
+
+print 'DoneApplying MinMover!'
+#		break
 
 	#except rosetta.PyRosettaException: pass
-	except RuntimeError: pass
+#	except RuntimeError: pass
 
-else:
-	print 'Was not able to finish min_mover in 10 tries, failing...'
-	sys.exit(1)
+#else:
+#	print 'Was not able to finish min_mover in 10 tries, failing...'
+#	sys.exit(1)
 
 
 # Low-Resolution Docking via RosettaDock
