@@ -35,6 +35,7 @@ namespace cp { extern StringOptionKey const vipReportFile; }
 namespace cp { extern StringOptionKey const relax_mover; }
 namespace cp { extern BooleanOptionKey const skip_relax; }
 namespace cp { extern BooleanOptionKey const local_relax; }
+namespace cp { extern BooleanOptionKey const print_intermediate_pdbs; }
 
 } // namespace OptionKeys
 } // namespace options

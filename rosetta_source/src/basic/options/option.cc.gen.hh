@@ -2236,6 +2236,7 @@ option.add( basic::options::OptionKeys::cp::vipReportFile, "File to print report
 option.add( basic::options::OptionKeys::cp::relax_mover, "relax w/o constraints=relax, w constraints=cst_relax" ).def("relax");
 option.add( basic::options::OptionKeys::cp::skip_relax, "Skip relax step... may reduce accurate identification of mutations" ).def(false);
 option.add( basic::options::OptionKeys::cp::local_relax, "Limit relax step to neighbors" ).def(false);
+option.add( basic::options::OptionKeys::cp::print_intermediate_pdbs, "Output a pdb file for each consecutive mutation" ).def(false);
 option.add( basic::options::OptionKeys::archive::archive, "archive option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::archive::reread_all_structures, "ignore pool file... reread from batches" ).def(false);
 option.add( basic::options::OptionKeys::archive::completion_notify_frequency, "tell Archive every X completed decoys" ).def(100);

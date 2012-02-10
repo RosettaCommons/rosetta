@@ -437,6 +437,7 @@ namespace cp { StringOptionKey const vipReportFile( "cp:vipReportFile" );  }
 namespace cp { StringOptionKey const relax_mover( "cp:relax_mover" );  }
 namespace cp { BooleanOptionKey const skip_relax( "cp:skip_relax" );  }
 namespace cp { BooleanOptionKey const local_relax( "cp:local_relax" );  }
+namespace cp { BooleanOptionKey const print_intermediate_pdbs( "cp:print_intermediate_pdbs" );  }
 namespace archive { BooleanOptionKey const archive( "archive" );  }
 namespace archive { BooleanOptionKey const reread_all_structures( "archive:reread_all_structures" );  }
 namespace archive { IntegerOptionKey const completion_notify_frequency( "archive:completion_notify_frequency" );  }

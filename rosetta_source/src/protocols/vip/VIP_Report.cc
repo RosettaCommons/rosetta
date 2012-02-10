@@ -44,17 +44,13 @@ namespace protocols {
 namespace vip {
 
                 VIP_Report::VIP_Report() {}
-                VIP_Report::VIP_Report(
-                        utility::vector1<core::pose::Pose> gp,
-                        utility::vector1<core::pose::Pose> gr,
-                        core::pose::Pose gn){
-                                goe_repack = gp;
-                                goe_relax = gr;
-                                goe_native = gn;}
                 VIP_Report::~VIP_Report(){}
 
 void
-VIP_Report::get_GOE_repack_report(){
+VIP_Report::get_GOE_repack_report(
+	core::pose::Pose & goe_native,
+	utility::vector1<core::pose::Pose> & goe_repack
+){
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
 	std::ofstream output;
@@ -78,7 +74,10 @@ output.close();
 
 
 void
-VIP_Report::get_GOE_relaxed_report(){
+VIP_Report::get_GOE_relaxed_report(
+	core::pose::Pose & goe_native,
+	utility::vector1<core::pose::Pose> & goe_relax
+  ){
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
 	std::fstream output;
@@ -95,12 +94,15 @@ VIP_Report::get_GOE_relaxed_report(){
 		score_em->apply( goe_relax[i] );
 	   if( goe_relax[i].energies().total_energy() < goe_native.energies().total_energy() ){
                 for( core::Size j = 1; j <= goe_relax[i].total_residue(); j++ ){
-                    if( goe_relax[i].residue(j).name() != goe_native.residue(j).name() ){                  output << "Position: " << j << " Native AA: " << goe_native.residue(j).name() << "  Mutant AA: " << goe_relax[i].residue(j).name() << "  ddEgoe: " << goe_native.energies().total_energy() - goe_relax[i].energies().total_energy() << std::endl;}}}}
+                    if( goe_relax[i].residue(j).name() != goe_native.residue(j).name() ){                  output << "Position: " << j << " Native AA: " << goe_native.residue(j).name() << "  Mutant AA: " << goe_relax[i].residue(j).name() << "  ddE: " << goe_native.energies().total_energy() - goe_relax[i].energies().total_energy() << std::endl;}}}}
 output.close();
 }
 
 void
-VIP_Report::get_GOE_packstat_report(){
+VIP_Report::get_GOE_packstat_report(
+	core::pose::Pose & goe_native,
+	utility::vector1<core::pose::Pose> & goe_relax
+  ){
 	std::fstream output;
         using namespace core::scoring::packstat;
 	std::string filename;

@@ -174,7 +174,7 @@ namespace vip {
 	}
 
 
-	void VIP_Mover::dump_pdb_to_file( core::pose::Pose posey, std::string filename ){
+	void VIP_Mover::dump_pdb_to_file( core::pose::Pose & posey, std::string filename ){
 		posey.dump_pdb(filename);
 	}
 
@@ -262,6 +262,8 @@ namespace vip {
 			temp_positions.push_back(void_mutatables[i]);
 		}
 
+		//std::cout << "Num void_mutatables is " << void_mutatables.size() << std::endl;
+
 		core::pack::task::ResfileCommandOP command = new core::pack::task::APOLAR;
 
 		for( core::Size aa = 1; aa <= void_mutatables.size(); aa++ ){
@@ -287,9 +289,7 @@ namespace vip {
 		VIP_Report();
 		VIP_Report vip_report;
 
-		vip_report.set_goe_native( initial_pose );
-		vip_report.set_goe_repack( favorable_poses );
-		vip_report.get_GOE_repack_report();
+		vip_report.get_GOE_repack_report( initial_pose, favorable_poses );
 	}
 
 
@@ -306,8 +306,10 @@ namespace vip {
 		for( core::Size i = 1; i <= temp_poses.size(); i++ ){
 			core::Real tempE = temp_poses[i].energies().total_energy();
 			if( tempE < baseE ){
-				favorable_poses.push_back( temp_poses[i] );
-				favorable_positions.push_back( temp_positions[i] );
+				if( are_seqs_different( initial_pose, temp_poses[i] ) ) {
+					favorable_poses.push_back( temp_poses[i] );
+					favorable_positions.push_back( temp_positions[i] );
+				}
 			}
 		}
 
@@ -317,15 +319,12 @@ namespace vip {
 	}
 
 
-
 	void VIP_Mover::print_relax_report(){
 		VIP_Report();
 		VIP_Report vip_report;
 
-		vip_report.set_goe_native( initial_pose );
-		vip_report.set_goe_relax( favorable_poses );
-		vip_report.get_GOE_relaxed_report();
-		vip_report.get_GOE_packstat_report();
+		vip_report.get_GOE_relaxed_report( initial_pose, favorable_poses );
+		vip_report.get_GOE_packstat_report( initial_pose, favorable_poses );
 	}
 
 	void VIP_Mover::skip_relax(){
@@ -342,6 +341,7 @@ namespace vip {
 		}
 
 		final_pose = favorable_poses[bestP];
+
 		dump_pdb_to_file( final_pose, "final.pdb" );
 		final_energy = bestE;
 	}
@@ -370,33 +370,65 @@ namespace vip {
 				}
 				relaxmover->apply(favorable_poses[i]);
 			} else if( rmover == "classic_relax" ){
-				protocols::moves::MoverOP relaxmover = new protocols::relax::ClassicRelax( relax_score_fxn );
+				protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::ClassicRelax( relax_score_fxn );
+				if( option[ cp::local_relax ] ) {
+					core::kinematics::MoveMapOP mmap_ptr = new core::kinematics::MoveMap;
+					if( option[ cp::local_relax ] ) {
+						set_local_movemap( favorable_poses[i], favorable_positions[i], mmap_ptr );
+					}
+					relaxmover->set_movemap( mmap_ptr );
+				}
 				relaxmover->apply(favorable_poses[i]);
 			} else if( rmover == "cst_relax" ){
-				protocols::moves::MoverOP cstrelaxmover = new protocols::relax::MiniRelax( relax_score_fxn );
+				protocols::relax::RelaxProtocolBaseOP cstrelaxmover = new protocols::relax::MiniRelax( relax_score_fxn );
+				if( option[ cp::local_relax ] ) {
+					core::kinematics::MoveMapOP mmap_ptr = new core::kinematics::MoveMap;
+					if( option[ cp::local_relax ] ) {
+						set_local_movemap( favorable_poses[i], favorable_positions[i], mmap_ptr );
+					}
+					cstrelaxmover->set_movemap( mmap_ptr );
+				}
 				cstrelaxmover->apply(favorable_poses[i]);
 			}
 		}
 	}
 
-
-
 	void VIP_Mover::sort_relaxed_poses(){
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		core::Real bestE = 99999;
-		core::Size bestP = 0;
+		core::Size bestP = 1;
+
+		core::scoring::ScoreFunctionOP sf2 =
+					core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
+		protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
+		//score_em->apply( initial_pose );
+
+		//score_em->apply( initial_pose );
 
 		for( core::Size i = 1; i <= favorable_poses.size(); i++ ){
-			if( favorable_poses[i].energies().total_energy() < bestE ){
-				bestE = favorable_poses[i].energies().total_energy();
+			score_em->apply( favorable_poses[i] );
+			core::Real checkE = favorable_poses[i].energies().total_energy();
+			if( checkE < bestE ){
+				bestE = checkE;
 				bestP = i;
 			}
 		}
 
-		final_pose = favorable_poses[bestP];
-		dump_pdb_to_file( final_pose, "final.pdb" );
+		if( favorable_poses.size() > 0 ) {
+			final_pose = favorable_poses[bestP];
+		} else {
+			final_pose = initial_pose;
+		}
+		//dump_pdb_to_file( final_pose, "final.pdb" );
+//		dump_pdb_to_file( favorable_poses[bestP], "final.pdb" );
 		final_energy = bestE;
+
+//		core::Size i = bestP;
+//		for( core::Size j = 1; j <= favorable_poses[i].total_residue(); j++ ){
+//			if( favorable_poses[i].residue(j).name() != initial_pose.residue(j).name() ){
+//				std::cout << "BestPosition: " << j << " Native AA: " << initial_pose.residue(j).name() <<
+//						"  Mutant AA: " << favorable_poses[i].residue(j).name() << std::endl;}}
 
 		if( option[ cp::print_reports ] ){
 			print_relax_report();
@@ -429,6 +461,17 @@ namespace vip {
 		nook_finder();
 		cranny_packer();
 	}
+
+	bool
+	are_seqs_different( core::pose::Pose & p1, core::pose::Pose & p2 ) {
+		for( core::Size j = 1; j <= p1.total_residue(); j++ ){
+			if( p1.residue(j).name() != p2.residue(j).name() ){
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 
 }}

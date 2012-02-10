@@ -23,6 +23,7 @@
 #include <core/init.hh>
 #include <core/types.hh>
 #include <core/chemical/util.hh>
+#include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
@@ -109,7 +110,7 @@ class VIP_Mover
 		void compute_number_cavities();
 		void get_cavity_positions();
 		void apply_holes();
-		void dump_pdb_to_file( core::pose::Pose, std::string );
+		void dump_pdb_to_file( core::pose::Pose &, std::string );
 		void get_neighbors();
 		void try_point_mutants();
 		void relax_favorable_poses();
@@ -132,6 +133,8 @@ class VIP_Mover
 
 
 };
+
+bool are_seqs_different( core::pose::Pose & p1, core::pose::Pose & p2 );
 
 }}
 #endif

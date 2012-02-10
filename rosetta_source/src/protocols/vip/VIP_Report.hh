@@ -83,29 +83,15 @@ namespace vip {
 class VIP_Report
 {
 
-	utility::vector1<core::pose::Pose> goe_repack;
-	utility::vector1<core::pose::Pose> goe_relax;
-	core::pose::Pose goe_native;
-
 	public:
                 VIP_Report();
-                VIP_Report(
-                        utility::vector1<core::pose::Pose>,
-                        utility::vector1<core::pose::Pose>,
-                        core::pose::Pose);
                 virtual ~VIP_Report();
 
-		void set_goe_repack( utility::vector1<core::pose::Pose> gp ){
-			goe_repack = gp;}
-		void set_goe_relax( utility::vector1<core::pose::Pose> gr ){
-			goe_relax = gr;}
-		void set_goe_native( core::pose::Pose nat ){
-			goe_native = nat;}
 //		void define_report_file();
 //		void close_report_file();
-		void get_GOE_repack_report();
-		void get_GOE_relaxed_report();
-		void get_GOE_packstat_report();
+		void get_GOE_repack_report(   core::pose::Pose & goe_native, utility::vector1<core::pose::Pose> & goe_relax );
+		void get_GOE_relaxed_report(   core::pose::Pose & goe_native, utility::vector1<core::pose::Pose> & goe_relax );
+		void get_GOE_packstat_report(   core::pose::Pose & goe_native, utility::vector1<core::pose::Pose> & goe_relax );
 
 //		friend class VIP_Mover;
 };

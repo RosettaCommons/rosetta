@@ -10834,6 +10834,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Limit relax step to neighbors</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-print_intermediate_pdbs</b> \<Boolean\><dt>
+<dd>Output a pdb file for each consecutive mutation</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>archive</h2>
 <dl>

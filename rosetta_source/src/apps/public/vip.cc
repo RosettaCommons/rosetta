@@ -15,13 +15,20 @@
 
 
 #include <basic/options/option.hh>
+#include <core/chemical/AA.hh>
 
 //protocols library (Movers)
 #include <protocols/vip/VIP_Mover.hh>
 #include <basic/options/keys/cp.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <utility/options/keys/OptionKey.hh>
+#include <utility/string_util.hh>
 #include <core/io/pdb/file_data.hh>
+#include <core/pose/PDBInfo.hh>
+
+#include <basic/Tracer.hh>
+static basic::Tracer TR("VIP");
+
 //utilities
 #include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
@@ -64,13 +71,35 @@ main( int argc, char * argv [] )
 		out_pose = vip_mover.get_final_pose();
 		core::Real new_energy = vip_mover.get_final_energy();
 
-		std::cout << "Comparing new energy " << new_energy << " with old energy " << old_energy << std::endl;
+		TR << "Comparing new energy " << new_energy << " with old energy " << old_energy << std::endl;
 		bool improved( new_energy < old_energy ? true : false );
 
 		if( improved ){
+			// Print out the accepted mutation
+
+			for( core::Size j = 1 ; j <= in_pose.total_residue() ; ++j ) {
+				if( out_pose.residue(j).name() != in_pose.residue(j).name() ) {
+					core::Size pdb_position( out_pose.pdb_info()->number(j) );
+					char pdb_chain( out_pose.pdb_info()->chain(j) );
+        	TR << "Accepting mutation at position " << pdb_position << " chain " << pdb_chain <<
+												" from " << in_pose.residue(j).name() << " to " <<
+												out_pose.residue(j).name() << std::endl;
+
+					if( option[ cp::print_intermediate_pdbs ] ) {
+						std::string pdb_file = "vip_iter_" + utility::to_string( it ) + ".pdb";
+						TR << "Dumping intermediate pdb file " << pdb_file << std::endl;
+						out_pose.dump_pdb( pdb_file );
+					}
+
+					break;
+				}
+			}
+
 			old_energy = new_energy;
 			in_pose = out_pose;
 			it++;
+		} else {
+			TR << "Rejecting attempted mutation - finished!" << std::endl;
 		}
 
 		not_finished = ( ncycles == 0 ? improved : it <= ncycles );
