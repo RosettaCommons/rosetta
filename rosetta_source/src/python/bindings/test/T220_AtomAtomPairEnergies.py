@@ -1,3 +1,4 @@
+import sys
 
 import rosetta
 
@@ -27,14 +28,23 @@ for i in range(residue_1.natoms()):
 
 emap=EMapVector()
 sfxn.eval_ci_2b(residue_1,residue_2,test_pose,emap)
-print 'res-res atr score emap: '+str(emap[fa_atr])
-print 'res-res atr score pairwise: '+str(atr_total)
-print 'res-res rep score emap: '+str(emap[fa_rep])
-print 'res-res rep score pairwise: '+str(rep_total)
-print 'res-res solv score emap: '+str(emap[fa_sol])
-print 'res-res solv score pairwise: '+str(solv_total)
 
+print '\n\n'
+print 'Printing individual energies:'
 
+print 'res-res atr score emap:      ', emap[fa_atr]
+print 'res-res atr score pairwise:  ', atr_total
+print 'res-res rep score emap:      ', emap[fa_rep]
+print 'res-res rep score pairwise:  ', rep_total
+print 'res-res solv score emap:     ', emap[fa_sol]
+print 'res-res solv score pairwise: ', solv_total
 
+print 'Checking if scores match...'
 
-
+if ( abs(emap[fa_atr] - atr_total) +
+     abs(emap[fa_rep] - rep_total) +
+     abs(emap[fa_sol] - solv_total) ) > 1.0e-10:
+		print 'Score did not match, exiting!!!'
+		sys.exit(1)
+else:
+		print 'Score did match, yay...'

@@ -1073,7 +1073,7 @@ class EnergyMethod:
 
 # --------------------------------------------------------------------------------------------------
 
-
+# By Michael Pacella
 def atom_atom_pair_energy(atom1, atom2, sfxn):
 	score_manager=core.scoring.ScoringManager.get_instance()
 	etable_ptr=score_manager.etable('FA_STANDARD_DEFAULT')
