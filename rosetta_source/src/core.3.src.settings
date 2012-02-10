@@ -228,7 +228,11 @@ sources = {
 		"util",
 		"xray_scattering",
 	],
-	"core/scoring/etable": [
+	"core/scoring/electron_density_atomwise": [
+		"ElecDensAtomwiseEnergy",
+        "ElectronDensityAtomwise",
+	],	
+    "core/scoring/etable": [
 		"Etable",
 		"EtableEnergy",
 		"EtableOptions",

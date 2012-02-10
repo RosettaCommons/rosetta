@@ -76,6 +76,7 @@
 #include <core/scoring/electron_density/ElecDensAllAtomCenEnergyCreator.hh>
 #include <core/scoring/electron_density/ElecDensEnergyCreator.hh>
 #include <core/scoring/electron_density/PattersonCorrEnergyCreator.hh>
+#include <core/scoring/electron_density_atomwise/ElecDensAtomwiseEnergyCreator.hh>
 //XRW_B_T1
 //#include <core/scoring/etable/CoarseEtableEnergyCreator.hh>
 //XRW_E_T1
@@ -280,6 +281,7 @@ static EnergyMethodRegistrator< scoring::electron_density::ElecDensCenEnergyCrea
 static EnergyMethodRegistrator< scoring::electron_density::ElecDensAllAtomCenEnergyCreator > ElecDensAllAtomCenEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::electron_density::ElecDensEnergyCreator > ElecDensEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::electron_density::PattersonCorrEnergyCreator > PattersonCorrEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::electron_density_atomwise::ElecDensAtomwiseEnergyCreator > ElecDensAtomwiseEnergyCreator_registrator;
 //XRW_B_T1
 //static EnergyMethodRegistrator< scoring::etable::CoarseEtableEnergyCreator > CoarseEtableEnergyCreator_registrator;
 //XRW_E_T1

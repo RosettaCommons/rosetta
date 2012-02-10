@@ -46,6 +46,7 @@ enum LongRangeEnergyType {
 	elec_dens_fast_energy,
 	elec_dens_cen_energy,
 	elec_dens_allatom_cen_energy,
+	elec_dens_atomwise_energy,
 	patterson_corr_energy,
 	fa_disulfide_energy,
 	disulfide_matching_energy,

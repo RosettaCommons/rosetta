@@ -374,7 +374,8 @@ enum ScoreType {
 	elec_dens_fast,
 	elec_dens_window,
 	elec_dens_whole_structure_ca,
-	elec_dens_whole_structure_allatom,
+	elec_dens_whole_structure_allatom,	
+	elec_dens_atomwise,
 
 	// patterson correlation
 	patterson_cc,

@@ -86,6 +86,11 @@ void ifft3(ObjexxFCL::FArray3D< std::complex<double> >  &fX , ObjexxFCL::FArray3
 ///@brief 3D inverse ifft c->r double
 void ifft3(ObjexxFCL::FArray3D< std::complex<double> >  &fX , ObjexxFCL::FArray3D< double > &X);
 
+///@brief 3D fft c->c double with no static
+void fft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &X , ObjexxFCL::FArray3D< std::complex<double> > &fX);
+
+///@brief 3D inverse fft c->c double with no static
+void ifft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &fX , ObjexxFCL::FArray3D< std::complex<double> > &X);
 }
 }
 

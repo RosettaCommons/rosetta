@@ -181,6 +181,34 @@ void ifft3(ObjexxFCL::FArray3D< std::complex<double> > &fX , ObjexxFCL::FArray3D
 	for (int i=0; i<dimsProd; ++i) X[i] /= (double)dimsProd;
 }
 
+/////////////////////////////////////
+//3D FFT and inverse-FFT with dynamic variable allocation.
+//Avoiding static variables occpupy unnecessary space when the data is large.
+///@brief 3D fft c->c double with no static
+void fft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &X , ObjexxFCL::FArray3D< std::complex<double> > &fX) {
+	kiss_fftnd_state fft_params;
+	std::vector< int > dims(3);
+	dims[0]=X.I3().size(); dims[1]=X.I2().size(); dims[2]=X.I1().size();  /// FArray dimensions in reverse order
+	fft_params.resize( dims, 0 );
+	fX.dimension(X.I1().size(),X.I2().size(),X.I3().size());
+	kiss_fftnd(&fft_params, &X[0], &fX[0] );
+}
+
+///@brief 3D inverse fft c->c doublewith no static
+void ifft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &fX , ObjexxFCL::FArray3D< std::complex<double> > &X) {
+	kiss_fftnd_state ifft_params;
+	std::vector< int > dims(3);
+	dims[0]=fX.I3().size(); dims[1]=fX.I2().size(); dims[2]=fX.I1().size();  /// FArray dimensions in reverse order
+	ifft_params.resize( dims, 1 );
+	X.dimension(fX.I1().size(),fX.I2().size(),fX.I3().size());
+	kiss_fftnd(&ifft_params, &fX[0], &X[0] );
+
+	// rescale
+	int dimsProd = X.I1().size()*X.I2().size()*X.I3().size();
+	for (int i=0; i<dimsProd; ++i) X[i] /= (double)dimsProd;
+}
+//////////////////////////////////
+
 ///@brief 3D fft r->c double
 void fft3(ObjexxFCL::FArray3D< double > &X , ObjexxFCL::FArray3D< std::complex<double> > &fX) {
 	ObjexxFCL::FArray3D< std::complex<double> > Xcpx;
