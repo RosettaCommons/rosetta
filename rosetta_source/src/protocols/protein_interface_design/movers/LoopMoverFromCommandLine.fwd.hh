@@ -17,7 +17,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
-namespace protein_interface_desing{
+namespace protein_interface_design{
 namespace movers{
 
 //Forwards and OP typedefs
