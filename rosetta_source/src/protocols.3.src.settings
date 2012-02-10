@@ -252,6 +252,7 @@ sources = {
 		"ExtendedPoseMoverCreator",
 		"FavorSequenceProfile",
 		"FragmentMover",
+		"GreedyOptMutationMover",
 		"GreenPacker",
 		"GunnCost",
 		"LoadUnboundRotMover",
