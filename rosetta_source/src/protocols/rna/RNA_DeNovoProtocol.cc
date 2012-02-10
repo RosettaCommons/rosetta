@@ -109,7 +109,8 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
     Mover(),
 		nstruct_( nstruct ),
 		monte_carlo_cycles_( monte_carlo_cycles ),
-		all_rna_fragments_file_( basic::database::full_name("chemical/rna/1jj2.torsions") ),
+		//all_rna_fragments_file_( basic::database::full_name("chemical/rna/1jj2.torsions") ), // user can still input this with -use_1jj2_torsions
+		all_rna_fragments_file_( basic::database::full_name("chemical/rna/RICHARDSON_RNA09.torsions") ),
 		silent_file_( silent_file ),
 		lores_silent_file_( "" ),
 		heat_structure_( heat_structure ),

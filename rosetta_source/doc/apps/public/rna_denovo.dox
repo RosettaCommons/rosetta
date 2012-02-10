@@ -98,7 +98,7 @@ rna_denovo.<exe> -fasta chunk002_1lnt_.fasta -native chunk002_1lnt_RNA.pdb -para
 -out::file::silent chunk002_1lnt.out -cycles 1000 -minimize_rna -database <path to database>
 @endverbatim
 
-This command line also includes the "native" pdb, and will result in heavy-atom rmsd scores being calculated. Note again that the native pdb should have residues marked rA, rC, rG, and rU (see notes on {DB @format below). The code again takes about 1 minute to generate two models. Finally, there are some notes on forcing other kinds of pairs below [@ref obligate].
+This command line also includes the "native" pdb, and will result in heavy-atom rmsd scores being calculated. Note again that the native pdb should have residues marked rA, rC, rG, and rU (see notes on PDB @format below). The code again takes about 1 minute to generate two models. Finally, there are some notes on forcing other kinds of pairs below [@ref obligate].
 
 
 

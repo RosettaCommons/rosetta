@@ -22,6 +22,7 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/sequence/util.hh>
 #include <basic/options/option.hh>
+#include <basic/database/open.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
@@ -72,6 +73,7 @@ OPT_KEY( Boolean, close_loops_after_each_move )
 OPT_KEY( Boolean, output_lores_silent_file )
 OPT_KEY( Boolean, ignore_secstruct )
 OPT_KEY( Boolean, filter_lores_base_pairs )
+OPT_KEY( Boolean, use_1jj2_torsions )
 OPT_KEY( String, lores_scorefxn )
 OPT_KEY( Boolean, vary_geometry )
 OPT_KEY( Boolean, heat )
@@ -183,7 +185,8 @@ rna_denovo_test()
 	if (native_exists) rna_de_novo_protocol.set_native_pose( native_pose_OP );
 
 	if ( option[ jump_library_file ].user() )	rna_de_novo_protocol.set_jump_library_file( in_path + option[ jump_library_file] );
- 	if ( option[ vall_torsions ].user() )	rna_de_novo_protocol.set_vall_torsions_file( in_path + option[ vall_torsions ] );
+ 	if ( option[ vall_torsions ].user() )	 rna_de_novo_protocol.set_vall_torsions_file( in_path + option[ vall_torsions ] );
+	if ( option[ use_1jj2_torsions ]() ) rna_de_novo_protocol.set_vall_torsions_file( basic::database::full_name("chemical/rna/1jj2.torsions") );
 	if ( option[params_file].user() )	rna_de_novo_protocol.set_rna_params_file( in_path + option[ params_file ] );
 	if ( option[data_file].user() )	rna_de_novo_protocol.set_rna_data_file( in_path + option[ data_file ] );
 	if ( option[lores_scorefxn].user() )	rna_de_novo_protocol.set_lores_scorefxn( option[ lores_scorefxn ] );
@@ -263,6 +266,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( data_file, "Input file for RNA exposure data", "" );
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
 	NEW_OPT( chunk_res, "Input residues for chunk libraries (specified by -in:file:silent)", blank_size_vector );
+	NEW_OPT( use_1jj2_torsions, "Use original (ribosome) fragments, 1JJ2", false );
 
 
 	////////////////////////////////////////////////////////////////////////////
