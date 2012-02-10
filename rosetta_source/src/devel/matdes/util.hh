@@ -22,7 +22,16 @@
 namespace devel {
 namespace matdes {
 
+PackerTaskOP
+make_interface_design_packertask(core:pose:Pose & pose);
 
+void add_native_bias_constraints(Pose & pose, Real cst_weight, const std::set<Size>& design_pos);
+
+utility::vector1<Real>
+sidechain_sasa(Pose const & pose, Real probe_radius = 2.2);
+
+std::set<Size>
+pick_design_position(core::pose::Pose & pose, Real contact_dist=10.0, Real bblock_dist = 5.0, Real probe_radius = 2.2);
 
 } // devel
 } // matdes
