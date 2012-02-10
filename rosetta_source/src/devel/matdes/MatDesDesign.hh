@@ -12,11 +12,11 @@
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
 
-#ifndef INCLUDED_devel_matdes_SymmetricMultimerDesign_HH
-#define INCLUDED_devel_matdes_SymmetricMultimerDesign_HH
+#ifndef INCLUDED_devel_matdes_MatDesDesign_HH
+#define INCLUDED_devel_matdes_MatDesDesign_HH
 
 // Unit headers
-#include <devel/matdes/SymmetricMultimerDesign.fwd.hh>
+#include <devel/matdes/MatDesDesign.fwd.hh>
 
 // Package headers
 
@@ -33,7 +33,7 @@
 namespace devel {
 namespace matdes {
 
-class SymmetricMultimerDesign: public protocols::moves::Mover {
+class MatDesDesign: public protocols::moves::Mover {
 public:
 	typedef core::pose::Pose Pose;
 	typedef core::Real Real;
@@ -48,11 +48,11 @@ public:
 	typedef utility::tag::TagPtr TagPtr;
 
 public:
-  SymmetricMultimerDesign();
-	SymmetricMultimerDesign(const SymmetricMultimerDesign& rval);
+  MatDesDesign();
+	MatDesDesign(const MatDesDesign& rval);
 
   // --- virtual functions from mover ---
-  virtual std::string get_name() const { return "SymmetricMultimerDesign"; }
+  virtual std::string get_name() const { return "MatDesDesign"; }
   virtual void apply(Pose& pose);
 
 	// --- virtual copy constructors 
@@ -69,9 +69,25 @@ public:
 														 Movers_map const &,
 														 Pose const & );
 
+private:
+	void minimize(Pose & pose, vector1<Size> design_pos, bool min_bb, bool min_sc, bool min_rb);
+	void repack(Pose & pose, PackerTaskOP task);
+	void design(Pose & pose, PackerTaskOP task);
+	utility::vector1<Real> sidechain_sasa(Pose const & pose, Real probe_radius);
+
 private: //	private data
-
-
+	std::string resfile_;
+	ScoreFunctionOP scorefxn_design_;
+	ScoreFunctionOP scorefxn_minimize_;
+	Real native_bias_;
+	
+	Real contact_dist_;
+	Real bblock_dist_;
+	Real probe_radius_;
+	Size n_cycles_;
+	bool min_bb_;
+	bool min_sc_;
+	bool min_rb_;
 };
 
 } // devel

@@ -12,15 +12,15 @@
 ///@author Neil King ( neilking@uw.edu )
 ///@author Javier Castellanos ( javiercv@uw.edu )
 
-#ifndef INCLUDED_devel_matdes_SymmetricMultimerDesignMoverCreator_hh
-#define INCLUDED_devel_matdes_SymmetricMultimerDesignMoverCreator_hh
+#ifndef INCLUDED_devel_matdes_MatDesDesignMoverCreator_hh
+#define INCLUDED_devel_matdes_MatDesDesignMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace devel {
 namespace constrained_sequence_design {
 
-class SymmetricMultimerDesignMoverCreator : public protocols::moves::MoverCreator {
+class MatDesDesignMoverCreator : public protocols::moves::MoverCreator {
 public:
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;

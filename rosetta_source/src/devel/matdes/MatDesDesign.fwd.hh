@@ -12,17 +12,17 @@
 /// @author Javier Castellanos	(javiercv@uw.edu)
 ///
 
-#ifndef INCLUDED_devel_constrained_sequence_SymmetricMultimerDesign_fwd_HH
-#define INCLUDED_devel_constrained_sequence_SymmetricMultimerDesign_fwd_HH
+#ifndef INCLUDED_devel_constrained_sequence_MatDesDesign_fwd_HH
+#define INCLUDED_devel_constrained_sequence_MatDesDesign_fwd_HH
 #include <utility/pointer/owning_ptr.hh>
 
 namespace devel {
 namespace constrained_sequence_design {
 
-class SymmetricMultimerDesign;
+class MatDesDesign;
 
-typedef utility::pointer::owning_ptr< SymmetricMultimerDesign > SymmetricMultimerDesignOP;
-typedef utility::pointer::owning_ptr< SymmetricMultimerDesign const > SymmetricMultimerDesignCOP;
+typedef utility::pointer::owning_ptr< MatDesDesign > MatDesDesignOP;
+typedef utility::pointer::owning_ptr< MatDesDesign const > MatDesDesignCOP;
 
 
 } // constrained_sequence_design
