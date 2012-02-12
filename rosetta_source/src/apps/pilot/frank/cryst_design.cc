@@ -122,8 +122,10 @@ OPT_1GRP_KEY(Real, crystdes, trans_max)
 OPT_1GRP_KEY(Real, crystdes, vdw)
 OPT_1GRP_KEY(Real, crystdes, sa1)
 OPT_1GRP_KEY(Real, crystdes, sa2)
+OPT_1GRP_KEY(Real, crystdes, sa3)
 OPT_1GRP_KEY(Real, crystdes, sc1)
 OPT_1GRP_KEY(Real, crystdes, sc2)
+OPT_1GRP_KEY(Real, crystdes, sc3)
 OPT_1GRP_KEY(Real, crystdes, ddg)
 OPT_1GRP_KEY(Real, crystdes, air)
 OPT_1GRP_KEY(Boolean, crystdes, print_des)
@@ -156,7 +158,7 @@ sidechain_sasa(Pose const & pose, Real probe_radius) {
 }
 
 void
-new_sc(Pose &pose, Real& sa1, Real& sc1, Real& sa2, Real& sc2 ) {
+new_sc(Pose &pose, Real& sa1, Real& sc1, Real& sa2, Real& sc2, Real& sa3, Real& sc3 ) {
 	using namespace core;
 
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
@@ -195,13 +197,20 @@ new_sc(Pose &pose, Real& sa1, Real& sc1, Real& sa2, Real& sc2 ) {
 	}
 
 	// find max uniques
-	sa1=sa2=0;
+	sa1=sa2=sa3=0;
+	sc1=sc2=sc3=0;
 	for (Size i=1; i<=sas.size(); ++i) {
-		if (sas[i] > sa1 && fabs(sa1-sas[i]) > 1e-6) {
+		// check if duplicate
+		if ( fabs(sa1-sas[i]) < 1e-1 || fabs(sa2-sas[i]) < 1e-1 || fabs(sa3-sas[i]) < 1e-1 ) continue;
+		if (sas[i] > sa1) {
+			sa3 = sa2; sc3 = sc2;
 			sa2 = sa1; sc2 = sc1;
 			sa1 = sas[i]; sc1 = scs[i];
-		} else if (sas[i] > sa2 && fabs(sa2-sas[i]) > 1e-6) {
+		} else if (sas[i] > sa2) {
+			sa3 = sa2; sc3 = sc2;
 			sa2 = sas[i]; sc2 = scs[i];
+		} else if (sas[i] > sa3) {
+			sa3 = sas[i]; sc3 = scs[i];
 		}
 	}
 }
@@ -341,8 +350,8 @@ private:
 	core::Real fav_nat_bonus_;
 
 	core::Real cen_vdw_filter_;
-	core::Real sa_filter_1_, sa_filter_2_;
-	core::Real sc_filter_1_, sc_filter_2_;
+	core::Real sa_filter_1_, sa_filter_2_, sa_filter_3_;
+	core::Real sc_filter_1_, sc_filter_2_, sc_filter_3_;
 	core::Real ddg_filter_;
 	core::Real air_filter_;
 
@@ -366,8 +375,10 @@ public:
 		cen_vdw_filter_ = option[crystdes::vdw]();
 		sa_filter_1_    = option[crystdes::sa1]();
 		sa_filter_2_    = option[crystdes::sa2]();
+		sa_filter_3_    = option[crystdes::sa2]();
 		sc_filter_1_    = option[crystdes::sc1]();
 		sc_filter_2_    = option[crystdes::sc2]();
+		sc_filter_3_    = option[crystdes::sc2]();
 		ddg_filter_     = option[crystdes::ddg]();
 		air_filter_     = option[crystdes::air]();
 		
@@ -541,8 +552,8 @@ public:
 			score12->score(pose_for_design);
 
 			// Calculate the surface area and surface complementarity for the interface
-			Real sa1=0,sc1=0,sa2=0,sc2=0;
-			new_sc(pose_for_design, sa1,sc1,sa2,sc2);
+			Real sa1=0,sc1=0,sa2=0,sc2=0,sa3=0,sc3=0;
+			new_sc(pose_for_design, sa1,sc1,sa2,sc2,sa3,sc3);
 
 			// Calculate the ddG of the monomer in the assembled and unassembled states
 			protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
@@ -611,6 +622,8 @@ public:
 			ss_out->add_energy("sc1", sc1);
 			ss_out->add_energy("sa2", sa2);
 			ss_out->add_energy("sc2", sc2);
+			ss_out->add_energy("sa3", sa3);
+			ss_out->add_energy("sc3", sc3);
 
 			// Write the scorefile
 			sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
@@ -647,8 +660,10 @@ main( int argc, char * argv [] ) {
 	NEW_OPT(crystdes::vdw, "vdw", 1);
 	NEW_OPT(crystdes::sa1, "sa1", 250.0);
 	NEW_OPT(crystdes::sa2, "sa2", 150.0);
+	NEW_OPT(crystdes::sa2, "sa3", 0.0);
 	NEW_OPT(crystdes::sc1, "sc1", 0.6);
 	NEW_OPT(crystdes::sc2, "sc2", 0.55);
+	NEW_OPT(crystdes::sc3, "sc3", 0.0);
 	NEW_OPT(crystdes::ddg, "ddg", -10);
 	NEW_OPT(crystdes::air, "air", -1);
 	NEW_OPT(crystdes::print_des, "print_des", false);
