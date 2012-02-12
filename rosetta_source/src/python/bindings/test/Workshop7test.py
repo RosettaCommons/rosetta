@@ -6,57 +6,57 @@ import sys
 from rosetta import *
 init()
 
-#for _i in range(10):
-	#try:
+for _i in range(10):
+    try:
 
 
-# Docking Moves in Rosetta
-pose = pose_from_pdb("test/data/workshops/complex.start.pdb")
+        # Docking Moves in Rosetta
+        pose = pose_from_pdb("test/data/workshops/complex.start.pdb")
+        
+        print pose.fold_tree()
+        
+        setup_foldtree(pose, "A_B", Vector1([1]))
+        print pose.fold_tree()
+        
+        jump_num = 1
+        print pose.jump(jump_num).get_rotation()
+        print pose.jump(jump_num).get_translation()
+        
+        pert_mover = RigidBodyPerturbMover(jump_num, 3, 8)
+        
+        pert_mover.apply(pose)
+        
+        randomize1 = RigidBodyRandomizeMover(pose, jump_num, partner_upstream)
+        randomize2 = RigidBodyRandomizeMover(pose, jump_num, partner_downstream)
+        
+        #randomize1.apply(pose)
+        #randomize2.apply(pose)
+        
+        slide = DockingSlideIntoContact(jump_num)
+        slide.apply(pose)
+        movemap = MoveMap()
+        movemap.set_jump(jump_num, True)
+        
+        scorefxn = create_score_function("standard")
+        scorefxn( pose )
+        
+        print 'Making MinMover...'
+        min_mover = MinMover()
+        min_mover.movemap(movemap)
+        min_mover.score_function(scorefxn)
+        
+        min_mover.apply(pose)
+        
+        print 'Done Applying MinMover!'
 
-print pose.fold_tree()
+        break
 
-setup_foldtree(pose, "A_B", Vector1([1]))
-print pose.fold_tree()
+    #except rosetta.PyRosettaException: pass
+    except RuntimeError: pass
 
-jump_num = 1
-print pose.jump(jump_num).get_rotation()
-print pose.jump(jump_num).get_translation()
-
-pert_mover = RigidBodyPerturbMover(jump_num, 3, 8)
-
-pert_mover.apply(pose)
-
-randomize1 = RigidBodyRandomizeMover(pose, jump_num, partner_upstream)
-randomize2 = RigidBodyRandomizeMover(pose, jump_num, partner_downstream)
-
-#randomize1.apply(pose)
-#randomize2.apply(pose)
-
-slide = DockingSlideIntoContact(jump_num)
-slide.apply(pose)
-
-movemap = MoveMap()
-movemap.set_jump(jump_num, True)
-
-scorefxn = create_score_function("standard")
-
-print 'Making MinMover...'
-min_mover = MinMover()
-min_mover.movemap(movemap)
-min_mover.score_function(scorefxn)
-
-#min_mover.apply(pose)
-# ^^^ disabling min mover for now, until RigidBodyMover is fixed
-
-print 'DoneApplying MinMover!'
-#		break
-
-	#except rosetta.PyRosettaException: pass
-#	except RuntimeError: pass
-
-#else:
-#	print 'Was not able to finish min_mover in 10 tries, failing...'
-#	sys.exit(1)
+else:
+    print 'Was not able to finish min_mover in 10 tries, failing...'
+    sys.exit(1)
 
 
 # Low-Resolution Docking via RosettaDock
