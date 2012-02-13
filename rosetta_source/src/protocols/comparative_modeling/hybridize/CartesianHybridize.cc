@@ -105,7 +105,7 @@ namespace hybridize {
 
 const core::Size DEFAULT_NCYCLES=400;
 
-static basic::Tracer TR("protocols.comparitive_modeling.hybridize.CartesianHybridize");
+static basic::Tracer TR("protocols.comparative_modeling.hybridize.CartesianHybridize");
 
 CartesianHybridize::CartesianHybridize( ) : ncycles_(DEFAULT_NCYCLES) {
 	init();
