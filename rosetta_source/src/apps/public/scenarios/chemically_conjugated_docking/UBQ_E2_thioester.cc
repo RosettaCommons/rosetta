@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/apps/public/scenarios/UBQ_E2_thioester.cc
+/// @file   src/apps/public/scenarios/chemically_conjugated_docking/UBQ_E2_thioester.cc
 /// @brief  this application is a one-shot for modeling the thioester bond between UBQ and an E2
 /// @author Steven Lewis
 
@@ -112,7 +112,7 @@ basic::options::RealOptionKey const constraintweight("constraintweight");
 //tracers
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.public.scenarios.UBQ_E2_thioester");
+static basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ_E2_thioester");
 
 class UBQ_E2Mover : public protocols::moves::Mover {
 public:

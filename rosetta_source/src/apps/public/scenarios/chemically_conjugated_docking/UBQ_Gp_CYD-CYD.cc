@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/apps/pilot/smlewis/UBQ_Gp_CYD-CYD.cc
-/// @brief  this application is a one-shot for modeling a ubiquitinated G-protein; this version uses a nonnatural cysteine to ubiquitin linkage (derived from the parent UBQ_E2 protocol)
+/// @file   src/apps/public/scenarios/chemically_conjugated_docking/UBQ_Gp_CYD-CYD.cc
+/// @brief  this application is a one-shot for modeling a ubiquitinated G-protein; this version uses a disulfide linkage to match an experimentally-induced disulfide
 /// @author Steven Lewis
 
 // Unit Headers
@@ -111,7 +111,7 @@ basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
 //tracers
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.smlewis.UBQ_Gp_CYD-CYD");
+static basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ_Gp_CYD-CYD");
 
 class UBQ_GTPase_disulfide_Mover : public protocols::moves::Mover {
 public:
@@ -363,12 +363,13 @@ public:
 		shear_mover->angle_max( 'E', 4.0 );
 		shear_mover->angle_max( 'L', 4.0 );
 
-		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_chi1(new protocols::simple_moves::TorsionDOFMover);
-		DOF_mover_chi1->set_DOF(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4]);
-		DOF_mover_chi1->check_mmt(true);
-		DOF_mover_chi1->temp(0.4);
-		DOF_mover_chi1->set_angle_range(-180, 180);
-		DOF_mover_chi1->tries(1000);
+		//handled by SidechainMover (?)
+		// protocols::simple_moves::TorsionDOFMoverOP DOF_mover_chi1(new protocols::simple_moves::TorsionDOFMover);
+		// DOF_mover_chi1->set_DOF(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4]);
+		// DOF_mover_chi1->check_mmt(true);
+		// DOF_mover_chi1->temp(0.4);
+		// DOF_mover_chi1->set_angle_range(-180, 180);
+		// DOF_mover_chi1->tries(1000);
 
 		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_chi2(new protocols::simple_moves::TorsionDOFMover);
 		DOF_mover_chi2->set_DOF(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]);
@@ -391,12 +392,13 @@ public:
 		DOF_mover_psi->set_angle_range(-180, 180);
 		DOF_mover_psi->tries(1000);
 
-		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_phi(new protocols::simple_moves::TorsionDOFMover);
-		DOF_mover_phi->set_DOF(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8]);
-		DOF_mover_phi->check_mmt(true);
-		DOF_mover_phi->temp(0.4);
-		DOF_mover_phi->set_angle_range(-180, 180);
-		DOF_mover_phi->tries(1000);
+		//Well, I forget why this is disabled, but it was for publication.  You can re-enable it.
+		// protocols::simple_moves::TorsionDOFMoverOP DOF_mover_phi(new protocols::simple_moves::TorsionDOFMover);
+		// DOF_mover_phi->set_DOF(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8]);
+		// DOF_mover_phi->check_mmt(true);
+		// DOF_mover_phi->temp(0.4);
+		// DOF_mover_phi->set_angle_range(-180, 180);
+		// DOF_mover_phi->tries(1000);
 
 		//Also add a SidechainMover for CYD (I hope...)
 		//set up "pack only the moving conjugates" packer task

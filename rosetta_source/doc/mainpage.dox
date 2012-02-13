@@ -101,7 +101,7 @@ put links to commonly referred to documentation pages here.
 	- @ref AnchoredDesign "Documentation for the AnchoredDesign application"
 	      - @ref AnchoredPDBCreator "Documentation for the AnchoredPDBCreator application (part of AnchoredDesign)"
 	      - @ref AnchorFinder "Documentation for the AnchorFinder application (part of AnchoredDesign)"
-	- @ref UBQ_E2_thioester "Documentation for the UBQ_E2_thioester application"
+	- @ref UBQ_conjugated "Documentation for the UBQ conjugation suite of applications, including UBQ_E2_thioester, UBQ_Gp_CYD-CYD, UBQ_Gp_CYX-Cterm, UBQ_Gp_LYX-Cterm"
 	- @ref pepspec "Documentation for the pepspec application"
 	- @ref comparative_modeling "Documentation for the comparative modeling application"
 	- @ref pmut_scan_parallel "Documentation for the point mutant scan application"

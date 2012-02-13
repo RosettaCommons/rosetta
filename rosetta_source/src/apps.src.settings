@@ -158,8 +158,11 @@ sources = {
 		"ca_to_allatom", # /* Frank DiMaio, doc/apps/public/scenarios/ca_to_allatom.dox */
 		"doug_dock_design_min_mod2_cal_cal",
 		"FloppyTail", # /* Steven Lewis, doc/apps/public/scenarios/FloppyTail.dox, test/integration/tests/FloppyTail/ */
-		"UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_E2_thioester.dox, test/integration/tests/UBQ_E2_thioester/ */
-	],
+		"chemically_conjugated_docking/UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_E2_thioester/ */
+                "chemically_conjugated_docking/UBQ_Gp_CYD-CYD"  , # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_CYD-CYD/   */
+                "chemically_conjugated_docking/UBQ_Gp_CYX-Cterm", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_CYX-Cterm/ */
+                "chemically_conjugated_docking/UBQ_Gp_LYX-Cterm", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_LYX-Cterm/ */
+                ],
 }
 include_path = [
 ]

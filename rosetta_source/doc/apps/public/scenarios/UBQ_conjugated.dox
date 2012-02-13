@@ -10,24 +10,29 @@
 ///@author Steven Lewis smlewi@gmail.com
 /*!
 
-@page UBQ_E2_thioester Documentation for UBQ_E2_thioester application
+@page UBQ_conjugated Documentation for UBQ_E2_thioester, UBQ_Gp_CYD-CYD, UBQ_Gp_CYX-Cterm, and UBQ_Gp_LYX-Cterm applications
 
 @section metadata Metadata
-Last edited 2/6/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+Last edited 2/13/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+
+@section contents_note Note on contents and history
+This page documents four applications, UBQ_E2_thioester, UBQ_Gp_CYD-CYD, UBQ_Gp_CYX-Cterm, and UBQ_Gp_LYX-Cterm.  The code and documentation were originally written for the thioester version.  The other versions are modifications of the first, and they all behave nearly the same from the outside, so they are all documented here.  Assume the document is talking about the thioester case, but also assume what it says is true for the other cases.
 
 @section code_demos Code and Demo
-The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/UBQ_E2_thioester/</code>; there's an integration test+demo at <code>rosetta/rosetta_source/test/integration/tests/UBQ_E2_thioester/</code>.  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
+The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/chemically_conjugated_docking/UBQ_E2_thioester/</code>; there's an integration test+demo at <code>rosetta/rosetta_source/test/integration/tests/UBQ_E2_thioester/</code>.  The same is true for the other versions of the application (altering the path as appropriate).  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
 
 @section refs References
 @li Saha A, Kleiger G, Lewis S, Kuhlman B, Deshaies RJ. Essential role for ubiquitin-ubiquitin-conjugating enzyme interaction in ubiquitin discharge from Cdc34 to substrate. Molecular Cell. 2011 Apr 8;42(1):75-83.
 
 You may want to look at the online supplemental info for that paper for a different presentation of how the code works.
 
-For the (documentation-pending) UBQ_Gp series of executables:
+For the (publication-pending) UBQ_Gp series of executables:
 @li Baker R, Lewis SM, Wilkerson EM, Sasaki AT, Cantley LC, Kuhlman B, Dohlman HG, Campbell SL.  Site-Specific Monoubiquitination Activates Ras by Impeding GTPase Activating Protein Function.  Submitted.
 
 @section purpose Purpose
-This code was written for a relatively singular application: modeling the thioester-linked state of an E2 enzyme charged with ubiquitin.  It serves no other purpose.  We had hypotheses about what this state might look like and used this code to generate models to examine those hypotheses and generate testable mutations.  It is included in the release because it was published, not because it is expected to serve other purposes.
+This code (UBQ_E2_thioester) was written for a relatively singular application: modeling the thioester-linked state of an E2 enzyme charged with ubiquitin.  It serves no other purpose.  We had hypotheses about what this state might look like and used this code to generate models to examine those hypotheses and generate testable mutations.  It is included in the release because it was published, not because it is expected to serve other purposes.
+
+A second, unrelated experiment was built on the code for that first project.  Here, we wished to examine how a G-protein (ras) would behave when chemically conjugated to ubiquitin.  The CYX-Cterm code is a direct port from the thioester version to work with the new experimental system, and the LYX-cterm and CYD-CYD versions are to mimic the native and experimental versions of the linkage.  These are four separate executables because the differences between them, while slight, do not lend themselves to straightforward code modularization and reuse...it really needs to be rewritten.
 
 @section algorithm Algorithm
 There are two important novel chunks of code associated with this algorithm.
@@ -38,18 +43,18 @@ The remodeling algorithm is straightforward.  It uses Rosetta's standard Metropo
 
 The thioester-building code first replaces the E2's cysteine with a CYX residue type, which has an open residue connection on its sulfur atom (and no hydrogen there).  The UBQ glycine is then appended to this with a chemical bond, removing its terminus type.  The remainder of ubiquitin is the prepended before the final residue, resulting in a normal residue ordering but a reversed atom-tree folding order (Ubiquitin folds from its C-terminus, rather than its N-terminus).
 
-The protocol also includes embedded machinery for generating constraints which are based on experimental data from Saha, Kleiger, and Deshaies; and on PDB 1FXT which is also a model of a thioester-linked E2/UBQ complex.  At the end of the protocol, there is filtering machinery to automatically reject models with no signficiant interface.
+The protocol also includes embedded machinery for generating constraints which are based on experimental data from Saha, Kleiger, and Deshaies; and on PDB 1FXT which is also a model of a thioester-linked E2/UBQ complex.  At the end of the protocol, there is filtering machinery to automatically reject models with no signficiant interface.  The UBQ_Gp versions of the code instead support user-defined, commandline-supplied constraints.
 
 @section limits Limitations
-The code is full of hardcoded assumptions that you are using our E2 of interest (CDC34 from PDB 2OB4) and ubiquitin (from 1UBQ, but other structures ought to work).  If you really want to model a different E2 with ubiquitin, you'll need to write your own constraints section (or tear it out and replace it with a constraint file).  If you want to do your own thioester modeling (which seems much more likely), start by using this protocol as a guide to setting up thioesters.
+The thioester code is full of hardcoded assumptions that you are using our E2 of interest (CDC34 from PDB 2OB4) and ubiquitin (from 1UBQ, but other structures ought to work).  This code was genericized to UBQ_Gp_CYX-Cterm, which will probably work with other sequences as needed.
 
 @section inputs Input Files
 See test/integration/tests/UBQ_E2_thioester/ for example usage.  Basically all you need is an input structure.
-@li You will NOT be using standard job distributor inputs (-s/-l PDBs or silent files.).  Use -UBQpdb and -E2pdb to pass in those structures.
+@li You will NOT be using standard job distributor inputs (-s/-l PDBs or silent files.).  Use -UBQpdb and -E2pdb (or GTPasepdb) to pass in those structures.
 @li Ensure that the code has the correct path to the CYX residue type.  It will be in your rosetta database; the path is in the integration test/demo.  %(database)s/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/CYX.params is its current location.
 
 @section tips Tips
-@li The filters are good enough that you will need to generate only a few hundred models to get the results we saw in the paper.  (Many more will be rejected by the filters; I am counting completed models here).
+@li The filters are good enough that you will need to generate only a few hundred models to get the results we saw in the paper.  (Many more will be rejected by the filters; I am counting completed models here).  Your mileage will vary if you use the code on a different system.
 @li The code has an unsupported mode allowing for KIC loop modeling.  This was intended to be used with the E2 loop absent in PDB 2OB4.  The loop was too long for KIC to solve effectively so we took a different path; the code is still present but senescent if you don't pass a loops file.
 
 @section ft_options Options
@@ -57,8 +62,8 @@ UBQ_E2_thioester supports three types of options: general rosetta options (packi
 
 UBQ_E2_thioester options
 @li UBQpdb - File - input UBQ PDB, we used 1UBQ.
-@li E2pdb - File - input E2 PDB; we used a trimmed version of 2OB4.
-@li E2_residue - Integer - Which E2 residue is the active cysteine?  85 is default; correct for 2OB4.
+@li E2pdb - File - input E2 PDB; we used a trimmed version of 2OB4.  Renamed GTPasepdb for the UBQ_Gp series.
+@li E2_residue - Integer - Which E2 residue is the active cysteine?  85 is default; correct for 2OB4.  Renamed GPTase_residue for the UBQ_Gp series
 @li SASAfilter - Real - minimum SASA filter value.  Default 1000 used for production.
 @li scorefilter - Real - filter value for maximum total score.  Default 10; 0 used for production.
 @li constraintweight - Real - weight on the constraint term in the scorefunction.  Default 50 used for production.
@@ -79,5 +84,6 @@ General options:  All packing namespace options loaded by the PackerTask are res
 Pick the best models by total score and look at the satisfaction of your experimentally-derived constraints to decide which you think is most plausible.  We used the models to successfully predict a mutation to rescue a defect caused by UBQ I44A.
 
 @section changelog Changes since last release
-Rosetta 3.3 is the first release.
+Rosetta 3.3 was the first release.
+For the 3.4 release, the UBQ_Gp series of applications was added.
 */

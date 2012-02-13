@@ -353,9 +353,6 @@ sources = {
 		#"remodel",
 	],
 	"pilot/smlewis" : [
-	        "UBQ_Gp_CYD-CYD",
-                "UBQ_Gp_CYX-Cterm",
-                "UBQ_Gp_LYX-Cterm",
                 #"Extender",
                 #"LoopAnalyzer",
                 #"ForgetPDBInfo",

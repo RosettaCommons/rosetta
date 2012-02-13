@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/apps/pilot/smlewis/UBQ_Gp_LYX-Cterm.cc
-/// @brief  this application is a one-shot for modeling a ubiquitinated G-protein; this version uses a native lysine to ubiquitin linkage via LYX
+/// @file   src/apps/public/scenarios/chemically_conjugated_docking/UBQ_Gp_CYX-Cterm.cc
+/// @brief  this application is a one-shot for modeling a ubiquitinated G-protein; this version uses a nonnatural cysteine to ubiquitin linkage (derived from the parent UBQ_E2 protocol)
 /// @author Steven Lewis
 
 // Unit Headers
@@ -63,7 +63,6 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -99,7 +98,6 @@
 
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
-
 //local options
 basic::options::FileOptionKey const UBQpdb("UBQpdb");
 basic::options::FileOptionKey const GTPasepdb("GTPasepdb");
@@ -110,7 +108,7 @@ basic::options::RealOptionKey const scorefilter("scorefilter");
 //tracers
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.smlewis.UBQ_Gp_LYX-Cterm");
+static basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ_Gp_CYX-Cterm");
 
 class UBQ_GTPaseMover : public protocols::moves::Mover {
 public:
@@ -118,12 +116,11 @@ public:
 	: init_for_input_yet_(false),
 		fullatom_scorefunction_(NULL),
 		task_factory_(NULL),
-		amide_mm_(NULL),
+		thioester_mm_(NULL),
 		loop_(), //we want default ctor
 		atomIDs(8, core::id::BOGUS_ATOM_ID ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
-		IAM_(new protocols::analysis::InterfaceAnalyzerMover),
-		GTPase_lys_(0)
+		IAM_(new protocols::analysis::InterfaceAnalyzerMover)
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
@@ -169,8 +166,8 @@ public:
 		//determine cysteine target
 		runtime_assert(GTPase.conformation().num_chains() == 1);
 		char const GTPasechain(GTPase.pdb_info()->chain(1));
-		GTPase_lys_ = GTPase.pdb_info()->pdb2pose(GTPasechain, basic::options::option[GTPase_residue].value());
-		//runtime_assert(GTPase.residue_type(GTPase_lys_).aa() == core::chemical::aa_lys);
+		core::Size const GTPase_cys(GTPase.pdb_info()->pdb2pose(GTPasechain, basic::options::option[GTPase_residue].value()));
+		//runtime_assert(GTPase.residue_type(GTPase_cys).aa() == core::chemical::aa_cys);
 
 		//determine c_term target on UBQ
 		core::Size const UBQ_term = UBQlength;
@@ -182,20 +179,20 @@ public:
 		UBQ.append_residue_by_bond( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("GLY")) ) );
 		//UBQ.dump_pdb("post-removeUQB.pdb");
 
-		//replace lysine
-		core::chemical::ResidueType const & lyx_rsd_type( fa_standard->name_map("LYX") );
+		//replace cysteine
+		core::chemical::ResidueType const & cyx_rsd_type( fa_standard->name_map("CYX") );
 		//GTPase.dump_pdb("prereplace_GTPase.pdb");
-		GTPase.replace_residue( GTPase_lys_, core::conformation::Residue(lyx_rsd_type, true), true);
+		GTPase.replace_residue( GTPase_cys, core::conformation::Residue(cyx_rsd_type, true), true);
 		//GTPase.dump_pdb("postreplace_GTPase.pdb");
 
 		// check safety of connections (from phil)
 		core::chemical::ResidueType const & ubq_rsd_type( UBQ.residue_type( UBQ_term ) );
-		core::Size const lyx_connid( 3 );
+		core::Size const cyx_connid( 3 );
 		core::Size const ubq_connid( 2 );
 
-		runtime_assert( lyx_rsd_type.n_residue_connections() == lyx_connid &&
-			lyx_rsd_type.lower_connect_id() != lyx_connid &&
-			lyx_rsd_type.upper_connect_id() != lyx_connid );
+		runtime_assert( cyx_rsd_type.n_residue_connections() == cyx_connid &&
+			cyx_rsd_type.lower_connect_id() != cyx_connid &&
+			cyx_rsd_type.upper_connect_id() != cyx_connid );
 
 		runtime_assert( ubq_rsd_type.n_residue_connections() == ubq_connid &&
 			ubq_rsd_type.lower_connect_id() != ubq_connid);
@@ -214,27 +211,26 @@ public:
 			bool const start_new_chain = false
 			)*/
 		core::pose::Pose complex(GTPase);
-		complex.append_residue_by_bond( UBQ.residue( UBQ_term ), true, ubq_connid, GTPase_lys_, lyx_connid );
+		complex.append_residue_by_bond( UBQ.residue( UBQ_term ), true, ubq_connid, GTPase_cys, cyx_connid );
 		//complex.dump_pdb("just1_complex.pdb");
 
 		//not that this does anything
-		complex.conformation().insert_ideal_geometry_at_residue_connection( GTPase_lys_, lyx_connid );
+		complex.conformation().insert_ideal_geometry_at_residue_connection( GTPase_cys, cyx_connid );
 
 		core::Size const ubq_pos( complex.total_residue() );
-		core::id::AtomID const atom0( lyx_rsd_type.atom_index( "CG" ), GTPase_lys_ );
-		core::id::AtomID const atom1( lyx_rsd_type.atom_index( "CD" ), GTPase_lys_ );
-		core::id::AtomID const atom2( lyx_rsd_type.atom_index( "CE" ), GTPase_lys_ );
-		core::id::AtomID const atom3( lyx_rsd_type.atom_index( "NZ" ), GTPase_lys_ );
+		core::id::AtomID const atom0( cyx_rsd_type.atom_index( "C" ), GTPase_cys );
+		core::id::AtomID const atom1( cyx_rsd_type.atom_index( "CA" ), GTPase_cys );
+		core::id::AtomID const atom2( cyx_rsd_type.atom_index( "CB" ), GTPase_cys );
+		core::id::AtomID const atom3( cyx_rsd_type.atom_index( "SG" ), GTPase_cys );
 		core::id::AtomID const atom4( ubq_rsd_type.atom_index( "C"  ), ubq_pos );
 		core::id::AtomID const atom5( ubq_rsd_type.atom_index( "CA" ), ubq_pos );
 		core::id::AtomID const atom6( ubq_rsd_type.atom_index( "N"  ), ubq_pos );
 
-		//starting values derived from the peptide bond and a straight-out lysine
-		for( core::Size chi(1); chi<=4; ++chi) complex.set_chi(chi, GTPase_lys_, 180);
-		//complex.conformation().set_torsion_angle( atom0, atom1, atom2, atom3, numeric::conversions::radians(106.5) );
-		//complex.conformation().set_torsion_angle( atom1, atom2, atom3, atom4, numeric::conversions::radians(-60.0) );
+		//starting values derived from 1FXT.pdb
+		complex.conformation().set_torsion_angle( atom0, atom1, atom2, atom3, numeric::conversions::radians(106.5) );
+		complex.conformation().set_torsion_angle( atom1, atom2, atom3, atom4, numeric::conversions::radians(-60.0) );
 		complex.conformation().set_torsion_angle( atom2, atom3, atom4, atom5, numeric::conversions::radians(180.0) );
-		complex.conformation().set_torsion_angle( atom3, atom4, atom5, atom6, numeric::conversions::radians(135.0) );
+		complex.conformation().set_torsion_angle( atom3, atom4, atom5, atom6, numeric::conversions::radians(100.5) );
 		//complex.dump_pdb("just1_complex2.pdb");
 
 		//now add the rest of ubiquitin
@@ -268,13 +264,13 @@ public:
 
 		//setup MoveMaps
 		//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
-		amide_mm_ = new core::kinematics::MoveMap;
-		//amide_mm_->set_bb(complexlength, true);
-		//amide_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::phi_torsion), true);
-		//amide_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::psi_torsion), true);
-		amide_mm_->set_bb(complexlength-1, true);
-		amide_mm_->set_bb(complexlength-2, true);
-		//amide_mm_->set(complex.atom_tree().torsion_angle_dof_id(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]), false);
+		thioester_mm_ = new core::kinematics::MoveMap;
+		//thioester_mm_->set_bb(complexlength, true);
+		//thioester_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::phi_torsion), true);
+		//thioester_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::psi_torsion), true);
+		thioester_mm_->set_bb(complexlength-1, true);
+		thioester_mm_->set_bb(complexlength-2, true);
+		//thioester_mm_->set(complex.atom_tree().torsion_angle_dof_id(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]), false);
 
 		//setup loop
 		std::set< core::Size > loop_posns;
@@ -297,9 +293,9 @@ public:
 		}
 		//task_factory_->push_back( new protocols::toolbox::task_operations::RestrictToInterfaceOperation );
 		task_factory_->push_back( new IncludeCurrent );
-		//prevent repacking at linkage lysine!
+		//prevent repacking at linkage cysteine!
 		PreventRepackingOP prevent(new PreventRepacking);
-		prevent->include_residue(GTPase_lys_);
+		prevent->include_residue(GTPase_cys);
 		task_factory_->push_back(prevent);
 
 		std::string const interface_calc("UBQGTPase_InterfaceNeighborDefinitionCalculator");
@@ -340,29 +336,29 @@ public:
 		MonteCarloOP mc( new MonteCarlo( pose, *fullatom_scorefunction_, option[ refine_temp ].value() ) );
 
 		//////////////////////////Small/ShearMovers////////////////////////////////////////////////////////
-		protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover(amide_mm_, 0.8, 1);
+		protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover(thioester_mm_, 0.8, 1);
 		small_mover->angle_max( 'H', 4.0 );
 		small_mover->angle_max( 'E', 4.0 );
 		small_mover->angle_max( 'L', 4.0 );
 
-		protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover(amide_mm_, 0.8, 1);
+		protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover(thioester_mm_, 0.8, 1);
 		shear_mover->angle_max( 'H', 4.0 );
 		shear_mover->angle_max( 'E', 4.0 );
 		shear_mover->angle_max( 'L', 4.0 );
 
-		// protocols::simple_moves::TorsionDOFMoverOP DOF_mover_chi1(new protocols::simple_moves::TorsionDOFMover);
-		// DOF_mover_chi1->set_DOF(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4]);
-		// DOF_mover_chi1->check_mmt(true);
-		// DOF_mover_chi1->temp(0.4);
-		// DOF_mover_chi1->set_angle_range(-180, 180);
-		// DOF_mover_chi1->tries(1000);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_chi1(new protocols::simple_moves::TorsionDOFMover);
+		DOF_mover_chi1->set_DOF(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4]);
+		DOF_mover_chi1->check_mmt(true);
+		DOF_mover_chi1->temp(0.4);
+		DOF_mover_chi1->set_angle_range(-180, 180);
+		DOF_mover_chi1->tries(1000);
 
-		// protocols::simple_moves::TorsionDOFMoverOP DOF_mover_chi2(new protocols::simple_moves::TorsionDOFMover);
-		// DOF_mover_chi2->set_DOF(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]);
-		// DOF_mover_chi2->check_mmt(true);
-		// DOF_mover_chi2->temp(0.4);
-		// DOF_mover_chi2->set_angle_range(-180, 180);
-		// DOF_mover_chi2->tries(1000);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_chi2(new protocols::simple_moves::TorsionDOFMover);
+		DOF_mover_chi2->set_DOF(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]);
+		DOF_mover_chi2->check_mmt(true);
+		DOF_mover_chi2->temp(0.4);
+		DOF_mover_chi2->set_angle_range(-180, 180);
+		DOF_mover_chi2->tries(1000);
 
 		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_thioester(new protocols::simple_moves::TorsionDOFMover);
 		DOF_mover_thioester->set_DOF(atomIDs[3], atomIDs[4], atomIDs[5], atomIDs[6]);
@@ -385,27 +381,14 @@ public:
 		DOF_mover_phi->set_angle_range(-180, 180);
 		DOF_mover_phi->tries(1000);
 
-		//Also add a SidechainMover for LYX (I hope...)
-		//set up "pack only the moving conjugate" packer task
-		utility::vector1< bool > repack_residues(pose.total_residue(), false); //this could be member data
-		repack_residues[GTPase_lys_] = true;
-		core::pack::task::PackerTaskOP SC_task(core::pack::task::TaskFactory::create_packer_task(pose) );
-		SC_task->restrict_to_residues(repack_residues);
-		SC_task->restrict_to_repacking(); //SCmover will design, oops
-		//and the mover
-		protocols::simple_moves::sidechain_moves::SidechainMoverOP SC_mover(new protocols::simple_moves::sidechain_moves::SidechainMover() );
-		SC_mover->set_change_chi_without_replacing_residue(true);
-		SC_mover->set_task(SC_task);
-
 		protocols::moves::RandomMoverOP backbone_mover( new protocols::moves::RandomMover() );
 		backbone_mover->add_mover(small_mover, 2.0);
 		backbone_mover->add_mover(shear_mover, 1.0);
-		// 		backbone_mover->add_mover(DOF_mover_chi1, 0.75); //SC mover will handle this DOF
-		// 		backbone_mover->add_mover(DOF_mover_chi2, 0.75); //SC mover will handle this DOF
- 		backbone_mover->add_mover(DOF_mover_thioester, 0.75);
- 		backbone_mover->add_mover(DOF_mover_psi, 0.75);
+		backbone_mover->add_mover(DOF_mover_chi1, 0.75);
+		backbone_mover->add_mover(DOF_mover_chi2, 0.75);
+		backbone_mover->add_mover(DOF_mover_thioester, 0.75);
+		backbone_mover->add_mover(DOF_mover_psi, 0.75);
 		backbone_mover->add_mover(DOF_mover_phi, 0.75);
-		backbone_mover->add_mover(SC_mover, 1.0);
 
 		///////////////////////////loop movement/////////////////////////////////////////////////////
 		if( loop_.stop() - loop_.start() >= 3 ) { //empty loop; skip it!
@@ -430,7 +413,7 @@ public:
 		using protocols::simple_moves::MinMoverOP;
 		using protocols::simple_moves::MinMover;
 		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
-																				amide_mm_,
+																				thioester_mm_,
 																				fullatom_scorefunction_,
 																				basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 																				0.01,
@@ -462,7 +445,7 @@ public:
 		pack_mover->score_function( fullatom_scorefunction_ );
 
 		protocols::simple_moves::MinMoverOP min_mover_pack = new protocols::simple_moves::MinMover(
-																						 amide_mm_,
+																						 thioester_mm_,
 																						 fullatom_scorefunction_,
 																						 basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 																						 0.01,
@@ -540,10 +523,10 @@ public:
 		//print mobile region fine-grained data
 		protocols::jd2::JobOP job_me(protocols::jd2::JobDistributor::get_instance()->current_job());
 		using numeric::conversions::degrees;
-		job_me->add_string_real_pair("lysine_chi3_CG-CD-CE-NZ", degrees(pose.atom_tree().torsion_angle(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4])));
-		job_me->add_string_real_pair("lysine_chi4_CD-CE-NZ-C", degrees(pose.atom_tree().torsion_angle(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5])));
-		job_me->add_string_real_pair("amide_CE-NZ-C-CA", degrees(pose.atom_tree().torsion_angle(atomIDs[3], atomIDs[4], atomIDs[5], atomIDs[6])));
-		job_me->add_string_real_pair("glycine_psi_NZ-C-CA-N", degrees(pose.atom_tree().torsion_angle(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7])));
+		job_me->add_string_real_pair("cysteine_chi1_C-CA-CB-SG", degrees(pose.atom_tree().torsion_angle(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4])));
+		job_me->add_string_real_pair("cysteine_chi2_CA-CB-SG-C", degrees(pose.atom_tree().torsion_angle(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5])));
+		job_me->add_string_real_pair("thioester_CB-SG-C-CA", degrees(pose.atom_tree().torsion_angle(atomIDs[3], atomIDs[4], atomIDs[5], atomIDs[6])));
+		job_me->add_string_real_pair("glycine_psi_SG-C-CA-N", degrees(pose.atom_tree().torsion_angle(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7])));
 		job_me->add_string_real_pair("glycine_phi_C-CA-N-C", degrees(pose.atom_tree().torsion_angle(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8])));
 
 		set_last_move_status(protocols::moves::MS_SUCCESS);
@@ -573,7 +556,7 @@ private:
 
 	core::scoring::ScoreFunctionOP fullatom_scorefunction_;
 	core::pack::task::TaskFactoryOP task_factory_;
-	core::kinematics::MoveMapOP amide_mm_;
+	core::kinematics::MoveMapOP thioester_mm_;
 // 	core::kinematics::MoveMapOP loop_mm_;
 // 	core::kinematics::MoveMapOP all_mm_;
 
@@ -588,8 +571,6 @@ private:
 
 	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 
-	core::Size GTPase_lys_; //converted to member data for sharing between setup and apply
-
 };
 
 typedef utility::pointer::owning_ptr< UBQ_GTPaseMover > UBQ_GTPaseMoverOP;
@@ -601,7 +582,7 @@ int main( int argc, char* argv[] )
 	using namespace basic::options::OptionKeys;
  	option.add( UBQpdb, "ubiquitin structure" ).def("1UBQ.pdb");
  	option.add( GTPasepdb, "GTPase structure" ).def("2OB4.pdb");
- 	option.add( GTPase_residue, "GTPase lysine (PDB numbering)").def(85);
+ 	option.add( GTPase_residue, "GTPase cysteine (PDB numbering)").def(85);
 	option.add( SASAfilter, "filter out interface dSASA less than this").def(10);
 	option.add( scorefilter, "filter out total score greater than this").def(1000);
 
