@@ -18,10 +18,11 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
+#include <core/id/SequenceMapping.hh>
 #include <basic/options/option.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <utility/io/ozstream.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -178,7 +179,20 @@ main( int argc, char* argv [] ) {
 				//(*(*it).sequence(2)).id();
 				// so the object->method() is syntax for saying (*object).method()
 				string const id_out( it->sequence(2)->id() );
-				query_pose.dump_pdb(id_out + ".pdb");
+				//query_pose.dump_pdb(id_out + ".pdb");
+
+				// print out query-anchored alignment
+				utility::io::ozstream output( id_out + ".pdb" );
+				core::id::SequenceMapping map( it->sequence_mapping(1,2) );
+				output << "REMARK query_anchored_aln ";
+				for ( core::Size ii = 1; ii <= fasta_seq->sequence().size(); ++ii ) {
+					if ( map[ii] ) output << fasta_seq->at(ii);
+					else           output << "-";
+				}
+				output << std::endl;
+				core::io::pdb::dump_pdb( query_pose, output );
+				output.close();
+
 			} // template pdb check
 		} // alns
 	} // for ( it in aligns )
