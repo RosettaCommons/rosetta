@@ -47,6 +47,7 @@
 #include <fstream>
 #include <limits>
 
+
 //Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
@@ -54,7 +55,10 @@
 #include <core/kinematics/RT.hh>
 
 
-
+#ifdef WIN32
+        #define _USE_MATH_DEFINES
+        #include <math.h>
+#endif
 
 
 
