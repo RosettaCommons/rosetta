@@ -633,8 +633,8 @@ namespace rna {
 		int const euler_angle_bin_min=-180/euler_angle_bin_size; //Should be -180/euler_angle_bin_size
 		int const euler_angle_bin_max=180/euler_angle_bin_size-1;  //Should be 180/euler_angle_bin_size-1
 
-		int const euler_z_bin_min=-1/euler_z_bin_size;
-		int const euler_z_bin_max=(1/euler_z_bin_size);
+		int const euler_z_bin_min=int(-1/euler_z_bin_size);
+		int const euler_z_bin_max=int(1/euler_z_bin_size);
 
 		Real C5_centroid_dist=get_max_centroid_to_atom_distance(moving_rsd_at_origin_list, " C5*");
 		Real O5_centroid_dist=get_max_centroid_to_atom_distance(moving_rsd_at_origin_list, " O3*");
@@ -645,8 +645,8 @@ namespace rna {
 
 		std::cout << "max centroid to centroid distance: " << max_distance << std::endl;;
 
-		int const centroid_bin_min=-max_distance/centroid_bin_size; 
-		int const centroid_bin_max=(max_distance/centroid_bin_size)-1;
+		int const centroid_bin_min=int(-max_distance/centroid_bin_size); 
+		int const centroid_bin_max=int(max_distance/centroid_bin_size)-1;
 
 		std::cout << "euler_angle_bin min= " << euler_angle_bin_min << " max " << euler_angle_bin_max << std::endl;
 		std::cout << "euler_z_bin_min min= " << euler_z_bin_min << " max " << euler_z_bin_max << std::endl;
@@ -2307,7 +2307,7 @@ namespace rna {
 
 		core::Real	const principal_torsion=numeric::principal_angle_degrees( torsion_value);
 
-		Size const principal_torsion_SIZE=std::abs(principal_torsion+0.00001); //0.00001 is to prevent random ambiguity if the torsion decimal value is exactly .0000 Oct 12, 2010
+		Size const principal_torsion_SIZE=Size(std::abs(principal_torsion+0.00001)); //0.00001 is to prevent random ambiguity if the torsion decimal value is exactly .0000 Oct 12, 2010
 
 
 		if(principal_torsion>0){

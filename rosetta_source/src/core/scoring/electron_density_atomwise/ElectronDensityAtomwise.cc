@@ -717,7 +717,7 @@ ElectronDensityAtomwise::generate_gaussian_1d ( core::Real const & sigma ) {
 	//Calculate up to 4*sigma
 	gaussian_max_d = 4 * sigma;
 	//Using interval of 0.01 Angstong
-	Size gaussian_size = std::ceil ( gaussian_max_d / 0.01 );
+	Size gaussian_size = Size( std::ceil ( gaussian_max_d / 0.01 ) );
 
 	for ( Size i = 0; i <= gaussian_size; ++i ) {
 		Real calc_value = exp ( - ( i * 0.01 ) * ( i * 0.01 ) / ( 2.0 * sigma * sigma ) ) / ( sqrt ( 2.0 * PI ) * sigma );

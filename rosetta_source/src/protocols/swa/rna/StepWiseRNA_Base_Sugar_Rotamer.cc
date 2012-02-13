@@ -114,11 +114,11 @@ namespace rna {
 
 				total_variation_=80;
 				bin_size_=inputted_bin_size_;				
-				num_base_std_ID_=(1 + (total_variation_/bin_size_) ); //-40,-20,0,20,40
+				num_base_std_ID_= Size(1 + (total_variation_/bin_size_) ); //-40,-20,0,20,40
 			}else{
 				total_variation_=40;	//+-20
 				bin_size_=inputted_bin_size_;
-				num_base_std_ID_=(1 + (total_variation_/bin_size_) ); //-20,0,20
+				num_base_std_ID_= Size(1 + (total_variation_/bin_size_) ); //-20,0,20
 			}
 
 			if(base_state_list_[base_ID_]==ANTI){

@@ -357,13 +357,13 @@ namespace rna {
 //		using namespace Bin_size;
 
 		Base_bin base_bin;
-		base_bin.centroid_x=centriod[0]/centroid_bin_size; 
-		base_bin.centroid_y=centriod[1]/centroid_bin_size; 
-		base_bin.centroid_z=centriod[2]/centroid_bin_size; 		
+		base_bin.centroid_x=int(centriod[0]/centroid_bin_size); 
+		base_bin.centroid_y=int(centriod[1]/centroid_bin_size); 
+		base_bin.centroid_z=int(centriod[2]/centroid_bin_size); 		
 
-		base_bin.euler_alpha=euler_angles.alpha/euler_angle_bin_size;
-		base_bin.euler_gamma=euler_angles.gamma/euler_angle_bin_size;
-		base_bin.euler_z=euler_angles.z/euler_z_bin_size;
+		base_bin.euler_alpha=int(euler_angles.alpha/euler_angle_bin_size);
+		base_bin.euler_gamma=int(euler_angles.gamma/euler_angle_bin_size);
+		base_bin.euler_z=int(euler_angles.z/euler_z_bin_size);
 
 
 		if(centriod[0]<0) base_bin.centroid_x--;

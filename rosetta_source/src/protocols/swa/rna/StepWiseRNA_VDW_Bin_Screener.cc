@@ -69,8 +69,8 @@ namespace rna {
 //		max_distance_(50.0), //Oct 27, Change from 60.0 to 50.0 after one slave node on Biox clash probably due to memory limit (but 60.0 should use only 200 MB!) 
 //		max_distance_(60.0), //Oct 26, Change from 40.0 to 60.0. In rare instances, minimization will move moving_res and reference res very far from initial pos of reference res.
 		atom_bin_size_(0.1), 
-		bin_min_( -max_distance_/atom_bin_size_ ), 
-		bin_max_( (max_distance_/atom_bin_size_) ),  //used to be (max_distance_/atom_bin_size_)-1, change on Nov 7, 2010
+		bin_min_( int(-max_distance_/atom_bin_size_) ), 
+		bin_max_( int(max_distance_/atom_bin_size_) ),  //used to be (max_distance_/atom_bin_size_)-1, change on Nov 7, 2010
 		bin_offset_( std::abs(bin_min_)+1 ),
 		num_clash_atom_cutoff_(3), //num of clash required to be considered a clash
 		write_to_file_(false), //for debugging
@@ -848,8 +848,8 @@ namespace rna {
 
 				Real const sum_radius=moving_atom_radius+VDW_radius-clash_dist_cutoff-max_binning_error; 
 
-				int const max_bin_offset=(sum_radius+atom_bin_size_)/atom_bin_size_;
-				int const min_bin_offset=-((sum_radius+atom_bin_size_)/atom_bin_size_);
+				int const max_bin_offset=int((sum_radius+atom_bin_size_)/atom_bin_size_);
+				int const min_bin_offset=int(-((sum_radius+atom_bin_size_)/atom_bin_size_));
 
 				if(output_once==false){
 					output_once=true;
@@ -1249,9 +1249,9 @@ namespace rna {
 		numeric::xyzVector<core::Real> const atom_pos_ref_frame=atom_pos-reference_xyz_;
 
 		Atom_Bin atom_bin;
-		atom_bin.x=atom_pos_ref_frame[0]/atom_bin_size_; 
-		atom_bin.y=atom_pos_ref_frame[1]/atom_bin_size_; 
-		atom_bin.z=atom_pos_ref_frame[2]/atom_bin_size_; 
+		atom_bin.x=int(atom_pos_ref_frame[0]/atom_bin_size_); 
+		atom_bin.y=int(atom_pos_ref_frame[1]/atom_bin_size_); 
+		atom_bin.z=int(atom_pos_ref_frame[2]/atom_bin_size_); 
 
 
 		if(atom_pos_ref_frame[0]<0) atom_bin.x--;
