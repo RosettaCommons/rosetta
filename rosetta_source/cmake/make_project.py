@@ -64,7 +64,7 @@ def project_callback(project, project_path, project_files):
 	print 'done.'
 
 
+update_svn_version()
 
 build_util.project_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_callback)
 
-update_svn_version()
