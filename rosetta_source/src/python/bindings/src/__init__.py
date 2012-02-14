@@ -1074,11 +1074,16 @@ class EnergyMethod:
 # --------------------------------------------------------------------------------------------------
 
 # By Michael Pacella
-def atom_atom_pair_energy(atom1, atom2, sfxn):
-	score_manager=core.scoring.ScoringManager.get_instance()
-	etable_ptr=score_manager.etable('FA_STANDARD_DEFAULT')
-	etable=etable_ptr.get()
-	etable_energy=core.scoring.etable.EtableEnergy(etable,sfxn.energy_method_options())
+def etable_atom_pair_energies(atom1, atom2, sfxn):
+	''' Usage: lj_atr, lj_rep, solv=etable_atom_pair_energies(atom1, atom2, sfxn)
+	Description: given a pair of atoms and scorefunction, use the precomputed
+	'etable' to return LJ attractive, LJ repulsive, and LK solvation energies
+	'''
+
+    score_manager=core.scoring.ScoringManager.get_instance()
+    etable_ptr=score_manager.etable(sfxn.energy_method_options().etable_type())
+    etable=etable_ptr.get()
+    etable_energy=core.scoring.etable.EtableEnergy(etable,sfxn.energy_method_options())
 
 	#constructing AtomPairEnergy container to hold computed energies
 	ape=core.scoring.etable.AtomPairEnergy()
