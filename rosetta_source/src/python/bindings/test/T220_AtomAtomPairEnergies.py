@@ -20,7 +20,7 @@ for i in range(residue_1.natoms()):
 	for j in range(residue_2.natoms()):
 		atom1=residue_1.atom(i+1)
 		atom2=residue_2.atom(j+1)
-		atr,rep,solv=atom_atom_pair_energy(atom1,atom2,sfxn)
+		atr,rep,solv=etable_atom_pair_energies(atom1,atom2,sfxn)
 
 		atr_total+=atr
 		rep_total+=rep

@@ -26,14 +26,14 @@ print pose.jump(jump_num).get_translation()
 print "_____ Check point 1"
 pert_mover = RigidBodyPerturbMover(jump_num, 3, 8)
 
-pert_mover.apply(pose)
+#pert_mover.apply(pose)
 
 randomize1 = RigidBodyRandomizeMover(pose, jump_num, partner_upstream)
 randomize2 = RigidBodyRandomizeMover(pose, jump_num, partner_downstream)
 
 print "_____ Check point 2"
-randomize1.apply(pose)
-randomize2.apply(pose)
+#randomize1.apply(pose)
+#randomize2.apply(pose)
 
 slide = DockingSlideIntoContact(jump_num)
 slide.apply(pose)
@@ -49,7 +49,7 @@ min_mover = MinMover()
 min_mover.movemap(movemap)
 min_mover.score_function(scorefxn)
 
-min_mover.apply(pose)
+#min_mover.apply(pose)
 
 print 'Done Applying MinMover!'
 
