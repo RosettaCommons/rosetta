@@ -46,13 +46,13 @@ dens <- estimate_density_1d(
 dens$don_chem_type <- sub("^hbdon_", '', dens$don_chem_type)
 
 plot_id = "cosBAH_dAH2p4cut_chem_type"
-p <- ggplot(data=dens, aes(x=acos(x)*180/pi, y=-log(y), colour=sample_source, indicator=counts))
+p <- ggplot(data=dens, aes(x=acos(x)*180/pi, y=y, colour=sample_source, indicator=counts))
 p <- p + geom_line()
 p <- p + geom_indicator()
 p <- p + facet_grid( don_chem_type ~ acc_chem_type )
 p <- p + opts(title = "Hydrogen Bonds BAH Angle by Chemical Type w/ dist(A,H) < 2.4\n(normalized for equal volume per unit distance)")
 p <- p + labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
-              y="log(FeatureDensity + 1)")
+              y="FeatureDensity")
 p <- p + theme_bw()
 p <- p + scale_y_continuous(limits=c(-2.3,6))
 

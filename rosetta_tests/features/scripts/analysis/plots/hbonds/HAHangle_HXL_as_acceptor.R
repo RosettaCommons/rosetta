@@ -9,24 +9,25 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "RealBAH_HXL_as_acceptor.R",
-filename = "scripts/analysis/plots/hbonds/RealBAH_HXL_as_acceptor.R",
+id = "HAH_HXL_as_acceptor.R",
+filename = "scripts/analysis/plots/hbonds/HAH_HXL_as_acceptor.R",
 author = "Andrew Leaver-Fay",
-brief_description = "Measure the angle of the tyrosine, serine, and threonine BAH angle -- where the base is the heavy-atom base of the hydroxyl oxygen -- when acting as an acceptor",
+brief_description = "Measure the angle of the tyrosine, serine, and threonine HAH angle when acting as an acceptor",
 
 long_description = "
-Currently the BAH angle extracted from the database is measured wrt to the hydroxyl hydrogen instead of the hydroxyl oxygen's heavyatom base.
-As shown for serine below, the angle HG-OG-H will be reported as the BAH angle.  This is a tough angle to work with, though, because
-the coordinate of the HG atom may only be inferred and not directly observed.  Instead, it would be good to look at the CB-OG-H angle.
+Measure the H-A-H angle for hydroxyl acceptors.  Since the flags that are active during extraction can decide whether
+the cosBAH angle reported in the features database is either the CB-OG-H angle OR the HG-OG-H angle, its worth simply
+measuring the angle directly from the cooridinates. This script creates HAH angle plots for SER/THR and for TYR
+acceptors -- both aggregate plots, and plots broken down by donor-type.
 
 
-                  A
-                 '
-                '
+                  D
+                 /
+                /
                H
-   HG        /
-     \     /
-       \ /
+   HG        '
+     \     '
+       \ '
         OG
         |
         |
@@ -46,7 +47,7 @@ SELECT
 	acc.HBChemType AS acc_chem_type,
 	acc.resNum AS acc_residue_number,
 	don.resNum AS don_residue_number,
-	acc_atoms.base_x AS Bx, acc_atoms.base_y AS By, acc_atoms.base_z AS Bz,
+	acc_atoms.base2_x AS Bx, acc_atoms.base2_y AS By, acc_atoms.base2_z AS Bz,
 	acc_atoms.atm_x  AS Ax, acc_atoms.atm_y AS Ay,  acc_atoms.atm_z AS Az,
 	don_atoms.atm_x  AS Hx, don_atoms.atm_y AS Hy,  don_atoms.atm_z AS Hz
 FROM
@@ -81,13 +82,13 @@ dens <- estimate_density_1d(
   ids = c("sample_source", "acc_chem_type"),
   variable = "cosBAH")
 
-plot_id = "cosBAH_hydroxyl_acceptors"
+plot_id = "cosHAH_hydroxyl_acceptors"
 p <- ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
   geom_indicator(aes(colour=sample_source, indicator=counts)) +
   facet_wrap( ~ acc_chem_type) +
-  opts(title = "Hydrogen Bonds BAH Angle for Hydroxyl Acceptors, Measured from the Heavy-Atom Base\nB-Factors < 30; Sequence Separation > 5") +
-  scale_x_continuous(paste('Heavyatom Base -- Acceptor -- Hydrogen (degrees)')) +
+  opts(title = "Hydrogen Bonds HAH Angle for Hydroxyl Acceptors, Measured from Coordinates\nB-Factors < 30; Sequence Separation > 5") +
+  scale_x_continuous(paste('Hydroxyl Hydrogen -- Acceptor -- Donor Hydrogen (degrees)')) +
   scale_y_continuous("FeatureDensity")
 if(nrow(sample_sources) <= 3){
   p <- p + opts(legend.position="bottom", legend.direction="horizontal")
@@ -99,13 +100,13 @@ dens2 <- estimate_density_1d(
   ids = c("sample_source", "acc_chem_type", "don_chem_type"),
   variable = "cosBAH")
 
-plot_id = "cosBAH_hydroxyl_acceptors_chem_type"
+plot_id = "cosHAH_hydroxyl_acceptors_chem_type"
 p <- ggplot(data=dens2) + theme_bw() +
   geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
   geom_indicator(aes(colour=sample_source, indicator=counts)) +
   facet_grid( don_chem_type ~ acc_chem_type) +
-  opts(title = "Hydrogen Bonds BAH Angle for Hydroxyl Acceptors, Measured from the Heavy-Atom Base\nB-Factors < 30; Sequence Separation > 5") +
-  scale_x_continuous(paste('Heavyatom Base -- Acceptor -- Hydrogen (degrees)')) +
+  opts(title = "Hydrogen Bonds HAH Angle for Hydroxyl Acceptors, Measured from Coordinates\nB-Factors < 30; Sequence Separation > 5") +
+  scale_x_continuous(paste('Hydroxyl Hydrogen -- Acceptor -- Donor Hydrogen (degrees)')) +
   scale_y_continuous("FeatureDensity")
 if(nrow(sample_sources) <= 3){
   p <- p + opts(legend.position="bottom", legend.direction="horizontal")
