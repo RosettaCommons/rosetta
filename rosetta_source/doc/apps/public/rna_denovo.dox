@@ -22,17 +22,15 @@ For a 'minimal' demo example of the RNA fragment assembly and full-atom minimiza
 
 <code>rosetta_demos/public/RNA_Denovo</code>
 
-
 @section refs References
-Das, R. and Baker, D. (2007), "Automated de novo prediction of native-like RNA tertiary structures", PNAS 104: 14664-14669. [for fragment assembly]
+Das, R. and Baker, D. (2007), "Automated de novo prediction of native-like RNA tertiary structures", PNAS 104: 14664-14669. [for fragment assembly]. <a href="http://www.stanford.edu/~rhiju/Das_Baker_PNAS_2007.pdf">Paper.</a> <a href="http://www.pnas.org/content/104/37/14664.long"> Link. </a>
 
-Das, R., Kudaravalli, M., et al. (2007) "Structural inference of native and partially folded RNA by high throughput contact mapping", PNAS, 4144-4149. [for modeling large RNAs with constraints]
+Das, R., Kudaravalli, M., et al. (2007) "Structural inference of native and partially folded RNA by high throughput contact mapping", PNAS, 4144-4149. [for modeling large RNAs with constraints]. <a href="http://www.stanford.edu/~rhiju/das_MOHCA08.pdf">Paper.</a> <a href="http://www.pnas.org/content/105/11/4144.long"> Link. </a>
 
-Das, R., Karanicolas, J., and Baker, D. (2010), "Atomic accuracy in predicting and designing noncanonical RNA structure". Nature Methods 7:291-294. [for high resolution refinement]
+Das, R., Karanicolas, J., and Baker, D. (2010), "Atomic accuracy in predicting and designing noncanonical RNA structure". Nature Methods 7:291-294. [for high resolution refinement] <a href="http://www.stanford.edu/~rhiju/DasKaranicolasBaker2010ALL.pdf">Paper.</a> <a href="http://www.nature.com/nmeth/journal/v7/n4/abs/nmeth.1433.html"> Link. </a>
 
-Sripakdeevong, P., Kladwang, W., and Das, R. (2011), "Resolving a sampling bottleneck in biopolymer structure prediction: RNA loops by a stepwise ansatz", PNAS in press. [for loop modeling]
-
-(Preprints/reprints of these papers are available at http://daslab.stanford.edu/pubs.html).
+Sripakdeevong, P., Kladwang, W., and Das, R. (2011) "An enumerative
+  stepwise ansatz enables atomic-accuracy RNA loop modeling", PNAS 108:20573-20578.  [for loop modeling] <a href="http://www.stanford.edu/~rhiju/Sripakdeevong_StepwiseAnsatz_2011.pdf">Paper</a> <a href="http://dx.doi.org/10.1073/pnas.1106516108">Link</a>
 
 @section purpose Purpose
 This code is intended to give three-dimensional de novo models of single-stranded RNAs or multi-stranded RNA motifs, with the prospect of reaching high (near-atomic-resolution) accuracy.
@@ -46,7 +44,7 @@ are also better at discriminating native-like conformations from non-native conf
 @section limits Limitations
 @li This method has been demonstrated to reach atomic accuracy for small motifs (12 residues or less) -- the current bottleneck for larger RNAs is the difficulty of complete conformational sampling (as in other applications in Rosetta to, e.g., protein de novo modeling). On-going work attempts to resolve this issue, but requires great computational expense (see Sripakdeevong et al. paper above).
 
-@li For larger RNAs, it appears most efficient to just carry out fragment assembly without refinement, specifying secondary structure (as described below). Although atomic accuracy is unlikely, models acccurate at nucleotide or helix resolution can be achieved, especially with constraints from experiments.
+@li For larger RNAs, it appears most efficient to just carry out fragment assembly without refinement, specifying secondary structure (as described below). Although atomic accuracy is unlikely, models acccurate at nucleotide or helix resolution can be achieved, especially with constraints from experiments. See also: @ref rna_assembly.
 
 @li As with most other modes in Rosetta, the final ensemble of models is not guaranteed to be a Boltzmann ensemble.
 
@@ -122,13 +120,13 @@ Similarly, the database of base pair geometries can be created with rna_database
 @verbatim
 Required:
 -in:database                                     Path to rosetta databases. [PathVector]
--in::fasta                                       Fasta-formatted sequence file. [FileVector]
+-in:fasta                                        Fasta-formatted sequence file. [FileVector]
 
 Commonly used:
--out::file::silent                               Name of output file [scores and torsions, compressed format]. default="default.out" [String]
+-out:file:silent                                 Name of output file [scores and torsions, compressed format]. default="default.out" [String]
 -params_file                                     RNA params file name.[String]. For Example: -params_file chunk002_1lnt_.prm
--in::native                                      Native PDB filename. [File].
--out::nstruct                                    Number of models to make. default: 1. [Integer]
+-in:native                                       Native PDB filename. [File].
+-out:nstruct                                     Number of models to make. default: 1. [Integer]
 -minimize_rna                                    High resolution optimize RNA after fragment assembly.[Boolean]
 -vary_geometry                                   Vary bond lengths and angles (with harmonic constraints near Rosetta ideal) for backbone and sugar degrees of freedom [Boolean]
 
@@ -139,11 +137,16 @@ Less commonly used, but useful
 -dump                                            Generate pdb output. [Boolean]
 -vall_torsions                                   Source of RNA fragments. [default: 1jj2.torsions]. [Boolean]
 -jump_library_file                               Source of base-pair rigid body transformations if base pairs are specified.
-                                                 [default: 1jj2_RNA_jump_library.dat] [String]
+                                                   [default: 1jj2_RNA_jump_library.dat] [String]
 -close_loops                                     Attempt closure across chainbreaks by cyclic coordinate descent after fragment moves [Boolean]
 -cst_file                                        Specify constraints (typically atom pairs) in Rosetta-style constraint file. [String]
 -output_lores_silent_file                        if doing full-atom minimize, also save models after fragment assembly but before refinement (file will be called *.LORES.out) [Boolean]
 -dump                                            output pdbs that occur during the run, even if using silent file output.
+
+Advanced [used in rna_assembly]
+-in:file:silent                                  List of input files (in 'silent' format) that specify potential template structures or 'chunks'
+-chunk_res                                       Positions at which 'chunks' are applied. If there is more than one chunk file, specify indices for
+                                                   the first file and then the second file, etc.
 
 @endverbatim
 

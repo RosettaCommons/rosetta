@@ -22,14 +22,10 @@ For the full workflow check out:
 
 <code>rosetta_demos/public/RNA_Assembly</code>
 
-For a 'minimal' demo example of the final step (RNA assembly from prebuilt parts saved in 'silent files'), see
-
-<code>rosetta_tests/integration/tests/rna_assemble/</code>
-
 @section refs References
-Kladwang,	W., VanLang, C.C.,Cordero, P.	& Das, R. (2011), "A two-dimensional mutate-and-map strategy for non-coding RNA structure", Nature Chemistry, in press. doi:10.1038/nchem.1176.
-
-(Preprints/reprints of these papers are available at http://daslab.stanford.edu/pubs.html).
+Kladwang, W., VanLang, C.C., Cordero P., and Das, R. (2011)
+ "A two-dimensional mutate-and-map strategy for non-coding RNA
+  structure", Nature Chemistry 3: 954-962.   <a href="http://www.stanford.edu/~rhiju/KladwangVanlangCorderoDas_NatChem_2011_ALL.pdf">Paper</a> <a href="http://www.nature.com/nchem/journal/v3/n12/abs/nchem.1176.html">Link</a>
 
 @section purpose Purpose
 This code is intended to take an RNA sequence and secondary structure and then give three-dimensional de novo models of the helices and inter-helical motifs, and then build up the complete model from these parts.
@@ -82,7 +78,9 @@ Then run the Rosetta commands in :
  README_ASSEMBLE [assembles the stems and motifs]
 @endverbatim
 
-You can see examples of these files and their output in example_output/. Please note that for these files I changed the 'nstruct' commands to only create 2 models per motif. In reality you will want to make  2000-4000 MOTIF models, and then several thousand ASSEMBLE models. [You can just use one STEM model per helix, as that is supposed to be an ideal helix.] The helical stem building should take only a few seconds per helix. The motif modeling will take longer -- about 1 minute per model. The final assembly jobs will take 2-3 minutes per model for a 100-nt RNA, and longer for larger molecules.
+You can see examples of these files and their output in example_output/. Please note that you can reduce or increase the number of models per motif with  the 'nstruct' models; for a quick run through, you could change these to 2. In reality you will want to make  2000-4000 MOTIF models, and then several thousand ASSEMBLE models. [You can just use one STEM model per helix, as that is supposed to be an ideal helix.] The helical stem building should take only a few seconds per helix. The motif modeling will take longer -- about 1 minute per model. The final assembly jobs will take 2-3 minutes per model for a 100-nt RNA, and longer for larger molecules.
+
+
 
 @subsection command_line Command-lines in some more detail.
 
