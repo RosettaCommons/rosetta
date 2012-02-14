@@ -1075,10 +1075,10 @@ class EnergyMethod:
 
 # By Michael Pacella
 def etable_atom_pair_energies(atom1, atom2, sfxn):
-	''' Usage: lj_atr, lj_rep, solv=etable_atom_pair_energies(atom1, atom2, sfxn)
+    ''' Usage: lj_atr, lj_rep, solv=etable_atom_pair_energies(atom1, atom2, sfxn)
 	Description: given a pair of atoms and scorefunction, use the precomputed
 	'etable' to return LJ attractive, LJ repulsive, and LK solvation energies
-	'''
+    '''
 
     score_manager=core.scoring.ScoringManager.get_instance()
     etable_ptr=score_manager.etable(sfxn.energy_method_options().etable_type())
@@ -1086,24 +1086,24 @@ def etable_atom_pair_energies(atom1, atom2, sfxn):
     etable_energy=core.scoring.etable.EtableEnergy(etable,sfxn.energy_method_options())
 
 	#constructing AtomPairEnergy container to hold computed energies
-	ape=core.scoring.etable.AtomPairEnergy()
+    ape=core.scoring.etable.AtomPairEnergy()
 
 	#setting all energies in the AtomPairEnergy to zero prior to calculation
-	ape.attractive, ape.bead_bead_interaction, ape.repulsive, ape.solvation=0.0, 0.0, 0.0, 0.0
+    ape.attractive, ape.bead_bead_interaction, ape.repulsive, ape.solvation=0.0, 0.0, 0.0, 0.0
 
 	#calculating distance squared and setting it in the AtomPairEnergy
-	ape.distance_squared = atom1.xyz().distance_squared(atom2.xyz())
+    ape.distance_squared = atom1.xyz().distance_squared(atom2.xyz())
 
 	#evaluate energies from pre-calculated etable, using a weight of 1.0
 	#in order to match the raw energies from eval_ci_2b
-	etable_energy.atom_pair_energy(atom1,atom2,1.0,ape)
+    etable_energy.atom_pair_energy(atom1,atom2,1.0,ape)
 
 	#calculating atom_atom scores
-	lj_atr=ape.attractive
-	lj_rep=ape.repulsive
-	solv=ape.solvation
+    lj_atr=ape.attractive
+    lj_rep=ape.repulsive
+    solv=ape.solvation
 
-	return lj_atr, lj_rep, solv
+    return lj_atr, lj_rep, solv
 
 
 
