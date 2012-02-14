@@ -14,20 +14,24 @@
 /// @author Javier Castellanos ( javiercv@uw.edu )
 
 // Unit headers
-#include <devel/matdes/SymmetricMultimerDesign.hh>
-#include <devel/matdes/SymmetricMultimerDesignMoverCreator.hh>
+#include <devel/matdes/Symmetrizer.hh>
+#include <devel/matdes/SymmetrizerMoverCreator.hh>
 
 // Package headers
 
 // project headers
 #include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymDof.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/random/random.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <protocols/moves/DataMap.hh>
+#include <protocols/filters/Filter.hh>
+#include <utility/tag/Tag.hh>
 
 namespace devel {
 namespace matdes {
@@ -37,26 +41,31 @@ using namespace utility;
 
 // -------------  Mover Creator -------------
 std::string
-SymmetrizeCreator::keyname() const
+SymmetrizerMoverCreator::keyname() const
 {
-	return SymmetrizeCreator::mover_name();
+	return SymmetrizerMoverCreator::mover_name();
 }
 
-MoverOP
-SymmetrizeCreator::create_mover() const {
-	return new ConstrainedDesign;
+protocols::moves::MoverOP
+SymmetrizerMoverCreator::create_mover() const {
+	return new Symmetrizer;
 }
 
 std::string
-SymmetrizeCreator::mover_name()
+SymmetrizerMoverCreator::mover_name()
 {
-	return "Symmetrize";
+	return "Symmetrizer";
 }
 // -------------  Mover Creator -------------
 
 void
-Symmetrize::apply(Pose & pose) {
-	core::pose::symmetry::make_symmetric_pose(pose, sym_file_);
+Symmetrizer::apply(Pose & pose) {
+	using core::conformation::symmetry::SymmetryInfoCOP;
+	using core::conformation::symmetry::SymDof;
+	using core::pose::Pose;
+	typedef numeric::xyzVector<Real> Vec;
+	typedef numeric::xyzMatrix<Real> Mat;
+	core::pose::symmetry::make_symmetric_pose(pose, symm_file_);
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	std::map<Size,SymDof> dofs = sym_info->get_dofs();
  	int sym_jump = 0;
@@ -71,9 +80,7 @@ Symmetrize::apply(Pose & pose) {
  	if (sym_jump == 0)
    	utility_exit_with_message("No jump defined!");
 
-	core::kinematics::Jump j;
-	//fpd if we have multiple symm DOFs or we have radial_disp==angle==0 then use input conformation
-	j = pose.jump(sym_jump);
+	core::kinematics::Jump j = pose.jump(sym_jump);
 
 	Mat init_rot = pose.jump(sym_jump).get_rotation();
 

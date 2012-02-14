@@ -11,20 +11,20 @@
 /// @brief
 /// @author Javier Castellanos	(javiercv@uw.edu)
 
-#ifndef INCLUDED_devel_constrained_sequence_MatDesDesign_fwd_HH
-#define INCLUDED_devel_constrained_sequence_MatDesDesign_fwd_HH
+#ifndef INCLUDED_devel_constrained_sequence_Symmetrizer_fwd_HH
+#define INCLUDED_devel_constrained_sequence_Symmetrizer_fwd_HH
 #include <utility/pointer/owning_ptr.hh>
 
 namespace devel {
-namespace constrained_sequence_design {
+namespace matdes {
 
-class MatDesDesign;
+class Symmetrizer;
 
-typedef utility::pointer::owning_ptr< MatDesDesign > MatDesDesignOP;
-typedef utility::pointer::owning_ptr< MatDesDesign const > MatDesDesignCOP;
+typedef utility::pointer::owning_ptr< Symmetrizer > SymmetrizerOP;
+typedef utility::pointer::owning_ptr< Symmetrizer const > SymmetrizerCOP;
 
 
-} // constrained_sequence_design
+} // matdes
 } // devel
 
 #endif

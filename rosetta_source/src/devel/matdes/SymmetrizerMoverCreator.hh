@@ -6,25 +6,29 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-//
-/// @file 
-/// @brief
-/// @author Javier Castellanos	(javiercv@uw.edu)
 
-#ifndef INCLUDED_devel_constrained_sequence_MatDesDesign_fwd_HH
-#define INCLUDED_devel_constrained_sequence_MatDesDesign_fwd_HH
-#include <utility/pointer/owning_ptr.hh>
+///@file 
+///@brief 
+///@author Neil King ( neilking@uw.edu )
+///@author Javier Castellanos ( javiercv@uw.edu )
+
+#ifndef INCLUDED_devel_matdes_SymmetryzerMoverCreator_hh
+#define INCLUDED_devel_matdes_SymmetryzerMoverCreator_hh
+
+#include <protocols/moves/MoverCreator.hh>
 
 namespace devel {
-namespace constrained_sequence_design {
+namespace matdes {
 
-class MatDesDesign;
+class SymmetrizerMoverCreator : public protocols::moves::MoverCreator {
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
+};
 
-typedef utility::pointer::owning_ptr< MatDesDesign > MatDesDesignOP;
-typedef utility::pointer::owning_ptr< MatDesDesign const > MatDesDesignCOP;
-
-
-} // constrained_sequence_design
-} // devel
+}
+}
 
 #endif
+
