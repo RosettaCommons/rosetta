@@ -67,9 +67,9 @@ public:
     //copy constructor
 	Loops( const Loops & src );
     
-    Loops( bool const read_loops_file, bool const strict_looprelax_checks = true, std::string const & token = "LOOP" );
-    Loops( std::string filename, bool const strict_looprelax_checks = true, std::string const & token = "LOOP" );
-    // assignment operator
+	Loops( bool const read_loops_file, bool const strict_looprelax_checks = true, std::string const & token = "LOOP" );
+	Loops( std::string filename, bool const strict_looprelax_checks = true, std::string const & token = "LOOP" );
+	// assignment operator
 	Loops & operator =( Loops const & src );
     
     // destructor
@@ -272,20 +272,23 @@ public:
 	bool operator!=( Loops const& other ) const;
 
 private:
-    void init(
-        LoopList const & loops_in,
-        bool const read_loop_file_from_options = false,
-        bool const strict_looprelax_checks = true,
-        std::string const & token = "LOOP",
-        std::string const & passed_in_filename = ""
-    );
+	void init(
+		LoopList const & loops_in,
+		bool const read_loop_file_from_options = false,
+		bool const strict_looprelax_checks = true,
+		std::string const & token = "LOOP",
+		std::string const & passed_in_filename = ""
+	);
 
-    void read_loop_file();
-    
-    bool strict_looprelax_checks_on_file_reads_;
+	void read_loop_file();
+
+private:
+
+	bool strict_looprelax_checks_on_file_reads_;
 	LoopList loops_;
-    std::string loop_filename_;
-    std::string file_reading_token_;
+	std::string loop_filename_;
+	std::string file_reading_token_;
+
 }; // Loops
 
 } //namespace loops

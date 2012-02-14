@@ -3787,6 +3787,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Experimental term for hydrogen bonds to sp2 acceptors: sets the dynamic range between the most potent sp2 hydrogen bonds and the least potent</dd><br>
 <dd>Default: 3.0</dd><br>
 </dl>
+<dl>
+<dt><b>-hbond_measure_sp3acc_BAH_from_hvy</b> \<Boolean\><dt>
+<dd>If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>corrections:chemical</h2>
 <dl>

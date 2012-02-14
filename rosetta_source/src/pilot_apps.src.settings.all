@@ -19,6 +19,7 @@ sources = {
 		#"optest",
 		#"mpi_msd",
 		"version_scorefunction", #Note: used for scorefunction version tests; no itest needed
+		"analyze_rtmin_failures",
 		#"find_buns",
 		#"test_ik_match",
 	],

@@ -1216,7 +1216,13 @@ make_hbBasetoAcc_unitvector(
 	using namespace chemical;
 	switch(acc_hybrid){
 	case SP2_HYBRID:  PBxyz = Bxyz; break;
-	case SP3_HYBRID:  PBxyz = B2xyz; break;
+	case SP3_HYBRID:
+		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ] ) {
+			PBxyz = Bxyz;
+		} else {
+			PBxyz = B2xyz;
+		}
+		break;
 	case RING_HYBRID: PBxyz = Real(0.5) * ( Bxyz + B2xyz ); break;
 	default:
 		BAunit = 0.0;
@@ -1250,8 +1256,14 @@ assign_abase_derivs(
 			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2(); break;
 		}
 		case SP3_HYBRID:  {
-			acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
-			acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2(); break;
+			if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ] ) {
+				acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
+				acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2();
+			} else {
+				acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
+				acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2();
+			}
+			break;
 		}
 		case RING_HYBRID: {
 			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f1() += 0.5 * weighted_energy * abase_deriv.f1();

@@ -190,6 +190,7 @@ namespace corrections { namespace score { BooleanOptionKey const score12prime( "
 namespace corrections { namespace score { BooleanOptionKey const hb_sp2_chipen( "corrections:score:hb_sp2_chipen" );  } }
 namespace corrections { namespace score { RealOptionKey const hb_sp2_amp( "corrections:score:hb_sp2_amp" );  } }
 namespace corrections { namespace score { RealOptionKey const hb_sp2_peak_heigh_above_trough( "corrections:score:hb_sp2_peak_heigh_above_trough" );  } }
+namespace corrections { namespace score { BooleanOptionKey const hbond_measure_sp3acc_BAH_from_hvy( "corrections:score:hbond_measure_sp3acc_BAH_from_hvy" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const chemical( "corrections:chemical" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const icoor_05_2009( "corrections:chemical:icoor_05_2009" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const parse_charge( "corrections:chemical:parse_charge" );  } }
@@ -593,4 +594,3 @@ namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
-namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }

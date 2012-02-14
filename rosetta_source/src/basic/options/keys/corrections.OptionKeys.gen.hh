@@ -50,6 +50,7 @@ namespace corrections { namespace score { extern BooleanOptionKey const score12p
 namespace corrections { namespace score { extern BooleanOptionKey const hb_sp2_chipen; } }
 namespace corrections { namespace score { extern RealOptionKey const hb_sp2_amp; } }
 namespace corrections { namespace score { extern RealOptionKey const hb_sp2_peak_heigh_above_trough; } }
+namespace corrections { namespace score { extern BooleanOptionKey const hbond_measure_sp3acc_BAH_from_hvy; } }
 namespace corrections { namespace chemical { extern BooleanOptionKey const chemical; } }
 namespace corrections { namespace chemical { extern BooleanOptionKey const icoor_05_2009; } }
 namespace corrections { namespace chemical { extern BooleanOptionKey const parse_charge; } }
