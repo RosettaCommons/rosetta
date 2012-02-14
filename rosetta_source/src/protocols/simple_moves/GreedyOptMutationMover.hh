@@ -41,7 +41,7 @@ public:
 	protocols::moves::MoverOP clone() const;
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new GreedyOptMutationMover ); }
-	
+
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~GreedyOptMutationMover();
 	core::pack::task::TaskFactoryOP task_factory() const;
@@ -58,6 +58,8 @@ public:
 	void report_all( bool const report_all );
 	std::string sample_type() const;
 	void sample_type( std::string const sample_type );
+	void stopping_condition( protocols::filters::FilterOP f ){ stopping_condition_ = f; }
+	protocols::filters::FilterOP stopping_condition() const{ return stopping_condition_; }
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -67,6 +69,7 @@ private:
 	core::Real flip_sign_;
 	bool report_all_;
 	bool dump_pdb_;
+	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
 };
 
 

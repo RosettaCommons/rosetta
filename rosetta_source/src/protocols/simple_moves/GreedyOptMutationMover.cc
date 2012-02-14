@@ -65,10 +65,11 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 	relax_mover_( NULL ),
 	scorefxn_( NULL ),
 	sample_type_( "low" ),
-	dump_pdb_( false )
+	dump_pdb_( false ),
+	stopping_condition_( NULL )
 {
 	if( sample_type_ == "high" ){
-		flip_sign_ = Real( -1 ); 
+		flip_sign_ = Real( -1 );
 	}else if( sample_type_ == "low" ){
 		flip_sign_ = Real( 1 );
 	}else{
@@ -142,20 +143,20 @@ GreedyOptMutationMover::sample_type() const{
 //for comparing values in sort
 bool
 cmp_pair_by_second(
-	std::pair< AA, Real > const pair1, 
+	std::pair< AA, Real > const pair1,
 	std::pair< AA, Real > const pair2 )
 {
 	return pair1.second < pair2.second;
-} 
+}
 
 //for comparing values in sort
 bool
 cmp_triple_by_third(
-	std::pair< Size, std::pair< AA, Real > > const pair1, 
-	std::pair< Size, std::pair< AA, Real > > const pair2 ) 
+	std::pair< Size, std::pair< AA, Real > > const pair1,
+	std::pair< Size, std::pair< AA, Real > > const pair2 )
 {
 	return pair1.second.second < pair2.second.second;
-} 
+}
 
 core::scoring::ScoreFunctionOP
 GreedyOptMutationMover::scorefxn() const{
@@ -344,7 +345,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		pose = best_pose;
 		Size resi( seqpos_resid_val.first );
 		AA target_aa( seqpos_resid_val.second.first );
-		
+
 		//make bool vector of allowed aa's [1,20], all false except for target_aa
 		utility::vector1< bool > allowed_aas;
 		allowed_aas.clear();
@@ -400,6 +401,10 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		TR<<"Mutation accepted. New best value is "<< val << std::endl;
 		best_val = val;
 		best_pose = pose;
+		if( stopping_condition() && stopping_condition()->apply( pose ) ){
+			TR<<"Stopping condition evaluates to true. Stopping early."<<std::endl;
+			return;
+		}
 	}
 
 //reset to best pose after last step
@@ -437,6 +442,11 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	//load dump_pdb
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
+	if( tag->hasOption( "stopping_condition" ) ){
+		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );
+		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, filters ) );
+		TR<<"Defined stopping condition "<<stopping_filter_name<<std::endl;
+	}
 }
 
 
