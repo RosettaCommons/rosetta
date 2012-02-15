@@ -18,6 +18,7 @@
 // Unit Headers
 #include <protocols/moves/GenericMonteCarloMover.hh>
 #include <protocols/moves/GenericMonteCarloMoverCreator.hh>
+#include <protocols/moves/DataMapObj.hh>
 
 // C/C++ headers
 #include <iostream>
@@ -640,7 +641,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 			mover_pp->apply_probability( new_probabilities );
 			mover_accepts = utility::vector1< core::Size >( mover_accepts.size(), 1 );
 		}
-		bool const stop( stopping_condition()->apply( pose ) );
+		bool const stop( ( mover_stopping_condition_() != NULL && mover_stopping_condition_->obj ) || stopping_condition()->apply( pose ) );
 		if( stop ){
 			TR<<"MC stopping condition met at trial "<<i<<std::endl;
 			break;
@@ -715,6 +716,10 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 		adaptation_period( tag->getOption< core::Size >( "adaptation_period", std::max( (int) maxtrials_ / 10, 10 ) ) );
 
 	String const  mover_name( tag->getOption< String >( "mover_name" ,""));
+	if( data.has( "stopping_condition", mover_name ) ){
+		TR<<mover_name<<" defines its own stopping condition, and GenericMC will respect this stopping condition"<<std::endl;
+		mover_stopping_condition_ = data.get< DataMapObj< bool > * >( "stopping_condition", mover_name );
+	}
 
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
 	Movers_map::const_iterator  find_mover ( movers.find( mover_name ));

@@ -84,7 +84,6 @@ TaskAwareCsts::apply( core::pose::Pose & pose )
 	foreach( core::Size const resid, designable ){
 		core::conformation::Residue const rsd_i( pose.residue( resid ) );
 		if( cst_type_ == "coordinate" ){
-
 			cst.push_back( new CoordinateConstraint( AtomID( rsd_i.atom_index( "CA" ), resid ), anchor_atom, rsd_i.xyz( "CA" ), coord_cst_func ) );
 			TR<<"coordinate cst at resid: "<<resid<<'\n';
 		}

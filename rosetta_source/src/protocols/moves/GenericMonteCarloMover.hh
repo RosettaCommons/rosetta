@@ -20,6 +20,7 @@
 
 // Unit header
 #include <protocols/moves/GenericMonteCarloMover.fwd.hh>
+#include <protocols/moves/DataMapObj.hh>
 
 // C/C++ headers
 #include <string>
@@ -375,6 +376,7 @@ private:
 	/// @brief Collection of function callbacks
 	boost::unordered_map<Size, GenericMonteCarloMoverTrigger> triggers_;
 	protocols::filters::FilterOP stopping_condition_; //dflt false_filter; use this to stop an MC trajectory before maxtrials_ (if filter evaluates to true)
+	utility::pointer::owning_ptr< DataMapObj< bool > > mover_stopping_condition_; // dflt NULL; if the mover defined a stopping condition on the datamap then this assumes the mover's value. In this way, the Mover can tell GenericMC to stop execution, e.g., if it has iterated over all internal possibilities
 	bool adaptive_movers_; //dflt false; change the mover probabilities according to the accept rates?; only works if the mover is a ParsedProtocol type with mode=single_random
 	core::Size adaptation_period_; /// dflt max( 10, trials/10 ); only works with adaptive; how often should the run probabilities be adapted?
 };
