@@ -282,7 +282,7 @@ namespace swa {
 		for ( Size i = 1; i <= slice_res.size(); i++ ) {
 			//		std::cout << "About to append " << i << std::endl;
 			ResidueOP residue_to_add = pose.residue( slice_res[ i ] ).clone() ;
-			if ( i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 ) /*new segment*/ || residue_to_add->is_lower_terminus() ){
+			if ( (i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 )) /*new segment*/ || residue_to_add->is_lower_terminus() ){
 				if( residue_to_add->is_RNA() && (i>1) && new_pose.residue_type(i-1).is_RNA() ){
 					new_pose.append_residue_by_jump(  *residue_to_add, i-1,
 																						chi1_torsion_atom( new_pose.residue(i-1) ),

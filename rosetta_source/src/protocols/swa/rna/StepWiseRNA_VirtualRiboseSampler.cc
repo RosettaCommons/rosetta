@@ -652,7 +652,7 @@ namespace rna {
 					if( floating_base_full_atom_van_der_Waals_screening(current_pose, pose_data.base_rep_score, atr_rep_screening_scorefxn, count_data, true)==false ) continue;
 
 					if( floating_base_chain_break_screening(current_pose, chainbreak_scorefxn, count_data, FB_job_params.five_prime_chain_break, pose_data.tag, true)==false ){
-						 CCD_fail_for_BB_rotamer[n]==true;
+						//CCD_fail_for_BB_rotamer[n]==true;  // This doesn't do anything besides make clang sad!
 						 continue;
 					}
 

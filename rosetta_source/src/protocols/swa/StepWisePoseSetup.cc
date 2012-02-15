@@ -1121,8 +1121,8 @@ return "StepWisePoseSetup";
 		using namespace core::pose;
 
 		for ( Size n = 1; n <= pose.total_residue()-1; n++ ) {
-			if ( pose.residue( n ).is_RNA() && pose.residue( n+1).is_protein()  ||
-					 pose.residue( n ).is_protein() && pose.residue( n+1).is_RNA() ){
+			if ( (pose.residue( n ).is_RNA() && pose.residue( n+1).is_protein())  ||
+					 (pose.residue( n ).is_protein() && pose.residue( n+1).is_RNA()) ){
 				pose::add_variant_type_to_pose_residue( pose, "UPPER_TERMINUS", 	n  );
 				pose::add_variant_type_to_pose_residue( pose, "LOWER_TERMINUS", 	n+1 );
 			}
