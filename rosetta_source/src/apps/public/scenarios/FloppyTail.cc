@@ -213,7 +213,7 @@ public:
 			movemap_ = new core::kinematics::MoveMap;
 			for(core::Size i(start_); i<=stop_; ++i) {
 				movemap_->set_bb(i, true); //backbone mobile
-				movemap_->set_chi(i, true); // chi of loop residues
+				movemap_->set_chi(i, true); //chi of mobile residues
 			}
 
 			movemap_lesstail_ = new core::kinematics::MoveMap(*movemap_);
@@ -222,6 +222,7 @@ public:
 				core::Size const substop = (start_ + core::Size(core::Real(taillength) * (1.0 - option[ short_tail_fraction ] ) ) );
 				for(core::Size i(start_); i <= substop; ++i) {
 					movemap_lesstail_->set_bb(i, false);
+					movemap_lesstail_->set_chi(i, false);
 				}
 			}
 		} else if ( //these options are incompatible with movemap use; the movemap determines flexible regions
