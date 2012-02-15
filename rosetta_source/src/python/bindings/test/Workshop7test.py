@@ -35,7 +35,7 @@ print "_____ Check point 2"
 #randomize1.apply(pose)
 #randomize2.apply(pose)
 
-slide = DockingSlideIntoContact(jump_num)
+slide = FaDockingSlideIntoContact(jump_num)
 slide.apply(pose)
 movemap = MoveMap()
 movemap.set_jump(jump_num, True)
