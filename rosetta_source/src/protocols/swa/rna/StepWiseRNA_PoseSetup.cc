@@ -24,7 +24,9 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/FadeFunc.hh>
@@ -158,6 +160,8 @@ namespace rna {
 		verify_protonated_H1_adenosine_variants( pose);
 		add_terminal_res_repulsion( pose );
 
+		if ( job_parameters_ -> add_virt_res_as_root() ) add_virtual_res(pose);
+
 		if(output_pdb_) pose.dump_pdb( "start.pdb" );
 
 		if(verbose_ ) Output_title_text("Exit StepWiseRNA_PoseSetup::apply");
@@ -167,7 +171,7 @@ namespace rna {
 
 
 	void
-	StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose const & pose ){
+	StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		using namespace core::conformation;
 		using namespace core::pose;
 		using namespace protocols::rna;
@@ -258,7 +262,12 @@ namespace rna {
 
 		if(act_working_alignment.size()==0) utility_exit_with_message("act_working_alignment.size()==0");
 
-		align_poses( (*working_native_pose), "working_native_pose" , pose, "working_pose", act_working_alignment);
+		if ( job_parameters_ -> add_virt_res_as_root() ) {
+			add_virtual_res(*working_native_pose);
+			(*working_native_pose).fold_tree( pose.fold_tree() );
+		}
+
+		align_poses( pose, "working_pose", (*working_native_pose), "working_native_pose", act_working_alignment);
 
 
 		job_parameters_->set_working_native_pose( working_native_pose );
@@ -968,6 +977,34 @@ namespace rna {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
+	//Adding Virtual res as root
+	void 
+	StepWiseRNA_PoseSetup::add_virtual_res( core::pose::Pose & pose) {
+		Size const nres = pose.total_residue();
+		Size const working_moving_res(  job_parameters_->working_moving_res() );
+		// if already rooted on virtual residue , return
+		if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
+			TR.Warning << "addVirtualResAsRoot() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
+			return;
+		}
+
+		// attach virt res there
+		bool fullatom = pose.is_fullatom();
+		core::chemical::ResidueTypeSet const & residue_set = pose.residue_type(1).residue_type_set();
+		core::chemical::ResidueTypeCAPs const & rsd_type_list( residue_set.name3_map("VRT") );
+		core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
+		if (working_moving_res == 1) {
+			pose.append_residue_by_jump( *new_res , nres );
+		} else {
+			pose.append_residue_by_jump( *new_res , 1 );
+		}
+
+		// make the virt atom the root
+		kinematics::FoldTree newF( pose.fold_tree() );
+		newF.reorder( nres+1 );
+		pose.fold_tree( newF );
+	}
+	////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 }

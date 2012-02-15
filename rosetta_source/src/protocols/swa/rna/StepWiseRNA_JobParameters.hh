@@ -77,6 +77,7 @@ namespace rna {
 
 		bool const & Is_prepend() const;
 		bool const & Is_internal() const;
+		bool const & add_virt_res_as_root() const;
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition() const;
 
@@ -153,7 +154,7 @@ namespace rna {
 		void set_force_north_ribose_list( utility::vector1< core::Size > const & setting);
 		void set_force_south_ribose_list( utility::vector1< core::Size > const & setting);
 		void set_protonated_H1_adenosine_list( utility::vector1< core::Size > const & setting);
-	
+		void set_add_virt_res_as_root( bool const setting){ add_virt_res_as_root_=setting; }	
 
 
 		core::pose::PoseCOP	working_native_pose() const;
@@ -192,6 +193,7 @@ namespace rna {
 
 		bool Is_prepend_;
 		bool Is_internal_;
+		bool add_virt_res_as_root_;
 
 		ObjexxFCL::FArray1D< bool > partition_definition_;
 

@@ -44,7 +44,8 @@ namespace rna {
 		gap_size_( 0 ),
 		five_prime_chain_break_res_( 0 ),
 		Is_prepend_( false ),
-		Is_internal_( false )
+		Is_internal_( false ),
+		add_virt_res_as_root_( false )
 	{
 
 		//These vectors and map should be empty to begin with, but not harm to ensure this.
@@ -194,6 +195,10 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	bool const & StepWiseRNA_JobParameters::Is_internal() const{
 		return Is_internal_;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////	
+	bool const & StepWiseRNA_JobParameters::add_virt_res_as_root() const{
+		return add_virt_res_as_root_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	ObjexxFCL::FArray1D< bool > const & StepWiseRNA_JobParameters::partition_definition() const{

@@ -101,6 +101,9 @@ namespace rna {
 		set_native_screen_rmsd_cutoff( core::Real const & setting ){native_screen_rmsd_cutoff_=setting;}
 
 		void
+		set_native_edensity_score_cutoff( core::Real const & setting){native_edensity_score_cutoff_=setting;}
+
+		void
 		set_user_input_VDW_bin_screener(StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
 
   private:
@@ -117,6 +120,8 @@ namespace rna {
 		void
 		Freeze_sugar_torsions(core::kinematics::MoveMap & mm, Size const nres) const;
 
+		bool
+		native_edensity_score_screener(core::pose::Pose & pose, core::pose::Pose & native_pose); 
 	private:
 
 		utility::vector1 <pose_data_struct2> const pose_data_list_;
@@ -130,6 +135,7 @@ namespace rna {
 		bool screen_verbose_;
 		bool native_screen_;
 		core::Real native_screen_rmsd_cutoff_;
+		core::Real native_edensity_score_cutoff_;
 
 		bool centroid_screen_; //for testing purposes
 

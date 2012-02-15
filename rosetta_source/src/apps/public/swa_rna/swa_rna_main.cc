@@ -216,6 +216,7 @@ OPT_KEY( Boolean, allow_bulge_at_chainbreak )
 OPT_KEY( Boolean, VERBOSE )
 OPT_KEY( Boolean, sampler_native_rmsd_screen )
 OPT_KEY( Real, sampler_native_screen_rmsd_cutoff )
+OPT_KEY( Real, native_edensity_score_cutoff )
 OPT_KEY( Boolean, skip_minimize )
 OPT_KEY( Real, score_diff_cut )
 OPT_KEY( Boolean, clusterer_perform_score_diff_cut )
@@ -229,6 +230,7 @@ OPT_KEY( Boolean, allow_chain_boundary_jump_partner_right_at_fixed_BP )
 OPT_KEY( Boolean, allow_fixed_res_at_moving_res )
 OPT_KEY( Boolean, clusterer_rename_tags )
 OPT_KEY( Boolean, simple_append_map )
+OPT_KEY( Boolean, add_virt_root )
 OPT_KEY( Boolean, minimizer_output_before_o2star_pack )
 OPT_KEY( StringVector, 	VDW_rep_delete_matching_res)
 OPT_KEY( IntegerVector, global_sample_res_list ) 
@@ -583,7 +585,7 @@ setup_simple_full_length_rna_job_parameters(){
 
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-	std::string const full_sequence = fasta_sequence->sequence();
+	std::string full_sequence = fasta_sequence->sequence();
 	core::Size const nres=full_sequence.length();
 
 	/////////////////////////////////////////////////////
@@ -704,7 +706,7 @@ setup_rna_job_parameters(bool check_for_previously_closed_cutpoint_with_input_po
 	if ( !option[ in::file::fasta ].user() ) utility_exit_with_message( "Must supply in::file::fasta!" );
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-	std::string const full_sequence = fasta_sequence->sequence();
+	std::string full_sequence = fasta_sequence->sequence();
 	core::Size const nres=full_sequence.length();
 
 	if ( !option[ sample_res ].user() ) utility_exit_with_message( "Must supply sample_res!" );
@@ -719,6 +721,7 @@ setup_rna_job_parameters(bool check_for_previously_closed_cutpoint_with_input_po
 																								 										 option[ cutpoint_open ](),
 																								 										 option[ cutpoint_closed ]() );
 	stepwise_rna_job_parameters_setup.set_simple_append_map( option[ simple_append_map]() );
+	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root ( option[ add_virt_root]() );
 	stepwise_rna_job_parameters_setup.set_allow_fixed_res_at_moving_res( option[ allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
 	stepwise_rna_job_parameters_setup.set_fixed_res( get_fixed_res(nres) );
 	stepwise_rna_job_parameters_setup.set_terminal_res( option[ terminal_res ]() );
@@ -1170,13 +1173,13 @@ swa_rna_sample()
 	stepwise_rna_minimizer.set_skip_minimize( option[ skip_minimize ]() );
 	stepwise_rna_minimizer.set_native_rmsd_screen( option[ sampler_native_rmsd_screen ]()); 
 	stepwise_rna_minimizer.set_native_screen_rmsd_cutoff( option[ sampler_native_screen_rmsd_cutoff ]() + 1 ); //+1 for leniency Sept 20, 2010
+	stepwise_rna_minimizer.set_native_edensity_score_cutoff( option[ native_edensity_score_cutoff ]()); 
 
 	stepwise_rna_minimizer.set_perform_o2star_pack( option[ minimizer_perform_o2star_pack ]() );
 	stepwise_rna_minimizer.set_output_before_o2star_pack( option[ minimizer_output_before_o2star_pack ]() );
 
 	if(option[num_pose_minimize].user()) 	stepwise_rna_minimizer.set_num_pose_minimize( option[ num_pose_minimize ]() );
 	stepwise_rna_minimizer.set_minimize_and_score_sugar( option[  minimize_and_score_sugar ]() );
-
 
 	stepwise_rna_minimizer.set_user_input_VDW_bin_screener( user_input_VDW_bin_screener );
 
@@ -1200,13 +1203,10 @@ swa_rna_cluster(){
 		job_parameters_exist=true;
 		job_parameters=setup_simple_full_length_rna_job_parameters();
 
-	}else{
-
-		if(option[ rmsd_res ].user()){
-			job_parameters_exist=true;
-			job_parameters=setup_rna_job_parameters();
-			print_JobParameters_info(job_parameters, "standard_clusterer_job_params", false /*Is_simple_full_length_JP*/);
-		}
+	}else if(option[ rmsd_res ].user()){
+		job_parameters_exist=true;
+		job_parameters=setup_rna_job_parameters();
+		print_JobParameters_info(job_parameters, "standard_clusterer_job_params", false /*Is_simple_full_length_JP*/);
 	}
 
 	StepWiseRNA_JobParametersCOP job_parameters_COP=job_parameters;
@@ -1786,6 +1786,7 @@ main( int argc, char * argv [] )
 	//////////////Job_Parameters///////////
 	NEW_OPT( filter_user_alignment_res, " filter_user_alignment_res ", true ); //General want this to be true except for special cases! June 13, 2011
 	NEW_OPT( simple_append_map , "simple_append_map", false);
+	NEW_OPT( add_virt_root, "add_virt_root", false);
 	NEW_OPT( allow_chain_boundary_jump_partner_right_at_fixed_BP, "mainly just to get Hermann nano-square RNA modeling to work", false); 
 	NEW_OPT( allow_fixed_res_at_moving_res, "mainly just to get Hermann Duplex modeling to work", false); //Nov 15, 2010 
 	NEW_OPT( simple_full_length_job_params, "simple_full_length_job_params", false); //Oct 31, 2011
@@ -1824,6 +1825,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true); //Sept 15, 2010
 	NEW_OPT( minimizer_output_before_o2star_pack, "minimizer_output_before_o2star_pack", false);
 	NEW_OPT( minimizer_perform_o2star_pack, "perform O2* hydrogen packing inside StepWiseRNA_Minimizer", true); //Jan 19, 2012
+	NEW_OPT( native_edensity_score_cutoff, "native_edensity_score_cutoff", -1 );
 
 
 	//////////////Clusterer ///////////////////////

@@ -85,6 +85,7 @@ namespace rna {
 		FARFAR_start_pdb_(""),
 		allow_chain_boundary_jump_partner_right_at_fixed_BP_(false), //hacky, just to get the Square RNA working..Nov 6, 2010
 		allow_fixed_res_at_moving_res_(false), //hacky, just to get the Hermann Duplex RNA working..Nov 15, 2010
+		add_virt_res_as_root_(false), //true for electron density map scoring
 		simple_append_map_(false)
   {
 		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::constructor");
@@ -171,6 +172,8 @@ namespace rna {
 		}else{
 			figure_out_best_working_alignment();
 		}
+
+		job_parameters_-> set_add_virt_res_as_root( add_virt_res_as_root_ );
 
 
 		Output_title_text("Exit StepWiseRNA_JobParameter_Setup::apply");
@@ -289,7 +292,7 @@ namespace rna {
 //		if(fold_tree.num_cutpoint()==0 ){ 
 		if(working_alignment.size()==0 ){
 
-			//if( working_fixed_res.size()!=0) utility_exit_with_message( "working_alignment.size()==0 but fixed_res_.size()!=0 !!" );
+			if( working_fixed_res.size()!=0) utility_exit_with_message( "working_alignment.size()==0 but fixed_res_.size()!=0 !!" );
 			
 			std::cout << " special case of building loop outward...no fixed element. " << std::endl;
 
@@ -428,7 +431,7 @@ namespace rna {
 			//For build loop outward case, in this case make every residue append except for the 1st residue in the chain..
 			//check that the fold_tree is simple..could also use the is_simple_tree() function that don't really understand how this function works
 			if(fold_tree.num_cutpoint()==0){ 
-				if( working_fixed_res.size()!=0) utility_exit_with_message( "fold_tree.num_cutpoint()==0 but fixed_res_.size()!=0 !!" );
+				//if( working_fixed_res.size()!=0) utility_exit_with_message( "fold_tree.num_cutpoint()==0 but fixed_res_.size()!=0 !!" );
 
 				if(full_to_sub[cur_seq_num]==1) return true; //prepend
 		
@@ -533,7 +536,6 @@ namespace rna {
 			 utility::vector1< Size > const & input_to_full_res_map=input_res_vectors[silent_file_num]; //input_res is map from input_seq_num to full_pose_seq_num
 
 			for(Size seq_num=1; seq_num<=import_pose.total_residue(); seq_num++){
-
 				if(import_pose.residue( seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ){
 					if( import_pose.residue( seq_num+1 ).has_variant_type( chemical::CUTPOINT_UPPER )==false ){
 						utility_exit_with_message("seq_num " + string_of(seq_num) + " is a CUTPOINT_LOWER but seq_num " + string_of(seq_num+1) + " is not a cutpoint CUTPOINT_UPPER??" );

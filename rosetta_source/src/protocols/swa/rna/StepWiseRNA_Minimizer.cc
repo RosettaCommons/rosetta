@@ -97,6 +97,7 @@ namespace rna {
 		verbose_(false),
 		native_screen_(false),
 		native_screen_rmsd_cutoff_(3.0),
+		native_edensity_score_cutoff_(-1),
 		centroid_screen_(true),
 		perform_o2star_pack_(true), 
 		output_before_o2star_pack_(false), 
@@ -142,6 +143,7 @@ namespace rna {
 		Output_boolean(" verbose_=", verbose_ ); std::cout << std::endl;
 		Output_boolean(" native_screen_=", native_screen_ ); std::cout << std::endl;
 		std::cout << " native_screen_rmsd_cutoff_=" << native_screen_rmsd_cutoff_ << std::endl;
+		std::cout << " native_edensity_score_cutoff_=" << native_edensity_score_cutoff_ << std::endl;		
 		Output_boolean(" centroid_screen_=", centroid_screen_ ); std::cout << std::endl;
 		Output_boolean(" perform_o2star_pack_=", perform_o2star_pack_); std::cout << std::endl;
 		Output_boolean(" output_before_o2star_pack_=", output_before_o2star_pack_ ); std::cout << std::endl;
@@ -169,8 +171,18 @@ namespace rna {
 	  AtomTreeMinimizer minimizer;
     float const dummy_tol( 0.00000025);
     bool const use_nblist( true );
-    MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false, false );
+    MinimizerOptions options( "dfpmin_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
     options.nblist_auto_update( true );
+
+		//setup native score screening
+		pose::Pose native_pose;
+		if (native_edensity_score_cutoff_ != -1) {
+			native_pose=*(job_parameters_->working_native_pose());
+			for (Size i = 1; i <= native_pose.total_residue(); ++i) {
+				pose::remove_variant_type_from_pose_residue(native_pose, "VIRTUAL_PHOSPHATE", i);
+			}
+		}
+		/////////////////////////////
 
 		if(pose_data_list_.size()==0){
 			 std::cout << "pose_data_list_.size()==0, early exit from StepWiseRNA_Minimizer::apply" << std::endl;
@@ -229,6 +241,10 @@ namespace rna {
 
  			std::string tag=pose_data_list_[i].tag;
 			pose=(*pose_data_list_[i].pose_OP); //This actually create a hard copy.....need this to get the graphic working..
+
+			for (Size ii = 1; ii <= pose.total_residue(); ++ii) {
+				pose::remove_variant_type_from_pose_residue(pose, "VIRTUAL_PHOSPHATE", ii);
+			}			
 
 			if(verbose_ && output_before_o2star_pack_){
 			 	tag[0]='B'; 
@@ -337,6 +353,14 @@ namespace rna {
 				}
 			}
 
+			if (native_edensity_score_cutoff_ != -1) {
+				bool pass_native = native_edensity_score_screener(pose, native_pose);
+				if (!pass_native) {
+					std::cout << tag << " discarded: fail native_edensity_score_screening" << std::endl;	 
+					continue;
+				}
+		  }
+
 			//March 20, 2011..This is neccessary though to be consistent with FARFAR. Cannot have false low energy state that are due to empty holes in the structure.
 			//Feb 22, 2011. Warning this is inconsistent with the code in SAMPLERER:
 			//In Both standard and floating base sampling, user_input_VDW_bin_screener_ is not used for gap_size==0 or internal case.
@@ -363,12 +387,13 @@ namespace rna {
 			pose_data.score=(*scorefxn_)(pose);
 			pose_data.pose_OP=new pose::Pose;
 			(*pose_data.pose_OP)=pose;
-			minimized_pose_data_list.push_back(pose_data);
+			//minimized_pose_data_list.push_back(pose_data);
 
 			// might as well output as we go along -- no longer clustering in between.
 
 			tag[ 0 ] = 'M';
 			(*scorefxn_)(pose); //Score pose to ensure that that it has a score to be output
+
 			Output_data(silent_file_data, silent_file_, tag, false , pose, get_native_pose(), job_parameters_);
 
 			std::cout << "Total time in StepWiseRNA_Minimizer: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
@@ -458,10 +483,33 @@ namespace rna {
 			std::cout << tag <<  std::endl;
 			(*scorefxn_)(pose); //Score pose to ensure that that it has a score to be output
 			Output_data(silent_file_data, silent_file_ + "_screen", tag, false, pose, get_native_pose(), job_parameters_);
-  		}
+  	}
 
 
 		return pass_screen;
+	}
+	////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	StepWiseRNA_Minimizer::native_edensity_score_screener(pose::Pose & pose, pose::Pose & native_pose) {
+
+		using namespace core::scoring;
+		
+		//get the score of elec_dens_atomwise only
+		static ScoreFunctionOP eden_scorefxn = new ScoreFunction;
+		eden_scorefxn -> set_weight( elec_dens_atomwise, 1.0 );
+		core::Real pose_score = ((*eden_scorefxn)(pose)); 
+		core::Real native_score = ((*eden_scorefxn)(native_pose));
+		core::Size nres = pose.total_residue();
+		core::Real native_score_cutoff = native_score / (static_cast <double> (nres)) *
+		(1 - native_edensity_score_cutoff_);
+		std::cout << "pose_score = " << pose_score << std::endl;
+		std::cout << "native_score = " << native_score << std::endl;
+		if (pose_score > native_score - native_score_cutoff) {
+			std::cout << "Fail native edensity score screening!" << std::endl;
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -506,7 +554,7 @@ namespace rna {
 		mm.set_jump( false );
 
 		for  (Size i = 1; i <= nres; i++ )  {
-
+			if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 			utility::vector1< TorsionID > torsion_ids;
 
 			for ( Size rna_torsion_number = 1; rna_torsion_number <= NUM_RNA_MAINCHAIN_TORSIONS; rna_torsion_number++ ) {
@@ -543,8 +591,10 @@ namespace rna {
 			Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
 			Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
 
-			if ( allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) ) 	 mm.set_jump( n, true );
-			std::cout << "jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << " mm.jump= "; Output_boolean(allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) );  std::cout << std::endl;
+			if (pose.residue(jump_pos1).aa() != core::chemical::aa_vrt && pose.residue(jump_pos2).aa() != core::chemical::aa_vrt ) {
+				if ( allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) ) 	 mm.set_jump( n, true );
+				std::cout << "jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << " mm.jump= "; Output_boolean(allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) );  std::cout << std::endl;
+			}
 		}
 
 	}

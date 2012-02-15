@@ -309,7 +309,7 @@ namespace rna {
 
 
 		for(Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) { 
-
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 			utility::vector1< core::chemical::VariantType > target_variants( pose.residue(seq_num).type().variant_types() );
 
 			if(target_variants.size()!=pose.residue(seq_num).type().variant_types().size()){
@@ -677,7 +677,7 @@ namespace rna {
 
 
  		for ( Size seq_num = 1; seq_num <= mod_pose.total_residue(); ++seq_num ) {
-
+			if (mod_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
  			if(!Contain_seq_num(seq_num, rmsd_residue_list)) continue;
 
  			setup_suite_atom_id_map(mod_pose, ref_pose, seq_num, atom_ID_map, base_only);
@@ -872,7 +872,7 @@ namespace rna {
 	Is_close_chain_break(pose::Pose const & pose){
 
 		for(Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++) {
-
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 			if ( !pose.residue( seq_num  ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
 			if ( !pose.residue( seq_num+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
 
@@ -1186,7 +1186,8 @@ namespace rna {
 	Add_virtual_O2Star_hydrogen( core::pose::Pose & pose){
 
 	  for (core::Size i = 1; i <= pose.total_residue(); i++){
-	    pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i);
+	    if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i);
 	  }
 	}
 
@@ -1194,6 +1195,7 @@ namespace rna {
 	Remove_virtual_O2Star_hydrogen(pose::Pose & pose){
 
 		for(Size i=1; i<=pose.total_residue(); i++){
+			if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 			if ( pose.residue_type( i ).has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) ){
 				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i);
 			}
@@ -2081,6 +2083,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		//Consistency_check
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 			core::conformation::Residue const & rsd = pose.residue(seq_num);	
 			Size const at= rsd.first_sidechain_atom();
 
@@ -2093,6 +2096,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		utility::vector1< bool > Is_O2star_hydrogen_virtual_list;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 			core::conformation::Residue const & rsd = pose.residue(seq_num);	
 			Size at=rsd.atom_index( "2HO*" );
 
@@ -2124,7 +2128,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		//1st layer, interaction between surrounding O2star and moving_res
 		for(Size seq_num=1; seq_num<= pose.total_residue(); seq_num++){
-
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 			if(Contain_seq_num(seq_num, surrounding_O2star_hydrogen) ) continue;
 
 			bool Is_surrounding_res=false;
@@ -2169,6 +2173,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			bool add_new_O2star_hydrogen=false;
 
 			for(Size seq_num=1; seq_num<= pose.total_residue(); seq_num++){
+				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 				if(Contain_seq_num(seq_num, surrounding_O2star_hydrogen) ) continue;
 
 				core::conformation::Residue const & rsd_1 = pose.residue(seq_num);	
@@ -2224,6 +2229,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		 utility::vector1< core::Size > O2star_pack_seq_num;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 			O2star_pack_seq_num.push_back(seq_num);
 		}
 
@@ -2258,6 +2264,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 			if(Contain_seq_num(seq_num, O2star_pack_seq_num) && pose.residue(seq_num).is_RNA() ){ //pack this residue!
 
 				/*
@@ -2615,6 +2622,7 @@ principal_angle_degrees( T const & angle )
 		using namespace core::scoring::rna;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 			conformation::Residue const & rsd(pose.residue(seq_num)); 
 			Real delta = numeric::principal_angle_degrees(rsd.mainchain_torsion( DELTA ));
 			Real chi = numeric::principal_angle_degrees(rsd.chi(1));
@@ -2938,6 +2946,7 @@ principal_angle_degrees( T const & angle )
 			pose::Pose testing_pose=input_pose;
 
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
+				if (testing_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 				if(Contain_seq_num(seq_num, allow_bulge_res_list)==false ) continue;
 				apply_virtual_rna_residue_variant_type(testing_pose, seq_num, true /*apply_check*/);
 			}
@@ -2947,6 +2956,7 @@ principal_angle_degrees( T const & angle )
 		//////////////////////////////////////////////////////////////////////////////////////////////////////	
 		if(allow_pre_virtualize==false){
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
+				if (input_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 				if(input_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
 					utility_exit_with_message( "allow_pre_virtualize==false but seq_num= " + string_of(seq_num) + "  is already virtualized!!" );
 				}
@@ -2969,7 +2979,7 @@ principal_angle_degrees( T const & angle )
 			Size num_res_virtualized_in_this_round=0;
 
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
-				
+				if (input_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;	
 				if(Contain_seq_num(seq_num, allow_bulge_res_list)==false ) continue;
 
 				if(input_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
@@ -3567,7 +3577,7 @@ principal_angle_degrees( T const & angle )
 		utility::vector1< bool > do_update_list(template_pose.total_residue(), false);
 
 		for(Size seq_num=1; seq_num<=template_pose.total_residue(); seq_num++){
-			
+			if (template_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;	
 			if(std::abs( template_pose.torsion(TorsionID( seq_num, id::CHI, 4 )) - mod_pose.torsion(TorsionID( seq_num, id::CHI, 4 )) ) > 0.001 ){ 
 				//the two o2star torsions are not the same! Basically don't want to trigger refolding if need not to.
 				do_update_list[seq_num]=true;
@@ -3575,6 +3585,7 @@ principal_angle_degrees( T const & angle )
 		}
 
 		for(Size seq_num=1; seq_num<=template_pose.total_residue(); seq_num++){
+			if (mod_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;	
 			if(do_update_list[seq_num]==true){
 				mod_pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), template_pose.torsion(TorsionID( seq_num, id::CHI, 4 ) ) );
 			}

@@ -10,3 +10,6 @@ patches/Virtual_RNA_Residue_Upper.txt
 patches/Virtual_Ribose.txt
 patches/Protonated_H1_Adenosine.txt
 patches/Virtual_Backbone_Except_C1star.txt
+patches/5prime_end_OH.txt
+patches/5prime_end_phosphate.txt
+patches/3prime_end_OH.txt

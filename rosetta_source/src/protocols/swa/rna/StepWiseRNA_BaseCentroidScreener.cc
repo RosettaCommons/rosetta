@@ -108,9 +108,8 @@ namespace rna {
 		is_fixed_res_.dimension( nres, false );
 
 		for (Size seq_num=1; seq_num <= nres; seq_num++){
-
 			conformation::Residue const & residue_object=pose.residue( seq_num );
-
+			if (residue_object.aa()==core::chemical::aa_vrt) continue;
 			core::kinematics::Stub base_stub;
 
 			if(is_virtual_base_( seq_num )==true){

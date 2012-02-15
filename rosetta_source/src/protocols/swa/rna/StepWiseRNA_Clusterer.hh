@@ -20,6 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -340,6 +341,7 @@ namespace rna {
 		bool ignore_FARFAR_no_auto_bulge_tag_;
 		bool ignore_unmatched_virtual_res_;
 		bool output_pdb_;
+		core::chemical::ResidueTypeSetCAP rsd_set_;
 
   };
 

@@ -139,6 +139,7 @@ namespace rna {
 		ignore_unmatched_virtual_res_=false; //Sept 07, 2011...for post-processing
 		output_pdb_=false; //Sept 24, 2011
 		min_num_south_ribose_filter_=0; //Oct 02, 2011
+		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
 	}
 
   //////////////////////////////////////////////////////////////////////////
@@ -271,7 +272,7 @@ namespace rna {
 		
 			if(found_valid_struct==false){		
 				PoseOP pose_op( new Pose );
-				silent_struct->fill_pose( *pose_op ); 
+				silent_struct->fill_pose( *pose_op, *rsd_set_ ); 
 
 				std::string const & tag( silent_struct->decoy_tag() );
 
@@ -357,7 +358,7 @@ namespace rna {
 
 			PoseOP pose_op( new Pose );
 			core::io::silent::SilentStructOP const silent_struct( input_->next_struct() );
-			silent_struct->fill_pose( *pose_op ); 
+			silent_struct->fill_pose( *pose_op, *rsd_set_ ); 
 
 			std::string const & tag( silent_struct->decoy_tag() );
 
@@ -417,7 +418,7 @@ namespace rna {
 
 			PoseOP pose_op( new Pose );
 			core::io::silent::SilentStructOP const silent_struct( input_->next_struct() );
-			silent_struct->fill_pose( *pose_op ); 
+			silent_struct->fill_pose( *pose_op, *rsd_set_ ); 
 
 			std::string const & tag( silent_struct->decoy_tag() );
 
@@ -552,7 +553,7 @@ namespace rna {
 
 			if(pass_FARFAR_no_auto_bulge_filter(silent_struct)==false) continue;
 
-			silent_struct->fill_pose( *pose_op ); //umm is the pose still connected to the silent_struct? Meaning that if the pose change, does the silent struct get changed as well? Apr 23, 2010 Parin.
+			silent_struct->fill_pose( *pose_op, *rsd_set_ ); //umm is the pose still connected to the silent_struct? Meaning that if the pose change, does the silent struct get changed as well? Apr 23, 2010 Parin.
 
 			std::string const & tag( silent_struct->decoy_tag() );
 
@@ -646,7 +647,7 @@ namespace rna {
 			if(perform_VDW_rep_screen_ || perform_filters_ ){
 				
 				PoseOP pose_op( new Pose );
-				silent_struct->fill_pose( *pose_op ); //umm is the pose still connected to the silent_struct? 
+				silent_struct->fill_pose( *pose_op, *rsd_set_ ); //umm is the pose still connected to the silent_struct? 
 
 				if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue; 
 
@@ -746,7 +747,7 @@ namespace rna {
 			if(keep_pose_in_memory_){
 				if( (keep_pose_in_memory_hydrid_==false) || (pose_output_list_.size() < max_memory_pose_num_)  ){
 					PoseOP localized_pose_op( new Pose );
-					silent_struct->fill_pose( *localized_pose_op );
+					silent_struct->fill_pose( *localized_pose_op, *rsd_set_ );
 					pose_output_list_.push_back(  localized_pose_op );
 				}
 			}
@@ -796,7 +797,7 @@ namespace rna {
 
 			if(pass_FARFAR_no_auto_bulge_filter(silent_struct)==false) continue;
 
-			silent_struct->fill_pose( *pose_op );
+			silent_struct->fill_pose( *pose_op, *rsd_set_ );
 
 			Real score( 0.0 );
 			getPoseExtraScores( *pose_op, "score", score );
@@ -817,8 +818,14 @@ namespace rna {
 
 			///Jan 12, 2012:Consistency check://///
 			if(job_parameters_exist_){
-				if( (*pose_op).total_residue()!=job_parameters_->working_sequence().size()){
-					utility_exit_with_message("(*pose_op).total_residue()=("+string_of((*pose_op).total_residue())+")!=("+string_of(job_parameters_->working_sequence().size())+")=job_parameters_working_sequence().size()");
+				if (job_parameters_ -> add_virt_res_as_root() ) {
+					if( (*pose_op).total_residue() - 1 != job_parameters_->working_sequence().size()){
+						utility_exit_with_message("(*pose_op).total_residue()=("+string_of((*pose_op).total_residue())+")!=("+string_of(job_parameters_->working_sequence().size())+")=job_parameters_working_sequence().size()");
+					}
+				} else {
+					if( (*pose_op).total_residue()!=job_parameters_->working_sequence().size()){
+						utility_exit_with_message("(*pose_op).total_residue()=("+string_of((*pose_op).total_residue())+")!=("+string_of(job_parameters_->working_sequence().size())+")=job_parameters_working_sequence().size()");
+					}
 				}
 			}
 			////////////////////////////////////////
@@ -1017,7 +1024,7 @@ namespace rna {
 
 		//OK if reach this point means that pose is not stored in the pose_output_list_, need to extract it from the silent_file.
 		core::pose::PoseOP pose_op( new Pose );
-		silent_struct_output_list_[n]->fill_pose( *pose_op ); 
+		silent_struct_output_list_[n]->fill_pose( *pose_op, *rsd_set_ ); 
 		
 		if(optimize_memory_usage_) (*pose_op)=sliced_pose_job_params_.create_sliced_pose(*pose_op);
 		

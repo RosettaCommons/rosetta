@@ -572,7 +572,7 @@ namespace rna {
 			//BUT NO POINT IN DURING SO, SINCE THE FULL RIBOSE IS VIRTUAL ANYWAYS!
 
 			for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-
+				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 				if( seq_num == moving_res ) continue; //moving_res is actually the working_moving_res
 
 				if ( pose.residue_type( seq_num ).has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) ){
@@ -662,7 +662,7 @@ namespace rna {
 
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
 			conformation::Residue const & residue_object=pose.residue( seq_num );
 			if(residue_object.has_variant_type( "VIRTUAL_RNA_RESIDUE" )){
 				std::cout << "Residue " << seq_num << " is a VIRTUAL_RNA_RESIDUE!" << std::endl;

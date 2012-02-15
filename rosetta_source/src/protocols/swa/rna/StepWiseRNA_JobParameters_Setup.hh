@@ -121,6 +121,9 @@ namespace rna {
 		void
 		set_simple_append_map( bool const setting){ simple_append_map_=setting; }
 
+		void
+		set_add_virt_res_as_root( bool const setting){ add_virt_res_as_root_=setting; }
+
 
   private:
 
@@ -210,6 +213,7 @@ namespace rna {
 		bool allow_chain_boundary_jump_partner_right_at_fixed_BP_;
 		bool allow_fixed_res_at_moving_res_;
 		bool simple_append_map_;
+		bool add_virt_res_as_root_;
 //		bool parin_favorite_output_;
   };
 

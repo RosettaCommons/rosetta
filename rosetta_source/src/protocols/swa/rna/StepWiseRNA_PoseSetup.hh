@@ -80,7 +80,7 @@ namespace rna {
 		set_verbose( bool const setting){ verbose_=setting;}
 		
 		void
-		setup_native_pose( core::pose::Pose const & pose );
+		setup_native_pose( core::pose::Pose & pose );
 
 		//void
 		//set_sampler_native_rmsd_screen( bool const setting) { sampler_native_rmsd_screen_= setting; }
@@ -93,6 +93,9 @@ namespace rna {
 
 		void
 		set_output_pdb( bool const setting){ output_pdb_=setting;}
+
+		void 
+		add_virtual_res( core::pose::Pose & pose );
 
   	private:
 
