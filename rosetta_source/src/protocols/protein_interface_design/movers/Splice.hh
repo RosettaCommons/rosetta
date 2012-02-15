@@ -23,6 +23,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <protocols/moves/DataMapObj.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -87,6 +88,7 @@ class Splice : public protocols::moves::Mover
 {
 public:
 	typedef core::pose::Pose Pose;
+	typedef utility::vector1< ResidueBBDofs >::const_iterator dbase_const_iterator;
 public:
 	Splice();
 	void apply( Pose & pose );
@@ -131,6 +133,11 @@ public:
 	void design( bool const d ) { design_ = d; }
 	void delta_lengths( utility::vector1< int > const dl ){ delta_lengths_ = dl; }
 	utility::vector1< int > delta_lengths() { return delta_lengths_; }
+	bool dbase_iterate() const { return dbase_iterate_; }
+	void dbase_iterate( bool const d ){ dbase_iterate_ = d; }
+	utility::vector1< core::Size >::const_iterator dbase_begin() const;
+	utility::vector1< core::Size >::const_iterator dbase_end() const;
+	core::Size find_dbase_entry( core::pose::Pose const & pose ); // returns a dbase entry
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -153,6 +160,11 @@ private:
 	core::kinematics::FoldTreeOP saved_fold_tree_;
 	bool design_; //dflt false; design all non-pro/gly residues in template
 	utility::vector1< int > delta_lengths_; // dflt empty; change loop length by how much? 0 is always assumed
+	bool dbase_iterate_; //dflt false;
+	bool first_pass_; // dflt true;
+	utility::vector1< core::Size > dbase_subset_; // indices to the subset of the dbase library over which multiple calls iterate
+	utility::vector1< core::Size >::const_iterator current_dbase_entry_; // used if multiple calls to splice are made to iterate through the list
+	utility::pointer::owning_ptr< protocols::moves::DataMapObj< bool > > end_dbase_subset_; // dflt false; this is a weird construct to allow placing the variable on the DataMap
 };
 
 

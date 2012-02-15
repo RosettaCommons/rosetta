@@ -104,11 +104,16 @@ Splice::Splice() :
 	template_pose_( NULL ),
 	start_pose_( NULL ),
 	saved_fold_tree_( NULL ),
-	design_( false )
+	design_( false ),
+	dbase_iterate_( false ),
+	first_pass_( true )
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
 	delta_lengths_.push_back( 0 );
+	dbase_subset_.clear();
+	end_dbase_subset_ = new protocols::moves::DataMapObj< bool >;
+	end_dbase_subset_->obj = false;
 }
 
 
@@ -152,6 +157,47 @@ TR<<"target: "<<from_res<<" "<<to_res<<" source: "<<from_nearest_on_source<<" "<
 
 	target.copy_segment( to_nearest_on_source - from_nearest_on_source + 1, source, from_res, from_nearest_on_source );
 	target.update_residue_neighbors();
+}
+
+///@brief controls which dbase entry will be used. Three options: 1. specific one according to user instruction; 2. randomized out of a subset of the dbase with fitting sequence lengths (if user specified 0); 3. iterating over dbase subset
+core::Size
+Splice::find_dbase_entry( core::pose::Pose const & pose )
+{
+	core::Size dbase_entry( database_entry() );
+	if( first_pass_ ){/// setup the dbase subset
+		for( core::Size i = 1; i <= torsion_database_.size(); ++i ){// find entries that fit the length criteria
+			using namespace protocols::rosetta_scripts;
+
+			ResidueBBDofs const & dofs( torsion_database_[ i ] );
+			core::Size const nearest_to_entry_start_on_pose( find_nearest_res( pose, *template_pose_, dofs.start_loop() ) );
+			core::Size const nearest_to_entry_stop_on_pose( find_nearest_res( pose, *template_pose_, dofs.stop_loop() ) );
+		  core::Size const pose_residues = nearest_to_entry_stop_on_pose - nearest_to_entry_start_on_pose + 1;
+			int const delta( dofs.size() - pose_residues );
+			bool const fit = std::find( delta_lengths_.begin(), delta_lengths_.end(), delta ) != delta_lengths_.end();
+			if( fit )
+				dbase_subset_.push_back( i );
+		}
+		if( dbase_subset_.empty() ){
+			TR<<"Loop of appropriate length not found in database. Returning"<<std::endl;
+			retrieve_values();
+			return 0;
+		}
+		TR<<"Found "<<dbase_subset_.size()<<" entries in the torsion dbase that match the length criteria"<<std::endl;
+		current_dbase_entry_ = dbase_subset_.begin();
+	}
+	if( dbase_iterate() ){
+		if( current_dbase_entry_ == dbase_end() )
+			utility_exit_with_message( "Request to read past end of the dbase denied." );
+		dbase_entry = *current_dbase_entry_;
+		current_dbase_entry_++;
+		if( current_dbase_entry_ == dbase_end() ){
+			TR<<"Reached last dbase entry"<<std::endl;
+			end_dbase_subset_->obj = true;
+		}
+	}
+	else if( dbase_entry == 0 )//randomize dbase entry
+		dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
+	return dbase_entry;
 }
 
 void
@@ -233,31 +279,8 @@ Splice::apply( core::pose::Pose & pose )
 		cut_site = dofs.cut_site() ? dofs.cut_site() + from_res() - 1: to_res(); // isn't this always going to be to_res()? I think so...
 	}// fi torsion_database_fname==NULL
 	else{/// read from dbase
-		core::Size dbase_entry( database_entry() );
-		if( dbase_entry == 0 ){/// randomize entry
-			core::Size rand_trials( 0 );
-			core::Size pose_residues( 0 );/// number of residues in loop on incoming pose
-			bool found( false );
-			do{/// choose random dbase entry. If equal_length is on then make sure the random entry has the same length
-				dbase_entry = (core::Size) ( RG.uniform() * torsion_database_.size() + 1);
-				dofs = torsion_database_[ dbase_entry ];
-				rand_trials++;
-				core::Size const nearest_to_entry_start_on_pose( find_nearest_res( pose, *template_pose_, dofs.start_loop() ) );
-				core::Size const nearest_to_entry_stop_on_pose( find_nearest_res( pose, *template_pose_, dofs.stop_loop() ) );
-			  pose_residues = nearest_to_entry_stop_on_pose - nearest_to_entry_start_on_pose + 1;
-				int const delta( dofs.size() - pose_residues );
-				found = std::find( delta_lengths_.begin(), delta_lengths_.end(), delta ) != delta_lengths_.end();
-			} while( !found && rand_trials < torsion_database_.size() * 10/*prevent infinite loops*/ );
-			if( rand_trials >=  torsion_database_.size() * 10 ){
-				TR<<"Loop of appropriate length not found in database. Returning"<<std::endl;
-				retrieve_values();
-				return;
-			}
-			else
-				TR<<"Randomly chose dbase entry "<<dbase_entry<<" with loop start: "<<dofs.start_loop()<<" loop_stop: "<<dofs.stop_loop()<<" cut: "<<dofs.cut_site()<<" total_residues: "<<dofs.size()<<std::endl;
-		}
-		else /// don't randomize entry, pick the one stated on the tag.
-			dofs = torsion_database_[ dbase_entry ];
+		core::Size const dbase_entry( find_dbase_entry( pose ) );
+		dofs = torsion_database_[ dbase_entry ];
 		foreach( BBDofs & resdofs, dofs ){/// transform 3-letter code to 1-letter code
 			using namespace core::chemical;
 			if( resdofs.resn() == "CYD" ){// at one point it would be a good idea to use disfulfides rather than bail out on them...; I think disulfided cysteins wouldn't be written as CYD. This requires something more clever...
@@ -501,6 +524,7 @@ void
 Splice::retrieve_values(){
 	from_res( saved_from_res_ );
 	to_res( saved_to_res_ );
+	first_pass_ = false;
 }
 
 std::string
@@ -575,7 +599,13 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		template_pose_ = new core::pose::Pose( pose );
 
 	design( tag->getOption< bool >( "design", false ) );
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
+	dbase_iterate( tag->getOption< bool >( "dbase_iterate", false ) );
+	if( dbase_iterate() ){ /// put the end_dbase_subset_ variable on the datamap for LoopOver & MC to be sensitive to it
+		std::string const curr_mover_name( tag->getOption< std::string >( "name" ) );
+		data.add( "stopping_condition", curr_mover_name, end_dbase_subset_ );
+		TR<<"Placed stopping_condition "<<curr_mover_name<<" on the DataMap"<<std::endl;
+	}
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
 }
 
 protocols::moves::MoverOP
@@ -683,6 +713,12 @@ Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size c
 BBDofs::~BBDofs() {}
 
 ResidueBBDofs::~ResidueBBDofs() {}
+
+utility::vector1< core::Size >::const_iterator
+Splice::dbase_begin() const{ return dbase_subset_.begin(); }
+
+utility::vector1< core::Size >::const_iterator
+Splice::dbase_end() const{ return dbase_subset_.end(); }
 
 } //movers
 } //protein_interface_design
