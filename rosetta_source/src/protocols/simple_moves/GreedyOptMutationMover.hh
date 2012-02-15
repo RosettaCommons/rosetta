@@ -25,6 +25,10 @@
 
 #include <utility/vector1.hh>
 
+#ifdef PYROSETTA
+	#include <protocols/filters/Filter.hh>
+#endif
+
 
 namespace protocols {
 namespace simple_moves{
