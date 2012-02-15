@@ -99,7 +99,8 @@ GenericMonteCarloMover::GenericMonteCarloMover():
   lowest_score_pose_( NULL ),
 	stopping_condition_( NULL ),
 	adaptive_movers_( false ),
-	adaptation_period_( 0 )
+	adaptation_period_( 0 ),
+  mover_stopping_condition_( NULL )
 {
   initialize();
 }
