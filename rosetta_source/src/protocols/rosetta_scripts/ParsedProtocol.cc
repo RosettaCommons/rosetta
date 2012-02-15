@@ -14,6 +14,8 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/ParsedProtocolCreator.hh>
 #include <protocols/moves/NullMover.hh>
+#include <protocols/moves/DataMapObj.hh>
+#include <protocols/moves/DataMap.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
@@ -211,7 +213,7 @@ ParsedProtocol::set_resid( core::Size const resid ){
 void
 ParsedProtocol::parse_my_tag(
 	TagPtr const tag,
-	protocols::moves::DataMap &,
+	protocols::moves::DataMap &data,
 	protocols::filters::Filters_map const &filters,
 	protocols::moves::Movers_map const &movers,
 	core::pose::Pose const & )
@@ -248,6 +250,11 @@ ParsedProtocol::parse_my_tag(
 			mover_defined = true;
 		}
 		//runtime_assert( mover_name ); // redundant with mover find below
+
+		if( data.has( "stopping_condition", mover_name ) ){
+			TR<<"ParsedProtocol's mover "<<mover_name<<" requests its own stopping condition. This ParsedProtocol's stopping_condition will point at the mover's"<<std::endl;
+			data.add( "stopping_condition", tag->getOption< std::string >( "name" ), data.get< protocols::moves::DataMapObj< bool > * >( "stopping_condition", mover_name ) );
+		}
 
 		std::string filter_name="true_filter"; // used in case user does not specify a filter name.
 		runtime_assert( !( tag_ptr->hasOption("filter_name") && tag_ptr->hasOption( "filter" ) ) );

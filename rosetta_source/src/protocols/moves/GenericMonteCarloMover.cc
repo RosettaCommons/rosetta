@@ -765,7 +765,8 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	}
 
 	stopping_condition( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "stopping_condition", "false_filter" ), filters ) );
-	TR<<"Generic MC using stopping condition "<< stopping_condition()->get_user_defined_name()<<std::endl;
+	if( tag->hasOption( "stopping_condition" ) )
+		TR<<"Generic MC using stopping condition "<< stopping_condition()->get_user_defined_name()<<std::endl;
 	drift_ = tag->getOption< bool >( "drift", 1 );
 	preapply_ = tag->getOption< bool >( "preapply", 1 ); // Default true for historical reasons
 	recover_low_ = tag->getOption< bool >( "recover_low", 1 );
