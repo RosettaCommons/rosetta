@@ -16,63 +16,40 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-
-// Platform Headers
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/types.hh>
-#include <protocols/moves/DataMap.hh>
-
-// Numeric Headers
-#include <numeric/HomogeneousTransform.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
+#include <numeric/HomogeneousTransform.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/vector1.hh>
 
 // Basic Headers
+#include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 // C++ Headers
-#include <string>
-#include <map>
 #include <sstream>
 
 namespace protocols{
 namespace features{
 
 using std::string;
-using std::stringstream;
-using std::endl;
-using std::map;
 using basic::database::safely_write_to_database;
 using basic::database::safely_prepare_statement;
 using core::Size;
 using core::SSize;
 using core::Real;
 using core::pose::Pose;
-using core::conformation::Residue;
-using protocols::moves::DataMap;
-using protocols::filters::Filters_map;
-using protocols::moves::Movers_map;
 using numeric::HomogeneousTransform;
 using numeric::xyzVector;
 using utility::sql_database::sessionOP;
 using utility::vector1;
-using utility::tag::TagPtr;
 using cppdb::statement;
 using cppdb::result;
 
@@ -169,20 +146,22 @@ LoopAnchorFeatures::features_reporter_dependencies() const {
 
 void
 LoopAnchorFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & /*data*/,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
+	utility::tag::TagPtr const tag,
+	protocols::moves::DataMap & /*data*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	min_loop_length_ = tag->getOption<Size>("min_loop_length", 5);
 	max_loop_length_ = tag->getOption<Size>("max_loop_length", 30);
 
+	set_use_relevant_residues_as_loop_length( tag->getOption<bool>("use_relevant_residues_as_loop_length", 0) );
+    
 	if(max_loop_length_ < min_loop_length_){
-		stringstream error_msg;
+		std::stringstream error_msg;
 		error_msg
 			<< "The max_loop_length, '" << max_loop_length_ << "',"
-			<< " must be longer than the min_loop_length, '" << min_loop_length_ << "'." << endl;
+		<< " must be longer than the min_loop_length, '" << min_loop_length_ << "'." << std::endl;
 		utility_exit_with_message(error_msg.str());
 	}
 }
@@ -210,25 +189,34 @@ LoopAnchorFeatures::report_features(
 
 	vector1<Size>::const_iterator chain_ending(pose.conformation().chain_endings().begin());
 	vector1<Size>::const_iterator chain_ending_end(pose.conformation().chain_endings().end());
-    
-	for(SSize begin=1; begin < SSize( pose.total_residue() - min_loop_length_ ); ++begin){
+	
+	Size local_min_loop_length = min_loop_length( relevant_residues );
+	Size local_max_loop_length = max_loop_length( relevant_residues );
+	
+	for(SSize begin=1; begin <= SSize( pose.total_residue() - local_min_loop_length ); ++begin){
 
 		for(Size end=begin;
-				(end <= begin + max_loop_length_ + 1 && end <= pose.total_residue());
+				(end <= begin + local_max_loop_length && end <= pose.total_residue());
 				++end){
+
+			bool bail_out = !relevant_residues[end];
 
 			// Note chain_endings does not have the last residue in the pose
 			// in the chain endings vector. So handle this separately
-			if(((chain_ending != chain_ending_end) && end == *chain_ending) ||
-				!relevant_residues[end]){
+			if((chain_ending != chain_ending_end) && (end == *chain_ending))
+			{
 				++chain_ending;
-				if(end - begin < min_loop_length_){
+				bail_out = true;
+			}
+			if ( bail_out )
+			{
+				if( (end - begin + 1) < local_min_loop_length){
 					begin = end;
 				}
-				break;
+				break;				
 			}
 
-			if(end - begin > min_loop_length_){
+			if( (end - begin + 1) >= local_min_loop_length){
 				loop_anchors_stmt.bind(1,struct_id);
 				loop_anchors_stmt.bind(2,begin);
 				loop_anchors_stmt.bind(3,end);
@@ -255,6 +243,35 @@ LoopAnchorFeatures::report_features(
 		}
 	}
 	return 0;
+}
+
+void LoopAnchorFeatures::set_use_relevant_residues_as_loop_length( bool const use_relevant_residues_as_loop_length )
+{
+    use_relevant_residues_as_loop_length_ = use_relevant_residues_as_loop_length;
+}
+
+Size LoopAnchorFeatures::min_loop_length( vector1< bool > const & relevant_residues )
+{
+	return determine_correct_length( relevant_residues, min_loop_length_ );
+}
+
+Size LoopAnchorFeatures::max_loop_length( vector1< bool > const & relevant_residues )
+{
+	return determine_correct_length( relevant_residues, max_loop_length_ );
+}
+
+Size LoopAnchorFeatures::determine_correct_length( vector1< bool > const & relevant_residue, Size default_length )
+{
+	if ( use_relevant_residues_as_loop_length_ )
+	{
+		Size number_of_residues = 0;
+		for ( vector1< bool >::const_iterator it = relevant_residue.begin(); it != relevant_residue.end(); ++it )
+		{
+			if ( *it ) ++number_of_residues;
+		}
+		return number_of_residues;
+	}
+	return default_length;
 }
 
 HomogeneousTransform<Real>

@@ -18,19 +18,8 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/LoopAnchorFeatures.fwd.hh>
 
-// Project Headers
-#include <core/types.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+// Utility Headers
 #include <numeric/HomogeneousTransform.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-
-// C++ Headers
-#include <string>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols{
 namespace features{
@@ -71,6 +60,10 @@ public:
 		utility::vector1< bool > const & /*relevant_residues*/,
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session);
+
+    void
+    set_use_relevant_residues_as_loop_length( bool const use_relevant_residues_as_loop_length );
+    
 private:
 
 	numeric::HomogeneousTransform<core::Real>
@@ -78,9 +71,15 @@ private:
 		core::pose::Pose const & pose,
 		core::Size residue_begin,
 		core::Size residue_end);
+	
+	core::Size min_loop_length( utility::vector1< bool > const & relevant_residue );
+	core::Size max_loop_length( utility::vector1< bool > const & relevant_residue );
+	core::Size determine_correct_length( utility::vector1< bool > const & relevant_residue, Size default_length );
+	
 
 private:
 
+	bool use_relevant_residues_as_loop_length_;
 	core::Size min_loop_length_;
 	core::Size max_loop_length_;
 
