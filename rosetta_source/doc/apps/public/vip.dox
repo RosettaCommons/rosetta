@@ -49,36 +49,28 @@ There is only one mode to run the vip application at present.
 You only need a pdb file of the structure for which you desire suggested mutations, passed to the executable with the -s commandline option described below.
 
 @section ft_options Options
--s input_file.pdb
-This specifies the pdb file for which you want to find mutations.
 
-@li -cp:ncycles (Size)
-	This will run the iterative protocol (find point mutations, relax, output best relaxed pose) a fixed number of times. If you don't use this option it will continue to run until it no longer finds favorable mutations. The latter option can take a while for large proteins.
+@li -s input_file.pdb - This specifies the pdb file for which you want to find mutations.
 
-@li -cp:cutoff (real, suggested value 6.0)
-	This is the cutoff for choosing mutatable residues (i.e., distance from cavity ball to a non-bb, non-surface atom on the residue). The smallest cutoff you can use is best since that will mutate the smallest number of residues that line the cavity.
+@li -cp:ncycles (Size) - This will run the iterative protocol (find point mutations, relax, output best relaxed pose) a fixed number of times. If you don't use this option it will continue to run until it no longer finds favorable mutations. The latter option can take a while for large proteins.
 
-@li -sasa_calculator_probe_radius (real, suggested value 1.0) Increasing this will likely give you surface clefts in addition to buried voids.
+@li -cp:cutoff (real, suggested value 6.0) - This is the cutoff for choosing mutatable residues (i.e., distance from cavity ball to a non-bb, non-surface atom on the residue). The smallest cutoff you can use is best since that will mutate the smallest number of residues that line the cavity.
 
-@li -cp:pack_sfxn (score function) (e.g. -cp:pack_sfxn score12_full)
-	Allows you to use a different score for the point mutant trials
+@li -sasa_calculator_probe_radius (real, suggested value 1.0) - Increasing this will likely give you surface clefts in addition to buried voids.
 
-@li -cp:relax_sfxn (score function) to use a different score for the relax stage
+@li -cp:pack_sfxn (score function) (e.g. -cp:pack_sfxn score12_full) - Allows you to use a different score for the point mutant trials
 
-@li -cp:skip_relax
-This causes the protocol to skip the relax step, which is pretty important for the algorithm.  This option is useful if all you want is a list of possible mutations for (e.g.) library construction for directed evolution.
+@li -cp:relax_sfxn (score function) - Allows you to use a different score for the relax stage.
 
-@li -cp:local_relax
-This restricts the scope of the relaxation protocol for possible mutations to neighbor residues, as determined by the EnergyGraph.
+@li -cp:skip_relax - This causes the protocol to skip the relax step, which is pretty important for the algorithm.  This option is useful if all you want is a list of possible mutations for (e.g.) library construction for directed evolution.
 
-@li -cp:output
-This option specifies the name of the final output model with all suggested mutations (default is "final_mutant.pdb").
+@li -cp:local_relax - This restricts the scope of the relaxation protocol for possible mutations to neighbor residues, as determined by the EnergyGraph.
 
-@li -cp:print_reports
-This generates a file (reports.txt ) that tells you which mutations were identified by the simple geometric screen, and which mutations still look good after relaxation.
+@li -cp:output - This option specifies the name of the final output model with all suggested mutations (default is "final_mutant.pdb").
 
-@li -cp:print_intermediate_pdbs
-This option outputs a fullatom pdb for each accepted mutation, named "vip_iter_1.pdb", with the number incremented for each pass through.  The pdb for the final iteration will be the same as the final pdb.
+@li -cp:print_reports - This generates a file (reports.txt ) that tells you which mutations were identified by the simple geometric screen, and which mutations still look good after relaxation.
+
+@li -cp:print_intermediate_pdbs - This option outputs a fullatom pdb for each accepted mutation, named "vip_iter_1.pdb", with the number incremented for each pass through.  The pdb for the final iteration will be the same as the final pdb.
 
 @section commandline Command Line
 The app can be run as follows:
