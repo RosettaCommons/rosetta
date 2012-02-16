@@ -251,7 +251,7 @@ ParsedProtocol::parse_my_tag(
 		}
 		//runtime_assert( mover_name ); // redundant with mover find below
 
-		if( data.has( "stopping_condition", mover_name ) ){
+		if( data.has( "stopping_condition", mover_name ) && tag->hasOption( "name" ) ){
 			TR<<"ParsedProtocol's mover "<<mover_name<<" requests its own stopping condition. This ParsedProtocol's stopping_condition will point at the mover's"<<std::endl;
 			data.add( "stopping_condition", tag->getOption< std::string >( "name" ), data.get< protocols::moves::DataMapObj< bool > * >( "stopping_condition", mover_name ) );
 		}

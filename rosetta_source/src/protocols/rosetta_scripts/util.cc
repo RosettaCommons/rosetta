@@ -502,6 +502,7 @@ core::Size
 find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res ){
   core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
   for( core::Size i = 1; i <= source.total_residue(); ++i ){
+		if( source.residue( i ).is_ligand() ) continue;
     core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
     if( dist <= min_dist ){
       min_dist = dist;

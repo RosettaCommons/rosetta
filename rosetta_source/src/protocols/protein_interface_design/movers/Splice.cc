@@ -680,14 +680,13 @@ Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size c
 		ffl.apply( pose );
 		return;
 	}
-	core::Size from_res( 0 ), to_res( 0 );
+	core::Size from_res( 0 );
 	for( core::Size resi = conf.chain_begin( 1 ); resi <= conf.chain_end( 1 ); ++resi ){
 		 if( pose.residue( resi ).has_variant_type( core::chemical::DISULFIDE ) ){
 			from_res = resi;
 			break;
 		}
 	}
-	to_res = protocols::geometry::residue_center_of_mass( pose, conf.chain_begin( 2 ), conf.chain_end( 2 ) );
 	core::kinematics::FoldTree ft;
 	ft.clear();
 	core::Size const first = std::min( s1, from_res );
@@ -700,7 +699,8 @@ Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size c
 	ft.add_edge( s1, s2, 1 );
 	ft.add_edge( s2, conf.chain_end( 1 ), -1 );
 	ft.add_edge( 1, conf.chain_begin( 2 ), 2 );
-	ft.add_edge( conf.chain_begin( 2 ), conf.chain_end( 2 ), -1 );
+	if( !pose.residue( conf.chain_begin( 2 ) ).is_ligand() )
+		ft.add_edge( conf.chain_begin( 2 ), conf.chain_end( 2 ), -1 );
 //	ft.add_edge( from_res, to_res, 2 );
 //	ft.add_edge( to_res, conf.chain_begin( 2 ), -1 );
 //	ft.add_edge( to_res, conf.chain_end( 2 ), -1 );
