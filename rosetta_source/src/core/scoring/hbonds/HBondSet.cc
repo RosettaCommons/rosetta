@@ -279,7 +279,7 @@ HBond::show(
 	Size const base_atomno(pose.residue(acc_res()).atom_base(acc_atm()));
 	Size const bbase_atomno(pose.residue(acc_res()).atom_base(base_atomno));
 	std::string const acc_res_name(pose.residue(acc_res()).type().name3());
-	std::string const acc_atom_name(pose.residue(acc_res()).atom_name(base_atomno));
+	std::string const acc_atom_name(pose.residue(acc_res()).atom_name(acc_atm()));
 
 	PointPosition const Dxyz(pose.residue(don_res()).xyz(don_atomno));
 	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
