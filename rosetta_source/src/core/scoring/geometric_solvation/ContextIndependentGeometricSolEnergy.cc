@@ -22,6 +22,7 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/constants.hh>
@@ -291,7 +292,7 @@ inline
 Real
 ContextIndependentGeometricSolEnergy::occluded_water_hbond_penalty(
   bool const & is_donor,
-	hbonds::HBEvalType const & hbond_eval_type,
+	hbonds::HBEvalTuple const & hbond_eval_type,
 	Vector const & polar_atm_xyz,
 	Vector const & base_atm_xyz,
 	Vector const & occluding_atm_xyz,
@@ -486,7 +487,7 @@ ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_dono
 	Real const hdis2 = ( occ_atm_xyz - don_h_atm_xyz ).length_squared();
 	if ( hdis2 > base_dis2 ) return;
 
-	HBEvalType hbe = hbe_dHXLaHXL;
+	HBEvalTuple hbe( hbdon_HXL, hbacc_HXL, seq_sep_other ); // apl note: this donor/accpetor/seqse combo maps to hbe_dHXLaHXL;
 
 	if(don_rsd.is_protein() && occ_rsd.is_protein()){ //Parin Sripakdeevong. Special Protien stuff. Not sure if this works!
 		// if a backbone donor participates in a backbone-backbone Hbond,
@@ -497,7 +498,7 @@ ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_dono
 
 		bool const potential_backbone_backbone_hbond = ( don_h_atm_is_protein_backbone && occ_atm_is_protein_backbone_acceptor );
 
-		hbe = potential_backbone_backbone_hbond ? ( hbond_evaluation_type( don_base_atm, don_rsd, occ_atm, occ_rsd) ) : hbe_dHXLaHXL;
+		hbe = potential_backbone_backbone_hbond ? ( hbond_evaluation_type( don_base_atm, don_rsd, occ_atm, occ_rsd) ) : HBEvalTuple( hbdon_HXL, hbacc_HXL, seq_sep_other ); // note HBEvalTuple( hbdon_HXL, hbacc_HXL, seq_sep_other ) creates hbeval type of hbe_dHXLaHXL
 	}
 
 
@@ -510,7 +511,7 @@ ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_dono
 			" atom "<< don_rsd.atom_name( don_h_atm )<<" is occluded by occ_res " <<
 			occ_rsd.name1()<< I(3, occ_rsd.seqpos()) <<
 			" atom "<< occ_rsd.atom_name( occ_atm ) <<
-			"  (HBEvalType " <<  I(2,hbe) << ") " <<
+			"  (HBEvalType " <<  I(2,hbe.eval_type()) << ") " <<
 			" with energy "<< F(8,3,energy)<< std::endl;
 	}
 }
@@ -568,7 +569,7 @@ ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_acce
 	Real const base_dis2 = ( occ_atm_xyz - base_atm_xyz ).length_squared();
 	if ( acc_dis2 > base_dis2 ) return;
 
- 	HBEvalType hbe = HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( acc_atm, acc_rsd), seq_sep_other );
+ 	HBEvalTuple hbe( hbdon_H2O, get_hb_acc_chem_type( acc_atm, acc_rsd), seq_sep_other );
 
 
 	if(occ_rsd.is_protein() && acc_rsd.is_protein()){ //Parin Sripakdeevong. Special Protien stuff. Not sure if this works!
@@ -593,7 +594,7 @@ ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_acce
 			" atom "<< acc_rsd.atom_name( acc_atm )<<" is occluded by occ_res "<<
 			occ_rsd.name1()<< I(3, occ_rsd.seqpos()) <<
 			" atom "<< occ_rsd.atom_name( occ_atm ) <<
-			"  (HBEvalType " <<  I(2,hbe) << ") " <<
+			"  (HBEvalType " <<  I(2,hbe.eval_type()) << ") " <<
 			" with energy "<< F(8,3,energy)<<std::endl;
 	}
 

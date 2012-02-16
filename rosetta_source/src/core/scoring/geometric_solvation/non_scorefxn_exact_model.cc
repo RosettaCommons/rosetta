@@ -34,6 +34,7 @@
 // AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/types.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/constants.hh>
@@ -327,7 +328,9 @@ core::Real compute_exact_geosol(
 						hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			Size const polar_atom( *hnum );
 			Size const base_atom( polar_rsd.atom_base( polar_atom ) );
-			hbonds::HBEvalType const curr_hbond_eval_type = hbonds::HBEval_lookup( get_hb_don_chem_type( polar_atom, polar_rsd ), hbacc_H2O, seq_sep_other);
+			hbonds::HBEvalTuple const curr_hbond_eval_tuple(
+				get_hb_don_chem_type( polar_atom, polar_rsd ),
+				hbacc_H2O, seq_sep_other);
 
 			// Figure out max LK energy
 			std::string const base_atom_name = polar_rsd.atom_name( base_atom );
@@ -344,14 +347,14 @@ core::Real compute_exact_geosol(
 
 			// Compute Ebulk (using the LK energy)
 			core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
-			core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type );
+			core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_tuple.eval_type() );
 			core::Real const Ebulk_weight = ( sum_water_weights * Emax_weight ) / ( 1. - Emax_weight);
 			// This grid constant is the denominator in computing solvation energies,
 			// it depends on the grid dimensions, and sets the max possible solvation energy (in this case to match LK)
 			core::Real const grid_constant = sum_water_weights + Ebulk_weight;
 			// Setup then call compute_individual_sol_energies
 			add_to_individual_sol_energies(input_pose, polar_resnum, polar_atom, etable_ptr, *GridInfo::get_instance(), grid_constant,
-				WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type ), occluded_sites, hydrogens_can_occlude,
+				WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_tuple.eval_type() ), occluded_sites, hydrogens_can_occlude,
 				pairwise_additive, pairwise_additive_output, residue_energies );
 		}
 
@@ -361,7 +364,7 @@ core::Real compute_exact_geosol(
 						anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Size const polar_atom( *anum );
 			Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
-			hbonds::HBEvalType const curr_hbond_eval_type = hbonds::HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
+			hbonds::HBEvalType const curr_hbeval_type = hbonds::HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 
 			// Figure out max LK energy
 			std::string const base_atom_name = polar_rsd.atom_name( base_atom );
@@ -369,14 +372,14 @@ core::Real compute_exact_geosol(
 			//			TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
 			// Compute Ebulk (using the LK energy)
 			core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
-			core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type );
+			core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbeval_type );
 			core::Real const Ebulk_weight = ( sum_water_weights * Emax_weight ) / ( 1. - Emax_weight);
 			// This grid constant is the denominator in computing solvation energies,
 			// it depends on the grid dimensions, and sets the max possible solvation energy (in this case to match LK)
 			core::Real const grid_constant = sum_water_weights + Ebulk_weight;
 			// Setup then call compute_individual_sol_energies
 			add_to_individual_sol_energies(input_pose, polar_resnum, polar_atom, etable_ptr, *GridInfo::get_instance(), grid_constant,
-				WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type ), occluded_sites, hydrogens_can_occlude,
+				WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbeval_type ), occluded_sites, hydrogens_can_occlude,
 				pairwise_additive, pairwise_additive_output, residue_energies );
 		}
 

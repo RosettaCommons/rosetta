@@ -163,7 +163,7 @@ private:
 	Real
 	occluded_water_hbond_penalty(
     bool const & is_donor,
-		hbonds::HBEvalType const & hbond_eval_type,
+		hbonds::HBEvalTuple const & hbond_eval_type,
 		Vector const & polar_atm_xyz,
 		Vector const & base_atm_xyz,
 		Vector const & occluding_atm_xyz,

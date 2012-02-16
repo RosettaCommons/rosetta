@@ -18,6 +18,7 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/FadeInterval.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/polynomial.hh>
 #include <core/scoring/DerivVectorPair.hh>
@@ -499,7 +500,7 @@ get_seq_sep(
 
 	/// Warning if you use this interface you are responsible for
 	/// testing if the residues are on different chains!
-hbonds::HBEvalType
+hbonds::HBEvalTuple
 hbond_evaluation_type(
 	hbtrie::HBAtom const & datm,
 	int const & don_rsd,
@@ -510,11 +511,11 @@ hbond_evaluation_type(
 	HBDonChemType don_chem_type(datm.hb_don_chem_type());
 	HBAccChemType acc_chem_type(aatm.hb_acc_chem_type());
 	HBSeqSep seq_sep(get_seq_sep(don_chem_type, acc_chem_type, acc_rsd - don_rsd));  //This should really test if things are on different chains
-	HBEvalType hbe(HBEval_lookup(don_chem_type, acc_chem_type, seq_sep));
-	return hbe;
+	//HBEvalType hbe(HBEval_lookup(don_chem_type, acc_chem_type, seq_sep));
+	return HBEvalTuple( don_chem_type, acc_chem_type, seq_sep );
 }
 
-hbonds::HBEvalType
+hbonds::HBEvalTuple
 hbond_evaluation_type(
 	int const datm,
 	conformation::Residue const & don_rsd,
@@ -524,8 +525,8 @@ hbond_evaluation_type(
 	HBDonChemType don_chem_type(get_hb_don_chem_type(datm, don_rsd));
 	HBAccChemType acc_chem_type(get_hb_acc_chem_type(aatm, acc_rsd));
 	HBSeqSep seq_sep(get_seq_sep(don_chem_type, acc_chem_type, don_rsd.polymeric_oriented_sequence_distance(acc_rsd)));
-	HBEvalType hbe(HBEval_lookup(don_chem_type, acc_chem_type, seq_sep));
-	return hbe;
+	//HBEvalType hbe(HBEval_lookup(don_chem_type, acc_chem_type, seq_sep));
+	return HBEvalTuple( don_chem_type, acc_chem_type, seq_sep );
 }
 
 
@@ -533,7 +534,7 @@ void
 hbond_compute_energy(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalType hbe,
+	HBEvalTuple hbt,  // the tuple representing the evaluation information for this hbond
 	Real const AHdis, // acceptor proton distance
 	Real const xD,    // -cos(180-theta), where theta is defined by Tanja K.
 	Real const xH,    // cos(180-phi), where phi is defined by Tanja K.
@@ -547,6 +548,7 @@ hbond_compute_energy(
 	Real & dchipen_dchi  // the change in the energy wrt the chi penalty for the chi dihedral
 )
 {
+	HBEvalType hbe = hbt.eval_type();
 	energy = MAX_HB_ENERGY + 1.0f;
 	apply_chi_torsion_penalty = false;
 	dE_dr = dE_dxD = dE_dxH = dchipen_dchi = 0.0;
@@ -748,7 +750,7 @@ void
 hb_energy_deriv_u(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	hbonds::HBEvalType const hbe_type, // hb evalation type
+	hbonds::HBEvalTuple const hbt, // hb evalation tuple
 	Vector const & Hxyz, // proton coords
 	Vector const & Dxyz, // Donor coords -- needed for derivative calculations
 	Vector const & HDunit, // unit vector toward donor
@@ -761,7 +763,7 @@ hb_energy_deriv_u(
 	HBondDerivs & deriv
 ) {
 	HBDerivType const deriv_type = ( evaluate_deriv ? hbderiv_ABE_GO : hbderiv_NONE );
-	hb_energy_deriv_u2( database, hbondoptions, hbe_type, deriv_type, Hxyz, Dxyz, HDunit, Axyz, Bxyz, BAunit, B2xyz, energy, deriv );
+	hb_energy_deriv_u2( database, hbondoptions, hbt, deriv_type, Hxyz, Dxyz, HDunit, Axyz, Bxyz, BAunit, B2xyz, energy, deriv );
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 /// @details Innermost score/derivative evaluation logic in this function; "u" stands for "unit vector"
@@ -774,7 +776,7 @@ void
 hb_energy_deriv_u2(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	hbonds::HBEvalType const hbe_type, // hb evalation type
+	hbonds::HBEvalTuple const hbt, // hb evalation tuple
 	HBDerivType const deriv_type,
 	Vector const & Hxyz, // proton coords
 	Vector const & Dxyz, // Donor coords
@@ -833,7 +835,7 @@ hb_energy_deriv_u2(
 
 	Real chi( 0 );
 	if ( hbondoptions.use_sp2_chi_penalty() &&
-			get_hbe_acc_hybrid( hbe_type ) == chemical::SP2_HYBRID &&
+			get_hbe_acc_hybrid( hbt.eval_type() ) == chemical::SP2_HYBRID &&
 			B2xyz != Vector(-1.0, -1.0, -1.0) ) {
 		chi = numeric::dihedral_radians( Hxyz, Axyz, Bxyz, B2xyz );
 	}
@@ -847,7 +849,7 @@ hb_energy_deriv_u2(
 
 	if ( deriv_type == hbderiv_NONE ) {
 		// NOTE: early return with energy if no derivatives
-		hbond_compute_energy( database, hbondoptions, hbe_type, AHdis, xD, xH, chi, energy );
+		hbond_compute_energy( database, hbondoptions, hbt, AHdis, xD, xH, chi, energy );
 		return;
 	}
 
@@ -855,7 +857,7 @@ hb_energy_deriv_u2(
 	Real dE_dxH, dE_dxD, dE_dr, dchipen_dBAH, dchipen_dchi;
 	bool apply_chi_torsion_penalty( false );
 
-	hbond_compute_energy(database,hbondoptions,hbe_type,AHdis,xD,xH,chi,energy,
+	hbond_compute_energy(database,hbondoptions,hbt,AHdis,xD,xH,chi,energy,
 		apply_chi_torsion_penalty,dE_dr,dE_dxD,dE_dxH,dchipen_dBAH,dchipen_dchi);
 
 	if (energy >= MAX_HB_ENERGY) return;
@@ -1082,7 +1084,7 @@ void
 hb_energy_deriv(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalType const hbe_type, // hbond evaluation type -- determines what scoring function to use
+	HBEvalTuple const hbt, // hbond evaluation tuple -- determines what scoring function to use
 	Vector const & Dxyz, // donor coords
 	Vector const & Hxyz, // proton
 	Vector const & Axyz, // acceptor
@@ -1093,14 +1095,14 @@ hb_energy_deriv(
 	HBondDerivs & deriv
 ){
 	HBDerivType const deriv_type = ( evaluate_deriv ? hbderiv_ABE_GO :  hbderiv_NONE );
-	hb_energy_deriv(database, hbondoptions, hbe_type, Dxyz, Hxyz, Axyz, Bxyz, B2xyz, energy, deriv_type, deriv );
+	hb_energy_deriv(database, hbondoptions, hbt, Dxyz, Hxyz, Axyz, Bxyz, B2xyz, energy, deriv_type, deriv );
 }
 
 void
 hb_energy_deriv(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalType const hbe_type, // hbond evaluation type -- determines what scoring function to use
+	HBEvalTuple const hbt, // hbond evaluation type -- determines what scoring function to use
 	Vector const & Dxyz, // donor coords
 	Vector const & Hxyz, // proton
 	Vector const & Axyz, // acceptor
@@ -1172,9 +1174,9 @@ hb_energy_deriv(
 	Vector BAunit;
 	// the pseudo-base xyz coordinate
 	Vector PBxyz;
-	chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbe_type ) );
+	chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) );
 	make_hbBasetoAcc_unitvector(acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit);
-	hb_energy_deriv_u2(database, hbondoptions, hbe_type, deriv_type, Hxyz, Dxyz, HDunit, Axyz, PBxyz, BAunit, B2xyz, energy, deriv );
+	hb_energy_deriv_u2(database, hbondoptions, hbt, deriv_type, Hxyz, Dxyz, HDunit, Axyz, PBxyz, BAunit, B2xyz, energy, deriv );
 }
 
 
@@ -1242,14 +1244,14 @@ void
 assign_abase_derivs(
 	conformation::Residue const & acc_rsd,
 	Size acc_atom,
-	HBEvalType const hbe_type,
+	HBEvalTuple const hbt,
 	DerivVectorPair const & abase_deriv,
 	Real weighted_energy,
 	utility::vector1< DerivVectorPair > & acc_atom_derivs
 )
 {
 	using namespace chemical;
-	Hybridization acc_hybrid( get_hbe_acc_hybrid( hbe_type ) );
+	Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) );
 	switch( acc_hybrid ){
 		case SP2_HYBRID:  {
 			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();

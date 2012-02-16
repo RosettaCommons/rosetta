@@ -21,6 +21,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
@@ -119,7 +120,7 @@ identify_intra_res_hbonds(
 
 Real
 get_environment_dependent_weight(
-	HBEvalType const & hbe_type,
+	HBEvalTuple const & hbe_tuple,
 	int const don_nb,
 	int const acc_nb,
 	HBondOptions const & options);
@@ -199,9 +200,10 @@ get_membrane_depth_dependent_weight(
 
 Real
 hb_eval_type_weight(
-  HBEvalType const &hbe_type,
+	HBEvalType const & hbe_type,
 	EnergyMap const & emap,
-	bool const intra_res);
+	bool const intra_res
+);
 
 
 bool

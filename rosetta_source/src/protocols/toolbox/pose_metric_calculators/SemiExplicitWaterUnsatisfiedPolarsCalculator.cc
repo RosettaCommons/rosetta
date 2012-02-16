@@ -52,6 +52,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
@@ -334,13 +335,13 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 
 	Size water_hb_states_tot( 0 );
 	Size water_hb_states_good( 0 );
-	hbonds::HBEvalType hbe_type( hbonds::hbond_evaluation_type( datm, pose.residue( don_pos ), aatm, pose.residue( acc_pos ) ) );
+	hbonds::HBEvalTuple hbe_type( datm, pose.residue( don_pos ), aatm, pose.residue( acc_pos ) );
 	//granularity of enumeration
-  Size steps( 7 );
-  //must import from hbonds/constants.hh
+	Size steps( 7 );
+	//must import from hbonds/constants.hh
 	// in case you're wondering, we're sampling in angle space instead of cos(angle)
 	// space so we sample more equally in polar coord space (not more densely when cos(pi-angle)->1)
-  Real AHdist_min(MIN_R), AHdist_max(MAX_R); Size AHdist_steps( 5 );
+	Real AHdist_min(MIN_R), AHdist_max(MAX_R); Size AHdist_steps( 5 );
 //  Real cosBAH_min( MIN_xH ), cosBAH_max( MAX_xH ); Size cosBAH_steps( 5 );
 //  Real cosAHD_min( MIN_xD ), cosAHD_max( MAX_xD ); Size cosAHD_steps( 5 );
   Real BAHang_min( pi - std::acos( MIN_xH ) ), BAHang_max( pi - std::acos( MAX_xH ) ); Size BAHang_steps( 5 );

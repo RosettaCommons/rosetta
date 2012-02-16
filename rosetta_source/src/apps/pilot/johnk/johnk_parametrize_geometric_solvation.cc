@@ -27,6 +27,7 @@
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <basic/Tracer.hh>
@@ -207,7 +208,7 @@ main( int argc, char * argv [] )
 
 	// Things that depend on which donor/acceptor we're trying to parametrize
 	bool WATER_IS_DONOR;
-	HBEvalType hbond_eval_type;
+	HBEvalTuple hbond_eval_tuple;
 	core::Real max_possible_LK;
 	id::AtomID outer_atom_id, base_atom_id;
 	core::Size template_resnum;
@@ -357,9 +358,9 @@ main( int argc, char * argv [] )
 	TR << "Changing max_possible_LK to -5." << std::endl;
 
 	if ( WATER_IS_DONOR ) {
-		hbond_eval_type = HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( outer_atom_id.atomno(), pose.residue( template_resnum ) ), seq_sep_other);
+		hbond_eval_tuple = HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( outer_atom_id.atomno(), pose.residue( template_resnum ) ), seq_sep_other);
 	} else {
-		hbond_eval_type = HBEval_lookup( get_hb_don_chem_type( outer_atom_id.atomno(), pose.residue( template_resnum ) ), hbacc_H2O, seq_sep_other);
+		hbond_eval_tuple = HBEval_lookup( get_hb_don_chem_type( outer_atom_id.atomno(), pose.residue( template_resnum ) ), hbacc_H2O, seq_sep_other);
 	}
 
 	// params independent of Hbond donor/acceptor type

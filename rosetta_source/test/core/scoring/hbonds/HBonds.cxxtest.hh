@@ -21,6 +21,7 @@
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/types.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
@@ -123,18 +124,22 @@ public:
 		Real dummy_chi( 0.0 );
 		bool dummy_chipenalty( false );
 		Real energy, dE_dr, dE_dxD, dE_dxH;
-		HBEvalType hbe_type;
-		for (Size hbe=1; hbe != hbe_MAX; ++hbe){
-			hbe_type = HBEvalType(hbe);
-			for (Real AHdis = MIN_R; AHdis <MAX_R; AHdis += AHdis_step){
-				for (Real xD = MIN_xD; xD < MAX_xD; xD += xD_step){
-					for (Real xH = MIN_xH; xH < MAX_xH; xH += xH_step){
-						hbond_compute_energy( *database, hboptions, hbe_type,
-							AHdis, xD, xH, dummy_chi, energy,
-							dummy_chipenalty, dE_dr, dE_dxD, dE_dxH);
-						if( energy < 0){
-							UT << hbe_type << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t";
-							UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\n";
+		for ( Size ii = 1; ii <= hbdon_MAX; ++ii ) {
+			for ( Size jj = 1; jj <= hbacc_MAX; ++jj ) {
+				for ( Size kk = 1; kk <= seq_sep_MAX; ++kk ) {
+					HBEvalTuple hbt = HBEvalTuple( HBDonChemType(ii), HBAccChemType(jj), HBSeqSep(kk) );
+					if ( hbt.eval_type() == 0 ) continue;
+					for (Real AHdis = MIN_R; AHdis <MAX_R; AHdis += AHdis_step){
+						for (Real xD = MIN_xD; xD < MAX_xD; xD += xD_step){
+							for (Real xH = MIN_xH; xH < MAX_xH; xH += xH_step){
+								hbond_compute_energy( *database, hboptions, hbt,
+									AHdis, xD, xH, dummy_chi, energy,
+									dummy_chipenalty, dE_dr, dE_dxD, dE_dxH);
+								if( energy < 0){
+									UT << ii << "\t" << jj << "\t" << kk << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t";
+									UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\n";
+								}
+							}
 						}
 					}
 				}
@@ -154,8 +159,8 @@ public:
 		HBondSet hbond_set( pose.n_residue() );
 
 		fill_hbond_set(pose,
-									 true, /* calculate derivative */
-									 hbond_set);
+			true, /* calculate derivative */
+			hbond_set);
 
 		for( Size i=1; i <= hbond_set.nhbonds(); ++i ){
 			const HBond hbond( hbond_set.hbond(i) );
@@ -171,7 +176,7 @@ public:
 			HBondDerivs deriv;
 
 			hb_energy_deriv(*database, hboptions,
-				hbond.eval_type(),
+				HBEvalTuple( don_res.atom_base( hbond.don_hatm()), don_res, hbond.acc_atm(), acc_res ),
 				Dxyz, Hxyz, Axyz, Bxyz, B2xyz,
 				energy,
 				hbderiv_ABE_GO, deriv);

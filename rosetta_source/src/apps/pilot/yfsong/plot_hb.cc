@@ -20,6 +20,7 @@
 // AUTO-REMOVED #include <basic/options/util.hh>
 
 #include <core/scoring/hbonds/hbonds_geom.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
@@ -67,7 +68,7 @@ main (int argc, char *argv[]){
 	//	option.add( plot_hb::show_poly,    "plot polynomials" ).def(false);
 	devel::init( argc, argv );
 
-	core::scoring::hbonds::HBEvalType hbe;
+	core::scoring::hbonds::HBEvalTuple hbe;
 
 	if (option[plot_hb::hb_type]() <= core::scoring::hbonds::hbe_MAX){
 		hbe = core::scoring::hbonds::HBEvalType( option[plot_hb::hb_type]());

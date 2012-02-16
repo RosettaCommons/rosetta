@@ -16,6 +16,7 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/constants.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
@@ -117,7 +118,7 @@ WaterAdductHBondPotential::h2o_hbond_score_1way(
 			Vector const separation( hyd_coord - h2o_coord );
 			if( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
 
-			scoring::hbonds::HBEvalType const hbe_type( scoring::hbonds::hbond_evaluation_type( donor_index, other_rsd, h2o_index, h2o_rsd )  );
+			scoring::hbonds::HBEvalTuple const hbe_type( donor_index, other_rsd, h2o_index, h2o_rsd );
 
 			Real h2o_hbond_energy( 0.0 );
 			bool const eval_deriv( false );
@@ -143,7 +144,7 @@ WaterAdductHBondPotential::h2o_hbond_score_1way(
 			Vector accpt_base_coord( other_rsd.xyz( accpt_base_index ) );
 			Size accpt_base2_index( other_rsd.abase2( accpt_index ) );
 			Vector accpt_base2_coord( other_rsd.xyz( accpt_base2_index ) );
-			scoring::hbonds::HBEvalType const hbe_type( scoring::hbonds::hbond_evaluation_type( h2o_index, h2o_rsd, accpt_index, other_rsd )  );
+			scoring::hbonds::HBEvalTuple const hbe_type( h2o_index, h2o_rsd, accpt_index, other_rsd );
 
 			// build a fictitious hydrogen for the water
 			Vector const z( cross( normal_from_base, separation ).normalized() );
@@ -267,8 +268,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 			Vector const separation( hyd_coord - h2o_coord );
 			if( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
 
-			scoring::hbonds::HBEvalType const hbe_type
-					( scoring::hbonds::hbond_evaluation_type( donor_index, other_rsd, h2o_index, h2o_rsd )  );
+			scoring::hbonds::HBEvalTuple const hbe_type( donor_index, other_rsd, h2o_index, h2o_rsd );
 
 			Real h2o_hbond_energy( 0.0 );
 			bool const eval_deriv( true );
@@ -280,7 +280,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 //				Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
 				Real const weight ( 1.0 );
 				hbond_set.append_hbond(
-					hyd_index, other_rsd, h2o_index, h2o_rsd, hbe_type,
+					hyd_index, other_rsd, h2o_index, h2o_rsd, hbe_type.eval_type(),
 					h2o_hbond_energy, weight, deriv );
 //				std::cout << "Stashing h2o hbond, water is acceptor " << std::endl;
 //				std::cout << "Energy is " << h2o_hbond_energy << std::endl;
@@ -309,8 +309,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 			Vector accpt_base_coord( other_rsd.xyz( accpt_base_index ) );
 			Size accpt_base2_index( other_rsd.abase2( accpt_index ) );
 			Vector accpt_base2_coord( other_rsd.xyz( accpt_base2_index ) );
-			scoring::hbonds::HBEvalType const hbe_type
-							( scoring::hbonds::hbond_evaluation_type( h2o_index, h2o_rsd, accpt_index, other_rsd )  );
+			scoring::hbonds::HBEvalTuple const hbe_type( h2o_index, h2o_rsd, accpt_index, other_rsd );
 
 			// build a fictitious hydrogen for the water
 			Vector const z( cross( normal_from_base, separation ).normalized() );
@@ -327,7 +326,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 			if( h2o_hbond_energy < 0.0 ) {
 //				Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
 				Real const weight ( 1.0 );
-				hbond_set.append_hbond( h2o_index, h2o_rsd, accpt_index, other_rsd, hbe_type,
+				hbond_set.append_hbond( h2o_index, h2o_rsd, accpt_index, other_rsd, hbe_type.eval_type(),
 					h2o_hbond_energy, weight, deriv );
 //				std::cout << "Stashing h2o hbond, water is donor " << std::endl;
 //				std::cout << "Energy is " << h2o_hbond_energy << std::endl;

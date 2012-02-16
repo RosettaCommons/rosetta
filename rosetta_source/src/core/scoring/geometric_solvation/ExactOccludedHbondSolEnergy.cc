@@ -37,6 +37,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/types.hh>
@@ -196,14 +197,14 @@ WaterWeightGridSet::WaterWeightGridSet() :
 
 	TR << "computing and storing water weight grids for acceptor types." << std::endl;
 	for(Size i = 1; i <= hbacc_MAX; i++){
-		HBEvalType const hbe = HBEval_lookup(hbdon_H2O, HBAccChemType(i), seq_sep_other);
-		sum_all_water_weights_[hbe] = fill_water_grid( all_water_weights_[hbe], hbe, *GridInfo::get_instance(), true /*water is donor*/);
+		HBEvalTuple const hbe( hbdon_H2O, HBAccChemType(i), seq_sep_other );
+		sum_all_water_weights_[hbe.eval_type()] = fill_water_grid( all_water_weights_[hbe.eval_type()], hbe, *GridInfo::get_instance(), true /*water is donor*/);
 	}
 
 	TR << "computing and storing water weight grids for donor types." << std::endl;
 	for(Size i = 1; i <= hbdon_MAX; i++){
-		HBEvalType const hbe = HBEval_lookup(HBDonChemType(i), hbacc_H2O, seq_sep_other);
-		sum_all_water_weights_[hbe] = fill_water_grid( all_water_weights_[hbe], hbe, *GridInfo::get_instance(), false /*water is acceptor*/);
+		HBEvalTuple const hbe( HBDonChemType(i), hbacc_H2O, seq_sep_other );
+		sum_all_water_weights_[hbe.eval_type()] = fill_water_grid( all_water_weights_[hbe.eval_type()], hbe, *GridInfo::get_instance(), false /*water is acceptor*/);
 	}
 }
 
@@ -211,7 +212,7 @@ WaterWeightGridSet::WaterWeightGridSet() :
 // Fill in the water grid
 core::Real WaterWeightGridSet::fill_water_grid(
 	std::vector < std::vector < std::vector <core::Real> > > & water_weights,
-	hbonds::HBEvalType const & hbond_eval_type,
+	hbonds::HBEvalTuple const & hbond_eval_type,
 	GridInfo const & grid_info, bool const water_is_donor)
 {
 
@@ -304,7 +305,8 @@ core::Real WaterWeightGridSet::fill_water_grid(
 }
 
 
-std::vector < std::vector < std::vector <core::Real> > > const & WaterWeightGridSet::get_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const {
+std::vector < std::vector < std::vector <core::Real> > > const &
+WaterWeightGridSet::get_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const {
 	// Check that we have weights for this Hbond type
 	all_water_weights_iterator curr_water_weights_iter = all_water_weights_.find( hbond_eval_type );
 	if ( curr_water_weights_iter == all_water_weights_.end( ) ) {
@@ -316,7 +318,9 @@ std::vector < std::vector < std::vector <core::Real> > > const & WaterWeightGrid
 	return curr_water_weights_iter->second;
 }
 
-core::Real WaterWeightGridSet::get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const {
+core::Real
+WaterWeightGridSet::get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const
+{
 	// Check that we have weights for this Hbond type
 	sum_water_weights_iterator curr_sum_water_weights_iter = sum_all_water_weights_.find( hbond_eval_type );
 	if ( curr_sum_water_weights_iter == sum_all_water_weights_.end( ) ) {
@@ -464,7 +468,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 					hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const polar_atom( *hnum );
 		Size const base_atom( polar_rsd.atom_base( polar_atom ) );
-		HBEvalType const curr_hbond_eval_type = HBEval_lookup(get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other);
+		HBEvalTuple const curr_hbond_eval_type( get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other );
 
 		// Figure out max LK energy
 		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
@@ -484,7 +488,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 		// Compute Ebulk (using the LK energy)
 		core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
-		core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type );
+		core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type.eval_type());
 		core::Real const Ebulk_weight = ( sum_water_weights * Emax_weight ) / ( 1. - Emax_weight);
 
 		// This grid constant is the denominator in computing solvation energies,
@@ -494,7 +498,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 		core::Real polar_group_energy = 0.;
 		if ( ! exact_occ_pairwise_ && ! exact_occ_pairwise_by_res_ ) {
 			polar_group_energy = compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type ) );
+				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
 		} else {
 			// loop over all atoms of neighboring residues, INCLUDING SELF
 			core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
@@ -511,12 +515,12 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 				conformation::Residue const occ_rsd = pose.residue(occ_resnum);
 				if ( exact_occ_pairwise_by_res_ ) {
 					polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-						grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type ),
+						grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
 						true, occ_resnum );
 				} else {
 					for ( Size occ_atomno = 1; occ_atomno <= occ_rsd.natoms(); ++occ_atomno ) {
 						polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-							grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type ),
+							grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
 							true, occ_resnum, true, occ_atomno );
 					}
 				}
@@ -535,7 +539,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 					anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 		Size const polar_atom( *anum );
 		Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
-		hbonds::HBEvalType const curr_hbond_eval_type = HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
+		hbonds::HBEvalTuple const curr_hbond_eval_type( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 
 		// Figure out max LK energy
 		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
@@ -547,7 +551,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 		// Compute Ebulk (using the LK energy)
 		core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
-		core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type );
+		core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( curr_hbond_eval_type.eval_type() );
 		core::Real const Ebulk_weight = ( sum_water_weights * Emax_weight ) / ( 1. - Emax_weight);
 		// This grid constant is the denominator in computing solvation energies,
 		// it depends on the grid dimensions, and sets the max possible solvation energy (in this case to match LK)
@@ -556,7 +560,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 		core::Real polar_group_energy = 0.;
 		if ( ! exact_occ_pairwise_ && ! exact_occ_pairwise_by_res_ ) {
 			polar_group_energy = compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type ) );
+				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
 		} else {
 			// loop over all atoms of neighboring residues, INCLUDING SELF
 			core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
@@ -573,12 +577,12 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 				conformation::Residue const occ_rsd = pose.residue(occ_resnum);
 				if ( exact_occ_pairwise_by_res_ ) {
 					polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-																															 grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type ),
+																															 grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
 																															 true, occ_resnum );
 				} else {
 					for ( Size occ_atomno = 1; occ_atomno <= occ_rsd.natoms(); ++occ_atomno ) {
 						polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-																																 grid_constant,  WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type ),
+																																 grid_constant,  WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
 																																 true, occ_resnum, true, occ_atomno );
 					}
 				}
@@ -614,22 +618,23 @@ Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 ) const {
 	Size const base_atom( polar_rsd.atom_base( polar_atom ) );
 
-	HBEvalType curr_hbond_eval_type;
+	HBEvalTuple curr_hbond_eval_type;
 	if ( polar_rsd.atom_type( base_atom ).is_donor()){
-		curr_hbond_eval_type = HBEval_lookup(get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other);
+		curr_hbond_eval_type = HBEvalTuple(get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other);
 	} else if( polar_rsd.atom_type( polar_atom).is_acceptor()){
-		curr_hbond_eval_type = HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
+		curr_hbond_eval_type = HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 	} else {
 		assert( false ); // Not a donor or an acceptor, don't know what to do.
 	}
 
 	Real const grid_constant = compute_grid_constant( curr_hbond_eval_type );
-	return compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-																				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type ),
-																				restrict_to_single_occluding_residue,
-																				single_occluding_resinx,
-																				restrict_to_single_occluding_atom,
-																				single_occluding_atominx);
+	return compute_polar_group_sol_energy(
+		pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
+		grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
+		restrict_to_single_occluding_residue,
+		single_occluding_resinx,
+		restrict_to_single_occluding_atom,
+		single_occluding_atominx);
 }
 
 
@@ -808,7 +813,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 								HBAccChemType acc_chem_type = get_hb_acc_chem_type( polar_atomno, polar_rsd );
 								// Note: this should really test if things are on different chains (comment from Hbond code)
 								HBSeqSep seq_sep(get_seq_sep(don_chem_type, acc_chem_type, polar_resnum - occ_resnum));
-								HBEvalType const hbe_type = HBEval_lookup(don_chem_type, acc_chem_type, seq_sep);
+								HBEvalTuple const hbe_type( don_chem_type, acc_chem_type, seq_sep);
 								Real hb_ener(0.);
 								hb_energy_deriv( *hb_database_, *hbondoptions_, hbe_type,
 									occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( don_h_atom ).xyz(),
@@ -816,7 +821,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 									polar_rsd.atom( polar_rsd.abase2( polar_atomno ) ).xyz(), hb_ener);
 
 								if ( hb_ener < 0. ) {
-									switch ( get_hbond_weight_type(hbe_type) ) {
+									switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
 									case hbw_SC:
 										hb_ener *= 1.1;
 										break;
@@ -852,14 +857,14 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 								HBAccChemType acc_chem_type = get_hb_acc_chem_type( occ_atomno, occ_rsd );
 								// Note: this should really test if things are on different chains (comment from Hbond code)
 								HBSeqSep seq_sep(get_seq_sep(don_chem_type, acc_chem_type, occ_resnum - polar_resnum ));
-								HBEvalType const hbe_type = HBEval_lookup(don_chem_type, acc_chem_type, seq_sep);
+								HBEvalTuple const hbe_type( don_chem_type, acc_chem_type, seq_sep );
 								Real hb_ener(0.);
 								hb_energy_deriv( *hb_database_, *hbondoptions_, hbe_type, polar_rsd.atom( base_atom ).xyz(), polar_rsd.atom( polar_atomno ).xyz(),
 									occ_rsd.atom( occ_atomno ).xyz(), occ_rsd.atom( occ_rsd.atom_base( occ_atomno ) ).xyz(),
 									occ_rsd.atom( occ_rsd.abase2( occ_atomno ) ).xyz(), hb_ener);
 
 								if ( hb_ener < 0. ) {
-									switch ( get_hbond_weight_type(hbe_type) ) {
+									switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
 									case hbw_SC:
 										hb_ener *= 1.1;
 										break;
@@ -1138,7 +1143,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 }
 
 
-core::Real ExactOccludedHbondSolEnergy::compute_grid_constant( HBEvalType const & hbond_eval_type ) const
+core::Real ExactOccludedHbondSolEnergy::compute_grid_constant( HBEvalTuple const & hbond_eval_type ) const
 {
 
 	//		// Figure out max LK energy for DONOR
@@ -1183,7 +1188,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_grid_constant( HBEvalType const 
 
 	// Compute Ebulk (using the LK energy)
 	core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
-	core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( hbond_eval_type );
+	core::Real const sum_water_weights = WaterWeightGridSet::get_instance()->get_sum_water_weight_grid( hbond_eval_type.eval_type() );
 	core::Real const Ebulk_weight = ( sum_water_weights * Emax_weight ) / ( 1. - Emax_weight);
 	// This grid constant is the denominator in computing solvation energies,
 	// it depends on the grid dimensions, and sets the max possible solvation energy (in this case to match LK)

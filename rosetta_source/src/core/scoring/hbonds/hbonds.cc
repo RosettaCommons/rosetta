@@ -17,6 +17,7 @@
 
 // Package headers
 #include <core/scoring/hbonds/constants.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
@@ -230,7 +231,7 @@ fill_hbond_set_by_AHdist_threshold(
 				foreach(Size const aatm, acc_rsd.accpt_pos()){
 					if(hatm_xyz.distance( acc_rsd.xyz( aatm )) > AHdist_threshold) continue;
 
-					HBEvalType hbe_type(hbond_evaluation_type(datm, don_rsd, aatm, acc_rsd));
+					HBEvalTuple hbe_type(datm, don_rsd, aatm, acc_rsd);
 					int const base ( acc_rsd.atom_base( aatm ) );
 					int const base2( acc_rsd.abase2( aatm ) );
 
@@ -247,7 +248,7 @@ fill_hbond_set_by_AHdist_threshold(
 							get_environment_dependent_weight(hbe_type, n_don_nbrs, n_acc_nbrs, hbond_set.hbond_options()));
 
 					hbond_set.append_hbond(
-						hatm, don_rsd, aatm, acc_rsd, hbe_type, unweighted_energy, environmental_weight, DUMMY_DERIVS );
+						hatm, don_rsd, aatm, acc_rsd, hbe_type.eval_type(), unweighted_energy, environmental_weight, DUMMY_DERIVS );
 				}
 			}
 		}
@@ -353,7 +354,7 @@ identify_hbonds_1way(
 
 			Real unweighted_energy( 0.0 );
 
-			HBEvalType hbe_type( hbond_evaluation_type( datm, don_rsd, aatm, acc_rsd));
+			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
@@ -376,7 +377,7 @@ identify_hbonds_1way(
 			//////
 			// now we have identified a hbond -> append it into the hbond_set
 			hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
-				hbe_type, unweighted_energy, environmental_weight, derivs );
+				hbe_type.eval_type(), unweighted_energy, environmental_weight, derivs );
 
 			//////
 
@@ -445,7 +446,7 @@ identify_hbonds_1way(
 
 			Real unweighted_energy( 0.0 );
 
-			HBEvalType hbe_type( hbond_evaluation_type( datm, don_rsd, aatm, acc_rsd));
+			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
@@ -467,7 +468,7 @@ identify_hbonds_1way(
 			// now we have identified an hbond -> accumulate its energy
 
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
-			switch(get_hbond_weight_type(hbe_type)){
+			switch(get_hbond_weight_type(hbe_type.eval_type())){
 			case hbw_NONE:
 			case hbw_SR_BB:
 				emap[hbond_sr_bb] += hbE; break;
@@ -485,7 +486,7 @@ identify_hbonds_1way(
 				emap[hbond_sc] += hbE; break;
 			default:
 				tr << "Warning: energy from unexpected HB type ignored "
-					<< hbe_type << std::endl;
+					<< hbe_type.eval_type() << std::endl;
 				runtime_assert(false);
 				break;
 			}
@@ -500,16 +501,18 @@ identify_hbonds_1way(
 void
 identify_intra_res_hbonds(
 	HBondDatabase const & database,
-  conformation::Residue const & rsd,
-  bool const evaluate_derivative,
-	HBondSet & hbond_set){
+	conformation::Residue const & rsd,
+	bool const evaluate_derivative,
+	HBondSet & hbond_set
+)
+{
 
 	if(rsd.is_RNA()==false) return;
 
 	if(hbond_set.hbond_options().include_intra_res_RNA()==false) return;
 
-  // <f1,f2> -- derivative vectors
-  //std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
+	// <f1,f2> -- derivative vectors
+	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
 	HBondDerivs derivs;
 
 	//Assume use_hb_env_dep==False!
@@ -518,18 +521,18 @@ identify_intra_res_hbonds(
 	
 	for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 
-    Size const aatm( *anum );
-    int const base ( rsd.atom_base( aatm ) ); //"base" does not refer to RNA base here!
-    int const base2( rsd.abase2( aatm ) );
-    assert( base2 > 0 && base != base2 );
+		Size const aatm( *anum );
+		int const base ( rsd.atom_base( aatm ) ); //"base" does not refer to RNA base here!
+		int const base2( rsd.abase2( aatm ) );
+		assert( base2 > 0 && base != base2 );
 
 		if( rsd.RNA_type().atom_is_phosphate(aatm)==false) continue;
 
- 		if( rsd.is_virtual(aatm) ) continue; //Is this necessary?
+		if( rsd.is_virtual(aatm) ) continue; //Is this necessary?
 
-	  for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),	hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		  Size const hatm( *hnum );
-		  Size const datm(rsd.atom_base(hatm));
+		for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),	hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+			Size const hatm( *hnum );
+			Size const datm(rsd.atom_base(hatm));
 	 
 			if( rsd.RNA_type().is_RNA_base_atom( datm )==false ) continue;
 
@@ -538,33 +541,33 @@ identify_intra_res_hbonds(
 	 		if(rsd.is_virtual(hatm) ) continue; //Is this necessary?
 	 		if(rsd.is_virtual(datm) ) continue; //Is this necessary?
 
-		  Vector const & hatm_xyz( rsd.atom(hatm).xyz());
-		  Vector const & datm_xyz( rsd.atom(datm).xyz());
+			Vector const & hatm_xyz( rsd.atom(hatm).xyz());
+			Vector const & datm_xyz( rsd.atom(datm).xyz());
 
-      // rough filter for existance of hydrogen bond
-      if ( hatm_xyz.distance_squared( rsd.xyz( aatm ) ) > MAX_R2 ) continue;
+			// rough filter for existance of hydrogen bond
+			if ( hatm_xyz.distance_squared( rsd.xyz( aatm ) ) > MAX_R2 ) continue;
 
-      Real unweighted_energy( 0.0 );
+			Real unweighted_energy( 0.0 );
 
-      HBEvalType hbe_type( hbond_evaluation_type( datm, rsd, aatm, rsd));
+			HBEvalTuple hbe_type( datm, rsd, aatm, rsd);
 
 			hb_energy_deriv( database, hbond_set.hbond_options(), 
-				hbe_type, datm_xyz, hatm_xyz, 
-				rsd.atom(aatm ).xyz(), 
-				rsd.atom(base ).xyz(), 
-				rsd.atom(base2).xyz(), 
-				unweighted_energy, evaluate_derivative, derivs);
+			hbe_type, datm_xyz, hatm_xyz, 
+			rsd.atom(aatm ).xyz(), 
+			rsd.atom(base ).xyz(), 
+			rsd.atom(base2).xyz(), 
+			unweighted_energy, evaluate_derivative, derivs);
 
-      if (unweighted_energy >= MAX_HB_ENERGY) continue;
+			if (unweighted_energy >= MAX_HB_ENERGY) continue;
 
-      Real environmental_weight=1;
+			Real environmental_weight=1;
 
 			// now we have identified a hbond -> upt it into the hbond_set//////
-      hbond_set.append_hbond( hatm, rsd, aatm, rsd, hbe_type, unweighted_energy, environmental_weight, derivs );
-			//////
+			hbond_set.append_hbond( hatm, rsd, aatm, rsd, hbe_type.eval_type(), unweighted_energy, environmental_weight, derivs );
+			///
 
-  		} // loop over donors
-  } // loop over acceptors
+		} // loop over donors
+	} // loop over acceptors
 }
 
 
@@ -619,7 +622,7 @@ identify_intra_res_hbonds(
 
       Real unweighted_energy( 0.0 );
 
-      HBEvalType hbe_type( hbond_evaluation_type( datm, rsd, aatm, rsd));
+      HBEvalTuple hbe_type( datm, rsd, aatm, rsd);
 
 			hb_energy_deriv( database, options,
 				hbe_type, datm_xyz, hatm_xyz, 
@@ -704,7 +707,7 @@ identify_hbonds_1way_membrane(
 
 			Real unweighted_energy( 0.0 );
 
-			HBEvalType hbe_type( hbond_evaluation_type( datm, don_rsd, aatm, acc_rsd));
+			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
@@ -729,7 +732,7 @@ identify_hbonds_1way_membrane(
 			// now we have identified a hbond -> put it into the hbond_set
 
 			hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
-				hbe_type, unweighted_energy, environmental_weight, derivs );
+				hbe_type.eval_type(), unweighted_energy, environmental_weight, derivs );
 
 			//////
 
@@ -799,7 +802,7 @@ identify_hbonds_1way_membrane(
 
 			Real unweighted_energy( 0.0 );
 
-			HBEvalType hbe_type( hbond_evaluation_type( datm, don_rsd, aatm, acc_rsd));
+			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
@@ -824,7 +827,7 @@ identify_hbonds_1way_membrane(
 			// now we have identified an hbond -> accumulate its energy
 
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
-			switch(get_hbond_weight_type(hbe_type)){
+			switch(get_hbond_weight_type(hbe_type.eval_type())){
 			case hbw_NONE:
 			case hbw_SR_BB:
 				emap[hbond_sr_bb] += hbE; break;
@@ -842,7 +845,7 @@ identify_hbonds_1way_membrane(
 				emap[hbond_sc] += hbE; break;
 			default:
 				tr << "Warning: energy from unexpected HB type ignored "
-					<< hbe_type << std::endl;
+					<< hbe_type.eval_type() << std::endl;
 				runtime_assert(false);
 				break;
 			}
@@ -943,7 +946,7 @@ get_hbond_energies(
 
 Real
 hb_eval_type_weight(
-  HBEvalType const & hbe_type,
+	HBEvalType const & hbe_type,
 	EnergyMap const & emap,
 	bool const intra_res /*false*/)
 {
@@ -1054,7 +1057,7 @@ hb_env_dep_burial_tk(int const nb1, int const nb2)
 ///////////////////////////////////////////////////////////////////////////////
 Real
 get_environment_dependent_weight(
-	HBEvalType const & hbe_type,
+	HBEvalTuple const & hbe_type,
 	int const don_nb,
 	int const acc_nb,
 	HBondOptions const & options
@@ -1062,7 +1065,7 @@ get_environment_dependent_weight(
 {
 	Real weight( 1.0 );
 	// mjo why is this only applied to side chains!!!!
-	if ( hbe_is_SC_type(hbe_type) ) {
+	if ( hbe_is_SC_type(hbe_type.eval_type()) ) {
 		if ( options.smooth_hb_env_dep() ) {
 			weight = hb_env_dep_burial_lin( acc_nb, don_nb );
 		} else {

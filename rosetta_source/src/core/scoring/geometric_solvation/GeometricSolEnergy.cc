@@ -21,6 +21,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/hbonds/types.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
@@ -330,7 +331,7 @@ inline
 Real
 GeometricSolEnergy::occluded_water_hbond_penalty(
   bool const & is_donor,
-	hbonds::HBEvalType const & hbond_eval_type,
+	hbonds::HBEvalTuple const & hbond_eval_type,
 	Vector const & polar_atm_xyz,
 	Vector const & base_atm_xyz,
 	Vector const & occluding_atm_xyz,
@@ -560,12 +561,12 @@ GeometricSolEnergy::get_atom_atom_geometric_solvation_for_donor(
 	Real const hdis2 = ( occ_atm_xyz - don_h_atm_xyz ).length_squared();
 	if ( hdis2 > base_dis2 ) return;
 
-		// For a backbone CO occluding a backbone NH, use the backbone-backbone (linear) geometry
-		// to compute solvation penalty (only really matters for the CO acceptor's geometry, but
-		// do it here as well for consistency)
+	// For a backbone CO occluding a backbone NH, use the backbone-backbone (linear) geometry
+	// to compute solvation penalty (only really matters for the CO acceptor's geometry, but
+	// do it here as well for consistency)
 	bool const potential_backbone_backbone_hbond =
 		( don_h_atm_is_protein_backbone && occ_atm_is_protein_backbone_acceptor );
-	HBEvalType hbe = potential_backbone_backbone_hbond ? ( hbond_evaluation_type( don_base_atm, don_rsd, occ_atm, occ_rsd) ) : hbe_dHXLaHXL;
+	HBEvalTuple hbe = potential_backbone_backbone_hbond ? ( HBEvalTuple( don_base_atm, don_rsd, occ_atm, occ_rsd) ) : HBEvalTuple( hbdon_HXL, hbacc_HXL, seq_sep_other ); // apl note: the false condition maps to hbe_dHXLaHXL
 
 	Size const don_nbrs = tenA_neighbor_graph.get_node( don_rsd.seqpos() )->num_neighbors_counting_self();
 	Size const occ_nbrs = tenA_neighbor_graph.get_node( occ_rsd.seqpos() )->num_neighbors_counting_self();
@@ -586,7 +587,7 @@ GeometricSolEnergy::get_atom_atom_geometric_solvation_for_donor(
 			" atom "<< don_rsd.atom_name( don_h_atm )<<" is occluded by occ_res " <<
 			occ_rsd.name1()<< I(3, occ_rsd.seqpos()) <<
 			" atom "<< occ_rsd.atom_name( occ_atm ) <<
-			"  (HBEvalType " <<  I(2,hbe) << ") " <<
+			"  (HBEvalType " <<  I(2,hbe.eval_type()) << ") " <<
 			" with energy "<< F(8,3,energy)<< std::endl;
 	}
 }
@@ -672,8 +673,8 @@ GeometricSolEnergy::get_atom_atom_geometric_solvation_for_acceptor(
 	// Following distinguished between helix/turn/etc. based on seq. separation. Is that what we want? Not in original jk code, so not for now.
 	//			HBEvalType hbe = potential_backbone_backbone_hbond ? ( hbond_evaluation_type( occ_atm, occ_rsd, acc_atm, acc_rsd) ) : hbe_SP3SC;
 	//			HBEvalType hbe = potential_backbone_backbone_hbond ? hbe_BSC : hbe_SP3SC;
- 	HBEvalType hbe = potential_backbone_backbone_hbond ? ( hbond_evaluation_type( occ_atm, occ_rsd, acc_atm, acc_rsd ) ) :
- 		HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( acc_atm, acc_rsd), seq_sep_other );
+ 	HBEvalTuple hbe = potential_backbone_backbone_hbond ? ( HBEvalTuple( occ_atm, occ_rsd, acc_atm, acc_rsd ) ) :
+ 		HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( acc_atm, acc_rsd), seq_sep_other );
 
 	Size const acc_nbrs = tenA_neighbor_graph.get_node( acc_rsd.seqpos() )->num_neighbors_counting_self();
 	Size const occ_nbrs = tenA_neighbor_graph.get_node( occ_rsd.seqpos() )->num_neighbors_counting_self();
@@ -691,7 +692,7 @@ GeometricSolEnergy::get_atom_atom_geometric_solvation_for_acceptor(
 			" atom "<< acc_rsd.atom_name( acc_atm )<<" is occluded by occ_res "<<
 			occ_rsd.name1()<< I(3, occ_rsd.seqpos()) <<
 			" atom "<< occ_rsd.atom_name( occ_atm ) <<
-			"  (HBEvalType " <<  I(2,hbe) << ") " <<
+			"  (HBEvalType " <<  I(2,hbe.eval_type()) << ") " <<
 			" with energy "<< F(8,3,energy)<<std::endl;
 
 	}

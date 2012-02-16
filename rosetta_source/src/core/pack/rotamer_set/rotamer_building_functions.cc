@@ -35,6 +35,7 @@
 
 // AUTO-REMOVED #include <core/scoring/LREnergyContainer.hh>
 // AUTO-REMOVED #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
@@ -1189,13 +1190,19 @@ build_donor_donor_waters(
 
 		/// evaluate the energy of the two hbonds
 		Real energy1(0.0), energy2(0.0);
-		HBEvalType hbe1(HBEval_lookup(get_hb_don_chem_type(rsd1.atom_base(hatm1),rsd1), hbacc_H2O, seq_sep_other));
+		HBEvalTuple hbe1(
+			get_hb_don_chem_type(rsd1.atom_base(hatm1),rsd1),
+			hbacc_H2O,
+			seq_sep_other);
 		hb_energy_deriv( *hb_database, hbondopts, hbe1, datm1_xyz, hatm1_xyz,
 			rot->xyz("O"), rot->xyz("H1"), rot->xyz("H2"), energy1 );
 
 		//if ( energy1 > hbond_energy_threshold ) return;
 
-		HBEvalType hbe2(HBEval_lookup(get_hb_don_chem_type(rsd2.atom_base(hatm2),rsd2), hbacc_H2O, seq_sep_other));
+		HBEvalTuple hbe2(
+			get_hb_don_chem_type(rsd2.atom_base(hatm2),rsd2),
+			hbacc_H2O,
+			seq_sep_other);
 		hb_energy_deriv( *hb_database, hbondopts, hbe2, datm2_xyz, hatm2_xyz,
 			rot->xyz("O"), rot->xyz("H1"), rot->xyz("H2"), energy2 );
 
@@ -1263,7 +1270,7 @@ build_donor_acceptor_waters(
 
 			// donor to water
 			Real energy1(0.0);
-			HBEvalType const hbe_type( HBEval_lookup( get_hb_don_chem_type( rsd1.atom_base( hatm1 ), rsd1 ), hbacc_H2O, seq_sep_other));
+			HBEvalTuple const hbe_type( get_hb_don_chem_type( rsd1.atom_base( hatm1 ), rsd1 ), hbacc_H2O, seq_sep_other);
 			hb_energy_deriv( *hb_database, hbondopts, hbe_type, datm1_xyz, hatm1_xyz,
 				rot->xyz("O"), rot->xyz("H1"), rot->xyz("H2"), energy1 );
 
@@ -1272,8 +1279,8 @@ build_donor_acceptor_waters(
 			Real energy2(0.0);
 			{ // water to acceptor
 				using namespace chemical;
-				HBEvalType const hbe_type
-					( HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( aatm2, rsd2 ) , seq_sep_other) );
+				HBEvalTuple const hbe_type
+					( hbdon_H2O, get_hb_acc_chem_type( aatm2, rsd2 ) , seq_sep_other);
 				hb_energy_deriv( *hb_database, hbondopts, hbe_type, rot->xyz("O"), rot->xyz("H1"),
 					aatm2_xyz, aatm2_base_xyz, aatm2_base2_xyz, energy2 );
 			}
@@ -1373,15 +1380,15 @@ build_acceptor_acceptor_waters(
 
 				{ // water to acceptor1
 					using namespace chemical;
-					HBEvalType const hbe_type( HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( aatm1, rsd1 ), seq_sep_other));
+					HBEvalTuple const hbe_type( hbdon_H2O, get_hb_acc_chem_type( aatm1, rsd1 ), seq_sep_other);
 					hb_energy_deriv( *hb_database, hbondopts, hbe_type, rot->xyz("O"), rot->xyz("H1"),
 						aatm1_xyz, aatm1_base_xyz, aatm1_base2_xyz, energy1 );
 				}
 
 				{ // water to acceptor
 					using namespace chemical;
-					HBEvalType const hbe_type
-						( HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( aatm2, rsd2 ), seq_sep_other));
+					HBEvalTuple const hbe_type
+						( hbdon_H2O, get_hb_acc_chem_type( aatm2, rsd2 ), seq_sep_other);
 					hb_energy_deriv( *hb_database, hbondopts, hbe_type, rot->xyz("O"), rot->xyz("H2"),
 						aatm2_xyz, aatm2_base_xyz, aatm2_base2_xyz, energy2 );
 				}

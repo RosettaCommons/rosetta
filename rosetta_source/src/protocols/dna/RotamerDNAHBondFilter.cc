@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
@@ -108,7 +109,7 @@ RotamerDNAHBondFilter::operator() (
 					   dnares.atom_type( datom_i ).is_acceptor() ) {
 					Real dis2( ratom.xyz().distance_squared( datom.xyz() ) );
 					if ( dis2 > MAX_R2 || dis2 < MIN_R2 ) continue;
-					HBEvalType hbtype(hbond_evaluation_type(rotamer->atom_base(ratom_i), *rotamer, datom_i, dnares));
+					HBEvalTuple hbtype(rotamer->atom_base(ratom_i), *rotamer, datom_i, dnares);
 					Real hbE;
 					hb_energy_deriv_u( *hb_database_, *hbondoptions_, hbtype,
 						ratom.xyz(), rotamer->xyz( rotamer->atom_base( ratom_i )), create_don_orientation_vector( *rotamer, ratom_i ),
@@ -125,7 +126,7 @@ RotamerDNAHBondFilter::operator() (
 					   rotamer->atom_type( ratom_i ).is_acceptor() ) {
 					Real dis2( ratom.xyz().distance_squared( datom.xyz() ) );
 					if ( dis2 > MAX_R2 || dis2 < MIN_R2 ) continue;
-					HBEvalType hbtype( hbond_evaluation_type( dnares.atom_base(datom_i), dnares, ratom_i, *rotamer ) );
+					HBEvalTuple hbtype( dnares.atom_base(datom_i), dnares, ratom_i, *rotamer );
 					Real hbE;
 					hb_energy_deriv_u( *hb_database_, *hbondoptions_, hbtype,
 						datom.xyz(), dnares.xyz( dnares.atom_base( datom_i ) ), create_don_orientation_vector( dnares, datom_i ),

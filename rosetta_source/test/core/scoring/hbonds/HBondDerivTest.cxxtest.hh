@@ -44,6 +44,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
 

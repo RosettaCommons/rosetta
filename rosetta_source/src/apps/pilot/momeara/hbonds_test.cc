@@ -30,6 +30,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 //#include <protocols/relax_protocols.hh>
 #include <basic/Tracer.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondEnergy.hh>
@@ -250,7 +251,7 @@ void dump_hbonds( std::string pdb_filename )
 			//Deriv deriv = bond.deriv();
 			HBondDerivs deriv;
 			Real energy = bond.energy();
-			hb_energy_deriv(*hb_database, hboptions, type, datm_xyz, hatm_xyz, aatm_xyz, base_xyz, base2_xyz, energy, true, deriv );
+			hb_energy_deriv(*hb_database, hboptions, HBEvalTuple( datm, donRes, aatm, accRes ), datm_xyz, hatm_xyz, aatm_xyz, base_xyz, base2_xyz, energy, true, deriv );
 			Real weight = bond.weight();
 			fout << energy << "\t" << weight << "\t";
 			fout << deriv.h_deriv.f1()[ 0 ] << "\t" << deriv.h_deriv.f1()[ 1] << "\t" << deriv.h_deriv.f1()[ 2] << "\t";

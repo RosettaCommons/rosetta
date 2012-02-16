@@ -21,6 +21,7 @@
 // Package headers
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
@@ -742,7 +743,7 @@ HBondEnergy::hbond_derivs_1way(
 
 			Real unweighted_energy( 0.0 );
 
-			HBEvalType hbe_type( hbond_evaluation_type( datm, don_rsd, aatm, acc_rsd));
+			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
@@ -760,13 +761,13 @@ HBondEnergy::hbond_derivs_1way(
 			Real weighted_energy = // evn weight * weight-set[ hbtype ] weight
 				(! hbond_set.hbond_options().use_hb_env_dep() ? 1 :
 				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options() )) *
-				hb_eval_type_weight( hbe_type, weights, is_intra_res);
+				hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res);
 
 			//pba membrane specific correction
 			if ( options_->Mbhbond()) {
 				weighted_energy = get_membrane_depth_dependent_weight(normal_, center_, thickness_,
 				steepness_, don_nb, acc_nb, hatm_xyz, acc_rsd.atom(aatm ).xyz()) *
-				hb_eval_type_weight( hbe_type, weights, is_intra_res);
+				hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res);
 			}
 
 			/// Only accumulate h and acc derivs for now; soon, don, h, acc, a-base and abase2 derivs
@@ -1661,7 +1662,7 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 	// When acc and don are both polymers and on the same chain:
 	// ss = acc.seqpos - don.seqpos
 	int ss = (flipped ? -rotamer_seq_sep_ : rotamer_seq_sep_);
-	HBEvalType hbe_type = hbond_evaluation_type( at2, 0,   // donor atom
+	HBEvalTuple hbe_type = hbond_evaluation_type( at2, 0,   // donor atom
 		at1, ss); // acceptor atom
 	Energy hbenergy;
 	//hb_energy_deriv_u( database_, hbe_type, at2.xyz(), at2.xyz() /*apl -- donor atom coordinate goes here, but is only used for derivatives */,
@@ -1701,7 +1702,7 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 		envweight = membrane_depth_dependent_weight;
 	}
 
-	Real weighted_energy(hb_eval_type_weight(hbe_type, weights_, res1_==res2_) * hbenergy * envweight);
+	Real weighted_energy(hb_eval_type_weight(hbe_type.eval_type(), weights_, res1_==res2_) * hbenergy * envweight);
 
 	//std::cout << "weighted energy: " << weighted_energy << " " << hbenergy << " " << envweight << std::endl;
 	return weighted_energy;

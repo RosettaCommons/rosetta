@@ -18,6 +18,7 @@
 #include <core/scoring/hbonds/types.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/hbtrie/HBAtom.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/DerivVectorPair.fwd.hh>
@@ -47,7 +48,7 @@ get_hb_don_chem_type(
 	conformation::Residue const & don_rsd
 );
 
-HBEvalType
+HBEvalTuple
 hbond_evaluation_type(
 	hbtrie::HBAtom const & datm,
 	int const & don_rsd,
@@ -69,7 +70,7 @@ extern HBondDerivs DUMMY_DERIVS;
 extern HBondDerivs const ZERO_DERIV2D;
 
 
-HBEvalType
+HBEvalTuple
 hbond_evaluation_type(
 	int const datm,
 	conformation::Residue const & don_rsd,
@@ -89,7 +90,7 @@ void
 hbond_compute_energy(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalType hbe,   // used internally & by geometric solvation
+	HBEvalTuple hbt,   // used internally & by geometric solvation
 	Real const AHdis, // acceptor proton distance
 	Real const xD,    // -cos(180-theta), where theta is defined by Tanja K.
 	Real const xH,      // cos(180-phi), where phi is defined by Tanja K.
@@ -109,7 +110,7 @@ void
 hb_energy_deriv_u(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalType const hbe_type, // hbond evaluation type
+	HBEvalTuple const hbt, // hbond evaluation tuple
 	Vector const & Hxyz, // proton
 	Vector const & Dxyz, // donor -- only needed for derivative evaluation
 	Vector const & HDunit, // proton-to-donor unit vector
@@ -128,7 +129,7 @@ void
 hb_energy_deriv_u2(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalType const hbe_type, // hbond evaluation type
+	HBEvalTuple const hbt, // hbond evaluation type
 	HBDerivType const deriv_type,
 	Vector const & Hxyz, // proton
 	Vector const & Dxyz, // donor
@@ -147,7 +148,7 @@ void
 hb_energy_deriv(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalType const hbe_type, // hbond evaluation type
+	HBEvalTuple const hbt, // hbond evaluation type
 	Vector const & Dxyz, // donor coords
 	Vector const & Hxyz, // proton
 	Vector const & Axyz, // acceptor
@@ -162,7 +163,7 @@ void
 hb_energy_deriv(
 	HBondDatabase const & database,
 	HBondOptions const & hbondoptions,
-	HBEvalType const hbe_type, // hbond evaluation type
+	HBEvalTuple const hbt, // hbond evaluation type
 	Vector const & Dxyz, // donor coords
 	Vector const & Hxyz, // proton
 	Vector const & Axyz, // acceptor
@@ -203,7 +204,7 @@ void
 assign_abase_derivs(
 	conformation::Residue const & acc_rsd,
 	Size acc_atom,
-	HBEvalType const hbe_type,
+	HBEvalTuple const hbe_type,
 	DerivVectorPair const & abase_deriv,
 	Real weighted_energy,
 	utility::vector1< DerivVectorPair > & acc_atom_derivs

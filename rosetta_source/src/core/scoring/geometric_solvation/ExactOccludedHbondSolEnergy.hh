@@ -21,6 +21,7 @@
 // AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/hbonds/types.hh>
+#include <core/scoring/hbonds/HBEvalTuple.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 // AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
@@ -78,8 +79,11 @@ class WaterWeightGridSet {
 public:
 	static WaterWeightGridSet * get_instance();
 
-	std::vector < std::vector < std::vector <core::Real> > > const & get_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
-	core::Real get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
+	std::vector < std::vector < std::vector <core::Real> > > const &
+	get_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
+
+	core::Real
+	get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
 
 private:
 	//private constructor
@@ -87,7 +91,7 @@ private:
 	static WaterWeightGridSet * instance_;
 
 	core::Real fill_water_grid( std::vector < std::vector < std::vector <core::Real> > > & water_weights,
-		hbonds::HBEvalType const & hbond_eval_type, GridInfo const & grid_info, bool const water_is_donor);
+		hbonds::HBEvalTuple const & hbond_eval_type, GridInfo const & grid_info, bool const water_is_donor);
 
 	// private member data
 	std::map< hbonds::HBEvalType, std::vector < std::vector < std::vector <core::Real> > > > all_water_weights_;
@@ -108,14 +112,14 @@ public:
 public:
 
 	ExactOccludedHbondSolEnergy(
-															bool const exact_occ_skip_Hbonders = false,
-															bool const exact_occ_include_Hbond_contribution = false,
-															bool const exact_occ_pairwise = false,
-															bool const exact_occ_pairwise_by_res = false,
-															bool const exact_occ_split_between_res = false,
-															bool const exact_occ_self_res_occ = true,
-															core::Real const occ_radius_scaling = 1.,
-															bool const verbose = false
+		bool const exact_occ_skip_Hbonders = false,
+		bool const exact_occ_include_Hbond_contribution = false,
+		bool const exact_occ_pairwise = false,
+		bool const exact_occ_pairwise_by_res = false,
+		bool const exact_occ_split_between_res = false,
+		bool const exact_occ_self_res_occ = true,
+		core::Real const occ_radius_scaling = 1.,
+		bool const verbose = false
 	);
 
 	ExactOccludedHbondSolEnergy( ExactOccludedHbondSolEnergy const & src );
@@ -146,7 +150,7 @@ public:
 
 	core::Real
 	compute_grid_constant(
-	  hbonds::HBEvalType const & hbond_eval_type
+	  hbonds::HBEvalTuple const & hbond_eval_type
 	) const;
 
 	core::Real compute_polar_group_sol_energy(
