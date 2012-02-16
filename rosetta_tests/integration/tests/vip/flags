@@ -1,0 +1,7 @@
+-s Start_Lambda_Model.pdb
+-cp:cutoff 6.0
+-cp:ncycles 1
+-cp:skip_relax
+-cp:print_reports
+-sasa_calculator_probe_radius 1.0
+-run:silent
