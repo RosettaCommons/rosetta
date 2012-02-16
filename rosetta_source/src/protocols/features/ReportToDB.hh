@@ -71,7 +71,6 @@ public:
 	virtual std::string get_name() const { return "ReportToDB"; }
 
 
-
 	void
 	parse_db_tag_item(
 		utility::tag::TagPtr const tag);
@@ -85,11 +84,19 @@ public:
 		utility::tag::TagPtr const tag);
 
 	void
+	parse_struct_id_type_tag_item(
+		utility::tag::TagPtr const tag);
+
+	void
 	parse_first_struct_id_tag_item(
 		utility::tag::TagPtr const tag);
 
 	void
 	parse_db_mode_tag_item(
+		utility::tag::TagPtr const tag);
+
+	void
+	parse_separate_db_per_mpi_process_tag_item(
 		utility::tag::TagPtr const tag);
 
 	void
@@ -99,8 +106,6 @@ public:
 	void
 	parse_cache_size_tag_item(
 		utility::tag::TagPtr const tag);
-
-	// Undefinded, commenting out to fix PyRosetta build  void parse_feature_tag(utility::tag::TagPtr const tag, protocols::moves::DataMap & data, core::pose::Pose const & pose );
 
 	void
 	parse_my_tag(
@@ -114,7 +119,6 @@ public:
 	check_features_reporter_dependencies(
 		FeaturesReporterOP test_feature_reporter
 	) const;
-
 
 	void
 	initialize_reporters();
@@ -134,6 +138,7 @@ public:
 private:
 	std::string database_fname_;
 	std::string database_mode_;
+	bool separate_db_per_mpi_process_;
 	std::string sample_source_;
 
 	core::scoring::ScoreFunctionOP scfxn_;
@@ -141,13 +146,8 @@ private:
 
 	core::Size cache_size_;
 
-	// For parallel jobs, where databases are written for each node,
-	// maintaining mergability requires managing the struct_id values to
-	// keep them distinct.
-	static core::Size struct_id_;
-	static bool autoincrement_struct_id_;
+	static core::Size protocol_id_;
 	static bool protocol_table_initialized_;
-	static core::Size protocol_id_; /* initialized to 0 */
 
 	// initialized in parse_my_tag
 	core::pack::task::TaskFactoryOP task_factory_;

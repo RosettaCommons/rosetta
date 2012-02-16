@@ -15,6 +15,8 @@
 #include <protocols/features/StructureFeatures.hh>
 
 // Project Headers
+#include <basic/database/sql_utils.hh>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <utility/exit.hh>
@@ -23,16 +25,19 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <basic/database/sql_utils.hh>
+#include <protocols/jd2/Job.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
+
+// Boost Headers
+#include <boost/functional/hash.hpp>
 
 // C++
 #include <string>
 #include <sstream>
 
-#include <protocols/jd2/Job.hh>
+
 
 
 namespace protocols{
@@ -41,7 +46,10 @@ namespace features{
 using std::string;
 using std::stringstream;
 using std::endl;
+using basic::database::safely_prepare_statement;
+using boost::hash_value;
 using core::Size;
+using core::io::silent::BinaryProteinSilentStruct;
 using core::pose::Pose;
 using core::pose::tag_from_pose;
 using core::pose::tag_into_pose;
@@ -52,7 +60,7 @@ using cppdb::result;
 
 StructureFeatures::StructureFeatures(){}
 
-StructureFeatures::StructureFeatures( StructureFeatures const & ) :
+StructureFeatures::StructureFeatures( StructureFeatures const & src) :
 	FeaturesReporter()
 {}
 
@@ -72,7 +80,7 @@ StructureFeatures::schema() const {
 			"	protocol_id INTEGER,\n"
 			"	tag TEXT,\n"
 			"	input_tag TEXT,\n"
-			"	UNIQUE (protocol_id, tag)"
+			"	UNIQUE (protocol_id, tag),"
 			"	FOREIGN KEY (protocol_id)\n"
 			"		REFERENCES protocols (protocol_id)\n"
 			"		DEFERRABLE INITIALLY DEFERRED);";
@@ -100,6 +108,7 @@ StructureFeatures::features_reporter_dependencies() const {
 }
 
 
+//@details missing struct_id and input/output tags
 Size
 StructureFeatures::report_features(
 	Pose const & pose,
@@ -107,70 +116,42 @@ StructureFeatures::report_features(
 	Size protocol_id,
 	sessionOP db_session
 ){
-	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-	std::string output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
-	return report_features(
-		pose, relevant_residues, protocol_id, db_session, output_tag ,input_tag);
+	string const output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
+	string const input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+	Size struct_id(
+		report_features(pose, relevant_residues, protocol_id,
+			db_session, output_tag, input_tag));
+	return struct_id;
 }
 
+//@details missing struct_id and input/output tags
 Size
 StructureFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
-	Size protocol_id,
-	sessionOP db_session
-){
-	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-	std::string output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
-	return report_features(
-		pose, relevant_residues, struct_id, protocol_id, db_session, output_tag,input_tag);
-}
-
-
-Size
-StructureFeatures::report_features(
-	Pose const &,
-	vector1< bool > const &,
 	Size protocol_id,
 	sessionOP db_session,
 	string const & tag,
 	string const & input_tag
 ){
-	std::string statement_string = "INSERT INTO structures VALUES (?,?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	string statement_string = "INSERT INTO structures VALUES (?,?,?,?);";
+	statement stmt(safely_prepare_statement(statement_string,db_session));
 
-	stmt.bind_null(1);
-	stmt.bind(2,protocol_id);
-	stmt.bind(3,tag);
-	stmt.bind(4,input_tag);
+	BinaryProteinSilentStruct silent_struct(pose, "");
+	stringstream pose_string;
+	silent_struct.print_conformation(pose_string);
+	Size const struct_id = hash_value(pose_string.str());
+
+	stmt.bind(1, struct_id);
+	stmt.bind(2, protocol_id);
+	stmt.bind(3, tag);
+	stmt.bind(4, input_tag);
 	basic::database::safely_write_to_database(stmt);
 
-	return stmt.last_insert_id();
+	return struct_id;
 }
-//%TODO you stopped here
-Size
-StructureFeatures::report_features(
-	Pose const &,
-	vector1< bool > const &,
-	Size struct_id,
-	Size protocol_id,
-	sessionOP db_session,
-	string const & tag,
-	string const & input_tag
-){
 
-	std::string statement_string = "INSERT INTO structures VALUES (?,?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	stmt.bind(1,struct_id);
-	stmt.bind(2,protocol_id);
-	stmt.bind(3,tag);
-	stmt.bind(4,input_tag);
-	basic::database::safely_write_to_database(stmt);
-
-	return stmt.last_insert_id();
-}
 void StructureFeatures::delete_record(
 	core::Size struct_id,
 	utility::sql_database::sessionOP db_session
@@ -245,9 +226,9 @@ StructureFeatures::get_struct_id(
 		error_message << "Unable to locate structure with tag '"<<tag<<"'."<<endl;
 		utility_exit_with_message(error_message.str());
 	}
-	Size struct_id;
+	long long struct_id;
 	res >> struct_id;
-	return struct_id;
+	return static_cast<Size>(struct_id);
 }
 
 } // namesapce

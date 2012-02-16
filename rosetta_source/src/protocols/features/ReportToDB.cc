@@ -21,11 +21,15 @@
 
 // Setup Mover
 #include <protocols/features/ReportToDBCreator.hh>
-
 #include <basic/database/sql_utils.hh>
 
-//Auto Headers
+// Platform Headers
+#include <basic/Tracer.hh>
+#include <basic/datacache/CacheableString.fwd.hh>
+#include <basic/options/keys/parser.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -38,15 +42,20 @@
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/jd2/JobDistributor.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
+
+// Utility Headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+
+// Numeric Headers
 #include <numeric>
-#include <basic/Tracer.hh>
-#include <basic/datacache/CacheableString.fwd.hh>
-#include <basic/options/keys/parser.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+
+// Boost Headers
 #include <boost/foreach.hpp>
+
+// C++ Headers
+#include <sstream>
 
 
 namespace protocols{
@@ -117,11 +126,8 @@ using utility::sql_database::session;
 
 static Tracer TR("protocols.features.ReportToDB");
 
-Size ReportToDB::struct_id_ = 0;
 Size ReportToDB::protocol_id_ = 0;
-bool ReportToDB::autoincrement_struct_id_ = true;
 bool ReportToDB::protocol_table_initialized_ = false;
-
 
 ReportToDB::ReportToDB():
 	Mover("ReportToDB"),
@@ -259,36 +265,6 @@ ReportToDB::parse_protocol_id_tag_item(
 
 }
 
-void
-ReportToDB::parse_first_struct_id_tag_item(
-	TagPtr const tag) {
-
-	if(tag->hasOption("first_struct_id")){
-		Size first_struct_id = tag->getOption<Size>("first_struct_id");
-		// Initialize struct_id_ to first_struct_id only if this is the
-		// first time ReportToDB has been executed. It is sufficient to
-		// test autoincrement_struct_id_.
-		if (autoincrement_struct_id_){
-#ifdef USEMPI
-			int mpi_rank(0);
-			MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-			struct_id_ = first_struct_id + mpi_rank - 1; // minus 1 to setup invariant
-#else
-			struct_id_ = first_struct_id - 1; // minus 1 to setup invariant
-#endif
-			autoincrement_struct_id_ = false;
-		}
-	}
-#ifdef USEMPI
-	else if (autoincrement_struct_id_){
-		int mpi_rank(0);
-		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-		struct_id_ = mpi_rank - 1;
-		autoincrement_struct_id_ = false;
-	}
-#endif
-
-}
 
 void
 ReportToDB::parse_db_mode_tag_item(
@@ -297,6 +273,21 @@ ReportToDB::parse_db_mode_tag_item(
 		database_mode_ = tag->getOption<std::string>("db_mode");
 	} else {
 		database_mode_ = "sqlite3";
+	}
+}
+
+void
+ReportToDB::parse_separate_db_per_mpi_process_tag_item(
+	TagPtr const tag) {
+	if(tag->hasOption("separate_db_per_mpi_process")){
+		if(database_mode_ != "sqlite"){
+			TR.Warning << "Attempting to set 'separate_db_per_mpi_process', but the database mode is not 'sqlite'" << endl;
+		}
+		separate_db_per_mpi_process_ =
+			tag->getOption<bool>("separate_db_per_mpi_process");
+
+	} else {
+		separate_db_per_mpi_process_ = true;
 	}
 }
 
@@ -340,19 +331,20 @@ ReportToDB::parse_my_tag(
 
 	// Manually control the id of associated with this protocol
 	// EXAMPLE: protocol_id=6
-	// OPTIONAL
+	// OPTIONAL default is to autoincrement the protocol_id in the protocols table
 	parse_protocol_id_tag_item(tag);
-
-	// Manually control the first structure id
-	// EXAMPLE: first_struct_id=100
-	// OPTIONAL
-	parse_first_struct_id_tag_item(tag);
 
 	// The database backend to use ('sqlite3', 'mysql' etc)
 	// EXAMPLE: db_mode=sqlite3
 	parse_db_mode_tag_item(tag);
 
-	// Use transactions to group database i/o to be more efficient. Turning them off OBcan help debugging.
+	// For sqlite databases in mpi mode, decide if each node should
+	// write to it's own database or all write to one database
+	// EXAMPLE: separate_db_per_mpi_process=true
+	// OPTIONAL default false
+	parse_separate_db_per_mpi_process_tag_item(tag);
+
+	// Use transactions to group database i/o to be more efficient. Turning them off can help debugging.
 	// EXAMPLE: use_transactions=true
 	// DEFAULT: TRUE
 	parse_use_transactions_tag_item(tag);
@@ -518,24 +510,12 @@ ReportToDB::apply( Pose& pose ){
 		stmt.exec();
 	}
 
-	if(autoincrement_struct_id_){
-		struct_id_ = structure_features_->report_features(
-		  pose, relevant_residues, protocol_id_, db_session);
-	} else {
-#ifdef USEMPI
-		int mpi_size(0);
-		MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-		struct_id_+=mpi_size;
-#else
-		struct_id_++;
-#endif
-		structure_features_->report_features(
-			pose, relevant_residues, struct_id_, protocol_id_, db_session);
-	}
+	Size const struct_id = structure_features_->report_features(
+		pose, relevant_residues, protocol_id_, db_session);
 
 	for(Size i=1; i <= features_reporters_.size(); ++i){
 		features_reporters_[i]->report_features(
-			pose, relevant_residues, struct_id_, db_session);
+			pose, relevant_residues, struct_id, db_session);
 	}
 
 	if(use_transactions_) db_session->commit();

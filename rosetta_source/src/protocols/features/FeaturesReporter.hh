@@ -76,7 +76,6 @@ public:
 	) const;
 
 	///@brief collect all the feature data for the pose.
-	virtual
 	core::Size
 	report_features(
 		core::pose::Pose const & /*pose*/,

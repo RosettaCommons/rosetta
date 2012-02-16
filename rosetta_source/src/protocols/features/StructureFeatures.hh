@@ -53,7 +53,7 @@ public:
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief collect all the feature data for the pose
+	///@brief collect all the feature data for the pose use
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,
@@ -62,18 +62,8 @@ public:
 		utility::sql_database::sessionOP db_session
 	);
 
-	///@brief collect all the feature data for the pose
-	core::Size
-	report_features(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & relevant_residues,
-		core::Size struct_id,
-		core::Size protocol_id,
-		utility::sql_database::sessionOP db_session
-	);
-
-
-	///@brief collect all the feature data for the pose
+	///@brief collect all the feature data for the pose use
+	///This version allows the tag and the input tag to be specificed
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,
@@ -84,18 +74,6 @@ public:
 		std::string const & input_tag
 	);
 
-	///@brief collect all the feature data for the pose
-	///pass in struct_id explicitly to mange mergability in parallel runs.
-	core::Size
-	report_features(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & relevant_residues,
-		core::Size struct_id,
-		core::Size protocol_id,
-		utility::sql_database::sessionOP db_session,
-		std::string const & tag,
-		std::string const & input_tag
-	);
 
 	void delete_record(
 		core::Size struct_id,

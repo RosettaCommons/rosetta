@@ -188,6 +188,11 @@ ProteinRMSDFeatures::report_features(
 ){
 	using namespace core::scoring;
 
+	if(!reference_pose_ || !reference_pose_->total_residue()){
+		utility_exit_with_message("No reference pose has been initialized.");
+		return 0;
+	}
+
 	list< Size > subset_residues;
 	for(Size i = 1; i <= relevant_residues.size(); ++i){
 		if(relevant_residues[i]) subset_residues.push_back(i);
