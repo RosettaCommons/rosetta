@@ -93,6 +93,7 @@ sources = {
 		"RRComparer",
 		"RRComparerAutomorphicRMSD",
 		"RRProtocol",
+		"RRProtocolReferenceStructure",
 		"RRProtocolMinPack",
 		"RRProtocolMover",
 		"RRProtocolRTMin",

@@ -144,14 +144,7 @@ ScoreTypeFeatures::report_features(
 
 void ScoreTypeFeatures::delete_record(
 	Size struct_id,
-	utility::sql_database::sessionOP db_session
-){
-
-	statement stmt = (*db_session) <<
-		"DELETE FROM structure_scores WHERE struct_id = ?;\n" << struct_id;
-	basic::database::safely_write_to_database(stmt);
-
-}
+	utility::sql_database::sessionOP db_session){}
 
 void
 ScoreTypeFeatures::insert_score_type_rows(

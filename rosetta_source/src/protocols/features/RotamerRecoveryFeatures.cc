@@ -19,12 +19,14 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 #include <protocols/rotamer_recovery/RRReporterSQLite.hh>
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>
+#include <protocols/rotamer_recovery/RRProtocolReferenceStructure.hh>
 
 
 // Project Headers
@@ -64,6 +66,7 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunction;
 using core::scoring::getScoreFunction;
 using core::pose::Pose;
+using core::pose::PoseCOP;
 using core::pack::task::PackerTaskOP;
 using core::pack::task::TaskFactory;
 using core::pack::task::TaskFactoryOP;
@@ -74,9 +77,11 @@ using protocols::moves::DataMap;
 using protocols::moves::MoverOP;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_mover;
+using protocols::rosetta_scripts::saved_reference_pose;
 using protocols::rotamer_recovery::RotamerRecovery;
 using protocols::rotamer_recovery::RotamerRecoveryFactory;
 using protocols::rotamer_recovery::RRProtocolMover;
+using protocols::rotamer_recovery::RRProtocolReferenceStructure;
 using protocols::rotamer_recovery::RRReporterSQLite;
 using protocols::rotamer_recovery::RRReporterSQLiteOP;
 using utility::sql_database::sessionOP;
@@ -125,7 +130,6 @@ RotamerRecoveryFeatures::features_reporter_dependencies() const {
 	return dependencies;
 }
 
-
 void
 RotamerRecoveryFeatures::parse_my_tag(
 	TagPtr const tag,
@@ -134,30 +138,68 @@ RotamerRecoveryFeatures::parse_my_tag(
 	Movers_map const & movers,
 	Pose const & /*pose*/
 ) {
-	if(tag->hasOption("scorefxn")){
-		string scorefxn_name = tag->getOption<string>("scorefxn");
-		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
-	} else {
-		stringstream error_msg;
-		error_msg
-			<< "The " << type_name() << " reporter requires a 'scorefxn' tag:" << endl
-			<< endl
-			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
-		utility_exit_with_message(error_msg.str());
-	}
+	string scorefxn_name = tag->getOption<string>("scorefxn", "score12");
+	scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
 
 	RotamerRecoveryFactory * factory(RotamerRecoveryFactory::get_instance());
 
 	if(tag->hasOption("mover") || tag->hasOption("mover_name")){
+		if(tag->hasOption("reference_name")){
+			utility_exit_with_message(
+				"Both 'mover_name' and 'reference_name' were supplied. "
+				"Please specify at most one to indicate which protocols should "
+				"be used to run RotamerRecovery.");
+		}
+
 		MoverOP mover = parse_mover(tag->hasOption("mover") ?
-			tag->getOption<string>("mover") : tag->getOption<string>("mover_name"), movers);
+			tag->getOption<string>("mover") :
+			tag->getOption<string>("mover_name"), movers);
 		protocol_ = new RRProtocolMover(mover);
+	} else if(tag->hasOption("reference_name")){
+		if(tag->hasOption("mover")){
+			utility_exit_with_message(
+				"Both 'mover' and 'reference_name' were supplied. "
+				"Please specify at most one to indicate which protocols "
+				"should be used to run RotamerRecovery.");
+		}
+
+		if(tag->hasOption("mover_name")){
+			utility_exit_with_message(
+				"Both 'mover_name' and 'reference_name' were supplied. "
+				"Please specify at most one to indicate which protocols "
+				"should be used to run RotamerRecovery.");
+		}
+
+		if(tag->hasOption("protocol") &&
+			!tag->getOption<string>("protocol").compare(
+				"RRProtocolReferenceStructure")){
+			utility_exit_with_message(
+				"Specifying 'reference_name' is only compatible with the "
+				"'RRProtocolReferenceStructure' protocol.");
+		}
+
+		// Use with SavePoseMover
+		// WARNING! reference_pose is not initialized until apply time
+		PoseCOP reference_pose(saved_reference_pose(tag, data));
+		protocol_ = new RRProtocolReferenceStructure(reference_pose);
 	} else {
-		string const & protocol_name(tag->getOption<string>("protocol", "RRProtocolMinPack"));
-		protocol_ = factory->get_rotamer_recovery_protocol(protocol_name);
+		string const & protocol_name(tag->getOption<string>(
+				"protocol", "RRProtocolMinPack"));
+		if(!protocol_name.compare("RRProtocolMover")){
+			utility_exit_with_message(
+				"Please specify 'mover_name' with the 'RRProtocolMover' "
+				"rotamer recovery protocol.");
+		} else if(!protocol_name.compare("RRProtocolReferenceStructure")){
+			utility_exit_with_message(
+				"Please specify 'reference_name' with 'RRProtocolReferenceStructure' "
+				"rotamer recovery protocol.");
+		} else {
+			protocol_ = factory->get_rotamer_recovery_protocol(protocol_name);
+		}
 	}
 
-	string const & comparer_name(tag->getOption<string>("comparer", "RRComparerAutomorphicRMSD"));
+	string const & comparer_name(tag->getOption<string>(
+			"comparer", "RRComparerAutomorphicRMSD"));
 	comparer_ = factory->get_rotamer_recovery_comparer(comparer_name);
 }
 

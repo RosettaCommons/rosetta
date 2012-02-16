@@ -41,6 +41,15 @@ public:
 	virtual std::string type_name() const = 0;
 };
 
+class RRProtocolReferenceStructureCreator : public RRProtocolCreator {
+public:
+	RRProtocolReferenceStructureCreator() {}
+	~RRProtocolReferenceStructureCreator() {}
+
+	RRProtocolOP create_protocol() const;
+	std::string type_name() const;
+};
+
 class RRProtocolRTMinCreator : public RRProtocolCreator {
 public:
 	RRProtocolRTMinCreator() {}

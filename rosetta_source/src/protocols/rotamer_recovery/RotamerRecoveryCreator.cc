@@ -15,6 +15,7 @@
 #include <protocols/rotamer_recovery/RotamerRecoveryCreator.hh>
 
 // Package Headers
+#include <protocols/rotamer_recovery/RRProtocolReferenceStructure.hh>
 #include <protocols/rotamer_recovery/RRProtocolRTMin.hh>
 #include <protocols/rotamer_recovery/RRProtocolMinPack.hh>
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>
@@ -34,6 +35,21 @@ namespace rotamer_recovery {
 
 using std::string;
 
+/// Protocols /////
+
+//////////////// ReferenceStructure ///////////////////
+RRProtocolOP
+RRProtocolReferenceStructureCreator::create_protocol(
+) const {
+	return new RRProtocolReferenceStructure;
+}
+
+string
+RRProtocolReferenceStructureCreator::type_name() const {
+	return "RRProtocolReferenceStructure";
+}
+
+//////////////// RTMin ///////////////////
 RRProtocolOP
 RRProtocolRTMinCreator::create_protocol(
 ) const {
@@ -45,6 +61,7 @@ RRProtocolRTMinCreator::type_name() const {
 	return "RRProtocolRTMin";
 }
 
+//////////////// MinPack ///////////////////
 RRProtocolOP
 RRProtocolMinPackCreator::create_protocol(
 ) const {
@@ -57,6 +74,7 @@ RRProtocolMinPackCreator::type_name() const {
 }
 
 
+//////////////// Mover ///////////////////
 string
 RRProtocolMoverCreator::type_name() const {
 	return "RRProtocolMover";
@@ -68,7 +86,8 @@ RRProtocolMoverCreator::create_protocol(
 	return new RRProtocolMover;
 }
 
-
+/// Protocols /////
+//////////////// AutomorphicRMSD ///////////////////
 RRComparerOP
 RRComparerAutomorphicRMSDCreator::create_comparer(
 ) const {
@@ -80,6 +99,8 @@ RRComparerAutomorphicRMSDCreator::type_name() const {
 	return "RRComparerAutomorphicRMSD";
 }
 
+
+//////////////// RotBins ///////////////////
 RRComparerOP
 RRComparerRotBinsCreator::create_comparer(
 ) const {
@@ -91,6 +112,8 @@ RRComparerRotBinsCreator::type_name() const {
 	return "RRComparerRotBins";
 }
 
+
+//////////////// Simple ///////////////////
 RRReporterOP
 RRReporterSimpleCreator::create_reporter(
 ) const {
@@ -102,6 +125,9 @@ RRReporterSimpleCreator::type_name() const {
 	return "RRReporterSimple";
 }
 
+
+//// Reporters ////
+//////////////// Human ///////////////////
 RRReporterOP
 RRReporterHumanCreator::create_reporter(
 ) const {
@@ -113,6 +139,7 @@ RRReporterHumanCreator::type_name() const {
 	return "RRReporterHuman";
 }
 
+//////////////// SQLite ///////////////////
 RRReporterOP
 RRReporterSQLiteCreator::create_reporter(
 ) const {
