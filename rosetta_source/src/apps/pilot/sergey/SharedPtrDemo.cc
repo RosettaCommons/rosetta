@@ -71,5 +71,11 @@ int main( int argc, char * argv [] )
 	//foo_baseSP(son_csp);  <-- Does not work...
 	foo_baseCSP(son_csp);
 
+	boost::weak_ptr<Son const> SonCWP = son_csp;
+	SonCSP son_csp1 = SonCWP.lock();
+	if(son_csp1) {
+		// Object was not released!
+	}
+
 	return 0;
 }
