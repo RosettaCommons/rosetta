@@ -798,7 +798,8 @@ EnzConstraintIO::setup_favor_native_constraints(
     	SequenceProfileOP profile = new SequenceProfile;
     	utility::file::FileName filename( option[ OptionKeys::in::file::pssm ]().front() );
 
-     	profile->read_from_file( filename, 1 );
+     	profile->read_from_file( filename );
+     	profile->convert_profile_to_probs( 1 ); // was previously implicit in read_from_file()
 
       tr << *profile << std::endl;
 

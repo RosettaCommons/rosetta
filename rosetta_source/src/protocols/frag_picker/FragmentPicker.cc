@@ -665,7 +665,8 @@ void FragmentPicker::parse_command_line() {
 																						 new core::sequence::SequenceProfile);
 		trPicker.Info << "reading a query profile from: "
 									<< option[in::file::pssm]()[1] << std::endl;
-		q_prof->read_from_file(option[in::file::pssm]()[1], 1.0);
+		q_prof->read_from_file(option[in::file::pssm]()[1] );
+		q_prof->convert_profile_to_probs(1.0); // was previously implicit in read_from_file()
 		set_query_seq(q_prof);
 		trPicker.Info << "picking fragments for query profile: "
 									<< get_query_seq_string() << std::endl;

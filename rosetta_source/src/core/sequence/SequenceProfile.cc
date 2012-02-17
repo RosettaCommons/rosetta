@@ -42,10 +42,11 @@ namespace sequence {
 static basic::Tracer tr( "core.sequence.SequenceProfile" );
 
 void SequenceProfile::read_from_checkpoint(
-	utility::file::FileName const & fn
+		utility::file::FileName const & fn,
+		bool negative_better
 ) {
 	utility::io::izstream input( fn );
-	profile_from_pssm_file_ = false;
+	negative_better_ = negative_better;
 	// order of amino acids in the .checkpoint file
 	static utility::vector1< core::chemical::AA > order;
 	order.resize( 20 );
@@ -110,14 +111,7 @@ void SequenceProfile::read_from_checkpoint(
 void SequenceProfile::read_from_file(
 	utility::file::FileName const & fn
 ) {
-	read_from_file(fn,1.0);
-}
-
-void SequenceProfile::read_from_file(
-	utility::file::FileName const & fn,
-	core::Real temp
-) {
-	profile_from_pssm_file_ = true;
+	negative_better_ = false;
 	// order of amino acids in the .pssm file
 	static utility::vector1< core::chemical::AA > order;
 	order.resize( 20 );
@@ -144,7 +138,6 @@ void SequenceProfile::read_from_file(
 
 	utility::io::izstream input( fn );
 
-	temp_ = temp;
 	if ( !input ) {
 		std::string msg(
 			"ERROR: Unable to open file " +
@@ -195,9 +188,8 @@ void SequenceProfile::read_from_file(
 			++index;
 		}
 
-		// convert prof_row to a vector of probabilities
-		scores_to_probs_( prof_row, 1.0 );
 		profile_.push_back( prof_row );
+
 		seq += aa;
 	} // while( getline( input, line ) )
 
@@ -216,13 +208,12 @@ void SequenceProfile::generate_from_sequence( Sequence const & seq, std::string 
 	for (core::Size ii(1), end(seq.length()); ii <= end; ++ii) {
 		utility::vector1< Real > prof_row( mat.values_for_aa( seq[ii] ) );
 		prof_row.resize( core::chemical::num_canonical_aas, -10000 );
-		scores_to_probs_( prof_row, 1.0 );
 		new_prof.push_back(prof_row);
 	}
 
 	sequence( seq.sequence() );
 	profile( new_prof );
-	profile_from_pssm_file_ = true;
+	negative_better_ = false;
 }
 
 /// @brief Returns the 2D vector1 of Real-values representing this profile.
@@ -239,17 +230,36 @@ void SequenceProfile::rescale(core::Real factor) {
 			*it *= factor;
 		}
 	}
+	if ( factor < 0 ) {
+		tr << "Flipping sense of negative_better." << std::endl;
+		negative_better_ = ! negative_better_;
+	}
 }
 
-void SequenceProfile::convert_profile_to_probs() {
+void SequenceProfile::convert_profile_to_probs( core::Real temp /*= 1.0*/ ) {
+	temp_ = temp;
 	utility::vector1< utility::vector1< Real > > new_prof;
 	for ( Size ii = 1; ii <= profile().size(); ++ii ) {
 		utility::vector1< core::Real > new_prof_row = prof_row(ii);
-		scores_to_probs_( new_prof_row, 1.0 );
+		scores_to_probs_( new_prof_row, temp, negative_better_ );
 		new_prof.push_back( new_prof_row );
 	}
 	profile( new_prof );
+	negative_better_ = false;
 }
+
+void SequenceProfile::global_auto_rescale() {
+	core::Real maxval(0.0);
+	for ( Size ii = 1; ii <= profile_.size(); ++ii ) {
+		for ( Size jj = 1; jj <= profile_[ii].size(); ++jj ) {
+			if ( maxval < std::abs(profile_[ii][jj]) ) {
+				maxval = std::abs(profile_[ii][jj]);
+			}
+		}
+	}
+	rescale( 1/maxval );
+}
+
 
 void SequenceProfile::profile(
 	utility::vector1< utility::vector1< core::Real > > const & new_prof
@@ -299,6 +309,7 @@ void SequenceProfile::delete_position(
 
 /// @brief Returns the number of distinct values at each position in this profile.
 Size SequenceProfile::width() const {
+	assert( check_internals_() );
 	return profile_[1].size();
 }
 
@@ -311,8 +322,9 @@ SequenceProfile::prof_row( Size pos ) const {
 
 void SequenceProfile::scores_to_probs_(
 	utility::vector1< core::Real > & scores,
-	core::Real kT
-) {
+	core::Real kT,
+	bool negative_better /* = false */
+) const {
 	using std::exp;
 	using utility::vector1;
 
@@ -322,8 +334,11 @@ void SequenceProfile::scores_to_probs_(
 	for ( vector1< core::Real >::iterator
 				it = scores.begin(), end = scores.end(); it != end; ++it
 	) {
-		//*it = exp( -1 * *it / kT );
-		*it = exp( *it / kT );
+		if ( negative_better ) {
+			*it = exp( -1 * *it / kT );
+		} else {
+			*it = exp( *it / kT );
+		}
 		partition += *it;
 	}
 
@@ -351,7 +366,7 @@ std::ostream & operator<<( std::ostream & out, const SequenceProfile & p ) {
 	return out;
 }
 
-void SequenceProfile::check_internals_() const {
+bool SequenceProfile::check_internals_() const {
 	using core::Real;
 	using utility::vector1;
 
@@ -360,6 +375,8 @@ void SequenceProfile::check_internals_() const {
 	for ( Size i = 1; i <= profile_.size(); ++i ) {
 		runtime_assert( profile_[i].size() == alphabet_.size() );
 	}
+
+	return true;
 }
 
 } // sequence

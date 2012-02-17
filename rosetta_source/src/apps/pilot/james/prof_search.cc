@@ -234,7 +234,8 @@ main( int argc, char* argv [] ) {
 	// query and template profiles
 	FileName pssm_file( option[ in::file::pssm ]()[1] );
 	SequenceProfileOP query_prof( new SequenceProfile );
-	query_prof->read_from_file( pssm_file, 1.0 );
+	query_prof->read_from_file( pssm_file );
+	query_prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 
 	FileName pssm_db  ( option[ in::file::pssm ]()[2] );
 	SequenceProfileDB prof_db( pssm_db );

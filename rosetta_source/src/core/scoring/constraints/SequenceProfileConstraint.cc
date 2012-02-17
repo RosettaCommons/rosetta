@@ -195,8 +195,8 @@ SequenceProfileConstraint::atom( Size const index ) const
 }
 
 utility::vector1< id::AtomID > const &
-SequenceProfileConstraint::atom_ids() const { 
-	return atom_ids_; 
+SequenceProfileConstraint::atom_ids() const {
+	return atom_ids_;
 }
 
 void SequenceProfileConstraint::atom_ids(utility::vector1< id::AtomID > & atomIds){
@@ -244,8 +244,11 @@ SequenceProfileConstraint::score(
 	Real const score( sequence_profile_->profile()[seqpos_][aa] );
 	TR(t_trace) << "seqpos " << seqpos_ << " aa " << aa << " " << score << std::endl;
 
-	if( sequence_profile_->profile_from_pssm_file() ) emap[ this->score_type() ] -= score;
-	else emap[ this->score_type() ] += score;
+	if( sequence_profile_->negative_better() ) {
+		emap[ this->score_type() ] += score;
+	} else {
+		emap[ this->score_type() ] -= score;
+	}
 }
 
 void

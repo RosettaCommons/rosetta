@@ -72,7 +72,8 @@ FavorSequenceProfile::FavorSequenceProfile( ) :
 	protocols::moves::Mover( "FavorSequenceProfile" ),
 	weight_( 1.0 ),
 	use_current_(false),
-	matrix_("BLOSUM62")
+	matrix_("BLOSUM62"),
+	scaling_("prob")
 {}
 
 void
@@ -98,6 +99,14 @@ FavorSequenceProfile::set_profile( core::sequence::SequenceProfile & profile) {
 }
 
 void
+FavorSequenceProfile::set_scaling( std::string const & scaling ) {
+	if( scaling != "prob" && scaling != "none" && scaling != "global" ) {
+		utility_exit_with_message("Scaling in FavorSequenceProfile must be one of 'prob', 'none', or 'global'.");
+	}
+	scaling_ = scaling;
+}
+
+void
 FavorSequenceProfile::apply( core::pose::Pose & pose )
 {
 	core::sequence::SequenceProfileOP profile;
@@ -109,6 +118,17 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 		runtime_assert( ref_profile_ );
 		profile = new core::sequence::SequenceProfile( *ref_profile_);
 	}
+
+	if( scaling_ == "prob" ) {
+		profile->convert_profile_to_probs( 1.0 );
+	} else if( scaling_ == "none" ) {
+		// pass
+	} else if( scaling_ == "global" ) {
+		profile->global_auto_rescale();
+	} else {
+		utility_exit_with_message("Unrecognized scaling type '" + scaling_ + "' in FavorSequenceProfile.");
+	}
+
 	if( weight_ != 1.0 ) {
 		profile->rescale(weight_);
 	}
@@ -154,6 +174,8 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 	if( tag->hasOption("matrix") && tag->hasOption("pssm")  ) {
 		TR.Warning << "WARNING In option matrix not used with pssm specification." << std::endl;
 	}
+
+	set_scaling( tag->getOption< std::string >( "scaling", "prob" ) );
 
 	matrix_ = tag->getOption< std::string >( "matrix", "BLOSUM62" );
 	if( tag->getOption< bool >( "use_native", false ) ) {

@@ -187,4 +187,80 @@ public:
 
 	}
 
+	void test_no_scaling() {
+		using namespace protocols::simple_moves;
+
+		core::pose::Pose pose(create_test_in_pdb_pose());
+		core::Real original_score = scorefxn_->score(pose);
+
+		core::sequence::Sequence seq(pose);
+		FavorSequenceProfile FSP;
+		FSP.set_sequence(seq,"BLOSUM62");
+		FSP.set_scaling( "none" );
+		FSP.apply(pose);
+
+		TS_ASSERT_EQUALS(original_score, 0);
+		// All residues match, so we should have a net energy bonus.
+		core::Real favored_score = scorefxn_->score(pose);
+		TR << "Blosum62 total: " << favored_score << std::endl;
+		TS_ASSERT_LESS_THAN(favored_score, 0);
+
+		// Check each individual residues value
+		for( core::Size ii(1); ii <= pose.total_residue(); ++ii) {
+			core::Real resenergy = pose.energies().residue_total_energies(ii)[core::scoring::res_type_constraint];
+			//TR << "Blosum62 resi " << ii << " res_type_constraint score " << resenergy << std::endl;
+			TS_ASSERT_LESS_THAN(resenergy, 0);
+		}
+
+		// Spot check individual positions
+		// The exact values here aren't important, merely that they match up with what they should be from the matrix (aa/pos wise)
+		TS_ASSERT_EQUALS( pose.aa(1), core::chemical::aa_asp ); // 49-48 = 1
+		TS_ASSERT_DELTA( pose.energies().residue_total_energies(1)[core::scoring::res_type_constraint], -6.0, 0.0001);
+		TS_ASSERT_EQUALS( pose.aa(11), core::chemical::aa_trp ); // 59-48 = 11
+		TS_ASSERT_DELTA( pose.energies().residue_total_energies(11)[core::scoring::res_type_constraint], -11.0, 0.0001);
+		TS_ASSERT_EQUALS( pose.aa(60), core::chemical::aa_ile ); //108-48 = 60
+		TS_ASSERT_DELTA( pose.energies().residue_total_energies(60)[core::scoring::res_type_constraint], -4.0, 0.0001);
+		TS_ASSERT_EQUALS( pose.aa(100), core::chemical::aa_lys ); // 148-48 = 100
+		TS_ASSERT_DELTA( pose.energies().residue_total_energies(100)[core::scoring::res_type_constraint], -5.0, 0.0001);
+	}
+
+	void test_global_scaling() {
+		using namespace protocols::simple_moves;
+
+		core::pose::Pose pose(create_test_in_pdb_pose());
+		core::Real original_score = scorefxn_->score(pose);
+
+		core::sequence::Sequence seq(pose);
+		FavorSequenceProfile FSP;
+		FSP.set_sequence(seq,"BLOSUM62");
+		FSP.set_scaling( "global" );
+		FSP.apply(pose);
+
+		TS_ASSERT_EQUALS(original_score, 0);
+		// All residues match, so we should have a net energy bonus.
+		core::Real favored_score = scorefxn_->score(pose);
+		TR << "Blosum62 total: " << favored_score << std::endl;
+		TS_ASSERT_LESS_THAN(favored_score, 0);
+
+		// Check each individual residues value
+		for( core::Size ii(1); ii <= pose.total_residue(); ++ii) {
+			core::Real resenergy = pose.energies().residue_total_energies(ii)[core::scoring::res_type_constraint];
+			//TR << "Blosum62 resi " << ii << " res_type_constraint score " << resenergy << std::endl;
+			TS_ASSERT_LESS_THAN(resenergy, 0);
+		}
+
+		// Spot check individual positions
+		// The exact values here aren't important, merely that they match up with what they should be from the matrix (aa/pos wise)
+		TS_ASSERT_EQUALS( pose.aa(1), core::chemical::aa_asp ); // 49-48 = 1
+		TS_ASSERT_DELTA( pose.energies().residue_total_energies(1)[core::scoring::res_type_constraint], -6.0/11.0, 0.0001);
+		TS_ASSERT_EQUALS( pose.aa(11), core::chemical::aa_trp ); // 59-48 = 11
+		TS_ASSERT_DELTA( pose.energies().residue_total_energies(11)[core::scoring::res_type_constraint], -11.0/11.0, 0.0001);
+		TS_ASSERT_EQUALS( pose.aa(60), core::chemical::aa_ile ); //108-48 = 60
+		TS_ASSERT_DELTA( pose.energies().residue_total_energies(60)[core::scoring::res_type_constraint], -4.0/11.0, 0.0001);
+		TS_ASSERT_EQUALS( pose.aa(100), core::chemical::aa_lys ); // 148-48 = 100
+		TS_ASSERT_DELTA( pose.energies().residue_total_energies(100)[core::scoring::res_type_constraint], -5.0/11.0, 0.0001);
+
+	}
+
+
 };

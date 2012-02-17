@@ -40,27 +40,26 @@ public:
 	/// @brief ctors
 	SequenceProfile() :
 		temp_( 1.0 ),
-		profile_from_pssm_file_(false)
+		negative_better_(false)
 	{}
 
-	SequenceProfile(
-		FileName const & fn,
-		core::Real temp = 1.0
-	) : temp_( temp ),
-			profile_from_pssm_file_(false)
+	SequenceProfile( FileName const & fn ) :
+		temp_( 1.0 ),
+		negative_better_(false)
 	{
-		read_from_file( fn, temp_ );
+		read_from_file( fn );
 	}
 
 	SequenceProfile(
 		utility::vector1< utility::vector1< core::Real > > prof,
 		std::string const & sequence,
 		std::string const & id,
-		Size start = 1
+		Size start = 1,
+		bool negative_better = false
 	) :
 		Sequence( sequence, id, start ),
 		temp_( 1.0 ),
-		profile_from_pssm_file_(false)
+		negative_better_(negative_better)
 	{
 		profile( prof );
 		assert( profile().size() == length() );
@@ -84,8 +83,8 @@ public:
 
 		profile ( rhs.profile() );
 		alphabet( rhs.alphabet() );
-		temp    ( rhs.temp() );
-		profile_from_pssm_file_ = rhs.profile_from_pssm_file_;
+		temp_ = rhs.temp_;
+		negative_better_ = rhs.negative_better_;
 
 		return *this;
 	}
@@ -102,22 +101,24 @@ public:
 
 	/// @brief Read an profile matrix from the given filename using the NCBI
 	/// PSSM format for a position-specific scoring matrix.
-	/// The resultant profile values will be boltzman weighted (strongly favored=1, strongly disfavored=0)
 	virtual void read_from_file( FileName const & fn );
-	virtual void read_from_file( FileName const & fn, core::Real temp );
 
 	/// @brief Generate the profile matrix from a sequence and a given substitution matrix
-	/// As with SequenceProfile::read_from_file(), the profile will be boltzman weighted (strongly favored=1, strongly disfavored=0)
 	virtual void generate_from_sequence( Sequence const & seq, std::string matrix="BLOSUM62" );
 
 	/// @brief Multiply all profile weights by factor
 	void rescale(core::Real factor=1);
 
-	void convert_profile_to_probs();
+	/// @brief Use boltzman scaling on a per-residue basis to convert the current profile values to probabilities ( range 0.0-1.0 )
+	void convert_profile_to_probs( core::Real temp = 1.0 );
+
+	/// @brief Use linear rescaling (with a fixed zero) to fit the values within the range -1.0 to 1.0
+	void global_auto_rescale();
 
 	/// @brief Read profile matrix from the given filename using the NNMAKE
 	/// .checkpoint format.
-	void read_from_checkpoint( FileName const & fn );
+	/// For compatability, negative_better defaults to true. Set manually if necessary.
+	void read_from_checkpoint( FileName const & fn, bool negative_better = true );
 
 	/// @brief Returns the 2D vector1 of Real values representing this profile.
 	utility::vector1< utility::vector1< Real > > const & profile() const;
@@ -147,20 +148,18 @@ public:
 	utility::vector1< Real > const &
 	prof_row( Size pos ) const;
 
-	/// @brief Returns true if the data in this profile came from a pssm file.
-	/// Returns false if it came from a checkpoint file
-	bool
-	profile_from_pssm_file() const {
-		return profile_from_pssm_file_; }
+	/// @brief Returns true if negative values are better identities.
+	/// @details The "default" use case is for storing log likelihood values
+	/// where positive is better. If you're using this class to store energy-like
+	/// values, set negative_better to true.
+	bool negative_better() const { return negative_better_; }
+
+	/// @brief Set whether negative identities are better.
+	bool negative_better( bool negbet ) { negative_better_ = negbet; }
 
 	/// @brief returns the temperature used in computing profile probabilities
 	core::Real temp() const {
 		return temp_;
-	}
-
-	/// @brief sets temperature used in computing profile probabilities
-	void temp( core::Real new_temp ) {
-		temp_ = new_temp;
 	}
 
 	/// @brief Return the alphabet used by this sequence profile. This is an
@@ -180,22 +179,26 @@ public:
 		std::ostream & out, const SequenceProfile & p
 	);
 
+private:
+
 	/// @brief converts a vector1 of arbitrary scores to values using Bolztmann
 	/// averaging at a given kT. Scores should follow the convention that more positive -> better score.
+	/// If not, set negative_better to true.
 	void scores_to_probs_(
 		utility::vector1< core::Real > & scores,
-		core::Real kT
-	);
+		core::Real kT,
+		bool negative_better = false
+	) const;
 
-private:
-	void check_internals_() const;
+	/// @brief Internal consistency check. Returns true if passed, causes a runtime_assertion failure if not.
+	bool check_internals_() const;
 	utility::vector1< std::string > alphabet_;
 	utility::vector1< utility::vector1< Real > > profile_;
 
-	// temp used to convert arbitrary scores to/from probabilities
+	/// @brief temp used to convert arbitrary scores to/from probabilities
 	core::Real temp_;
-	//whether the profile came from a .pssm file as opposed to a checkpoint file
-	bool profile_from_pssm_file_;
+	/// @brief The orientation of the values. Are negative values better than zero/positive ones?
+	bool negative_better_;
 
 }; // class SequenceProfile
 

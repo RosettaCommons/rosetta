@@ -139,7 +139,8 @@ sequences_from_cmd_line(
 	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
 		SequenceProfileOP prof( new SequenceProfile );
 		if ( file_exists(*it) ) {
-			prof->read_from_file( *it, 1.0 );
+			prof->read_from_file( *it );
+			prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 			string name = utility::file_basename( *it );
 			name = name.substr( 0, 5 );
 			seqs[name] = prof;
@@ -193,7 +194,8 @@ main( int argc, char* argv [] ) {
 	SequenceProfileOP query_prof( new SequenceProfile );
 	map< string, SequenceOP > seqs;
 	if ( option[ in::file::pssm ].user() ) {
-		query_prof->read_from_file( option[ in::file::pssm ]()[1], 1.0 );
+		query_prof->read_from_file( option[ in::file::pssm ]()[1] );
+		query_prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 		seqs = sequences_from_cmd_line(
 			option[ in::file::pssm ]()
 		);

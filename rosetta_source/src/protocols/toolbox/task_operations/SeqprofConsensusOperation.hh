@@ -76,16 +76,19 @@ public:
 	core::sequence::SequenceProfileCOP
 	seqprof() const;
 
+	/// @brief Set the sequence profile. If reweight is true, convert the profile into per-residue probabilities first
 	void
-	set_seqprof(
-		core::sequence::SequenceProfileCOP seqprof );
+	set_seqprof( core::sequence::SequenceProfileCOP seqprof, bool reweight = false );
 
 private:
 
 	std::string seqprof_filename_;
+	/// @details Stored as a per-position probability weighted value
 	core::sequence::SequenceProfileCOP seqprof_;
-	core::Real min_aa_probability_; // mininum probability that an aa must have in the sequence profile to be considered
-	bool prob_larger_current_; //whether probability of a given aa to be included needs to be higher than the probability of the aa in the input pose
+	/// @brief mininum probability that an aa must have in the sequence profile to be considered
+	core::Real min_aa_probability_;
+	/// @brief whether probability of a given aa to be included needs to be higher than the probability of the aa in the input pose
+	bool prob_larger_current_;
 
 };
 

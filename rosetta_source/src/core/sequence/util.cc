@@ -290,7 +290,8 @@ utility::vector1< SequenceOP > seqs_from_cmd_lines() {
 					it != end; ++it
 		) {
 			SequenceProfileOP prof( new SequenceProfile );
-			prof->read_from_file( *it, 1.0 );
+			prof->read_from_file( *it );
+			prof->convert_profile_to_probs(); // was previously implicit in read_from_file()
 			seqs.push_back( prof );
 		}
 	}

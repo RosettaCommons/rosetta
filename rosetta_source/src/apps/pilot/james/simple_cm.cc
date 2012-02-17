@@ -109,10 +109,12 @@ main( int argc, char* argv [] ) {
 	FileName fn2( option[ in::file::pssm ]()[2] );
 
 	SequenceProfileOP prof1( new SequenceProfile );
-	prof1->read_from_file( fn1, 1.0 );
+	prof1->read_from_file( fn1 );
+	prof1->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 
 	SequenceProfileOP prof2( new SequenceProfile );
-	prof2->read_from_file( fn2, 1.0 );
+	prof2->read_from_file( fn2 );
+	prof2->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 
 	// eliminate leading paths from prof1 and prof2
 	prof1->id( FileName( prof1->id() ).base() );

@@ -61,7 +61,9 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 	prob_larger_current_(true)
 {
 	if( utility::file::file_exists( seqprof_filename_ ) ){
-		seqprof_ = new core::sequence::SequenceProfile( seqprof_filename_ );
+		core::sequence::SequenceProfileOP seqprof = new core::sequence::SequenceProfile( seqprof_filename_ );
+		seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
+		seqprof_ = seqprof;
 	}
 }
 
@@ -114,8 +116,9 @@ SeqprofConsensusOperation::parse_tag( TagPtr tag )
 {
 	if( tag->hasOption("filename") ){
 		seqprof_filename_ = tag->getOption< String >( "filename" );
-		seqprof_ = new core::sequence::SequenceProfile( seqprof_filename_ );
-		//seqprof_->convert_profile_to_probs();
+		core::sequence::SequenceProfileOP seqprof = new core::sequence::SequenceProfile( seqprof_filename_ );
+		seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
+		seqprof_ = seqprof;
 	}
 	if( tag->hasOption("min_aa_probability") ) min_aa_probability_ = tag->getOption< Real >("min_aa_probability" );
 	if( tag->hasOption("probability_larger_than_current") ) prob_larger_current_ = tag->getOption< bool >("probability_larger_than_current");
@@ -128,10 +131,15 @@ SeqprofConsensusOperation::seqprof() const
 }
 
 void
-SeqprofConsensusOperation::set_seqprof(
-	core::sequence::SequenceProfileCOP seqprof )
+SeqprofConsensusOperation::set_seqprof( core::sequence::SequenceProfileCOP seqprof, bool reweight )
 {
-	seqprof_ = seqprof;
+	if ( reweight ) {
+		core::sequence::SequenceProfileOP reweightedprof = new core::sequence::SequenceProfile( *seqprof );
+		reweightedprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
+		seqprof_ = reweightedprof;
+	} else {
+		seqprof_ = seqprof;
+	}
 }
 
 core::pack::task::operation::TaskOperationOP

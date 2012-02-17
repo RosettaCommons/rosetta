@@ -147,7 +147,8 @@ sequences_from_cmd_line(
 	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
 		SequenceProfileOP prof( new SequenceProfile );
 		if ( file_exists(*it) ) {
-			prof->read_from_file( *it, 1.0 );
+			prof->read_from_file( *it );
+			prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 			string name = utility::file_basename( *it );
 			name = name.substr( 0, 5 );
 			seqs[name] = prof;
@@ -178,8 +179,8 @@ main( int argc, char* argv [] ) {
 	basic::Tracer tr( "thread_fast" );
 
 	SequenceProfileOP query_prof( new SequenceProfile );
-	query_prof->read_from_file( option[ in::file::pssm ]()[1], 1.0 );
-
+	query_prof->read_from_file( option[ in::file::pssm ]()[1] );
+	query_prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 	vector1< std::string > align_fns = option[ in::file::alignment ]();
 
 	Pose native_pose;

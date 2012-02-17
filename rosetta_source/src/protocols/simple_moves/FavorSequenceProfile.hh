@@ -39,9 +39,14 @@ public:
 	virtual std::string get_name() const { return "FavorSequenceProfile"; }
 	protocols::moves::MoverOP clone() const { return( new protocols::simple_moves::FavorSequenceProfile( *this ) ); }
 	protocols::moves::MoverOP fresh_instance() const { return new FavorSequenceProfile; }
-	void set_weight( core::Real weight );
 	void set_sequence( core::sequence::Sequence & seq, std::string matrix);
+	/// @brief Set the profile object to use.
+	/// Remember to set set_scaling() appropriately for the profile matrix you pass in.
 	void set_profile( core::sequence::SequenceProfile & profile);
+	/// @brief What type of manipulation to apply to the profile prior to using it for constraints.
+	void set_scaling( std::string const & scaling );
+	/// @brief What multiplication factor to apply to the profile prior to using it for constraints.
+	void set_weight( core::Real weight );
 	void apply( core::pose::Pose & pose );
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~FavorSequenceProfile() {};
@@ -49,6 +54,7 @@ private:
 	core::Real weight_;
 	bool use_current_;
 	std::string matrix_;
+	std::string scaling_;
 	core::sequence::SequenceProfileOP ref_profile_;
 };
 
