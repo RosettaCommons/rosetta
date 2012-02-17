@@ -183,6 +183,7 @@ Splice::find_dbase_entry( core::pose::Pose const & pose )
 			return 0;
 		}
 		TR<<"Found "<<dbase_subset_.size()<<" entries in the torsion dbase that match the length criteria"<<std::endl;
+		std::random_shuffle( dbase_subset_.begin(), dbase_subset_.end() );
 		current_dbase_entry_ = dbase_subset_.begin();
 	}
 	if( dbase_iterate() ){
@@ -570,7 +571,6 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 
   typedef utility::vector1< std::string > StringVec;
 	std::string delta;
-	delta_lengths_.push_back( 0 );
 	if( tag->hasOption( "delta_lengths" ) ){
 		delta = tag->getOption< std::string >( "delta_lengths" );
   	StringVec const lengths_keys( utility::string_split( delta, ',' ) );
@@ -580,6 +580,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 			delta_lengths_.push_back( delta_i );
 		}
 	}
+	else
+		delta_lengths_.push_back( 0 );
 	std::sort( delta_lengths_.begin(), delta_lengths_.end() );
 	std::unique( delta_lengths_.begin(), delta_lengths_.end() );
 
