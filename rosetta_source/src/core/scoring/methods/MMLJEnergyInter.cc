@@ -579,7 +579,7 @@ MMLJEnergyInter::get_count_pair_function_trie(
 	if ( connection != CP_NO_BONDS ) {
 		tcpfxn = new TrieCountPair1BC3( conn1, conn2 );
 	} else {
-		tcpfxn = new TrieCountPairAll( conn1, conn2 );
+		tcpfxn = new TrieCountPairAll;
 	}
 	return tcpfxn;
 

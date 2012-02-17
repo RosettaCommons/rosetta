@@ -71,7 +71,7 @@
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <utility/vector1.hh>
 
-
+#include <utility/string_util.hh>
 
 
 static basic::Tracer tr("protocols.toolbox.match_enzdes_util.EnzConstraintParameters");
@@ -572,6 +572,25 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 	std::string current_pose_type_patches_name( residue_type_all_patches_name( pose.residue_type(res_pos) ) );
 
 	res_varname = "_connect" + res_atom;
+	{// scope
+		// Find a name for the new residue type / variant name that will be added to the existing
+		// residue so that, if the existing residue already has this variant type, then the
+		// new residue type will get one with a new name.
+		core::chemical::ResidueType const & currres( pose.residue_type( res_pos ));
+		Size count=0;
+		while ( true ) {
+			if ( count > 1000 ) {
+				utility_exit_with_message( "Encountered infinite loop trying to find a new variant name for residue type " + currres.name() + " in EnzConstraintParameters.  Talk to Andrew.");
+			}
+			++count;
+			if ( count == 1 ) {
+				if ( ! currres.has_variant_type( res_varname )) break;
+			} else {
+				res_varname = "_"+utility::to_string(count)+"connect"+res_atom;
+				if ( ! currres.has_variant_type( res_varname )) break;
+			}
+		}
+	}
 	std::string res_type_mod_name( current_pose_type_basename + res_varname + current_pose_type_patches_name );
 
 	//check whether the modified residues have already been created earlier
@@ -614,6 +633,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 				mod_res = (*res_it)->clone();
 				con_res = mod_res->add_residue_connection( res_atom );
 				mod_res->name( new_name );
+				assert( ! mod_res->has_variant_type( res_varname ) );
 				mod_res->add_variant_type( res_varname ); //necessary to restrict the packer to only use this residue variant in packing
 
 				mod_res->set_icoor( "CONN"+string_of( con_res ), itorsion, iangle, idis, res_atom, pose.residue(res_pos).atom_name( (template_res->get_template_atoms_at_pos( pose, res_pos) )->atom2_[Atpos].atomno() ), pose.residue(res_pos).atom_name( (template_res->get_template_atoms_at_pos(pose, res_pos) )->atom3_[Atpos].atomno() ), true );

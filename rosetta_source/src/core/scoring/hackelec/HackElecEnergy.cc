@@ -1538,7 +1538,7 @@ HackElecEnergy::get_count_pair_function_trie(
 	if ( connection == CP_ONE_BOND ) {
 		tcpfxn = new TrieCountPair1BC4( conn1, conn2 );
 	} else if ( connection == CP_NO_BONDS) {
-		tcpfxn = new TrieCountPairAll( conn1, conn2 );
+		tcpfxn = new TrieCountPairAll;
 	} else {
 		tcpfxn = new TrieCountPairGeneric( res1, res2, conn1, conn2 );
 	}

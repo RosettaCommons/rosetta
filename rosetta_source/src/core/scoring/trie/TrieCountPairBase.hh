@@ -60,6 +60,11 @@ class TrieCountPairBase : public utility::pointer::ReferenceCount
 {
 public:
 
+	/// When returning the path distance for two atoms that are separated by more chemical
+	/// bonds than any portion of the score function cares, return this as the equivalent
+	/// of an infinite chemical separation.
+	static const Size INFINITE_SEPARATION = 5;
+
 	virtual ~TrieCountPairBase();
 	// There are as many as T*K*M*N^2 different type resolution functions for
 	// M different scoring functions with

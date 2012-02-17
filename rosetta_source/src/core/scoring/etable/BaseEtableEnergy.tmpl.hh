@@ -1107,7 +1107,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 		cpgen->hard_crossover( false );
 		tcpfxn = cpgen;
 	} else {
-		tcpfxn = new TrieCountPairAll( conn1, conn2 );
+		tcpfxn = new TrieCountPairAll;
 	}
 	return tcpfxn;
 

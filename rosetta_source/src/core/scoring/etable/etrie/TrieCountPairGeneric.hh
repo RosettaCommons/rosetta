@@ -68,7 +68,6 @@ private:
 	Size const res1_cpdat_;
 	Size const res2_cpdat_;
 
-	static const Size INFINITE_SEPARATION = 5;
 
 public:
 

@@ -155,7 +155,7 @@ public:
 	bool negative_better() const { return negative_better_; }
 
 	/// @brief Set whether negative identities are better.
-	bool negative_better( bool negbet ) { negative_better_ = negbet; }
+	void negative_better( bool negbet ) { negative_better_ = negbet; }
 
 	/// @brief returns the temperature used in computing profile probabilities
 	core::Real temp() const {

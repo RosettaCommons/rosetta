@@ -43,25 +43,18 @@ namespace etrie {
 
 class TrieCountPairAll : public trie::TrieCountPairBase
 {
-private:
-	Size const res1_cpdat_;
-	Size const res2_cpdat_;
-
 public:
 
-	TrieCountPairAll( Size res1_cpdat_for_res2, Size res2_cpdat_for_res1 )
-	:
-		res1_cpdat_( res1_cpdat_for_res2 ),
-		res2_cpdat_( res2_cpdat_for_res1 )
+	TrieCountPairAll()
 	{}
 
 	virtual ~TrieCountPairAll();
 	/// ------- USEFUL FUNCTIONS -------------///
 
 	template < class CPDATA1, class CPDATA2  >
-	bool operator () ( CPDATA1 const & at1dat, CPDATA2 const & at2dat, Real & /*weight*/, Size & path_dist )
+	bool operator () ( CPDATA1 const & /*at1dat*/, CPDATA2 const & /*at2dat*/, Real & /*weight*/, Size & path_dist )
 	{
-		path_dist = at1dat.conn_dist( res1_cpdat_ ) + at2dat.conn_dist( res2_cpdat_ ) + 1;
+		path_dist = INFINITE_SEPARATION;
 		return true;
 	}
 

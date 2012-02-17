@@ -1726,17 +1726,17 @@ ResidueType::add_residue_connection(
 		std::string const & connect_atom_type
 )
 {
-		finalized_ = false;
+	finalized_ = false;
 
-		++n_non_polymeric_residue_connections_;
-		residue_connections_.push_back(
-				ResidueConnection(
-						atom_index( atom_name ),
-						atom_types_->atom_type_index( connect_atom_type )
-				)
-		);
-		update_residue_connection_mapping();
-		return residue_connections_.size();
+	++n_non_polymeric_residue_connections_;
+	residue_connections_.push_back(
+		ResidueConnection(
+			atom_index( atom_name ),
+			atom_types_->atom_type_index( connect_atom_type )
+		)
+	);
+	update_residue_connection_mapping();
+	return residue_connections_.size();
 }
 
 ///@details update actcoord
