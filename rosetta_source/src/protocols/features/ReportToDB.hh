@@ -83,13 +83,15 @@ public:
 	parse_protocol_id_tag_item(
 		utility::tag::TagPtr const tag);
 
-	void
+	/* Undefined, commenting out to fix PyRosetta build  void
 	parse_struct_id_type_tag_item(
 		utility::tag::TagPtr const tag);
+	*/
 
-	void
+	/* Undefined, commenting out to fix PyRosetta build  void
 	parse_first_struct_id_tag_item(
 		utility::tag::TagPtr const tag);
+	*/
 
 	void
 	parse_db_mode_tag_item(
