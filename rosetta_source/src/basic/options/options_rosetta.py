@@ -3848,6 +3848,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'outlog', 'File', desc='File to which the OptEPosition data should be written'),
 			Option( 'measure_sequence_recovery', 'Boolean', desc='When rescoring a weight set, run design with that weight set and measure the sequence recovery.', default='false' ),
 		),
+		Option('no_design_pdb_output','Boolean',desc='Do not write out the designed pdbs to the workdir_ directories over the course of the optE run'),
 	), # optE
 
 	##  options for BackrubMover

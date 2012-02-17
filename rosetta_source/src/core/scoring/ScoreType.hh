@@ -76,12 +76,12 @@ enum ScoreType {
 	fastsaxs,   // fastsaxs agreement using formulation of Stovgaard et al (BMC Bioinf. 2010)
 	saxs_score, // centroid saxs asessment
 	saxs_cen_score,
-  saxs_fa_score, // full-atom SAXS score
-  pddf_score, // score based on pairwise distance distribution function
+	saxs_fa_score, // full-atom SAXS score
+	pddf_score, // score based on pairwise distance distribution function
 
-  //pba Membrane all atom terms
-  fa_mbenv,       // depth dependent reference term
-  fa_mbsolv,      // burial+depth dependent term
+	//pba Membrane all atom terms
+	fa_mbenv,       // depth dependent reference term
+	fa_mbsolv,      // burial+depth dependent term
 
 	//Split out hack_elec for RNA.
 	hack_elec_rna_phos_phos,
@@ -260,6 +260,7 @@ enum ScoreType {
 	omega,
 	fa_dun,
 	p_aa_pp,
+	yhh_planarity,
 	h2o_intra,
 	ref,
 	seqdep_ref,

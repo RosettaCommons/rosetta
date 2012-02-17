@@ -9282,6 +9282,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
  </li>
+<li><h2>optE</h2>
+<dl>
+<dt><b>-no_design_pdb_output</b> \<Boolean\><dt>
+<dd>Do not write out the designed pdbs to the workdir_ directories over the course of the optE run</dd><br>
+</dl>
+ </li>
 <li><h2>backrub</h2>
 <dl>
 <dt><b>-backrub</b> \<Boolean\><dt>

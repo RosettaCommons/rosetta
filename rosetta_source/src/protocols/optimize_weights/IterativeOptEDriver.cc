@@ -4917,7 +4917,9 @@ IterativeOptEDriver::measure_sequence_recovery(
 		}
 
 		/// write out new pdb for posterity
-		pose.dump_scored_pdb( names_for_output_pdbs[ poseindex ], *sfxn );
+		if ( ! option[ optE::no_design_pdb_output ] ) {
+			pose.dump_scored_pdb( names_for_output_pdbs[ poseindex ], *sfxn );
+		}
 
 		// print out score information for the redesign
 		(*sfxn)( pose );
@@ -5279,8 +5281,11 @@ IterativeOptEDriver::write_parameters_to_std_out( core::scoring::EnergyMap & fre
 /// Requires workdir_{0..MPI_numprocs_ - 1 } directories already exist.
 ///
 void
-IterativeOptEDriver::setup_pdbnames_next_round( Size const outer_loop_counter,
-	utility::vector1< std::string  > & pdbs_next_round, utility::vector1< std::string > const & native_pdb_names )
+IterativeOptEDriver::setup_pdbnames_next_round(
+	Size const outer_loop_counter,
+	utility::vector1< std::string  > & pdbs_next_round,
+	utility::vector1< std::string > const & native_pdb_names
+)
 {
 	// assumption, native_pdb_names end in ".pdb"
 	pdbs_next_round.resize( native_pdb_names.size() );

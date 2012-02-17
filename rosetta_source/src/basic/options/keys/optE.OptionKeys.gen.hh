@@ -82,6 +82,7 @@ namespace optE { namespace rescore { extern FileOptionKey const weights; } }
 namespace optE { namespace rescore { extern IntegerOptionKey const context_round; } }
 namespace optE { namespace rescore { extern FileOptionKey const outlog; } }
 namespace optE { namespace rescore { extern BooleanOptionKey const measure_sequence_recovery; } }
+namespace optE { extern BooleanOptionKey const no_design_pdb_output; }
 
 } // namespace OptionKeys
 } // namespace options

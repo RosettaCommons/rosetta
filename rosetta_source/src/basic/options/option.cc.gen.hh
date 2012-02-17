@@ -1916,6 +1916,7 @@ option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to u
 option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
 option.add( basic::options::OptionKeys::optE::rescore::outlog, "File to which the OptEPosition data should be written" );
 option.add( basic::options::OptionKeys::optE::rescore::measure_sequence_recovery, "When rescoring a weight set, run design with that weight set and measure the sequence recovery." ).def(false);
+option.add( basic::options::OptionKeys::optE::no_design_pdb_output, "Do not write out the designed pdbs to the workdir_ directories over the course of the optE run" );
 option.add( basic::options::OptionKeys::backrub::backrub, "backrub option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::backrub::pivot_residues, "residues for which contiguous stretches can contain segments (internal residue numbers, defaults to all residues)" ).def(utility::vector1<int>());
 option.add( basic::options::OptionKeys::backrub::pivot_atoms, "main chain atoms usable as pivots" ).def(utility::vector1<std::string>(1, "CA"));

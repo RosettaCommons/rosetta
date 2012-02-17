@@ -188,6 +188,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "omega"    ] = omega;
 	name2score_type_[ "fa_dun" ] = fa_dun;
 	name2score_type_[ "p_aa_pp" ] = p_aa_pp;
+	name2score_type_[ "yhh_planarity" ] = yhh_planarity;
 	name2score_type_[ "h2o_intra" ] =  h2o_intra;
 	name2score_type_[ "ref" ] = ref;
 	name2score_type_[ "seqdep_ref" ] = seqdep_ref;

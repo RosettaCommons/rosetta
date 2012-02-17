@@ -120,7 +120,7 @@ identify_intra_res_hbonds(
 
 Real
 get_environment_dependent_weight(
-	HBEvalTuple const & hbe_tuple,
+	HBEvalTuple const & hbe_type,
 	int const don_nb,
 	int const acc_nb,
 	HBondOptions const & options);

@@ -378,6 +378,7 @@ sources = {
 		"WaterAdductHBondEnergy",
 		"WaterAdductIntraEnergy",
 		"WholeStructureEnergy",
+		"YHHPlanarityEnergy",
 	],
 	"core/scoring/methods/dfire": [
 		"DFIRE_Energy",

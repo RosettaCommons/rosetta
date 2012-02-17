@@ -121,6 +121,7 @@
 #include <core/scoring/methods/SmoothEnvEnergyCreator.hh>
 #include <core/scoring/methods/CenHBEnergyCreator.hh>
 #include <core/scoring/methods/SuckerEnergyCreator.hh>
+#include <core/scoring/methods/YHHPlanarityEnergyCreator.hh>
 #include <core/pack/interaction_graph/SurfaceEnergyCreator.hh>
 #include <core/pack/interaction_graph/HPatchEnergyCreator.hh>
 #include <core/scoring/methods/SymmetricLigandEnergyCreator.hh>
@@ -325,6 +326,7 @@ static EnergyMethodRegistrator< scoring::methods::pHEnergyCreator > pHEnergyCrea
 static EnergyMethodRegistrator< scoring::methods::ResidualDipolarCouplingEnergyCreator > ResidualDipolarCouplingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ResidualDipolarCouplingEnergy_RohlCreator > ResidualDipolarCouplingEnergy_RohlCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SuckerEnergyCreator > SuckerEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::YHHPlanarityEnergyCreator > YYHPlanarityEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::interaction_graph::SurfaceEnergyCreator > SurfaceEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::interaction_graph::HPatchEnergyCreator > HPatchEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SymmetricLigandEnergyCreator > SymmetricLigandEnergyCreator_registrator;

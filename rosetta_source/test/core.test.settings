@@ -176,6 +176,7 @@ sources = {
 		"RamachandranEnergy",
 		"RG_Energy",
 		"UnfoldedStateEnergy",
+		"YHHPlanarityEnergy",
 	],
 	#"scoring/orbitals" : [
 #		"OrbitalsScore"

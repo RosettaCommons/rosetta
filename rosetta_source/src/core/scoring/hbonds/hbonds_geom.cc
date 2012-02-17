@@ -551,7 +551,7 @@ hbond_compute_energy(
 	HBEvalType hbe = hbt.eval_type();
 	energy = MAX_HB_ENERGY + 1.0f;
 	apply_chi_torsion_penalty = false;
-	dE_dr = dE_dxD = dE_dxH = dchipen_dchi = 0.0;
+	dE_dr = dE_dxD = dE_dxH = dchipen_dBAH = dchipen_dchi = 0.0;
 
 	// These should throw an exection if fail_on_bad_hbond is true
 	if ( std::abs(xD) > 1.0 || std::abs(xH) > 1.0 ) {
@@ -632,10 +632,12 @@ hbond_compute_energy(
 	Real chi_penalty_via_chi( 1.0 ); // for derivatives
 	Real angleBAH(0.0);
 	Real half_cos_piminus3BAH_plus_1(1.0);
+	bool apply_chi_torsion_penalty_sp2 = false;
+	bool apply_chi_torsion_penalty_sp3 = false;
 	if ( hbondoptions.use_sp2_chi_penalty() &&
 			get_hbe_acc_hybrid( hbe ) == chemical::SP2_HYBRID ) {
 		apply_chi_torsion_penalty = true;
-
+		apply_chi_torsion_penalty_sp2 = true;
 		// NEW FORMULA #6: (aka "vesion 7")
 		// weaken hbonds in the center relative to hbonds on the edges
 		// place the maximum chi bonus @ BAH = 120, but make sure that @ BAH = 180, there is no contribution from the chi angle
@@ -648,9 +650,9 @@ hbond_compute_energy(
 		// (a/p)*(( (p-1)(cos(2chi)+1)/2 + 1 ) * ( 1 - (cos(pi-3BAH)+1)/2) + (cos(pi-3BAH)+1)/2))
 		// (a/p)*(( (p-1)(cos(2chi)+1)/2 )( 1 - (cos3BAH+1)/2) + 1) -- may be easier to just add a and p back in.
 
-    /// Version #8: do not use the sp2 term for short-ranged backbone-backbone hydrogen bonds.
-    /// Added exclusion in the if-check above for hbe <= hbe_dPBAaPBAsepP4helix (which covers
-    /// all the short-ranged backbone-backbone hydrogen bonds)
+		/// Version #8: do not use the sp2 term for short-ranged backbone-backbone hydrogen bonds.
+		/// Added exclusion in the if-check above for hbe <= hbe_dPBAaPBAsepP4helix (which covers
+		/// all the short-ranged backbone-backbone hydrogen bonds)
 
 		/// Version #7: (11/12/19) restoring v7 after determining that sp2 potential should be used for
 		/// all bb/bb contacts.
@@ -669,6 +671,17 @@ hbond_compute_energy(
 
 		chi_penalty *= chi_amp / peak_height;
 
+	} else if ( basic::options::option[ basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ] &&
+			( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )) {
+		apply_chi_torsion_penalty = true;
+		apply_chi_torsion_penalty_sp3 = true;
+		
+		// just add in a penalty directly to the energy sum; the chi-penalty
+		// is only multiplied in for the sp2 term.
+		Real const max_penalty = 0.25;
+		Real cos2ChiShifted = max_penalty * ( 1 + std::cos(chi)) / 2;
+		//std::cout << "penalizing hbond by " << cos2ChiShifted << " for having hydroxyl hydrogen too close: chi " << chi*180/3.1415926535 << std::endl;
+		energy += cos2ChiShifted;
 	}
 
 	// NOTE: if any deriv parameter omitted, we don't compute derivatives.
@@ -681,7 +694,7 @@ hbond_compute_energy(
 	dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);
 	dE_dxH = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
 
-	if ( apply_chi_torsion_penalty ) {
+	if ( apply_chi_torsion_penalty_sp2 ) {
 		dE_dr  *= chi_penalty;
 		dE_dxD *= chi_penalty;
 		dE_dxH *= chi_penalty;
@@ -699,6 +712,11 @@ hbond_compute_energy(
 		/// wait until the above calculations have completed, then scale the energy by the chi penalty
 		energy *= chi_penalty;
 
+	} else if ( apply_chi_torsion_penalty_sp3 ) {
+		Real const max_penalty = 0.25;
+		//std::cout << "applying dchipen_dchi" << std::endl;
+		Real minussin2ChiShifted = -1 * max_penalty * std::sin(chi)/2;
+		dchipen_dchi = minussin2ChiShifted;
 	}
 
 }
@@ -837,6 +855,11 @@ hb_energy_deriv_u2(
 	if ( hbondoptions.use_sp2_chi_penalty() &&
 			get_hbe_acc_hybrid( hbt.eval_type() ) == chemical::SP2_HYBRID &&
 			B2xyz != Vector(-1.0, -1.0, -1.0) ) {
+		chi = numeric::dihedral_radians( Hxyz, Axyz, Bxyz, B2xyz );
+	} else if ( basic::options::option[ basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ] &&
+			( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL ) ) {
+		/// Bxyz really is the heavy atom base and B2xyz really is the hydroxyl hydrogen
+		/// this is guaranteed by the hbond_measure_sp3acc_BAH_from_hvy flag.
 		chi = numeric::dihedral_radians( Hxyz, Axyz, Bxyz, B2xyz );
 	}
 	//std::cout << " hb_energy_deriv_u2" <<
