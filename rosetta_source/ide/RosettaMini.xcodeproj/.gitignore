@@ -1,0 +1,5 @@
+*.mode1
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+*.perspectivev3
