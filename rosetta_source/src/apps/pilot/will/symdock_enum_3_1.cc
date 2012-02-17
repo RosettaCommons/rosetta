@@ -17,7 +17,7 @@ DONE
 	contacts weight by avg. deg.
 */
 #include <apps/pilot/will/xyzStripeHashPose.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh> 
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -65,36 +65,36 @@ typedef numeric::xyzMatrix<core::Real> Mat;
 typedef numeric::xyzVector<double> Vecf;
 typedef numeric::xyzMatrix<double> Matf;
 static basic::Tracer TR("symdock_enum");
-OPT_1GRP_KEY( Real , tcdock, clash_dis	);
-OPT_1GRP_KEY( Real , tcdock, contact_dis );
-OPT_1GRP_KEY( Real , tcdock, intra );
-OPT_1GRP_KEY( Real , tcdock, intra1 );
-OPT_1GRP_KEY( Real , tcdock, intra2 );
-OPT_1GRP_KEY( Real , tcdock, termini_weight );
-OPT_1GRP_KEY( Real , tcdock, termini_cutoff );
-OPT_1GRP_KEY( Real , tcdock, hash_3D_vs_2D );
-OPT_1GRP_KEY( Integer , tcdock, termini_trim );
-OPT_1GRP_KEY( Integer , tcdock, nsamp1 );
-OPT_1GRP_KEY( Integer , tcdock, topx );
-OPT_1GRP_KEY( Integer , tcdock, peak_grid_size);
-OPT_1GRP_KEY( Integer , tcdock, peak_grid_smooth);
-OPT_1GRP_KEY( Boolean , tcdock, reverse );
-OPT_1GRP_KEY( Boolean , tcdock, dump_pdb );
-OPT_1GRP_KEY( IntegerVector , tcdock, dump_pdb_grid );
-OPT_1GRP_KEY( Real , tcdock, grid_delta_rot );
-OPT_1GRP_KEY( Real , tcdock, grid_delta_disp );
-OPT_1GRP_KEY( Integer , tcdock, grid_size_rot );
-OPT_1GRP_KEY( Integer , tcdock, grid_size_disp );
-OPT_1GRP_KEY( IntegerVector , tcdock, dump_peak_grids );
-OPT_1GRP_KEY( IntegerVector , tcdock, justone );
-OPT_1GRP_KEY( FileVector, tcdock, I2 );
-OPT_1GRP_KEY( FileVector, tcdock, I3 );
-OPT_1GRP_KEY( FileVector, tcdock, I5 );
-OPT_1GRP_KEY( FileVector, tcdock, O2 );
-OPT_1GRP_KEY( FileVector, tcdock, O3 );
-OPT_1GRP_KEY( FileVector, tcdock, O4 );
-OPT_1GRP_KEY( FileVector, tcdock, T2 );
-OPT_1GRP_KEY( FileVector, tcdock, T3 );
+OPT_1GRP_KEY( Real , tcdock, clash_dis	)
+OPT_1GRP_KEY( Real , tcdock, contact_dis )
+OPT_1GRP_KEY( Real , tcdock, intra )
+OPT_1GRP_KEY( Real , tcdock, intra1 )
+OPT_1GRP_KEY( Real , tcdock, intra2 )
+OPT_1GRP_KEY( Real , tcdock, termini_weight )
+OPT_1GRP_KEY( Real , tcdock, termini_cutoff )
+OPT_1GRP_KEY( Real , tcdock, hash_3D_vs_2D )
+OPT_1GRP_KEY( Integer , tcdock, termini_trim )
+OPT_1GRP_KEY( Integer , tcdock, nsamp1 )
+OPT_1GRP_KEY( Integer , tcdock, topx )
+OPT_1GRP_KEY( Integer , tcdock, peak_grid_size)
+OPT_1GRP_KEY( Integer , tcdock, peak_grid_smooth)
+OPT_1GRP_KEY( Boolean , tcdock, reverse )
+OPT_1GRP_KEY( Boolean , tcdock, dump_pdb )
+OPT_1GRP_KEY( IntegerVector , tcdock, dump_pdb_grid )
+OPT_1GRP_KEY( Real , tcdock, grid_delta_rot )
+OPT_1GRP_KEY( Real , tcdock, grid_delta_disp )
+OPT_1GRP_KEY( Integer , tcdock, grid_size_rot )
+OPT_1GRP_KEY( Integer , tcdock, grid_size_disp )
+OPT_1GRP_KEY( IntegerVector , tcdock, dump_peak_grids )
+OPT_1GRP_KEY( IntegerVector , tcdock, justone )
+OPT_1GRP_KEY( FileVector, tcdock, I2 )
+OPT_1GRP_KEY( FileVector, tcdock, I3 )
+OPT_1GRP_KEY( FileVector, tcdock, I5 )
+OPT_1GRP_KEY( FileVector, tcdock, O2 )
+OPT_1GRP_KEY( FileVector, tcdock, O3 )
+OPT_1GRP_KEY( FileVector, tcdock, O4 )
+OPT_1GRP_KEY( FileVector, tcdock, T2 )
+OPT_1GRP_KEY( FileVector, tcdock, T3 )
 void register_options() {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
@@ -106,9 +106,9 @@ void register_options() {
 		NEW_OPT( tcdock::intra2           ,"weight for conp2 intra contacts"     ,  1.0   );
 		NEW_OPT( tcdock::nsamp1           ,"check around X top lowres hits"      , 2000   );
 		NEW_OPT( tcdock::topx             ,"output top X hits"                   , 10     );
-		NEW_OPT( tcdock::peak_grid_size   ,"peak detect grid size (2*N+1)"       , 24     );		
-		NEW_OPT( tcdock::peak_grid_smooth ,"peak detect grid smooth (0+)"        ,  1     );		
-		NEW_OPT( tcdock::reverse          ,"reverse one component"               , false  );	
+		NEW_OPT( tcdock::peak_grid_size   ,"peak detect grid size (2*N+1)"       , 24     );
+		NEW_OPT( tcdock::peak_grid_smooth ,"peak detect grid smooth (0+)"        ,  1     );
+		NEW_OPT( tcdock::reverse          ,"reverse one component"               , false  );
 		NEW_OPT( tcdock::dump_pdb         ,"dump pdbs"                           , false  );
 		NEW_OPT( tcdock::dump_pdb_grid    ,"dump pdb design grids"               , -1  );
 		NEW_OPT( tcdock::grid_delta_rot   ,"grid samp size theta"                ,  0.5   );
@@ -237,7 +237,7 @@ void prune_cb_pairs(vector1<Vecf> & cba, vector1<Vecf> & cbb, vector1<double> & 
 	cba = a;
 	cbb = b;
 	wa_in = wa;
-	wb_in = wb;	
+	wb_in = wb;
 }
 int neighbor_count(Pose const &pose, int ires, double distance_threshold=10.0) {
 	core::conformation::Residue const resi( pose.residue( ires ) );
@@ -264,10 +264,10 @@ struct SICFast {
 	double xmx1,xmn1,ymx1,ymn1,xmx,xmn,ymx,ymn;
 	double CTD,CLD,CTD2,CLD2,BIN;
 	int xlb,ylb,xub,yub;
-	xyzStripeHashPose xh1_bb_,xh2_bb_,xh1_cb_,xh2_cb_;	
+	xyzStripeHashPose xh1_bb_,xh2_bb_,xh1_cb_,xh2_cb_;
 	vector1<double> w1_,w2_;
-	ObjexxFCL::FArray2D<Vecf> ha,hb;	
-	SICFast() : 
+	ObjexxFCL::FArray2D<Vecf> ha,hb;
+	SICFast() :
 		CTD(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]()),
 		CLD(basic::options::option[basic::options::OptionKeys::tcdock::clash_dis]()),
 		CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD*basic::options::option[basic::options::OptionKeys::tcdock::hash_3D_vs_2D]()),
@@ -285,7 +285,7 @@ struct SICFast {
 		xh1_cb_.init_with_pose(cmp1in,cmp1wts,CB);
 		xh2_cb_.init_with_pose(cmp2in,cmp2wts,CB);
 		w1_ = cmp1wts;
-		w2_ = cmp2wts;		
+		w2_ = cmp2wts;
 		// Pose tmp1(cmp1in); trans_pose(tmp1,xh1_bb_.translation()); tmp1.dump_pdb("pose1.pdb");
 		// Pose tmp2(cmp2in); trans_pose(tmp2,xh2_bb_.translation()); tmp2.dump_pdb("pose2.pdb");
 		// dump_points_pdb(xh1_bb_.grid_atoms(),xh1_bb_.natom()                                            ,"xh1.pdb");
@@ -323,7 +323,7 @@ struct SICFast {
 		// if( rot != Matf::identity() ) {
 		//         for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
 		//         for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
-		// }               
+		// }
 		Matf rot = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
 		for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
 		for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
@@ -342,8 +342,8 @@ struct SICFast {
 		xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
 		ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
 	}
-	double get_score(vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double mindis, 
-	                 double anga, double angb, Vecf axsa, Vecf axsb, bool cmp1or2_a, bool cmp1or2_b) 
+	double get_score(vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double mindis,
+	                 double anga, double angb, Vecf axsa, Vecf axsb, bool cmp1or2_a, bool cmp1or2_b)
 	{
  		vector1<double> const & wa = cmp1or2_a ? w1_ : w2_;
 		vector1<double> const & wb = cmp1or2_b ? w1_ : w2_;
@@ -354,7 +354,7 @@ struct SICFast {
 		for(vector1<Vecf>::const_iterator i = cbb.begin(); i != cbb.end(); ++i,++iwb) {
 			Vecf v = R*((*i)-mindis*ori) + xh.translation();
 			if( v.x() < -xh.grid_size_ || v.y() < -xh.grid_size_ || v.z() < -xh.grid_size_ ) continue; // worth it?
-			if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it? 
+			if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it?
 			int const ix	= (v.x()<0.0) ? 0 : (int)(numeric::min(xh.xdim_-1,(int)(v.x()/xh.grid_size_)));
 			int const iy0	= (v.y()<0.0) ? 0 : (int)(v.y()/xh.grid_size_);
 			int const iz0	= (v.z()<0.0) ? 0 : (int)(v.z()/xh.grid_size_);
@@ -365,7 +365,7 @@ struct SICFast {
 			for(int iy = iyl; iy < iyu; ++iy) {
 				for(int iz = izl; iz < izu; ++iz) {
 					int const ig = ix+xh.xdim_*iy+xh.xdim_*xh.ydim_*iz;
-					assert(ig < xh.xdim_*xh.ydim_*xh.zdim_ && ix < xh.xdim_ && iy < xh.ydim_ && iz < xh.zdim_);				
+					assert(ig < xh.xdim_*xh.ydim_*xh.zdim_ && ix < xh.xdim_ && iy < xh.ydim_ && iz < xh.zdim_);
 					int const igl = xh.grid_stripe_[ig].x;
 					int const igu = xh.grid_stripe_[ig].y;
 					for(int i = igl; i < igu; ++i) {
@@ -377,7 +377,7 @@ struct SICFast {
 					}
 				}
 			}
-		}		
+		}
 		// double cbcount = 0.0;
 		// vector1<double>::const_iterator iwa = wa.begin();
 		// for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia,++iwa) {
@@ -388,7 +388,7 @@ struct SICFast {
 		// 			cbcount += sigmoid(d2, CLD, CTD ) * (*iwa) * (*iwb);
 		// 		}
 		// 	}
-		// }		
+		// }
 		// if( fabs(cbcount-score) > 0.0001 ) {
 		// 	cout << "btute/hash score mismatch!!!! " << anga << " " << angb << " " << cbcount << " " << score << endl;
 		// }
@@ -401,14 +401,14 @@ struct SICFast {
 		xyzStripeHashPose const & xh( cmp1or2_a ? xh1_bb_ : xh2_bb_ );
 		Matf Rori = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
 		Matf R    = numeric::rotation_matrix_degrees(axsa,-anga);
-		Matf Rinv = numeric::rotation_matrix_degrees(axsa, anga);		
+		Matf Rinv = numeric::rotation_matrix_degrees(axsa, anga);
 		while(true){
 			double correction_hash = 9e9;
 			for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
 				Vecf const v = R*Rori*((*ib)-Vecf(0,0,mindis)) + xh.translation();
 				Vecf const b = Rori * Rinv * v;
 				if( v.x() < -xh.grid_size_ || v.y() < -xh.grid_size_ || v.z() < -xh.grid_size_ ) continue; // worth it?
-				if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it? 
+				if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it?
 				int const ix  = (v.x()<0) ? 0 : numeric::min(xh.xdim_-1,(int)(v.x()/xh.grid_size_));
 				int const iy0 = (int)((v.y()<0) ? 0 : v.y()/xh.grid_size_);
 				int const iz0 = (int)((v.z()<0) ? 0 : v.z()/xh.grid_size_);
@@ -419,7 +419,7 @@ struct SICFast {
 				for(int iy = iyl; iy < iyu; ++iy) {
 					for(int iz = izl; iz < izu; ++iz) {
 						int const ig = ix+xh.xdim_*iy+xh.xdim_*xh.ydim_*iz;
-						assert(ig < xh.xdim_*xh.ydim_*xh.zdim_ && ix < xh.xdim_ && iy < xh.ydim_ && iz < xh.zdim_);				
+						assert(ig < xh.xdim_*xh.ydim_*xh.zdim_ && ix < xh.xdim_ && iy < xh.ydim_ && iz < xh.zdim_);
 						int const igl = xh.grid_stripe_[ig].x;
 						int const igu = xh.grid_stripe_[ig].y;
 						for(int i = igl; i < igu; ++i) {
@@ -458,7 +458,7 @@ struct SICFast {
 		// 	cout << F(9,5,correction_hash) << " " << F(9,5,correction_safe) << " " << mindis << endl;
 		// 	// utility_exit_with_message("FOO");
 		// }
-		
+
 		return mindis;
 	}
 	double slide_into_contact(vector1<Vecf> pa, vector1<Vecf> pb, vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double & score,
@@ -485,7 +485,7 @@ struct SICFast {
 			int const ix = (int)((ia->x()/BIN)-xlb+0.999999999);
 			int const iy = (int)((ia->y()/BIN)-ylb+0.999999999);
 			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-			if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;	
+			if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
 			// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize) && ha(ix,iy).z() < ia->z();
 			// ha(ix,iy) = test ? *ia : ha(ix,iy);
 		}
@@ -497,7 +497,7 @@ struct SICFast {
 			// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) && hb(ix,iy).z() > ib->z();
 			// hb(ix,iy) = test ? *ib : hb(ix,iy);
 		}
-		
+
 	}
 	virtual double get_mindis_with_plane_hashes() {
 		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
@@ -509,7 +509,7 @@ struct SICFast {
 					if(i+k < 1 || i+k > xsize) continue;
 					for(int l = -1; l <= 1; ++l) {
 						if(j+l < 1 || j+l > ysize) continue;
-						double const xa1=ha(i,j).x(),ya1=ha(i,j).y(),xb1=hb(i+k,j+l).x(),yb1=hb(i+k,j+l).y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1); 
+						double const xa1=ha(i,j).x(),ya1=ha(i,j).y(),xb1=hb(i+k,j+l).x(),yb1=hb(i+k,j+l).y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1);
 						if(d21<CLD2){ double const dz=hb(i+k,j+l).z()-ha(i,j).z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
 					}
 				}
@@ -523,11 +523,11 @@ int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double
 	grid(i,j,k) = t;
 	int nmark = 1;
 	if(i>1           ) nmark += flood_fill3D(i-1,j  ,k  ,grid,t);
-	if(i<grid.size1()) nmark += flood_fill3D(i+1,j  ,k  ,grid,t);	
+	if(i<grid.size1()) nmark += flood_fill3D(i+1,j  ,k  ,grid,t);
 	if(j>1           ) nmark += flood_fill3D(i  ,j-1,k  ,grid,t);
-	if(j<grid.size2()) nmark += flood_fill3D(i  ,j+1,k  ,grid,t);	
+	if(j<grid.size2()) nmark += flood_fill3D(i  ,j+1,k  ,grid,t);
 	if(k>1           ) nmark += flood_fill3D(i  ,j  ,k-1,grid,t);
-	if(k<grid.size3()) nmark += flood_fill3D(i  ,j  ,k+1,grid,t);	
+	if(k<grid.size3()) nmark += flood_fill3D(i  ,j  ,k+1,grid,t);
 	return nmark;
 }
 struct LMAX {
@@ -543,7 +543,7 @@ int compareLMAX(const LMAX a,const LMAX b) {
 struct TCDock {
 	vector1<double> cmp2mnpos_,cmp1mnpos_,cmp2mnneg_,cmp1mnneg_,cmp2dspos_,cmp1dspos_,cmp2dsneg_,cmp1dsneg_;
 	ObjexxFCL::FArray2D<double> cmp2cbpos_,cmp1cbpos_,cmp2cbneg_,cmp1cbneg_;
-	ObjexxFCL::FArray3D<double> gradii,gscore;	
+	ObjexxFCL::FArray3D<double> gradii,gscore;
 	Vecf cmp1axs_,cmp2axs_;
 	double alpha_,sin_alpha_,tan_alpha_;
 	double cmp1diapos_,cmp1dianeg_,cmp2diapos_,cmp2dianeg_;
@@ -581,7 +581,7 @@ struct TCDock {
 				cmp2dianeg_ = max(cmp2dianeg_,-v.z());
 			}
 		}
-		
+
 		if(cmp1type[1]=='2') { make_dimer   (cmp1in_); cmp1nsub_ = 2; }
 		if(cmp1type[1]=='3') { make_trimer  (cmp1in_); cmp1nsub_ = 3; }
 		if(cmp1type[1]=='4') { make_tetramer(cmp1in_); cmp1nsub_ = 4; }
@@ -591,13 +591,13 @@ struct TCDock {
 		if(cmp2type[1]=='4') { make_tetramer(cmp2in_); cmp2nsub_ = 4; }
 		if(cmp2type[1]=='5') { make_pentamer(cmp2in_); cmp2nsub_ = 5; }
 		if(option[tcdock::reverse]()) rot_pose(cmp1in_,Vecf(0,1,0),180.0);
-				
+
 		cmp1name_ = utility::file_basename(cmp1pdb);
 		cmp2name_ = utility::file_basename(cmp2pdb);
 		if(cmp1name_.substr(cmp1name_.size()-3)==".gz" ) cmp1name_ = cmp1name_.substr(0,cmp1name_.size()-3);
-		if(cmp2name_.substr(cmp2name_.size()-3)==".gz" ) cmp2name_ = cmp2name_.substr(0,cmp2name_.size()-3);		
+		if(cmp2name_.substr(cmp2name_.size()-3)==".gz" ) cmp2name_ = cmp2name_.substr(0,cmp2name_.size()-3);
 		if(cmp1name_.substr(cmp1name_.size()-4)==".pdb") cmp1name_ = cmp1name_.substr(0,cmp1name_.size()-4);
-		if(cmp2name_.substr(cmp2name_.size()-4)==".pdb") cmp2name_ = cmp2name_.substr(0,cmp2name_.size()-4);		
+		if(cmp2name_.substr(cmp2name_.size()-4)==".pdb") cmp2name_ = cmp2name_.substr(0,cmp2name_.size()-4);
 		symtype_ = cmp2type.substr(0,4);
 
 		std::map<string,int> comp_nangle;
@@ -617,7 +617,7 @@ struct TCDock {
 		cmp1axs_ = axismap_[cmp1type_];
 		cmp2axs_ = axismap_[cmp2type_];
 		cmp1nangle_ = comp_nangle[cmp1type_];
-		cmp2nangle_ = comp_nangle[cmp2type_];		
+		cmp2nangle_ = comp_nangle[cmp2type_];
 		cout << cmp1type_ << " " << cmp2type_ << " nang1 " << cmp1nangle_ << " nang2 " << cmp2nangle_ << endl;
 
 		alpha_ = angle_degrees(cmp1axs_,Vecf(0,0,0),cmp2axs_);
@@ -628,7 +628,7 @@ struct TCDock {
 		alignaxis(cmp1in_,cmp1axs_,Vec(0,0,1),Vec(0,0,0));
 		alignaxis(cmp2in_,cmp2axs_,Vec(0,0,1),Vec(0,0,0));
 		// cmp1in_.dump_pdb("out/test1.pdb");
-		// cmp2in_.dump_pdb("out/test2.pdb");		
+		// cmp2in_.dump_pdb("out/test2.pdb");
 
 		for(Size i = 1; i <= cmp1in_.n_residue(); ++i) {
 			if(cmp1in_.residue(i).has("CB")) {
@@ -652,11 +652,11 @@ struct TCDock {
 				cmp2pts_.push_back(v);
 			}
 		}
-		
+
 		sics_.resize(num_threads());
 		for(int i = 0; i < num_threads(); ++i) sics_[i] = new SICFast;
 		for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp1axs_,cmp2in_,cmp2cbs_,cmp2wts_,cmp2axs_);
-		
+
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
 		cmp2mnpos_.resize(cmp2nangle_,0.0);
 		cmp1mnneg_.resize(cmp1nangle_,0.0);
@@ -671,10 +671,10 @@ struct TCDock {
 		cmp2cbneg_.dimension(cmp2nangle_,200,0.0);
 		gradii.dimension(cmp2nangle_,cmp1nangle_,360,-9e9);
 		gscore.dimension(cmp2nangle_,cmp1nangle_,360,-9e9);
-		
+
 	}
 	virtual ~TCDock() {
-		for(int i = 0; i < num_threads(); ++i) delete sics_[i];		
+		for(int i = 0; i < num_threads(); ++i) delete sics_[i];
 	}
 	int num_threads() {
 		#ifdef USE_OPENMP
@@ -695,11 +695,11 @@ struct TCDock {
 		if( type[1] == '2' ) {
 			Mat r = rotation_matrix_degrees( axismap_[type[0]+string("3")],120.0);
 			other_axis = r*axismap_[type];
-			for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);		
+			for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);
 		} else {
 			Mat r = rotation_matrix_degrees( axismap_[type[0]+string("2")],180.0);
 			other_axis = r*axismap_[type];
-			for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);			
+			for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) *i = r*(*i);
 		}
 		return other_axis.normalized();
 	}
@@ -711,7 +711,7 @@ struct TCDock {
 		// compute high/low min dis for pent and cmp1 here, input to sicfast and don't allow any below
 		cout << "precomputing one-component interactions every 1°" << endl;
 		for(int i12 = 0; i12 < 2; ++i12) {
-			Vecf const axis = (i12?cmp1axs_:cmp2axs_);	
+			Vecf const axis = (i12?cmp1axs_:cmp2axs_);
 			vector1<double>             & cmpwts  ( i12?cmp1wts_  :cmp2wts_   );
 			vector1<double>             & cmpmnpos( i12?cmp1mnpos_:cmp2mnpos_ );
 			vector1<double>             & cmpmnneg( i12?cmp1mnneg_:cmp2mnneg_ );
@@ -780,14 +780,14 @@ struct TCDock {
 	void get_cmp1(double acmp1, vector1<Vecf> & pts, vector1<Vecf> & cbs ) {
 		Matf R = rotation_matrix_degrees( cmp1axs_, acmp1 );
 		pts = cmp1pts_;
-		cbs = cmp1cbs_;		
+		cbs = cmp1cbs_;
 		for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) (*i) = R*(*i);
 		for(vector1<Vecf>::iterator i = cbs.begin(); i != cbs.end(); ++i) (*i) = R*(*i);
 	}
 	void get_cmp2(double acmp2, vector1<Vecf> & pts, vector1<Vecf> & cbs ){
 		Matf R = rotation_matrix_degrees( cmp2axs_, acmp2 );
 		pts = cmp2pts_;
-		cbs = cmp2cbs_;		
+		cbs = cmp2cbs_;
 		for(vector1<Vecf>::iterator i = pts.begin(); i != pts.end(); ++i) (*i) = R*(*i);
 		for(vector1<Vecf>::iterator i = cbs.begin(); i != cbs.end(); ++i) (*i) = R*(*i);
 	}
@@ -862,9 +862,9 @@ struct TCDock {
 			core::pose::symmetry::make_symmetric_pose(symm);
 		}
 		core::io::pdb::dump_pdb(symm,option[out::file::o]()+"/"+fname);
-		
+
 		// find contacts
-		
+
 		vector1<int> dumpg = option[tcdock::dump_pdb_grid]();
 		if( std::find(dumpg.begin(),dumpg.end(),idx)!=dumpg.end() ){
 		//if(option[tcdock::dump_pdb_grid]()) {
@@ -887,8 +887,8 @@ struct TCDock {
 			double pr1=0.0,pr2=0.0;
 			for(vector1<Vecf>::const_iterator i = cmp1pts_.begin(); i != cmp1pts_.end(); ++i) pr1 = max(pr1,projperp(cmp1axs_,*i).length());
 			for(vector1<Vecf>::const_iterator i = cmp2pts_.begin(); i != cmp2pts_.end(); ++i) pr2 = max(pr2,projperp(cmp2axs_,*i).length());
-			int const na = option[tcdock::grid_size_rot]();			
-			int const nr = option[tcdock::grid_size_disp]();			
+			int const na = option[tcdock::grid_size_rot]();
+			int const nr = option[tcdock::grid_size_disp]();
 			double const da1 = numeric::conversions::degrees(asin(option[tcdock::grid_delta_rot]()*1.2/pr1));
 			double const da2 = numeric::conversions::degrees(asin(option[tcdock::grid_delta_rot]()*1.2/pr1));
 			double const dr1 = -option[tcdock::grid_delta_disp]()*dcmp1/d;
@@ -905,21 +905,21 @@ struct TCDock {
 						#pragma omp critical
 						#endif
 						core::io::pdb::dump_pdb(asym,option[out::file::o]()+"/"+fname+"_"+string_of(ia1)+"_"+string_of(ia2)+"_"+string_of(ir)+".pdb.gz");
-						trans_pose(asym,cmp1axs_*dr1,1, p1.n_residue());		
+						trans_pose(asym,cmp1axs_*dr1,1, p1.n_residue());
 						trans_pose(asym,cmp2axs_*dr2,p1.n_residue()+1,asym.n_residue());
 					}
-					trans_pose(asym,cmp1axs_*-nr*dr1,1, p1.n_residue());		
+					trans_pose(asym,cmp1axs_*-nr*dr1,1, p1.n_residue());
 					trans_pose(asym,cmp2axs_*-nr*dr2,p1.n_residue()+1,asym.n_residue());
 				}
 			}
-		}		
+		}
 	}
 	double __dock_base__(int icmp2,int icmp1,int iori,double&dori,double&dcmp2,double&dcmp1,double&icbc,double&cmp2cbc,double&cmp1cbc,bool cache=true){
 		if(!cache || gradii(icmp2+1,icmp1+1,iori+1)==-9e9 ) {
 			using basic::options::option;
 			using namespace basic::options::OptionKeys;
 			cmp2cbc=0; cmp1cbc=0;
-			vector1<Vecf> pb,cbb, pa,cba; get_cmp1(icmp1,pa,cba); get_cmp2(icmp2,pb,cbb);		
+			vector1<Vecf> pb,cbb, pa,cba; get_cmp1(icmp1,pa,cba); get_cmp2(icmp2,pb,cbb);
 			Vecf sicaxis = rotation_matrix_degrees( cmp1axs_.cross(cmp2axs_) ,(double)iori) * (cmp1axs_+cmp2axs_).normalized();
 			// cerr << cmp1axs_.cross(cmp2axs_) << endl;
 			// utility_exit_with_message("arstio");
@@ -930,15 +930,15 @@ struct TCDock {
 			double const gamma=numeric::conversions::radians(theta-alpha_/2.0);
 			double const sin_gamma=sin(gamma), cos_gamma=cos(gamma), x=d*sin_gamma, y=d*cos_gamma, w=x/sin_alpha_, z=x/tan_alpha_;
 			dcmp2 = y+z;  dcmp1 = w;
-						// 
+						//
 						// cerr << icmp1 << " " << icmp2 << " " << iori << " " << d << endl;
 						// cerr << dcmp1 << " " << dcmp2 << endl;
 						// utility_exit_with_message("FOO");
-						// 
+						//
 			if( w > 0 ) {
 				double const cmp2mn = cmp2mnpos_[icmp2+1];
 				double const cmp1mn = cmp1mnpos_[icmp1+1];
-				if( dcmp1 < cmp1mn || dcmp2 < cmp2mn ) { 
+				if( dcmp1 < cmp1mn || dcmp2 < cmp2mn ) {
 					double const dmncmp2 = cmp2mn/(cos_gamma+sin_gamma/tan_alpha_);
 					double const dmncmp1 = cmp1mn*sin_alpha_/sin_gamma;
 					gradii(icmp2+1,icmp1+1,iori+1) = min(dmncmp2,dmncmp1);
@@ -952,7 +952,7 @@ struct TCDock {
 			} else {
 				double const cmp2mn = cmp2mnneg_[icmp2+1];
 				double const cmp1mn = cmp1mnneg_[icmp1+1];
-				if( dcmp1 > cmp1mn || dcmp2 > cmp2mn ) { 
+				if( dcmp1 > cmp1mn || dcmp2 > cmp2mn ) {
 					double const dmncmp2 = cmp2mn/(cos_gamma+sin_gamma/tan_alpha_);
 					double const dmncmp1 = cmp1mn*sin_alpha_/sin_gamma;
 					gradii(icmp2+1,icmp1+1,iori+1) = min(dmncmp2,dmncmp1);
@@ -997,17 +997,17 @@ struct TCDock {
 		for(int t1 = 0; t1 <= option[tcdock::termini_trim](); ++t1) {
 			Vecf n1_0 = cmp1in_.xyz(core::id::AtomID(1,1+t1));
 		for(int t2 = 0; t2 <= option[tcdock::termini_trim](); ++t2) {
-			Vecf n2_0 = cmp2in_.xyz(core::id::AtomID(1,1+t2));			
+			Vecf n2_0 = cmp2in_.xyz(core::id::AtomID(1,1+t2));
 		for(int t3 = 0; t3 <= option[tcdock::termini_trim](); ++t3) {
 			Vecf c1_0 = cmp1in_.xyz(core::id::AtomID(3,cmp1in_.n_residue()-t3));
 		for(int t4 = 0; t4 <= option[tcdock::termini_trim](); ++t4) {
-			Vecf c2_0 = cmp2in_.xyz(core::id::AtomID(3,cmp2in_.n_residue()-t4));			
+			Vecf c2_0 = cmp2in_.xyz(core::id::AtomID(3,cmp2in_.n_residue()-t4));
 			for(int i1 = 0; i1 < cmp1nsub_; ++i1){
 				Vecf n1 = d1*cmp1axs_ + rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(double)cmp1nsub_*(double)i1) * n1_0;
-				Vecf c1 = d1*cmp1axs_ + rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(double)cmp1nsub_*(double)i1) * c1_0;				
+				Vecf c1 = d1*cmp1axs_ + rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(double)cmp1nsub_*(double)i1) * c1_0;
 				for(int i2 = 0; i2 < cmp2nsub_; ++i2){
 					Vecf n2 = d2*cmp2axs_ + rotation_matrix_degrees(cmp2axs_,a2 + 360.0/(double)cmp2nsub_*(double)i2) * n2_0;
-					Vecf c2 = d2*cmp2axs_ + rotation_matrix_degrees(cmp2axs_,a2 + 360.0/(double)cmp2nsub_*(double)i2) * c2_0;				
+					Vecf c2 = d2*cmp2axs_ + rotation_matrix_degrees(cmp2axs_,a2 + 360.0/(double)cmp2nsub_*(double)i2) * c2_0;
 					td = min( n1.distance(c2), td );
 					td = min( c1.distance(n2), td );
 				}
@@ -1034,7 +1034,7 @@ struct TCDock {
 		ObjexxFCL::FArray3D<double> grid(2*N+1,2*N+1,2*N+1,0.0);
 		#ifdef USE_OPENMP
 		#pragma omp parallel for schedule(dynamic,1)
-		#endif			
+		#endif
 		for(int di = -N; di <= N; ++di) {
 			for(int dj = -N; dj <= N; ++dj) {
 				for(int dk = -N; dk <= N; ++dk) {
@@ -1053,7 +1053,7 @@ struct TCDock {
 		vector1<double> ffhist(25,0);
 		// #ifdef USE_OPENMP
 		// #pragma omp parallel for schedule(dynamic,1)
-		// #endif			
+		// #endif
 		for(int ifh = 0; ifh < ffhist.size(); ++ifh) {
 			flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
 			double count = 0;
@@ -1099,17 +1099,17 @@ struct TCDock {
 		double score = dock_get_geom(h.icmp2,h.icmp1,h.iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
 		string fn = cmp1name_+"_"+cmp2name_+"_"+(option[tcdock::reverse]()?"R":"F")+"_"+ObjexxFCL::string_of(ilm);
 		cout << "| " << fn << ((ilm<10)?"  ":" ")
-             << F(8,3,score) << " " 
+             << F(8,3,score) << " "
 		     << F(6,2,2*max(fabs(dcmp1)+(dcmp1>0?cmp1diapos_:cmp1dianeg_),fabs(dcmp2)+(dcmp2>0?cmp2diapos_:cmp2dianeg_))) << " "
 		     << F(6,2, min_termini_dis(dcmp1,h.icmp1,dcmp2,h.icmp2) ) << " "
-             << F(7,3,icbc) << " " 
-		     << F(6,2,cmp1cbc) << " " 
-		     << F(6,2,cmp2cbc) << " " 
-		     << I(4,cmp1in_.n_residue()) << " " 
-		     << I(3,h.icmp1) << " " 
+             << F(7,3,icbc) << " "
+		     << F(6,2,cmp1cbc) << " "
+		     << F(6,2,cmp2cbc) << " "
+		     << I(4,cmp1in_.n_residue()) << " "
+		     << I(3,h.icmp1) << " "
 		     << F(8,3,dcmp1) << " "
-		     << I(4,cmp2in_.n_residue()) << " " 
-		     << I(3,h.icmp2) << " " 
+		     << I(4,cmp2in_.n_residue()) << " "
+		     << I(3,h.icmp2) << " "
 		     << F(8,3,dcmp2) << " "
 			 << I(3,h.iori);
 		for(int ifh = 1; ifh <= ffhist.size(); ++ifh) {
@@ -1117,7 +1117,7 @@ struct TCDock {
 		}
 		cout << endl;
 		if(option[tcdock::dump_pdb]() ) dump_pdb(h.icmp2,h.icmp1,h.iori,fn+".pdb.gz",0,true);
-		
+
 	}
 	void run() {
 		using basic::options::option;
@@ -1130,14 +1130,14 @@ struct TCDock {
 		double const CLASH_D2   = sqr(CLASH_D);
 		Pose const cmp1init(cmp1in_);
 		Pose const cmp2init(cmp2in_);
-		{                                                         // 3deg loop 
+		{                                                         // 3deg loop
 			double max1=0;
 			// dump_onecomp();
 			precompute_intra();
-			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl; 
+			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl;
 			double max_score = 0;
 			for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
-				if(icmp1%15==0 && icmp1!=0) cout<<" lowres dock "<<cmp1name_<<" "<<I(2,100*icmp1/cmp1nangle_)<<"\% done, max_score: "<<F(10,6,max_score)<<endl;
+				if(icmp1%15==0 && icmp1!=0) cout<<" lowres dock "<<cmp1name_<<" "<<I(2,100*icmp1/cmp1nangle_)<<"% done, max_score: "<<F(10,6,max_score)<<endl;
 				vector1<Vecf> pa,cba; get_cmp1(icmp1,pa,cba);
 				#ifdef USE_OPENMP
 				#pragma omp parallel for schedule(dynamic,1)
@@ -1167,7 +1167,7 @@ struct TCDock {
 			if(max_score<0.00001) utility_exit_with_message("cmp1 or cmp2 too large, no contacts!");
 			cout << "MAX3 " << max_score << endl;
 		}
-		utility::vector1<vector1<int> > cmp2lmx,cmp1lmx,orilmx; { // set up work for main loop 2 
+		utility::vector1<vector1<int> > cmp2lmx,cmp1lmx,orilmx; { // set up work for main loop 2
 			double topX_3 = 0;
 			vector1<double> cbtmp;
 			for(Size i = 0; i < gscore.size(); ++i) if(gscore[i] > 0) cbtmp.push_back(gscore[i]);
@@ -1195,7 +1195,7 @@ struct TCDock {
 			#pragma omp parallel for schedule(dynamic,1)
 			#endif
 			for(Size ilmx = 1; ilmx <= cmp2lmx.size(); ++ilmx)  {       //  MAIN LOOP 2
-				if( (ilmx-1)%(option[tcdock::nsamp1]()/10)==0 && ilmx!=1) cout<<" highres dock "<<cmp1name_<<" "<<(double(ilmx-1)/(option[tcdock::nsamp1]()/100))<<"\% done"<<endl;
+				if( (ilmx-1)%(option[tcdock::nsamp1]()/10)==0 && ilmx!=1) cout<<" highres dock "<<cmp1name_<<" "<<(double(ilmx-1)/(option[tcdock::nsamp1]()/100))<<"% done"<<endl;
 				for(vector1<int>::const_iterator picmp2 = cmp2lmx[ilmx].begin(); picmp2 != cmp2lmx[ilmx].end(); ++picmp2) {
 					int icmp2 = *picmp2; vector1<Vecf> pb,cbb; get_cmp2(icmp2,pb,cbb);
 					for(vector1<int>::const_iterator picmp1 = cmp1lmx[ilmx].begin(); picmp1 != cmp1lmx[ilmx].end(); ++picmp1) {
@@ -1207,8 +1207,8 @@ struct TCDock {
 					}
 				}
 			}
-		}		
-		vector1<LMAX> local_maxima;	{                             // get local radial disp maxima (minima, really)     
+		}
+		vector1<LMAX> local_maxima;	{                             // get local radial disp maxima (minima, really)
 			double highscore = -9e9;
 			for(int i = 1; i <= gradii.size1(); ++i){
 				for(int j = 1; j <= gradii.size2(); ++j){
@@ -1238,21 +1238,21 @@ struct TCDock {
 				}
 			}
 			std::sort(local_maxima.begin(),local_maxima.end(),compareLMAX);
-			cout << "N maxima: " << local_maxima.size() << ", best score: " << highscore << endl;					
+			cout << "N maxima: " << local_maxima.size() << ", best score: " << highscore << endl;
 			string nc1=cmp1type_.substr(1,1), nc2=cmp2type_.substr(1,1);
 			cout << "                          tag     score   diam   tdis   inter    ";
 			cout << "sc"+nc1+"    sc"+nc2+"  nr"+nc1+"  a"+nc1+"       r"+nc1+"  nr"+nc2+"  a"+nc2+"       r"+nc2+" ori";
 			cout << "  v0.2  v0.4  v0.6  v0.8  v1.0  v1.2  v1.4  v1.6  v1.8  v2.0";
 			cout << "  v2.2  v2.4  v2.6  v2.8  v3.0  v3.2  v3.4  v3.6  v3.8  v4.0  v4.2  v4.4  v4.6  v4.8  v5.0" << endl;
 		}
-		for(Size ilm = 1; ilm <= min(local_maxima.size(),(Size)option[tcdock::topx]()); ++ilm) { // dump top hit info 
+		for(Size ilm = 1; ilm <= min(local_maxima.size(),(Size)option[tcdock::topx]()); ++ilm) { // dump top hit info
 			LMAX const & h(local_maxima[ilm]);
 			double d,dcmp2,dcmp1,icbc,cmp1cbc,cmp2cbc;
 			int N = option[tcdock::peak_grid_size]();
 			ObjexxFCL::FArray3D<double> grid(2*N+1,2*N+1,2*N+1,0.0);
 			#ifdef USE_OPENMP
 			#pragma omp parallel for schedule(dynamic,1)
-			#endif			
+			#endif
 			for(int di = -N; di <= N; ++di) {
 				for(int dj = -N; dj <= N; ++dj) {
 					for(int dk = -N; dk <= N; ++dk) {
@@ -1271,7 +1271,7 @@ struct TCDock {
 			vector1<double> ffhist(25,0);
 			// #ifdef USE_OPENMP
 			// #pragma omp parallel for schedule(dynamic,1)
-			// #endif			
+			// #endif
 			for(int ifh = 0; ifh < ffhist.size(); ++ifh) {
 				flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
 				double count = 0;
@@ -1316,17 +1316,17 @@ struct TCDock {
 			double score = dock_get_geom(h.icmp2,h.icmp1,h.iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
 			string fn = cmp1name_+"_"+cmp2name_+"_"+(option[tcdock::reverse]()?"R":"F")+"_"+ObjexxFCL::string_of(ilm);
 			cout << "| " << fn << ((ilm<10)?"  ":" ")
-                 << F(8,3,score) << " " 
+                 << F(8,3,score) << " "
 			     << F(6,2,2*max(fabs(dcmp1)+(dcmp1>0?cmp1diapos_:cmp1dianeg_),fabs(dcmp2)+(dcmp2>0?cmp2diapos_:cmp2dianeg_))) << " "
 			     << F(6,2, min_termini_dis(dcmp1,h.icmp1,dcmp2,h.icmp2) ) << " "
-                 << F(7,3,icbc) << " " 
-			     << F(6,2,cmp1cbc) << " " 
-			     << F(6,2,cmp2cbc) << " " 
-			     << I(4,cmp1in_.n_residue()) << " " 
-			     << I(3,h.icmp1) << " " 
+                 << F(7,3,icbc) << " "
+			     << F(6,2,cmp1cbc) << " "
+			     << F(6,2,cmp2cbc) << " "
+			     << I(4,cmp1in_.n_residue()) << " "
+			     << I(3,h.icmp1) << " "
 			     << F(8,3,dcmp1) << " "
-			     << I(4,cmp2in_.n_residue()) << " " 
-			     << I(3,h.icmp2) << " " 
+			     << I(4,cmp2in_.n_residue()) << " "
+			     << I(3,h.icmp2) << " "
 			     << F(8,3,dcmp2) << " "
 				 << I(3,h.iori);
 			for(int ifh = 1; ifh <= ffhist.size(); ++ifh) {
@@ -1341,7 +1341,7 @@ struct TCDock {
 };
 int main (int argc, char *argv[]) {
 	register_options();
-	devel::init(argc,argv);	
+	devel::init(argc,argv);
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	vector1<string> compkind;

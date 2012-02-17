@@ -418,3 +418,10 @@ strip(std::string StringToModify) {
 	 std::string tempString = StringToModify;
    return tempString.substr(startIndex, (endIndex-startIndex+ 1) );
 }
+
+void make_dimer(core::pose::Pose & pose) {
+	// cerr << "make_dimer" << endl;
+	core::pose::Pose t2(pose);
+	rot_pose(t2,Vec(0,0,1),180.0);
+	for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+}

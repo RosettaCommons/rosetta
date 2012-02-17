@@ -2,7 +2,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
-	#include <basic/options/option.hh>
+#include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -59,7 +59,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <protocols/filters/Filter.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
+#include <protocols/simple_moves/GreedyOptMutationMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
@@ -88,29 +90,26 @@ int thread_num() {
 	#endif
 }
 
-OPT_1GRP_KEY( Integer, bpytoi, min_bpy_cb_mono_nbr_count   );
-OPT_1GRP_KEY( Integer, bpytoi, chi1_increment  );
-OPT_1GRP_KEY( Integer, bpytoi, max_nres        );
-OPT_1GRP_KEY( Integer, bpytoi, max_cys         );
-OPT_1GRP_KEY( Real   , bpytoi, max_bpy_dun     );
-OPT_1GRP_KEY( Real   , bpytoi, bpy_clash_dis   );
-OPT_1GRP_KEY( Real   , bpytoi, max_sym_error   );
-OPT_1GRP_KEY( Real   , bpytoi, max_dimer_rmsd  );
-OPT_1GRP_KEY( Real   , bpytoi, max_bpy_dis     );
+// OPT_1GRP_KEY( Integer, bpytoi, min_bpy_cb_mono_nbr_count   );
+// OPT_1GRP_KEY( Integer, bpytoi, min_bpy_bb_tri_nbr_count   );
+// OPT_1GRP_KEY( Integer, bpytoi, min_bpy_bb_tri_nbr_count   );
+OPT_1GRP_KEY( Integer, bpytoi, chi1_increment  )
+OPT_1GRP_KEY( Integer, bpytoi, max_nres        )
+OPT_1GRP_KEY( Integer, bpytoi, max_cys         )
+OPT_1GRP_KEY( Real   , bpytoi, max_bpy_dun     )
+OPT_1GRP_KEY( Real   , bpytoi, bpy_clash_dis   )
+OPT_1GRP_KEY( Real   , bpytoi, max_sym_error   )
 
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	OPT( in::file::s );
-	NEW_OPT( bpytoi::min_bpy_cb_mono_nbr_count ,"", 10  );
-	NEW_OPT( bpytoi::chi1_increment            ,"", 10  );
+	NEW_OPT( bpytoi::chi1_increment            ,"", 1  );
 	NEW_OPT( bpytoi::max_nres                  ,"", 200 );
 	NEW_OPT( bpytoi::max_cys                   ,"", 3   );
-	NEW_OPT( bpytoi::max_bpy_dun               ,"", 2.0 );
+	NEW_OPT( bpytoi::max_bpy_dun               ,"", 3.0 );
 	NEW_OPT( bpytoi::bpy_clash_dis             ,"", 3.0 );
-	NEW_OPT( bpytoi::max_sym_error             ,"", 0.3 );
-	NEW_OPT( bpytoi::max_dimer_rmsd            ,"", 9e9 );
-	NEW_OPT( bpytoi::max_bpy_dis               ,"", 9e9 );
+	NEW_OPT( bpytoi::max_sym_error             ,"", 0.4 );
 }
 
 using core::kinematics::Stub;
@@ -214,6 +213,77 @@ bool is_near_C2Z_iface(Pose const & p, Size rsd) {
 	}
 	return false;
 }
+
+void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
+	using namespace core::chemical;
+	using namespace core::conformation::symmetry;
+	using namespace core::pack::task;
+	using namespace core::scoring::constraints;
+	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+
+	vector1<bool> allowed_aas(20,false);
+	allowed_aas[aa_ala] = true;
+	allowed_aas[aa_phe] = true;
+	allowed_aas[aa_ile] = true;
+	allowed_aas[aa_leu] = true;
+	allowed_aas[aa_met] = true;
+	allowed_aas[aa_val] = true;
+	allowed_aas[aa_trp] = true;
+	allowed_aas[aa_tyr] = true;
+
+	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
+
+	vector1<Size> design_pos;
+	for( Size i=1; i <= sym_info->num_independent_residues() ; i++) {
+		if(i==ibpy) continue;
+		if(!sym_info->bb_is_independent(i)) continue;
+		if(pose.residue(i).name3()=="GLY"||pose.residue(i).name3()=="PRO") continue;
+		for( Size j=sym_info->num_independent_residues()+1; j <= sym_info->num_total_residues_without_pseudo(); j++) {
+			if(sym_info->subunit_index(j) == dsub ) continue;
+			if(pose.residue(j).name3()=="GLY"||pose.residue(j).name3()=="PRO") continue;
+			if( pose.residue(i).xyz("CB").distance_squared( pose.residue(j).xyz("CB") ) < 100.0 ) {
+				//TR << "design_pos " << i << " " << j << std::endl;
+				if( find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) design_pos.push_back(i);
+			}
+		}
+	}
+
+	for( Size i=1; i<=pose.n_residue(); i++) {
+		if (!sym_info->bb_is_independent(i)) {
+			task->nonconst_residue_task(i).prevent_repacking();
+		} else if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY" || i==ibpy) {
+			//TR << "res " << i << " fix" << std::endl;
+			// Don't mess with Pros or Glys at the interfaces
+			task->nonconst_residue_task(i).prevent_repacking();
+		} else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
+			//TR << "res " << i << " fix" << std::endl;
+			task->nonconst_residue_task(i).prevent_repacking();
+		} else {
+			//TR << "res " << i << " des" << std::endl;
+			bool temp = allowed_aas[pose.residue(i).aa()];
+			allowed_aas[pose.residue(i).aa()] = true;
+			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
+			task->nonconst_residue_task(i).or_include_current(true);
+			task->nonconst_residue_task(i).initialize_from_command_line();
+			allowed_aas[pose.residue(i).aa()] = temp;
+		}
+	}
+
+	Real worig = sf->get_weight(core::scoring::res_type_constraint);
+	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
+	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
+	pose.add_constraints( res_cst );
+
+	core::pack::make_symmetric_PackerTask(pose, task);
+	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+	packer->apply(pose);
+
+	pose.remove_constraints( res_cst );
+	sf->set_weight(core::scoring::res_type_constraint,worig);
+
+}
+
 void refine(Pose & pose, Size ibpy, Size dsub) {
 	using namespace core::chemical;
 	using namespace core::conformation::symmetry;
@@ -335,65 +405,10 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 	protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 	pose.remove_constraints();
 
-	vector1<bool> allowed_aas(20,false);
-	allowed_aas[aa_ala] = true;
-	allowed_aas[aa_phe] = true;
-	allowed_aas[aa_ile] = true;
-	allowed_aas[aa_leu] = true;
-	allowed_aas[aa_met] = true;
-	allowed_aas[aa_val] = true;
-	allowed_aas[aa_trp] = true;
-	allowed_aas[aa_tyr] = true;
 
-	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
+	fixbb_design(pose,ibpy,dsub);
 
-	vector1<Size> design_pos;
-	for( Size i=1; i <= sym_info->num_independent_residues() ; i++) {
-		if(i==ibpy) continue;
-		if(!sym_info->bb_is_independent(i)) continue;
-		if(pose.residue(i).name3()=="GLY"||pose.residue(i).name3()=="PRO") continue;
-		for( Size j=sym_info->num_independent_residues()+1; j <= sym_info->num_total_residues_without_pseudo(); j++) {
-			if(sym_info->subunit_index(j) == dsub ) continue;
-			if(pose.residue(j).name3()=="GLY"||pose.residue(j).name3()=="PRO") continue;
-			if( pose.residue(i).xyz("CB").distance_squared( pose.residue(j).xyz("CB") ) < 100.0 ) {
-				//TR << "design_pos " << i << " " << j << std::endl;
-				if( find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) design_pos.push_back(i);
-			}
-		}
-	}
 
-	for( Size i=1; i<=pose.n_residue(); i++) {
-		if (!sym_info->bb_is_independent(i)) {
-			task->nonconst_residue_task(i).prevent_repacking();
-		} else if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
-			//TR << "res " << i << " fix" << std::endl;
-			// Don't mess with Pros or Glys at the interfaces
-			task->nonconst_residue_task(i).prevent_repacking();
-		} else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
-			//TR << "res " << i << " fix" << std::endl;
-			task->nonconst_residue_task(i).prevent_repacking();
-		} else {
-			//TR << "res " << i << " des" << std::endl;
-			bool temp = allowed_aas[pose.residue(i).aa()];
-			allowed_aas[pose.residue(i).aa()] = true;
-			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
-			task->nonconst_residue_task(i).or_include_current(true);
-			task->nonconst_residue_task(i).initialize_from_command_line();
-			allowed_aas[pose.residue(i).aa()] = temp;
-		}
-	}
-
-	Real worig = sf->get_weight(core::scoring::res_type_constraint);
-	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
-	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
-	pose.add_constraints( res_cst );
-
-	core::pack::make_symmetric_PackerTask(pose, task);
-	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
-	packer->apply(pose);
-
-	pose.remove_constraints( res_cst );
-	sf->set_weight(core::scoring::res_type_constraint,worig);
 	{
 		pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+0*sym_info->num_independent_residues()),
 																								 AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+1*sym_info->num_independent_residues()),
@@ -484,7 +499,6 @@ void repack(Pose & pose, Size ibpy, Size dsub) {
 	core::pack::make_symmetric_PackerTask(pose, task);
 	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
-
 }
 void new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) {
 
@@ -543,7 +557,7 @@ Real dimer_rms(Pose const & psym, Pose const & pdimer) {
 	Pose dimer2;
 	for(Size i = 1; i <= pdimer.n_residue()*2; ++i) {
 		if(pdimer.n_residue()/2 < i && i <= pdimer.n_residue()*3/2 ) continue;
-		if(psym.residue(i).is_lower_terminus()) dimer2.append_residue_by_jump(psym.residue(i),1); 
+		if(psym.residue(i).is_lower_terminus()) dimer2.append_residue_by_jump(psym.residue(i),1);
 		else                                    dimer2.append_residue_by_bond(psym.residue(i));
 	}
 	// dimer2.dump_pdb("dimer2.pdb");
@@ -581,7 +595,11 @@ void run() {
 	ScoreFunctionOP sfsym = new core::scoring::symmetry::SymmetricScoreFunction(sf);
 	ScoreFunctionOP sfrepsym = new core::scoring::symmetry::SymmetricScoreFunction(sfrep);
 
+
 	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( (rs->name_map("TYR")) );
+	core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
+
 	Pose bpy,ala,tyr;
 	core::import_pose::pose_from_pdb(bpy ,*rs,"input/bpy_ideal.pdb");
 	core::pose::remove_lower_terminus_type_from_pose_residue(bpy,1);
@@ -607,10 +625,10 @@ void run() {
 
 	vector1<string> const & fnames(option[OptionKeys::in::file::s]());
 	TR << "gensym_3bpy_from_dimer " << fnames.size() << " files" << std::endl;
-	
+
 	for(Size ifile = 1; ifile <= fnames.size(); ++ifile) {
-		cout << "PROGRESS "<< ifile << endl;
 		string fname = fnames[ifile], infile = utility::file_basename(fnames[ifile]);
+		cout << "PROGRESS "<< ifile << " " << fname << endl;
 		Pose nat; core::import_pose::pose_from_pdb(nat,*rs,fname);
 		core::scoring::dssp::Dssp dssp(nat);
 		dssp.insert_ss_into_pose(nat);
@@ -628,8 +646,8 @@ void run() {
 			if(base.residue(ibpy).is_lower_terminus()) continue;
 			if(base.residue(ibpy).is_upper_terminus()) continue;
 			if(base.secstruct(ibpy)=='L') continue;
-			if(neighbor_count(base,ibpy) < option[bpytoi::min_bpy_cb_mono_nbr_count]()) continue;
-			
+			// if(neighbor_count(base,ibpy) < option[bpytoi::min_bpy_cb_mono_nbr_count]()) continue;
+
 			//cout << fname << " " << ibpy << endl;
 			base = nat;
 			base.replace_residue(ibpy,bpy.residue(1),true);
@@ -659,17 +677,13 @@ void run() {
 					Real const orig_ang = angle_degrees( c2f1, isct, c3f1);
 					Real const ang = (orig_ang > 90.0) ? 180.0-orig_ang : orig_ang;
 					if( fabs(ang-ATET)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() &&          // sin(x) ~ x for small x
-					    fabs(ang-AOCT)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() &&          // sin(x) ~ x for small x
-					    fabs(ang-AICS)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() ) continue; // sin(x) ~ x for small x
-					// aln bpy
+						fabs(ang-AOCT)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() &&          // sin(x) ~ x for small x
+						fabs(ang-AICS)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() ) continue; // sin(x) ~ x for small x
+
 					Real const dang = dihedral_degrees( c3f1,CG,CB,base.residue(ibpy).xyz(iZN) );
 					base.set_chi(2,ibpy, base.chi(2,ibpy) + dang );
-					
-					// Real bpymdis = base.residue(ibpy).xyz("ZN").distance_squared( rotation_matrix_degrees(a3f1,120.0)*(base.residue(ibpy).xyz("ZN")-isct)+isct);
-					// if( bpymdis > 0.001 ) utility_exit_with_message("BPY DIS > 0!!!!!!!");
 
-					sfdun->score(base);
-					Real bpy_dun = base.energies().residue_total_energies(ibpy)[core::scoring::fa_dun];
+					Real bpy_dun = dunlib1->rotamer_energy( base.residue(ibpy), scratch );
 					if(bpy_dun > option[bpytoi::max_bpy_dun]()) continue;
 
 					int bpy_mono_bb_atom_nbrs = 0;
@@ -679,20 +693,23 @@ void run() {
 						for(Size ia = 1; ia <= min(5ul,base.residue(ir).nheavyatoms()); ia++) {
 							Vec const x0 =     base.xyz(AtomID(ia,ir))           ;
 							Vec const x1 = R1*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
-							Vec const x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;							
+							Vec const x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
 							for(Size ja = 7; ja <= base.residue(ibpy).nheavyatoms(); ja++) {
 								if( x0.distance_squared(base.xyz(AtomID(ja,ibpy))) < bpy_clash_d2 ) goto clash3;
-								if( x0.distance_squared(base.xyz(AtomID(ja,ibpy))) <         36.0 ) bpy_mono_bb_atom_nbrs++;
-								if( x0.distance_squared(base.xyz(AtomID(ja,ibpy))) <         36.0 ) bpy_tri_bb_atom_nbrs++;
-								if( x1.distance_squared(base.xyz(AtomID(ja,ibpy))) <         36.0 ) bpy_tri_bb_atom_nbrs++;
-								if( x2.distance_squared(base.xyz(AtomID(ja,ibpy))) <         36.0 ) bpy_tri_bb_atom_nbrs++;
+								if( x1.distance_squared(base.xyz(AtomID(ja,ibpy))) < bpy_clash_d2 ) goto clash3;
+								if( x2.distance_squared(base.xyz(AtomID(ja,ibpy))) < bpy_clash_d2 ) goto clash3;
+								if(ia == 5) {
+									if( x0.distance_squared(base.xyz(AtomID(ja,ibpy))) < 64.0 ) bpy_mono_bb_atom_nbrs++;
+									if( x0.distance_squared(base.xyz(AtomID(ja,ibpy))) < 64.0 ) bpy_tri_bb_atom_nbrs++;
+									if( x1.distance_squared(base.xyz(AtomID(ja,ibpy))) < 64.0 ) bpy_tri_bb_atom_nbrs++;
+									if( x2.distance_squared(base.xyz(AtomID(ja,ibpy))) < 64.0 ) bpy_tri_bb_atom_nbrs++;
+								}
 							}
 						}
 					}
 					goto noclash3;	clash3: continue; noclash3:
-					// sf->score(base);
-					//TR << "IREP "<< base.energies().residue_total_energies(ibpy)[core::scoring::fa_intra_rep] << std::endl;
-					// if( base.energies().residue_total_energies(ibpy)[core::scoring::fa_intra_rep] > 15.0 ) continue;
+					// if( bpy_mono_bb_atom_nbrs < option[min_bpy_cb_mono_nbr_count]() ) continue;
+					// if( bpy_tri_bb_atom_nbrs  < option[min_bpy_cb_tri_nbr_count]()  ) continue;
 
 					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
 						for(Size ia = 1; ia <= min(5ul,base.residue(ir).nheavyatoms()); ia++) {
@@ -701,7 +718,7 @@ void run() {
 							Vec const x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
 							for(Size jr = 1; jr <= base.n_residue(); ++jr) {
 								for(Size ja = 1; ja <= min(5ul,base.residue(jr).nheavyatoms()); ja++) {
-									if( x1.distance_squared(base.xyz(AtomID(ja,jr))) < 9.0 ) goto clash4;
+									if( x1.distance_squared(      base.xyz(AtomID(ja,jr)))             < bpy_clash_d2 ) goto clash4;
 									if( x1.distance_squared( Rc2*(base.xyz(AtomID(ja,jr))-c2f1)+c2f1 ) < bpy_clash_d2 ) goto clash4;
 									if( x2.distance_squared( Rc2*(base.xyz(AtomID(ja,jr))-c2f1)+c2f1 ) < bpy_clash_d2 ) goto clash4;
 								}
@@ -742,12 +759,13 @@ void run() {
 						continue;
 						TR << "closed symm from ang " << ang << " not yet supported" << std::endl;
 					}
+					rot_pose(psym,Rsymm);
 
-					rot_pose(psym,Rsymm); core::pose::symmetry::make_symmetric_pose(psym);
+					string outfname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+"_"+lead_zero_string_of(jaxs,1)+".pdb";
+					core::pose::symmetry::make_symmetric_pose(psym);
 					Real bpymdis = psym.residue(ibpy).xyz("ZN").distance(psym.residue(ibpy+base.n_residue()).xyz("ZN"));
-					if( bpymdis > option[bpytoi::max_bpy_dis]() ) continue;
+					if( bpymdis > option[bpytoi::max_sym_error]() ) continue;
 
-					string fname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+"_"+lead_zero_string_of(jaxs,1)+".pdb";
 
 					bool clash = false;
 					for(Size ir = 4; ir <= base.n_residue()-3; ++ir) {
@@ -784,51 +802,62 @@ void run() {
 					if(clash) continue;
 
 					Size ncontact = num_trimer_contacts(psym,base.n_residue());
-					// if( ncontact < 50 ) continue;
 					Real drms = dimer_rms(psym,pdimer);
-					if( drms > option[bpytoi::max_dimer_rmsd]() ) continue;
-					// for(int ib = 0; ib < 3; ++ib) {
-					// 	for(int ia = 0; ia < 2; ++ia) {
-					// 		Vec n1 = psym.residue(ibpy+ib*nat.n_residue()).xyz(ia?"NE1":"NN1");
-					// 		for(int jb = 0; jb < 3; ++jb) {						
-					// 			if(ib==jb) continue;
-					// 			for(int ja = 0; ja < 2; ++ja) {
-					// 				Vec n2 = psym.residue(ibpy+jb*nat.n_residue()).xyz(ja?"NE1":"NN1");
-					// 				Real d = n1.distance(n2);
-					// 				if( d > 4.4 ) goto bpybad;
-					// 			}
-					// 		}
-					// 	}
-					// }
-					// goto bpyok;	bpybad: continue; bpyok:
+					if( drms > option[bpytoi::max_sym_error]() ) continue;
 
-					cout << "DOCK_HIT " 
-					     << fname << " " 
-					     << F(5,3,angerr) << " " 
-					     << F(5,3,drms) << " " 
-					     << F(5,3,bpymdis) << " " 
-					     << F(5,3,bpy_dun) << " " 
-					     << I(2,neighbor_count(base,ibpy)) << " " 
-					     << I(3,bpy_mono_bb_atom_nbrs) << " " 
-					     << I(3,bpy_tri_bb_atom_nbrs )
-					     << endl;
-					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_dock.pdb");
+					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_base.pdb");
 
 					// Real batr = psym.energies().residue_total_energies(ibpy)[core::scoring::fa_atr];
-					// refine(psym,ibpy,dimersub);
-					// 
+					fixbb_design(psym,ibpy,dimersub);
+					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=psym.residue(i).name3()) nmut++;
+					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
+
 					// Real rms = core::scoring::CA_rmsd(psym,psym_bare);
-					// Real sc,int_area;
-					// vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(4);
-					// sfsym->score(psym);
-					// new_sc(psym,intra_subs,int_area,sc);
-					// 
+					Real sc,int_area;
+					vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(4);
+					sfsym->score(psym);
+					new_sc(psym,intra_subs,int_area,sc);
+
+					int bpy_tri_atom_nbrs = 0;
+					int bpy_mono_atom_nbrs = 0;
+					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+						if(ir==ibpy) continue;
+						for(Size ia = 1; ia <= base.residue(ir).nheavyatoms(); ia++) {
+							Vec const x0 =     base.xyz(AtomID(ia,ir))           ;
+							Vec const x1 = R1*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
+							Vec const x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
+							for(Size ja = 7; ja <= base.residue(ibpy).nheavyatoms(); ja++) {
+								if( x0.distance_squared(base.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_mono_atom_nbrs++;
+								if( x0.distance_squared(base.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
+								if( x1.distance_squared(base.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
+								if( x2.distance_squared(base.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
+							}
+						}
+					}
+
+
+					protocols::simple_moves::GreedyOptMutationMover gomm;
+					core::pack::task::TaskFactoryOP task_factory;
+					protocols::filters::FilterOP filter;
+
+					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+					movemap->set_jump(true);
+					movemap->set_bb(true);
+					movemap->set_chi(true);
+					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+
+					gomm.task_factory(  task_factory );
+					gomm.scorefxn( sfsym );
+					gomm.filter( filter );
+					gomm.relax_mover( relax_mover );
+
+
 					// if( int_area < 200 || sc < 0.6 ) continue;
-					// 
-					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_des.pdb");
-					// 
+					//
+					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
+					//
 					// repack(psym,ibpy,dimersub);
-					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_RPK.pdb");
+					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_RPK.pdb");
 					// Real s0 = sfsym->score(psym);
 					// for(Size ir = 1; ir <= base.n_residue(); ++ir) {
 					// for(Size ia = 1; ia <= psym.residue_type(ir).natoms(); ++ia) {
@@ -839,13 +868,13 @@ void run() {
 					// }
 					// }
 					// repack(psym,ibpy,dimersub);
-					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_DDG_RPK.pdb");
+					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_DDG_RPK.pdb");
 					// Real s1 = sfsym->score(psym);
-					// 
-					// TR << "HIT " << fname << " " <<	ang << " " << ibpy << " " << bch1 << " " << jaxs << " ddG: " << s0-s1 << " sc: " << sc << " " << int_area <<std::endl;
-					// 
+					//
+					// TR << "HIT " << outfname << " " <<	ang << " " << ibpy << " " << bch1 << " " << jaxs << " ddG: " << s0-s1 << " sc: " << sc << " " << int_area <<std::endl;
+					//
 					// core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
-					// ss_out->fill_struct(psym_bare,fname);
+					// ss_out->fill_struct(psym_bare,outfname);
 					// ss_out->add_energy("rms",rms);
 					// ss_out->add_energy("nres",base.n_residue());
 					// ss_out->add_energy("batr",batr);
@@ -854,6 +883,23 @@ void run() {
 					// ss_out->add_energy("int_area",int_area);
 					// sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]()+"/"+option[basic::options::OptionKeys::out::file::silent ]() );
 
+					cout << "DOCK_HIT "
+						 << option[OptionKeys::out::file::o]()+"/"+outfname << " "
+						 << F(5,3,angerr) << " "
+						 << F(5,3,drms) << " "
+						 << F(5,3,bpymdis) << " "
+						 << F(5,3,bpy_dun) << " "
+						 << I(2,neighbor_count(base,ibpy)) << " "
+						 << I(3,bpy_mono_bb_atom_nbrs) << " "
+						 << I(3,bpy_tri_bb_atom_nbrs ) << " "
+						 << I(3,bpy_mono_atom_nbrs ) << " "
+						 << I(3,bpy_tri_atom_nbrs ) << " "
+						 << F(7,1,int_area) << " "
+						 << F(5,3,sc) << " "
+						 << F(9,3,sfsym->score(psym)) << " "
+						 << I(2,nmut) << " "
+						 << I(2,nmut-nala) << " "
+						 << endl;
 				}
 			}
 		}
