@@ -110,7 +110,6 @@ Splice::Splice() :
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
-	delta_lengths_.push_back( 0 );
 	dbase_subset_.clear();
 	end_dbase_subset_ = new protocols::moves::DataMapObj< bool >;
 	end_dbase_subset_->obj = false;
@@ -576,7 +575,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
   	StringVec const lengths_keys( utility::string_split( delta, ',' ) );
 		foreach( std::string const delta, lengths_keys ){
 			if( delta == "" ) continue;
-			int const delta_i( -1 * atoi( delta.c_str() ) );
+			int const delta_i( 1 * atoi( delta.c_str() ) );
 			delta_lengths_.push_back( delta_i );
 		}
 	}
