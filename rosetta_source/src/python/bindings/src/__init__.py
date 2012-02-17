@@ -622,7 +622,7 @@ class PySocketClient:
 #PyMOL_Mover = rosetta.protocols.moves.PyMolMover  # for now we use one implementation for both Rosetta C++ and PyRosetta
 #__Deprecated_do_not_use_
 class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
-    def __init__(self, *args): rosetta.protocols.moves.PyMolMover.__init__(self, *args)
+    def __init__(self, *args, **kargs): rosetta.protocols.moves.PyMolMover.__init__(self, *args, **kargs)
 
     def send_colors(self, pose, colors, default_color=protocols.moves.XC_blue):
         cm = rosetta.utility.map_int_int()
@@ -993,7 +993,8 @@ class PyMOL_Observer(core.pose.PosePyObserver):
     '''
     def __init__(self, keep_history=False):
         rosetta.core.pose.PosePyObserver.__init__(self)
-        self.pymol = rosetta.PyMOL_Mover(keep_history=keep_history)
+        self.pymol = rosetta.PyMOL_Mover()
+        self.pymol.keep_history(keep_history)
 
 
     def generalEvent(self, event):
