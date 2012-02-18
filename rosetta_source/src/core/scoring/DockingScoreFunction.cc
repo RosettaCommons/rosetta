@@ -90,20 +90,24 @@ DockingScoreFunction::operator()( pose::Pose & pose ) const
 	ScoreFunction::operator()( pose ); //score -- but without atom_pair_constraints..
 	// is probably cheaper to not apply a completely new scorefunction...
 	EnergyMap cst_free_weights( weights() );
+	Real cst_weight = cst_free_weights.get( atom_pair_constraint );
 	cst_free_weights[ atom_pair_constraint ] = 0;
 	Real unbound_energy = pose.energies().total_energies().dot( cst_free_weights );
 
 
 	pose.set_jump( interface_jump_id, bound_pose_jump );
 
-	Real full_score = ScoreFunction::operator() ( pose );
+	ScoreFunction::operator() ( pose );
+	Real bound_energy = pose.energies().total_energies().dot( cst_free_weights );
+
 	runtime_assert( pose.num_jump() > 0 );
 
-	Real interaction_energy = (full_score - unbound_energy);
-	pose.energies().total_energies()[ total_score ] = interaction_energy;
-	tr.Debug << "unbound_energy " << unbound_energy << " full_score " << full_score << " diff " << interaction_energy << std::endl;
+	Real interaction_energy = (bound_energy - unbound_energy);
+
+	pose.energies().total_energies()[ total_score ] = interaction_energy += pose.energies().total_energies()[ atom_pair_constraint ]*cst_weight;
+	tr.Debug << "unbound_energy " << unbound_energy << " full_score " << bound_energy << " diff " << interaction_energy << std::endl;
 	pose::setPoseExtraScores( pose, "I_sc", interaction_energy );
-	return interaction_energy;
+	return pose.energies().total_energies()[ total_score ];
 }
 
 
