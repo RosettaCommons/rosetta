@@ -109,7 +109,7 @@ public:
 	///@brief dummy for master/slave version
 	virtual
 	void
-	job_succeeded(core::pose::Pose & pose, core::Real run_time);
+	job_succeeded(core::pose::Pose & pose, core::Real runtime);
 
 	virtual
 	void
@@ -125,7 +125,7 @@ protected:
 		 core::Size slave_rank,
 		 core::Size slave_job_id,
 		 core::Size slave_batch_id,
-		 core::Real run_time
+		 core::Real runtime
 	);
 
 	//overloaded so that slave-nodes never automatically switch to next_batch when spinning down.
@@ -203,7 +203,7 @@ protected:
 	}
 
 	///@brief marks job as completed in joblist
-	virtual void mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real run_time );
+	virtual void mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real runtime );
 
 	///@brief marks job as bad in joblist
 	virtual void mark_job_as_bad( core::Size job_id, core::Size batch_id );
@@ -228,7 +228,7 @@ private:
 	///@brief batch_id allow to run multiple batches of jobs -
 	core::Size slave_current_batch_id_; //i.e. next_job_to_assign_ is from this batch (for master)
 
-	///@brief run_time of last job
+	///@brief runtime of last job
 	core::Real slave_current_runtime_; //i.e. next_job_to_assign_ is from this batch (for master)
 
   ///@brief where master stores next job to assign (in a good state after get_new_job_id up until it's used)
@@ -268,6 +268,10 @@ private:
 	//core::Size const min_client_rank_; //2 or 3 ...
 	core::Size min_client_rank_; //2 or 3 ... //ek made non-const
 
+	///@brief keep track of average timings for time-outs
+	core::Real cumulated_runtime_;
+
+	core::Size cumulated_jobs_;
 
 };
 

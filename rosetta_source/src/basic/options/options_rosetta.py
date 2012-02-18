@@ -1072,6 +1072,9 @@ Options = Option_Group( '',
 								# save the computer time...
 		Option( 'mpi_nowait_for_remaining_jobs','Boolean', desc='exit immediately (not graceful -- not complete) if the last job has been sent out', default='false'),
 
+		Option( 'mpi_timeout_factor','Real', desc='timeout is X times average job-completion time - set to 0 to switch off', default='3'),
+
+
 		Option( 'mpi_work_partition_job_distributor', 'Boolean', desc='determine if we should use the WorkPartition job distributor', default='false' ),
 		Option( 'mpi_file_buf_job_distributor', 'Boolean', desc='determine if we should use the MPIFileBufJobDistributor (warning: silent output only)', default='true' ),
 
@@ -1671,6 +1674,7 @@ Options = Option_Group( '',
 		Option( 'weights', 'String', desc="Name of weights file (without extension .wts)" , default="standard" ),
 		Option( 'pack_weights', 'String', desc="Name of packing weights file (without extension .wts)" , default="standard" ),
 		Option( 'soft_wts', 'String', desc="Name of the 'soft' weights file, for protocols which use it." , default="soft_rep" ),
+		Option( 'docking_interface_score','Boolean',desc="the score is computed as difference between bound and unbound pose", default='false'),
 		Option( 'custom_atom_pair', 'String', desc='filename for custom atom pair constraints', default = 'empty' ),
 		Option( 'patch',   'String', desc="Name of patch file (without extension)" , default="" ),
 		Option( 'empty',   'Boolean', desc="Make an empty score - i.e. NO scoring"  ),

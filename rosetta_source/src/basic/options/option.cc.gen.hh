@@ -400,6 +400,7 @@ option.add( basic::options::OptionKeys::jd2::jd2, "jd2 option group" ).legal(tru
 option.add( basic::options::OptionKeys::jd2::pose_input_stream, "Use PoseInputStream classes for Pose input" ).def(false);
 option.add( basic::options::OptionKeys::jd2::lazy_silent_file_reader, "use lazy silent file reader in job distributor, read in a structure only when you need to" ).def(false);
 option.add( basic::options::OptionKeys::jd2::mpi_nowait_for_remaining_jobs, "exit immediately (not graceful -- not complete) if the last job has been sent out" ).def(false);
+option.add( basic::options::OptionKeys::jd2::mpi_timeout_factor, "timeout is X times average job-completion time - set to 0 to switch off" ).def(3);
 option.add( basic::options::OptionKeys::jd2::mpi_work_partition_job_distributor, "determine if we should use the WorkPartition job distributor" ).def(false);
 option.add( basic::options::OptionKeys::jd2::mpi_file_buf_job_distributor, "determine if we should use the MPIFileBufJobDistributor (warning: silent output only)" ).def(true);
 option.add( basic::options::OptionKeys::jd2::mpi_filebuf_jobdistributor, "same as mpi_file_buf_job_distributor but with more intuitive spacing... determine if we should use the MPIFileBufJobDistributor (warning: silent output only)" ).def(true);
@@ -701,6 +702,7 @@ option.add( basic::options::OptionKeys::score::score, "scorefunction option grou
 option.add( basic::options::OptionKeys::score::weights, "Name of weights file (without extension .wts)" ).def("standard");
 option.add( basic::options::OptionKeys::score::pack_weights, "Name of packing weights file (without extension .wts)" ).def("standard");
 option.add( basic::options::OptionKeys::score::soft_wts, "Name of the 'soft' weights file, for protocols which use it." ).def("soft_rep");
+option.add( basic::options::OptionKeys::score::docking_interface_score, "the score is computed as difference between bound and unbound pose" ).def(false);
 option.add( basic::options::OptionKeys::score::custom_atom_pair, "filename for custom atom pair constraints" ).def("empty");
 option.add( basic::options::OptionKeys::score::patch, "Name of patch file (without extension)" ).def("");
 option.add( basic::options::OptionKeys::score::empty, "Make an empty score - i.e. NO scoring" );
@@ -1795,10 +1797,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );

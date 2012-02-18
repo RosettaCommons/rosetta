@@ -1896,6 +1896,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-mpi_timeout_factor</b> \<Real\><dt>
+<dd>timeout is X times average job-completion time - set to 0 to switch off</dd><br>
+<dd>Default: 3</dd><br>
+</dl>
+<dl>
 <dt><b>-mpi_work_partition_job_distributor</b> \<Boolean\><dt>
 <dd>determine if we should use the WorkPartition job distributor</dd><br>
 <dd>Default: false</dd><br>
@@ -3348,6 +3353,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-soft_wts</b> \<String\><dt>
 <dd>Name of the 'soft' weights file, for protocols which use it.</dd><br>
 <dd>Default: "soft_rep"</dd><br>
+</dl>
+<dl>
+<dt><b>-docking_interface_score</b> \<Boolean\><dt>
+<dd>the score is computed as difference between bound and unbound pose</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-custom_atom_pair</b> \<String\><dt>

@@ -78,7 +78,7 @@ private:
 	/// @brief PyRosetta workaround, make copy constructor private so it will not try to create copy methods
 	WriteFileSFB( WriteFileSFB const & src );
 
-	utility::io::ozstream out_;
+	std::ofstream out_;
 };
 
 }

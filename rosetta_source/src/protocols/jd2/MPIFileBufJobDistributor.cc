@@ -46,7 +46,7 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
-
+#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 
@@ -74,7 +74,9 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor() :
 	repeat_job_( false ),
 	master_rank_( 1 ),
 	file_buf_rank_( 0 ),
-	min_client_rank_( 2 )
+	min_client_rank_( 2 ),
+	cumulated_runtime_( 0.0 ),
+	cumulated_jobs_( 0 )
 {
 
   // set n_rank_ and rank based on whether we are using MPI or not
@@ -105,7 +107,9 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 	repeat_job_( false ),
 	master_rank_( master_rank ),
 	file_buf_rank_(file_buf_rank ),
-	min_client_rank_( min_client_rank )
+	min_client_rank_( min_client_rank ),
+	cumulated_runtime_( 0.0 ),
+	cumulated_jobs_( 0 )
 {
 
 	// set n_rank_ and rank based on whether we are using MPI or not
@@ -182,7 +186,7 @@ void MPIFileBufJobDistributor::send_job_to_slave( Size MPI_ONLY(slave_rank) ) {
 ///@details messages are received constantly by Master JobDistributor and then the virtual process_message() method
 /// is used to assign some action to each message ... this allows child-classes to answer to more messages or change behaviour of already known messages
 bool
-MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size slave_job_id, Size slave_batch_id, core::Real run_time ) {
+MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size slave_job_id, Size slave_batch_id, core::Real runtime ) {
 	switch ( msg_tag ) {
 	case NEW_JOB_ID:  //slave requested a new job id ... send new job or spin-down signal
 		tr.Debug << "Master Node: Sending new job id " << current_job_id() << " " << "job: " << current_job()->input_tag() << " to node " << slave_rank << std::endl;
@@ -201,13 +205,13 @@ MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size s
 		++jobs_returned_;
 		break;
 	case JOB_SUCCESS:
-		mark_job_as_completed( slave_job_id, slave_batch_id, run_time );
+		mark_job_as_completed( slave_job_id, slave_batch_id, runtime );
 		++jobs_returned_;
 		break;
 	case JOB_FAILED_NO_RETRY :
 		++jobs_returned_;
 		break;
-		
+
 	default:
 		tr.Error << "[ERROR] from " << slave_rank << " tag: "  << msg_tag << " " << slave_job_id << std::endl;
 		utility_exit_with_message(" unknown tag "+ ObjexxFCL::string_of( msg_tag ) +" in master_loop of MPIFileBufJobDistributor ");
@@ -217,9 +221,13 @@ MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size s
 }
 
 ///@brief mark job as completed
-void MPIFileBufJobDistributor::mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real run_time ) {
+void MPIFileBufJobDistributor::mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real runtime ) {
+	if ( runtime > 0 ) {
+		cumulated_runtime_+=runtime;
+		cumulated_jobs_ += 1;
+	}
 	if ( batch_id == current_batch_id() ) {
-		Parent::mark_job_as_completed( job_id, run_time );
+		Parent::mark_job_as_completed( job_id, runtime );
 	}
 }
 
@@ -246,10 +254,10 @@ MPIFileBufJobDistributor::eat_signal( Size msg_tag_in, int MPI_ONLY( source ) ) 
 		Size const msg_tag ( mpi_buf[ 0 ] );
 		Size const slave_job_id( mpi_buf[ 1 ] );
 		Size const slave_batch_id( mpi_buf[ 2 ]);
-		Size const run_time( mpi_buf[ 3 ] );
+		Size const runtime( mpi_buf[ 3 ] );
 		if ( msg_tag_in != msg_tag ) {
 			tr.Debug <<" when trying to eat signal " << msg_tag_in <<" I received " << msg_tag << " going to process this now" << std::endl;
-			process_message( msg_tag, slave_rank, slave_job_id, slave_batch_id, run_time );
+			process_message( msg_tag, slave_rank, slave_job_id, slave_batch_id, runtime );
 		} else {
 			break;
 		}
@@ -273,6 +281,7 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	int mpi_buf[ mpi_size ];
 
 	MPI_Status status;
+	MPI_Request request;
 
 	// set first job to assign
 	obtain_new_job();
@@ -285,24 +294,39 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	n_nodes_left_to_spin_down_ = option[ OptionKeys::jd2::mpi_nowait_for_remaining_jobs ]() ? 0 : ( n_worker() );
-
+	double timeout_wait_factor = option[ OptionKeys::jd2::mpi_timeout_factor ]();  //wait at most X-times the average job-time for stray jobs...
 	// Job Distribution Loop  --- receive message and process -- repeat
 	while ( current_job_id() || jobs_returned_ < jobs_assigned_ || n_nodes_left_to_spin_down_ ) {
 		tr.Debug << "current_job_id: " << current_job_id() << " jobs_returned " << jobs_returned_
 						 << " jobs_assigned_ " << jobs_assigned_ << " nodes_to_spin_down " << n_nodes_left_to_spin_down_ << std::endl;
 		//receive message
 		tr.Debug << "Master Node: Waiting for job requests..." << std::endl;
-		MPI_Recv( &mpi_buf, mpi_size, MPI_INT, MPI_ANY_SOURCE, MPI_JOB_DIST_TAG, MPI_COMM_WORLD, &status);
+		MPI_Irecv( &mpi_buf, mpi_size, MPI_INT, MPI_ANY_SOURCE, MPI_JOB_DIST_TAG, MPI_COMM_WORLD, &request);
+		int flag=0;
+		bool only_some_nodes_unfinished = ( 1.0 * n_nodes_left_to_spin_down_ / n_worker() ) < 0.2;
+
+
+		double timeout=MPI_Wtime();
+		double timeout_limit = ( cumulated_jobs_ < 1 || timeout_wait_factor <=0 ) ? 1e9 : cumulated_runtime_/cumulated_jobs_ * timeout_wait_factor ;
+		tr.Debug << "set timeout_limit to " << timeout_limit << std::endl;
+		while ( flag==0 ) {
+			if ( MPI_Wtime() - timeout > timeout_limit ) break;
+			MPI_Test(&request, &flag, &status);
+		}
+		if ( flag == 0 ) { //timeout
+			utility_exit_with_message("quick exit from job-distributor due to flag jd2::XXX and timeout of "+
+				utility::to_string( MPI_Wtime()-timeout )+" seconds" );
+		}
 		Size slave_rank( status.MPI_SOURCE );
 		Size const msg_tag ( mpi_buf[ 0 ] );
 		Size const slave_job_id( mpi_buf[ 1 ] );
 		Size const slave_batch_id( mpi_buf[ 2 ]);
-		Real const run_time( mpi_buf[ 3 ]);
+		Real const runtime( mpi_buf[ 3 ]);
 		tr.Debug << "Master Node: Recieved message from  " << slave_rank << " with tag "
 						 << msg_tag << " slave_jobid " << slave_job_id << " slave batchid " << slave_batch_id << std::endl;
 
 		//process message
-		process_message( msg_tag, slave_rank, slave_job_id, slave_batch_id, run_time);
+		process_message( msg_tag, slave_rank, slave_job_id, slave_batch_id, runtime);
 
 	}
 
@@ -364,7 +388,9 @@ MPIFileBufJobDistributor::master_get_new_job_id()
 //overloaded so that slave-nodes never automatically switch to next_batch when spinning down.
 bool
 MPIFileBufJobDistributor::next_batch() {
-	if ( !( rank_ == master_rank_ )) return false; //slave answer
+	if ( rank_ != master_rank_ ) return false; //slave answer
+	cumulated_jobs_ = 0;
+	cumulated_runtime_ = 0;
 	return Parent::next_batch();
 }
 
@@ -372,7 +398,7 @@ core::Size
 MPIFileBufJobDistributor::slave_get_new_job_id()
 {
 #ifdef USEMPI
-	runtime_assert( !( rank_ == master_rank_ ) );
+	runtime_assert( rank_ != master_rank_ );
 
 	if ( repeat_job_ == true ) {
 		tr.Debug << "Slave Node " << rank_ << ": Repeating job id " << slave_current_job_id_ <<std::endl;
@@ -413,7 +439,7 @@ MPIFileBufJobDistributor::master_mark_current_job_id_for_repetition()
 void
 MPIFileBufJobDistributor::slave_mark_current_job_id_for_repetition()
 {
-	runtime_assert( !( rank_ == master_rank_ ) );
+	runtime_assert( rank_ != master_rank_ );
 	tr.Debug << "Slave Node " << rank_ << ": Mark current job for repetition, id " << current_job_id() << std::endl;
 	repeat_job_ = true;
 }
@@ -449,7 +475,7 @@ MPIFileBufJobDistributor::master_remove_bad_inputs_from_job_list()
 void
 MPIFileBufJobDistributor::slave_to_master( Size MPI_ONLY(tag) ) {
 #ifdef USEMPI
-	runtime_assert( !( rank_ == master_rank_ ) );
+	runtime_assert( rank_ != master_rank_ );
 	Size const mpi_size( 4 );
 	int mpi_buf[ mpi_size ];
 	mpi_buf[ 0 ] = tag;
@@ -468,12 +494,12 @@ MPIFileBufJobDistributor::slave_remove_bad_inputs_from_job_list()
 
 ///@brief dummy for master/slave version
 void
-MPIFileBufJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time)
+MPIFileBufJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real runtime)
 {
   if ( rank_ == master_rank_ ) {
     master_job_succeeded( pose );
   } else {
-		slave_current_runtime_ = run_time;
+		slave_current_runtime_ = runtime;
     slave_job_succeeded( pose );
   }
 }

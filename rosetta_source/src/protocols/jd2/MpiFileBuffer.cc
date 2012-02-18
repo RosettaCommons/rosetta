@@ -138,6 +138,7 @@ void MpiFileBuffer::run() {
 		} else if ( msg_type == MPI_STREAM_CLOSE ) {
 			close_channel( slave, channel_id );
 		} else if ( msg_type == MPI_STREAM_FLUSH ) {
+			tr.Info << "MPI_STREAM_FLUSH received" << std::endl;
 			flush_channel( slave, channel_id );
 		} else if ( msg_type == MPI_WIND_DOWN ) {
 			bStop_ = true;
@@ -295,14 +296,14 @@ void MpiFileBuffer::clear_channel_from_garbage_collector( core::Size channel ) {
 #ifdef USEMPI
 void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool append, Size& status ) {
 	//find filename in our file-map...
-	tr.Debug << "open mpi-channel from slave-node " << slave << " for file: " << filename << std::endl;
+	tr.Info << "open mpi-channel from slave-node " << slave << " for file: " << filename << std::endl;
 	Filenames::const_iterator iter = open_files_.find( filename );
 	Size channel;
 	if ( iter != open_files_.end() ) {
 		channel = iter->second;
 		SingleFileBufferOP buf = open_buffers_[ channel ];
 		runtime_assert( buf ); //consistent?
-		buf->flush( slave );
+		//buf->flush( slave );
 		tr.Debug << "channel exists already: " << channel << std::endl;
 		status = MPI_SUCCESS_APPEND;
 
@@ -333,7 +334,7 @@ void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool 
 			receive_str( slave, size, header );
 			tr.Debug << header << std::endl;
 			open_buffers_[ channel ]->store_line( slave, channel, header );
-			open_buffers_[ channel ]->flush( slave );
+			open_buffers_[ channel ]->flush( slave ); //flush to write header first
 	}
 	//send file-descriptor out
 }
@@ -350,7 +351,7 @@ void MpiFileBuffer::store_to_channel( Size slave, Size channel, std::string cons
 	runtime_assert( buf ); //writing to open file ?
 	buf->store_line( slave, channel, line );
 	if (buf->length(slave) > 5e6) {
-		tr.Debug << "autoflush threshold (5 MB) triggered for slave " << slave << " channel: " << channel << std::endl;
+		tr.Info << "autoflush threshold (5 MB) triggered for slave " << slave << " channel: " << channel << std::endl;
 		flush_channel(slave, channel);
 	}
 }

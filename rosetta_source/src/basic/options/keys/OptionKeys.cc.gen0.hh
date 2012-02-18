@@ -395,6 +395,7 @@ namespace jd2 { BooleanOptionKey const jd2( "jd2" );  }
 namespace jd2 { BooleanOptionKey const pose_input_stream( "jd2:pose_input_stream" );  }
 namespace jd2 { BooleanOptionKey const lazy_silent_file_reader( "jd2:lazy_silent_file_reader" );  }
 namespace jd2 { BooleanOptionKey const mpi_nowait_for_remaining_jobs( "jd2:mpi_nowait_for_remaining_jobs" );  }
+namespace jd2 { RealOptionKey const mpi_timeout_factor( "jd2:mpi_timeout_factor" );  }
 namespace jd2 { BooleanOptionKey const mpi_work_partition_job_distributor( "jd2:mpi_work_partition_job_distributor" );  }
 namespace jd2 { BooleanOptionKey const mpi_file_buf_job_distributor( "jd2:mpi_file_buf_job_distributor" );  }
 namespace jd2 { BooleanOptionKey const mpi_filebuf_jobdistributor( "jd2:mpi_filebuf_jobdistributor" );  }

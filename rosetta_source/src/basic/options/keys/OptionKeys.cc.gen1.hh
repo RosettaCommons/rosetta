@@ -98,6 +98,7 @@ namespace score { BooleanOptionKey const score( "score" );  }
 namespace score { StringOptionKey const weights( "score:weights" );  }
 namespace score { StringOptionKey const pack_weights( "score:pack_weights" );  }
 namespace score { StringOptionKey const soft_wts( "score:soft_wts" );  }
+namespace score { BooleanOptionKey const docking_interface_score( "score:docking_interface_score" );  }
 namespace score { StringOptionKey const custom_atom_pair( "score:custom_atom_pair" );  }
 namespace score { StringOptionKey const patch( "score:patch" );  }
 namespace score { BooleanOptionKey const empty( "score:empty" );  }

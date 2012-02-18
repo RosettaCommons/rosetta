@@ -25,6 +25,7 @@ namespace jd2 { extern BooleanOptionKey const jd2; }
 namespace jd2 { extern BooleanOptionKey const pose_input_stream; }
 namespace jd2 { extern BooleanOptionKey const lazy_silent_file_reader; }
 namespace jd2 { extern BooleanOptionKey const mpi_nowait_for_remaining_jobs; }
+namespace jd2 { extern RealOptionKey const mpi_timeout_factor; }
 namespace jd2 { extern BooleanOptionKey const mpi_work_partition_job_distributor; }
 namespace jd2 { extern BooleanOptionKey const mpi_file_buf_job_distributor; }
 namespace jd2 { extern BooleanOptionKey const mpi_filebuf_jobdistributor; }
