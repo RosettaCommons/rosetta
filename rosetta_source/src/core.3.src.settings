@@ -104,6 +104,7 @@ sources = {
 		"sasa",
 		"ScoreFunction",
 		"ScoreFunctionFactory",
+                "DockingScoreFunction",
 		"ScoreFunctionInfo",
 		"ScoreType",
 		"ScoreTypeManager",
@@ -231,7 +232,7 @@ sources = {
 	"core/scoring/electron_density_atomwise": [
 		"ElecDensAtomwiseEnergy",
         "ElectronDensityAtomwise",
-	],	
+	],
     "core/scoring/etable": [
 		"Etable",
 		"EtableEnergy",

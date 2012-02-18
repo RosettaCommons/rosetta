@@ -15,6 +15,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/DockingScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/chemical/AA.hh>
@@ -54,10 +55,13 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag )
 	// allow user to change weights via options system
 	apply_user_defined_reweighting_( scorefxn );
 
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )
-	{
-		return ScoreFunctionOP( new SymmetricScoreFunction( scorefxn ) );
+	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )	{
+		scorefxn = new SymmetricScoreFunction( scorefxn );
 	}
+	if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
+		scorefxn = new DockingScoreFunction( scorefxn );
+	}
+
 	return scorefxn;
 }
 
@@ -101,9 +105,11 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	// allow user to change weights via options system
 	apply_user_defined_reweighting_( scorefxn );
 
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )
-	{
-		return ScoreFunctionOP( new SymmetricScoreFunction( scorefxn ) );
+	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )	{
+		scorefxn = new SymmetricScoreFunction( scorefxn );
+	}
+	if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
+		scorefxn = new DockingScoreFunction( scorefxn );
 	}
 
 	return scorefxn;
@@ -135,9 +141,12 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, std::strin
 	// allow user to change weights via options system
 	apply_user_defined_reweighting_( scorefxn );
 
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )
-	{
-		return ScoreFunctionOP( new SymmetricScoreFunction( scorefxn ) );
+
+	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )	{
+		scorefxn = new SymmetricScoreFunction( scorefxn );
+	}
+	if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
+		scorefxn = new DockingScoreFunction( scorefxn );
 	}
 
 	return scorefxn;
@@ -270,10 +279,12 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 	//if ( option[ constraints::cst_weight ].user() ) {
 	//	scorefxn->set_weight( atom_pair_constraint, option[ constraints::cst_weight ]() );
 	//	}
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )
-  {
-		return core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( scorefxn ) );
-	}
+
+	// this is already done in create_score_function
+	//	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )
+	//  {
+	//		return core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( scorefxn ) );
+	//	}
 
 	return scorefxn;
 }
