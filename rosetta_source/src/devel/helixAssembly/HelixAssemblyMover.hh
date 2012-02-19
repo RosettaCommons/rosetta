@@ -25,6 +25,7 @@
 
 //Protocols
 #include <protocols/moves/Mover.hh>
+#include <protocols/features/helixAssembly/HelicalFragment.hh>
 
 //mover definition
 //class HelixAssemblyMover : public protocols::moves::Mover {
@@ -32,7 +33,7 @@ class HelixAssemblyMover {
 public:
 
         ///@brief
-        HelixAssemblyMover(HelicalFragment query_frag_1, HelicalFragment query_frag_2);
+        HelixAssemblyMover(protocols::features::helixAssembly::HelicalFragment query_frag_1, protocols::features::helixAssembly::HelicalFragment query_frag_2);
         ~HelixAssemblyMover();
 
         virtual std::string get_name() const {
@@ -40,20 +41,20 @@ public:
         }
 
         core::scoring::ScoreFunctionOP get_scorefxn() const;
-        HelicalFragment get_query_frag_1() const;
-        HelicalFragment get_query_frag_2() const;
-        core::Real get_helix_cap_distance_cutoff() const;
-        core::Real get_helix_contact_distance_cutoff() const;
+        protocols::features::helixAssembly::HelicalFragment get_query_frag_1() const;
+        protocols::features::helixAssembly::HelicalFragment get_query_frag_2() const;
+        core::Real get_helix_cap_dist_cutoff() const;
+        core::Real get_helix_contact_dist_cutoff() const;
         core::Real get_helix_pair_rmsd_cutoff() const;
         core::Size get_minimum_helix_contacts() const;
         std::string get_query_structure_path() const;
         std::string get_query_structure_string() const;
         core::Real get_single_helix_rmsd_cutoff() const;
         void set_scorefxn(const core::scoring::ScoreFunctionOP & scorefxn_);
-        void set_query_frag_1(const HelicalFragment & frag_1_);
-        void set_query_frag_2(const HelicalFragment & frag_2_);
-        void set_helix_cap_distance_cutoff(core::Real helix_cap_distance_cutoff_);
-        void set_helix_contact_distance_cutoff(core::Real helix_contact_distance_cutoff_);
+        void set_query_frag_1(const protocols::features::helixAssembly::HelicalFragment & frag_1_);
+        void set_query_frag_2(const protocols::features::helixAssembly::HelicalFragment & frag_2_);
+        void set_helix_cap_dist_cutoff(core::Real helix_cap_dist_cutoff_);
+        void set_helix_contact_dist_cutoff(core::Real helix_contact_dist_cutoff_);
         void set_helix_pair_rmsd_cutoff(core::Real helix_pair_rmsd_cutoff_);
         void set_minimum_helix_contacts(core::Size minimum_helix_contacts_);
         void set_query_structure_path(std::string query_structure_path_);
@@ -64,38 +65,38 @@ public:
 
         void combinePoses(core::pose::Pose & pose1, const core::pose::Pose & pose2);
 
-        utility::vector1<HelicalFragment> findHelices(const core::pose::Pose & pose);
+        utility::vector1<protocols::features::helixAssembly::HelicalFragment> findHelices(const core::pose::Pose & pose);
 
-        utility::vector1<HelicalFragment> findFragmentMatches(core::pose::Pose const & search_structure,
-            core::pose::Pose const & query_structure, HelicalFragment query_fragment,
-            utility::vector1<HelicalFragment> all_helices);
+        utility::vector1<protocols::features::helixAssembly::HelicalFragment> findFragmentMatches(core::pose::Pose const & search_structure,
+            core::pose::Pose const & query_structure, protocols::features::helixAssembly::HelicalFragment query_fragment,
+            utility::vector1<protocols::features::helixAssembly::HelicalFragment> all_helices);
 
-        bool checkHelixContacts(const core::pose::Pose & query_structure, std::pair<HelicalFragment, HelicalFragment> helix_pair,
-            HelicalFragment helix_to_check);
+        bool checkHelixContacts(const core::pose::Pose & query_structure, std::pair<protocols::features::helixAssembly::HelicalFragment, protocols::features::helixAssembly::HelicalFragment> helix_pair,
+            protocols::features::helixAssembly::HelicalFragment helix_to_check);
 
         bool closenessCheck(const core::Distance maxRange, const core::Distance end1Dist, const core::Distance end2Dist,
-            const core::pose::Pose & search_structure, HelicalFragment search_frag_1, HelicalFragment search_frag_2);
+            const core::pose::Pose & search_structure, protocols::features::helixAssembly::HelicalFragment search_frag_1, protocols::features::helixAssembly::HelicalFragment search_frag_2);
 
-        utility::vector1<HelicalFragment> findPartnerHelices(core::pose::Pose const & search_structure,
-            std::pair<HelicalFragment, HelicalFragment> query_match, utility::vector1<HelicalFragment> all_helices,
+        utility::vector1<protocols::features::helixAssembly::HelicalFragment> findPartnerHelices(core::pose::Pose const & search_structure,
+            std::pair<protocols::features::helixAssembly::HelicalFragment, protocols::features::helixAssembly::HelicalFragment> query_match, utility::vector1<protocols::features::helixAssembly::HelicalFragment> all_helices,
             bool first_round, bool direction_needed);
 
         std::map<core::id::AtomID, core::id::AtomID> getFragmentMap(const core::pose::Pose & pose_1,
-            const core::pose::Pose & pose_2, HelicalFragment pose_1_fragment, HelicalFragment pose_2_fragment);
+            const core::pose::Pose & pose_2, protocols::features::helixAssembly::HelicalFragment pose_1_fragment, protocols::features::helixAssembly::HelicalFragment pose_2_fragment);
 
         std::map<core::id::AtomID, core::id::AtomID> getFragmentPairMap(const core::pose::Pose & pose_1,
-            const core::pose::Pose & pose_2, const std::pair<HelicalFragment, HelicalFragment> & pose_1_fragments,
-            const std::pair<HelicalFragment, HelicalFragment> & pose_2_fragments);
+            const core::pose::Pose & pose_2, const std::pair<protocols::features::helixAssembly::HelicalFragment, protocols::features::helixAssembly::HelicalFragment> & pose_1_fragments,
+            const std::pair<protocols::features::helixAssembly::HelicalFragment, protocols::features::helixAssembly::HelicalFragment> & pose_2_fragments);
 
-        void superimposeBundles(const core::pose::Pose & query_structure, core::pose::Pose & results_structure, std::pair< HelicalFragment, HelicalFragment> matching_pair);
+        void superimposeBundles(const core::pose::Pose & query_structure, core::pose::Pose & results_structure, std::pair< protocols::features::helixAssembly::HelicalFragment, protocols::features::helixAssembly::HelicalFragment> matching_pair);
 
         core::Real bb_score(core::pose::Pose & pose, core::Size unique_chain_num, core::scoring::ScoreFunctionOP & scorefxn);
 
         void removeDuplicateFragmentPairs(const core::pose::Pose & pose,
-        		utility::vector1< std::pair<HelicalFragment,HelicalFragment> > & helix_pairs);
+        		utility::vector1< std::pair<protocols::features::helixAssembly::HelicalFragment,protocols::features::helixAssembly::HelicalFragment> > & helix_pairs);
 
-        void removeDuplicateFragments(const core::pose::Pose & pose, const utility::vector1<HelicalFragment> & all_helix_fragments,
-        		utility::vector1<HelicalFragment> & helix_fragments);
+        void removeDuplicateFragments(const core::pose::Pose & pose, const utility::vector1<protocols::features::helixAssembly::HelicalFragment> & all_helix_fragments,
+        		utility::vector1<protocols::features::helixAssembly::HelicalFragment> & helix_fragments);
 
         std::vector<HelixAssemblyJob> apply(HelixAssemblyJob & job);
 
@@ -103,14 +104,14 @@ public:
 private:
 
         core::scoring::ScoreFunctionOP scorefxn_;
-        HelicalFragment query_frag_1_;
-        HelicalFragment query_frag_2_;
+        protocols::features::helixAssembly::HelicalFragment query_frag_1_;
+        protocols::features::helixAssembly::HelicalFragment query_frag_2_;
         std::string query_structure_path_;
         std::string query_structure_string_;
         core::Real single_helix_rmsd_cutoff_;
         core::Real helix_pair_rmsd_cutoff_;
-        core::Real helix_cap_distance_cutoff_;
-        core::Real helix_contact_distance_cutoff_;
+        core::Real helix_cap_dist_cutoff_;
+        core::Real helix_contact_dist_cutoff_;
         core::Size minimum_helix_contacts_;
 
 }; //end HelixAssemblyMover

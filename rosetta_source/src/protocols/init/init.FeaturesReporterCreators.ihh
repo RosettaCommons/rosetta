@@ -46,3 +46,4 @@
 #include <protocols/features/ScoreTypeFeaturesCreator.hh>
 #include <protocols/features/StructureFeaturesCreator.hh>
 #include <protocols/features/StructureScoresFeaturesCreator.hh>
+#include <protocols/features/helixAssembly/HelixBundleFeaturesCreator.hh>

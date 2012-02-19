@@ -67,9 +67,6 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	option.add( native_residue_files, "File with all native residue files");
 	option.add( bridge_fragments, "File containing bridge fragments");
 	devel::init(argc, argv);
@@ -84,7 +81,8 @@ main( int argc, char * argv [] )
 	}
 	utility::file::FileName bridge_fragment_list_file( option[ bridge_fragments ]() );
 
-
+	//////////////////////////////////////////////////////////////////////////////////
+	///////////////////Close helical bundles using bridge fragments///////////////////
 	utility::vector1<utility::file::FileName> bridge_fragment_files;
 	utility::io::izstream fragments_stream( bridge_fragment_list_file );
 	if ( !fragments_stream.good() ) {
@@ -96,45 +94,42 @@ main( int argc, char * argv [] )
 		if ( fragments_stream.good() ) bridge_fragment_files.push_back( utility::file::FileName(name) );
 	}
 
+	core::Size total_bridge_frags(0);
 	utility::vector1<core::fragment::FragSetOP> frag_sets;
 	for(core::Size i=1; i<=bridge_fragment_files.size(); ++i){
 		core::fragment::FragSetOP frag_set(core::fragment::FragmentIO().read_data(bridge_fragment_files[i].name()));
+		total_bridge_frags+=frag_set->size();
 		frag_sets.push_back(frag_set);
 	}
+	cout << "Total number of bridge fragments: " << total_bridge_frags << endl;
 
-
+	protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
 	BridgeFragmentMoverOP bridge_frag_mover = new BridgeFragmentMover(frag_sets);
-	protocols::jd2::JobDistributor::get_instance()->go(bridge_frag_mover);
+	seq_mover->add_mover( bridge_frag_mover );
+	///////////////////Done adding bridge fragments///////////////////
+	//////////////////////////////////////////////////////////////////
 
-	exit(1);
 
+
+
+	///////////////////Setup task factory to design using native residue files///////////////////
 	NativeResidueReader native_res_reader;
 	std::map<core::Size, utility::vector1<core::conformation::ResidueOP> > nat_ro_map =
 			native_res_reader.generateResiduesFromFile(native_res_file.name());
 
 	cout << "Finished populating native rotamers map" << endl;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	//create a task factory: this will create a new PackerTask for each input pose
 	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
 
 	//Delete all rotamers
-	DeleteAllRotamerSetOperation delete_all_rotamers_operation;
-	core::pack::task::operation::AppendRotamerSet delete_rotamers(delete_all_rotamers_operation.clone());
-	main_task_factory->push_back( delete_rotamers.clone() );
+//	DeleteAllRotamerSetOperation delete_all_rotamers_operation;
+//	core::pack::task::operation::AppendRotamerSet delete_rotamers(delete_all_rotamers_operation.clone());
+//	main_task_factory->push_back( delete_rotamers.clone() );
 
 	//Add rotamers defined in the native residue file
 	for(std::map<core::Size, utility::vector1<core::conformation::ResidueOP> >::const_iterator map_it = nat_ro_map.begin();
 			map_it != nat_ro_map.end(); ++map_it){
-
-//		cout << "Resnum: " << map_it->first << endl;
-//		for(core::Size p=1; p<=map_it->second.size();p++){
-//			cout << "Residue: " << map_it->second[p]->name3() << endl;
-//			cout << "Num atoms: " << map_it->second[p]->natoms() << endl;
-//		}
 
 		AddResiduesRotamerSetOperation nat_ro_set(map_it->second);
 		core::pack::task::operation::AppendResidueRotamerSet append_res(map_it->first, nat_ro_set.clone());
@@ -145,6 +140,8 @@ main( int argc, char * argv [] )
 	if ( option[ packing::resfile ].user() ) {
 		main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
 	}
+	///////////////////Finished task factory setup///////////////////
+
 
 	//create a ScoreFunction from commandline options (default is score12)
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
@@ -152,28 +149,26 @@ main( int argc, char * argv [] )
 	//create the PackRotamersMover which will do the packing
 	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 
-//	// Use the symmetric packer if necessary
-//	if ( option[ symmetry::symmetry_definition ].user() ) {
-//		pack_mover = new protocols::simple_moves::symmetry::SymPackRotamersMover;
-//	}
-
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( score_fxn );
+	seq_mover->add_mover( pack_mover );
 
-//	//This sequence mover will contain packing for sure, and may contain minimization
-//	protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
-
-//	// make symmetric pose if necessary
-//	if ( option[ symmetry::symmetry_definition ].user() )  {
-//	    seq_mover->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
-//	}
-
-//	seq_mover->add_mover( pack_mover );
-
+	//////MINIMIZATION///////
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	movemap->set_bb(true);
+	movemap->set_chi(true);
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
+			movemap,
+			score_fxn,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true
+	);
+	seq_mover->add_mover( min_mover );
+	//////END MINIMIZATION///////
 	cout << "GO GO GO GO GO!!!!" << endl;
 
-//	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
-//	protocols::jd2::JobDistributor::get_instance()->go(pack_mover);
+	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
 
 	cout << "-------------DONE-------------" << endl;
 }

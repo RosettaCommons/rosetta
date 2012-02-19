@@ -8,7 +8,7 @@
 // (c) for more information, see http://www.rosettacommons.org. questions about this can be
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
-/// @file /rosetta/rosetta_source/src/devel/helixAssembly/BridgeFragmentMover.fwd.hhBridgeFragmentMover.fwd.hh
+/// @file /rosetta/rosetta_source/src/devel/helixAssembly/BridgeFragmentMover.fwd.hh
 /// @brief 
 /// @author Tim Jacobs
 

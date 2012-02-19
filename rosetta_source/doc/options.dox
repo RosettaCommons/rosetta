@@ -11122,10 +11122,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 9</dd><br>
 </dl>
  </li>
-<li><h2>HelixAssembly</h2>
+<li><h2>helixAssembly</h2>
 <dl>
-<dt><b>-HelixAssembly</b> \<Boolean\><dt>
-<dd>HelixAssembly option group</dd><br>
+<dt><b>-helixAssembly</b> \<Boolean\><dt>
+<dd>helixAssembly option group</dd><br>
 </dl>
 <dl>
 <dt><b>-query_structure_path</b> \<File\><dt>
@@ -11164,12 +11164,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd></dd><br>
 </dl>
 <dl>
-<dt><b>-helix_cap_distance_cutoff</b> \<Real\><dt>
-<dd></dd><br>
+<dt><b>-helix_cap_dist_cutoff</b> \<Real\><dt>
+<dd>Maximum distance between c-alpha residues at the end of two helices in order to call them part of the same bundle</dd><br>
 </dl>
 <dl>
-<dt><b>-helix_contact_distance_cutoff</b> \<Real\><dt>
-<dd></dd><br>
+<dt><b>-helix_contact_dist_cutoff</b> \<Real\><dt>
+<dd>Maximum distance between c-alpha residues in two helices in order to call them interacting</dd><br>
+</dl>
+<dl>
+<dt><b>-min_helix_size</b> \<Integer\><dt>
+<dd>Minimum size of a helix in a bundle</dd><br>
 </dl>
  </li>
 <li><h2>pepspec</h2>

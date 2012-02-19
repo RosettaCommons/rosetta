@@ -85,6 +85,11 @@ sources = {
 		"StructureScoresFeatures",
 		"StructureScoresFeaturesCreator",
 	],
+	"protocols/features/helixAssembly": [
+		"HelixBundleFeatures",
+		"HelixBundleFeaturesCreator",
+		"HelicalFragment",
+	],
 	"protocols/rotamer_recovery": [
 		"RotamerRecovery",
 		"RotamerRecoveryCreator",

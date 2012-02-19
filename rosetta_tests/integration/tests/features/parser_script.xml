@@ -31,7 +31,8 @@
             		<feature name=GeometricSolvationFeatures/>
 			<feature name=HBondParameterFeatures scorefxn=s/>
 			<feature name=SaltBridgeFeatures/>
-                </ReportToDB>
+			<feature name=HelixBundleFeatures/>
+    </ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
 		<Add mover_name=init_struct/>

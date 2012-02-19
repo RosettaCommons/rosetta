@@ -27,7 +27,8 @@ query_frag_1_index_(0),
 query_frag_2_index_(0),
 fragments_(),
 direction_needed_(true),
-first_round_(false)
+first_round_(false),
+n_term_growth_(false)
 {};
 HelixAssemblyJob::~HelixAssemblyJob(){};
 
@@ -71,19 +72,23 @@ bool HelixAssemblyJob::get_first_round() const{
   return first_round_;
 }
 
-HelicalFragment HelixAssemblyJob::get_query_frag_1() const{
+bool HelixAssemblyJob::get_n_term_growth() const{
+  return n_term_growth_;
+}
+
+protocols::features::helixAssembly::HelicalFragment HelixAssemblyJob::get_query_frag_1() const{
   return fragments_[query_frag_1_index_];
 }
 
-HelicalFragment HelixAssemblyJob::get_query_frag_2() const{
+protocols::features::helixAssembly::HelicalFragment HelixAssemblyJob::get_query_frag_2() const{
   return fragments_[query_frag_2_index_];
 }
 
-std::vector<HelicalFragment> HelixAssemblyJob::get_fragments() const{
+std::vector<protocols::features::helixAssembly::HelicalFragment> HelixAssemblyJob::get_fragments() const{
   return fragments_;
 }
 
-void HelixAssemblyJob::add_fragment(HelicalFragment new_fragment){
+void HelixAssemblyJob::add_fragment(protocols::features::helixAssembly::HelicalFragment new_fragment){
   fragments_.push_back(new_fragment);
 }
 
@@ -119,7 +124,7 @@ void HelixAssemblyJob::set_query_frag_2_index(core::Size query_frag_2_index){
   this->query_frag_2_index_ = query_frag_2_index;
 }
 
-void HelixAssemblyJob::set_fragments(std::vector<HelicalFragment> fragments){
+void HelixAssemblyJob::set_fragments(std::vector<protocols::features::helixAssembly::HelicalFragment> fragments){
   this->fragments_ = fragments;
 }
 
@@ -129,6 +134,10 @@ void HelixAssemblyJob::set_direction_needed(bool direction_needed){
 
 void HelixAssemblyJob::set_first_round(bool first_round){
   this->first_round_=first_round;
+}
+
+void HelixAssemblyJob::set_n_term_growth(bool n_term_growth){
+  this->n_term_growth_=n_term_growth;
 }
 
 std::string HelixAssemblyJob::printBundleResidues() const{

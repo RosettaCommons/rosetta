@@ -8,7 +8,7 @@
 // (c) for more information, see http://www.rosettacommons.org. questions about this can be
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
-/// @file /rosetta/rosetta_source/src/devel/helixAssembly/BridgeFragmentEvaluator.ccBridgeFragmentEvaluator.cc
+/// @file /rosetta/rosetta_source/src/devel/helixAssembly/BridgeFragmentMover.cc
 /// @brief 
 /// @author Tim Jacobs
 
@@ -26,8 +26,10 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/rms_util.hh>
@@ -43,13 +45,19 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/model_quality/rms.hh>
 
+//Basic
+#include <basic/Tracer.hh>
+
 //Utility
 #include <utility/string_util.hh>
+#include <utility/file/FileName.hh>
 
 static basic::Tracer TR("BridgeFragmentMover");
 
 BridgeFragmentMover::BridgeFragmentMover(utility::vector1<core::fragment::FragSetOP> frag_sets):
-frag_sets_(frag_sets)
+frag_sets_(frag_sets),
+num_helical_residues_(5),
+size_helical_window_(3)
 {}
 
 BridgeFragmentMover::~BridgeFragmentMover(){}
@@ -57,18 +65,24 @@ BridgeFragmentMover::~BridgeFragmentMover(){}
 void BridgeFragmentMover::apply(core::pose::Pose & pose){
 
 	using namespace std;
-
-	//Numer of CA atoms we are using from each helix for RMSD calculations to bridge fragments
-	core::Size num_helical_residues(2);
+	bool reverse=false; //bool to determine whether the helix was built off of the n or c terminus (reverse true means it was built from the N)
 
 	core::Size num_jumps(pose.fold_tree().num_jump());
 	TR << "There are " << num_jumps << " jumps" << endl;
+	core::Size total_low_rms_counter(0);
+	utility::vector1<core::pose::Pose> min_rms_loop_poses;
 	for(core::Size cur_jump_edge=1; cur_jump_edge <= num_jumps; ++cur_jump_edge){
 
 		core::Size low_rms_counter(0);
 		core::Size downstream_jump_residue(pose.fold_tree().downstream_jump_residue(cur_jump_edge));
-		core::Size pose_frag_start(downstream_jump_residue-num_helical_residues);
-		core::Size pose_frag_end(downstream_jump_residue+num_helical_residues-1);
+		core::Size pose_frag_start(downstream_jump_residue-size_helical_window_);
+		core::Size pose_frag_end(downstream_jump_residue+size_helical_window_-1);
+
+		core::Real jump_distance(pose.residue(downstream_jump_residue).atom("CA").xyz().distance(pose.residue(downstream_jump_residue-1).atom("CA").xyz()));
+		TR << "jump distance is: " << jump_distance << endl;
+
+		TR << "FRAG START: " << pose_frag_start << endl;
+		TR << "FRAG END: " << pose_frag_end << endl;
 
 		core::Size total_size(0);
 		for(core::Size frag_sets_index=1; frag_sets_index<=frag_sets_.size(); ++frag_sets_index){
@@ -79,6 +93,8 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 		core::Real min_rms(10.0);
 		core::fragment::AnnotatedFragData min_frag_data("dummy", 1);
 		Pose min_frag_pose;
+		core::Size min_frag_start_window_offset;
+		core::Size min_frag_end_window_offset;
 		for(core::Size frag_sets_index=1; frag_sets_index<=frag_sets_.size(); ++frag_sets_index){
 			core::fragment::FragSetOP cur_frag_set=frag_sets_[frag_sets_index];
 
@@ -88,68 +104,119 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 					core::fragment::AnnotatedFragData cur_frag =
 						dynamic_cast< const core::fragment::AnnotatedFragData & > (it->fragment(i));
 
-					ObjexxFCL::FArray2D< core::Real > p1a( 3, num_helical_residues*2 );
-					ObjexxFCL::FArray2D< core::Real > p2a( 3, num_helical_residues*2 );
-
-					std::string p1a_test("");
 					std::string p2a_test("");
-					for(core::Size j=1; j<=num_helical_residues; j++){
-						core::fragment::BBTorsionSRFDCOP fragment_residue =
-								dynamic_cast< const core::fragment::BBTorsionSRFD* > (cur_frag.get_residue(j)());
+					ObjexxFCL::FArray2D< core::Real > pose_helical_coords( 3, size_helical_window_*2 );
 
-						p1a(1,j)=fragment_residue->x();
-						p1a(2,j)=fragment_residue->y();
-						p1a(3,j)=fragment_residue->z();
-
-						p1a_test += utility::to_string(fragment_residue->sequence()) + " " +
-								utility::to_string(fragment_residue->x()) + " " +
-								utility::to_string(fragment_residue->y()) + " " +
-								utility::to_string(fragment_residue->z()) + "\n";
-					}
-					for(core::Size j=0; j<num_helical_residues; j++){
-						core::fragment::BBTorsionSRFDCOP fragment_residue =
-												dynamic_cast< const core::fragment::BBTorsionSRFD* > (cur_frag.get_residue(cur_frag.size()-(num_helical_residues-1-j))());
-
-						p1a(1,num_helical_residues+j+1)=fragment_residue->x();
-						p1a(2,num_helical_residues+j+1)=fragment_residue->y();
-						p1a(3,num_helical_residues+j+1)=fragment_residue->z();
-
-						p1a_test += utility::to_string(fragment_residue->sequence()) + " " +
-								utility::to_string(fragment_residue->x()) + " " +
-								utility::to_string(fragment_residue->y()) + " " +
-								utility::to_string(fragment_residue->z()) + "\n";
-					}
-					for(core::Size j=0; j<num_helical_residues*2;j++){
+					//get coordinates for the helical residues before the jump
+					for(core::Size j=0; j<size_helical_window_;j++){
 						numeric::xyzVector<core::Real> res_xyz(pose.residue(pose_frag_start+j).atom("CA").xyz());
 
-						p2a(1,j+1)=res_xyz.x();
-						p2a(2,j+1)=res_xyz.y();
-						p2a(3,j+1)=res_xyz.z();
+						pose_helical_coords(1,j+1)=res_xyz.x();
+						pose_helical_coords(2,j+1)=res_xyz.y();
+						pose_helical_coords(3,j+1)=res_xyz.z();
 
 						p2a_test += utility::to_string(pose.residue(pose_frag_start+j).name1()) + " " +
 								utility::to_string(res_xyz.x()) + " " +
 								utility::to_string(res_xyz.y()) + " " +
 								utility::to_string(res_xyz.z()) + "\n";
 					}
-					core::Real rms(numeric::model_quality::rms_wrapper( num_helical_residues*2, p1a, p2a ));
 
-					if(rms<1){
-						low_rms_counter++;
+					//get coordinates for the helical residues after the jump
+					for(int j=size_helical_window_-1; j>=0; j--){
+						numeric::xyzVector<core::Real> res_xyz(pose.residue(pose_frag_end-j).atom("CA").xyz());
+
+						pose_helical_coords(1,size_helical_window_*2-j)=res_xyz.x();
+						pose_helical_coords(2,size_helical_window_*2-j)=res_xyz.y();
+						pose_helical_coords(3,size_helical_window_*2-j)=res_xyz.z();
+
+						p2a_test += utility::to_string(pose.residue(pose_frag_start+j).name1()) + " " +
+								utility::to_string(res_xyz.x()) + " " +
+								utility::to_string(res_xyz.y()) + " " +
+								utility::to_string(res_xyz.z()) + "\n";
 					}
 
-					//TR << "Fragment RMSD: " << rms << endl;
-					if(rms<min_rms){
-						it->fragment_as_pose(i,min_frag_pose,core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ));
-						min_rms=rms;
-						min_frag_data=cur_frag;
-					}
+					//Check every 'size_helical_window' number of helical residues at the beginning and end of the bridge fragment.
+					//If the helical residue window used does come directly before or directly after the loop residues then the extra
+					//helical residues will also be added to the pose. The goal of using this window was to ensure that the helix ends
+					//are in the optimal position for loop closure without shortening the helices.
+					for(core::Size start_window_offset=0; start_window_offset<num_helical_residues_-size_helical_window_+1;
+							++start_window_offset){
 
+						ObjexxFCL::FArray2D< core::Real > frag_helical_coords( 3, size_helical_window_*2 );
+						std::string p1a_test("");
+
+						//get coordinates for the helical residues on the beginning of the bridge fragment
+						for(core::Size j=1; j<=size_helical_window_; j++){
+							core::Size cur_resnum = j+start_window_offset;
+							core::fragment::BBTorsionSRFDCOP fragment_residue =
+									dynamic_cast< const core::fragment::BBTorsionSRFD* > (cur_frag.get_residue(cur_resnum)());
+
+							frag_helical_coords(1,j)=fragment_residue->x();
+							frag_helical_coords(2,j)=fragment_residue->y();
+							frag_helical_coords(3,j)=fragment_residue->z();
+
+							p1a_test += utility::to_string(fragment_residue->sequence()) + " " +
+									utility::to_string(fragment_residue->x()) + " " +
+									utility::to_string(fragment_residue->y()) + " " +
+									utility::to_string(fragment_residue->z()) + "\n";
+						}
+
+						for(core::Size end_window_offset=0; end_window_offset<num_helical_residues_-size_helical_window_+1;
+								++end_window_offset){
+
+							//get coordinates for the helical residues on the end of the bridge fragment
+							for(core::Size j=0; j<size_helical_window_; j++){
+								core::Size cur_resnum = cur_frag.size()-(size_helical_window_-1-j)-end_window_offset;
+								core::fragment::BBTorsionSRFDCOP fragment_residue =
+														dynamic_cast< const core::fragment::BBTorsionSRFD* > (cur_frag.get_residue(cur_resnum)());
+
+								frag_helical_coords(1,size_helical_window_+j+1)=fragment_residue->x();
+								frag_helical_coords(2,size_helical_window_+j+1)=fragment_residue->y();
+								frag_helical_coords(3,size_helical_window_+j+1)=fragment_residue->z();
+
+								p1a_test += utility::to_string(fragment_residue->sequence()) + " " +
+										utility::to_string(fragment_residue->x()) + " " +
+										utility::to_string(fragment_residue->y()) + " " +
+										utility::to_string(fragment_residue->z()) + "\n";
+							}
+
+							core::Real rms(numeric::model_quality::rms_wrapper( size_helical_window_*2, frag_helical_coords, pose_helical_coords ));
+
+							if(rms<0.8){
+								low_rms_counter++;
+							}
+
+							//TR << "Fragment RMSD: " << rms << endl;
+							if(rms<min_rms){
+								it->fragment_as_pose(i,min_frag_pose,core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ));
+
+								min_rms=rms;
+								min_frag_data=cur_frag;
+								min_frag_start_window_offset=start_window_offset;
+								min_frag_end_window_offset=end_window_offset;
+
+								//Remove unused helical elements from the frag_pose
+								for(core::Size i=1; i<=min_frag_start_window_offset; ++i){
+									min_frag_pose.conformation().delete_residue_slow(1);
+								}
+								for(core::Size i=1; i<=min_frag_end_window_offset; ++i){
+									min_frag_pose.conformation().delete_residue_slow(min_frag_pose.total_residue());
+								}
+
+							}
+						}
+					}
 				}
 			}
 		}
 
-		TR << "Min RMS: " << min_rms << " from pdb " << min_frag_data.pdbid() << endl;
-		TR << "Number of bridge fragments < 1: " << low_rms_counter << endl;
+		TR << "Min RMS: " << min_rms << "  " << min_frag_data.size() << "-residue fragment from pdb " << min_frag_data.pdbid() << endl;
+		TR << "Start offset" << min_frag_start_window_offset << endl;
+		TR << "End offset" << min_frag_end_window_offset << endl;
+		TR << low_rms_counter << " " << pose.pdb_info()->name() << " " << cur_jump_edge << " bridge fragments < 0.8"
+				<< endl;
+		total_low_rms_counter+=low_rms_counter;
+
 		std::string sequence(min_frag_data.sequence());
 		TR << "Sequence: " << sequence << endl;
 
@@ -159,12 +226,11 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 		core::pose::initialize_atomid_map( atom_map, min_frag_pose, core::id::BOGUS_ATOM_ID );
 
 		//superimpose the found two-helix pose onto the query structure
-		for(Size j=0; j< num_helical_residues; j++){
-			//Sloppy way of adding all bb atoms, must be a better way...
+		for(Size j=0; j< size_helical_window_; j++){
 
-//			TR << "superimpose residues " <<  j+1 << " of frag to residue " << j+pose_frag_start << " of pose." << endl;
+			TR << "superimpose residues " <<  j+1 << " of frag to residue " << j+pose_frag_start << " of pose." << endl;
 
-			core::id::AtomID const id1( min_frag_pose.residue(j+1).atom_index("CA"), j+1 );
+			core::id::AtomID const id1( min_frag_pose.residue(j+1).atom_index("CA"),j+1 );
 			core::id::AtomID const id2( pose.residue(j+pose_frag_start).atom_index("CA"), j+pose_frag_start);
 			atom_map.set(id1, id2);
 
@@ -180,12 +246,13 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 //			core::id::AtomID const id8( min_frag_pose.residue(j+1).atom_index("O"), j+1 );
 //			atom_map[ id8 ] = id7;
 		}
-		for(int j=num_helical_residues-1; j>=0; j--){
+		for(int j=size_helical_window_-1; j>=0; j--){
 			//Sloppy way of adding all bb atoms, must be a better way...
 
-//			TR << "superimpose residues " <<  min_frag_pose.total_residue()-j << " of frag to residue " << pose_frag_end-j << " of pose." << endl;
+			TR << "superimpose residues " <<  min_frag_pose.total_residue()-j << " of frag to residue " << pose_frag_end-j << " of pose." << endl;
 
-			core::id::AtomID const id1( min_frag_pose.residue(min_frag_pose.total_residue()-j).atom_index("CA"), min_frag_pose.total_residue()-j );
+			core::id::AtomID const id1( min_frag_pose.residue(min_frag_pose.total_residue()-j).atom_index("CA"),
+					min_frag_pose.total_residue()-j );
 			core::id::AtomID const id2( pose.residue(pose_frag_end-j).atom_index("CA"), pose_frag_end-j);
 			atom_map.set(id1, id2);
 
@@ -208,6 +275,7 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 		utility::file::FileName pdb_name (pose.pdb_info()->name());
 		std::string output_name = pdb_name.base() + "_loop_" + utility::to_string(cur_jump_edge) + ".pdb";
 		min_frag_pose.dump_pdb(output_name);
+		min_rms_loop_poses.push_back(min_frag_pose);
 
 //		core::chemical::ResidueTypeSetCAP fa_set =
 //				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
@@ -244,4 +312,41 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 //			TR << "Residue " << foo << " " << pose.phi(foo) << " " << pose.psi(foo) << " " << pose.omega(foo) << endl;
 //		}
 	}
+	TR << total_low_rms_counter << " " << pose.pdb_info()->name() << " " << " bridge fragments < 0.8 for ALL jumps"
+							<< endl;
+
+	core::pose::Pose closed_bundle = constructClosedBundle(pose, min_rms_loop_poses);
+
+	utility::file::FileName pdb_name (pose.pdb_info()->name());
+	std::string output_name = pdb_name.base() + "_closed.pdb";
+	closed_bundle.dump_pdb(output_name);
+
+	pose=closed_bundle;
+}
+
+core::pose::Pose BridgeFragmentMover::constructClosedBundle(core::pose::Pose & pose, utility::vector1<core::pose::Pose> & loop_poses){
+	utility::vector1< core::pose::PoseOP > chain_poses = pose.split_by_chain();
+
+	core::pose::Pose new_pose;
+	for(core::Size i=1; i<=chain_poses.size(); ++i){
+		for(core::Size j=1; j<=chain_poses[i]->total_residue(); ++j){
+			if((i==1 && j<= chain_poses[i]->total_residue()-size_helical_window_) ||
+				(i==chain_poses.size() && j>size_helical_window_) ||
+				(j<= chain_poses[i]->total_residue()-size_helical_window_ && j>size_helical_window_)){
+				core::conformation::remove_upper_terminus_type_from_conformation_residue(chain_poses[i]->conformation(), j);
+				core::conformation::remove_lower_terminus_type_from_conformation_residue(chain_poses[i]->conformation(), j);
+				new_pose.append_residue_by_bond(chain_poses[i]->residue(j));
+			}
+		}
+		if(i!=chain_poses.size()){
+
+			for(core::Size j=1; j<=loop_poses[i].total_residue(); ++j){
+				core::conformation::remove_upper_terminus_type_from_conformation_residue(loop_poses[i].conformation(), j);
+				core::conformation::remove_lower_terminus_type_from_conformation_residue(loop_poses[i].conformation(), j);
+				new_pose.append_residue_by_bond(loop_poses[i].residue(j));
+//				std::cout << "Added loop residue - new pose size" << new_pose.total_residue() << std::endl;
+			}
+		}
+	}
+	return new_pose;
 }

@@ -202,9 +202,9 @@ sessionOP get_db_session(
 		return db_session;
 	}else if(db_mode == "mysql")
 	{
-#ifndef USEMYSQL
-		utility_exit_with_message("If you want to use a mysql database, build with extras=mysql");
-#endif
+//#ifndef USEMYSQL
+//		utility_exit_with_message("If you want to use a mysql database, build with extras=mysql");
+//#endif
 		if(readonly){
 			utility_exit_with_message("Restricting access to a mysql database is done at the user level rather that the connection level. So requesting a readonly connection cannot fullfilled.");
 		}

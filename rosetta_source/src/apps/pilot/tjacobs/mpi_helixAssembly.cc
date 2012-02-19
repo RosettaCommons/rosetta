@@ -16,7 +16,7 @@
 // Unit headers
 #include <devel/helixAssembly/HelixAssemblyMover.hh>
 #include <devel/helixAssembly/HelixAssemblyJob.hh>
-#include <devel/helixAssembly/HelicalFragment.hh>
+#include <protocols/features/helixAssembly/HelicalFragment.hh>
 #include <devel/helixAssembly/NativeAtom.hh>
 #include <devel/helixAssembly/NativeResidue.hh>
 
@@ -33,7 +33,7 @@
 // option key includes
 #include <basic/options/util.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/HelixAssembly.OptionKeys.gen.hh>
+#include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
@@ -114,14 +114,14 @@ main( int argc, char * argv [] )
       }
 
       //Read original query pdb into a string
-      std::string originalQueryPdbPath( option[ HelixAssembly::query_structure_path].value());
+      std::string originalQueryPdbPath( option[ helixAssembly::query_structure_path].value());
       utility::io::izstream originalQueryPdbData( originalQueryPdbPath.c_str() );
       std::string originalQueryPdbString;
       utility::slurp(originalQueryPdbData, originalQueryPdbString);
 
       vector1<HelixAssemblyJob> job_queue;
       vector1<int> freeProcessors;
-      Size helices_to_add = option[ HelixAssembly::helices_to_add ];
+      Size helices_to_add = option[ helixAssembly::helices_to_add ];
 
       TR << "library size: " << pdb_library.size() << endl;
 
@@ -132,14 +132,14 @@ main( int argc, char * argv [] )
           temp_job.set_name(pdb_library[i].base());
           temp_job.set_query_structure(originalQueryPdbString);
           temp_job.set_search_index(i);
-          temp_job.set_remaining_rounds(option[HelixAssembly::helices_to_add]);
+          temp_job.set_remaining_rounds(option[helixAssembly::helices_to_add]);
           temp_job.set_direction_needed(true); //doesn't matter for first round
           temp_job.set_first_round(true);
 
-          core::Size frag1_start = option[ HelixAssembly::frag1_start];
-          core::Size frag1_end = option[ HelixAssembly::frag1_end];
-          core::Size frag2_start = option[ HelixAssembly::frag2_start];
-          core::Size frag2_end = option[ HelixAssembly::frag2_end];
+          core::Size frag1_start = option[ helixAssembly::frag1_start];
+          core::Size frag1_end = option[ helixAssembly::frag1_end];
+          core::Size frag2_start = option[ helixAssembly::frag2_start];
+          core::Size frag2_end = option[ helixAssembly::frag2_end];
 
           HelicalFragment fragment1(frag1_start, frag1_end, true);
           fragment1.set_pdb_source(pdb_library[i].name());
@@ -269,6 +269,14 @@ main( int argc, char * argv [] )
           TR << "Jobs left in queue: " << job_queue.size() << endl;
           cout << "Jobs left in queue: " << job_queue.size() << endl;
 
+          size_t job_queue_mem_size(0);
+          for(core::Size test=1; test<=job_queue.size(); ++test){
+        	  job_queue_mem_size += sizeof(string)+ job_queue[test].get_query_structure().capacity() * sizeof(char);
+        	  job_queue_mem_size += sizeof(string)+ job_queue[test].get_search_structure().capacity() * sizeof(char);
+          }
+
+          cout << "Job queue memory size: " << job_queue_mem_size << endl;
+
           //use newly free processor
           if(job_queue.size() > 0){
               //LOOP THROUGH FREE PROCESSORS HERE
@@ -308,12 +316,29 @@ main( int argc, char * argv [] )
               HelixAssemblyJob received_job;
               world.recv(0, 0, boost::mpi::skeleton(received_job));
               world.recv(0, 0, boost::mpi::get_content(received_job));
-              TR << "Node " << world.rank() << " received job: " << received_job.get_name() << endl;
+              int pid = getpid();
+              cout << "Node " << world.rank() << " with PID " << pid << " received job: " << received_job.get_name() << endl;
 
               HelixAssemblyMover helixAssembler(received_job.get_query_frag_1(), received_job.get_query_frag_2());
               std::vector<HelixAssemblyJob> returned_jobs = helixAssembler.apply(received_job);
-              cout << "Node " << world.rank() << " finished " << received_job.get_name() << ", returning " <<
-                  returned_jobs.size() << " new job(s)." << endl;
+//              std::vector<HelixAssemblyJob> returned_jobs;
+//              while(true){
+//            	  int counter = 1;
+//            	  std::vector<HelixAssemblyJob> temp = helixAssembler.apply(received_job);
+//            	  returned_jobs.insert(returned_jobs.end(), temp.begin(), temp.end());
+//            	  cout << "Round " << counter << "finished" << endl;
+//            	  counter++;
+//              }
+//              helixAssembler.apply(received_job);
+//              cout << "Node " << world.rank() << " finished " << received_job.get_name() << ", returning " <<
+//                  returned_jobs.size() << " new job(s)." << endl;
+
+              ///MEMORY TESTS
+//              std::vector<HelixAssemblyJob> returned_jobs;
+//              HelixAssemblyJob return_job1(received_job);
+//              HelixAssemblyJob return_job2(received_job);
+//              returned_jobs.push_back(return_job1);
+//              returned_jobs.push_back(return_job2);
 
               //tell head node which job finished
               world.send(0,0,world.rank());

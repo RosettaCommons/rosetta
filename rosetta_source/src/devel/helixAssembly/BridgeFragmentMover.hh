@@ -8,7 +8,7 @@
 // (c) for more information, see http://www.rosettacommons.org. questions about this can be
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
-/// @file /rosetta/rosetta_source/src/devel/helixAssembly/BridgeFragmentEvaluator.hhBridgeFragmentEvaluator.hh
+/// @file /rosetta/rosetta_source/src/devel/helixAssembly/BridgeFragmentMover.hh
 /// @brief Reads in fragments
 /// @author Tim Jacobs
 
@@ -36,8 +36,14 @@ public:
 
 	void apply(core::pose::Pose &);
 
+	core::pose::Pose constructClosedBundle(core::pose::Pose & pose, utility::vector1<core::pose::Pose> & loop_poses);
+
 private:
 	utility::vector1<core::fragment::FragSetOP> frag_sets_;
+
+	//Numer of CA atoms we are using from each helix for RMSD calculations to bridge fragments
+	core::Size num_helical_residues_;
+	core::Size size_helical_window_;
 
 };
 

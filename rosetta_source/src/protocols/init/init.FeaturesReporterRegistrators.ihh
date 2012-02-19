@@ -49,5 +49,6 @@ static FeaturesReporterRegistrator< SaltBridgeFeaturesCreator > SaltBridgeFeatur
 static FeaturesReporterRegistrator< ScoreTypeFeaturesCreator > ScoreTypeFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< StructureFeaturesCreator > StructureFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< StructureScoresFeaturesCreator > StructureScoresFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< helixAssembly::HelixBundleFeaturesCreator > HelixBundleFeaturesCreator_registrator;
 
 } //namespace protocols

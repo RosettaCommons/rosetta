@@ -82,7 +82,38 @@ ResidueSecondaryStructureFeatures::schema() const {
 		"	FOREIGN KEY(dssp)\n"
 		"		REFERENCES dssp_codes(code)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, resNum));\n";
+		"	PRIMARY KEY(struct_id, resNum));\n"
+    
+        "CREATE TABLE IF NOT EXISTS helix_segments(\n"
+        "	struct_id INTEGER,\n"    
+        "	helix_id INTEGER,\n"
+        "	residue_begin INTEGER,\n"
+        "	residue_end INTEGER,\n"
+        "	FOREIGN KEY(struct_id, residue_begin, residue_begin)\n"
+        "		REFERENCES residues(struct_id, resNum, resNum)\n"
+        "		DEFERRABLE INITIALLY DEFERRED,\n"
+        "	PRIMARY KEY(struct_id, helix_id));\n"
+    
+        "CREATE TABLE IF NOT EXISTS beta_segments(\n"
+        "	struct_id INTEGER,\n"    
+        "	beta_id INTEGER,\n"
+        "	residue_begin INTEGER,\n"
+        "	residue_end INTEGER,\n"
+        "	FOREIGN KEY(struct_id, residue_begin, residue_begin)\n"
+        "		REFERENCES residues(struct_id, resNum, resNum)\n"
+        "		DEFERRABLE INITIALLY DEFERRED,\n"
+        "	PRIMARY KEY(struct_id, beta_id));\n"
+    
+//        "CREATE TABLE IF NOT EXISTS loop_segments(\n"
+//        "	struct_id INTEGER,\n"    
+//        "	loop_id INTEGER,\n"
+//        "	residue_begin INTEGER,\n"
+//        "	residue_end INTEGER,\n"
+//        "	FOREIGN KEY(struct_id, residue_begin, residue_begin)\n"
+//        "		REFERENCES residues(struct_id, resNum, resNum)\n"
+//        "		DEFERRABLE INITIALLY DEFERRED,\n"
+//        "	PRIMARY KEY(struct_id, loop_id));\n"
+    ;
 }
 
 utility::vector1<std::string>
@@ -102,6 +133,13 @@ ResidueSecondaryStructureFeatures::report_features(
 	// compute dssp
 	core::scoring::dssp::Dssp all_dssp(pose);
 
+    //stores the secondary structure for the current stretch of secondary structure
+    string segment_secondary;
+    Size segment_begin;
+    Size segment_end;
+    Size helix_counter=1;
+    Size beta_counter=1;
+    Size loop_counter=1;
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
 
@@ -113,11 +151,55 @@ ResidueSecondaryStructureFeatures::report_features(
 			break;
 		}
 
+        string residue_secondary = string(1, all_dssp.get_dssp_secstruct(resNum));
+        if(residue_secondary != segment_secondary){
+            
+            if(resNum > 1){
+                segment_end=resNum-1;
+                if(segment_secondary == "H"){
+                    std::string statement_string = "INSERT INTO helix_segments VALUES (?,?,?,?);";
+                    statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+                    stmt.bind(1,struct_id);
+                    stmt.bind(2,helix_counter);
+                    stmt.bind(3,segment_begin);
+                    stmt.bind(4,segment_end);
+                    basic::database::safely_write_to_database(stmt);
+                    
+                    ++helix_counter;
+                }
+                else if(segment_secondary == "E"){
+                    std::string statement_string = "INSERT INTO beta_segments VALUES (?,?,?,?);";
+                    statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+                    stmt.bind(1,struct_id);
+                    stmt.bind(2,beta_counter);
+                    stmt.bind(3,segment_begin);
+                    stmt.bind(4,segment_end);
+                    basic::database::safely_write_to_database(stmt);
+                    
+                    ++beta_counter;
+                }
+//                else if(segment_secondary == "L"){
+//                    std::string statement_string = "INSERT INTO loop_segments VALUES (?,?,?,?);";
+//                    statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+//                    stmt.bind(1,struct_id);
+//                    stmt.bind(2,loop_counter);
+//                    stmt.bind(3,segment_begin);
+//                    stmt.bind(4,segment_end);
+//                    basic::database::safely_write_to_database(stmt);
+//                    
+//                    ++loop_counter;
+//                }
+            }
+            
+            segment_secondary = residue_secondary;
+            segment_begin=resNum;
+        }
+        
 		std::string statement_string = "INSERT INTO residue_secondary_structure VALUES (?,?,?);";
 		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 		stmt.bind(1,struct_id);
 		stmt.bind(2,resNum);
-		stmt.bind(3,string(1, all_dssp.get_dssp_secstruct(resNum)));
+		stmt.bind(3,residue_secondary);
 		basic::database::safely_write_to_database(stmt);
 
 	}

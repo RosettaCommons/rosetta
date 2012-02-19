@@ -9,7 +9,7 @@
 
 /// @file HelicalFragment.hh
 ///
-/// @brief
+/// @brief Small helper class that stores the start and end of a helix secondary structure
 
 /// @author Tim jacobs
 
@@ -24,7 +24,7 @@
 #include <utility/vector1.fwd.hh>
 
 //Devel
-#include <devel/helixAssembly/NativeResidue.hh>
+//#include <devel/helixAssembly/NativeResidue.hh>
 
 //External
 #include <boost/serialization/access.hpp>
@@ -37,6 +37,10 @@
 #include <vector>
 #include <map>
 
+namespace protocols {
+namespace features {
+namespace helixAssembly {
+    
 class HelicalFragment{
 
 public:
@@ -59,10 +63,10 @@ public:
   void set_pdb_source(std::string pdb_source_);
   void set_direction(bool direction);
 
-  void insertResiduesFromPose(const core::pose::Pose & pose,
-  		core::Size start, core::Size end, const core::pose::Pose & this_pose);
-
-  std::string print() const;
+//  void insertResiduesFromPose(const core::pose::Pose & pose,
+//  		core::Size start, core::Size end, const core::pose::Pose & this_pose);
+//
+//  std::string print() const;
 
 private:
   friend class boost::serialization::access;
@@ -78,7 +82,7 @@ private:
     ar & pdb_source_;
     ar & direction_;
 //    ar & residue_map_;
-    ar & residue_list_;
+//    ar & residue_list_;
   }
 
   core::Size start_;
@@ -86,7 +90,7 @@ private:
   std::string pdb_source_;
   bool direction_;
 //  std::map<core::Size, std::vector<NativeResidue> > residue_map_;
-  std::vector<std::vector<NativeResidue> > residue_list_;
+//  std::vector<std::vector<NativeResidue> > residue_list_;
 
 };
 
@@ -116,4 +120,8 @@ private:
 //}
 //}}
 
+} //namespace helixAssembly
+} //namespace features
+} //namespace protocols
+    
 #endif /* HELICALFRAGMENT_HH_ */

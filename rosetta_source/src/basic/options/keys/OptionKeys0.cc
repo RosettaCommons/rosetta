@@ -92,7 +92,7 @@
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
 #include <basic/options/keys/DenovoProteinDesign.OptionKeys.gen.hh>
 #include <basic/options/keys/DomainAssembly.OptionKeys.gen.hh>
-#include <basic/options/keys/HelixAssembly.OptionKeys.gen.hh>
+#include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
 #include <basic/options/keys/LoopModel.OptionKeys.gen.hh>
 #include <basic/options/keys/MM.OptionKeys.gen.hh>
 #include <basic/options/keys/MonteCarlo.OptionKeys.gen.hh>

@@ -17,7 +17,7 @@
 #define HELIXASSEMBLYJOB_HH_
 
 //Unit headers
-#include <devel/helixAssembly/HelicalFragment.hh>
+#include <protocols/features/helixAssembly/HelicalFragment.hh>
 
 //external library
 #include <boost/serialization/vector.hpp>
@@ -82,11 +82,12 @@ public:
   std::string get_search_structure() const;
   core::Size get_query_frag_1_index() const;
   core::Size get_query_frag_2_index() const;
-  std::vector<HelicalFragment> get_fragments() const;
+  std::vector<protocols::features::helixAssembly::HelicalFragment> get_fragments() const;
   bool get_direction_needed() const;
   bool get_first_round() const;
-  HelicalFragment get_query_frag_1() const;
-  HelicalFragment get_query_frag_2() const;
+  bool get_n_term_growth() const;
+  protocols::features::helixAssembly::HelicalFragment get_query_frag_1() const;
+  protocols::features::helixAssembly::HelicalFragment get_query_frag_2() const;
   void set_id(core::Size job_id);
   void set_name(std::string job_name);
   void set_remaining_rounds(core::Size remaining_rounds);
@@ -95,10 +96,11 @@ public:
   void set_search_structure(std::string search_structure);
   void set_query_frag_1_index(core::Size query_frag_1_index);
   void set_query_frag_2_index(core::Size query_frag_2_index);
-  void set_fragments(std::vector<HelicalFragment> fragments);
+  void set_fragments(std::vector<protocols::features::helixAssembly::HelicalFragment> fragments);
   void set_direction_needed(bool direction);
   void set_first_round(bool first_round);
-  void add_fragment(HelicalFragment new_fragment);
+  void set_n_term_growth(bool n_term_growth);
+  void add_fragment(protocols::features::helixAssembly::HelicalFragment new_fragment);
 
   std::string printBundleResidues() const;
 
@@ -122,6 +124,7 @@ private:
     ar & fragments_;
     ar & direction_needed_;
     ar & first_round_;
+    ar & n_term_growth_;
   }
 
   core::Size id_;
@@ -132,8 +135,9 @@ private:
   core::Size search_index_;
   core::Size query_frag_1_index_;
   core::Size query_frag_2_index_;
-  std::vector<HelicalFragment> fragments_;
+  std::vector<protocols::features::helixAssembly::HelicalFragment> fragments_;
   bool direction_needed_; //toggles between true and false to tell HelixAssemblyMover which direction the helix should be built
+  bool n_term_growth_;
   bool first_round_;
 };
 

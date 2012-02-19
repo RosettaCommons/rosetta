@@ -38,6 +38,7 @@
 #include <basic/options/keys/rotamerdump.OptionKeys.gen.hh>
 #include <basic/options/keys/robert.OptionKeys.gen.hh>
 #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
+#include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh>
@@ -48,7 +49,6 @@
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
-#include <basic/options/keys/HelixAssembly.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/boinc.OptionKeys.gen.hh>
 #include <basic/options/keys/fast_loops.OptionKeys.gen.hh>

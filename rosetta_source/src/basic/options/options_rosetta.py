@@ -4531,8 +4531,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	),
 
 	################################
-	## Tim's options
-	Option_Group( 'HelixAssembly',
+	## In development helix assembly options
+	Option_Group( 'helixAssembly',
+        ####Old options - to be removed shortly####
 		Option('query_structure_path','File', desc=""),
 		Option('frag1_start','Integer', desc=""),
 		Option('frag1_end','Integer', desc=""),
@@ -4542,8 +4543,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('helices_to_add','Integer', desc=""),
 		Option('single_helix_rmsd_cutoff','Real', desc=""),
 		Option('helix_pair_rmsd_cutoff','Real', desc=""),
-		Option('helix_cap_distance_cutoff','Real', desc=""),
-		Option('helix_contact_distance_cutoff','Real', desc=""),
+        ####End old stuff####
+                 
+        Option('helix_cap_dist_cutoff','Real', desc="Maximum distance between c-alpha residues at the end of two helices in order to call them part of the same bundle"),
+        Option('helix_contact_dist_cutoff','Real', desc="Maximum distance between c-alpha residues in two helices in order to call them interacting"),
+        Option('min_helix_size','Integer', desc="Minimum size of a helix in a bundle"),
 	),
 
 	###############################################################################

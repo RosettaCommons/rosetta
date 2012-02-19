@@ -1,0 +1,20 @@
+//
+//  ThreeHelixBundleFinder.cc
+//  Rosetta
+//
+//  Created by tim on 1/23/12.
+//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//
+
+#include <devel/init.hh>
+#include <devel/helixAssembly/ThreeHelixBundleFinderMover.hh>
+
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
+
+int
+main( int argc, char * argv [] )
+{
+    devel::init(argc, argv);
+    protocols::jd2::JobDistributor::get_instance()->go( new ThreeHelixBundleFinderMover() );
+}
