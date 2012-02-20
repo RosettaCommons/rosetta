@@ -465,7 +465,8 @@ ReportToDB::write_features_reporters_table(
 	sql = "INSERT OR IGNORE INTO features_reporters VALUES (?);";
 	stmt = safely_prepare_statement(sql, db_session);
 	foreach(FeaturesReporterOP const & reporter, features_reporters_){
-		stmt.bind(1, reporter->type_name());
+		string const reporter_name(reporter->type_name());
+		stmt.bind(1, reporter_name);
 		safely_write_to_database(stmt);
 	}
 

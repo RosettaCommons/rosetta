@@ -275,6 +275,8 @@ AtomTypeDatabaseIO::write_atom_type_extra_parameters_table(
 	sessionOP db_session
 ) const {
 
+	string const atom_type_set_name = atom_type_set.name();
+
 	string stmt_string = "INSERT INTO atom_type_extra_parameters VALUES (?,?,?,?);";
 	statement stmt(safely_prepare_statement(stmt_string, db_session));
 
@@ -288,7 +290,7 @@ AtomTypeDatabaseIO::write_atom_type_extra_parameters_table(
 
 		string const extra_parameter_name(extra_parameter_index_iter->first);
 		Size const extra_parameter_index(extra_parameter_index_iter->second);
-		stmt.bind(1, atom_type_set.name());
+		stmt.bind(1, atom_type_set_name);
 		stmt.bind(2, atom_type.name());
 		stmt.bind(3, extra_parameter_name);
 		stmt.bind(4, atom_type.extra_parameter(extra_parameter_index));
