@@ -82,6 +82,7 @@ namespace rna {
 		verbose_( true ), 		
 		FARFAR_start_pdb_(""),
 		rebuild_bulge_mode_(false), //Nov 26, 2010
+		parin_favorite_output_(true),
 		output_pdb_(false) //Sept 24, 2011
   {
 	}
@@ -404,6 +405,9 @@ namespace rna {
 				remove_variant_type_from_pose_residue( start_pose, "BULGE", n );	
 				remove_variant_type_from_pose_residue( start_pose, "VIRTUAL_RIBOSE", n );	
 				remove_variant_type_from_pose_residue( start_pose, "PROTONATED_H1_ADENOSINE", n );	
+				remove_variant_type_from_pose_residue( start_pose, "5PRIME_END_PHOSPHATE", n );	
+				remove_variant_type_from_pose_residue( start_pose, "5PRIME_END_OH", n );	
+				remove_variant_type_from_pose_residue( start_pose, "3PRIME_END_OH", n );	
 				/*
 				//NOTES: June 16, 2011
 				//Should LOWER_TERMINUS and UPPER_TERMINUS be removed as well? LOWER_TERMINUS does determine the position of  O1P and O2P?
@@ -412,7 +416,10 @@ namespace rna {
 				*/
 			}
 
-			if(output_pdb_) start_pose.dump_pdb( "import_" + string_of(i) + ".pdb" );
+			if(output_pdb_) {
+				start_pose.dump_pdb( "import_" + string_of(i) + ".pdb" );
+				start_pose_with_variant.dump_pdb( "import_orig_" + string_of(i) + ".pdb" );
+			}
 
 			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//Now actually copy into the pose.
@@ -452,6 +459,18 @@ namespace rna {
 	
 					add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", full_to_sub[ input_res[n] ] );
 
+				}
+
+				if(start_pose_with_variant.residue(n).has_variant_type("5PRIME_END_OH")){
+					add_variant_type_to_pose_residue( pose, "5PRIME_END_OH", full_to_sub[ input_res[n] ] );
+				}
+
+				if(start_pose_with_variant.residue(n).has_variant_type("3PRIME_END_OH")){
+					add_variant_type_to_pose_residue( pose, "3PRIME_END_OH", full_to_sub[ input_res[n] ] );
+				}
+
+				if(start_pose_with_variant.residue(n).has_variant_type("5PRIME_END_PHOSPHATE")){
+					add_variant_type_to_pose_residue( pose, "5PRIME_END_PHOSPHATE", full_to_sub[ input_res[n] ] );
 				}
 
 				if( i > silent_files_in_.size() ) { // not a silent file, read in from pdb text file. May 04, 2011
@@ -538,7 +557,10 @@ namespace rna {
 			Output_seq_num_list("common_res_list= ", common_res_list, 30);
 		}
 
-		if(common_res_list.size()==0) return; //No common/background residues...
+		if(common_res_list.size()==0) {
+			if(verbose_) Output_title_text("Exit StepWiseRNA_PoseSetup::correctly_copy_HO2star_position");
+			return; //No common/background residues...
+		}
 
 		for(Size n=1; n<=common_res_list.size(); n++){
 			Size const full_seq_num=common_res_list[n];

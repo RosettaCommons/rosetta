@@ -82,6 +82,9 @@ sources = {
 		"StepWiseRNA_Util",
 		"StepWiseRNA_VDW_Bin_Screener",
 		"StepWiseRNA_VirtualRiboseSampler", 
+		"RNA_AnalyticLoopCloser",
+		"RNA_LoopCloseSampler",
+		"StepWiseRNA_AnalyticalLoopCloseSampler",
 	],
 
 

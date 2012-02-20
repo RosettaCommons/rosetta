@@ -445,7 +445,7 @@ sources = {
 		"Bridge",
 		"BuildInstruction",
 		"BuildManager",
-		"ConnectRight",
+		"`ConnectRight",
 		"GrowLeft",
 		"GrowRight",
 		"RelativeConnectRight",
@@ -1191,6 +1191,9 @@ sources = {
 	],
 
 	"protocols/swa/rna" : [
+		"RNA_AnalyticLoopCloser",
+		"RNA_LoopCloseSampler",
+		"StepWiseRNA_AnalyticalLoopCloseSampler",
 		"StepWiseRNA_BaseCentroidScreener",
 		"StepWiseRNA_Clusterer",
 		"StepWiseRNA_JobParameters",

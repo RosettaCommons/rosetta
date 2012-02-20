@@ -114,6 +114,7 @@ namespace rna {
 		delta_fade_( 10.0 ),
 		alpha_fade_( 10.0 ),
 		skip_chainbreak_torsions_( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_skip_chainbreak ]() ),
+		use_new_potential_( false ),
 		verbose_( false )
 	{
 		if( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ].user() ){
@@ -122,8 +123,14 @@ namespace rna {
 
 			std::cout << "-----------------------------------------------------------------------------------" << std::endl;
 			std::cout << "USER INPUTTED path_to_torsion_files_=" <<  basic::database::full_name(path_to_torsion_files_) << std::endl;
-			std::cout << "-----------------------------------------------------------------------------------" << std::endl;
 
+			
+			//Turn on the new torsional potential if the folder name ends wirh "new"
+			if ( path_to_torsion_files_ .compare(path_to_torsion_files_.size() - 3, 3, "new") == 0 ) {
+				use_new_potential_ = true;
+				std::cout << "Foler name ends with 'new'... Turn on the new torsional potential" << std::endl;
+			}
+			std::cout << "-----------------------------------------------------------------------------------" << std::endl;
 		}else{
 			//path_to_torsion_files_( "scoring/rna/torsion_potentials/rd2008/" ),
 			//path_to_torsion_files_( "scoring/rna/torsion_potentials/FINAL_Mar_24_2010_new_delta_zeta_chi/" ),
@@ -188,12 +195,22 @@ namespace rna {
 		if(verbose_)  std::cout << "Chi torsion" << std::endl;
 
 		if(Should_score_torsion(pose, TorsionID( rsd.seqpos(), id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
-			if ( rsd.aa() == core::chemical::na_rgu ) {
-				score += ( fade_delta_north_->func( delta ) * chi_north_potential_guanosine_->func( chi ) +
-								 fade_delta_south_->func( delta ) * chi_south_potential_guanosine_->func( chi ) ); //chi
-			}else{
-				score += ( fade_delta_north_->func( delta ) * chi_north_potential_others_->func( chi ) +
-								 fade_delta_south_->func( delta ) * chi_south_potential_others_->func( chi ) ); //chi
+			if (use_new_potential_) {
+				if ( rsd.aa() == core::chemical::na_rgu || rsd.aa() == core::chemical::na_rad  ) {
+					score += ( fade_delta_north_->func( delta ) * chi_purine_north_potential_->func( chi ) +
+									 fade_delta_south_->func( delta ) * chi_purine_south_potential_->func( chi ) ); //chi
+				}else{
+					score += ( fade_delta_north_->func( delta ) * chi_pyrimidine_north_potential_->func( chi ) +
+									 fade_delta_south_->func( delta ) * chi_pyrimidine_south_potential_->func( chi ) ); //chi
+				}
+			} else {
+				if ( rsd.aa() == core::chemical::na_rgu ) {
+					score += ( fade_delta_north_->func( delta ) * chi_north_potential_guanosine_->func( chi ) +
+									 fade_delta_south_->func( delta ) * chi_south_potential_guanosine_->func( chi ) ); //chi
+				}else{
+					score += ( fade_delta_north_->func( delta ) * chi_north_potential_others_->func( chi ) +
+									 fade_delta_south_->func( delta ) * chi_south_potential_others_->func( chi ) ); //chi
+				}
 			}
 
 		}
@@ -389,12 +406,22 @@ namespace rna {
 														 fade_delta_south_->dfunc( delta ) * delta_south_potential_->func( delta ) +
 														 fade_delta_south_->func( delta )  * delta_south_potential_->dfunc( delta ) );
 
-				if ( rsd.aa() == core::chemical::na_rgu ) {
-					dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_north_potential_guanosine_->func( chi ) +
-													 fade_delta_south_->dfunc( delta ) * chi_south_potential_guanosine_->func( chi ) );
-				}else{
-					dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_north_potential_others_->func( chi ) +
-													 fade_delta_south_->dfunc( delta ) * chi_south_potential_others_->func( chi ) );
+				if (use_new_potential_) {
+					if (  rsd.aa() == core::chemical::na_rgu || rsd.aa() == core::chemical::na_rad ) {
+						dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_purine_north_potential_->func( chi ) +
+														 fade_delta_south_->dfunc( delta ) * chi_purine_south_potential_->func( chi ) );
+					}else{
+						dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_pyrimidine_north_potential_->func( chi ) +
+														 fade_delta_south_->dfunc( delta ) * chi_pyrimidine_south_potential_->func( chi ) );
+					}
+				} else {
+					if ( rsd.aa() == core::chemical::na_rgu ) {
+						dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_north_potential_guanosine_->func( chi ) +
+														 fade_delta_south_->dfunc( delta ) * chi_south_potential_guanosine_->func( chi ) );
+					}else{
+						dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_north_potential_others_->func( chi ) +
+														 fade_delta_south_->dfunc( delta ) * chi_south_potential_others_->func( chi ) );
+					}
 				}
 
 				dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * nu2_north_potential_->func( nu2 ) +
@@ -436,19 +463,29 @@ namespace rna {
 			/////////////////////////////////////CHI///////////////////////////////////////////////////
 			if ( get_f1_f2( id::TorsionID( seqpos, id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ),	pose, id, f1, f2 ) ){
 
-				if ( rsd.aa() == core::chemical::na_rgu ) {
-					Real const dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_north_potential_guanosine_->dfunc( chi ) +
-																		 fade_delta_south_->func( delta ) * chi_south_potential_guanosine_->dfunc( chi ) );
+				Real dE_dtorsion;
 
-					F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
-					F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
-				}else{
-					Real const dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_north_potential_others_->dfunc( chi ) +
-																		 fade_delta_south_->func( delta ) * chi_south_potential_others_->dfunc( chi ) );
+				if (use_new_potential_) {
+					if ( rsd.aa() == core::chemical::na_rgu || rsd.aa() == core::chemical::na_rad ) {
+						dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_purine_north_potential_->dfunc( chi ) +
+														fade_delta_south_->func( delta ) * chi_purine_south_potential_->dfunc( chi ) );
+					} else {
+						dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_pyrimidine_north_potential_->dfunc( chi ) +
+														fade_delta_south_->func( delta ) * chi_pyrimidine_south_potential_->dfunc( chi ) );
+					}
+				} else {
+					if ( rsd.aa() == core::chemical::na_rgu ) {
+						dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_north_potential_guanosine_->dfunc( chi ) +
+														fade_delta_south_->func( delta ) * chi_south_potential_guanosine_->dfunc( chi ) );
 
-					F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
-					F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
+					} else {
+						dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_north_potential_others_->dfunc( chi ) +
+														fade_delta_south_->func( delta ) * chi_south_potential_others_->dfunc( chi ) );				
+					}
 				}
+
+				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
+				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
 			}
 
 			/////////////////////////////////////NU2//////////////////////////////////////////////////////
@@ -505,14 +542,22 @@ namespace rna {
 		initialize_potential_from_file( zeta_alpha_sc_minus_potential_, "zeta_alpha_sc_minus_potential.txt" );
 		initialize_potential_from_file( zeta_alpha_sc_plus_potential_, "zeta_alpha_sc_plus_potential.txt" );
 		initialize_potential_from_file( zeta_alpha_ap_potential_, "zeta_alpha_ap_potential.txt" );
-		initialize_potential_from_file( chi_north_potential_guanosine_, "chi_north_potential_guanosine.txt" );
-		initialize_potential_from_file( chi_south_potential_guanosine_, "chi_south_potential_guanosine.txt" );
-		initialize_potential_from_file( chi_north_potential_others_, "chi_north_potential_others.txt" );
-		initialize_potential_from_file( chi_south_potential_others_, "chi_south_potential_others.txt" );
 		initialize_potential_from_file( nu2_north_potential_, "nu2_north_potential.txt" );
 		initialize_potential_from_file( nu2_south_potential_, "nu2_south_potential.txt" );
 		initialize_potential_from_file( nu1_north_potential_, "nu1_north_potential.txt" );
 		initialize_potential_from_file( nu1_south_potential_, "nu1_south_potential.txt" );
+
+		if (use_new_potential_) {
+			initialize_potential_from_file( chi_purine_north_potential_, "chi_purine_north_potential.txt" );
+			initialize_potential_from_file( chi_purine_south_potential_, "chi_purine_south_potential.txt" );
+			initialize_potential_from_file( chi_pyrimidine_north_potential_, "chi_pyrimidine_north_potential.txt" );
+			initialize_potential_from_file( chi_pyrimidine_south_potential_, "chi_pyrimidine_south_potential.txt" );
+		} else {
+			initialize_potential_from_file( chi_north_potential_guanosine_, "chi_north_potential_guanosine.txt" );
+			initialize_potential_from_file( chi_south_potential_guanosine_, "chi_south_potential_guanosine.txt" );
+			initialize_potential_from_file( chi_north_potential_others_, "chi_north_potential_others.txt" );
+			initialize_potential_from_file( chi_south_potential_others_, "chi_south_potential_others.txt" );
+		}
 
 	}
 

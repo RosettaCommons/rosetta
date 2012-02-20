@@ -2314,16 +2314,20 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		using namespace core::id;
 
-		Size const three_prime_chainbreak=five_prime_chainbreak+1;
-
 		conformation::Residue const & suite_lower_res=pose.residue(five_prime_chainbreak);
-		conformation::Residue const & suite_upper_res=pose.residue(three_prime_chainbreak);	
-
 		std::cout << std::setw(5) << " ep= " << std::setw(15) << suite_lower_res.mainchain_torsion(5);
 		std::cout << std::setw(5) << " z= "  << std::setw(15) << suite_lower_res.mainchain_torsion(6);
-		std::cout << std::setw(5) << " a= "  << std::setw(15) << suite_upper_res.mainchain_torsion(1);
-		std::cout << std::setw(5) << " b= "  << std::setw(15) << suite_upper_res.mainchain_torsion(2);
-		std::cout << std::setw(5) << " g= "  << std::setw(15) << suite_upper_res.mainchain_torsion(3) << std::endl;  
+		
+		
+		Size const three_prime_chainbreak=five_prime_chainbreak+1;
+		if (three_prime_chainbreak <= pose.total_residue()) {
+			conformation::Residue const & suite_upper_res=pose.residue(three_prime_chainbreak);	
+			std::cout << std::setw(5) << " a= "  << std::setw(15) << suite_upper_res.mainchain_torsion(1);
+			std::cout << std::setw(5) << " b= "  << std::setw(15) << suite_upper_res.mainchain_torsion(2);
+			std::cout << std::setw(5) << " g= "  << std::setw(15) << suite_upper_res.mainchain_torsion(3);
+		}
+
+		std::cout << std::endl;  
 	
 	}
 	/////////////////////////////////////////////////////////////////////////////////////

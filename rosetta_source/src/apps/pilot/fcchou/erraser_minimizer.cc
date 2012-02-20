@@ -34,7 +34,6 @@
 #include <core/sequence/Sequence.hh>
 
 #include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -119,10 +118,8 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
-using io::pdb::dump_pdb;
 
 OPT_KEY ( String, force_field_file )
-OPT_KEY ( Real, edensity_weight )
 OPT_KEY ( Boolean, vary_geometry )
 OPT_KEY ( Boolean, fix_all_P )
 OPT_KEY ( IntegerVector, fixed_res )
@@ -593,10 +590,9 @@ pdb_minimizer() {
 	using namespace protocols::swa::rna;
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->
-	          residue_type_set ( RNA );
+	          residue_type_set ( "rna" );
 	bool vary_bond_geometry_ =  option[ vary_geometry ];
 	bool fix_all_P_ =  option[ fix_all_P ];
-	core::Real const edensity_weight_ = option[edensity_weight];
 	utility::vector1< core::Size > const fixed_res_list = option[ fixed_res ]();
 	utility::vector1< core::Size > const sample_res_list = option[ sample_res ]();
 	utility::vector1< core::Size > const cutpoint_list = option[cutpoint_open]();
@@ -604,20 +600,15 @@ pdb_minimizer() {
 	Pose pose;
 
 	if ( option[ in::file::native ].user() ) {
-		pose =  * ( new Pose );
 		import_pose::pose_from_pdb ( pose, *rsd_set, option[in::file::native]() );
 	}
 
 	std::string pdb_name = option[in::file::native]();
-	dump_pdb ( pose, pdb_name + "_start.pdb" );
+	pose.dump_pdb ( pdb_name + "_start.pdb" );
 	//Setup score function.
 	std::string const force_field_file_option = option[force_field_file];
 	core::scoring::ScoreFunctionOP scorefxn =
 	  ScoreFunctionFactory::create_score_function ( force_field_file_option );
-
-	if ( edensity_weight_ != 0 ) {
-		scorefxn->set_weight ( elec_dens_fast, edensity_weight_ );
-	}
 
 	//Setup fold tree using user input or using Rhiju's function
 	if ( cutpoint_list.size() == 0 ) {
@@ -659,10 +650,16 @@ pdb_minimizer() {
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol ( 0.00000001 );
 	bool const use_nblist ( true );
-	MinimizerOptions options_armijo ( "dfpmin_armijo_nonmonotone", dummy_tol, use_nblist, false,
-	                                  false );
-	options_armijo.nblist_auto_update ( true );
-	options_armijo.max_iter ( std::min( 3000, std::max( 600, int(nres * 8) ) ) );
+	MinimizerOptions min_options ( "dfpmin_armijo", dummy_tol, use_nblist, false,
+	                               false );
+	min_options.nblist_auto_update ( true );
+	min_options.max_iter ( std::min( 1500, std::max( 300, int(nres * 4) ) ) );
+
+	MinimizerOptions min_options1 ( "dfpmin", dummy_tol, use_nblist, false,
+	                               false );
+	min_options1.nblist_auto_update ( true );
+	min_options1.max_iter ( std::min( 1500, std::max( 300, int(nres * 4) ) ) );
+
 	//Set the MoveMap, avoiding moving the virtual residue
 	std::cout << "Setting up movemap ..." << std::endl;
 	kinematics::MoveMap mm;
@@ -739,7 +736,6 @@ pdb_minimizer() {
 		std::cout << "Setup vary_bond_geometry" << std::endl;
 		pose::Pose pose_reference;
 		create_pose_reference ( pose_full, pose_reference );
-		dump_pdb ( pose_reference, "ref_pose.pdb" );
 		vary_bond_geometry ( mm, pose, pose_reference, allow_insert );
 	}
 
@@ -768,11 +764,27 @@ pdb_minimizer() {
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 400, 400 );
 
 	//Start Minimizing the Full Structure
-	minimizer.run ( pose, mm, *scorefxn, options_armijo );
+	Pose start_pose = pose;
+	minimizer.run ( pose, mm, *scorefxn, min_options );
 
-	dump_pdb ( pose, pdb_name + "minimize.pdb" );
-	//Score the minimized pose
+	//Score and save the minimized pose
+
+	Real score = ( (*scorefxn) (pose) );
+	if (score > 9999) {
+		std::cout << "Score is very high: the minimization went wild!!!" << std::endl;
+		std::cout << "Use original dfpmin instead..." << std::endl;
+		Pose pose = start_pose;
+		minimizer.run ( pose, mm, *scorefxn, min_options1 );
+	}
+	minimizer.run ( pose, mm, *scorefxn, min_options1 );
+
 	scorefxn -> show ( std::cout, pose );
+	score = ( (*scorefxn) (pose) );
+	if (score > 9999) {
+		utility_exit_with_message( "The minimization still went wild!!!" );
+	}
+
+	pose.dump_pdb ( pdb_name + "minimize.pdb" );
 	std::cout << "Job completed sucessfully." << std::endl;
 }
 ///////////////////////////////////////////////////////////////
@@ -786,8 +798,7 @@ int
 main ( int argc, char * argv [] ) {
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
-	NEW_OPT ( force_field_file, "score_file", "elec_dens_rna" );
-	NEW_OPT ( edensity_weight, "weight of edensity", 0.0 );
+	NEW_OPT ( force_field_file, "score_file", "rna/rna_hires_elec_dens" );
 	NEW_OPT ( vary_geometry, "vary geometry", false );
 	NEW_OPT ( fix_all_P, "fix all phosphate", false );
 	NEW_OPT ( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );

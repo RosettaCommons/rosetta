@@ -119,7 +119,12 @@ private:
 	Real const delta_fade_;
 	Real const alpha_fade_;
 
-	core::scoring::constraints::FuncOP alpha_potential_, beta_potential_, gamma_potential_, delta_north_potential_, delta_south_potential_, epsilon_north_potential_, epsilon_south_potential_, zeta_alpha_sc_minus_potential_, zeta_alpha_sc_plus_potential_, zeta_alpha_ap_potential_, chi_north_potential_others_, chi_south_potential_others_, chi_north_potential_guanosine_, chi_south_potential_guanosine_, nu2_north_potential_, nu2_south_potential_, nu1_north_potential_, nu1_south_potential_;
+	core::scoring::constraints::FuncOP alpha_potential_, beta_potential_, gamma_potential_, delta_north_potential_,
+	delta_south_potential_, epsilon_north_potential_, epsilon_south_potential_, zeta_alpha_sc_minus_potential_,
+	zeta_alpha_sc_plus_potential_, zeta_alpha_ap_potential_, nu2_north_potential_, nu2_south_potential_, 
+	nu1_north_potential_, nu1_south_potential_, chi_north_potential_others_, chi_south_potential_others_, 
+	chi_north_potential_guanosine_, chi_south_potential_guanosine_, chi_purine_north_potential_, chi_purine_south_potential_,
+	chi_pyrimidine_north_potential_, chi_pyrimidine_south_potential_;
 
 	core::scoring::constraints::FuncOP fade_delta_north_, fade_delta_south_;
 	core::scoring::constraints::FuncOP fade_alpha_sc_minus_, fade_alpha_sc_plus_;
@@ -127,6 +132,7 @@ private:
 
 	bool const skip_chainbreak_torsions_;
 	bool const verbose_;
+	bool use_new_potential_;
 
 };
 
