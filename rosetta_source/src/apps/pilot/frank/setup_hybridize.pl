@@ -28,9 +28,8 @@ my $NATIVEDIR        = "native/";
 my $TEMPLATEDIR      = "templates/";
 my $PARTIALTHREADDIR = "partial_threads/";
 my $COORDCSTDIR      = "coordCsts_resOnly/";
-my $FRAG3FILE      = "fragments/%s_templatesvall.200.3mers";
-my $FRAG9FILE      = "fragments/%s_templatesvall.200.9mers";
-my $SSPREDFILE      = "fragments/t000_.psipred_ss2";
+my $FRAG3FILE      = "fragments/%s_templatesvall.25.3mers";
+my $FRAG9FILE      = "fragments/%s_templatesvall.25.9mers";
 
 my $PCORRFILENAMES  = "p_correct%d.txt";
 my $ALNFILENAMES  = "cluster%d.filt";
@@ -42,7 +41,7 @@ my $ALNTEMPLATEDIR  = "aligned_templates";
 #my $CFGFILENAMES  = "hybrid%d.config";
 my $XMLFILENAMES = "hybridize%d.xml";
 my $RUNFILENAMES = "run%d.sh";
-my $HYBRIDIZEOPTIONS = "batch=16 stage1_increase_cycles=1.0 stage2_increase_cycles=0.25 linmin_only=1";
+my $HYBRIDIZEOPTIONS = "batch=4 stage1_increase_cycles=1.0 stage2_increase_cycles=1.0 linmin_only=0";
 
 #####
 #####
@@ -68,6 +67,8 @@ my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for al
 # 	0 => 0.00418    # default
 # );
 my %template_probs =  (
+	101 =>0.1430503, 102 => 0.0770168, 103 => 0.0427618, 104 => 0.0249920, 105 => 0.0157738,
+	106 =>0.0109919, 107 => 0.0085113, 108 => 0.0072245, 109 => 0.0065569, 110 => 0.0062107,
 	201 =>0.1276504, 202 => 0.0535388, 203 => 0.0243316, 204 => 0.0128212, 205 => 0.0082849,
 	206 =>0.0064972, 207 => 0.0057927, 208 => 0.0055150, 209 => 0.0054056, 210 => 0.0053625,
 	301 =>0.1161114, 302 => 0.0838580, 303 => 0.0609236, 304 => 0.0446156, 305 => 0.0330195,
@@ -478,7 +479,7 @@ foreach my $prob (@clusterprobs) {
 	foreach my $member (@{ $cluster_members{ $prob } }) {
 		my $filename = $THREADED_MDLS[ $member ];
 		$filename =~ s/.*\///;
-		if ( $filename =~ /201/ || $filename =~ /301/ || $filename =~ /401/ ) {
+		if ( $filename =~ /101/ || $filename =~ /201/ || $filename =~ /301/ || $filename =~ /401/ ) {
 			$nclust = $counter;
 		}
 	}
@@ -763,7 +764,6 @@ foreach my $i (0..$nclust) {
 # 	printf FLAGS "-in::file::frag3 $dir/$FRAG3FILE\n", $dirtag;
 # 	printf FLAGS "-in::file::frag9 $dir/$FRAG9FILE\n", $dirtag;
 # 	printf FLAGS "-edensity::mapfile $dir/$MAPFILENAMES\n", $i;
-# 	print FLAGS "-in:file:psipred_ss2 $SSPREDFILE\n";
 # }
 
 exit 0;

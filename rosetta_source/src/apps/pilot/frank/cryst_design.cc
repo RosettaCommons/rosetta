@@ -375,10 +375,10 @@ public:
 		cen_vdw_filter_ = option[crystdes::vdw]();
 		sa_filter_1_    = option[crystdes::sa1]();
 		sa_filter_2_    = option[crystdes::sa2]();
-		sa_filter_3_    = option[crystdes::sa2]();
+		sa_filter_3_    = option[crystdes::sa3]();
 		sc_filter_1_    = option[crystdes::sc1]();
 		sc_filter_2_    = option[crystdes::sc2]();
-		sc_filter_3_    = option[crystdes::sc2]();
+		sc_filter_3_    = option[crystdes::sc3]();
 		ddg_filter_     = option[crystdes::ddg]();
 		air_filter_     = option[crystdes::air]();
 		
@@ -580,12 +580,20 @@ public:
 				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sa2 filter (" << sa2 << ")" << std::endl;
 				continue;
 			}
+			if (sa3 < sa_filter_3_) {
+				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sa3 filter (" << sa3 << ")" << std::endl;
+				continue;
+			}
 			if (sc1 < sc_filter_1_) {
 				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sc1 filter (" << sc1 << ")" << std::endl;
 				continue;
 			}
 			if (sc2 < sc_filter_2_) {
 				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sc2 filter (" << sc2 << ")" << std::endl;
+				continue;
+			}
+			if (sc3 < sc_filter_3_) {
+				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sc3 filter (" << sc3 << ")" << std::endl;
 				continue;
 			}
 			if (ddG > ddg_filter_) {
@@ -658,11 +666,11 @@ main( int argc, char * argv [] ) {
 	NEW_OPT(crystdes::rot_max, "rot_max", 7.5);
 	NEW_OPT(crystdes::trans_max, "trans_max", 1.5);
 	NEW_OPT(crystdes::vdw, "vdw", 1);
-	NEW_OPT(crystdes::sa1, "sa1", 250.0);
+	NEW_OPT(crystdes::sa1, "sa1", 150.0);
 	NEW_OPT(crystdes::sa2, "sa2", 150.0);
-	NEW_OPT(crystdes::sa2, "sa3", 0.0);
-	NEW_OPT(crystdes::sc1, "sc1", 0.6);
-	NEW_OPT(crystdes::sc2, "sc2", 0.55);
+	NEW_OPT(crystdes::sa3, "sa3", 0.0);
+	NEW_OPT(crystdes::sc1, "sc1", 0.5);
+	NEW_OPT(crystdes::sc2, "sc2", 0.5);
 	NEW_OPT(crystdes::sc3, "sc3", 0.0);
 	NEW_OPT(crystdes::ddg, "ddg", -10);
 	NEW_OPT(crystdes::air, "air", -1);
