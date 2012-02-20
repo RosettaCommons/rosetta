@@ -225,7 +225,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 		pose = pose_with_virtual_O2star_hydrogen;
 	}
 
-	Real base_rep_score ( -9999999999 ), base_atr_score ( -9999999999 );
+	Real base_rep_score ( -99999 ), base_atr_score ( -99999 );
 	get_base_atr_rep_score ( pose_with_virtual_O2star_hydrogen, base_atr_score, base_rep_score );
 	//////////////////////////////////////////Setup Atr_rep_screening/////////////////////////////////////////////////
 	pose::Pose screening_pose = pose_with_virtual_O2star_hydrogen; //Hard copy
