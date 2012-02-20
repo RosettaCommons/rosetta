@@ -104,7 +104,7 @@ DockingScoreFunction::operator()( pose::Pose & pose ) const
 
 	Real interaction_energy = (bound_energy - unbound_energy);
 
-	pose.energies().total_energies()[ total_score ] = interaction_energy += pose.energies().total_energies()[ atom_pair_constraint ]*cst_weight;
+	pose.energies().total_energies()[ total_score ] = interaction_energy + pose.energies().total_energies()[ atom_pair_constraint ]*cst_weight;
 	tr.Debug << "unbound_energy " << unbound_energy << " full_score " << bound_energy << " diff " << interaction_energy << std::endl;
 	pose::setPoseExtraScores( pose, "I_sc", interaction_energy );
 	return pose.energies().total_energies()[ total_score ];
