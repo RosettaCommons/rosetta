@@ -338,7 +338,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 			if ( flag ) {
 #ifdef USEMPI
 				int merrno = MPI_Recv( &buf, 6, MPI_INT, jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &status );
-				if ( merrno != MPI_SUCCESS ) tr.Error << "MPI_Recv error " << std::endl;
+				if ( merrno != MPI_SUCCESS ) tr.Error << "ERROR: MPI_Recv error " << std::endl;
 #endif
 			}	else { //nothing received
 				idle();
