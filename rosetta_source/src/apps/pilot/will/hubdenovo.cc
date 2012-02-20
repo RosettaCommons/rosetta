@@ -899,7 +899,6 @@ struct HubDenovo {
 		core::util::switch_to_residue_type_set(p,"centroid");
 
 		return p;
-
 	}
 
 	bool cen_fold(Pose & p) {		
@@ -1021,8 +1020,8 @@ struct HubDenovo {
 
 			{
 				core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
-			  ss_out->fill_struct(tmp,fn);
-			  sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]()+"_cen.sc" );
+				ss_out->fill_struct(tmp,fn);
+				sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]()+"_cen.sc" );
 			}
 
 			if(tmp.energies().total_energy() > option[OptionKeys::hub_cen_energy_cut]() ) {
@@ -1075,7 +1074,6 @@ struct HubDenovo {
 		  sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
 
 		}
-
 	}
 
 };

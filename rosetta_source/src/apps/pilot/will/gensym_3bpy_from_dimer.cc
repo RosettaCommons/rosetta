@@ -31,10 +31,15 @@
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
+#include <core/pack/optimizeH.hh>
+#include <core/pack/packer_neighbors.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
@@ -60,11 +65,14 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/filters/Filter.hh>
+#include <protocols/filters/BasicFilters.hh>
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <protocols/simple_moves/GreedyOptMutationMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/toolbox/task_operations/JointSequenceOperation.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -281,7 +289,6 @@ void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
 
 	pose.remove_constraints( res_cst );
 	sf->set_weight(core::scoring::res_type_constraint,worig);
-
 }
 
 void refine(Pose & pose, Size ibpy, Size dsub) {
@@ -579,6 +586,8 @@ int neighbor_count(Pose const &pose, int ires, double distance_threshold=10.0) {
 	return resi_neighbors;
 }
 
+
+
 #define ATET 54.735610317245360079 // asin(sr2/sr3)
 #define AOCT 35.264389682754668343 // asin(sr1/sr3)
 #define AICS 20.89774264557		  // asin(G/2/sr3)
@@ -683,8 +692,15 @@ void run() {
 					Real const dang = dihedral_degrees( c3f1,CG,CB,base.residue(ibpy).xyz(iZN) );
 					base.set_chi(2,ibpy, base.chi(2,ibpy) + dang );
 
+					base.replace_residue(ibpy,tyr.residue(1),true);
+					base.set_chi(1,ibpy, bch1 );
+					base.set_chi(2,ibpy, base.chi(2,ibpy) + dang );
 					Real bpy_dun = dunlib1->rotamer_energy( base.residue(ibpy), scratch );
+					base.replace_residue(ibpy,bpy.residue(1),true);
+					base.set_chi(1,ibpy, bch1 );
+					base.set_chi(2,ibpy, base.chi(2,ibpy) + dang );
 					if(bpy_dun > option[bpytoi::max_bpy_dun]()) continue;
+
 
 					int bpy_mono_bb_atom_nbrs = 0;
 					int bpy_tri_bb_atom_nbrs = 0;
@@ -835,27 +851,28 @@ void run() {
 						}
 					}
 
+					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
 
 					protocols::simple_moves::GreedyOptMutationMover gomm;
-					core::pack::task::TaskFactoryOP task_factory;
-					protocols::filters::FilterOP filter;
-
+					using namespace core::pack::task;
+					using namespace core::pack::task::operation;
+					TaskFactoryOP task_factory( new TaskFactory );
+					protocols::toolbox::task_operations::JointSequenceOperationOP revert = new protocols::toolbox::task_operations::JointSequenceOperation;
+					revert->add_pose(psym);
+					revert->add_pose(base);
+				    task_factory->push_back(revert);
+					protocols::filters::FilterOP filter = new protocols::simple_filters::ScoreTypeFilter(sfsym,core::scoring::total_score,sfsym->score(psym));
 					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-					movemap->set_jump(true);
-					movemap->set_bb(true);
-					movemap->set_chi(true);
+					movemap->set_jump(true); movemap->set_bb(true); movemap->set_chi(true);
 					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
-
-					gomm.task_factory(  task_factory );
+					gomm.task_factory( task_factory );
 					gomm.scorefxn( sfsym );
 					gomm.filter( filter );
 					gomm.relax_mover( relax_mover );
+					gomm.apply(psym);
 
-
-					// if( int_area < 200 || sc < 0.6 ) continue;
-					//
 					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
-					//
+
 					// repack(psym,ibpy,dimersub);
 					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_RPK.pdb");
 					// Real s0 = sfsym->score(psym);
@@ -939,7 +956,7 @@ void run() {
 	*/
 }
 
-int main (int argc, char *argv[]) {
+int main(int argc, char **argv){
 	register_options();
 	devel::init(argc,argv);
 	run();
