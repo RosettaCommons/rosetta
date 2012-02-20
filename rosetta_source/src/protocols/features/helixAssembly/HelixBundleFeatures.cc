@@ -618,7 +618,7 @@ HelixBundleFeatures::report_features(
                                      
                     string bundle_insert =  "INSERT INTO helix_bundles VALUES (?,?);";
                     statement bundle_insert_stmt(basic::database::safely_prepare_statement(bundle_insert,db_session));
-                    bundle_insert_stmt.bind(1,NULL);//auto-increment
+                    bundle_insert_stmt.bind_null(1);//auto-increment
                     bundle_insert_stmt.bind(2,struct_id);
                     basic::database::safely_write_to_database(bundle_insert_stmt);
                     
@@ -626,26 +626,24 @@ HelixBundleFeatures::report_features(
                     core::Size bundle_id(bundle_insert_stmt.last_insert_id());
                                         
                     string helix_insert =  "INSERT INTO bundle_helices VALUES (?,?,?,?);";
-                    statement helix_1_insert_stmt(basic::database::safely_prepare_statement(helix_insert,db_session));
-                    helix_1_insert_stmt.bind(1,NULL);
-                    helix_1_insert_stmt.bind(2,bundle_id);
-                    helix_1_insert_stmt.bind(3,helix_i.get_start());
-                    helix_1_insert_stmt.bind(4,helix_i.get_end());
-                    basic::database::safely_write_to_database(helix_1_insert_stmt); 
+                    statement helix_insert_stmt(basic::database::safely_prepare_statement(helix_insert,db_session));
+                    helix_insert_stmt.bind_null(1);
+                    helix_insert_stmt.bind(2,bundle_id);
+                    helix_insert_stmt.bind(3,helix_i.get_start());
+                    helix_insert_stmt.bind(4,helix_i.get_end());
+                    basic::database::safely_write_to_database(helix_insert_stmt); 
                     
-                    statement helix_2_insert_stmt(basic::database::safely_prepare_statement(helix_insert,db_session));
-                    helix_2_insert_stmt.bind(1,NULL);
-                    helix_2_insert_stmt.bind(2,bundle_id);
-                    helix_2_insert_stmt.bind(3,helix_j.get_start());
-                    helix_2_insert_stmt.bind(4,helix_j.get_end());
-                    basic::database::safely_write_to_database(helix_2_insert_stmt);
+                    helix_insert_stmt.bind_null(1);
+                    helix_insert_stmt.bind(2,bundle_id);
+                    helix_insert_stmt.bind(3,helix_j.get_start());
+                    helix_insert_stmt.bind(4,helix_j.get_end());
+                    basic::database::safely_write_to_database(helix_insert_stmt);
 
-                    statement helix_3_insert_stmt(basic::database::safely_prepare_statement(helix_insert,db_session));
-                    helix_3_insert_stmt.bind(1,NULL);
-                    helix_3_insert_stmt.bind(2,bundle_id);
-                    helix_3_insert_stmt.bind(3,helix_k.get_start());
-                    helix_3_insert_stmt.bind(4,helix_k.get_end());
-                    basic::database::safely_write_to_database(helix_3_insert_stmt);
+                    helix_insert_stmt.bind_null(1);
+                    helix_insert_stmt.bind(2,bundle_id);
+                    helix_insert_stmt.bind(3,helix_k.get_start());
+                    helix_insert_stmt.bind(4,helix_k.get_end());
+                    basic::database::safely_write_to_database(helix_insert_stmt);
                 }
             }
         }

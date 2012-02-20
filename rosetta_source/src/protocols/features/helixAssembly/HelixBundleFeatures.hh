@@ -67,8 +67,8 @@ public:
 
 private:
     
-    core::Size helix_cap_dist_cutoff_;
-    core::Size helix_contact_dist_cutoff_;
+    core::Real helix_cap_dist_cutoff_;
+    core::Real helix_contact_dist_cutoff_;
     core::Size min_helix_size_;
     
 };
