@@ -98,9 +98,6 @@ option_list <- c(option_list, list(
 
 opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TRUE)
 
-#Setup output directory
-setup_output_directory(opt$options$output_dir)
-iscript_setup_output_directory(opt$options$output_dir)
 
 #Setup analysis manager
 analysis_manager_db_path <- paste(
@@ -181,7 +178,7 @@ cat("\n")
 #Validate ouput_dir
 if(!file.exists(opt$options$output_dir)){
 	print(paste("Creating output directory: '",opt$options$output_dir,"'...",sep=""))
-	dir.create(opt$options$output_dir)
+	dir.create(opt$options$output_dir, recursive=TRUE)
 	if(!file.exists(opt$options$output_dir)){
 		print("ERROR: Unable to create output directory.")
 		stop(1)

@@ -50,11 +50,17 @@ iscript_base_dir <- function(base_dir){
 	cat("base_dir <- \"", base_dir , "\"\n", file=iscript_fname, sep="", append=T)
 }
 
-iscript_setup_output_directory <- function(build_dir){
-	cat("if(!file.exists(", build_dir, "))){
-	dir.create(", build_dir, ", recursive=TRUE)
-}", file=iscript_fname, sep="", append=TRUE)
+iscript_output_dir <- function(output_dir){
+  cat("#directory where the output should be generated\n",
+      file=iscript_fname, append=TRUE)
+	cat("if(!file.exists(\"", output_dir, "\")){
+	dir.create(\"", output_dir, "\", recursive=TRUE)
+}\n", file=iscript_fname, sep="", append=TRUE)
+  cat("output_dir <- \"", output_dir, "\"\n",
+      file=iscript_fname, sep="", append=TRUE)
+  cat("\n", file=iscript_fname, append=TRUE)
 }
+
 
 iscript_includes <- function(includes){
   for( inc in includes){
@@ -75,14 +81,6 @@ iscript_sample_sources <- function(sample_sources){
       file=iscript_fname, append=TRUE)
   cat("sample_sources <- get_sample_sources(c(
 	\"", paste(sample_sources$fname, collapse="\",\n	\""), "\"))\n",
-      file=iscript_fname, sep="", append=TRUE)
-  cat("\n", file=iscript_fname, append=TRUE)
-}
-
-iscript_output_dir <- function(output_dir){
-  cat("#directory where the output should be generated\n",
-      file=iscript_fname, append=TRUE)
-  cat("output_dir <- \"", output_dir, "\"\n",
       file=iscript_fname, sep="", append=TRUE)
   cat("\n", file=iscript_fname, append=TRUE)
 }
@@ -125,14 +123,18 @@ iscript_run_feature_analyses <- function(){
 			file=iscript_fname, append=TRUE)
 	cat("for(features_analysis in feature_analyses){
 
+	cat(paste(\"Features Analysis: \", features_analysis@id, \"\\n\", sep=\"\"))
+
+
 	# In order to assist in running the script interactively, rather
 	# than just running it, setup the input parameters in the current
 	# evironment and then evaluate the body of the function in the
-	# current frame as well..
+	# current frame as well.
 
 	self <- features_analysis
 	eval(body(features_analysis@run))
 
+	cat(\"\\n\")
 }\n\n",
 			file=iscript_fname, append=TRUE)
 }

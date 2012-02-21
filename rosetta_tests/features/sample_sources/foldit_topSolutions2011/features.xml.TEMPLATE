@@ -14,6 +14,7 @@
 			<feature name=RadiusOfGyrationFeatures/>
 			<feature name=ResidueTypesFeatures/>
 			<feature name=ResidueFeatures/>
+			<feature name=PdbDataFeatures/>
 			<feature name=ResidueScoresFeatures scorefxn=s/>
 			<feature name=PairFeatures/>
 			<feature name=ResidueBurialFeatures/>

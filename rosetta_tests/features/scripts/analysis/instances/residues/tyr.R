@@ -25,7 +25,7 @@ SELECT DISTINCT
 	'' AS atom
 FROM
 	structures AS struct,
-	residues AS res, 
+	residues AS res,
 	residue_pdb_confidence AS res_conf
 WHERE
 	res.struct_id = struct.struct_id AND
@@ -38,7 +38,10 @@ LIMIT 15;"
 
 f <- query_sample_sources(sample_sources, sele)
 
-print(summary(f))
+if(nrow(f) == 0){
+	cat("WARNING: Query returned no rows. Skipping rest of features analysis.\n")
+	return()
+}
 
 instances_id <- "residues_tyr"
 prepare_feature_instances(instances_id, sample_sources, f)

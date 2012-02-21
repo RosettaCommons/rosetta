@@ -7,8 +7,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
-
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_chem_type_with_rosetta_model",
@@ -17,6 +15,10 @@ author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self){
+
+source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
+source("scripts/methods/polynomial_methods.R")
+
 
 sele <-"
 SELECT
@@ -36,7 +38,7 @@ sele <-"
 SELECT DISTINCT
 	ev.don_chem_type,
 	ev.acc_chem_type,
-	ev.separation,
+	ev.separation AS seq_sep,
 	p.dimension,
 	p.xmin, p.xmax,
 	p.degree,
@@ -47,15 +49,15 @@ FROM
 WHERE
 	ev.separation = 'seq_sep_other' AND
 	ev.database_tag = p.database_tag AND ev.AHdist = p.name;"
-polynomials <- query_sample_sources(sample_sources[2,], sele)
+polynomials <- query_sample_sources(sample_sources, sele)
 
 
-xmin <- min(f$AHdist)
-xmax <- max(f$AHdist)
+xmin <- min(f$AHdist, polynomials$xmin)
+xmax <- max(f$AHdist, polynomials$xmax)
 
 dens <- estimate_density_1d(
 	f, c("sample_source", "acc_chem_type", "don_chem_type"),
-	"AHdist", weight_fun = radial_3d_normalization, adjust=.6)
+	"AHdist", weight_fun = radial_3d_normalization)
 
 
 dens$y <- -log(dens$y)*.35
@@ -72,15 +74,14 @@ dens.model <- ddply(dens.model,
   sample_source <- as.character(df$sample_source[1])
   acc_chem_type <- as.character(df$acc_chem_type[1])
   don_chem_type <- as.character(df$don_chem_type[1])
-  separation <- "seq_sep_other"
-  dimension <- "hbgd_AHdist"
 
-  poly <- get_1d_polynomial_from_types(
-    polynomials,
-    sample_source,
-    acc_chem_type, don_chem_type, separation, dimension)
+  poly <- get_1d_polynomial(
+    polynomials, don_chem_type, acc_chem_type)
+
   x <- seq(xmin, xmax, length.out=100)
-  data.frame(x=x, y=aaply(x, 1, as.function(poly)), sample_source=factor("Rosetta Model"))
+  z <- data.frame(x=x, y=predict(poly$poly, x), sample_source=factor("Rosetta Model"))
+	z$y <- ifelse(z$x >= poly$xmin & z$x <= poly$xmax, z$y, NA)
+	z
 })
 
 dens.model$counts <- NA
@@ -101,9 +102,7 @@ dens$acc_chem_type_name <- factor(dens$acc_chem_type,
 	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
-dens$sample_source <- factor(dens$sample_source,
-	levels = levels(dens$sample_source),
-	labels = c("top8000 (native)", "Rosetta (simulated)", "AHdist dimension of Rosetta HBond module"))
+dens <- dens[!is.na(dens$acc_chem_type_name) & !is.na(dens$don_chem_type_name),]
 
 plot_id <- "hbond_AHdist_chem_type_with_parameters"
 p <- ggplot(data=dens) + theme_bw() +
@@ -111,8 +110,8 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
 	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance in density estimation") +
-	scale_y_continuous("Energy (arbitrary units)", limits=c(-.7,.2), breaks=c(-.5,-.25,0)) +
-	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
+	scale_y_continuous("Energy (arbitrary units)", limits=c(-.6,1.1), breaks=c(-.5,0, .5)) +
+	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(.5,3), breaks=c(1, 1.5, 2, 2.5))
 
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")

@@ -44,6 +44,10 @@ ORDER BY RANDOM()
 LIMIT 30;"
 f <- query_sample_sources(sample_sources, sele)
 
+if(nrow(f) == 0){
+	cat("WARNING: Query returned no rows. Skipping rest of features analysis.\n")
+	return()
+}
 
 f <- melt(f,
 	id.vars=c("sample_source", "tag", "id", "chain", "resNum"),

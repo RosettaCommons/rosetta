@@ -180,6 +180,9 @@ query_sample_sources <- function(
 		cat(as.character(timing[3]),"s\n")
 		df
 	})
+	if(nrow(features)==0){
+		cat("WARNING: Query returned no rows.\n")
+	}
 	for(col in names(features)){
 		if(is.character(features[,col])){
 			features[,col] <- factor(features[,col])

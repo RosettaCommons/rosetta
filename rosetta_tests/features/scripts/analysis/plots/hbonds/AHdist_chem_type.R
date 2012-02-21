@@ -49,6 +49,8 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
+f <- na.omit(f, method="r")
+
 dens <- estimate_density_1d(
 	f, c("sample_source", "acc_chem_type", "don_chem_type"),
 	"AHdist", weight_fun = radial_3d_normalization)
@@ -85,8 +87,8 @@ p <- ggplot(data=dens) + theme_bw() +
 #	geom_indicator(data=z, aes(indicator=round(statistic,2), colour=new_sample_source), xpos="left") +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance") +
-	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +
-	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
+	scale_y_continuous("FeatureDensity", limits=c(0,7.5), breaks=c(1,3,5,7)) +
+	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.5))
 
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
@@ -96,6 +98,3 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 })) # end FeaturesAnalysis
-
-
-python merge_databases.py features_top8000_relax_r46954_120118.db3 features_top8000_relax_r46954_120118.db3_*

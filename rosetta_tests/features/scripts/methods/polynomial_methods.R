@@ -37,9 +37,10 @@ get_1d_polynomial <- function(polynomials,
   if(is.null(acc_chem_type)) acc_chem_type <- "hbacc_NONE"
   if(is.null(seq_sep)) seq_sep <- "seq_sep_other"
   
-  df <- polynomials[polynomials$don_chem_type==don_chem_type &
-                    polynomials$acc_chem_type==acc_chem_type &
-                    polynomials$seq_sep==seq_sep,]
+  df <- polynomials[
+	as.character(polynomials$don_chem_type)==as.character(don_chem_type) &
+        as.character(polynomials$acc_chem_type)==as.character(acc_chem_type) &
+	as.character(polynomials$seq_sep)==as.character(seq_sep),]
 
   if (nrow(df) !=1){
     print(paste("Polynomial for (",
@@ -63,7 +64,7 @@ get_1d_polynomial <- function(polynomials,
          p <- df[1,c("c_i","c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")],
          p <- df[1,c("c_j","c_i","c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")],
          p <- df[1,c("c_k","c_j","c_i","c_h","c_g","c_f","c_e","c_d","c_c","c_b","c_a")])
-  model <- list(poly=polynomial(p), name=df$name)
+  model <- list(poly=polynomial(p), xmin=df$xmin, xmax=df$xmax, name=df$name)
   #print(paste("Polynomial ",model$name,": ", paste(p,sep=","), sep=""))
   model
 }

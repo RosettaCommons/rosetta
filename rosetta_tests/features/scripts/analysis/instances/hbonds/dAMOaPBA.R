@@ -44,6 +44,13 @@ ORDER BY RANDOM()
 LIMIT 15;"
 
 f <- query_sample_sources(sample_sources, sele)
+
+if(nrow(f) == 0){
+	cat("WARNING: Query returned no rows. Skipping rest of features analysis.\n")
+	return()
+}
+
+
 ss_ids <- as.character(unique(f$sample_source))
 
 
