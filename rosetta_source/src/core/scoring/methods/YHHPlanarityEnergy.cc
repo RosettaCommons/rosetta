@@ -81,12 +81,15 @@ YHHPlanarityEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
+	using numeric::constants::d::degrees_to_radians;
+	using numeric::constants::d::pi;
+
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( "REPLONLY" ) ){
 			return;
 	}
 	if ( defines_score_for_rsd(rsd) ) {
-		emap[ yhh_planarity ] += 0.5 * std::sin(2*rsd.chi(3)*numeric::constants::d::degrees_to_radians);
+		emap[ yhh_planarity ] += 0.5 * (std::cos( pi - 2*rsd.chi(3)*degrees_to_radians)+1);
 	}
 }
 
@@ -108,6 +111,8 @@ YHHPlanarityEnergy::eval_residue_dof_derivative(
 	EnergyMap const & weights
 ) const
 {
+	using numeric::constants::d::degrees_to_radians;
+	using numeric::constants::d::pi;
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( "REPLONLY" ) ){
 			return 0.0;
@@ -116,7 +121,7 @@ YHHPlanarityEnergy::eval_residue_dof_derivative(
 	if ( ! tor_id.valid() ) return 0.0;
 	if ( defines_score_for_rsd(rsd) && tor_id.type() == id::CHI && tor_id.torsion() == 3 ) {
 		return
-			weights[ yhh_planarity ] * std::cos(2*rsd.chi(3)*numeric::constants::d::degrees_to_radians);
+			weights[ yhh_planarity ] * std::sin(pi -2*rsd.chi(3)*degrees_to_radians);
 	} else {
 		return 0.0;
 	}

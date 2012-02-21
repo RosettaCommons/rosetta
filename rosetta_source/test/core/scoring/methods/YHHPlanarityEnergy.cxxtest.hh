@@ -83,7 +83,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -0.1690711837213315, false /* print start score?*/ );
+		adv.validate_start_func_matches_start_score( 0.06583992062591906, false /* print start score?*/ );
 
 	}
 
@@ -98,7 +98,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -0.1690711837213315,  false /* print start score?*/ );
+		adv.validate_start_func_matches_start_score( 0.06583992062591906,  false /* print start score?*/ );
 
 	}
 
