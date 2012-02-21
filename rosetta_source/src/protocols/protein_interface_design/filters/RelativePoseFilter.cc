@@ -13,6 +13,7 @@
 // AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -197,6 +198,7 @@ RelativePoseFilter::report( std::ostream & out, core::pose::Pose const & pose ) 
 }
 
 /// alignment is expecting X1:Y1,X2:Y2,X3:Y3... where X is the protein on disk (target) and Y is the active structure (starting structure). When no alignment is given it is implied that the poses are trivially aligned 1..nres
+/// Feb2012 added option to align entire chains: A:B,D:C. Notice that no testing is made to ensure correct lengths etc., simply aligns from the start to end of the chains sequentially.
 void
 RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		protocols::moves::DataMap & data,
@@ -225,7 +227,27 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		foreach( std::string const residue_pair, residue_pairs ){
 			utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 			runtime_assert( residues.size() == 2 );
-			alignment_[ parse_resnum( residues[ 1 ], *pose() ) ] = parse_resnum( residues[ 2 ], p );
+			char const residues1_cstr( residues[ 1 ].c_str()[ 0 ] ), residues2_cstr( residues[ 2 ].c_str()[ 0 ] ); // these may hold the chain designators
+			if( residues[ 1 ].length() == 1 &&
+				( residues1_cstr <= 'Z' && residues2_cstr >= 'A' ) &&
+				( residues[ 2 ].length() == 1 &&
+				( residues2_cstr <= 'Z' && residues2_cstr >= 'A' ) ) ){ // are we aligning two chains to one another?
+					core::pose::PDBInfoCOP pdbinfo1( pose()->pdb_info() ), pdbinfo2( p.pdb_info() );
+					core::Size pose_res( 1 ), p_res( 1 );
+					for(; pose_res <= pose()->total_residue(); ++pose_res )// find chain1 start
+						if( pdbinfo1->chain( pose_res ) == residues1_cstr ) break;
+					for(; p_res <= p.total_residue(); ++p_res ) // find chain2 start
+						if( pdbinfo2->chain( p_res ) == residues2_cstr ) break;
+					for( core::Size index = 0; ; ++index ){/// push aligned residues
+						alignment_[ pose_res ] = p_res;
+						pose_res++; p_res++;
+						if( pdbinfo1->chain( pose_res ) != residues1_cstr ||
+							pdbinfo2->chain( p_res ) != residues2_cstr ) /// end of aligned chains
+							break;
+					}
+				}//fi aligning two chains
+			else /// aligning individual residues
+				alignment_[ parse_resnum( residues[ 1 ], *pose() ) ] = parse_resnum( residues[ 2 ], p );
 		}
 	}
 	else{
