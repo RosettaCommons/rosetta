@@ -115,7 +115,7 @@ void register_options() {
 	NEW_OPT( bpytoi::chi1_increment            ,"", 1  );
 	NEW_OPT( bpytoi::max_nres                  ,"", 200 );
 	NEW_OPT( bpytoi::max_cys                   ,"", 3   );
-	NEW_OPT( bpytoi::max_bpy_dun               ,"", 3.0 );
+	NEW_OPT( bpytoi::max_bpy_dun               ,"", 2.0 );
 	NEW_OPT( bpytoi::bpy_clash_dis             ,"", 3.0 );
 	NEW_OPT( bpytoi::max_sym_error             ,"", 0.4 );
 }
@@ -858,13 +858,28 @@ void run() {
 					using namespace core::pack::task::operation;
 					TaskFactoryOP task_factory( new TaskFactory );
 					protocols::toolbox::task_operations::JointSequenceOperationOP revert = new protocols::toolbox::task_operations::JointSequenceOperation;
+					Pose basesym(base);
+					core::pose::symmetry::make_symmetric_pose(basesym);
 					revert->add_pose(psym);
-					revert->add_pose(base);
-				    task_factory->push_back(revert);
+					revert->add_pose(basesym);
+				 	task_factory->push_back(revert);
 					protocols::filters::FilterOP filter = new protocols::simple_filters::ScoreTypeFilter(sfsym,core::scoring::total_score,sfsym->score(psym));
+
+					#ifdef NDEBUG
+						psym.dump_pdb("ndebug.pdb");
+					#else
+						psym.dump_pdb("debug.pdb");
+					#endif
+					// PDBs are same!!!
+					filter->apply(psym);
+					double tmp1 = filter->report_sm(psym);
+					double tmp2 =  sfsym->score(psym);
+					std::cout << tmp1 << " " << tmp2 << std::endl;
+					utility_exit_with_message("aoristn");
+
 					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-					movemap->set_jump(true); movemap->set_bb(true); movemap->set_chi(true);
-					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+					movemap->set_jump(true); movemap->set_bb(false); movemap->set_chi(true);
+					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 					gomm.task_factory( task_factory );
 					gomm.scorefxn( sfsym );
 					gomm.filter( filter );
