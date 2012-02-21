@@ -143,7 +143,7 @@ void
 JointSequenceOperation::add_pose( Pose const & pose )
 {
 	std::string name("unknown");
-	if(! pose.pdb_info() ) {
+	if(pose.pdb_info() ) {
 		name = pose.pdb_info()->name();
 	}
 	sequences_.push_back( new core::sequence::Sequence(pose.sequence(), name) );
