@@ -197,6 +197,7 @@ EnvSmoothEnergy::setup_for_derivatives(
 		conformation::Residue const & rsd( pose.residue(i) );
 		// currently this is only for protein residues
 		if(! rsd.is_protein() ) continue; //return;
+		if( rsd.aa() == chemical::aa_unk ) continue; //return;
 
 		Size const atomindex_i = rsd.atom_index( representative_atom_name( rsd.aa() ));
 
@@ -261,9 +262,10 @@ EnvSmoothEnergy::residue_energy(
 	if ( rsd.has_variant_type( "REPLONLY" ) ){
 			return;
 	}
-	
+
 	// currently this is only for protein residues
 	if ( ! rsd.is_protein() ) return;
+	if( rsd.aa() == chemical::aa_unk ) return;
 
 	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 	Size const atomindex_i = rsd.atom_index( representative_atom_name( rsd.aa() ));
@@ -320,6 +322,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 	conformation::Residue const & rsd = pose.residue( atom_id.rsd() );
 
 	if (! rsd.is_protein() ) return;
+	if ( rsd.aa() == chemical::aa_unk ) return;
 
 	Size const i = rsd.seqpos();
 	Size const i_nbr_atom = rsd.type().nbr_atom();
@@ -347,6 +350,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 
 		// if virtual residue, don't score
 		if (rsd_j.aa() == core::chemical::aa_vrt ) continue;
+		if (rsd_j.aa() == core::chemical::aa_unk ) continue;
 
 		if ( input_atom_is_nbr && input_atom_is_rep && rsd_j.is_protein() ) {
 			Size const resj_rep_atom = rsd_j.atom_index( representative_atom_name( rsd_j.aa() ));
@@ -395,7 +399,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 std::string const &
 EnvSmoothEnergy::representative_atom_name( chemical::AA const aa ) const
 {
-	assert( aa >= 1 && aa <= chemical::num_canonical_aas );
+	// assert( aa >= 1 && aa <= chemical::num_canonical_aas );
 
 	static std::string const cbeta_string(  "CB"  );
 	static std::string const sgamma_string( "SG"  );
