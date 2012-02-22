@@ -337,8 +337,8 @@ settings = {
 
     "gcc, 4.1, linux" : {
         "overrides" : {
-            "cc"            : "gcc41",
-            "cxx"           : "g++41",
+            "cc"            : "gcc",
+            "cxx"           : "g++",
         },
     },
 
