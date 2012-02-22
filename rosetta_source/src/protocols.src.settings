@@ -445,7 +445,7 @@ sources = {
 		"Bridge",
 		"BuildInstruction",
 		"BuildManager",
-		"`ConnectRight",
+		"ConnectRight",
 		"GrowLeft",
 		"GrowRight",
 		"RelativeConnectRight",

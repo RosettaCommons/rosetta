@@ -852,7 +852,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::create_torsion_value_string ( core::Real
 	using namespace ObjexxFCL;
 	std::string torsion_string = "";
 	core::Real	const principal_torsion = numeric::principal_angle_degrees ( torsion_value );
-	Size const principal_torsion_SIZE = std::abs ( principal_torsion + 0.00001 ); //0.00001 is to prevent random ambiguity if the torsion decimal value is exactly .0000 Oct 12, 2010
+	Size const principal_torsion_SIZE = Size( std::abs ( principal_torsion + 0.00001 ) ); //0.00001 is to prevent random ambiguity if the torsion decimal value is exactly .0000 Oct 12, 2010
 
 	if ( principal_torsion > 0 ) {
 		torsion_string = "p" + lead_zero_string_of ( principal_torsion_SIZE, 3 );
