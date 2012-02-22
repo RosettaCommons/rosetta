@@ -170,8 +170,7 @@ DatabaseJobInputter::set_tags(
 void DatabaseJobInputter::set_tags_from_sql(utility::vector1<std::string> const & sql)
 {
 	//first do some basic validation, make sure this is a SELECT command that is selecting the tag or structures.tag
-	if(sql[1] != "SELECT" && !(sql[2] == "tag" || sql[2] == "structures.tag"))
-	{
+	if(sql.size() < 2 || sql[1] != "SELECT" && !(sql[2] == "tag" || sql[2] == "structures.tag")) {
 		utility_exit_with_message("you must provide an SQL SELECT command that selects the tag or structures.tag column");
 	}
 
