@@ -417,6 +417,93 @@ IncludeCurrent::apply( pose::Pose const &, PackerTask & task ) const
 	task.or_include_current(true);
 }
 
+/// BEGIN ExtraRotamersGeneric
+
+ExtraRotamersGeneric::ExtraRotamersGeneric() :
+	ex1_(false),
+	ex2_(false),
+	ex3_(false),
+	ex4_(false),
+	ex1aro_(false),
+	ex2aro_(false),
+	ex1aro_exposed_(false),
+	ex2aro_exposed_(false),
+	ex1_sample_level_( NO_EXTRA_CHI_SAMPLES ),
+	ex2_sample_level_( NO_EXTRA_CHI_SAMPLES ),
+	ex3_sample_level_( NO_EXTRA_CHI_SAMPLES ),
+	ex4_sample_level_( NO_EXTRA_CHI_SAMPLES ),
+	ex1aro_sample_level_( NO_EXTRA_CHI_SAMPLES ),
+	ex2aro_sample_level_( NO_EXTRA_CHI_SAMPLES ),
+	ex1aro_exposed_sample_level_( NO_EXTRA_CHI_SAMPLES ),
+	ex2aro_exposed_sample_level_( NO_EXTRA_CHI_SAMPLES ),
+	exdna_sample_level_( NO_EXTRA_CHI_SAMPLES ),
+	extrachi_cutoff_( EXTRACHI_CUTOFF_LIMIT )
+{}
+
+ExtraRotamersGeneric::~ExtraRotamersGeneric() {}
+
+TaskOperationOP ExtraRotamersGenericCreator::create_task_operation() const
+{
+	return new ExtraRotamersGeneric;
+}
+
+TaskOperationOP ExtraRotamersGeneric::clone() const
+{
+	return new ExtraRotamersGeneric( *this );
+}
+
+void
+ExtraRotamersGeneric::parse_tag( TagPtr tag )
+{
+	ex1_ = tag->getOption<bool>("ex1", false);
+	ex2_ = tag->getOption<bool>("ex2", false);
+	ex3_ = tag->getOption<bool>("ex3", false);
+	ex4_ = tag->getOption<bool>("ex4", false);
+	ex1aro_ = tag->getOption<bool>("ex1aro", false);
+	ex2aro_ = tag->getOption<bool>("ex2aro", false);
+	ex1aro_exposed_ = tag->getOption<bool>("ex1aro_exposed", false);
+	ex2aro_exposed_ = tag->getOption<bool>("ex2aro_exposed", false);
+
+	ex1_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex1_sample_level", NO_EXTRA_CHI_SAMPLES));
+	ex2_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex2_sample_level", NO_EXTRA_CHI_SAMPLES));
+	ex3_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex3_sample_level", NO_EXTRA_CHI_SAMPLES));
+	ex4_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex4_sample_level", NO_EXTRA_CHI_SAMPLES));
+	ex1aro_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex1aro_sample_level", NO_EXTRA_CHI_SAMPLES));
+	ex2aro_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex2aro_sample_level", NO_EXTRA_CHI_SAMPLES));
+	ex1aro_exposed_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex1aro_exposed_sample_level", NO_EXTRA_CHI_SAMPLES));
+	ex2aro_exposed_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex2aro_exposed_sample_level", NO_EXTRA_CHI_SAMPLES));
+	exdna_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("exdna_sample_level", NO_EXTRA_CHI_SAMPLES));
+
+	extrachi_cutoff_ = tag->getOption<Size>("extrachi_cutoff", EXTRACHI_CUTOFF_LIMIT);
+}
+
+
+void
+ExtraRotamersGeneric::apply( pose::Pose const &, PackerTask & task ) const
+{
+	for(Size i=1; i <= task.total_residue(); ++i){
+		ResidueLevelTask & res_task(task.nonconst_residue_task(i));
+		res_task.or_ex1(ex1_);
+		res_task.or_ex2(ex2_);
+		res_task.or_ex3(ex3_);
+		res_task.or_ex4(ex4_);
+		res_task.or_ex1aro(ex1aro_);
+		res_task.or_ex2aro(ex2aro_);
+		res_task.or_ex1aro_exposed(ex1aro_exposed_);
+		res_task.or_ex2aro_exposed(ex2aro_exposed_);
+		res_task.or_ex1_sample_level(ex1_sample_level_);
+		res_task.or_ex2_sample_level(ex2_sample_level_);
+		res_task.or_ex3_sample_level(ex3_sample_level_);
+		res_task.or_ex4_sample_level(ex4_sample_level_);
+		res_task.or_ex1aro_sample_level(ex1aro_sample_level_);
+		res_task.or_ex2aro_sample_level(ex2aro_sample_level_);
+		res_task.or_ex1aro_exposed_sample_level(ex1aro_exposed_sample_level_);
+		res_task.or_ex2aro_exposed_sample_level(ex2aro_exposed_sample_level_);
+		res_task.or_exdna_sample_level(exdna_sample_level_);
+		res_task.and_extrachi_cutoff(extrachi_cutoff_);
+	}
+}
+
 /// BEGIN ReadResfile
 
 ReadResfile::ReadResfile() : parent()

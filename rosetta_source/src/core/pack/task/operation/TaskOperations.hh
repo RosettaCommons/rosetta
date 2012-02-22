@@ -222,6 +222,46 @@ public:
 
 };
 
+///@details control the extra chi rotamers for all residues
+class ExtraRotamersGeneric : public TaskOperation {
+public:
+	typedef TaskOperation parent;
+
+public:
+  ExtraRotamersGeneric();
+	virtual ~ExtraRotamersGeneric();
+
+	virtual TaskOperationOP clone() const;
+
+	virtual void parse_tag( TagPtr );
+
+	virtual
+	void
+	apply( pose::Pose const &, PackerTask & ) const;
+
+private:
+
+	bool ex1_;
+	bool ex2_;
+	bool ex3_;
+	bool ex4_;
+	bool ex1aro_;
+	bool ex2aro_;
+	bool ex1aro_exposed_;
+	bool ex2aro_exposed_;
+
+	ExtraRotSample ex1_sample_level_;
+	ExtraRotSample ex2_sample_level_;
+	ExtraRotSample ex3_sample_level_;
+	ExtraRotSample ex4_sample_level_;
+	ExtraRotSample ex1aro_sample_level_;
+	ExtraRotSample ex2aro_sample_level_;
+	ExtraRotSample ex1aro_exposed_sample_level_;
+	ExtraRotSample ex2aro_exposed_sample_level_;
+	ExtraRotSample exdna_sample_level_;
+	Size extrachi_cutoff_;
+};
+
 class ReadResfile : public TaskOperation
 {
 public:

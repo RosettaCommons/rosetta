@@ -58,6 +58,7 @@ using core::pose::get_all_comments;
 using core::pose::add_comment;
 using core::conformation::Residue;
 using core::chemical::num_canonical_aas;
+using basic::database::table_exists;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
@@ -144,6 +145,9 @@ PoseCommentsFeatures::load_into_pose(
 	sessionOP db_session,
 	Size struct_id,
 	Pose & pose){
+
+	if(!table_exists(db_session, "pose_comments")) return;
+
 
 	std::string statement_string =
 		"SELECT\n"

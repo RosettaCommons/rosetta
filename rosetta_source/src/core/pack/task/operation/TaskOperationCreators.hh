@@ -107,6 +107,12 @@ public:
 	virtual std::string keyname() const { return "InitializeFromCommandline"; }
 };
 
+class ExtraRotamersGenericCreator : public TaskOperationCreator {
+public:
+	virtual TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const { return "ExtraRotamersGeneric"; }
+};
+
 class RotamerExplosionCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;
