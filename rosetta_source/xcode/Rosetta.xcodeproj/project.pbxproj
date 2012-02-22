@@ -298,6 +298,7 @@
 		5D18C5E7DFA23F54E46DAD69 /* Adduct.cc in Sources */ = {isa = PBXBuildFile; fileRef = AB220BEC6D23B5EDA14A4551 /* Adduct.cc */; };
 		4B81356E32962766F3F7CA92 /* AtomICoor.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0ECCB0A63D68BD5767FFCF6 /* AtomICoor.cc */; };
 		3EBAFD1DFD5426FDAE7695B8 /* AtomType.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1A2AB229478FDB0CB95EE67B /* AtomType.cc */; };
+		1513089A4A90E42041CEF2AB /* AtomTypeDatabaseIO.cc in Sources */ = {isa = PBXBuildFile; fileRef = FDA82E88C70E049F065667B7 /* AtomTypeDatabaseIO.cc */; };
 		94F1A6982782A858387CEB14 /* AtomTypeSet.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6552748D47C47A46F5F2F7E4 /* AtomTypeSet.cc */; };
 		8D5083B55359CB982813ADD3 /* ChemicalManager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8EDCB850659626A7B05361CD /* ChemicalManager.cc */; };
 		56EE387CDEDC86D3BD803512 /* Element.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6DAD34D8E4DBF85476A7B2ED /* Element.cc */; };
@@ -554,6 +555,8 @@
 		7C859AFA1D74969D0CEA47DD /* SplineInterp.cc in Sources */ = {isa = PBXBuildFile; fileRef = 34D31C71D59CA64E17336EA3 /* SplineInterp.cc */; };
 		CAAD150CE70F2D42581D66B3 /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 687A5F31A5ED4F858829C4CB /* util.cc */; };
 		4CABB1B7B85F79F3E36074BA /* xray_scattering.cc in Sources */ = {isa = PBXBuildFile; fileRef = A56C2497524820A7D7622DCB /* xray_scattering.cc */; };
+		6BCE2E8D5AE357815A33A57F /* ElecDensAtomwiseEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5FF80D94269C6FE8DEC023AC /* ElecDensAtomwiseEnergy.cc */; };
+		DDC91FFEA135CC2FCE2527B8 /* ElectronDensityAtomwise.cc in Sources */ = {isa = PBXBuildFile; fileRef = B15426DC07C5EABF1E997756 /* ElectronDensityAtomwise.cc */; };
 		8B6F6E3BFB34CE2CF0783DD3 /* Etable.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0A5FFCAE093174E9EC3C358D /* Etable.cc */; };
 		225469DF7A86F575BEB8079F /* EtableEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = AF22EA799BC86249664DDE9D /* EtableEnergy.cc */; };
 		1B803584FE84095ECF9434E6 /* EtableOptions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0B128059B889078D619BC00F /* EtableOptions.cc */; };
@@ -588,6 +591,7 @@
 		A034D0EC219968FF1F3072EC /* HackElecEnergyAroAro.cc in Sources */ = {isa = PBXBuildFile; fileRef = 60D283518865B7AA80AA1809 /* HackElecEnergyAroAro.cc */; };
 		0E473FF049182288765A774B /* RNAHackElecEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7D548EA2E3094F685BEB0257 /* RNAHackElecEnergy.cc */; };
 		4A610A46832FEF60CCF8B1B7 /* FadeInterval.cc in Sources */ = {isa = PBXBuildFile; fileRef = BB463B24AE48EC04D07B18F5 /* FadeInterval.cc */; };
+		5385A818E8F928AD044F137E /* HBEvalTuple.cc in Sources */ = {isa = PBXBuildFile; fileRef = 461746C36DF66B0A90A98E9A /* HBEvalTuple.cc */; };
 		ED3A053EFABE14ACD1A48B05 /* HBondDatabase.cc in Sources */ = {isa = PBXBuildFile; fileRef = 81EC2048C81D9467CB9F611C /* HBondDatabase.cc */; };
 		8F7E7E2DEE5394E0B7BE473A /* HBondEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = B318AE8075FEAF98FF3A575A /* HBondEnergy.cc */; };
 		18BF6F49423183B0A4A0C149 /* HBondOptions.cc in Sources */ = {isa = PBXBuildFile; fileRef = BDF19B43187B7DEF9F33EE14 /* HBondOptions.cc */; };
@@ -627,6 +631,8 @@
 		40CE3F0BCF20ADA25D51430C /* Fa_MbsolvEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3896CA2EED3751AB0E338D0F /* Fa_MbsolvEnergy.cc */; };
 		E61C21BA29DC93131CA569C4 /* GenBornEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = CF230B8DB7EA13263BE681F9 /* GenBornEnergy.cc */; };
 		767D805221F76D109750356B /* HybridVDW_Energy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5ED104F41EAD62DCBC1B05EA /* HybridVDW_Energy.cc */; };
+		79DA7822689E043AE0AFDE99 /* LK_BallEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 67B35A46D7F1EC8DF7A9812A /* LK_BallEnergy.cc */; };
+		97D74CBB293B0D463441EB42 /* LK_BallInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = 35DF46DFC3C680EC5BB25B97 /* LK_BallInfo.cc */; };
 		5803C492B6E504C99500A920 /* LK_CosThetaEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = A6D2266CBF5B97FE54FEAB72 /* LK_CosThetaEnergy.cc */; };
 		304DA124F3F19335F025F86D /* LK_hack.cc in Sources */ = {isa = PBXBuildFile; fileRef = D59CD97B27F948BACE69262E /* LK_hack.cc */; };
 		DA5CB42AEAB8A0E14C328547 /* LinearChainbreakEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 66A50520D2FC6D64459773C0 /* LinearChainbreakEnergy.cc */; };
@@ -673,6 +679,7 @@
 		D32426C66114086115B4C5E3 /* WaterAdductHBondEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B022E6B5ACE238AD2AC7B9F /* WaterAdductHBondEnergy.cc */; };
 		74C0815FAEA923CDDF438CC8 /* WaterAdductIntraEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 826F05E8FDBC9E10D5F3807D /* WaterAdductIntraEnergy.cc */; };
 		55C1F184BC7D239E240C661A /* WholeStructureEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 641C273DD8D047525B8689C6 /* WholeStructureEnergy.cc */; };
+		4B5C3F0CD4553C187A8A0436 /* YHHPlanarityEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4AF2A4341B337D73E60D08DC /* YHHPlanarityEnergy.cc */; };
 		D10CFDDB40FD0A3A57EBC154 /* chainbreak_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = FE1E1892901FD5C6424FDAF5 /* chainbreak_util.cc */; };
 		B3A20B5DB4427D906C800750 /* pHEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44695C49C41E85824270795B /* pHEnergy.cc */; };
 		9C750DCFE292A2915A8D9A5E /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 629E093E8A598B9E1AABA54C /* util.cc */; };
@@ -944,11 +951,13 @@
 		523A96E3BA1AD56D87E2C042 /* SSClass.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6717E1BA2567BAA56B9E01FD /* SSClass.cc */; };
 		5DF82A8821A2DCE1508EEFDA /* SequenceFitnessMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = D154791339FD512A938B7608 /* SequenceFitnessMover.cc */; };
 		86133618A140F388E9B00D0D /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED2490C73A82A3F33DB819A0 /* util.cc */; };
+		71AD635E9141039DE5B8A052 /* MotifLoopBuild.cc in Sources */ = {isa = PBXBuildFile; fileRef = DA28362CE0399D88E769D16C /* MotifLoopBuild.cc */; };
 		18D45672339880DA4002C2CE /* ProteinDNA_Relax.cc in Sources */ = {isa = PBXBuildFile; fileRef = 69816596748FBB3E70E054F9 /* ProteinDNA_Relax.cc */; };
 		74EAB32E3D25AC4B9D44C3D4 /* base_movers.cc in Sources */ = {isa = PBXBuildFile; fileRef = 260262870BE57B16ED76863E /* base_movers.cc */; };
 		01EDD6EB16D603A7CB7AD191 /* protocols.cc in Sources */ = {isa = PBXBuildFile; fileRef = 19A2187F65B8945DE2A23818 /* protocols.cc */; };
 		D188580969F165A4A9FF1EA5 /* relax_util.cc in Sources */ = {isa = PBXBuildFile; fileRef = C6052F89AB825969B4BD240B /* relax_util.cc */; };
 		33AD1A7D829FDBE162442A5D /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 927F8B0594E5865CA2087CD9 /* util.cc */; };
+		4DC4CC81DAB57FEB544D329E /* util_motif_loop.cc in Sources */ = {isa = PBXBuildFile; fileRef = BA507A0ED2E7E9EE6C5C5EF3 /* util_motif_loop.cc */; };
 		B331040744A12FB5C3C20F00 /* DomainAssemblyReader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2C6D5A906F2005D7D5FBA649 /* DomainAssemblyReader.cc */; };
 		1CBF7452982D36B0FA236E6C /* domain_assembly.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1B29F207371B5BCC84A1099 /* domain_assembly.cc */; };
 		DA8D4D29B02C1DA2CCE86CCF /* domain_assembly_setup.cc in Sources */ = {isa = PBXBuildFile; fileRef = 09800FEA45DFA1F9EFDE0A28 /* domain_assembly_setup.cc */; };
@@ -1385,6 +1394,7 @@
 		20E970CA1C0645E31D7F8E1E /* ExtendedPoseMoverCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = FE72C808700117EC5637C3EA /* ExtendedPoseMoverCreator.cc */; };
 		8C0CA66929C496AB106D3D23 /* FavorSequenceProfile.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4F052F0D8212C84F49FF99E6 /* FavorSequenceProfile.cc */; };
 		C472B2DE46DEF9427C945FDC /* FragmentMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3F3D0EFCE51D7A591BEBAB54 /* FragmentMover.cc */; };
+		F1A34FB5555F0CBA05323377 /* GreedyOptMutationMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E7F7DCA5152E8C9EAF6DA079 /* GreedyOptMutationMover.cc */; };
 		F576318DAB943E06A5858D13 /* GreenPacker.cc in Sources */ = {isa = PBXBuildFile; fileRef = FC9988993CDAC613EE28D53B /* GreenPacker.cc */; };
 		4CDF59A2EB7B4E324407060F /* GunnCost.cc in Sources */ = {isa = PBXBuildFile; fileRef = C3ACE8BB4ADA1108312866E8 /* GunnCost.cc */; };
 		E124072B992C76DD964BB1DF /* LoadUnboundRotMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = ABADAACA7B4547AD91CDC498 /* LoadUnboundRotMover.cc */; };
@@ -1586,6 +1596,8 @@
 		AAAB97D3231CA26126021FEF /* AtomAtomPairFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = DA1BC1652E661E2A37E81E0A /* AtomAtomPairFeaturesCreator.cc */; };
 		2269B581E8EC1007768C77E5 /* AtomInResidueAtomInResiduePairFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5E9085631B357EFEC15E7AAF /* AtomInResidueAtomInResiduePairFeatures.cc */; };
 		530464B580E02DBB569DF693 /* AtomInResidueAtomInResiduePairFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C7AF47B42DCC9A87F675F /* AtomInResidueAtomInResiduePairFeaturesCreator.cc */; };
+		E6A4FF1AEF957A4F3FCE5C51 /* AtomTypesFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = A782B63B78206395D49FFF0D /* AtomTypesFeatures.cc */; };
+		265C2CCA715257BCFB4CF304 /* AtomTypesFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = B0B5020D1DA3BD9C26781C20 /* AtomTypesFeaturesCreator.cc */; };
 		9C2B003200B21C776E6DB04D /* BetaTurnDetectionFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 45931262D18D975F1D66CEA5 /* BetaTurnDetectionFeatures.cc */; };
 		C732DB9F7919948AFCECCB63 /* BetaTurnDetectionFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 34C42FAF22BC79D1F67B75EE /* BetaTurnDetectionFeaturesCreator.cc */; };
 		905D508D95F087D2A326D228 /* DatabaseFilters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 28D22D33A62DECE4B220AE4F /* DatabaseFilters.cc */; };
@@ -1659,6 +1671,7 @@
 		DDD8DC93384923D38F795F0D /* RRProtocolMinPack.cc in Sources */ = {isa = PBXBuildFile; fileRef = 483555A405C96AD88722400C /* RRProtocolMinPack.cc */; };
 		38361B3D10FEB929457C3891 /* RRProtocolMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9A3A7CEF536809C82AB302F8 /* RRProtocolMover.cc */; };
 		0257666980985A1B7A39247C /* RRProtocolRTMin.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B2EE03877B76C19F3B8FEDA /* RRProtocolRTMin.cc */; };
+		5CCFEF0360B1048029A6A1F2 /* RRProtocolReferenceStructure.cc in Sources */ = {isa = PBXBuildFile; fileRef = D033C52D4AFAF522F53365E6 /* RRProtocolReferenceStructure.cc */; };
 		789442BD934C4032692F39CC /* RRReporter.cc in Sources */ = {isa = PBXBuildFile; fileRef = E17E3C15107EB7B53FE6FBB7 /* RRReporter.cc */; };
 		85E491AB31C09C0331A14FA0 /* RRReporterHuman.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6787726C1272CE7C46EB867C /* RRReporterHuman.cc */; };
 		055844D00AEE161063716726 /* RRReporterSQLite.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3104429B56099CCDC809D275 /* RRReporterSQLite.cc */; };
@@ -7400,6 +7413,9 @@
 		1A2AB229478FDB0CB95EE67B /* AtomType.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomType.cc; path = ../src/core/chemical/AtomType.cc; sourceTree = SOURCE_ROOT; };
 		0479A655CB9A24E5947936AF /* AtomType.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomType.fwd.hh; path = ../src/core/chemical/AtomType.fwd.hh; sourceTree = SOURCE_ROOT; };
 		0E60CF5B1B5305E3F4239E0F /* AtomType.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomType.hh; path = ../src/core/chemical/AtomType.hh; sourceTree = SOURCE_ROOT; };
+		FDA82E88C70E049F065667B7 /* AtomTypeDatabaseIO.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomTypeDatabaseIO.cc; path = ../src/core/chemical/AtomTypeDatabaseIO.cc; sourceTree = SOURCE_ROOT; };
+		F669FDC38FE008C1AB2F43D1 /* AtomTypeDatabaseIO.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomTypeDatabaseIO.fwd.hh; path = ../src/core/chemical/AtomTypeDatabaseIO.fwd.hh; sourceTree = SOURCE_ROOT; };
+		D75C86B3A7BFF10133948329 /* AtomTypeDatabaseIO.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomTypeDatabaseIO.hh; path = ../src/core/chemical/AtomTypeDatabaseIO.hh; sourceTree = SOURCE_ROOT; };
 		6552748D47C47A46F5F2F7E4 /* AtomTypeSet.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomTypeSet.cc; path = ../src/core/chemical/AtomTypeSet.cc; sourceTree = SOURCE_ROOT; };
 		85F4C38ED9047F59A35D687F /* AtomTypeSet.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomTypeSet.fwd.hh; path = ../src/core/chemical/AtomTypeSet.fwd.hh; sourceTree = SOURCE_ROOT; };
 		375B55991D9FBC2775DF1EB6 /* AtomTypeSet.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomTypeSet.hh; path = ../src/core/chemical/AtomTypeSet.hh; sourceTree = SOURCE_ROOT; };
@@ -8191,6 +8207,12 @@
 		C366670C929DDCBCFC4A1398 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/core/scoring/electron_density/util.hh; sourceTree = SOURCE_ROOT; };
 		A56C2497524820A7D7622DCB /* xray_scattering.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = xray_scattering.cc; path = ../src/core/scoring/electron_density/xray_scattering.cc; sourceTree = SOURCE_ROOT; };
 		CE09CEFCD3BEC9AE29E26A05 /* xray_scattering.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = xray_scattering.hh; path = ../src/core/scoring/electron_density/xray_scattering.hh; sourceTree = SOURCE_ROOT; };
+		5FF80D94269C6FE8DEC023AC /* ElecDensAtomwiseEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ElecDensAtomwiseEnergy.cc; path = ../src/core/scoring/electron_density_atomwise/ElecDensAtomwiseEnergy.cc; sourceTree = SOURCE_ROOT; };
+		A248EFA4ABB305CFEFB2F87B /* ElecDensAtomwiseEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ElecDensAtomwiseEnergy.fwd.hh; path = ../src/core/scoring/electron_density_atomwise/ElecDensAtomwiseEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
+		83B6A13B4EAB457200928248 /* ElecDensAtomwiseEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ElecDensAtomwiseEnergy.hh; path = ../src/core/scoring/electron_density_atomwise/ElecDensAtomwiseEnergy.hh; sourceTree = SOURCE_ROOT; };
+		30E3189CA0098901DBC90648 /* ElecDensAtomwiseEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ElecDensAtomwiseEnergyCreator.hh; path = ../src/core/scoring/electron_density_atomwise/ElecDensAtomwiseEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
+		B15426DC07C5EABF1E997756 /* ElectronDensityAtomwise.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ElectronDensityAtomwise.cc; path = ../src/core/scoring/electron_density_atomwise/ElectronDensityAtomwise.cc; sourceTree = SOURCE_ROOT; };
+		EFAE92F7AA8A46C579D787F5 /* ElectronDensityAtomwise.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ElectronDensityAtomwise.hh; path = ../src/core/scoring/electron_density_atomwise/ElectronDensityAtomwise.hh; sourceTree = SOURCE_ROOT; };
 		0E808C8BB0A0F25EC2B3E7E3 /* BaseEtableEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BaseEtableEnergy.hh; path = ../src/core/scoring/etable/BaseEtableEnergy.hh; sourceTree = SOURCE_ROOT; };
 		83806AA3D05023E3093C0A3F /* BaseEtableEnergy.tmpl.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BaseEtableEnergy.tmpl.hh; path = ../src/core/scoring/etable/BaseEtableEnergy.tmpl.hh; sourceTree = SOURCE_ROOT; };
 		D2E056AA7795B32BA7B27DB2 /* BaseMembEtableEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BaseMembEtableEnergy.hh; path = ../src/core/scoring/etable/BaseMembEtableEnergy.hh; sourceTree = SOURCE_ROOT; };
@@ -8320,6 +8342,9 @@
 		BB463B24AE48EC04D07B18F5 /* FadeInterval.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FadeInterval.cc; path = ../src/core/scoring/hbonds/FadeInterval.cc; sourceTree = SOURCE_ROOT; };
 		DA9EB057E1524762BBEB6B98 /* FadeInterval.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FadeInterval.fwd.hh; path = ../src/core/scoring/hbonds/FadeInterval.fwd.hh; sourceTree = SOURCE_ROOT; };
 		76B14FED5A01FD76BF7A1482 /* FadeInterval.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FadeInterval.hh; path = ../src/core/scoring/hbonds/FadeInterval.hh; sourceTree = SOURCE_ROOT; };
+		461746C36DF66B0A90A98E9A /* HBEvalTuple.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HBEvalTuple.cc; path = ../src/core/scoring/hbonds/HBEvalTuple.cc; sourceTree = SOURCE_ROOT; };
+		7F7620716982009DB9AFF6A1 /* HBEvalTuple.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HBEvalTuple.fwd.hh; path = ../src/core/scoring/hbonds/HBEvalTuple.fwd.hh; sourceTree = SOURCE_ROOT; };
+		8A7944DCDD2337B5169C1DDF /* HBEvalTuple.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HBEvalTuple.hh; path = ../src/core/scoring/hbonds/HBEvalTuple.hh; sourceTree = SOURCE_ROOT; };
 		81EC2048C81D9467CB9F611C /* HBondDatabase.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HBondDatabase.cc; path = ../src/core/scoring/hbonds/HBondDatabase.cc; sourceTree = SOURCE_ROOT; };
 		1118BCC55136AC18B06F6AD3 /* HBondDatabase.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HBondDatabase.fwd.hh; path = ../src/core/scoring/hbonds/HBondDatabase.fwd.hh; sourceTree = SOURCE_ROOT; };
 		B285F394595B4AC7C85893E0 /* HBondDatabase.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HBondDatabase.hh; path = ../src/core/scoring/hbonds/HBondDatabase.hh; sourceTree = SOURCE_ROOT; };
@@ -8460,6 +8485,12 @@
 		AE599C9C904BC22B3856E0E8 /* HybridVDW_Energy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridVDW_Energy.fwd.hh; path = ../src/core/scoring/methods/HybridVDW_Energy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6B90BF5D1C1CFAFE42B5747A /* HybridVDW_Energy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridVDW_Energy.hh; path = ../src/core/scoring/methods/HybridVDW_Energy.hh; sourceTree = SOURCE_ROOT; };
 		236D85BD88180C5AD7FB9821 /* HybridVDW_EnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HybridVDW_EnergyCreator.hh; path = ../src/core/scoring/methods/HybridVDW_EnergyCreator.hh; sourceTree = SOURCE_ROOT; };
+		67B35A46D7F1EC8DF7A9812A /* LK_BallEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LK_BallEnergy.cc; path = ../src/core/scoring/methods/LK_BallEnergy.cc; sourceTree = SOURCE_ROOT; };
+		1A4ACCD4DFA4A3E547B6229B /* LK_BallEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LK_BallEnergy.fwd.hh; path = ../src/core/scoring/methods/LK_BallEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
+		C89E687C749B765CC243245A /* LK_BallEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LK_BallEnergy.hh; path = ../src/core/scoring/methods/LK_BallEnergy.hh; sourceTree = SOURCE_ROOT; };
+		74EAEE0652B07E64800AC810 /* LK_BallEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LK_BallEnergyCreator.hh; path = ../src/core/scoring/methods/LK_BallEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
+		35DF46DFC3C680EC5BB25B97 /* LK_BallInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LK_BallInfo.cc; path = ../src/core/scoring/methods/LK_BallInfo.cc; sourceTree = SOURCE_ROOT; };
+		685718F4841236593F911CC4 /* LK_BallInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LK_BallInfo.hh; path = ../src/core/scoring/methods/LK_BallInfo.hh; sourceTree = SOURCE_ROOT; };
 		A6D2266CBF5B97FE54FEAB72 /* LK_CosThetaEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LK_CosThetaEnergy.cc; path = ../src/core/scoring/methods/LK_CosThetaEnergy.cc; sourceTree = SOURCE_ROOT; };
 		2DD2AB571540541245DCE6F1 /* LK_CosThetaEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LK_CosThetaEnergy.fwd.hh; path = ../src/core/scoring/methods/LK_CosThetaEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6D2D4D291EFAB5C5E882AC89 /* LK_CosThetaEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LK_CosThetaEnergy.hh; path = ../src/core/scoring/methods/LK_CosThetaEnergy.hh; sourceTree = SOURCE_ROOT; };
@@ -8638,6 +8669,10 @@
 		641C273DD8D047525B8689C6 /* WholeStructureEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WholeStructureEnergy.cc; path = ../src/core/scoring/methods/WholeStructureEnergy.cc; sourceTree = SOURCE_ROOT; };
 		BDF02C7164A1BB0E23B9762C /* WholeStructureEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WholeStructureEnergy.fwd.hh; path = ../src/core/scoring/methods/WholeStructureEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		536FD56D6403F669E44EC4A0 /* WholeStructureEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WholeStructureEnergy.hh; path = ../src/core/scoring/methods/WholeStructureEnergy.hh; sourceTree = SOURCE_ROOT; };
+		4AF2A4341B337D73E60D08DC /* YHHPlanarityEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = YHHPlanarityEnergy.cc; path = ../src/core/scoring/methods/YHHPlanarityEnergy.cc; sourceTree = SOURCE_ROOT; };
+		D14E54B598D5654139F011C5 /* YHHPlanarityEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = YHHPlanarityEnergy.fwd.hh; path = ../src/core/scoring/methods/YHHPlanarityEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
+		E6D0EDC73F9E6992BA52F991 /* YHHPlanarityEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = YHHPlanarityEnergy.hh; path = ../src/core/scoring/methods/YHHPlanarityEnergy.hh; sourceTree = SOURCE_ROOT; };
+		EB6FA1F9779D733E1EED75CB /* YHHPlanarityEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = YHHPlanarityEnergyCreator.hh; path = ../src/core/scoring/methods/YHHPlanarityEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		FE1E1892901FD5C6424FDAF5 /* chainbreak_util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = chainbreak_util.cc; path = ../src/core/scoring/methods/chainbreak_util.cc; sourceTree = SOURCE_ROOT; };
 		1099904D6A479DD0BE68A2E1 /* chainbreak_util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = chainbreak_util.hh; path = ../src/core/scoring/methods/chainbreak_util.hh; sourceTree = SOURCE_ROOT; };
 		44695C49C41E85824270795B /* pHEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = pHEnergy.cc; path = ../src/core/scoring/methods/pHEnergy.cc; sourceTree = SOURCE_ROOT; };
@@ -9502,6 +9537,9 @@
 		0F2A36BB75ED39E450F14847 /* SequenceFitnessMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SequenceFitnessMover.hh; path = ../src/devel/denovo_protein_design/SequenceFitnessMover.hh; sourceTree = SOURCE_ROOT; };
 		ED2490C73A82A3F33DB819A0 /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/devel/denovo_protein_design/util.cc; sourceTree = SOURCE_ROOT; };
 		FE0AF9B827EF5E5438E0A0DF /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/devel/denovo_protein_design/util.hh; sourceTree = SOURCE_ROOT; };
+		DA28362CE0399D88E769D16C /* MotifLoopBuild.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MotifLoopBuild.cc; path = ../src/devel/dna/MotifLoopBuild.cc; sourceTree = SOURCE_ROOT; };
+		6A672ED2D88523B836B1FF99 /* MotifLoopBuild.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MotifLoopBuild.hh; path = ../src/devel/dna/MotifLoopBuild.hh; sourceTree = SOURCE_ROOT; };
+		F5EBB2FE585DBC48C851426B /* MotifLoopBuildCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MotifLoopBuildCreator.hh; path = ../src/devel/dna/MotifLoopBuildCreator.hh; sourceTree = SOURCE_ROOT; };
 		69816596748FBB3E70E054F9 /* ProteinDNA_Relax.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ProteinDNA_Relax.cc; path = ../src/devel/dna/ProteinDNA_Relax.cc; sourceTree = SOURCE_ROOT; };
 		1F201C18EE54FB86DB26170D /* ProteinDNA_Relax.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProteinDNA_Relax.hh; path = ../src/devel/dna/ProteinDNA_Relax.hh; sourceTree = SOURCE_ROOT; };
 		260262870BE57B16ED76863E /* base_movers.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = base_movers.cc; path = ../src/devel/dna/base_movers.cc; sourceTree = SOURCE_ROOT; };
@@ -9513,6 +9551,8 @@
 		B52E75C0BA2E6FAF3665FE90 /* typedefs.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = typedefs.hh; path = ../src/devel/dna/typedefs.hh; sourceTree = SOURCE_ROOT; };
 		927F8B0594E5865CA2087CD9 /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/devel/dna/util.cc; sourceTree = SOURCE_ROOT; };
 		EFAA3B85C571C5E0CEAA1266 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/devel/dna/util.hh; sourceTree = SOURCE_ROOT; };
+		BA507A0ED2E7E9EE6C5C5EF3 /* util_motif_loop.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util_motif_loop.cc; path = ../src/devel/dna/util_motif_loop.cc; sourceTree = SOURCE_ROOT; };
+		80EA11EF6145E2A5E5F98333 /* util_motif_loop.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util_motif_loop.hh; path = ../src/devel/dna/util_motif_loop.hh; sourceTree = SOURCE_ROOT; };
 		2C6D5A906F2005D7D5FBA649 /* DomainAssemblyReader.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DomainAssemblyReader.cc; path = ../src/devel/domain_assembly/DomainAssemblyReader.cc; sourceTree = SOURCE_ROOT; };
 		97C50C2A5FCD25113B9234CD /* DomainAssemblyReader.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DomainAssemblyReader.hh; path = ../src/devel/domain_assembly/DomainAssemblyReader.hh; sourceTree = SOURCE_ROOT; };
 		A1B29F207371B5BCC84A1099 /* domain_assembly.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = domain_assembly.cc; path = ../src/devel/domain_assembly/domain_assembly.cc; sourceTree = SOURCE_ROOT; };
@@ -9820,6 +9860,7 @@
 		EC7F0E7E36457CC93407B52D /* DataMap.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DataMap.cc; path = ../src/protocols/moves/DataMap.cc; sourceTree = SOURCE_ROOT; };
 		93E7EC95FA6B90BA0CC16DD8 /* DataMap.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DataMap.fwd.hh; path = ../src/protocols/moves/DataMap.fwd.hh; sourceTree = SOURCE_ROOT; };
 		69A672F087D3186C711ABD49 /* DataMap.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DataMap.hh; path = ../src/protocols/moves/DataMap.hh; sourceTree = SOURCE_ROOT; };
+		786518A5B5410B17A8D5B607 /* DataMapObj.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DataMapObj.hh; path = ../src/protocols/moves/DataMapObj.hh; sourceTree = SOURCE_ROOT; };
 		19DB567ED50B59914420DD9B /* DsspMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DsspMover.cc; path = ../src/protocols/moves/DsspMover.cc; sourceTree = SOURCE_ROOT; };
 		A36375AC5455989389FFBE2B /* DsspMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DsspMover.fwd.hh; path = ../src/protocols/moves/DsspMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		17B8002AD7988023209091D2 /* DsspMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DsspMover.hh; path = ../src/protocols/moves/DsspMover.hh; sourceTree = SOURCE_ROOT; };
@@ -10790,6 +10831,10 @@
 		3F3D0EFCE51D7A591BEBAB54 /* FragmentMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FragmentMover.cc; path = ../src/protocols/simple_moves/FragmentMover.cc; sourceTree = SOURCE_ROOT; };
 		B93786DFE1239D05631BDC41 /* FragmentMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FragmentMover.fwd.hh; path = ../src/protocols/simple_moves/FragmentMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		B99740C12BB07EFEB709A54F /* FragmentMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FragmentMover.hh; path = ../src/protocols/simple_moves/FragmentMover.hh; sourceTree = SOURCE_ROOT; };
+		E7F7DCA5152E8C9EAF6DA079 /* GreedyOptMutationMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GreedyOptMutationMover.cc; path = ../src/protocols/simple_moves/GreedyOptMutationMover.cc; sourceTree = SOURCE_ROOT; };
+		698A233467D5C79D1B22A069 /* GreedyOptMutationMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GreedyOptMutationMover.fwd.hh; path = ../src/protocols/simple_moves/GreedyOptMutationMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		14EE496A9AC5668DD4FB32E7 /* GreedyOptMutationMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GreedyOptMutationMover.hh; path = ../src/protocols/simple_moves/GreedyOptMutationMover.hh; sourceTree = SOURCE_ROOT; };
+		0A0BB9DC993EF5C0FC8CACDE /* GreedyOptMutationMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GreedyOptMutationMoverCreator.hh; path = ../src/protocols/simple_moves/GreedyOptMutationMoverCreator.hh; sourceTree = SOURCE_ROOT; };
 		FC9988993CDAC613EE28D53B /* GreenPacker.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GreenPacker.cc; path = ../src/protocols/simple_moves/GreenPacker.cc; sourceTree = SOURCE_ROOT; };
 		98CBE746B2303E7AC0522E73 /* GreenPacker.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GreenPacker.fwd.hh; path = ../src/protocols/simple_moves/GreenPacker.fwd.hh; sourceTree = SOURCE_ROOT; };
 		7D0DB33DC5BF1B5F5E062D2B /* GreenPacker.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GreenPacker.hh; path = ../src/protocols/simple_moves/GreenPacker.hh; sourceTree = SOURCE_ROOT; };
@@ -11416,6 +11461,11 @@
 		C3D7ABFAA3E25F5DD5724128 /* AtomInResidueAtomInResiduePairFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomInResidueAtomInResiduePairFeatures.hh; path = ../src/protocols/features/AtomInResidueAtomInResiduePairFeatures.hh; sourceTree = SOURCE_ROOT; };
 		5E6C7AF47B42DCC9A87F675F /* AtomInResidueAtomInResiduePairFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomInResidueAtomInResiduePairFeaturesCreator.cc; path = ../src/protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
 		132E9A19D1B3D5DE8CC1F1B0 /* AtomInResidueAtomInResiduePairFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomInResidueAtomInResiduePairFeaturesCreator.hh; path = ../src/protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
+		A782B63B78206395D49FFF0D /* AtomTypesFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomTypesFeatures.cc; path = ../src/protocols/features/AtomTypesFeatures.cc; sourceTree = SOURCE_ROOT; };
+		391A545FC5ABBD0B041104BC /* AtomTypesFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomTypesFeatures.fwd.hh; path = ../src/protocols/features/AtomTypesFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
+		0DEF19B7B512545B2537EB46 /* AtomTypesFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomTypesFeatures.hh; path = ../src/protocols/features/AtomTypesFeatures.hh; sourceTree = SOURCE_ROOT; };
+		B0B5020D1DA3BD9C26781C20 /* AtomTypesFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomTypesFeaturesCreator.cc; path = ../src/protocols/features/AtomTypesFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
+		BEBB870D0C9DE91B61D54F3D /* AtomTypesFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomTypesFeaturesCreator.hh; path = ../src/protocols/features/AtomTypesFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
 		45931262D18D975F1D66CEA5 /* BetaTurnDetectionFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BetaTurnDetectionFeatures.cc; path = ../src/protocols/features/BetaTurnDetectionFeatures.cc; sourceTree = SOURCE_ROOT; };
 		B480A76465F1B74BF84E9359 /* BetaTurnDetectionFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BetaTurnDetectionFeatures.fwd.hh; path = ../src/protocols/features/BetaTurnDetectionFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		F67D3DDF5E3F78BCF3C8ACC2 /* BetaTurnDetectionFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BetaTurnDetectionFeatures.hh; path = ../src/protocols/features/BetaTurnDetectionFeatures.hh; sourceTree = SOURCE_ROOT; };
@@ -11612,6 +11662,9 @@
 		4B2EE03877B76C19F3B8FEDA /* RRProtocolRTMin.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RRProtocolRTMin.cc; path = ../src/protocols/rotamer_recovery/RRProtocolRTMin.cc; sourceTree = SOURCE_ROOT; };
 		BB7B46910773EFE8F2688144 /* RRProtocolRTMin.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RRProtocolRTMin.fwd.hh; path = ../src/protocols/rotamer_recovery/RRProtocolRTMin.fwd.hh; sourceTree = SOURCE_ROOT; };
 		97F28E52535BEE0E3682CFF9 /* RRProtocolRTMin.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RRProtocolRTMin.hh; path = ../src/protocols/rotamer_recovery/RRProtocolRTMin.hh; sourceTree = SOURCE_ROOT; };
+		D033C52D4AFAF522F53365E6 /* RRProtocolReferenceStructure.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RRProtocolReferenceStructure.cc; path = ../src/protocols/rotamer_recovery/RRProtocolReferenceStructure.cc; sourceTree = SOURCE_ROOT; };
+		A9A83D68E0A90CB1B4BB65A9 /* RRProtocolReferenceStructure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RRProtocolReferenceStructure.fwd.hh; path = ../src/protocols/rotamer_recovery/RRProtocolReferenceStructure.fwd.hh; sourceTree = SOURCE_ROOT; };
+		CF41F7D81CAED36F51A55E96 /* RRProtocolReferenceStructure.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RRProtocolReferenceStructure.hh; path = ../src/protocols/rotamer_recovery/RRProtocolReferenceStructure.hh; sourceTree = SOURCE_ROOT; };
 		E17E3C15107EB7B53FE6FBB7 /* RRReporter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RRReporter.cc; path = ../src/protocols/rotamer_recovery/RRReporter.cc; sourceTree = SOURCE_ROOT; };
 		00C4D4E11CA8CEFC5EE6EFCE /* RRReporter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RRReporter.fwd.hh; path = ../src/protocols/rotamer_recovery/RRReporter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9A4D0248A6CB743CC41DE600 /* RRReporter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RRReporter.hh; path = ../src/protocols/rotamer_recovery/RRReporter.hh; sourceTree = SOURCE_ROOT; };
@@ -14873,6 +14926,9 @@
 				1A2AB229478FDB0CB95EE67B /* AtomType.cc */,
 				0479A655CB9A24E5947936AF /* AtomType.fwd.hh */,
 				0E60CF5B1B5305E3F4239E0F /* AtomType.hh */,
+				FDA82E88C70E049F065667B7 /* AtomTypeDatabaseIO.cc */,
+				F669FDC38FE008C1AB2F43D1 /* AtomTypeDatabaseIO.fwd.hh */,
+				D75C86B3A7BFF10133948329 /* AtomTypeDatabaseIO.hh */,
 				6552748D47C47A46F5F2F7E4 /* AtomTypeSet.cc */,
 				85F4C38ED9047F59A35D687F /* AtomTypeSet.fwd.hh */,
 				375B55991D9FBC2775DF1EB6 /* AtomTypeSet.hh */,
@@ -15456,6 +15512,7 @@
 				5BE1F76C5CED9917631097CB /* dna */,
 				5FDA2BB82E9E2840477F9E72 /* dssp */,
 				0A0D09669809F8ECF0EF32E3 /* electron_density */,
+				FAE7666D1BFFAE3798A97FFA /* electron_density_atomwise */,
 				C493C5C25327087F66C0BCBD /* etable */,
 				32D62C8E6220D96298899578 /* geometric_solvation */,
 				53984C43DA42972F24AFC199 /* hackaro */,
@@ -15953,6 +16010,20 @@
 			path = ../src/core/scoring/electron_density/;
 			sourceTree = SOURCE_ROOT;
 		};
+		FAE7666D1BFFAE3798A97FFA /* electron_density_atomwise */ = {
+			isa = PBXGroup;
+			children = (
+				5FF80D94269C6FE8DEC023AC /* ElecDensAtomwiseEnergy.cc */,
+				A248EFA4ABB305CFEFB2F87B /* ElecDensAtomwiseEnergy.fwd.hh */,
+				83B6A13B4EAB457200928248 /* ElecDensAtomwiseEnergy.hh */,
+				30E3189CA0098901DBC90648 /* ElecDensAtomwiseEnergyCreator.hh */,
+				B15426DC07C5EABF1E997756 /* ElectronDensityAtomwise.cc */,
+				EFAE92F7AA8A46C579D787F5 /* ElectronDensityAtomwise.hh */,
+			);
+			name = electron_density_atomwise;
+			path = ../src/core/scoring/electron_density_atomwise/;
+			sourceTree = SOURCE_ROOT;
+		};
 		C493C5C25327087F66C0BCBD /* etable */ = {
 			isa = PBXGroup;
 			children = (
@@ -16136,6 +16207,9 @@
 				BB463B24AE48EC04D07B18F5 /* FadeInterval.cc */,
 				DA9EB057E1524762BBEB6B98 /* FadeInterval.fwd.hh */,
 				76B14FED5A01FD76BF7A1482 /* FadeInterval.hh */,
+				461746C36DF66B0A90A98E9A /* HBEvalTuple.cc */,
+				7F7620716982009DB9AFF6A1 /* HBEvalTuple.fwd.hh */,
+				8A7944DCDD2337B5169C1DDF /* HBEvalTuple.hh */,
 				81EC2048C81D9467CB9F611C /* HBondDatabase.cc */,
 				1118BCC55136AC18B06F6AD3 /* HBondDatabase.fwd.hh */,
 				B285F394595B4AC7C85893E0 /* HBondDatabase.hh */,
@@ -16309,6 +16383,12 @@
 				AE599C9C904BC22B3856E0E8 /* HybridVDW_Energy.fwd.hh */,
 				6B90BF5D1C1CFAFE42B5747A /* HybridVDW_Energy.hh */,
 				236D85BD88180C5AD7FB9821 /* HybridVDW_EnergyCreator.hh */,
+				67B35A46D7F1EC8DF7A9812A /* LK_BallEnergy.cc */,
+				1A4ACCD4DFA4A3E547B6229B /* LK_BallEnergy.fwd.hh */,
+				C89E687C749B765CC243245A /* LK_BallEnergy.hh */,
+				74EAEE0652B07E64800AC810 /* LK_BallEnergyCreator.hh */,
+				35DF46DFC3C680EC5BB25B97 /* LK_BallInfo.cc */,
+				685718F4841236593F911CC4 /* LK_BallInfo.hh */,
 				A6D2266CBF5B97FE54FEAB72 /* LK_CosThetaEnergy.cc */,
 				2DD2AB571540541245DCE6F1 /* LK_CosThetaEnergy.fwd.hh */,
 				6D2D4D291EFAB5C5E882AC89 /* LK_CosThetaEnergy.hh */,
@@ -16487,6 +16567,10 @@
 				641C273DD8D047525B8689C6 /* WholeStructureEnergy.cc */,
 				BDF02C7164A1BB0E23B9762C /* WholeStructureEnergy.fwd.hh */,
 				536FD56D6403F669E44EC4A0 /* WholeStructureEnergy.hh */,
+				4AF2A4341B337D73E60D08DC /* YHHPlanarityEnergy.cc */,
+				D14E54B598D5654139F011C5 /* YHHPlanarityEnergy.fwd.hh */,
+				E6D0EDC73F9E6992BA52F991 /* YHHPlanarityEnergy.hh */,
+				EB6FA1F9779D733E1EED75CB /* YHHPlanarityEnergyCreator.hh */,
 				FE1E1892901FD5C6424FDAF5 /* chainbreak_util.cc */,
 				1099904D6A479DD0BE68A2E1 /* chainbreak_util.hh */,
 				44695C49C41E85824270795B /* pHEnergy.cc */,
@@ -17741,6 +17825,9 @@
 		9BA3788841CB662DF7A7A401 /* dna */ = {
 			isa = PBXGroup;
 			children = (
+				DA28362CE0399D88E769D16C /* MotifLoopBuild.cc */,
+				6A672ED2D88523B836B1FF99 /* MotifLoopBuild.hh */,
+				F5EBB2FE585DBC48C851426B /* MotifLoopBuildCreator.hh */,
 				69816596748FBB3E70E054F9 /* ProteinDNA_Relax.cc */,
 				1F201C18EE54FB86DB26170D /* ProteinDNA_Relax.hh */,
 				260262870BE57B16ED76863E /* base_movers.cc */,
@@ -17752,6 +17839,8 @@
 				B52E75C0BA2E6FAF3665FE90 /* typedefs.hh */,
 				927F8B0594E5865CA2087CD9 /* util.cc */,
 				EFAA3B85C571C5E0CEAA1266 /* util.hh */,
+				BA507A0ED2E7E9EE6C5C5EF3 /* util_motif_loop.cc */,
+				80EA11EF6145E2A5E5F98333 /* util_motif_loop.hh */,
 			);
 			name = dna;
 			path = ../src/devel/dna/;
@@ -18238,6 +18327,7 @@
 				EC7F0E7E36457CC93407B52D /* DataMap.cc */,
 				93E7EC95FA6B90BA0CC16DD8 /* DataMap.fwd.hh */,
 				69A672F087D3186C711ABD49 /* DataMap.hh */,
+				786518A5B5410B17A8D5B607 /* DataMapObj.hh */,
 				19DB567ED50B59914420DD9B /* DsspMover.cc */,
 				A36375AC5455989389FFBE2B /* DsspMover.fwd.hh */,
 				17B8002AD7988023209091D2 /* DsspMover.hh */,
@@ -19568,6 +19658,10 @@
 				3F3D0EFCE51D7A591BEBAB54 /* FragmentMover.cc */,
 				B93786DFE1239D05631BDC41 /* FragmentMover.fwd.hh */,
 				B99740C12BB07EFEB709A54F /* FragmentMover.hh */,
+				E7F7DCA5152E8C9EAF6DA079 /* GreedyOptMutationMover.cc */,
+				698A233467D5C79D1B22A069 /* GreedyOptMutationMover.fwd.hh */,
+				14EE496A9AC5668DD4FB32E7 /* GreedyOptMutationMover.hh */,
+				0A0BB9DC993EF5C0FC8CACDE /* GreedyOptMutationMoverCreator.hh */,
 				FC9988993CDAC613EE28D53B /* GreenPacker.cc */,
 				98CBE746B2303E7AC0522E73 /* GreenPacker.fwd.hh */,
 				7D0DB33DC5BF1B5F5E062D2B /* GreenPacker.hh */,
@@ -20430,6 +20524,11 @@
 				C3D7ABFAA3E25F5DD5724128 /* AtomInResidueAtomInResiduePairFeatures.hh */,
 				5E6C7AF47B42DCC9A87F675F /* AtomInResidueAtomInResiduePairFeaturesCreator.cc */,
 				132E9A19D1B3D5DE8CC1F1B0 /* AtomInResidueAtomInResiduePairFeaturesCreator.hh */,
+				A782B63B78206395D49FFF0D /* AtomTypesFeatures.cc */,
+				391A545FC5ABBD0B041104BC /* AtomTypesFeatures.fwd.hh */,
+				0DEF19B7B512545B2537EB46 /* AtomTypesFeatures.hh */,
+				B0B5020D1DA3BD9C26781C20 /* AtomTypesFeaturesCreator.cc */,
+				BEBB870D0C9DE91B61D54F3D /* AtomTypesFeaturesCreator.hh */,
 				45931262D18D975F1D66CEA5 /* BetaTurnDetectionFeatures.cc */,
 				B480A76465F1B74BF84E9359 /* BetaTurnDetectionFeatures.fwd.hh */,
 				F67D3DDF5E3F78BCF3C8ACC2 /* BetaTurnDetectionFeatures.hh */,
@@ -20634,6 +20733,9 @@
 				4B2EE03877B76C19F3B8FEDA /* RRProtocolRTMin.cc */,
 				BB7B46910773EFE8F2688144 /* RRProtocolRTMin.fwd.hh */,
 				97F28E52535BEE0E3682CFF9 /* RRProtocolRTMin.hh */,
+				D033C52D4AFAF522F53365E6 /* RRProtocolReferenceStructure.cc */,
+				A9A83D68E0A90CB1B4BB65A9 /* RRProtocolReferenceStructure.fwd.hh */,
+				CF41F7D81CAED36F51A55E96 /* RRProtocolReferenceStructure.hh */,
 				E17E3C15107EB7B53FE6FBB7 /* RRReporter.cc */,
 				00C4D4E11CA8CEFC5EE6EFCE /* RRReporter.fwd.hh */,
 				9A4D0248A6CB743CC41DE600 /* RRReporter.hh */,
@@ -24823,6 +24925,7 @@
 				20E970CA1C0645E31D7F8E1E /* ExtendedPoseMoverCreator.cc in Sources */,
 				8C0CA66929C496AB106D3D23 /* FavorSequenceProfile.cc in Sources */,
 				C472B2DE46DEF9427C945FDC /* FragmentMover.cc in Sources */,
+				F1A34FB5555F0CBA05323377 /* GreedyOptMutationMover.cc in Sources */,
 				F576318DAB943E06A5858D13 /* GreenPacker.cc in Sources */,
 				4CDF59A2EB7B4E324407060F /* GunnCost.cc in Sources */,
 				E124072B992C76DD964BB1DF /* LoadUnboundRotMover.cc in Sources */,
@@ -25045,6 +25148,8 @@
 				AAAB97D3231CA26126021FEF /* AtomAtomPairFeaturesCreator.cc in Sources */,
 				2269B581E8EC1007768C77E5 /* AtomInResidueAtomInResiduePairFeatures.cc in Sources */,
 				530464B580E02DBB569DF693 /* AtomInResidueAtomInResiduePairFeaturesCreator.cc in Sources */,
+				E6A4FF1AEF957A4F3FCE5C51 /* AtomTypesFeatures.cc in Sources */,
+				265C2CCA715257BCFB4CF304 /* AtomTypesFeaturesCreator.cc in Sources */,
 				9C2B003200B21C776E6DB04D /* BetaTurnDetectionFeatures.cc in Sources */,
 				C732DB9F7919948AFCECCB63 /* BetaTurnDetectionFeaturesCreator.cc in Sources */,
 				905D508D95F087D2A326D228 /* DatabaseFilters.cc in Sources */,
@@ -25118,6 +25223,7 @@
 				DDD8DC93384923D38F795F0D /* RRProtocolMinPack.cc in Sources */,
 				38361B3D10FEB929457C3891 /* RRProtocolMover.cc in Sources */,
 				0257666980985A1B7A39247C /* RRProtocolRTMin.cc in Sources */,
+				5CCFEF0360B1048029A6A1F2 /* RRProtocolReferenceStructure.cc in Sources */,
 				789442BD934C4032692F39CC /* RRReporter.cc in Sources */,
 				85E491AB31C09C0331A14FA0 /* RRReporterHuman.cc in Sources */,
 				055844D00AEE161063716726 /* RRReporterSQLite.cc in Sources */,
@@ -25819,11 +25925,13 @@
 				523A96E3BA1AD56D87E2C042 /* SSClass.cc in Sources */,
 				5DF82A8821A2DCE1508EEFDA /* SequenceFitnessMover.cc in Sources */,
 				86133618A140F388E9B00D0D /* util.cc in Sources */,
+				71AD635E9141039DE5B8A052 /* MotifLoopBuild.cc in Sources */,
 				18D45672339880DA4002C2CE /* ProteinDNA_Relax.cc in Sources */,
 				74EAB32E3D25AC4B9D44C3D4 /* base_movers.cc in Sources */,
 				01EDD6EB16D603A7CB7AD191 /* protocols.cc in Sources */,
 				D188580969F165A4A9FF1EA5 /* relax_util.cc in Sources */,
 				33AD1A7D829FDBE162442A5D /* util.cc in Sources */,
+				4DC4CC81DAB57FEB544D329E /* util_motif_loop.cc in Sources */,
 				B331040744A12FB5C3C20F00 /* DomainAssemblyReader.cc in Sources */,
 				1CBF7452982D36B0FA236E6C /* domain_assembly.cc in Sources */,
 				DA8D4D29B02C1DA2CCE86CCF /* domain_assembly_setup.cc in Sources */,
@@ -26026,6 +26134,7 @@
 				5D18C5E7DFA23F54E46DAD69 /* Adduct.cc in Sources */,
 				4B81356E32962766F3F7CA92 /* AtomICoor.cc in Sources */,
 				3EBAFD1DFD5426FDAE7695B8 /* AtomType.cc in Sources */,
+				1513089A4A90E42041CEF2AB /* AtomTypeDatabaseIO.cc in Sources */,
 				94F1A6982782A858387CEB14 /* AtomTypeSet.cc in Sources */,
 				8D5083B55359CB982813ADD3 /* ChemicalManager.cc in Sources */,
 				56EE387CDEDC86D3BD803512 /* Element.cc in Sources */,
@@ -26289,6 +26398,8 @@
 				7C859AFA1D74969D0CEA47DD /* SplineInterp.cc in Sources */,
 				CAAD150CE70F2D42581D66B3 /* util.cc in Sources */,
 				4CABB1B7B85F79F3E36074BA /* xray_scattering.cc in Sources */,
+				6BCE2E8D5AE357815A33A57F /* ElecDensAtomwiseEnergy.cc in Sources */,
+				DDC91FFEA135CC2FCE2527B8 /* ElectronDensityAtomwise.cc in Sources */,
 				8B6F6E3BFB34CE2CF0783DD3 /* Etable.cc in Sources */,
 				225469DF7A86F575BEB8079F /* EtableEnergy.cc in Sources */,
 				1B803584FE84095ECF9434E6 /* EtableOptions.cc in Sources */,
@@ -26323,6 +26434,7 @@
 				A034D0EC219968FF1F3072EC /* HackElecEnergyAroAro.cc in Sources */,
 				0E473FF049182288765A774B /* RNAHackElecEnergy.cc in Sources */,
 				4A610A46832FEF60CCF8B1B7 /* FadeInterval.cc in Sources */,
+				5385A818E8F928AD044F137E /* HBEvalTuple.cc in Sources */,
 				ED3A053EFABE14ACD1A48B05 /* HBondDatabase.cc in Sources */,
 				8F7E7E2DEE5394E0B7BE473A /* HBondEnergy.cc in Sources */,
 				18BF6F49423183B0A4A0C149 /* HBondOptions.cc in Sources */,
@@ -26362,6 +26474,8 @@
 				40CE3F0BCF20ADA25D51430C /* Fa_MbsolvEnergy.cc in Sources */,
 				E61C21BA29DC93131CA569C4 /* GenBornEnergy.cc in Sources */,
 				767D805221F76D109750356B /* HybridVDW_Energy.cc in Sources */,
+				79DA7822689E043AE0AFDE99 /* LK_BallEnergy.cc in Sources */,
+				97D74CBB293B0D463441EB42 /* LK_BallInfo.cc in Sources */,
 				5803C492B6E504C99500A920 /* LK_CosThetaEnergy.cc in Sources */,
 				304DA124F3F19335F025F86D /* LK_hack.cc in Sources */,
 				DA5CB42AEAB8A0E14C328547 /* LinearChainbreakEnergy.cc in Sources */,
@@ -26408,6 +26522,7 @@
 				D32426C66114086115B4C5E3 /* WaterAdductHBondEnergy.cc in Sources */,
 				74C0815FAEA923CDDF438CC8 /* WaterAdductIntraEnergy.cc in Sources */,
 				55C1F184BC7D239E240C661A /* WholeStructureEnergy.cc in Sources */,
+				4B5C3F0CD4553C187A8A0436 /* YHHPlanarityEnergy.cc in Sources */,
 				D10CFDDB40FD0A3A57EBC154 /* chainbreak_util.cc in Sources */,
 				B3A20B5DB4427D906C800750 /* pHEnergy.cc in Sources */,
 				9C750DCFE292A2915A8D9A5E /* util.cc in Sources */,

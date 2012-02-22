@@ -96,11 +96,6 @@ def select_compiler_version(supported, compiler, requested):
                 "Actual compiler version '%s' does not match requested version '%s'" % \
                 (actual, requested)
 
-    # If the request was for "*" and we haven't hit any errors, then we
-    # want to keep actual as "*" to properly select the unadorned compiler.
-    if requested == "*":
-        actual = requested
-
     return actual
 
 
@@ -277,8 +272,8 @@ to be parsed out.
             full_version = compiler_output.strip()
             version = ".".join(full_version.split(".")[0:2])
         else:
-            full_version = "8.0"#None
-            version = "8.0"#None
+            full_version = "*"#None
+            version = "*"#None
     else:
         compiler_output = os.popen("%s --version" % compiler).read()
         # New versions of Apple provided clang return: "Apple clang version 2.0 (tags/Apple/clang-137) (based on LLVM 2.9svn)..."
@@ -289,8 +284,8 @@ to be parsed out.
             version = ".".join(full_version.split(".")[0:2])
             
         else:
-            full_version = "8.0"#None
-            version = "8.0"#None
+            full_version = "*"#None
+            version = "*"#None
     return version, full_version
 
 

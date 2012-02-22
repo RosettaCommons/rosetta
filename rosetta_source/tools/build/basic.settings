@@ -418,7 +418,14 @@ settings = {
             "cxx"           : "g++-4.2",
         },
     },
-
+    
+    "gcc, 4.2, macos, 10.7" : {
+        "overrides" : {
+            "cc"            : "llvm-gcc-4.2",
+            "cxx"           : "llvm-g++-4.2",
+        },
+    },
+    
     "gcc, x86, 32" : {
         "appends" : {
             "flags" : {
@@ -1153,25 +1160,21 @@ settings = {
             "library_path" : [ "/usr/lib/gcc/x86_64-redhat-linux6E/4.4.0" ],
         },
     },
+    
     "clang, macos" : {
-
         "appends" : {
             "flags" : {
                 # change 'abspath' to 'file' to use DYLD_LIBRARY_PATH environment variable
+                "compile"   : [ "march=native" ],
                 "shlink"    : [ "install_name ${TARGET.abspath}" ],
             },
         },
-    },
-    "clang, macos, 10.6" : {
-        "prepends" : {
-                # This makes clang use libstdc++ 4.2.1 on Mac OS X 10.6
-                "library_path" : [ "/usr/lib/gcc/i686-apple-darwin10/4.2.1" ],
-        },
-    },
-    "clang, macos, 10.7" : {
-        "prepends" : {
-                # This makes clang use libstdc++ 4.2.1 on Mac OS X 10.7
-                "library_path" : [ "/usr/lib/gcc/i686-apple-darwin11/4.2.1/x86_64" ],
+        "removes" : {
+            "flags" : {
+                "link"      : [ "$__RPATH" ],
+                "cxx"       : [ "std=c++98" ],
+                "shlink"    : [ "$LINKFLAGS" ],
+            },
         },
     },
 
