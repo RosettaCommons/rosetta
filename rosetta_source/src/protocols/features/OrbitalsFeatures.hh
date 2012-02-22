@@ -17,7 +17,8 @@
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/OrbitalsFeatures.fwd.hh>
-
+#include <core/conformation/Residue.hh>
+#include <numeric/xyzVector.hh>
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -77,6 +78,53 @@ public:
 		core::Size const struct_id,
 		utility::sql_database::sessionOP db_session
 	);
+	void
+	set_OrbH_features_data(
+			core::conformation::Residue  & res1,
+			core::conformation::Residue  & res2,
+			core::Size const Aindex,
+			core::Size const Hindex,
+			core::Size const Orbindex,
+			numeric::xyzVector<core::Real> const Orbxyz,
+			core::Size & resNum2,
+			std::string & orbName1,
+			std::string & htype2,
+			std::string & res2name,
+			core::Size & orbNum1,
+			core::Size & hpolNum2,
+			core::Real & cosAOH,
+			core::Real & cosDHO,
+			core::Real & chiBDHO,
+			core::Real & chiBAOH,
+			core::Real & AOH_angle,
+			core::Real & DHO_angle,
+			core::Real & chiBAHD,
+			core::Real & cosAHD,
+			core::Real & OrbHdist);
+	void
+	set_OrbOrb_features_data(
+			core::conformation::Residue  & res1,
+			core::conformation::Residue  & res2,
+			core::Size Aindex,
+			core::Size Dindex,
+			core::Size Orbindex1,
+			core::Size Orbindex2,
+			numeric::xyzVector<core::Real> const & Orbxyz1,
+			numeric::xyzVector<core::Real> const & Orbxyz2,
+			core::Size & resNum2,
+			std::string & orbName1,
+			std::string & res2name,
+			std::string & OrbName2,
+			core::Size & orbNum1,
+			core::Size & OrbNum2,
+			core::Real & cosAOO,
+			core::Real & cosDOO,
+			core::Real & chiBAOO,
+			core::Real & chiBDOO,
+			core::Real & AOO_angle,
+			core::Real & DOO_angle,
+			core::Real & OrbHdist
+		);
 
 };
 

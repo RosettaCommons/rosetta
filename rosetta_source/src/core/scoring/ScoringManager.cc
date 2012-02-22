@@ -589,21 +589,20 @@ ScoringManager::get_NVLookupTable() const
 		if(orbitals_lookup_table_ == 0){
 			using namespace basic::options;
 			using namespace basic::options::OptionKeys;
-			utility::vector1<std::string> filenames;
-			utility::vector1< std::string > cubic_files;
+			utility::vector1<std::string> DHO_energies;
+			utility::vector1< std::string > AOH_energies;
 
-			filenames.push_back("scoring/score_functions/orbitals/HPOL_sc_H_sc_orb.txt");//filenames[1]
-			filenames.push_back("scoring/score_functions/orbitals/HARO_sc_H_sc_orb.txt");//filenames[2]
-			filenames.push_back("scoring/score_functions/orbitals/HPOL_sc_H_bb_orb.txt");//filenames[3]
-			filenames.push_back("scoring/score_functions/orbitals/HPOL_bb_H_sc_orb.txt");  //filenames[4]
+			DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Hpol_scOrbH.txt");//DHO_energies[1]
+			DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Hpol_bbOrbH.txt");//DHO_energies[2]
+			DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Haro_scOrbH.txt");//DHO_energies[3]
 
-			cubic_files.push_back("scoring/score_functions/orbitals/cubic_HPOL_sc_H_sc_orb.txt");
-			cubic_files.push_back("scoring/score_functions/orbitals/cubic_HPOL_sc_H_bb_orb.txt");
-			cubic_files.push_back("scoring/score_functions/orbitals/cubic_HPOL_bb_H_sc_orb.txt");
-			cubic_files.push_back("scoring/score_functions/orbitals/cubic_HARO_sc_H_sc_orb.txt");
+			AOH_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOH_Hpol_scOrbH.txt");//AOH_energies[1]
+			AOH_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOH_Hpol_bbOrbH.txt");//AOH_energies[2]
+			AOH_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOH_Haro_scOrbH.txt");//AOH_energies[3]
 
 
-			orbitals_lookup_table_ = new orbitals::OrbitalsLookup(filenames, cubic_files);
+
+			orbitals_lookup_table_ = new orbitals::OrbitalsLookup(DHO_energies, AOH_energies);
 
 		}
 		return *orbitals_lookup_table_;

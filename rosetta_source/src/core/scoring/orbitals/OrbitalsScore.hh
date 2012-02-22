@@ -66,6 +66,11 @@ public:
 	) const;
 
 	virtual
+	void
+	finalize_after_derivatives( pose::Pose & pose, ScoreFunction const &  ) const;
+
+
+	virtual
 	void eval_intrares_energy(
 		core::conformation::Residue const &,
 		core::pose::Pose const &,
@@ -116,32 +121,26 @@ public:
 	void get_E_haro_one_way(
 			core::conformation::Residue const & res1,
 			core::conformation::Residue const & res2,
-			core::Real & HARO_sc_H_sc_orb_E,
-			core::Real & HARO_DHO_angle_E
+			core::Real & HARO_sc_H_sc_orb_E
 	) const;
 
 	void get_E_hpol_one_way(
 			core::conformation::Residue const & res1,
 			core::conformation::Residue const & res2,
 			core::Real & HPOL_sc_H_sc_orb_E,
-			core::Real & HPOL_bb_H_sc_orb_energy,
-			core::Real & HPOL_sc_H_bb_orb_energy,
-			core::Real & HPOL_DHO_angle_E
+			core::Real & HPOL_bb_H_sc_orb_energy
 	) const;
 
 	void get_orb_H_distance_and_energy(
 			core::conformation::Residue const & res1,
-			core::Size const & atom_index,
-			numeric::xyzVector<core::Real> const & atom_xyz,
-			numeric::xyzVector<core::Real> const & H_xyz,
-			numeric::xyzVector<core::Real> const & donor_xyz,
+			core::Size const & Aindex,
+			numeric::xyzVector<core::Real> const & Axyz, //acceptor xyz
+			numeric::xyzVector<core::Real> const & Hxyz,//hydrogen xyz
+			numeric::xyzVector<core::Real> const & Dxyz, //donor xyz
 			core::Real & sc_energy,
 			core::Real & bb_h_energy,
-			core::Real & bb_orb_energy,
-			core::Real & DHO_angle_E,
 			OrbitalsLookup::h_type htype,
-			bool bb_h_flag,
-			bool bb_orb_flag
+			bool bb_h_flag
 	) const;
 
 	void assign_haro_derivs_one_way(
