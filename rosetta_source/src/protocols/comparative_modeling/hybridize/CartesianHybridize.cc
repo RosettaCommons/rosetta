@@ -514,20 +514,24 @@ sampler:
 				utility::vector1<core::Real> max_residuals(3,0);
 				utility::vector1<int> max_poses(4,-1);
 				for (int i=1; i<nres; ++i) {
-					numeric::xyzVector< core::Real > c0 , n1;
-					c0 = pose.residue(i).atom(" C  ").xyz();
-					n1 = pose.residue(i+1).atom(" N  ").xyz();
-					core::Real d2 = c0.distance( n1 );
-					residuals[i] = (d2-1.328685)*(d2-1.328685);
-					if ( residuals[i] > max_residuals[1]) {
-						max_residuals[3] = max_residuals[2]; max_residuals[2] = max_residuals[1]; max_residuals[1] = residuals[i];
-						max_poses[3] = max_poses[2]; max_poses[2] = max_poses[1]; max_poses[1] = i;
-					} else if ( residuals[i] > max_residuals[2]) {
-						max_residuals[3] = max_residuals[2]; max_residuals[2] = residuals[i];
-						max_poses[3] = max_poses[2]; max_poses[2] = i;
-					} else if ( residuals[i] > max_residuals[3]) {
-						max_residuals[3] = residuals[i];
-						max_poses[3] = i;
+					if (pose.fold_tree().is_cutpoint(i+1)) {
+						residuals[i] = -1;
+					} else {
+						numeric::xyzVector< core::Real > c0 , n1;
+						c0 = pose.residue(i).atom(" C  ").xyz();
+						n1 = pose.residue(i+1).atom(" N  ").xyz();
+						core::Real d2 = c0.distance( n1 );
+						residuals[i] = (d2-1.328685)*(d2-1.328685);
+						if ( residuals[i] > max_residuals[1]) {
+							max_residuals[3] = max_residuals[2]; max_residuals[2] = max_residuals[1]; max_residuals[1] = residuals[i];
+							max_poses[3] = max_poses[2]; max_poses[2] = max_poses[1]; max_poses[1] = i;
+						} else if ( residuals[i] > max_residuals[2]) {
+							max_residuals[3] = max_residuals[2]; max_residuals[2] = residuals[i];
+							max_poses[3] = max_poses[2]; max_poses[2] = i;
+						} else if ( residuals[i] > max_residuals[3]) {
+							max_residuals[3] = residuals[i];
+							max_poses[3] = i;
+						}
 					}
 				}
 
@@ -543,7 +547,8 @@ sampler:
 				insert_pos = std::min( insert_pos, nres-8);
 				insert_pos = std::max( (int)insert_pos, 1);
 
-				apply_frame (pose, library_[insert_pos]);
+				if (library_.find(insert_pos) != library_.end())
+					apply_frame (pose, library_[insert_pos]);
 			}
 
 			// MC
