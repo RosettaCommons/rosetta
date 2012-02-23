@@ -1686,6 +1686,9 @@ ResidueType::atom_index( std::string const & name ) const
 		// chu temporary graphic fix for boinc
 		if ( name == "CA" && !is_protein() ) return 1;
 #endif
+		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
+		show_all_atom_names( tr.Error );
+		tr.Error << std::endl;
 		utility_exit_with_message("unknown atom_name: " + name3() + "  " + name );
 	}
 	return iter->second;
