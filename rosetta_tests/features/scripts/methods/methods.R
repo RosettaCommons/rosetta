@@ -152,7 +152,7 @@ query_sample_sources <- function(
 	sele,
 	cache_size=db_cache_size){
 	tryCatch(sele,error=function(e){
-		cat("ERROR: The select statement ", sele, " is not defined.\n")
+		cat("ERROR: The select statement is not defined.\n")
 	})
 	features <- ddply(sample_sources, c("sample_source"), function(ss){
 
@@ -177,7 +177,7 @@ query_sample_sources <- function(
 			df <- dbGetQuery(con, last_stmt)
 			dbDisconnect(con)
 		})
-		cat(as.character(timing[3]),"s\n")
+		cat(as.character(round(timing[3], 2)),"s\n")
 		df
 	})
 	if(nrow(features)==0){
@@ -242,7 +242,7 @@ In the returned data.frame the there will be the following columns:
 			df <- dbGetQuery(con, last_stmt)
 		})
 		dbGetQuery(con, "DETACH DATABASE new;")
-		cat(as.character(timing[3]),"s\n")
+		cat(as.character(round(timing[3],2)),"s\n")
 		df
 	})
 	dbDisconnect(con)

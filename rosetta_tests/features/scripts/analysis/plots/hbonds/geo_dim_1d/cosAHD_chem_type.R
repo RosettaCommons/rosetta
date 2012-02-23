@@ -9,38 +9,31 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "AHdist_chemtype_bfac30",
-filename = "scripts/analysis/plots/hbonds/AHdist_chemtype_bfac30.R",
+id = "cosAHD_chem_type",
+filename = "scripts/analysis/plots/hbonds/cosAHD_chem_type.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self){
 
-plot_id <- "AHdist_chem_type_bcut30"
-
 sele <-"
 SELECT
-  geom.AHdist,
-  acc_site.HBChemType AS acc_chem_type,
-  don_site.HBChemType AS don_chem_type
+  geom.cosAHD,
+	don.HBChemType AS don_chem_type, acc.HBChemType AS acc_chem_type
 FROM
-  hbond_geom_coords AS geom,
-  hbonds AS hbond,
-  hbond_sites AS don_site,
-  hbond_sites AS acc_site,
-  hbond_sites_pdb AS don_site_pdb,
-  hbond_sites_pdb AS acc_site_pdb
+	hbonds AS hb,
+	hbond_geom_coords AS geom,
+	hbond_sites AS don, hbond_sites AS acc,
+	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb
 WHERE
-  hbond.struct_id = geom.struct_id AND
-  hbond.hbond_id =  geom.hbond_id AND
-  hbond.struct_id = don_site.struct_id AND
-  hbond.don_id = don_site.site_id AND
-  hbond.struct_id = acc_site.struct_id AND
-  don_site_pdb.struct_id = hbond.struct_id AND don_site_pdb.site_id = hbond.don_id AND
-  acc_site_pdb.struct_id = hbond.struct_id AND acc_site_pdb.site_id = hbond.acc_id AND
-  don_site_pdb.heavy_atom_temperature < 30 AND
-  acc_site_pdb.heavy_atom_temperature < 30 AND
-  hbond.acc_id = acc_site.site_id;"
+	geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
+	don.struct_id = hb.struct_id AND don.site_id = hb.don_id AND
+	acc.struct_id = hb.struct_id AND acc.site_id = hb.acc_id AND
+	don_pdb.struct_id = hb.struct_id AND don_pdb.site_id = hb.don_id AND
+	don_pdb.heavy_atom_temperature < 30 AND
+	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id AND
+	acc_pdb.heavy_atom_temperature < 30 AND
+  abs(don.resNum - acc.resNum) > 5;"
 
 f <- query_sample_sources(sample_sources, sele)
 
@@ -60,17 +53,29 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
-dens <- estimate_density_1d(
-  f, c("sample_source", "acc_chem_type", "don_chem_type"),
-  "AHdist", weight_fun = radial_3d_normalization)
+f <- na.omit(f, method="r")
 
+#coAHD goes from 0 to 1, where 1 is linear
+#since there is significant density at 1,
+#to accurately model a discontinuity, reflect
+#the data across the right boundary, in computing the density esitmation
+dens <- estimate_density_1d_reflect_boundary(
+ data=f,
+ ids = c("sample_source", "acc_chem_type", "don_chem_type"),
+ variable = "cosAHD",
+ reflect_right=TRUE,
+ right_boundary=1, adjust=.5)
+
+plot_id = "hbond_cosAHD_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "Hydrogen Bonds A-H Distance with Bfactors < 30\nnormalized for equal weight per unit distance") +
-	scale_y_continuous("FeatureDensity)", limits=c(0,6), breaks=c(1,3,5)) +
-	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
+	opts(title = "HBond AHD Angle by Chemical Type, SeqSep > 5, B-Fact < 30\n(normalized for equal volume per unit distance)") +
+	scale_y_continuous("FeatureDensity", limits=c(0,30), breaks=c(0,10,20)) +
+	scale_x_continuous(
+		"Acceptor -- Hydrogen -- Donor (degrees)", trans="reverse",
+		limits=c(180, 120), breaks=c(180, 160, 140))
 
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")

@@ -18,30 +18,21 @@ run=function(self){
 
 sele <-"
 SELECT
-  geom.AHdist, geom.cosBAH, geom.cosAHD, geom.chi,
-  hblj.don_acc_atrE + hblj.don_acc_base_atrE +
-    h_acc_atrE + h_acc_base_atrE AS lj_atrE,
-  hblj.don_acc_repE + hblj.don_acc_base_repE +
-    h_acc_repE + h_acc_base_repE AS lj_repE,
-  hblj.don_acc_solv + hblj.don_acc_base_solv +
-    h_acc_solv + h_acc_base_solv AS lj_solv,
-  acc_site.HBChemType AS acc_chem_type,
-  don_site.HBChemType AS don_chem_type
+	geom.AHdist, geom.cosBAH, geom.cosAHD, geom.chi,
+	acc.HBChemType AS acc_chem_type, don.HBChemType AS don_chem_type
 FROM
-  hbond_geom_coords AS geom,
-  hbonds AS hbond,
-  hbond_sites AS don_site,
-  hbond_sites AS acc_site,
-  hbond_lennard_jones AS hblj
+	hbond_geom_coords AS geom,
+	hbonds AS hb,
+	hbond_sites AS don, hbond_sites AS acc,
+	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb
 WHERE
-  hbond.struct_id = geom.struct_id AND
-  hbond.hbond_id =  geom.hbond_id AND
-  hbond.struct_id = don_site.struct_id AND
-  hbond.don_id = don_site.site_id AND
-  hbond.struct_id = acc_site.struct_id AND
-  hbond.acc_id = acc_site.site_id AND
-  hbond.struct_id = hblj.struct_id AND
-  hbond.hbond_id = hblj.hbond_id;"
+	geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
+	don.struct_id = hb.struct_id AND don.site_id = hb.don_id AND
+	acc.struct_id = hb.struct_id AND acc.site_id = hb.acc_id AND
+	don_pdb.struct_id = hb.struct_id AND don_pdb.site_id = hb.don_id AND
+	don_pdb.heavy_atom_temperature < 30 AND
+	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id AND
+	acc_pdb.heavy_atom_temperature < 30;"
 f <- query_sample_sources(sample_sources, sele)
 
 # This is deprecated please use the hbond_chem_types table for the lables instead
@@ -75,32 +66,32 @@ plot_each_ss <- function(sub_f){
 	ss_id <- sub_f$sample_source[1]
 	ss <- sample_sources[sample_sources$sample_source == ss_id,]
 
-	plot_id <- "geo_dim_pairs_scatter_cosBAH_AHdist_chem_type"
+	plot_id <- "hbond_geo_dim_pairs_scatter_cosBAH_AHdist_chem_type"
 	ggplot(data=sub_f, aes(x=cosBAH, y=AHdist)) + plot_parts +
 		scale_x_cosBAH + scale_y_AHdist + set_plot_title("cosBAH", "AHdist", ss_id)
 	save_plots(self, plot_id, ss, output_dir, output_formats)
 
-	plot_id <- "geo_dim_pairs_scatter_cosAHD_AHdist_chem_type"
+	plot_id <- "hbond_geo_dim_pairs_scatter_cosAHD_AHdist_chem_type"
 	p <- ggplot(data=sub_f, aes(x=cosAHD, y=AHdist)) + plot_parts +
 		scale_x_cosAHD + scale_y_AHdist + set_plot_title("cosAHD", "AHdist", ss_id)
 	save_plots(self, plot_id, ss, output_dir, output_formats)
 
-	plot_id <- "geo_dim_pairs_scatter_chi_AHdist_chem_type"
+	plot_id <- "hbond_geo_dim_pairs_scatter_chi_AHdist_chem_type"
 	p <- ggplot(data=sub_f, aes(x=chi, y=AHdist)) + plot_parts +
 		scale_x_chi + scale_y_AHdist + set_plot_title("CHI", "AHdist", ss_id)
 	save_plots(self, plot_id, ss, output_dir, output_formats)
 
-	plot_id <- "geo_dim_pairs_scatter_cosAHD_cosBAH_chem_type"
+	plot_id <- "hbond_geo_dim_pairs_scatter_cosAHD_cosBAH_chem_type"
 	p <- ggplot(data=sub_f, aes(x=cosAHD, y=cosBAH)) + plot_parts +
 		scale_x_cosAHD + scale_y_cosBAH + set_plot_title("cosAHD", "cosBAH", ss_id)
 	save_plots(self, plot_id, ss, output_dir, output_formats)
 
-	plot_id <- "geo_dim_pairs_scatter_chi_cosBAH_chem_type"
+	plot_id <- "hbond_geo_dim_pairs_scatter_chi_cosBAH_chem_type"
 	p <- ggplot(data=sub_f, aes(x=chi, y=cosBAH)) + plot_parts +
 		scale_x_chi + scale_y_cosBAH + set_plot_title("CHI", "cosBAH", ss_id)
 	save_plots(self, plot_id, ss, output_dir, output_formats)
 
-	plot_id <- "geo_dim_pairs_scatter_chi_cosAHD_chem_type"
+	plot_id <- "hbond_geo_dim_pairs_scatter_chi_cosAHD_chem_type"
 	p <- ggplot(data=sub_f, aes(x=chi, y=cosAHD)) + plot_parts +
 		scale_x_chi + scale_y_cosAHD + set_plot_title("CHI", "cosAHD", ss_id)
 	save_plots(self, plot_id, ss, output_dir, output_formats)
@@ -108,7 +99,5 @@ plot_each_ss <- function(sub_f){
 
 runtime <- system.time(d_ply(f, .(sample_source), .fun=plot_each_ss))
 print(paste("Plot Generation Time: ", runtime, sep=""))
-
-
 
 })) # end FeaturesAnalysis

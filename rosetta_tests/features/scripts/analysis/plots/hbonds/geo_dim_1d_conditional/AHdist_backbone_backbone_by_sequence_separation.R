@@ -9,8 +9,8 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "AHdist_bbbb",
-filename = "scripts/analysis/plots/hbonds/AHdist_bbbb.R",
+id = "AHdist_backbone_backbone_by_squence_separation",
+filename = "scripts/analysis/plots/hbonds/AHdist_backbone_backbone_by_squence_separation.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
@@ -21,7 +21,7 @@ SELECT
 	geom.AHdist,
 	CASE don_site.resNum - acc_site.resNum
 		WHEN -1 THEN '-1' WHEN -2 THEN '-2' WHEN -3 THEN '-3' WHEN -4 THEN '-4'
-		WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4'
+		WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4' WHEN 5 THEN '5'
 		ELSE 'long' END AS seq_sep
 FROM
 	hbond_geom_coords AS geom,
@@ -39,18 +39,23 @@ WHERE
 	don_site.HBChemType == 'hbdon_PBA';"
 f <- query_sample_sources(sample_sources, sele)
 
+f$seq_sep <- factor(f$seq_sep,
+	levels = c("-4", "-3", "-2", "-1", "2", "3", "4", "5", "long"),
+	labels = c("-4", "-3", "-2", "-1", "2", "3", "4", "5", "long"))
+
+
 dens <- estimate_density_1d(
 	f, c("sample_source", "seq_sep"),
 	"AHdist", weight_fun = radial_3d_normalization)
 
-plot_id <- "AHdist_bbbb"
+plot_id <- "hbond_AHdist_backbone_backbone_by_sequence_separation"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_wrap( ~ seq_sep ) +
-	opts(title = "BB/BB Hydrogen Bonds A-H Distance by Sequence Separation\n(donres - accres) normalized for equal weight per unit distance") +
+	opts(title = "Backbone-Backbone HBonds A-H Distance by Sequence Separation\n(DonRes - AccRes) normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity)", limits=c(0,6), breaks=c(1,3,5)) +
-	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
+	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.5))
 
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")

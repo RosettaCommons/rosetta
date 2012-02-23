@@ -199,8 +199,7 @@ print(summary(f))
 exp <- ddply(f, .(sample_source, num_sc_hbs),
 	function(df) data.frame(mean=round(mean(df$don_res_recovery), 4)))
 dens <- estimate_density_1d(
-	f, c("sample_source", "num_sc_hbs" ),
-	"don_res_recovery", weight_fun = radial_3d_normalization)
+	f, c("sample_source", "num_sc_hbs" ), "don_res_recovery")
 dens <- merge(dens, exp)
 
 plot_id <- "salt_bridge_ARG_with_ASP-GLU_recovery"
@@ -210,7 +209,7 @@ p <- ggplot(data=dens) + theme_bw() +
   	geom_indicator(aes(indicator=mean, color=sample_source, xpos="left")) +
 	facet_wrap( ~ num_sc_hbs, nrow=1 ) +
 	opts(title = "ARG Rotamer Recovery when forming HBonds with ASP/GLU and ARG and Bfactors < 20\nBy Number of sc hbonds between the acceptor and donor residues") +
-	labs(x="log(Automorphic RMSD + 1)", y="log(FeatureDensity + 1)") 
+	labs(x="log(Automorphic RMSD + 1)", y="log(FeatureDensity + 1)")
 
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")

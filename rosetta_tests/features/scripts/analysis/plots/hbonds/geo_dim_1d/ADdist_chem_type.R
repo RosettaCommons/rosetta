@@ -7,8 +7,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
-
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "ADdist_chem_type",
 filename = "scripts/analysis/plots/hbonds/ADdist_chem_type.R",
@@ -50,6 +48,8 @@ hydroxyl acceptor (e.g., in a tyrosine) a protein backbone donor
 feature_reporter_dependencies = c("HBondFeatures"),
 
 run=function(self){
+
+source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
 sele <- "
 SELECT
@@ -94,8 +94,7 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
-# Filter to HBonds having A-D distance not greater than 3.5 Angstroms.
-f <- f[f$ADdist <= 3.5,]
+f <- na.omit(f, method="r")
 
 # Compute density estimation for over the A-D distance grouping by the
 # donor type, acceptor type and sample source. Apply the radial 3d
@@ -113,7 +112,7 @@ p <- ggplot(dens) + theme_bw() +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "Hydrogen Bond A-D Distance by Chemical Type, B-Factor < 30\n(normalized for equal volume per unit distance)") +
 	scale_x_ADdist +
-	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5))
+	scale_y_continuous("FeatureDensity", limits=c(0,8.5), breaks=c(1,3,5,7))
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }

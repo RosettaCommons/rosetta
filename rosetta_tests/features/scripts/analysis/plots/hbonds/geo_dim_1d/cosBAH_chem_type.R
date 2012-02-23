@@ -59,6 +59,8 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
+f <- na.omit(f, method="r")
+
 dens <- estimate_density_1d_reflect_boundary(
   data = f,
   ids = c("sample_source", "acc_chem_type", "don_chem_type"),
@@ -73,7 +75,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "HBonds BAH Angle by Chemical Type, B-Factor < 30\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
-	scale_y_continuous("log(FeatureDensity)", limits=c(0,6), breaks=c(1,3,5))
+	scale_y_continuous("log(FeatureDensity)", limits=c(0,3.5), breaks=c(1,2,3))
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }

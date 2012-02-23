@@ -32,7 +32,9 @@ WHERE
 	don_pdb.struct_id = hb.struct_id AND don_pdb.site_id = hb.don_id AND
 	don_pdb.heavy_atom_temperature < 30 AND
 	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id AND
-	acc_pdb.heavy_atom_temperature < 30;"
+	acc_pdb.heavy_atom_temperature < 30 AND
+  abs(don.resNum - acc.resNum ) > 5;"
+
 f <- query_sample_sources(sample_sources, sele)
 
 # Order the plots better and give more descriptive labels
@@ -86,7 +88,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 #	geom_indicator(data=z, aes(indicator=round(statistic,2), colour=new_sample_source), xpos="left") +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance") +
+	opts(title = "HBond A-H Distance by Chemical Type, SeqSep > 5, B-Factor < 30\nnormalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity", limits=c(0,7.5), breaks=c(1,3,5,7)) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.5))
 

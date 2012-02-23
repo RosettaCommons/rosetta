@@ -28,23 +28,22 @@ description <-
 
 sele <-"
 SELECT
-  geom.AHdist,
-  acc_site.HBChemType AS acc_chem_type,
-  don_site.HBChemType AS don_chem_type,
-  hbond.donRank AS donRank,
-  hbond.accRank AS accRank
+	geom.AHdist,
+	acc.HBChemType AS acc_chem_type, don.HBChemType AS don_chem_type,
+	hb.accRank AS accRank, hb.donRank AS donRank
 FROM
-  hbond_geom_coords AS geom,
-  hbonds AS hbond,
-  hbond_sites AS don_site,
-  hbond_sites AS acc_site
+	hbond_geom_coords AS geom,
+	hbonds AS hb,
+	hbond_sites AS don, hbond_sites AS acc,
+	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb
 WHERE
-  hbond.struct_id = geom.struct_id AND
-  hbond.hbond_id =  geom.hbond_id AND
-  hbond.struct_id = don_site.struct_id AND
-  hbond.don_id = don_site.site_id AND
-  hbond.struct_id = acc_site.struct_id AND
-  hbond.acc_id = acc_site.site_id;"
+	geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
+	don.struct_id = hb.struct_id AND don.site_id = hb.don_id AND
+	acc.struct_id = hb.struct_id AND acc.site_id = hb.acc_id AND
+	don_pdb.struct_id = hb.struct_id AND don_pdb.site_id = hb.don_id AND
+	don_pdb.heavy_atom_temperature < 30 AND
+	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id AND
+	acc_pdb.heavy_atom_temperature < 30;"
 
 f <- query_sample_sources(sample_sources, sele)
 f$accRank <- factor(f$accRank)
@@ -75,37 +74,39 @@ plot_parts <- list(
 	opts(legend.position="bottom", legend.direction="horizontal"))
 
 if(nrow(sample_sources) <= 3){
-	plot_parts <- c(plot_parts,
+	plot_parts_all <- c(plot_parts,
+		facet_wrap( ~ sample_source, ncol=1),
 		list(opts(legend.position="bottom", legend.direction="horizontal")))
+} else {
+	plot_parts_all <- c(plot_parts,
+		facet_wrap( ~ sample_source))
 }
 
-plot_id <- "AHdist_by_donRank"
+plot_id <- "hbond_AHdist_by_donRank"
 d <- estimate_density_1d(f, c("sample_source", "donRank"), "AHdist", radial_3d_normalization)
-ggplot(d, aes(colour=donRank)) + plot_parts +
-  facet_wrap( ~ sample_source, ncol=1) +
-  opts(title = "Hydrogen Bonds A-H Distance by Donor Rank\nnormalized for equal weight per unit distance")
+ggplot(d, aes(colour=donRank)) + plot_parts_all +
+  opts(title = "Hydrogen Bonds A-H Distance by Donor Rank, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-plot_id <- "AHdist_by_accRank"
+plot_id <- "hbond_AHdist_by_accRank"
 d <- estimate_density_1d(f, c("sample_source", "accRank"), "AHdist", radial_3d_normalization)
-ggplot(d, aes(colour=accRank)) + plot_parts +
-  facet_wrap( ~ sample_source, ncol=1) +
-  opts(title = "Hydrogen Bonds A-H Distance by Acceptor Rank\nnormalized for equal weight per unit distance")
+ggplot(d, aes(colour=accRank)) + plot_parts_all +
+  opts(title = "HBonds A-H Distance by Acceptor Rank, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$donRank==1,]
-plot_id <- "AHdist_donRank_is_1"
+plot_id <- "hbond_AHdist_donRank_is_1"
 d <- estimate_density_1d(f1, c("sample_source"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=sample_source)) + plot_parts +
-  opts(title = "Hydrogen Bonds A-H Distance, Primary HBond at Bifuracted Donor\nnormalized for equal weight per unit distance")
+  opts(title = "HBonds A-H Distance, Primary HBond at Bifuracted Donor, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$donRank==1,]
-plot_id <- "AHdist_chem_type_donRank_is_1"
+plot_id <- "hbond_AHdist_chem_type_donRank_is_1"
 d <- estimate_density_1d(f1, c("sample_source", "don_chem_type", "acc_chem_type"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=sample_source)) + plot_parts +
   facet_grid( don_chem_type ~ acc_chem_type) +
-  opts(title = "Hydrogen Bonds A-H Distance, Donor Rank=1\nnormalized for equal weight per unit distance")
+  opts(title = "HBonds A-H Distance, Donor Rank=1, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
