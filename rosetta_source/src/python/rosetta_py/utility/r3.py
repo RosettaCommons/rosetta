@@ -152,7 +152,7 @@ def angle(a, b, c=None):
     try:
         ang = math.acos( dt / (mag(a)*mag(b)) )
     except:
-        if dot >= 0: return 0.0
+        if dt >= 0: return 0.0
         else: return 180.0
     if is_nan(ang):
         if dot >= 0: return 0.0
