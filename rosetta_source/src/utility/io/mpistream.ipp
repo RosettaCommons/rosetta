@@ -58,7 +58,10 @@ namespace mpi_stream {
 	MPI_Recv(&buf, 2, MPI_INT, master_rank_, MPI_STREAM_TAG, MPI_COMM_WORLD, &stat );
 	channel_id_ = buf[ 0 ];
 	file_status_ = buf[ 1 ];
-	//	std::cout << "mpistream: opening succeeded --- status: " << file_status_ << std::endl;
+	if ( file_status_ == MPI_FAIL ) {
+		std::cerr << "ERROR when opening mpistream to write to " << filename << std::endl;
+	}
+
 #endif
 	}
 

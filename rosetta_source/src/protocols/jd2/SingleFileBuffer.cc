@@ -45,7 +45,12 @@ void SingleFileBuffer::flush( Size slave ) {
 }
 
 bool SingleFileBuffer::has_open_slaves() const {
-	return unfinished_blocks_.size();
+	for ( BufferMap::const_iterator it = unfinished_blocks_.begin(); it != unfinished_blocks_.end(); ++it ) {
+		if ( it->second.size() > 0 ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 Size SingleFileBuffer::nr_open_slaves() const {
@@ -108,24 +113,32 @@ WriteFileSFB::WriteFileSFB( std::string const& filename, core::Size channel, boo
 	SingleFileBuffer( filename, channel, status ) {//, out_( filename.c_str() )
 	//if ( append ) out_.open_append(filename); //still problems with this ???
 	status = MPI_FAIL;
-	if ( append ) {
-		if ( !utility::file::file_exists( filename ) ) {
-			//			out_.open( filename.c_str() );
+	int trials = 5;
+	while ( status == MPI_FAIL && trials > 0 ) {
+		--trials;
+		if ( append ) {
+			if ( !utility::file::file_exists( filename ) ) {
+				//			out_.open( filename.c_str() );
+				tr.Info << "open file " << filename << " ... " << std::endl;
+				out_.open( filename.c_str() );
+				if ( out_.good() ) status = MPI_SUCCESS_NEW;
+			} else {
+
+				tr.Info << "open file (append) " << filename << " ... " << std::endl;
+				//			out_.open_append( filename.c_str() );
+				out_.open( filename.c_str(), std::ios::app );
+				if ( out_.good() ) status = MPI_SUCCESS_APPEND;
+			}
+		}	else {
+			//		out_.open( filename.c_str() );
 			tr.Info << "open file " << filename << " ... " << std::endl;
 			out_.open( filename.c_str() );
 			if ( out_.good() ) status = MPI_SUCCESS_NEW;
-		} else {
-
-			tr.Info << "open file (append) " << filename << " ... " << std::endl;
-			//			out_.open_append( filename.c_str() );
-			out_.open( filename.c_str(), std::ios::app );
-			if ( out_.good() ) status = MPI_SUCCESS_APPEND;
 		}
-	}	else {
-		//		out_.open( filename.c_str() );
-		tr.Info << "open file " << filename << " ... " << std::endl;
-		out_.open( filename.c_str() );
-		if ( out_.good() ) status = MPI_SUCCESS_NEW;
+		if ( status == MPI_FAIL ) {
+			std::cerr << "failing to write file " << filename << " try again after 1 second of sleep ... " << std::endl;
+			sleep( 1 );
+		}
 	}
 }
 
