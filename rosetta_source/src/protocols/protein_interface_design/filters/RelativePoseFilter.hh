@@ -71,6 +71,8 @@ public:
 	void baseline( bool const b );
 	core::Real baseline_val() const;
 	void baseline_val( core::Real const );
+	bool unbound() const{ return unbound_; }
+	void unbound( bool const b ){ unbound_ = b; }
 private:
 	protocols::filters::FilterOP filter_; //which filter to use
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value.
@@ -82,6 +84,7 @@ private:
 	bool thread_;// dflt true; should we thread or only repack? Only repack is useful for computing baseline filter values at the start of the run, vs. the values for the actual mutated sequences later
 	bool baseline_; // dflt true; should we use an internal baseline? (see wiki for details)
 	core::Real baseline_val_;
+	bool unbound_; //dflt false; measure the filter for the unbound system?
 };
 
 } // filters

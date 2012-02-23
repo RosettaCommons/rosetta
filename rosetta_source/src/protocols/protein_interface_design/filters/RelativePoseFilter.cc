@@ -10,7 +10,7 @@
 /// @author Sarel Fleishman (sarelf@uw.edu)
 #include <protocols/protein_interface_design/filters/RelativePoseFilter.hh>
 #include <protocols/protein_interface_design/filters/RelativePoseFilterCreator.hh>
-// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pose/PDBInfo.hh>
@@ -56,7 +56,8 @@ RelativePoseFilter::RelativePoseFilter() :
 	packing_shell_( 8.0 ),
 	thread_( true ),
 	baseline_( true ),
-	baseline_val_( -9999 )
+	baseline_val_( -9999 ),
+	unbound_( false )
 {
 	alignment_.clear();
 }
@@ -123,11 +124,16 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 	using namespace core::chemical;
 	using namespace protocols::toolbox::task_operations;
 
+	core::pose::PoseOP copy_pose( new core::pose::Pose( *pose() ) ); // don't let the pose drift
+	if( unbound() ){
+  	protocols::rigid::RigidBodyTransMover rbtm( *copy_pose, 1 );
+  	rbtm.step_size( 10000.0 );
+  	rbtm.apply( *copy_pose );
+	}
 	DesignAroundOperationOP dao = new DesignAroundOperation;
 	dao->design_shell( packing_shell() );
 	std::vector< core::Size > diffs;
 	diffs.clear();
-	core::pose::PoseOP copy_pose( new core::pose::Pose( *pose() ) ); // don't let the pose drift
 	for( std::map< core::Size, core::Size >::const_iterator aln=alignment_.begin(); aln!=alignment_.end(); ++aln )
 		if( pose()->conformation().residue( aln->first ).aa() != p.conformation().residue( aln->second ).aa() ) diffs.push_back( aln->first );
 
@@ -259,7 +265,8 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	packing_shell( tag->getOption( "packing_shell", packing_shell() ));
 	runtime_assert( packing_shell() >= 0 );
 	thread( tag->getOption< bool >( "thread", thread() ) );
-	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" and packing_shell: "<<packing_shell()<<std::endl;
+	unbound( tag->getOption< bool >( "unbound", false ) );
+	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" unbound "<<unbound()<<" and packing_shell: "<<packing_shell()<<std::endl;
 }
 
 protocols::filters::FilterOP
