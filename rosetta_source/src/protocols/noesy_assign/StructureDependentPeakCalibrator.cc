@@ -121,14 +121,23 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 			//first sort to get a 90% distribution length --i.e., ignore 5% on each side and take distance between those
 			std::sort( distance_deltas.begin(), distance_deltas.end() );
 
-			//get extension between high and low.
-			Size const ind_low_5( 1+lrint( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
-			Size const ind_high_5( lrint( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
-			Real max_extension( distance_deltas[ ind_high_5 ] - distance_deltas[ ind_low_5 ] );
+			//find smallest interval that fits X% of the deltas
+			Size num_element_cluster( lrint( 1.0*distance_deltas.size() * params.local_distviol_range_  ) );
+			Real max_extension( 1000 );
+			for ( Size start_cluster = 1; start_cluster+num_element_cluster <= distance_deltas.size(); start_cluster++ ) {
+				Real ext = distance_deltas[ start_cluster+num_element_cluster ] - distance_deltas[ start_cluster ];
+				if ( max_extension > ext ) max_extension = ext;
+			}
 
-			tr.Debug << "ind_low_5 " << ind_low_5 << " ind_high_5 " << ind_high_5 << " min_delta: "
-							 << distance_deltas[ 1 ] << " max_delta "
-							 << distance_deltas.back() << std::endl;
+			tr.Debug << num_element_cluster << " distances are in an interval of only " << max_extension << std::endl;
+			//get extension between high and low.
+			//			Size const ind_low_5( 1+lrint( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
+			//			Size const ind_high_5( lrint( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
+			//			Real max_extension( distance_deltas[ ind_high_5 ] - distance_deltas[ ind_low_5 ] );
+
+			//			tr.Debug << "ind_low_5 " << ind_low_5 << " ind_high_5 " << ind_high_5 << " min_delta: "
+			//							 << distance_deltas[ 1 ] << " max_delta "
+			//<< distance_deltas.back() << std::endl;
 
 			Size viol_count( 0 );
 			for ( RealVector::const_iterator delta_it = distance_deltas.begin(); delta_it != distance_deltas.end(); ++delta_it ) {
@@ -136,7 +145,8 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 			}
 
 			tr.Debug << "peak: " << (*it)->peak_id() <<" " << (*it)->filename()
-							 << " max_extension " << max_extension << " viol_count " << viol_count << std::endl;
+							 << " max_extension " << max_extension << " viol_count " << viol_count
+							 <<  ( viol_count > (params.nr_conformers_violatable_*distance_deltas.size() ) ? " REMOVED " : "" ) << std::endl;
 
 			(*it)->set_eliminated_due_to_dist_violations( viol_count > (params.nr_conformers_violatable_*distance_deltas.size() ) );
 		} // use_local_distviol

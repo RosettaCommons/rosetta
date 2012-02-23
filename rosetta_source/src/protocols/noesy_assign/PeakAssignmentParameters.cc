@@ -224,8 +224,8 @@ void protocols::noesy_assign::PeakAssignmentParameters::set_options_from_cmdline
 	use_local_distviol_ = option[ noesy::use_local_distviol ]();
 	local_distviol_range_ = option[ noesy::local_distviol::range ]();
 	local_distviol_global_buffer_ = option[ noesy::local_distviol::global_buffer ]();
-	if ( local_distviol_range_ >= 0.5 ) {
-		utility_exit_with_message( "local_distviol::range must be in the range 0.0...0.5" );
+	if ( local_distviol_range_ <= 0.5 ) {
+		utility_exit_with_message( "local_distviol::range must be in the range 0.5...1.0" );
 	}
 	show_on_tracer();
 }
