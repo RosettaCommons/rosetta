@@ -105,6 +105,15 @@ bool jd2_used() {
 	return ( jd && jd->job_outputter() && jd->current_job() != JD2_BOGUS_JOB );
 }
 
+std::string current_output_filename() {
+	jd2::JobDistributor* jd 	= jd2::JobDistributor::get_instance();
+	JobOP job = get_current_job();
+	if ( job && jd && jd->job_outputter() ) {
+		return jd->job_outputter()->filename( job );
+	}
+	return "JD2_OUTPUT_FILE_UNKNOWN"; //else
+}
+
 void
 write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) {
 	static basic::Tracer tr_score("protocols.jd2.score", basic::t_info, true /*muted by default*/ );

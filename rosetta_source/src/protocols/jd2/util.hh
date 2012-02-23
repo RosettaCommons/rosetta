@@ -47,6 +47,9 @@ void output_intermediate_pose( core::pose::Pose const& pose, std::string const& 
 /// ask jd for current-job ---> ask jobOutputter for name of this job
 std::string current_output_name();
 
+///@brief call the 'filename' accessor of the current job-distributor with the current job
+std::string current_output_filename();
+
 ///@brief is this application running with jd2 --- used for some code that yields backward compatability with old JobDistributor
 bool jd2_used();
 
@@ -72,7 +75,7 @@ MPI_Comm const& current_mpi_comm();
 /// otherwise it returns the sub-rank of the process within the job starting at 1
 core::Size current_replica();
 
-}
-}
+}  //jd2
+}  //protocols
 
 #endif
