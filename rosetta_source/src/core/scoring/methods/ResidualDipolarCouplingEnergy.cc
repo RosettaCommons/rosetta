@@ -200,11 +200,11 @@ Real ResidualDipolarCouplingEnergy::eval_dipolar(
 		} //dump_weights
 	} else {
 
-		static std::string const fit_method( 
+		static std::string const fit_method(
 			basic::options::option[ basic::options::OptionKeys::rdc::fit_method ]()
 		);
 		if ( fit_method == "svd" ) {
-			//tr.Trace << "svd: " << std::endl;
+			tr.Trace << "residual-energy method chosen: 'svd' " << std::endl;
 			score = rdc_data.compute_dipscore( pose );
 		} else {
 				using namespace basic::options;

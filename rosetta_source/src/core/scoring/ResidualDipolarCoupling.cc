@@ -160,11 +160,16 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 
 		if ( atom1 == "HN" ) atom1 = "H"; //take care of typical NMR community notation
 		if ( atom2 == "HN" ) atom2 = "H";
-		if ( res1 == 1 && atom1 == "H" ) atom1 == "H1"; //or should it be ignored ?
-		if ( res2 == 1 && atom2 == "H" ) atom2 == "H1";
+		//		if ( res1 == 1 && atom1 == "H" ) atom1 = "1H"; //this does not work since it is "H" in centroid mode and "1H" in full-atom mode
+		//		if ( res2 == 1 && atom2 == "H" ) atom2 = "1H";
 		if ( line_stream.fail() ) {
 			tr.Error << "couldn't read line " << line << " in rdc-file " << filename << std::endl;
 			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-file "+filename));
+		}
+
+		if ( res1 < 1 || res1 < 1 ) {
+			tr.Error << "negative residue number in line " << line << " in rdc-file " << filename << std::endl;
+			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc_file " + filename ) );
 		}
 
 		Real weight(1.0);
@@ -307,7 +312,7 @@ void ResidualDipolarCoupling::preprocess_data() {
 }
 
 std::string element_string(std::string atom) {
-	if (atom == "HN" || atom == "H" || atom == "HA")
+	if (atom == "HN" || atom == "H" || atom == "HA" || atom == "1H" )
 		return "H";
 	if (atom == "C" || atom == "CA")
 		return "C";
@@ -429,9 +434,25 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 	bool const correct_NH( basic::options::option[basic::options::OptionKeys::rdc::correct_NH_length]);
 	bool const bReduced( basic::options::option[basic::options::OptionKeys::rdc::reduced_couplings]);
 	Size nrow(0);
+
+	/* Calculate the order tensor S for each experiment via optimization */
+	for (core::Size ex = 0; ex < nex_; ex++) {
+		for (Size i = 0; i < 5; i++) {
+			rhs_[ex][i] = 0;
+			for (Size j = 0; j <= i; j++) {
+				T_[ex][i][j] = 0;
+			}
+		}
+	}
+
 	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
 		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
-			if ( tr.Debug.visible() ) tr.Debug << "non-existing residue, ignore RDC" << std::endl;
+			tr.Warning << "non-existing residue, ignore RDC" << std::endl;
+			continue;
+		}
+
+		if ( it->res1() == 1 || it->res2() == 1  ) {
+			tr.Warning << "residue 1, always problematic with 1H vs H, just ignore RDC" << std::endl;
 			continue;
 		}
 
@@ -439,7 +460,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		kinematics::FoldTree const& ft(pose.fold_tree());
 		if ((ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2())))
 				&& it->res1() != it->res2()) {
-			if ( tr.Trace.visible() ) tr.Trace << "cutpoint: ignore RDC " << *it << std::endl;
+			tr.Warning << "cutpoint: ignore RDC " << *it << std::endl;
 			continue;
 		}
 
@@ -471,31 +492,19 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		// 			Real umn_x = umn.x()/it->fixed_dist();
 		// 			Real umn_y = umn.y()/it->fixed_dist();
 		// 			Real umn_z = umn.z()/it->fixed_dist();
-	} //cycle over atoms
 
-	/* Calculate the order tensor S for each experiment via optimization */
-	for (core::Size ex = 0; ex < nex_; ex++) {
-		for (Size i = 0; i < 5; i++) {
-			rhs_[ex][i] = 0;
-			for (Size j = 0; j <= i; j++) {
-				T_[ex][i][j] = 0;
-			}
-		}
-	}
 
-	for (core::Size d = 0; d < nrow; d++) {
-
-		//type   = forceatoms[fa];
-		core::Size ex = All_RDC_lines_[d + 1].expid(); //only one experiment now
-		core::Real weight = All_RDC_lines_[d + 1].weight(); //force constant
-		core::Real obs = All_RDC_lines_[d + 1].Jdipolar();
+	//type   = forceatoms[fa];
+		core::Size ex = it->expid(); //only one experiment now
+		core::Real weight = it->weight(); //force constant
+		core::Real obs = it->Jdipolar();
 		/* Calculate the vector rhs and half the matrix T for the 5 equations */
 		for (Size i = 0; i < 5; i++) {
 			rhs_[ex][i] += D_[d][i] * obs * weight;
 			for (Size j = 0; j <= i; j++)
 				T_[ex][i][j] += D_[d][i] * D_[d][j] * weight;
 		}
-	}
+	} //cycle over atoms
 
 	/* Now we have all the data we can calculate S */
 	runtime_assert( nex_ < 200 );
@@ -555,7 +564,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 			}
 		}
 
-		if ( tr.Debug.visible() ) tr.Debug << "Smax( " << ex << " ): " << Smax[ex] << std::endl;
+		tr.Debug << "Smax( " << ex << " ): " << Smax[ex] << std::endl;
 
 		//		std::cout << 'AL.TENSOR elements : ' << S_[ex][0][0]) << ' ' <<  S_[ex][0][1]  << ' ' << 	S_[ex][0][2] << ' '
 		//				<< S_[ex][1][1] << ' ' << S_[ex][1][2] << std::endl;
@@ -591,11 +600,20 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 		//check for cutpoints!!!
 		kinematics::FoldTree const& ft(pose.fold_tree());
-		if ((ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2())))
-				&& it->res1() != it->res2()) {
-			if ( tr.Trace.visible() ) tr.Trace << "cutpoint: ignore RDC " << *it << std::endl;
+		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
+			tr.Warning << "non-existing residue, ignore RDC" << *it << std::endl;
 			continue;
 		}
+		if ((ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2())))
+				&& it->res1() != it->res2()) {
+			tr.Warning << "cutpoint: ignore RDC " << *it << std::endl;
+			continue;
+		}
+		if ( it->res1() == 1 || it->res2() == 1  ) {
+			tr.Warning << "residue 1, always problematic with 1H vs H, just ignore RDC" << std::endl;
+			continue;
+		}
+
 
 		++irow;
 		Size const d(irow - 1);
