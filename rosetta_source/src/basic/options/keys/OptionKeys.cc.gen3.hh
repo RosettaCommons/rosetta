@@ -1,6 +1,3 @@
-namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
@@ -207,6 +204,7 @@ namespace remodel { IntegerOptionKey const collect_clustered_top( "remodel:colle
 namespace remodel { IntegerOptionKey const dr_cycles( "remodel:dr_cycles" );  }
 namespace remodel { IntegerOptionKey const two_chain_tree( "remodel:two_chain_tree" );  }
 namespace remodel { IntegerOptionKey const repeat_structure( "remodel:repeat_structure" );  }
+namespace remodel { BooleanOptionKey const cen_minimize( "remodel:cen_minimize" );  }
 namespace remodel { namespace domainFusion { BooleanOptionKey const domainFusion( "remodel:domainFusion" );  } }
 namespace remodel { namespace domainFusion { FileOptionKey const insert_segment_from_pdb( "remodel:domainFusion:insert_segment_from_pdb" );  } }
 namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }
@@ -224,6 +222,7 @@ namespace remodel { RealOptionKey const match_rt_limit( "remodel:match_rt_limit"
 namespace remodel { IntegerVectorOptionKey const disulf_landing_range( "remodel:disulf_landing_range" );  }
 namespace remodel { namespace design { BooleanOptionKey const design( "remodel:design" );  } }
 namespace remodel { namespace design { BooleanOptionKey const no_design ( "remodel:design:no_design " );  } }
+namespace remodel { namespace design { BooleanOptionKey const allow_rare_aro_chi( "remodel:design:allow_rare_aro_chi" );  } }
 namespace remodel { namespace design { BooleanOptionKey const silent( "remodel:design:silent" );  } }
 namespace remodel { namespace design { BooleanOptionKey const skip_partial( "remodel:design:skip_partial" );  } }
 namespace remodel { namespace design { BooleanOptionKey const design_neighbors( "remodel:design:design_neighbors" );  } }

@@ -317,13 +317,37 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 
 	runtime_assert (build_aa_type.size() == 1);
 
-	if (build_aa_type.compare("A") != 0){
-
-		//build the aa string to be the same length as dssp updated ss
-		for (int i = 1; i<= data.dssp_updated_ss.size(); i++){
-			aa.append(build_aa_type);
+	if (option[OptionKeys::remodel::use_blueprint_sequence].user()){
+		for (int i = 0; i < data.blueprint.size(); i++){
+			if ( data.blueprint[i].resname.compare("x") == 0  || data.blueprint[i].resname.compare("X") == 0 ){
+				aa.append(build_aa_type);
+			}
+			else {
+				aa.append( data.blueprint[i].resname );
+			}
+		}
+		if (option[OptionKeys::remodel::repeat_structure].user()){
+			String monomer_seq = aa;
+			Size copies = option[OptionKeys::remodel::repeat_structure];
+			while (copies > 1){ //first copy already made
+				aa.append( monomer_seq );
+				copies--;
+			}
+			//runtime_assert( aa.size() == data.dssp_updated_ss.size());
+		}	
+	}	else {
+		if ( build_aa_type.compare("A") != 0){
+						//build the aa string to be the same length as dssp updated ss
+						//use that length because repeat structures are bigger than blueprint
+						for (int i = 1; i<= data.dssp_updated_ss.size(); i++){
+							aa.append(build_aa_type);
+						}
 		}
 	}
+
+	
+	//debug
+	std::cout << "AA for build: " << aa << std::endl;
 
 	//BuildManager manager;
 

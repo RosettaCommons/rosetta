@@ -9717,6 +9717,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>build identical repeats this many times</dd><br>
 <dd>Default: 1</dd><br>
 </dl>
+<dl>
+<dt><b>-cen_minimize</b> \<Boolean\><dt>
+<dd>centroid minimization after fragment building</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>remodel:domainFusion</h2>
 <dl>
@@ -9802,6 +9807,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-no_design </b> \<Boolean\><dt>
 <dd> skips all design steps. WARNING: will only output centroid level structures and dump all fragment tries.</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_rare_aro_chi</b> \<Boolean\><dt>
+<dd>allow all aromatic rotamers, not issuing AroChi2 filter</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-silent</b> \<Boolean\><dt>

@@ -10,6 +10,7 @@
 /// @file   protocols/forge/methods/util.cc
 /// @brief  miscellaneous utility functions for forge
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
+/// @author Possu Huang (possu@u.washington.edu)
 
 // unit headers
 #include <protocols/forge/methods/util.hh>
@@ -36,6 +37,8 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <basic/options/keys/remodel.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -439,7 +442,9 @@ remodel_generic_taskfactory(){
   TF->push_back( new InitializeFromCommandline() ); // also inits -ex options
   TF->push_back( new IncludeCurrent() ); // enforce keeping of input sidechains
   TF->push_back( new NoRepackDisulfides() );
-  TF->push_back( new LimitAromaChi2Operation() );
+  if (!basic::options::option[basic::options::OptionKeys::remodel::design::allow_rare_aro_chi].user()){
+  	TF->push_back( new LimitAromaChi2Operation() );
+	}
 
 	return TF;
 }

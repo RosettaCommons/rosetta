@@ -1,4 +1,3 @@
-namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
 namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }
 namespace fold_cst { IntegerOptionKey const reramp_cst_cycles( "fold_cst:reramp_cst_cycles" );  }
@@ -595,3 +594,5 @@ namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
+namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
+namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }

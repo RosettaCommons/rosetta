@@ -643,7 +643,7 @@ if (working_model.manager.size()!= 0){
 		}
 		else {
 
-			if (option[ OptionKeys::remodel::repeat_structure].user()) {
+			if (option[ OptionKeys::remodel::repeat_structure].user() || option[ OptionKeys::remodel::cen_minimize]) {
 
 				core::kinematics::MoveMapOP cmmop = new core::kinematics::MoveMap;
 				//pose.dump_pdb("pretest.pdb");
@@ -653,7 +653,7 @@ if (working_model.manager.size()!= 0){
 
 				//core::scoring::ScoreFunctionOP cen_min_sfxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 
-				TR << "centroid minimizing repeat structures" << std::endl;
+				TR << "centroid minimizing" << std::endl;
 				Pose archived_pose = pose;
 
 				// flip residue type set for centroid minimize
@@ -661,7 +661,10 @@ if (working_model.manager.size()!= 0){
 
 				centroid_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
 				centroid_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0 );
-				centroid_sfx_->set_weight( core::scoring::cen_hb, 1.0);
+				//only use smooth hb if either of the term is used in centroid build level
+				if (centroid_sfx_->get_weight(core::scoring::hbond_lr_bb) > 0 || centroid_sfx_->get_weight(core::scoring::hbond_sr_bb) > 0 ){
+					centroid_sfx_->set_weight( core::scoring::cen_hb, 1.0);
+				}
 
 				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
 				minMover->apply(pose);
@@ -1009,7 +1012,9 @@ bool RemodelMover::design_refine_seq_relax(
 
 	// safety, clear the energies object
 	pose.energies().clear();
-	ScoreFunctionOP sfx = fullatom_sfx_->clone();
+
+// for refinement, always use standard repulsive
+	ScoreFunctionOP sfx = core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
 //turning on weights
   sfx->set_weight(core::scoring::coordinate_constraint, 1.0 );
   sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
@@ -1148,7 +1153,9 @@ bool RemodelMover::design_refine(
 	FoldTree original_ft = pose.fold_tree();
 
 	// define the score function
-	ScoreFunctionOP sfx = fullatom_sfx_->clone();
+	//ScoreFunctionOP sfx = fullatom_sfx_->clone();
+//for refinement always use hard repulsive
+	ScoreFunctionOP sfx = core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
 
 //turning on weights, for paranoya
   sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
@@ -1401,7 +1408,9 @@ RemodelMover::TaskFactoryOP RemodelMover::generic_taskfactory() {
 	tf->push_back( new InitializeFromCommandline() ); // also inits -ex options
 	tf->push_back( new IncludeCurrent() ); // enforce keeping of input sidechains
 	tf->push_back( new NoRepackDisulfides() );
-	tf->push_back( new LimitAromaChi2Operation() );
+  if (!basic::options::option[basic::options::OptionKeys::remodel::design::allow_rare_aro_chi].user()){
+		tf->push_back( new LimitAromaChi2Operation() );
+	}
 
 	// load resfile op only if requested
 /*	if ( !resfile_.empty() ) {

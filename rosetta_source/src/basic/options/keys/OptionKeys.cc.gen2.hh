@@ -1,5 +1,3 @@
-namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
-namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
 namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }
 namespace lh { StringOptionKey const mpi_resume( "lh:mpi_resume" );  }
 namespace lh { StringOptionKey const mpi_feedback( "lh:mpi_feedback" );  }
@@ -595,3 +593,6 @@ namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "Denov
 namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
+namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
+namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
+namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }

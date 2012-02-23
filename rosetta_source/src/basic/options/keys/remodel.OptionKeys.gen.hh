@@ -55,6 +55,7 @@ namespace remodel { extern IntegerOptionKey const collect_clustered_top; }
 namespace remodel { extern IntegerOptionKey const dr_cycles; }
 namespace remodel { extern IntegerOptionKey const two_chain_tree; }
 namespace remodel { extern IntegerOptionKey const repeat_structure; }
+namespace remodel { extern BooleanOptionKey const cen_minimize; }
 namespace remodel { namespace domainFusion { extern BooleanOptionKey const domainFusion; } }
 namespace remodel { namespace domainFusion { extern FileOptionKey const insert_segment_from_pdb; } }
 namespace remodel { extern RealOptionKey const vdw; }
@@ -72,6 +73,7 @@ namespace remodel { extern RealOptionKey const match_rt_limit; }
 namespace remodel { extern IntegerVectorOptionKey const disulf_landing_range; }
 namespace remodel { namespace design { extern BooleanOptionKey const design; } }
 namespace remodel { namespace design { extern BooleanOptionKey const no_design ; } }
+namespace remodel { namespace design { extern BooleanOptionKey const allow_rare_aro_chi; } }
 namespace remodel { namespace design { extern BooleanOptionKey const silent; } }
 namespace remodel { namespace design { extern BooleanOptionKey const skip_partial; } }
 namespace remodel { namespace design { extern BooleanOptionKey const design_neighbors; } }

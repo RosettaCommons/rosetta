@@ -600,10 +600,10 @@ option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g.
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
@@ -1199,11 +1199,11 @@ option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" )
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
+option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
+option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
-option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
-option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_chunks, "No description" ).def(100);
@@ -1798,12 +1798,12 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, 
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
@@ -2009,6 +2009,7 @@ option.add( basic::options::OptionKeys::remodel::collect_clustered_top, "take th
 option.add( basic::options::OptionKeys::remodel::dr_cycles, "number of design-refine cycles to use" ).def(3);
 option.add( basic::options::OptionKeys::remodel::two_chain_tree, "label the start of the second chain" );
 option.add( basic::options::OptionKeys::remodel::repeat_structure, "build identical repeats this many times" ).def(1);
+option.add( basic::options::OptionKeys::remodel::cen_minimize, "centroid minimization after fragment building" ).def(false);
 option.add( basic::options::OptionKeys::remodel::domainFusion::domainFusion, "domainFusion option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb, "segment pdb file to be inserted [insert pdb file name]." ).def("");
 option.add( basic::options::OptionKeys::remodel::vdw, "set vdw weight" ).def(1.0);
@@ -2026,6 +2027,7 @@ option.add( basic::options::OptionKeys::remodel::match_rt_limit, "match RT score
 option.add( basic::options::OptionKeys::remodel::disulf_landing_range, "residue range for disulf landing sites" ).n(2);
 option.add( basic::options::OptionKeys::remodel::design::design, "design option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::design::no_design , " skips all design steps. WARNING: will only output centroid level structures and dump all fragment tries." );
+option.add( basic::options::OptionKeys::remodel::design::allow_rare_aro_chi, "allow all aromatic rotamers, not issuing AroChi2 filter" ).def(false);
 option.add( basic::options::OptionKeys::remodel::design::silent, " dumps all structures by silent-mode WARNING: will work only during no_design protocol (see -no_design)." );
 option.add( basic::options::OptionKeys::remodel::design::skip_partial, " skip design stage that operate only on burial positions" ).def(false);
 option.add( basic::options::OptionKeys::remodel::design::design_neighbors, "design neighbors." ).def(false);
