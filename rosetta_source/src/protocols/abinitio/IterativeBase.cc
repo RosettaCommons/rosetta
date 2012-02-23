@@ -170,6 +170,7 @@ OPT_1GRP_KEY( Real, iterative, dcut )
 OPT_1GRP_KEY( String, iterative, initial_beta_topology )
 OPT_1GRP_KEY( Integer, iterative, recompute_beta_Naccept )
 OPT_1GRP_KEY( String, iterative, flags_fullatom )
+OPT_1GRP_KEY( Boolean, iterative, force_topology_resampling )
 
 std::string const NOESY_CST_FILE_NAME("noe_auto_assign.cst");
 
@@ -227,6 +228,7 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT( iterative::auto_assign_scheme,"select CONST, ADAPT1, ... ","CONST");
 		NEW_OPT( iterative::dcut,"in ADAPT1 what dcut should be chosen",7);
 		NEW_OPT( iterative::initial_beta_topology,"start with this file as beta.top in stage3","" );
+		NEW_OPT( iterative::force_topology_resampling,"if strand-fraction is low topology sampling is usually skipped. Override this with this flags", false );
 		NEW_OPT( iterative::recompute_beta_Naccept, "recompute beta-topology after minimum of Naccept structures -- if no initial_beta_topology always recompute", -1 );
 		NEW_OPT( iterative::flags_fullatom, "point to flag-file to read flags for fullatom-refinement and loop-closing specify e.g., as ../flags_fullatom ","");
 		options_registered_ = true;
@@ -417,9 +419,16 @@ IterativeBase::IterativeBase(std::string name )
 	//less than 15% strands and less than 40 residues in total and we skip jumping...
 	bDoBetaJumping_ = true;
 	if ( (ct_E*1.0)/(ss_def.total_residue()*1.0) < 0.15 && ct_E < 40 ) {
-		stage_ = PURE_TOPO_RESAMPLING;
 		tr.Info << "skip beta-jumping since mostly alpha-helical protein" << std::endl;
+		tr.Info << "only " << (ct_E*1.0)/(ss_def.total_residue()*1.0)*100 << "% of residues display significant strand-character" << std::endl;
 		bDoBetaJumping_ = false;
+	}
+	if ( !bDoBetaJumping_ && option[ OptionKeys::iterative::force_topology_resampling ]() ) {
+		tr.Info << "force-topology-resampling despite low beta-sheet content due to flag -force_topology_resampling" << std::endl;
+		bDoBetaJumping_ = true;
+	}
+	if ( !bDoBetaJumping_ ) {
+		stage_ = PURE_TOPO_RESAMPLING;
 	}
 
 	test_for_stage_end();
@@ -1433,6 +1442,7 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 		Real percentage_per_batch( 1.0*batch.nstruct() / (1.0*total) );
 		if ( it->id() >= first_fullatom_batch_ ) break;
 		if ( !it->has_silent_in() ) continue; //usually only the resampling decoys are interesting...
+		if ( !it->decoys_returned() ) continue; //avoid looking for empty files
 		//		it->silent_out();
 		SilentFileData sfd;
 			std::list< std::pair< core::Real, SilentStructOP > > score_cut_decoys;
@@ -1845,7 +1855,7 @@ void IterativeBase::collect_alternative_decoys( SilentStructs primary_decoys, st
 		io::silent::SilentFileData sfd;
 		try { //read structures
 			sfd._read_file( it->first, it->second, true /*throw exceptions */ );
-			if ( sfd.size() != it->second.size() ) {
+			if ( sfd.size() > it->second.size() ) {
 				tr.Warning << "[WARNING] multiple decoys with same tag detected in file " << it->first << std::endl;
 			}
 			copy( sfd.begin(), sfd.end(), std::back_inserter( output_decoys ) );
