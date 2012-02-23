@@ -206,10 +206,11 @@ void HamiltonianExchange::init_from_options() {
 void
 HamiltonianExchange::initialize_simulation(
 	 core::pose::Pose& pose,
-		MetropolisHastingsMover const& metropolis_hastings_mover
+		MetropolisHastingsMover const& metropolis_hastings_mover,
+	 core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
 	show( tr.Info );
-	Parent::initialize_simulation( pose, metropolis_hastings_mover );
+	Parent::initialize_simulation( pose, metropolis_hastings_mover,cycle );
 #ifdef USEMPI
 	set_mpi_comm( jd2::current_mpi_comm() );
 #endif
@@ -217,6 +218,18 @@ HamiltonianExchange::initialize_simulation(
 	current_exchange_schedule_ = 0;
 	set_current_temp( rank()+1 );
 	monte_carlo()->reset_scorefxn( pose, *hamiltonians_[ rank()+1 ] );
+}
+
+void
+HamiltonianExchange::initialize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & mhm,
+		core::Size level,
+		core::Real temp_in,
+		core::Size cycle //default=0; non-zero if trajectory is restarted
+) {
+	Parent::initialize_simulation( pose, mhm, level, temp_in, cycle );
+	monte_carlo()->reset_scorefxn( pose, *hamiltonians_[ level ] );
 }
 
 void

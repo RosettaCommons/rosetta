@@ -408,7 +408,8 @@ CoupledSidechainProtocol::parse_my_tag( utility::tag::TagPtr const tag, protocol
 void
 CoupledSidechainProtocol::initialize_simulation(
 	core::pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
 )
 {
 	SidechainMover::initialize_simulation(pose, metropolis_hastings_mover);

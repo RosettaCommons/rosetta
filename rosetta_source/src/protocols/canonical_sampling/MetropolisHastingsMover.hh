@@ -189,7 +189,10 @@ protected:
 	tempering() { return tempering_; }
 
 	void wind_down_simulation( core::pose::Pose& pose);
-	void prepare_simulation( core::pose::Pose& pose);
+
+	//initialize all movers
+	//return cycle number if a restart, 0 otherwise
+	core::Size prepare_simulation( core::pose::Pose& pose);
 
 	void set_last_accepted( bool setting ) {
 		last_accepted_ = setting;

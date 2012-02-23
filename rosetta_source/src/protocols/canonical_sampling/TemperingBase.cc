@@ -182,7 +182,8 @@ void TemperingBase::set_defaults() {
 	/// @brief callback executed before any Monte Carlo trials
 void TemperingBase::initialize_simulation(
 	pose::Pose& pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & mh_mover,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
 	if ( !instance_initialized_ ) init_from_options();
 	current_temp_=temperatures_.size();
@@ -199,9 +200,27 @@ void TemperingBase::initialize_simulation(
 }
 
 void
+TemperingBase::initialize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & mh_mover,
+		core::Size level,
+		core::Real temp_in,
+		core::Size cycle //default=0; non-zero if trajectory is restarted
+) {
+	initialize_simulation( pose, mh_mover,cycle );
+	set_current_temp( level );
+	if ( std::abs( temperature() - temp_in ) > 0.01 ) {
+		using namespace ObjexxFCL;
+		utility_exit_with_message( "inconsistent temperature when trying to restart Tempering temp_in: "
+			+string_of( temp_in )
+			+" temperature expected at level "+string_of( level )+ " is "+string_of( temperature() ) );
+	}
+}
+
+void
 TemperingBase::finalize_simulation(
 	pose::Pose& pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & mh_mover
 ) {
 	job_ = NULL;
 }
@@ -375,6 +394,7 @@ void TemperingBase::set_temperatures( utility::vector1< Real > const& temps ) {
 	temperatures_ = temps;
 	set_current_temp( temps.size() );
 }
+
 
 void TemperingBase::set_current_temp( Size new_temp ) {
 	current_temp_ = new_temp;

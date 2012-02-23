@@ -53,6 +53,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 // basic headers
 #include <basic/prof.hh>
@@ -154,9 +155,10 @@ ParallelTempering::~ParallelTempering() {
 void
 ParallelTempering::initialize_simulation(
 	pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
-	Parent::initialize_simulation(pose, metropolis_hastings_mover);
+	Parent::initialize_simulation(pose, metropolis_hastings_mover,cycle);
 #ifdef USEMPI
 	set_mpi_comm( jd2::current_mpi_comm() );
 #endif
@@ -189,7 +191,7 @@ ParallelTempering::finalize_simulation(
 		for (core::Size i=0; i<n_temp_levels()-1; ++i) {
 			std::pair<int, int> elem(i, i+1);
 			core::Real frequency(core::Real(exchange_accepts_[elem])/core::Real(exchange_attempts_[elem]));
-			tr << temperature(i+1) << " <-> " << temperature(i+2) << ": " << frequency 
+			tr << temperature(i+1) << " <-> " << temperature(i+2) << ": " << frequency
 				 << " (" << exchange_accepts_[elem] << " of " << exchange_attempts_[elem] << ")" << std::endl;
 		}
 		tr.width(oldwidth);
@@ -200,7 +202,7 @@ ParallelTempering::finalize_simulation(
 	core::Real const clock_factor( ( (double) basic::SHRINK_FACTOR ) / CLOCKS_PER_SEC );
 	clock_t total_time(clock()/basic::SHRINK_FACTOR - start_time_);
 	core::Real fraction_waiting = total_mpi_wait_time_*clock_factor / ( total_time*clock_factor );
-	tr << "Spent " << fraction_waiting*100 << "% time waiting for MPI temperature exchange (" 
+	tr << "Spent " << fraction_waiting*100 << "% time waiting for MPI temperature exchange ("
 	   << total_mpi_wait_time_*clock_factor << " seconds out of " << total_time*clock_factor << " total)" << std::endl;
 }
 

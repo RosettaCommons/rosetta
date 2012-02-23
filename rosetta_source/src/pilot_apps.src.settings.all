@@ -330,7 +330,7 @@ sources = {
 		"r_trjconv", # /* Oliver Lange,Documentation Location,Demo Location */
 		"r_frag_quality", #Note: used for measuring fragment quality; no itest needed
 		"r_cst_tool", # /* Oliver Lange,Documentation Location,Demo Location */
-		#"r_score_rdc", # /* Oliver Lange,Documentation Location,Demo Location */
+		"r_score_rdc", # /* Oliver Lange,Documentation Location,Demo Location */
 		#"r_score", # /* Oliver Lange,Documentation Location,Demo Location */
 		#"r_count_neighbours", # /* Oliver Lange,Documentation Location,Demo Location */
 		#"r_rmsf", # /* Oliver Lange,Documentation Location,Demo Location */

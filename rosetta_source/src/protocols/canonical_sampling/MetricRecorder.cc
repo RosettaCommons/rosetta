@@ -149,7 +149,7 @@ MetricRecorder::parse_my_tag(
 			core::Size torsion = subtag->getOption< core::Size >( "torsion" );
 			std::string name = subtag->getOption< std::string >( "name", "" );
 			if (subtag->hasOption("name")) name = subtag->getOptions().find("name")->second;
-				
+
 			add_torsion(pose, rsd, type, torsion, name);
 
 		} else {
@@ -237,7 +237,7 @@ MetricRecorder::add_torsion(
 	runtime_assert(torsion_id.valid());
 
 	if (name == "") {
-	
+
 		std::ostringstream name_stream;
 		name_stream << torsion_id;
 		name = name_stream.str();
@@ -268,9 +268,9 @@ MetricRecorder::add_torsion(
 	} else {
 		utility_exit_with_message("Unknown torsion type");
 	}
-	
+
 	core::id::TorsionID torsion_id(parsed_rsd, parsed_type, torsion);
-	
+
 	add_torsion(torsion_id, name);
 }
 
@@ -345,7 +345,7 @@ MetricRecorder::update_after_boltzmann(
 		}
 
 		recorder_stream_ << std::endl;
-		
+
 		time_t now = time(NULL);
 		if (now-last_flush_ > 10) {
 			recorder_stream_.flush();
@@ -367,7 +367,8 @@ MetricRecorder::apply(
 void
 MetricRecorder::initialize_simulation(
 	core::pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
 )
 {
 	std::string original_file_name(file_name());

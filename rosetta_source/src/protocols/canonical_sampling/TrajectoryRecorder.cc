@@ -154,12 +154,17 @@ TrajectoryRecorder::apply( core::pose::Pose & pose ) {
 void
 TrajectoryRecorder::initialize_simulation(
   core::pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover )
-{
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
+) {
 	reset(
 		*(metropolis_hastings_mover.monte_carlo()),
 		&metropolis_hastings_mover
 	);
+	if (cycle != 0) {
+		step_count_ = cycle;
+		model_count_ = step_count_ / stride();
+	}
 }
 
 void

@@ -146,8 +146,7 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 			nstruct_=0;
 		}
 		if ( option[ residue_subset ].user() ) { //filter
-			protocols::loops::Loops rigid_core;
-			rigid_core.read_loop_file( option[ residue_subset ](), false /*no strict looprlx checking*/, "RIGID" );  // <==
+			protocols::loops::Loops rigid_core( option[ residue_subset ](), false /*no strict looprlx checking*/, "RIGID" );  // <==
 			ResidualDipolarCoupling::RDC_lines filtered;
 			for ( ResidualDipolarCoupling::RDC_lines::const_iterator it = data.begin(); it != data.end(); ++it ) {
 				if ( rigid_core.has( it->res1() ) ) {

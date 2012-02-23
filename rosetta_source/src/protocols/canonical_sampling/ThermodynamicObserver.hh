@@ -47,12 +47,25 @@ public:
 	virtual
 	void apply( core::pose::Pose& pose ) {};
 	/// @brief callback executed before any Monte Carlo trials
+
+	virtual
+	bool
+	restart_simulation(
+			 core::pose::Pose & pose,
+			 protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
+			 core::Size& cycle,
+			 core::Size& temp_level,
+			 core::Real& temperature
+	) { return false; }
+
+
 	virtual
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size cycle //non-zero if trajectory is restarted
+	) {};
 
 	/// @brief callback executed after the Metropolis criterion is evaluated
 	virtual
@@ -67,7 +80,7 @@ public:
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) {};
 
 	/// @brief return false here if a valid pose is not required for "observe"
 	/// i.e. a trialcounter

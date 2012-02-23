@@ -194,7 +194,8 @@ protocols::backrub::BackrubMover::parse_my_tag(
 void
 protocols::backrub::BackrubMover::initialize_simulation(
 	core::pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+	core::Size cycle
 )
 {
 	if ( ! branchopt_.initialized() ) branchopt_.read_database();

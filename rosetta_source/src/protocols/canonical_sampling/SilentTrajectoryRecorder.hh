@@ -77,11 +77,22 @@ public:
 
 	virtual void initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
 	virtual	void observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	);
+
+	virtual
+	bool
+	restart_simulation(
+			 core::pose::Pose & pose,
+			 protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
+			 core::Size& cycle,
+			 core::Size& temp_level,
+			 core::Real& temperature
 	);
 
 protected:

@@ -150,7 +150,7 @@ public: // Methods
 
 	bool
 	cumulate_jobs() const;
-	
+
 	void
 	cumulate_jobs(
 		bool cumulate_jobs
@@ -158,7 +158,7 @@ public: // Methods
 
 	bool
 	cumulate_replicas() const;
-	
+
 	void
 	cumulate_replicas(
 		bool cumulate_replicas
@@ -166,7 +166,7 @@ public: // Methods
 
 	bool
 	prepend_output_name() const;
-	
+
 	void
 	prepend_output_name(
 		bool prepend_output_name
@@ -209,7 +209,8 @@ public: // Methods
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
 	virtual

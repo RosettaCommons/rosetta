@@ -127,6 +127,21 @@ TemperatureController::get_name() const
 	return "TemperatureController";
 }
 
+
+void
+TemperatureController::initialize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & mhm,
+		core::Size level,
+		core::Real temperature,
+		core::Size cycle //default=0; non-zero if trajectory is restarted
+) {
+	if ( level != 1 ) {
+		utility_exit_with_message( "TemperatureController - Baseclass doesn't know about different temp-levels" );
+	};
+}
+
+
 } //moves
 } //protocols
 

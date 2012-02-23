@@ -51,20 +51,6 @@ ThermodynamicObserver::ThermodynamicObserver(
 
 ThermodynamicObserver::~ThermodynamicObserver() {}
 
-void
-ThermodynamicObserver::initialize_simulation(
-	core::pose::Pose & /*pose*/,
-	protocols::canonical_sampling::MetropolisHastingsMover const & /*metropolis_hastings_mover*/
-)
-{}
-
-void
-ThermodynamicObserver::finalize_simulation(
-	core::pose::Pose & /*pose*/,
-	protocols::canonical_sampling::MetropolisHastingsMover const & /*metropolis_hastings_mover*/
-)
-{}
-
 } //moves
 } //protocols
 

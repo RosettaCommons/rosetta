@@ -87,7 +87,8 @@ TrialCounterObserver::parse_my_tag(
 void
 TrialCounterObserver::initialize_simulation(
 	core::pose::Pose & /*pose*/,
-	MetropolisHastingsMover const& mhm /*metropolis_hastings_mover*/
+	MetropolisHastingsMover const& mhm, /*metropolis_hastings_mover*/
+	core::Size cycle //default=0; non-zero if trajectory is restarted
 )
 {
 	counters_.set_temperature_observer( mhm.tempering() );

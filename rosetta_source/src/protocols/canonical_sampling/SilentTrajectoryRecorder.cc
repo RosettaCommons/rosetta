@@ -18,6 +18,7 @@
 #include <protocols/canonical_sampling/SilentTrajectoryRecorderCreator.hh>
 
 // Other project headers or inline function headers
+#include <core/io/silent/SilentFileData.hh>
 #include <core/io/raw_data/ScoreStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -27,6 +28,7 @@
 #include <protocols/jd2/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/jd2/util.hh>
+#include <utility/string_util.hh>
 
 // just for tracer output
 #include <protocols/jd2/Job.hh>
@@ -35,6 +37,7 @@
 // External library headers
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
+#include <core/types.hh>
 
 // C++ headers
 #include <iomanip>
@@ -61,6 +64,7 @@ void protocols::canonical_sampling::SilentTrajectoryRecorder::register_options()
 
 namespace protocols {
 namespace canonical_sampling {
+using namespace core;
 
 std::string
 SilentTrajectoryRecorderCreator::keyname() const {
@@ -87,7 +91,7 @@ SilentTrajectoryRecorder::SilentTrajectoryRecorder() {
 
 SilentTrajectoryRecorder::SilentTrajectoryRecorder(
 	SilentTrajectoryRecorder const & other
-) :	
+) :
 	TrajectoryRecorder(other),
 	score_stride_(other.score_stride_)
 {}
@@ -133,12 +137,57 @@ SilentTrajectoryRecorder::write_model(
 	jd2::output_intermediate_pose( pose, filename, mc,  ( mc % score_stride_ ) != 0 && mc > 1 ); //write always first a structure
 }
 
+bool
+SilentTrajectoryRecorder::restart_simulation(
+			 core::pose::Pose & pose,
+			 protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
+			 core::Size& cycle,
+			 core::Size& temp_level,
+			 core::Real& temperature
+) {
+	std::string filename( metropolis_hastings_mover.output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) );
+	utility::file::FileName jd2_filename( jd2::current_output_filename() );
+	std::string physical_filename( jd2_filename.base()+"_"+filename );
+
+	//check existence of file
+	temp_level = 1;
+	temperature = -1.0;
+	cycle = 0;
+
+	//check for correct tags in file
+	tr.Info << "restarting from trajector file " << physical_filename << ". Reading tags now ..." << std::endl;
+	io::silent::SilentFileData sfd( physical_filename );
+	std::ostringstream replica_id_str;
+	replica_id_str << std::setw(3) << std::setfill('0') << jd2::current_replica();
+	std::string tag = jd2::current_output_name()+"_"+replica_id_str.str();
+
+	utility::vector1< std::string > matched_tags_in_file;
+	bool found = sfd.matched_tags( tag, "last", matched_tags_in_file );
+	if ( found ) {
+		sfd.read_file( sfd.filename(), matched_tags_in_file );
+		runtime_assert( sfd.size() == 1 );
+		sfd.begin()->fill_pose( pose );
+
+		std::string decoy_tag=matched_tags_in_file.front();
+		Size ind=decoy_tag.find_last_of( '_' );
+		cycle = utility::string2int(decoy_tag.substr( ind+1 ) )*stride();
+		if ( sfd.begin()->has_energy( "temp_level" ) ) {
+			temp_level = (Size) sfd.begin()->get_energy( "temp_level" );
+		}
+		if ( sfd.begin()->has_energy( "temperature" )) {
+			temperature = sfd.begin()->get_energy( "temperature" );
+		}
+	}
+	return found;
+}
+
 void
 SilentTrajectoryRecorder::initialize_simulation(
   core::pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover )
-{
-	Parent::initialize_simulation(pose, metropolis_hastings_mover);
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
+) {
+	Parent::initialize_simulation(pose, metropolis_hastings_mover,cycle);
 	tr.Info << std::setprecision( 3 );
 	tr.Debug << std::setprecision( 3 );
 }
@@ -162,7 +211,7 @@ SilentTrajectoryRecorder::observe_after_metropolis(
 		}
 		mc.show_counters();
 	}
-	
+
 	Parent::observe_after_metropolis(metropolis_hastings_mover);
 }
 

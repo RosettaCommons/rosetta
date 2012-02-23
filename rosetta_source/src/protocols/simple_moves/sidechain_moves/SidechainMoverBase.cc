@@ -181,8 +181,9 @@ SidechainMoverBase::init_task( pose::Pose const &pose ) {
 void
 SidechainMoverBase::initialize_simulation(
 	pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & /*metropolis_hastings_mover*/ )
-{
+	protocols::canonical_sampling::MetropolisHastingsMover const&, /*metropolis_hastings_mover*/
+	core::Size cycle
+) {
 	idealize_sidechains( pose );
 	init_task( pose );
 }

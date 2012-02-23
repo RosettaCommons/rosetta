@@ -97,6 +97,24 @@ public:
 		return 1;
 	}
 
+	virtual
+	void
+	initialize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size level,
+		core::Real temperature,
+		core::Size cycle
+	);
+
+	virtual
+	void
+	initialize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size cycle   //non-zero if trajectory is restarted
+	) {};
+
 	virtual core::Size n_temp_levels() const { return 1; };
 
 	protocols::moves::MonteCarloCOP

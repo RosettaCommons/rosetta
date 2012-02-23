@@ -222,7 +222,8 @@ protocols::backrub::BackrubSidechainMover::update_segments(
 void
 protocols::backrub::BackrubSidechainMover::initialize_simulation(
 	core::pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
 )
 {
 	if (!(valid_segments_.size() && backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree())) {
@@ -230,8 +231,8 @@ protocols::backrub::BackrubSidechainMover::initialize_simulation(
 	}
 
 	// because the segments have already been set up, they shouldn't be set up again in the next call
-	backrub_mover_->initialize_simulation(pose, metropolis_hastings_mover);
-	sidechain_mover_->initialize_simulation(pose, metropolis_hastings_mover);
+	backrub_mover_->initialize_simulation(pose, metropolis_hastings_mover,cycle);
+	sidechain_mover_->initialize_simulation(pose, metropolis_hastings_mover,cycle);
 
 	if (record_statistics_) reset_statistics();
 }

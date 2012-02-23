@@ -72,6 +72,7 @@ static numeric::random::RandomGenerator RG(638767547);
 namespace protocols {
 namespace canonical_sampling {
 
+
 std::string
 MetropolisHastingsMoverCreator::keyname() const {
 	return MetropolisHastingsMoverCreator::mover_name();
@@ -120,7 +121,7 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 
 MetropolisHastingsMover::~MetropolisHastingsMover(){}
 
-void
+core::Size
 MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	if (output_name() == "") {
 		set_output_name(protocols::jd2::JobDistributor::get_instance()->current_output_name());
@@ -129,18 +130,34 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	} else {
 		TR.Info << " running with preset output name: " << output_name() << std::endl;
 	}
+
 	if ( !tempering_ ) {
 		//get this done before "initialize_simulation" is called no movers and observers
 		TR.Info << "no temperature controller in MetropolisHastings defined... generating FixedTemperatureController" << std::endl;
 		tempering_= new protocols::canonical_sampling::FixedTemperatureController( monte_carlo_->temperature() );
 	}
+	using namespace core;
+	bool restart = false;
+	core::Size cycle_number = 0;
+	Size temp_level = 0;
+	Real temperature = -1.0;
+//	for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
+//		TR << "Attempting restart using " << observers_[i]->get_name() << std::endl;
+//		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
+//		if ( restart ) TR << "Restarted using " << observers_[i]->get_name() << std::endl;
+//	}
 
-	tempering_->initialize_simulation(pose, *this);
+	if ( !restart ) {
+		cycle_number = 0; //make sure this is zero if we don't have a restart.
+		tempering_->initialize_simulation(pose, *this, cycle_number );
+	} else {
+		tempering_->initialize_simulation(pose, *this, temp_level, temperature, cycle_number );
+	}
 
 	for (core::Size i = 1; i <= movers_.size(); ++i) {
 		TR << "Initializing " << movers_[i]->get_name() << std::endl;
 		movers_[i]->set_metropolis_hastings_mover(this);
-		movers_[i]->initialize_simulation(pose, *this);
+		movers_[i]->initialize_simulation(pose, *this, cycle_number);
 	}
 
 	runtime_assert( monte_carlo_ );
@@ -149,22 +166,23 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 
 	for (core::Size i = 1; i <= observers_.size(); ++i) {
 		TR << "Initializing " << observers_[i]->get_name() << std::endl;
-		observers_[i]->initialize_simulation(pose, *this);
+		observers_[i]->initialize_simulation(pose, *this, cycle_number);
 	}
 
 	TR << "Initial Score:\n";
 	monte_carlo_->score_function().show(TR, pose);
 
-	TR << "Running " << ntrials_ << " trials..." << std::endl;
+	TR << "Running " << ntrials_-cycle_number << " trials..." << std::endl;
+	return cycle_number;
 }
 
 void
 MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 	output_name_from_job_distributor_ = false;
 
-	prepare_simulation( pose );
+	Size start_cycle = prepare_simulation( pose );
 
-	for (trial_ = 1; trial_ <= ntrials_; ++trial_) {
+	for (trial_ = start_cycle+1; trial_ <= ntrials_; ++trial_) {
 
 		ThermodynamicMoverOP mover(random_mover());
 		mover->apply(pose);

@@ -62,7 +62,15 @@ public:
 	// constructor
 
 	SilentFileData() :
-		filename_( "" ),
+		filename_(),
+		store_argv_in_file_( false ),
+		strict_column_mode_( false ),
+		record_source_( false ),
+		silent_struct_type_("") // by default its option controlled.
+	{}
+
+	SilentFileData( std::string const& filename ) :
+		filename_( filename ),
 		store_argv_in_file_( false ),
 		strict_column_mode_( false ),
 		record_source_( false ),
@@ -181,7 +189,7 @@ public:
 
 	/// @brief Gets the filename that this SilentFileData object will
 	/// write to.
-	std::string filename() const {
+	std::string const& filename() const {
 		return filename_;
 	}
 	/// @brief Return all tags in this container.
@@ -197,6 +205,15 @@ public:
 	/// lines beginning with SCORE: strings.
 	bool read_tags_fast(
 		std::string const & filename, utility::vector1< std::string >&
+	) const;
+
+	///@brief return mode=first,last,all matched tags -- currently matching 'expression*' to tags in file, boost::regexp possible later
+	bool matched_tags(
+    std::string const& expression,
+		std::string const& mode,
+		utility::vector1< std::string >& tags_in_file
+		//		utility::vector1< SilentStructOP >& decoys_in_file,
+		//		bool ignore_decoys = false
 	) const;
 
 	/// @brief Returns a boolean indicating whether or not the strict_column_mode

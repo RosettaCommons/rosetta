@@ -91,7 +91,8 @@ public:
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
 	core::conformation::ResidueOP
