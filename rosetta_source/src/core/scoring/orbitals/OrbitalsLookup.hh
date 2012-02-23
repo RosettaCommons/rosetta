@@ -19,7 +19,8 @@
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
 #include <numeric/interpolation/spline/Cubic_spline.hh>
 
-
+#include <map>
+#include <string>
 
 #include <vector>
 
@@ -33,6 +34,11 @@ public:
 
 
 	OrbitalsLookup( utility::vector1< std::string > const & DHO_energies, utility::vector1< std::string > const & AOH_energies );
+
+	utility::vector1< utility::vector1< core::Real > > parse_files(
+			std::string const & file,
+			std::map<core::Size, std::pair<core::Size, core::Size> > & orbital_angle_dist_map
+	)const;
 
 	void OrbHdist_cosDHO_energy (
 		const h_type h_enum,

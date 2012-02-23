@@ -22,11 +22,15 @@
 #include <utility/io/izstream.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <basic/database/open.hh>
+#include <map>
 
 #include <utility/exit.hh>
+#include <utility/string_util.hh>
+
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <core/chemical/orbitals/OrbitalTypeMapper.hh>
 
 
 namespace core{
@@ -39,43 +43,17 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 	number_elements_(600)
 {
 
-	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != 1 ){
+	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != true ){
 		utility_exit_with_message( "Trying to run orbitals score without orbitals! Pass the flag -add_orbitals!" );
 	}
 
-	//set up initial vectors. Data read from the database will be placed into these vectors
-	utility::vector1< core::Real > E_vector(number_elements_, 0);
-	utility::vector1< utility::vector1< core::Real > > DHO_Hpol_scOrbH_vector(static_cast <core::Size> (number_stats_), E_vector);
-	utility::vector1< utility::vector1< core::Real > > DHO_Hpol_bbOrbH_vector(static_cast <core::Size> (number_stats_), E_vector);
-	utility::vector1< utility::vector1< core::Real > > DHO_Haro_scOrbH_vector(static_cast <core::Size> (number_stats_), E_vector);
 
-	std::string line;
-	utility::io::izstream stream;
-	basic::database::open( stream, DHO_energies[1] );
-
-	//sc hpol energy file processing
-	for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
-		std::istringstream l( line );
-		l >> DHO_Hpol_scOrbH_vector[1][count] >> DHO_Hpol_scOrbH_vector[2][count] >> DHO_Hpol_scOrbH_vector[3][count] >> DHO_Hpol_scOrbH_vector[4][count] >> DHO_Hpol_scOrbH_vector[5][count] >> DHO_Hpol_scOrbH_vector[6][count];
-	}
-	stream.close();
-
-	//backbone hpol energy file processing
-	basic::database::open( stream, DHO_energies[2] );
-	for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
-		std::istringstream l( line );
-		l >> DHO_Hpol_bbOrbH_vector[1][count] >> DHO_Hpol_bbOrbH_vector[2][count] >> DHO_Hpol_bbOrbH_vector[3][count] >> DHO_Hpol_bbOrbH_vector[4][count] >> DHO_Hpol_bbOrbH_vector[5][count] >> DHO_Hpol_bbOrbH_vector[6][count];
-	}
-	stream.close();
-
-	//haro energy file processing
-	basic::database::open( stream, DHO_energies[3] );
-	//read in database file. This is the haro file, put files into the array constructed above
-	for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
-		std::istringstream l( line );
-		l >> DHO_Haro_scOrbH_vector[1][count] >> DHO_Haro_scOrbH_vector[2][count] >> DHO_Haro_scOrbH_vector[3][count] >> DHO_Haro_scOrbH_vector[4][count] >> DHO_Haro_scOrbH_vector[5][count] >> DHO_Haro_scOrbH_vector[6][count];
-	}
-	stream.close();
+	std::map<core::Size, std::pair<core::Size, core::Size> > DHO_Hpol_scOrbscH_map;
+	utility::vector1< utility::vector1< core::Real > > DHO_Hpol_scOrbH_vector = parse_files(DHO_energies[1], DHO_Hpol_scOrbscH_map);
+	std::map<core::Size, std::pair<core::Size, core::Size> > DHO_bbOrbscH_map;
+	utility::vector1< utility::vector1< core::Real > > DHO_Hpol_bbOrbH_vector = parse_files(DHO_energies[2], DHO_bbOrbscH_map);
+	std::map<core::Size, std::pair<core::Size, core::Size> > DHO_HARO_scOrbscH_map;
+	utility::vector1< utility::vector1< core::Real > > DHO_Haro_scOrbH_vector = parse_files(DHO_energies[3], DHO_HARO_scOrbscH_map);
 
 	//initial construction of a vector of MathMatrix. We will be pushing back matrixes into this
 	utility::vector1< numeric::MathMatrix<core::Real> > DHO_Hpol_scOrbH_vector_matrix;
@@ -84,9 +62,10 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 
 	for( core::Size count=1; count <= static_cast< core::Size > (number_stats_); ++count ) {
 		//MathMatrix requires an array, not a vector. To get an array from a vector, we can use the & vector[1]. See wikipedia!
-		numeric::MathMatrix<core::Real> Hpol_scOrbH_matrix(30, 20, & DHO_Hpol_scOrbH_vector[count][1] );
-		numeric::MathMatrix<core::Real> Hpol_bbOrbH_matrix(30, 20, & DHO_Hpol_bbOrbH_vector[count][1] );
-		numeric::MathMatrix<core::Real> Haro_scOrbH_matrix(30, 20, & DHO_Haro_scOrbH_vector[count][1]);
+		numeric::MathMatrix<core::Real> Hpol_scOrbH_matrix(DHO_Hpol_scOrbscH_map[count].second, DHO_Hpol_scOrbscH_map[count].first, & DHO_Hpol_scOrbH_vector[count][1] );
+		//std::cout << "second " << DHO_scOrbscH_map[count].second << "first " << DHO_scOrbscH_map[count].first << std::endl;
+		numeric::MathMatrix<core::Real> Hpol_bbOrbH_matrix(DHO_bbOrbscH_map[count].second, DHO_bbOrbscH_map[count].first, & DHO_Hpol_bbOrbH_vector[count][1] );
+		numeric::MathMatrix<core::Real> Haro_scOrbH_matrix(DHO_HARO_scOrbscH_map[count].second, DHO_HARO_scOrbscH_map[count].first, & DHO_Haro_scOrbH_vector[count][1]);
 
 		DHO_Hpol_scOrbH_vector_matrix.push_back(Hpol_scOrbH_matrix);
 		DHO_Hpol_bbOrbH_vector_matrix.push_back(Hpol_bbOrbH_matrix);
@@ -139,23 +118,23 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 
 
  //some verbose checking. Not needed
-
 /*
+	for(core::Real i=0.00; i <= 3; i+=0.1){
+		core::Size number=0;
+		for(core::Real j=-1.0; j<=0; j+=0.05){
+			++number;
+			if( number == 20){
+				std::cout << DHO_Hpol_scOrbH_vector_spline[1].F((numeric::MakeVector(i,j))) << std::endl;
 
-	for(core::Real i=0.00; i <= 30; i+=0.1){
-	core::Size number=0;
-			for(core::Real j=-1.0; j<=0; j+=0.05){
-				++number;
-				if( number == 20){
-					std::cout << DHO_Hpol_scOrbH_vector_spline[5].F((numeric::MakeVector(i,j))) << std::endl;
-
-				}else{
-					std::cout << DHO_Hpol_scOrbH_vector_spline[5].F((numeric::MakeVector(i,j))) << " ";
-					//std::cout << i << " " << j << std::endl;
-				}
+			}else{
+				std::cout << DHO_Hpol_scOrbH_vector_spline[1].F((numeric::MakeVector(i,j))) << " ";
+				//std::cout << i << " " << j << std::endl;
 			}
 		}
+	}
 	std::cout << "###################################################################################\n#####################3" << std::endl;
+*/
+/*
 
 	for(core::Real i=0.00; i <= 30; i+=0.1){
 	core::Size number=0;
@@ -172,49 +151,31 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 		}
 */
 
+
+
 //std::cout << "###################################################################################\n#####################3" << std::endl;
-	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_scOrbH_vector(static_cast <core::Size> (number_stats_), E_vector);
-	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_bbOrbH_vector(static_cast <core::Size> (number_stats_), E_vector);
-	utility::vector1< utility::vector1< core::Real > > AOH_Haro_scOrbH_vector(static_cast <core::Size> (number_stats_), E_vector);
 
-	basic::database::open( stream, AOH_energies[1] );
-	//sc hpol energy file processing
-	for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
-		std::istringstream l( line );
-		l >> AOH_Hpol_scOrbH_vector[1][count] >> AOH_Hpol_scOrbH_vector[2][count] >> AOH_Hpol_scOrbH_vector[3][count] >> AOH_Hpol_scOrbH_vector[4][count] >> AOH_Hpol_scOrbH_vector[5][count] >> AOH_Hpol_scOrbH_vector[6][count];
-	}
-	stream.close();
 
-	//backbone hpol energy file processing
-	basic::database::open( stream, AOH_energies[2] );
-	for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
-		std::istringstream l( line );
-		l >> AOH_Hpol_bbOrbH_vector[1][count] >> AOH_Hpol_bbOrbH_vector[2][count] >> AOH_Hpol_bbOrbH_vector[3][count] >> AOH_Hpol_bbOrbH_vector[4][count] >> AOH_Hpol_bbOrbH_vector[5][count] >> AOH_Hpol_bbOrbH_vector[6][count];
-	}
-	stream.close();
+	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_Hpol_scOrbscH_map;
+	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_scOrbH_vector = parse_files(DHO_energies[1], AOH_Hpol_scOrbscH_map);
+	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_bbOrbscH_map;
+	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_bbOrbH_vector = parse_files(DHO_energies[2], AOH_bbOrbscH_map);
+	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_HARO_scOrbscH_map;
+	utility::vector1< utility::vector1< core::Real > > AOH_Haro_scOrbH_vector = parse_files(DHO_energies[3], AOH_HARO_scOrbscH_map);
 
-	//haro energy file processing
-	basic::database::open( stream, AOH_energies[3] );
-	for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
-		std::istringstream l( line );
-		l >> AOH_Haro_scOrbH_vector[1][count] >> AOH_Haro_scOrbH_vector[2][count] >> AOH_Haro_scOrbH_vector[3][count] >> AOH_Haro_scOrbH_vector[4][count] >> AOH_Haro_scOrbH_vector[5][count] >> AOH_Haro_scOrbH_vector[6][count];
-	}
-	stream.close();
 
 
 
 	//initial construction of a vector of MathMatrix. We will be pushing back matrixes into this
 	utility::vector1< numeric::MathMatrix<core::Real> > AOH_Hpol_scOrbH_vector_matrix;
 	utility::vector1< numeric::MathMatrix<core::Real> > AOH_Hpol_bbOrbH_vector_matrix;
-
-
 	utility::vector1< numeric::MathMatrix<core::Real> > AOH_Haro_scOrbH_vector_matrix;
 
 	for( core::Size count=1; count <= static_cast< core::Size > (number_stats_); ++count ) {
 		//MathMatrix requires an array, not a vector. To get an array from a vector, we can use the & vector[1]. See wikipedia!
-		numeric::MathMatrix<core::Real> Hpol_scOrbH_matrix(30, 20, & AOH_Hpol_scOrbH_vector[count][1] );
-		numeric::MathMatrix<core::Real> Hpol_bbOrbH_matrix(30, 20, & AOH_Hpol_bbOrbH_vector[count][1] );
-		numeric::MathMatrix<core::Real> Haro_scOrbH_matrix(30, 20, & AOH_Haro_scOrbH_vector[count][1]);
+		numeric::MathMatrix<core::Real> Hpol_scOrbH_matrix(AOH_Hpol_scOrbscH_map[count].second, AOH_Hpol_scOrbscH_map[count].first, & AOH_Hpol_scOrbH_vector[count][1] );
+		numeric::MathMatrix<core::Real> Hpol_bbOrbH_matrix(AOH_bbOrbscH_map[count].second, AOH_bbOrbscH_map[count].first, & AOH_Hpol_bbOrbH_vector[count][1] );
+		numeric::MathMatrix<core::Real> Haro_scOrbH_matrix(AOH_HARO_scOrbscH_map[count].second, AOH_HARO_scOrbscH_map[count].first, & AOH_Haro_scOrbH_vector[count][1]);
 
 		AOH_Hpol_scOrbH_vector_matrix.push_back(Hpol_scOrbH_matrix);
 		AOH_Hpol_bbOrbH_vector_matrix.push_back(Hpol_bbOrbH_matrix);
@@ -248,7 +209,45 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 
 
 
+
 }//end orbitalsLookup
+
+
+
+utility::vector1< utility::vector1< core::Real > > OrbitalsLookup::parse_files(
+		std::string const & file,
+		std::map<core::Size, std::pair<core::Size, core::Size> > & orbital_angle_dist_map
+)const
+{
+	utility::vector1< core::Real > E_vector(number_elements_, 0);
+	utility::vector1< utility::vector1< core::Real > > energy_vector(static_cast <core::Size> (number_stats_), E_vector); //600 default value for KBP, resized later
+	std::string line;
+	utility::io::izstream stream;
+	basic::database::open( stream, file );
+	core::Size orbital_type(0);
+	core::Size overall_count(1);
+	for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
+		std::vector< std::string > split_string = utility::string_split(line, '\t'); //file is tab-delimenated
+		if(split_string[0]=="Orbital"){
+			orbital_type = static_cast< core::Size > (core::chemical::orbitals::OrbitalTypeMapper::get_instance()->get_orbital_enum(split_string[1]));
+			overall_count=1;
+		}else if(split_string[0] == "Size"){
+			core::Size angle_bins = utility::string2int(split_string[1]);
+			core::Size dist_bins = utility::string2int(split_string[2]);
+			std::pair<core::Size, core::Size> angle_dist(angle_bins, dist_bins);
+			orbital_angle_dist_map.insert(std::pair<core::Size, std::pair<core::Size, core::Size> >(orbital_type, angle_dist));
+			energy_vector[orbital_type].resize((angle_bins*dist_bins), 0);//need to resize. KBP have differing amount of elements
+		}else{
+			for(core::Size x=1; x<= orbital_angle_dist_map[orbital_type].first; ++x){//iterate through angles and put into vector
+				energy_vector[orbital_type][overall_count] = utility::string2float(split_string[x-1]);//x-1 conversion of std::vector to utility::vector1
+				++overall_count;
+			}
+		}
+	}
+	stream.close();
+	return energy_vector;
+}
+
 
 //get the energy from the bicubic spline. This is done by using the mm atom name as a key in the map. We pass in the distance and angle.
 void OrbitalsLookup::OrbHdist_cosDHO_energy

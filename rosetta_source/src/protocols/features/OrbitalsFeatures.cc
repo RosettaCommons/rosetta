@@ -25,7 +25,7 @@
 #include <core/chemical/AtomType.hh>
 //Numeric Headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>ok
+#include <numeric/xyz.functions.hh>
 
 
 //Utility Headers
