@@ -203,8 +203,8 @@ settings = {
         "appends" : {
             "version"       : [ "4", "1" ],
             "flags" : {
-                "compile"   : [ "-param inline-unit-growth=1000",
-                "-param large-function-growth=50000" ],
+               # "compile"   : [ "-param inline-unit-growth=1000",
+               # "-param large-function-growth=50000" ],
             },
         },
     },
