@@ -58,14 +58,16 @@ public :
 	void parse_my_tag(  utility::tag::TagPtr const, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& );
 
 	virtual std::string get_name() const;
+	protocols::moves::MoverOP relax_mover() const{ return relax_mover_; }
+	void relax_mover( protocols::moves::MoverOP m ){ relax_mover_ = m; }
 
 private :
 	std::map< ScoreType, Real > bound_energies_;
 	std::map< ScoreType, Real > unbound_energies_;
-	
+
 	std::map< Size, Real > bound_per_residue_energies_;
 	std::map< Size, Real > unbound_per_residue_energies_;
-	
+
 	Real bound_total_energy_;
 	Real unbound_total_energy_;
 	Size repeats_;
@@ -76,6 +78,7 @@ private :
 	bool symmetry_;
 	bool per_residue_ddg_;
 	bool repack_;
+	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, relax before taking the energy
 };
 
 } // movers

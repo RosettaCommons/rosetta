@@ -74,7 +74,7 @@ moves::MoverOP ddGCreator::create_mover() const
 {
 	return new ddG;
 }
-	
+
 std::string ddGCreator::mover_name()
 {
 	return "ddG";
@@ -84,7 +84,7 @@ std::string ddGCreator::keyname() const
 {
 	return ddGCreator::mover_name();
 }
-	
+
 using namespace core;
 using namespace protocols::simple_moves;
 using namespace core::scoring;
@@ -97,14 +97,15 @@ ddG::ddG() :
 		rb_jump_(0),
 		symmetry_(false),
 		per_residue_ddg_(false),
-		repack_(false)
+		repack_(false),
+		relax_mover_( NULL )
 {
 	bound_energies_.clear();
 	unbound_energies_.clear();
 	bound_per_residue_energies_.clear();
 	unbound_per_residue_energies_.clear();
 }
-	
+
 ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, bool const symmetry /*=false*/ ) :
 		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
 		bound_total_energy_(0.0),
@@ -113,7 +114,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1
 		rb_jump_(0),
 		symmetry_(false),
 		per_residue_ddg_(false),
-		repack_(false)
+		repack_(false),
+		relax_mover_( NULL )
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
 	rb_jump_ = jump;
@@ -121,18 +123,18 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1
 	per_residue_ddg_ = false;
 	repack_ = true;
 	repeats_ = 1;
-	
+
 	bound_energies_.clear();
 	unbound_energies_.clear();
 	bound_per_residue_energies_.clear();
 	unbound_per_residue_energies_.clear();
 }
 
-void ddG::parse_my_tag( 
+void ddG::parse_my_tag(
 	utility::tag::TagPtr const tag,
 	protocols::moves::DataMap  & data,
-	protocols::filters::Filters_map const &, 
-	protocols::moves::Movers_map const &, 
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
 	core::pose::Pose const& )
 {
 	rb_jump_ = tag->getOption<core::Size>("jump", 1);
@@ -140,11 +142,11 @@ void ddG::parse_my_tag(
 	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",0);
 	repack_ = tag->getOption<bool>("repack",0);
 	repeats_ = tag->getOption<Size>("repeats",1);
-	
+
 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
 	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
 }
-	
+
 ddG::~ddG() {}
 
 void ddG::apply(Pose & pose)
@@ -154,12 +156,12 @@ void ddG::apply(Pose & pose)
 		core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()));
 		energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn_->set_energy_method_options(*energy_options);
-		
+
 	}
-	
+
 	Real average_ddg = 0.0;
 	std::map<Size, Real> average_per_residue_ddgs;
-	
+
 	for(Size repeat = 1; repeat <= repeats_; ++repeat)
 	{
 		calculate(pose);
@@ -182,13 +184,13 @@ void ddG::apply(Pose & pose)
 			}
 		}
 	}
-	
+
 	average_ddg /= repeats_;
 	for(std::map<Size,Real>::iterator avg_it = average_per_residue_ddgs.begin(); avg_it != average_per_residue_ddgs.end();++avg_it)
 	{
 		avg_it->second /= repeats_;
 	}
-	
+
 	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
 	job->add_string_real_pair("ddg",average_ddg);
 	if (per_residue_ddg_)
@@ -198,9 +200,9 @@ void ddG::apply(Pose & pose)
 			job->add_string_real_pair("residue_ddg_"+residue_string,average_per_residue_ddgs[i]);
 		}
 	}
-	
+
 }
-	
+
 /// @details a private function for storing energy values
 void
 ddG::fill_energy_vector( pose::Pose const & pose, std::map< ScoreType, core::Real > & energy_map )
@@ -213,7 +215,7 @@ ddG::fill_energy_vector( pose::Pose const & pose, std::map< ScoreType, core::Rea
 		}
 	}
 }
-	
+
 void ddG::fill_per_residue_energy_vector(pose::Pose const & pose, std::map<Size, Real> & energy_map)
 {
 	energy_map.clear();
@@ -269,7 +271,7 @@ ddG::sum_ddG() const
 	return sum_energy;
 }
 
-	
+
 /// @details compute the energy of the repacked complex in the bound and unbound states
 void
 ddG::calculate( pose::Pose const & pose_in )
@@ -281,7 +283,7 @@ ddG::calculate( pose::Pose const & pose_in )
 		symm_ddG( pose_in );
 		return;
 	}
-	
+
 	if(!repack_)
 	{
 		no_repack_ddG(pose_in);
@@ -315,6 +317,8 @@ ddG::calculate( pose::Pose const & pose_in )
 	translate->step_size( 1000.0 );
 	translate->apply( pose );
 	pack::pack_rotamers( pose, *scorefxn_, task_ );
+	if( relax_mover() )
+		relax_mover()->apply( pose );
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, unbound_energies_ );
 	if(per_residue_ddg_)
@@ -363,6 +367,8 @@ ddG::symm_ddG( pose::Pose const & pose_in )
 	translate->step_size( 1000.0 );
 	translate->apply( pose );
 	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
+	if( relax_mover() )
+		relax_mover()->apply( pose );
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, unbound_energies_ );
 	if(per_residue_ddg_)
@@ -370,12 +376,12 @@ ddG::symm_ddG( pose::Pose const & pose_in )
 		fill_per_residue_energy_vector(pose, unbound_per_residue_energies_);
 	}
 }
-	
+
 void
 ddG::no_repack_ddG(Pose const & pose_in)
 {
 	pose::Pose pose = pose_in;
-	
+
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, bound_energies_ );
 	if(per_residue_ddg_)
@@ -385,6 +391,8 @@ ddG::no_repack_ddG(Pose const & pose_in)
 	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose,rb_jump_ ) );
 	translate->step_size( 1000.0 );
 	translate->apply( pose );
+	if( relax_mover() )
+		relax_mover()->apply( pose );
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose,unbound_energies_ );
 	if(per_residue_ddg_)

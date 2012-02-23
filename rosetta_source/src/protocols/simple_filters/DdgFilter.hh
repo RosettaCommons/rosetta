@@ -50,6 +50,8 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~DdgFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void relax_mover( protocols::moves::MoverOP m );
+	protocols::moves::MoverOP relax_mover() const;
 private:
 	core::Real ddg_threshold_; //dflt -15
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL/score12 in cstrctr/rosettascripts
@@ -57,9 +59,10 @@ private:
 	core::Size repeats_;//average of how many repeats? defaults to 1
 	bool symmetry_; //dflt false
 	bool repack_; //dflt true; Do you want to repack in the bound and unbound states (ddG) or merely compute the dG
+	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, prior to taking the energy, should we do any relaxation
 };
 
-	
+
 }
 }
 #endif

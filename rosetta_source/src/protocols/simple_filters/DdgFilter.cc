@@ -35,7 +35,7 @@
 
 namespace protocols {
 namespace simple_filters {
-	
+
 static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
 protocols::filters::FilterOP
@@ -52,7 +52,8 @@ DdgFilter::DdgFilter() :
 	rb_jump_( 1 ),
 	repeats_( 1 ),
 	symmetry_(false),
-	repack_( true )
+	repack_( true ),
+	relax_mover_( NULL )
 {}
 
 DdgFilter::~DdgFilter() {}
@@ -70,7 +71,7 @@ DdgFilter::repack() const
 }
 
 void
-DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const & , moves::Movers_map const & , core::pose::Pose const & )
+DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const & , moves::Movers_map const & movers, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 
@@ -81,6 +82,9 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, 
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
 	repack( tag->getOption< bool >( "repack", 1 ) );
 	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
+	if( tag->hasOption( "relax_mover" ) )
+		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
+
 
 	if( repeats() > 1 && !repack() )
 		utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
@@ -133,6 +137,7 @@ core::Real
 DdgFilter::compute( core::pose::Pose const & pose ) const {
 	if( repack() ){
 		protocols::simple_moves::ddG ddg( scorefxn_, rb_jump_, symmetry_ );
+		ddg.relax_mover( relax_mover() );
 		core::Real average( 0.0 );
 		for( core::Size i = 1; i<=repeats_; ++i ){
 			ddg.calculate( pose );
@@ -162,7 +167,8 @@ DdgFilter::compute( core::pose::Pose const & pose ) const {
 
 DdgFilter::DdgFilter( core::Real const ddg_threshold, core::scoring::ScoreFunctionCOP scorefxn, core::Size const rb_jump/*=1*/, core::Size const repeats/*=1*/, bool const symmetry /*=false*/ ) :
 	Filter("Ddg" ),
-	repack_( true )
+	repack_( true ),
+	relax_mover_( NULL )
 {
 	ddg_threshold_ = ddg_threshold;
 	scorefxn_ = scorefxn->clone();
@@ -170,6 +176,14 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold, core::scoring::ScoreFuncti
 	repeats_ = repeats;
 	symmetry_ = symmetry;
 }
+
+void
+DdgFilter::relax_mover( protocols::moves::MoverOP m ){
+	relax_mover_ = m;
+}
+
+protocols::moves::MoverOP
+DdgFilter::relax_mover() const{ return relax_mover_; }
 
 
 }
