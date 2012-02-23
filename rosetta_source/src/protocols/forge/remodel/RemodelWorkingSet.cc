@@ -326,6 +326,8 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 				aa.append( data.blueprint[i].resname );
 			}
 		}
+	//		runtime_assert( aa.size() == data.dssp_updated_ss.size());
+
 		if (option[OptionKeys::remodel::repeat_structure].user()){
 			String monomer_seq = aa;
 			Size copies = option[OptionKeys::remodel::repeat_structure];
@@ -334,7 +336,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 				copies--;
 			}
 			//runtime_assert( aa.size() == data.dssp_updated_ss.size());
-		}	
+		}
 	}	else {
 		if ( build_aa_type.compare("A") != 0){
 						//build the aa string to be the same length as dssp updated ss
@@ -345,7 +347,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 		}
 	}
 
-	
+
 	//debug
 	std::cout << "AA for build: " << aa << std::endl;
 

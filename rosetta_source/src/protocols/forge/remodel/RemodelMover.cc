@@ -16,7 +16,7 @@
 #include <protocols/forge/remodel/RemodelMover.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.fwd.hh>
-#include <protocols/forge/remodel/RemodelMoverCreator.hh> 
+#include <protocols/forge/remodel/RemodelMoverCreator.hh>
 
 // package headers
 #include <protocols/forge/build/BuildInstruction.hh>
@@ -253,7 +253,7 @@ RemodelMover::MoverOP RemodelMover::fresh_instance() const {
 
 
 /// @brief clone this object
-RemodelMover::MoverOP RemodelMover::clone() { 
+RemodelMover::MoverOP RemodelMover::clone() {
 	return new RemodelMover( *this );
 }
 
@@ -598,8 +598,8 @@ if (working_model.manager.size()!= 0){
 				fullatom_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0);
 				designMover.scorefunction(fullatom_sfx_);
     }
-	
- 			
+
+
 
 		if (basic::options::option[OptionKeys::remodel::build_disulf].user()){
 			utility::vector1<std::pair <Size, Size> > disulf_partners;
@@ -624,7 +624,7 @@ if (working_model.manager.size()!= 0){
 				//for now, accept all disulf build, as it is hard enough to do
 				//already.  Accept instead of cst filter?
 				//accumulator.apply(disulf_copy_pose);
-				if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() || 
+				if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ||
 							basic::options::option[ OptionKeys::constraints::cst_file ].user()
 			 	)
 				{
@@ -777,7 +777,7 @@ if (working_model.manager.size()!= 0){
 			current_score = score ;
 			pose = *(*it) ;
 		}
-		
+
 		filecount++;
 	}
 
@@ -922,7 +922,16 @@ bool RemodelMover::centroid_build(
 	vlb_->restart_mode(true);
   vlb_->new_secondary_structure_override(working_model_.ss);
 	if ( option[OptionKeys::remodel::use_blueprint_sequence] ) {
-		vlb_->new_sequence_override( remodel_data_.sequence );
+	    if (option[ OptionKeys::remodel::repeat_structure].user()) {
+				Size copies = option[ OptionKeys::remodel::repeat_structure];
+				String rep_seq = remodel_data_.sequence;
+				while (copies > 1){
+					rep_seq.append(remodel_data_.sequence);
+					copies--;
+				}
+			  vlb_->new_sequence_override( rep_seq );
+			}
+			else vlb_->new_sequence_override( remodel_data_.sequence );
 	}
 
 
