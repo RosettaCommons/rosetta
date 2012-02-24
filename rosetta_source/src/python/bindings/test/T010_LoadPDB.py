@@ -13,6 +13,7 @@
 ## @brief        binaries on windows.
 ## @author Sergey Lyskov
 
+import rosetta
 from rosetta import *
 
 rosetta.init()
@@ -38,4 +39,5 @@ make_pose_from_sequence(pose3, "DSEEKFLRRIGRFGYGYGPYE",'centroid')
 scorefxn = create_score_function('score3')
 scorefxn(pose3)
 
-
+pose_fs = rosetta.pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE")
+pose_fs.delete_polymer_residue(2)  # Testing that attached PDB info have right size...

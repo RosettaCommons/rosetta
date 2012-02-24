@@ -440,12 +440,14 @@ def pose_from_sequence( seq , res_type = 'fa_standard' ):
     """
     pose=Pose()
     make_pose_from_sequence(pose,seq,res_type)
+    #print 'Setting phi, psi, omega...'
     for i in range(0,pose.total_residue()):
         pose.set_phi(i+1,180)
         pose.set_psi(i+1,180)
         pose.set_omega(i+1,180)
-    pose.pdb_info(rosetta.core.pose.PDBInfo())
-    pose.pdb_info().name(seq[:4])
+    #print 'Attaching PDBInfo...'
+    pose.pdb_info(rosetta.core.pose.PDBInfo(pose))  # Empty PDBInfo (rosetta.core.pose.PDBInfo()) is not correct here - we have to reserve placed for atoms...
+    pose.pdb_info().name(seq[:8])
 #	print pose
     return pose
 
