@@ -1,55 +1,29 @@
-#
-#
+# The sp2 correction
 -score:weights sp2_correction
-#
-# The chi term correction
--score:hb_sp2_chipen
--score:hb_sp2_peak_heigh_above_trough 2.0
--score:hb_sp2_amp 2.0
-#
-#
-# HBond OH donor correction
+-hbond_params sp2_params
+-corrections:score:hb_sp2_chipen
+-corrections:score:hb_sp2_peak_heigh_above_trough 2.0
+-corrections:score:hb_sp2_amp 2.0
 -lj_hbond_hdis 1.75
 -lj_hbond_OH_donor_dis 2.6
 #
-#ref_SER -= 0.1; ref_THR -= 0.1;
-#
-#
--hbond_params sp2_params
-#
-#
--options
- -user
+-options:user
 #
 #
 -ignore_unrecognized_res
 #
 #
--in
- -path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens
- -file
-  -l %(sample_source_path)s/input/all_pdbs.list
+-in:path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens
+-in:file:l %(sample_source_path)s/input/all_pdbs.list
 #
 # Since the important output is the feature database,
 # ignore the job distributor output.
--out
- -nooutput
+-out:nooutput
 #
 #
 #Deleting old poses subsantialy reduces the memory requirements for
 #for runs with a large number of structures
--jd2
- -delete_old_poses
+-jd2:delete_old_poses
 #
 #
--parser
- -protocol %(output_dir)s/%(sample_source_id)s/features.xml
-#
-#
--mute protocols.jd2
--mute core.io.pdb.file_data
--mute core.scoring.etable
--mute core.io.database
--mute core.scoring.ScoreFunctionFactory
--mute core.pack.task
--mute protocols.ProteinInterfaceDesign.DockDesign
+-parser:protocol %(output_dir)s/%(sample_source_id)s/features.xml

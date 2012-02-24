@@ -1,0 +1,36 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<s weights=score12prime/>
+	</SCOREFXNS>		
+	<TASKOPERATIONS>
+		<ReadResfileFromDB name=relevant_chain db="%(sample_source_path)s/input/rosetta_inputs.db3" table="resfiles"/>
+	</TASKOPERATIONS>		
+        <MOVERS>
+		<SavePoseMover name=save_primary reference_name=primary_structure/>
+		<MinPackMover name=min_pack scorefxn=s task_operations=relevant_chain/>
+                <ReportToDB name=report_features db="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="MinPack with the score12prime score function" task_operations=relevant_chain>
+
+			<feature name=ScoreTypeFeatures/>
+			<feature name=StructureScoresFeatures scorefxn=s/>
+			<feature name=PoseCommentsFeatures/>
+                        <feature name=PoseConformationFeatures/>
+			<feature name=ResidueTypesFeatures/>
+                        <feature name=ResidueFeatures/>
+                        <feature name=ProteinResidueConformationFeatures/>
+                        <feature name=PdbDataFeatures/>
+                        <feature name=ResidueScoresFeatures scorefxn=s/>
+                        <feature name=PairFeatures/>
+                        <feature name=ResidueBurialFeatures/>
+                        <feature name=ResidueSecondaryStructureFeatures/>
+                        <feature name=HBondFeatures scorefxn=s/>
+			<feature name=HBondParameterFeatures scorefxn=s/>
+                        <feature name=SaltBridgeFeatures/>
+                        <feature name=RotamerRecoveryFeatures reference_name=primary_structure comparer=RRComparerRotBins/>
+                </ReportToDB>
+        </MOVERS>
+        <PROTOCOLS>
+		<Add mover_name=save_primary/>
+		<Add mover_name=min_pack/>
+		<Add mover_name=report_features/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>

@@ -1,0 +1,37 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<s weights=sp2_correction/>
+	</SCOREFXNS>		
+	<TASKOPERATIONS>
+		<ReadResfileFromDB name=relevant_chain db="%(sample_source_path)s/input/rosetta_inputs.db3" table="resfiles"/>
+                <ExtraRotamersGeneric name=extra_chi ex1=1 ex2=1 extrachi_cutoff=0/>
+	</TASKOPERATIONS>		
+        <MOVERS>
+		<SavePoseMover name=save_primary reference_name=primary_structure/>
+		<RotamerTrialsMinMover name=rt_min scorefxn=s task_operations=relevant_chain,extra_chi/>
+                <ReportToDB name=report_features db="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="RTMin with the sp2 corrected score function" task_operations=relevant_chain>
+
+			<feature name=ScoreTypeFeatures/>
+			<feature name=StructureScoresFeatures scorefxn=s/>
+			<feature name=PoseCommentsFeatures/>
+                        <feature name=PoseConformationFeatures/>
+			<feature name=ResidueTypesFeatures/>
+                        <feature name=ResidueFeatures/>
+                        <feature name=ProteinResidueConformationFeatures/>
+                        <feature name=PdbDataFeatures/>
+                        <feature name=ResidueScoresFeatures scorefxn=s/>
+                        <feature name=PairFeatures/>
+                        <feature name=ResidueBurialFeatures/>
+                        <feature name=ResidueSecondaryStructureFeatures/>
+                        <feature name=HBondFeatures scorefxn=s/>
+			<feature name=HBondParameterFeatures scorefxn=s/>
+                        <feature name=SaltBridgeFeatures/>
+                        <feature name=RotamerRecoveryFeatures reference_name=primary_structure comparer=RRComparerRotBins/>
+                </ReportToDB>
+        </MOVERS>
+        <PROTOCOLS>
+		<Add mover_name=save_primary/>
+		<Add mover_name=rt_min/>
+		<Add mover_name=report_features/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>

@@ -3,10 +3,6 @@
 -score:weights score12prime
 #
 #
-# packing flags for rotamer recovery
--ex1
--ex2
-#
 -options
  -user
 #

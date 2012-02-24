@@ -1,0 +1,29 @@
+# Flags for rotamer recovery scientific benchmark
+#
+#input structures
+-in:path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens
+-in:file:l %(sample_source_path)s/input/all_pdbs.list
+#
+# Input processing
+-ignore_unrecognized_res
+-no_optH
+#
+#
+-out:nooutput
+#
+#
+# The sp2 correction
+-score:weights sp2_correction
+-hbond_params sp2_params
+-corrections:score:hb_sp2_chipen
+-corrections:score:hb_sp2_peak_heigh_above_trough 2.0
+-corrections:score:hb_sp2_amp 2.0
+-lj_hbond_hdis 1.75
+-lj_hbond_OH_donor_dis 2.6
+#
+#
+# Conserve memory
+-jd2:delete_old_poses
+#
+#
+-parser:protocol %(output_dir)s/%(sample_source_id)s/features.xml

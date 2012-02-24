@@ -14,7 +14,6 @@
 			<feature name=PoseConformationFeatures/>
 			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
 			<feature name=RadiusOfGyrationFeatures/>
-			<feature name=AtomAtomPairFeatures/>
 			<feature name=ResidueTypesFeatures/>
 			<feature name=ResidueFeatures/>
 			<feature name=PdbDataFeatures/>
@@ -25,7 +24,6 @@
 			<feature name=ProteinBackboneAtomAtomPairFeatures/>
 			<feature name=ProteinBackboneTorsionAngleFeatures/>
 			<feature name=ProteinResidueConformationFeatures/>
-			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolMinPack comparer=RRComparerRotBins/>
 			<feature name=HBondFeatures scorefxn=s/>
 			<feature name=HBondParameterFeatures scorefxn=s/>
 			<feature name=SaltBridgeFeatures/>

@@ -1,0 +1,19 @@
+# Flags for rotamer recovery scientific benchmark
+#
+#input structures
+-in:path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens
+-in:file:l %(sample_source_path)s/input/all_pdbs.list
+#
+# Input processing
+-ignore_unrecognized_res
+-no_optH
+#
+#
+-out:nooutput
+#
+#
+# Conserve memory
+-jd2:delete_old_poses
+#
+#
+-parser:protocol %(output_dir)s/%(sample_source_id)s/features.xml

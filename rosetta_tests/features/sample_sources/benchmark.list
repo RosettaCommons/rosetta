@@ -19,19 +19,24 @@
 #top4400_sp2
 
 # The top8000 chains dataset
-top8000
+#top8000
 
 # The top8000 chains dataset with the O'Meara Leaver-Fay score function corrections
 #top8000_sp2
 
+#top8000_rotamer_recovery_score12prime_RTMin
+#top8000_rotamer_recovery_score12prime_MinPack
+#top8000_rotamer_recovery_sp2_8b_RTMin
+#top8000_rotamer_recovery_sp2_8b_MinPack
+
 # The top8000 chains dataset where each structure is FastRelaxed
-top8000_relax
+#top8000_relax
 
 # The top8000 chains dataset where each structure is FastRelaxed with the O'Meara Leaver-Fay score function corrections
-top8000_relax_sp2
+#top8000_relax_sp2
 
 # Rosetta ab initio structure predictions with lr5 rmsd to native normalizationn with score12prime weight set
-abrelax
+#abrelax
 
 # Rosetta ab init structure predictions with lr5 rmsd to native normalization with -correct flag
 #abrelax_correct
@@ -41,8 +46,6 @@ abrelax
 
 # FoldIt top solutions from 2011 ~45,000 structures from Firas 12/01/20
 #foldit_topSolutions2011
-
-
 
 # Rosetta Kinimatic Loop Closure structure predictions with the score12prime weight set
 #kic
