@@ -80,6 +80,7 @@
 #include <algorithm>
 
 
+core::Size num_stored_poses( 0 );
 
 
 namespace protocols {
@@ -93,8 +94,12 @@ namespace vip {
  		core::pose::Pose p,
 		core::pose::Pose cp,
 		core::pose::Pose fp,
-		utility::vector1<core::pose::Pose> tp,
-		utility::vector1<core::pose::Pose> vp,
+		utility::vector1<core::conformation::ResidueOP> tr,
+		utility::vector1<core::Size> tp,
+		utility::vector1<core::Real> te,
+		utility::vector1<core::conformation::ResidueOP> vr,
+		utility::vector1<core::Size> fav_p,
+		utility::vector1<core::Real> fav_e,
 		core::Size nc,
 		utility::vector1<core::Size> cb,
 		utility::vector1<std::string> fm,
@@ -104,8 +109,12 @@ namespace vip {
 			initial_pose = p;
 			cavity_pose = cp;
 			final_pose = fp;
-			temp_poses = tp;
-			favorable_poses = vp;
+			temp_residues = tr;
+			temp_positions = tp;
+			temp_energies = te;
+			favorable_residues = vr;
+			favorable_positions = fav_p;
+			favorable_energies = fav_e;
 			number_cavities = nc;
 			cavity_balls = cb;
 			favorable_mutations = fm;
@@ -258,29 +267,39 @@ namespace vip {
 		using namespace basic::options::OptionKeys;
 
 		for( core::Size i = 1; i <= void_mutatables.size(); i++ ){
-			temp_poses.push_back(initial_pose);
 			temp_positions.push_back(void_mutatables[i]);
 		}
 
-		//std::cout << "Num void_mutatables is " << void_mutatables.size() << std::endl;
+		// TR << "Num void_mutatables is " << void_mutatables.size() << std::endl;
+		// TR << "Num temp_positions  is " << temp_positions.size() << std::endl;
 
 		core::pack::task::ResfileCommandOP command = new core::pack::task::APOLAR;
 
 		for( core::Size aa = 1; aa <= void_mutatables.size(); aa++ ){
-			core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( temp_poses[aa]));
+			core::pose::Pose pack_pose;
+			pack_pose = initial_pose;
+			core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pack_pose ));
 			core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
 			core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
-			for( core::Size j = 1; j <= temp_poses[aa].total_residue(); j++ ){
+			for( core::Size j = 1; j <= pack_pose.total_residue(); j++ ){
 				if( j != void_mutatables[aa] ){
 					task->nonconst_residue_task(j).prevent_repacking();
 				} else {
 					task->nonconst_residue_task(void_mutatables[aa]).or_ex1(true);
 					task->nonconst_residue_task(void_mutatables[aa]).or_ex2(true);
 					task->nonconst_residue_task(void_mutatables[aa]).or_ex3(true);
-					command->residue_action(*task,void_mutatables[aa]);}}
+					command->residue_action(*task,void_mutatables[aa]);
+				}
+			}
 					protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover(score_fxn, task);
-					pack_mover->apply(temp_poses[aa]);
+					pack_mover->apply( pack_pose );
+					// Store this single residue
+					temp_residues.push_back( pack_pose.residue(temp_positions[aa]).clone() );
+					temp_energies.push_back( pack_pose.energies().total_energy() );
 		}
+
+		// TR << "Done try_point_mutants" << std::endl;
+
 	}
 
 
@@ -289,7 +308,7 @@ namespace vip {
 		VIP_Report();
 		VIP_Report vip_report;
 
-		vip_report.get_GOE_repack_report( initial_pose, favorable_poses );
+		vip_report.get_GOE_repack_report( initial_pose, favorable_energies, favorable_residues, favorable_positions );
 	}
 
 
@@ -303,12 +322,17 @@ namespace vip {
 
 		core::Real baseE = initial_pose.energies().total_energy();
 		core::pose::Pose basePose = initial_pose;
-		for( core::Size i = 1; i <= temp_poses.size(); i++ ){
-			core::Real tempE = temp_poses[i].energies().total_energy();
+		for( core::Size i = 1; i <= temp_energies.size(); i++ ){
+			core::Real tempE = temp_energies[i];
 			if( tempE < baseE ){
-				if( are_seqs_different( initial_pose, temp_poses[i] ) ) {
-					favorable_poses.push_back( temp_poses[i] );
+				if( initial_pose.residue(temp_positions[i]).name() != temp_residues[i]->name() ){
+					core::pose::Pose temp_pose;
+					temp_pose = initial_pose;
+					temp_pose.replace_residue( temp_positions[i], *(temp_residues[i]), true );
+					favorable_residues.push_back( temp_residues[i] );
 					favorable_positions.push_back( temp_positions[i] );
+					favorable_energies.push_back( temp_energies[i] );
+					num_stored_poses++;
 				}
 			}
 		}
@@ -323,8 +347,8 @@ namespace vip {
 		VIP_Report();
 		VIP_Report vip_report;
 
-		vip_report.get_GOE_relaxed_report( initial_pose, favorable_poses );
-		vip_report.get_GOE_packstat_report( initial_pose, favorable_poses );
+		vip_report.get_GOE_relaxed_report( initial_pose, favorable_energies, favorable_residues, favorable_positions );
+//		vip_report.get_GOE_packstat_report( initial_pose, favorable_energies );
 	}
 
 	void VIP_Mover::skip_relax(){
@@ -333,14 +357,15 @@ namespace vip {
 
 		core::Real bestE = 99999;
 		core::Size bestP = 0;
-		for( core::Size i = 1; i <= favorable_poses.size(); i++ ){
-			if( favorable_poses[i].energies().total_energy() < bestE ){
-				bestE = favorable_poses[i].energies().total_energy();
+		for( core::Size i = 1; i <= favorable_energies.size(); i++ ){
+			if( favorable_energies[i] < bestE ){
+				bestE = favorable_energies[i];
 				bestP = i;
 			}
 		}
 
-		final_pose = favorable_poses[bestP];
+		final_pose = initial_pose;
+		final_pose.replace_residue( favorable_positions[bestP], *(favorable_residues[bestP]), true );
 
 		dump_pdb_to_file( final_pose, "final.pdb" );
 		final_energy = bestE;
@@ -352,43 +377,59 @@ namespace vip {
 
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
+
+		core::Real bestE = 99999;
+
 		core::scoring::ScoreFunctionOP relax_score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
 
 		std::string rmover = option[ cp::relax_mover ];
 
-		for( core::Size i = 1; i <= favorable_poses.size(); i++ ){
+		for( core::Size i = 1; i <= favorable_residues.size(); i++ ){
 
+			core::pose::Pose relax_pose = initial_pose;
+			relax_pose.replace_residue( favorable_positions[i], *(favorable_residues[i]), true );
 
 			if( rmover == "relax" ){
 					protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::FastRelax( relax_score_fxn );
 				if( option[ cp::local_relax ] ) {
 					core::kinematics::MoveMapOP mmap_ptr = new core::kinematics::MoveMap;
 					if( option[ cp::local_relax ] ) {
-						set_local_movemap( favorable_poses[i], favorable_positions[i], mmap_ptr );
+						set_local_movemap( relax_pose, favorable_positions[i], mmap_ptr );
 					}
 					relaxmover->set_movemap( mmap_ptr );
 				}
-				relaxmover->apply(favorable_poses[i]);
+				relaxmover->apply(relax_pose);
 			} else if( rmover == "classic_relax" ){
 				protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::ClassicRelax( relax_score_fxn );
 				if( option[ cp::local_relax ] ) {
 					core::kinematics::MoveMapOP mmap_ptr = new core::kinematics::MoveMap;
 					if( option[ cp::local_relax ] ) {
-						set_local_movemap( favorable_poses[i], favorable_positions[i], mmap_ptr );
+						set_local_movemap( relax_pose, favorable_positions[i], mmap_ptr );
 					}
 					relaxmover->set_movemap( mmap_ptr );
 				}
-				relaxmover->apply(favorable_poses[i]);
+				relaxmover->apply(relax_pose);
 			} else if( rmover == "cst_relax" ){
 				protocols::relax::RelaxProtocolBaseOP cstrelaxmover = new protocols::relax::MiniRelax( relax_score_fxn );
 				if( option[ cp::local_relax ] ) {
 					core::kinematics::MoveMapOP mmap_ptr = new core::kinematics::MoveMap;
 					if( option[ cp::local_relax ] ) {
-						set_local_movemap( favorable_poses[i], favorable_positions[i], mmap_ptr );
+						set_local_movemap( relax_pose, favorable_positions[i], mmap_ptr );
 					}
 					cstrelaxmover->set_movemap( mmap_ptr );
 				}
-				cstrelaxmover->apply(favorable_poses[i]);
+				cstrelaxmover->apply(relax_pose);
+			}
+
+			core::scoring::ScoreFunctionOP sf2 =
+					core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
+			protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
+			score_em->apply( relax_pose );
+			favorable_energies[i] = relax_pose.energies().total_energy();
+			if( favorable_energies[i] < bestE ) {
+				bestE = favorable_energies[i];
+				final_pose = relax_pose;
+				final_energy = bestE;
 			}
 		}
 	}
@@ -396,39 +437,6 @@ namespace vip {
 	void VIP_Mover::sort_relaxed_poses(){
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		core::Real bestE = 99999;
-		core::Size bestP = 1;
-
-		core::scoring::ScoreFunctionOP sf2 =
-					core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
-		protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
-		//score_em->apply( initial_pose );
-
-		//score_em->apply( initial_pose );
-
-		for( core::Size i = 1; i <= favorable_poses.size(); i++ ){
-			score_em->apply( favorable_poses[i] );
-			core::Real checkE = favorable_poses[i].energies().total_energy();
-			if( checkE < bestE ){
-				bestE = checkE;
-				bestP = i;
-			}
-		}
-
-		if( favorable_poses.size() > 0 ) {
-			final_pose = favorable_poses[bestP];
-		} else {
-			final_pose = initial_pose;
-		}
-		//dump_pdb_to_file( final_pose, "final.pdb" );
-//		dump_pdb_to_file( favorable_poses[bestP], "final.pdb" );
-		final_energy = bestE;
-
-//		core::Size i = bestP;
-//		for( core::Size j = 1; j <= favorable_poses[i].total_residue(); j++ ){
-//			if( favorable_poses[i].residue(j).name() != initial_pose.residue(j).name() ){
-//				std::cout << "BestPosition: " << j << " Native AA: " << initial_pose.residue(j).name() <<
-//						"  Mutant AA: " << favorable_poses[i].residue(j).name() << std::endl;}}
 
 		if( option[ cp::print_reports ] ){
 			print_relax_report();

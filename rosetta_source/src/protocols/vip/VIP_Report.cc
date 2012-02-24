@@ -49,7 +49,9 @@ namespace vip {
 void
 VIP_Report::get_GOE_repack_report(
 	core::pose::Pose & goe_native,
-	utility::vector1<core::pose::Pose> & goe_repack
+	utility::vector1<core::Real> & goe_repack_e,
+	utility::vector1<core::conformation::ResidueOP> & goe_repack_res,
+	utility::vector1<core::Size> & goe_repack_pos
 ){
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
@@ -63,12 +65,10 @@ VIP_Report::get_GOE_repack_report(
 	protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
 	score_em->apply( goe_native );
 
-	for( core::Size i = 1; i <= goe_repack.size(); i++ ){
-		score_em->apply( goe_repack[i] );
-	    if( goe_repack[i].energies().total_energy() < goe_native.energies().total_energy() ){
-		for( core::Size j = 1; j <= goe_repack[i].total_residue(); j++ ){
-		    if( goe_repack[i].residue(j).name() != goe_native.residue(j).name() ){
-			output << "Position: " << j << " Native AA: " << goe_native.residue(j).name() << "  Mutant AA: " << goe_repack[i].residue(j).name() << "  ddEgoe: " << goe_native.energies().total_energy() - goe_repack[i].energies().total_energy() << std::endl;}}}}
+	for( core::Size i = 1; i <= goe_repack_e.size(); i++ ){
+	    if( goe_repack_e[i] < goe_native.energies().total_energy() ){
+		    if( goe_repack_res[i]->name() != goe_native.residue(goe_repack_pos[i]).name() ){
+			output << "Position: " << goe_repack_pos[i] << " Native AA: " << goe_native.residue(goe_repack_pos[i]).name() << "  Mutant AA: " << goe_repack_res[i]->name() << "  ddEgoe: " << goe_native.energies().total_energy() - goe_repack_e[i] << std::endl;}}}
 output.close();
 }
 
@@ -76,7 +76,9 @@ output.close();
 void
 VIP_Report::get_GOE_relaxed_report(
 	core::pose::Pose & goe_native,
-	utility::vector1<core::pose::Pose> & goe_relax
+	utility::vector1<core::Real> & goe_relax_e,
+	utility::vector1<core::conformation::ResidueOP> & goe_relax_res,
+	utility::vector1<core::Size> & goe_relax_pos
   ){
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
@@ -90,12 +92,11 @@ VIP_Report::get_GOE_relaxed_report(
         protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
         score_em->apply( goe_native );
 
-	for( core::Size i = 1; i <= goe_relax.size(); i++ ){
-		score_em->apply( goe_relax[i] );
-	   if( goe_relax[i].energies().total_energy() < goe_native.energies().total_energy() ){
-                for( core::Size j = 1; j <= goe_relax[i].total_residue(); j++ ){
-                    if( goe_relax[i].residue(j).name() != goe_native.residue(j).name() ){                  output << "Position: " << j << " Native AA: " << goe_native.residue(j).name() << "  Mutant AA: " << goe_relax[i].residue(j).name() << "  ddE: " << goe_native.energies().total_energy() - goe_relax[i].energies().total_energy() << std::endl;}}}}
-output.close();
+	for( core::Size i = 1; i <= goe_relax_e.size(); i++ ){
+	   if( goe_relax_e[i] < goe_native.energies().total_energy() ){
+		    if( goe_relax_res[i]->name() != goe_native.residue(goe_relax_pos[i]).name() ){
+			output << "Position: " << goe_relax_pos[i] << " Native AA: " << goe_native.residue(goe_relax_pos[i]).name() << "  Mutant AA: " << goe_relax_res[i]->name() << "  ddEgoe: " << goe_native.energies().total_energy() - goe_relax_e[i] << std::endl;}}}
+	output.close();
 }
 
 void

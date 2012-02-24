@@ -46,6 +46,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/MiniPose.hh>
 #include <core/kinematics/MoveMap.hh>
 //#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -78,10 +79,12 @@ class VIP_Mover
                 core::pose::Pose initial_pose;
 		core::pose::Pose cavity_pose;
 		core::pose::Pose final_pose;
-		utility::vector1<core::pose::Pose> temp_poses;
+		utility::vector1<core::conformation::ResidueOP> temp_residues;
 		utility::vector1<core::Size> temp_positions;
-		utility::vector1<core::pose::Pose> favorable_poses;
+		utility::vector1<core::Real> temp_energies;
+		utility::vector1<core::conformation::ResidueOP> favorable_residues;
 		utility::vector1<core::Size> favorable_positions;
+		utility::vector1<core::Real> favorable_energies;
 		core::Size number_cavities;
 		utility::vector1<core::Size> cavity_balls;
 		utility::vector1<std::string> favorable_mutations;
@@ -95,8 +98,12 @@ class VIP_Mover
                         core::pose::Pose,
                         core::pose::Pose,
                         core::pose::Pose,
-                        utility::vector1<core::pose::Pose>,
-                        utility::vector1<core::pose::Pose>,
+                        utility::vector1<core::conformation::ResidueOP>,
+                        utility::vector1<core::Size>,
+                        utility::vector1<core::Real>,
+                        utility::vector1<core::conformation::ResidueOP>,
+                        utility::vector1<core::Size>,
+                        utility::vector1<core::Real>,
                         core::Size,
                         utility::vector1<core::Size>,
                         utility::vector1<std::string>,
