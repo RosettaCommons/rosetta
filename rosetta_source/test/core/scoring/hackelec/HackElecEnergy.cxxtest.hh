@@ -211,7 +211,6 @@ public:
 
 		EnergyMap emap;
 
-		/*
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 																												 pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
@@ -224,7 +223,6 @@ public:
 		// with no hack_elec on atoms 1,2,or 3 bonds apart, and a scaling of 0.2 on those 4 bonds apart
 		TS_ASSERT_DELTA( emap[ hack_elec ] , 0.850238278, TOL);
 		TS_ASSERT_DELTA( sfxn(pose), 0.850238278, TOL);
-		*/
 	}
 
 	/// @brief Setup for minimization using a move map that says "minimize all bb and sc torsions"

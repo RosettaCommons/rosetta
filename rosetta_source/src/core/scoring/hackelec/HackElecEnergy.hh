@@ -523,11 +523,6 @@ HackElecEnergy::eval_atom_atom_hack_elecE(
 {
 	d2 = i_xyz.distance_squared( j_xyz );
 
-	if ( no_dis_dep_die_ ) {
-		utility_exit_with_message( "Turning off hack_elec distance dependance doesn't currently work." );
-		d2 = i_xyz.distance( j_xyz );
-	} /// XXXXXX
-
 	if ( d2 > max_dis2_ ) {
 		return 0.0;
 	}
@@ -554,8 +549,7 @@ HackElecEnergy::eval_dhack_elecE_dr_over_r(
 	if ( dis2 > max_dis2_ ) return 0.0;
 	else if ( dis2 < min_dis2_ ) return 0.0; // flat in this region
 
-	if ( false && no_dis_dep_die_ ) {
-		utility_exit_with_message( "Turning off hack_elec distance dependance doesn't currently work." );
+	if ( no_dis_dep_die_ ) {
 		return dEfac_ * q1 * q2 / ( dis2 * std::sqrt(dis2) ) ;
 	} else {
 		return dEfac_ * q1 * q2 / ( dis2 * dis2 );
