@@ -473,6 +473,9 @@ def prepareMiniLibs(mini_path, bindings_path):
             if platform.release()[:2] == '10': lib_path = 'build/src/pyrosetta/macos/10.6/64/x86/gcc/'
             else: lib_path = 'build/src/pyrosetta/macos/10.7/64/x86/gcc/'
 
+    # now lets add version to lib_path...
+    lib_path += execute("Getting GCC version...", 'gcc -dumpversion', return_='output').strip()[0:3] + '/'
+
         #if Platform == "macos" and PlatformBits=='64'  and  platform.release().startswith('11.'): lib_path = 'build/src/pyrosetta/macos/11/64/x86/gcc/'
         #else: lib_path = 'build/src/pyrosetta/macos/10.6/64/x86/gcc/'
 
