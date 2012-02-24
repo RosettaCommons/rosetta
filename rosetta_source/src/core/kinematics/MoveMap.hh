@@ -244,6 +244,33 @@ class MoveMap: public utility::pointer::ReferenceCount {
 			set( MoveMapTorsionID( ii, id::CHI ), allow_chi[ii] );
 	}
 
+	/// @brief Sets the chi torsions between residues <begin> and <end>
+	/// as movable and all other residues are non-movable.
+	///
+	/// Example:
+	///     movemap.set_chi_true_range(40, 60)
+	/// See also:
+	///     MoveMap
+	///     MoveMap.set_bb
+	///     MoveMap.set_bb_true_range
+	///     MoveMap.set_chi
+	///     Pose
+	///     MinMover
+	///     ShearMover
+	///     SmallMover
+	// added by Labonte
+	inline
+	void set_chi_true_range(Size const begin, Size const end)
+	{
+		PyAssert((begin > 0), "MoveMap::set_chi_true_range(Size const begin, Size const end): input variable begin has a meaningless value");
+		PyAssert((end > 0), "MoveMap::set_chi_true_range(Size const begin, Size const end): input variable end has a meaningless value");
+		PyAssert((begin <= end), "MoveMap::set_chi_true_range(Size const begin, Size const end): input variable begin must be <= input variable end");
+		set_chi(false);
+		for(Size res = begin; res <= end; ++res) {
+			set_chi(res, true);
+		}
+	}
+
 	/// @brief Sets whether or not JUMP TorsionType is moveable
 	///
 	/// example:
