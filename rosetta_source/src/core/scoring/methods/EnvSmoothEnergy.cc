@@ -350,9 +350,8 @@ EnvSmoothEnergy::eval_atom_derivative(
 
 		// if virtual residue, don't score
 		if (rsd_j.aa() == core::chemical::aa_vrt ) continue;
-		if (rsd_j.aa() == core::chemical::aa_unk ) continue;
 
-		if ( input_atom_is_nbr && input_atom_is_rep && rsd_j.is_protein() ) {
+		if ( input_atom_is_nbr && input_atom_is_rep && (rsd_j.is_protein() && rsd_j.aa()<=core::chemical::num_canonical_aas) ) {
 			Size const resj_rep_atom = rsd_j.atom_index( representative_atom_name( rsd_j.aa() ));
 			Size const resj_nbr_atom = rsd_j.nbr_atom();
 			if ( resj_rep_atom == resj_nbr_atom ) {
@@ -372,7 +371,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 					weights[ envsmooth ] * ( residue_dEdN_[ i ] ),
 					F1, F2 );
 			}
-		} else if ( input_atom_is_nbr && rsd_j.is_protein() ) {
+		} else if ( input_atom_is_nbr && (rsd_j.is_protein() && rsd_j.aa()<=core::chemical::num_canonical_aas) ) {
 			Size const resj_rep_atom = rsd_j.atom_index( representative_atom_name( rsd_j.aa() ));
 
 			increment_f1_f2_for_atom_pair(
