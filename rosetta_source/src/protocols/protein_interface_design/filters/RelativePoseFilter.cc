@@ -57,7 +57,8 @@ RelativePoseFilter::RelativePoseFilter() :
 	thread_( true ),
 	baseline_( true ),
 	baseline_val_( -9999 ),
-	unbound_( false )
+	unbound_( false ),
+	copy_stretch_( false )
 {
 	alignment_.clear();
 }
@@ -130,47 +131,51 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
   	rbtm.step_size( 10000.0 );
   	rbtm.apply( *copy_pose );
 	}
-	DesignAroundOperationOP dao = new DesignAroundOperation;
-	dao->design_shell( packing_shell() );
-	std::vector< core::Size > diffs;
-	diffs.clear();
-	for( std::map< core::Size, core::Size >::const_iterator aln=alignment_.begin(); aln!=alignment_.end(); ++aln )
-		if( pose()->conformation().residue( aln->first ).aa() != p.conformation().residue( aln->second ).aa() ) diffs.push_back( aln->first );
+	if( copy_stretch() ) // just copy the aligned stretch, and then go straight to relax. No repacking
+		copy_pose->copy_segment( alignment_.size()/*how many residues*/, p/*src*/, alignment_.begin()->first/*start on target*/, alignment_.begin()->second/*start on src*/ );
+	else{ // no copy_stretch. Repack etc. carefully
+		DesignAroundOperationOP dao = new DesignAroundOperation;
+		dao->design_shell( packing_shell() );
+		std::vector< core::Size > diffs;
+		diffs.clear();
+		for( std::map< core::Size, core::Size >::const_iterator aln=alignment_.begin(); aln!=alignment_.end(); ++aln )
+			if( pose()->conformation().residue( aln->first ).aa() != p.conformation().residue( aln->second ).aa() ) diffs.push_back( aln->first );
 
-	TR<<"differences at positions: ";
-	foreach( core::Size const d, diffs ){
-		dao->include_residue( d );
-		TR<<d<<", ";
-	}
-	TR<<std::endl;
-	using namespace core::pack::task;
-	using namespace core::pack::task::operation;
-	TaskFactoryOP tf = new TaskFactory;
-	tf->push_back( dao );
-	tf->push_back( new IncludeCurrent );
-	tf->push_back( new InitializeFromCommandline );
-	core::pack::task::PackerTaskOP pack = tf->create_task_and_apply_taskoperations( *pose() );
-	for( core::Size i = 1; i<=pose()->total_residue(); ++i ){
-		if( !pack->nonconst_residue_task( i ).being_designed() ) // prevent repacking on all non-designable residues
-			pack->nonconst_residue_task( i ).prevent_repacking();
-		else if( std::find( diffs.begin(), diffs.end(), i ) == diffs.end() )
-			pack->nonconst_residue_task( i ).restrict_to_repacking();
-		else{//design!
-			utility::vector1< bool > allowed_aas( num_canonical_aas, false );
-			if( thread() )
-				allowed_aas[ p.residue( i ).aa() ] = true;
-			else
-				allowed_aas[ pose()->residue( i ).aa() ] = true;
-			pack->nonconst_residue_task( i ).restrict_absent_canonical_aas( allowed_aas );
+		TR<<"differences at positions: ";
+		foreach( core::Size const d, diffs ){
+			dao->include_residue( d );
+			TR<<d<<", ";
 		}
-	}//for i=1->total_residue
-	using namespace protocols::simple_moves;
-	PackRotamersMoverOP prm;
-	if( core::pose::symmetry::is_symmetric( *copy_pose ) )
-		prm = new symmetry::SymPackRotamersMover( scorefxn(), pack );
-	else
-		prm = new PackRotamersMover( scorefxn(), pack );
-	prm->apply( *copy_pose );
+		TR<<std::endl;
+		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
+		TaskFactoryOP tf = new TaskFactory;
+		tf->push_back( dao );
+		tf->push_back( new IncludeCurrent );
+		tf->push_back( new InitializeFromCommandline );
+		core::pack::task::PackerTaskOP pack = tf->create_task_and_apply_taskoperations( *pose() );
+		for( core::Size i = 1; i<=pose()->total_residue(); ++i ){
+			if( !pack->nonconst_residue_task( i ).being_designed() ) // prevent repacking on all non-designable residues
+				pack->nonconst_residue_task( i ).prevent_repacking();
+			else if( std::find( diffs.begin(), diffs.end(), i ) == diffs.end() )
+				pack->nonconst_residue_task( i ).restrict_to_repacking();
+			else{//design!
+				utility::vector1< bool > allowed_aas( num_canonical_aas, false );
+				if( thread() )
+					allowed_aas[ p.residue( i ).aa() ] = true;
+				else
+					allowed_aas[ pose()->residue( i ).aa() ] = true;
+				pack->nonconst_residue_task( i ).restrict_absent_canonical_aas( allowed_aas );
+			}
+		}//for i=1->total_residue
+		using namespace protocols::simple_moves;
+		PackRotamersMoverOP prm;
+		if( core::pose::symmetry::is_symmetric( *copy_pose ) )
+			prm = new symmetry::SymPackRotamersMover( scorefxn(), pack );
+		else
+			prm = new PackRotamersMover( scorefxn(), pack );
+		prm->apply( *copy_pose );
+	}/// end else no copy_stretch
 	relax_mover()->apply( *copy_pose );
 	return( copy_pose );
 }
@@ -266,7 +271,8 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	runtime_assert( packing_shell() >= 0 );
 	thread( tag->getOption< bool >( "thread", thread() ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );
-	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" unbound "<<unbound()<<" and packing_shell: "<<packing_shell()<<std::endl;
+	copy_stretch( tag->getOption< bool >( "copy_stretch", false ) );
+	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" unbound "<<unbound()<<" copy_stretch: "<<copy_stretch()<<" and packing_shell: "<<packing_shell()<<std::endl;
 }
 
 protocols::filters::FilterOP
