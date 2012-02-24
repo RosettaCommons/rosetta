@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/HackElecEnergy.hh
-/// @brief  Statistically derived rotamer pair potential class declaration
+/// @brief  Electrostatic energy with a distance-dependant dielectric
 /// @author Phil Bradley
 
 

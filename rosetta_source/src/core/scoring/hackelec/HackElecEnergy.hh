@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/HackElecEnergy.hh
-/// @brief  Statistically derived rotamer pair potential class declaration
+/// @brief  Electrostatic energy with a distance-dependant dielectric
 /// @author Phil Bradley, modifed by James Gleixner
 
 
@@ -27,16 +27,17 @@
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/trie/RotamerTrie.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/trie/TrieCountPairBase.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
-#include <utility/vector1.hh>
-
 
 // Utility headers
 
+#include <utility/vector1.hh>
+
+// C++ headers
+
+#include <cmath>
 
 namespace core {
 namespace scoring {
@@ -61,8 +62,9 @@ public:
 	///
 	HackElecEnergy( HackElecEnergy const & src );
 
+  /// @brief Initilize constants.
 	void
-	initialize(); //james added in option to change max-dis
+	initialize();
 
 	/// clone
 	virtual
@@ -260,18 +262,6 @@ public:
 	) const;
 
 
-	/*virtual
-	void
-	eval_atom_derivative(
-		id::AtomID const & atom_id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
-	) const;*/
-
 	virtual
 	bool
 	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
@@ -315,20 +305,18 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
 public:
-	 // Hooks for trie algorithms
-
-	///  How close two heavy atoms have to be such that their hydrogen atoms might interact, squared.
+	/// @brief  How close two heavy atoms have to be such that their hydrogen atoms might interact, squared.
 	Real
 	hydrogen_interaction_cutoff2() const
 	{
 		return ( hydrogen_interaction_cutoff() )*( hydrogen_interaction_cutoff() );
 	}
 
-	/// How close two heavy atoms have to be such that their hydrogen atoms might interact
+	/// @brief How close two heavy atoms have to be such that their hydrogen atoms might interact
 	Real
 	hydrogen_interaction_cutoff() const
 	{
-		return ( max_dis + 2*core::chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH );
+		return ( max_dis_ + 2*core::chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH );
 	}
 
 	inline
@@ -407,6 +395,8 @@ private:
 	) const;
 
 protected:
+	///@brief Get the key numeric value for derivative calculations
+	/// i.e. the derivative of energy with respect to distance divided by the distance
 	inline
 	Real
 	eval_dhack_elecE_dr_over_r(
@@ -416,25 +406,6 @@ protected:
 	) const;
 
 private:
-	/* ALL RNA specific electrostatics have been moved to the RNAHackElec class
-	Real
-	residue_pair_energy_RNA(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		EnergyMap & emap
-	) const;
-
-	void
-	eval_atom_derivative_RNA(
-		conformation::Residue const & rsd1,
-		Size const & i,
-		conformation::Residue const & rsd2,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
-	) const;
-	*/
-
 	trie::RotamerTrieBaseOP
 	create_rotamer_trie(
 		conformation::RotamerSetBase const & rotset,
@@ -482,36 +453,23 @@ private:
 	set_nres_mono(
 		core::pose::Pose const & pose
 	) const;
-	
+
 	bool
 	monomer_test(
 		Size irsd,
 		Size jrsd
 	) const;
-	
+
 
 private:
 
-	/////////////////////////////////////////////////////////////////////////////
-	// data
-  // These variables were moved here from HackElecEnergy.cc and made public so
-	// that distance cuttoff could be changed and the r dependence of the dielectric
-	// could be changed by option flags.  They are all defined in HackElecEnergy.cc
-	//		James Gleixner and Liz Kellogg - April 2011
-	/////////////////////////////////////////////////////////////////////////////
+	Real max_dis_;
+	Real max_dis2_;
+	Real min_dis_;
+	Real min_dis2_;
 
-	/**
-	static Real const max_dis;
-	static Real const max_dis2;
-	static Real const min_dis;
-	static Real const min_dis2;
-	**/
-
-	Real max_dis;
-	Real max_dis2;
-	Real min_dis;
-	Real min_dis2;
-	bool r_option;
+	Real die_;
+	bool no_dis_dep_die_;
 
 	bool exclude_protein_protein_;
 	bool exclude_monomer_;
@@ -522,27 +480,23 @@ private:
 	mutable Real wbb_sc_;
 	mutable Real wsc_sc_;
 
-	/**
-	static Real const C0_;
-	static Real const die_;
-	static Real const C1_;
-	static Real const C2_;
-	static Real const min_dis_score_;
-	static Real const dEfac_;
-	**/
+  ///@brief Precomputed constants
 	Real C0_;
-	Real die_;
 	Real C1_;
 	Real C2_;
 	Real min_dis_score_;
 	Real dEfac_;
-	
+
 	mutable Size nres_monomer_;
 
 	virtual
 	core::Size version() const;
 
 };
+
+///////////////////////////////////////////////////////////////////////////////////
+// The following functions are defined here in the header as they are inlined
+// and are used in derived classes.
 
 inline
 Real
@@ -553,28 +507,8 @@ HackElecEnergy::eval_atom_atom_hack_elecE(
 	Real const j_charge
 ) const
 {
-
 	Real d2;
-	if( r_option ) {
-		d2 = i_xyz.distance( j_xyz );
-		//debug_output
-		//std::cout << "Using distance " << std::endl;
-	} else {
-		d2 = i_xyz.distance_squared( j_xyz );
-		//debug_output
-		//std::cout << "Using distance squared " << std::endl;
-	}
-	Real energy(0.0);
-	//debug_output
-	//std::cout << "d2: " << d2 << "max_dis2: " << max_dis2 << std::endl;
-	if ( d2 <= max_dis2 ) {   //max_dis2 is defined in HackElecEnergy.cc
-		if ( d2 < min_dis2 ) energy = i_charge * j_charge * min_dis_score_;
-		else energy = i_charge * j_charge * ( C1_ / d2 - C2_ );
-
-	}
-//debug_output
-	//std::cout << "Energy: " << energy << std::endl;
-	return energy;
+	return eval_atom_atom_hack_elecE(i_xyz, i_charge, j_xyz, j_charge, d2);
 }
 
 inline
@@ -587,22 +521,51 @@ HackElecEnergy::eval_atom_atom_hack_elecE(
 	DistanceSquared & d2
 ) const
 {
-	if (r_option) {
+	d2 = i_xyz.distance_squared( j_xyz );
+
+	if ( no_dis_dep_die_ ) {
+		utility_exit_with_message( "Turning off hack_elec distance dependance doesn't currently work." );
 		d2 = i_xyz.distance( j_xyz );
+	} /// XXXXXX
+
+	if ( d2 > max_dis2_ ) {
+		return 0.0;
 	}
-	else {
-		d2 = i_xyz.distance_squared( j_xyz );
+	if ( d2 < min_dis2_ ) {
+		return i_charge * j_charge * min_dis_score_;
 	}
-	Real energy(0.0);
-	if ( d2 <= max_dis2 ) {
-		if ( d2 < min_dis2 ) energy = i_charge * j_charge * min_dis_score_;
-		else energy = i_charge * j_charge * ( C1_ / d2 - C2_ );
+	if ( no_dis_dep_die_ ) {
+		return i_charge * j_charge * ( C1_ / std::sqrt(d2) - C2_ );
+	} else {
+		return i_charge * j_charge * ( C1_ / d2 - C2_ );
 	}
-	return energy;
 }
 
+////////////////////////////////////////////////////////////////////////////
+
+inline
+Real
+HackElecEnergy::eval_dhack_elecE_dr_over_r(
+	Real const dis2,
+	Real const q1,
+	Real const q2
+) const
+{
+	if ( dis2 > max_dis2_ ) return 0.0;
+	else if ( dis2 < min_dis2_ ) return 0.0; // flat in this region
+
+	if ( false && no_dis_dep_die_ ) {
+		utility_exit_with_message( "Turning off hack_elec distance dependance doesn't currently work." );
+		return dEfac_ * q1 * q2 / ( dis2 * std::sqrt(dis2) ) ;
+	} else {
+		return dEfac_ * q1 * q2 / ( dis2 * dis2 );
+	}
 }
-}
-}
+
+////////////////////////////////////////////////////////////////////////////
+
+} // namespace hackelec
+} // namespace scoring
+} // namespace core
 
 #endif

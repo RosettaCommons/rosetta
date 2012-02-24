@@ -47,16 +47,20 @@ namespace scoring {
 namespace methods {
 
 /// add more options here
-/// NOTE: If you add an option, make sure you also update the == comparison operator in this .hh file!
+/// NOTE: If you add an option, make sure you also update the constructor,
+/// the assignment operator, the == comparison operator, and the show method in the .cc file!
 /// right now this class should be pretty light-weight since a copy is held inside ScoreFunctionInfo
 ///
-
 
 
 class EnergyMethodOptions : public utility::pointer::ReferenceCount {
 public:
 	///
 	EnergyMethodOptions();
+
+	/// @brief Initialize a new EnergyMethodOptions with defaults from the command line.
+	void
+	initialize_from_options();
 
 	/// copy constructor
 	EnergyMethodOptions( EnergyMethodOptions const & src );
@@ -99,6 +103,34 @@ public:
 	///
 	void
 	exclude_monomer_hack_elec( bool const setting );
+
+	/// @brief The maximum (all atom) distance at which hack_elec is non-zero
+	core::Real
+	hackelec_max_dis() const;
+
+	void
+	hackelec_max_dis( core::Real setting );
+
+	/// @brief The minimium (all atom) distance for which hack_elec changes with distances
+	core::Real
+	hackelec_min_dis() const;
+
+	void
+	hackelec_min_dis( core::Real setting );
+
+	/// @brief The dielectric used for the hack_elec term
+	core::Real
+	hackelec_die() const;
+
+	void
+	hackelec_die( core::Real setting );
+
+	/// @brief Should hack_elec use a constant (non-distance dependant) dielectric?
+	bool
+	hackelec_no_dis_dep_die() const;
+
+	void
+	hackelec_no_dis_dep_die( bool setting );
 
 	///
 	bool
@@ -188,7 +220,7 @@ public:
 		ang=cartbonded_ang_;
 		tors=cartbonded_tors_;
 		proton=cartbonded_proton_;
-	}		
+	}
 
 	///@brief set the harmonic bond angle and bond-length spring constants
 	void
@@ -197,7 +229,7 @@ public:
 		cartbonded_ang_=ang;
 		cartbonded_tors_=tors;
 		cartbonded_proton_=proton;
-	}	
+	}
 
 	///@brief get the harmonic bond angle and bond-length spring constants
 	bool get_cartesian_bonded_linear() const {
@@ -207,7 +239,7 @@ public:
 	///@brief set the harmonic bond angle and bond-length spring constants
 	void set_cartesian_bonded_linear( bool lin_in ) {
 		cartbonded_linear_ = lin_in;
-	}	
+	}
 
 	/// used inside ScoreFunctionInfo::operator==
 	friend
@@ -230,7 +262,8 @@ private:
 private:
 
 	/////////////////////////////////////////////////
-	// SEE FOLLOWING NOTE!
+	// IMPORTANT NOTE!  If you add an option, make sure you also update the constructor,
+	// the assignment operator, the == comparison operator, and the show method in the .cc file!
 	/////////////////////////////////////////////////
 	std::string etable_type_;
 	std::string atom_vdw_atom_type_set_name_;
@@ -239,6 +272,10 @@ private:
 	SecondaryStructureWeights ss_weights_;
 	bool exclude_protein_protein_hack_elec_;
 	bool exclude_monomer_hack_elec_;
+	core::Real hackelec_max_dis_;
+	core::Real hackelec_min_dis_;
+	core::Real hackelec_die_;
+	bool hackelec_no_dis_dep_die_;
 	bool exclude_DNA_DNA_;
 	hbonds::HBondOptionsOP hbond_options_;
 
@@ -249,8 +286,6 @@ private:
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;
 	core::scoring::mm::MMBondAngleResidueTypeParamSetOP bond_angle_residue_type_param_set_;
-	/// NOTE: If you add an option, make sure you also update the == comparison operator,
-	/// the constructor, and the copy constructor in the .cc file!
 };
 
 

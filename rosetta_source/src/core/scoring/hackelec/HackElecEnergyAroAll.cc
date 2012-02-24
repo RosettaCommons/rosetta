@@ -89,29 +89,6 @@ HackElecEnergyAroAllCreator::score_types_for_method() const {
 	return sts;
 }
 
-
-inline
-Real
-HackElecEnergy::eval_dhack_elecE_dr_over_r(
-	Real const dis2,
-	Real const q1,
-	Real const q2
-) const
-{
-	//static Real const C0( 322.0637 );
-	//static Real const die( 10.0 ); // 10r dielectric
-	//static Real const dEfac_( -2.0 * C0_ / die_ );
-
-	if ( dis2 > max_dis2 ) return 0.0;
-	else if ( dis2 < min_dis2 ) return 0.0; // flat in this region
-
-	return dEfac_ * q1 * q2 / ( dis2 * dis2 );
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////
-
 ////////////////////////////////////////////////////////////////////////////
 HackElecEnergyAroAll::HackElecEnergyAroAll(
 	methods::EnergyMethodOptions const & options

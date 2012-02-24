@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/HackElecEnergy.cc
-/// @brief  Statistically derived rotamer pair potential class implementation
+/// @brief  Electrostatic energy with a distance-dependant dielectric
 /// @author Phil Bradley
 /// @author Andrew Leaver-Fay
 /// modified by James Gleixner and Liz Kellogg
@@ -24,7 +24,6 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
@@ -33,8 +32,6 @@
 #include <core/scoring/NeighborList.tmpl.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/ResidueNeighborList.hh>
-
-//#include <core/scoring/ContextGraphTypes.hh>
 
 // Project headers
 #include <core/kinematics/MinimizerMapBase.hh>
@@ -59,12 +56,13 @@
 #include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
 
 #include <core/conformation/RotamerSetBase.hh>
-//#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 
-#include <basic/options/option.hh>
 // Utility headers
 
+#include <basic/options/option.hh>
+
 // Numeric headers
+
 #include <numeric/xyzVector.hh>
 
 // option key includes
@@ -73,15 +71,14 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
-
-
-// C++
+static basic::Tracer TR("core.scoring.hackelec.HackElecEnergy");
 
 /////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// Hacky (hence the name) implementation of 10r dielectric model, cutoff at 5.5A
-///
+/// Hacky (hence the name) implementation of distance dependant dielectric electrostatics,
+/// with near and far distance cutoffs.
 ///
 
 //
@@ -125,30 +122,12 @@ HackElecEnergyCreator::score_types_for_method() const {
 
 
 ////////////////////////////////////////////////////////////////////////////
-
-inline
-Real
-HackElecEnergy::eval_dhack_elecE_dr_over_r(
-	Real const dis2,
-	Real const q1,
-	Real const q2
-) const
-{
-	//static Real const C0( 322.0637 );
-	//static Real const die( 10.0 ); // 10r dielectric
-	//static Real const dEfac( -2.0 * C0_ / die_ );
-
-	if ( dis2 > max_dis2 ) return 0.0;
-	else if ( dis2 < min_dis2 ) return 0.0; // flat in this region
-
-	return dEfac_ * q1 * q2 / ( dis2 * dis2 );
-}
-
-////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////
 HackElecEnergy::HackElecEnergy( methods::EnergyMethodOptions const & options ):
 	parent( new HackElecEnergyCreator ),
+	max_dis_( options.hackelec_max_dis() ),
+	min_dis_( options.hackelec_min_dis() ),
+	die_( options.hackelec_die() ),
+	no_dis_dep_die_( options.hackelec_no_dis_dep_die() ),
 	exclude_protein_protein_( options.exclude_protein_protein_hack_elec() ),
 	exclude_monomer_( options.exclude_monomer_hack_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
@@ -158,6 +137,10 @@ HackElecEnergy::HackElecEnergy( methods::EnergyMethodOptions const & options ):
 ////////////////////////////////////////////////////////////////////////////
 HackElecEnergy::HackElecEnergy( HackElecEnergy const & src ):
 	parent( src ),
+	max_dis_( src.max_dis_ ),
+	min_dis_( src.min_dis_ ),
+	die_( src.die_ ),
+	no_dis_dep_die_( src.no_dis_dep_die_ ),
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ )
@@ -166,30 +149,28 @@ HackElecEnergy::HackElecEnergy( HackElecEnergy const & src ):
 
 void
 HackElecEnergy::initialize() {
+	// Must have already initialized max_dis_, min_dis_, die_, and no_dis_dep_die_
 
-	//Real const HackElecEnergy::max_dis( 5.5 );
-	max_dis = basic::options::option[basic::options::OptionKeys::score::hackelec_max_dis ]();
-	// add option to modify max_dis on command-line
-	//min_dis =  1.5 ;
-	min_dis = basic::options::option[basic::options::OptionKeys::score::hackelec_min_dis ]();
+	//max_dis_ = 5.5;
+	max_dis2_ = max_dis_ * max_dis_;
+	//min_dis_ = 1.5;
+	min_dis2_ = min_dis_ * min_dis_ ;
 
-	r_option =  basic::options::option[ basic::options::OptionKeys::score::hackelec_r_option ]();
-	if (  r_option ) {
-		max_dis2 =  max_dis ;
-		min_dis2 = min_dis ;
-	}
-	else {
-		max_dis2 =  max_dis * max_dis;
-		min_dis2 = min_dis * min_dis ;
-	}
+	// default dielectric is 10r
+	//die_ = 10.0;
+	//no_dis_dep_die_ = false;
 
 	C0_ = 322.0637 ;
-//Real const die_( 10.0 ); // dielectric is 10r
-	die_ = basic::options::option[ basic::options::OptionKeys::score::hackelec_die ]();  //dielectric is variable
   C1_ = C0_ / die_ ;
-	C2_ = C1_ / max_dis2 ;
-	min_dis_score_ = C1_ / min_dis2 - C2_ ;
-	dEfac_ = -2.0 * C0_ / die_ ;
+	if( no_dis_dep_die_ ) {
+		C2_ = C1_ / max_dis_ ;
+		min_dis_score_ = C1_ / min_dis_ - C2_ ;
+		dEfac_ = -2.0 * C0_ / die_ ;
+	} else {
+		C2_ = C1_ / max_dis2_ ;
+		min_dis_score_ = C1_ / min_dis2_ - C2_ ;
+		dEfac_ = -2.0 * C0_ / die_ ;
+	}
 	////////////////////////////////////////////////////////////////////////////
 
 }
@@ -221,7 +202,7 @@ HackElecEnergy::setup_for_minimizing(
 		// setup the atom-atom nblist
 		NeighborListOP nblist;
 		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
-		Real const XX = max_dis + 2 * tolerated_motion;
+		Real const XX = max_dis_ + 2 * tolerated_motion;
 		nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
 		if ( pose.energies().use_nblist_auto_update() ) {
 			nblist->set_auto_update( tolerated_motion );
@@ -542,7 +523,7 @@ HackElecEnergy::setup_for_minimizing_for_residue_pair(
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
-	Real const XX2 = std::pow( max_dis + 2*tolerated_narrow_nblist_motion, 2 );
+	Real const XX2 = std::pow( max_dis_ + 2*tolerated_narrow_nblist_motion, 2 );
 
 	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 
@@ -598,80 +579,6 @@ HackElecEnergy::eval_residue_pair_derivatives(
 
 }
 
-
-
-//////////////////////////////////////////////////////////////////////////////////
-// Following copies a little code, but at least separates out this inelegant and
-// probably useless RNA stuff from the usual stuff.
-/*
-Real
-HackElecEnergy::residue_pair_energy_RNA(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	EnergyMap & emap
-) const
-{
-	assert( rsd1.is_RNA() );
-	assert( rsd2.is_RNA() );
-
-	using namespace etable::count_pair;
-
-	Real total_score( 0.0 );
-
-	CountPairFunctionOP cpfxn =
-		CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
-
-	for ( Size i=1, i_end = rsd1.natoms(); i<= i_end; ++i ) {
-		Vector const & i_xyz( rsd1.xyz(i) );
-		Real const i_charge( rsd1.atomic_charge(i) );
-
-		// NOTE THAT is_base, is_sugar, and is_phosphate contains MAGIC NUMBERS (for speed!)
-		// Might be better to make it precomputed as part of the residue_type definition?
-		bool const atom1_is_base = is_base(rsd1, i);
-		bool const atom1_is_sugar = is_sugar(rsd1, i);
-		bool const atom1_is_phosphate = is_phosphate(rsd1, i);
-		assert( atom1_is_base || atom1_is_sugar || atom1_is_phosphate );
-
-		//		if (atom1_is_base) std::cout << "THIS BETTER BE A BASE ATOM: "  << rsd1.atom_name( i ) << std::endl;
-
-		if ( i_charge == 0.0 ) continue;
-		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
-			Real const j_charge( rsd2.atomic_charge(j) );
-			if ( j_charge == 0.0 ) continue;
-			Real weight(1.0);
-			if ( cpfxn->count( i, j, weight ) ) {
-				Real score = weight *
-					eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
-
-				total_score += score;
-
-				bool const atom2_is_base = is_base(rsd2, j);
-				bool const atom2_is_sugar = is_sugar(rsd2, j);
-				bool const atom2_is_phosphate = is_phosphate(rsd2, j);
-				assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
-
-				if ( atom1_is_base && atom2_is_base ) {
-					emap[ hack_elec_rna_base_base ] += score;
-				} else if (  (atom1_is_base && atom2_is_sugar)  || (atom1_is_sugar && atom2_is_base) ) {
-					emap[ hack_elec_rna_sugr_base ] += score;
-				} else if (  (atom1_is_base && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_base) ) {
-					emap[ hack_elec_rna_phos_base ] += score;
-				} else if (  (atom1_is_sugar && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_sugar) ) {
-					emap[ hack_elec_rna_phos_sugr ] += score;
-				} else if (  (atom1_is_sugar && atom2_is_sugar)  ) {
-					emap[ hack_elec_rna_sugr_sugr ] += score;
-				} else if (  (atom1_is_phosphate && atom2_is_phosphate)  ) {
-					emap[ hack_elec_rna_phos_phos ] += score;
-				} else {
-					std::cout << "PROBLEM! " << rsd1.atom_name( i ) << " " << rsd2.atom_name( j ) << std::endl;
-				}
-			}
-		}
-	}
-
-	return total_score;
-
-}*/
 
 void
 HackElecEnergy::backbone_backbone_energy(
@@ -929,8 +836,8 @@ HackElecEnergy::finalize_total_energy(
 
 				Real d2 = ires.xyz( ii ).distance_squared( jres.xyz( jj ) );
 				nbr.temp1() = nbr.weight() * ii_charge * jres.atomic_charge( jj ) * ( C1_ / ( d2 + 1e-300 ) - C2_ );
-				nbr.temp2() = d2 < max_dis2 ? 1.0 : 0.0;
-				nbr.temp3() = d2 > min_dis2 ? 1.0 : 0.0;
+				nbr.temp2() = d2 < max_dis2_ ? 1.0 : 0.0;
+				nbr.temp3() = d2 > min_dis2_ ? 1.0 : 0.0;
 				nbr.temp4() = nbr.weight() * ii_charge * jres.atomic_charge(jj) * min_dis_score_;
 			}
 		}
@@ -1129,207 +1036,6 @@ HackElecEnergy::evaluate_rotamer_background_energies(
 
 }
 
-
-/*void
-HackElecEnergy::eval_atom_derivative(
-	id::AtomID const & atom_id,
-	pose::Pose const & pose,
-	kinematics::DomainMap const &,// domain_map,
-	ScoreFunction const &,
-	EnergyMap const &,// weights,
-	Vector & F1,
-	Vector & F2
- 	) const
-{
-	using namespace etable::count_pair;
-
-	// what is my charge?
-	Size const i( atom_id.rsd() );
-	Size const ii( atom_id.atomno() );
-	conformation::Residue const & irsd( pose.residue( i ) );
-	Real const ii_charge( irsd.atomic_charge( ii ) );
-
-	if ( ii_charge == 0.0 ) return;
-
-	Vector const & ii_xyz( irsd.xyz(ii) );
-	bool const ii_isbb( irsd.atom_is_backbone( ii ) );
-
-	assert( pose.energies().use_nblist() );
-	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::HACKELEC_NBLIST ) );
-	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,ii) );
-
-	Vector f1,f2;
-	for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(),
-					it2e=nbrs.end(); it2 != it2e; ++it2 ) {
-		scoring::AtomNeighbor const & nbr( *it2 );
-		Size const j( nbr.rsd() );
-		Size const jj( nbr.atomno() );
-		conformation::Residue const & jrsd( pose.residue( j ) );
-
-		Real const jj_charge( jrsd.atomic_charge(jj) );
-		if ( jj_charge == 0.0 ) continue; /// should prune out such atoms when constructing the neighborlist!
-		Vector const & jj_xyz( jrsd.xyz( jj ) );
-		f2 = ( ii_xyz - jj_xyz );
-		Real const dis2( f2.length_squared() );
-		Real const dE_dr_over_r = nbr.weight() * eval_dhack_elecE_dr_over_r( dis2, ii_charge, jj_charge );
-		if ( dE_dr_over_r != 0.0 ) {
-			Real sfxn_weight = hackelec_weight( ii_isbb, jrsd.atom_is_backbone( jj ));
-			f1 = ii_xyz.cross( jj_xyz );
-			F1 += dE_dr_over_r * sfxn_weight * f1;
-			F2 += dE_dr_over_r * sfxn_weight * f2;
-		}
-	}
-}*/
-
-/// OLD OLD atom-derivative implementation below.
-/*
-	// cached energies object
-	Energies const & energies( pose.energies() );
-
-	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
-
-// 	kinematics::DomainMap const & domain_map( energies.domain_map() );
-// 	bool const pos1_fixed( !energies.res_moved( pos1 ) );
-// 	assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
-
-	// loop over *all* nbrs of rsd1 (not just upper or lower)
-	for ( graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
-					irue = energy_graph.get_node( pos1 )->const_edge_list_end();
-				iru != irue; ++iru ) {
-		//EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-		//Size const pos2( edge->get_second_node_ind() );
-		Size const pos2( (*iru)->get_other_ind( pos1 ) );
-
-		if ( pos1_fixed && pos1_map == domain_map( pos2 ) ) continue; // fixed wrt one another
-
-		conformation::Residue const & rsd2( pose.residue( pos2 ) );
-
-		assert( pos2 != pos1 );
-
-		if ( exclude_protein_protein_ && rsd1.is_protein() && rsd2.is_protein() ) continue;
-		if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) continue;
-
-		assert( rsd1.seqpos() != rsd2.seqpos() );
-		if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 )) {
-			// generalizing to arbitrary topologies --  assuming crossover of 4
-			CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
-
-
-			for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
-				Real const j_charge( rsd2.atomic_charge(j) );
-				if ( j_charge == 0.0 ) continue;
-				Real weight(1.0);
-				if ( cpfxn->count( i, j, weight ) ) {
-					Vector const & j_xyz( rsd2.xyz(j) );
-					Vector const f2( i_xyz - j_xyz );
-					Real const dis2( f2.length_squared() );
-					Real const dE_dr_over_r = weight * weights[ hack_elec ] *
-						eval_dhack_elecE_dr_over_r( dis2, i_charge, j_charge );
-					if ( dE_dr_over_r != 0.0 ) {
-						Vector const f1( i_xyz.cross( j_xyz ) );
-						F1 += dE_dr_over_r * f1;
-						F2 += dE_dr_over_r * f2;
-					}
-				}
-			}
-		} else {
-			// no countpair!
-			for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
-				Real const j_charge( rsd2.atomic_charge(j) );
-				if ( j_charge == 0.0 ) continue;
-				Vector const & j_xyz( rsd2.xyz(j) );
-				Vector const f2( i_xyz - j_xyz );
-				Real const dis2( f2.length_squared() );
-				Real const dE_dr_over_r = weights[ hack_elec ] * eval_dhack_elecE_dr_over_r( dis2, i_charge, j_charge );
-				if ( dE_dr_over_r != 0.0 ) {
-					Vector const f1( i_xyz.cross( j_xyz ) );
-					F1 += dE_dr_over_r * f1;
-					F2 += dE_dr_over_r * f2;
-				}
-			}
-		} // are rsd1 and rsd2 bonded?
-
-	} // loop over nbrs of rsd1
-*/
-
-
-/*
-//////////////////////////////////////////////////
-void
-HackElecEnergy::eval_atom_derivative_RNA(
-	conformation::Residue const & rsd1,
-	Size const & i,
-	conformation::Residue const & rsd2,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
- 	) const
-{
-
-	using namespace etable::count_pair;
-
-	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
-
-	Real const i_charge( rsd1.atomic_charge( i ) );
-	Vector const & i_xyz( rsd1.xyz(i) );
-
-
-	// NOTE THAT is_base, is_sugar, and is_phosphate contains MAGIC NUMBERS (for speed!)
-	// Might be better to make it precomputed as part of the residue_type definition?
-	//This repeats some unnecessary stuff, but hey, derivatives don't have to be that fast.
-	bool const atom1_is_base = is_base(rsd1, i);
-	bool const atom1_is_sugar = is_sugar(rsd1, i);
-	bool const atom1_is_phosphate = is_phosphate(rsd1, i);
-	assert( atom1_is_base || atom1_is_sugar || atom1_is_phosphate );
-
-	for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
-		Real const j_charge( rsd2.atomic_charge(j) );
-		if ( j_charge == 0.0 ) continue;
-		Real weight(1.0);
-		if ( cpfxn->count( i, j, weight ) ) {
-			Vector const & j_xyz( rsd2.xyz(j) );
-			Vector const f2( i_xyz - j_xyz );
-			Real const dis2( f2.length_squared() );
-			Real const dE_dr_over_r = weight *
-				eval_dhack_elecE_dr_over_r( dis2, i_charge, j_charge );
-			if ( dE_dr_over_r != 0.0 ) {
-				Vector const f1( i_xyz.cross( j_xyz ) );
-				F1 += weights[ hack_elec ] * dE_dr_over_r * f1;
-				F2 += weights[ hack_elec ] * dE_dr_over_r * f2;
-
-				bool const atom2_is_base = is_base(rsd2, j);
-				bool const atom2_is_sugar = is_sugar(rsd2, j);
-				bool const atom2_is_phosphate = is_phosphate(rsd2, j);
-				assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
-
-				if ( atom1_is_base && atom2_is_base ) {
-					F1 += weights[ hack_elec_rna_base_base ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_base_base ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_base && atom2_is_sugar)  || (atom1_is_sugar && atom2_is_base) ) {
-					F1 += weights[ hack_elec_rna_sugr_base ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_sugr_base ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_base && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_base) ) {
-					F1 += weights[ hack_elec_rna_phos_base ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_phos_base ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_sugar && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_sugar) ) {
-					F1 += weights[ hack_elec_rna_phos_sugr ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_phos_sugr ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_sugar && atom2_is_sugar)  ) {
-					F1 += weights[ hack_elec_rna_sugr_sugr ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_sugr_sugr ] * dE_dr_over_r * f2;
-				} else if (  (atom1_is_phosphate && atom2_is_phosphate)  ) {
-					F1 += weights[ hack_elec_rna_phos_phos ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_phos_phos ] * dE_dr_over_r * f2;
-				}
-
-			}
-		}
-	}
-
-}
-*/
 
 /// @brief HackElecEnergy distance cutoff
  ///
@@ -1546,6 +1252,7 @@ HackElecEnergy::get_count_pair_function_trie(
 
 }
 
+
 inline
 Real
 HackElecEnergy::score_atom_pair(
@@ -1569,13 +1276,20 @@ HackElecEnergy::score_atom_pair(
 	} else {
 		emap[ hack_elec_bb_sc ] += energy;
 	}
+	/*	TR << "Residue " << rsd1.seqpos() << " atom " << rsd1.atom_name(at1) << " to Residue " << rsd2.seqpos() << " atom " << rsd2.atom_name(at2)
+							 << " q1 " << rsd1.atomic_charge(at1) << " q2 " << rsd2.atomic_charge(at2)
+		 << " dist " << rsd1.xyz(at1).distance( rsd2.xyz(at2) ) << " energy " << energy << " cpwt " << cpweight << " d2 " << d2 << std::endl;
+	*/
 	return energy;
 }
+
+
 core::Size
 HackElecEnergy::version() const
 {
 	return 1; // Initial versioning
 }
+
 
 void
 HackElecEnergy::set_nres_mono(
@@ -1590,17 +1304,18 @@ HackElecEnergy::set_nres_mono(
 	}
 }
 
+
 bool
 HackElecEnergy::monomer_test(
 	Size irsd,
 	Size jrsd
 ) const {
-	return (irsd <= nres_monomer_ && jrsd <= nres_monomer_ ) || 
+	return (irsd <= nres_monomer_ && jrsd <= nres_monomer_ ) ||
 	       (irsd >  nres_monomer_ && jrsd >  nres_monomer_ );
-	
+
 }
 
 
-}
-}
-}
+} // namespace hackelec
+} // namespace scoring
+} // namespace core

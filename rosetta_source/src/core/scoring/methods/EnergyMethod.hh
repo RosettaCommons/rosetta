@@ -170,6 +170,12 @@ public:
 	/// through the ScoreFunction::eval_atom_derivative intermediary.
 	/// F1 and F2 should not zeroed, rather, this class should accumulate its contribution
 	/// from this atom's XYZ derivative
+	///
+	/// @details The derivative scheme is based on that of Abe, Braun, Noguti and Go (1984)
+	/// "Rapid Calculation of First and Second Derivatives of Conformational Energy with
+	/// Respect to Dihedral Angles for Proteins. General Recurrent Equations"
+	/// Computers & Chemistry 8(4) pp. 239-247. F1 and F2 correspond roughly to Fa and Ga,
+	/// respectively, of equations 7a & 7b in that paper.
 	virtual
 	void
 	eval_atom_derivative(
