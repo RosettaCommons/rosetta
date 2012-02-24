@@ -15,7 +15,6 @@
 
 // Unit headers
 #include <protocols/comparative_modeling/hybridize/HybridizeFoldtreeDynamic.fwd.hh>
-#include <protocols/comparative_modeling/hybridize/HybridizeFoldtreeBase.hh>
 
 // C/C++ headers
 #include <string>
@@ -33,41 +32,56 @@ namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 
-class HybridizeFoldtreeDynamic:  public HybridizeFoldtreeBase {
+class HybridizeFoldtreeDynamic {
 public:
 	HybridizeFoldtreeDynamic( );
 
-	void set_core_chunks(const protocols::loops::Loops & chunks);
-
-	// Undefined, commenting out to fix PyRosetta build  protocols::loops::Loops make_complete_chunks( utility::vector1 < core::Size > cut_positions );
-
-	// Undefined, commenting out to fix PyRosetta build  void set_complete_chunks(const protocols::loops::Loops & chunks);
-
+	// initialize pose ... add VRT if needed
 	void initialize( core::pose::Pose & pose, protocols::loops::Loops const & core_chunks );
 
+private:
+	// HELPER FUNCTIONS
+
+	// stochastically selects an anchor position
+	core::Size choose_anchor_position(const protocols::loops::Loop& chunk) const;
+
+	// update pose fold tree with new chunks .. assume vrt already added
+	void update(core::pose::Pose & pose);
+
+	// set the core chunks ... where anchors must lie and cuts are forbidden
+	void set_core_chunks(const protocols::loops::Loops & chunks);
+
+	// cutpoints selection logic
 	utility::vector1 < core::Size > decide_cuts(core::Size n_residues);
 
+	// anchor selection logic
 	void choose_anchors();
 
-	protocols::loops::Loops make_complete_chunks(
+	void make_complete_chunks(
 		utility::vector1 < core::Size > cut_positions,
 		core::Size n_residues);
 
-protected:
-	/// @brief Stochastically selects an anchor position
-	core::Size choose_anchor_position(const protocols::loops::Loop& chunk) const;
-
 private:
-	utility::vector1 < core::Size > anchor_positions_;
+	// DATA
 
 	// segment the entire pose, defining cutpoints
-	protocols::loops::Loops complete_chunks_last_;
-	protocols::loops::Loops complete_chunks_;
+	protocols::loops::Loops chunks_last_; 
+	protocols::loops::Loops chunks_; 
 
 	// segment pose into "core regions" where anchors may lie
 	protocols::loops::Loops core_chunks_last_;
 	protocols::loops::Loops core_chunks_;
 
+	utility::vector1 < core::Size > anchor_positions_last_;
+	utility::vector1 < core::Size > anchor_positions_;
+
+	/// index of the virtual residue we added to the pose in set_up()
+	int virtual_res_;
+	core::Size num_nonvirt_residues_;
+
+	// backup original info
+	core::kinematics::FoldTree saved_ft_;
+	core::Size saved_n_residue_;
 };
 
 }  //  namespace comparative_modeling

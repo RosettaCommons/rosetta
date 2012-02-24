@@ -88,6 +88,13 @@
 
 #include <protocols/moves/DataMap.hh>
 
+// symmetry
+#include <core/pose/symmetry/util.hh>
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+
 // utility
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
@@ -259,6 +266,16 @@ HybridizeProtocol::initialize_and_sample_loops(
 	TR << "CONTIGS" << std::endl << template_contigs_icluster << std::endl;
 	core::Size ncontigs = template_contigs_icluster.size();
 	core::Size nres_tgt = pose.total_residue();
+
+	//symmetry
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+		nres_tgt = symm_info->num_independent_residues();
+	}
+
 	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
 
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops;
@@ -738,15 +755,15 @@ HybridizeProtocol::parse_my_tag(
 	// scorfxns
 	if( tag->hasOption( "stage1_scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "stage1_scorefxn" ) );
-		stage1_scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+		stage1_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
 	if( tag->hasOption( "stage2_scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "stage2_scorefxn" ) );
-		stage2_scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+		stage2_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
 	if( tag->hasOption( "fa_scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "fa_scorefxn" ) );
-		fa_scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+		fa_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
 
 	// fragments

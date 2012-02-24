@@ -57,6 +57,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -81,6 +82,14 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FragData.hh>
+
+// symmetry
+#include <core/pose/symmetry/util.hh>
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/file_sys_util.hh>
@@ -194,7 +203,7 @@ CartesianHybridize::set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in
 
 	min_scorefxn_ = scorefxn_in->clone();
 
-	bonds_scorefxn_ = new core::scoring::ScoreFunction();
+	bonds_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
 	bonds_scorefxn_->set_weight( core::scoring::vdw, lowres_scorefxn_->get_weight( core::scoring::vdw ) );
 	bonds_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
 
@@ -287,6 +296,16 @@ CartesianHybridize::apply_frame( core::pose::Pose & pose, core::fragment::Frame 
 	int aln_len = 3;
 	
 	core::Size nres = pose.total_residue();
+
+	//symmetry
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+		nres = symm_info->num_independent_residues();
+	}
+
 	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
 	bool nterm = (start == 1);
 	bool cterm = (start == nres-8);

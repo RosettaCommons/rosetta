@@ -16,6 +16,7 @@
 #include <protocols/comparative_modeling/GenericJobInputterCreator.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Project headers
 // AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
@@ -51,6 +52,7 @@ GenericJobInputter::GenericJobInputter() {
 /// If not, it will read it into the pose reference, and hand a COP cloned from
 /// that pose to the Job. If the pose pre-exists it just copies the COP's pose
 /// into it.
+/// why does this code live in comparative_modeling?
 void GenericJobInputter::pose_from_job( core::pose::Pose& pose, protocols::jd2::JobOP job) {
   using protocols::simple_moves::ExtendedPoseMover;
   using std::string;
@@ -59,6 +61,11 @@ void GenericJobInputter::pose_from_job( core::pose::Pose& pose, protocols::jd2::
 
   tr.Debug << "GenericJobInputter::pose_from_job" << std::endl;
   if( !job->inner_job()->get_pose() ){
+		//fpd if pose is symmetric we need to change SymmetricConformation to Conformation
+		if ( core::pose::symmetry::is_symmetric( pose ) ) {
+	 		core::pose::symmetry::make_asymmetric_pose( pose );
+		}
+
     // Creates an extended, idealized pose from the first sequence in the first
     // file in -in:file:fasta. Preserves current behavior for the TopologyBroker
 		if (option[OptionKeys::in::file::fasta].user() && option[OptionKeys::run::protocol]() != "broker") {

@@ -45,6 +45,13 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 
+// symmetry
+#include <core/pose/symmetry/util.hh>
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -271,7 +278,19 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 	// combine:
 	// (a) contigs in the current template
-	utility::vector1< bool > template_mask( pose.total_residue(), false );
+
+	core::Size nres = pose.total_residue();
+
+	//symmetry
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+		nres = symm_info->num_independent_residues();
+	}
+
+	utility::vector1< bool > template_mask( nres, false );
 	protocols::loops::Loops my_chunks(template_chunks_[initial_template_index_]);
 
 	for (core::Size icontig = 1; icontig<=template_chunks_[initial_template_index_].num_loop(); ++icontig) {
