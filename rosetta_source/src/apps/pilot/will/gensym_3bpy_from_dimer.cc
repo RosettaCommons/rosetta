@@ -112,12 +112,12 @@ void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	OPT( in::file::s );
-	NEW_OPT( bpytoi::chi1_increment            ,"", 1  );
+	NEW_OPT( bpytoi::chi1_increment            ,"", 10  );
 	NEW_OPT( bpytoi::max_nres                  ,"", 200 );
 	NEW_OPT( bpytoi::max_cys                   ,"", 3   );
-	NEW_OPT( bpytoi::max_bpy_dun               ,"", 2.0 );
+	NEW_OPT( bpytoi::max_bpy_dun               ,"", 3.0 );
 	NEW_OPT( bpytoi::bpy_clash_dis             ,"", 3.0 );
-	NEW_OPT( bpytoi::max_sym_error             ,"", 0.4 );
+	NEW_OPT( bpytoi::max_sym_error             ,"", 0.5 );
 }
 
 using core::kinematics::Stub;
@@ -602,6 +602,7 @@ void run() {
 	ScoreFunctionOP sfrep = new core::scoring::ScoreFunction; sfrep->set_weight(core::scoring::fa_rep,1.0);
 	ScoreFunctionOP sfdun = new core::scoring::ScoreFunction; sfdun->set_weight(core::scoring::fa_dun,1.0);
 	ScoreFunctionOP sfsym = new core::scoring::symmetry::SymmetricScoreFunction(sf);
+	sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
 	ScoreFunctionOP sfrepsym = new core::scoring::symmetry::SymmetricScoreFunction(sfrep);
 
 
@@ -641,13 +642,14 @@ void run() {
 		Pose nat; core::import_pose::pose_from_pdb(nat,*rs,fname);
 		core::scoring::dssp::Dssp dssp(nat);
 		dssp.insert_ss_into_pose(nat);
-		if( nat.n_residue() > option[bpytoi::max_nres]() ) continue;
+		if( nat.n_residue() > option[bpytoi::max_nres]() ) { cout<<"FAIL_SIZE"<<std::endl; continue; };
 		Pose base(nat), pdimer(nat);
 		make_dimer(pdimer);
 		Size cyscnt = 0; {
 			for(Size ir = 1; ir <= base.n_residue(); ++ir) if(base.residue(ir).name3()=="CYS") cyscnt++;
-			if(cyscnt > option[bpytoi::max_cys]()) continue;
+			if(cyscnt > option[bpytoi::max_cys]()) { cout<<"FAIL_CYS"<<std::endl; continue; };
 		}
+
 		//TR << "gensym_3bpy_from_dimer " << ifile << " " << fnames[ifile] << " " << base.n_residue() << " residues" << " " << cyscnt << std::endl;
 		for(Size ibpy = 1; ibpy <= base.n_residue(); ++ibpy) {
 			if(!base.residue(ibpy).is_protein()) continue;
@@ -671,15 +673,15 @@ void run() {
 						if( base.xyz(AtomID(ia,ir)).distance_squared(base.residue(ibpy).xyz(iCM)) < 6.0 ) goto clash2;
 					}
 				}
-				goto noclash2; clash2: continue; noclash2:
+				goto noclash2; clash2: { cout<<"FAIL_CLASH2"<<std::endl; continue; }; noclash2:
 				Vec const CB = base.residue(ibpy).xyz(iCB);
 				Vec const CG = base.residue(ibpy).xyz(iCG);
 				vector1<std::pair<Vec,Vec> > baxes = intersecting_bpy_axes(CB,CG,base.residue(ibpy).xyz("ZN"),a2f1,c2f1);
 				for(Size jaxs = 1; jaxs <= baxes.size(); ++jaxs) {
 					Vec const isct = baxes[jaxs].first;
 					Vec const c3f1 = baxes[jaxs].second;
-					if( isct.distance_squared(c3f1) < 15.0 ) continue;
-					if( isct.distance_squared(c2f1) < 15.0 ) continue;
+					if( isct.distance_squared(c3f1) < 15.0 ) { cout<<"FAIL_ISCTDIS"<<std::endl; continue; };
+					if( isct.distance_squared(c2f1) < 15.0 ) { cout<<"FAIL_ISCTDIS"<<std::endl; continue; };
 					Vec const a3f1 = (isct-c3f1).normalized();
 					Mat const R1 = rotation_matrix_degrees(a3f1,120.0);
 					Mat const R2 = rotation_matrix_degrees(a3f1,240.0);
@@ -687,7 +689,7 @@ void run() {
 					Real const ang = (orig_ang > 90.0) ? 180.0-orig_ang : orig_ang;
 					if( fabs(ang-ATET)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() &&          // sin(x) ~ x for small x
 						fabs(ang-AOCT)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() &&          // sin(x) ~ x for small x
-						fabs(ang-AICS)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() ) continue; // sin(x) ~ x for small x
+						fabs(ang-AICS)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() ) { cout<<"FAIL_SYM_GEOM"<<std::endl; continue; }; // sin(x) ~ x for small x
 
 					Real const dang = dihedral_degrees( c3f1,CG,CB,base.residue(ibpy).xyz(iZN) );
 					base.set_chi(2,ibpy, base.chi(2,ibpy) + dang );
@@ -699,7 +701,7 @@ void run() {
 					base.replace_residue(ibpy,bpy.residue(1),true);
 					base.set_chi(1,ibpy, bch1 );
 					base.set_chi(2,ibpy, base.chi(2,ibpy) + dang );
-					if(bpy_dun > option[bpytoi::max_bpy_dun]()) continue;
+					if(bpy_dun > option[bpytoi::max_bpy_dun]()) { cout<<"FAIL_DUN"<<std::endl; continue; };
 
 
 					int bpy_mono_bb_atom_nbrs = 0;
@@ -723,7 +725,7 @@ void run() {
 							}
 						}
 					}
-					goto noclash3;	clash3: continue; noclash3:
+					goto noclash3;	clash3: { cout<<"FAIL_CLASH3"<<std::endl; continue; }; noclash3:
 					// if( bpy_mono_bb_atom_nbrs < option[min_bpy_cb_mono_nbr_count]() ) continue;
 					// if( bpy_tri_bb_atom_nbrs  < option[min_bpy_cb_tri_nbr_count]()  ) continue;
 
@@ -741,7 +743,7 @@ void run() {
 							}
 						}
 					}
-					goto noclash4;	clash4: continue; noclash4:
+					goto noclash4;	clash4: { cout<<"FAIL_CLASH4"<<std::endl; continue; }; noclash4:
 
 					Pose psym = base;
 					trans_pose(psym,-isct);
@@ -779,8 +781,9 @@ void run() {
 
 					string outfname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+"_"+lead_zero_string_of(jaxs,1)+".pdb";
 					core::pose::symmetry::make_symmetric_pose(psym);
+
 					Real bpymdis = psym.residue(ibpy).xyz("ZN").distance(psym.residue(ibpy+base.n_residue()).xyz("ZN"));
-					if( bpymdis > option[bpytoi::max_sym_error]() ) continue;
+					if( bpymdis > option[bpytoi::max_sym_error]() ) { cout<<"FAIL_BPYGEOM"<<std::endl; continue; };
 
 
 					bool clash = false;
@@ -815,24 +818,23 @@ void run() {
 						}
 					}
 					//TR << "!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n" << std::endl;
-					if(clash) continue;
+					if(clash) { cout<<"FAIL_CLASH5"<<std::endl; continue; };
 
 					Size ncontact = num_trimer_contacts(psym,base.n_residue());
 					Real drms = dimer_rms(psym,pdimer);
-					if( drms > option[bpytoi::max_sym_error]() ) continue;
+					if( drms > option[bpytoi::max_sym_error]() ) { cout<<"FAIL_DIMER_RMS"<<std::endl; continue; };
 
 					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_base.pdb");
 
 					// Real batr = psym.energies().residue_total_energies(ibpy)[core::scoring::fa_atr];
 					fixbb_design(psym,ibpy,dimersub);
-					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=psym.residue(i).name3()) nmut++;
-					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
 
 					// Real rms = core::scoring::CA_rmsd(psym,psym_bare);
 					Real sc,int_area;
 					vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(4);
 					sfsym->score(psym);
 					new_sc(psym,intra_subs,int_area,sc);
+					if(int_area < 300.0 || sc < 0.4) { cout<<"FAIL_SC"<<std::endl; continue; }
 
 					int bpy_tri_atom_nbrs = 0;
 					int bpy_mono_atom_nbrs = 0;
@@ -851,9 +853,8 @@ void run() {
 						}
 					}
 
-					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
+					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
 
-					protocols::simple_moves::GreedyOptMutationMover gomm;
 					using namespace core::pack::task;
 					using namespace core::pack::task::operation;
 					TaskFactoryOP task_factory( new TaskFactory );
@@ -865,28 +866,34 @@ void run() {
 				 	task_factory->push_back(revert);
 					protocols::filters::FilterOP filter = new protocols::simple_filters::ScoreTypeFilter(sfsym,core::scoring::total_score,sfsym->score(psym));
 
-					#ifdef NDEBUG
-						psym.dump_pdb("ndebug.pdb");
-					#else
-						psym.dump_pdb("debug.pdb");
-					#endif
-					// PDBs are same!!!
-					filter->apply(psym);
-					double tmp1 = filter->report_sm(psym);
-					double tmp2 =  sfsym->score(psym);
-					std::cout << tmp1 << " " << tmp2 << std::endl;
-					utility_exit_with_message("aoristn");
+
+					// filter->apply(psym);
+					// double tmp1 = filter->report_sm(psym);
+					// double tmp2 =  sfsym->score(psym);
+					// std::cout << tmp1 << " " << tmp2 << std::endl;
+					// utility_exit_with_message("aoristn");
+
+					using namespace core::scoring::constraints;
+					using core::id::AtomID;
+					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+1*base.n_residue()),new HarmonicFunc(0,0.01)));
+					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+2*base.n_residue()),new HarmonicFunc(0,0.01)));
 
 					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 					movemap->set_jump(true); movemap->set_bb(false); movemap->set_chi(true);
 					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+					relax_mover->apply(psym);
+					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_min.pdb");
+
+					sfsym->show(psym);
+
+					protocols::simple_moves::GreedyOptMutationMover gomm;
 					gomm.task_factory( task_factory );
 					gomm.scorefxn( sfsym );
 					gomm.filter( filter );
 					gomm.relax_mover( relax_mover );
 					gomm.apply(psym);
 
-					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
+					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_greedy.pdb");
 
 					// repack(psym,ibpy,dimersub);
 					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_RPK.pdb");
@@ -914,6 +921,11 @@ void run() {
 					// ss_out->add_energy("sc",sc);
 					// ss_out->add_energy("int_area",int_area);
 					// sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]()+"/"+option[basic::options::OptionKeys::out::file::silent ]() );
+
+					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=psym.residue(i).name3()) nmut++;
+					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
+					sfsym->score(psym);
+					new_sc(psym,intra_subs,int_area,sc);
 
 					cout << "DOCK_HIT "
 						 << option[OptionKeys::out::file::o]()+"/"+outfname << " "
