@@ -160,7 +160,7 @@ void protocols::noesy_assign::PeakAssignmentParameters::register_options() {
 	NEW_OPT( noesy::network::use_all_covalent_atoms, "resonance list contains atoms (e.g., CA, CB) that are never part of an assignment (e.g., H, QD1, etc.) should CA, CB be included in network analysis? ", false );
 
 	NEW_OPT( noesy::use_local_distviol, "don't use global distance-violation parameter dcut, but make-up local one using the distribution of distances", false );
-	NEW_OPT( noesy::local_distviol::range, "get distance-difference between lowest X% and hightest X% of decoys", 0.00 );
+	NEW_OPT( noesy::local_distviol::range, "get distance-difference between lowest X% and hightest X% of decoys", 0.99 );
 	NEW_OPT( noesy::local_distviol::global_buffer, "add an extra grace-buffer (A) to the local range before you evaluate dist-cutoff", 0.5 );
 
 
