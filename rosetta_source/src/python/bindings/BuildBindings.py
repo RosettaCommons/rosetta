@@ -391,7 +391,7 @@ def getCompilerOptions():
         if Options.compiler == 'clang': add_option = '-pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC'
         else: add_option = '-pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
-    add_option += ' -DBOOST_PYTHON_MAX_ARITY=20 -DNDEBUG -DPYROSETTA'
+    add_option += ' -DBOOST_PYTHON_MAX_ARITY=25 -DNDEBUG -DPYROSETTA'
     return add_option
 
 
@@ -718,7 +718,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
                 execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_CL_Options(), source)  #  /D__PYROSETTA_ONE_LIB__
                    + ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
-                   + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=20'
+                   + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=25'
                    + ' /Fo%s ' % obj ) )
                 #  /Iplatform/windows/32/msvc
                 #  /I../external/boost_1_46_1
@@ -727,7 +727,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
                 # c:\\mingw\\bin\\
                 """execute('Compiling %s' % (dir_name+f), 'gcc -DPYROSETTA -c %s -I. \
                         -I../external/include -IC:/WPyRosetta/boost_1_47_0 -I../external/dbio -Iplatform/windows/PyRosetta \
-    -Ic:\Python27\include -c -pipe -O3 -ffast-math -funroll-loops -finline-functions -DBOOST_PYTHON_MAX_ARITY=20 \
+    -Ic:\Python27\include -c -pipe -O3 -ffast-math -funroll-loops -finline-functions -DBOOST_PYTHON_MAX_ARITY=25 \
         -o %s' % (source, obj) )"""
 
             latest = max(latest, os.path.getmtime(obj) )
@@ -758,7 +758,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
 
 
 
-#-c -pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC -DBOOST_PYTHON_MAX_ARITY=20 -I../external/include  -I../external/dbio
+#-c -pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC -DBOOST_PYTHON_MAX_ARITY=25 -I../external/include  -I../external/dbio
 #-I/Users/sergey/work/trunk/PyRosetta.develop.Python-2.7/PyRosetta.Develop.64/include -I/Users/sergey/work/trunk/PyRosetta.develop.Python-2.7/PyRosetta.Develop.64/include/boost
 #-I/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 -I../src/platform/linux -I../src
 
