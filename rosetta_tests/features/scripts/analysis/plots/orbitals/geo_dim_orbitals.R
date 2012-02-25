@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "geo_dim_orbitals",
 filename = "scripts/analysis/plots/orbitals/geo_dim_orbitals.R",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
-run=function(){
+run=function(self){
 
 sele <-"
 SELECT
@@ -101,5 +101,5 @@ d_ply(sample_sources, .(sample_source), function(ss){
     opts(title = paste("Donor Haro Orbital 2D plot\nss_id: ", ss_id, sep=""))
   save_plots(plot_id, ss, output_dir, output_formats)
 })
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis
 

@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chiBAOH_cosAOH_eqpoldens_pi_stacking_cpisp2",
 filename = "chiBAOH_cosAOH_eqpoldens_pi_stacking_cpisp2.R",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
-run=function(){
+run=function(self){
 
 #####Pi Stacking interactions 2.0
 
@@ -66,7 +66,7 @@ ggplot(data=f_first) + theme_bw() +
     '2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
   coord_fixed(ratio = 1) +
   scale_fill_gradientn('Density', colour=jet.colors(10))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 #####Pi Stacking interactions 3.5
@@ -119,7 +119,7 @@ ggplot(data=f_first) + theme_bw() +
     '2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
   coord_fixed(ratio = 1) +
   scale_fill_gradientn('Density', colour=jet.colors(10))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 ###Phe-Phe 2.0
 sele <- "
@@ -170,7 +170,7 @@ ggplot(data=f_first) + theme_bw() +
     '2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
   coord_fixed(ratio = 1) +
   scale_fill_gradientn('Density', colour=jet.colors(10))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 ###Phe -Phe 3.5
 sele <- "
@@ -221,7 +221,7 @@ ggplot(data=f_first) + theme_bw() +
     '2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
   coord_fixed(ratio = 1) +
   scale_fill_gradientn('Density', colour=jet.colors(10))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

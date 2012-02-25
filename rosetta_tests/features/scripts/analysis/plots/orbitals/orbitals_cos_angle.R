@@ -30,10 +30,10 @@ FROM
 all_geom <- query_sample_sources(sample_sources, sele)
 
 n_pts <- 50
-xlim=range(all_geom$angle)
+xlim=range(all_geom$AOH_angle)
 dens <- ddply(all_geom, .variables=c("sample_source", "orbName1"),
 function(df){
-  lgs <- logspline(df$angle, lbound=xlim[1], ubound=xlim[2])
+  lgs <- logspline(df$AOH_angle, lbound=xlim[1], ubound=xlim[2])
 	x <- seq(from=xlim[1], to=xlim[2], length.out=n_pts)
 	y <- dlogspline(x, lgs)
   d <-data.frame(x=x, y=y, counts=nrow(df))

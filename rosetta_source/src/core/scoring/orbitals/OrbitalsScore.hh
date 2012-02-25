@@ -160,10 +160,18 @@ public:
 
 	) const;
 
+	bool cation_pi_rules(
+			core::conformation::Residue const & res1,
+			core::conformation::Residue const & res2,
+			core::Size const & Aindex,
+			core::Size const & Dindex
+	)const;
+
+
 	void assign_orb_H_derivs(
 			core::conformation::Residue const & res1,
 			core::conformation::Residue const & res2,
-			core::Size const & atom_index,
+			core::Size  & atom_index,
 			numeric::xyzVector<core::Real> const & atom_xyz,
 			core::Size const & H_index,
 			numeric::xyzVector<core::Real> const & H_xyz,

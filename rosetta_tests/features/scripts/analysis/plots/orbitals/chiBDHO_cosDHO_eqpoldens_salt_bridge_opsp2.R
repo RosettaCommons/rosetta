@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chiBDHO_cosDHO_eqpoldens_salt_bridge_opsp2",
 filename = "chiBDHO_cosDHO_eqpoldens_salt_bridge_opsp2.R",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
-run=function(){
+run=function(self){
 
 #####All salt bridge interactions
 
@@ -68,6 +68,6 @@ ggplot(data=f_first) + theme_bw() +
     '2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
   coord_fixed(ratio = 1) +
   scale_fill_gradientn('Density', colour=jet.colors(10))
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis

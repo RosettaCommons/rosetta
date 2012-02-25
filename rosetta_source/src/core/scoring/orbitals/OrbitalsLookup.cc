@@ -134,6 +134,21 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 	}
 	std::cout << "###################################################################################\n#####################3" << std::endl;
 */
+	for(core::Real i=0.00; i <= 3; i+=0.1){
+		core::Size number=0;
+		for(core::Real j=-1.0; j<=0; j+=0.05){
+			++number;
+			if( number == 40){
+				std::cout << DHO_Hpol_scOrbH_vector_spline[1].F((numeric::MakeVector(i,j))) << std::endl;
+
+			}else{
+				std::cout << DHO_Hpol_scOrbH_vector_spline[1].F((numeric::MakeVector(i,j))) << " ";
+				//std::cout << i << " " << j << std::endl;
+			}
+		}
+	}
+	std::cout << "###################################################################################\n#####################3" << std::endl;
+
 /*
 
 	for(core::Real i=0.00; i <= 30; i+=0.1){
@@ -262,7 +277,10 @@ void OrbitalsLookup::OrbHdist_cosDHO_energy
 	bool check_derivative
 ) const
 {
-	if ( distance > 3.0 ||  DHO_angle > 0.0 ) { energy = distance_derivative = angle_derivative = 0.0; return; }
+
+	if ((orb_type_name != core::chemical::orbitals::C_pi_sp2) && (distance > 3.0 ||  DHO_angle > -0.025) ) { energy = distance_derivative = angle_derivative = 0.0; return; }
+
+	if(orb_type_name == core::chemical::orbitals::N_pi_sp2 && h_enum==Hpol_scOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
 
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, DHO_angle));
 	if(check_derivative){
@@ -311,7 +329,9 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 	bool check_derivative
 ) const
 {
-	if ( distance > 3.0 ||  AOH_angle > 0.0 ) { energy = distance_derivative = angle_derivative = 0.0; return; }
+	if ( distance > 3.0 ||  AOH_angle > -0.025 ) { energy = distance_derivative = angle_derivative = 0.0; return; }
+	if(orb_type_name == core::chemical::orbitals::N_pi_sp2 && h_enum==Hpol_scOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
+	if(orb_type_name == core::chemical::orbitals::C_pi_sp2 && h_enum==Hpol_bbOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
 
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, AOH_angle));
 	if(check_derivative){

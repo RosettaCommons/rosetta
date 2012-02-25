@@ -8,13 +8,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 check_setup()
-feature_analyses <- c(feature_analyses, new("FeatureAnalysis",
+feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hist_salt_bridges_by_angle",
 filename = "scripts/analysis/plots/orbitals/hist_salt_bridges_by_angle.R",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
-run=function(){
+run=function(self){
 
 sele <- "
 SELECT
@@ -46,7 +46,7 @@ ggplot(data=all_geom) +
  # scale_x_continuous(breaks=c(0,30,60,90,120,150, 180), paste('Acceptor -- Orbital -- Hydrogen (degrees)'))
 	scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Acceptor -- Orbital -- Hydrogen (degrees)'))
   scale_y_continuous("Salt Bridge Counts < 4.0 A from Orbital -- Hydrogen")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id = "hist_DHO_scOrb_scH_salt_bridge_all_residues"
 ggplot(data=all_geom) +
@@ -54,7 +54,7 @@ ggplot(data=all_geom) +
   opts(title = "DHO SaltBridges Combined: His, Arg, Lys, Glu, Asp") +
   scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Donor -- Hydrogen -- Orbital (degrees)'))
   scale_y_continuous("Salt Bridge Counts < 4.0 A from Orbital -- Hydrogen")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 ####Only Histidine
 sele <- "
 SELECT
@@ -82,7 +82,7 @@ ggplot(data=all_geom) +
   opts(title = "AOH SaltBridges Combined: His, Glu, Asp") +
   scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Acceptor -- Orbital -- Hydrogen (degrees)'))
   scale_y_continuous("Salt Bridge Counts < 4.0 A from Orbital -- Hydrogen")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id = "hist_DHO_scOrb_scH_salt_bridge_His"
 ggplot(data=all_geom) +
@@ -90,7 +90,7 @@ ggplot(data=all_geom) +
   opts(title = "DHO SaltBridges Combined: His, Glu, Asp") +
   scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Donor -- Hydrogen -- Orbital (degrees)'))
   scale_y_continuous("Salt Bridge Counts < 4.0 A from Orbital -- Hydrogen")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 ####Only Lys
 sele <- "
@@ -119,7 +119,7 @@ ggplot(data=all_geom) +
   opts(title = "AOH SaltBridges Combined: Lys, Glu, Asp") +
   scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Acceptor -- Orbital -- Hydrogen (degrees)'))
   scale_y_continuous("Salt Bridge Counts < 4.0 A from Orbital -- Hydrogen")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id = "hist_DHO_scOrb_scH_salt_bridge_Lys"
 ggplot(data=all_geom) +
@@ -127,7 +127,7 @@ ggplot(data=all_geom) +
   opts(title = "DHO SaltBridges Combined: Lys, Glu, Asp") +
   scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Donor -- Hydrogen -- Orbital (degrees)'))
   scale_y_continuous("Salt Bridge Counts < 4.0 A from Orbital -- Hydrogen")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 ####Only Lys
 sele <- "
@@ -156,7 +156,7 @@ ggplot(data=all_geom) +
   opts(title = "AOH SaltBridges Combined: Arg, Glu, Asp") +
   scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Acceptor -- Orbital -- Hydrogen (degrees)'))
   scale_y_continuous("Salt Bridge Counts < 4.0 A from Orbital -- Hydrogen")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id = "hist_DHO_scOrb_scH_salt_bridge_Arg"
 ggplot(data=all_geom) +
@@ -164,9 +164,9 @@ ggplot(data=all_geom) +
   opts(title = "DHO SaltBridges Combined: Arg, Glu, Asp") +
   scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Donor -- Hydrogen -- Orbital (degrees)'))
   scale_y_continuous("Salt Bridge Counts < 4.0 A from Orbital -- Hydrogen")
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
 
-})) # end FeatureAnalysis
+})) # end FeaturesAnalysis
