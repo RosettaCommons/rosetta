@@ -13,32 +13,26 @@ require "kabsch.pm";
 require "matrix.pm";
 
 ## programs
-my $PARTIALTHREAD_APP = "/work/dimaio/rosetta/rosetta_source/bin/partial_thread.default.linuxgccrelease".
-                        " -database /work/dimaio/rosetta/rosetta_database ".
-						"-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm";
+my $EXTRACTAPP = "/work/dimaio/rosetta/rosetta_source/bin/extract_pdbs.default.linuxgccrelease".
+                 " -database /work/dimaio/rosetta/rosetta_database ".
+				 "-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm";
 my $DENSGENAPP = "/work/dimaio/rosetta/rosetta_source/bin/pdb_to_map.default.linuxgccrelease".
                  " -database /work/dimaio/rosetta/rosetta_database ".
-                 " -edensity:mapreso 5.0 -edensity::grid_spacing 2.0 -in:file:centroid_input";
-my $CSTGEN_APP = "/work/dimaio/rosetta/cm_scripts/bin/predict_distances.pl";
-my $PDBFILEDIR = "/lab/databases/wwpdb/";
-
+                 " -edensity:mapreso 10.0 -edensity::grid_spacing 2.0 -in:file:fullatom";
+my $THESEUSAPP = "/work/dimaio/bin/theseus  -f ";
+my $THESEUSCUT = 4;
 
 ## paths
 my $NATIVEDIR        = "native/";
-my $TEMPLATEDIR      = "templates/";
-my $PARTIALTHREADDIR = "partial_threads/";
-my $COORDCSTDIR      = "coordCsts_resOnly/";
 my $FRAG3FILE      = "fragments/%s_templatesvall.25.3mers";
 my $FRAG9FILE      = "fragments/%s_templatesvall.25.9mers";
 
-my $PCORRFILENAMES  = "p_correct%d.txt";
-my $ALNFILENAMES  = "cluster%d.filt";
 my $CSTFILENAMES  = "cluster%d.filt.dist_csts";
 my $FLAGFILENAMES = "flags%d";
 my $MAPFILENAMES  = "templates%d.mrc";
 my $ALNTEMPLATEDIR  = "aligned_templates";
+my $UNALNTEMPLATEDIR  = "unaligned_templates";
 
-#my $CFGFILENAMES  = "hybrid%d.config";
 my $XMLFILENAMES = "hybridize%d.xml";
 my $RUNFILENAMES = "run%d.sh";
 my $HYBRIDIZEOPTIONS = "batch=2 stage1_increase_cycles=1.0 stage2_increase_cycles=1.0 linmin_only=0";
@@ -47,25 +41,12 @@ my $HYBRIDIZEOPTIONS = "batch=2 stage1_increase_cycles=1.0 stage2_increase_cycle
 #####
 
 ## structure alignments
+#my @RMS_CUTOFFS = (10,5,4,3,2,1.5,1);
+#my $CLUSTERCUTOFF = 0.40;
+#my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
 my @RMS_CUTOFFS = (10,5,4,3,2,1.5,1);
-my $CLUSTERCUTOFF = 0.40;
+my $CLUSTERCUTOFF = 0.50;
 my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
-
-## probability correct
-## this could be read from a file
-my %template_probs =  (
-	101 =>0.1430503, 102 => 0.0770168, 103 => 0.0427618, 104 => 0.0249920, 105 => 0.0157738,
-	106 =>0.0109919, 107 => 0.0085113, 108 => 0.0072245, 109 => 0.0065569, 110 => 0.0062107,
-	201 =>0.1276504, 202 => 0.0535388, 203 => 0.0243316, 204 => 0.0128212, 205 => 0.0082849,
-	206 =>0.0064972, 207 => 0.0057927, 208 => 0.0055150, 209 => 0.0054056, 210 => 0.0053625,
-	301 =>0.1161114, 302 => 0.0838580, 303 => 0.0609236, 304 => 0.0446156, 305 => 0.0330195,
-	306 =>0.0247739, 307 => 0.0189107, 308 => 0.0147415, 309 => 0.0117769, 310 => 0.0096689,
-	401 =>0.1430503, 402 => 0.0770168, 403 => 0.0427618, 404 => 0.0249920, 405 => 0.0157738,
-	406 =>0.0109919, 407 => 0.0085113, 408 => 0.0072245, 409 => 0.0065569, 410 => 0.0062107,
-	0 => 0.005    # default
-);
-my $template_M_EST = 0.01; # favor lower-ranked alignments a bit more in sampling
-my $template_M_EST_counts = 1; # when using custom counts to weight, use this M instead
 
 ## amino acid map
 my %one_to_three = ( 
@@ -97,25 +78,21 @@ my %three_to_one = (
 
 ## main()
 if ($#ARGV < 2) {
-	#print STDERR "usage: $0 <fasta-file> <ali-file> <evmap> <working-dir>\n";
-	print STDERR "usage: $0 <fasta-file> <ali-file> <working-dir>\n";
+	print STDERR "usage: $0 <fasta-file> <silent_file> <working-dir>\n";
 	exit -1;
 }
 
-my $fastafile = shift @ARGV;
-my $alifile   = shift @ARGV;
-#my $evmapfile = shift @ARGV;
-my $WORKDIR   = shift @ARGV;
+my $fastafile  = shift @ARGV;
+my $silentfile = shift @ARGV;
+my $WORKDIR    = shift @ARGV;
 
 ## files inside WORKDIR
-$PCORRFILENAMES  = "$WORKDIR/".$PCORRFILENAMES;
-$ALNFILENAMES  = "$WORKDIR/".$ALNFILENAMES;
-$CSTFILENAMES  = "$WORKDIR/".$CSTFILENAMES;
+$CSTFILENAMES = "$WORKDIR/".$CSTFILENAMES;
 $FLAGFILENAMES = "$WORKDIR/".$FLAGFILENAMES;
 $XMLFILENAMES  = "$WORKDIR/".$XMLFILENAMES;
-#$CFGFILENAMES  = "$WORKDIR/".$CFGFILENAMES;
 $MAPFILENAMES  = "$WORKDIR/".$MAPFILENAMES;
 $ALNTEMPLATEDIR  = "$WORKDIR/".$ALNTEMPLATEDIR;
+$UNALNTEMPLATEDIR  = "$WORKDIR/".$UNALNTEMPLATEDIR;
 
 
 ## read sequence
@@ -134,101 +111,28 @@ my $nres = length( $seq );
 print STDERR "Read sequence: $seq\n";
 
 
-## real ali file
-open (ALI, $alifile) || die "Cannot open $_";
-my @alilines = <ALI>;
-close ALI;
-my %alimap = ();
-my @currbuff; 
-my $currtag = "";
-foreach my $line (@alilines) {
-	if ($line =~ /^##/) {
-		chomp $line;
-		if ($currtag ne "") {
-			$alimap {$currtag} = dclone(\@currbuff);
-		}
-		my @fields = split / /, $line;
-		$currtag = $fields[$#fields];
-		@currbuff = ( $line."\n" );
-	} else {
-		push @currbuff, $line;
-	}
-}
-if ($currtag ne "") {
-	$alimap {$currtag} = dclone(\@currbuff);
-}
+## 
 
 ###############################
 ###############################
 ## STAGE 0 -- make output directories if they don't exist
-#rmtree($TEMPLATEDIR);
-rmtree($PARTIALTHREADDIR);
 rmtree($WORKDIR);
-mkdir $TEMPLATEDIR;
-mkdir $PARTIALTHREADDIR;
 mkdir $WORKDIR;
+mkdir $UNALNTEMPLATEDIR;
 
-
-###############################
-###############################
-## STAGE 1 -- generate partial threads
-## (a) grab+sanitize templates
-foreach my $tag (keys %alimap) {
-	my $template = substr($tag,0,5);
-	my $pdbout = $TEMPLATEDIR."/".$template.".pdb";
-	if ( ! -f $pdbout ) {
-		print STDERR "trying to get $pdbout!\n";
-		my $pdbid = substr( $template, 0, 4 );
-		my $chain = substr( $template, 4, 1 );
-		my $dirid = substr( $template, 1, 2 );
-		open (PDB, $PDBFILEDIR."/".$dirid."/".$pdbid.".pdb") || die "Cannot open $_";
-		my @pdblines = <PDB>;
-		close PDB;
-		open (PDBOUT, ">$pdbout") || die "Cannot open $_";
-		my $linecount = 0;
-		foreach my $line (@pdblines) {
-			last if ($line =~ /^ENDMDL/ && $linecount>0);
-			next if ($line !~/^ATOM  / && $line !~/^HETATM/);
-			my $chainid = substr($line,21,1);
-			next if ($chainid ne $chain);
-			my $resname = substr($line,17,3);
-			next if (!defined $three_to_one{ $resname });
-			my $conf = substr($line,16,1);
-			next if ($conf ne " " && $conf ne "A");
-			# sanitization
-			substr($line,0,6) = "ATOM  ";
-			substr($line,17,3) = $one_to_three{ $three_to_one{ $resname } };
-			# MSE
-			if ($resname eq "MSE") {
-				my $atomname = substr ($line,12,4);
-				if ($atomname eq "SE  ") {
-					substr ($line,12,4) = " SD ";
-				}
-			}
-			# all other non-standard ... throw away sidechain
-			elsif (substr($line,17,3) ne $resname) {
-				my $atomname = substr ($line,12,4);
-				next if ($atomname ne " C  " && $atomname ne " CA "  && $atomname ne " O  "  && $atomname ne " N  "  && $atomname ne " CB ");
-			}
-			print PDBOUT $line;
-			$linecount++;
-		}
-		close PDBOUT
-	}
-}
-
-## (b) partial threading app
-chdir $PARTIALTHREADDIR;
-my $cmd = "$PARTIALTHREAD_APP -in::file::fasta ../$fastafile -in::file::alignment ../$alifile -in::file::template_pdb ../$TEMPLATEDIR/*.pdb";
+# extract
+chdir $UNALNTEMPLATEDIR;
+my $cmd = "$EXTRACTAPP -in:file:silent ../../$silentfile -in:file:silent_struct_type binary";
 print STDERR $cmd."\n";
 system($cmd);
-chdir "..";
+chdir "../..";
+
 
 ###############################
 ###############################
 ## STAGE 2 -- clustering + alignment
 ##
-my @THREADED_MDLS=<$PARTIALTHREADDIR/*.pdb>;
+my @THREADED_MDLS=<$UNALNTEMPLATEDIR/*.pdb>;
 my %allfrags;
 my %bbatoms;
 my %resids;
@@ -368,22 +272,8 @@ foreach my $j (0..$i-1) {
 my $clusterid = [];
 
 # start with highest probability member as the seed
-my $maxprob = 0;
-my $minI = -1;
-foreach my $i (0..$#THREADED_MDLS) {
-	my $tag = $THREADED_MDLS[$i];
-	my $prob = $template_probs{ 0 };
-	if ($tag =~ /.*_(\d\d\d).*/) {
-		$tag = $1;
-		$prob = $template_probs{ $tag } if defined $template_probs{ $tag };
-	} elsif ($tag =~ /.*_w(\d+).*/) {
-		$prob = $1+$template_M_EST_counts;
-	}
-	if ($prob > $maxprob) {
-		$maxprob = $prob;
-		$minI = $i;
-	}
-}
+my $maxprob = 1;
+my $minI = 0;
 print STDERR "SEED $minI (".$THREADED_MDLS[$minI].") with probability $maxprob\n";
 
 my $nextclusterid = 1;
@@ -455,34 +345,16 @@ foreach my $i (1..$nextclusterid) {
 	foreach my $j (0..$#THREADED_MDLS) {
 		if ($clusterid->[$j] == $i) {
 			push @currclust, $j;
-			my $tag = $THREADED_MDLS[$j];
-			my $prob = $template_probs{ 0 };
-			if ($tag =~ /.*_(\d\d\d).*/) {
-				$tag = $1;
-				$prob = $template_probs{ $tag } if defined $template_probs{ $tag };
-			} elsif ($tag =~ /.*_w(\d+).*/) {
-				$prob = $1+$template_M_EST_counts;
-			}
+			my $prob = 1.0;
 			$clusterprobs[$i-1] += $prob;
 		}
 	}
 	$cluster_members{ $clusterprobs[$i-1] } = \@currclust;
 }
 
-# find out how many clusters to use
 @clusterprobs = sort {$b <=> $a} @clusterprobs;
 my $counter = 0;
 my $nclust = 0;
-foreach my $prob (@clusterprobs) {
-	foreach my $member (@{ $cluster_members{ $prob } }) {
-		my $filename = $THREADED_MDLS[ $member ];
-		$filename =~ s/.*\///;
-		if ( $filename =~ /_101/ || $filename =~ /_201/ || $filename =~ /_301/ || $filename =~ /_401/ ) {
-			$nclust = $counter;
-		}
-	}
-	$counter++;
-}
 print STDERR "Using $nclust clusters\n";
 
 # store new cluster assignments
@@ -501,54 +373,7 @@ foreach my $i (0..$nclust) {
 ## STAGE 3 -- output
 mkdir ($WORKDIR);
 
-# (a) per-cluster alignment files
-#      + normalized p-correct
-foreach my $i (0..$nclust) {
-	my $clstfile = sprintf $ALNFILENAMES, $i;
-	open (CLST, ">$clstfile") || die "Cannot open $_";
-	my $pcorrect = sprintf $PCORRFILENAMES, $i;
-	open (PCORR, ">$pcorrect") || die "Cannot open $_";
-
-	foreach my $j (0..$#THREADED_MDLS) {
-		next if ($clusterid->[$j] != $i);
-
-		my $filename = $THREADED_MDLS[ $j ];
-		$filename =~ s/.*\///;
-		$filename =~ s/\.pdb//;
-		foreach my $alnline ( @{$alimap {$filename}} ) {
-			print CLST $alnline;
-		}
-
-		my $tag = $filename;
-		my $prob = $template_probs{ 0 };
-		if ($tag =~ /.*_(\d\d\d).*/) {
-			$tag = $1;
-			$prob = $template_probs{ $tag } if defined $template_probs{ $tag };
-		} elsif ($tag =~ /.*_w(\d+).*/) {
-			$tag = "w$1";
-			$prob = $1+$template_M_EST_counts;
-		}
-		$prob = $prob / $clusterprobs[$i];
-		print PCORR "$tag $prob\n";
-	}
-	$counter++;
-
-	close CLST;
-	close PCORR;
-
-	# (b) constraint files
-	#chdir $TEMPLATEDIR;
-	mkdir "temp";
-	chdir "temp";
-	#~tex/src/cm_scripts/bin/predict_distances.pl $file $pdb/alignment/$pdb.fasta -aln_format grishin -weights_file /work/tex/src/cm_scripts/bin/p-correct.txt
-	my $cmd = "$CSTGEN_APP ../$clstfile ../$fastafile -aln_format grishin -weights_file ../$pcorrect"; ## -ev_map_file ../$evmapfile";
-	print STDERR $cmd."\n";
-	system($cmd);
-	chdir "..";
-	#rmtree("temp");
-}
-
-# (c) aligned templates
+# aligned templates
 mkdir ($ALNTEMPLATEDIR);
 foreach my $i (0..$#THREADED_MDLS) {
 	next if ($clusterid->[$i] == -1);
@@ -576,6 +401,55 @@ foreach my $i (0..$#THREADED_MDLS) {
 	close PDBF;
 }
 
+# thesius
+# my $cmd = "$THESEUSAPP $ALNTEMPLATEDIR/\*.pdb";
+# system($cmd);
+# open (THES, 'theseus_variances.txt') || die "Cannot open $_";
+# my @thes_vars = <THES>;
+# close(THES);
+# 
+# my %per_res_var;
+# foreach my $line (@thes_vars) {
+# 	# RES 1           MET      1    77.520451     8.804570    21.785661 CORE
+# 	if ($line =~/RES.*CORE/) {
+# 		my @fields = split ' ', $line;
+# 		$per_res_var{ int($fields[3]) } = $fields[4];
+# 	}
+# }
+# 
+# #trim
+# foreach my $i (0..$#THREADED_MDLS) {
+# 	next if ($clusterid->[$i] == -1);
+# 	my $clid = $clusterid->[$i];
+# 	my $pdb = $THREADED_MDLS[$i];
+# 	my $nfrags = scalar( @{ $allfrags{$pdb} } );
+# 	my $outpdb = $pdb;
+# 	$outpdb =~ s/.*\///;
+# 	$outpdb =~ s/\.pdb$/_aln.cl$clid.pdb/;
+# 	print STDERR "trimming aligned_templates/$outpdb\n";
+# 	open (PDBIN, "$ALNTEMPLATEDIR/$outpdb") || die "Cannot open $_";
+# 	my @oldlines = <PDBIN>;
+# 	close PDBIN;
+# 
+# 	open (PDBOUT, ">$ALNTEMPLATEDIR/$outpdb") || die "Cannot open $_";
+# 	foreach my $line (@oldlines) {
+# 		my $resid = substr ($line, 22, 4);
+# 		next if ($per_res_var{ int($resid) } >  $THESEUSCUT);
+# 		print PDBOUT $line;
+# 	}
+# 	close PDBOUT;
+# }
+# 
+# 
+# #trim
+# unlink("theseus_ave.pdb");
+# unlink("theseus_residuals.txt");
+# unlink("theseus_sup.pdb");
+# unlink("theseus_transf2.txt");
+# unlink("theseus_tree.nxs");
+# unlink("theseus_variances.txt");
+
+
 # (d) template density maps
 foreach my $i (0..$nclust) {
 	my $mapfile = sprintf $MAPFILENAMES , $i;
@@ -589,8 +463,6 @@ foreach my $i (0..$nclust) {
 		open (PDBCAT, ">$temppdb") || die "Cannot open $_";
 
 		my $tmpl_filename = $THREADED_MDLS[ $j ];
-		$tmpl_filename =~ s/$PARTIALTHREADDIR/$TEMPLATEDIR/g;
-		$tmpl_filename =~ s/_w?\d+//g;
 		open (TEMPLPDB, "$tmpl_filename") || die "Cannot open $_";
 		my @templatepdb_lines = <TEMPLPDB>;
 		close TEMPLPDB;
@@ -651,6 +523,9 @@ foreach my $i (0..$nclust) {
  	my $frag9filepath = sprintf "$dir/$FRAG9FILE", $dirtag;
 	print XML  "            <Fragments 3mers=\"$frag3filepath\" 9mers=\"$frag9filepath\"/>\n";
 
+	my $cstfile = sprintf $CSTFILENAMES, $i;
+	$cstfile = $dir."/$cstfile";
+
  	foreach my $j (0..$#THREADED_MDLS) {
 		next if ($clusterid->[$j] != $i);
 		my $id = $THREADED_MDLS[$j];
@@ -658,18 +533,7 @@ foreach my $i (0..$nclust) {
 		$id =~ s/\.pdb$/_aln.cl$i.pdb/;
 		$id = "$dir/$ALNTEMPLATEDIR/$id";
 
-		my $cstfile = sprintf $CSTFILENAMES, $i;
-		$cstfile = $dir."/$cstfile";
-
-		my $tag = $THREADED_MDLS[$j];
-		my $prob = $template_probs{ 0 };
-		if ($tag =~ /.*_(\d\d\d).*/) {
-			$tag = $1;
-			$prob = $template_probs{ $tag } if defined $template_probs{ $tag };
-			$prob += $template_M_EST;
-		} elsif ($tag =~ /.*_w(\d+).*/) {
-			$prob = $1+$template_M_EST_counts;
-		}
+		my $prob = 1;
 
 	 	my $outline = sprintf "pdb=\"$id\" cst_file=\"$cstfile\" weight=$prob";
 		print XML  "            <Template $outline/>\n";
