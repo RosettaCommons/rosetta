@@ -234,11 +234,11 @@ public:
 	core::Real rot_mag_,trans_mag_;
 	SymRBMover(core::pose::Pose const & pose, core::Real rot_mag, core::Real trans_mag) : rot_mag_(rot_mag), trans_mag_(trans_mag) {
 		using namespace core::conformation::symmetry;
-		using namespace core::pose::symmetry;		
+		using namespace core::pose::symmetry;
 		std::map<Size,SymDof> const & dofs = symmetry_info(pose)->get_dofs();
 		for(std::map<Size,SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
 			jump_ = i->first;
-		}		
+		}
 	}
 	void apply( core::pose::Pose & pose ) {
 		core::kinematics::Jump j = pose.jump(jump_);
@@ -376,8 +376,8 @@ struct ConstraintConfig {
 		} else {
 			bool isnum=true,isdash=true;
 			for(Size i = 0; i < s.size(); ++i) {
-				isnum  &= (s[i] >= '0' && s[i] <= '9');
-				isdash &= (s[i] >= '0' && s[i] <= '9' || s[i]=='-');
+				isnum  &=  (s[i] >= '0' && s[i] <= '9');
+				isdash &= ((s[i] >= '0' && s[i] <= '9') || s[i]=='-');
 			}
 			if(isnum) {
 				r.push_back(atoi(s.c_str()));
@@ -442,11 +442,13 @@ struct ConstraintConfig {
 		}
 	}
 	int hub_seq_sep(int r1, int r2) const {
-		if(r1 >  r2) { int tmp = r1; r1 = r2; r2 = tmp;	}		
+		if(r1 >  r2) { int tmp = r1; r1 = r2; r2 = tmp;	}
 		if(r1 >  nres) return nsub*nres;
 		if(r1 <= nres) return r2-r1;
 		if(r2 <= nhub*nres) return (r2-1)%nres+1 + (r1-1)%nres+1;
 		if(r2 >  nhub*nres) return nhub*nres+1;
+		utility_exit_with_message("hub_seq_sep");
+		return 0;
 	}
 	void parse_config_file(std::istream & in) {
 		string op,op2,val;
@@ -641,7 +643,7 @@ struct ConstraintConfig {
 									Size dri = template_map.back()[*i];
 									dres.push_back(dri);
 									seq[dri].resize(1);
-									seq[dri][1] = templates_cen.back()->residue(*i).name1();									
+									seq[dri][1] = templates_cen.back()->residue(*i).name1();
 								}
 								bbgrp++;
 								for(Size i = 1; i <= tres.size(); ++i) {
@@ -787,7 +789,7 @@ struct ConstraintConfig {
 		for(CSTs::iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) i->active = false;
 		for(CSTs::iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) i->active = false;
 		for(vector1<DCST>::iterator i = dcst.begin(); i != dcst.end(); ++i) i->active = false;
-		
+
 	}
 	std::string pick_sequence() const {
 		string s = "Z";
@@ -824,7 +826,7 @@ struct ConstraintConfig {
 			if( i->dres2 <= nhub*nres && i->dres2 > mx) mx = i->dres2;
 		}
 		return mx;
-	}	
+	}
 };
 
 struct HubDenovo {
@@ -901,8 +903,8 @@ struct HubDenovo {
 		return p;
 	}
 
-	bool cen_fold(Pose & p) {		
-		
+	bool cen_fold(Pose & p) {
+
 		// set up movemap and min mover
 		using core::conformation::symmetry::SymDof;
 		core::conformation::symmetry::SymmetryInfoCOP si = core::pose::symmetry::symmetry_info(p);
@@ -911,7 +913,7 @@ struct HubDenovo {
 	  movemap->set_jump(false);
 	  movemap->set_bb(true);
 	  movemap->set_chi(true);
-	
+
 		for(std::map<Size,SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
 			//cout << "sym dof jump: " << i->first << endl;
 	  	movemap->set_jump(i->first,true);
@@ -922,13 +924,13 @@ struct HubDenovo {
 			break;
 		}
 		cenmin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false );
-		
+
 		Size STOP = cfg.get_highest_intrahub_seqsep() + 4;
 		//tr << "rnd 1 ssep STOP " << STOP << endl;
-		protocols::moves::RandomMoverOP mymover = new protocols::moves::RandomMover; 
+		protocols::moves::RandomMoverOP mymover = new protocols::moves::RandomMover;
 		mymover->add_mover(fragins,0.8);
-		mymover->add_mover(new SymRBMover(p,0.1,0.4),0.2);	
-		
+		mymover->add_mover(new SymRBMover(p,0.1,0.4),0.2);
+
 		Real temp = 2.0;
 		Pose last_cor_ori = p;
 		for(Size icst = 1; icst <= STOP; ++icst) {
@@ -961,7 +963,7 @@ struct HubDenovo {
 			tr <<"fin " << i <<" "<<  sf3->score(p) << endl;
 			//if( option[OptionKeys::hub_cen_energy_cut]()*4.0 < sf3->score(p) ) return false;
 		}
-		sf3->show(p);			
+		sf3->show(p);
 		//sf3->set_weight(core::scoring::atom_pair_constraint,cstwt);
 		return true;
 	}
@@ -993,13 +995,13 @@ struct HubDenovo {
     task->initialize_extra_rotamer_flags_from_command_line();
 		for(vector1<CST>::iterator i = cfg.cst_sc.begin(); i != cfg.cst_sc.end(); ++i) {
 			task->nonconst_residue_task(i->dres1).prevent_repacking();
-			task->nonconst_residue_task(i->dres2).prevent_repacking();			
+			task->nonconst_residue_task(i->dres2).prevent_repacking();
 		}
 		core::pack::make_symmetric_PackerTask(p,task);
 	  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 		tr << "predes: " << sf->score(p) << std::endl;
 	  repack.apply(p);
-		tr << "postdes: " << sf->score(p) << std::endl;	
+		tr << "postdes: " << sf->score(p) << std::endl;
 	}
 
 	void run(Size NITER = 9999999999) {
@@ -1007,11 +1009,11 @@ struct HubDenovo {
 		for(int iter = 1; iter < NITER; ++iter) {
 			std::cout << "!!!!!!!!!!!!!!!!!!! " << iter << " " << sf3->get_weight(core::scoring::atom_pair_constraint) << std::endl;
 			Pose tmp = make_start_pose();
-			
+
 			if(basic::options::option[basic::options::OptionKeys::hub_graphics]()) {
 				protocols::viewer::add_conformation_viewer(tmp.conformation(),"test",1150,1150);
 			}
-			
+
 			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 
 			cfg.reset_csts();
@@ -1037,7 +1039,7 @@ struct HubDenovo {
 				// FA and reapply csts
 				core::util::switch_to_residue_type_set(tmp,"fa_standard");
 				tmp.remove_constraints();
-				cfg.reset_csts();				
+				cfg.reset_csts();
 				cfg.apply_csts(tmp);
 
 				{
@@ -1082,6 +1084,7 @@ void * run(void *) {
 	string cstcfg = option[OptionKeys::hub_cst_cfg]();
 	HubDenovo hd(cstcfg);
 	hd.run();
+	return NULL;
 }
 
 int main(int argc, char *argv[]) {

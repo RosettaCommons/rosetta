@@ -1,15 +1,13 @@
 /*
 WISH LIST
-	grid output
 	buried unsats
 		scan for rotamers that cna make H-bonds
 		detect and penalize missing BB density
 	strand pairs
-	cen score components
+	centriod score components ?
 	disulfide-compatible positions
-	sc?
-	patchdock-like complimentarity measure?
-	"good" BB xforms? all of by good contacts?
+	low-res sc? maybe patchdock-like complimentarity measure?
+	statistically "good" BB xforms? all of by good contacts?
 IGNORE
 	contacts by SS ?? avg. degree probably sufficient
 DONE
