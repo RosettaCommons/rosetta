@@ -486,6 +486,9 @@ sources = {
 		"format_converter",
 		#"hbond_param_sweep",
 	],
+	"pilot/labonte" : [
+		"tester" # /* generic testing source */
+	],
 	"pilot/mpacella" : [
                 "surface_docking_jd2",
         ],

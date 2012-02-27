@@ -328,6 +328,10 @@ Pose::split_by_chain() const
 		{
 			chain_pose->conformation().detect_disulfides();
 		}
+
+		// restore broken pdb_info to new pose ~ Labonte
+		chain_pose->pdb_info()->obsolete(false);
+
 		singlechain_poses.push_back( chain_pose );
 	}
 	return singlechain_poses;
