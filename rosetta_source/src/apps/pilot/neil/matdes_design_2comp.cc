@@ -487,9 +487,7 @@ Pose get_neighbor_subs(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, P
 			}
 		}
 	}
-
 	return sub_pose;
-
 }
 
 Real get_atom_packing_score(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2, Real cutoff=9.0){
@@ -519,38 +517,28 @@ Real get_atom_packing_score(Pose const &pose, Sizes intra_subs1, Sizes intra_sub
 			}
 		} // ia
 	} // ir
-
 	return if_score /(Real)count;
-
 }
 
 
-Real average_degree(Pose const &pose, vector1<Size> mutalyze_pos, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2, Real distance_threshold=10.0)
-{
-
+Real average_degree(Pose const &pose, vector1<Size> mutalyze_pos, Sizes intra_subs1, Sizes intra_subs2, 
+	                  Pose const & p1, Pose const & p2, Real distance_threshold=10.0){
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	Size nres_monomer = sym_info->num_independent_residues();
-	Size count_neighbors( 0 );
-
-	for(Size i = 1; i <= mutalyze_pos.size(); ++i) {
-		Size ires = mutalyze_pos[i];
+	Size count_neighbors=0;
+	for(Size i=1,ires=mutalyze_pos[1]; i <= mutalyze_pos.size(); ++i,ires=mutalyze_pos[i]) {
 		core::conformation::Residue const resi( pose.conformation().residue( ires ) );
-		Size resi_neighbors( 0 );
+		Size resi_neighbors=0;
 		Sizes const & intra_subs(which_subsub(ires,p1,p2)==1?intra_subs1:intra_subs2);
 		for(Size jres = 1; jres <= sym_info->num_total_residues_without_pseudo(); ++jres) {
-			if(std::find(intra_subs.begin(), intra_subs.end(), i) == intra_subs.end()) continue;
+			if(std::find(intra_subs.begin(),intra_subs.end(),sym_info->subunit_index(jres))==intra_subs.end()) continue;
 			core::conformation::Residue const resj( pose.residue( jres ) );
 			Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
-			if( distance <= distance_threshold ){
-				++count_neighbors;
-				++resi_neighbors;
-			}
+			if( distance <= distance_threshold ){	++count_neighbors; ++resi_neighbors; }
 		}
 		TR << "avg_deg of " << resi.name3() << ires << " = " << resi_neighbors << std::endl;
 	}
-
 	return( (Real) count_neighbors / mutalyze_pos.size() );
-
 }
 
 void *dostuff(void*) {
