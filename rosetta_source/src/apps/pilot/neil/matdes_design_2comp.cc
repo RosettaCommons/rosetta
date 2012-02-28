@@ -433,15 +433,13 @@ void new_sc(Pose &pose, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, P
 	// Figure out which chains touch chain A, and add the residues from those chains
 	// into the sc surface objects
 	Size nres_monomer = symm_info->num_independent_residues();
-	for(Size i=1; i<=nres_monomer; ++i) {
-		scc.AddResidue(0, pose.residue(i));
-	}
-	for(Size i=1; i<=symm_info->subunits(); ++i) {
+	for(Size i=1; i<=nres_monomer; ++i) scc.AddResidue(0, pose.residue(i));
+	for(Size isub=1; isub<=symm_info->subunits(); ++isub) {
 		bool contact = false;
-		Size start = (i-1)*nres_monomer;
+		Size start = (isub-1)*nres_monomer;
 		for(Size ir=1; ir<=nres_monomer; ir++) {
 			Sizes const & intra_subs(which_subsub(ir,p1,p2)==1?intra_subs1:intra_subs2);
-			if(std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
+			if(std::find(intra_subs.begin(),intra_subs.end(),isub)!=intra_subs.end()) continue;
 			if(pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
 				contact = true;
 				break;
@@ -465,9 +463,9 @@ Pose get_neighbor_subs(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, P
 	Pose sub_pose;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	Size nres_monomer = symm_info->num_independent_residues();
-	sub_pose.append_residue_by_jump(pose.residue(1),1);
-	for(Size i=2; i<=nres_monomer; ++i) {
-		sub_pose.append_residue_by_bond(pose.residue(i));
+	for(Size i=1; i<=nres_monomer; ++i) {
+		if(pose.residue(i).is_upper_terminus()) sub_pose.append_residue_by_jump(pose.residue(i),1);
+		else                                    sub_pose.append_residue_by_bond(pose.residue(i));
 	}
 	for(Size i=1; i<=symm_info->subunits(); ++i) {
 		bool contact = false;
@@ -481,9 +479,9 @@ Pose get_neighbor_subs(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, P
 			}
 		}
 		if(contact) {
-			sub_pose.append_residue_by_jump(pose.residue(start+1),sub_pose.n_residue());
-			for(Size ir=2; ir<=nres_monomer; ir++) {
-				sub_pose.append_residue_by_bond(pose.residue(ir+start));
+			for(Size i=1; i<=nres_monomer; ++i) {
+				if(pose.residue(i).is_upper_terminus()) sub_pose.append_residue_by_jump(pose.residue(start+i),1);
+				else                                    sub_pose.append_residue_by_bond(pose.residue(start+i));
 			}
 		}
 	}
@@ -526,7 +524,8 @@ Real average_degree(Pose const &pose, vector1<Size> mutalyze_pos, Sizes intra_su
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	Size nres_monomer = sym_info->num_independent_residues();
 	Size count_neighbors=0;
-	for(Size i=1,ires=mutalyze_pos[1]; i <= mutalyze_pos.size(); ++i,ires=mutalyze_pos[i]) {
+	for(Size i=1; i <= mutalyze_pos.size(); ++i) {
+		Size ires=mutalyze_pos[i];
 		core::conformation::Residue const resi( pose.conformation().residue( ires ) );
 		Size resi_neighbors=0;
 		Sizes const & intra_subs(which_subsub(ires,p1,p2)==1?intra_subs1:intra_subs2);
