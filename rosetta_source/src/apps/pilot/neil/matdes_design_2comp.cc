@@ -174,8 +174,7 @@ void alignaxis(core::pose::Pose & pose, Vec newaxis, Vec oldaxis, Vec cen = Vec(
 
 
 
-void
-print_movemap(core::kinematics::MoveMap const & movemap) {
+void print_movemap(core::kinematics::MoveMap const & movemap) {
 	using namespace core::id;
 	using namespace core::kinematics;
 	TR << "movemap " << std::endl;
@@ -201,8 +200,7 @@ print_movemap(core::kinematics::MoveMap const & movemap) {
 }
 
 
-void
-design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool hphobic_only) {
+void design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool hphobic_only) {
 
 	using namespace core;
 	using namespace pack;
@@ -220,129 +218,128 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
 	allowed_aas[aa_pro] = false;
 	// Set used to design O333, for use with hack_elec9000
 /*
-  if(hphobic_only == true) {
-    allowed_aas[aa_ala] = true;
-    allowed_aas[aa_asp] = true;
-    allowed_aas[aa_glu] = true;
-    allowed_aas[aa_phe] = true;
-    allowed_aas[aa_his] = false;
-    allowed_aas[aa_ile] = true;
-    allowed_aas[aa_lys] = true;
-    allowed_aas[aa_leu] = true;
-    allowed_aas[aa_met] = true;
-    allowed_aas[aa_asn] = false;
-    allowed_aas[aa_pro] = false;
-    allowed_aas[aa_gln] = false;
-    allowed_aas[aa_arg] = false;
-    allowed_aas[aa_ser] = false;
-    allowed_aas[aa_thr] = false;
-    allowed_aas[aa_val] = true;
-    allowed_aas[aa_trp] = true;
-    allowed_aas[aa_tyr] = true;
-  }
+	if(hphobic_only == true) {
+		allowed_aas[aa_ala] = true;
+		allowed_aas[aa_asp] = true;
+		allowed_aas[aa_glu] = true;
+		allowed_aas[aa_phe] = true;
+		allowed_aas[aa_his] = false;
+		allowed_aas[aa_ile] = true;
+		allowed_aas[aa_lys] = true;
+		allowed_aas[aa_leu] = true;
+		allowed_aas[aa_met] = true;
+		allowed_aas[aa_asn] = false;
+		allowed_aas[aa_pro] = false;
+		allowed_aas[aa_gln] = false;
+		allowed_aas[aa_arg] = false;
+		allowed_aas[aa_ser] = false;
+		allowed_aas[aa_thr] = false;
+		allowed_aas[aa_val] = true;
+		allowed_aas[aa_trp] = true;
+		allowed_aas[aa_tyr] = true;
+	}
 */
 /*
 	// For use with score12
-  if(hphobic_only == true) {
-    allowed_aas[aa_ala] = true;
-    allowed_aas[aa_asp] = false; // FIX LATER
-    allowed_aas[aa_glu] = false; // FIX LATER
-    allowed_aas[aa_phe] = true;
-    allowed_aas[aa_his] = false;
-    allowed_aas[aa_ile] = true;
-    allowed_aas[aa_lys] = false; // FIX LATER
-    allowed_aas[aa_leu] = true;
-    allowed_aas[aa_met] = true;
-    allowed_aas[aa_asn] = false;
-    allowed_aas[aa_pro] = false;
-    allowed_aas[aa_gln] = false;
-    allowed_aas[aa_arg] = false;
-    allowed_aas[aa_ser] = false;
-    allowed_aas[aa_thr] = false;
-    allowed_aas[aa_val] = true;
-    allowed_aas[aa_trp] = true;
-    allowed_aas[aa_tyr] = true;
-  }
+	if(hphobic_only == true) {
+		allowed_aas[aa_ala] = true;
+		allowed_aas[aa_asp] = false; // FIX LATER
+		allowed_aas[aa_glu] = false; // FIX LATER
+		allowed_aas[aa_phe] = true;
+		allowed_aas[aa_his] = false;
+		allowed_aas[aa_ile] = true;
+		allowed_aas[aa_lys] = false; // FIX LATER
+		allowed_aas[aa_leu] = true;
+		allowed_aas[aa_met] = true;
+		allowed_aas[aa_asn] = false;
+		allowed_aas[aa_pro] = false;
+		allowed_aas[aa_gln] = false;
+		allowed_aas[aa_arg] = false;
+		allowed_aas[aa_ser] = false;
+		allowed_aas[aa_thr] = false;
+		allowed_aas[aa_val] = true;
+		allowed_aas[aa_trp] = true;
+		allowed_aas[aa_tyr] = true;
+	}
 */
 /*
 	// Small AA set
-  if(hphobic_only == true) {
-    allowed_aas[aa_ala] = true;
-    allowed_aas[aa_asp] = false;
-    allowed_aas[aa_glu] = false;
-    allowed_aas[aa_phe] = false;
-    allowed_aas[aa_his] = false;
-    allowed_aas[aa_ile] = true;
-    allowed_aas[aa_lys] = false;
-    allowed_aas[aa_leu] = true;
-    allowed_aas[aa_met] = false;
-    allowed_aas[aa_asn] = true;
-    allowed_aas[aa_pro] = false;
-    allowed_aas[aa_gln] = false;
-    allowed_aas[aa_arg] = false;
-    allowed_aas[aa_ser] = true;
-    allowed_aas[aa_thr] = true;
-    allowed_aas[aa_val] = true;
-    allowed_aas[aa_trp] = false;
-    allowed_aas[aa_tyr] = false;
+	if(hphobic_only == true) {
+		allowed_aas[aa_ala] = true;
+		allowed_aas[aa_asp] = false;
+		allowed_aas[aa_glu] = false;
+		allowed_aas[aa_phe] = false;
+		allowed_aas[aa_his] = false;
+		allowed_aas[aa_ile] = true;
+		allowed_aas[aa_lys] = false;
+		allowed_aas[aa_leu] = true;
+		allowed_aas[aa_met] = false;
+		allowed_aas[aa_asn] = true;
+		allowed_aas[aa_pro] = false;
+		allowed_aas[aa_gln] = false;
+		allowed_aas[aa_arg] = false;
+		allowed_aas[aa_ser] = true;
+		allowed_aas[aa_thr] = true;
+		allowed_aas[aa_val] = true;
+		allowed_aas[aa_trp] = false;
+		allowed_aas[aa_tyr] = false;
 	}
 */
 
 	// Used 110817 to design 32_3s with neil.wts
 /*
-  if(hphobic_only == true) {
-    allowed_aas[aa_ala] = true;
-    allowed_aas[aa_asp] = true;
-    allowed_aas[aa_glu] = true;
-    allowed_aas[aa_phe] = true;
-    allowed_aas[aa_his] = false;
-    allowed_aas[aa_ile] = true;
-    allowed_aas[aa_lys] = true;
-    allowed_aas[aa_leu] = true;
-    allowed_aas[aa_met] = true;
-    allowed_aas[aa_asn] = true;
-    allowed_aas[aa_gln] = true;
-    allowed_aas[aa_arg] = true;
-    allowed_aas[aa_ser] = true;
-    allowed_aas[aa_thr] = true;
-    allowed_aas[aa_val] = true;
-    allowed_aas[aa_trp] = true;
-    allowed_aas[aa_tyr] = true;
-  }
+	if(hphobic_only == true) {
+		allowed_aas[aa_ala] = true;
+		allowed_aas[aa_asp] = true;
+		allowed_aas[aa_glu] = true;
+		allowed_aas[aa_phe] = true;
+		allowed_aas[aa_his] = false;
+		allowed_aas[aa_ile] = true;
+		allowed_aas[aa_lys] = true;
+		allowed_aas[aa_leu] = true;
+		allowed_aas[aa_met] = true;
+		allowed_aas[aa_asn] = true;
+		allowed_aas[aa_gln] = true;
+		allowed_aas[aa_arg] = true;
+		allowed_aas[aa_ser] = true;
+		allowed_aas[aa_thr] = true;
+		allowed_aas[aa_val] = true;
+		allowed_aas[aa_trp] = true;
+		allowed_aas[aa_tyr] = true;
+	}
 */
 
 	// Get the symmetry info and make the packer task
-  SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-  PackerTaskOP task( TaskFactory::create_packer_task( pose ));
+	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
 	// Set which residues can be designed
-  for(Size i=1; i<=pose.n_residue(); i++) {
-  	if(!sym_info->bb_is_independent(i)) {
-  		task->nonconst_residue_task(i).prevent_repacking();
-  	} else if(pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
+	for(Size i=1; i<=pose.n_residue(); i++) {
+		if(!sym_info->bb_is_independent(i)) {
+			task->nonconst_residue_task(i).prevent_repacking();
+		} else if(pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
 			// Don't mess with Pros or Glys at the interfaces
-  		task->nonconst_residue_task(i).prevent_repacking();
-  	} else if(find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
-  		task->nonconst_residue_task(i).prevent_repacking();
-  	} else {
-  		bool temp = allowed_aas[pose.residue(i).aa()];
-  		allowed_aas[pose.residue(i).aa()] = true;
-  		task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
-  		task->nonconst_residue_task(i).or_include_current(true);
-  		task->nonconst_residue_task(i).initialize_from_command_line();
-  		allowed_aas[pose.residue(i).aa()] = temp;
-  	}
-  }
+			task->nonconst_residue_task(i).prevent_repacking();
+		} else if(find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
+			task->nonconst_residue_task(i).prevent_repacking();
+		} else {
+			bool temp = allowed_aas[pose.residue(i).aa()];
+			allowed_aas[pose.residue(i).aa()] = true;
+			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
+			task->nonconst_residue_task(i).or_include_current(true);
+			task->nonconst_residue_task(i).initialize_from_command_line();
+			allowed_aas[pose.residue(i).aa()] = temp;
+		}
+	}
 
-  // Actually perform design.
-  make_symmetric_PackerTask(pose, task);
-  protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
-  packer->apply(pose);
+	// Actually perform design.
+	make_symmetric_PackerTask(pose, task);
+	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+	packer->apply(pose);
 
 }
 
-void
-repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
+void repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 
 	using namespace core;
 	using namespace pack;
@@ -352,11 +349,11 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 	using namespace scoring;
 	using namespace chemical;
 
-  // Get the symmetry info and make the packer task
+	// Get the symmetry info and make the packer task
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
-  // Set which residues can be repacked
+	// Set which residues can be repacked
 	for(Size i=1; i<=pose.n_residue(); i++) {
 		if(!sym_info->bb_is_independent(i)) {
 			task->nonconst_residue_task(i).prevent_repacking();
@@ -370,15 +367,14 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 		}
 	}
 
-  // Actually repack.
+	// Actually repack.
 	make_symmetric_PackerTask(pose, task);
 	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
 
 }
 
-void
-minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool move_bb, bool move_sc, bool move_rb) {
+void minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool move_bb, bool move_sc, bool move_rb) {
 
 	// Initialize a MoveMap
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
@@ -399,8 +395,13 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
 	m.apply(pose);
 }
 
-utility::vector1<Real>
-sidechain_sasa(Pose const & pose, Real probe_radius) {
+int which_subsub(int i,Pose const & p1, Pose const & p2) {
+	int N = p1.n_residue()+p2.n_residue();
+	i = (i-1)%N+1;
+	return i > p1.n_residue() ? 2 : 1;
+}
+
+utility::vector1<Real> sidechain_sasa(Pose const & pose, Real probe_radius) {
 	using core::id::AtomID;
 	utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
 	core::id::AtomID_Map<Real> atom_sasa;
@@ -425,15 +426,10 @@ sidechain_sasa(Pose const & pose, Real probe_radius) {
 }
 
 // Pose needs to be scored before this will work.
-void
-new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) {
-
+void new_sc(Pose &pose, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2, Real& int_area, Real& sc) {
 	using namespace core;
-
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-	core::scoring::sc::ShapeComplementarityCalculator scc;
-	scc.Init();
-
+	core::scoring::sc::ShapeComplementarityCalculator scc; scc.Init();
 	// Figure out which chains touch chain A, and add the residues from those chains
 	// into the sc surface objects
 	Size nres_monomer = symm_info->num_independent_residues();
@@ -441,10 +437,11 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 		scc.AddResidue(0, pose.residue(i));
 	}
 	for(Size i=1; i<=symm_info->subunits(); ++i) {
-		if(std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
 		bool contact = false;
 		Size start = (i-1)*nres_monomer;
 		for(Size ir=1; ir<=nres_monomer; ir++) {
+			Sizes const & intra_subs(which_subsub(ir,p1,p2)==1?intra_subs1:intra_subs2);
+			if(std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
 			if(pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
 				contact = true;
 				break;
@@ -463,11 +460,8 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 }
 
 // Pose must be scored in order for this to work.
-Pose
-get_neighbor_subs (Pose const &pose, vector1<Size> intra_subs)
-{
-
-  // Figure out which chains touch chain A, and return those chains
+Pose get_neighbor_subs(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2){
+	// Figure out which chains touch chain A, and return those chains
 	Pose sub_pose;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	Size nres_monomer = symm_info->num_independent_residues();
@@ -476,10 +470,11 @@ get_neighbor_subs (Pose const &pose, vector1<Size> intra_subs)
 		sub_pose.append_residue_by_bond(pose.residue(i));
 	}
 	for(Size i=1; i<=symm_info->subunits(); ++i) {
-		if(std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
 		bool contact = false;
 		Size start = (i-1)*nres_monomer;
 		for(Size ir=1; ir<=nres_monomer; ir++) {
+			Sizes const & intra_subs(which_subsub(ir,p1,p2)==1?intra_subs1:intra_subs2);
+			if(std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
 			if(pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
 				contact = true;
 				break;
@@ -497,11 +492,8 @@ get_neighbor_subs (Pose const &pose, vector1<Size> intra_subs)
 
 }
 
-Real
-get_atom_packing_score (Pose const &pose, vector1<Size> intra_subs, Real cutoff=9.0)
-{
-
-	Pose sub_pose = get_neighbor_subs(pose, intra_subs);
+Real get_atom_packing_score(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2, Real cutoff=9.0){
+	Pose sub_pose = get_neighbor_subs(pose, intra_subs1,intra_subs2,p1,p2);
 	core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
@@ -528,13 +520,12 @@ get_atom_packing_score (Pose const &pose, vector1<Size> intra_subs, Real cutoff=
 		} // ia
 	} // ir
 
-	return if_score / (Real)count;
+	return if_score /(Real)count;
 
 }
 
 
-Real
-average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Size intra_subs, Real distance_threshold=10.0)
+Real average_degree(Pose const &pose, vector1<Size> mutalyze_pos, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2, Real distance_threshold=10.0)
 {
 
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
@@ -545,7 +536,9 @@ average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Size intra_subs, R
 		Size ires = mutalyze_pos[i];
 		core::conformation::Residue const resi( pose.conformation().residue( ires ) );
 		Size resi_neighbors( 0 );
-		for(Size jres = 1; jres <= (nres_monomer*intra_subs); ++jres) {
+		Sizes const & intra_subs(which_subsub(ires,p1,p2)==1?intra_subs1:intra_subs2);
+		for(Size jres = 1; jres <= sym_info->num_total_residues_without_pseudo(); ++jres) {
+			if(std::find(intra_subs.begin(), intra_subs.end(), i) == intra_subs.end()) continue;
 			core::conformation::Residue const resj( pose.residue( jres ) );
 			Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 			if( distance <= distance_threshold ){
@@ -560,14 +553,7 @@ average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Size intra_subs, R
 
 }
 
-int which_subsub(int i,Pose const & p1, Pose const & p2) {
-	int N = p1.n_residue()+p2.n_residue();
-	i = (i-1)%N+1;
-	return i > p1.n_residue() ? 2 : 1;
-}
-
-void
-*dostuff(void*) {
+void *dostuff(void*) {
 	using namespace core;
 	using namespace basic;
 	using namespace options;
@@ -788,9 +774,9 @@ void
 						// cout << "show spheres, name ca and resi "; 
 						// for(int i = 1; i <= nontrimer_pos.size(); ++i) cout << (i==1?"":"+") << nontrimer_pos[i]; cout << endl;
 
-		      	// Finally, filter the positions for design based on surface accessibility.
-		      	// We don't want to design positions that are near to the interface but pointed
-		      	// in toward the core of the monomer (e.g., positions on the insides of helices).
+						// Finally, filter the positions for design based on surface accessibility.
+						// We don't want to design positions that are near to the interface but pointed
+						// in toward the core of the monomer (e.g., positions on the insides of helices).
 						// At the same time, create ResidueTypeConstraints favoring the native residue
 						// at each design position if a fav_nat_bonus option is passed.
 						Sizes design_pos;
@@ -817,95 +803,95 @@ void
 
 
 						// Design
-					design(pose_for_design, sf, design_pos, true);
+						design(pose_for_design, sf, design_pos, true);
 
 						// Repack and minimize using score12
-					ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
-					repack(pose_for_design, score12, design_pos);
-					minimize(pose_for_design, score12, design_pos, false, true, false);
-					score12->score(pose_for_design);
+						ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
+						repack(pose_for_design, score12, design_pos);
+						minimize(pose_for_design, score12, design_pos, false, true, false);
+						score12->score(pose_for_design);
 
 						// Build a filename for the output PDB
-					std::string tag = string_of(numeric::random::uniform()).substr(2,4);
-					std::ostringstream r_string;
-					r_string << std::fixed << std::setprecision(1) << "0";
-					std::string fn = string_of(option[matdes::prefix]()+option[matdes::pdbID]())+"_"+r_string.str()+"_"+"0"+"_"+tag+".pdb.gz";
+						std::string tag = string_of(numeric::random::uniform()).substr(2,4);
+						std::ostringstream r_string;
+						r_string << std::fixed << std::setprecision(1) << "0";
+						std::string fn = string_of(option[matdes::prefix]()+option[matdes::pdbID]())+"_"+r_string.str()+"_"+"0"+"_"+tag+".pdb.gz";
 
 						// Write the pdb file of the design
-					utility::io::ozstream out( option[out::file::o]() + "/" + fn );
-					pose_for_design.dump_pdb(out);
-					core::io::pdb::extract_scores(pose_for_design,out);
-					out.close();
+						utility::io::ozstream out( option[out::file::o]() + "/" + fn );
+						pose_for_design.dump_pdb(out);
+						core::io::pdb::extract_scores(pose_for_design,out);
+						out.close();
 
-            // Spit these positions out for visual debugging
-					TR << "select interface_pos, " << fn << " and resi ";
-					for(Size index=1; index<=interface_pos.size(); index++) {
-						TR << interface_pos[index] << "+";
-					}
-					TR << std::endl;
-            // Spit these positions out for visual debugging
-					TR << "select nontrimer_pos, " << fn << " and resi ";
-					for(Size index=1; index<=nontrimer_pos.size(); index++) {
-						TR << nontrimer_pos[index] << "+";
-					}
-					TR << std::endl;
-            // Spit out the final design positions for visual debugging
-					TR << "select design_pos, " << fn << " and resi ";
-					for(Size index=1; index<=design_pos.size(); index++) {
-						TR << design_pos[index] << "+";
-					}
-					TR << std::endl;
+						// Spit these positions out for visual debugging
+						TR << "select interface_pos, " << fn << " and resi ";
+						for(Size index=1; index<=interface_pos.size(); index++) {
+							TR << interface_pos[index] << "+";
+						}
+						TR << std::endl;
+						// Spit these positions out for visual debugging
+						TR << "select nontrimer_pos, " << fn << " and resi ";
+						for(Size index=1; index<=nontrimer_pos.size(); index++) {
+							TR << nontrimer_pos[index] << "+";
+						}
+						TR << std::endl;
+						// Spit out the final design positions for visual debugging
+						TR << "select design_pos, " << fn << " and resi ";
+						for(Size index=1; index<=design_pos.size(); index++) {
+							TR << design_pos[index] << "+";
+						}
+						TR << std::endl;
 
-      			// Calculate the AverageDegree of the designed positions
-					Real avg_deg = 0;//average_degree(pose_for_design, design_pos, intra_subs1, intra_subs2, p1, p2);
+						// Calculate the AverageDegree of the designed positions
+						Real avg_deg = average_degree(pose_for_design, design_pos, intra_subs1, intra_subs2, p1, p2);
 
-		        // Calculate the surface area and surface complementarity for the interface
-					Real int_area = 0; Real sc = 0;
-					// new_sc(pose_for_design, intra_subs1, intra_subs2, int_area, sc, p1, p2);
+						// Calculate the surface area and surface complementarity for the interface
+						Real int_area = 0; Real sc = 0;
+						new_sc(pose_for_design, intra_subs1, intra_subs2, p1, p2, int_area, sc);
 
-		        // Get the packing score
-					Real packing = 0;//get_atom_packing_score(pose_for_design, intra_subs1, intra_subs2, 9.0, p1, p2);
+						// Get the packing score
+						Real packing = get_atom_packing_score(pose_for_design, intra_subs1, intra_subs2, p1, p2, 9.0);
 
 						// Calculate the ddG of the monomer in the assembled and unassembled states
-					protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
-					ddG_mover.calculate(pose_for_design);
-					Real ddG = ddG_mover.sum_ddG();
-					TR << files1[iconfig] << " " << files2[iconfig] << " ddG = " << ddG << std::endl;
+						protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
+						ddG_mover.calculate(pose_for_design);
+						Real ddG = ddG_mover.sum_ddG();
+						TR << files1[iconfig] << " " << files2[iconfig] << " ddG = " << ddG << std::endl;
 
 						// Calculate per-residue energies for interface residues
-					Real interface_energy = 0;
-					core::scoring::EnergyMap em;
-					Real avg_interface_energy = 0;
-					for(Size index=1; index<=design_pos.size(); index++) {
-						interface_energy += pose_for_design.energies().residue_total_energy(design_pos[index]);
-						em += pose_for_design.energies().residue_total_energies(design_pos[index]);
-					}
-					avg_interface_energy = interface_energy / design_pos.size();
+						Real interface_energy = 0;
+						core::scoring::EnergyMap em;
+						Real avg_interface_energy = 0;
+						for(Size index=1; index<=design_pos.size(); index++) {
+							interface_energy += pose_for_design.energies().residue_total_energy(design_pos[index]);
+							em += pose_for_design.energies().residue_total_energies(design_pos[index]);
+						}
+						avg_interface_energy = interface_energy / design_pos.size();
 						// Multiply those energies by the weights
-					em *= sf->weights();
+						em *= sf->weights();
 
 						// Create a scorefile struct, add custom metrics to it
-					core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
-					ss_out->fill_struct(pose_for_design,fn);
-					ss_out->add_energy("ddG", ddG);
-					ss_out->add_energy("air_energy", avg_interface_energy);
-					ss_out->add_energy("air_fa_atr", em[core::scoring::fa_atr] / design_pos.size());
-					ss_out->add_energy("air_fa_rep", em[core::scoring::fa_rep] / design_pos.size());
-					ss_out->add_energy("air_fa_dun", em[core::scoring::fa_dun] / design_pos.size());
-					ss_out->add_energy("des_pos", design_pos.size());
-					ss_out->add_energy("packing", packing);
-					ss_out->add_energy("avg_deg", avg_deg);
-					ss_out->add_energy("int_area", int_area);
-					ss_out->add_energy("sc", sc);
+						core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
+						ss_out->fill_struct(pose_for_design,fn);
+						ss_out->add_energy("ddG", ddG);
+						ss_out->add_energy("air_energy", avg_interface_energy);
+						ss_out->add_energy("air_fa_atr", em[core::scoring::fa_atr] / design_pos.size());
+						ss_out->add_energy("air_fa_rep", em[core::scoring::fa_rep] / design_pos.size());
+						ss_out->add_energy("air_fa_dun", em[core::scoring::fa_dun] / design_pos.size());
+						ss_out->add_energy("des_pos", design_pos.size());
+						ss_out->add_energy("packing", packing);
+						ss_out->add_energy("avg_deg", avg_deg);
+						ss_out->add_energy("int_area", int_area);
+						ss_out->add_energy("sc", sc);
 
 						// Write the scorefile
-					sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
+						sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
 
 
-							} // iradius2
-						} // iangle2
-					} // iradius1
-				} // iangle1
+					} // iradius2
+				} // iangle2
+			} // iradius1
+		} // iangle1
 
 
 	} // iconfig
