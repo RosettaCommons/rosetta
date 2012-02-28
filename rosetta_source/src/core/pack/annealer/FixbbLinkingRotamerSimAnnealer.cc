@@ -353,8 +353,8 @@ void FixbbLinkingRotamerSimAnnealer::run()
 						other_rotamer = other_rotamer_set->rotamer(other_rotamer_state);
 						--tries;
 
-						//if ( new_rotamer->is_similar_rotamer( *other_rotamer ) ) { //found the same rotamer, move on
-						if ( new_rotamer->is_similar_aa( *other_rotamer ) ) { //found the same rotamer, move on
+						if ( new_rotamer->is_similar_rotamer( *other_rotamer ) ) { //found the same rotamer, move on
+						//if ( new_rotamer->is_similar_aa( *other_rotamer ) ) { //found the same rotamer, move on
 						//std::cout << "found the same rotamer for " << moltenres_id << " and " <<  *itr << "of types " << new_rotamer->aa() << " and " << other_rotamer->aa() << std::endl;
 							found_rotamer = true;
 
