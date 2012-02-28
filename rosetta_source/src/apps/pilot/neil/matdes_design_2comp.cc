@@ -87,6 +87,8 @@ using namespace core::scoring::packing;
 using namespace ObjexxFCL::fmt;
 using core::scoring::ScoreFunctionOP;
 using core::pose::Pose;
+using std::cout;
+using std::endl;
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 typedef vector1<Size> Sizes;
@@ -314,13 +316,13 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
   PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
 	// Set which residues can be designed
-  for (Size i=1; i<=pose.n_residue(); i++) {
-  	if (!sym_info->bb_is_independent(i)) {
+  for(Size i=1; i<=pose.n_residue(); i++) {
+  	if(!sym_info->bb_is_independent(i)) {
   		task->nonconst_residue_task(i).prevent_repacking();
-  	} else if (pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
+  	} else if(pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
 			// Don't mess with Pros or Glys at the interfaces
   		task->nonconst_residue_task(i).prevent_repacking();
-  	} else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
+  	} else if(find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
   		task->nonconst_residue_task(i).prevent_repacking();
   	} else {
   		bool temp = allowed_aas[pose.residue(i).aa()];
@@ -355,10 +357,10 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
   // Set which residues can be repacked
-	for (Size i=1; i<=pose.n_residue(); i++) {
-		if (!sym_info->bb_is_independent(i)) {
+	for(Size i=1; i<=pose.n_residue(); i++) {
+		if(!sym_info->bb_is_independent(i)) {
 			task->nonconst_residue_task(i).prevent_repacking();
-		} else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
+		} else if(find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else {
 			vector1<bool> allowed_aas(20, false);
@@ -386,7 +388,7 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
 
 	// Set allowable move types at interface positions
 	// Currently, only sc moves allowed
-	for (utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++) {
+	for(utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++) {
 		movemap->set_bb (*i, move_bb);
 		movemap->set_chi(*i, move_sc);
 	}
@@ -435,26 +437,26 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 	// Figure out which chains touch chain A, and add the residues from those chains
 	// into the sc surface objects
 	Size nres_monomer = symm_info->num_independent_residues();
-	for (Size i=1; i<=nres_monomer; ++i) {
+	for(Size i=1; i<=nres_monomer; ++i) {
 		scc.AddResidue(0, pose.residue(i));
 	}
-	for (Size i=1; i<=symm_info->subunits(); ++i) {
-		if (std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
+	for(Size i=1; i<=symm_info->subunits(); ++i) {
+		if(std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
 		bool contact = false;
 		Size start = (i-1)*nres_monomer;
-		for (Size ir=1; ir<=nres_monomer; ir++) {
-			if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
+		for(Size ir=1; ir<=nres_monomer; ir++) {
+			if(pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
 				contact = true;
 				break;
 			}
 		}
-		if (contact) {
-			for (Size ir=1; ir<=nres_monomer; ir++) {
+		if(contact) {
+			for(Size ir=1; ir<=nres_monomer; ir++) {
 				scc.AddResidue(1, pose.residue(ir+start));
 			}
 		}
 	}
-	if (scc.Calc()) {
+	if(scc.Calc()) {
 		sc = scc.GetResults().sc;
 		int_area = scc.GetResults().surface[2].trimmedArea;
 	}
@@ -470,22 +472,22 @@ get_neighbor_subs (Pose const &pose, vector1<Size> intra_subs)
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	Size nres_monomer = symm_info->num_independent_residues();
 	sub_pose.append_residue_by_jump(pose.residue(1),1);
-	for (Size i=2; i<=nres_monomer; ++i) {
+	for(Size i=2; i<=nres_monomer; ++i) {
 		sub_pose.append_residue_by_bond(pose.residue(i));
 	}
-	for (Size i=1; i<=symm_info->subunits(); ++i) {
-		if (std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
+	for(Size i=1; i<=symm_info->subunits(); ++i) {
+		if(std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
 		bool contact = false;
 		Size start = (i-1)*nres_monomer;
-		for (Size ir=1; ir<=nres_monomer; ir++) {
-			if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
+		for(Size ir=1; ir<=nres_monomer; ir++) {
+			if(pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
 				contact = true;
 				break;
 			}
 		}
-		if (contact) {
+		if(contact) {
 			sub_pose.append_residue_by_jump(pose.residue(start+1),sub_pose.n_residue());
-			for (Size ir=2; ir<=nres_monomer; ir++) {
+			for(Size ir=2; ir<=nres_monomer; ir++) {
 				sub_pose.append_residue_by_bond(pose.residue(ir+start));
 			}
 		}
@@ -507,19 +509,19 @@ get_atom_packing_score (Pose const &pose, vector1<Size> intra_subs, Real cutoff=
 	Size count = 0; Real if_score = 0;
 
 	Real cutoff2 = cutoff*cutoff;
-	for (Size ir=1; ir<=nres_monomer; ir++) {
-		for (Size ia = 1; ia<=sub_pose.residue(ir).nheavyatoms(); ia++) {
+	for(Size ir=1; ir<=nres_monomer; ir++) {
+		for(Size ia = 1; ia<=sub_pose.residue(ir).nheavyatoms(); ia++) {
 			bool contact = false;
-			for (Size jr=nres_monomer+1; jr<=sub_pose.n_residue(); jr++) {
-				for (Size ja = 1; ja<=sub_pose.residue(jr).nheavyatoms(); ja++) {
-					if (sub_pose.residue(ir).xyz(ia).distance_squared(sub_pose.residue(jr).xyz(ja)) <= cutoff2)  {
+			for(Size jr=nres_monomer+1; jr<=sub_pose.n_residue(); jr++) {
+				for(Size ja = 1; ja<=sub_pose.residue(jr).nheavyatoms(); ja++) {
+					if(sub_pose.residue(ir).xyz(ia).distance_squared(sub_pose.residue(jr).xyz(ja)) <= cutoff2)  {
 						contact = true;
 						break; // ja
 					}
 				} // ja
-				if (contact == true) break;
+				if(contact == true) break;
 			} // jr
-			if (contact == true) {
+			if(contact == true) {
 				count++;
 				if_score += hr.atom_scores[AtomID(ia, ir)];
 			}
@@ -539,7 +541,7 @@ average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Size intra_subs, R
 	Size nres_monomer = sym_info->num_independent_residues();
 	Size count_neighbors( 0 );
 
-	for (Size i = 1; i <= mutalyze_pos.size(); ++i) {
+	for(Size i = 1; i <= mutalyze_pos.size(); ++i) {
 		Size ires = mutalyze_pos[i];
 		core::conformation::Residue const resi( pose.conformation().residue( ires ) );
 		Size resi_neighbors( 0 );
@@ -579,12 +581,6 @@ void
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 	core::io::silent::SilentFileData sfd;
 
-	// Create a score function object, turn hack_elec off in the monomer
-	ScoreFunctionOP sf = getScoreFunction();
-	core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
-	eo.exclude_monomer_hack_elec(true);
-	sf->set_energy_method_options(eo);
-
 	vector1<string> compkind;
 	vector1<vector1<string> > compfiles;
 	if( option[matdes2c::I5].user() ) { compkind.push_back("I5"); compfiles.push_back(option[matdes2c::I5]()); }
@@ -618,6 +614,11 @@ void
 	Real cmp2nangle = comp_nangle[cmp2type];
 
 	option[OptionKeys::symmetry::symmetry_definition]("input/"+compkind[1].substr(0,1)+".sym");
+	// Create a score function object, turn hack_elec off in the monomer
+	ScoreFunctionOP sf = getScoreFunction();
+	core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
+	eo.exclude_monomer_hack_elec(true);
+	sf->set_energy_method_options(eo);
 
 	Real const contact_dist = option[matdes::design::contact_dist]();
 	Real const contact_dist_sq = contact_dist * contact_dist;
@@ -626,9 +627,9 @@ void
 	// subunits should not be designed.
 	Sizes intra_subs1 = option[matdes2c::intra_subs1]();
 	Sizes intra_subs2 = option[matdes2c::intra_subs2]();
-	std::cout << intra_subs1.size() << " " << intra_subs2.size() << std::endl;
-	for(int i = 1; i <= intra_subs1.size(); ++i) std::cout << "intra_subs1 " << intra_subs1[i] << std::endl;
-	for(int i = 1; i <= intra_subs2.size(); ++i) std::cout << "intra_subs2 " << intra_subs2[i] << std::endl;
+	// std::cout << intra_subs1.size() << " " << intra_subs2.size() << std::endl;
+	// for(int i = 1; i <= intra_subs1.size(); ++i) { std::cout << "intra_subs1 " << intra_subs1[i] << std::endl; }
+	// for(int i = 1; i <= intra_subs2.size(); ++i) { std::cout << "intra_subs2 " << intra_subs2[i] << std::endl; }
 
 	utility::vector1<std::string> files1 = compfiles[1];
 	utility::vector1<std::string> files2 = compfiles[2];
@@ -645,7 +646,7 @@ void
 		std::string file1 = files1[files1.size()==1?1:iconfig];
 		std::string file2 = files2[files2.size()==1?1:iconfig];
 
-		// Read in pose
+			// Read in pose
 		Pose pose,mono,p1,p2;
 		utility::vector1<Real> sc_sasa1,sc_sasa2,sc_sasa;
 		{
@@ -685,13 +686,13 @@ void
 		// int sym_jump = 0;
 		// for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
 		// 	Size jump_num = i->first;
-		// 	if (sym_jump == 0) {
+		// 	if(sym_jump == 0) {
 		// 		sym_jump = jump_num;
 		// 	} else {
 		// 		utility_exit_with_message("Can only handle one subunit!");
 		// 	}
 		// }
-		// if (sym_jump == 0) {
+		// if(sym_jump == 0) {
 		// 	utility_exit_with_message("No jump defined!");
 		// }
 
@@ -710,7 +711,7 @@ void
 
 		// Get the favor_native_residue weight from the command line
 		Real fav_nat_bonus = 0.0;
-		if (option[matdes::design::fav_nat_bonus]()) {
+		if(option[matdes::design::fav_nat_bonus]()) {
 			fav_nat_bonus = option[matdes::design::fav_nat_bonus]();
 		}
 
@@ -740,7 +741,6 @@ void
 						Sizes interface_pos;
 						for(Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
 							if(sym_info->subunit_index(ir) != 1) continue;
-							std::cout << ir << std::endl;
 							std::string atom_i = (pose_for_design.residue(ir).name3() == "GLY") ? "CA" : "CB";
 							for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
 								Sizes const & isubs( which_subsub(ir,p1,p2)==1?intra_subs1:intra_subs2);
@@ -754,146 +754,154 @@ void
 							}
 						}
 
-					// 	// Here we filter the residues that we are selecting for design
-					// 	// to get rid of those that make intra-building block interactions
-					// Sizes nontrimer_pos;
-					// Real all_atom_contact_thresh2 = 5.0*5.0;
-					// sf->score(pose_for_design);
-					// for (Size index=1; index<=interface_pos.size(); index++) {
-					// 	Size ir = interface_pos[index];
-					// 	bool contact = false;
-					// 	for (Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
-					// 		if (find(intra_subs.begin(), intra_subs.end(), sym_info->subunit_index(jr)) == intra_subs.end()) continue;
-					// 		if (sym_info->subunit_index(jr) == 1) continue;
-					// 		for (Size ia = 1; ia<=pose_for_design.residue(ir).nheavyatoms(); ia++) {
-					// 			for (Size ja = 1; ja<=pose_for_design.residue(jr).nheavyatoms(); ja++) {
-					// 				if (pose_for_design.residue(ir).xyz(ia).distance_squared(pose_for_design.residue(jr).xyz(ja)) <= all_atom_contact_thresh2)	{
-					// 						// However, if the residue in question is clashing badly (usually with a
-					// 						// residue from another building block), it needs to be designed.
-					// 					core::scoring::EnergyMap em1 = pose_for_design.energies().residue_total_energies(ir);
-					// 					Real resi_fa_rep = em1[core::scoring::fa_rep];
-					// 					if (resi_fa_rep > 3.0) {
-					// 						break;
-					// 					} else {
-					// 						contact = true;
-					// 						break;
-					// 					}
-					// 				}
-					// 			}
-					// 			if (contact == true) break;
-					// 		}
-					// 		if (contact == true) break;
-					// 	}
-					// 	if (!contact) nontrimer_pos.push_back(ir);
-					// }
+						// Here we filter the residues that we are selecting for design
+						// to get rid of those that make intra-building block interactions
+						Sizes nontrimer_pos;
+						Real all_atom_contact_thresh2 = 5.0*5.0;
+						sf->score(pose_for_design);
+						for(Size iip=1; iip<=interface_pos.size(); iip++) {
+							Size ir = interface_pos[iip];
+							Sizes const & intra_subs(which_subsub(ir,p1,p2)==1?intra_subs1:intra_subs2);
+							bool contact = false;
+							for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
+								if(which_subsub(ir,p1,p2)!=which_subsub(jr,p1,p2)) continue;
+								if(find(intra_subs.begin(), intra_subs.end(), sym_info->subunit_index(jr)) == intra_subs.end()) continue;
+								if(sym_info->subunit_index(jr) == 1) continue;
+								for(Size ia = 1; ia<=pose_for_design.residue(ir).nheavyatoms(); ia++) {
+									for(Size ja = 1; ja<=pose_for_design.residue(jr).nheavyatoms(); ja++) {
+										if(pose_for_design.residue(ir).xyz(ia).distance_squared(pose_for_design.residue(jr).xyz(ja)) <= all_atom_contact_thresh2)	{
+											// However, if the residue in question is clashing badly (usually with a
+											// residue from another building block), it needs to be designed.
+											core::scoring::EnergyMap em1 = pose_for_design.energies().residue_total_energies(ir);
+											Real resi_fa_rep = em1[core::scoring::fa_rep];
+											if(resi_fa_rep < 3.0) { contact = true; break; }
+											// contact = true; break; 
+										}
+									}
+									if(contact == true) break;
+								}
+								if(contact == true) break;
+							}
+							if(!contact) nontrimer_pos.push_back(ir);
+						}
 
-		   //      // Finally, filter the positions for design based on surface accessibility.
-		   //      // We don't want to design positions that are near to the interface but pointed
-		   //      // in toward the core of the monomer (e.g., positions on the insides of helices).
-					// 	// At the same time, create ResidueTypeConstraints favoring the native residue
-					// 	// at each design position if a fav_nat_bonus option is passed.
-					// Sizes design_pos;
-					// utility::vector1<core::scoring::constraints::ConstraintOP> favor_native_constraints;
-					// favor_native_constraints.clear();
-					// for(Size i = 1; i <= nontrimer_pos.size(); ++i) {
-					// 	if( sc_sasa[nontrimer_pos[i]] > 0.0 ) {
-					// 		design_pos.push_back(nontrimer_pos[i]);
-					// 		if (fav_nat_bonus != 0.0) {
-					// 			core::scoring::constraints::ConstraintOP resconstraint = new core::scoring::constraints::ResidueTypeConstraint(pose_for_design, nontrimer_pos[i], fav_nat_bonus);
-					// 			favor_native_constraints.push_back(resconstraint);
-					// 			resconstraint->show(TR);
-					// 			TR << std::endl;
-					// 		}
-					// 	}
-					// }
-					// if (fav_nat_bonus != 0.0) {
-					// 	pose_for_design.add_constraints(favor_native_constraints);
-					// }
+						// cout << "show spheres, name ca and resi "; 
+						// for(int i = 1; i <= nontrimer_pos.size(); ++i) cout << (i==1?"":"+") << nontrimer_pos[i]; cout << endl;
 
-					// 	// Design
-					// design(pose_for_design, sf, design_pos, true);
+		      	// Finally, filter the positions for design based on surface accessibility.
+		      	// We don't want to design positions that are near to the interface but pointed
+		      	// in toward the core of the monomer (e.g., positions on the insides of helices).
+						// At the same time, create ResidueTypeConstraints favoring the native residue
+						// at each design position if a fav_nat_bonus option is passed.
+						Sizes design_pos;
+						utility::vector1<core::scoring::constraints::ConstraintOP> favor_native_constraints;
+						favor_native_constraints.clear();
+						for(Size i = 1; i <= nontrimer_pos.size(); ++i) {
+							if( sc_sasa[nontrimer_pos[i]] > 0.0 ) {
+								design_pos.push_back(nontrimer_pos[i]);
+								if(fav_nat_bonus != 0.0) {
+									core::scoring::constraints::ConstraintOP resconstraint = new core::scoring::constraints::ResidueTypeConstraint(pose_for_design, nontrimer_pos[i], fav_nat_bonus);
+									favor_native_constraints.push_back(resconstraint);
+									resconstraint->show(TR);
+									TR << std::endl;
+								}
+							}
+						}
+						if(fav_nat_bonus != 0.0) {
+							pose_for_design.add_constraints(favor_native_constraints);
+						}
 
-					// 	// Repack and minimize using score12
-					// ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
-					// repack(pose_for_design, score12, design_pos);
-					// minimize(pose_for_design, score12, design_pos, false, true, false);
-					// score12->score(pose_for_design);
+						// cout << "show spheres, name ca and resi "; 
+						// for(int i = 1; i <= design_pos.size(); ++i) cout << (i==1?"":"+") << design_pos[i]; cout << endl;
+						// utility_exit_with_message("aorisn");
 
-					// 	// Build a filename for the output PDB
-					// std::string tag = string_of(numeric::random::uniform()).substr(2,4);
-					// std::ostringstream r_string;
-					// r_string << std::fixed << std::setprecision(1) << pose_for_design.jump(sym_jump).get_translation().x();
-					// std::string fn = string_of(option[matdes::prefix]()+option[matdes::pdbID]())+"_"+r_string.str()+"_"+string_of(angles[iconfig]+delta_ang1)+"_"+tag+".pdb.gz";
 
-					// 	// Write the pdb file of the design
-					// utility::io::ozstream out( option[out::file::o]() + "/" + fn );
-					// pose_for_design.dump_pdb(out);
-					// core::io::pdb::extract_scores(pose_for_design,out);
-					// out.close();
+						// Design
+					design(pose_for_design, sf, design_pos, true);
 
-     //        // Spit these positions out for visual debugging
-					// TR << "select interface_pos, " << fn << " and resi ";
-					// for (Size index=1; index<=interface_pos.size(); index++) {
-					// 	TR << interface_pos[index] << "+";
-					// }
-					// TR << std::endl;
-     //        // Spit these positions out for visual debugging
-					// TR << "select nontrimer_pos, " << fn << " and resi ";
-					// for (Size index=1; index<=nontrimer_pos.size(); index++) {
-					// 	TR << nontrimer_pos[index] << "+";
-					// }
-					// TR << std::endl;
-     //        // Spit out the final design positions for visual debugging
-					// TR << "select design_pos, " << fn << " and resi ";
-					// for (Size index=1; index<=design_pos.size(); index++) {
-					// 	TR << design_pos[index] << "+";
-					// }
-					// TR << std::endl;
+						// Repack and minimize using score12
+					ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
+					repack(pose_for_design, score12, design_pos);
+					minimize(pose_for_design, score12, design_pos, false, true, false);
+					score12->score(pose_for_design);
 
-     //  			// Calculate the AverageDegree of the designed positions
-					// Real avg_deg = average_degree(pose_for_design, design_pos, intra_subs.size());
+						// Build a filename for the output PDB
+					std::string tag = string_of(numeric::random::uniform()).substr(2,4);
+					std::ostringstream r_string;
+					r_string << std::fixed << std::setprecision(1) << "0";
+					std::string fn = string_of(option[matdes::prefix]()+option[matdes::pdbID]())+"_"+r_string.str()+"_"+"0"+"_"+tag+".pdb.gz";
 
-		   //      // Calculate the surface area and surface complementarity for the interface
-					// Real int_area = 0; Real sc = 0;
-					// new_sc(pose_for_design, intra_subs, int_area, sc);
+						// Write the pdb file of the design
+					utility::io::ozstream out( option[out::file::o]() + "/" + fn );
+					pose_for_design.dump_pdb(out);
+					core::io::pdb::extract_scores(pose_for_design,out);
+					out.close();
 
-		   //      // Get the packing score
-					// Real packing = get_atom_packing_score(pose_for_design, intra_subs, 9.0);
+					utility_exit_with_message("oaristn");
 
-					// 	// Calculate the ddG of the monomer in the assembled and unassembled states
-					// protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
-					// ddG_mover.calculate(pose_for_design);
-					// Real ddG = ddG_mover.sum_ddG();
-					// TR << files[iconfig] << " ddG = " << ddG << std::endl;
+            // Spit these positions out for visual debugging
+					TR << "select interface_pos, " << fn << " and resi ";
+					for(Size index=1; index<=interface_pos.size(); index++) {
+						TR << interface_pos[index] << "+";
+					}
+					TR << std::endl;
+            // Spit these positions out for visual debugging
+					TR << "select nontrimer_pos, " << fn << " and resi ";
+					for(Size index=1; index<=nontrimer_pos.size(); index++) {
+						TR << nontrimer_pos[index] << "+";
+					}
+					TR << std::endl;
+            // Spit out the final design positions for visual debugging
+					TR << "select design_pos, " << fn << " and resi ";
+					for(Size index=1; index<=design_pos.size(); index++) {
+						TR << design_pos[index] << "+";
+					}
+					TR << std::endl;
 
-					// 	// Calculate per-residue energies for interface residues
-					// Real interface_energy = 0;
-					// core::scoring::EnergyMap em;
-					// Real avg_interface_energy = 0;
-					// for (Size index=1; index<=design_pos.size(); index++) {
-					// 	interface_energy += pose_for_design.energies().residue_total_energy(design_pos[index]);
-					// 	em += pose_for_design.energies().residue_total_energies(design_pos[index]);
-					// }
-					// avg_interface_energy = interface_energy / design_pos.size();
-					// 	// Multiply those energies by the weights
-					// em *= sf->weights();
+      			// Calculate the AverageDegree of the designed positions
+					Real avg_deg = 0;//average_degree(pose_for_design, design_pos, intra_subs1, intra_subs2, p1, p2);
 
-					// 	// Create a scorefile struct, add custom metrics to it
-					// core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
-					// ss_out->fill_struct(pose_for_design,fn);
-					// ss_out->add_energy("ddG", ddG);
-					// ss_out->add_energy("air_energy", avg_interface_energy);
-					// ss_out->add_energy("air_fa_atr", em[core::scoring::fa_atr] / design_pos.size());
-					// ss_out->add_energy("air_fa_rep", em[core::scoring::fa_rep] / design_pos.size());
-					// ss_out->add_energy("air_fa_dun", em[core::scoring::fa_dun] / design_pos.size());
-					// ss_out->add_energy("des_pos", design_pos.size());
-					// ss_out->add_energy("packing", packing);
-					// ss_out->add_energy("avg_deg", avg_deg);
-					// ss_out->add_energy("int_area", int_area);
-					// ss_out->add_energy("sc", sc);
+		        // Calculate the surface area and surface complementarity for the interface
+					Real int_area = 0; Real sc = 0;
+					// new_sc(pose_for_design, intra_subs1, intra_subs2, int_area, sc, p1, p2);
 
-					// 	// Write the scorefile
-					// sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
+		        // Get the packing score
+					Real packing = 0;//get_atom_packing_score(pose_for_design, intra_subs1, intra_subs2, 9.0, p1, p2);
+
+						// Calculate the ddG of the monomer in the assembled and unassembled states
+					protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
+					ddG_mover.calculate(pose_for_design);
+					Real ddG = ddG_mover.sum_ddG();
+					TR << files1[iconfig] << " " << files2[iconfig] << " ddG = " << ddG << std::endl;
+
+						// Calculate per-residue energies for interface residues
+					Real interface_energy = 0;
+					core::scoring::EnergyMap em;
+					Real avg_interface_energy = 0;
+					for(Size index=1; index<=design_pos.size(); index++) {
+						interface_energy += pose_for_design.energies().residue_total_energy(design_pos[index]);
+						em += pose_for_design.energies().residue_total_energies(design_pos[index]);
+					}
+					avg_interface_energy = interface_energy / design_pos.size();
+						// Multiply those energies by the weights
+					em *= sf->weights();
+
+						// Create a scorefile struct, add custom metrics to it
+					core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
+					ss_out->fill_struct(pose_for_design,fn);
+					ss_out->add_energy("ddG", ddG);
+					ss_out->add_energy("air_energy", avg_interface_energy);
+					ss_out->add_energy("air_fa_atr", em[core::scoring::fa_atr] / design_pos.size());
+					ss_out->add_energy("air_fa_rep", em[core::scoring::fa_rep] / design_pos.size());
+					ss_out->add_energy("air_fa_dun", em[core::scoring::fa_dun] / design_pos.size());
+					ss_out->add_energy("des_pos", design_pos.size());
+					ss_out->add_energy("packing", packing);
+					ss_out->add_energy("avg_deg", avg_deg);
+					ss_out->add_energy("int_area", int_area);
+					ss_out->add_energy("sc", sc);
+
+						// Write the scorefile
+					sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
 
 
 							} // iradius2
@@ -911,12 +919,12 @@ void
 int
 main (int argc, char *argv[])
 {
-	register_options();
-	devel::init(argc,argv);
+		register_options();
+		devel::init(argc,argv);
 
-	void* (*func)(void*) = &dostuff;
+		void* (*func)(void*) = &dostuff;
 
-	func(NULL);
+		func(NULL);
 
 }
 
