@@ -837,8 +837,6 @@ void
 					core::io::pdb::extract_scores(pose_for_design,out);
 					out.close();
 
-					utility_exit_with_message("oaristn");
-
             // Spit these positions out for visual debugging
 					TR << "select interface_pos, " << fn << " and resi ";
 					for(Size index=1; index<=interface_pos.size(); index++) {
