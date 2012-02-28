@@ -464,7 +464,7 @@ Pose get_neighbor_subs(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, P
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	Size nres_monomer = symm_info->num_independent_residues();
 	for(Size i=1; i<=nres_monomer; ++i) {
-		if(pose.residue(i).is_upper_terminus()) sub_pose.append_residue_by_jump(pose.residue(i),1);
+		if(pose.residue(i).is_lower_terminus()) sub_pose.append_residue_by_jump(pose.residue(i),1);
 		else                                    sub_pose.append_residue_by_bond(pose.residue(i));
 	}
 	for(Size i=1; i<=symm_info->subunits(); ++i) {
@@ -480,7 +480,7 @@ Pose get_neighbor_subs(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, P
 		}
 		if(contact) {
 			for(Size i=1; i<=nres_monomer; ++i) {
-				if(pose.residue(i).is_upper_terminus()) sub_pose.append_residue_by_jump(pose.residue(start+i),1);
+				if(pose.residue(i).is_lower_terminus()) sub_pose.append_residue_by_jump(pose.residue(start+i),1);
 				else                                    sub_pose.append_residue_by_bond(pose.residue(start+i));
 			}
 		}
@@ -629,24 +629,20 @@ void *dostuff(void*) {
 			sc_sasa2 = sidechain_sasa(p2,2.5);
 			sc_sasa = sc_sasa1;
 			sc_sasa.insert(sc_sasa.begin(),sc_sasa2.begin(),sc_sasa2.end());
-
 			rot_pose(p1,Vec(0,0,1),cmp1rots[iconfig]);
 			rot_pose(p2,Vec(0,0,1),cmp2rots[iconfig]);
 			trans_pose(p1,Vec(0,0,cmp1disps[iconfig]));
 			trans_pose(p2,Vec(0,0,cmp2disps[iconfig]));
 			alignaxis(p1,cmp1axs,Vec(0,0,1),Vec(0,0,0));
 			alignaxis(p2,cmp2axs,Vec(0,0,1),Vec(0,0,0));
-
 			Pose mono;
-			mono.append_residue_by_jump(p1.residue(1),1);
-			for(Size i = 2; i <= p1.n_residue(); ++i) {
-				if(mono.residue(i-1).is_terminus()) mono.append_residue_by_jump(p1.residue(i),1);
-				else                                mono.append_residue_by_bond(p1.residue(i));
+			for(Size i = 1; i <= p1.n_residue(); ++i) {
+				if(p1.residue(i).is_lower_terminus()) mono.append_residue_by_jump(p1.residue(i),1);
+				else                                  mono.append_residue_by_bond(p1.residue(i));
 			}
-			mono.append_residue_by_jump(p2.residue(1),1);
-			for(Size i = 2; i <= p2.n_residue(); ++i) {
-				if(mono.residue(mono.n_residue()).is_terminus()) mono.append_residue_by_jump(p2.residue(i),1);
-				else                                             mono.append_residue_by_bond(p2.residue(i));
+			for(Size i = 1; i <= p2.n_residue(); ++i) {
+				if(p2.residue(i).is_lower_terminus()) mono.append_residue_by_jump(p2.residue(i),1);
+				else                                  mono.append_residue_by_bond(p2.residue(i));
 			}
 			pose = mono;
 		}
