@@ -53,6 +53,7 @@ sources = {
 	"pilot/cmiles" : [
                 #"close_loops_cart",
                 #"close_loops_ccd",
+                #"dssp",
                 #"extend",
                 #"fragment_rmsd",
                 #"helix_rotate",
