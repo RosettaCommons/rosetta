@@ -91,10 +91,10 @@ typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 typedef vector1<Size> Sizes;
 
-OPT_1GRP_KEY( RealVector, matdes2c, comp2rot )
-OPT_1GRP_KEY( RealVector, matdes2c, comp2disp )
-OPT_1GRP_KEY( RealVector, matdes2c, comp1rot )
-OPT_1GRP_KEY( RealVector, matdes2c, comp1disp )
+OPT_1GRP_KEY( RealVector   , matdes2c, comp2rot )
+OPT_1GRP_KEY( RealVector   , matdes2c, comp2disp )
+OPT_1GRP_KEY( RealVector   , matdes2c, comp1rot )
+OPT_1GRP_KEY( RealVector   , matdes2c, comp1disp )
 OPT_1GRP_KEY( IntegerVector, matdes2c, intra_subs1 )
 OPT_1GRP_KEY( IntegerVector, matdes2c, intra_subs2 )
 OPT_1GRP_KEY( FileVector, matdes2c, I2 )
@@ -602,8 +602,7 @@ void
 	std::map<string,int> comp_nangle;
 	comp_nangle["I2"] = 180; comp_nangle["O2"] = 180; comp_nangle["T2"] = 180;
 	comp_nangle["I3"] = 120; comp_nangle["O3"] = 120; comp_nangle["T3"] = 120;
-	comp_nangle["I5"] =  72;
-	comp_nangle["O4"] =  90;
+	comp_nangle["I5"] =  72; comp_nangle["O4"] =  90;
 	std::map<string,Vec> axismap;
 	axismap["I2"] = Vec(-0.166666666666666,-0.28867500000000000, 0.87267800000000 ).normalized();
 	axismap["I3"] = Vec( 0.000000000000000, 0.00000000000000000, 1.00000000000000 ).normalized();
@@ -620,14 +619,16 @@ void
 
 	option[OptionKeys::symmetry::symmetry_definition]("input/"+compkind[1].substr(0,1)+".sym");
 
-						Real const contact_dist = option[matdes::design::contact_dist]();
-						Real const contact_dist_sq = contact_dist * contact_dist;
+	Real const contact_dist = option[matdes::design::contact_dist]();
+	Real const contact_dist_sq = contact_dist * contact_dist;
 
-		// Define which subs are part of the oligomeric building block. The interfaces between these
-		// subunits should not be designed.
-		Sizes intra_subs1 = option[matdes2c::intra_subs1]();
-		Sizes intra_subs2 = option[matdes2c::intra_subs2]();
-		std::cout << intra_subs1.size() << " " << intra_subs2.size() << std::endl;
+	// Define which subs are part of the oligomeric building block. The interfaces between these
+	// subunits should not be designed.
+	Sizes intra_subs1 = option[matdes2c::intra_subs1]();
+	Sizes intra_subs2 = option[matdes2c::intra_subs2]();
+	std::cout << intra_subs1.size() << " " << intra_subs2.size() << std::endl;
+	for(int i = 1; i <= intra_subs1.size(); ++i) std::cout << "intra_subs1 " << intra_subs1[i] << std::endl;
+	for(int i = 1; i <= intra_subs2.size(); ++i) std::cout << "intra_subs2 " << intra_subs2[i] << std::endl;
 
 	utility::vector1<std::string> files1 = compfiles[1];
 	utility::vector1<std::string> files2 = compfiles[2];
@@ -739,10 +740,11 @@ void
 						Sizes interface_pos;
 						for(Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
 							if(sym_info->subunit_index(ir) != 1) continue;
-							if(which_subsub(ir,p1,p2)==2) continue;
+							std::cout << ir << std::endl;
 							std::string atom_i = (pose_for_design.residue(ir).name3() == "GLY") ? "CA" : "CB";
 							for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
-								if(find(intra_subs1.begin(), intra_subs1.end(), sym_info->subunit_index(jr)) != intra_subs1.end()) continue;
+								Sizes const & isubs( which_subsub(ir,p1,p2)==1?intra_subs1:intra_subs2);
+								if(which_subsub(jr,p1,p2)==which_subsub(ir,p1,p2)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end()) continue;
 								// std::cout << sym_info->subunit_index(ir) << " " << sym_info->subunit_index(jr) << std::endl;
 								std::string atom_j = (pose_for_design.residue(jr).name3() == "GLY") ? "CA" : "CB";
 								if(pose_for_design.residue(ir).xyz(atom_i).distance_squared(pose_for_design.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
@@ -751,13 +753,6 @@ void
 								}
 							}
 						}
-
-						std::cout << "show spheres, name CA and resi ";
-						for(int i = 1; i <= interface_pos.size(); ++i) {
-							std::cout << (i==1?"":"+") << interface_pos[i];
-						}
-						std::cout << std::endl;
-						utility_exit_with_message("orzest");
 
 					// 	// Here we filter the residues that we are selecting for design
 					// 	// to get rid of those that make intra-building block interactions
