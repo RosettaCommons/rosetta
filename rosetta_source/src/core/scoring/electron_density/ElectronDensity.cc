@@ -832,7 +832,8 @@ core::Real ElectronDensity::matchCentroidPose(
 
 			conformation::Residue const &rsd_i (pose.residue(i)); //( *reses[i] );
 
-			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+			//if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+			if ( !pose.residue_type(i).is_protein() ) continue;
 			if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
 
 			numeric::xyzVector< core::Real > dVdx_ij(0,0,0), dOdx_ij(0,0,0), dO2dx_ij(0,0,0), dCOdx_ij(0,0,0), dC2dx_ij(0,0,0);
