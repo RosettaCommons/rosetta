@@ -875,13 +875,6 @@ void *dostuff(void*) {
 	ddG = bounde - ubounde;
 }
 
-
-
-
-
-
-						TR << files1[iconfig] << " " << files2[iconfig] << " ddG = " << ddG << std::endl;
-
 						// Calculate per-residue energies for interface residues
 						Real interface_energy = 0;
 						core::scoring::EnergyMap em;
