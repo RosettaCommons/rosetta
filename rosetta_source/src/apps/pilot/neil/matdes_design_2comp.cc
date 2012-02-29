@@ -39,12 +39,13 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/pack/pack_rotamers.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/RestrictToInterface.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -176,6 +177,7 @@ void alignaxis(core::pose::Pose & pose, Vec newaxis, Vec oldaxis, Vec cen = Vec(
 }
 
 
+inline Real sqr(Real x) { return x*x; }
 
 void print_movemap(core::kinematics::MoveMap const & movemap) {
 	using namespace core::id;
@@ -432,34 +434,29 @@ utility::vector1<Real> sidechain_sasa(Pose const & pose, Real probe_radius) {
 
 // must fix to include whole building block
 
-void new_sc(Pose &pose, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2, Real& int_area, Real& sc) {
+void new_sc(Pose &pose, Sizes isubs, Real& int_area, Real& sc) {
 	using namespace core;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	core::scoring::sc::ShapeComplementarityCalculator scc; scc.Init();
-	// Figure out which chains touch chain A, and add the residues from those chains
-	// into the sc surface objects
 	Size nres_monomer = symm_info->num_independent_residues();
-	for(Size i=1; i<=nres_monomer; ++i) scc.AddResidue(0, pose.residue(i));
-	for(Size isub=1; isub<=symm_info->subunits(); ++isub) {
-		bool contact = false;
-		Size start = (isub-1)*nres_monomer;
-		for(Size ir=1; ir<=nres_monomer; ir++) {
-			Sizes const & intra_subs(which_subsub(ir,p1,p2)==1?intra_subs1:intra_subs2);
-			if(std::find(intra_subs.begin(),intra_subs.end(),isub)!=intra_subs.end()) continue;
-			if(pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
-				contact = true;
-				break;
-			}
-		}
-		if(contact) {
-			for(Size ir=1; ir<=nres_monomer; ir++) {
-				scc.AddResidue(1, pose.residue(ir+start));
-			}
+	std::set<Size> iset,jset;
+	for(Size ir=1; ir <= symm_info->num_total_residues_without_pseudo(); ++ir){
+		if(symm_info->subunit_index(ir)!=1) continue;
+		// if(std::find(isubs.begin(),isubs.end(),symm_info->subunit_index(ir))==isubs.end()) continue;
+		for(Size jr=1; jr <= symm_info->num_total_residues_without_pseudo(); ++jr){
+			if(std::find(isubs.begin(),isubs.end(),symm_info->subunit_index(jr))!=isubs.end()) continue;
+			if(pose.residue(ir).nbr_atom_xyz().distance_squared(pose.residue(jr).nbr_atom_xyz()) > 
+			                 sqr(pose.residue(ir).nbr_radius()+pose.residue(jr).nbr_radius())) continue;
+			iset.insert(ir);
+			jset.insert(jr);
 		}
 	}
+	TR << "SC res sets: " << iset.size() << " " << jset.size() << std::endl;
+	for(std::set<Size>::const_iterator i=iset.begin(); i!=iset.end(); ++i) { cout << " " << *i; scc.AddResidue(0,pose.residue(*i)); } cout << std::endl;
+	for(std::set<Size>::const_iterator i=jset.begin(); i!=jset.end(); ++i) { cout << " " << *i; scc.AddResidue(1,pose.residue(*i)); } cout << std::endl;
 	if(scc.Calc()) {
 		sc = scc.GetResults().sc;
-		int_area = scc.GetResults().surface[2].trimmedArea;
+		int_area = scc.GetResults().surface[2].trimmedArea / isubs.size();
 	}
 }
 
@@ -706,7 +703,7 @@ void *dostuff(void*) {
 						rot_pose  (pose_for_design,  rot2,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
 						trans_pose(pose_for_design,trans2,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
 
-						pose_for_design.dump_pdb("test_grid_"+ObjexxFCL::string_of(iconfig)+"_"+ObjexxFCL::string_of(iangle1)+"_"+ObjexxFCL::string_of(iradius1)+"_"+ObjexxFCL::string_of(iangle2)+"_"+ObjexxFCL::string_of(iradius2)+".pdb");
+						// pose_for_design.dump_pdb("test_grid_"+ObjexxFCL::string_of(iconfig)+"_"+ObjexxFCL::string_of(iangle1)+"_"+ObjexxFCL::string_of(iradius1)+"_"+ObjexxFCL::string_of(iangle2)+"_"+ObjexxFCL::string_of(iradius2)+".pdb");
 						// utility_exit_with_message("aorisht");
 
 
@@ -836,7 +833,7 @@ void *dostuff(void*) {
 
 						// Calculate the surface area and surface complementarity for the interface
 						Real int_area = 0; Real sc = 0;
-						new_sc(pose_for_design, intra_subs1, intra_subs2, p1, p2, int_area, sc);
+						new_sc(pose_for_design, intra_subs2, int_area, sc);
 
 						// Get the packing score
 						Real packing = get_atom_packing_score(pose_for_design, intra_subs1, intra_subs2, p1, p2, 9.0);
@@ -858,8 +855,7 @@ void *dostuff(void*) {
 	using namespace protocols::moves;
 	pose::Pose pose = pose_in;
 	assert( core::pose::symmetry::is_symmetric( pose ));
-  SymmetricConformation & symm_conf (
-        dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
+	SymmetricConformation & symm_conf( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 	// convert to symetric scorefunction
 	//setup_packer_and_movemap( pose );
 	task_ = core::pack::task::TaskFactory::create_packer_task( pose );
@@ -868,17 +864,14 @@ void *dostuff(void*) {
 	rpk.apply( pose, *task_ );
 	core::pack::task::operation::NoRepackDisulfides nodisulf;
 	nodisulf.apply( pose, *task_ );
-	protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
-	rti.apply( pose, *task_ );
+	// protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
+	// rti.apply( pose, *task_ );
 	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
-	Real bounds = scorefxn_->(pose);
-
-	rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
-	translate->step_size( 1000.0 );
-	translate->apply( pose );
-
+	Real bounde = scorefxn_->score(pose);
+	trans_pose(pose,cmp1axs*1000.0,               1,p1.n_residue()               );
+	trans_pose(pose,cmp2axs*1000.0,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
 	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
-	Real ubounde = scorefxn_->(pose);
+	Real ubounde = scorefxn_->score(pose);
 	ddG = bounde - ubounde;
 }
 
