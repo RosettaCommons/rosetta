@@ -149,12 +149,12 @@ SOGFunc_Impl::func( Real const x ) const	{
 	}
 	Real score = prob_sum_of_gaussians(x);
 	check_bounds( x, score );
-	if ( score == 0 ) {
+	if ( score <= 1e-50 ) {  // avoid floating point comparison to 0
 		return 0.0;
 	} else {
-		Real sc( -1 * std::log( score ) );
+		Real sc = -std::log(score);
 		sc = sc - upper_bound_score();
-		return(sc);
+		return sc;
 	}
 } // func
 
