@@ -430,23 +430,20 @@ utility::vector1<Real> sidechain_sasa(Pose const & pose, Real probe_radius) {
 	return sc_sasa;
 }
 
-// Pose needs to be scored before this will work.
-
-// must fix to include whole building block
-
-void new_sc(Pose &pose, Sizes isubs, Real& int_area, Real& sc) {
+void new_sc(Pose &pose, Sizes isubs2, Pose const & p1, Pose const & p2, Real& int_area, Real& sc) {
 	using namespace core;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	core::scoring::sc::ShapeComplementarityCalculator scc; scc.Init();
 	Size nres_monomer = symm_info->num_independent_residues();
 	std::set<Size> iset,jset;
 	for(Size ir=1; ir <= symm_info->num_total_residues_without_pseudo(); ++ir){
-		// if(symm_info->subunit_index(ir)!=1) continue;
-		if(std::find(isubs.begin(),isubs.end(),symm_info->subunit_index(ir))==isubs.end()) continue;
+		if(std::find(isubs2.begin(),isubs2.end(),symm_info->subunit_index(ir))==isubs2.end()) continue;
+		if(which_subsub(ir,p1,p2)!=2) continue;
 		for(Size jr=1; jr <= symm_info->num_total_residues_without_pseudo(); ++jr){
-			if(std::find(isubs.begin(),isubs.end(),symm_info->subunit_index(jr))!=isubs.end()) continue;
+			if(std::find(isubs2.begin(),isubs2.end(),symm_info->subunit_index(jr))!=isubs2.end()) continue;
+			if(which_subsub(jr,p1,p2)!=1) continue;
 			if(pose.residue(ir).nbr_atom_xyz().distance_squared(pose.residue(jr).nbr_atom_xyz()) > 
-			                 sqr(pose.residue(ir).nbr_radius()+pose.residue(jr).nbr_radius())) continue;
+			   sqr(pose.residue(ir).nbr_radius()+pose.residue(jr).nbr_radius())) continue;
 			iset.insert(ir);
 			jset.insert(jr);
 		}
@@ -456,8 +453,9 @@ void new_sc(Pose &pose, Sizes isubs, Real& int_area, Real& sc) {
 	for(std::set<Size>::const_iterator i=jset.begin(); i!=jset.end(); ++i) { cout << " " << *i; scc.AddResidue(1,pose.residue(*i)); } cout << std::endl;
 	if(scc.Calc()) {
 		sc = scc.GetResults().sc;
-		int_area = scc.GetResults().surface[2].trimmedArea / isubs.size();
+		int_area = scc.GetResults().surface[2].trimmedArea / isubs2.size();
 	}
+	TR << "SC DONE" << std::endl;
 }
 
 // Pose must be scored in order for this to work.
@@ -833,7 +831,7 @@ void *dostuff(void*) {
 
 						// Calculate the surface area and surface complementarity for the interface
 						Real int_area = 0; Real sc = 0;
-						new_sc(pose_for_design, intra_subs2, int_area, sc);
+						new_sc(pose_for_design, intra_subs2,p1,p2, int_area, sc);
 
 						// Get the packing score
 						Real packing = get_atom_packing_score(pose_for_design, intra_subs1, intra_subs2, p1, p2, 9.0);
