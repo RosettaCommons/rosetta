@@ -42,6 +42,9 @@
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <core/pack/task/operation/RestrictToInterface.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -426,6 +429,9 @@ utility::vector1<Real> sidechain_sasa(Pose const & pose, Real probe_radius) {
 }
 
 // Pose needs to be scored before this will work.
+
+// must fix to include whole building block
+
 void new_sc(Pose &pose, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2, Real& int_area, Real& sc) {
 	using namespace core;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
@@ -836,9 +842,51 @@ void *dostuff(void*) {
 						Real packing = get_atom_packing_score(pose_for_design, intra_subs1, intra_subs2, p1, p2, 9.0);
 
 						// Calculate the ddG of the monomer in the assembled and unassembled states
-						protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
-						ddG_mover.calculate(pose_for_design);
-						Real ddG = ddG_mover.sum_ddG();
+						// protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
+						// ddG_mover.calculate(pose_for_design);
+						Real ddG;// = ddG_mover.sum_ddG();
+
+
+
+
+						//must do ddG manually, moving each BB separately
+{
+	Pose const & pose_in(pose_for_design);
+	ScoreFunctionOP scorefxn_ = score12;
+	core::pack::task::PackerTaskOP task_;
+	using namespace pack;
+	using namespace protocols::moves;
+	pose::Pose pose = pose_in;
+	assert( core::pose::symmetry::is_symmetric( pose ));
+  SymmetricConformation & symm_conf (
+        dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
+	// convert to symetric scorefunction
+	//setup_packer_and_movemap( pose );
+	task_ = core::pack::task::TaskFactory::create_packer_task( pose );
+	task_->initialize_from_command_line().or_include_current( true );
+	core::pack::task::operation::RestrictToRepacking rpk;
+	rpk.apply( pose, *task_ );
+	core::pack::task::operation::NoRepackDisulfides nodisulf;
+	nodisulf.apply( pose, *task_ );
+	protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
+	rti.apply( pose, *task_ );
+	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
+	Real bounds = scorefxn_->(pose);
+
+	rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
+	translate->step_size( 1000.0 );
+	translate->apply( pose );
+
+	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
+	Real ubounde = scorefxn_->(pose);
+	ddG = bounde - ubounde;
+}
+
+
+
+
+
+
 						TR << files1[iconfig] << " " << files2[iconfig] << " ddG = " << ddG << std::endl;
 
 						// Calculate per-residue energies for interface residues
