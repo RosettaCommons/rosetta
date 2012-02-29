@@ -22,6 +22,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
@@ -31,12 +32,13 @@ int main(int argc, char* argv[]) {
 
   devel::init(argc, argv);
   core::pose::PoseCOP pose = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::s]()[1]);
+  core::pose::PDBInfoCOP info = pose->pdb_info();
 
   core::scoring::dssp::Dssp dssp(*pose);
   dssp.dssp_reduced();
 
-  std::cout << "Residue" << "\t" << "Secondary Structure" << std::endl;
+  std::cout << "Rosetta_Residue" << "\t" << "PDB_Residue" << "\t" << "Secondary_Structure" << std::endl;
   for (core::Size i = 1; i <= pose->total_residue(); ++i) {
-    std::cout << i << "\t" << dssp.get_dssp_secstruct(i) << std::endl;
+    std::cout << i << "\t" << info->number(i) << "\t" << dssp.get_dssp_secstruct(i) << std::endl;
   }
 }
