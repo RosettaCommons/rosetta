@@ -441,8 +441,8 @@ void new_sc(Pose &pose, Sizes isubs, Real& int_area, Real& sc) {
 	Size nres_monomer = symm_info->num_independent_residues();
 	std::set<Size> iset,jset;
 	for(Size ir=1; ir <= symm_info->num_total_residues_without_pseudo(); ++ir){
-		if(symm_info->subunit_index(ir)!=1) continue;
-		// if(std::find(isubs.begin(),isubs.end(),symm_info->subunit_index(ir))==isubs.end()) continue;
+		// if(symm_info->subunit_index(ir)!=1) continue;
+		if(std::find(isubs.begin(),isubs.end(),symm_info->subunit_index(ir))==isubs.end()) continue;
 		for(Size jr=1; jr <= symm_info->num_total_residues_without_pseudo(); ++jr){
 			if(std::find(isubs.begin(),isubs.end(),symm_info->subunit_index(jr))!=isubs.end()) continue;
 			if(pose.residue(ir).nbr_atom_xyz().distance_squared(pose.residue(jr).nbr_atom_xyz()) > 
@@ -874,7 +874,6 @@ void *dostuff(void*) {
 	Real ubounde = scorefxn_->score(pose);
 	ddG = bounde - ubounde;
 }
-
 						// Calculate per-residue energies for interface residues
 						Real interface_energy = 0;
 						core::scoring::EnergyMap em;
@@ -903,7 +902,6 @@ void *dostuff(void*) {
 
 						// Write the scorefile
 						sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
-
 
 					} // iradius2
 				} // iangle2
