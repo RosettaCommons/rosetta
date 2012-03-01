@@ -45,7 +45,7 @@ my $HYBRIDIZEOPTIONS = "batch=2 stage1_increase_cycles=1.0 stage2_increase_cycle
 #my $CLUSTERCUTOFF = 0.40;
 #my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
 my @RMS_CUTOFFS = (10,5,4,3,2,1.5,1);
-my $CLUSTERCUTOFF = 0.50;
+my $CLUSTERCUTOFF = 0.40;
 my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
 
 ## amino acid map
@@ -402,52 +402,52 @@ foreach my $i (0..$#THREADED_MDLS) {
 }
 
 # thesius
-# my $cmd = "$THESEUSAPP $ALNTEMPLATEDIR/\*.pdb";
-# system($cmd);
-# open (THES, 'theseus_variances.txt') || die "Cannot open $_";
-# my @thes_vars = <THES>;
-# close(THES);
-# 
-# my %per_res_var;
-# foreach my $line (@thes_vars) {
-# 	# RES 1           MET      1    77.520451     8.804570    21.785661 CORE
-# 	if ($line =~/RES.*CORE/) {
-# 		my @fields = split ' ', $line;
-# 		$per_res_var{ int($fields[3]) } = $fields[4];
-# 	}
-# }
-# 
-# #trim
-# foreach my $i (0..$#THREADED_MDLS) {
-# 	next if ($clusterid->[$i] == -1);
-# 	my $clid = $clusterid->[$i];
-# 	my $pdb = $THREADED_MDLS[$i];
-# 	my $nfrags = scalar( @{ $allfrags{$pdb} } );
-# 	my $outpdb = $pdb;
-# 	$outpdb =~ s/.*\///;
-# 	$outpdb =~ s/\.pdb$/_aln.cl$clid.pdb/;
-# 	print STDERR "trimming aligned_templates/$outpdb\n";
-# 	open (PDBIN, "$ALNTEMPLATEDIR/$outpdb") || die "Cannot open $_";
-# 	my @oldlines = <PDBIN>;
-# 	close PDBIN;
-# 
-# 	open (PDBOUT, ">$ALNTEMPLATEDIR/$outpdb") || die "Cannot open $_";
-# 	foreach my $line (@oldlines) {
-# 		my $resid = substr ($line, 22, 4);
-# 		next if ($per_res_var{ int($resid) } >  $THESEUSCUT);
-# 		print PDBOUT $line;
-# 	}
-# 	close PDBOUT;
-# }
-# 
-# 
-# #trim
-# unlink("theseus_ave.pdb");
-# unlink("theseus_residuals.txt");
-# unlink("theseus_sup.pdb");
-# unlink("theseus_transf2.txt");
-# unlink("theseus_tree.nxs");
-# unlink("theseus_variances.txt");
+$cmd = "$THESEUSAPP $ALNTEMPLATEDIR/\*.pdb";
+system($cmd);
+open (THES, 'theseus_variances.txt') || die "Cannot open $_";
+my @thes_vars = <THES>;
+close(THES);
+
+my %per_res_var;
+foreach my $line (@thes_vars) {
+	# RES 1           MET      1    77.520451     8.804570    21.785661 CORE
+	if ($line =~/RES.*CORE/) {
+		my @fields = split ' ', $line;
+		$per_res_var{ int($fields[3]) } = $fields[4];
+	}
+}
+
+#trim
+foreach my $i (0..$#THREADED_MDLS) {
+	next if ($clusterid->[$i] == -1);
+	my $clid = $clusterid->[$i];
+	my $pdb = $THREADED_MDLS[$i];
+	my $nfrags = scalar( @{ $allfrags{$pdb} } );
+	my $outpdb = $pdb;
+	$outpdb =~ s/.*\///;
+	$outpdb =~ s/\.pdb$/_aln.cl$clid.pdb/;
+	print STDERR "trimming aligned_templates/$outpdb\n";
+	open (PDBIN, "$ALNTEMPLATEDIR/$outpdb") || die "Cannot open $_";
+	my @oldlines = <PDBIN>;
+	close PDBIN;
+
+	open (PDBOUT, ">$ALNTEMPLATEDIR/$outpdb") || die "Cannot open $_";
+	foreach my $line (@oldlines) {
+		my $resid = substr ($line, 22, 4);
+		next if ($per_res_var{ int($resid) } >  $THESEUSCUT);
+		print PDBOUT $line;
+	}
+	close PDBOUT;
+}
+
+
+#trim
+unlink("theseus_ave.pdb");
+unlink("theseus_residuals.txt");
+unlink("theseus_sup.pdb");
+unlink("theseus_transf2.txt");
+unlink("theseus_tree.nxs");
+unlink("theseus_variances.txt");
 
 
 # (d) template density maps

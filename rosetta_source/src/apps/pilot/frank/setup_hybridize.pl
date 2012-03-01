@@ -20,13 +20,19 @@ my $DENSGENAPP = "/work/dimaio/rosetta/rosetta_source/bin/pdb_to_map.default.lin
                  " -database /work/dimaio/rosetta/rosetta_database ".
                  " -edensity:mapreso 5.0 -edensity::grid_spacing 2.0 -in:file:centroid_input";
 my $CSTGEN_APP = "/work/dimaio/rosetta/cm_scripts/bin/predict_distances.pl";
-my $PDBFILEDIR = "/lab/databases/wwpdb/";
+my $SYMMDEFFILE_APP = "/work/dimaio/rosetta/rosetta_source/src/apps/pilot/frank/make_NCS.pl";
+my $DDG_APP = "/work/dimaio/rosetta/rosetta_source/bin/ddg.default.linuxgccrelease".
+              " -database /work/dimaio/rosetta/rosetta_database -score:weights softrep";
+my $DDG_CUTOFF = -10;
 
+my $PDBFILEDIR = "/lab/databases/wwpdb/";
+my $BIOPDBFILEDIR = "/lab/databases/biounits/";
 
 ## paths
 my $NATIVEDIR        = "native/";
 my $TEMPLATEDIR      = "templates/";
 my $PARTIALTHREADDIR = "partial_threads/";
+my $SYMMDIR          = "symmetry/";
 my $COORDCSTDIR      = "coordCsts_resOnly/";
 my $FRAG3FILE      = "fragments/%s_templatesvall.25.3mers";
 my $FRAG9FILE      = "fragments/%s_templatesvall.25.9mers";
@@ -97,7 +103,6 @@ my %three_to_one = (
 
 ## main()
 if ($#ARGV < 2) {
-	#print STDERR "usage: $0 <fasta-file> <ali-file> <evmap> <working-dir>\n";
 	print STDERR "usage: $0 <fasta-file> <ali-file> <working-dir>\n";
 	exit -1;
 }
@@ -113,7 +118,6 @@ $ALNFILENAMES  = "$WORKDIR/".$ALNFILENAMES;
 $CSTFILENAMES  = "$WORKDIR/".$CSTFILENAMES;
 $FLAGFILENAMES = "$WORKDIR/".$FLAGFILENAMES;
 $XMLFILENAMES  = "$WORKDIR/".$XMLFILENAMES;
-#$CFGFILENAMES  = "$WORKDIR/".$CFGFILENAMES;
 $MAPFILENAMES  = "$WORKDIR/".$MAPFILENAMES;
 $ALNTEMPLATEDIR  = "$WORKDIR/".$ALNTEMPLATEDIR;
 
@@ -162,8 +166,10 @@ if ($currtag ne "") {
 ###############################
 ## STAGE 0 -- make output directories if they don't exist
 #rmtree($TEMPLATEDIR);
+rmtree($SYMMDIR);
 rmtree($PARTIALTHREADDIR);
 rmtree($WORKDIR);
+mkdir $SYMMDIR;
 mkdir $TEMPLATEDIR;
 mkdir $PARTIALTHREADDIR;
 mkdir $WORKDIR;
@@ -175,29 +181,33 @@ mkdir $WORKDIR;
 ## (a) grab+sanitize templates
 foreach my $tag (keys %alimap) {
 	my $template = substr($tag,0,5);
-	my $pdbout = $TEMPLATEDIR."/".$template.".pdb";
-	if ( ! -f $pdbout ) {
-		print STDERR "trying to get $pdbout!\n";
-		my $pdbid = substr( $template, 0, 4 );
-		my $chain = substr( $template, 4, 1 );
-		my $dirid = substr( $template, 1, 2 );
+	my $pdbid = substr( $template, 0, 4 );
+	my $tgtchain = substr( $template, 4, 1 );
+	my $dirid = substr( $template, 1, 2 );
+
+	my $pdbout1 = $TEMPLATEDIR."/".$template.".pdb";
+	unless ( ( -e $pdbout1 ) ) {
+		print STDERR "writing $pdbout1!\n";
 		open (PDB, $PDBFILEDIR."/".$dirid."/".$pdbid.".pdb") || die "Cannot open $_";
 		my @pdblines = <PDB>;
 		close PDB;
-		open (PDBOUT, ">$pdbout") || die "Cannot open $_";
+
+		open (PDBOUT1, ">$pdbout1") || die "Cannot open $_";
 		my $linecount = 0;
 		foreach my $line (@pdblines) {
 			last if ($line =~ /^ENDMDL/ && $linecount>0);
 			next if ($line !~/^ATOM  / && $line !~/^HETATM/);
+
 			my $chainid = substr($line,21,1);
-			next if ($chainid ne $chain);
 			my $resname = substr($line,17,3);
 			next if (!defined $three_to_one{ $resname });
 			my $conf = substr($line,16,1);
 			next if ($conf ne " " && $conf ne "A");
+
 			# sanitization
 			substr($line,0,6) = "ATOM  ";
 			substr($line,17,3) = $one_to_three{ $three_to_one{ $resname } };
+
 			# MSE
 			if ($resname eq "MSE") {
 				my $atomname = substr ($line,12,4);
@@ -210,10 +220,123 @@ foreach my $tag (keys %alimap) {
 				my $atomname = substr ($line,12,4);
 				next if ($atomname ne " C  " && $atomname ne " CA "  && $atomname ne " O  "  && $atomname ne " N  "  && $atomname ne " CB ");
 			}
-			print PDBOUT $line;
+
+			if ($chainid eq $tgtchain) {
+				print PDBOUT1 $line;
+			}
+
 			$linecount++;
 		}
-		close PDBOUT
+		close PDBOUT1;
+	}
+
+	# grab biounits
+	my @allbiofiles = <$BIOPDBFILEDIR/$dirid/$pdbid.pdb*>;
+	my (@bestbiofile,@bestbiofile_chains);
+	my $mostbiochains=1;
+	foreach my $biofile (@allbiofiles) {
+		open( BIOPDB, "-|", "zcat " . $biofile) || die "!";
+		my @pdblines = <BIOPDB>;
+		close BIOPDB;
+
+		# verify that it contains the target chain
+		# remember each chain's fasta
+		my %fastas;
+		my $mdl = 0;
+		foreach my $line (@pdblines) {
+			$mdl++ if ($line =~/^ENDMDL/);
+
+			next if ($line !~/^ATOM  / && $line !~/^HETATM/);
+			my $resname = substr($line,17,3);
+			next if (!defined $three_to_one{ $resname });
+			my $conf = substr($line,16,1);
+			next if ($conf ne " " && $conf ne "A");
+
+			my $atomname = substr ($line,12,4);
+			next if ($atomname ne " CA ");
+
+			my $chainid = substr($line,21,1).$mdl;
+			if (!defined ($fastas{$chainid})) {
+				$fastas{$chainid} = "";
+			}
+			$fastas{$chainid} = $fastas{$chainid}.$three_to_one{ $resname };
+		}
+
+		# make sure chain exists
+		next if !defined( $fastas{$tgtchain.'0'} ); # chain is not part of biounit
+
+		# throw out nonidentical chains
+		my @chain_matches = ($tgtchain.'0');
+		foreach my $chainid (keys %fastas) {
+			next if ($tgtchain eq $chainid);
+			my ($tgt_aln, $src_aln, $pdbstart, $maxscore) = alignSW( $fastas{$tgtchain.'0'}, $fastas{$chainid} );
+			#my $target = realign( $tgt_aln, $fastas{$tgtchain}, $fastas{$chainid} ); # attempt to remap target seq
+
+			next if ($maxscore <= 0); # <50% aln res
+			push @chain_matches, $chainid;
+		}
+
+		my $nbiochains = scalar( @chain_matches );
+		if ($nbiochains > $mostbiochains) {
+			$mostbiochains = $nbiochains;
+			@bestbiofile = @pdblines;
+			@bestbiofile_chains = @chain_matches;
+		}
+	}
+
+	next if ($mostbiochains <= 1);
+	#next if ($mostbiochains > 52); # ...
+
+	my %chainhash;
+	my $chainids = "BCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+	my $currchain = 0;
+	foreach my $chainid (@bestbiofile_chains) {
+		if ($chainid eq $tgtchain.'0') {
+			$chainhash{$chainid} = 'A';
+		} else {
+			$chainhash{$chainid} = substr($chainids,$currchain,1);
+			$currchain++;
+		}
+	}
+
+	my $pdbout2 = $SYMMDIR."/".$template.".pdb";
+	open (PDBOUT2, ">$pdbout2") || die "Cannot open $_";
+	my $linecount = 0;
+	my $mdl = 0;
+	foreach my $line (@bestbiofile) {
+		$mdl++ if ($line =~/^ENDMDL/);
+		next if ($line !~/^ATOM  / && $line !~/^HETATM/);
+
+		my $chainid = substr($line,21,1);
+		my $resname = substr($line,17,3);
+		next if (!defined $three_to_one{ $resname });
+		my $conf = substr($line,16,1);
+		next if ($conf ne " " && $conf ne "A");
+
+		# sanitization
+		substr($line,0,6) = "ATOM  ";
+		substr($line,17,3) = $one_to_three{ $three_to_one{ $resname } };
+
+		# MSE
+		if ($resname eq "MSE") {
+			my $atomname = substr ($line,12,4);
+			if ($atomname eq "SE  ") {
+				substr ($line,12,4) = " SD ";
+			}
+		}
+		# all other non-standard ... throw away sidechain
+		elsif (substr($line,17,3) ne $resname) {
+			my $atomname = substr ($line,12,4);
+			next if ($atomname ne " C  " && $atomname ne " CA "  && $atomname ne " O  "  && $atomname ne " N  "  && $atomname ne " CB ");
+		}
+
+		if (defined $chainhash{$chainid.$mdl}) {
+			substr($line,21,1) = $chainhash{$chainid.$mdl};
+			print PDBOUT2 $line;
+		}
+
+
+		$linecount++;
 	}
 }
 
@@ -498,6 +621,142 @@ foreach my $i (0..$nclust) {
 
 ###############################
 ###############################
+## STAGE 2.5 -- symmetry analysis
+foreach my $i (0..$nclust) {
+	my @input_pdbs = ();
+	foreach my $j (0..$#THREADED_MDLS) {
+		next if ($clusterid->[$j] != $i);
+
+		my $tmpl_filename = $THREADED_MDLS[ $j ];
+		$tmpl_filename =~ s/$PARTIALTHREADDIR/$SYMMDIR/g;
+		my $tmpl_filename_in = $tmpl_filename;
+		$tmpl_filename_in =~ s/_w?\d+//g;
+
+		open (TEMPLPDB, "$tmpl_filename_in") || next;
+		my @templatepdb_lines = <TEMPLPDB>;
+		close TEMPLPDB;
+
+		# get alignment
+		my $filename = $THREADED_MDLS[ $j ];
+		$filename =~ s/.*\///;
+		$filename =~ s/\.pdb//;
+		my @target_aln = split(' ',$alimap {$filename}->[3]);
+		my @templ_aln = split(' ',$alimap {$filename}->[4]);
+		chomp( @target_aln);
+		my $target_start = 0;
+		my $target_stop  = length( $target_aln[1] )-1;
+		while( substr($target_aln[1],$target_start,1) eq '-' ) { $target_start++; }
+		while( substr($target_aln[1],$target_stop,1) eq '-' ) { $target_stop--; }
+		print STDERR "Trim $tmpl_filename to $target_start,$target_stop\n";
+
+		# trim to common core
+		# TODO assumes numbering is right ... 
+		my %allreses;
+		foreach my $line (@templatepdb_lines) {
+			my $chainid = substr($line,21,1);
+			my $resid = int( substr($line,22,4) );
+			$allreses{$chainid}->{$resid} = 1;
+		}
+		my %common_reses;
+		resloop: foreach my $resid( keys %{ $allreses{'A'} } ) {
+			foreach my $chn ( keys %allreses ) {
+				next resloop if (!exists $allreses{$chn}->{$resid});
+			}
+			$common_reses{$resid} = 1;
+		}
+
+		# remove unaligned termini + non-common residues
+		my @templatepdb_trim1;
+		my $currptr=-1;
+		my %seenreses;
+		my %seenchains;
+		my %allcas;
+		foreach my $line (@templatepdb_lines) {
+			my $chainid = substr($line,21,1);
+			if (!defined $seenchains{$chainid}) {
+				$seenchains{$chainid} = 1;
+				$allcas{$chainid} = [];
+				$currptr=-1;
+				%seenreses = ();
+			}
+
+			my $resname = $three_to_one{ substr($line,17,3) };
+			my $resid = int( substr($line,22,4) );
+
+			# not in all copies
+			next if (!defined $common_reses{$resid});
+
+			if (!defined ($seenreses{$resid}) ) {
+				$seenreses{$resid} = 1;
+				$currptr++;
+				while (substr($templ_aln[1],$currptr,1) ne $resname) { 
+					#print substr($templ_aln[1],$currptr,1)." at ".$currptr." ne ". $resname."\n";
+					$currptr++;
+					if (!defined substr($templ_aln[1],$currptr,1)) {exit;}
+				} # acct for missing density in template
+				# TODO extra residues in template instead?
+			}
+
+			# termini
+			next if (($currptr < $target_start) || ($currptr > $target_stop));
+			push @templatepdb_trim1, $line;
+
+			# remember ca trace for next step
+			if (substr($line,12,4) eq " CA ") {
+				push @{ $allcas{$chainid} }, [substr ($line, 30, 8), substr ($line, 38, 8), substr ($line, 46, 8)];
+			}
+		}
+
+		# remove non-contacting chains
+		my %contacting_chains = ('A' => 1 );
+		chainloop: foreach my $chn ( keys %seenchains ) {
+			next if ($chn eq 'A');
+			foreach my $ca1 (@{ $allcas{'A'} }) {
+			foreach my $ca2 (@{ $allcas{$chn} }) {
+				if ( dist2( $ca1 , $ca2 ) < 12.0*12.0 ) {
+					$contacting_chains{$chn} = 1;
+					next chainloop;
+				}
+			}
+			}
+		}
+
+		# are we now monomeric?
+		next if (scalar( keys %contacting_chains ) == 1);
+
+		open (TEMPLOUT, ">$tmpl_filename") || die "Cannot open $_";
+		foreach my $line (@templatepdb_trim1) {
+			next if ($line !~ /^ATOM/);
+			next if (!defined $contacting_chains{substr($line,21,1)});
+			my $newX = [ substr ($line, 30, 8), substr ($line, 38, 8), substr ($line, 46, 8) ];
+			$newX = vsub( $newX, $preTs->[$j]);
+			$newX = mapply( $globalRs->[$j], $newX );
+			$newX = vadd( $newX, $postTs->[$j]);
+			substr ($line, 30, 8) = sprintf ("%8.3f", $newX->[0]);
+			substr ($line, 38, 8) = sprintf ("%8.3f", $newX->[1]);
+			substr ($line, 46, 8) = sprintf ("%8.3f", $newX->[2]);
+			print TEMPLOUT $line;
+		}
+		close TEMPLOUT;
+
+		# run "autosymm" code
+		my $cmd = "$SYMMDEFFILE_APP -p $tmpl_filename";
+		print STDERR $cmd."\n";
+		system($cmd);
+	}
+}
+# delete original alignments
+foreach my $j (0..$#THREADED_MDLS) {
+	my $tmpl_filename = $THREADED_MDLS[ $j ];
+	$tmpl_filename =~ s/$PARTIALTHREADDIR/$SYMMDIR/g;
+	$tmpl_filename =~ s/_w?\d+//g;
+	unlink($tmpl_filename);
+}
+
+exit;
+
+###############################
+###############################
 ## STAGE 3 -- output
 mkdir ($WORKDIR);
 
@@ -704,4 +963,163 @@ sub dist {
 	my ($x, $y) = @_;
 	my $z = [ $x->[0]-$y->[0] , $x->[1]-$y->[1] , $x->[2]-$y->[2] ];
 	return sqrt( $z->[0]*$z->[0] + $z->[1]*$z->[1] + $z->[2]*$z->[2] );
+}
+
+sub dist2 {
+	my ($x, $y) = @_;
+	my $z = [ $x->[0]-$y->[0] , $x->[1]-$y->[1] , $x->[2]-$y->[2] ];
+	return ( $z->[0]*$z->[0] + $z->[1]*$z->[1] + $z->[2]*$z->[2] );
+}
+
+
+## transitive alignment realigns hhr sequence to pdb sequence
+sub realign {
+	my ($templ_aln, $template, $target) = @_;
+
+	my $ptr1=0;
+	my $ptr2=0;
+
+	# find gaps in templ_aln
+	while (	$ptr1 <= length($templ_aln) && $ptr2 <= length($template) ) {
+		if ( substr($template, $ptr2, 1) eq substr($templ_aln, $ptr1, 1) ) {
+			$ptr1++;
+			$ptr2++;
+		} elsif ( substr($templ_aln, $ptr1, 1) eq '-') {
+			$target = substr($target, 0, $ptr1).'-'.substr($target, $ptr1);
+			$ptr1++;
+		} else {
+			return ""; # failure
+		}
+	}
+	return $target;
+}
+
+## DP sequence alignment
+sub alignSW {
+	my ($seq1, $seq2) = @_;
+	
+	# scoring scheme
+	my $MATCH    =  1; # +1 for letters that match
+	my $MISMATCH = -1; # -1 for letters that mismatch
+	my $GAP      = -1; # -1 for any gap
+	
+	# initialization
+	my @matrix;
+	$matrix[0][0]{score}   = 0;
+	$matrix[0][0]{pointer} = "n";
+	for(my $j = 1; $j <= length($seq1); $j++) {
+		$matrix[0][$j]{score}   = -$j;
+		$matrix[0][$j]{pointer} = "l";
+	}
+	for (my $i = 1; $i <= length($seq2); $i++) {
+		$matrix[$i][0]{score}   = -$i;
+		$matrix[$i][0]{pointer} = "n";
+	}
+
+	# fill
+	my $max_i     = 0;
+	my $max_j     = 0;
+	my $max_score = -99999;
+	
+	for(my $i = 1; $i <= length($seq2); $i++) {
+		for(my $j = 1; $j <= length($seq1); $j++) {
+			my ($diagonal_score, $left_score, $up_score);
+			
+			# calculate match score
+			my $letter1 = substr($seq1, $j-1, 1);
+			my $letter2 = substr($seq2, $i-1, 1);       
+			if ($letter1 eq $letter2) {
+				$diagonal_score = $matrix[$i-1][$j-1]{score} + $MATCH;
+			}
+			else {
+				$diagonal_score = $matrix[$i-1][$j-1]{score} + $MISMATCH;
+			}
+			
+			# calculate gap scores
+			if ($letter2 eq '-') {
+				$up_score   = $matrix[$i-1][$j]{score} + $MATCH;
+			} else {
+				$up_score   = $matrix[$i-1][$j]{score} + $GAP;
+			}
+			if ($letter1 eq '-') {
+				$left_score = $matrix[$i][$j-1]{score} + $MATCH;
+			} else {
+				$left_score = $matrix[$i][$j-1]{score} + $GAP;
+			}
+			
+			#if ($diagonal_score <= 0 and $up_score <= 0 and $left_score <= 0) {
+			#	$matrix[$i][$j]{score}   = 0;
+			#	$matrix[$i][$j]{pointer} = "n";
+			#	next; # terminate this iteration of the loop
+			#}
+			
+			# choose best score
+			if ($diagonal_score >= $up_score) {
+				if ($diagonal_score >= $left_score) {
+					$matrix[$i][$j]{score}   = $diagonal_score;
+					$matrix[$i][$j]{pointer} = "d";
+				}
+				else {
+					$matrix[$i][$j]{score}   = $left_score;
+					$matrix[$i][$j]{pointer} = "l";
+				}
+			} else {
+				if ($up_score >= $left_score) {
+					$matrix[$i][$j]{score}   = $up_score;
+					$matrix[$i][$j]{pointer} = "u";
+				}
+				else {
+					$matrix[$i][$j]{score}   = $left_score;
+					$matrix[$i][$j]{pointer} = "l";
+				}
+			}
+			
+			# set maximum score
+			#if ($matrix[$i][$j]{score} > $max_score) {
+			#	$max_i     = $i;
+			#	$max_j     = $j;
+			#	$max_score = $matrix[$i][$j]{score};
+			#}
+		}
+	}
+	
+	# trace-back
+	my $align1 = "";
+	my $align2 = "";
+	
+
+	# find max score
+	for(my $i = 1; $i <= length($seq2); $i++) {
+		if ($matrix[$i][length($seq1)]{score} > $max_score) {
+			$max_i     = $i;
+			$max_score = $matrix[$i][length($seq1)]{score};
+		}
+	}
+	my $i = $max_i;
+	my $j = length($seq1);
+	
+	while (1) {
+		last if $matrix[$i][$j]{pointer} eq "n";
+		
+		if ($matrix[$i][$j]{pointer} eq "d") {
+			$align1 .= substr($seq1, $j-1, 1);
+			$align2 .= substr($seq2, $i-1, 1);
+			$i--; $j--;
+		}
+		elsif ($matrix[$i][$j]{pointer} eq "l") {
+			$align1 .= substr($seq1, $j-1, 1);
+			$align2 .= "-";
+			$j--;
+		}
+		elsif ($matrix[$i][$j]{pointer} eq "u") {
+			$align1 .= "-";
+			$align2 .= substr($seq2, $i-1, 1);
+			$i--;
+		}   
+	}
+	
+	$align1 = reverse $align1;
+	$align2 = reverse $align2;
+
+	return ($align1, $align2, $i, $max_score);
 }

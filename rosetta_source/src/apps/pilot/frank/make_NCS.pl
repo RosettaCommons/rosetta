@@ -17,16 +17,21 @@ use lib dirname(__FILE__);
 require "kabsch.pm";
 require "matrix.pm";
 
+## parameters
+my $MAX_TRANS_ERR = 5.0; # angstrom
+my $MAX_ROT_ERR   = 3.0; # degrees
+
 ###############################################################################
 
 if ($#ARGV < 0) {
 	print STDERR "usage: $0 [options]\n";
-	print STDERR "example:   $0 -a A -i B C -r 12.0 -p mystructure.pdb\n";
+	print STDERR "example:   $0 -a A -r 12.0 -p mystructure.pdb\n";
+	print STDERR "NOTE: This is experimental code that tries to automatically determine the symmetry of the\n";
+	print STDERR "input system.  Use with caution!\n";
 	print STDERR "options: \n";
 	print STDERR "    -p <string> : Input PDB file (one of -b or -p _must_ be given)\n";
 	print STDERR "    -r <real>   : [default 8.0] the max CA-CA distance between two interacting chains\n";
 	print STDERR "    -a <char>   : [default A] the chain ID of the main chain\n";
-	print STDERR "    -i <char>   : [default B] the chain IDs of one chain in each symmetric complex\n";
 	print STDERR "    -f          : [default false] fast distance checking\n";
 	exit -1;
 }
@@ -34,7 +39,7 @@ if ($#ARGV < 0) {
 my $pdbfile;
 my $interact_dist = 8.0;  # min interaction distance
 my $primary_chain = 'A';
-my @secondary_chains = ('B');
+my @secondary_chains = ();
 my $fastDistCheck = 0;
 
 ## parse options (do this by hand since Getopt does not handle this well)
@@ -46,8 +51,6 @@ for ( my $i=0; $i<=$#suboptions; $i++ ) {
 	} elsif ($suboptions[$i] eq "-a " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$primary_chain = $suboptions[++$i];
 		$primary_chain =~ s/\s*(\S+)\s*/$1/;
-	} elsif ($suboptions[$i] eq "-i " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
-		@secondary_chains = split /[, ]/,$suboptions[++$i];
 	} elsif ($suboptions[$i] eq "-p " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$pdbfile = $suboptions[++$i];
 		$pdbfile =~ s/\s*(\S+)\s*/$1/;
@@ -59,15 +62,12 @@ for ( my $i=0; $i<=$#suboptions; $i++ ) {
 	}
 }
 
+
 ### '_' -> ' '
 if ($primary_chain eq '_') {
 	$primary_chain = ' ';
 }
-foreach my $i (0..$#secondary_chains) {
-	if ($secondary_chains[$i] eq '_') {
-		$secondary_chains[$i] = ' ';
-	}
-}
+
 
 ###
 ### Input PDB file
@@ -82,6 +82,7 @@ while (<PDB>) {
 		if ($atom eq " CA ") {
 			if (!defined $chains{ $chnid } ) {
 				$chains{ $chnid } = [];
+				push @secondary_chains, $chnid if ($chnid ne $primary_chain);
 			}
 			my $CA_i = [substr ($_, 30, 8),substr ($_, 38, 8),substr ($_, 46, 8)];
 			push @{ $chains{ $chnid } }, $CA_i;
@@ -92,7 +93,6 @@ while (<PDB>) {
 	}
 }
 close (PDB);
-
 
 
 # recenter the primary chain ...
@@ -108,6 +108,7 @@ $NCS_ops->{R} = $R_0;
 $NCS_ops->{T} = $COM_0;
 $NCS_ops->{PATH} = "";
 $NCS_ops->{CHILDREN} = [];
+
 
 # find residue closest to CoM of the system
 # find the radius of the molecule
@@ -126,11 +127,141 @@ foreach my $i ( 0..scalar( @{ $chains{ $primary_chain } })-1 ) {
 }
 my $monomerRadius = sqrt( $maxDist2 );
 
+# pass 1 -- throw out nonsymm stuff
 my @allQs;
 my @allCOMs;
+my @allCorrCOMs;
 my @sym_orders;
+my @secondary_chains_filt;
 
+# remember 'best' so far
+my $best_score=999;
+my $best_order=1;
+my @best_chain;
 foreach my $sec_chain (@secondary_chains) {
+	my $chain1 = deep_copy( $chains{ $primary_chain });
+	my $chain2 = deep_copy( $chains{ $sec_chain });
+	my ($R,$rmsd, $COM_i, $COM_ij) = rms_align( $chain1,$chain2 );
+	my $del_COM = vsub ($COM_i, $COM_0);
+
+	my ($X,$Y,$Z,$W)=R2quat($R);
+	my $Worig = $W;
+	my $Wmult = 1;
+	if ($W < 0) { $W = -$W; $Wmult = -1; }
+	my $omega = acos($W);
+	my $sym_order = int(PI/$omega + 0.5);
+
+	# now make perfectly symmetrical version of superposition
+	my $newW = -$Wmult *cos( PI/$sym_order );
+	my $S = sqrt ( (1-$newW*$newW)/($X*$X+$Y*$Y+$Z*$Z) );
+	my $newQ = [$X*$S , $Y*$S, $Z*$S, $newW];
+	my $newR = quat2R( $newQ->[0], $newQ->[1], $newQ->[2], $newQ->[3] );
+
+	# error (rot)
+	my $Werror = 180/PI * abs( $Worig + $newW );
+
+	# error (trans)
+	my $err_pos = [0,0,0];
+	my $R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
+	foreach my $j (1..$sym_order) {
+		$err_pos = vadd( $err_pos, mapply( $R_i,$del_COM ) );
+		$R_i = mmult($newR, $R_i);
+	}
+
+	next if (vnorm( $err_pos ) > $MAX_TRANS_ERR);
+	next if ($Werror > $MAX_ROT_ERR);
+
+	#print STDERR "$pdbfile: Found ".$sym_order."-fold (err=".$Werror."/".vnorm( $err_pos ).") symmetric complex at chain ".$sec_chain."\n";
+	my $adj_newDelCOM = vsub( $del_COM , [ $err_pos->[0]/$sym_order , $err_pos->[1]/$sym_order , $err_pos->[2]/$sym_order ] );
+	push @secondary_chains_filt, $sec_chain;
+	push @sym_orders, $sym_order;
+	push @allQs, $newQ;
+	push @allCOMs, $del_COM;
+	push @allCorrCOMs, $adj_newDelCOM;
+
+	my $score = $Werror+vnorm( $err_pos );
+	if ($sym_order > $best_order || ( $sym_order == $best_order && $best_score > $score) ) {
+		$best_order = $sym_order;
+		$best_score = $score;
+		@best_chain = ($sec_chain);
+	}
+}
+
+# pass 2 -- try to see if any pairs are Dn-compatible
+my @secondary_chains_filt_dn;
+my @scores_dn;
+my @symm_orders_dn;
+foreach my $i (0..$#secondary_chains_filt) {
+foreach my $j (0..$#secondary_chains_filt) {
+	next if ($i eq $j);
+	next if ($sym_orders[$i] != 2);
+
+	# symm agreement
+	# the two transformations must be about perpendicular axes
+	my $X = [ $allQs[$i]->[0],  $allQs[$i]->[1],  $allQs[$i]->[2] ];
+	my $Y = [ $allQs[$j]->[0],  $allQs[$j]->[1],  $allQs[$j]->[2] ];
+	normalize($X); normalize($Y);
+	my $ang1 = abs( 90-angle_deg($X,$Y) ); # angle between sym axes
+	next if ($ang1 > $MAX_ROT_ERR);
+
+	# trans agreement
+	my $NCS_opstemp = {};
+	my $newR = quat2R( $allQs[$i]->[0], $allQs[$i]->[1], $allQs[$i]->[2], $allQs[$i]->[3] );
+	my $adj_newDelCOM = $allCorrCOMs[$i];
+	expand_symmops_by_split( $NCS_opstemp, $newR, $adj_newDelCOM, $sym_orders[$i]);
+
+	my $newQ = $allQs[ $j ];
+	my $del_COM = $allCOMs[ $j ];
+	my $sym_order = $sym_orders[ $j ];
+	$newR = quat2R( $newQ->[0], $newQ->[1], $newQ->[2], $newQ->[3] );
+
+	my $com_complex = $NCS_opstemp->{T};
+	my $com_secondary = vadd( $del_COM, vadd( $COM_0, mapply( $newR , vsub ( $com_complex , $COM_0 ) ) ) );
+	my $newDelCOM = vsub ( $com_secondary , $com_complex );
+	my $err_pos = [0,0,0];
+	my $R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
+	foreach my $j (1..$sym_order) {
+		$err_pos = vadd( $err_pos, mapply( $R_i,$newDelCOM ) );
+		$R_i = mmult($newR, $R_i);
+	}
+	my $axis_proj_i =  [ $allQs[1-$i]->[0],  $allQs[1-$i]->[1],  $allQs[1-$i]->[2] ];
+	normalize( $axis_proj_i );
+	my $del_COM_inplane    = vsub( $newDelCOM , vscale(dot($newDelCOM,$axis_proj_i),$axis_proj_i) );
+	$err_pos = vscale( $sym_orders[ $i ] , $del_COM_inplane );
+	next if (vnorm( $err_pos ) > $MAX_TRANS_ERR);
+
+	#print STDERR "$pdbfile: Found D".$sym_orders[$j]." (err=".$ang1."/".vnorm( $err_pos ).") symmetric complex at chains ".
+	#   $secondary_chains_filt[$i]."/".$secondary_chains_filt[$j]."\n";
+
+	my $score = ($ang1+vnorm( $err_pos ));
+	if (2*$sym_orders[$j] > $best_order || ( $sym_order == $best_order && $best_score > $score) ) {
+		$best_order = 2*$sym_orders[$j];
+		$best_score = $score;
+		@best_chain = ($secondary_chains_filt[$i],$secondary_chains_filt[$j]);
+	}
+}
+}
+
+my $symmtype= "C".$best_order;
+if ( scalar(@best_chain) == 2 ) {
+	$symmtype = "D".($best_order/2);
+}
+
+if ($symmtype eq "C1") {
+	print STDERR "$pdbfile: No symmetry found.\n";	
+	exit;
+}
+print STDERR "$pdbfile: Found ".$symmtype." symmetric complex!\n";
+
+my $outfile = $pdbfile;
+$outfile =~ s/\.pdb/_$symmtype.symm/;
+
+# make symmdef file
+@allQs = ();
+@allCOMs = ();
+@sym_orders = ();
+
+foreach my $sec_chain (@best_chain) {
 	my @sec_chain_ids = split( ':', $sec_chain );
 
 	if ( ! defined $chains{ $sec_chain_ids[0] } ) {
@@ -163,7 +294,7 @@ foreach my $sec_chain (@secondary_chains) {
 	}
 
 	push @sym_orders, $sym_order;
-	print STDERR "Found ".$sym_order."-fold (".(PI/$omega).") symmetric complex at chain ".$sec_chain_ids[0]."\n";
+	#print STDERR "Found ".$sym_order."-fold (".(PI/$omega).") symmetric complex at chain ".$sec_chain_ids[0]."\n";
 
 	# now make perfectly symmetrical version of superposition
 	my $newW = -$Wmult *cos( PI/$sym_order );
@@ -193,6 +324,15 @@ if ($#allQs == 1 && ($sym_orders[ 0 ] == 2 || $sym_orders[ 1 ] == 2) ) {
 
 	$allQs[0] = [ $X0->[0]*$S_x , $X0->[1]*$S_x, $X0->[2]*$S_x, $W_x];
 	$allQs[1] = [ $Y0->[0]*$S_y , $Y0->[1]*$S_y, $Y0->[2]*$S_y, $W_y];
+
+	# if we're Dn symmetry, always expand the Cn before the C2
+	if ($sym_orders[ 0 ] == 2 && $sym_orders[ 1 ] != 2) {
+		my $temp;
+		$temp = $allQs[1]; $allQs[1] = $allQs[0]; $allQs[0] = $temp;
+		$temp = $allCOMs[1]; $allCOMs[1] = $allCOMs[0]; $allCOMs[0] = $temp;
+		$temp = $sym_orders[1]; $sym_orders[1] = $sym_orders[0]; $sym_orders[0] = $temp;
+		$temp = $secondary_chains[1]; $secondary_chains[1] = $secondary_chains[0]; $secondary_chains[0] = $temp;
+	}
 }
 
 # 2) Icosahedral symmetries
@@ -228,16 +368,15 @@ foreach my $i (0..$#allQs) {
 		$R_i = mmult($newR, $R_i);
 	}
 
-	# special case for D symmetry
-	if ($#allQs == 1 && $sym_orders[ $i ] == 2 && $sym_orders[ 1-$i ] != 2) {
-		my $axis_proj_i = [ $allQs[1-$i]->[0],  $allQs[1-$i]->[1],  $allQs[1-$i]->[2] ];
-
+	# special case for Dn symmetry
+	if ( $i == 1 && $#allQs == 1 ) { 
+		my $axis_proj_i =  [ $allQs[1-$i]->[0],  $allQs[1-$i]->[1],  $allQs[1-$i]->[2] ];
 		# project $delCOM along this axis
 		normalize( $axis_proj_i );
 		my $del_COM_inplane    = vsub( $newDelCOM , vscale(dot($newDelCOM,$axis_proj_i),$axis_proj_i) );
-		$err_pos = vscale( 2 , $del_COM_inplane );
+		$err_pos = vscale( $sym_orders[ $i ] , $del_COM_inplane );
 	}
-	print STDERR "  translation error = ".vnorm( $err_pos )."\n";
+	#print STDERR "  translation error = ".vnorm( $err_pos )."\n";
 
 
 	# special case for icosehedral symmetry
@@ -250,8 +389,8 @@ foreach my $i (0..$#allQs) {
 }
 
 my ($nnodes,$nleaves) = tree_size( $NCS_ops );
-print STDERR "Found a total of $nleaves monomers in the symmetric complex.\n";
-print STDERR "Placing $nnodes virtual residues.\n";
+#print STDERR "Found a total of $nleaves monomers in the symmetric complex.\n";
+#print STDERR "Placing $nnodes virtual residues.\n";
 
 #exit -1;
 
@@ -268,7 +407,7 @@ foreach my $symop (@{ $symops }) {
   	my $dist2XY = vnorm2( $delXY );
 
 	if ( sqrt($dist2XY) > 2*$monomerRadius + $interact_dist ) {
-		print STDERR " [$counter] Excluding interface '".$symop->{PATH}."'\n";
+		#print STDERR " [$counter] Excluding interface '".$symop->{PATH}."'\n";
 		$excludeinterface{ $id } = $counter++;
 	}
 }
@@ -281,7 +420,7 @@ if ($fastDistCheck == 1) {
 		next if (defined $excludeinterface{ $id });
 
 		# we have a hit! tag NCS copy $j_symm as a non-symmetic interface
-		print STDERR " Adding interface '".$symop->{PATH}."'\n";
+		#print STDERR " Adding interface '".$symop->{PATH}."'\n";
 		$symminterface{ $id } = $counter++;
 	}
 } else {
@@ -302,7 +441,7 @@ if ($fastDistCheck == 1) {
 	 
 				if ($dist2XY < $interact_dist*$interact_dist) {
 					# we have a hit! tag NCS copy $j_symm as a non-symmetic interface
-					print STDERR " Adding interface '".$symop->{PATH}."'\n";
+					#print STDERR " Adding interface '".$symop->{PATH}."'\n";
 					$symminterface{ $id } = $counter++;
 				}
 			}
@@ -390,16 +529,18 @@ foreach my $i (1..scalar(@{ $symops })-1) {  # no need to test 0
 # symmetry_name c4
 # E = 2*VRT2
 # anchor_residue 17
+open (OUTSYM, ">$outfile");
+
 my $symmname = $pdbfile;
 $symmname =~ s/\.pdb$//;
 $symmname = $symmname."_".get_topology( $NCS_ops );
-print "symmetry_name $symmname\n";
-print "E = ".($nleaves)."*VRT".$syminterfaces[0]."_base";
+print OUTSYM "symmetry_name $symmname\n";
+print OUTSYM "E = ".($nleaves)."*VRT".$syminterfaces[0]."_base";
 foreach my $complex (sort { $symminterface{$a} <=> $symminterface{$b} } keys %energy_counter) {
-	print " + ".$energy_counter{$complex}."*(VRT".$syminterfaces[0]."_base".":VRT".$complex."_base".")";
+	print OUTSYM " + ".$energy_counter{$complex}."*(VRT".$syminterfaces[0]."_base".":VRT".$complex."_base".")";
 }
-print "\n";
-print "anchor_residue $minRes\n";
+print OUTSYM "\n";
+print OUTSYM "anchor_residue $minRes\n";
 
 # virtual_coordinates_start
 # xyz VRT1 -1,0,0 0,1,0 0,0,0
@@ -409,139 +550,46 @@ print "anchor_residue $minRes\n";
 # virtual_coordinates_stop
 my $vrts_by_depth = tree_traverse_by_depth( $NCS_ops );
 my ($vrt_lines, $connect_lines, $dof_lines, $debug_lines) = fold_tree_from_ncs( $NCS_ops , $vrts_by_depth, \%symminterface );
-print "virtual_coordinates_start\n";
+print OUTSYM "virtual_coordinates_start\n";
 foreach my $vrt_line (@{ $vrt_lines }) {
-	print $vrt_line."\n";
+	print OUTSYM $vrt_line."\n";
 }
 # connect_virtual JUMP1 VRT1 VRT2
 # connect_virtual JUMP2 VRT1 VRT3
 # connect_virtual JUMP3 VRT1 VRT4
-print "virtual_coordinates_stop\n";
+print OUTSYM "virtual_coordinates_stop\n";
 foreach my $connect_line (@{ $connect_lines }) {
-	print $connect_line."\n";
+	print OUTSYM $connect_line."\n";
 }
 foreach my $dof_line (@{ $dof_lines }) {
-	print $dof_line."\n";
+	print OUTSYM $dof_line."\n";
 }
 my $counter = 0;
 foreach my $vrt_level ( @{ $vrts_by_depth } ) {
 	if ($counter > 1) {
-		print "set_jump_group JUMPGROUP$counter";
+		print OUTSYM "set_jump_group JUMPGROUP$counter";
 		foreach my $tag (@{ $vrt_level }) {
 			# jump to _first_ child in each group
 			if ($tag =~ /_0$/) {
-				print " JUMP$tag";
+				print OUTSYM " JUMP$tag";
 			}
 		}
-		print "\n";
+		print OUTSYM "\n";
 	}
 	$counter++;
 }
-print "set_jump_group JUMPGROUP$counter";
+print OUTSYM "set_jump_group JUMPGROUP$counter";
 foreach my $leaf ( @{ $symops } ) {
 	my $tag = $leaf->{PATH};
-	print " JUMP$tag"."_to_com";
+	print OUTSYM " JUMP$tag"."_to_com";
 }
-print "\n";
+print OUTSYM "\n";
 $counter++;
-print "set_jump_group JUMPGROUP$counter";
+print OUTSYM "set_jump_group JUMPGROUP$counter";
 foreach my $tag ( keys %symminterface ) {
-	print " JUMP$tag"."_to_subunit";
+	print OUTSYM " JUMP$tag"."_to_subunit";
 }
-print "\n";
-
-
-
-# output complete symm complex
-########################################
-## write output pdb
-my $outpdb = $pdbfile;
-my $outmon = $pdbfile;
-my $outmdl = $pdbfile;
-my $outkin = $pdbfile;
-
-my $suffix = "_model_$primary_chain";
-foreach my $chn (@secondary_chains) {
-	$suffix = $suffix.$chn;
-}
-$suffix =~ s/://g;
-
-if ($outpdb =~ /\.pdb$/) {
-	$outpdb =~ s/\.pdb$/_symm.pdb/;
-	$outkin =~ s/\.pdb$/.kin/;
-	$outmdl =~ s/\.pdb$/$suffix.pdb/;
-	$outmon =~ s/\.pdb$/_INPUT.pdb/;
-} else {
-	$outpdb = $outpdb."_symm.pdb";
-	$outkin = $outpdb.".kin";
-	$outmdl = $outpdb."_model.pdb";
-	$outmon = $outmon."_INPUT.pdb";
-}
-open (OUTPDB, ">$outpdb");
-open (OUTMON, ">$outmon");
-open (OUTMDL, ">$outmdl");
-open (OUTKIN, ">$outkin");
-
-my $chnidx = 0;
-my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-foreach my $symop (@{ $symops }) {
-	foreach my $line (@filebuf) {
-		my $linecopy = $line;
-
-		my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
-		my $X_0 = vsub($X,$COM_0);
-		my $rX = vadd( mapply($symop->{R}, $X_0) , $symop->{T} );
-
-		substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
-		substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
-		substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
-		substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
-
-		print OUTPDB $linecopy."\n";
-
-		if (defined $symminterface{ $symop->{PATH} }) {
-			print OUTMDL $linecopy."\n";
-		}
-	}
-	print OUTPDB "TER   \n";
-	#if (defined $symminterface{ $symop->{PATH} }) {
-		print STDERR "Writing interface ".$symop->{PATH}." as chain ".substr ($chains, $chnidx, 1)."\n";
-	#}
-	$chnidx++;
-}
-
-######################################
-foreach my $line (@filebuf) {
-	my $linecopy = $line;
-
-	my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
-
-	substr ($linecopy, 30, 8) = sprintf ("%8.3f", $X->[0]);
-	substr ($linecopy, 38, 8) = sprintf ("%8.3f", $X->[1]);
-	substr ($linecopy, 46, 8) = sprintf ("%8.3f", $X->[2]);
-	substr ($linecopy, 21, 1) = "A";
-
-	print OUTMON $linecopy."\n";
-}
-
-
-#
-#
-#
-print OUTKIN "\@kinemage 1\n";
-print OUTKIN "\@perspective\n";
-print OUTKIN "\@onewidth\n";
-#print OUTKIN "\@zoom 1.0\n";
-#print OUTKIN "\@zslab 180 \n";
-#print OUTKIN "\@center 0.0 0.0 0.0\n";
-print OUTKIN "\@arrowlist {ft} color=sky\n";
-foreach my $debug_line (@{ $debug_lines }) {
-	print OUTKIN $debug_line;
-}
-
-#close(OUTPDB);
-#close(OUTMON);
-
+print OUTSYM "\n";
 
 
 
@@ -555,6 +603,16 @@ foreach my $debug_line (@{ $debug_lines }) {
 #############################################################################
 #############################################################################
 
+sub angle_deg {
+    my ($x, $y) = @_;
+
+    my $x_m = vnorm($x);
+    my $y_m = vnorm($y);
+
+	my $xy = ($x->[0]*$y->[0]+$x->[1]*$y->[1]+$x->[2]*$y->[2]);
+
+    return (180*acos ( $xy / ($x_m * $y_m) )/PI);
+}
 
 #############
 # expand_symmops_by_split( $NCS_ops, $newR, $adj_newDelCOM, $sym_order)
