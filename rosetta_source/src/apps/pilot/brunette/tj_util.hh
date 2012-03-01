@@ -3,18 +3,24 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Residue.fwd.hh>
 
+#include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 
 #include <core/io/pdb/pose_io.hh>
+#include <core/import_pose/import_pose.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
+
+#include <core/pose/annotated_sequence.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/SequenceAlignment.hh>
@@ -24,6 +30,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/rms_util.tmpl.hh>
 
 #include <core/pack/optimizeH.hh>
 #include <core/pack/pack_missing_sidechains.hh>
@@ -32,12 +40,22 @@
 #include <protocols/comparative_modeling/coord_util.hh>
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
+#include <protocols/loops/util.hh>
+
+#include <protocols/star/Extender.hh>
+
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+
 #include <map>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 using utility::vector1;
 using namespace core::sequence;
@@ -74,20 +92,18 @@ map<string,SequenceAlignment> input_alignmentsMapped(bool mapToPdbid){
 			     option[ cm::aln_format ](), align_fns[ii]
 								     );
     for ( Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
-			string mapToName;
+			string aln_id;
 			if(mapToPdbid == true){
-				string aln_id = tmp_alns[jj].sequence(2)->id();
-				string pdbid = aln_id.substr(0,aln_id.length()-2);
-				mapToName = pdbid;
-			}
+              aln_id = tmp_alns[jj].sequence(2)->id();
+              std::transform(aln_id.begin(), aln_id.end(), aln_id.begin(), toupper);
+            }
 			else{
-				std::stringstream numbConvert;
-				string alnBaseName = utility::file_basename(option[ in::file::alignment ]()[ii]);
-				numbConvert << alnBaseName << "_" << jj;
-				string aln_id = numbConvert.str();
-				mapToName = aln_id;
-					}
-			alns.insert(std::pair<string,SequenceAlignment>(mapToName,tmp_alns[jj]));
+              std::stringstream numbConvert;
+              string alnBaseName = utility::file_basename(option[ in::file::alignment ]()[ii]);
+              numbConvert << alnBaseName << "_" << jj;
+              aln_id = numbConvert.str();
+            }
+			alns.insert(std::pair<string,SequenceAlignment>(aln_id,tmp_alns[jj]));
     }
   }
   return(alns);
@@ -114,6 +130,34 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line(
       core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
       string name = utility::file_basename( *it );
       name = name.substr( 0, 5 );
+      poses[name] = pose;
+    }
+  }
+  return poses;
+}
+
+//gets the template poses from the cmd line.
+std::map< std::string, core::pose::Pose > poses_from_cmd_line_noPDBtag(
+	 utility::vector1< std::string > const & fn_list) {
+  using std::string;
+  using core::pose::Pose;
+  using utility::file::file_exists;
+  using core::import_pose::pose_from_pdb;
+  using namespace core::chemical;
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+
+  ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+  map< string, Pose > poses;
+
+  typedef vector1< string >::const_iterator iter;
+  for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
+    if ( file_exists(*it) ) {
+      Pose pose;
+      core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
+      string name = utility::file_basename( *it );
+      name = name.substr( 0, 9 );
+      std::transform(name.begin(), name.end(), name.begin(), toupper);
       poses[name] = pose;
     }
   }
@@ -168,7 +212,22 @@ map<string,Pose> generate_partial_threads(map<string,SequenceAlignment> alnData,
   return(partialThreads);
 }
 
-/// @brief calculates burial 
+/// @brief get all unaligned loops from set of alignments
+map<string, const protocols::loops::Loops> get_unalignedLoopsMapped(map<string,SequenceAlignment> alnDataMapped, Size numResidues){
+  using namespace protocols::star;
+  using protocols::loops::Loops;
+  map<string,const Loops> unalignedLoops;
+  map<string, SequenceAlignment>::iterator alnDataMapped_itr;
+  for(alnDataMapped_itr=alnDataMapped.begin(); alnDataMapped_itr != alnDataMapped.end(); alnDataMapped_itr++){
+    core::sequence::SequenceAlignmentCOP tmpAlignment = alnDataMapped_itr->second.clone();
+    Extender extender(tmpAlignment, numResidues);
+    const Loops& unaligned = *(extender.unaligned());
+    unalignedLoops.insert(std::pair<string,const Loops>(alnDataMapped_itr->first,unaligned));
+  }
+  return(unalignedLoops);
+}
+
+/// @brief calculates burial
 vector1<bool> calculate_surface_exposure(Pose pose){
   vector1<core::Real> normalized_rsd_sasa;
   core::id::AtomID_Map< core::Real > atom_sasa;
@@ -223,12 +282,84 @@ vector1<bool> calculate_surface_exposure(Pose pose){
   return(surface_exposed);
 }
 
+/// @brief superimposes aligned residues
+void superimpose_pose_using_aln(Pose & mod_pose, Pose const & ref_pose, SequenceAlignment aln, Size firstAln){
+  using namespace core::id;
+  using namespace core::sequence;
+  using namespace core::scoring;
+  Size secondAln;
+  if (firstAln == 1)
+    secondAln = 2;
+  else
+    secondAln = 1;
+  //was 2,1
+  SequenceMapping map = aln.sequence_mapping(firstAln,secondAln);
+  core::id::AtomID_Map< core::id::AtomID > atom_map;
+  core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::BOGUS_ATOM_ID ); // maps every atomid to bogus atom
+  for ( Size ii=1; ii<=mod_pose.total_residue(); ++ii ) {
+    if(map[ii] != 0){
+      core::id::AtomID const id1( mod_pose.residue(ii).atom_index("CA"), ii );
+      core::id::AtomID const id2( ref_pose.residue(map[ii]).atom_index("CA"), map[ii] );
+      atom_map[ id1 ] = id2;
+    }
+  }
+  superimpose_pose( mod_pose, ref_pose, atom_map);
+}
 
-/// @brief calculates burial 
-bool gap_res_re(Size gapStartRes, Size gapEndRes, Size resToStart, Size resToEnd, Size goalRes, Pose pose){
-  Size CA_CA_DIST = 3.16; //I measured several beta-sheets and found that the length between CA was exactly 3.16 in 2 cases.(Both cases 5 residues 15.8ang.  In loops the longest I got was 1.37 angstroms.
-  distStartToGoal =
-  distEndToGoal = 
-   
-  pose(position gap start) dist to end
-    pose(position gap end dist to end
+/// @brief inputs the first N poses
+
+utility::vector1< core::pose::PoseOP > input_subset_poses(Size n){
+  using namespace core::chemical;
+  using namespace core::import_pose::pose_stream;
+  utility::vector1< core::pose::PoseOP > pose_vector;
+  ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+  Size count = 0;
+  MetaPoseInputStream input = streams_from_cmd_line();
+  while(input.has_another_pose() && count < n){
+    core::pose::PoseOP input_poseOP;
+    input_poseOP = new core::pose::Pose();
+    input.fill_pose(*input_poseOP,*rsd_set);
+    pose_vector.push_back(input_poseOP);
+    count++;
+  }
+  return(pose_vector);
+}
+
+//@brief gets central pose...assumes all poses are the same length
+core::pose::PoseOP get_central_pose(utility::vector1< core::pose::PoseOP> pose_vector){
+  using namespace core::scoring;
+  vector1< vector1 <Real> > gdt_matrix(pose_vector.size(),vector1< Real>(pose_vector.size(),0));
+  for(Size ii=1; ii<pose_vector.size(); ++ii){
+    for(Size jj=ii+1; jj<=pose_vector.size(); ++jj){
+      Real tmp_gdt = CA_gdtmm(*pose_vector[ii],*pose_vector[jj]);
+      gdt_matrix[ii][jj] = tmp_gdt;
+      gdt_matrix[jj][ii] = tmp_gdt;
+    }
+  }
+  map<Real,Size>  avg_gdt_pose_map;
+  for(Size ii=1; ii<=pose_vector.size(); ++ii){
+    Real total_gdt = 0;
+    for(Size jj=1; jj<=pose_vector.size(); ++jj){
+      total_gdt += gdt_matrix[ii][jj];
+    }
+    avg_gdt_pose_map[total_gdt/(Real)(pose_vector.size()-1)] = ii;
+  }
+  return(pose_vector[avg_gdt_pose_map.rbegin()->second]);
+}
+
+void get_disordered_regions(core::pose::PoseOP centralPose, utility::vector1< core::pose::PoseOP> pose_vector,Real threshold){
+  using namespace core::scoring;
+  vector1 <Real> per_position_totalDist(centralPose->total_residue(),0);
+  vector1 <Real> per_position_avgDist(centralPose->total_residue(),0);
+  for(Size ii=1; ii<=pose_vector.size(); ++ii){
+    calpha_superimpose_pose(*pose_vector[ii],*centralPose);
+    for(Size jj=1; jj<centralPose->total_residue(); ++jj){
+      per_position_totalDist[jj] += pose_vector[ii]->residue(jj).xyz("CA").distance(centralPose->residue(jj).xyz("CA"));
+    }
+  }
+  for(Size ii=1; ii<=centralPose->total_residue(); ++ii){
+    per_position_avgDist[ii] = per_position_totalDist[ii]/(Real)pose_vector.size();
+    std::cout <<ii <<"-" << per_position_avgDist[ii] <<std::endl;
+  }
+}
+
