@@ -111,6 +111,7 @@ OPT_1GRP_KEY( FileVector, matdes2c, O3 )
 OPT_1GRP_KEY( FileVector, matdes2c, O4 )
 OPT_1GRP_KEY( FileVector, matdes2c, T2 )
 OPT_1GRP_KEY( FileVector, matdes2c, T3 )
+OPT_1GRP_KEY( Boolean   , matdes2c, mutate_intra_bb )
 
 void register_options() {
 	using namespace basic::options;
@@ -129,6 +130,7 @@ void register_options() {
 	NEW_OPT( matdes2c::O4      , "file(s) for octa 4fold tetramer"  , ""     );
 	NEW_OPT( matdes2c::T2      , "file(s) for tetr 2fold comp1"     , ""     );
 	NEW_OPT( matdes2c::T3      , "file(s) for tetr 3fold comp2"    , ""     );
+	NEW_OPT( matdes2c::mutate_intra_bb      , ""    , false );
 }
 
 
@@ -663,7 +665,7 @@ void *dostuff(void*) {
 								}
 								if(contact == true) break;
 							}
-							if(!contact) nontrimer_pos.push_back(ir);
+							if(!contact || option[matdes2c::mutate_intra_bb]()) nontrimer_pos.push_back(ir);
 						}
 
 						// cout << "show spheres, name ca and resi "; 
