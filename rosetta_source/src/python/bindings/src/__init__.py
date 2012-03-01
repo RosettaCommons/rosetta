@@ -424,32 +424,39 @@ def cleanCRYS( pdb_file , olig = 2 ):
     else:
         raise IOError('No such file or directory named '+pdb_file)
 
-# returns a pose made from seq, all phi/psi/omega set to 180
-def pose_from_sequence( seq , res_type = 'fa_standard' ):
-    """
-    Returns a pose generated from amino acid single letters in  <seq>  using
-    the  <res_type>  ResidueType
+# Return a pose made from seq, with all phi/psi/omega angles set to 180.
+def pose_from_sequence(seq, res_type = "fa_standard", auto_termini = True):
+    ''' Returns a pose generated from a single-letter sequence of amino acid
+        residues in <seq> using the <res_type> ResidueType and creates N- and C-
+        termini if <auto_termini> is set to True.
 
-    example:
-        pose=pose_from_sequence('THANKSEVAN')
+        Unlike make_pose_from_sequence(), this method generates a default PDBInfo
+        and sets all torsion angles to 180 degrees.
+
+    Example:
+        pose = pose_from_sequence("THANKSEVAN")
     See also:
         Pose
         make_pose_from_sequence
         pose_from_pdb
         pose_from_rcsb
-    """
-    pose=Pose()
-    make_pose_from_sequence(pose,seq,res_type)
+    '''
+
+    pose = Pose()
+    make_pose_from_sequence(pose, seq, res_type, auto_termini)
     #print 'Setting phi, psi, omega...'
-    for i in range(0,pose.total_residue()):
-        pose.set_phi(i+1,180)
-        pose.set_psi(i+1,180)
-        pose.set_omega(i+1,180)
+    for i in range(0, pose.total_residue()):
+        pose.set_phi(i + 1, 180)
+        pose.set_psi(i + 1, 180)
+        pose.set_omega(i + 1, 180)
     #print 'Attaching PDBInfo...'
-    pose.pdb_info(rosetta.core.pose.PDBInfo(pose))  # Empty PDBInfo (rosetta.core.pose.PDBInfo()) is not correct here - we have to reserve placed for atoms...
+    # Empty PDBInfo (rosetta.core.pose.PDBInfo()) is not correct here;
+    # we have to reserve space for atoms....
+    pose.pdb_info(rosetta.core.pose.PDBInfo(pose))
     pose.pdb_info().name(seq[:8])
-#	print pose
+    #print pose
     return pose
+
 
 # retreives pdbData from rcsb for  <pdb_code>
 # ADD NAMING OPTION
