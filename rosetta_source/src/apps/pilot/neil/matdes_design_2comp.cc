@@ -537,8 +537,8 @@ void *dostuff(void*) {
 		{
 			import_pose::pose_from_pdb(p1, file1, resi_set);
 			import_pose::pose_from_pdb(p2, file2, resi_set);
-			sc_sasa1 = sidechain_sasa(p1,2.5); // 110728 -- WAS 2.5 -- Changed for xtal design
-			sc_sasa2 = sidechain_sasa(p2,2.5);
+			sc_sasa1 = sidechain_sasa(p1,2.2); // 110728 -- WAS 2.5 -- Changed for xtal design
+			sc_sasa2 = sidechain_sasa(p2,2.2);
 			sc_sasa = sc_sasa1;
 			sc_sasa.insert(sc_sasa.begin(),sc_sasa2.begin(),sc_sasa2.end());
 			rot_pose(p1,Vec(0,0,1),cmp1rots[iconfig]);
