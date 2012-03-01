@@ -114,62 +114,21 @@ OPT_KEY( Boolean, hub_no_fa )
 OPT_KEY( Boolean, hub_graphics )
 
 void register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  NEW_OPT( hub_pdb      ,"", "input/CHC_HUB_FA.pdb" );
-  NEW_OPT( hub_ss       ,"", "" );
-  NEW_OPT( hub_sequence ,"", "" );
-  NEW_OPT( hub_cst_cfg  ,"", "" );
-  NEW_OPT( hub_ho_cst   ,"", utility::vector1< Size >() );
-  NEW_OPT( hub_cen_energy_cut   ,"", 200.0 );
-  NEW_OPT( hub_no_fa   ,"", false );
-  NEW_OPT( hub_graphics,"", false );
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	NEW_OPT( hub_pdb      ,"", "input/CHC_HUB_FA.pdb" );
+	NEW_OPT( hub_ss       ,"", "" );
+	NEW_OPT( hub_sequence ,"", "" );
+	NEW_OPT( hub_cst_cfg  ,"", "" );
+	NEW_OPT( hub_ho_cst   ,"", utility::vector1< Size >() );
+	NEW_OPT( hub_cen_energy_cut   ,"", 200.0 );
+	NEW_OPT( hub_no_fa   ,"", false );
+	NEW_OPT( hub_graphics,"", false );
 }
 
 static core::io::silent::SilentFileData sfd;
 
 static basic::Tracer tr("hubdenovo");
-
-
-/*
-Real calc_c3_carmsd(Size const nres, Pose p, Pose const & native) {
-	if(native.n_residue() == 0) return;
-	if(native.n_residue()+1 != nres) {
-		tr << p.sequence() << endl;
-		tr << " " << native.sequence() << endl;
-		utility_exit_with_message("native should be 1 chain w/o hub");
-	}
-	core::pose::symmetry::make_asymmetric_pose(p);
-	Real carmsd1 = 0.0; {
-		Vec com   = center_ca(p,2,nres);
-		Real ang  = dihedral_degrees(com  ,Vec(0,0,0),Vec(0,0,1),natcomca  );
-		trans_pose(p,Vec(0,0,natcomca.z()-com.z()));
-		rot_pose(p,Vec(0,0,1),ang);
-		Size naa = 0;
-		for(Size ir = 1; ir < nres; ++ir) {
-			carmsd1 += native.xyz(AtomID(2,ir)).distance_squared(p.xyz(AtomID(2,ir+1)));
-			naa++;
-		}
-		carmsd1 = sqrt(carmsd1/(Real)naa);
-	}
-	rot_pose(p,Vec(1,0,0),180.0,Vec(0,0,0));
-	Real carmsd2 = 0.0; {
-		Vec com   = center_ca(p,2,nres);
-		Real ang  = dihedral_degrees(com  ,Vec(0,0,0),Vec(0,0,1),natcomca  );
-		trans_pose(p,Vec(0,0,natcomca.z()-com.z()));
-		rot_pose(p,Vec(0,0,1),ang);
-		Size naa = 0;
-		for(Size ir = 1; ir < nres; ++ir) {
-			carmsd2 += native.xyz(AtomID(2,ir)).distance_squared(p.xyz(AtomID(2,ir+1)));
-			naa++;
-		}
-		carmsd2 = sqrt(carmsd2/(Real)naa);
-	}
-	return min(carmsd1,carmsd2);
-}
-*/
-
-
 
 // bool hocstcmp (std::pair<Size,Size> i, std::pair<Size,Size> j) {
 // 	return abs(i.first-i.second) < abs(j.first-j.second);
@@ -253,7 +212,6 @@ public:
 	virtual std::string get_name() const { return "SymRBMover"; }
 };
 
-
 // fixed SS
 struct ConstraintConfig {
 	Size nres,nsub,nhub;
@@ -272,12 +230,14 @@ struct ConstraintConfig {
 	core::chemical::ResidueTypeSetCAP crs,frs;
 	virtual ~ConstraintConfig() {}
 	ConstraintConfig()
-	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
+	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),
+	  template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
 	{
 		init();
 	}
 	ConstraintConfig(string cfgfile)
- 	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
+	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),
+	  template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
 	{
 		tr << "reading config file: " << cfgfile << endl;
 		fname = cfgfile;
@@ -293,7 +253,7 @@ struct ConstraintConfig {
 	std::string ssstr() const {
 		string s = "";
 		for(Size i = 1; i <= nres; ++i) s += ss[i];
-		return s;
+			return s;
 	}
 	void parse_config_file(string infname) {
 		utility::io::izstream in(infname);
@@ -356,9 +316,9 @@ struct ConstraintConfig {
 
 			out << templates_fname[i] << endl << "        ";
 			for(Size it = 1; it <= X; ++it) if(it%2==1) out << lss(it,4);
-			out << endl << "          ";
+				out << endl << "          ";
 			for(Size it = 1; it <= X; ++it) if(it%2==0) out << lss(it,4);
-			out << endl << "          ";
+				out << endl << "          ";
 			for(Size it = 1; it <= X; ++it) out << " " << templates_fa[i]->residue(it).name1(); out << endl;
 			for(Size id = 1; id <= Y; ++id) {
 				if((id-1)%nres==0) out << "--- ";
@@ -413,9 +373,8 @@ struct ConstraintConfig {
 		r.push_back(residue_names_from_sequence(s));
 		return r;
 	}
-
 	void add_sym_cst(Pose & p, AtomID id1, AtomID id2, Real d, Real sd) const {
-//		if(nsub > 11) utility_exit_with_message("residue mapping unclear!!!!!!!!");
+		//		if(nsub > 11) utility_exit_with_message("residue mapping unclear!!!!!!!!");
 		//tr << "add sym cst " << id1 << " " << id2 << endl;
 		using namespace core::scoring::constraints;
 		if(id1.rsd() > id2.rsd()) {
@@ -491,7 +450,7 @@ struct ConstraintConfig {
 							if(ssst>0) { // add whole previous elment
 								Sizes v;
 								for(Size is = ssst; is < i; ++is) v.push_back(is);
-								ssmap[symbol] = v;
+									ssmap[symbol] = v;
 							}
 							prev = ss[i];
 							nss[ss[i]]++;
@@ -502,7 +461,7 @@ struct ConstraintConfig {
 					}
 					Sizes v;
 					for(Size is = ssst; is <= ss.size(); ++is) v.push_back(is);
-					ssmap[symbol] = v;
+						ssmap[symbol] = v;
 					for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
 						// tr << "ssmap['" << i->first << "'] = ";
 						char ssc = i->first[0];
@@ -531,8 +490,8 @@ struct ConstraintConfig {
 					// }
 					// utility_exit_with_message("debug");
 				}
-			} else
-			if("SEQUENCE"==op) {
+			} else if("SEQUENCE"==op) {
+				tr << "SEQUENCE BEGIN" << endl;
 				if(ssmap.size()==0) utility_exit_with_message("SECSTRUCT must come before SEQUENCE");
 				while(true) {
 					string buf;
@@ -546,6 +505,7 @@ struct ConstraintConfig {
 					string tmp = read_ignore_comments(in);
 					Sizes r = parse_residues(op2);
 					vector1<Strings > s = parse_sequence(tmp);
+					tr << "SEQUENCE " << r << " " << s << endl;
 					if(s.size()==1 && r.size()==s[1].size()) {
 						Strings tmp = s[1];
 						s.clear();
@@ -553,7 +513,7 @@ struct ConstraintConfig {
 					}
 					if(r.size()!=s.size()) utility_exit_with_message("SEQUENCE size mismatch: "+op2+" vs. "+tmp);
 					for(Size i = 1; i <= r.size(); ++i) {
-						if(r[i]==1) utility_exit_with_message("cannot mutate resi 1!!! "+op2+" "+tmp);
+						if(r[i]<=1) { tr << "WARNING: cannot mutate resi "+str(r[i])+"!!! "+op2+" "+tmp << endl; continue; }
 						if(r[i] > nres) utility_exit_with_message("AAs can only be specified in primary subunit "+str(r[i])+" > "+str(nres)+", "+op2+" "+tmp);
 						if(seq.count(r[i])) utility_exit_with_message("multiple AA sets at position "+str(r[i])+", "+op2+" "+tmp);
 						seq[r[i]] = s[i];
@@ -565,7 +525,8 @@ struct ConstraintConfig {
 					// 	tr << endl;
 					// }
 				}
-				tr << "SEQUENCE" << endl;
+				tr << "SEQUENCE END" << endl;
+				// utility_exit_with_message("orasit");
 			} else
 			if("CONSTRAINT"==op) {
 				if(ssmap.size()==0) utility_exit_with_message("SECSTRUCT must come before CONSTRAINT");
@@ -602,7 +563,7 @@ struct ConstraintConfig {
 							if(dres.size()!=tres.size()) utility_exit_with_message("MAPPING res no. mismatch in template "+str(tpdb)+" MAPPING");
 							std::map<Size,Size> m;
 							for(Size i = 1; i <= dres.size(); ++i) m[tres[i]] = dres[i];
-							template_map.push_back(m);
+								template_map.push_back(m);
 							tr << "MAPPING {t:d} " << tpdb << " " << m << endl;
 							break;
 						} else {
@@ -612,7 +573,8 @@ struct ConstraintConfig {
 								Sizes dres;
 								for(Sizes::const_iterator i = tres.begin(); i != tres.end(); ++i) {
 									Size tresi = *i;
-									if(template_map.back().count(tresi)==0) utility_exit_with_message("SIDECHAIN: template "+tpdb+" residue "+str(tresi)+" not mapped to design residue!");
+									if(template_map.back().count(tresi)==0) 
+										utility_exit_with_message("SIDECHAIN: template "+tpdb+" residue "+str(tresi)+" not mapped to design residue!");
 									Size dresi = template_map.back()[tresi];
 									dres.push_back(dresi);
 									if(template_sc[resi_to_primary(dresi)]!=0 && template_sc[resi_to_primary(dresi)]!=templates_fname.size())
@@ -620,13 +582,14 @@ struct ConstraintConfig {
 									template_sc[resi_to_primary(dresi)] = templates_fname.size();
 									template_sc[dresi] = templates_fname.size();
 									template_sc_resi[dresi] = tresi;
-									if(seq.count(dresi)) {
-										if(seq[dresi].size()!=1 || seq[dresi][1]!=str(templates_cen.back()->residue(tresi).name1())) {
-											 utility_exit_with_message("incompatible sequence for residue "+str(dresi));
-										}
-									}
-									seq[dresi].resize(1);
-									seq[dresi][1] = templates_cen.back()->residue(tresi).name1();
+									// if(seq.count(dresi)) {
+									// 	if(seq[dresi].size()!=1||seq[dresi][1]!=str(templates_cen.back()->residue(tresi).name1())) {
+									// 		tr << "WARNING ignoring sidechain cst because of incompatible sequence for residue "+str(dresi) << std::endl;
+									// 	}
+									// } else {
+									// 	seq[dresi].resize(1);
+									// 	seq[dresi][1] = templates_cen.back()->residue(tresi).name1();
+									// }
 								}
 								scgrp++;
 								for(Size i = 1; i <= tres.size(); ++i) {
@@ -639,11 +602,12 @@ struct ConstraintConfig {
 								Sizes tres = parse_residues(getline(in),false);
 								Sizes dres;
 								for(Sizes::const_iterator i = tres.begin(); i != tres.end(); ++i) {
-									if(template_map.back().count(*i)==0) utility_exit_with_message("BACKBONE: template "+tpdb+" residue "+str(*i)+" not mapped to design residue!");
+									if(template_map.back().count(*i)==0) 
+										utility_exit_with_message("BACKBONE: template "+tpdb+" residue "+str(*i)+" not mapped to design residue!");
 									Size dri = template_map.back()[*i];
 									dres.push_back(dri);
-									seq[dri].resize(1);
-									seq[dri][1] = templates_cen.back()->residue(*i).name1();
+									// seq[dri].resize(1);
+									// seq[dri][1] = templates_cen.back()->residue(*i).name1();
 								}
 								bbgrp++;
 								for(Size i = 1; i <= tres.size(); ++i) {
@@ -659,8 +623,8 @@ struct ConstraintConfig {
 					}
 				}
 			} else {
-					utility_exit_with_message("parse_config_file: don't understand CMD: '"+op+"'");
-					break;
+				utility_exit_with_message("parse_config_file: don't understand CMD: '"+op+"'");
+				break;
 			}
 		}
 		for(Size i = 1; i <= cst_bb.size(); ++i) {
@@ -688,14 +652,14 @@ struct ConstraintConfig {
 			ncst++;
 		}
 	}
-
 	void apply_bb_csts(Pose & p, Size ssep=0, bool earlycst = false) {
 		using namespace core::scoring::constraints;
-		vector1<string> anames; anames.push_back("N"); anames.push_back("CA"); anames.push_back("C"); anames.push_back("O"); /*anames.push_back("CB");*/ anames.push_back("H");
+			vector1<string> anames; anames.push_back("N"); anames.push_back("CA"); anames.push_back("C"); 
+			anames.push_back("O"); /*anames.push_back("CB");*/ anames.push_back("H");
 		for(CSTs::iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) {
 			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) && (!earlycst || numeric::random::uniform() > Real(nres)/6.0/Real(nintercst)) ) continue;
 			if(i->active) continue; else i->active = true;
-			//if(hub_seq_sep(i->dres1,i->dres2) != ssep) tr << "early cst!!!" << endl;
+				//if(hub_seq_sep(i->dres1,i->dres2) != ssep) tr << "early cst!!!" << endl;
 			Pose & t(*templates_cen[i->tplt]);
 			for(Size an1 = 1; an1 <= anames.size(); ++an1) {
 				if(!p.residue(i->dres1).has(anames[an1]) || !t.residue(i->tres1).has(anames[an1])) continue;
@@ -705,7 +669,7 @@ struct ConstraintConfig {
 					AtomID id1( p.residue(i->dres1).atom_index(anames[an1]), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );
 					add_sym_cst( p, id1, id2, d, CSTSDMULT*sqrt(d) );
-					// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
+						// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 				}
 			}
 		}
@@ -742,11 +706,11 @@ struct ConstraintConfig {
 					add_sym_cst( p, id1, id2, d, CSTSDMULT*sqrt(d) );
 				}
 			}
-			// Real d = t.residue(i->tres1).xyz("CEN").distance( t.residue(i->tres2).xyz("CEN") );
-			// AtomID id1( p.residue(i->dres1).atom_index("CEN"), i->dres1 );
-			// AtomID id2( p.residue(i->dres2).atom_index("CEN"), i->dres2 );
-			// //tr << "constraint: " << ssep << " " << i->dres1 << ",CEN " << i->dres2 << ",CEN " << d << endl;
-			// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
+				// Real d = t.residue(i->tres1).xyz("CEN").distance( t.residue(i->tres2).xyz("CEN") );
+				// AtomID id1( p.residue(i->dres1).atom_index("CEN"), i->dres1 );
+				// AtomID id2( p.residue(i->dres2).atom_index("CEN"), i->dres2 );
+				// //tr << "constraint: " << ssep << " " << i->dres1 << ",CEN " << i->dres2 << ",CEN " << d << endl;
+				// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 		}
 		apply_bb_csts(p,ssep,earlycst);
 		apply_dcsts(p,ssep);
@@ -762,7 +726,8 @@ struct ConstraintConfig {
 				string aname1 = p.residue(i->dres1).atom_name(a1);
 				if(!t.residue(i->tres1).has(aname1)) {
 					for(Size ia = 1; ia <= t.residue(i->tres1).nheavyatoms(); ++ia) tr << t.residue(i->tres1).atom_name(ia) << endl;
-					utility_exit_with_message("can't find atom "+aname1+" in template residue "+str(i->tres1)+" t.aa "+t.residue(i->tres1).name()+" d.aa "+p.residue(i->dres1).name());
+						utility_exit_with_message("can't find atom "+aname1+" in template residue "+
+							str(i->tres1)+" t.aa "+t.residue(i->tres1).name()+" d.aa "+p.residue(i->dres1).name());
 				}
 				for(Size a2 = 6; a2 <= p.residue(i->dres2).nheavyatoms(); ++a2) {
 					string aname2 = p.residue(i->dres2).atom_name(a2);
@@ -770,7 +735,7 @@ struct ConstraintConfig {
 					Real d = t.residue(i->tres1).xyz(aname1).distance( t.residue(i->tres2).xyz(aname2) );
 					AtomID id1( p.residue(i->dres1).atom_index(aname1), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(aname2), i->dres2 );
-					//tr << "constraint: " << ssep << " " << i->dres1 << "," << aname1 << " " << i->dres2 << "," << aname2 << " " << d << endl;
+						//tr << "constraint: " << ssep << " " << i->dres1 << "," << aname1 << " " << i->dres2 << "," << aname2 << " " << d << endl;
 					add_sym_cst( p, id1, id2, d, CSTSDMULT/2.0*sqrt(d) );
 					p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT/2.0*sqrt(d)) ) );
 				}
@@ -787,11 +752,10 @@ struct ConstraintConfig {
 	}
 	void reset_csts() {
 		for(CSTs::iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) i->active = false;
-		for(CSTs::iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) i->active = false;
-		for(vector1<DCST>::iterator i = dcst.begin(); i != dcst.end(); ++i) i->active = false;
-
-	}
-	std::string pick_sequence() const {
+			for(CSTs::iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) i->active = false;
+				for(vector1<DCST>::iterator i = dcst.begin(); i != dcst.end(); ++i) i->active = false;
+		}
+		std::string pick_sequence() const {
 		string s = "Z";
 		for(Size i = 2; i <= nres; ++i) {
 			if(seq.count(i)) {
@@ -836,7 +800,7 @@ struct HubDenovo {
 	protocols::moves::MoverOP rlxcst,rlxnocst,des,fragins3,fraginsL,fragins,cenmin;
 	virtual ~HubDenovo() {}
 	HubDenovo(std::string cstcfgfile) : cfg(cstcfgfile),sf3(NULL),sfsym(NULL),sfasym(NULL),sfsymnocst(NULL),rlxcst(NULL),rlxnocst(NULL),
-		                                  des(NULL),fragins3(NULL),fraginsL(NULL),fragins(NULL),cenmin(NULL)
+	des(NULL),fragins3(NULL),fraginsL(NULL),fragins(NULL),cenmin(NULL)
 	{
 		using namespace core::scoring;
 		sf3 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score4_smooth"));
@@ -856,10 +820,10 @@ struct HubDenovo {
 		fragins3  = new protocols::simple_moves::ClassicFragmentMover(frags3);
 		fraginsL  = new protocols::simple_moves::ClassicFragmentMover(fragsl);
 		{
-		  	protocols::moves::RandomMoverOP tmp = new protocols::moves::RandomMover;
-		  	tmp->add_mover(fragins3,0.7);
-		  	tmp->add_mover(fraginsL,0.3);
-		  	fragins = tmp;
+			protocols::moves::RandomMoverOP tmp = new protocols::moves::RandomMover;
+			tmp->add_mover(fragins3,0.7);
+			tmp->add_mover(fraginsL,0.3);
+			fragins = tmp;
 		}
 		des      = new protocols::flxbb::FlxbbDesign( sfsym, sfsym );
 		rlxcst   = new protocols::relax::FastRelax (sfsym);
@@ -910,13 +874,13 @@ struct HubDenovo {
 		core::conformation::symmetry::SymmetryInfoCOP si = core::pose::symmetry::symmetry_info(p);
 		std::map<Size,SymDof> const & dofs = si->get_dofs();
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-	  movemap->set_jump(false);
-	  movemap->set_bb(true);
-	  movemap->set_chi(true);
+		movemap->set_jump(false);
+		movemap->set_bb(true);
+		movemap->set_chi(true);
 
 		for(std::map<Size,SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
 			//cout << "sym dof jump: " << i->first << endl;
-	  	movemap->set_jump(i->first,true);
+			movemap->set_jump(i->first,true);
 			core::kinematics::Jump j = p.jump(i->first);
 			//j.set_rotation(rotation_matrix(Vec(1,0,0),numeric::random::gaussian()*6.3)*j.get_rotation());
 			j.set_translation(j.get_translation()+Vec(  (numeric::random::uniform()*15.0+5.0)*numeric::sign(numeric::random::uniform()-0.5)   -10,0,0));
@@ -981,26 +945,26 @@ struct HubDenovo {
 		sf->set_weight(core::scoring::atom_pair_constraint,1.0);
 		sf->set_weight(core::scoring::    angle_constraint,1.0);
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-	  	movemap->set_jump(false);
-	  	movemap->set_bb(true);
-	  	movemap->set_chi(true);
+		movemap->set_jump(false);
+		movemap->set_bb(true);
+		movemap->set_chi(true);
 		protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 		sf->set_weight(core::scoring::atom_pair_constraint,1.0);
 		sf->set_weight(core::scoring::    angle_constraint,1.0);
 	}
 
 	void design(Pose & p) {
-	  ScoreFunctionOP sf = core::scoring::getScoreFunction();
-	  core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(p);
-    task->initialize_extra_rotamer_flags_from_command_line();
+		ScoreFunctionOP sf = core::scoring::getScoreFunction();
+		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(p);
+		task->initialize_extra_rotamer_flags_from_command_line();
 		for(vector1<CST>::iterator i = cfg.cst_sc.begin(); i != cfg.cst_sc.end(); ++i) {
 			task->nonconst_residue_task(i->dres1).prevent_repacking();
 			task->nonconst_residue_task(i->dres2).prevent_repacking();
 		}
 		core::pack::make_symmetric_PackerTask(p,task);
-	  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 		tr << "predes: " << sf->score(p) << std::endl;
-	  repack.apply(p);
+		repack.apply(p);
 		tr << "postdes: " << sf->score(p) << std::endl;
 	}
 
@@ -1071,9 +1035,9 @@ struct HubDenovo {
 			tmp.dump_pdb(fn);
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 			// ss_out->add_energy("cstsc",cstsc);
-		  ss_out->fill_struct(tmp,fn);
+			ss_out->fill_struct(tmp,fn);
 
-		  sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
+			sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
 
 		}
 	}
