@@ -83,7 +83,7 @@ def find_programs(options):
     if options.compile_tag is not None:
         comp_tag = options.compile_tag.replace('.',r'\.')
     else:
-        comp_tag = r'.+release'
+        comp_tag = r'static.linuxiccrelease'
     scr_paths = [os.path.join(options.mini,'src','apps','public','ligand_docking'),
         os.path.join(options.mini,'src','python','apps','public')] + PATH_paths
     oe_paths =  [os.path.join(options.openeye,'bin')] + PATH_paths
@@ -521,8 +521,6 @@ for f in "$minnatfile" "$dockfile"; do
     cat > "$f" <<'HEREDOC'
 Executable = %(ligand_dock)s
 Universe = vanilla
-Requirements = Memory > 256
-Notification = Never
 copy_to_spool = false
 
 Initialdir = .
