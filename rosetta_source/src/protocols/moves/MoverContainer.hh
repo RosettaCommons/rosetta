@@ -23,6 +23,11 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/filters/Filter.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+
+
 
 // C++ Headers
 #include <map>
@@ -184,6 +189,15 @@ public:
 	virtual std::string get_name() const;
 
 	core::Real last_proposal_density_ratio();
+
+	//fpd Only making this MoverContainer parsile since the other MoverContainers already have an RS equivalent
+	void parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
+
 
 private:
 	Size nmoves_;

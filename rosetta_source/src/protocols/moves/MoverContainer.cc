@@ -12,28 +12,28 @@
 /// @detailed
 /// @author Monica Berrondo
 
+#include <protocols/moves/MoverContainerCreator.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
-
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverStatus.hh>
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Random number generator
 #include <numeric/random/random.hh>
+
+#include <utility/tag/Tag.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/util.hh>
 
 //
 #include <string>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
+#include <utility/string_util.hh>
 
 static basic::Tracer tr("protocols.moves.MoverContainer");
 
@@ -142,6 +142,21 @@ SequenceMover::get_name() const {
 	return "SequenceMover";
 }
 
+
+
+std::string RandomMoverCreator::mover_name() {
+  return "RandomMover";
+}
+
+std::string RandomMoverCreator::keyname() const {
+  return mover_name();
+}
+
+protocols::moves::MoverOP RandomMoverCreator::create_mover() const {
+  return new RandomMover();
+}
+
+
 void RandomMover::apply( core::pose::Pose & pose )
 {
 	Real weight_sum(0.0);
@@ -184,6 +199,33 @@ std::string
 RandomMover::get_name() const {
 	return "RandomMover";
 }
+
+void 
+RandomMover::parse_my_tag( utility::tag::TagPtr const tag,
+                           protocols::moves::DataMap &,
+                           protocols::filters::Filters_map const &,
+                           protocols::moves::Movers_map const &movers,
+                           core::pose::Pose const & ) {
+	using namespace protocols::filters;
+	
+	utility::vector1<std::string> mover_names( utility::string_split( tag->getOption< std::string >("movers"), ',') );
+	utility::vector1<std::string> mover_weights;
+	if (tag->hasOption ("weights"))
+		mover_weights = utility::string_split( tag->getOption< std::string >( "weights" ), ',');
+	
+	// make sure # movers matches # weights
+	runtime_assert( mover_weights.size() == 0 || mover_weights.size() == mover_names.size() );
+	
+	nmoves_ = tag->getOption< core::Size >( "repeats",1 );
+
+	for (int i=1; i<=mover_names.size(); ++i) {
+		protocols::moves::MoverOP mover = find_mover_or_die(mover_names[i], tag, movers);
+		core::Real weight = (mover_weights.size() == 0)? 1.0 : std::atof( mover_weights[i].c_str() );
+		add_mover( mover, weight );
+	}
+}
+
+
 
 //ek added this function must be called AFTER apply
 core::Real RandomMover::last_proposal_density_ratio(){

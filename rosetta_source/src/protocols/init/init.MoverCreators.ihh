@@ -107,6 +107,7 @@
 #include <protocols/moves/DsspMoverCreator.hh>
 #include <protocols/moves/GenericMonteCarloMoverCreator.hh>
 #include <protocols/moves/IfMoverCreator.hh>
+#include <protocols/moves/MoverContainerCreator.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
 #include <protocols/moves/MonteCarloRecoverCreator.hh>
 #include <protocols/moves/MonteCarloTestCreator.hh>

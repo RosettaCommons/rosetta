@@ -6,6 +6,7 @@ use POSIX qw(ceil floor);
 use lib (".");
 use File::Basename;
 use File::Path qw(rmtree);
+use File::Copy;
 use Cwd;
 use Storable qw(dclone);
 use lib dirname(__FILE__);
@@ -20,7 +21,7 @@ my $DENSGENAPP = "/work/dimaio/rosetta/rosetta_source/bin/pdb_to_map.default.lin
                  " -database /work/dimaio/rosetta/rosetta_database ".
                  " -edensity:mapreso 5.0 -edensity::grid_spacing 2.0 -in:file:centroid_input";
 my $CSTGEN_APP = "/work/dimaio/rosetta/cm_scripts/bin/predict_distances.pl";
-my $SYMMDEFFILE_APP = "/work/dimaio/rosetta/rosetta_source/src/apps/pilot/frank/make_NCS.pl";
+my $SYMMDEFFILE_APP = "/work/dimaio/rosetta/rosetta_source/src/apps/pilot/frank/make_NCS.pl -r 999";
 my $DDG_APP = "/work/dimaio/rosetta/rosetta_source/bin/ddg.default.linuxgccrelease".
               " -database /work/dimaio/rosetta/rosetta_database -score:weights softrep";
 my $DDG_CUTOFF = -10;
@@ -40,12 +41,13 @@ my $FRAG9FILE      = "fragments/%s_templatesvall.25.9mers";
 my $PCORRFILENAMES  = "p_correct%d.txt";
 my $ALNFILENAMES  = "cluster%d.filt";
 my $CSTFILENAMES  = "cluster%d.filt.dist_csts";
-my $FLAGFILENAMES = "flags%d";
+my $FLAGFILENAMES = "flags%d_%s";
 my $MAPFILENAMES  = "templates%d.mrc";
 my $ALNTEMPLATEDIR  = "aligned_templates";
+my $SYMMDEFDIR  = "symmdef";
 
 #my $CFGFILENAMES  = "hybrid%d.config";
-my $XMLFILENAMES = "hybridize%d.xml";
+my $XMLFILENAMES = "hybridize%d_%s.xml";
 my $RUNFILENAMES = "run%d.sh";
 my $HYBRIDIZEOPTIONS = "batch=2 stage1_increase_cycles=1.0 stage2_increase_cycles=1.0 linmin_only=0";
 
@@ -57,17 +59,27 @@ my @RMS_CUTOFFS = (10,5,4,3,2,1.5,1);
 my $CLUSTERCUTOFF = 0.40;
 my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
 
+## symmetry
+my $MINSYMMPROB = 0.04;
+
 ## probability correct
 ## this could be read from a file
 my %template_probs =  (
 	101 =>0.1430503, 102 => 0.0770168, 103 => 0.0427618, 104 => 0.0249920, 105 => 0.0157738,
 	106 =>0.0109919, 107 => 0.0085113, 108 => 0.0072245, 109 => 0.0065569, 110 => 0.0062107,
+
 	201 =>0.1276504, 202 => 0.0535388, 203 => 0.0243316, 204 => 0.0128212, 205 => 0.0082849,
 	206 =>0.0064972, 207 => 0.0057927, 208 => 0.0055150, 209 => 0.0054056, 210 => 0.0053625,
+
 	301 =>0.1161114, 302 => 0.0838580, 303 => 0.0609236, 304 => 0.0446156, 305 => 0.0330195,
 	306 =>0.0247739, 307 => 0.0189107, 308 => 0.0147415, 309 => 0.0117769, 310 => 0.0096689,
+
 	401 =>0.1430503, 402 => 0.0770168, 403 => 0.0427618, 404 => 0.0249920, 405 => 0.0157738,
 	406 =>0.0109919, 407 => 0.0085113, 408 => 0.0072245, 409 => 0.0065569, 410 => 0.0062107,
+
+	501 =>0.0666667, 502 => 0.0666667, 503 => 0.0666667, 504 => 0.0666667, 505 => 0.0666667,
+	506 =>0.0666667, 507 => 0.0666667, 508 => 0.0666667, 509 => 0.0666667, 510 => 0.0666667,
+
 	0 => 0.005    # default
 );
 my $template_M_EST = 0.01; # favor lower-ranked alignments a bit more in sampling
@@ -120,7 +132,7 @@ $FLAGFILENAMES = "$WORKDIR/".$FLAGFILENAMES;
 $XMLFILENAMES  = "$WORKDIR/".$XMLFILENAMES;
 $MAPFILENAMES  = "$WORKDIR/".$MAPFILENAMES;
 $ALNTEMPLATEDIR  = "$WORKDIR/".$ALNTEMPLATEDIR;
-
+$SYMMDEFDIR = "$WORKDIR/".$SYMMDEFDIR;
 
 ## read sequence
 open (FASTA, $fastafile) || die "Cannot open $_";
@@ -622,6 +634,7 @@ foreach my $i (0..$nclust) {
 ###############################
 ###############################
 ## STAGE 2.5 -- symmetry analysis
+my %symdeffiles;
 foreach my $i (0..$nclust) {
 	my @input_pdbs = ();
 	foreach my $j (0..$#THREADED_MDLS) {
@@ -652,10 +665,19 @@ foreach my $i (0..$nclust) {
 		# trim to common core
 		# TODO assumes numbering is right ... 
 		my %allreses;
+		my %allseqs;
 		foreach my $line (@templatepdb_lines) {
 			my $chainid = substr($line,21,1);
 			my $resid = int( substr($line,22,4) );
-			$allreses{$chainid}->{$resid} = 1;
+			my $resname = $three_to_one{ substr($line,17,3) };
+			if (!defined $allreses{$chainid}->{$resid}) {
+				$allreses{$chainid}->{$resid} = 1;
+				if (!defined $allseqs{$chainid}) {
+					$allseqs{$chainid} = $resname;
+				} else {
+					$allseqs{$chainid} = $allseqs{$chainid}.$resname;
+				}
+			}
 		}
 		my %common_reses;
 		resloop: foreach my $resid( keys %{ $allreses{'A'} } ) {
@@ -667,38 +689,51 @@ foreach my $i (0..$nclust) {
 
 		# remove unaligned termini + non-common residues
 		my @templatepdb_trim1;
-		my $currptr=-1;
+		my ($aliptr,$pdbptr)=(-1,-1);
+		my ($ali_seq, $pdb_seq);
 		my %seenreses;
 		my %seenchains;
 		my %allcas;
 		foreach my $line (@templatepdb_lines) {
 			my $chainid = substr($line,21,1);
+			my ($tgt_aln, $src_aln);
 			if (!defined $seenchains{$chainid}) {
 				$seenchains{$chainid} = 1;
 				$allcas{$chainid} = [];
-				$currptr=-1;
+				$aliptr=-1;
+				$pdbptr=-1;
 				%seenreses = ();
+
+				# align 'ali' sequence with 'pdb sequence
+				($ali_seq, $pdb_seq) = alignSW($templ_aln[1], $allseqs{$chainid} );
+				#print "$ali_seq\n$pdb_seq\n"
 			}
 
 			my $resname = $three_to_one{ substr($line,17,3) };
 			my $resid = int( substr($line,22,4) );
 
+			if (!defined ($seenreses{$resid}) ) {
+				$seenreses{$resid} = 1;
+				$pdbptr++;
+
+				# extra residues in pdb
+				if (substr($ali_seq,$pdbptr,1) eq '-' && substr($pdb_seq,$pdbptr,1) ne '-' ) {
+					; #do nothing
+				} else {
+					$aliptr++;
+					# missing density in pdb
+					while (substr($pdb_seq,$pdbptr,1) eq '-' && substr($ali_seq,$pdbptr,1) ne '-' ) {
+						$pdbptr++;
+						$aliptr++;
+					}
+				}
+			}
+
 			# not in all copies
 			next if (!defined $common_reses{$resid});
 
-			if (!defined ($seenreses{$resid}) ) {
-				$seenreses{$resid} = 1;
-				$currptr++;
-				while (substr($templ_aln[1],$currptr,1) ne $resname) { 
-					#print substr($templ_aln[1],$currptr,1)." at ".$currptr." ne ". $resname."\n";
-					$currptr++;
-					if (!defined substr($templ_aln[1],$currptr,1)) {exit;}
-				} # acct for missing density in template
-				# TODO extra residues in template instead?
-			}
-
 			# termini
-			next if (($currptr < $target_start) || ($currptr > $target_stop));
+			next if (($aliptr < $target_start) || ($aliptr > $target_stop));
 			push @templatepdb_trim1, $line;
 
 			# remember ca trace for next step
@@ -744,6 +779,37 @@ foreach my $i (0..$nclust) {
 		print STDERR $cmd."\n";
 		system($cmd);
 	}
+
+	# collect symmdef files
+	mkdir ($SYMMDEFDIR);
+	my @SYMMDEFFILES=<$SYMMDIR/*.symm>;
+	
+	my %symmap;
+	foreach my $symmdef (@SYMMDEFFILES) {
+		my $symmstem = $symmdef;
+		$symmstem =~ s/.*\/([^\/]+)$/$1/;
+		$symmstem =~ s/\.symm//;
+		my ($templ, $tag, $symmgp) = split '_', $symmstem;
+		if (!defined $symmap{$symmgp}) {
+			$symmap{$symmgp} = 0;
+		}
+		$symmap{$symmgp} += $template_probs{$tag};
+	}
+
+	$symdeffiles{$i} = {"C1"=>[]};
+	foreach my $symmdef (@SYMMDEFFILES) {
+		my $symmstem = $symmdef;
+		$symmstem =~ s/.*\/([^\/]+)$/$1/;
+		$symmstem =~ s/\.symm//;
+		my ($templ, $tag, $symmgp) = split '_', $symmstem;
+		if ( $symmap{$symmgp} >= $MINSYMMPROB ) {
+			move("$symmdef","$SYMMDEFDIR");
+			if (!defined $symdeffiles{$i}->{$symmgp}) { $symdeffiles{$i}->{$symmgp} = []; }
+			push @{ $symdeffiles{$i}->{$symmgp} }, $symmstem;
+		} else {
+			unlink ($symmdef);
+		}
+	}
 }
 # delete original alignments
 foreach my $j (0..$#THREADED_MDLS) {
@@ -753,7 +819,6 @@ foreach my $j (0..$#THREADED_MDLS) {
 	unlink($tmpl_filename);
 }
 
-exit;
 
 ###############################
 ###############################
@@ -804,7 +869,7 @@ foreach my $i (0..$nclust) {
 	print STDERR $cmd."\n";
 	system($cmd);
 	chdir "..";
-	#rmtree("temp");
+	rmtree("temp");
 }
 
 # (c) aligned templates
@@ -888,70 +953,91 @@ my $dirtag = $dir;
 $dirtag =~ s/.*\/([^\/]+$)/$1/g;
 
 foreach my $i (0..$nclust) {
-	my $xmlfile = sprintf $XMLFILENAMES, $i;
-	open (XML, ">$xmlfile") || die "Cannot open $_";
+	my @nsymm = keys %{ $symdeffiles{$i} };
+	foreach my $symmgp (@nsymm) {
+		my $xmlfile = sprintf $XMLFILENAMES, $i, $symmgp;
+		open (XML, ">$xmlfile") || die "Cannot open $_";
 
-	print XML  "<dock_design>\n";
-	print XML  "    <TASKOPERATIONS>\n";
-	print XML  "    </TASKOPERATIONS>\n";
-	print XML  "    <SCOREFXNS>\n";
-	print XML  "        <fullatom weights=stage3_rlx>\n";
-	print XML  "	    </fullatom>\n";
-	print XML  "        <stage1 weights=stage1>\n";
-	print XML  "        </stage1>\n";
-	print XML  "        <stage2 weights=stage2>\n";
-	print XML  "        </stage2>\n";
-	print XML  "    </SCOREFXNS>\n";
-	print XML  "    <FILTERS>\n";
-	print XML  "    </FILTERS>\n";
-	print XML  "    <MOVERS>\n";
-	print XML  "        <Hybridize name=hybridize stage1_scorefxn=stage1 stage2_scorefxn=stage2 fa_scorefxn=fullatom $HYBRIDIZEOPTIONS>\n";
- 	my $frag3filepath = sprintf "$dir/$FRAG3FILE", $dirtag;
- 	my $frag9filepath = sprintf "$dir/$FRAG9FILE", $dirtag;
-	print XML  "            <Fragments 3mers=\"$frag3filepath\" 9mers=\"$frag9filepath\"/>\n";
-
- 	foreach my $j (0..$#THREADED_MDLS) {
-		next if ($clusterid->[$j] != $i);
-		my $id = $THREADED_MDLS[$j];
-		$id =~ s/.*\///;
-		$id =~ s/\.pdb$/_aln.cl$i.pdb/;
-		$id = "$dir/$ALNTEMPLATEDIR/$id";
-
-		my $cstfile = sprintf $CSTFILENAMES, $i;
-		$cstfile = $dir."/$cstfile";
-
-		my $tag = $THREADED_MDLS[$j];
-		my $prob = $template_probs{ 0 };
-		if ($tag =~ /.*_(\d\d\d).*/) {
-			$tag = $1;
-			$prob = $template_probs{ $tag } if defined $template_probs{ $tag };
-			$prob += $template_M_EST;
-		} elsif ($tag =~ /.*_w(\d+).*/) {
-			$prob = $1+$template_M_EST_counts;
+		my $symmflag = 1;
+		if ($symmgp eq "C1") { $symmflag=0; }
+	
+		print XML  "<dock_design>\n";
+		print XML  "    <TASKOPERATIONS>\n";
+		print XML  "    </TASKOPERATIONS>\n";
+		print XML  "    <SCOREFXNS>\n";
+		print XML  "        <fullatom weights=stage3_rlx symmetric=$symmflag>\n";
+		print XML  "	    </fullatom>\n";
+		print XML  "        <stage1 weights=stage1 symmetric=$symmflag>\n";
+		print XML  "        </stage1>\n";
+		print XML  "        <stage2 weights=stage2 symmetric=$symmflag>\n";
+		print XML  "        </stage2>\n";
+		print XML  "    </SCOREFXNS>\n";
+		print XML  "    <FILTERS>\n";
+		print XML  "    </FILTERS>\n";
+		print XML  "    <MOVERS>\n";
+		if ($symmflag == 1) {
+			my (@allmovers,@allweights);
+			foreach my $symmdeffile (@{ $symdeffiles{$i}->{$symmgp} }) {
+				my $symmstem = $symmdeffile;
+				$symmstem =~ s/\.symm//;
+				print XML  "       <SetupForSymmetry name=$symmstem definition=\"$dir/$SYMMDEFDIR/$symmdeffile.symm\"/>\n";
+				my ($templ, $tag, $symmgp) = split '_', $symmstem;
+				push @allmovers, $symmstem;
+				push @allweights, $template_probs{$tag};
+			}
+			print XML  "       <RandomMover name=setup_symm movers=\"".(join ',',@allmovers)."\" weights=\"".(join ',',@allweights)."\"/>\n";
 		}
+		print XML  "        <Hybridize name=hybridize stage1_scorefxn=stage1 stage2_scorefxn=stage2 fa_scorefxn=fullatom $HYBRIDIZEOPTIONS>\n";
+		my $frag3filepath = sprintf "$dir/$FRAG3FILE", $dirtag;
+		my $frag9filepath = sprintf "$dir/$FRAG9FILE", $dirtag;
+		print XML  "            <Fragments 3mers=\"$frag3filepath\" 9mers=\"$frag9filepath\"/>\n";
+	
+		foreach my $j (0..$#THREADED_MDLS) {
+			next if ($clusterid->[$j] != $i);
+			my $id = $THREADED_MDLS[$j];
+			$id =~ s/.*\///;
+			$id =~ s/\.pdb$/_aln.cl$i.pdb/;
+			$id = "$dir/$ALNTEMPLATEDIR/$id";
+	
+			my $cstfile = sprintf $CSTFILENAMES, $i;
+			$cstfile = $dir."/$cstfile";
+	
+			my $tag = $THREADED_MDLS[$j];
+			my $prob = $template_probs{ 0 };
+			if ($tag =~ /.*_(\d\d\d).*/) {
+				$tag = $1;
+				$prob = $template_probs{ $tag } if defined $template_probs{ $tag };
+				$prob += $template_M_EST;
+			} elsif ($tag =~ /.*_w(\d+).*/) {
+				$prob = $1+$template_M_EST_counts;
+			}
 
-	 	my $outline = sprintf "pdb=\"$id\" cst_file=\"$cstfile\" weight=$prob";
-		print XML  "            <Template $outline/>\n";
+			my $outline = sprintf "pdb=\"$id\" cst_file=\"$cstfile\" weight=$prob";
+			print XML  "            <Template $outline/>\n";
+		}
+		print XML  "        </Hybridize>\n";
+		print XML  "    </MOVERS>\n";
+		print XML  "    <APPLY_TO_POSE>\n";
+		print XML  "    </APPLY_TO_POSE>\n";
+		print XML  "    <PROTOCOLS>\n";
+		if ($symmflag == 1) {
+			print XML  "        <Add mover=setup_symm/>\n";
+		}
+		print XML  "        <Add mover=hybridize/>\n";
+		print XML  "    </PROTOCOLS>\n";
+		print XML  "</dock_design>\n";
+		close(XML);
+	
+		# finally write flags
+		my $flagfile = sprintf $FLAGFILENAMES, $i, $symmgp;
+		open (FLAGS, ">$flagfile") || die "Cannot open $_";
+		print FLAGS "-in:file:fasta $dir/$fastafile\n";
+		print FLAGS "-out:prefix $dirtag\n";
+		print FLAGS "-out:file:silent $dir/../$dirtag.$symmgp.cl$i.silent\n";
+		print FLAGS "-in:file:native $dir/$NATIVEDIR/$dirtag.pdb\n";
+		print FLAGS "-parser:protocol $dir/$xmlfile\n";
+		printf FLAGS "-edensity::mapfile $dir/$MAPFILENAMES\n", $i;
 	}
-	print XML  "        </Hybridize>\n";
-	print XML  "    </MOVERS>\n";
-	print XML  "    <APPLY_TO_POSE>\n";
-	print XML  "    </APPLY_TO_POSE>\n";
-	print XML  "    <PROTOCOLS>\n";
-	print XML  "        <Add mover=hybridize/>\n";
-	print XML  "    </PROTOCOLS>\n";
-	print XML  "</dock_design>\n";
-	close(XML);
-
- 	# finally write flags
- 	my $flagfile = sprintf $FLAGFILENAMES, $i;
- 	open (FLAGS, ">$flagfile") || die "Cannot open $_";
- 	print FLAGS "-in:file:fasta $dir/$fastafile\n";
- 	print FLAGS "-out:prefix $dirtag\n";
- 	print FLAGS "-out:file:silent $dir/../$dirtag.cl$i.silent\n";
- 	print FLAGS "-in:file:native $dir/$NATIVEDIR/$dirtag.pdb\n";
- 	print FLAGS "-parser:protocol $dir/$xmlfile\n";
- 	printf FLAGS "-edensity::mapfile $dir/$MAPFILENAMES\n", $i;
 }
 
 exit 0;
@@ -1097,7 +1183,7 @@ sub alignSW {
 	}
 	my $i = $max_i;
 	my $j = length($seq1);
-	
+
 	while (1) {
 		last if $matrix[$i][$j]{pointer} eq "n";
 		

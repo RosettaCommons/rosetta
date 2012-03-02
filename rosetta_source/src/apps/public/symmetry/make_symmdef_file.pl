@@ -524,7 +524,6 @@ if ($ncs_mode == 1) {
 			$err_pos = vscale( $sym_orders[ $i ] , $del_COM_inplane );
 		}
 		print STDERR "  translation error = ".vnorm( $err_pos )."\n";
-		
 
 		# special case for icosehedral symmetry
 		# see above for restrictions
@@ -875,8 +874,12 @@ if ($cryst_mode == 1) {
 		[1,-1,-1] ,[1,-1,0] ,[1,-1,1] ,  [1,0,-1] ,[1,0,0] ,[1,0,1] ,  [1,1,-1] ,[1,1,0] ,[1,1,1]
 	];
 
+	# nmr check
 	my %symminterface = ();
-	if ($fastDistCheck == 1) {
+	my $nmr = 0;
+	if ($A == 1 && $B == 1 && $C == 1 && $alpha == 90 && $beta == 90 && $gamma == 90) {
+		$symminterface{ "0_0_0_0" } = 0;
+	} elsif ($fastDistCheck == 1) {
 		foreach my $j_symm (0..($nsymm-1)) {
 			my $fY_i = $fCoM;
 			my $fY_j = vadd( mapply($Rs->[$j_symm],$fY_i) , $Ts->[$j_symm] );
@@ -10959,7 +10962,7 @@ sub spacegp_lookup {
 		push @Cs, [0,0,0];
 		$cheshire = [ [0,2/3] , [0,2/3] , [0,0] ];
 	}
-	elsif ($id eq "R 3 :H") {
+	elsif ($id eq "R 3 :H"|| $id eq "H 3") {
 		$gpid = 146;
 		push @Rs, [ [1,0,0] , [0,1,0] , [0,0,1] ];
 		push @Ts, [0,0,0];

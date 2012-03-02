@@ -482,9 +482,7 @@ sub alignSW {
 			$max_score = $matrix[$i][length($seq2)]{score};
 		}
 	}
-	#my $j = $max_j;
 	my $i = $max_i;
-	#my $i = length($seq2);
 	my $j = length($seq1);
 	
 	while (1) {

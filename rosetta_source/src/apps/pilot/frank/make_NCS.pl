@@ -30,14 +30,14 @@ if ($#ARGV < 0) {
 	print STDERR "input system.  Use with caution!\n";
 	print STDERR "options: \n";
 	print STDERR "    -p <string> : Input PDB file (one of -b or -p _must_ be given)\n";
-	print STDERR "    -r <real>   : [default 8.0] the max CA-CA distance between two interacting chains\n";
+	print STDERR "    -r <real>   : [default 12.0] the max CA-CA distance between two interacting chains\n";
 	print STDERR "    -a <char>   : [default A] the chain ID of the main chain\n";
 	print STDERR "    -f          : [default false] fast distance checking\n";
 	exit -1;
 }
 
 my $pdbfile;
-my $interact_dist = 8.0;  # min interaction distance
+my $interact_dist = 12.0;  # min interaction distance
 my $primary_chain = 'A';
 my @secondary_chains = ();
 my $fastDistCheck = 0;

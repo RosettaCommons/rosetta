@@ -110,6 +110,7 @@ static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreat
 static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
 static MoverRegistrator< moves::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;
+static MoverRegistrator< moves::RandomMoverCreator > reg_RandomMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
 static MoverRegistrator< moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
 static MoverRegistrator< moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
