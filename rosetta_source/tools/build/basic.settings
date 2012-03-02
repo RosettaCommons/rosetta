@@ -75,20 +75,20 @@ settings = {
     "cygwin" : {
         "overrides" : {
             "program_path"  : [
-                "/usr/local/bin",
-                "/usr/bin",
                 "/bin",
+                "/usr/bin",
+                "/usr/local/bin",
             ],
             "include_path"  : [
                 "#external/boost_1_46_1",
                 "#external/dbio",
-                "/usr/local/include",
                 "/usr/include",
+                "/usr/local/include",
             ],
             "library_path"  : [
                 "lib/cygwin/",
-                "/usr/local/lib",
                 "/usr/lib",
+                "/usr/local/lib",
             ],
             #"libraries" : [ "z --enable-auto-import" ],
             "flags" : {
@@ -101,19 +101,19 @@ settings = {
     "linux" : {
         "overrides" : {
             "program_path"  : [
-                "/usr/local/bin",
-                "/usr/bin",
                 "/bin",
+                "/usr/bin",
+                "/usr/local/bin",
             ],
             "include_path"  : [
                 "#external/boost_1_46_1",
                 "#external/dbio",
-                "/usr/local/include",
                 "/usr/include",
+                "/usr/local/include",
             ],
             "library_path"  : [
+                "/usr/lib",
                 "/usr/local/lib",
-	            "/usr/lib",
             ],
         },
     },
@@ -121,19 +121,19 @@ settings = {
     "macos" : {
         "overrides" : {
             "program_path"  : [
-                "/usr/local/bin",
-                "/usr/bin",
                 "/bin",
+                "/usr/bin",
+                "/usr/local/bin",
             ],
             "include_path"  : [
                 "#external/boost_1_46_1",
                 "#external/dbio",
-                "/usr/local/include",
                 "/usr/include",
+                "/usr/local/include",
             ],
             "library_path"  : [
-                "/usr/local/lib",
                 "/usr/lib",
+                "/usr/local/lib",
             ],
         },
     },
