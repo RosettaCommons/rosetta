@@ -76,24 +76,24 @@ settings = {
         "overrides" : {
             "program_path"  : [
                 "/usr/local/bin",
-            "/usr/bin",
-            "/bin",
+                "/usr/bin",
+                "/bin",
             ],
             "include_path"  : [
                 "#external/boost_1_46_1",
                 "#external/dbio",
-            "/usr/local/include",
-            "/usr/include",
+                "/usr/local/include",
+                "/usr/include",
             ],
             "library_path"  : [
                 "lib/cygwin/",
-            "/usr/local/lib",
-            "/usr/lib",
+                "/usr/local/lib",
+                "/usr/lib",
             ],
             #"libraries" : [ "z --enable-auto-import" ],
             "flags" : {
                 "link" : [ "lz -Xlinker --enable-auto-import -Xlinker --export-all-symbols", ],
-            #"ld"  : [ "-enable-auto-import", ],
+                #"ld"  : [ "-enable-auto-import", ],
             }
         },
     },
@@ -102,18 +102,18 @@ settings = {
         "overrides" : {
             "program_path"  : [
                 "/usr/local/bin",
-            "/usr/bin",
-            "/bin",
+                "/usr/bin",
+                "/bin",
             ],
             "include_path"  : [
                 "#external/boost_1_46_1",
                 "#external/dbio",
-            "/usr/local/include",
-            "/usr/include",
+                "/usr/local/include",
+                "/usr/include",
             ],
             "library_path"  : [
                 "/usr/local/lib",
-	     "/usr/lib",
+	            "/usr/lib",
             ],
         },
     },
@@ -122,18 +122,18 @@ settings = {
         "overrides" : {
             "program_path"  : [
                 "/usr/local/bin",
-            "/usr/bin",
-            "/bin",
+                "/usr/bin",
+                "/bin",
             ],
             "include_path"  : [
                 "#external/boost_1_46_1",
                 "#external/dbio",
-            "/usr/local/include",
-            "/usr/include",
+                "/usr/local/include",
+                "/usr/include",
             ],
             "library_path"  : [
                 "/usr/local/lib",
-            "/usr/lib",
+                "/usr/lib",
             ],
         },
     },
