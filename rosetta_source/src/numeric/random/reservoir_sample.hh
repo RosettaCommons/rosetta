@@ -40,7 +40,7 @@ public:
 	~ReservoirSampler() {}
 
 	void add_value( T val ) {
-		if ( n_vals() < n_wanted ) {
+		if ( n_vals() < n_wanted() ) {
 			values_.push_back( val );
 		} else {
 			Real const accept_prob(
