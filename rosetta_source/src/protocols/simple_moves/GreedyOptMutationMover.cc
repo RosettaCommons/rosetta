@@ -235,6 +235,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		utility::vector1< AA > allow_temp;
 		allow_temp.clear();
 		foreach( ResidueTypeCAP const t, allowed ){
+			if(std::find(allow_temp.begin(),allow_temp.end(),t->aa())!=allow_temp.end()) continue;
 			allow_temp.push_back( t->aa() );
 		}
 		//for each allowed AA
