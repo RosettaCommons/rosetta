@@ -24,6 +24,4 @@ atom_pair_constraint 1.0
 angle_constraint 1.0
 dihedral_constraint 1.0
 res_type_constraint 1.0
-hack_elec 0.25
-ch_bond_bb_bb 0.5
-fa_cust_pair_dist 1.0
+
