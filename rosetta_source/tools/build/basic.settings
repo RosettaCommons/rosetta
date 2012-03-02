@@ -66,14 +66,6 @@ settings = {
             #"ENV"           : {
             #    "PATH"      : [ ]
             #},
-        },
-    },
-
-    # Set a baseline environment for supported operating systems.
-
-    # XXX: Is this correct for Cygwin?
-    "cygwin" : {
-        "overrides" : {
             "program_path"  : [
                 "/bin",
                 "/usr/bin",
@@ -86,10 +78,20 @@ settings = {
                 "/usr/local/include",
             ],
             "library_path"  : [
-                "lib/cygwin/",
                 "/usr/lib",
                 "/usr/local/lib",
-            ],
+            ],            
+        },
+    },
+
+    # Set a baseline environment for supported operating systems.
+
+    # XXX: Is this correct for Cygwin?
+    "cygwin" : {
+        "prepends" : {
+            "library_path"  : [ "lib/cygwin/", ],
+        },
+        "overrides" : {
             #"libraries" : [ "z --enable-auto-import" ],
             "flags" : {
                 "link" : [ "lz -Xlinker --enable-auto-import -Xlinker --export-all-symbols", ],
@@ -98,45 +100,9 @@ settings = {
         },
     },
 
-    "linux" : {
-        "overrides" : {
-            "program_path"  : [
-                "/bin",
-                "/usr/bin",
-                "/usr/local/bin",
-            ],
-            "include_path"  : [
-                "#external/boost_1_46_1",
-                "#external/dbio",
-                "/usr/include",
-                "/usr/local/include",
-            ],
-            "library_path"  : [
-                "/usr/lib",
-                "/usr/local/lib",
-            ],
-        },
-    },
+    "linux" : {},
 
-    "macos" : {
-        "overrides" : {
-            "program_path"  : [
-                "/bin",
-                "/usr/bin",
-                "/usr/local/bin",
-            ],
-            "include_path"  : [
-                "#external/boost_1_46_1",
-                "#external/dbio",
-                "/usr/include",
-                "/usr/local/include",
-            ],
-            "library_path"  : [
-                "/usr/lib",
-                "/usr/local/lib",
-            ],
-        },
-    },
+    "macos" : {},
 
     # Note: Setting the above paths for Windows is only useful in the site.settings
     # as there is no standard location for installed libraries and headers.
