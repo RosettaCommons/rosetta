@@ -43,6 +43,8 @@ public:
 	~MutationData();
 	
 	std::string mutation_string() const;
+	std::string mutation_string_PDB_numbering() const;
+	
 	char mut_residue() const;
 	core::Size pose_resnum() const;
 

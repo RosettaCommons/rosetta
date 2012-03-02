@@ -3,7 +3,7 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file protocols/stability/point_mut_scan.hh
+/// @file protocols/pmut_scan/point_mut_scan.hh
 /// @brief A protocol that tries to find stability enhancing mutations
 /// @author Ron Jacak
 
@@ -54,7 +54,7 @@ public:
 	void calculate_neighbor_table( core::pose::Pose & pose, utility::vector1< utility::vector1< bool > > & neighbors );
 
 	void make_specific_mutant( utility::vector1< core::pose::Pose > & mutant_poses, utility::vector1< core::pose::Pose > & native_poses,
-		core::scoring::ScoreFunctionOP scorefxn, protocols::pmut_scan::Mutant & m, std::string mutation_string = "" );
+		core::scoring::ScoreFunctionOP scorefxn, protocols::pmut_scan::Mutant & m, std::string mutation_string = "", std::string mutation_string_PDB_numbering = "" );
 
 	void set_ddG_cutoff( core::Real threshold );
 	

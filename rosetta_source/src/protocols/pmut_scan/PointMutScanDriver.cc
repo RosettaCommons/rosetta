@@ -3,7 +3,7 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file protocols/pmut_scan/point_mut_scan.cc
+/// @file protocols/pmut_scan/PointMutScanDriver.cc
 /// @brief A protocol that tries to find stability enhancing mutations
 /// @author Ron Jacak
 
@@ -704,7 +704,7 @@ void PointMutScanDriver::make_mutants() {
 
 	// print out a header to the terminal
 	if ( MPI_rank_ == 0 ) {
-		TR << A( "mutation" ) << X(3) << A( "average ddG" ) << X(3) << A( "average total energy" ) << std::endl;
+		TR << A( "mutation" ) << X(3) << A( "mutation_PDB_numbering" ) << X(3) << A( "average ddG" ) << X(3) << A( "average total energy" ) << std::endl;
 	}
 
 	for ( Size ii=1; ii <= mutants_list_.size(); ++ii ) {
@@ -720,7 +720,7 @@ void PointMutScanDriver::make_mutants() {
 			native_poses[ ii ] = input_poses_[ ii ];
 		}
 
-		make_specific_mutant( mutant_poses, native_poses, scorefxn, m, "" );
+		make_specific_mutant( mutant_poses, native_poses, scorefxn, m, "", "" );
 		// this will result in the Mutant object 'm' being modified, and since m is a reference, the original mutants_list_
 		// will be modified, as well.
 	}
@@ -737,7 +737,7 @@ void PointMutScanDriver::make_mutants() {
 /// without having to run an entire scan protocol that would cover those mutations.
 ///
 void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & mutant_poses, utility::vector1< pose::Pose > & native_poses,
-	scoring::ScoreFunctionOP scorefxn, Mutant & m, std::string mutation_string ) {
+	scoring::ScoreFunctionOP scorefxn, Mutant & m, std::string mutation_string, std::string mutation_string_PDB_numbering ) {
 
 	//TR << "make_specific_mutant() called. mutant_poses.size(): " << mutant_poses.size() << ", native_poses.size(): " << native_poses.size()
 	//	<< ", num mutations: " << m.n_mutations() << ", mutation_string: " << mutation_string << std::endl;
@@ -761,8 +761,15 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 		if ( mutation_string != "" ) { out << ","; }
 		out << md.mutation_string();
 		std::string updated_mutation_string = out.str();
+		out.str("");
+		
+		out << mutation_string_PDB_numbering;
+		if ( mutation_string_PDB_numbering != "" ) { out << ","; }
+		out << md.mutation_string_PDB_numbering();
+		std::string updated_mutation_string_PDB_numbering = out.str();
+		
 
-		make_specific_mutant( mutant_poses, native_poses, scorefxn, m, updated_mutation_string );
+		make_specific_mutant( mutant_poses, native_poses, scorefxn, m, updated_mutation_string, updated_mutation_string_PDB_numbering );
 
 	} else {
 		// make the last mutation, calculate the ddG, and print out the results
@@ -824,7 +831,14 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 		out << md.mutation_string();
 		std::string final_mutation_string = out.str();
 
-		TR << final_mutation_string << X(3) << F( 9,3,ddG_mutation ) << X(3) << F( 9,2,average_mutant_score ) << std::endl;
+		out.str("");
+		out << mutation_string_PDB_numbering;
+		if ( mutation_string_PDB_numbering != "" ) { out << ","; }
+		out << md.mutation_string_PDB_numbering();
+		std::string final_mutation_string_PDB_numbering = out.str();
+
+
+		TR << final_mutation_string << X(3) << final_mutation_string_PDB_numbering << X(3) << F( 9,3,ddG_mutation ) << X(3) << F( 9,2,average_mutant_score ) << std::endl;
 
 
 		/*TR << "native poses total energies: ";

@@ -82,6 +82,7 @@ sources = {
 	"public/design": [
 		"fixbb",
 		"mpi_msd",
+		"pmut_scan_parallel",
 		"sequence_recovery",
 	],
 	"public/docking": [

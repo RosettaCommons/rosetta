@@ -73,6 +73,22 @@ std::string MutationData::mutation_string() const {
 }
 
 ///
+/// @begin MutationData::mutation_string_PDB_numbering
+///
+/// @brief
+/// Returns a string representation of this mutation using PDB not pose numbering.
+///
+std::string MutationData::mutation_string_PDB_numbering() const {
+	std::stringstream out;
+	out << chain_ << "-" << wt_residue_ << pdb_resnum_;
+	if ( icode_ != ' ' ) {
+		out << icode_;
+	}
+	out << mut_residue_;
+	return out.str();
+}
+
+///
 /// @begin MutationData::mut_residue
 ///
 /// @brief

@@ -594,7 +594,6 @@ sources = {
 		#"monomer_protocols",
 		#"analyze_ddG",
 		#"analyze_interface",
-		"pmut_scan_parallel",
 		#"hydrophobic_patch_stats_calculator",
 		#"rss_energy_calculator",
 		"report_hbonds_for_plugin",

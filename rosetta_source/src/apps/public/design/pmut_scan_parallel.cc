@@ -10,7 +10,7 @@
 // (C) 199x-2007 University of North Carolina, Chapel Hill
 // (C) 199x-2007 Vanderbilt University
 
-/// @file   apps/pilot/ronj/pmut_scan_parallel.cc
+/// @file   apps/public/design/pmut_scan_parallel.cc
 /// @brief  Main function for running the point mutant scan protocol
 /// @author Ron Jacak (ron.jacak@gmail.com)
 
