@@ -27,7 +27,7 @@ namespace protocols {
 namespace docking {
 
 /// @brief Sets up a docking fold tree based on user-specified chains for the first and second partner
-void setup_foldtree( core::pose::Pose & pose, std::string const partner_chainID, DockJumps movable_jumps );
+void setup_foldtree( core::pose::Pose & pose, std::string const partner_chainID, DockJumps & movable_jumps );
 
 } // docking
 } // protocols

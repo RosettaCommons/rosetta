@@ -14,6 +14,7 @@
 // Unit headers
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTreeCreator.hh>
+#include <protocols/docking/types.hh>
 #include <protocols/docking/util.hh>
 
 // Package headers
@@ -30,7 +31,6 @@
 #include <core/pose/PDBPoseMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {
@@ -162,7 +162,7 @@ void
 SetAtomTree::apply( core::pose::Pose & pose )
 {
 	if( docking_ft_ ){
-		utility::vector1< core::SSize > jumps;
+		docking::DockJumps jumps;
 		jumps.clear();
 		jumps.push_back( jump_ );
 		std::string const partners( "_" );

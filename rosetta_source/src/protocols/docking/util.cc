@@ -41,7 +41,7 @@ namespace docking {
 //
 
 void
-setup_foldtree( core::pose::Pose & pose, std::string const partner_chainID, DockJumps movable_jumps )
+setup_foldtree( core::pose::Pose & pose, std::string const partner_chainID, DockJumps & movable_jumps )
 {
 
 	using namespace core;
