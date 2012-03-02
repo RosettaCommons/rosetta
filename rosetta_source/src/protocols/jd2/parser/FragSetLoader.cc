@@ -73,7 +73,7 @@ void FragSetLoader::load_data(
 		runtime_assert( false );
 	}
 
-	foreach(TagPtr tag, tag->getTag( "FRAGMENTS" )->getTags()){
+	foreach( TagPtr tag, tag->getTags() ){
 		std::string const name ( tag->getName() );
 		if( name == "FRAGMENTS" ) continue;
 
