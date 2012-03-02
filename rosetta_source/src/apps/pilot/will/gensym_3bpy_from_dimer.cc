@@ -112,7 +112,7 @@ void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	OPT( in::file::s );
-	NEW_OPT( bpytoi::chi1_increment            ,"", 10  );
+	NEW_OPT( bpytoi::chi1_increment            ,"", 1   );
 	NEW_OPT( bpytoi::max_nres                  ,"", 200 );
 	NEW_OPT( bpytoi::max_cys                   ,"", 3   );
 	NEW_OPT( bpytoi::max_bpy_dun               ,"", 3.0 );
@@ -593,7 +593,7 @@ int neighbor_count(Pose const &pose, int ires, double distance_threshold=10.0) {
 #define AICS 20.89774264557		  // asin(G/2/sr3)
 
 void run() {
-
+	TR << "START RUN!" << std::endl;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -642,21 +642,21 @@ void run() {
 		Pose nat; core::import_pose::pose_from_pdb(nat,*rs,fname);
 		core::scoring::dssp::Dssp dssp(nat);
 		dssp.insert_ss_into_pose(nat);
-		if( nat.n_residue() > option[bpytoi::max_nres]() ) { cout<<"FAIL_SIZE"<<std::endl; continue; };
+		if( nat.n_residue() > option[bpytoi::max_nres]() ) { /*SIZE*/ continue; };
 		Pose base(nat), pdimer(nat);
 		make_dimer(pdimer);
 		Size cyscnt = 0; {
 			for(Size ir = 1; ir <= base.n_residue(); ++ir) if(base.residue(ir).name3()=="CYS") cyscnt++;
-			if(cyscnt > option[bpytoi::max_cys]()) { cout<<"FAIL_CYS"<<std::endl; continue; };
+			if(cyscnt > option[bpytoi::max_cys]()) { /*CYS*/ continue; };
 		}
 
 		//TR << "gensym_3bpy_from_dimer " << ifile << " " << fnames[ifile] << " " << base.n_residue() << " residues" << " " << cyscnt << std::endl;
 		for(Size ibpy = 1; ibpy <= base.n_residue(); ++ibpy) {
 			if(!base.residue(ibpy).is_protein()) continue;
-			if(is_near_C2Z_iface(base,ibpy)) continue;
+			// if(is_near_C2Z_iface(base,ibpy)) continue;
 			if(base.residue(ibpy).is_lower_terminus()) continue;
 			if(base.residue(ibpy).is_upper_terminus()) continue;
-			if(base.secstruct(ibpy)=='L') continue;
+			// if(base.secstruct(ibpy)=='L') continue;
 			// if(neighbor_count(base,ibpy) < option[bpytoi::min_bpy_cb_mono_nbr_count]()) continue;
 
 			//cout << fname << " " << ibpy << endl;
@@ -665,32 +665,33 @@ void run() {
 			Real chi1_incr = option[bpytoi::chi1_increment]();
 			for(Real bch1 = 0.0; bch1 < 360.0; bch1 += chi1_incr) {
 				base.set_chi(1,ibpy,bch1);
+				// clash check atoms along chi2 vector
 				for(Size ir = 1; ir <= base.n_residue(); ++ir) {
-					Size natom = (ir==ibpy) ? 5 : base.residue(ir).nheavyatoms();
-					for(Size ia = 1; ia <= natom; ia++) {
+					if(ir==ibpy) continue;
+					for(Size ia = 1; ia <= (base.residue(ir).name3()=="GLY"?4:5); ia++) {
 						if( base.xyz(AtomID(ia,ir)).distance_squared(base.residue(ibpy).xyz(iCZ)) < 6.0 ) goto clash2;
 						if( base.xyz(AtomID(ia,ir)).distance_squared(base.residue(ibpy).xyz(iCP)) < 6.0 ) goto clash2;
 						if( base.xyz(AtomID(ia,ir)).distance_squared(base.residue(ibpy).xyz(iCM)) < 6.0 ) goto clash2;
 					}
 				}
-				goto noclash2; clash2: { cout<<"FAIL_CLASH2"<<std::endl; continue; }; noclash2:
+				goto noclash2; clash2: { /*CLASH2*/ continue; }; noclash2:
 				Vec const CB = base.residue(ibpy).xyz(iCB);
 				Vec const CG = base.residue(ibpy).xyz(iCG);
 				vector1<std::pair<Vec,Vec> > baxes = intersecting_bpy_axes(CB,CG,base.residue(ibpy).xyz("ZN"),a2f1,c2f1);
 				for(Size jaxs = 1; jaxs <= baxes.size(); ++jaxs) {
 					Vec const isct = baxes[jaxs].first;
 					Vec const c3f1 = baxes[jaxs].second;
-					if( isct.distance_squared(c3f1) < 15.0 ) { cout<<"FAIL_ISCTDIS"<<std::endl; continue; };
-					if( isct.distance_squared(c2f1) < 15.0 ) { cout<<"FAIL_ISCTDIS"<<std::endl; continue; };
+					// if( isct.distance_squared(c3f1) < 15.0 ) { /*ISCTDIS*/ continue; };
+					// if( isct.distance_squared(c2f1) < 15.0 ) { /*ISCTDIS*/ continue; };
 					Vec const a3f1 = (isct-c3f1).normalized();
 					Mat const R1 = rotation_matrix_degrees(a3f1,120.0);
 					Mat const R2 = rotation_matrix_degrees(a3f1,240.0);
 					Real const orig_ang = angle_degrees( c2f1, isct, c3f1);
 					Real const ang = (orig_ang > 90.0) ? 180.0-orig_ang : orig_ang;
-					if( fabs(ang-ATET)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() &&          // sin(x) ~ x for small x
-						fabs(ang-AOCT)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() &&          // sin(x) ~ x for small x
-						fabs(ang-AICS)*(isct.distance(c3f1))*0.01745418/2.0 > option[bpytoi::max_sym_error]() ) { cout<<"FAIL_SYM_GEOM"<<std::endl; continue; }; // sin(x) ~ x for small x
-
+					if( fabs(ang-ATET)*(isct.distance(c3f1))*0.01745418/3.0 > option[bpytoi::max_sym_error]() && // sin(x) ~ x for small x
+					    fabs(ang-AOCT)*(isct.distance(c3f1))*0.01745418/3.0 > option[bpytoi::max_sym_error]() && // sin(x) ~ x for small x
+					    fabs(ang-AICS)*(isct.distance(c3f1))*0.01745418/3.0 > option[bpytoi::max_sym_error]() ){ /*SYM_GEOM*/ continue; }; // sin(x) ~ x for small x
+					
 					Real const dang = dihedral_degrees( c3f1,CG,CB,base.residue(ibpy).xyz(iZN) );
 					base.set_chi(2,ibpy, base.chi(2,ibpy) + dang );
 
@@ -701,14 +702,15 @@ void run() {
 					base.replace_residue(ibpy,bpy.residue(1),true);
 					base.set_chi(1,ibpy, bch1 );
 					base.set_chi(2,ibpy, base.chi(2,ibpy) + dang );
-					if(bpy_dun > option[bpytoi::max_bpy_dun]()) { cout<<"FAIL_DUN"<<std::endl; continue; };
+					if(bpy_dun > option[bpytoi::max_bpy_dun]()) { /*DUN*/ continue; };
 
-
+					// clash check BPY vs trimer BB
 					int bpy_mono_bb_atom_nbrs = 0;
 					int bpy_tri_bb_atom_nbrs = 0;
 					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
 						if(ir==ibpy) continue;
 						for(Size ia = 1; ia <= min(5ul,base.residue(ir).nheavyatoms()); ia++) {
+					// foreach bb atoms besides bpy:
 							Vec const x0 =     base.xyz(AtomID(ia,ir))           ;
 							Vec const x1 = R1*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
 							Vec const x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
@@ -725,17 +727,20 @@ void run() {
 							}
 						}
 					}
-					goto noclash3;	clash3: { cout<<"FAIL_CLASH3"<<std::endl; continue; }; noclash3:
+					goto noclash3;	clash3: { /*CLASH3*/ continue; }; noclash3:
 					// if( bpy_mono_bb_atom_nbrs < option[min_bpy_cb_mono_nbr_count]() ) continue;
 					// if( bpy_tri_bb_atom_nbrs  < option[min_bpy_cb_tri_nbr_count]()  ) continue;
 
+					// clash check trimer BB
 					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
 						for(Size ia = 1; ia <= min(5ul,base.residue(ir).nheavyatoms()); ia++) {
-							if(ir==ibpy) if(ia==iNE || ia==iNN) continue;
+							if(ir==ibpy) if(ia==iNE||ia==iNN) continue;
+					// foreach BB
 							Vec const x1 = R1*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
 							Vec const x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
 							for(Size jr = 1; jr <= base.n_residue(); ++jr) {
 								for(Size ja = 1; ja <= min(5ul,base.residue(jr).nheavyatoms()); ja++) {
+							// foreach BB
 									if( x1.distance_squared(      base.xyz(AtomID(ja,jr)))             < bpy_clash_d2 ) goto clash4;
 									if( x1.distance_squared( Rc2*(base.xyz(AtomID(ja,jr))-c2f1)+c2f1 ) < bpy_clash_d2 ) goto clash4;
 									if( x2.distance_squared( Rc2*(base.xyz(AtomID(ja,jr))-c2f1)+c2f1 ) < bpy_clash_d2 ) goto clash4;
@@ -743,7 +748,7 @@ void run() {
 							}
 						}
 					}
-					goto noclash4;	clash4: { cout<<"FAIL_CLASH4"<<std::endl; continue; }; noclash4:
+					goto noclash4;	clash4: { /*CLASH4*/ continue; }; noclash4:
 
 					Pose psym = base;
 					trans_pose(psym,-isct);
@@ -753,76 +758,81 @@ void run() {
 					Vec f1=(c3f1-isct).normalized(),f2=(c2f1-isct).normalized(),t1=Vec(0,0,1);
 					Size dimersub = 0;
 					Real angerr = 0.0;
-					if( fabs(ang-ATET) <= option[bpytoi::max_sym_error]() ) {
-						angerr = fabs(ang-ATET);
-						symtag = "TET";
-						option[OptionKeys::symmetry::symmetry_definition]("input/sym/tetra.sym");
-						Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.8164965743782284,0.0,0.5773502784520137) );
-						dimersub =	4;
-					} else if( fabs(ang-AOCT) <= option[bpytoi::max_sym_error]() ) {
-						angerr = fabs(ang-AOCT);
-						//continue;
-						symtag = "OCT";
-						option[OptionKeys::symmetry::symmetry_definition]("input/sym/octa.sym");
-						Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.4082482904638630,0.4082482904638626,0.8164965809277260));
-						dimersub =	4;
-					} else if( fabs(ang-AICS) <= option[bpytoi::max_sym_error]() ) {
-						angerr = fabs(ang-AICS);
-						//continue;
-						symtag = "ICS";
-						option[OptionKeys::symmetry::symmetry_definition]("input/sym/icosa.sym");
-						Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*rotation_matrix_degrees(Vec(0,0,1),120.0)*Vec(0.35670090519235864157,0.0,0.93421863834701557305));
-						dimersub =	4;
-					} else {
-						continue;
-						TR << "closed symm from ang " << ang << " not yet supported" << std::endl;
+					{
+						Real dtet = fabs(ang-ATET);
+						Real doct = fabs(ang-AOCT);
+						Real dics = fabs(ang-AICS);
+						Real dmin = min(dtet,min(doct,dics));
+						if( dmin==dtet ) {
+							angerr = fabs(ang-ATET);
+							symtag = "TET";
+							option[OptionKeys::symmetry::symmetry_definition]("input/sym/tetra.sym");
+							Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.8164965743782284,0.0,0.5773502784520137) );
+							dimersub =	4;
+						} else
+						if( dmin==doct ) {
+							angerr = fabs(ang-AOCT);
+							symtag = "OCT";
+							option[OptionKeys::symmetry::symmetry_definition]("input/sym/octa.sym");
+							Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.4082482904638630,0.4082482904638626,0.8164965809277260));
+							dimersub =	4;
+						} else
+						if( dmin==dics ) {
+							angerr = fabs(ang-AICS);
+							symtag = "ICS";
+							option[OptionKeys::symmetry::symmetry_definition]("input/sym/icosa.sym");
+							Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*rotation_matrix_degrees(Vec(0,0,1),120.0)*Vec(0.35670090519235864157,0.0,0.93421863834701557305));
+							dimersub =	4;
+						} else {
+							utility_exit_with_message("closed symm not yet supported");
+						}
 					}
 					rot_pose(psym,Rsymm);
 
-					string outfname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+"_"+lead_zero_string_of(jaxs,1)+".pdb";
+					string outfname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+
+					                     "_"+lead_zero_string_of(jaxs,1)+".pdb";
 					core::pose::symmetry::make_symmetric_pose(psym);
 
 					Real bpymdis = psym.residue(ibpy).xyz("ZN").distance(psym.residue(ibpy+base.n_residue()).xyz("ZN"));
-					if( bpymdis > option[bpytoi::max_sym_error]() ) { cout<<"FAIL_BPYGEOM"<<std::endl; continue; };
+					if( bpymdis > option[bpytoi::max_sym_error]() ) { /*BPYGEOM*/ continue; };
 
-
-					bool clash = false;
-					for(Size ir = 4; ir <= base.n_residue()-3; ++ir) {
-						Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
-						if( psym.residue(ir).name3()=="GLY" ) natom = 4;
-						for(Size ia = 1; ia <= natom; ++ia) {
-							Vec ip = psym.xyz(AtomID(ia,ir));
-							for(Size is = 2; is <= 12; ++is) {
-								if(is==4) continue;
-								for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
-									for(Size ja = 1; ja <= 4; ja++) {
-										if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
-									}
-								}
-							}
-						}
-					}
-					for(Size ir = 3*base.n_residue()+4; ir <= 4*base.n_residue()-3; ++ir) {
-						Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
-						if( psym.residue(ir).name3()=="GLY" ) natom = 4;
-						for(Size ia = 1; ia <= natom; ++ia) {
-							Vec ip = psym.xyz(AtomID(ia,ir));
-							for(Size is = 2; is <= 12; ++is) {
-								if(is==4) continue;
-								for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
-									for(Size ja = 1; ja <= 4; ja++) {
-										if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
-									}
-								}
-							}
-						}
-					}
-					//TR << "!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n" << std::endl;
-					if(clash) { cout<<"FAIL_CLASH5"<<std::endl; continue; };
+					// bool clash = false;
+					// for(Size ir = 4; ir <= base.n_residue()-3; ++ir) {
+					// 	Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
+					// 	if( psym.residue(ir).name3()=="GLY" ) natom = 4;
+					// 	for(Size ia = 1; ia <= natom; ++ia) {
+					// 		Vec ip = psym.xyz(AtomID(ia,ir));
+					// 		for(Size is = 2; is <= 12; ++is) {
+					// 			if(is==4) continue;
+					// 			for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
+					// 				for(Size ja = 1; ja <= 4; ja++) {
+					// 					if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
+					// 				}
+					// 			}
+					// 		}
+					// 	}
+					// }
+					// for(Size ir = 3*base.n_residue()+4; ir <= 4*base.n_residue()-3; ++ir) {
+					// 	Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
+					// 	if( psym.residue(ir).name3()=="GLY" ) natom = 4;
+					// 	for(Size ia = 1; ia <= natom; ++ia) {
+					// 		Vec ip = psym.xyz(AtomID(ia,ir));
+					// 		for(Size is = 2; is <= 12; ++is) {
+					// 			if(is==4) continue;
+					// 			for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
+					// 				for(Size ja = 1; ja <= 4; ja++) {
+					// 					if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
+					// 				}
+					// 			}
+					// 		}
+					// 	}
+					// }
+					// //TR << "!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n" << std::endl;
+					// if(clash) { /*CLASH5*/ continue; };
 
 					Size ncontact = num_trimer_contacts(psym,base.n_residue());
 					Real drms = dimer_rms(psym,pdimer);
-					if( drms > option[bpytoi::max_sym_error]() ) { cout<<"FAIL_DIMER_RMS"<<std::endl; continue; };
+					if( drms > option[bpytoi::max_sym_error]() ) { /*DIMER_RMS*/ continue; };
 
 					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_base.pdb");
 
@@ -834,8 +844,9 @@ void run() {
 					vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(4);
 					sfsym->score(psym);
 					new_sc(psym,intra_subs,int_area,sc);
-					if(int_area < 300.0 || sc < 0.4) { cout<<"FAIL_SC"<<std::endl; continue; }
+					// if(int_area < 200.0 || sc < 0.4) { /*SC*/ continue; }
 
+					// BPY buttressing atom count
 					int bpy_tri_atom_nbrs = 0;
 					int bpy_mono_atom_nbrs = 0;
 					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
@@ -926,6 +937,8 @@ void run() {
 					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
 					sfsym->score(psym);
 					new_sc(psym,intra_subs,int_area,sc);
+
+					cout << "DEBUG " << (angerr*isct.distance(c3f1))*0.01745418/option[bpytoi::max_sym_error]() << std::endl;
 
 					cout << "DOCK_HIT "
 						 << option[OptionKeys::out::file::o]()+"/"+outfname << " "

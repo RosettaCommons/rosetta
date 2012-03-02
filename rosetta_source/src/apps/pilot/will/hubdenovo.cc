@@ -112,6 +112,9 @@ OPT_KEY( IntegerVector, hub_ho_cst )
 OPT_KEY( Real, hub_cen_energy_cut )
 OPT_KEY( Boolean, hub_no_fa )
 OPT_KEY( Boolean, hub_graphics )
+OPT_KEY( Boolean, hub_test_config )
+
+#define ERROR_UINT 80085
 
 void register_options() {
 	using namespace basic::options;
@@ -124,6 +127,7 @@ void register_options() {
 	NEW_OPT( hub_cen_energy_cut   ,"", 200.0 );
 	NEW_OPT( hub_no_fa   ,"", false );
 	NEW_OPT( hub_graphics,"", false );
+	NEW_OPT( hub_test_config,"", false );
 }
 
 static core::io::silent::SilentFileData sfd;
@@ -216,7 +220,7 @@ public:
 struct ConstraintConfig {
 	Size nres,nsub,nhub;
 	Real CSTSDMULT;
-	string fname;
+	string fname, template_seq_sc, template_seq_bb;
 	vector1<char> ss;
 	std::map<string,Sizes> ssmap;
 	std::map<Size,Strings> seq;
@@ -245,6 +249,7 @@ struct ConstraintConfig {
 		parse_config_file(cfgfile);
 		show_cst_grids(tr);
 		show_sequence(tr);
+		if(basic::options::option[basic::options::OptionKeys::hub_test_config]()) utility_exit_with_message("DEBUG!!!!!!!!!!!!!!!!!");
 	}
 	void init() {
 		frs = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
@@ -433,6 +438,8 @@ struct ConstraintConfig {
 					}
 				}
 				nres = ssstr.size();
+				template_seq_sc="";	for(Size i=1; i<=nres; ++i) template_seq_sc += "_";
+				template_seq_bb="";	for(Size i=1; i<=nres; ++i) template_seq_bb += "_";
 				template_sc.resize(nres*nsub);
 				template_sc_resi.resize(nres*nsub);
 				for(Size i = 1; i <= nsub; ++i) {
@@ -480,8 +487,10 @@ struct ConstraintConfig {
 						for(int j = 1; j < 10; ++j) {
 							string symbol = i->first + str(-j);
 							if( fr - j >= 1         ) toadd.push_back(std::pair<string,Sizes>(symbol,Sizes(1,fr-j)));
+							else                      toadd.push_back(std::pair<string,Sizes>(symbol,Sizes(1,ERROR_UINT)));
 							symbol = i->first + "+" + str( j);
 							if( bk + j <= nres*nsub ) toadd.push_back(std::pair<string,Sizes>(symbol,Sizes(1,bk+j)));
+							else                      toadd.push_back(std::pair<string,Sizes>(symbol,Sizes(1,ERROR_UINT)));
 						}
 					}
 					for(Size i = 1; i <= toadd.size(); ++i) ssmap[toadd[i].first] = toadd[i].second;
@@ -513,10 +522,17 @@ struct ConstraintConfig {
 					}
 					if(r.size()!=s.size()) utility_exit_with_message("SEQUENCE size mismatch: "+op2+" vs. "+tmp);
 					for(Size i = 1; i <= r.size(); ++i) {
-						if(r[i]<=1) { tr << "WARNING: cannot mutate resi "+str(r[i])+"!!! "+op2+" "+tmp << endl; continue; }
-						if(r[i] > nres) utility_exit_with_message("AAs can only be specified in primary subunit "+str(r[i])+" > "+str(nres)+", "+op2+" "+tmp);
-						if(seq.count(r[i])) utility_exit_with_message("multiple AA sets at position "+str(r[i])+", "+op2+" "+tmp);
-						seq[r[i]] = s[i];
+						if(r[i]==1) { tr << "WARNING: cannot mutate resi "+str(r[i])+"!!! "+op2+" "+tmp << endl; continue; }
+						if(r[i] > nres || r[i] < 1) {
+							if(r[i]==ERROR_UINT)
+								tr << "WARNING: ignoring SEQUENCE "+op2+" "+tmp << ", out of monomer range!" << std::endl;
+							else
+								utility_exit_with_message("AAs can only be specified in primary subunit "+str(r[i])+" > "+str(nres)+", "+op2+" "+tmp);
+						}
+						if(r[i]!=ERROR_UINT){
+							if(seq.count(r[i])) utility_exit_with_message("multiple AA sets at position "+str(r[i])+", "+op2+" "+tmp);						
+							seq[r[i]] = s[i];
+						}
 					}
 					// tr << "sequence: " << op2 << " " << tmp << endl;
 					// for(Size i = 1; i <= r.size(); ++i) {
@@ -544,7 +560,7 @@ struct ConstraintConfig {
 				int scgrp=0,bbgrp=0,exgrp=0;
 				char buf[9999];
 				read_ignore_comments(in,tpdb);
-				if(tpdb.substr(tpdb.size()-4,4)!=".pdb"&&tpdb.substr(tpdb.size()-7,7)!=".pdb.gz") utility_exit_with_message("bad pdb: "+tpdb);
+				if(tpdb.substr(tpdb.size()-4,4)!=".pdb"&&tpdb.substr(tpdb.size()-7,7)!=".pdb") utility_exit_with_message("bad pdb: "+tpdb);
 				templates_fname.push_back(tpdb);
 				templates_fa .push_back( pose_from_pdb(*frs,tpdb) );
 				templates_cen.push_back( pose_from_pdb(*crs,tpdb) );
@@ -582,6 +598,7 @@ struct ConstraintConfig {
 									template_sc[resi_to_primary(dresi)] = templates_fname.size();
 									template_sc[dresi] = templates_fname.size();
 									template_sc_resi[dresi] = tresi;
+									if(template_seq_sc[dresi-1]=='_') template_seq_sc[dresi-1] = templates_cen.back()->residue(tresi).name1();
 									// if(seq.count(dresi)) {
 									// 	if(seq[dresi].size()!=1||seq[dresi][1]!=str(templates_cen.back()->residue(tresi).name1())) {
 									// 		tr << "WARNING ignoring sidechain cst because of incompatible sequence for residue "+str(dresi) << std::endl;
@@ -606,6 +623,7 @@ struct ConstraintConfig {
 										utility_exit_with_message("BACKBONE: template "+tpdb+" residue "+str(*i)+" not mapped to design residue!");
 									Size dri = template_map.back()[*i];
 									dres.push_back(dri);
+									if(template_seq_bb[dri-1]=='_') template_seq_bb[dri-1] = templates_cen.back()->residue(*i).name1();
 									// seq[dri].resize(1);
 									// seq[dri][1] = templates_cen.back()->residue(*i).name1();
 								}
@@ -725,13 +743,18 @@ struct ConstraintConfig {
 			for(Size a1 = 6; a1 <= p.residue(i->dres1).nheavyatoms(); ++a1) {
 				string aname1 = p.residue(i->dres1).atom_name(a1);
 				if(!t.residue(i->tres1).has(aname1)) {
-					for(Size ia = 1; ia <= t.residue(i->tres1).nheavyatoms(); ++ia) tr << t.residue(i->tres1).atom_name(ia) << endl;
-						utility_exit_with_message("can't find atom "+aname1+" in template residue "+
-							str(i->tres1)+" t.aa "+t.residue(i->tres1).name()+" d.aa "+p.residue(i->dres1).name());
+					tr << "WARNING: sidechain cst mismatch des:"<<p.residue(i->dres1)<<" vs tplt:"<<t.residue(i->tres1)<<" atom " << aname1 << ", probably residue identity is not same at template!" << std::endl;
+					// for(Size ia = 1; ia <= t.residue(i->tres1).nheavyatoms(); ++ia)
+					// 	tr << t.residue(i->tres1).atom_name(ia) << endl;
+					// utility_exit_with_message("can't find atom "+aname1+" in template residue "+
+					// 	str(i->tres1)+" t.aa "+t.residue(i->tres1).name()+" d.aa "+p.residue(i->dres1).name());
 				}
 				for(Size a2 = 6; a2 <= p.residue(i->dres2).nheavyatoms(); ++a2) {
 					string aname2 = p.residue(i->dres2).atom_name(a2);
-					if(!t.residue(i->tres2).has(aname2)) utility_exit_with_message("can't find atom "+aname2+" in template residue "+str(i->tres2));
+					if(!t.residue(i->tres2).has(aname2)){
+					tr << "WARNING: sidechain cst mismatch des:"<<p.residue(i->dres1)<<" vs tplt:"<<t.residue(i->tres1)<<" atom " << aname1 << " " << aname2 << ", probably residue identity is not same at template!" << std::endl;
+						// utility_exit_with_message("can't find atom "+aname2+" in template residue "+str(i->tres2));
+					}
 					Real d = t.residue(i->tres1).xyz(aname1).distance( t.residue(i->tres2).xyz(aname2) );
 					AtomID id1( p.residue(i->dres1).atom_index(aname1), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(aname2), i->dres2 );
@@ -755,7 +778,7 @@ struct ConstraintConfig {
 			for(CSTs::iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) i->active = false;
 				for(vector1<DCST>::iterator i = dcst.begin(); i != dcst.end(); ++i) i->active = false;
 		}
-		std::string pick_sequence() const {
+	std::string pick_sequence() const {
 		string s = "Z";
 		for(Size i = 2; i <= nres; ++i) {
 			if(seq.count(i)) {
@@ -776,7 +799,7 @@ struct ConstraintConfig {
 		if( s.size() != nres ) {
 			utility_exit_with_message("particular sequence doesn't match length of ss");
 		}
-		tr << "pick sequence: " << s << endl;
+		//tr << "pick sequence: " << s << endl;
 		return s;
 	}
 	int get_highest_intrahub_seqsep() {
@@ -797,16 +820,16 @@ struct HubDenovo {
 	Pose hub;
 	ConstraintConfig cfg;
 	ScoreFunctionOP sf3,sfsym,sfasym,sfsymnocst;
-	protocols::moves::MoverOP rlxcst,rlxnocst,des,fragins3,fraginsL,fragins,cenmin;
+	protocols::moves::MoverOP rlxcst,rlxnocst,des,fragins3,fraginsL,fragins,cenmin,famin;
 	virtual ~HubDenovo() {}
 	HubDenovo(std::string cstcfgfile) : cfg(cstcfgfile),sf3(NULL),sfsym(NULL),sfasym(NULL),sfsymnocst(NULL),rlxcst(NULL),rlxnocst(NULL),
 	des(NULL),fragins3(NULL),fraginsL(NULL),fragins(NULL),cenmin(NULL)
 	{
 		using namespace core::scoring;
 		sf3 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score4_smooth"));
-		Real cstwt = Real(cfg.nres)/Real(cfg.cst_bb.size());
+		Real cstwt = 2.0*Real(cfg.nres)/Real(cfg.cst_bb.size());
 		sf3->set_weight(atom_pair_constraint,cstwt);
-		sf3->set_weight(vdw,2.0);
+		sf3->set_weight(vdw,3.0);
 		sfsym  = getScoreFunction();
 		sfsymnocst  = getScoreFunction();
 		sfasym = new ScoreFunction(*sfsym);
@@ -829,6 +852,12 @@ struct HubDenovo {
 		rlxcst   = new protocols::relax::FastRelax (sfsym);
 		rlxnocst = new protocols::relax::FastRelax(sfsymnocst);
 
+		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		movemap->set_jump(false);
+		movemap->set_bb(true);
+		movemap->set_chi(true);
+		famin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsymnocst, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+
 		hub = *core::import_pose::pose_from_pdb(*rtsfa, option[OptionKeys::hub_pdb]() );
 
 	}
@@ -839,8 +868,11 @@ struct HubDenovo {
 		string tmpseq = cfg.pick_sequence();
 		// tr << "start sequence " << seq << endl;
 		for(Size ir = 2; ir <= cfg.nres; ++ir) {
+			char myaa = tmpseq[ir-1];
+			if     (cfg.template_seq_sc[ir-1]!='_') myaa = cfg.template_seq_sc[ir-1];
+			else if(cfg.template_seq_bb[ir-1]!='_') myaa = cfg.template_seq_bb[ir-1];
 			core::conformation::ResidueOP tmp = core::conformation::ResidueFactory::create_residue(
-				*p.residue(1).residue_type_set().aa_map(core::chemical::aa_from_oneletter_code(tmpseq[ir-1]))[1] );
+				*p.residue(1).residue_type_set().aa_map(core::chemical::aa_from_oneletter_code(myaa))[1] );
 			tmp->seqpos(ir);
 			tmp->chain(1);
 			p.append_residue_by_bond( *tmp, true );
@@ -849,6 +881,8 @@ struct HubDenovo {
 		}
 		core::pose::add_upper_terminus_type_to_pose_residue(p,p.n_residue());
 		//sfsym->show(p);
+
+		tr << "make_start_pose: " << p.sequence() << std::endl;
 
 		make_symmetric_pose(p);
 		FoldTree ft = p.fold_tree();
@@ -953,15 +987,39 @@ struct HubDenovo {
 		sf->set_weight(core::scoring::    angle_constraint,1.0);
 	}
 
-	void design(Pose & p) {
+	void design(Pose & p, bool hydrophobic_only=false) {
 		ScoreFunctionOP sf = core::scoring::getScoreFunction();
 		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(p);
 		task->initialize_extra_rotamer_flags_from_command_line();
-		for(vector1<CST>::iterator i = cfg.cst_sc.begin(); i != cfg.cst_sc.end(); ++i) {
-			task->nonconst_residue_task(i->dres1).prevent_repacking();
-			task->nonconst_residue_task(i->dres2).prevent_repacking();
+		string HRES = "AFILMVWY";
+		// for(vector1<CST>::iterator i = cfg.cst_sc.begin(); i != cfg.cst_sc.end(); ++i) {
+		// 	task->nonconst_residue_task(i->dres1).prevent_repacking();
+		// 	task->nonconst_residue_task(i->dres2).prevent_repacking();
+		// }
+		task->nonconst_residue_task(1).prevent_repacking();
+		for(int i = 2; i <= cfg.nres; ++i) {
+			vector1<bool> allowed_aas(20,false);
+			int nadded = 0;
+			for(int j=1; j <= cfg.seq[i].size(); ++j) {
+				string tmp = cfg.seq[i][j];
+				if(tmp.size()!=1) utility_exit_with_message("only one letter AA codes supported ATM");
+				if(!hydrophobic_only || std::find(HRES.begin(),HRES.end(),tmp[0])!=HRES.end()) {
+					allowed_aas[core::chemical::aa_from_oneletter_code(tmp[0])] = true;
+					nadded++;
+				}			
+			}
+			if(nadded==0) {
+				for(int j=1; j <= cfg.seq[i].size(); ++j) {
+					string tmp = cfg.seq[i][j];
+					allowed_aas[core::chemical::aa_from_oneletter_code(tmp[0])] = true;
+				}			
+			}
+			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
 		}
 		core::pack::make_symmetric_PackerTask(p,task);
+		// tr << "TASK:" << std::endl;
+		// tr << *task << std::endl;
+		// utility_exit_with_message("aritns");
 		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 		tr << "predes: " << sf->score(p) << std::endl;
 		repack.apply(p);
@@ -978,7 +1036,7 @@ struct HubDenovo {
 				protocols::viewer::add_conformation_viewer(tmp.conformation(),"test",1150,1150);
 			}
 
-			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
+			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb";
 
 			cfg.reset_csts();
 
@@ -998,41 +1056,34 @@ struct HubDenovo {
 			tr << "HIT " << tmp.energies().total_energy() << " " << fn << endl;
 
 			if(!option[OptionKeys::hub_no_fa]()) {
-				tmp.dump_pdb(fn+"_cen.pdb.gz");
+				tmp.dump_scored_pdb(fn+"_cen.pdb",*sf3);
 
 				// FA and reapply csts
 				core::util::switch_to_residue_type_set(tmp,"fa_standard");
 				tmp.remove_constraints();
-				cfg.reset_csts();
-				cfg.apply_csts(tmp);
 
-				{
-					// sfsym->set_weight(core::scoring::atom_pair_constraint,10.0);
-					// sfsym->set_weight(core::scoring::    angle_constraint,10.0);
-					// core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-					// 				  	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
-					rlxcst->apply(tmp); // no cst
-					tr << "rlx w/cst " << sfsym->score(tmp) << std::endl;
-					// protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(tmp);
-					// sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
-					// sfsym->set_weight(core::scoring::    angle_constraint,1.0);
-					// min_as_poly_ala(tmp,sfsym,hocsts,cfg.nres);
-					sfsym->show(tmp);
-					//tmp.dump_pdb(fn+"_min.pdb.gz");
-					// tmp.constraint_set()->show_violations(tr,tmp,1,1.0);
-				}
-				// Real cstsc = tmp.energies().total_energies()[core::scoring::atom_pair_constraint];
-				// tmp.remove_constraints();
-				tmp.dump_pdb(fn+"_cst.pdb.gz");
-
+				tr << "relax with csts, starting tplt-based seq" << std::endl;
+				cfg.reset_csts();	cfg.apply_csts(tmp);
+				rlxcst->apply(tmp);
 				tmp.remove_constraints();
-				design(tmp);
-				// rlxnocst->apply(tmp); // no cst
-				// tr << "rlx nocst " << sfsym->score(tmp) << std::endl;
-				// sfsymnocst->score(tmp); // rescore with cst
+				sfsym->show(tmp);
+				tmp.dump_scored_pdb(fn+"_relax_tplt.pdb",*sfsym);
+
+				tr << "relax from cnofig file with no polars" << std::endl;
+				design(tmp,true);
+				sfsymnocst->show(tmp);
+				famin->apply(tmp);
+				sfsymnocst->show(tmp);
+				tmp.dump_scored_pdb(fn+"_grease.pdb",*sfsym);
+
+				tr << "relax from cnofig file" << std::endl;
+				design(tmp,false);
+				sfsymnocst->show(tmp);
+				famin->apply(tmp);
+				sfsymnocst->show(tmp);
 			}
 
-			tmp.dump_pdb(fn);
+			tmp.dump_scored_pdb(fn,*sfsym);
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 			// ss_out->add_energy("cstsc",cstsc);
 			ss_out->fill_struct(tmp,fn);
