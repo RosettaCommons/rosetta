@@ -196,8 +196,10 @@ EnvSmoothEnergy::setup_for_derivatives(
 		// get the appropriate residue from the pose.
 		conformation::Residue const & rsd( pose.residue(i) );
 		// currently this is only for protein residues
-		if(! rsd.is_protein() ) continue; //return;
-		if( rsd.aa() == chemical::aa_unk ) continue; //return;
+		if( !rsd.is_protein() || rsd.aa() == chemical::aa_unk ) {
+			residue_dEdN_.push_back(0);
+			continue; //return;
+		}
 
 		Size const atomindex_i = rsd.atom_index( representative_atom_name( rsd.aa() ));
 
