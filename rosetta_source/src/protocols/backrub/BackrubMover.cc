@@ -177,9 +177,9 @@ protocols::backrub::BackrubMover::parse_my_tag(
 
 	min_atoms_ = tag->getOption<core::Size>( "min_atoms", min_atoms_ );
 	max_atoms_ = tag->getOption<core::Size>( "max_atoms", max_atoms_ );
-	max_angle_disp_4_ = tag->getOption<bool>( "max_angle_disp_4", max_angle_disp_4_ );
-	max_angle_disp_7_ = tag->getOption<bool>( "max_angle_disp_7", max_angle_disp_7_ );
-	max_angle_disp_slope_ = tag->getOption<bool>( "max_angle_disp_slope", max_angle_disp_slope_ );
+	max_angle_disp_4_ = tag->getOption<core::Real>( "max_angle_disp_4", max_angle_disp_4_ );
+	max_angle_disp_7_ = tag->getOption<core::Real>( "max_angle_disp_7", max_angle_disp_7_ );
+	max_angle_disp_slope_ = tag->getOption<core::Real>( "max_angle_disp_slope", max_angle_disp_slope_ );
 	set_preserve_detailed_balance( tag->getOption<bool>( "preserve_detailed_balance", preserve_detailed_balance() ) );
 	set_require_mm_bend( tag->getOption<bool>( "require_mm_bend", require_mm_bend() ) );
 
