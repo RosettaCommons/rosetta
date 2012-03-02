@@ -197,6 +197,8 @@ foreach my $tag (keys %alimap) {
 	my $tgtchain = substr( $template, 4, 1 );
 	my $dirid = substr( $template, 1, 2 );
 
+	print STDERR "At  $tag\n";
+
 	my $pdbout1 = $TEMPLATEDIR."/".$template.".pdb";
 	unless ( ( -e $pdbout1 ) ) {
 		print STDERR "writing $pdbout1!\n";
@@ -247,6 +249,11 @@ foreach my $tag (keys %alimap) {
 	my (@bestbiofile,@bestbiofile_chains);
 	my $mostbiochains=1;
 	foreach my $biofile (@allbiofiles) {
+		# size filter ... 20 MB gzipped???
+		# mainly for 3k1qA
+		next if ( (-s $biofile) > 20*1024*1024);
+
+		print STDERR "Unzip $biofile\n";
 		open( BIOPDB, "-|", "zcat " . $biofile) || die "!";
 		my @pdblines = <BIOPDB>;
 		close BIOPDB;
@@ -297,10 +304,10 @@ foreach my $tag (keys %alimap) {
 	}
 
 	next if ($mostbiochains <= 1);
-	#next if ($mostbiochains > 52); # ...
+	next if ($mostbiochains > 62); # ...
 
 	my %chainhash;
-	my $chainids = "BCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+	my $chainids = "BCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()";
 	my $currchain = 0;
 	foreach my $chainid (@bestbiofile_chains) {
 		if ($chainid eq $tgtchain.'0') {
@@ -312,6 +319,7 @@ foreach my $tag (keys %alimap) {
 	}
 
 	my $pdbout2 = $SYMMDIR."/".$template.".pdb";
+	#print STDERR "writing $pdbout2!\n";
 	open (PDBOUT2, ">$pdbout2") || die "Cannot open $_";
 	my $linecount = 0;
 	my $mdl = 0;
@@ -350,6 +358,7 @@ foreach my $tag (keys %alimap) {
 
 		$linecount++;
 	}
+	#print STDERR "   ... done\n";
 }
 
 ## (b) partial threading app
