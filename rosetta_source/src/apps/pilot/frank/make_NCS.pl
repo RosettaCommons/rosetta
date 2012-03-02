@@ -540,7 +540,7 @@ foreach my $complex (sort { $symminterface{$a} <=> $symminterface{$b} } keys %en
 	print OUTSYM " + ".$energy_counter{$complex}."*(VRT".$syminterfaces[0]."_base".":VRT".$complex."_base".")";
 }
 print OUTSYM "\n";
-print OUTSYM "anchor_residue $minRes\n";
+print OUTSYM "anchor_residue com\n";
 
 # virtual_coordinates_start
 # xyz VRT1 -1,0,0 0,1,0 0,0,0
