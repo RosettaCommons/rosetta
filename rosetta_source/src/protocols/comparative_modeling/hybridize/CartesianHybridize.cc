@@ -203,7 +203,9 @@ CartesianHybridize::set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in
 
 	min_scorefxn_ = scorefxn_in->clone();
 
-	bonds_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
+	//bonds_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
+	bonds_scorefxn_ = scorefxn_in->clone();
+	bonds_scorefxn_->reset();
 	bonds_scorefxn_->set_weight( core::scoring::vdw, lowres_scorefxn_->get_weight( core::scoring::vdw ) );
 	bonds_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
 
