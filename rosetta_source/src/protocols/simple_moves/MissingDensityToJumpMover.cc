@@ -60,12 +60,12 @@ MissingDensityToJumpMover::apply( core::pose::Pose & pose ) {
 	using namespace core::conformation;
 	using namespace core::chemical;
   Size const nres( pose.total_residue() );  
-  for ( Size i=1; i< nres; ++i ) {//don't have to go to last residue thus < rather than <=
-    if ( !(pose.residue_type(i).is_polymer() || pose.residue_type(i).is_lower_terminus() || pose.fold_tree().is_cutpoint(i))){
+ for ( Size i=1; i< nres; ++i ) {//don't have to go to last residue thus < rather than <=
+    if ( pose.residue_type(i).is_polymer() && !pose.residue_type(i).is_lower_terminus() && !pose.fold_tree().is_cutpoint(i) ) {
       Residue const &current_rsd(pose.residue(i));
       Residue const &next_rsd(pose.residue(i+1));
       core::Real bondlength = ( current_rsd.atom( current_rsd.upper_connect_atom() ).xyz() - next_rsd.atom( next_rsd.lower_connect_atom() ).xyz() ).length();
-      if( bondlength > 3.5 ){
+      if( bondlength > 2.5 ){
 				TR << "[ WARNING ] missing density found at residue " << i << std::endl;
 				core::kinematics::FoldTree update_tree(pose.fold_tree());
 				update_tree.new_jump(i,i+1,i);

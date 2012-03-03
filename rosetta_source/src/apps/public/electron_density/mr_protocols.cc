@@ -252,7 +252,9 @@ public:
 		relax_prot->set_movemap(mm_relax);
 
 		core::scoring::ScoreFunctionOP cart_fa = new core::scoring::ScoreFunction(*fadens_scorefxn_);
-		cart_fa->set_weight( core::scoring::cart_bonded, 0.5 );
+		cart_fa->set_weight( core::scoring::cart_bonded_angle, 0.5 );
+		cart_fa->set_weight( core::scoring::cart_bonded_length, 0.5 );
+		cart_fa->set_weight( core::scoring::cart_bonded_torsion, 0.5 );
 		relax_prot->set_scorefxn( cart_fa );
 
 		relax_prot->apply( pose );

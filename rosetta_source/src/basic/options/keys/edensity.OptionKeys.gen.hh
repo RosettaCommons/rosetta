@@ -42,6 +42,7 @@ namespace edensity { extern RealOptionKey const ca_mask; }
 namespace edensity { extern BooleanOptionKey const score_symm_complex; }
 namespace edensity { extern RealOptionKey const sc_scaling; }
 namespace edensity { extern RealOptionKey const render_sigma; }
+namespace edensity { extern BooleanOptionKey const missing_density_to_jump; }
 
 } // namespace OptionKeys
 } // namespace options

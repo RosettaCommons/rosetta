@@ -68,7 +68,7 @@ public:
 	TorsionDatabase(Real k_tors, Real k_tors_prot);
 
 	// lookup ideal bondangle; insert in DB if not there
-	void
+	void													
 	lookup( core::chemical::ResidueType const & restype,
 	        int atm1, int atm2, int atm3, int atm4, Real &Kphi, Real &phi0, Real &phi_step );
 
@@ -117,9 +117,9 @@ private:
 	//fpd involves a string comparison (restype) .. could be faster
 	//std::map< residx_atm_pair, core::Real > bondlengths_;
 	boost::unordered_map< residx_atm_pair, core::Real > bondlengths_;
-	boost::unordered_map< residx_atm_pair, core::Real > Kbonds_;
+	boost::unordered_map< residx_atm_pair, core::Real > Klengths_;
 
-	Real k_bond;  // can only be set in constructor
+	Real k_length;  // can only be set in constructor
 };
 
 

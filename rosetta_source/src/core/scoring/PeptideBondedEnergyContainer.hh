@@ -24,8 +24,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <utility/vector1.hh>
-
+#include <utility/vector1.hh>tables_->size()
 
 namespace core {
 namespace scoring {
@@ -40,14 +39,14 @@ public:
 	PeptideBondedNeighborIterator(
 		Size const base_in,
 		Size const pos_in,
-		ScoreType const st,
-		utility::vector1< Real > * table_in,
+		utility::vector1< ScoreType > const st,
+		utility::vector1< utility::vector1< Real > > * table_in,
 		utility::vector1< bool > * computed_in
 	):
 		base_( base_in ),
 		pos_( pos_in ),
-		score_type_( st ),
-		table_( table_in ),
+		score_types_( st ),
+		tables_( table_in ),
 		computed_( computed_in )
 	{}
 
@@ -56,7 +55,7 @@ public:
 		PeptideBondedNeighborIterator const & my_src( static_cast< PeptideBondedNeighborIterator const & >( src ) );
 		base_ = my_src.base_;
 		pos_ = my_src.pos_;
-		table_ = my_src.table_;
+		tables_ = my_src.tables_;
 		computed_ = my_src.computed_;
 		return *this;
 	}
@@ -95,16 +94,21 @@ public:
 	}
 
 	virtual void save_energy( EnergyMap const & emap ) {
-		Real const energy( emap[ score_type_ ] );
-		(*table_)[ std::min(pos_,base_) ] = energy;
+		for (Size i=1; i<=tables_->size(); ++i)
+		{
+			Real const energy( emap[ score_types_[i] ] );
+			(*tables_)[i][ std::min(pos_,base_) ] = energy;
+		}
 	}
 
 	virtual void retrieve_energy( EnergyMap & emap ) const {
-		emap[ score_type_ ] = (*table_)[std::min(pos_,base_)];
+		for (Size i=1; i<=tables_->size(); ++i)
+			emap[ score_types_[i] ] = (*tables_)[i][std::min(pos_,base_)];
 	}
 
 	virtual void accumulate_energy( EnergyMap & emap ) const {
-		emap[ score_type_ ] += (*table_)[std::min(pos_,base_)];
+		for (Size i=1; i<=tables_->size(); ++i)
+			emap[ score_types_[i] ] += (*tables_)[i][std::min(pos_,base_)];
 	}
 
 	virtual void mark_energy_computed() {
@@ -122,8 +126,8 @@ public:
 private:
 	Size base_;
 	Size pos_;
-	ScoreType score_type_;
-	utility::vector1< Real > * table_;
+	utility::vector1< ScoreType > score_types_;
+	utility::vector1< utility::vector1< Real > > * tables_;
 	utility::vector1< bool > * computed_;
 };
 
@@ -138,14 +142,14 @@ public:
 	PeptideBondedNeighborConstIterator(
 		Size const base_in,
 		Size const pos_in,
-		ScoreType const st,
-		utility::vector1< Real > const * table_in,
+		utility::vector1< ScoreType > const st,
+		utility::vector1< utility::vector1< Real > > const * table_in,
 		utility::vector1< bool > const * computed_in
 	):
 		base_( base_in ),
 		pos_( pos_in ),
-		score_type_( st ),
-		table_( table_in ),
+		score_types_( st ),
+		tables_( table_in ),
 		computed_( computed_in )
 	{}
 
@@ -153,7 +157,7 @@ public:
 		assert( dynamic_cast< PeptideBondedNeighborConstIterator const * >( &src ) );
 		PeptideBondedNeighborConstIterator const & my_src( static_cast< PeptideBondedNeighborConstIterator const & >( src ) );
 		pos_ = my_src.pos_;
-		table_ = my_src.table_;
+		tables_ = my_src.tables_;
 		computed_ = my_src.computed_;
 		return *this;
 	}
@@ -190,11 +194,13 @@ public:
 	}
 
 	virtual void retrieve_energy( EnergyMap & emap ) const {
-		emap[ score_type_ ] = (*table_)[std::min(pos_,base_)];
+		for (Size i=1; i<=tables_->size(); ++i)
+			emap[ score_types_[i] ] = (*tables_)[i][std::min(pos_,base_)];
 	}
 
 	virtual void accumulate_energy( EnergyMap & emap ) const {
-		emap[ score_type_ ] += (*table_)[std::min(pos_,base_)];
+		for (Size i=1; i<=tables_->size(); ++i)
+			emap[ score_types_[i] ] += (*tables_)[i][std::min(pos_,base_)];
 	}
 
 	virtual bool energy_computed() const {
@@ -204,8 +210,8 @@ public:
 private:
 	Size base_;
 	Size pos_;
-	ScoreType score_type_;
-	utility::vector1< Real > const * table_;
+	utility::vector1< ScoreType > score_types_;
+	utility::vector1< utility::vector1< Real > > const * tables_;
 	utility::vector1< bool > const * computed_;
 };
 
@@ -221,12 +227,14 @@ public:
 		return new PeptideBondedEnergyContainer( *this );
 	}
 
-	PeptideBondedEnergyContainer( Size const size_in, ScoreType const score_type_in ):
+	PeptideBondedEnergyContainer( Size const size_in, utility::vector1< ScoreType > const score_type_in ):
 		size_( size_in ),
-		score_type_( score_type_in ),
-		table_( size_in, 0.0 ),
+		score_types_( score_type_in ),
 		computed_( size_in, false )
-	{}
+	{
+		int nscoretypes = score_type_in.size();
+		tables_.resize( size_in, utility::vector1< core::Real >(nscoretypes,0) );
+	}
 
 	virtual
 	bool empty() const {
@@ -237,7 +245,11 @@ public:
 	void
 	set_num_nodes( Size size_in ) {
 		size_ = size_in;
-		table_.clear(); table_.resize( size_ , 0.0 );
+		for (Size i=1; i<=tables_.size(); ++i)
+		{
+			tables_[i].clear(); 
+			tables_[i].resize( size_ , 0.0 );
+		}
 		computed_.clear(); computed_.resize( size_,  false );
 	}
 
@@ -249,19 +261,19 @@ public:
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const {
-		return new PeptideBondedNeighborConstIterator( resid, resid==1 ? 2:resid-1, score_type_, &table_, &computed_ );
+		return new PeptideBondedNeighborConstIterator( resid, resid==1 ? 2:resid-1, score_types_, &tables_, &computed_ );
 	}
 
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_end( int resid ) const {
-		return new PeptideBondedNeighborConstIterator( resid, std::min( resid+2, (int)size_+1 ), score_type_, &table_, &computed_ );
+		return new PeptideBondedNeighborConstIterator( resid, std::min( resid+2, (int)size_+1 ), score_types_, &tables_, &computed_ );
 	}
 
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_upper_neighbor_iterator_begin( int resid ) const {
-		return new PeptideBondedNeighborConstIterator( resid, resid+1, score_type_, &table_, &computed_ );
+		return new PeptideBondedNeighborConstIterator( resid, resid+1, score_types_, &tables_, &computed_ );
 	}
 
 	virtual
@@ -274,20 +286,20 @@ public:
 	virtual
 	ResidueNeighborIteratorOP
 	neighbor_iterator_begin( int resid ) {
-		return new PeptideBondedNeighborIterator( resid, resid==1 ? 2:resid-1, score_type_, &table_, &computed_ );
+		return new PeptideBondedNeighborIterator( resid, resid==1 ? 2:resid-1, score_types_, &tables_, &computed_ );
 	}
 
 	virtual
 	ResidueNeighborIteratorOP
 	neighbor_iterator_end( int resid ) {
-		return new PeptideBondedNeighborIterator( resid, std::min( resid+2, (int)size_+1 ), score_type_, &table_, &computed_ );
+		return new PeptideBondedNeighborIterator( resid, std::min( resid+2, (int)size_+1 ), score_types_, &tables_, &computed_ );
  	}
 
 	virtual
 	ResidueNeighborIteratorOP
 	upper_neighbor_iterator_begin( int resid )
 	{
-		return new PeptideBondedNeighborIterator( resid, resid+1, score_type_, &table_, &computed_ );
+		return new PeptideBondedNeighborIterator( resid, resid+1, score_types_, &tables_, &computed_ );
 	}
 
 	virtual
@@ -298,9 +310,8 @@ public:
 
 private:
 	Size size_;
-	ScoreType score_type_;
-
-	utility::vector1< Real > table_;
+	utility::vector1< ScoreType > score_types_;
+	utility::vector1< utility::vector1< Real > > tables_;
 	utility::vector1< bool > computed_;
 
 };

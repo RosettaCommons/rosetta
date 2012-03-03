@@ -3770,6 +3770,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 Option( 'score_symm_complex', 'Boolean', default = 'false', desc='If set, scores the structure over the entire symmetric complex; otherwise just use controlling monomer'),
                 Option( 'sc_scaling', 'Real', default = '1.0', desc='Scale sidechain density by this amount (default same as mainchain density)'),
                 Option( 'render_sigma', 'Real', default = '2', desc='initially render at this sigma level (extras=graphics build only)'),
+		Option( 'missing_density_to_jump', 'Boolean', desc = 'Place jumps where missing density is found', default = 'false'),
 	),
   Option_Group( 'patterson',
                 Option( 'debug', 'Boolean', default = 'false'),

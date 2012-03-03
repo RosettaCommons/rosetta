@@ -1842,6 +1842,7 @@ option.add( basic::options::OptionKeys::edensity::ca_mask, "override default (=6
 option.add( basic::options::OptionKeys::edensity::score_symm_complex, "If set, scores the structure over the entire symmetric complex; otherwise just use controlling monomer" ).def(false);
 option.add( basic::options::OptionKeys::edensity::sc_scaling, "Scale sidechain density by this amount (default same as mainchain density)" ).def(1.0);
 option.add( basic::options::OptionKeys::edensity::render_sigma, "initially render at this sigma level (extras=graphics build only)" ).def(2);
+option.add( basic::options::OptionKeys::edensity::missing_density_to_jump, "Place jumps where missing density is found" ).def(false);
 option.add( basic::options::OptionKeys::patterson::patterson, "patterson option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::patterson::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::patterson::weight, "wt of patterson correlation" ).def(0.0);

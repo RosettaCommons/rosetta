@@ -68,6 +68,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
+#include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 #include <utility/Bound.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -259,6 +260,14 @@ main( int argc, char * argv [] )
 			seqmov->add_mover( mover );
 			mover = seqmov;
 		}
+	}
+
+	// add jumps when missing density is found
+	if ( option [ edensity::missing_density_to_jump ]() ) {
+			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
+			seqmov->add_mover( new protocols::simple_moves::MissingDensityToJumpMover );
+  		seqmov->add_mover( mover );
+  		mover = seqmov;
 	}
 
 	// operate this mover and output pdbs/scorefile
