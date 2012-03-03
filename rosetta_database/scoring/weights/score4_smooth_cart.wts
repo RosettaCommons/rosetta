@@ -7,4 +7,6 @@ cen_pair_smooth 1.0
 cbeta_smooth 1.0
 cenpack_smooth 1.0
 vdw 1.0
-cart_bonded 0.1
+cart_bonded_angle 0.1
+cart_bonded_length 0.1
+cart_bonded_torsion 0.1
