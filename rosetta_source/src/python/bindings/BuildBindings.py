@@ -439,11 +439,12 @@ def buildModules(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_p
 
 
         print "buildModules(...): '%s', " % dir_name
-        print "Directory: ", dir_name
+        #print "Directory: ", dir_name
         #dname = dest+'/' + os.path.dirname(dir_name)
         dname = dest+'/' + dir_name
         if not os.path.isdir(dname): os.makedirs(dname)
         if Options.jobs > 1:
+            sys.stdout.flush()
             pid = mfork()
             if not pid:  # we are child process
                 buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
