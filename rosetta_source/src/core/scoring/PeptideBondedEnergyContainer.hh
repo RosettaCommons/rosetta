@@ -24,7 +24,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <utility/vector1.hh>tables_->size()
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {
