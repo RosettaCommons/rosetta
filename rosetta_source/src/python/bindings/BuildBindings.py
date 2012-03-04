@@ -239,11 +239,12 @@ def main(args):
             buildModule(n, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
 
     else:
+        # we want to start with lib that is longest to build - that way we can do multi-core build more efficiently
+        buildModules('core',      bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
+        buildModules('protocols', bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('utility',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('numeric',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('basic',     bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
-        buildModules('core',      bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
-        buildModules('protocols', bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
 
     error = False
     for p in Jobs:
@@ -411,7 +412,7 @@ def getLinkerOptions():
 
 
 
-def buildModules(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+def buildModules__old(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
     ''' recursive build buinding for given dir name, and store them in dest.
     '''
     def visit(arg, dir_name, names):
@@ -454,6 +455,51 @@ def buildModules(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_p
             IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
 
     os.path.walk(path, visit, None)
+
+
+def buildModules(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+    ''' recursive build buinding for given dir name, and store them in dest.
+    '''
+    #os.path.walk(path, visit, None)
+    dir_list = []
+    for dir_name, _, files in os.walk(path):
+        if dir_name.find('.svn') >= 0: continue  # exclude all svn related namespaces
+
+        if Options.build_all:
+            if exclude.isBanned(dir_name):
+                print 'Dir %s is banned! Skipping...' % dir_name
+                continue
+        else:
+            if dir_name in IncludeDict:
+                if not IncludeDict[dir_name][0]:
+                    print 'Skipping dir %s...' % dir_name
+                    continue
+            else:
+                print "Skipping new dir", dir_name
+                IncludeDictNew[dir_name] = (False, 999, [])
+                continue
+
+        dir_list.append( (dir_name, files) )
+
+    dir_list.sort(key=lambda x: -len(x[1]))  # sort dirs by number of files, most populated first. This should improve speed of multi-thread builds
+
+    for dir_name, _ in dir_list:
+        print "buildModules(...): '%s', " % dir_name
+        #print "Directory: ", dir_name
+        #dname = dest+'/' + os.path.dirname(dir_name)
+        dname = dest+'/' + dir_name
+        if not os.path.isdir(dname): os.makedirs(dname)
+        if Options.jobs > 1:
+            sys.stdout.flush()
+            pid = mfork()
+            if not pid:  # we are child process
+                buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
+                sys.exit(0)
+
+        else:
+            IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
+
+
 
 
 
