@@ -33,9 +33,6 @@
 
 cd %(workdir)s
 
-# Removing old files from previous run
-rm -R output
-rm .results.log  .results.yaml
 
 python submit.py
-condor_submit condor
+#condor_submit condor
