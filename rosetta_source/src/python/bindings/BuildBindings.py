@@ -393,6 +393,7 @@ def getCompilerOptions():
         else: add_option = '-pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
     add_option += ' -DBOOST_PYTHON_MAX_ARITY=25 -DNDEBUG -DPYROSETTA'
+    if Options.compiler == 'clang': add_option += ' -w'
     return add_option
 
 
