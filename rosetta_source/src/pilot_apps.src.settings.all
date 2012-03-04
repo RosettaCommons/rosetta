@@ -623,6 +623,8 @@ sources = {
 	"pilot/luki" : [
 		"sc",
 	],
+	"pilot/lior" : [ "feature_schema_generator"
+	],
 }
 
 include_path = [ ]

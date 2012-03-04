@@ -38,6 +38,7 @@
 
 namespace protocols {
 namespace features {
+typedef std::vector<std::string> FeaturesNamesCollection;
 
 /// Create Features Reporters
 class FeaturesReporterFactory {
@@ -73,11 +74,10 @@ public:
 
 	// undefined, commenting out to fix PyRosetta build  FeaturesReporterCreatorCOP
 	// get_creator( std::string const & type_name );
-
+	FeaturesNamesCollection get_all_features_names();
 private:
 
 	static FeaturesReporterFactory * instance_;
-
 
 	typedef std::map< std::string, protocols::features::FeaturesReporterCreatorCOP > FeaturesReporterCreatorMap;
 	FeaturesReporterCreatorMap types_;

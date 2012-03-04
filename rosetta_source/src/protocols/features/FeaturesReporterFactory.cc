@@ -94,7 +94,6 @@ FeaturesReporterFactory::get_features_reporter(
 	if (iter != types_.end()) {
 		return iter->second->create_features_reporter();
 	} else {
-
 		stringstream error_msg;
 		error_msg
 			<< "Attempting to create unrecognized FeaturesReporter "
@@ -110,7 +109,17 @@ FeaturesReporterFactory::get_features_reporter(
 	}
 	return 0;
 }
+FeaturesNamesCollection
+FeaturesReporterFactory::get_all_features_names() {
+	FeaturesNamesCollection collection;
+	FeaturesReporterCreatorMap::const_iterator iter = types_.begin();
+	while ( iter != types_.end() ) {
+		collection.push_back(iter->first);
+		iter++;
+	}
+	return collection;
 
+}
 FeaturesReporterOP
 FeaturesReporterFactory::get_features_reporter(
 	TagPtr const tag,
