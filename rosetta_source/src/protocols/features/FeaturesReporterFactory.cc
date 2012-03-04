@@ -109,9 +109,9 @@ FeaturesReporterFactory::get_features_reporter(
 	}
 	return 0;
 }
-FeaturesNamesCollection
-FeaturesReporterFactory::get_all_features_names() {
-	FeaturesNamesCollection collection;
+utility::vector1<std::string> FeaturesReporterFactory::get_all_features_names()
+{
+	utility::vector1<std::string> collection;
 	FeaturesReporterCreatorMap::const_iterator iter = types_.begin();
 	while ( iter != types_.end() ) {
 		collection.push_back(iter->first);
