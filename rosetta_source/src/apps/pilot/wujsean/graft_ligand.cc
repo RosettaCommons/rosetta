@@ -115,7 +115,6 @@ main( int argc, char * argv [] ) {
 
 	ExtraThreadingMover mover( aln, template_pose, residues_to_steal );
 	mover.apply(comparative_modeling_pose); //Does a superimpose_pose
-	comparative_modeling_pose.dump_pdb("james_debug.pdb");
 
 	char ligand_chain = core::pose::chr_chains[comparative_modeling_pose.residue(old_comparative_model_length).chain() + 1];
 
@@ -134,7 +133,6 @@ main( int argc, char * argv [] ) {
 	//Creates Remarks object from template pose remarks
 	core::pose::Remarks remarks( template_pose.pdb_info()->remarks() );
 	std::cout << "currently have " << remarks.size() << " remarks." << std::endl;
-	template_pose.dump_pdb("template_debug.pdb");
 
 	//Create sequence alignment from template(2) to query(1)
 	SequenceMapping template_to_query( aln.sequence_mapping(2,1) );
@@ -180,7 +178,6 @@ main( int argc, char * argv [] ) {
 			comparative_modeling_pose.replace_residue(query_posB, template_pose.residue(pdbposB), true);
 		}
   }
-	comparative_modeling_pose.dump_pdb("james_debug2.pdb");
 
 	//Superimposes again to make the mutated residues in the correct spot.
   vector1< Size > residues;
@@ -194,31 +191,6 @@ main( int argc, char * argv [] ) {
       residues.push_back(ii);
     }
   }
-
-  SequenceMapping mapping = aln.sequence_mapping(1,2);
-
-  AtomID_Map< AtomID > atom_map;
-  core::pose::initialize_atomid_map( atom_map, comparative_modeling_pose, core::id::BOGUS_ATOM_ID );
-  typedef vector1< Size >::const_iterator iter;
-  for ( iter it = residues.begin(), end = residues.end(); it != end; ++it ) {
-    Size const templ_ii( mapping[*it] );
-    if ( templ_ii == 0 ) {
-      continue;
-    }
-    if ( ! template_pose.residue(*it).has("CA") ) {
-      continue;
-    }
-    if ( ! comparative_modeling_pose.residue(templ_ii).has("CA") ) {
-       continue;
-    }
-    //std::cout << *it << " => " << templ_ii << std::endl;
-    AtomID const id1( template_pose.residue(*it).atom_index("CA"), *it );
-    AtomID const id2( comparative_modeling_pose.residue(templ_ii).atom_index("CA"), templ_ii );
-    atom_map.set( id1, id2 );
-  }
-  std::cout << "Finished mapping" << std::endl;
-
-	//core::scoring::superimpose_pose( comparative_modeling_pose , template_pose, atom_map );
 
 	//Place remarks into comparative modeling pose
   core::pose::Remarks query_remarks;
