@@ -51,6 +51,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/packing/compute_holes_score.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
@@ -91,6 +92,10 @@
 #include <apps/pilot/will/will_util.ihh>
 #include <apps/pilot/will/mynamespaces.ihh>
 #include <apps/pilot/will/frag_util.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <core/pack/pack_rotamers.hh>
 
 using core::conformation::symmetry::SymmData;
 using core::conformation::symmetry::SymmDataOP;
@@ -249,6 +254,8 @@ struct ConstraintConfig {
 		parse_config_file(cfgfile);
 		show_cst_grids(tr);
 		show_sequence(tr);
+		tr << "template concensus SC csts: " << template_seq_sc << std::endl;
+		tr << "template concensus BB csts: " << template_seq_bb << std::endl;
 		if(basic::options::option[basic::options::OptionKeys::hub_test_config]()) utility_exit_with_message("DEBUG!!!!!!!!!!!!!!!!!");
 	}
 	void init() {
@@ -1026,6 +1033,46 @@ struct HubDenovo {
 		tr << "postdes: " << sf->score(p) << std::endl;
 	}
 
+
+	Real stupid_ddg(Pose const & pose_in) {
+
+		tr << "assuming center on 2fold!!!!!!" << std::endl;
+		Vec dax(0,0,0);
+		for(int i=1; i<=cfg.nres; ++i) {
+			dax += pose_in.residue(i           ).xyz(2);
+			dax += pose_in.residue(i+3*cfg.nres).xyz(2);				
+		}
+		dax = 1000.0*(dax.normalized());
+
+		ScoreFunctionOP scorefxn_ = sfsymnocst;
+		core::pack::task::PackerTaskOP task_;
+		using namespace core;
+		using namespace pack;
+		using namespace protocols::moves;
+		core::pose::Pose pose = pose_in;
+		assert( core::pose::symmetry::is_symmetric( pose ));
+		core::conformation::symmetry::SymmetricConformation & symm_conf( dynamic_cast<core::conformation::symmetry::SymmetricConformation & > ( pose.conformation()) );
+		// convert to symetric scorefunction
+		//setup_packer_and_movemap( pose );
+		task_ = core::pack::task::TaskFactory::create_packer_task( pose );
+		task_->initialize_from_command_line().or_include_current( true );
+		core::pack::task::operation::RestrictToRepacking rpk;
+		rpk.apply( pose, *task_ );
+		core::pack::task::operation::NoRepackDisulfides nodisulf;
+		nodisulf.apply( pose, *task_ );
+		// protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
+		// rti.apply( pose, *task_ );
+		pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
+		Real bounde = scorefxn_->score(pose);
+
+		trans_pose(pose,dax,1,cfg.nres);
+
+		pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
+		Real ubounde = scorefxn_->score(pose);
+		return bounde - ubounde;
+
+	}
+
 	void run(Size NITER = 9999999999) {
 		using namespace core::scoring;
 		for(int iter = 1; iter < NITER; ++iter) {
@@ -1037,7 +1084,6 @@ struct HubDenovo {
 			}
 
 			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb";
-
 			cfg.reset_csts();
 
 			if(!cen_fold(tmp)) continue;
@@ -1069,12 +1115,12 @@ struct HubDenovo {
 				sfsym->show(tmp);
 				tmp.dump_scored_pdb(fn+"_relax_tplt.pdb",*sfsym);
 
-				tr << "relax from cnofig file with no polars" << std::endl;
-				design(tmp,true);
-				sfsymnocst->show(tmp);
-				famin->apply(tmp);
-				sfsymnocst->show(tmp);
-				tmp.dump_scored_pdb(fn+"_grease.pdb",*sfsym);
+				// tr << "relax from cnofig file with no polars" << std::endl;
+				// design(tmp,true);
+				// sfsymnocst->show(tmp);
+				// famin->apply(tmp);
+				// sfsymnocst->show(tmp);
+				// tmp.dump_scored_pdb(fn+"_grease.pdb",*sfsym);
 
 				tr << "relax from cnofig file" << std::endl;
 				design(tmp,false);
@@ -1083,11 +1129,31 @@ struct HubDenovo {
 				sfsymnocst->show(tmp);
 			}
 
+			cfg.reset_csts(); cfg.apply_csts(tmp);
+			sfsym->score(tmp);
 			tmp.dump_scored_pdb(fn,*sfsym);
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 			// ss_out->add_energy("cstsc",cstsc);
+			tr << "firstX scores" << endl;
 			ss_out->fill_struct(tmp,fn);
+			for(int inr=1; inr <= 6; ++inr) {
+				Real esum = 0.0;
+				for(int isum=1; isum <= inr; ++isum) {
+					esum += tmp.energies().residue_total_energy(isum);
+				}
+				ss_out->add_energy("first"+str(inr),esum);
+			}
+			ss_out->add_energy("phi1",tmp.phi(1));
+			ss_out->add_energy("psi1",tmp.psi(1));
+			ss_out->add_energy("omg1",tmp.omega(1));
+			ss_out->add_energy("phi2",tmp.phi(2));
+			ss_out->add_energy("psi2",tmp.psi(2));
+			ss_out->add_energy("omg2",tmp.omega(2));
+			tr << "dec15 score" << endl;
+			ss_out->add_energy("dec15",core::scoring::packing::compute_dec15_score(tmp));
+			ss_out->add_energy("ddg3",stupid_ddg(tmp));
 
+			tr << "dump scores" << endl;
 			sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
 
 		}

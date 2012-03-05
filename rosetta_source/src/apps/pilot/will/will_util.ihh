@@ -68,36 +68,34 @@ core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, c
   return s;
 }
 
-void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
-  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+void trans_pose( core::pose::Pose & pose, Vec const & trans, Size start=1, Size end=0 ) {
+  if(0==end) end = pose.n_residue();
+  for(Size ir = start; ir <= end; ++ir) {
     for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
       core::id::AtomID const aid(core::id::AtomID(ia,ir));
-      pose.set_xyz( aid, pose.xyz(aid) + trans );
+      pose.set_xyz( aid, pose.xyz(aid) + (Vec)trans );
     }
   }
 }
-
-void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
-  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+void rot_pose( core::pose::Pose & pose, Mat const & rot, Size start=1, Size end=0 ) {
+  if(0==end) end = pose.n_residue();
+  for(Size ir = start; ir <= end; ++ir) {
     for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
       core::id::AtomID const aid(core::id::AtomID(ia,ir));
       pose.set_xyz( aid, rot * pose.xyz(aid) );
     }
   }
 }
-
-void rot_pose( core::pose::Pose & pose, Mat const & rot, Vec const & cen ) {
-  trans_pose(pose,-cen);
-  rot_pose(pose,rot);
-  trans_pose(pose,cen);
+void rot_pose( core::pose::Pose & pose, Mat const & rot, Vec const & cen, Size start=1, Size end=0 ) {
+  trans_pose(pose,-cen,start,end);
+  rot_pose(pose,rot,start,end);
+  trans_pose(pose,cen,start,end);
 }
-
-void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang ) {
-  rot_pose(pose,rotation_matrix_degrees(axis,ang));
+void rot_pose( core::pose::Pose & pose, Vec const & axis, double const & ang, Size start=1, Size end=0 ) {
+  rot_pose(pose,rotation_matrix_degrees(axis,ang),start,end);
 }
-
-void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang, Vec const & cen ) {
-  rot_pose(pose,rotation_matrix_degrees(axis,ang),cen);
+void rot_pose( core::pose::Pose & pose, Vec const & axis, double const & ang, Vec const & cen, Size start=1, Size end=0 ) {
+  rot_pose(pose,rotation_matrix_degrees(axis,ang),cen,start,end);
 }
 
 
