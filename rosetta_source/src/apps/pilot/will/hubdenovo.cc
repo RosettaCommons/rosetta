@@ -1129,6 +1129,8 @@ struct HubDenovo {
 				sfsymnocst->show(tmp);
 			}
 
+			Real ddg3 = stupid_ddg(tmp);
+
 			cfg.reset_csts(); cfg.apply_csts(tmp);
 			sfsym->score(tmp);
 			tmp.dump_scored_pdb(fn,*sfsym);
@@ -1151,7 +1153,7 @@ struct HubDenovo {
 			ss_out->add_energy("omg2",tmp.omega(2));
 			tr << "dec15 score" << endl;
 			ss_out->add_energy("dec15",core::scoring::packing::compute_dec15_score(tmp));
-			ss_out->add_energy("ddg3",stupid_ddg(tmp));
+			ss_out->add_energy("ddg3",ddg3);
 
 			tr << "dump scores" << endl;
 			sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
