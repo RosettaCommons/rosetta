@@ -1064,13 +1064,15 @@ struct HubDenovo {
 		// rti.apply( pose, *task_ );
 		pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
 		Real bounde = scorefxn_->score(pose);
+		scorefxn_->show(pose);
 
 		trans_pose(pose,dax,1,cfg.nres);
 
 		pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
 		Real ubounde = scorefxn_->score(pose);
-		return bounde - ubounde;
+		scorefxn_->show(pose);
 
+		return bounde - ubounde;
 	}
 
 	void run(Size NITER = 9999999999) {
