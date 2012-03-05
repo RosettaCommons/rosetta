@@ -331,6 +331,7 @@ enum ScoreType {
 	distance_chainbreak,
 	dof_constraint,
 
+	cart_bonded,  // cartesian bonded potential
 	cart_bonded_angle,  // cartesian bonded potential
 	cart_bonded_length,  // cartesian bonded potential
 	cart_bonded_torsion,  // cartesian bonded potential

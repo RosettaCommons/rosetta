@@ -45,7 +45,7 @@ my $HYBRIDIZEOPTIONS = "batch=2 stage1_increase_cycles=1.0 stage2_increase_cycle
 #my $CLUSTERCUTOFF = 0.40;
 #my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
 my @RMS_CUTOFFS = (10,5,4,3,2,1.5,1);
-my $CLUSTERCUTOFF = 0.40;
+my $CLUSTERCUTOFF = 0.50;
 my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
 
 ## amino acid map

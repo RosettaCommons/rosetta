@@ -94,21 +94,21 @@ public:
 	}
 
 	virtual void save_energy( EnergyMap const & emap ) {
-		for (Size i=1; i<=tables_->size(); ++i)
+		for (Size i=1; i<=score_types_.size(); ++i)
 		{
 			Real const energy( emap[ score_types_[i] ] );
-			(*tables_)[i][ std::min(pos_,base_) ] = energy;
+			(*tables_)[ std::min(pos_,base_) ][i] = energy;
 		}
 	}
 
 	virtual void retrieve_energy( EnergyMap & emap ) const {
-		for (Size i=1; i<=tables_->size(); ++i)
-			emap[ score_types_[i] ] = (*tables_)[i][std::min(pos_,base_)];
+		for (Size i=1; i<=score_types_.size(); ++i)
+			emap[ score_types_[i] ] = (*tables_)[std::min(pos_,base_)][i];
 	}
 
 	virtual void accumulate_energy( EnergyMap & emap ) const {
-		for (Size i=1; i<=tables_->size(); ++i)
-			emap[ score_types_[i] ] += (*tables_)[i][std::min(pos_,base_)];
+		for (Size i=1; i<=score_types_.size(); ++i)
+			emap[ score_types_[i] ] += (*tables_)[std::min(pos_,base_)][i];
 	}
 
 	virtual void mark_energy_computed() {
@@ -194,13 +194,13 @@ public:
 	}
 
 	virtual void retrieve_energy( EnergyMap & emap ) const {
-		for (Size i=1; i<=tables_->size(); ++i)
-			emap[ score_types_[i] ] = (*tables_)[i][std::min(pos_,base_)];
+		for (Size i=1; i<=score_types_.size(); ++i)
+			emap[ score_types_[i] ] = (*tables_)[std::min(pos_,base_)][i];
 	}
 
 	virtual void accumulate_energy( EnergyMap & emap ) const {
-		for (Size i=1; i<=tables_->size(); ++i)
-			emap[ score_types_[i] ] += (*tables_)[i][std::min(pos_,base_)];
+		for (Size i=1; i<=score_types_.size(); ++i)
+			emap[ score_types_[i] ] += (*tables_)[std::min(pos_,base_)][i];
 	}
 
 	virtual bool energy_computed() const {
@@ -245,12 +245,11 @@ public:
 	void
 	set_num_nodes( Size size_in ) {
 		size_ = size_in;
-		for (Size i=1; i<=tables_.size(); ++i)
-		{
-			tables_[i].clear(); 
-			tables_[i].resize( size_ , 0.0 );
-		}
-		computed_.clear(); computed_.resize( size_,  false );
+		int nscoretypes = score_types_.size();
+		tables_.clear();
+		tables_.resize( size_in, utility::vector1< core::Real >(nscoretypes,0) );
+		computed_.clear();
+		computed_.resize( size_,  false );
 	}
 
 	Size

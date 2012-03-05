@@ -12,8 +12,6 @@ use lib dirname(__FILE__);
 require "kabsch.pm";
 require "matrix.pm";
 
-my $NMODELSOUT=5;
-
 ## programs
 my $EXTRACTAPP = "/work/dimaio/rosetta/rosetta_source/bin/extract_pdbs.default.linuxgccrelease".
                  " -database /work/dimaio/rosetta/rosetta_database ".
@@ -23,10 +21,14 @@ my $EXTRACTAPP = "/work/dimaio/rosetta/rosetta_source/bin/extract_pdbs.default.l
 #####
 
 ## structure alignments
-my @RMS_CUTOFFS = (8,5,2.5);
-my $CLUSTERCUTOFF = 0.1;
-my $BOLTZMANTEMP = 10;
+my $NMODELSOUT=5;
 
+my @RMS_CUTOFFS = (8,5,2.5);
+my $CLUSTERCUTOFF = 0.0;
+my $BOLTZMANTEMP = 20;
+
+## remove neighbors
+my $REMOVENEIGHBORS = 10;
 
 ## main()
 if ($#ARGV < 1) {
@@ -353,7 +355,7 @@ my @chooseModel = (-1) x $NMODELSOUT;
 my $modelswritten = 0;
 
 while ($modelswritten < $NMODELSOUT) {
-	foreach my $clid (0,0..$nclust) {
+	foreach my $clid (0,0,1,2,3,4) {
 		last if ($modelswritten == $NMODELSOUT);
 	
 		# once we sample every cluster go back to cluster 1
@@ -369,18 +371,17 @@ while ($modelswritten < $NMODELSOUT) {
 			next if ($clusterid->[$i] != $effclid);
 	
 			# remove identical
-			foreach my $j (0..$modelswritten-1) {
-				next outer if ($overlapscore->[$i][$chooseModel[$j]] == 1);
-			}
+			#foreach my $j (0..$modelswritten-1) {
+			#	next outer if ($overlapscore->[$i][$chooseModel[$j]] == 1);
+			#}
 	
 			my $pdbidstem = $THREADED_MDLS[$i];
 			$pdbidstem =~ s/\.pdb//g;
 			my $score = $weightmap{$pdbidstem};
 			foreach my $j (0..$#THREADED_MDLS) {
-				next if ($towrite[$j] != 0);
-				next if ($clusterid->[$j] == -1);
+				next if ($clusterid->[$j] == -1);  # use the other clusters to decide?
 				next if ($i==$j);
-	
+
 				my $pdbidstemJ = $THREADED_MDLS[$j];
 				$pdbidstemJ =~ s/\.pdb//g;
 				my $prob = $weightmap{$pdbidstemJ};
@@ -394,7 +395,23 @@ while ($modelswritten < $NMODELSOUT) {
 			}
 		}
 		if ($chooseModel[$modelswritten] != -1) {
-			$towrite[$chooseModel[$modelswritten++]] = $modelswritten;
+			$towrite[$chooseModel[$modelswritten]] = $modelswritten+1;
+
+			# remove this model and its neighbors
+			$clusterid->[$chooseModel[$modelswritten]] = -1;
+
+			removeloop: foreach my $k (1..$REMOVENEIGHBORS) {
+				$clusterid->[$chooseModel[$modelswritten]] = -1;
+				my ($maxScore,$maxJ) = (0,-1);
+				foreach my $j (0..$#THREADED_MDLS) {
+					next if ($clusterid->[$j] != $effclid);
+					next if ($chooseModel[$modelswritten]==$j);
+					my $score = $overlapscore->[$chooseModel[$modelswritten]][$j];
+					if ($score > $maxScore) { $maxScore = $score; $maxJ = $j; }
+				}
+				if ($maxJ != -1) { $clusterid->[$maxJ] = -1; }
+			}
+			$modelswritten++;
 		}
 	}
 }

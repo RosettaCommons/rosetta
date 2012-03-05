@@ -81,6 +81,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "mm_twist" ] = mm_twist;
 	name2score_type_[ "mm_bend" ] = mm_bend;
 	name2score_type_[ "mm_stretch" ] = mm_stretch;
+	name2score_type_[ "cart_bonded" ] = cart_bonded;
 	name2score_type_[ "cart_bonded_angle" ] = cart_bonded_angle;
 	name2score_type_[ "cart_bonded_length" ] = cart_bonded_length;
 	name2score_type_[ "cart_bonded_torsion" ] = cart_bonded_torsion;

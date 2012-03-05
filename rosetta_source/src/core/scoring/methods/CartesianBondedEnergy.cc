@@ -26,8 +26,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>  // for is_virtual()
-// AUTO-REMOVED #include <core/chemical/util.hh>  // for is_virtual()
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/AA.hh>
@@ -134,6 +132,7 @@ CartesianBondedEnergyCreator::create_energy_method(
 ScoreTypes
 CartesianBondedEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
+	sts.push_back( cart_bonded );
 	sts.push_back( cart_bonded_angle );
 	sts.push_back( cart_bonded_length );
 	sts.push_back( cart_bonded_torsion );
@@ -533,6 +532,7 @@ CartesianBondedEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const
 	if ( create_new_lre_container ) {
 		TR << "Creating new peptide-bonded energy container (" << pose.total_residue() << ")" << std::endl;
 		utility::vector1< ScoreType > s_types;
+		s_types.push_back( cart_bonded );
 		s_types.push_back( cart_bonded_angle );
 		s_types.push_back( cart_bonded_length );
 		s_types.push_back( cart_bonded_torsion );
@@ -611,7 +611,7 @@ CartesianBondedEnergy::residue_pair_energy(
 
 			if (Ktheta == 0.0) continue;
 
-			if (0.5*Ktheta*(angle-theta0)*(angle-theta0) > CUTOFF) {
+			if (pose.pdb_info() && 0.5*Ktheta*(angle-theta0)*(angle-theta0) > CUTOFF) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) << " angle rsd1: " << rsd1.name() << ":" << rsd1_type.atom_name( res1_lower_atomno ) << " , "
 				   << rsd1_type.atom_name( resconn_atomno1 ) << " , " << rsd2_type.atom_name( resconn_atomno2 )
 				   << "    " << angle << "  " << theta0 << "   "
@@ -644,7 +644,7 @@ CartesianBondedEnergy::residue_pair_energy(
 				rsd2.atom( resconn_atomno2 ).xyz(),
 				rsd1.atom( resconn_atomno1 ).xyz() );
 
-			if (0.5*Ktheta*(angle-theta0)*(angle-theta0) > CUTOFF) {
+			if (pose.pdb_info() && 0.5*Ktheta*(angle-theta0)*(angle-theta0) > CUTOFF) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd2.seqpos()) << " angle rsd2: " << rsd2.name() << ":" << rsd2_type.atom_name( res2_lower_atomno ) << " , "
 			   << rsd2_type.atom_name( resconn_atomno2 ) << " , " << rsd1_type.atom_name( resconn_atomno1 )
 				 << "    " << angle << "  " << theta0 << "   "
@@ -667,8 +667,8 @@ CartesianBondedEnergy::residue_pair_energy(
 		Real Kd, d0;
 		db_length_->lookup( rsd1.type(), resconn_atomno1, -resconn_id1, Kd, d0 );
 
-		if (0.5*Kd*(length-d0) * (length-d0) > CUTOFF) {
-			TR << pose.pdb_info()->name() << " pdbpos rsd1: " << pose.pdb_info()->number(rsd1.seqpos()) << " length rsd1 rsd2: " << rsd1.seqpos() << " -- " << rsd2.seqpos() << "  "
+		if (pose.pdb_info() && 0.5*Kd*(length-d0) * (length-d0) > CUTOFF) {
+			TR.Debug << pose.pdb_info()->name() << " pdbpos rsd1: " << pose.pdb_info()->number(rsd1.seqpos()) << " length rsd1 rsd2: " << rsd1.seqpos() << " -- " << rsd2.seqpos() << "  "
 			   << rsd1.name() << ":" << rsd1_type.atom_name( resconn_atomno1 ) << " , " << rsd2_type.atom_name( resconn_atomno2 )
 			   << "    " << length << " [" << d0 << "]" 
 			   << Kd << "    " << 0.5*Kd*std::fabs(length-d0) << std::endl;
@@ -684,9 +684,15 @@ CartesianBondedEnergy::residue_pair_energy(
 
 	emap[ cart_bonded_angle ] += energy_angle;
 	emap[ cart_bonded_length ] += energy_length;
-	TR.Debug << pose.pdb_info()->name() << "seqpos: " << rsd1.seqpos() << " " << rsd2.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) 
-			 << " " << pose.pdb_info()->number(rsd2.seqpos()) << " res-res energies - angle: " << energy_angle << " length: " << energy_length << std::endl;
-	
+
+	// fpd note this is dounble counting if both cart_bonded and cart_bonded_* are set
+	emap[ cart_bonded ] += energy_angle;
+	emap[ cart_bonded ] += energy_length;
+
+	if (pose.pdb_info()) {
+		TR.Debug << pose.pdb_info()->name() << "seqpos: " << rsd1.seqpos() << " " << rsd2.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) 
+				 << " " << pose.pdb_info()->number(rsd2.seqpos()) << " res-res energies - angle: " << energy_angle << " length: " << energy_length << std::endl;
+	}
 }
 
 void
@@ -726,8 +732,8 @@ CartesianBondedEnergy::eval_intrares_energy(
 		Real del_phi = basic::subtract_radian_angles(angle, phi0);
 		if (phi_step>0) del_phi = basic::periodic_range( del_phi, phi_step );
 
- 		if (0.5*Kphi*del_phi*del_phi > CUTOFF) {
- 			TR << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares torsion: " <<
+ 		if (pose.pdb_info() && 0.5*Kphi*del_phi*del_phi > CUTOFF) {
+ 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares torsion: " <<
  				rsd_type.name() << " : " <<
  			  rsd.atom_name( rt1 ) << " , " << rsd.atom_name( rt2 ) << " , " <<
  			  rsd.atom_name( rt3 ) << " , " << rsd.atom_name( rt4 ) << "   " <<
@@ -765,7 +771,7 @@ CartesianBondedEnergy::eval_intrares_energy(
 			rsd.atom( rt2 ).xyz(),
 			rsd.atom( rt3 ).xyz() );
 
- 		if ( 0.5*Ktheta*(angle-theta0) * (angle-theta0) > CUTOFF) {
+ 		if ( pose.pdb_info() && 0.5*Ktheta*(angle-theta0) * (angle-theta0) > CUTOFF) {
  			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares angle: " <<
  				rsd_type.name() << " : " <<
  			  rsd.atom_name( rt1 ) << " , " << rsd.atom_name( rt2 ) << " , " <<
@@ -819,9 +825,15 @@ CartesianBondedEnergy::eval_intrares_energy(
 	// add energy to emap
 	emap[ cart_bonded_angle ] += energy_angle;
 	emap[ cart_bonded_length ] += energy_length;
-	emap[ cart_bonded_torsion ] += energy_torsion; 
-	TR.Debug << pose.pdb_info() << "seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << "intrares energies - angle: " << energy_angle << " length: " << energy_length << " torsion: " << energy_torsion << std::endl;
+	emap[ cart_bonded_torsion ] += energy_torsion;
 
+	// fpd note this is dounble counting if both cart_bonded and cart_bonded_* are set
+	emap[ cart_bonded ] += energy_angle;
+	emap[ cart_bonded ] += energy_length;
+	emap[ cart_bonded ] += energy_torsion; 
+	if (pose.pdb_info()) {
+		TR.Debug << pose.pdb_info() << "seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << "intrares energies - angle: " << energy_angle << " length: " << energy_length << " torsion: " << energy_torsion << std::endl;
+	}
 }
 
 
@@ -896,8 +908,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
 			dE_dphi = weights[ cart_bonded_torsion ] * Kphi * (del_phi>0? 1 : -1);
+			dE_dphi = weights[ cart_bonded ] * Kphi * (del_phi>0? 1 : -1);
 		} else {
 			dE_dphi = weights[ cart_bonded_torsion ] * Kphi * del_phi;
+			dE_dphi = weights[ cart_bonded ] * Kphi * del_phi;
 		}
 
 		LF1 += dE_dphi * f1;
@@ -934,8 +948,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		if (linear_bonded_potential_ && std::fabs(theta - theta0)>1) {
 			dE_dtheta = weights[ cart_bonded_angle ] * Ktheta * ((theta - theta0)>0? 1 : -1);
+			dE_dtheta = weights[ cart_bonded ] * Ktheta * ((theta - theta0)>0? 1 : -1);
 		} else {
 			dE_dtheta = weights[ cart_bonded_angle ] * Ktheta * (theta - theta0);
+			dE_dtheta = weights[ cart_bonded ] * Ktheta * (theta - theta0);
 		}
 
 		LF1 += dE_dtheta * f1;
@@ -960,8 +976,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
 			dE_dd = weights[ cart_bonded_length ] * Kd * ((d - d0)>0? 1 : -1);
+			dE_dd = weights[ cart_bonded ] * Kd * ((d - d0)>0? 1 : -1);
 		} else {
 			dE_dd = weights[ cart_bonded_length ] * Kd * (d - d0);
+			dE_dd = weights[ cart_bonded ] * Kd * (d - d0);
 		}
 
 		LF1 += dE_dd * f1;
@@ -1015,8 +1033,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 		Real dE_dtheta;
 		if (linear_bonded_potential_  && std::fabs(theta - theta0)>1 ) {
 			dE_dtheta = weights[ cart_bonded_angle ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
+			dE_dtheta = weights[ cart_bonded ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
 		} else {
 			dE_dtheta  = weights[ cart_bonded_angle ] * Ktheta * (theta - theta0);
+			dE_dtheta  = weights[ cart_bonded ] * Ktheta * (theta - theta0);
 		}
 
 		LF1 += dE_dtheta * f1;
@@ -1068,8 +1088,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 			Real dE_dtheta;
 			if (linear_bonded_potential_ && std::fabs(theta - theta0)>1) {
 				dE_dtheta = weights[ cart_bonded_angle ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
+				dE_dtheta = weights[ cart_bonded ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
 			} else {
 				dE_dtheta  = weights[ cart_bonded_angle ] * Ktheta * (theta - theta0);
+				dE_dtheta  = weights[ cart_bonded ] * Ktheta * (theta - theta0);
 			}
 
 			LF1 += dE_dtheta * f1;
@@ -1110,8 +1132,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
 			dE_dd = weights[ cart_bonded_length ] * Kd * ((d - d0)>0? 1 : -1);
+			dE_dd = weights[ cart_bonded ] * Kd * ((d - d0)>0? 1 : -1);
 		} else {
 			dE_dd = weights[ cart_bonded_length ] * Kd * (d - d0);
+			dE_dd = weights[ cart_bonded ] * Kd * (d - d0);
 		}
 
 		LF1 += dE_dd * f1;

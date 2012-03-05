@@ -207,6 +207,7 @@ CartesianHybridize::set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in
 	bonds_scorefxn_ = scorefxn_in->clone();
 	bonds_scorefxn_->reset();
 	bonds_scorefxn_->set_weight( core::scoring::vdw, lowres_scorefxn_->get_weight( core::scoring::vdw ) );
+	bonds_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
 	bonds_scorefxn_->set_weight( core::scoring::cart_bonded_angle, lowres_scorefxn_->get_weight( core::scoring::cart_bonded_angle ) );
 	bonds_scorefxn_->set_weight( core::scoring::cart_bonded_length, lowres_scorefxn_->get_weight( core::scoring::cart_bonded_length ) );
 	bonds_scorefxn_->set_weight( core::scoring::cart_bonded_torsion, lowres_scorefxn_->get_weight( core::scoring::cart_bonded_torsion ) );
@@ -425,6 +426,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	core::kinematics::MoveMap mm;
 	mm.set_bb  ( true ); mm.set_chi ( true ); mm.set_jump( true );
 
+	core::Real max_cart = lowres_scorefxn_->get_weight( core::scoring::cart_bonded );
 	core::Real max_cart_angle = lowres_scorefxn_->get_weight( core::scoring::cart_bonded_angle );
 	core::Real max_cart_length = lowres_scorefxn_->get_weight( core::scoring::cart_bonded_length );
 	core::Real max_cart_torsion = lowres_scorefxn_->get_weight( core::scoring::cart_bonded_torsion );
@@ -444,6 +446,11 @@ CartesianHybridize::apply( Pose & pose ) {
 
 sampler:
 	for (int m=1; m<=NMACROCYCLES; m+=1) {
+		core::Real bonded_weight = max_cart;
+		if (m==1)	bonded_weight = 0.0*max_cart;
+		if (m==2) bonded_weight = 0.01*max_cart;
+		if (m==3) bonded_weight = 0.1*max_cart;
+
 		core::Real bonded_weight_angle = max_cart_angle;
 		if (m==1)	bonded_weight_angle = 0.0*max_cart_angle;
 		if (m==2) bonded_weight_angle = 0.01*max_cart_angle;
@@ -470,12 +477,14 @@ sampler:
 		if (m==3) vdw_weight = 0.1*max_vdw;
 
 		TR << "CYCLE " << m << std::endl;
+		TR << "  setting bonded weight = " << bonded_weight << std::endl;
 		TR << "  setting bonded angle weight = " << bonded_weight_angle << std::endl;
 		TR << "  setting bonded length weight = " << bonded_weight_length << std::endl;
 		TR << "  setting bonded torsion weight = " << bonded_weight_torsion << std::endl;
 		TR << "  setting cst    weight = " << cst_weight << std::endl;
 		TR << "  setting vdw    weight = " << vdw_weight << std::endl;
 
+		lowres_scorefxn_->set_weight( core::scoring::cart_bonded, bonded_weight );
 		lowres_scorefxn_->set_weight( core::scoring::cart_bonded_angle, bonded_weight_angle );
 		lowres_scorefxn_->set_weight( core::scoring::cart_bonded_length, bonded_weight_length );
 		lowres_scorefxn_->set_weight( core::scoring::cart_bonded_torsion, bonded_weight_torsion );
@@ -633,6 +642,7 @@ sampler:
 		goto sampler;
 	}
 
+	lowres_scorefxn_->set_weight( core::scoring::cart_bonded, max_cart );
 	lowres_scorefxn_->set_weight( core::scoring::cart_bonded_angle, max_cart_angle );
 	lowres_scorefxn_->set_weight( core::scoring::cart_bonded_length, max_cart_length );
 	lowres_scorefxn_->set_weight( core::scoring::cart_bonded_torsion, max_cart_torsion );
