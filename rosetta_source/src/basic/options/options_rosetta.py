@@ -4005,6 +4005,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
       Option( 'boost_closure_cycles', 'Integer', desc="the maximum number of possible lockdown closure cycles to perform (default 30)" ) ,
       Option( 'force_cutting_N', 'Boolean', desc="force a cutpoint at N-term side of blueprint assignment" ) ,
       Option( 'bypass_closure', 'Boolean', desc="turning off CCD closure in the mover for tethered docking purpose" ),
+      Option( 'cyclic_peptide', 'Boolean', desc="circularize structure joining N and C-term." ),
   		Option( 'temperature', 'Real', desc="temperature for monte carlo ( default 2.0)" ),
 		),
   ),
@@ -4549,7 +4550,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('single_helix_rmsd_cutoff','Real', desc=""),
 		Option('helix_pair_rmsd_cutoff','Real', desc=""),
         ####End old stuff####
-                 
+
         Option('helix_cap_dist_cutoff','Real', desc="Maximum distance between c-alpha residues at the end of two helices in order to call them part of the same bundle"),
         Option('helix_contact_dist_cutoff','Real', desc="Maximum distance between c-alpha residues in two helices in order to call them interacting"),
         Option('min_helix_size','Integer', desc="Minimum size of a helix in a bundle"),

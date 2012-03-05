@@ -1,6 +1,3 @@
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
-namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
@@ -240,6 +237,7 @@ namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const independ
 namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const boost_closure_cycles( "remodel:RemodelLoopMover:boost_closure_cycles" );  } }
 namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const force_cutting_N( "remodel:RemodelLoopMover:force_cutting_N" );  } }
 namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const bypass_closure( "remodel:RemodelLoopMover:bypass_closure" );  } }
+namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const cyclic_peptide( "remodel:RemodelLoopMover:cyclic_peptide" );  } }
 namespace remodel { namespace RemodelLoopMover { RealOptionKey const temperature( "remodel:RemodelLoopMover:temperature" );  } }
 namespace fold_from_loops { BooleanOptionKey const fold_from_loops( "fold_from_loops" );  }
 namespace fold_from_loops { BooleanOptionKey const native_ca_cst( "fold_from_loops:native_ca_cst" );  }

@@ -257,7 +257,8 @@ fill_non_loop_cst_set(
 	protocols::loops::Loops loops);
 
 
-
+void
+cyclize_pose(core::pose::Pose & pose);
 
 
 } // namespace methods

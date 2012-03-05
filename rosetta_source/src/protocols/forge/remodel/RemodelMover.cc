@@ -659,6 +659,48 @@ if (working_model.manager.size()!= 0){
 				// flip residue type set for centroid minimize
 				core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
 
+				protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+
+				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+							//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
+
+							Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
+							Size segment_length = (pose.n_residue())/repeat_number;
+
+
+							for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
+								std::stringstream templateRangeSS;
+								templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
+								std::stringstream targetSS;
+								targetSS << 1+(segment_length*rep)+1 << "-" << segment_length + (segment_length*rep)+1;
+								TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+								setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+							}
+
+						for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
+								std::stringstream templateRangeSS;
+								templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
+								std::stringstream targetSS;
+								targetSS << 1+(segment_length*rep)+2 << "-" << segment_length + (segment_length*rep)+2;
+								TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+								setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+							}
+
+
+							std::stringstream templateRangeSS;
+							//take care of the terminal repeat, since the numbers are offset.
+							templateRangeSS << "2-" << segment_length-1; // offset by one to work around the termini
+							std::stringstream targetSS;
+							targetSS << 1+(segment_length*(repeat_number-1))+1 << "-" << segment_length + (segment_length*(repeat_number-1))-1;
+							TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+							setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+
+				}
+
+				setup_ncs.apply(pose);
+				//sfx->show(TR, pose);
+				//TR << std::endl;
+
 				centroid_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
 				centroid_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0 );
 				//only use smooth hb if either of the term is used in centroid build level
@@ -668,6 +710,9 @@ if (working_model.manager.size()!= 0){
 
 				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
 				minMover->apply(pose);
+
+				//reset cen_hb to 0
+				centroid_sfx_->set_weight( core::scoring::cen_hb, 0.0);
 
 				// flip residue type set back, for repeat builds, currently don't do
 				// restore_sidechain, as they should all be redesigned.  MAY NEED TO

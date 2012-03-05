@@ -88,6 +88,7 @@ namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const i
 namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const boost_closure_cycles; } }
 namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const force_cutting_N; } }
 namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const bypass_closure; } }
+namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const cyclic_peptide; } }
 namespace remodel { namespace RemodelLoopMover { extern RealOptionKey const temperature; } }
 
 } // namespace OptionKeys

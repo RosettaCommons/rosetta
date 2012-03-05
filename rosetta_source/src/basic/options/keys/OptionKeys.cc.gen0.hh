@@ -596,3 +596,4 @@ namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:viol
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
+namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }

@@ -21,8 +21,10 @@
 
 // project headers
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/graph/DisjointSets.hh>
 #include <core/id/types.hh>
@@ -30,6 +32,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -489,6 +492,48 @@ fill_non_loop_cst_set(
 
 	pose.constraint_set( cst_set );
 }
+	void fixH(core::pose::Pose & pose) {
+		using namespace core;
+		using core::id::AtomID;
+		for(Size i = 1; i <= pose.n_residue(); ++i) {
+			numeric::xyzVector<Real> n  = pose.residue(i).xyz("N");
+			numeric::xyzVector<Real> ca = pose.residue(i).xyz("CA");
+			Size in = i-1;
+			if(in == 0) in = pose.n_residue();
+			numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
+			numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
+			pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
+		}
+	}
+
+
+void cyclize_pose(core::pose::Pose & pose) {
+	using namespace core;
+	using namespace core::pose;
+	using namespace core::scoring::constraints;
+	using namespace chemical;
+	using core::id::AtomID;
+  Size N = pose.n_residue();
+  for(Size i = 1; i <= N; ++i) {
+    if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
+    if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
+    if(pose.residue(i).has_variant_type(CUTPOINT_UPPER)) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_UPPER,i);
+    if(pose.residue(i).has_variant_type(CUTPOINT_LOWER)) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_LOWER,i);
+  }
+  if(!pose.residue(1).has_variant_type(CUTPOINT_UPPER)) core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_UPPER,1);
+  if(!pose.residue(N).has_variant_type(CUTPOINT_LOWER)) core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_LOWER,N);
+  pose.conformation().declare_chemical_bond( 1, "N", N, "C" );
+  fixH(pose);
+  using namespace core::scoring::constraints;
+  AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
+  AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
+  AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
+//  pose.remove_constraints();
+  pose.add_constraint(new AtomPairConstraint(a1,a2,new HarmonicFunc(0.0,0.1)));
+  pose.add_constraint(new AtomPairConstraint(b1,b2,new HarmonicFunc(0.0,0.1)));
+  pose.add_constraint(new AtomPairConstraint(c1,c2,new HarmonicFunc(0.0,0.1)));
+}
+
 
 
 

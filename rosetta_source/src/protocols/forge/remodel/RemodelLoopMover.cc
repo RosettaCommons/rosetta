@@ -453,6 +453,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 		  }
 */
+		if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+			protocols::forge::methods::cyclize_pose(repeat_pose_);
+		}
+
 	}
 
 	// for accumulation of closed structures (only return the best)
@@ -781,6 +785,11 @@ void RemodelLoopMover::simultaneous_stage(
 		if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
 			sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 		}
+		if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+		//	sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
+			sfxOP->set_weight( core::scoring::atom_pair_constraint, 0);//ramping from 0
+		}
+
 
 		mc.score_function( *sfxOP );
 
@@ -973,6 +982,14 @@ void RemodelLoopMover::independent_stage(
 			if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
+
+			if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+		//	sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
+			sfxOP->set_weight(
+				core::scoring::atom_pair_constraint,
+				sfxOP->get_weight( core::scoring::atom_pair_constraint) + cbreak_increment
+			);
+		}
 
 			mc.score_function( *sfxOP );
 
@@ -1184,6 +1201,14 @@ void RemodelLoopMover::boost_closure_stage(
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
+			if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+		//	sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
+				sfxOP->set_weight(
+					core::scoring::atom_pair_constraint,
+					sfxOP->get_weight( core::scoring::atom_pair_constraint) + cbreak_increment
+				);
+			}
+
 			mc.score_function( *sfxOP );
 
 			pose = mc.lowest_score_pose();
@@ -1276,7 +1301,7 @@ void RemodelLoopMover::boost_closure_stage(
 ///  loops.
 loops::LoopsOP RemodelLoopMover::determine_loops_to_model( Pose & pose ) {
 	using protocols::forge::methods::linear_chainbreak;
-    
+
 	loops::LoopsOP loops_to_model = new loops::Loops();
 
 	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
