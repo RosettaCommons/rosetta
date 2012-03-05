@@ -38,6 +38,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -100,7 +102,9 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 	
 
-FoldTreeHybridize::FoldTreeHybridize( ) {
+FoldTreeHybridize::FoldTreeHybridize() :
+foldtree_mover_()
+{
 	init();
 }
 
@@ -128,8 +132,6 @@ FoldTreeHybridize::FoldTreeHybridize (
 
 	// abinitio frag9,frag3 flags
 	frag_libs_ = frag_libs;
-
-	increase_cycles_ = option[cm::hybridize::stage1_increase_cycles]();
 }
 	
 void
@@ -358,8 +360,8 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	TR << "Chunks used for foldtree setup: " << std::endl;
 	TR << my_chunks << std::endl;
 
-	HybridizeFoldtreeDynamic foldtree_mover;
-	foldtree_mover.initialize(pose, my_chunks);
+	//HybridizeFoldtreeDynamic foldtree_mover;
+	foldtree_mover_.initialize(pose, my_chunks);
 	TR << pose.fold_tree() << std::endl;
 }
 
@@ -423,22 +425,32 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops
 }
 
 void FoldTreeHybridize::backup_original_foldtree(core::pose::Pose const & pose) {
-	orig_ft_ = pose.conformation().fold_tree();
-	orig_n_residue_ = pose.total_residue();
+	//orig_ft_ = pose.conformation().fold_tree();
+	//orig_n_residue_ = pose.total_residue();
 }
 
 void FoldTreeHybridize::restore_original_foldtree(core::pose::Pose & pose) {
+	foldtree_mover_.reset(pose);
+	/*
 	if (pose.total_residue() > orig_n_residue_) {
 		pose.conformation().delete_residue_range_slow(orig_n_residue_+1, pose.total_residue());
 	}
 	protocols::loops::remove_cutpoint_variants( pose );
 	pose.conformation().fold_tree( orig_ft_ );
+	*/
 }
 
 void
 FoldTreeHybridize::apply(core::pose::Pose & pose) {
-	backup_original_foldtree(pose);
+	//backup_original_foldtree(pose);
 	setup_foldtree(pose);
+
+	core::scoring::constraints::ConstraintSetOP constraint_set;
+	if (!cst_file_.empty() && cst_file_ != "NONE") {
+        using namespace core::scoring::constraints;
+		constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_file_, new ConstraintSet, pose );
+	}
+	pose.constraint_set( constraint_set );
 	
 	// Initialize the structure
 	bool use_random_template = false;
@@ -495,6 +507,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		mc->recover_low(pose);
 	}
 
+    pose.remove_constraints();
 	restore_original_foldtree(pose);
 
 	basic::Tracer TR("pilot.yfsong.util");

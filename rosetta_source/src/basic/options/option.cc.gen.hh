@@ -1431,6 +1431,7 @@ option.add( basic::options::OptionKeys::constraints::viol, "show violations" ).d
 option.add( basic::options::OptionKeys::constraints::viol_level, "how much detail for violation output" ).def(1);
 option.add( basic::options::OptionKeys::constraints::viol_type, "work only on these types of constraints" ).def("");
 option.add( basic::options::OptionKeys::constraints::sog_cst_param, "weight parameter for SOGFunc constraints" ).def(0.0);
+option.add( basic::options::OptionKeys::constraints::sog_upper_bound, "Upper cutoff for SOGFunc constraints" ).def(10.0);
 option.add( basic::options::OptionKeys::constraints::epr_distance, "use epr distance potential" ).def(false);
 option.add( basic::options::OptionKeys::constraints::combine, "combine constraints randomly into OR connected groups (Ambiguous). N->1" ).def(1);
 option.add( basic::options::OptionKeys::constraints::combine_exclude_region, "core-defintion file do not combine constraints that are core-core" );
@@ -1562,6 +1563,7 @@ option.add( basic::options::OptionKeys::cm::hh_map, "Input file that maps pdbCha
 option.add( basic::options::OptionKeys::cm::hybridize::hybridize, "hybridize option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::hybridize::templates, "Input list of template files" );
 option.add( basic::options::OptionKeys::cm::hybridize::template_list, "Input list of templates, constaints, cluster, and weights" );
+option.add( basic::options::OptionKeys::cm::hybridize::starting_template, "Define starting templates" );
 option.add( basic::options::OptionKeys::cm::hybridize::add_non_init_chunks, "non chunks from templates other than the initial one" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure elements used to split the pose" ).def("HE");
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_increase_cycles, "Scale stage 1 cycles" ).def(1.0);
@@ -1799,11 +1801,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa,
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");

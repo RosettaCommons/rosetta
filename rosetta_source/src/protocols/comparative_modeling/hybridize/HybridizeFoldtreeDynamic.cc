@@ -58,7 +58,7 @@ namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 
-HybridizeFoldtreeDynamic::HybridizeFoldtreeDynamic() {}
+HybridizeFoldtreeDynamic::HybridizeFoldtreeDynamic() : virtual_res_(-1) {}
 	
 utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::Size n_residues) {
 	// complete the chunks to cover the whole protein and customize cutpoints
@@ -186,7 +186,9 @@ void HybridizeFoldtreeDynamic::initialize(
   using utility::vector1;
 
 	num_nonvirt_residues_ = pose.total_residue();
-
+	saved_n_residue_ = pose.total_residue();
+	saved_ft_ = pose.conformation().fold_tree();
+	
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info=NULL;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -221,6 +223,17 @@ void HybridizeFoldtreeDynamic::initialize(
 	protocols::loops::add_cutpoint_variants( pose );
 }
 
+void HybridizeFoldtreeDynamic::reset(
+									 core::pose::Pose & pose
+									 ) {
+
+	if (pose.total_residue() > saved_n_residue_) {
+		pose.conformation().delete_residue_range_slow(saved_n_residue_+1, pose.total_residue());
+	}
+	pose.conformation().fold_tree( saved_ft_ );
+
+	protocols::loops::remove_cutpoint_variants( pose );
+}
 
 void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 	using core::Size;
@@ -274,7 +287,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		utility_exit_with_message("HybridizeFoldtreeBase: failed to build fold tree from cuts and jumps");
 	}
 
-	std::cerr << tree;
+	//std::cerr << tree;
 	
 	// Update the pose's fold tree
 	core::pose::symmetry::set_asymm_unit_fold_tree( pose , tree );

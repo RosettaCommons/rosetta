@@ -38,6 +38,7 @@ public:
 
 	// initialize pose ... add VRT if needed
 	void initialize( core::pose::Pose & pose, protocols::loops::Loops const & core_chunks );
+    void reset( core::pose::Pose & pose );
 
 private:
 	// HELPER FUNCTIONS

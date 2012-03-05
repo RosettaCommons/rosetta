@@ -99,9 +99,11 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <ObjexxFCL/format.hh>
+#include <boost/foreach.hpp>
 
 // evaluation
 #include <core/scoring/rms_util.hh>
@@ -116,6 +118,8 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 #include <string>
+
+#define foreach BOOST_FOREACH
 
 static basic::Tracer TR( "protocols.comparative_modeling.hybridize.HybridizeProtocol" );
 static numeric::random::RandomGenerator RG(541938);
@@ -188,6 +192,10 @@ HybridizeProtocol::init() {
 	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
 
+	if (option[cm::hybridize::starting_template].user()) {
+		starting_templates_ = option[cm::hybridize::starting_template]();
+	}
+	
 	stage2_increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
 	no_global_frame_ = option[cm::hybridize::no_global_frame]();
 	linmin_only_ = option[cm::hybridize::linmin_only]();
@@ -505,10 +513,19 @@ void HybridizeProtocol::pick_starting_template(core::Size & initial_template_ind
 	template_chunks_icluster.clear();
 	template_contigs_icluster.clear();
 	
-	numeric::random::WeightedSampler weighted_sampler;
-	weighted_sampler.weights(template_weights_);
-
-	initial_template_index = weighted_sampler.random_sample(RG);
+	if (starting_templates_.size() > 0) {
+		numeric::random::WeightedSampler weighted_sampler;
+		for (Size i=1; i<=starting_templates_.size(); ++i) {
+			weighted_sampler.add_weight(template_weights_[starting_templates_[i]]);
+		}
+		Size k = weighted_sampler.random_sample(RG);
+		initial_template_index = starting_templates_[k];
+	}
+	else {
+		numeric::random::WeightedSampler weighted_sampler;
+		weighted_sampler.weights(template_weights_);
+		initial_template_index = weighted_sampler.random_sample(RG);
+	}
 	Size cluster_id = template_clusterID_[initial_template_index];
 	
 	for (Size i_template = 1; i_template <= template_clusterID_.size(); ++i_template) {
@@ -569,25 +586,20 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		history->setall( initial_template_index_icluster );
 		pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
 
-		// apply constraints
-		core::scoring::constraints::ConstraintSetOP constraint_set;
-		std::string cst_fn = template_cst_fn_[initial_template_index];
-		if (!cst_fn.empty() && cst_fn != "NONE") {
-			constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_fn, new ConstraintSet, pose );
-		}
-		pose.constraint_set( constraint_set );
-
 		// fold tree hybridize
 		if (RG.uniform() < stage1_probability_) {
 			// package up fragments
 			utility::vector1 < core::fragment::FragSetOP > frag_libs;
 			frag_libs.push_back(fragments3_);
 			frag_libs.push_back(fragments9_);
+
+    		std::string cst_fn = template_cst_fn_[initial_template_index];
 	
 			FoldTreeHybridizeOP ft_hybridize(
 				new FoldTreeHybridize(
 					initial_template_index_icluster, templates_icluster, weights_icluster,
 					template_chunks_icluster, template_contigs_icluster, frag_libs) ) ;
+			ft_hybridize->set_constraint_file( cst_fn );
 			ft_hybridize->set_scorefunction( stage1_scorefxn_ );
 			ft_hybridize->set_increase_cycles( stage1_increase_cycles_ );
 			ft_hybridize->set_add_non_init_chunks( add_non_init_chunks_ );
@@ -607,7 +619,15 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
 
 		// cartesian fragment hybridize
+
+		// apply constraints
+		core::scoring::constraints::ConstraintSetOP constraint_set;
+		std::string cst_fn = template_cst_fn_[initial_template_index];
+		if (!cst_fn.empty() && cst_fn != "NONE") {
+			constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_fn, new ConstraintSet, pose );
+		}
 		pose.constraint_set( constraint_set );  //reset constraints
+
 		if (!option[cm::hybridize::skip_stage2]()) {
 			CartesianHybridizeOP cart_hybridize (
 				new CartesianHybridize(
@@ -737,6 +757,15 @@ HybridizeProtocol::parse_my_tag(
 	stage2_increase_cycles_ = tag->getOption< core::Real >( "stage2_increase_cycles", 1. );
 	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
 
+	if( tag->hasOption( "starting_template" ) ) {
+		std::vector<std::string> buff = utility::string_split( tag->getOption<std::string>( "starting_template" ), ',' );
+		foreach(std::string field, buff){
+			Size const value = std::atoi( field.c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
+			starting_templates_.push_back(value);
+		}
+	}
+
+	
 	if( tag->hasOption( "stage1_probability" ) )
 		stage1_probability_ = tag->getOption< core::Real >( "stage1_probability" );
 	if( tag->hasOption( "add_non_init_chunks" ) )
@@ -780,7 +809,6 @@ HybridizeProtocol::parse_my_tag(
 		}
 
 		if ( (*tag_it)->getName() == "Template" ) {
-			using namespace core::fragment;
 			std::string template_fn = (*tag_it)->getOption<std::string>( "pdb" );
 			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "NONE" );
 			core::Real weight = (*tag_it)->getOption<core::Real>( "weight", 1 );

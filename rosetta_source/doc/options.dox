@@ -6924,6 +6924,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.0</dd><br>
 </dl>
 <dl>
+<dt><b>-sog_upper_bound</b> \<Real\><dt>
+<dd>Upper cutoff for SOGFunc constraints</dd><br>
+<dd>Default: 10.0</dd><br>
+</dl>
+<dl>
 <dt><b>-epr_distance</b> \<Boolean\><dt>
 <dd>use epr distance potential</dd><br>
 <dd>Default: false</dd><br>
@@ -7561,6 +7566,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-template_list</b> \<File\><dt>
 <dd>Input list of templates, constaints, cluster, and weights</dd><br>
+</dl>
+<dl>
+<dt><b>-starting_template</b> \<IntegerVector\><dt>
+<dd>Define starting templates</dd><br>
 </dl>
 <dl>
 <dt><b>-add_non_init_chunks</b> \<Boolean\><dt>
@@ -8952,6 +8961,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-render_sigma</b> \<Real\><dt>
 <dd>initially render at this sigma level (extras=graphics build only)</dd><br>
 <dd>Default: 2</dd><br>
+</dl>
+<dl>
+<dt><b>-missing_density_to_jump</b> \<Boolean\><dt>
+<dd>Place jumps where missing density is found</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>patterson</h2>

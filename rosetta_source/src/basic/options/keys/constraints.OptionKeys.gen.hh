@@ -45,6 +45,7 @@ namespace constraints { extern BooleanOptionKey const viol; }
 namespace constraints { extern IntegerOptionKey const viol_level; }
 namespace constraints { extern StringOptionKey const viol_type; }
 namespace constraints { extern RealOptionKey const sog_cst_param; }
+namespace constraints { extern RealOptionKey const sog_upper_bound; }
 namespace constraints { extern BooleanOptionKey const epr_distance; }
 namespace constraints { extern IntegerOptionKey const combine; }
 namespace constraints { extern FileOptionKey const combine_exclude_region; }

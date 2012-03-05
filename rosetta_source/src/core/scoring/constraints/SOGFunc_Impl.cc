@@ -69,7 +69,14 @@ SOGFunc_Impl::read_data( std::istream & in ) {
 
 	if ( renormalize ) renormalize_weights();
 
-	upper_bound(10);
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( option[ OptionKeys::constraints::sog_upper_bound ].user() ) {
+		upper_bound(option[ OptionKeys::constraints::sog_upper_bound ]());
+	}
+	else {
+		upper_bound(10);
+	}
 }
 
 void SOGFunc_Impl::renormalize_weights() {

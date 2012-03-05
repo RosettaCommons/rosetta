@@ -83,6 +83,7 @@ public:
 
 private:
 	// parsible options
+	utility::vector1 < core::Size > starting_templates_;
 	core::Real stage1_probability_, stage1_increase_cycles_, stage2_increase_cycles_;
 	core::Real frag_weight_aligned_;
 	core::Size max_registry_shift_;

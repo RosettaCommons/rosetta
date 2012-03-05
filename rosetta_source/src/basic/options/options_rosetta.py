@@ -3007,6 +3007,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'viol_type',   'String',     desc='work only on these types of constraints',     default='' ),
 		##Option( 'debug_cst_stages', 'Boolean', desc="Unknown - ask olange", default = 'false' ),
 		Option( 'sog_cst_param', 'Real', desc='weight parameter for SOGFunc constraints', default = '0.0' ),
+		Option( 'sog_upper_bound', 'Real', desc='Upper cutoff for SOGFunc constraints', default = '10.0' ),
 		Option( 'epr_distance',	'Boolean',	desc='use epr distance potential',	default='false' ),
 		Option( 'combine', 'Integer', desc='combine constraints randomly into OR connected groups (Ambiguous). N->1', default='1' ),
 		Option( 'combine_exclude_region', 'File', desc='core-defintion file do not combine constraints that are core-core' ),
@@ -3257,6 +3258,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option_Group( 'hybridize', # tempalate hybridization
 			Option( 'templates',                      'FileVector', desc='Input list of template files'),
 			Option( 'template_list',                  'File', desc='Input list of templates, constaints, cluster, and weights'),
+			Option( 'starting_template',              'IntegerVector',    desc='Define starting templates' ),
 			Option( 'add_non_init_chunks',            'Boolean',     desc='non chunks from templates other than the initial one', default='false' ),
 			Option( 'ss',                             'String',     desc='secondary structure elements used to split the pose', default='HE' ),
 			Option( 'stage1_increase_cycles',         'Real',     desc='Scale stage 1 cycles', default='1.0' ),

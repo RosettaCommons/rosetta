@@ -17,6 +17,7 @@
 
 #include <protocols/comparative_modeling/hybridize/InsertChunkMover.hh>
 #include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.fwd.hh>
+#include <protocols/comparative_modeling/hybridize/HybridizeFoldtreeDynamic.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -92,6 +93,7 @@ public:
 	          protocols::loops::Loops & template_chunk,
 	          core::pose::PoseCOP template_pose);
 
+  	void set_constraint_file(std::string cst_file_in) { cst_file_=cst_file_in; }
 	void set_increase_cycles(core::Real increase_cycles_in) { increase_cycles_=increase_cycles_in; }
 	void set_add_non_init_chunks(bool add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
 	void set_frag_weight_aligned(core::Real frag_weight_aligned_in) { frag_weight_aligned_=frag_weight_aligned_in; }
@@ -110,6 +112,7 @@ private:
 	bool add_non_init_chunks_;
 	core::Real frag_weight_aligned_;
 	core::Size max_registry_shift_;
+    std::string cst_file_;
 
 	core::Size initial_template_index_;
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -122,8 +125,9 @@ private:
 	Loops ss_chunks_pose_;
 
 	// backup original info
-	core::kinematics::FoldTree orig_ft_;
-	Size orig_n_residue_;
+	HybridizeFoldtreeDynamic foldtree_mover_;
+	//core::kinematics::FoldTree orig_ft_;
+	//Size orig_n_residue_;
 }; //class FoldTreeHybridize
 
 } // hybridize
