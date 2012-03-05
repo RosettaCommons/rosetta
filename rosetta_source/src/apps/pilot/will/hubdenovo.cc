@@ -618,7 +618,7 @@ struct ConstraintConfig {
 								scgrp++;
 								for(Size i = 1; i <= tres.size(); ++i) {
 									for(Size j = 1; j < i; ++j) {
-										tr << "add cst " << templates_fname.size() << " " << dres[i] << " " << tres[i] << " " << dres[j] << " " << tres[j] << endl;
+										// tr << "add cst " << templates_fname.size() << " " << dres[i] << " " << tres[i] << " " << dres[j] << " " << tres[j] << endl;
 										cst_sc.push_back(CST(templates_fname.size(),scgrp,dres[i],tres[i],dres[j],tres[j]));
 									}
 								}
