@@ -78,7 +78,7 @@ ResidueFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS residues (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	resNum INTEGER,\n"
 			"	name3 TEXT,\n"
 			"	res_type TEXT,\n"

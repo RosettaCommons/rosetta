@@ -36,6 +36,7 @@
 // C++
 #include <string>
 #include <sstream>
+#include <iostream>
 
 
 
@@ -88,7 +89,7 @@ StructureFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS structures (\n"
-			"	struct_id INTEGER PRIMARY KEY AUTO_INCREMENT,\n"
+			"	struct_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,\n"
 			"	protocol_id INTEGER REFERENCES protocols(protocol_id),\n"
 			"	tag VARCHAR(255),\n"
 			"	input_tag VARCHAR(255),\n"

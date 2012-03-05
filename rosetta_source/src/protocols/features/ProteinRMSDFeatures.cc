@@ -124,7 +124,7 @@ ProteinRMSDFeatures::schema() const {
 	}else if(db_mode == "mysql") {
 		return
 			"CREATE TABLE IF NOT EXISTS protein_rmsd (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	reference_tag VARCHAR(255),\n"
 			"	protein_CA DOUBLE,\n"
 			"	protein_CA_or_CB DOUBLE,\n"

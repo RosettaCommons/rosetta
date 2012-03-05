@@ -143,7 +143,7 @@ PoseConformationFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS pose_conformations (\n"
-			"	struct_id INTEGER PRIMARY KEY,\n"
+			"	struct_id BIGINT UNSIGNED PRIMARY KEY,\n"
 			"	annotated_sequence TEXT,\n"
 			"	total_residue INTEGER,\n"
 			"	fullatom BOOLEAN,\n"
@@ -151,7 +151,7 @@ PoseConformationFeatures::schema() const {
 			//"	PRIMARY KEY (struct_id));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS fold_trees (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	start_res INTEGER,\n"
 			"	start_atom TEXT,\n"
 			"	stop_res INTEGER,\n"
@@ -162,7 +162,7 @@ PoseConformationFeatures::schema() const {
 			//"	PRIMARY KEY (struct_id, label));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS jumps (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	jump_id INTEGER,\n"
 			"	xx DOUBLE,\n"
 			"	xy DOUBLE,\n"
@@ -180,7 +180,7 @@ PoseConformationFeatures::schema() const {
 			"	PRIMARY KEY (struct_id, jump_id));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS chain_endings (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	end_pos INTEGER,\n"
 			"	FOREIGN KEY (struct_id ) REFERENCES structures (struct_id),\n"
 			"	PRIMARY KEY (struct_id, end_pos));";

@@ -124,7 +124,7 @@ StructureScoresFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-			"	struct_id INTEGER REFERENCES structures (struct_id),\n"
+			"	struct_id BIGINT UNSIGNED REFERENCES structures (struct_id),\n"
 			"	score_type_id INTEGER REFERENCES score_types (score_type_id),\n"
 			"	score_value INTEGER,\n"
 			"	PRIMARY KEY (struct_id, score_type_id));\n";

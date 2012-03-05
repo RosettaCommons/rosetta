@@ -110,7 +110,7 @@ string PdbDataFeatures::schema() const
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	residue_number INTEGER,\n"
 			"	chain_id TEXT,\n"
 			"	insertion_code TEXT,\n"
@@ -119,7 +119,7 @@ string PdbDataFeatures::schema() const
 			"	PRIMARY KEY (struct_id, residue_number));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	residue_number INTEGER,\n"
 			"	max_temperature REAL,\n"
 			"	max_bb_temperature REAL,\n"

@@ -111,7 +111,7 @@ LoopAnchorFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS loop_anchors (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	residue_begin INTEGER,\n"
 			"	residue_end INTEGER,\n"
             "   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
@@ -119,7 +119,7 @@ LoopAnchorFeatures::schema() const {
 			"	PRIMARY KEY(struct_id, residue_begin, residue_end));"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	residue_begin INTEGER,\n"
 			"	residue_end INTEGER,\n"
 			"	x REAL,\n"

@@ -99,7 +99,7 @@ ProteinResidueConformationFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS protein_residue_conformation (\n"
-			"	struct_id INTEGER REFERENCES residues(struct_id),\n"
+			"	struct_id BIGINT UNSIGNED REFERENCES residues(struct_id),\n"
 			"	seqpos INTEGER REFERENCES residues(resNum),\n"
 			"	secstruct TEXT,\n"
 			"	phi DOUBLE,\n"
@@ -112,7 +112,7 @@ ProteinResidueConformationFeatures::schema() const {
 			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-			"	struct_id INTEGER REFERENCES residues(struct_id),\n"
+			"	struct_id BIGINT UNSIGNED REFERENCES residues(struct_id),\n"
 			"	seqpos INTEGER REFERENCES residues(resNum),\n"
 			"	atomno INTEGER,\n"
 			"	x DOUBLE,\n"

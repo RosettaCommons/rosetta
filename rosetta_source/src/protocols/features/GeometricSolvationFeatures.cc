@@ -89,7 +89,7 @@ GeometricSolvationFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS geometric_solvation (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	hbond_site_id INTEGER,\n"
 			"	geometric_solvation_exact TEXT,\n"
 			"	FOREIGN KEY (struct_id, hbond_site_id),\n"

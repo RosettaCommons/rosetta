@@ -86,7 +86,7 @@ PoseCommentsFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	comment_key VARCHAR(255),\n"
 			"	value TEXT,\n"
 			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"

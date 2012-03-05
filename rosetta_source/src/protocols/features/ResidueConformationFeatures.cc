@@ -103,7 +103,7 @@ ResidueConformationFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	seqpos INTEGER,\n"
 			"	phi DOUBLE,\n"
 			"	psi DOUBLE,\n"
@@ -112,7 +112,7 @@ ResidueConformationFeatures::schema() const {
 			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	seqpos INTEGER,\n"
 			"	chinum INTEGER,\n"
 			"	chiangle DOUBLE,\n"
@@ -120,7 +120,7 @@ ResidueConformationFeatures::schema() const {
 			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BIGINT UNSIGNED,\n"
 			"	seqpos INTEGER,\n"
 			"	atomno INTEGER,\n"
 			"	x DOUBLE,\n"
