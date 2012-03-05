@@ -52,6 +52,16 @@ CompoundInterpolator::interpolate(
 	Real & y,
 	Real & dy
 ) {
+
+	if(has_lb_function() && x < get_lb_function_cutoff())
+	{
+		return compute_lb_function_solution(x,y);
+	}
+	if(has_ub_function() && x > get_ub_function_cutoff())
+	{
+		return compute_ub_function_solution(x,y);
+	}
+
 	for( size_t i = 1; i <= interpolators_.size(); ++i ) {
 		if( interpolators_[i].lb <= x && x <= interpolators_[i].ub ) {
 			return interpolators_[i].interp->interpolate(x,y,dy);

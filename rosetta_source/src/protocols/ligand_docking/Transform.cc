@@ -61,7 +61,7 @@ std::string TransformCreator::mover_name()
 	return "Transform";
 }
 
-Transform::Transform(): Mover("Transform"), transform_info_()
+Transform::Transform(): Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(0.0)
 {
 
 }
@@ -73,7 +73,7 @@ Transform::Transform(
 	core::Real const & angle,
 	core::Size const & cycles,
 	core::Real const & temp
-) : Mover("Transform"), transform_info_()
+) : Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(0.0)
 {
 	transform_info_.chain = chain;
 	transform_info_.box_size = box_size;
@@ -123,12 +123,16 @@ void Transform::parse_my_tag
 	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Transform' mover requires cycles tag");
 	if (!tag->hasOption("temperature")) utility_exit_with_message("'Transform' mover requires temperature tag");
 
+
 	transform_info_.chain = tag->getOption<std::string>("chain");
 	transform_info_.move_distance = tag->getOption<core::Real>("move_distance");
 	transform_info_.box_size = tag->getOption<core::Real>("box_size");
 	transform_info_.angle = tag->getOption<core::Real>("angle");
 	transform_info_.cycles = tag->getOption<core::Size>("cycles");
 	transform_info_.temperature = tag->getOption<core::Real>("temperature");
+
+	optimize_until_score_is_negative_ = tag->getOption<bool>("optimize_until_score_is_negative",false);
+
 }
 
 void Transform::apply(core::pose::Pose & pose)
@@ -176,8 +180,27 @@ void Transform::apply(core::pose::Pose & pose)
 	core::Size accepted_moves = 0;
 	core::Size rejected_moves = 0;
 
-	for(core::Size cycle = 1; cycle <= transform_info_.cycles; ++cycle)
+	bool not_converged = true;
+
+	core::Size cycle = 1;
+	//for(core::Size cycle = 1; cycle <= transform_info_.cycles; ++cycle)
+	while(not_converged)
 	{
+		if(optimize_until_score_is_negative_)
+		{
+			if(cycle >= transform_info_.cycles && best_score <= 0.0)
+			{
+				not_converged= false;
+			}
+		}else
+		{
+			if(cycle >= transform_info_.cycles)
+			{
+				not_converged= false;
+			}
+		}
+
+		cycle++;
 
 		//during each move either move the ligand or try a new conformer (if there is more than one conformer)
 		if(ligand_conformers_.size() > 1)
@@ -206,29 +229,30 @@ void Transform::apply(core::pose::Pose & pose)
 		{
 			pose = best_pose;
 			rejected_moves++;
-			transform_tracer << "probability: " << probability << " rejected (out of box)"<<std::endl;
+			//transform_tracer << "probability: " << probability << " rejected (out of box)"<<std::endl;
 		}else if(probability < 1 && RG.uniform() >= probability)  //reject the new pose
 		{
 			pose = best_pose;
 			rejected_moves++;
-			transform_tracer << "probability: " << probability << " rejected"<<std::endl;
+			//transform_tracer << "probability: " << probability << " rejected"<<std::endl;
 		}else if(probability < 1)  // Accept the new pose
 		{
 			best_score = current_score;
 			best_pose = pose;
 			accepted_moves++;
-			transform_tracer << "probability: " << probability << " accepted"<<std::endl;
+			//transform_tracer << "probability: " << probability << " accepted"<<std::endl;
 		}else  //Accept the new pose
 		{
 			best_score = current_score;
 			best_pose = pose;
 			accepted_moves++;
-			transform_tracer << "probability: " << probability << " accepted"<<std::endl;
+			//transform_tracer << "probability: " << probability << " accepted"<<std::endl;
 		}
+		transform_tracer << best_score << " " <<current_score <<std::endl;
 	}
 	pose=best_pose;
 
-	transform_tracer <<"percent acceptance: "<< accepted_moves << " " << accepted_moves/rejected_moves <<" " << rejected_moves <<std::endl;
+	transform_tracer <<"percent acceptance: "<< accepted_moves << " " << (core::Real)accepted_moves/(core::Real)rejected_moves <<" " << rejected_moves <<std::endl;
 
 }
 

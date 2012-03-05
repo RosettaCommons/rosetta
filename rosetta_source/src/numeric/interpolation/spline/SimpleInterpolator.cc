@@ -26,6 +26,7 @@ SimpleInterpolator::SimpleInterpolator(
 	 Real lbdy,
 	 Real ubdy
 ) :
+	Interpolator(),
 	x_(x),
 	y_(y),
 	ddy_()
@@ -35,6 +36,14 @@ SimpleInterpolator::SimpleInterpolator(
 
 void
 SimpleInterpolator::interpolate( Real x, Real & y, Real & dy ) {
+	if(has_lb_function() && x < get_lb_function_cutoff())
+	{
+		return compute_lb_function_solution(x,y);
+	}
+	if(has_ub_function() && x > get_ub_function_cutoff())
+	{
+		return compute_ub_function_solution(x,y);
+	}
 	return spline_interpolate(x_,y_,ddy_,x,y,dy);
 }
 

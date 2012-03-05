@@ -67,6 +67,11 @@ SplineGenerator::add_known_value(
 	points_.push_back( Point(x,y,dy) );
 }
 
+void SplineGenerator::add_boundary_function(std::string const & tag, Real const & cutoff, Real const & slope, Real const & intercept)
+{
+	boundary_functions_[tag] = LinearFunction(cutoff,slope,intercept);
+}
+
 InterpolatorOP
 SplineGenerator::get_interpolator()
 {
@@ -111,6 +116,17 @@ SplineGenerator::get_interpolator()
 				y.push_back( p.y );
 			}
 			interpolator_ = InterpolatorOP(interp);
+		}
+		std::map<std::string, LinearFunction>::iterator lower_bound(boundary_functions_.find("lb_function"));
+		std::map<std::string, LinearFunction>::iterator upper_bound(boundary_functions_.find("ub_function"));
+		if(lower_bound != boundary_functions_.end())
+		{
+			interpolator_->set_lb_function(lower_bound->second.cutoff,lower_bound->second.slope,lower_bound->second.intercept);
+		}
+
+		if(upper_bound != boundary_functions_.end())
+		{
+			interpolator_->set_ub_function(upper_bound->second.cutoff,upper_bound->second.slope,upper_bound->second.intercept);
 		}
 	}
 	return interpolator_;

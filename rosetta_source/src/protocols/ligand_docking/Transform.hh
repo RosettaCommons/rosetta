@@ -82,13 +82,14 @@ private:
 	void transform_ligand(core::pose::Pose & pose);
 
 
+
 	void change_conformer(core::pose::Pose & pose, core::Size const & seqpos);
 
 private:
 	//qsar::scoring_grid::GridManagerOP grid_manager_;
 	Transform_info transform_info_;
 	utility::vector1< core::conformation::ResidueOP >  ligand_conformers_;
-
+	bool optimize_until_score_is_negative_;
 
 };
 

@@ -24,7 +24,7 @@ namespace numeric {
 namespace interpolation {
 
 ///@details read in a file, read out a spline.
-///The file should be tab seperated, and have two lines
+///The file should be tab separated, and have two lines
 ///The first field of one line should be "x_axis", the next fields should be the x values of the points for the spline
 ///The first field of the other line should be "y_axis", the next fields should be the y values for the points on the spline
 ///For an example, see "scoring/constraints/epr_distance_potential.histogram"
@@ -43,6 +43,8 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 
 
 	std::string line;
+	utility::vector1< std::pair<std::string,spline::LinearFunction> > boundary_functions;
+
 	while(getline(potential_file,line))
 	{
 		if(line.size() == 0)
@@ -74,6 +76,13 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 			lower_bound_y = *lower_bound_y_iterator;
 			upper_bound_y = *upper_bound_y_iterator;
 		}
+		if(split_fields[0] == "lb_function" || split_fields[0] == "ub_function")
+		{
+			platform::Real cutoff= utility::from_string(split_fields[1],platform::Real(0.0));
+			platform::Real slope = utility::from_string(split_fields[2],platform::Real(0.0));
+			platform::Real intercept = utility::from_string(split_fields[3],platform::Real(0.0));
+			boundary_functions.push_back(std::make_pair(split_fields[0],spline::LinearFunction(cutoff,slope,intercept)));
+		}
 
 	}
 	potential_file.close();
@@ -92,6 +101,15 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 		//std::cout << "current index is:  " << index << " current bins_vect value is:  " << bins_vect[index]
 		  // << " current potential_vect_value is:  " << potential_vect[index] << std::endl;	}
 	}
+
+
+	for(platform::Size index = 1; index <= boundary_functions.size(); ++index )
+	{
+		std::string tag = boundary_functions[index].first;
+		spline::LinearFunction function = boundary_functions[index].second;
+		spline.add_boundary_function(tag,function.cutoff,function.slope,function.intercept);
+	}
+
 	return spline;
 
 

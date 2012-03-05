@@ -249,7 +249,7 @@ void GridBase::set_ring(
 	//TR << "done making sphere "<<std::endl;
 }
 
-void GridBase::set_distance_sphere_for_atom(core::Vector const & coords,core::Real cutoff)
+void GridBase::set_distance_sphere_for_atom(core::Real const & atom_shell,core::Vector const & coords,core::Real cutoff)
 {
 	core::Real cutoff2 = cutoff*cutoff;
 	int x_count(0);
@@ -273,9 +273,9 @@ void GridBase::set_distance_sphere_for_atom(core::Vector const & coords,core::Re
 				{
 					core::Real distance = sqrt(distance2);
 					core::Real current_value = grid_.getValue(point);
-					if(distance <= current_value)
+					if(distance - atom_shell <= current_value)
 					{
-						grid_.setValue(point,distance);
+						grid_.setValue(point,distance - atom_shell);
 					}
 				}
 			}

@@ -89,7 +89,8 @@ void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const &  )
 		{
 			core::id::AtomID atom_id(atom_index,residue_index);
 			core::Vector xyz(pose.xyz(atom_id));
-			this->set_distance_sphere_for_atom(xyz,cutoff_);
+			core::Real const & radius(residue.atom_type(atom_index).lj_radius());
+			this->set_distance_sphere_for_atom(radius,xyz,cutoff_);
 		}
 	}
 }
@@ -123,17 +124,15 @@ core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Rea
 			core::Real max_radius = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 			core::Real spline_score = 0.0;
 			core::Real spline_score_deriv = 0.0;
-
-			if( (max_radius - radius) <= lj_spline_.get_lbx())
+			if(max_radius-radius >= 1)
 			{
-				spline_score = lj_spline_.get_lby();
-			}else if( (max_radius - radius) >= lj_spline_.get_ubx())
-			{
-				spline_score = 0.0;
+				spline_score = 1.531066;
 			}else
 			{
 				interpolator->interpolate(max_radius-radius,spline_score,spline_score_deriv);
 			}
+
+
 
 			score += spline_score;
 		}
