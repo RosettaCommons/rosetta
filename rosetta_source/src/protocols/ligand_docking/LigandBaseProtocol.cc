@@ -891,7 +891,6 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 				if( !mobile_bb[i] ) --i; // back up one unless the end is flexible
 				Size const stop = i; // last mobile residue
 				//std::cout << "  Stop at " << stop << std::endl;
-				runtime_assert( stop > start );
 
 				if( (stop-start+1) < 4 ){
 					// This kind of thing can come up at chain terminii, and should not cause a fatal error.
