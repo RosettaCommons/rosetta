@@ -209,6 +209,13 @@ HybridizeProtocol::init() {
 	fa_scorefxn_ = core::scoring::getScoreFunction();
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn_ );
 
+	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
+		utility::vector1< std::string > cst_files = option[ OptionKeys::constraints::cst_fa_file ]();
+		core::Size choice = core::Size( RG.random_range( 1, cst_files.size() ) );
+		fa_cst_fn_ = cst_files[choice];
+		TR.Info << "Fullatom Constraint choice: " << fa_cst_fn_ << std::endl;
+	}
+	
 	batch_relax_ = option[ cm::hybridize::relax ]();
 	relax_repeats_ = option[ basic::options::OptionKeys::relax::default_repeats ]();
 
@@ -669,6 +676,20 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
 			tofa->apply(pose);
 
+			// apply fa constraints
+			core::scoring::constraints::ConstraintSetOP constraint_set;
+			std::string fa_cst_fn;
+			if (fa_cst_fn_.empty()) {
+				fa_cst_fn = template_cst_fn_[initial_template_index];
+			}
+			else {
+				fa_cst_fn = fa_cst_fn_;
+			}
+			if (!fa_cst_fn.empty() && fa_cst_fn != "NONE") {
+				constraint_set = ConstraintIO::get_instance()->read_constraints_new( fa_cst_fn, new ConstraintSet, pose );
+			}
+			pose.constraint_set( constraint_set );  //reset constraints
+
 			if (batch_relax_ == 1) {
 				// add constraints
 				core::pose::addVirtualResAsRoot(pose);
@@ -755,6 +776,7 @@ HybridizeProtocol::parse_my_tag(
 	// basic options
 	stage1_increase_cycles_ = tag->getOption< core::Real >( "stage1_increase_cycles", 1. );
 	stage2_increase_cycles_ = tag->getOption< core::Real >( "stage2_increase_cycles", 1. );
+	fa_cst_fn_ = tag->getOption< std::string >( "fa_cst_file", "" );
 	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
 
 	if( tag->hasOption( "starting_template" ) ) {
