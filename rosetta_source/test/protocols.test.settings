@@ -45,6 +45,7 @@ sources = {
 
 	"docking" : [
 		"DockingTest",
+		"SetupDockingFoldTree",
 	],
 
 	"enzdes" : [

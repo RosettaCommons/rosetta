@@ -149,7 +149,7 @@ main( int argc, char* argv [] ) {
 	cout << "      -inout:database_mode                        Specify database backend. default: 'sqlite3'" << endl;
 	cout << "      -inout:database_filename                    If sqlite3 the filename for the database" << endl;
 	cout << "      -mysql:host                                 Note to use mysql as a backend:" << endl;
-	cout << "	     -mysql:user                                   compile with 'extras=mysql'" << endl;
+	cout << "      -mysql:user                                   compile with 'extras=mysql'" << endl;
 	cout << "      -mysql:password                               and use the '-input:datbase_mode mysql' flag" << endl;
 	cout << "      -mysql:port" << endl;
 	cout << endl;
@@ -162,6 +162,7 @@ main( int argc, char* argv [] ) {
 	cout << "      -out:nooutput                               Do not output any structures" << endl;
 	cout << "      -out:no_nstruct_label                       Do not append _#### to tag for output structures" << endl;
 	cout << "      -out:overwrite                              Overwrite structures if they already exist" << endl;
+	cout << "      -out:path:all                               Path where to write output data" << endl;
 	cout << "      -out:prefix                                 Prefix for output structures" << endl;
 	cout << "      -out:suffix                                 Suffix for output structures" << endl;
 	cout << "      -out:file:fullatom                          Force full-atom output" << endl;
@@ -171,7 +172,7 @@ main( int argc, char* argv [] ) {
 	cout << "      -pdb_gz                                     Output structures in zipped PDB file format" << endl;
 	cout << endl;
 	cout << "   Silent Output:" << endl;
-	cout << "      -out:file:silent                            Output structures to specified silent file" << endl;
+	cout << "      -out:file:silent <filename>                 Output structures to specified silent file" << endl;
 	cout << "      -out:file:silent_gz                         Output structures to specified silent file in zipped format" << endl;
 	cout << "      -out:file:silent_struct_type <type>         Specify the input silent-file format e.g." << endl;
 	cout << "                                                    (protein_float, protein, rna, binary, score, binary_rna, pdb)" << endl;

@@ -18,8 +18,16 @@
 
 #include <protocols/docking/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.fwd.hh>
 
-#include <utility/vector1.hh>
+#include <map>
+
+#ifdef WIN32
+#include <utility/sql_database/DatabaseSessionManager.hh>
+#else
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#endif
+
 
 
 
@@ -27,7 +35,38 @@ namespace protocols {
 namespace docking {
 
 /// @brief Sets up a docking fold tree based on user-specified chains for the first and second partner
-void setup_foldtree( core::pose::Pose & pose, std::string const partner_chainID, DockJumps & movable_jumps );
+void
+setup_foldtree(
+	core::pose::Pose & pose,
+	std::string const & partner_chainID,
+	DockJumps & movable_jumps);
+
+/// @brief Sets up a docking fold tree based on looking up the
+/// interface in a database
+void
+setup_foldtree(
+	core::pose::Pose & pose,
+	core::Size interface_id,
+	utility::sql_database::sessionOP db_session,
+	DockJumps & movable_jumps);
+
+/// @brief Sets up a docking fold tree based on a map of which chains
+/// are part of which partner
+void
+setup_foldtree(
+	core::pose::Pose & pose,
+	std::map< core::Size, utility::vector1< core::Size > > const & partner_to_chains,
+	DockJumps & movable_jumps );
+
+
+/// @brief Sets up a docking fold tree based on user-specified chains for the first and second partner
+void
+setup_foldtree(
+	core::pose::Pose & pose,
+	core::Size cutpoint,
+	DockJumps & movable_jumps );
+
+
 
 } // docking
 } // protocols

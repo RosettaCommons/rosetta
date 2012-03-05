@@ -105,6 +105,10 @@ void SilentFileJobOutputter::set_defaults() {
 	using namespace basic::options::OptionKeys;
 
 	silent_file_ = option[ out::file::silent ]();
+	if(silent_file_().compare("") == 0){
+		utility_exit_with_message("Please supply a file name with the -out:file:silent flag. If you specify a path the -out:path:all flag, the -out:file:silent file name will be relative to it.");
+	}
+
 	if ( silent_file_.relative() ) {
 		silent_file_.path( option[ out::path::all ]().path() + "/" + silent_file_.path() );
 		//FileName takes care of platform-specific path seperator, i.e.,  "/" or "\" ...

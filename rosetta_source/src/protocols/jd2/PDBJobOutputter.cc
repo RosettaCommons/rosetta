@@ -68,11 +68,13 @@ protocols::jd2::PDBJobOutputter::PDBJobOutputter()
 		extension_ = ".pdb.gz";
 	}
 
-    if ( option[ out::path::pdb ].user() ) {
-        path_ = option[ out::path::pdb ]().path();
-    }else{
-        path_ = "";
-    }
+	if ( option[ out::path::pdb ].user() ) {
+		path_ = option[ out::path::pdb ]().path();
+	} else if (option[ out::path::all ].user() ) {
+		path_ = option[ out::path::all ]().path();
+	} else {
+		path_ = "";
+	}
 }
 
 protocols::jd2::PDBJobOutputter::~PDBJobOutputter(){}

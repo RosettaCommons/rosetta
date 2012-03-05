@@ -67,8 +67,17 @@ AtomTreeDiffJobOutputter::AtomTreeDiffJobOutputter():
 		oss << basic::options::option[ basic::options::OptionKeys::out::prefix ]() << outfile.base()
 		    << basic::options::option[ basic::options::OptionKeys::out::suffix ]();
 		outfile.base( oss.str() );
-		outfile.path( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path() );
-		outfile.vol( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().vol() );
+		if ( basic::options::option[ basic::options::OptionKeys::out::path::pdb ].user() ){
+			outfile.path(basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path());
+			outfile.vol(basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().vol());
+		} else if( basic::options::option[ basic::options::OptionKeys::out::path::all ].user() ){
+			outfile.path(basic::options::option[ basic::options::OptionKeys::out::path::all ]().path());
+			outfile.vol(basic::options::option[ basic::options::OptionKeys::out::path::all ]().vol());
+		}else{
+			outfile.path("");
+			outfile.vol("");
+		}
+
 		if( basic::options::option[ basic::options::OptionKeys::out::pdb_gz ] && outfile.ext() != "gz" ) {
 			outfile.ext( ".gz" ); // else use input extension
 		}

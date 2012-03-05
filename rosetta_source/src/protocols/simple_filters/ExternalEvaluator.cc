@@ -158,7 +158,11 @@ core::Real ExternalEvaluator::apply( core::pose::Pose& pose ) const {
 	pose_stream.close();
 	tr.Info << "write pose : " << pose_file_name << endl;
 	tr.Info << "execute command: "<< command_buf << endl;
-	system(command_buf.c_str());
+	int ret(system(command_buf.c_str()));
+	if(ret){
+		tr.Warning << "Applying the external evaluator failed!" << endl;
+	}
+
 	//execl("/bin/bash","bash","-c",command_buf.c_str(), (char *)0);
 
 	core::Real result;
@@ -167,7 +171,10 @@ core::Real ExternalEvaluator::apply( core::pose::Pose& pose ) const {
 		result_file >> result;
 	}
 	std::string const delete_result_cmd( "rm -f "+work_dir_+"/__RESULT" );
-	system( delete_result_cmd.c_str() );
+	ret = system( delete_result_cmd.c_str() );
+	if(ret){
+		tr.Warning << "Deleting the file '" << work_dir_  << "/__RESULT' failed!" << endl;
+	}
 
   tr.Debug << "obtained result: " << result << endl;
   return result;
@@ -175,7 +182,10 @@ core::Real ExternalEvaluator::apply( core::pose::Pose& pose ) const {
 
 ExternalEvaluator::~ExternalEvaluator() {
 	std::string command = "rm -Rf "+work_dir_;
-	system(command.c_str());
+	int const ret(system(command.c_str()));
+	if(ret){
+		tr.Warning << "Deleting work directory '" << work_dir_ << "' failed!" << endl;
+	}
 	//clean up
 }
 

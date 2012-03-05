@@ -51,11 +51,13 @@ FileSystemJobDistributor::FileSystemJobDistributor() :
 	//	next_job_to_try_assigning_( 1 ),
 	retry_count_( 0 )
 {
-    if ( basic::options::option[ basic::options::OptionKeys::out::path::pdb ].user() ){
-        path_ = basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path();
-    }else{
-        path_ = "";
-    }
+	if ( basic::options::option[ basic::options::OptionKeys::out::path::pdb ].user() ){
+		path_ = basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path();
+	} else if( basic::options::option[ basic::options::OptionKeys::out::path::all ].user() ){
+		path_ = basic::options::option[ basic::options::OptionKeys::out::path::all ]().path();
+	}else{
+		path_ = "";
+	}
 
 }
 
