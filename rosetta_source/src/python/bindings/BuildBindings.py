@@ -483,6 +483,7 @@ def buildModules(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_p
         dir_list.append( (dir_name, files) )
 
     dir_list.sort(key=lambda x: -len(x[1]))  # sort dirs by number of files, most populated first. This should improve speed of multi-thread builds
+    #for d, fs in dir_list: print len(fs), d
 
     for dir_name, _ in dir_list:
         print "buildModules(...): '%s', " % dir_name

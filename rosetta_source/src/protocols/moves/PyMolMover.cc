@@ -358,6 +358,17 @@ void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors
 
 
 
+void PyMolObserver::attach(core::pose::Pose &p)
+{
+		p.attach_general_obs(&PyMolObserver::generalEvent, this);
+}
+
+void PyMolObserver::detach(core::pose::Pose &p)
+{
+		p.detach_general_obs(&PyMolObserver::generalEvent, this);
+}
+
+
 PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
 	//Add options

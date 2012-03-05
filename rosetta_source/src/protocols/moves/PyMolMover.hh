@@ -365,6 +365,10 @@ public:
 
 	PyMolMover & pymol() { return pymol_; };
 
+	/// attach/detach observer from the pose object
+	void attach(core::pose::Pose &p);
+	void detach(core::pose::Pose &p);
+
 private:
 	PyMolMover pymol_;
 
