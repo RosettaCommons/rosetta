@@ -1,37 +1,58 @@
+#You'll define your own database flag, of course
 #-database /ifs1/home/smlewis/minirosetta_database
+
+#useful for debugging
 #-options:user
 #-show_accessed_options
 #-run:version
 
+#input PDB
 -s complex_readytail_final_nozn.pdb.gz
 
+#ex flags give extra rotamers for packing; use_input_sc allows the pre-existing rotamer when packing (useful when paired with sidechain minimization)
 #-ex1
 #-ex2
 -use_input_sc
+#prevent design, keep the input sequence (use a resfile if you want design)
 -packing:repack_only
+#-resfile resfile
 
+#minimizer type.  I don't know which is best
 -run:min_type dfpmin_armijo_nonmonotone
-#-in:file:frag3 complex_readytail_final_nozn_fragset3mer.gz #frags are too big to include w/mini
+
+#fragments if you want them; only 3mers are used.
+#-in:file:frag3 complex_readytail_final_nozn_fragset3mer.gz #frags are too big to include in the demo
 
 #local
+#start of tail
 -flexible_start_resnum 180
+#end of tail (assumed to be end of chain)
 #-flexible_stop_resnum 
+#chain of tail
 -flexible_chain C
+#used for preventing loss of compactness at centroid/fa switch; see documentation
 -short_tail_off 0
 -short_tail_fraction 1.0
+
+#shear does nothing for extended tails; see documentation
 -shear_on .33333333333333333333
-#turn this one OFF for other uses
+
+#turn this one OFF for other uses; activates publication-relevant metrics
 -publication true
 
 #borrowed from AnchoredDesign
+#debugging
 #-AnchoredDesign:perturb_show
+#-AnchoredDesign:debug
+#MC temperatures
 #-AnchoredDesign:perturb_temp
 #-AnchoredDesign:refine_temp
-#-AnchoredDesign:debug
+
+#frequency of full repacking
+#-AnchoredDesign:refine_repack_cycles 100
 -AnchoredDesign:refine_repack_cycles 10
 
-#-constant_seed
-#-jran !!!
+#low-end production numbers
 #-AnchoredDesign:perturb_cycles 5000
 #-AnchoredDesign:refine_cycles 3000
 #-nstruct 5000

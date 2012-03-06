@@ -13,7 +13,7 @@
 @page FloppyTail Documentation for FloppyTail application
 
 @section metadata Metadata
-Last edited 2/1/11.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+Last edited 3/6/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
 The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/FloppyTail/</code>; there's an integration test+demo at <code>rosetta/rosetta_source/test/integration/tests/FloppyTail/</code>.  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
@@ -22,6 +22,10 @@ The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/FloppyTail
 @li Kleiger G, Saha A, Lewis S, Kuhlman B, Deshaies RJ. Rapid E2-E3 assembly and disassembly enable processive ubiquitylation of cullin-RING ubiquitin ligase substrates. Cell. 2009 Nov 25;139(5):957-68. PubMed PMID: 19945379.
 
 You may want to look at the online supplemental info for that paper for a different presentation of how the code works.
+
+@li Crawley SW, Gharaei MS, Ye Q, Yang Y, Raveh B, London N, Schueler-Furman O, Jia Z, Côté GP. Autophosphorylation activates Dictyostelium myosin II heavy chain kinase A by providing a ligand for an allosteric binding site in the alpha-kinase domain. J Biol Chem. 2011 Jan 28;286(4):2607-16. Epub 2010 Nov 11.
+
+This paper uses FloppyTail but is not related to development.
 
 @section purpose Purpose
 This code was written for a relatively singular application.  The system in question was a protein with a long (dozens of residues) flexible tail, which was not seen in crystal structures.  Biochemical evidence suggested a particular binding site for the tail on a known binding partner (the two binding partners also had a known binding interface separate from this tail).  The code was intended to model the reach of the long flexible tail and determine whether the hypothesized binding site was plausible.
@@ -54,6 +58,7 @@ This code was intended for a single purpose, but it may work if you have a simil
 @li Fragments are supported, but were not found to be necessary.  You should probably be running this on a sequence which has little secondary structure anyway, so the fragments won't be too useful.  In the publication case, use of fragments resulted in scattered short helices in the results (clearly raw fragments) without affecting any of the important metrics.
 @li Do a secondary structure prediction on your flexible tail ahead of time.  If it has no SS preferences, use FloppyTail.  If it has a few predicted helices, use FloppyTail with fragments.  If it has a lot of secondary structure, use abinitio.
 @li If you have a single chain (one protein), if the flexible region is closer to the N-terminus than the C-terminus, use the C_root option to make computation faster.  It reroots the fold tree on the C terminus, obviating a lot of useless recalculation of coordinates for the rigid part of the protein (if the N part is moving).
+@li You must use the C_root option (or pass a flexible_start_resnum of zero) when using an N-terminal tail.  Otherwise, the first residue of the tail will have no motion in phi (undefined at an N-terminus), and the residue will remain fixed in space in a probably undesired fashion.
 @li If you are modeling a complex, ensure that the flexible region has either the highest or lowest residue numbers possible: if it is a N-terminus, put its subcomponent first in the PDB file, or vice-versa if it is C-terminal.  Use the C_root option if your flexible region is a lower residue number, and do not if it is higher.  If you have more than two components in your complex, and are modeling a linker between them, then the linker's chain must come between the groups of internally rigid parts in the input PDB file.
 @li FloppyTail now fully supports modeling internal linker regions (to do domain assembly).  It detects interfaces between the internally rigid portions and packs accordingly.
 
@@ -81,6 +86,7 @@ AnchoredDesign options (borrowed for simplicity, not tied to AnchoredDesign in a
 
 General options:  All packing namespace options loaded by the PackerTask are respected.  jd2 namespace options are respected.  Anything very low-level, like the database paths, is respected.
 @li packing::resfile - string - @ref resfiles - resfile if you want one
+@li packing::repack_only - boolean - Tells the code not to perform design.  Design is performed by default because PackerTasks behave that way.
 @li in::file::frag3 - string - @ref directory_core_fragments - fragments if you've got them
 @li run::min_type - string - @ref minimization_overview - minimizer type.  dfpmin_armijo_nonmonotone used for production.
 @li nstruct - integer - number of structures to generate
