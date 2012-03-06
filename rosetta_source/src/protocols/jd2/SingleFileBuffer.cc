@@ -23,6 +23,10 @@
 
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+#include <windows.h>  // for sleep()
+#include <ctime>      // for clock()
+#endif
 
 namespace protocols {
 namespace jd2 {
@@ -137,7 +141,12 @@ WriteFileSFB::WriteFileSFB( std::string const& filename, core::Size channel, boo
 		}
 		if ( status == MPI_FAIL ) {
 			std::cerr << "failing to write file " << filename << " try again after 1 second of sleep ... " << std::endl;
+
+#ifdef WIN32
+			Sleep(1000);
+#else
 			sleep( 1 );
+#endif
 		}
 	}
 }
