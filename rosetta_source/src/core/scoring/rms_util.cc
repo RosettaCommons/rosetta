@@ -397,6 +397,52 @@ CA_rmsd(
 	return rms;
 } // CA_rmsd
 
+/// @detail Populates the output parameter with the xyz coordinates of
+/// a subset of <pose>'s CA atoms, which are specified in <residues>
+void retrieve_coordinates(const core::pose::Pose& pose,
+													const utility::vector1<core::Size>& residues,
+													FArray2D<core::Real>* coords) {
+	using core::Real;
+	using core::Size;
+	using core::id::NamedAtomID;
+	using numeric::xyzVector;
+	using utility::vector1;
+
+	coords->dimension(3, residues.size());
+
+	for (Size i = 1; i <= residues.size(); ++i) {
+		const NamedAtomID id("CA", residues[i]);
+		const xyzVector<Real>& xyz = pose.xyz(id);
+		(*coords)(1, i) = xyz.x();
+		(*coords)(2, i) = xyz.y();
+		(*coords)(3, i) = xyz.z();
+	}
+}
+
+core::Real CA_rmsd(const core::pose::Pose& pose1,
+									 const core::pose::Pose& pose2,
+									 const std::map<core::Size, core::Size>& residues) {
+	using core::Real;
+	using core::Size;
+	using utility::vector1;
+
+	vector1<Size> residues_1;  // residues in pose1
+	vector1<Size> residues_2;  // residues in pose2
+	for (std::map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i) {
+		Size res_1 = i->first;
+		Size res_2 = i->second;
+		residues_1.push_back(res_1);
+		residues_2.push_back(res_2);
+	}
+
+	FArray2D<Real> p1;  // coordinates of CA atoms of selected residues in pose1
+	FArray2D<Real> p2;  // coordinates of CA atoms of selected residues in pose2
+	retrieve_coordinates(pose1, residues_1, &p1);
+	retrieve_coordinates(pose2, residues_2, &p2);
+
+	return numeric::model_quality::rms_wrapper(residues.size(), p1, p2);
+}
+
 core::Real
 CA_rmsd(
 	const core::pose::Pose & pose1,
