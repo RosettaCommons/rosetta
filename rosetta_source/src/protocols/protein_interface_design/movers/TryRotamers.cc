@@ -118,7 +118,10 @@ TryRotamers::apply ( pose::Pose & pose )
 
 	core::kinematics::FoldTree const saved_ft( pose.fold_tree() );
 
-	Residue const & res_ = pose.residue( resnum_);
+	//SEGFAULT REMOVED: OL 3/6/12:
+	//using here a const reference causes segfaults, probably due to subsequent fold-tree manipulation which
+	//would invalidate residue objects.
+	Residue res_ = pose.residue( resnum_ );
 
 	if( automatic_connection_ ){
 		core::kinematics::FoldTree const new_ft( make_hotspot_foldtree( pose ) );
@@ -230,8 +233,8 @@ TryRotamers::parse_my_tag( TagPtr const tag,
   	utility::vector1< std::string > const shove_keys( utility::string_split( shove_val, ',' ) );
   	foreach( std::string const key, shove_keys ){
 			core::Size const resnum( protocols::rosetta_scripts::parse_resnum( key, pose ) );
-			shove_residues_.push_back( resnum);
-			TR<<"Using shove atomtype for "<<key<<'\n';
+			shove_residues_.push_back( resnum );
+			TR<<"Using shove atomtype for "<< key <<'\n';
 		}
 	}
 
