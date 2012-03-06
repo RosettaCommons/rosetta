@@ -36,6 +36,11 @@ settings = {
         },
     },	 	
      
+    "gcc, 4.3, mpi" : { 
+	"overrides" : {
+	   "cxx" : "mpicxx"
+        },
+    },	 	
 	   
     "site" : {
         "prepends" : {

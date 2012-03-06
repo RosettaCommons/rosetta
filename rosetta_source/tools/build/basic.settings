@@ -611,9 +611,9 @@ settings = {
         "appends" : {
             "defines"       : [ "USEMPI" ],
         },
-        "overrides" : {
-            "cc"            : "mpicc -V 4.3",
-            "cxx"           : "mpiCC -V 4.3",
+        "appends" : {
+            "cc"            : " -V 4.3",
+            "cxx"           : " -V 4.3",
         },
     },
 
