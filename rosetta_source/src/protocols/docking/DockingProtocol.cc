@@ -644,27 +644,27 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 	lhs.lowres_inner_cycles_ = rhs.lowres_inner_cycles_;
 	lhs.lowres_outer_cycles_ = rhs.lowres_outer_cycles_;
 	lhs.movable_jumps_ = rhs.movable_jumps_;
-	lhs.docking_scorefxn_low_ = rhs.docking_scorefxn_low_->clone();
-	lhs.docking_scorefxn_high_ = rhs.docking_scorefxn_high_->clone();
-	lhs.docking_scorefxn_pack_ = rhs.docking_scorefxn_pack_->clone();
-	lhs.docking_scorefxn_output_ = rhs.docking_scorefxn_output_->clone();
+	if ( rhs.docking_scorefxn_low_ ) lhs.docking_scorefxn_low_ = rhs.docking_scorefxn_low_->clone();
+	if ( rhs.docking_scorefxn_high_ ) lhs.docking_scorefxn_high_ = rhs.docking_scorefxn_high_->clone();
+	if ( rhs.docking_scorefxn_pack_ ) lhs.docking_scorefxn_pack_ = rhs.docking_scorefxn_pack_->clone();
+	if ( rhs.docking_scorefxn_output_ ) lhs.docking_scorefxn_output_ = rhs.docking_scorefxn_output_->clone();
 	if( rhs.mc_ ) //not used currently but might be needed later
 		lhs.mc_ = new moves::MonteCarlo( *(rhs.mc_) );
-	lhs.lowres_filter_ = static_cast< DockingLowResFilter * const > (rhs.lowres_filter_->clone()() );
-	lhs.highres_filter_ = static_cast< DockingHighResFilter * const > (rhs.highres_filter_->clone()() );
-	if(rhs.docking_lowres_mover_){
+	if ( rhs.lowres_filter_ ) lhs.lowres_filter_ = static_cast< DockingLowResFilter * const > (rhs.lowres_filter_->clone()() );
+	if ( rhs.highres_filter_ ) lhs.highres_filter_ = static_cast< DockingHighResFilter * const > (rhs.highres_filter_->clone()() );
+	if ( rhs.docking_lowres_mover_){
 		lhs.docking_lowres_mover_ = static_cast< DockingLowRes * >( rhs.docking_lowres_mover_->clone()() );
 	}
-	if(rhs.docking_highres_mover_){
+	if ( rhs.docking_highres_mover_){
 		lhs.docking_highres_mover_ = static_cast< DockingHighRes * >( rhs.docking_highres_mover_->clone()() );
 	}
-	lhs.to_centroid_ = static_cast< protocols::simple_moves::SwitchResidueTypeSetMover * >( rhs.to_centroid_->clone()() );
-	lhs.to_all_atom_ = rhs.to_all_atom_->clone();
-	if(rhs.ensemble1_){
+	if ( rhs.to_centroid_ ) lhs.to_centroid_ = static_cast< protocols::simple_moves::SwitchResidueTypeSetMover * >( rhs.to_centroid_->clone()() );
+	if ( rhs.to_all_atom_ ) lhs.to_all_atom_ = rhs.to_all_atom_->clone();
+	if( rhs.ensemble1_){
 		lhs.ensemble1_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) );
 		lhs.ensemble1_filename_ = rhs.ensemble1_filename_ ;
 	}
-	if(rhs.ensemble2_){
+	if( rhs.ensemble2_){
 		lhs.ensemble2_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble2_) );
 		lhs.ensemble2_filename_ = rhs.ensemble2_filename_;
 	}
