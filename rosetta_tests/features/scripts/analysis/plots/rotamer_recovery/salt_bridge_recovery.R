@@ -11,7 +11,6 @@ check_setup()
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "salt_bridge_recovery",
-filename = "scripts/analysis/plots/rotamer_recovery/salt_bridge_recovery.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotamerRecoveryFeatures", "HBondFeatures"),

@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "angle_dependence_on_AHdist",
-filename = "scripts/analysis/plots/hbonds/angle_dependence_on_AHdist.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),

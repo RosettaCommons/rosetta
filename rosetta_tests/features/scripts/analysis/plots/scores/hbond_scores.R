@@ -11,7 +11,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_scores",
-filename = "scripts/analysis/plots/scores/hbond_scores.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResidueScoreFeatures"),

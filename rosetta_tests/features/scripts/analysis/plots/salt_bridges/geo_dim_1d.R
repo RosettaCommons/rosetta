@@ -10,8 +10,7 @@
 check_setup()
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "rotamer_recovery_by_secondary_structure",
-filename = "scripts/analysis/plots/salt_bridges/geo_dim_1d.R",
+id = "salt_bridge_geo_dim_1d",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("SaltBridgeFeatures"),
@@ -20,6 +19,7 @@ run=function(self){
 
 sele <-"
 SELECT
+	struct.tag, don.resNum AS don_resNum, acc.resNum AS acc_resNum,
 	sb.psi, sb.theta, sb.rho, sb.orbital,
 	don.name3 AS don_res_type, acc.HBChemType AS acc_chem_type,
 	CASE don.resNum - acc.resNum
@@ -27,10 +27,12 @@ SELECT
 		WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4'
 		ELSE 'long' END AS seq_sep
 FROM
+	structures AS struct,
 	salt_bridges AS sb,
-	hbond_sites AS acc, residues as don,
+	hbond_sites AS acc, residues as don
 	residue_pdb_confidence AS don_con, hbond_sites_pdb AS acc_con
 WHERE
+	sb.struct_id = struct.struct_id AND
 	don.struct_id = sb.struct_id AND don.resNum = sb.don_resNum AND
 	acc.struct_id = sb.struct_id AND acc.site_id = sb.acc_id AND
 	don_con.struct_id = sb.struct_id AND don_con.residue_number = sb.don_resNum AND
@@ -40,12 +42,7 @@ WHERE
 
 f <- query_sample_sources(sample_sources, sele)
 
-f[f$don_res_type == 'LYS',] <- transform(f[f$don_res_type == 'LYS',],
-	theta = theta * 180/pi,
-	psi = psi * 180/pi)
-
-f[f$don_res_type == 'HIS' | f$don_res_type == 'ARG',] <- transform(f[f$don_res_type == 'HIS' | f$don_res_type == 'ARG',],
-	theta = theta - 90)
+f <- transform(f,	theta = theta * 180/pi,	psi = psi * 180/pi)
 
 # give more descriptive plot labels
 f$acc_chem_type <- factor(f$acc_chem_type,
@@ -88,39 +85,39 @@ if(nrow(sample_sources) <= 3){
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-#plot_id <- "salt_bridge_psi_by_orbital_don_res_type"
-#dens <- estimate_density_1d_wrap(f, c("sample_source", "don_res_type", "orbital"), "psi", xlim=c(-180, 180), adjust=.2)
-#p <- ggplot(data=dens) + plot_parts +
-#	opts(title = "Salt Bridge PSI, B-Factor < 30") +
-#	facet_grid( orbital ~ don_res_type ) +
-#	scale_x_continuous("Angle Around Donor")
-#if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
-#}
-#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+plot_id <- "salt_bridge_psi_by_orbital_don_res_type"
+dens <- estimate_density_1d_wrap(f, c("sample_source", "don_res_type", "orbital"), "psi", xlim=c(-180, 180), adjust=.2)
+p <- ggplot(data=dens) + plot_parts +
+	opts(title = "Salt Bridge PSI, B-Factor < 30") +
+	facet_grid( orbital ~ don_res_type ) +
+	scale_x_continuous("Angle Around Donor")
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-#plot_id <- "salt_bridge_psi_by_acc_chem_type_don_res_type"
-#dens <- estimate_density_1d_wrap(f, c("sample_source", "don_res_type", "acc_chem_type"), "psi", xlim=c(-180, 180), adjust=.2)
-#p <- ggplot(data=dens) + plot_parts +
-#	opts(title = "Salt Bridge PSI, B-Factor < 30") +
-#	facet_grid( acc_chem_type ~ don_res_type ) +
-#	scale_x_continuous("Angle Around Donor")
-#if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
-#}
-#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+plot_id <- "salt_bridge_psi_by_acc_chem_type_don_res_type"
+dens <- estimate_density_1d_wrap(f, c("sample_source", "don_res_type", "acc_chem_type"), "psi", xlim=c(-180, 180), adjust=.2)
+p <- ggplot(data=dens) + plot_parts +
+	opts(title = "Salt Bridge PSI, B-Factor < 30") +
+	facet_grid( acc_chem_type ~ don_res_type ) +
+	scale_x_continuous("Angle Around Donor")
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-#plot_id <- "salt_bridge_psi_by_orbital_acc_chem_type"
-#dens <- estimate_density_1d_wrap(f, c("sample_source", "orbital", "acc_chem_type"), "psi", xlim=c(-180, 180), adjust=.2)
-#p <- ggplot(data=dens) + plot_parts +
-#	opts(title = "Salt Bridge PSI, B-Factor < 30") +
-#	facet_grid( orbital ~ acc_chem_type ) +
-#	scale_x_continuous("Angle Around Donor")
-#if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
-#}
-#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+plot_id <- "salt_bridge_psi_by_orbital_acc_chem_type"
+dens <- estimate_density_1d_wrap(f, c("sample_source", "orbital", "acc_chem_type"), "psi", xlim=c(-180, 180), adjust=.2)
+p <- ggplot(data=dens) + plot_parts +
+	opts(title = "Salt Bridge PSI, B-Factor < 30") +
+	facet_grid( orbital ~ acc_chem_type ) +
+	scale_x_continuous("Angle Around Donor")
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_psi_by_seq_sep_don_res_type"
 dens <- estimate_density_1d(f, c("sample_source", "seq_sep", "don_res_type"), "psi", xlim=c(-180, 180), adjust=.2)
@@ -163,39 +160,39 @@ if(nrow(sample_sources) <= 3){
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-#plot_id <- "salt_bridge_theta_by_orbital_don_res_type"
-#dens <- estimate_density_1d(f, c("sample_source", "don_res_type", "orbital"), "theta")
-#p <- ggplot(data=dens) + plot_parts +
-#	opts(title = "Salt Bridge THETA, B-Factor < 30") +
-#	facet_grid( orbital ~ don_res_type ) +
-#	scale_x_continuous("Angle Out of Donor Plane")
-#if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
-#}
-#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
-#
-#
-#plot_id <- "salt_bridge_theta_by_acc_chem_type_don_res_type"
-#dens <- estimate_density_1d(f, c("sample_source", "don_res_type", "acc_chem_type"), "theta")
-#p <- ggplot(data=dens) + plot_parts +
-#	opts(title = "Salt Bridge THETA, B-Factor < 30") +
-#	facet_grid( acc_chem_type ~ don_res_type ) +
-#	scale_x_continuous("Angle Out of Donor Plane")
-#if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
-#}
-#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
-#
-#plot_id <- "salt_bridge_theta_by_orbital_acc_chem_type"
-#dens <- estimate_density_1d(f, c("sample_source", "orbital", "acc_chem_type"), "theta")
-#p <- ggplot(data=dens) + plot_parts +
-#	opts(title = "Salt Bridge THETA, B-Factor < 30")+
-#	facet_grid( orbital ~ acc_chem_type ) +
-#	scale_x_continuous("Angle Out of Donor Plane")
-#if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
-#}
-#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+plot_id <- "salt_bridge_theta_by_orbital_don_res_type"
+dens <- estimate_density_1d(f, c("sample_source", "don_res_type", "orbital"), "theta")
+p <- ggplot(data=dens) + plot_parts +
+	opts(title = "Salt Bridge THETA, B-Factor < 30") +
+	facet_grid( orbital ~ don_res_type ) +
+	scale_x_continuous("Angle Out of Donor Plane")
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
+plot_id <- "salt_bridge_theta_by_acc_chem_type_don_res_type"
+dens <- estimate_density_1d(f, c("sample_source", "don_res_type", "acc_chem_type"), "theta")
+p <- ggplot(data=dens) + plot_parts +
+	opts(title = "Salt Bridge THETA, B-Factor < 30") +
+	facet_grid( acc_chem_type ~ don_res_type ) +
+	scale_x_continuous("Angle Out of Donor Plane")
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+plot_id <- "salt_bridge_theta_by_orbital_acc_chem_type"
+dens <- estimate_density_1d(f, c("sample_source", "orbital", "acc_chem_type"), "theta")
+p <- ggplot(data=dens) + plot_parts +
+	opts(title = "Salt Bridge THETA, B-Factor < 30")+
+	facet_grid( orbital ~ acc_chem_type ) +
+	scale_x_continuous("Angle Out of Donor Plane")
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_theta_by_seq_sep_don_res_type"
 dens <- estimate_density_1d(f, c("sample_source", "seq_sep", "don_res_type"), "theta")
@@ -243,27 +240,27 @@ if(nrow(sample_sources) <= 3){
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-#plot_id <- "salt_bridge_rho_by_acc_chem_type_don_res_type"
-#dens <- estimate_density_1d(f, c("sample_source", "don_res_type", "acc_chem_type"), "rho", radial_3d_normalization)
-#p <- ggplot(data=dens) + plot_parts +
-#	opts(title = "Salt Bridge RHO, B-Factor < 30\nnormalized for equal weight per unit distance") +
-#	facet_grid( acc_chem_type ~ don_res_type ) +
-#	scale_x_continuous(expression(paste('"Cental Carbon -- Oxygen Distance (', ring(A), ')')))
-#if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
-#}
-#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
-#
-#plot_id <- "salt_bridge_rho_by_orbital_acc_chem_type"
-#dens <- estimate_density_1d(f, c("sample_source", "orbital", "acc_chem_type"), "rho", radial_3d_normalization)
-#p <- ggplot(data=dens) + plot_parts +
-#	opts(title = "Salt Bridge RHO, B-Factor < 30\nnormalized for equal weight per unit distance") +
-#	facet_grid( orbital ~ acc_chem_type ) +
-#	scale_x_continuous(expression(paste('"Cental Carbon -- Oxygen Distance (', ring(A), ')')))
-#if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
-#}
-#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+plot_id <- "salt_bridge_rho_by_acc_chem_type_don_res_type"
+dens <- estimate_density_1d(f, c("sample_source", "don_res_type", "acc_chem_type"), "rho", radial_3d_normalization)
+p <- ggplot(data=dens) + plot_parts +
+	opts(title = "Salt Bridge RHO, B-Factor < 30\nnormalized for equal weight per unit distance") +
+	facet_grid( acc_chem_type ~ don_res_type ) +
+	scale_x_continuous(expression(paste('"Cental Carbon -- Oxygen Distance (', ring(A), ')')))
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+plot_id <- "salt_bridge_rho_by_orbital_acc_chem_type"
+dens <- estimate_density_1d(f, c("sample_source", "orbital", "acc_chem_type"), "rho", radial_3d_normalization)
+p <- ggplot(data=dens) + plot_parts +
+	opts(title = "Salt Bridge RHO, B-Factor < 30\nnormalized for equal weight per unit distance") +
+	facet_grid( orbital ~ acc_chem_type ) +
+	scale_x_continuous(expression(paste('"Cental Carbon -- Oxygen Distance (', ring(A), ')')))
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_rho_by_seq_sep_don_res_type"
 dens <- estimate_density_1d(f, c("sample_source", "seq_sep", "don_res_type"), "rho", radial_3d_normalization)

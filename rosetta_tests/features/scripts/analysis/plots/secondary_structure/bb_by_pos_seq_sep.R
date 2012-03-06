@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "bb_by_pos_seq_sep",
-filename = "scripts/analysis/plots/secondary_structure/bb_by_pos_seq_sep.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

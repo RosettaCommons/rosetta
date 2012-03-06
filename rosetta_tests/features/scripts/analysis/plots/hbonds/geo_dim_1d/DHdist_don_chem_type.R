@@ -9,8 +9,7 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "DHdist_chem_Type",
-filename = "scripts/analysis/plots/hbonds/DHdist_chem_type.R",
+id = "DHdist_don_chem_type",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
@@ -18,7 +17,7 @@ run=function(self){
 
 sele <-"
 SELECT DISTINCT
-	don_atoms.base_x AS dx, don_atoms.base_y AS dy, don_atoms.base_z AS dz,	
+	don_atoms.base_x AS dx, don_atoms.base_y AS dy, don_atoms.base_z AS dz,
 	don_atoms.atm_x  AS hx, don_atoms.atm_y  AS hy, don_atoms.atm_z  AS hz,
 	don.HBChemType AS don_chem_type
 FROM

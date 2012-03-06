@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_CXL_ARG_bfac20",
-filename = "scripts/analysis/plots/hbonds/AHdist_CXL_ARG_bfac20.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
@@ -169,22 +168,9 @@ write.csv(f, "arg_cxl_salt_bridges_examples.csv")
 #  hbond.struct_id = geom.struct_id AND
 #  hbond.hbond_id =  geom.hbond_id;
 
-
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
-#f$don_chem_type <- factor(f$don_chem_type,
-#	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
-#		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
-#	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
-#		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
-
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
-#f$acc_chem_type <- factor(f$acc_chem_type,
-#	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
-#		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
-#	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
-#		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
+#f$don_chem_type_name <- don_chem_type_name_linear(f$don_chem_type)
+#f$acc_chem_type_name <- acc_chem_type_name_linear(f$acc_chem_type)
+#f <- na.omit(f, method("r"))
 
 dens <- estimate_density_1d(
   f, c("sample_source", "num_sc_hbs" ),

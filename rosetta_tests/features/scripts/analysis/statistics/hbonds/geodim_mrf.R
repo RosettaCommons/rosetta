@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "geodim_mrf",
-filename = "scripts/analysis/statistics/hbonds/geodim_mrf.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

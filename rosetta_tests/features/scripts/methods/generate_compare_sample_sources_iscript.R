@@ -86,16 +86,25 @@ iscript_sample_sources <- function(sample_sources){
 }
 
 iscript_output_formats <- function(output_formats){
-  ids <- c()
-  for(output_format in output_formats[,1]) ids <- c(ids, output_format)
   cat("#file format for plots
-#See scripts/methods/output_formats.R for more formats\n",
+#See scripts/methods/output_formats.csv for more formats\n",
       file=iscript_fname, append=TRUE)
-  cat("output_formats <- rbind(\n	", paste(ids, collapse=",\n	"),
-      ")\n",
-      file=iscript_fname, sep="", append=TRUE)
+	dump("output_formats", file=iscript_fname, append=TRUE)
   cat("\n", file=iscript_fname, append=TRUE)
 }
+
+iscript_setup_add_footer_to_output_formats <- function(add_footer){
+	if(add_footer){
+		cat("#Do not include footer information in any plots\n",
+"output_formats$add_footer <- FALSE\n\n",
+				file=iscript_fname, append=TRUE)
+	} else {
+		cat("#nclude footer information for the plot formats that can accept them\n",
+"output_formats$add_footer <- output_formats$accept_footer\n\n",
+				file=iscript_fname, append=TRUE)
+	}
+}
+
 
 iscript_db_cache_size <- function(db_cache_size){
   cat("#number of 1k pages to use as cache\n",

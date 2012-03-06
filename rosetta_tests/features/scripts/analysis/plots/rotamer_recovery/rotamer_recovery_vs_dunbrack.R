@@ -11,7 +11,6 @@ check_setup()
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_vs_dunbrack",
-filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_vs_dunbrack.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotamerRecoveryFeatures"),

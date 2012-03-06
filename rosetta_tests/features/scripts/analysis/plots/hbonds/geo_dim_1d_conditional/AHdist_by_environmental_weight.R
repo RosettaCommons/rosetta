@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_by_environmental_weight",
-filename = "scripts/analysis/plots/hbonds/AHdist_by_environmental_weight.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),

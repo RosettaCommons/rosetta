@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chiBAOH_cosAOH_eqpoldens_salt_bridge_opsp2",
-filename = "chiBAOH_cosAOH_eqpoldens_salt_bridge_opsp2.R",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),

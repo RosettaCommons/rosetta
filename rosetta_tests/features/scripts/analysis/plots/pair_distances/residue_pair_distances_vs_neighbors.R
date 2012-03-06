@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "residue_pair_distances_vs_neighbors",
-filename = "scripts/analysis/pair_distances/residue_pair_distances_vs_neighbors.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResiduePairFeatures"),

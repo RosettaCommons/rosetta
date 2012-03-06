@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hist_salt_bridges_by_angle",
-filename = "scripts/analysis/plots/orbitals/hist_salt_bridges_by_angle.R",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),

@@ -35,4 +35,4 @@ cd %(workdir)s
 
 
 python submit.py
-#condor_submit condor
+condor_submit condor

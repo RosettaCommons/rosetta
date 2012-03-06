@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "not_recovered",
-filename = "scripts/analysis/instances/rotamer_recovery/not_recovered.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotaermRecoveryFeatures"),
@@ -37,14 +36,14 @@ WHERE
 	b.max_temperature < 20 AND
 	bur.struct_id = res.struct_id AND bur.resNum = res.resNum AND
 	bur.sasa_r140 = 0 AND
-	res.res_type = 'LYS';"
+	res.res_type = 'ARG';"
 
 f <-  query_sample_sources_against_ref(sample_sources, sele)
 
 plot_id <- "rotamer_recovery_LYS_relative_divergence"
 ref_ss_id <- f$ref_sample_source[1]
 p <- ggplot(data=f) + theme_bw() +
-	geom_histogram(aes(x=rel_div, fill=sample_source)) +
+	geom_histogram(aes(x=rel_div, fill=new_sample_source)) +
 	opts(title = paste("Lysine Relative Rotamer Recovery against ", ref_ss_id, ", 0 Sasa and B-Factor < 20", sep="")) +
 	labs(x="New Recovery - Ref Recovery", y="log(FeatureDensity + 1)")
 if(nrow(sample_sources) <= 3){

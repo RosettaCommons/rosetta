@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_by_chem_type_signal",
-filename = "scripts/analysis/statistics/hbonds/AHdist_by_chem_type_signal.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),

@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_summary",
-filename = "scripts/analysis/statistics/rotamer_recovery/rotamer_recovery_summary.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

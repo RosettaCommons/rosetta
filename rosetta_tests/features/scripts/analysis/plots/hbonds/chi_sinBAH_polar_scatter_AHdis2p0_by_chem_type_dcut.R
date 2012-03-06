@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chi_sinBAH_polar_scatter_AHdis2p0_by_chem_type_dcut",
-filename = "scripts/analysis/plots/hbonds/chi_sinBAH_polar_scatter_AHdis2p0_by_chem_type_dcut.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),

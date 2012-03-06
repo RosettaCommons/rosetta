@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "bifurcated_at_donor",
-filename = "scripts/analysis/plots/hbonds/bifurcated_at_donor.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "The rank of a hydrogen bond at donor site or acceptor site is rank of the relative Rosetta HBond energy of the hydrogen bond at the site.",

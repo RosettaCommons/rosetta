@@ -11,7 +11,6 @@ check_setup()
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "beta_mediated_hbonds",
-filename = "scripts/analysis/plots/secondary_structure/beta_mediated_hbonds.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

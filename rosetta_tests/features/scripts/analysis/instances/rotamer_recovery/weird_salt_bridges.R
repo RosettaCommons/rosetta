@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "weird_salt_bridges",
-filename = "scripts/analysis/instances/rotamer_recovery/weird_salt_bridges.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotaermRecoveryFeatures"),

@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "solvation_vs_hbonding",
-filename = "scripts/analysis/plots/solvation/solvation_vs_hbonding.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures", "GeometricSolvationFeatures"),

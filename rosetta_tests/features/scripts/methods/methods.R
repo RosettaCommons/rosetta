@@ -20,15 +20,6 @@ setup_output_directory <- function(output_dir){
 	}
 }
 
-date_code <- function(d=NA){
-	# reference http://www.r-cookbook.com/node/17
-	if(is.na(d)) d <- Sys.Date()
-	pattern <- '20([[:digit:]]{2})-([[:digit:]]{2})-([[:digit:]]{2})'
-	paste(
-		sub(pattern, '\\1', d), sub(pattern, '\\2', d), sub(pattern, '\\3', d),
-		sep="")
-}
-
 check_setup <- function(){
 	tryCatch(sample_sources, error=function(e){
 		stop("ERROR: The variable 'sample_sources' is not defined. See compare_sample_sources.R")
@@ -48,95 +39,6 @@ check_setup <- function(){
 	})
 	tryCatch(db_cache_size, error=function(e){
 		stop("ERROR: The variable 'db_cache_size' is not defined. See compare_sample_sources.R")
-	})
-}
-
-
-ggplot_footer <- function(text){
-	seekViewport("background")
-	popViewport("footer")
-	pushViewport(viewport(name="footer", x=.99, y=.01, just=c(1,0), width=.4, height=.04))
-	#grid.rect(gp=gpar(col="red"))
-	grid.text(text, x=1, hjust=1, gp=gpar(fontsize=5, col="lightgray"))
-	upViewport(0)
-}
-
-# Save the last ggplot() object created. For each output format,
-# generate a plot and put in the output directory
-save_plots <- function(
-	features_analysis,
-	plot_id,
-	sample_sources,
-	output_dir,
-	output_formats,
-	...
-) {
-	tryCatch(plot_id, error=function(e){
-		stop(paste(
-			"ERROR: Unable to save the plot because ",
-			"the 'plot_id' is not specified.\n", e, sep=""))
-	})
-
-	tryCatch(features_analysis, error=function(e){
-		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id,"' ",
-			"because the specified 'features_analysis' is not valid.\n",
-			e, sep=""))
-	})
-
-	tryCatch(sample_sources, error=function(e){
-		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id, "' ",
-			"because the specified 'sample_sources' is not valid.\n",
-			e, sep=""))
-	})
-
-	if(nrow(sample_sources)==0){
-		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id, "' ",
-			"because no sample_sources were specified.\n", e, sep=""))
-	}
-
-	tryCatch(output_dir, error=function(e){
-		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id, "' ",
-			"because the specified 'output_dir' ",
-			"is not a valid variable.\n",
-			e, sep=""))
-	})
-
-	tryCatch(output_formats, error=function(e){
-		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id, "' ",
-			"because the 'output_formats' parameter is not valid.\n",
-			e, sep=""))
-	})
-
-	if(nrow(output_formats)==0){
-		stop(paste(
-			"ERROR: Unable to save teh plot '", plot_id, "' ",
-			"because no output formats were specified.", e, sep=""))
-	}
-
-	a_ply(output_formats, 1, function(fmt){
-		if(!file.exists(file.path(output_dir, fmt$id))){
-			dir.create(file.path(output_dir, fmt$id), recursive=TRUE)
-		}
-		ss_ids <- paste(sample_sources$sample_source,collapse="_")
-		date <- date_code()
-		fname <- paste(plot_id, date, "with", ss_ids, sep="_")
-		full_path <- file.path(output_dir, fmt$id, paste(fname, fmt$extension, sep=""))
-		cat("Saving Plot: ", full_path, "\n")
-#		p <- last_plot() + ggplot_footer(analysis_script)
-		add_features_analysis_plot(features_analysis, plot_id, sample_sources, date, fname, fmt)
-		ggsave(
-			filename=full_path,
-			width=fmt$width,
-			height=fmt$height,
-			dpi=fmt$dpi,
-			scale=fmt$scale,
-			...)
-
 	})
 }
 
@@ -255,6 +157,7 @@ In the returned data.frame the there will be the following columns:
 	data.frame(
 		ref_sample_source = factor(ref_ss$sample_source[1]),
 		new_sample_source = factor(features$sample_source),
+		sample_source = factor(features$sample_source),
 		subset(features, select= -sample_source))
 }
 

@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "orbitals_dist",
-filename = "scripts/analysis/plots/orbitals_dist.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),

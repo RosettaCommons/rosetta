@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_bbbb_seq_sep_m2",
-filename = "scripts/analysis/instances/hbonds/AHdist_bbbb_seq_sep_m2.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

@@ -1,4 +1,4 @@
- # -*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+# -*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 # vi: set ts=2 noet:
 #
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_by_res_type",
-filename = "scripts/analysis/plots/rotamer_recovery/rotamer_recovery_by_res_type.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotamerRecoveryFeatures"),

@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_by_secondary_structure",
-filename = "scripts/analysis/plots/salt_bridges/geo_dim_1d.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

@@ -9,7 +9,6 @@
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHchi_AHD_eq_polar_density_PBAtoPBA",
-filename = "scripts/analysis/plots/hbonds/AHchi_AHD_eq_polar_density_AHchi_AHD_eq_polar_density_PBAtoPBA.R",
 author = "Matthew O'Meara",
 
 brief_description = "",

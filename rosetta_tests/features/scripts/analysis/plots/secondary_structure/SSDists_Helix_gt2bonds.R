@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "SSDists_Helix_gt2bonds",
-filename = "scripts/analysis/plots/secondary_structure/SSDists_Helix_gt2bonds.R",
 author = "Andrew Leaver-Fay",
 brief_description = "",
 long_description = "

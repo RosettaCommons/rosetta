@@ -10,8 +10,7 @@
 check_setup()
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "rotamer_recovery_by_secondary_structure",
-filename = "scripts/analysis/plots/salt_bridges/lys_rotamer_hbond_interaction.R",
+id = "lys_rotamer_hbond_interaction",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("SaltBridgeFeatures", "HBondFeatures"),

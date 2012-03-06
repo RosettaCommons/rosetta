@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "number_of_neighbors",
-filename = "scripts/analysis/plots/solvation/number_of_neighbors.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResidueFeatures", "ResidueBurialFeatures"),

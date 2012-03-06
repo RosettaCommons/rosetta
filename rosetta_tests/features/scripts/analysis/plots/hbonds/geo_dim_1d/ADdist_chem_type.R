@@ -9,7 +9,6 @@
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "ADdist_chem_type",
-filename = "scripts/analysis/plots/hbonds/ADdist_chem_type.R",
 author = "Matthew O'Meara",
 
 brief_description = "Measure the distance between acceptor heavy atoms and the donor heavy atoms for hydrogen bonds.",

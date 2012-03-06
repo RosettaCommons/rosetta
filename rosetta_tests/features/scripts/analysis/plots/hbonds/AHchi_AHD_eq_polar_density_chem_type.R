@@ -9,11 +9,12 @@
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHchi_AHD_eq_polar_density_chem_type",
-filename = "scripts/analysis/plots/hbonds/AHchi_AHD_eq_polar_density_chem_type.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self){
+
+source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
 sele <-"
 SELECT
@@ -53,16 +54,8 @@ WHERE
 	don_pdb.heavy_atom_temperature < 20 AND acc_pdb.heavy_atom_temperature < 20;"
 f <- query_sample_sources(sample_sources, sele)
 
-f$don_chem_type <- factor(f$don_chem_type,
-	levels = c("hbdon_HXL", "hbdon_IMD", "hbdon_GDE", "hbdon_AHX",
-		"hbdon_IME", "hbdon_GDH", "hbdon_CXA", "hbdon_AMO", "hbdon_IND", "hbdon_PBA"),
-	labels = c("dHXL: s,t", "dIMD: h", "dGDE: r", "dAHX: y", "dIME: h", "dGDH: r",
-		"dCXA: n,q", "dAMO: k", "dIND: w", "dPBA: bb"))
-
-f$acc_chem_type <- factor(f$acc_chem_type,
-	levels = c("hbacc_HXL", "hbacc_CXL", "hbacc_IMD", "hbacc_AHX", "hbacc_CXA", "hbacc_IME",  "hbacc_PBA"),
-	labels = c("aHXL: s,t", "aCXL: d,e", "aIMD: h",   "aAHX: y",   "aCXA: n,q", "aIME: h",    "aPBA: bb"))
-
+f$don_chem_type_name <- don_chem_type_name_wrap(f$don_chem_type)
+f$acc_chem_type_name <- acc_chem_type_name_wrap(f$acc_chem_type)
 f$acc_rank <- factor(f$acc_rank)
 
 f$orbital <- factor(ifelse(f$chi < pi/2 & f$chi > -pi/2, "anti", "syn"))

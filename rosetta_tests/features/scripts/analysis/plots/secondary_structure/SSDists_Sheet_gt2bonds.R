@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "SSDists_Sheet_gt2bonds",
-filename = "scripts/analysis/plots/secondary_structure/SSDists_Sheet_gt2bonds.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

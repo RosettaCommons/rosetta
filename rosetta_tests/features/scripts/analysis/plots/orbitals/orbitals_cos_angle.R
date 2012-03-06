@@ -12,7 +12,6 @@ check_setup()
 require(logspline)
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "orbitals_cos_angle",
-filename = "scripts/analysis/plots/orbitals/orbitals_cos_angle.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),

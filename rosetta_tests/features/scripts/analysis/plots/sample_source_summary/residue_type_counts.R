@@ -11,7 +11,6 @@ check_setup()
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "residue_type_counts",
-filename = "scripts/analysis/plots/sample_source_summary/residue_type_counts.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResidueFeatures"),

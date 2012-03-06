@@ -11,7 +11,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "relative_score_in_environment",
-filename = "scripts/analysis/plots/scores/relative_score_in_environment.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResidueFeatures"),

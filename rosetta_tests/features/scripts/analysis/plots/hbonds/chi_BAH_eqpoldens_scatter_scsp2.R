@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chi_BAH_eqpoldens_scatter_scsp2",
-filename = "scripts/analysis/plots/hbonds/chi_BAH_eqpoldens_scatter_scsp2.R",
 author = "Matthew O'Meara",
 brief_description = "The rank of a hydrogen bond at donor site or acceptor site is rank of the relative Rosetta HBond energy of the hydrogen bond at the site.",
 

@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_backbone_correlation",
-filename = "scripts/analysis/plots/hbonds/hbond_backbone_correlation.R",
 author = "Matthew O'Meara",
 brief_description = "This script addresses the question: Are the hydrogen bond geometries on either side of the backbone correlated?",
 long_description = "

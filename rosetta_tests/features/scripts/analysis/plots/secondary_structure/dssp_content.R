@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "dssp_content",
-filename = "scripts/analysis/plots/secondary_structure/dssp_content.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures"),

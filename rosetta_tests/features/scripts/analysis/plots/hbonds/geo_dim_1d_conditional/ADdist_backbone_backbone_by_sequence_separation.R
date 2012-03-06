@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "ADdist_backbone_backbone_by_squence_separation",
-filename = "scripts/analysis/plots/hbonds/ADdist_backbone_backbone_by_squence_separation.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),

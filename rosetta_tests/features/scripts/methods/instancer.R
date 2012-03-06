@@ -66,14 +66,14 @@ prepare_feature_instances <- function(
 
 	d_ply(feature_atoms, .(sample_source), function(df){
 		ss_id <- feature_atoms$sample_source[1]
-		print(paste("extracting pdb structures from sample source '", ss_id, "'", sep=""))
+		cat("extracting pdb structures from sample source '", as.character(ss_id), "'\n", sep="")
 		db_fname <- sample_sources[as.character(sample_sources$sample_source) == as.character(ss_id), "fname"]
 		extract_structures_to_pdbs(
 			db_fname, unique(df$tag), file.path(full_instances_dir, ss_id))
 	})
 
 	print("done extracting pdbs")
-	
+
 	generate_pymol_script(
 		feature_atoms, full_instances_dir)
 

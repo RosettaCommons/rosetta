@@ -9,8 +9,7 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "AHdist_chem_type_with_rosetta_model",
-filename = "scripts/analysis/plots/hbonds/AHdist_chem_type_with_rosetta_model.R",
+id = "cosBAH_chem_type_with_rosetta_model",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),

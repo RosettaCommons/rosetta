@@ -1,0 +1,13 @@
+id	extension	height	width	dpi	scale	use_by_default	accepts_footer
+output_web_raster	.png	8	10.5	300	1	TRUE	TRUE
+output_web_vector	.svg	8	10.5	300	1	FALSE	TRUE
+output_web_icon	.jpg	8	10.5	50	1	FALSE	FALSE
+output_slide_raster	.png	6	8	300	1	FALSE	TRUE
+output_slide_vector	.svg	6	8	300	1	FALSE	TRUE
+output_slide_pdf	.pdf	6	8	300	1	FALSE	TRUE
+output_print_raster	.png	8	10.5	300	1	FALSE	TRUE
+output_print_vector	.svg	8	10.5	300	1	FALSE	TRUE
+output_print_pdf	.pdf	8	10.5	300	1	FALSE	TRUE
+output_huge_raster	.png	15	18	300	1	FALSE	TRUE
+output_huge_vector	.svg	15	18	300	1	FALSE	TRUE
+output_huge_pdf	.pdf	15	18	300	1	FALSE	TRUE

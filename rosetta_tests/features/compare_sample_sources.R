@@ -35,6 +35,7 @@ includes <- c(
 	"scripts/methods/ggplot2_scales.R",
 	"scripts/methods/instancer.R",
 	"scripts/methods/output_formats.R",
+	"scripts/methods/save_plots.R",
 	"scripts/methods/coordinate_normalizations.R",
 	"scripts/methods/comparison_statistics.R",
 	"scripts/methods/vector_math.R",
@@ -53,7 +54,10 @@ option_list <- c(option_list, list(
 	make_option(c("--dry_run"), action="store_true", type="logical", default=FALSE, dest="dry_run",
 							help="Debug the analysis scripts but do not run them.  [Default \"%default\"]"),
 	make_option(c("--db_cache_size"), action="store_true", type="integer", default=10000, dest="db_cache_size",
-							help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]")))
+							help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]"),
+	make_option(c("--add_footer"), action="store_true", type="logical", default=TRUE, dest="add_footer",
+							help="Add footer to plots saying the analysis script and run date.")))
+
 
 # Which analysis scripts should be run
 option_list <- c(option_list, list(
@@ -63,31 +67,13 @@ option_list <- c(option_list, list(
 							help="Directory where the analysis scripts are located. The supplied directory is searched recursively for files of the form \"*.R\".  [Default \"%default\"]")))
 
 # Where should the results be stored?
-option_list <- c(option_list, list(
+option_list <- c(option_list,
+								 list(
 	make_option(c("-o", "--output_dir"), type="character", default="build", dest="output_dir",
-							help="Directory where the output plots and statistics will be generated.  [Default \"%default\"]"),
-	make_option(c("--output_web_raster"), action="store_true", type="logical", default=TRUE, dest="output_web_raster",
-							help="Generate output plots suitable for the web in .png format.  [Default \"%default\"]"),
-	make_option(c("--output_web_vector"), action="store_true", type="logical", default=FALSE, dest="output_web_vector",
-							help="Generate output plots suitable for the web in .svg format.  [Default \"%default\"]"),
-	make_option(c("--output_slide_raster"), action="store_true", type="logical", default=FALSE, dest="output_slide_raster",
-							help="Generate output plots suitable for slides in .png format.  [Default \"%default\"]"),
-	make_option(c("--output_slide_vector"), action="store_true", type="logical", default=FALSE, dest="output_slide_vector",
-							help="Generate output plots suitable for slides in .svg format.  [Default \"%default\"]"),
-	make_option(c("--output_slide_pdf"), action="store_true", type="logical", default=FALSE, dest="output_slide_pdf",
-							help="Generate output plots suitable for slides in .pdf format.  [Default \"%default\"]"),
-	make_option(c("--output_print_raster"), action="store_true", type="logical", default=FALSE, dest="output_print_raster",
-							help="Generate output plots suitable for printing in .png format.  [Default \"%default\"]"),
-	make_option(c("--output_print_vector"), action="store_true", type="logical", default=FALSE, dest="output_print_vector",
-							help="Generate output plots suitable for printing in .svg format.  [Default \"%default\"]"),
-	make_option(c("--output_print_pdf"), action="store_true", type="logical", default=FALSE, dest="output_print_pdf",
-							help="Generate output plots suitable for printing in .pdf format.  [Default \"%default\"]"),
-	make_option(c("--output_huge_raster"), action="store_true", type="logical", default=FALSE, dest="output_huge_raster",
-							help="Generate output plots suitable for hugeing in .png format.  [Default \"%default\"]"),
-	make_option(c("--output_huge_vector"), action="store_true", type="logical", default=FALSE, dest="output_huge_vector",
-							help="Generate output plots suitable for hugeing in .svg format.  [Default \"%default\"]"),
-	make_option(c("--output_huge_pdf"), action="store_true", type="logical", default=FALSE, dest="output_huge_pdf",
-							help="Generate output plots suitable for hugeing in .pdf format.  [Default \"%default\"]")))
+							help="Directory where the output plots and statistics will be generated.  [Default \"%default\"]")))
+
+option_list <- c(option_list, make_output_formats_options_list(all_output_formats))
+
 
 # Analysis manager options
 option_list <- c(option_list, list(
@@ -97,14 +83,6 @@ option_list <- c(option_list, list(
 							help="Should the plots themselves be stored in the the analysis manager database?  [Default \"%default\"]")))
 
 opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TRUE)
-
-
-#Setup analysis manager
-analysis_manager_db_path <- paste(
-	opt$options$output_dir, opt$options$analysis_manager_db, sep="/")
-iscript_setup_analysis_manager(analysis_manager_db_path)
-analysis_manager_con <- initialize_analysis_manager_db(
-	analysis_manager_db_path)
 
 #Setup sample sources
 data_sources <- opt$args
@@ -121,7 +99,7 @@ if(length(data_sources) == 0){
 		"    ./compare_sample_sources.R [OPTIONS] --analysis_dir <analysis_dir> features_<ss_id1>.db3 [features_<ss_id2>.db3 ...]",
 		"",
 		"    From within an R session:",
-		"       source(\"compare_sample_sources_iscript.R\", # This will re-run the last './compare_sample_sources.R' interactively",
+		"       source(\"compare_sample_sources_iscript.R\") # This will re-run the last './compare_sample_sources.R' interactively",
 		"",
 		"DESCRIPTION",
 		"    Compare structural features coming from different sample sources.",
@@ -143,6 +121,16 @@ if(length(data_sources) == 0){
   quit()
 }
 sample_sources <- get_sample_sources(data_sources)
+
+#Setup analysis manager
+analysis_manager_db_path <- paste(
+	opt$options$output_dir,
+	paste(sample_sources$sample_source, collapse="/"),
+	opt$options$analysis_manager_db, sep="/")
+iscript_setup_analysis_manager(analysis_manager_db_path)
+analysis_manager_con <- initialize_analysis_manager_db(
+	analysis_manager_db_path)
+
 add_sample_sources_to_analysis_manager(analysis_manager_con, sample_sources)
 iscript_sample_sources(sample_sources)
 cat("Comparing the following sample sources:\n")
@@ -175,7 +163,7 @@ cat(paste(analysis_scripts, sep="", colapse="\n  "))
 cat("\n")
 
 
-#Validate ouput_dir
+#setup ouput_dir
 if(!file.exists(opt$options$output_dir)){
 	print(paste("Creating output directory: '",opt$options$output_dir,"'...",sep=""))
 	dir.create(opt$options$output_dir, recursive=TRUE)
@@ -188,8 +176,13 @@ output_dir <- opt$options$output_dir
 iscript_output_dir(output_dir)
 
 #Setup output formats
-output_formats <- get_output_formats(opt$options)
+output_formats <- get_output_formats(opt$options, all_output_formats)
 iscript_output_formats(output_formats)
+
+#Setup footer specification in output_formats
+output_formats$add_footer <- output_formats$accepts_footer & opt$options$add_footer
+iscript_setup_add_footer_to_output_formats(opt$options$add_footer)
+
 
 #Setup db_cache_size
 db_cache_size <- opt$options$db_cache_size
@@ -200,10 +193,22 @@ iscript_source_scripts(analysis_scripts)
 
 # This is a vector of FeaturesAnalysis objects that are defined each features analysis script
 feature_analyses <- c()
+num_feature_analyses_before <- 0
 for(analysis_script in analysis_scripts){
+
+	# parse all the analysis scripts
 	tryCatch(source(analysis_script), error=function(e){
 		cat(paste("ERROR: Failed to parse the Features Analysis '",analysis_script,"' with the following error message:\n",e,sep=""))
 	})
+
+	# assign the filename to each feature analysis
+	num_new_feature_analyses = length(feature_analyses) - num_feature_analyses_before
+	for(feature_analysis in
+		feature_analyses[
+			seq(num_feature_analyses_before+1, length.out=num_new_feature_analyses)]){
+		feature_analysis@filename <- analysis_script
+	}
+	num_feature_analyses_before <- length(feature_analyses)
 }
 
 
@@ -228,6 +233,10 @@ if(!opt$options$dry_run){
 		cat("\n")
 	}
 }
+
+
+
+
 
 # close connection to the analysis manager
 result <- dbDisconnect(analysis_manager_con)

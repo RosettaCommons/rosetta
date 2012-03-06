@@ -11,7 +11,6 @@ check_setup()
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chiBAHD_cosAHD_eqpoldens_pi_stacking_cpisp2",
-filename = "chiBAHD_cosAHD_eqpoldens_pi_stacking_cpisp2.R",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),

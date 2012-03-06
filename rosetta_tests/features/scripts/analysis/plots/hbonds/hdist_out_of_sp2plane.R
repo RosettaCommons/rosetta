@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hdist_out_of_sp2plane",
-filename = "scripts/analysis/plots/hbonds/hdist_out_of_sp2plane.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),

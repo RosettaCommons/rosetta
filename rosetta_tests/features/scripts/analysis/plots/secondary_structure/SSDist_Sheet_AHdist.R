@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "SSDist_Sheet_AHdist",
-filename = "scripts/analysis/plots/secondary_structure/SSDist_Sheet_AHdist.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

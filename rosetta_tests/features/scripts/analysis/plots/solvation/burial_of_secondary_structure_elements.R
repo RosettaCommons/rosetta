@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "burial_of_secondary_structure_elements",
-filename = "scripts/analysis/plots/solvation/burial_of_secondary_structure_elements.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("APSAFeatures"),

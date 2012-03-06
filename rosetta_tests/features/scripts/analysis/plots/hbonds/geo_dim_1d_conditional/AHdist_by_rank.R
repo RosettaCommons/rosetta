@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_by_rank",
-filename = "scripts/analysis/plots/hbonds/AHdist_by_rank.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

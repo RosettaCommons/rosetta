@@ -77,9 +77,7 @@ generate_description_page <- function(
 		analysis_script_fname <- analysis_script_fnames[i]
 
 		z <- parse(analysis_script_fname)
-		
 
-		
 	}
 }
 

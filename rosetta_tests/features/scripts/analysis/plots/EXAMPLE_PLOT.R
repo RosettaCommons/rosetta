@@ -10,7 +10,6 @@
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "EXAMPLE_PLOT",
-filename = "scripts/analysis/plots/EXAMPLE_PLOT.R",
 author = "Matthew O'Meara",
 
 brief_description = "A simple demonstration of the Grammar of Graphics plotting functionality.  Make a bar graph of the number of residues in each supplied sample source",
@@ -56,6 +55,7 @@ plot <- plot + opts(title="Dataset Size") + labs(x="Number of Residues", y="Coun
 plot_id <- "EXAMPLE_PLOT"
 
 # See './compare_sample_sources.R --help' about specifying the output_dir and output_formats.
+
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 

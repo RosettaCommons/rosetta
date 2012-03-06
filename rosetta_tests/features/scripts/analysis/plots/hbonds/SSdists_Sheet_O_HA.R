@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "SSdists_Sheet_O_HA",
-filename = "scripts/analysis/plots/hbonds/SSdists_Sheet_O_HA.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

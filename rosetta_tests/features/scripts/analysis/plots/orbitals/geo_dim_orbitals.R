@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "geo_dim_orbitals",
-filename = "scripts/analysis/plots/orbitals/geo_dim_orbitals.R",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),

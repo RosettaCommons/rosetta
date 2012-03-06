@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chi_fit_cos_cosBAH_long_range",
-filename = "scripts/analysis/plots/hbonds/chi_fit_cos_cosBAH_long_range.R",
 author = "Matthew O'Meara",
 brief_description = "",
 long_description = "

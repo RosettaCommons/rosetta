@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "apsa_summary",
-filename = "scripts/analysis/plots/secondary_structure/apsa_summary.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("APSAFeatures"),

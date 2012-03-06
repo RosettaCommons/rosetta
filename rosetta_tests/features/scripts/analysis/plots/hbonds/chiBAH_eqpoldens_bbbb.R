@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chiBAH_eqpoldens_bbbb",
-filename = "scripts/analysis/plots/hbonds/chiBAH_eqpoldens_bbbb.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),

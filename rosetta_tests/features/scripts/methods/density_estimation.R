@@ -65,6 +65,7 @@ estimate_density_1d_wrap <-function(
   min_count=20,
   n_pts=200,
 	xlim=c(0,360),
+	adjust=1,
   ...){
 	density.args <- list(...)
 	if(!(class(data) == "data.frame")){
@@ -90,6 +91,7 @@ estimate_density_1d_wrap <-function(
 	})
 	extended_n_pts=n_pts*3
 	extended_min_count=min_count*3
+	adjust = adjust/3
   compute_density <- function(factor_df){
     if (nrow(factor_df) < extended_min_count){
       return( data.frame(x=seq(xlim[1], xlim[2], length.out=n_pts), y=0))
@@ -97,7 +99,7 @@ estimate_density_1d_wrap <-function(
       weights <- weight_fun(factor_df[,variable])
 			d <- do.call(density,
 				c(list(x=factor_df[,variable], from=xlim[1], to=xlim[2], n=extended_n_pts,
-					weights=weights), density.args))
+					weights=weights, adjust=adjust), density.args))
       return(data.frame(
 				x=d$x[xlim[1] <= d$x & d$x <= xlim[2]],
 				y=d$y[xlim[1] <= d$x & d$x <= xlim[2]]*3,
@@ -119,6 +121,7 @@ estimate_density_1d_reflect_boundary <-function(
 	reflect_right=FALSE,
   left_boundary=NULL,
 	right_boundary=NULL,
+	adjust=1,
   ...){
 	if(!(class(data) == "data.frame")){
 		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
@@ -157,13 +160,16 @@ estimate_density_1d_reflect_boundary <-function(
 		data <- rbind(data, data_upper)
 		extended_factor = extended_factor + 1
 	}
+
+	adjust <- adjust/(1 + reflect_left + reflect_right)
+
   compute_density <- function(factor_df){
 			if (nrow(factor_df) < min_count*extended_factor){
 				return(data.frame(x=seq(left_boundary, right_boundary, length.out=n_pts), y=0, counts=nrow(factor_df)))
     } else {
       weights <- weight_fun(factor_df[,variable])
 			d <- density(x=factor_df[,variable], from=left_boundary, to=right_boundary, n=n_pts*extended_factor,
-				weights=weights,
+				weights=weights, adjust=adjust,
         ...)
 
 			return(data.frame(
@@ -172,7 +178,8 @@ estimate_density_1d_reflect_boundary <-function(
 				counts=round(nrow(factor_df)/extended_factor),0))
     }
   }
-	ddply(data, ids, compute_density)
+	z <- ddply(data, ids, compute_density)
+	z[,!(names(z) %in% "X0")]
 }
 
 

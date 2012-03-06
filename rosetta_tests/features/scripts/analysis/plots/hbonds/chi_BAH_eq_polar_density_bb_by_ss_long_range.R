@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "chi_BAH_eq_polar_density_bb_by_ss_long_range",
-filename = "scripts/analysis/plots/hbonds/chi_BAH_eq_polar_density_bb_by_ss_long_range.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
@@ -71,7 +70,6 @@ f <- ddply(f, c("sample_source", "don_ss_name", "acc_ss_name"),
 plot_id = "chi_sinBAH_eq_polar_density_bb_by_ss_long_range"
 d_ply(sample_sources, .(sample_source), function(sample_source){
 	ss_id <- sample_source$sample_source[1]
-	print(paste("plotting for sample source ->", ss_id))
 	ggplot(data=subset(f, sample_source == ss_id)) + theme_bw() +
 		stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.06,.06)) +
 		polar_equal_area_grids_bw() +

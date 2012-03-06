@@ -10,7 +10,6 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "geo_dim_pairs_scatter_chem_type_extended_definition",
-filename = "scripts/analysis/plots/hbonds/geo_dim_pairs_scatter_chem_type_extended_definition.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),

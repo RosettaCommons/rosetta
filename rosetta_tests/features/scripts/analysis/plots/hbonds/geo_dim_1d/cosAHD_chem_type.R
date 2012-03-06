@@ -10,11 +10,12 @@
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "cosAHD_chem_type",
-filename = "scripts/analysis/plots/hbonds/cosAHD_chem_type.R",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self){
+
+source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
 sele <-"
 SELECT
@@ -33,35 +34,20 @@ WHERE
 	don_pdb.heavy_atom_temperature < 30 AND
 	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id AND
 	acc_pdb.heavy_atom_temperature < 30 AND
-  abs(don.resNum - acc.resNum) > 5;"
+	abs(don.resNum - acc.resNum) > 5;"
 
 f <- query_sample_sources(sample_sources, sele)
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
-f$don_chem_type <- factor(f$don_chem_type,
-	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
-		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
-	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
-		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
-
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
-f$acc_chem_type <- factor(f$acc_chem_type,
-	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
-		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
-	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
-		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
-
+f$don_chem_type_name <- don_chem_type_name_linear(f$don_chem_type)
+f$acc_chem_type_name <- acc_chem_type_name_linear(f$acc_chem_type)
 f <- na.omit(f, method="r")
 
-#coAHD goes from 0 to 1, where 1 is linear
-#since there is significant density at 1,
-#to accurately model a discontinuity, reflect
-#the data across the right boundary, in computing the density esitmation
+#coAHD goes from 0 to 1, where 1 is linear since there is significant
+#density at 1, to accurately model a discontinuity, reflect the data
+#across the right boundary, in computing the density esitmation
 dens <- estimate_density_1d_reflect_boundary(
  data=f,
- ids = c("sample_source", "acc_chem_type", "don_chem_type"),
+ ids = c("sample_source", "acc_chem_type_name", "don_chem_type_name"),
  variable = "cosAHD",
  reflect_right=TRUE,
  right_boundary=1, adjust=.5)
@@ -70,7 +56,7 @@ plot_id = "hbond_cosAHD_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts)) +
-	facet_grid(don_chem_type ~ acc_chem_type) +
+	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
 	opts(title = "HBond AHD Angle by Chemical Type, SeqSep > 5, B-Fact < 30\n(normalized for equal volume per unit distance)") +
 	scale_y_continuous("FeatureDensity", limits=c(0,30), breaks=c(0,10,20)) +
 	scale_x_continuous(
