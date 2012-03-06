@@ -162,9 +162,19 @@ FilterScanFilter::resfile_name() const{
 	return resfile_name_;
 }
 
+std::string
+FilterScanFilter::score_filename() const{
+	return score_filename_;
+}
+
 void
 FilterScanFilter::resfile_name( std::string const resfile_name ){
 	resfile_name_ = resfile_name;
+}
+	
+void
+FilterScanFilter::score_filename( std::string const score_filename ){
+	score_filename_ = score_filename;
 }
 
 core::pack::task::TaskFactoryOP
@@ -301,13 +311,29 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		}
 		resfile.close();
 	}//fi resfile_name()
+	
+	if ( score_filename() != "" ) {
+		std::ofstream scorefile;
+		scorefile.open( score_filename().c_str(), std::ios::out );
+		
+		for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
+			core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
+			scorefile
+			<< pair->first.first << '\t'
+			<< oneletter_code_from_aa( pair->first.second )<<'\t'
+			<<( delta() ? pair->second.first - baseline : pair->second.first )
+			<<(pair->second.second?"":"\tTRIAGED")<<std::endl;
+		}
+		scorefile.close();
+	} // fi score_filename()
+	
 	for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
 		core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
 		TR_residue_scan<<resfile_name()<<'\t'
-									 <<pair->first.first<<'\t'
-									 <<oneletter_code_from_aa( pair->first.second )<<'\t'
-									 <<( delta() ? pair->second.first - baseline : pair->second.first )
-									 <<(pair->second.second?"":"\tTRIAGED")<<std::endl;
+									 << pair->first.first<<'\t'
+									 << pose.residue( pair->first.first ).name1() <<'\t'
+									 << oneletter_code_from_aa( pair->first.second )<<'\t'
+									 << ( pair->second.first ) <<std::endl;
 	}
 	TR.flush();
 	return true;

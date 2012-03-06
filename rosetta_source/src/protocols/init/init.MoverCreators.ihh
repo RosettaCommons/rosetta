@@ -177,7 +177,9 @@
 #include <protocols/seeded_abinitio/SwapSegmentCreator.hh>
 
 #include <protocols/simple_moves/GreedyOptMutationMoverCreator.hh>
+#include <protocols/simple_moves/AddConstraintsToCurrentConformationMoverCreator.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
+#include <protocols/simple_moves/ClearConstraintsMoverCreator.hh>
 #include <protocols/simple_moves/ConsensusDesignMoverCreator.hh>
 #include <protocols/simple_moves/ConstraintSetMoverCreator.hh>
 #include <protocols/simple_moves/ddGCreator.hh>

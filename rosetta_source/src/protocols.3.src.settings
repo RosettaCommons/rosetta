@@ -238,9 +238,11 @@ sources = {
 	],
 	"protocols/simple_moves": [
 		"AddCavitiesMover",
+		"AddConstraintsToCurrentConformationMover",
 		"BackboneMover",
 		"BBConRotMover",
 		"BBGaussianMover",
+		"ClearConstraintsMover",
 		"ConsensusDesignMover",
 		"ConstrainToIdealMover",
 		"ConstraintSetMover",
