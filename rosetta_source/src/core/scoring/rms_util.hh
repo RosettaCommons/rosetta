@@ -81,6 +81,11 @@ core::Real CA_rmsd(const core::pose::Pose& pose1,
 									 const core::pose::Pose& pose2,
 									 const std::map<core::Size, core::Size>& residues);
 
+/// @detail Computes the gdtmm between zero or more CA residues in pose1
+/// and pose2, whose correspondence is specified in the map parameter.
+core::Real CA_gdtmm(const core::pose::Pose& pose1,
+										const core::pose::Pose& pose2,
+										const std::map<core::Size, core::Size>& residues);
 
 //////////////////////////////////////////////////////////////////////////////
 // Predicate functions to use with rmsd_no_super() and rmsd_with_super()

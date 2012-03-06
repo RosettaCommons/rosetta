@@ -443,6 +443,31 @@ core::Real CA_rmsd(const core::pose::Pose& pose1,
 	return numeric::model_quality::rms_wrapper(residues.size(), p1, p2);
 }
 
+core::Real CA_gdtmm(const core::pose::Pose& pose1,
+										const core::pose::Pose& pose2,
+										const std::map<core::Size, core::Size>& residues) {
+  using core::Real;
+	using core::Size;
+	using utility::vector1;
+
+	vector1<Size> residues_1;  // residues in pose1
+	vector1<Size> residues_2;  // residues in pose2
+	for (std::map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i) {
+		Size res_1 = i->first;
+		Size res_2 = i->second;
+		residues_1.push_back(res_1);
+		residues_2.push_back(res_2);
+	}
+
+	FArray2D<Real> p1;  // coordinates of CA atoms of selected residues in pose1
+	FArray2D<Real> p2;  // coordinates of CA atoms of selected residues in pose2
+	retrieve_coordinates(pose1, residues_1, &p1);
+	retrieve_coordinates(pose2, residues_2, &p2);
+
+	Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
+	return xyz_gdtmm(p1, p2, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4);
+}
+
 core::Real
 CA_rmsd(
 	const core::pose::Pose & pose1,
