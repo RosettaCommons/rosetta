@@ -314,11 +314,11 @@ SymmetryInfo::initialize(
 	chi_clones_.clear();
 	jump_clones_.clear();
 
-		// 1                 --> N*njump_monomer  : the internal jumps
-		// N*njump_monomer+1 --> N*njump_monomer+N: the pseudo-rsd--monomer jumps
-		// last N-1 jumps                         : jumps between pseudo-rsds
+	// 1                 --> N*njump_monomer  : the internal jumps
+	// N*njump_monomer+1 --> N*njump_monomer+N: the pseudo-rsd--monomer jumps
+	// last N-1 jumps                         : jumps between pseudo-rsds
 
-		npseudo_ = num_virtual;
+	npseudo_ = num_virtual;
 
 	for ( Size i=1; i<= nres_monomer; ++i ) {
 		Clones clones;
@@ -358,11 +358,12 @@ SymmetryInfo::initialize(
 }
 
 /////////////////////////////////////////////////////////////////////////////
+template< class T >
 void
 comma_strings_to_vector_map(
 	std::istream & is,
 	Size const nbase,
-	std::map< Size, utility::vector1< Size > > & clones,
+	std::map< Size, utility::vector1< T > > & clones,
 	std::string tag=""
 )
 {
@@ -371,7 +372,7 @@ comma_strings_to_vector_map(
 	if( tag != "" ) {
 		is >> tag0;
 		if( tag0 != tag ) {
-			std::cout << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
+			TR << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
 			return;
 		}
 	}
@@ -391,7 +392,7 @@ comma_strings_to_vector_map(
 			break;
 		}
 		while ( true ) {
-			Size j;
+			T j;
 			l >> j;
 			if ( l.fail() ) break;
 			clones[ base_jump ].push_back( j );
@@ -407,20 +408,20 @@ comma_strings_to_vector_map(
 }
 
 /////////////////////////////////////////////////////////////////////////////
+template <class T>
 void
 comma_strings_to_map(
 	std::istream & is,
 	Size const nbase,
-	std::map< Size, Size > & clones,
+	std::map< Size, T > & clones,
 	std::string tag=""
-)
-{
+) {
 	bool fail( false );
 	std::string tag0;
 	if( tag != "" ) {
 		is >> tag0;
 		if( tag0 != tag ) {
-			std::cout << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
+			TR << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
 			return;
 		}
 	}
@@ -460,7 +461,7 @@ comma_strings_to_map(
 	if( tag != "" ) {
 		is >> tag0;
 		if( tag0 != tag ) {
-			std::cout << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
+			TR << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
 			return;
 		}
 	}
@@ -502,7 +503,7 @@ comma_strings_to_vector(
 	if( tag != "" ) {
 		is >> tag0;
 		if( tag0 != tag ) {
-			std::cout << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
+			TR << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
 			return;
 		}
 	}
@@ -528,18 +529,17 @@ comma_strings_to_vector(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void
-vector_map_to_comma_strings(
+template<class CloneType>
+void vector_map_to_comma_strings(
 	std::ostream & out,
-	std::map< Size, utility::vector1< Size > > clones,
+	std::map< Size, utility::vector1< CloneType > > clones,
 	std::string tag=""
-)
-{
+) {
+	typename std::map< Size,utility::vector1<CloneType> >::const_iterator it;
 	if( tag != "" ) out << ' ' << tag ;
-	for ( std::map< Size ,utility::vector1< Size > >::const_iterator
-					it = clones.begin(); it != clones.end(); ++it ) {
+	for ( it = clones.begin(); it != clones.end(); ++it ) {
 		out << ' ' << it->first;
-		utility::vector1< Size > const & l( it->second );
+		utility::vector1< CloneType > const & l( it->second );
 		for ( Size i=1; i<= l.size(); ++i ) {
 			out << ',' << l[i];
 		}
@@ -548,16 +548,15 @@ vector_map_to_comma_strings(
 
 
 /////////////////////////////////////////////////////////////////////////////
-void
-map_to_comma_strings(
+template< class CloneType >
+void map_to_comma_strings(
 	std::ostream & out,
-	std::map< Size, Size > clones,
+	std::map< Size, CloneType > clones,
 	std::string tag=""
-)
-{
+) {
+	typename std::map< Size , CloneType >::const_iterator it;
 	if( tag != "" ) out << ' ' << tag ;
-	for ( std::map< Size , Size >::const_iterator
-					it = clones.begin(); it != clones.end(); ++it ) {
+	for ( it = clones.begin(); it != clones.end(); ++it ) {
 		out << ' ' << it->first << ',' << it->second ;
 	}
 }
@@ -614,33 +613,72 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 	if ( tag != "SYMMETRY_INFO" || s.fail() ) {
 		fail = true;
 	} else {
-		s >> tag >> tag >> tag >> symminfo.npseudo_ >> tag >> symminfo.interfaces_ >> tag >> symminfo.type_
-			>> tag >> num_bb_indep >> tag >> num_chi_indep >> tag >> num_jump_indep
-			>> tag >> num_bb_dep >> tag >> num_chi_dep >> tag >> num_jump_dep
-			>> tag >> num_dof >> tag >> num_score_multiply ;
+		s >> tag >> tag >> tag;
+
+		//fpd try to ensure backwards compatibility
+		bool old_stream = false;
+		if (tag == "N_RES_MONOMER") {
+			s >> symminfo.nres_monomer_
+			  >> tag >> symminfo.scoring_subunit_
+			  >> tag >> symminfo.njump_monomer_
+			  >> tag;
+		} else {
+			old_stream = true;
+		}
+		s >> symminfo.npseudo_ 
+			>> tag >> symminfo.interfaces_
+		  >> tag >> symminfo.type_
+		  >> tag >> num_bb_indep
+		  >> tag >> num_chi_indep
+		  >> tag >> num_jump_indep
+		  >> tag >> num_bb_dep
+		  >> tag >> num_chi_dep
+		  >> tag >> num_jump_dep
+		  >> tag >> num_dof
+		  >> tag >> num_score_multiply;
 
 		if ( s.fail() ) fail = true;
-		//std::cout<< num_bb_indep << " " << num_chi_indep << " " << num_jump_indep
-		//				 << " " << num_bb_dep << " " << num_chi_dep << " " << num_jump_dep
-		//				 << " " << num_dof << " " << num_score_multiply << std::endl;
-
 
 		// clones
 		comma_strings_to_vector_map( s,   num_bb_indep,  symminfo.bb_clones_, "BB_CLONES" );
 		comma_strings_to_vector_map( s,  num_chi_indep,  symminfo.chi_clones_, "CHI_CLONES" );
 		comma_strings_to_vector_map( s, num_jump_indep,  symminfo.jump_clones_, "JUMP_CLONES" );
 
+		if (old_stream) {
+			TR << "Warning: Symmetric input stream is out of date! Trying to recover." << std::endl;
+			// set master jumps to 1; clones to 0
+			for (std::map<Size,SymmetryInfo::Clones>::const_iterator map_it=symminfo.jump_clones_.begin(), 
+			     map_end=symminfo.jump_clones_.end();
+			     map_it != map_end; ++map_it) {
+				for (int i=1; i<=map_it->second.size(); ++i) {
+					symminfo.jump_clone_wts_[ map_it->second[i] ] = 0;
+				}
+			}
+
+			// guess at missing parameters
+			symminfo.nres_monomer_ = num_bb_indep;
+			std::map<Size,SymmetryInfo::Clones>::const_iterator first_bb_clone=symminfo.bb_clones_.begin();
+			symminfo.scoring_subunit_ = 1 + ((first_bb_clone->first-1) / symminfo.nres_monomer_);
+			symminfo.njump_monomer_ = 0;
+		} else {
+			comma_strings_to_map( s, num_jump_dep-num_jump_indep,  symminfo.jump_clone_wts_, "JUMP_CLONE_WEIGHTS" );
+			old_stream |= (symminfo.jump_clone_wts_.size() == 0);
+		}
+
 		// follows
 		comma_strings_to_map( s,   num_bb_dep,  symminfo.bb_follows_, "BB_FOLLOWS" );
 		comma_strings_to_map( s,  num_chi_dep,  symminfo.chi_follows_, "CHI_FOLLOWS" );
 		comma_strings_to_map( s, num_jump_dep,  symminfo.jump_follows_, "JUMP_FOLLOWS" );
 
-		//dof_
+		// dof_
 		comma_strings_to_map( s, num_dof,  symminfo.dofs_, "DOFS" );
 
-		//score_multiply_
+		// score_multiply_
 		comma_strings_to_vector( s, num_score_multiply,  symminfo.score_multiply_, "SCORE_MULTIPLY" );
 		symminfo.update_score_multiply_factor();
+
+		// 
+		symminfo.set_use_symmetry( true );
 
 		if ( fail ) {
 			std::cout << "Symmetry_info operator>>: Input failed" << std::endl;
@@ -657,6 +695,9 @@ std::ostream& operator<< ( std::ostream & s, const SymmetryInfo & symminfo )
 {
 	s << "SYMMETRY_INFO " <<
 		"N " << symminfo.subunits() << ' ' <<
+		"N_RES_MONOMER " << symminfo.nres_monomer_ << ' ' <<
+		"SCORING_SUBUNIT " << symminfo.scoring_subunit_ << ' ' <<
+		"N_JUMP_MONOMER " << symminfo.njump_monomer_ << ' ' <<
 		"N_VIRT " << symminfo.npseudo_ << ' ' <<
 		"N_INTERFACE " << symminfo.num_interfaces() << ' ' <<
 		"TYPE " << symminfo.type_ << ' ' <<
@@ -673,6 +714,7 @@ std::ostream& operator<< ( std::ostream & s, const SymmetryInfo & symminfo )
 	vector_map_to_comma_strings( s, symminfo.bb_clones_, "BB_CLONES" );
 	vector_map_to_comma_strings( s, symminfo.chi_clones_, "CHI_CLONES" );
 	vector_map_to_comma_strings( s, symminfo.jump_clones_, "JUMP_CLONES" );
+	map_to_comma_strings( s, symminfo.jump_clone_wts_, "JUMP_CLONE_WEIGHTS" );
 
 	// follows
 	map_to_comma_strings( s, symminfo.bb_follows_, "BB_FOLLOWS" );
