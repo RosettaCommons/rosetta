@@ -52,9 +52,9 @@ public:
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	void resfile_name( std::string const resfile_name);
-	void score_filename( std::string const score_filename);
+	void score_log_file( std::string const score_log_file);
 	std::string resfile_name() const;
-	std::string score_filename() const;
+	std::string score_log_file() const;
 	protocols::filters::FilterOP triage_filter() const;
 	void triage_filter( protocols::filters::FilterOP filter );
 
@@ -85,7 +85,7 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	protocols::filters::FilterOP triage_filter_;//dflt null; mutations that are categorically rejected, no matter what
 	protocols::filters::FilterOP filter_;//dflt null; a filter to use for its report functionality to probe the pose's state
-	std::string score_filename_;
+	std::string score_log_file_;
 	std::string resfile_name_;
 	std::string resfile_general_property_; //dflt nataa; what to write in the resfile above the 'start' line
 	protocols::moves::MoverOP relax_mover_; //dflt nullmover; what to do after mutation

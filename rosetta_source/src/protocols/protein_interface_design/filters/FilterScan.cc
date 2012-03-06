@@ -163,8 +163,8 @@ FilterScanFilter::resfile_name() const{
 }
 
 std::string
-FilterScanFilter::score_filename() const{
-	return score_filename_;
+FilterScanFilter::score_log_file() const{
+	return score_log_file_;
 }
 
 void
@@ -173,8 +173,8 @@ FilterScanFilter::resfile_name( std::string const resfile_name ){
 }
 	
 void
-FilterScanFilter::score_filename( std::string const score_filename ){
-	score_filename_ = score_filename;
+FilterScanFilter::score_log_file( std::string const score_log_file ){
+	score_log_file_ = score_log_file;
 }
 
 core::pack::task::TaskFactoryOP
@@ -310,30 +310,30 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			resfile<<'\n';
 		}
 		resfile.close();
-	}//fi resfile_name()
+	} //fi resfile_name()
 	
-	if ( score_filename() != "" ) {
+	if ( score_log_file() != "" ) {
 		std::ofstream scorefile;
-		scorefile.open( score_filename().c_str(), std::ios::out );
+		scorefile.open( score_log_file().c_str(), std::ios::out );
 		
 		for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
 			core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
 			scorefile
 			<< pair->first.first << '\t'
+			<< pose.residue( pair->first.first ).name1() <<'\t'
 			<< oneletter_code_from_aa( pair->first.second )<<'\t'
-			<<( delta() ? pair->second.first - baseline : pair->second.first )
-			<<(pair->second.second?"":"\tTRIAGED")<<std::endl;
+			<< ( pair->second.first ) <<std::endl;
 		}
 		scorefile.close();
-	} // fi score_filename()
+	} // fi score_log_file()
 	
 	for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
 		core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
 		TR_residue_scan<<resfile_name()<<'\t'
 									 << pair->first.first<<'\t'
-									 << pose.residue( pair->first.first ).name1() <<'\t'
 									 << oneletter_code_from_aa( pair->first.second )<<'\t'
-									 << ( pair->second.first ) <<std::endl;
+		                             <<( delta() ? pair->second.first - baseline : pair->second.first )
+                            		 <<(pair->second.second?"":"\tTRIAGED")<<std::endl;
 	}
 	TR.flush();
 	return true;
@@ -396,6 +396,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	resfile_name( tag->getOption< std::string >( "resfile_name",resfile_name() ) );
 	resfile_general_property( tag->getOption< std::string >( "resfile_general_property", "nataa" ) );
+	score_log_file( tag->getOption< std::string >( "score_log_file",score_log_file() ) );
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
 	TR<<"with options resfile_name: "<<resfile_name()<<" resfile_general_property "<<resfile_general_property()<<" unbound "<<unbound()<<" jump "<<jump()<<" delta "<<delta()<<" filter "<<filter_name<<" dump_pdb "<<dump_pdb()<<std::endl;
 }
