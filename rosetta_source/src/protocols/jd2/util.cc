@@ -107,9 +107,11 @@ bool jd2_used() {
 
 std::string current_output_filename() {
 	jd2::JobDistributor* jd 	= jd2::JobDistributor::get_instance();
-	JobOP job = get_current_job();
-	if ( job && jd && jd->job_outputter() ) {
-		return jd->job_outputter()->filename( job );
+	if ( jd && jd->job_outputter() ) {
+		JobOP job = jd->current_job();
+		if ( job ) {
+			return jd->job_outputter()->filename( job );
+		}
 	}
 	return "JD2_OUTPUT_FILE_UNKNOWN"; //else
 }
