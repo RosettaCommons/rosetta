@@ -122,6 +122,31 @@ if(length(data_sources) == 0){
 }
 sample_sources <- get_sample_sources(data_sources)
 
+#setup ouput_dir
+output_dir <- opt$options$output_dir
+sample_source_output_dir <- file.path(
+	output_dir,
+	paste(sample_sources$sample_source, collpase="/", sep=""))
+
+if(!file.exists(sample_source_output_dir)){
+	cat("Creating output directory: '", sample_source_output_dir, "' ...\n", sep="")
+
+	dir.create(sample_source_output_dir, recursive=TRUE)
+
+	if(!file.exists(sample_source_output_dir)){
+		print("ERROR: Unable to create output directory.")
+		stop(1)
+	}
+
+	file.copy(
+		from=file.path(base_dir, "scripts/methods/features_web"),
+		to=file.path(sample_source_output_dir),
+		recursive=TRUE)
+}
+iscript_output_dir(output_dir)
+
+
+
 #Setup analysis manager
 analysis_manager_db_path <- paste(
 	opt$options$output_dir,
@@ -162,18 +187,6 @@ cat("Running the following analysis scripts:\n   ")
 cat(paste(analysis_scripts, sep="", colapse="\n  "))
 cat("\n")
 
-
-#setup ouput_dir
-if(!file.exists(opt$options$output_dir)){
-	print(paste("Creating output directory: '",opt$options$output_dir,"'...",sep=""))
-	dir.create(opt$options$output_dir, recursive=TRUE)
-	if(!file.exists(opt$options$output_dir)){
-		print("ERROR: Unable to create output directory.")
-		stop(1)
-	}
-}
-output_dir <- opt$options$output_dir
-iscript_output_dir(output_dir)
 
 #Setup output formats
 output_formats <- get_output_formats(opt$options, all_output_formats)
@@ -233,8 +246,6 @@ if(!opt$options$dry_run){
 		cat("\n")
 	}
 }
-
-
 
 
 

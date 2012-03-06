@@ -67,6 +67,4 @@ ggplot(f, aes(don_chem_type_name, log(don_chem_type_count))) + theme_bw() +
   labs(x="Donor Type", y="log(Counts)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-
-
 })) # end FeaturesAnalysis

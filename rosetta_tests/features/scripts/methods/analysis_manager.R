@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS features_analysis_plots (
 	date_code TEXT,
 	filename TEXT,
 	format_id TEXT,
-	PRIMARY KEY(plot_id),
+	PRIMARY KEY(plot_id, date_code, filename, format_id),
 	FOREIGN KEY(features_analysis_id)
 		REFERENCES feature_analyses(features_analysis_id)
 		DEFERRABLE INITIALLY DEFERRED,
@@ -154,7 +154,7 @@ add_features_analysis_plot <- function(
 	filename,
 	plot_format) {
 
-	sql <- "INSERT OR IGNORE INTO features_analysis_plots VALUES (?,?,?,?,?);"
+	sql <- "INSERT INTO features_analysis_plots VALUES (?,?,?,?,?);"
 	bind <- data.frame(
 		plot_id=plot_id,
 		features_analysis_id=features_analysis@id,

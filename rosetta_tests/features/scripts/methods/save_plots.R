@@ -87,7 +87,13 @@ save_plots <- function(
 		fname <- paste(plot_id, date, sep="_")
 		full_path <- file.path(full_output_dir, paste(fname, fmt$extension, sep=""))
 		cat("Saving Plot: ", full_path, "\n")
-		add_features_analysis_plot(features_analysis, plot_id, sample_sources, date, fname, fmt)
+		add_features_analysis_plot(
+			features_analysis,
+			plot_id,
+			sample_sources,
+			date,
+			file.path(features_analysis@id, fmt$id, paste(fname, fmt$extension, sep="")),
+			fmt)
 		if(fmt$add_footer){
 				ggsave_with_footer(
 					filename=full_path,
