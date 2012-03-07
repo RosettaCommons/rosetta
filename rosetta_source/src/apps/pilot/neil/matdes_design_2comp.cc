@@ -503,9 +503,9 @@ void *dostuff(void*) {
 	option[OptionKeys::symmetry::symmetry_definition]("input/"+compkind[1].substr(0,1)+".sym");
 	// Create a score function object, turn hack_elec off in the monomer
 	ScoreFunctionOP sf = getScoreFunction();
-	core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
-	eo.exclude_monomer_hack_elec(true);
-	sf->set_energy_method_options(eo);
+	// core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
+	// eo.exclude_monomer_hack_elec(true);
+	// sf->set_energy_method_options(eo);
 
 	Real const contact_dist = option[matdes::design::contact_dist]();
 	Real const contact_dist_sq = contact_dist * contact_dist;
@@ -541,8 +541,10 @@ void *dostuff(void*) {
 			import_pose::pose_from_pdb(p2, file2, resi_set);
 			sc_sasa1 = sidechain_sasa(p1,2.2); // 110728 -- WAS 2.5 -- Changed for xtal design
 			sc_sasa2 = sidechain_sasa(p2,2.2);
+			if(sc_sasa1.size() != p1.n_residue()) utility_exit_with_message("SASA BAD");
+			if(sc_sasa2.size() != p2.n_residue()) utility_exit_with_message("SASA BAD");
 			sc_sasa = sc_sasa1;
-			sc_sasa.insert(sc_sasa.begin(),sc_sasa2.begin(),sc_sasa2.end());
+			sc_sasa.insert(sc_sasa.end(),sc_sasa2.begin(),sc_sasa2.end());
 			rot_pose(p1,Vec(0,0,1),cmp1rots[iconfig]);
 			rot_pose(p2,Vec(0,0,1),cmp2rots[iconfig]);
 			trans_pose(p1,Vec(0,0,cmp1disps[iconfig]));
@@ -558,7 +560,13 @@ void *dostuff(void*) {
 				if(p2.residue(i).is_lower_terminus()) mono.append_residue_by_jump(p2.residue(i),1);
 				else                                  mono.append_residue_by_bond(p2.residue(i));
 			}
+			if(sc_sasa.size() != mono.n_residue()) utility_exit_with_message("SASA BAD");
 			pose = mono;
+			// mono.dump_pdb("test.pdb");
+			// for(int i = 1; i <= sc_sasa.size(); ++i) {
+			// 	cout << i << " " << sc_sasa[i] << endl;
+			// }
+			// utility_exit_with_message("DBG SASA");
 		}
 
 		// Handle all of the symmetry stuff
@@ -758,33 +766,16 @@ void *dostuff(void*) {
 
 
 						//must do ddG manually, moving each BB separately
-{
-	Pose const & pose_in(pose_for_design);
-	ScoreFunctionOP scorefxn_ = score12;
-	core::pack::task::PackerTaskOP task_;
-	using namespace pack;
-	using namespace protocols::moves;
-	pose::Pose pose = pose_in;
-	assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
-	// convert to symetric scorefunction
-	//setup_packer_and_movemap( pose );
-	task_ = core::pack::task::TaskFactory::create_packer_task( pose );
-	task_->initialize_from_command_line().or_include_current( true );
-	core::pack::task::operation::RestrictToRepacking rpk;
-	rpk.apply( pose, *task_ );
-	core::pack::task::operation::NoRepackDisulfides nodisulf;
-	nodisulf.apply( pose, *task_ );
-	// protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
-	// rti.apply( pose, *task_ );
-	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
-	Real bounde = scorefxn_->score(pose);
-	trans_pose(pose,cmp1axs*1000.0,               1,p1.n_residue()               );
-	trans_pose(pose,cmp2axs*1000.0,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
-	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
-	Real ubounde = scorefxn_->score(pose);
-	ddG = bounde - ubounde;
-}
+						{
+							Pose pose(pose_for_design);
+							Real bounde = score12->score(pose);
+							trans_pose(pose,cmp1axs*1000.0,               1,p1.n_residue()               );
+							trans_pose(pose,cmp2axs*1000.0,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
+							repack(pose, score12, design_pos);
+							minimize(pose, score12, design_pos, false, true, false);
+							Real ubounde = score12->score(pose);
+							ddG = bounde - ubounde;
+						}
 						// Calculate per-residue energies for interface residues
 						Real interface_energy = 0;
 						core::scoring::EnergyMap em;
