@@ -199,7 +199,14 @@ ProtocolFeatures::report_features(
 	insert_statement.bind(6,script);
 
 	basic::database::safely_write_to_database(insert_statement);
-	return insert_statement.sequence_last("");
+	if(protocol_id)
+	{
+		return protocol_id;
+	}else
+	{
+		return insert_statement.sequence_last("");
+	}
+
 
 }
 

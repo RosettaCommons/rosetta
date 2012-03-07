@@ -30,6 +30,7 @@ namespace in { IntegerVectorOptionKey const target_residues( "in:target_residues
 namespace in { IntegerVectorOptionKey const replonly_residues( "in:replonly_residues" );  }
 namespace in { BooleanOptionKey const replonly_loops( "in:replonly_loops" );  }
 namespace in { BooleanOptionKey const use_database( "in:use_database" );  }
+namespace in { IntegerOptionKey const database_protocol( "in:database_protocol" );  }
 namespace in { StringVectorOptionKey const select_structures_from_database( "in:select_structures_from_database" );  }
 namespace in { namespace path { PathVectorOptionKey const path( "in:path" );  } }
 namespace in { namespace path { PathVectorOptionKey const fragments( "in:path:fragments" );  } }
@@ -596,4 +597,3 @@ namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:viol
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
-namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }

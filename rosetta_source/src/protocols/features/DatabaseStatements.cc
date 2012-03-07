@@ -50,15 +50,20 @@ T get_something_from_database(
 
 cppdb::statement get_structure_count_statement(
 		utility::sql_database::sessionOP db_session,
-		std::string const & input_tag
+		std::string const & input_tag,
+		core::Size const & protocol_id
 ){
 	if( input_tag.empty()){
 		std::string statement_string =
 			"SELECT\n"
 			"	count(*)\n"
 			"FROM\n"
-			"	structures;";
-		return basic::database::safely_prepare_statement(statement_string,db_session);
+			"	structures"
+			"WHERE\n"
+			"	structures.protocol_id = ?;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,protocol_id);
+		return statement;
 	}else{
 		std::string statement_string =
 			"SELECT\n"
@@ -66,9 +71,12 @@ cppdb::statement get_structure_count_statement(
 			"FROM\n"
 			"	structures\n"
 			"WHERE\n"
-			"	structures.input_tag=?;";
+			"	structures.input_tag=?\n"
+			"AND\n"
+			"	structures.protocol_id=?;";
 		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 		statement.bind(1,input_tag);
+		statement.bind(2,protocol_id);
 		return statement;
 	}
 }
@@ -105,22 +113,24 @@ cppdb::statement get_nth_lowest_score_from_job_data_statement(
 		utility::sql_database::sessionOP db_session,
 		std::string const & score_term,
 		core::Size const & cutoff_index,
-		std::string const & input_tag
+		std::string const & input_tag,
+		core::Size const & protocol_id
 ){
 	if(input_tag.empty()){
 		std::string statement_string =
 			"SELECT\n"
 			"	job_string_real_data.struct_id\n"
 			"FROM\n"
-			"	job_string_real_data\n"
+			"	job_string_real_data INNER JOIN structures ON job_string_real_data.struct_id = structures.struct_id\n"
 			"WHERE\n"
-			"	job_string_real_data.data_key = ?\n"
+			"	job_string_real_data.data_key = ? AND structures.protocol_id = ?\n"
 			"ORDER BY\n"
 			"	job_string_real_data.data_value\n"
 			"LIMIT ?,1;";
 		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 		statement.bind(1,score_term);
-		statement.bind(2,cutoff_index-1);
+		statement.bind(2,protocol_id);
+		statement.bind(3,cutoff_index-1);
 		return statement;
 	}
 	else{
@@ -138,13 +148,16 @@ cppdb::statement get_nth_lowest_score_from_job_data_statement(
 			"	job_string_real_data.data_key = ?\n"
 			"AND\n"
 			"	structures.input_tag = ?\n"
+			"AND\n"
+			"	structures.protocol_id = ?\n"
 			"ORDER BY\n"
 			"	job_string_real_data.data_value\n"
 			"LIMIT ?,1;";
 		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 		statement.bind(1,score_term);
 		statement.bind(2,input_tag);
-		statement.bind(3,cutoff_index-1);
+		statement.bind(3,protocol_id);
+		statement.bind(4,cutoff_index-1);
 		return statement;
 	}
 }
@@ -153,7 +166,8 @@ cppdb::statement get_nth_lowest_score_from_score_data_statement(
 		utility::sql_database::sessionOP db_session,
 		core::Size const & score_type_id,
 		core::Size const & cutoff_index,
-		std::string const & input_tag
+		std::string const & input_tag,
+		core::Size const & protocol_id
 ){
 	if(input_tag.empty()){
 		std::string statement_string =
@@ -161,14 +175,21 @@ cppdb::statement get_nth_lowest_score_from_score_data_statement(
 			"	structure_scores.struct_id\n"
 			"FROM\n"
 			"	structure_scores\n"
+			"INNER JOIN\n"
+			"	structures\n"
+			"ON\n"
+			"	structure_scores.struct_id = structures.struct_id\n"
 			"WHERE\n"
 			"	structure_scores.score_type_id = ?\n"
+			"AND\n"
+			"	structures.protocol_id = ?\n"
 			"ORDER BY\n"
 			"	structure_scores.score_value\n"
 			"LIMIT ?,1;";
 		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 		statement.bind(1,score_type_id);
-		statement.bind(2,cutoff_index-1);
+		statement.bind(2,protocol_id);
+		statement.bind(3,cutoff_index-1);
 		return statement;
 	}
 	else{
@@ -185,13 +206,16 @@ cppdb::statement get_nth_lowest_score_from_score_data_statement(
 			"	structure_scores.score_type_id = ?\n"
 			"AND\n"
 			"	structures.input_tag = ?\n"
+			"AND\n"
+			"	structures.protocol_id =?\n"
 			"ORDER BY\n"
 			"	structure_scores.score_value\n"
 			"LIMIT ?,1;";
 		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 		statement.bind(1,score_type_id);
 		statement.bind(2,input_tag);
-		statement.bind(3,cutoff_index-1);
+		statement.bind(3,protocol_id);
+		statement.bind(4,cutoff_index-1);
 		return statement;
 	}
 }
@@ -199,7 +223,8 @@ cppdb::statement get_nth_lowest_score_from_score_data_statement(
 cppdb::statement get_highest_score_from_job_data_statement(
 		utility::sql_database::sessionOP db_session,
 		std::string const & score_term,
-		std::string const & input_tag
+		std::string const & input_tag,
+		core::Size const & protocol_id
 ){
 	if(input_tag.empty()){
 		std::string statement_string =
@@ -207,13 +232,20 @@ cppdb::statement get_highest_score_from_job_data_statement(
 			"	job_string_real_data.struct_id\n"
 			"FROM\n"
 			"	job_string_real_data\n"
+			"INNER JOIN\n"
+			"	structures\n"
+			"ON\n"
+			"	job_string_real_data.struct_id = structures.struct_id\n"
 			"WHERE\n"
 			"	job_string_real_data.data_key = ?\n"
+			"AND\n"
+			"	structures.protocol_id = ?\n"
 			"ORDER BY\n"
 			"	job_string_real_data.data_value DESC\n"
 			"LIMIT 1;";
 		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 		statement.bind(1,score_term);
+		statement.bind(2,protocol_id);
 		return statement;
 	}
 	else{
@@ -230,12 +262,15 @@ cppdb::statement get_highest_score_from_job_data_statement(
 			"	job_string_real_data.data_key = ?\n"
 			"AND\n"
 			"	structures.input_tag = ?\n"
+			"AND\n"
+			"	structures.protocol_id = ?\n"
 			"ORDER BY\n"
 			"	job_string_real_data.data_value DESC\n"
 			"LIMIT 1;";
 		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 		statement.bind(1,score_term);
 		statement.bind(2,input_tag);
+		statement.bind(3,protocol_id);
 		return statement;
 	}
 }
@@ -243,7 +278,8 @@ cppdb::statement get_highest_score_from_job_data_statement(
 cppdb::statement get_highest_score_from_score_data_statement(
 		utility::sql_database::sessionOP db_session,
 		core::Size const & score_type_id,
-		std::string const & input_tag
+		std::string const & input_tag,
+		core::Size const & protocol_id
 ){
 	if(input_tag.empty()){
 		std::string statement_string =
@@ -251,13 +287,20 @@ cppdb::statement get_highest_score_from_score_data_statement(
 			"	structure_scores.struct_id\n"
 			"FROM\n"
 			"	structure_scores\n"
+			"INNER JOIN\n"
+			"	structures\n"
+			"ON\n"
+			"	structure_scores.struct_id = structures.struct_id\n"
 			"WHERE\n"
 			"	structure_scores.score_type_id = ?\n"
+			"AND\n"
+			"	structures.protocol_id = ?\n"
 			"ORDER BY\n"
 			"	structure_scores.score_value DESC\n"
 			"LIMIT 1;";
 		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 		statement.bind(1,score_type_id);
+		statement.bind(2,protocol_id);
 		return statement;
 	}
 	else{
@@ -274,12 +317,15 @@ cppdb::statement get_highest_score_from_score_data_statement(
 			"	structure_scores.score_type_id = ?\n"
 			"AND\n"
 			"	structures.input_tag = ?\n"
+			"AND\n"
+			"	structures.protocol_id = ?\n"
 			"ORDER BY\n"
 			"	structure_scores.score_value DESC\n"
 			"LIMIT 1;";
 		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 		statement.bind(1,score_type_id);
 		statement.bind(2,input_tag);
+		statement.bind(3,protocol_id);
 		return statement;
 	}
 }
@@ -288,9 +334,10 @@ cppdb::statement get_highest_score_from_score_data_statement(
 
 core::Size get_current_structure_count(
 	utility::sql_database::sessionOP db_session,
+	core::Size const & protocol_id,
 	std::string const & input_tag
 ){
-	cppdb::statement statement = get_structure_count_statement(db_session, input_tag);
+	cppdb::statement statement = get_structure_count_statement(db_session, input_tag,protocol_id);
 	return get_something_from_database(statement, core::Size());
 }
 
@@ -298,9 +345,10 @@ core::Size get_struct_id_with_nth_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & cutoff_index,
+	core::Size const & protocol_id,
 	std::string const & input_tag
 ){
-	cppdb::statement statement = get_nth_lowest_score_from_job_data_statement(db_session, score_term, cutoff_index, input_tag);
+	cppdb::statement statement = get_nth_lowest_score_from_job_data_statement(db_session, score_term, cutoff_index, input_tag,protocol_id);
 
 	try{
 		return get_something_from_database(statement, core::Size());
@@ -313,9 +361,10 @@ core::Size get_struct_id_with_nth_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & cutoff_index,
+	core::Size const & protocol_id,
 	std::string const & input_tag
 ){
-	cppdb::statement statement = get_nth_lowest_score_from_score_data_statement(db_session, score_type_id, cutoff_index, input_tag);
+	cppdb::statement statement = get_nth_lowest_score_from_score_data_statement(db_session, score_type_id, cutoff_index, input_tag,protocol_id);
 
 	try{
 		return get_something_from_database(statement, core::Size());
@@ -327,25 +376,28 @@ core::Size get_struct_id_with_nth_lowest_score_from_score_data(
 core::Size get_struct_id_with_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
+	core::Size const & protocol_id,
 	std::string const & input_tag
 ){
-	return get_struct_id_with_nth_lowest_score_from_job_data(db_session, score_term, 1, input_tag);
+	return get_struct_id_with_nth_lowest_score_from_job_data(db_session, score_term, 1, protocol_id, input_tag);
 }
 
 core::Size get_struct_id_with_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
+	core::Size const & protocol_id,
 	std::string const & input_tag
 ){
-	return get_struct_id_with_nth_lowest_score_from_score_data(db_session, score_type_id, 1, input_tag);
+	return get_struct_id_with_nth_lowest_score_from_score_data(db_session, score_type_id, 1, protocol_id, input_tag);
 }
 
 core::Size get_struct_id_with_highest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
+	core::Size const & protocol_id,
 	std::string const & input_tag )
 {
-	cppdb::statement statement = get_highest_score_from_job_data_statement(db_session, score_term, input_tag);
+	cppdb::statement statement = get_highest_score_from_job_data_statement(db_session, score_term, input_tag, protocol_id);
 
 	try{
 		return get_something_from_database(statement, core::Size());
@@ -357,9 +409,10 @@ core::Size get_struct_id_with_highest_score_from_job_data(
 core::Size get_struct_id_with_highest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
+	core::Size const & protocol_id,
 	std::string const & input_tag
 ){
-	cppdb::statement statement = get_highest_score_from_score_data_statement(db_session, score_type_id, input_tag);
+	cppdb::statement statement = get_highest_score_from_score_data_statement(db_session, score_type_id, input_tag,protocol_id);
 
 	try{
 		return get_something_from_database(statement, core::Size());

@@ -92,7 +92,7 @@ public:
     using core::scoring::CA_gdtmm;
 
     core::pose::Pose copy_1ten;
-    protein_silent_report_->load_pose(db_session_, "1ten", copy_1ten);
+    protein_silent_report_->load_pose(db_session_, "1ten",1, copy_1ten);
 
     TS_ASSERT(pose_1ten_.total_residue() == copy_1ten.total_residue());
     TS_ASSERT(pose_1ten_.sequence() == copy_1ten.sequence());

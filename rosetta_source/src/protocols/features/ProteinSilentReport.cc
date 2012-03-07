@@ -180,11 +180,12 @@ void
 ProteinSilentReport::load_pose(
 	sessionOP db_session,
 	std::string tag,
+	core::Size protocol_id,
 	Pose & pose){
 
 	tag_into_pose(pose,tag);
 
-	Size struct_id = structure_features_->get_struct_id(db_session, tag);
+	Size struct_id = structure_features_->get_struct_id(db_session, tag,protocol_id);
 
 	pose_conformation_features_->load_into_pose(db_session, struct_id, pose);
 	pdb_data_features_->load_into_pose(db_session,struct_id,pose);
@@ -206,7 +207,7 @@ ProteinSilentReport::write_protocol_report(
 	//MYSQL innoDB tables cannot defer foreign constraint checking, so we explicitly wrap these
 	//Calls in transaction guards to make sure the protocol and type_id features are set up properly
 	cppdb::transaction protocol_transaction(*db_session);
-	protocol_features_->report_features(protocol_id_, db_session);
+	protocol_id_ = protocol_features_->report_features(protocol_id_, db_session);
 	protocol_transaction.commit();
 
 	cppdb::transaction score_type_transaction(*db_session);
@@ -255,7 +256,7 @@ ProteinSilentReport::write_full_report(
 
 void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_session, std::string const & tag)
 {
-	core::Size struct_id = structure_features_->get_struct_id(db_session,tag);
+	core::Size struct_id = structure_features_->get_struct_id(db_session,tag,protocol_id_);
 	delete_pose(db_session,struct_id);
 }
 

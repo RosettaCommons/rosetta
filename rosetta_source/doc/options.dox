@@ -157,6 +157,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Read in structures from database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags or select_structures_from_database</dd><br>
 </dl>
 <dl>
+<dt><b>-database_protocol</b> \<Integer\><dt>
+<dd>Database to use when reading in structures</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
 <dt><b>-select_structures_from_database</b> \<StringVector\><dt>
 <dd>specify an SQL query to determine which structures get read in from a database specified with -inout:database_filename.  SELECT query must return structures.tag</dd><br>
 </dl>
@@ -9889,6 +9894,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-bypass_closure</b> \<Boolean\><dt>
 <dd>turning off CCD closure in the mover for tethered docking purpose</dd><br>
+</dl>
+<dl>
+<dt><b>-cyclic_peptide</b> \<Boolean\><dt>
+<dd>circularize structure joining N and C-term.</dd><br>
 </dl>
 <dl>
 <dt><b>-temperature</b> \<Real\><dt>

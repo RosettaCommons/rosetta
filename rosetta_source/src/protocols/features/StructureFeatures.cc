@@ -207,7 +207,8 @@ StructureFeatures::load_tag(
 Size
 StructureFeatures::get_struct_id(
 	sessionOP db_session,
-	string const & tag
+	string const & tag,
+	core::Size const & protocol_id
 ){
 
 	std::string statement_string =
@@ -216,10 +217,11 @@ StructureFeatures::get_struct_id(
 		"FROM\n"
 		"	structures\n"
 		"WHERE\n"
-		"	structures.tag=?;";
+		"	structures.tag=? AND structures.protocol_id=?;";
 
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,tag);
+	stmt.bind(2,protocol_id);
 
 	result res(basic::database::safely_read_from_database(stmt));
 	if(!res.next()){

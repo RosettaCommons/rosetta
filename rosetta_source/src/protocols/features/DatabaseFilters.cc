@@ -87,7 +87,7 @@ WriteDeletePair get_write_delete_pair(
 		std::string const & score_term,
 		std::string current_input=""
 ){
-	core::Size n_models = get_current_structure_count(db_session,current_input);
+	core::Size n_models = get_current_structure_count(db_session,protocol_id,current_input);
 
 	//store all the structures until you have at least percentile_count worth of models
 	if(n_models < count)
@@ -117,9 +117,9 @@ WriteDeletePair get_write_delete_pair(
 		current_model_score = get_current_model_score(pose, score_type_id);
 
 		//Get the structure ID and associated score from the database
-		struct_id = get_struct_id_with_nth_lowest_score_from_score_data(db_session,score_type_id,count, current_input);
+		struct_id = get_struct_id_with_nth_lowest_score_from_score_data(db_session,score_type_id,count, protocol_id, current_input);
 		cutoff_score = get_score_for_struct_id_and_score_term_from_score_data(db_session,struct_id,score_type_id);
-		struct_id_to_remove = get_struct_id_with_highest_score_from_score_data(db_session,score_type_id,current_input);
+		struct_id_to_remove = get_struct_id_with_highest_score_from_score_data(db_session,score_type_id,protocol_id, current_input);
 
 	}
 	else{
@@ -137,11 +137,11 @@ WriteDeletePair get_write_delete_pair(
 			}
 		}
 
-		struct_id = get_struct_id_with_nth_lowest_score_from_job_data(db_session, score_term, count, current_input);
+		struct_id = get_struct_id_with_nth_lowest_score_from_job_data(db_session, score_term, count,protocol_id, current_input);
 		cutoff_score = get_score_for_struct_id_and_score_term_from_job_data(db_session,struct_id,score_term);
 
 		//See if our current model is better
-		struct_id_to_remove = get_struct_id_with_highest_score_from_job_data(db_session,score_term,current_input);
+		struct_id_to_remove = get_struct_id_with_highest_score_from_job_data(db_session,score_term,protocol_id,current_input);
 	}
 	//See if our current model is better
 	if(current_model_score < cutoff_score )

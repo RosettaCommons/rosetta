@@ -101,6 +101,7 @@ private:
 	core::scoring::ScoreFunctionOP scfxn_;
 	protocols::features::ProteinSilentReportOP protein_silent_report_;
 	std::string database_fname_;
+	core::Size input_protocol_id_;
 	utility::vector1< std::string > tags_;
 
 }; // DatabaseJobInputter

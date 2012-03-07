@@ -96,7 +96,9 @@ public:
 	core::Size
 	get_struct_id(
 		utility::sql_database::sessionOP db_session,
-		std::string const & tag);
+		std::string const & tag,
+		core::Size const & protocol_id
+	);
 
 };
 

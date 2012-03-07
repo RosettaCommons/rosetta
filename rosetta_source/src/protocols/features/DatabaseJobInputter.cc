@@ -107,6 +107,9 @@ DatabaseJobInputter::load_options_from_option_system(){
 	if (option[in::select_structures_from_database].user()) {
 		set_tags_from_sql(option[in::select_structures_from_database]);
 	}
+
+	input_protocol_id_ = option[in::database_protocol];
+
 }
 
 void
@@ -228,7 +231,7 @@ DatabaseJobInputter::pose_from_job(
 		tr.Debug << "filling pose from Database (tag = " << tag	<< ")" << endl;
 		sessionOP db_session(basic::database::get_db_session(database_fname_));
 
-		protein_silent_report_->load_pose(db_session, tag, pose);
+		protein_silent_report_->load_pose(db_session, tag,input_protocol_id_, pose);
 
 	} else {
 		tr.Debug << "filling pose from saved copy (tag = " << tag << ")" << endl;
