@@ -1,8 +1,9 @@
-
+import blargs
 
 import Tkinter, tkFileDialog, tkSimpleDialog
 import numpy
 import inspect, warnings
+import math
 
 from cvxopt import lapack, matrix
 
@@ -104,7 +105,9 @@ class PolyFit:
         self.plot_height = 680
         self.left_gutter = 10
         self.top_gutter = 10
-
+        self.fit_normal = True
+        self.fit_deg_as_cos = False
+        self.fit_deg_as_rad = False
 
         self.xaxis_tick_height = 5
         self.yaxis_tick_width = 5
@@ -112,7 +115,7 @@ class PolyFit:
         self.axis_color = "white"
 
 
-        self.polynomial_dimensions = [2,3,4,5,6,7,8,9,10]
+        self.polynomial_dimensions = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
         self.nbins = 200
 
         self.coefficient_precision = 8
@@ -120,7 +123,7 @@ class PolyFit:
         self.dot_color = 'blue'
         self.dot_width = 6
 
-        self.polynomial_colors = {2:"#D53E4F", 3:"#FC8D59", 4:"#FEE08B", 5:"#FFFFBF", 6:"#E6F598", 7:"#99D594", 8:"#3288BD", 9:"#FFFFFF", 10:"#000000"}
+        self.polynomial_colors = {2:"#D53E4F", 3:"#FC8D59", 4:"#FEE08B", 5:"#FFFFBF", 6:"#E6F598", 7:"#99D594", 8:"#3288BD", 9:"#FFFFFF", 10:"#000000",11:"#D53E4F", 12:"#FC8D59", 13:"#FEE08B", 14:"#FFFFBF", 15:"#E6F598", 16:"#99D594"}
 
         self.panel_frame = Tkinter.Frame(self.main)
 
@@ -168,9 +171,8 @@ class PolyFit:
 
 #        self.test_diagnostics()
 
-
+    def go( self ) :
         self.main.mainloop()
-
 
     def build_poly_frame(self, parent):
         self.poly_text_frame = Tkinter.Frame(parent)
@@ -517,16 +519,31 @@ class PolyFit:
         coefs = coefs[::-1]
         return coefs
 
+    def get_x_polyval_points(self):
+        x_points = self.polynomial_x_points()
+        if self.fit_normal :
+            x_polyval_points = x_points
+        elif self.fit_deg_as_rad :
+            x_polyval_points = [ x * math.pi / 180 for x in x_points ]
+        elif self.fit_deg_as_cos :
+            x_polyval_points = [ numpy.cos( math.pi/180 * ( 180 - x )) for x in x_points ]
+        return x_polyval_points
 
     def compute_polynomial_fits(self):
         x_points = self.polynomial_x_points()
+        x_polyval_points = self.get_x_polyval_points()
 
         self.polynomial_points = {}
 
         if len(self.control_points) == 0: return
         for d in self.polynomial_dimensions:
             if len(self.control_points) < d: break
-            xs = [p[0] for p in self.control_points]
+            if self.fit_normal :
+                xs = [ p[0] for p in self.control_points ]
+            elif self.fit_deg_as_rad :
+                xs = [ p[0] * math.pi / 180 for p in self.control_points ]
+            elif self.fit_deg_as_cos :
+                xs = [numpy.cos(math.pi/180*(180-p[0])) for p in self.control_points]
             ys = [p[1] for p in self.control_points]
 
 
@@ -552,17 +569,18 @@ class PolyFit:
             self.polynomial_coefficients[d] = coefs
 
             self.polynomial_points[d] = \
-                (x_points, numpy.polyval(numpy.poly1d(coefs), x_points))
+                (x_points, numpy.polyval(numpy.poly1d(coefs), x_polyval_points))
 
     def compute_reference_polynomial_points(self):
         self.ref_polynomial_points = {}
 
         x_points = self.polynomial_x_points()
+        x_polyval_points = self.get_x_polyval_points()
         for i in range(len(self.ref_polynomial_coefficients)):
             ref_poly_coefs = self.ref_polynomial_coefficients[i]
 
             self.ref_polynomial_points[i] = \
-                (x_points, numpy.polyval(numpy.poly1d(ref_poly_coefs), x_points))
+                (x_points, numpy.polyval(numpy.poly1d(ref_poly_coefs), x_polyval_points))
 
     def draw_demo(self):
         self.draw_polynomial_fits(self.ref_polynomial_points, fixed_color="darkgray")
@@ -650,11 +668,26 @@ class PolyFit:
 
         self.redraw_everything()
 
+    def set_fit_deg_as_rad( self ) :
+        self.fit_normal = False
+        self.fit_deg_as_rad = True
+        self.fit_deg_as_cos = False
 
-initial_control_points = []
+    def set_fit_deg_as_cos( self ) :
+        self.fit_normal = False
+        self.fit_deg_as_rad = False
+        self.fit_deg_as_cos = True
 
+if __name__ == "__main__" :
+    with blargs.Parser(locals()) as p:
+        p.flag("fit_degrees_as_radians").conflicts( p.flag("fit_degrees_as_cosexterior"))
+        
+    initial_control_points = []
+    d = PolyFit(initial_control_points)
+    if fit_degrees_as_radians :
+        d.set_fit_deg_as_rad()
+    elif fit_degrees_as_cosexterior :
+        d.set_fit_deg_as_cos()
 
-d = PolyFit(initial_control_points)
-
-
+    d.go()
 
