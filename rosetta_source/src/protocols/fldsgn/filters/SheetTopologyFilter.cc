@@ -102,10 +102,8 @@ bool SheetTopologyFilter::apply( Pose const & pose ) const
 	using core::scoring::dssp::Dssp;
 	using protocols::fldsgn::topology::NO_STRANDS;
 
-	tr << "ss of input pose=" << pose.secstruct() << std::endl;
-
-	Dssp dssp( pose );
 	if( ! secstruct_input_ ) {
+		Dssp dssp( pose );
 		ssinfo_->initialize( pose, dssp.get_dssp_secstruct() );
 	}
 
@@ -113,36 +111,43 @@ bool SheetTopologyFilter::apply( Pose const & pose ) const
 		tr << "Structure does not include strands." << std::endl;
 		return false;
 	}
+	//tr << "ss of input pose=" << pose.secstruct() << std::endl;
+	//tr << spairset_filter.name() << std::endl;
 
 	StrandPairingSet spairset = protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo_ );
 	StrandPairingSet spairset_filter( filtered_sheet_topology_ );
-	
-	bool flag( true );
-	if( spairset.size() != spairset_filter.size() ) {
-		flag = false;
-	} else {
-	
-		for( Size ii=1; ii<=spairset_filter.size(); ii++ ) {
-			if( spairset.strand_pairing( ii )->s1() != spairset_filter.strand_pairing( ii )->s1() ||
-			    spairset.strand_pairing( ii )->s2() != spairset_filter.strand_pairing( ii )->s2() ) {
-				flag = false;
-				break;				
-			}
-			if( spairset_filter.strand_pairing( ii )->rgstr_shift() != 99 ) {
-				if( spairset.strand_pairing( ii )->rgstr_shift() != spairset_filter.strand_pairing( ii )->rgstr_shift() ) {
-					flag = false;					
-				}
-			}
-		}
-	}
 
-	if( flag ){
-		tr << "Successfully " << spairset.name() << " sheet topology was filtered. " << std::endl;
-		return true;
-	}else{
-		tr << "Filtering failed: current/filtered sheet topology, " << spairset.name() << '/' << filtered_sheet_topology_ << '.' << std::endl;
-		return false;
-	}
+	for( Size ii=1; ii<=spairset_filter.size(); ++ii ) {
+
+		bool flag( false );
+		for( Size jj=1; jj<=spairset.size(); jj++ ) {
+			if( spairset.strand_pairing( jj )->s1() == spairset_filter.strand_pairing( ii )->s1() &&
+			    spairset.strand_pairing( jj )->s2() == spairset_filter.strand_pairing( ii )->s2() ) {
+				if( spairset.strand_pairing( jj )->orient() == spairset_filter.strand_pairing( ii )->orient() ) {
+					if( spairset_filter.strand_pairing( ii )->rgstr_shift() != 99 ) {
+						if( spairset.strand_pairing( jj )->rgstr_shift() == spairset_filter.strand_pairing( ii )->rgstr_shift() ) {
+							flag = true;
+							break;
+						}
+					} else {
+						flag = true;
+						break;
+					} // register shift ?
+				} else {
+					break;					
+				} // orient ?
+			} // spairset 
+		} // jj
+
+		if( !flag ) {
+			tr << "Filtering failed: current/filtered sheet topology, " << spairset.name() << '/' << filtered_sheet_topology_ << '.' << std::endl;
+			return false;
+		}
+	} // ii
+
+
+	tr << "Successfully " << spairset.name() << " sheet topology was filtered. " << std::endl;
+	return true;
 
 } // apply_filter
 
