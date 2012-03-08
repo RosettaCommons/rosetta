@@ -13,15 +13,12 @@
 // Unit header
 #include <core/fragment/FragmentRmsd.hh>
 
-// C/C++ headers
-#include <iostream>
-
 // Utility headers
-#include <basic/Tracer.hh>
+#include <utility/exit.hh>
 
 // Project headers
 #include <core/types.hh>
-//#include <core/fragment/FragData.hh>
+#include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
@@ -32,8 +29,6 @@
 namespace core {
 namespace fragment {
 
-static basic::Tracer TR("core.fragment.FragmentRmsd");
-
 FragmentRmsd::FragmentRmsd(FragSetCOP fragments) : fragments_(fragments) {
   for (FrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
     Frame const * frame = *i;
@@ -41,27 +36,32 @@ FragmentRmsd::FragmentRmsd(FragSetCOP fragments) : fragments_(fragments) {
   }
 }
 
+Frame const * FragmentRmsd::frame(core::Size position) const {
+  if (frames_.find(position) == frames_.end()) {
+    utility_exit_with_message("Requested invalid position in FragmentRmsd::fragment");
+  }
+
+  return frames_[position];
+}
+
+FragDataCOP FragmentRmsd::fragment(core::Size position, core::Size k) const {
+  Frame const * f = frame(position);
+
+  if (k < 1 || k > f->nr_frags()) {
+    utility_exit_with_message("Requested invalid fragment number in FragmentRmsd::fragment");
+  }
+
+  return f->fragment_ptr(k);
+}
+
 core::Real FragmentRmsd::rmsd(core::Size position, core::Size k, const core::pose::Pose& reference) const {
-  if (frames_.find(position) == frames_.end()) {  // invalid position
-    TR.Warning << "Invalid position-- " << position << std::endl;
-    return -1;
-  }
-
-  Frame const * frame = frames_[position];
-
-  if (k < 1 || k > frame->nr_frags()) {  // invalid fragment
-    TR.Warning << "Invalid fragment number-- " << k << std::endl;
-    return -1;
-  }
-
   core::pose::Pose pose;
   core::pose::make_pose_from_sequence(pose, reference.sequence(), "centroid");
-  frame->apply(k, pose);
 
-  //const FragData& fragment = frame->fragment(k);
-  //fragment.apply(pose, frame->start(), frame->end());
+  Frame const * f = frame(position);
+  f->apply(k, pose);
 
-  return core::scoring::CA_rmsd(pose, reference, frame->start(), frame->stop());
+  return core::scoring::CA_rmsd(pose, reference, f->start(), f->stop());
 }
 
 }  // namespace fragment

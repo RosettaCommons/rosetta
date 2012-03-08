@@ -24,6 +24,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -37,9 +38,19 @@ class FragmentRmsd : public utility::pointer::ReferenceCount {
  public:
   FragmentRmsd(FragSetCOP fragments);
 
+  /// @brief Returns the kth fragment at the specified position
+  /// in the fragment library.
+  FragDataCOP fragment(core::Size position, core::Size k) const;
+
   /// @brief Returns the RMSD of the kth fragment at the specified position
-  /// of the fragment library and pose.
+  /// in the fragment library and pose.
   core::Real rmsd(core::Size position, core::Size k, const core::pose::Pose& reference) const;
+
+
+ protected:
+  /// @brief Returns the position'th frame in the fragment library
+  Frame const * frame(core::Size position) const;
+
 
  private:
   /// @brief Input fragment library
