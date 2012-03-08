@@ -78,7 +78,7 @@ save_plots <- function(
 	}
 
 	a_ply(output_formats, 1, function(fmt){
-		ss_ids <- paste(sample_sources$sample_source,collapse="/")
+		ss_ids <- paste(sample_sources$sample_source,collapse="_")
 		full_output_dir <- file.path(output_dir, ss_ids, features_analysis@id, fmt$id)
 		if(!file.exists(full_output_dir)){
 			dir.create(full_output_dir, recursive=TRUE)

@@ -154,7 +154,7 @@ add_features_analysis_plot <- function(
 	filename,
 	plot_format) {
 
-	sql <- "INSERT INTO features_analysis_plots VALUES (?,?,?,?,?);"
+	sql <- "INSERT OR IGNORE INTO features_analysis_plots VALUES (?,?,?,?,?);"
 	bind <- data.frame(
 		plot_id=plot_id,
 		features_analysis_id=features_analysis@id,

@@ -126,7 +126,7 @@ sample_sources <- get_sample_sources(data_sources)
 output_dir <- opt$options$output_dir
 sample_source_output_dir <- file.path(
 	output_dir,
-	paste(sample_sources$sample_source, collpase="/", sep=""))
+	paste(sample_sources$sample_source, collapse="_"))
 
 if(!file.exists(sample_source_output_dir)){
 	cat("Creating output directory: '", sample_source_output_dir, "' ...\n", sep="")
@@ -142,16 +142,16 @@ if(!file.exists(sample_source_output_dir)){
 		from=file.path(base_dir, "scripts/methods/features_web"),
 		to=file.path(sample_source_output_dir),
 		recursive=TRUE)
+
 }
 iscript_output_dir(output_dir)
 
 
 
 #Setup analysis manager
-analysis_manager_db_path <- paste(
-	opt$options$output_dir,
-	paste(sample_sources$sample_source, collapse="/"),
-	opt$options$analysis_manager_db, sep="/")
+analysis_manager_db_path <- file.path(
+	sample_source_output_dir,
+	opt$options$analysis_manager_db)
 iscript_setup_analysis_manager(analysis_manager_db_path)
 analysis_manager_con <- initialize_analysis_manager_db(
 	analysis_manager_db_path)
