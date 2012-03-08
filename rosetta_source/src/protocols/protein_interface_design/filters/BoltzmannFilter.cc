@@ -144,11 +144,16 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		core::pose::Pose const & pose )
 {
 	TR << "BoltzmannFilter"<<std::endl;
+	runtime_assert( tag->hasOption( "anchors" ) || tag->hasOption( "negative_filters" ) );
 	fitness_threshold( tag->getOption< core::Real >( "fitness_threshold", 0 ) );
 	temperature( tag->getOption< core::Real >( "temperature", 0.6 ) );
 	utility::vector1< std::string > const positive_filter_names( utility::string_split( tag->getOption< std::string >( "positive_filters" ), ',' ) );
-	utility::vector1< std::string > const negative_filter_names( utility::string_split( tag->getOption< std::string >( "negative_filters" ), ',' ) );
-	utility::vector1< std::string > const anchors_string( utility::string_split( tag->getOption< std::string >( "anchors"), ',' ));
+	utility::vector1< std::string > negative_filter_names, anchors_string;
+	negative_filter_names.clear(); anchors_string.clear();
+	if( tag->hasOption( "negative_filters" ) )
+		negative_filter_names = utility::string_split( tag->getOption< std::string >( "negative_filters" ), ',' );
+	if( tag->hasOption( "anchors" ) )
+		anchors_string = utility::string_split( tag->getOption< std::string >( "anchors"), ',' );
 	foreach( std::string const positive_filter_name, positive_filter_names )
 		add_positive_filter( protocols::rosetta_scripts::parse_filter( positive_filter_name, filters ) );
 	foreach( std::string const negative_filter_name, negative_filter_names )
