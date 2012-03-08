@@ -67,7 +67,15 @@ public:
 
 	virtual
 	Size
-	natoms() const;
+	natoms() const { return 0; }
+
+	virtual
+	AtomID const &
+	atom( Size const index ) const { utility_exit_with_message("ResidueTypeLinkingConstraint is not atom-based!."); }
+
+	virtual
+	utility::vector1< core::Size >
+	residues() const;
 
 	void
 	show( std::ostream & out ) const;
@@ -76,9 +84,6 @@ public:
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
 */
-	virtual
-	AtomID const &
-	atom( Size const index ) const;
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
@@ -93,7 +98,7 @@ public:
 	virtual
 	void
 	score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
-	
+
 	virtual
 	void
 	fill_f1_f2(
@@ -114,7 +119,6 @@ private:
 	std::string rsd1_type_name3_;
 	std::string rsd2_type_name3_;
 	core::Real bonus_;
-	utility::vector1< AtomID > atom_ids_;
 }; // RotamerConstraint
 
 

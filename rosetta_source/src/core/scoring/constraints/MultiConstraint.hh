@@ -106,6 +106,10 @@ public:
 		return member_atoms_[n];
 	}
 
+	virtual
+	utility::vector1< core::Size >
+	residues() const { return member_residues_; }
+
 	//@brief translates the atom-names into numbers
 	virtual void setup_for_scoring( XYZ_Func const &, ScoreFunction const & ) const;
 
@@ -168,6 +172,7 @@ protected:
 private:
 
 	//data structure that holds the atoms and atom numbers
+	utility::vector1< core::Size > member_residues_;
 	utility::vector1< AtomID > member_atoms_;
 	std::map< AtomID, ConstraintCOPs > AtomID_to_Csts_;
 

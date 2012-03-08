@@ -57,15 +57,22 @@ public:
 		Size seqpos,
 		std::string aa_in,
 		std::string name3_in,
-		core::Real bonus_in,
-		utility::vector1< AtomID > const & atoms_in
+		core::Real bonus_in
 	);
 
 	virtual ~NonResidueTypeConstraint();
 
 	virtual
 	Size
-	natoms() const;
+	natoms() const { return 0; }
+
+	virtual
+	AtomID const &
+	atom( Size const index ) const { utility_exit_with_message("NonResidueTypeConstraint is not atom-based!."); }
+
+	virtual
+	utility::vector1< core::Size >
+	residues() const;
 
 	void
 	show( std::ostream & out ) const;
@@ -73,10 +80,6 @@ public:
 	virtual
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
-
-	virtual
-	AtomID const &
-	atom( Size const index ) const;
 
 	virtual
 	void
@@ -99,7 +102,6 @@ private:
 	std::string AAname;
 	std::string rsd_type_name3_;
 	core::Real favor_non_native_bonus_;
-	utility::vector1< AtomID > atom_ids_;
 }; // RotamerConstraint
 
 

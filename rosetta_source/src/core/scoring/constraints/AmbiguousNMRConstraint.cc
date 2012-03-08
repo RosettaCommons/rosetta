@@ -238,14 +238,16 @@ AmbiguousNMRConstraint::show_violations( std::ostream& out, pose::Pose const& po
 	for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
 		Size viol = (*cst_it)->show_violations( out, pose, verbose_level, threshold);
 		if ( viol == 0 && verbose_level > 70 ) {
+			utility::vector1< int > pos_list( (*cst_it)->residues() );
 			passed = true;
-			out << "\nResiduePairConstraints (" <<  (*cst_it)->atom(1).rsd() << ", " << (*cst_it)->atom((*cst_it)->natoms()).rsd() << " ) . of total: 1  0 violated" << std::endl;
+			out << "\nResiduePairConstraints (" <<  pos_list[1] << ", " << pos_list[pos_list.size()] << " ) . of total: 1  0 violated" << std::endl;
 		}
 		total_viol += viol;
 	}
 	if ( !passed && verbose_level > 70 ) {
 		for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
-			out << "\nResiduePairConstraints (" <<  (*cst_it)->atom(1).rsd() << ", " << (*cst_it)->atom((*cst_it)->natoms()).rsd() << " ) + of total: 1  1 violated" << std::endl;
+			utility::vector1< int > pos_list( (*cst_it)->residues() );
+			out << "\nResiduePairConstraints (" <<  pos_list[1] << ", " << pos_list[pos_list.size()] << " ) + of total: 1  1 violated" << std::endl;
 		}
 	}
 	return func_->show_violations( out, dist( pose ), verbose_level, threshold );

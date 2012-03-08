@@ -23,7 +23,6 @@
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/Tracer.hh>
 
-#include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -31,10 +30,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-
-
 
 namespace core {
 namespace scoring {
@@ -56,17 +52,7 @@ ResidueTypeConstraint::ResidueTypeConstraint(
 	seqpos_( seqpos ),
 	rsd_type_name3_( pose.residue_type( seqpos ).name3() ),
 	favor_native_bonus_( favor_native_bonus )
-{
-		//conformation::Residue const & rsd( pose.residue(seqpos_) );
-		//flo feb 11 by default this constraint now only has
-		// one atom, good enough since we're not doing minimization
-		//anyway. having all heavyatoms fucks up remapping this constraint
-		//from one residue type to another
-		atom_ids_.push_back(AtomID(1, seqpos_));
-		//for(Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i) {
-		//	atom_ids_.push_back(AtomID( i, seqpos_ )); // atom, rsd
-		//}
-}
+{}
 
 
 ResidueTypeConstraint::ResidueTypeConstraint(
@@ -79,31 +65,20 @@ ResidueTypeConstraint::ResidueTypeConstraint(
 	seqpos_( seqpos ),
 	rsd_type_name3_( AAname ),
 	favor_native_bonus_( favor_native_bonus )
-{
-		atom_ids_.push_back(AtomID(1, seqpos_));
-		//conformation::Residue const & rsd( pose.residue(seqpos_) );
-		//for(Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i) {
-		//	atom_ids_.push_back(AtomID( i, seqpos_ )); // atom, rsd
-		//}
-}
+{}
 
 ResidueTypeConstraint::ResidueTypeConstraint(
 		Size seqpos,
 		std::string aa_in,
 		std::string name3_in,
-		core::Real bonus_in,
-		utility::vector1< id::AtomID > const & atoms_in
+		core::Real bonus_in
 ):
 	Constraint( core::scoring::res_type_constraint ),
 	seqpos_( seqpos ),
 	AAname( aa_in ),
 	rsd_type_name3_( name3_in ),
 	favor_native_bonus_( bonus_in )
-{
-	for( utility::vector1< id::AtomID >::const_iterator at_it = atoms_in.begin(); at_it != atoms_in.end(); ++at_it ){
-		atom_ids_.push_back( *at_it );
-	}
-}
+{}
 
 
 ResidueTypeConstraint::~ResidueTypeConstraint() {}
@@ -114,10 +89,10 @@ ResidueTypeConstraint::clone() const
 	return ConstraintOP( new ResidueTypeConstraint( *this ) );
 }
 
-Size
-ResidueTypeConstraint::natoms() const
-{
-	return atom_ids_.size();
+utility::vector1< core::Size >
+ResidueTypeConstraint::residues() const {
+	utility::vector1< core::Size > pos_list(1, seqpos_); // length 1 containing "all" seqpos_ values
+	return pos_list;
 }
 
 void
@@ -129,26 +104,12 @@ ResidueTypeConstraint::show( std::ostream & out ) const {
 	out << "; favor_native_bonus: "<< favor_native_bonus_;
 }
 
-id::AtomID const &
-ResidueTypeConstraint::atom( Size const index ) const
-{
-	return atom_ids_[index];
-}
-
-
 ConstraintOP
 ResidueTypeConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 {
 	core::Size newseqpos = seqmap[ seqpos_ ];
   if ( newseqpos != 0 ) {
-
-		utility::vector1< id::AtomID > new_atomids;
-		for( utility::vector1< id::AtomID >::const_iterator at_it = atom_ids_.begin(); at_it != atom_ids_.end(); ++at_it ){
-			if( seqmap[ at_it->rsd() ] != 0 ){
-				new_atomids.push_back( id::AtomID( at_it->atomno(), seqmap[ at_it->rsd() ] ) );
-			}
-		}
-		return ConstraintOP( new ResidueTypeConstraint(	newseqpos, AAname, rsd_type_name3_, favor_native_bonus_, new_atomids ) );
+		return new ResidueTypeConstraint(	newseqpos, AAname, rsd_type_name3_, favor_native_bonus_ );
   } else {
     return NULL;
   }
@@ -165,11 +126,6 @@ ResidueTypeConstraint::operator == ( Constraint const & other_cst ) const
 	if( AAname != other.AAname ) return false;
 	if( rsd_type_name3_ != other.rsd_type_name3_ ) return false;
 	if( favor_native_bonus_ != other.favor_native_bonus_ ) return false;
-	core::Size natoms = atom_ids_.size();
-	if( natoms != other.atom_ids_.size() ) return false;
-	for(core::Size i =1; i <= natoms; ++i){
-		if( atom_ids_[i] != other.atom_ids_[i] ) return false;
-	}
 	if( this->score_type() != other.score_type() ) return false;
 
 	return true;
@@ -184,15 +140,7 @@ ResidueTypeConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& 
 		if( newseqpos == 0 ) return NULL;
 	}
 
-	utility::vector1< AtomID > new_atomids;
-	for( core::Size  i =1; i <= atom_ids_.size(); ++i ){
-		id::NamedAtomID atom( atom_id_to_named_atom_id( atom_ids_[i], src ) );
-		if( smap ){
-			atom.rsd() = (*smap)[atom_ids_[i].rsd() ];
-		}
-		new_atomids.push_back( named_atom_id_to_atom_id( atom, dest ) );
-	}
-	return new ResidueTypeConstraint(newseqpos, AAname, rsd_type_name3_, favor_native_bonus_, new_atomids);
+	return new ResidueTypeConstraint(newseqpos, AAname, rsd_type_name3_, favor_native_bonus_);
 }
 
 

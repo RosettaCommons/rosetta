@@ -133,6 +133,32 @@ SequenceMapping::reverse()
 	mapping_.swap( new_mapping );
 }
 
+void
+SequenceMapping::downstream_combine( core::id::SequenceMapping const & smap_to_add )
+{
+	for( core::Size i = 1; i <= mapping_.size(); ++i){
+		if( mapping_[i] != 0 ){
+			mapping_[i] = smap_to_add[ mapping_[i] ];
+		}
+	}
+	size2_ = smap_to_add.size2();
+}
+
+void
+SequenceMapping::upstream_combine( core::id::SequenceMapping const & smap_to_add )
+{
+	utility::vector1< Size > new_mapping( smap_to_add.mapping() );
+	for( core::Size i = 1; i <= new_mapping.size(); ++i){
+		if( new_mapping[i] != 0 && new_mapping[i] <= mapping_.size() ){
+				new_mapping[i] = mapping_[ new_mapping[i] ];
+		} else {
+			new_mapping[i] = 0;
+		}
+	}
+	mapping_.swap( new_mapping );
+	// size2_ stays the same
+}
+
 /// access
 Size
 SequenceMapping::size1() const
@@ -335,7 +361,7 @@ combine_sequence_mappings(
 	*composite_smap = smaps[1];
 
 	for( core::Size i = 2; i <= smaps.size(); ++i ){
-		combine_sequence_mappings( *composite_smap, smaps[i] );
+		composite_smap->downstream_combine( smaps[i] );
 	}
 
 	return composite_smap;
@@ -351,16 +377,7 @@ combine_sequence_mappings(
 	core::id::SequenceMapping & smap,
 	core::id::SequenceMapping const & smap_to_add )
 {
-
-	for( core::Size i = 1; i <= smap.size1(); ++i){
-
-		if( smap[i] != 0 ){
-
-			if( smap[i] <= smap_to_add.size1() ) smap[i] = smap_to_add[ smap[i] ];
-
-			else smap[i] = 0;
-		}
-	}
+	smap.downstream_combine( smap_to_add );
 }
 
 } // id

@@ -21,7 +21,6 @@
 
 #include <utility/vector1.hh>
 
-
 static basic::Tracer tr("core.io.constraints");
 
 namespace core {
@@ -55,9 +54,8 @@ MultiConstraint::read_def(
 	}
 }
 
-
 /// @detail this function only checks whether the member_constraints_
-/// are identical. should mean by inference that the member_atoms_
+/// are identical. should mean by inference that the member_residues_, member_atoms_
 /// and AtomID_to_Csts_ are also identical
 bool
 MultiConstraint::operator == ( Constraint const & other_cst ) const
@@ -106,6 +104,11 @@ MultiConstraint::add_individual_constraint( ConstraintCOP cst_in )
 	//not yet seen atoms
 	for( Size i = 1; i <= cst_in->natoms(); i++){
 		AtomID cur_atomid = cst_in->atom(i);
+
+		if ( std::find( member_residues_.begin(), member_residues_.end(), cur_atomid.rsd() ) == member_residues_.end() ) {
+			member_residues_.push_back( cur_atomid.rsd() );
+		}
+
 		std::map< AtomID, ConstraintCOPs >::iterator map_it = AtomID_to_Csts_.find(cur_atomid);
 
 		//if it does, add the atom id to the atom_members and the atomid/vect pair to the map

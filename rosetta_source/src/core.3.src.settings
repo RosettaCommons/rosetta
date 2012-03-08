@@ -141,6 +141,7 @@ sources = {
 		"CircularSigmoidalFunc",
 		"ConstantConstraint",
 		"ConstantFunc",
+                "Constraint",
 		"ConstraintCreator",
 		"ConstraintEnergyContainer",
 		"ConstraintFactory",

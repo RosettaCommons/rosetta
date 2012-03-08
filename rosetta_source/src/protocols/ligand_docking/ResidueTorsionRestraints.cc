@@ -86,7 +86,7 @@ void ResidueTorsionRestraints::setup_constraints(core::pose::Pose & pose)
 		core::Real const curr_chi_radians = numeric::conversions::radians( curr_chi_degrees );
 		FuncOP restr_func = new CircularHarmonicFunc( curr_chi_radians, stddev_radians );
 		AtomIndices chi_idx = rsd_type.chi_atoms(j); // 1-based
-		ConstraintCOP constraint = new DihedralConstraint(
+		DihedralConstraintCOP constraint = new DihedralConstraint(
 			AtomID(chi_idx[1], resid_),
 			AtomID(chi_idx[2], resid_),
 			AtomID(chi_idx[3], resid_),

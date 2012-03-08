@@ -278,9 +278,9 @@ add_coordinate_constraints( pose::Pose & pose ) {
 
 bool combinable( Constraint const& cst, utility::vector1< Size > exclude_res ) {
 	if ( exclude_res.size() == 0 ) return true;
-	for ( Size i=1; i<= cst.natoms(); ++i ) {
-		Size const seqpos( cst.atom(i).rsd() );
-		// seqpos already in list?
+	utility::vector1< Size > pos_list( cst.residues() );
+	for( core::Size i(1); i <= pos_list.size(); ++i ) {
+		Size const seqpos( pos_list[i] );
 		runtime_assert( seqpos <= exclude_res.size() );
 		if ( !exclude_res[ seqpos ] ) {
 			return true;
@@ -372,16 +372,7 @@ void combine_constraints(
 void count_constraint( ConstraintCOP cst, bool redundant, ObjexxFCL::FArray2D_int& count_matrix, Size influence_width, Size total_residue ){
 
 	// figure out if it's inter-res, residue_pair, or 3+body
-	utility::vector1< int > pos_list;
-
-	// generate list of all involved residues
-	for ( Size i=1; i<= cst->natoms(); ++i ) {
-		int const seqpos( cst->atom(i).rsd() );
-		// seqpos already in list?
-		if ( std::find( pos_list.begin(), pos_list.end(), seqpos )== pos_list.end() ) {
-			pos_list.push_back( seqpos );
-		}
-	}
+	utility::vector1< int > pos_list( cst->residues() );
 
 	if ( pos_list.size() != 2 ) {
 		tr.Error << "problems understanding constraint in skip_redundant_constraints ... ignore and keep this one" << std::endl;
@@ -405,16 +396,7 @@ void count_constraint( ConstraintCOP cst, bool redundant, ObjexxFCL::FArray2D_in
 bool keep_constraint( ConstraintCOP cst, bool redundant, ObjexxFCL::FArray2D_int& count_matrix, Size influence_width, Size total_residue ) {
 
 	// figure out if it's inter-res, residue_pair, or 3+body
-	utility::vector1< int > pos_list;
-
-	// generate list of all involved residues
-	for ( Size i=1; i<= cst->natoms(); ++i ) {
-		int const seqpos( cst->atom(i).rsd() );
-		// seqpos already in list?
-		if ( std::find( pos_list.begin(), pos_list.end(), seqpos )== pos_list.end() ) {
-			pos_list.push_back( seqpos );
-		}
-	}
+	utility::vector1< int > pos_list( cst->residues() );
 
 	if ( pos_list.size() != 2 ) {
 		tr.Error << "problems understanding constraint in skip_redundant_constraints ... ignore and keep this one" << std::endl;

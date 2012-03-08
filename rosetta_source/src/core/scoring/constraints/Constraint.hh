@@ -105,14 +105,30 @@ public:
 	}
 
 	/// @brief Returns the number of atoms involved in defining this constraint.
+	/// If the constraint doesn't depend on particular atoms (e.g. a residue type constraint)
+	/// this function can return zero
+	/// @details Note that this function isn't actually used by the constraint scoring machenery.
+	/// If you're calling it on a generic Constraint (as opposed to specifically on a derived class)
+	/// you're probably doing something wrong.
 	virtual
 	Size
 	natoms() const = 0;
 
 	/// @brief Returns the AtomID referred to by index.
+	/// @details Note that this function isn't actually used by the constraint scoring machenery.
+	/// If you're calling it on a generic Constraint (as opposed to specifically on a derived class)
+	/// you're probably doing something wrong.
 	virtual
 	AtomID const &
 	atom( Size const index ) const = 0;
+
+	/// @brief Returns the pose numbers of the residues involved in this constraint, in no particular order.
+	/// @details Used in determining one-body/two-body/multi-body status.
+	/// For historical reasons, the default uses a simple protocol based on natoms()/atom() -
+	/// feel free to reimplement more efficiently.
+	virtual
+	utility::vector1< core::Size >
+	residues() const;
 
 	/// @brief This method is totally redundant with read_def  YAY
 	// DON'T USE THIS ONE.. Most Constraint classes have not overloaded this one, but read_def ! OL

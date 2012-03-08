@@ -34,7 +34,6 @@ namespace constraints_additional {
 class SequenceCoupling1BDConstraint : public core::scoring::constraints::SequenceProfileConstraint {
 public:
 	typedef core::sequence::SequenceCoupling SequenceCoupling;
-	typedef core::sequence::SequenceCouplingOP SequenceCouplingOP;
 	typedef core::sequence::SequenceCouplingCOP SequenceCouplingCOP;
 	typedef core::id::SequenceMapping SequenceMapping;
 	typedef core::pose::Pose Pose;
@@ -51,13 +50,12 @@ public:
 	SequenceCoupling1BDConstraint(
 		Pose const &,
 		core::Size,
-		SequenceProfileOP profile
+		SequenceProfileCOP profile
 	);
 
 	SequenceCoupling1BDConstraint(
 		core::Size,
-		utility::vector1< AtomID > const &,
-		SequenceProfileOP profile
+		SequenceProfileCOP profile
 	);
 
 	virtual ~SequenceCoupling1BDConstraint();
@@ -94,11 +92,6 @@ public:
 		EnergyMap const &
 	) const;
 
-	/*
-private:
-	SequenceProfileOP sequence_profile_;
-	utility::vector1< AtomID > atom_ids_;
-	*/
 };
 
 

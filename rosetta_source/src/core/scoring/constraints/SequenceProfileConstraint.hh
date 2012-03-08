@@ -34,7 +34,6 @@ namespace constraints {
 class SequenceProfileConstraint : public core::scoring::constraints::Constraint {
 public:
 	typedef core::sequence::SequenceProfile SequenceProfile;
-	typedef core::sequence::SequenceProfileOP SequenceProfileOP;
 	typedef core::sequence::SequenceProfileCOP SequenceProfileCOP;
 	typedef core::id::SequenceMapping SequenceMapping;
 	typedef core::pose::Pose Pose;
@@ -51,13 +50,14 @@ public:
 	SequenceProfileConstraint(
 		Pose const &,
 		core::Size,
-		SequenceProfileOP profile = NULL
+		SequenceProfileCOP profile = NULL,
+		core::id::SequenceMappingCOP mapping = NULL // current pose numbers onto profile numbers.
 	);
 
 	SequenceProfileConstraint(
 		core::Size,
-		utility::vector1< AtomID > const &,
-		SequenceProfileOP profile = NULL
+		SequenceProfileCOP profile = NULL,
+		core::id::SequenceMappingCOP mapping = NULL // current pose numbers onto profile numbers.
 	);
 
 	virtual ~SequenceProfileConstraint();
@@ -81,20 +81,21 @@ public:
 	core::Size seqpos() const { return seqpos_; }
 
 	//hk
-	void seqpos(core::Size seqpos) { 
-		seqpos_=seqpos; 
+	void seqpos(core::Size seqpos) {
+		seqpos_=seqpos;
 	}
 	//hk end
 
-	void set_sequence_profile( SequenceProfileOP );
-	SequenceProfileOP sequence_profile();
+	void set_sequence_profile( SequenceProfileCOP profile, core::id::SequenceMappingCOP mapping = NULL);
 	SequenceProfileCOP sequence_profile() const;
+	core::id::SequenceMappingCOP profile_mapping() const;
 
-	virtual core::Size natoms() const;
+	virtual core::Size natoms() const { return 0; }
+	virtual AtomID const & atom( core::Size const ) const { utility_exit_with_message("SequenceProfileConstraint is not atom-based!."); };
+	virtual utility::vector1< core::Size > residues() const;
+
 	virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
-	virtual AtomID const & atom( core::Size const ) const;
-	utility::vector1< AtomID > const & atom_ids() const;
-	void  atom_ids(utility::vector1< AtomID > & );
+	virtual ConstraintOP remapped_clone(pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const;
 
 	virtual void
 	score(
@@ -114,8 +115,10 @@ public:
 
 private:
 	core::Size seqpos_;
-	SequenceProfileOP sequence_profile_;
-	utility::vector1< AtomID > atom_ids_;
+	// COP is deliberate, as sequence profiles are typically shared amoung many constraints, and as such probably shouldn't be fiddled with
+	SequenceProfileCOP sequence_profile_;
+	/// @brief A mapping of current pose numbers onto profile numbers.
+	core::id::SequenceMappingCOP mapping_;
 };
 
 } // namespace constraints

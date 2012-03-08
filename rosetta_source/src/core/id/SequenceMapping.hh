@@ -70,8 +70,16 @@ public:
 	/// @brief resize
 	void resize( Size const s1, Size const s2 );
 
-	///
+	/// @brief go from an A->B mapping to a B->A mapping
 	void reverse();
+
+	/// @brief Apply a B->C mapping to the current A->B mapping to get an A->C mapping
+	/// i.e. smap[j] becomes smap_to_add[ smap[j] ]
+	void downstream_combine( core::id::SequenceMapping const & smap_to_add );
+
+	/// @brief Apply a C->A mapping to the current A->B mapping to get a C->B mapping
+	/// i.e. smap[j] becomes smap[ smap_to_add[ j ] ]
+	void upstream_combine( core::id::SequenceMapping const & smap_to_add );
 
 	///@brief size of target sequence
 	Size size1() const;

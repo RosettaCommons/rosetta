@@ -71,32 +71,18 @@ SequenceCouplingConstraint::SequenceCouplingConstraint(
 	seqpos1_(seqpos1),
 	seqpos2_(seqpos2),
 	sequence_coupling_( coupling)
-{
-	//Residue const & rsd( pose.residue(seqpos1_) );
-	atom_ids_.push_back(AtomID(1,seqpos1_));
-	//Residue const & rsd( pose.residue(seqpos2_) );
-	atom_ids_.push_back(AtomID(1,seqpos2_));
-	/*for( Size i(1), i_end( rsd.nheavyatoms() ); i <= i_end; ++i ) {
-		atom_ids_.push_back( AtomID( i, seqpos_ ) );
-	}
-	*/
-}
+{}
 
 SequenceCouplingConstraint::SequenceCouplingConstraint(
 	Size seqpos1,
 	Size seqpos2,
-	utility::vector1< AtomID > const & atoms_in,
 	SequenceCouplingOP sequence_coupling /* = NULL */
 ):
 	Constraint( res_type_constraint ),
 	seqpos1_( seqpos1 ),
 	seqpos2_( seqpos2 ),
 	sequence_coupling_( sequence_coupling )
-{
-	for( utility::vector1< AtomID >::const_iterator at_it( atoms_in.begin() ), end( atoms_in.end() ); at_it != end; ++at_it ) {
-		atom_ids_.push_back( *at_it );
-	}
-}
+{}
 
 SequenceCouplingConstraint::~SequenceCouplingConstraint() {}
 
@@ -132,9 +118,6 @@ SequenceCouplingConstraint::read_def(
 
 	seqpos1_ = residue_index1;
 	seqpos2_ = residue_index2;
-
-	atom_ids_.push_back(AtomID(1,seqpos1_));
-	atom_ids_.push_back(AtomID(1,seqpos2_));
 
 	// figure out sequence profile filename
 	using namespace utility::file;
@@ -191,20 +174,13 @@ SequenceCouplingConstraint::sequence_coupling() { return sequence_coupling_; }
 SequenceCouplingCOP
 SequenceCouplingConstraint::sequence_coupling() const { return sequence_coupling_; }
 
-Size
-SequenceCouplingConstraint::natoms() const
-{
-	return atom_ids_.size();
+utility::vector1< core::Size >
+SequenceCouplingConstraint::residues() const {
+	utility::vector1< core::Size > pos_list;
+	pos_list.push_back(seqpos1_);
+	pos_list.push_back(seqpos2_);
+	return pos_list;
 }
-
-id::AtomID const &
-SequenceCouplingConstraint::atom( Size const index ) const
-{
-	return atom_ids_[index];
-}
-
-utility::vector1< id::AtomID > const &
-SequenceCouplingConstraint::atom_ids() const { return atom_ids_; }
 
 /*
  * hk: how does one fix sequencecoupling on a remap_resid call?
@@ -217,13 +193,7 @@ SequenceCouplingConstraint::remap_resid(
 	if ( newseqpos != 0 ) {
 		TR(t_debug) << "Remapping resid " << seqpos1_ << " to " << newseqpos1 << std::endl;
 
-		utility::vector1< AtomID > new_atomids;
-		for ( utility::vector1< AtomID >::const_iterator at_it( atom_ids_.begin() ), end( atom_ids_.end() ); at_it != end; ++at_it ) {
-			if ( seqmap[ at_it->rsd() ] != 0 ) {
-				new_atomids.push_back( AtomID( at_it->atomno(), seqmap[ at_it->rsd() ] ) );
-			}
-		}
-		return new SequenceCouplingConstraint(	newseqpos1, newseqpos2,  new_atomids, sequence_coupling_ );
+		return new SequenceCouplingConstraint(	newseqpos1, newseqpos2, sequence_coupling_ );
 	}
 	else return NULL;
 }
@@ -248,11 +218,11 @@ SequenceCouplingConstraint::score(
 
 	Size edgeId = sequence_coupling_->findEdgeId(seqpos1_, seqpos2_);
 	Real score( 0);
-	if(edgeId<=0){//direction important. if (i,j) edge exists, will not return if (j,i) asked 
+	if(edgeId<=0){//direction important. if (i,j) edge exists, will not return if (j,i) asked
 		 edgeId = sequence_coupling_->findEdgeId(seqpos2_, seqpos1_);
 
-		 //epot = sequence_coupling_->edgePotBetween(edgeId); 
-		 utility::vector1< utility::vector1 < Real > > const &  epot(sequence_coupling_->edgePotBetween(edgeId)); 
+		 //epot = sequence_coupling_->edgePotBetween(edgeId);
+		 utility::vector1< utility::vector1 < Real > > const &  epot(sequence_coupling_->edgePotBetween(edgeId));
 		 //runtime_assert(epot);
 		 /*
 		 if(epot==NULL){
@@ -262,7 +232,7 @@ SequenceCouplingConstraint::score(
 		 */
 		 score = epot[aa2][aa1];
 	}else{
-		utility::vector1< utility::vector1 < Real > > const &  epot(sequence_coupling_->edgePotBetween(edgeId)); 
+		utility::vector1< utility::vector1 < Real > > const &  epot(sequence_coupling_->edgePotBetween(edgeId));
 		//runtime_assert(epot);
 		score = epot[aa1][aa2];
 	}

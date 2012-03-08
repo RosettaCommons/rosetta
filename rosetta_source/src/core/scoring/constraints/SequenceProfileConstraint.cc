@@ -29,7 +29,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/id/AtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
@@ -57,37 +56,32 @@ static basic::Tracer TR("core.scoring.constraints.SequenceProfileConstraint");
 SequenceProfileConstraint::SequenceProfileConstraint()
 	: Constraint( res_type_constraint ),
 		seqpos_(0),
-		sequence_profile_(NULL)
+		sequence_profile_(NULL),
+		mapping_(NULL)
 {}
 
 SequenceProfileConstraint::SequenceProfileConstraint(
 	Pose const & pose,
 	Size seqpos,
-	SequenceProfileOP profile /* = NULL */
+	SequenceProfileCOP profile /* = NULL */,
+	core::id::SequenceMappingCOP mapping /* = NULL */ // current pose numbers onto profile numbers.
 ):
 	Constraint( res_type_constraint ),
 	seqpos_( seqpos ),
-	sequence_profile_( profile )
-{
-	Residue const & rsd( pose.residue(seqpos_) );
-	for( Size i(1), i_end( rsd.nheavyatoms() ); i <= i_end; ++i ) {
-		atom_ids_.push_back( AtomID( i, seqpos_ ) );
-	}
-}
+	sequence_profile_( profile ),
+	mapping_( mapping )
+{}
 
 SequenceProfileConstraint::SequenceProfileConstraint(
 	Size seqpos,
-	utility::vector1< AtomID > const & atoms_in,
-	SequenceProfileOP sequence_profile /* = NULL */
+	SequenceProfileCOP sequence_profile /* = NULL */,
+	core::id::SequenceMappingCOP mapping /* = NULL */ // current pose numbers onto profile numbers.
 ):
 	Constraint( res_type_constraint ),
 	seqpos_( seqpos ),
-	sequence_profile_( sequence_profile )
-{
-	for( utility::vector1< AtomID >::const_iterator at_it( atoms_in.begin() ), end( atoms_in.end() ); at_it != end; ++at_it ) {
-		atom_ids_.push_back( *at_it );
-	}
-}
+	sequence_profile_( sequence_profile ),
+	mapping_( mapping )
+{}
 
 SequenceProfileConstraint::~SequenceProfileConstraint() {}
 
@@ -118,11 +112,6 @@ SequenceProfileConstraint::read_def(
 
 	seqpos_ = residue_index;
 
-	Residue const & rsd( pose.residue(seqpos_) );
-	for( Size i(1), i_end( rsd.nheavyatoms() ); i <= i_end; ++i ) {
-		atom_ids_.push_back( AtomID( i, seqpos_ ) );
-	}
-
 	// figure out sequence profile filename
 	using namespace utility::file;
 	// if specified, verify file exists
@@ -141,8 +130,10 @@ SequenceProfileConstraint::read_def(
 
 	// if filename is not "none" by this point, read it even if sequence_profile_ is not currently NULL
 	if ( profile_filename != "none" ) {
-		sequence_profile_ = new SequenceProfile;
-		sequence_profile_->read_from_checkpoint( FileName(profile_filename) );
+		SequenceProfileOP newseqprof( new SequenceProfile );
+		newseqprof->read_from_checkpoint( FileName(profile_filename) );
+		sequence_profile_ = newseqprof;
+		mapping_ = NULL; // Reset mapping
 	}
 
 	// if sequence_profile_ is still NULL by this point, it is assumed that the user intended so
@@ -171,36 +162,22 @@ SequenceProfileConstraint::show( std::ostream & os ) const {
 }
 
 void
-SequenceProfileConstraint::set_sequence_profile( SequenceProfileOP profile )
+SequenceProfileConstraint::set_sequence_profile( SequenceProfileCOP profile, core::id::SequenceMappingCOP mapping /* = NULL */ )
 {
 	sequence_profile_ = profile;
+	mapping_ = mapping;
 }
-
-SequenceProfileOP
-SequenceProfileConstraint::sequence_profile() { return sequence_profile_; }
 
 SequenceProfileCOP
 SequenceProfileConstraint::sequence_profile() const { return sequence_profile_; }
 
-Size
-SequenceProfileConstraint::natoms() const
-{
-	return atom_ids_.size();
-}
+core::id::SequenceMappingCOP
+SequenceProfileConstraint::profile_mapping() const { return mapping_; }
 
-id::AtomID const &
-SequenceProfileConstraint::atom( Size const index ) const
-{
-	return atom_ids_[index];
-}
-
-utility::vector1< id::AtomID > const &
-SequenceProfileConstraint::atom_ids() const {
-	return atom_ids_;
-}
-
-void SequenceProfileConstraint::atom_ids(utility::vector1< id::AtomID > & atomIds){
-	atom_ids_ = atomIds;
+utility::vector1< core::Size >
+SequenceProfileConstraint::residues() const {
+	utility::vector1< core::Size > pos_list(1, seqpos_); // length 1 containing "all" seqpos_ values
+	return pos_list;
 }
 
 ConstraintOP
@@ -208,19 +185,45 @@ SequenceProfileConstraint::remap_resid(
 	SequenceMapping const & seqmap
 ) const {
 	Size newseqpos( seqmap[ seqpos_ ] );
-	if ( newseqpos != 0 ) {
-		TR(t_debug) << "Remapping resid " << seqpos_ << " to " << newseqpos << std::endl;
+	if ( newseqpos == 0 ) { return NULL; }
 
-		utility::vector1< AtomID > new_atomids;
-		for ( utility::vector1< AtomID >::const_iterator at_it( atom_ids_.begin() ), end( atom_ids_.end() ); at_it != end; ++at_it ) {
-			if ( seqmap[ at_it->rsd() ] != 0 ) {
-				new_atomids.push_back( AtomID( at_it->atomno(), seqmap[ at_it->rsd() ] ) );
-			}
-		}
-		return new core::scoring::constraints::SequenceProfileConstraint(	newseqpos, new_atomids, sequence_profile_ );
+	TR(t_debug) << "Remapping resid " << seqpos_ << " to " << newseqpos << std::endl;
+
+	core::id::SequenceMappingOP new_map( new core::id::SequenceMapping( seqmap ) );
+	new_map->reverse(); // Go from old->new to new->old
+	if ( mapping_ ) {
+		new_map->downstream_combine( *mapping_ ); // Combine new->old and old->profile into new->profile
 	}
-	else return NULL;
+
+	return new core::scoring::constraints::SequenceProfileConstraint(	newseqpos, sequence_profile_, new_map );
 }
+
+ConstraintOP
+SequenceProfileConstraint::remapped_clone(
+	pose::Pose const& src,
+	pose::Pose const& dest,
+	id::SequenceMappingCOP map /*=NULL*/ ) const
+{
+	if ( ! map ) {
+		return new core::scoring::constraints::SequenceProfileConstraint(	seqpos_, sequence_profile_, mapping_ );
+	}
+
+	// Hereafter map is valid
+	Size newseqpos( (*map)[ seqpos_ ] );
+
+	if ( newseqpos == 0 ) { return NULL; }
+
+	TR(t_debug) << "Remapping resid " << seqpos_ << " to " << newseqpos << std::endl;
+
+	core::id::SequenceMappingOP new_map( new core::id::SequenceMapping( *map ) );
+	new_map->reverse(); // Go from old->new to new->old
+	if ( mapping_ ) {
+		new_map->downstream_combine( *mapping_ ); // Combine new->old and old->profile into new->profile
+	}
+
+	return new core::scoring::constraints::SequenceProfileConstraint(	newseqpos, sequence_profile_, new_map );
+}
+
 
 // Calculates a score for this constraint using XYZ_Func, and puts the UNWEIGHTED score into
 // emap. Although the current set of weights currently is provided, Constraint objects
@@ -235,13 +238,17 @@ SequenceProfileConstraint::score(
 	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
 	runtime_assert( sequence_profile_ );
 
+	core::Size profile_pos( seqpos_ );
+	if( mapping_ ) {
+		profile_pos = (*mapping_)[seqpos_];
+		if( profile_pos == 0 ) return; // safety/relevance check
+	}
 	chemical::AA aa( xyz_func.residue( seqpos_ ).type().aa() );
 	utility::vector1< utility::vector1< Real > > const & profile( sequence_profile_->profile() );
-	if ( seqpos_ > profile.size() ) return; // safety/relevance check
-	utility::vector1< Real > const & position_profile( profile[ seqpos_ ] );
+	if ( profile_pos > profile.size() ) return; // safety/relevance check
+	utility::vector1< Real > const & position_profile( profile[ profile_pos ] );
 	if ( size_t(aa) > position_profile.size() ) return; // safety/relevance check
-	// this assumes that the profile contains energies and not probabilities
-	Real const score( sequence_profile_->profile()[seqpos_][aa] );
+	Real const score( position_profile[aa] );
 	TR(t_trace) << "seqpos " << seqpos_ << " aa " << aa << " " << score << std::endl;
 
 	if( sequence_profile_->negative_better() ) {

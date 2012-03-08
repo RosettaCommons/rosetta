@@ -9,7 +9,7 @@
 
 /// @file   protocols/constraints_additional/SequenceCouplingConstraint.hh
 /// @brief  This is a constraint that refers to a core::sequence::SequenceCoupling? in order to influence the scoring of amino acid types based on multiple sequence alignments (i.e. for biasing amino acid choices during design).
-/// @author ashworth
+/// @author HetuKamisetty
 
 #ifndef INCLUDED_protocols_constraints_additional_SequenceCouplingConstraint_hh
 #define INCLUDED_protocols_constraints_additional_SequenceCouplingConstraint_hh
@@ -57,7 +57,6 @@ public:
 	SequenceCouplingConstraint(
 		core::Size,
 		core::Size,
-		utility::vector1< AtomID > const &,
 		SequenceCouplingOP profile = NULL
 	);
 
@@ -86,10 +85,11 @@ public:
 	SequenceCouplingOP sequence_coupling();
 	SequenceCouplingCOP sequence_coupling() const;
 
-	virtual core::Size natoms() const;
+	virtual core::Size natoms() const { return 0; };
+	virtual	AtomID const & atom( Size const ) const { utility_exit_with_message("SequenceCouplingConstraint is not atom-based!."); }
+	virtual utility::vector1< core::Size > residues() const;
+
 	//virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
-	virtual AtomID const & atom( core::Size const ) const;
-	utility::vector1< AtomID > const & atom_ids() const;
 
 	virtual void
 	score(
@@ -111,7 +111,6 @@ private:
 	core::Size seqpos1_;
 	core::Size seqpos2_;
 	SequenceCouplingOP sequence_coupling_;
-	utility::vector1< AtomID > atom_ids_;
 };
 
 

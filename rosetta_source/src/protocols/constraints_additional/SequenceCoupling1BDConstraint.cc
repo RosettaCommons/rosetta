@@ -28,7 +28,6 @@
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
 #include <core/sequence/SequenceCoupling.hh>
@@ -57,18 +56,17 @@ static basic::Tracer TR("protocols.constraints_additional.SequenceCoupling1BDCon
 	:core::scoring::constraints::SequenceProfileConstraint( )
 {}
 
-	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint( 
+	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint(
 		Pose const & pose,
 		core::Size numpos,
-		SequenceProfileOP profile
+		SequenceProfileCOP profile
 		):core::scoring::constraints::SequenceProfileConstraint(pose, numpos,profile)
 {}
 
-	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint( 
+	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint(
 		core::Size numpos,
-		utility::vector1< AtomID > const & atomids,
-		SequenceProfileOP profile
-		):core::scoring::constraints::SequenceProfileConstraint(numpos, atomids ,profile)
+		SequenceProfileCOP profile
+		):core::scoring::constraints::SequenceProfileConstraint(numpos, profile)
 {}
 SequenceCoupling1BDConstraint::~SequenceCoupling1BDConstraint() {}
 
@@ -99,10 +97,6 @@ SequenceCoupling1BDConstraint::read_def(
 
 	seqpos(residue_index);
 
-	utility::vector1< AtomID > atomIds;
-	atomIds.push_back(AtomID(1,seqpos()));
-	atom_ids(atomIds);
-
 	// figure out sequence profile filename
 	using namespace utility::file;
 	// if specified, verify file exists
@@ -132,27 +126,6 @@ SequenceCoupling1BDConstraint::show( std::ostream & os ) const {
 	if ( ! sequence_profile() ) os << "(uninitialized sequence profile)";
 	os << '\n';
 }
-
-/*
-ConstraintOP
-SequenceCoupling1BDConstraint::remap_resid(
-	SequenceMapping const & seqmap
-) const {
-	Size newseqpos( seqmap[ seqpos_ ] );
-	if ( newseqpos != 0 ) {
-		TR(t_debug) << "Remapping resid " << seqpos_ << " to " << newseqpos << std::endl;
-
-		utility::vector1< AtomID > new_atomids;
-		for ( utility::vector1< AtomID >::const_iterator at_it( atom_ids().begin() ), end( atom_ids().end() ); at_it != end; ++at_it ) {
-			if ( seqmap[ at_it->rsd() ] != 0 ) {
-				new_atomids.push_back( AtomID( at_it->atomno(), seqmap[ at_it->rsd() ] ) );
-			}
-		}
-		return new SequenceCoupling1BDConstraint(	newseqpos, new_atomids, sequence_profile() );
-	}
-	else return NULL;
-}
-*/
 
 // Calculates a score for this constraint using XYZ_Func, and puts the UNWEIGHTED score into
 // emap. Although the current set of weights currently is provided, Constraint objects

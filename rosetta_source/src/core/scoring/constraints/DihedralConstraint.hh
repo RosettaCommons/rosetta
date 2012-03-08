@@ -13,6 +13,8 @@
 #ifndef INCLUDED_core_scoring_constraints_DihedralConstraint_hh
 #define INCLUDED_core_scoring_constraints_DihedralConstraint_hh
 
+#include <core/scoring/constraints/DihedralConstraint.fwd.hh>
+
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>

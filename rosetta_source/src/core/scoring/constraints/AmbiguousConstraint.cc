@@ -236,16 +236,7 @@ AmbiguousConstraint::show_violations( std::ostream& out, pose::Pose const& pose,
 			if ( active_constraint_ ) {
 				if ( (*cst_it).get() == active_constraint_.get() ) {
 					// figure out if it's inter-res, residue_pair, or 3+body
-					utility::vector1< int > pos_list;
-
-					// generate list of all involved residues
-					for ( Size i=1; i<= (*cst_it)->natoms(); ++i ) {
-						int const seqpos( (*cst_it)->atom(i).rsd() );
-						// seqpos already in list?
-						if ( std::find( pos_list.begin(), pos_list.end(), seqpos )== pos_list.end() ) {
-							pos_list.push_back( seqpos );
-						}
-					}
+					utility::vector1< int > pos_list( (*cst_it)->residues() );
 					if ( pos_list.size() == 2 ) {
 						out << "ResiduePairConstraints ( " << pos_list[ 1 ] << " , " << pos_list[ 2 ] << " ) ";
 						if ( verbose_level>80 ) out << std::endl;

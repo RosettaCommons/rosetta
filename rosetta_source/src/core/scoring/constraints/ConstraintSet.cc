@@ -516,17 +516,7 @@ ConstraintSet::add_constraint( ConstraintCOP cst )
 	mark_revision_id_expired();
 
 	// figure out if it's inter-res, residue_pair, or 3+body
-	utility::vector1< int > pos_list;
-
-	// generate list of all involved residues
-	for ( Size i=1; i<= cst->natoms(); ++i ) {
-		int const seqpos( cst->atom(i).rsd() );
-		// seqpos already in list?
-		if ( std::find( pos_list.begin(), pos_list.end(), seqpos )== pos_list.end() ) {
-			pos_list.push_back( seqpos );
-		}
-	}
-
+	utility::vector1< int > pos_list( cst->residues() );
 
 	if ( pos_list.size() == 1 ) {
 		// intra-res
@@ -627,17 +617,7 @@ ConstraintSet::remove_constraint(
 	mark_revision_id_expired();
 
 	// figure out if it's inter-res, residue_pair, or 3+body
-	utility::vector1< int > pos_list;
-
-	// generate list of all involved residues
-	for ( Size i=1; i<= cst->natoms(); ++i ) {
-		int const seqpos( cst->atom(i).rsd() );
-		// seqpos already in list?
-		if ( std::find( pos_list.begin(), pos_list.end(), seqpos )== pos_list.end() ) {
-			pos_list.push_back( seqpos );
-		}
-	}
-
+	utility::vector1< int > pos_list( cst->residues() );
 
 	bool success = false;
 	if ( pos_list.size() == 1 ) {

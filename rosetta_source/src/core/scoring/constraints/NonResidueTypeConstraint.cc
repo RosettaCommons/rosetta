@@ -23,7 +23,6 @@
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/Tracer.hh>
 
-#include <core/id/AtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -48,12 +47,7 @@ NonResidueTypeConstraint::NonResidueTypeConstraint(
 	seqpos_( seqpos ),
 	rsd_type_name3_( pose.residue_type( seqpos ).name3() ),
 	favor_non_native_bonus_( favor_non_native_bonus )
-{
-		conformation::Residue const & rsd( pose.residue(seqpos_) );
-		for(Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i) {
-			atom_ids_.push_back(AtomID( i, seqpos_ )); // atom, rsd
-		}
-}
+{}
 
 
 NonResidueTypeConstraint::NonResidueTypeConstraint(
@@ -66,30 +60,20 @@ NonResidueTypeConstraint::NonResidueTypeConstraint(
 	seqpos_( seqpos ),
 	rsd_type_name3_( AAname ),
 	favor_non_native_bonus_( favor_non_native_bonus )
-{
-		conformation::Residue const & rsd( pose.residue(seqpos_) );
-		for(Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i) {
-			atom_ids_.push_back(AtomID( i, seqpos_ )); // atom, rsd
-		}
-}
+{}
 
 NonResidueTypeConstraint::NonResidueTypeConstraint(
 		Size seqpos,
 		std::string aa_in,
 		std::string name3_in,
-		core::Real bonus_in,
-		utility::vector1< id::AtomID > const & atoms_in
+		core::Real bonus_in
 ):
 	Constraint( core::scoring::res_type_constraint ),
 	seqpos_( seqpos ),
 	AAname( aa_in ),
 	rsd_type_name3_( name3_in ),
 	favor_non_native_bonus_( bonus_in )
-{
-	for( utility::vector1< id::AtomID >::const_iterator at_it = atoms_in.begin(); at_it != atoms_in.end(); ++at_it ){
-		atom_ids_.push_back( *at_it );
-	}
-}
+{}
 
 
 NonResidueTypeConstraint::~NonResidueTypeConstraint() {}
@@ -100,10 +84,10 @@ NonResidueTypeConstraint::clone() const
 	return ConstraintOP( new NonResidueTypeConstraint( *this ) );
 }
 
-Size
-NonResidueTypeConstraint::natoms() const
-{
-	return atom_ids_.size();
+utility::vector1< core::Size >
+NonResidueTypeConstraint::residues() const {
+	utility::vector1< core::Size > pos_list(1, seqpos_); // length 1 containing "all" seqpos_ values
+	return pos_list;
 }
 
 void
@@ -115,26 +99,12 @@ NonResidueTypeConstraint::show( std::ostream & out ) const {
 	out << "; favor_non_native_bonus: "<< favor_non_native_bonus_;
 }
 
-id::AtomID const &
-NonResidueTypeConstraint::atom( Size const index ) const
-{
-	return atom_ids_[index];
-}
-
-
 ConstraintOP
 NonResidueTypeConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 {
 	core::Size newseqpos = seqmap[ seqpos_ ];
   if ( newseqpos != 0 ) {
-
-		utility::vector1< id::AtomID > new_atomids;
-		for( utility::vector1< id::AtomID >::const_iterator at_it = atom_ids_.begin(); at_it != atom_ids_.end(); ++at_it ){
-			if( seqmap[ at_it->rsd() ] != 0 ){
-				new_atomids.push_back( id::AtomID( at_it->atomno(), seqmap[ at_it->rsd() ] ) );
-			}
-		}
-		return ConstraintOP( new NonResidueTypeConstraint(	newseqpos, AAname, rsd_type_name3_, favor_non_native_bonus_, new_atomids ) );
+		return ConstraintOP( new NonResidueTypeConstraint(	newseqpos, AAname, rsd_type_name3_, favor_non_native_bonus_ ) );
   } else {
     return NULL;
   }
