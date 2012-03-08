@@ -1,12 +1,11 @@
-cen_hb 2.0
+hbond_sr_bb 2.0
+hbond_lr_bb 2.0
 rama 0.2
 omega 0.2
 rg 2.0
-cen_env_smooth 1.0
+cen_env_smooth 2.0
 cen_pair_smooth 1.0
 cbeta_smooth 1.0
 cenpack_smooth 1.0
 vdw 1.0
-cart_bonded_angle 0.1
-cart_bonded_length 0.1
-cart_bonded_torsion 0.1
+cart_bonded 0.05
