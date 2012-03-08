@@ -38,7 +38,7 @@ sources = {
                 "StarAbinitioMain",
                 "util",
 	],
-	"protocols/nonlocal/frag_picker": [
+	"protocols/frag_picker/nonlocal": [
 		"NonlocalFrags",
 		"NonlocalFragsMain",
 	],

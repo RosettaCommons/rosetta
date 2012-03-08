@@ -169,6 +169,22 @@ ConstantLengthFragSet FragmentCandidate::create_frag_set(utility::vector1<std::p
     }
 } */
 
+/// @brief Prints fragment data, the output can be directly loaded to minirosetta
+void FragmentCandidate::print_fragment_seq(std::ostream& out) {
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	out << " " << get_pdb_id() << " " << get_chain_id();
+	VallResidueOP r1 = get_residue(1);
+	out << " " << I(5,r1->resi()) << " ";
+	for (Size i = 1; i <= fragmentLength_; ++i) {
+		VallResidueOP r = get_residue(i);
+		char aa_upper( toupper(r->aa()) );
+		out << aa_upper;
+	}
+}
+
+
 bool FragmentCandidate::same_chain( FragmentCandidateCOP fr ) {
 	if (get_pdb_id() != fr->get_pdb_id() || get_chain_id() != fr->get_chain_id()) return false;
 	return true;

@@ -95,8 +95,19 @@ public:
 		return storage_.size();
 	}
 
+	/// @brief Inserts candidates from another Collector for a give position in the query
+	inline void insert(Size pos, CandidatesCollectorOP collector) {
+		GrabAllCollector *c = dynamic_cast<GrabAllCollector*> (collector());
+		if (c == 0)
+			utility_exit_with_message("Cant' cast candidates' collector to GrabAllCollector.");
+		for(Size j=1;j<=storage_[pos].size();++j) {
+			ScoredCandidatesVector1 & content = c->get_candidates(pos);
+			for(Size l=1;l<=content.size();l++) storage_[pos].push_back( content[l] );
+		}
+	}
+
 	/// @brief returns all stored fragment candidates that begins at a given position in a query
-	inline virtual ScoredCandidatesVector1 const& get_candidates(Size position_in_query) {
+	inline virtual ScoredCandidatesVector1 & get_candidates(Size position_in_query) {
 		return storage_.at(position_in_query);
 	}
 

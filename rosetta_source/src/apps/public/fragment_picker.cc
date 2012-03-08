@@ -20,7 +20,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <protocols/frag_picker/FragmentPicker.hh>
@@ -69,25 +68,21 @@ void register_options() {
   OPT(frags::keep_all_protocol);
   OPT(frags::bounded_protocol);
   OPT(frags::quota_protocol);
-  OPT(frags::nonlocal_pairs_protocol);
   OPT(frags::picking::selecting_rule);
   OPT(frags::picking::selecting_scorefxn);
   OPT(frags::picking::quota_config_file);
   OPT(frags::picking::query_pos);
-  //	OPT(frags::p_value_selection);
 
   OPT(constraints::cst_file);
 
   OPT(out::file::frag_prefix);
 
-  //	OPT(rdc::correct_NH_length);
-  //	OPT(rdc::reduced_couplings);
-
-  OPT(frags::nonlocal::min_seq_sep);
-  OPT(frags::nonlocal::ca_dist);
-  OPT(frags::nonlocal::min_contacts_per_res);
-  //	OPT(frags::nonlocal::max_ddg_score);
-  //	OPT(frags::nonlocal::max_rmsd_after_relax);
+	OPT(frags::nonlocal_pairs);
+	OPT(frags::nonlocal::min_contacts_per_res);
+	OPT(frags::contacts::min_seq_sep);
+	OPT(frags::contacts::dist_cutoffs);
+	OPT(frags::contacts::centroid_distance_scale_factor);
+	OPT(frags::contacts::type);
 
 }
 
@@ -110,20 +105,14 @@ int main(int argc, char * argv[]) {
   else
     pickIt = new FragmentPicker();
   pickIt->parse_command_line();
-  trace << "After setup; size of a query is: " << pickIt->size_of_query()
-	<< std::endl;
+  trace << "After setup; size of a query is: " << pickIt->size_of_query() << std::endl;
 
   //-------- Trata ta ta, tra ta... (picking fragment candidates)
   trace << "Picking candidates" << std::endl;
 
   if (option[frags::picking::quota_config_file].user() || option[frags::quota_protocol].user() ) {
-    if (option[frags::nonlocal_pairs_protocol].user()) {
-      trace << "Running nonlocal pairs quota protocol" << std::endl;
-      pickIt->nonlocal_pairs_protocol();
-    } else {
-      trace << "Running quota protocol" << std::endl;
-      pickIt->quota_protocol();
-    }
+		trace << "Running quota protocol" << std::endl;
+		pickIt->quota_protocol();
   } else {
     if (option[frags::keep_all_protocol].user()) {
       trace << "Running keep-all protocol" << std::endl;
@@ -133,7 +122,6 @@ int main(int argc, char * argv[]) {
       pickIt->bounded_protocol();
     }
   }
-
   basic::prof_show();
 }
 

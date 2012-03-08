@@ -2201,6 +2201,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>frags option group</dd><br>
 </dl>
 <dl>
+<dt><b>-j</b> \<Integer\><dt>
+<dd>Number of threads to use</dd><br>
+</dl>
+<dl>
 <dt><b>-filter_JC</b> \<Boolean\><dt>
 <dd>Filter J-coupling values in the dynamic range </dd><br>
 <dd>Default: false</dd><br>
@@ -2221,8 +2225,13 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-nonlocal_pairs_protocol</b> \<Boolean\><dt>
-<dd>nonlocal pairs protocol implies the use of a QuotaCollector and a QuotaSelelctor, no matter what user set up by other flags.</dd><br>
+<dt><b>-nonlocal_pairs</b> \<Boolean\><dt>
+<dd>identifies and outputs nonlocal fragment pairs.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-fragment_contacts</b> \<Boolean\><dt>
+<dd>identifies and outputs fragment contacts.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -2242,6 +2251,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-ss_pred</b> \<StringVector\><dt>
 <dd>provides one or more files with secondary structure prediction (PsiPred SS2 format) , to be used by secondary structure scoring and quota selector. Each file name must be followed by a string ID.</dd><br>
+</dl>
+<dl>
+<dt><b>-spine_x</b> \<File\><dt>
+<dd>provides phi and psi torsion angle predictions and solvent accessibility prediction from Spine-X</dd><br>
+</dl>
+<dl>
+<dt><b>-depth</b> \<File\><dt>
+<dd>provides residue depth values from DEPTH</dd><br>
 </dl>
 <dl>
 <dt><b>-denied_pdb</b> \<File\><dt>
@@ -2322,6 +2339,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Writes scores for all fragments into a file</dd><br>
 <dd>Default: ""</dd><br>
 </dl>
+<dl>
+<dt><b>-write_sequence_only</b> \<Boolean\><dt>
+<dd>Fragment picker will output fragment sequences only. This option is for creating structure based sequence profiles using the FragmentCrmsdResDepth score.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>frags:scoring</h2>
 <dl>
@@ -2389,16 +2411,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>non-local fragment pairs will be restricted to the same chain</dd><br>
 </dl>
 <dl>
-<dt><b>-min_seq_sep</b> \<Integer\><dt>
-<dd>minimum sequence separation between non-local fragment pairs</dd><br>
-</dl>
-<dl>
-<dt><b>-ca_dist</b> \<Integer\><dt>
-<dd>CA distance threshold to be considered a contact</dd><br>
-</dl>
-<dl>
-<dt><b>-min_contacts_per_res</b> \<Integer\><dt>
+<dt><b>-min_contacts_per_res</b> \<Real\><dt>
 <dd>minimum contacts per residue in fragment to be considered a fragment pair</dd><br>
+<dd>Default: 1.0</dd><br>
 </dl>
 <dl>
 <dt><b>-max_ddg_score</b> \<Real\><dt>
@@ -2415,6 +2430,47 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-output_idealized</b> \<Boolean\><dt>
 <dd>output an idealized pose which can be used for generating a new VALL</dd><br>
+</dl>
+<dl>
+<dt><b>-output_silent</b> \<Boolean\><dt>
+<dd>output non-local fragment pairs silent file</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+ </li>
+<li><h2>frags:contacts</h2>
+<dl>
+<dt><b>-contacts</b> \<Boolean\><dt>
+<dd>contacts option group</dd><br>
+</dl>
+<dl>
+<dt><b>-min_seq_sep</b> \<Integer\><dt>
+<dd>minimum sequence separation between contacts</dd><br>
+<dd>Default: 12</dd><br>
+</dl>
+<dl>
+<dt><b>-dist_cutoffs</b> \<RealVector\><dt>
+<dd>distance cutoffs to be considered a contact. contact counts will only be saved.</dd><br>
+<dd>Default: ['9.0']</dd><br>
+</dl>
+<dl>
+<dt><b>-centroid_distance_scale_factor</b> \<Real\><dt>
+<dd>Scaling factor for centroid distance cutoffs.</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-type</b> \<StringVector\><dt>
+<dd>Atom considered for contacts</dd><br>
+<dd>Default: utility::vector1<std::string>(1,"ca")</dd><br>
+</dl>
+<dl>
+<dt><b>-neighbors</b> \<Integer\><dt>
+<dd>number of adjacent residues to a contact for finding neighboring contacts</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-output_all</b> \<Boolean\><dt>
+<dd>output all contacts</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>broker</h2>

@@ -47,7 +47,7 @@ public:
 
 	virtual ~QuotaPool() {};
 
-	virtual bool could_be_accepted(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) = 0;
+	virtual bool could_be_accepted(ScoredCandidate) = 0;
 
 
 	/// @brief Says how many fragments (in total) may fit into this pool
@@ -61,6 +61,9 @@ public:
 
 	/// @brief Makes the pool empty by removing all candidates
 	virtual void clear() = 0;
+
+	/// @brief Push a fragment candidate into the pool container
+	virtual void push(ScoredCandidate) = 0;
 
 	/// @brief  Check how many candidates have been already collected for a given position
 	/// @detailed This is a very special case - collector will be used only for a given position.
@@ -87,7 +90,7 @@ public:
 
 	/// @brief provides the score for a candidate that was used to sort a quota pool
 	/// @detailed This base class returns the most recent total score for a fragment
-	inline virtual Real quota_score(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) const {
+	inline virtual Real quota_score(ScoredCandidate candidate) const {
 	    return candidate.second->get_most_recent_total_score();
 	}
 private:

@@ -103,15 +103,12 @@ void QuotaCollector::print_report(std::ostream & output,
 	output<<std::endl;
 }
 
-utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> > const& QuotaCollector::get_candidates(
-			Size position_in_query) {
+ScoredCandidatesVector1 & QuotaCollector::get_candidates(Size position_in_query) {
 
 		frags_for_pos_.clear();
 		for(Size j=1;j<=storage_[position_in_query].size();++j) {
 		    for(Size k=1;k<=storage_[position_in_query][j]->count_candidates();k++) {
-			utility::vector1<std::pair<FragmentCandidateOP,
-			                        scores::FragmentScoreMapOP> > const& content = storage_[position_in_query][j]->get_candidates(0);
+			ScoredCandidatesVector1 & content = storage_[position_in_query][j]->get_candidates(0);
 			for(Size l=1;l<=content.size();l++)
 			    frags_for_pos_.push_back( content[l] );
 		    }

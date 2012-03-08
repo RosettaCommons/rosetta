@@ -72,14 +72,14 @@ ABEGO_SS_Pool::ABEGO_SS_Pool(Size total_size,std::string pool_name,
 //		trABEGO_SS_Pool.Debug<<ss_abego_types_[i].first<<":"<<ss_abego_types_[i].second<<"\n";
 //	    }
 	    trABEGO_SS_Pool.Debug<< ss_abego_types_->show_valid();
-    	    trABEGO_SS_Pool.Debug<<"\nholding "<<this_size_<<" candidates, quota fraction is: "<<fraction<<std::endl;
+			trABEGO_SS_Pool.Debug<<"\nholding "<<this_size_<<" candidates, quota fraction is: "<<fraction<<std::endl;
 	}
 }
 
 
 ABEGO_SS_Pool::~ABEGO_SS_Pool() {}
 
-bool ABEGO_SS_Pool::could_be_accepted(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) {
+bool ABEGO_SS_Pool::could_be_accepted(ScoredCandidate candidate) {
 
 	VallResidueOP r = candidate.first->get_middle_residue();
 	Size abego_bin = torsion2big_bin_id(r->phi(),r->psi(),r->omega());
@@ -88,10 +88,10 @@ bool ABEGO_SS_Pool::could_be_accepted(std::pair<FragmentCandidateOP, scores::Fra
 }
 
 
-bool ABEGO_SS_Pool::add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) {
+bool ABEGO_SS_Pool::add(ScoredCandidate candidate) {
 
 	if( could_be_accepted(candidate) ) {
-	    return storage_->push_back( candidate );
+	    return storage_->push( candidate );
 	}
 	return false;
 }

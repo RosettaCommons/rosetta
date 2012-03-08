@@ -51,8 +51,7 @@ public:
 	void show_availability(std::ostream &) const;
 
 	/// @brief try to insert a given fragment candidate into this pool
-	bool try_fragment(std::pair<
-		    FragmentCandidateOP, scores::FragmentScoreMapOP> & candidate);
+	bool try_fragment(ScoredCandidate & candidate);
 
 	void restart(Size,Size);
 

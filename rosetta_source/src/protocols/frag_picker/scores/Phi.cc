@@ -21,9 +21,6 @@
 #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
-#include <utility/vector1.hh>
-
-
 namespace protocols {
 namespace frag_picker {
 namespace scores {
@@ -51,12 +48,13 @@ bool Phi::score(FragmentCandidateOP f,
 	for (Size i = 1; i <= f->get_length(); i++) {
 		// skip low confidence positions
 		Size qindex = i + f->get_first_index_in_query() - 1;
+		VallResidueOP r = f->get_residue(i);
 		//if (query_phi_prediction_conf_[qindex] < PHI_MIN_CONF) continue;
 		// skip first residue in query and vall chunk
-		if (i == 1 && ( qindex == 1 || f->get_first_index_in_vall() <= 1)) continue;
-		// just the difference
-		VallResidueOP r = f->get_residue(i);
-		totalScore += fabs( query_phi_prediction_[i + f->get_first_index_in_query() - 1] - r->dssp_phi() );
+		if (i == 1 && ( qindex == 1 || f->get_first_index_in_vall() <= 1) ||
+			r->dssp_phi() == 360.0 || query_phi_prediction_[qindex] == 360.0) continue;
+		// difference / 180
+		totalScore += fabs( (query_phi_prediction_[qindex] - r->dssp_phi()) / 180.0 );
 		conf_positions++;
 	}
 	totalScore /= (Real) conf_positions;

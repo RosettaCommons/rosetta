@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/frag_picker/NonlocalFragsMain.cc
+/// @file protocols/frag_picker/nonlocal/NonlocalFragsMain.cc
 /// @author David Kim
 
 /*
@@ -17,8 +17,8 @@
 
 
 // Project headers
-#include <protocols/nonlocal/frag_picker/NonlocalFragsMain.hh>
-#include <protocols/nonlocal/frag_picker/NonlocalFrags.hh>
+#include <protocols/frag_picker/nonlocal/NonlocalFragsMain.hh>
+#include <protocols/frag_picker/nonlocal/NonlocalFrags.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 // Utility headers
@@ -27,7 +27,7 @@
 //#include <basic/options/keys/OptionKeys.hh>
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/keys/frags.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
+#include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
 //#include <utility/vector1.hh>
 
@@ -35,16 +35,13 @@
 
 // C/C++ headers
 #include <iostream>
-
-#include <utility/vector1.hh>
-
 //#include <string>
 
 namespace protocols  {
-namespace nonlocal {
 namespace frag_picker {
+namespace nonlocal {
 
-static basic::Tracer TR("protocols.nonlocal.frag_picker.NonlocalFragsMain");
+static basic::Tracer TR("protocols.frag_picker.nonlocal.NonlocalFragsMain");
 
 using namespace std;
 

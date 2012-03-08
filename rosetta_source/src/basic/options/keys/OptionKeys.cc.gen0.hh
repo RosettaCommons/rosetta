@@ -461,15 +461,19 @@ namespace MonteCarlo { BooleanOptionKey const MonteCarlo( "MonteCarlo" );  }
 namespace MonteCarlo { RealOptionKey const temp_initial( "MonteCarlo:temp_initial" );  }
 namespace MonteCarlo { RealOptionKey const temp_final( "MonteCarlo:temp_final" );  }
 namespace frags { BooleanOptionKey const frags( "frags" );  }
+namespace frags { IntegerOptionKey const j( "frags:j" );  }
 namespace frags { BooleanOptionKey const filter_JC( "frags:filter_JC" );  }
 namespace frags { BooleanOptionKey const bounded_protocol( "frags:bounded_protocol" );  }
 namespace frags { BooleanOptionKey const keep_all_protocol( "frags:keep_all_protocol" );  }
 namespace frags { BooleanOptionKey const quota_protocol( "frags:quota_protocol" );  }
-namespace frags { BooleanOptionKey const nonlocal_pairs_protocol( "frags:nonlocal_pairs_protocol" );  }
+namespace frags { BooleanOptionKey const nonlocal_pairs( "frags:nonlocal_pairs" );  }
+namespace frags { BooleanOptionKey const fragment_contacts( "frags:fragment_contacts" );  }
 namespace frags { BooleanOptionKey const p_value_selection( "frags:p_value_selection" );  }
 namespace frags { IntegerOptionKey const n_frags( "frags:n_frags" );  }
 namespace frags { FileOptionKey const allowed_pdb( "frags:allowed_pdb" );  }
 namespace frags { StringVectorOptionKey const ss_pred( "frags:ss_pred" );  }
+namespace frags { FileOptionKey const spine_x( "frags:spine_x" );  }
+namespace frags { FileOptionKey const depth( "frags:depth" );  }
 namespace frags { FileOptionKey const denied_pdb( "frags:denied_pdb" );  }
 namespace frags { IntegerVectorOptionKey const frag_sizes( "frags:frag_sizes" );  }
 namespace frags { BooleanOptionKey const write_ca_coordinates( "frags:write_ca_coordinates" );  }
@@ -486,6 +490,7 @@ namespace frags { RealOptionKey const seqsim_E( "frags:seqsim_E" );  }
 namespace frags { RealOptionKey const seqsim_L( "frags:seqsim_L" );  }
 namespace frags { RealOptionKey const rama_norm( "frags:rama_norm" );  }
 namespace frags { StringOptionKey const describe_fragments( "frags:describe_fragments" );  }
+namespace frags { BooleanOptionKey const write_sequence_only( "frags:write_sequence_only" );  }
 namespace frags { namespace scoring { BooleanOptionKey const scoring( "frags:scoring" );  } }
 namespace frags { namespace scoring { FileOptionKey const config( "frags:scoring:config" );  } }
 namespace frags { namespace scoring { StringOptionKey const profile_score( "frags:scoring:profile_score" );  } }
@@ -500,13 +505,19 @@ namespace frags { namespace nonlocal { BooleanOptionKey const relax_input( "frag
 namespace frags { namespace nonlocal { BooleanOptionKey const relax_input_with_coordinate_constraints( "frags:nonlocal:relax_input_with_coordinate_constraints" );  } }
 namespace frags { namespace nonlocal { IntegerOptionKey const relax_frags_repeats( "frags:nonlocal:relax_frags_repeats" );  } }
 namespace frags { namespace nonlocal { BooleanOptionKey const single_chain( "frags:nonlocal:single_chain" );  } }
-namespace frags { namespace nonlocal { IntegerOptionKey const min_seq_sep( "frags:nonlocal:min_seq_sep" );  } }
-namespace frags { namespace nonlocal { IntegerOptionKey const ca_dist( "frags:nonlocal:ca_dist" );  } }
-namespace frags { namespace nonlocal { IntegerOptionKey const min_contacts_per_res( "frags:nonlocal:min_contacts_per_res" );  } }
+namespace frags { namespace nonlocal { RealOptionKey const min_contacts_per_res( "frags:nonlocal:min_contacts_per_res" );  } }
 namespace frags { namespace nonlocal { RealOptionKey const max_ddg_score( "frags:nonlocal:max_ddg_score" );  } }
 namespace frags { namespace nonlocal { RealOptionKey const max_rmsd_after_relax( "frags:nonlocal:max_rmsd_after_relax" );  } }
 namespace frags { namespace nonlocal { BooleanOptionKey const output_frags_pdbs( "frags:nonlocal:output_frags_pdbs" );  } }
 namespace frags { namespace nonlocal { BooleanOptionKey const output_idealized( "frags:nonlocal:output_idealized" );  } }
+namespace frags { namespace nonlocal { BooleanOptionKey const output_silent( "frags:nonlocal:output_silent" );  } }
+namespace frags { namespace contacts { BooleanOptionKey const contacts( "frags:contacts" );  } }
+namespace frags { namespace contacts { IntegerOptionKey const min_seq_sep( "frags:contacts:min_seq_sep" );  } }
+namespace frags { namespace contacts { RealVectorOptionKey const dist_cutoffs( "frags:contacts:dist_cutoffs" );  } }
+namespace frags { namespace contacts { RealOptionKey const centroid_distance_scale_factor( "frags:contacts:centroid_distance_scale_factor" );  } }
+namespace frags { namespace contacts { StringVectorOptionKey const type( "frags:contacts:type" );  } }
+namespace frags { namespace contacts { IntegerOptionKey const neighbors( "frags:contacts:neighbors" );  } }
+namespace frags { namespace contacts { BooleanOptionKey const output_all( "frags:contacts:output_all" );  } }
 namespace broker { BooleanOptionKey const broker( "broker" );  }
 namespace broker { FileVectorOptionKey const setup( "broker:setup" );  }
 namespace chunk { BooleanOptionKey const chunk( "chunk" );  }
@@ -589,11 +600,3 @@ namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio
 namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
 namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
 namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
-namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
-namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
-namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
-namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
-namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
-namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
-namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
-namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }

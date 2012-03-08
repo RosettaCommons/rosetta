@@ -71,7 +71,7 @@ public:
 	/// @brief Says how many fragments can still be inserted into this pool
 	virtual Size size_left() { return total_size() - current_size(); }
 
-	virtual bool could_be_accepted(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate);
+	virtual bool could_be_accepted(ScoredCandidate candidate);
 
 	void resize(Size new_size) {
 	    storage_->resize(new_size,new_size*buffer_factor_);
@@ -86,9 +86,14 @@ public:
 	    storage_->resize(this_size_,this_size_*buffer_factor_);
 	}
 
+	/// @brief Push a fragment candidate into the container
+	virtual void push(ScoredCandidate candidate) {
+		storage_->push(candidate);
+	}
+
 // Stuff inherited from CandidatesCollector base
 	/// @brief  Insert a fragment candidate to the container
-	virtual bool add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>);
+	virtual bool add(ScoredCandidate);
 
 	/// @brief removes all candidates from the container
 	void clear() { storage_->clear(); }
@@ -106,15 +111,25 @@ public:
 	/// know the tolal size. Thus it returns always 0
 	Size query_length()  { return 0; }
 
+	/// @brief Inserts candidates from another Collector for a give position in the query
+	/// Candidates may or may not get inserted depending on the candidate
+	void insert(Size pos, CandidatesCollectorOP collector) {
+		ABEGO_SS_Pool *c = dynamic_cast<ABEGO_SS_Pool*> (collector());
+		if (c == 0)
+			utility_exit_with_message("Cant' cast candidates' collector to ABEGO_SS_Pool.");
+		ScoredCandidatesVector1 & content = c->get_candidates(0);
+		for(Size l=1;l<=content.size();l++) storage_->push( content[l] );
+	}
+
 	/// @brief  Returns all the candidate in this pool
-	ScoredCandidatesVector1 const& get_candidates( Size /*position_in_query*/ ) {
+	ScoredCandidatesVector1 & get_candidates( Size /*position_in_query*/ ) {
 		return storage_->expose_data();
 	}
 
 	/// @brief Describes what has been collected
 	void print_report(std::ostream &, scores::FragmentScoreManagerOP);
 
-	virtual Real quota_score(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) const {
+	virtual Real quota_score(ScoredCandidate candidate) const {
 
 	    Real t2(0);
 	    for(Size i=1;i<=components_.size();i++)

@@ -67,6 +67,10 @@ sources = {
                 "windowed_rama",
                 "windowed_rmsd",
 	],
+	"pilot/dekim" : [
+		"score_nonlocal_frags",
+		"convert_to_centroid",
+	],
 	"pilot/delucasl" : [
 		#"roc_test",
 		"roc_optimizer",

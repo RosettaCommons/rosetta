@@ -24,7 +24,10 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-#include <utility/vector1.hh>
+//Auto Headers
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.fwd.hh>
+#include <iostream>
 
 
 namespace protocols {

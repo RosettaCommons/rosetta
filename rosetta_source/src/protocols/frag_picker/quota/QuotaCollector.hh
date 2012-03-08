@@ -60,11 +60,23 @@ public:
 	/// fragment picking machinery.
 	Size query_length() { return storage_.size(); }
 
-	ScoredCandidatesVector1 const& get_candidates(Size position_in_query);
+	ScoredCandidatesVector1 & get_candidates(Size position_in_query);
 
 	/// @brief Describes what has been collected
 	void print_report(std::ostream & output,
 			scores::FragmentScoreManagerOP scoring);
+
+	/// @brief Inserts candidates from another QuotaCollector for a give position in the query
+	/// Candidates may or may not get inserted depending on the candidate
+	void insert(Size pos, CandidatesCollectorOP collector) {
+		QuotaCollector *c = dynamic_cast<QuotaCollector*> (collector());
+		if (c == 0)
+			utility_exit_with_message("Cant' cast candidates' collector to QuotaCollector. Is quota set up correctly?");
+		for(Size j=1;j<=storage_[pos].size();++j) {
+			ScoredCandidatesVector1 & content = c->get_pool(pos, j)->get_candidates(0);
+			for(Size l=1;l<=content.size();l++) storage_[pos][j]->push( content[l] );
+		}
+	}
 
 	/// @brief list all registered pools with their capacity
 	void list_pools(std::ostream & where);

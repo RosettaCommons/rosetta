@@ -7,31 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/frag_picker/Faraggi_SA.hh
-/// @brief  Faraggi maximum SA values from Faraggi et al. Proteins 2008
-/// @author David E Kim
+/// @file   protocols/frag_picker/nonlocal/Contact.fwd.hh
+/// @brief  forward declaration for a Contact
+/// @author David E. Kim (dekim@u.washington.edu)
 
-#ifndef INCLUDED_protocols_frag_picker_Faraggi_SA_hh
-#define INCLUDED_protocols_frag_picker_Faraggi_SA_hh
-
-// type headers
-#include <core/types.hh>
+#ifndef INCLUDED_protocols_frag_picker_Contact_fwd_hh
+#define INCLUDED_protocols_frag_picker_Contact_fwd_hh
 
 // utility headers
-
-// project headers
-
-// C++ headers
-#include <map>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace frag_picker {
 
-core::Real sa_faraggi_max( char aa );
+/// @brief forward declaration for Contact
+class Contact;
+
+typedef utility::pointer::owning_ptr<Contact> ContactOP;
+typedef utility::pointer::owning_ptr<Contact const> ContactCOP;
 
 } // frag_picker
 } // protocols
 
 
-#endif /* INCLUDED_protocols_frag_picker_Faraggi_SA_HH */
-
+#endif /* INCLUDED_protocols_frag_picker_Contact_FWD_HH */

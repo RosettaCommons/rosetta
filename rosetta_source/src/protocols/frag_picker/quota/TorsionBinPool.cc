@@ -38,7 +38,7 @@ void TorsionBinPool::show_availability(std::ostream & where) const {
 	 where << std::setw(10) << get_pool_name()<<" : nH = "<< max_h_ - nh_<<" nE = "<<max_e_ - ne_<<" nL = "<<max_l_ - nl_<<"\n";
 }
 
-bool TorsionBinPool::try_fragment(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> & candidate) {
+bool TorsionBinPool::try_fragment(ScoredCandidate & candidate) {
 
   char ss = candidate.first->get_middle_ss();
   switch(ss) {

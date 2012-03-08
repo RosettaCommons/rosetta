@@ -29,17 +29,21 @@
 #include <basic/Tracer.hh>
 
 
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
+#include <numeric/model_quality/rms.hh>
 
 // utils
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <basic/prof.hh>
 
+//Auto Headers
 #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
-#include <fstream>
+#include <core/io/pdb/pose_io.hh>
+#include <core/pose/Pose.hh>
+#include <utility/io/izstream.hh>
+#include <iostream>
+#include <string>
 
 
 namespace protocols {
@@ -109,15 +113,17 @@ bool FragmentDME::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 		VallChunkOP chunk = f->get_chunk();
 		for (Size i = 1; i<=f->get_length(); ++i) {
 			VallResidueOP ri = chunk->at( f->get_first_index_in_vall() + i - 1 );
+			Size qindexi = i + f->get_first_index_in_query() - 1;
 			for (Size j = i+1; j<=f->get_length(); ++j) {
 				VallResidueOP rj = chunk->at( f->get_first_index_in_vall() + j - 1 );
 				Real xdiff = ri->x()-rj->x();
 				Real ydiff = ri->y()-rj->y();
 				Real zdiff = ri->z()-rj->z();
 				Real dist1 = xdiff*xdiff + ydiff*ydiff + zdiff*zdiff;
-				Real xrdiff = reference_coordinates_(1, i + f->get_first_index_in_query() - 1)-reference_coordinates_(1, j + f->get_first_index_in_query() - 1);
-				Real yrdiff = reference_coordinates_(2, i + f->get_first_index_in_query() - 1)-reference_coordinates_(2, j + f->get_first_index_in_query() - 1);
-				Real zrdiff = reference_coordinates_(3, i + f->get_first_index_in_query() - 1)-reference_coordinates_(3, j + f->get_first_index_in_query() - 1);
+				Size qindexj = j + f->get_first_index_in_query() - 1;
+				Real xrdiff = reference_coordinates_(1, qindexi)-reference_coordinates_(1, qindexj);
+				Real yrdiff = reference_coordinates_(2, qindexi)-reference_coordinates_(2, qindexj);
+				Real zrdiff = reference_coordinates_(3, qindexi)-reference_coordinates_(3, qindexj);
 				Real dist2 = xrdiff*xrdiff + yrdiff*yrdiff + zrdiff*zrdiff;
 				dme += (sqrt(dist1)-sqrt(dist2))*(sqrt(dist1)-sqrt(dist2));
 			}
@@ -160,14 +166,18 @@ bool FragmentDME::cached_score(FragmentCandidateOP fragment,
 		tot_pair = tot_pair+i;
 	if (tot_pair > 0) {
     for (Size i = 1; i<=fragment->get_length(); ++i) {
+			Size qindexi = i + fragment->get_first_index_in_query() - 1;
+			Size vindexi = i + fragment->get_first_index_in_vall() - 1;
       for (Size j = i+1; j<=fragment->get_length(); ++j) {
-				Real xdiff = chunk_coordinates_(1, i + fragment->get_first_index_in_vall() - 1)-chunk_coordinates_(1, j + fragment->get_first_index_in_vall() - 1);
-				Real ydiff = chunk_coordinates_(2, i + fragment->get_first_index_in_vall() - 1)-chunk_coordinates_(2, j + fragment->get_first_index_in_vall() - 1);
-				Real zdiff = chunk_coordinates_(3, i + fragment->get_first_index_in_vall() - 1)-chunk_coordinates_(3, j + fragment->get_first_index_in_vall() - 1);
+				Size qindexj = j + fragment->get_first_index_in_query() - 1;
+				Size vindexj = j + fragment->get_first_index_in_vall() - 1;
+				Real xdiff = chunk_coordinates_(1, vindexi)-chunk_coordinates_(1, vindexj);
+				Real ydiff = chunk_coordinates_(2, vindexi)-chunk_coordinates_(2, vindexj);
+				Real zdiff = chunk_coordinates_(3, vindexi)-chunk_coordinates_(3, vindexj);
         Real dist1 = xdiff*xdiff + ydiff*ydiff + zdiff*zdiff;
-				Real xrdiff = reference_coordinates_(1, i + fragment->get_first_index_in_query() - 1)-reference_coordinates_(1, j + fragment->get_first_index_in_query() - 1);
-				Real yrdiff = reference_coordinates_(2, i + fragment->get_first_index_in_query() - 1)-reference_coordinates_(2, j + fragment->get_first_index_in_query() - 1);
-				Real zrdiff = reference_coordinates_(3, i + fragment->get_first_index_in_query() - 1)-reference_coordinates_(3, j + fragment->get_first_index_in_query() - 1);
+				Real xrdiff = reference_coordinates_(1, qindexi)-reference_coordinates_(1, qindexj);
+				Real yrdiff = reference_coordinates_(2, qindexi)-reference_coordinates_(2, qindexj);
+				Real zrdiff = reference_coordinates_(3, qindexi)-reference_coordinates_(3, qindexj);
         Real dist2 = xrdiff*xrdiff + yrdiff*yrdiff + zrdiff*zrdiff;
         dme += (sqrt(dist1)-sqrt(dist2))*(sqrt(dist1)-sqrt(dist2));
       }

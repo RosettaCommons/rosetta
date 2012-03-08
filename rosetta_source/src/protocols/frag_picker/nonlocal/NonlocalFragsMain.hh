@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/frag_picker/NonlocalFragsMain.hh
+/// @file protocols/frag_picker/nonlocal/NonlocalFragsMain.hh
 /// @author David Kim
 
-#ifndef PROTOCOLS_NONLOCAL_FRAG_PICKER_NONLOCAL_FRAGSMAIN_HH_
-#define PROTOCOLS_NONLOCAL_FRAG_PICKER_NONLOCAL_FRAGSMAIN_HH_
+#ifndef PROTOCOLS_FRAG_PICKER_NONLOCAL_NONLOCALFRAGSMAIN_HH_
+#define PROTOCOLS_FRAG_PICKER_NONLOCAL_NONLOCALFRAGSMAIN_HH_
 
 
 namespace protocols {
-namespace nonlocal {
 namespace frag_picker {
+namespace nonlocal {
 
 void NonlocalFrags_main();
 

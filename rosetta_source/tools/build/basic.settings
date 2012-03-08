@@ -594,7 +594,7 @@ settings = {
             "defines"       : [ "USEMYSQL" ],
         },
     },
-		
+
     "gcc, boost_mpi" : {
         "appends" : {
             "libraries"     : [ "libboost_serialization", "libboost_mpi" ],
@@ -604,6 +604,17 @@ settings = {
         "overrides" : {
             "cc"            : "mpicc",
             "cxx"           : "mpiCC",
+        },
+    },
+
+    "gcc, boost_thread" : {
+        "appends" : {
+            "defines" : [ "MULTI_THREADED" ],
+            "libraries"     : [ "pthread", "boost_thread" ],
+	    "library_path"  : [ "/usr/local/lib", "/opt/boost/lib" ],
+            "flags"         : {
+                "compile"   : [ "pthread" ],
+            },
         },
     },
 

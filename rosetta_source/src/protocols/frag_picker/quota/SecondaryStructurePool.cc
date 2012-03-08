@@ -73,7 +73,7 @@ SecondaryStructurePool::SecondaryStructurePool(Size total_size,std::string pool_
 
 SecondaryStructurePool::~SecondaryStructurePool() {}
 
-bool SecondaryStructurePool::could_be_accepted(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) {
+bool SecondaryStructurePool::could_be_accepted(ScoredCandidate candidate) {
 
 	if( candidate.first->get_middle_ss() == ss_type_ ) return true;
 
@@ -81,10 +81,10 @@ bool SecondaryStructurePool::could_be_accepted(std::pair<FragmentCandidateOP, sc
 }
 
 
-bool SecondaryStructurePool::add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) {
+bool SecondaryStructurePool::add(ScoredCandidate candidate) {
 
 	if( candidate.first->get_middle_ss() == ss_type_ ) {
-	    return  storage_->push_back( candidate );
+	    return  storage_->push( candidate );
 	}
 
 	return false;

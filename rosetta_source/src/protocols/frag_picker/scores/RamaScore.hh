@@ -26,9 +26,6 @@
 
 #include <core/fragment/SecondaryStructure.fwd.hh>
 
-#include <utility/vector1.hh>
-
-
 namespace protocols {
 namespace frag_picker {
 namespace scores {
@@ -57,6 +54,7 @@ public:
 			std::ostream& out);
 
 	std::string & get_prediction_name() { return prediction_name_; }
+
 private:
 	Real minScoreAllowed_;
 	std::string& query_;
@@ -65,10 +63,10 @@ private:
 
 	std::string cached_scores_id_;
 
-	//Sequence Specific Ramachandran Surfaces
-	utility::vector1< utility::vector1< utility::vector1< Real > > > sequence_rama_tables_;
-
 	utility::vector1< utility::vector1< Real > > scores_;
+
+	//Sequence Specific Ramachandran Surfaces (keep only one copy of this so we don't have to keep reading it from the database for each instance)
+	static utility::vector1< utility::vector1< utility::vector1< Real > > > sequence_rama_tables_;
 
 };
 

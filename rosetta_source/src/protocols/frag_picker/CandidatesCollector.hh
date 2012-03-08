@@ -42,6 +42,10 @@ public:
 	/// @brief removes all candidates from the container
 	virtual void clear() = 0;
 
+	/// @brief inserts candidates from another collector
+	/// Candidates may or may not get inserted depending on the candidate and type of storage
+	virtual void insert( Size, CandidatesCollectorOP ) = 0;
+
 	/// @brief  Check how many candidates have been already collected for a given position
 	virtual Size count_candidates(Size) = 0;
 
@@ -53,7 +57,7 @@ public:
 	/// fragment picking machinery.
 	virtual Size query_length()=0;
 
-	virtual ScoredCandidatesVector1 const& get_candidates( Size position_in_query) = 0;
+	virtual ScoredCandidatesVector1 & get_candidates( Size position_in_query) = 0;
 
 	/// @brief Describes what has been collected
 	virtual void print_report( std::ostream & output,

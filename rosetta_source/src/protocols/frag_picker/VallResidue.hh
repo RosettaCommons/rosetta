@@ -33,9 +33,10 @@
 // AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
-// AUTO-REMOVED #include <map>
+#include <iostream>
+#include <map>
 
+//Auto Headers
 #include <core/fragment/BBTorsionSRFD.fwd.hh>
 #include <utility/vector1_bool.hh>
 
@@ -102,6 +103,12 @@ public:
 	char ss() const {
 		return ss_;
 	}
+
+  /// @brief one letter secondary structure STR code
+  inline
+  char ss_str() const {
+    return ss_str_;
+  }
 
 	/// @brief residue sequence number in source
 	inline Size resi() const {
@@ -173,6 +180,11 @@ public:
     return dssp_psi_;
   }
 
+	/// @brief all-atom residue depth
+	inline Real depth() const {
+		return all_atom_residue_depth_;
+	}
+
   /// @brief number of alignments
   inline Size nali() const {
     return nali_;
@@ -203,6 +215,11 @@ public:
 		return profile_;
 	}
 
+	/// @brief per amino acid structure profile data
+	inline utility::vector1<Real> const & profile_struct() const {
+		return profile_struct_;
+	}
+
 	/// @brief secondary chemical shifts
 	inline utility::vector1<Real> const & secondary_shifts() {
 		return sec_shift_data_;
@@ -211,6 +228,11 @@ public:
 	/// @brief per amino acid profile data
 	inline void profile(utility::vector1<Real> const & v) {
 		profile_ = v;
+	}
+
+	/// @brief per amino acid structure profile data
+	inline void profile_struct(utility::vector1<Real> const & v) {
+		profile_struct_ = v;
 	}
 
 	/// @brief stores the 1-based indexing for accessing this residue
@@ -244,6 +266,50 @@ public:
 	inline
 	void ss(char const c) {
 		ss_ = c;
+	}
+
+  /// @brief one letter secondary structure STR code
+  inline
+  void ss_str(char const c) {
+    ss_str_ = c;
+  }
+
+	inline
+	void set_ss_from_str() {
+		switch(ss_str_) {
+			case 'H':
+				ss_ = 'H';
+				break;
+			case 'G':
+				ss_ = 'H';
+				break;
+			case 'I':
+				ss_ = 'H';
+				break;
+			case 'A':
+				ss_ = 'E';
+				break;
+			case 'E':
+				ss_ = 'E';
+				break;
+			case 'M':
+				ss_ = 'E';
+				break;
+			case 'P':
+				ss_ = 'E';
+				break;
+			case 'Q':
+				ss_ = 'E';
+				break;
+			case 'Z':
+				ss_ = 'E';
+				break;
+			case 'B':
+				ss_ = 'E';
+				break;
+			default:
+				ss_ = 'L';
+		}
 	}
 
 	/// @brief residue sequence number in source
@@ -320,6 +386,12 @@ public:
     nali_ = val;
   }
 
+	/// @brief all-atom residue depth
+	inline
+	void depth(Real const depth) {
+		all_atom_residue_depth_ = depth;
+	}
+
 	/// @brief phi backbone torsion in degrees
 	inline
 	void phi(Real const val) {
@@ -367,6 +439,12 @@ public:
 		return profile_.size() > 0;
 	}
 
+	/// @brief has structure profile info?
+	inline
+	bool has_profile_struct() const {
+		return profile_struct_.size() > 0;
+	}
+
 	inline
 	bool has_chemical_shifts() const {
 		return sec_shift_data_.size() > 0;
@@ -383,6 +461,8 @@ public:
 
 	/// @brief fill internal data from string
 	void fill_from_string_version1(String const & line);
+
+	void fill_from_string_residue_depth_version1(String const & line);
 
 	Real distance_squared( VallResidueCOP r );
 
@@ -415,6 +495,8 @@ private:
 	///  input.
 	static String format_string_version1();
 
+	static String format_string_residue_depth_version1();
+
 private:
 	// data
 
@@ -427,8 +509,11 @@ private:
 	/// @brief one letter amino acid code
 	char aa_;
 
-	/// @brief one letter secondary structure code
+	/// @brief one letter secondary structure code (3 letter alphabet)
 	char ss_;
+
+  /// @brief one letter secondary structure code (STR alphabet - Karplus et. al.)
+	char ss_str_;
 
 	/// @brief residue sequence number in source
 	Size resi_;
@@ -490,6 +575,9 @@ private:
 	/// @brief per amino acid profile data
 	utility::vector1<Real> profile_;
 
+	/// @brief per amino acid structure profile data
+	utility::vector1<Real> profile_struct_;
+
 	utility::vector1<Real> sec_shift_data_;
 
 	/// @brief stores the 1-based indexing for accessing this residue
@@ -499,6 +587,8 @@ private:
 	/// @brief stores the 1-based indexing for accessing the VallSection
 	///  this residue is located in via VallLibrary::operator []
 	Size section_index_;
+
+	Real all_atom_residue_depth_;
 
 private:
 	// static data

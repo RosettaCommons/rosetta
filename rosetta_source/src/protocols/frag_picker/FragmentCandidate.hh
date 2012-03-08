@@ -149,6 +149,9 @@ public:
 	/// @brief Prints fragment data, the output can be directly loaded to minirosetta
 	void print_fragment(std::ostream& out);
 
+	/// @brief Prints fragment sequence, used for generating structure based sequence profiles
+	void print_fragment_seq(std::ostream& out);
+
 	inline void set_pool_name(std::string pool_name) {
 	    if(pool_name_!=NULL) delete pool_name_;
 	    pool_name_= new std::string(pool_name);

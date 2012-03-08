@@ -33,9 +33,6 @@
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <utility/vector1.hh>
-
-
 namespace protocols {
 namespace frag_picker {
 namespace scores {
@@ -69,6 +66,9 @@ RamaScore::RamaScore(Size priority, Real lowest_acceptable_value, bool use_lowes
 void
 RamaScore::SetupRamaTables()
 {
+
+	// skip if static data is already set up
+	if (sequence_rama_tables_.size() > 1) return;
 
 	utility::vector1< utility::vector1< utility::vector1< float > > > temp( query_.size(), utility::vector1< utility::vector1< float > > ( 37, utility::vector1< float > ( 37, 0 ) ) );
 
@@ -111,7 +111,7 @@ RamaScore::SetupRamaTables()
 		for( Size s = 1; s <= 3; ++s ) {
 			if ( ss_weight[s] > 0.0 ) {
 				//std::string db_location("/work/rvernon/fragpicking_tests/vall/final/"+ss_types[s]+"_"+aa_type+".counts");
-				std::string db_location("fragpicker_rama_tables/"+ss_types[s]+"_"+aa_type+".counts");
+				std::string db_location("sampling/fragpicker_rama_tables/"+ss_types[s]+"_"+aa_type+".counts");
 				utility::io::izstream table_file;
 				basic::database::open(table_file, db_location);
 				//table_file.open(db_location);
@@ -235,11 +235,11 @@ bool RamaScore::score(FragmentCandidateOP fragment,FragmentScoreMapOP scores) {
 bool RamaScore::cached_score(FragmentCandidateOP fragment,
 		FragmentScoreMapOP scores) {
 
-/*
+
 	std::string & tmp = fragment->get_chunk()->chunk_key();
 	if (tmp.compare(cached_scores_id_) != 0)
 		do_caching(fragment->get_chunk());
-*/
+
 
 	Real totalScore = 0.0;
 
@@ -276,6 +276,9 @@ bool RamaScore::describe_score(FragmentCandidateOP,
 															 //
 															 //    return true;
 	//}
+
+
+utility::vector1< utility::vector1< utility::vector1< Real > > > RamaScore::sequence_rama_tables_;
 
 } // scores
 } // frag_picker

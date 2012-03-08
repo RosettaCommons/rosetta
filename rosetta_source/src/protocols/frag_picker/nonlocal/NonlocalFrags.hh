@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/frag_picker/NonlocalFrags.hh
+/// @file protocols/frag_picker/nonlocal/NonlocalFrags.hh
 /// @author David Kim (dekim@u.washington.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_FRAG_PICKER_FRAGS_NONLOCALFRAGS_HH_
-#define PROTOCOLS_NONLOCAL_FRAG_PICKER_FRAGS_NONLOCALFRAGS_HH_
+#ifndef PROTOCOLS_FRAG_PICKER_NONLOCAL_FRAGS_NONLOCALFRAGS_HH_
+#define PROTOCOLS_FRAG_PICKER_NONLOCAL_FRAGS_NONLOCALFRAGS_HH_
 
 // Unit header
-#include <protocols/nonlocal/frag_picker/NonlocalFrags.fwd.hh>
+#include <protocols/frag_picker/nonlocal/NonlocalFrags.fwd.hh>
 
 // C/C++ headers
 #include <string>
@@ -30,8 +30,8 @@
 #include <utility/vector1.hh>
 
 namespace protocols {
-namespace nonlocal {
 namespace frag_picker {
+namespace nonlocal {
 
 
 class NonlocalFrags : public protocols::moves::Mover {
@@ -79,7 +79,7 @@ private:
 	utility::vector1<Size> frag_sizes_;
 
 	Size min_seq_sep_;
-	Size ca_dist_squared_;
+	core::Real ca_dist_squared_;
   Size min_contacts_per_res_;
 	core::Real max_rmsd_after_relax_;
 	core::Real max_ddg_score_;

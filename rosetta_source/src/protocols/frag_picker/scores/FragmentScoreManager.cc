@@ -55,9 +55,13 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/scores/FragmentDME.hh>
 #include <protocols/frag_picker/scores/HydrophobicitySimilarity.hh>
+#include <protocols/frag_picker/scores/HydrophobicityProfileSimilarity.hh>
 #include <protocols/frag_picker/scores/SolventAccessibility.hh>
 #include <protocols/frag_picker/scores/Phi.hh>
 #include <protocols/frag_picker/scores/Psi.hh>
+#include <protocols/frag_picker/scores/ProfileScoreStructL1.hh>
+#include <protocols/frag_picker/scores/FragmentCrmsdResDepth.hh>
+
 
 #include <utility/io/izstream.hh>
 
@@ -314,9 +318,13 @@ FragmentScoreManager::FragmentScoreManager() {
 	register_score_maker(new MakeConstScore());
 	register_score_maker(new MakeFragmentDME());
 	register_score_maker(new MakeHydrophobicitySimilarity());
+	register_score_maker(new MakeHydrophobicityProfileSimilarity());
 	register_score_maker(new MakeSolventAccessibility());
 	register_score_maker(new MakePhi());
 	register_score_maker(new MakePsi());
+	register_score_maker(new MakeProfileScoreStructL1());
+	register_score_maker(new MakeFragmentCrmsdResDepth());
+
 }
 
 void FragmentScoreManager::create_scoring_method(

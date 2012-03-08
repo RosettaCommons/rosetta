@@ -21,9 +21,6 @@
 #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
-#include <utility/vector1.hh>
-
-
 namespace protocols {
 namespace frag_picker {
 namespace scores {
@@ -51,14 +48,13 @@ bool Psi::score(FragmentCandidateOP f,
 	for (Size i = 1; i <= f->get_length(); i++) {
 		// skip low confidence positions
 		Size qindex = i + f->get_first_index_in_query() - 1;
-//		if (query_psi_prediction_conf_[qindex] < PSI_MIN_CONF) continue;
-		// skip last residue in query
-		if (qindex >= query_len_) continue;
-		// skip last residue in vall chunk
-		if (i == f->get_length() && f->get_first_index_in_vall() + i - 1 >=  f->get_chunk()->size()) continue;
-		// just the difference
 		VallResidueOP r = f->get_residue(i);
-		totalScore += fabs( query_psi_prediction_[i + f->get_first_index_in_query() - 1] - r->dssp_psi() );
+//		if (query_psi_prediction_conf_[qindex] < PSI_MIN_CONF) continue;
+		// skip last residue in query and last residue in vall chunk
+		if (qindex >= query_len_ || (i == f->get_length() && qindex >=  f->get_chunk()->size()) ||
+				r->dssp_psi() == 360.0 || query_psi_prediction_[qindex] == 360.0) continue;
+		// difference / 180
+		totalScore += fabs( (query_psi_prediction_[qindex] - r->dssp_psi())/ 180.0 );
 		conf_positions++;
 	}
 	totalScore /= (Real) conf_positions;

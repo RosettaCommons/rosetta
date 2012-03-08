@@ -14,6 +14,7 @@
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
+#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
@@ -38,6 +39,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/scoring/ResidualDipolarCoupling.hh>
+#include <core/conformation/Conformation.hh>
 
 // Project headers
 #include <core/scoring/rms_util.hh>
@@ -45,7 +47,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
+#include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
 // Utility headers
@@ -118,9 +120,9 @@ MyScoreMover::MyScoreMover():
 	// get sfxn_ and add constraints if defined
 	sfxn_ = scoring::getScoreFunction();
 
-	if ( option[ frags::nonlocal::native ].user() ) {
+	if ( option[ in::file::native ].user() ) {
 		// read native structure
-		import_pose::pose_from_pdb( native_, option[ basic::options::OptionKeys::frags::nonlocal::native ] );
+		import_pose::pose_from_pdb( native_, option[ basic::options::OptionKeys::in::file::native ] );
 		has_native_ = true;
 	}
 

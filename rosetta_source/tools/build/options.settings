@@ -113,6 +113,9 @@ options = {
 
         # Build boost MPI and serialization dependent code (requires these libraries to be installed in /usr/local/lib)
         "boost_mpi",
+
+	# Build with Boost thread library
+	"boost_thread",
     ],
 
 

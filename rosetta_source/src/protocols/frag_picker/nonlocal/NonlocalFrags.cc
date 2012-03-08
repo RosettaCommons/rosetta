@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/frag_picker/NonlocalFrags.cc
+/// @file protocols/frag_picker/nonlocal/NonlocalFrags.cc
 /// @author David Kim (dekim@u.washington.edu)
 
 #ifdef BOINC
@@ -16,7 +16,7 @@
 
 
 // Unit headers
-#include <protocols/nonlocal/frag_picker/NonlocalFrags.hh>
+#include <protocols/frag_picker/nonlocal/NonlocalFrags.hh>
 
 // C/C++ headers
 
@@ -27,14 +27,17 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
+#include <protocols/simple_filters/DdgFilter.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -53,7 +56,7 @@
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
@@ -62,22 +65,15 @@
 #include <sstream>
 #include <fstream>
 
-#include <core/kinematics/MoveMap.hh>
-#include <utility/vector1.hh>
-
-//Auto Headers
-#include <core/conformation/Conformation.hh>
-#include <protocols/simple_filters/DdgFilter.hh>
-
 static numeric::random::RandomGenerator RG(10420);  // Magic Number
 
 namespace protocols {
-namespace nonlocal {
 namespace frag_picker {
+namespace nonlocal {
 
 using namespace core;
 
-static basic::Tracer TR("protocols.nonlocal.frag_picker.NonlocalFrags");
+static basic::Tracer TR("protocols.frag_picker.nonlocal.NonlocalFrags");
 
 void NonlocalFrags::register_options() {
   using namespace basic::options;
@@ -92,9 +88,9 @@ void NonlocalFrags::register_options() {
 	option.add_relevant( frags::nonlocal::relax_input );
 	option.add_relevant( frags::nonlocal::relax_input_with_coordinate_constraints );
 	option.add_relevant( frags::nonlocal::relax_frags_repeats );
+	option.add_relevant( frags::contacts::min_seq_sep );
+	option.add_relevant( frags::contacts::dist_cutoffs );
 	// non-local contact definition options
-	option.add_relevant( frags::nonlocal::min_seq_sep );
-	option.add_relevant( frags::nonlocal::ca_dist );
 	option.add_relevant( frags::nonlocal::min_contacts_per_res );
 	option.add_relevant( frags::nonlocal::max_rmsd_after_relax );
 
@@ -112,7 +108,7 @@ NonlocalFrags::NonlocalFrags() :
 	relax_input_with_coordinate_constraints_( false ),
 	relax_frags_repeats_( 1 ),
 	min_seq_sep_( 12 ),
-	ca_dist_squared_( 100 ),
+	ca_dist_squared_( 100.0 ),
 	min_contacts_per_res_( 1 ),
 	max_rmsd_after_relax_( 1.5 ),
 	max_ddg_score_( -4.0 ),
@@ -142,15 +138,18 @@ void NonlocalFrags::initialize() {
 		relax_frags_repeats_ = option[ frags::nonlocal::relax_frags_repeats ]();
 	}
 	// non-local contact definition
-	if (option[ frags::nonlocal::min_seq_sep ].user()) {
-		min_seq_sep_ = option[ frags::nonlocal::min_seq_sep ]();
+	if (option[ frags::contacts::min_seq_sep ].user()) {
+		min_seq_sep_ = option[ frags::contacts::min_seq_sep ]();
 	}
-	if (option[ frags::nonlocal::ca_dist ].user()) {
-		Size min_dist = option[ frags::nonlocal::ca_dist ]();
+	if (option[ frags::contacts::dist_cutoffs ].user()) {
+		utility::vector1<Real> dist_cutoffs = option[ frags::contacts::dist_cutoffs ]();
+		if (dist_cutoffs.size() != 1)
+			utility_exit_with_message( "Error: only one frags::contacts::dist_cutoffs value is allowed!" );
+		Real min_dist = dist_cutoffs[1];
 		ca_dist_squared_ = min_dist*min_dist;
 	}
 	if (option[ frags::nonlocal::min_contacts_per_res ].user()) {
-		min_contacts_per_res_ = option[ frags::nonlocal::min_contacts_per_res ]();
+		min_contacts_per_res_ = (Size)option[ frags::nonlocal::min_contacts_per_res ]();
 	}
 	// for valid interacting pair
 	if (option[ frags::nonlocal::max_ddg_score ].user()) {
@@ -266,7 +265,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 	// clear the evaluators or else different input pdbs may cause a runtime error
 	// when doing rmsd evaluations
 	jd->job_outputter()->clear_evaluators();
-	jd->job_outputter()->add_evaluation( new protocols::simple_filters::RmsdEvaluator( new pose::Pose( unmodified_pose ), "" ));
+	jd->job_outputter()->add_evaluation( new simple_filters::RmsdEvaluator( new pose::Pose( unmodified_pose ), "" ));
 
 	//scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
 	scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();

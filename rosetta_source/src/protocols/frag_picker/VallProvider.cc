@@ -41,8 +41,8 @@
 #include <sstream>
 #include <string>
 
+//Auto Headers
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
 
 
 // Tracer instance for this file
@@ -191,12 +191,14 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 
 	//Decides if vall is in the old nnmake format
 	//if not it tries to use the nnmake + chemical shift's format
-	if (line.length() < 240)
-		firstRes->fill_from_string(line);
-	else if (line.length() < 280)
+	if (line.length() > 300)
 		firstRes->fill_from_string_version1(line);
-	else
+	else if (line.length() > 240)
 		firstRes->fill_from_string_cs(line);
+	else if (line.length() > 110)
+		firstRes->fill_from_string(line);
+	else
+		firstRes->fill_from_string_residue_depth_version1(line);
 
 	current_section->push_back(firstRes);
 	prior_id = firstRes->id();
@@ -213,12 +215,14 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 
 		VallResidueOP current_residue = new VallResidue();
 
-		if (line.length() < 240)
-			current_residue->fill_from_string(line);
-		else if (line.length() < 280)
+		if (line.length() > 300)
 			current_residue->fill_from_string_version1(line);
-		else
+		else if (line.length() > 240)
 			current_residue->fill_from_string_cs(line);
+		else if (line.length() > 110)
+			current_residue->fill_from_string(line);
+		else
+			current_residue->fill_from_string_residue_depth_version1(line);
 
 		current_residue->key( n_lines + last_key );
 		// check for start of new continuous stretch

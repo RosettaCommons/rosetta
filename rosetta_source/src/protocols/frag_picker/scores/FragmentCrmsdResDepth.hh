@@ -7,17 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/frag_picker/scores/FragmentCrmsd.hh
-/// @brief  Object that scores a fragment by its crmsd to the native
-/// @author Dominik Gront (dgront@chem.uw.edu.pl)
+/// @file   protocols/frag_picker/scores/FragmentCrmsdResDepth.hh
+/// @brief  Object that scores a fragment by its crmsd and residue depth to the native
+/// @author David E Kim
 
-#ifndef INCLUDED_protocols_frag_picker_scores_FragmentCrmsd_hh
-#define INCLUDED_protocols_frag_picker_scores_FragmentCrmsd_hh
+#ifndef INCLUDED_protocols_frag_picker_scores_FragmentCrmsdResDepth_hh
+#define INCLUDED_protocols_frag_picker_scores_FragmentCrmsdResDepth_hh
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
+#include <protocols/frag_picker/FragmentPicker.hh>
 
 // mini
 // AUTO-REMOVED #include <protocols/toolbox/superimpose.hh>
@@ -42,18 +43,18 @@ using namespace ObjexxFCL;
 typedef utility::vector1<utility::vector1<Real> > Matrix;
 
 /// @brief  scores a fragment by its crmsd to the given reference structure
-class FragmentCrmsd: public CachingScoringMethod {
+class FragmentCrmsdResDepth: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a crmsd-based scoring function.
 	/// @detailed fragments will be compared to a given pose, which should have the same number of residues a the query sequence
-	FragmentCrmsd(Size, Real, bool, core::pose::PoseOP);
+	FragmentCrmsdResDepth(Size, Real, bool, core::pose::PoseOP, utility::vector1<core::Real> & query_residue_depth);
 
 	/// @brief  creates a crmsd-based scoring function.
 	/// @detailed fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
-	FragmentCrmsd(Size, Real, bool, utility::vector1< utility::vector1<Real> >);
+	FragmentCrmsdResDepth(Size, Real, bool, utility::vector1< utility::vector1<Real> >,  utility::vector1<core::Real> & query_residue_depth);
 
-	~FragmentCrmsd();
+	~FragmentCrmsdResDepth();
 
 	void do_caching(VallChunkOP);
 	void clean_up();
@@ -69,16 +70,17 @@ private:
 	FArray2D_double fragment_coordinates_;
 	FArray2D_double frag_pos_coordinates_;
 	FArray1D_double weights_;
+	utility::vector1<core::Real> query_residue_depth_;
 
 	void fill_CA_coords(core::pose::Pose const &, FArray2_double &, Size);
 };
 
-/// @brief  Maker class that produces a new FragmentCrmsd object
-class MakeFragmentCrmsd: public MakeFragmentScoringMethod {
+/// @brief  Maker class that produces a new FragmentCrmsdResDepth object
+class MakeFragmentCrmsdResDepth: public MakeFragmentScoringMethod {
 public:
 
-	MakeFragmentCrmsd() :
-		MakeFragmentScoringMethod("FragmentCrmsd") {
+	MakeFragmentCrmsdResDepth() :
+		MakeFragmentScoringMethod("FragmentCrmsdResDepth") {
 	}
 
 	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
@@ -88,4 +90,4 @@ public:
 } // frag_picker
 } // protocols
 
-#endif // INCLUDED_protocols_frag_picker_scores_FragmentCrmsd_HH
+#endif // INCLUDED_protocols_frag_picker_scores_FragmentCrmsdResDepth_HH

@@ -36,7 +36,7 @@
 #include <protocols/ddg/ddG_main.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
-#include <protocols/nonlocal/frag_picker/NonlocalFragsMain.hh>
+#include <protocols/frag_picker/nonlocal/NonlocalFragsMain.hh>
 #include <protocols/star/StarAbinitioMain.hh>
 
 #ifdef BOINC
@@ -231,7 +231,7 @@ main( int argc, char * argv [] )
 		} else if ( option[run::protocol]() == "canonical_sampling") {
 			protocols::canonical_sampling::canonical_sampling_main();
 		} else if ( option[run::protocol]() == "nonlocal_frags") {
-			protocols::nonlocal::frag_picker::NonlocalFrags_main();
+			protocols::frag_picker::nonlocal::NonlocalFrags_main();
 		}
 		else {
 			utility_exit_with_message(

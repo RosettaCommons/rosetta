@@ -466,15 +466,19 @@ option.add( basic::options::OptionKeys::MonteCarlo::MonteCarlo, "MonteCarlo opti
 option.add( basic::options::OptionKeys::MonteCarlo::temp_initial, "initial temperature for Monte Carlo considerations" ).lower(0.001).def(2);
 option.add( basic::options::OptionKeys::MonteCarlo::temp_final, "final temperature for Monte Carlo considerations" ).lower(0.001).def(0.6);
 option.add( basic::options::OptionKeys::frags::frags, "frags option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::frags::j, "Number of threads to use" );
 option.add( basic::options::OptionKeys::frags::filter_JC, "Filter J-coupling values in the dynamic range " ).def(false);
 option.add( basic::options::OptionKeys::frags::bounded_protocol, "makes the picker use bounded protocol to select fragments. This is teh default behavior" ).def(true);
 option.add( basic::options::OptionKeys::frags::keep_all_protocol, "makes the picker use keep-all protocol to select fragments. The default is bounded protocol" ).def(false);
 option.add( basic::options::OptionKeys::frags::quota_protocol, "quota protocol implies the use of a QuotaCollector and a QuotaSelelctor, no matter what user set up by other flags." ).def(false);
-option.add( basic::options::OptionKeys::frags::nonlocal_pairs_protocol, "nonlocal pairs protocol implies the use of a QuotaCollector and a QuotaSelelctor, no matter what user set up by other flags." ).def(false);
+option.add( basic::options::OptionKeys::frags::nonlocal_pairs, "identifies and outputs nonlocal fragment pairs." ).def(false);
+option.add( basic::options::OptionKeys::frags::fragment_contacts, "identifies and outputs fragment contacts." ).def(false);
 option.add( basic::options::OptionKeys::frags::p_value_selection, "the final fragment selection will b based on p-value rather than on a total score for the given fragment" ).def(false);
 option.add( basic::options::OptionKeys::frags::n_frags, "number of fragments per position" ).def(200);
 option.add( basic::options::OptionKeys::frags::allowed_pdb, "provides a text file with allowed PDB chains (five characters per entry, e.g.'4mbA'). Only these PDB chains from Vall will be used to pick fragments" );
 option.add( basic::options::OptionKeys::frags::ss_pred, "provides one or more files with secondary structure prediction (PsiPred SS2 format) , to be used by secondary structure scoring and quota selector. Each file name must be followed by a string ID." );
+option.add( basic::options::OptionKeys::frags::spine_x, "provides phi and psi torsion angle predictions and solvent accessibility prediction from Spine-X" );
+option.add( basic::options::OptionKeys::frags::depth, "provides residue depth values from DEPTH" );
 option.add( basic::options::OptionKeys::frags::denied_pdb, "provides a text file with denied PDB chains (five characters per entry, e.g.'4mbA'). This way close homologs may be excluded from fragment picking." );
 option.add( basic::options::OptionKeys::frags::frag_sizes, "sizes of fragments to pick from the vall" ).def(9).def(3).def(1);
 option.add( basic::options::OptionKeys::frags::write_ca_coordinates, "Fragment picker will store CA Cartesian coordinates in output fragment files. By default only torsion coordinates are stored." ).def(false);
@@ -491,6 +495,7 @@ option.add( basic::options::OptionKeys::frags::seqsim_E, "Secondary structure ty
 option.add( basic::options::OptionKeys::frags::seqsim_L, "Secondary structure type prediction multiplier, for use in fragment picking" ).def(1.0);
 option.add( basic::options::OptionKeys::frags::rama_norm, "Used to multiply rama table values after normalization, default (0.0) means use raw counts (unnormalized)" ).def(0.0);
 option.add( basic::options::OptionKeys::frags::describe_fragments, "Writes scores for all fragments into a file" ).def("");
+option.add( basic::options::OptionKeys::frags::write_sequence_only, "Fragment picker will output fragment sequences only. This option is for creating structure based sequence profiles using the FragmentCrmsdResDepth score." ).def(false);
 option.add( basic::options::OptionKeys::frags::scoring::scoring, "scoring option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::frags::scoring::config, "scoring scheme used for picking fragments" ).def("");
 option.add( basic::options::OptionKeys::frags::scoring::profile_score, "scoring scheme used for profile-profile comparison" ).def("L1");
@@ -505,13 +510,19 @@ option.add( basic::options::OptionKeys::frags::nonlocal::relax_input, "relax inp
 option.add( basic::options::OptionKeys::frags::nonlocal::relax_input_with_coordinate_constraints, "relax input with coordinate constraints before running protocol" );
 option.add( basic::options::OptionKeys::frags::nonlocal::relax_frags_repeats, "relax repeats for relaxing fragment pair" );
 option.add( basic::options::OptionKeys::frags::nonlocal::single_chain, "non-local fragment pairs will be restricted to the same chain" );
-option.add( basic::options::OptionKeys::frags::nonlocal::min_seq_sep, "minimum sequence separation between non-local fragment pairs" );
-option.add( basic::options::OptionKeys::frags::nonlocal::ca_dist, "CA distance threshold to be considered a contact" );
-option.add( basic::options::OptionKeys::frags::nonlocal::min_contacts_per_res, "minimum contacts per residue in fragment to be considered a fragment pair" );
+option.add( basic::options::OptionKeys::frags::nonlocal::min_contacts_per_res, "minimum contacts per residue in fragment to be considered a fragment pair" ).def(1.0);
 option.add( basic::options::OptionKeys::frags::nonlocal::max_ddg_score, "maximum DDG score of fragment pair" );
 option.add( basic::options::OptionKeys::frags::nonlocal::max_rmsd_after_relax, "maximum rmsd of fragment pair after relax" );
 option.add( basic::options::OptionKeys::frags::nonlocal::output_frags_pdbs, "output non-local fragment pair PDBs" );
 option.add( basic::options::OptionKeys::frags::nonlocal::output_idealized, "output an idealized pose which can be used for generating a new VALL" );
+option.add( basic::options::OptionKeys::frags::nonlocal::output_silent, "output non-local fragment pairs silent file" ).def(true);
+option.add( basic::options::OptionKeys::frags::contacts::contacts, "contacts option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::frags::contacts::min_seq_sep, "minimum sequence separation between contacts" ).def(12);
+option.add( basic::options::OptionKeys::frags::contacts::dist_cutoffs, "distance cutoffs to be considered a contact. contact counts will only be saved." ).def(9.0);
+option.add( basic::options::OptionKeys::frags::contacts::centroid_distance_scale_factor, "Scaling factor for centroid distance cutoffs." ).def(1.0);
+option.add( basic::options::OptionKeys::frags::contacts::type, "Atom considered for contacts" ).legal("ca").legal("cb").legal("cen").def(utility::vector1<std::string>(1,"ca"));
+option.add( basic::options::OptionKeys::frags::contacts::neighbors, "number of adjacent residues to a contact for finding neighboring contacts" ).def(0);
+option.add( basic::options::OptionKeys::frags::contacts::output_all, "output all contacts" ).def(false);
 option.add( basic::options::OptionKeys::broker::broker, "broker option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::broker::setup, "setup file for topology-broker" ).def("NO_SETUP_FILE");
 option.add( basic::options::OptionKeys::chunk::chunk, "chunk option group" ).legal(true).def(true);
@@ -594,7 +605,9 @@ option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" 
 option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
 option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
-option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
@@ -602,9 +615,7 @@ option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local s
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
@@ -1198,14 +1209,14 @@ option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(10
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
+option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_chunks, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No description" ).def(300);
@@ -1802,11 +1813,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa,
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");

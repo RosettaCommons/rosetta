@@ -7,24 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/frag_picker/NonlocalFrags.fwd.hh
+/// @file protocols/frag_picker/SidechainContactDistCutoff.fwd.hh
 /// @author David Kim (dekim@u.washington.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_FRAG_PICKER_NONLOCALFRAGS_FWD_HH_
-#define PROTOCOLS_NONLOCAL_FRAG_PICKER_NONLOCALFRAGS_FWD_HH_
+#ifndef PROTOCOLS_FRAG_PICKER_SIDECHAIN_CONTACT_DIST_CUTOFF_FWD_HH_
+#define PROTOCOLS_FRAG_PICKER_SIDECHAIN_CONTACT_DIST_CUTOFF_FWD_HH_
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace nonlocal {
 namespace frag_picker {
 
-class NonlocalFrags;
-typedef utility::pointer::owning_ptr<NonlocalFrags> NonlocalFragsOP;
-typedef utility::pointer::owning_ptr<NonlocalFrags const> NonlocalFragsCOP;
+class SidechainContactDistCutoff;
+typedef utility::pointer::owning_ptr<SidechainContactDistCutoff> SidechainContactDistCutoffOP;
+typedef utility::pointer::owning_ptr<SidechainContactDistCutoff const> SidechainContactDistCutoffCOP;
 
-}  // namespace nonlocal
 }  // namespace frag_picker
 }  // namespace protocols
 
-#endif  // PROTOCOLS_FRAG_PICKER_NONLOCAL_NONLOCALFRAGS_FWD_HH_
+#endif  // PROTOCOLS_FRAG_PICKER_SIDECHAIN_CONTACT_DIST_CUTOFF_FWD_HH_

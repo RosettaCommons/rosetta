@@ -77,7 +77,7 @@ public:
 	/// @brief  Insert a fragment candidate to the container
 	inline bool add( ScoredCandidate new_canditate) {
 
-		return storage_[new_canditate.first->get_first_index_in_query()].push_back(
+		return storage_[new_canditate.first->get_first_index_in_query()].push(
 				new_canditate);
 	}
 
@@ -102,8 +102,18 @@ public:
 		return storage_.size();
 	}
 
+	/// @brief Inserts candidates from another Collector for a give position in the query
+	/// Candidates may or may not get inserted depending on the candidate
+	void insert(Size pos, CandidatesCollectorOP collector) {
+		BoundedCollector *c = dynamic_cast<BoundedCollector*> (collector());
+		if (c == 0)
+			utility_exit_with_message("Cant' cast candidates' collector to BoundedCollector.");
+		ScoredCandidatesVector1 & content = c->get_candidates(pos);
+		for(Size l=1;l<=content.size();l++) storage_.at(pos).push( content[l] );
+	}
+
 	/// @brief returns all stored fragment candidates that begins at a given position in a query
-	inline 	ScoredCandidatesVector1 const& get_candidates( Size position_in_query ) {
+	inline 	ScoredCandidatesVector1 & get_candidates( Size position_in_query ) {
 		return storage_.at(position_in_query).expose_data();
 	}
 
