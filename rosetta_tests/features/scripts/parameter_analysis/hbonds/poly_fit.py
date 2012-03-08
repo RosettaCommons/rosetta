@@ -564,7 +564,14 @@ class PolyFit:
                 print "Fitting without constraints"
                 coefs = self.fit_polynomials_using_cvxopt(xs, ys, d)
             else:
-                coefs = self.fit_polynomials_constrained_using_cvxopt(xs, ys, d, self.minima)
+                minima = [ None, self.minima[1] ]
+                if self.fit_normal :
+                    minima[0] = self.minima[0]
+                elif self.fit_deg_as_cos :
+                    minima[0] = [ math.cos( math.pi - x*math.pi/180 ) for x in self.minima[0] ]
+                elif self.fit_deg_as_rad :
+                    minima[0] = [ x*math.pi/180 for x in self.minima[0] ]
+                coefs = self.fit_polynomials_constrained_using_cvxopt(xs, ys, d, minima)
 
             self.polynomial_coefficients[d] = coefs
 
@@ -672,11 +679,13 @@ class PolyFit:
         self.fit_normal = False
         self.fit_deg_as_rad = True
         self.fit_deg_as_cos = False
+        self.main.title("Polynomial Fitting -- plotting degrees, fitting in radians")
 
     def set_fit_deg_as_cos( self ) :
         self.fit_normal = False
         self.fit_deg_as_rad = False
         self.fit_deg_as_cos = True
+        self.main.title("Polynomial Fitting -- plotting degrees, fitting in cosine of the exterior angle")
 
 if __name__ == "__main__" :
     with blargs.Parser(locals()) as p:
