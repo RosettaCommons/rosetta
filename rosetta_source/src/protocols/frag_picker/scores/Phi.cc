@@ -51,7 +51,7 @@ bool Phi::score(FragmentCandidateOP f,
 		VallResidueOP r = f->get_residue(i);
 		//if (query_phi_prediction_conf_[qindex] < PHI_MIN_CONF) continue;
 		// skip first residue in query and vall chunk
-		if (i == 1 && ( qindex == 1 || f->get_first_index_in_vall() <= 1) ||
+		if ((i == 1 && ( qindex == 1 || f->get_first_index_in_vall() <= 1)) ||
 			r->dssp_phi() == 360.0 || query_phi_prediction_[qindex] == 360.0) continue;
 		// difference / 180
 		totalScore += fabs( (query_phi_prediction_[qindex] - r->dssp_phi()) / 180.0 );

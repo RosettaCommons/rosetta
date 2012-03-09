@@ -37,8 +37,6 @@ namespace scores {
 class HydrophobicityProfileSimilarity: public CachingScoringMethod {
 public:
 
-	static const Real MIN_HYDROPHOBIC_PROBABILITY = 0.75;
-
 	/// @brief  creates a hydrophobicity-based scoring function.
 	HydrophobicityProfileSimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
 				std::string & fastaQuerySequence, sequence::SequenceProfileOP query_profile) :

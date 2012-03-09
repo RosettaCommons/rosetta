@@ -44,6 +44,9 @@ bool HydrophobicityProfileSimilarity::cached_score(FragmentCandidateOP fragment,
 
 bool HydrophobicityProfileSimilarity::score(FragmentCandidateOP f,
 		FragmentScoreMapOP empty_map) {
+
+	static const Real MIN_HYDROPHOBIC_PROBABILITY(0.75);
+
 	Real totalScore = 0;
   VallChunkOP chunk = f->get_chunk();
 	for (Size i = 1; i <= f->get_length(); i++) {
