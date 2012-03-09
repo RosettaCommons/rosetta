@@ -845,11 +845,11 @@ SilentStruct::print_parent_remarks( std::ostream & out ) const {
 	for ( c_iter it = parent_remarks_map_.begin(), end = parent_remarks_map_.end(); it != end; ++it) {
 		out << remark << ' ' << it->first << ' ' << it->second << std::endl;
 	}
-} 
+}
 
 ///////////////////////////////////////////////////////////////////////////
 
-std::string 
+std::string
 SilentStruct::get_parent_remark( std::string const & name ) const {
 
 	if(parent_remarks_map_.count(name)==0) utility_exit_with_message( "The key (" + name +") doesn't exist in the parent_remarks_map_!");
@@ -857,7 +857,7 @@ SilentStruct::get_parent_remark( std::string const & name ) const {
 	std::map< std::string, std::string >::const_iterator entry= parent_remarks_map_.find( name );
 
 	if ( entry == parent_remarks_map_.end() ) {
-		utility_exit_with_message( "entry == parent_remarks_map_.end()  for the the key (" + name +").");	
+		utility_exit_with_message( "entry == parent_remarks_map_.end()  for the the key (" + name +").");
 	}
 
 	std::string const parent_remark = entry->second;
@@ -872,16 +872,21 @@ bool SilentStruct::has_parent_remark( std::string const & name ) const {
 
 ///////////////////////////////////////////////////////////////////////////
 
-void 
+void
 SilentStruct::add_parent_remark( std::string const name, std::string const value ){
 
-	if(parent_remarks_map_.count(name)>0) utility_exit_with_message( "The key (" + name +") already exist in the parent_remarks_map_!");
+	//	if(parent_remarks_map_.count(name)>0) utility_exit_with_message( "The key (" + name +") already exist in the parent_remarks_map_!");
 
-	parent_remarks_map_.insert( std::make_pair( name, value ) );
+	if(parent_remarks_map_.count(name)>0)	{
+		tr << "The key (" + name +") already exist in the parent_remarks_map_!";
+	} else {
+		parent_remarks_map_.insert( std::make_pair( name, value ) );
+	}
+
 }
 ///////////////////////////////////////////////////////////////////////////
 
-void 
+void
 SilentStruct::get_parent_remark_from_line( std::string const line ){
 
 	std::istringstream line_stream( line );
