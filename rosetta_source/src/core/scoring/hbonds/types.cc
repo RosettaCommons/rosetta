@@ -78,7 +78,6 @@ HBEval_lookup_initializer( ObjexxFCL::FArray3D<HBEvalType> & hbe )
 	hbe(hbdon_PBA, hbacc_PBA, seq_sep_P2) = hbe_dPBAaPBAsepP2turn;
 	hbe(hbdon_PBA, hbacc_PBA, seq_sep_P3) = hbe_dPBAaPBAsepP3turn;
 	hbe(hbdon_PBA, hbacc_PBA, seq_sep_P4) = hbe_dPBAaPBAsepP4helix;
-	hbe(hbdon_PBA, hbacc_PBA, seq_sep_P5) = hbe_dPBAaPBAsepP5helix;
 	hbe(hbdon_PBA, hbacc_PBA, seq_sep_other) = hbe_dPBAaPBAsepother;
 	hbe(hbdon_CXA, hbacc_PBA, seq_sep_PM1) = hbe_dCXAaPBAsepPM1;
 	hbe(hbdon_IMD, hbacc_PBA, seq_sep_PM1) = hbe_dIMDaPBAsepPM1;
@@ -508,7 +507,6 @@ get_hbe_acc_hybrid( HBEvalType const & hbe )
 		case hbe_dPBAaPBAsepP2turn: return SP2_HYBRID; break;
 		case hbe_dPBAaPBAsepP3turn: return SP2_HYBRID; break;
 		case hbe_dPBAaPBAsepP4helix: return SP2_HYBRID; break;
- 	  case hbe_dPBAaPBAsepP5helix: return SP2_HYBRID; break;
 		case hbe_dPBAaPBAsepother: return SP2_HYBRID; break;
 		case hbe_dCXAaPBAsepPM1: return SP2_HYBRID; break;
 		case hbe_dIMDaPBAsepPM1: return SP2_HYBRID; break;
@@ -768,7 +766,6 @@ hbe_is_BB_type( HBEvalType hbe )
 		case hbe_dPBAaPBAsepP2turn: return true; break;
 		case hbe_dPBAaPBAsepP3turn: return true; break;
 		case hbe_dPBAaPBAsepP4helix: return true; break;
-	  case hbe_dPBAaPBAsepP5helix: return true; break;
 		case hbe_dPBAaPBAsepother: return true; break;
 		case hbe_dCXAaPBAsepPM1: return false; break;
 		case hbe_dIMDaPBAsepPM1: return false; break;
@@ -1008,7 +1005,6 @@ get_hbond_weight_type( HBEvalType const & hbe_type )
 		case hbe_dPBAaPBAsepP2turn: return hbw_SR_BB; break;
 		case hbe_dPBAaPBAsepP3turn: return hbw_SR_BB; break;
 		case hbe_dPBAaPBAsepP4helix: return hbw_SR_BB; break;
-	  case hbe_dPBAaPBAsepP5helix: return hbw_SR_BB; break;
 		case hbe_dPBAaPBAsepother: return hbw_LR_BB; break;
 		case hbe_dCXAaPBAsepPM1: return hbw_SR_BB_SC; break;
 		case hbe_dIMDaPBAsepPM1: return hbw_SR_BB_SC; break;

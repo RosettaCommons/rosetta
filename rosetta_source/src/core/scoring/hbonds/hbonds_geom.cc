@@ -458,7 +458,6 @@ get_seq_sep(
 			case 2: return seq_sep_P2; break;
 			case 3: return seq_sep_P3; break;
 			case 4: return seq_sep_P4; break;
-			case 5: return seq_sep_P5; break;
 			default: return seq_sep_other; break;
 			}
 		default:

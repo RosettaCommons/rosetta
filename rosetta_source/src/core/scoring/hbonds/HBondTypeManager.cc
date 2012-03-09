@@ -132,7 +132,6 @@ HBondTypeManager::setup_type_names()
 	name2seq_sep_type_["seq_sep_P2"] = seq_sep_P2;
 	name2seq_sep_type_["seq_sep_P3"] = seq_sep_P3;
 	name2seq_sep_type_["seq_sep_P4"] = seq_sep_P4;
-	name2seq_sep_type_["seq_sep_P5"] = seq_sep_P5;
 
 	name2hybridization_type_["SP2_HYBRID"] = chemical::SP2_HYBRID;
 	name2hybridization_type_["SP3_HYBRID"] = chemical::SP3_HYBRID;
