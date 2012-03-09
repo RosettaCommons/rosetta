@@ -132,6 +132,7 @@ enum HBEvalType{
 	hbe_dPBAaPBAsepP2turn, hbe_dPROTEIN_BB_AMIDEaPROTEIN_BB_AMIDEsepP2turn = hbe_dPBAaPBAsepP2turn,
 	hbe_dPBAaPBAsepP3turn, hbe_dPROTEIN_BB_AMIDEaPROTEIN_BB_AMIDEsepP3turn = hbe_dPBAaPBAsepP3turn,
 	hbe_dPBAaPBAsepP4helix, hbe_dPROTEIN_BB_AMIDEaPROTEIN_BB_AMIDEsepP4helix = hbe_dPBAaPBAsepP4helix,
+	hbe_dPBAaPBAsepP5helix, hbe_dPROTEIN_BB_AMIDEaPROTEIN_BB_AMIDEsepP5helix = hbe_dPBAaPBAsepP5helix,
 	hbe_dPBAaPBAsepother, hbe_dPROTEIN_BB_AMIDEaPROTEIN_BB_AMIDEsepother = hbe_dPBAaPBAsepother,
 	hbe_dCXAaPBAsepPM1, hbe_dCARBOXAMIDEaPROTEIN_BB_AMIDEsepPM1 = hbe_dCXAaPBAsepPM1,
 	hbe_dIMDaPBAsepPM1, hbe_dIMIDAZOL_DELTAaPROTEIN_BB_AMIDEsepPM1 = hbe_dIMDaPBAsepPM1,
@@ -362,9 +363,10 @@ enum HBSeqSep{
 	seq_sep_M2, // // acc_rsd.seqpos() - don_rsd.seqpos() = -2
 	seq_sep_PM1, // // abs(acc_rsd.seqpos() - don_rsd.seqpos()) = 1
 	seq_sep_P2, // // acc_rsd.seqpos() - don_rsd.seqpos() = 2
-	seq_sep_P3, // // acc_rsd.seqpos() - don_rsd.seqpos() = -3
+	seq_sep_P3, // // acc_rsd.seqpos() - don_rsd.seqpos() = 3
 	seq_sep_P4, // // acc_rsd.seqpos() - don_rsd.seqpos() = 4
-	seq_sep_MAX = seq_sep_P4
+	seq_sep_P5, // // acc_rsd.seqpos() - don_rsd.seqpos() = 5
+	seq_sep_MAX = seq_sep_P5
 };
 
 
