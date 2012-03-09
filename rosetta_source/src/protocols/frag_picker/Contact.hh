@@ -17,11 +17,19 @@
 // unit headers
 #include <protocols/frag_picker/Contact.fwd.hh>
 
+// project headers
 #include <protocols/frag_picker/ContactTypes.hh>
 
-#include <string>
+// type headers
+#include <core/types.hh>
+
+// utility headers
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
+#include <string>
+
 
 namespace protocols {
 namespace frag_picker {
