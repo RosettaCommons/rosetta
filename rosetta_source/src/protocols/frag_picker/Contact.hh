@@ -29,7 +29,7 @@
 
 // C++ headers
 #include <string>
-
+#include <cmath>
 
 namespace protocols {
 namespace frag_picker {
@@ -61,7 +61,7 @@ public:
 	}
 
 	Real dist() {
-		return sqrt(dist_squared_);
+		return std::sqrt(dist_squared_);
 	}
 
 	ContactType & type() {
