@@ -1,0 +1,48 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+#These are settings for compiling MPI executables on the Vanderbilt ACCRE cluster
+
+# Settings here are added to the combined build settings, after all basic
+# settings, to allow you to override anything you need to.  They can in turn
+# be overriden by user settings and project settings respectively.
+#
+# Typically you want to prepend to one of the settings listed to expand your
+# paths, but you can also append, override, or remove settings.
+
+settings = {
+    "user" : {
+        "prepends" : {
+           "include_path" : [
+				"/usr/local/mpich2/latest/x86_64/gcc46/ether/include",],
+           "library_path" : [ 
+				"/usr/local/mpich2/latest/x86_64/gcc46/ether/lib",
+                "/usr/lib64",],
+        },
+        "appends" : {
+            "defines"    : [ "MPICH_IGNORE_CXX_SEEK" ],        
+            # Uncomment the line below and the "import os" line above
+            # to let SCons find ICC (assuming it's on your PATH already)
+            #"program_path"  : os.environ["PATH"].split(":"),
+
+            # Uncomment the line below to begin building the "devel" project too.
+            #"projects": { "src" : [ "devel", ], },
+            "flags" : {
+              "link" : ["lmpich", "lpmpich","fPIC"],
+              },
+        },
+        "overrides" : {
+		"cxx": "/usr/local/mpich2/latest/x86_64/gcc46/ether/bin/mpicxx",
+		"cc": "/usr/local/mpich2/latest/x86_64/gcc46/ether/bin/mpicc",
+        },
+        "removes" : {
+          "flags" : {
+            "compile" : ["fno-exceptions",],
+            },
+        },
+    }
+}
