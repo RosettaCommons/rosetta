@@ -28,8 +28,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-#include <string>
+#include <cstdlib>
 #include <cmath>
+#include <math.h>
+#include <stdio.h>
+#include <string>
 
 namespace protocols {
 namespace frag_picker {
