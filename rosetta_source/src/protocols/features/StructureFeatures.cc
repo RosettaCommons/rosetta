@@ -84,6 +84,15 @@ StructureFeatures::schema() const {
 			"	UNIQUE (protocol_id, tag),"
 			"	FOREIGN KEY (protocol_id)\n"
 			"		REFERENCES protocols (protocol_id)\n"
+			"		DEFERRABLE INITIALLY DEFERRED);\n"
+			"\n"
+			"CREATE TABLE IF NOT EXISTS sampled_structures (\n"
+			"	protocol_id INTEGER,\n"
+			"	tag TEXT,\n"
+			"	input_tag TEXT,\n"
+			"	UNIQUE (protocol_id, tag),"
+			"	FOREIGN KEY (protocol_id)\n"
+			"		REFERENCES protocols (protocol_id)\n"
 			"		DEFERRABLE INITIALLY DEFERRED);";
 	}else if(db_mode == "mysql")
 	{
@@ -93,8 +102,13 @@ StructureFeatures::schema() const {
 			"	protocol_id INTEGER REFERENCES protocols(protocol_id),\n"
 			"	tag VARCHAR(255),\n"
 			"	input_tag VARCHAR(255),\n"
+			"	UNIQUE (protocol_id, tag));\n"
+			"\n"
+			"CREATE TABLE IF NOT EXISTS sampled_structures (\n"
+			"	protocol_id INTEGER REFERENCES protocols(protocol_id),\n"
+			"	tag VARCHAR(255),\n"
+			"	input_tag VARCHAR(255),\n"
 			"	UNIQUE (protocol_id, tag));";
-			//"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));";
 	}else
 	{
 		return "";
@@ -152,13 +166,26 @@ StructureFeatures::report_features(
 	return struct_id;
 }
 
+void StructureFeatures::mark_structure_as_sampled(
+	core::Size protocol_id,
+	std::string const & tag,
+	std::string const & input_tag,
+	utility::sql_database::sessionOP db_session
+){
+	std::string insert_deleted_structure_string = "INSERT INTO sampled_structures VALUES (?,?,?);";
+	statement insert_statement(safely_prepare_statement(insert_deleted_structure_string,db_session));
+	insert_statement.bind(1,protocol_id);
+	insert_statement.bind(2,tag);
+	insert_statement.bind(3,input_tag);
+	basic::database::safely_write_to_database(insert_statement);
+}
 
 void StructureFeatures::delete_record(
 	core::Size struct_id,
 	utility::sql_database::sessionOP db_session
 ){
 
-	std::string statement_string = "DELETE FROM structures WHERE struct_id = ?;";
+ 	std::string statement_string = "DELETE FROM structures WHERE struct_id = ?;";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(stmt);

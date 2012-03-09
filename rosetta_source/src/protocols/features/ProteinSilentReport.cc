@@ -154,11 +154,11 @@ ProteinSilentReport::apply(
 	vector1< bool > relevant_residues(pose.total_residue(), true);
 
 	//cppdb::transaction transact_guard(*db_session);
-	if (!initialized_){
-		write_schema_to_db(db_session);
-		write_protocol_report(db_session);
-		initialized_ = true;
-	}
+	initialize(db_session);
+
+	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+	structure_features_->mark_structure_as_sampled(protocol_id_,tag,input_tag,db_session);
+
 	//transact_guard.commit();
 	if(!database_filter_){
 		write_full_report(pose,db_session,tag);
@@ -198,6 +198,16 @@ ProteinSilentReport::load_pose(
 bool ProteinSilentReport::is_initialized() const
 {
 	return initialized_;
+}
+
+void ProteinSilentReport::initialize(sessionOP db_session)
+{
+	if(!initialized_)
+	{
+		write_schema_to_db(db_session);
+		write_protocol_report(db_session);
+		initialized_ = true;
+	}
 }
 
 void
@@ -275,6 +285,11 @@ void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_sessio
 
 
 
+}
+
+core::Size ProteinSilentReport::get_protocol_id() const
+{
+	return protocol_id_;
 }
 
 

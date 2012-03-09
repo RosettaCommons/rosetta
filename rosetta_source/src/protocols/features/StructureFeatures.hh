@@ -75,6 +75,13 @@ public:
 	);
 
 
+	void mark_structure_as_sampled(
+		core::Size protocol_id,
+		std::string const & tag,
+		std::string const & input_tag,
+		utility::sql_database::sessionOP db_session
+	);
+
 	void delete_record(
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session

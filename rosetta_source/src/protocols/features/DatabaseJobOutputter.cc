@@ -61,7 +61,7 @@ using utility::sql_database::sessionOP;
 using cppdb::result;
 
 
-DatabaseJobOutputter::DatabaseJobOutputter() :
+DatabaseJobOutputter::DatabaseJobOutputter() : protocols::jd2::FileJobOutputter(),
 	protein_silent_report_(new ProteinSilentReport())
 {
 	load_options_from_option_system();
@@ -150,34 +150,20 @@ bool DatabaseJobOutputter::job_has_completed( protocols::jd2::JobCOP job ) {
 
 	//It is possible for the mpi distributor to call this function
 	//before the database has even been initialized
-	//if this is the case, return false
-	if(!protein_silent_report_->is_initialized())
-	{
-		return false;
-	}
+
+	protein_silent_report_->initialize(db_session);
+
+	std::string job_completion_string = "SELECT count(*) FROM sampled_structures WHERE tag=? and protocol_id = ?;";
+	cppdb::statement job_completion_statement(basic::database::safely_prepare_statement(job_completion_string,db_session));
+	job_completion_statement.bind(1,output_name(job));
+	job_completion_statement.bind(2,protein_silent_report_->get_protocol_id());
 
 
-	result res;
-	while(true)
-	{
-		try
-		{
-			res = (*db_session) <<
-				"SELECT count(*) FROM structures WHERE tag=?;" << output_name(job);
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			#ifndef WIN32
-				usleep(10);
-			#endif
-			continue;
-		}
-	}
+	result res(basic::database::safely_read_from_database(job_completion_statement));
 
 	res.next();
 	Size already_written;
 	res >> already_written;
-
 	return already_written;
 
 

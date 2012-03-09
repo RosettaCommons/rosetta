@@ -63,6 +63,8 @@ public:
 
 	bool is_initialized() const;
 
+	void initialize(utility::sql_database::sessionOP db_session);
+
 	void
 	apply(
 		core::pose::Pose const & pose,
@@ -92,6 +94,8 @@ public:
 	void delete_pose(
 		utility::sql_database::sessionOP db_session,
 		core::Size const & struct_id);
+
+	core::Size get_protocol_id() const;
 
 
 private:
