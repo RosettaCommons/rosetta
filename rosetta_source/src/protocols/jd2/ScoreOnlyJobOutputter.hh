@@ -60,11 +60,18 @@ public:
 
 	///@brief this function is not used for output, but it belongs here since it needs to check the same output locations as the class normally writes to.  This class checks wherever output goes to see if the job's expected output already exists (on disk or whatever).  This is the most basic form of checkpointing.
 	virtual
-	bool job_has_completed( JobCOP ) ;
+	bool job_has_completed( JobCOP job ) ;
 
 	virtual std::string output_name( JobCOP job );
 
-}; // NoOutputJobOutputter
+private:
+
+	void read_done_jobs();
+
+	// list of tags already written
+	utility::vector1< std::string > score_file_tags_;
+
+}; // ScoreOnlyJobOutputter
 
 } // namespace jd2
 } // namespace protocols
