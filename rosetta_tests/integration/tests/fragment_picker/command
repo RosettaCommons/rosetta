@@ -8,10 +8,10 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-echo "Total fragments:  " `grep -v "#" frags.fsc.9mers | wc | awk '{print $1}'` >> log_picking
-echo "Unique fragments: " `grep -v "#" frags.fsc.9mers | cut -c 1-150 | sort -u | wc | awk '{print $1}'` >> log_picking
+echo "Total fragments:  " `grep -v "#" frags.fsc.50.9mers | wc | awk '{print $1}'` >> log_picking
+echo "Unique fragments: " `grep -v "#" frags.fsc.50.9mers | cut -c 1-150 | sort -u | wc | awk '{print $1}'` >> log_picking
 
-cat frags.fsc.9mers >> log_picking
-cat frags.fsc.3mers >> log_picking
+cat frags.fsc.50.9mers >> log_picking
+cat frags.fsc.50.3mers >> log_picking
 
 
