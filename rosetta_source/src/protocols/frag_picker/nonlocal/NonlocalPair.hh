@@ -21,10 +21,19 @@
 // package headers
 #include <protocols/frag_picker/Contact.hh>
 #include <protocols/frag_picker/ContactTypes.hh>
+#include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
+// type headers
+#include <core/types.hh>
+
 // utility headers
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+
+// C++ headers
+#include <iostream>
 #include <map>
 
 namespace protocols {
@@ -34,6 +43,7 @@ namespace nonlocal {
 typedef std::pair<Size,Size> PosPair;
 typedef std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> Candidate;
 
+using namespace core;
 using namespace protocols::frag_picker;
 
 /// @brief  represents a nonlocal fragment pair.

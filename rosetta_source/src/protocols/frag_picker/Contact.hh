@@ -34,6 +34,8 @@
 namespace protocols {
 namespace frag_picker {
 
+using namespace core;
+
 class Contact: public utility::pointer::ReferenceCount {
 public:
 
