@@ -330,8 +330,8 @@ public:
 	/// @brief Reads query secondary structure prediction from a Talos+ file
 	void read_talos_ss(std::string const &, std::string);
 
-	void setup_summary(quota::QuotaCollector* collector_);
-	void write_summary();
+	//void setup_summary(quota::QuotaCollector* collector_);
+	//void write_summary();
 
 // should be private but some classes directly access these
 	utility::vector1<Size> frag_sizes_;
