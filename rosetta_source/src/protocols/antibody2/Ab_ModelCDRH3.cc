@@ -343,12 +343,10 @@ Ab_ModelCDRH3::finalize_setup( pose::Pose & frame_pose ) {
 		// Read standard Rosetta fragments file
 		exit(-1);
 		read_and_store_fragments( frame_pose );
+        model_cdrh3_->set_offset_frags( offset_frags_ );
 
-		// Read in CDR H3 C-terminal fragment file
-		utility::vector1< core::fragment::FragData > H3_base_library;
-		read_H3_cter_fragment( ab_info_, H3_base_library, camelid_);
-		model_cdrh3_->set_offset_frags( offset_frags_ );
-		model_cdrh3_->store_H3_cter_fragment( H3_base_library );
+
+        
 		model_cdrh3_->set_native_pose( get_native_pose() );
 	}
 }
@@ -434,12 +432,15 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 	// snugfit
 	if ( !camelid_ && snugfit_ ) {
 		all_cdr_VL_VH_fold_tree( frame_pose, ab_info_.all_cdr_loops_ );
+        
 		relax_cdrs( frame_pose );
 		pymol.apply( frame_pose );
 		pymol.send_energy( frame_pose );
+        
 		repulsive_ramp ( frame_pose, ab_info_.all_cdr_loops_ );
 		pymol.apply( frame_pose );
 		pymol.send_energy( frame_pose );
+        
 		snugfit_mcm_protocol ( frame_pose, ab_info_.all_cdr_loops_ );
 		pymol.apply( frame_pose );
 		pymol.send_energy( frame_pose );

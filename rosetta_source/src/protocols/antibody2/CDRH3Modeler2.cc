@@ -87,6 +87,13 @@
 #include <cstddef>
 #include <limits>
 
+
+
+
+#include <protocols/antibody2/Ab_H3_cter_insert_mover.hh>
+
+
+
 static numeric::random::RandomGenerator RG(21141980);
 
 static basic::Tracer TR("protocols.antibody2.CDRH3Modeler2");
@@ -158,9 +165,21 @@ void CDRH3Modeler2::init(
 	highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
 
 	// set up objects based on the boolean values defined above
-//	setup_objects();
+	setup_objects();
 }
 
+    
+void CDRH3Modeler2::setup_objects(){
+    ab_h3_cter_insert_mover_ = new Ab_H3_cter_insert_mover(antibody_in_);
+    //TODO:  right now, just want the code to work, whether this antibody_in_ is at the right position or 
+    // wehther it has been initialized or not? I don't know. Will come back to address this
+}
+    
+    
+    
+    
+    
+    
 // CDRH3Modeler2 default destructor
 CDRH3Modeler2::~CDRH3Modeler2() {}
 
@@ -202,6 +221,11 @@ void CDRH3Modeler2::set_default()
 	TR << "H3M Finished Setting Defaults" << std::endl;
 } // CDRH3Modeler2 set_default
 
+    
+    
+    
+    
+    
 		void CDRH3Modeler2::set_lowres_score_func(
       scoring::ScoreFunctionOP lowres_scorefxn ) {
 			lowres_scorefxn_ = lowres_scorefxn;
@@ -211,6 +235,13 @@ void CDRH3Modeler2::set_default()
       scoring::ScoreFunctionOP highres_scorefxn) {
 			highres_scorefxn_ = highres_scorefxn;
 		} // set_highres_score_func
+
+    
+    
+    
+        //################################################
+        //###########  apply function ####################
+        //################################################
 
 		void CDRH3Modeler2::apply( pose::Pose & pose_in )
 		{
@@ -374,8 +405,13 @@ CDRH3Modeler2::get_name() const {
 			Size cycle ( 1 );
 			while( !closed_cutpoints && cycle < max_cycle_) {
 				antibody_in_ = starting_antibody;
-				if( framework_loop_size > 5 )
-					antibody_modeling_insert_ter( pose );
+				if( framework_loop_size > 5 ){
+                    //JQX: refactoring the old "antibody_modeling_insert_ter" function 
+                    //      into a ab_h3_cter_insert_mover function
+                    ab_h3_cter_insert_mover_->apply(pose);
+                    
+					//antibody_modeling_insert_ter( pose );
+                }
 				scored_frag_close( pose, trimmed_cdr_h3 );
 				if( trimmed_cdr_h3.size() > cutoff_9_  ) { // aroop_temp default cutoff_9_
 					Size saved_cutoff_9 = cutoff_9_;
@@ -424,13 +460,17 @@ CDRH3Modeler2::get_name() const {
 		void CDRH3Modeler2::set_offset_frags(
 			utility::vector1< core::fragment::FragSetOP > & offset_frags ) {
 			cdr_h3_frags_ = offset_frags;
-		} // store_H3_cter_fragment
+		}
+    
+    
+    
+    
 
-		void CDRH3Modeler2::store_H3_cter_fragment(
-			utility::vector1< fragment::FragData > & base_library_in ) {
-			H3_base_library = base_library_in;
-		} // store_H3_cter_fragment
-
+    
+    
+    
+    
+    
 		void simple_one_loop_fold_tree(
 			pose::Pose & pose_in,
 			loops::Loop const & loop	) {
@@ -493,188 +533,39 @@ CDRH3Modeler2::get_name() const {
 			return;
 		} // simple_fold_tree
 
-		void read_H3_cter_fragment(
-			antibody2::Ab_Info & antibody_in,
-			utility::vector1< fragment::FragData > & H3_base_library,
-			bool is_camelid ) {
-			using namespace fragment;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
-			std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
 
-			TR <<  "H3M Reading CDR H3 C-ter Fragments" << std::endl;
-
-			bool is_kinked( antibody_in.is_kinked() );
-			bool is_extended( antibody_in.is_extended() );
-
-			// extract single letter aa codes for the chopped loop residues
-			Size cdr_h3_size = ( antibody_in.get_CDR_loop("h3")->stop()-1 -
-				antibody_in.get_CDR_loop("h3")->start() ) + 1;
-			utility::vector1< char > aa_1name;
-			for( Size ii = antibody_in.get_CDR_loop("h3")->start() - 2;
-					 ii <= ( antibody_in.get_CDR_loop("h3")->start() - 2 ) + cdr_h3_size + 3; ++ii )
-				aa_1name.push_back( antibody_in.Fv_sequence_[ii] );
-
-			// used only when no length & kink match are found
-			utility::vector1< FragData > H3_base_library_seq_kink;
-
-			// used only when no (length & kink) or (length & seq) are found
-			utility::vector1< FragData > H3_base_library_kink;
-
-			std::string H3_ter_library_filename;
-			// file is read in from where other contraints are supposed to exist
-			if( is_camelid )
-				H3_ter_library_filename = path+"camelid_H3_CTERM";
-			else
-				H3_ter_library_filename = path+"H3_CTERM";
-
-			// Read the file defined by command line option
-			utility::io::izstream H3_ter_library_stream( H3_ter_library_filename );
-
-			// Check to see if file exists
-			if ( !H3_ter_library_stream ) {
-				TR << "[Error]: Could not open H3 base library file: "
-					 << H3_ter_library_filename << std::endl
-					 << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
-				std::exit( EXIT_FAILURE );
-			}
-
-			std::string pdb_name;
-			std::string res_no;
-			char res_name;
-			Real phi(0.0);
-			Real psi(0.0);
-			Real omega(0.0);
-			Size H3_length(0);
-			Real resolution(0.0);
-			std::string base_type;
-
-			Size pdb_H3_length = cdr_h3_size;
-			Size h3_base_frag_size( is_camelid ? 6 : 4 ); // changed from 4:6
-			bool end_not_reached(true);
-			while(end_not_reached){
-				bool seq_match( true );
-				bool kink_match( false );
-
-				FragData f;
-				f.set_valid( true );
-
-				for ( Size i = 1; i <= h3_base_frag_size; ++i ) {
-					H3_ter_library_stream >> pdb_name
-																>> res_no
-																>> res_name
-																>> omega
-																>> phi
-																>> psi
-																>> H3_length
-																>> resolution
-																>> base_type
-																>> std::skipws;
-					if(H3_ter_library_stream.eof()) {
-						end_not_reached = false;
-						break;
-					}
-					if( res_name != aa_1name[aa_1name.size() - 5 + i] )
-							seq_match = false;
-
-					utility::pointer::owning_ptr< BBTorsionSRFD > res_torsions(
-						new BBTorsionSRFD( 3, 'L', res_name ) ); // 3 protein torsions
-					// ugly numbers 1-3, but pose.set_phi also uses explicit numbers
-					res_torsions->set_torsion   ( 1, phi   );
-					res_torsions->set_torsion   ( 2, psi   );
-					res_torsions->set_torsion   ( 3, omega );
-					res_torsions->set_secstruct ( 'L' );
-					f.add_residue( res_torsions );
-				}
-				if( !is_camelid ) {
-					if( is_kinked && base_type == "KINK" )
-						kink_match = true;
-					else if( is_extended && base_type == "EXTENDED" )
-						kink_match = true;
-					else if( !is_kinked && !is_extended && base_type == "NEUTRAL" )
-						kink_match = true;
-				}
-				else {
-					if( is_extended && base_type == "EXTENDED" )
-						kink_match = true;
-					else if( ( is_kinked && base_type == "KINK" ) ||
-									 ( is_kinked && base_type == "EXTENDED" ) )
-						kink_match = true;
-					else if( !is_kinked && !is_extended )
-						kink_match = true;
-				}
-				if( is_camelid && end_not_reached && kink_match )
-					H3_base_library.push_back( f );
-				else if( end_not_reached && ( H3_length == pdb_H3_length )
-								 && kink_match )
-					H3_base_library.push_back( f );
-				if( end_not_reached && seq_match && kink_match )
-					H3_base_library_seq_kink.push_back( f );
-				if( end_not_reached && kink_match  )
-					H3_base_library_kink.push_back( f );
-			}
-
-			H3_ter_library_stream.close();
-			H3_ter_library_stream.clear();
-
-			// if no match found based on sequence and kink match criterion
-			// then choose based on size and kink match criterion
-			// if still no match, then choose based only on kink
-			if( H3_base_library.size() == 0 )
-				H3_base_library = H3_base_library_seq_kink;
-			if( H3_base_library.size() == 0 )
-				H3_base_library = H3_base_library_kink;
-
-			TR <<  "H3M Finished reading CDR H3 C-ter Fragments" << std::endl;
-
-			return;
-		}
-
-		void CDRH3Modeler2::antibody_modeling_insert_ter( core::pose::Pose & pose) {
-
-			TR <<  "H3M Inserting CDR H3 C-ter Fragments" << std::endl;
-
-			// Storing initial fold tree
-			kinematics::FoldTree const input_tree( pose.fold_tree() );
-
-			Size loop_begin(0), loop_end(0), cutpoint(0), random_H3_ter(0);
-			//utility::vector1< fragment::FragData >::const_iterator H3_ter;
-			fragment::FragData f;
-
-			loop_begin = antibody_in_.get_CDR_loop("h3")->start();
-			cutpoint = antibody_in_.get_CDR_loop("h3")->start() + 1;
-			random_H3_ter = RG.random_range( 1, H3_base_library.size() );
-			//H3_ter = H3_base_library.begin();
-
-			loop_end = antibody_in_.get_CDR_loop("h3")->stop();
-
-			loops::Loop cdr_h3( loop_begin, loop_end, cutpoint,	0, true );
-			simple_one_loop_fold_tree( pose, cdr_h3 );
-
-			// choosing a base randomly
-			//H3_ter = H3_ter + random_H3_ter;
-			f = H3_base_library[ random_H3_ter ];
-
-//			pose::Pose start_pose = antibody_in_.Fv;
-			//inserting base dihedrals
-			Size cter_insertion_pos( is_camelid_ ? 4 : 2 );
-			if( (antibody_in_.get_CDR_loop("h3")->stop()-1 - cter_insertion_pos) <=
-					antibody_in_.get_CDR_loop("h3")->start() )
-				TR << "H3 LOOP IS TOO SHORT: CAN NOT USE N-TERM INFORMATION"
-					 << std::endl;
-			else {
-				// H3_ter->apply(...);
-				f.apply( pose, antibody_in_.get_CDR_loop("h3")->stop()-1 -
-					cter_insertion_pos, antibody_in_.get_CDR_loop("h3")->stop() );
-			}
-
-			// Restoring pose fold tree
-			pose.fold_tree( input_tree );
-
-			TR <<  "H3M Finished Inserting CDR H3 C-ter Fragments" << std::endl;
-
-			return;
-		} // antibody_modeling_insert_ter
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 		bool CDRH3Modeler2::cutpoints_separation( core::pose::Pose & pose ) {
 
 			bool closed_cutpoints = true;
@@ -693,7 +584,7 @@ CDRH3Modeler2::get_name() const {
 			}
 			return( closed_cutpoints );
 		} // cutpoints_separation
-
+    
 		Real CDRH3Modeler2::cutpoint_separation(
   		pose::Pose & pose_in,
 			Size cutpoint ) {

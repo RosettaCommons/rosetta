@@ -37,6 +37,14 @@
 #include <protocols/moves/Mover.hh>
 
 
+
+
+
+#include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
+
+
+
+
 // ObjexxFCL Headers
 
 // C++ Headers
@@ -125,10 +133,7 @@ public:
 	/// @brief insert C-terminal fragments
 	void antibody_modeling_insert_ter( core::pose::Pose & pose);
 
-	/// @brief store CDR H3 C-terminal fragments
-	void store_H3_cter_fragment(
-		utility::vector1< core::fragment::FragData > & base_library_in
-	);
+
 
 	/// @brief return false if any cdr cutpoint is broken
 	bool cutpoints_separation( core::pose::Pose & pose );
@@ -248,14 +253,14 @@ private:
 		bool benchmark
 		);
 
+    void setup_objects();
+    
+    Ab_H3_cter_insert_moverOP ab_h3_cter_insert_mover_;
+    
+    
 }; // class CDRH3Modeler2
 
-// read CDR H3 C-terminal fragments (size: 4)
-void read_H3_cter_fragment(
-	antibody2::Ab_Info & antibody_in,
-	utility::vector1< core::fragment::FragData > & H3_base_library,
-	bool is_camelid
-);
+
 
 void simple_one_loop_fold_tree(
 	core::pose::Pose & pose,

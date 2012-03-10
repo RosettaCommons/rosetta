@@ -25,7 +25,7 @@ sources = {
                 "Ab_CloseOneCDR_Mover",
                 "Ab_RelaxCDRs_Mover",
 		"Ab_ModelCDRH3",
-#		"Ab_H3_cter_insert_mover",
+		"Ab_H3_cter_insert_mover",
                 "CDRH3Modeler2",
 	],
 }
