@@ -93,8 +93,8 @@ private:
     
         
     void init(antibody2::Ab_Info & antibody_in, bool camelid, bool benchmark);
-    void setup_objects();
-    void finalize_setup( core::pose::Pose & pose );
+//    void setup_objects();
+//    void finalize_setup( core::pose::Pose & pose );
 
     
     

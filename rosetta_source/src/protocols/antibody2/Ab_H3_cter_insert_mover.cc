@@ -91,7 +91,7 @@ void Ab_H3_cter_insert_mover::init(antibody2::Ab_Info & antibody_in, bool cameli
         benchmark_  = benchmark;
     }
             
-    setup_objects();
+//    setup_objects();
     
     
     read_H3_cter_fragment(antibody_in, H3_base_library, camelid ) ;
@@ -110,20 +110,20 @@ void Ab_H3_cter_insert_mover::set_default(){
 }
         
         
-void Ab_H3_cter_insert_mover::setup_objects(){
-}
+//void Ab_H3_cter_insert_mover::setup_objects(){
+//}
         
         
         
-void Ab_H3_cter_insert_mover::finalize_setup(core::pose::Pose & pose ){
+//void Ab_H3_cter_insert_mover::finalize_setup(core::pose::Pose & pose ){
         
-}
+//}
         
         
         
 void Ab_H3_cter_insert_mover::apply(pose::Pose & pose)    
 {        
-    finalize_setup(pose);
+//    finalize_setup(pose);
             
             
         
