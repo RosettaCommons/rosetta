@@ -131,7 +131,7 @@ public:
 	);
 
 	/// @brief insert C-terminal fragments
-	void antibody_modeling_insert_ter( core::pose::Pose & pose);
+	// void antibody_modeling_insert_ter( core::pose::Pose & pose);
 
 
 
