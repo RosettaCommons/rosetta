@@ -38,6 +38,10 @@ class Ab_Info : public utility::pointer::ReferenceCount {
 
 public:
 	typedef std::map < std::string, loops::LoopOP > LoopMap;
+    typedef std::map <std::string, core::Size> CDR_Numbering_Begin_Map;
+    typedef std::map <std::string, core::Size> CDR_Numbering_End_Map;
+
+    
 	/// default constructor
 	Ab_Info();
 
@@ -46,34 +50,36 @@ public:
 	Ab_Info( core::pose::Pose & pose, bool camelid );
 	Ab_Info( core::pose::Pose & pose, std::string cdr_name );
 
-	void setup_loops( core::pose::Pose & pose, bool camelid );
+	void setup_CDR_loops( core::pose::Pose & pose, bool camelid );
 
 	void all_cdr_fold_tree( core::pose::Pose & pose );
 //	void cdr_h3_fold_tree( core::pose::Pose & pose );
 
 	/// @brief return the loop of a certain loop type
-	loops::LoopOP get_loop( std::string loop );
+	loops::LoopOP get_CDR_loop( std::string loop );
 
 	// return kinked/extended
 	bool is_kinked() { return kinked_; }
 	bool is_extended() { return extended_; }
+    bool is_camelid()  { return camelid_;  }
 
 	/// align current Fv to native.Fv
 	void align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & native, core::pose::Pose & native_pose );
+    
+    void load_CDR_query_info_to_check();
 
-	// Start coordinates of active loop
+    void show( std::ostream & out=std::cout );
+    friend std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info );
+
+    
+    
+    // Start coordinates of active loop
 	core::Size current_start;
 	// End coordinates of active loop
 	core::Size current_end;
 	utility::vector1< char > Fv_sequence_;
-
+    
 	loops::Loops all_cdr_loops_;
-
-
-
-
-    void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info );
 
 
 //private:
@@ -84,19 +90,28 @@ private:
     std::string L1_seq_, L2_seq_, L3_seq_, H1_seq_,H2_seq_,H3_seq_;
     core::pose::PoseOP ab_pose_;
 
+    
 	core::Size hfr_[7][3]; // array of framework residues for alignment
 
+    CDR_Numbering_Begin_Map CDR_numbering_begin_;
+    CDR_Numbering_End_Map CDR_numbering_end_;
+
+    
 	bool camelid_;
 
 	// information about h3
 	bool kinked_;
 	bool extended_;
 
-    void obtain_loop_info();
-
+    
+    void get_CDRs_numbering();
+    
 	void set_default( bool camelid );
+    
 	void detect_CDR_H3_stem_type( core::pose::Pose & pose );
+    
 	void detect_camelid_CDR_H3_stem_type();
+    
 	void detect_regular_CDR_H3_stem_type( core::pose::Pose & pose );
 };
 
@@ -106,3 +121,7 @@ private:
 
 
 #endif //INCLUDED_protocols_loops_Ab_Info_HH
+
+
+
+

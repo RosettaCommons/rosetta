@@ -224,15 +224,15 @@ void CDRH3Modeler2::set_default()
 			using namespace protocols::moves;
 
 			start_pose_ = pose_in;
-			antibody_in_.setup_loops( pose_in, is_camelid_ );
+			antibody_in_.setup_CDR_loops( pose_in, is_camelid_ );
 			setup_packer_task( pose_in );
 			pose::Pose start_pose = pose_in;
 
 			if( is_camelid_ && !antibody_in_.is_extended() && !antibody_in_.is_kinked() )
 				c_ter_stem_ = 0;
 
-			Size framework_loop_begin( antibody_in_.get_loop("h3")->start() );
-			Size frmrk_loop_end_plus_one( antibody_in_.get_loop("h3")->stop() );
+			Size framework_loop_begin( antibody_in_.get_CDR_loop("h3")->start() );
+			Size frmrk_loop_end_plus_one( antibody_in_.get_CDR_loop("h3")->stop() );
 			//Size framework_loop_size = ( frmrk_loop_end_plus_one -
 			//														framework_loop_begin ) + 1;
 			Size cutpoint = framework_loop_begin + 1;
@@ -249,14 +249,14 @@ void CDRH3Modeler2::set_default()
 				to_centroid.apply( pose_in );
 				build_centroid_loop( pose_in );
 				if( is_camelid_ )
-					loop_centroid_relax( pose_in, antibody_in_.get_loop("h1")->start(),
-															 antibody_in_.get_loop("h1")->stop() );
+					loop_centroid_relax( pose_in, antibody_in_.get_CDR_loop("h1")->start(),
+															 antibody_in_.get_CDR_loop("h1")->stop() );
 				to_full_atom.apply( pose_in );
 
 				utility::vector1<bool> allow_chi_copy( pose_in.total_residue(),
 																							 true );
-				for( Size ii = antibody_in_.get_loop("h3")->start();
-						 ii <= ( antibody_in_.get_loop("h3")->stop() ); ii++ )
+				for( Size ii = antibody_in_.get_CDR_loop("h3")->start();
+						 ii <= ( antibody_in_.get_CDR_loop("h3")->stop() ); ii++ )
 					allow_chi_copy[ii] = false;
 				//recover sidechains from starting structures
 				protocols::simple_moves::ReturnSidechainMover recover_sidechains(
@@ -298,8 +298,8 @@ void CDRH3Modeler2::set_default()
 				Size cycle (1 );
 				while( !closed_cutpoints && cycle < max_cycle_ ) {
 					antibody_in_ = starting_antibody;
-					loop_fa_relax( pose_in, antibody_in_.get_loop("h2")->start(),
-												 antibody_in_.get_loop("h2")->stop()  );
+					loop_fa_relax( pose_in, antibody_in_.get_CDR_loop("h2")->start(),
+												 antibody_in_.get_CDR_loop("h2")->stop()  );
 					closed_cutpoints = cutpoints_separation( pose_in );
 					++cycle;
 				} // while( ( cut_separation > 1.9 )
@@ -316,6 +316,9 @@ void CDRH3Modeler2::set_default()
 			return;
 		} // CDRH3Modeler2::apply()
 
+    
+    
+    
 std::string
 CDRH3Modeler2::get_name() const {
 	return "CDRH3Modeler2";
@@ -332,10 +335,10 @@ CDRH3Modeler2::get_name() const {
 
 			TR <<  "H3M Modeling Centroid CDR H3 loop" << std::endl;
 
-			Size frmrk_loop_end_plus_one( antibody_in_.get_loop("h3")->stop() );
-			Size framework_loop_size = ( frmrk_loop_end_plus_one - antibody_in_.get_loop("h3")->start() ) + 1;
-			Size cutpoint = antibody_in_.get_loop("h3")->start() + 1;
-			loops::Loop cdr_h3( antibody_in_.get_loop("h3")->start(), frmrk_loop_end_plus_one,
+			Size frmrk_loop_end_plus_one( antibody_in_.get_CDR_loop("h3")->stop() );
+			Size framework_loop_size = ( frmrk_loop_end_plus_one - antibody_in_.get_CDR_loop("h3")->start() ) + 1;
+			Size cutpoint = antibody_in_.get_CDR_loop("h3")->start() + 1;
+			loops::Loop cdr_h3( antibody_in_.get_CDR_loop("h3")->start(), frmrk_loop_end_plus_one,
 													cutpoint,	0, true );
 			simple_one_loop_fold_tree( pose, cdr_h3 );
 
@@ -355,13 +358,13 @@ CDRH3Modeler2::get_name() const {
 			unaligned_cdr_loop_begin = hfr_template.current_start;
 			unaligned_cdr_loop_end = hfr_template.current_end;
 
-			pose.set_psi( antibody_in_.get_loop("h3")->start() - 1,
+			pose.set_psi( antibody_in_.get_CDR_loop("h3")->start() - 1,
 				template_pose_.psi( unaligned_cdr_loop_begin - 1 ) );
-			pose.set_omega(antibody_in_.get_loop("h3")->start() - 1,
+			pose.set_omega(antibody_in_.get_CDR_loop("h3")->start() - 1,
 				template_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
 
 			Size modified_framework_loop_end = frmrk_loop_end_plus_one - c_ter_stem_;
-			loops::Loop trimmed_cdr_h3( antibody_in_.get_loop("h3")->start(),
+			loops::Loop trimmed_cdr_h3( antibody_in_.get_CDR_loop("h3")->start(),
 				modified_framework_loop_end, cutpoint, 0, true );
 
 			antibody2::Ab_Info starting_antibody;
@@ -407,8 +410,8 @@ CDRH3Modeler2::get_name() const {
 			Size cycle( 1 );
 			while( !closed_cutpoints && cycle<max_cycle_ ) {
 				antibody_in_ = starting_antibody;
-				loop_fa_relax( pose, antibody_in_.get_loop("h3")->start(),
-											 antibody_in_.get_loop("h3")->stop()-1 + base_ );
+				loop_fa_relax( pose, antibody_in_.get_CDR_loop("h3")->start(),
+                                     antibody_in_.get_CDR_loop("h3")->stop()-1 + base_ );
 				closed_cutpoints = cutpoints_separation( pose );
 				++cycle;
 			} // while( ( cut_separation > 1.9 )
@@ -504,11 +507,11 @@ CDRH3Modeler2::get_name() const {
 			bool is_extended( antibody_in.is_extended() );
 
 			// extract single letter aa codes for the chopped loop residues
-			Size cdr_h3_size = ( antibody_in.get_loop("h3")->stop()-1 -
-				antibody_in.get_loop("h3")->start() ) + 1;
+			Size cdr_h3_size = ( antibody_in.get_CDR_loop("h3")->stop()-1 -
+				antibody_in.get_CDR_loop("h3")->start() ) + 1;
 			utility::vector1< char > aa_1name;
-			for( Size ii = antibody_in.get_loop("h3")->start() - 2;
-					 ii <= ( antibody_in.get_loop("h3")->start() - 2 ) + cdr_h3_size + 3; ++ii )
+			for( Size ii = antibody_in.get_CDR_loop("h3")->start() - 2;
+					 ii <= ( antibody_in.get_CDR_loop("h3")->start() - 2 ) + cdr_h3_size + 3; ++ii )
 				aa_1name.push_back( antibody_in.Fv_sequence_[ii] );
 
 			// used only when no length & kink match are found
@@ -637,12 +640,12 @@ CDRH3Modeler2::get_name() const {
 			//utility::vector1< fragment::FragData >::const_iterator H3_ter;
 			fragment::FragData f;
 
-			loop_begin = antibody_in_.get_loop("h3")->start();
-			cutpoint = antibody_in_.get_loop("h3")->start() + 1;
+			loop_begin = antibody_in_.get_CDR_loop("h3")->start();
+			cutpoint = antibody_in_.get_CDR_loop("h3")->start() + 1;
 			random_H3_ter = RG.random_range( 1, H3_base_library.size() );
 			//H3_ter = H3_base_library.begin();
 
-			loop_end = antibody_in_.get_loop("h3")->stop();
+			loop_end = antibody_in_.get_CDR_loop("h3")->stop();
 
 			loops::Loop cdr_h3( loop_begin, loop_end, cutpoint,	0, true );
 			simple_one_loop_fold_tree( pose, cdr_h3 );
@@ -654,14 +657,14 @@ CDRH3Modeler2::get_name() const {
 //			pose::Pose start_pose = antibody_in_.Fv;
 			//inserting base dihedrals
 			Size cter_insertion_pos( is_camelid_ ? 4 : 2 );
-			if( (antibody_in_.get_loop("h3")->stop()-1 - cter_insertion_pos) <=
-					antibody_in_.get_loop("h3")->start() )
+			if( (antibody_in_.get_CDR_loop("h3")->stop()-1 - cter_insertion_pos) <=
+					antibody_in_.get_CDR_loop("h3")->start() )
 				TR << "H3 LOOP IS TOO SHORT: CAN NOT USE N-TERM INFORMATION"
 					 << std::endl;
 			else {
 				// H3_ter->apply(...);
-				f.apply( pose, antibody_in_.get_loop("h3")->stop()-1 -
-					cter_insertion_pos, antibody_in_.get_loop("h3")->stop() );
+				f.apply( pose, antibody_in_.get_CDR_loop("h3")->stop()-1 -
+					cter_insertion_pos, antibody_in_.get_CDR_loop("h3")->stop() );
 			}
 
 			// Restoring pose fold tree
@@ -838,8 +841,8 @@ CDRH3Modeler2::get_name() const {
 					bool H3_found_current(false);
 					if( current_loop_is_H3_ && H3_filter_ &&
 							( local_h3_attempts++ < (50 * cycles2) ) ) {
-						H3_found_current = CDR_H3_filter(pose_in,antibody_in_.get_loop("h3")->start(),
-							( antibody_in_.get_loop("h3")->stop()-1 - antibody_in_.get_loop("h3")->start() ) + 1 );
+						H3_found_current = CDR_H3_filter(pose_in,antibody_in_.get_CDR_loop("h3")->start(),
+							( antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start() ) + 1 );
 						if( !H3_found_ever && !H3_found_current) {
 							--c2;
 							mc->boltzmann( pose_in );
@@ -892,8 +895,8 @@ CDRH3Modeler2::get_name() const {
 					outer_mc->boltzmann( pose_in );
 					if( current_loop_is_H3_ && H3_filter_ &&
 							(current_h3_prob < h3_fraction) && (h3_attempts++<50) )
-						if( !CDR_H3_filter(pose_in, antibody_in_.get_loop("h3")->start(),
-							( antibody_in_.get_loop("h3")->stop()-1 - antibody_in_.get_loop("h3")->start() ) + 1) )
+						if( !CDR_H3_filter(pose_in, antibody_in_.get_CDR_loop("h3")->start(),
+							( antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start() ) + 1) )
 							continue;
 					loop_found = true;
 				}
@@ -1307,8 +1310,8 @@ CDRH3Modeler2::get_name() const {
 
 			bool relaxed_H3_found_ever( false );
 			if( H3_filter_)
-				relaxed_H3_found_ever =CDR_H3_filter(pose_in,antibody_in_.get_loop("h3")->start(),
-					(antibody_in_.get_loop("h3")->stop()-1 - antibody_in_.get_loop("h3")->start()) + 1 );
+				relaxed_H3_found_ever =CDR_H3_filter(pose_in,antibody_in_.get_CDR_loop("h3")->start(),
+					(antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start()) + 1 );
 
 			// outer cycle
 			for(Size i = 1; i <= outer_cycles; i++) {
@@ -1340,8 +1343,8 @@ CDRH3Modeler2::get_name() const {
 					if(H3_filter_ && (h3_attempts <= inner_cycles)) {
 						h3_attempts++;
 						relaxed_H3_found_current = CDR_H3_filter(pose_in,
-              antibody_in_.get_loop("h3")->start(), ( antibody_in_.get_loop("h3")->stop()-1 -
-                antibody_in_.get_loop("h3")->start()) + 1 );
+              antibody_in_.get_CDR_loop("h3")->start(), ( antibody_in_.get_CDR_loop("h3")->stop()-1 -
+                antibody_in_.get_CDR_loop("h3")->start()) + 1 );
 
 						if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
 							mc->boltzmann( pose_in );
@@ -1361,8 +1364,8 @@ CDRH3Modeler2::get_name() const {
 						if( H3_filter_ ) {
 							bool relaxed_H3_found_current(false);
 							relaxed_H3_found_current = CDR_H3_filter(pose_in,
-                antibody_in_.get_loop("h3")->start(), ( antibody_in_.get_loop("h3")->stop()-1 -
-                  antibody_in_.get_loop("h3")->start()) + 1 );
+                antibody_in_.get_CDR_loop("h3")->start(), ( antibody_in_.get_CDR_loop("h3")->stop()-1 -
+                  antibody_in_.get_CDR_loop("h3")->start()) + 1 );
 							if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
 								mc->boltzmann( pose_in );
 							}

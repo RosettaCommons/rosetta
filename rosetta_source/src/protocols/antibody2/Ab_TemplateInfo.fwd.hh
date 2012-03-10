@@ -21,25 +21,15 @@
 
 namespace protocols {
 namespace antibody2 {
-        
-        class Ab_TemplateInfo;
-        typedef utility::pointer::owning_ptr< Ab_TemplateInfo > Ab_TemplateInfoOP;
-        typedef utility::pointer::owning_ptr< Ab_TemplateInfo const > Ab_TemplateInfoCOP;
+
+// Forward
+class Ab_TemplateInfo;
+    
+typedef utility::pointer::owning_ptr< Ab_TemplateInfo > Ab_TemplateInfoOP;
+typedef utility::pointer::owning_ptr< Ab_TemplateInfo const > Ab_TemplateInfoCOP;
         
 } // antibody2
 } // protocols
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif
 

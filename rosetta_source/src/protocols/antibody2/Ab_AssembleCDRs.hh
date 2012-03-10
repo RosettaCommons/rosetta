@@ -19,8 +19,6 @@
 #ifndef INCLUDED_protocols_antibody2_Ab_AssembleCDRs_hh
 #define INCLUDED_protocols_antibody2_Ab_AssembleCDRs_hh
 
-#include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/FragData.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -29,21 +27,29 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/Ab_Info.fwd.hh>
+#include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 #include <protocols/antibody2/Ab_AssembleCDRs.fwd.hh>
+
+
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/antibody2/CDRH3Modeler2.fwd.hh>
-#include <protocols/antibody2/Ab_GraftCDRs_Mover.fwd.hh>
+#include <protocols/moves/PyMolMover.fwd.hh>
+#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+
+
+
 
 #include <utility/vector1.hh>
+#include <iostream>
 
 namespace protocols {
 namespace antibody2 {
 
 class Ab_AssembleCDRs: public moves::Mover {
 public:
+    typedef std::map < std::string, bool > GraftMap;
 
 	// default constructor
 	Ab_AssembleCDRs();
@@ -62,8 +68,6 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 
 	// simple inline setters
-	void set_model_h3( bool model_h3 ) { model_h3_ = model_h3; }
-	void set_snugfit( bool snugfit ) { snugfit_ = snugfit; }
 	void set_graft_l1( bool graft_l1 ) { graft_l1_ = graft_l1; }
 	void set_graft_l2( bool graft_l2 ) { graft_l2_ = graft_l2; }
 	void set_graft_l3( bool graft_l3 ) { graft_l3_ = graft_l3; }
@@ -73,57 +77,27 @@ public:
 	void set_camelid( bool camelid ) { camelid_ = camelid; }
 	void set_camelid_constraints( bool camelid_constraints ) { camelid_constraints_ = camelid_constraints; }
 	void set_benchmark( bool benchmark ) { benchmark_ = benchmark; }
+    void set_cst_weight(core::Real cst_weight){ cst_weight_ = cst_weight; }
 
 	virtual std::string get_name() const;
 
-	void setup_simple_fold_tree(
-		core::Size jumppoint1,
-		core::Size cutpoint,
-		core::Size jumppoint2,
-		core::Size nres,
-		core::pose::Pose & pose_in );
 
-	void relax_cdrs( core::pose::Pose & pose );
 
-	void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in, const loops::Loops & loops );
-
-	void repulsive_ramp( core::pose::Pose & pose_in, loops::Loops loops_in );
-
-	void snugfit_MC_min (
-		core::pose::Pose & pose_in,
-		core::kinematics::MoveMapOP cdr_dock_map,
-		core::Size cycles,
-		core::Real minimization_threshold,
-		core::scoring::ScoreFunctionOP scorefxn,
-	  core::scoring::ScoreFunctionOP pack_scorefxn,
-		utility::vector1< bool> is_flexible );
-
-	void snugfit_mcm_protocol(core::pose::Pose & pose_in, loops::Loops loops_in );
-
-	void setup_packer_task( core::pose::Pose & pose_in );
-
-	core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, const core::pose::Pose & native_pose, std::string cdr_type );
-
-	void read_and_store_fragments( core::pose::Pose & pose );
-
-	void display_constraint_residues( core::pose::Pose & pose );
-
-    
-    
-    void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const Ab_AssembleCDRs & ab_m_2 );
     
     
     /// @brief Associates relevant options with the AntibodyModeler class
     static void register_options();
     
+	void display_constraint_residues( core::pose::Pose & pose );
+    
+    void show( std::ostream & out=std::cout );
+    friend std::ostream & operator<<(std::ostream& out, const Ab_AssembleCDRs & ab_m_2 );
 
-
-public:
+    
+    
+private:
 
 	// Modeling H3 options
-	bool model_h3_;
-	bool snugfit_;
 	bool graft_l1_;
 	bool graft_l2_;
 	bool graft_l3_;
@@ -133,6 +107,11 @@ public:
 	bool camelid_;
 	bool camelid_constraints_;
 
+    
+    GraftMap grafts_ ;
+    
+    
+    
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;
 
@@ -149,19 +128,21 @@ public:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 	// external objects
-	Ab_Info ab_info_;
-	utility::vector1< core::fragment::FragSetOP > offset_frags_;
+	Ab_InfoOP ab_info_;
+    Ab_TemplateInfoOP ab_t_info_ ;
 
-	//packer task
-	core::pack::task::TaskFactoryOP tf_;
-	core::pack::task::TaskFactoryOP init_task_factory_;
-
-	// movers
-	protocols::antibody2::Ab_GraftCDRs_MoverOP graft_move_;
-	protocols::antibody2::CDRH3Modeler2OP model_cdrh3_;
 
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();
+    void set_packer_default( core::pose::Pose & pose, bool include_current ) ;
+
+
+    
+    // movers
+    protocols::moves::SequenceMoverOP graft_sequence_ ;
+    protocols::moves::SequenceMoverOP relax_sequence_ ;
+    protocols::simple_moves::PackRotamersMoverOP packer_ ;
+    protocols::moves::PyMolMoverOP pymol_ ;
 
 
 	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
@@ -183,3 +164,8 @@ public:
 } // namespace protocols
 
 #endif
+
+
+
+
+

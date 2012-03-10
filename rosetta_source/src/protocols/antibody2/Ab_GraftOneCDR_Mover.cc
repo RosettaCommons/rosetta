@@ -20,6 +20,8 @@
 
 #include <protocols/antibody2/Ab_Info.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -45,38 +47,51 @@ using namespace core;
 
 Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover(){}
 
-Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover( Size query_start, Size query_end, std::string template_name, scoring::ScoreFunctionOP scorefxn ) : Mover( "Ab_GraftOneCDR_Mover" ), scorefxn_( scorefxn )
+Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover(std::string cdr_name, 
+                                           Size query_start, 
+                                           Size query_end, 
+                                           scoring::ScoreFunctionOP scorefxn ) : Mover( "Ab_GraftOneCDR_Mover" )
 {
+    scorefxn_ = scorefxn;
 	query_start_ = query_start;
 	query_end_   = query_end;
-	set_default( template_name );
-} // Ab_GraftOneCDR_Mover default constructor
+	set_default( cdr_name );
+    std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
+    TRG << "Reading in template: " << path << cdr_name << ".pdb " << std::endl;
+    import_pose::pose_from_pdb( template_pose_, path + cdr_name + ".pdb" );
+    
+} //default constructor
 
+    
+    
 
-//Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover( Size query_start, Size query_end, std::string template_name) : Mover( "Ab_GraftOneCDR_Mover" )
-//{
-//    query_start_ = query_start;
-//	query_end_ = query_end;
-//	set_default( template_name );
-//}
+Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover( std::string cdr_name, 
+                                           Ab_InfoOP ab_info, 
+                                           Ab_TemplateInfoOP ab_t_info, 
+                                           scoring::ScoreFunctionOP scorefxn ) : Mover( "Ab_GraftOneCDR_Mover" )
+{
+    scorefxn_ = scorefxn;
+    query_start_ = ab_info->get_CDR_loop(cdr_name)->start();
+	query_end_   = ab_info->get_CDR_loop(cdr_name)->stop();
+	set_default(cdr_name);
+    template_pose_ = ab_t_info->get_one_template_pose(cdr_name) ;
+    TRG<< "template_pose_ "<<std::endl;
+    TRG<< template_pose_<<std::endl;
+}
+    
+    
+    
     
 
 // Ab_GraftOneCDR_Mover default destructor
 Ab_GraftOneCDR_Mover::~Ab_GraftOneCDR_Mover() {}
 
 
+    
+    
 
 void Ab_GraftOneCDR_Mover::set_default( std::string template_name )
 {
-//	std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
-//	TRG << "Reading in template: " << path << template_name << ".pdb " << std::endl;
-//	import_pose::pose_from_pdb( template_pose_, path + template_name + ".pdb" );
-    
-    Ab_TemplateInfo ab_template_info;
-    // Need disscussion about where to put this declearation 
-    // TRG<<ab_template_info<<std::endl;
-    template_pose_ = ab_template_info.get_one_template_pose(template_name) ;
-
 
 /*        
     //idealize the loop
@@ -86,62 +101,50 @@ void Ab_GraftOneCDR_Mover::set_default( std::string template_name )
     template_pose_.dump_pdb("idealized.pdb");
   */  
     
-    
-	Ab_Info ab_info( template_pose_, template_name );
-	template_start_ = ab_info.current_start;
-	template_end_   = ab_info.current_end;
+
 	template_name_  = template_name;
+    flank_size_ = 4 ;//^^^^^^^^^^  
+    TRG<<"flank_size: "<<flank_size_<<std::endl;
+    // JQX:  the default value of flank_size_ is equle to 4, meaning there are 4 residues
+    //       on the C-ter and N-ter of the actual loop
+    //       However, based on the old R2 antibody code, only 3 residues on each stem 
 } 
 
-std::string
-Ab_GraftOneCDR_Mover::get_name() const { return "Ab_GraftOneCDR_Mover"; }
+    
+    
+    
+    
+    
 
-// copy ctor
-Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover( Ab_GraftOneCDR_Mover const & rhs ) {
-    initForEqualOperatorAndCopyConstructor(*this, rhs);
-}
-
-///@brief assignment operator
-Ab_GraftOneCDR_Mover & Ab_GraftOneCDR_Mover::operator=( Ab_GraftOneCDR_Mover const & rhs ){
-    //abort self-assignment
-    if (this == &rhs) return *this;
-    Mover::operator=(rhs);
-    initForEqualOperatorAndCopyConstructor(*this, rhs);
-    return *this;
-}
-
-void Ab_GraftOneCDR_Mover::initForEqualOperatorAndCopyConstructor(Ab_GraftOneCDR_Mover & lhs, Ab_GraftOneCDR_Mover const & rhs) {
-
-}
 
 
 
 void Ab_GraftOneCDR_Mover::apply( pose::Pose & pose_in )
 {
 
-    
-    
-    pose_in.dump_pdb("before_align.pdb");
+    TRG<<"flank_size: "<<flank_size_<<std::endl;
+
+    TRG<<"Start to Graft CDRs   "<< template_name_  <<" ............"<<std::endl;
     Size const nres( pose_in.total_residue() ); // Total residues
     Size query_size = ( query_end_ - query_start_ )+1;
-    Size flank_size ( 4 );  //^^^^^^^^^^  
-    // JQX:  the default value of flank_size is equle to 4, meaning there are 4 residues
-    //       on the C-ter and N-ter of the actual loop
-    //       However, based on the old R2 antibody code, only 3 residues on each stem 
+
+
 
 
 	// create a sub pose with  4 flanking residues on either side of CDR loop
 //        TRG<<"query_start="<<query_start_<<std::endl;
 //        TRG<<"query_end="<<query_end_<<std::endl;
-//        TRG<<"flank_size="<<flank_size<<std::endl;
+//        TRG<<"flank_size="<<flank_size_<<std::endl;
 //        TRG<<"query_size="<<query_size<<std::endl;
-//        TRG<<"truncated_pose will be from "<<query_start_-flank_size<<" to "<<query_end_+flank_size<<std::endl;
-    pose::Pose truncated_pose( pose_in, query_start_-flank_size, query_end_+flank_size );
-//        TRG<<"**************&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*************"<<std::endl;
-//        TRG<<pose_in.sequence()<<std::endl;
-//        TRG<<"  the template sequence:  "<<template_pose_.sequence()<<std::endl;
-//        TRG<<"trucated_query sequence:  "<<truncated_pose.sequence()<<std::endl;
-//        TRG<<"**************&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*************"<<std::endl;
+//        TRG<<"truncated_pose will be from "<<query_start_-flank_size_<<" to "<<query_end_+flank_size_<<std::endl;
+    pose::Pose truncated_pose( pose_in, query_start_-flank_size_, query_end_+flank_size_ );
+
+    // Just want to make life a litter easier
+    //TRG<<"**************&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*************"<<std::endl;
+    //TRG<<pose_in.sequence()<<std::endl;
+    //TRG<<"  the template sequence:  "<<template_pose_.sequence()<<std::endl;
+    //TRG<<"trucated_query sequence:  "<<truncated_pose.sequence()<<std::endl;
+    //TRG<<"**************&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*************"<<std::endl;
     
     
 	// create atom map for superimposing 2 flanking resiudes
@@ -149,9 +152,14 @@ void Ab_GraftOneCDR_Mover::apply( pose::Pose & pose_in )
     pose::initialize_atomid_map( atom_map, template_pose_, id::BOGUS_ATOM_ID );
 
 
-    for( Size start_stem = 2; start_stem <= flank_size; ++start_stem ) {
+    
+    //   ****AAAAAAAAAAAAAAAAAAA****  the template pose should have 4 residues each side
+    //    @@@AAAAAAAAAAAAAAAAAAA@@@   the real alignment only based on 3 residues each side
+    
+    for( Size start_stem = 2; start_stem <= flank_size_; ++start_stem ) { 
+    /// starting from the 2nd residue in the l1-3.pdb, H1-3.pdb
         Size const ref_stem ( start_stem  );
-        for( Size j=1; j <= 4; j++ ) {
+        for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
 //          TRG<<"j="<<j<<"  start_stem_in_template_pose_="<<start_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
             id::AtomID const id1( j, start_stem );
             id::AtomID const id2( j, ref_stem );
@@ -160,10 +168,10 @@ void Ab_GraftOneCDR_Mover::apply( pose::Pose & pose_in )
     }
 
 	// start at the end of the actual loop
-    for( Size end_stem = query_size+flank_size+1; end_stem <= query_size+flank_size+flank_size-1; ++end_stem ) { 
+    for( Size end_stem = query_size+flank_size_+1; end_stem <= query_size+flank_size_+flank_size_-1; ++end_stem ) { 
         Size const ref_stem ( end_stem);  
 //        if(template_name_ == "h3") Size const ref_stem(end_stem+1);
-        for( Size j=1; j <= 4; j++ ) {
+        for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
 //            TRG<<"j="<<j<<"  end_stem_in_template_pose_="<<end_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
             id::AtomID const id1( j, end_stem );
             id::AtomID const id2( j, ref_stem );
@@ -217,6 +225,36 @@ void Ab_GraftOneCDR_Mover::apply( pose::Pose & pose_in )
 
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+std::string Ab_GraftOneCDR_Mover::get_name() const { return "Ab_GraftOneCDR_Mover"; }
+    
+// copy ctor
+Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover( Ab_GraftOneCDR_Mover const & rhs ) {
+    initForEqualOperatorAndCopyConstructor(*this, rhs);
+}
+    
+///@brief assignment operator
+Ab_GraftOneCDR_Mover & Ab_GraftOneCDR_Mover::operator=( Ab_GraftOneCDR_Mover const & rhs ){
+    //abort self-assignment
+    if (this == &rhs) return *this;
+    Mover::operator=(rhs);
+    initForEqualOperatorAndCopyConstructor(*this, rhs);
+    return *this;
+}
+    
+void Ab_GraftOneCDR_Mover::initForEqualOperatorAndCopyConstructor(Ab_GraftOneCDR_Mover & lhs, Ab_GraftOneCDR_Mover const & rhs) {
+        
+}
     
     
     

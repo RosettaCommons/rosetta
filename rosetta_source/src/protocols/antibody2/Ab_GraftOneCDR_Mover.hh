@@ -19,8 +19,11 @@
 
 #include <protocols/antibody2/Ab_GraftOneCDR_Mover.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>  // Needs to be the full header so the scorefxn can default to NULL
+#include <core/scoring/ScoreFunction.hh>  
+// Needs to be the full header so the scorefxn can default to NULL
 #include <protocols/moves/Mover.hh>
+#include <protocols/antibody2/Ab_Info.fwd.hh>
+#include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 
 namespace protocols {
 namespace antibody2 {
@@ -32,9 +35,17 @@ namespace antibody2 {
 		Ab_GraftOneCDR_Mover();
 
 		// constructor with arguments
-		Ab_GraftOneCDR_Mover( core::Size query_start, core::Size query_end, std::string template_name, core::scoring::ScoreFunctionOP scorefxn );
-//		Ab_GraftOneCDR_Mover( core::Size query_start, core::Size query_end, std::string template_name);
-		// default destructor
+		Ab_GraftOneCDR_Mover(std::string cdr_name, 
+                             core::Size query_start, 
+                             core::Size query_end, 
+                             core::scoring::ScoreFunctionOP scorefxn );
+        
+		Ab_GraftOneCDR_Mover(std::string cdr_name, 
+                             Ab_InfoOP ab_info,
+                             Ab_TemplateInfoOP ab_t_info,
+                             core::scoring::ScoreFunctionOP scorefxn );
+
+        
 		~Ab_GraftOneCDR_Mover();
 
 		void set_default( std::string template_name );
@@ -58,7 +69,7 @@ namespace antibody2 {
 		// Limits of query loop
 		core::Size query_start_;
 		core::Size query_end_;
-
+        core::Size flank_size_;
 		std::string template_name_;
 
 		// Limits of template loop

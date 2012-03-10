@@ -17,6 +17,7 @@
 #define INCLUDED_protocols_antibody2_Ab_TemplateInfo_hh
 
 
+#include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 #include <map>
 #include <core/pose/Pose.hh>
 #include <iostream>
@@ -30,17 +31,22 @@ using namespace core;
 /// antibody2 definition
 class Ab_TemplateInfo  : public utility::pointer::ReferenceCount {
 
-
-
 public:
     typedef std::map <std::string, core::pose::Pose> TemplatePoseMap;
 
-    /// default constructor
+    /// constructors
     Ab_TemplateInfo();
+    Ab_TemplateInfo(bool load_L1, bool load_L2, bool load_L3,
+                    bool load_H1, bool load_H2, bool load_H3) ;
 
-
-    pose::Pose get_one_template_pose(std::string template_name);
-
+    Ab_TemplateInfo(bool load_L1, bool load_L2, bool load_L3,
+                    bool load_H1, bool load_H2, bool load_H3, bool camelid);
+    
+    void load_templates_from_pdbs(bool load_L1, bool load_L2, bool load_L3,
+                                  bool load_H1, bool load_H2, bool load_H3, bool camelid);
+    
+    pose::Pose get_one_template_pose(std::string cdr_name);
+    bool is_camelid()  { return camelid_;  }
 
 	void show( std::ostream & out=std::cout );
 //	void show( std::ostream & out );
@@ -49,21 +55,24 @@ public:
 
 
 private:
+    bool load_L1_, load_L2_, load_L3_, 
+         load_H1_, load_H2_, load_H3_;
+    
     TemplatePoseMap templates_poses_;
     pose::Pose L1_t_pose_, L2_t_pose_, L3_t_pose_,
                H1_t_pose_, H2_t_pose_, H3_t_pose_;
 //    pose::Pose Lfr_t_pose_, Hfr_t_pose_, LightHeavy_t_pose_;
 
-
+	void set_default( bool camelid );
 
     std::string LightHeavy_t_name_, Lfr_t_name_, Hfr_t_name_;
     std::string L1_t_name_, L2_t_name_, L3_t_name_,
                 H1_t_name_, H2_t_name_, H3_t_name_;
 
     void obtain_templates_names();
-    void load_templates_from_pdbs();
 
 
+	bool camelid_;
 
 
 

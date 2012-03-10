@@ -48,7 +48,7 @@ main( int argc, char * argv [] )
 
 
 	Ab_AssembleCDRsOP abm = new Ab_AssembleCDRs();
-    TR<<abm<<std::endl;
+    TR<<*abm<<std::endl;
 //    exit(-1);
 
 	JobDistributor::get_instance()->go(abm);

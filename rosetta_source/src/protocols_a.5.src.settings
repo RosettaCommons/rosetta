@@ -21,11 +21,12 @@ sources = {
                 "Ab_TemplateInfo",
                 "Ab_Info",
                 "Ab_AssembleCDRs",
-                "CDRH3Modeler2",
-                "Ab_GraftCDRs_Mover",
                 "Ab_GraftOneCDR_Mover",
                 "Ab_CloseOneCDR_Mover",
                 "Ab_RelaxCDRs_Mover",
+		"Ab_ModelCDRH3",
+#		"Ab_H3_cter_insert_mover",
+                "CDRH3Modeler2",
 	],
 }
 include_path = [

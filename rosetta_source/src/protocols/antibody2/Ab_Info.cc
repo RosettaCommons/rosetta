@@ -51,20 +51,19 @@ Ab_Info::Ab_Info() {
 	set_default( false/*camelid*/ );
 
 	for( core::Size i = 0; i <= 6; i++ ) hfr_[i][0] = hfr_[i][1] = hfr_[i][2] = 0;
-    obtain_loop_info();
 }
 
 
 /// constructor with arguments
 Ab_Info::Ab_Info( core::pose::Pose & pose ) {
-	setup_loops( pose, false/*camelid*/ );
-    obtain_loop_info();
+	setup_CDR_loops( pose, false/*camelid*/ );
+    load_CDR_query_info_to_check();
 }
 
 /// constructor with arguments
 Ab_Info::Ab_Info( core::pose::Pose & pose, bool camelid ) {
-	setup_loops( pose, camelid );
-    obtain_loop_info();
+	setup_CDR_loops( pose, camelid );
+    load_CDR_query_info_to_check();
 }
 
 
@@ -72,72 +71,51 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, bool camelid ) {
 /// constructor with arguments
 Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 {
+    if(camelid_){
+        if (cdr_name == "l1" || cdr_name == "l2" ||cdr_name == "l3") {
+            utility_exit_with_message("This is Camelid antibody, No Light Chain !!!");
+        }
+    }
+
 	set_default( false/*camelid*/ );
-    using namespace std;
-    ifstream inf;
-    std::string temp;
 
 	if( !camelid_ ) {
 		if( cdr_name == "l1" ) {
-			L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 24 ), pose.pdb_info()->pdb2pose( 'L', 34 ) );
+			L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l1"] ), 
+                                   pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l1"] ) );
 			current_start = L1_->start();
 			current_end = L1_->stop();
-
-            inf.open("query.l1");
-            if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l1' file!!");}
-            inf>>temp; inf>>L1_seq_;
-            inf.close();
 		}
 		else if( cdr_name == "l2" ) {
-			L2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 50 ), pose.pdb_info()->pdb2pose( 'L', 56 ) );
+			L2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l2"] ), 
+                                   pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l2"] ) );
 			current_start = L2_->start();
 			current_end = L2_->stop();
-
-            inf.open("query.l2");
-            if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l2' file!!");}
-            inf>>temp; inf>>L2_seq_;
-            inf.close();
 		}
 		else if( cdr_name == "l3" ) {
-			L3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 89 ), pose.pdb_info()->pdb2pose( 'L', 97 ) );
+			L3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l3"] ), 
+                                   pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l3"] ) );
 			current_start = L3_->start();
 			current_end = L3_->stop();
-
-            inf.open("query.l3");
-            if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l3' file!!");}
-            inf>>temp; inf>>L3_seq_;
-            inf.close();
 		}
 	}
 	if( cdr_name == "h1" ) {
-		H1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 26 ), pose.pdb_info()->pdb2pose( 'H', 35 ) );
+		H1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h1"] ), 
+                               pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h1"] ) );
 		current_start = H1_->start();
 		current_end = H1_->stop();
-
-        inf.open("query.h1");
-        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h1' file!!");}
-        inf>>temp; inf>>H1_seq_;
-        inf.close();
 	}
 	else if( cdr_name == "h2" ) {
-		H2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 50 ), pose.pdb_info()->pdb2pose( 'H', 65 ) );
+		H2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h2"] ), 
+                               pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h2"] ) );
 		current_start = H2_->start();
 		current_end = H2_->stop();
-
-        inf.open("query.h2");
-        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h2' file!!");}
-        inf>>temp; inf>>H2_seq_;
-        inf.close();
 	}
 	else if( cdr_name == "h3" ) {
-		H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 ) );
+		H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h3"] ), 
+                               pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h3"] ) );
 		current_start = H3_->start();
 		current_end = H3_->stop();
-
-        inf.open("query.h3");
-        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h3' file!!");}
-        inf>>temp; inf>>H3_seq_;
-        inf.close();
 	}
 
 
@@ -158,6 +136,7 @@ Ab_Info::set_default( bool camelid )
 	current_end = 0;
 	kinked_ = false;
 	extended_ = false;
+    get_CDRs_numbering();
 }
 
 
@@ -167,40 +146,48 @@ Ab_Info::set_default( bool camelid )
 
 
 void
-Ab_Info::setup_loops( core::pose::Pose & pose, bool camelid ) {
-
-
+Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool camelid ) {
 
 	set_default( camelid );
 
 	if( !camelid_ ) {
-		L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 24 ), pose.pdb_info()->pdb2pose( 'L', 34 ) );
+		L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l1"] ), 
+                               pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l1"] ) );
 		L1_->set_cut( L1_->start() + core::Size( ( ( L1_->stop() - L1_->start() ) + 1 ) / 2 ) );
 		all_cdr_loops_.add_loop( *L1_ );
 		loops_.insert( std::pair<std::string, loops::LoopOP>("l1", L1_) );
-		L2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 50 ), pose.pdb_info()->pdb2pose( 'L', 56 ) );
+        
+		L2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l2"] ), 
+                               pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l2"] ) );
 		L2_->set_cut( L2_->start() + core::Size( ( ( L2_->stop() - L2_->start() ) + 1 ) / 2 ) );
 		all_cdr_loops_.add_loop( *L2_ );
 		loops_.insert( std::pair<std::string, loops::LoopOP>("l2", L2_) );
-		L3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', 89 ), pose.pdb_info()->pdb2pose( 'L', 97 ) );
+        
+		L3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l3"] ), 
+                               pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l3"] ) );
 		L3_->set_cut( L3_->start() + core::Size( ( ( L3_->stop() - L3_->start() ) + 1 ) / 2 ) );
 		all_cdr_loops_.add_loop( *L3_ );
 		loops_.insert( std::pair<std::string, loops::LoopOP>("l3", L3_) );
 	}
 
-	H1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 26 ), pose.pdb_info()->pdb2pose( 'H', 35 ) );
+	H1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h1"] ), 
+                           pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h1"] ) );
 	H1_->set_cut( H1_->start() + core::Size( ( ( H1_->stop() - H1_->start() ) + 1 ) / 2 ) );
 	all_cdr_loops_.add_loop( *H1_ );
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h1", H1_) );
-	H2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 50 ), pose.pdb_info()->pdb2pose( 'H', 65 ) );
+    
+	H2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h2"] ), 
+                           pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h2"] ) );
 	H2_->set_cut( H2_->start() + core::Size( ( ( H2_->stop() - H2_->start() ) + 1 ) / 2 ) );
 	all_cdr_loops_.add_loop( *H2_ );
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h2", H2_) );
+    
 //	H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 )+1 );
 //	H3_->set_cut( H3_->start() + 1 );
 //  JQX: don't understand why the perl script has one less residue in the end of h3.pdb for deep graft option
 //       don't understand this +1, either, temporary remove    CHECK LATER !!!
-    H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 ) );
+    H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h3"] ), 
+                           pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h3"] ) );
     H3_->set_cut( H3_->start() + 1 );  // why this is different compared to other cuts of other loops? Aroop seems did this in his old R3 code, CHECK LATER !!!
 	all_cdr_loops_.add_loop( *H3_ );
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h3", H3_) );
@@ -237,7 +224,7 @@ Ab_Info::setup_loops( core::pose::Pose & pose, bool camelid ) {
 
 
 
-loops::LoopOP Ab_Info::get_loop( std::string loop ) {
+loops::LoopOP Ab_Info::get_CDR_loop( std::string loop ) {
 	LoopMap::iterator iter = loops_.begin();
 	iter = loops_.find(loop);
 	if ( iter != loops_.end() ) {return iter->second;}
@@ -275,8 +262,7 @@ void Ab_Info::align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & nat
 
 
 
-void
-Ab_Info::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
+void Ab_Info::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	if( camelid_ )
 		detect_camelid_CDR_H3_stem_type();
 	else
@@ -287,8 +273,7 @@ Ab_Info::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
 
 
 
-void
-Ab_Info::detect_camelid_CDR_H3_stem_type() {
+void Ab_Info::detect_camelid_CDR_H3_stem_type() {
 	TR << "AC Detecting Camelid CDR H3 Stem Type" << std::endl;
 
 	// extract single letter aa codes for the chopped loop residues
@@ -325,8 +310,7 @@ Ab_Info::detect_camelid_CDR_H3_stem_type() {
 
 
 
-void
-Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
+void Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
 
 	bool is_H3( false );
@@ -417,8 +401,7 @@ Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 
 
 
-void
-Ab_Info::all_cdr_fold_tree( core::pose::Pose & pose ) {
+void Ab_Info::all_cdr_fold_tree( core::pose::Pose & pose ) {
 	using namespace core::kinematics;
 
 	all_cdr_loops_.sequential_order();
@@ -450,12 +433,42 @@ Ab_Info::all_cdr_fold_tree( core::pose::Pose & pose ) {
 } // all_cdr_fold_tree()
 
 
+    
+    
+    
+    
+    
+void Ab_Info::get_CDRs_numbering(){
+    CDR_numbering_begin_.insert( std::pair<std::string, core::Size>("l1", 24) );
+    CDR_numbering_end_.insert( std::pair<std::string, core::Size>("l1", 34) );
+        
+    CDR_numbering_begin_.insert( std::pair<std::string, core::Size>("l2", 50) );
+    CDR_numbering_end_.insert( std::pair<std::string, core::Size>("l2", 56) );
+            
+    CDR_numbering_begin_.insert( std::pair<std::string, core::Size>("l3", 89) );
+    CDR_numbering_end_.insert( std::pair<std::string, core::Size>("l3", 97) );
+            
+    CDR_numbering_begin_.insert( std::pair<std::string, core::Size>("h1", 26) );
+    CDR_numbering_end_.insert( std::pair<std::string, core::Size>("h1", 35) );
+            
+    CDR_numbering_begin_.insert( std::pair<std::string, core::Size>("h2", 50) );
+    CDR_numbering_end_.insert( std::pair<std::string, core::Size>("h2", 65) );
+            
+    CDR_numbering_begin_.insert( std::pair<std::string, core::Size>("h3", 95) );
+    CDR_numbering_end_.insert( std::pair<std::string, core::Size>("h3", 102) );
+}
+
+    
+    
+    
+    
+    
+    
 
 
 
 /// @details  Show the complete setup of the docking protocol
-void
-Ab_Info::show( std::ostream & out ) {
+void Ab_Info::show( std::ostream & out ) {
     //      if ( !flags_and_objects_are_in_sync_ ){
     //              sync_objects_with_flags();
     //      }
@@ -508,38 +521,38 @@ std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info )
 }
 
 
-void Ab_Info::obtain_loop_info(){
+void Ab_Info::load_CDR_query_info_to_check(){
 
         using namespace std;
         ifstream inf;
         std::string temp;
 
-        inf.open("query.l1");
+        inf.open("input/query.l1");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l1' file!!");}
         inf>>temp; inf>>L1_seq_;
         inf.close();
 
-        inf.open("query.l2");
+        inf.open("input/query.l2");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l2' file!!");}
         inf>>temp; inf>>L2_seq_;
         inf.close();
 
-        inf.open("query.l3");
+        inf.open("input/query.l3");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l3' file!!");}
         inf>>temp; inf>>L3_seq_;
         inf.close();
 
-        inf.open("query.h1");
+        inf.open("input/query.h1");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h1' file!!");}
         inf>>temp; inf>>H1_seq_;
         inf.close();
 
-        inf.open("query.h2");
+        inf.open("input/query.h2");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h2' file!!");}
         inf>>temp; inf>>H2_seq_;
         inf.close();
 
-        inf.open("query.h3");
+        inf.open("input/query.h3");
         if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h3' file!!");}
         inf>>temp; inf>>H3_seq_;
         inf.close();
@@ -550,4 +563,5 @@ void Ab_Info::obtain_loop_info(){
 
 } // namespace antibody2
 } // namespace protocols
+
 
