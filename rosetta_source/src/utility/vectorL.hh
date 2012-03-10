@@ -23,6 +23,7 @@
 // C++ headers
 #include <cassert>
 #include <vector>
+#include <algorithm>
 
 
 namespace utility {
@@ -298,6 +299,34 @@ public: // Methods
 		if ( super::size() < super::capacity() ) vectorL( *this ).swap( *this );
 	}
 
+
+	/// @brief  Check if vector contains a given element.
+	inline
+	bool
+	contains(T const & t)
+	{
+		if (std::find(begin(), end(), t) == end()) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+
+	/// @brief  Return the index of a given element or NULL if not found.
+	inline
+	index_type
+	index_of(T const & t)
+	{
+		index_type loc = std::find(begin(), end(), t) - begin();
+		if (loc < size()) {
+			return loc + l_;
+		}
+		else {
+			return NULL;
+		}
+	}
 
 public: // Properties
 

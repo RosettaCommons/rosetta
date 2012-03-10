@@ -46,6 +46,7 @@
 
 #include <utility/vector1.hh>
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 //#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
@@ -344,6 +345,53 @@ Pose::split_by_chain(Size const chain_id) const{
 	core::Size const end = conformation().chain_end(chain_id);
 	return Pose(*this, begin, end);
 }
+
+
+/// @details  This method updates the pose chain IDs to match the chain IDs
+/// found in pdb_info().  In some applications, it is more intuitive to change
+/// pdb chain ID letters than it is to change pose chain IDs.  This method
+/// adds chain endings between pdb chains and redrives the pose chain IDs.
+/// Currently, disconnected segments with the same pdb chain ID character are
+/// treated as separate pose chains, e.g., it is possible for pose chains 1,
+/// 3, and 5 to all be chain X.  In the future, I will add a flag to force a
+/// one-to-one correspondence between the two chain designations, e.g., if
+/// residues 6 through 10 are chain B and residues 1 through 5 AND residues 11
+/// through 15 are chain A, then the pose will be reordered to place all res-
+/// idues with the same pdb chain ID into a single pose chain. (This is how it
+/// works when a pose is loaded from a pdb file.)  I personally have needed
+/// use of both functionalities.  I have chosen to create this as a separate
+/// method, rather than a part of a change_pdb_chain_ID_of_range(), to avoid
+/// multiple calls to Conformation.rederive_chain_ids().  Thus, this method
+/// should be called once after all modifications to pdb_info() have been
+/// made. ~ Labonte
+///
+/// See also:
+///  PDBInfo.chain()
+///  PDBInfo.set_resinfo()
+///  Pose.split_by_chain()
+///  Conformation.rederive_chain_IDs()
+///  Conformation.rederive_chain_endings()
+void
+Pose::update_pose_chains_from_pdb_chains()
+{
+	// Declare a vector for storing new (between-residue) chain endings.
+	utility::vector1<Size> new_endings;
+
+	char last_pdb_chain = pdb_info_->chain(1);
+	char current_pdb_chain;
+
+	for (Size i = 1; i <= conformation_->size(); ++i) {
+		current_pdb_chain = pdb_info_->chain(i);
+		if (current_pdb_chain != last_pdb_chain) {
+			new_endings.push_back(i - 1);
+			last_pdb_chain = current_pdb_chain;
+		}
+
+	// (chain_endings() includes a call to Conformer.rederive_chain_IDs.)
+	conformation_->chain_endings(new_endings);
+	}
+}
+
 
 /// APL Illegal.
 ///conformation::ResidueOPs::iterator Pose::res_begin() { return conformation_->res_begin(); }

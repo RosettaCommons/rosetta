@@ -299,6 +299,10 @@ public:
 	Pose
 	split_by_chain(Size chain_id) const;
 
+	/// @brief  Updates the pose chain IDs to match the pdb chain IDs.
+	void
+	update_pose_chains_from_pdb_chains();
+
 	/// APL Removing illegal non-const accessors to residues which
 	/// otherwise violate the data-integrity guarantees provided by
 	/// class Conformation.
