@@ -98,6 +98,11 @@ using namespace ObjexxFCL::fmt;
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 
+#include <protocols/antibody2/Ab_LH_SnugFit_Mover.hh>
+
+
+
+
 
 using basic::T;
 using basic::Error;
@@ -273,10 +278,14 @@ Ab_ModelCDRH3::init_from_options() {
     
 void
 Ab_ModelCDRH3::setup_objects() {
+    
 	sync_objects_with_flags();
+    
+    
+    
 }
-void
-Ab_ModelCDRH3::sync_objects_with_flags() {
+    
+void Ab_ModelCDRH3::sync_objects_with_flags() {
 
 	using namespace protocols::moves;
 
@@ -287,6 +296,13 @@ Ab_ModelCDRH3::sync_objects_with_flags() {
 	if ( model_h3_ ){model_cdrh3_ = new CDRH3Modeler2( model_h3_, true, true, camelid_, benchmark_ );}
 	else            {model_cdrh3_ = NULL;}
 
+    
+    
+
+    
+    
+    
+    
 	flags_and_objects_are_in_sync_ = true;
 	first_apply_with_current_setup_ = true;
 }
@@ -441,9 +457,18 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 		pymol.apply( frame_pose );
 		pymol.send_energy( frame_pose );
         
-		snugfit_mcm_protocol ( frame_pose, ab_info_.all_cdr_loops_ );
-		pymol.apply( frame_pose );
-		pymol.send_energy( frame_pose );
+        
+        //############################################################################
+        Ab_LH_SnugFit_Mover ab_lh_snugfit_mover(ab_info_.all_cdr_loops_); 
+        // TODO: JQX: should just pass the pointer of ab_info_ into the SnugFit class
+        ab_lh_snugfit_mover.apply(frame_pose);
+		//snugfit_mcm_protocol ( frame_pose, ab_info_.all_cdr_loops_ );
+		//pymol.apply( frame_pose );
+		//pymol.send_energy( frame_pose );
+        //############################################################################
+
+        
+        
 
 		// align pose to native pose
 		pose::Pose native_pose = *get_native_pose();
@@ -945,144 +970,17 @@ Ab_ModelCDRH3::get_name() const {
 
 	} // snugfit_MC_min
 
-	void
-	Ab_ModelCDRH3::snugfit_mcm_protocol(
-		pose::Pose & pose_in,
-		loops::Loops loops_in ) {
 
-		using namespace moves;
-		bool nb_list = true;
-		Size nres = pose_in.total_residue();
-
-		//MC move
-		Real trans_mag ( 0.1 );
-		Real rot_mag ( 5.0 );
-
-		// rb minimization
-		std::string min_type = "dfpmin_armijo_nonmonotone";
-		Real min_threshold ( 15.0 ); /* score unit */
-
-		// score functions
-		using namespace core::scoring;
-		core::scoring::ScoreFunctionOP scorefxn;
-		scorefxn = core::scoring::ScoreFunctionFactory::
-			create_score_function( "docking", "docking_min" );
-		scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
-		scorefxn->set_weight( core::scoring::overlap_chainbreak, 10./3. );
-
-		// score functions
-		core::scoring::ScoreFunctionOP pack_scorefxn;
-		pack_scorefxn = core::scoring::ScoreFunctionFactory::
-			create_score_function( "standard" );
-
-		// remove cutpoints variants for all cdrs
-		// "true" forces removal of variants even from non-cutpoints
-		loops::remove_cutpoint_variants( pose_in, true );
-
-		using namespace core::chemical;
-		for ( loops::Loops::const_iterator it = loops_in.begin(),
-						it_end = loops_in.end();	it != it_end; ++it ) {
-			core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it->cut() );
-			core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it->cut()+1);
-		}
-
-		//setting MoveMap
-		kinematics::MoveMapOP cdr_dock_map;
-		cdr_dock_map = new kinematics::MoveMap();
-		cdr_dock_map->clear();
-		cdr_dock_map->set_chi( false );
-		cdr_dock_map->set_bb( false );
-		utility::vector1< bool> is_flexible( nres, false );
-		bool include_neighbors( false );
-		select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
-		cdr_dock_map->set_bb( is_flexible );
-		include_neighbors = true;
-		select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
-		cdr_dock_map->set_chi( is_flexible );
-		cdr_dock_map->set_jump( 1, true );
-		for( Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ )
-			cdr_dock_map->set_jump( ii, false );
-
-
-		//set up minimizer movers
-        simple_moves::MinMoverOP min_mover = new simple_moves::MinMover( cdr_dock_map, scorefxn, min_type, min_threshold, nb_list );
-
-		//set up rigid body movers
-        rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose_in,
-                                                                                     *cdr_dock_map, rot_mag, trans_mag, rigid::partner_downstream, true );
-
-		setup_packer_task( pose_in );
-		//set up sidechain movers for rigid body jump and loop & neighbors
-		utility::vector1_size rb_jump;
-		rb_jump.push_back( 1 );
-		using namespace core::pack::task;
-		using namespace core::pack::task::operation;
-		// selecting movable c-terminal residues
-		ObjexxFCL::FArray1D_bool loop_residues( nres, false );
-		for( Size i = 1; i <= nres; i++ )
-			loop_residues( i ) = is_flexible[ i ]; // check mapping
-		using namespace protocols::toolbox::task_operations;
-		tf_->push_back( new RestrictToInterface( rb_jump, loop_residues ) );
-
-
-
-        simple_moves::RotamerTrialsMoverOP pack_rottrial = new simple_moves::RotamerTrialsMover( pack_scorefxn, tf_ );
-
-        simple_moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::PackRotamersMover( pack_scorefxn );
-		pack_interface_repack->task_factory(tf_);
-
-		Real temperature = 0.8;
-		MonteCarloOP mc = new MonteCarlo( pose_in, *scorefxn, temperature );
-
-		TrialMoverOP pack_interface_trial = new TrialMover(pack_interface_repack, mc );
-
-		protocols::docking::SidechainMinMoverOP scmin_mover = new
-		protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionCOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
-		TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc );
-
-		SequenceMoverOP rb_mover = new SequenceMover;
-		rb_mover->add_mover( rb_perturb );
-		rb_mover->add_mover( pack_rottrial );
-
-		JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover, scorefxn, min_threshold);
-		TrialMoverOP rb_mover_min_trial = new TrialMover( rb_mover_min, mc  );
-
-		SequenceMoverOP repack_step = new SequenceMover;
-		repack_step->add_mover( rb_mover_min_trial );
-		repack_step->add_mover( pack_interface_trial );
-		repack_step->add_mover( scmin_trial );
-
-		CycleMoverOP rb_mover_min_trial_repack  = new CycleMover;
-		for ( Size i=1; i < 8; ++i )
-			rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
-		rb_mover_min_trial_repack->add_mover( repack_step );
-
-		//set up initial repack mover
-		SequenceMoverOP initial_repack = new SequenceMover;
-		initial_repack->add_mover( pack_interface_trial );
-		initial_repack->add_mover( scmin_trial );
-
-		//set up initial and final min_trial movers for docking
-		TrialMoverOP minimize_trial = new TrialMover( min_mover, mc );
-
-		//set up mcm cycles and mcm_repack cycles
-		RepeatMoverOP mcm_four_cycles = new RepeatMover( rb_mover_min_trial, 4 );
-
-		Size cycles = 3;
-		if ( benchmark_ ) cycles = 1;
-		RepeatMoverOP mcm_final_cycles = new RepeatMover( rb_mover_min_trial_repack, cycles );
-
-		SequenceMoverOP snugfit_mcm = new SequenceMover;
-		snugfit_mcm->add_mover( initial_repack );
-		snugfit_mcm->add_mover( minimize_trial );
-		snugfit_mcm->add_mover( mcm_four_cycles );
-		snugfit_mcm->add_mover( mcm_final_cycles );
-		snugfit_mcm->add_mover( minimize_trial );
-
-		snugfit_mcm->apply ( pose_in );
-
-		return;
-	} // snugfit_mcm_protocol
+    
+    
+    
+    
+    
+    // delete the snugfit_mcm_protocol
+    
+    
+    
+    
 
 	void
 	Ab_ModelCDRH3::setup_packer_task(

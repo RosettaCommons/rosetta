@@ -37,6 +37,7 @@
 #include <protocols/antibody2/CDRH3Modeler2.fwd.hh>
 
 
+
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -98,7 +99,8 @@ public:
 	  core::scoring::ScoreFunctionOP pack_scorefxn,
 		utility::vector1< bool> is_flexible );
 
-	void snugfit_mcm_protocol(core::pose::Pose & pose_in, loops::Loops loops_in );
+	//void snugfit_mcm_protocol(core::pose::Pose & pose_in, loops::Loops loops_in );
+    //JQX: move to a new class
 
 	void setup_packer_task( core::pose::Pose & pose_in );
 
@@ -157,8 +159,13 @@ public:
 	core::pack::task::TaskFactoryOP init_task_factory_;
 
 	// movers
-
 	protocols::antibody2::CDRH3Modeler2OP model_cdrh3_;
+    
+    
+
+
+    
+    
 
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();
