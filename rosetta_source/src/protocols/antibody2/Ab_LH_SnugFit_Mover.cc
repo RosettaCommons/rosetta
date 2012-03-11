@@ -143,13 +143,21 @@ void Ab_LH_SnugFit_Mover::init(loops::Loops loops_in, bool camelid )
 }
     
     
-    
+void Ab_LH_SnugFit_Mover::set_default(){
+        
+}
     
     
 std::string Ab_LH_SnugFit_Mover::get_name() const {
     return "Ab_LH_SnugFit_Mover";
 }
 
+    
+    
+    
+    
+    
+    
     
     
     
