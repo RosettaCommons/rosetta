@@ -117,27 +117,9 @@ Splice::Splice() :
 
 
 Splice::~Splice() {}
-/* this doesnt quite work, and is superseded by copy_stretch
-void
-remove_cutpoint_variants_in_interval( core::pose::Pose & pose, core::Size const from_res, core::Size const to_res ){
-	using namespace core::chemical;
-	using namespace core::pose;
-
-	const core::kinematics::FoldTree& tree(pose.fold_tree());
-	for( core::Size resi = from_res + 1; resi<to_res; ++resi ) {
-//		if (!tree.is_cutpoint(resi) || resi >= (pose.total_residue() - 1))
-//			continue;
-		if( pose.residue( resi ).is_lower_terminus() ){
-			core::conformation::idealize_position( resi, pose.conformation() );
-			remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, resi );
-			remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, resi + 1 );
-			TR<<"removing cut at "<<resi<<std::endl;
-		}
-	}
-}
-*/
 
 /// @brief copy a stretch of aligned phi-psi dofs from source to target. No repacking no nothing.
+/// The core function, copy_segment, copies residues from the source to the target without aligning the residues, thereby delivering all of their dofs
 void
 copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res ){
 	using namespace core::pose;
@@ -145,8 +127,9 @@ copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::
 	using namespace core::chemical;
 	core::Size const from_nearest_on_source( find_nearest_res( source, target, from_res ) );
 	core::Size const to_nearest_on_source( find_nearest_res( source, target, to_res ) );
-TR<<"target: "<<from_res<<" "<<to_res<<" source: "<<from_nearest_on_source<<" "<<to_nearest_on_source<<std::endl;
+	TR<<"target: "<<from_res<<" "<<to_res<<" source: "<<from_nearest_on_source<<" "<<to_nearest_on_source<<std::endl;
 	runtime_assert( from_nearest_on_source && to_nearest_on_source );
+// change loop length:
 	core::Size const residue_diff( to_nearest_on_source - from_nearest_on_source - (to_res - from_res ));
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res );
@@ -163,7 +146,7 @@ core::Size
 Splice::find_dbase_entry( core::pose::Pose const & pose )
 {
 	core::Size dbase_entry( database_entry() );
-	if( first_pass_ ){/// setup the dbase subset
+	if( first_pass_ ){/// setup the dbase subset where loop lengths fit the selection criteria
 		for( core::Size i = 1; i <= torsion_database_.size(); ++i ){// find entries that fit the length criteria
 			using namespace protocols::rosetta_scripts;
 
@@ -227,7 +210,6 @@ Splice::apply( core::pose::Pose & pose )
 
 	core::pose::Pose const in_pose_copy( pose );
 	pose.conformation().detect_disulfides(); // just in case; but I think it's unnecessary
-
 
 /// from_res/to_res can also be determined through task factory, by identifying the first and last residues that are allowed to design in this tf
 	if( torsion_database_fname_ == "" && from_res() == 0 && to_res() == 0 ){/// set the splice site dynamically according to the task factory
@@ -360,8 +342,6 @@ Splice::apply( core::pose::Pose & pose )
 		pose.set_psi( pose_resi, dofs[ i + 1 ].psi() );
 		pose.set_omega( pose_resi, dofs[ i + 1 ].omega() );
 		TR<<pose_resi<<",";
-//		char f[ 10];
-//		sprintf( f, "b%d.pdb", i );
 	}
 
 	pose.conformation().detect_disulfides();/// probably unnecessary
