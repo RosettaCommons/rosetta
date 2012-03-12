@@ -88,16 +88,7 @@ public:
 
 	void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in, const loops::Loops & loops );
 
-	void repulsive_ramp( core::pose::Pose & pose_in, loops::Loops loops_in );
-
-	void snugfit_MC_min (
-		core::pose::Pose & pose_in,
-		core::kinematics::MoveMapOP cdr_dock_map,
-		core::Size cycles,
-		core::Real minimization_threshold,
-		core::scoring::ScoreFunctionOP scorefxn,
-	  core::scoring::ScoreFunctionOP pack_scorefxn,
-		utility::vector1< bool> is_flexible );
+    //JQX: move the repulsive_ramp and snugfit_MC_min to a new class
 
 	//void snugfit_mcm_protocol(core::pose::Pose & pose_in, loops::Loops loops_in );
     //JQX: move to a new class
