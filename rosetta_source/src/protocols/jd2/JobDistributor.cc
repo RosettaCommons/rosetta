@@ -283,6 +283,7 @@ JobDistributor::go_main( protocols::moves::MoverOP mover ) {
 			basic::Error() << "Treating failure as bad input; canceling similar jobs" << std::endl;
 			remove_bad_inputs_from_job_list();
 			job_failed( pose, false );
+			pose = core::pose::Pose();
 			continue;
 		}
 
