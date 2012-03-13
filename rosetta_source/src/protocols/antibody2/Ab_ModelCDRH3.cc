@@ -97,9 +97,11 @@ using namespace ObjexxFCL::fmt;
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
+#include <protocols/antibody2/Ab_util.hh>
 
 #include <protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.hh>
 #include <protocols/antibody2/Ab_LH_SnugFit_Mover.hh>
+#include <protocols/antibody2/Ab_util.hh>
 
 
 
@@ -610,33 +612,6 @@ Ab_ModelCDRH3::get_name() const {
 
 
 
-	void
-	Ab_ModelCDRH3::setup_simple_fold_tree(
-		Size jumppoint1,
-		Size cutpoint,
-		Size jumppoint2,
-		Size nres,
-		pose::Pose & pose_in ) {
-
-		using namespace kinematics;
-
-		TR << "ABM Setting up simple fold tree" << std::endl;
-
-		FoldTree f;
-		f.clear();
-
-		f.add_edge( 1, jumppoint1, Edge::PEPTIDE );
-		f.add_edge( jumppoint1, cutpoint, Edge::PEPTIDE );
-		f.add_edge( cutpoint + 1, jumppoint2, Edge::PEPTIDE );
-		f.add_edge( jumppoint2, nres, Edge::PEPTIDE );
-		f.add_edge( jumppoint1, jumppoint2, 1 );
-		f.reorder( 1 );
-
-		pose_in.fold_tree( f );
-
-		TR << "ABM Done: Setting up simple fold tree" << std::endl;
-
-	} // setup_simple_fold_tree
 
 	///////////////////////////////////////////////////////////////////////////
 	/// @begin relax_cdrs

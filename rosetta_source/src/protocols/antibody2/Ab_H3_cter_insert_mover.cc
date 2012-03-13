@@ -33,10 +33,11 @@
 #include <protocols/antibody2/Ab_Info.hh>
 
 
-#include <protocols/antibody2/CDRH3Modeler2.hh>
+//#include <protocols/antibody2/CDRH3Modeler2.hh>
 //TODO: JQX: the reason I used this CDRH3Modeler2 head file 
 // is because of the "simple_one_loop_fold_tree" function in CDRH3Modeler2 file.
 // Planning to make a independent file to save this function, since it is widely used
+#include <protocols/antibody2/Ab_util.hh>
 
 
 

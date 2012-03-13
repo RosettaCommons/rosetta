@@ -77,12 +77,7 @@ public:
 
 	virtual std::string get_name() const;
 
-	void setup_simple_fold_tree(
-		core::Size jumppoint1,
-		core::Size cutpoint,
-		core::Size jumppoint2,
-		core::Size nres,
-		core::pose::Pose & pose_in );
+
 
 	void relax_cdrs( core::pose::Pose & pose );
 

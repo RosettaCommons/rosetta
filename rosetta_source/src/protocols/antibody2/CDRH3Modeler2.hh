@@ -262,17 +262,7 @@ private:
 
 
 
-void simple_one_loop_fold_tree(
-	core::pose::Pose & pose,
-	loops::Loop const & loop
-);
 
-void simple_fold_tree(
-	core::pose::Pose & pose_in,
-	core::Size jumppoint1,
-	core::Size cutpoint,
-	core::Size jumppoint2
-);
 
 } // antibody2
 } // protocols

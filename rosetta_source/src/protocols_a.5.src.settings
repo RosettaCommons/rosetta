@@ -28,6 +28,7 @@ sources = {
 		"Ab_H3_cter_insert_mover",
                 "CDRH3Modeler2",
 		"Ab_LH_SnugFit_Mover",
+		"Ab_util",
 	],
 }
 include_path = [

@@ -87,8 +87,7 @@
 #include <cstddef>
 #include <limits>
 
-
-
+#include <protocols/antibody2/Ab_util.hh>
 
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.hh>
 
@@ -472,71 +471,7 @@ CDRH3Modeler2::get_name() const {
     
     
     
-    
-    
-		void simple_one_loop_fold_tree(
-			pose::Pose & pose_in,
-			loops::Loop const & loop	) {
-			using namespace kinematics;
 
-			TR <<  "H3M Setting up simple one loop fold tree" << std::endl;
-
-			//setup fold tree for this loop
-			FoldTree f;
-			f.clear();
-			Size nres = pose_in.total_residue();
-			Size jumppoint1 = loop.start() - 1;
-			Size jumppoint2 = loop.stop() + 1;
-
-			if( jumppoint1 < 1 )   jumppoint1 = 1;
-			if( jumppoint2 > nres) jumppoint2 = nres;
-
-			f.add_edge( 1, jumppoint1, Edge::PEPTIDE );
-			f.add_edge( jumppoint1, loop.cut(), Edge::PEPTIDE );
-			f.add_edge( loop.cut() + 1, jumppoint2, Edge::PEPTIDE );
-			f.add_edge( jumppoint2, nres, Edge::PEPTIDE );
-			f.add_edge( jumppoint1, jumppoint2, 1 );
-			f.reorder( 1 );
-
-			pose_in.fold_tree( f );
-
-			TR <<  "H3M Finished setting up simple one loop fold tree" << std::endl;
-
-			return;
-		} // simple_one_loop_fold_tree
-
-		void simple_fold_tree(
-			pose::Pose & pose_in,
-			Size jumppoint1,
-			Size cutpoint,
-			Size jumppoint2 ) {
-			using namespace kinematics;
-
-			TR <<  "H3M Setting up simple fold tree" << std::endl;
-
-			//setup fold tree for this loop
-			FoldTree f;
-			f.clear();
-			Size nres = pose_in.total_residue();
-
-			if( jumppoint1 < 1 )   jumppoint1 = 1;
-			if( jumppoint2 > nres) jumppoint2 = nres;
-
-			f.add_edge( 1, jumppoint1, Edge::PEPTIDE );
-			f.add_edge( jumppoint1, cutpoint, Edge::PEPTIDE );
-			f.add_edge( cutpoint + 1, jumppoint2, Edge::PEPTIDE );
-			f.add_edge( jumppoint2, nres, Edge::PEPTIDE );
-			f.add_edge( jumppoint1, jumppoint2, 1 );
-			f.reorder( 1 );
-
-			pose_in.fold_tree( f );
-
-			TR <<  "H3M Finished setting up simple fold tree" << std::endl;
-
-			return;
-		} // simple_fold_tree
-
-    
     
     
     

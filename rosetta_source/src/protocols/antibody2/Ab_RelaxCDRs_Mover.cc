@@ -51,7 +51,7 @@
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/ResFilters.hh>
-
+#include <protocols/antibody2/Ab_util.hh>
 
 namespace protocols {
 namespace antibody2 {
