@@ -426,14 +426,6 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 
 
 
-	// graft loops
-
-//	graft_move_->apply( frame_pose );
-
-	pymol.apply( frame_pose );
-	pymol.send_energy( frame_pose );
-
-	exit(-1);
 
 	// model h3
 	if ( model_h3_ ) {

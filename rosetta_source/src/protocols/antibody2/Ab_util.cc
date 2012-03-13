@@ -435,6 +435,46 @@ namespace antibody2{
     
     
     
+    bool cutpoints_separation( core::pose::Pose & pose, Ab_Info & antibody_in ) 
+    {
+        
+        bool closed_cutpoints = true;
+        
+        for( loops::Loops::const_iterator it=antibody_in.all_cdr_loops_.begin(),
+            it_end=antibody_in.all_cdr_loops_.end(),
+            it_next; it != it_end; ++it ) {
+            Size cutpoint   = it->cut();
+            Real separation = 10.00; // an unlikely high number
+            separation = cutpoint_separation( pose, cutpoint );
+            
+            if( separation > 1.9 ) {
+                closed_cutpoints = false;
+                break;
+            }
+        }
+        return( closed_cutpoints );
+    } // cutpoints_separation
+    
+    Real cutpoint_separation(pose::Pose & pose_in, Size cutpoint) {
+        
+        Size const N ( 1 ); // N atom
+        Size const C ( 3 ); // C atom
+        
+        // Coordinates of the C atom of cutpoint res and N atom of res cutpoint+1
+        numeric::xyzVector_float peptide_C(pose_in.residue( cutpoint ).xyz( C )),
+        peptide_N( pose_in.residue( cutpoint + 1 ).xyz( N ) );
+        //			Real cutpoint_separation=distance(peptide_C, peptide_N);
+        Real cutpoint_separation=peptide_C.distance(peptide_N);
+        
+        return( cutpoint_separation );
+    } // cutpoint_separation
+
+    
+    
+    
+    
+    
+    
 
 
 } // namespace antibody2

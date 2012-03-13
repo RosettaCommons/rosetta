@@ -23,14 +23,14 @@
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <protocols/antibody2/Ab_Info.hh>
 
 
 
-
+using namespace core;
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace antibody2 {
-
 void simple_one_loop_fold_tree(
                                    core::pose::Pose & pose,
                                    loops::Loop const & loop
@@ -67,7 +67,19 @@ void setup_simple_fold_tree(
     
     void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactoryOP tf );
 
+    
+    
 
+    /// @brief return false if any cdr cutpoint is broken
+	bool cutpoints_separation( core::pose::Pose & pose, Ab_Info & antibody_in );
+    
+	// Compute the separation at the cutpoint. The N-C distance of the
+	// peptide bond which should be formed at the cutpoint. A closed loop is
+	// assumed to have a gap < 1.9 Ang
+	core::Real cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
+
+    
+    
 
 } //namespace antibody2
 } //namespace protocols

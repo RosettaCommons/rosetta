@@ -170,7 +170,8 @@ void CDRH3Modeler2::init(
     
 void CDRH3Modeler2::setup_objects(){
     ab_h3_cter_insert_mover_ = new Ab_H3_cter_insert_mover(antibody_in_);
-    //TODO:  right now, just want the code to work, whether this antibody_in_ is at the right position or 
+    //TODO:  
+    //JQX: right now, just want the code to work, whether this antibody_in_ is at the right position or 
     // wehther it has been initialized or not? I don't know. Will come back to address this
 }
     
@@ -330,7 +331,7 @@ void CDRH3Modeler2::set_default()
 					antibody_in_ = starting_antibody;
 					loop_fa_relax( pose_in, antibody_in_.get_CDR_loop("h2")->start(),
 												 antibody_in_.get_CDR_loop("h2")->stop()  );
-					closed_cutpoints = cutpoints_separation( pose_in );
+					closed_cutpoints = cutpoints_separation( pose_in, antibody_in_ );
 					++cycle;
 				} // while( ( cut_separation > 1.9 )
 
@@ -421,7 +422,7 @@ CDRH3Modeler2::get_name() const {
 					scored_frag_close( pose, trimmed_cdr_h3 );
 					cutoff_9_ = saved_cutoff_9; // restoring
 				}
-				closed_cutpoints = cutpoints_separation( pose );
+				closed_cutpoints = cutpoints_separation( pose, antibody_in_ );
 				++cycle;
 			} // while( ( cut_separation > 1.9 )
 
@@ -450,7 +451,7 @@ CDRH3Modeler2::get_name() const {
 				antibody_in_ = starting_antibody;
 				loop_fa_relax( pose, antibody_in_.get_CDR_loop("h3")->start(),
                                      antibody_in_.get_CDR_loop("h3")->stop()-1 + base_ );
-				closed_cutpoints = cutpoints_separation( pose );
+				closed_cutpoints = cutpoints_separation( pose, antibody_in_ );
 				++cycle;
 			} // while( ( cut_separation > 1.9 )
 
@@ -504,40 +505,6 @@ CDRH3Modeler2::get_name() const {
     
     
     
-		bool CDRH3Modeler2::cutpoints_separation( core::pose::Pose & pose ) {
-
-			bool closed_cutpoints = true;
-
-			for( loops::Loops::const_iterator it=antibody_in_.all_cdr_loops_.begin(),
-						 it_end=antibody_in_.all_cdr_loops_.end(),
-						 it_next; it != it_end; ++it ) {
-				Size cutpoint   = it->cut();
-				Real separation = 10.00; // an unlikely high number
-				separation = cutpoint_separation( pose, cutpoint );
-
-				if( separation > 1.9 ) {
-					closed_cutpoints = false;
-					break;
-				}
-			}
-			return( closed_cutpoints );
-		} // cutpoints_separation
-    
-		Real CDRH3Modeler2::cutpoint_separation(
-  		pose::Pose & pose_in,
-			Size cutpoint ) {
-
-			Size const N ( 1 ); // N atom
-			Size const C ( 3 ); // C atom
-
-			// Coordinates of the C atom of cutpoint res and N atom of res cutpoint+1
-			numeric::xyzVector_float peptide_C(pose_in.residue( cutpoint ).xyz( C )),
-				peptide_N( pose_in.residue( cutpoint + 1 ).xyz( N ) );
-//			Real cutpoint_separation=distance(peptide_C, peptide_N);
-			Real cutpoint_separation=peptide_C.distance(peptide_N);
-
-			return( cutpoint_separation );
-		} // cutpoint_separation
 
 		///////////////////////////////////////////////////////////////////////////
 		/// @begin scored_frag_close

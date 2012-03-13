@@ -134,17 +134,9 @@ public:
 	// void antibody_modeling_insert_ter( core::pose::Pose & pose);
 
 
+    //JQX: cutpoints_separation and cutpoint_separation have been
+    // moved to the Ab_util file
 
-	/// @brief return false if any cdr cutpoint is broken
-	bool cutpoints_separation( core::pose::Pose & pose );
-
-	// Compute the separation at the cutpoint. The N-C distance of the
-	// peptide bond which should be formed at the cutpoint. A closed loop is
-	// assumed to have a gap < 1.9 Ang
-	core::Real cutpoint_separation(
-		core::pose::Pose & pose_in,
-		Size cutpoint
-	);
 
 	void scored_frag_close(
 		core::pose::Pose & pose_in,
