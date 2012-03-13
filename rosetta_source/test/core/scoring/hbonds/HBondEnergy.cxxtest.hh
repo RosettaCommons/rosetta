@@ -315,7 +315,7 @@ public:
 		//std::cout << "end score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -33.88566264995315, end_score, 1e-12 );
 	}
-	
+
 	void initialize_lj_hbond_sfxn( core::scoring::ScoreFunction & sfxn )
 	{
 		sfxn.set_weight( fa_atr, 0.5 );

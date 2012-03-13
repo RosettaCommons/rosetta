@@ -18,27 +18,28 @@
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 
-// Package headers
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/types.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondDatabase.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondTypeManager.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
+//Package headers
+#include <core/scoring/hbonds/hbonds_geom.hh>
+#include <core/scoring/hbonds/types.hh>
+#include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/HBondTypeManager.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/hbonds.hh>
 
-// Project headers
-// AUTO-REMOVED #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+//Project headers
+#include <core/types.hh>
+#include <basic/Tracer.hh>
+#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 
-// Numeric headers
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/deriv/angle_deriv.hh>
-// AUTO-REMOVED #include <numeric/deriv/distance_deriv.hh>
+//Numeric headers
+#include <numeric/constants.hh>
+#include <numeric/deriv/angle_deriv.hh>
+#include <numeric/deriv/distance_deriv.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -72,23 +73,26 @@ public:
 
 	void test_dummy_test() {}
 
-	/*void dont_test_hbond_deriv_a(){
+	/*
+	void do_not_test_hbond_deriv_a(){
 
 		// A few bonds that have been causing some trouble...
 		{
-			HBEvalType hbe( hbe_dGDEaHXL );
+			HBEvalTuple hbt( hbdon_GDE, hbacc_AHX, seq_sep_other );
 			Real AHdis(2.0626650237011339);
 			Real xD(0.81221037050947442);
 			Real xH(0.37311327017559648);
-			do_hbond_deriv_test( hbe, AHdis, xD, xH );
+			Real chi(0.0);
+			do_hbond_deriv_test( hbt, AHdis, xD, xH, chi );
 		}
 
 		{
-			HBEvalType hbe( hbe_dGDEaHXL );
+			HBEvalTuple hbt( hbdon_GDE, hbacc_HXL, seq_sep_other );
 			Real AHdis(2.722940506144047);
 			Real xD(0.62920743488168385);
 			Real xH(0.15382334407518322);
-			do_hbond_deriv_test( hbe, AHdis, xD, xH );
+			Real chi(0.0);
+			do_hbond_deriv_test( hbt, AHdis, xD, xH, chi );
 		}
 	}
 
@@ -97,22 +101,30 @@ public:
 	// tangent at the point.
 
 	void do_hbond_deriv_test(
-		HBEvalType hbe,
+		HBEvalTuple hbt,
 		Real const AHdis, // acceptor proton distance
 		Real const xD, // -cos(180-theta), where theta is defined by Tanja K.
 		Real const xH, // cos(180-phi), where phi is defined by Tanja K.
+		Real const chi, // AB2-AB-A-H dihdral angle for sp2 hybridized acceptors
 		Real const increment = 0.0005,
 		Size const n_increment = 5,
 		bool verbose = true,
 		Real deriv_tolerance = .0001){
 
 		HBondDatabaseCOP database(HBondDatabase::get_database());
-
+		HBondOptions hbond_options;
+		bool apply_chi_torsion_penalty;
+		HBGeoDimType AHD_geometric_dimension;
 		// Get Analytic derivative
 		Real energy, dE_dr, dE_dxD, dE_dxH;
-		hbond_compute_energy(database,
-			hbe, AHdis, xD, xH,
-			energy, dE_dr, dE_dxD, dE_dxH);
+		hbond_compute_energy(
+			*database,
+			hbond_options,
+			hbt, AHdis, xD, xH, chi,
+			energy,
+			apply_chi_torsion_penalty,
+			AHD_geometric_dimension,
+			dE_dr, dE_dxD, dE_dxH);
 
 		Real e_low, e_high, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH;
 		Real numeric_deriv, deriv, deriv_dev;
@@ -130,14 +142,24 @@ public:
 		for ( Size j = 1, factor=1; j <= n_increment; ++j ){
 			factor*=2;
 			test_AHdis = AHdis - factor * increment;
-			hbond_compute_energy(database,
-				hbe, test_AHdis, xD, xH,
-				e_low, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
+			hbond_compute_energy(
+				*database,
+				hbond_options,
+				hbt, test_AHdis, xD, xH, chi,
+				e_low,
+				apply_chi_torsion_penalty,
+				AHD_geometric_dimension,
+				dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
 
 			test_AHdis = AHdis + factor * increment;
-			hbond_compute_energy(database,
-				hbe, test_AHdis, xD, xH,
-				e_high, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
+			hbond_compute_energy(
+				*database,
+				hbond_options,
+				hbt, test_AHdis, xD, xH, chi,
+				e_high,
+				apply_chi_torsion_penalty,
+				AHD_geometric_dimension,
+				dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
 			numeric_deriv = ( e_high - e_low ) / ( factor * 2 * increment );
 			deriv_dev = std::min( deriv_dev, std::abs( deriv - numeric_deriv ) );
 			Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
@@ -164,14 +186,24 @@ public:
 		for ( Size j = 1, factor=1; j <= n_increment; ++j ){
 			factor*=2;
 			test_xH = xH - factor * increment;
-			hbond_compute_energy(database,
-				hbe, AHdis, xD, test_xH,
-				e_low, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
+			hbond_compute_energy(
+				*database,
+				hbond_options,
+				hbt, AHdis, xD, test_xH, chi,
+				e_low,
+				apply_chi_torsion_penalty,
+				AHD_geometric_dimension,
+				dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
 
 			test_xH = xH + factor * increment;
-			hbond_compute_energy(database,
-				hbe, AHdis, xD, test_xH,
-				e_high, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
+			hbond_compute_energy(
+				*database,
+				hbond_options,
+				hbt, AHdis, xD, test_xH, chi,
+				e_high,
+				apply_chi_torsion_penalty,
+				AHD_geometric_dimension,
+				dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
 			numeric_deriv = ( e_high - e_low ) / ( factor * 2 * increment );
 			deriv_dev = std::min( deriv_dev, std::abs( deriv - numeric_deriv ) );
 			Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
@@ -198,14 +230,24 @@ public:
 		for ( Size j = 1, factor=1; j <= n_increment; ++j ){
 			factor*=2;
 			test_xD = xD - factor * increment;
-			hbond_compute_energy(database,
-				hbe, AHdis, test_xD, xH,
-				e_low, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
+			hbond_compute_energy(
+				*database,
+				hbond_options,
+				hbt, AHdis, test_xD, xH, chi,
+				e_low,
+				apply_chi_torsion_penalty,
+				AHD_geometric_dimension,
+				dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
 
 			test_xD = xD + factor * increment;
-			hbond_compute_energy(database,
-				hbe, AHdis, test_xD, xH,
-				e_high, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
+			hbond_compute_energy(
+				*database,
+				hbond_options,
+				hbt, AHdis, test_xD, xH, chi,
+				e_high,
+				apply_chi_torsion_penalty,
+				AHD_geometric_dimension,
+				dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH);
 			numeric_deriv = ( e_high - e_low ) / ( factor * 2 * increment );
 			deriv_dev = std::min( deriv_dev, std::abs( deriv - numeric_deriv ) );
 			Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
@@ -227,7 +269,7 @@ public:
 
 	}
 
-	void dont_test_f1f2_deriv(){
+	void do_not_test_f1f2_deriv(){
 		HBondDatabaseCOP database(HBondDatabase::get_database());
 		Pose pose = create_trpcage_ideal_pose();
 		ScoreFunctionOP score_function( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
@@ -241,7 +283,7 @@ public:
 
 		for( Size i=1; i <= hbond_set.nhbonds(); ++i ){
 			TR << "HBond " << hbond_set.hbond(i) << std::endl;
-			do_f1f2_deriv_test(database, pose, hbond_set.hbond(i));
+			do_f1f2_deriv_test(database, hbond_set.hbond_options(), pose, hbond_set.hbond(i));
 			TR << std::endl;
 		}
 
@@ -264,6 +306,7 @@ public:
 	void
 	do_f1f2_deriv_test(
 		HBondDatabaseCOP database,
+		HBondOptions const & hbond_options,
 		Pose const & pose,
 		HBond const & hbond
 	)
@@ -291,7 +334,8 @@ public:
 		const Vector HDunit(create_don_orientation_vector(don_res, hbond.don_hatm()));
 		chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbond.eval_type() ) );
 		Vector BAunit;
-		make_hbBasetoAcc_unitvector( acc_hybrid, Axyz, Bxyz, B2xyz, BAunit );
+		Vector PBxyz;
+		make_hbBasetoAcc_unitvector( acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit );
 
 
 		// compute hbond geometric dimensions
@@ -310,11 +354,30 @@ public:
 		Real const xH =            // cos(180-psi) = cos(thetaH)
 			dot( BAunit, AHunit );
 
+		Real chi( 0 );
+		if ( hbond_options.use_sp2_chi_penalty() &&
+				get_hbe_acc_hybrid( hbond.eval_type() ) == chemical::SP2_HYBRID &&
+				B2xyz != Vector(-1.0, -1.0, -1.0) ) {
+			chi = numeric::dihedral_radians( Hxyz, Axyz, Bxyz, B2xyz );
+		} else if(hbond.eval_tuple().acc_type() == hbacc_AHX || hbond.eval_tuple().acc_type() == hbacc_HXL){
+			/// Bxyz really is the heavy atom base and B2xyz really is the hydroxyl hydrogen
+			/// this is guaranteed by the hbond_measure_sp3acc_BAH_from_hvy flag.
+			chi = numeric::dihedral_radians( Hxyz, Axyz, Bxyz, B2xyz );
+		}
+
+
 		Real dE_dxH, dE_dxD, dE_dr, dummy_energy;
-		hbond_compute_energy(database,
-			hbond.eval_type(),
-			AHdis,xD,xH,
-			dummy_energy,dE_dr,dE_dxD,dE_dxH);
+		bool apply_chi_torsion_penalty;
+		HBGeoDimType AHD_geometric_dimension;
+		hbond_compute_energy(
+			*database,
+			hbond_options,
+			hbond.eval_tuple(),
+			AHdis, xD, xH, chi,
+			dummy_energy,
+			apply_chi_torsion_penalty,
+			AHD_geometric_dimension,
+			dE_dr, dE_dxD, dE_dxH);
 
 
 		// Compute f1 f2 using generic computations
@@ -341,17 +404,38 @@ public:
 		Real theta;
 		angle_p1_deriv(  Axyz, Hxyz, Hxyz-HDunit, theta, temp_f1, temp_f2);
 
-		Real comp_xD(- cos(pi - theta ) );
-		TS_ASSERT( abs( xD - comp_xD ) < 0.001);
+		if(AHD_geometric_dimension == hbgd_cosAHD){
 
-		new_f1 += temp_f1*dE_dxD*sin(theta);
-		new_f2 += temp_f2*dE_dxD*sin(theta);
+			Real comp_xD(- cos(pi - theta ) );
+			TS_ASSERT( abs( xD - comp_xD ) < 0.001);
 
-		Vector new_xD_f1( temp_f1*dE_dxD*sin(theta));
-		Vector new_xD_f2( temp_f2*dE_dxD*sin(theta));
+			new_f1 += temp_f1*dE_dxD*sin(theta);
+			new_f2 += temp_f2*dE_dxD*sin(theta);
 
-		TR << "new_xD_f1: " << new_xD_f1[0] << " "<< new_xD_f1[1] << " " << new_xD_f1[2] << " new_xD_f2:" << new_xD_f2[0] << " " << new_xD_f2[1] << " " << new_xD_f2[2] << std::endl;
+			Vector new_xD_f1( temp_f1*dE_dxD*sin(theta));
+			Vector new_xD_f2( temp_f2*dE_dxD*sin(theta));
 
+			TR << "new_xD_f1: " << new_xD_f1[0] << " "<< new_xD_f1[1] << " " << new_xD_f1[2] << " new_xD_f2:" << new_xD_f2[0] << " " << new_xD_f2[1] << " " << new_xD_f2[2] << std::endl;
+		} else if (AHD_geometric_dimension == hbgd_AHD) {
+
+			TS_ASSERT( abs( xD - theta ) < 0.001);
+
+			new_f1 += temp_f1*dE_dxD;
+			new_f2 += temp_f2*dE_dxD;
+
+			Vector new_xD_f1( temp_f1*dE_dxD);
+			Vector new_xD_f2( temp_f2*dE_dxD);
+
+			TR << "new_xD_f1: " << new_xD_f1[0] << " "<< new_xD_f1[1] << " " << new_xD_f1[2] << " new_xD_f2:" << new_xD_f2[0] << " " << new_xD_f2[1] << " " << new_xD_f2[2] << std::endl;
+			TR << "||f1-new_xD_f1||: " << (f1-new_xD_f1).length() << std::endl;
+			TR << "||f2-new_xD_f2||: " << (f2-new_xD_f2).length() << std::endl;
+			TS_ASSERT( (f1-new_xD_f1).length() < .000000001 );
+			TS_ASSERT( (f2-new_xD_f2).length() < .000000001 );
+
+
+		} else {
+			utility_exit_with_message("Invalid AHD_geometric_dimension");
+		}
 
 		Real phi;
 		angle_p1_deriv( Hxyz, Axyz,
@@ -378,6 +462,7 @@ public:
 		TR << "||f2-new_f2||: " << (f2-new_f2).length() << std::endl;
 		TS_ASSERT( (f1-new_f1).length() < .000000001 );
 		TS_ASSERT( (f2-new_f2).length() < .000000001 );
-	}*/
+	}
 
+	*/
 };

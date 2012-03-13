@@ -123,6 +123,7 @@ public:
 		test::UTracer UT("core/scoring/hbonds/hbond_compute_energy.u");
 		Real dummy_chi( 0.0 );
 		bool dummy_chipenalty( false );
+		HBGeoDimType AHD_geometric_dimension;
 		Real energy, dE_dr, dE_dxD, dE_dxH;
 		for ( Size ii = 1; ii <= hbdon_MAX; ++ii ) {
 			for ( Size jj = 1; jj <= hbacc_MAX; ++jj ) {
@@ -134,7 +135,7 @@ public:
 							for (Real xH = MIN_xH; xH < MAX_xH; xH += xH_step){
 								hbond_compute_energy( *database, hboptions, hbt,
 									AHdis, xD, xH, dummy_chi, energy,
-									dummy_chipenalty, dE_dr, dE_dxD, dE_dxH);
+									dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH);
 								if( energy < 0){
 									UT << ii << "\t" << jj << "\t" << kk << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t";
 									UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\n";

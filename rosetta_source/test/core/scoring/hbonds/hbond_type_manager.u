@@ -68,6 +68,7 @@ HBGeoDimType:
 	hbgd_AHdist
 	hbgd_cosBAH
 	hbgd_cosAHD
+	hbgd_AHD
 	hbgd_chi
 
 
