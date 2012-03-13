@@ -36,6 +36,22 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
+#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <core/pack/task/operation/OperateOnCertainResidues.hh>
+#include <core/pack/task/operation/OptH.hh>
+#include <core/pack/task/operation/ResFilters.hh>
+#include <core/pack/task/operation/ResLvlTaskOperations.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/dunbrack/RotamerConstraint.hh>
+
+
+
+
+
 
 
 
@@ -360,6 +376,58 @@ namespace antibody2{
     
     
     
+    
+    //TODO:
+    //JQX:
+    // What you need is to input the "tf" object, 
+    // do something to change the value of this "tf" object
+    // right now, it is OK, but JQX must come back to make sure the value of tf 
+    // can be changed in this function. If not, maybe this function should return a 
+    // pointer
+    
+    void setup_packer_task(pose::Pose & pose_in, core::pack::task::TaskFactoryOP tf ) 
+    {
+		using namespace pack::task;
+		using namespace pack::task::operation;
+        
+/*		if( init_task_factory_ ) {
+			tf = new TaskFactory( *init_task_factory_ );
+			TR << "AbModeler Reinitializing Packer Task" << std::endl;
+			return;
+		}
+		else{
+			tf = new TaskFactory;
+        }
+*/
+        
+        tf = new TaskFactory;
+        
+        
+		TR << "AbModeler Setting Up Packer Task" << std::endl;
+        
+		tf->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
+		tf->push_back( new InitializeFromCommandline );
+		tf->push_back( new IncludeCurrent );
+		tf->push_back( new RestrictToRepacking );
+		tf->push_back( new NoRepackDisulfides );
+        
+		// incorporating Ian's UnboundRotamer operation.
+		// note that nothing happens if unboundrot option is inactive!
+		pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
+		unboundrot->initialize_from_command_line();
+		operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
+		tf->push_back( unboundrot_operation );
+		// adds scoring bonuses for the "unbound" rotamers, if any
+		core::pack::dunbrack::load_unboundrot( pose_in );
+        
+//		init_task_factory_ = tf;
+        
+		TR << "AbModeler Done: Setting Up Packer Task" << std::endl;
+        
+	} // setup_packer_task
+
+    
+
     
     
     

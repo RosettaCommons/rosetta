@@ -84,14 +84,12 @@ private:
     void snugfit_mcm_protocol( core::pose::Pose & pose_in, loops::Loops loops_in );
     
     
-    void setup_packer_task(core::pose::Pose & Pose_in);
     
     
     
     
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;
-	core::pack::task::TaskFactoryOP init_task_factory_;
 
 };
     

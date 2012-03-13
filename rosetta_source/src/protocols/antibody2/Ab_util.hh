@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_antibody2_Ab_util_hh
 
 
-// Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -23,7 +22,8 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
-// C++ Headers
+#include <core/pack/task/TaskFactory.fwd.hh>
+
 
 
 
@@ -65,6 +65,8 @@ void setup_simple_fold_tree(
                        bool H3_filter,
                        bool is_camelid);
     
+    void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactoryOP tf );
+
 
 
 } //namespace antibody2

@@ -88,7 +88,7 @@ public:
 	//void snugfit_mcm_protocol(core::pose::Pose & pose_in, loops::Loops loops_in );
     //JQX: move to a new class
 
-	void setup_packer_task( core::pose::Pose & pose_in );
+    //JQX: move setup_packer_task to Ab_util function
 
 	core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, const core::pose::Pose & native_pose, std::string cdr_type );
 
@@ -142,7 +142,6 @@ public:
 
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;
-	core::pack::task::TaskFactoryOP init_task_factory_;
 
 	// movers
 	protocols::antibody2::CDRH3Modeler2OP model_cdrh3_;

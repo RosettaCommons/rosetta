@@ -68,7 +68,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-
+#include <protocols/antibody2/Ab_util.hh>
 
 
 
@@ -240,7 +240,7 @@ void Ab_LH_SnugFit_Mover::snugfit_mcm_protocol( pose::Pose & pose_in, loops::Loo
     rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose_in,
                                                                                  *cdr_dock_map, rot_mag, trans_mag, rigid::partner_downstream, true );
     
-    setup_packer_task( pose_in );
+    setup_packer_task( pose_in, tf_ );
     
     //set up sidechain movers for rigid body jump and loop & neighbors
     utility::vector1_size rb_jump;
@@ -319,47 +319,7 @@ void Ab_LH_SnugFit_Mover::snugfit_mcm_protocol( pose::Pose & pose_in, loops::Loo
     
     
     
-    //TODO:
-    //JQX:
-    // you saw the functino of setup_packer_task was used multiple times
-    // in relaxCDR and repulsive_ramp as well, it is better to make a separate utility 
-    // class, or put it in the ab_info_ object
-void Ab_LH_SnugFit_Mover::setup_packer_task(pose::Pose & pose_in ) {
-    
-    using namespace pack::task;
-    using namespace pack::task::operation;
-        
-    if( init_task_factory_ ) {
-        tf_ = new TaskFactory( *init_task_factory_ );
-        TR << "AbModeler Reinitializing Packer Task" << std::endl;
-        return;
-    }
-    else
-        tf_ = new TaskFactory;
-        
-    TR << "AbModeler Setting Up Packer Task" << std::endl;
-        
-    tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
-    tf_->push_back( new InitializeFromCommandline );
-    tf_->push_back( new IncludeCurrent );
-    tf_->push_back( new RestrictToRepacking );
-    tf_->push_back( new NoRepackDisulfides );
-        
-    // incorporating Ian's UnboundRotamer operation.
-    // note that nothing happens if unboundrot option is inactive!
-    pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
-    unboundrot->initialize_from_command_line();
-    operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
-    tf_->push_back( unboundrot_operation );
-    // adds scoring bonuses for the "unbound" rotamers, if any
-    core::pack::dunbrack::load_unboundrot( pose_in );
-        
-    init_task_factory_ = tf_;
-        
-    TR << "AbModeler Done: Setting Up Packer Task" << std::endl;
-        
-} // setup_packer_task
-    
+
     
     
     

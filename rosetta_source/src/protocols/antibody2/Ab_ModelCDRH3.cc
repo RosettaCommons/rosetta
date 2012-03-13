@@ -692,7 +692,7 @@ Ab_ModelCDRH3::get_name() const {
 
 		if( !benchmark_ ) {
             simple_moves::PackRotamersMoverOP repack=new simple_moves::PackRotamersMover( scorefxn );
-			setup_packer_task( pose );
+			setup_packer_task( pose, tf_ );
 			( *scorefxn )( pose );
 			tf_->push_back( new RestrictToInterface( is_flexible ) );
 			repack->task_factory( tf_ );
@@ -809,42 +809,7 @@ Ab_ModelCDRH3::get_name() const {
     
     
 
-	void
-	Ab_ModelCDRH3::setup_packer_task(
-		pose::Pose & pose_in ) {
-		using namespace pack::task;
-		using namespace pack::task::operation;
 
-		if( init_task_factory_ ) {
-			tf_ = new TaskFactory( *init_task_factory_ );
-			TR << "AbModeler Reinitializing Packer Task" << std::endl;
-			return;
-		}
-		else
-			tf_ = new TaskFactory;
-
-		TR << "AbModeler Setting Up Packer Task" << std::endl;
-
-		tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
-		tf_->push_back( new InitializeFromCommandline );
-		tf_->push_back( new IncludeCurrent );
-		tf_->push_back( new RestrictToRepacking );
-		tf_->push_back( new NoRepackDisulfides );
-
-		// incorporating Ian's UnboundRotamer operation.
-		// note that nothing happens if unboundrot option is inactive!
-		pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
-		unboundrot->initialize_from_command_line();
-		operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
-		tf_->push_back( unboundrot_operation );
-		// adds scoring bonuses for the "unbound" rotamers, if any
-		core::pack::dunbrack::load_unboundrot( pose_in );
-
-		init_task_factory_ = tf_;
-
-		TR << "AbModeler Done: Setting Up Packer Task" << std::endl;
-
-	} // setup_packer_task
 
 	Real
 	Ab_ModelCDRH3::global_loop_rmsd (

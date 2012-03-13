@@ -166,7 +166,7 @@ public:
 		core::Size const loop_begin,
 		core::Size const loop_end );
 
-	void setup_packer_task( core::pose::Pose & pose_in );
+
 
 	// CDR H3 C-terminal fragments
 	utility::vector1< core::fragment::FragData > H3_base_library;
@@ -241,7 +241,6 @@ private:
 
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;
-	core::pack::task::TaskFactoryOP init_task_factory_;
 
 	void init(
 		bool model_h3,

@@ -255,7 +255,7 @@ void CDRH3Modeler2::set_default()
 
 			start_pose_ = pose_in;
 			antibody_in_.setup_CDR_loops( pose_in, is_camelid_ );
-			setup_packer_task( pose_in );
+			setup_packer_task( pose_in, tf_ );
 			pose::Pose start_pose = pose_in;
 
 			if( is_camelid_ && !antibody_in_.is_extended() && !antibody_in_.is_kinked() )
@@ -883,7 +883,7 @@ CDRH3Modeler2::get_name() const {
 			cdrh3_map->set_chi( allow_repack );
 
 			PackRotamersMoverOP loop_repack=new PackRotamersMover(highres_scorefxn_);
-			setup_packer_task( start_pose_ );
+			setup_packer_task( start_pose_, tf_ );
 			( *highres_scorefxn_ )( pose_in );
 			tf_->push_back( new RestrictToInterface( allow_repack ) );
 			loop_repack->task_factory(tf_);
@@ -952,7 +952,7 @@ CDRH3Modeler2::get_name() const {
 			select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
 														allow_repack);
 			cdrh3_map->set_chi( allow_repack );
-			setup_packer_task( start_pose_ );
+			setup_packer_task( start_pose_, tf_ );
 			( *highres_scorefxn_ )( pose_in );
 			tf_->push_back( new RestrictToInterface( allow_repack ) );
 			RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
@@ -997,7 +997,7 @@ CDRH3Modeler2::get_name() const {
 					select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
 																allow_repack);
 					cdrh3_map->set_chi( allow_repack );
-					setup_packer_task( start_pose_ );
+					setup_packer_task( start_pose_, tf_ );
 					( *highres_scorefxn_ )( pose_in );
 					tf_->push_back( new RestrictToInterface( allow_repack ) );
 					RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
@@ -1055,7 +1055,7 @@ CDRH3Modeler2::get_name() const {
 					if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
 						// repack trial
 						loop_repack = new PackRotamersMover( highres_scorefxn_ );
-						setup_packer_task( start_pose_ );
+						setup_packer_task( start_pose_, tf_ );
 						( *highres_scorefxn_ )( pose_in );
 						tf_->push_back( new RestrictToInterface( allow_repack ) );
 						loop_repack->task_factory( tf_ );
@@ -1237,45 +1237,7 @@ CDRH3Modeler2::get_name() const {
 			return;
 		} // loop_centroid_relax
 
-		void
-		CDRH3Modeler2::setup_packer_task(
-			pose::Pose & pose_in ) {
-			using namespace pack::task;
-			using namespace pack::task::operation;
 
-			if( init_task_factory_ ) {
-				tf_ = new TaskFactory( *init_task_factory_ );
-				TR << "CDRH3Modeler2 Reinitializing Packer Task" << std::endl;
-				return;
-			}
-			else
-				tf_ = new TaskFactory;
-
-			TR << "CDRH3Modeler2 Setting Up Packer Task" << std::endl;
-
-			tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT,
-				new ResidueLacksProperty("PROTEIN") ) );
-			tf_->push_back( new InitializeFromCommandline );
-			tf_->push_back( new IncludeCurrent );
-			tf_->push_back( new RestrictToRepacking );
-			tf_->push_back( new NoRepackDisulfides );
-
-			// incorporating Ian's UnboundRotamer operation.
-			// note that nothing happens if unboundrot option is inactive!
-			pack::rotamer_set::UnboundRotamersOperationOP unboundrot =
-				new pack::rotamer_set::UnboundRotamersOperation();
-			unboundrot->initialize_from_command_line();
-			operation::AppendRotamerSetOP unboundrot_operation =
-				new operation::AppendRotamerSet( unboundrot );
-			tf_->push_back( unboundrot_operation );
-			// adds scoring bonuses for the "unbound" rotamers, if any
-			core::pack::dunbrack::load_unboundrot( pose_in );
-
-			init_task_factory_ = tf_;
-
-			TR << "CDRH3Modeler2 Done: Setting Up Packer Task" << std::endl;
-
-		} // setup_packer_task
 
 
 

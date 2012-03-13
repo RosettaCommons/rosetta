@@ -83,7 +83,7 @@ private:
     
     
     
-    void setup_packer_task(core::pose::Pose & Pose_in);
+
     
 	void repulsive_ramp( core::pose::Pose & pose_in, loops::Loops loops_in );
     
@@ -99,7 +99,6 @@ private:
     
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;
-	core::pack::task::TaskFactoryOP init_task_factory_;
 
 };
     
