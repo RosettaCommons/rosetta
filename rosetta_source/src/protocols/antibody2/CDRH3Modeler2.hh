@@ -151,11 +151,9 @@ public:
 		loops::Loop const trimmed_cdr_h3
 	);
 
-	bool CDR_H3_filter(
-	  const core::pose::Pose & pose_in,
-		core::Size const loop_begin,
-		core::Size const size,
-		char const light_chain = 'L' );
+    
+    //JQX: move the CDR_H3_filter into the utility class
+
 
 	void loop_fa_relax(
 		core::pose::Pose & pose_in,

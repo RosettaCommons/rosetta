@@ -670,8 +670,11 @@ CDRH3Modeler2::get_name() const {
 					bool H3_found_current(false);
 					if( current_loop_is_H3_ && H3_filter_ &&
 							( local_h3_attempts++ < (50 * cycles2) ) ) {
-						H3_found_current = CDR_H3_filter(pose_in,antibody_in_.get_CDR_loop("h3")->start(),
-							( antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start() ) + 1 );
+						H3_found_current = CDR_H3_filter(pose_in,
+                                                         antibody_in_.get_CDR_loop("h3")->start(),
+                                                         ( antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start() ) + 1,
+                                                         H3_filter_,
+                                                         is_camelid_);
 						if( !H3_found_ever && !H3_found_current) {
 							--c2;
 							mc->boltzmann( pose_in );
@@ -724,9 +727,15 @@ CDRH3Modeler2::get_name() const {
 					outer_mc->boltzmann( pose_in );
 					if( current_loop_is_H3_ && H3_filter_ &&
 							(current_h3_prob < h3_fraction) && (h3_attempts++<50) )
-						if( !CDR_H3_filter(pose_in, antibody_in_.get_CDR_loop("h3")->start(),
-							( antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start() ) + 1) )
-							continue;
+						if( !CDR_H3_filter(pose_in, 
+                                           antibody_in_.get_CDR_loop("h3")->start(),
+                                           ( antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start() ) + 1,
+                                           H3_filter_,
+                                           is_camelid_) 
+                           )
+                        {
+                           continue; 
+                        }
 					loop_found = true;
 				}
 				else if( H3_filter_ )
@@ -743,184 +752,7 @@ CDRH3Modeler2::get_name() const {
 			return;
 		} // scored_frag_close
 
-		///////////////////////////////////////////////////////////////////////////
-		/// @begin CDR_H3_filter
-		///
-		/// @brief tests if a loop has H3 like base charachteristics
-		///
-		/// @detailed Uses the Shirai rules to find out if the dihedral angle
-		///           formed by CA atoms of residues n-2,n-1,n and n+1 conform to a
-		///           kinked/extended structure in accordance with the sequence. If
-		///           there is a match, a true value is returned
-		///
-		/// @param[in] pose: full actual protein
-		///            loop_begin: seq numbered loop begin corresponding to pose
-		///            size: size of loop to compute loop_end
-		///
-		/// @global_read reads -command line flag -base stored in dle_ns
-		///              to determine to do the complete H3 filter check or just do
-		///              a prediction of the H3 base type based on the
-		///              aforementioned dihedral angle
-		///
-		/// @global_write
-		///
-		/// @remarks
-		///
-		/// @references Structural classification of CDR-H3 in antibodies
-		///             Hiroki Shirai, Akinori Kidera, Haruki Nakamura
-		///             FEBS Letters 399 (1996) 1-8
-		///
-		/// @authors Aroop 02/04/2010
-		///
-		/// @last_modified 02/04/2010
-		///////////////////////////////////////////////////////////////////////////
-		bool CDRH3Modeler2::CDR_H3_filter(
-			const pose::Pose & pose_in,
-			Size const loop_begin,
-			Size const size,
-			char const light_chain )
-		{
 
-			TR <<  "H3M Checking Kink/Extended CDR H3 Base Angle" << std::endl;
-
-			if( !H3_filter_ || is_camelid_ )
-				return( true );
-
-			// Values read from plot in reference paper. Fig 1 on Page 3
-			// Values adjusted to match data from antibody training set
-			Real const kink_lower_bound = -10.00; // Shirai: 0
-			Real const kink_upper_bound = 70.00; // Shirai: 70
-			Real const extended_lower_bound = 125.00; // Shirai: ~180
-			Real const extended_upper_bound = 185.00; // Shirai: ~180
-
-			// Hydrogen Bond maximum value is 3.9 Angstroms - not used
-			//	Real const h_bond(3.9);
-			// Salt Bridge maximum value is 2.0 Angstroms - not used
-			//	Real const s_bridge(4.0);
-
-			// chop out the loop
-			pose::Pose h3_loop( pose_in, loop_begin - 2, loop_begin + size + 1 );
-
-			bool is_kinked( false );
-			bool is_extended( false );
-			bool is_H3( false );
-
-			// extract 3 letter residue codes for the chopped loop
-			std::vector <std::string> aa_name; // loop residue 3 letter codes
-			for(Size ii = 1; ii <= size + 3; ii++)
-				aa_name.push_back( h3_loop.residue(ii).name3() );
-
-			Size const CA(2);   // CA atom position in full_coord array
-			// base dihedral angle to determine kinked/extended conformation
-			Real base_dihedral( numeric::dihedral_degrees(
-				h3_loop.residue( aa_name.size() ).xyz( CA ),
-				h3_loop.residue( aa_name.size() - 1).xyz( CA ),
-				h3_loop.residue( aa_name.size() - 2).xyz( CA ),
-				h3_loop.residue( aa_name.size() - 3).xyz( CA ) ) );
-
-			// std::cout << "Base Dihedral: " << base_dihedral << std::endl;
-
-			// setting up pseudo-periodic range used in extended base computation
-			if( base_dihedral < kink_lower_bound )
-				base_dihedral = base_dihedral + 360.00;
-
-
-			// Rule 1a for standard kink
-			if ((aa_name[aa_name.size()-3] != "ASP") &&
-					(aa_name[aa_name.size()-1] == "TRP"))	{
-				if( (base_dihedral > kink_lower_bound) &&
-						(base_dihedral < kink_upper_bound))
-					{
-						// std::cout << "KINK Found" << std::endl; // aroop_temp remove
-						is_kinked = true;
-						is_H3 = true;
-					}
-			}
-
-			// Rule 1b for standard extended form
-			if ( ( aa_name[ aa_name.size() - 3 ] == "ASP" ) &&
-					( ( aa_name[1] != "LYS" ) && ( aa_name[1] != "ARG" ) ) &&
-                    ( is_H3 != true ) )     {
-                
-				if( ( base_dihedral > extended_lower_bound ) &&
-						( base_dihedral < extended_upper_bound) ) {
-					// std::cout << "EXTENDED Found" << std::endl; // aroop_temp remove
-					is_extended = true;
-					is_H3 = true;
-				}
-
-				if(!is_H3) {
-					// Rule 1b extension for special kinked form
-					bool is_basic(false); // Special basic residue exception flag
-					for(Size ii = 2; ii <= Size(aa_name.size() - 5); ii++) {
-						if( aa_name[ii] == "ARG" || aa_name[ii] == "LYS" ) {
-							is_basic = true;
-							break;
-						}
-					}
-
-					if(!is_basic) {
-						Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(light_chain, 49 );
-						std::string let3_code_L49 = pose_in.residue( rosetta_number_of_L49 ).name3();
-						if( let3_code_L49 == "ARG" || let3_code_L49 == "LYS")
-							is_basic = true;
-					}
-					if( is_basic && ( base_dihedral > kink_lower_bound ) &&
-							( base_dihedral < kink_upper_bound ) ) {
-						// aroop_temp remove
-						// std::cout << "KINK (special 1b) Found" << std::endl;
-						is_kinked = true;
-						is_H3 = true;
-					}
-				}
-			}
-
-			// Rule 1c for kinked form with salt bridge
-			if ( ( aa_name[ aa_name.size() - 3 ] == "ASP") &&
-					 ( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
-					 ( (aa_name[0] != "LYS" ) && ( aa_name[0] != "ARG" ) ) &&
-					 ( is_H3 != true) ) {
-				if( (base_dihedral > kink_lower_bound ) &&
-						(base_dihedral < kink_upper_bound ) ) {
-					// aroop_temp remove
-					// std::cout << "KINK (w sb) Found" << std::endl;
-					is_kinked = true;
-					is_H3 = true;
-				}
-				if(!is_H3) {
-					bool is_basic(false); // Special basic residue exception flag
-					Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose(
-						light_chain, 46 );
-					std::string let3_code_L46 = pose_in.residue( rosetta_number_of_L46 ).name3();
-					if( let3_code_L46 == "ARG" || let3_code_L46 == "LYS") is_basic = true;
-					if( is_basic && (base_dihedral > extended_lower_bound ) &&
-                      ( base_dihedral < extended_upper_bound ) ) {
-						// aroop_temp remove
-						// std::cout << "EXTENDED (special 1c) Found" << std::endl;
-						is_extended = true;
-						is_H3 = true;
-					}
-				}
-			}
-
-			// Rule 1d for extened form with salt bridge
-			if ( ( aa_name[ aa_name.size() - 3 ] == "ASP") &&
-					 ( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
-					 ( ( aa_name[0] == "LYS") || ( aa_name[0] == "ARG") ) &&
-					 ( is_H3 != true ) ) {
-				if( ( base_dihedral > extended_lower_bound ) &&
-						( base_dihedral < extended_upper_bound ) ) {
-					// aroop_temp remove
-					// std::cout << "EXTENDED (w sb) Found" << std::endl;
-					is_extended = true;
-					is_H3 = true;
-				}
-			}
-
-			TR <<  "H3M Finished Checking Kink/Extended CDR H3 Base Angle: " << is_H3 << std::endl;
-
-			return is_H3;
-		} // CDR_H3_filter
 
 		///////////////////////////////////////////////////////////////////////////
 		/// @begin loop_fa_relax  //JQX: this is actually the H3_refinment
@@ -929,8 +761,8 @@ CDRH3Modeler2::get_name() const {
 		///
 		/// @detailed This is all done in high resolution.Hence there are no rigid
 		///           body moves relative to the docking partners. Only small moves
-    ///           are carried out here to see if there are better fits.
-    ///           Repacking is carried out extensively after each move.
+        ///           are carried out here to see if there are better fits.
+        ///           Repacking is carried out extensively after each move.
 		///
 		/// @param[in] pose, loop begin position, loop end position
 		///
@@ -1139,8 +971,12 @@ CDRH3Modeler2::get_name() const {
 
 			bool relaxed_H3_found_ever( false );
 			if( H3_filter_)
-				relaxed_H3_found_ever =CDR_H3_filter(pose_in,antibody_in_.get_CDR_loop("h3")->start(),
-					(antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start()) + 1 );
+				relaxed_H3_found_ever = CDR_H3_filter( pose_in,
+                                                       antibody_in_.get_CDR_loop("h3")->start(),
+                                                      (antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start()) + 1, 
+                                                      H3_filter_,
+                                                      is_camelid_
+                                                      );
 
 			// outer cycle
 			for(Size i = 1; i <= outer_cycles; i++) {
@@ -1172,8 +1008,10 @@ CDRH3Modeler2::get_name() const {
 					if(H3_filter_ && (h3_attempts <= inner_cycles)) {
 						h3_attempts++;
 						relaxed_H3_found_current = CDR_H3_filter(pose_in,
-              antibody_in_.get_CDR_loop("h3")->start(), ( antibody_in_.get_CDR_loop("h3")->stop()-1 -
-                antibody_in_.get_CDR_loop("h3")->start()) + 1 );
+                                                                 antibody_in_.get_CDR_loop("h3")->start(), 
+                                                                 (antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start()) + 1,
+                                                                 H3_filter_,
+                                                                 is_camelid_);
 
 						if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
 							mc->boltzmann( pose_in );
@@ -1193,8 +1031,10 @@ CDRH3Modeler2::get_name() const {
 						if( H3_filter_ ) {
 							bool relaxed_H3_found_current(false);
 							relaxed_H3_found_current = CDR_H3_filter(pose_in,
-                antibody_in_.get_CDR_loop("h3")->start(), ( antibody_in_.get_CDR_loop("h3")->stop()-1 -
-                  antibody_in_.get_CDR_loop("h3")->start()) + 1 );
+                                                                     antibody_in_.get_CDR_loop("h3")->start(), 
+                                                                     ( antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start()) + 1,
+                                                                     H3_filter_,
+                                                                     is_camelid_);
 							if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
 								mc->boltzmann( pose_in );
 							}

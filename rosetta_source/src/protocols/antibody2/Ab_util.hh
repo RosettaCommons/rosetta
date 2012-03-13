@@ -53,6 +53,18 @@ void setup_simple_fold_tree(
                                 core::Size jumppoint2,
                                 core::Size nres,
                                 core::pose::Pose & pose_in );
+    
+    
+    
+    
+    
+    bool CDR_H3_filter(
+                       const core::pose::Pose & pose_in,
+                       core::Size const loop_begin,
+                       core::Size const size,
+                       bool H3_filter,
+                       bool is_camelid);
+    
 
 
 } //namespace antibody2

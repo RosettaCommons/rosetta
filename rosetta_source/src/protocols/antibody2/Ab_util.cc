@@ -33,6 +33,9 @@
 
 #include <iostream>
 #include <fstream>
+#include <numeric/xyz.functions.hh>
+#include <numeric/numeric.functions.hh>
+#include <numeric/random/random.hh>
 
 
 
@@ -45,7 +48,7 @@ namespace antibody2{
 
     
     //JQX:
-    // OK Description (Jason contributed)
+    // Description (Jason contributed)
     // assuming a loop 10,11,12,13,14,15, cut_point is 13/14
     //                  or loop = Loop (10, 15, 13)
     // 1. (Rosetta Default) 
@@ -158,6 +161,209 @@ namespace antibody2{
 		TR << "ABM Done: Setting up simple fold tree" << std::endl;
         
 	} // setup_simple_fold_tree
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ///////////////////////////////////////////////////////////////////////////
+    /// @begin CDR_H3_filter
+    ///
+    /// @brief tests if a loop has H3 like base charachteristics
+    ///
+    /// @detailed Uses the Shirai rules to find out if the dihedral angle
+    ///           formed by CA atoms of residues n-2,n-1,n and n+1 conform to a
+    ///           kinked/extended structure in accordance with the sequence. If
+    ///           there is a match, a true value is returned
+    ///
+    /// @param[in] pose: full actual protein
+    ///            loop_begin: seq numbered loop begin corresponding to pose
+    ///            size: size of loop to compute loop_end
+    ///
+    /// @global_read reads -command line flag -base stored in dle_ns
+    ///              to determine to do the complete H3 filter check or just do
+    ///              a prediction of the H3 base type based on the
+    ///              aforementioned dihedral angle
+    ///
+    /// @global_write
+    ///
+    /// @remarks
+    ///
+    /// @references Structural classification of CDR-H3 in antibodies
+    ///             Hiroki Shirai, Akinori Kidera, Haruki Nakamura
+    ///             FEBS Letters 399 (1996) 1-8
+    ///
+    /// @authors Aroop 02/04/2010
+    ///
+    /// @last_modified 02/04/2010
+    ///////////////////////////////////////////////////////////////////////////
+    bool CDR_H3_filter(
+                                      const pose::Pose & pose_in,
+                                      Size const loop_begin,
+                                      Size const size,
+                                      bool H3_filter,
+                                      bool is_camelid)
+    {
+        
+        char const light_chain = 'L';
+        
+        TR <<  "H3M Checking Kink/Extended CDR H3 Base Angle" << std::endl;
+        
+        if( !H3_filter || is_camelid )
+            return( true );
+        
+        // Values read from plot in reference paper. Fig 1 on Page 3
+        // Values adjusted to match data from antibody training set
+        Real const kink_lower_bound = -10.00; // Shirai: 0
+        Real const kink_upper_bound = 70.00; // Shirai: 70
+        Real const extended_lower_bound = 125.00; // Shirai: ~180
+        Real const extended_upper_bound = 185.00; // Shirai: ~180
+        
+        // Hydrogen Bond maximum value is 3.9 Angstroms - not used
+        //	Real const h_bond(3.9);
+        // Salt Bridge maximum value is 2.0 Angstroms - not used
+        //	Real const s_bridge(4.0);
+        
+        // chop out the loop
+        pose::Pose h3_loop( pose_in, loop_begin - 2, loop_begin + size + 1 );
+        
+        bool is_kinked( false );
+        bool is_extended( false );
+        bool is_H3( false );
+        
+        // extract 3 letter residue codes for the chopped loop
+        std::vector <std::string> aa_name; // loop residue 3 letter codes
+        for(Size ii = 1; ii <= size + 3; ii++)
+            aa_name.push_back( h3_loop.residue(ii).name3() );
+        
+        Size const CA(2);   // CA atom position in full_coord array
+        // base dihedral angle to determine kinked/extended conformation
+        Real base_dihedral( numeric::dihedral_degrees(
+                                                      h3_loop.residue( aa_name.size() ).xyz( CA ),
+                                                      h3_loop.residue( aa_name.size() - 1).xyz( CA ),
+                                                      h3_loop.residue( aa_name.size() - 2).xyz( CA ),
+                                                      h3_loop.residue( aa_name.size() - 3).xyz( CA ) ) );
+        
+        // std::cout << "Base Dihedral: " << base_dihedral << std::endl;
+        
+        // setting up pseudo-periodic range used in extended base computation
+        if( base_dihedral < kink_lower_bound )
+            base_dihedral = base_dihedral + 360.00;
+        
+        
+        // Rule 1a for standard kink
+        if ((aa_name[aa_name.size()-3] != "ASP") &&
+            (aa_name[aa_name.size()-1] == "TRP"))	{
+            if( (base_dihedral > kink_lower_bound) &&
+               (base_dihedral < kink_upper_bound))
+            {
+                // std::cout << "KINK Found" << std::endl; // aroop_temp remove
+                is_kinked = true;
+                is_H3 = true;
+            }
+        }
+        
+        // Rule 1b for standard extended form
+        if ( ( aa_name[ aa_name.size() - 3 ] == "ASP" ) &&
+            ( ( aa_name[1] != "LYS" ) && ( aa_name[1] != "ARG" ) ) &&
+            ( is_H3 != true ) )     {
+            
+            if( ( base_dihedral > extended_lower_bound ) &&
+               ( base_dihedral < extended_upper_bound) ) {
+                // std::cout << "EXTENDED Found" << std::endl; // aroop_temp remove
+                is_extended = true;
+                is_H3 = true;
+            }
+            
+            if(!is_H3) {
+                // Rule 1b extension for special kinked form
+                bool is_basic(false); // Special basic residue exception flag
+                for(Size ii = 2; ii <= Size(aa_name.size() - 5); ii++) {
+                    if( aa_name[ii] == "ARG" || aa_name[ii] == "LYS" ) {
+                        is_basic = true;
+                        break;
+                    }
+                }
+                
+                if(!is_basic) {
+                    Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(light_chain, 49 );
+                    std::string let3_code_L49 = pose_in.residue( rosetta_number_of_L49 ).name3();
+                    if( let3_code_L49 == "ARG" || let3_code_L49 == "LYS")
+                        is_basic = true;
+                }
+                if( is_basic && ( base_dihedral > kink_lower_bound ) &&
+                   ( base_dihedral < kink_upper_bound ) ) {
+                    // aroop_temp remove
+                    // std::cout << "KINK (special 1b) Found" << std::endl;
+                    is_kinked = true;
+                    is_H3 = true;
+                }
+            }
+        }
+        
+        // Rule 1c for kinked form with salt bridge
+        if ( ( aa_name[ aa_name.size() - 3 ] == "ASP") &&
+            ( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
+            ( (aa_name[0] != "LYS" ) && ( aa_name[0] != "ARG" ) ) &&
+            ( is_H3 != true) ) {
+            if( (base_dihedral > kink_lower_bound ) &&
+               (base_dihedral < kink_upper_bound ) ) {
+                // aroop_temp remove
+                // std::cout << "KINK (w sb) Found" << std::endl;
+                is_kinked = true;
+                is_H3 = true;
+            }
+            if(!is_H3) {
+                bool is_basic(false); // Special basic residue exception flag
+                Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose(
+                                                                          light_chain, 46 );
+                std::string let3_code_L46 = pose_in.residue( rosetta_number_of_L46 ).name3();
+                if( let3_code_L46 == "ARG" || let3_code_L46 == "LYS") is_basic = true;
+                if( is_basic && (base_dihedral > extended_lower_bound ) &&
+                   ( base_dihedral < extended_upper_bound ) ) {
+                    // aroop_temp remove
+                    // std::cout << "EXTENDED (special 1c) Found" << std::endl;
+                    is_extended = true;
+                    is_H3 = true;
+                }
+            }
+        }
+        
+        // Rule 1d for extened form with salt bridge
+        if ( ( aa_name[ aa_name.size() - 3 ] == "ASP") &&
+            ( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
+            ( ( aa_name[0] == "LYS") || ( aa_name[0] == "ARG") ) &&
+            ( is_H3 != true ) ) {
+            if( ( base_dihedral > extended_lower_bound ) &&
+               ( base_dihedral < extended_upper_bound ) ) {
+                // aroop_temp remove
+                // std::cout << "EXTENDED (w sb) Found" << std::endl;
+                is_extended = true;
+                is_H3 = true;
+            }
+        }
+        
+        TR <<  "H3M Finished Checking Kink/Extended CDR H3 Base Angle: " << is_H3 << std::endl;
+        
+        return is_H3;
+    } // CDR_H3_filter
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
