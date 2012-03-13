@@ -248,7 +248,7 @@ fill_hbond_set_by_AHdist_threshold(
 							get_environment_dependent_weight(hbe_type, n_don_nbrs, n_acc_nbrs, hbond_set.hbond_options()));
 
 					hbond_set.append_hbond(
-						hatm, don_rsd, aatm, acc_rsd, hbe_type.eval_type(), unweighted_energy, environmental_weight, DUMMY_DERIVS );
+						hatm, don_rsd, aatm, acc_rsd, hbe_type, unweighted_energy, environmental_weight, DUMMY_DERIVS );
 				}
 			}
 		}
@@ -377,7 +377,7 @@ identify_hbonds_1way(
 			//////
 			// now we have identified a hbond -> append it into the hbond_set
 			hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
-				hbe_type.eval_type(), unweighted_energy, environmental_weight, derivs );
+				hbe_type, unweighted_energy, environmental_weight, derivs );
 
 			//////
 
@@ -563,7 +563,7 @@ identify_intra_res_hbonds(
 			Real environmental_weight=1;
 
 			// now we have identified a hbond -> upt it into the hbond_set//////
-			hbond_set.append_hbond( hatm, rsd, aatm, rsd, hbe_type.eval_type(), unweighted_energy, environmental_weight, derivs );
+			hbond_set.append_hbond( hatm, rsd, aatm, rsd, hbe_type, unweighted_energy, environmental_weight, derivs );
 			///
 
 		} // loop over donors
@@ -732,7 +732,7 @@ identify_hbonds_1way_membrane(
 			// now we have identified a hbond -> put it into the hbond_set
 
 			hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
-				hbe_type.eval_type(), unweighted_energy, environmental_weight, derivs );
+				hbe_type, unweighted_energy, environmental_weight, derivs );
 
 			//////
 

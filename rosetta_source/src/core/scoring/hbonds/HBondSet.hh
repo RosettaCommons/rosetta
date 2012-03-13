@@ -22,6 +22,7 @@
 
 // Package headers
 #include <core/scoring/hbonds/types.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
 // Project headers
@@ -70,7 +71,7 @@ public:
 		bool const ares_is_dna,
 		bool const aatm_is_backbone,
 		Size const ares,
-		HBEvalType const hbe_type,
+		HBEvalTuple const hbe_tuple,
 		Real const energy_in, // unweighted
 		Real const weight_in,
 		HBondDerivs const & derivs_in
@@ -132,9 +133,15 @@ public:
 	HBondDerivs const &
 	derivs() const;
 
-	///
-	HBEvalType const &
+	///@brief The HBEval type encodes the evaluation type as a single
+	///enum value
+	HBEvalType
 	eval_type() const;
+
+	///@brief The HBEvalTuple is a tuple of enums for each dimension of
+	///the evaluation type
+	HBEvalTuple const &
+	eval_tuple() const;
 
 	///
 	bool
@@ -189,7 +196,7 @@ private:
 	bool acc_res_is_dna_;
 	bool acc_atm_is_backbone_;
 	Size acc_res_;
-	HBEvalType eval_type_;
+	HBEvalTuple eval_tuple_;
 
 	Real energy_;
 	Real weight_;
@@ -264,7 +271,7 @@ public:
 		conformation::Residue const & don_rsd,
 		Size const aatm,
 		conformation::Residue const & acc_rsd,
-		HBEvalType const & hbe_type,
+		HBEvalTuple const & hbe_tuple,
 		Real const energy,
 		Real const weight,
 		HBondDerivs const & deriv

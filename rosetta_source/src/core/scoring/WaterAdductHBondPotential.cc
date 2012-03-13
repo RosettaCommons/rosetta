@@ -280,7 +280,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 //				Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
 				Real const weight ( 1.0 );
 				hbond_set.append_hbond(
-					hyd_index, other_rsd, h2o_index, h2o_rsd, hbe_type.eval_type(),
+					hyd_index, other_rsd, h2o_index, h2o_rsd, hbe_type,
 					h2o_hbond_energy, weight, deriv );
 //				std::cout << "Stashing h2o hbond, water is acceptor " << std::endl;
 //				std::cout << "Energy is " << h2o_hbond_energy << std::endl;
@@ -326,7 +326,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 			if( h2o_hbond_energy < 0.0 ) {
 //				Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
 				Real const weight ( 1.0 );
-				hbond_set.append_hbond( h2o_index, h2o_rsd, accpt_index, other_rsd, hbe_type.eval_type(),
+				hbond_set.append_hbond( h2o_index, h2o_rsd, accpt_index, other_rsd, hbe_type,
 					h2o_hbond_energy, weight, deriv );
 //				std::cout << "Stashing h2o hbond, water is donor " << std::endl;
 //				std::cout << "Energy is " << h2o_hbond_energy << std::endl;

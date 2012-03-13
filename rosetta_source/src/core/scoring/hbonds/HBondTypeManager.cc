@@ -142,6 +142,7 @@ HBondTypeManager::setup_type_names()
 	name2geo_dim_type_["hbgd_AHdist"] = hbgd_AHdist;
 	name2geo_dim_type_["hbgd_cosBAH"] = hbgd_cosBAH;
 	name2geo_dim_type_["hbgd_cosAHD"] = hbgd_cosAHD;
+	name2geo_dim_type_["hbgd_AHD"] = hbgd_AHD;
 	name2geo_dim_type_["hbgd_chi"] = hbgd_chi;
 
 	assert( name2weight_type_.size() == hbw_MAX );

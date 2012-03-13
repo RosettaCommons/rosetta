@@ -51,6 +51,16 @@ HBEvalTuple::HBEvalTuple(
 	eval_type_ = HBEval_lookup(don_type_, acc_type_, seq_sep_);
 }
 
+bool
+operator==(HBEvalTuple const & a, HBEvalTuple const & b){
+	return(
+		a.don_type_ == b.don_type_ &&
+		a.acc_type_ == b.acc_type_ &&
+		a.seq_sep_ == b.seq_sep_ &&
+		a.eval_type_ == b.eval_type_
+	);
+}
+
 
 void HBEvalTuple::don_type( HBDonChemType don )
 {

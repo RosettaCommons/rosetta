@@ -26,7 +26,7 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-class HBEvalTuple 
+class HBEvalTuple
 {
 private:
 	HBDonChemType don_type_;
@@ -41,14 +41,14 @@ public:
 		seq_sep_( seq_sep_other ),
 		eval_type_( hbe_NONE )
 	{}
-	
+
 	HBEvalTuple(
 		int const datm,
 		core::conformation::Residue const & don_rsd,
 		int const aatm,
 		core::conformation::Residue const & acc_rsd
 	);
-	
+
 	HBEvalTuple(
 		HBDonChemType don,
 		HBAccChemType acc,
@@ -61,7 +61,7 @@ public:
 		seq_sep_( src.seq_sep_ ),
 		eval_type_( src.eval_type_ )
 	{}
-	
+
 	HBEvalTuple const & operator = ( HBEvalTuple const & rhs ) {
 		if ( this != & rhs ) {
 			don_type_ = rhs.don_type_;
@@ -74,6 +74,10 @@ public:
 
 	inline ~HBEvalTuple() {}
 
+	friend
+	bool
+	operator==(HBEvalTuple const & a, HBEvalTuple const & b);
+
 	void don_type( HBDonChemType don );
 	void acc_type( HBAccChemType acc );
 	void sequence_sep( HBSeqSep seqsep );
@@ -81,7 +85,7 @@ public:
 	inline HBDonChemType don_type() const { return don_type_; }
 	inline HBAccChemType acc_type() const { return acc_type_; }
 	inline HBSeqSep sequence_sep() const { return seq_sep_; }
-	inline HBEvalType eval_type() const { return eval_type_; }	
+	inline HBEvalType eval_type() const { return eval_type_; }
 
 
 private:

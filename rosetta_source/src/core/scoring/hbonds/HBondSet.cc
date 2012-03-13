@@ -78,7 +78,7 @@ HBond::HBond(
 	bool const ares_is_dna,
 	bool const aatm_is_backbone,
 	Size const ares,
-	HBEvalType const hbe_type,
+	HBEvalTuple const hbe_tuple,
 	Real const energy_in, // unweighted
 	Real const weight_in,
 	HBondDerivs const & derivs_in
@@ -95,7 +95,7 @@ HBond::HBond(
 	acc_res_is_dna_( ares_is_dna ),
 	acc_atm_is_backbone_( aatm_is_backbone ),
 	acc_res_( ares ),
-	eval_type_( hbe_type ),
+	eval_tuple_( hbe_tuple ),
 	energy_( energy_in ),
 	weight_( weight_in ),
 	derivs_( derivs_in )
@@ -203,11 +203,19 @@ HBond::derivs() const
 }
 
 ///
-HBEvalType const &
+HBEvalType
 HBond::eval_type() const
 {
-	return eval_type_;
+	return eval_tuple_.eval_type();
 }
+
+///
+HBEvalTuple const &
+HBond::eval_tuple() const
+{
+	return eval_tuple_;
+}
+
 
 ///
 bool
@@ -235,7 +243,7 @@ HBond::hbond_energy_comparer( HBondCOP a, HBondCOP b )
 void
 HBond::show( std::ostream & out ) const
 {
-	out << eval_type_ << " ";
+	out << eval_tuple_.eval_type() << " ";
 	out << "don: ";
 	out << (don_res_is_protein_ ? "protein " : "");
 	out << (don_hatm_is_protein_backbone_ ? "backbone " : "");
@@ -344,7 +352,7 @@ operator==(HBond const & a, HBond const & b)
 		a.acc_res_is_dna_               == b.acc_res_is_dna_              &&
 		a.acc_atm_is_backbone_          == b.acc_atm_is_backbone_         &&
 		a.acc_res_                      == b.acc_res_                     &&
-		a.eval_type_                    == b.eval_type_                   &&
+		a.eval_tuple_                   == b.eval_tuple_                  &&
 		a.energy_                       == b.energy_                      &&
 		a.weight_                       == b.weight_                      ); /*&&
 		a.deriv_.first[0]               == b.deriv_.first[0]              &&
@@ -552,7 +560,7 @@ HBondSet::append_hbond(
 	conformation::Residue const & don_rsd,
 	Size const aatm,
 	conformation::Residue const & acc_rsd,
-	HBEvalType const & hbe_type,
+	HBEvalTuple const & hbe_tuple,
 	Real const energy,
 	Real const weight,
 	HBondDerivs const & derivs
@@ -578,7 +586,7 @@ HBondSet::append_hbond(
 		dhatm_is_backbone, don_pos,
 		aatm , aatm_is_protein_backbone, acc_rsd.is_protein(),
 		acc_rsd.is_DNA(), aatm_is_backbone, acc_pos,
-		hbe_type, energy, weight, derivs ) );
+		hbe_tuple, energy, weight, derivs ) );
 
 	// update hbcheck
 	// note: these dimension checks could be removed completely & replaced by pose-aware dimensioning

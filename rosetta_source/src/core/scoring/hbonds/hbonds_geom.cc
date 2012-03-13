@@ -20,6 +20,7 @@
 #include <core/scoring/hbonds/FadeInterval.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/hbonds/polynomial.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
@@ -76,6 +77,7 @@ static basic::Tracer tr("core.scoring.hbonds");
 
 Real DUMMY_DERIV(0.0);
 bool DUMMY_BOOL(false);
+HBGeoDimType DUMMY_HBGEODIMTYPE(hbgd_NONE);
 HBondDerivs DUMMY_DERIVS;
 HBondDerivs const ZERO_DERIV2D = { DerivVectorPair(), DerivVectorPair(), DerivVectorPair(), DerivVectorPair() };
 
@@ -183,7 +185,7 @@ get_hb_don_chem_type(
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
 			} else if ( aname == " N1 " &&  don_rsd.has_variant_type("PROTONATED_H1_ADENOSINE") ) { //Parin Sripakdeevong May 03, 2011.
-				return hbdon_GENERIC_SC;			
+				return hbdon_GENERIC_SC;
 			} break;
 		case na_rgu:
 			if (aname == " N1 ") {
@@ -541,6 +543,7 @@ hbond_compute_energy(
 	Real const chi,   // AB2-AB-A-H dihdral angle for sp2 hybridized acceptors
 	Real & energy,
 	bool & apply_chi_torsion_penalty, // did this hbond get the chi torsion penalty?
+	HBGeoDimType & AHD_geometric_dimension, // measure in angle in cosine space?
 	Real & dE_dr,
 	Real & dE_dxD,
 	Real & dE_dxH,
@@ -599,21 +602,45 @@ hbond_compute_energy(
 		}
 	}
 
+	// add these checks, of course, to the hbeval reading
+	assert( database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == database.cosAHD_long_poly_lookup(hbe)->geometric_dimension() );
+	bool use_cosAHD = database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_cosAHD;
+	AHD_geometric_dimension = use_cosAHD ? hbgd_cosAHD : hbgd_AHD;
+	assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_AHD );
+
+	Real AHD(-1234);
+	if ( ! use_cosAHD ) {
+		AHD = numeric::constants::d::pi-acos(dxD); // spare this calculation if were evaluating the polynomial in cosine space
+	}
+
 	if ( FxD == Real(0.0) ) {
 		// is xD out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
-		if ( ( dxD < database.cosAHD_short_poly_lookup( hbe )->xmin() && dxD < database.cosAHD_long_poly_lookup( hbe )->xmin() ) ||
-			( dxD > database.cosAHD_short_poly_lookup( hbe )->xmax() && dxD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
-			energy = MAX_HB_ENERGY + Real(1.0);
-			return;
+		if ( use_cosAHD ) {
+			if ( ( dxD < database.cosAHD_short_poly_lookup( hbe )->xmin() && dxD < database.cosAHD_long_poly_lookup( hbe )->xmin() ) ||
+				( dxD > database.cosAHD_short_poly_lookup( hbe )->xmax() && dxD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
+				energy = MAX_HB_ENERGY + Real(1.0);
+				return;
+			}
+		} else {
+			if ( ( AHD < database.cosAHD_short_poly_lookup( hbe )->xmin() && AHD < database.cosAHD_long_poly_lookup( hbe )->xmin() ) ||
+				( AHD > database.cosAHD_short_poly_lookup( hbe )->xmax() && AHD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
+				energy = MAX_HB_ENERGY + Real(1.0);
+				return;
+			}
 		}
 	}
 
 	(*database.AHdist_poly_lookup( hbe ))(dAHdis, Pr, dPr);
 	(*database.cosBAH_short_poly_lookup( hbe ))(dxH, PSxH, dPSxH);
 	(*database.cosBAH_long_poly_lookup( hbe ))(dxH, PLxH, dPLxH);
-	(*database.cosAHD_short_poly_lookup( hbe ))(dxD, PSxD, dPSxD);
-	(*database.cosAHD_long_poly_lookup( hbe ))(dxD, PLxD, dPLxD);
-	//database.chi_poly_lookup( HBEvalType )(AHdis, Pr, dPr);
+	if ( use_cosAHD ) {
+		(*database.cosAHD_short_poly_lookup( hbe ))(dxD, PSxD, dPSxD);
+		(*database.cosAHD_long_poly_lookup( hbe ))(dxD, PLxD, dPLxD);
+	} else {
+		(*database.cosAHD_short_poly_lookup( hbe ))(AHD, PSxD, dPSxD);
+		(*database.cosAHD_long_poly_lookup( hbe ))(AHD, PLxD, dPLxD);
+	}
+
 
 	energy = Pr*FxD*FxH + FSr*(PSxD*FxH + FxD*PSxH) + FLr*(PLxD*FxH + FxD*PLxH);
 	//std::cout << " hb: " << AHdis << " " << xH << " " << xD << " energy: " << energy << std::endl;
@@ -675,7 +702,7 @@ hbond_compute_energy(
 			( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )) {
 		apply_chi_torsion_penalty = true;
 		apply_chi_torsion_penalty_sp3 = true;
-		
+
 		// just add in a penalty directly to the energy sum; the chi-penalty
 		// is only multiplied in for the sp2 term.
 		Real const max_penalty = 0.25;
@@ -691,7 +718,16 @@ hbond_compute_energy(
 	}
 
 	dE_dr =  dPr*FxD*FxH + dFSr*(PSxD*FxH + FxD*PSxH) + dFLr*(PLxD*FxH + FxD*PLxH);
-	dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);
+
+
+	if(use_cosAHD){
+		dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);
+	} else {
+		/// the fade function is still evaluated in cosine space, so its derivatives have to
+		/// be converted to units of dE/dAHD by multiplying dE/dcosAHD by sin(AHD)
+		/// the polynomial's derivatives, on the other hand, is already in units of dE/dAHD
+		dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH)*sin(AHD) + FxH*(FSr*dPSxD + FLr*dPLxD);
+	}
 	dE_dxH = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
 
 	if ( apply_chi_torsion_penalty_sp2 ) {
@@ -879,9 +915,24 @@ hb_energy_deriv_u2(
 	//JSS the rest happens only if we want deriviative information
 	Real dE_dxH, dE_dxD, dE_dr, dchipen_dBAH, dchipen_dchi;
 	bool apply_chi_torsion_penalty( false );
+	HBGeoDimType AHD_geometric_dimension;
 
-	hbond_compute_energy(database,hbondoptions,hbt,AHdis,xD,xH,chi,energy,
-		apply_chi_torsion_penalty,dE_dr,dE_dxD,dE_dxH,dchipen_dBAH,dchipen_dchi);
+	hbond_compute_energy(
+		database,
+		hbondoptions,
+		hbt,
+		AHdis,
+		xD,
+		xH,
+		chi,
+		energy,
+		apply_chi_torsion_penalty,
+		AHD_geometric_dimension,
+		dE_dr,
+		dE_dxD,
+		dE_dxH,
+		dchipen_dBAH,
+		dchipen_dchi);
 
 	if (energy >= MAX_HB_ENERGY) return;
 
@@ -920,19 +971,35 @@ hb_energy_deriv_u2(
 		deriv.acc_deriv.f2() = -1 * dE_dr * f2;
 
 		/// 2. theta derivatives (theta is the D-H-A angle)
-		Real theta;
-		angle_p1_deriv(  Axyz, Hxyz, Dxyz, theta, f1, f2);
-		Real const dE_dxD_sin_theta = dE_dxD*sin( theta );
-		deriv.acc_deriv.f1() += dE_dxD_sin_theta * f1;
-		deriv.acc_deriv.f2() += dE_dxD_sin_theta * f2;
+		if(AHD_geometric_dimension == hbgd_cosAHD){
+			Real theta;
+			angle_p1_deriv(  Axyz, Hxyz, Dxyz, theta, f1, f2);
+			Real const dE_dxD_sin_theta = dE_dxD*sin( theta );
+			deriv.acc_deriv.f1() += dE_dxD_sin_theta * f1;
+			deriv.acc_deriv.f2() += dE_dxD_sin_theta * f2;
 
-		angle_p1_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
-		deriv.don_deriv.f1() = dE_dxD_sin_theta * f1;
-		deriv.don_deriv.f2() = dE_dxD_sin_theta * f2;
+			angle_p1_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
+			deriv.don_deriv.f1() = dE_dxD_sin_theta * f1;
+			deriv.don_deriv.f2() = dE_dxD_sin_theta * f2;
 
-		angle_p2_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
-		deriv.h_deriv.f1() += dE_dxD_sin_theta * f1;
-		deriv.h_deriv.f2() += dE_dxD_sin_theta * f2;
+			angle_p2_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
+			deriv.h_deriv.f1() += dE_dxD_sin_theta * f1;
+			deriv.h_deriv.f2() += dE_dxD_sin_theta * f2;
+		} else if (AHD_geometric_dimension == hbgd_AHD){
+			Real theta;
+			angle_p1_deriv(  Axyz, Hxyz, Dxyz, theta, f1, f2);
+			deriv.acc_deriv.f1() += dE_dxD * f1;
+			deriv.acc_deriv.f2() += dE_dxD * f2;
+
+			angle_p1_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
+			deriv.don_deriv.f1() = dE_dxD * f1;
+			deriv.don_deriv.f2() = dE_dxD * f2;
+
+			angle_p2_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
+			deriv.h_deriv.f1() += dE_dxD * f1;
+			deriv.h_deriv.f2() += dE_dxD * f2;
+		}
+
 
 		/// 3. phi derivatives (phi is the H-A-AB angle
 		{ // scope

@@ -66,6 +66,7 @@ get_seq_sep(
 // hbond evaluation type -- determines what scoring function to use
 extern Real DUMMY_DERIV;
 extern bool DUMMY_BOOL;
+extern HBGeoDimType DUMMY_HBGEODIMTYPE;
 extern HBondDerivs DUMMY_DERIVS;
 extern HBondDerivs const ZERO_DERIV2D;
 
@@ -97,6 +98,7 @@ hbond_compute_energy(
 	Real const chi,     // AB2-AB-A-H dihdral angle for sp2 hybridized acceptors
 	Real & energy,      // main return value #1: sum of the dAH term, the xD term and the xH term.
 	bool & apply_chi_torsion_penalty = DUMMY_BOOL, // did this hbond get the chi torsion penalty?
+	HBGeoDimType & AHD_geometric_dimension = DUMMY_HBGEODIMTYPE, // measure in angle in cosine space?
 	Real & dE_dr = DUMMY_DERIV,
 	Real & dE_dxD = DUMMY_DERIV,
 	Real & dE_dxH = DUMMY_DERIV,

@@ -431,6 +431,43 @@ enum HBGeoDimType {
 	// cosAHD = AHDunit <dot> HDunit
 	hbgd_cosAHD,
 
+
+	// the angle formed by the acceptor-hydrogen-donor
+	// this the interior angle measured in radians.
+
+	// In score12, the hydrogen bond score function evaluated the cosine
+	// of exterior BAH and AHD angles rather than the angles
+	// themselves. This was done for two reasons:
+	//
+	//    1) The cosine of the exterior angle is easy to evaluate, just
+	//    take the dot product of the noralized bond vectors.
+	//
+	//    2) When projecting uniform density density over cartesian
+	//    space onto the theta angle in spherical coordinates, the
+	//    resulting density is not uniform. This happens because the
+	//    change in the volume of the conic section per unit angle
+	//    depends on the angle itself. It turns out that the
+	//    distribution of the cosine of the angle is uniform. Therefore
+	//    when estimating distributions, as is done for knowledge based
+	//    potentials, one should normalize the distribution by computing
+	//    the distrbution in "cosine" space.
+	//
+	// Because density estimation should be done in cosine space and the
+	// cosine of the angles is easy to evaluate, the polynomials in the
+	// hydrogen bond score function were defined as functions of the
+	// cosine of the angles.
+	//
+	// A limitation of this parametrization is that the dynamic range
+	// from optimal AHD angle (180 degrees) to decent AHD angle (~160
+	// degrees) is compressed. This can be seen by noticing that the
+	// acos(x) around zero is steep, so a small change in x results in
+	// large change in acos(x). To create polynomials that have such a
+	// tight distribution requires them to be relatively high degree.
+	//
+  // As an alternative, the AHD angle can be used directly in the
+	// parametrization.
+	hbgd_AHD,
+
 	// Torsional angle about the base-acceptor bond vector
 	// Not yet implemented (11/09) but coming soon...
 	hbgd_chi,

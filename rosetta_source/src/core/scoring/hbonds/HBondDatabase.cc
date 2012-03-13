@@ -493,6 +493,10 @@ HBondDatabase::initialize_HBEval()
 			buf << tokens[i]; i++;
 			buf >> AHdist_poly_name;
 			AHdist_poly = HBPoly1D_from_name(AHdist_poly_name);
+			/// Error handling: make sure we're given a distance polynomial
+			if ( AHdist_poly->geometric_dimension() != hbgd_AHdist ) {
+				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a distance polynomial (i.e. geometric_dimension == hbgd_AHdist), but instead, found " + AHdist_poly_name + " of geometric dimension " + utility::to_string(AHdist_poly->geometric_dimension()) );
+			}
 			if(AHdist_poly_lookup_[hbe_type]){
 				assert(AHdist_poly_lookup_[hbe_type] == AHdist_poly);
 			} else {
@@ -504,6 +508,10 @@ HBondDatabase::initialize_HBEval()
 			buf << tokens[i]; i++;
 			buf >> cosBAH_short_poly_name;
 			cosBAH_short_poly = HBPoly1D_from_name(cosBAH_short_poly_name);
+			/// Error handling: make sure we're given a cosBAH polynomial
+			if ( cosBAH_short_poly->geometric_dimension() != hbgd_cosBAH ) {
+				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a short-range cosBAH polynomial (i.e. geometric_dimension == hbgd_cosBAH), but instead, found " + cosBAH_short_poly_name + " of geometric dimension " + utility::to_string(cosBAH_short_poly->geometric_dimension()) );
+			}
 			if(cosBAH_short_poly_lookup_[hbe_type]){
 				assert(cosBAH_short_poly_lookup_[hbe_type] == cosBAH_short_poly);
 			} else {
@@ -515,6 +523,10 @@ HBondDatabase::initialize_HBEval()
 			buf << tokens[i]; i++;
 			buf >> cosBAH_long_poly_name;
 			cosBAH_long_poly = HBPoly1D_from_name(cosBAH_long_poly_name);
+			/// Error handling: make sure we're given a cosBAH polynomial
+			if ( cosBAH_long_poly->geometric_dimension() != hbgd_cosBAH ) {
+				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a long-range cosBAH polynomial (i.e. geometric_dimension == hbgd_cosBAH), but instead, found " + cosBAH_long_poly_name + " of geometric dimension " + utility::to_string(cosBAH_long_poly->geometric_dimension()) );
+			}
 			if(cosBAH_long_poly_lookup_[hbe_type]){
 				assert(cosBAH_long_poly_lookup_[hbe_type] == cosBAH_long_poly);
 			} else {
@@ -526,6 +538,10 @@ HBondDatabase::initialize_HBEval()
 			buf << tokens[i]; i++;
 			buf >> cosAHD_short_poly_name;
 			cosAHD_short_poly = HBPoly1D_from_name(cosAHD_short_poly_name);
+			/// Error handling: make sure we're given either a cosAHD polynomial or an AHD polynomial
+			if ( cosAHD_short_poly->geometric_dimension() != hbgd_cosAHD && cosAHD_short_poly->geometric_dimension() != hbgd_AHD  ) {
+				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a short-range cosAHD or AHD polynomial (i.e. geometric_dimension == hbgd_cosAHD or hbgd_AHD), but instead, found " + cosAHD_short_poly_name + " of geometric dimension " + utility::to_string(cosAHD_short_poly->geometric_dimension()) );
+			}
 			if(cosAHD_short_poly_lookup_[hbe_type]){
 				assert(cosAHD_short_poly_lookup_[hbe_type]);
 			} else {
@@ -537,6 +553,14 @@ HBondDatabase::initialize_HBEval()
 			buf << tokens[i]; i++;
 			buf >> cosAHD_long_poly_name;
 			cosAHD_long_poly = HBPoly1D_from_name(cosAHD_long_poly_name);
+			/// Error handling: make sure we're given either a cosAHD polynomial or an AHD polynomial
+			if ( cosAHD_long_poly->geometric_dimension() != hbgd_cosAHD && cosAHD_long_poly->geometric_dimension() != hbgd_AHD  ) {
+				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a long-range cosAHD or AHD polynomial (i.e. geometric_dimension == hbgd_cosAHD or hbgd_AHD), but instead, found " + cosAHD_long_poly_name + " of geometric dimension " + utility::to_string(cosAHD_long_poly->geometric_dimension()) );
+			}
+			/// Error handling: make sure the type of the long and short polynomials are consistent -- no mixing cosAHD and AHD polynomials!
+			if ( cosAHD_long_poly->geometric_dimension() != cosAHD_short_poly->geometric_dimension()  ) {
+				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", found that the short- and long-range polynomials for the AHD angle are of different geometric types: one of hbgd_cosAHD and the other of hbgd_AHD.  These types cannot be mixed" );
+			}
 			if(cosAHD_long_poly_lookup_[hbe_type]){
 				assert(cosAHD_long_poly_lookup_[hbe_type] == cosAHD_long_poly);
 			} else {
