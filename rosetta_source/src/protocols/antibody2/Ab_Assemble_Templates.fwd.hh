@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   Ab_AssembleCDRs.fwd.hh
+/// @file   Ab_Assemble_Templates.fwd.hh
 ///
 /// @brief forward declaration
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_Ab_AssembleCDRs_fwd_hh
-#define INCLUDED_protocols_antibody2_Ab_AssembleCDRs_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_Assemble_Templates_fwd_hh
+#define INCLUDED_protocols_antibody2_Ab_Assemble_Templates_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
 
-	class Ab_AssembleCDRs;
-	typedef utility::pointer::owning_ptr< Ab_AssembleCDRs > Ab_AssembleCDRsOP;
-	typedef utility::pointer::owning_ptr< Ab_AssembleCDRs const > Ab_AssembleCDRsCOP;
+	class Ab_Assemble_Templates;
+	typedef utility::pointer::owning_ptr< Ab_Assemble_Templates > Ab_Assemble_TemplatesOP;
+	typedef utility::pointer::owning_ptr< Ab_Assemble_Templates const > Ab_Assemble_TemplatesCOP;
 
 }
 }

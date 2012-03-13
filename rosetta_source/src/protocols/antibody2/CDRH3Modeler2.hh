@@ -36,10 +36,6 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-
-
-
-
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
 
 

@@ -69,6 +69,7 @@ public:
 private:
 
     Ab_Info ab_info_;
+    // Ab_InfoOP
     
     bool user_defined_;
     bool benchmark_;

@@ -437,7 +437,8 @@ void Ab_Info::all_cdr_fold_tree( core::pose::Pose & pose ) {
     
     
     
-    
+    // JQX:: assuming Chothia numbering
+    //   setup_CDRs_numbering
 void Ab_Info::get_CDRs_numbering(){
     CDR_numbering_begin_.insert( std::pair<std::string, core::Size>("l1", 24) );
     CDR_numbering_end_.insert( std::pair<std::string, core::Size>("l1", 34) );

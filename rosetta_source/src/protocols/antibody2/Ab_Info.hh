@@ -88,7 +88,6 @@ private:
 	LoopMap loops_;
 	loops::LoopOP L1_, L2_, L3_, H1_, H2_, H3_;
     std::string L1_seq_, L2_seq_, L3_seq_, H1_seq_,H2_seq_,H3_seq_;
-    core::pose::PoseOP ab_pose_;
 
     
 	core::Size hfr_[7][3]; // array of framework residues for alignment

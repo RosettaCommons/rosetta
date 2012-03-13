@@ -14,7 +14,7 @@
 
 
 
-#include <protocols/antibody2/Ab_AssembleCDRs.hh>
+#include <protocols/antibody2/Ab_Assemble_Templates.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
@@ -41,13 +41,13 @@ main( int argc, char * argv [] )
 	using namespace protocols::antibody2;
 	using namespace protocols::jd2;
 
-	Ab_AssembleCDRs::register_options();
+	Ab_Assemble_Templates::register_options();
 	protocols::jd2::register_options();
 	// initialize core
 	devel::init(argc, argv);
 
 
-	Ab_AssembleCDRsOP abm = new Ab_AssembleCDRs();
+	Ab_Assemble_TemplatesOP abm = new Ab_Assemble_Templates();
     TR<<*abm<<std::endl;
 //    exit(-1);
 

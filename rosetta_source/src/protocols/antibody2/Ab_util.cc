@@ -179,15 +179,7 @@ namespace antibody2{
 	} // setup_simple_fold_tree
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     

@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file Ab_AssembleCDRs
+/// @file Ab_Assemble_Templates
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -16,8 +16,8 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_AssembleCDRs_hh
-#define INCLUDED_protocols_antibody2_Ab_AssembleCDRs_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_Assemble_Templates_hh
+#define INCLUDED_protocols_antibody2_Ab_Assemble_Templates_hh
 
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -29,7 +29,7 @@
 
 #include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
-#include <protocols/antibody2/Ab_AssembleCDRs.fwd.hh>
+#include <protocols/antibody2/Ab_Assemble_Templates.fwd.hh>
 
 
 #include <protocols/loops/Loops.hh>
@@ -47,15 +47,15 @@
 namespace protocols {
 namespace antibody2 {
 
-class Ab_AssembleCDRs: public moves::Mover {
+class Ab_Assemble_Templates: public moves::Mover {
 public:
     typedef std::map < std::string, bool > GraftMap;
 
 	// default constructor
-	Ab_AssembleCDRs();
+	Ab_Assemble_Templates();
 
 	// default destructor
-	~Ab_AssembleCDRs();
+	~Ab_Assemble_Templates();
 
 	virtual protocols::moves::MoverOP clone() const;
 
@@ -91,7 +91,7 @@ public:
 	void display_constraint_residues( core::pose::Pose & pose );
     
     void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const Ab_AssembleCDRs & ab_m_2 );
+    friend std::ostream & operator<<(std::ostream& out, const Ab_Assemble_Templates & ab_m_2 );
 
     
     
@@ -154,7 +154,7 @@ private:
 
 	void setup_objects();
 
-}; // class Ab_AssembleCDRs
+}; // class Ab_Assemble_Templates
 
     
     

@@ -199,7 +199,7 @@ void Ab_LH_RepulsiveRamp_Mover::apply( pose::Pose & pose ) {
 	///
 	/// @references
 	///
-	/// @authors Aroop 07/13/2010
+	/// @authors Aroop 07/13/2010    
 	///
 	/// @last_modified 07/13/2010
 	///////////////////////////////////////////////////////////////////////////

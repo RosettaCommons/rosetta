@@ -1,3 +1,4 @@
+
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -64,7 +65,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/antibody2/Ab_Info.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
 
-#include <protocols/antibody2/Ab_AssembleCDRs.hh>
+#include <protocols/antibody2/Ab_Assemble_Templates.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
@@ -100,25 +101,25 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.Ab_AssembleCDRs");
+static basic::Tracer TR("protocols.antibody2.Ab_Assemble_Templates");
 using namespace core;
 
 namespace protocols {
 namespace antibody2 {
 
 // default constructor
-Ab_AssembleCDRs::Ab_AssembleCDRs() : Mover() {
+Ab_Assemble_Templates::Ab_Assemble_Templates() : Mover() {
 	user_defined_ = false;
 	init();
 }
 
 // default destructor
-Ab_AssembleCDRs::~Ab_AssembleCDRs() {}
+Ab_Assemble_Templates::~Ab_Assemble_Templates() {}
 
 //clone
 protocols::moves::MoverOP
-Ab_AssembleCDRs::clone() const {
-	return( new Ab_AssembleCDRs() );
+Ab_Assemble_Templates::clone() const {
+	return( new Ab_Assemble_Templates() );
 }
 
     
@@ -128,8 +129,8 @@ Ab_AssembleCDRs::clone() const {
     
     
     
-void Ab_AssembleCDRs::init() {
-	Mover::type( "Ab_AssembleCDRs" );
+void Ab_Assemble_Templates::init() {
+	Mover::type( "Ab_Assemble_Templates" );
 
 	// setup all the booleans with default values
 	// they will get overwritten by the options and/or passed values
@@ -157,7 +158,7 @@ void Ab_AssembleCDRs::init() {
     
     
     
-void Ab_AssembleCDRs::set_default()
+void Ab_Assemble_Templates::set_default()
 {
 	TR <<  "Setting up default settings to all FALSE" << std::endl;
 	graft_l1_  = false;
@@ -178,7 +179,7 @@ void Ab_AssembleCDRs::set_default()
     
     
     
-void Ab_AssembleCDRs::register_options()
+void Ab_Assemble_Templates::register_options()
 {
 	using namespace basic::options;
 
@@ -199,7 +200,7 @@ void Ab_AssembleCDRs::register_options()
     
     
     
-void Ab_AssembleCDRs::init_from_options() {
+void Ab_Assemble_Templates::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	TR <<  "Reading Options" << std::endl;
@@ -265,7 +266,7 @@ void Ab_AssembleCDRs::init_from_options() {
     
     
     
-void Ab_AssembleCDRs::setup_objects() {
+void Ab_Assemble_Templates::setup_objects() {
     ab_info_ = NULL;
     ab_t_info_ = NULL;
     
@@ -281,7 +282,7 @@ void Ab_AssembleCDRs::setup_objects() {
     
     
     
-void Ab_AssembleCDRs::sync_objects_with_flags() {
+void Ab_Assemble_Templates::sync_objects_with_flags() {
 
 	using namespace protocols::moves;
 
@@ -299,7 +300,7 @@ void Ab_AssembleCDRs::sync_objects_with_flags() {
 
     
 
-void Ab_AssembleCDRs::finalize_setup( pose::Pose & frame_pose ) {
+void Ab_Assemble_Templates::finalize_setup( pose::Pose & frame_pose ) {
     TR<<" finalize_setup ............."<<std::endl;
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
 
@@ -385,7 +386,7 @@ void Ab_AssembleCDRs::finalize_setup( pose::Pose & frame_pose ) {
     
     
 //APPLY
-void Ab_AssembleCDRs::apply( pose::Pose & frame_pose ) {
+void Ab_Assemble_Templates::apply( pose::Pose & frame_pose ) {
 
     using namespace chemical;
     using namespace id;
@@ -481,11 +482,11 @@ void Ab_AssembleCDRs::apply( pose::Pose & frame_pose ) {
 
 
 
-std::string Ab_AssembleCDRs::get_name() const {
-	return "Ab_AssembleCDRs";
+std::string Ab_Assemble_Templates::get_name() const {
+	return "Ab_Assemble_Templates";
 }
 
-void Ab_AssembleCDRs::set_packer_default(pose::Pose & pose, bool include_current) {
+void Ab_Assemble_Templates::set_packer_default(pose::Pose & pose, bool include_current) {
     //set up packer
     pack::task::PackerTaskOP task;
     task = pack::task::TaskFactory::create_packer_task( pose );
@@ -498,7 +499,7 @@ void Ab_AssembleCDRs::set_packer_default(pose::Pose & pose, bool include_current
 
 
 
-void Ab_AssembleCDRs::display_constraint_residues( core::pose::Pose & pose ) {		
+void Ab_Assemble_Templates::display_constraint_residues( core::pose::Pose & pose ) {		
     // Detecting di-sulfide bond
 
     Size H1_Cys(0), H3_Cys(0);
@@ -539,14 +540,14 @@ void Ab_AssembleCDRs::display_constraint_residues( core::pose::Pose & pose ) {
     
     
 /// @details  Show the complete setup of the docking protocol
-void Ab_AssembleCDRs::show( std::ostream & out ) {
+void Ab_Assemble_Templates::show( std::ostream & out ) {
     if ( !flags_and_objects_are_in_sync_ ){
         sync_objects_with_flags();
     }
     out << *this;
 }
     
-std::ostream & operator<<(std::ostream& out, const Ab_AssembleCDRs & ab_m_2 )
+std::ostream & operator<<(std::ostream& out, const Ab_Assemble_Templates & ab_m_2 )
 {
     using namespace ObjexxFCL::fmt;
         

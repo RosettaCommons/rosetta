@@ -406,14 +406,7 @@ CDRH3Modeler2::get_name() const {
 			while( !closed_cutpoints && cycle < max_cycle_) {
 				antibody_in_ = starting_antibody;
 				if( framework_loop_size > 5 ){
-                    
-                    //##################################################################
-                    //JQX: refactoring the old "antibody_modeling_insert_ter" function 
-                    //      into a ab_h3_cter_insert_mover function
                     ab_h3_cter_insert_mover_->apply(pose);
-                    
-					//antibody_modeling_insert_ter( pose );
-                    //##################################################################
                 }
 				scored_frag_close( pose, trimmed_cdr_h3 );
 				if( trimmed_cdr_h3.size() > cutoff_9_  ) { // aroop_temp default cutoff_9_
@@ -466,43 +459,7 @@ CDRH3Modeler2::get_name() const {
 		}
     
     
-    
-    
-
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+      
     
     
 
