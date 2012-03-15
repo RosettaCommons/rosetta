@@ -59,12 +59,15 @@ public:
 	loops::LoopOP get_CDR_loop( std::string loop );
 
 	// return kinked/extended
-	bool is_kinked() { return kinked_; }
-	bool is_extended() { return extended_; }
-    bool is_camelid()  { return camelid_;  }
+	bool is_kinked()   { return kinked_H3_;   }
+	bool is_extended() { return extended_H3_; }
+    bool is_camelid()  { return camelid_;     }
+    utility::vector1<char> get_Fv_sequence() { return Fv_sequence_;}
 
 	/// align current Fv to native.Fv
-	void align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & native, core::pose::Pose & native_pose );
+	void align_to_native( core::pose::Pose & pose, 
+                          antibody2::Ab_Info & native, 
+                          core::pose::Pose & native_pose );
     
     void load_CDR_query_info_to_check();
 
@@ -77,17 +80,27 @@ public:
 	core::Size current_start;
 	// End coordinates of active loop
 	core::Size current_end;
-	utility::vector1< char > Fv_sequence_;
+
     
 	loops::Loops all_cdr_loops_;
-
-
-//private:
+    
+    void detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose );
+	void detect_and_set_camelid_CDR_H3_stem_type();
+	void detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose );
+    void get_CDRs_numbering();
+	void set_default( bool camelid );
+    
+    //bool is_my_pose_antibody(core::pose::Pose & pose);
+    //bool is_my_antibody_camelid(core::pose::Pose & pose);
+    
+    
 private:
 	// cdr loops
 	LoopMap loops_;
-	loops::LoopOP L1_, L2_, L3_, H1_, H2_, H3_;
-    std::string L1_seq_, L2_seq_, L3_seq_, H1_seq_,H2_seq_,H3_seq_;
+	loops::LoopOP L1_, L2_, L3_;
+    loops::LoopOP H1_, H2_, H3_;
+    std::string L1_seq_, L2_seq_, L3_seq_;
+    std::string H1_seq_,H2_seq_,H3_seq_;
 
     
 	core::Size hfr_[7][3]; // array of framework residues for alignment
@@ -97,21 +110,12 @@ private:
 
     
 	bool camelid_;
+	bool kinked_H3_;
+	bool extended_H3_;
+    
+    utility::vector1< char > Fv_sequence_;
+ 
 
-	// information about h3
-	bool kinked_;
-	bool extended_;
-
-    
-    void get_CDRs_numbering();
-    
-	void set_default( bool camelid );
-    
-	void detect_CDR_H3_stem_type( core::pose::Pose & pose );
-    
-	void detect_camelid_CDR_H3_stem_type();
-    
-	void detect_regular_CDR_H3_stem_type( core::pose::Pose & pose );
 };
 
 

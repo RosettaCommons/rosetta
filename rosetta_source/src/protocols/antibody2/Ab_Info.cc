@@ -85,6 +85,7 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
                                    pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l1"] ) );
 			current_start = L1_->start();
 			current_end = L1_->stop();
+            
 		}
 		else if( cdr_name == "l2" ) {
 			L2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l2"] ), 
@@ -134,8 +135,8 @@ Ab_Info::set_default( bool camelid )
 	camelid_ = camelid;
 	current_start = 0;
 	current_end = 0;
-	kinked_ = false;
-	extended_ = false;
+	kinked_H3_ = false;
+	extended_H3_ = false;
     get_CDRs_numbering();
 }
 
@@ -184,6 +185,7 @@ Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool camelid ) {
     
 //	H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 )+1 );
 //	H3_->set_cut( H3_->start() + 1 );
+//  TODO:
 //  JQX: don't understand why the perl script has one less residue in the end of h3.pdb for deep graft option
 //       don't understand this +1, either, temporary remove    CHECK LATER !!!
     H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h3"] ), 
@@ -213,7 +215,7 @@ Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool camelid ) {
 	for( core::Size i = 1; i <= pose.total_residue(); ++i )
 		Fv_sequence_.push_back( pose.residue(i).name1() );
 
-	detect_CDR_H3_stem_type( pose );
+	detect_and_set_CDR_H3_stem_type( pose );
 
 } // set_defaults
 
@@ -262,18 +264,18 @@ void Ab_Info::align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & nat
 
 
 
-void Ab_Info::detect_CDR_H3_stem_type( core::pose::Pose & pose ) {
+void Ab_Info::detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	if( camelid_ )
-		detect_camelid_CDR_H3_stem_type();
+		detect_and_set_camelid_CDR_H3_stem_type();
 	else
-		detect_regular_CDR_H3_stem_type( pose );
+		detect_and_set_regular_CDR_H3_stem_type( pose );
 	return;
 } // detect_CDR_H3_stem_type
 
 
 
 
-void Ab_Info::detect_camelid_CDR_H3_stem_type() {
+void Ab_Info::detect_and_set_camelid_CDR_H3_stem_type() {
 	TR << "AC Detecting Camelid CDR H3 Stem Type" << std::endl;
 
 	// extract single letter aa codes for the chopped loop residues
@@ -288,29 +290,29 @@ void Ab_Info::detect_camelid_CDR_H3_stem_type() {
 					( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'F' ) ) &&
 				( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'H' ) &&
 				( cdr_h3_sequence[ cdr_h3_sequence.size() - 1 ] != 'G' ) )
-			extended_ = true;
+			extended_H3_ = true;
 	}
 
-	if( !extended_ ) {
-		kinked_ = true;
+	if( !extended_H3_ ) {
+		kinked_H3_ = true;
 		if(           ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'R' ) ||
 				      ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'Y' ) ||
 				((     ( cdr_h3_sequence[ cdr_h3_sequence.size() - 1 ] != 'Y' ) || ( cdr_h3_sequence[ cdr_h3_sequence.size() - 1 ] != 'W' )    ) &&
 				(     ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'Y' ) || ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'W' )    ) &&
 				( 	  ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] != 'Y' ) || ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] != 'W' )    ))
 		)
-			kinked_ = false;
+			kinked_H3_ = false;
 	}
 
 
 	TR << "AC Finished Detecting Camelid CDR H3 Stem Type: "
-		 << "Kink: " << kinked_ << " Extended: " << extended_ << std::endl;
+		 << "Kink: " << kinked_H3_ << " Extended: " << extended_H3_ << std::endl;
 } // detect_camelid_CDR_H3_stem_type()
 
 
 
 
-void Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
+void Ab_Info::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
 
 	bool is_H3( false );
@@ -322,7 +324,7 @@ void Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 
 	// Rule 1a for standard kink
 	if( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'D') {
-		kinked_ = true;
+		kinked_H3_ = true;
 		is_H3 = true;
 	}
 
@@ -330,7 +332,7 @@ void Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D')
 			&& ( (cdr_h3_sequence[2] != 'K') &&
 					 (cdr_h3_sequence[2] != 'R') ) && (is_H3 != true)) {
-		extended_ = true;
+		extended_H3_ = true;
 		is_H3 = true;
 	}
 
@@ -352,7 +354,7 @@ void Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 				is_basic = true;
 		}
 		if( is_basic ) {
-			kinked_ = true;
+			kinked_H3_ = true;
 			is_H3 = true;
 		}
 	}
@@ -363,7 +365,7 @@ void Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 				(cdr_h3_sequence[2] == 'R') ) &&
 			( (cdr_h3_sequence[1] != 'K') &&
 				(cdr_h3_sequence[1] != 'R') ) && (is_H3 != true) ) {
-		kinked_ = true;
+		kinked_H3_ = true;
 		is_H3 = true;
 		if( !is_H3 ) {
 			bool is_basic( false ); // Special basic residue exception flag
@@ -372,7 +374,7 @@ void Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 			if( aa_code_L46 == 'R' || aa_code_L46 == 'K')
 				is_basic = true;
 			if( is_basic ) {
-				extended_ = true;
+				extended_H3_ = true;
 				is_H3 = true;
 			}
 		}
@@ -384,12 +386,12 @@ void Ab_Info::detect_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 				(cdr_h3_sequence[2] == 'R')) &&
 			( (cdr_h3_sequence[1] == 'K') ||
 				(cdr_h3_sequence[1] == 'R') ) && (is_H3 != true) ) {
-		extended_ = true;
+		extended_H3_ = true;
 		is_H3 = true;
 	}
 
 	TR << "AC Finished Detecting Regular CDR H3 Stem Type: "
-		 << "Kink: " << kinked_ << " Extended: " << extended_ << std::endl;
+		 << "Kink: " << kinked_H3_ << " Extended: " << extended_H3_ << std::endl;
 } // detect_regular_CDR_H3_stem_type()
 
 

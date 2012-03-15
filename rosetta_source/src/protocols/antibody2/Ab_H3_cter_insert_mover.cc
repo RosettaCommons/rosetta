@@ -166,7 +166,7 @@ std::string Ab_H3_cter_insert_mover::get_name() const {
             utility::vector1< char > aa_1name;
             for( Size ii = antibody_in.get_CDR_loop("h3")->start() - 2;
                 ii <= ( antibody_in.get_CDR_loop("h3")->start() - 2 ) + cdr_h3_size + 3; ++ii )
-                aa_1name.push_back( antibody_in.Fv_sequence_[ii] );
+                aa_1name.push_back( antibody_in.get_Fv_sequence()[ii] );
             
             // used only when no length & kink match are found
             utility::vector1< FragData > H3_base_library_seq_kink;

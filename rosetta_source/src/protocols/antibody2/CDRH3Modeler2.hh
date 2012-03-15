@@ -110,8 +110,8 @@ public:
 	/// @brief Build centroid mode CDR H3 loop
 	void build_centroid_loop( core::pose::Pose & pose );
 
-	/// @brief Build fullatom mode CDR H3 loop
-	void build_fullatom_loop( core::pose::Pose & pose );
+    //JQX: move the build_fullatom_loop into Ab_Relax_a_CDR_fullAtom
+
 
 	/////////////////////////////////////////////////////////////////////////
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
@@ -130,8 +130,7 @@ public:
 	// void antibody_modeling_insert_ter( core::pose::Pose & pose);
 
 
-    //JQX: cutpoints_separation and cutpoint_separation have been
-    // moved to the Ab_util file
+    //JQX: cutpoints_separation and cutpoint_separation have been moved to the Ab_util file
 
 
 	void scored_frag_close(
@@ -142,12 +141,9 @@ public:
     
     //JQX: move the CDR_H3_filter into the utility class
 
+    //JQX: move the loop_fa_relax into Ab_Relax_a_CDR_FullAtom
+    
 
-	void loop_fa_relax(
-		core::pose::Pose & pose_in,
-		core::Size const loop_begin,
-		core::Size const loop_end
-	);
 
 	void loop_centroid_relax(
 		core::pose::Pose & pose_in,
@@ -165,7 +161,6 @@ private:
 	core::pose::Pose start_pose_;
 	/// @brief Number of ADDITIONAL residues modeled from H3_CTERM
 	///        These residues range from H:n-2,n-1,n,n+1 of H3
-	core::Size base_;
 	core::Size c_ter_stem_;
 	// constraints
 	core::Real cen_cst_;
@@ -191,16 +186,12 @@ private:
 	bool current_loop_is_H3_;
 	/// @brief actually enables H3 filter for H3 operations
 	bool H3_filter_;
-	/// @brief build H3 only
-	bool antibody_build_;
+
 	/// @brief refine H3 only
 	bool antibody_refine_;
-	/// @brief lower amplitude during base relaxation
-	bool min_base_relax_;
-	/// @brief use random cutpoints for h3 modeling
-	bool h3_random_cut_;
-	/// @brief cutpoint whose separation is computed in scorefile
-	Size decoy_loop_cutpoint_;
+
+
+
 	/// @brief enable docking local refine of LH chains & simultaneous H3 min
 	bool snug_fit_;
 	/// @brief loop_building in docking
@@ -210,12 +201,9 @@ private:
 	bool dle_flag_;
 	/// @brief just refine input loop
 	bool refine_input_loop_;
-	/// @brief number of flanking residues:default 5
-	core::Size h3_flank_;
-	/// @brief relax flanking regions of h3
-	bool flank_relax_;
-	/// @brief freeze h3 during all cdr relax and local refine
-	bool freeze_h3_;
+
+
+
 	/// @brief is camelid antibody without light chain
 	bool is_camelid_;
 	/// @brief size of loop above which 9mer frags are used
