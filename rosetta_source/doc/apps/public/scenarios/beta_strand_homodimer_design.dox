@@ -40,7 +40,7 @@ exposed_strand_finder options
 
 General options:
 @li -s or -l for input structure(s)
-@li -ignore_unrecognized_res - bool - Good to have true for 
+@li -ignore_unrecognized_res - bool - Good to have true for large numbers of input structures
 @li -packing::pack_missing_sidechains
 @li -out::nooutput -bool- this protocol manages its own output, prevent job distributor from helping
 @li -struct_file -file- path to the file for the structure restrictor if needed
@@ -63,29 +63,29 @@ homodimer_maker options
 @li -window_size - integer - number of residues to consider within the exposed strand when calculating vectors.  Cannot be larger than sheet_stop - sheet_start + 1.
 
 homodimer_design options
-General options: 
+General options:
 @li -s - *_INPUT.pdb from symmetery script
 @li -symmetry:symmetry_definition -file- symmetry deffinition file from script
 @li -nstruct -integer- try 5000 or so for production runs
 
 Application specific:
-@li -pack_min_runs - integer - number of cycles through design/minimization 
-@li -make_ala_interface - bool - make the interface all Ala before docking 
-@li -find_bb_hbond_E - bool - calculate the bb-bb H bonding energy for the output 
+@li -pack_min_runs - integer - number of cycles through design/minimization
+@li -make_ala_interface - bool - make the interface all Ala before docking
+@li -find_bb_hbond_E - bool - calculate the bb-bb H bonding energy for the output
 @li -disallow_res CGP  # prevents design up Gly, Cys, Pro
 
 Other useful options
 @li -favor_native_res 0.5
 @li -run:min_type dfpmin
-@li -pose_metrics:interface_cutoff 8.0 
+@li -pose_metrics:interface_cutoff 8.0
 @li -use_input_sc
 @li -ex1
-@li -ex2 
+@li -ex2
 @li -overwrite
 @li -docking::docking_local_refine true/false
-@li -docking::sc_min true 
-@li -docking::dock_ppk false 
-@li symmetry:perturb_rigid_body_dofs 3 5 
-@li -out::file::fullatom 
+@li -docking::sc_min true
+@li -docking::dock_ppk false
+@li symmetry:perturb_rigid_body_dofs 3 5
+@li -out::file::fullatom
 
 
