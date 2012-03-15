@@ -14,8 +14,8 @@
 #include "json_spirit_writer_options.h"
 #include <iostream>
 
-namespace json_spirit
-{
+namespace utility {
+namespace json_spirit {
     // these functions to convert JSON Values to text
 
 #ifdef JSON_SPIRIT_VALUE_ENABLED
@@ -40,7 +40,7 @@ namespace json_spirit
 
     // these "formatted" versions of the "write" functions are the equivalent of the above functions
     // with option "pretty_print"
-    
+
 #ifdef JSON_SPIRIT_VALUE_ENABLED
     void         write_formatted( const Value& value, std::ostream&  os );
     std::string  write_formatted( const Value& value );
@@ -58,6 +58,8 @@ namespace json_spirit
     void         write_formatted( const wmValue& value, std::wostream& os );
     std::wstring write_formatted( const wmValue& value );
 #endif
-}
+
+} // namespace json_spirit
+} // namespace utility
 
 #endif

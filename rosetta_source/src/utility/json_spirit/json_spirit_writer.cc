@@ -6,7 +6,11 @@
 #include "json_spirit_writer.h"
 #include "json_spirit_writer_template.h"
 
+
+namespace utility {
+
 using namespace json_spirit;
+
 
 #ifdef JSON_SPIRIT_VALUE_ENABLED
     void json_spirit::write( const Value& value, std::ostream& os, unsigned int options )
@@ -94,3 +98,6 @@ using namespace json_spirit;
         return write_string( value, options );
     }
 #endif
+
+//} // namespace json_spirit
+} // namespace utility

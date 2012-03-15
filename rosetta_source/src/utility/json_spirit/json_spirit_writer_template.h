@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
 
+namespace utility {
 namespace json_spirit
 {
     inline char to_hex_char( unsigned int c )
@@ -206,8 +207,8 @@ namespace json_spirit
 
         void output( const Obj_member_type& member )
         {
-            output( Config_type::get_name( member ) ); space(); 
-            os_ << ':'; space(); 
+            output( Config_type::get_name( member ) ); space();
+            os_ << ':'; space();
             output( Config_type::get_value( member ) );
         }
 
@@ -286,7 +287,7 @@ namespace json_spirit
             if( single_line_arrays_ && !contains_composite_elements( arr )  )
             {
                 os_ << '['; space();
-               
+
                 for( typename Array_type::const_iterator i = arr.begin(); i != arr.end(); ++i )
                 {
                     output_composite_item( i, arr.end() );
@@ -308,7 +309,7 @@ namespace json_spirit
             os_ << start_char; new_line();
 
             ++indentation_level_;
-            
+
             for( typename T::const_iterator i = t.begin(); i != t.end(); ++i )
             {
                 indent();
@@ -322,13 +323,13 @@ namespace json_spirit
 
             indent(); os_ << end_char;
         }
-        
+
         void indent()
         {
             if( !pretty_ ) return;
 
             for( int i = 0; i < indentation_level_; ++i )
-            { 
+            {
                 os_ << "    ";
             }
         }
@@ -380,6 +381,8 @@ namespace json_spirit
 
         return os.str();
     }
-}
+
+} // namespace json_spirit
+} // namespace utility
 
 #endif

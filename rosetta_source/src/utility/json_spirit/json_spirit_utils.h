@@ -13,8 +13,9 @@
 #include "json_spirit_value.h"
 #include <map>
 
+namespace utility {
 namespace json_spirit
-{ 
+{
     template< class Obj_t, class Map_t >
     void obj_to_map( const Obj_t& obj, Map_t& mp_obj )
     {
@@ -58,6 +59,8 @@ namespace json_spirit
 
         return Object_type::value_type::Value_type::null;
     }
-}
+
+} // namespace json_spirit
+} // namespace utility
 
 #endif

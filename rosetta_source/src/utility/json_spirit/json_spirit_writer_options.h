@@ -10,6 +10,7 @@
 # pragma once
 #endif
 
+namespace utility {
 namespace json_spirit
 {
     enum Output_options{ pretty_print = 0x01,   // Add whitespace to format the output nicely.
@@ -25,6 +26,9 @@ namespace json_spirit
                                                 // pretty printing except that arrays printed on single lines unless they contain
                                                 // composite elements, i.e. objects or arrays
                        };
-}
+
+
+} // namespace json_spirit
+} // namespace utility
 
 #endif

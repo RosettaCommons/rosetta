@@ -12,10 +12,11 @@
 
 #include "json_spirit_reader_template.h"
 
+namespace utility {
 namespace json_spirit
 {
     // these classes allows you to read multiple top level contiguous values from a stream,
-    // the normal stream read functions have a bug that prevent multiple top level values 
+    // the normal stream read functions have a bug that prevent multiple top level values
     // from being read unless they are separated by spaces
 
     template< class Istream_type, class Value_type >
@@ -65,6 +66,8 @@ namespace json_spirit
         Mp_iters iters_;
         Posn_iter_t posn_begin_, posn_end_;
     };
-}
+
+} // namespace json_spirit
+} // namespace utility
 
 #endif
