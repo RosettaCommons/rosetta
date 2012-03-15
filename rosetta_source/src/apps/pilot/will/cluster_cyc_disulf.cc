@@ -72,6 +72,14 @@ public:
 				Pose & pose = poselist[ clusterlist[i][j] ];
 				// align
 				core::id::AtomID_Map< core::id::AtomID > amap;
+				for(int ir = 1; ir <= pose.n_residue(); ++ir) {
+					for(int ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia) {
+						if(use_in_rmsd(posecen,pose,ir,ia)) {
+							using core::id::AtomID;
+							amap[AtomID(ia,ir)] = AtomID(ia,ir);
+						}
+					}
+				}
 				core::scoring::superimpose_pose( pose, posecen, amap );
 
 			}
