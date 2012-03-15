@@ -92,11 +92,11 @@ FoldandDockClaimer::add_mover(
 		new symmetric_docking::SymFoldandDockRbTrialMover( &scorefxn, true ) :
 		new symmetric_docking::SymFoldandDockRbTrialMover( &scorefxn );  // smooth RB moves in stage 4
 	moves::MoverOP slide_mover = new symmetric_docking::SymFoldandDockSlideTrialMover;
-	core::Real move_anchor_weight(1.0),
+	core::Real move_anchor_weight(option[ OptionKeys::fold_and_dock::move_anchor_frequency ]()),
 	           rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
 	           slide_weight(option[ OptionKeys::fold_and_dock::slide_contact_frequency ]());
 
-	random_mover.add_mover( move_anchor_mover, move_anchor_weight );
+	if (move_anchor_weight > 0) random_mover.add_mover( move_anchor_mover, move_anchor_weight );
 	random_mover.add_mover( rb_trial_mover, rb_weight );
 	random_mover.add_mover( slide_mover, slide_weight );
 }

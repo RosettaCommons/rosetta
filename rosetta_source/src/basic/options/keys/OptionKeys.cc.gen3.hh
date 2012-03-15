@@ -178,6 +178,7 @@ namespace remodel { BooleanOptionKey const help( "remodel:help" );  }
 namespace remodel { BooleanOptionKey const autopilot( "remodel:autopilot" );  }
 namespace remodel { FileOptionKey const blueprint( "remodel:blueprint" );  }
 namespace remodel { FileOptionKey const cstfile( "remodel:cstfile" );  }
+namespace remodel { IntegerOptionKey const cstfilter( "remodel:cstfilter" );  }
 namespace remodel { StringOptionKey const cen_sfxn( "remodel:cen_sfxn" );  }
 namespace remodel { IntegerOptionKey const num_trajectory( "remodel:num_trajectory" );  }
 namespace remodel { IntegerOptionKey const save_top( "remodel:save_top" );  }
@@ -269,6 +270,7 @@ namespace fold_and_dock { RealOptionKey const rot_mag_smooth( "fold_and_dock:rot
 namespace fold_and_dock { RealOptionKey const rb_rot_magnitude( "fold_and_dock:rb_rot_magnitude" );  }
 namespace fold_and_dock { RealOptionKey const rb_trans_magnitude( "fold_and_dock:rb_trans_magnitude" );  }
 namespace fold_and_dock { IntegerOptionKey const rigid_body_cycles( "fold_and_dock:rigid_body_cycles" );  }
+namespace fold_and_dock { RealOptionKey const move_anchor_frequency( "fold_and_dock:move_anchor_frequency" );  }
 namespace fold_and_dock { RealOptionKey const rigid_body_frequency( "fold_and_dock:rigid_body_frequency" );  }
 namespace fold_and_dock { BooleanOptionKey const rigid_body_disable_mc( "fold_and_dock:rigid_body_disable_mc" );  }
 namespace fold_and_dock { RealOptionKey const slide_contact_frequency( "fold_and_dock:slide_contact_frequency" );  }

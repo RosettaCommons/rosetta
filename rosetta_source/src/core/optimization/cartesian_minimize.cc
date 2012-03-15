@@ -217,7 +217,7 @@ void cartesian_collect_torsional_deriv(
 		core::Vector nrml1, nrml2, nrml3;
 		core::Real inv_nrml1_mag, inv_nrml2_mag, inv_nrml3_mag;
 
-		core::Vector dcosdnrml1, dcosdnrml2, dsindnrml3, dsindnrml2;
+		core::Vector dcosdnrml1(0,0,0), dcosdnrml2(0,0,0), dsindnrml3(0,0,0), dsindnrml2(0,0,0);
 		core::Vector f, fi, fab, fj;
 
 		vti_vta = pose.xyz( id1 ) - pose.xyz( id2 );

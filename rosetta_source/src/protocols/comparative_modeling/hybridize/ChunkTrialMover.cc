@@ -21,6 +21,8 @@
 #include <core/util/kinematics_util.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/conformation/Residue.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -170,7 +172,16 @@ core::Size ChunkTrialMover::template_number()
 }
     
 void ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
+	int ntrials=500;
 	jump_number_ = RG.random_range(1, pose.num_jump());
+	core::Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
+	while ( pose.residue(jump_residue_pose).aa() == core::chemical::aa_vrt && --ntrials>0) {
+		jump_number_ = RG.random_range(1, pose.num_jump());
+		jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);	
+	}
+	if (ntrials == 0) {
+		utility_exit_with_message( "Fatal error in ChunkTrialMover::pick_random_chunk()");
+	}
 }
 
 Size ChunkTrialMover::trial_counter(Size ires) {
@@ -205,7 +216,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
         align_chunk_.reset_torsion(true);
 		for (core::Size jump_number=1; jump_number<=pose.num_jump(); ++jump_number) {
 			align_chunk_.set_aligned_chunk(pose, jump_number);
-			
+
 			// apply alignment
 			int registry_shift = RG.random_range(-max_registry_shift_[jump_number], max_registry_shift_[jump_number]);
 			align_chunk_.set_registry_shift(registry_shift);

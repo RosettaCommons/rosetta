@@ -1995,6 +1995,7 @@ option.add( basic::options::OptionKeys::remodel::help, "help menu." );
 option.add( basic::options::OptionKeys::remodel::autopilot, "autopilot" );
 option.add( basic::options::OptionKeys::remodel::blueprint, "blueprint file name" );
 option.add( basic::options::OptionKeys::remodel::cstfile, "description" );
+option.add( basic::options::OptionKeys::remodel::cstfilter, "filter cst energy" ).def(10);
 option.add( basic::options::OptionKeys::remodel::cen_sfxn, "centroid score function to be used for building" ).def("remodel_cen");
 option.add( basic::options::OptionKeys::remodel::num_trajectory, "Number of remodel trajectories." ).def(10);
 option.add( basic::options::OptionKeys::remodel::save_top, "the number of final low scoring pdbs to keep." ).def(5);
@@ -2086,6 +2087,7 @@ option.add( basic::options::OptionKeys::fold_and_dock::rot_mag_smooth, "rotation
 option.add( basic::options::OptionKeys::fold_and_dock::rb_rot_magnitude, "rotational perturbation size for rigid body pertubations" ).def(8.0);
 option.add( basic::options::OptionKeys::fold_and_dock::rb_trans_magnitude, "translational perturbation size rigid body pertubations" ).def(3.0);
 option.add( basic::options::OptionKeys::fold_and_dock::rigid_body_cycles, "number of rigid bosy cycles during fold and dock fragment insertion" ).def(50);
+option.add( basic::options::OptionKeys::fold_and_dock::move_anchor_frequency, "Frequency of slide-anchor moves" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_and_dock::rigid_body_frequency, "The fraction of times rigid body cycles are applied during fragment assembly moves" ).def(0.2);
 option.add( basic::options::OptionKeys::fold_and_dock::rigid_body_disable_mc, "Dissallow moves to be accepted locally by MC criteria within the rigid body mover " ).def(false);
 option.add( basic::options::OptionKeys::fold_and_dock::slide_contact_frequency, "The fraction of times subunits are slided together during fragment assembly moves" ).def(0.1);

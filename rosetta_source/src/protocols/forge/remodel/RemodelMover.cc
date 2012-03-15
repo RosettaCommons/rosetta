@@ -728,7 +728,7 @@ if (working_model.manager.size()!= 0){
 			if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ||
 					 basic::options::option[ OptionKeys::constraints::cst_file ].user()
 			){
-						ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint, 10 );
+						ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint, option[ OptionKeys::remodel::cstfilter]() );
 						bool CScore(pose_constraint.apply( pose ));
 						if (!CScore){  // if didn't pass, rebuild
 							continue;

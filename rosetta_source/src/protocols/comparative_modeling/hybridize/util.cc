@@ -63,8 +63,12 @@ bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos) {
 std::list < Size >
 downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_number) {
 	std::list < Size > residue_list;
-	utility::vector1< Edge > edges = pose.fold_tree().get_outgoing_edges(pose.fold_tree().jump_edge(jump_number).stop());
-	
+	Size downstream_res = pose.fold_tree().jump_edge(jump_number).stop();
+	utility::vector1< Edge > edges = pose.fold_tree().get_outgoing_edges(downstream_res);
+
+	// for jumps to singletons
+	residue_list.push_back(downstream_res);
+
 	for (Size i_edge = 1; i_edge <= edges.size(); ++i_edge) {
 		if ( !edges[i_edge].is_polymer() ) continue;
 		Size start = edges[i_edge].start() <= edges[i_edge].stop() ? edges[i_edge].start() : edges[i_edge].stop();
