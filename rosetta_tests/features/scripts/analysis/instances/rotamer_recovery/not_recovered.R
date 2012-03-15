@@ -22,9 +22,10 @@ SELECT
 	res.name3 AS res_type,
 	new_rr.divergence - ref_rr.divergence AS rel_div
 FROM
-	ref.structures AS ref_struct, new.structures AS new_struct,
+	ref.structures AS ref_struct,
+	new.structures AS new_struct,
 	ref.rotamer_recovery AS ref_rr, new.rotamer_recovery AS new_rr,
-	ref.residues AS res,
+	ref.residues AS res
 	ref.residue_pdb_confidence AS b,
 	ref.residue_burial AS bur
 WHERE
@@ -39,6 +40,8 @@ WHERE
 	res.res_type = 'ARG';"
 
 f <-  query_sample_sources_against_ref(sample_sources, sele)
+f$sample_source <- f$new_sample_source
+f$rel_div <- factor(f$rel_div)
 
 plot_id <- "rotamer_recovery_LYS_relative_divergence"
 ref_ss_id <- f$ref_sample_source[1]
@@ -51,11 +54,9 @@ if(nrow(sample_sources) <= 3){
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-n_examples <- 15
-
 f <- f[order(f$rel_div, decreasing=T),]
 f$id <- 1:nrow(f)
-g <- melt(f[f$id <= n_examples,],
+g <- melt(f[as.numeric(f$rel_div) > 0,],
 	id.vars=c("sample_source", "tag", "id", "chain", "resNum"),
 	measure.vars=c("CA", "C", "CB"),
 	variable_name = "atom")

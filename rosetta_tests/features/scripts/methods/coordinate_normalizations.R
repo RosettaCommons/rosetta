@@ -10,6 +10,8 @@
 
 radial_3d_normalization <- function(x){ 1/(x^2*sum(1/x^2))}
 
+conical_3d_normalization <- function(x){1*abs(cos(x))}
+
 
 uniform_normalization <- function(x){ rep(1/length(x),length(x)) }
 

@@ -114,6 +114,12 @@ iscript_db_cache_size <- function(db_cache_size){
   cat("\n", file=iscript_fname, append=TRUE)
 }
 
+iscript_general_kernel_adjust <- function(general_kernel_adjust){
+	cat("#Adjust density estimation kernel:\n",
+"general_kernel_adjust <- ", general_kernel_adjust, "\n",
+		file=iscript_fname, sep="", append=TRUE)
+}
+
 iscript_source_scripts <- function(scripts){
   cat("\n", file=iscript_fname, append=TRUE)
   cat("#Source these analysis scripts:\n",

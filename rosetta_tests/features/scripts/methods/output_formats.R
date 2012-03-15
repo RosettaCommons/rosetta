@@ -1,6 +1,6 @@
 
 all_output_formats <- read.csv(
-	"scripts/methods/output_formats.csv",header=T, sep="\t")
+	file.path(base_dir, "scripts/methods/output_formats.csv"), header=T, sep="\t")
 
 make_output_formats_options_list <- function(output_formats){
 	alply(output_formats, 1, function(output_format){

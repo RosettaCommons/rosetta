@@ -38,6 +38,7 @@ includes <- c(
 	"scripts/methods/save_plots.R",
 	"scripts/methods/coordinate_normalizations.R",
 	"scripts/methods/comparison_statistics.R",
+	"scripts/methods/generate_plot_webpage.R",
 	"scripts/methods/vector_math.R",
 	"scripts/methods/color_palettes.R")
 for(inc in includes) source(paste(base_dir, inc, sep="/"))
@@ -50,27 +51,33 @@ option_list <- list()
 # Run level options
 option_list <- c(option_list, list(
 	make_option(c("-v", "--verbose"), action="store_true", default=FALSE, dest="verbose",
-							help="Print extra output [default]"),
+		help="Print extra output [default]"),
 	make_option(c("--dry_run"), action="store_true", type="logical", default=FALSE, dest="dry_run",
-							help="Debug the analysis scripts but do not run them.  [Default \"%default\"]"),
+		help="Debug the analysis scripts but do not run them.  [Default \"%default\"]"),
 	make_option(c("--db_cache_size"), action="store_true", type="integer", default=10000, dest="db_cache_size",
-							help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]"),
+		help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]"),
 	make_option(c("--add_footer"), action="store_true", type="logical", default=TRUE, dest="add_footer",
-							help="Add footer to plots saying the analysis script and run date.")))
+		help="Add footer to plots saying the analysis script and run date."),
+	make_option(c("--generate_website"), action="store_true", type="logical", default=TRUE, dest="generate_website",
+		help="Add footer to plots saying the analysis script and run date.")))
 
+
+# Density estimation options
+option_list <- c(option_list, list(
+	make_option(c("--adjust_kernel"), action="store_true", type="integer", default=1, dest="general_kernel_adjust",
+		help="Multiplicative factor in the kernel bandwith for density estimation.")))
 
 # Which analysis scripts should be run
 option_list <- c(option_list, list(
 	make_option(c("-i", "--script"), action="store", type="character", default=NULL, dest="script",
-							help="Path to a single analysis script.  [Default \"%default\"]"),
+		help="Path to a single analysis script.  [Default \"%default\"]"),
 	make_option(c("-a", "--analysis_dir"), type="character", default="scripts/analysis", dest="analysis_dir",
-							help="Directory where the analysis scripts are located. The supplied directory is searched recursively for files of the form \"*.R\".  [Default \"%default\"]")))
+		help="Directory where the analysis scripts are located. The supplied directory is searched recursively for files of the form \"*.R\".  [Default \"%default\"]")))
 
 # Where should the results be stored?
-option_list <- c(option_list,
-								 list(
+option_list <- c(option_list, list(
 	make_option(c("-o", "--output_dir"), type="character", default="build", dest="output_dir",
-							help="Directory where the output plots and statistics will be generated.  [Default \"%default\"]")))
+		help="Directory where the output plots and statistics will be generated.  [Default \"%default\"]")))
 
 option_list <- c(option_list, make_output_formats_options_list(all_output_formats))
 
@@ -78,9 +85,9 @@ option_list <- c(option_list, make_output_formats_options_list(all_output_format
 # Analysis manager options
 option_list <- c(option_list, list(
 	make_option(c("--analysis_manager_db"), type="character", default="analysis_manager.db3", dest="analysis_manager_db",
-							help="Store information about the results of the features analysis in the analysis manager database.  [Default \"<output_dir>/%default\"]"),
+		help="Store information about the results of the features analysis in the analysis manager database.  [Default \"<output_dir>/%default\"]"),
 	make_option(c("--store_plots_in_analysis_manager_db"), action="store_true", type="logical", default=FALSE, dest="store_plots_analysis_manager_db",
-							help="Should the plots themselves be stored in the the analysis manager database?  [Default \"%default\"]")))
+		help="Should the plots themselves be stored in the the analysis manager database?  [Default \"%default\"]")))
 
 opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TRUE)
 
@@ -137,11 +144,6 @@ if(!file.exists(sample_source_output_dir)){
 		print("ERROR: Unable to create output directory.")
 		stop(1)
 	}
-
-	file.copy(
-		from=file.path(base_dir, "scripts/methods/features_web"),
-		to=file.path(sample_source_output_dir),
-		recursive=TRUE)
 
 }
 iscript_output_dir(output_dir)
@@ -201,6 +203,10 @@ iscript_setup_add_footer_to_output_formats(opt$options$add_footer)
 db_cache_size <- opt$options$db_cache_size
 iscript_db_cache_size(db_cache_size)
 
+#Setup density estimation options
+general_kernel_adjust <- opt$options$general_kernel_adjust
+iscript_general_kernel_adjust(general_kernel_adjust)
+
 #Read in all the features analysis scripts
 iscript_source_scripts(analysis_scripts)
 
@@ -224,7 +230,6 @@ for(analysis_script in analysis_scripts){
 	num_feature_analyses_before <- length(feature_analyses)
 }
 
-
 #Run all the features analysis scripts
 iscript_run_feature_analyses()
 if(!opt$options$dry_run){
@@ -247,6 +252,10 @@ if(!opt$options$dry_run){
 	}
 }
 
+
+if(opt$options$generate_website){
+	generate_all_webpages(output_dir)
+}
 
 
 # close connection to the analysis manager

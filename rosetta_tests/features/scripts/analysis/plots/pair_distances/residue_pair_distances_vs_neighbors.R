@@ -35,10 +35,10 @@ ORDER BY
 LIMIT
   100000;"
 
-all_geom <-  query_sample_sources(sample_sources, sele)
+f <-  query_sample_sources(sample_sources, sele)
 
 plot_id <- "residue_pair_distances_vs_neighbors"
-p <- ggplot(data=all_geom, aes(x=dist, y=nbrs, color=sample_source))
+p <- ggplot(data=f) + theme_bw() +
 p <- p + geom_point( size = .5)
 p <- p + facet_wrap( ~ res1_type )
 p <- p + opts(title = "Residue Pair Distances vs Burial")

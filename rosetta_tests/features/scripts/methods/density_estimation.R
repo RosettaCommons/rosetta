@@ -15,8 +15,10 @@ estimate_density_1d <-function(
   variable,
   weight_fun=uniform_normalization,
   min_count=20,
-  n_pts=200,
+  n_pts=512,
   histogram=FALSE,
+	sample_domain=NULL,
+	adjust=1,
   ...){
 	density.args <- list(...)
 	data <- as.data.frame(data)
@@ -35,20 +37,23 @@ estimate_density_1d <-function(
 		stop(paste("The value variable '", variable, "' is not a column name of the data. The value variable is used to compute the density estimation.", sep=""))
 	}
 
-  xlim <- range(data[,variable])
+	if(is.null(sample_domain)){
+		sample_domain <- range(data[,variable])
+	}
   compute_density <- function(factor_df){
     if (nrow(factor_df) < min_count){
-      return( data.frame(x=seq(xlim[1], xlim[2], n_pts), y=0))
+      return( data.frame(x=seq(sample_domain[1], sample_domain[2], n_pts), y=0))
     } else {
       weights <- weight_fun(factor_df[,variable])
       if(histogram){
-        breaks = seq(from=xlim[1], to=xlim[2], length=n_pts)
+        breaks = seq(from=sample_domain[1], to=sample_domain[2], length=n_pts)
         d <- weighted.hist(x=factor_df[,variable], w=weights, plot=FALSE)
         return(data.frame(x=d$mids, y=d$density, counts=nrow(factor_df)))
       } else {
+        adjust <- adjust * general_kernel_adjust
         d <- do.call(density,
-					c(list(x=factor_df[,variable], from=xlim[1], to=xlim[2], n=n_pts,
-          weights=weights), density.args))
+					c(list(x=factor_df[,variable], from=sample_domain[1], to=sample_domain[2], n=n_pts,
+          weights=weights, adjust=adjust), density.args))
           return(data.frame(x=d$x, y=d$y, counts=nrow(factor_df)))
       }
 
@@ -63,7 +68,7 @@ estimate_density_1d_wrap <-function(
   variable,
   weight_fun=uniform_normalization,
   min_count=20,
-  n_pts=200,
+  n_pts=512,
 	xlim=c(0,360),
 	adjust=1,
   ...){
@@ -89,9 +94,12 @@ estimate_density_1d_wrap <-function(
 		y[,variable] <- y[,variable] + s;
 		y
 	})
-	extended_n_pts=n_pts*3
-	extended_min_count=min_count*3
-	adjust = adjust/3
+
+	extended_n_pts <- n_pts*3
+	extended_min_count <- min_count*3
+
+	# there is three times the data and assume the the bin width scales linearly with the sample size
+	adjust <- adjust/3
   compute_density <- function(factor_df){
     if (nrow(factor_df) < extended_min_count){
       return( data.frame(x=seq(xlim[1], xlim[2], length.out=n_pts), y=0))
@@ -116,7 +124,7 @@ estimate_density_1d_reflect_boundary <-function(
   variable,
   weight_fun=uniform_normalization,
   min_count=20,
-  n_pts=200,
+  n_pts=512,
 	reflect_left=FALSE,
 	reflect_right=FALSE,
   left_boundary=NULL,
@@ -144,8 +152,7 @@ estimate_density_1d_reflect_boundary <-function(
 	if(is.null(right_boundary)){
 		right_boundary=max(data[,variable])
 	}
-
-	extended_factor = 1
+	extended_factor <- 1
 
 	if(reflect_left==TRUE){
 		data_lower <- data
@@ -161,6 +168,7 @@ estimate_density_1d_reflect_boundary <-function(
 		extended_factor = extended_factor + 1
 	}
 
+	adjust <- adjust * general_kernel_adjust
 	adjust <- adjust/(1 + reflect_left + reflect_right)
 
   compute_density <- function(factor_df){
@@ -168,8 +176,13 @@ estimate_density_1d_reflect_boundary <-function(
 				return(data.frame(x=seq(left_boundary, right_boundary, length.out=n_pts), y=0, counts=nrow(factor_df)))
     } else {
       weights <- weight_fun(factor_df[,variable])
-			d <- density(x=factor_df[,variable], from=left_boundary, to=right_boundary, n=n_pts*extended_factor,
-				weights=weights, adjust=adjust,
+			d <- density(
+				x=factor_df[,variable],
+				adjust=adjust,
+				weights=weights,
+				n=n_pts*extended_factor,
+				from=left_boundary,
+				to=right_boundary,
         ...)
 
 			return(data.frame(
@@ -188,7 +201,7 @@ estimate_density_1d_logspline <-function(
   ids,
   variable,
   min_count=20,
-  n_pts=200,
+  n_pts=512,
   weight_fun=NULL,
   ...){
 
@@ -247,7 +260,7 @@ estimate_density_2d <-function(
   xvariable,
 	yvariable,
   min_count=20,
-  n_pts=200,
+  n_pts=512,
   histogram=FALSE,
   ...){
 	if(!(class(data) == "data.frame")){

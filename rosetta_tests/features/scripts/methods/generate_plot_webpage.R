@@ -82,4 +82,175 @@ generate_description_page <- function(
 }
 
 
-generate_page_for_all_plots(".")
+get_subdirs <- function(base_dir){
+	dir_contents <- dir(path=base_dir, include.dirs=T)
+	dir_contents[file.info(paste(base_dir, dir_contents, sep="/"))$isdir]
+}
+
+generate_all_webpages <- function(
+	output_dir
+) {
+	sample_source_comparisons <- get_subdirs(output_dir)
+
+	l_ply(sample_source_comparisons, function(sample_source_dir){
+		generate_sample_source_comparison_webpages(file.path(output_dir, sample_source_dir))
+	})
+}
+
+
+generate_sample_source_comparison_webpages <- function(
+	sample_source_comparison_dir,
+	main_page_fname = "main.html"
+) {
+
+	full_main_page_fname <- file.path(sample_source_comparison_dir, main_page_fname)
+  cat(generate_page_header(), file=full_main_page_fname, append=F)
+
+	features_analyses <- get_subdirs(sample_source_comparison_dir)
+	l_ply(features_analyses, function(features_analysis_id){
+		cat(
+			"<A class='features_analysis_title' href='",features_analysis_id, "/main.html', >",
+			features_analysis_id,
+			"</A><br>\n", file=full_main_page_fname, sep="", append=T)
+		cat(
+			"<span class='features_analysis_description'> Put the contents of features_analysis@short_description here</span><br><br>\n", file=full_main_page_fname, sep="", append=T)
+
+		generate_features_analysis_webpage(
+			file.path(sample_source_comparison_dir, features_analysis_id))
+
+	})
+
+}
+
+features_analysis_page_template <- function()
+	"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 //EN\">
+
+<html lang=\"en\">
+
+<head>
+	<meta content=\"text/html; charset=utf-8\" http-equiv=\"content-type\">
+	<title>
+		Feature Analysis: Plot Viewer
+	</title>
+
+	<script type=\"text/javascript\">
+		// handle 'j' 'k' key navigation between plots
+		var current_plot=1;
+
+		var nplots = NUM_PLOTS;
+
+		function navigate_plots(e){
+			var keycode=e.keyCode? e.keyCode : e.charCode;
+			if(keycode==106 && current_plot < nplots){
+				current_plot += 1;
+				top.frames['main'].location.href = \"plot_viewer_main_frame.php#plot_\" + current_plot;
+			} else if(keycode==107 && current_plot > 1){
+				current_plot -= 1;
+				top.frames['main'].location.href = \"plot_viewer_main_frame.php#plot_\" + current_plot;
+			}
+		}
+		document.onkeypress=navigate_plots
+	</script>
+	<style>
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		html, body {
+			height: 100%;
+			overflow: hidden;
+		}
+
+		#main, #navigator {
+			height: 100%;
+			overflow: auto;
+		}
+
+		#navigator {
+			background: Silver;
+			float: left;
+			width: 200px;
+		}
+
+		.plot_div {
+			max-height:100%;
+			max-width:100%;
+			align:\"center\";
+		}
+
+		.plot {
+			max-height:100%;
+			max-width:100%;
+		}
+
+		.plot_separator {
+			height:4px;
+		}
+
+		.plot_separator_navigator {
+			height:4px;
+		}
+
+		.align_left {
+			text-align: left
+		}
+
+		.align_center {
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+
+<div id=\"main\">
+MAIN_PANEL
+</div>
+
+<div id=\"navigator\">
+NAVIGATOR_PANEL
+</div>
+
+</body>
+</html>
+"
+
+
+generate_features_analysis_webpage <- function(
+	analysis_dir
+){
+	full_page_fname <- file.path(analysis_dir, "main.html")
+	page <- features_analysis_page_template()
+
+	plot_fnames <- dir(file.path(analysis_dir, "output_web_raster"))
+	main_panel <- ""
+	navigator_panel <- ""
+	plot_count = 1
+	for(i in 1:length(plot_fnames)){
+		plot_fname <- plot_fnames[i]
+		main_panel <- paste(main_panel,
+			"	<div class=\"plot_div\">\n",
+			"		<img src=\"output_web_raster/", plot_fname, "\" class=\"plot\" id=\"plot_", i, "\"/>\n",
+			"	</div>\n",
+			"	<div class=\"plot_separator\"></div>\n",
+			sep="")
+
+		navigator_panel <- paste(navigator_panel,
+			"	<div class=\"plot_div\">\n",
+			"		<a href=\"#plot_", i, "\">\n",
+			"			<img src=\"output_web_icon/", plot_fname, "\" class=\"plot\"/>\n",
+			"		</a>\n",
+			"	</div>\n",
+			"	<div class=\"plot_separator_navigator\"></div>\n",
+			sep="")
+
+	}
+
+	page <- sub("NUM_PLOTS", length(plot_fnames), page)
+	page <- sub("MAIN_PANEL", main_panel, page)
+	page <- sub("NAVIGATOR_PANEL", navigator_panel, page)
+
+	cat(page, file=full_page_fname, sep="", append=F)
+}
