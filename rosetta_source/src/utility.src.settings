@@ -40,6 +40,14 @@ sources = {
 		"ocstream",
 		"ozstream",
 	],
+
+	"utility/json_spirit": [
+		"json_spirit_reader",
+		"json_spirit_value",
+		"json_spirit_writer",
+	],
+
+
 	"utility/options": [
 		"mpi_stderr",
 		"OptionCollection",
