@@ -22,6 +22,7 @@ namespace options {
 namespace OptionKeys {
 
 namespace optE { extern BooleanOptionKey const optE; }
+namespace optE { extern StringOptionKey const load_from_silent; }
 namespace optE { extern StringOptionKey const data_in; }
 namespace optE { extern StringOptionKey const data_out; }
 namespace optE { extern StringOptionKey const weights; }

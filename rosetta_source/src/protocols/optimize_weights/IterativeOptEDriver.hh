@@ -47,9 +47,9 @@
 //#include <map>
 // AUTO-REMOVED #include <string>
 
+//Auto Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/optimize_weights/OptEMultifunc.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {
@@ -83,8 +83,8 @@ private:
 	Size num_outer_iterations() const;
 	Size num_inner_iterations() const;
 
-	void read_tagfile_to_taskfactory(std::string tagfile_name,
-																	 core::pack::task::TaskFactoryOP task_factory);
+	void read_tagfile_to_taskfactory(std::string tagfile_name, core::pack::task::TaskFactoryOP task_factory);
+	void load_pose( core::pose::Pose & pose, std::string const & filename, bool ignore_centroid_input_flag );
 
 	void divide_up_pdbs();
 	void intialize_free_and_fixed_energy_terms();

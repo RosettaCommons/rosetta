@@ -1,5 +1,3 @@
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
@@ -56,6 +54,7 @@ namespace patterson { BooleanOptionKey const use_spline_interpolation( "patterso
 namespace patterson { BooleanOptionKey const use_on_repack( "patterson:use_on_repack" );  }
 namespace patterson { BooleanOptionKey const dont_use_symm_in_pcalc( "patterson:dont_use_symm_in_pcalc" );  }
 namespace optE { BooleanOptionKey const optE( "optE" );  }
+namespace optE { StringOptionKey const load_from_silent( "optE:load_from_silent" );  }
 namespace optE { StringOptionKey const data_in( "optE:data_in" );  }
 namespace optE { StringOptionKey const data_out( "optE:data_out" );  }
 namespace optE { StringOptionKey const weights( "optE:weights" );  }

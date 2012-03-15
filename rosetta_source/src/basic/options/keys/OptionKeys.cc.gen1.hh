@@ -1,4 +1,3 @@
-namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
@@ -146,6 +145,7 @@ namespace score { BooleanOptionKey const output_residue_energies( "score:output_
 namespace score { StringOptionKey const fa_custom_pair_distance_file( "score:fa_custom_pair_distance_file" );  }
 namespace score { RealOptionKey const disulf_matching_probe( "score:disulf_matching_probe" );  }
 namespace score { RealVectorOptionKey const bonded_params( "score:bonded_params" );  }
+namespace score { RealOptionKey const pro_close_planar_constraint( "score:pro_close_planar_constraint" );  }
 namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }
 namespace score { namespace saxs { RealOptionKey const min_score( "score:saxs:min_score" );  } }
@@ -600,3 +600,4 @@ namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
 namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
+namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }

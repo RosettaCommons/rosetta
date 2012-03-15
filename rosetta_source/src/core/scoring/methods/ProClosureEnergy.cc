@@ -35,6 +35,10 @@
 // STL Headers
 #include <string>
 
+// options
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
@@ -67,7 +71,7 @@ using namespace numeric::constants::d;
 /// ctor
 ProClosureEnergy::ProClosureEnergy() :
 	parent( new ProClosureEnergyCreator ),
-	n_nv_dist_sd_( 0.1 ), // totally fictional
+	n_nv_dist_sd_( basic::options::option[ basic::options::OptionKeys::score::pro_close_planar_constraint ] ), // totally fictional
 
 	/// measured from 4745 prolines from 1.25 A and higher resolution protein structures
 	trans_chi4_mean_( 176.3 * numeric::constants::d::degrees_to_radians ),

@@ -305,6 +305,48 @@ IterativeOptEDriver::read_tagfile_to_taskfactory(std::string tagfile_name,
 	}
 }
 
+///
+/// @begin IterativeOptEDriver::load_pose()
+///
+/// @brief
+/// loads structure into pose - decides between silent or pdb
+///    
+
+// PTC - this is a quick and dirty function to intercept the file name intended for pose_from_pdb and retrieve it from a silent file instead
+// it dramatically speeds up decoy discrimination (more than 70% of the time is spent on loading pdbs!)
+// it uses the path of requested pdb to find silent file, each PDB needs to have all of its structures in its own folder (ie: 1agy/pdb_set.silent) 
+// it looks within each folder for the filename passed to optE::load_from_silent option
+// only used in optimize_decoy_discrimination and use of optE::load_from_silent option is not exhaustively tested!
+ 
+void 
+IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename, bool ignore_centroid_input_flag=false )
+{
+	if ( option[ optE::load_from_silent ].user() ) {
+		static std::string prev_path = "";
+		static core::io::silent::SilentFileData * sfd;
+		
+		Size slash_index = filename.find_last_of("/\\");
+		std::string path = filename.substr(0, slash_index);
+		std::string tag = filename.substr(slash_index+1);
+		std::string filename = option[ optE::load_from_silent ];
+		TR_VERBOSE << "loading: " << tag << "from " << path << "/" << filename << std::endl;
+		
+		if ( prev_path != path ) {
+			prev_path = path;
+			delete sfd;
+			sfd = new core::io::silent::SilentFileData();
+			sfd->read_file( path + "/" + filename );
+		}
+		(*sfd)[ tag ]->fill_pose( pose );
+	}
+	else {
+		if ( option[ in::file::centroid_input ] && !ignore_centroid_input_flag) {
+			core::import_pose::centroid_pose_from_pdb( pose, filename );
+		} else {
+			core::import_pose::pose_from_pdb( pose, filename );
+		}
+	}
+}
 
 ///
 /// @begin IterativeOptEDriver::divide_up_pdbs()
@@ -1261,11 +1303,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 
 
 			core::pose::Pose crystal_native;
-			if ( option[ in::file::centroid_input ] ) {
-				core::import_pose::centroid_pose_from_pdb( crystal_native, decdisc_crystal_natives_[ ii ] );
-			} else {
-				core::import_pose::pose_from_pdb( crystal_native, decdisc_crystal_natives_[ ii ] );
-			}
+			load_pose( crystal_native, decdisc_crystal_natives_[ ii ], false );
 			if ( option[ optE::repack_and_minimize_decoys ] ) {
 				decdisc_xtal_natives_[ ii ] = crystal_native;
 			}
@@ -1275,11 +1313,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 				//std::cout << " PROC #" << MPI_rank_ << " reading pdb: #" << jj << " " << native_pdb_names[ jj ] << std::endl;
 				/// read the pdb into a pose
 				core::pose::Pose pose;
-				if ( option[ in::file::centroid_input ] ) {
-					core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ jj ] );
-				} else {
-					core::import_pose::pose_from_pdb( pose, native_pdb_names[ jj ] );
-				}
+				load_pose( pose, native_pdb_names[ jj ], false );
 
 				if ( option[ optE::repack_and_minimize_decoys ] ) {
 					decdisc_native_poses_[ ii ].push_back( pose );
@@ -1318,11 +1352,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 				/// read the pdb into a pose
 				core::pose::Pose pose;
 				//std::cout << " PROC #" << MPI_rank_ << " reading pdb: #" << jj << " " << decoy_pdb_names[ jj ] << std::endl;
-				if ( option[ in::file::centroid_input ] ) {
-					core::import_pose::centroid_pose_from_pdb( pose, decoy_pdb_names[ jj ] );
-				} else {
-					core::import_pose::pose_from_pdb( pose, decoy_pdb_names[ jj ] );
-				}
+				load_pose( pose, decoy_pdb_names[ jj ], false );
 
 				if ( first_total_residue != pose.total_residue() ) {
 					std::cerr << "Warning: total_residue for " << decoy_pdb_names[ jj ];

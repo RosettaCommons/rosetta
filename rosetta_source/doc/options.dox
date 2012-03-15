@@ -3608,6 +3608,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Spring constants for bonded parameters [length,angle,torsion,proton-torsion] (default 600,300,300,60)</dd><br>
 </dl>
 <dl>
+<dt><b>-pro_close_planar_constraint</b> \<Real\><dt>
+<dd>stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method</dd><br>
+<dd>Default: 0.1</dd><br>
+</dl>
+<dl>
 <dt><b>-linear_bonded_potential</b> \<Boolean\><dt>
 <dd>use linear (instead of quadratic) bonded potential</dd><br>
 <dd>Default: false</dd><br>
@@ -9109,6 +9114,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>optE option group</dd><br>
 </dl>
 <dl>
+<dt><b>-load_from_silent</b> \<String\><dt>
+<dd>load from silent instead of pdb - uses path of requested pdb to find silent file, each PDB needs to have all of its structures in its own folder (ie: 1agy/pdb_set.silent) - only works in optimize_decoy_discrimination</dd><br>
+<dd>Default: "pdb_set.silent"</dd><br>
+</dl>
+<dl>
 <dt><b>-data_in</b> \<String\><dt>
 <dd>file from which to read in optE data</dd><br>
 <dd>Default: "optE.data"</dd><br>
@@ -9664,6 +9674,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>description</dd><br>
 </dl>
 <dl>
+<dt><b>-cstfilter</b> \<Integer\><dt>
+<dd>filter cst energy</dd><br>
+<dd>Default: 10</dd><br>
+</dl>
+<dl>
 <dt><b>-cen_sfxn</b> \<String\><dt>
 <dd>centroid score function to be used for building</dd><br>
 <dd>Default: "remodel_cen"</dd><br>
@@ -10092,6 +10107,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-rigid_body_cycles</b> \<Integer\><dt>
 <dd>number of rigid bosy cycles during fold and dock fragment insertion</dd><br>
 <dd>Default: 50</dd><br>
+</dl>
+<dl>
+<dt><b>-move_anchor_frequency</b> \<Real\><dt>
+<dd>Frequency of slide-anchor moves</dd><br>
+<dd>Default: 1.0</dd><br>
 </dl>
 <dl>
 <dt><b>-rigid_body_frequency</b> \<Real\><dt>
