@@ -1,0 +1,26 @@
+-s inputs/1a19.pdb
+-constraints:cst_fa_file inputs/1a19_sc.cst
+-ex1
+-ex2
+-use_input_sc
+-correct
+-no_his_his_pairE
+-score::hbond_params correct_params
+-lj_hbond_hdis 1.75
+-lj_hbond_OH_donor_dis 2.6
+-linmem_ig 10
+-nblist_autoupdate true
+-dun08 false
+-no_optH false
+-flip_HNQ
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer
+ VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals
+pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated
+thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated
+lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated
+cys_acetylated tyr_diiodinated N_acetylated C_methylamidated
+MethylatedProteinCterm
+-constrain_relax_to_start_coords
+-relax:script inputs/short_relax_script
+-ignore_unrecognized_res
+-preserve_header
