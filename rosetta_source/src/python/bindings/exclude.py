@@ -1054,8 +1054,8 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
                         + commands.getoutput("cat %s | grep '^#include <utility' | grep '\.hh\|\.hpp'" % f) + '\n'   \
                         + commands.getoutput("cat %s | grep '^#include <protocols' | grep '\.hh\|\.hpp'" % f) + '\n' \
                         + commands.getoutput("cat %s | grep '^#include <basic' | grep '\.hh\|\.hpp'" % f) + '\n' \
-                        + commands.getoutput("cat %s | grep '^#include <ObjexxFCL' | grep '\.hh\|\.hpp'" % f) + '\n' \
-                        + commands.getoutput("cat %s | grep '^#include <boost' | grep '\.hh\|\.hpp'" % f) + '\n'
+                        + commands.getoutput("cat %s | grep '^#include <ObjexxFCL' | grep '\.hh\|\.hpp'" % f) + '\n'
+                        #+ commands.getoutput("cat %s | grep '^#include <boost' | grep '\.hh\|\.hpp'" % f) + '\n'
 
                 #print f, lines
 

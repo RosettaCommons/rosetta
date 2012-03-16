@@ -31,6 +31,10 @@
 // Boost Headers
 #include <core/graph/unordered_object_pool.fwd.hpp>
 
+#ifdef PYROSETTA
+#include <core/graph/unordered_object_pool.hpp>
+#endif
+
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>

@@ -116,6 +116,16 @@ protected:
 		SmoothFragmentMover( fragset, movemap, cost, type )
 	{}
 
+	virtual
+	bool
+	choose_fragment(
+		core::fragment::FrameList const& fl,
+		core::pose::Pose const& p,
+		Size &frame_num,
+		Size &frag_num
+		) const { SmoothFragmentMover::choose_fragment(fl, p, frame_num, frag_num); }
+
+
 private:
 	Size image_start_;
 };

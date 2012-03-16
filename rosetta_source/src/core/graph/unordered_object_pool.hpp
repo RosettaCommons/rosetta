@@ -16,6 +16,10 @@
 
 #include <core/graph/unordered_object_pool.fwd.hpp>
 
+#ifdef PYROSETTA
+#include <boost/pool/pool.hpp>
+#endif
+
 // boost::pool
 
 // The following code will be put into Boost.Config in a later revision
