@@ -1174,8 +1174,10 @@ def sortObjects(l):
             for j in range( i, len(l) ):
                 if isinstance(l[i], CppClass) and isinstance(l[j], CppClass):
                     if l[i].isDepend(l[j]) and not l[j].isDepend(l[i]):  swap(i, j); f = True; break
-                if isinstance(l[i], CppClass) and isinstance(l[j], CppEnum):
-                    swap(i, j); f = True; break
+
+                if isinstance(l[i], CppClass) and isinstance(l[j], CppEnum): swap(i, j); f = True; break
+
+                if isinstance(l[i], CppFunction) and isinstance(l[j], CppEnum): swap(i, j); f = True; break
 
 
 def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size, by_hand_beginning='', by_hand_ending=''):
