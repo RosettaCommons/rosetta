@@ -51,9 +51,17 @@ public:
     skip_rate_( 0.0 ),
     extended_(false)
   {}
-
-  /// input constructor
-  Loop(
+	
+	Loop( SerializedLoop loop ):
+		start_( loop.start ),
+		stop_( loop.stop ),
+		cut_( loop.cut ),
+		skip_rate_( loop.skip_rate ),
+		extended_( loop.extended )
+	{}
+	
+	/// input constructor
+	Loop(
       core::Size const start_in, core::Size const stop_in,
       core::Size const cut_in = 0, core::Real skip_rate = 0.0,
       bool const extended_in = false

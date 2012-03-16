@@ -15,7 +15,11 @@
 #ifndef INCLUDED_protocols_loops_Loop_FWD_HH
 #define INCLUDED_protocols_loops_Loop_FWD_HH
 
+// Unit header
 #include <utility/pointer/owning_ptr.hh>
+
+// Project header
+#include <core/types.hh>
 
 namespace protocols {
 namespace loops {
@@ -23,6 +27,14 @@ namespace loops {
 class Loop;
 typedef utility::pointer::owning_ptr< Loop > LoopOP;
 typedef utility::pointer::owning_ptr< Loop const > LoopCOP;
+
+struct SerializedLoop {
+	core::Size start;
+	core::Size stop;
+	core::Size cut;
+	core::Real skip_rate;
+	bool extended;
+};
 
 } //namespace loops
 } //namespace protocols

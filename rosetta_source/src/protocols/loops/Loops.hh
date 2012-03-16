@@ -49,6 +49,7 @@ class Loops : public utility::pointer::ReferenceCount {
 
 public:
 	typedef utility::vector1< Loop > LoopList;
+	typedef utility::vector1< SerializedLoop > SerializedLoopList;
 	typedef LoopList::iterator iterator;
 	typedef LoopList::const_iterator const_iterator;
 
@@ -80,7 +81,7 @@ public:
     void read_loops_options();
 
     // I kind of wish this method was private
-	void read_stream_to_END( std::istream & is );
+	SerializedLoopList const read_stream_to_END( std::istream & is );
     
 	void
 	write_loops_to_file(
@@ -279,6 +280,8 @@ private:
 		std::string const & token = "LOOP",
 		std::string const & passed_in_filename = ""
 	);
+	
+	void setup_loops_from_data( SerializedLoopList const & loop_data );
 
 	void read_loop_file();
 

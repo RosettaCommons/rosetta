@@ -97,7 +97,7 @@ void Loops::read_loops_options()
 {
     using namespace basic::options;
     if ( option[ OptionKeys::loops::loop_file ].user() ) {
-		utility::vector1< std::string>  loop_files = option[ OptionKeys::loops::loop_file]();
+		utility::vector1< std::string >  loop_files = option[ OptionKeys::loops::loop_file]();
 		if( loop_files.size() == 1 )
         {
             set_loop_file_name_and_reset( loop_files[ 1 ] );
@@ -446,14 +446,17 @@ Loops::clear(){
 
 Loops::LoopList const & Loops::loops() const { return loops_; }
 
-void Loops::read_stream_to_END( std::istream & is ) {
+Loops::SerializedLoopList const Loops::read_stream_to_END( std::istream & is ) {
 	std::string line;
 	int linecount=0;
 	int errcount=50; //if we reach 0 we bail!
+	
+	SerializedLoopList serial_loops;
 	while( getline( is, line) ) {
 		linecount++;
 		std::vector< std::string > tokens ( utility::split( line ) );
-
+		
+		SerializedLoop current_loop;
 		if( tokens.size() > 0 ) {
 			if ( tokens[0].substr(0,3) == "END" ) break;
 			if ( tokens[0] == file_reading_token() ) {
@@ -463,17 +466,17 @@ void Loops::read_stream_to_END( std::istream & is ) {
 				if ( tokens.size() > 6 ) {
 					utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Maximum of 6 tokens allowed (LOOP begin end cutpoint skiprate extended)"  );
 				}
-				core::Size start_res = (core::Size) atoi(tokens[1].c_str());
-				core::Size end_res   = (core::Size) atoi(tokens[2].c_str());
-				core::Size cutpt = 0;        // default - let LoopRebuild choose cutpoint
-				core::Real skip_rate = 0.0;  // default - never skip
+				current_loop.start = (core::Size) atoi(tokens[1].c_str());
+				current_loop.stop = (core::Size) atoi(tokens[2].c_str());
+				current_loop.cut = 0;        // default - let LoopRebuild choose cutpoint
+				current_loop.skip_rate = 0.0;  // default - never skip
 				std::string extend_loop_str;
 				bool extend_loop = false;
 
 				if (tokens.size() > 3)
-					cutpt = (core::Size) atoi(tokens[3].c_str());
+					current_loop.cut = (core::Size) atoi(tokens[3].c_str());
 				if (tokens.size() > 4)
-					skip_rate = atof(tokens[4].c_str());
+					current_loop.skip_rate = atof(tokens[4].c_str());
 				if (tokens.size() > 5){
 					if( tokens[5] == "X" ){
 						tr.Error << "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
@@ -488,10 +491,12 @@ void Loops::read_stream_to_END( std::istream & is ) {
 						else                      extend_loop = true;
 					}
 				}
-				if ( start_res > end_res || ( start_res==end_res && strict_looprelax_checks() ) ) {
+				
+				current_loop.extended = extend_loop;
+				if ( current_loop.start > current_loop.stop || ( current_loop.start==current_loop.stop && strict_looprelax_checks() ) ) {
 					utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Invalid loop definition (start residue " + ( strict_looprelax_checks() ? ">=" : ">" )  + " end residue) - ERROR"  );
 				} else {
-					loops_.push_back( Loop(start_res, end_res, cutpt,  skip_rate, extend_loop) );
+					serial_loops.push_back( current_loop );
 				}
 			} else if ( tokens[0][0] != '#' ) {
 				if (tokens.size() >= 2) {
@@ -502,15 +507,15 @@ void Loops::read_stream_to_END( std::istream & is ) {
 						utility_exit_with_message( "too many errors in loop-file " + loop_file_name() );
 					}
 
-					core::Size start_res = (core::Size) atoi(tokens[0].c_str());
-					core::Size end_res   = (core::Size) atoi(tokens[1].c_str());
-					core::Size cutpt = 0;        // default - let LoopRebuild choose cutpoint
-					core::Real skip_rate = 0.0;  // default - never skip
+					current_loop.start = (core::Size) atoi(tokens[0].c_str());
+					current_loop.stop   = (core::Size) atoi(tokens[1].c_str());
+					current_loop.cut = 0;        // default - let LoopRebuild choose cutpoint
+					current_loop.skip_rate = 0.0;  // default - never skip
 					bool extend_loop = false;    // default - not extended
 					if (tokens.size() > 2)
-						cutpt = (core::Size) atoi(tokens[2].c_str());
+						current_loop.cut = (core::Size) atoi(tokens[2].c_str());
 					if (tokens.size() > 3)
-						skip_rate = atof(tokens[3].c_str());
+						current_loop.skip_rate = atof(tokens[3].c_str());
 					if (tokens.size() > 4){
 						if( tokens[4] == "X" ){
 							tr.Error << "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
@@ -521,13 +526,14 @@ void Loops::read_stream_to_END( std::istream & is ) {
 							else                extend_loop = true;
 						}
 					}
+					current_loop.extended = extend_loop;
 
 
-					if ( start_res > end_res || ( start_res==end_res && strict_looprelax_checks() ) ) {
+					if ( current_loop.start > current_loop.stop || ( current_loop.start==current_loop.stop && strict_looprelax_checks() ) ) {
 						utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Invalid loop definition (start residue " + ( strict_looprelax_checks() ? ">=" : ">" ) + "end residue) - ERROR"  );
 					}
 
-					loops_.push_back( Loop(start_res, end_res, cutpt,  skip_rate, extend_loop) );
+					serial_loops.push_back( current_loop );
 
 				} else {
 					tr.Warning << "[WARNING] Skipping line '" << line << "'" << std::endl;
@@ -535,10 +541,18 @@ void Loops::read_stream_to_END( std::istream & is ) {
 			}
  		}
 	} //while
+	return serial_loops;
+}
+
+void Loops::setup_loops_from_data( SerializedLoopList const & loop_data )
+{
+	for(  SerializedLoopList::const_iterator it=loop_data.begin(), it_end=loop_data.end(); it != it_end; ++it ) {
+		loops_.push_back( Loop( *it ) );
+	}
 	// sort by start residue
 	std::sort( loops_.begin(), loops_.end(), Loop_lt() );
 }
-
+	
 void Loops::read_loop_file()
 {
 	clear();
@@ -547,8 +561,10 @@ void Loops::read_loop_file()
 	if (!infile.good()) {
 		utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + loop_file_name() + "'" );
 	}
-
-	read_stream_to_END( infile );
+	
+	// TODO: The read_stream_to_END stuff should be moved to its own class that will handle the various types of input
+	// files
+	setup_loops_from_data( read_stream_to_END( infile ) );
 
 	tr.Warning << "LOOP formats were recently reconciled - with *some* backwards compatibility. Please check your definition files!" << std::endl;
 	tr.Warning << "Please check that this is what you intended to read in: " << std::endl;
@@ -804,7 +820,7 @@ void Loops::grow_loop(
 		<< ")  " <<  loop << std::endl;
 }
 
-void Loops::get_residues( utility::vector1< Size>& selection ) const {
+void Loops::get_residues( utility::vector1< Size >& selection ) const {
 	selection.clear();
 	for ( const_iterator it = loops_.begin(); it != loops_.end(); ++it ) {
 		it->get_residues( selection );
