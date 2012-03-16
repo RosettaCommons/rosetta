@@ -21,11 +21,7 @@ namespace viewer {
 
 // This here is the numeric information needed to do marching cubes.
 
-typedef struct {
-   int edges[21];
-} PolyCase;
-
-extern const PolyCase POLY_CASES[];
+extern const int POLY_CASES[][21];
 
 extern const int VERTEX_OFF[][3];
 

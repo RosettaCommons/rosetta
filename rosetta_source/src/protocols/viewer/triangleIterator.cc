@@ -102,14 +102,11 @@ void triangleIterator::aquireNextQueue() {
 	  }
 	}
 
-	// Use it as a lookup into case array.
-	PolyCase p = POLY_CASES[bitfield];
-
 	// Load up the triangles
-	for (int j = 0 ; p.edges[j] != 0 ; j++) {
+	for (int j = 0 ; POLY_CASES[bitfield][j] != 0 ; j++) {
 	  for (int k = 0 ; k < 3 ; k++) {
 	    // look up the edge
-	    int edgeIndex = p.edges[j++];
+	    int edgeIndex = POLY_CASES[bitfield][j++];
 
 	    // find the adjacent vertices
 	    int v0 = EDGE_NGHBRS[edgeIndex][0];
