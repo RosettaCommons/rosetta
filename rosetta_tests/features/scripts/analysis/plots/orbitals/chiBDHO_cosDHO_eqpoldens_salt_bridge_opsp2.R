@@ -14,59 +14,59 @@ author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
 run=function(self){
-
-#####All salt bridge interactions
-
-sele <- "
-SELECT
-  resNum1,
-  resName1,
-  resNum2,
-  resName2,
-	OrbName1,
-	cosDHO,
-  OrbHdist,
-	chiBDHO,
-	htype2
-FROM
-  Hpol_orbital
-WHERE
-  (((resName1 = 'GLU' OR resName1 = 'ASP' ) AND (resName2 = 'LYS' OR resName2 = 'ARG')))  AND 
-	OrbHdist < 2 AND 
-	OrbName1 = 'O.p.sp2' AND
-	htype2 = 'Hpol' AND 
-	ABS(resNum1 - resNum2) > 5;"
-
-f <- query_sample_sources(sample_sources, sele)
-
-f <- transform(f,
-  capx = 2*sin(acos(cosDHO)/2)*cos(chiBDHO),
-  capy = 2*sin(acos(cosDHO)/2)*sin(chiBDHO))
-
-capx_limits <- c(-1.5,1.5)
-capy_limits <- capx_limits
-
-
-
-plot_id = "chiBDHO_cosDHO_eqpoldens_salt_bridge_opsp2"
-
-f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
-
-ggplot(data=f_first) + theme_bw() +
-  geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
-  stat_density2d(
-    aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
-  polar_equal_area_grids_bw() +
-  opts(title =
-    paste("Salt bridge chiBDHO vs DHO Angles with Sequence Separation > 5\n",
-    "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
-		"LYS+ARG to ASP+GLU", sep="")) +
-  scale_x_continuous(
-    '2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-  scale_y_continuous(
-    '2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-  coord_fixed(ratio = 1) +
-  scale_fill_gradientn('Density', colour=jet.colors(10))
-save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+	
+	#####All salt bridge interactions
+	
+	sele <- "
+			SELECT
+			resNum1,
+			resName1,
+			resNum2,
+			resName2,
+			OrbName1,
+			cosDHO,
+			OrbHdist,
+			chiBDHO,
+			htype2
+			FROM
+			Hpol_orbital
+			WHERE
+			(((resName1 = 'GLU' OR resName1 = 'ASP' ) AND (resName2 = 'LYS' OR resName2 = 'ARG')))  AND 
+			OrbHdist < 2 AND 
+			OrbName1 = 'O.p.sp2' AND
+			htype2 = 'Hpol' AND 
+			ABS(resNum1 - resNum2) > 5;"
+	
+	f <- query_sample_sources(sample_sources, sele)
+	
+	f <- transform(f,
+			capx = 2*sin(acos(cosDHO)/2)*cos(chiBDHO),
+			capy = 2*sin(acos(cosDHO)/2)*sin(chiBDHO))
+	
+	capx_limits <- c(-1.5,1.5)
+	capy_limits <- capx_limits
+	
+	
+	
+	plot_id = "chiBDHO_cosDHO_eqpoldens_salt_bridge_opsp2"
+	
+	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
+	
+	ggplot(data=f_first) + theme_bw() +
+			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+			stat_density2d(
+					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
+			polar_equal_area_grids_bw() +
+			opts(title =
+							paste("Salt bridge chiBDHO vs DHO Angles with Sequence Separation > 5\n",
+									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
+									"LYS+ARG to ASP+GLU at 2.0A", sep="")) +
+			scale_x_continuous(
+					'2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+			scale_y_continuous(
+					'2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+			coord_fixed(ratio = 1) +
+			scale_fill_gradientn('Density', colour=jet.colors(10))
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 })) # end FeaturesAnalysis
