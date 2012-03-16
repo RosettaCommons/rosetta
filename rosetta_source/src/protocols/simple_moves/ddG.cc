@@ -63,6 +63,8 @@
 namespace protocols {
 namespace simple_moves {
 
+using core::conformation::symmetry::SymmetricConformation;
+using core::conformation::symmetry::SymmetryInfoCOP;
 
 using basic::T;
 using basic::Error;

@@ -62,6 +62,9 @@ using namespace ObjexxFCL;
 namespace core {
 namespace pack {
 
+using core::conformation::symmetry::SymmetryInfoCOP;
+using core::conformation::symmetry::SymmetricConformation;
+
 static basic::Tracer tt("core.pack.pack_rotamers",basic::t_info );
 
 // @begin pack_rotamers

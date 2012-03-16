@@ -53,6 +53,9 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
+using core::conformation::symmetry::SymmetricConformation;
+using core::conformation::symmetry::SymmetryInfoCOP;
+
 using namespace core;
 	using namespace pack;
 		using namespace task;

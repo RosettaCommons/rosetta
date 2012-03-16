@@ -45,8 +45,6 @@
 namespace core {
 namespace pack {
 
-typedef conformation::symmetry::SymmetricConformation SymmetricConformation;
-typedef conformation::symmetry::SymmetryInfoCOP SymmetryInfoCOP;
 
 void
 pack_rotamers(
