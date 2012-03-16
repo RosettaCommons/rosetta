@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file antibody2/CDRH3Modeler2.hh
+/// @file protocols/antibody2/CDRH3Modeler2.hh
 /// @brief
 ///// @author Jianqing Xu (xubest@gmail.com)
 //
@@ -36,7 +36,6 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
 
 
 
@@ -98,18 +97,14 @@ public:
 		apply_fullatom_mode_ = setting;
 	};
 
-	/// @brief store CDR H3 C-terminal fragments
-	void set_offset_frags(
-		utility::vector1< core::fragment::FragSetOP > & offset_frags
-	);
+
 
 	void set_default();
 	virtual void apply( core::pose::Pose & pose_in );
 	virtual std::string get_name() const;
 
-	/// @brief Build centroid mode CDR H3 loop
-	void build_centroid_loop( core::pose::Pose & pose );
 
+    //JQX: move the build_centroid_loop into Ab_H3_perturb_ccd_build 
     //JQX: move the build_fullatom_loop into Ab_Relax_a_CDR_fullAtom
 
 
@@ -133,10 +128,7 @@ public:
     //JQX: cutpoints_separation and cutpoint_separation have been moved to the Ab_util file
 
 
-	void scored_frag_close(
-		core::pose::Pose & pose_in,
-		loops::Loop const trimmed_cdr_h3
-	);
+    //JQX: move the scored_frag_close into the Ab_H3_perturb_ccd_build
 
     
     //JQX: move the CDR_H3_filter into the utility class
@@ -157,11 +149,8 @@ public:
 
 private:
 	bool user_defined_;
-	core::pose::Pose template_pose_;
 	core::pose::Pose start_pose_;
-	/// @brief Number of ADDITIONAL residues modeled from H3_CTERM
-	///        These residues range from H:n-2,n-1,n,n+1 of H3
-	core::Size c_ter_stem_;
+
 	// constraints
 	core::Real cen_cst_;
 	core::Real high_cst_;
@@ -182,8 +171,10 @@ private:
 	bool apply_centroid_mode_;
 	/// @brief Fullatom mode loop building
 	bool apply_fullatom_mode_;
+    
 	/// @brief flag indicating that current loop being modeled is CDR H3
 	bool current_loop_is_H3_;
+    
 	/// @brief actually enables H3 filter for H3 operations
 	bool H3_filter_;
 
@@ -206,12 +197,9 @@ private:
 
 	/// @brief is camelid antibody without light chain
 	bool is_camelid_;
-	/// @brief size of loop above which 9mer frags are used
-	core::Size cutoff_9_; // default 16
-	/// @brief size of loop above which 3mer frags are used
-	core::Size cutoff_3_; // default 6
 
-	core::Size max_cycle_;
+
+
 
 	antibody2::Ab_Info antibody_in_;
 
@@ -228,7 +216,7 @@ private:
 
     void setup_objects();
     
-    Ab_H3_cter_insert_moverOP ab_h3_cter_insert_mover_;
+
     
     
 }; // class CDRH3Modeler2

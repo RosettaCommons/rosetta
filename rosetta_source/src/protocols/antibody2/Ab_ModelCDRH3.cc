@@ -8,6 +8,11 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
+/// @file protocols/antibody2/Ab_ModelCDRH3.cc
+/// @brief Build a homology model of an antibody2
+/// @detailed
+///
+///
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 #include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi
@@ -19,9 +24,7 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragID.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameList.hh>
+
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
@@ -361,8 +364,6 @@ Ab_ModelCDRH3::finalize_setup( pose::Pose & frame_pose ) {
 	if( model_h3_ ) {
 		// Read standard Rosetta fragments file
 		exit(-1);
-		read_and_store_fragments( frame_pose );
-        model_cdrh3_->set_offset_frags( offset_frags_ );
 
 
         
@@ -373,9 +374,6 @@ Ab_ModelCDRH3::finalize_setup( pose::Pose & frame_pose ) {
 
 
 //APPLY
-
-
-
 void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 
     using namespace chemical;
@@ -538,63 +536,6 @@ Ab_ModelCDRH3::get_name() const {
 
 
 
-
-
-	void
-	Ab_ModelCDRH3::read_and_store_fragments( core::pose::Pose & pose ) {
-		using namespace chemical;
-		using namespace id;
-		using namespace fragment;
-		using namespace core::scoring;
-
-		if ( !model_h3_ )
-			return;
-
-		// fragment initialization
-		utility::vector1< FragSetOP > frag_libs;
-
-		protocols::loops::read_loop_fragments( frag_libs );
-
-		Size frag_size = (ab_info_.get_CDR_loop("h3")->stop()-ab_info_.get_CDR_loop("h3")->start()) + 3;
-		Size cutpoint =  ab_info_.get_CDR_loop("h3")->start() + int( frag_size / 2 );
-		setup_simple_fold_tree(  ab_info_.get_CDR_loop("h3")->start() - 1, cutpoint,
-														 ab_info_.get_CDR_loop("h3")->stop() + 1,
-														 pose.total_residue(),
-														 pose );
-
-		FragSetOP offset_3mer_frags;
-		// a fragset of same type should be able to handle everything
-		offset_3mer_frags = frag_libs[2]->empty_clone();
-		FrameList loop_3mer_frames;
-		Size offset = 0;
-		frag_libs[2]->region_simple( 1, frag_size, loop_3mer_frames );
-		for ( FrameList::const_iterator it = loop_3mer_frames.begin(),
-						eit = loop_3mer_frames.end(); it!=eit; ++it ) {
-			FrameOP short_frame = (*it)->clone_with_frags();
-			offset++;
-			short_frame->shift_to( ( ab_info_.get_CDR_loop("h3")->start() - 2 ) + offset  );
-			offset_3mer_frags->add( short_frame );
-		}
-
-		FragSetOP offset_9mer_frags;
-		// a fragset of same type should be able to handle everything
-		offset_9mer_frags = frag_libs[1]->empty_clone();
-		FrameList loop_9mer_frames;
-		offset = 0;
-		frag_libs[1]->region_simple( 1, frag_size, loop_9mer_frames );
-		for ( FrameList::const_iterator it = loop_9mer_frames.begin(),
-						eit = loop_9mer_frames.end(); it!=eit; ++it ) {
-			FrameOP short_frame = (*it)->clone_with_frags();
-			offset++;
-			short_frame->shift_to( ( ab_info_.get_CDR_loop("h3")->start() - 2 ) + offset  );
-			offset_9mer_frags->add( short_frame );
-		}
-
-		offset_frags_.push_back( offset_9mer_frags );
-		offset_frags_.push_back( offset_3mer_frags );
-
-		return;
-	} // read_and_store_fragments
 
 
 

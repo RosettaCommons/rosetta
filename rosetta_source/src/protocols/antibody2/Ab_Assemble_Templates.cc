@@ -9,6 +9,11 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
+/// @file protocols/antibody2/Ab_Assemble_Templates.cc
+/// @brief Build a homology model of an antibody2
+/// @detailed
+///
+///
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 #include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi

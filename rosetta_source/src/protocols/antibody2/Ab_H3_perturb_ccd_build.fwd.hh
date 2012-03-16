@@ -1,5 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet:
+// vi: set ts=2 noet;
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -7,27 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-
-/// @file protocols/antibody2/Ab_ModelCDRH3.fwd.hh
-/// @brief Build a homology model of an antibody2
-/// @detailed
+/// @file   Ab_LHSnugFit_Mover.fwd.hh
 ///
-///// @author Jianqing Xu (xubest@gmail.com)
-//
+/// @brief forward declaration
+/// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_CDRH3Modeler2_fwd_hh
-#define INCLUDED_protocols_antibody2_CDRH3Modeler2_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_H3_perturb_ccd_build_fwd_hh
+#define INCLUDED_protocols_antibody2_Ab_H3_perturb_ccd_build_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
-
-class CDRH3Modeler2;
-typedef utility::pointer::owning_ptr< CDRH3Modeler2 > CDRH3Modeler2OP;
-typedef utility::pointer::owning_ptr< CDRH3Modeler2 const > CDRH3Modeler2COP;
-
-} // antibody2
-} // protocols
+        
+    class Ab_H3_perturb_ccd_build;
+    typedef utility::pointer::owning_ptr< Ab_H3_perturb_ccd_build > Ab_H3_perturb_ccd_buildOP;
+    typedef utility::pointer::owning_ptr< Ab_H3_perturb_ccd_build const > Ab_H3_perturb_ccd_buildCOP;
+        
+}
+}
 
 #endif
+
+
+
+

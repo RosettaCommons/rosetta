@@ -31,6 +31,7 @@ sources = {
 		"Ab_LH_SnugFit_Mover",
 		"Ab_util",
 		"Ab_Relax_a_CDR_FullAtom",
+		"Ab_H3_perturb_ccd_build",
 	],
 }
 include_path = [

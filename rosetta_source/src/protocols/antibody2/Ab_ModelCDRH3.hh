@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file Ab_ModelCDRH3
+/// @file protocols/antibody2/Ab_ModelCDRH3.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -92,7 +92,7 @@ public:
 
 	core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, const core::pose::Pose & native_pose, std::string cdr_type );
 
-	void read_and_store_fragments( core::pose::Pose & pose );
+
 
 	void display_constraint_residues( core::pose::Pose & pose );
 
@@ -138,7 +138,7 @@ public:
 
 	// external objects
 	Ab_Info ab_info_;
-	utility::vector1< core::fragment::FragSetOP > offset_frags_;
+
 
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;

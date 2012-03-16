@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file
+/// @file protocols/antibody2/Ab_Info.cc
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
