@@ -141,6 +141,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		for( std::map< core::Size, core::Size >::const_iterator aln=alignment_.begin(); aln!=alignment_.end(); ++aln )
 			if( pose()->conformation().residue( aln->first ).aa() != p.conformation().residue( aln->second ).aa() ) diffs.push_back( aln->first );
 
+		TR<<"baseline: "<<baseline_val()<<std::endl;
 		TR<<"differences at positions: ";
 		foreach( core::Size const d, diffs ){
 			dao->include_residue( d );

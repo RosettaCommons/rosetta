@@ -40,7 +40,9 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
@@ -69,7 +71,8 @@ FilterScanFilter::FilterScanFilter() :
 	unbound_( false ),
 	report_all_( false ),
 	jump_( 0 ),
-	dump_pdb_( false )
+	dump_pdb_( false ),
+	rtmin_( false )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -171,7 +174,7 @@ void
 FilterScanFilter::resfile_name( std::string const resfile_name ){
 	resfile_name_ = resfile_name;
 }
-	
+
 void
 FilterScanFilter::score_log_file( std::string const score_log_file ){
 	score_log_file_ = score_log_file;
@@ -229,11 +232,20 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	repack->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
 
 	protocols::simple_moves::PackRotamersMoverOP repack_mover;
-  if( core::pose::symmetry::is_symmetric( pose ) )
+	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover; //this is optional
+  if( core::pose::symmetry::is_symmetric( pose ) ){
+		runtime_assert( !rtmin() );/// RotamerTrials, but not RTMin is supported by symmetry, so failing
 		 repack_mover =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), repack );
- 	else
+	}
+ 	else{
 		 repack_mover = new protocols::simple_moves::PackRotamersMover( scorefxn(), repack );
+		 rtmin_mover = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *repack );
+	}
  	repack_mover->apply( pose );
+	if( rtmin() ){//rtmin is noisy so try twice
+		rtmin_mover->apply( pose );
+		rtmin_mover->apply( pose );
+	}
 	pose_orig = pose;
 	relax_mover()->apply( pose );
 	core::Real const baseline( filter()->report_sm( pose ) );
@@ -270,11 +282,16 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			 pose = pose_orig;//unbind if necessary
     	 TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
 			 protocols::simple_moves::PackRotamersMoverOP pack;
+			 protocols::simple_moves::RotamerTrialsMinMoverOP rtmin; //this is optional
 			 if( core::pose::symmetry::is_symmetric( pose ) )
 				 pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
-			 else
+			 else{
 				 pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
+		 		 rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
+			 }
     	 pack->apply( pose );
+			 if( rtmin() )
+				 rtmin->apply( pose );
     	 TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
     	 relax_mover()->apply( pose );
 			 bool const triage_filter_pass( triage_filter()->apply( pose ) );
@@ -311,11 +328,11 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		}
 		resfile.close();
 	} //fi resfile_name()
-	
+
 	if ( score_log_file() != "" ) {
 		std::ofstream scorefile;
 		scorefile.open( score_log_file().c_str(), std::ios::out );
-		
+
 		for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
 			core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
 			scorefile
@@ -326,7 +343,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		}
 		scorefile.close();
 	} // fi score_log_file()
-	
+
 	for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
 		core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
 		TR_residue_scan<<resfile_name()<<'\t'
@@ -396,9 +413,10 @@ FilterScanFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	resfile_name( tag->getOption< std::string >( "resfile_name",resfile_name() ) );
 	resfile_general_property( tag->getOption< std::string >( "resfile_general_property", "nataa" ) );
+	rtmin( tag->getOption< bool >( "rtmin", false ) );
 	score_log_file( tag->getOption< std::string >( "score_log_file",score_log_file() ) );
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
-	TR<<"with options resfile_name: "<<resfile_name()<<" resfile_general_property "<<resfile_general_property()<<" unbound "<<unbound()<<" jump "<<jump()<<" delta "<<delta()<<" filter "<<filter_name<<" dump_pdb "<<dump_pdb()<<std::endl;
+	TR<<"with options resfile_name: "<<resfile_name()<<" resfile_general_property "<<resfile_general_property()<<" unbound "<<unbound()<<" jump "<<jump()<<" delta "<<delta()<<" filter "<<filter_name<<" dump_pdb "<<dump_pdb()<<" rtmin "<<rtmin()<<std::endl;
 }
 
 core::scoring::ScoreFunctionOP

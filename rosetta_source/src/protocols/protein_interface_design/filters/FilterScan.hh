@@ -81,6 +81,8 @@ public:
 	void report_all( bool const ra );
 	void dump_pdb( bool const d );
 	bool dump_pdb() const;
+	bool rtmin() const{ return rtmin_; }
+	void rtmin( bool const r ){ rtmin_ = r; }
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	protocols::filters::FilterOP triage_filter_;//dflt null; mutations that are categorically rejected, no matter what
@@ -96,6 +98,7 @@ private:
 	core::Size jump_;
 	void unbind( core::pose::Pose & ) const; //utility function for unbinding the pose
 	bool dump_pdb_; // dflt false; dump a pdb for each substitution (with extensions signifying the substitution).
+	bool rtmin_; //dflt false; shall we do rtmin after each mutation (and at baseline)?
 };
 
 } // filters
