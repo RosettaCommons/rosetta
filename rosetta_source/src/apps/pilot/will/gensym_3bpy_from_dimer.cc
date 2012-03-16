@@ -117,7 +117,7 @@ void register_options() {
 	NEW_OPT( bpytoi::max_cys                   ,"", 3   );
 	NEW_OPT( bpytoi::max_bpy_dun               ,"", 3.0 );
 	NEW_OPT( bpytoi::bpy_clash_dis             ,"", 3.0 );
-	NEW_OPT( bpytoi::max_sym_error             ,"", 0.5 );
+	NEW_OPT( bpytoi::max_sym_error             ,"", 0.7 );
 }
 
 using core::kinematics::Stub;
@@ -230,15 +230,16 @@ void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
 	ScoreFunctionOP sf = core::scoring::getScoreFunction();
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
-	vector1<bool> allowed_aas(20,false);
-	allowed_aas[aa_ala] = true;
-	allowed_aas[aa_phe] = true;
-	allowed_aas[aa_ile] = true;
-	allowed_aas[aa_leu] = true;
-	allowed_aas[aa_met] = true;
-	allowed_aas[aa_val] = true;
-	allowed_aas[aa_trp] = true;
-	allowed_aas[aa_tyr] = true;
+	// vector1<bool> allowed_aas(20,false);
+	// allowed_aas[aa_ala] = true;
+	// allowed_aas[aa_phe] = true;
+	// allowed_aas[aa_ile] = true;
+	// allowed_aas[aa_leu] = true;
+	// allowed_aas[aa_met] = true;
+	// allowed_aas[aa_val] = true;
+	// allowed_aas[aa_trp] = true;
+	// allowed_aas[aa_tyr] = true;
+	vector1<bool> allowed_aas(20,true);
 
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
@@ -268,7 +269,7 @@ void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
 			//TR << "res " << i << " fix" << std::endl;
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else {
-			//TR << "res " << i << " des" << std::endl;
+			std::cout << "design_pos " << i << " " << pose.residue(i).name3() << std::endl;
 			bool temp = allowed_aas[pose.residue(i).aa()];
 			allowed_aas[pose.residue(i).aa()] = true;
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
@@ -540,6 +541,9 @@ void new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real&
 	if (scc.Calc()) {
 		sc = scc.GetResults().sc;
 		int_area = scc.GetResults().surface[2].trimmedArea;
+	} else {
+		sc = 0.0;
+		int_area = 0.0;
 	}
 }
 Size num_trimer_contacts(Pose const & psym, Size nres) {
@@ -590,7 +594,7 @@ int neighbor_count(Pose const &pose, int ires, double distance_threshold=10.0) {
 
 #define ATET 54.735610317245360079 // asin(sr2/sr3)
 #define AOCT 35.264389682754668343 // asin(sr1/sr3)
-#define AICS 20.89774264557		  // asin(G/2/sr3)
+#define AICS 20.89774264557		     // asin(G/2/sr3)
 
 void run() {
 	TR << "START RUN!" << std::endl;
@@ -796,39 +800,40 @@ void run() {
 					Real bpymdis = psym.residue(ibpy).xyz("ZN").distance(psym.residue(ibpy+base.n_residue()).xyz("ZN"));
 					if( bpymdis > option[bpytoi::max_sym_error]() ) { /*BPYGEOM*/ continue; };
 
-					// bool clash = false;
-					// for(Size ir = 4; ir <= base.n_residue()-3; ++ir) {
-					// 	Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
-					// 	if( psym.residue(ir).name3()=="GLY" ) natom = 4;
-					// 	for(Size ia = 1; ia <= natom; ++ia) {
-					// 		Vec ip = psym.xyz(AtomID(ia,ir));
-					// 		for(Size is = 2; is <= 12; ++is) {
-					// 			if(is==4) continue;
-					// 			for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
-					// 				for(Size ja = 1; ja <= 4; ja++) {
-					// 					if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
-					// for(Size ir = 3*base.n_residue()+4; ir <= 4*base.n_residue()-3; ++ir) {
-					// 	Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
-					// 	if( psym.residue(ir).name3()=="GLY" ) natom = 4;
-					// 	for(Size ia = 1; ia <= natom; ++ia) {
-					// 		Vec ip = psym.xyz(AtomID(ia,ir));
-					// 		for(Size is = 2; is <= 12; ++is) {
-					// 			if(is==4) continue;
-					// 			for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
-					// 				for(Size ja = 1; ja <= 4; ja++) {
-					// 					if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
-					// //TR << "!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n" << std::endl;
-					// if(clash) { /*CLASH5*/ continue; };
+					bool clash = false;
+					for(Size ir = 4; ir <= base.n_residue()-3; ++ir) {
+						Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
+						if( psym.residue(ir).name3()=="GLY" ) natom = 4;
+						if( psym.residue(ir).name3()=="PRO" ) natom = 7;
+						for(Size ia = 1; ia <= natom; ++ia) {
+							Vec ip = psym.xyz(AtomID(ia,ir));
+							for(Size is = 2; is <= 12; ++is) {
+								if(is==4) continue;
+								for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
+									for(Size ja = 1; ja <= 4; ja++) {
+										if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
+									}
+								}
+							}
+						}
+					}
+					for(Size ir = 3*base.n_residue()+4; ir <= 4*base.n_residue()-3; ++ir) {
+						Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
+						if( psym.residue(ir).name3()=="GLY" ) natom = 4;
+						for(Size ia = 1; ia <= natom; ++ia) {
+							Vec ip = psym.xyz(AtomID(ia,ir));
+							for(Size is = 2; is <= 12; ++is) {
+								if(is==4) continue;
+								for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
+									for(Size ja = 1; ja <= 4; ja++) {
+										if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
+									}
+								}
+							}
+						}
+					}
+					//TR << "!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n" << std::endl;
+					if(clash) { /*CLASH5*/ continue; };
 
 					Size ncontact = num_trimer_contacts(psym,base.n_residue());
 					Real drms = dimer_rms(psym,pdimer);
@@ -839,12 +844,16 @@ void run() {
 					// Real batr = psym.energies().residue_total_energies(ibpy)[core::scoring::fa_atr];
 					fixbb_design(psym,ibpy,dimersub);
 
+					std::cout << "fixbb done" << endl;
+
 					// Real rms = core::scoring::CA_rmsd(psym,psym_bare);
 					Real sc,int_area;
 					vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(4);
 					sfsym->score(psym);
 					new_sc(psym,intra_subs,int_area,sc);
 					// if(int_area < 200.0 || sc < 0.4) { /*SC*/ continue; }
+
+					std::cout << "calc buttressing" << endl;
 
 					// BPY buttressing atom count
 					int bpy_tri_atom_nbrs = 0;
@@ -864,7 +873,10 @@ void run() {
 						}
 					}
 
-					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
+					std::cout << "dump des" << endl;
+					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
+
+					// continue;
 
 					using namespace core::pack::task;
 					using namespace core::pack::task::operation;

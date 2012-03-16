@@ -39,7 +39,6 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>

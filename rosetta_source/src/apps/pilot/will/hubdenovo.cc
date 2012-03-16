@@ -115,6 +115,7 @@ OPT_KEY( String, hub_sequence )
 OPT_KEY( File, hub_cst_cfg )
 OPT_KEY( IntegerVector, hub_ho_cst )
 OPT_KEY( Real, hub_cen_energy_cut )
+OPT_KEY( Real, hub_cen_rg_cut )
 OPT_KEY( Boolean, hub_no_fa )
 OPT_KEY( Boolean, hub_graphics )
 OPT_KEY( Boolean, hub_test_config )
@@ -129,7 +130,8 @@ void register_options() {
 	NEW_OPT( hub_sequence ,"", "" );
 	NEW_OPT( hub_cst_cfg  ,"", "" );
 	NEW_OPT( hub_ho_cst   ,"", utility::vector1< Size >() );
-	NEW_OPT( hub_cen_energy_cut   ,"", 200.0 );
+	NEW_OPT( hub_cen_energy_cut   ,"", 999999.0 );
+	NEW_OPT( hub_cen_rg_cut   ,"", 999999.0 );
 	NEW_OPT( hub_no_fa   ,"", false );
 	NEW_OPT( hub_graphics,"", false );
 	NEW_OPT( hub_test_config,"", false );
@@ -866,7 +868,6 @@ struct HubDenovo {
 		famin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsymnocst, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
 		hub = *core::import_pose::pose_from_pdb(*rtsfa, option[OptionKeys::hub_pdb]() );
-
 	}
 	Pose make_start_pose() {
 		Pose p(hub);
@@ -907,7 +908,6 @@ struct HubDenovo {
 
 		return p;
 	}
-
 	bool cen_fold(Pose & p) {
 
 		// set up movemap and min mover
@@ -923,7 +923,7 @@ struct HubDenovo {
 			//cout << "sym dof jump: " << i->first << endl;
 			movemap->set_jump(i->first,true);
 			core::kinematics::Jump j = p.jump(i->first);
-			//j.set_rotation(rotation_matrix(Vec(1,0,0),numeric::random::gaussian()*6.3)*j.get_rotation());
+			j.set_rotation(rotation_matrix(Vec(1,0,0),numeric::random::gaussian()*6.3)*j.get_rotation());
 			j.set_translation(j.get_translation()+Vec(  (numeric::random::uniform()*15.0+5.0)*numeric::sign(numeric::random::uniform()-0.5)   -10,0,0));
 			p.set_jump(i->first,j);
 			break;
@@ -934,7 +934,8 @@ struct HubDenovo {
 		//tr << "rnd 1 ssep STOP " << STOP << endl;
 		protocols::moves::RandomMoverOP mymover = new protocols::moves::RandomMover;
 		mymover->add_mover(fragins,0.8);
-		mymover->add_mover(new SymRBMover(p,0.1,0.4),0.2);
+		mymover->add_mover(new SymRBMover(p,0.2,0.4),0.2);
+		mymover->add_mover(new SymRBMover(p,1.1,1.4),0.05);
 
 		Real temp = 2.0;
 		Pose last_cor_ori = p;
@@ -972,7 +973,6 @@ struct HubDenovo {
 		//sf3->set_weight(core::scoring::atom_pair_constraint,cstwt);
 		return true;
 	}
-
 	void min_as_poly_ala(Pose & p, ScoreFunctionOP sf) {
 		for(Size i = 2; i <= cfg.nres; ++i) {
 			if(p.residue(i).name3()=="GLY") continue;
@@ -993,7 +993,6 @@ struct HubDenovo {
 		sf->set_weight(core::scoring::atom_pair_constraint,1.0);
 		sf->set_weight(core::scoring::    angle_constraint,1.0);
 	}
-
 	void design(Pose & p, bool hydrophobic_only=false) {
 		ScoreFunctionOP sf = core::scoring::getScoreFunction();
 		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(p);
@@ -1032,8 +1031,6 @@ struct HubDenovo {
 		repack.apply(p);
 		tr << "postdes: " << sf->score(p) << std::endl;
 	}
-
-
 	Real stupid_ddg(Pose const & pose_in) {
 
 		tr << "assuming center on 2fold!!!!!!" << std::endl;
@@ -1074,7 +1071,6 @@ struct HubDenovo {
 
 		return bounde - ubounde;
 	}
-
 	void run(Size NITER = 9999999999) {
 		using namespace core::scoring;
 		for(int iter = 1; iter < NITER; ++iter) {
@@ -1090,8 +1086,7 @@ struct HubDenovo {
 
 			if(!cen_fold(tmp)) continue;
 
-			{
-				core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
+			{   core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 				ss_out->fill_struct(tmp,fn);
 				sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]()+"_cen.sc" );
 			}
@@ -1100,8 +1095,19 @@ struct HubDenovo {
 				tr << "CEN fail " << tmp.energies().total_energy() << endl;
 				continue;
 			}
+			core::scoring::symmetry::SymmetricScoreFunction sfrg;
+			sfrg.set_weight(core::scoring::rg,1.0);
+			Real rg = sfrg(tmp);
+			if(rg > option[OptionKeys::hub_cen_rg_cut]()) {
+				tr << "RG FAIL" << endl;
+				continue;
+			}
+			sf3->score(tmp);
 
 			tr << "HIT " << tmp.energies().total_energy() << " " << fn << endl;
+
+			Real ddg3=0,dec15=0;
+			Real cstscore = tmp.energies().total_energies()[core::scoring::atom_pair_constraint];
 
 			if(!option[OptionKeys::hub_no_fa]()) {
 				tmp.dump_scored_pdb(fn+"_cen.pdb",*sf3);
@@ -1113,50 +1119,44 @@ struct HubDenovo {
 				tr << "relax with csts, starting tplt-based seq" << std::endl;
 				cfg.reset_csts();	cfg.apply_csts(tmp);
 				rlxcst->apply(tmp);
-				tmp.remove_constraints();
-				sfsym->show(tmp);
 				tmp.dump_scored_pdb(fn+"_relax_tplt.pdb",*sfsym);
+				tmp.remove_constraints();
 
-				// tr << "relax from cnofig file with no polars" << std::endl;
-				// design(tmp,true);
-				// sfsymnocst->show(tmp);
-				// famin->apply(tmp);
-				// sfsymnocst->show(tmp);
-				// tmp.dump_scored_pdb(fn+"_grease.pdb",*sfsym);
-
-				tr << "relax from cnofig file" << std::endl;
+				tr << "relax from config file" << std::endl;
 				design(tmp,false);
-				sfsymnocst->show(tmp);
 				famin->apply(tmp);
-				sfsymnocst->show(tmp);
+	
+				ddg3 = stupid_ddg(tmp);
+				rg = sfrg(tmp);
+				if(rg > option[OptionKeys::hub_cen_rg_cut]()) continue;
+				cfg.reset_csts(); cfg.apply_csts(tmp);
+				sfsym->score(tmp);
+				cstscore = tmp.energies().total_energies()[core::scoring::atom_pair_constraint];
+				tmp.remove_constraints();			
+				dec15 = core::scoring::packing::compute_dec15_score(tmp);
+				tmp.dump_scored_pdb(fn,*sfsymnocst);
+			} else {
+				tmp.dump_scored_pdb(fn,*sf3);
 			}
 
-			Real ddg3 = stupid_ddg(tmp);
-
-			cfg.reset_csts(); cfg.apply_csts(tmp);
-			sfsym->score(tmp);
-			tmp.dump_scored_pdb(fn,*sfsym);
-			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
-			// ss_out->add_energy("cstsc",cstsc);
 			tr << "firstX scores" << endl;
+			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 			ss_out->fill_struct(tmp,fn);
 			for(int inr=1; inr <= 6; ++inr) {
 				Real esum = 0.0;
-				for(int isum=1; isum <= inr; ++isum) {
-					esum += tmp.energies().residue_total_energy(isum);
-				}
+				for(int isum=1; isum <= inr; ++isum) esum += tmp.energies().residue_total_energy(isum);
 				ss_out->add_energy("first"+str(inr),esum);
 			}
-			ss_out->add_energy("phi1",tmp.phi(1));
 			ss_out->add_energy("psi1",tmp.psi(1));
 			ss_out->add_energy("omg1",tmp.omega(1));
 			ss_out->add_energy("phi2",tmp.phi(2));
 			ss_out->add_energy("psi2",tmp.psi(2));
 			ss_out->add_energy("omg2",tmp.omega(2));
 			tr << "dec15 score" << endl;
-			ss_out->add_energy("dec15",core::scoring::packing::compute_dec15_score(tmp));
+			ss_out->add_energy("dec15",dec15);
 			ss_out->add_energy("ddg3",ddg3);
-
+			ss_out->add_energy("cst",cstscore);
+			ss_out->add_energy("rg",rg);
 			tr << "dump scores" << endl;
 			sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
 
