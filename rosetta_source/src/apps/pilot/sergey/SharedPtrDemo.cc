@@ -22,7 +22,7 @@
 
 #include <memory>
 
-typedef std::shared_ptr<int> intSP__;
+typedef boost::shared_ptr<int> intSP__;
 
 
 typedef boost::shared_ptr<int> intSP;
@@ -68,14 +68,20 @@ int main( int argc, char * argv [] )
 	foo_baseCSP(base_csp);
 
 	SonCSP son_csp;
+	SonSP son_sp;
 	//foo_baseSP(son_csp);  <-- Does not work...
+	foo_baseSP( boost::dynamic_pointer_cast<Base>(son_sp) );
 	foo_baseCSP(son_csp);
 
-	boost::weak_ptr<Son const> SonCWP = son_csp;
+	BaseSP baseSP = boost::dynamic_pointer_cast<Base>(son_sp);
+	SonSP  _2 = boost::dynamic_pointer_cast<Son>(baseSP);
+
+    /*
+	boost::weak_ptr<Son const> SonCWP(son_csp);
 	SonCSP son_csp1 = SonCWP.lock();
 	if(son_csp1) {
 		// Object was not released!
-	}
+	} */
 
 	return 0;
 }

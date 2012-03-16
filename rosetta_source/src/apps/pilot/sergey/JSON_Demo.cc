@@ -15,6 +15,10 @@
 
 
 #include <utility/json_spirit/json_spirit_reader.h>
+#include <utility/json_spirit/json_spirit_writer.h>
+
+#include <utility/tools/make_vector.hh>
+#include <utility/tools/make_map.hh>
 
 #include <string>
 #include <iostream>
@@ -37,13 +41,53 @@ int main( int argc, char * argv [] )
 	std::cout << std::endl << std::endl;
 
 
-	input = " \"A\" : [1, 2, 3] ";
-	//utility::json_spirit::Value mv;
+	input = " { \"A\" : [1, 2, 3] } ";
+	utility::json_spirit::mValue mv;
 	std::cout << "Parsing: " << input << std::endl;
-	std::cout << "Result:" << utility::json_spirit::read(input, v) << std::endl;
-	/* if(v.get_obj().count("A")) {
-		std::cout << "Key A exist!!!" << v.get_obj()["A"] << std::endl;
-	} */
+	std::cout << "Result:" << utility::json_spirit::read(input, mv) << std::endl;
+	std::cout << "RootType=" << mv.type() << std::endl;
+	if(mv.get_obj().count("A")) {
+		std::cout << "Key A exist!!!" << std::endl;
+		std::cout << "mv.get_obj()[A]: [";
 
+		utility::json_spirit::mArray const & array = mv.get_obj()["A"].get_array();
+
+		for(int i; i<array.size(); ++i) {
+			std::cout << array[i].get_int() << ", ";
+		}
+		std::cout << "]" << std::endl;
+	}
+
+	std::cout << "JSON Emmitter demo..." << std::endl;
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+	using utility::tools::make_vector;
+	using utility::tools::make_map;
+
+	std::cout << utility::json_spirit::write(make_vector(Value(1), Value(2), Value(3), Value(5)), utility::json_spirit::pretty_print) << std::endl;
+
+	/* Let create a Loop-like object, something like this:
+		"Loop" : {
+			"Start" : {"ResNo" : "50", "Insertion" : "A", "Chain" : "A"},
+			"Cutpoint" : {"ResNo" : "50", "Insertion" : "A", "Chain" : "A"},
+			"Stop" : {"ResNo" : "50", "Insertion" : "A", "Chain" : "A"},
+		}
+	*/
+	Value loop( make_vector( Pair("Loop",
+								          make_vector( Pair("Start",    make_vector(Pair("ResNo", 50), Pair("Insertion", "A"), Pair("Chain", "A") ) )
+													  ,Pair("Cutpoint", make_vector(Pair("ResNo", 50), Pair("Insertion", "A"), Pair("Chain", "A") ) )
+													  ,Pair("Stop",     make_vector(Pair("ResNo", 50), Pair("Insertion", "A"), Pair("Chain", "A") ) )
+								          			  ) ) ) );
+
+	std::cout << utility::json_spirit::write(loop, utility::json_spirit::pretty_print | utility::json_spirit::single_line_arrays) << std::endl;
+
+	//mValue( make_map("Start", Value(0)) )
+		//				 )
+
+	//std::cout << utility::json_spirit::write(utility::tools::make_map("Loop" Value(1), Value(2), Value(3), Value(5)), utility::json_spirit::pretty_print) << std::endl;
+
+
+	//utility::json_spirit::mArray int_array( utility::tools::make_vector(Value(1), Value(2), Value(3), Value(5)) );
+	//utility::json_spirit::mValue av(utility::tools::make_vector(Value(1), Value(2), Value(3), Value(5)));
 }
 

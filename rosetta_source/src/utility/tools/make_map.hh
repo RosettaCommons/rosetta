@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file   utility/tools/make_vector.hh
+/// @file   utility/tools/make_map.hh
 /// @brief  Common function to build vector, vector0, vector1, map.
 /// @author Sergey Lyskov
 
