@@ -79,15 +79,6 @@ int main( int argc, char * argv [] )
 													  ,Pair("Stop",     make_vector(Pair("ResNo", 50), Pair("Insertion", "A"), Pair("Chain", "A") ) )
 								          			  ) ) ) );
 
-	std::cout << utility::json_spirit::write(loop, utility::json_spirit::pretty_print | utility::json_spirit::single_line_arrays) << std::endl;
-
-	//mValue( make_map("Start", Value(0)) )
-		//				 )
-
-	//std::cout << utility::json_spirit::write(utility::tools::make_map("Loop" Value(1), Value(2), Value(3), Value(5)), utility::json_spirit::pretty_print) << std::endl;
-
-
-	//utility::json_spirit::mArray int_array( utility::tools::make_vector(Value(1), Value(2), Value(3), Value(5)) );
-	//utility::json_spirit::mValue av(utility::tools::make_vector(Value(1), Value(2), Value(3), Value(5)));
+	std::cout << utility::json_spirit::write(loop, utility::json_spirit::pretty_print) << std::endl;
 }
 
