@@ -28,6 +28,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/sequence/Sequence.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
@@ -39,7 +41,7 @@
 #include <utility/vector0.hh>
 
 
-static basic::Tracer TR("protocols.toolbox.tas_operations.JointSequenceOperation");
+static basic::Tracer TR("protocols.toolbox.task_operations.JointSequenceOperation");
 
 namespace protocols{
 namespace toolbox{
@@ -75,10 +77,14 @@ JointSequenceOperation::clone() const {
 void
 JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 {
+
+	core::conformation::symmetry::SymmetryInfoCOP syminfo = NULL;
+	if( core::pose::symmetry::is_symmetric(pose) ) syminfo = core::pose::symmetry::symmetry_info(pose);
+
 	for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()); iter != sequences_.end(); iter++ ) {
 		if( (*iter)->length() != pose.total_residue() ) {
 				std::string name("current pdb");
-				if(! pose.pdb_info() ) {
+				if( pose.pdb_info() ) {
 					name = pose.pdb_info()->name();
 				}
 				TR.Warning << "WARNING: Pose " << (*iter)->id() << " contains a different number of residues than " << name << std::endl;
@@ -86,20 +92,22 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 	}
 	for( core::Size ii = 1; ii <= pose.total_residue(); ++ii){
 		if( !pose.residue_type( ii ).is_protein() ) continue;
-
 		utility::vector1< bool > allowed(core::chemical::num_canonical_aas, false);
 
 		if(use_current_pose_) {
-			allowed[ pose.aa(ii) ] = true;
+			if( pose.aa(ii) <= allowed.size() ) allowed[ pose.aa(ii) ] = true;
 		}
-		for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()); iter != sequences_.end(); iter++ ) {
-			if ( ii > (*iter)->length() ) continue; // ignore short references
-			char aa( (*(*iter))[ ii ] );
-			if( core::chemical::oneletter_code_specifies_aa(aa) ) {
-				allowed[ core::chemical::aa_from_oneletter_code(aa)  ] = true;
+		if( !core::pose::symmetry::is_symmetric(pose) || syminfo->chi_is_independent(ii) ) {
+			for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()); iter != sequences_.end(); iter++ ) {
+				if ( ii > (*iter)->length() ) continue; // ignore short references
+				char aa( (*(*iter))[ ii ] );
+				if( core::chemical::oneletter_code_specifies_aa(aa) ) {
+					if(core::chemical::aa_from_oneletter_code(aa)<=allowed.size()) {
+						allowed[ core::chemical::aa_from_oneletter_code(aa)  ] = true;
+					}
+				}
 			}
 		}
-
 		task.nonconst_residue_task(ii).restrict_absent_canonical_aas( allowed );
 	} //loop over all residues
 
@@ -143,7 +151,7 @@ void
 JointSequenceOperation::add_pose( Pose const & pose )
 {
 	std::string name("unknown");
-	if(pose.pdb_info() ) {
+	if( pose.pdb_info() ) {
 		name = pose.pdb_info()->name();
 	}
 	sequences_.push_back( new core::sequence::Sequence(pose.sequence(), name) );
