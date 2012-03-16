@@ -572,8 +572,6 @@ namespace rna {
 
 		//Would this slow down the code?
 
-
-		bool const Is_prepend(  job_parameters_->Is_prepend() ); 
 		Size const num_nucleotides(  job_parameters_->working_moving_res_list().size() );
 		Size const previous_step_gap_size= (job_parameters_->gap_size())+num_nucleotides;
 
@@ -672,9 +670,6 @@ namespace rna {
 				if(combine_helical_silent_file_==false){ 
 					if(pass_all_filters(side_ONE_pose_data, side_TWO_pose_data)==false) continue;
 				}else{ //Nov 27 2010
-
-					core::pose::Pose const & side_ONE_pose=(*side_ONE_pose_data.pose_OP);
-					core::pose::Pose const & side_TWO_pose=(*side_TWO_pose_data.pose_OP);
 
 					Real const curr_combine_score=side_ONE_pose_data.score + side_TWO_pose_data.score;
 

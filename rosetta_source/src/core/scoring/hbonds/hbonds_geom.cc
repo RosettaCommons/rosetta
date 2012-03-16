@@ -266,7 +266,7 @@ get_hb_acc_chem_type(
 				return hbacc_RRI_DNA;
 			}
 		}else if ( acc_rsd.is_RNA() ){
-			if (aname == " O1P" || aname == " O2P" ){
+			if (aname == " O1P" || aname == " O2P" || aname == " O3P"){
 				return hbacc_PCA_RNA;
 			} else if (aname == " O5*" || aname == " O3*"){
 				return hbacc_PES_RNA;

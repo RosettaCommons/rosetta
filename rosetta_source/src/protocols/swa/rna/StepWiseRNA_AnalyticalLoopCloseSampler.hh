@@ -157,7 +157,7 @@ private:
 	initialize_scorefunctions();
 
 	void
-	standard_sampling ( core::pose::Pose & pose, utility::vector1< pose_data_struct2 > & pose_data_list, std::string const sugar_tag );
+	standard_sampling ( core::pose::Pose & pose, utility::vector1< pose_data_struct2 > & pose_data_list );
 
 	void
 	copy_suite_torsion ( core::pose::Pose & pose, core::pose::Pose const & ref_pose, core::Size const & suite_num );

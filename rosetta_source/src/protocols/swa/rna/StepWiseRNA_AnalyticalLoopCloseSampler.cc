@@ -171,7 +171,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	pose = pose_save; //this recopy is useful for triggering graphics.
 	initialize_scorefunctions(); //////////////// Sets up scorefunctions for a bunch of different screens /////////
 	utility::vector1< pose_data_struct2 > pose_data_list;
-	standard_sampling ( pose, pose_data_list, "" );
+	standard_sampling ( pose, pose_data_list );
 	std::cout << "Total time in StepWiseRNA_AnalyticalLoopCloseSampler::apply " << static_cast<Real> ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 	Output_title_text ( "Exit StepWiseRNA_AnalyticalLoopCloseSampler::apply" );
 }
@@ -179,7 +179,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::apply ( core::pose::Pose & pose ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & pose , utility::vector1< pose_data_struct2 > & pose_data_list, std::string const sugar_tag ) {
+StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & pose , utility::vector1< pose_data_struct2 > & pose_data_list ) {
 	using namespace core::scoring;
 	using namespace core::pose;
 	using namespace core::io::silent;
@@ -194,7 +194,6 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	bool const Is_internal ( job_parameters_->Is_internal() ); // no cutpoints before or after moving_res.
 	Size const actually_moving_res ( job_parameters_->actually_moving_res() ); //Now same as moving_res
 	Size const gap_size ( job_parameters_->gap_size() ); /* If this is zero or one, need to screen or closable chain break */
-	utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos();
 	utility::vector1 < core::Size > const & cutpoint_closed_list = job_parameters_->cutpoint_closed_list();
 	Size const num_nucleotides ( job_parameters_->working_moving_res_list().size() );
 	Size const five_prime_chain_break_res = job_parameters_->five_prime_chain_break_res();
@@ -423,7 +422,6 @@ StepWiseRNA_AnalyticalLoopCloseSampler::get_base_atr_rep_score ( core::pose::Pos
 	Size const working_moving_suite ( job_parameters_->working_moving_suite() );
 	Size const working_moving_res ( job_parameters_->working_moving_res() );
 	Size const nres = job_parameters_->working_sequence().size();
-	bool const Is_prepend ( job_parameters_->Is_prepend() );
 	///////////////////////////////Old_way////////////////////////////////////////////
 	pose::Pose base_pose_screen = pose; //hard copy
 //		std::cout << "BLAH_BLAH_BLAH May 5, 2010" << std::endl;

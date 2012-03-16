@@ -51,7 +51,7 @@ public:
 
 
 	//	void update_constraints( pose::Pose & pose ) const;
-	Real const
+	Real 
 	eval_intrares_energy(
 											 core::conformation::Residue const & rsd,
 											 pose::Pose const & pose
@@ -59,7 +59,6 @@ public:
 
 
 	Real
-	const
 	residue_pair_energy(
 											core::conformation::Residue const & rsd1,
 											core::conformation::Residue const & rsd2,

@@ -81,8 +81,8 @@ namespace rna {
 		copy_DOF_(false),
 		verbose_( true ), 		
 		FARFAR_start_pdb_(""),
-		rebuild_bulge_mode_(false), //Nov 26, 2010
 		parin_favorite_output_(true),
+		rebuild_bulge_mode_(false), //Nov 26, 2010
 		output_pdb_(false) //Sept 24, 2011
   {
 	}
@@ -263,6 +263,11 @@ namespace rna {
 
 		if(act_working_alignment.size()==0) utility_exit_with_message("act_working_alignment.size()==0");
 
+
+		Pose pose_without_cutpoints = *working_native_pose;
+		apply_cutpoint_variants( *working_native_pose , pose_without_cutpoints);
+		add_protonated_H1_adenosine_variants( *working_native_pose);
+		verify_protonated_H1_adenosine_variants( *working_native_pose );
 		if ( job_parameters_ -> add_virt_res_as_root() ) {
 			add_virtual_res(*working_native_pose);
 			(*working_native_pose).fold_tree( pose.fold_tree() );
@@ -395,26 +400,31 @@ namespace rna {
 
 			// Remove all variant types
       // DO TO LIST: Need to remove atom constraint and remove angle constaint as well
+			utility::vector1< std::string > variant_type_list;
+			variant_type_list.push_back("VIRTUAL_PHOSPHATE");
+			variant_type_list.push_back("VIRTUAL_O2STAR_HYDROGEN");
+			variant_type_list.push_back("CUTPOINT_LOWER");
+			variant_type_list.push_back("CUTPOINT_UPPER");
+			variant_type_list.push_back("VIRTUAL_RNA_RESIDUE");
+			variant_type_list.push_back("VIRTUAL_RNA_RESIDUE_UPPER");
+			variant_type_list.push_back("BULGE");
+			variant_type_list.push_back("PROTONATED_H1_ADENOSINE");
+			variant_type_list.push_back("3PRIME_END_OH");
+			variant_type_list.push_back("5PRIME_END_PHOSPHATE");
+			variant_type_list.push_back("5PRIME_END_OH");
+
 			for ( Size n = 1; n <= start_pose.total_residue(); n++  ) {
-				remove_variant_type_from_pose_residue( start_pose, "VIRTUAL_PHOSPHATE", n );
-				remove_variant_type_from_pose_residue( start_pose, "VIRTUAL_O2STAR_HYDROGEN", n );
-				remove_variant_type_from_pose_residue( start_pose, "CUTPOINT_LOWER", n );
-				remove_variant_type_from_pose_residue( start_pose, "CUTPOINT_UPPER", n );
-				remove_variant_type_from_pose_residue( start_pose, "VIRTUAL_RNA_RESIDUE", n );
-				remove_variant_type_from_pose_residue( start_pose, "VIRTUAL_RNA_RESIDUE_UPPER", n );
-				remove_variant_type_from_pose_residue( start_pose, "BULGE", n );	
-				remove_variant_type_from_pose_residue( start_pose, "VIRTUAL_RIBOSE", n );	
-				remove_variant_type_from_pose_residue( start_pose, "PROTONATED_H1_ADENOSINE", n );	
-				remove_variant_type_from_pose_residue( start_pose, "5PRIME_END_PHOSPHATE", n );	
-				remove_variant_type_from_pose_residue( start_pose, "5PRIME_END_OH", n );	
-				remove_variant_type_from_pose_residue( start_pose, "3PRIME_END_OH", n );	
-				/*
+				for ( Size k = 1; k <= variant_type_list.size(); ++k ) {
+					std::string const & variant_type = variant_type_list[k];
+					if ( start_pose.residue(n).has_variant_type(variant_type) ) {
+						remove_variant_type_from_pose_residue( start_pose, variant_type, n );
+					}
+				}
+			}
 				//NOTES: June 16, 2011
 				//Should LOWER_TERMINUS and UPPER_TERMINUS be removed as well? LOWER_TERMINUS does determine the position of  O1P and O2P?
 				//Also should then check that pose.residue_type(i).variant_types() is the empty?
 				//Alternatively could convert to FARFAR way and use the NEW_copy_dof that match atom names (MORE ROBUST!). This way doesn't need to remove any variant type from the chunk_pose?
-				*/
-			}
 
 			if(output_pdb_) {
 				start_pose.dump_pdb( "import_" + string_of(i) + ".pdb" );
@@ -449,35 +459,27 @@ namespace rna {
 			utility::vector1< Size > const & working_cutpoint_closed_list=apply_full_to_sub_mapping( cutpoint_closed_list , StepWiseRNA_JobParametersCOP(job_parameters_) );
 
 			for ( Size n = 1; n <= start_pose_with_variant.total_residue(); n++  ) {
-
 				if( has_virtual_rna_residue_variant_type(start_pose_with_variant, n) ){
-
 					apply_virtual_rna_residue_variant_type( pose, full_to_sub[ input_res[n] ], working_cutpoint_closed_list ) ;
 				} 
 
 				if(start_pose_with_variant.residue(n).has_variant_type("VIRTUAL_RIBOSE")){
-	
 					add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", full_to_sub[ input_res[n] ] );
-
 				}
 
-				if(start_pose_with_variant.residue(n).has_variant_type("5PRIME_END_OH")){
-					add_variant_type_to_pose_residue( pose, "5PRIME_END_OH", full_to_sub[ input_res[n] ] );
-				}
-
-				if(start_pose_with_variant.residue(n).has_variant_type("3PRIME_END_OH")){
+				if ( start_pose_with_variant.residue(n).has_variant_type("3PRIME_END_OH") ) {
 					add_variant_type_to_pose_residue( pose, "3PRIME_END_OH", full_to_sub[ input_res[n] ] );
-				}
-
-				if(start_pose_with_variant.residue(n).has_variant_type("5PRIME_END_PHOSPHATE")){
+				} else if ( start_pose_with_variant.residue(n).has_variant_type("5PRIME_END_PHOSPHATE") ) {
 					add_variant_type_to_pose_residue( pose, "5PRIME_END_PHOSPHATE", full_to_sub[ input_res[n] ] );
+				} else if ( start_pose_with_variant.residue(n).has_variant_type("5PRIME_END_OH") ) {
+					add_variant_type_to_pose_residue( pose, "5PRIME_END_OH", full_to_sub[ input_res[n] ] );
 				}
 
 				if( i > silent_files_in_.size() ) { // not a silent file, read in from pdb text file. May 04, 2011
 
 					//start_pose_with_variant does not have PROTONATED_H1_ADENOSINE variant type since the input_pdb does not have the variant type or loses the variant when imported into Rosetta.
 
-					if(start_pose_with_variant.residue(n).has_variant_type("PROTONATED_H1_ADENOSINE")){ //May 03, 2011
+					if ( start_pose_with_variant.residue(n).has_variant_type("PROTONATED_H1_ADENOSINE") ) { //May 03, 2011
 						Output_seq_num_list("protonate_H1_adenosine_list= ", job_parameters_->protonated_H1_adenosine_list());
 						utility_exit_with_message("start_pose have PROTONATED_H1_ADENOSINE variant type at full_seq_num=" + ObjexxFCL::string_of(input_res[n]) + " even though it was read in from PDB file!");			
 					}
@@ -488,7 +490,8 @@ namespace rna {
 
 				}else{
 				
-					if(start_pose_with_variant.residue(n).has_variant_type("PROTONATED_H1_ADENOSINE")){ //May 03, 2011
+					if ( start_pose.residue(n).aa() == core::chemical::na_rad && 
+							 start_pose_with_variant.residue(n).has_variant_type("PROTONATED_H1_ADENOSINE") ) { //May 03, 2011
 
 						if(Contain_seq_num( input_res[n], job_parameters_->protonated_H1_adenosine_list() )==false){
 							Output_seq_num_list("protonate_H1_adenosine_list= ", job_parameters_->protonated_H1_adenosine_list());
@@ -909,7 +912,8 @@ namespace rna {
 					utility_exit_with_message("Contain_seq_num(seq_num, working_protonated_H1_adenosine_list )==true but residue doesn't either PROTONATED_H1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type , seq_num=" + string_of(seq_num) );
 				}
 			}else{
-				if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE") ==true){
+				if ( pose.residue(seq_num).aa() == core::chemical::na_rad && 
+				     pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE") ){
 					print_JobParameters_info(StepWiseRNA_JobParametersCOP(job_parameters_), "DEBUG job_parameters");
 					utility_exit_with_message("Contain_seq_num(seq_num, working_protonated_H1_adenosine_list)==false but pose.residue(seq_num).has_variant_type(\"PROTONATED_H1_ADENOSINE\") )==false, seq_num=" + string_of(seq_num) );
 				}
@@ -1004,14 +1008,12 @@ namespace rna {
 	StepWiseRNA_PoseSetup::add_virtual_res( core::pose::Pose & pose) {
 		Size const nres = pose.total_residue();
 		Size const working_moving_res(  job_parameters_->working_moving_res() );
-		// if already rooted on virtual residue , return
+		//if already rooted on virtual residue , return
 		if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
 			TR.Warning << "addVirtualResAsRoot() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
 			return;
 		}
 
-		// attach virt res there
-		bool fullatom = pose.is_fullatom();
 		core::chemical::ResidueTypeSet const & residue_set = pose.residue_type(1).residue_type_set();
 		core::chemical::ResidueTypeCAPs const & rsd_type_list( residue_set.name3_map("VRT") );
 		core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );

@@ -1519,9 +1519,6 @@ namespace rna {
  		
 		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
 		
-		Size const num_heavy_backbone_atoms=11; //RNA contain 11 heavy backbone atoms.
-
-
   		//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
 		//the virtaul O2star hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
   		for( Size n = 1; n<= num_side_chain_atom; n++){ //This INCLUDE the O2star oxygen
@@ -1559,15 +1556,8 @@ namespace rna {
 
 		if(res_aa!=res_aa2) utility_exit_with_message( "res_aa (" + name_from_aa(res_aa) + ")!=res_aa2 (" + name_from_aa(res_aa2) + ") " );
 		
-  		Size const first_sidechain_atom1=pose1.residue(moving_res_1).first_sidechain_atom();
-  		Size const first_sidechain_atom2=pose2.residue(moving_res_2).first_sidechain_atom();
-
-		Size const num_side_chain_atom=Get_num_side_chain_atom_from_res_name(res_aa, verbose);
- 		
 		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
 		
-		Size const num_heavy_backbone_atoms=11; //RNA contain 11 heavy backbone atoms.
-
 		for( Size atomno = 1; atomno <= 4; atomno++){
 
 			conformation::Residue const & rsd_1=pose1.residue(moving_res_1);
@@ -2115,8 +2105,6 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		Size num_o2star_moving_res=0; 
 		for(Size n=1; n<=moving_res.size(); n++){
 			Size const seq_num=moving_res[n];
-
-			core::conformation::Residue const & rsd = pose.residue(seq_num);
 
 			if(Is_O2star_hydrogen_virtual_list[seq_num]) continue;
 

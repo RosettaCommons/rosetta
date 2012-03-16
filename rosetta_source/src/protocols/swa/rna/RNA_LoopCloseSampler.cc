@@ -75,8 +75,8 @@ RNA_LoopCloseSampler::RNA_LoopCloseSampler ( Size const moving_suite, Size const
 	scorefxn_ ( core::scoring::getScoreFunction() ),
 	bin_size_ ( 20 ),
 	n_construct_ ( 0 ),
-	epsilon_range_ ( 40.0 ),
 	rep_cutoff_ ( 0.1 ),
+	epsilon_range_ ( 40.0 ),
 	torsion_range_ ( 20.0 ),
 	torsion_increment_ ( 5.0 ),
 	just_output_score_ ( false ),
@@ -111,11 +111,8 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	// This should probably be encapsulated into a PoseSampleGenerator or something similar
 	int const bins1_ = 360 / bin_size_ ; //This is total bins, default is 18
 	int const bins2_ = bins1_ / 2; //This is total bins divided by 2; default is 9
-	int const bins3_ = bins1_ / 3; //This is total bins divided by 3; default is 6
-	int const bins4_ = 1 + 40 / bin_size_; //This is the bin for chi and episilon, these two torsion angles vary from -20+mean to 20+mean
 	PuckerState pucker_state1 = Get_residue_pucker_state ( pose, moving_suite_ );
-	Real epsilon1, zeta1, alpha1 ( 0.0 ), alpha2 ( 0.0 ), perturb_epsilon1, perturb_zeta1, perturb_alpha1, perturb_alpha2;
-	Real beta1, beta2, epsilon2;
+	Real epsilon1, zeta1, alpha1, alpha2;
 	// following is only used if we are estimating jacobians (numerically).
 	utility::vector1< utility::vector1< utility::vector1< Real > > > perturbed_solution_torsions;
 	utility::vector1< utility::vector1< Real > > J; // 6 x 6 Jacobian.
@@ -125,8 +122,6 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 
 	for ( int i = 1; i <= 6; i++ ) J.push_back ( six_zeros );
 
-	Real const perturbation_size ( 1.0e-5 );
-	Real const detJ_cutoff_ ( 1.0 );
 	Real epsilon1_center = ( pucker_state1 == NORTH ) ? -150.17 : -98.45;
 	Real epsilon1_min = epsilon1_center - epsilon_range_;
 	Real epsilon1_max = epsilon1_center + epsilon_range_;
@@ -178,14 +173,12 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 
 					//close loop.
 					rna_analytic_loop_closer.apply ( pose );
-					bool perturb_solutions_calculated = false;
 
 					// iterate over solutions -- anything with OK repulsive?
 					for ( Size n = 1; n <= rna_analytic_loop_closer.nsol(); n++ ) {
 						rna_analytic_loop_closer.fill_solution ( pose, n );
-						utility::vector1< Real > const & solution_torsions = rna_analytic_loop_closer.get_torsions ( n );
 
-						if ( !torsion_angles_within_cutoffs ( pose, moving_suite_, chainbreak_suite_, bin_size_, bins2_ ) ) continue;
+						if ( !torsion_angles_within_cutoffs ( pose, moving_suite_, chainbreak_suite_ ) ) continue;
 
 						if ( !sample_only_ ) {
 							if ( !check_clash ( pose, fa_rep_score_baseline, rep_cutoff_, rep_scorefxn_ ) ) continue;
@@ -317,9 +310,7 @@ RNA_LoopCloseSampler::set_scorefxn ( core::scoring::ScoreFunctionOP const & scor
 bool
 RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
     Size const moving_suite,
-    Size const chainbreak_suite,
-    int const bin_size_,
-    int const bins2_ ) {
+    Size const chainbreak_suite ) {
 	using namespace id;
 	using namespace core::scoring::rna;
 	using namespace protocols::swa::rna;

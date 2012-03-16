@@ -429,7 +429,6 @@ namespace rna {
 		Size const moving_suite(  job_parameters_->working_moving_suite() ); // dofs betweeen this value and value+1 actually move.
 		bool const Is_prepend(  job_parameters_->Is_prepend() ); 
 		bool const Is_internal(  job_parameters_->Is_internal() ); // no cutpoints before or after moving_res.
-		Size const actually_moving_res( job_parameters_->actually_moving_res() ); //Now same as moving_res
 		Size const gap_size( job_parameters_->gap_size()); /* If this is zero or one, need to screen or closable chain break */
 		Size const five_prime_chain_break_res = job_parameters_->five_prime_chain_break_res();
 		Size const num_nucleotides(  job_parameters_->working_moving_res_list().size() );
@@ -984,8 +983,9 @@ namespace rna {
 
 		if(verbose_){ //Don't really need this......May 1, 2010...
 			std::string const foldername="test/";
-			system(std::string("rm -r " + foldername).c_str());
-			system(std::string("mkdir -p " + foldername).c_str());
+			int return_code;
+			return_code = system(std::string("rm -r " + foldername).c_str());
+			return_code = system(std::string("mkdir -p " + foldername).c_str());
 			Analyze_base_bin_map( base_bin_map, foldername);
 		}
 

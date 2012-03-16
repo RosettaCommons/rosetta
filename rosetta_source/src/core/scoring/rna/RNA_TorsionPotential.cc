@@ -114,8 +114,8 @@ namespace rna {
 		delta_fade_( 10.0 ),
 		alpha_fade_( 10.0 ),
 		skip_chainbreak_torsions_( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_skip_chainbreak ]() ),
-		use_new_potential_( false ),
-		verbose_( false )
+		verbose_( false ),
+		use_new_potential_( false )
 	{
 		if( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ].user() ){
 
@@ -128,7 +128,7 @@ namespace rna {
 			//Turn on the new torsional potential if the folder name ends wirh "new"
 			if ( path_to_torsion_files_ .compare(path_to_torsion_files_.size() - 3, 3, "new") == 0 ) {
 				use_new_potential_ = true;
-				std::cout << "Foler name ends with 'new'... Turn on the new torsional potential" << std::endl;
+				std::cout << "Path name ends with 'new'... Turn on the new torsional potential" << std::endl;
 			}
 			std::cout << "-----------------------------------------------------------------------------------" << std::endl;
 		}else{
@@ -151,7 +151,7 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	Real const
+	Real 
 	RNA_TorsionPotential::eval_intrares_energy(core::conformation::Residue const & rsd, pose::Pose const & pose) const
 	{
 		using namespace core::id;
@@ -234,7 +234,7 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	Real const
+	Real 
 	RNA_TorsionPotential::residue_pair_energy(core::conformation::Residue const & rsd1, core::conformation::Residue const & rsd2, pose::Pose const & pose) const
 	{
 

@@ -156,10 +156,7 @@ namespace rna {
 
 		clock_t const time_start( clock() );
 
-		Size const moving_res(  job_parameters_->working_moving_res() );
-		Size const actually_moving_res(  job_parameters_->actually_moving_res() );
 		Size const gap_size(  job_parameters_->gap_size() );
-		bool const Is_prepend(  job_parameters_->Is_prepend() );
 		Size const five_prime_chain_break_res = job_parameters_->five_prime_chain_break_res();
 	
 		utility::vector1< pose_data_struct2 > minimized_pose_data_list;
@@ -515,8 +512,6 @@ namespace rna {
 	////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1 <core::kinematics::MoveMap>
 	StepWiseRNA_Minimizer::Get_default_movemap( core::pose::Pose const & pose ) const{
-
-		Size const nres( pose.total_residue() );
 
 		utility::vector1 <core::kinematics::MoveMap> move_map_list;
 

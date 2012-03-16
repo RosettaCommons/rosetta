@@ -899,7 +899,6 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 		}
 
 		for ( Size j = 1; j <= n_heavyatom_rsd; ++j ) { //atom
-			conformation::Atom const atm ( rsd.atom ( j ) );
 			chemical::AtomTypeSet const & atom_type_set ( rsd.atom_type_set() );
 			//get the weight of each atom (element based)
 			std::string element = atom_type_set[rsd.atom_type_index ( j ) ].element();
@@ -907,7 +906,7 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 			sum_weight += weight;
 			weight_rsd.push_back ( weight );
 			//Compute the atom position in unit cell (index coord)
-			numeric::xyzVector< core::Real > coord_index = xyz2index_in_cell ( atm.xyz() );
+			numeric::xyzVector< core::Real > coord_index = xyz2index_in_cell ( rsd.xyz( j ) );
 			numeric::xyzVector< core::Real > dist_index;
 			numeric::xyzVector< core::Real > grid_half ( grid[0] * 0.5,
 			    grid[1] * 0.5, grid[1] * 0.5 );
@@ -1114,11 +1113,12 @@ ElectronDensityAtomwise::residue_score ( core::conformation::Residue const & rsd
 	Real total_score = 0.0;
 
 	for ( Size j = 1 ; j <= n_heavyatom_rsd; ++j ) {
-		conformation::Atom const &atm ( rsd.atom ( j ) );
+		//Skip virtual atoms
+		if ( rsd.is_virtual(j) ) continue;
 		//get the weight of each atom (element based)
 		Size weight = atom_weight_stored[rsd_id][j];
 		//Compute the atom position in unit cell (index coord)
-		numeric::xyzVector< Real > coord_index = xyz2index_in_cell ( atm.xyz() );
+		numeric::xyzVector< Real > coord_index = xyz2index_in_cell ( rsd.xyz( j ) );
 		Real score = weight * spline_interpolation ( unweighted_score_coeff, coord_index );
 		total_score += score;
 	}
@@ -1130,10 +1130,16 @@ ElectronDensityAtomwise::residue_score ( core::conformation::Residue const & rsd
 numeric::xyzVector< core::Real >
 ElectronDensityAtomwise::atom_gradient ( core::pose::Pose const & pose, core::Size
     const & rsd_id, core::Size const & atm_id ) {
+	
+	//Skip virtual atoms
+	if ( pose.residue( rsd_id ).is_virtual( atm_id ) ) {
+		return numeric::xyzVector< core::Real > (0, 0, 0);
+	}
+
 	//get the weight of the atom (element based)
 	Size &weight = atom_weight_stored[rsd_id][atm_id];
 	Real incre = 0.00000001;
-	numeric::xyzVector< Real > atmxyz = pose.residue ( rsd_id ).atom ( atm_id ).xyz();
+	numeric::xyzVector< Real > atmxyz = pose.residue ( rsd_id ).xyz( atm_id );
 	numeric::xyzVector< Real > coord_index = xyz2index_in_cell ( atmxyz );
 	numeric::xyzVector< Real > coord_index_dx = coord_index;
 	numeric::xyzVector< Real > coord_index_dy = coord_index;

@@ -1755,7 +1755,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( sampler_num_pose_kept, "optional: set_num_pose_kept by ResidueSampler", 108 );
 
 	//////////////Minimizer////////////
-	NEW_OPT( num_pose_minimize, "optional: set_num_pose_minimize by Minimizer", 99999999999 );
+	NEW_OPT( num_pose_minimize, "optional: set_num_pose_minimize by Minimizer", 99999 );
 
 	//////////////Clusterer////////////
 	NEW_OPT( clusterer_num_pose_kept, "optional: Num_pose_kept by the clusterer", 1000 );

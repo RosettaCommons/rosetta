@@ -1276,8 +1276,6 @@ namespace rna {
 
 		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
 		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
-		bool const Is_prepend(  job_parameters_->Is_prepend() ); // if true, moving_suite+1 is fixed. Otherwise, moving_suite is fixed.
-
 
 		//bool const ignore_min_decoys=true; //Over the keep min_decoy mode...Comment out on Dec 11, 2011.
 
@@ -1402,7 +1400,6 @@ namespace rna {
 
 		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
 		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
-		bool const Is_prepend(  job_parameters_->Is_prepend() ); // if true, moving_suite+1 is fixed. Otherwise, moving_suite is fixed.
 
 		std::map< core::Size, bool > Is_prepend_map;
 		Is_prepend_map.clear();

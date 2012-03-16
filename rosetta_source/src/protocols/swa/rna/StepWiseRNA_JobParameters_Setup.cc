@@ -85,8 +85,8 @@ namespace rna {
 		FARFAR_start_pdb_(""),
 		allow_chain_boundary_jump_partner_right_at_fixed_BP_(false), //hacky, just to get the Square RNA working..Nov 6, 2010
 		allow_fixed_res_at_moving_res_(false), //hacky, just to get the Hermann Duplex RNA working..Nov 15, 2010
-		add_virt_res_as_root_(false), //true for electron density map scoring
-		simple_append_map_(false)
+		simple_append_map_(false),
+		add_virt_res_as_root_(false)
   {
 		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::constructor");
 		///////////////////////////////////////////////////////
@@ -488,7 +488,6 @@ namespace rna {
 
 		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::figure_out_Is_residue_prepend_map");
 
-		Size const total_residues( job_parameters_->full_sequence().size() );
 		utility::vector1< core::Size > const & rmsd_res_list= job_parameters_->rmsd_res_list();
 		Output_seq_num_list("rmsd_res_list= ", rmsd_res_list, 30);
 		std::map< core::Size, bool > Is_prepend_map;
@@ -953,7 +952,7 @@ namespace rna {
 		utility::vector1< utility::vector1< Size > > const & input_res_vectors=job_parameters_->input_res_vectors();
 
 		if(input_res_vectors.size()!=2) utility_exit_with_message( "Is_internal case but input_res_vectors.size()!=2" );
-		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() ); //make these const		
+		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() );
 
 		if( Contain_seq_num(sub_to_full[working_seq_num], input_res_vectors[1]) ) return 1;
 
@@ -1096,8 +1095,7 @@ namespace rna {
 		core::kinematics::FoldTree const & fold_tree = job_parameters_->fold_tree();
 		Size const nres = job_parameters_->working_sequence().size();
 
- 		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() ); //make these const
-		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() ); //make these const
+		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() );
 
 		Size num_partition_0( 0 ), num_partition_1( 0 );
 		Size possible_new_root_residue_in_partition_0( 0 ), possible_new_root_residue_in_partition_1( 0 ), root_res( 0 );
@@ -1285,7 +1283,7 @@ namespace rna {
 	StepWiseRNA_JobParameters_Setup::figure_out_Prepend_Internal(core::Size const root_res, InternalWorkingResidueParameter const & internal_params){
 
 		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::figure_out_Prepend_Internal");
-		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() ); //make these const
+		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() );
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
 		Size const working_moving_res( job_parameters_->working_moving_res() ); //hard copy, since this is set later in the function

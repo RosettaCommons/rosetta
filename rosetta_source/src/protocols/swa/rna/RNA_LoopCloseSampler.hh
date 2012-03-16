@@ -97,9 +97,7 @@ private:
 	bool
 	torsion_angles_within_cutoffs ( pose::Pose const & pose,
 	                                Size const moving_suite,
-	                                Size const chainbreak_suite,
-	                                int const bin_size_,
-	                                int const bins2_ );
+	                                Size const chainbreak_suite);
 
 	void initialize_rep_scorefxn();
 
