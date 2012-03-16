@@ -13,7 +13,7 @@
 /// @detailed
 ///
 ///
-/// @author Jianqing Xu (xubest@gmail.com)
+/// @author Jianqing Xu ( xubest@gmail.com )
 
 
 
@@ -46,10 +46,10 @@ class Ab_H3_cter_insert_mover : public protocols::moves::Mover {
     
 public:
     /// @brief default constructor
-	Ab_H3_cter_insert_mover(antibody2::Ab_Info & antibody_in);
+	Ab_H3_cter_insert_mover(antibody2::Ab_Info & ab_info);
     
 	/// @brief constructor with arguments
-	Ab_H3_cter_insert_mover(antibody2::Ab_Info & antibody_in, bool camelid );
+	Ab_H3_cter_insert_mover(antibody2::Ab_Info & ab_info, bool camelid );
 	
     
 	/// @brief default destructor
@@ -61,27 +61,23 @@ public:
     virtual std::string get_name() const;
 
     
-private:
-    
-    // CDR H3 C-terminal fragments
-	utility::vector1< core::fragment::FragData > H3_base_library;
-   
-    Ab_InfoOP antibody_in_;
-
     
     // read CDR H3 C-terminal fragments (size: 4)
     void read_H3_cter_fragment(
-                               antibody2::Ab_Info & antibody_in,
-                               utility::vector1< core::fragment::FragData > & H3_base_library,
+                               antibody2::Ab_Info & ab_info,
                                bool is_camelid
                                );
     
     
+private:
+    
+    // CDR H3 C-terminal fragments
+	utility::vector1< core::fragment::FragData > H3_base_library_;
+   
+    Ab_InfoOP ab_info_;
 
     /// @brief insert C-terminal fragments
     void antibody_modeling_insert_ter( core::pose::Pose & pose) ;
-    
-
     
     bool user_defined_;
         
@@ -92,12 +88,12 @@ private:
 	bool is_camelid_;
     
         
-    void init(antibody2::Ab_Info & antibody_in, bool camelid, bool benchmark);
+    void init(antibody2::Ab_Info & ab_info, bool camelid, bool benchmark);
 //    void setup_objects();
 //    void finalize_setup( core::pose::Pose & pose );
 
     
-    
+    std::string H3_ter_library_filename_;
     
 };
     
@@ -106,8 +102,8 @@ private:
     
     
 
-}
-}
+}//antibody2
+}//protocols
 
 #endif
 

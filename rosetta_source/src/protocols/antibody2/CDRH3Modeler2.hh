@@ -10,7 +10,7 @@
 
 /// @file protocols/antibody2/CDRH3Modeler2.hh
 /// @brief
-///// @author Jianqing Xu (xubest@gmail.com)
+///// @author Jianqing Xu ( xubest@gmail.com )
 //
 
 
@@ -104,8 +104,6 @@ public:
 	virtual std::string get_name() const;
 
 
-    //JQX: move the build_centroid_loop into Ab_H3_perturb_ccd_build 
-    //JQX: move the build_fullatom_loop into Ab_Relax_a_CDR_fullAtom
 
 
 	/////////////////////////////////////////////////////////////////////////
@@ -121,19 +119,6 @@ public:
 		core::scoring::ScoreFunctionOP highres_scorefxn
 	);
 
-	/// @brief insert C-terminal fragments
-	// void antibody_modeling_insert_ter( core::pose::Pose & pose);
-
-
-    //JQX: cutpoints_separation and cutpoint_separation have been moved to the Ab_util file
-
-
-    //JQX: move the scored_frag_close into the Ab_H3_perturb_ccd_build
-
-    
-    //JQX: move the CDR_H3_filter into the utility class
-
-    //JQX: move the loop_fa_relax into Ab_Relax_a_CDR_FullAtom
     
 
 
@@ -185,20 +170,19 @@ private:
 
 	/// @brief enable docking local refine of LH chains & simultaneous H3 min
 	bool snug_fit_;
+    
 	/// @brief loop_building in docking
 	bool loops_flag_;
+    
 	bool docking_local_refine_;
 	/// @brief insert fragment in docking
 	bool dle_flag_;
+    
 	/// @brief just refine input loop
 	bool refine_input_loop_;
 
-
-
 	/// @brief is camelid antibody without light chain
 	bool is_camelid_;
-
-
 
 
 	antibody2::Ab_Info antibody_in_;

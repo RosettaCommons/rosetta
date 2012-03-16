@@ -24,52 +24,43 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <numeric/numeric.functions.hh>
+#include <numeric/random/random.hh>
+#include <numeric/xyz.functions.hh>
+
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/fragment/Frame.hh>
+#include <core/fragment/FrameIterator.hh>
+#include <core/fragment/FrameList.hh>
+#include <core/fragment/BBTorsionSRFD.hh>
+#include <core/fragment/FragData.hh>
+#include <core/fragment/FragSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/chemical/VariantType.hh>
+//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
 
 #include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-//#include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
-
-
-#include <protocols/antibody2/Ab_util.hh>
-#include <core/chemical/VariantType.hh>
-//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
-
-#include <protocols/antibody2/Ab_H3_cter_insert_mover.hh>
-
-#include <numeric/numeric.functions.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-
-
-
-#include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
-
-#include <protocols/simple_moves/FragmentMover.hh>
 
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
+#include <protocols/antibody2/Ab_util.hh>
+#include <protocols/antibody2/Ab_H3_cter_insert_mover.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameList.hh>
 
 
 
@@ -108,7 +99,7 @@ Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build( bool current_loop_is_H3, bool 
     current_loop_is_H3_ = current_loop_is_H3;
     H3_filter_ =  H3_filter;
     is_camelid_= is_camelid;
-    antibody_in_ = antibody_in;
+    ab_info_ = antibody_in;
 
 }
 
@@ -165,9 +156,9 @@ void Ab_H3_perturb_ccd_build::init( )
     
     
 void Ab_H3_perturb_ccd_build::setup_objects(){
-    ab_h3_cter_insert_mover_ = new Ab_H3_cter_insert_mover(antibody_in_);
+    ab_h3_cter_insert_mover_ = new Ab_H3_cter_insert_mover(ab_info_);
     //TODO:  
-    //JQX: right now, just want the code to work, whether this antibody_in_ is at the right position or 
+    //JQX: right now, just want the code to work, whether this ab_info_ is at the right position or 
     // wehther it has been initialized or not? I don't know. Will come back to address this
 }
     
@@ -210,10 +201,10 @@ void Ab_H3_perturb_ccd_build::build_centroid_loop( core::pose::Pose & pose ) {
         
         TR <<  "H3M Modeling Centroid CDR H3 loop" << std::endl;
         
-        Size frmrk_loop_end_plus_one( antibody_in_.get_CDR_loop("h3")->stop() );
-        Size framework_loop_size = ( frmrk_loop_end_plus_one - antibody_in_.get_CDR_loop("h3")->start() ) + 1;
-        Size cutpoint = antibody_in_.get_CDR_loop("h3")->start() + 1;
-        loops::Loop cdr_h3( antibody_in_.get_CDR_loop("h3")->start(), frmrk_loop_end_plus_one,
+        Size frmrk_loop_end_plus_one( ab_info_.get_CDR_loop("h3")->stop() );
+        Size framework_loop_size = ( frmrk_loop_end_plus_one - ab_info_.get_CDR_loop("h3")->start() ) + 1;
+        Size cutpoint = ab_info_.get_CDR_loop("h3")->start() + 1;
+        loops::Loop cdr_h3( ab_info_.get_CDR_loop("h3")->start(), frmrk_loop_end_plus_one,
                            cutpoint,	0, true );
         simple_one_loop_fold_tree( pose, cdr_h3 );
         
@@ -233,22 +224,22 @@ void Ab_H3_perturb_ccd_build::build_centroid_loop( core::pose::Pose & pose ) {
         unaligned_cdr_loop_begin = hfr_template.current_start;
         unaligned_cdr_loop_end = hfr_template.current_end;
         
-        pose.set_psi( antibody_in_.get_CDR_loop("h3")->start() - 1,
+        pose.set_psi( ab_info_.get_CDR_loop("h3")->start() - 1,
                      template_pose_.psi( unaligned_cdr_loop_begin - 1 ) );
-        pose.set_omega(antibody_in_.get_CDR_loop("h3")->start() - 1,
+        pose.set_omega(ab_info_.get_CDR_loop("h3")->start() - 1,
                        template_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
         
         Size modified_framework_loop_end = frmrk_loop_end_plus_one - c_ter_stem_;
-        loops::Loop trimmed_cdr_h3( antibody_in_.get_CDR_loop("h3")->start(),
+        loops::Loop trimmed_cdr_h3( ab_info_.get_CDR_loop("h3")->start(),
                                    modified_framework_loop_end, cutpoint, 0, true );
         
         antibody2::Ab_Info starting_antibody;
-        starting_antibody = antibody_in_;
+        starting_antibody = ab_info_;
         bool closed_cutpoints( false );
         
         Size cycle ( 1 );
         while( !closed_cutpoints && cycle < max_cycle_) {
-            antibody_in_ = starting_antibody;
+            ab_info_ = starting_antibody;
             if( framework_loop_size > 5 ){
                 ab_h3_cter_insert_mover_->apply(pose);
             }
@@ -259,7 +250,7 @@ void Ab_H3_perturb_ccd_build::build_centroid_loop( core::pose::Pose & pose ) {
                 scored_frag_close( pose, trimmed_cdr_h3 );
                 cutoff_9_ = saved_cutoff_9; // restoring
             }
-            closed_cutpoints = cutpoints_separation( pose, antibody_in_ );
+            closed_cutpoints = cutpoints_separation( pose, ab_info_ );
             ++cycle;
         } // while( ( cut_separation > 1.9 )
         
@@ -382,7 +373,7 @@ void Ab_H3_perturb_ccd_build::scored_frag_close (
         protocols::moves::MonteCarloOP mc, outer_mc;
         mc = new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, temp );
         outer_mc = new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, temp );
-        Size buffer( (is_camelid_ && antibody_in_.is_extended()) ? 2 : 0 );
+        Size buffer( (is_camelid_ && ab_info_.is_extended()) ? 2 : 0 );
         while( !loop_found && ( total_cycles++ < cycles1) ) {
             // insert random fragments over the whole loop
             for(Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop()
@@ -408,8 +399,8 @@ void Ab_H3_perturb_ccd_build::scored_frag_close (
                 if( current_loop_is_H3_ && H3_filter_ &&
                    ( local_h3_attempts++ < (50 * cycles2) ) ) {
                     H3_found_current = CDR_H3_filter(pose_in,
-                                                     antibody_in_.get_CDR_loop("h3")->start(),
-                                                     ( antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start() ) + 1,
+                                                     ab_info_.get_CDR_loop("h3")->start(),
+                                                     ( ab_info_.get_CDR_loop("h3")->stop()-1 - ab_info_.get_CDR_loop("h3")->start() ) + 1,
                                                      H3_filter_,
                                                      is_camelid_);
                     if( !H3_found_ever && !H3_found_current) {
@@ -465,8 +456,8 @@ void Ab_H3_perturb_ccd_build::scored_frag_close (
                 if( current_loop_is_H3_ && H3_filter_ &&
                    (current_h3_prob < h3_fraction) && (h3_attempts++<50) )
                     if( !CDR_H3_filter(pose_in, 
-                                       antibody_in_.get_CDR_loop("h3")->start(),
-                                       ( antibody_in_.get_CDR_loop("h3")->stop()-1 - antibody_in_.get_CDR_loop("h3")->start() ) + 1,
+                                       ab_info_.get_CDR_loop("h3")->start(),
+                                       ( ab_info_.get_CDR_loop("h3")->stop()-1 - ab_info_.get_CDR_loop("h3")->start() ) + 1,
                                        H3_filter_,
                                        is_camelid_) 
                        )
@@ -508,10 +499,10 @@ void Ab_H3_perturb_ccd_build::read_and_store_fragments( core::pose::Pose & pose 
         
 		protocols::loops::read_loop_fragments( frag_libs );
         
-		Size frag_size = (antibody_in_.get_CDR_loop("h3")->stop()-antibody_in_.get_CDR_loop("h3")->start()) + 3;
-		Size cutpoint =  antibody_in_.get_CDR_loop("h3")->start() + int( frag_size / 2 );
-		setup_simple_fold_tree(  antibody_in_.get_CDR_loop("h3")->start() - 1, cutpoint,
-                               antibody_in_.get_CDR_loop("h3")->stop() + 1,
+		Size frag_size = (ab_info_.get_CDR_loop("h3")->stop()-ab_info_.get_CDR_loop("h3")->start()) + 3;
+		Size cutpoint =  ab_info_.get_CDR_loop("h3")->start() + int( frag_size / 2 );
+		setup_simple_fold_tree(  ab_info_.get_CDR_loop("h3")->start() - 1, cutpoint,
+                               ab_info_.get_CDR_loop("h3")->stop() + 1,
                                pose.total_residue(),
                                pose );
         
@@ -525,7 +516,7 @@ void Ab_H3_perturb_ccd_build::read_and_store_fragments( core::pose::Pose & pose 
              eit = loop_3mer_frames.end(); it!=eit; ++it ) {
 			FrameOP short_frame = (*it)->clone_with_frags();
 			offset++;
-			short_frame->shift_to( ( antibody_in_.get_CDR_loop("h3")->start() - 2 ) + offset  );
+			short_frame->shift_to( ( ab_info_.get_CDR_loop("h3")->start() - 2 ) + offset  );
 			offset_3mer_frags->add( short_frame );
 		}
         
@@ -539,7 +530,7 @@ void Ab_H3_perturb_ccd_build::read_and_store_fragments( core::pose::Pose & pose 
              eit = loop_9mer_frames.end(); it!=eit; ++it ) {
 			FrameOP short_frame = (*it)->clone_with_frags();
 			offset++;
-			short_frame->shift_to( ( antibody_in_.get_CDR_loop("h3")->start() - 2 ) + offset  );
+			short_frame->shift_to( ( ab_info_.get_CDR_loop("h3")->start() - 2 ) + offset  );
 			offset_9mer_frags->add( short_frame );
 		}
         
@@ -547,7 +538,7 @@ void Ab_H3_perturb_ccd_build::read_and_store_fragments( core::pose::Pose & pose 
 		cdr_h3_frags_.push_back( offset_3mer_frags );
         
 		return;
-	} // read_and_store_fragments
+} // read_and_store_fragments
     
 
     

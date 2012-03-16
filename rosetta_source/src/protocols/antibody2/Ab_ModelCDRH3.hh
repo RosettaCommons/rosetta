@@ -13,18 +13,15 @@
 /// @detailed
 ///
 ///
-/// @author Jianqing Xu (xubest@gmail.com)
+/// @author Jianqing Xu ( xubest@gmail.com )
 
 
 #ifndef INCLUDED_protocols_antibody2_Ab_ModelCDRH3_hh
 #define INCLUDED_protocols_antibody2_Ab_ModelCDRH3_hh
 
-#include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/FragData.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
@@ -62,62 +59,39 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 
-	// simple inline setters
-	void set_model_h3( bool model_h3 ) { model_h3_ = model_h3; }
-	void set_snugfit( bool snugfit ) { snugfit_ = snugfit; }
-	void set_graft_l1( bool graft_l1 ) { graft_l1_ = graft_l1; }
-	void set_graft_l2( bool graft_l2 ) { graft_l2_ = graft_l2; }
-	void set_graft_l3( bool graft_l3 ) { graft_l3_ = graft_l3; }
-	void set_graft_h1( bool graft_h1 ) { graft_h1_ = graft_h1; }
-	void set_graft_h2( bool graft_h2 ) { graft_h2_ = graft_h2; }
-	void set_graft_h3( bool graft_h3 ) { graft_h3_ = graft_h3; }
-	void set_camelid( bool camelid ) { camelid_ = camelid; }
-	void set_camelid_constraints( bool camelid_constraints ) { camelid_constraints_ = camelid_constraints; }
-	void set_benchmark( bool benchmark ) { benchmark_ = benchmark; }
-
 	virtual std::string get_name() const;
-
-
-
-	void relax_cdrs( core::pose::Pose & pose );
-
-	void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in, const loops::Loops & loops );
-
-    //JQX: move the repulsive_ramp and snugfit_MC_min to a new class
-
-	//void snugfit_mcm_protocol(core::pose::Pose & pose_in, loops::Loops loops_in );
-    //JQX: move to a new class
-
-    //JQX: move setup_packer_task to Ab_util function
-
-	core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, const core::pose::Pose & native_pose, std::string cdr_type );
-
-
-
-	void display_constraint_residues( core::pose::Pose & pose );
-
-    
-    
-    void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const Ab_ModelCDRH3 & ab_m_2 );
-    
     
     /// @brief Associates relevant options with the AntibodyModeler class
     static void register_options();
     
+	// simple inline setters
+	void set_snugfit( bool snugfit ) { snugfit_ = snugfit; }
+	void set_camelid( bool camelid ) { camelid_ = camelid; }
+	void set_camelid_constraints( bool camelid_constraints ) 
+        { camelid_constraints_ = camelid_constraints; }
+	void set_benchmark( bool benchmark ) { benchmark_ = benchmark; }
+
+	void relax_cdrs( core::pose::Pose & pose );
+
+	void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in, 
+                                  const loops::Loops & loops );
 
 
-public:
+	core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, 
+                                  const core::pose::Pose & native_pose, 
+                                  std::string cdr_type );
 
-	// Modeling H3 options
-	bool model_h3_;
+	void display_constraint_residues( core::pose::Pose & pose );
+
+        
+    void show( std::ostream & out=std::cout );
+    friend std::ostream & operator<<(std::ostream& out, const Ab_ModelCDRH3 & ab_m_2 );
+    
+    
+
+private:
+
 	bool snugfit_;
-	bool graft_l1_;
-	bool graft_l2_;
-	bool graft_l3_;
-	bool graft_h1_;
-	bool graft_h2_;
-	bool graft_h3_;
 	bool camelid_;
 	bool camelid_constraints_;
 
@@ -126,7 +100,6 @@ public:
 
 	bool user_defined_; // for constructor options passed to init
 
-	// flag for one time fragment initialization
 	bool flags_and_objects_are_in_sync_;
 	bool first_apply_with_current_setup_;
 
@@ -145,11 +118,6 @@ public:
 
 	// movers
 	protocols::antibody2::CDRH3Modeler2OP model_cdrh3_;
-    
-    
-
-
-    
     
 
 	/// @brief Assigns user specified values to primitive members using command line options

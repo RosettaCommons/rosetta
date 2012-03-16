@@ -11,23 +11,24 @@
 /// @file protocols/antibody2/CDRH3Modeler2.cc
 /// @brief models CDR H3 loop using loop modeling
 /// @detailed
-///// @author Jianqing Xu (xubest@gmail.com)
+///// @author Jianqing Xu ( xubest@gmail.com )
 //
 
 // Rosetta Headers
 #include <protocols/antibody2/CDRH3Modeler2.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
-
 #include <core/chemical/VariantType.hh>
+
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
+
 #include <core/id/types.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <core/kinematics/Jump.hh>
+
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -35,51 +36,58 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/dunbrack/RotamerConstraint.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/import_pose/import_pose.hh>
+
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
+
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-//#include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
+
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
+
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
+
+
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/RepeatMover.hh>
+
 
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/pose/util.hh>
+
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -87,7 +95,6 @@
 #include <limits>
 
 #include <protocols/antibody2/Ab_util.hh>
-
 #include <protocols/antibody2/Ab_Relax_a_CDR_FullAtom.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.hh>
 
@@ -150,14 +157,12 @@ void CDRH3Modeler2::init(
 		benchmark_ = benchmark;
 	}
 
-	lowres_scorefxn_ = scoring::ScoreFunctionFactory::
-		create_score_function( "cen_std", "score4L" );
+	lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 	lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
 	// adding constraints
 	lowres_scorefxn_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
 
-	highres_scorefxn_ = scoring::ScoreFunctionFactory::
-		create_score_function("standard", "score12" );
+	highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
 	highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
 	highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
 	// adding constraints
@@ -211,122 +216,117 @@ void CDRH3Modeler2::set_default()
     
     
     
-		void CDRH3Modeler2::set_lowres_score_func(
-      scoring::ScoreFunctionOP lowres_scorefxn ) {
-			lowres_scorefxn_ = lowres_scorefxn;
-		} // set_lowres_score_func
+void CDRH3Modeler2::set_lowres_score_func( scoring::ScoreFunctionOP lowres_scorefxn ) {
+    lowres_scorefxn_ = lowres_scorefxn;
+} 
 
-		void CDRH3Modeler2::set_highres_score_func(
-      scoring::ScoreFunctionOP highres_scorefxn) {
-			highres_scorefxn_ = highres_scorefxn;
-		} // set_highres_score_func
+void CDRH3Modeler2::set_highres_score_func(scoring::ScoreFunctionOP highres_scorefxn) {
+    highres_scorefxn_ = highres_scorefxn;
+}
 
     
     
     
-        //################################################
-        //###########  apply function ####################
-        //################################################
-
-		void CDRH3Modeler2::apply( pose::Pose & pose_in )
-		{
-			if( !model_h3_ )
+//################################################
+//###########  apply function ####################
+//################################################
+void CDRH3Modeler2::apply( pose::Pose & pose_in )
+{
+    if( !model_h3_ )
 				return;
 
-			TR << "H3M Applying CDR H3 modeler" << std::endl;
+    TR << "H3M Applying CDR H3 modeler" << std::endl;
 
-			using namespace core::pose;
-			using namespace core::scoring;
-			using namespace protocols::moves;
+    using namespace core::pose;
+    using namespace core::scoring;
+    using namespace protocols::moves;
 
-			start_pose_ = pose_in;
-			antibody_in_.setup_CDR_loops( pose_in, is_camelid_ );
-			setup_packer_task( pose_in, tf_ );
-			pose::Pose start_pose = pose_in;
+    start_pose_ = pose_in;
+    antibody_in_.setup_CDR_loops( pose_in, is_camelid_ );
+    setup_packer_task( pose_in, tf_ );
+    pose::Pose start_pose = pose_in;
 
-//camelid			if( is_camelid_ && !antibody_in_.is_extended() && !antibody_in_.is_kinked() )
-//camelid				c_ter_stem_ = 0;
+//camelid	if( is_camelid_ && !antibody_in_.is_extended() && !antibody_in_.is_kinked() )
+//camelid		c_ter_stem_ = 0;
 
-			Size framework_loop_begin( antibody_in_.get_CDR_loop("h3")->start() );
-			Size frmrk_loop_end_plus_one( antibody_in_.get_CDR_loop("h3")->stop() );
-			//Size framework_loop_size = ( frmrk_loop_end_plus_one -
-			//														framework_loop_begin ) + 1;
-			Size cutpoint = framework_loop_begin + 1;
-			loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one,
+    Size framework_loop_begin( antibody_in_.get_CDR_loop("h3")->start() );
+    Size frmrk_loop_end_plus_one( antibody_in_.get_CDR_loop("h3")->stop() );
+    //Size framework_loop_size = ( frmrk_loop_end_plus_one -
+    //														framework_loop_begin ) + 1;
+    Size cutpoint = framework_loop_begin + 1;
+    loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one,
 													cutpoint,	0, true );
-			simple_one_loop_fold_tree( pose_in, cdr_h3 );
+    simple_one_loop_fold_tree( pose_in, cdr_h3 );
 
-			// switching to centroid mode
-			simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
-			simple_moves::SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
+    // switching to centroid mode
+    simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+    simple_moves::SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
 
-			// Building centroid mode loop
-			if( apply_centroid_mode_ ) {
-				to_centroid.apply( pose_in );
-                //#############################
-                Ab_H3_perturb_ccd_build ab_h3_perturb_ccd_build(current_loop_is_H3_,H3_filter_,is_camelid_, antibody_in_ );
-                ab_h3_perturb_ccd_build.apply(pose_in);
-				//build_centroid_loop( pose_in );
-                //#############################
-				if( is_camelid_ )
-					loop_centroid_relax( pose_in, antibody_in_.get_CDR_loop("h1")->start(),
+    // Building centroid mode loop
+    if( apply_centroid_mode_ ) {
+        to_centroid.apply( pose_in );
+        //#############################
+        Ab_H3_perturb_ccd_build ab_h3_perturb_ccd_build(current_loop_is_H3_,H3_filter_,is_camelid_, antibody_in_ );
+        ab_h3_perturb_ccd_build.apply(pose_in);
+        //build_centroid_loop( pose_in );
+        //#############################
+        if( is_camelid_ )
+            loop_centroid_relax( pose_in, antibody_in_.get_CDR_loop("h1")->start(),
 															 antibody_in_.get_CDR_loop("h1")->stop() );
-				to_full_atom.apply( pose_in );
+        to_full_atom.apply( pose_in );
 
-				utility::vector1<bool> allow_chi_copy( pose_in.total_residue(),
-																							 true );
-				for( Size ii = antibody_in_.get_CDR_loop("h3")->start();
+        utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
+        for( Size ii = antibody_in_.get_CDR_loop("h3")->start();
 						 ii <= ( antibody_in_.get_CDR_loop("h3")->stop() ); ii++ )
 					allow_chi_copy[ii] = false;
-				//recover sidechains from starting structures
-				protocols::simple_moves::ReturnSidechainMover recover_sidechains(
-					start_pose_, allow_chi_copy );
-				recover_sidechains.apply( pose_in );
+        //recover sidechains from starting structures
+        protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose_, allow_chi_copy );
+        recover_sidechains.apply( pose_in );
 
-				// Packer
-				protocols::simple_moves::PackRotamersMoverOP packer;
-				packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
-				packer->task_factory(tf_);
-				packer->apply( pose_in );
-			}
+        // Packer
+        protocols::simple_moves::PackRotamersMoverOP packer;
+        packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
+        packer->task_factory(tf_);
+        packer->apply( pose_in );
+    }
 
-			if( apply_fullatom_mode_ ) {
-                //##############################
-                Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(current_loop_is_H3_, H3_filter_); 
-                relax_a_cdr_high_res.pass_start_pose(start_pose_);
-                relax_a_cdr_high_res.apply(pose_in);
-				//build_fullatom_loop( pose_in );
-                //##############################
-				if( !benchmark_ ) {
-					Size repack_cycles(1);
-					if( antibody_refine_ && !snug_fit_ )
-						repack_cycles = 3;
-					protocols::simple_moves::PackRotamersMoverOP packer;
-					packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
-					packer->task_factory(tf_);
-					packer->nloop( repack_cycles );
-					packer->apply( pose_in );
-				}
-			}
+    if( apply_fullatom_mode_ ) {
+        //##############################
+        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(current_loop_is_H3_, H3_filter_); 
+        relax_a_cdr_high_res.pass_start_pose(start_pose_);
+        relax_a_cdr_high_res.apply(pose_in);
+        //build_fullatom_loop( pose_in );
+        //##############################
+        if( !benchmark_ ) 
+        {
+            Size repack_cycles(1);
+            if( antibody_refine_ && !snug_fit_ ){repack_cycles = 3;}
+            protocols::simple_moves::PackRotamersMoverOP packer;
+            packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
+            packer->task_factory(tf_);
+            packer->nloop( repack_cycles );
+            packer->apply( pose_in );
+        }
+    }
 
-			// Minimize CDR H2 loop if this is a camelid
+    // Minimize CDR H2 loop if this is a camelid
             
-			if( is_camelid_ ) {
-                //##############################
-                Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(false, false, is_camelid_); // because of h2
-                relax_a_cdr_high_res.apply(pose_in);
-                //##############################
+    if( is_camelid_ ) {
+        //##############################
+        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(false, false, is_camelid_); // because of h2
+        relax_a_cdr_high_res.apply(pose_in);
+        //##############################
 
-                //JQX: remove the duplicated code, camelid H2 will be automatically taken care of
-                //     see the code in Ab_Relax_a_CDR_FullAtom file
-			}
+        //JQX: remove the duplicated code, camelid H2 will be automatically taken care of
+        //     see the code in Ab_Relax_a_CDR_FullAtom file
+    }
 
 
 
-			TR << "H3M Finished applying CDR H3 modeler" << std::endl;
+    TR << "H3M Finished applying CDR H3 modeler" << std::endl;
 
-			return;
-		} // CDRH3Modeler2::apply()
+    return;
+} // CDRH3Modeler2::apply()
 
     
     

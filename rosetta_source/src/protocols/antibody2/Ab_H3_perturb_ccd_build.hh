@@ -23,18 +23,16 @@
 
 
 
-
-
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/antibody2/Ab_Info.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/loops/Loops.hh>
 
+#include <protocols/antibody2/Ab_Info.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
 
@@ -45,6 +43,8 @@
 namespace protocols {
 namespace antibody2 {
         
+    
+    
 class Ab_H3_perturb_ccd_build: public moves::Mover {
             
             
@@ -75,8 +75,7 @@ public:
     
 private:
 
-    Ab_Info antibody_in_;
-    // Ab_InfoOP
+    Ab_Info ab_info_;
     
     
     /// @brief Centroid mode loop building
@@ -92,8 +91,6 @@ private:
     void finalize_setup( core::pose::Pose & pose );
 
     
-
-
     /// @brief Build centroid mode CDR H3 loop
 	void build_centroid_loop( core::pose::Pose & pose );
     
@@ -102,13 +99,8 @@ private:
                            loops::Loop const trimmed_cdr_h3
                            );
 
-
-
-
     
     core::Size max_cycle_;
-    
-    
     
     /// @brief Number of ADDITIONAL residues modeled from H3_CTERM
 	///        These residues range from H:n-2,n-1,n,n+1 of H3
@@ -117,6 +109,7 @@ private:
     
     /// @brief size of loop above which 9mer frags are used
 	core::Size cutoff_9_; // default 16
+    
 	/// @brief size of loop above which 3mer frags are used
 	core::Size cutoff_3_; // default 6
     
@@ -134,16 +127,9 @@ private:
     /// @brief actually enables H3 filter for H3 operations
 	bool H3_filter_;
     
+    utility::vector1< core::fragment::FragSetOP > cdr_h3_frags_;
     
-    
-    	utility::vector1< core::fragment::FragSetOP > cdr_h3_frags_;
-    
-
 };
-    
-    
-    
-    
     
     
     
@@ -151,10 +137,6 @@ private:
 } // namespace protocols
 
 #endif
-
-
-
-
 
 
 

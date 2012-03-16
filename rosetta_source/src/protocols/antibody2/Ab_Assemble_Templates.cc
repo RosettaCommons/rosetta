@@ -1,4 +1,3 @@
-
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -18,88 +17,44 @@
 
 #include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueSelector.hh>
-
-#include <core/chemical/VariantType.hh>
-
 #include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/import_pose/import_pose.hh>
+
+#include <basic/prof.hh>
+#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
-//#include <basic/options/keys/antibody2.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/prof.hh>
-#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/OptH.hh>
-#include <core/pack/task/operation/ResFilters.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
-#include <basic/Tracer.hh>
 
+#include <protocols/jd2/ScoreMap.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/PyMolMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/antibody2/Ab_GraftOneCDR_Mover.hh>
+#include <protocols/antibody2/Ab_CloseOneCDR_Mover.hh>
+#include <protocols/antibody2/Ab_RelaxCDRs_Mover.hh>
+#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/Ab_TemplateInfo.hh>
+#include <protocols/antibody2/Ab_Assemble_Templates.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 using namespace ObjexxFCL::fmt;
 
-#include <protocols/jd2/ScoreMap.hh>
-
-#include <protocols/antibody2/Ab_Info.hh>
-#include <protocols/antibody2/Ab_TemplateInfo.hh>
-
-#include <protocols/antibody2/Ab_Assemble_Templates.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
-
-
-#include <protocols/simple_moves/ConstraintSetMover.hh>
-
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
-
-#include <protocols/moves/PyMolMover.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/TrialMover.hh>
-
-
-
-#include <protocols/antibody2/Ab_GraftOneCDR_Mover.hh>
-#include <protocols/antibody2/Ab_CloseOneCDR_Mover.hh>
-#include <protocols/antibody2/Ab_RelaxCDRs_Mover.hh>
-
-
-
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 
 
 using basic::T;
@@ -122,16 +77,10 @@ Ab_Assemble_Templates::Ab_Assemble_Templates() : Mover() {
 Ab_Assemble_Templates::~Ab_Assemble_Templates() {}
 
 //clone
-protocols::moves::MoverOP
-Ab_Assemble_Templates::clone() const {
+protocols::moves::MoverOP Ab_Assemble_Templates::clone() const {
 	return( new Ab_Assemble_Templates() );
 }
 
-    
-    
-    
-    
-    
     
     
 void Ab_Assemble_Templates::init() {
@@ -144,7 +93,6 @@ void Ab_Assemble_Templates::init() {
 	register_options();
 	init_from_options();
 
-    
 //	if ( ab_model_score() == NULL ) { //<- use this if we want to pass in score functions
 		// score functions
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" );
@@ -157,11 +105,7 @@ void Ab_Assemble_Templates::init() {
 
 }
 
-    
-    
-    
-    
-    
+
     
 void Ab_Assemble_Templates::set_default()
 {
@@ -178,10 +122,6 @@ void Ab_Assemble_Templates::set_default()
 
 }
 
-    
-    
-    
-    
     
     
 void Ab_Assemble_Templates::register_options()
@@ -228,9 +168,8 @@ void Ab_Assemble_Templates::init_from_options() {
                 set_camelid_constraints( option[ OptionKeys::antibody::camelid_constraints ]() );
 	if ( option[ OptionKeys::run::benchmark ].user() )
                 set_benchmark( option[ OptionKeys::run::benchmark ]() );
-    
     if ( option[ OptionKeys::constraints::cst_weight ].user() )
-        set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
+                set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
 
 
 	//set native pose if asked for
@@ -259,17 +198,10 @@ void Ab_Assemble_Templates::init_from_options() {
     grafts_.insert( std::pair< std::string, bool >("h2", graft_h2_) );
     grafts_.insert( std::pair< std::string, bool >("h3", graft_h3_) );
     
-
-
 }
 
     
-    
-    
-    
-    
-    
-    
+
     
 void Ab_Assemble_Templates::setup_objects() {
     ab_info_ = NULL;
@@ -289,9 +221,6 @@ void Ab_Assemble_Templates::setup_objects() {
     
 void Ab_Assemble_Templates::sync_objects_with_flags() {
 
-	using namespace protocols::moves;
-
-
 	flags_and_objects_are_in_sync_ = true;
 	first_apply_with_current_setup_ = true;
 }
@@ -306,7 +235,6 @@ void Ab_Assemble_Templates::sync_objects_with_flags() {
     
 
 void Ab_Assemble_Templates::finalize_setup( pose::Pose & frame_pose ) {
-    TR<<" finalize_setup ............."<<std::endl;
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
 
 	// check for native and input pose
@@ -399,15 +327,7 @@ void Ab_Assemble_Templates::apply( pose::Pose & frame_pose ) {
     using namespace core::scoring::constraints;
     using namespace protocols::moves;
 
-//  I assume the pose is from the job distributor, which can take the -s flag to get the pose
-    // the below test proves that the inital secstruct is all "L"!
-/*    TR<<"JQX:    this is the 1st time that the 'pose' is used in the code: "<<std::endl;
-    TR<<pose<<std::endl;
-    for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-            TR<<"JQX:   residue: "<<i<<"       secstruct: "<<pose.secstruct(i)<<std::endl;
-    }
-    exit(-1);   */
-    
+
     TR<<" in the apply function "<<std::endl;
     
     
@@ -581,10 +501,6 @@ std::ostream & operator<<(std::ostream& out, const Ab_Assemble_Templates & ab_m_
     return out;
 }
     
-
-    
-
-
 
     
     

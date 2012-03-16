@@ -16,30 +16,31 @@
 
 // Rosetta Headers
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/Pose.hh>
+
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
 #include <core/id/AtomID_Map.hh>
-
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-
-//Auto Headers
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/import_pose/import_pose.hh>
 
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
+
 #include <iostream>
 #include <fstream>
+#include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
+
+
+
+
 
 static basic::Tracer TR("antibody2.Ab_Info");
 

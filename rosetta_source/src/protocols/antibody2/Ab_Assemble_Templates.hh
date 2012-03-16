@@ -13,16 +13,14 @@
 /// @detailed
 ///
 ///
-/// @author Jianqing Xu (xubest@gmail.com)
+/// @author Jianqing Xu ( xubest@gmail.com )
 
 
 #ifndef INCLUDED_protocols_antibody2_Ab_Assemble_Templates_hh
 #define INCLUDED_protocols_antibody2_Ab_Assemble_Templates_hh
 
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
@@ -30,19 +28,16 @@
 #include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 #include <protocols/antibody2/Ab_Assemble_Templates.fwd.hh>
-
-
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 
-
-
-
-#include <utility/vector1.hh>
 #include <iostream>
+
+
+
 
 namespace protocols {
 namespace antibody2 {
@@ -81,9 +76,6 @@ public:
 
 	virtual std::string get_name() const;
 
-
-
-    
     
     /// @brief Associates relevant options with the AntibodyModeler class
     static void register_options();
@@ -110,7 +102,7 @@ private:
     
     GraftMap grafts_ ;
     
-    
+
     
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;

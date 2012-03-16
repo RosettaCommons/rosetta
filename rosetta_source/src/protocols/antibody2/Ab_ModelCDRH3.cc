@@ -19,37 +19,16 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueSelector.hh>
-
 #include <core/chemical/VariantType.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragID.hh>
-#include <core/fragment/FragSet.hh>
-
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/antibody.OptionKeys.gen.hh>
-//#include <basic/options/keys/antibody2.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/prof.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/OptH.hh>
-#include <core/pack/task/operation/ResFilters.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pose/Pose.hh>
+#include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -60,52 +39,54 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/pose/util.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DiagnosticData.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-using namespace ObjexxFCL::fmt;
-
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/jd2/ScoreMap.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/antibody2/Ab_Info.hh>
-#include <protocols/antibody2/Ab_ModelCDRH3.hh>
-#include <protocols/docking/SidechainMinMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/antibody2/CDRH3Modeler2.hh>
-
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/moves/JumpOutMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/moves/PyMolMover.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/moves/JumpOutMover.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/docking/SidechainMinMover.hh>
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 #include <protocols/antibody2/Ab_util.hh>
-
+#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/Ab_ModelCDRH3.hh>
+#include <protocols/antibody2/CDRH3Modeler2.hh>
 #include <protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.hh>
 #include <protocols/antibody2/Ab_LH_SnugFit_Mover.hh>
-#include <protocols/antibody2/Ab_util.hh>
 
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
+using namespace ObjexxFCL::fmt;
 
 
 
@@ -137,12 +118,8 @@ Ab_ModelCDRH3::clone() const {
 
     
     
-    
-    
-    
-    
-    
-void Ab_ModelCDRH3::init() {
+void Ab_ModelCDRH3::init() 
+{
 	Mover::type( "Ab_ModelCDRH3" );
 
 	// setup all the booleans with default values
@@ -154,14 +131,10 @@ void Ab_ModelCDRH3::init() {
     
 	init_from_options();
 
-    
-//	if ( ab_model_score() == NULL ) { //<- use this if we want to pass in score functions
-		// score functions
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" );
-		scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
-		scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
-		scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1.00 );
-//	}
+    scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" );
+    scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
+    scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
+    scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1.00 );
 
 	setup_objects();
 
@@ -169,22 +142,10 @@ void Ab_ModelCDRH3::init() {
 
     
     
-    
-    
-    
-    
-void
-Ab_ModelCDRH3::set_default()
+void Ab_ModelCDRH3::set_default()
 {
 	TR <<  "Setting up default settings to all FALSE" << std::endl;
-	model_h3_  = false;
 	snugfit_   = false;
-	graft_l1_  = false;
-	graft_l2_  = false;
-	graft_l3_  = false;
-	graft_h1_  = false;
-	graft_h2_  = false;
-	graft_h3_  = false;
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
@@ -193,25 +154,13 @@ Ab_ModelCDRH3::set_default()
 
     
     
-    
-    
-    
-    
-void
-Ab_ModelCDRH3::register_options()
+void Ab_ModelCDRH3::register_options()
 {
 	using namespace basic::options;
 
-	option.add_relevant( OptionKeys::antibody::model_h3 );
 	option.add_relevant( OptionKeys::antibody::snugfit );
 	option.add_relevant( OptionKeys::antibody::camelid );
 	option.add_relevant( OptionKeys::antibody::camelid_constraints );
-	option.add_relevant( OptionKeys::antibody::graft_l1 );
-	option.add_relevant( OptionKeys::antibody::graft_l2 );
-	option.add_relevant( OptionKeys::antibody::graft_l3 );
-	option.add_relevant( OptionKeys::antibody::graft_h1 );
-	option.add_relevant( OptionKeys::antibody::graft_h2 );
-	option.add_relevant( OptionKeys::antibody::graft_h3 );
 	option.add_relevant( OptionKeys::constraints::cst_weight );
 	option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::in::file::native );
@@ -221,27 +170,14 @@ Ab_ModelCDRH3::register_options()
     
     
     
-void
-Ab_ModelCDRH3::init_from_options() {
+void Ab_ModelCDRH3::init_from_options() 
+{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	TR <<  "Reading Options" << std::endl;
-	if ( option[ OptionKeys::antibody::model_h3 ].user() )
-                set_model_h3( option[ OptionKeys::antibody::model_h3 ]() );
+
 	if ( option[ OptionKeys::antibody::snugfit ].user() )
                 set_snugfit( option[ OptionKeys::antibody::snugfit ]() );
-	if ( option[ OptionKeys::antibody::graft_l1 ].user() )
-                set_graft_l1( option[ OptionKeys::antibody::graft_l1 ]() );
-	if ( option[ OptionKeys::antibody::graft_l2 ].user() )
-                set_graft_l2( option[ OptionKeys::antibody::graft_l2 ]() );
-	if ( option[ OptionKeys::antibody::graft_l3 ].user() )
-                set_graft_l3( option[ OptionKeys::antibody::graft_l3 ]() );
-	if ( option[ OptionKeys::antibody::graft_h1 ].user() )
-                set_graft_h1( option[ OptionKeys::antibody::graft_h1 ]() );
-	if ( option[ OptionKeys::antibody::graft_h2 ].user() )
-                set_graft_h2( option[ OptionKeys::antibody::graft_h2 ]() );
-	if ( option[ OptionKeys::antibody::graft_h3 ].user() )
-                set_graft_h3( option[ OptionKeys::antibody::graft_h3 ]() );
 	if ( option[ OptionKeys::antibody::camelid ].user() )
                 set_camelid( option[ OptionKeys::antibody::camelid ]() );
 	if ( option[ OptionKeys::antibody::camelid_constraints ].user() )
@@ -263,58 +199,39 @@ Ab_ModelCDRH3::init_from_options() {
 	cst_weight_ = option[ OptionKeys::constraints::cst_weight ]();
     
 	if( camelid_ ) {
-		graft_l1_ = false;
-		graft_l2_ = false;
-		graft_l3_ = false;
 		snugfit_ = false;
 	}
     
-	if( camelid_constraints_ )
-		model_h3_ = false;
-
 }
 
-    
-    
-    
-    
-    
-    
+
     
     
 void
 Ab_ModelCDRH3::setup_objects() {
     
 	sync_objects_with_flags();
-    
-    
-    
+
 }
     
-void Ab_ModelCDRH3::sync_objects_with_flags() {
-
+void Ab_ModelCDRH3::sync_objects_with_flags() 
+{
 	using namespace protocols::moves;
 
 	// add movers to sequence mover depending on the flags that were set
 
-
-
-	if ( model_h3_ ){model_cdrh3_ = new CDRH3Modeler2( model_h3_, true, true, camelid_, benchmark_ );}
-	else            {model_cdrh3_ = NULL;}
-
-    
-    
-
-    
-    
-    
+    model_cdrh3_ = new CDRH3Modeler2( true /*model_h3*/, true, true, camelid_, benchmark_ );
     
 	flags_and_objects_are_in_sync_ = true;
 	first_apply_with_current_setup_ = true;
 }
 
 
-    
+std::string Ab_ModelCDRH3::get_name() const 
+{        
+    return "Ab_ModelCDRH3";
+}
+
     
     
     
@@ -324,13 +241,11 @@ void Ab_ModelCDRH3::sync_objects_with_flags() {
     
 
 void
-Ab_ModelCDRH3::finalize_setup( pose::Pose & frame_pose ) {
+Ab_ModelCDRH3::finalize_setup( pose::Pose & frame_pose ) 
+{
 
-    
-
-	TR<<"AAAAAAAA     model_h3: "<<model_h3_<<std::endl;
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
-	if( model_h3_ && ( cst_weight_ != 0.00 ) ) {
+	if(  cst_weight_ != 0.00  ) {
 		simple_moves::ConstraintSetMoverOP cdr_constraint = new simple_moves::ConstraintSetMover();
 		cdr_constraint->apply( frame_pose );
 	}
@@ -361,14 +276,9 @@ Ab_ModelCDRH3::finalize_setup( pose::Pose & frame_pose ) {
             TR<<ab_info_<<std::endl;
 
 
-	if( model_h3_ ) {
-		// Read standard Rosetta fragments file
-		exit(-1);
 
-
-        
-		model_cdrh3_->set_native_pose( get_native_pose() );
-	}
+    model_cdrh3_->set_native_pose( get_native_pose() );
+	
 }
 
 
@@ -378,21 +288,13 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 
     using namespace chemical;
     using namespace id;
-    using namespace fragment;
     using namespace scoring;
     using namespace core::scoring::constraints;
     using namespace protocols::moves;
 
-//  I assume the pose is from the job distributor, which can take the -s flag to get the pose
-    // the below test proves that the inital secstruct is all "L"   !!!!!!!!!!!!!
-/*    TR<<"JQX:    this is the 1st time that the 'pose' is used in the code: "<<std::endl;
-    TR<<pose<<std::endl;
-    for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-            TR<<"JQX:   residue: "<<i<<"       secstruct: "<<pose.secstruct(i)<<std::endl;
-    }
-    exit(-1);   */
-    
-    
+
+    // the default inital secstruct is all "L" loop!
+
     
     protocols::moves::PyMolMover pymol;
     if ( !flags_and_objects_are_in_sync_ ){ 
@@ -423,28 +325,20 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 
 
 
+    
+    
+    model_cdrh3_->apply( frame_pose );
+    pymol.apply( frame_pose );
+    pymol.send_energy( frame_pose );
+    
+    relax_cdrs( frame_pose );
+    pymol.apply( frame_pose );
+    pymol.send_energy( frame_pose );
 
-
-	// model h3
-	if ( model_h3_ ) {
-		// centroid
-		// high res
-		model_cdrh3_->apply( frame_pose );
-		pymol.apply( frame_pose );
-		pymol.send_energy( frame_pose );
-		// if not snugfit, relax cdr
-		if ( !snugfit_ ) relax_cdrs( frame_pose );
-		pymol.apply( frame_pose );
-		pymol.send_energy( frame_pose );
-	}
 
 	// snugfit
 	if ( !camelid_ && snugfit_ ) {
 		all_cdr_VL_VH_fold_tree( frame_pose, ab_info_.all_cdr_loops_ );
-        
-		relax_cdrs( frame_pose );
-		pymol.apply( frame_pose );
-		pymol.send_energy( frame_pose );
         
         //############################################################################
         Ab_LH_RepulsiveRamp_Mover ab_lh_repulsiveramp_mover (ab_info_.all_cdr_loops_);
@@ -516,26 +410,7 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 	basic::prof_show();
 
 
-
-
-
 }// end apply
-
-
-
-
-
-
-
-
-std::string
-Ab_ModelCDRH3::get_name() const {
-	return "Ab_ModelCDRH3";
-}
-
-
-
-
 
 
 
@@ -572,8 +447,7 @@ Ab_ModelCDRH3::get_name() const {
 	///
 	/// @last_modified 02/15/2010
 	///////////////////////////////////////////////////////////////////////////
-	void
-	Ab_ModelCDRH3::relax_cdrs( core::pose::Pose & pose )
+	void Ab_ModelCDRH3::relax_cdrs( core::pose::Pose & pose )
 	{
 		using namespace pack;
 		using namespace pack::task;
@@ -639,6 +513,12 @@ Ab_ModelCDRH3::get_name() const {
 		pose.fold_tree( input_tree );
 	} // relax_cdrs
 
+    
+    
+    
+    
+    
+    
 	///////////////////////////////////////////////////////////////////////////
 	/// @begin all_cdr_VL_VH_fold_tree
 	///
@@ -660,8 +540,8 @@ Ab_ModelCDRH3::get_name() const {
 	///
 	/// @last_modified 07/13/2010
 	///////////////////////////////////////////////////////////////////////////
-	void
-	Ab_ModelCDRH3::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) {
+	void Ab_ModelCDRH3::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) 
+    {
 
 		using namespace kinematics;
 
@@ -731,71 +611,75 @@ Ab_ModelCDRH3::get_name() const {
 
 
 
+
+
+
+
+Real Ab_ModelCDRH3::global_loop_rmsd (
+    const pose::Pose & pose_in,
+    const pose::Pose & native_pose,
+    std::string cdr_type ) 
+{
+    using namespace scoring;
+
+    loops::LoopOP current_loop = ab_info_.get_CDR_loop( cdr_type );
+    Size loop_start = current_loop->start();
+    Size loop_end = current_loop->stop();
+
+    using ObjexxFCL::FArray1D_bool;
+    FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
+
+    for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
+
+    using namespace core::scoring;
+    Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_CA );
+    return ( rmsG );
+} // global_loop_rmsd
     
-    //JQX: delete the repulsive_ramp and snugfit_MC_min here
     
     
-    
-    //JQX: delete the snugfit_mcm_protocol
     
     
     
     
 
+void Ab_ModelCDRH3::display_constraint_residues( core::pose::Pose & pose ) 
+{
 
+    // Detecting di-sulfide bond
 
-	Real
-	Ab_ModelCDRH3::global_loop_rmsd (
-	  const pose::Pose & pose_in,
-		const pose::Pose & native_pose,
-		std::string cdr_type ) {
+    Size H1_Cys(0), H3_Cys(0);
 
-		using namespace scoring;
+    if(      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" ){
+        H1_Cys = pose.pdb_info()->pdb2pose( 'H', 32 );
+    }
+    else if( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" ){
+        H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
+    }
 
-		loops::LoopOP current_loop = ab_info_.get_CDR_loop( cdr_type );
-		Size loop_start = current_loop->start();
-		Size loop_end = current_loop->stop();
+    for( Size ii = ab_info_.get_CDR_loop("h3")->start(); ii <= ab_info_.get_CDR_loop("h3")->stop(); ii++ ){
+        if( pose.residue(ii).name3() == "CYS" ) {
+            H3_Cys = ii;
+        }
+    }
 
-		using ObjexxFCL::FArray1D_bool;
-		FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
+    if( ( H1_Cys != 0 ) && ( H3_Cys != 0 ) ){
+        TR << "CONSTRAINTS: "<< "AtomPair CA " << H1_Cys << " CA " << H3_Cys
+           << " BOUNDED 4.0 6.1 0.6 BOND; mean 5.6 sd 0.6" << std::endl;
+    }
 
-		for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
+    // Specifying extended kink
 
-		using namespace core::scoring;
-		Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_CA );
-		return ( rmsG );
-	} // global_loop_rmsd
+    Size hfr_46(0), h3_closest(0);
+    hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
+    if( ab_info_.is_extended() ) h3_closest = ab_info_.get_CDR_loop("h3")->stop() - 5;
+    if( h3_closest != 0 ) {
+        TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest
+           << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;
+    }
 
-	void
-	Ab_ModelCDRH3::display_constraint_residues( core::pose::Pose & pose ) {
-
-		// Detecting di-sulfide bond
-
-		Size H1_Cys(0), H3_Cys(0);
-
-		if(      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" )
-			H1_Cys = pose.pdb_info()->pdb2pose( 'H', 32 );
-		else if( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" )
-			H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
-
-		for( Size ii = ab_info_.get_CDR_loop("h3")->start(); ii <= ab_info_.get_CDR_loop("h3")->stop(); ii++ )
-			if( pose.residue(ii).name3() == "CYS" ) H3_Cys = ii;
-
-		if( ( H1_Cys != 0 ) && ( H3_Cys != 0 ) )
-			TR << "CONSTRAINTS: "<< "AtomPair CA " << H1_Cys << " CA " << H3_Cys
-				 << " BOUNDED 4.0 6.1 0.6 BOND; mean 5.6 sd 0.6" << std::endl;
-
-		// Specifying extended kink
-
-		Size hfr_46(0), h3_closest(0);
-		hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
-		if( ab_info_.is_extended() ) h3_closest = ab_info_.get_CDR_loop("h3")->stop() - 5;
-		if( h3_closest != 0 )
-			TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest
-				 << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;
-
-		return;
-	} // display_constraint_residues
+    return;
+} // display_constraint_residues
 
     
     
@@ -808,16 +692,14 @@ Ab_ModelCDRH3::get_name() const {
     
     
 /// @details  Show the complete setup of the docking protocol
-void
-Ab_ModelCDRH3::show( std::ostream & out ) {
+void Ab_ModelCDRH3::show( std::ostream & out ) {
     if ( !flags_and_objects_are_in_sync_ ){
         sync_objects_with_flags();
     }
     out << *this;
 }
     
-std::ostream & operator<<(std::ostream& out, const Ab_ModelCDRH3 & ab_m_2 )
-{
+std::ostream & operator<<(std::ostream& out, const Ab_ModelCDRH3 & ab_m_2 ){
     using namespace ObjexxFCL::fmt;
         
     // All output will be 80 characters - 80 is a nice number, don't you think?
@@ -828,22 +710,9 @@ std::ostream & operator<<(std::ostream& out, const Ab_ModelCDRH3 & ab_m_2 )
     // Display the movable jumps that will be used in docking
     out << line_marker << " Dockable Jumps: ";
         
-        
-        
     // Display the state of the low resolution docking protocol that will be used
-    out << line_marker << " Graft_l1:  " << ab_m_2.graft_l1_<<std::endl;
-    out << line_marker << " Graft_l2:  " << ab_m_2.graft_l2_<<std::endl;
-    out << line_marker << " Graft_l3:  " << ab_m_2.graft_l3_<<std::endl;
-    out << line_marker << " Graft_h1:  " << ab_m_2.graft_h1_<<std::endl;
-    out << line_marker << " Graft_h2:  " << ab_m_2.graft_h2_<<std::endl;
-    out << line_marker << " Graft_h3:  " << ab_m_2.graft_h3_<<std::endl;
     out << line_marker << "  camelid:  " << ab_m_2.camelid_ <<std::endl;
-    out << line_marker << " model_h3:  " << ab_m_2.model_h3_<<std::endl;
     out << line_marker << "  snugfit:  " << ab_m_2.snugfit_ <<std::endl;
-        
-        
-    // Display the state of the low resolution docking protocol that will be used
-        
         
     // Close the box I have drawn
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
