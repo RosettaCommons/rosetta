@@ -793,15 +793,15 @@ struct TCDock {
 		// cerr << "make_dimer" << endl;
 		core::pose::Pose t2(pose);
 		rot_pose(t2,Vecf(0,0,1),180.0);
-		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
 	}
 	void make_trimer(core::pose::Pose & pose) {
 		// cerr << "make_trimer" << endl;
 		core::pose::Pose t2(pose),t3(pose);
 		rot_pose(t2,Vecf(0,0,1),120.0);
 		rot_pose(t3,Vecf(0,0,1),240.0);
-		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
-		for(Size i = 1; i <= t3.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
+		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+		for(Size i = 1; i <= t3.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
 	}
 	void make_tetramer(core::pose::Pose & pose) {
 		// cerr << "make_tetramer" << endl;
@@ -809,9 +809,9 @@ struct TCDock {
 		rot_pose(t2,Vecf(0,0,1), 90.0);
 		rot_pose(t3,Vecf(0,0,1),180.0);
 		rot_pose(t4,Vecf(0,0,1),270.0);
-		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
-		for(Size i = 1; i <= t3.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
-		for(Size i = 1; i <= t4.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
+		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+		for(Size i = 1; i <= t3.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
+		for(Size i = 1; i <= t4.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
 	}
 	void make_pentamer(core::pose::Pose & pose) {
 		// cerr << "make_pentamer" << endl;
@@ -820,10 +820,10 @@ struct TCDock {
 		rot_pose(t3,Vecf(0,0,1),144.0);
 		rot_pose(t4,Vecf(0,0,1),216.0);
 		rot_pose(t5,Vecf(0,0,1),288.0);
-		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
-		for(Size i = 1; i <= t3.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
-		for(Size i = 1; i <= t4.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
-		for(Size i = 1; i <= t5.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()) pose.append_residue_by_jump(t5.residue(i),1); else pose.append_residue_by_bond(t5.residue(i));
+		for(Size i = 1; i <= t2.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+		for(Size i = 1; i <= t3.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
+		for(Size i = 1; i <= t4.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
+		for(Size i = 1; i <= t5.n_residue(); ++i) if(pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t5.residue(i),1); else pose.append_residue_by_bond(t5.residue(i));
 	}
 	void dump_pdb(int icmp2, int icmp1, int iori, string fname, int idx, bool sym=true) {
 		using basic::options::option;
@@ -846,12 +846,12 @@ struct TCDock {
 		{
 			symm.append_residue_by_jump(p1.residue(1),1);
 			for(Size i = 2; i <= p1.n_residue()/cmp1nsub_; ++i) {
-				if(symm.residue(i-1).is_terminus()) symm.append_residue_by_jump(p1.residue(i),1);
+				if(symm.residue(i-1).is_terminus()||symm.residue(i-1).is_ligand()) symm.append_residue_by_jump(p1.residue(i),1);
 				else                                symm.append_residue_by_bond(p1.residue(i));
 			}
 			symm.append_residue_by_jump(p2.residue(1),1);
 			for(Size i = 2; i <= p2.n_residue()/cmp2nsub_; ++i) {
-				if(symm.residue(symm.n_residue()).is_terminus()) symm.append_residue_by_jump(p2.residue(i),1);
+				if(symm.residue(symm.n_residue()).is_terminus()||symm.residue(symm.n_residue()).is_ligand()) symm.append_residue_by_jump(p2.residue(i),1);
 				else                                             symm.append_residue_by_bond(p2.residue(i));
 			}
 		}
@@ -873,12 +873,12 @@ struct TCDock {
 			{
 				asym.append_residue_by_jump(p1.residue(1),1);
 				for(Size i = 2; i <= p1.n_residue(); ++i) {
-					if(asym.residue(i-1).is_terminus()) asym.append_residue_by_jump(p1.residue(i),1);
+				  if(asym.residue(i-1).is_terminus()||asym.residue(i-1).is_ligand()) asym.append_residue_by_jump(p1.residue(i),1);
 					else                                asym.append_residue_by_bond(p1.residue(i));
 				}
 				asym.append_residue_by_jump(p2.residue(1),1);
 				for(Size i = 2; i <= p2.n_residue(); ++i) {
-					if(asym.residue(asym.n_residue()).is_terminus()) asym.append_residue_by_jump(p2.residue(i),1);
+				  if(asym.residue(asym.n_residue()).is_terminus()||asym.residue(asym.n_residue()).is_ligand()) asym.append_residue_by_jump(p2.residue(i),1);
 					else                                             asym.append_residue_by_bond(p2.residue(i));
 				}
 			}

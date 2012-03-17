@@ -1,4 +1,3 @@
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
@@ -113,7 +112,7 @@ void register_options() {
 	using namespace basic::options::OptionKeys;
 	OPT( in::file::s );
 	NEW_OPT( bpytoi::chi1_increment            ,"", 1   );
-	NEW_OPT( bpytoi::max_nres                  ,"", 200 );
+	NEW_OPT( bpytoi::max_nres                  ,"", 300 );
 	NEW_OPT( bpytoi::max_cys                   ,"", 3   );
 	NEW_OPT( bpytoi::max_bpy_dun               ,"", 3.0 );
 	NEW_OPT( bpytoi::bpy_clash_dis             ,"", 3.0 );
@@ -873,6 +872,9 @@ void run() {
 						}
 					}
 
+					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=psym.residue(i).name3()) nmut++;
+					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
+
 					std::cout << "dump des" << endl;
 					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
 
@@ -945,8 +947,8 @@ void run() {
 					// ss_out->add_energy("int_area",int_area);
 					// sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]()+"/"+option[basic::options::OptionKeys::out::file::silent ]() );
 
-					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=psym.residue(i).name3()) nmut++;
-					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
+					int nmut2 = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=psym.residue(i).name3()) nmut2++;
+					int nala2 = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala2++;
 					sfsym->score(psym);
 					new_sc(psym,intra_subs,int_area,sc);
 
@@ -968,6 +970,8 @@ void run() {
 						 << F(9,3,sfsym->score(psym)) << " "
 						 << I(2,nmut) << " "
 						 << I(2,nmut-nala) << " "
+						 << I(2,nmut2) << " "
+						 << I(2,nmut2-nala2) << " "
 						 << endl;
 				}
 			}
