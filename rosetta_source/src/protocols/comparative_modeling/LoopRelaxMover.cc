@@ -529,6 +529,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		} // recover checkpoint
 		checkpoints_.debug( curr_job_tag, "remodel", (*cen_scorefxn_)( pose ) );
 	} // if ( remodel != no )
+    else { all_loops_closed = true; } // AS 03/16/2012: hack to allow refinement without a preceding perturb stage
+
 	long endtime = time(NULL);
 
 	TR << "Buildtime: " << endtime - starttime << std::endl;
@@ -791,7 +793,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			//fpd
 			(*fa_scorefxn_)(pose);
 			TR << "No repacking required" << std::endl;
-			(*fa_scorefxn_)(pose);
+            (*fa_scorefxn_)(pose);
 		}
 
 		if ( debug ) pose.dump_pdb(curr_job_tag + "_after_repack.pdb");
@@ -871,7 +873,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////  Loop refine (fullatom type loop modelling )
 	////
 	////
-
+    
 	if ( refine() != "no" && (all_loops_closed)) {
 		TR << "====================================================================================" << std::endl;
 		TR << "===" << std::endl;
