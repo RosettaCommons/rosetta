@@ -1,0 +1,9 @@
+-native 1Q9A_cut_ready_set.pdb
+-out_pdb 1Q9A_cut_ready_set_min.pdb
+-score::weights rna/rna_hires_elec_dens 
+-score:rna_torsion_potential RNA09_based_2012_new 
+-vary_geometry true 
+-fixed_res 1 4 
+-edensity:mapfile 1Q9A_map.ccp4 
+-edensity:mapreso 2.0 
+-edensity:realign no
