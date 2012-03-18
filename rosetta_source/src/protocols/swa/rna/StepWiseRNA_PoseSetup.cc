@@ -79,9 +79,7 @@ namespace rna {
 		rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" ) ),
 		job_parameters_( job_parameters ),
 		copy_DOF_(false),
-		verbose_( true ), 		
-		FARFAR_start_pdb_(""),
-		parin_favorite_output_(true),
+		verbose_( true ),
 		rebuild_bulge_mode_(false), //Nov 26, 2010
 		output_pdb_(false) //Sept 24, 2011
   {
@@ -108,12 +106,6 @@ namespace rna {
 
 		if(verbose_) Output_title_text("Enter StepWiseRNA_PoseSetup::apply");
 
-		Output_boolean("parin_favorite_ouput= ", parin_favorite_output_); std::cout << std::endl;
-
-		if(parin_favorite_output_==false){
-				utility_exit_with_message( "parin_favorite_output_ should be true!!!" );
-		}
-
 		// actually make the pose, set fold tree, copy in starting templates from disk.
 
 		pose::Pose pose_without_cutpoints;
@@ -134,26 +126,10 @@ namespace rna {
 			pose.fold_tree( job_parameters_->fold_tree()); 
 		}
 
-		if(FARFAR_start_pdb_!=""){
-			using namespace core::io::silent;
-
-			SilentFileData silent_file_data;
-			std::string const FARFAR_start_tag=get_tag_from_pdb_filename(FARFAR_start_pdb_);
-			std::string const silent_file=FARFAR_start_tag+".out";
-
-			BinaryRNASilentStruct s( pose, FARFAR_start_tag );
-			silent_file_data.write_silent_struct(s, silent_file, false); 
-
-			if(output_pdb_) pose.dump_pdb( FARFAR_start_pdb_ ); //Eventually will phase out use of pdb, but right now still need to retain this for len(motif_info_list)==2 case.
-			std::cout << "FARFAR_start_pdb_ (" << FARFAR_start_pdb_ << ") !=\"\", early exit " << std::endl;
-			exit(0);
-		}
-
 		if(output_pdb_) pose.dump_pdb( "test.pdb" );
 
 		//WARNING STILL NEED TO IMPLEMENT harmonic_chainbreak HERE!
 		apply_cutpoint_variants( pose , pose_without_cutpoints);
-		check_close_chain_break( pose );
 		apply_virtual_phosphate_variants( pose );
 		add_protonated_H1_adenosine_variants( pose);
 		apply_bulge_variants( pose );
@@ -161,7 +137,7 @@ namespace rna {
 		verify_protonated_H1_adenosine_variants( pose);
 		add_terminal_res_repulsion( pose );
 
-		if ( job_parameters_ -> add_virt_res_as_root() ) add_virtual_res(pose);
+		if( job_parameters_->add_virt_res_as_root() ) add_aa_virt_rsd_as_root(pose); //Fang's electron density code.
 
 		if(output_pdb_) pose.dump_pdb( "start.pdb" );
 
@@ -264,16 +240,24 @@ namespace rna {
 		if(act_working_alignment.size()==0) utility_exit_with_message("act_working_alignment.size()==0");
 
 
-		Pose pose_without_cutpoints = *working_native_pose;
-		apply_cutpoint_variants( *working_native_pose , pose_without_cutpoints);
-		add_protonated_H1_adenosine_variants( *working_native_pose);
-		verify_protonated_H1_adenosine_variants( *working_native_pose );
-		if ( job_parameters_ -> add_virt_res_as_root() ) {
-			add_virtual_res(*working_native_pose);
+		if ( job_parameters_ -> add_virt_res_as_root() ) { //Fang's electron density code
+
+			//Fang why do you need this?////
+			pose::Pose dummy_pose = *working_native_pose;
+			apply_cutpoint_variants( *working_native_pose , dummy_pose);
+			add_protonated_H1_adenosine_variants( *working_native_pose);
+			verify_protonated_H1_adenosine_variants( *working_native_pose );
+			////////////////////////////////
+
+			add_aa_virt_rsd_as_root(*working_native_pose);
 			(*working_native_pose).fold_tree( pose.fold_tree() );
+			align_poses( pose, "working_pose", (*working_native_pose), "working_native_pose", act_working_alignment);
+
+		}else{ //March 17, 2012 Standard. This ensures that adding native_pdb does not change the final output silent_struct coordinates.
+			align_poses( (*working_native_pose), "working_native_pose" , pose, "working_pose", act_working_alignment);
 		}
 
-		align_poses( pose, "working_pose", (*working_native_pose), "working_native_pose", act_working_alignment);
+
 
 
 		job_parameters_->set_working_native_pose( working_native_pose );
@@ -400,6 +384,11 @@ namespace rna {
 
 			// Remove all variant types
       // DO TO LIST: Need to remove atom constraint and remove angle constaint as well
+			//NOTES: June 16, 2011
+			//Should LOWER_TERMINUS and UPPER_TERMINUS be removed as well? LOWER_TERMINUS does determine the position of  O1P and O2P?
+			//Also should then check that pose.residue_type(i).variant_types() is the empty?
+			//Alternatively could convert to FARFAR way and use the NEW_copy_dof that match atom names (MORE ROBUST!). This way doesn't need to remove any variant type from the chunk_pose?
+
 			utility::vector1< std::string > variant_type_list;
 			variant_type_list.push_back("VIRTUAL_PHOSPHATE");
 			variant_type_list.push_back("VIRTUAL_O2STAR_HYDROGEN");
@@ -408,23 +397,22 @@ namespace rna {
 			variant_type_list.push_back("VIRTUAL_RNA_RESIDUE");
 			variant_type_list.push_back("VIRTUAL_RNA_RESIDUE_UPPER");
 			variant_type_list.push_back("BULGE");
+			variant_type_list.push_back("VIRTUAL_RIBOSE");	
 			variant_type_list.push_back("PROTONATED_H1_ADENOSINE");
-			variant_type_list.push_back("3PRIME_END_OH");
-			variant_type_list.push_back("5PRIME_END_PHOSPHATE");
-			variant_type_list.push_back("5PRIME_END_OH");
+			variant_type_list.push_back("3PRIME_END_OH"); 				//Fang's electron density code
+			variant_type_list.push_back("5PRIME_END_PHOSPHATE"); //Fang's electron density code
+			variant_type_list.push_back("5PRIME_END_OH"); 				//Fang's electron density code
 
-			for ( Size n = 1; n <= start_pose.total_residue(); n++  ) {
+			for ( Size seq_num = 1; seq_num <= start_pose.total_residue(); seq_num++  ) {
 				for ( Size k = 1; k <= variant_type_list.size(); ++k ) {
 					std::string const & variant_type = variant_type_list[k];
-					if ( start_pose.residue(n).has_variant_type(variant_type) ) {
-						remove_variant_type_from_pose_residue( start_pose, variant_type, n );
+
+					if( start_pose.residue(seq_num).has_variant_type(variant_type) ) {
+						remove_variant_type_from_pose_residue( start_pose, variant_type, seq_num );
 					}
+
 				}
 			}
-				//NOTES: June 16, 2011
-				//Should LOWER_TERMINUS and UPPER_TERMINUS be removed as well? LOWER_TERMINUS does determine the position of  O1P and O2P?
-				//Also should then check that pose.residue_type(i).variant_types() is the empty?
-				//Alternatively could convert to FARFAR way and use the NEW_copy_dof that match atom names (MORE ROBUST!). This way doesn't need to remove any variant type from the chunk_pose?
 
 			if(output_pdb_) {
 				start_pose.dump_pdb( "import_" + string_of(i) + ".pdb" );
@@ -490,8 +478,11 @@ namespace rna {
 
 				}else{
 				
-					if ( start_pose.residue(n).aa() == core::chemical::na_rad && 
-							 start_pose_with_variant.residue(n).has_variant_type("PROTONATED_H1_ADENOSINE") ) { //May 03, 2011
+					if( start_pose_with_variant.residue(n).has_variant_type("PROTONATED_H1_ADENOSINE") ) { //May 03, 2011
+
+						if(start_pose.residue(n).aa() != core::chemical::na_rad){
+							utility_exit_with_message("start_pose have PROTONATED_H1_ADENOSINE variant type at full_seq_num=" + ObjexxFCL::string_of(input_res[n]) + " but rsd.aa()!=core::chemical::na_rad!");			
+						}
 
 						if(Contain_seq_num( input_res[n], job_parameters_->protonated_H1_adenosine_list() )==false){
 							Output_seq_num_list("protonate_H1_adenosine_list= ", job_parameters_->protonated_H1_adenosine_list());
@@ -719,31 +710,6 @@ namespace rna {
 		}
 
 	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void
-	StepWiseRNA_PoseSetup::check_close_chain_break( core::pose::Pose const & pose ) const{
-
-		Output_boolean("CHECK: parin_favorite_ouput= ", parin_favorite_output_); std::cout << std::endl;
-
-		if(parin_favorite_output_==false){
-				utility_exit_with_message( "parin_favorite_output_ should be true!!!" );
-		}
-
-
-		if(parin_favorite_output_) return; //I am allowing for additional cutpoint closed, Parin Feb 25, 2010
-
-		if ( !Is_close_chain_break( pose ) && job_parameters_->gap_size() == 0 ) {
-			utility_exit_with_message( "mismatch --> gap_size = 0, but no cutpoint variants defined?" );
-		}
-
-		if ( Is_close_chain_break( pose ) && job_parameters_->gap_size() != 0 ) {
-			utility_exit_with_message( "mismatch --> gap_size != 0, but cutpoint variants defined?" );
-		}
-
-	}
-
-
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Assume we have done a crappy job of placing 5' phosphates.
@@ -912,10 +878,12 @@ namespace rna {
 					utility_exit_with_message("Contain_seq_num(seq_num, working_protonated_H1_adenosine_list )==true but residue doesn't either PROTONATED_H1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type , seq_num=" + string_of(seq_num) );
 				}
 			}else{
-				if ( pose.residue(seq_num).aa() == core::chemical::na_rad && 
-				     pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE") ){
+				if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE") ){
+
 					print_JobParameters_info(StepWiseRNA_JobParametersCOP(job_parameters_), "DEBUG job_parameters");
-					utility_exit_with_message("Contain_seq_num(seq_num, working_protonated_H1_adenosine_list)==false but pose.residue(seq_num).has_variant_type(\"PROTONATED_H1_ADENOSINE\") )==false, seq_num=" + string_of(seq_num) );
+					std::cout << "ERROR: seq_num=" << seq_num << std::endl;
+					std::cout << "ERROR: start_pose.residue(n).aa()=" << name_from_aa(pose.residue(seq_num).aa()) << std::endl;
+					utility_exit_with_message("Contain_seq_num(seq_num, working_protonated_H1_adenosine_list)==false but pose.residue(seq_num).has_variant_type(\"PROTONATED_H1_ADENOSINE\") )==false");
 				}
 
 			}
@@ -1005,7 +973,8 @@ namespace rna {
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//Adding Virtual res as root
 	void 
-	StepWiseRNA_PoseSetup::add_virtual_res( core::pose::Pose & pose) {
+	StepWiseRNA_PoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose){  //Fang's electron density code
+
 		Size const nres = pose.total_residue();
 		Size const working_moving_res(  job_parameters_->working_moving_res() );
 		//if already rooted on virtual residue , return

@@ -74,6 +74,9 @@ namespace rna {
 		set_base_centroid_screener( StepWiseRNA_BaseCentroidScreenerOP & screener );
 
 		void
+		set_native_edensity_score_cutoff( core::Real const & setting); //Fang's electron density code
+
+		void
 		set_verbose( bool const setting){verbose_=setting;} 
 
 		void
@@ -95,16 +98,16 @@ namespace rna {
 		set_minimize_and_score_sugar(bool const setting){minimize_and_score_sugar_=setting;}
 
 		void
-		set_native_rmsd_screen( bool const & setting ){native_screen_=setting;}
+		set_native_rmsd_screen( bool const setting ){native_screen_=setting;}
 
 		void
-		set_native_screen_rmsd_cutoff( core::Real const & setting ){native_screen_rmsd_cutoff_=setting;}
-
-		void
-		set_native_edensity_score_cutoff( core::Real const & setting){native_edensity_score_cutoff_=setting;}
+		set_native_screen_rmsd_cutoff( core::Real const setting ){native_screen_rmsd_cutoff_=setting;}
 
 		void
 		set_user_input_VDW_bin_screener(StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
+
+		void
+		set_rename_tag( bool const setting ){ rename_tag_=setting;}
 
   private:
 
@@ -115,13 +118,23 @@ namespace rna {
 		Figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const;
 
 		bool
-		Pose_screening(core::pose::Pose & pose, std::string tag, core::io::silent::SilentFileData & silent_file_data) const;
+		pass_all_pose_screens(core::pose::Pose & pose, std::string const in_tag, core::io::silent::SilentFileData & silent_file_data) const;
 
 		void
 		Freeze_sugar_torsions(core::kinematics::MoveMap & mm, Size const nres) const;
 
+		void
+		output_empty_minimizer_silent_file() const; //FEB 09, 2012
+
+		void
+		output_pose_data_wrapper(std::string & tag, char tag_first_char, core::pose::Pose & pose, core::io::silent::SilentFileData & silent_file_data, std::string const out_silent_file) const;
+
+		core::Size
+		figure_out_actual_five_prime_chain_break_res(core::pose::Pose const & pose) const;
+
 		bool
-		native_edensity_score_screener(core::pose::Pose & pose, core::pose::Pose & native_pose); 
+		native_edensity_score_screener(core::pose::Pose & pose, core::pose::Pose & native_pose) const; //Fang's electron density code
+
 	private:
 
 		utility::vector1 <pose_data_struct2> const pose_data_list_;
@@ -135,7 +148,9 @@ namespace rna {
 		bool screen_verbose_;
 		bool native_screen_;
 		core::Real native_screen_rmsd_cutoff_;
-		core::Real native_edensity_score_cutoff_;
+
+		bool perform_electron_density_screen_; //Fang's electron density code
+		core::Real native_edensity_score_cutoff_; //Fang's electron density code
 
 		bool centroid_screen_; //for testing purposes
 
@@ -146,6 +161,7 @@ namespace rna {
 
 		core::Size num_pose_minimize_; 
 		bool minimize_and_score_sugar_; 
+		bool rename_tag_;
 
 		std::map< core::id::AtomID, core::id::AtomID > pose_to_native_map_;
 

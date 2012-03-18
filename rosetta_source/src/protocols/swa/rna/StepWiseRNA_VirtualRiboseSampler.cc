@@ -629,7 +629,7 @@ namespace rna {
 
 				for(Size n=1; n<=pose_data_list.size(); n++){
 
-					if(CCD_fail_for_BB_rotamer[n]==true) continue; //already checked that this BB rotamer doesn't have a CCD solution		
+					//if(CCD_fail_for_BB_rotamer[n]==true) continue; //already checked that this BB rotamer doesn't have a CCD solution.  Feb 08, 2012: Commented out until further testing		
 
 					FB_Pose_Data & pose_data=pose_data_list[n];
 					if(pose_data.Is_chain_close==true) continue; //chain is already close...
@@ -652,7 +652,9 @@ namespace rna {
 					if( floating_base_full_atom_van_der_Waals_screening(current_pose, pose_data.base_rep_score, atr_rep_screening_scorefxn, count_data, true)==false ) continue;
 
 					if( floating_base_chain_break_screening(current_pose, chainbreak_scorefxn, count_data, FB_job_params.five_prime_chain_break, pose_data.tag, true)==false ){
-						//CCD_fail_for_BB_rotamer[n]==true;  // This doesn't do anything besides make clang sad!
+
+						 //CCD_fail_for_BB_rotamer[n]=true; //Feb 08, 2012. FIX ERROR, used to be == instead of =. Feb 08, 2012: Commented out until further testing
+
 						 continue;
 					}
 

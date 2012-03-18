@@ -937,9 +937,11 @@ ContextIndependentGeometricSolEnergy::atomic_interaction_cutoff() const
 bool
 ContextIndependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const & weights ) const
 {
-	bool method_1= (weights[CI_geom_sol_intra_RNA]>0.0) ? true : false;
+	//bool method_1= (weights[CI_geom_sol_intra_RNA]>0.0) ? true : false;
+
+	bool condition_1= (weights[CI_geom_sol_intra_RNA]>0.0001) ? true : false; //Change to this on Feb 06, 2012. Ensure that the function returns false if weights[CI_geom_sol_intra_RNA]==0.0
 	
-	return method_1;
+	return condition_1;
 }
 
 

@@ -126,13 +126,14 @@ namespace rna {
 		allow_bulge_at_chainbreak_( false ),
 		fast_( false ),
 		medium_fast_( false ),
+		integration_test_mode_( false ), //March 16, 2012
 		centroid_screen_(true),
 		allow_base_pair_only_centroid_screen_(false), //allow for possibility of conformation that base_pair but does not base_stack
 		VDW_atr_rep_screen_(true),
 		include_syn_chi_(false),
 		allow_syn_pyrimidine_(false), //New option Nov 15, 2010
 		distinguish_pucker_(true), 
-		current_score_cutoff_(999999.9), //Feb 12, 2012
+		current_score_cutoff_(999999.9), //Feb 02, 2012
 		//current_score_cutoff_(99999999999.9999), //New option May 12, 2010, Feb 02, 2012; This might lead to server-test error at R47200 
 		finer_sampling_at_chain_closure_(false), //New option Jun 10 2010
 		PBP_clustering_at_chain_closure_(false), //New option Aug 15 2010
@@ -198,6 +199,9 @@ namespace rna {
  
 		//output screen options
 		std::cout << "--------SCREEN OPTIONS---------- "<< std::endl;
+		Output_boolean("fast_ = ", fast_ ); std::cout << std::endl;
+		Output_boolean("medium_fast_ = ", medium_fast_ ); std::cout << std::endl;
+		Output_boolean("integration_test_mode_ = ", integration_test_mode_ ); std::cout << std::endl;
 		Output_boolean("native_rmsd_screen = ", native_rmsd_screen_ ); std::cout << std::endl;
 		std::cout << "native_screen_rmsd_cutoff = " << native_screen_rmsd_cutoff_ << std::endl;
 		Output_boolean("perform_o2star_pack = ", perform_o2star_pack_ ); std::cout << std::endl;
@@ -453,7 +457,7 @@ namespace rna {
 		if(Is_dinucleotide==true && Is_internal==true) utility_exit_with_message( "Is_dinucleotide==true && Is_internal==true)!!" );
 		if(num_nucleotides!=1 && num_nucleotides!=2) utility_exit_with_message( "num_nucleotides!=1 and num_nucleotides!=2" );
 
-		if(Is_dinucleotide==true && allow_base_pair_only_centroid_screen_==true){
+		if(Is_dinucleotide==true && allow_base_pair_only_centroid_screen_==true){ //Feb 09, 2012: FIXED BUG. Used to be "and" instead of "&&"
 
 			Size const user_input_num_pose_kept=num_pose_kept_;
 			num_pose_kept_=4*num_pose_kept_;
@@ -474,8 +478,8 @@ namespace rna {
 	  //////////////////////////////////////////Setup Atr_rep_screening/////////////////////////////////////////////////
 		//This is getting annoying...need to move this up here since it create a chainbreak conflict with setup_chain_break_jump_point) below.. 
 
-		//Real base_rep_score(-9999999999), base_atr_score(-9999999999); //Feb 12, 2012 This might lead to server-test error at R47200 
-		Real base_rep_score(-999999), base_atr_score(-999999); //Feb 12, 2012
+		//Real base_rep_score(-9999999999), base_atr_score(-9999999999); //Feb 02, 2012 This might lead to server-test error at R47200 
+		Real base_rep_score(-999999), base_atr_score(-999999); //Feb 02, 2012
 		get_base_atr_rep_score(pose, base_atr_score, base_rep_score); 
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -571,7 +575,7 @@ namespace rna {
 			//BUT NO POINT IN DURING SO, SINCE THE FULL RIBOSE IS VIRTUAL ANYWAYS!
 
 			for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code. 
 				if( seq_num == moving_res ) continue; //moving_res is actually the working_moving_res
 
 				if ( pose.residue_type( seq_num ).has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) ){
@@ -661,7 +665,12 @@ namespace rna {
 
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+
+			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ){ //Fang's electron density code
+				std::cout << "Residue.aa() " << seq_num << " is core::chemical::aa_vrt!" << std::endl;
+				continue;
+			}
+
 			conformation::Residue const & residue_object=pose.residue( seq_num );
 			if(residue_object.has_variant_type( "VIRTUAL_RNA_RESIDUE" )){
 				std::cout << "Residue " << seq_num << " is a VIRTUAL_RNA_RESIDUE!" << std::endl;
@@ -721,11 +730,12 @@ namespace rna {
 		
 
 		for(base_bin.euler_alpha=euler_angle_bin_min; base_bin.euler_alpha<=euler_angle_bin_max; base_bin.euler_alpha++){
-			if(fast_ && count_data_.both_count>1000) break;
-			if(medium_fast_ && count_data_.both_count>1000 && pose_data_list.size()>5) break;
 		for(base_bin.euler_z=euler_z_bin_min; base_bin.euler_z<=euler_z_bin_max; base_bin.euler_z++){
+
 			if(fast_ && count_data_.both_count>1000) break;
 			if(medium_fast_ && count_data_.both_count>1000 && pose_data_list.size()>5) break;
+			if(integration_test_mode_ && count_data_.both_count>=1000) native_rmsd_screen_=true;
+			if(integration_test_mode_ && count_data_.rmsd_count>=10) break;
 
 			Matrix O_frame_rotation;
 			euler_angles.alpha=(base_bin.euler_alpha+0.5)*euler_angle_bin_size*(PI/180); //convert to radians
@@ -816,8 +826,8 @@ namespace rna {
 			//screening_pose.dump_pdb( "FIXED_screening_pose.pdb" );
 			//////////////////////////////////////////////////////
 
-			if (native_rmsd_screen_ && get_native_pose()){
-				// Following does not look right -- what if pose and native_pose are not superimposed corectly? -- rhiju
+			if(native_rmsd_screen_ && get_native_pose()){
+				//This assumes that screening_pose and native_pose are already superimposed.
 				if( suite_rmsd(*get_native_pose(), screening_pose, moving_res, Is_prepend, true /*ignore_virtual_atom*/) >(native_screen_rmsd_cutoff_)) continue;
 				if( rmsd_over_residue_list( *get_native_pose(), screening_pose, job_parameters_, true /*ignore_virtual_atom*/)>(native_screen_rmsd_cutoff_)) continue; //Oct 14, 2010
 
@@ -983,9 +993,9 @@ namespace rna {
 
 		if(verbose_){ //Don't really need this......May 1, 2010...
 			std::string const foldername="test/";
-			int return_code;
-			return_code = system(std::string("rm -r " + foldername).c_str());
-			return_code = system(std::string("mkdir -p " + foldername).c_str());
+			int dummy_return_code;
+			dummy_return_code = system(std::string("rm -r " + foldername).c_str());
+			dummy_return_code = system(std::string("mkdir -p " + foldername).c_str());
 			Analyze_base_bin_map( base_bin_map, foldername);
 		}
 
@@ -1164,7 +1174,8 @@ namespace rna {
 
 		bool const Is_dinucleotide=(num_nucleotides==2);
 
-		if(Is_dinucleotide==true && allow_base_pair_only_centroid_screen_==true){
+
+		if(Is_dinucleotide==true && allow_base_pair_only_centroid_screen_==true){ //Feb 09, 2012: FIXED BUG. Used to be "and" instead of "&&"
 
 			Size const user_input_num_pose_kept=num_pose_kept_;
 			num_pose_kept_=4*num_pose_kept_;
@@ -1245,8 +1256,8 @@ namespace rna {
 			pose = pose_with_virtual_O2star_hydrogen;
 		}
 
-		//Real base_rep_score(-9999999999), base_atr_score(-9999999999); //Feb 12, 2012 This might lead to server-test error at R47200
-		Real base_rep_score(-999999), base_atr_score(-999999); //Feb 12, 2012
+		//Real base_rep_score(-9999999999), base_atr_score(-9999999999); //Feb 02, 2012 This might lead to server-test error at R47200
+		Real base_rep_score(-999999), base_atr_score(-999999); //Feb 02, 2012
 
 
 		get_base_atr_rep_score(pose_with_virtual_O2star_hydrogen, base_atr_score, base_rep_score);
@@ -1339,14 +1350,15 @@ namespace rna {
 			count_data_.tot_rotamer_count++;
 
 			if(fast_ && count_data_.both_count>=100) break;
-
 			if(medium_fast_ && count_data_.both_count>=1000) break;
+			if(integration_test_mode_ && count_data_.both_count>=1000) native_rmsd_screen_=true;
+			if(integration_test_mode_ && count_data_.rmsd_count>=10) break;
 
 			std::string tag=create_tag("U" + sugar_tag, rotamer_generator);
 
 
-			if (native_rmsd_screen_ && get_native_pose()){
-				// Following does not look right -- what if pose and native_pose are not superimposed corectly? -- rhiju
+			if(native_rmsd_screen_ && get_native_pose()){
+				//This assumes that screening_pose and native_pose are already superimposed.
 				if( suite_rmsd(*get_native_pose(), screening_pose, actually_moving_res, Is_prepend)>(native_screen_rmsd_cutoff_) ) continue;
 				if( rmsd_over_residue_list( *get_native_pose(), screening_pose, job_parameters_, false)>(native_screen_rmsd_cutoff_) ) continue; //Oct 14, 2010
 
@@ -1876,8 +1888,8 @@ namespace rna {
 //		static Real const atr_cutoff_for_bulge( -1.0 );
 //		static Real const atr_cutoff_for_bulge( 0.0 );
 
-		//static Real const atr_cutoff_for_bulge( -9999999999999999999.0 ); //Feb 12, 2012 This might lead to server-test error at R47200
-		static Real const atr_cutoff_for_bulge( -999999.0 ); //Feb 12, 2012 
+		//static Real const atr_cutoff_for_bulge( -9999999999999999999.0 ); //Feb 02, 2012 This might lead to server-test error at R47200
+		static Real const atr_cutoff_for_bulge( -999999.0 ); //Feb 02, 2012 
 
 
 
@@ -1946,10 +1958,10 @@ namespace rna {
 			current_pose_data.score = current_score;
 			current_pose_data.tag=tag;
 
-			if ( get_native_pose())  {
-				setPoseExtraScores( *current_pose_data.pose_OP, "all_rms",
-														core::scoring::rms_at_corresponding_heavy_atoms( *current_pose_data.pose_OP, *get_native_pose() ) );
-			}
+			//if ( get_native_pose())  { //ACTUALLY DEPRECATED SINCE EARLY 2010!! Comment out on March 16, 2012
+			//	setPoseExtraScores( *current_pose_data.pose_OP, "all_rms",
+			//											core::scoring::rms_at_corresponding_heavy_atoms( *current_pose_data.pose_OP, *get_native_pose() ) );
+			//}
 
 			pose_data_list.push_back(current_pose_data);
 			if(verbose_) std::cout << " pose_data_list.size= " << pose_data_list.size() << std::endl;
@@ -2045,8 +2057,8 @@ namespace rna {
 		}else{
 			//keep on adding pose to list if there are still not enough clusters
 
-			//current_score_cutoff_=99999999999.9999; //Feb 12, 2012 This might lead to server-test error at R47200 
-			current_score_cutoff_=999999.9; //Feb 12, 2012 
+			//current_score_cutoff_=99999999999.9999; //Feb 02, 2012 This might lead to server-test error at R47200 
+			current_score_cutoff_=999999.9; //Feb 02, 2012 
 		}
 		////////////////////////////////////////////
 		
@@ -2378,6 +2390,12 @@ namespace rna {
   }
 
   //////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_ResidueSampler::set_num_pose_kept( core::Size const & num_pose_kept ){
+		num_pose_kept_=num_pose_kept ;
+	}
+
+  //////////////////////////////////////////////////////////////////////////
   void
   StepWiseRNA_ResidueSampler::set_fast( bool const & setting ){
     fast_ = setting;
@@ -2391,20 +2409,34 @@ namespace rna {
 		if (medium_fast_) num_pose_kept_ = 20;
   }
 
-
   //////////////////////////////////////////////////////////////////////////
   void
   StepWiseRNA_ResidueSampler::set_native_rmsd_screen( bool const & setting ){
     native_rmsd_screen_ = setting;
-		//if (native_rmsd_screen_) num_pose_kept_ = 20; Aug 16 2010..Parin S. For python_rebuild_suite.py
   }
+
+  //////////////////////////////////////////////////////////////////////////
+	void
+  StepWiseRNA_ResidueSampler::set_native_screen_rmsd_cutoff( core::Real const & setting){ 
+		native_screen_rmsd_cutoff_= setting;
+	}
+  //////////////////////////////////////////////////////////////////////////
+  void
+	StepWiseRNA_ResidueSampler::set_integration_test_mode( bool const & setting){
+   	integration_test_mode_ = setting;
+		if(integration_test_mode_){
+			num_pose_kept_ = 20;
+			native_rmsd_screen_=false; //Start off as false, will change to true after count_data_.both_count>=1000!
+			native_screen_rmsd_cutoff_= 1.0;
+		}
+
+  }
+
   //////////////////////////////////////////////////////////////////////////
   void
   StepWiseRNA_ResidueSampler::set_verbose( bool const & setting ){
     verbose_ = setting;
   }
-
-
   //////////////////////////////////////////////////////////////////////////
   void
   StepWiseRNA_ResidueSampler::set_perform_o2star_pack( bool const & setting ){
@@ -2468,15 +2500,8 @@ namespace rna {
 		std::cout << "Set cluster_rmsd to " << cluster_rmsd_ << std::endl;
 	}
 
-	void
-	StepWiseRNA_ResidueSampler::set_num_pose_kept( core::Size const & num_pose_kept ){
-		num_pose_kept_=num_pose_kept ;
+	//////////////////////////////////////////////////////////////////
 
-		// PARIN THIS DOES NOT MAKE ANY SENSE??
-		//If fast_ or native_rmsd_scren the num_pose_kept_= 10 or 20 respectively Parin Feb 13, 2010
-		set_native_rmsd_screen(native_rmsd_screen_); 
-		set_fast(fast_); 
-	}
 
 }
 }

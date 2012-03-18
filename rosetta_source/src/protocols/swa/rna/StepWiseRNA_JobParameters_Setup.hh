@@ -70,9 +70,6 @@ namespace rna {
 		void
 		set_bulge_res(utility::vector1 < core::Size > const & bulge_res );
 
-//		void
-//		set_parin_favorite_output( bool const & setting){ parin_favorite_output_=setting ; }
-
 		void
 		set_jump_point_pair_list(utility::vector1< std::string > const & jump_point_pairs_string);
 
@@ -104,13 +101,16 @@ namespace rna {
 		set_protonated_H1_adenosine_list( utility::vector1 < core::Size > const & setting );
 
 		void
+		set_output_extra_RMSDs( bool const setting);
+
+		void
+		set_add_virt_res_as_root( bool const setting);
+
+		void
 		set_input_tags( utility::vector1< std::string > const & setting){ input_tags_=setting; } //Only called if check_for_previously_closed_cutpoint_with_input_pose is true
 
 		void
 		set_silent_files_in( utility::vector1< std::string > const & setting){ silent_files_in_= setting; } //Only called if check_for_previously_closed_cutpoint_with_input_pose  is true
-
-		void
-		set_FARFAR_start_pdb( std::string const setting){ FARFAR_start_pdb_= setting; }
 
 		void
 		set_allow_chain_boundary_jump_partner_right_at_fixed_BP( bool const setting){ allow_chain_boundary_jump_partner_right_at_fixed_BP_=setting; }
@@ -120,9 +120,6 @@ namespace rna {
 
 		void
 		set_simple_append_map( bool const setting){ simple_append_map_=setting; }
-
-		void
-		set_add_virt_res_as_root( bool const setting){ add_virt_res_as_root_=setting; }
 
 
   private:
@@ -209,12 +206,10 @@ namespace rna {
 		
 		utility::vector1< std::string > input_tags_; //for check_for_previously_closed_cutpoint_with_input_pose 
 		utility::vector1< std::string > silent_files_in_; //for check_for_previously_closed_cutpoint_with_input_pose 
-		std::string FARFAR_start_pdb_;
 		bool allow_chain_boundary_jump_partner_right_at_fixed_BP_;
 		bool allow_fixed_res_at_moving_res_;
 		bool simple_append_map_;
-		bool add_virt_res_as_root_;
-//		bool parin_favorite_output_;
+
   };
 
 }

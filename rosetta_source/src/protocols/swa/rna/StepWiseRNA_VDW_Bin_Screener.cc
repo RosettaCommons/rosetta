@@ -843,7 +843,9 @@ namespace rna {
 				Real const VDW_radius=rsd.atom_type(at).lj_radius();
 				Real const moving_atom_radius=1.0; //Play it safe...could optimize by having a VWD_bin for each moving_atom tyep but don't think will significantly speed out code Apr 17, 2010
 				Real const clash_dist_cutoff=0.8; //Fail van der Waals replusion screen if two atoms radius within 0.5 Angstrom of each other
-				Real const max_binning_error=2*(atom_bin_size_/2)*sqrt(3.0);
+
+				Real const max_binning_error=2*(atom_bin_size_/2)*sqrt(3.0); //Feb 09, 2012: FIXED. Used to be "3" instead of "3.0"
+
 				//Basically distance from center of box to the edge of box...2x since this is Lennard Jones distance between two atoms.
 
 				Real const sum_radius=moving_atom_radius+VDW_radius-clash_dist_cutoff-max_binning_error; 

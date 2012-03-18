@@ -82,11 +82,9 @@ namespace rna {
 		is_cutpoint_( full_sequence.size(), false ),
 		job_parameters_( new StepWiseRNA_JobParameters ),
 		filter_user_alignment_res_(true), //Generally want to keep this true!
-		FARFAR_start_pdb_(""),
 		allow_chain_boundary_jump_partner_right_at_fixed_BP_(false), //hacky, just to get the Square RNA working..Nov 6, 2010
 		allow_fixed_res_at_moving_res_(false), //hacky, just to get the Hermann Duplex RNA working..Nov 15, 2010
-		simple_append_map_(false),
-		add_virt_res_as_root_(false)
+		simple_append_map_(false)
   {
 		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::constructor");
 		///////////////////////////////////////////////////////
@@ -172,9 +170,6 @@ namespace rna {
 		}else{
 			figure_out_best_working_alignment();
 		}
-
-		job_parameters_-> set_add_virt_res_as_root( add_virt_res_as_root_ );
-
 
 		Output_title_text("Exit StepWiseRNA_JobParameter_Setup::apply");
 
@@ -274,7 +269,6 @@ namespace rna {
 		utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
 
 		bool const root_partition = partition_definition( fold_tree.root() );
-//		bool const root_partition = partition_definition( pose.fold_tree().root() );
 
 		utility::vector1< core::Size > working_alignment;
 
@@ -289,10 +283,11 @@ namespace rna {
 
 
  		//Special case for building loop outward
-//		if(fold_tree.num_cutpoint()==0 ){ 
 		if(working_alignment.size()==0 ){
 
-			if( working_fixed_res.size()!=0) utility_exit_with_message( "working_alignment.size()==0 but fixed_res_.size()!=0 !!" );
+			//March 17, 2012: RE-comment out since that are possible cases where all the working_fixed_res resides in the 'non-root' partition.
+			//For example at the last building-step of of build-outward mode + idealized helix.
+			//if( working_fixed_res.size()!=0) utility_exit_with_message( "working_alignment.size()==0 but fixed_res_.size()!=0 !!" );
 			
 			std::cout << " special case of building loop outward...no fixed element. " << std::endl;
 
@@ -308,9 +303,7 @@ namespace rna {
 
 		Output_seq_num_list("working_fixed_res= ", working_fixed_res, 30);
 		Output_seq_num_list("working_alignment= ", working_alignment, 30);
-//		Output_seq_num_list("working_rmsd_res_list= ", working_rmsd_res_list, 30);
 		Output_seq_num_list("working_alignment= ", working_alignment, 30);
-
 
 		job_parameters_->set_working_best_alignment(working_alignment);
 
@@ -431,6 +424,8 @@ namespace rna {
 			//For build loop outward case, in this case make every residue append except for the 1st residue in the chain..
 			//check that the fold_tree is simple..could also use the is_simple_tree() function that don't really understand how this function works
 			if(fold_tree.num_cutpoint()==0){ 
+
+				//This line was commented out since it conflicted with Fang's electron density code.
 				//if( working_fixed_res.size()!=0) utility_exit_with_message( "fold_tree.num_cutpoint()==0 but fixed_res_.size()!=0 !!" );
 
 				if(full_to_sub[cur_seq_num]==1) return true; //prepend
@@ -1156,7 +1151,7 @@ namespace rna {
 		Size const moving_res( job_parameters_->working_moving_res() );
 
 
-		if(	(num_partition_1 == num_partition_0) || FARFAR_start_pdb_!="" ){ //The FARFAR part is hacky!
+		if( num_partition_1 == num_partition_0 ){
 			if(partition_definition( moving_res )==0){ //put root_res in partition 1 away from the moving_res.
 				if ( partition_definition( 1 ) && partition_definition( nres ) ) {
 					root_res = 1;
@@ -1528,7 +1523,9 @@ namespace rna {
 
 		for(Size n=1; n<=jump_point_pairs_string.size(); n++){
 
-			if( (n==1) && (jump_point_pairs_string[n]=="NOT_ASSERT_IN_FIXED_RES") ){
+
+			if( (n==1) && (jump_point_pairs_string[n]=="NOT_ASSERT_IN_FIXED_RES") ){ //Feb 09, 2012: FIXED BUG. Used to be "and" instead of "&&"
+
 				assert_in_fixed_res=false;
 				continue;
 			}
@@ -1635,8 +1632,22 @@ namespace rna {
 
 	}
 
-  //////////////////////////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_JobParameters_Setup::set_output_extra_RMSDs( bool const setting){
+
+		job_parameters_->set_output_extra_RMSDs( setting);
+
+	}
+  //////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_JobParameters_Setup::set_add_virt_res_as_root( bool const setting){ 
+		
+		job_parameters_->set_add_virt_res_as_root(setting );
+
+	}
+  //////////////////////////////////////////////////////////////////////////
 }
 }
 }

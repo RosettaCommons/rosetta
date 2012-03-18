@@ -62,9 +62,6 @@ namespace rna {
 		set_silent_files_in( utility::vector1< std::string > const & setting){ silent_files_in_= setting; } //Only called if COPY_DOF is true
 
 		void
-		set_parin_favorite_output( bool const setting){ parin_favorite_output_=setting; }
-
-		void
 		set_bulge_res( utility::vector1 < core::Size > const & bulge_res ){ bulge_res_ = bulge_res; }
 
 		void
@@ -82,20 +79,11 @@ namespace rna {
 		void
 		setup_native_pose( core::pose::Pose & pose );
 
-		//void
-		//set_sampler_native_rmsd_screen( bool const setting) { sampler_native_rmsd_screen_= setting; }
-
-		void
-		set_FARFAR_start_pdb( std::string const setting){ FARFAR_start_pdb_= setting; }
-
 		void
 		set_rebuild_bulge_mode( bool const setting){ rebuild_bulge_mode_=setting;}
 
 		void
 		set_output_pdb( bool const setting){ output_pdb_=setting;}
-
-		void 
-		add_virtual_res( core::pose::Pose & pose );
 
   	private:
 
@@ -110,9 +98,6 @@ namespace rna {
 
 		void
 		apply_cutpoint_variants( core::pose::Pose & pose , core::pose::Pose & pose_without_cutpoints);
-
-		void
-		check_close_chain_break( core::pose::Pose const & pose ) const;
 
 		void
 		apply_bulge_variants( core::pose::Pose & pose ) const;
@@ -141,6 +126,9 @@ namespace rna {
 		void
 		verify_protonated_H1_adenosine_variants( core::pose::Pose & pose ) const;
 
+		void 
+		add_aa_virt_rsd_as_root( core::pose::Pose & pose );
+
 	private:
 
 //		utility::vector1< utility::vector1< Size > > input_res_vectors_;
@@ -152,15 +140,10 @@ namespace rna {
 		bool copy_DOF_;
 		bool verbose_;
 
-		bool parin_favorite_output_;
-
-
 		utility::vector1< Size > bulge_res_;
 		utility::vector1< Size > virtual_res_list_;
 		utility::vector1< Size > native_virtual_res_list_;
 
-		//bool sampler_native_rmsd_screen_;
-		std::string FARFAR_start_pdb_;
 		bool rebuild_bulge_mode_; 
 		bool output_pdb_;
 

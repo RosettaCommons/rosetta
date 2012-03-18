@@ -177,10 +177,10 @@ apply_full_to_sub_mapping( utility::vector1< core::Size > const & res_vector, St
 */
 
 core::Size
-string_to_int(std::string const string);
+string_to_int(std::string const input_string);
 
 core::Real
-string_to_real(std::string const string);
+string_to_real(std::string const input_string);
 
 
 utility::vector1<std::string> 
@@ -250,9 +250,6 @@ remove_file(std::string const & file_name);
 
 void
 output_rotamer(utility::vector1 <core::Real > & rotamer);
-
-void
-Output_entropy_data(core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, core::pose::Pose  & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_, core::scoring::ScoreFunctionOP const & scorefxn, core::Real const & KT_to_rosetta_unit);
 
 void
 Add_virtual_O2Star_hydrogen(core::pose::Pose & pose);
@@ -329,7 +326,7 @@ void
 Output_boolean(bool boolean);
 
 void
-Output_movemap(core::kinematics::MoveMap const & mm, core::Size const total_residue);
+Output_movemap(core::kinematics::MoveMap const & mm, core::pose::Pose const & pose);
 
 utility::vector1< core::Size >
 get_surrounding_O2star_hydrogen(core::pose::Pose const & pose, utility::vector1< core::Size > const & moving_res, bool verbose=false);

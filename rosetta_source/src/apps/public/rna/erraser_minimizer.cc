@@ -736,7 +736,7 @@ pdb_minimizer() {
 		vary_bond_geometry ( mm, pose, pose_reference, allow_insert );
 	}
 
-	Output_movemap ( mm, nres );
+	Output_movemap ( mm, pose );
 	scorefxn->show ( std::cout, pose );
 	std::cout << "Start Minimizing ..." << std::endl;
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 400, 400 );

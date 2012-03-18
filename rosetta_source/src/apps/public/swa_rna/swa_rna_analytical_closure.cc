@@ -207,7 +207,6 @@ OPT_KEY ( String, 	cluster_type )
 OPT_KEY ( Integer, sampler_num_pose_kept )
 OPT_KEY ( StringVector, input_tag_list )
 OPT_KEY ( Boolean, recreate_silent_struct )
-OPT_KEY ( String, FARFAR_start_pdb )
 OPT_KEY ( Boolean, allow_chain_boundary_jump_partner_right_at_fixed_BP )
 OPT_KEY ( Boolean, allow_fixed_res_at_moving_res )
 OPT_KEY( Real, sampler_cluster_rmsd )
@@ -480,7 +479,6 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 	stepwise_rna_job_parameters_setup.set_jump_point_pair_list ( option[ jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
 	stepwise_rna_job_parameters_setup.set_alignment_res ( option[ alignment_res ]() ); //Important!: Need to be called after set_fixed_res
 	stepwise_rna_job_parameters_setup.set_native_alignment_res ( option[ native_alignment_res ]() );
-	stepwise_rna_job_parameters_setup.set_FARFAR_start_pdb ( option[ FARFAR_start_pdb ]() );
 	stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP ( option[ allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
 	/////////////////////////////Sept 1, 2010////////////
 	if ( check_for_previously_closed_cutpoint_with_input_pose ) {
@@ -592,7 +590,6 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 	stepwise_rna_pose_setup->set_bulge_res( option[ bulge_res ]() );
 	stepwise_rna_pose_setup->set_native_pose( native_pose );
 	stepwise_rna_pose_setup->set_native_virtual_res( option[ native_virtual_res]() );
-	stepwise_rna_pose_setup->set_FARFAR_start_pdb( option[FARFAR_start_pdb]() );
 	stepwise_rna_pose_setup->set_output_pdb( option[ output_pdb ]() );
 
 	return stepwise_rna_pose_setup;
@@ -782,7 +779,6 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT ( score_diff_cut_tier_two, "score_tier_two difference cut for clustering", 0.0 ); //Sept 24, 2010
 	NEW_OPT ( score_diff_cut_tier_three, "score_tier_three difference cut for clustering", 0.0 ); //Sept 24, 2010
 	NEW_OPT ( algorithm, "Specify algorithm to execute", "" );
-	NEW_OPT ( FARFAR_start_pdb, "if pass in name, then create pdb with input chunks and the less with idealize bond length and angle residue", "" ); //Oct 16, 2010
 	NEW_OPT ( allow_chain_boundary_jump_partner_right_at_fixed_BP, "allow_chain_boundary_jump_partner_right_at_fixed_BP, mainly just to get SQUARE RNA working", false ); //Nov 6, 2010
 	NEW_OPT ( allow_fixed_res_at_moving_res, "allow_fixed_res_at_moving_res, mainly just to get Hermann Duplex working", false ); //Nov 15, 2010
 	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!

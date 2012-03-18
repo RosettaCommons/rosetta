@@ -91,7 +91,10 @@ namespace rna {
 		set_native_rmsd_screen( bool const & setting );
 
 		void
-		set_native_screen_rmsd_cutoff( core::Real const & setting){ native_screen_rmsd_cutoff_= setting ;}
+		set_native_screen_rmsd_cutoff( core::Real const & setting);
+
+		void
+		set_integration_test_mode( bool const & setting);
 
 		void
 		set_verbose( bool const & setting );
@@ -185,6 +188,7 @@ namespace rna {
 
 		void
 		set_output_pdb( bool const setting){ output_pdb_=setting;}
+
 
   private:
 
@@ -328,6 +332,7 @@ namespace rna {
 		bool allow_bulge_at_chainbreak_;
 		bool fast_;
 		bool medium_fast_;
+		bool integration_test_mode_;
 		bool floating_base_;
 	
 		StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
@@ -357,7 +362,7 @@ namespace rna {
 		bool do_not_sample_multiple_virtual_sugar_; 
 		bool sample_ONLY_multiple_virtual_sugar_; 
 		bool assert_no_virt_ribose_sampling_;
-		bool output_pdb_; 
+		bool output_pdb_;
 
 		StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;
 

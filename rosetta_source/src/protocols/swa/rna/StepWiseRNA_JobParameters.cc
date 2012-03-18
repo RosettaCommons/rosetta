@@ -34,6 +34,7 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// Constructor
 	StepWiseRNA_JobParameters::StepWiseRNA_JobParameters():
+		output_extra_RMSDs_(false),
 		Is_simple_full_length_job_params_(false),
 		full_sequence_( "" ),
 		working_sequence_( "" ),
@@ -81,14 +82,15 @@ namespace rna {
 
 	StepWiseRNA_JobParameters::~StepWiseRNA_JobParameters(){}
 
+	//////////////////////////////////////////////////////////////////////////////////////////
+	bool const & StepWiseRNA_JobParameters::output_extra_RMSDs() const{
+		return output_extra_RMSDs_;
+	}
 	///////////////////////////////////////////////////////////////////////////////////////
-
 	bool const & StepWiseRNA_JobParameters::Is_simple_full_length_job_params() const{
 		return Is_simple_full_length_job_params_;
 	}
-
 	///////////////////////////////////////////////////////////////////////////////////////
-
 	std::string const & StepWiseRNA_JobParameters::full_sequence() const{
 
 		if(full_sequence_.size()==0) utility_exit_with_message( "full_sequence_.size()==0" );
@@ -100,7 +102,6 @@ namespace rna {
 		if(working_sequence_.size()==0) utility_exit_with_message( "working_sequence_.size()==0" );
 		return working_sequence_;
 	}
-
 	//////////////////////////////////////////////////////////////////////////////////////////
 	Size const & StepWiseRNA_JobParameters::moving_res() const{
 		return moving_res_;
@@ -286,6 +287,10 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::working_protonated_H1_adenosine_list() const{
 		return working_protonated_H1_adenosine_list_;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	void StepWiseRNA_JobParameters::set_output_extra_RMSDs( bool const & setting ){
+		output_extra_RMSDs_=setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void StepWiseRNA_JobParameters::set_Is_simple_full_length_job_params( bool const & setting ){ //Oct 31, 2011

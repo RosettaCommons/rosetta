@@ -309,7 +309,9 @@ namespace rna {
 
 
 		for(Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) { 
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+
 			utility::vector1< core::chemical::VariantType > target_variants( pose.residue(seq_num).type().variant_types() );
 
 			if(target_variants.size()!=pose.residue(seq_num).type().variant_types().size()){
@@ -476,6 +478,7 @@ namespace rna {
 		return full_to_input_res_map;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*
 	core::Size
 	string_to_int(std::string const string){
 		Size int_of_string; //misnomer
@@ -486,10 +489,27 @@ namespace rna {
 	//	std::cout << "The string  " <<  string << " have the corresponding int value " << int_of_string << std::endl;
 	
 		return int_of_string;
+	}*/
+
+	core::Size
+	string_to_int(std::string const input_string){
+
+		Size int_of_string; //misnomer
+		std::stringstream ss (std::stringstream::in | std::stringstream::out);
+
+		ss << input_string;
+
+		if(ss.fail()) utility_exit_with_message("In string_to_real(): ss.fail() for ss << input_string | string ("+input_string+")");
+
+		ss >> int_of_string;
+
+		if(ss.fail()) utility_exit_with_message("In string_to_real(): ss.fail() for ss >> int_of_string | string ("+input_string+")");
+
+		return int_of_string;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	/*
 	core::Real
 	string_to_real(std::string const string){
 		Real real_of_string;
@@ -499,6 +519,25 @@ namespace rna {
 		return real_of_string;
 
 		//std::cout << "The string  " <<  string << " have the corresponding real value " << real_of_string << std::endl;
+	}
+	*/
+
+	core::Real
+	string_to_real(std::string const input_string){
+
+		Real real_of_string;
+		std::stringstream ss (std::stringstream::in | std::stringstream::out);
+
+		ss << input_string;
+
+		if(ss.fail()) utility_exit_with_message("In string_to_real(): ss.fail() for ss << input_string | string ("+input_string+")");
+
+		ss >> real_of_string;
+
+		if(ss.fail()) utility_exit_with_message("In string_to_real(): ss.fail() for ss >> real_of_string | string ("+input_string+")");
+
+		return real_of_string;
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -677,7 +716,7 @@ namespace rna {
 
 
  		for ( Size seq_num = 1; seq_num <= mod_pose.total_residue(); ++seq_num ) {
-			if (mod_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+			if (mod_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
  			if(!Contain_seq_num(seq_num, rmsd_residue_list)) continue;
 
  			setup_suite_atom_id_map(mod_pose, ref_pose, seq_num, atom_ID_map, base_only);
@@ -872,7 +911,7 @@ namespace rna {
 	Is_close_chain_break(pose::Pose const & pose){
 
 		for(Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++) {
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
 			if ( !pose.residue( seq_num  ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
 			if ( !pose.residue( seq_num+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
 
@@ -1050,114 +1089,6 @@ namespace rna {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-	void
-	Output_entropy_data(core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_, core::scoring::ScoreFunctionOP const & scorefxn, Real const & KT_in_term_of_rosetta_unit){
-
-		using namespace core::io::silent;
-		using namespace core::scoring;
-		using namespace core::pose;
-		using namespace conformation;
-		using namespace ObjexxFCL;
-
-
-		std::cout << "KT_in_term_of_rosetta_unit= " <<  KT_in_term_of_rosetta_unit << std::endl;
-
-		core::Real const bulge_bonus=10*(scorefxn->get_weight(rna_bulge));
-		std::cout << "bulge_bonus= " << bulge_bonus << std::endl;
-
-		core::Real const bulge_conformations=exp(bulge_bonus*KT_in_term_of_rosetta_unit)-1;
-
-
-		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
-		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
-
-		Real sum_entropy=0;
-
-
-		
-		(*scorefxn)(pose);
-		Real start_base_score=0.0;
-	
-
-		BinaryRNASilentStruct s(pose, tag ); //Does this take a long time to create?
-
-		pose::Pose pose_copy=pose;
-
-		for(Size n=1; n<= rmsd_res_list.size(); n++){
-			
-			start_base_score=(*scorefxn)(pose_copy);
-
-			Size const full_seq_num= rmsd_res_list[n];
-			Size const seq_num=full_to_sub.find(full_seq_num)->second;
-
-			Real const base_score=(*scorefxn)(pose_copy);
-
-			bool already_virtualized=false;
-
-			if(pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
-				if(pose.residue(seq_num+1).has_variant_type("VIRTUAL_RNA_RESIDUE_UPPER")==false){
-					utility_exit_with_message( "seq_num= " + string_of(seq_num) + "  is a virtual res but seq_num+1 is not a virtual_res_upper" );
-				}
-				already_virtualized=true;
-			}
-	
-			pose::add_variant_type_to_pose_residue( pose_copy, "VIRTUAL_RNA_RESIDUE", seq_num );
-			pose::add_variant_type_to_pose_residue( pose_copy, "VIRTUAL_RNA_RESIDUE_UPPER", seq_num+1 );
-
-
-			Real const virtual_score=(*scorefxn)(pose_copy);
-			Real const delta_E=base_score-virtual_score;
-
-			Real const boltzmann =  exp(-1*delta_E*KT_in_term_of_rosetta_unit);
-			Real const mean_energy = (delta_E * boltzmann)/(boltzmann+bulge_conformations);
-
-			Real const entropy = -log( exp(-1*delta_E*KT_in_term_of_rosetta_unit)+ bulge_conformations)-(mean_energy); 
-			//THIS IS CORRECT EXPRESSION FOR ENTROPY which is difference between free_energy and delta_MEAN_energy (boltzmann average of the pose energy and the unfold states energy)
-			//HOWEVER, what we want is difference beteween free_energy and delta_energy of the actual pose conformation which is the expression below.
-
-//			float const entropy=-log(exp(-1*delta_E*KT_in_term_of_rosetta_unit)+bulge_conformations)-(delta_E*KT_in_term_of_rosetta_unit);
-
-
-			std::cout << "full_seq_num= " << full_seq_num << " seq_num= " << seq_num; Output_boolean(" already_virtualized= ",already_virtualized);
-			std::cout << " base_score= " << base_score << " virtual_score= " << virtual_score << " delta_E= " << delta_E;
-			std::cout << " entropy= " << entropy;
-			std::cout << std::endl;
-			sum_entropy+=entropy;
-
-			if(already_virtualized==false){
-				pose::remove_variant_type_from_pose_residue( pose_copy, "VIRTUAL_RNA_RESIDUE", seq_num );
-				pose::remove_variant_type_from_pose_residue( pose_copy, "VIRTUAL_RNA_RESIDUE_UPPER", seq_num+1 );
-			}
-		}
-		Real const free_energy=((1/KT_in_term_of_rosetta_unit)*sum_entropy)+start_base_score;  ///THIS IS NOT CORRECT!!
-
-		std::cout << " sum_entropy= " << sum_entropy << std::endl;
-		std::cout << "------------------------------------------------------------------------------------" << std::endl;
-
-		/////////////////////////////////////WARNING CODE DUPLICATION//////////////////////////////////////////////////////////////////
-		std::map< core::Size, bool > const & Is_prepend_map = job_parameters_->Is_prepend_map();
-		bool const Is_prepend(  job_parameters_->Is_prepend() ); // if true, moving_suite+1 is fixed. Otherwise, moving_suite is fixed.
-		Size const moving_base_residue( job_parameters_->actually_moving_res() );
-
-		if ( native_poseCOP ) {
-			s.add_energy( "all_rms", rms_at_corresponding_heavy_atoms( pose, *native_poseCOP ) );
-			s.add_energy( "rmsd", suite_rmsd( pose, *native_poseCOP, moving_base_residue, Is_prepend));
-			s.add_energy( "loop_rmsd", rmsd_over_residue_list( pose, *native_poseCOP, rmsd_res_list, full_to_sub, Is_prepend_map, false) );
-
-			s.add_energy( "V_rms", suite_rmsd( pose, *native_poseCOP, moving_base_residue, Is_prepend, true));
-			s.add_energy( "V_loop_rms", rmsd_over_residue_list( pose, *native_poseCOP, rmsd_res_list, full_to_sub, Is_prepend_map, false, true) );
-
-		}
-
-		s.add_energy( "entropy", sum_entropy );
-		s.add_energy( "free_energy", free_energy );
-
-		silent_file_data.write_silent_struct(s, silent_file, write_score_only);
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	}
-
 	void
 	output_rotamer(utility::vector1 <Real > & rotamer){
 
@@ -1182,28 +1113,28 @@ namespace rna {
 	}
 
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	Add_virtual_O2Star_hydrogen( core::pose::Pose & pose){
 
 	  for (core::Size i = 1; i <= pose.total_residue(); i++){
-	    if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+	    if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i);
 	  }
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	Remove_virtual_O2Star_hydrogen(pose::Pose & pose){
 
 		for(Size i=1; i<=pose.total_residue(); i++){
-			if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+			if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			if ( pose.residue_type( i ).has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) ){
 				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i);
 			}
 		}
 		return true;
 	}
-
-
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//This now works for any rebuild residue.
@@ -1850,7 +1781,8 @@ namespace rna {
 		conformation::Residue const & five_prime_rsd =five_prime_pose.residue(five_prime_chain_break_res);
 		conformation::Residue const & three_prime_rsd=three_prime_pose.residue(three_prime_chain_break_res);
 
-		Distance C4_C3_min, C4_C3_max;
+		Distance C4_C3_min=0.0;
+		Distance C4_C3_max=0.0;
 
 		get_C4_C3_distance_range(five_prime_rsd, three_prime_rsd, C4_C3_min, C4_C3_max);
 		
@@ -2015,48 +1947,63 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue){
+	Output_movemap(kinematics::MoveMap const & mm, core::pose::Pose const & pose){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
-//		using namespace core::kinematics;
 		using namespace core::id;
 		using namespace core::kinematics;
 
-		typedef std::map< id::JumpID, bool > JumpID_Map;
+		Size const total_residue =pose.total_residue();
 
 		Size spacing=10;
 
+		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 		std::cout << "Movemap (in term of partial_pose seq_num): " << std::endl;
-		std::cout << A(spacing,"res_num") << A(spacing,"alpha") << A(spacing,"beta") << A(8,"gamma") << A(8,"delta") <<A(8,"eplison") <<A(8,"zeta");
-		std::cout << A(spacing,"chi_1") << A(spacing,"nu_2") << A(spacing,"nu_1") << A(8,"chi_O2") << std::endl;
+		std::cout << A(spacing,"res_num" ) << A(spacing," alpha  ") << A(spacing,"  beta  ") << A(spacing," gamma  "); 
+		std::cout << A(spacing," delta  ") << A(spacing,"eplison ") << A(spacing,"  zeta  ") << A(spacing," chi_1  ");
+		std::cout << A(spacing,"  nu_2  ") << A(spacing,"  nu_1  ") << A(spacing,"chi_O2* ") << std::endl;
 
 		for(Size n=1; n<= total_residue; n++){
 
 			std::cout << I(spacing, 3 , n);
-			Output_boolean(mm.get(TorsionID( n , id::BB,  1 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  2 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  3 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  4 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  5 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  6 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::CHI, 1 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::CHI, 2 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::CHI, 3 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::CHI, 4 ))); A(spacing-4, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  1 ))); std::cout << A(1+(spacing-4)/2, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  2 ))); std::cout << A(1+(spacing-4)/2, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  3 ))); std::cout << A(1+(spacing-4)/2, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  4 ))); std::cout << A(1+(spacing-4)/2, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  5 ))); std::cout << A(1+(spacing-4)/2, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  6 ))); std::cout << A(1+(spacing-4)/2, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 1 ))); std::cout << A(1+(spacing-4)/2, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 2 ))); std::cout << A(1+(spacing-4)/2, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 3 ))); std::cout << A(1+(spacing-4)/2, "");
+			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 4 ))); std::cout << A(1+(spacing-4)/2, "");
 			std::cout << std::endl;
 		}
+		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+
 
 		
+		std::cout << "print movemap jump_points [explicit method]: " << std::endl;
+		for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
+			Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
+			Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
+
+			std::cout << "n=" << n << " | jump_pos1= " << jump_pos1 << " | jump_pos2= " << jump_pos2;
+			std::cout << " | mm.get_jump(n) = "; Output_boolean( mm.get_jump(n) ); 
+			std::cout << std::endl;
+			
+		}
+		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+
 		//From core/kinematic/MoveMap.hh
 		//typedef std::map< id::JumpID, bool > JumpID_Map
-		std::cout << "mm.jump_point(): " << std::endl;
-	  for (JumpID_Map::const_iterator it=mm.jump_id_begin(); it!=mm.jump_id_end(); it++ ){
-			std::cout << "blah" << std::endl;
-	    std::cout << it->first << " => " << it->second << std::endl;
+		std::cout << "print movemap jump_points [iterator method]: " << std::endl;
+	  for (std::map< id::JumpID, bool >::const_iterator it=mm.jump_id_begin(); it!=mm.jump_id_end(); it++ ){
+	    std::cout << "movemap jump==true for jump_pos1=" << it->first << " | jump_pos2=" << it->second << std::endl;
 		}
+		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 
 	}
 
@@ -2073,7 +2020,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		//Consistency_check
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			core::conformation::Residue const & rsd = pose.residue(seq_num);	
 			Size const at= rsd.first_sidechain_atom();
 
@@ -2086,7 +2033,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		utility::vector1< bool > Is_O2star_hydrogen_virtual_list;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			core::conformation::Residue const & rsd = pose.residue(seq_num);	
 			Size at=rsd.atom_index( "2HO*" );
 
@@ -2116,7 +2063,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		//1st layer, interaction between surrounding O2star and moving_res
 		for(Size seq_num=1; seq_num<= pose.total_residue(); seq_num++){
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			if(Contain_seq_num(seq_num, surrounding_O2star_hydrogen) ) continue;
 
 			bool Is_surrounding_res=false;
@@ -2161,7 +2108,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			bool add_new_O2star_hydrogen=false;
 
 			for(Size seq_num=1; seq_num<= pose.total_residue(); seq_num++){
-				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 				if(Contain_seq_num(seq_num, surrounding_O2star_hydrogen) ) continue;
 
 				core::conformation::Residue const & rsd_1 = pose.residue(seq_num);	
@@ -2217,7 +2164,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		 utility::vector1< core::Size > O2star_pack_seq_num;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			O2star_pack_seq_num.push_back(seq_num);
 		}
 
@@ -2252,7 +2199,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			if(Contain_seq_num(seq_num, O2star_pack_seq_num) && pose.residue(seq_num).is_RNA() ){ //pack this residue!
 
 				/*
@@ -2308,6 +2255,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		
 		
 		Size const three_prime_chainbreak=five_prime_chainbreak+1;
+
 		if (three_prime_chainbreak <= pose.total_residue()) {
 			conformation::Residue const & suite_upper_res=pose.residue(three_prime_chainbreak);	
 			std::cout << std::setw(5) << " a= "  << std::setw(15) << suite_upper_res.mainchain_torsion(1);
@@ -2614,7 +2562,7 @@ principal_angle_degrees( T const & angle )
 		using namespace core::scoring::rna;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			conformation::Residue const & rsd(pose.residue(seq_num)); 
 			Real delta = numeric::principal_angle_degrees(rsd.mainchain_torsion( DELTA ));
 			Real chi = numeric::principal_angle_degrees(rsd.chi(1));
@@ -2938,7 +2886,7 @@ principal_angle_degrees( T const & angle )
 			pose::Pose testing_pose=input_pose;
 
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
-				if (testing_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+				if (testing_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 				if(Contain_seq_num(seq_num, allow_bulge_res_list)==false ) continue;
 				apply_virtual_rna_residue_variant_type(testing_pose, seq_num, true /*apply_check*/);
 			}
@@ -2948,7 +2896,7 @@ principal_angle_degrees( T const & angle )
 		//////////////////////////////////////////////////////////////////////////////////////////////////////	
 		if(allow_pre_virtualize==false){
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
-				if (input_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;
+				if (input_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 				if(input_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
 					utility_exit_with_message( "allow_pre_virtualize==false but seq_num= " + string_of(seq_num) + "  is already virtualized!!" );
 				}
@@ -2971,7 +2919,7 @@ principal_angle_degrees( T const & angle )
 			Size num_res_virtualized_in_this_round=0;
 
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
-				if (input_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;	
+				if (input_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 				if(Contain_seq_num(seq_num, allow_bulge_res_list)==false ) continue;
 
 				if(input_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
@@ -3148,8 +3096,8 @@ principal_angle_degrees( T const & angle )
 		std::cout << "gap_size= " << JP->gap_size();
 		std::cout << " five_prime_chain_break_res= " << JP->five_prime_chain_break_res();
 		Output_boolean(" Is_prepend= ",  JP->Is_prepend() ) ;
-		Output_boolean(" Is_internal= " , JP->Is_internal() ); std::cout << std::endl;
-
+		Output_boolean(" Is_internal= " , JP->Is_internal() );
+		Output_boolean(" output_extra_RMSDs= ", JP->	output_extra_RMSDs() ); std::cout << std::endl;
 
 
 		//std::map< core::Size, core::Size > full_to_sub_;
@@ -3569,7 +3517,7 @@ principal_angle_degrees( T const & angle )
 		utility::vector1< bool > do_update_list(template_pose.total_residue(), false);
 
 		for(Size seq_num=1; seq_num<=template_pose.total_residue(); seq_num++){
-			if (template_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;	
+			if (template_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;	//Fang's electron density code
 			if(std::abs( template_pose.torsion(TorsionID( seq_num, id::CHI, 4 )) - mod_pose.torsion(TorsionID( seq_num, id::CHI, 4 )) ) > 0.001 ){ 
 				//the two o2star torsions are not the same! Basically don't want to trigger refolding if need not to.
 				do_update_list[seq_num]=true;
@@ -3577,7 +3525,7 @@ principal_angle_degrees( T const & angle )
 		}
 
 		for(Size seq_num=1; seq_num<=template_pose.total_residue(); seq_num++){
-			if (mod_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;	
+			if (mod_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;	//Fang's electron density code
 			if(do_update_list[seq_num]==true){
 				mod_pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), template_pose.torsion(TorsionID( seq_num, id::CHI, 4 ) ) );
 			}

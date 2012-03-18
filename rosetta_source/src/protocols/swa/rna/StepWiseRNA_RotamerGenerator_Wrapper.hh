@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file SWA_ResidueSampler.hh
+/// @file StepWiseRNA_RotamerGenerator_Wrapper.hh
 /// @brief
 /// @detailed
 ///
@@ -19,7 +19,9 @@
 #define INCLUDED_protocols_swa_SWA_RNA_RotamerGenerator_Wrapper_HH
 
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh> 
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh> 
+
+#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh>  //Feb 09, 2012: Uncomment this line. Necessary for BOINC build? (R47296 by cmiles)
+
 #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh> 
 
 #include <core/types.hh>

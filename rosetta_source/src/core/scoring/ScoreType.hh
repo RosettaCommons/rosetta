@@ -43,6 +43,9 @@ enum ScoreType {
 	fa_intra_atr,
 	fa_intra_rep,
 	fa_intra_sol,
+	fa_intra_RNA_base_phos_atr, //RNA specific score term
+	fa_intra_RNA_base_phos_rep, //RNA specific score term
+	fa_intra_RNA_base_phos_sol, //RNA specific score term
 	lk_hack,
 	lk_ball,
 	lk_ball_iso,
@@ -60,6 +63,8 @@ enum ScoreType {
 	lk_costheta,
 	lk_polar,
 	lk_nonpolar,
+	lk_polar_intra_RNA,    //RNA specific score term
+	lk_nonpolar_intra_RNA, //RNA specific score term
 //	csd_torsion, //commenting out until it is implemented
 	hack_elec,
 	hack_elec_bb_bb,
@@ -149,14 +154,7 @@ enum ScoreType {
 	//	fa_stack_pyrimidine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PYRIMIDINE
 	fa_stack_aro,
 
-	////////////Intra-res RNA specific score terms//////////////////
-	fa_intra_RNA_base_phos_atr, //RNA specific score term
-	fa_intra_RNA_base_phos_rep, //RNA specific score term
-	fa_intra_RNA_base_phos_sol, //RNA specific score term
-	lk_polar_intra_RNA,    //RNA specific score term
-	lk_nonpolar_intra_RNA, //RNA specific score term
-	hbond_intra,           //Currently effects only RNA
-	geom_sol_intra_RNA,    //RNA specific score term
+
 	CI_geom_sol,           //Context independent version. Currently tested only for RNA case.
 	CI_geom_sol_intra_RNA, //RNA specific score term
 
@@ -196,6 +194,7 @@ enum ScoreType {
 	hbond_sr_bb_sc,
 	hbond_lr_bb_sc,
 	hbond_sc,
+	hbond_intra,           //Currently effects only RNA
 
 	PyRosettaTwoBodyContextDependentEnergy_first,
 	PyRosettaTwoBodyContextDependentEnergy_last = PyRosettaTwoBodyContextDependentEnergy_first + 10,
@@ -205,6 +204,7 @@ enum ScoreType {
 
 	// Geometric solvation
 	geom_sol,
+	geom_sol_intra_RNA,    //RNA specific score term
 	occ_sol_fitted,
 	occ_sol_fitted_onebody,
 	occ_sol_exact,

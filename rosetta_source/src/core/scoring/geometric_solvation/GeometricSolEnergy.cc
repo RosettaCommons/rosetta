@@ -1079,7 +1079,9 @@ GeometricSolEnergy::atomic_interaction_cutoff() const
 bool
 GeometricSolEnergy::defines_intrares_energy( EnergyMap const & weights ) const
 {
-	bool condition_1= (weights[geom_sol_intra_RNA]>0.0) ? true : false;
+	//bool condition_1= (weights[geom_sol_intra_RNA]>0.0) ? true : false;
+
+	bool condition_1= (weights[geom_sol_intra_RNA]>0.0001) ? true : false; //Change to this on Feb 06, 2012. Ensure that the function returns false if weights[geom_sol_intra_RNA]==0.0
 	
 	return condition_1;
 }

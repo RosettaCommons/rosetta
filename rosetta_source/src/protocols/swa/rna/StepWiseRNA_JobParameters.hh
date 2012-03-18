@@ -46,6 +46,7 @@ namespace rna {
 	  //destructor -- necessary?
     ~StepWiseRNA_JobParameters();
 
+		bool const & output_extra_RMSDs() const;
 		bool const & Is_simple_full_length_job_params() const;
 
 		std::string const & full_sequence() const;
@@ -110,6 +111,7 @@ namespace rna {
 		utility::vector1< core::Size > const & protonated_H1_adenosine_list() const;
 		utility::vector1< core::Size > const & working_protonated_H1_adenosine_list() const;
 
+		void set_output_extra_RMSDs( bool const & setting );	
 		void set_Is_simple_full_length_job_params( bool const & setting );
 
 		void set_full_sequence( std::string const & setting );
@@ -170,6 +172,7 @@ namespace rna {
 
 	private:
 
+		bool output_extra_RMSDs_; //Used in StepWiseRNA_Output_Data.cc
 		bool Is_simple_full_length_job_params_;
 
 		std::string full_sequence_;

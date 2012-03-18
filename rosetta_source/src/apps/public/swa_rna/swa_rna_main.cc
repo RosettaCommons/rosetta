@@ -210,7 +210,6 @@ OPT_KEY( Boolean, centroid_screen )
 OPT_KEY( Boolean, allow_base_pair_only_centroid_screen )
 OPT_KEY( Boolean, VDW_atr_rep_screen )
 OPT_KEY( Boolean, sampler_perform_o2star_pack )
-OPT_KEY( Boolean, minimizer_perform_o2star_pack )
 OPT_KEY( Boolean, fast )
 OPT_KEY( Boolean, medium_fast )
 OPT_KEY( Boolean, allow_bulge_at_chainbreak )
@@ -226,13 +225,13 @@ OPT_KEY( Integer, sampler_num_pose_kept)
 OPT_KEY( Integer, clusterer_num_pose_kept)
 OPT_KEY( Boolean, recreate_silent_struct )
 OPT_KEY( Boolean, clusterer_use_best_neighboring_shift_RMSD )
-OPT_KEY( String, FARFAR_start_pdb )
 OPT_KEY( Boolean, allow_chain_boundary_jump_partner_right_at_fixed_BP )
 OPT_KEY( Boolean, allow_fixed_res_at_moving_res )
 OPT_KEY( Boolean, clusterer_rename_tags )
 OPT_KEY( Boolean, simple_append_map )
-OPT_KEY( Boolean, add_virt_root )
+OPT_KEY( Boolean, minimizer_perform_o2star_pack )
 OPT_KEY( Boolean, minimizer_output_before_o2star_pack )
+OPT_KEY( Boolean, minimizer_rename_tag ) 
 OPT_KEY( StringVector, 	VDW_rep_delete_matching_res)
 OPT_KEY( IntegerVector, global_sample_res_list ) 
 OPT_KEY( Boolean, clusterer_perform_VDW_rep_screen ) 
@@ -254,6 +253,9 @@ OPT_KEY( String, 	start_silent)
 OPT_KEY( String, 	start_tag)
 OPT_KEY( Boolean,  simple_full_length_job_params ) 
 OPT_KEY( Real, sampler_cluster_rmsd )
+OPT_KEY( Boolean, 	output_extra_RMSDs)
+OPT_KEY( Boolean, 	integration_test)
+OPT_KEY( Boolean, 	add_virt_root ) //For Fang's electron density code.
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -333,8 +335,6 @@ Is_nonempty_input_silent_file(std::string const input_silent_file, std::string c
 
 		std::string line;
 	
-		bool found_queue_ID=false;
-
 		bool found_line=getline(infile, line);
 
 		if(found_line==false) utility_exit_with_message("No line exist in input_silent_file= " + input_silent_file); 
@@ -586,14 +586,21 @@ setup_simple_full_length_rna_job_parameters(){
 
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-	std::string full_sequence = fasta_sequence->sequence();
+	std::string const full_sequence = fasta_sequence->sequence();
 	core::Size const nres=full_sequence.length();
 
 	/////////////////////////////////////////////////////
 
 	StepWiseRNA_JobParametersOP job_parameters = new StepWiseRNA_JobParameters;
 
+	job_parameters->set_Is_simple_full_length_job_params(true); //FORGOT THIS! ONLY INCLUDED ON MARCH 03, 2012!
+	//LUCKILY, BEFORE MARCH 03, 2012, only called Is_simple_full_length_job_params() for utility_exit_with_message() check in the following three functions of StepWiseRNA_Clusterer.cc: 
+	//i. initialize_VDW_rep_screener(), 
+	//ii. recalculate_rmsd_and_output_silent_file()
+	//iii. get_best_neighboring_shift_RMSD_and_output_silent_file()
 	/////////////////////////////////////////////////////
+
+	job_parameters->set_output_extra_RMSDs( option[ output_extra_RMSDs ]() );
 
 	utility::vector1< core::Size > is_working_res(nres, 1); //All res belong to 'mock pose' 1
 	job_parameters->set_is_working_res( is_working_res ); 
@@ -707,7 +714,7 @@ setup_rna_job_parameters(bool check_for_previously_closed_cutpoint_with_input_po
 	if ( !option[ in::file::fasta ].user() ) utility_exit_with_message( "Must supply in::file::fasta!" );
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-	std::string full_sequence = fasta_sequence->sequence();
+	std::string const full_sequence = fasta_sequence->sequence();
 	core::Size const nres=full_sequence.length();
 
 	if ( !option[ sample_res ].user() ) utility_exit_with_message( "Must supply sample_res!" );
@@ -722,11 +729,9 @@ setup_rna_job_parameters(bool check_for_previously_closed_cutpoint_with_input_po
 																								 										 option[ cutpoint_open ](),
 																								 										 option[ cutpoint_closed ]() );
 	stepwise_rna_job_parameters_setup.set_simple_append_map( option[ simple_append_map]() );
-	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root ( option[ add_virt_root]() );
 	stepwise_rna_job_parameters_setup.set_allow_fixed_res_at_moving_res( option[ allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
 	stepwise_rna_job_parameters_setup.set_fixed_res( get_fixed_res(nres) );
 	stepwise_rna_job_parameters_setup.set_terminal_res( option[ terminal_res ]() );
-//	stepwise_rna_job_parameters_setup.set_parin_favorite_output( option[ parin_favorite_output ]());
 	stepwise_rna_job_parameters_setup.set_rmsd_res_list( option[ rmsd_res ]() );
 	stepwise_rna_job_parameters_setup.set_jump_point_pair_list( option[ jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
 	stepwise_rna_job_parameters_setup.set_alignment_res( option[ alignment_res ]() ); 
@@ -740,10 +745,10 @@ setup_rna_job_parameters(bool check_for_previously_closed_cutpoint_with_input_po
 	stepwise_rna_job_parameters_setup.set_force_south_ribose_list( option[ force_south_ribose_list ]() ); //April 29, 2011
 	stepwise_rna_job_parameters_setup.set_protonated_H1_adenosine_list( option[ protonated_H1_adenosine_list ]() ); //May 02, 2011
 
-	stepwise_rna_job_parameters_setup.set_FARFAR_start_pdb( option[ FARFAR_start_pdb ]() );
 	stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP( option[ allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
 
-
+	stepwise_rna_job_parameters_setup.set_output_extra_RMSDs( option[ output_extra_RMSDs ]() );
+	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( option[ add_virt_root]() );
 
 
 	/////////////////////////////Sept 1, 2010////////////
@@ -856,12 +861,10 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 		setup_copy_DOF_input(stepwise_rna_pose_setup);
 	}
 
-	stepwise_rna_pose_setup->set_parin_favorite_output( option[ parin_favorite_output ]());
 	stepwise_rna_pose_setup->set_virtual_res( option[ virtual_res ]() );
 	stepwise_rna_pose_setup->set_bulge_res( option[ bulge_res ]() );
 	stepwise_rna_pose_setup->set_native_pose( native_pose );
 	stepwise_rna_pose_setup->set_native_virtual_res( option[ native_virtual_res]() );
-	stepwise_rna_pose_setup->set_FARFAR_start_pdb( option[FARFAR_start_pdb]() );
 	stepwise_rna_pose_setup->set_rebuild_bulge_mode( option[rebuild_bulge_mode]() );
 	stepwise_rna_pose_setup->set_output_pdb( option[ output_pdb ]() );
 
@@ -904,14 +907,25 @@ filter_combine_long_loop()
 
 	}
 
+	if ( utility::file::file_exists( output_filename ) ) { //Feb 08, 2012
+		std::cout << "WARNING: output_filename " << output_filename << " already exist! removing..." << std::endl;
+
+		int remove_file_return_value=std::remove( output_filename.c_str() ); 
+		std::cout << "remove_file_return_value= " <<  remove_file_return_value << " for std::remove(" << output_filename << ")" << std::endl;
+
+		if(remove_file_return_value!=0){
+			utility_exit_with_message("remove_file_return_value=" +ObjexxFCL::string_of(remove_file_return_value )+ "!=0 for std::remove(" + output_filename + ")" );
+		}
+	}
+
+
 	if(at_least_one_empty_silent_file){
 		std::cout << "Early Exit: since at_least_one_empty_silent_file, outputting empty filterer outfile " << std::endl;
-	
+
 		std::ofstream outfile;
 		outfile.open(output_filename.c_str()); //Opening the file with this command removes all prior content..
 
 
-//		outfile << "empty cluster silent_file since at least of the two input_silent_file is empty.";
 		outfile << "empty cluster silent_file since at least one of the two input_silent_file is empty.";
 		outfile << " input_silent_file:";
 		for(Size n=1; n<=silent_files_in.size(); n++){ 
@@ -1024,7 +1038,7 @@ swa_rna_sample()
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
-	std::cout << "Total time to setup ResidueTypeSet: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+	std::cout << "Total time to setup ResidueTypeSet: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
 
@@ -1051,9 +1065,10 @@ swa_rna_sample()
 
 		user_input_VDW_bin_screener->set_physical_pose_clash_dist_cutoff(option[ VDW_rep_screen_physical_pose_clash_dist_cutoff ]() );
 
-		user_input_VDW_bin_screener->setup_using_user_input_VDW_pose(option[ VDW_rep_screen_info](), pose, job_parameters_COP);
-
 		user_input_VDW_bin_screener->set_output_pdb( option[ output_pdb ]() );
+
+		//This should be called last, after all options are specified
+		user_input_VDW_bin_screener->setup_using_user_input_VDW_pose(option[ VDW_rep_screen_info](), pose, job_parameters_COP);
 
 	}
 
@@ -1068,14 +1083,10 @@ swa_rna_sample()
 		protocols::viewer::add_conformation_viewer( pose.conformation(), current_directory_string, 400, 400 );
 	}	
 
-	StepWiseRNA_JobParametersCOP samplerer_JP_COP;
 
-	samplerer_JP_COP=job_parameters_COP;
-
-	print_JobParameters_info(samplerer_JP_COP, "Full_length_samplerer_job_parameters");
+	print_JobParameters_info(job_parameters_COP, "job_parameters_COP");
 
 
-	StepWiseRNA_ResidueSampler stepwise_rna_residue_sampler( samplerer_JP_COP );
   std::string const silent_file = option[ out::file::silent  ]();
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -1097,14 +1108,18 @@ swa_rna_sample()
 		//int delete_file_return_value=utility::file::file_delete( silent_file_test ); #DO NOT USE THIS SINCE ITS RETURN VALUE IS 0 regardless of whether the deletion was successful or not!
 	}
 	////////////////////////////////////////////////////////////////////////////////
+	StepWiseRNA_ResidueSampler stepwise_rna_residue_sampler( job_parameters_COP );
 
 	stepwise_rna_residue_sampler.set_silent_file( silent_file + "_sampling" );
 	stepwise_rna_residue_sampler.set_scorefxn( scorefxn );
-	stepwise_rna_residue_sampler.set_num_pose_kept( option[ sampler_num_pose_kept ]() );
+
+	stepwise_rna_residue_sampler.set_num_pose_kept( option[ sampler_num_pose_kept ]() ); //Should set before fast, medium_fast, 
 	stepwise_rna_residue_sampler.set_fast( option[ fast ]() );
 	stepwise_rna_residue_sampler.set_medium_fast( option[ medium_fast ]() );
 	stepwise_rna_residue_sampler.set_native_rmsd_screen( option[ sampler_native_rmsd_screen ]() );
 	stepwise_rna_residue_sampler.set_native_screen_rmsd_cutoff( option[ sampler_native_screen_rmsd_cutoff ]() );
+	stepwise_rna_residue_sampler.set_integration_test_mode( option[ integration_test ]() ); //Should set after setting sampler_native_screen_rmsd_cutoff, fast, medium_fast options.
+
 	stepwise_rna_residue_sampler.set_allow_bulge_at_chainbreak( option[ allow_bulge_at_chainbreak ]() );
 	stepwise_rna_residue_sampler.set_perform_o2star_pack( option[ sampler_perform_o2star_pack ]() );
 	stepwise_rna_residue_sampler.set_verbose( option[ VERBOSE ]() );
@@ -1138,12 +1153,10 @@ swa_rna_sample()
 
 	stepwise_rna_residue_sampler.set_VDW_atr_rep_screen( option[ VDW_atr_rep_screen ]() );
 	
-
 	stepwise_rna_residue_sampler.set_base_centroid_screener( base_centroid_screener );
 
 	stepwise_rna_residue_sampler.set_user_input_VDW_bin_screener( user_input_VDW_bin_screener );
 	
-
 	if(option[skip_sampling]()==false) stepwise_rna_residue_sampler.apply( pose );
 
 
@@ -1162,7 +1175,6 @@ swa_rna_sample()
 		pose_data_list.push_back(native_data_struct);
 	}
 
-	//utility_exit_with_message("AFTERE SAMPLERER TESTING EXIT");
   ////////////////////////////////////////////////////////////////
 
 	StepWiseRNA_Minimizer stepwise_rna_minimizer( stepwise_rna_residue_sampler.get_pose_data_list() , job_parameters_COP );
@@ -1178,6 +1190,7 @@ swa_rna_sample()
 
 	stepwise_rna_minimizer.set_perform_o2star_pack( option[ minimizer_perform_o2star_pack ]() );
 	stepwise_rna_minimizer.set_output_before_o2star_pack( option[ minimizer_output_before_o2star_pack ]() );
+	stepwise_rna_minimizer.set_rename_tag( option[ minimizer_rename_tag ]() );
 
 	if(option[num_pose_minimize].user()) 	stepwise_rna_minimizer.set_num_pose_minimize( option[ num_pose_minimize ]() );
 	stepwise_rna_minimizer.set_minimize_and_score_sugar( option[  minimize_and_score_sugar ]() );
@@ -1237,7 +1250,7 @@ swa_rna_cluster(){
 
 		std::string const input_silent_file=silent_files_in[n];
 
-		if(Is_nonempty_input_silent_file(input_silent_file, "empty filtered silent_file since no actual samplerer outfiles.")){
+		if(Is_nonempty_input_silent_file(input_silent_file, "empty filtered silent_file since no non-empty sampler silent_file.")){
 			std::cout << "adding input_silent_file " << input_silent_file << " to non_empty_silent_files_in " << std::endl;
 			non_empty_silent_files_in.push_back(input_silent_file);
 		}
@@ -1269,7 +1282,7 @@ swa_rna_cluster(){
 
 	if(non_empty_silent_files_in.size()==0){
 		std::cout << "Early Exit: non_empty_silent_files_in.size()==0, outputting empty clustered outfile " << std::endl;
-	
+
 		std::ofstream outfile;
 		outfile.open(silent_file_out.c_str()); //Opening the file with this command removes all prior content..
 
@@ -1672,6 +1685,8 @@ void*
 my_main( void* )
 {
 
+	clock_t const my_main_time_start( clock() );
+
   using namespace basic::options;
 
 	std::string algorithm_input = option[algorithm];
@@ -1687,10 +1702,12 @@ my_main( void* )
 	}	else if (algorithm_input=="filter_combine_long_loop"){
 		filter_combine_long_loop();
 	} else {
-		std::cout << "Error no algorithm selected" << std::endl;
+		utility_exit_with_message("Invalid User-specified algorithm ("+ algorithm_input +")!");
 	}
 
 	protocols::viewer::clear_conformation_viewers();
+
+	std::cout << "Total time took to run algorithm (" << algorithm_input << "): " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 	std::cout << "JOB_SUCCESSFULLY_COMPLETED" << std::endl;
 
@@ -1744,7 +1761,6 @@ main( int argc, char * argv [] )
 
 	//////////////Pose setup///////
 	NEW_OPT( job_queue_ID, " swa_rna_sample()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported (start from 0!)" , 0);	
-	NEW_OPT( FARFAR_start_pdb, "if pass in name, then create pdb with input chunks and the less with idealize bond length and angle residue", ""); //deprecate option
 
 	///////////////Sampler////////////
 	NEW_OPT( combine_long_loop_mode, " Sampler: combine_long_loop_mode " , false);
@@ -1755,12 +1771,13 @@ main( int argc, char * argv [] )
 	NEW_OPT( sampler_num_pose_kept, "optional: set_num_pose_kept by ResidueSampler", 108 );
 
 	//////////////Minimizer////////////
-	NEW_OPT( num_pose_minimize, "optional: set_num_pose_minimize by Minimizer", 99999 );
+	NEW_OPT( num_pose_minimize, "optional: set_num_pose_minimize by Minimizer", 999999 );
 
 	//////////////Clusterer////////////
 	NEW_OPT( clusterer_num_pose_kept, "optional: Num_pose_kept by the clusterer", 1000 );
 	NEW_OPT( suite_cluster_radius , " individual_suite_cluster_radius ", 999.99); 							//IMPORTANT, DO NOT CHANGE DEFAULT VALUE!
 	NEW_OPT( loop_cluster_radius , " loop_cluster_radius ", 999.99); 													//IMPORTANT, DO NOT CHANGE DEFAULT VALUE!
+	NEW_OPT( clusterer_full_length_loop_rmsd_clustering, "use the full_length_rmsd function to calculate loop_rmsd", false); //April 06, 2011: Should switch to true for all length_full clustering steps.
 
 	//////////VDW_bin_screener//////////
 	NEW_OPT( VDW_rep_screen_info, "VDW_rep_screen_info to create VDW_rep_screen_bin (useful when building loop from large poses)", blank_string_vector); //Jun 9, 2010
@@ -1783,14 +1800,17 @@ main( int argc, char * argv [] )
 	//////////////General/////////////////////////////
 	NEW_OPT( VERBOSE, "VERBOSE", false );
 	NEW_OPT( parin_favorite_output , " parin_favorite_output ", true ); //Change to true on Oct 10, 2010
+	NEW_OPT( integration_test , " integration_test ", false ); //March 16, 2012
+
 
 	//////////////Job_Parameters///////////
 	NEW_OPT( filter_user_alignment_res, " filter_user_alignment_res ", true ); //General want this to be true except for special cases! June 13, 2011
 	NEW_OPT( simple_append_map , "simple_append_map", false);
-	NEW_OPT( add_virt_root, "add_virt_root", false);
+	NEW_OPT( add_virt_root, "add_virt_root", false); //For Fang's electron density code.
 	NEW_OPT( allow_chain_boundary_jump_partner_right_at_fixed_BP, "mainly just to get Hermann nano-square RNA modeling to work", false); 
 	NEW_OPT( allow_fixed_res_at_moving_res, "mainly just to get Hermann Duplex modeling to work", false); //Nov 15, 2010 
 	NEW_OPT( simple_full_length_job_params, "simple_full_length_job_params", false); //Oct 31, 2011
+	NEW_OPT( output_extra_RMSDs, "output_extra_RMSDs", false); //March 16, 2012
 
 	///////////////Sampler////////////
 	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
@@ -1826,8 +1846,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true); //Sept 15, 2010
 	NEW_OPT( minimizer_output_before_o2star_pack, "minimizer_output_before_o2star_pack", false);
 	NEW_OPT( minimizer_perform_o2star_pack, "perform O2* hydrogen packing inside StepWiseRNA_Minimizer", true); //Jan 19, 2012
-	NEW_OPT( native_edensity_score_cutoff, "native_edensity_score_cutoff", -1 );
-
+	NEW_OPT( minimizer_rename_tag, "Reorder and rename the tag by the energy_score", true); //March 15, 2012
+	NEW_OPT( native_edensity_score_cutoff, "native_edensity_score_cutoff", -1.0 ); //Fang's electron density code
 
 	//////////////Clusterer ///////////////////////
 	NEW_OPT( clusterer_two_stage_clustering, "Cluster is two stage..using triangle inequaility to speed up clustering", false); //Change to false on April 9th 2011
@@ -1850,7 +1870,6 @@ main( int argc, char * argv [] )
 	NEW_OPT( clusterer_min_num_south_ribose_filter, "clusterer_min_num_south_ribose_filter", 0); //Oct 02, 2011
 	NEW_OPT( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false); 
 	NEW_OPT( skip_clustering, "keep every pose, no clustering", false );
-	NEW_OPT( clusterer_full_length_loop_rmsd_clustering, "use the full_length_rmsd function to calculate loop_rmsd", false); //April 06, 2011
 	NEW_OPT( clusterer_rename_tags , "clusterer_rename_tags", true);
 	NEW_OPT( whole_struct_cluster_radius , " whole_struct_cluster_radius ", 0.5); //IMPORTANT DO NOT CHANGE
 
