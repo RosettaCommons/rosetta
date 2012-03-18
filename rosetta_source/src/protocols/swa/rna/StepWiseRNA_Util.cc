@@ -2020,7 +2020,9 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		//Consistency_check
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
+
 			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+
 			core::conformation::Residue const & rsd = pose.residue(seq_num);	
 			Size const at= rsd.first_sidechain_atom();
 
@@ -2033,11 +2035,13 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		utility::vector1< bool > Is_O2star_hydrogen_virtual_list;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			core::conformation::Residue const & rsd = pose.residue(seq_num);	
 			Size at=rsd.atom_index( "2HO*" );
 
-			if(rsd.atom_type(at).name()=="VIRT"){
+			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ){
+				if(verbose) std::cout << "res " << seq_num << " is core::chemical::aa_vrt! " << std::endl;		
+				Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen 
+			}else if(rsd.atom_type(at).name()=="VIRT"){
 				if(verbose) std::cout << "res " << seq_num << " has a virtual o2star hydrogen! " << std::endl;		
 				Is_O2star_hydrogen_virtual_list.push_back(true);
 			}else{
@@ -2045,7 +2049,8 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			}
 		}
 
-			
+		//March 17, 2012 extra precation.
+		if(Is_O2star_hydrogen_virtual_list.size()!=pose.total_residue()) utility_exit_with_message("Is_O2star_hydrogen_virtual_list.size()!=pose.total_residue()");
 
 		utility::vector1< core::Size > surrounding_O2star_hydrogen;
 
@@ -2053,6 +2058,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		for(Size n=1; n<=moving_res.size(); n++){
 			Size const seq_num=moving_res[n];
 
+			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			if(Is_O2star_hydrogen_virtual_list[seq_num]) continue;
 
 			//if(verbose) std::cout << "res " << seq_num << " is a working_moving_res" << std::endl;
@@ -2063,7 +2069,8 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		//1st layer, interaction between surrounding O2star and moving_res
 		for(Size seq_num=1; seq_num<= pose.total_residue(); seq_num++){
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+
+			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			if(Contain_seq_num(seq_num, surrounding_O2star_hydrogen) ) continue;
 
 			bool Is_surrounding_res=false;
@@ -2108,6 +2115,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			bool add_new_O2star_hydrogen=false;
 
 			for(Size seq_num=1; seq_num<= pose.total_residue(); seq_num++){
+
 				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 				if(Contain_seq_num(seq_num, surrounding_O2star_hydrogen) ) continue;
 
@@ -2199,7 +2207,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
-			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			if(Contain_seq_num(seq_num, O2star_pack_seq_num) && pose.residue(seq_num).is_RNA() ){ //pack this residue!
 
 				/*
