@@ -39,9 +39,9 @@ m_vars["input_target_extension"] = "_rl_b.pdb"
 # where the output data should be end up
 m_vars["output_scorefile_extension"] = "_lr_b.sc"
 m_vars["output_silentfile_extension"] = "_rl_b.silent.gz"
-m_vars["output_run_log_path"] = "outputs"
-m_vars["output_score_path"] = "outputs"
-m_vars["output_decoy_path"] = "outputs/decoys"
+m_vars["output_run_log_path"] = "output"
+m_vars["output_score_path"] = "output"
+m_vars["output_decoy_path"] = "output/decoys"
 m_vars["test_results_log"] = ".results.log"
 m_vars["test_results_yaml"] = ".results.yaml"
 
@@ -215,6 +215,7 @@ def prepare_output_paths(m_vars):
         try:
             os.rmtree(m_vars["output_run_log_path"])
             os.makedirs(m_vars["output_run_log_path"])
+            print "\tOutput run log path: '%s'" % os.path.abspath(m_vars["output_run_log_path"])
         except e:
             print "Unable to create the output run log path '%s':" % m_vars["output_run_log_path"]
             print e
@@ -224,6 +225,7 @@ def prepare_output_paths(m_vars):
         try:
             os.rmtree(m_vars["output_score_path"])
             os.makedirs(m_vars["output_score_path"])
+            print "\tOutput score path: '%s'" % os.path.abspath(m_vars["output_score_path"])
         except e:
             print "Unable to create the output score path '%s':" % m_vars["output_score_path"]
             print e
@@ -240,10 +242,11 @@ def prepare_output_paths(m_vars):
 
     if os.path.exists(m_vars["test_results_log"]):
         os.remove(m_vars["test_results_log"])
+    print "\tTest results log: '%s'" % os.path.abspath(m_vars["test_results_log"])
 
     if os.path.exists(m_vars["test_results_yaml"]):
         os.remove(m_vars["test_results_yaml"])
-
+    print "\tTest results yaml: '%s'" % os.path.abspath(m_vars["test_results_yaml"])
 
 
 def prepare_condor_header(m_vars):
