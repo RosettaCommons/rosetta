@@ -48,7 +48,7 @@
 #-AnchoredDesign:perturb_temp
 #-AnchoredDesign:refine_temp
 
-#frequency of full repacking
+#frequency of full repacking; 10 used for test to fit in refine_cycles
 #-AnchoredDesign:refine_repack_cycles 100
 -AnchoredDesign:refine_repack_cycles 10
 
