@@ -96,7 +96,8 @@ namespace rna {
 	StepWiseRNA_BaseCentroidScreener::Initialize_base_stub_list( pose::Pose const & pose, bool const verbose ){
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
-		bool const root_partition = partition_definition( pose.fold_tree().root() );
+		Size const moving_res = job_parameters_ -> moving_res();
+		bool const moving_partition = partition_definition( moving_res );
 
 		moving_residues_.clear();
 		fixed_residues_.clear();
@@ -123,8 +124,8 @@ namespace rna {
 
 			if(is_virtual_base_( seq_num )==true) continue;
 
-			if ( partition_definition( seq_num ) == root_partition ) {
-				// This is a "fixed" residue -- on the ssame side of the moving suite as the root.
+			if ( partition_definition( seq_num ) != moving_partition ) {
+				// This is a "fixed" residue -- on the same side of the moving suite as the root.
 				fixed_residues_.push_back( seq_num );
 				if ( verbose ) std::cout << " FIXED POSITION  --> " << seq_num << std::endl;
 				is_fixed_res_( seq_num ) = true;
