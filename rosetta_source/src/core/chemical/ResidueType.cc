@@ -1524,7 +1524,7 @@ ResidueType::update_derived_data()
 		//Reinitialize rna_residuetype_ object! This also make sure rna_residuetype_ didn't inherit anything from the previous update!
 		//It appears that the rna_residuetype_ is shared across multiple ResidueType object, if the rna_residuetype_ is not reinitialized here!	
 
-		rna_residuetype_=*(new core::chemical::rna::RNA_ResidueType);
+		rna_residuetype_ = *( core::chemical::rna::RNA_ResidueTypeOP( new core::chemical::rna::RNA_ResidueType ) );
 
 		//update_last_controlling_chi is treated seperately for RNA case. Parin Sripakdeevong, June 26, 2011
 		rna_residuetype_.rna_update_last_controlling_chi(this, last_controlling_chi_, atoms_last_controlled_by_chi_);
