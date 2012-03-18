@@ -79,7 +79,7 @@ For example, if the main rosetta folder is located at ~/rosetta/, then the file 
 	USER_ROSETTA_DATABASE_FOLDER="~/rosetta/rosetta_database/"
 @endverbatim
 
-2) Add the python package scripts/SWA_RNA_python/ to the PYTHON path. For bash shell users, the path can be directly added to the ~/.bashrc file:
+2) Add the SWA_RNA_python package location to the PYTHON path. For bash shell users, the location can be directly added to the ~/.bashrc file:
 
 @verbatim
 	export PYTHONPATH=$PYTHONPATH:~/rosetta/rosetta_tools/SWA_RNA_python/
@@ -116,7 +116,7 @@ The expected outputs are two silent_files:
 
 @section outputs Post Processing
 
-In both silent_files, the total energy score is found under the 'score' column. If the "native_pdb" flag was included, then the RMSD between the native_pdb and each Rosetta model is found under the 'NAT_rmsd' column.
+In both silent_files, the total energy score is found under the 'score' column. If the "native_pdb" flag was included, then the RMSD (in angstrom units) between the native_pdb and each Rosetta model is found under the 'NAT_rmsd' column.
 
 Finally, use the following command to extract the top 5 energy cluster centers:
 
