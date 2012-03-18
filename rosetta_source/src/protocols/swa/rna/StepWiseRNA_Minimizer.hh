@@ -89,7 +89,7 @@ namespace rna {
 		set_output_before_o2star_pack(bool const setting){output_before_o2star_pack_=setting;} //For testing purposes.
 
 		void
-		set_skip_minimize(bool const setting){skip_minimize_=setting;} //For testing purposes.
+		set_perform_minimize(bool const setting){perform_minimize_=setting;}
 
 		void
 		set_num_pose_minimize(Size const setting){num_pose_minimize_=setting;} 
@@ -157,7 +157,7 @@ namespace rna {
 		bool perform_o2star_pack_; //Jan 19, 2012
 		bool output_before_o2star_pack_; //for testing purposes
 
-		bool skip_minimize_; //for testing purposes
+		bool perform_minimize_; //Parin Mar 12, 2012
 
 		core::Size num_pose_minimize_; 
 		bool minimize_and_score_sugar_; 

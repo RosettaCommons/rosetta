@@ -197,7 +197,7 @@ OPT_KEY ( Boolean, sampler_native_rmsd_screen )
 OPT_KEY ( Real, sampler_native_screen_rmsd_cutoff )
 OPT_KEY ( Real, native_edensity_score_cutoff )
 OPT_KEY ( Boolean, auto_tune )
-OPT_KEY ( Boolean, skip_minimize )
+OPT_KEY ( Boolean, minimizer_perform_minimize ) 
 OPT_KEY ( Real, score_diff_min )
 OPT_KEY ( Real, score_diff_cut )
 OPT_KEY ( Real, score_diff_cut_tier_two )
@@ -684,7 +684,7 @@ rna_resample_test() {
 	stepwise_rna_minimizer.set_scorefxn ( scorefxn );
 	stepwise_rna_minimizer.set_centroid_screen ( option[ centroid_screen ]() );
 	stepwise_rna_minimizer.set_base_centroid_screener ( base_centroid_screener );
-	stepwise_rna_minimizer.set_skip_minimize ( option[ skip_minimize ]() );
+	stepwise_rna_minimizer.set_perform_minimize( option[ minimizer_perform_minimize ]() );
 	stepwise_rna_minimizer.set_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
 	stepwise_rna_minimizer.set_native_edensity_score_cutoff ( option[native_edensity_score_cutoff]() );
 	stepwise_rna_minimizer.set_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() + 1 ); //+1 for leniency Sept 20, 2010
@@ -771,7 +771,7 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT ( sampler_native_screen_rmsd_cutoff, "sampler_native_screen_rmsd_cutoff", 2.0 );
 	NEW_OPT ( native_edensity_score_cutoff, "native_edensity_score_cutoff", -1 );
 	NEW_OPT ( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
-	NEW_OPT ( skip_minimize, "no minimize step in rna_swa residue sampling", false );
+	NEW_OPT ( minimizer_perform_minimize, "minimizer_perform_minimize", true );
 	NEW_OPT ( skip_sampling, "no sampling step in rna_swa residue sampling", false );
 	NEW_OPT ( skip_clustering, "keep every pose, no clustering", false );
 	NEW_OPT ( score_diff_min, "minimum score_diff before max_decoy_ condition applies", 0.0 ); //Oct 3, 2010

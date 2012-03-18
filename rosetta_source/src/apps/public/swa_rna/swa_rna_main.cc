@@ -217,7 +217,6 @@ OPT_KEY( Boolean, VERBOSE )
 OPT_KEY( Boolean, sampler_native_rmsd_screen )
 OPT_KEY( Real, sampler_native_screen_rmsd_cutoff )
 OPT_KEY( Real, native_edensity_score_cutoff )
-OPT_KEY( Boolean, skip_minimize )
 OPT_KEY( Real, score_diff_cut )
 OPT_KEY( Boolean, clusterer_perform_score_diff_cut )
 OPT_KEY( String, 	algorithm)
@@ -231,7 +230,8 @@ OPT_KEY( Boolean, clusterer_rename_tags )
 OPT_KEY( Boolean, simple_append_map )
 OPT_KEY( Boolean, minimizer_perform_o2star_pack )
 OPT_KEY( Boolean, minimizer_output_before_o2star_pack )
-OPT_KEY( Boolean, minimizer_rename_tag ) 
+OPT_KEY( Boolean, minimizer_rename_tag )
+OPT_KEY( Boolean, minimizer_perform_minimize ) 
 OPT_KEY( StringVector, 	VDW_rep_delete_matching_res)
 OPT_KEY( IntegerVector, global_sample_res_list ) 
 OPT_KEY( Boolean, clusterer_perform_VDW_rep_screen ) 
@@ -1183,7 +1183,7 @@ swa_rna_sample()
 	stepwise_rna_minimizer.set_scorefxn( scorefxn );
 	stepwise_rna_minimizer.set_centroid_screen( option[ centroid_screen ]() );
 	stepwise_rna_minimizer.set_base_centroid_screener( base_centroid_screener );
-	stepwise_rna_minimizer.set_skip_minimize( option[ skip_minimize ]() );
+	stepwise_rna_minimizer.set_perform_minimize( option[ minimizer_perform_minimize ]() );
 	stepwise_rna_minimizer.set_native_rmsd_screen( option[ sampler_native_rmsd_screen ]()); 
 	stepwise_rna_minimizer.set_native_screen_rmsd_cutoff( option[ sampler_native_screen_rmsd_cutoff ]() + 1 ); //+1 for leniency Sept 20, 2010
 	stepwise_rna_minimizer.set_native_edensity_score_cutoff( option[ native_edensity_score_cutoff ]()); 
@@ -1841,9 +1841,9 @@ main( int argc, char * argv [] )
 	NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
 
 	//////////////Minimizer////////////
-	NEW_OPT( skip_minimize, "no minimize step in rna_swa residue sampling", false );
 	NEW_OPT( minimize_and_score_native_pose, "minimize_and_score_native_pose ", false); //Sept 15, 2010
 	NEW_OPT( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true); //Sept 15, 2010
+	NEW_OPT( minimizer_perform_minimize, "minimizer_perform_minimize", true );
 	NEW_OPT( minimizer_output_before_o2star_pack, "minimizer_output_before_o2star_pack", false);
 	NEW_OPT( minimizer_perform_o2star_pack, "perform O2* hydrogen packing inside StepWiseRNA_Minimizer", true); //Jan 19, 2012
 	NEW_OPT( minimizer_rename_tag, "Reorder and rename the tag by the energy_score", true); //March 15, 2012

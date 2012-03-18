@@ -104,7 +104,7 @@ namespace rna {
 		centroid_screen_(true),
 		perform_o2star_pack_(true), 
 		output_before_o2star_pack_(false), 
-		skip_minimize_(false), 
+		perform_minimize_(true), 
 		num_pose_minimize_(999999), //Feb 02, 2012
 		minimize_and_score_sugar_(true),
 		rename_tag_(true),
@@ -143,8 +143,6 @@ namespace rna {
 
 		Output_title_text("Enter StepWiseRNA_Minimizer::apply");
 
-		bool const perform_minimizer_run=true; //this is for debugging!
-
 		Output_boolean(" verbose_=", verbose_ ); std::cout << std::endl;
 		Output_boolean(" native_screen_=", native_screen_ ); std::cout << std::endl;
 		std::cout << " native_screen_rmsd_cutoff_=" << native_screen_rmsd_cutoff_ << std::endl;
@@ -157,8 +155,7 @@ namespace rna {
 		Output_boolean(" minimize_and_score_sugar_=", minimize_and_score_sugar_ ); std::cout << std::endl;
 		Output_boolean(" user_inputted_VDW_bin_screener_=", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ); std::cout << std::endl;
 		Output_seq_num_list(" working_global_sample_res_list=", job_parameters_->working_global_sample_res_list() ); 
-		Output_boolean(" skip_minimize_=", skip_minimize_); std::cout << std::endl;
-		Output_boolean(" perform_minimizer_run=", perform_minimizer_run); std::cout << std::endl;
+		Output_boolean(" perform_minimize_=", perform_minimize_); std::cout << std::endl;
 		Output_boolean(" rename_tag_=", rename_tag_); std::cout << std::endl;
 
 		clock_t const time_start( clock() );
@@ -249,9 +246,6 @@ namespace rna {
 				
 			if(verbose_ && !output_before_o2star_pack_) output_pose_data_wrapper(tag, 'B', pose, silent_file_data, silent_file_ + "_before_minimize");
 
-			if(skip_minimize_) continue;
-
-
  			///////Minimization/////////////////////////////////////////////////////////////////////////////
 			if (gap_size == 0){
 				rna_loop_closer.apply( pose, five_prime_chain_break_res ); //This doesn't do anything if rna_loop_closer was already applied during sampling stage...May 10,2010
@@ -262,7 +256,7 @@ namespace rna {
 			for(Size round=1; round<=move_map_list_.size(); round++){
 				core::kinematics::MoveMap mm=move_map_list_[round];
 
-				if(perform_minimizer_run) minimizer.run( pose, mm, *(scorefxn_), options );
+				if(perform_minimize_) minimizer.run( pose, mm, *(scorefxn_), options );
 				if(perform_o2star_pack_) o2star_minimize(pose, scorefxn_, get_surrounding_O2star_hydrogen(pose, working_minimize_res, o2star_pack_verbose) );
 
 				if( gap_size == 0 ){ 
@@ -270,7 +264,7 @@ namespace rna {
 					std::cout << "mean_dist_err (round= " << round << " ) = " <<  mean_dist_err << std::endl;
 
 					if(perform_o2star_pack_) o2star_minimize(pose, scorefxn_, get_surrounding_O2star_hydrogen(pose, working_minimize_res, o2star_pack_verbose) ); 
-					if(perform_minimizer_run) minimizer.run( pose, mm, *(scorefxn_), options );
+					if(perform_minimize_) minimizer.run( pose, mm, *(scorefxn_), options );
 
 				}
 
