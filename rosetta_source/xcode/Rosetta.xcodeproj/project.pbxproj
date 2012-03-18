@@ -1259,6 +1259,7 @@
 		A6BBDDAC8920ECD74EAE7CFD /* Loop.cc in Sources */ = {isa = PBXBuildFile; fileRef = B24AED784757B7649E3FB2BD /* Loop.cc */; };
 		69251577A27115EBC0C54B74 /* LoopMoverFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 393395EC7851954896B9CAA7 /* LoopMoverFactory.cc */; };
 		58437074668E1D82DEA31512 /* Loops.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4D27106EFA83F4300BE954D5 /* Loops.cc */; };
+		D880B30BF8C60371EE603CAF /* LoopsFileIO.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0F8D8B771302B874C931178D /* LoopsFileIO.cc */; };
 		6AE14AF1ECF55FAF78092264 /* loopfinder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4AB6932F136EF60F743F16B5 /* loopfinder.cc */; };
 		A28F17DEBA68748028DDA3B3 /* looprelax_protocols.cc in Sources */ = {isa = PBXBuildFile; fileRef = 42C38C0718A8028E29BB6DE4 /* looprelax_protocols.cc */; };
 		FBB274983A9AB98F92DF11F4 /* loops_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 23F82DA3D1A6AF46BD3DF3C7 /* loops_main.cc */; };
@@ -1855,6 +1856,7 @@
 		CD85D7FF3ABC18E72C3FD1CF /* Ab_CloseOneCDR_Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = AAA0D47A9EEF2BD58D017B92 /* Ab_CloseOneCDR_Mover.cc */; };
 		B5C40E87507027439DAC1E9A /* Ab_GraftOneCDR_Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4674698F003DC70D3D93C96A /* Ab_GraftOneCDR_Mover.cc */; };
 		D6DB0EF7B72DE51A69CF5CF9 /* Ab_H3_cter_insert_mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E477F9E03BE07FC158003A24 /* Ab_H3_cter_insert_mover.cc */; };
+		D628DED1900F29944F4885B9 /* Ab_H3_perturb_ccd_build.cc in Sources */ = {isa = PBXBuildFile; fileRef = 03D1861034C8DEB1CB36995B /* Ab_H3_perturb_ccd_build.cc */; };
 		137D85FA47FA2EFC00901603 /* Ab_Info.cc in Sources */ = {isa = PBXBuildFile; fileRef = C80161969A1DC4A037BBE61C /* Ab_Info.cc */; };
 		95E100DF1434665688643601 /* Ab_LH_RepulsiveRamp_Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6829048C0815787E022B9455 /* Ab_LH_RepulsiveRamp_Mover.cc */; };
 		793A133639BCF66F83FBEF7B /* Ab_LH_SnugFit_Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 488DB178CC7C3AA942950F4B /* Ab_LH_SnugFit_Mover.cc */; };
@@ -10462,6 +10464,9 @@
 		65378443F5478B1DB14446E5 /* Loops.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.fwd.hh; path = ../src/protocols/loops/Loops.fwd.hh; sourceTree = SOURCE_ROOT; };
 		40C65BF9BBA03ED2583821A7 /* Loops.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.hh; path = ../src/protocols/loops/Loops.hh; sourceTree = SOURCE_ROOT; };
 		AA247D7FFCC70DFD18BFC9C5 /* Loops.tmpl.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Loops.tmpl.hh; path = ../src/protocols/loops/Loops.tmpl.hh; sourceTree = SOURCE_ROOT; };
+		0F8D8B771302B874C931178D /* LoopsFileIO.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopsFileIO.cc; path = ../src/protocols/loops/LoopsFileIO.cc; sourceTree = SOURCE_ROOT; };
+		105474CA8CFB0268D8580801 /* LoopsFileIO.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopsFileIO.fwd.hh; path = ../src/protocols/loops/LoopsFileIO.fwd.hh; sourceTree = SOURCE_ROOT; };
+		5E75A6F94048EE8FC1A193E8 /* LoopsFileIO.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopsFileIO.hh; path = ../src/protocols/loops/LoopsFileIO.hh; sourceTree = SOURCE_ROOT; };
 		4AB6932F136EF60F743F16B5 /* loopfinder.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = loopfinder.cc; path = ../src/protocols/loops/loopfinder.cc; sourceTree = SOURCE_ROOT; };
 		8632CB1BB53599C094882ABC /* loopfinder.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = loopfinder.hh; path = ../src/protocols/loops/loopfinder.hh; sourceTree = SOURCE_ROOT; };
 		42C38C0718A8028E29BB6DE4 /* looprelax_protocols.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = looprelax_protocols.cc; path = ../src/protocols/loops/looprelax_protocols.cc; sourceTree = SOURCE_ROOT; };
@@ -12229,6 +12234,9 @@
 		E477F9E03BE07FC158003A24 /* Ab_H3_cter_insert_mover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_H3_cter_insert_mover.cc; path = ../src/protocols/antibody2/Ab_H3_cter_insert_mover.cc; sourceTree = SOURCE_ROOT; };
 		3BF0C65BFCA98A7C0C179A69 /* Ab_H3_cter_insert_mover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_H3_cter_insert_mover.fwd.hh; path = ../src/protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		60BE5B1EC73A683FB1DAB5E9 /* Ab_H3_cter_insert_mover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_H3_cter_insert_mover.hh; path = ../src/protocols/antibody2/Ab_H3_cter_insert_mover.hh; sourceTree = SOURCE_ROOT; };
+		03D1861034C8DEB1CB36995B /* Ab_H3_perturb_ccd_build.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_H3_perturb_ccd_build.cc; path = ../src/protocols/antibody2/Ab_H3_perturb_ccd_build.cc; sourceTree = SOURCE_ROOT; };
+		FF514EBC0B9CF71566921221 /* Ab_H3_perturb_ccd_build.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_H3_perturb_ccd_build.fwd.hh; path = ../src/protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh; sourceTree = SOURCE_ROOT; };
+		9D3E1D70010C8782F4F82C21 /* Ab_H3_perturb_ccd_build.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_H3_perturb_ccd_build.hh; path = ../src/protocols/antibody2/Ab_H3_perturb_ccd_build.hh; sourceTree = SOURCE_ROOT; };
 		C80161969A1DC4A037BBE61C /* Ab_Info.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ab_Info.cc; path = ../src/protocols/antibody2/Ab_Info.cc; sourceTree = SOURCE_ROOT; };
 		28EB2A496EDB9B8B81F01B48 /* Ab_Info.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_Info.fwd.hh; path = ../src/protocols/antibody2/Ab_Info.fwd.hh; sourceTree = SOURCE_ROOT; };
 		265C091048880CD91232DDC9 /* Ab_Info.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_Info.hh; path = ../src/protocols/antibody2/Ab_Info.hh; sourceTree = SOURCE_ROOT; };
@@ -19234,6 +19242,9 @@
 				65378443F5478B1DB14446E5 /* Loops.fwd.hh */,
 				40C65BF9BBA03ED2583821A7 /* Loops.hh */,
 				AA247D7FFCC70DFD18BFC9C5 /* Loops.tmpl.hh */,
+				0F8D8B771302B874C931178D /* LoopsFileIO.cc */,
+				105474CA8CFB0268D8580801 /* LoopsFileIO.fwd.hh */,
+				5E75A6F94048EE8FC1A193E8 /* LoopsFileIO.hh */,
 				4AB6932F136EF60F743F16B5 /* loopfinder.cc */,
 				8632CB1BB53599C094882ABC /* loopfinder.hh */,
 				42C38C0718A8028E29BB6DE4 /* looprelax_protocols.cc */,
@@ -21641,6 +21652,9 @@
 				E477F9E03BE07FC158003A24 /* Ab_H3_cter_insert_mover.cc */,
 				3BF0C65BFCA98A7C0C179A69 /* Ab_H3_cter_insert_mover.fwd.hh */,
 				60BE5B1EC73A683FB1DAB5E9 /* Ab_H3_cter_insert_mover.hh */,
+				03D1861034C8DEB1CB36995B /* Ab_H3_perturb_ccd_build.cc */,
+				FF514EBC0B9CF71566921221 /* Ab_H3_perturb_ccd_build.fwd.hh */,
+				9D3E1D70010C8782F4F82C21 /* Ab_H3_perturb_ccd_build.hh */,
 				C80161969A1DC4A037BBE61C /* Ab_Info.cc */,
 				28EB2A496EDB9B8B81F01B48 /* Ab_Info.fwd.hh */,
 				265C091048880CD91232DDC9 /* Ab_Info.hh */,
@@ -24970,6 +24984,7 @@
 				A6BBDDAC8920ECD74EAE7CFD /* Loop.cc in Sources */,
 				69251577A27115EBC0C54B74 /* LoopMoverFactory.cc in Sources */,
 				58437074668E1D82DEA31512 /* Loops.cc in Sources */,
+				D880B30BF8C60371EE603CAF /* LoopsFileIO.cc in Sources */,
 				6AE14AF1ECF55FAF78092264 /* loopfinder.cc in Sources */,
 				A28F17DEBA68748028DDA3B3 /* looprelax_protocols.cc in Sources */,
 				FBB274983A9AB98F92DF11F4 /* loops_main.cc in Sources */,
@@ -25494,6 +25509,7 @@
 				CD85D7FF3ABC18E72C3FD1CF /* Ab_CloseOneCDR_Mover.cc in Sources */,
 				B5C40E87507027439DAC1E9A /* Ab_GraftOneCDR_Mover.cc in Sources */,
 				D6DB0EF7B72DE51A69CF5CF9 /* Ab_H3_cter_insert_mover.cc in Sources */,
+				D628DED1900F29944F4885B9 /* Ab_H3_perturb_ccd_build.cc in Sources */,
 				137D85FA47FA2EFC00901603 /* Ab_Info.cc in Sources */,
 				95E100DF1434665688643601 /* Ab_LH_RepulsiveRamp_Mover.cc in Sources */,
 				793A133639BCF66F83FBEF7B /* Ab_LH_SnugFit_Mover.cc in Sources */,
@@ -31328,6 +31344,7 @@
 				);
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = (
 					..,
 					../src,
@@ -31340,6 +31357,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				VALID_ARCHS = x86_64;
+				WARNING_CFLAGS = "-Wignored-qualifiers";
 			};
 			name = Debug;
 		};
@@ -31358,6 +31376,7 @@
 					MULTI_THREADED,
 				);
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = (
 					..,
 					../src,
@@ -31370,6 +31389,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				VALID_ARCHS = x86_64;
+				WARNING_CFLAGS = "-Wignored-qualifiers";
 			};
 			name = Release;
 		};

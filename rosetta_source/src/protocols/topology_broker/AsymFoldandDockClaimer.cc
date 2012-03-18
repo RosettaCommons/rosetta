@@ -20,6 +20,7 @@
 #include <protocols/topology_broker/DofClaim.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/util.hh>
 #include <basic/Tracer.hh>
@@ -108,7 +109,14 @@ bool AsymFoldandDockClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "loop_file" || tag == "LOOP_FILE" ) {
 		std::string file;
 		is >> file;
-		protocols::loops::Loops loop_defs( file, false /*no strict looprlx checking*/ ); // <==
+		std::ifstream infile( file.c_str() );
+		
+		if (!infile.good()) {
+			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
+		}
+		loops::LoopsFileIO loop_file_reader;
+		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(infile, file, false, "LOOP" );
+		loops::Loops loop_defs = loops::Loops( loops ); // <==
 //		loop_defs = loop_defs.invert( input_pose_.total_residue() );
 		tr << "Flexible residues: " << input_pose_.total_residue() << std::endl << loop_defs << std::endl;
 		moving_res_ = loop_defs;

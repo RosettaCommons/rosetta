@@ -30,6 +30,7 @@
 #include <core/io/silent/SilentFileData.hh>
 
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray3D.hh>
@@ -459,7 +460,15 @@ using namespace basic::options::OptionKeys;
 	Real const grow_fact_lb( option[ dist_cst::grow_fact_lb ] );
 	loops::Loops rigid;
 	if ( option[ dist_cst::excl_rigid ].user() ) {
-		rigid = loops::Loops( option[ dist_cst::excl_rigid ](), false, "RIGID" );
+		loops::LoopsFileIO loop_file_reader;
+		std::ifstream is( option[ dist_cst::excl_rigid ]().name().c_str() );
+		
+		if (!is.good()) {
+			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ dist_cst::excl_rigid ]().name() + "'" );
+		}
+		
+		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ dist_cst::excl_rigid ](), false, "RIGID" );
+		rigid = loops::Loops( loops );
 	}
 	//	utility::vector1< core::Real > dist_sorted;
 	for ( Size i = 1; i <= n_atoms(); i++ ) {

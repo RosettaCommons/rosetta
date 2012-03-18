@@ -73,6 +73,7 @@
 #include <protocols/evaluation/util.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loop.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
@@ -291,7 +292,14 @@ IterativeBase::IterativeBase(std::string name )
 
 
 	if (  option[ OptionKeys::iterative::force_scored_region ].user() ) {
-		scored_core_= loops::Loops( option[ OptionKeys::iterative::force_scored_region ](), false, "RIGID" );
+		std::ifstream is( option[ OptionKeys::iterative::force_scored_region ]().name().c_str() );
+		
+		if (!is.good()) {
+			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ OptionKeys::iterative::force_scored_region ]().name() + "'" );
+		}
+		loops::LoopsFileIO loop_file_reader;
+		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, option[ OptionKeys::iterative::force_scored_region ](), false /*no strict checking */, "RIGID" );
+		scored_core_ = loops::Loops( loops );
 	}
 
 	mem_tr << "setup cen-scorefxn" << std::endl;
@@ -971,7 +979,14 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 	if ( stage_ >= STAGE2_RESAMPLING && !scored_core_initialized_
 		&& ( option[ OptionKeys::iterative::scored_ss_core ]() || option[ OptionKeys::iterative::force_scored_region ].user() ) ) {
 		if (  option[ OptionKeys::iterative::force_scored_region ].user() ) {
-			scored_core_ = loops::Loops( option[ OptionKeys::iterative::force_scored_region ](), false, "RIGID" );
+			std::ifstream is( option[ OptionKeys::iterative::force_scored_region ]().name().c_str() );
+			
+			if (!is.good()) {
+				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ OptionKeys::iterative::force_scored_region ]().name() + "'" );
+			}
+			loops::LoopsFileIO loop_file_reader;
+			loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, option[ OptionKeys::iterative::force_scored_region ](), false /*no strict checking */, "RIGID" );
+			scored_core_ = loops::Loops( loops );
 		} else {
 			tr.Debug << "use refined secondary structure information to select scored_core " << std::endl;
 			// obtain secondary structure from fragments
@@ -1649,10 +1664,10 @@ void IterativeBase::restore_status( std::istream& is ) {
 	compute_cores();
 	is >> tag;
 	if ( is.good() && tag == "SCORED_CORE:" ) {
-		scored_core_.set_strict_looprelax_checks( false );
-        scored_core_.set_file_reading_token( "RIGID" );
-        scored_core_.read_stream_to_END( is );
-	  scored_core_initialized_ = true;
+		loops::LoopsFileIO loop_file_reader;
+		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, name()+"STATUS file", false /*no strict checking */, "RIGID" );
+		scored_core_ = loops::Loops( loops );
+		scored_core_initialized_ = true;
 	}
 	is >> tag;
 	if ( is.good() && tag == "NOESY_CYCLE:" ) {

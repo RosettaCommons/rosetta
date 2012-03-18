@@ -26,6 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loops.tmpl.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 // #include <core/kinematics/MoveMap.hh>
 // #include <core/fragment/FragSet.hh>
 // #include <protocols/simple_moves/FragmentMover.hh>
@@ -147,7 +148,15 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) {
 	std::string const new_sequence ( pose.annotated_sequence( true ) );
 	if ( bCmdFlag_ && option[ OptionKeys::constraints::combine_exclude_region ].user() && combine_exclude_res_.size() == 0 && sequence_ != new_sequence ) {
 		std::string const file( option[ OptionKeys::constraints::combine_exclude_region ]() );
-		loops::Loops rigid_core( file, false /*no strict looprlx checking*/, "RIGID" );
+		loops::LoopsFileIO loop_file_reader;
+		std::ifstream is( file.c_str() );
+		
+		if (!is.good()) {
+			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
+		}
+		
+		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, file, false, "RIGID");
+		loops::Loops rigid_core = loops::Loops( loops );
 		combine_exclude_res_.resize( pose.total_residue(), false );
 		rigid_core.transfer_to_residue_vector( combine_exclude_res_, true );
 	}

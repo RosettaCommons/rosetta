@@ -80,6 +80,7 @@ sources = {
 		"looprelax_protocols",
 		"Loops",
 		"loops_main",
+		"LoopsFileIO",
 		"make_loops",
 		"util",
 	],

@@ -25,6 +25,8 @@
 #include <protocols/loops/Loop.fwd.hh>
 #endif
 
+#include <protocols/loops/LoopsFileIO.fwd.hh>
+
 // Project headers
 #include <core/types.hh>
 #include <core/id/types.hh>
@@ -68,8 +70,10 @@ public:
     //copy constructor
 	Loops( const Loops & src );
     
-	Loops( bool const read_loops_file, bool const strict_looprelax_checks = true, std::string const & token = "LOOP" );
-	Loops( std::string filename, bool const strict_looprelax_checks = true, std::string const & token = "LOOP" );
+	Loops( SerializedLoopList const & src );
+	Loops( std::string const & loop_file_name );
+	Loops( bool setup_loops_from_options_system );
+	
 	// assignment operator
 	Loops & operator =( Loops const & src );
     
@@ -79,9 +83,6 @@ public:
 	friend std::ostream & operator<<( std::ostream & os, const Loops & loops );
     
     void read_loops_options();
-
-    // I kind of wish this method was private
-	SerializedLoopList const read_stream_to_END( std::istream & is );
     
 	void
 	write_loops_to_file(
@@ -163,6 +164,8 @@ public:
 	void clear();
 
 	LoopList const & loops() const;
+	
+	LoopsFileIOOP get_loop_file_reader() const;
 
 	/// @brief  Is seqpos contained in any of my loops?
 	bool
@@ -276,19 +279,20 @@ private:
 	void init(
 		LoopList const & loops_in,
 		bool const read_loop_file_from_options = false,
-		bool const strict_looprelax_checks = true,
-		std::string const & token = "LOOP",
 		std::string const & passed_in_filename = ""
 	);
 	
-	void setup_loops_from_data( SerializedLoopList const & loop_data );
+	LoopList setup_loops_from_data( SerializedLoopList const & loop_data );
 
 	void read_loop_file();
 
 private:
-
-	bool strict_looprelax_checks_on_file_reads_;
+	
 	LoopList loops_;
+	mutable LoopsFileIOOP loop_file_reader_;
+	
+	bool strict_looprelax_checks_on_file_reads_;
+	
 	std::string loop_filename_;
 	std::string file_reading_token_;
 

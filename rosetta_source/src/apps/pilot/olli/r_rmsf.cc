@@ -35,6 +35,7 @@
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -207,7 +208,16 @@ void run() {
 	FArray1D_double input_weights( rmsf_tool->eval_.n_atoms(), 1.0 );
 
 	if ( option[ rigid::in ].user() ) {
-			loops::Loops rigid = loops::Loops( option[ rigid::in ](), false, "RIGID" );
+			loops::LoopsFileIO loop_file_reader;
+			std::ifstream is( option[ rigid::in ]().name().c_str() );
+			
+			if (!is.good()) {
+				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
+			}
+			
+			loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ rigid::in ](), false, "RIGID");
+			loops::Loops rigid = loops::Loops( loops );
+
 			for ( Size i=1;i<=rmsf_tool->eval_.n_atoms(); ++i ) {
 				if (rigid.is_loop_residue( i ) ) weights( i )=1.0;
 				else weights( i )=0.0;

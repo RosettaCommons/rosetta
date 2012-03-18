@@ -33,6 +33,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED
@@ -78,6 +79,7 @@ FibrilModelingClaimer::FibrilModelingClaimer( pose::Pose const& input_pose, loop
 }
 
 bool FibrilModelingClaimer::read_tag( std::string tag, std::istream& is ) {
+	loops::LoopsFileIO loop_file_reader;
 	if ( tag == "pdb" || tag == "PDB" || tag == "pdb:" || tag == "PDB_FILE" ) {
 		std::string file;
 		is >> file;
@@ -89,16 +91,14 @@ bool FibrilModelingClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "sequence_shift" ) {
 		is >> sequence_shift_ ;
 	} else if ( tag == "REGION" ) {
-		rigid_core_.set_strict_looprelax_checks( false /*no strict checking */ );
-        rigid_core_.set_file_reading_token( "RIGID" );
-        rigid_core_.read_stream_to_END( is );
+		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
+		rigid_core_ = loops::Loops( loops );
 		input_rigid_core_ = rigid_core_;
 		input_rigid_core_.make_sequence_shift(sequence_shift_);
 	} else if ( tag == "INPUT_REGION" ) {
 		input_rigid_core_.clear();
-        input_rigid_core_.set_strict_looprelax_checks( false /*no strict checking */ );
-        input_rigid_core_.set_file_reading_token( "RIGID" );
-		input_rigid_core_.read_stream_to_END( is );
+        loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
+		input_rigid_core_ = loops::Loops( loops );
 	} else return Parent::read_tag( tag, is );
 	return true;
 }

@@ -23,6 +23,7 @@
 #include <protocols/simple_filters/ScoreEvaluator.hh>
 
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <core/chemical/ResidueType.hh>
@@ -130,7 +131,16 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 				select_string = option[ OptionKeys::evaluation::extra_score_select ]()[ ct ];
 			}
 			if ( select_string != "SELECT_ALL" ) {
-				loops::Loops core( select_string, false, "RIGID" );
+				std::ifstream is( select_string.c_str() );
+				
+				if (!is.good()) {
+					utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + select_string + "'" );
+				}
+				
+				loops::LoopsFileIO loop_file_reader;
+				loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, select_string, false /*no strict checking */, "RIGID" );
+				loops::Loops core( loops );
+				
 				utility::vector1< Size> selection;
 				core.get_residues( selection );
 				eval.add_evaluation( new simple_filters::TruncatedScoreEvaluator( tag, selection, scfxn ) );

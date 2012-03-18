@@ -23,6 +23,7 @@
 #include <protocols/simple_filters/ChiWellRmsdEvaluator.hh>
 
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.hh>
@@ -162,7 +163,15 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 					} //error condition
 				}
 			} else if ( selection_file != "FULL" ) {
-				loops::Loops core( selection_file, false, "RIGID" );
+				std::ifstream is( selection_file.c_str() );
+				
+				if (!is.good()) {
+					utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + selection_file + "'" );
+				}
+
+				loops::LoopsFileIO loop_file_reader;
+				loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, selection_file, false /*no strict checking */, "RIGID" );
+				loops::Loops core( loops );
 				core.get_residues( selection );
 			}
 			if ( invert ) {

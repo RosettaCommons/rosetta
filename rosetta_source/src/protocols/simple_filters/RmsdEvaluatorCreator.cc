@@ -23,6 +23,7 @@
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.hh>
@@ -98,6 +99,7 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 		///   selection: file or special tag: FULL
 		///   modifier: EXCLUDE ( take the inverse of the selection )
 		///                INLINE r1 r2 r3 ... rm END_INLINE   -- select residues r1, r2, r3, ..., rm
+		loops::LoopsFileIO loop_file_reader;
 		for ( RmsdVector::const_iterator it=rmsd.begin(); it!=rmsd.end(); ++it ) {
 			core::pose::PoseOP target_pose = NULL;
 			std::string fname( *it );
@@ -121,7 +123,13 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 				} else if ( key == "superimpose") {
 					superimpose_for_looprms = (value=="yes");
 				} else if ( key == "core" ) {
-					core = loops::Loops( value, false, "RIGID" );
+					std::ifstream is( value.c_str() );
+					
+					if (!is.good()) {
+						utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + value + "'" );
+					}
+					loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, value, false, "RIGID");
+					core = loops::Loops( loops );
 			} else {
 					utility_exit_with_message( "key not recognized: "+key+" possible keys: { heavy }" );
 				}
@@ -179,10 +187,18 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 					} //error condition
 				}
 			} else if ( selection_file != "FULL" ) {
+				std::ifstream is( selection_file.c_str() );
+				
+				if (!is.good()) {
+					utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + selection_file + "'" );
+				}
+				loops::LoopsFileIO::SerializedLoopList list_of_loops;
 				if ( loop_rms ) {
-					loops = loops::Loops( selection_file, false, "LOOP" );
+					list_of_loops = loop_file_reader.use_custom_legacy_file_format(is, selection_file, false, "LOOP");
+					loops = loops::Loops( list_of_loops );
 				} else {
-					loops::Loops core( selection_file, false, "RIGID" );
+					list_of_loops = loop_file_reader.use_custom_legacy_file_format(is, selection_file, false, "RIGID");
+					loops::Loops core = loops::Loops( list_of_loops );
 					core.get_residues( selection );
 				}
 			}

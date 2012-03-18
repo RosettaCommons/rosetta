@@ -17,6 +17,7 @@
 
 // Package headers
 #include <protocols/loops/Loop.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -61,24 +62,27 @@ Loops::Loops( const Loops & src ) : utility::pointer::ReferenceCount()
     init( src.loops() );
 }
 
-Loops::Loops( bool const read_loops_file, bool const strict_looprelax_checks, std::string const & token ): utility::pointer::ReferenceCount() 
+Loops::Loops( SerializedLoopList const & src )
 {
-    //read_loop_file( get_loop_file_name() );
-    init( LoopList(), read_loops_file, strict_looprelax_checks, token );
+	init( setup_loops_from_data( src ) );
 }
 
-Loops::Loops( std::string filename, bool const strict_looprelax_checks, std::string const & token )
+Loops::Loops( std::string const & loop_file_name )
 {
-    init( LoopList(), false, strict_looprelax_checks, token, filename );
+	init( LoopList(), false, loop_file_name );
 }
+
+Loops::Loops( bool setup_loops_from_options_system )
+{
+	init( LoopList(), setup_loops_from_options_system );
+}
+
 // destructor
 Loops::~Loops(){}
 
-void Loops::init( LoopList const & loops_in, bool const read_loop_file_from_options, bool const strict_looprelax_checks, std::string const & token, std::string const & passed_in_filename )
+void Loops::init( LoopList const & loops_in, bool const read_loop_file_from_options, std::string const & passed_in_filename )
 {
     loops_ = loops_in;
-    strict_looprelax_checks_on_file_reads_ = strict_looprelax_checks;
-    file_reading_token_ = token;
     
     if ( read_loop_file_from_options )
     {
@@ -446,126 +450,33 @@ Loops::clear(){
 
 Loops::LoopList const & Loops::loops() const { return loops_; }
 
-Loops::SerializedLoopList const Loops::read_stream_to_END( std::istream & is ) {
-	std::string line;
-	int linecount=0;
-	int errcount=50; //if we reach 0 we bail!
-	
-	SerializedLoopList serial_loops;
-	while( getline( is, line) ) {
-		linecount++;
-		std::vector< std::string > tokens ( utility::split( line ) );
-		
-		SerializedLoop current_loop;
-		if( tokens.size() > 0 ) {
-			if ( tokens[0].substr(0,3) == "END" ) break;
-			if ( tokens[0] == file_reading_token() ) {
-				if ( tokens.size() < 3 ) {
-					utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Minimum of 3 tokens necessary (begin, end, cutpoint)"  );
-				}
-				if ( tokens.size() > 6 ) {
-					utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Maximum of 6 tokens allowed (LOOP begin end cutpoint skiprate extended)"  );
-				}
-				current_loop.start = (core::Size) atoi(tokens[1].c_str());
-				current_loop.stop = (core::Size) atoi(tokens[2].c_str());
-				current_loop.cut = 0;        // default - let LoopRebuild choose cutpoint
-				current_loop.skip_rate = 0.0;  // default - never skip
-				std::string extend_loop_str;
-				bool extend_loop = false;
-
-				if (tokens.size() > 3)
-					current_loop.cut = (core::Size) atoi(tokens[3].c_str());
-				if (tokens.size() > 4)
-					current_loop.skip_rate = atof(tokens[4].c_str());
-				if (tokens.size() > 5){
-					if( tokens[5] == "X" ){
-						tr.Error << "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
-						extend_loop = true;
-						if ( errcount > 0 ) errcount--;
-						else {
-							utility_exit_with_message( "too many errors in loop-file " + loop_file_name() );
-						}
-					}else{
-						int extended_token = atoi(tokens[5].c_str());
-						if( extended_token == 0 ) extend_loop = false;
-						else                      extend_loop = true;
-					}
-				}
-				
-				current_loop.extended = extend_loop;
-				if ( current_loop.start > current_loop.stop || ( current_loop.start==current_loop.stop && strict_looprelax_checks() ) ) {
-					utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Invalid loop definition (start residue " + ( strict_looprelax_checks() ? ">=" : ">" )  + " end residue) - ERROR"  );
-				} else {
-					serial_loops.push_back( current_loop );
-				}
-			} else if ( tokens[0][0] != '#' ) {
-				if (tokens.size() >= 2) {
-					tr.Error << "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "DEPRECATED r++ style loopfile" << std::endl;
-
-					if ( errcount>0 ) errcount--;
-					else {
-						utility_exit_with_message( "too many errors in loop-file " + loop_file_name() );
-					}
-
-					current_loop.start = (core::Size) atoi(tokens[0].c_str());
-					current_loop.stop   = (core::Size) atoi(tokens[1].c_str());
-					current_loop.cut = 0;        // default - let LoopRebuild choose cutpoint
-					current_loop.skip_rate = 0.0;  // default - never skip
-					bool extend_loop = false;    // default - not extended
-					if (tokens.size() > 2)
-						current_loop.cut = (core::Size) atoi(tokens[2].c_str());
-					if (tokens.size() > 3)
-						current_loop.skip_rate = atof(tokens[3].c_str());
-					if (tokens.size() > 4){
-						if( tokens[4] == "X" ){
-							tr.Error << "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
-							extend_loop = true;
-						} else {
-							int extended_token = atoi(tokens[4].c_str());
-							if ( extended_token == 0 ) extend_loop = false;
-							else                extend_loop = true;
-						}
-					}
-					current_loop.extended = extend_loop;
-
-
-					if ( current_loop.start > current_loop.stop || ( current_loop.start==current_loop.stop && strict_looprelax_checks() ) ) {
-						utility_exit_with_message( "[ERROR] Error parsing " + loop_file_name() + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Invalid loop definition (start residue " + ( strict_looprelax_checks() ? ">=" : ">" ) + "end residue) - ERROR"  );
-					}
-
-					serial_loops.push_back( current_loop );
-
-				} else {
-					tr.Warning << "[WARNING] Skipping line '" << line << "'" << std::endl;
-				}
-			}
- 		}
-	} //while
-	return serial_loops;
+LoopsFileIOOP Loops::get_loop_file_reader() const
+{
+	if ( !loop_file_reader_ )
+	{
+		loop_file_reader_ = new LoopsFileIO;
+	}
+	return loop_file_reader_;
 }
 
-void Loops::setup_loops_from_data( SerializedLoopList const & loop_data )
+Loops::LoopList Loops::setup_loops_from_data( SerializedLoopList const & loop_data )
 {
+	LoopList tmp_loops;
 	for(  SerializedLoopList::const_iterator it=loop_data.begin(), it_end=loop_data.end(); it != it_end; ++it ) {
-		loops_.push_back( Loop( *it ) );
+		tmp_loops.push_back( Loop( *it ) );
 	}
 	// sort by start residue
-	std::sort( loops_.begin(), loops_.end(), Loop_lt() );
+	std::sort( tmp_loops.begin(), tmp_loops.end(), Loop_lt() );
+	return tmp_loops;
 }
 	
 void Loops::read_loop_file()
 {
 	clear();
-	std::ifstream infile( loop_file_name().c_str() );
 
-	if (!infile.good()) {
-		utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + loop_file_name() + "'" );
-	}
+	loops_ = setup_loops_from_data( get_loop_file_reader()->read_loop_file( loop_file_name() ) );
 	
-	// TODO: The read_stream_to_END stuff should be moved to its own class that will handle the various types of input
-	// files
-	setup_loops_from_data( read_stream_to_END( infile ) );
-
+	// TODO: Update these warnings/move them to the reader.
 	tr.Warning << "LOOP formats were recently reconciled - with *some* backwards compatibility. Please check your definition files!" << std::endl;
 	tr.Warning << "Please check that this is what you intended to read in: " << std::endl;
 	tr.Warning << *this;

@@ -36,6 +36,7 @@
 #include <protocols/simple_moves/MinMover.hh>
 
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 
 // Utility headers
 #include <basic/options/option_macros.hh>
@@ -146,7 +147,15 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 			nstruct_=0;
 		}
 		if ( option[ residue_subset ].user() ) { //filter
-			protocols::loops::Loops rigid_core( option[ residue_subset ](), false /*no strict looprlx checking*/, "RIGID" );  // <==
+			loops::LoopsFileIO loop_file_reader;
+			std::ifstream is( option[ residue_subset ]().name().c_str() );
+			
+			if (!is.good()) {
+				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ residue_subset ]().name() + "'" );
+			}
+			
+			loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ residue_subset ](), false, "RIGID");
+			loops::Loops rigid_core = loops::Loops( loops ); // <==
 			ResidualDipolarCoupling::RDC_lines filtered;
 			for ( ResidualDipolarCoupling::RDC_lines::const_iterator it = data.begin(); it != data.end(); ++it ) {
 				if ( rigid_core.has( it->res1() ) ) {

@@ -16,7 +16,7 @@
                BlueprintIdentifier = "3DDF62A513EE13B800401374"
                BuildableName = "libdevel.a"
                BlueprintName = "devel"
-               ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
+               ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

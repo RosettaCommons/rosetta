@@ -23,6 +23,7 @@
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/simple_filters/ScoreEvaluator.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 
 #include <core/chemical/ResidueType.hh>
 
@@ -58,6 +59,8 @@
 	#include <core/scoring/constraints/Constraint.hh>
 #endif
 
+#include <utility/exit.hh>
+#include <fstream>
 
 static basic::Tracer tr("protocols.evalution.NativeEvaluatorCreator");
 
@@ -121,7 +124,15 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 		if ( !option[ in::file::native ].user() ) utility_exit_with_message( "need to specify in:file:native together with rmsd_select " );
 
 	  for ( Size ct = 1; ct <= rmsd_core.size(); ct ++ ) {
-			loops::Loops core( rmsd_core[ ct ], false, "RIGID" );
+		  std::ifstream is( rmsd_core[ ct ].name().c_str() );
+		  
+		  if (!is.good()) {
+			  utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + rmsd_core[ ct ].name() + "'" );
+		  }
+		  
+		  loops::LoopsFileIO loop_file_reader;
+		  loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, rmsd_core[ ct ].name(), false /*no strict checking */, "RIGID" );
+		  loops::Loops core( loops );
 			utility::vector1< Size> selection;
 			core.get_residues( selection );
 			if ( native_pose ) eval.add_evaluation( new simple_filters::SelectRmsdEvaluator( native_pose, selection, rmsd_core[ ct ].base() ) );

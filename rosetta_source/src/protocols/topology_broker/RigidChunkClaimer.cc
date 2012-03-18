@@ -28,6 +28,7 @@
 // AUTO-REMOVED #include <core/kinematics/Exceptions.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.tmpl.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -120,6 +121,7 @@ void RigidChunkClaimer::receive_message( ClaimerMessage& cm ) {
 }
 
 bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is ) {
+	loops::LoopsFileIO loop_file_reader;
 	if ( tag == "pdb" || tag == "PDB" || tag == "pdb:" || tag == "PDB_FILE" ) {
 		std::string file;
 		is >> file;
@@ -128,17 +130,28 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is ) {
 			file );
 		runtime_assert( input_pose_.is_fullatom() );
 	} else if ( tag == "REGION" ) {
-		rigid_core_.set_strict_looprelax_checks( false /*no strict checking */ );
-        rigid_core_.set_file_reading_token( "RIGID" );
-        rigid_core_.read_stream_to_END( is );
+		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
+		rigid_core_ = loops::Loops( loops );
 	} else if ( tag == "region_file" || tag == "REGION_FILE" ) {
 		std::string file;
 		is >> file;
-		rigid_core_ = loops::Loops( file, false /*no strict looprlx checking*/, "RIGID" );  // <==
+		std::ifstream infile( file.c_str() );
+		
+		if (!infile.good()) {
+			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
+		}
+		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
+		rigid_core_ = loops::Loops( loops ); // <==
 	} else if ( tag == "loop_file" || tag == "LOOP_FILE" ) {
 		std::string file;
 		is >> file;
-		protocols::loops::Loops loop_defs( file, false /*no strict looprlx checking*/, "LOOP" );  // <==
+		std::ifstream infile( file.c_str() );
+		
+		if (!infile.good()) {
+			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
+		}
+		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
+		protocols::loops::Loops loop_defs = loops::Loops( loops ); // <==
 		loop_defs = loop_defs.invert( input_pose_.total_residue() );
 		tr << "Rigid core: " << input_pose_.total_residue() << std::endl << loop_defs << std::endl;
 		rigid_core_ = loop_defs;
