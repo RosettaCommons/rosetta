@@ -2035,13 +2035,17 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		utility::vector1< bool > Is_O2star_hydrogen_virtual_list;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-			core::conformation::Residue const & rsd = pose.residue(seq_num);	
-			Size at=rsd.atom_index( "2HO*" );
 
 			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ){
 				if(verbose) std::cout << "res " << seq_num << " is core::chemical::aa_vrt! " << std::endl;		
 				Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen 
-			}else if(rsd.atom_type(at).name()=="VIRT"){
+				continue;
+			}
+
+			core::conformation::Residue const & rsd = pose.residue(seq_num);	
+			Size at=rsd.atom_index( "2HO*" );
+
+			if(rsd.atom_type(at).name()=="VIRT"){
 				if(verbose) std::cout << "res " << seq_num << " has a virtual o2star hydrogen! " << std::endl;		
 				Is_O2star_hydrogen_virtual_list.push_back(true);
 			}else{

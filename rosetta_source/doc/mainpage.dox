@@ -71,6 +71,7 @@ put links to commonly referred to documentation pages here.
 	- @ref ligand_dock "Documentation for the ligand_dock application"
 	- @ref rna_denovo "Documentation for the RNA 3D modeling applications"
 	- @ref rna_design "Documentation for RNA fixed backbone design"
+	- @ref swa_rna_loop "Documentation for RNA loop modeling (lock-and-key problem) with Stepwise Assembly"
 	- @ref erraser "Documentation for remodeling RNA crystallographic models with electron density constraint"
 	- @ref extract_atomtree_diffs "Documentation for the extract_atomtree_diffs application (use with ligand_dock)"
 	- @ref kinematic_loopmodel "Documentation for kinematic loop modeling"

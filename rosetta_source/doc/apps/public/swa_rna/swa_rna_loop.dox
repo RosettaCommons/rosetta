@@ -1,0 +1,63 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+///@author Parin Sripakdeevong, Rhiju Das
+/*!
+
+@page swa_rna_loop Documentation for RNA loop modeling (lock-and-key problem) with Stepwise Assembly, using <em>swa_rna_main</em> and <em>swa_rna_util</em> executables
+
+@section metadata Metadata
+March 2012 by Parin Sripakdeevong (sripakpa [at] stanford.edu) and Rhiju Das (rhiju [at] stanford.edu).
+
+@section code_demos Code and Demo
+This code builds single-stranded RNA loops using a deterministic, enumerative sampling method called Stepwise Assembly. A demo example for building the first (5´ most) nucleotide of a 6-nucleotides loop is given in <code>rosetta_demos/public/SWA_RNA_Loop/</code>. The same protocol can then be recursively applied to build the other nucleotides, one individual nucleotide at a time.
+
+(Note: the Stepwise Assembly method constructs full-length RNA loops through the recursive building of each individual RNA nucleotides over multiple steps. The enumerative nature of the method makes the full-calculation quite computationally expensive, requiring for example 15,000 CPU hours to build a single 6-nucleotides RNA loop. While this full-calculation is now feasible on a high-performance computer clusters, perform the full-calculation in the demo would be too excessive.)
+
+The central codes are located in the <code>src/protocols/swa_rna/</code> folder. The applications are in <em>apps/public/swa_rna_main</em> and <em>apps/public/swa_rna_util</em> 
+
+
+@section refs References
+Sripakdeevong,	P., Kladwang, W. & Das, R. (2012), “An enumerative stepwise ansatz enables atomic-accuracy RNA loop modeling”, Proc Natl Acad Sci USA. doi:10.1073/pnas.1106516108
+
+@section purpose Purpose and Algorithm
+	This method builds single-stranded RNA loops using a deterministic, enumerative sampling method called Stepwise Assembly. The modeling situation considered here is the lock-and-key problem. Given a template PDB that contains surrounding nucleotides that is a missing RNA loop (the lock), the Stepwise Assembly method finds the loop conformation (the key) that best fits the surrounding structure.
+
+
+@section limits Limitations
+@li The enumerative nature of the method makes the full-calculation quite computationally expensive, requiring for example 15,000 CPU hours to build a single 6-nucleotides RNA loop. Therefore is infeasible to perform the full-calculation on a single desktop/laptop computer. Instead the full-calculation is feasible only on a high-performance computer clusters.
+
+@li The missing rna loop needs to be single-stranded. The longer loop succesfully tested thus far is 10 nucleotides in length (see referenced paper for more details)
+
+@li Currently, the method only optimize the conformation of the missing loop. The coordinates of the surrounding nucleotides from the @ref template_PDB are fixed during entire modeling process.
+
+@li Due to memory limitations, the full-length structure (missing loop nucleotides plus surrounding nucleotides in the @ref template_PDB) should not exceed 100 nucleotides.
+
+@section modes Modes
+There is only one mode to run SWA_RNA_Loop at present.
+
+@section inputs Input Files
+@subsection required Required file
+You need two files:
+
+@anchor template_PDB
+@li The @ref template_PDB file: A PDB file containing the coordinates of surrounding nucleotides in the vicinity of the missing RNA loop to be build. We recommend including all surrounding nucleotides within 10-Angstrom vicinity of the missing RNA loop. An example is available at rosetta_demos/SWA_RNA_loop/rosetta_inputs/template.pdb. Supplied PDB file must be in Rosetta RNA PDB format (see @ref Note on PDB format for RNA).
+
+
+@li The @ref fasta file: this is the sequence file of the full-length RNA. The fasta file has the RNA name on the first line (after >), and the sequence on the second line. Valid letters are a,c,g, and u. The example fasta file is available at rosetta_demos/SWA_RNA_loop/rosetta_inputs/fasta.
+
+@subsection Optional additional files:
+@li The native_PDB file: A PDB file containing the ‘native’ crystallographic or NMR structure. This PDB file should contain the coordinates of the coordinates of the native loop nucleotides as well as the surrounding nucleotides (@ref templte_PDB). The native_PDB file is NOT used to guide the modeling process and only used for reporting the RMSD of the generated rosetta models to the native loop. An example is available at rosetta_demos/SWA_RNA_loop/rosetta_inputs/native.pdb. Supplied PDB file must be in Rosetta RNA PDB format (see @ref Note on PDB format for RNA).
+
+
+@section rna_new_stuff New things since last release
+This application is new as of Rosetta 3.4.
+
+
+*/
