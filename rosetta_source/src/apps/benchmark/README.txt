@@ -17,10 +17,9 @@ See the performance benchmarks section on RosettaTests
 # To add a performance benchmark #
 ##################################
 
-1) Create a file <mytest>.bench.hh
-2) Add your file to rosetta_source/src/apps.src.settings
-3) Subclass Benchmark and implement the 'setUp', 'run' and 'tearDown' functions.
-4) Instantiate an instance of your class at the top of benchmark.cc with a name
+1) Create a file <TestName>.bench.hh
+2) Subclass Benchmark and implement the 'setUp', 'run' and 'tearDown' functions.
+3) Instantiate an instance of your class at the top of benchmark.cc with a name
 
 ############################################
 #To run the performance benchmarks locally:#
@@ -29,15 +28,15 @@ See the performance benchmarks section on RosettaTests
 1) Compile the benchmark application in release mode 
     
      cd rosetta_source
-     ./scons.py bin/benchmark.<platform/compiler>release mode=release -j<n_cores>
+     ./scons.py benchmark mode=release -j<n_cores>
 
 2) Run the benchark application from this directory
 
      cd rosetta_source/src/apps/benchmark
      ../../../bin/benchmark.default.<platform/compiler>release \
        -database <path_to_database> \
-       -benchmark_scale <multiple run lenght by this value> \
-       [-run_one_benchmark <name of benchmark>
+       -benchmark_scale <multiple run length by this value> \
+       [-run_one_benchmark <name of benchmark>]
 
 3) Look at output for results --or--
 4) Look at rosetta_source/src/apps/benchmark/_performance_ for results

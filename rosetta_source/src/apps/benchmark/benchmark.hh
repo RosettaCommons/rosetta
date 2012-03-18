@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   rosetta/benchmark/benchmark.hh
+/// @file   src/apps/benchmark/benchmark.hh
 ///
 /// @brief  Base class for mini rosetta benchmark system
 /// @author Sergey Lyskov

@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   rosetta/benchmark/benchmark.cc
+/// @file   rosetta_source/src/apps/benchmark/benchmark.cc
 ///
 /// @brief
 /// @author Sergey Lyskov
@@ -40,6 +40,7 @@ OPT_1GRP_KEY( String, run, run_one_benchmark )
 
 const char results_filename[] = "_performance_";
 
+// Initialize performance benchmark tests here:
 #include <apps/benchmark/score.bench.hh>
 ScoreBenchmark Score_("core.scoring.Score");
 
@@ -69,7 +70,7 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 //LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
 #include <apps/benchmark/pdb_io.bench.hh>
-PDB_IOBenchmark PDB_IO_("core_pdb_import_pdb");
+PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
 
 // option key includes
 
