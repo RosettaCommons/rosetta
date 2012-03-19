@@ -35,4 +35,5 @@
 
 cd %(workdir)s
 
-#python analyze.py >>.results.log
+./analyze.R >>.results.log
+

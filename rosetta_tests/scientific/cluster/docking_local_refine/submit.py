@@ -17,39 +17,10 @@ from targets import targets
 # benchmark, such as paths/compilers versions etc. Here we'll add
 # additional configuration information needed to setup and run the
 # benchmark
-m_vars = eval( file('_arguments.py').read() )
+m_vars = dict(
+	eval(file('_arguments.py').read())
+	eval(file('config.py').read()))
 
-# svn path to the docking benchmark set and where it should get checked out
-m_vars["svn_benchmark_path"] = "https://svn.rosettacommons.org/source/trunk/mini.data/tests/scientific/cluster/docking"
-m_vars["benchmark_data_path"] = "inputs"
-m_vars["benchmark_data_set"] = "zdock_benchmark_v4"
-# note assume there is a file m_vars["benchmark_data_set"] + ".tar.gz"
-# in the the svn_benchmark_path
-
-# where the fully preprocessed input targets should end up
-m_vars["input_target_path"] = "inputs/bound_targets"
-
-# r <- "receptor": the larger partner
-# l <- "ligand": the smaller partner 
-# b <- "bound": the partners in their native bound conformation
-m_vars["receptor_target_extension"] = "_r_b.pdb"
-m_vars["ligand_target_extension"] = "_l_b.pdb"
-m_vars["input_target_extension"] = "_rl_b.pdb"
-
-# where the output data should be end up
-m_vars["output_scorefile_extension"] = "_lr_b.sc"
-m_vars["output_silentfile_extension"] = "_rl_b.silent.gz"
-m_vars["output_run_log_path"] = "output"
-m_vars["output_score_path"] = "output"
-m_vars["output_decoy_path"] = "output/decoys"
-m_vars["test_results_log"] = ".results.log"
-m_vars["test_results_yaml"] = ".results.yaml"
-
-# These are the most common configuration options that can be adjusted
-m_vars["nstruct"] = 180
-m_vars["extra_chi_rotamers"] = "-ex1 -ex2 -extrachi_cutoff 0"
-m_vars["condor_priority"] = "-10"
-m_vars["condor_queue"] = 50
 
 def prepare_input_targets(targets, m_vars):
     """ The zdock set provides bound and unbound versions of the
