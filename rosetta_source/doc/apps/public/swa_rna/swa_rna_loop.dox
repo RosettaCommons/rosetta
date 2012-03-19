@@ -55,7 +55,8 @@ You need two files:
 @subsection Optional additional files:
 @li The native_PDB file: A PDB file containing the 'native' crystallographic or NMR structure. This PDB file should contain the coordinates of the coordinates of the native loop nucleotides plus the surrounding nucleotides inherited from @ref templte_PDB. The supplied native_PDB file is not used to guide the modeling process and only used for reporting the RMSD of the generated rosetta models to the native loop. An example is available at rosetta_demos/SWA_RNA_loop/rosetta_inputs/native.pdb. Supplied PDB file must be in Rosetta RNA PDB format (see @ref Note on PDB format for RNA).
 
-@subsection Preprocessing of input files
+@section pre_process Preprocessing of input files
+
 Input PDB file can be converted into the Rosetta RNA PDB format using the following command:
 
 @verbatim
@@ -64,7 +65,8 @@ Input PDB file can be converted into the Rosetta RNA PDB format using the follow
 
 Replace 'IN_PDB.pdb' with your input PDB filename. Replace 'OUT_PDB.pdb' with the filename you want the converted PDB to be outputted to.
 
-@subsection workflow How to run the job
+@section how_to_run_the_job How to run the job
+
 
 The SWA_RNA_python package located at rosetta_tools/SWA_RNA_python/ contains the scripts necessary to setup and run the Stepwise Assembly protocol. Instructions are provided in steps 1)-4) below: 
 
@@ -114,7 +116,7 @@ The expected outputs are two silent_files:
 	B) region_0_1_sample.cluster.out: Same as A) but after clustering of the models to remove redundant conformations.
 @endverbatim
 
-@section outputs Post Processing
+@section post_process Post Processing
 
 In both silent_files, the total energy score is found under the 'score' column. If the "native_pdb" flag was included, then the RMSD (in angstrom units) between the native_pdb and each Rosetta model is found under the 'NAT_rmsd' column.
 
