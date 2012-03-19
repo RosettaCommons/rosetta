@@ -1013,7 +1013,8 @@ option.add( basic::options::OptionKeys::relax::superimpose_to_native, "Superimpo
 option.add( basic::options::OptionKeys::relax::superimpose_to_file, "Superimpose input structure to file" ).def("false");
 option.add( basic::options::OptionKeys::relax::constrain_relax_to_native_coords, "For relax and fastrelax, tether backbone coordinates of the pdbs being relaxed to the coordinates in the xtal native" ).def(false);
 option.add( basic::options::OptionKeys::relax::constrain_relax_to_start_coords, "For relax and fastrelax, tether backbone coordinates of the pdbs being relaxed to the coordinates in the xtal native" ).def(false);
-option.add( basic::options::OptionKeys::relax::sc_cst_maxdist, "Use constraints around the input side-chains with the given upper distance cutoff (0 => no sc-sc restraints)" ).def(0.0);
+option.add( basic::options::OptionKeys::relax::coord_constrain_sidechains, "For relax and fastrelax, also tether sidechain heavy atom coordinates (requires either -constrain_relax_to_native_coords or -constrain_relax_to_start_coords)" ).def(false);
+option.add( basic::options::OptionKeys::relax::sc_cst_maxdist, "Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)" ).def(0.0);
 option.add( basic::options::OptionKeys::relax::limit_aroma_chi2, "limit chi2 rotamer of PHE,TYR, and HIS around 90 " ).def(false);
 option.add( basic::options::OptionKeys::relax::bb_move, "allow backbone to move during relax" ).def(true);
 option.add( basic::options::OptionKeys::relax::chi_move, "allow sidechain to move during relax" ).def(true);
@@ -1210,10 +1211,10 @@ option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(10
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
@@ -1815,10 +1816,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");

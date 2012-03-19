@@ -256,7 +256,11 @@ FastRelax::FastRelax(
 {
 	set_to_default();
 	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
-	read_script_file( "", standard_repeats );
+	if( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
+		read_script_file( "NO CST RAMPING", standard_repeats );
+	} else {
+		read_script_file( "", standard_repeats );
+	}
 }
 
 
@@ -271,7 +275,11 @@ FastRelax::FastRelax(
 {
 	set_to_default();
 	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
-	read_script_file( "", standard_repeats );
+	if( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
+		read_script_file( "NO CST RAMPING", standard_repeats );
+	} else {
+		read_script_file( "", standard_repeats );
+	}
 }
 
 

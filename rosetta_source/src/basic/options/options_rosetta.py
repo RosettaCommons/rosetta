@@ -2059,7 +2059,8 @@ Options = Option_Group( '',
 		Option( 'superimpose_to_file',     'File', desc='Superimpose input structure to file', default='false' ),
 		Option( 'constrain_relax_to_native_coords', 'Boolean', desc = "For relax and fastrelax, tether backbone coordinates of the pdbs being relaxed to the coordinates in the xtal native", default="false" ),
 		Option( 'constrain_relax_to_start_coords', 'Boolean', desc = "For relax and fastrelax, tether backbone coordinates of the pdbs being relaxed to the coordinates in the xtal native", default="false" ),
-		Option( 'sc_cst_maxdist', 'Real', default='0.0', desc='Use constraints around the input side-chains with the given upper distance cutoff (0 => no sc-sc restraints)' ),
+                Option( 'coord_constrain_sidechains', 'Boolean', desc = "For relax and fastrelax, also tether sidechain heavy atom coordinates (requires either -constrain_relax_to_native_coords or -constrain_relax_to_start_coords)", default="false" ),
+		Option( 'sc_cst_maxdist', 'Real', default='0.0', desc='Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)' ),
 		Option( 'limit_aroma_chi2', 'Boolean', desc = "limit chi2 rotamer of PHE,TYR, and HIS around 90 ", default="false" ),
 
 		## Options to manipulate the movemap

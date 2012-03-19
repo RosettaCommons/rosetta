@@ -198,6 +198,11 @@ void RelaxProtocolBase::set_default_coordinate_settings(){
 	constrain_relax_to_native_coords_ = option[ OptionKeys::relax::constrain_relax_to_native_coords ]();
 	constrain_relax_to_start_coords_ = option[ OptionKeys::relax::constrain_relax_to_start_coords ]();
 	constrain_coords_ = constrain_relax_to_native_coords_ || constrain_relax_to_start_coords_;
+	coord_constrain_sidechains_ = option[ OptionKeys::relax::coord_constrain_sidechains ]();
+	if ( coord_constrain_sidechains_ && ! constrain_coords_ ) {
+		utility_exit_with_message("Option -relax:coord_constrain_sidechains also requires either -relax:constrain_relax_to_start_coords or -relax:constrain_relax_to_native_coords");
+	}
+	explicit_ramp_constraints_ = option[ OptionKeys::relax::ramp_constraints ].user();
 	ramp_down_constraints_ = option[ OptionKeys::relax::ramp_constraints ]();
 	constrain_relax_segments_ = option[ OptionKeys::relax::constrain_relax_segments ].user();
 	limit_aroma_chi2_ = option[ OptionKeys::relax::limit_aroma_chi2 ]();
@@ -389,7 +394,9 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 				if ( (Size)i==(Size)pose.fold_tree().root() ) continue;
 				if( coordconstraint_segments_.is_loop_residue( i ) ) {
 					Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
-					for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+					core::Size last_atom( nat_i_rsd.last_backbone_atom() );
+					if ( coord_constrain_sidechains_ ) { last_atom = nat_i_rsd.nheavyatoms(); }
+					for ( Size ii = 1; ii<= last_atom; ++ii ) {
 						pose.add_constraint( new CoordinateConstraint(
 							AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
 							new HarmonicFunc( 0.0, coord_sdev ) ) );
@@ -403,7 +410,9 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 			for ( Size i = 1; i<= nres - 1; ++i ) {
 				if( coordconstraint_segments_.is_loop_residue( i ) ) {
 					Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
-					for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+					core::Size last_atom( nat_i_rsd.last_backbone_atom() );
+					if ( coord_constrain_sidechains_ ) { last_atom = nat_i_rsd.nheavyatoms(); }
+					for ( Size ii = 1; ii<= last_atom; ++ii ) {
 						pose.add_constraint( new CoordinateConstraint(
 							AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
 							new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );

@@ -81,16 +81,28 @@ public:
 	bool constrain_relax_to_native_coords() const {  return    constrain_relax_to_native_coords_;}
 	bool constrain_relax_to_start_coords() const {  return     constrain_relax_to_start_coords_;}
 	bool constrain_coords() const {  return                    constrain_coords_;}
+	bool explicit_ramp_constraints() const {  return           explicit_ramp_constraints_;}
 	bool ramp_down_constraints() const {  return               ramp_down_constraints_;}
 	bool constrain_relax_segments() const {  return            constrain_relax_segments_;}
 
 	bool limit_aroma_chi2() const { return limit_aroma_chi2_; }
 
-	void constrain_relax_to_native_coords(  bool   constrain_relax_to_native_coords )  {   constrain_relax_to_native_coords_ =     constrain_relax_to_native_coords; }
-	void constrain_relax_to_start_coords(  bool    constrain_relax_to_start_coords )  {    constrain_relax_to_start_coords_ =      constrain_relax_to_start_coords; }
-	void constrain_coords(  bool                   constrain_coords )  {                   constrain_coords_ =                     constrain_coords; }
-	void ramp_down_constraints(  bool              ramp_down_constraints )  {              ramp_down_constraints_ =                ramp_down_constraints; }
-	void constrain_relax_segments(  bool           constrain_relax_segments )  {           constrain_relax_segments_ =             constrain_relax_segments; }
+	void constrain_relax_to_native_coords( bool constrain_relax_to_native_coords ) {
+		constrain_relax_to_native_coords_ = constrain_relax_to_native_coords;
+	}
+	void constrain_relax_to_start_coords(  bool constrain_relax_to_start_coords ) {
+		constrain_relax_to_start_coords_ = constrain_relax_to_start_coords;
+	}
+	void constrain_coords( bool constrain_coords ) {
+		constrain_coords_ = constrain_coords;
+	}
+	void ramp_down_constraints( bool ramp_down_constraints ) {
+		explicit_ramp_constraints_ = true;
+		ramp_down_constraints_ =  ramp_down_constraints;
+	}
+	void constrain_relax_segments( bool constrain_relax_segments ) {
+		constrain_relax_segments_ = constrain_relax_segments;
+	}
 
 	// get/set cartesian minimization option
 	void cartesian( bool newval ) { cartesian_ = newval; }
@@ -145,6 +157,8 @@ protected:  // Constraint settings
 	bool constrain_relax_to_native_coords_;
 	bool constrain_relax_to_start_coords_;
 	bool constrain_coords_;
+	bool coord_constrain_sidechains_;
+	bool explicit_ramp_constraints_;
 	bool ramp_down_constraints_;
 	bool constrain_relax_segments_;
 

@@ -4869,8 +4869,13 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-coord_constrain_sidechains</b> \<Boolean\><dt>
+<dd>For relax and fastrelax, also tether sidechain heavy atom coordinates (requires either -constrain_relax_to_native_coords or -constrain_relax_to_start_coords)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-sc_cst_maxdist</b> \<Real\><dt>
-<dd>Use constraints around the input side-chains with the given upper distance cutoff (0 => no sc-sc restraints)</dd><br>
+<dd>Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)</dd><br>
 <dd>Default: 0.0</dd><br>
 </dl>
 <dl>

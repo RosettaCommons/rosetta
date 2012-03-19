@@ -403,6 +403,7 @@ namespace relax { BooleanOptionKey const superimpose_to_native( "relax:superimpo
 namespace relax { FileOptionKey const superimpose_to_file( "relax:superimpose_to_file" );  }
 namespace relax { BooleanOptionKey const constrain_relax_to_native_coords( "relax:constrain_relax_to_native_coords" );  }
 namespace relax { BooleanOptionKey const constrain_relax_to_start_coords( "relax:constrain_relax_to_start_coords" );  }
+namespace relax { BooleanOptionKey const coord_constrain_sidechains( "relax:coord_constrain_sidechains" );  }
 namespace relax { RealOptionKey const sc_cst_maxdist( "relax:sc_cst_maxdist" );  }
 namespace relax { BooleanOptionKey const limit_aroma_chi2( "relax:limit_aroma_chi2" );  }
 namespace relax { BooleanOptionKey const bb_move( "relax:bb_move" );  }
@@ -600,4 +601,3 @@ namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
 namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
-namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }

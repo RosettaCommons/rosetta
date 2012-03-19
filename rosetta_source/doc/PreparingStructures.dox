@@ -11,7 +11,7 @@
 
 @page preparing_structures How to prepare structures for use in Rosetta
 
-@author Relaxation with all-atom constraints by Lucas Nivon and Rocco Moretti. 
+@author Relaxation with all-heavy-atom constraints by Lucas Nivon and Rocco Moretti.
 @author Other answers collated by Steven Lewis and Ramesh Jha
 
 @section purpose Why prepare structures?
@@ -25,31 +25,51 @@ Structures derived straight from the PDB are almost never perfectly compatible w
 How to prepare your structures is unfortunately closely linked to what you want to do with them.  In other words, your main protocol dictates your preparation protocol.  Remember that all you're really doing here is relaxing into Rosetta's energy function - you're not necessarily making it objectively more correct (although clashes are generally wrong), you're really just making Rosetta like it better.  What follows is a protocol that has been benchmarked for enzyme design and should work for any design situation, and then a series of suggestions from rosetta developers for other situations.
 
 @section relax_w_csts_intro Relax with all-heavy-atom constraints: Introduction
-We looked for a way to simultaneously minimize rosetta energy and keep all heavy atoms in a crystal structure as close as possible to their starting positions. As many posts below -- or hard-won experience -- will show, running relax on a structure will often move the backbone a few Angstroms. The best way we have found to perform the simultaneous optimization is to run relax with constraints always turned on (typically constraints ramp down in the late cycles of a relax run) and to constrain not just backbone but also sidechain atoms. 
+
+(See also the @ref relax_commands "relax documentation".)
+
+We looked for a way to simultaneously minimize rosetta energy and keep all heavy atoms in a crystal structure as close as possible to their starting positions. As many posts below -- or hard-won experience -- will show, running relax on a structure will often move the backbone a few Angstroms. The best way we have found to perform the simultaneous optimization is to run relax with constraints always turned on (typically constraints ramp down in the late cycles of a relax run) and to constrain not just backbone but also sidechain atoms.
 This protocol has been tested on a benchmark set of 51 proteins and found to increase sequence recovery in enzyme design by 5% as compared with design in raw pdb structures. It accomplishes this with only .077 Angstrom RMSD over the set of proteins (C-alpha RMSD) from raw pdb to relaxed-with-csts pdb. A more complete description of the data leading to this protocol is below.
 
 @section relax_w_csts_protocol Relax with all-heavy-atom constraints: Protocol
 The required files are in:
 rosetta/rosetta_source/src/apps/public/relax_w_allatom_cst
 
+@subsection short_protocol Short Protocol
+
+The longer (but not necessarily better) protocol described below has been incorporated into the relax appliction itself:
+
+<tt>relax.linuxgccrelease @flags -database rosetta/rosetta_database [-extra_res_fa your_ligand.params] -relax:constrain_relax_to_start_coords -relax:coord_constrain_sidechains -relax:ramp_constraints false -s your_structure.pdb </tt>
+
+The flags file can contain whatever packing and scorefunction flags you wish to use. We recommend at least:
+
+@code
+-ex1
+-ex2
+-use_input_sc
+-flip_HNQ
+-no_optH false
+@endcode
+
+The strength and type of constraints uses can be varied with the <tt>-relax:coord_cst_stdev</tt> and <tt>-relax:coord_cst_width</tt> options. By default relax uses a harmonic constraint with the strength adjusted by coord_cst_stdev (smaller=tighter). If coord_cst_width is specified, a flat-bottomed, linear-walled constraint is used, with the size of the flat-bottomed well controlled by coord_cst_width (smaller=tighter), and the slope of the walls by coord_cst_stdev (smaller=tighter).
+
+@subsection long_protocol Longer Protocol
+
 (0) This protocol is designed for a single-chain pdb. For multiple chains we recommend that you split the pdb into one for each chain and run the protocol separately on each. Note that we often "clean" structures to replace non-canonical amino acids with their closest counterparts using this script: clean_pdb_keep_ligand.py
 
-python clean_pdb_keep_ligand.py your_structure_original.pdb -ignorechain
+<tt>python clean_pdb_keep_ligand.py your_structure_original.pdb -ignorechain</tt>
 
-(1) Generate sidechain coordinate constraints on your pdb using sidechain_cst_3.py: 
+(1) Generate sidechain coordinate constraints on your pdb using sidechain_cst_3.py:
 
-python sidechain_cst_3.py your_structure.pdb 0.1 0.5 [output: your_structure_sc.cst]
+<tt>python sidechain_cst_3.py your_structure.pdb 0.1 0.5</tt> [output: your_structure_sc.cst]
 
-(2) Run relax using these constraints and with a custom relax script to force constraints to stay on during the entire run. Please adjust the path for the relax:script flag in the flags file to point to the correct location for your always_constrained_relax_script. Run time is approximately 30 minutes for a 340 residue protein.
+(2) Run relax using these constraints and with a custom relax script to force constraints to stay on during the entire run. Run time is approximately 30 minutes for a 340 residue protein.
 
-relax.linuxiccrelease @flags -database rosetta_database/ -s your_structure.pdb -constraints:cst_fa_file your_structure_sc.cst [-extra_res_fa your_ligand.params]
+<tt>relax.linuxgccrelease @flags -database rosetta/rosetta_database -relax:script rosetta/rosetta_source/src/apps/public/relax_w_allatom_cst/always_constrained_relax_script -constrain_relax_to_start_coords -constraints:cst_fa_file your_structure_sc.cst -s your_structure.pdb  [-extra_res_fa your_ligand.params]</tt>
 
-Use the flags file listed below. The bracketed extra_res_fa only applies if there are any ligand(s) in the structure.
+The bracketed extra_res_fa only applies if there are any ligand(s) in the structure. The example flags file listed below was used in testing:
 
-flags:
 @code
--constrain_relax_to_start_coords
--relax:script rosetta/rosetta_source/src/apps/public/relax_w_allatom_cst/always_constrained_relax_script
 -ex1
 -ex2
 -use_input_sc
@@ -141,6 +161,7 @@ In general, the Meiler lab does the following:
 This will alleviate clashes in the protein and give a good starting structure for any of the Rosetta applications...unless the protein blows up for some reason.
 
 With an addendum from James Thompson:
+
 Thanks Steven! That's a very reasonable way to gently structures from the PDB, although there are a lot of different ways that you might try this.
 
 Here are two more things that come to mind:
@@ -148,6 +169,7 @@ Here are two more things that come to mind:
 @li Also, Mike Tyka wrote that script for cleaning up PDBs. One of the most useful parts of that script is that it matches non-canonical amino acids (such as selenomethionines) with the appropriate canonical amino acid.
 
 With a second addendum from Andrew Leaver-Fay:
+
 I thought I might point out two things:
 @li 1) ex1aro doesn't do anything extra if you already have ex1 on your command line. You can however set the sampling level for ex1aro to be higher than for ex1; e.g. -ex1 -ex1aro:level 4. This is stated very explicitly in the option documentation, yet still surprises a lot of people. In Rosetta++, -ex1aro behaved as if it were -ex1aro:level 4.
 @li 2) Mike has observed that extra rotamers will not yield better energy structures out of relax; they will however slow it down.
