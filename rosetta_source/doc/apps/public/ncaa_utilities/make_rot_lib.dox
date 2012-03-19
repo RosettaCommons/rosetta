@@ -94,7 +94,7 @@ $ cd inputs
 $ ../scripts/make_inputs C40_rot_lib_options_XXX_YYY.in
 @endverbatim
 
-The number of chi angles and the CHI_RANGE sampling interval are the primary determinants of the run time as they determine the number of rotamers that will be tested for each phi/psi bin. It is recommended to have at least 500 samples per chi. In the ornithine example we sample in 30 degree intervals for each of the 3 chi angles giving us a total of 1728 (12x12x12) conformations tested for each phi/psi bin. For a residue with a single chi 1 degree bins will suffice. 
+The number of chi angles and the CHI_RANGE sampling interval are the primary determinants of the run time as they determine the number of rotamers that will be tested for each phi/psi bin. It is recommended to have at least 500 samples per chi. In the ornithine example we sample in 30 degree intervals for each of the 3 chi angles giving us a total of 1728 (12x12x12) conformations tested for each phi/psi bin. For a residue with a single chi 1 degree bins will suffice.
 
 @section running Running the MakeRotLib Protocol
 The next step is to run the MakeRotLib protocol on each of the input files we created in step one. This is the most time consuming portion of the process and should probably be done on a cluster. As cluster setups vary, an example for a single MakeRotLib options file is provided. The other 1295 should be run identically.
@@ -104,7 +104,7 @@ $ cd outputs
 $ PATH/TO/ROSETTA/bin/make_rot_lib.macosgccrelease -database PATH/TO/rosetta_database -rot_lib_options_file ../inputs/C40_rot_lib_options_-60_-40.in >& C40_rot_lib_options_-60_-40.log &
 @endverbatim
 
-<bNote:</b> The extension on your executable maybe different.
+<b>Note:</b> The extension on your executable maybe different.
 
 The only options passed to the executable are the path to the database and the MakeRotLib options file. After the run completes a file called <code>C40_-60_-40_bbdep.rotlib</code> should be in the output directory. This is the backbone dependent rotamer library for a phi of -60 and a psi of -40.
 
@@ -118,8 +118,12 @@ The log file also displays the number of conformations per cluster, the average 
 The MakeRotlib protocol has one option and it is not really optional.
 @li rot_lib_options_file: the path to the rotlib options file we made above.
 
+@section eo Expected Outputs
+
+You should have 1296 rotamer libraries, one for each phi/psi bin.
+
 @section assemble Assembilng the Individual Rotamer Libraries in to a Single File
-After the MakeRotLib protocol has been run on all of the MakeRotLib options files the individual rotamer libraries for each phi psi bin need to be assembled in to a single file. This is accomplished with a provided script as shown bellow. 
+After the MakeRotLib protocol has been run on all of the MakeRotLib options files the individual rotamer libraries for each phi psi bin need to be assembled in to a single file. This is accomplished with a provided script as shown bellow.
 
 @verbatim
 $ cd outputs
