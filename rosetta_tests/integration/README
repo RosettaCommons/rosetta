@@ -32,6 +32,7 @@ The next thing you need to do is strip out irrelevant output.  egrep -v stands f
     | egrep -v 'core.init: command' \
     | egrep -v 'seconds' \
     > log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 These lines remove all jd2-based references to TIME (number of seconds for jobs) and PATH (the core.init line).  This prevents failures due to different runtimes and different directory sets (when copying results from one installation to another for testing).
 
