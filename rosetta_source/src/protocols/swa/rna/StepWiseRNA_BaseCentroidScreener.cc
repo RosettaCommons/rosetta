@@ -96,8 +96,30 @@ namespace rna {
 	StepWiseRNA_BaseCentroidScreener::Initialize_base_stub_list( pose::Pose const & pose, bool const verbose ){
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
-		Size const moving_res = job_parameters_ -> moving_res();
-		bool const moving_partition = partition_definition( moving_res );
+
+		//Used to be this before March 19, 2012. Fang switched to the version below to fix a memory leak problem.
+		//bool const root_partition = partition_definition( pose.fold_tree().root() ); 
+
+		//To Fang: This version is buggy since it assumes full-length pose which is not always the case!
+		//Fang modified to this version On March 18, 2012
+		//Size const moving_res = job_parameters_ -> moving_res();
+		//bool const moving_partition = partition_definition( moving_res );
+
+		Size const working_moving_res = job_parameters_->working_moving_res();
+		utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos();
+
+		if(working_moving_partition_pos.size()==0) utility_exit_with_message("working_moving_partition_pos.size()==0!");
+
+		bool const moving_partition = partition_definition( working_moving_res ); 
+		bool const moving_partition_check = partition_definition( working_moving_partition_pos[1] );
+
+		if(moving_partition!=moving_partition_check){
+			std::cout << "working_moving_res= " << working_moving_res << std::endl;
+			Output_seq_num_list("working_moving_partition_pos= ", job_parameters_->working_moving_partition_pos(), 40);
+			std::cout << "moving_partition= " << moving_partition << std::endl;
+			std::cout << "moving_partition_check= " << moving_partition_check << std::endl;
+			utility_exit_with_message("moving_partition!=moving_partition_check!");
+		}
 
 		moving_residues_.clear();
 		fixed_residues_.clear();
