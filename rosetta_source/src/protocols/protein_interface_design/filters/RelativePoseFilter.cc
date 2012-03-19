@@ -117,6 +117,7 @@ bool
 RelativePoseFilter::apply(core::pose::Pose const & p ) const
 {
 	core::pose::PoseCOP threaded_pose( thread_seq( p ) );
+	TR<<"filter's value: "<<filter()->report_sm( *threaded_pose )<<std::endl;
 	return( filter()->apply( *threaded_pose ) );
 }
 
