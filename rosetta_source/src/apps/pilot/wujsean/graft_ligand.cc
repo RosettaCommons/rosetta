@@ -9,8 +9,8 @@
 
 /// @file
 /// @brief
-/// @author James Thompson
 /// @author Sean Joseph Wu
+/// @author James Thompson
 
 // libRosetta headers
 
@@ -122,11 +122,12 @@ main( int argc, char * argv [] ) {
 	comparative_modeling_pose.pdb_info() -> resize_residue_records( comparative_modeling_pose.total_residue() );
   //comparative_modeling_pose.pdb_info() -> resize_atom_records( comparative_modeling_pose );
 
-	//renumbers pdbinfo for the ligand
-	//No longer changes numbers in PDB file...Don't know why
+	//renumbers pdbinfo for the ligand. No longer changes numbers in PDB file...Don't know why
+	//Current Fix: Adds on ligand as next number in the chain. If protein ends at 360, then ligand start will be 361
 	for(Size i = old_comparative_model_length + 1; i <= comparative_modeling_pose.total_residue(); ++i) {
-		comparative_modeling_pose.pdb_info() -> set_resinfo(i, ligand_chain, i - old_comparative_model_length, ' ');
-		std::cout << comparative_modeling_pose.pdb_info() -> pose2pdb(i) << std::endl;
+		//comparative_modeling_pose.pdb_info() -> set_resinfo(i, ligand_chain, i - old_comparative_model_length, ' ');
+		comparative_modeling_pose.pdb_info() -> set_resinfo(i, ligand_chain, i, ' ');
+		//std::cout << comparative_modeling_pose.pdb_info() -> pose2pdb(i) << std::endl;
 		//std::cout << "Renumbering to " << (i - old_comparative_model_length) << " at " << i << std::endl;
 	}
 
@@ -145,19 +146,25 @@ main( int argc, char * argv [] ) {
 		core::Size cst_block(0), exgeom_id( 0 );
 		//protocols::enzdes::enzutil::split_up_remark_line( remarks[i].value, chainA, resA, pdbposA, chainB, resB, pdbposB, cst_block, exgeom_id );
 		protocols::toolbox::match_enzdes_util::split_up_remark_line( remarks[i].value, chainA, resA, pdbposA, chainB, resB, pdbposB, cst_block, exgeom_id );
+
+		//std::cout<<"chainA:"<<chainA<<"	resA:"<<resA<<" pdbposA:"<<pdbposA<<"	chainB:" << chainB<< "	resB:"<<resB<<" pdbposB:"<<pdbposB<<std::endl;
+		
     std::string query_chainA, query_chainB, query_resA, query_resB;
 		int query_posA, query_posB;
 		char model_last_chain = core::pose::chr_chains[comparative_modeling_pose.residue(old_comparative_model_length).chain()];
 		//Maps new residue positions for comparative remarks
+		//Changes remarks to be consistent with ligand numbering
 		if( chainA[0] <= model_last_chain) {
 			query_posA = template_to_query[pdbposA];
 		} else {
-			query_posA = pdbposA;
+			query_posA = pdbposA + old_comparative_model_length;
+			//query_posA = pdbposA;
 		}
     if( chainB[0] <= model_last_chain) {
       query_posB = template_to_query[pdbposB];
     } else {
-      query_posB = pdbposB;
+			query_posB = pdbposB + old_comparative_model_length;
+    	//query_posB = pdbposB;
     }
     query_resA = resA;
     query_chainA = chainA;
@@ -179,6 +186,26 @@ main( int argc, char * argv [] ) {
 		}
   }
 
+
+//
+//Attempt to renumber ligand to 1 B, 2 B, etc...
+/*
+	vector1< Size > renumber_vector;
+	for(Size i = 1; i <= comparative_modeling_pose.total_residue(); ++i) {
+		if( i <= old_comparative_model_length ) {
+			renumber_vector.push_back(i);
+		} else {
+			renumber_vector.push_back(i-old_comparative_model_length);
+		}
+	}
+
+	for(Size i=1; i<= comparative_modeling_pose.total_residue(); ++i ) {
+		std::cout<<"testing:"<<renumber_vector[i]<<std::endl;
+		((core::conformation::Residue)(comparative_modeling_pose.residue(i))).update_sequence_numbering(renumber_vector);
+		std::cout<<comparative_modeling_pose.residue(i)<<std::endl;
+  }
+*/
+//
 	//Superimposes again to make the mutated residues in the correct spot.
   vector1< Size > residues;
 
