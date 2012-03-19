@@ -217,15 +217,14 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
     setup_packer_task( pose_in, tf_ );
     pose::Pose start_pose = pose_in;
 
-//camelid	if( is_camelid_ && !ab_info_.is_extended() && !ab_info_.is_kinked() )
-//camelid		c_ter_stem_ = 0;
+    //camelid	if( is_camelid_ && !ab_info_.is_extended() && !ab_info_.is_kinked() )
+    //camelid		c_ter_stem_ = 0;
 
     Size framework_loop_begin( ab_info_->get_CDR_loop("h3")->start() );
-    Size frmrk_loop_end_plus_one( ab_info_->get_CDR_loop("h3")->stop() );
-    //Size framework_loop_size = ( frmrk_loop_end_plus_one -framework_loop_begin ) + 1;
+    Size framework_loop_end  ( ab_info_->get_CDR_loop("h3")->stop()  );
     Size cutpoint = framework_loop_begin + 1;
 
-    loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one, cutpoint, 0, true );
+    loops::Loop cdr_h3( framework_loop_begin, framework_loop_end, cutpoint, 0, true );
 
     simple_one_loop_fold_tree( pose_in, cdr_h3 );
 

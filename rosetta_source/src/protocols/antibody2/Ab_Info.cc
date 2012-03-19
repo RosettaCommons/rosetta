@@ -188,15 +188,19 @@ Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool is_camelid ) {
     H2_seq_ = get_seq_from_a_loop(pose, H2_);
 
     
-//	H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 )+1 );
-//	H3_->set_cut( H3_->start() + 1 );
-//  TODO:
-//  JQX: don't understand why the perl script has one less residue in the end of h3.pdb for deep graft option
-//       don't understand this +1, either, temporary remove    CHECK LATER !!!
-//       OK, in R2, "antibody_modeling_convert_to_sequential_res_from_chothia_res function", you saw +1 as well
+    // JQX:
+    // You should always see 95-102 as the positions for your H3 in your FR02.pdb, but as a matter of fact,
+    // the antibody script just copied h3.pdb (heavy atoms) into the FR02.pdb, sometimes you see the stop
+    // like postition pdb number 98, not 102, if the h3.pdb is short. Therefore, you use pdb number 102 to 
+    // define h3, sometimes it fails! 
+    // But in FR02.pdb, you always see 103, because 103 is on the framework. The idea is to find the pose number
+    // of PDB number 103, then minus 1 will give you the last residue of h3.
+    Size pose_num_end_plus_one = pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h3"]+1 ) ;  // PDB number 103 to get pose number
+    Size pose_num_end = pose_num_end_plus_one - 1; // pose number -1
     H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h3"] ), 
-                           pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h3"] ) );
-    H3_->set_cut( H3_->start() + 1 );  // why this is different compared to other cuts of other loops? Aroop seems did this in his old R3 code, CHECK LATER !!!
+                           pose_num_end );
+    H3_->set_cut( H3_->start() + 1 );  // why this is different compared to other cuts of other loops? 
+                                       // Aroop seems did this in his old R3 code, CHECK LATER !!!
 	all_cdr_loops_.add_loop( *H3_ );
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h3", H3_) );
     H3_seq_ = get_seq_from_a_loop(pose, H3_);

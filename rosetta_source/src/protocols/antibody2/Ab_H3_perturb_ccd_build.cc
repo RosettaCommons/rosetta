@@ -207,11 +207,13 @@ void Ab_H3_perturb_ccd_build::build_centroid_loop( core::pose::Pose & pose ) {
         
     TR <<  "Modeling Centroid CDR H3 loop" << std::endl;
     
-    Size frmrk_loop_end_plus_one( ab_info_->get_CDR_loop("h3")->stop() );
-    Size framework_loop_size = ( frmrk_loop_end_plus_one - ab_info_->get_CDR_loop("h3")->start() ) + 1;
+    Size framework_loop_size = ( ab_info_->get_CDR_loop("h3")->stop() - ab_info_->get_CDR_loop("h3")->start() ) + 1;
+    TR<< "ab_info_->get_CDR_loop('h3')->start() = "<<ab_info_->get_CDR_loop("h3")->start()<<std::endl;
+    TR<< "ab_info_->get_CDR_loop('h3')->stop() = "<<ab_info_->get_CDR_loop("h3")->stop()<<std::endl;
+
     Size cutpoint = ab_info_->get_CDR_loop("h3")->start() + 1;
     loops::Loop cdr_h3( ab_info_->get_CDR_loop("h3")->start(), 
-                        frmrk_loop_end_plus_one,
+                        ab_info_->get_CDR_loop("h3")->stop(),
                            cutpoint,	0, true );
     
     simple_one_loop_fold_tree( pose, cdr_h3 );
@@ -244,7 +246,7 @@ void Ab_H3_perturb_ccd_build::build_centroid_loop( core::pose::Pose & pose ) {
                         hfr_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
     }
         
-    Size modified_framework_loop_end = frmrk_loop_end_plus_one - c_ter_stem_;
+    Size modified_framework_loop_end = ab_info_->get_CDR_loop("h3")->stop() - c_ter_stem_;
     //###########################################################################
     loops::Loop trimmed_cdr_h3( ab_info_->get_CDR_loop("h3")->start(),
                                    modified_framework_loop_end, cutpoint, 0, true );
@@ -522,8 +524,13 @@ void Ab_H3_perturb_ccd_build::read_and_store_fragments( core::pose::Pose & pose 
         
     protocols::loops::read_loop_fragments( frag_libs );
         
-    Size frag_size = (ab_info_->get_CDR_loop("h3")->stop()-ab_info_->get_CDR_loop("h3")->start()) + 3;
-    Size cutpoint =  ab_info_->get_CDR_loop("h3")->start() + int(frag_size/2);
+    Size frag_size = (ab_info_->get_CDR_loop("h3")->stop()  - ab_info_->get_CDR_loop("h3")->start()) + 3;
+    TR<<frag_size<<std::endl;
+    
+    Size cutpoint =   ab_info_->get_CDR_loop("h3")->start() + int(frag_size/2);
+    TR<<cutpoint<<std::endl;
+
+    
     setup_simple_fold_tree( ab_info_->get_CDR_loop("h3")->start() - 1, 
                             cutpoint,
                             ab_info_->get_CDR_loop("h3")->stop() + 1,
@@ -531,6 +538,7 @@ void Ab_H3_perturb_ccd_build::read_and_store_fragments( core::pose::Pose & pose 
                             pose );
         
     FragSetOP offset_3mer_frags;
+    
     // a fragset of same type should be able to handle everything
     offset_3mer_frags = frag_libs[2]->empty_clone();
     FrameList loop_3mer_frames;

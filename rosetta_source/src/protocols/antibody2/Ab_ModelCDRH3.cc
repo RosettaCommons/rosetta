@@ -317,15 +317,27 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 
 
 
-    
-    
+    //####################################################
+    // Step 1: model the cdr h3: 
+    //  1). insert the c_terminal
+    //  2). frag_ccd the h3 loop
+    //  notes: pay attention to the way it treats the stems
+    //####################################################
     model_cdrh3_->apply( frame_pose );
     pymol.apply( frame_pose );
     pymol.send_energy( frame_pose );
     
+    
+    
+    
+    
     exit(-1);
     
     
+    
+    //####################################################
+    // Step 2: packing the CDRs
+    //####################################################
     relax_cdrs( frame_pose );
     pymol.apply( frame_pose );
     pymol.send_energy( frame_pose );
@@ -333,8 +345,9 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 
     
     
-    
-	// snugfit
+    //####################################################
+	// Step 3: SnugFit: remove the clashes between L-H
+    //####################################################
 	if ( !camelid_ && snugfit_ ) {
 		all_cdr_VL_VH_fold_tree( frame_pose, ab_info_->all_cdr_loops_ );
         
@@ -369,6 +382,26 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 	pymol.apply( frame_pose );
 	pymol.send_energy( frame_pose );
 
+    
+    
+    
+    //####################################################
+	// Step 4: Full Atom Relax 
+    //####################################################
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //####################################################
+	// Step 5: Store the homolgy models
+    //####################################################
+    
 	// remove cutpoints variants for all cdrs
 	// "true" forces removal of variants even from non-cutpoints
 	loops::remove_cutpoint_variants( frame_pose, true );
@@ -420,7 +453,7 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin relax_cdrs
+/// @begin relax_cdrs     //JQX: packing, minimization, and mintrial
 ///
 /// @brief relaxes all cdrs simultaneously
 ///
