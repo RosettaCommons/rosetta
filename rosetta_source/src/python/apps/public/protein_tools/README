@@ -1,0 +1,14 @@
+This is a collection of classes and scripts that are useful for parsing and analyzing the results of rosetta simulations.  
+
+The library depends on Biopython, which can be downloaded from http://www.biopython.org
+To use the graphics package, you will also need to install matplotlib from http://matplotlib.sourceforge.net
+
+The library is divided into 3 packages:
+
+graphics - Classes and functions for graphical output (requires matplotlib)
+rosetta - Classes and functions for parsing file formats specific to rosetta
+protein - Classes and functions for manipulation protein structural data (requires biopython)
+
+to install this package type:
+python setup.py install --install-scripts=/script/install/directory
+

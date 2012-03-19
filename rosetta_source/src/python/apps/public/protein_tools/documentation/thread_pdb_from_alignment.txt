@@ -1,0 +1,13 @@
+Procedure
+1. Generate an initial threaded structure from a CLUSTAL formatted alignment file and a template pdb file by running $ROSETTA_SCRIPTS/thread_pdb_from_alignment.py --template=template_name --alignment=alignment_name alignment_file.aln template.pdb output.pdb
+	a) specify --chain=A to align thread around a specific chain in a multi-chain protien
+	b) specify --align_format=clustal to set the format of the alignment file.  Supported formats are clustal, emboss, fasta, fasta-m10, ig, nexus, phylip, and stockholm
+Timing
+
+step 1 takes 5 seconds per structure
+
+Troubleshooting
+
+Anticipated Results
+
+output.pdb will contain the sequence of the alignment protein threaded onto the structure of the template.  Residues of the same type will have all side chain atoms, residues of a different type will have only backbone coordinates, and residues in alignment gap regions will have 0.0 cooridinates and atom occupancies of -1.00

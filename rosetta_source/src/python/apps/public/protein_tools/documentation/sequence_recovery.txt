@@ -1,0 +1,12 @@
+Procedure
+1. Produce a summary of a single designed model by running $ROSETTA_SCRIPTS native.pdb designed.pdb
+	a) specify --best=5 --worst=5 options to output the best and worst 5 mutations.
+Timing
+
+less than 1 second per model
+
+Troubleshooting
+
+Anticipated Results
+
+The script outputs an alignment of the native and designed sequences, with * symbols indicating sequence identity. Below the alignment are the best and worst mutations by total residue score. 

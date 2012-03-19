@@ -1,0 +1,12 @@
+Procedure
+1. Generate a table comparing two scores for each pdb file by executing the script $ROSETTA_SCRIPTS/score_scatter_plot.py --x_axis=term1 --y_axis=term2 --pdbs=pdb_list.txt output_table.txt where term1 and term2 are terms in the rosetta score table and pdb_list.txt is a list of paths to pdb files, 1 per line. 
+	a) specify --silent=silent_list.txt to input silent files, where silent_list.txt is a list of silent file paths, 1 per line. 
+	
+Timing
+step 1 takes approximately 0.1 seconds per input structure. 
+
+Troubleshooting
+
+Anticipated Results
+
+A tab delimited file containing the structure tag and the values of the terms specified with --x_axis and --y_axis will be produced. 
