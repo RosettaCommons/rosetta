@@ -216,6 +216,7 @@ Options = Option_Group( '',
 				desc='Select a random subset of this number of decoys from every silent-file read',
 				default = '0'
 			),
+		  Option( 'skip_failed_simulations', 'Boolean', default = 'false', desc = 'Ignore failed simulations (prefixed by W_) during silent file input. Existing behavior is preserved by default.'),
 			Option(
 				'silent_scores_wanted', 'StringVector',
 				desc = 'Only put these silent-scores into the Pose.',

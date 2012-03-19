@@ -30,6 +30,9 @@
 ///C++ headers
 #include <string>
 
+// External headers
+#include <boost/algorithm/string/predicate.hpp>
+
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/symmetry/util.hh>
@@ -156,7 +159,19 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( Jobs & jobs ){
 	for ( SilentFileData::iterator iter = sfd_.begin(), end = sfd_.end();
 			iter != end; ++iter
 	) {
-		InnerJobOP ijob( new InnerJob( iter->decoy_tag(), nstruct ) );
+		const std::string tag = iter->decoy_tag();
+
+		// Optionally ignore failed simulations. Supporting protocols are not consistent
+		// in their support of this option. Abrelax, for example, writes models from
+		// failed simulations in centroid residue type set, despite the fact that
+		// fullatom was requested. This can lead to issues during clustering, rescoring,
+		// etc.
+		bool failed_simulation = boost::starts_with(tag, "W_");
+		if (failed_simulation && option[OptionKeys::in::file::skip_failed_simulations]()) {
+			continue;
+		}
+
+		InnerJobOP ijob( new InnerJob( tag, nstruct ) );
 		inner_jobs.push_back( ijob );
 	}
 

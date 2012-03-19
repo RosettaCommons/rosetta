@@ -405,6 +405,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0</dd><br>
 </dl>
 <dl>
+<dt><b>-skip_failed_simulations</b> \<Boolean\><dt>
+<dd>Ignore failed simulations (prefixed by W_) during silent file input. Existing behavior is preserved by default.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-silent_scores_wanted</b> \<StringVector\><dt>
 <dd>Only put these silent-scores into the Pose.</dd><br>
 </dl>

@@ -86,6 +86,7 @@ namespace in { namespace file { StringOptionKey const silent_struct_type( "in:fi
 namespace in { namespace file { BooleanOptionKey const silent_read_through_errors( "in:file:silent_read_through_errors" );  } }
 namespace in { namespace file { StringOptionKey const silent_score_prefix( "in:file:silent_score_prefix" );  } }
 namespace in { namespace file { IntegerOptionKey const silent_select_random( "in:file:silent_select_random" );  } }
+namespace in { namespace file { BooleanOptionKey const skip_failed_simulations( "in:file:skip_failed_simulations" );  } }
 namespace in { namespace file { StringVectorOptionKey const silent_scores_wanted( "in:file:silent_scores_wanted" );  } }
 namespace in { namespace file { FileVectorOptionKey const fasta( "in:file:fasta" );  } }
 namespace in { namespace file { FileVectorOptionKey const pssm( "in:file:pssm" );  } }
@@ -600,4 +601,3 @@ namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio
 namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
 namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
 namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
-namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
