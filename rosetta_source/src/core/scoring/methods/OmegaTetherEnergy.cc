@@ -20,6 +20,7 @@
 #include <core/scoring/OmegaTether.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/id/TorsionID.hh>
@@ -85,7 +86,7 @@ OmegaTetherEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
 			return;
 	}
 	if ( rsd.is_protein() ) {

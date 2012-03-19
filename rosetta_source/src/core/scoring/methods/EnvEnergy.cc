@@ -21,6 +21,7 @@
 // Package headers
 #include <core/scoring/EnvPairPotential.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/chemical/VariantType.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
@@ -101,7 +102,7 @@ EnvEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
 			return;
 	}
 	if(rsd.aa()==core::chemical::aa_unk) return;

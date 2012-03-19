@@ -19,6 +19,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/id/TorsionID.hh>
@@ -85,7 +86,7 @@ YHHPlanarityEnergy::residue_energy(
 	using numeric::constants::d::pi;
 
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
 			return;
 	}
 	if ( defines_score_for_rsd(rsd) ) {
@@ -114,7 +115,7 @@ YHHPlanarityEnergy::eval_residue_dof_derivative(
 	using numeric::constants::d::degrees_to_radians;
 	using numeric::constants::d::pi;
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
 			return 0.0;
 	}
 

@@ -21,6 +21,7 @@
 
 // Project headers
 #include <core/chemical/AA.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 
 #include <utility/vector1.hh>
@@ -79,7 +80,7 @@ ReferenceEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
 			return;
 	}
 

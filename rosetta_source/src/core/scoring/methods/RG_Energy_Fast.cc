@@ -19,6 +19,7 @@
 // Package headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
+#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -106,7 +107,7 @@ RG_Energy_Fast::calculate_rg_score( core::pose::Pose const & pose ) const
 	Vector center_of_mass( 0, 0, 0 );
 	for ( Size i = 1; i <= nres; ++i ) {
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) continue;
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 
 		Vector const v( pose.residue(i).nbr_atom_xyz() );
@@ -119,7 +120,7 @@ RG_Energy_Fast::calculate_rg_score( core::pose::Pose const & pose ) const
 	Real rg_score = 0;
 	for ( Size i = 1; i <= nres; ++i ) {
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) continue;
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 
 		Vector const v( pose.residue(i).nbr_atom_xyz() );
@@ -155,7 +156,7 @@ RG_Energy_Fast::calculate_rg_score(
 		if (!relevant_residues[i]) continue;
 
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) continue;
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 
 		Vector const v( pose.residue(i).nbr_atom_xyz() );
@@ -170,7 +171,7 @@ RG_Energy_Fast::calculate_rg_score(
 		if (!relevant_residues[i]) continue;
 
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) continue;
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 
 		Vector const v( pose.residue(i).nbr_atom_xyz() );
@@ -198,7 +199,7 @@ RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 	mindata.com = Vector( 0, 0, 0 );
 	for ( Size i = 1; i <= nres; ++i ) {
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) continue;
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 
 		Vector const v( pose.residue(i).nbr_atom_xyz() );
@@ -211,7 +212,7 @@ RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 	mindata.rg = 0;
 	for ( Size i = 1; i <= nres; ++i ) {
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) continue;
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 
 		Vector const v( pose.residue(i).nbr_atom_xyz() );

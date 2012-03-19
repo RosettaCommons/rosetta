@@ -21,6 +21,7 @@
 // Package headers
 #include <core/scoring/EnvPairPotential.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/chemical/VariantType.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
@@ -109,7 +110,7 @@ CenPairEnergy::residue_pair_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 			return;
 	}
 	if(rsd1.aa()==core::chemical::aa_unk) return;

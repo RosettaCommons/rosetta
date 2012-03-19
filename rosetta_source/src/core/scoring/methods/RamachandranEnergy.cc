@@ -20,6 +20,7 @@
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -81,7 +82,7 @@ RamachandranEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
 			return;
 	}
 
@@ -110,7 +111,7 @@ RamachandranEnergy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
 			return 0.0;
 	}
 
@@ -142,7 +143,7 @@ RamachandranEnergy::eval_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue(tor_id.rsd()).has_variant_type( "REPLONLY" ) ){
+	if ( pose.residue(tor_id.rsd()).has_variant_type( core::chemical::REPLONLY ) ){
 		return 0.0;
 	}
 

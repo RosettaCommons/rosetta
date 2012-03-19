@@ -25,6 +25,7 @@
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
+#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -140,7 +141,7 @@ PairEnergy::residue_pair_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 			return;
 	}
 
@@ -421,7 +422,7 @@ PairEnergy::eval_residue_pair_derivatives(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 			return;
 	}
 

@@ -21,6 +21,7 @@
 #include <core/scoring/SmoothEnvPairPotential.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/DerivVectorPair.hh>
+#include <core/chemical/VariantType.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
@@ -98,7 +99,7 @@ SmoothEnvEnergy::residue_energy(
 	EnergyMap & emap
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ) return;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
 
 	Real env_score( 0.0 ), cb_score6( 0.0 ), cb_score12( 0.0 ), cb_score( 0.0 );
@@ -124,7 +125,7 @@ SmoothEnvEnergy::eval_residue_derivatives(
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const {
-	if ( rsd.has_variant_type( "REPLONLY" ) ) return;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
 	
 

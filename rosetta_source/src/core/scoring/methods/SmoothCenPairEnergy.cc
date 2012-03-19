@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/chemical/VariantType.hh>
 
 #include <numeric/xyzVector.hh>
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
@@ -102,7 +103,7 @@ SmoothCenPairEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ) return;
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd1.aa() > core::chemical::num_canonical_aas || rsd2.aa() > core::chemical::num_canonical_aas ) return;
 
 	/// assumes centroids are being used
@@ -134,7 +135,7 @@ SmoothCenPairEnergy::eval_residue_pair_derivatives(
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const {
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ) return;
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd1.aa() > core::chemical::num_canonical_aas || rsd2.aa() > core::chemical::num_canonical_aas ) return;
 
 	Real weight1 = weights[ cen_pair_smooth ];

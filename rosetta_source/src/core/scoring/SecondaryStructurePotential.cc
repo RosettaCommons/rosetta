@@ -20,6 +20,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/VariantType.hh>
 #include <basic/database/open.hh>
 #include <core/graph/DisjointSets.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -215,7 +216,6 @@ SecondaryStructurePotential::hspair(
 				iru  = energy_graph.get_node( HH_resnum_ss1 )->const_edge_list_begin(),
 				irue = energy_graph.get_node( HH_resnum_ss1 )->const_edge_list_end();
 				iru != irue; ++iru ) {
-
 			int SS_resnum_ss2( (*iru)->get_second_node_ind() );
 
 			//Edges always have first node < second node. Just in case we picked the wrong one:
@@ -1206,7 +1206,7 @@ SecondaryStructurePotential::identify_ss(
 	//std::cout << "secstruct: ";
 	for ( int i = 1; i <= total_residue; ++i ) {
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ){
+		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ){
 				continue;
 		}
 		char const c = conf.secstruct(i);
@@ -1250,7 +1250,7 @@ SecondaryStructurePotential::identify_ss(
 
 	for ( int i = total_residue; i >= 1; --i ) {
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ){
+		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ){
 				continue;
 		}
 		char const c = conf.secstruct(i);
