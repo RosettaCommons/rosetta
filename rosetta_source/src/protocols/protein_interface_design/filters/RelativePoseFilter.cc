@@ -117,7 +117,6 @@ bool
 RelativePoseFilter::apply(core::pose::Pose const & p ) const
 {
 	core::pose::PoseCOP threaded_pose( thread_seq( p ) );
-	TR<<"filter's value: "<<filter()->report_sm( *threaded_pose )<<std::endl;
 	return( filter()->apply( *threaded_pose ) );
 }
 
@@ -192,10 +191,14 @@ RelativePoseFilter::compute( core::pose::Pose const & p ) const{
 		dump.set_scorefxn( scorefxn() );
 		dump.apply( *threaded_pose );
 	}
-	if( baseline() )
+	if( baseline() ){
+		TR<<"filter val, baseline: "<<filter_val<<", "<<baseline_val()<<std::endl;
 		return( filter_val - baseline_val() );
-	else
+	}
+	else{
+		TR<<"filter val: "<<filter_val<<std::endl;
 		return( filter_val );
+	}
 }
 
 core::Real
