@@ -20,9 +20,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
+
 
 #include <core/id/types.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -74,13 +72,10 @@
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
-
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
-
 
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
@@ -110,53 +105,44 @@ namespace antibody2 {
 
 CDRH3Modeler2::CDRH3Modeler2() : Mover()
 {
-	user_defined_ = false;
-	init( false, true, true, false, false );
+
 }
 
 CDRH3Modeler2::CDRH3Modeler2(
-	bool model_h3,
-	bool apply_centroid_mode,
-	bool apply_fullatom_mode,
-	bool camelid,
-	bool benchmark
-	) : Mover()
+                             bool apply_centroid_mode,
+                             bool apply_fullatom_mode,
+                             bool camelid,
+                             bool benchmark,
+                             Ab_InfoOP antibody_info) : Mover()
 {
 	user_defined_ = true;
-	init( model_h3, apply_centroid_mode, apply_fullatom_mode, camelid, benchmark );
+	init( apply_centroid_mode, apply_fullatom_mode, camelid, benchmark, antibody_info );
 }
 
-CDRH3Modeler2::CDRH3Modeler2(
-	utility::vector1< fragment::FragSetOP > cdr_h3_frags) : Mover()
-{
-	user_defined_ = false;
-	init( false, true, true, false, false );
-	cdr_h3_frags_ = cdr_h3_frags;
-}
+
 
 void CDRH3Modeler2::init(
-	bool model_h3,
-	bool apply_centroid_mode,
-	bool apply_fullatom_mode,
-	bool camelid,
-	bool benchmark
-	)
+                         bool apply_centroid_mode,
+                         bool apply_fullatom_mode,
+                         bool camelid,
+                         bool benchmark,
+                         Ab_InfoOP antibody_info)
 {
 	Mover::type( "CDRH3Modeler2" );
 
-	// setup all the booleans with default values
-	// they will get overwritten by the options and/or passed values
+
 	set_default();
-//	register_options();
-//	init_from_options();
+    
 	if ( user_defined_ ) {
-		model_h3_ = model_h3;
 		apply_centroid_mode_ = apply_centroid_mode;
 		apply_fullatom_mode_ = apply_fullatom_mode;
 		set_camelid( camelid );
 		benchmark_ = benchmark;
+        ab_info_= antibody_info;
 	}
 
+
+    
 	lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 	lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
 	// adding constraints
@@ -177,25 +163,18 @@ void CDRH3Modeler2::setup_objects(){
 
 }
     
-    
-    
-    
-    
-    
-// CDRH3Modeler2 default destructor
-CDRH3Modeler2::~CDRH3Modeler2() {}
 
+    
+CDRH3Modeler2::~CDRH3Modeler2() {}
+    
+    
 void CDRH3Modeler2::set_default()
 {
 	benchmark_ = false;
-	model_h3_ = false;
 	cen_cst_ = 10.0;
 	high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
-
-
 	apply_centroid_mode_ = false;
 	apply_fullatom_mode_ = false;
-
 	current_loop_is_H3_ = true;
 	H3_filter_ = true;
 	antibody_refine_ = true;
@@ -206,14 +185,9 @@ void CDRH3Modeler2::set_default()
 	refine_input_loop_ = true;
 	is_camelid_ = false;
 
+	TR << "Finished Setting Defaults" << std::endl;
+} 
 
-
-	TR << "H3M Finished Setting Defaults" << std::endl;
-} // CDRH3Modeler2 set_default
-
-    
-    
-    
     
     
 void CDRH3Modeler2::set_lowres_score_func( scoring::ScoreFunctionOP lowres_scorefxn ) {
@@ -232,30 +206,27 @@ void CDRH3Modeler2::set_highres_score_func(scoring::ScoreFunctionOP highres_scor
 //################################################
 void CDRH3Modeler2::apply( pose::Pose & pose_in )
 {
-    if( !model_h3_ )
-				return;
 
-    TR << "H3M Applying CDR H3 modeler" << std::endl;
+    TR << "Applying CDR H3 modeler" << std::endl;
 
     using namespace core::pose;
     using namespace core::scoring;
     using namespace protocols::moves;
 
     start_pose_ = pose_in;
-    antibody_in_.setup_CDR_loops( pose_in, is_camelid_ );
     setup_packer_task( pose_in, tf_ );
     pose::Pose start_pose = pose_in;
 
-//camelid	if( is_camelid_ && !antibody_in_.is_extended() && !antibody_in_.is_kinked() )
+//camelid	if( is_camelid_ && !ab_info_.is_extended() && !ab_info_.is_kinked() )
 //camelid		c_ter_stem_ = 0;
 
-    Size framework_loop_begin( antibody_in_.get_CDR_loop("h3")->start() );
-    Size frmrk_loop_end_plus_one( antibody_in_.get_CDR_loop("h3")->stop() );
-    //Size framework_loop_size = ( frmrk_loop_end_plus_one -
-    //														framework_loop_begin ) + 1;
+    Size framework_loop_begin( ab_info_->get_CDR_loop("h3")->start() );
+    Size frmrk_loop_end_plus_one( ab_info_->get_CDR_loop("h3")->stop() );
+    //Size framework_loop_size = ( frmrk_loop_end_plus_one -framework_loop_begin ) + 1;
     Size cutpoint = framework_loop_begin + 1;
-    loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one,
-													cutpoint,	0, true );
+
+    loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one, cutpoint, 0, true );
+
     simple_one_loop_fold_tree( pose_in, cdr_h3 );
 
     // switching to centroid mode
@@ -266,18 +237,18 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
     if( apply_centroid_mode_ ) {
         to_centroid.apply( pose_in );
         //#############################
-        Ab_H3_perturb_ccd_build ab_h3_perturb_ccd_build(current_loop_is_H3_,H3_filter_,is_camelid_, antibody_in_ );
+        Ab_H3_perturb_ccd_build ab_h3_perturb_ccd_build(current_loop_is_H3_,H3_filter_,is_camelid_, ab_info_ );
         ab_h3_perturb_ccd_build.apply(pose_in);
         //build_centroid_loop( pose_in );
         //#############################
         if( is_camelid_ )
-            loop_centroid_relax( pose_in, antibody_in_.get_CDR_loop("h1")->start(),
-															 antibody_in_.get_CDR_loop("h1")->stop() );
+            loop_centroid_relax( pose_in, ab_info_->get_CDR_loop("h1")->start(),
+															 ab_info_->get_CDR_loop("h1")->stop() );
         to_full_atom.apply( pose_in );
 
         utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
-        for( Size ii = antibody_in_.get_CDR_loop("h3")->start();
-						 ii <= ( antibody_in_.get_CDR_loop("h3")->stop() ); ii++ )
+        for( Size ii = ab_info_->get_CDR_loop("h3")->start();
+						 ii <= ( ab_info_->get_CDR_loop("h3")->stop() ); ii++ )
 					allow_chi_copy[ii] = false;
         //recover sidechains from starting structures
         protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose_, allow_chi_copy );
@@ -292,7 +263,7 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
 
     if( apply_fullatom_mode_ ) {
         //##############################
-        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(current_loop_is_H3_, H3_filter_); 
+        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(current_loop_is_H3_, H3_filter_, ab_info_); 
         relax_a_cdr_high_res.pass_start_pose(start_pose_);
         relax_a_cdr_high_res.apply(pose_in);
         //build_fullatom_loop( pose_in );
@@ -313,7 +284,7 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
             
     if( is_camelid_ ) {
         //##############################
-        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(false, false, is_camelid_); // because of h2
+        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(false, false, is_camelid_, ab_info_); // because of h2
         relax_a_cdr_high_res.apply(pose_in);
         //##############################
 
@@ -323,7 +294,7 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
 
 
 
-    TR << "H3M Finished applying CDR H3 modeler" << std::endl;
+    TR << "Finished applying CDR H3 modeler" << std::endl;
 
     return;
 } // CDRH3Modeler2::apply()
@@ -402,11 +373,9 @@ CDRH3Modeler2::get_name() const {
 
 			// set cutpoint variants for correct chainbreak scoring
 			if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
-				if( !pose_in.residue( cutpoint ).has_variant_type(
-						chemical::CUTPOINT_LOWER))
+				if( !pose_in.residue( cutpoint ).has_variant_type(chemical::CUTPOINT_LOWER))
 					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, cutpoint );
-				if( !pose_in.residue( cutpoint + 1 ).has_variant_type(
-						chemical::CUTPOINT_UPPER ) )
+				if( !pose_in.residue( cutpoint + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) )
 					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, cutpoint + 1 );
 			}
 
@@ -488,7 +457,7 @@ CDRH3Modeler2::get_name() const {
 			// Restoring pose stuff
 			pose_in.fold_tree( tree_in ); // Tree
 
-			TR << "H3M Finished Centroid Relaxing Loop" << std::endl;
+			TR << "Finished Centroid Relaxing Loop" << std::endl;
 
 			return;
 		} // loop_centroid_relax
@@ -499,3 +468,6 @@ CDRH3Modeler2::get_name() const {
 
 } // namespace antibody2
 }  // namespace protocols
+
+
+

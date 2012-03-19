@@ -55,18 +55,17 @@ namespace antibody2 {
     
     
         
-Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover(antibody2::Ab_Info & ab_info) : Mover()   
+Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover() : Mover()   
 {
-    init(ab_info, false, false);     
+    user_defined_ = false;    
 }
         
         
         
-Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover(antibody2::Ab_Info & ab_info, bool camelid ) : Mover()
+Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover(antibody2::Ab_InfoOP  antibody_info, bool camelid ) : Mover()
 {
     user_defined_ = true;
-            
-    init(ab_info, camelid, false);
+    init(antibody_info, camelid, false);
 }
         
         
@@ -78,10 +77,7 @@ Ab_H3_cter_insert_mover::~Ab_H3_cter_insert_mover() {}
         
         
         
-        
-        
-        
-void Ab_H3_cter_insert_mover::init(antibody2::Ab_Info & ab_info, bool camelid, bool benchmark)
+void Ab_H3_cter_insert_mover::init(Ab_InfoOP antibody_info, bool camelid, bool benchmark)
 {
     Mover::type( "Ab_H3_cter_insert_mover" );
             
@@ -90,14 +86,12 @@ void Ab_H3_cter_insert_mover::init(antibody2::Ab_Info & ab_info, bool camelid, b
     if ( user_defined_ ) {
         is_camelid_ = camelid;
         benchmark_  = benchmark;
+        ab_info_= antibody_info;
     }
-            
-//    setup_objects();
     
+    //    setup_objects();
     
-    read_H3_cter_fragment(ab_info, camelid ) ;
-    
-    
+    read_H3_cter_fragment(camelid ) ;
     
 }
         
@@ -124,6 +118,7 @@ void Ab_H3_cter_insert_mover::set_default(){
         
 void Ab_H3_cter_insert_mover::apply(pose::Pose & pose)    
 {        
+
 //    finalize_setup(pose);
             
             
@@ -146,26 +141,45 @@ std::string Ab_H3_cter_insert_mover::get_name() const {
         
         
         
-void Ab_H3_cter_insert_mover::read_H3_cter_fragment(
-                                antibody2::Ab_Info & ab_info,
-                                bool is_camelid ) 
+void Ab_H3_cter_insert_mover::read_H3_cter_fragment(bool is_camelid ) 
 {
     using namespace fragment;
             
     std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
             
-    TR <<  "H3M Reading CDR H3 C-ter Fragments" << std::endl;
+    TR <<  "Reading CDR H3 C-ter Fragments" << std::endl;
+  
+    bool is_kinked( ab_info_->is_kinked() );
+    bool is_extended( ab_info_->is_extended() );
             
-    bool is_kinked( ab_info.is_kinked() );
-    bool is_extended( ab_info.is_extended() );
-            
+    
+    
+    
+    
     // extract single letter aa codes for the chopped loop residues
-    Size cdr_h3_size = ( ab_info.get_CDR_loop("h3")->stop()-1 -
-                         ab_info.get_CDR_loop("h3")->start() ) + 1;
+    TR<< *(ab_info_->get_CDR_loop("h3"))<<std::endl;
+
+    Size cdr_h3_size = ( ab_info_->get_CDR_loop("h3")->stop() - ab_info_->get_CDR_loop("h3")->start() ) + 1;
+    
+    TR<<cdr_h3_size<<std::endl;
     utility::vector1< char > aa_1name;
-    for( Size ii = ab_info.get_CDR_loop("h3")->start() - 2;
-              ii <= ( ab_info.get_CDR_loop("h3")->start() - 2 ) + cdr_h3_size + 3; ++ii )
-        aa_1name.push_back( ab_info.get_Fv_sequence()[ii] );
+    for( Size ii =    ab_info_->get_CDR_loop("h3")->start() - 2;
+              ii <= ( ab_info_->get_CDR_loop("h3")->start() - 2 ) + cdr_h3_size + 3; 
+              ++ii ) // XXcdrh3seqXX
+    {
+        aa_1name.push_back( ab_info_->get_Fv_sequence()[ii] );
+    }
+    TR<<aa_1name.size()<<std::endl;
+    
+    std::string tttttt="";
+    for(int i=1;i<=aa_1name.size();i++){
+        tttttt+=aa_1name[i];
+    }
+    TR<<tttttt<<std::endl;
+    
+    
+    
+    
             
     // used only when no length & kink match are found
     utility::vector1< FragData > H3_base_library_seq_kink;
@@ -175,10 +189,12 @@ void Ab_H3_cter_insert_mover::read_H3_cter_fragment(
             
 
     // file is read in from where other contraints are supposed to exist
-    if( is_camelid )
+    if( is_camelid ){
         H3_ter_library_filename_ = path+"camelid_H3_CTERM";
-    else
+    }
+    else{
         H3_ter_library_filename_ = path+"H3_CTERM";
+    }
             
     // Read the file defined by command line option
     utility::io::izstream H3_ter_library_stream( H3_ter_library_filename_ );
@@ -202,34 +218,31 @@ void Ab_H3_cter_insert_mover::read_H3_cter_fragment(
     std::string base_type;
             
     Size pdb_H3_length = cdr_h3_size;
-    Size h3_base_frag_size( is_camelid ? 6 : 4 ); // changed from 4:6
+    Size h3_base_frag_size( is_camelid ? 6 : 4 );
+    
     bool end_not_reached(true);
     while(end_not_reached){
         bool seq_match( true );
-        bool kink_match( false );
+        bool base_match( false );
                 
         FragData f;
         f.set_valid( true );
                 
         for ( Size i = 1; i <= h3_base_frag_size; ++i ) {
-            H3_ter_library_stream >> pdb_name
-                                  >> res_no
-                                  >> res_name
-                                  >> omega
-                                  >> phi
-                                  >> psi
-                                  >> H3_length
-                                  >> resolution
-                                  >> base_type
+            H3_ter_library_stream >> pdb_name  >> res_no     >> res_name
+                                  >> omega     >> phi        >> psi
+                                  >> H3_length >> resolution >> base_type
                                   >> std::skipws;
             
             if(H3_ter_library_stream.eof()) {
                 end_not_reached = false;
                 break;
             }
+
             if( res_name != aa_1name[aa_1name.size() - 5 + i] ){
                 seq_match = false;
             }
+            //TR<<res_name<<"   .vs.    "<<aa_1name[aa_1name.size() - 5 + i]<<"    "<<seq_match<<std::endl;
                     
             utility::pointer::owning_ptr< BBTorsionSRFD > res_torsions(
                         new BBTorsionSRFD( 3, 'L', res_name ) ); // 3 protein torsions
@@ -241,33 +254,49 @@ void Ab_H3_cter_insert_mover::read_H3_cter_fragment(
             res_torsions->set_secstruct ( 'L' );
             f.add_residue( res_torsions );
         }
-        if( !is_camelid ) {
-            if( is_kinked && base_type == "KINK" )
-                kink_match = true;
-            else if( is_extended && base_type == "EXTENDED" )
-                kink_match = true;
-            else if( !is_kinked && !is_extended && base_type == "NEUTRAL" )
-                kink_match = true;
+        
+        
+        //regular antibody
+        if( is_camelid == false) {
+            if( is_kinked && base_type == "KINK" ){
+                base_match = true;
+            }
+            else if( is_extended && base_type == "EXTENDED" ){
+                base_match = true;
+            }
+            else if( !is_kinked && !is_extended && base_type == "NEUTRAL" ){
+                base_match = true;
+            }
         }
+        //camelid antibody
         else {
-            if( is_extended && base_type == "EXTENDED" )
-                kink_match = true;
-            else if( ( is_kinked && base_type == "KINK" ) ||
-                    ( is_kinked && base_type == "EXTENDED" ) )
-                kink_match = true;
-            else if( !is_kinked && !is_extended )
-                kink_match = true;
+            if( is_extended && base_type == "EXTENDED" ){
+                base_match = true;
+            }
+            else if( ( is_kinked && base_type == "KINK" ) || ( is_kinked && base_type == "EXTENDED" ) ){
+                base_match = true;
+            }
+            else if( !is_kinked && !is_extended ){
+                base_match = true;
+            }
         }
-        if( is_camelid && end_not_reached && kink_match ){
+        
+        
+        //camelid antibody
+        if( is_camelid && end_not_reached && base_match ){
             H3_base_library_.push_back( f );
         }
-        else if( end_not_reached && (H3_length==pdb_H3_length) && kink_match ){
+        
+        // regular antibody
+        else if( end_not_reached && (H3_length==pdb_H3_length) && base_match ){
             H3_base_library_.push_back( f );
         }
-        if( end_not_reached && seq_match && kink_match ){
+        
+        
+        if( end_not_reached && seq_match && base_match ){
             H3_base_library_seq_kink.push_back( f );
         }
-        if( end_not_reached && kink_match  ){
+        if( end_not_reached && base_match  ){
             H3_base_library_kink.push_back( f );
         }
     }
@@ -285,9 +314,10 @@ void Ab_H3_cter_insert_mover::read_H3_cter_fragment(
         H3_base_library_ = H3_base_library_kink;
     }
             
-    TR <<  "H3M Finished reading CDR H3 C-ter Fragments" << std::endl;
-            
+    TR <<  "Finished reading CDR H3 C-ter Fragments" << std::endl;
     return;
+    
+
 }
         
     
@@ -303,47 +333,67 @@ void Ab_H3_cter_insert_mover::read_H3_cter_fragment(
 void Ab_H3_cter_insert_mover::antibody_modeling_insert_ter( core::pose::Pose & pose) 
 {
             
-    TR <<  "H3M Inserting CDR H3 C-ter Fragments" << std::endl;
+    TR <<  "Inserting CDR H3 C-ter Fragments" << std::endl;
             
     // Storing initial fold tree
     kinematics::FoldTree const input_tree( pose.fold_tree() );
             
+    
+    
+    
     Size loop_begin(0), loop_end(0), cutpoint(0), random_H3_ter(0);
+    
     //utility::vector1< fragment::FragData >::const_iterator H3_ter;
     fragment::FragData f;
             
-    loop_begin = ab_info_->get_CDR_loop("h3")->start();
-    cutpoint   = ab_info_->get_CDR_loop("h3")->start() + 1;
-    random_H3_ter = RG.random_range( 1, H3_base_library_.size() );
+    loop_begin    = ab_info_->get_CDR_loop("h3")->start()-1;  //JQX: to match R2_Antibody
+    cutpoint      = ab_info_->get_CDR_loop("h3")->start() + 1; //JQX: to match R2_Antibody
+    random_H3_ter = RG.random_range( 1, H3_base_library_.size() ); 
     //H3_ter = H3_base_library_.begin();
             
-    loop_end = ab_info_->get_CDR_loop("h3")->stop();
+    loop_end = ab_info_->get_CDR_loop("h3")->stop()+2; //JQX: to match R2_Antibody
             
     loops::Loop cdr_h3( loop_begin, loop_end, cutpoint,	0, true );
-    simple_one_loop_fold_tree( pose, cdr_h3 );
+    
+//    simple_one_loop_fold_tree( pose, cdr_h3 ); // JQX: this doesn't match R2_Antibody
+    
+    setup_simple_fold_tree(loop_begin, cutpoint, loop_end,pose.total_residue(), pose);
             
+    
+    TR<<pose.fold_tree()<<std::endl;
+    
     // choosing a base randomly
-    //H3_ter = H3_ter + random_H3_ter;
+    //H3_ter = H3_ter + random_H3_ter;//R2 style
     f = H3_base_library_[ random_H3_ter ];
+//    f = H3_base_library_[ 21 ]; //JQX: a test case to match R2_Antibody
+                                //JQX: realize R2_antibody the fragment data was vector, not vector1
+                                //JQX: in another word, R2->20 match R3->21
+    TR<<f<<std::endl;
             
-    //			pose::Pose start_pose = ab_info_.Fv;
     //inserting base dihedrals
-    Size cter_insertion_pos( is_camelid_ ? 4 : 2 );
-    if( (ab_info_->get_CDR_loop("h3")->stop()-1 - cter_insertion_pos) <=
-        ab_info_->get_CDR_loop("h3")->start() )
-        TR << "H3 LOOP IS TOO SHORT: CAN NOT USE N-TERM INFORMATION"
-            << std::endl;
-    else {
-        // H3_ter->apply(...);
-        f.apply( pose, ab_info_->get_CDR_loop("h3")->stop()-1 -
-                cter_insertion_pos, ab_info_->get_CDR_loop("h3")->stop() );
+    Size cter_insertion_pos( is_camelid_ ? 4 : 2 ); // not sure why 4 for camelid
+    
+    
+    if( (ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos) <=
+         ab_info_->get_CDR_loop("h3")->start() )
+    {
+        TR << "H3 LOOP IS TOO SHORT: CAN NOT USE N-TERM INFORMATION"<< std::endl;
     }
+    else {
+        // H3_ter->apply(...); // R2 style
+        f.apply( pose, 
+                 ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos, 
+                 ab_info_->get_CDR_loop("h3")->stop() + 1 );
+    }
+    //JQX: it seems movemap is not required..... kind of weird, but it works!
             
     // Restoring pose fold tree
     pose.fold_tree( input_tree );
             
-    TR <<  "H3M Finished Inserting CDR H3 C-ter Fragments" << std::endl;
-            
+    
+    pose.dump_pdb("after_c_insert.pdb");
+    TR <<  "Finished Inserting CDR H3 C-ter Fragments" << std::endl;
+
     return;
 } 
         

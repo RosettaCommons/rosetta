@@ -19,33 +19,22 @@
 
 #include <protocols/antibody2/CDRH3Modeler2.fwd.hh>
 
-// Rosetta headers
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
-
-#ifdef WIN32
-#include <core/fragment/FragData.hh> // WIN32 INCLUDE
-#include <core/fragment/FragSet.hh>
-#endif
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
-
-
-
-
-
-// ObjexxFCL Headers
-
-// C++ Headers
-
-// Utility Headers
 #include <utility/vector1.fwd.hh>
+
+
+
+
+
 using namespace core;
 
 namespace protocols {
@@ -60,16 +49,16 @@ public:
 	CDRH3Modeler2();
 
 	/// @brief constructor with arguments
-	CDRH3Modeler2( bool model_h3, bool apply_centroid_mode, bool apply_fullatom_mode, bool camelid, bool benchmark );
-	CDRH3Modeler2( utility::vector1<core::fragment::FragSetOP> cdr_h3_frags );
+	CDRH3Modeler2( bool apply_centroid_mode, 
+                   bool apply_fullatom_mode, 
+                   bool camelid, 
+                   bool benchmark, 
+                   Ab_InfoOP antibody_info );
+    
 
 	/// @brief default destructor
 	~CDRH3Modeler2();
 
-	/// @brief enable CDR H3 loop building
-	inline void model_h3( bool setting ) {
-		model_h3_ = setting;
-	}
 
 	/// @brief enable benchmark mode
 	inline void enable_benchmark_mode( bool setting ) {
@@ -103,34 +92,18 @@ public:
 	virtual void apply( core::pose::Pose & pose_in );
 	virtual std::string get_name() const;
 
-
-
-
-	/////////////////////////////////////////////////////////////////////////
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
-	/// @details
-	void set_lowres_score_func(
-		core::scoring::ScoreFunctionOP lowres_scorefxn );
+	void set_lowres_score_func(core::scoring::ScoreFunctionOP lowres_scorefxn );
 
-	/////////////////////////////////////////////////////////////////////////
 	/// @brief set scorefunction for high resolution of CDR H3 modeling
-	/// @details
-	void set_highres_score_func(
-		core::scoring::ScoreFunctionOP highres_scorefxn
-	);
+	void set_highres_score_func(core::scoring::ScoreFunctionOP highres_scorefxn);
 
     
-
-
 	void loop_centroid_relax(
 		core::pose::Pose & pose_in,
 		core::Size const loop_begin,
 		core::Size const loop_end );
 
-
-
-	// CDR H3 C-terminal fragments
-	utility::vector1< core::fragment::FragData > H3_base_library;
 
 private:
 	bool user_defined_;
@@ -139,12 +112,9 @@ private:
 	// constraints
 	core::Real cen_cst_;
 	core::Real high_cst_;
-	// true if command line option "model_h3" is set
-	// enables modeling of CDR H3 loop
-	bool model_h3_;
+
 	core::scoring::ScoreFunctionOP fa_scorefxn_;
 
-	utility::vector1< core::fragment::FragSetOP > cdr_h3_frags_;
 
 	// score functions
 	core::scoring::ScoreFunctionOP lowres_scorefxn_;
@@ -166,8 +136,6 @@ private:
 	/// @brief refine H3 only
 	bool antibody_refine_;
 
-
-
 	/// @brief enable docking local refine of LH chains & simultaneous H3 min
 	bool snug_fit_;
     
@@ -185,18 +153,17 @@ private:
 	bool is_camelid_;
 
 
-	antibody2::Ab_Info antibody_in_;
+	antibody2::Ab_InfoOP ab_info_;
 
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;
 
 	void init(
-		bool model_h3,
-		bool apply_centroid_mode,
-		bool apply_fullatom_mode,
-		bool camelid,
-		bool benchmark
-		);
+              bool apply_centroid_mode,
+              bool apply_fullatom_mode,
+              bool camelid,
+              bool benchmark,
+              Ab_InfoOP antibody_info);
 
     void setup_objects();
     

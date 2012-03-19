@@ -23,16 +23,18 @@
 
 
 
+
+
+#include <protocols/moves/Mover.hh>
+
+#include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/loops/Loops.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/loops/Loops.hh>
-
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
 
@@ -54,11 +56,12 @@ public:
 	Ab_H3_perturb_ccd_build();
     
 	/// @brief constructor with arguments
-    Ab_H3_perturb_ccd_build(bool current_loop_is_H3, bool H3_filter, bool is_camelid, Ab_Info & antibody_in);
+    Ab_H3_perturb_ccd_build(
+                            bool current_loop_is_H3, 
+                            bool H3_filter, 
+                            bool is_camelid, 
+                            Ab_InfoOP & antibody_in);
     
-    
-
-
         
     virtual protocols::moves::MoverOP clone() const;
     
@@ -75,18 +78,16 @@ public:
     
 private:
 
-    Ab_Info ab_info_;
+    Ab_InfoOP ab_info_;
     
-    
-    /// @brief Centroid mode loop building
-	bool apply_centroid_mode_;
+
     
     bool user_defined_;
     bool is_camelid_;
     
     
     void set_default();
-    void init();
+    void init( bool current_loop_is_H3, bool H3_filter,bool is_camelid, Ab_InfoOP & antibody_in);
     void setup_objects();
     void finalize_setup( core::pose::Pose & pose );
 
@@ -96,8 +97,7 @@ private:
     
     void scored_frag_close(
                            core::pose::Pose & pose_in,
-                           loops::Loop const trimmed_cdr_h3
-                           );
+                           loops::Loop const trimmed_cdr_h3 );
 
     
     core::Size max_cycle_;
@@ -118,7 +118,7 @@ private:
     Ab_H3_cter_insert_moverOP ab_h3_cter_insert_mover_;
     
     core::Real cen_cst_;
-    core::pose::Pose template_pose_;
+    core::pose::Pose hfr_pose_;
 
     
     

@@ -46,10 +46,10 @@ class Ab_H3_cter_insert_mover : public protocols::moves::Mover {
     
 public:
     /// @brief default constructor
-	Ab_H3_cter_insert_mover(antibody2::Ab_Info & ab_info);
+	Ab_H3_cter_insert_mover();
     
 	/// @brief constructor with arguments
-	Ab_H3_cter_insert_mover(antibody2::Ab_Info & ab_info, bool camelid );
+	Ab_H3_cter_insert_mover(antibody2::Ab_InfoOP antibody_info, bool camelid );
 	
     
 	/// @brief default destructor
@@ -59,14 +59,9 @@ public:
     
 	virtual void apply(pose::Pose & pose );
     virtual std::string get_name() const;
-
-    
     
     // read CDR H3 C-terminal fragments (size: 4)
-    void read_H3_cter_fragment(
-                               antibody2::Ab_Info & ab_info,
-                               bool is_camelid
-                               );
+    void read_H3_cter_fragment( bool is_camelid);
     
     
 private:
@@ -88,7 +83,7 @@ private:
 	bool is_camelid_;
     
         
-    void init(antibody2::Ab_Info & ab_info, bool camelid, bool benchmark);
+    void init(Ab_InfoOP antibody_info, bool camelid, bool benchmark);
 //    void setup_objects();
 //    void finalize_setup( core::pose::Pose & pose );
 

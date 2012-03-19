@@ -33,8 +33,7 @@ namespace protocols {
 namespace antibody2 {
 void simple_one_loop_fold_tree(
                                    core::pose::Pose & pose,
-                                   loops::Loop const & loop
-                                   );
+                                   loops::Loop const & loop);
     
     
     
@@ -43,8 +42,8 @@ void simple_fold_tree(
                           core::pose::Pose & pose_in,
                           core::Size jumppoint1,
                           core::Size cutpoint,
-                          core::Size jumppoint2
-                          );
+                          core::Size jumppoint2);
+    
     
     
 void setup_simple_fold_tree(
@@ -58,27 +57,35 @@ void setup_simple_fold_tree(
     
     
     
-    bool CDR_H3_filter(
+bool CDR_H3_filter(
                        const core::pose::Pose & pose_in,
                        core::Size const loop_begin,
                        core::Size const size,
                        bool H3_filter,
                        bool is_camelid);
     
-    void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactoryOP tf );
+void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactoryOP tf );
 
     
     
 
-    /// @brief return false if any cdr cutpoint is broken
-	bool cutpoints_separation( core::pose::Pose & pose, Ab_Info & antibody_in );
+/// @brief return false if any cdr cutpoint is broken
+bool cutpoints_separation( core::pose::Pose & pose, Ab_InfoOP & antibody_info );
     
-	// Compute the separation at the cutpoint. The N-C distance of the
-	// peptide bond which should be formed at the cutpoint. A closed loop is
-	// assumed to have a gap < 1.9 Ang
-	core::Real cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
+    
+    
+    
+// Compute the separation at the cutpoint. The N-C distance of the
+// peptide bond which should be formed at the cutpoint. A closed loop is
+// assumed to have a gap < 1.9 Ang
+core::Real cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 
     
+    
+    
+    
+    
+std::string get_seq_from_a_loop(core::pose::Pose & pose_in, loops::LoopOP  loop);
     
 
 } //namespace antibody2

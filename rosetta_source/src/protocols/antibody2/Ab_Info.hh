@@ -61,7 +61,7 @@ public:
 	// return kinked/extended
 	bool is_kinked()   { return kinked_H3_;   }
 	bool is_extended() { return extended_H3_; }
-    bool is_camelid()  { return camelid_;     }
+    bool is_camelid()  { return is_camelid_;     }
     utility::vector1<char> get_Fv_sequence() { return Fv_sequence_;}
 
 	/// align current Fv to native.Fv
@@ -92,7 +92,8 @@ public:
     
     //bool is_my_pose_antibody(core::pose::Pose & pose);
     //bool is_my_antibody_camelid(core::pose::Pose & pose);
-    
+    std::string get_cdrSeq_from_a_cdrLoop(loops::Loop const & loop);
+
     
 private:
 	// cdr loops
@@ -109,12 +110,15 @@ private:
     CDR_Numbering_End_Map CDR_numbering_end_;
 
     
-	bool camelid_;
+	bool is_camelid_;
 	bool kinked_H3_;
 	bool extended_H3_;
     
     utility::vector1< char > Fv_sequence_;
  
+    
+    
+    
 
 };
 

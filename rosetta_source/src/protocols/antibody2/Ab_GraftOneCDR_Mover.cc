@@ -183,6 +183,16 @@ void Ab_GraftOneCDR_Mover::apply( pose::Pose & pose_in )
     scoring::superimpose_pose( template_pose_, truncated_pose, atom_map );
     template_pose_.dump_pdb(template_name_);
 
+    // TODO:
+    // JQX:
+    // when copying the backbone heavy atom coordinates, you copy two more residues on each side
+    // pay attention to this, it is "2", not "3" here. "3" was used to superimpose like the code did above. 
+    // No reason for that, just to match R2_antibody. 
+    // This may be the reason why you need hfr to reasign the phi, psi, or omega angle of h3_start-1
+    // when doing H3 loop modeling. But this is still weird, because you need to take care
+    // of 2 residues on each side then, not just one more on h3_start-1 or +1 position using hfr.pdb. 
+    // Maybe I should remove this number 2, just copy the loop itself !!!!!
+    
     for ( Size i=query_start_-2; i <= query_end_+2; ++i ) {
         Size template_num ( i - (query_start_-5) );  // this "5" is the default in the l1.pdb, you have 4 residues before the 1st one
 //        TRG<<" i="<<i<<"    template_num="<<template_num<<std::endl;
@@ -204,6 +214,7 @@ void Ab_GraftOneCDR_Mover::apply( pose::Pose & pose_in )
             if ( target_rsd.has( atom_name ) ) {
                 pose_in.set_xyz( id::AtomID( source_rsd.atom_index( atom_name),i ), target_rsd.xyz( atom_name ) );
                 //make sure the source_rsd in pose_in only has 4 backbone atoms
+                //my script should take care of it
             } 
             else {
                 TRG<<"watch out !!! missing "<<atom_name << "   !!!!!" <<std::endl;

@@ -37,7 +37,7 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
 
-
+#include <protocols/antibody2/Ab_util.hh>
 
 
 
@@ -49,7 +49,7 @@ namespace antibody2{
 
 /// default constructor
 Ab_Info::Ab_Info() {
-	set_default( false/*camelid*/ );
+	set_default( false/*is_camelid*/ );
 
 	for( core::Size i = 0; i <= 6; i++ ) hfr_[i][0] = hfr_[i][1] = hfr_[i][2] = 0;
 }
@@ -57,30 +57,28 @@ Ab_Info::Ab_Info() {
 
 /// constructor with arguments
 Ab_Info::Ab_Info( core::pose::Pose & pose ) {
-	setup_CDR_loops( pose, false/*camelid*/ );
-    load_CDR_query_info_to_check();
+	setup_CDR_loops( pose, false/*is_camelid*/ );
 }
 
 /// constructor with arguments
-Ab_Info::Ab_Info( core::pose::Pose & pose, bool camelid ) {
-	setup_CDR_loops( pose, camelid );
-    load_CDR_query_info_to_check();
+Ab_Info::Ab_Info( core::pose::Pose & pose, bool is_camelid ) {
+	setup_CDR_loops( pose, is_camelid );
 }
 
 
 
-/// constructor with arguments
+/// constructor with one cdr loop arguments
 Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 {
-    if(camelid_){
+    if(is_camelid_){
         if (cdr_name == "l1" || cdr_name == "l2" ||cdr_name == "l3") {
             utility_exit_with_message("This is Camelid antibody, No Light Chain !!!");
         }
     }
 
-	set_default( false/*camelid*/ );
+	set_default( false/*is_camelid*/ );
 
-	if( !camelid_ ) {
+	if( !is_camelid_ ) {
 		if( cdr_name == "l1" ) {
 			L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l1"] ), 
                                    pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l1"] ) );
@@ -131,9 +129,9 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 
 
 void
-Ab_Info::set_default( bool camelid )
+Ab_Info::set_default( bool is_camelid )
 {
-	camelid_ = camelid;
+	is_camelid_ = is_camelid;
 	current_start = 0;
 	current_end = 0;
 	kinked_H3_ = false;
@@ -148,28 +146,31 @@ Ab_Info::set_default( bool camelid )
 
 
 void
-Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool camelid ) {
+Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool is_camelid ) {
 
-	set_default( camelid );
+	set_default( is_camelid );
 
-	if( !camelid_ ) {
+	if( !is_camelid_ ) {
 		L1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l1"] ), 
                                pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l1"] ) );
 		L1_->set_cut( L1_->start() + core::Size( ( ( L1_->stop() - L1_->start() ) + 1 ) / 2 ) );
 		all_cdr_loops_.add_loop( *L1_ );
 		loops_.insert( std::pair<std::string, loops::LoopOP>("l1", L1_) );
+        L1_seq_ = get_seq_from_a_loop(pose, L1_);
         
 		L2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l2"] ), 
                                pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l2"] ) );
 		L2_->set_cut( L2_->start() + core::Size( ( ( L2_->stop() - L2_->start() ) + 1 ) / 2 ) );
 		all_cdr_loops_.add_loop( *L2_ );
 		loops_.insert( std::pair<std::string, loops::LoopOP>("l2", L2_) );
+        L2_seq_ = get_seq_from_a_loop(pose, L2_);
         
 		L3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'L', CDR_numbering_begin_["l3"] ), 
                                pose.pdb_info()->pdb2pose( 'L', CDR_numbering_end_["l3"] ) );
 		L3_->set_cut( L3_->start() + core::Size( ( ( L3_->stop() - L3_->start() ) + 1 ) / 2 ) );
 		all_cdr_loops_.add_loop( *L3_ );
 		loops_.insert( std::pair<std::string, loops::LoopOP>("l3", L3_) );
+        L3_seq_ = get_seq_from_a_loop(pose, L3_);
 	}
 
 	H1_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h1"] ), 
@@ -177,23 +178,28 @@ Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool camelid ) {
 	H1_->set_cut( H1_->start() + core::Size( ( ( H1_->stop() - H1_->start() ) + 1 ) / 2 ) );
 	all_cdr_loops_.add_loop( *H1_ );
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h1", H1_) );
+    H1_seq_ = get_seq_from_a_loop(pose, H1_);
     
 	H2_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h2"] ), 
                            pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h2"] ) );
 	H2_->set_cut( H2_->start() + core::Size( ( ( H2_->stop() - H2_->start() ) + 1 ) / 2 ) );
 	all_cdr_loops_.add_loop( *H2_ );
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h2", H2_) );
+    H2_seq_ = get_seq_from_a_loop(pose, H2_);
+
     
 //	H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', 95 ), pose.pdb_info()->pdb2pose( 'H', 102 )+1 );
 //	H3_->set_cut( H3_->start() + 1 );
 //  TODO:
 //  JQX: don't understand why the perl script has one less residue in the end of h3.pdb for deep graft option
 //       don't understand this +1, either, temporary remove    CHECK LATER !!!
+//       OK, in R2, "antibody_modeling_convert_to_sequential_res_from_chothia_res function", you saw +1 as well
     H3_ = new loops::Loop( pose.pdb_info()->pdb2pose( 'H', CDR_numbering_begin_["h3"] ), 
                            pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h3"] ) );
     H3_->set_cut( H3_->start() + 1 );  // why this is different compared to other cuts of other loops? Aroop seems did this in his old R3 code, CHECK LATER !!!
 	all_cdr_loops_.add_loop( *H3_ );
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h3", H3_) );
+    H3_seq_ = get_seq_from_a_loop(pose, H3_);
 
 	hfr_[1][1] = pose.pdb_info()->pdb2pose( 'H', 5 );
 	hfr_[1][2] = pose.pdb_info()->pdb2pose( 'H', 6 );
@@ -213,8 +219,9 @@ Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool camelid ) {
 
 	all_cdr_fold_tree( pose );
 
-	for( core::Size i = 1; i <= pose.total_residue(); ++i )
+	for( core::Size i = 1; i <= pose.total_residue(); ++i ){
 		Fv_sequence_.push_back( pose.residue(i).name1() );
+    }
 
 	detect_and_set_CDR_H3_stem_type( pose );
 
@@ -266,7 +273,7 @@ void Ab_Info::align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & nat
 
 
 void Ab_Info::detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose ) {
-	if( camelid_ )
+	if( is_camelid_ )
 		detect_and_set_camelid_CDR_H3_stem_type();
 	else
 		detect_and_set_regular_CDR_H3_stem_type( pose );
@@ -308,7 +315,7 @@ void Ab_Info::detect_and_set_camelid_CDR_H3_stem_type() {
 
 	TR << "AC Finished Detecting Camelid CDR H3 Stem Type: "
 		 << "Kink: " << kinked_H3_ << " Extended: " << extended_H3_ << std::endl;
-} // detect_camelid_CDR_H3_stem_type()
+} 
 
 
 
@@ -525,6 +532,28 @@ std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info )
 }
 
 
+    
+    
+    std::string get_cdrSeq_from_a_cdrLoop(loops::Loop const & loop)
+    {
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 void Ab_Info::load_CDR_query_info_to_check(){
 
         using namespace std;

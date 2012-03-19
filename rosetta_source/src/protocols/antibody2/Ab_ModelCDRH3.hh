@@ -110,7 +110,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 	// external objects
-	Ab_Info ab_info_;
+	Ab_InfoOP ab_info_;
 
 
 	//packer task

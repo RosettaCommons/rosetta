@@ -55,8 +55,13 @@ public:
     Ab_Relax_a_CDR_FullAtom(bool current_loop_is_H3, bool H3_filter);
     
     /// @brief constructor with arguments
+    Ab_Relax_a_CDR_FullAtom(bool current_loop_is_H3, bool H3_filter, Ab_InfoOP antibody_info);
+    
+    /// @brief constructor with arguments
     Ab_Relax_a_CDR_FullAtom(bool current_loop_is_H3, bool H3_filter, bool is_camelid);
     
+    /// @brief constructor with arguments
+    Ab_Relax_a_CDR_FullAtom(bool current_loop_is_H3, bool H3_filter, bool is_camelid, Ab_InfoOP antibody_info);
 
 
         
@@ -74,8 +79,7 @@ public:
     
 private:
 
-    Ab_Info ab_info_;
-    // Ab_InfoOP
+    Ab_InfoOP ab_info_;
     
     bool user_defined_;
     bool benchmark_;
@@ -142,8 +146,6 @@ private:
     
     
     core::pose::Pose start_pose_;
-    
-    antibody2::Ab_Info antibody_in_;
     
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;

@@ -85,7 +85,7 @@ namespace antibody2{
                                    loops::Loop const & loop	) {
         using namespace kinematics;
         
-        TR <<  "H3M Setting up simple one loop fold tree" << std::endl;
+        TR <<  "Utility: Setting up simple one loop fold tree" << std::endl;
         
         //setup fold tree for this loop
         FoldTree f;
@@ -106,7 +106,7 @@ namespace antibody2{
         
         pose_in.fold_tree( f );
         
-        TR <<  "H3M Finished setting up simple one loop fold tree" << std::endl;
+        TR <<  "Utility: Finished setting up simple one loop fold tree" << std::endl;
         
         return;
     } // simple_one_loop_fold_tree
@@ -122,7 +122,7 @@ namespace antibody2{
                           Size jumppoint2 ) {
         using namespace kinematics;
         
-        TR <<  "H3M Setting up simple fold tree" << std::endl;
+        TR <<  "Utility: Setting up simple fold tree" << std::endl;
         
         //setup fold tree for this loop
         FoldTree f;
@@ -141,7 +141,7 @@ namespace antibody2{
         
         pose_in.fold_tree( f );
         
-        TR <<  "H3M Finished setting up simple fold tree" << std::endl;
+        TR <<  "Utility: Finished setting up simple fold tree" << std::endl;
         
         return;
     } // simple_fold_tree
@@ -160,7 +160,7 @@ namespace antibody2{
         
 		using namespace kinematics;
         
-		TR << "ABM Setting up simple fold tree" << std::endl;
+		TR << "Utility: Setting up simple fold tree" << std::endl;
         
 		FoldTree f;
 		f.clear();
@@ -174,7 +174,7 @@ namespace antibody2{
         
 		pose_in.fold_tree( f );
         
-		TR << "ABM Done: Setting up simple fold tree" << std::endl;
+		TR << "Utility: Done: Setting up simple fold tree" << std::endl;
         
 	} // setup_simple_fold_tree
     
@@ -224,7 +224,7 @@ namespace antibody2{
         
         char const light_chain = 'L';
         
-        TR <<  "H3M Checking Kink/Extended CDR H3 Base Angle" << std::endl;
+        TR <<  "Utility: Checking Kink/Extended CDR H3 Base Angle" << std::endl;
         
         if( !H3_filter || is_camelid )
             return( true );
@@ -360,7 +360,7 @@ namespace antibody2{
             }
         }
         
-        TR <<  "H3M Finished Checking Kink/Extended CDR H3 Base Angle: " << is_H3 << std::endl;
+        TR <<  "Utility: Finished Checking Kink/Extended CDR H3 Base Angle: " << is_H3 << std::endl;
         
         return is_H3;
     } // CDR_H3_filter
@@ -395,7 +395,7 @@ namespace antibody2{
         tf = new TaskFactory;
         
         
-		TR << "AbModeler Setting Up Packer Task" << std::endl;
+		TR << "Utility: Setting Up Packer Task" << std::endl;
         
 		tf->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
 		tf->push_back( new InitializeFromCommandline );
@@ -414,7 +414,7 @@ namespace antibody2{
         
 //		init_task_factory_ = tf;
         
-		TR << "AbModeler Done: Setting Up Packer Task" << std::endl;
+		TR << "Utility: Done: Setting Up Packer Task" << std::endl;
         
 	} // setup_packer_task
 
@@ -427,13 +427,13 @@ namespace antibody2{
     
     
     
-    bool cutpoints_separation( core::pose::Pose & pose, Ab_Info & antibody_in ) 
+    bool cutpoints_separation( core::pose::Pose & pose, Ab_InfoOP & antibody_info ) 
     {
         
         bool closed_cutpoints = true;
         
-        for( loops::Loops::const_iterator it=antibody_in.all_cdr_loops_.begin(),
-            it_end=antibody_in.all_cdr_loops_.end(),
+        for( loops::Loops::const_iterator it=antibody_info->all_cdr_loops_.begin(),
+            it_end=antibody_info->all_cdr_loops_.end(),
             it_next; it != it_end; ++it ) {
             Size cutpoint   = it->cut();
             Real separation = 10.00; // an unlikely high number
@@ -464,6 +464,17 @@ namespace antibody2{
     
     
     
+    std::string get_seq_from_a_loop(core::pose::Pose & pose_in, loops::LoopOP loop )
+    {
+        std::string seq="";
+        for (Size it=loop->start(); it <= loop->stop(); ++it ) {
+            seq+=pose_in.residue(it).name1();
+        }
+        return seq;
+    }
+
+    
+
     
     
     
