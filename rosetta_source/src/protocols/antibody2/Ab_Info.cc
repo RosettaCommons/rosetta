@@ -534,10 +534,7 @@ std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info )
 
     
     
-    std::string get_cdrSeq_from_a_cdrLoop(loops::Loop const & loop)
-    {
-        
-    }
+
     
     
     

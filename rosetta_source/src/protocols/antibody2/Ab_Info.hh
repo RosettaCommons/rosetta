@@ -92,7 +92,7 @@ public:
     
     //bool is_my_pose_antibody(core::pose::Pose & pose);
     //bool is_my_antibody_camelid(core::pose::Pose & pose);
-    std::string get_cdrSeq_from_a_cdrLoop(loops::Loop const & loop);
+
 
     
 private:
