@@ -89,6 +89,8 @@ Please note that this script is for debuging/testing purposes only, it is not us
             options.database = environ.get('ROSETTA3_DB')
         elif path.isdir( path.join( path.expanduser("~"), "rosetta_database") ):
             options.database = path.join( path.expanduser("~"), "rosetta_database")
+    	elif path.isdir("../../../rosetta_database"):
+            options.database = "../../../rosetta_database"
         else:
             print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
             return 1
@@ -124,9 +126,10 @@ Please note that this script is for debuging/testing purposes only, it is not us
     if sys.platform.startswith("linux"): platform = "linux" # can be linux1, linux2, etc
     elif sys.platform == "darwin": platform = "macos"
     else: platform = "_unknown_"
+    extras = options.extras
     compiler = options.compiler
     mode = options.mode
-    binext = platform+compiler+mode
+    binext = extras+"."+platform+compiler+mode
     lsf_queue_name = options.lsf_queue_name
     num_cores = options.num_cores
     output_dir = options.output_dir

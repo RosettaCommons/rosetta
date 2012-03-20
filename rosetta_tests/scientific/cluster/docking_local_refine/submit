@@ -33,6 +33,5 @@
 
 cd %(workdir)s
 
-
 python submit.py
-condor_submit condor
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
