@@ -71,6 +71,8 @@ public:
 		protocols::loops::Loops template_contigs_icluster,
 		core::scoring::ScoreFunctionOP scorefxn);
 
+	// check fragments ... if they do not exist dynamically allocate them
+	void check_and_create_fragments( Pose & );
 
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;

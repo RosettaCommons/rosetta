@@ -33,6 +33,10 @@
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
+// dynamic fragpick
+#include <protocols/moves/DsspMover.hh>
+#include <core/fragment/picking_old/vall/util.hh>
+
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 
@@ -49,12 +53,14 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
+#include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FragData.hh>
+#include <core/fragment/util.hh>
 
 #include <core/sequence/util.hh>
 
@@ -161,7 +167,9 @@ HybridizeProtocolCreator::mover_name() {
 /////////////
 // mover
 HybridizeProtocol::HybridizeProtocol() :
-	template_weights_sum_(0)
+	template_weights_sum_(0),
+	fragments3_(NULL),
+	fragments9_(NULL)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -175,7 +183,10 @@ HybridizeProtocol::HybridizeProtocol() :
 }
 
 HybridizeProtocol::HybridizeProtocol(std::string template_list_file) :
-	template_weights_sum_(0) {
+	template_weights_sum_(0),
+	fragments3_(NULL),
+	fragments9_(NULL)
+{
 	init();
 	read_template_structures(template_list_file);
 }
@@ -257,6 +268,65 @@ core::Real HybridizeProtocol::get_gdtmm( core::pose::Pose &pose ) {
 		gdtmm = core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
 	}
 	return gdtmm;
+}
+
+
+void
+HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
+	if (fragments9_ && fragments3_) return;
+
+	if (!fragments9_) {
+		fragments9_ = new core::fragment::ConstantLengthFragSet( 9 );
+
+		// number of residues
+		core::Size nres_tgt = pose.total_residue();
+		core::conformation::symmetry::SymmetryInfoCOP symm_info;
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
+			core::conformation::symmetry::SymmetricConformation & SymmConf (
+				dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+			symm_info = SymmConf.Symmetry_Info();
+			nres_tgt = symm_info->num_independent_residues();
+		}
+		if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+	
+		// sequence
+		std::string tgt_seq = pose.sequence();
+		std::string tgt_ss(nres_tgt, '0');
+
+		// templates vote on secstruct
+		for (core::Size i=1; i<=templates_.size(); ++i) {
+			for (core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
+				core::Size tgt_pos = templates_[i]->pdb_info()->number(j);
+				char tgt_ss_j = templates_[i]->secstruct(j);
+
+				if (tgt_ss[tgt_pos] == '0') {
+					tgt_ss[tgt_pos] = tgt_ss_j;
+				} else if (tgt_ss[tgt_pos] != tgt_ss_j) {
+					tgt_ss[tgt_pos] = 'D'; // templates disagree
+				}
+			}
+		}
+		for ( core::Size j=1; j<=nres_tgt; ++j ) {
+			if (tgt_ss[j] == '0') tgt_ss[j] = 'D';
+		}
+
+		// pick from vall based on template SS + target sequence
+		for ( core::Size j=1; j<=nres_tgt-8; ++j ) {
+			std::string ss_sub = tgt_ss.substr( j-1, 9 );
+			std::string aa_sub = tgt_seq.substr( j-1, 9 );
+
+			core::fragment::FrameOP frame = new core::fragment::Frame( j, 9 );
+			frame->add_fragment( 
+				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_sub, aa_sub, 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
+			fragments9_->add( frame );
+		}
+	}
+	if (!fragments3_) {
+		fragments3_ = new core::fragment::ConstantLengthFragSet( 3 );
+
+		// make them from 9mers
+		core::fragment::chop_fragments( *fragments9_, *fragments3_ );
+	}
 }
 
 
@@ -558,6 +628,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	using namespace core::pose::datacache;
 	using namespace core::io::silent;
 	using namespace ObjexxFCL::fmt;
+
+	// make fragments if we don't have them at this point
+	check_and_create_fragments( pose );
 
 	// set pose for density scoring if a map was input
 	//fpd eventually this should be moved to after pose initialization
