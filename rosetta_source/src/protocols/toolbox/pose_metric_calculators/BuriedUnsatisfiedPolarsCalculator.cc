@@ -194,49 +194,46 @@ void
 BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 {
 
-  all_bur_unsat_polars_ = 0;
-  special_region_bur_unsat_polars_ = 0;
+	all_bur_unsat_polars_ = 0;
+	special_region_bur_unsat_polars_ = 0;
 
-  if( this_pose.total_residue() != residue_bur_unsat_polars_.size() ){
-    residue_bur_unsat_polars_.resize( this_pose.total_residue() );
-    atom_bur_unsat_.resize( this_pose.total_residue() );
-  }
+	if( this_pose.total_residue() != residue_bur_unsat_polars_.size() ){
+		residue_bur_unsat_polars_.resize( this_pose.total_residue() );
+		atom_bur_unsat_.resize( this_pose.total_residue() );
+	}
 
-  basic::MetricValue< id::AtomID_Map< Real > > atom_sasa;
-  basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds;
+	basic::MetricValue< id::AtomID_Map< Real > > atom_sasa;
+	basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds;
 
-  this_pose.metric( name_of_hbond_calc_, "atom_Hbonds", atom_hbonds );
-  this_pose.metric( name_of_sasa_calc_, "atom_sasa", atom_sasa);
 
-  for( Size i = 1; i <= this_pose.total_residue(); ++i){
 
-    residue_bur_unsat_polars_[i] = 0;
+	this_pose.metric( name_of_hbond_calc_, "atom_Hbonds", atom_hbonds );
+	this_pose.metric( name_of_sasa_calc_, "atom_sasa", atom_sasa);
 
-    conformation::Residue const & rsd = this_pose.residue( i );
+	for( Size i = 1; i <= this_pose.total_residue(); ++i){
 
-    //utility::vector1< Real > const & atom_sasas_this_res = atom_sasa.value()[ i ];
-    //utility::vector1< Size > const & atom_hbonds_this_res = atom_hbonds.value()[ i ];
+		residue_bur_unsat_polars_[i] = 0;
 
-    for( Size at = 1; at <= rsd.nheavyatoms(); ++at){
+		conformation::Residue const & rsd = this_pose.residue( i );
 
-      core::id::AtomID atid( at, i );
-      bool this_atom_bur_unsat(false);
+		//utility::vector1< Real > const & atom_sasas_this_res = atom_sasa.value()[ i ];
+		//utility::vector1< Size > const & atom_hbonds_this_res = atom_hbonds.value()[ i ];
 
-      if( rsd.atom_type( at ).is_acceptor() || rsd.atom_type( at ).is_donor() ){
+		for( Size at = 1; at <= rsd.nheavyatoms(); ++at){
 
+			core::id::AtomID atid( at, i );
+			bool this_atom_bur_unsat(false);
+
+			if( rsd.atom_type( at ).is_acceptor() || rsd.atom_type( at ).is_donor() ){
 				//we have to add up the sasas for the H attached to this atom
 				Real cursasa =  atom_sasa.value()[ atid ];
-
 				for( Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++){
 					cursasa = cursasa + atom_sasa.value()[ core::id::AtomID ( hcount, i ) ];
 				}
 
 				if( cursasa < burial_sasa_cutoff_ ){
-
 					Size satisfac_cut = satisfaction_cutoff( rsd.type().atom_type( at ).name() );
-
 					Size bonded_heavyatoms = rsd.n_bonded_neighbor_all_res( at ) - rsd.type().number_bonded_hydrogens( at );
-
 					if( ( bonded_heavyatoms + atom_hbonds.value()[ atid ] ) < satisfac_cut ){
 
 						//TR << rsd.type().atom_name( at ) << " of res " << i << " has " << atom_sasa.value()[atid] << " sasa and " << cursasa << " combined sasa, and " << bonded_heavyatoms << " bonded heavyatoms, and " <<  atom_hbonds.value()[ atid ] << " hbonds, counts as buried unsatisfied." << std::endl;
@@ -248,10 +245,10 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 						if( special_region_.find( i ) != special_region_.end() ) special_region_bur_unsat_polars_++;
 					}
 				}
-      }
-      atom_bur_unsat_.set( atid, this_atom_bur_unsat );
-    }
-  }
+			}
+			atom_bur_unsat_.set( atid, this_atom_bur_unsat );
+		}
+	}
 
 
 } //recompute

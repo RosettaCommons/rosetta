@@ -14,12 +14,16 @@
 #ifndef INCLUDED_protocols_simple_filters_DdgFilter_fwd_hh
 #define INCLUDED_protocols_simple_filters_DdgFilter_fwd_hh
 
-
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 class DdgFilter;
+
+typedef utility::pointer::owning_ptr< DdgFilter > DdgFilterOP;
+typedef utility::pointer::owning_ptr< DdgFilter const > DdgFilterCOP;
+
 
 }
 }

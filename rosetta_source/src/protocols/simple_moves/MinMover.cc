@@ -231,9 +231,9 @@ void MinMover::parse_opts(
 	score_function( data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) );
 	if ( tag->hasOption("jump") ) {
 		if ( ! movemap_ ) movemap_ = new MoveMap;
-		if( tag->getOption< core::Size > ( "jump" ) == 0 )
+		if( tag->getOption< core::Size > ( "jump" ) == 0 ) {
 			movemap_->set_jump( false );
-		else{
+		} else {
 			std::vector<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 			foreach(std::string jump, jumps){
 				Size const value = std::atoi( jump.c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)

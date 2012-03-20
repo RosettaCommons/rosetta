@@ -68,7 +68,7 @@ private:
 	core::kinematics::MoveMapOP movemap_;
 	moves::MonteCarloOP mc_;
 	moves::SequenceMoverOP docking_lowres_protocol_;
-  rigid::RigidBodyDofSeqPerturbMoverOP rb_mover_;
+	rigid::RigidBodyDofSeqPerturbMoverOP rb_mover_;
 
 	// docking
 	int inner_cycles_, outer_cycles_;

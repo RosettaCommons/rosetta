@@ -321,8 +321,8 @@ SymDockProtocol::apply( pose::Pose & pose )
 	//using core::pose::datacache::CacheableDataType::SCORE_MAP;
 	using utility::file::FileName;
 
-		using namespace viewer;
-		add_conformation_viewer( pose.conformation(), "start_pose", 450, 450 );
+	using namespace viewer;
+	add_conformation_viewer( pose.conformation(), "start_pose", 450, 450 );
 
 
 	//initialize docking protocol movers
@@ -378,7 +378,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 	if ( option[ OptionKeys::run::score_only ]() ) {
 		score_only( pose );
 		return;
-		}
+	}
 
 	core::Size const max_repeats( option[ OptionKeys::docking::max_repeats ]() );
 
@@ -510,7 +510,7 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 		if (dock_filters.size() > 2) {
 			distance_constraint_cutoff = dock_filters[3];
 		}
-		}
+	}
 
 	if (pose.energies().total_energies()[ interchain_contact ] >= interchain_contact_cutoff ) passed_filter = false;
 	if (pose.energies().total_energies()[ interchain_vdw ] >= interchain_vdw_cutoff ) passed_filter = false;

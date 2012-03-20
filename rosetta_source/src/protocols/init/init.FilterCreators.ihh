@@ -59,6 +59,7 @@
 #include <protocols/simple_filters/EnergyPerResidueFilterCreator.hh>
 #include <protocols/simple_filters/HolesFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
+#include <protocols/simple_filters/InterfaceBindingEnergyDensityFilterCreator.hh>
 #include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
 #include <protocols/simple_filters/PackStatFilterCreator.hh>
 #include <protocols/simple_filters/ResidueBurialFilterCreator.hh>

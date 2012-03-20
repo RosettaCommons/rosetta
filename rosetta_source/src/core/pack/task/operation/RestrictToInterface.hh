@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_pack_task_operation_RestrictToInterface_hh
 #define INCLUDED_core_pack_task_operation_RestrictToInterface_hh
 
-#include <core/pack/task/operation/RestrictToInterface.fwd.hh>
+//#include <core/pack/task/operation/RestrictToInterface.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // for parsing

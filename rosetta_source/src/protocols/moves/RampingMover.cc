@@ -14,26 +14,25 @@
 
 // Unit Headers
 #include <protocols/moves/RampingMover.hh>
+#include <protocols/moves/RampingMoverCreator.hh>
 
 // Project headers
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <protocols/moves/DataMap.hh>
-#include <utility/tag/Tag.hh>
 
-// Package headers
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/jobdist/Jobs.hh>
 
-//#include <protocols/moves/MoverStatistics.hh>
-
+// Utility headers
+#include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 // tracer
 #include <basic/Tracer.hh>
-
-#include <protocols/jobdist/Jobs.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <complex>
 
 using basic::T;
@@ -47,6 +46,8 @@ using basic::Warning;
 
 namespace protocols {
 namespace moves {
+
+static basic::Tracer TR( "protocols.moves.RampingMover" );
 
 RampingFunc::~RampingFunc() {}
 
@@ -126,10 +127,15 @@ InvGeometricFunc::func( Real x ) const
 	return std::exp( -1 * ( 1 - x ) * inv_one_minus_xval_at_0p5_ * ln_0p5 );
 }
 
+MoverOP RampingMoverCreator::create_mover() const { return new RampingMover; }
+std::string RampingMoverCreator::keyname() const { return RampingMoverCreator::mover_name(); }
+std::string RampingMoverCreator::mover_name() { return "RampingMover"; }
+
+
 /// RampingMover
 
 RampingMover::RampingMover() :
-	Mover( "RampingMover" ),
+	Mover( RampingMoverCreator::mover_name() ),
 	mover_( 0 ),
 	scorefxn_( 0 ),
 	ramp_one_weight_( true ),
@@ -151,7 +157,7 @@ RampingMover::RampingMover(
 	MonteCarloOP  mc_in,
 	bool geometric_in
 ) :
-	Mover( "RampingMover" ),
+	Mover( RampingMoverCreator::mover_name() ),
 	mover_( mover_in ),
 	scorefxn_( scorefxn_in ), // replace this with clone() when symmetry comes online.
 	ramp_one_weight_( true ),
@@ -176,7 +182,7 @@ RampingMover::RampingMover(
 	int inner_cycles_in,
 	MonteCarloOP  mc_in
 ) :
-	Mover( "RampingMover" ),
+	Mover( RampingMoverCreator::mover_name() ),
 	mover_( mover_in ),
 	scorefxn_( scorefxn_in ), // replace this with clone() when symmetry comes online.
 	ramp_one_weight_( false ),
@@ -198,6 +204,11 @@ RampingMover::RampingMover(
 
 RampingMover::~RampingMover() {}
 
+MoverOP RampingMover::clone() const
+{
+	return new RampingMover(*this);
+}
+
 void
 RampingMover::parse_my_tag(
 	TagPtr const tag,
@@ -205,85 +216,135 @@ RampingMover::parse_my_tag(
 	Filters_map const & /*filters*/,
 	Movers_map const & movers,
 	Pose const & /*pose*/
-	)
+)
 {
-	if(!tag->hasOption("start_weight"))
-	{
-		utility_exit_with_message("You must specify the option start_weight in RampingMover");
-	}
-	if(!tag->hasOption("end_weight"))
-	{
-		utility_exit_with_message("You must specify the option end_weight in RampingMover");
-	}
-	if(!tag->hasOption("outer_cycles"))
-	{
+
+	if(!tag->hasOption("outer_cycles")) {
 		utility_exit_with_message("You must specify the option outer_cycles in RampingMover");
 	}
-	if(!tag->hasOption("inner_cycles"))
-	{
+	if(!tag->hasOption("inner_cycles")) {
 		utility_exit_with_message("You must specify the option inner_cycles in RampingMover");
 	}
-	if(!tag->hasOption("score_type"))
-	{
-		utility_exit_with_message("You must specify the option score_type in RampingMover");
-	}
-	if(!tag->hasOption("ramp_func"))
-	{
-        utility_exit_with_message("You must specify the option ramp_func in RampingMover");
-	}
-	if(!tag->hasOption("montecarlo"))
-	{
-        utility_exit_with_message("You must specify the option montecarlo in RampingMover");
-	}
-	if(!tag->hasOption("mover"))
-	{
+	if(!tag->hasOption("mover")) {
 		utility_exit_with_message("You must specify the option mover in RampingMover");
 	}
 	
 	//Get options values out of the tag
-	core::Real start_weight(tag->getOption<core::Real>("start_weight"));
-	core::Real end_weight(tag->getOption<core::Real>("end_weight"));
 	outer_cycles_ = tag->getOption<int>("outer_cycles");
 	inner_cycles_ = tag->getOption<int>("inner_cycles");
-	std::string score_type(tag->getOption<std::string>("score_type"));
-	std::string ramping_func(tag->getOption<std::string>("ramp_func"));
-    std::string montecarlo_name(tag->getOption<std::string>("montecarlo"));
+	std::string montecarlo_name(tag->getOption<std::string>("montecarlo","none"));
 	std::string mover_name(tag->getOption<std::string>("mover"));
-	
-	//set up the start and end weights
-	this->start_weight(start_weight);
-	this->end_weight(end_weight);
-	
-	//set up the score type
-	score_type_ = core::scoring::ScoreTypeManager::score_type_from_name("score_type");
 
-    //Set the appropriate geometric function for ramping
-	if(ramping_func == "geometric")
-	{
-		ramping_funcs_for_weights_[score_type_] = new GeometricFunc;
-	}else if(ramping_func == "linear")
-	{
-		ramping_funcs_for_weights_[score_type_] = new LinearFunc;
-	}else if(ramping_func == "inverse_geometric")
-	{
-		ramping_funcs_for_weights_[score_type_] = new InvGeometricFunc;
-	}else
-	{
-		utility_exit_with_message("option ramping_func in RampingMover must be geometric,linear, or inverse_geometric");
+	core::scoring::ScoreFunctionOP sfxn( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
+	if ( sfxn == 0 ) {
+		utility_exit_with_message("scorefxn required to create a RampingMover");
 	}
+	scorefxn_ = sfxn;
+
 
     //get the mover to ramp out of the movemap
 	Movers_map::const_iterator find_mover(movers.find(mover_name));
-	if(find_mover == movers.end())
-	{
+	if(find_mover == movers.end()) {
 		utility_exit_with_message("cannot find "+mover_name+" in mover map.");
 	}
-	mover_ == find_mover->second;
+	mover_ = find_mover->second;
 	
 	//get the montecarlo object out of the datamap
-    mc_ = *datamap.get<protocols::moves::MonteCarlo *>("montecarlos", montecarlo_name);
-    
+	if ( montecarlo_name != "none" ) {
+		mc_ = *datamap.get<protocols::moves::MonteCarlo *>("montecarlos", montecarlo_name);
+	}
 
+	// Two modes for the Ramping mover:
+	// either we ramp one weight, in which case start-weight, end-weight,
+	// ramp_func, and scoretype must be provided,
+	// OR we ramp several weights, in which case those four should not be provided.
+	// CASE 1: Ramp one weight
+	
+	if ( tag->hasOption("start_weight") ||
+			tag->hasOption("end_weight") ||
+			tag->hasOption("scoretype") ||
+			tag->hasOption("ramp_func") ) {
+
+		// 1st: Make sure all the required options have been provided.
+		if(!tag->hasOption("start_weight")) {
+			utility_exit_with_message("One-weight ramping mode: you must specify the option start_weight in RampingMover");
+		}
+		if(!tag->hasOption("end_weight")) {
+			utility_exit_with_message("One-weight ramping mode: you must specify the option end_weight in RampingMover");
+		}
+		if(!tag->hasOption("score_type")) {
+			utility_exit_with_message("One-weight ramping mode: you must specify the option score_type in RampingMover");
+		}
+		if(!tag->hasOption("ramp_func")) {
+			  utility_exit_with_message("One-weight ramping mode: you must specify the option ramp_func in RampingMover");
+		}
+		ramp_one_weight_ = true;
+
+		core::Real start_weight(tag->getOption<core::Real>("start_weight"));
+		core::Real end_weight(tag->getOption<core::Real>("end_weight"));
+		std::string score_type(tag->getOption<std::string>("score_type"));
+		std::string ramping_func(tag->getOption<std::string>("ramp_func"));
+
+		//set up the start and end weights
+		this->start_weight(start_weight);
+		this->end_weight(end_weight);
+		
+
+		//set up the score type
+		if ( ! core::scoring::ScoreTypeManager::is_score_type( score_type ) ) {
+			utility_exit_with_message( "The value for option score_type \"" + score_type + "\" is not a valid name for a score_type" );
+		}
+		score_type_ = core::scoring::ScoreTypeManager::score_type_from_name(score_type);
+		ramping_funcs_for_weights_[score_type_] = instantiate_rampfunc( ramping_func, tag );
+
+	} else {
+		ramp_one_weight_ = false;
+		if( tag->hasOption("unramped_weights_from_sfxn")) {
+			std::string const scorefxn_key( tag->getOption<std::string>("unramped_weights_from_sfxn") );
+			if ( ! datamap.has( "scorefxns", scorefxn_key ) ) {
+				utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in DataMap.");
+			}
+			core::scoring::ScoreFunctionCOP sfxn = datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_key );
+			start_weights_ = end_weights_ = sfxn->weights();
+
+		}
+
+
+
+		utility::vector0< TagPtr > const rampterm_tags( tag->getTags() );
+		for( utility::vector0< TagPtr >::const_iterator
+				rampterm_it=rampterm_tags.begin(), rampterm_it_end = rampterm_tags.end();
+				rampterm_it!=rampterm_it_end; ++rampterm_it ) {
+			TagPtr const tag_ptr = *rampterm_it;
+			if ( ! tag_ptr->hasOption("score_type") ) {
+				utility_exit_with_message("Ramping mover Add statement requires the score_type option");
+			}
+			if ( ! tag_ptr->hasOption("start_weight") ) {
+				utility_exit_with_message("Ramping mover Add statement requires the start_weight option");
+			}
+			if ( ! tag_ptr->hasOption("end_weight") ) {
+				utility_exit_with_message("Ramping mover Add statement requires the end_weight option");
+			}
+			if ( ! tag_ptr->hasOption("ramp_func") ) {
+				utility_exit_with_message("Ramping mover Add statement requires the ramp_func option");
+			}
+			core::Real start_weight(tag_ptr->getOption<core::Real>("start_weight"));
+			core::Real end_weight(tag_ptr->getOption<core::Real>("end_weight"));
+			std::string score_type(tag_ptr->getOption<std::string>("score_type"));
+			std::string ramping_func(tag_ptr->getOption<std::string>("ramp_func"));
+
+			//read the score type
+			if ( ! core::scoring::ScoreTypeManager::is_score_type( score_type ) ) {
+				utility_exit_with_message( "The value for option score_type \"" + score_type + "\" is not a valid name for a score_type" );
+			}
+			core::scoring::ScoreType st = core::scoring::ScoreTypeManager::score_type_from_name(score_type);
+			start_weights_[ st ] = start_weight;
+			end_weights_[ st ] = end_weight;
+
+			ramping_funcs_for_weights_[ st ] = instantiate_rampfunc( ramping_func, tag_ptr );
+			TR << "Ramping weight " << score_type << std::endl;
+		}
+	}
 }
 	
 void
@@ -294,7 +355,11 @@ RampingMover::apply( core::pose::Pose & pose )
 		//T("protocols.moves.RampingMover") << "Move: " << i << "/" << outer_cycles_ << std::endl;
 		update_weights( i );
 		(*scorefxn_)(pose);
-		mc_->reset_scorefxn( pose, *scorefxn_ );
+
+		// reset the score function for the monte carlo object, if any.
+		if ( mc_ ) {
+			mc_->reset_scorefxn( pose, *scorefxn_ );
+		}
 		//T("protocols.moves.RampingMover") << "Move: " << i << "/" << outer_cycles_ << " " << scorefxn_->weights()[ core::scoring::fa_rep ] << std::endl;
 
 		// pose.dump_pdb("ramp" + ObjexxFCL::right_string_of(i,2,'0') + "_before.pdb" );
@@ -314,9 +379,13 @@ RampingMover::get_name() const {
 }
 
 
+// @details The Ramping mover performs a shallow copy of the input
+// score function pointer, so that multiple objects can share the
+// same score function and be influenced by this mover's change to
+// that score function.
 void RampingMover::sfxn( core::scoring::ScoreFunctionOP scorefxn )
 {
-	scorefxn_ = scorefxn; // replace this with clone() when symmetry comes online.
+	scorefxn_ = scorefxn;
 	start_weights_ = scorefxn->weights();
 }
 
@@ -371,6 +440,32 @@ RampingMover::set_weights( core::scoring::EnergyMap const & emap )
 		//T.Debug("protocols.moves.RampingMover") << iist << " " << emap[ iist ] << " ";
 	}
 	//T.Debug("protocols.moves.RampingMover") << std::endl;
+}
+
+RampingFuncOP
+RampingMover::instantiate_rampfunc(
+	std::string const & func_name,
+	utility::tag::TagPtr const tag_ptr
+) const
+{
+
+	if ( func_name == "geometric" ) {
+		core::Real xval_at_0p5 = tag_ptr->getOption< core::Real >( "xval_at_0p5", 0.75 );
+		return new GeometricFunc( xval_at_0p5 );
+	} else if ( func_name == "linear" ) {
+		return new LinearFunc;
+	} else if ( func_name == "fast_linear" ) {
+		core::Real xval_start_ramp = tag_ptr->getOption<core::Real>("xval_start_ramp",0.0);
+		core::Real xval_end_ramp = tag_ptr->getOption<core::Real>("xval_end_ramp",1.0);
+		return new FastLinearFunc( xval_start_ramp, xval_end_ramp );
+	} else if ( func_name == "inverse_geometric") {
+		core::Real xval_at_0p5 = tag_ptr->getOption<core::Real>("xval_at_0p5",0.75);
+		return new InvGeometricFunc( xval_at_0p5 );
+	} else {
+		utility_exit_with_message("option ramping_func in RampingMover must be: geometric, linear, fast_linear, or inverse_geometric");
+	}
+
+	return new LinearFunc; // appease compiler.
 }
 
 

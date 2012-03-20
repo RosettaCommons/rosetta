@@ -105,6 +105,10 @@ sources = {
 	"devel/vardist_solaccess": [
 		"VarSolDRotamerDots",
 	],
+	"devel/znhash": [
+		"ZnHash",
+		"SymmZnMoversAndTaskOps",
+	],
 	#"path_rover": [
 	#	"pathrover_DOFs_manager",
 	#],

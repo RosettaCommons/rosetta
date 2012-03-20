@@ -14,6 +14,7 @@
 
 // Unit Headers
 #include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
+#include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 
 // Project headers
 #include <core/chemical/AtomTypeSet.hh>
@@ -23,6 +24,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <core/scoring/sasa.hh>
 #include <core/scoring/Energies.hh>
@@ -58,10 +60,11 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
-static basic::Tracer TR_DS("core.pack.interaction_graph.RotamerDots.DotSphere");
-static basic::Tracer TR_RD("core.pack.interaction_graph.RotamerDots.RotamerDots");
-static basic::Tracer TR_RDC("core.pack.interaction_graph.RotamerDots.RotamerDotsCache");
-static basic::Tracer TR_RDRD("core.pack.interaction_graph.RotamerDots.RotamerDotsRadiusData");
+static basic::Tracer TR("devel.vardist_solaccess");
+//static basic::Tracer TR_DS("core.pack.interaction_graph.RotamerDots.DotSphere");
+//static basic::Tracer TR_RD("core.pack.interaction_graph.RotamerDots.RotamerDots");
+//static basic::Tracer TR_RDC("core.pack.interaction_graph.RotamerDots.RotamerDotsCache");
+//static basic::Tracer TR_RDRD("core.pack.interaction_graph.RotamerDots.RotamerDotsRadiusData");
 
 
 using namespace ObjexxFCL::fmt;
@@ -1288,6 +1291,7 @@ void
 VarSolDistSasaCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const
 {
 	// STOLEN from SasaCalculator.cc
+	TR << "VarSolDistSasaCalculator::lookup" << std::endl;
 
 	if ( key == "total_sasa" ) {
 		basic::check_cast( valptr, &total_sasa_, "total_sasa expects to return a Real" );
@@ -1330,6 +1334,7 @@ VarSolDistSasaCalculator::print( std::string const & key ) const
 void
 VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 {
+	TR << "VarSolDistSasaCalculator::recompute" << std::endl;
 	core::pose::initialize_atomid_map( atom_sasa_, this_pose, 0.0 );
 
 	rotamer_dots_.resize( this_pose.total_residue() );
@@ -1936,6 +1941,51 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 //	}
 //	std::cout << std::endl;
 //}
+
+protocols::moves::MoverOP
+LoadVarSolDistSasaCalculatorMoverCreator::create_mover() const
+{
+	return new LoadVarSolDistSasaCalculatorMover;
+}
+std::string LoadVarSolDistSasaCalculatorMoverCreator::keyname() const
+{
+	return "LoadVarSolDistSasaCalculatorMover";
+}
+
+LoadVarSolDistSasaCalculatorMover::LoadVarSolDistSasaCalculatorMover() :
+	protocols::moves::Mover( "LoadVarSolDistSasaCalculatorMover" )
+{}
+
+LoadVarSolDistSasaCalculatorMover::~LoadVarSolDistSasaCalculatorMover()
+{}
+
+protocols::moves::MoverOP
+LoadVarSolDistSasaCalculatorMover::clone() const {
+	return new LoadVarSolDistSasaCalculatorMover;
+}
+
+std::string
+LoadVarSolDistSasaCalculatorMover::get_name() const { return "LoadVarSolDistSasaCalculatorMover"; }
+
+void
+LoadVarSolDistSasaCalculatorMover::apply( core::pose::Pose & )
+{
+	using core::pose::metrics::CalculatorFactory;
+	if ( CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_default_sasa_calc" ) ) {
+		CalculatorFactory::Instance().remove_calculator( "bur_unsat_calc_default_sasa_calc" );
+	}
+	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_sasa_calc", new VarSolDistSasaCalculator );
+}
+
+///@brief parse XML (specifically in the context of the parser/scripting scheme)
+void LoadVarSolDistSasaCalculatorMover::parse_my_tag(
+	TagPtr const,
+	protocols::moves::DataMap &,
+	Filters_map const &,
+	protocols::moves::Movers_map const &,
+	Pose const & )
+{}
+
 
 
 } // vardist_solaccess

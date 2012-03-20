@@ -60,6 +60,9 @@ TaskOperationFactory::TaskOperationFactory()
 void
 TaskOperationFactory::factory_register( TaskOperationCreatorOP creator )
 {
+	if ( task_operation_creator_map_.find( creator->keyname() ) != task_operation_creator_map_.end() ) {
+		utility_exit_with_message( "Factory Name Conflict: Two or more TaskOperationCreators registered with the name " + creator->keyname() );
+	}
 	add_creator( creator );
 }
 

@@ -150,8 +150,9 @@ void
 RestrictAbsentCanonicalAAS::apply( pose::Pose const &, PackerTask & task ) const
 {
 	if( resid_ == 0 ){// restrict all residues
-		for( core::Size i( 1 ); i <= task.total_residue(); ++i )
+		for( core::Size i( 1 ); i <= task.total_residue(); ++i ) {
 			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( keep_aas_ );
+		}
 	}
 	else
 		task.nonconst_residue_task( resid_ ).restrict_absent_canonical_aas( keep_aas_ );
@@ -165,6 +166,7 @@ RestrictAbsentCanonicalAAS::keep_aas( std::string const keep )
 	utility::vector1< bool > canonical_aas_to_keep( num_canonical_aas, false );
 	foreach( char const c, keep ){
 		if ( oneletter_code_specifies_aa( c ) ) {
+			//std::cout << "Keeping amino acid " << c << std::endl;
 			canonical_aas_to_keep[ aa_from_oneletter_code( c ) ] = true;
 		} else {
 			TR << "aa letter " << c << " does not not correspond to a canonical AA"<<std::endl;
@@ -179,6 +181,9 @@ RestrictAbsentCanonicalAAS::keep_aas( utility::vector1< bool > const keep )
 {
 	runtime_assert( keep.size() == chemical::num_canonical_aas );
 	keep_aas_ = keep;
+	//for ( Size ii = 1; ii <= keep_aas_.size(); ++ii ) {
+	//	std::cout << " keeping " << ii << " " << " ? " << keep_aas_[ ii ]  << std::endl;
+	//}
 }
 
 void
@@ -986,69 +991,130 @@ void
 RestrictYSDesign::include_gly( bool const gly ) { gly_switch_ = gly; }
 
 
-	//////////////////////////////////////////////////////
-	// This class could easily be expanded to handle sample_level, etc.
-	// Someone has probably already written this, and should replace this
-	// dinky thing.
-	ExtraRotamers::ExtraRotamers(){}
+//////////////////////////////////////////////////////
+// This class could easily be expanded to handle sample_level, etc.
+// Someone has probably already written this, and should replace this
+// dinky thing.
+ExtraRotamers::ExtraRotamers() :
+	resid_( 0 ), // default apply to all residues
+	chi_( 0 ),
+	level_( 0 )
+{}
 
-	ExtraRotamers::ExtraRotamers( core::Size const resid, core::Size const chi ):
-		resid_( resid ),
-		chi_( chi )
-	{}
+ExtraRotamers::ExtraRotamers( core::Size const resid, core::Size const chi, core::Size level ):
+	resid_( resid ),
+	chi_( chi ),
+	level_( level )
+{}
 
-	ExtraRotamers::~ExtraRotamers() {}
+ExtraRotamers::~ExtraRotamers() {}
 
-	TaskOperationOP ExtraRotamersCreator::create_task_operation() const
-	{
-		return new ExtraRotamers;
-	}
+TaskOperationOP ExtraRotamersCreator::create_task_operation() const
+{
+	return new ExtraRotamers;
+}
 
-	TaskOperationOP ExtraRotamers::clone() const
-	{
-		return( new ExtraRotamers( *this ) );
-	}
+TaskOperationOP ExtraRotamers::clone() const
+{
+	return( new ExtraRotamers( *this ) );
+}
 
-	void
-	ExtraRotamers::apply( core::pose::Pose const &, PackerTask & task ) const
-	{
+void
+ExtraRotamers::apply( core::pose::Pose const & p, PackerTask & task ) const
+{
+	if ( resid_ != 0 ) {
 		ResidueLevelTask & restask( task.nonconst_residue_task( resid_ ) );
-		if( chi_ == 1 ) restask.or_ex1( true );
-		if( chi_ == 2 ) restask.or_ex2( true );
-		if( chi_ == 3 ) restask.or_ex3( true );
-		if( chi_ == 4 ) restask.or_ex4( true );
+		if( chi_ == 1 ) restask.or_ex1( ExtraRotSample( level_ ) );
+		if( chi_ == 2 ) restask.or_ex2( ExtraRotSample( level_ ) );
+		if( chi_ == 3 ) restask.or_ex3( ExtraRotSample( level_ ) );
+		if( chi_ == 4 ) restask.or_ex4( ExtraRotSample( level_ ) );
+	} else {
+		// apply to all residues
+		TR << "Enabling extra rotamers for chi " << chi_ << " at all positions" << std::endl;
+		for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
+			ResidueLevelTask & restask( task.nonconst_residue_task( ii ) );
+			if( chi_ == 1 ) restask.or_ex1( ExtraRotSample( level_ ) );
+			if( chi_ == 2 ) restask.or_ex2( ExtraRotSample( level_ ) );
+			if( chi_ == 3 ) restask.or_ex3( ExtraRotSample( level_ ) );
+			if( chi_ == 4 ) restask.or_ex4( ExtraRotSample( level_ ) );
+		}
+	}
+}
+
+void ExtraRotamers::parse_tag( TagPtr tag )
+{
+	if ( tag->hasOption("resid") ) {
+		resid_ = tag->getOption< core::Size >( "resid" );
+	} else {
+		resid_ = 0; // apply to all residues
 	}
 
-
-	//////////////////////////////////////////////////////
-	// This class could easily be expanded ...
-	// Someone has probably already written this, and should replace this
-	// dinky thing.
-	ExtraChiCutoff::ExtraChiCutoff() {}
-
-	ExtraChiCutoff::ExtraChiCutoff( core::Size const resid, core::Size const extrachi_cutoff):
-		resid_( resid ),
-		extrachi_cutoff_( extrachi_cutoff )
-	{}
-
-	ExtraChiCutoff::~ExtraChiCutoff() {}
-
-	TaskOperationOP ExtraChiCutoffCreator::create_task_operation() const
-	{
-		return new ExtraChiCutoff;
+	if ( ! tag->hasOption("chi")  ) {
+		utility_exit_with_message("ExtraRotamers Task Operation requires the chi option");
 	}
-
-	TaskOperationOP ExtraChiCutoff::clone() const
-	{
-		return( new ExtraChiCutoff( *this ) );
+	chi_ = tag->getOption< core::Size >("chi");
+	if ( chi_ > 4 ) {
+		utility_exit_with_message("ExtraRotamers Task Operation given a value for chi outside of legal range 1-4.  Given value of " +  utility::to_string(chi_) );
 	}
+	if ( tag->hasOption("level") ) {
+		level_ = tag->getOption< core::Size >("level");
+		if ( level_ > core::Size( ExtraRotSampleCardinality ) ) {
+			utility_exit_with_message( "ExtraRotamers Task Operation gien a value for level outside of legal range 1-" + utility::to_string( core::Size( ExtraRotSampleCardinality ) ) + ".  Given value of " + utility::to_string( level_ ) );
 
-	void
-	ExtraChiCutoff::apply( core::pose::Pose const &, PackerTask & task ) const
-	{
+		}
+	}
+}
+
+//////////////////////////////////////////////////////
+// This class could easily be expanded ...
+// Someone has probably already written this, and should replace this
+// dinky thing.
+ExtraChiCutoff::ExtraChiCutoff() {}
+
+ExtraChiCutoff::ExtraChiCutoff( core::Size const resid, core::Size const extrachi_cutoff):
+	resid_( resid ),
+	extrachi_cutoff_( extrachi_cutoff )
+{}
+
+ExtraChiCutoff::~ExtraChiCutoff() {}
+
+TaskOperationOP ExtraChiCutoffCreator::create_task_operation() const
+{
+	return new ExtraChiCutoff;
+}
+
+TaskOperationOP ExtraChiCutoff::clone() const
+{
+	return( new ExtraChiCutoff( *this ) );
+}
+
+void
+ExtraChiCutoff::apply( core::pose::Pose const & p, PackerTask & task ) const
+{
+	if ( resid_ != 0 ) {
 		task.nonconst_residue_task( resid_ ).and_extrachi_cutoff( extrachi_cutoff_ );
+	} else {
+		//appy to all residues
+		TR << "Enabling extrachi cutoff at all positions" << std::endl;
+		for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
+			task.nonconst_residue_task( ii ).and_extrachi_cutoff( extrachi_cutoff_ );
+		}
+	}
+}
+
+void ExtraChiCutoff::parse_tag( TagPtr tag )
+{
+	if ( tag->hasOption("resid") ) {
+		resid_ = tag->getOption< core::Size >( "resid" );
+	} else {
+		resid_ = 0; // apply to all residues
 	}
 
+	if ( ! tag->hasOption("extrachi_cutoff")  ) {
+		utility_exit_with_message("ExtraChiCutoff Task Operation requires the extrachi_cutoff option");
+	}
+	extrachi_cutoff_ = tag->getOption< core::Size >("extrachi_cutoff");
+}
 
 
 } //namespace operation

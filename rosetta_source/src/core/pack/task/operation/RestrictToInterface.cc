@@ -196,16 +196,16 @@ RestrictToInterface::apply(
 
 void RestrictToInterface::symmetric_task( core::pose::Pose const & pose, task::PackerTask & task ) const
 {
-	 using namespace conformation::symmetry;
+	using namespace conformation::symmetry;
 
-  SymmetricConformation const & SymmConf (
-    dynamic_cast< SymmetricConformation const &> ( pose.conformation()) );
+	SymmetricConformation const & SymmConf (
+	dynamic_cast< SymmetricConformation const &> ( pose.conformation()) );
 
-  for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-  if ( !SymmConf.Symmetry_Info()->chi_is_independent(i) ) {
-      task.nonconst_residue_task( i ).prevent_repacking();
-    }
-  }
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !SymmConf.Symmetry_Info()->chi_is_independent(i) ) {
+			task.nonconst_residue_task( i ).prevent_repacking();
+		}
+	}
 }
 
 void RestrictToInterface::rb_jump( core::Size const jump_in ) {

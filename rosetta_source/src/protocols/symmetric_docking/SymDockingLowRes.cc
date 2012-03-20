@@ -121,7 +121,7 @@ namespace symmetric_docking {
 
 		set_default_mc( pose );
 		set_default_move_map( pose );
-	  set_default_protocol( pose );
+		set_default_protocol( pose );
 	}
 
 	moves::MonteCarloOP
@@ -147,11 +147,11 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 	using namespace moves;
 	using namespace conformation::symmetry;
 
-	 assert( core::pose::symmetry::is_symmetric( pose ));
-  SymmetricConformation & symm_conf (
+	assert( core::pose::symmetry::is_symmetric( pose ));
+	SymmetricConformation & symm_conf (
         dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-  std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 	rb_mover_ = new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ );
 

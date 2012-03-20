@@ -398,6 +398,8 @@ static TaskOperationRegistrator< PreventRepackingCreator > PreventRepackingCreat
 static TaskOperationRegistrator< PreserveCBetaCreator > PreserveCBetaCreator_registrator;
 static TaskOperationRegistrator< AppendRotamerSetCreator > AppendRotamerSetCreator_registrator;
 static TaskOperationRegistrator< AppendRotamerCreator > AppendRotamerCreator_registrator;
+static TaskOperationRegistrator< ExtraRotamersCreator > ExtraRotamersCreator_registrator;
+static TaskOperationRegistrator< ExtraChiCutoffCreator > ExtraChiCutoffCreator_registrator;
 static TaskOperationRegistrator< SetRotamerCouplingsCreator > SetRotamerCouplingsCreator_registrator;
 static TaskOperationRegistrator< SetRotamerLinksCreator > SetRotamerLinksCreator_registrator;
 static TaskOperationRegistrator< ReadResfileCreator > ReadResfileCreator_registrator;

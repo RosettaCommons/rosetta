@@ -39,6 +39,11 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+// APL TEMP
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/Pose.hh>
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -91,9 +96,11 @@ SymMinMover::SymMinMover(
 	bool use_nb_list_in,
 	bool deriv_check_in /* = false */,
 	bool deriv_check_verbose_in /* = false */
-) : protocols::simple_moves::MinMover(movemap_in, scorefxn_in, min_type_in,
-					tolerance_in, use_nb_list_in,
-					deriv_check_in, deriv_check_verbose_in ) {}
+) :
+	protocols::simple_moves::MinMover(
+		movemap_in, scorefxn_in, min_type_in,
+		tolerance_in, use_nb_list_in,
+		deriv_check_in, deriv_check_verbose_in ) {}
 
 
 
@@ -106,13 +113,32 @@ SymMinMover::apply( pose::Pose & pose )
 
 	core::pose::symmetry::make_symmetric_movemap( pose, *symmetric_movemap_ ); // we do this here since this is the first time we meet the symmetric pose
 
+	//{ // scope APL debug:
+	//	std::cout << "SymMinMover free DOFs" << std::endl;
+	//	core::conformation::symmetry::SymmetricConformation const & symm_conf (
+	//		dynamic_cast< core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
+	//	core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	//	for (int jump_nbr = 1; jump_nbr <= (int)pose.num_jump(); ++jump_nbr) {
+	//		if ( symmetric_movemap_->get_jump( jump_nbr ) ) {
+	//			std::cout << "SymMinMover jump " << jump_nbr << " is free" << std::endl;
+	//		}
+	//	}
+	//}
+
+
 	if ( ! score_function() ) score_function( getScoreFunction() ); // get a default (INITIALIZED!) ScoreFunction
 
 	PROF_START( basic::MINMOVER_APPLY );
 	if (!cartesian( )) {
+		//TR << "Before minimization" << std::endl;
+		//score_function()->show( TR, pose );
+		//TR << std::endl;
 		core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
 		(*score_function())(pose);
 		minimizer.run( pose, *symmetric_movemap_, *score_function(), *min_options() );
+		//TR << "After minimization" << std::endl;
+		//score_function()->show( TR, pose );
+		//TR << std::endl;
 	} else {
 		core::optimization::CartesianMinimizer minimizer;
 		(*score_function())(pose);

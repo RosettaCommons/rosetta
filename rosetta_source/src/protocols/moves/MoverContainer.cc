@@ -128,10 +128,13 @@ void SequenceMover::apply( core::pose::Pose & pose )
 		}
 
 	}else{
-
+		// set the mover status from the last mover applied, but do not act on the mover status
 		for ( Size i=0; i<movers_.size(); ++i ) {
 			movers_[i]->apply( pose );
 			type( type()+movers_[i]->type() );
+		}
+		if ( movers_.size() > 0 ) {
+			set_last_move_status( movers_[movers_.size()-1]->get_last_move_status() );
 		}
 
 	}

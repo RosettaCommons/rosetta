@@ -25,7 +25,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/constraints/Constraints.hh>
+#include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/MultiConstraint.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -53,6 +53,70 @@
 namespace protocols {
 namespace enzdes {
 
+class EnzdesConstraintReporter : public utility::pointer::ReferenceCount
+{
+public:
+	EnzdesConstraintReporter();
+	virtual ~EnzdesConstraintReporter();
+
+	EnzdesConstraintReporter( EnzdesConstraintReporter const & );
+
+	/// @brief Recurse through all the constraints in the pose to the ligand,
+	/// through all the constraint-container constraints (e.g. Ambiguous constraints
+	/// and multi-constraints) to find all the atoms that participate in various constraints
+	/// to ligand atoms in the input Pose.
+	void
+	find_constraints_to_ligand(
+		core::pose::Pose const &pose
+	);
+
+	/// @brief Read access to the set of atoms that participate in distance constraints
+	/// to ligand atoms.
+	utility::vector1< core::Size > const & constrained_lig_atoms() const {
+		return constrained_lig_atoms_;
+	}
+
+
+	utility::vector1< core::id::AtomID > const & constrained_nonligand_atoms() const {
+		return constrained_nonligand_atoms_;
+	}
+
+	/// @brief Set the (one) ligand residue index
+	void ligand_resno(core::Size res_no) { ligand_seqpos_ = res_no; }
+
+	/// @brief Get the (one) ligand residue index
+	core::Size ligand_resno() const { return ligand_seqpos_; }
+
+protected:
+
+	void
+	add_constrained_atoms_from_multiconstraint(
+		core::scoring::constraints::MultiConstraintCOP real_multi_constraint
+	);
+
+	void
+	add_constrained_atoms_from_atom_pair_constraint(
+		core::scoring::constraints::AtomPairConstraintCOP atom_pair_constraint
+	);
+
+	void
+	add_constrained_lig_atom(
+		core::Size atom_no
+	);
+
+	void
+	add_constrained_nonligand_atom(
+		core::id::AtomID const & atid
+	);
+
+
+private:
+	utility::vector1< core::Size   > constrained_lig_atoms_;
+	utility::vector1< core::id::AtomID > constrained_nonligand_atoms_;
+	core::Size ligand_seqpos_; //Ligand's sequence position
+
+
+};
 
 class PredesignPerturbMover : public protocols::rigid::RigidBodyPerturbMover
 {
@@ -74,13 +138,13 @@ public:
 		core::pose::Pose &pose,
 		core::pose::Pose const &old_Pose );
 
-	void
-	add_constrained_lig_atoms_from_multiconstraint(
-		core::scoring::constraints::MultiConstraintCOP real_multi_constraint );
+	//void
+	//add_constrained_lig_atoms_from_multiconstraint(
+	//	core::scoring::constraints::MultiConstraintCOP real_multi_constraint );
 
-	void
-	add_constrained_lig_atom(
-		core::Size atom_no );
+	//void
+	//add_constrained_lig_atom(
+	//	core::Size atom_no );
 
 	void
 	find_constraints_to_ligand(
@@ -93,14 +157,14 @@ public:
 	virtual std::string get_name() const;
 
 	void
-	set_ligand(core::Size res_no)
-	{
-		ligand_seqpos_ = res_no;
-	}
+	set_ligand(core::Size res_no);
 
-	utility::vector1< core::Size > get_constrained_lig_atoms() const
+	/// @brief Allow an outside interpretter to the set of atoms for which there are AtomPair constraints to
+	/// the ligand.
+	utility::vector1< core::Size > const &
+	get_constrained_lig_atoms() const
 	{
-		return constrained_lig_atoms_;
+		return constraint_reporter_.constrained_lig_atoms();
 	}
 
 	core::Vector
@@ -125,10 +189,11 @@ public:
 	protocols::moves::MoverOP fresh_instance() const;
 
 private:
+	EnzdesConstraintReporter constraint_reporter_;
 	utility::vector1< core::Size >positions_to_replace_;
-  utility::vector1< core::Size >constrained_lig_atoms_;
+	//utility::vector1< core::Size >constrained_lig_atoms_;
 	core::Size dock_trials_;
-  core::Size ligand_seqpos_;//Ligand's sequence position
+	//core::Size ligand_seqpos_;//Ligand's sequence position
 };
 
 /// @brief class that will identify the region around the ligand,

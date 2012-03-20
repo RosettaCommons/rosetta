@@ -78,12 +78,14 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( core::Si
 { }
 
 //full constructor
-RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( core::Size const lower_chain,
-																																				core::Size const upper_chain,
-																																				core::Real CB_dist_cutoff,
-																																				core::Real nearby_atom_cutoff,
-																																				core::Real vector_angle_cutoff,
-																																				core::Real vector_dist_cutoff):
+RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
+	core::Size const lower_chain,
+	core::Size const upper_chain,
+	core::Real CB_dist_cutoff,
+	core::Real nearby_atom_cutoff,
+	core::Real vector_angle_cutoff,
+	core::Real vector_dist_cutoff
+):
 	parent(),
 	lower_chain_(lower_chain),
 	upper_chain_(upper_chain),
@@ -106,11 +108,13 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( utility:
 { set_movable_jumps( movable_jumps ); }
 
 //full constructor
-RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps ,
-																																				core::Real CB_dist_cutoff,
-																																				core::Real nearby_atom_cutoff,
-																																				core::Real vector_angle_cutoff,
-																																				core::Real vector_dist_cutoff):
+RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
+	utility::vector1_int const movable_jumps ,
+	core::Real CB_dist_cutoff,
+	core::Real nearby_atom_cutoff,
+	core::Real vector_angle_cutoff,
+	core::Real vector_dist_cutoff
+):
 	parent(),
 	jump_active_(true),
 	CB_dist_cutoff_( CB_dist_cutoff ),
@@ -151,10 +155,10 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 			//run detection based on jump
 			utility::vector1_bool repack =
 				core::pack::task::operation::util::calc_interface_vector( pose, *jj,
-																																	CB_dist_cutoff_,
-																																	nearby_atom_cutoff_,
-																																	vector_angle_cutoff_,
-																																	vector_dist_cutoff_ );
+				CB_dist_cutoff_,
+				nearby_atom_cutoff_,
+				vector_angle_cutoff_,
+				vector_dist_cutoff_ );
 			//add repack true setting to repack_full
 			for(core::Size ii = 1; ii <= repack.size(); ++ii){
 				if(repack[ii])
@@ -168,11 +172,11 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 		//vector for filling packertask
 		utility::vector1_bool repack =
 			core::pack::task::operation::util::calc_interface_vector( pose,
-																																 lower_chain_, upper_chain_,
-																																 CB_dist_cutoff_,
-																																 nearby_atom_cutoff_,
-																																 vector_angle_cutoff_,
-																																 vector_dist_cutoff_ );
+			lower_chain_, upper_chain_,
+			CB_dist_cutoff_,
+			nearby_atom_cutoff_,
+			vector_angle_cutoff_,
+			vector_dist_cutoff_ );
 		task.restrict_to_residues(repack);
 	}
 

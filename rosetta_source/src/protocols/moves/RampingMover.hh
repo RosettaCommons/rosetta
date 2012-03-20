@@ -162,6 +162,8 @@ public:
 		MonteCarloOP  mc_in
 	);
 
+	virtual MoverOP clone() const;
+
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	
@@ -184,19 +186,24 @@ private:
 	void update_weights( int round );
 	void set_weights( core::scoring::EnergyMap const & emap );
 
+	RampingFuncOP instantiate_rampfunc(
+		std::string const & func_name,
+		utility::tag::TagPtr const tag_ptr ) const;
+
 private:
 
 	MoverOP mover_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 
-	bool const ramp_one_weight_; /// Are we ramping one weight or several weights?
+	bool ramp_one_weight_; /// Are we ramping one weight or several weights?
 	core::scoring::ScoreType score_type_; // The single weight that will be ramped
 
 	core::scoring::EnergyMap start_weights_;
 	core::scoring::EnergyMap end_weights_;
 	core::scoring::EnergyMap intermediate_weights_;
 
-	utility::vector1< RampingFuncOP > ramping_funcs_for_weights_;
+	// Once it's set, its immutable.
+	utility::vector1< RampingFuncCOP > ramping_funcs_for_weights_;
 
 	int outer_cycles_, inner_cycles_;
 

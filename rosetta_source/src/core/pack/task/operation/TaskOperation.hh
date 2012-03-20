@@ -30,12 +30,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
-// C++ Headers
-// AUTO-REMOVED #include <string>
-
 #include <utility/vector1.hh>
 
 

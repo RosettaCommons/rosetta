@@ -83,6 +83,10 @@ public:
 		double & value,
 		double & deriv) const;
 
+	/// @brief just evaluate the polynomial, w/o derivatives
+	double
+	eval( double const variable );
+
 	void
 	show( std::ostream & out ) const;
 

@@ -17,6 +17,7 @@
 
 // Project Headers
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoringManager.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh> 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -89,6 +90,13 @@ void ScoreFunctionLoader::load_data(
 			if( mod_tag->getName() == "Set" ){
 				core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
 				core::scoring::hbonds::HBondOptionsOP hboptions( emoptions.hbond_options() );
+
+				if( mod_tag->hasOption( "softrep_etable" )) {
+					if ( mod_tag->getOption<bool>( "softrep_etable" )) {
+						emoptions.etable_type( core::scoring::FA_STANDARD_SOFT );
+						
+					}
+				}
 
 				if( mod_tag->hasOption( "exclude_protein_protein_hack_elec" )) {
 					emoptions.exclude_protein_protein_hack_elec( mod_tag->getOption<bool>( "exclude_protein_protein_hack_elec" ) );

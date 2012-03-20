@@ -55,7 +55,7 @@ public:
 		bool const fullatom,
 		bool const local_refine,
 		bool const view=false
-	  );
+	);
 
 	SymDockProtocol(
 		bool const fullatom,
@@ -63,9 +63,9 @@ public:
 		bool const view,
 		core::scoring::ScoreFunctionOP docking_score_low,
 		core::scoring::ScoreFunctionOP docking_score_high
-	  );
+	);
 
-  virtual ~SymDockProtocol();
+	virtual ~SymDockProtocol();
 
 	/// @brief setup that is called from constructor
 	void set_default();

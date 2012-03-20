@@ -687,9 +687,8 @@ SymmetricConformation::append_residue_by_jump(
 				new_new_rsd.set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, seqpos ) );
 			}
 		}
-		insert_residue_by_jump( new_new_rsd, seqpos+1, anchor_pos, anchor_atom, root_atom );
+		insert_residue_by_jump( new_new_rsd, seqpos+1, anchor_pos, anchor_atom, root_atom, start_new_chain );
 	}
-
 	// update symminfo
 	symm_info_->resize_asu( nres_monomer + 1 );
 	symm_info_->update_nmonomer_jumps( nmonomer_jumps + 1 );

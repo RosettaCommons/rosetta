@@ -784,6 +784,7 @@ option.add( basic::options::OptionKeys::corrections::corrections, "corrections o
 option.add( basic::options::OptionKeys::corrections::correct, "turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::score, "score option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::score::no_his_his_pairE, "Set pair term for His-His to zero" );
+option.add( basic::options::OptionKeys::corrections::score::no_his_DE_pairE, "Set pair term for His-Glu and His-Asp to zero" );
 option.add( basic::options::OptionKeys::corrections::score::hbond_His_Phil_fix, "Phil's fix on Histidine interaction angular dependence" );
 option.add( basic::options::OptionKeys::corrections::score::helix_hb_06_2009, "Helix backbone-backbone hbond potential with a different angular dependence" );
 option.add( basic::options::OptionKeys::corrections::score::use_incorrect_hbond_deriv, "Use deprecated hbond derivative calculation." ).def(false);
@@ -1210,10 +1211,10 @@ option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No descripti
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
-option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
+option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
@@ -1815,10 +1816,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, 
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);

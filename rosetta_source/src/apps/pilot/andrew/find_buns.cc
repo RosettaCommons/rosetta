@@ -1,6 +1,7 @@
 #include <devel/init.hh>
 #include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
 
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>

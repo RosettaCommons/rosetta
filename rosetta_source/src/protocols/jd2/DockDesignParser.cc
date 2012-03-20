@@ -36,18 +36,12 @@
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-//#include <protocols/forge/build/BuildInstruction.hh>
-//#include <protocols/flxbb/FlxbbDesign.hh>
-//#include <protocols/flxbb/DesignTask.hh>
 
 // movers
-//#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
-// AUTO-REMOVED #include <protocols/moves/StructureRestrictor.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/moves/NullMover.hh>
-/// #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsMover.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

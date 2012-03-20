@@ -16,6 +16,8 @@
 
 #include <protocols/simple_filters/BuriedUnsatHbondFilter.fwd.hh>
 
+#include <core/scoring/ScoreFunction.fwd.hh>
+
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -45,6 +47,7 @@ public:
 	virtual ~BuriedUnsatHbondFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
+	core::scoring::ScoreFunctionCOP sfxn_;
 	core::Size upper_threshold_;
 	core::Size jump_num_;
 };

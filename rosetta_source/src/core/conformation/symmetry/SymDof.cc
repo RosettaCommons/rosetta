@@ -32,15 +32,15 @@ namespace symmetry {
 SymDof::SymDof()
 {
 	for ( Size i=1; i<=6; ++i ) {
-    allowed_dof_jumps_.push_back(false);
+		allowed_dof_jumps_.push_back(false);
 		lower_range_dof_jumps1_.push_back(0.0);
 		upper_range_dof_jumps1_.push_back(0.0);
 		lower_range_dof_jumps2_.push_back(0.0);
-    upper_range_dof_jumps2_.push_back(0.0);
+		upper_range_dof_jumps2_.push_back(0.0);
 		has_range1_lower_.push_back(false);
-	  has_range1_upper_.push_back(false);
-	  has_range2_lower_.push_back(false);
-	  has_range2_upper_.push_back(false);
+		has_range1_upper_.push_back(false);
+		has_range2_lower_.push_back(false);
+		has_range2_upper_.push_back(false);
 		jump_dir_.push_back( 1 );
   }
 
@@ -52,16 +52,17 @@ SymDof::SymDof( SymDof const & src )
 	lower_range_dof_jumps1_ = src.lower_range_dof_jumps1_;
 	upper_range_dof_jumps1_ = src.upper_range_dof_jumps1_;
 	lower_range_dof_jumps2_ = src.lower_range_dof_jumps2_;
-  upper_range_dof_jumps2_ = src.upper_range_dof_jumps2_;
+	upper_range_dof_jumps2_ = src.upper_range_dof_jumps2_;
 	has_range1_lower_ = src.has_range1_lower_;
-  has_range1_upper_ = src.has_range1_upper_;
-  has_range2_lower_ = src.has_range2_lower_;
-  has_range2_upper_ = src.has_range2_upper_;
+	has_range1_upper_ = src.has_range1_upper_;
+	has_range2_lower_ = src.has_range2_lower_;
+	has_range2_upper_ = src.has_range2_upper_;
 	jump_dir_ = src.jump_dir_;
 }
 
-	SymDof &
-  SymDof::operator=( SymDof const & src ) {
+SymDof &
+SymDof::operator=( SymDof const & src ) {
+	if ( this != &src ) {
 		allowed_dof_jumps_ = src.allowed_dof_jumps_;
 		lower_range_dof_jumps1_ = src.lower_range_dof_jumps1_;
 		upper_range_dof_jumps1_ = src.upper_range_dof_jumps1_;
@@ -72,124 +73,123 @@ SymDof::SymDof( SymDof const & src )
 		has_range2_lower_ = src.has_range2_lower_;
 		has_range2_upper_ = src.has_range2_upper_;
 		jump_dir_ = src.jump_dir_;
+	}
 	return *this;
+}
+
+SymDof::~SymDof() {}
+
+// @details is df allowed to move?
+bool
+SymDof::allow_dof( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	assert( allowed_dof_jumps_.size() == 6 );
+	return allowed_dof_jumps_[df];
+
+}
+
+bool
+SymDof::has_dof()
+{
+	for (int i = X_DOF; i <= Z_ANGLE_DOF; ++i ) {
+		if ( allow_dof(i) ) return true;
 	}
+	return false;
+}
 
-	SymDof::~SymDof() {}
+// @details the lower boundary of range1
+core::Real
+SymDof::range1_lower( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	assert( lower_range_dof_jumps1_.size() == 6 );
+	return lower_range_dof_jumps1_[df];
+}
 
-	// @details is df allowed to move?
-	bool
-	SymDof::allow_dof( int df ) const
-	{
-		assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-		assert( allowed_dof_jumps_.size() == 6 );
-		return allowed_dof_jumps_[df];
+// @details the upper boundary of range1
+core::Real
+SymDof::range1_upper( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	assert( upper_range_dof_jumps1_.size() == 6 );
+	return upper_range_dof_jumps1_[df];
+}
 
-	}
+// @details the lower boundary of range2
+core::Real
+SymDof::range2_lower( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	assert( lower_range_dof_jumps2_.size() == 6 );
+	return lower_range_dof_jumps2_[df];
+}
 
-	bool
-	SymDof::has_dof()
-	{
-		for (int i = X_DOF; i <= Z_ANGLE_DOF; ++i ) {
-			if ( allow_dof(i) ) return true;
-		}
-		return false;
-	}
+// @details the upper boundary of range1
+core::Real
+SymDof::range2_upper( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	assert( upper_range_dof_jumps2_.size() == 6 );
+	return upper_range_dof_jumps2_[df];
+}
 
-	// @details the lower boundary of range1
-	core::Real
-	SymDof::range1_lower( int df ) const
-	{
-		assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-		assert( lower_range_dof_jumps1_.size() == 6 );
-		return lower_range_dof_jumps1_[df];
-	}
+// details Have a range1 been specified?
+bool
+SymDof::has_range1( int df ) const
+{
+	if ( has_range1_lower_[df] && has_range1_upper_[df] ) return true;
+	else return false;
+}
 
-	// @details the upper boundary of range1
-	core::Real
-  SymDof::range1_upper( int df ) const
-  {
-    assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-    assert( upper_range_dof_jumps1_.size() == 6 );
-    return upper_range_dof_jumps1_[df];
-  }
+// details Have a range2 been specified?
+bool
+SymDof::has_range2( int df ) const
+{
+	if ( has_range2_lower_[df] && has_range2_upper_[df] ) return true;
+	else return false;
+}
 
-	// @details the lower boundary of range2
-	core::Real
-	SymDof::range2_lower( int df ) const
-	{
-		assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-		assert( lower_range_dof_jumps2_.size() == 6 );
-		return lower_range_dof_jumps2_[df];
-	}
+// @details has a lower boundary of range1 been specified?
+bool
+SymDof::has_range1_lower( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	return has_range1_lower_[df];
+}
 
-	// @details the upper boundary of range1
-	core::Real
-  SymDof::range2_upper( int df ) const
-  {
-    assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-    assert( upper_range_dof_jumps2_.size() == 6 );
-    return upper_range_dof_jumps2_[df];
-  }
+// @details has a upper boundary of range1 been specified?
+bool
+SymDof::has_range1_upper( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	return has_range1_upper_[df];
+}
 
-	// details Have a range1 been specified?
-	bool
-	SymDof::has_range1( int df ) const
-	{
-		if ( has_range1_lower_[df]
-					&& has_range1_upper_[df] ) return true;
-		else return false;
-	}
+// @details has a lower boundary of range2 been specified?
+bool
+SymDof::has_range2_lower( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	return has_range2_lower_[df];
+}
 
-	// details Have a range2 been specified?
-	bool
-	SymDof::has_range2( int df ) const
-	{
-		if ( has_range2_lower_[df]
-          && has_range2_upper_[df] ) return true;
-    else return false;
-	}
+// @details has a upper boundary of range2 been specified?
+bool
+SymDof::has_range2_upper( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	return has_range2_upper_[df];
+}
 
-	// @details has a lower boundary of range1 been specified?
-	bool
-	SymDof::has_range1_lower( int df ) const
-	{
-		assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-		return has_range1_lower_[df];
-	}
-
-	// @details has a upper boundary of range1 been specified?
-	bool
-  SymDof::has_range1_upper( int df ) const
-  {
-		assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-    return has_range1_upper_[df];
-  }
-
-	// @details has a lower boundary of range2 been specified?
-	bool
-  SymDof::has_range2_lower( int df ) const
-  {
-		assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-    return has_range2_lower_[df];
-  }
-
-	// @details has a upper boundary of range2 been specified?
-	bool
-  SymDof::has_range2_upper( int df ) const
-  {
-		assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-    return has_range2_upper_[df];
-  }
-
-	// @detail return the direction( upstream or downstream )
-	// of the jump for a dof
-	int
-	SymDof::jump_direction( int df ) const
-	{
-		assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-		return jump_dir_[df];
-	}
+// @detail return the direction( upstream or downstream )
+// of the jump for a dof
+int
+SymDof::jump_direction( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	return jump_dir_[df];
+}
 
 // @details function to parse a string describing dofs and parameters associated with them
 // This function is used in reading symmetry_definition files. A typical line would look like this:

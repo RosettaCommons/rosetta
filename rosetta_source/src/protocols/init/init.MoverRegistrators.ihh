@@ -114,6 +114,7 @@ static MoverRegistrator< moves::RandomMoverCreator > reg_RandomMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
 static MoverRegistrator< moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
 static MoverRegistrator< moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
+static MoverRegistrator< moves::RampingMoverCreator > reg_RampingMoverCreator;
 
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
 

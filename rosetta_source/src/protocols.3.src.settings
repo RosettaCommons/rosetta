@@ -199,6 +199,7 @@ sources = {
 		"ExtraScoreEvaluatorCreator",
 		"HolesFilter",
 		"InterfaceSasaFilter",
+		"InterfaceBindingEnergyDensityFilter",
 		"JScoreEvaluator",
 		"JScoreEvaluatorCreator",
 		"JumpEvaluator",

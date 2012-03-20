@@ -455,7 +455,7 @@ make_symmetric_movemap(
 
 	// use the dof information in the symmetry_info object set allowed rb
 	// dofs
-  std::map< Size, SymDof > dofs ( symm_info->get_dofs() );
+	std::map< Size, SymDof > dofs ( symm_info->get_dofs() );
 
 	std::map< Size, SymDof >::iterator it;
 	std::map< Size, SymDof >::iterator it_begin = dofs.begin();
@@ -502,7 +502,7 @@ make_symmetric_movemap(
 	// Allow internal jumps to move (if allowed in movemap_in
 	// ... allow it to move if it is in the controlling subunit
 	// ... otherwise, it can't move
-	for (int jump_nbr = 1; jump_nbr < (int)pose.num_jump(); ++jump_nbr) {
+	for (int jump_nbr = 1; jump_nbr <= (int)pose.num_jump(); ++jump_nbr) {
 		int upstream_resid = pose.fold_tree().upstream_jump_residue (jump_nbr);
 		int downstream_resid = pose.fold_tree().downstream_jump_residue (jump_nbr);
 		if ( upstream_resid <= numNonVrt && downstream_resid <= numNonVrt &&
@@ -539,31 +539,38 @@ make_symmetric_movemap(
 			id::DOF_ID const & id
 				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,1)));
 			movemap.set( id, true );
+			//std::cout << "make symmetric movemap: " << jump_nbr << " X_DOF jump is allowed" << std::endl;
+
 		}
 		if ( dof.allow_dof( Y_DOF ) ) {
 			id::DOF_ID const & id
 				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,2)));
 			movemap.set( id, true );
+			//std::cout << "make symmetric movemap: " << jump_nbr << " Y_DOF jump is allowed" << std::endl;
 		}
 		if ( dof.allow_dof( Z_DOF ) ) {
 			id::DOF_ID const & id
 				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,3)));
 			movemap.set( id, true );
+			//std::cout << "make symmetric movemap: " << jump_nbr << " Z_DOF jump is allowed" << std::endl;
 		}
 		if ( dof.allow_dof( X_ANGLE_DOF ) ) {
 			id::DOF_ID const & id
 				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,4)));
 			movemap.set( id, true );
+			//std::cout << "make symmetric movemap: " << jump_nbr << " X_ANGLE_DOF jump is allowed" << std::endl;
 		}
 		if ( dof.allow_dof( Y_ANGLE_DOF ) ) {
 			id::DOF_ID const & id
 				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,5)));
 			movemap.set( id, true );
+			//std::cout << "make symmetric movemap: " << jump_nbr << " Y_ANGLE_DOF jump is allowed" << std::endl;
 		}
 		if ( dof.allow_dof( Z_ANGLE_DOF ) ) {
 			id::DOF_ID const & id
 				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,6)));
 			movemap.set( id, true );
+			//std::cout << "make symmetric movemap: " << jump_nbr << " Z_ANGLE_DOF jump is allowed" << std::endl;
 		}
 	}
 }

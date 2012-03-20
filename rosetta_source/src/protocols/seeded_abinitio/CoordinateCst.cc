@@ -56,45 +56,46 @@
 
 
 namespace protocols {
-	namespace seeded_abinitio {
-		
-		using namespace core;
-		using namespace scoring::constraints;
-		using namespace protocols::moves;
-		
-		static basic::Tracer TR( "protocols.seeded_abinitio.CoordinateCst" );
-		static basic::Tracer TR_debug( "CoordinateCst.Debug" );
-		
-		std::string
-		CoordinateCstCreator::keyname() const
-		{
-			return CoordinateCstCreator::mover_name();
-		}
-		
-		protocols::moves::MoverOP
-		CoordinateCstCreator::create_mover() const {
-			return new CoordinateCst;
-		}
-		
-		std::string
-		CoordinateCstCreator::mover_name()
-		{
-			return "CoordinateCst";
-		}
-		
-		CoordinateCst::~CoordinateCst() {}
-		
-		CoordinateCst::CoordinateCst() :
-			protocols::moves::Mover( CoordinateCstCreator::mover_name() )
-		{
-			stddev_ =  3.0;
-			use_jumps_ = true;
-			anchor_res_.clear();
-			span_vector_.clear();
-			unparsed_residue_.clear();
-			jump_ = 0; 
-			atom_id_ = "CA"; 
-		}	
+namespace seeded_abinitio {
+
+using namespace core;
+using namespace scoring::constraints;
+using namespace protocols::moves;
+
+static basic::Tracer TR( "protocols.seeded_abinitio.CoordinateCst" );
+static basic::Tracer TR_debug( "CoordinateCst.Debug" );
+
+std::string
+CoordinateCstCreator::keyname() const
+{
+	return CoordinateCstCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+CoordinateCstCreator::create_mover() const {
+	return new CoordinateCst;
+}
+
+std::string
+CoordinateCstCreator::mover_name()
+{
+	return "CoordinateCst";
+}
+
+CoordinateCst::~CoordinateCst() {}
+
+CoordinateCst::CoordinateCst() :
+	protocols::moves::Mover( CoordinateCstCreator::mover_name() )
+{
+	stddev_ =  3.0;
+	use_jumps_ = true;
+	anchor_res_.clear();
+	span_vector_.clear();
+	unparsed_residue_.clear();
+	jump_ = 0;
+	anchor_atom_id_ = ""; // by default, use the same atom name as atom_id_ -- denote their sameness by setting this to the empty string
+	atom_id_ = "CA"; 
+}	
 
 protocols::moves::MoverOP
 CoordinateCst::clone() const {
@@ -107,9 +108,12 @@ CoordinateCst::fresh_instance() const {
 }
 		
 ///parse residues at run time, in case there was a lenght change
-void parse_spans(	pose::Pose & pose,
-							utility::vector1 < std::pair < std::string, std::string > > const span_vector,
-							std::set < core::Size > resi_collection){
+void parse_spans(
+	pose::Pose & pose,
+	utility::vector1 < std::pair < std::string, std::string > > const span_vector,
+	std::set < core::Size > resi_collection
+)
+{
 	
 	for( Size iter = 1 ; iter <= span_vector.size() ; ++ iter ){
 		TR.Debug <<"sanity check, span_vector[iter].first " <<span_vector[iter].first <<std::endl;
@@ -125,28 +129,33 @@ void parse_spans(	pose::Pose & pose,
 		}
 	}
 }
+
 utility::vector1< core::Size >
-adjust_residues( pose::Pose & pose,
-               std::string design_residues ){
+adjust_residues(
+	pose::Pose & pose,
+   std::string design_residues
+){
 
-    utility::vector1< std::string > const design_keys( utility::string_split( design_residues, ',' ) );
-    utility::vector1< core::Size > design_res;
+	utility::vector1< std::string > const design_keys( utility::string_split( design_residues, ',' ) );
+	utility::vector1< core::Size > design_res;
 
-    foreach( std::string const key, design_keys ){
-      core::Size const resnum( protocols::rosetta_scripts::parse_resnum( key, pose ));
-      //TR.Debug<<"design within seed, residue: "<< key <<", parsed: "<< resnum <<std::endl;
-      design_res.push_back( resnum);
-      TR.Debug<<"parsed "<<key<<std::endl;
-    }
-    //TR.Debug<<"runtime designable: " << design_res <<std::endl;
-    return design_res;
+	foreach( std::string const key, design_keys ){
+		core::Size const resnum( protocols::rosetta_scripts::parse_resnum( key, pose ));
+		//TR.Debug<<"design within seed, residue: "<< key <<", parsed: "<< resnum <<std::endl;
+		design_res.push_back( resnum);
+		TR.Debug<<"parsed "<<key<<std::endl;
+	}
+	//TR.Debug<<"runtime designable: " << design_res <<std::endl;
+	return design_res;
 }//end parsing design residues
 
 
 ///residue parsing at runtime
-void adjust_single_residues( 		pose::Pose & pose,
-																std::string single_residues,
-					   										std::set < core::Size > resi_collection){
+void adjust_single_residues(
+	pose::Pose & pose,
+	std::string single_residues,
+	std::set < core::Size > resi_collection
+){
 	
 	utility::vector1< std::string > const single_keys( utility::string_split( single_residues, ',' ) );
 	
@@ -156,37 +165,62 @@ void adjust_single_residues( 		pose::Pose & pose,
 	}
 }
 
-void add_coordinate_constraints(  pose::Pose & pose,
-                              std::set < core::Size > const constrain_residues,
-                              core::Size const anchor_resnum,
-                              core::Real const coord_sdev,
-                              std::string atom_id,
-                              core::scoring::constraints::HarmonicFuncOP & coord_cst_func ){
+void add_coordinate_constraints(
+	pose::Pose & pose,
+	std::set < core::Size > const constrain_residues,
+	core::Size const anchor_resnum,
+	core::Real const coord_sdev,
+	std::string anchor_atom_name, // if this is the empty string, use the same string as "atom_name"
+	std::string atom_name,
+	core::scoring::constraints::HarmonicFuncOP & coord_cst_func
+)
+{
 
-  using namespace core::scoring::constraints;
-  using namespace core::conformation;
+	using namespace core::scoring::constraints;
+	using namespace core::conformation;
 	//should this rather be a ConstraintSet?
-  ConstraintCOPs cst;
+	ConstraintCOPs cst;
 
-  if( anchor_resnum != 0 ){
-    TR<<"Anchor residue for the coordinate constraint is "<< anchor_resnum <<std::endl;
+	if ( anchor_atom_name == "" ) {
+		anchor_atom_name = atom_name;
+	}
 
-    if ( atom_id == "CB" ){
-      if( pose.residue( anchor_resnum ).aa() == core::chemical::aa_gly )
-        atom_id = "CA";
-    }
-  }
-  core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue( anchor_resnum ).atom_index( atom_id ), anchor_resnum ) );
+	if( anchor_resnum != 0 ){
+		TR<<"Anchor residue for the coordinate constraint is "<< anchor_resnum <<std::endl;
 
-  if( !coord_cst_func )
-    coord_cst_func = new core::scoring::constraints::HarmonicFunc( 0.0, 0.0 );
-  coord_cst_func->sd( coord_sdev );
+		if ( anchor_atom_name == "CB" ){
+			if( pose.residue( anchor_resnum ).aa() == core::chemical::aa_gly ) {
+				anchor_atom_name = "CA";
+			}
+		}
+	}
+	if ( ! pose.residue( anchor_resnum ).has( anchor_atom_name ) ) {
+		utility_exit_with_message( "Could not add coordinate constraint to anchor residue atom " + anchor_atom_name + " on residue "
+			+ utility::to_string( anchor_resnum ) + " (" + pose.residue( anchor_resnum ).name()
+			+ ") since that residue does not have an atom with that name" );
+	}
+	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue( anchor_resnum ).atom_index( anchor_atom_name ), anchor_resnum ) );
 
-  foreach(core::Size res, constrain_residues){
-    TR<<"Constraining residue " << pose.residue( res ).name()<< res <<std::endl;
- 		core::chemical::ResidueType rsd_type( pose.residue( res ).type() );
-   	cst.push_back( new CoordinateConstraint( core::id::AtomID( rsd_type.atom_index( atom_id ), res ), anchor_atom, pose.residue( res ).xyz( atom_id ),coord_cst_func));
-  	cst = pose.add_constraints( cst );
+	if( !coord_cst_func ) {
+		coord_cst_func = new core::scoring::constraints::HarmonicFunc( 0.0, 0.0 );
+	}
+	coord_cst_func->sd( coord_sdev );
+
+	foreach(core::Size res, constrain_residues) {
+		// safety check.
+		if ( ! pose.residue( res ).has( atom_name ) ) {
+			utility_exit_with_message( "Could not add coordinate constraint to " + atom_name + " on residue " + utility::to_string( res ) + " (" +
+				pose.residue( res ).name() + ") since that residue does not have an atom with that name" );
+		}
+		TR<<"Coordinate-constraining residue " << pose.residue( res ).name() << " " << res <<std::endl;
+		///core::chemical::ResidueType rsd_type( pose.residue( res ).type() );
+		Size atomindex =  pose.residue( res ).atom_index( atom_name );
+		cst.push_back( new CoordinateConstraint(
+			core::id::AtomID( atomindex, res ),
+			anchor_atom,
+			pose.residue( res ).xyz( atomindex ),
+			coord_cst_func));
+		cst = pose.add_constraints( cst );
 	}
 }
 
@@ -194,15 +228,17 @@ void add_coordinate_constraints(  pose::Pose & pose,
 //for right now using CA
 
 void
-CoordinateCst::apply( pose::Pose & pose ){
+CoordinateCst::apply( pose::Pose & pose )
+{
 	
 	using namespace core;
 
 	//collect all residues that should have coordinate constraints
 	std::set < core::Size > constrain_residues_set;
 
-	if( unparsed_residue_ != "" )
+	if( unparsed_residue_ != "" ) {
 		adjust_single_residues( pose, unparsed_residue_, constrain_residues_set );
+	}
 	
 	parse_spans( pose, span_vector_ , constrain_residues_set );
 
@@ -221,27 +257,27 @@ CoordinateCst::apply( pose::Pose & pose ){
 		TR << "-- anchor residue: " <<  anchor_res << " --" << std::endl;
 	}
 
-	if( use_jumps_ ){
-		if( pose.fold_tree().jump_edge( jump_ ).start()  == 0 ){
+	if( use_jumps_ ) {
+		if( pose.fold_tree().jump_edge( jump_ ).start()  == 0 ) {
 			TR<<"no jump detected, defaulting anchor to 1" << std::endl;
 			anchor_res = 1;
 		}
-		if( constrain_residues_set.size() == 0 ){
+		if( constrain_residues_set.size() == 0 ) {
 			constrain_residues_set.insert( pose.fold_tree().jump_edge( jump_ ).stop() );
 			TR<< "adding constraints to the downstream jump atom" << std::endl;
 		}
 
-			anchor_res = (pose.fold_tree().jump_edge( jump_ ).start());
-			TR<< "setting anchor residue to upstream jump residue: " << anchor_res_ << std::endl;
+		anchor_res = (pose.fold_tree().jump_edge( jump_ ).start());
+		TR<< "setting anchor residue to upstream jump residue: " << anchor_res_ << std::endl;
 	}
 	
 
 	core::scoring::constraints::HarmonicFuncOP coord_cst_func = new core::scoring::constraints::HarmonicFunc( 0.0, 0.0 );	
-	add_coordinate_constraints( pose, constrain_residues_set, anchor_res, stddev_, atom_id_, coord_cst_func );	
+	add_coordinate_constraints( pose, constrain_residues_set, anchor_res, stddev_, anchor_atom_id_, atom_id_, coord_cst_func );	
 	
 }//end apply 
-		
-		
+
+
 std::string
 CoordinateCst::get_name() const {
 	return CoordinateCstCreator::mover_name();
@@ -249,40 +285,48 @@ CoordinateCst::get_name() const {
 
 
 void
-CoordinateCst::parse_my_tag( 	TagPtr const tag,
-															DataMap & /*data*/,
-															protocols::filters::Filters_map const & /*filters*/,
-															Movers_map const &,
-															Pose const & /*pose*/){
+CoordinateCst::parse_my_tag(
+	TagPtr const tag,
+	DataMap & /*data*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	Movers_map const &,
+	Pose const & /*pose*/)
+{
 
-		TR<<"CoordinateCst mover has been invoked"<<std::endl;
-		stddev_ = tag->getOption<core::Real>( "stddev", 0.5);
+	TR<<"CoordinateCst mover has been invoked"<<std::endl;
+	stddev_ = tag->getOption<core::Real>( "stddev", 0.5);
 
-		TR<<"setting constraint standard deviation to "<< stddev_<< std::endl;	
-		use_jumps_ = true;
-		
-		atom_id_ = tag->getOption< std::string >( "atom" , "CA" );
+	TR<<"setting constraint standard deviation to "<< stddev_<< std::endl;	
+	use_jumps_ = true;
+	
+	atom_id_ = tag->getOption< std::string >( "atom" , "CA" );
 
-		if( tag->hasOption( "anchor_res" ) ){
-			anchor_res_ = tag->getOption< std::string >( "anchor_res" );
-			TR<< "user specified following residue as anchor atom for the coordinate constraints: " << anchor_res_ << std::endl;
-		
-			if( anchor_res_ != ""  ){ 
-				TR<< "WARNING, if jump is specified, it will not be used, since the specification of an anchor residue will override it" <<std::endl;
-				use_jumps_ = false; 
-			}//end excluding jump
-		}//end anchor
-   
-   	if( tag->hasOption( "jump" ))
-			jump_ = tag->getOption< core::Size >( "jump", 0 );
+	// if not provided, set anchor_atom_id_ to the empty string which will signal to the
+	// add_coordinate_constraints function above that it should have the same value as the atom_id_ string.
+	anchor_atom_id_ = tag->getOption< std::string > ("anchor_atom", "" );
 
-		if ( use_jumps_ )
-			TR<< "using jump atoms for anchor, that is the first one, for jump #: " << jump_ << std::endl;
+	if( tag->hasOption( "anchor_res" ) ){
+		anchor_res_ = tag->getOption< std::string >( "anchor_res" );
+		TR<< "user specified following residue as anchor atom for the coordinate constraints: " << anchor_res_ << std::endl;
+	
+		if( anchor_res_ != ""  ){ 
+			TR<< "WARNING, if jump is specified, it will not be used, since the specification of an anchor residue will override it" <<std::endl;
+			use_jumps_ = false; 
+		}//end excluding jump
+	}//end anchor
 
-	  //parsing option for CA or CB to use or whether just functional groups! 
+	if( tag->hasOption( "jump" )) {
+		jump_ = tag->getOption< core::Size >( "jump", 0 );
+	}
 
-//parsing branch tags
-utility::vector0< TagPtr > const branch_tags( tag->getTags() );
+	if ( use_jumps_ ) {
+		TR<< "using jump atoms for anchor, that is the first one, for jump #: " << jump_ << std::endl;
+	}
+
+	//parsing option for CA or CB to use or whether just functional groups! 
+
+	//parsing branch tags
+	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
 	
 	foreach( TagPtr const btag, branch_tags ){
 
@@ -303,5 +347,6 @@ utility::vector0< TagPtr > const branch_tags( tag->getTags() );
 		
    }//end b-tags
 }//end parse my tag                                                      
+
 }//seeded_abinitio/
 }//protocol

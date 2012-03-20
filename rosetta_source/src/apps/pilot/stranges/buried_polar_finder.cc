@@ -344,12 +344,12 @@ void CalcsTestMover::pretty_print(
 void CalcsTestMover::register_calculators(){
 	using namespace core::pose::metrics;
 	using namespace protocols::toolbox::pose_metric_calculators;
-	
+
 	//find name of job
 	// protocols::jd2::JobOP const job_me( JobDistributor::get_instance()->current_job() );
 	std::string name( posename_.base() );
-	
-	
+
+
 	//now check on calculators
 	Sasa_ = "Sasa_" + name;
 	if( CalculatorFactory::Instance().check_calculator_exists( Sasa_ ) ){
@@ -359,11 +359,11 @@ void CalcsTestMover::register_calculators(){
 		if ( basic::options::option[ basic::options::OptionKeys::bpf::variable_sasa_radii ] ) {
 			CalculatorFactory::Instance().register_calculator( Sasa_, new devel::vardist_solaccess::VarSolDistSasaCalculator );
 		} else {
-			CalculatorFactory::Instance().register_calculator( Sasa_, new SasaCalculator);
+			CalculatorFactory::Instance().register_calculator( Sasa_, new simple_calculators::SasaCalculator );
 		}
 
 	}
-	
+
 	NumberHBonds_ = "NumberHBonds_" + name;
 	if( CalculatorFactory::Instance().check_calculator_exists( NumberHBonds_ ) ){
 		Warning() << "In InterfaceAnalyzerMover, calculator " << NumberHBonds_
@@ -371,7 +371,7 @@ void CalcsTestMover::register_calculators(){
 	} else {
 		CalculatorFactory::Instance().register_calculator( NumberHBonds_, new NumberHBondsCalculator);
 	}
-	
+
 	BuriedUnsatisfiedPolars_ = "BuriedUnsatisfiedPolars_" + name;
 	if( CalculatorFactory::Instance().check_calculator_exists( BuriedUnsatisfiedPolars_ ) ){
 		Warning() << "In InterfaceAnalyzerMover, calculator " << BuriedUnsatisfiedPolars_
@@ -379,7 +379,7 @@ void CalcsTestMover::register_calculators(){
 	} else {
 		CalculatorFactory::Instance().register_calculator(  BuriedUnsatisfiedPolars_, new BuriedUnsatisfiedPolarsCalculator(Sasa_, NumberHBonds_));
 	}
-	
+
 	return;
 }
 

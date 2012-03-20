@@ -319,14 +319,16 @@ public:
 	);
 
 
-	/// @brief Insert a new residue by jump.
+	/// @brief Insert a new residue by jump.  If new_chain is "true", then seqpos must be the last 
+	/// residue of one chain (i.e. residue(seqpos).chain() != residue(seqpos+1).chain() )
 	void
 	insert_residue_by_jump(
 		Residue const & new_rsd_in,
 		Size const seqpos, // desired seqpos of new_rsd
 		Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
 		std::string const& anchor_atom = "",
-		std::string const& root_atom = ""
+		std::string const& root_atom = "",
+		bool new_chain = false // insert this residue as a new chain, displacing all downstream chains
 	);
 
 	/// @brief Append a new residue by a bond.
@@ -1109,7 +1111,8 @@ private:
 	residues_insert(
 		Size const seqpos,
 		Residue const & new_rsd,
-		bool const use_lower_chain = false
+		bool const use_lower_chain = false,
+		bool const new_chain = false
 	);
 
 	///

@@ -2827,6 +2827,9 @@ void IterativeOptEDriver::write_new_scorefile()
 			}
 			fout << "\n";
 		}
+		if ( option[ optE::no_hb_env_dependence ] ) {
+			fout << "NO_HB_ENV_DEP\n";
+		}
 
 		for( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 			if ( combined_weights[ ScoreType( ii ) ] != 0 ) {

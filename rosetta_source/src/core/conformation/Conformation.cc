@@ -907,7 +907,8 @@ Conformation::insert_residue_by_jump(
 	Size const seqpos, // desired seqpos of new_rsd
 	Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
 	std::string const& anchor_atom, // could be ""
-	std::string const& root_atom // ditto
+	std::string const& root_atom, // ditto
+	bool new_chain
 )
 {
 	pre_nresidue_change();
@@ -921,7 +922,7 @@ Conformation::insert_residue_by_jump(
 	//if (   !root_atomno )   root_atomno = kinematics::get_root_atomno  (             new_rsd_in, kinematics::dir_jump );
 
 	// this handles all renumbering internal to the Residues, *_moved arrays
-	residues_insert( seqpos, new_rsd_in );
+	residues_insert( seqpos, new_rsd_in, false, new_chain );
 
 	Residue const & new_rsd( residue_( seqpos ) );
 
@@ -2911,9 +2912,12 @@ void
 Conformation::residues_insert(
 	Size const seqpos,
 	Residue const & new_rsd,
-	bool const use_lower_chain // = false
+	bool const use_lower_chain, // = false,
+	bool const new_chain // = false
 )
 {
+	assert( ! new_chain || residues_[ seqpos-1 ]->chain() != residues_[ seqpos ]->chain() );
+
 	Size const old_size( residues_.size() ), new_size( old_size+1 );
 
 	// first renumber things
@@ -2924,13 +2928,21 @@ Conformation::residues_insert(
 	}
 	update_sequence_numbering( new_size, old2new ); // numbering in residues_ and *_moved
 
-	Size const old_chain( ( use_lower_chain || Size(seqpos) == new_size ) ? residues_[ seqpos-1 ]->chain() :
-												residues_[ seqpos ]->chain() );
+	Size const old_chain( ( new_chain || use_lower_chain || Size(seqpos) == new_size ) ?
+		residues_[ seqpos-1 ]->chain() :
+		residues_[ seqpos ]->chain() );
+
+	Size const newrsd_chain( new_chain ? old_chain + 1 :old_chain );
 
 	residues_.insert( residues_.begin() + (seqpos-1), new_rsd.clone() );
 	assert( residues_[seqpos]->name() == new_rsd.name() );
 	residues_[ seqpos ]->seqpos( seqpos );
-	residues_[ seqpos ]->chain( old_chain );
+	residues_[ seqpos ]->chain( newrsd_chain );
+	if ( new_chain ) {
+		for ( Size ii = seqpos+1; ii <= new_size; ++ii ) {
+			residues_[ ii ]->chain( residues_[ ii ]->chain() + 1 );
+		}
+	}
 	// wipe residue connection data that may have been cloned from the original residue
 	residues_[ seqpos ]->clear_residue_connections();
 

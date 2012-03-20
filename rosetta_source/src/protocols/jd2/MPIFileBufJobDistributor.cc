@@ -211,7 +211,6 @@ MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size s
 	case JOB_FAILED_NO_RETRY :
 		++jobs_returned_;
 		break;
-
 	default:
 		tr.Error << "[ERROR] from " << slave_rank << " tag: "  << msg_tag << " " << slave_job_id << std::endl;
 		utility_exit_with_message(" unknown tag "+ ObjexxFCL::string_of( msg_tag ) +" in master_loop of MPIFileBufJobDistributor ");

@@ -17,6 +17,8 @@
 #include <protocols/init/init.hh>
 
 // Factories
+#include <core/pack/task/operation/TaskOperationRegistrator.hh>
+#include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/jd2/parser/DataLoaderFactory.hh>
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
@@ -32,20 +34,24 @@
 //#include <devel/constrained_sequence_design/constraints/MaximunNumberPerResidueTypeConstraintCreator.hh>
 
 // Utility Headers
+
+// Task Operation creators
+#include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
+#include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
+
 #include <utility/vector1.hh>
 
 
 namespace devel {
 
-// movers
-static protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;
-//static protocols::moves::MoverRegistrator< constrained_sequence_design::ConstrainedDesignMoverCreator > reg_ConstrainedDesignMoverCreator;
+// Mover creators
+protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;
+protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
+protocols::moves::MoverRegistrator< devel::znhash::InsertZincCoordinationRemarkLinesCreator > reg_InsertZincCoordinationRemarkLinesCreator;
+protocols::moves::MoverRegistrator< znhash::LoadZnCoordNumHbondCalculatorMoverCreator > reg_LoadZnCoordNumHbondCalculatorMoverCreator;
 
-// SequenceConstraints
-//static constrained_sequence_design::SequenceConstraintRegistrator< constrained_sequence_design::constraints::MaximunNumberPerResidueTypeConstraintCreator > reg_MaximunNumberPerResidueTypeConstraint;
-
-// data loaders
-//static protocols::jd2::parser::DataLoaderRegistrator< constrained_sequence_design::SequenceConstraintLoaderCreator > reg_SequenceConstraintLoaderCreator;
+// Task creators
+core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
 
 void init( int argc, char * argv [] )
 {

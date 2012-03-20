@@ -174,6 +174,7 @@ namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }
 namespace corrections { namespace score { BooleanOptionKey const score( "corrections:score" );  } }
 namespace corrections { namespace score { BooleanOptionKey const no_his_his_pairE( "corrections:score:no_his_his_pairE" );  } }
+namespace corrections { namespace score { BooleanOptionKey const no_his_DE_pairE( "corrections:score:no_his_DE_pairE" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hbond_His_Phil_fix( "corrections:score:hbond_His_Phil_fix" );  } }
 namespace corrections { namespace score { BooleanOptionKey const helix_hb_06_2009( "corrections:score:helix_hb_06_2009" );  } }
 namespace corrections { namespace score { BooleanOptionKey const use_incorrect_hbond_deriv( "corrections:score:use_incorrect_hbond_deriv" );  } }
@@ -600,4 +601,3 @@ namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multipl
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
-namespace lh { StringOptionKey const jobname( "lh:jobname" );  }

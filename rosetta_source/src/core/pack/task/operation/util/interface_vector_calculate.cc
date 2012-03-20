@@ -72,11 +72,14 @@ typedef numeric::HomogeneousTransform< core::Real > HTReal;
 
 //forward declarations of funtions that do the work
 ///@brief looks at the big set and figures out what is actually pointing towards the interface
-void find_interface_pointing_residues_from_neighbs(core::pose::Pose const & pose, InterfacePair const & interface_pair,
-																									 core::Real const nearby_atom_cutoff,
-																									 core::Real const vector_angle_cutoff,
-																									 core::Real const vector_dist_cutoff,
-																									 utility::vector1_bool & interface_residues );
+void find_interface_pointing_residues_from_neighbs(
+	core::pose::Pose const & pose, InterfacePair const & interface_pair,
+	core::Real const nearby_atom_cutoff,
+	core::Real const vector_angle_cutoff,
+	core::Real const vector_dist_cutoff,
+	utility::vector1_bool & interface_residues
+);
+
 ///@brief find nearby atoms to other in interface
 bool any_atoms_within_cutoff(core::conformation::Residue & res1,
 														 core::conformation::Residue & res2,
@@ -117,10 +120,12 @@ calc_interface_vector( core::pose::Pose const & pose, core::Size const chain1_nu
 
 ///@details full runner that takes all of the inputs for chains
 utility::vector1_bool
-calc_interface_vector( core::pose::Pose  const & pose,
-											 core::Size const chain1_number, core::Size const chain2_number,
-											 core::Real const CB_dist_cutoff, core::Real const nearby_atom_cutoff,
-											 core::Real const vector_angle_cutoff, core::Real const vector_dist_cutoff ){
+calc_interface_vector(
+	core::pose::Pose  const & pose,
+	core::Size const chain1_number, core::Size const chain2_number,
+	core::Real const CB_dist_cutoff, core::Real const nearby_atom_cutoff,
+	core::Real const vector_angle_cutoff, core::Real const vector_dist_cutoff
+){
 	//set all residues in pose to false
 	utility::vector1_bool at_interface(pose.total_residue(), false);
 	//do stuff
@@ -139,12 +144,14 @@ calc_interface_vector( core::pose::Pose  const & pose,
 
 ///@details full runner that takes the jump
 utility::vector1_bool
-calc_interface_vector( core::pose::Pose const & pose,
-											 int const interface_jump,
-											 core::Real const CB_dist_cutoff,
-											 core::Real const nearby_atom_cutoff,
-											 core::Real const vector_angle_cutoff,
-											 core::Real const vector_dist_cutoff ){
+calc_interface_vector(
+	core::pose::Pose const & pose,
+	int const interface_jump,
+	core::Real const CB_dist_cutoff,
+	core::Real const nearby_atom_cutoff,
+	core::Real const vector_angle_cutoff,
+	core::Real const vector_dist_cutoff
+){
 	//set all residues in pose to false
 	utility::vector1_bool at_interface(pose.total_residue(), false);
 	//do stuff
@@ -367,6 +374,9 @@ find_jump_partners_within_CB_cutoff( core::pose::Pose const & pose, core::Real b
 numeric::xyzVector<core::Real>
 cbeta_vector( core::conformation::Residue & res){
 	//std::string const atom_to_use( "CA" );
+	if ( ! res.has("CA") ) {
+		return numeric::xyzVector< core::Real> (0.0);
+	}
 	numeric::xyzVector< core::Real > CA_position( res.atom("CA").xyz() );
 	numeric::xyzVector< core::Real > CB_position( select_coord_for_residue( res ) );
 	//subtract CB position from CA position to get the right vector, then .normalize()
@@ -381,10 +391,10 @@ select_coord_for_residue(core::conformation::Residue & res){
 	using namespace numeric;
 	using namespace core;
 	//if there is a CB then use it
-	if ( res.type().has("CB") )
+	if ( res.type().has("CB") ) {
 		return res.atom("CB").xyz();
 	//otherwise estimate where one would be.
-	else{
+	} else if ( res.has("CA") && res.has("C") && res.has("N") ) {
  		//locations of other bb atoms
  		xyzVector< core::Real > CA_xyz ( res.atom("CA").xyz() );
  		xyzVector< core::Real >  C_xyz ( res.atom("C").xyz() );
@@ -415,7 +425,9 @@ select_coord_for_residue(core::conformation::Residue & res){
 		xyzVector< core::Real > CB_ideal_local = ideal_frame.to_local_coordinate( idealCB  );
 		xyzVector< core::Real > CB_xyz( input_frame * CB_ideal_local );
 		return CB_xyz;
-	} //end if no CB
+	} else {
+		return res.xyz( res.nbr_atom() ); // neighbor atom for non protein
+	}//end if no CB
 
 } //end select_coord_for_residue
 

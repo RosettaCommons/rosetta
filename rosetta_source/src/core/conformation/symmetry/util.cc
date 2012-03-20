@@ -390,9 +390,12 @@ get_asymm_unit_fold_tree( core::conformation::Conformation const &conf ) {
 	return f_new;
 }
 
-
 void
-symmetrize_fold_tree( core::conformation::Conformation const &conf, kinematics::FoldTree &f ) {
+symmetrize_fold_tree(
+	core::conformation::Conformation const &conf,
+	kinematics::FoldTree & f
+) {
+
   if( !is_symmetric( conf ) ) {
 		return;
 	}
@@ -441,7 +444,7 @@ symmetrize_fold_tree( core::conformation::Conformation const &conf, kinematics::
 
 	// 2 - Get symmetic jumps cuts and anchor
 	// inter-VRT jumps
-	kinematics::FoldTree const &f_pose = conf.fold_tree();
+	kinematics::FoldTree const & f_pose = conf.fold_tree();
 	for ( Size i = 1; i<= f_pose.num_jump(); ++i ) {
 		Size down ( f_pose.downstream_jump_residue(i) );
 		Size up ( f_pose.upstream_jump_residue(i) );
@@ -503,8 +506,6 @@ set_asymm_unit_fold_tree( core::conformation::Conformation &conf, kinematics::Fo
 
 	conf.fold_tree( f_new );
 }
-
-
 
 // this function is directly stolen from the docking code in protocols. The code duplication is introduced
 // to avoid dependencies of core functionality from protocols

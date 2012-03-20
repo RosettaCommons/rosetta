@@ -177,6 +177,23 @@ Polynomial_1d::operator()(
 	}
 }
 
+double
+Polynomial_1d::eval( double const variable )
+{
+       if(variable <= xmin_){
+               return min_val_;
+       }
+       if(variable >= xmax_){
+               return max_val_;
+       }
+       Real value = coefficients_[1];
+       for ( Size i=2; i <= degree_; ++i ) {
+               ( value *= variable ) += coefficients_[i];
+       }
+       return value;
+}
+
+
 ostream &
 operator<< ( ostream & out, const Polynomial_1d & poly ){
 	poly.show( out );

@@ -185,6 +185,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "constant_constraint" ] = constant_constraint;
 	name2score_type_[ "coordinate_constraint" ] = coordinate_constraint;
 	name2score_type_[ "site_constraint" ] = site_constraint;
+	name2score_type_[ "metalhash_constraint" ] = metalhash_constraint;
 
 	name2score_type_[ "rama"    ] = rama;
 	name2score_type_[ "rama2b"  ] = rama2b;

@@ -199,6 +199,17 @@ PairEPotential::pair_term_energy(
 		return Energy( 0.0 );
 	}
 
+	if ( ( option[ corrections::score::no_his_DE_pairE ] ) &&
+		((( res1.aa() == aa_his ) &&
+		( res2.aa() == aa_asp || res2.aa() == aa_glu ) ) ||
+		( ( res1.aa() == aa_asp || res1.aa() == aa_glu ) &&
+		( res2.aa() == aa_his ))) )
+	{
+		return Energy( 0.0 );
+	}
+
+
+
 	if ( pair_score_min_sep_ > 1 ) { // Short-circuit for speed
 		if ( res1.polymeric_sequence_distance( res2 ) < pair_score_min_sep_ ) return Energy( 0.0 );
 	}

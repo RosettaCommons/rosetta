@@ -254,6 +254,7 @@ enum ScoreType {
 	big_bin_constraint,
 	dunbrack_constraint,
 	site_constraint,
+	metalhash_constraint, // Rigid body, metal binding constraints for centroid mode
 	rna_bond_geometry, // deviations from ideal geometry
 
 	rama,

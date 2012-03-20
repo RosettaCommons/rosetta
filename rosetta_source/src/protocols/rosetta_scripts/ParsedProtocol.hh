@@ -52,10 +52,10 @@ public:
 	virtual void apply( Pose & pose );
 	virtual core::pose::PoseOP get_additional_output( );
 	virtual std::string get_name() const;
-/// Tricky! movers are cloned into the protocol b/c their apply functions (which are nonconst) could accumulate
-/// state information. Filters are safe and are therefore merely registered.
-/// Under this state of affairs, a mover or filter may be called many times in the protocol, and it will be
-/// guaranteed to have no state accumulation.
+	/// Tricky! movers are cloned into the protocol b/c their apply functions (which are nonconst) could accumulate
+	/// state information. Filters are safe and are therefore merely registered.
+	/// Under this state of affairs, a mover or filter may be called many times in the protocol, and it will be
+	/// guaranteed to have no state accumulation.
 	void add_mover( protocols::moves::MoverCOP mover, protocols::filters::FilterOP filter ) {
 		protocols::moves::MoverOP mover_p = mover->clone();
 		protocols::filters::FilterOP filter_p = filter;

@@ -171,16 +171,16 @@ SymPackRotamersMover::make_symmetric_task(
 {
 	assert( pose::symmetry::is_symmetric( pose ) );
 	SymmetricConformation & SymmConf (
-    dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
-  core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	utility::vector1<bool> allow_repacked( pose.total_residue(), false );
-	for (Size res=1; res <= pose.total_residue(); ++res )
-    {
-        if ( pose.residue(res).aa() != core::chemical::aa_vrt && symm_info->fa_is_independent(res) )
-					allow_repacked.at(res) = true;
-    }
-    task->restrict_to_residues( allow_repacked );
+	for (Size res=1; res <= pose.total_residue(); ++res ) {
+		if ( pose.residue(res).aa() != core::chemical::aa_vrt && symm_info->fa_is_independent(res) ) {
+			allow_repacked.at(res) = true;
+		}
+	}
+	task->restrict_to_residues( allow_repacked );
 }
 
 protocols::moves::MoverOP SymPackRotamersMover::clone() const { return new  SymPackRotamersMover( *this ); }

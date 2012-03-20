@@ -41,8 +41,8 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
-#include <core/scoring/constraints/MultiConstraint.fwd.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -66,6 +66,129 @@ namespace enzdes {
 
 static basic::Tracer mv_tr("protocols.enzdes.PredesignPerturbMover");
 //PredesignPerturbMoverCreator
+
+EnzdesConstraintReporter::EnzdesConstraintReporter() :
+	ligand_seqpos_( 0 )
+{}
+
+EnzdesConstraintReporter::~EnzdesConstraintReporter() {}
+
+EnzdesConstraintReporter::EnzdesConstraintReporter( EnzdesConstraintReporter const & src ) :
+	constrained_lig_atoms_( src.constrained_lig_atoms_ ),
+	constrained_nonligand_atoms_( src.constrained_nonligand_atoms_ ),
+	ligand_seqpos_( src.ligand_seqpos_ )
+{}
+
+
+void
+EnzdesConstraintReporter::find_constraints_to_ligand(
+	core::pose::Pose const & pose
+)
+{
+	using namespace core::scoring::constraints;
+	
+	//Get a set of constraints for a ligand.
+	//It is a vector of ResidueConstraints.
+	ConstraintSetCOP constraint_set;
+	constraint_set=pose.constraint_set();
+	
+	// Each residue constraint is a map container
+	// of Size and ConstraintsOP, defining a residue number
+	//and constraints object respectively.
+	for ( ConstraintSet::ResiduePairConstraintsIterator
+			rpc_start = constraint_set->residue_pair_constraints_begin(ligand_seqpos_),
+			rpc_end=constraint_set->residue_pair_constraints_end(ligand_seqpos_);
+			rpc_start != rpc_end; ++rpc_start ) {
+		//Constraints object is a pointer vector of constraint objects.
+		// Each contraint object contains type of constraints.
+		ConstraintsOP constraints;
+		constraints=rpc_start->second;
+
+		for ( Constraints::const_iterator
+				iter     = constraints->begin(),
+				iter_end = constraints->end();
+				iter != iter_end; ++iter ) {
+			mv_tr.Info <<(*iter)->type() << std::endl;
+			if ( (*iter)->type() == "MultiConstraint" || (*iter)->type() == "AmbiguousConstraint" ) {
+				add_constrained_atoms_from_multiconstraint( dynamic_cast <MultiConstraint const * > ((*iter)()) );
+			} else if ( ((*iter)->type()) == "AtomPair") {
+				add_constrained_atoms_from_atom_pair_constraint( dynamic_cast <AtomPairConstraint const * > ((*iter)()) );
+			} // else, ignore this constraint
+		}
+	}
+}
+
+void
+EnzdesConstraintReporter::add_constrained_atoms_from_multiconstraint(
+  core::scoring::constraints::MultiConstraintCOP real_multi_constraint )
+{
+	core::scoring::constraints::ConstraintCOPs multi_constraint_members;
+	multi_constraint_members=real_multi_constraint->member_constraints();
+	
+	for (core::scoring::constraints::ConstraintCOPs::const_iterator
+			MC_it=multi_constraint_members.begin();
+			MC_it!=multi_constraint_members.end(); MC_it++) {
+		if ( ((*MC_it)->type()) == "AtomPair") {
+			assert( dynamic_cast <core::scoring::constraints::AtomPairConstraint const * > ((*MC_it)()) );
+			add_constrained_atoms_from_atom_pair_constraint( dynamic_cast <core::scoring::constraints::AtomPairConstraint const * > ((*MC_it)()) );
+		} else if ( ((*MC_it)->type()) == "MultiConstraint" || ((*MC_it)->type()) == "AmbiguousConstraint" ) {
+			assert( dynamic_cast <core::scoring::constraints::MultiConstraint const * > ((*MC_it)()) );
+			add_constrained_atoms_from_multiconstraint( (dynamic_cast <core::scoring::constraints::MultiConstraint const * > ((*MC_it)())) );
+		} // else, ignore this constraint
+	}
+}
+
+void
+EnzdesConstraintReporter::add_constrained_atoms_from_atom_pair_constraint(
+	core::scoring::constraints::AtomPairConstraintCOP atom_pair_constraint
+)
+{
+	// if ligand equals residue of atom1 then assign atom1
+	// otherwise asign the other atom
+	if ( atom_pair_constraint->atom(1).rsd() == ligand_seqpos_ ) {
+		add_constrained_lig_atom( atom_pair_constraint->atom(1).atomno() );
+		add_constrained_nonligand_atom( atom_pair_constraint->atom(2)    );
+	} else {
+		add_constrained_lig_atom( atom_pair_constraint->atom(2).atomno() );
+		add_constrained_nonligand_atom( atom_pair_constraint->atom(1)    );
+	}
+}
+
+
+void
+EnzdesConstraintReporter::add_constrained_lig_atom(
+	core::Size atom_no 
+)
+{
+	for(utility::vector1< core::Size >::const_iterator
+			it  = constrained_lig_atoms_.begin();
+			it != constrained_lig_atoms_.end(); it++){
+		if ( (*it) == atom_no) return;
+	}
+	constrained_lig_atoms_.push_back(atom_no);
+	if ( mv_tr.Info.visible()) {
+		mv_tr.Info << "Constrained ligand atom: " << std::endl;
+		mv_tr.Info << atom_no << std::endl;
+	}
+}
+
+void
+EnzdesConstraintReporter::add_constrained_nonligand_atom(
+	core::id::AtomID const & atid
+)
+{
+	for(utility::vector1< core::id::AtomID > ::const_iterator
+			it  = constrained_nonligand_atoms_.begin();
+			it != constrained_nonligand_atoms_.end(); it++){
+		if ( (*it) == atid ) return;
+	}
+	constrained_nonligand_atoms_.push_back( atid );
+	if ( mv_tr.Info.visible()) {
+		mv_tr.Info << "Constrained non-ligand atom: res " << std::endl;
+		mv_tr.Info << atid.rsd() << " atom " << atid.atomno() << std::endl;
+	}
+}
+
 
 moves::MoverOP
 PredesignPerturbMoverCreator::create_mover() const
@@ -126,88 +249,21 @@ PredesignPerturbMover::reinstate_pose(
 }
 
 void
-PredesignPerturbMover::add_constrained_lig_atoms_from_multiconstraint(
-  core::scoring::constraints::MultiConstraintCOP real_multi_constraint )
-{
-  core::scoring::constraints::ConstraintCOPs multi_constraint_members;
-  multi_constraint_members=real_multi_constraint->member_constraints();
-
-	for (core::scoring::constraints::ConstraintCOPs::const_iterator MC_it=multi_constraint_members.begin(); MC_it!=multi_constraint_members.end(); MC_it++) {
-
-		if ( ((*MC_it)->type()) == "AtomPair") {
-			( ((*MC_it)->atom(1)).rsd() == ligand_seqpos_) ? add_constrained_lig_atom( ((*MC_it)->atom(1)).atomno() ) : add_constrained_lig_atom( ((*MC_it)->atom(2)).atomno() ) ;
-     // mv_tr.Info << "adding AtomPair" << std::endl;
-     // mv_tr.Info << ((*MC_it)->atom(1)).atomno() << std::endl;
-		} else if ( ((*MC_it)->type()) == "MultiConstraint") {
-			add_constrained_lig_atoms_from_multiconstraint( (dynamic_cast <core::scoring::constraints::MultiConstraint const * > ((*MC_it)())) );
-    } else if ( ((*MC_it)->type()) == "AmbiguousConstraint") {
-      add_constrained_lig_atoms_from_multiconstraint( (dynamic_cast <core::scoring::constraints::MultiConstraint const * > ((*MC_it)())) );
-		}
-	}
-}
-
-void
-PredesignPerturbMover::add_constrained_lig_atom(
-	core::Size atom_no )
-{
-  for(utility::vector1< core::Size >::const_iterator it=constrained_lig_atoms_.begin(); it !=constrained_lig_atoms_.end(); it++){
-    if ( (*it) == atom_no)
-			return;
-	}
-	constrained_lig_atoms_.push_back(atom_no);
-  mv_tr.Info << "Constrained ligand atom: " << std::endl;
-  mv_tr.Info << atom_no << std::endl;
-}
-
-void
 PredesignPerturbMover::find_constraints_to_ligand(
-	core::pose::Pose const & pose )
+	core::pose::Pose const & pose
+)
 {
-  using namespace core::scoring::constraints;
-
-  //Get a set of constraints for a ligand.
-  //It is a vector of ResidueConstraints.
-  ConstraintSetCOP constraint_set;
-  constraint_set=pose.constraint_set();
-  ConstraintSet::ResiduePairConstraintsIterator rpc_start=constraint_set->residue_pair_constraints_begin(ligand_seqpos_);
-  ConstraintSet::ResiduePairConstraintsIterator rpc_end=constraint_set->residue_pair_constraints_end(ligand_seqpos_);
-
-  // Each residue constraint is a map container
-  // of Size and ConstraintsOP, defining a residue number
- 	//and constraints object respectively.
-  for (; rpc_start != rpc_end; ++rpc_start ) {
-    //Constraints object is a pointer vector of constraint objects.
-    // Each contraint object contains type of constraints.
-    ConstraintsOP constraints;
-		constraints=rpc_start->second;
-		Constraints::const_iterator it_begin=constraints->begin();
-  	Constraints::const_iterator it_end=constraints->end();
-    for (; it_begin != it_end; ++it_begin ) {
-		   mv_tr.Info <<(*it_begin)->type() << std::endl;
-			  if ( ((*it_begin)->type()) == "MultiConstraint") {
-  //        MultiConstraintCOP real_multi_constraint = dynamic_cast <MultiConstraint const * > ((*it_begin)());
-  //        add_constrained_lig_atoms_from_multiconstraint(real_multi_constraint);
-          add_constrained_lig_atoms_from_multiconstraint( dynamic_cast <MultiConstraint const * > ((*it_begin)()) );
-			  } else if ( ((*it_begin)->type()) == "AmbiguousConstraint") {
-          add_constrained_lig_atoms_from_multiconstraint( dynamic_cast <MultiConstraint const * > ((*it_begin)()) );
-				} else if ( ((*it_begin)->type()) == "AtomPair") {
-        // if ligand equals residue of atom1 then assign atom1
-        // otherwise asign the other atom
-      ( ((*it_begin)->atom(1)).rsd() == ligand_seqpos_ ) ? add_constrained_lig_atom( ((*it_begin)->atom(1)).atomno() ) : add_constrained_lig_atom( ((*it_begin)->atom(2)).atomno() ) ;
-			  }
- 		}
-	}
+	constraint_reporter_.find_constraints_to_ligand( pose ); // delegate
 }
 
 core::Vector
 PredesignPerturbMover::find_rotation_center( core::pose::Pose const &pose )
 {
-	if ( constrained_lig_atoms_.size() != 0 ) {
+	if ( constraint_reporter_.constrained_lig_atoms().size() != 0 ) {
 		return find_geometric_center_for_constrained_lig_atoms( pose );
-	}
-	else { // Use geometric center of atoms
+	} else { // Use geometric center of atoms
 		core::Vector geometric_center( 0.0 );
-		core::conformation::Residue const & res( pose.residue(ligand_seqpos_) );
+		core::conformation::Residue const & res( pose.residue( constraint_reporter_.ligand_resno() ) );
 		for ( core::Size ii(1); ii <= res.natoms(); ++ii) {
 			geometric_center += res.xyz(ii);
 		}
@@ -220,22 +276,24 @@ core::Vector
 PredesignPerturbMover::find_geometric_center_for_constrained_lig_atoms(
 	core::pose::Pose const &pose)
 {
-	assert( constrained_lig_atoms_.size() != 0 );
+	assert( constraint_reporter_.constrained_lig_atoms().size() != 0 );
 
 	core::Vector geometric_center( 0.0 );
-  for( utility::vector1< core::Size >::const_iterator it = constrained_lig_atoms_.begin();
-				it != constrained_lig_atoms_.end(); ++it ){
-		geometric_center+=pose.residue(ligand_seqpos_).xyz(*it);
+	for( utility::vector1< core::Size >::const_iterator
+			it = constraint_reporter_.constrained_lig_atoms().begin();
+			it != constraint_reporter_.constrained_lig_atoms().end(); ++it ){
+		geometric_center+=pose.residue( constraint_reporter_.ligand_resno() ).xyz(*it);
 	}
 
-  geometric_center /= constrained_lig_atoms_.size();
+	geometric_center /= constraint_reporter_.constrained_lig_atoms().size();
 
-  return geometric_center;
+	return geometric_center;
 }
 
 void
 PredesignPerturbMover::apply(
-	core::pose::Pose & pose)
+	core::pose::Pose & pose
+)
 {
   //make a poly ala of the designable
  	protocols::enzdes::EnzdesBaseProtocolOP enzprot = new protocols::enzdes::EnzdesBaseProtocol();
@@ -275,6 +333,11 @@ PredesignPerturbMover::apply(
   reinstate_pose( pose, org_Pose );
 }
 
+void PredesignPerturbMover::set_ligand(core::Size res_no)
+{
+	constraint_reporter_.ligand_resno( res_no );
+}
+
 
 void
 PredesignPerturbMover::parse_my_tag(
@@ -287,7 +350,7 @@ PredesignPerturbMover::parse_my_tag(
 	trans_magnitude( tag -> getOption< core::Real >( "trans_magnitude", 0.1 ) );
 	rot_magnitude( tag -> getOption< core::Real >( "rot_magnitude", 2.0 ) );
 	dock_trials_ = tag -> getOption< core::Size >( "dock_trials", 100 );
-	ligand_seqpos_ = (core::Size) pose.fold_tree().downstream_jump_residue( pose.num_jump() );
+	constraint_reporter_.ligand_resno( (core::Size) pose.fold_tree().downstream_jump_residue( pose.num_jump() ));
 }
 
 protocols::moves::MoverOP

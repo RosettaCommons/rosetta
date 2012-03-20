@@ -1,0 +1,51 @@
+# cst constraint descriptor for 2-residue zinc binding sites
+
+#explicit ambiguity allows His/Asp/Glu to be tried at any/all positions
+
+#1
+####################################################################################################
+####################################################################################################
+
+#block 1 of 4
+VARIABLE_CST::BEGIN
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name: ZN V1 V2
+  TEMPLATE::   ATOM_MAP: 1 residue3:  ZNX
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: Nhis
+  TEMPLATE::   ATOM_MAP: 2 residue3:  HIS 
+ 
+  CONSTRAINT:: distanceAB:   2.05   0.10  10.0  0    
+  CONSTRAINT::    angle_A:   109.5  20.0  10.0  360. 
+  CONSTRAINT::    angle_B:   125.0  20.0  10.0  360. 
+  CONSTRAINT::  torsion_A:   0.0    20.0  10.0  15.0 
+  CONSTRAINT:: torsion_AB:   60.0   20.0  10.0  120.  
+  CONSTRAINT::  torsion_B:   0.0    20.0  10.0  180. 
+CST::END
+VARIABLE_CST::END
+
+
+#2
+####################################################################################################
+####################################################################################################
+
+#block 2 of 4
+VARIABLE_CST::BEGIN
+
+#Block 2 Asp/Glu
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name: ZN V2 V3
+  TEMPLATE::   ATOM_MAP: 1 residue3:  ZNX
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: OOC
+  TEMPLATE::   ATOM_MAP: 2 residue1:  ED
+ 
+  CONSTRAINT:: distanceAB:   2.05   0.10  10.0  0    
+  CONSTRAINT::    angle_A:   109.5  20.0  10.0  360. 
+  CONSTRAINT::    angle_B:   120.0  20.0  10.0  360. 
+  CONSTRAINT::  torsion_A:   0.0    20.0  10.0  15.0 
+  CONSTRAINT:: torsion_AB:   60.0   20.0  10.0  120.  
+  CONSTRAINT::  torsion_B:   0.0    20.0  10.0  180. 
+CST::END
+VARIABLE_CST::END
+

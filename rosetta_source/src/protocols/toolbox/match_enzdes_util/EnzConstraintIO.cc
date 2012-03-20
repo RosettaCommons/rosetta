@@ -133,8 +133,8 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 		line_stream >> key;
 
 		if( key == "VARIABLE_CST::BEGIN" ){
+			counted_blocks++; // APL MOD HERE
 			in_variable_block = true;
-			counted_blocks++;
 			mcfil = new toolbox::match_enzdes_util::MatchConstraintFileInfoList( restype_set_ );
 		}
 

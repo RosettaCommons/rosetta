@@ -22,7 +22,7 @@ namespace task_operations {
 class RestrictToInterfaceOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "RestrictToInterface"; }
+	virtual std::string keyname() const { return "RestrictToInterfaceOperation"; }
 };
 
 } //namespace protocols

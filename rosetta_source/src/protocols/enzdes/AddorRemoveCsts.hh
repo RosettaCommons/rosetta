@@ -58,7 +58,15 @@ public:
 
 	void apply( core::pose::Pose & pose );
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
+
+	// @brief Set the name of the constraint file. Overwrites the file name that might be read in during parse_my_tag.
+	void cstfile( std::string const & setting );
 
 	static
 	toolbox::match_enzdes_util::EnzConstraintIOCOP
@@ -73,12 +81,16 @@ protected:
 
 	toolbox::match_enzdes_util::EnzConstraintIOOP
 	get_EnzConstraintIO_for_cstfile(
-		std::string const cstfile );
+		std::string const cstfile
+	);
 
 private:
 
+	/// Save the contents of the constraint files that are read in for reuse.
 	static std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP > cstfile_map_;
-	std::string option_cstfile_, tag_cstfile_;
+
+	std::string option_cstfile_; // Read from options system if no user-defined constraint file is given.
+	std::string cstfile_; // May be set either by the parser or programmatically.
 	CstAction cst_action_;
 	bool keep_covalent_, accept_blocks_missing_header_, fail_on_constraints_missing_;
 

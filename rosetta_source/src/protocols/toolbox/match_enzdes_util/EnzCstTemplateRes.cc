@@ -269,6 +269,11 @@ void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
 
     if( std::find( allowed_res_types_.begin(), allowed_res_types_.end(), cur_res_name3 ) == allowed_res_types_.end() ){
       std::cerr << "Error: residue " << pose.residue( respos_it->first).name3() << respos_it->first << "found in pdb header is not allowed by data in cstfile." << std::endl;
+		std::cerr << "Allowed restypes:";
+		for ( utility::vector1< std::string >::const_iterator iter = allowed_res_types_.begin(); iter != allowed_res_types_.end(); ++iter ) {
+			std::cerr << " " << *iter;
+		}
+		std::cerr << std::endl;
       utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
     }
 

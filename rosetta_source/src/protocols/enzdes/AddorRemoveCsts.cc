@@ -62,7 +62,7 @@ AddOrRemoveMatchCstsCreator::mover_name()
 
 AddOrRemoveMatchCsts::AddOrRemoveMatchCsts()
 	: Mover("AddOrRemoveMatchCsts"),
-		option_cstfile_(""), tag_cstfile_(""),
+		option_cstfile_(""), cstfile_(""),
 		cst_action_(VOID), keep_covalent_(false),
 		accept_blocks_missing_header_(false), fail_on_constraints_missing_(true)
 {
@@ -82,7 +82,7 @@ AddOrRemoveMatchCsts::AddOrRemoveMatchCsts()
 
 AddOrRemoveMatchCsts::AddOrRemoveMatchCsts( AddOrRemoveMatchCsts const & other ) :
 	Mover( other ),
-	option_cstfile_(other.option_cstfile_), tag_cstfile_(other.tag_cstfile_),
+	option_cstfile_(other.option_cstfile_), cstfile_(other.cstfile_),
 	cst_action_(other.cst_action_), keep_covalent_(other.keep_covalent_),
 	accept_blocks_missing_header_(other.accept_blocks_missing_header_),
 	fail_on_constraints_missing_(other.fail_on_constraints_missing_),
@@ -106,10 +106,10 @@ AddOrRemoveMatchCsts::fresh_instance() const
 void
 AddOrRemoveMatchCsts::apply( core::pose::Pose & pose )
 {
-	std::string cstfile( tag_cstfile_ != "" ? tag_cstfile_ : option_cstfile_ );
+	std::string cstfile( cstfile_ != "" ? cstfile_ : option_cstfile_ );
 	//safety check for this function being called without a cstfile having been specified
 	if( (cstfile == "") && (cstfile_map_.size() == 0) ){
-		tr.Warning << "Warning: apply function of enzdes constraints mover called even though no cstfile has been specified on the commandline or in the tag. This function will have no effect." << std::endl;
+		tr.Warning << "Warning: apply function of enzdes constraints mover called even though no cstfile has been specified on the commandline, in the tag, or programmatically. This function will have no effect." << std::endl;
 		return;
 	}
 
@@ -139,23 +139,31 @@ AddOrRemoveMatchCsts::get_name() const {
 void
 AddOrRemoveMatchCsts::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-	tag_cstfile_ = tag->getOption<std::string>( "cstfile", "" );
-	if( (tag_cstfile_ == "") && ( option_cstfile_ == "" ) ){
-		tr.Warning << "WARNING: No name for the enzdes .cst file was specified in either the options or the xml tag. AddOrRemoveMatchCsts will turn into a null operation." << std::endl;
+	cstfile_ = tag->getOption<std::string>( "cstfile", "" );
+	if( (cstfile_ == "") && ( option_cstfile_ == "" ) ){
+		tr.Warning << "WARNING: No name for the enzdes .cst file was specified in either the options, the xml tag, or programatically. AddOrRemoveMatchCsts will turn into a null operation." << std::endl;
 	}
 
-		std::string cst_instruction = tag->getOption<std::string>( "cst_instruction", "void" );
-		if( cst_instruction == "add_new" ) cst_action_ = ADD_NEW;
-		else if( cst_instruction == "add_pregenerated") cst_action_ = ADD_PREGENERATED;
-		else if( cst_instruction == "remove" ) cst_action_ = REMOVE;
-		else{
-			utility_exit_with_message("Illegal or no value for cst_instruction in xml tag given. Has to be either 'add_new', 'add_pregenerated', or 'remove'.");
-		}
+	std::string cst_instruction = tag->getOption<std::string>( "cst_instruction", "void" );
+	if( cst_instruction == "add_new" ) cst_action_ = ADD_NEW;
+	else if( cst_instruction == "add_pregenerated") cst_action_ = ADD_PREGENERATED;
+	else if( cst_instruction == "remove" ) cst_action_ = REMOVE;
+	else{
+		utility_exit_with_message("Illegal or no value for cst_instruction in xml tag given. Has to be either 'add_new', 'add_pregenerated', or 'remove'.");
+	}
 
-		keep_covalent_ = tag->getOption<bool>( "keep_covalent", 0 );
-		accept_blocks_missing_header_ = tag->getOption<bool>( "accept_blocks_missing_header", 0 );
-		fail_on_constraints_missing_ = tag->getOption<bool>( "fail_on_constraints_missing", 1 );
+	keep_covalent_ = tag->getOption<bool>( "keep_covalent", 0 );
+	accept_blocks_missing_header_ = tag->getOption<bool>( "accept_blocks_missing_header", 0 );
+	fail_on_constraints_missing_ = tag->getOption<bool>( "fail_on_constraints_missing", 1 );
 }
+
+void
+AddOrRemoveMatchCsts::cstfile( std::string const & setting )
+{
+	cstfile_ = setting;
+}
+
+
 
 toolbox::match_enzdes_util::EnzConstraintIOCOP
 AddOrRemoveMatchCsts::get_const_EnzConstraintIO_for_cstfile( std::string cstfile )

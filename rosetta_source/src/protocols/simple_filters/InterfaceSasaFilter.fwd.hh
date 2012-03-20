@@ -14,11 +14,15 @@
 #ifndef INCLUDED_protocols_simple_filters_InterfaceSasaFilter_fwd_hh
 #define INCLUDED_protocols_simple_filters_InterfaceSasaFilter_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 class InterfaceSasaFilter;
+
+typedef utility::pointer::owning_ptr< InterfaceSasaFilter > InterfaceSasaFilterOP;
+typedef utility::pointer::owning_ptr< InterfaceSasaFilter const > InterfaceSasaFilterCOP;
 
 }
 }

@@ -100,13 +100,13 @@ public:
 
 	virtual TaskOperationOP clone() const;
 
-/// @brief if resid_ is zero, will apply RestrictAbsentCanonicalAAs to all residues
-/// in the pose. O/w only to resid_
+	/// @brief if resid_ is zero, will apply RestrictAbsentCanonicalAAs to all residues
+	/// in the pose. O/w only to resid_
 	virtual
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
 
- /// @brief a human-readible string-based mutator
+	/// @brief a human-readible string-based mutator
 	void keep_aas( std::string const keep_aas );
 	/// @brief direct vector1-basd mutator
 	void keep_aas( utility::vector1< bool > keep_aas );
@@ -511,12 +511,13 @@ public:
 	typedef TaskOperation parent;
 public:
 	ExtraRotamers();
-	ExtraRotamers( core::Size const resid, core::Size const chi );
+	ExtraRotamers( core::Size const resid, core::Size const chi, core::Size level = 1 );
 	virtual ~ExtraRotamers();
 	virtual TaskOperationOP clone() const;
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
+	virtual void parse_tag( TagPtr );
 private:
-	core::Size resid_, chi_;
+	core::Size resid_, chi_, level_;
 };
 
 /// @brief ExtraChiCutoff (correponding to flag "-extrachi_cutoff <float>" )
@@ -530,6 +531,7 @@ public:
 	virtual ~ExtraChiCutoff();
 	virtual TaskOperationOP clone() const;
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
+	virtual void parse_tag( TagPtr );
 private:
 	core::Size resid_, extrachi_cutoff_;
 };

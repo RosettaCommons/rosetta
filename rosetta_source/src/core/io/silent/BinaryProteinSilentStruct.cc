@@ -262,7 +262,6 @@ bool BinaryProteinSilentStruct::init_from_lines(
 		std::istringstream line_stream( *iter );
 		std::string tag;
 		tr.Debug << "reading sequence from " << *iter << std::endl;
-		++iter;
 
 		std::string temp_seq;
 		line_stream >> tag >> temp_seq;
@@ -275,6 +274,10 @@ bool BinaryProteinSilentStruct::init_from_lines(
 		sequence( temp_seq );
 
 		// second line is a list of score names
+		++iter;
+		if ( iter == lines.end() ) {
+			utility_exit_with_message( "While reading binary silent structure, encountered end of structure too early after reading the 'SEQUENCE' line" );
+		}
 		std::istringstream score_line_stream( *iter );
 		tr.Debug << "reading score names from " << *iter << std::endl;
 		++iter;
@@ -438,8 +441,7 @@ bool BinaryProteinSilentStruct::init_from_lines(
 				if (bitflip ) {
 					swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 				}
-			}
-
+ 			}
 			if ( !symmetry_info()->get_use_symmetry() || currpos <=symmetry_info()->num_independent_residues()  ) {
 				// always run this if we're not dealing with a symmetric pose, or, if we're dealing with a symmetric pose
 				// and we're still reading in data for the assymetric unit.  But if we're reading in a symmetric pose

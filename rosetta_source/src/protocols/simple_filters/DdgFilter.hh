@@ -34,12 +34,8 @@ public:
 	DdgFilter();
 	DdgFilter( core::Real const ddg_threshold, core::scoring::ScoreFunctionCOP scorefxn, core::Size const rb_jump=1, core::Size const repeats=1, bool const symmetry=false );
 	bool apply( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
-		return new DdgFilter( *this );
-	}
-	filters::FilterOP fresh_instance() const{
-		return new DdgFilter();
-	}
+	filters::FilterOP clone() const;
+	filters::FilterOP fresh_instance() const;
 
 	void repack( bool const repack );
 	bool repack() const;

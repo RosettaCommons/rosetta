@@ -30,42 +30,46 @@ class CoordinateCst : public protocols::moves::Mover
 public:
 	typedef core::pose::Pose Pose;
 				
-	public:
-				CoordinateCst();
-										
-				void apply( core::pose::Pose & pose );
-				virtual std::string get_name() const;
-				virtual protocols::moves::MoverOP clone() const;
-        virtual protocols::moves::MoverOP fresh_instance() const;
-			
-				void parse_my_tag( utility::tag::TagPtr const tag,
-								  protocols::moves::DataMap &,
-								  protocols::filters::Filters_map const &,
-								  protocols::moves::Movers_map const &,
-								  core::pose::Pose const & );
+public:
+	CoordinateCst();
 							
-				virtual ~CoordinateCst();
-	
-				private:
-					/// stedev for the constraint function
-					core::Real stddev_;
-					/// residue number to which the coordinate constraints are anchored to
-					/// stored as string, parsed at runtime
-					std::string anchor_res_;				
-					/// whether to use the jump to determine the anchor residue
-					bool use_jumps_;
-					/// vector with list of residues numbers that will getcoordinate constraints.
-					/// they are parsed during runtime to be compatible with pose length changes
-					std::string unparsed_residue_;
-        	///container for spans of residues that will get coordinate constraints
-        	utility::vector1 < std::pair < std::string, std::string > >  span_vector_;
-					///which jump atom pair to choose when the anchor residue should be part of the jump atoms
-					core::Size jump_;
-					///which atom id to place the constraint onto
-					std::string atom_id_;
+	void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-			};
-		} //seeded_abinitio
+	void parse_my_tag( utility::tag::TagPtr const tag,
+		protocols::moves::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
+
+	virtual ~CoordinateCst();
+
+private:
+	/// stedev for the constraint function
+	core::Real stddev_;
+	/// residue number to which the coordinate constraints are anchored to
+	/// stored as string, parsed at runtime
+	std::string anchor_res_;				
+	/// whether to use the jump to determine the anchor residue
+	bool use_jumps_;
+	/// vector with list of residues numbers that will getcoordinate constraints.
+	/// they are parsed during runtime to be compatible with pose length changes
+	std::string unparsed_residue_;
+	///container for spans of residues that will get coordinate constraints
+	utility::vector1 < std::pair < std::string, std::string > >  span_vector_;
+	///which jump atom pair to choose when the anchor residue should be part of the jump atoms
+	core::Size jump_;
+
+	/// which atom on the anchor residue to place the constraint onto
+	std::string anchor_atom_id_;
+
+	///which atom id on the moving residue to place the constraint onto
+	std::string atom_id_;
+
+};
+} //seeded_abinitio
 } // protocols
 
 #endif 

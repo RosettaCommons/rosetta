@@ -45,10 +45,17 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 BuriedUnsatHbondFilter::~BuriedUnsatHbondFilter(){}
 
 void
-BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & datamap, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
+
+	std::string const scorefxn_key( tag->getOption<std::string>("scorefxn") );
+	if ( datamap.has( "scorefxns", scorefxn_key ) ) {
+		sfxn_ = datamap.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_key );
+	} else {
+		sfxn_ = core::scoring::getScoreFunction();
+	}
 
 	buried_unsat_hbond_filter_tracer<<"Buried Unsatisfied Hbond filter over jump number " << jump_num_ << " with cutoff " << upper_threshold_ << std::endl;
 }
@@ -99,23 +106,30 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		trans_mover.trans_axis( trans_mover.trans_axis() );
 		trans_mover.step_size(unbound_dist);
 		trans_mover.apply( unbound );
-		unbound.update_residue_neighbors();
+		//unbound.update_residue_neighbors();
+		(*sfxn_)(unbound ); // score the new pose, or we get assertion erros.
 	}
 
 	basic::MetricValue< core::Size > mv_bound, mv_unbound;
+	basic::MetricValue< std::string > mv_bound_str, mv_unbound_str;
 
 	using namespace protocols::toolbox::pose_metric_calculators;
 	// Despite the name, it's counting H-bonders, not any old polars.
 	BuriedUnsatisfiedPolarsCalculator calc_bound("default", "default"), calc_unbound("default", "default");
 	calc_bound.get("all_bur_unsat_polars", mv_bound, bound);
+	std::string bound_string = calc_bound.get( "residue_bur_unsat_polars", bound );
+	buried_unsat_hbond_filter_tracer << "BOUND: " << bound_string << std::endl;
 
 	core::Real unsat_hbonds( 0.0 );
 	if( jump_num_ ) {
 		calc_unbound.get("all_bur_unsat_polars", mv_unbound, unbound);
 		unsat_hbonds = mv_bound.value() - mv_unbound.value();
 		buried_unsat_hbond_filter_tracer << "unbound_unsat=" << mv_unbound.value() << "    " << "bound_unsat=" << mv_bound.value() << std::endl;
+		std::string unbound_string = calc_unbound.get( "residue_bur_unsat_polars", unbound );
+		buried_unsat_hbond_filter_tracer << "UNBOUND: " << unbound_string << std::endl;
 	}
 	else unsat_hbonds = mv_bound.value();
+
 
 	return( unsat_hbonds );
 }

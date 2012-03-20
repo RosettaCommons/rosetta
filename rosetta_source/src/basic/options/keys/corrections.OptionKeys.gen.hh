@@ -25,6 +25,7 @@ namespace corrections { extern BooleanOptionKey const corrections; }
 namespace corrections { extern BooleanOptionKey const correct; }
 namespace corrections { namespace score { extern BooleanOptionKey const score; } }
 namespace corrections { namespace score { extern BooleanOptionKey const no_his_his_pairE; } }
+namespace corrections { namespace score { extern BooleanOptionKey const no_his_DE_pairE; } }
 namespace corrections { namespace score { extern BooleanOptionKey const hbond_His_Phil_fix; } }
 namespace corrections { namespace score { extern BooleanOptionKey const helix_hb_06_2009; } }
 namespace corrections { namespace score { extern BooleanOptionKey const use_incorrect_hbond_deriv; } }

@@ -58,6 +58,13 @@ DdgFilter::DdgFilter() :
 
 DdgFilter::~DdgFilter() {}
 
+filters::FilterOP DdgFilter::clone() const {
+	return new DdgFilter( *this );
+}
+filters::FilterOP DdgFilter::fresh_instance() const{
+	return new DdgFilter();
+}
+
 void
 DdgFilter::repack( bool const repack )
 {
@@ -145,8 +152,7 @@ DdgFilter::compute( core::pose::Pose const & pose ) const {
 			ddg.report_ddG( TR );
 		}
 		return average / (core::Real)repeats_;
-	}
-	else{
+	} else {
 		if( repeats() > 1 && !repack() )
 			utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
 		using namespace protocols::moves;

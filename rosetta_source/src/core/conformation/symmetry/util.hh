@@ -74,7 +74,6 @@ symmetrize_fold_tree( core::conformation::Conformation const &conf, kinematics::
 void
 set_asymm_unit_fold_tree( core::conformation::Conformation &p, kinematics::FoldTree const &f);
 
-
 int
 residue_center_of_mass(
 	conformation::Conformation const & conformation,
