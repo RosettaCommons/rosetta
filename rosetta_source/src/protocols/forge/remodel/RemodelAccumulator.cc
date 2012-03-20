@@ -14,6 +14,7 @@
 
 // unit headers
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
+#include <protocols/forge/methods/util.hh>
 
 // package headers
 
@@ -237,6 +238,10 @@ core::Size RemodelAccumulator::recover_checkpoint()
 					}
 					std::cout << "linking " << count << " residue pairs" << std::endl;
 				}
+
+				if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){ //all processes/constraints has to be applied to checkpointed files
+		      protocols::forge::methods::cyclize_pose(dummyPose);
+		    }
 
 				this->apply(dummyPose);
 

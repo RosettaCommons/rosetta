@@ -24,6 +24,7 @@
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
@@ -237,19 +238,21 @@ RotamerSets::build_rotamers(
 					}
 
 					//debug	connectivity
-					//std::cout << "resconn1: " << cloneRes->connected_residue_at_resconn( 1 ) << " ";
-					//std::cout	<< cloneRes->residue_connection_conn_id(1);
-					//std::cout << " resconn2: " << cloneRes->connected_residue_at_resconn( 2 ) << " ";
-					//std::cout << cloneRes->residue_connection_conn_id(2);
-					//std::cout << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << (*itr)->seqpos() << std::endl;
+				  //std::cout << "resconn1: " << cloneRes->connected_residue_at_resconn( 1 ) << " ";
+				  //std::cout	<< cloneRes->residue_connection_conn_id(1);
+				  //std::cout << " resconn2: " << cloneRes->connected_residue_at_resconn( 2 ) << " ";
+				  //std::cout << cloneRes->residue_connection_conn_id(2);
+				  //std::cout << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << (*itr)->seqpos() << std::endl;
 
 					using namespace core::chemical;
 
-					if (copies[jj]==1){
+					//if pose is cyclic, it'll have cutpoint variants; in those cases,
+					//leave alone
+					if (copies[jj]==1 && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_UPPER)) {
 						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
 						//std::cout << cloneRes->name()  << " of variant type lower? " << cloneRes->has_variant_type("LOWER_TERMINUS") << std::endl;
 					}
-					if (copies[jj]==pose.total_residue()){
+					if (copies[jj]==pose.total_residue() && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_LOWER)){
 						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
 						//std::cout << cloneRes->name() << " of variant type upper? " << cloneRes->has_variant_type("UPPER_TERMINUS") <<  std::endl;
 					}

@@ -453,9 +453,16 @@ void RemodelLoopMover::apply( Pose & pose ) {
 					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 		  }
 */
+
+/*   If want cyclize peptide in frag insertion, uncomment here.  But in
+ *   practice, it seems to screw up more than helping.  So currently do
+ *   fragment insertion without cyclizing pose, and only enforce this in
+ *   refinement stage
+
 		if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
 			protocols::forge::methods::cyclize_pose(repeat_pose_);
 		}
+*/
 
 	}
 

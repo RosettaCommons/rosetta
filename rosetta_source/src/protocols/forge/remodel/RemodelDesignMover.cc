@@ -93,18 +93,15 @@ RemodelDesignMover::RemodelDesignMover(RemodelData const & remodel_data, Remodel
 	std::set< core:: Size > und_pos;
 
   std::set< core::Size > uup = working_model.manager.union_of_intervals_containing_undefined_positions();
-//  for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
-//	    TR << *i <<  " UUP in DesignMover" <<  std::endl;
- // }
 
 	if (option[ OptionKeys::remodel::repeat_structure].user()){
 		Size repeatCount = option[ OptionKeys::remodel::repeat_structure];
 		for (int rep = 0; rep < repeatCount ; rep++){
 			for (std::set< core::Size >::iterator it = uup.begin(); it != uup.end(); ++it){
 			//DEBUG
-				//std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
-	//			std::cout << "manger size"  << working_model.manager.union_of_intervals_containing_undefined_positions().size() <<  std::endl;
-	//			std::cout << *it  << std::endl;
+			//	std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
+			//	std::cout << "manger size"  << working_model.manager.union_of_intervals_containing_undefined_positions().size() <<  std::endl;
+			//	std::cout << *it  << std::endl;
 				und_pos.insert(*it + remodel_data.blueprint.size()*rep);
 			}
 		}
@@ -188,44 +185,43 @@ void RemodelDesignMover::apply( Pose & pose )
 	}
 
 	if (!strcmp(state_.c_str(), "stage")){
-    if (!basic::options::option[basic::options::OptionKeys::remodel::design::skip_partial].user()){
-			reduce_task(pose, working_model_.task, true, true, false);
+		if (manual){
+			//do nothing
+		}
+		else {  //auto build always reduce task
+
+			if (!basic::options::option[basic::options::OptionKeys::remodel::design::skip_partial].user()){
+				reduce_task(pose, working_model_.task, true, true, false);
+			}
+			else {
+				reduce_task(pose, working_model_.task, true, true, true);
+			}
 		}
 	}
 	else if (!strcmp(state_.c_str(), "finish")){
+		if (manual){
+			//do nothing
+		}
+		else {
 		// if finishing design, no need to reduce, but require resetting positios
-		//reduce_task(pose, working_model_.task, true, true, true);
+    //if (!basic::options::option[basic::options::OptionKeys::remodel::design::skip_partial].user()){
+			reduce_task(pose, working_model_.task, true, true, true);
+		}
 	}
 
-/*
-	//mode4_packertask(pose);
-	//mode5_packertask(pose);
-	//mode6_packertask(pose);
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
-	core::pack::pack_rotamers(pose, *scorefxn , working_model_.task);
-
-	mode5_packertask(pose);
-	core::pack::pack_rotamers(pose, *scorefxn , working_model_.task);
-	mode5_packertask(pose);
-	core::pack::pack_rotamers(pose, *scorefxn , working_model_.task);
-*/
-/*
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
-	if (basic::options::option[basic::options::OptionKeys::packing::soft_rep_design]){
-			TR << "SWITCHING REMODEL DESIGN MOVER SCOREFUNCTION TO SOFT_REP_DESIGN" << std::endl;
-			scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::SOFT_REP_DESIGN_WTS);
-	}
-	*/
 	//debug
-	//	score_fxn_->show(TR, pose);
+	TR.Debug << working_model_.task->task_string(pose) << std::endl;
+	TR.Debug << *working_model_.task << std::endl;
+
 	core::pack::pack_rotamers(pose, *score_fxn_ , working_model_.task);
 	score_fxn_->show(TR, pose);
-	TR<< std::endl;
+	TR << std::endl;
+
 // pose.dump_pdb("junkCheck.pdb");
 //	core::pack::pack_rotamers(pose, *scorefxn , working_model_.task);
 //	core::pack::pack_rotamers(pose, *scorefxn , working_model_.task);
- // core::pack::task::TaskFactoryOP TF = new core::pack::task::TaskFactory;
-  //TF->create_packer_task(pose);
+// core::pack::task::TaskFactoryOP TF = new core::pack::task::TaskFactory;
+//TF->create_packer_task(pose);
 //	core::pack::pack_rotamers(pose, *scorefxn , TF->create_packer_task(pose));
 //	core::pack::pack_rotamers(pose, *scorefxn , TF->create_packer_task(pose));
 //	core::pack::pack_rotamers(pose, *scorefxn , TF->create_packer_task(pose));
@@ -270,7 +266,7 @@ run_calculator(
 	//TR << "runCAlculator " << std::endl;
   //insert this into the vector
   for(SizeSet::const_iterator it(sizeset.begin()), end(sizeset.end()) ; it != end; ++it){
-   // TR << *it <<  " debug run_calc " << std::endl;
+    //TR << *it <<  " debug run_calc " << std::endl;
     residues[*it] = true;  }
 
   return;
@@ -309,13 +305,19 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	utility::vector1<Size> boundaryPos;
 	utility::vector1<Size> surfPos;
 
-	Size CORE_CUTOFF=15;
-	Size BOUNDARY_CUTOFF=10;
+	Size CORE_CUTOFF = option[ OptionKeys::remodel::core_cutoff ];
+	Size BOUNDARY_CUTOFF = option[ OptionKeys::remodel::boundary_cutoff ];
 
 	//get num_neighbors for each position
 	basic::MetricValue< std::map< core::Size, core::Size > >nbr_map;
 	pose.metric("reducetask_calc", "num_neighbors_map", nbr_map);
   std::map< core::Size, core::Size > sizemap=nbr_map.value();
+
+		TR.Debug << "sizemap content " << sizemap.size() << std::endl;
+
+	for (std::map< core::Size, core::Size>::iterator it= sizemap.begin(); it!=sizemap.end(); it++){
+		TR.Debug << "neighborlist " << (*it).first << " " <<  (*it).second << std::endl;
+	}
 
 	if (option[ OptionKeys::remodel::repeat_structure].user()){
 
@@ -337,6 +339,8 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 					visited[ copies[jj] ] = true;
 
+					TR.Debug << "sizemap in repeat decision " << copies[jj] << " " << sizemap[ copies[jj] ] << std::endl;
+
 					//take the counts for each set
 					if ( sizemap[ copies[jj] ] >= CORE_CUTOFF){
 						coreCount++;
@@ -351,28 +355,28 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 			//assign
 			if (coreCount > 0) { //if any of them is core, turn everythign to core
-				//TR.trace << "core: ";
+				//std::cout << "core: ";
 				for (unsigned jj = 1; jj <= copies.size(); ++jj){
 					corePos.push_back(copies[jj]);
-				//TR.trace << copies[jj] << " " ;
+				//std::cout << copies[jj] << " " ;
 				}
-				//TR.trace << std::endl;
+				//std::cout << std::endl;
 			}
 			else if (coreCount == 0 && boundaryCount > 0){
-				//TR.trace << "boundary: ";
+				//std::cout << "boundary: ";
 				for (unsigned jj = 1; jj <= copies.size(); ++jj){
 					boundaryPos.push_back(copies[jj]);
-				//TR.trace << copies[jj] << " " ;
+				//std::cout << copies[jj] << " " ;
 				}
-				//TR.trace << std::endl;
+				//std::cout << std::endl;
 			}
 			else if (coreCount == 0 && boundaryCount == 0){
-				//TR.trace << "surf: ";
+				//std::cout << "surf: ";
 				for (unsigned jj = 1; jj <= copies.size(); ++jj){
 					surfPos.push_back(copies[jj]);
-				//TR.trace << copies[jj] << " " ;
+				//std::cout << copies[jj] << " " ;
 				}
-				//TR.trace << std::endl;
+				//std::cout << std::endl;
 			}
 			else {
 				TR << "no idea what kind of scenario this would be" << std::endl;
@@ -403,13 +407,13 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 /*
 		//debug:
 		for (utility::vector1<Size>::iterator it= corePos.begin(), end=corePos.end(); it!=end; it++){
-			TR << "DEBUG: core positions:" << *it << std::endl;
+			TR.Debug << "DEBUG: core positions:" << *it << std::endl;
 		}
 		for (utility::vector1<Size>::iterator it= boundaryPos.begin(), end=boundaryPos.end(); it!=end; it++){
-			TR << "DEBUG: boundary positions:" << *it << std::endl;
+			TR.Debug << "DEBUG: boundary positions:" << *it << std::endl;
 		}
 		for (utility::vector1<Size>::iterator it= surfPos.begin(), end=surfPos.end(); it!=end; it++){
-			TR << "DEBUG: surface positions:" << *it << std::endl;
+			TR.Debug << "DEBUG: surface positions:" << *it << std::endl;
 		}
 */
 		//build new reduced task
@@ -537,15 +541,21 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 //manual overwrite of the disulfide mobile range
 	if (remodel_data_.disulfMobileRange.size() != 0){
+
 		int i = 1;
+
 		for (utility::vector1_bool::iterator itr=modeled_clusters.begin(), end=modeled_clusters.end();  itr !=end; itr++){
+
 			*itr = false;
+
 			if ( i == remodel_data_.disulfMobileRange[0] ){
 				*itr=true;
 				TR << "Use disulf mobile range start: " << i << std::endl;
-		 	} else if (i > remodel_data_.disulfMobileRange[0] && i < remodel_data_.disulfMobileRange[1]){
+			}
+			else if (i > remodel_data_.disulfMobileRange[0] && i < remodel_data_.disulfMobileRange[1]){
         *itr=true;
-			} else if ( i == remodel_data_.disulfMobileRange[1] ){
+			}
+			else if ( i == remodel_data_.disulfMobileRange[1] ){
 				*itr=true;
 				TR << "Use disulf mobile range stop: " << i << std::endl;
 			}
@@ -557,7 +567,8 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	Size i=1;
 	for (utility::vector1_bool::iterator itr=modeled_clusters.begin(), end=modeled_clusters.end();  itr !=end; itr++){
 	//TR << *itr<< std::endl;
-		if (modeled_clusters[i] == 0 && residue_clusters[i] == 1) {
+//		if (modeled_clusters[i] == 0 && residue_clusters[i] == 1) {
+		if ( residue_clusters[i] == 1) {
 	//		TR << "neighbor " << i <<  std::endl;
 			nbr_res.push_back(i);
 		}

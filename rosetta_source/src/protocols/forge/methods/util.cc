@@ -26,6 +26,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
 #include <core/graph/DisjointSets.hh>
 #include <core/id/types.hh>
 #include <core/types.hh>
@@ -502,7 +503,9 @@ fill_non_loop_cst_set(
 			if(in == 0) in = pose.n_residue();
 			numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
 			numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
-			pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
+			if (pose.residue(i).name3() != "PRO"){
+				pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
+			}
 		}
 	}
 
@@ -513,6 +516,7 @@ void cyclize_pose(core::pose::Pose & pose) {
 	using namespace core::scoring::constraints;
 	using namespace chemical;
 	using core::id::AtomID;
+	//pose.conformation().show_residue_connections();
   Size N = pose.n_residue();
   for(Size i = 1; i <= N; ++i) {
     if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
@@ -520,10 +524,73 @@ void cyclize_pose(core::pose::Pose & pose) {
     if(pose.residue(i).has_variant_type(CUTPOINT_UPPER)) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_UPPER,i);
     if(pose.residue(i).has_variant_type(CUTPOINT_LOWER)) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_LOWER,i);
   }
-  if(!pose.residue(1).has_variant_type(CUTPOINT_UPPER)) core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_UPPER,1);
-  if(!pose.residue(N).has_variant_type(CUTPOINT_LOWER)) core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_LOWER,N);
+  if(!pose.residue(1).has_variant_type(CUTPOINT_UPPER)) {
+		core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_UPPER,1);
+		/*
+		//make connection
+		conformation::ResidueOP cloneRes = new conformation::Residue(*pose.residue(1).clone());
+
+		cloneRes->residue_connection_partner(1, N, 2);
+		cloneRes->residue_connection_partner(2, 2, 1);
+
+		pose.replace_residue(1, *cloneRes, false);
+		*/
+
+	}
+  if(!pose.residue(N).has_variant_type(CUTPOINT_LOWER)) {
+		core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_LOWER,N);
+		/*
+		//make connection
+		conformation::ResidueOP cloneRes = new conformation::Residue(*pose.residue(N).clone());
+
+		cloneRes->residue_connection_partner(1, N-1, 2);
+		cloneRes->residue_connection_partner(2, 1, 1);
+
+		pose.replace_residue(N, *cloneRes, false);
+		*/
+	}
   pose.conformation().declare_chemical_bond( 1, "N", N, "C" );
   fixH(pose);
+
+	pose.conformation().update_polymeric_connection(1);
+
+//	conformation::ResidueOP cloneRes2 = new conformation::Residue(*pose.residue(2).clone());
+//	cloneRes2->residue_connection_partner(1, 1, 2);
+//	cloneRes2->residue_connection_partner(2, 3, 1);
+//std::cout << "resconn1CR2: " << cloneRes2->connected_residue_at_resconn( 1 ) << " ";
+//        std::cout << cloneRes2->residue_connection_conn_id(1);
+//        std::cout << " resconn2: " << cloneRes2->connected_residue_at_resconn( 2 ) << " ";
+//        std::cout << cloneRes2->residue_connection_conn_id(2);
+//        std::cout << " seqpos: " << cloneRes2->seqpos() << std::endl;
+//
+//	pose.replace_residue(2, *cloneRes2, false);
+//	pose.conformation().update_polymeric_connection(2);
+//std::cout << "resconn1PR2: " << pose.residue(2).connected_residue_at_resconn( 1 ) << " ";
+//         std::cout << pose.residue(2).residue_connection_conn_id(1);
+//         std::cout << " resconn2: " << pose.residue(2).connected_residue_at_resconn( 2 ) << " ";
+//         std::cout << pose.residue(2).residue_connection_conn_id(2);
+//         std::cout << " seqpos: " << pose.residue(2).seqpos() << std::endl;
+
+	/*
+	//make connection
+	conformation::ResidueOP cloneRes1 = new conformation::Residue(*pose.residue(1).clone());
+//	conformation::ResidueOP cloneResN = new conformation::Residue(*pose.residue(N).clone());
+
+	cloneRes1->residue_connection_partner(1, N, 2);
+	cloneRes1->residue_connection_partner(2, 2, 1);
+//	cloneRes1->residue_connection_partner(2, N, 2);
+	cloneRes2->residue_connection_partner(1, 1, 2);
+	cloneRes2->residue_connection_partner(2, 3, 1);
+//	cloneResN->residue_connection_partner(1, N-1, 2);
+//	cloneResN->residue_connection_partner(2, 1, 1);
+
+	pose.replace_residue(1, *cloneRes1, false);
+	pose.replace_residue(2, *cloneRes2, false);
+//	pose.replace_residue(N, *cloneResN, false);
+*/
+
+//	pose.conformation().show_residue_connections();
+
   using namespace core::scoring::constraints;
   AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
   AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );

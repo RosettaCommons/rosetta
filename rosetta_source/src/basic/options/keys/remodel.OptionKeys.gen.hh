@@ -57,6 +57,8 @@ namespace remodel { extern IntegerOptionKey const dr_cycles; }
 namespace remodel { extern IntegerOptionKey const two_chain_tree; }
 namespace remodel { extern IntegerOptionKey const repeat_structure; }
 namespace remodel { extern BooleanOptionKey const cen_minimize; }
+namespace remodel { extern IntegerOptionKey const core_cutoff; }
+namespace remodel { extern IntegerOptionKey const boundary_cutoff; }
 namespace remodel { namespace domainFusion { extern BooleanOptionKey const domainFusion; } }
 namespace remodel { namespace domainFusion { extern FileOptionKey const insert_segment_from_pdb; } }
 namespace remodel { extern RealOptionKey const vdw; }

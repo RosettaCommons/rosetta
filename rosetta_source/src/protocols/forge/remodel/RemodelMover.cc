@@ -643,7 +643,7 @@ if (working_model.manager.size()!= 0){
 		}
 		else {
 
-			if (option[ OptionKeys::remodel::repeat_structure].user() || option[ OptionKeys::remodel::cen_minimize]) {
+			if (option[ OptionKeys::remodel::cen_minimize]) {
 
 				core::kinematics::MoveMapOP cmmop = new core::kinematics::MoveMap;
 				//pose.dump_pdb("pretest.pdb");
@@ -1134,6 +1134,13 @@ bool RemodelMover::design_refine_seq_relax(
 		//update dihedral constraint for repeat structures
 		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			setup_ncs.apply(pose);
+
+			//total hack (for now), see if the restypeset fails when initialized
+			//twice.
+			if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+		     protocols::forge::methods::cyclize_pose(pose);
+		  }
+
 			sfx->show(TR, pose);
 			TR << std::endl;
 		}

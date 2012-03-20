@@ -211,6 +211,8 @@ namespace remodel { IntegerOptionKey const dr_cycles( "remodel:dr_cycles" );  }
 namespace remodel { IntegerOptionKey const two_chain_tree( "remodel:two_chain_tree" );  }
 namespace remodel { IntegerOptionKey const repeat_structure( "remodel:repeat_structure" );  }
 namespace remodel { BooleanOptionKey const cen_minimize( "remodel:cen_minimize" );  }
+namespace remodel { IntegerOptionKey const core_cutoff( "remodel:core_cutoff" );  }
+namespace remodel { IntegerOptionKey const boundary_cutoff( "remodel:boundary_cutoff" );  }
 namespace remodel { namespace domainFusion { BooleanOptionKey const domainFusion( "remodel:domainFusion" );  } }
 namespace remodel { namespace domainFusion { FileOptionKey const insert_segment_from_pdb( "remodel:domainFusion:insert_segment_from_pdb" );  } }
 namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }
