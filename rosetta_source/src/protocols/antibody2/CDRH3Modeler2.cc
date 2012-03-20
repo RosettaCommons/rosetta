@@ -91,7 +91,8 @@
 
 #include <protocols/antibody2/Ab_util.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.hh>
-
+#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/Ab_H3_cter_insert_mover.hh>
 
 
 
@@ -142,6 +143,12 @@ void CDRH3Modeler2::init(
 
 
     
+    if( is_camelid_ && !ab_info_->is_extended() && !ab_info_->is_kinked() ){
+        c_ter_stem_ = 0;
+    }
+    
+    
+    
 	lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 	lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
 	// adding constraints
@@ -158,9 +165,7 @@ void CDRH3Modeler2::init(
 }
 
     
-void CDRH3Modeler2::setup_objects(){
 
-}
     
 
     
@@ -169,6 +174,7 @@ CDRH3Modeler2::~CDRH3Modeler2() {}
     
 void CDRH3Modeler2::set_default()
 {
+    do_cter_insert_ = true;
 	benchmark_ = false;
 	cen_cst_ = 10.0;
 	high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
@@ -183,10 +189,35 @@ void CDRH3Modeler2::set_default()
 	dle_flag_ = true;
 	refine_input_loop_ = true;
 	is_camelid_ = false;
+    c_ter_stem_ = 3;
+    max_cycle_ = 20;
+    
+    // size of loop above which 9mer frags are used
+	cutoff_9_ = 16; // default 16
+    
+    // size of loop above which 3mer frags are used
+	cutoff_3_ = 6; // default 6
 
+    
+    //TODO:
+    //JQX:
+    //if one decides to insert c_terminal first, it means the h3 loop has 3 less residues
+    //should one change the creteria of cutoff_3_ and cutoff_9_?
+    
+    
 	TR << "Finished Setting Defaults" << std::endl;
 } 
 
+    
+    
+    
+void CDRH3Modeler2::setup_objects(){
+    h3_cter_insert_mover_ = new Ab_H3_cter_insert_mover(ab_info_, is_camelid_);
+    h3_perturb_ccd_build_ = new Ab_H3_perturb_ccd_build(current_loop_is_H3_,H3_filter_,is_camelid_, ab_info_ );        
+}
+    
+    
+    
     
     
 void CDRH3Modeler2::set_lowres_score_func( scoring::ScoreFunctionOP lowres_scorefxn ) {
@@ -198,13 +229,13 @@ void CDRH3Modeler2::set_highres_score_func(scoring::ScoreFunctionOP highres_scor
 }
 
     
+
     
     
-//################################################
-//###########  apply function ####################
-//################################################
+
 void CDRH3Modeler2::apply( pose::Pose & pose_in )
 {
+    
 
     TR << "Applying CDR H3 modeler" << std::endl;
 
@@ -216,14 +247,25 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
     setup_packer_task( pose_in, tf_ );
     pose::Pose start_pose = pose_in;
 
-    //camelid	if( is_camelid_ && !ab_info_.is_extended() && !ab_info_.is_kinked() )
-    //camelid		c_ter_stem_ = 0;
+
 
     Size framework_loop_begin( ab_info_->get_CDR_loop("h3")->start() );
     Size framework_loop_end  ( ab_info_->get_CDR_loop("h3")->stop()  );
     Size cutpoint = framework_loop_begin + 1;
+    Size framework_loop_size = (framework_loop_end - framework_loop_begin) + 1;
 
+    
+    
     loops::Loop cdr_h3( framework_loop_begin, framework_loop_end, cutpoint, 0, true );
+    loops::Loop trimmed_cdr_h3(framework_loop_begin, framework_loop_end - c_ter_stem_, cutpoint, 0, true );
+    loops::Loop input_loop;
+    if (do_cter_insert_){
+        input_loop = trimmed_cdr_h3;
+    }
+    else{
+        input_loop = cdr_h3;
+    }
+        
 
     simple_one_loop_fold_tree( pose_in, cdr_h3 );
 
@@ -231,33 +273,109 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
     simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
     simple_moves::SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
 
+    
+    
     // Building centroid mode loop
-    if( apply_centroid_mode_ ) {
-        to_centroid.apply( pose_in );
-        //#############################
-        Ab_H3_perturb_ccd_build ab_h3_perturb_ccd_build(current_loop_is_H3_,H3_filter_,is_camelid_, ab_info_ );
-        ab_h3_perturb_ccd_build.apply(pose_in);
-        //build_centroid_loop( pose_in );
-        //#############################
-        if( is_camelid_ )
-            loop_centroid_relax( pose_in, ab_info_->get_CDR_loop("h1")->start(),
-                                          ab_info_->get_CDR_loop("h1")->stop() );
-        to_full_atom.apply( pose_in );
+    to_centroid.apply( pose_in );
+    
 
-        utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
-        for( Size ii = ab_info_->get_CDR_loop("h3")->start();
+    
+    set_extended_torsions( pose_in, cdr_h3 );
+        //JQX:  this function is in loops_main.cc file
+        //      firstly, idealize the loop (indealize bonds as well)
+        //      phi(-150),  all the residue, except the first one
+        //      psi(150),   all the residue, except the last one
+        //      omega(180), all the residue, except the first & last one
+        //JQX:  in R2: the function is called insert_init_frag, which is 
+        //      in the file jumping_util.cc. All the phi, psi, omega are 
+        //      assigned to all the residues. "L" secondary structure is 
+        //      also assinged. The bonds are idealized using 
+        //        framework_pose.insert_ideal_bonds(begin-1, end)
+    
+    Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
+    std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
+    core::import_pose::pose_from_pdb( hfr_pose_, path+"hfr.pdb" );
+    std::string cdr_name = "h3";
+    Ab_InfoOP hfr_info =  new Ab_Info ( hfr_pose_, cdr_name );
+    unaligned_cdr_loop_begin = hfr_info->current_start;
+    unaligned_cdr_loop_end   = hfr_info->current_end;
+    
+    if(framework_loop_size > 4){  //JQX: add this if statement to match R2_antibody
+        pose_in.set_psi  (framework_loop_begin - 1, hfr_pose_.psi( unaligned_cdr_loop_begin - 1 )   );
+        pose_in.set_omega(framework_loop_begin - 1, hfr_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
+    }
+    
+
+
+    
+    antibody2::Ab_InfoOP starting_antibody;
+    starting_antibody = ab_info_;
+    bool closed_cutpoints( false );
+    
+    h3_perturb_ccd_build_->pass_the_loop(input_loop);
+    
+    Size cycle ( 1 );
+    while( !closed_cutpoints && cycle < max_cycle_) {
+        ab_info_ = starting_antibody;
+        if (do_cter_insert_){
+            if( framework_loop_size > 6 ){ //JQX: replace 5 by 6 to match R2_antibody
+                h3_cter_insert_mover_->apply(pose_in);
+            }
+            else{
+                utility_exit_with_message("Loop Size is Less than 6");
+            }
+        }
+        
+        exit(-1);
+        
+
+
+        h3_perturb_ccd_build_->apply(pose_in);
+        
+        if( input_loop.size() > cutoff_9_  ) {
+            Size saved_cutoff_9 = cutoff_9_;
+            cutoff_9_ = 100; // never going to reach
+            h3_perturb_ccd_build_->apply(pose_in);
+            cutoff_9_ = saved_cutoff_9; // restoring
+        }
+        closed_cutpoints = cutpoints_separation( pose_in, ab_info_ );
+        ++cycle;
+    } // while( ( cut_separation > 1.9 )
+    
+    TR <<  "Finished Modeling Centroid CDR H3 loop" << std::endl;
+    
+
+    
+    
+    
+    
+    //#############################
+    if( is_camelid_ ){
+        loop_centroid_relax( pose_in, ab_info_->get_CDR_loop("h1")->start(), ab_info_->get_CDR_loop("h1")->stop() );
+    }
+    //#############################
+    
+    
+    
+    
+    
+    
+    to_full_atom.apply( pose_in );
+
+    utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
+    for( Size ii = ab_info_->get_CDR_loop("h3")->start();
 						 ii <= ( ab_info_->get_CDR_loop("h3")->stop() ); ii++ )
 					allow_chi_copy[ii] = false;
-        //recover sidechains from starting structures
-        protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose_, allow_chi_copy );
-        recover_sidechains.apply( pose_in );
+    //recover sidechains from starting structures
+    protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose_, allow_chi_copy );
+    recover_sidechains.apply( pose_in );
 
-        // Packer
-        protocols::simple_moves::PackRotamersMoverOP packer;
-        packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
-        packer->task_factory(tf_);
-        packer->apply( pose_in );
-    }
+    // Packer
+    protocols::simple_moves::PackRotamersMoverOP packer;
+    packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
+    packer->task_factory(tf_);
+    packer->apply( pose_in );
+
 
 
 

@@ -116,13 +116,8 @@ Ab_ModelCDRH3::clone() const {
 void Ab_ModelCDRH3::init() 
 {
 	Mover::type( "Ab_ModelCDRH3" );
-
-	// setup all the booleans with default values
-	// they will get overwritten by the options and/or passed values
     
 	set_default();
-    
-	register_options();
     
 	init_from_options();
 
@@ -140,6 +135,7 @@ void Ab_ModelCDRH3::init()
 void Ab_ModelCDRH3::set_default()
 {
 	TR <<  "Setting up default settings to all FALSE" << std::endl;
+    model_h3_  = true;
 	snugfit_   = false;
 	benchmark_ = false;
 	camelid_   = false;
@@ -155,6 +151,7 @@ void Ab_ModelCDRH3::register_options()
 {
 	using namespace basic::options;
 
+    option.add_relevant( OptionKeys::antibody::model_h3 );
 	option.add_relevant( OptionKeys::antibody::snugfit );
     option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::antibody::camelid );
@@ -171,16 +168,33 @@ void Ab_ModelCDRH3::init_from_options()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+    
 	TR <<  "Reading Options" << std::endl;
-
-	if ( option[ OptionKeys::antibody::snugfit ].user() )
-                set_snugfit( option[ OptionKeys::antibody::snugfit ]() );
-	if ( option[ OptionKeys::antibody::camelid ].user() )
-                set_camelid( option[ OptionKeys::antibody::camelid ]() );
-	if ( option[ OptionKeys::antibody::camelid_constraints ].user() )
-                set_camelid_constraints( option[ OptionKeys::antibody::camelid_constraints ]() );
-	if ( option[ OptionKeys::run::benchmark ].user() )
-                set_benchmark( option[ OptionKeys::run::benchmark ]() );
+    
+    if ( option[OptionKeys::antibody::model_h3].user() ){
+        set_h3modeler(option[OptionKeys::antibody::model_h3]() );
+    }
+    
+	if ( option[ OptionKeys::antibody::snugfit ].user() ){
+        set_snugfit( option[ OptionKeys::antibody::snugfit ]() );
+    }
+    
+	if ( option[ OptionKeys::antibody::camelid ].user() ){
+        set_camelid( option[ OptionKeys::antibody::camelid ]() );
+    }
+    
+	if ( option[ OptionKeys::antibody::camelid_constraints ].user() ){
+        set_camelid_constraints( option[ OptionKeys::antibody::camelid_constraints ]() );
+    }
+    
+	if ( option[ OptionKeys::run::benchmark ].user() ){
+        set_benchmark( option[ OptionKeys::run::benchmark ]() );
+    }
+        
+    if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
+		set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
+	}
+    
 
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
@@ -192,8 +206,7 @@ void Ab_ModelCDRH3::init_from_options()
 		set_native_pose(NULL);
 	}
     
-	//cst_weight_ = option[ OptionKeys::constraints::cst_weight ]();
-    //JQX: why this will read 1 ?
+
     
 	if( camelid_ ) {
 		snugfit_ = false;
@@ -209,7 +222,6 @@ void Ab_ModelCDRH3::init_from_options()
 
 
     
-    
 void
 Ab_ModelCDRH3::setup_objects() {
     
@@ -220,8 +232,6 @@ Ab_ModelCDRH3::setup_objects() {
 void Ab_ModelCDRH3::sync_objects_with_flags() 
 {
 	using namespace protocols::moves;
-
-	// add movers to sequence mover depending on the flags that were set
 
 
     
@@ -324,38 +334,36 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 	}
 
 
+    
+    
+    if(model_h3_){
 
-    //####################################################
-    // Step 1: model the cdr h3: 
-    //  1). insert the c_terminal
-    //  2). frag_ccd the h3 loop
-    //  notes: pay attention to the way it treats the stems
-    //####################################################
-    model_cdrh3_->apply( frame_pose );
-    pymol.apply( frame_pose );
-    pymol.send_energy( frame_pose );
+        //####################################################
+        // Step 1: model the cdr h3: 
+        //  1). insert the c_terminal
+        //  2). frag_ccd the h3 loop
+        //  notes: pay attention to the way it treats the stems
+        
+        
+        model_cdrh3_->apply( frame_pose );
+        pymol.apply( frame_pose );
+        pymol.send_energy( frame_pose );
+    
+        exit(-1);
+    
+        //####################################################
+        // Step 2: packing the CDRs
+        relax_cdrs( frame_pose );
+        pymol.apply( frame_pose );
+        pymol.send_energy( frame_pose );
+    }
     
     
-    
-    
-    
-    exit(-1);
-    
-    
-    
-    //####################################################
-    // Step 2: packing the CDRs
-    //####################################################
-    relax_cdrs( frame_pose );
-    pymol.apply( frame_pose );
-    pymol.send_energy( frame_pose );
-
-
     
     
     //####################################################
 	// Step 3: SnugFit: remove the clashes between L-H
-    //####################################################
+    
 	if ( !camelid_ && snugfit_ ) {
 		all_cdr_VL_VH_fold_tree( frame_pose, ab_info_->all_cdr_loops_ );
         
@@ -395,7 +403,6 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
     
     //####################################################
 	// Step 4: Full Atom Relax 
-    //####################################################
 
         //$$$$$$$$$$$$$$$$$$$$$$$$
         Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(true/*current_loop_is_H3_*/, true/*H3_filter_*/, ab_info_); 
@@ -437,7 +444,6 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
     
     //####################################################
 	// Step 5: Store the homolgy models
-    //####################################################
     
 	// remove cutpoints variants for all cdrs
 	// "true" forces removal of variants even from non-cutpoints

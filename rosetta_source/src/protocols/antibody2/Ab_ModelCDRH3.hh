@@ -65,11 +65,14 @@ public:
     static void register_options();
     
 	// simple inline setters
+    void set_h3modeler( bool model_h3 ){ model_h3_ = model_h3; }
 	void set_snugfit( bool snugfit ) { snugfit_ = snugfit; }
 	void set_camelid( bool camelid ) { camelid_ = camelid; }
 	void set_camelid_constraints( bool camelid_constraints ) 
         { camelid_constraints_ = camelid_constraints; }
 	void set_benchmark( bool benchmark ) { benchmark_ = benchmark; }
+    void set_cst_weight( core::Real const cst_weight){cst_weight_=cst_weight;}
+
 
 	void relax_cdrs( core::pose::Pose & pose );
 
@@ -90,7 +93,7 @@ public:
     
 
 private:
-
+    bool model_h3_;
 	bool snugfit_;
 	bool camelid_;
 	bool camelid_constraints_;

@@ -185,11 +185,14 @@ void Ab_H3_perturb_ccd_build::finalize_setup( pose::Pose & pose ) {
 
     
     
+void Ab_H3_perturb_ccd_build::pass_the_loop(loops::Loop & input_loop) {
+    input_loop_=input_loop;
+}
     
 //APPLY
 void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose ) {
     finalize_setup( pose );
-    build_centroid_loop(pose);
+    scored_frag_close(pose, input_loop_ );
 }
     
     
@@ -199,95 +202,7 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose ) {
     
     
     
-void Ab_H3_perturb_ccd_build::build_centroid_loop( core::pose::Pose & pose ) {
-    using namespace core::pose;
-    using namespace core::scoring;
-    using namespace protocols::moves;
 
-        
-    TR <<  "Modeling Centroid CDR H3 loop" << std::endl;
-    
-    Size framework_loop_size = ( ab_info_->get_CDR_loop("h3")->stop() - ab_info_->get_CDR_loop("h3")->start() ) + 1;
-    TR<< "ab_info_->get_CDR_loop('h3')->start() = "<<ab_info_->get_CDR_loop("h3")->start()<<std::endl;
-    TR<< "ab_info_->get_CDR_loop('h3')->stop() = "<<ab_info_->get_CDR_loop("h3")->stop()<<std::endl;
-
-    Size cutpoint = ab_info_->get_CDR_loop("h3")->start() + 1;
-    loops::Loop cdr_h3( ab_info_->get_CDR_loop("h3")->start(), 
-                        ab_info_->get_CDR_loop("h3")->stop(),
-                           cutpoint,	0, true );
-    
-    simple_one_loop_fold_tree( pose, cdr_h3 );
-    
-    set_extended_torsions( pose, cdr_h3 );
-    //JQX:  this function is in loops_main.cc file
-    //      firstly, idealize the loop (indealize bonds as well)
-    //      phi(-150),  all the residue, except the first one
-    //      psi(150),   all the residue, except the last one
-    //      omega(180), all the residue, except the first & last one
-    //JQX:  in R2: the function is called insert_init_frag, which is 
-    //      in the file jumping_util.cc. All the phi, psi, omega are 
-    //      assigned to all the residues. "L" secondary structure is 
-    //      also assinged. The bonds are idealized using 
-    //        framework_pose.insert_ideal_bonds(begin-1, end)
-
-
-    Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
-    std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
-    core::import_pose::pose_from_pdb( hfr_pose_, path+"hfr.pdb" );
-    std::string cdr_name = "h3";
-    Ab_InfoOP hfr_info =  new Ab_Info ( hfr_pose_, cdr_name );
-    unaligned_cdr_loop_begin = hfr_info->current_start;
-    unaligned_cdr_loop_end   = hfr_info->current_end;
-        
-    if(framework_loop_size > 4){  //JQX: add this if statement to match R2_antibody
-        pose.set_psi( ab_info_->get_CDR_loop("h3")->start() - 1,
-                      hfr_pose_.psi( unaligned_cdr_loop_begin - 1 ) );
-        pose.set_omega( ab_info_->get_CDR_loop("h3")->start() - 1,
-                        hfr_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
-    }
-        
-    Size modified_framework_loop_end = ab_info_->get_CDR_loop("h3")->stop() - c_ter_stem_;
-    //###########################################################################
-    loops::Loop trimmed_cdr_h3( ab_info_->get_CDR_loop("h3")->start(),
-                                   modified_framework_loop_end, cutpoint, 0, true );
-    //###########################################################################
-
-    antibody2::Ab_InfoOP starting_antibody;
-    starting_antibody = ab_info_;
-    bool closed_cutpoints( false );
-        
-    Size cycle ( 1 );
-    while( !closed_cutpoints && cycle < max_cycle_) {
-        ab_info_ = starting_antibody;
-        if( framework_loop_size > 6 ){ //JQX: replace 5 by 6 to match R2_antibody
-             //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            ab_h3_cter_insert_mover_ = new Ab_H3_cter_insert_mover(ab_info_, is_camelid_);
-            ab_h3_cter_insert_mover_->apply(pose);
-             //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        }
-        exit(-1);
-        //########################################
-        scored_frag_close( pose, trimmed_cdr_h3 );
-        //########################################
-        if( trimmed_cdr_h3.size() > cutoff_9_  ) {
-            Size saved_cutoff_9 = cutoff_9_;
-            cutoff_9_ = 100; // never going to reach
-            //########################################
-            scored_frag_close( pose, trimmed_cdr_h3 );
-            //########################################
-            cutoff_9_ = saved_cutoff_9; // restoring
-        }
-        closed_cutpoints = cutpoints_separation( pose, ab_info_ );
-        ++cycle;
-    } // while( ( cut_separation > 1.9 )
-        
-    TR <<  "Finished Modeling Centroid CDR H3 loop" << std::endl;
-        
-    return;
-        
-} // build_centroid_loop
-    
-    
 
     
     

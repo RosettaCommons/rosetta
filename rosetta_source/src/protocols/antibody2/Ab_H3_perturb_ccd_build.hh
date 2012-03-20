@@ -28,6 +28,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -74,13 +75,14 @@ public:
     
     virtual std::string get_name() const;
     void read_and_store_fragments( core::pose::Pose & pose );
+    void pass_the_loop(loops::Loop & input_loop);
     
     
 private:
 
     Ab_InfoOP ab_info_;
     
-
+    loops::Loop input_loop_;
     
     bool user_defined_;
     bool is_camelid_;

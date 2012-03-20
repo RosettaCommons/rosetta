@@ -21,15 +21,16 @@
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
-
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-
-#include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/vector1.fwd.hh>
+#include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
+#include <protocols/antibody2/Ab_Info.fwd.hh>
+#include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
+
 
 
 
@@ -68,7 +69,6 @@ public:
 	/// @brief enable camelid modeling mode
 	inline void set_camelid( bool setting ) {
 		is_camelid_ = setting;
-
 		if( is_camelid_ ) {
 			H3_filter_ = false;
 			snug_fit_ = false;
@@ -108,10 +108,25 @@ public:
 private:
 	bool user_defined_;
 	core::pose::Pose start_pose_;
+    
+    bool do_cter_insert_;
 
 	// constraints
 	core::Real cen_cst_;
 	core::Real high_cst_;
+    core::pose::Pose hfr_pose_;
+    
+    /// @brief size of loop above which 9mer frags are used
+	core::Size cutoff_9_; // default 16
+    
+	/// @brief size of loop above which 3mer frags are used
+	core::Size cutoff_3_; // default 6
+    
+    /// @brief Number of ADDITIONAL residues modeled from H3_CTERM
+	///        These residues range from H:n-2,n-1,n,n+1 of H3
+	core::Size c_ter_stem_;
+        core::Size max_cycle_;
+
 
 	core::scoring::ScoreFunctionOP fa_scorefxn_;
 
@@ -166,9 +181,9 @@ private:
               Ab_InfoOP antibody_info);
 
     void setup_objects();
-    
 
-    
+    Ab_H3_cter_insert_moverOP h3_cter_insert_mover_;
+    Ab_H3_perturb_ccd_buildOP h3_perturb_ccd_build_;
     
 }; // class CDRH3Modeler2
 
