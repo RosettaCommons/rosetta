@@ -90,7 +90,6 @@
 #include <limits>
 
 #include <protocols/antibody2/Ab_util.hh>
-#include <protocols/antibody2/Ab_Relax_a_CDR_FullAtom.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.hh>
 
 
@@ -242,7 +241,7 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
         //#############################
         if( is_camelid_ )
             loop_centroid_relax( pose_in, ab_info_->get_CDR_loop("h1")->start(),
-															 ab_info_->get_CDR_loop("h1")->stop() );
+                                          ab_info_->get_CDR_loop("h1")->stop() );
         to_full_atom.apply( pose_in );
 
         utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
@@ -258,37 +257,6 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
         packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
         packer->task_factory(tf_);
         packer->apply( pose_in );
-    }
-
-    if( apply_fullatom_mode_ ) {
-        //##############################
-        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(current_loop_is_H3_, H3_filter_, ab_info_); 
-        relax_a_cdr_high_res.pass_start_pose(start_pose_);
-        relax_a_cdr_high_res.apply(pose_in);
-        //build_fullatom_loop( pose_in );
-        //##############################
-        if( !benchmark_ ) 
-        {
-            Size repack_cycles(1);
-            if( antibody_refine_ && !snug_fit_ ){repack_cycles = 3;}
-            protocols::simple_moves::PackRotamersMoverOP packer;
-            packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
-            packer->task_factory(tf_);
-            packer->nloop( repack_cycles );
-            packer->apply( pose_in );
-        }
-    }
-
-    // Minimize CDR H2 loop if this is a camelid
-            
-    if( is_camelid_ ) {
-        //##############################
-        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(false, false, is_camelid_, ab_info_); // because of h2
-        relax_a_cdr_high_res.apply(pose_in);
-        //##############################
-
-        //JQX: remove the duplicated code, camelid H2 will be automatically taken care of
-        //     see the code in Ab_Relax_a_CDR_FullAtom file
     }
 
 

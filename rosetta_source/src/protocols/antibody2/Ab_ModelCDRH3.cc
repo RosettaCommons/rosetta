@@ -77,6 +77,7 @@
 #include <protocols/antibody2/CDRH3Modeler2.hh>
 #include <protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.hh>
 #include <protocols/antibody2/Ab_LH_SnugFit_Mover.hh>
+#include <protocols/antibody2/Ab_Relax_a_CDR_FullAtom.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -144,6 +145,7 @@ void Ab_ModelCDRH3::set_default()
 	camelid_   = false;
 	camelid_constraints_ = false;
     cst_weight_ = 0.0;
+    high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
 
 }
 
@@ -197,6 +199,12 @@ void Ab_ModelCDRH3::init_from_options()
 		snugfit_ = false;
 	}
     
+    
+    highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
+	highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
+	highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
+    // adding constraints
+	highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
 }
 
 
@@ -286,7 +294,7 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 
 
     // the default inital secstruct is all "L" loop!
-
+    start_pose_ = frame_pose;
     
     protocols::moves::PyMolMover pymol;
     if ( !flags_and_objects_are_in_sync_ ){ 
@@ -351,7 +359,7 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 	if ( !camelid_ && snugfit_ ) {
 		all_cdr_VL_VH_fold_tree( frame_pose, ab_info_->all_cdr_loops_ );
         
-        //############################################################################
+        //$$$$$$$$$$$$$$$$$$$$$$$$
         Ab_LH_RepulsiveRamp_Mover ab_lh_repulsiveramp_mover (ab_info_->all_cdr_loops_);
                 // TODO: JQX: should just pass the pointer of ab_info_ into the SnugFit class
         ab_lh_repulsiveramp_mover.apply(frame_pose);
@@ -359,7 +367,7 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 		pymol.apply( frame_pose );
 		pymol.send_energy( frame_pose );
         // turn on repulsive
-        //############################################################################
+        //$$$$$$$$$$$$$$$$$$$$$$$$$
         Ab_LH_SnugFit_Mover ab_lh_snugfit_mover(ab_info_->all_cdr_loops_); 
                 // TODO: JQX: should just pass the pointer of ab_info_ into the SnugFit class
         ab_lh_snugfit_mover.apply(frame_pose);
@@ -367,7 +375,7 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
 		pymol.apply( frame_pose );
 		pymol.send_energy( frame_pose );
         // turn off repulsive
-        //############################################################################
+        //$$$$$$$$$$$$$$$$$$$$$$$$$$
 
         //TODO: 
         //JQX: need to read creafully these two functions, maybe they should be merged into one class
@@ -388,8 +396,37 @@ void Ab_ModelCDRH3::apply( pose::Pose & frame_pose ) {
     //####################################################
 	// Step 4: Full Atom Relax 
     //####################################################
+
+        //$$$$$$$$$$$$$$$$$$$$$$$$
+        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(true/*current_loop_is_H3_*/, true/*H3_filter_*/, ab_info_); 
+        relax_a_cdr_high_res.pass_start_pose(start_pose_);
+        relax_a_cdr_high_res.apply(frame_pose);
+        //build_fullatom_loop( pose_in );
+        //$$$$$$$$$$$$$$$$$$$$$$$$$
+        if( !benchmark_ ) 
+        {
+            
+            Size repack_cycles(1);
+            if( antibody_refine_ && !snugfit_ ){repack_cycles = 3;}
+            protocols::simple_moves::PackRotamersMoverOP packer;
+            packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
+            packer->task_factory(tf_);
+            packer->nloop( repack_cycles );
+            packer->apply( frame_pose );
+        }
     
     
+        // Minimize CDR H2 loop if this is a camelid
+    
+        if( is_camelid_ ) {
+            //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+            Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(false, false, is_camelid_, ab_info_); // because of h2
+            relax_a_cdr_high_res.apply(frame_pose);
+            //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        
+            //JQX: remove the duplicated code, camelid H2 will be automatically taken care of
+            //     see the code in Ab_Relax_a_CDR_FullAtom file
+        }
     
     
     

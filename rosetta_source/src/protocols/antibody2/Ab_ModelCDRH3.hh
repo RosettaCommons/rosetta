@@ -94,6 +94,12 @@ private:
 	bool snugfit_;
 	bool camelid_;
 	bool camelid_constraints_;
+    core::pose::Pose start_pose_;
+    /// @brief refine H3 only
+	bool antibody_refine_;
+    bool is_camelid_;
+    core::scoring::ScoreFunctionOP highres_scorefxn_;
+    core::Real high_cst_;
 
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;
