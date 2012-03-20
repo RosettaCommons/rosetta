@@ -7,6 +7,7 @@ use lib (".");
 use File::Basename;
 use File::Path qw(rmtree);
 use Cwd;
+use Cwd 'abs_path';
 use Storable qw(dclone);
 use lib dirname(__FILE__);
 require "kabsch.pm";
@@ -21,14 +22,11 @@ my $EXTRACTAPP = "/work/dimaio/rosetta/rosetta_source/bin/extract_pdbs.default.l
 #####
 
 ## structure alignments
-my $NMODELSOUT=5;
+my $NMODELSOUT = 5;
 
 my @RMS_CUTOFFS = (8,5,2.5);
 my $CLUSTERCUTOFF = 0.0;
 my $BOLTZMANTEMP = 20;
-
-## remove neighbors
-my $REMOVENEIGHBORS = 10;
 
 ## main()
 if ($#ARGV < 1) {
@@ -39,6 +37,9 @@ if ($#ARGV < 1) {
 my $N = shift @ARGV;
 my $silentfile = shift @ARGV;
 
+## remove neighbors
+my $REMOVENEIGHBORS = int($N/10);
+
 ## STAGE 0 -- make output directory
 my $WORKDIR = $silentfile;
 $WORKDIR =~ s/\.out//;
@@ -47,8 +48,13 @@ rmtree($WORKDIR);
 mkdir $WORKDIR;
 
 # scorecut
+$silentfile = abs_path($silentfile);
+my $silentstem = $silentfile;
+if ($silentstem =~ /\//) { $silentstem =~ s/^.*\/([^\/]+)$/$1/; }
+symlink($silentfile, $WORKDIR."/$silentstem");
+
 chdir $WORKDIR;
-open( INSILENT , "../$silentfile" ) || die "Cannot open $silentfile\n";
+open( INSILENT , "$silentstem" ) || die "Cannot open $silentfile\n";
 my @filelines = <INSILENT>;
 chomp (@filelines);
 
@@ -56,13 +62,30 @@ my @scores;
 my %scoremap;
 my %gdtmap;
 my $counter = 0;
+my (@fields_add, @fields_sub);
+my $gdtmm_field=-1;
 foreach my $line (@filelines) {
+	if ($line =~ /^SCORE:/ && $line =~ /description/) {
+		my @fields = split ' ', $line;
+		foreach my $i (0..$#fields) {
+			if ($fields[$i] eq 'score') { push @fields_add, $i; }
+			if ($fields[$i] eq 'atom_pair_constraint') { push @fields_sub, $i; }
+			if ($fields[$i] eq 'cart_bonded') { push @fields_sub, $i; }
+			if ($fields[$i] =~ '^elec_dens') { push @fields_sub, $i; }
+			if ($fields[$i] =~ '^dslf') { push @fields_sub, $i; }
+			if ($fields[$i] eq 'GDTMM_final') { $gdtmm_field = $i; }
+		}
+	}
 	if ($line =~ /^SCORE:/ && $line !~ /description/) {
 		my @fields = split ' ', $line;
-		my $score = $fields[1] - $fields[16] - $fields[22];
+		my $score = 0;
+		foreach my $i (@fields_add) { $score += $fields[$i]; }
+		foreach my $i (@fields_sub) { $score -= $fields[$i]; }
+
 		$scores[$counter] = $score;
 		$scoremap{ $fields[$#fields] } = $score;
-		$gdtmap{ $fields[$#fields] } = $fields[25];
+		$gdtmap{ $fields[$#fields] } = 0;
+		if ($gdtmm_field > 0) { $gdtmap{ $fields[$#fields] } = $fields[$gdtmm_field]; }
 		$counter++;
 	}
 }
@@ -78,7 +101,7 @@ my $scorecut = $scores_sort[$cutat];
 ## make pruned silent file
 my $outfile = $silentfile;
 $outfile =~ s/\.[\w]*$/.top$N\.silent/;
-`head -2 ../$silentfile > $outfile`;
+`head -2 $silentstem > $outfile`;
 open( OUTSILENT , ">>$outfile" );
 
 my $printstate = 0;
@@ -355,7 +378,7 @@ my @chooseModel = (-1) x $NMODELSOUT;
 my $modelswritten = 0;
 
 while ($modelswritten < $NMODELSOUT) {
-	foreach my $clid (0,0,1,2,3,4) {
+	foreach my $clid (0,0..$nclust) {
 		last if ($modelswritten == $NMODELSOUT);
 	
 		# once we sample every cluster go back to cluster 1
@@ -416,72 +439,6 @@ while ($modelswritten < $NMODELSOUT) {
 	}
 }
 
-
-# model 1 - median of largest cluster
-# my $lowmaxsub = -999999;
-# foreach my $i (0..$#THREADED_MDLS) {
-# 	next if ($clusterid->[$i] != 0);
-# 
-# 	my $pdbidstem = $THREADED_MDLS[$i];
-# 	$pdbidstem =~ s/\.pdb//g;
-# 	my $score = $weightmap{$pdbidstem};
-# 
-# 	foreach my $j (0..$#THREADED_MDLS) {
-# 		next if ($clusterid->[$j] == -1);
-# 		next if ($i==$j);
-# 
-# 		my $pdbidstemJ = $THREADED_MDLS[$j];
-# 		$pdbidstemJ =~ s/\.pdb//g;
-# 		my $prob = $weightmap{$pdbidstemJ};
-# 
-# 		$score += $prob*$overlapscore->[$i][$j];
-# 	}
-# 
-# 	if ($score > $lowmaxsub) {
-# 		$chooseModel[0] = $i;
-# 		$chooseGDT[0] = $gdtmap { $pdbidstem };
-# 		$lowmaxsub = $score;
-# 	}
-# }
-# $towrite[$chooseModel[0]] = 1;
-# $modelswritten++;
-
-# models 2-5 - low energy cl 1-4
-# foreach my $clid (0..4) {
-# 	last if ($modelswritten == 5);
-# 
-# 	# once we sample every cluster go back to cluster 1
-# 	my $effclid = $clid;
-# 	if ($effclid >= $nclust) {
-# 		$effclid = 0;
-# 	}
-# 
-# 	$chooseGDT[$modelswritten] = -1;
-# 	my $lowenergy = 999999;
-# 	outer: foreach my $i (0..$#THREADED_MDLS) {
-# 		next if ($towrite[$i] != 0);
-# 		next if ($clusterid->[$i] != $effclid);
-# 
-# 		# remove identical
-# 		foreach my $j (0..$modelswritten-1) {
-# 			#print $i." ".$chooseModel[$j]." ".$overlapscore->[$i][$chooseModel[$j]]."\n";
-# 			next outer if ($overlapscore->[$i][$chooseModel[$j]] == 1);
-# 		}
-# 
-# 		my $pdbidstem = $THREADED_MDLS[$i];
-# 		$pdbidstem =~ s/\.pdb//g;
-# 		my $score = $scoremap { $pdbidstem };
-# 		if ($score < $lowenergy) {
-# 			$chooseModel[$modelswritten] = $i;
-# 			$chooseGDT[$modelswritten] = $gdtmap { $pdbidstem };
-# 			$lowenergy = $score;
-# 		}
-# 	}
-# 	if ($chooseModel[$modelswritten] != -1) {
-# 		$towrite[$chooseModel[$modelswritten++]] = $modelswritten;
-# 	}
-# }
-
 print "$WORKDIR ".(join ' ',@chooseGDT)."\n";
 
 ## STAGE 3 -- output
@@ -491,7 +448,7 @@ foreach my $i (0..$#THREADED_MDLS) {
 	next if ($towrite[$i] == 0);
 	my $pdb = $THREADED_MDLS[$i];
 
-	my $outpdb = "$WORKDIR.model".$towrite[$i].".pdb";
+	my $outpdb = "model".$towrite[$i].".pdb";
 	#print STDERR "writing $outpdb\n";
 	open (PDBF, ">$outpdb") || die "Cannot open $_";
 

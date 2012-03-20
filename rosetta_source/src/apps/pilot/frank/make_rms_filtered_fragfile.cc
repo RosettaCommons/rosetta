@@ -15,6 +15,8 @@
 #include <core/types.hh>
 #include <devel/init.hh>
 
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
@@ -26,8 +28,6 @@
 #include <protocols/frags/RMSVallData.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-
-
 
 #include <core/conformation/ResidueFactory.hh>
 
@@ -44,7 +44,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
-#include <protocols/evaluation/ChemicalShiftEvaluator.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -92,7 +91,7 @@ int main(int argc, char **argv) {
 
 	// load vall
 	protocols::frags::RMSVallData rms_vall( option[ OptionKeys::loops::vall_file ] );
-	ConstantLengthFragSet frags3(3),frags9(9);
+	ConstantLengthFragSet frags3(3),frags5(5),frags7(7),frags9(9);
 
 	// for each 3 mer get a frame
 	for (int i =  1; i <= nres - 2; ++i) {
@@ -103,6 +102,28 @@ int main(int argc, char **argv) {
 		std::string frag_seq = input_seq.substr( i-1, 3 );
 		rms_vall.get_frags( 200, cas, frag_seq, '-', frame3_i, 0.0 );
 		frags3.add( frame3_i );
+	}
+
+	// for each 3 mer get a frame
+	for (int i =  1; i <= nres - 4; ++i) {
+		FrameOP frame5_i = new core::fragment::Frame( i, 5 );
+		utility::vector1< numeric::xyzVector< core::Real> > cas( 5 );
+		for (int k=0; k<5; ++k)
+			cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
+		std::string frag_seq = input_seq.substr( i-1, 5 );
+		rms_vall.get_frags( 200, cas, frag_seq, '-', frame5_i, 0.0 );
+		frags5.add( frame5_i );
+	}
+
+	// for each 3 mer get a frame
+	for (int i =  1; i <= nres - 6; ++i) {
+		FrameOP frame7_i = new core::fragment::Frame( i, 7 );
+		utility::vector1< numeric::xyzVector< core::Real> > cas( 7 );
+		for (int k=0; k<7; ++k)
+			cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
+		std::string frag_seq = input_seq.substr( i-1, 7 );
+		rms_vall.get_frags( 200, cas, frag_seq, '-', frame7_i, 0.0 );
+		frags7.add( frame7_i );
 	}
 
 	// for each 9 mer get a frame
@@ -117,8 +138,10 @@ int main(int argc, char **argv) {
 	}
 
 	// dump frame sets
-	FragmentIO().write( option[ OptionKeys::out::file::frag_prefix ]()+"3", frags3 );
-	FragmentIO().write( option[ OptionKeys::out::file::frag_prefix ]()+"9", frags9 );
+	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"3", frags3 );
+	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"5", frags5 );
+	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"7", frags7 );
+	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"9", frags9 );
 
 	return 0;
 }

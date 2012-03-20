@@ -35,8 +35,8 @@ my $TEMPLATEDIR      = "templates/";
 my $PARTIALTHREADDIR = "partial_threads/";
 my $SYMMDIR          = "symmetry/";
 my $COORDCSTDIR      = "coordCsts_resOnly/";
-my $FRAG3FILE      = "fragments/%s_templatesvall.25.3mers";
-my $FRAG9FILE      = "fragments/%s_templatesvall.25.9mers";
+my $FRAG3FILE      = "fragments/%s_quicktemplatesvall.25.3mers";
+my $FRAG9FILE      = "fragments/%s_quicktemplatesvall.25.9mers";
 
 my $PCORRFILENAMES  = "p_correct%d.txt";
 my $ALNFILENAMES  = "cluster%d.filt";
@@ -60,7 +60,7 @@ my $CLUSTERCUTOFF = 0.40;
 my $ALIGNCUTOFF   = 0.20;  # to get better superpositions, trade coverage for alignment
 
 ## symmetry
-my $MINSYMMPROB = 0.04;
+my $MINSYMMPROB = 0.10;
 
 ## probability correct
 ## this could be read from a file
@@ -192,7 +192,7 @@ mkdir $WORKDIR;
 ## STAGE 1 -- generate partial threads
 ## (a) grab+sanitize templates
 foreach my $tag (keys %alimap) {
-	my $template = substr($tag,0,5);
+	my ($template,$idtag) = split '_', $tag;
 	my $pdbid = substr( $template, 0, 4 );
 	my $tgtchain = substr( $template, 4, 1 );
 	my $dirid = substr( $template, 1, 2 );
@@ -243,6 +243,10 @@ foreach my $tag (keys %alimap) {
 		}
 		close PDBOUT1;
 	}
+
+	# only consider symmetry of the top 3 templates
+	$idtag =~ s/\.pdb//g;
+	next if (($idtag % 100) > 3);
 
 	# grab biounits
 	my @allbiofiles = <$BIOPDBFILEDIR/$dirid/$pdbid.pdb*>;
@@ -721,6 +725,9 @@ foreach my $i (0..$nclust) {
 			my $resname = $three_to_one{ substr($line,17,3) };
 			my $resid = int( substr($line,22,4) );
 
+			# not in chain A
+			next if (!defined $allreses{'A'}->{$resid} );
+
 			if (!defined ($seenreses{$resid}) ) {
 				$seenreses{$resid} = 1;
 				$pdbptr++;
@@ -738,7 +745,7 @@ foreach my $i (0..$nclust) {
 				}
 			}
 
-			# not in all copies
+			# not in some copies
 			next if (!defined $common_reses{$resid});
 
 			# termini

@@ -828,6 +828,11 @@ sub fold_tree_from_ncs_recursive {
 	# y is whatever is left
 	my $myY = cross( $myZ, $myX );
 
+	# at top level, if symm axis is X, this can happen
+	if ($myY->[0] < 1e-6 && $myY->[1] < 1e-6 && $myY->[2] < 1e-6 ) {
+		$myZ = mapply( $tree->{R}, [1,0,0]);
+		$myY = cross( $myZ, $myX );
+	}
 	normalize( $myX );
 	normalize( $myY );
 
@@ -849,15 +854,6 @@ sub fold_tree_from_ncs_recursive {
 				sprintf("%.4f,%.4f,%.4f", $myX->[0], $myX->[1], $myX->[2])."  ".
 				sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
 				sprintf("%.4f,%.4f,%.4f", $parent_com->[0], $parent_com->[1], $parent_com->[2]);
-	#my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Z   1     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,
-	#					 $parent_com->[0], $parent_com->[1], $parent_com->[2];
-	#my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Z   2     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,
-	#					 $parent_com->[0]+$myX->[0], $parent_com->[1]+$myX->[1], $parent_com->[2]+$myX->[2];
-	#my $fakePDBline3 = sprintf "ATOM    %3d  C   Y   Z   3     %7.3f %7.3f %7.3f  1.00  0.00\n", 3,
-	#					 $parent_com->[0]+$myY->[0], $parent_com->[1]+$myY->[1], $parent_com->[2]+$myY->[2];
-	#push @{ $debug_lines }, $fakePDBline1;
-	#push @{ $debug_lines }, $fakePDBline2;
-	#push @{ $debug_lines }, $fakePDBline3;
 	my $kineline1 = "{$id_string up} P  ".$parent_com->[0]." , ".$parent_com->[1]." , ".$parent_com->[2]."\n";
 	my $kineline2 = "{$id_string down}  ".$origin->[0]." , ".$origin->[1]." , ".$origin->[2]."\n";
 	push @{ $debug_lines }, $kineline1;
@@ -946,16 +942,6 @@ sub fold_tree_from_ncs_recursive {
 					sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
 					sprintf("%.4f,%.4f,%.4f", $origin->[0], $origin->[1], $origin->[2]);
 
-
-		#my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Z   1     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,
-		#                     $origin->[0], $origin->[1], $origin->[2];
-		#my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Z   2     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,
-		#                     $origin->[0]+$myX->[0], $origin->[1]+$myX->[1], $origin->[2]+$myX->[2];
-		#my $fakePDBline3 = sprintf "ATOM    %3d  C   Y   Z   3     %7.3f %7.3f %7.3f  1.00  0.00\n", 3,
-		#                     $origin->[0]+$myY->[0], $origin->[1]+$myY->[1], $origin->[2]+$myY->[2];
-		#push @{ $debug_lines }, $fakePDBline1;
-		#push @{ $debug_lines }, $fakePDBline2;
-		#push @{ $debug_lines }, $fakePDBline3;
 	}
 }
 
