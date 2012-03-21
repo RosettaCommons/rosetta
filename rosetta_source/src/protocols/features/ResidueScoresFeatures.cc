@@ -88,7 +88,7 @@ string
 ResidueScoresFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS residue_scores_1b (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	resNum INTEGER,\n"
 		"	score_type TEXT,\n"
 		"	score_value REAL,\n"
@@ -99,7 +99,7 @@ ResidueScoresFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, resNum, score_type));\n"
 		"\n"
 		"CREATE TABLE IF NOT EXISTS residue_scores_2b (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	resNum1 INTEGER,\n"
 		"	resNum2 INTEGER,\n"
 		"	score_type TEXT,\n"
@@ -146,7 +146,7 @@ Size
 ResidueScoresFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 	insert_residue_scores_rows(pose, relevant_residues, struct_id, db_session );
@@ -185,7 +185,7 @@ void
 ResidueScoresFeatures::insert_residue_scores_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 

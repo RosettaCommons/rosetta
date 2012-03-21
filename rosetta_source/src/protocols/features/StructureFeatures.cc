@@ -27,19 +27,29 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
+#include <utility/sql_database/PrimaryKey.hh>
+#include <utility/sql_database/ForeignKey.hh>
+#include <utility/sql_database/Column.hh>
+#include <utility/sql_database/Schema.hh>
+
 // External Headers
 #include <cppdb/frontend.h>
 
 // Boost Headers
-#include <boost/functional/hash.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/lexical_cast.hpp>
 
 // C++
 #include <string>
 #include <sstream>
 #include <iostream>
 
+//Basic Headers
+#include <basic/Tracer.hh>
 
-
+static basic::Tracer TR("protocols.features.StructureFeatures");
 
 namespace protocols{
 namespace features{
@@ -72,47 +82,34 @@ StructureFeatures::type_name() const { return "StructureFeatures"; }
 
 string
 StructureFeatures::schema() const {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-	if(db_mode == "sqlite3")
-		{
-		return
-			"CREATE TABLE IF NOT EXISTS structures (\n"
-			"	struct_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-			"	protocol_id INTEGER,\n"
-			"	tag TEXT,\n"
-			"	input_tag TEXT,\n"
-			"	UNIQUE (protocol_id, tag),"
-			"	FOREIGN KEY (protocol_id)\n"
-			"		REFERENCES protocols (protocol_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS sampled_structures (\n"
-			"	protocol_id INTEGER,\n"
-			"	tag TEXT,\n"
-			"	input_tag TEXT,\n"
-			"	UNIQUE (protocol_id, tag),"
-			"	FOREIGN KEY (protocol_id)\n"
-			"		REFERENCES protocols (protocol_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);";
-	}else if(db_mode == "mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS structures (\n"
-			"	struct_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,\n"
-			"	protocol_id INTEGER REFERENCES protocols(protocol_id),\n"
-			"	tag VARCHAR(255),\n"
-			"	input_tag VARCHAR(255),\n"
-			"	UNIQUE (protocol_id, tag));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS sampled_structures (\n"
-			"	protocol_id INTEGER REFERENCES protocols(protocol_id),\n"
-			"	tag VARCHAR(255),\n"
-			"	input_tag VARCHAR(255),\n"
-			"	UNIQUE (protocol_id, tag));";
-	}else
-	{
-		return "";
-	}
+	using namespace utility::sql_database;
+	
+    //Don't autoincrement the struct_id because it is a UUID generated here
+    Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+    Column batch_id("batch_id",DbInteger());
+    Column tag("tag", DbText(255));
+    Column input_tag("input_tag", DbText());
+    
+    /***structures***/
+    Schema structures("structures", PrimaryKey(struct_id));
+    
+    structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
+    structures.add_column( tag );
+    structures.add_column( input_tag );
+    
+    /***sampled_structures***/
+    Schema sampled_structures("sampled_structures");
+    sampled_structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
+    
+    sampled_structures.add_column( tag );
+    sampled_structures.add_column( input_tag );
+    
+    utility::vector1<Column> unique_cols;
+    unique_cols.push_back(tag);
+    unique_cols.push_back(batch_id);
+    sampled_structures.add_constraint(new UniqueConstraint(unique_cols));
+    
+    return structures.print() + sampled_structures.print();
 }
 
 utility::vector1<std::string>
@@ -124,64 +121,99 @@ StructureFeatures::features_reporter_dependencies() const {
 
 
 //@details missing struct_id and input/output tags
-Size
+boost::uuids::uuid
 StructureFeatures::report_features(
-	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size protocol_id,
+	Size batch_id,
 	sessionOP db_session
 ){
 	string const output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
 	string const input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-	Size struct_id(
-		report_features(pose, relevant_residues, protocol_id,
+    boost::uuids::uuid struct_id(
+		report_features(relevant_residues, batch_id,
 			db_session, output_tag, input_tag));
 	return struct_id;
 }
 
 //@details missing struct_id and input/output tags
-Size
+boost::uuids::uuid
 StructureFeatures::report_features(
-	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size protocol_id,
+	Size batch_id,
 	sessionOP db_session,
 	string const & tag,
 	string const & input_tag
 ){
-	string statement_string = "INSERT INTO structures VALUES (?,?,?,?);";
-	statement stmt(safely_prepare_statement(statement_string,db_session));
+	string statement_string = "INSERT INTO structures (struct_id, batch_id, tag, input_tag) VALUES (?,?,?,?);";
+	statement structure_stmt(safely_prepare_statement(statement_string,db_session));
 
-	BinaryProteinSilentStruct silent_struct(pose, "");
-	stringstream pose_string;
-	silent_struct.print_conformation(pose_string);
-	Size const struct_id = hash_value(pose_string.str());
-
-	stmt.bind(1, struct_id);
-	stmt.bind(2, protocol_id);
-	stmt.bind(3, tag);
-	stmt.bind(4, input_tag);
-	basic::database::safely_write_to_database(stmt);
-
-	return struct_id;
+    boost::uuids::uuid struct_id = boost::uuids::random_generator()();
+//    boost::uuids::uuid const struct_id(to_string(struct_uuid));
+    
+//    std::stringstream bytes_stream;
+//    std::copy(struct_uuid.begin(), struct_uuid.end(),std::ostream_iterator<char>(bytes_stream, ""));    
+//    
+//    structure_stmt.bind(1, bytes_stream);
+    
+    structure_stmt.bind(1, struct_id);
+    structure_stmt.bind(2, batch_id);
+    structure_stmt.bind(3, tag);
+    structure_stmt.bind(4, input_tag);
+    
+    basic::database::safely_write_to_database(structure_stmt);
+    
+    return struct_id;
+    
+//	BinaryProteinSilentStruct silent_struct(pose, "");
+//	stringstream pose_string;
+//	silent_struct.print_conformation(pose_string);
+//	boost::uuids::uuid const struct_id = hash_value(pose_string.str());
+//        
+//    //Check to see if we've reported this structure before    
+//    std::string select_string =
+//    "SELECT *\n"
+//    "FROM\n"
+//    "	structures\n"
+//    "WHERE\n"
+//    "   struct_id = ?;";
+//    cppdb::statement select_stmt(basic::database::safely_prepare_statement(select_string,db_session));
+//    select_stmt.bind(1, struct_id);
+//    
+//    cppdb::result res(basic::database::safely_read_from_database(select_stmt));
+//    if(!res.next()) {
+//        TR << "No existing structure found, adding the new one" << endl;
+//        
+//        structure_stmt.bind(1, struct_id);
+//        structure_stmt.bind(2, tag);
+//        structure_stmt.bind(3, input_tag);
+//        
+//        TR << "struct id: " << struct_id << "\nbatch_id: " << batch_id << "\ntag: " << tag << "\ninputtag: " << input_tag << endl;
+//        basic::database::safely_write_to_database(structure_stmt);
+//    }
+//    
+//    std::string batch_structures_string = "INSERT INTO batch_structures (struct_id, batch_id) VALUES (?,?);";
+//    statement batch_structures_stmt(safely_prepare_statement(batch_structures_string, db_session));
+//    batch_structures_stmt.bind(1, struct_id);
+//    batch_structures_stmt.bind(2, batch_id);
+//    basic::database::safely_write_to_database(batch_structures_stmt);
 }
 
 void StructureFeatures::mark_structure_as_sampled(
-	core::Size protocol_id,
+	core::Size batch_id,
 	std::string const & tag,
 	std::string const & input_tag,
 	utility::sql_database::sessionOP db_session
 ){
-	std::string insert_deleted_structure_string = "INSERT INTO sampled_structures VALUES (?,?,?);";
+	std::string insert_deleted_structure_string = "INSERT INTO sampled_structures (batch_id, tag, input_tag) VALUES (?,?,?);";
 	statement insert_statement(safely_prepare_statement(insert_deleted_structure_string,db_session));
-	insert_statement.bind(1,protocol_id);
+	insert_statement.bind(1,batch_id);
 	insert_statement.bind(2,tag);
 	insert_statement.bind(3,input_tag);
 	basic::database::safely_write_to_database(insert_statement);
 }
 
 void StructureFeatures::delete_record(
-	core::Size struct_id,
+	boost::uuids::uuid struct_id,
 	utility::sql_database::sessionOP db_session
 ){
 
@@ -195,7 +227,7 @@ void StructureFeatures::delete_record(
 void
 StructureFeatures::load_into_pose(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
 	load_tag(db_session, struct_id, pose);
@@ -204,7 +236,7 @@ StructureFeatures::load_into_pose(
 void
 StructureFeatures::load_tag(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose) {
 
 	std::string statement_string =
@@ -231,7 +263,7 @@ StructureFeatures::load_tag(
 	tag_into_pose(pose,tag);
 }
 
-Size
+boost::uuids::uuid
 StructureFeatures::get_struct_id(
 	sessionOP db_session,
 	string const & tag,
@@ -240,11 +272,15 @@ StructureFeatures::get_struct_id(
 
 	std::string statement_string =
 		"SELECT\n"
-		"	struct_id\n"
+		"	structures.struct_id\n"
 		"FROM\n"
-		"	structures\n"
+		"	protocols\n"
+        "JOIN batches ON\n"
+        "   protocols.protocol_id = batches.protocol_id\n"
+        "JOIN structures ON\n"
+        "   batches.batch_id = structures.batch_id\n"
 		"WHERE\n"
-		"	structures.tag=? AND structures.protocol_id=?;";
+		"	structures.tag=? AND protocols.protocol_id=?;";
 
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,tag);
@@ -256,9 +292,9 @@ StructureFeatures::get_struct_id(
 		error_message << "Unable to locate structure with tag '"<<tag<<"'."<<endl;
 		utility_exit_with_message(error_message.str());
 	}
-	long long struct_id;
+    boost::uuids::uuid struct_id;
 	res >> struct_id;
-	return static_cast<Size>(struct_id);
+	return struct_id;
 }
 
 } // namesapce

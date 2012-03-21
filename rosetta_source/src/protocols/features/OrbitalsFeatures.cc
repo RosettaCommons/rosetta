@@ -84,7 +84,7 @@ string
 OrbitalsFeatures::schema() const {
 	return
 			"CREATE TABLE IF NOT EXISTS HPOL_orbital (\n"
-			"	struct_id TEXT,\n"
+			"	struct_id BLOB,\n"
 			"	resNum1 INTEGER,\n"
 			"	resName1 INTEGER,\n"
 			"	orbNum1 INTEGER,\n"
@@ -111,7 +111,7 @@ OrbitalsFeatures::schema() const {
 			"	PRIMARY KEY(struct_id, resNum1, orbName1, resNum2, hpolNum2));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS HARO_orbital (\n"
-			"	struct_id TEXT,\n"
+			"	struct_id BLOB,\n"
 			"	resNum1 INTEGER,\n"
 			"	resName1 INTEGER,\n"
 			"	orbNum1 INTEGER,\n"
@@ -138,7 +138,7 @@ OrbitalsFeatures::schema() const {
 			"	PRIMARY KEY(struct_id, resNum1, orbName1, resNum2, haroNum2));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS orbital_orbital (\n"
-			"	struct_id TEXT,\n"
+			"	struct_id BLOB,\n"
 			"	resNum1 INTEGER,\n"
 			"	resName1 INTEGER,\n"
 			"	orbNum1 INTEGER,\n"
@@ -176,7 +176,7 @@ Size
 OrbitalsFeatures::report_features(
 		Pose const & pose,
 		vector1< bool > const & relevant_residues,
-		Size const struct_id,
+		boost::uuids::uuid const struct_id,
 		sessionOP db_session
 ){
 	report_hpol_orbital_interactions( pose, relevant_residues, struct_id, db_session );
@@ -190,7 +190,7 @@ void
 OrbitalsFeatures::report_hpol_orbital_interactions(
 		Pose const & pose,
 		vector1< bool > const & relevant_residues,
-		Size const struct_id,
+		boost::uuids::uuid const struct_id,
 		sessionOP db_session
 ){
 	std::string orbita_H_string = "INSERT INTO HPOL_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
@@ -370,7 +370,7 @@ void
 OrbitalsFeatures::report_haro_orbital_interactions(
 		Pose const & pose,
 		vector1< bool > const & relevant_residues,
-		Size const struct_id,
+		boost::uuids::uuid const struct_id,
 		sessionOP db_session
 ){
 	std::string orbita_H_string = "INSERT INTO HARO_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";

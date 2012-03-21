@@ -3753,6 +3753,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Set pair term for His-His to zero</dd><br>
 </dl>
 <dl>
+<dt><b>-no_his_DE_pairE</b> \<Boolean\><dt>
+<dd>Set pair term for His-Glu and His-Asp to zero</dd><br>
+</dl>
+<dl>
 <dt><b>-hbond_His_Phil_fix</b> \<Boolean\><dt>
 <dd>Phil's fix on Histidine interaction angular dependence</dd><br>
 </dl>

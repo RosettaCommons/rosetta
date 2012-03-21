@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/features/GeometricSolvationFeatures.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Platform Headers
 #include <core/pose/Pose.hh>
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
@@ -78,7 +81,7 @@ GeometricSolvationFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS geometric_solvation (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	hbond_site_id TEXT,\n"
 			"	geometric_solvation_exact REAL,\n"
 			"	FOREIGN KEY (struct_id, hbond_site_id)\n"
@@ -89,7 +92,7 @@ GeometricSolvationFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS geometric_solvation (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	hbond_site_id INTEGER,\n"
 			"	geometric_solvation_exact TEXT,\n"
 			"	FOREIGN KEY (struct_id, hbond_site_id),\n"
@@ -113,7 +116,7 @@ Size
 GeometricSolvationFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const &,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 

@@ -18,6 +18,9 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Utility Headers
 #include <numeric/HomogeneousTransform.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -82,7 +85,7 @@ LoopAnchorFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS loop_anchors (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	residue_begin INTEGER,\n"
 			"	residue_end INTEGER,\n"
 			"	FOREIGN KEY (struct_id, residue_begin)\n"
@@ -94,7 +97,7 @@ LoopAnchorFeatures::schema() const {
 			"	PRIMARY KEY(struct_id, residue_begin, residue_end));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	residue_begin INTEGER,\n"
 			"	residue_end INTEGER,\n"
 			"	x REAL,\n"
@@ -111,7 +114,7 @@ LoopAnchorFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS loop_anchors (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	residue_begin INTEGER,\n"
 			"	residue_end INTEGER,\n"
             "   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
@@ -119,7 +122,7 @@ LoopAnchorFeatures::schema() const {
 			"	PRIMARY KEY(struct_id, residue_begin, residue_end));"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	residue_begin INTEGER,\n"
 			"	residue_end INTEGER,\n"
 			"	x REAL,\n"
@@ -175,7 +178,7 @@ Size
 LoopAnchorFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 	string loop_anchors_stmt_string = "INSERT INTO loop_anchors VALUES (?,?,?);";

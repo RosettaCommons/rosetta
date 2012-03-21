@@ -50,5 +50,7 @@ static FeaturesReporterRegistrator< ScoreTypeFeaturesCreator > ScoreTypeFeatures
 static FeaturesReporterRegistrator< StructureFeaturesCreator > StructureFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< StructureScoresFeaturesCreator > StructureScoresFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< helixAssembly::HelixBundleFeaturesCreator > HelixBundleFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< helixAssembly::ConcurrencyTestCreator > ConcurrencyTestCreator_registrator;
+static FeaturesReporterRegistrator< BatchFeaturesCreator > BatchFeaturesCreator_registrator;
 
 } //namespace protocols

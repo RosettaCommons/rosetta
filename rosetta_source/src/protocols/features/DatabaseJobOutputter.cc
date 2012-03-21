@@ -153,10 +153,10 @@ bool DatabaseJobOutputter::job_has_completed( protocols::jd2::JobCOP job ) {
 
 	protein_silent_report_->initialize(db_session);
 
-	std::string job_completion_string = "SELECT count(*) FROM sampled_structures WHERE tag=? and protocol_id = ?;";
+	std::string job_completion_string = "SELECT count(*) FROM sampled_structures WHERE tag=? and batch_id = ?;";
 	cppdb::statement job_completion_statement(basic::database::safely_prepare_statement(job_completion_string,db_session));
 	job_completion_statement.bind(1,output_name(job));
-	job_completion_statement.bind(2,protein_silent_report_->get_protocol_id());
+	job_completion_statement.bind(2,protein_silent_report_->get_batch_id());
 
 
 	result res(basic::database::safely_read_from_database(job_completion_statement));

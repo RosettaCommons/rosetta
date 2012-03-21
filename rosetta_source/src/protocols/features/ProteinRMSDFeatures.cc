@@ -19,6 +19,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
 
 // Platform Headers
 #include <basic/Tracer.hh>
@@ -107,7 +109,7 @@ ProteinRMSDFeatures::schema() const {
 	if(db_mode == "sqlite3") {
 		return
 			"CREATE TABLE IF NOT EXISTS protein_rmsd (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	reference_tag TEXT,\n"
 			"	protein_CA REAL,\n"
 			"	protein_CA_or_CB REAL,\n"
@@ -124,7 +126,7 @@ ProteinRMSDFeatures::schema() const {
 	}else if(db_mode == "mysql") {
 		return
 			"CREATE TABLE IF NOT EXISTS protein_rmsd (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	reference_tag VARCHAR(255),\n"
 			"	protein_CA DOUBLE,\n"
 			"	protein_CA_or_CB DOUBLE,\n"
@@ -183,7 +185,7 @@ Size
 ProteinRMSDFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 	using namespace core::scoring;

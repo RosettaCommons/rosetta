@@ -14,6 +14,10 @@
 // Unit Headers
 #include <protocols/features/PoseConformationFeatures.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 // Project Headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -26,6 +30,12 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/types.hh>
+#include <utility/sql_database/PrimaryKey.hh>
+#include <utility/sql_database/ForeignKey.hh>
+#include <utility/sql_database/Column.hh>
+#include <utility/sql_database/Schema.hh>
+#include <utility/sql_database/Constraint.hh>
+
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -89,107 +99,54 @@ PoseConformationFeatures::type_name() const { return "PoseConformationFeatures";
 
 string
 PoseConformationFeatures::schema() const {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS pose_conformations (\n"
-			"	struct_id INTEGER PRIMARY KEY,\n"
-			"	annotated_sequence TEXT,\n"
-			"	total_residue INTEGER,\n"
-			"	fullatom BOOLEAN,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS fold_trees (\n"
-			"	struct_id INTEGER,\n"
-			"	start_res INTEGER,\n"
-			"	start_atom TEXT,\n"
-			"	stop_res INTEGER,\n"
-			"	stop_atom TEXT,\n"
-			"	label INTEGER,\n"
-			"	keep_stub_in_residue BOOLEAN,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS jumps (\n"
-			"	struct_id INTEGER,\n"
-			"	jump_id INTEGER,\n"
-			"	xx REAL INTEGER,\n"
-			"	xy REAL INTEGER,\n"
-			"	xz REAL INTEGER,\n"
-			"	yx REAL INTEGER,\n"
-			"	yy REAL INTEGER,\n"
-			"	yz REAL INTEGER,\n"
-			"	zx REAL INTEGER,\n"
-			"	zy REAL INTEGER,\n"
-			"	zz REAL INTEGER,\n"
-			"	x REAL INTEGER,\n"
-			"	y REAL INTEGER,\n"
-			"	z REAL INTEGER,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS chain_endings (\n"
-			"	struct_id INTEGER,\n"
-			"	end_pos INTEGER,\n"
-			"	FOREIGN KEY (struct_id )\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);";
-	}else if(db_mode == "mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS pose_conformations (\n"
-			"	struct_id BIGINT UNSIGNED PRIMARY KEY,\n"
-			"	annotated_sequence TEXT,\n"
-			"	total_residue INTEGER,\n"
-			"	fullatom BOOLEAN,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));\n"
-			//"	PRIMARY KEY (struct_id));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS fold_trees (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
-			"	start_res INTEGER,\n"
-			"	start_atom TEXT,\n"
-			"	stop_res INTEGER,\n"
-			"	stop_atom TEXT,\n"
-			"	label INTEGER,\n"
-			"	keep_stub_in_residue BOOLEAN,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));\n"
-			//"	PRIMARY KEY (struct_id, label));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS jumps (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
-			"	jump_id INTEGER,\n"
-			"	xx DOUBLE,\n"
-			"	xy DOUBLE,\n"
-			"	xz DOUBLE,\n"
-			"	yx DOUBLE,\n"
-			"	yy DOUBLE,\n"
-			"	yz DOUBLE,\n"
-			"	zx DOUBLE,\n"
-			"	zy DOUBLE,\n"
-			"	zz DOUBLE,\n"
-			"	x DOUBLE,\n"
-			"	y DOUBLE,\n"
-			"	z DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-			"	PRIMARY KEY (struct_id, jump_id));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS chain_endings (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
-			"	end_pos INTEGER,\n"
-			"	FOREIGN KEY (struct_id ) REFERENCES structures (struct_id),\n"
-			"	PRIMARY KEY (struct_id, end_pos));";
-	}else
-	{
-		return "";
-	}
+    using namespace utility::sql_database;
+    
+    Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+    
+    /******pose_conformations******/
+    Schema pose_conformations("pose_conformations");
+    pose_conformations.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
+    pose_conformations.add_column( Column("annotated_sequence", DbText()) );
+    pose_conformations.add_column( Column("total_residue", DbInteger()) );
+    pose_conformations.add_column( Column("fullatom", DbBoolean()) );
+        
+    
+    /******pose_trees******/
+    Schema fold_trees("fold_trees");
+    fold_trees.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+    
+    fold_trees.add_column( Column("start_res", DbInteger()) );
+    fold_trees.add_column( Column("start_atom", DbText()) );
+    fold_trees.add_column( Column("stop_res", DbInteger()) );
+    fold_trees.add_column( Column("stop_atom", DbText()) );
+    fold_trees.add_column( Column("label", DbInteger()) );
+    fold_trees.add_column( Column("keep_stub_in_residue", DbBoolean()) );
 
+    
+    /******jumps******/
+    Schema jumps("jumps");
+    jumps.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+    jumps.add_column( Column("jump_id", DbInteger()) );
+    jumps.add_column( Column("xx", DbInteger()) );
+    jumps.add_column( Column("xy", DbInteger()) );
+    jumps.add_column( Column("xz", DbInteger()) );
+    jumps.add_column( Column("yx", DbInteger()) );
+    jumps.add_column( Column("yy", DbInteger()) );
+    jumps.add_column( Column("yz", DbInteger()) );
+    jumps.add_column( Column("zx", DbInteger()) );
+    jumps.add_column( Column("zy", DbInteger()) );
+    jumps.add_column( Column("zz", DbInteger()) );
+    jumps.add_column( Column("x", DbInteger()) );
+    jumps.add_column( Column("y", DbInteger()) );
+    jumps.add_column( Column("z", DbInteger()) );
+
+    /******chain_endings******/
+    Schema chain_endings("chain_endings");
+    chain_endings.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+    chain_endings.add_column( Column("end_pos", DbInteger()) );
+
+    return pose_conformations.print() + "\n" + fold_trees.print() + "\n" + jumps.print() + "\n" + chain_endings.print();
 }
 
 utility::vector1<std::string>
@@ -203,7 +160,7 @@ Size
 PoseConformationFeatures::report_features(
 	Pose const & pose_orig,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 	vector1< Size > residue_indices;
@@ -221,8 +178,8 @@ PoseConformationFeatures::report_features(
 	FoldTree const & fold_tree(pose->conformation().fold_tree());
 	//assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 	//cppdb::transaction transact_guard(*db_session);
-
-	std::string fold_tree_string = "INSERT INTO fold_trees VALUES (?,?,?,?,?,?,?);";
+    
+	std::string fold_tree_string = "INSERT INTO fold_trees (struct_id, start_res, start_atom, stop_res, stop_atom, label, keep_stub_in_residue) VALUES (?,?,?,?,?,?,?);";
 	statement fold_tree_statement(basic::database::safely_prepare_statement(fold_tree_string,db_session));
 	for (FoldTree::const_iterator
 			it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
@@ -241,7 +198,7 @@ PoseConformationFeatures::report_features(
 
 	}
 
-	std::string jump_string = "INSERT INTO jumps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string jump_string = "INSERT INTO jumps (struct_id, jump_id, xx, xy, xz, yx, yy, yz, zx, zy, zz, x, y, z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement jump_statement(basic::database::safely_prepare_statement(jump_string,db_session));
  	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
 		Jump const & jump(pose->jump(nr));
@@ -269,7 +226,7 @@ PoseConformationFeatures::report_features(
 		basic::database::safely_write_to_database(jump_statement);
 	}
 
- 	std::string chain_ending_string = "INSERT INTO chain_endings VALUES (?,?);";
+ 	std::string chain_ending_string = "INSERT INTO chain_endings (struct_id, end_pos) VALUES (?,?);";
  	statement chain_ending_statement(basic::database::safely_prepare_statement(chain_ending_string,db_session));
 	foreach(Size end_pos, pose->conformation().chain_endings()){
 
@@ -293,7 +250,7 @@ PoseConformationFeatures::report_features(
 
 	string annotated_sequence(pose->annotated_sequence(true));
 
-	std::string pose_conformation_string = "INSERT INTO pose_conformations VALUES (?,?,?,?);";
+	std::string pose_conformation_string = "INSERT INTO pose_conformations (struct_id, annotated_sequence, total_residue, fullatom) VALUES (?,?,?,?);";
 	statement pose_conformation_statement(basic::database::safely_prepare_statement(pose_conformation_string,db_session));
 
 	pose_conformation_statement.bind(1,struct_id);
@@ -308,7 +265,7 @@ PoseConformationFeatures::report_features(
 }
 
 void PoseConformationFeatures::delete_record(
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 
@@ -332,7 +289,7 @@ void PoseConformationFeatures::delete_record(
 void
 PoseConformationFeatures::load_into_pose(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
 	load_sequence(db_session, struct_id, pose);
@@ -344,7 +301,7 @@ PoseConformationFeatures::load_into_pose(
 void
 PoseConformationFeatures::load_sequence(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
 
@@ -363,7 +320,7 @@ PoseConformationFeatures::load_sequence(
 
 	if(!res.next()){
 		stringstream error_message;
-		error_message << "Unable to locate structure with struct_id '" << struct_id << "'";
+		error_message << "Unable to locate structure with struct_id '" << to_string(struct_id) << "'";
 		utility_exit_with_message(error_message.str());
 	}
 	string annotated_sequence;
@@ -381,7 +338,7 @@ PoseConformationFeatures::load_sequence(
 void
 PoseConformationFeatures::load_fold_tree(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
 
@@ -420,7 +377,7 @@ PoseConformationFeatures::load_fold_tree(
 void
 PoseConformationFeatures::load_jumps(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
 	//note the Conformation object sorts the chain_endings after they are passed in.
@@ -496,7 +453,7 @@ PoseConformationFeatures::load_jumps(
 void
 PoseConformationFeatures::load_chain_endings(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
 

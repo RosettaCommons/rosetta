@@ -18,6 +18,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -79,7 +82,7 @@ public:
 	core::Size
 	report_features(
 		core::pose::Pose const & /*pose*/,
-		core::Size /*parent_id*/,
+        boost::uuids::uuid /*parent uuid*/,
 		utility::sql_database::sessionOP /*db_session*/
 	);
 
@@ -89,7 +92,7 @@ public:
 	report_features(
 		core::pose::Pose const & /*pose*/,
 		utility::vector1< bool > const & /*relevant_residues*/,
-		core::Size /*parent_id*/,
+        boost::uuids::uuid /*parent uuid*/,
 		utility::sql_database::sessionOP /*db_session*/
 	);
 
@@ -106,13 +109,13 @@ public:
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose) {}
 
 	virtual
 	void
 	delete_record(
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session) {}
 
 protected:
@@ -127,7 +130,7 @@ protected:
 	void
 	delete_records_from_table(
 		std::string const & table_name,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
 };

@@ -28,6 +28,11 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
+#include <utility/sql_database/PrimaryKey.hh>
+#include <utility/sql_database/ForeignKey.hh>
+#include <utility/sql_database/Column.hh>
+#include <utility/sql_database/Schema.hh>
+
 #include <cstdio>
 
 #include <core/init.hh>
@@ -44,17 +49,65 @@
 int
 main( int argc, char * argv [] )
 {
+    // initialize core
+	core::init(argc, argv);
+    
     using cppdb::statement;
     using cppdb::result;
+    using namespace utility::sql_database;
     
-	// initialize core
-	core::init(argc, argv);
+    Column protocol_id("protocol_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
+    Schema protocols("protocols", PrimaryKey(protocol_id));
+    
+    protocols.add_column( Column("command_line", DbText()) );
+    protocols.add_column( Column("svn_url", DbText()) );
+    protocols.add_column( Column("svn_version", DbText()) );
+    protocols.add_column( Column("script", DbText()) );
+
+    std::cout << protocols.print() << std::endl;
+    
+    Column struct_id("struct_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
+    Schema structures("structures", PrimaryKey(struct_id));
+    
+    structures.add_foreign_key(ForeignKey(protocol_id, "protocols", "protocol_id", true /*defer*/));    
+    
+    Column tag("tag", DbText());
+    structures.add_column( tag );
+    structures.add_column( Column("input_tag", DbText()) );
+    
+    utility::vector1<Column> unique_cols;
+    unique_cols.push_back(tag);
+    unique_cols.push_back(protocol_id);
+    UniqueConstraint test(unique_cols);
+    
+    std::cout << "TEST: " << test.print() << std::endl;
+    
+    structures.add_constraint( new UniqueConstraint(unique_cols) );
+    
+    std::cout << structures.print() << std::endl;
+
+    
+    
+    
+    exit(1);
     
     using namespace basic::options;
     using namespace protocols::wum;
-        
-    // Initialize DB - hardcoded currently
-    utility::sql_database::sessionOP db_session(basic::database::get_db_session(option[OptionKeys::inout::database_filename], option[OptionKeys::inout::database_mode], false, false));
+    
+    std::string db_mode;
+    if(!option[OptionKeys::inout::database_mode].user()){
+        utility_exit_with_message("ERROR: Must provide database mode using inout::database_mode. Allowed modes are sqlite3, mysql, and postgres");
+        db_mode=option[OptionKeys::inout::database_mode].value();
+    }
+    
+    std::string db_name;
+    if(!option[OptionKeys::inout::database_filename].user()){
+        utility_exit_with_message("ERROR: Must provide database file name using inout::database_filename");
+        db_name=option[OptionKeys::inout::database_filename].value();
+    }
+    
+    // Initialize DB
+    utility::sql_database::sessionOP db_session(basic::database::get_db_session(db_name, option[OptionKeys::inout::database_mode], false, false));
     
     
     WorkUnitList wulist;

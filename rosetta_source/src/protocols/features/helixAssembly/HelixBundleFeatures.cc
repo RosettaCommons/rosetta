@@ -17,6 +17,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 //Devel
 #include <protocols/features/helixAssembly/HelixBundleFeatures.hh>
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
@@ -79,15 +82,15 @@ HelixBundleFeatures::schema() const {
 	return
 
     "CREATE TABLE IF NOT EXISTS helix_bundles (\n"
-    "   bundle_id INTEGER PRIMARY KEY,\n"
-    "   struct_id INTEGER,\n"
+    "   bundle_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+    "   struct_id BLOB,\n"
     "	FOREIGN KEY(struct_id)\n"
     "		REFERENCES structures(struct_id)\n"
     "		DEFERRABLE INITIALLY DEFERRED);"
     
     //does this need to be keyed on struct_id too?
     "CREATE TABLE IF NOT EXISTS bundle_helices (\n"
-    "   helix_id INTEGER PRIMARY KEY,\n"
+    "   helix_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
     "   bundle_id INTEGER,\n"
     "	residue_begin INTEGER,\n"
     "	residue_end INTEGER,\n"
@@ -101,7 +104,7 @@ HelixBundleFeatures::schema() const {
 }
 
 //Select all helical segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
-utility::vector1<HelicalFragment> HelixBundleFeatures::get_full_helices(Size struct_id, sessionOP db_session){
+utility::vector1<HelicalFragment> HelixBundleFeatures::get_full_helices(boost::uuids::uuid struct_id, sessionOP db_session){
     std::string select_string =
     "SELECT\n"
     "	helices.helix_id,\n"
@@ -181,7 +184,7 @@ core::Size
 HelixBundleFeatures::report_features(
                                      core::pose::Pose const & pose,
                                      utility::vector1<bool> const & relevant_residues,
-                                     core::Size struct_id,
+                                     boost::uuids::uuid struct_id,
                                      utility::sql_database::sessionOP db_session
                                      ){
     
@@ -618,12 +621,15 @@ HelixBundleFeatures::report_features(
                                      
                     string bundle_insert =  "INSERT INTO helix_bundles VALUES (?,?);";
                     statement bundle_insert_stmt(basic::database::safely_prepare_statement(bundle_insert,db_session));
-                    bundle_insert_stmt.bind_null(1);//auto-increment
+                    bundle_insert_stmt.bind_null(1);
                     bundle_insert_stmt.bind(2,struct_id);
                     basic::database::safely_write_to_database(bundle_insert_stmt);
-                    
+                                        
+                    TR << "Saving helices" << endl;
                     //Get bundle primary key               
                     core::Size bundle_id(bundle_insert_stmt.last_insert_id());
+                    
+                    TR << "Bundle saved and given id: " << bundle_id << endl;
                                         
                     string helix_insert =  "INSERT INTO bundle_helices VALUES (?,?,?,?);";
                     statement helix_insert_stmt(basic::database::safely_prepare_statement(helix_insert,db_session));

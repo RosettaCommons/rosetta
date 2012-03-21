@@ -34,6 +34,11 @@
 
 #include <iostream>
 
+// Boost Headers
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+
 namespace cppdb {
 	namespace postgresql {
 	
@@ -111,6 +116,14 @@ namespace cppdb {
 				std::string tmp(PQgetvalue(res_,current_,col),PQgetlength(res_,current_,col));
 				v=parse_number<T>(tmp,ss_);
 				return true;
+			}
+            virtual bool fetch(int col,boost::uuids::uuid &v) 
+			{
+                std::string s=to_string(v);
+                bool result = fetch(col,s);
+                boost::uuids::string_generator gen;
+                v = gen(s);
+                return result;
 			}
 			virtual bool fetch(int col,short &v)
 			{
@@ -360,6 +373,11 @@ namespace cppdb {
 				params_pvalues_.swap(pvals);
 				params_plengths_.swap(lengths);
 				params_set_.swap(flags);
+			}
+      virtual void bind(int col,boost::uuids::uuid const &v) 
+			{
+        std::string struct_id_string(to_string(v));
+				bind(col,struct_id_string.c_str(),struct_id_string.c_str()+struct_id_string.size());
 			}
 			virtual void bind(int col,std::string const &v)
 			{

@@ -18,6 +18,9 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ScoreTypeFeatures.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
@@ -66,7 +69,7 @@ public:
 	);
 
 	void delete_record(
-		Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 

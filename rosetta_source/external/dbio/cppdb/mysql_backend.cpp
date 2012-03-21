@@ -31,6 +31,11 @@
 
 #include <iostream>
 
+// Boost Headers
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+
 namespace cppdb {
 
 namespace mysql_backend {	
@@ -110,6 +115,14 @@ namespace unprep {
 				return false;
 			v = parse_number<T>(std::string(s,len),fmt_);
 			return true;
+		}
+          virtual bool fetch(int col,boost::uuids::uuid &v) 
+		{
+              std::string s=to_string(v);
+              bool result = fetch(col,s);
+              boost::uuids::string_generator gen;
+              v = gen(s);
+              return result;
 		}
 		virtual bool fetch(int col,short &v) 
 		{
@@ -270,6 +283,12 @@ namespace unprep {
 		virtual std::string const &sql_query() 
 		{
 			return query_;
+		}
+
+    virtual void bind(int col,boost::uuids::uuid const &v) 
+		{
+      std::string struct_id_string(to_string(v));
+		  bind(col,struct_id_string.c_str(),struct_id_string.c_str()+struct_id_string.size());
 		}
 
 		virtual void bind(int col,std::string const &s)
@@ -547,6 +566,14 @@ namespace prep {
 
 			v=parse_number<T>(std::string(d.ptr,d.length),fmt_);
 			return true;
+		}
+          virtual bool fetch(int col,boost::uuids::uuid &v) 
+		{
+              std::string s=to_string(v);
+              bool result = fetch(col,s);
+              boost::uuids::string_generator gen;
+              v = gen(s);
+              return result;
 		}
 		virtual bool fetch(int col,short &v) 
 		{
@@ -844,6 +871,20 @@ namespace prep {
 		virtual std::string const &sql_query() 
 		{
 			return query_;
+		}
+
+		///
+		/// Bind a UUID value to column \a col (starting from 1). You may assume
+		/// that the reference remains valid until real call of query() or exec()
+		///
+		/// Should throw invalid_placeholder() if the value of col is out of range. May
+		/// ignore if it is impossible to know whether the placeholder exists without special
+		/// support from back-end.
+		///
+    virtual void bind(int col,boost::uuids::uuid const &v) 
+		{
+      std::string struct_id_string(to_string(v));
+		  bind(col,struct_id_string.c_str(),struct_id_string.c_str()+struct_id_string.size());
 		}
 
 		///

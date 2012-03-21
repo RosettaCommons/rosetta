@@ -16,6 +16,10 @@
 #include <cxxtest/TestSuite.h>
 #include <util/pose_funcs.hh>
 
+// External
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+
 // Unit Headers
 #include <protocols/features/AtomAtomPairFeatures.hh>
 #include <protocols/features/AtomInResidueAtomInResiduePairFeatures.hh>
@@ -157,7 +161,7 @@ public:
 	void do_test_report_features() {
 		using protocols::features::FeaturesReporterOP;
 
-		core::Size fake_parent_id = 0;
+		boost::uuids::uuid fake_parent_id = boost::uuids::random_generator()();
 		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
 			tr << "Reporting features for '" << reporter->type_name() << "'" << std::endl;
 			reporter->report_features(*pose_1ten_, fake_parent_id, db_session_);

@@ -14,11 +14,14 @@
 // Unit Headers
 #include <protocols/features/ProteinSilentReport.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
 
 // Project Headers
 #include <protocols/features/FeaturesReporter.hh>
 
 #include <protocols/features/ProtocolFeatures.hh>
+#include <protocols/features/BatchFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/ScoreTypeFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
@@ -30,6 +33,7 @@
 #include <protocols/features/ResidueConformationFeatures.hh>
 #include <protocols/features/JobDataFeatures.hh>
 #include <protocols/features/DatabaseFilters.hh>
+#include <protocols/features/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -76,6 +80,7 @@ ProteinSilentReport::ProteinSilentReport() :
 	protocol_id_(0),
 	structure_map_(),
 	protocol_features_( new ProtocolFeatures() ),
+    batch_features_( new BatchFeatures() ),
 	pdb_data_features_( new PdbDataFeatures()),
 	structure_features_( new StructureFeatures() ),
 	structure_scores_features_( new StructureScoresFeatures() ),
@@ -123,7 +128,8 @@ ProteinSilentReport::write_schema_to_db(
 	sessionOP db_session
 ) const {
 	protocol_features_->write_schema_to_db(db_session);
-	structure_features_->write_schema_to_db(db_session);
+    batch_features_->write_schema_to_db(db_session);
+    structure_features_->write_schema_to_db(db_session);
 	score_type_features_->write_schema_to_db(db_session);
 	structure_scores_features_->write_schema_to_db(db_session);
 	pdb_data_features_->write_schema_to_db(db_session);
@@ -157,7 +163,7 @@ ProteinSilentReport::apply(
 	initialize(db_session);
 
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-	structure_features_->mark_structure_as_sampled(protocol_id_,tag,input_tag,db_session);
+	structure_features_->mark_structure_as_sampled(batch_id_,tag,input_tag,db_session);
 
 	//transact_guard.commit();
 	if(!database_filter_){
@@ -165,10 +171,10 @@ ProteinSilentReport::apply(
 		return;
 	}
 
-	std::pair<bool, utility::vector1<core::Size> > temp= (*database_filter_)(pose, db_session, protocol_id_);
+	std::pair<bool, utility::vector1<boost::uuids::uuid> > temp= (*database_filter_)(pose, db_session, protocol_id_);
 	bool write_this_pose = temp.first;
-	utility::vector1<core::Size> struct_ids_to_delete = temp.second;
-	foreach(core::Size struct_id, struct_ids_to_delete){
+	utility::vector1<boost::uuids::uuid> struct_ids_to_delete = temp.second;
+	foreach(boost::uuids::uuid struct_id, struct_ids_to_delete){
 		delete_pose(db_session,struct_id);
 	}
 	if(write_this_pose){
@@ -185,7 +191,7 @@ ProteinSilentReport::load_pose(
 
 	tag_into_pose(pose,tag);
 
-	Size struct_id = structure_features_->get_struct_id(db_session, tag,protocol_id);
+	boost::uuids::uuid struct_id = structure_features_->get_struct_id(db_session, tag,protocol_id);
 
 	pose_conformation_features_->load_into_pose(db_session, struct_id, pose);
 	pdb_data_features_->load_into_pose(db_session,struct_id,pose);
@@ -217,8 +223,12 @@ ProteinSilentReport::write_protocol_report(
 	//MYSQL innoDB tables cannot defer foreign constraint checking, so we explicitly wrap these
 	//Calls in transaction guards to make sure the protocol and type_id features are set up properly
 	cppdb::transaction protocol_transaction(*db_session);
-	protocol_id_ = protocol_features_->report_features(protocol_id_, db_session);
-	protocol_transaction.commit();
+    
+    //initialize protocol and batch id
+    std::pair<Size, Size> ids = get_protocol_and_batch_id("db_job_outputter", db_session);
+    protocol_id_=ids.first;
+    batch_id_=ids.second;
+    protocol_transaction.commit();
 
 	cppdb::transaction score_type_transaction(*db_session);
 	score_type_features_->report_features(protocol_id_, db_session);
@@ -236,41 +246,41 @@ ProteinSilentReport::write_full_report(
 	cppdb::transaction transact_guard(*db_session);
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 
-	Size struct_id = structure_features_->report_features(
-		pose, relevant_residues, protocol_id_, db_session, tag, input_tag);
+    boost::uuids::uuid struct_id = structure_features_->report_features(
+		relevant_residues, batch_id_, db_session, tag, input_tag);
 
-	pose_conformation_features_->report_features(
-		pose, relevant_residues, struct_id, db_session);
-	pdb_data_features_->report_features(
-		pose,relevant_residues,struct_id,db_session);
+    pose_conformation_features_->report_features(
+        pose, relevant_residues, struct_id, db_session);
+    
+    pdb_data_features_->report_features(
+        pose,relevant_residues,struct_id,db_session);
 
-	if(pose.energies().energies_updated()){
-		structure_scores_features_->report_features(
-			pose, relevant_residues, struct_id, db_session);
-	}
+    if(pose.energies().energies_updated()){
+        structure_scores_features_->report_features(
+            pose, relevant_residues, struct_id, db_session);
+    }
 
 	pose_comments_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);
 	protein_residue_conformation_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);
-	residue_features_->report_features(
-		pose, relevant_residues, struct_id, db_session);
-	residue_conformation_features_->report_features(
-		pose, relevant_residues, struct_id, db_session);
-	job_data_features_->report_features(
-		pose, relevant_residues, struct_id, db_session);
-
+    residue_features_->report_features(
+        pose, relevant_residues, struct_id, db_session);
+    residue_conformation_features_->report_features(
+        pose, relevant_residues, struct_id, db_session);
+    job_data_features_->report_features(
+        pose, relevant_residues, struct_id, db_session);
 
 	transact_guard.commit();
 }
 
-void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_session, std::string const & tag)
+void ProteinSilentReport::delete_pose_from_tag(utility::sql_database::sessionOP db_session, std::string const & tag)
 {
-	core::Size struct_id = structure_features_->get_struct_id(db_session,tag,protocol_id_);
+	boost::uuids::uuid struct_id = structure_features_->get_struct_id(db_session,tag,protocol_id_);
 	delete_pose(db_session,struct_id);
 }
 
-void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_session, core::Size const & struct_id)
+void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_session, boost::uuids::uuid const & struct_id)
 {
 
 	job_data_features_->delete_record(struct_id,db_session);
@@ -290,6 +300,11 @@ void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_sessio
 core::Size ProteinSilentReport::get_protocol_id() const
 {
 	return protocol_id_;
+}
+    
+core::Size ProteinSilentReport::get_batch_id() const
+{
+    return batch_id_;
 }
 
 

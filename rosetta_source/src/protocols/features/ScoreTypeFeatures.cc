@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/features/ScoreTypeFeatures.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Platform Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -143,7 +146,7 @@ ScoreTypeFeatures::report_features(
 }
 
 void ScoreTypeFeatures::delete_record(
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	utility::sql_database::sessionOP db_session){}
 
 void

@@ -108,6 +108,9 @@ options = {
         #enable mysql database support
         "mysql",
 
+        #enable postgres database support
+        "postgres",
+
         # Build with CUDA
         "cuda",
 

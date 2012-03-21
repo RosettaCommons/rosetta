@@ -18,6 +18,9 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/PoseCommentsFeatures.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
@@ -63,17 +66,17 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & /*relevant_residues*/,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void delete_record(
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose);
 
 };

@@ -81,7 +81,7 @@ string
 RotamerBoltzmannWeightFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS rotamer_boltzmann_weight (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	resNum INTEGER,\n"
 		"	boltzmann_weight REAL,\n"
 		"	FOREIGN KEY (struct_id, resNum)\n"
@@ -124,7 +124,7 @@ Size
 RotamerBoltzmannWeightFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 

@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/features/HBondFeatures.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Package Headers
 #include <core/scoring/hbonds/HBondSet.hh>
 
@@ -190,7 +193,7 @@ HBondFeatures::schema() const {
 		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_GENERIC_SC', 'dGEN: sc');\n"
 		"\n"
 		"CREATE TABLE IF NOT EXISTS hbond_sites (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	site_id INTEGER,\n"
 		"	resNum INTEGER,\n"
 		"	atmNum INTEGER,\n"
@@ -208,7 +211,7 @@ HBondFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, site_id));\n"
 		"\n"
 		"CREATE TABLE IF NOT EXISTS hbond_sites_pdb (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	site_id INTEGER,\n"
 		"	chain TEXT,\n"
 		"	resNum INTEGER,\n"
@@ -221,7 +224,7 @@ HBondFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, site_id));\n"
 		"\n"
 		"CREATE TABLE IF NOT EXISTS hbond_site_environment (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	site_id INTEGER,\n"
 		"	sasa_r100 REAL,\n"
 		"	sasa_r140 REAL,\n"
@@ -234,7 +237,7 @@ HBondFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, site_id));\n"
 		"\n"
 		"CREATE TABLE IF NOT EXISTS hbond_site_atoms (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	site_id INTEGER,\n"
 		"	atm_x REAL,\n"
 		"	atm_y REAL,\n"
@@ -255,7 +258,7 @@ HBondFeatures::schema() const {
 
 		"\n"
 		"CREATE TABLE IF NOT EXISTS hbonds (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	hbond_id INTEGER,\n"
 		"	don_id INTEGER,\n"
 		"	acc_id INTEGER,\n"
@@ -274,7 +277,7 @@ HBondFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, hbond_id));\n"
 		"\n"
 		"CREATE TABLE IF NOT EXISTS hbond_lennard_jones (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	hbond_id INTEGER,\n"
 		"	don_acc_atrE REAL,\n"
 		"	don_acc_repE REAL,\n"
@@ -294,7 +297,7 @@ HBondFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, hbond_id));\n"
 		"\n"
 		"CREATE TABLE IF NOT EXISTS hbond_geom_coords (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	hbond_id INTEGER,\n"
 		"	AHdist REAL,\n"
 		"	cosBAH REAL,\n"
@@ -306,7 +309,7 @@ HBondFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, hbond_id));\n"
 		"\n"
 		"CREATE TABLE IF NOT EXISTS hbond_dehydrons (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	hbond_id INTEGER,\n"
 		"	wrapping_count INTEEGER,\n"
 		"	FOREIGN KEY(struct_id, hbond_id)\n"
@@ -369,7 +372,7 @@ Size
 HBondFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 	HBondSet hbond_set;
@@ -482,7 +485,7 @@ HBondFeatures::report_features(
 void
 HBondFeatures::insert_site_row(
 	Pose const & pose,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Size site_id,
 	Size resNum,
 	Size atmNum,
@@ -531,7 +534,7 @@ HBondFeatures::insert_site_pdb_row(
 	Size resNum,
 	Size atmNum,
   Size heavy_atmNum,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Size site_id,
 	sessionOP db_session
 ){
@@ -563,7 +566,7 @@ HBondFeatures::insert_site_environment_row(
 	Pose const & pose,
 	Size resNum,
 	Size atmNum,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Size site_id,
 	AtomID_Map< Real > const & atom_sasa_s,
 	AtomID_Map< Real > const & atom_sasa_m,
@@ -594,7 +597,7 @@ HBondFeatures::insert_site_atoms_row(
 	Pose const & pose,
 	Size resNum,
 	Size atmNum,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Size site_id,
 	sessionOP db_session
 ){
@@ -641,7 +644,7 @@ HBondFeatures::insert_site_atoms_row(
 Size
 HBondFeatures::insert_hbond_row(
 	HBond const & hbond,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Size hbond_id,
 	AtomID_Map< Size > const & site_ids,        // This is for ranking hbonds
 	AtomID_Map< vector1<HBondCOP> > const & site_partners,
@@ -713,7 +716,7 @@ void
 HBondFeatures::insert_hbond_geom_coords(
 	Pose const & pose,
 	HBond const & hbond,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Size hbond_id,
 	sessionOP db_session
 ){
@@ -765,7 +768,7 @@ void
 HBondFeatures::insert_hbond_lennard_jones_row(
 	Pose const & pose,
 	HBond const & hbond,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Size hbond_id,
 	sessionOP db_session
 ){
@@ -857,7 +860,7 @@ void
 HBondFeatures::insert_hbond_dehydron_row(
 	Pose const & pose,
 	HBond const & hbond,
-	Size struct_id,
+    boost::uuids::uuid struct_id,
 	Size hbond_id,
 	sessionOP db_session
 ){

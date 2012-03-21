@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/features/ResidueFeatures.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -65,7 +68,7 @@ ResidueFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS residues (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	resNum INTEGER,\n"
 			"	name3 TEXT,\n"
 			"	res_type TEXT,\n"
@@ -78,7 +81,7 @@ ResidueFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS residues (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	resNum INTEGER,\n"
 			"	name3 TEXT,\n"
 			"	res_type TEXT,\n"
@@ -99,7 +102,7 @@ Size
 ResidueFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 	insert_residue_rows(pose, relevant_residues, struct_id, db_session);
@@ -111,7 +114,7 @@ void
 ResidueFeatures::insert_residue_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 
@@ -135,7 +138,7 @@ ResidueFeatures::insert_residue_rows(
 
 void
 ResidueFeatures::delete_record(
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session) {
 
 	delete_records_from_table("residues", struct_id, db_session);

@@ -20,6 +20,9 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/database/sql_utils.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 //external headers
 #include <cppdb/frontend.h>
 
@@ -53,7 +56,7 @@ std::string JobDataFeatures::schema() const
 	{
 		return
 				"CREATE TABLE IF NOT EXISTS job_string_data (\n"
-				"	struct_id INTEGER,\n"
+				"	struct_id BLOB,\n"
 				"	data_key TEXT,\n"
 				"	FOREIGN KEY (struct_id)\n"
 				"		REFERENCES structures(struct_id)\n"
@@ -61,7 +64,7 @@ std::string JobDataFeatures::schema() const
 				"	PRIMARY KEY (struct_id,data_key));\n"
 				"\n"
 				"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
-				"	struct_id INTEGER,\n"
+				"	struct_id BLOB,\n"
 				"	data_key TEXT,\n"
 				"	data_value TEXT,\n"
 				"	FOREIGN KEY (struct_id)\n"
@@ -70,7 +73,7 @@ std::string JobDataFeatures::schema() const
 				"	PRIMARY KEY (struct_id,data_key));\n"
 				"\n"
 				"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
-				"	struct_id INTEGER,\n"
+				"	struct_id BLOB,\n"
 				"	data_key TEXT,\n"
 				"	data_value REAL,\n"
 				"	FOREIGN KEY (struct_id)\n"
@@ -81,20 +84,20 @@ std::string JobDataFeatures::schema() const
 	{
 		return
 				"CREATE TABLE IF NOT EXISTS job_string_data (\n"
-				"	struct_id BIGINT UNSIGNED,\n"
+				"	struct_id BINARY(36),\n"
 				"	data_key VARCHAR(255),\n"
 				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id),\n"
 				"	PRIMARY KEY (struct_id,data_key));\n"
 				"\n"
 				"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
-				"	struct_id BIGINT UNSIGNED,\n"
+				"	struct_id BINARY(36),\n"
 				"	data_key VARCHAR(255),\n"
 				"	data_value TEXT,\n"
 				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id),\n"
 				"	PRIMARY KEY (struct_id,data_key));\n"
 				"\n"
 				"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
-				"	struct_id BIGINT UNSIGNED,\n"
+				"	struct_id BINARY(36),\n"
 				"	data_key VARCHAR(255),\n"
 				"	data_value REAL,\n"
 				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id),\n"
@@ -118,7 +121,7 @@ core::Size
 JobDataFeatures::report_features(
 		core::pose::Pose const & /*pose */,
 		utility::vector1<bool> const & /*relevant_residues*/,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session
 )
 {
@@ -132,7 +135,7 @@ JobDataFeatures::report_features(
 void
 JobDataFeatures::load_into_pose(
 		utility::sql_database::sessionOP db_session,
-		Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose
 ){
 	load_string_data(db_session, struct_id, pose);
@@ -141,7 +144,7 @@ JobDataFeatures::load_into_pose(
 }
 
 void JobDataFeatures::delete_record(
-	core::Size struct_id,
+	boost::uuids::uuid struct_id,
 	utility::sql_database::sessionOP db_session
 	)
 {
@@ -163,7 +166,7 @@ void JobDataFeatures::delete_record(
 
 }
 
-void JobDataFeatures::insert_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
+void JobDataFeatures::insert_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
 	std::string statement_string = "INSERT INTO job_string_data VALUES (?,?);";
@@ -179,7 +182,7 @@ void JobDataFeatures::insert_string_rows(core::Size struct_id, utility::sql_data
 void
 JobDataFeatures::load_string_data(
 		utility::sql_database::sessionOP db_session,
-		Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose
 ){
 	if(!table_exists(db_session, "job_string_data")) return;
@@ -203,7 +206,7 @@ JobDataFeatures::load_string_data(
 	}
 }
 
-void JobDataFeatures::insert_string_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
+void JobDataFeatures::insert_string_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin());
 	std::string statement_string = "INSERT INTO job_string_string_data VALUES (?,?,?);";
@@ -220,7 +223,7 @@ void JobDataFeatures::insert_string_string_rows(core::Size struct_id, utility::s
 void
 JobDataFeatures::load_string_string_data(
 		utility::sql_database::sessionOP db_session,
-		Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose
 ){
 	if(!table_exists(db_session, "job_string_string_data")) return;
@@ -244,7 +247,7 @@ JobDataFeatures::load_string_string_data(
 	}
 }
 
-void JobDataFeatures::insert_string_real_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
+void JobDataFeatures::insert_string_real_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
 	std::string statement_string = "INSERT INTO job_string_real_data VALUES (?,?,?);";
@@ -263,7 +266,7 @@ void JobDataFeatures::insert_string_real_rows(core::Size struct_id, utility::sql
 void
 JobDataFeatures::load_string_real_data(
 		utility::sql_database::sessionOP db_session,
-		Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose
 ){
 	if(!table_exists(db_session, "job_string_real_data")) return;

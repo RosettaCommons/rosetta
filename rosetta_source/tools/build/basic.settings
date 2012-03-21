@@ -595,6 +595,12 @@ settings = {
         },
     },
 
+    "gcc, postgres" : {
+        "appends" : {
+            "defines"       : [ "USEPOSTGRES" ],
+        },
+    },
+		
     "gcc, boost_mpi" : {
         "appends" : {
             "libraries"     : [ "libboost_serialization", "libboost_mpi" ],
@@ -805,12 +811,19 @@ settings = {
             "cc"            : "mpicc",
             "cxx"           : "mpiCC",
         },
-        },
+     },
     "icc, mysql" : {
         "appends" : {
             "defines"       : [ "USEMYSQL" ],
         },
     },
+
+    "icc, postgres" : {
+        "appends" : {
+            "defines"       : [ "USEPOSTGRES" ],
+        },
+    },
+
     "icc, linux, release_debug" : {
         "appends" : {
             "flags" : {
@@ -1112,6 +1125,26 @@ settings = {
                 "warn"      : [ "W", "Wall", "pedantic", "Wno-long-long" ],
             },
 		    },
+    },
+    "clang, debug" : {
+        "appends" : {
+            "flags" : {
+                "compile"   : [ "O0" ],
+                "mode"      : [
+                    "g"
+                ],
+            },
+        },
+    },
+    "clang, postgres" : {
+        "appends" : {
+            "defines"       : [ "USEPOSTGRES" ],
+        },
+    },
+    "clang, mysql" : {
+        "appends" : {
+            "defines"       : [ "USEMYSQL" ],
+        },
     },
     "clang, mpi" : {
         "appends" : {

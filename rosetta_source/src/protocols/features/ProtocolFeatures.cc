@@ -22,11 +22,18 @@
 #include <basic/database/sql_utils.hh>
 #include <core/types.hh>
 #include <core/svn_version.hh>
+#include <utility/sql_database/PrimaryKey.hh>
+#include <utility/sql_database/ForeignKey.hh>
+#include <utility/sql_database/Column.hh>
+#include <utility/sql_database/Schema.hh>
 
 // Utility Headers
 #include <utility/io/izstream.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+
+//Basic Headers
+#include <basic/Tracer.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -34,6 +41,8 @@
 // C++ Headers
 #include <string>
 #include <sstream>
+
+static basic::Tracer TR("protocols.features.ProtocolFeatures");
 
 namespace protocols{
 namespace features{
@@ -51,7 +60,7 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
-
+    
 ProtocolFeatures::ProtocolFeatures(){}
 
 ProtocolFeatures::ProtocolFeatures( ProtocolFeatures const & ) :
@@ -65,62 +74,38 @@ ProtocolFeatures::type_name() const { return "ProtocolFeatures"; }
 
 string
 ProtocolFeatures::schema() const {
+    using namespace utility::sql_database;
+    
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 	bool protocol_id_mode = basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user();
-	if(db_mode == "sqlite3")
-	{
-		if(protocol_id_mode)
-		{
-			return
-				"CREATE TABLE IF NOT EXISTS protocols (\n"
-				"	protocol_id INTEGER PRIMARY KEY UNIQUE,\n"
-				"	command_line TEXT,\n"
-				"	specified_options TEXT,\n"
-				"	svn_url TEXT,\n"
-				"	svn_version TEXT,\n"
-				"	script TEXT);";
-		}else
-		{
-			//default behavior
-			return
-				"CREATE TABLE IF NOT EXISTS protocols (\n"
-				"	protocol_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-				"	command_line TEXT,\n"
-				"	specified_options TEXT,\n"
-				"	svn_url TEXT,\n"
-				"	svn_version TEXT,\n"
-				"	script TEXT);";
-		}
+    
+    if(protocol_id_mode){
+        
+        Column protocol_id("protocol_id",DbInteger());
+        Schema protocols("protocols", PrimaryKey(protocol_id));
 
-	}else if(db_mode == "mysql")
-	{
-		if(protocol_id_mode)
-		{
-			return
-				"CREATE TABLE IF NOT EXISTS protocols (\n"
-				"	protocol_id INTEGER PRIMARY KEY,\n"
-				"	command_line TEXT,\n"
-				"	specified_options TEXT,\n"
-				"	svn_url TEXT,\n"
-				"	svn_version TEXT,\n"
-				"	script TEXT);";
-		}else
-		{
-			//default behavior
-			return
-				"CREATE TABLE IF NOT EXISTS protocols (\n"
-				"	protocol_id INTEGER PRIMARY KEY AUTO_INCREMENT,\n"
-				"	command_line TEXT,\n"
-				"	specified_options TEXT,\n"
-				"	svn_url TEXT,\n"
-				"	svn_version TEXT,\n"
-				"	script TEXT);";
-		}
-
-	}else
-	{
-		return "";
-	}
+        protocols.add_column( Column("specified_options", DbText()) );
+        protocols.add_column( Column("command_line", DbText()) );
+        protocols.add_column( Column("svn_url", DbText()) );
+        protocols.add_column( Column("svn_version", DbText()) );
+        protocols.add_column( Column("script", DbText()) );
+        return protocols.print();
+    }
+    
+    else{
+        
+        Column protocol_id("protocol_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
+        Schema protocols("protocols", PrimaryKey(protocol_id));
+        
+        protocols.add_column( Column("specified_options", DbText()) );
+        protocols.add_column( Column("command_line", DbText()) );
+        protocols.add_column( Column("svn_url", DbText()) );
+        protocols.add_column( Column("svn_version", DbText()) );
+        protocols.add_column( Column("script", DbText()) );
+        return protocols.print();
+    }
+    
+    
 }
 
 utility::vector1<std::string>
@@ -171,8 +156,7 @@ ProtocolFeatures::report_features(
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,protocol_id);
 
-	//<< protocol_id;
-
+    TR << "Checking for existing protocol entry with given id" << std::endl;
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 	if(res.next())
 	{
@@ -183,20 +167,29 @@ ProtocolFeatures::report_features(
 			return protocol_id;
 		}
 	}
-
-	std::string insert_string("INSERT INTO protocols VALUES (?,?,?,?,?,?);");
-	cppdb::statement insert_statement(basic::database::safely_prepare_statement(insert_string,db_session));
+	
+	cppdb::statement insert_statement;
 	if(protocol_id){
+        TR << "Writing to protocols table with given protocol id: " << protocol_id << std::endl;
+        std::string insert_string("INSERT INTO protocols VALUES (?,?,?,?,?,?);");
+        cppdb::statement insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
 		insert_statement.bind(1,protocol_id);
-	}else {
-		insert_statement.bind_null(1);
-	}
+        insert_statement.bind(2,command_line);
+        insert_statement.bind(3,specified_options);
+        insert_statement.bind(4,svn_url);
+        insert_statement.bind(5,svn_version);
+        insert_statement.bind(6,script);
 
-	insert_statement.bind(2,command_line);
-	insert_statement.bind(3,specified_options);
-	insert_statement.bind(4,svn_url);
-	insert_statement.bind(5,svn_version);
-	insert_statement.bind(6,script);
+	}else {
+        TR << "No protocol ID, generating one automagically" << std::endl;
+        std::string insert_string("INSERT INTO protocols (command_line, specified_options, svn_url, svn_version, script) VALUES (?,?,?,?,?);");
+        insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
+        insert_statement.bind(1,command_line);
+        insert_statement.bind(2,specified_options);
+        insert_statement.bind(3,svn_url);
+        insert_statement.bind(4,svn_version);
+        insert_statement.bind(5,script);
+	}
 
 	basic::database::safely_write_to_database(insert_statement);
 	if(protocol_id)
@@ -204,10 +197,8 @@ ProtocolFeatures::report_features(
 		return protocol_id;
 	}else
 	{
-		return insert_statement.sequence_last("");
+    return insert_statement.sequence_last("protocols_protocol_id_seq");
 	}
-
-
 }
 
 } // features namesapce

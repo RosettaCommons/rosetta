@@ -18,8 +18,12 @@
 #include <protocols/features/Report.hh>
 #include <protocols/features/ProteinSilentReport.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <protocols/features/ProtocolFeatures.fwd.hh>
+#include <protocols/features/BatchFeatures.fwd.hh>
 #include <protocols/features/PdbDataFeatures.fwd.hh>
 #include <protocols/features/StructureFeatures.fwd.hh>
 #include <protocols/features/StructureScoresFeatures.fwd.hh>
@@ -87,15 +91,17 @@ public:
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session ) const;
 
-	void delete_pose(
+	void delete_pose_from_tag(
 		utility::sql_database::sessionOP db_session,
 		std::string const & tag);
 
 	void delete_pose(
 		utility::sql_database::sessionOP db_session,
-		core::Size const & struct_id);
+		boost::uuids::uuid const & struct_id);
 
 	core::Size get_protocol_id() const;
+    
+    core::Size get_batch_id() const;
 
 
 private:
@@ -118,9 +124,11 @@ private:
 	DatabaseFilterOP database_filter_;
 
 	core::Size protocol_id_;
+    core::Size batch_id_;
 	StructureMap structure_map_;
 
 	protocols::features::ProtocolFeaturesOP protocol_features_;
+    protocols::features::BatchFeaturesOP batch_features_;
 	protocols::features::PdbDataFeaturesOP pdb_data_features_;
 	protocols::features::StructureFeaturesOP structure_features_;
 	protocols::features::StructureScoresFeaturesOP structure_scores_features_;

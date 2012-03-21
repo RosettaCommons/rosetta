@@ -16,6 +16,8 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/features/DatabaseStatements.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -92,10 +94,10 @@ WriteDeletePair get_write_delete_pair(
 	//store all the structures until you have at least percentile_count worth of models
 	if(n_models < count)
 	{
-		return WriteDeletePair(true, utility::vector1<core::Size>());
+		return WriteDeletePair(true, utility::vector1<boost::uuids::uuid>());
 	}
 	// else we need to delete some structure(s) from the database
-	core::Size struct_id = 0;
+	boost::uuids::uuid struct_id;
 	core::Real cutoff_score = 0.0;
 	core::Real current_model_score = 0.0;
 	core::Size score_type_id = 0;
@@ -110,7 +112,7 @@ WriteDeletePair get_write_delete_pair(
 	//If this is the case score_type_id will return 0
 	//otherwise, we know that the score term in question is a normal scoring function term
 
-	core::Size struct_id_to_remove;
+	boost::uuids::uuid struct_id_to_remove;
 
 	if(score_type_id != 0)
 	{
@@ -146,11 +148,11 @@ WriteDeletePair get_write_delete_pair(
 	//See if our current model is better
 	if(current_model_score < cutoff_score )
 	{
-		utility::vector1<core::Size> struct_ids_to_delete(1, struct_id_to_remove);
+		utility::vector1<boost::uuids::uuid> struct_ids_to_delete(1, struct_id_to_remove);
 		return WriteDeletePair(true, struct_ids_to_delete);
 	}else
 	{
-		return WriteDeletePair(false, utility::vector1<core::Size>());
+		return WriteDeletePair(false, utility::vector1<boost::uuids::uuid>());
 	}
 
 }

@@ -1,0 +1,1 @@
+place header files for mysql client in this directory and compile with extras=mysql to add mysql support.

@@ -80,7 +80,7 @@ string
 ResidueBurialFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS residue_burial (\n"
-		"	struct_id TEXT,\n"
+		"	struct_id BLOB,\n"
 		"	resNum INTEGER,\n"
 		"	ten_a_neighbors INTEGER,\n"
 		"	twelve_a_neighbors INTEGER,\n"
@@ -105,7 +105,7 @@ Size
 ResidueBurialFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 

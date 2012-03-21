@@ -71,7 +71,7 @@ string
 AtomInResidueAtomInResiduePairFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS atom_in_residue_pairs (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	residue_type1 TEXT,\n"
 		"	atom_type1 TEXT,\n"
 		"	residue_type2 TEXT,\n"
@@ -96,7 +96,7 @@ Size
 AtomInResidueAtomInResiduePairFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 	report_atom_pairs(pose, relevant_residues, struct_id, db_session);
@@ -123,7 +123,7 @@ void
 AtomInResidueAtomInResiduePairFeatures::report_atom_pairs(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+    boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 

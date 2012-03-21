@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/features/StructureScoresFeatures.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Platform Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -110,7 +113,7 @@ StructureScoresFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	score_type_id INTEGER,\n"
 			"	score_value INTEGER,\n"
 			"	FOREIGN KEY (struct_id)\n"
@@ -124,7 +127,7 @@ StructureScoresFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-			"	struct_id BIGINT UNSIGNED REFERENCES structures (struct_id),\n"
+			"	struct_id BINARY(36) REFERENCES structures (struct_id),\n"
 			"	score_type_id INTEGER REFERENCES score_types (score_type_id),\n"
 			"	score_value INTEGER,\n"
 			"	PRIMARY KEY (struct_id, score_type_id));\n";
@@ -172,7 +175,7 @@ Size
 StructureScoresFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 	if(!pose.energies().energies_updated()){
@@ -186,7 +189,7 @@ StructureScoresFeatures::report_features(
 }
 
 void StructureScoresFeatures::delete_record(
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	utility::sql_database::sessionOP db_session
 ){
 
@@ -201,7 +204,7 @@ void
 StructureScoresFeatures::insert_structure_score_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ) const {
 

@@ -67,7 +67,11 @@ def build_cppdb(current_project):
     actual = ProjectSettings(current_project)
     env = build.environment.Clone()
     actual.libraries.append("sqlite3")
+    if "postgres" in build.options.extras:
+        actual.include_path.append("dbio/postgreSQL")
+        actual.libraries.append("pq")
     if "mysql" in build.options.extras:
+        actual.include_path.append("dbio/mysql")
         actual.libraries.append("mysqlclient")
     actual.library_path.append("#build/external/" + build.platform)
     env.Prepend(**actual.symbols())
@@ -79,6 +83,8 @@ def build_cppdb(current_project):
     env.Append(CPPDEFINES=['CPPDB_DISABLE_THREAD_SAFETY'])
     env.Append(CPPDEFINES=['CPPDB_SOVERSION=\\"0\\"'])
     env.Append(CPPDEFINES=['CPPDB_WITH_SQLITE3'])
+    if "postgres" in build.options.extras:
+    	env.Append(CPPDEFINES=['CPPDB_WITH_PQ'])
     if "mysql" in build.options.extras:
         env.Append(CPPDEFINES=['CPPDB_WITH_MYSQL'])
     env.Append(LIBPATH='#external/lib')
@@ -95,6 +101,8 @@ def build_cppdb(current_project):
         "dbio/cppdb/sqlite3_backend.cpp",
         "dbio/cppdb/utils.cpp",
         ]
+    if "postgres" in build.options.extras:
+        cppdb_files.append("dbio/cppdb/postgres_backend.cpp")
     if "mysql" in build.options.extras:
         cppdb_files.append("dbio/cppdb/mysql_backend.cpp")
 

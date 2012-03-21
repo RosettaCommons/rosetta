@@ -38,6 +38,8 @@
 namespace basic {
 namespace database {
 
+std::string mode_specific_primary_key(bool auto_increment);
+    
 utility::sql_database::sessionOP get_db_session(
 	std::string const & db_name,
 	bool const readonly = false,

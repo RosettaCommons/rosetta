@@ -18,6 +18,9 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/LoopAnchorFeatures.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <core/types.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -61,7 +64,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & /*relevant_residues*/,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 private:
 	static void setup_conformation_to_turn_type_map();

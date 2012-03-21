@@ -25,6 +25,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/uuid/uuid.hpp>
 
 namespace protocols{
 namespace features{
@@ -52,7 +53,7 @@ string
 RadiusOfGyrationFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS radius_of_gyration (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	radius_of_gyration REAL,\n"
 		"	FOREIGN KEY(struct_id)\n"
 		"		REFERENCES structures(struct_id)\n"
@@ -71,7 +72,7 @@ Size
 RadiusOfGyrationFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 	RG_Energy_Fast rg;

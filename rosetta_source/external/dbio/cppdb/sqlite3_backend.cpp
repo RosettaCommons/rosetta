@@ -32,6 +32,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Boost Headers
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+
 namespace cppdb {
 	namespace sqlite3_backend {
 		
@@ -89,6 +94,14 @@ namespace cppdb {
 				return true;
 			}
 	
+            virtual bool fetch(int col,boost::uuids::uuid &v) 
+			{
+                std::string s;
+                bool result = fetch(col,s);
+                boost::uuids::string_generator gen;
+                v = gen(s);
+                return result;
+			}
 			virtual bool fetch(int col,short &v) 
 			{
 				return do_fetch(col,v);
@@ -232,20 +245,24 @@ namespace cppdb {
 					reset_=true;
 				}
 			}
+            virtual void bind(int col,boost::uuids::uuid const &v) 
+			{
+				bind(col, to_string(v));
+			}
 			virtual void bind(int col,std::string const &v) 
 			{
 				reset_stat();
-				check_bind(sqlite3_bind_text(st_,col,v.c_str(),v.size(),SQLITE_STATIC));
+				check_bind(sqlite3_bind_text(st_,col,v.c_str(),v.size(),SQLITE_TRANSIENT));
 			}
 			virtual void bind(int col,char const *s)
 			{
 				reset_stat();
-				check_bind(sqlite3_bind_text(st_,col,s,-1,SQLITE_STATIC));
+				check_bind(sqlite3_bind_text(st_,col,s,-1,SQLITE_TRANSIENT));
 			}
 			virtual void bind(int col,char const *b,char const *e) 
 			{
 				reset_stat();
-				check_bind(sqlite3_bind_text(st_,col,b,e-b,SQLITE_STATIC));
+				check_bind(sqlite3_bind_text(st_,col,b,e-b,SQLITE_TRANSIENT));
 			}
 			virtual void bind(int col,std::tm const &v)
 			{

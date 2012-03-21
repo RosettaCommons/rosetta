@@ -79,6 +79,10 @@ sources = {
 		"EvaluatedArchive",
 		"MPIArchiveJobDistributor",
 	],
+	"protocols/jd2/message_listening": [
+		"DbMoverMessageListener",
+		"MessageListenerFactory",
+	],
 	"protocols/jd2/parser": [
 		"BluePrint",
 		"DataLoader",

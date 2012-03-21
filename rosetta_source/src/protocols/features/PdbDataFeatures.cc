@@ -17,6 +17,10 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -83,7 +87,7 @@ string PdbDataFeatures::schema() const
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	residue_number INTEGER,\n"
 			"	chain_id TEXT,\n"
 			"	insertion_code TEXT,\n"
@@ -94,7 +98,7 @@ string PdbDataFeatures::schema() const
 			"	PRIMARY KEY(struct_id, residue_number));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	residue_number INTEGER,\n"
 			"	max_temperature REAL,\n"
 			"	max_bb_temperature REAL,\n"
@@ -110,7 +114,7 @@ string PdbDataFeatures::schema() const
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	residue_number INTEGER,\n"
 			"	chain_id TEXT,\n"
 			"	insertion_code TEXT,\n"
@@ -119,7 +123,7 @@ string PdbDataFeatures::schema() const
 			"	PRIMARY KEY (struct_id, residue_number));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	residue_number INTEGER,\n"
 			"	max_temperature REAL,\n"
 			"	max_bb_temperature REAL,\n"
@@ -146,7 +150,7 @@ PdbDataFeatures::features_reporter_dependencies() const {
 Size PdbDataFeatures::report_features(
 	Pose const & pose,
 	vector1<bool> const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session )
 {
 	insert_residue_pdb_identification_rows(struct_id,db_session,pose);
@@ -155,7 +159,7 @@ Size PdbDataFeatures::report_features(
 }
 
 void PdbDataFeatures::delete_record(
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session)
 {
 	string id_statement_string = "DELETE FROM residue_pdb_identification WHERE struct_id = ?;\n";
@@ -172,16 +176,17 @@ void PdbDataFeatures::delete_record(
 
 void PdbDataFeatures::load_into_pose(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose)
 {
 	load_residue_pdb_identification(db_session, struct_id, pose);
 	load_residue_pdb_confidence(db_session, struct_id, pose);
 }
 
+    
 void PdbDataFeatures::load_residue_pdb_identification(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose)
 {
 	if(!table_exists(db_session, "residue_pdb_identification")) return;
@@ -191,6 +196,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	vector1<char> insertion_codes;
 	string statement_string =
 		"SELECT\n"
+        "	r_id.struct_id,\n"
 		"	r_id.residue_number,\n"
 		"	r_id.chain_id,\n"
 		"	r_id.insertion_code,\n"
@@ -199,26 +205,26 @@ void PdbDataFeatures::load_residue_pdb_identification(
 		"	residue_pdb_identification AS r_id\n"
 		"WHERE\n"
 		"	r_id.struct_id=?;";
-
+    
 	statement stmt(safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	result res(safely_read_from_database(stmt));
-
+    
 	while(res.next()) {
+        boost::uuids::uuid temp;
 		Size residue_number;
 		//cppdb doesn't do char's
 		string chain_id;
 		string insertion_code;
 		int pdb_residue_number;
+        
+		res >> temp >> residue_number >> chain_id >> insertion_code >> pdb_residue_number;
 
-		res >> residue_number >> chain_id >> insertion_code >> pdb_residue_number;
-
-		pdb_numbers.push_back(pdb_residue_number);
 		pdb_chains.push_back(chain_id[0]);
 		insertion_codes.push_back(insertion_code[0]);
+        pdb_numbers.push_back(pdb_residue_number);
 	}
-
-
+    
 	if(!pose.pdb_info()){
 		pose.pdb_info(new PDBInfo(pose.total_residue()));
 	}
@@ -229,7 +235,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 }
 
 void PdbDataFeatures::insert_residue_pdb_identification_rows(
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session,
 	Pose const & pose)
 {
@@ -254,7 +260,7 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 
 void PdbDataFeatures::load_residue_pdb_confidence(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose)
 {
 	if(!table_exists(db_session, "residue_pdb_confidence")) return;
@@ -321,7 +327,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 
 
 void PdbDataFeatures::insert_residue_pdb_confidence_rows(
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session,
 	Pose const & pose)
 {

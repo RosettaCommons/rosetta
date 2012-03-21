@@ -17,6 +17,9 @@
 // Project Headers
 #include <core/pose/util.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Platform Headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
@@ -75,7 +78,7 @@ PoseCommentsFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	comment_key TEXT,\n"
 			"	value TEXT,\n"
 			"	FOREIGN KEY (struct_id)\n"
@@ -86,7 +89,7 @@ PoseCommentsFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	comment_key VARCHAR(255),\n"
 			"	value TEXT,\n"
 			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
@@ -110,7 +113,7 @@ Size
 PoseCommentsFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & /*relevant_residues*/,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 
@@ -129,7 +132,7 @@ PoseCommentsFeatures::report_features(
 }
 
 void PoseCommentsFeatures::delete_record(
-	core::Size struct_id,
+	boost::uuids::uuid struct_id,
 	utility::sql_database::sessionOP db_session
 ) {
 
@@ -143,7 +146,7 @@ void PoseCommentsFeatures::delete_record(
 void
 PoseCommentsFeatures::load_into_pose(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose){
 
 	if(!table_exists(db_session, "pose_comments")) return;

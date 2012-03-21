@@ -64,7 +64,7 @@ string
 PairFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS residue_pairs (\n"
-		"	struct_id TEXT,\n"
+		"	struct_id BLOB,\n"
 		"	resNum1 INTEGER,\n"
 		"	resNum2 INTEGER,\n"
 		"	res1_10A_neighbors INTEGER,\n"
@@ -95,7 +95,7 @@ Size
 PairFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 	report_residue_pairs(pose, relevant_residues, struct_id, db_session);
@@ -106,7 +106,7 @@ void
 PairFeatures::report_residue_pairs(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 

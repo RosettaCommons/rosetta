@@ -171,6 +171,37 @@ namespace database {
 
 static basic::Tracer TR( "basic.database.sql_utils" );
 
+std::string mode_specific_primary_key(bool auto_increment){
+    std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+    if(db_mode == "sqlite3"){
+        if(auto_increment){
+            return "INTEGER PRIMARY KEY AUTOINCREMENT";
+        }
+        else{
+            return "INTEGER PRIMARY KEY UNIQUE";
+        }
+    }
+    else if(db_mode == "mysql"){
+        if(auto_increment){
+            return "INTEGER PRIMARY KEY AUTOINCREMENT";
+        }
+        else{
+            return "INTEGER PRIMARY KEY UNIQUE";
+        }
+    }
+    else if(db_mode == "postgres"){
+        if(auto_increment){
+            return "SERIAL";
+        }
+        else{
+            return "INTEGER PRIMARY KEY";
+        }
+    }
+    else{
+        utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
+    }
+}
+    
 utility::sql_database::sessionOP get_db_session(
 	string const & db_name,
 	bool const readonly /* = false */,
@@ -196,17 +227,14 @@ sessionOP get_db_session(
 
 		if(option[mysql::host].user() || option[mysql::user].user() || option[mysql::password].user() || option[mysql::port].user())
 		{
-			TR << "WARNING: You have specified both mysql and sqlite connection options.  Are you sure you meant to do this?";
+			TR << "WARNING: You have specified both mysql and sqlite connection options.  Are you sure you meant to do this?" << std::endl;
 		}
 		sessionOP db_session(DatabaseSessionManager::get_instance()->get_session(db_name, readonly, separate_db_per_mpi_process));
 		return db_session;
-	}else if(db_mode == "mysql")
+	}else if(db_mode == "mysql" || db_mode == "postgres")
 	{
-//#ifndef USEMYSQL
-//		utility_exit_with_message("If you want to use a mysql database, build with extras=mysql");
-//#endif
 		if(readonly){
-			utility_exit_with_message("Restricting access to a mysql database is done at the user level rather that the connection level. So requesting a readonly connection cannot fullfilled.");
+			utility_exit_with_message("Restricting access to a mysql or postgres database is done at the user level rather that the connection level. So requesting a readonly connection cannot fullfilled.");
 		}
 
 		if(option[mysql::host].user() && option[mysql::user].user() && option[mysql::password].user() && option[mysql::port].user())
@@ -218,7 +246,7 @@ sessionOP get_db_session(
 
 
 			sessionOP db_session(
-				DatabaseSessionManager::get_instance()->get_session(host,user,password,db_name,port));
+				DatabaseSessionManager::get_instance()->get_session(db_mode, host,user,password,db_name,port));
 			return db_session;
 		}else
 		{
@@ -226,7 +254,7 @@ sessionOP get_db_session(
 		}
 	}else
 	{
-		utility_exit_with_message("You need to specify either 'mysql' or 'sqlite3' as a mode with -inout:database_mode.  You specified: "+db_mode);
+		utility_exit_with_message("You need to specify either 'mysql', 'postgres', or 'sqlite3' as a mode with -inout:database_mode.  You specified: "+db_mode);
 	}
 }
 

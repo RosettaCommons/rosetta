@@ -54,7 +54,7 @@ string
 ProteinBackboneTorsionAngleFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS protein_backbone_torsion_angles (\n"
-		"	struct_id TEXT,\n"
+		"	struct_id BLOB,\n"
 		"	resNum INTEGER,\n"
 		"	phi REAL,\n"
 		"	psi REAL,\n"
@@ -76,7 +76,7 @@ Size
 ProteinBackboneTorsionAngleFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 	std::string statement_string ="INSERT INTO protein_backbone_torsion_angles VALUES (?,?,?,?,?)";

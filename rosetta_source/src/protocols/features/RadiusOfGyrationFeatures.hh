@@ -28,6 +28,9 @@
 // C++ Headers
 #include <string>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 #include <utility/vector1.hh>
 
 
@@ -60,7 +63,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		core::Size stuct_id,
+        boost::uuids::uuid stuct_id,
 		utility::sql_database::sessionOP db_interface
 	);
 

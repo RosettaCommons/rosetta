@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/features/SaltBridgeFeatures.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Platform Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -103,7 +106,7 @@ SaltBridgeFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS salt_bridges (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	don_resNum INTEGER,\n"
 			"	acc_id INTEGER,\n"
 			"	psi REAL,    -- angle around donor group\n"
@@ -120,7 +123,7 @@ SaltBridgeFeatures::schema() const {
 	} else if(db_mode == "mysql") {
 		return
 			"CREATE TABLE IF NOT EXISTS salt_bridges (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	don_resNum INTEGER,\n"
 			"	acc_id INTEGER,\n"
 			"	psi REAL,    -- angle around donor group\n"
@@ -153,7 +156,7 @@ Size
 SaltBridgeFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const &,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 

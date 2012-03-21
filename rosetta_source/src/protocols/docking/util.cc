@@ -156,7 +156,7 @@ setup_foldtree(
 ///
 ///
 ///CREATE TABLE IF NOT EXISTS interfaces (
-///	struct_id INTEGER,
+///	struct_id BLOB,
 ///	interface_id INTEGER,
 ///	FOREIGN KEY (struct_id) REFERENCES structures (struct_id)	DEFERRABLE INITIALLY DEFERRED,
 ///	PRIMARY KEY(struct_id, interface_id));

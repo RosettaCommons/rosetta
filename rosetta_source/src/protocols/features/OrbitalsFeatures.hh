@@ -25,6 +25,9 @@
 // AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // C++ Headers
 #include <string>
 
@@ -60,7 +63,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 
@@ -68,14 +71,14 @@ public:
 	report_hpol_orbital_interactions(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		core::Size const struct_id,
+		boost::uuids::uuid const struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 	void
 	report_haro_orbital_interactions(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		core::Size const struct_id,
+		boost::uuids::uuid const struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 	void

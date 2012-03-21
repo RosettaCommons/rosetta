@@ -83,7 +83,7 @@ Size
 AtomTypesFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+    boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 	if(pose.total_residue() == 0) return 0;

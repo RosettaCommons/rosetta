@@ -18,6 +18,9 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Platform Headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
@@ -105,7 +108,7 @@ BetaTurnDetectionFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS beta_turns (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	residue_begin INTEGER,\n"
             "   turn_type TEXT,\n"
 			"	FOREIGN KEY (struct_id, residue_begin)\n"
@@ -116,7 +119,7 @@ BetaTurnDetectionFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS beta_turns (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	residue_begin INTEGER,\n"
             "   turn_type VARCHAR(255),\n"
 			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
@@ -141,7 +144,7 @@ Size
 BetaTurnDetectionFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 	string beta_turns_stmt_string = "INSERT INTO beta_turns VALUES (?,?,?);";

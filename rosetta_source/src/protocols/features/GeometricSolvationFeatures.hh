@@ -18,6 +18,9 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/GeometricSolvationFeatures.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <core/types.hh>
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
@@ -60,7 +63,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const &,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
 private:

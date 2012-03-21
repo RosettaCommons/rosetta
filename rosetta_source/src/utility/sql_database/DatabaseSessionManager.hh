@@ -64,7 +64,7 @@ public:
 	// overloaded get_session function for mysql
 	sessionOP
 	get_session(
-		std::string const & host, std::string const & user, std::string const & password, std::string const & database,int const & port);
+                std::string const & db_mode, std::string const & host, std::string const & user, std::string const & password, std::string const & database,int const & port);
 
 private:
 

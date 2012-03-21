@@ -26,6 +26,8 @@
 #include <cppdb/errors.h>
 #include <cppdb/ref_ptr.h>
 
+#include <boost/uuid/uuid.hpp>
+
 namespace cppdb {
 	class connection_info;
 	class pool;
@@ -64,6 +66,13 @@ namespace cppdb {
 			/// return false, otherwise return true
 			///
 			virtual bool next() = 0;
+            ///
+			/// Fetch an UUID value for column \a col starting from 0.
+			///
+			/// Should throw invalid_column() \a col value is invalid, should throw bad_value_cast() if the underlying data
+			/// can't be converted to integer or its range is not supported by the integer type.
+			///
+			virtual bool fetch(int col,boost::uuids::uuid &v) = 0;
 			///
 			/// Fetch an integer value for column \a col starting from 0.
 			///
@@ -221,7 +230,17 @@ namespace cppdb {
 			/// caching 
 			///
 			virtual std::string const &sql_query() = 0;
-
+           
+            ///
+			/// Bind a UUID value to column \a col (starting from 1). You may assume
+			/// that the reference remains valid until real call of query() or exec()
+			///
+			/// Should throw invalid_placeholder() if the value of col is out of range. May
+			/// ignore if it is impossible to know whether the placeholder exists without special
+			/// support from back-end.
+			///
+            virtual void bind(int col,boost::uuids::uuid const &) = 0;
+            
 			///
 			/// Bind a text value to column \a col (starting from 1). You may assume
 			/// that the reference remains valid until real call of query() or exec()

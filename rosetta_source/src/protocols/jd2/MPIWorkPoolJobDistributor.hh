@@ -72,7 +72,10 @@ namespace jd2 {
 enum mpi_tags {
 	NEW_JOB_ID_TAG = 10,
 	BAD_INPUT_TAG = 20,
-	JOB_SUCCESS_TAG = 30
+	JOB_SUCCESS_TAG = 30,
+    REQUEST_MESSAGE_TAG = 40,
+    RECIEVE_MESSAGE_TAG = 50
+    
 };
 
 ///@details This job distributor is meant for running jobs where the machine you are using has a large number of

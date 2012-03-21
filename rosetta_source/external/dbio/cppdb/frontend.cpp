@@ -20,6 +20,8 @@
 #include <cppdb/backend.h>
 #include <cppdb/conn_manager.h>
 
+#include <boost/uuid/uuid.hpp>
+
 namespace cppdb {
 	struct result::data {};
 
@@ -140,7 +142,7 @@ namespace cppdb {
 		return is_null(index(n));
 	}
 
-	
+	bool result::fetch(int col,boost::uuids::uuid &v) { return res_->fetch(col,v); }
 	bool result::fetch(int col,short &v) { return res_->fetch(col,v); }
 	bool result::fetch(int col,unsigned short &v) { return res_->fetch(col,v); }
 	bool result::fetch(int col,int &v) { return res_->fetch(col,v); }
@@ -156,6 +158,7 @@ namespace cppdb {
 	bool result::fetch(int col,std::tm &v) { return res_->fetch(col,v); }
 	bool result::fetch(int col,std::ostream &v) { return res_->fetch(col,v); }
 
+    bool result::fetch(std::string const &n,boost::uuids::uuid &v) { return res_->fetch(index(n),v); }
 	bool result::fetch(std::string const &n,short &v) { return res_->fetch(index(n),v); }
 	bool result::fetch(std::string const &n,unsigned short &v) { return res_->fetch(index(n),v); }
 	bool result::fetch(std::string const &n,int &v) { return res_->fetch(index(n),v); }
@@ -171,6 +174,7 @@ namespace cppdb {
 	bool result::fetch(std::string const &n,std::tm &v) { return res_->fetch(index(n),v); }
 	bool result::fetch(std::string const &n,std::ostream &v) { return res_->fetch(index(n),v); }
 
+    bool result::fetch(boost::uuids::uuid &v) { return res_->fetch(current_col_++,v); }
 	bool result::fetch(short &v) { return res_->fetch(current_col_++,v); }
 	bool result::fetch(unsigned short &v) { return res_->fetch(current_col_++,v); }
 	bool result::fetch(int &v) { return res_->fetch(current_col_++,v); }
@@ -252,7 +256,11 @@ namespace cppdb {
 	{
 		return manipulator(*this);
 	}
-
+    statement &statement::bind(boost::uuids::uuid v)
+	{
+		stat_->bind(placeholder_++,v);
+		return *this;
+	}
 	statement &statement::bind(int v)
 	{
 		stat_->bind(placeholder_++,v);
@@ -326,6 +334,10 @@ namespace cppdb {
 	}
 
 
+    void statement::bind(int col,boost::uuids::uuid v)
+	{
+		stat_->bind(col,v);
+	}
 	void statement::bind(int col,std::string const &v)
 	{
 		stat_->bind(col,v);

@@ -18,6 +18,9 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/HBondFeatures.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <core/types.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -103,13 +106,13 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
 	insert_site_row(
 		core::pose::Pose const & pose,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::Size site_id,
 		core::Size resNum,
 		core::Size atmNum,
@@ -122,7 +125,7 @@ public:
 		core::Size resNum,
 		core::Size atmNum,
 		core::Size heavy_atmNum,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::Size site_id,
 		utility::sql_database::sessionOP db_session);
 
@@ -131,7 +134,7 @@ public:
 		core::pose::Pose const & pose,
 		core::Size resNum,
 		core::Size atmNum,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::Size site_id,
 		core::id::AtomID_Map< core::Real > const & atom_sasa_s,
 		core::id::AtomID_Map< core::Real > const & atom_sasa_m,
@@ -145,14 +148,14 @@ public:
 		core::pose::Pose const & pose,
 		core::Size resNum,
 		core::Size atmNum,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::Size site_id,
 		utility::sql_database::sessionOP db_session);
 
 	core::Size
 	insert_hbond_row(
 		core::scoring::hbonds::HBond const & hbond,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::Size hbond_id,
 		core::id::AtomID_Map< core::Size > const & site_ids,
 		core::id::AtomID_Map< utility::vector1< core::scoring::hbonds::HBondCOP > > const & site_partners,
@@ -162,7 +165,7 @@ public:
 	insert_hbond_geom_coords(
 		core::pose::Pose const & pose,
 		core::scoring::hbonds::HBond const & hbond,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::Size hbond_id,
 		utility::sql_database::sessionOP db_session);
 
@@ -170,7 +173,7 @@ public:
 	insert_hbond_lennard_jones_row(
 		core::pose::Pose const & pose,
 		core::scoring::hbonds::HBond const & hbond,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::Size hbond_id,
 		utility::sql_database::sessionOP db_session);
 
@@ -178,7 +181,7 @@ public:
 	insert_hbond_dehydron_row(
 		core::pose::Pose const & pose,
 		core::scoring::hbonds::HBond const & hbond,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::Size hbond_id,
 		utility::sql_database::sessionOP db_session);
 

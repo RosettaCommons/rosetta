@@ -63,7 +63,7 @@ string
 ProteinBackboneAtomAtomPairFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS protein_backbone_atom_atom_pairs (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	resNum1 TEXT,\n"
 		"	resNum2 TEXT,\n"
 		"	N_N_dist REAL,\n"
@@ -119,7 +119,7 @@ Size
 ProteinBackboneAtomAtomPairFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 	TenANeighborGraph const & tenA(pose.energies().tenA_neighbor_graph());

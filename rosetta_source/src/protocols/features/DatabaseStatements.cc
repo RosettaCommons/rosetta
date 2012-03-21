@@ -16,12 +16,13 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/database/sql_utils.hh>
 
-
-
 // External Headers
 #include <cppdb/frontend.h>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 
 #include <utility/vector1.hh>
 
@@ -341,7 +342,7 @@ core::Size get_current_structure_count(
 	return get_something_from_database(statement, core::Size());
 }
 
-core::Size get_struct_id_with_nth_lowest_score_from_job_data(
+boost::uuids::uuid get_struct_id_with_nth_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & cutoff_index,
@@ -351,13 +352,13 @@ core::Size get_struct_id_with_nth_lowest_score_from_job_data(
 	cppdb::statement statement = get_nth_lowest_score_from_job_data_statement(db_session, score_term, cutoff_index, input_tag,protocol_id);
 
 	try{
-		return get_something_from_database(statement, core::Size());
+		return get_something_from_database(statement, boost::uuids::uuid());
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No nth lowest "+score_term+" with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
 	}
 }
 
-core::Size get_struct_id_with_nth_lowest_score_from_score_data(
+boost::uuids::uuid get_struct_id_with_nth_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & cutoff_index,
@@ -367,13 +368,13 @@ core::Size get_struct_id_with_nth_lowest_score_from_score_data(
 	cppdb::statement statement = get_nth_lowest_score_from_score_data_statement(db_session, score_type_id, cutoff_index, input_tag,protocol_id);
 
 	try{
-		return get_something_from_database(statement, core::Size());
+		return get_something_from_database(statement, boost::uuids::uuid());
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No nth lowest score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
 	}
 }
 
-core::Size get_struct_id_with_lowest_score_from_job_data(
+boost::uuids::uuid get_struct_id_with_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & protocol_id,
@@ -382,7 +383,7 @@ core::Size get_struct_id_with_lowest_score_from_job_data(
 	return get_struct_id_with_nth_lowest_score_from_job_data(db_session, score_term, 1, protocol_id, input_tag);
 }
 
-core::Size get_struct_id_with_lowest_score_from_score_data(
+boost::uuids::uuid get_struct_id_with_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & protocol_id,
@@ -391,7 +392,7 @@ core::Size get_struct_id_with_lowest_score_from_score_data(
 	return get_struct_id_with_nth_lowest_score_from_score_data(db_session, score_type_id, 1, protocol_id, input_tag);
 }
 
-core::Size get_struct_id_with_highest_score_from_job_data(
+boost::uuids::uuid get_struct_id_with_highest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & protocol_id,
@@ -400,13 +401,13 @@ core::Size get_struct_id_with_highest_score_from_job_data(
 	cppdb::statement statement = get_highest_score_from_job_data_statement(db_session, score_term, input_tag, protocol_id);
 
 	try{
-		return get_something_from_database(statement, core::Size());
+		return get_something_from_database(statement, boost::uuids::uuid());
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No "+score_term+" with input_tag "+input_tag);
 	}
 }
 
-core::Size get_struct_id_with_highest_score_from_score_data(
+boost::uuids::uuid get_struct_id_with_highest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & protocol_id,
@@ -415,7 +416,7 @@ core::Size get_struct_id_with_highest_score_from_score_data(
 	cppdb::statement statement = get_highest_score_from_score_data_statement(db_session, score_type_id, input_tag,protocol_id);
 
 	try{
-		return get_something_from_database(statement, core::Size());
+		return get_something_from_database(statement, boost::uuids::uuid());
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag);
 	}
@@ -423,7 +424,7 @@ core::Size get_struct_id_with_highest_score_from_score_data(
 
 core::Real get_score_for_struct_id_and_score_term_from_job_data(
 	utility::sql_database::sessionOP db_session,
-	core::Size const & struct_id,
+	boost::uuids::uuid const & struct_id,
 	std::string const & score_term
 ){
 
@@ -443,13 +444,13 @@ core::Real get_score_for_struct_id_and_score_term_from_job_data(
 	try{
 		return get_something_from_database(statement, core::Real());
 	}catch(utility::excn::EXCN_Msg_Exception){
-		utility_exit_with_message("No "+score_term+" with struct_id "+utility::to_string(struct_id));
+		utility_exit_with_message("No "+score_term+" with struct_id "+to_string(struct_id));
 	}
 }
 
 core::Real get_score_for_struct_id_and_score_term_from_score_data(
 	utility::sql_database::sessionOP db_session,
-	core::Size const & struct_id,
+	boost::uuids::uuid const & struct_id,
 	core::Size const & score_type_id)
 {
 
@@ -469,7 +470,7 @@ core::Real get_score_for_struct_id_and_score_term_from_score_data(
 	try{
 		return get_something_from_database(statement, core::Real());
 	}catch(utility::excn::EXCN_Msg_Exception){
-		utility_exit_with_message("No score_type_id:"+utility::to_string(score_type_id)+", with struct_id "+utility::to_string(struct_id));
+		utility_exit_with_message("No score_type_id:"+utility::to_string(score_type_id)+", with struct_id "+to_string(struct_id));
 	}
 }
 

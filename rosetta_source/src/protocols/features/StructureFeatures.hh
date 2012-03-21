@@ -18,6 +18,9 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/StructureFeatures.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -54,21 +57,19 @@ public:
 	features_reporter_dependencies() const;
 
 	///@brief collect all the feature data for the pose use
-	core::Size
+    boost::uuids::uuid
 	report_features(
-		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		core::Size protocol_id,
+		core::Size batch_id,
 		utility::sql_database::sessionOP db_session
 	);
 
 	///@brief collect all the feature data for the pose use
 	///This version allows the tag and the input tag to be specificed
-	core::Size
+	boost::uuids::uuid
 	report_features(
-		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		core::Size protocol_id,
+		core::Size batch_id,
 		utility::sql_database::sessionOP db_session,
 		std::string const & tag,
 		std::string const & input_tag
@@ -76,31 +77,31 @@ public:
 
 
 	void mark_structure_as_sampled(
-		core::Size protocol_id,
+		core::Size batch_id,
 		std::string const & tag,
 		std::string const & input_tag,
 		utility::sql_database::sessionOP db_session
 	);
 
 	void delete_record(
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose);
 
 	void
 	load_tag(
 		utility::sql_database::sessionOP db_session,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose);
 
 
-	core::Size
+    boost::uuids::uuid
 	get_struct_id(
 		utility::sql_database::sessionOP db_session,
 		std::string const & tag,

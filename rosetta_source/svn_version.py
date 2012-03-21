@@ -24,7 +24,7 @@ def svn_version():
     if ver == "unknown" or ver == "exported":
         ver = os.popen("git log -1 --format='%H'").read().strip() or "unknown"
         if ver != "unknown":
-            url = os.popen("git remote -v |grep fetch |awk '{print $2}'").read().strip()
+            url = os.popen("git remote -v |grep fetch |awk '{print $2}'|head -n1").read().strip()
             if url == "":
                 url = "unknown"
     else:

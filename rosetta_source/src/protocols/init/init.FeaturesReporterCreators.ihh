@@ -46,4 +46,6 @@
 #include <protocols/features/ScoreTypeFeaturesCreator.hh>
 #include <protocols/features/StructureFeaturesCreator.hh>
 #include <protocols/features/StructureScoresFeaturesCreator.hh>
+#include <protocols/features/BatchFeaturesCreator.hh>
 #include <protocols/features/helixAssembly/HelixBundleFeaturesCreator.hh>
+#include <protocols/features/helixAssembly/ConcurrencyTestCreator.hh>

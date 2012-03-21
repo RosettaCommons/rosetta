@@ -144,7 +144,7 @@ string
 AtomAtomPairFeatures::schema() const {
 	return
 		"CREATE TABLE IF NOT EXISTS atom_pairs (\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	atom_type TEXT,\n"
 		"	element TEXT,\n"
 		"	lower_break REAL,\n"
@@ -184,7 +184,7 @@ Size
 AtomAtomPairFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 	report_atom_pairs(pose, relevant_residues, struct_id, db_session);
@@ -196,7 +196,7 @@ void
 AtomAtomPairFeatures::report_atom_pairs(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const struct_id,
+	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
 

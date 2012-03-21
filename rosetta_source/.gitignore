@@ -10,6 +10,8 @@
 /build/*
 /bin/*
 /html/
+/external/dbio/mysql/*.h
+/external/dbio/mysql/*/*
 /src/core/svn_version.cc
 /src/pilot_apps.src.settings
 /src/pilot_apps.src.settings.my
@@ -27,6 +29,8 @@ CMakeFiles
 !/cmake/build/build.post.cmake
 /cmake/build_*/*
 /xcode/build
+/xcode/Rosetta.xcodeproj/project.xcworkspace/xcuserdata
+/xcode/Rosetta.xcodeproj/xcuserdata
 /ide/build
 
 /.unit_test_results.yaml

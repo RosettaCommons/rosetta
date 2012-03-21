@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/features/ResidueSecondaryStructureFeatures.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
@@ -73,7 +76,7 @@ ResidueSecondaryStructureFeatures::schema() const {
 		"INSERT OR IGNORE INTO dssp_codes VALUES(' ', 'Irregular');\n"
 		"\n"
 		"CREATE TABLE IF NOT EXISTS residue_secondary_structure(\n"
-		"	struct_id INTEGER,\n"
+		"	struct_id BLOB,\n"
 		"	resNum INTEGER,\n"
 		"	dssp TEXT,\n"
 		"	FOREIGN KEY(struct_id, resNum)\n"
@@ -85,27 +88,27 @@ ResidueSecondaryStructureFeatures::schema() const {
 		"	PRIMARY KEY(struct_id, resNum));\n"
     
         "CREATE TABLE IF NOT EXISTS helix_segments(\n"
-        "	struct_id INTEGER,\n"    
+        "	struct_id BLOB,\n"    
         "	helix_id INTEGER,\n"
         "	residue_begin INTEGER,\n"
         "	residue_end INTEGER,\n"
-        "	FOREIGN KEY(struct_id, residue_begin, residue_begin)\n"
+        "	FOREIGN KEY(struct_id, residue_begin, residue_end)\n"
         "		REFERENCES residues(struct_id, resNum, resNum)\n"
         "		DEFERRABLE INITIALLY DEFERRED,\n"
         "	PRIMARY KEY(struct_id, helix_id));\n"
     
         "CREATE TABLE IF NOT EXISTS beta_segments(\n"
-        "	struct_id INTEGER,\n"    
+        "	struct_id BLOB,\n"    
         "	beta_id INTEGER,\n"
         "	residue_begin INTEGER,\n"
         "	residue_end INTEGER,\n"
-        "	FOREIGN KEY(struct_id, residue_begin, residue_begin)\n"
+        "	FOREIGN KEY(struct_id, residue_begin, residue_end)\n"
         "		REFERENCES residues(struct_id, resNum, resNum)\n"
         "		DEFERRABLE INITIALLY DEFERRED,\n"
         "	PRIMARY KEY(struct_id, beta_id));\n"
     
 //        "CREATE TABLE IF NOT EXISTS loop_segments(\n"
-//        "	struct_id INTEGER,\n"    
+//        "	struct_id BLOB,\n"    
 //        "	loop_id INTEGER,\n"
 //        "	residue_begin INTEGER,\n"
 //        "	residue_end INTEGER,\n"
@@ -127,7 +130,7 @@ Size
 ResidueSecondaryStructureFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 	// compute dssp
@@ -140,6 +143,11 @@ ResidueSecondaryStructureFeatures::report_features(
     Size helix_counter=1;
     Size beta_counter=1;
     Size loop_counter=1;
+    
+    //Create the statement strings outside the loops so we don't need to rcreate them for every residue
+    std::string sec_structure_statement_string = "INSERT INTO residue_secondary_structure VALUES (?,?,?);";
+    std::string helix_segment_statement_string = "INSERT INTO helix_segments VALUES (?,?,?,?);";
+    std::string beta_segment_statement_string = "INSERT INTO beta_segments VALUES (?,?,?,?);";
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
 
@@ -157,23 +165,25 @@ ResidueSecondaryStructureFeatures::report_features(
             if(resNum > 1){
                 segment_end=resNum-1;
                 if(segment_secondary == "H"){
-                    std::string statement_string = "INSERT INTO helix_segments VALUES (?,?,?,?);";
-                    statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+                    
+                    statement stmt(basic::database::safely_prepare_statement(helix_segment_statement_string,db_session));
                     stmt.bind(1,struct_id);
                     stmt.bind(2,helix_counter);
                     stmt.bind(3,segment_begin);
                     stmt.bind(4,segment_end);
+                    
                     basic::database::safely_write_to_database(stmt);
                     
                     ++helix_counter;
                 }
                 else if(segment_secondary == "E"){
-                    std::string statement_string = "INSERT INTO beta_segments VALUES (?,?,?,?);";
-                    statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+                    
+                    statement stmt(basic::database::safely_prepare_statement(beta_segment_statement_string,db_session));
                     stmt.bind(1,struct_id);
                     stmt.bind(2,beta_counter);
                     stmt.bind(3,segment_begin);
                     stmt.bind(4,segment_end);
+                
                     basic::database::safely_write_to_database(stmt);
                     
                     ++beta_counter;
@@ -195,8 +205,7 @@ ResidueSecondaryStructureFeatures::report_features(
             segment_begin=resNum;
         }
         
-		std::string statement_string = "INSERT INTO residue_secondary_structure VALUES (?,?,?);";
-		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement stmt(basic::database::safely_prepare_statement(sec_structure_statement_string,db_session));
 		stmt.bind(1,struct_id);
 		stmt.bind(2,resNum);
 		stmt.bind(3,residue_secondary);

@@ -26,6 +26,8 @@
 #include <string>
 #include <memory>
 
+#include <boost/uuid/uuid.hpp>
+
 ///
 /// The namespace of all data related to the cppdb api
 ///
@@ -205,6 +207,10 @@ namespace cppdb {
 		/// If the data type is not same it tries to cast the data, if casting fails or the
 		/// data is out of the type range, throws bad_value_cast().
 		///
+        bool fetch(int col,boost::uuids::uuid &v);
+        ///
+		/// \copydoc fetch(int,uuid&)
+		///
 		bool fetch(int col,short &v);
 		///
 		/// \copydoc fetch(int,short&)
@@ -273,6 +279,10 @@ namespace cppdb {
 		/// data is out of the type range, throws bad_value_cast().
 		///
 		/// If the \a n value is invalid throws invalid_column exception
+		///
+        bool fetch(std::string const &n,boost::uuids::uuid &v);
+        ///
+		/// \copydoc fetch(std::string const &,short&)
 		///
 		bool fetch(std::string const &n,short &v);
 		///
@@ -349,6 +359,8 @@ namespace cppdb {
 		/// It is not required to call rewind_column() after calling next() as column index is reset
 		/// automatically.
 		///
+        bool fetch(boost::uuids::uuid &v);
+        /// \copydoc fetch(uuid&)
 		bool fetch(short &v);
 		/// \copydoc fetch(short&)
 		bool fetch(unsigned short &v);
@@ -531,6 +543,8 @@ namespace cppdb {
 		///
 		/// If placeholder was not binded the behavior is undefined and may vary between different backends.
 		///
+        statement &bind(boost::uuids::uuid v);
+        /// \copydoc bind(uuid)
 		statement &bind(int v);
 		/// \copydoc bind(int)
 		statement &bind(unsigned v);
@@ -612,6 +626,8 @@ namespace cppdb {
 		///
 		/// If placeholder was not binded the behavior is undefined and may vary between different backends.
 		///
+        void bind(int col,boost::uuids::uuid v);
+        /// \copydoc bind(int,uuid)
 		void bind(int col,int v);
 		/// \copydoc bind(int,int)
 		void bind(int col,unsigned v);

@@ -18,6 +18,9 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/PairFeatures.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 // AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -60,14 +63,14 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		core::Size struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
 	report_residue_pairs(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		core::Size const struct_id,
+		boost::uuids::uuid const struct_id,
 		utility::sql_database::sessionOP db_session);
 
 };

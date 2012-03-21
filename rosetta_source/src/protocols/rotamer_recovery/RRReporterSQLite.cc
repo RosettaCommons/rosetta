@@ -63,8 +63,8 @@ static Tracer TR("protocols.rotamer_recovery.RRReporterSQLite");
 
 RRReporterSQLite::RRReporterSQLite() :
 	output_level_( OutputLevel::full ),
-	struct_id1_( 0 ),
-	struct_id2_( 0 ),
+//	struct_id1_(""),
+//	struct_id2_(""),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -80,8 +80,8 @@ RRReporterSQLite::RRReporterSQLite(
 	OutputLevel::e output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
-	struct_id1_( 0 ),
-	struct_id2_( 0 ),
+//	struct_id1_(""),
+//	struct_id2_(""),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -97,8 +97,8 @@ RRReporterSQLite::RRReporterSQLite(
 	OutputLevel::e const output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
-	struct_id1_( 0 ),
-	struct_id2_( 0 ),
+//	struct_id1_(""),
+//	struct_id2_(""),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -211,7 +211,7 @@ RRReporterSQLite::schema(
 			"INSERT OR IGNORE INTO nchi VALUES('GLY', 0);\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS rotamer_recovery (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	resNum INTEGER,\n"
 			"	divergence REAL,\n"
 			"	recovered BOOLEAN,\n"
@@ -245,12 +245,12 @@ RRReporterSQLite::get_output_level(
 
 void
 RRReporterSQLite::set_struct_id1(
-	Size const struct_id1
+	boost::uuids::uuid const struct_id1
 ){
 	struct_id1_ = struct_id1;
 }
 
-Size
+boost::uuids::uuid
 RRReporterSQLite::get_struct_id1(
 ) const {
 	return struct_id1_;
@@ -258,12 +258,12 @@ RRReporterSQLite::get_struct_id1(
 
 void
 RRReporterSQLite::set_struct_id2(
-	Size const struct_id2
+	boost::uuids::uuid const struct_id2
 ){
 	struct_id1_ = struct_id2;
 }
 
-Size
+boost::uuids::uuid
 RRReporterSQLite::get_struct_id2(
 ) const {
 	return struct_id2_;
@@ -391,7 +391,7 @@ RRReporterSQLite::report_rotamer_recovery_full(
 
 void
 RRReporterSQLite::report_rotamer_recovery_features(
-	Size const struct_id1,
+	boost::uuids::uuid const struct_id1,
 	Residue const & res1,
 	Real const score,
 	bool const recovered

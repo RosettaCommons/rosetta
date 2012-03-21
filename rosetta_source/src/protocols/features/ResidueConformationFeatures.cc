@@ -15,6 +15,9 @@
 // Unit Headers
 #include <protocols/features/ResidueConformationFeatures.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
@@ -68,7 +71,7 @@ ResidueConformationFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	seqpos INTEGER,\n"
 			"	phi REAL,\n"
 			"	psi REAL,\n"
@@ -79,7 +82,7 @@ ResidueConformationFeatures::schema() const {
 			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	seqpos INTEGER,\n"
 			"	chinum INTEGER,\n"
 			"	chiangle REAL,\n"
@@ -89,7 +92,7 @@ ResidueConformationFeatures::schema() const {
 			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-			"	struct_id INTEGER,\n"
+			"	struct_id BLOB,\n"
 			"	seqpos INTEGER,\n"
 			"	atomno INTEGER,\n"
 			"	x REAL,\n"
@@ -103,7 +106,7 @@ ResidueConformationFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	seqpos INTEGER,\n"
 			"	phi DOUBLE,\n"
 			"	psi DOUBLE,\n"
@@ -112,7 +115,7 @@ ResidueConformationFeatures::schema() const {
 			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	seqpos INTEGER,\n"
 			"	chinum INTEGER,\n"
 			"	chiangle DOUBLE,\n"
@@ -120,7 +123,7 @@ ResidueConformationFeatures::schema() const {
 			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-			"	struct_id BIGINT UNSIGNED,\n"
+			"	struct_id BINARY(36),\n"
 			"	seqpos INTEGER,\n"
 			"	atomno INTEGER,\n"
 			"	x DOUBLE,\n"
@@ -146,7 +149,7 @@ Size
 ResidueConformationFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 	//check to see if this structure is ideal
@@ -226,7 +229,7 @@ ResidueConformationFeatures::report_features(
 
 void
 ResidueConformationFeatures::delete_record(
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
 
@@ -245,7 +248,7 @@ ResidueConformationFeatures::delete_record(
 void
 ResidueConformationFeatures::load_into_pose(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
 	load_conformation(db_session, struct_id, pose);
@@ -254,7 +257,7 @@ ResidueConformationFeatures::load_into_pose(
 void
 ResidueConformationFeatures::load_conformation(
 	sessionOP db_session,
-	Size struct_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
 	if(!table_exists(db_session, "nonprotein_residue_conformation")) return;
@@ -349,7 +352,7 @@ ResidueConformationFeatures::load_conformation(
 //This should be factored out into a non-member function.
 void ResidueConformationFeatures::set_coords_for_residue(
 		sessionOP db_session,
-		Size struct_id,
+		boost::uuids::uuid struct_id,
 		Size seqpos,
 		Pose & pose
 ){

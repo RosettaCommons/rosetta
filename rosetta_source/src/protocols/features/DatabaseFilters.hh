@@ -17,6 +17,9 @@
 // Unit Headers
 #include <protocols/features/DatabaseFilters.fwd.hh>
 
+//External
+#include <boost/uuid/uuid.hpp>
+
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -33,7 +36,7 @@
 namespace protocols{
 namespace features{
 
-typedef std::pair<bool, utility::vector1<core::Size> > WriteDeletePair;
+typedef std::pair<bool, utility::vector1<boost::uuids::uuid> > WriteDeletePair;
 
 DatabaseFilterOP get_DB_filter_ptr();
 

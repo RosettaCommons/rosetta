@@ -22,6 +22,9 @@
 // Package headers
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
+#include <protocols/jd2/message_listening/MessageListenerFactory.hh>
+#include <protocols/jd2/message_listening/MessageListener.hh>
+
 
 #include <protocols/moves/Mover.hh>
 
@@ -30,6 +33,7 @@
 #include <basic/options/option.hh>
 #include <utility/exit.hh>
 #include <utility/assert.hh>
+#include <utility/mpi_util.hh>
 
 // Option headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -124,6 +128,9 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	// set first job to assign
 	master_get_new_job_id();
 
+    // create a factory for listening
+    message_listening::MessageListenerFactory factory;
+    
 	// Job Distribution Loop
 	while ( next_job_to_assign_ != 0 ) {
 		TR << "Master Node: Waiting for job requests..." << std::endl;
@@ -135,26 +142,47 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 		// decide what to do based on message tag
 		//switch ( status.MPI::Status::Get_tag() ) {
 		switch ( status.MPI_TAG ) {
-		case NEW_JOB_ID_TAG:
-			//TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI::Status::Get_source() << " with tag " << NEW_JOB_ID_TAG << std::endl;
-			//MPI::COMM_WORLD.Send( &next_job_to_assign_, 1, MPI::INT, status.MPI::Status::Get_source(), NEW_JOB_ID_TAG );
-			TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI_SOURCE << " with tag " << NEW_JOB_ID_TAG << std::endl;
-			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
-			master_get_new_job_id();
-			break;
-		case BAD_INPUT_TAG:
-			//TR << "Master Node: Received job failure message for job id " << slave_data << " from node " << status.MPI::Status::Get_source() << std::endl;
-			TR << "Master Node: Received job failure message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
-			bad_job_id_ = slave_data;
-			master_remove_bad_inputs_from_job_list();
-			break;
-		case JOB_SUCCESS_TAG:
-			TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
-			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
-			MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
-			TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
-			break;
-		}
+            case NEW_JOB_ID_TAG:
+                //TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI::Status::Get_source() << " with tag " << NEW_JOB_ID_TAG << std::endl;
+                //MPI::COMM_WORLD.Send( &next_job_to_assign_, 1, MPI::INT, status.MPI::Status::Get_source(), NEW_JOB_ID_TAG );
+                TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI_SOURCE << " with tag " << NEW_JOB_ID_TAG << std::endl;
+                MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
+                master_get_new_job_id();
+                break;
+            case BAD_INPUT_TAG:
+                //TR << "Master Node: Received job failure message for job id " << slave_data << " from node " << status.MPI::Status::Get_source() << std::endl;
+                TR << "Master Node: Received job failure message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
+                bad_job_id_ = slave_data;
+                master_remove_bad_inputs_from_job_list();
+                break;
+            case JOB_SUCCESS_TAG:
+                TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
+                MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
+                MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
+                TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
+                break;
+            case REQUEST_MESSAGE_TAG:
+            {
+                TR << "Master Node: recieved a message request from the slave node, having the message listener factor create the appropriate message" << std::endl;
+                message_listening::MessageListenerOP listener(factory.get_listener((message_listening::listener_tags)slave_data));
+            
+                TR << "Master Node: recieved message data from the slave node, processing data now" << std::endl;
+                std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
+                std::string return_info="";
+                bool request_slave_data = listener->request(message_data, return_info);
+            
+                //send the listener's data to the slave node. If the listener needs information from the slave then wait for a message from the same node
+                TR << "Master Node: sending the listener generated data back to the slave" << std::endl;
+                utility::send_string_to_node(status.MPI_SOURCE, return_info);
+                if(request_slave_data){
+                    TR << "Master Node: recieved data from slave node" << std::endl;
+                    message_data = utility::receive_string_from_node(status.MPI_SOURCE);
+                    listener->recieve(message_data);
+                }
+                
+                break;
+            }
+        }
 	}
 	TR << "Master Node: Finished handing out jobs" << std::endl;
 
@@ -171,21 +199,42 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 		// decide what to do based on message tag
 		//switch ( status.MPI::Status::Get_tag() ) {
 		switch ( status.MPI_TAG ) {
-		case NEW_JOB_ID_TAG:
-			//TR << "Master Node: Sending spin down signal to node " << status.MPI::Status::Get_source() << std::endl;
-			//MPI::COMM_WORLD.Send( &next_job_to_assign_, 1, MPI::INT, status.MPI::Status::Get_source(), NEW_JOB_ID_TAG );
-			TR << "Master Node: Sending spin down signal to node " << status.MPI_SOURCE << std::endl;
-			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
-			n_nodes_left_to_spin_down--;
-			break;
-		case BAD_INPUT_TAG:
-			break;
-		case JOB_SUCCESS_TAG:
-			TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
-			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
-			MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
-			TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
-			break;
+            case NEW_JOB_ID_TAG:
+                //TR << "Master Node: Sending spin down signal to node " << status.MPI::Status::Get_source() << std::endl;
+                //MPI::COMM_WORLD.Send( &next_job_to_assign_, 1, MPI::INT, status.MPI::Status::Get_source(), NEW_JOB_ID_TAG );
+                TR << "Master Node: Sending spin down signal to node " << status.MPI_SOURCE << std::endl;
+                MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
+                n_nodes_left_to_spin_down--;
+                break;
+            case BAD_INPUT_TAG:
+                break;
+            case JOB_SUCCESS_TAG:
+                TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
+                MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
+                MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
+                TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
+                break;
+            case REQUEST_MESSAGE_TAG:
+            {
+                TR << "Master Node: recieved a message request from the slave node, having the message listener factory create the appropriate message" << std::endl;
+                message_listening::MessageListenerOP listener(factory.get_listener((message_listening::listener_tags)slave_data));
+                
+                TR << "Master Node: recieved message data from the slave node, processing data now" << std::endl;
+                std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
+                std::string return_info="";
+                bool request_slave_data = listener->request(message_data, return_info);
+                
+                //send the listener's data to the slave node. If the listener needs information from the slave then wait for a message from the same node
+                TR << "Master Node: sending the listener generated data back to the slave" << std::endl;
+                utility::send_string_to_node(status.MPI_SOURCE, return_info);
+                if(request_slave_data){
+                    TR << "Master Node: recieved data from slave node" << std::endl;
+                    message_data = utility::receive_string_from_node(status.MPI_SOURCE);
+                    listener->recieve(message_data);
+                }
+                
+                break;
+            }
 		}
 	}
 	TR << "Master Node: Finished sending spin down signals to slaves" << std::endl;
