@@ -20,11 +20,15 @@
 #ifndef INCLUDED_core_scoring_nv_NVlookup_fwd_hh
 #define INCLUDED_core_scoring_nv_NVlookup_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 namespace nv {
 
-	class NVlookup;
+class NVlookup;
+typedef utility::pointer::owning_ptr< NVlookup > NVlookupOP;
+typedef utility::pointer::owning_ptr< NVlookup const > NVlookupCOP;
 
 } //NV
 } //scoring

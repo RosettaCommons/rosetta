@@ -44,14 +44,11 @@ public:
 	typedef methods::ContextDependentOneBodyEnergy  parent;
 
 public:
-	//NVscore(methods::EnergyMethodOptions const & options );
 
 	NVscore();
 
 	/// clone
 	virtual methods::EnergyMethodOP clone() const;
-
-	//virtual void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
 
 	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
@@ -67,27 +64,13 @@ public:
 					EnergyMap & emap
 	) const;
 
-	//virtual Distance atomic_interaction_cutoff() const;
-
 	virtual void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
-	//virtual bool defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
-
-	/*
-	virtual void eval_intrares_energy(
-		conformation::Residue const &,
-		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
-	) const {}
-*/
-
-	Real neighborWeight( Vector::Value  & dist, Real & lBound, Real & uBound) const;
+	Real neighbor_weight( Vector::Value const & distance, Real const & lower_bound, Real const & upper_bound) const;
 
 private:
 		NVlookup const &lookup_table_;
-	//static Real const lBound;
-	//static Real const uBound;
+
 virtual
 core::Size version() const;
 };

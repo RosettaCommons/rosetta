@@ -11,27 +11,32 @@
 /// @details  Implementation of Neighbor Vector estimation ( from Durham EA, Et. Al. "Solvent Accessible Surface Area Approximations for Protein Structure Prediction"
 /// @author Sam DeLuca (samuel.l.deluca@vanderbilt.edu)
 
-#include <utility/vector1.hh>
 #include <core/scoring/nv/NVscore.hh>
 #include <core/scoring/nv/NVscoreCreator.hh>
 
-// AUTO-REMOVED #include <core/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
-#include <basic/Tracer.hh>
+
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ContextGraphTypes.hh>
-#include <numeric/constants.hh>
+#include <core/scoring/TwelveANeighborGraph.hh>
 
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/AA.hh>
+
 #include <core/conformation/Residue.hh>
+
 #include <core/kinematics/Jump.hh>
-#include <core/scoring/EnergyMap.hh>
+
+#include <utility/vector1.hh>
+
+#include <numeric/constants.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
+
 
 
 namespace core {
@@ -85,12 +90,12 @@ void NVscore::setup_for_packing(pose::Pose &pose, utility::vector1< bool > const
 
 void NVscore::setup_for_derivatives(pose::Pose &pose, const ScoreFunction &) const
 {
-	pose.update_residue_neighbors();
+	//pose.update_residue_neighbors();
 }
 
 void NVscore::setup_for_minimizing(pose::Pose & pose, ScoreFunction const & ,kinematics::MinimizerMapBase const &) const
 {
-	pose.update_residue_neighbors();
+	//pose.update_residue_neighbors();
 }
 
 
@@ -101,74 +106,103 @@ void NVscore::indicate_required_context_graphs(utility::vector1< bool > & contex
 }
 
 ///Calculate the weighted neighbor count given an upper and lower bound
-Real NVscore::neighborWeight(Vector::Value  &dist, Real &lBound, Real &uBound) const
+Real NVscore::neighbor_weight(Vector::Value const & distance, Real const & lower_bound, Real const & upper_bound) const
 {
 
-	if(dist <= lBound)
+
+	if(distance <= lower_bound)
 	{
 		//neighbor count score is 1 if less than the lower bound
 		return(1);
-	}else if(dist >= uBound)
+	}else if(distance >= upper_bound)
 	{
 		//neighbor count score is 0 if gerater than upper bound
 		return(0);
-	}else if( (lBound < dist) && (uBound > dist) )
+	}else if( (lower_bound < distance) && (upper_bound > distance) )
 	{
 		//if between upper and lower bound, score follows a smooth function
 
-		Real weight = ( cos( ( (dist-lBound) / (uBound-lBound) ) * numeric::constants::r::pi ) + 1 )/2.0;
+		Real weight = ( cos( ( (distance-lower_bound) / (upper_bound-lower_bound) ) * numeric::constants::r::pi ) + 1 )/2.0;
 		return(weight);
 	}
 	return(0);
 }
 
-void NVscore::residue_energy(const conformation::Residue &rsd, const pose::Pose &pose, EnergyMap & emap) const
+void NVscore::residue_energy( conformation::Residue const &current_residue,  pose::Pose const & pose, EnergyMap & emap) const
 {
 
 	//lbound defaults to 3.3 and ubound defaults to 11.1.  If you change these values the lookup table may no longer be accurate
-	Real lBound = basic::options::option[ basic::options::OptionKeys::score::NV_lbound]();
-	Real uBound = basic::options::option[ basic::options::OptionKeys::score::NV_ubound]();
+	Real lower_bound = basic::options::option[ basic::options::OptionKeys::score::NV_lbound]();
+	Real upper_bound = basic::options::option[ basic::options::OptionKeys::score::NV_ubound]();
 
-	Real neighborCount(0);
-	Vector neighborVectSum(0,0,0);
+	Real neighbor_count(0);
+	Vector neighbor_vector_sum(0,0,0);
 
 	conformation::ResidueOPs::iterator poseIT;
 	//use the coordinates of residue neighbor atom for all calcuations
-	Vector currentVect(rsd.nbr_atom_xyz());
+	Vector current_vector(current_residue.nbr_atom_xyz());
+
+	TwelveANeighborGraph const & graph(pose.energies().twelveA_neighbor_graph());
+
+	for ( graph::Graph::EdgeListConstIter
+		node_index  = graph.get_node( current_residue.seqpos() )->const_edge_list_begin(),
+		node_index_end = graph.get_node( current_residue.seqpos() )->const_edge_list_end();
+		node_index != node_index_end; ++node_index )
+
+	{
+		//get the residue to compare to the current residue
+		core::Size comparison_residue_index((*node_index)->get_other_ind(current_residue.seqpos()));
+		conformation::Residue comparison_residue(pose.residue(comparison_residue_index));
+		//you don't want to compare a residue to itself
+		if(current_residue.seqpos() == comparison_residue.seqpos()) continue;
+		Vector comparison_vector(comparison_residue.nbr_atom_xyz());
+		//calculate the distance between the two residues
+		Vector::Value distance = current_vector.distance(comparison_vector);
+		//get the weighted neighbor count
+		Real weight = neighbor_weight(distance,lower_bound, upper_bound);
+
+		//calculate the weighted neighbor vector for this pair and sum
+		Vector weighted_vector = ( (comparison_vector-current_vector) / distance) * weight;
+		neighbor_count += weight;
+		neighbor_vector_sum += weighted_vector;
+	}
 
 	//pose::Pose pose(pose);
 	//iterate through the pose
+	/*
 	for(core::Size pose_index = 1; pose_index <= pose.total_residue() ; ++pose_index)
 	{
 		//get the residue to compare to the current ersidue rsd
-		conformation::Residue compRes(pose.residue(pose_index));
+		conformation::Residue comparison_residue(pose.residue(pose_index));
 		//you don't want to compare a residue to itself
-		if(rsd.seqpos() == compRes.seqpos()) continue;
-		Vector compVect(compRes.nbr_atom_xyz());
+		if(current_residue.seqpos() == comparison_residue.seqpos()) continue;
+		Vector comparison_vector(comparison_residue.nbr_atom_xyz());
 		//calculate the distance between the two residues
-		Vector::Value dist = currentVect.distance(compVect);
+		Vector::Value distance = current_vector.distance(comparison_vector);
 		//get the weighted neighbor count
-		Real weight = neighborWeight(dist,lBound, uBound);
+		Real weight = neighbor_weight(distance,lower_bound, upper_bound);
 
 		//calculate the weighted neighbor vector for this pair and sum
-		Vector weightedVector = ( (compVect-currentVect) / dist) * weight;
-		neighborCount += weight;
-		neighborVectSum += weightedVector;
+		Vector weighted_vector = ( (comparison_vector-current_vector) / distance) * weight;
+		neighbor_count += weight;
+		neighbor_vector_sum += weighted_vector;
 
 	}
-	if ( neighborCount == 0.0 ) return; // do not try to divide by zero
 
-	Vector avgSum = neighborVectSum/neighborCount;
+	*/
+	if ( neighbor_count == 0.0 ) return; // do not try to divide by zero
+
+	Vector average_sum = neighbor_vector_sum/neighbor_count;
 	//neighbor vector score is the norm of the average sum of all neighbor vectors
-	Real neighborVector = avgSum.norm();
+	Real neighbor_vector = average_sum.norm();
 
-	char single_letter_name = rsd.name1();
+	core::chemical::AA aa_type = current_residue.aa();
 	//use the neighbor vector score to look up the potential from the knowledge base
-	Real NVPotential = lookup_table_.get_potentials(single_letter_name,neighborVector);
+	Real nv_potential = lookup_table_.get_potentials(aa_type,neighbor_vector);
 
-	emap[ neigh_vect ] += NVPotential;
-	emap[ neigh_vect_raw ] += neighborVector;
-	emap[ neigh_count ] += neighborCount;
+	emap[ neigh_vect ] += nv_potential;
+	emap[ neigh_vect_raw ] += neighbor_vector;
+	emap[ neigh_count ] += neighbor_count;
 
 }
 core::Size

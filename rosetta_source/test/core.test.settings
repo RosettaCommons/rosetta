@@ -178,6 +178,11 @@ sources = {
 		"UnfoldedStateEnergy",
 		"YHHPlanarityEnergy",
 	],
+	"scoring/nv" : [
+		"NVscore",
+		"NVlookup"
+	],
+
 	#"scoring/orbitals" : [
 #		"OrbitalsScore"
 #	],

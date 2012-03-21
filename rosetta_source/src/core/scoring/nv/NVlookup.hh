@@ -21,19 +21,18 @@
 #define INCLUDED_core_scoring_nv_NVlookup_hh
 
 //unit headers
-#include <utility/vector1.hh>
 
-#include <core/types.hh>
+#include <core/scoring/nv/NVlookup.fwd.hh>
 
 //project headers
-// AUTO-REMOVED #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+#include <core/types.hh>
+#include <core/chemical/AA.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 
 //STL header
-
 #include <map>
 #include <vector>
 
@@ -42,15 +41,22 @@ namespace core {
 namespace scoring {
 namespace nv {
 
-class NVlookup {
+class NVlookup : public utility::pointer::ReferenceCount {
 public:
 	NVlookup(std::string filename);
 
-	core::Real get_potentials(char &name, core::Real &score) const;
+	core::Real get_potentials(core::chemical::AA const & aa_type, core::Real const & score) const;
 
 private:
 
-	std::map<char, numeric::interpolation::spline::SplineGenerator > lookup_table_;
+	void set_up_spline_from_data(core::chemical::AA const & aa_type, utility::vector1<core::Real> const & bin_centers, utility::vector1<core::Real> const & data);
+
+	//The spline for each amino acid is stored in an array indexed by core::chemical::AA enum
+	//numeric::interpolation::spline::InterpolatorOP lookup_table_[core::chemical::num_canonical_aas];
+
+	utility::vector1<numeric::interpolation::spline::InterpolatorOP> lookup_table_;
+
+	//std::map<char, numeric::interpolation::spline::InterpolatorOP > lookup_table_;
 
 };
 
