@@ -1,7 +1,7 @@
 #!/usr/bin/python
 ## Written and improved over the years by Phil, Rhiju, Olli and Mike
 ## Lucas Nivon, Nov 2010, modifying to keep HETATMS which are not non-canonical ligands
-## Usage: python ~/Scoring/obfit_Scripts/clean_pdb_keep_ligand.py 1dqb -ignorechain
+## Usage: python clean_pdb_keep_ligand.py 1dqb -ignorechain
 ## Note that the database for the original pdbs is at local_pdb_database, change this as needed at top of script
 ###############################################################
 
@@ -13,7 +13,7 @@ from amino_acids import longer_names
 from amino_acids import modres
 
 ##############################  set your scaffold source here #################################
-local_pdb_database = "/net/shared/scaffolds/"
+local_pdb_database = "/lab/shared/scaffolds/"
 keep_ligand = True    # set to false to throw away all HETATMs, not just the confusing non-canonical Amino Acids
 ###############################################################################################
 

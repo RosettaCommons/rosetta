@@ -10,7 +10,7 @@
 ///@author Rocco Moretti and Lucas Nivon
 /*!
 
-@page AppName Documentation for relax pdb with all-atom constraints / prepare pdb for rosetta with relax
+@page prepare_pdb_for_rosetta_with_relax Documentation for relax pdb with all-atom constraints / prepare pdb for rosetta with relax
 
 @section metadata Metadata
 Updated 20120315 by Lucas Nivon. nivon@u.washington.edu. Baker lab. dabaker@u.washington.edu
