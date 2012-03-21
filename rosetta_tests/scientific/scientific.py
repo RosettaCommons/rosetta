@@ -222,6 +222,40 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     return 0
 
 
+def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True):
+    print message
+    print command_line
+    while True:
+        #(res, output) = commands.getstatusoutput(commandline)
+
+        po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        f = po.stderr
+        output = ''
+        for line in f:
+            #po.poll()
+            if print_output: print line,
+            output += line
+            sys.stdout.flush()
+        f.close()
+        while po.returncode is None: po.wait()
+        res = po.returncode
+
+        if res and untilSuccesses: pass  # Thats right - redability COUNT!
+        else: break
+
+        print "Error while executing %s: %s\n" % (message, output)
+        print "Sleeping 60s... then I will retry..."
+        time.sleep(60)
+
+    if res:
+        if print_output: print "\nEncounter error while executing: " + command_line
+        if not return_: sys.exit(1)
+
+    if return_ == 'output': return output
+    else: return False
+
+
 class Worker:
     def __init__(self, queue, outdir, opts, host=None, timeout_minutes=0):
         self.queue = queue
@@ -257,8 +291,10 @@ class Worker:
                         #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
                         #print cmd; print
                         if self.host is None:
-                            print "Running %s on localhost ..." % test
-                            proc = subprocess.Popen(["bash", "-c", cmd])#, cwd=workdir)
+                            #print "Running %s on localhost ..." % test
+                            #proc = subprocess.Popen(["bash", "-c", cmd])#, cwd=workdir)
+                            execute("Running %s on localhost ..." % test, 'bash -c %s' % cmd, return_=True)
+
                         # Can't use cwd=workdir b/c it modifies *local* dir, not remote dir.
                         else:
                             print "Running %s on %s ..." % (test, self.host)
@@ -269,7 +305,7 @@ class Worker:
                             cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
                             proc = subprocess.Popen(["ssh", self.host, cmd])#, cwd=workdir)
                         if self.timeout == 0:
-                            retcode = proc.wait() # does this block all threads?
+                            #retcode = proc.wait() # does this block all threads?
                         else:
                             start = time.time()
                             while time.time() - start <= self.timeout:
