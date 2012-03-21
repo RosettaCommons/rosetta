@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@author P. Ben Stranges stranges@unc.edu
+///@author P. Ben Stranges stranges@unc.edu, PI is Brian Kuhlman: bkuhlman@unc.edu
 /*!
 
 @page beta_strand_homodimer_design Documentation for beta_strand_homodimer_design suite of apps
@@ -32,7 +32,7 @@ The output from the above is then used to put together the command line for the 
 The homodimer model generated above was used to generate the symmetry definition and starting structure for interface design. First, the protein is symmetrically docked against itself to sample rigid body degrees of freedom. After the docking step, all residues within 8 Å of the other chain were symmetrically designed.  Finally, the backbone and side chains of all interface residues were minimized.
 
 @section inputs Input Files
-See the demo at: <code>rosetta/rosetta_tests/integration/tests/beta_strand_homodimer/</code>
+See the demo at: <code>rosetta/rosetta_demos/public/beta_strand_homodimer_design</code>
 
 @section options Options
 
@@ -88,4 +88,16 @@ Other useful options
 @li symmetry:perturb_rigid_body_dofs 3 5
 @li -out::file::fullatom
 
+@section tips Tips
+These protocols are specific for one method of finding exposed beta-strands and designing that protein to be a homodimer. We are not sure how easily it could be used for other purposes.
 
+@section outputs Expected Outputs
+See the full description in <code>rosetta/rosetta_demos/beta_strand_homodimer_design/README</code>
+
+@section postprocessing Post Processing
+The demo located in <code>rosetta/rosetta_demos/beta_strand_homodimer_design/</code> has a full description of how to handle outputs.
+
+@section changelog Changes since last release
+3.4 is the first release of this code. - stranges
+
+*/
