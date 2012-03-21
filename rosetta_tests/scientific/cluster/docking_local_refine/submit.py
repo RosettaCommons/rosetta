@@ -233,7 +233,7 @@ bsub \\
 	-database %(database)s \\
 	-in:file:list %(output_dir)s/input.list \\
 	-out:mpi_tracer_to_file %(output_dir)s/%(output_decoy_path)s/docking_local_refine.log \\
-	-out:file:scorefile %(output_dir)s/%(output_score_path)s/docking_local_refine.sc \\
+	-out:file:scorefile %(output_dir)s/%(output_score_path)s/docking_local_refine%(output_scorefile_extension)s \\
 	-out:file:silent_print_all_score_headers \\
 	-out:file:silent %(output_dir)s/%(output_decoy_path)s/docking_local_refine.silent \\
 	@flags

@@ -8,9 +8,6 @@
         "energy_function_flags.description": "Indicate energy function parameters",
         "energy_function_flags": "",
 
-        "num_top_structures.description": "The number of top scoring structures to use in analysis",
-        "num_top_structures": 5,
-
 	"svn_benchmar_path.description" : "svn path to the docking benchmark set and where it should get checked out",
 	"svn_benchmark_path": "https://svn.rosettacommons.org/source/trunk/mini.data/tests/scientific/cluster/docking",
 
@@ -30,7 +27,7 @@
 	"ligand_target_extension": "_l_b.pdb",
 
 	"output_run_log_path.description": "Where the log files should be generated.",
-	"output_run_log_path": "",
+	"output_run_log_path": ".",
 
 	"output_decoy_path.description": "Where the decoys should be generated.",
 	"output_decoy_path": "decoys",
@@ -38,9 +35,12 @@
 	"output_silentfile_extension": "_rl_b.silent.gz",
 
 	"output_score_path.description": "Where the score files should be generated.",
-	"output_score_path": "",
+	"output_score_path": ".",
 	"output_scorefile_extension.description": "The output scorefiles will be <output_score_path>/<target><input_target_extension><output_scorefile_extension>.",
-	"output_scorefile_extension": "_lr_b.sc",
+	"output_scorefile_extension": "_rl_b.sc",
+
+        "output_analysis_path.description": "Where the analysis plots should be generated.",
+        "output_analysis_path": "files",
 
 	"test_results_log": ".results.log",
 	"test_results_yaml": ".results.yaml",
