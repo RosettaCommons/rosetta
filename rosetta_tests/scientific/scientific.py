@@ -305,6 +305,7 @@ class Worker:
                             cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
                             proc = subprocess.Popen(["ssh", self.host, cmd])#, cwd=workdir)
                         if self.timeout == 0:
+			    pass
                             #retcode = proc.wait() # does this block all threads?
                         else:
                             start = time.time()

@@ -57,10 +57,10 @@ sqlite3 outputs/features_score12prime.db3 \
 	> .results.yaml
 
 
-minidir=%(minidir)s
-features_base_dir=${minidir%%source}tests/features
-nice $features_base_dir/compare_sample_sources.R \
-	--script $features_base_dir/scripts/analysis/statistics/rotamer_recovery/rotamer_recovery_summary.R \
-	--output_dir %(workdir)s/outputs \
-	%(workdir)s/outputs/features_score12prime.db3 \
-	&> %(workdir)s/outputs/rotamer_recovery_summary.log
+#minidir=%(minidir)s
+#features_base_dir=${minidir%%source}tests/features
+#nice $features_base_dir/compare_sample_sources.R \
+#	--script $features_base_dir/scripts/analysis/statistics/rotamer_recovery/rotamer_recovery_summary.R \
+#	--output_dir %(workdir)s/outputs \
+#	%(workdir)s/outputs/features_score12prime.db3 \
+#	&> %(workdir)s/outputs/rotamer_recovery_summary.log
