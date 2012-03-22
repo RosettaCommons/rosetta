@@ -30,6 +30,9 @@
 #include <iomanip>
 #include <iostream>
 
+//Exception for NaN in sin/cos
+#include <utility/excn/Exceptions.hh>
+
 
 namespace numeric {
 
@@ -113,6 +116,10 @@ sin_cos_range( T const & x, T const & tol = T( .001 ) )
 		//SGM This deserves further investigation: Either there is a bug
 		//    or we need a larger tolerance for some call sites on certain (which?) h/w
 		return ( x >= T( 0.0 ) ? T( 1.0 ) : T( -1.0 ) );
+#endif
+#ifdef MPI
+		std::string const warning( "NANs occured in sin_cos_range!" );
+  	throw( utility::excn::EXCN_Msg_Exception( warning ) );
 #endif
 		utility_exit();
 		return T( 0.0 ); // Keep compiler happy
