@@ -145,9 +145,9 @@ MPI_WorkUnitManager::process_incoming_msgs( bool MPI_ONLY( wait_until_message ) 
 		int result;
 		TR.Trace << "Probing for incoming messages .." << std::endl;
 
-		// If there is stuff in the outbound queue, deal with work requests first
 		core::Size before_size =  outbound().size();
 		while( outbound().size() > 0 ){
+			TR.Trace << "Fulfilling work requests since we have outbound work" << std::endl;
 			MPI_Iprobe( MPI_ANY_SOURCE, WUM_MPI_REQUEST_WU, MPI_COMM_WORLD, &result, &status);
 			if( !result){ // If there are no work requests
 				break;      // break out and continue to accept *any* messages
@@ -155,18 +155,18 @@ MPI_WorkUnitManager::process_incoming_msgs( bool MPI_ONLY( wait_until_message ) 
 			// if we're here that means we got a work request - deal with that
 			// sanity check - this should absolutely be true here
 			if(  status.MPI_TAG != WUM_MPI_REQUEST_WU ){
-				TR << "ERROR: status.MPI_TAG != WUM_MPI_REQUEST_WU" << std::endl;
+				TR.Error << "ERROR: status.MPI_TAG != WUM_MPI_REQUEST_WU" << std::endl;
 				break;
 			}
+		  TR.Trace << "Someone requested work!" << std::endl;
 			send_next_WU_on_request();
 		}
 
 		if(  outbound().size() != before_size ){
-			TR << "Present " << (before_size - outbound().size()) << " units" << std::endl;
+			TR.Trace << "Present " << (before_size - outbound().size()) << " units" << std::endl;
 		}
 
-		// now you're free to receive new results and other requests
-
+	  TR.Trace << "Now listening for any inbound work"  << std::endl;
 		MPI_Iprobe( MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &result, &status);
 		if( !result){ // if there's nothing on the line...
 			if( !wait_until_message ){  // depending on this flag
@@ -182,9 +182,11 @@ MPI_WorkUnitManager::process_incoming_msgs( bool MPI_ONLY( wait_until_message ) 
 		// interpret what's there
 		switch( status.MPI_TAG ){
 			case WUM_MPI_REQUEST_WU:
+				TR.Debug << "Sending WU on request to " << status.MPI_SOURCE << std::endl;
 				send_next_WU_on_request();
 				break;
 			case WUM_MPI_SEND_WU:
+				TR.Debug << "Receiving WU from " << status.MPI_SOURCE << std::endl;
 				receive_MPI_workunit();
 				return; // now,  surely ther eis work
 			default:
@@ -227,14 +229,16 @@ void MPI_WorkUnitManager::send_MPI_workunit( const WorkUnitBaseOP& MPI_ONLY(wu),
 	// The first blocking send will only return when the master has recevied the data. Since the data transfer is negligible,
 	// We'll count that as waiting time, not sending time
 	start_timer( TIMING_WAIT );
-	TRDEBUG << "Sending workunit .. " << std::endl;
+	TRDEBUG << "Sending workunit to " << dest_rank << std::endl;
 	// announce that you're about to send data and the size of it
 	double  start_wait = get_time();
 	MPI_Send( &size_of_raw_data,    1,                MPI_UNSIGNED, dest_rank, WUM_MPI_SEND_WU,    MPI_COMM_WORLD );
-	TR.Trace << "  Sent header.. " << std::endl;
+	TR.Debug << "Sent header announcing incoming WU of size " << F(5,1,(size_of_raw_data/1024.0)) << "kB" << " to node " << dest_rank << std::endl;
 	start_timer( TIMING_TRANSFER_SEND );
 	double  start_send = get_time();
+	TR.Debug << "Sending WU" << std::endl;
 	MPI_Send( (char*) raw_data_ptr, size_of_raw_data, MPI_CHAR,     dest_rank, WUM_MPI_DATA_BLOCK, MPI_COMM_WORLD );
+	TR.Debug << "WU sent" << std::endl;
 	double  end_send = get_time();
 	send_wu_time_ += end_send - start_send;
 	send_wu_time_n_++;
@@ -265,7 +269,9 @@ void MPI_WorkUnitManager::receive_MPI_workunit( core::Size MPI_ONLY(node_rank) )
 	start_timer( TIMING_TRANSFER_RECV );
 
 	double  start_recv = get_time();
+	TR.Debug << "Receiving MPI header (ie how big the WU will be)" << std::endl;
 	MPI_Recv( &size_of_raw_data, 1, MPI_UNSIGNED, node_rank, WUM_MPI_SEND_WU, MPI_COMM_WORLD, &status);
+	TR.Debug << "Received MPI header, receiving WU of " << F(5,1,(size_of_raw_data/1024.0)) << "kB from node " << status.MPI_SOURCE << std::endl;
 	raw_data_ptr = new unsigned char [size_of_raw_data];
 	// now receive a datablock fromt he very same source
 	MPI_Recv( (char*) raw_data_ptr, size_of_raw_data, MPI_CHAR,  status.MPI_SOURCE, WUM_MPI_DATA_BLOCK, MPI_COMM_WORLD, &status);
