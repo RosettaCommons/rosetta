@@ -73,43 +73,20 @@ SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--dynamic-linker /lib64/ld-2.5.so")
 
 
 ##### Top level binaries
-# just loophash stuff for now
 ### loophash_createfiltereddb 
-ADD_EXECUTABLE(loophash_createfiltereddb.mpi.linuxgccrelease ../../src/apps/pilot/kenjung/loophash_createfiltereddb.cc)
-TARGET_LINK_LIBRARIES(loophash_createfiltereddb.mpi.linuxgccrelease ${LINK_ALL_LIBS})
-SET_TARGET_PROPERTIES(loophash_createfiltereddb.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-SET_TARGET_PROPERTIES(loophash_createfiltereddb.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
-# Dependencies are set so that binaries are created after rosetta libraries
-# are built
-ADD_DEPENDENCIES(loophash_createfiltereddb.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
-	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel)
+SET(BINARIES
+    ../../src/apps/pilot/kenjung/loophash_createfiltereddb.cc
+    ../../src/apps/pilot/mike/loophash_mpi.cc
+    ../../src/apps/public/relax.cc
+)
 
-### loophash_analyse 
-#ADD_EXECUTABLE(loophash_analyse.mpi.linuxgccrelease ../../src/apps/pilot/mike/loophash_analyse.cc)
-#TARGET_LINK_LIBRARIES(loophash_analyse.mpi.linuxgccrelease ${LINK_ALL_LIBS})
-#SET_TARGET_PROPERTIES(loophash_analyse.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-#SET_TARGET_PROPERTIES(loophash_analyse.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
-# Dependencies are set so that binaries are created after rosetta libraries
-# are built
-#ADD_DEPENDENCIES(loophash_analyse.mpi.linuxgccrelease ObjexxFCL utility numeric basic core.1 core.2 core.3 core.4 core.5 protocols devel)
-
-
-### loophash_mpi 
-ADD_EXECUTABLE(loophash_mpi.mpi.linuxgccrelease ../../src/apps/pilot/mike/loophash_mpi.cc)
-TARGET_LINK_LIBRARIES(loophash_mpi.mpi.linuxgccrelease ${LINK_ALL_LIBS})
-SET_TARGET_PROPERTIES(loophash_mpi.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-SET_TARGET_PROPERTIES(loophash_mpi.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
-# Dependencies are set so that binaries are created after rosetta libraries
-# are built
-ADD_DEPENDENCIES(loophash_mpi.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
-	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel)
-
-### relax 
-ADD_EXECUTABLE(relax.mpi.linuxgccrelease ../../src/apps/public/relax.cc)
-TARGET_LINK_LIBRARIES(relax.mpi.linuxgccrelease ${LINK_ALL_LIBS})
-SET_TARGET_PROPERTIES(relax.mpi.linuxgccrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-SET_TARGET_PROPERTIES(relax.mpi.linuxgccrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
-# Dependencies are set so that binaries are created after rosetta libraries
-# are built
-ADD_DEPENDENCIES(relax.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
-	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel)
+FOREACH(BINARY ${BINARIES})
+    GET_FILENAME_COMPONENT(BIN_NAME ${BINARY} NAME_WE)
+    SET(BIN_NAME ${BIN_NAME}.mpi)
+    ADD_EXECUTABLE(${BIN_NAME} ${BINARY}) 
+    TARGET_LINK_LIBRARIES(${BIN_NAME} ${LINK_ALL_LIBS})
+    SET_TARGET_PROPERTIES(${BIN_NAME} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+    SET_TARGET_PROPERTIES(${BIN_NAME} PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+    ADD_DEPENDENCIES(${BIN_NAME} ${LIBRARIES})
+    #ADD_CUSTOM_COMMAND(TARGET ${BIN_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BIN_NAME} /work/kenjung/minibin/)
+ENDFOREACH( BINARY )
