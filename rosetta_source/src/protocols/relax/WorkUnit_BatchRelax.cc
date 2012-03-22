@@ -26,9 +26,11 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/chemical/util.hh>
@@ -95,7 +97,15 @@ WorkUnit_BatchRelax::run(){
 	pre_process();
 
   // relax handles all the silent structures in situ
-  relax.batch_apply( decoys().store() );
+	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
+	core::pose::Pose pose;
+	core::io::silent::SilentStructOP ss = decoys().get_struct(0);
+	ss->fill_pose( pose );
+			core::scoring::constraints::ConstraintSetOP cstset = core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_fa_file_option(), new core::scoring::constraints::ConstraintSet, pose  ); 
+			relax.batch_apply( decoys().store(), cstset );
+	} else {
+			relax.batch_apply( decoys().store() );
+	}
 
 	TR << "Post Processing: "  << std::endl;
 	
