@@ -24,37 +24,37 @@ namespace database{
 namespace schema_generator{
 
 PrimaryKey::PrimaryKey(){}
-    
+
 PrimaryKey::PrimaryKey(Column column){
-    columns_.push_back(column);
+	columns_.push_back(column);
 }
 
 PrimaryKey::PrimaryKey(utility::vector1<Column> columns){
-    columns_ = columns;
+	columns_ = columns;
 }
 
 void PrimaryKey::add_column(Column column){
-    columns_.push_back(column);
+	columns_.push_back(column);
 }
 
 utility::vector1<Column> PrimaryKey::columns(){
-    return this->columns_;
+	return this->columns_;
 }
-    
+
 std::string PrimaryKey::print(){
-    std::string primary_key_string = "PRIMARY KEY (";
-    
-    for(utility::vector1<Column>::const_iterator it=columns_.begin(); it != columns_.end(); ++it){
-        if(it!=columns_.begin()){
-            primary_key_string += ",";
-        }
-        primary_key_string += it->name();
-    }
-    
-    primary_key_string += ")";
-    return primary_key_string;
+	std::string primary_key_string = "PRIMARY KEY (";
+
+	for(utility::vector1<Column>::const_iterator it=columns_.begin(); it != columns_.end(); ++it){
+		if(it!=columns_.begin()){
+			primary_key_string += ",";
+		}
+		primary_key_string += it->name();
+	}
+
+	primary_key_string += ")";
+	return primary_key_string;
 }
-    
+
 } // schema_generator
 } // namespace database
 } // namespace utility

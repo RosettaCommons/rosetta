@@ -99,54 +99,54 @@ PoseConformationFeatures::type_name() const { return "PoseConformationFeatures";
 
 string
 PoseConformationFeatures::schema() const {
-    using namespace basic::database::schema_generator;
-    
-    Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
-    
-    /******pose_conformations******/
-    Schema pose_conformations("pose_conformations");
-    pose_conformations.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+	using namespace basic::database::schema_generator;
 
-    pose_conformations.add_column( Column("annotated_sequence", DbText()) );
-    pose_conformations.add_column( Column("total_residue", DbInteger()) );
-    pose_conformations.add_column( Column("fullatom", DbBoolean()) );
-        
-    
-    /******pose_trees******/
-    Schema fold_trees("fold_trees");
-    fold_trees.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-    
-    fold_trees.add_column( Column("start_res", DbInteger()) );
-    fold_trees.add_column( Column("start_atom", DbText()) );
-    fold_trees.add_column( Column("stop_res", DbInteger()) );
-    fold_trees.add_column( Column("stop_atom", DbText()) );
-    fold_trees.add_column( Column("label", DbInteger()) );
-    fold_trees.add_column( Column("keep_stub_in_residue", DbBoolean()) );
+	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
 
-    
-    /******jumps******/
-    Schema jumps("jumps");
-    jumps.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-    jumps.add_column( Column("jump_id", DbInteger()) );
-    jumps.add_column( Column("xx", DbInteger()) );
-    jumps.add_column( Column("xy", DbInteger()) );
-    jumps.add_column( Column("xz", DbInteger()) );
-    jumps.add_column( Column("yx", DbInteger()) );
-    jumps.add_column( Column("yy", DbInteger()) );
-    jumps.add_column( Column("yz", DbInteger()) );
-    jumps.add_column( Column("zx", DbInteger()) );
-    jumps.add_column( Column("zy", DbInteger()) );
-    jumps.add_column( Column("zz", DbInteger()) );
-    jumps.add_column( Column("x", DbInteger()) );
-    jumps.add_column( Column("y", DbInteger()) );
-    jumps.add_column( Column("z", DbInteger()) );
+	/******pose_conformations******/
+	Schema pose_conformations("pose_conformations");
+	pose_conformations.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
-    /******chain_endings******/
-    Schema chain_endings("chain_endings");
-    chain_endings.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-    chain_endings.add_column( Column("end_pos", DbInteger()) );
+	pose_conformations.add_column( Column("annotated_sequence", DbText()) );
+	pose_conformations.add_column( Column("total_residue", DbInteger()) );
+	pose_conformations.add_column( Column("fullatom", DbBoolean()) );
 
-    return pose_conformations.print() + "\n" + fold_trees.print() + "\n" + jumps.print() + "\n" + chain_endings.print();
+
+	/******pose_trees******/
+	Schema fold_trees("fold_trees");
+	fold_trees.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+
+	fold_trees.add_column( Column("start_res", DbInteger()) );
+	fold_trees.add_column( Column("start_atom", DbText()) );
+	fold_trees.add_column( Column("stop_res", DbInteger()) );
+	fold_trees.add_column( Column("stop_atom", DbText()) );
+	fold_trees.add_column( Column("label", DbInteger()) );
+	fold_trees.add_column( Column("keep_stub_in_residue", DbBoolean()) );
+
+
+	/******jumps******/
+	Schema jumps("jumps");
+	jumps.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+	jumps.add_column( Column("jump_id", DbInteger()) );
+	jumps.add_column( Column("xx", DbInteger()) );
+	jumps.add_column( Column("xy", DbInteger()) );
+	jumps.add_column( Column("xz", DbInteger()) );
+	jumps.add_column( Column("yx", DbInteger()) );
+	jumps.add_column( Column("yy", DbInteger()) );
+	jumps.add_column( Column("yz", DbInteger()) );
+	jumps.add_column( Column("zx", DbInteger()) );
+	jumps.add_column( Column("zy", DbInteger()) );
+	jumps.add_column( Column("zz", DbInteger()) );
+	jumps.add_column( Column("x", DbInteger()) );
+	jumps.add_column( Column("y", DbInteger()) );
+	jumps.add_column( Column("z", DbInteger()) );
+
+	/******chain_endings******/
+	Schema chain_endings("chain_endings");
+	chain_endings.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+	chain_endings.add_column( Column("end_pos", DbInteger()) );
+
+	return pose_conformations.print() + "\n" + fold_trees.print() + "\n" + jumps.print() + "\n" + chain_endings.print();
 }
 
 utility::vector1<std::string>
@@ -178,7 +178,7 @@ PoseConformationFeatures::report_features(
 	FoldTree const & fold_tree(pose->conformation().fold_tree());
 	//assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 	//cppdb::transaction transact_guard(*db_session);
-    
+
 	std::string fold_tree_string = "INSERT INTO fold_trees (struct_id, start_res, start_atom, stop_res, stop_atom, label, keep_stub_in_residue) VALUES (?,?,?,?,?,?,?);";
 	statement fold_tree_statement(basic::database::safely_prepare_statement(fold_tree_string,db_session));
 	for (FoldTree::const_iterator
@@ -200,7 +200,7 @@ PoseConformationFeatures::report_features(
 
 	std::string jump_string = "INSERT INTO jumps (struct_id, jump_id, xx, xy, xz, yx, yy, yz, zx, zy, zz, x, y, z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement jump_statement(basic::database::safely_prepare_statement(jump_string,db_session));
- 	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
+	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
 		Jump const & jump(pose->jump(nr));
 		xyzMatrix< Real > const & r(jump.get_rotation());
 		Real xx(r.xx()), xy(r.xy()), xz(r.xz());
@@ -226,8 +226,8 @@ PoseConformationFeatures::report_features(
 		basic::database::safely_write_to_database(jump_statement);
 	}
 
- 	std::string chain_ending_string = "INSERT INTO chain_endings (struct_id, end_pos) VALUES (?,?);";
- 	statement chain_ending_statement(basic::database::safely_prepare_statement(chain_ending_string,db_session));
+	std::string chain_ending_string = "INSERT INTO chain_endings (struct_id, end_pos) VALUES (?,?);";
+	statement chain_ending_statement(basic::database::safely_prepare_statement(chain_ending_string,db_session));
 	foreach(Size end_pos, pose->conformation().chain_endings()){
 
 		chain_ending_statement.bind(1,struct_id);

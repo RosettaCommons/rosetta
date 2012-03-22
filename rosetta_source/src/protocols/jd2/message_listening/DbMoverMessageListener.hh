@@ -24,30 +24,30 @@
 
 namespace protocols {
 namespace jd2 {
-namespace message_listening { 
+namespace message_listening {
 
 class DbMoverMessageListener : public MessageListener{
-    
-public:
-    DbMoverMessageListener();
-    
-    //recieve the protocol id and batch id from the slave
-    virtual void recieve(std::string data);
-    
-    //check to see if we have a protocol id and batch id. If we have them
-    //then tell them to the slave. If we don't have them then tell the slave
-    //to make them
-    virtual bool request(std::string identifier, std::string & return_data);
 
-    void deserialize_data(std::string data);
-    
+public:
+	DbMoverMessageListener();
+
+	//recieve the protocol id and batch id from the slave
+	virtual void recieve(std::string data);
+
+	//check to see if we have a protocol id and batch id. If we have them
+	//then tell them to the slave. If we don't have them then tell the slave
+	//to make them
+	virtual bool request(std::string identifier, std::string & return_data);
+
+	void deserialize_data(std::string data);
+
 private:
-    
-    core::Size protocol_id_;
-    std::map<std::string, core::Size> batch_ids_;
+
+	core::Size protocol_id_;
+	std::map<std::string, core::Size> batch_ids_;
 
 };
-    
+
 } //namespace message_listening
 } //namespace jd2
 } //namespace protocols

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file devel/helixAssembly/HelixBundleFeaturesCreator.cc
-/// @brief  
+/// @brief
 /// @author Tim Jacobs
 
 // Unit Headers
@@ -26,17 +26,17 @@
 namespace protocols {
 namespace features {
 namespace helixAssembly {
-        
+
 HelixBundleFeaturesCreator::HelixBundleFeaturesCreator() {}
 HelixBundleFeaturesCreator::~HelixBundleFeaturesCreator() {}
 FeaturesReporterOP HelixBundleFeaturesCreator::create_features_reporter() const {
-    return new HelixBundleFeatures;
+	return new HelixBundleFeatures;
 }
 
 std::string HelixBundleFeaturesCreator::type_name() const {
-    return "HelixBundleFeatures";
+	return "HelixBundleFeatures";
 }
-        
+
 } //namespace helixAssembly
 } //namespace features
 } //namespace protocols

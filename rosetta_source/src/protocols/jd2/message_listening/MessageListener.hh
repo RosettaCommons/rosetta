@@ -23,21 +23,21 @@
 
 namespace protocols {
 namespace jd2 {
-namespace message_listening {        
+namespace message_listening {
 
 class MessageListener : public utility::pointer::ReferenceCount
 {
 
 public:
-    //recieve data from a slave node
-    virtual void recieve(std::string data)=0;
-    
-    //Given the identifier for a slave node, fill the return data to be sent
-    //back and specify whether the slave should give more data. The use case for
-    //this would be when you have some logic in the slave that you want executed
-    //only once, or only once for each unique identifier.
-    virtual bool request(std::string identifier, std::string & return_data)=0;
-    
+	//recieve data from a slave node
+	virtual void recieve(std::string data)=0;
+
+	//Given the identifier for a slave node, fill the return data to be sent
+	//back and specify whether the slave should give more data. The use case for
+	//this would be when you have some logic in the slave that you want executed
+	//only once, or only once for each unique identifier.
+	virtual bool request(std::string identifier, std::string & return_data)=0;
+
 };
 
 } //namespace message_listening

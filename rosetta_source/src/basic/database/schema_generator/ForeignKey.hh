@@ -24,31 +24,31 @@
 namespace basic{
 namespace database{
 namespace schema_generator{
-    
+
 class ForeignKey
 {
 public:
-    
-    ForeignKey(Column column, std::string reference_table, std::string reference_column);
-    
-    ForeignKey(Column column, std::string reference_table, std::string reference_column, bool defer);
-    
-    void init_db_mode();
-    
-    std::string print();
-    
-    Column column();
-    
+
+	ForeignKey(Column column, std::string reference_table, std::string reference_column);
+
+	ForeignKey(Column column, std::string reference_table, std::string reference_column, bool defer);
+
+	void init_db_mode();
+
+	std::string print();
+
+	Column column();
+
 private:
-    
-    std::string database_mode_;
-    Column column_;
-    std::string reference_column_;
-    std::string reference_table_;
-    bool defer_;
+
+	std::string database_mode_;
+	Column column_;
+	std::string reference_column_;
+	std::string reference_table_;
+	bool defer_;
 };
 
-    
+
 } // schema_generator
 } // namespace database
 } // namespace utility

@@ -26,31 +26,31 @@
 
 namespace protocols{
 namespace jd2{
-namespace message_listening{   
+namespace message_listening{
 
 static basic::Tracer TR("protocols.jd2.message_listening.MessageListenerFactory");
-    
+
 MessageListenerOP MessageListenerFactory::get_listener(listener_tags tag){
-    
-    //if we already made this listener then return it, otherwise create a new one
-    if(listeners_.count( tag )){
-        TR << "Found existing listener for tag, returning it" << std::endl;
-        return listeners_[tag];
-    }
-    
-    MessageListenerOP listener;
-    switch ( tag ) {
+
+	//if we already made this listener then return it, otherwise create a new one
+	if(listeners_.count( tag )){
+		TR << "Found existing listener for tag, returning it" << std::endl;
+		return listeners_[tag];
+	}
+
+	MessageListenerOP listener;
+	switch ( tag ) {
 		case DB_TAG:
-            TR << "Creating a new DbMoverMessageListener" << std::endl;
-            listener = new DbMoverMessageListener();
-            break;
-            
-        default:
-            utility_exit_with_message("ERROR: you specified an invalid message listener");
-            break;
-    }
-    listeners_[tag]=listener;
-    return listener;
+			TR << "Creating a new DbMoverMessageListener" << std::endl;
+			listener = new DbMoverMessageListener();
+			break;
+
+		default:
+			utility_exit_with_message("ERROR: you specified an invalid message listener");
+			break;
+	}
+	listeners_[tag]=listener;
+	return listener;
 }
 
 } //namespace message_listening

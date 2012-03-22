@@ -20,21 +20,21 @@
 
 namespace basic{
 namespace database{
-namespace schema_generator{       
-    
+namespace schema_generator{
+
 Constraint::Constraint(Column column){
-    this->columns_.push_back(column);
+	this->columns_.push_back(column);
 }
 
 Constraint::Constraint(utility::vector1<Column> columns):
 columns_(columns)
 {}
-        
-//    std::string ComparisonConstraint::print(){
-//        std::string constraint_string;
-//        
-//        
-//    }
+
+//	std::string ComparisonConstraint::print(){
+//		std::string constraint_string;
+//
+//
+//	}
 
 UniqueConstraint::UniqueConstraint(Column column):
 Constraint(column)
@@ -43,20 +43,20 @@ Constraint(column)
 UniqueConstraint::UniqueConstraint(utility::vector1<Column> columns):
 Constraint(columns)
 {}
-        
+
 std::string UniqueConstraint::print(){
-    std::string constraint_string = "UNIQUE (";
-    
-    for(int i=1; i<=columns_.size(); ++i){
-        if(i!=1){
-            constraint_string += ",";
-        }
-        constraint_string += columns_[i].name();
-    }
-    constraint_string += ")";
-    return constraint_string;
+	std::string constraint_string = "UNIQUE (";
+
+	for(int i=1; i<=columns_.size(); ++i){
+		if(i!=1){
+			constraint_string += ",";
+		}
+		constraint_string += columns_[i].name();
+	}
+	constraint_string += ")";
+	return constraint_string;
 }
-    
+
 } // schema_generator
 } // namespace database
 } // namespace utility

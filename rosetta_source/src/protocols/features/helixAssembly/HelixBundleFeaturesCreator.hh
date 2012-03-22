@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/features/helixAssembly/HelixBundleFeaturesCreator.hh
-/// @brief  
+/// @brief
 /// @author Tim Jacobs
 
 #ifndef INCLUDED_HelixBundleFeaturesCreator_hh
@@ -24,18 +24,18 @@
 namespace protocols {
 namespace features {
 namespace helixAssembly {
-        
+
 /// @brief creator for the HelixBundleFeatures class
 class HelixBundleFeaturesCreator : public FeaturesReporterCreator
 {
 public:
-    HelixBundleFeaturesCreator();
-    virtual ~HelixBundleFeaturesCreator();
-    
-    virtual FeaturesReporterOP create_features_reporter() const;
-    virtual std::string type_name() const;
+	HelixBundleFeaturesCreator();
+	virtual ~HelixBundleFeaturesCreator();
+
+	virtual FeaturesReporterOP create_features_reporter() const;
+	virtual std::string type_name() const;
 };
-  
+
 } //namespace helixAssembly
 } //namespace features
 } //namespace protocols

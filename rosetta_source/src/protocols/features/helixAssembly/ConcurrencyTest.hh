@@ -57,32 +57,32 @@ class ConcurrencyTest : public protocols::features::FeaturesReporter
 {
 
 public:
-    
-    ConcurrencyTest(){}
-    
-    virtual
+	
+	ConcurrencyTest(){}
+	
+	virtual
 	std::string
 	type_name() const  {
 		return "HelixBundleFeatures";
 	}
-    
+	
 	///@brief return sql statements that sets up the appropriate tables
 	///to contain the features.
 	virtual
 	std::string
 	schema() const;
-    
-    ///@brief collect all the feature data for the pose
-    virtual
+	
+	///@brief collect all the feature data for the pose
+	virtual
 	core::Size
 	report_features(
-                    core::pose::Pose const & pose,
-                    utility::vector1<bool> const & relevant_residues,
-                    boost::uuids::uuid struct_id,
-                    utility::sql_database::sessionOP db_session
-                    );
+					core::pose::Pose const & pose,
+					utility::vector1<bool> const & relevant_residues,
+					boost::uuids::uuid struct_id,
+					utility::sql_database::sessionOP db_session
+					);
 };
-    
+	
 }
 }
 }

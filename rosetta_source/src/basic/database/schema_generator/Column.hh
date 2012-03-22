@@ -27,28 +27,28 @@ namespace schema_generator{
 class Column
 {
 public:
-    
-    Column(std::string name, DbDataType type);
-    
-    Column(std::string name, DbDataType type, bool allow_null, bool auto_increment);
-    
-    void init_db_mode();
-    
-    std::string name() const;
-    
-    bool auto_increment() const;
-    
-    std::string print() const;
-    
-    bool operator==(const Column &other) const;
-        
+
+	Column(std::string name, DbDataType type);
+
+	Column(std::string name, DbDataType type, bool allow_null, bool auto_increment);
+
+	void init_db_mode();
+
+	std::string name() const;
+
+	bool auto_increment() const;
+
+	std::string print() const;
+
+	bool operator==(const Column &other) const;
+
 private:
-    
-    std::string database_mode_;
-    std::string name_;
-    DbDataType type_;
-    bool allow_null_;
-    bool auto_increment_;
+
+	std::string database_mode_;
+	std::string name_;
+	DbDataType type_;
+	bool allow_null_;
+	bool auto_increment_;
 };
 
 } // schema_generator

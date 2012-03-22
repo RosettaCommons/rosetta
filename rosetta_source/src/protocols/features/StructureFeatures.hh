@@ -57,7 +57,7 @@ public:
 	features_reporter_dependencies() const;
 
 	///@brief collect all the feature data for the pose use
-    boost::uuids::uuid
+	boost::uuids::uuid
 	report_features(
 		utility::vector1< bool > const & relevant_residues,
 		core::Size batch_id,
@@ -101,7 +101,7 @@ public:
 		core::pose::Pose & pose);
 
 
-    boost::uuids::uuid
+	boost::uuids::uuid
 	get_struct_id(
 		utility::sql_database::sessionOP db_session,
 		std::string const & tag,

@@ -12,8 +12,6 @@
 /// @brief
 /// @author tim
 
-
-
 #ifndef INCLUDED_ConcurrencyTestCreator_HH
 #define INCLUDED_ConcurrencyTestCreator_HH
 
@@ -26,18 +24,18 @@
 namespace protocols {
 namespace features {
 namespace helixAssembly {
-    
-    /// @brief creator for the HelixBundleFeatures class
-    class ConcurrencyTestCreator : public FeaturesReporterCreator
-    {
-    public:
-        ConcurrencyTestCreator();
-        virtual ~ConcurrencyTestCreator();
-        
-        virtual FeaturesReporterOP create_features_reporter() const;
-        virtual std::string type_name() const;
-    };
-    
+
+	/// @brief creator for the HelixBundleFeatures class
+	class ConcurrencyTestCreator : public FeaturesReporterCreator
+	{
+	public:
+		ConcurrencyTestCreator();
+		virtual ~ConcurrencyTestCreator();
+
+		virtual FeaturesReporterOP create_features_reporter() const;
+		virtual std::string type_name() const;
+	};
+
 } //namespace helixAssembly
 } //namespace features
 } //namespace protocols

@@ -31,47 +31,47 @@
 
 namespace protocols{
 namespace features{
-    
+
 class BatchFeatures : public protocols::features::FeaturesReporter {
 public:
-    BatchFeatures();
-    
-    BatchFeatures( BatchFeatures const & src );
-    
-    virtual ~BatchFeatures();
-    
-    ///@brief return string with class name
-    std::string
-    type_name() const;
-    
-    ///@brief return sql statements that setup the right tables
-    std::string
-    schema() const;
-    
-    ///@brief return the set of features reporters that are required to
-    ///also already be extracted by the time this one is used.
-    utility::vector1<std::string>
-    features_reporter_dependencies() const;
-    
-    ///@brief return sql statements that setup helpful indices on the tables
-    std::string
-    indices() const;
-    
-    ///@brief return sql statments that add indexes check invariants etc.
-    //std::string cleanup() const;
-    
-    ///@brief collect all the feature data for the pose
-    ///if protocol_id is 0 autoincrement the protocol_id
-    core::Size
-    report_features(
-                    core::Size protocol_id,
-                    std::string name,
-                    std::string description,
-                    utility::sql_database::sessionOP db_session
-                    );
-    
+	BatchFeatures();
+
+	BatchFeatures( BatchFeatures const & src );
+
+	virtual ~BatchFeatures();
+
+	///@brief return string with class name
+	std::string
+	type_name() const;
+
+	///@brief return sql statements that setup the right tables
+	std::string
+	schema() const;
+
+	///@brief return the set of features reporters that are required to
+	///also already be extracted by the time this one is used.
+	utility::vector1<std::string>
+	features_reporter_dependencies() const;
+
+	///@brief return sql statements that setup helpful indices on the tables
+	std::string
+	indices() const;
+
+	///@brief return sql statments that add indexes check invariants etc.
+	//std::string cleanup() const;
+
+	///@brief collect all the feature data for the pose
+	///if protocol_id is 0 autoincrement the protocol_id
+	core::Size
+	report_features(
+					core::Size protocol_id,
+					std::string name,
+					std::string description,
+					utility::sql_database::sessionOP db_session
+					);
+
 };
-    
+
 } // features namespace
 } // protocols namespace
 

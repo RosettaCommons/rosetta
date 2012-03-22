@@ -85,32 +85,32 @@ string
 StructureFeatures::schema() const {
 	using namespace basic::database::schema_generator;
 
-		//Don't autoincrement the struct_id because it is a UUID generated here
-		Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
-		Column batch_id("batch_id",DbInteger());
-		Column tag("tag", DbText(255));
-		Column input_tag("input_tag", DbText());
+	//Don't autoincrement the struct_id because it is a UUID generated here
+	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	Column batch_id("batch_id",DbInteger());
+	Column tag("tag", DbText(255));
+	Column input_tag("input_tag", DbText());
 
-		/***structures***/
-		Schema structures("structures", PrimaryKey(struct_id));
+	/***structures***/
+	Schema structures("structures", PrimaryKey(struct_id));
 
-		structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
-		structures.add_column( tag );
-		structures.add_column( input_tag );
+	structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
+	structures.add_column( tag );
+	structures.add_column( input_tag );
 
-		/***sampled_structures***/
-		Schema sampled_structures("sampled_structures");
-		sampled_structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
+	/***sampled_structures***/
+	Schema sampled_structures("sampled_structures");
+	sampled_structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
 
-		sampled_structures.add_column( tag );
-		sampled_structures.add_column( input_tag );
+	sampled_structures.add_column( tag );
+	sampled_structures.add_column( input_tag );
 
-		utility::vector1<Column> unique_cols;
-		unique_cols.push_back(tag);
-		unique_cols.push_back(batch_id);
-		sampled_structures.add_constraint(new UniqueConstraint(unique_cols));
+	utility::vector1<Column> unique_cols;
+	unique_cols.push_back(tag);
+	unique_cols.push_back(batch_id);
+	sampled_structures.add_constraint(new UniqueConstraint(unique_cols));
 
-		return structures.print() + sampled_structures.print();
+	return structures.print() + sampled_structures.print();
 }
 
 utility::vector1<std::string>
@@ -130,7 +130,7 @@ StructureFeatures::report_features(
 ){
 	string const output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
 	string const input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-		boost::uuids::uuid struct_id(
+	boost::uuids::uuid struct_id(
 		report_features(relevant_residues, batch_id,
 			db_session, output_tag, input_tag));
 	return struct_id;
@@ -147,7 +147,6 @@ StructureFeatures::report_features(
 ){
 	string statement_string = "INSERT INTO structures (struct_id, batch_id, tag, input_tag) VALUES (?,?,?,?);";
 	statement structure_stmt(safely_prepare_statement(statement_string,db_session));
-
 
 	boost::uuids::basic_random_generator<numeric::random::RandomGenerator>
 		uuids_rng(numeric::random::RG);
@@ -167,33 +166,33 @@ StructureFeatures::report_features(
 //	silent_struct.print_conformation(pose_string);
 //	boost::uuids::uuid const struct_id = hash_value(pose_string.str());
 //
-//    //Check to see if we've reported this structure before
-//    std::string select_string =
-//    "SELECT *\n"
-//    "FROM\n"
-//    "	structures\n"
-//    "WHERE\n"
-//    "   struct_id = ?;";
-//    cppdb::statement select_stmt(basic::database::safely_prepare_statement(select_string,db_session));
-//    select_stmt.bind(1, struct_id);
+//	//Check to see if we've reported this structure before
+//	std::string select_string =
+//	"SELECT *\n"
+//	"FROM\n"
+//	"	structures\n"
+//	"WHERE\n"
+//	"   struct_id = ?;";
+//	cppdb::statement select_stmt(basic::database::safely_prepare_statement(select_string,db_session));
+//	select_stmt.bind(1, struct_id);
 //
-//    cppdb::result res(basic::database::safely_read_from_database(select_stmt));
-//    if(!res.next()) {
-//        TR << "No existing structure found, adding the new one" << endl;
+//	cppdb::result res(basic::database::safely_read_from_database(select_stmt));
+//	if(!res.next()) {
+//		TR << "No existing structure found, adding the new one" << endl;
 //
-//        structure_stmt.bind(1, struct_id);
-//        structure_stmt.bind(2, tag);
-//        structure_stmt.bind(3, input_tag);
+//		structure_stmt.bind(1, struct_id);
+//		structure_stmt.bind(2, tag);
+//		structure_stmt.bind(3, input_tag);
 //
-//        TR << "struct id: " << struct_id << "\nbatch_id: " << batch_id << "\ntag: " << tag << "\ninputtag: " << input_tag << endl;
-//        basic::database::safely_write_to_database(structure_stmt);
-//    }
+//		TR << "struct id: " << struct_id << "\nbatch_id: " << batch_id << "\ntag: " << tag << "\ninputtag: " << input_tag << endl;
+//		basic::database::safely_write_to_database(structure_stmt);
+//	}
 //
-//    std::string batch_structures_string = "INSERT INTO batch_structures (struct_id, batch_id) VALUES (?,?);";
-//    statement batch_structures_stmt(safely_prepare_statement(batch_structures_string, db_session));
-//    batch_structures_stmt.bind(1, struct_id);
-//    batch_structures_stmt.bind(2, batch_id);
-//    basic::database::safely_write_to_database(batch_structures_stmt);
+//	std::string batch_structures_string = "INSERT INTO batch_structures (struct_id, batch_id) VALUES (?,?);";
+//	statement batch_structures_stmt(safely_prepare_statement(batch_structures_string, db_session));
+//	batch_structures_stmt.bind(1, struct_id);
+//	batch_structures_stmt.bind(2, batch_id);
+//	basic::database::safely_write_to_database(batch_structures_stmt);
 }
 
 void StructureFeatures::mark_structure_as_sampled(

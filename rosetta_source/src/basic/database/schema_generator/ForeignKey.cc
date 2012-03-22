@@ -42,49 +42,49 @@ reference_table_(reference_table),
 reference_column_(reference_column),
 defer_(false)
 {
-    init_db_mode();
+	init_db_mode();
 }
-    
+
 ForeignKey::ForeignKey(Column column, std::string reference_table, std::string reference_column, bool defer):
 column_(column),
 reference_table_(reference_table),
 reference_column_(reference_column),
 defer_(defer)
 {
-    init_db_mode();
+	init_db_mode();
 }
-    
+
 void ForeignKey::init_db_mode(){
-    if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){
-        database_mode_=basic::options::option[basic::options::OptionKeys::inout::database_mode].value();
-    }
-    else{
-        database_mode_="sqlite3";
-    }
+	if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){
+		database_mode_=basic::options::option[basic::options::OptionKeys::inout::database_mode].value();
+	}
+	else{
+		database_mode_="sqlite3";
+	}
 }
-    
+
 std::string ForeignKey::print(){
-    std::string foreign_key_string = "FOREIGN KEY (" + column_.name() + ") REFERENCES " + reference_table_ + "(" + reference_column_ + ")";
-    if(defer_){
-        
-        if(this->database_mode_.compare("sqlite3") == 0 || this->database_mode_.compare("postgres") == 0){
-            foreign_key_string += " DEFERRABLE INITIALLY DEFERRED";
-        }
-        else if(this->database_mode_.compare("mysql") == 0){
-            //MySQL does not support deferring foreign keys. Warn and continue
-            TR << "Warning: You have tried to defer and foreign key constraint in MySql mode. MySql does not support foreign keys!" << std::endl;
-        }
-        else{
-            utility_exit_with_message("ERROR:Please specify the database mode using -inout::database_mode. Valid options are: 'sqlite3', 'mysql', or 'postgres'");
-        }
-    }
-    return foreign_key_string;
+	std::string foreign_key_string = "FOREIGN KEY (" + column_.name() + ") REFERENCES " + reference_table_ + "(" + reference_column_ + ")";
+	if(defer_){
+
+		if(this->database_mode_.compare("sqlite3") == 0 || this->database_mode_.compare("postgres") == 0){
+			foreign_key_string += " DEFERRABLE INITIALLY DEFERRED";
+		}
+		else if(this->database_mode_.compare("mysql") == 0){
+			//MySQL does not support deferring foreign keys. Warn and continue
+			TR << "Warning: You have tried to defer and foreign key constraint in MySql mode. MySql does not support foreign keys!" << std::endl;
+		}
+		else{
+			utility_exit_with_message("ERROR:Please specify the database mode using -inout::database_mode. Valid options are: 'sqlite3', 'mysql', or 'postgres'");
+		}
+	}
+	return foreign_key_string;
 }
 
 Column ForeignKey::column(){
-    return this->column_;
+	return this->column_;
 }
-    
+
 } // schema_generator
 } // namespace database
 } // namespace utility

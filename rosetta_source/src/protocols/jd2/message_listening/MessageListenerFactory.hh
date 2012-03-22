@@ -23,7 +23,7 @@
 
 namespace protocols {
 namespace jd2 {
-namespace message_listening {    
+namespace message_listening {
 
 enum listener_tags {
 	DB_TAG = 42
@@ -32,11 +32,11 @@ enum listener_tags {
 class MessageListenerFactory {
 
 public:
-    MessageListenerOP get_listener(listener_tags tag);
-    
+	MessageListenerOP get_listener(listener_tags tag);
+
 private:
-    std::map<listener_tags, MessageListenerOP> listeners_;
-        
+	std::map<listener_tags, MessageListenerOP> listeners_;
+
 };
 
 } //namespace message_listening

@@ -21,65 +21,65 @@
 namespace basic{
 namespace database{
 namespace schema_generator{
-    
+
 //Class definitions for datatypes
-class DbDataType {    
+class DbDataType {
 
 public:
-    DbDataType();
-    std::string print() const;
+	DbDataType();
+	std::string print() const;
 
 protected:
-    std::string database_mode_;
-    std::string type_string_;
+	std::string database_mode_;
+	std::string type_string_;
 };
 
 //General text data type
 class DbText : public  DbDataType {
 public:
-    DbText();
-    
-    DbText(int size);
+	DbText();
+
+	DbText(int size);
 };
 
 class DbTextKey : public  DbDataType {
 public:
-    DbTextKey();
+	DbTextKey();
 };
-    
+
 //General integer data type
 class DbInteger : public DbDataType {
 public:
-    DbInteger();
-    
-    DbInteger(int size);
+	DbInteger();
+
+	DbInteger(int size);
 };
-    
+
 //General integer data type
 class DbBoolean : public DbDataType {
 public:
-    DbBoolean();
-    
+	DbBoolean();
+
 };
 
 class DbBigInt : public DbDataType {
 public:
-    DbBigInt();
-    
+	DbBigInt();
+
 };
 
 //Real data type
 class DbReal : public DbDataType {
 public:
-    DbReal();
+	DbReal();
 };
-    
+
 //Struct Id has its own type due to incompatibilities between backends in regards to unsigned long longs
 class DbUUID : public DbDataType {
 public:
-    DbUUID();
+	DbUUID();
 };
-    
+
 } // schema_generator
 } // namespace database
 } // namespace utility

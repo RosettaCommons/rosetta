@@ -12,8 +12,6 @@
 /// @brief
 /// @author tim
 
-
-
 #ifndef INCLUDED_basic_database_schema_generator_Schema_HH
 #define INCLUDED_basic_database_schema_generator_Schema_HH
 
@@ -35,34 +33,34 @@ class Schema
 {
 
 public:
-    
-    Schema(std::string table_name);
-    
-    Schema(std::string table_name, PrimaryKey primary_key);
-       
-    void init();
-    
-    void add_foreign_key(ForeignKey key);
-    
-    void add_column(Column column);
-    
-    void add_constraint(ConstraintOP constraint);
-    
-    std::string print();
-    
+
+	Schema(std::string table_name);
+
+	Schema(std::string table_name, PrimaryKey primary_key);
+
+	void init();
+
+	void add_foreign_key(ForeignKey key);
+
+	void add_column(Column column);
+
+	void add_constraint(ConstraintOP constraint);
+
+	std::string print();
+
 private:
-    
-    std::string database_mode_;
-    
-    std::string table_name_;
-    PrimaryKey primary_key_;
-    utility::vector1<Column> columns_;
-    utility::vector1<ForeignKey> foreign_keys_;
-    utility::vector1<ConstraintOP> constraints_;
+
+	std::string database_mode_;
+
+	std::string table_name_;
+	PrimaryKey primary_key_;
+	utility::vector1<Column> columns_;
+	utility::vector1<ForeignKey> foreign_keys_;
+	utility::vector1<ConstraintOP> constraints_;
 };
 
 } // schema_generator
 } // namespace database
 } // namespace utility
-    
+
 #endif

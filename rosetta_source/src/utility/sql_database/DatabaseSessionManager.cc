@@ -6,7 +6,7 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file   utility/sql_database/DatabaseSessionManager.cc
+/// @file	 utility/sql_database/DatabaseSessionManager.cc
 /// @author Matthew O'Meara
 /// @author Sam Deluca
 /// @author Chris Miles
@@ -50,10 +50,10 @@ boost::scoped_ptr< DatabaseSessionManager > DatabaseSessionManager::instance_;
 
 DatabaseSessionManager *
 DatabaseSessionManager::get_instance(){
-    if( instance_.get() == 0 ){
-        instance_.reset( new DatabaseSessionManager() );
-    }
-    return instance_.get();
+	if( instance_.get() == 0 ){
+		instance_.reset( new DatabaseSessionManager() );
+	}
+	return instance_.get();
 }
 
 DatabaseSessionManager::DatabaseSessionManager() {}
@@ -69,84 +69,84 @@ DatabaseSessionManager::~DatabaseSessionManager() {}
 /// This is useful when writing to an sqlite database not through the job distributor where locking causes problems
 sessionOP
 DatabaseSessionManager::get_session(
-  std::string const & db_fname,
-  bool const readonly /* = false */,
-    bool const separate_db_per_mpi_process /* = false */
+	std::string const & db_fname,
+	bool const readonly /* = false */,
+	bool const separate_db_per_mpi_process /* = false */
 ){
-    sessionOP s(new session());
+	sessionOP s(new session());
 
-    try {
-        string use_db_fname;
+	try {
+		string use_db_fname;
 
 #ifdef USEMPI
-        if(separate_db_per_mpi_process){
-            int mpi_rank(0);
-            MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-            stringstream buf; buf << FileName(db_fname).name() << "_" << mpi_rank;
-            use_db_fname = buf.str();
-        } else {
-            use_db_fname = FileName(db_fname).name();
-        }
+		if(separate_db_per_mpi_process){
+			int mpi_rank(0);
+			MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+			stringstream buf; buf << FileName(db_fname).name() << "_" << mpi_rank;
+			use_db_fname = buf.str();
+		} else {
+			use_db_fname = FileName(db_fname).name();
+		}
 #else
-        use_db_fname = FileName(db_fname).name();
+		use_db_fname = FileName(db_fname).name();
 #endif
 
 
-        if(readonly){
-            s->open("sqlite3:mode=readonly;db="+use_db_fname);
-        } else {
-            s->open("sqlite3:db="+use_db_fname);
-        }
-    } catch (cppdb_error & e){
-        std::stringstream error_msg;
-        error_msg
-            << "Failed to open database file '" << db_fname << "'"
-            << (readonly ? " in readonly mode:" : ":") << std::endl
-            << "\t" << e.what();
-        utility_exit_with_message(error_msg.str());
-    }
-    return s;
+		if(readonly){
+			s->open("sqlite3:mode=readonly;db="+use_db_fname);
+		} else {
+			s->open("sqlite3:db="+use_db_fname);
+		}
+	} catch (cppdb_error & e){
+		std::stringstream error_msg;
+		error_msg
+			<< "Failed to open database file '" << db_fname << "'"
+			<< (readonly ? " in readonly mode:" : ":") << std::endl
+			<< "\t" << e.what();
+		utility_exit_with_message(error_msg.str());
+	}
+	return s;
 }
 
 sessionOP
 DatabaseSessionManager::get_session(
-    std::string const & db_mode,                                
-    std::string const & host,
-    std::string const & user,
-    std::string const & password,
-    std::string const & database,
-    int const & port    
+	std::string const & db_mode,
+	std::string const & host,
+	std::string const & user,
+	std::string const & password,
+	std::string const & database,
+	int const & port
 ){
 
-    sessionOP s(new session());
-    std::string port_string(utility::to_string<int>(port));
-    
-  try {
-       
-      if(db_mode == "postgres"){
+	sessionOP s(new session());
+	std::string port_string(utility::to_string<int>(port));
+
+	try {
+
+		if(db_mode == "postgres"){
 #ifndef USEPOSTGRES
-          utility_exit_with_message("If you want to use a postgres database, build with extras=postgres");
+			utility_exit_with_message("If you want to use a postgres database, build with extras=postgres");
 #endif
-          s->open("postgresql:user="+user+";dbname="+database+";port="+port_string);
-      }
-      else if(db_mode == "mysql"){          
+			s->open("postgresql:host="+host+";user="+user+";password="+password+";dbname="+database+";port="+port_string);
+		}
+		else if(db_mode == "mysql"){
 #ifndef USEMYSQL
-          utility_exit_with_message("If you want to use a mysql database, build with extras=mysql");
+			utility_exit_with_message("If you want to use a mysql database, build with extras=mysql");
 #endif
-          s->open("mysql:host="+host+";user="+user+";password="+password+";database="+database+";port="+port_string+";opt_reconnect=1");
-      }
-  } catch (cppdb_error & e){
-      std::stringstream error_msg;
-      error_msg
-      << "Failed to open database file '" << database << "'"
-      <<  std::endl
-      << "\t" << e.what();
-      utility_exit_with_message(error_msg.str());
-  }      
-   
-    return s;
+			s->open("mysql:host="+host+";user="+user+";password="+password+";database="+database+";port="+port_string+";opt_reconnect=1");
+		}
+	} catch (cppdb_error & e){
+		std::stringstream error_msg;
+		error_msg
+		<< "Failed to open database file '" << database << "'"
+		<<	std::endl
+		<< "\t" << e.what();
+		utility_exit_with_message(error_msg.str());
+	}
+
+	return s;
 //#else
-//	  	utility_exit_with_message("You shouldn't be here, also if you want to use mysql specify extras=mysql when you build");
+//		utility_exit_with_message("You shouldn't be here, also if you want to use mysql specify extras=mysql when you build");
 //		return NULL; // need to return something to compile on Windows VC++
 //#endif
 }

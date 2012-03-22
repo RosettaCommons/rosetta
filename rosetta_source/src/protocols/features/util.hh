@@ -22,14 +22,14 @@
 #include <map>
 
 namespace protocols{
-namespace features{ 
+namespace features{
 
 std::pair<core::Size, core::Size> get_protocol_and_batch_id(std::string identifier, utility::sql_database::sessionOP db_session);
 
 std::pair<core::Size, core::Size> deserialize_db_listener_data(std::string data);
 
 std::string serialize_ids(int protocol_id, std::string identifier, core::Size batch_id);
-    
+
 } //features
 } //protocols
 

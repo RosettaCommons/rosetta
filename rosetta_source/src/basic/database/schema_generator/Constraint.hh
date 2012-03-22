@@ -25,57 +25,57 @@
 
 namespace basic{
 namespace database{
-namespace schema_generator{       
+namespace schema_generator{
 
-class Constraint : public utility::pointer::ReferenceCount  
+class Constraint : public utility::pointer::ReferenceCount
 {
 public:
-    
-    Constraint(Column column);
-    
-    Constraint(utility::vector1<Column> columns);
-    
-    virtual std::string print() = 0;
-    
+
+	Constraint(Column column);
+
+	Constraint(utility::vector1<Column> columns);
+
+	virtual std::string print() = 0;
+
 protected:
-    
-    utility::vector1<Column> columns_;
+
+	utility::vector1<Column> columns_;
 };
 
-//class ComparisonConstraint : public Constraint    
+//class ComparisonConstraint : public Constraint
 //{
 //public:
-//    
-//    enum ComparisonOperator{
-//        GREATER_THAN,
-//        LESS_THAN,
-//        EQUAL_TO,
-//        NOT_EQUAL_TO
-//    };
-//    
-//    ComparisonConstraint(Column column1, int comparison_operator, Column column2);
-//    
-//    ComparisonConstraint(Column column, int comparator, std::string value);
-//    
-//    ComparisonConstraint(Column, Column);
-//    
-//    std::string print();
-//    
+//
+//	enum ComparisonOperator{
+//		GREATER_THAN,
+//		LESS_THAN,
+//		EQUAL_TO,
+//		NOT_EQUAL_TO
+//	};
+//
+//	ComparisonConstraint(Column column1, int comparison_operator, Column column2);
+//
+//	ComparisonConstraint(Column column, int comparator, std::string value);
+//
+//	ComparisonConstraint(Column, Column);
+//
+//	std::string print();
+//
 //private:
-//    std::string string_value;
-//    
+//	std::string string_value;
+//
 //};
 
 class UniqueConstraint : public Constraint {
 public:
-          
-    UniqueConstraint(Column column);    
-    UniqueConstraint(utility::vector1<Column> columns);    
-    virtual std::string print();
-    
+
+	UniqueConstraint(Column column);
+	UniqueConstraint(utility::vector1<Column> columns);
+	virtual std::string print();
+
 };
 
-    
+
 } // schema_generator
 } // namespace database
 } // namespace utility

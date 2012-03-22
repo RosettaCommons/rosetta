@@ -26,29 +26,29 @@
 namespace basic{
 namespace database{
 namespace schema_generator{
-    
+
 class PrimaryKey
 {
 public:
-    
-    PrimaryKey();
-    
-    PrimaryKey(Column column);
-    
-    PrimaryKey(utility::vector1<Column> columns);
-    
-    void add_column(Column column);
-    
-    utility::vector1<Column> columns();
-    
-    std::string print();
-    
+
+	PrimaryKey();
+
+	PrimaryKey(Column column);
+
+	PrimaryKey(utility::vector1<Column> columns);
+
+	void add_column(Column column);
+
+	utility::vector1<Column> columns();
+
+	std::string print();
+
 private:
-    utility::vector1<Column> columns_;
+	utility::vector1<Column> columns_;
 };
-    
+
 } // schema_generator
 } // namespace database
 } // namespace utility
-    
+
 #endif

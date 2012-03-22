@@ -22,13 +22,13 @@
 namespace basic{
 namespace database{
 namespace schema_generator{
-    
-    // Forward declarations
-    class Constraint;
-    
-    typedef utility::pointer::owning_ptr< Constraint > ConstraintOP;
-    typedef utility::pointer::owning_ptr< Constraint const > ConstraintCOP;
-    
+
+	// Forward declarations
+	class Constraint;
+
+	typedef utility::pointer::owning_ptr< Constraint > ConstraintOP;
+	typedef utility::pointer::owning_ptr< Constraint const > ConstraintCOP;
+
 } // schema_generator
 } // namespace database
 } // namespace utility

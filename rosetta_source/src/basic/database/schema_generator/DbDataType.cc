@@ -32,122 +32,122 @@ namespace schema_generator{
 
 /*********Base class*********/
 DbDataType::DbDataType() {
-    if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){
-        database_mode_=basic::options::option[basic::options::OptionKeys::inout::database_mode].value();
-    }
-    else{
-        database_mode_="sqlite3";
-    }
+	if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){
+		database_mode_=basic::options::option[basic::options::OptionKeys::inout::database_mode].value();
+	}
+	else{
+		database_mode_="sqlite3";
+	}
 }
 
 std::string DbDataType::print() const{
-    return type_string_;
+	return type_string_;
 }
 
 /*********Text based data types*********/
 DbText::DbText():
 DbDataType()
 {
-    type_string_ = "TEXT";
+	type_string_ = "TEXT";
 }
 
 DbText::DbText(int size):
 DbDataType()
 {
-    
-    std::string size_string = utility::to_string(size);
-    if(this->database_mode_.compare("sqlite3") == 0){
-        type_string_ = "TEXT";
-    }
-    else if(this->database_mode_.compare("mysql") == 0 || this->database_mode_.compare("postgres") == 0){
-        type_string_ = "VARCHAR(" + size_string + ")";
-    }
-    else{
-        utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
-    }
-    
+
+	std::string size_string = utility::to_string(size);
+	if(this->database_mode_.compare("sqlite3") == 0){
+		type_string_ = "TEXT";
+	}
+	else if(this->database_mode_.compare("mysql") == 0 || this->database_mode_.compare("postgres") == 0){
+		type_string_ = "VARCHAR(" + size_string + ")";
+	}
+	else{
+		utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
+	}
+
 }
 
 //Needed because MYSQL doesn't support variable length primary keys
 DbTextKey::DbTextKey():
 DbDataType()
 {
-    
-    if(this->database_mode_.compare("sqlite3") == 0){
-        type_string_ = "TEXT";
-    }
-    else if(this->database_mode_.compare("postgres") == 0){
-        type_string_ = "TEXT";
-    }
-    else if(this->database_mode_.compare("mysql") == 0){
-        type_string_ = "VARCHAR(255)";
-    }
-    else{
-        utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
-    }
-    
+
+	if(this->database_mode_.compare("sqlite3") == 0){
+		type_string_ = "TEXT";
+	}
+	else if(this->database_mode_.compare("postgres") == 0){
+		type_string_ = "TEXT";
+	}
+	else if(this->database_mode_.compare("mysql") == 0){
+		type_string_ = "VARCHAR(255)";
+	}
+	else{
+		utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
+	}
+
 }
-    
+
 /*********Integer data types*********/
 DbInteger::DbInteger():
 DbDataType()
 {
-    type_string_ = "INTEGER";
+	type_string_ = "INTEGER";
 }
 
 DbInteger::DbInteger(int size):
 DbDataType()
 {
-    std::string size_string = utility::to_string(size);
-    type_string_ = "INTEGER";
+	std::string size_string = utility::to_string(size);
+	type_string_ = "INTEGER";
 }
-    
+
 DbBigInt::DbBigInt():
 DbDataType()
-{    
-    if(this->database_mode_.compare("sqlite3") == 0){
-        type_string_ = "INTEGER";
-    }
-    else if(this->database_mode_.compare("mysql") == 0 || this->database_mode_.compare("postgres") == 0){
-        type_string_ = "BIGINT";
-    }
-    else{
-        utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
-    }
+{
+	if(this->database_mode_.compare("sqlite3") == 0){
+		type_string_ = "INTEGER";
+	}
+	else if(this->database_mode_.compare("mysql") == 0 || this->database_mode_.compare("postgres") == 0){
+		type_string_ = "BIGINT";
+	}
+	else{
+		utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
+	}
 }
-    
+
 /*********Boolean data types*********/
 DbBoolean::DbBoolean():
 DbDataType()
 {
-    type_string_ = "BOOLEAN";
+	type_string_ = "BOOLEAN";
 }
-    
+
 DbReal::DbReal():
 DbDataType()
 {
-    type_string_ = "REAL";
+	type_string_ = "REAL";
 }
-    
+
 /*********UUID data types*********/
 DbUUID::DbUUID():
 DbDataType()
 {
-    if(this->database_mode_.compare("sqlite3") == 0){
-        type_string_ = "BLOB";
-    }
-    else if(this->database_mode_.compare("postgres") == 0){
-        type_string_ = "UUID";
-    }
-    //I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
-    else if(this->database_mode_.compare("mysql") == 0){
-        type_string_ = "BINARY(36)";
-    }
-    else{
-        utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
-    }
+	if(this->database_mode_.compare("sqlite3") == 0){
+		type_string_ = "BLOB";
+	}
+	else if(this->database_mode_.compare("postgres") == 0){
+		type_string_ = "UUID";
+	}
+	//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
+	else if(this->database_mode_.compare("mysql") == 0){
+		type_string_ = "BINARY(36)";
+	}
+	else{
+		utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
+	}
 }
-    
+
 } // schema_generator
 } // namespace database
 } // namespace utility

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/features/helixAssembly/HelixBundleFeatures.fwd.hh
-/// @brief  
+/// @brief
 /// @author Tim Jacobs
 
 #ifndef INCLUDED_protocols_features_HelixBundleFeatures_fwd_hh
@@ -20,11 +20,11 @@
 namespace protocols{
 namespace features{
 namespace helixAssembly {
-        
+
 class HelixBundleFeatures;
 typedef utility::pointer::owning_ptr< HelixBundleFeatures > HelixBundleFeaturesOP;
 typedef utility::pointer::owning_ptr< HelixBundleFeatures const > HelixBundleFeaturesCOP;
-        
+
 } //namespace helixAssembly
 }// namespace features
 }// namespace protocols

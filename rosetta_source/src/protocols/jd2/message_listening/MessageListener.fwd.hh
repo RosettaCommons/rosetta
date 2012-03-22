@@ -21,12 +21,12 @@
 
 namespace protocols {
 namespace jd2 {
-namespace message_listening {    
+namespace message_listening {
 
 class MessageListener;
 typedef utility::pointer::owning_ptr< MessageListener > MessageListenerOP;
 typedef utility::pointer::owning_ptr< MessageListener const > MessageListenerCOP;
-    
+
 } //namespace message_listening
 } //namespace jd2
 } //namespace protocols

@@ -9,7 +9,7 @@
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
 /// @file HelixBundleFeatures.hh
-/// @brief 
+/// @brief
 /// @author Tim Jacobs
 
 #ifndef Rosetta_HelixBundleFeatures_hh
@@ -37,47 +37,47 @@ namespace helixAssembly {
 class HelixBundleFeatures : public protocols::features::FeaturesReporter {
 
 public:
-    
-    HelixBundleFeatures();
-    
-    void init_from_options();
-    
-    virtual
+
+	HelixBundleFeatures();
+
+	void init_from_options();
+
+	virtual
 	std::string
 	type_name() const  {
 		return "HelixBundleFeatures";
 	}
-    
+
 	///@brief return sql statements that sets up the appropriate tables
 	///to contain the features.
 	virtual
 	std::string
 	schema() const;
-    
-    ///@brief collect all the feature data for the pose
-    virtual
+
+	///@brief collect all the feature data for the pose
+	virtual
 	core::Size
 	report_features(
-                    core::pose::Pose const & pose,
-                    utility::vector1<bool> const & relevant_residues,
-                    boost::uuids::uuid struct_id,
-                    utility::sql_database::sessionOP db_session
-                    );
-    
-    utility::vector1<HelicalFragment> get_full_helices(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session);
-    
-    bool checkHelixContacts(core::pose::Pose const & pose, HelicalFragment helix_1, HelicalFragment helix_2, HelicalFragment helix_3);
+					core::pose::Pose const & pose,
+					utility::vector1<bool> const & relevant_residues,
+					boost::uuids::uuid struct_id,
+					utility::sql_database::sessionOP db_session
+					);
+
+	utility::vector1<HelicalFragment> get_full_helices(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session);
+
+	bool checkHelixContacts(core::pose::Pose const & pose, HelicalFragment helix_1, HelicalFragment helix_2, HelicalFragment helix_3);
 
 private:
-    
-    core::Real helix_cap_dist_cutoff_;
-    core::Real helix_contact_dist_cutoff_;
-    core::Size min_helix_size_;
-    
+
+	core::Real helix_cap_dist_cutoff_;
+	core::Real helix_contact_dist_cutoff_;
+	core::Size min_helix_size_;
+
 };
 
 } //namespace helixAssembly
 } //namespace features
 } //namespace protocols
-    
+
 #endif

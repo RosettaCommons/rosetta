@@ -49,37 +49,37 @@
 namespace protocols {
 namespace features {
 namespace helixAssembly {
-    
-    std::string
-    ConcurrencyTest::schema() const {
-        return
-        
-        "CREATE TABLE IF NOT EXISTS concurrency_test (\n"
-        "   id SERIAL PRIMARY KEY,\n"
-        "   random_num INTEGER);"
-        ;
-    }
-    
-    ///@brief collect all the feature data for the pose
-    core::Size
-    ConcurrencyTest::report_features(
-                                     core::pose::Pose const & pose,
-                                     utility::vector1<bool> const & relevant_residues,
-                                     boost::uuids::uuid struct_id,
-                                     utility::sql_database::sessionOP db_session
-                                     ){
-        
-        std::cout << "I'M ABOUT TO COMMIT A BUNCH O' STUFF. SNAP" << std::endl;
-        
-        std::string test_insert =  "INSERT INTO concurrency_test (random_num) VALUES (?);";
-        for(int i=1; i<=10000; i++){
-            cppdb::statement test_stmt(basic::database::safely_prepare_statement(test_insert,db_session));
-            test_stmt.bind(1,rand());
-            basic::database::safely_write_to_database(test_stmt); 
-        }
-        return 0;
-    }
-    
+
+	std::string
+	ConcurrencyTest::schema() const {
+		return
+
+		"CREATE TABLE IF NOT EXISTS concurrency_test (\n"
+		"   id SERIAL PRIMARY KEY,\n"
+		"   random_num INTEGER);"
+		;
+	}
+
+	///@brief collect all the feature data for the pose
+	core::Size
+	ConcurrencyTest::report_features(
+									 core::pose::Pose const & pose,
+									 utility::vector1<bool> const & relevant_residues,
+									 boost::uuids::uuid struct_id,
+									 utility::sql_database::sessionOP db_session
+									 ){
+
+		std::cout << "I'M ABOUT TO COMMIT A BUNCH O' STUFF. SNAP" << std::endl;
+
+		std::string test_insert =  "INSERT INTO concurrency_test (random_num) VALUES (?);";
+		for(int i=1; i<=10000; i++){
+			cppdb::statement test_stmt(basic::database::safely_prepare_statement(test_insert,db_session));
+			test_stmt.bind(1,rand());
+			basic::database::safely_write_to_database(test_stmt);
+		}
+		return 0;
+	}
+
 }
 }
 }
