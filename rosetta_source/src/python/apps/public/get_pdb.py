@@ -9,6 +9,9 @@ from os.path import exists,basename
 from amino_acids import longer_names
 from amino_acids import modres
 from string import uppercase
+import gzip
+import random
+
 
 # remote host for downloading pdbs
 remote_host = 'ws0.nrb'
@@ -24,12 +27,13 @@ pdbfile = ""
 def download_pdb(pdb_id,dest_dir):
 	#print "downloading %s" % ( pdb_id )
 	url      = 'http://www.rcsb.org/pdb/files/%s.pdb.gz' % ( pdb_id.upper() )
-	dest     = '%s/%s.pdb.gz' % ( os.path.abspath(dest_dir), pdb_id.lower() )
+	dest     = '%s/%s.pdb.gz' % ( os.path.abspath(dest_dir), ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(8)) )
 	wget_cmd = 'wget --quiet %s -O %s' % ( url, dest )
-	if remote_host:
-		wget_cmd = 'ssh %s %s' % ( remote_host, wget_cmd )
+	#if remote_host:
+		#wget_cmd = 'ssh %s %s' % ( remote_host, wget_cmd )
 
-	lines = popen( wget_cmd ).readlines()
+	system( wget_cmd )
+	print wget_cmd
 	if ( exists(dest) ):
 		return dest
 	else:
@@ -107,7 +111,8 @@ else:
 	files_to_unlink.append( netpdbname )
 
 if netpdbname[-3:]=='.gz':
- 	lines = popen( 'zcat '+netpdbname,'r').readlines()
+ 	f = gzip.open( netpdbname , 'r' )
+ 	lines = f.readlines()
 else:
  	lines = open(netpdbname,'r').readlines()
 
