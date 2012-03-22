@@ -49,6 +49,10 @@ Scales the scoretype's default value by whatever the scale number is.
 For ex, scale:fa_rep 0.1 will take the original fa_rep weight and set it
 to 0.1 * original weight.
 
+rscale:<scoretype> <lower limit> <upper limit>
+
+Like scale, but picks a random number between the limits to multiply by
+
 weight:<scoretype> <weight>
 
 Sets the weight of the scoretype to whatever the weight number is.
@@ -622,6 +626,12 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * cmd.param1 );
 		}   else
 
+		if( cmd.command.substr(0,6) == "rscale" ){
+				// no input validation as of now, relax will just die
+				scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
+				local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
+		}   else
+
 		if( cmd.command.substr(0,6) == "weight" ){
 			// no input validation as of now, relax will just die
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
@@ -1119,6 +1129,12 @@ void FastRelax::batch_apply(
             // no input validation as of now, relax will just die
             scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(6));
             local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * cmd.param1 );
+        }   else
+
+        if( cmd.command.substr(0,6) == "rscale" ){
+            // no input validation as of now, relax will just die
+            scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
+            local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
         }   else
 
         if( cmd.command.substr(0,6) == "weight" ){
