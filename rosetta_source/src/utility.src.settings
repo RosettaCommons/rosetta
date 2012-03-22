@@ -60,13 +60,7 @@ sources = {
 		"ReferenceCountMI_",
 	],
 	"utility/sql_database": [
-		"Column",
-		"Constraint",
 		"DatabaseSessionManager",
-		"DbDataType",
-		"ForeignKey",
-		"PrimaryKey",
-		"Schema",
 	],
 	"utility/tag": [
 		"Tag",

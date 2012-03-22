@@ -30,11 +30,11 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/types.hh>
-#include <utility/sql_database/PrimaryKey.hh>
-#include <utility/sql_database/ForeignKey.hh>
-#include <utility/sql_database/Column.hh>
-#include <utility/sql_database/Schema.hh>
-#include <utility/sql_database/Constraint.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
 
 
 // Basic Headers
@@ -99,7 +99,7 @@ PoseConformationFeatures::type_name() const { return "PoseConformationFeatures";
 
 string
 PoseConformationFeatures::schema() const {
-    using namespace utility::sql_database;
+    using namespace basic::database::schema_generator;
     
     Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
     

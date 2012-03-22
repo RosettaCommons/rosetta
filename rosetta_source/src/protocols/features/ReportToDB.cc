@@ -51,10 +51,10 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
-#include <utility/sql_database/PrimaryKey.hh>
-#include <utility/sql_database/ForeignKey.hh>
-#include <utility/sql_database/Column.hh>
-#include <utility/sql_database/Schema.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 // Numeric Headers
 #include <numeric>
@@ -481,7 +481,7 @@ void
 ReportToDB::write_linking_tables(
 	utility::sql_database::sessionOP db_session
 ) const {
-    using namespace utility::sql_database;
+    using namespace basic::database::schema_generator;
     
     /***feature reporters table***/
     Schema features_reporters("features_reporters", PrimaryKey( Column("report_name", DbTextKey())));

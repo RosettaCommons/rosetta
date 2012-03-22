@@ -13,10 +13,10 @@
 /// @author tim
 
 //Unit
-#include <utility/sql_database/Schema.hh>
-#include <utility/sql_database/PrimaryKey.hh>
-#include <utility/sql_database/ForeignKey.hh>
-#include <utility/sql_database/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -29,8 +29,9 @@
 #include <stdio.h>
 #include <set>
 
-namespace utility{
-namespace sql_database{
+namespace basic{
+namespace database{
+namespace schema_generator{
 
 Schema::Schema(std::string table_name):
 table_name_(table_name)
@@ -108,6 +109,7 @@ std::string Schema::print(){
     return schema_string;
 }
 
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility
 

@@ -13,7 +13,7 @@
 
 /// @author tim
 
-#include <utility/sql_database/DbDataType.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 
 //Basic
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -26,8 +26,9 @@
 //C++
 #include <string>
 
-namespace utility{
-namespace sql_database{
+namespace basic{
+namespace database{
+namespace schema_generator{
 
 /*********Base class*********/
 DbDataType::DbDataType() {
@@ -147,5 +148,6 @@ DbDataType()
     }
 }
     
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility

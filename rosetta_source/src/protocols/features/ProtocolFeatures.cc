@@ -22,10 +22,10 @@
 #include <basic/database/sql_utils.hh>
 #include <core/types.hh>
 #include <core/svn_version.hh>
-#include <utility/sql_database/PrimaryKey.hh>
-#include <utility/sql_database/ForeignKey.hh>
-#include <utility/sql_database/Column.hh>
-#include <utility/sql_database/Schema.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 // Utility Headers
 #include <utility/io/izstream.hh>
@@ -74,7 +74,7 @@ ProtocolFeatures::type_name() const { return "ProtocolFeatures"; }
 
 string
 ProtocolFeatures::schema() const {
-    using namespace utility::sql_database;
+    using namespace basic::database::schema_generator;
     
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 	bool protocol_id_mode = basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user();

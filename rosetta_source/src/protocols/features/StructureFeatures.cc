@@ -27,10 +27,10 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
-#include <utility/sql_database/PrimaryKey.hh>
-#include <utility/sql_database/ForeignKey.hh>
-#include <utility/sql_database/Column.hh>
-#include <utility/sql_database/Schema.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -82,7 +82,7 @@ StructureFeatures::type_name() const { return "StructureFeatures"; }
 
 string
 StructureFeatures::schema() const {
-	using namespace utility::sql_database;
+	using namespace basic::database::schema_generator;
 	
     //Don't autoincrement the struct_id because it is a UUID generated here
     Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);

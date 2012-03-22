@@ -25,6 +25,14 @@ sources = {
 		"open",
 		"sql_utils",
 	],
+	"basic/database/schema_generator": [
+		"Column",
+		"Constraint",
+		"DbDataType",
+		"ForeignKey",
+		"PrimaryKey",
+		"Schema",
+	],
 	"basic/datacache": [
 		"BasicDataCache",
 	],

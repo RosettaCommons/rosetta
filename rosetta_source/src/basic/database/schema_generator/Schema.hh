@@ -14,21 +14,22 @@
 
 
 
-#ifndef INCLUDED_utility_sql_database_Schema_HH
-#define INCLUDED_utility_sql_database_Schema_HH
+#ifndef INCLUDED_basic_database_schema_generator_Schema_HH
+#define INCLUDED_basic_database_schema_generator_Schema_HH
 
-#include <utility/sql_database/PrimaryKey.hh>
-#include <utility/sql_database/ForeignKey.hh>
-#include <utility/sql_database/Column.hh>
-#include <utility/sql_database/Constraint.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Constraint.hh>
 
 #include <boost/unordered_set.hpp>
 
 #include <string>
 #include <set>
 
-namespace utility{
-namespace sql_database{
+namespace basic{
+namespace database{
+namespace schema_generator{
 
 class Schema
 {
@@ -60,7 +61,8 @@ private:
     utility::vector1<ConstraintOP> constraints_;
 };
 
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility
     
 #endif

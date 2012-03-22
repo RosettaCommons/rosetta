@@ -13,8 +13,8 @@
 /// @author tim
 
 //Unit Headers
-#include <utility/sql_database/Column.hh>
-#include <utility/sql_database/DbDataType.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -23,8 +23,9 @@
 // Utility Headers
 #include <utility/exit.hh>
 
-namespace utility{
-namespace sql_database{
+namespace basic{
+namespace database{
+namespace schema_generator{
     
 Column::Column(std::string name, DbDataType type):
 name_(name),
@@ -93,5 +94,6 @@ bool Column::operator==(const Column &other) const {
     return (this->name_.compare(other.name()) == 0);
 }
     
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility

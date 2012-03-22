@@ -7,50 +7,50 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file Column.hh
+/// @file ForeignKey.hh
 ///
 /// @brief
 /// @author tim
 
-#ifndef INCLUDED_utility_sql_database_Column_HH
-#define INCLUDED_utility_sql_database_Column_HH
 
-#include <utility/sql_database/DbDataType.hh>
+#ifndef INCLUDED_basic_database_schema_generator_ForeignKey_HH
+#define INCLUDED_basic_database_schema_generator_ForeignKey_HH
 
-//C++ headers
+#include <basic/database/schema_generator/Column.hh>
+
+//C++ Headers
 #include <string>
 
-namespace utility{
-namespace sql_database{
-
-class Column
+namespace basic{
+namespace database{
+namespace schema_generator{
+    
+class ForeignKey
 {
 public:
     
-    Column(std::string name, DbDataType type);
+    ForeignKey(Column column, std::string reference_table, std::string reference_column);
     
-    Column(std::string name, DbDataType type, bool allow_null, bool auto_increment);
+    ForeignKey(Column column, std::string reference_table, std::string reference_column, bool defer);
     
     void init_db_mode();
     
-    std::string name() const;
+    std::string print();
     
-    bool auto_increment() const;
+    Column column();
     
-    std::string print() const;
-    
-    bool operator==(const Column &other) const;
-        
 private:
     
     std::string database_mode_;
-    std::string name_;
-    DbDataType type_;
-    bool allow_null_;
-    bool auto_increment_;
+    Column column_;
+    std::string reference_column_;
+    std::string reference_table_;
+    bool defer_;
 };
 
-} // namespace sql_database
+    
+} // schema_generator
+} // namespace database
 } // namespace utility
 
 #endif

@@ -12,19 +12,20 @@
 /// @brief
 /// @author Tim Jacobs
 
-#ifndef INCLUDED_utility_sql_database_Constraint_HH
-#define INCLUDED_utility_sql_database_Constraint_HH
+#ifndef INCLUDED_basic_database_schema_generator_Constraint_HH
+#define INCLUDED_basic_database_schema_generator_Constraint_HH
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/sql_database/Constraint.fwd.hh>
+#include <basic/database/schema_generator/Constraint.fwd.hh>
 #include <utility/vector1.hh>
 
-#include <utility/sql_database/Column.hh>
+#include <basic/database/schema_generator/Column.hh>
 
 #include <string>
 
-namespace utility{
-namespace sql_database{        
+namespace basic{
+namespace database{
+namespace schema_generator{       
 
 class Constraint : public utility::pointer::ReferenceCount  
 {
@@ -75,6 +76,7 @@ public:
 };
 
     
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility
 #endif

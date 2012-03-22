@@ -7,46 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file PrimaryKey.hh
+/// @file Constraint.fwd.hh
 ///
 /// @brief
 /// @author tim
 
 
-#ifndef INCLUDED_utility_sql_database_PrimaryKey_HH
-#define INCLUDED_utility_sql_database_PrimaryKey_HH
 
-#include <utility/sql_database/Column.hh>
-#include <utility/vector1.hh>
+#ifndef INCLUDED_basic_database_schema_generator_Constraint_fwd_hh
+#define INCLUDED_basic_database_schema_generator_Constraint_fwd_hh
 
-//C++ Header
-#include <string>
-#include <set>
+#include <utility/pointer/owning_ptr.hh>
 
-namespace utility{
-namespace sql_database{
+namespace basic{
+namespace database{
+namespace schema_generator{
     
-class PrimaryKey
-{
-public:
+    // Forward declarations
+    class Constraint;
     
-    PrimaryKey();
+    typedef utility::pointer::owning_ptr< Constraint > ConstraintOP;
+    typedef utility::pointer::owning_ptr< Constraint const > ConstraintCOP;
     
-    PrimaryKey(Column column);
-    
-    PrimaryKey(utility::vector1<Column> columns);
-    
-    void add_column(Column column);
-    
-    utility::vector1<Column> columns();
-    
-    std::string print();
-    
-private:
-    utility::vector1<Column> columns_;
-};
-    
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility
-    
 #endif

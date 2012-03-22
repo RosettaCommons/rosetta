@@ -12,8 +12,8 @@
 /// @brief
 /// @author tim
 
-#include <utility/sql_database/ForeignKey.hh>
-#include <utility/sql_database/Column.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -32,8 +32,9 @@ static basic::Tracer TR("utility.sql_database.ForeignKey");
 //C++ Headers
 #include <string>
 
-namespace utility{
-namespace sql_database{
+namespace basic{
+namespace database{
+namespace schema_generator{
 
 ForeignKey::ForeignKey(Column column, std::string reference_table, std::string reference_column):
 column_(column),
@@ -84,6 +85,7 @@ Column ForeignKey::column(){
     return this->column_;
 }
     
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility
 

@@ -12,14 +12,15 @@
 /// @brief
 /// @author tim
 
-#ifndef INCLUDED_utility_sql_database_DbDataType_HH
-#define INCLUDED_utility_sql_database_DbDataType_HH
+#ifndef INCLUDED_basic_database_schema_generator_DbDataType_HH
+#define INCLUDED_basic_database_schema_generator_DbDataType_HH
 
 //C++
 #include <string>
 
-namespace utility{
-namespace sql_database{
+namespace basic{
+namespace database{
+namespace schema_generator{
     
 //Class definitions for datatypes
 class DbDataType {    
@@ -79,7 +80,8 @@ public:
     DbUUID();
 };
     
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility
 
 #endif

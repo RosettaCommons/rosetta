@@ -12,15 +12,16 @@
 /// @brief
 /// @author tim
 
-#include <utility/sql_database/PrimaryKey.hh>
-//#include <utility/sql_database/Column.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+//#include <basic/database/schema_generator/Column.hh>
 
 //C++ Headers
 #include <string>
 #include <set>
 
-namespace utility{
-namespace sql_database{
+namespace basic{
+namespace database{
+namespace schema_generator{
 
 PrimaryKey::PrimaryKey(){}
     
@@ -54,6 +55,7 @@ std::string PrimaryKey::print(){
     return primary_key_string;
 }
     
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility
 

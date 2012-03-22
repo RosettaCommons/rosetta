@@ -12,14 +12,15 @@
 /// @brief
 /// @author Tim Jacobs
 
-#include <utility/sql_database/Constraint.hh>
-#include <utility/sql_database/Column.hh>
+#include <basic/database/schema_generator/Constraint.hh>
+#include <basic/database/schema_generator/Column.hh>
 
 #include <string>
 #include <utility/exit.hh>
 
-namespace utility{
-namespace sql_database{            
+namespace basic{
+namespace database{
+namespace schema_generator{       
     
 Constraint::Constraint(Column column){
     this->columns_.push_back(column);
@@ -56,6 +57,7 @@ std::string UniqueConstraint::print(){
     return constraint_string;
 }
     
-} // namespace sql_database
+} // schema_generator
+} // namespace database
 } // namespace utility
 
