@@ -59,14 +59,14 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid const struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
 	insert_residue_rows(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid const struct_id,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
