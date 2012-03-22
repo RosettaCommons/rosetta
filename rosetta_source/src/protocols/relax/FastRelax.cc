@@ -159,6 +159,7 @@ endrepeat
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <utility/excn/Exceptions.hh>
 
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>
@@ -1153,7 +1154,9 @@ void FastRelax::batch_apply(
 			if( cmd.nparams < 2 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * cmd.param1 );
 
+
 			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
+					try {
 				clock_t starttime = clock();
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
@@ -1173,6 +1176,15 @@ void FastRelax::batch_apply(
 
 				clock_t endtime = clock();
 				TR.Debug << "time:" << endtime - starttime << " Score: " << relax_decoys[index].current_score << std::endl;
+					} catch ( utility::excn::EXCN_Base& excn ) {
+						std::cerr << "Ramp_repack_min exception: " << std::endl;
+						excn.show( std::cerr );
+						// just deactivate this pose
+						relax_decoys[index].active = false;		
+						// and need to "reset scoring" of the pose we reuse
+						TR << "Throwing out one structure due to scoring problems!" << std::endl;
+						pose.scoring_end(*local_scorefxn);
+					}
 			}
 
 		}	else
@@ -1218,18 +1230,31 @@ void FastRelax::batch_apply(
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
 				if ( input_csts ) pose.constraint_set( input_csts );
-				core::Real score = (*local_scorefxn)( pose );
+				core::Real score = 0;
+				try {
+						score = (*local_scorefxn)( pose );
+					} catch ( utility::excn::EXCN_Base& excn ) {
+						std::cerr << "Accept_to_best scoring exception: " << std::endl;
+						excn.show( std::cerr );
+						// just deactivate this pose
+						relax_decoys[index].active = false;		
+						// and need to "reset scoring" of the pose we reuse
+						TR << "Throwing out one structure due to scoring problems!" << std::endl;
+						pose.scoring_end(*local_scorefxn);
+						continue;
+					}
 				TR.Debug << "Comparison: " << score << " " << relax_decoys[index].best_score << std::endl;
 
 				if( ( score < relax_decoys[index].best_score) || (relax_decoys[index].accept_count == 0) ){
 					relax_decoys[index].best_score = score;
 					relax_decoys[index].best_struct->fill_struct( pose );
-
+#ifdef DEBUG
 					core::pose::Pose pose_check;
 					relax_decoys[index].best_struct->fill_pose( pose_check );
 					if ( input_csts ) pose.constraint_set( input_csts );
 					core::Real score_check = (*local_scorefxn)( pose_check );
 					TR.Debug << "Sanity: "<< score << " ==  " << score_check << std::endl;
+#endif
 				}
 
 				if ( get_native_pose() ) {
