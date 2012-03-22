@@ -15,6 +15,7 @@
 #include <protocols/comparative_modeling/hybridize/FoldTreeHybridize.hh>
 #include <protocols/comparative_modeling/hybridize/CartesianHybridize.hh>
 #include <protocols/comparative_modeling/hybridize/TemplateHistory.hh>
+#include <protocols/comparative_modeling/hybridize/util.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -562,12 +563,14 @@ void HybridizeProtocol::read_template_structures(utility::vector1 < utility::fil
 	templates_.clear();
 	templates_.resize(template_filenames.size());
 
-	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+	//core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+
+	//fpd remember sidechains from input structure
+	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	for (core::Size i_ref=1; i_ref<= template_filenames.size(); ++i_ref) {
 		templates_[i_ref] = new core::pose::Pose();
 		core::import_pose::pose_from_pdb( *(templates_[i_ref]), *residue_set, template_filenames[i_ref].name() );
-		
 		core::scoring::dssp::Dssp dssp_obj( *templates_[i_ref] );
 		dssp_obj.insert_ss_into_pose( *templates_[i_ref] );
 	}
@@ -666,6 +669,15 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		history->setall( initial_template_index_icluster );
 		pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
 
+		//fpd constraints are handled a little bit weird
+		//  * foldtree hybridize sets chainbreak variants then applies constraints (so c-beta csts are treated properly)
+		//  * after chainbreak variants are removed, csts are removed and reapplied in this function
+		//  * finally after switch to fullatom CSTs are reapplied again (optionally using a different CST file)
+		// If "AUTO" is specified for cen_csts automatic centroid csts are generated
+		// If "AUTO" is specified for fa_csts automatic fa csts are generated
+		// If "NONE" is specified for fa_csts, cen csts are used (AUTO or otherwise)
+		// An empty string is treated as equivalent to "NONE"
+
 		// fold tree hybridize
 		if (RG.uniform() < stage1_probability_) {
 			// package up fragments
@@ -698,15 +710,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
 		TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
 
-		// cartesian fragment hybridize
-
 		// apply constraints
-		core::scoring::constraints::ConstraintSetOP constraint_set;
 		std::string cst_fn = template_cst_fn_[initial_template_index];
-		if (!cst_fn.empty() && cst_fn != "NONE") {
-			constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_fn, new ConstraintSet, pose );
-		}
-		pose.constraint_set( constraint_set );  //reset constraints
+		setup_centroid_constraints( pose, templates_, template_weights_, cst_fn );
 
 		if (!option[cm::hybridize::skip_stage2]()) {
 			CartesianHybridizeOP cart_hybridize (
@@ -723,25 +729,20 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				option[ score::linear_bonded_potential ].value( false ); //fpd hack
 		}
 
-		// get fragment history
-		runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
-		history = *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
-
 		//write gdtmm to output
 		gdtmm = get_gdtmm(pose);
 		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
 		TR << "GDTMM_after_stage2" << F(8,3,gdtmm) << std::endl;
 
-		//look back and apply constraints
+		// get fragment history
+		runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
+		history = *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
+
 		TR << "History :";
-		for (int i=1; i<= history->size(); ++i ) {
-			TR << I(4,i);
-		}
+		for (int i=1; i<= history->size(); ++i ) { TR << I(4,i); }
 		TR << std::endl;
 		TR << "History :";
-		for (int i=1; i<= history->size(); ++i ) {
-			TR << I(4, history->get(i));
-		}
+		for (int i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
 		TR << std::endl;
 
 		// optional relax
@@ -750,21 +751,12 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			tofa->apply(pose);
 
 			// apply fa constraints
-			core::scoring::constraints::ConstraintSetOP constraint_set;
-			std::string fa_cst_fn;
-			if (fa_cst_fn_.empty()) {
-				fa_cst_fn = template_cst_fn_[initial_template_index];
-			}
-			else {
-				fa_cst_fn = fa_cst_fn_;
-			}
-			if (!fa_cst_fn.empty() && fa_cst_fn != "NONE") {
-				constraint_set = ConstraintIO::get_instance()->read_constraints_new( fa_cst_fn, new ConstraintSet, pose );
-			}
-			pose.constraint_set( constraint_set );  //reset constraints
+			std::string cst_fn = template_cst_fn_[initial_template_index];
+			setup_fullatom_constraints( pose, templates_, template_weights_, fa_cst_fn_, cst_fn );
 
 			if (batch_relax_ == 1) {
-				// add constraints
+				// add additional _CALPHA_ constraints
+				//fpd  generally this is unused
 				core::pose::addVirtualResAsRoot(pose);
 				core::Size rootres = pose.fold_tree().root();
 				Real const coord_sdev( 1 ); // this should be an option perhaps
@@ -905,7 +897,7 @@ HybridizeProtocol::parse_my_tag(
 
 		if ( (*tag_it)->getName() == "Template" ) {
 			std::string template_fn = (*tag_it)->getOption<std::string>( "pdb" );
-			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "NONE" );
+			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "AUTO" );
 			core::Real weight = (*tag_it)->getOption<core::Real>( "weight", 1 );
 			core::Size cluster_id = (*tag_it)->getOption<core::Size>( "cluster_id", 1 );
 			utility::vector1<core::Size> cst_reses;

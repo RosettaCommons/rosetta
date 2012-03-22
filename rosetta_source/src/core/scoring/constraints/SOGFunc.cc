@@ -28,6 +28,19 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+SOGFunc::SOGFunc(
+	utility::vector1< core::Real > const means,
+	utility::vector1< core::Real > const sdevs,
+	utility::vector1< core::Real > const weights
+) : member_(means, sdevs, weights) {}
+
+SOGFunc::SOGFunc(
+	core::Real mean,
+	core::Real sdev
+) : member_(utility::vector1< core::Real >(1,mean),
+            utility::vector1< core::Real >(1,sdev),
+            utility::vector1< core::Real >(1,1.0)) {}
+
 void
 SOGFunc::read_data( std::istream & in ) {
 	member_.read_data( in );

@@ -53,8 +53,6 @@ public:
 
 	core::Real get_gdtmm( core::pose::Pose & pose );
 
-	//void check_options();
-
 	void pick_starting_template(core::Size & initial_template_index,
 		core::Size & initial_template_index_icluster,
 		utility::vector1 < core::Size > & template_index_icluster,

@@ -34,6 +34,30 @@ namespace hybridize {
 using namespace core;
 using namespace kinematics;
 
+void setup_centroid_constraints( 
+	core::pose::Pose &pose,
+	utility::vector1 < core::pose::PoseCOP > templates,
+	utility::vector1 < core::Real > template_weights,
+	std::string cen_cst_file );
+
+void setup_fullatom_constraints(
+	core::pose::Pose &pose,
+	utility::vector1 < core::pose::PoseCOP > templates,
+	utility::vector1 < core::Real > template_weights,
+	std::string cen_cst_file,
+	std::string fa_cst_file  );
+
+void generate_centroid_constraints( 
+	core::pose::Pose &pose,
+	utility::vector1 < core::pose::PoseCOP > templates,
+	utility::vector1 < core::Real > template_weights );
+
+void generate_fullatom_constraints(
+	core::pose::Pose &pose,
+	utility::vector1 < core::pose::PoseCOP > templates,
+	utility::vector1 < core::Real > template_weights );
+
+
 bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos);
 
 bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos);

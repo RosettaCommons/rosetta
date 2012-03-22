@@ -37,6 +37,14 @@ public:
 
 	SOGFunc() {}
 
+	SOGFunc(
+		utility::vector1< core::Real > const means,
+		utility::vector1< core::Real > const sdevs,
+		utility::vector1< core::Real > const weights
+	);
+
+	SOGFunc( core::Real mean, core::Real sdev );
+
 	/// @brief returns a clone of this SOGFunc
 	FuncOP clone() const { return new SOGFunc( *this ); }
 

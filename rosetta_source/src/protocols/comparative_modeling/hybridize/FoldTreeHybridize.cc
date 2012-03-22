@@ -16,6 +16,7 @@
 #include <protocols/comparative_modeling/hybridize/ChunkTrialMover.hh>
 #include <protocols/comparative_modeling/hybridize/WeightedFragmentTrialMover.hh>
 #include <protocols/comparative_modeling/hybridize/HybridizeFoldtreeDynamic.hh>
+#include <protocols/comparative_modeling/hybridize/util.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -445,12 +446,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	//backup_original_foldtree(pose);
 	setup_foldtree(pose);
 
-	core::scoring::constraints::ConstraintSetOP constraint_set;
-	if (!cst_file_.empty() && cst_file_ != "NONE") {
-        using namespace core::scoring::constraints;
-		constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_file_, new ConstraintSet, pose );
-	}
-	pose.constraint_set( constraint_set );
+	setup_centroid_constraints( pose, template_poses_, template_wts_, cst_file_ );
 	
 	// Initialize the structure
 	bool use_random_template = false;
@@ -507,7 +503,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		mc->recover_low(pose);
 	}
 
-    pose.remove_constraints();
+	pose.remove_constraints();
 	restore_original_foldtree(pose);
 
 	basic::Tracer TR("pilot.yfsong.util");
