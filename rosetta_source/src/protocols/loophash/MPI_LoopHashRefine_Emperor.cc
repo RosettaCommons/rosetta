@@ -33,6 +33,7 @@
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
@@ -177,16 +178,15 @@ MPI_LoopHashRefine_Emperor::process_outbound_wus(){
 // iterate through the structure store and add strucutres to the central library according to the algorithm specified or the default algorithm
 bool
 MPI_LoopHashRefine_Emperor::add_structures_to_library( SilentStructStore &new_structs, std::string add_algorithm ){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	bool result = false;
 
 	for( SilentStructStore::const_iterator it = new_structs.begin();
 		 it != new_structs.end(); ++it )
 	{
 		runtime_assert( *it );
-		core::io::silent::ProteinSilentStruct *pss;
-		TR << "Add structure... " << format_silent_struct( *it ) << std::endl;
-		core::io::silent::SilentStruct *ss = &(*(*it));
-		pss = dynamic_cast< core::io::silent::ProteinSilentStruct* >( ss );
+		core::io::silent::SilentStruct *pss = &(*(*it));
 		
 		// Filter for max_emperor_lib_round_
 

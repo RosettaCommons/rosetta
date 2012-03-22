@@ -22,9 +22,10 @@
 // AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 // AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -106,6 +107,8 @@ WorkUnit_LoopHash::run()
 {
   using namespace core::pose;
 	using namespace protocols::loops;
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
 
 	if( decoys().size() == 0 ){
 		TR << "Empty WorkUnit ! Cannot execute run() " << std::endl;
@@ -130,6 +133,7 @@ WorkUnit_LoopHash::run()
   lsampler.set_max_bbrms( 1400.0 );
   lsampler.set_min_rms( 0.5 );
   lsampler.set_max_rms( 4.0 );
+	if( option[ OptionKeys::lh::bss]() ) lsampler.set_nonideal(true);
 
 	// convert pose to centroid pose:
 	if( pose.is_fullatom() ){
@@ -148,13 +152,11 @@ WorkUnit_LoopHash::run()
 	// transfer any tags from input structure:
 
 	const core::io::silent::SilentStruct *ss2 = &( *start_struct );
-	const core::io::silent::ProteinSilentStruct *pss2 = dynamic_cast< const core::io::silent::ProteinSilentStruct* > ( ss2 );
 
 	for ( protocols::wum::SilentStructStore::iterator it = decoys().begin();
 				it != decoys().end(); ++ it ){
 		
 		core::io::silent::SilentStruct *ss = &(*(*it));
-		core::io::silent::ProteinSilentStruct *pss = dynamic_cast< core::io::silent::ProteinSilentStruct* > ( ss );
 		// preserve the centroid score!
 		core::Real censcore = (*it)->get_energy("censcore");
 		(*it)->copy_scores( *start_struct );
@@ -164,10 +166,22 @@ WorkUnit_LoopHash::run()
 		(*it)->add_string_value( "usid", new_usid );
 		(*it)->add_energy( "state", 1 );
 
-		if( (pss != NULL) && (pss2 != NULL) ){
-			TR.Debug << "LoophashResult: " << pss->CA_rmsd( *pss2 ) << "  " <<  pss->get_energy("censcore") << std::endl;
-		}	else {
-			TR << "LoophashResult: ERROR"  << std::endl;
+	if( option[ OptionKeys::lh::bss]() ) {
+			const core::io::silent::BinaryProteinSilentStruct *pss2 = dynamic_cast< const core::io::silent::BinaryProteinSilentStruct* > ( ss2 );
+			core::io::silent::BinaryProteinSilentStruct *pss = dynamic_cast< core::io::silent::BinaryProteinSilentStruct* > ( ss );
+			if( (pss != NULL) && (pss2 != NULL) ){
+				TR.Debug << "LoophashResult: " << pss->CA_rmsd( *pss2 ) << "  " <<  pss->get_energy("censcore") << std::endl;
+			}	else {
+				TR << "LoophashResult: ERROR, dynamic cast to BSS failed"  << std::endl;
+			}
+		} else {
+			const core::io::silent::ProteinSilentStruct *pss2 = dynamic_cast< const core::io::silent::ProteinSilentStruct* > ( ss2 );
+			core::io::silent::ProteinSilentStruct *pss = dynamic_cast< core::io::silent::ProteinSilentStruct* > ( ss );
+			if( (pss != NULL) && (pss2 != NULL) ){
+				TR.Debug << "LoophashResult: " << pss->CA_rmsd( *pss2 ) << "  " <<  pss->get_energy("censcore") << std::endl;
+			}	else {
+				TR << "LoophashResult: ERROR, dynamic cast to PSS failed"  << std::endl;
+			}
 		}
 	}
 }

@@ -66,13 +66,13 @@ class MPI_LoopHashRefine: public protocols::wum::MPI_WorkUnitManager {
 		// adding arriving structures to library
 		virtual bool add_structures_to_library( protocols::wum::SilentStructStore &new_structs, std::string add_algorithm = "" );
 
-		virtual bool add_structure_to_library( core::io::silent::ProteinSilentStruct &pss, std::string add_algorithm = "" );
+		virtual bool add_structure_to_library( core::io::silent::SilentStruct &pss, std::string add_algorithm = "" );
 
-		bool add_structure_to_library_direct( core::io::silent::ProteinSilentStruct &pss );
+		bool add_structure_to_library_direct( core::io::silent::SilentStruct &pss );
 
-		bool add_structure_to_library_add_n_replace( core::io::silent::ProteinSilentStruct &pss );
+		bool add_structure_to_library_add_n_replace( core::io::silent::SilentStruct &pss );
 
-		bool add_structure_to_library_single_replace( core::io::silent::ProteinSilentStruct &pss );
+		bool add_structure_to_library_single_replace( core::io::silent::SilentStruct &pss );
 
 		void send_random_library_struct( core::Size dest_rank, core::Size ssid ) const ;
 

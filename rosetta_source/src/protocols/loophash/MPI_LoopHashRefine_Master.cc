@@ -31,9 +31,10 @@
 // AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 // AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
@@ -276,21 +277,26 @@ MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentSt
 		core::pose::delete_comment(start_pose,"sample_weight");
 		core::pose::add_comment(start_pose,"sample_weight", sample_weight_str_);
 
-		core::io::silent::ProteinSilentStruct pss;
-		pss.fill_struct( start_pose );
-		pss.copy_scores( *start_struct );
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		
+		core::io::silent::SilentStructOP ss = option[ OptionKeys::lh::bss]() ?
+				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
+				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		ss->fill_struct( start_pose );
+		ss->copy_scores( *start_struct );
 
 		// first cound up "round" counter - just counts how many times each structure has been
 		// thorugh the loop hasher
-		core::Size round = (core::Size)pss.get_energy("round");
+		core::Size round = (core::Size)ss->get_energy("round");
 		round++;
-		pss.add_energy("round", round );
-		pss.add_energy("masterid", mpi_rank() );
-		pss.add_energy("parent_score", pss.get_energy("score") );
+		ss->add_energy("round", round );
+		ss->add_energy("masterid", mpi_rank() );
+		ss->add_energy("parent_score", ss->get_energy("score") );
 
 		core::Size start_ir = 1;
 		core::Size end_ir = 1;
-		core::Size ssid = (core::Size)pss.get_energy("ssid");
+		core::Size ssid = (core::Size)ss->get_energy("ssid");
 
 		core::Size count_wus = 0;
 		for( ;start_ir< start_pose.total_residue(); start_ir+=loophash_split_size_ )
@@ -304,7 +310,7 @@ MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentSt
 			WorkUnit_LoopHashOP new_wu = new WorkUnit_LoopHash( start_ir, end_ir, ssid );
 			// this is unsatisfying.. why can't i use the template ? grrr C++ thou are limited.
 			new_wu->set_wu_type("loophasher");
-			new_wu->decoys().add( pss );
+			new_wu->decoys().add( ss);
 			new_wu->clear_serial_data();
 			outbound().add( new_wu );
 		  if( start_pose.total_residue() - end_ir < loophash_split_size_ ) start_ir = start_pose.total_residue();
@@ -446,7 +452,7 @@ MPI_LoopHashRefine_Master::check_library_expiry_dates(){
 /// that reports any successful library add-ons to the emperor. This behaviour is master specific and thus should not be in the base class.
 
 bool
-MPI_LoopHashRefine_Master::add_structure_to_library( core::io::silent::ProteinSilentStruct &pss, std::string add_algorithm ){
+MPI_LoopHashRefine_Master::add_structure_to_library( core::io::silent::SilentStruct &pss, std::string add_algorithm ){
 	bool result = MPI_LoopHashRefine::add_structure_to_library( pss, add_algorithm );
 	TR << "MPI_LoopHashRefine_Master::add_structure_to_library: " << std::endl;
 	if(result) report_structure_to_emperor( pss );
@@ -463,7 +469,7 @@ MPI_LoopHashRefine_Master::report_structure_to_emperor(  core::io::silent::Silen
 }
 
 void
-MPI_LoopHashRefine_Master::report_structure_to_emperor(  core::io::silent::ProteinSilentStruct &pss ) {
+MPI_LoopHashRefine_Master::report_structure_to_emperor(  core::io::silent::SilentStruct &pss ) {
 	WorkUnit_SilentStructStoreOP resultpack = new WorkUnit_SilentStructStore( );
 	resultpack->set_wu_type( "resultpack" );
 	resultpack->decoys().add( pss );

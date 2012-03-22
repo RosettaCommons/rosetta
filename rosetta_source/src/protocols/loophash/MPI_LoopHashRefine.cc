@@ -30,9 +30,10 @@
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
@@ -158,26 +159,27 @@ MPI_LoopHashRefine::load_structures_from_cmdline_into_library( core::Size struct
 		(*scorefxn)(pose);
 	
 		core::pose::set_ss_from_phipsi( pose );
-		core::io::silent::ProteinSilentStruct pss;
-		
-		pss.fill_struct( pose );
-		pss.add_energy( "censcore", 0 );   // centroidscore of last time this structure was in centroid form
-		pss.add_energy( "extra_score", 0 );   // extra_score is used if a different scoring scheme is used to select structures then to actually repack/relax them 
-		pss.add_energy( "combined_score", 0 );   // extra_score + score 
-		pss.add_energy( "parent_score", 0 );  // fa score of parent
-		pss.add_energy( "lhcount", 0 );   // lh count is the number of times this structure has been used to generate new loophashed structures 
-		pss.add_energy( "round", 0 );     // round is the number of consecutive loophashes this structure has gone through  
-		pss.add_energy( "expire", 0 );    // how many times has this structure been retired to the temporor ? >1 means it's been sent out again
-		if(  pss.get_string_value("usid") == "" ){	
-			pss.add_string_value( "usid", "_" + string_of(count)); // A unique structure id (usid) that will identify the structure until it is modified. 
-		}
-		pss.add_string_value( "husid", pss.get_string_value("usid") ); // history of usids  
-		pss.add_energy( "state", 0 );     // state: 0 init, 1 loophashed, 2 relaxed 
-		pss.add_energy( "ltime", time(NULL) ); // time when it became active. This is used to expire structures that havn't changed for a while.
-		pss.add_energy( "master", mpi_rank() ); // what master is it curretnly on ? (volatile)
-		pss.add_energy( "emperor_count", 0 ); // what master is it curretnly on ? (volatile)
-		temp_lib.add( pss );
-		count ++;
+		core::io::silent::SilentStructOP ss = option[ OptionKeys::lh::bss]() ?
+				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
+				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+				ss->fill_struct( pose, "empty_tag" );
+				ss->add_energy( "censcore", 0 );   // centroidscore of last time this structure was in centroid form
+				ss->add_energy( "extra_score", 0 );   // extra_score is used if a different scoring scheme is used to select structures then to actually repack/relax them 
+				ss->add_energy( "combined_score", 0 );   // extra_score + score 
+				ss->add_energy( "parent_score", 0 );  // fa score of parent
+				ss->add_energy( "lhcount", 0 );   // lh count is the number of times this structure has been used to generate new loophashed structures 
+				ss->add_energy( "round", 0 );     // round is the number of consecutive loophashes this structure has gone through  
+				ss->add_energy( "expire", 0 );    // how many times has this structure been retired to the temporor ? >1 means it's been sent out again
+				if(  ss->get_string_value("usid") == "" ){	
+						ss->add_string_value( "usid", "_" + string_of(count)); // A unique structure id (usid) that will identify the structure until it is modified. 
+				}
+				ss->add_string_value( "husid", ss->get_string_value("usid") ); // history of usids  
+				ss->add_energy( "state", 0 );     // state: 0 init, 1 loophashed, 2 relaxed 
+				ss->add_energy( "ltime", time(NULL) ); // time when it became active. This is used to expire structures that havn't changed for a while.
+				ss->add_energy( "master", mpi_rank() ); // what master is it curretnly on ? (volatile)
+				ss->add_energy( "emperor_count", 0 ); // what master is it curretnly on ? (volatile)
+				temp_lib.add( ss );
+				count ++;
 	}
 
 	if ( temp_lib.size() == 0 ){
@@ -255,7 +257,7 @@ MPI_LoopHashRefine::print_stats(){
 }
 
 bool
-MPI_LoopHashRefine::add_structure_to_library( core::io::silent::ProteinSilentStruct &pss, std::string add_algorithm ){
+MPI_LoopHashRefine::add_structure_to_library( core::io::silent::SilentStruct &pss, std::string add_algorithm ){
 	// reset the lhcount to 0
 	pss.add_energy( "lhcount", 0 );
 	pss.add_energy( "ltime", time(NULL) );
@@ -275,15 +277,18 @@ MPI_LoopHashRefine::add_structure_to_library( core::io::silent::ProteinSilentStr
 }
 
 bool
-MPI_LoopHashRefine::add_structure_to_library_direct( core::io::silent::ProteinSilentStruct &pss )
+MPI_LoopHashRefine::add_structure_to_library_direct( core::io::silent::SilentStruct &pss )
 {
 	library_central_.add( pss );
 	return true;
 }
 
 bool
-MPI_LoopHashRefine::add_structure_to_library_add_n_replace( core::io::silent::ProteinSilentStruct &pss )
+MPI_LoopHashRefine::add_structure_to_library_add_n_replace( core::io::silent::SilentStruct &pss )
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	
 	core::Real new_struct_score = objective_function(pss); 
 	pss.add_energy( "lhcount", 0 );
 	start_timer( TIMING_CPU );
@@ -305,14 +310,22 @@ MPI_LoopHashRefine::add_structure_to_library_add_n_replace( core::io::silent::Pr
 	core::Real closest_rms = 1000000;
 	SilentStructStore::iterator closest_struct;
 
-	// upcast to protein silent_structs:
 	for( SilentStructStore::iterator jt =  library_central_.begin();
 									jt != library_central_.end(); jt ++ )
 	{
-		// upcast to protein silent_structs:
-		core::io::silent::ProteinSilentStruct *jt_pss = dynamic_cast < core::io::silent::ProteinSilentStruct * > ( &(*(*jt)) );
-		if ( jt_pss == NULL ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Protein SilentStructs " );
-		core::Real the_rms = pss.CA_rmsd( *jt_pss );
+			core::Real the_rms;
+		// downcast
+		if ( option[ OptionKeys::lh::bss]() ) {
+				core::io::silent::BinaryProteinSilentStruct *jt_pss = dynamic_cast < core::io::silent::BinaryProteinSilentStruct * > ( &(*(*jt)) );
+				core::io::silent::BinaryProteinSilentStruct *ss = dynamic_cast < core::io::silent::BinaryProteinSilentStruct * > ( &(pss) );
+				if ( jt_pss == NULL || ss == NULL ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Binary Protein SilentStructs " );
+				the_rms = ss->CA_rmsd( *jt_pss );
+		} else {
+				core::io::silent::ProteinSilentStruct *jt_pss = dynamic_cast < core::io::silent::ProteinSilentStruct * > ( &(*(*jt)) );
+				core::io::silent::ProteinSilentStruct *ss = dynamic_cast < core::io::silent::ProteinSilentStruct * > ( &(pss) );
+				if ( jt_pss == NULL || ss == NULL ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Protein SilentStructs " );
+				the_rms = ss->CA_rmsd( *jt_pss );
+		}
 		TRDEBUG << "The rms: " << the_rms << std::endl;
 		if ( the_rms < closest_rms ){
 			//TR << "Found better: " << the_rms;
@@ -345,7 +358,7 @@ MPI_LoopHashRefine::add_structure_to_library_add_n_replace( core::io::silent::Pr
 }
 
 bool
-MPI_LoopHashRefine::add_structure_to_library_single_replace( core::io::silent::ProteinSilentStruct &pss )
+MPI_LoopHashRefine::add_structure_to_library_single_replace( core::io::silent::SilentStruct &pss )
 {
 	core::Real ssid = pss.get_energy("ssid");
 
@@ -359,7 +372,6 @@ MPI_LoopHashRefine::add_structure_to_library_single_replace( core::io::silent::P
 		return false;
 	}
 
-	core::io::silent::SilentStructOP ssop = new core::io::silent::ProteinSilentStruct( pss );
 
 	bool replace_it = false;
 	// to get library replacement you must either: be of a more advanced round or have lower energy
@@ -369,7 +381,7 @@ MPI_LoopHashRefine::add_structure_to_library_single_replace( core::io::silent::P
 	}
 
 	if( replace_it ){
-		core::Real new_energy = objective_function(ssop); 
+		core::Real new_energy = objective_function(pss); 
 		core::Real old_energy = objective_function(*ssid_match);
 
 		bool metropolis_replace = false;
@@ -385,11 +397,11 @@ MPI_LoopHashRefine::add_structure_to_library_single_replace( core::io::silent::P
 		total_metropolis_++;
 		if ( metropolis_replace ) {
 			total_metropolis_accepts_++;
-			TR << "ReplacingACC: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( ssop ) << "  " << energy_diff_T << std::endl;
-			*ssid_match = ssop;
+			TR << "ReplacingACC: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( pss ) << "  " << energy_diff_T << std::endl;
+			*ssid_match = pss;
 			return true;
 		}else{
-			TR << "ReplacingREJ: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( ssop ) << "  " << energy_diff_T << std::endl;
+			TR << "ReplacingREJ: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( pss ) << "  " << energy_diff_T << std::endl;
 		}
 	}
 
@@ -415,12 +427,8 @@ MPI_LoopHashRefine::add_structures_to_library( SilentStructStore &new_structs, s
 		 it != new_structs.end(); ++it )
 	{
 		runtime_assert( *it );
-		core::io::silent::ProteinSilentStruct *pss;
 		TR << "Add structure... " << format_silent_struct( *it ) << std::endl;
-		core::io::silent::SilentStruct *ss = &(*(*it));
-		pss = dynamic_cast< core::io::silent::ProteinSilentStruct* >( ss );
-		runtime_assert( pss );
-		bool local_result = add_structure_to_library( *pss, add_algorithm );
+		bool local_result = add_structure_to_library( *(*it), add_algorithm );
 		result = result || local_result;
 	}
 

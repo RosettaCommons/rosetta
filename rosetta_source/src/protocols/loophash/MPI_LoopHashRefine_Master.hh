@@ -68,11 +68,11 @@ protected: // Added functions
 
 	void load_sample_weight();
 
-	virtual bool add_structure_to_library( core::io::silent::ProteinSilentStruct &pss, std::string add_algorithm = "" );
+	virtual bool add_structure_to_library( core::io::silent::SilentStruct &pss, std::string add_algorithm = "" );
 
 	void report_structure_to_emperor(  core::io::silent::SilentStructOP &ss ) ;
 
-	void report_structure_to_emperor(  core::io::silent::ProteinSilentStruct &pss ) ;
+	void report_structure_to_emperor(  core::io::silent::SilentStruct &pss ) ;
 
 	core::Real ev_objective_function( core::io::silent::SilentStructOP &ss );
 
