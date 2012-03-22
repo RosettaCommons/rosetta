@@ -1136,6 +1136,15 @@ settings = {
             },
         },
     },
+    
+    "clang, warnings_as_errors" : {
+        "appends" : {
+            "flags" : {
+                "compile"   : [ "Werror",],
+            },
+        },
+    },
+    
     "clang, postgres" : {
         "appends" : {
             "defines"       : [ "USEPOSTGRES" ],
