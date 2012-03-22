@@ -114,6 +114,15 @@ public:
 	///@brief Restores the state of all random number generators from given stream.
 	static void restoreAllStates(std::istream & in);
 
+public: // implement the boost Uniform Random Generator concept
+
+	typedef double result_type;
+
+	double operator()() { return gaussian(); }
+
+	double min() const { return 0; }
+	double max() const { return 1; }
+
 private: // Fields
 	int seed_offset; /// Our magic number goes there
 

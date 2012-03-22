@@ -26,6 +26,7 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
+#include <numeric/random/random.hh>
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
@@ -83,33 +84,33 @@ StructureFeatures::type_name() const { return "StructureFeatures"; }
 string
 StructureFeatures::schema() const {
 	using namespace basic::database::schema_generator;
-	
-    //Don't autoincrement the struct_id because it is a UUID generated here
-    Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
-    Column batch_id("batch_id",DbInteger());
-    Column tag("tag", DbText(255));
-    Column input_tag("input_tag", DbText());
-    
-    /***structures***/
-    Schema structures("structures", PrimaryKey(struct_id));
-    
-    structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
-    structures.add_column( tag );
-    structures.add_column( input_tag );
-    
-    /***sampled_structures***/
-    Schema sampled_structures("sampled_structures");
-    sampled_structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
-    
-    sampled_structures.add_column( tag );
-    sampled_structures.add_column( input_tag );
-    
-    utility::vector1<Column> unique_cols;
-    unique_cols.push_back(tag);
-    unique_cols.push_back(batch_id);
-    sampled_structures.add_constraint(new UniqueConstraint(unique_cols));
-    
-    return structures.print() + sampled_structures.print();
+
+		//Don't autoincrement the struct_id because it is a UUID generated here
+		Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+		Column batch_id("batch_id",DbInteger());
+		Column tag("tag", DbText(255));
+		Column input_tag("input_tag", DbText());
+
+		/***structures***/
+		Schema structures("structures", PrimaryKey(struct_id));
+
+		structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
+		structures.add_column( tag );
+		structures.add_column( input_tag );
+
+		/***sampled_structures***/
+		Schema sampled_structures("sampled_structures");
+		sampled_structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
+
+		sampled_structures.add_column( tag );
+		sampled_structures.add_column( input_tag );
+
+		utility::vector1<Column> unique_cols;
+		unique_cols.push_back(tag);
+		unique_cols.push_back(batch_id);
+		sampled_structures.add_constraint(new UniqueConstraint(unique_cols));
+
+		return structures.print() + sampled_structures.print();
 }
 
 utility::vector1<std::string>
@@ -129,7 +130,7 @@ StructureFeatures::report_features(
 ){
 	string const output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
 	string const input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-    boost::uuids::uuid struct_id(
+		boost::uuids::uuid struct_id(
 		report_features(relevant_residues, batch_id,
 			db_session, output_tag, input_tag));
 	return struct_id;
@@ -147,29 +148,26 @@ StructureFeatures::report_features(
 	string statement_string = "INSERT INTO structures (struct_id, batch_id, tag, input_tag) VALUES (?,?,?,?);";
 	statement structure_stmt(safely_prepare_statement(statement_string,db_session));
 
-    boost::uuids::uuid struct_id = boost::uuids::random_generator()();
-//    boost::uuids::uuid const struct_id(to_string(struct_uuid));
-    
-//    std::stringstream bytes_stream;
-//    std::copy(struct_uuid.begin(), struct_uuid.end(),std::ostream_iterator<char>(bytes_stream, ""));    
-//    
-//    structure_stmt.bind(1, bytes_stream);
-    
-    structure_stmt.bind(1, struct_id);
-    structure_stmt.bind(2, batch_id);
-    structure_stmt.bind(3, tag);
-    structure_stmt.bind(4, input_tag);
-    
-    basic::database::safely_write_to_database(structure_stmt);
-    
-    return struct_id;
-    
+
+	boost::uuids::basic_random_generator<numeric::random::RandomGenerator>
+		uuids_rng(numeric::random::RG);
+	boost::uuids::uuid struct_id = uuids_rng();
+
+	structure_stmt.bind(1, struct_id);
+	structure_stmt.bind(2, batch_id);
+	structure_stmt.bind(3, tag);
+	structure_stmt.bind(4, input_tag);
+
+	basic::database::safely_write_to_database(structure_stmt);
+
+	return struct_id;
+
 //	BinaryProteinSilentStruct silent_struct(pose, "");
 //	stringstream pose_string;
 //	silent_struct.print_conformation(pose_string);
 //	boost::uuids::uuid const struct_id = hash_value(pose_string.str());
-//        
-//    //Check to see if we've reported this structure before    
+//
+//    //Check to see if we've reported this structure before
 //    std::string select_string =
 //    "SELECT *\n"
 //    "FROM\n"
@@ -178,19 +176,19 @@ StructureFeatures::report_features(
 //    "   struct_id = ?;";
 //    cppdb::statement select_stmt(basic::database::safely_prepare_statement(select_string,db_session));
 //    select_stmt.bind(1, struct_id);
-//    
+//
 //    cppdb::result res(basic::database::safely_read_from_database(select_stmt));
 //    if(!res.next()) {
 //        TR << "No existing structure found, adding the new one" << endl;
-//        
+//
 //        structure_stmt.bind(1, struct_id);
 //        structure_stmt.bind(2, tag);
 //        structure_stmt.bind(3, input_tag);
-//        
+//
 //        TR << "struct id: " << struct_id << "\nbatch_id: " << batch_id << "\ntag: " << tag << "\ninputtag: " << input_tag << endl;
 //        basic::database::safely_write_to_database(structure_stmt);
 //    }
-//    
+//
 //    std::string batch_structures_string = "INSERT INTO batch_structures (struct_id, batch_id) VALUES (?,?);";
 //    statement batch_structures_stmt(safely_prepare_statement(batch_structures_string, db_session));
 //    batch_structures_stmt.bind(1, struct_id);
@@ -275,10 +273,10 @@ StructureFeatures::get_struct_id(
 		"	structures.struct_id\n"
 		"FROM\n"
 		"	protocols\n"
-        "JOIN batches ON\n"
-        "   protocols.protocol_id = batches.protocol_id\n"
-        "JOIN structures ON\n"
-        "   batches.batch_id = structures.batch_id\n"
+		"JOIN batches ON\n"
+		"	protocols.protocol_id = batches.protocol_id\n"
+		"JOIN structures ON\n"
+		"	batches.batch_id = structures.batch_id\n"
 		"WHERE\n"
 		"	structures.tag=? AND protocols.protocol_id=?;";
 
@@ -292,7 +290,7 @@ StructureFeatures::get_struct_id(
 		error_message << "Unable to locate structure with tag '"<<tag<<"'."<<endl;
 		utility_exit_with_message(error_message.str());
 	}
-    boost::uuids::uuid struct_id;
+	boost::uuids::uuid struct_id;
 	res >> struct_id;
 	return struct_id;
 }
