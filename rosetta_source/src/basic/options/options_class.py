@@ -211,7 +211,7 @@ def printWikiTable(opt_list):
 
 
 def getDoxygenPage(opt_list):
-    s = "/*!\n@page options\nMini rosetta command line option descriptions. <i>(This is automatically generated file, do not edit!)</i>\n"
+    s = "/*!\n@page full_options_list\nMini rosetta command line option descriptions. <i>(This is automatically generated file, do not edit!)</i>\n"
     s += "<ul>\n"
     prevGroup = None
     for o in opt_list:

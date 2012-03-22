@@ -141,7 +141,7 @@ There are several optional settings used for Monte Carlo based membrane normal a
 -membrane:center_mag (default=1)          Magnitude of membrane center search (Angstroms)
 @endverbatim
 
-For more information about membrane ab initio modeling flags, please check the @ref options "options list"
+For more information about membrane ab initio modeling flags, please check the @ref full_options_list "full options list"
 
 @section tips Tips
 

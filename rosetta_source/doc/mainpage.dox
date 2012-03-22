@@ -25,7 +25,7 @@ put links to commonly referred to documentation pages here.
 	- Coding Guidelines
 		- @ref before_commit_check "List of things you should check in your code before committing it in to svn"
 		- @ref owning_pointer_usage_guidlines "Guidelines on Owning pointers usage"
-		- @ref options "Option list with description/range/default values"
+		- @ref full_options_list "Option list with description/range/default values"
 	- @ref robust "How to make mini 'robust' against badly formatted PDBs"
 	- @ref RNA_protein_changes "How to use combined RNA-protein poses (not possible by default!)"
 	- @ref preparing_structures "How to prepare structures for use in Rosetta"

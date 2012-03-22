@@ -1,5 +1,5 @@
 /*!
-@page options
+@page full_options_list
 Mini rosetta command line option descriptions. <i>(This is automatically generated file, do not edit!)</i>
 <ul>
 <li><h2>rigid</h2>
@@ -9825,6 +9825,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-cen_minimize</b> \<Boolean\><dt>
 <dd>centroid minimization after fragment building</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-core_cutoff</b> \<Integer\><dt>
+<dd>number of neighbors required to consider core in auto design</dd><br>
+<dd>Default: 15</dd><br>
+</dl>
+<dl>
+<dt><b>-boundary_cutoff</b> \<Integer\><dt>
+<dd>number of neighbors required to consider boundary in auto design</dd><br>
+<dd>Default: 10</dd><br>
 </dl>
  </li>
 <li><h2>remodel:domainFusion</h2>

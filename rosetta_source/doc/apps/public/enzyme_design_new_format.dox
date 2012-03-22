@@ -21,7 +21,7 @@ Most code resides in rosetta/rosetta_source/src/protocols/enzdes/ and rosetta/ro
 the most basic mover is the EnzdesFixBBMover, rosetta/rosetta_source/src/protocols/enzdes/EnzdesFixBBProtocol.hh/cc
 
 A basic usage example is the enzdes integration test, found in rosetta/rosetta_tests/integration/tests/enzdes/
-To do a production run, the flags file from the enzdes integration test should be expanded by the desired rotamer packing  options (ex1, ex2, use_input_sc, linmem_ig ), the number n (usually 2-4) of iterative design/minimization cycles the user would like to do (-design_min_cycles n ) and of course by the number of structures the user would like to produce (-nstruct). All options pertaining to enzdes are in the options documentaion, @ref options "options documentation page", section enzdes
+To do a production run, the flags file from the enzdes integration test should be expanded by the desired rotamer packing  options (ex1, ex2, use_input_sc, linmem_ig ), the number n (usually 2-4) of iterative design/minimization cycles the user would like to do (-design_min_cycles n ) and of course by the number of structures the user would like to produce (-nstruct). All options pertaining to enzdes are in the options documentation, @ref full_options_list "options documentation page", section enzdes
 
 
 @section refs References

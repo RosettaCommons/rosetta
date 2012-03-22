@@ -64,6 +64,6 @@ Fullatom refinement:  -loops::refine [refine_ccd|refine_alc]
 FA Relax:  -loops::relax [fullrelax|shortrelax|fastrelax]
 @endverbatim
 
-For more information about loop modeling flags, please check the @ref options "options list"
+For more information about loop modeling flags, please check the @ref full_options_list "full options list"
 
 */

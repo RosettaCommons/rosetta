@@ -37,6 +37,6 @@ We are still working on the final tuning, it is best to contact us before any ap
 @li It works pretty well on both bound and unbound receptors
 @li the lowres_preoptimize option perform a preemptive low-resolution search, it may increase the protocol basin of attraction, but compromise precision in some cases. Perhaps is is
 
-For information about FlexPepDocking application flags, please check the @ref options "options list"
+For information about FlexPepDocking application flags, please check the @ref full_options_list "full options list"
 
 */
