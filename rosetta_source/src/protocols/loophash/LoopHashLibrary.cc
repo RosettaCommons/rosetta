@@ -386,9 +386,11 @@ namespace loophash {
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		}
 		core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
+		core::Size counter = 0;
 		while( input.has_another_pose() ) {
 			core::pose::Pose pose;
-			input.fill_pose( pose, *rsd_set );
+			input.fill_pose( pose, *rsd_set ); // no other way to increment the inputstream
+		  if (counter++ % num_partitions_ != assigned_num_) continue;
 			extract_data_from_pose(  pose  );
 		}
 	}
