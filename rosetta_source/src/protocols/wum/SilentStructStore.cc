@@ -48,6 +48,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
@@ -70,6 +71,7 @@
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/lh.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //Auto Headers
@@ -134,9 +136,17 @@ namespace wum {
 
   void
   SilentStructStore::add( const core::pose::Pose &pose ){
-    ProteinSilentStructOP pss = new ProteinSilentStruct();
-    pss->fill_struct( pose );
-    add( pss );
+	  using namespace basic::options;
+	  using namespace basic::options::OptionKeys;
+		if ( option[ lh:bss]() ) {
+				ProteinSilentStructOP pss = new ProteinSilentStruct();
+				pss->fill_struct( pose );
+				add( pss );
+		} else {
+				BinaryProteinSilentStructOP pss = new BinaryProteinSilentStruct();
+				pss->fill_struct( pose );
+				add( pss );
+		}
   }
 
 

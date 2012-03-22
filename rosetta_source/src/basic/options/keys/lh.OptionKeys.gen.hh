@@ -27,6 +27,7 @@ namespace lh { extern IntegerVectorOptionKey const loopsizes; }
 namespace lh { extern IntegerOptionKey const num_partitions; }
 namespace lh { extern PathOptionKey const db_path; }
 namespace lh { extern BooleanOptionKey const exclude_homo; }
+namespace lh { extern BooleanOptionKey const bss; }
 namespace lh { extern StringOptionKey const refstruct; }
 namespace lh { extern StringOptionKey const homo_file; }
 namespace lh { extern RealVectorOptionKey const createdb_rms_cutoff; }

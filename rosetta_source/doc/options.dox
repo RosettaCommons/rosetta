@@ -5778,6 +5778,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-bss</b> \<Boolean\><dt>
+<dd>Use BinaryProteinSilentStruct instead of ProteinSilentStruct (needed for nonideal)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-refstruct</b> \<String\><dt>
 <dd>File with a target reference structure</dd><br>
 <dd>Default: ""</dd><br>

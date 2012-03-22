@@ -2712,6 +2712,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'num_partitions', 'Integer', default = '1', desc='Number of partitions to split the database into'),
 		Option( 'db_path', 'Path', default = '', desc = 'Path to database' ),
 		Option( 'exclude_homo', 'Boolean', default = 'false', desc = 'Use a homolog exclusion filter' ),
+		Option( 'bss', 'Boolean', default = 'false', desc = 'Use BinaryProteinSilentStruct instead of ProteinSilentStruct (needed for nonideal)' ),
 		Option( 'refstruct', 'String', default = '', desc = 'File with a target reference structure' ),
 		Option( 'homo_file', 'String', default = '', desc = 'File containing homologs to exclude' ),
 		Option( 'createdb_rms_cutoff', 'RealVector', default = ['0','0','0'], desc = 'RMS cutoff used for throwing out similar fragments.' ),

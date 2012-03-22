@@ -1,4 +1,3 @@
-namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
@@ -586,6 +585,7 @@ namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }
 namespace lh { IntegerOptionKey const num_partitions( "lh:num_partitions" );  }
 namespace lh { PathOptionKey const db_path( "lh:db_path" );  }
 namespace lh { BooleanOptionKey const exclude_homo( "lh:exclude_homo" );  }
+namespace lh { BooleanOptionKey const bss( "lh:bss" );  }
 namespace lh { StringOptionKey const refstruct( "lh:refstruct" );  }
 namespace lh { StringOptionKey const homo_file( "lh:homo_file" );  }
 namespace lh { RealVectorOptionKey const createdb_rms_cutoff( "lh:createdb_rms_cutoff" );  }
@@ -601,3 +601,4 @@ namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multipl
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
+namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
