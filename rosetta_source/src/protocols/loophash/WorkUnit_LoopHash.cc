@@ -130,8 +130,6 @@ WorkUnit_LoopHash::run()
   lsampler.set_max_bbrms( 1400.0 );
   lsampler.set_min_rms( 0.5 );
   lsampler.set_max_rms( 4.0 );
-  lsampler.set_max_struct( 10 );
-  lsampler.set_max_struct_per_radius( 10 );
 
 	// convert pose to centroid pose:
 	if( pose.is_fullatom() ){

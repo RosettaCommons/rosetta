@@ -108,6 +108,8 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
     using namespace numeric::geometry::hashing;
     using namespace optimization;
     using namespace id;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 		runtime_assert( library_ );
 		TR.Trace << "Testing libstructs: " << "NStruct: " << lib_structs.size() << std::endl;
@@ -203,13 +205,13 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 				// and one that gives a max_bbrms and min_bbrms
 				// Make it slightly dependent on round
 				//core::Size sw_nmodels = (int)(avg_sw/5*(1.0+(round-1)/60));
-				core::Size sw_nmodels = (int)(avg_sw*max_struct_/50*(1.0+(round-1)/60));
-				core::Size sw_nfrags = (int)avg_sw*400;
+				core::Size sw_nmodels = (core::Size)(avg_sw*max_struct_/50*(1.0+(round-1)/60));
+				core::Size sw_nfrags = (core::Size)avg_sw*400;
 				
 				// Limit how many structures chosen from a given radius
 				// Make it dependent on round, less for higher rounds
 				//core::Size sw_nmodels_per_rad = (int)(avg_sw/50*3);
-				core::Size sw_nmodels_per_rad = (int)(avg_sw*max_struct_per_radius_/50);
+				core::Size sw_nmodels_per_rad = (core::Size)(avg_sw*max_struct_per_radius_/50);
 
 				/* dont change these based on avg_sw for now
 				set_min_rms(  avg_sw/10   );
