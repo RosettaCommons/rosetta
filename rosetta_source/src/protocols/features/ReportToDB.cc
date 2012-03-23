@@ -100,6 +100,9 @@ using basic::Warning;
 using basic::datacache::CacheableString;
 using basic::database::safely_prepare_statement;
 using basic::database::safely_write_to_database;
+using basic::database::safely_read_from_database;
+using basic::database::get_db_session;
+using basic::database::set_cache_size;
 using core::Size;
 using core::pack::task::PackerTaskCOP;
 using core::pack::task::TaskFactory;
@@ -128,12 +131,14 @@ using std::string;
 using std::endl;
 using std::accumulate;
 using std::stringstream;
+using boost::uuids::uuid;
 using utility::file::FileName;
 using utility::vector0;
 using utility::vector1;
 using utility::tag::TagPtr;
 using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::session;
+using utility::sql_database::sessionOP;
 
 static Tracer TR("protocols.features.ReportToDB");
 
@@ -445,7 +450,8 @@ ReportToDB::check_features_reporter_dependencies(
 		if(!exists){
 			stringstream error_msg;
 			error_msg
-				<< "The dependencies for the '" << test_features_reporter->type_name() << "'"
+				<< "For batch '" << name_ << "'," << endl
+				<< "the dependencies for the '" << test_features_reporter->type_name() << "'"
 				<< " reporter are not satisfied because the '" << dependency << "' has not been defined yet." << endl
 				<< "These are the FeaturesReporters that have been defined:" << endl
 				<< "\tProtocolFeatures (included by default)" << endl
@@ -468,85 +474,36 @@ ReportToDB::initialize_reporters()
 	structure_features_ = new StructureFeatures();
 }
 
-void
-ReportToDB::initialize_database(
-	utility::sql_database::sessionOP db_session
-){
+utility::sql_database::sessionOP
+ReportToDB::initialize_database(){
+	sessionOP db_session(
+		get_db_session(database_fname_, database_mode_, false,
+			separate_db_per_mpi_process_));
+
 	if (!initialized){
+		if(use_transactions_) db_session->begin();
 
 		protocol_features_->write_schema_to_db(db_session);
-				batch_features_->write_schema_to_db(db_session);
+		batch_features_->write_schema_to_db(db_session);
 		structure_features_->write_schema_to_db(db_session);
 
-				write_linking_tables(db_session);
+		write_linking_tables(db_session);
 
 		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
 			reporter->write_schema_to_db(db_session);
 		}
 
+		if(use_transactions_) db_session->commit();
+
 		initialized = true;
 	}
-
+	return db_session;
 }
 
-void
-ReportToDB::write_linking_tables(
-	utility::sql_database::sessionOP db_session
+vector1< bool >
+ReportToDB::initialize_pose(
+	Pose & pose
 ) const {
-		using namespace basic::database::schema_generator;
-
-		/***feature reporters table***/
-		Schema features_reporters("features_reporters", PrimaryKey( Column("report_name", DbTextKey())));
-
-		statement features_reporters_stmt(safely_prepare_statement(features_reporters.print(), db_session));
-		safely_write_to_database(features_reporters_stmt);
-
-		//Only report features that aren't already in the database
-		std::string select_string =
-		"SELECT *\n"
-		"FROM\n"
-		"	features_reporters\n"
-		"WHERE\n"
-		"   report_name = ?;";
-		cppdb::statement select_stmt(basic::database::safely_prepare_statement(select_string,db_session));
-
-		std::string insert_string = "INSERT INTO features_reporters VALUES (?);";
-		cppdb::statement insert_stmt(basic::database::safely_prepare_statement(insert_string,db_session));
-
-		foreach(FeaturesReporterOP const & reporter, features_reporters_){
-				string const report_name(reporter->type_name());
-				select_stmt.bind(1,report_name);
-
-				cppdb::result res(basic::database::safely_read_from_database(select_stmt));
-				if(!res.next())
-				{
-						insert_stmt.bind(1, report_name);
-						safely_write_to_database(insert_stmt);
-				}
-		}
-
-		Column report_name("report_name", DbTextKey());
-		Column batch_id("batch_id",DbInteger());
-
-		/***batch_reports linking table***/
-		Schema batch_reports("batch_reports");
-
-		batch_reports.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
-		batch_reports.add_foreign_key(ForeignKey(report_name, "features_reporters", "report_name", true /*defer*/));
-
-		utility::vector1<Column> batch_reports_unique;
-		batch_reports_unique.push_back(batch_id);
-		batch_reports_unique.push_back(report_name);
-		batch_reports.add_constraint( new UniqueConstraint(batch_reports_unique) );
-
-		statement batch_reports_stmt(safely_prepare_statement(batch_reports.print(), db_session));
-		safely_write_to_database(batch_reports_stmt);
-}
-
-void
-ReportToDB::apply( Pose& pose ){
-
-	utility::sql_database::sessionOP db_session(basic::database::get_db_session(database_fname_, database_mode_, false, separate_db_per_mpi_process_));
 
 	// Make sure energy objects are initialized
 	(*scfxn_)(pose);
@@ -554,50 +511,191 @@ ReportToDB::apply( Pose& pose ){
 	PackerTaskCOP task(task_factory_->create_task_and_apply_taskoperations(pose));
 	vector1< bool > relevant_residues(task->repacking_residues());
 
-	TR << "Reporting features for "
+	TR
+		<< "Reporting features for "
 		<< accumulate(relevant_residues.begin(), relevant_residues.end(), 0)
 		<< " of the " << pose.total_residue()
-		<< " total residues in the pose." << endl;
+		<< " total residues in the pose for batch '" << name_ << "'." << endl;
 
-	if(use_transactions_) db_session->begin();
-	initialize_database(db_session);
-	if(use_transactions_) db_session->commit();
+	return relevant_residues;
+}
 
-	if(use_transactions_) db_session->begin();
+/// @detail The 'features_reporters' table lists the type_names of the
+/// all defined features reporters. The 'batch_reports' table link the
+/// features reporters with each batch defined in the 'batches' table.
+void
+ReportToDB::write_features_reporters_table(
+	utility::sql_database::sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
 
+	Schema features_reporters(
+		"features_reporters",
+		PrimaryKey( Column("report_name", DbTextKey())));
 
-		statement stmt;
-		if (database_mode_ == "sqlite3"){
-				stringstream stmt_ss; stmt_ss << "PRAGMA cache_size = " << cache_size_ << ";";
-				stmt = (*db_session) << stmt_ss.str(); stmt.exec();
+	statement features_reporters_stmt(
+		safely_prepare_statement(features_reporters.print(), db_session));
+	safely_write_to_database(features_reporters_stmt);
+
+	//Only report features that aren't already in the database
+	string select_string =
+	"SELECT *\n"
+	"FROM\n"
+	"	features_reporters\n"
+	"WHERE\n"
+	"	report_name = ?;";
+	statement select_stmt(safely_prepare_statement(select_string,db_session));
+
+	string insert_string = "INSERT INTO features_reporters VALUES (?);";
+	statement insert_stmt(safely_prepare_statement(insert_string,db_session));
+
+	foreach(FeaturesReporterOP const & reporter, features_reporters_){
+		string const report_name(reporter->type_name());
+		select_stmt.bind(1,report_name);
+
+		result res(safely_read_from_database(select_stmt));
+		if(!res.next()) {
+			insert_stmt.bind(1, report_name);
+			safely_write_to_database(insert_stmt);
 		}
+	}
+}
 
-		//initialize protocol and batch id
-		std::pair<Size, Size> ids = get_protocol_and_batch_id(name_, db_session);
-		protocol_id_=ids.first;
-		batch_id_=ids.second;
+void
+ReportToDB::write_batch_reports_table(
+	utility::sql_database::sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
 
-		/**structure features**/
-		boost::uuids::uuid const struct_id = structure_features_->report_features(
-		relevant_residues, batch_id_, db_session);
+	Schema batch_reports("batch_reports");
+	Column report_name("report_name", DbTextKey());
+	Column batch_id("batch_id",DbInteger());
 
-		/**all other features**/
-		std::string batch_reports_string = "INSERT INTO batch_reports (batch_id, report_name) VALUES (?,?);";
-		statement batch_reports_stmt(safely_prepare_statement(batch_reports_string, db_session));
+	batch_reports.add_foreign_key(
+		ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
+	batch_reports.add_foreign_key(
+		ForeignKey(report_name, "features_reporters", "report_name", true /*defer*/));
 
-	for(Size i=1; i <= features_reporters_.size(); ++i){
+	vector1<Column> batch_reports_unique;
+	batch_reports_unique.push_back(batch_id);
+	batch_reports_unique.push_back(report_name);
+	batch_reports.add_constraint( new UniqueConstraint(batch_reports_unique) );
 
-				std::string report_name = features_reporters_[i]->type_name();
+	statement batch_reports_stmt(
+		safely_prepare_statement(batch_reports.print(), db_session));
+	safely_write_to_database(batch_reports_stmt);
+}
 
-				features_reporters_[i]->report_features(pose, relevant_residues, struct_id, db_session);
+void
+ReportToDB::write_linking_tables(
+	utility::sql_database::sessionOP db_session
+) const {
 
-				//Need to check for preexisting entry to avoid constraint failure caused by having multiple structures in a batch
-//        batch_reports_stmt.bind(1, batch_id_);
-//        batch_reports_stmt.bind(2, report_name);
-//        safely_write_to_database(batch_reports_stmt);
+	try{
+		write_features_reporters_table(db_session);
+	} catch(cppdb_error error){
+		stringstream err_msg;
+		err_msg
+			<< "The ReportToDB Mover failed to write the 'features_reporters' table "
+			<< "to the database for batch '" << name_ << "'." << endl
+			<< "Error Message:" << endl << error.what() << endl;
+		utility_exit_with_message(err_msg.str());
 	}
 
+	try{
+		write_batch_reports_table(db_session);
+	} catch(cppdb_error error){
+		stringstream err_msg;
+		err_msg
+			<< "The ReportToDB Mover failed to write the 'batch_reports' table "
+			<< "to the database." << endl
+			<< "Error Message:" << endl << error.what() << endl;
+		utility_exit_with_message(err_msg.str());
+	}
+}
+
+void
+ReportToDB::apply( Pose& pose ){
+
+	sessionOP db_session(initialize_database());
+	vector1<bool> relevant_residues(initialize_pose(pose));
+
+	if(use_transactions_) db_session->begin();
+
+	set_cache_size(db_session, database_mode_, cache_size_);
+
+	std::pair<Size, Size> ids = get_protocol_and_batch_id(name_, db_session);
+	protocol_id_ = ids.first;
+	batch_id_ = ids.second;
+
+	uuid struct_id = report_structure_features(relevant_residues,	db_session);
+
+	report_features(pose, struct_id, relevant_residues, db_session);
+
 	if(use_transactions_) db_session->commit();
+}
+
+uuid
+ReportToDB::report_structure_features(
+	vector1<bool> const & relevant_residues,
+	sessionOP db_session
+) const {
+	uuid struct_id;
+	try {
+		struct_id = structure_features_->report_features(
+			relevant_residues, batch_id_, db_session);
+	} catch (cppdb_error error){
+		stringstream err_msg;
+		err_msg
+			<< "Failed to report structure features for:" << endl
+			<< "\tprotocol_id: '" << protocol_id_ << "'" << endl
+			<< "\tbatch name: '" << name_ << "'" <<  endl
+			<< "\tbatch_id: '" << batch_id_ << "'" << endl
+			<< "Error Message:" << endl << error.what() << endl;
+		utility_exit_with_message(err_msg.str());
+	}
+	return struct_id;
+}
+
+void
+ReportToDB::report_features(
+	Pose const & pose,
+	uuid const struct_id,
+	utility::vector1<bool> const & relevant_residues,
+	utility::sql_database::sessionOP db_session
+) const {
+
+//	string batch_reports_string =
+//		"INSERT INTO batch_reports (batch_id, report_name) VALUES (?,?);";
+//	statement batch_reports_stmt(
+//		safely_prepare_statement(batch_reports_string, db_session));
+
+	for(Size i=1; i <= features_reporters_.size(); ++i){
+		string report_name = features_reporters_[i]->type_name();
+
+		try {
+			features_reporters_[i]->report_features(
+				pose, relevant_residues, struct_id, db_session);
+		} catch (cppdb_error error){
+			stringstream err_msg;
+			err_msg
+				<< "Failed to report features for the "
+				<< "'" << report_name << "' reporter with:" << endl
+				<< "with:" << endl
+				<< "\tprotocol_id: '" << protocol_id_ << "' " << endl
+				<< "\tbatch name: '" << name_ << "' " << endl
+				<< "\tbatch_id: '" << batch_id_ << "'" << endl
+				<< "\tstruct_id: '" << struct_id << "'" << endl
+				<< "Error Message:" << endl << error.what() << endl;
+			utility_exit_with_message(err_msg.str());
+		}
+
+		//Need to check for preexisting entry to avoid constraint failure caused by having multiple structures in a batch
+		//        batch_reports_stmt.bind(1, batch_id_);
+		//        batch_reports_stmt.bind(2, report_name);
+		//        safely_write_to_database(batch_reports_stmt);
+	}
+
 }
 
 } // namespace

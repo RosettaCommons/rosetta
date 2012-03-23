@@ -156,47 +156,43 @@ ProtocolFeatures::report_features(
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,protocol_id);
 
-    TR << "Checking for existing protocol entry with given id" << std::endl;
+	TR << "Checking for existing protocol entry with given id" << std::endl;
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
-	if(res.next())
-	{
+	if(res.next()) {
 		core::Size selected = 0;
 		res >> selected;
-		if(selected != 0)
-		{
+		if(selected != 0) {
 			return protocol_id;
 		}
 	}
-	
-	cppdb::statement insert_statement;
-	if(protocol_id){
-        TR << "Writing to protocols table with given protocol id: " << protocol_id << std::endl;
-        std::string insert_string("INSERT INTO protocols VALUES (?,?,?,?,?,?);");
-        cppdb::statement insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
-		insert_statement.bind(1,protocol_id);
-        insert_statement.bind(2,command_line);
-        insert_statement.bind(3,specified_options);
-        insert_statement.bind(4,svn_url);
-        insert_statement.bind(5,svn_version);
-        insert_statement.bind(6,script);
 
-	}else {
-        TR << "No protocol ID, generating one automagically" << std::endl;
-        std::string insert_string("INSERT INTO protocols (command_line, specified_options, svn_url, svn_version, script) VALUES (?,?,?,?,?);");
-        insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
-        insert_statement.bind(1,command_line);
-        insert_statement.bind(2,specified_options);
-        insert_statement.bind(3,svn_url);
-        insert_statement.bind(4,svn_version);
-        insert_statement.bind(5,script);
+	cppdb::statement insert_statement;
+	if(protocol_id) {
+		TR << "Writing to protocols table with given protocol id: " << protocol_id << std::endl;
+		std::string insert_string("INSERT INTO protocols VALUES (?,?,?,?,?,?);");
+		insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
+		insert_statement.bind(1,protocol_id);
+		insert_statement.bind(2,command_line);
+		insert_statement.bind(3,specified_options);
+		insert_statement.bind(4,svn_url);
+		insert_statement.bind(5,svn_version);
+		insert_statement.bind(6,script);
+
+	} else {
+		TR << "No protocol ID, generating one automagically" << std::endl;
+		std::string insert_string("INSERT INTO protocols (command_line, specified_options, svn_url, svn_version, script) VALUES (?,?,?,?,?);");
+		insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
+		insert_statement.bind(1,command_line);
+		insert_statement.bind(2,specified_options);
+		insert_statement.bind(3,svn_url);
+		insert_statement.bind(4,svn_version);
+		insert_statement.bind(5,script);
 	}
 
 	basic::database::safely_write_to_database(insert_statement);
-	if(protocol_id)
-	{
+	if(protocol_id) {
 		return protocol_id;
-	}else
-	{
+	} else {
     return insert_statement.sequence_last("protocols_protocol_id_seq");
 	}
 }

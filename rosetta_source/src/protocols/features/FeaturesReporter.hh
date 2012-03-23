@@ -82,7 +82,7 @@ public:
 	core::Size
 	report_features(
 		core::pose::Pose const & /*pose*/,
-        boost::uuids::uuid /*parent uuid*/,
+		boost::uuids::uuid /*parent uuid*/,
 		utility::sql_database::sessionOP /*db_session*/
 	);
 

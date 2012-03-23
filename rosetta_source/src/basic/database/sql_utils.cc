@@ -412,6 +412,26 @@ void write_schema_to_database(
 }
 
 
+void
+set_cache_size(
+	utility::sql_database::sessionOP db_session,
+	std::string db_mode,
+	platform::Size cache_size
+) {
+
+	if (db_mode == "sqlite3"){
+		std::stringstream stmt_ss;
+		stmt_ss << "PRAGMA cache_size = " << cache_size << ";";
+		cppdb::statement stmt(safely_prepare_statement(stmt_ss.str(), db_session));
+		safely_write_to_database(stmt);
+	} else {
+		TR
+			<< "WARNING: Attempting to set database cache size "
+			<< "for a database type for which this is currently not supported: "
+			<< "'" << db_mode << "'." << std::endl;
+	}
+}
+
 
 }
 }

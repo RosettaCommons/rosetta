@@ -63,6 +63,13 @@ table_exists(
 	utility::sql_database::sessionOP db_session,
 	std::string const & table_name);
 
+///@brief set the number of 1kb pages to use for cache
+void
+set_cache_size(
+	utility::sql_database::sessionOP db_session,
+	std::string db_mode,
+	platform::Size cache_size);
+
 
 void write_schema_to_database(
 	std::string schema,

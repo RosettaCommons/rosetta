@@ -22,21 +22,24 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-
-// Utility Headers
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
-
-// C++ Headers
-#include <string>
-
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
 #include <protocols/features/FeaturesReporterFactory.fwd.hh>
 #include <protocols/features/ProtocolFeatures.fwd.hh>
 #include <protocols/features/BatchFeatures.fwd.hh>
 #include <protocols/features/StructureFeatures.fwd.hh>
+
+
+// Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/vector1.hh>
+
+// Boost Headers
+#include <boost/uuid/uuid.hpp>
+
+// C++ Headers
+#include <string>
 
 
 namespace protocols{
@@ -110,8 +113,8 @@ public:
 	parse_cache_size_tag_item(
 		utility::tag::TagPtr const tag);
 
-		void
-		parse_name_tag_item(TagPtr const tag);
+	void
+	parse_name_tag_item(TagPtr const tag);
 
 	void
 	parse_my_tag(
@@ -129,10 +132,29 @@ public:
 	void
 	initialize_reporters();
 
-	void
-	initialize_database(
-		utility::sql_database::sessionOP db_session);
+	utility::sql_database::sessionOP
+	initialize_database();
 
+	///@brief initialize the pose and return the relevant residues
+	utility::vector1< bool >
+	initialize_pose(
+		Pose & pose
+	) const;
+
+	///@brief Add the defined features reporters to the
+	///'features_reporters' table in the database
+	void
+	write_features_reporters_table(
+		utility::sql_database::sessionOP db_session) const;
+
+	///@brief Link the defined features reporters to the batch of
+	///structures extracted with this invocation of the ReportToDB mover
+	void
+	write_batch_reports_table(
+		utility::sql_database::sessionOP db_session) const;
+
+	///@brief write tables linking the batches table with the features
+	///datababase
 	void
 	write_linking_tables(
 		utility::sql_database::sessionOP db_session) const;
@@ -140,6 +162,18 @@ public:
 	void
 	apply(
 		Pose& pose);
+
+	boost::uuids::uuid
+	report_structure_features(
+		utility::vector1<bool> const & relevant_residues,
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	report_features(
+		core::pose::Pose const & pose,
+		boost::uuids::uuid struct_id,
+		utility::vector1<bool> const & relevant_residues,
+		utility::sql_database::sessionOP db_session) const;
 
 private:
 	std::string database_fname_;

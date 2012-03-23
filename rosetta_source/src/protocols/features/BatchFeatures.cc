@@ -73,14 +73,24 @@ BatchFeatures::schema() const {
 	using namespace basic::database::schema_generator;
 
 
-	Column batch_id("batch_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
-	Schema batches("batches", PrimaryKey(batch_id));
+	PrimaryKey batch_id(
+		Column("batch_id", DbInteger(), false /*not null*/, true /*autoincrement*/));
 
-	Column protocol_id("protocol_id",DbInteger());
-	batches.add_foreign_key(ForeignKey(protocol_id, "protocols", "protocol_id", true /*defer*/));
+	ForeignKey protocol_id(
+		Column("protocol_id", DbInteger()),
+		"protocols",
+		"protocol_id",
+		true /*defer*/);
 
-	batches.add_column( Column("name", DbText()) );
-	batches.add_column( Column("description", DbText()) );
+	Column name(Column("name", DbText()));
+
+	Column description(Column("description", DbText()));
+
+
+	Schema batches("batches", batch_id);
+	batches.add_foreign_key(protocol_id);
+	batches.add_column(name);
+	batches.add_column(description);
 
 	return batches.print();
 }
@@ -114,14 +124,14 @@ BatchFeatures::report_features(
 
 	basic::database::safely_write_to_database(insert_statement);
 
-	std::string select = "SELECT protocol_id, batch_id, name FROM batches;";
+	std::string select = "SELECT batch_id, protocol_id, name FROM batches;";
 	cppdb::statement select_stmt = basic::database::safely_prepare_statement(select,db_session);
 
 	cppdb::result res(basic::database::safely_read_from_database(select_stmt));
 	while(res.next()){
-		core::Size b_id, p_id;
+		signed long long b_id, p_id;
 		std::string test_name;
-		res >> p_id >> b_id >> test_name;
+		res >> b_id >> p_id >> test_name;
 	}
 
 	int test = insert_statement.sequence_last("batches_batch_id_seq");

@@ -82,9 +82,16 @@ FeaturesReporter::write_schema_to_db(
 ) const {
 
   string schema_str(schema());
-
-  basic::database::write_schema_to_database(schema_str,db_session);
-
+	try{
+		basic::database::write_schema_to_database(schema_str,db_session);
+	} catch (cppdb::cppdb_error error){
+		stringstream err_msg;
+		err_msg
+			<< "Failed to write database schema for '" << type_name() << "'" << endl
+			<< "Error Message:" << endl << error.what() << endl
+			<< "Schema:" << endl << schema_str << endl;
+		utility_exit_with_message(err_msg.str());
+	}
 }
 
 ///@details Extract all features from the pose to the database.  The
@@ -95,7 +102,7 @@ FeaturesReporter::write_schema_to_db(
 Size
 FeaturesReporter::report_features(
 	Pose const & pose,
-    boost::uuids::uuid parent_id,
+	boost::uuids::uuid parent_id,
 	sessionOP db_session
 ){
 	vector1<bool> relevant_residues(true, pose.total_residue());
@@ -111,7 +118,7 @@ Size
 FeaturesReporter::report_features(
 	Pose const & /*pose*/,
 	vector1< bool > const & /*relevant_residues*/,
-    boost::uuids::uuid /*parent uuid*/,
+	boost::uuids::uuid /*parent uuid*/,
 	sessionOP /*db_session*/
 ){
 	Size dummy_parent_id(0);
