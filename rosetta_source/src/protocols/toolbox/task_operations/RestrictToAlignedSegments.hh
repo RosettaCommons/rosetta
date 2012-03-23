@@ -60,10 +60,14 @@ public:
 	void start_res( utility::vector1< core::Size > const s ){ start_res_ = s; }
 	utility::vector1< core::Size > stop_res() const{ return stop_res_; }
 	void stop_res( utility::vector1< core::Size > const s ){ stop_res_ = s; }
+	bool repack_outside() const { return repack_outside_; }
+	void repack_outside( bool const r ){ repack_outside_ = r; }
+
 private:
 	utility::vector1< core::pose::PoseOP > source_pose_;
 	utility::vector1< core::Size > start_res_; // start and end will be parsed at apply time to determine the relevant residue numbers
 	utility::vector1< core::Size > stop_res_;
+	bool repack_outside_; //dflt true; shall we repack all residues not specified by the alignment? Else, prevent repacking
 };
 
 } //namespace protocols

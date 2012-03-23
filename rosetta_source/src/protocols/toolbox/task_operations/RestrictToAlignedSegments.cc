@@ -58,6 +58,7 @@ RestrictToAlignedSegmentsOperation::RestrictToAlignedSegmentsOperation()
 	source_pose_.clear();
 	start_res_.clear();
 	stop_res_.clear();
+	repack_outside_ = true;
 }
 
 RestrictToAlignedSegmentsOperation::~RestrictToAlignedSegmentsOperation() {}
@@ -92,21 +93,27 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 			designable.insert( position );
   }
 
-	utility::vector1< core::Size > restrict_to_repacking;
-	restrict_to_repacking.clear();
-	TR<<"Repackable residues: ";
+	utility::vector1< core::Size > outside;
+	outside.clear();
+	if( repack_outside() )
+		TR<<"Repackable residues: ";
+	else
+		TR<<"Prevent repacking on: ";
 	for( core::Size i = 1; i<=pose.total_residue(); ++i ){
 		if( std::find( designable.begin(), designable.end(), i ) == designable.end() ){
 			TR<<i<<",";
-			restrict_to_repacking.push_back( i );
+			outside.push_back( i );
 		}
 	}
 ///for some unfathomable reason OperateOnCertainResidues defaults to applying to all residues if none are defined, so you have to be careful here...
-	OperateOnCertainResidues oocr_repacking;
-	if( restrict_to_repacking.size() ){
-		oocr_repacking.op( new RestrictToRepackingRLT );
-		oocr_repacking.residue_indices( restrict_to_repacking );
-		oocr_repacking.apply( pose, task );
+	OperateOnCertainResidues oocr_outside;
+	if( outside.size() ){
+		if( repack_outside() )
+			oocr_outside.op( new RestrictToRepackingRLT );
+		else
+			oocr_outside.op( new PreventRepackingRLT );
+		oocr_outside.residue_indices( outside );
+		oocr_outside.apply( pose, task );
 	}
 	TR<<std::endl;
 }
@@ -147,6 +154,7 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 		start_res_.push_back( parsed_start );
 		stop_res_. push_back( parsed_stop );
 	}
+	repack_outside( tag->getOption< bool >( "repack_outside", 1 ) );
 }
 } //namespace protocols
 } //namespace toolbox
