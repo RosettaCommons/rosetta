@@ -13,7 +13,7 @@
 @page FloppyTail Documentation for FloppyTail application
 
 @section metadata Metadata
-Last edited 3/6/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+Last edited 3/23/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
 The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/FloppyTail/</code>; there's an integration test+demo at <code>rosetta/rosetta_source/test/integration/tests/FloppyTail/</code>.  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
@@ -66,8 +66,8 @@ This code was intended for a single purpose, but it may work if you have a simil
 FloppyTail supports three types of options: general rosetta options (packing, etc.), generic protocol options like "how many cycles" borrowed from the (unreleased) AnchoredDesign application, and FloppyTail specific options.
 
 FloppyTail options
-@li flexible_start_resnum - integer - this is the start of the flexible tail in PDB numbering.
-@li flexible_stop_resnum - integer - this is the end of the flexible region, in PDB numbering.  Passing 0 or not using this option means the entire chain after flexible_start_resnum.
+@li flexible_start_resnum - integer - this is the start of the flexible tail in PDB numbering. (See below that you have an option for passing a MoveMap file instead).
+@li flexible_stop_resnum - integer - this is the end of the flexible region, in PDB numbering.  Passing 0 or not using this option means the entire chain after flexible_start_resnum. (See below that you have an option for passing a MoveMap file instead).
 @li flexible_chain - string - the first character of this string is interpreted as the PDB chain for the flexible region; any other characters are ignored.
 @li shear_on - real - In centroid mode, shear moves are completely nonproductive early on when the tail is still largely extended.  This value gives the fraction of centroid cycles when shear moves will be allowed (introduced into the moveset of the RandomMover choosing perturbation moves).  For example, passing 0.333 means that for the first third of centroid mode, shear moves will be disallowed.
 @li short_tail_fraction - real - Fraction of the tail used in the short tail fraction of refinement mode.  0.1 would mean the last tenth of the tail is flexible.  Not compatible with non-terminal flexible regions.
