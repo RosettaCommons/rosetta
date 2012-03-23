@@ -179,6 +179,11 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 	if( in_variable_block ) utility_exit_with_message("Error when reading cstfile. VARIABLE_CST::BEGIN tag without corresponding VARIABLE_CST::END tag found.");
 
 	tr.Info << " done, " << cst_pairs_.size() << " cst blocks were read." << std::endl;
+
+	//if we're doing matching or building inverse rotamer trees later on,
+	//this information is necessary
+	this->determine_target_downstream_res();
+
 } //funtion read enzyme cst
 
 
@@ -903,11 +908,35 @@ EnzConstraintIO::mcfi_lists_size() const
 	return mcfi_lists_.size();
 }
 
-/*MatchConstraintFileInfoListCOP
-EnzConstraintIO::mcfi_list( Size index ) const
+void
+EnzConstraintIO::determine_target_downstream_res()
 {
-	return mcfi_lists_[ index ];
-}*/
+	target_downstream_res_.clear();
+
+	for( core::Size i =1; i <= mcfi_lists_.size(); ++i ){
+
+		std::map< std::string, utility::vector1< std::string > > const &
+			alg_info( (*mcfi_lists_[i]).mcfi(1)->algorithm_inputs() );
+
+		if ( alg_info.find( "match" ) == alg_info.end() ) target_downstream_res_.push_back( std::pair<core::Size, core::Size >(1,1) );
+		else{
+			utility::vector1< std::string > const & info( alg_info.find( "match" )->second );
+			std::pair<core::Size, core::Size > this_target(1,1);
+			for ( core::Size ll = 1; ll <= info.size(); ++ll ) {
+				std::string llstr = info[ ll ];
+				std::istringstream llstream( llstr );
+				std::string first, second;
+				llstream >> first >> second;
+				if( first == "SECONDARY_MATCH:" && second == "UPSTREAM_CST" ){
+					this_target.second = 2;
+					llstream >> this_target.first;
+					break;
+				}
+			}
+			target_downstream_res_.push_back( this_target );
+		}
+	}
+}
 
 }
 } //enzdes

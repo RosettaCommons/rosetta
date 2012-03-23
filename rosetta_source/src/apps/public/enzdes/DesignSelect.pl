@@ -41,6 +41,42 @@ sub StdDev {
 
 }
 
+sub array1_pareto_suboptimal_to_array2 {
+  my $array1_ref = shift;
+  my @array1 = @$array1_ref;
+  my $array2_ref = shift;
+  my @array2 = @$array2_ref;
+  my $compare_columns_ref = shift;
+  my @compare_columns = @$compare_columns_ref;
+  my $compare_modes_ref = shift;
+  my @compare_modes = @$compare_modes_ref;
+
+  #printf STDERR "\n calling pareto func.. \n";
+
+  #printf STDERR "compare_modes has size %s\n", scalar @compare_modes;
+  #for( my $fack = 0; $fack < scalar @compare_modes; $fack++){
+  #  printf STDERR "compare_modes[%s] has value %i \n", $fack, $compare_modes[$fack];
+  #}
+ 
+  my $num_compare_val = scalar @compare_columns;
+  for( my $i = 0; $i < $num_compare_val; $i++){
+    my $this_column = $compare_columns[$i];
+    #printf STDERR "compare mode for column %s is _%i \n" , $this_column, $compare_modes[$this_column];
+    if( $compare_modes[$this_column] == 0 ){    #convention: 0 means smaller is better
+      if ($array1[$this_column] < $array2[$this_column] ){ 
+	#printf STDERR " array1 value in column is %s, array2 value is %s, array1 not pareto suboptimal", $array1[$this_column], $array2[$this_column];
+	return 0;
+      }
+    }
+    elsif ($compare_modes[$this_column] == 1 ){    #convention: 1 means larger is better
+      if ($array1[$this_column] > $array2[$this_column] ) {return 0;}
+    }
+  }
+  
+  return 1;
+}
+
+
 #function: Padsp(InpString,len) adds spaces to the end of the input string until the desired length is reached
 sub Padsp {
     my $InpString = $_[0];
@@ -79,6 +115,7 @@ my $OutOption = 0;
 my $ReducedOutput = 0;
 my $EZlabels = 1;
 my $sort_data = 0;
+my $pareto_optimal_set = 0;
 
 my $tag_column = 0;
 
@@ -89,6 +126,7 @@ for(my $ii = -1; $ii < $#ARGV;$ii++){
     if ($ARGV[$ii] eq '-short_output'){$ReducedOutput = 1;}
     if ($ARGV[$ii] eq '-easy_labels'){$EZlabels = 1;}
     if ($ARGV[$ii] eq '-column_id_labels'){$EZlabels = 0;}
+    if ($ARGV[$ii] eq '-get_pareto_set'){$pareto_optimal_set = 1;}
 
     if ($ARGV[$ii] eq '-tag_column'){
       if( $ARGV[$ii+1] eq 'last' ) { $tag_column = -1;}
@@ -195,85 +233,142 @@ printf STDERR "\n";
 
 
 #---now perform exclusions----
+#first, if pareto set required, we only do the pareto said
+if( $pareto_optimal_set == 1 ){
 
-for(my $rr = 0; $rr < $NumReqs; $rr++) {
+  my @compare_columns=();
+  my @compare_modes = ();
+
+  #---the following code is duplication of the requirement parsing in the next block, at some point this should be unified
+  for (my $rr = 0; $rr < $NumReqs; $rr++) {
+
+    my @CurReqArray = split(' ',$ReqStrings[$rr]);
+    if ($EZlabels == 1) { 
+      $compare_columns[$rr] = int( $title_hash{ $CurReqArray[1] } -1); 
+      if ( $compare_columns[$rr] eq "" ) { 
+	printf STDERR "\nError: label %s was not found in the data file.\n", $CurReqArray[1];
+	exit 1;
+      }
+      printf STDERR "Label %s translates to column %s, first value is %s \n", $CurReqArray[1],$compare_columns[$rr], $ColumnArray[$compare_columns[$rr] +1][0]; 
+    } else {
+      $compare_columns[$rr] = int( $CurReqArray[1] - 1 );
+    }#remember offset
+    #printf STDERR "compare column for rr %s is %s \n", $rr, $compare_columns[$rr];
+
+    #my $CurMode = $CurReqArray[2];
+    #my $CurSubmode = $CurReqArray[3];
+    if( $CurReqArray[2] eq 'value' ){
+      if( $CurReqArray[3] eq '<' ) {$compare_modes[$rr] = 0;}
+      elsif( $CurReqArray[3] eq '>' ) {$compare_modes[$rr] = 1;}
+      else{ $compare_modes[$rr] = -1;}
+    } 
+    else{ $compare_modes[$rr] = -1;}
+  } #loop over requirements
+  #printf STDERR "compare_modes has size %i\n", scalar @compare_modes;
+  #for( my $fack = 0; $fack < scalar @compare_modes; $fack++){
+  #  printf STDERR "compare_modes[%s] has value %i \n", $fack, $compare_modes[$fack];
+  #}
+  #print
+ #----duplication over
+
+
+  #print STDERR "DataArray[0] has size %i\n", scalar $DataArray[0];
+  for (my $ii = 0; $ii < $NumEntries; $ii++) {
+    for ( my $jj = $ii +1; $jj < $NumEntries; $jj++ ){
+
+      if( &array1_pareto_suboptimal_to_array2( \@{$DataArray[$ii]}, \@{$DataArray[$jj]}, \@compare_columns, \@compare_modes )){
+	$DataArray[$ii][$NumColumns+1] = 0;
+      } 
+    }
+  }
+
+}
+
+#otherwise, do everything that passes reqs
+else{
+  for (my $rr = 0; $rr < $NumReqs; $rr++) {
     my @CurReqArray = split(' ',$ReqStrings[$rr]);
     my $CurCol = -1;
-    if($EZlabels == 1){ 
+    if ($EZlabels == 1) { 
       $CurCol = $title_hash{ $CurReqArray[1] }; 
-      if( $CurCol eq "" ){ 
+      if ( $CurCol eq "" ) { 
 	printf STDERR "\nError: label %s was not found in the data file.\n", $CurReqArray[1];
 	exit 1;
       }
       printf STDERR "Label %s translates to column %s, first value is %s \n", $CurReqArray[1],$CurCol, $ColumnArray[$CurCol+1][0]; 
-    }
-    else{ $CurCol = $CurReqArray[1] - 1;} #remember offset
+    } else {
+      $CurCol = $CurReqArray[1] - 1;
+    }				#remember offset
     $req_columns[$CurCol] = 1;			
     my $CurMode = $CurReqArray[2];
     my $CurSubmode = $CurReqArray[3];
     my $CurValue = $CurReqArray[4];
     printf STDERR "\n$CurCol $CurMode $CurSubmode $CurValue ";
 
-    if($CurMode eq 'value'){    #absolute value mode, select only those entries that have an absolute value higher, lower or equal to a given cutoff
+    if ($CurMode eq 'value') { #absolute value mode, select only those entries that have an absolute value higher, lower or equal to a given cutoff
       my $num_passing = $NumEntries;
-	if($CurSubmode eq '>'){
-	    for(my $ii = 0; $ii < $NumEntries; $ii++){
-		if($DataArray[$ii][$CurCol ] <= $CurValue){
-		  $DataArray[$ii][$NumColumns+1] = 0;
-		  $num_passing = $num_passing - 1;
-		}
-	    }
+      if ($CurSubmode eq '>') {
+	for (my $ii = 0; $ii < $NumEntries; $ii++) {
+	  if ($DataArray[$ii][$CurCol ] <= $CurValue) {
+	    $DataArray[$ii][$NumColumns+1] = 0;
+	    $num_passing = $num_passing - 1;
+	  }
 	}
-	elsif($CurSubmode eq '<'){
-	    for(my $ii = 0; $ii < $NumEntries; $ii++){
-		if($DataArray[$ii][$CurCol] >= $CurValue){
-		  $DataArray[$ii][$NumColumns+1] = 0;
-		  $num_passing = $num_passing - 1;
-		}
-	    }
+      } elsif ($CurSubmode eq '<') {
+	for (my $ii = 0; $ii < $NumEntries; $ii++) {
+	  if ($DataArray[$ii][$CurCol] >= $CurValue) {
+	    $DataArray[$ii][$NumColumns+1] = 0;
+	    $num_passing = $num_passing - 1;
+	  }
+	}
 	
+      } elsif ($CurSubmode eq '=') { #value has to equal something
+	for (my $ii = 0; $ii < $NumEntries; $ii++) {
+	  #printf STDERR "comparing %s and %s ", $DataArray[$ii][$CurCol], $CurValue;
+	  if ($DataArray[$ii][$CurCol] != $CurValue) {
+	    $DataArray[$ii][$NumColumns+1] = 0;
+	    $num_passing = $num_passing - 1;
+	  }
+	  #else{ printf STDERR "accept \n"; }
 	}
-	elsif($CurSubmode eq '=') { #value has to equal something
-	   for(my $ii = 0; $ii < $NumEntries; $ii++){
-	       #printf STDERR "comparing %s and %s ", $DataArray[$ii][$CurCol], $CurValue;
-	       if($DataArray[$ii][$CurCol] != $CurValue){
-		 $DataArray[$ii][$NumColumns+1] = 0;
-		 $num_passing = $num_passing - 1;
-	       }
-	       #else{ printf STDERR "accept \n"; }
-	    }
-       }
+      }
       @num_passing_reqs[$CurCol] = $num_passing
-    } #if mode eq value
+    }				#if mode eq value
 
-    if($CurMode eq 'fraction'){     #percentage mode, select only those entries which are among the best or worst $CurValue percent entries in a column
+    if ($CurMode eq 'fraction') { #percentage mode, select only those entries which are among the best or worst $CurValue percent entries in a column
 	
-	my @CurColSort = sort {$a <=> $b} @{$ColumnArray[$CurCol +1]};
+      my @CurColSort = sort {$a <=> $b} @{$ColumnArray[$CurCol +1]};
 	
-	if((scalar @CurColSort) != $NumEntries){printf STDERR "Error, not enough entries for column $CurCol.\n"; exit 1;} #sanity check
+      if ((scalar @CurColSort) != $NumEntries) {
+	printf STDERR "Error, not enough entries for column $CurCol.\n"; exit 1;
+      }				#sanity check
 
-	$CurColSort[$NumEntries] = $CurColSort[$NumEntries - 1] + 1; #have to put sentinel at end of array that's the biggest number
-	my $NumToSelect = sprintf("%.0f",$NumEntries * $CurValue);
-	#my $NumToSelect = $NumEntries * $CurValue;
-	my $CutOffValue = 0;
-	printf STDERR "numto select is $NumToSelect, ";
+      $CurColSort[$NumEntries] = $CurColSort[$NumEntries - 1] + 1; #have to put sentinel at end of array that's the biggest number
+      my $NumToSelect = sprintf("%.0f",$NumEntries * $CurValue);
+      #my $NumToSelect = $NumEntries * $CurValue;
+      my $CutOffValue = 0;
+      printf STDERR "numto select is $NumToSelect, ";
 	
-	if($CurSubmode eq '>'){ #highest percentage
-	    $CutOffValue = $CurColSort[$NumEntries - $NumToSelect];
-	    printf STDERR "cut off is $CutOffValue \n";
-	    for(my $ii = 0; $ii < $NumEntries; $ii++){
-		if($DataArray[$ii][$CurCol ] < $CutOffValue){$DataArray[$ii][$NumColumns+1] = 0;}
-	    }
-	} 
-	elsif($CurSubmode eq '<'){#lowest percentage
-	    $CutOffValue = $CurColSort[$NumToSelect - 1];
-	    printf STDERR "cut off is $CutOffValue \n";
-	    for(my $ii = 0; $ii < $NumEntries; $ii++){
-		if($DataArray[$ii][$CurCol ] > $CutOffValue){$DataArray[$ii][$NumColumns+1] = 0;}
-	    }
-	} 
-	@num_passing_reqs[$CurCol] = $NumToSelect
+      if ($CurSubmode eq '>') { #highest percentage
+	$CutOffValue = $CurColSort[$NumEntries - $NumToSelect];
+	printf STDERR "cut off is $CutOffValue \n";
+	for (my $ii = 0; $ii < $NumEntries; $ii++) {
+	  if ($DataArray[$ii][$CurCol ] < $CutOffValue) {
+	    $DataArray[$ii][$NumColumns+1] = 0;
+	  }
+	}
+      } elsif ($CurSubmode eq '<') { #lowest percentage
+	$CutOffValue = $CurColSort[$NumToSelect - 1];
+	printf STDERR "cut off is $CutOffValue \n";
+	for (my $ii = 0; $ii < $NumEntries; $ii++) {
+	  if ($DataArray[$ii][$CurCol ] > $CutOffValue) {
+	    $DataArray[$ii][$NumColumns+1] = 0;
+	  }
+	}
+      } 
+      @num_passing_reqs[$CurCol] = $NumToSelect
     }
+  }
 }
 printf STDERR "\n";
 

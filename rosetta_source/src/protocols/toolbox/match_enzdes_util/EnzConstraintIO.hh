@@ -236,6 +236,10 @@ public:
 	core::Size
 	enz_cst_params_size() { return cst_pairs_.size(); }
 
+	utility::vector1< std::pair< core::Size, core::Size> > const &
+	target_downstream_res()  const {
+		return target_downstream_res_; }
+
 protected:
 
 	utility::vector1< EnzConstraintParametersOP > cst_pairs_; // contains information about the residue pair constraints
@@ -261,7 +265,13 @@ private:
 		core::Size cst_block
 	) const;
 
+	void
+	determine_target_downstream_res();
+
 	utility::vector1< toolbox::match_enzdes_util::MatchConstraintFileInfoListOP > mcfi_lists_;
+
+	//convenience data structure that contains info about upstream / upstream interactions
+	utility::vector1< std::pair< core::Size, core::Size> > target_downstream_res_;
 
 	core::chemical::ResidueTypeSetCAP restype_set_;
 	//bool cst_pair_data_consistent_;

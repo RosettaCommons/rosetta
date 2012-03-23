@@ -35,13 +35,6 @@
 void
 match_main();
 
-/// @brief small function to parse the ALGORITHM_INFO blocks of a cstfile
-/// for whether they contain a SECONDARY_MATCH: UPSTREAM_CST <x> tag
-/// and if so, return this information
-std::pair< core::Size, core::Size >
-target_downstream_res(
-	protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi );
-
 int main( int argc, char * argv [] )
 {
 
@@ -71,7 +64,7 @@ match_main()
 	utility::vector1< std::list< core::conformation::ResidueCOP >::const_iterator > res_iterators( num_geomcst );
 	for( core::Size i =1; i <= num_geomcst; ++i ){
 		core::conformation::ResidueCOP downstream_res( ligres );
-		std::pair< core::Size, core::Size > targ_ds_res( target_downstream_res( enz_io->mcfi_list( i )->mcfi( 1 ) ) );
+		std::pair< core::Size, core::Size > const & targ_ds_res( enz_io->target_downstream_res()[i] );
 		if( targ_ds_res.first > i ) utility_exit_with_message("Downstream residue given for constraint block "+utility::to_string( i )+" seems to be in a later constraint block ( " +utility::to_string( targ_ds_res.first )+" ). This is not legal." );
 		if( targ_ds_res.second != 1 ) downstream_res = *(theozyme_res[ targ_ds_res.first ].begin());
 		std::list< core::conformation::ResidueCOP > cur_inv_rots( enz_io->mcfi_list( i )->inverse_rotamers_against_residue( enz_io->mcfi_list( i )->mcfi(1)->downstream_res(), downstream_res ) );
@@ -114,30 +107,4 @@ match_main()
 	}
 	file_out.close();
 }
-
-std::pair< core::Size, core::Size >
-target_downstream_res(
-	protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi )
-{
-	std::pair< core::Size, core::Size> to_return(1,1);
-	std::map< std::string, utility::vector1< std::string > > const &
-		alg_info( mcfi->algorithm_inputs() );
-
-	if ( alg_info.find( "match" ) == alg_info.end() ) return to_return;
-
-	utility::vector1< std::string > const & info( alg_info.find( "match" )->second );
-	for ( core::Size ll = 1; ll <= info.size(); ++ll ) {
-		std::string llstr = info[ ll ];
-		std::istringstream llstream( llstr );
-		std::string first, second;
-		llstream >> first >> second;
-		if( first == "SECONDARY_MATCH:" && second == "UPSTREAM_CST" ){
-			to_return.second = 2;
-			llstream >> to_return.first;
-			break;
-		}
-	}
-	return to_return;
-}
-
 
