@@ -110,9 +110,9 @@ public:
 	parse_cache_size_tag_item(
 		utility::tag::TagPtr const tag);
 
-    void
-    parse_name_tag_item(TagPtr const tag);
-    
+		void
+		parse_name_tag_item(TagPtr const tag);
+
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,
@@ -140,28 +140,28 @@ public:
 	void
 	apply(
 		Pose& pose);
-    
+
 private:
 	std::string database_fname_;
 	std::string database_mode_;
 	bool separate_db_per_mpi_process_;
 	std::string sample_source_;
-    std::string name_;
-    
+	std::string name_;
+
 	core::scoring::ScoreFunctionOP scfxn_;
 	bool use_transactions_;
 
 	core::Size cache_size_;
-    
-    core::Size protocol_id_;
-    core::Size batch_id_;
-    
+
+	core::Size protocol_id_;
+	core::Size batch_id_;
+
 	// initialized in parse_my_tag
 	core::pack::task::TaskFactoryOP task_factory_;
 
 	protocols::features::FeaturesReporterFactory * features_reporter_factory_;
 	protocols::features::ProtocolFeaturesOP protocol_features_;
-    protocols::features::BatchFeaturesOP batch_features_;
+	protocols::features::BatchFeaturesOP batch_features_;
 	protocols::features::StructureFeaturesOP structure_features_;
 	utility::vector1< protocols::features::FeaturesReporterOP > features_reporters_;
 	bool initialized;

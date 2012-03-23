@@ -75,18 +75,18 @@ namespace features{
 std::string
 ReportToDBCreator::keyname() const
 {
-  return ReportToDBCreator::mover_name();
+	return ReportToDBCreator::mover_name();
 }
 
 moves::MoverOP
 ReportToDBCreator::create_mover() const {
-  return new ReportToDB;
+	return new ReportToDB;
 }
 
 std::string
 ReportToDBCreator::mover_name()
 {
-  return "ReportToDB";
+	return "ReportToDB";
 }
 
 /// Macros are not properly caught and passed along by my #inclusion
@@ -136,15 +136,18 @@ using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::session;
 
 static Tracer TR("protocols.features.ReportToDB");
-    
+
 ReportToDB::ReportToDB():
 	Mover("ReportToDB"),
 	database_fname_("FeatureStatistics.db3"),
 	database_mode_("sqlite3"),
+	separate_db_per_mpi_process_(false),
 	sample_source_("Rosetta: Unknown Protocol"),
 	scfxn_(getScoreFunction()),
 	use_transactions_(true),
 	cache_size_(2000),
+	protocol_id_(0),
+	batch_id_(0),
 	task_factory_(new TaskFactory()),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -157,10 +160,13 @@ ReportToDB::ReportToDB(string const & name):
 	Mover(name),
 	database_fname_("FeatureStatistics.db3"),
 	database_mode_("sqlite3"),
+	separate_db_per_mpi_process_(false),
 	sample_source_("Rosetta: Unknown Protocol"),
 	scfxn_( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) ),
-	cache_size_(2000),
 	use_transactions_(true),
+	cache_size_(2000),
+	protocol_id_(0),
+	batch_id_(0),
 	task_factory_(new TaskFactory()),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -179,10 +185,13 @@ ReportToDB::ReportToDB(
 	Mover(name),
 	database_fname_(database_fname),
 	database_mode_("sqlite3"),
+	separate_db_per_mpi_process_(false),
 	sample_source_(sample_source),
 	scfxn_(scfxn),
 	use_transactions_(use_transactions),
 	cache_size_(cache_size),
+	protocol_id_(0),
+	batch_id_(0),
 	task_factory_(new TaskFactory()),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -195,20 +204,23 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 	Mover(src),
 	database_fname_(src.database_fname_),
 	database_mode_(src.database_mode_),
+	separate_db_per_mpi_process_(src.separate_db_per_mpi_process_),
 	sample_source_(src.sample_source_),
-    name_(src.name_),
+	name_(src.name_),
 	scfxn_(new ScoreFunction(* src.scfxn_)),
 	use_transactions_(src.use_transactions_),
 	cache_size_(src.cache_size_),
+	protocol_id_(src.protocol_id_),
+	batch_id_(src.batch_id_),
 	task_factory_(src.task_factory_),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	protocol_features_(src.protocol_features_),
-    batch_features_(src.batch_features_),
+	batch_features_(src.batch_features_),
 	structure_features_(src.structure_features_),
 	features_reporters_(src.features_reporters_),
 	initialized(src.initialized)
 {
-    TR << "ReportToDB copy ctor called" << std::endl;
+	TR << "ReportToDB copy ctor called" << std::endl;
 }
 
 ReportToDB::~ReportToDB(){}
@@ -256,13 +268,13 @@ ReportToDB::parse_sample_source_tag_item(
 
 void
 ReportToDB::parse_name_tag_item(TagPtr const tag){
-    if( tag->hasOption("name") ){
-        name_=tag->getOption<string>("name");        
-    } else {
-        TR << "Field 'name' required for use of ReportToDB in Rosetta Scripts." << endl;
-    }
+		if( tag->hasOption("name") ){
+				name_=tag->getOption<string>("name");
+		} else {
+				TR << "Field 'name' required for use of ReportToDB in Rosetta Scripts." << endl;
+		}
 }
-    
+
 void
 ReportToDB::parse_protocol_id_tag_item(
 	TagPtr const tag){
@@ -278,7 +290,7 @@ ReportToDB::parse_protocol_id_tag_item(
 	}
 #ifdef USEMPI
 	else {
-        protocol_id_ = 0;
+				protocol_id_ = 0;
 	}
 #endif
 
@@ -348,12 +360,12 @@ ReportToDB::parse_my_tag(
 	// RECOMMENDED
 	parse_sample_source_tag_item(tag);
 
-    // Name of report to db mover. A new batch will be created for each uniquely named
-    // ReportToDb mover
+		// Name of report to db mover. A new batch will be created for each uniquely named
+		// ReportToDb mover
 	// EXAMPLE: name="initial_feature_extraction"
 	// RECOMMENDED
 	parse_name_tag_item(tag);
-    
+
 	// Manually control the id of associated with this protocol
 	// EXAMPLE: protocol_id=6
 	// OPTIONAL default is to autoincrement the protocol_id in the protocols table
@@ -452,7 +464,7 @@ ReportToDB::initialize_reporters()
 {
 	// the protocols, batches, and structure features are special
 	protocol_features_ = new ProtocolFeatures();
-    batch_features_ = new BatchFeatures();
+		batch_features_ = new BatchFeatures();
 	structure_features_ = new StructureFeatures();
 }
 
@@ -463,15 +475,15 @@ ReportToDB::initialize_database(
 	if (!initialized){
 
 		protocol_features_->write_schema_to_db(db_session);
-        batch_features_->write_schema_to_db(db_session);
+				batch_features_->write_schema_to_db(db_session);
 		structure_features_->write_schema_to_db(db_session);
-        
-        write_linking_tables(db_session);
-        
+
+				write_linking_tables(db_session);
+
 		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
 			reporter->write_schema_to_db(db_session);
 		}
-        
+
 		initialized = true;
 	}
 
@@ -481,56 +493,56 @@ void
 ReportToDB::write_linking_tables(
 	utility::sql_database::sessionOP db_session
 ) const {
-    using namespace basic::database::schema_generator;
-    
-    /***feature reporters table***/
-    Schema features_reporters("features_reporters", PrimaryKey( Column("report_name", DbTextKey())));
-    
-    statement features_reporters_stmt(safely_prepare_statement(features_reporters.print(), db_session));
-    safely_write_to_database(features_reporters_stmt);
-    
-    //Only report features that aren't already in the database   
-    std::string select_string =
-    "SELECT *\n"
-    "FROM\n"
-    "	features_reporters\n"
-    "WHERE\n"
-    "   report_name = ?;";
-    cppdb::statement select_stmt(basic::database::safely_prepare_statement(select_string,db_session));
+		using namespace basic::database::schema_generator;
 
-    std::string insert_string = "INSERT INTO features_reporters VALUES (?);";
-    cppdb::statement insert_stmt(basic::database::safely_prepare_statement(insert_string,db_session));
-    
-    foreach(FeaturesReporterOP const & reporter, features_reporters_){
-        string const report_name(reporter->type_name());
-        select_stmt.bind(1,report_name);
-        
-        cppdb::result res(basic::database::safely_read_from_database(select_stmt));
-        if(!res.next())
-        {
-            insert_stmt.bind(1, report_name);
-            safely_write_to_database(insert_stmt);
-        }        
-    }
-                                  
-    Column report_name("report_name", DbTextKey());
-    Column batch_id("batch_id",DbInteger());
+		/***feature reporters table***/
+		Schema features_reporters("features_reporters", PrimaryKey( Column("report_name", DbTextKey())));
 
-    /***batch_reports linking table***/
-    Schema batch_reports("batch_reports");
-    
-    batch_reports.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
-    batch_reports.add_foreign_key(ForeignKey(report_name, "features_reporters", "report_name", true /*defer*/));
-    
-    utility::vector1<Column> batch_reports_unique;
-    batch_reports_unique.push_back(batch_id);
-    batch_reports_unique.push_back(report_name);
-    batch_reports.add_constraint( new UniqueConstraint(batch_reports_unique) );
-    
-    statement batch_reports_stmt(safely_prepare_statement(batch_reports.print(), db_session));
-    safely_write_to_database(batch_reports_stmt);
+		statement features_reporters_stmt(safely_prepare_statement(features_reporters.print(), db_session));
+		safely_write_to_database(features_reporters_stmt);
+
+		//Only report features that aren't already in the database
+		std::string select_string =
+		"SELECT *\n"
+		"FROM\n"
+		"	features_reporters\n"
+		"WHERE\n"
+		"   report_name = ?;";
+		cppdb::statement select_stmt(basic::database::safely_prepare_statement(select_string,db_session));
+
+		std::string insert_string = "INSERT INTO features_reporters VALUES (?);";
+		cppdb::statement insert_stmt(basic::database::safely_prepare_statement(insert_string,db_session));
+
+		foreach(FeaturesReporterOP const & reporter, features_reporters_){
+				string const report_name(reporter->type_name());
+				select_stmt.bind(1,report_name);
+
+				cppdb::result res(basic::database::safely_read_from_database(select_stmt));
+				if(!res.next())
+				{
+						insert_stmt.bind(1, report_name);
+						safely_write_to_database(insert_stmt);
+				}
+		}
+
+		Column report_name("report_name", DbTextKey());
+		Column batch_id("batch_id",DbInteger());
+
+		/***batch_reports linking table***/
+		Schema batch_reports("batch_reports");
+
+		batch_reports.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
+		batch_reports.add_foreign_key(ForeignKey(report_name, "features_reporters", "report_name", true /*defer*/));
+
+		utility::vector1<Column> batch_reports_unique;
+		batch_reports_unique.push_back(batch_id);
+		batch_reports_unique.push_back(report_name);
+		batch_reports.add_constraint( new UniqueConstraint(batch_reports_unique) );
+
+		statement batch_reports_stmt(safely_prepare_statement(batch_reports.print(), db_session));
+		safely_write_to_database(batch_reports_stmt);
 }
-    
+
 void
 ReportToDB::apply( Pose& pose ){
 
@@ -553,33 +565,33 @@ ReportToDB::apply( Pose& pose ){
 
 	if(use_transactions_) db_session->begin();
 
-    
-    statement stmt;
-    if (database_mode_ == "sqlite3"){
-        stringstream stmt_ss; stmt_ss << "PRAGMA cache_size = " << cache_size_ << ";";
-        stmt = (*db_session) << stmt_ss.str(); stmt.exec();
-    }
 
-    //initialize protocol and batch id
-    std::pair<Size, Size> ids = get_protocol_and_batch_id(name_, db_session);
-    protocol_id_=ids.first;
-    batch_id_=ids.second;
-    
-    /**structure features**/
-    boost::uuids::uuid const struct_id = structure_features_->report_features(
+		statement stmt;
+		if (database_mode_ == "sqlite3"){
+				stringstream stmt_ss; stmt_ss << "PRAGMA cache_size = " << cache_size_ << ";";
+				stmt = (*db_session) << stmt_ss.str(); stmt.exec();
+		}
+
+		//initialize protocol and batch id
+		std::pair<Size, Size> ids = get_protocol_and_batch_id(name_, db_session);
+		protocol_id_=ids.first;
+		batch_id_=ids.second;
+
+		/**structure features**/
+		boost::uuids::uuid const struct_id = structure_features_->report_features(
 		relevant_residues, batch_id_, db_session);
-    
-    /**all other features**/
-    std::string batch_reports_string = "INSERT INTO batch_reports (batch_id, report_name) VALUES (?,?);";
-    statement batch_reports_stmt(safely_prepare_statement(batch_reports_string, db_session));
-    
-	for(Size i=1; i <= features_reporters_.size(); ++i){
-        
-        std::string report_name = features_reporters_[i]->type_name();
-        
-        features_reporters_[i]->report_features(pose, relevant_residues, struct_id, db_session);
 
-        //Need to check for preexisting entry to avoid constraint failure caused by having multiple structures in a batch        
+		/**all other features**/
+		std::string batch_reports_string = "INSERT INTO batch_reports (batch_id, report_name) VALUES (?,?);";
+		statement batch_reports_stmt(safely_prepare_statement(batch_reports_string, db_session));
+
+	for(Size i=1; i <= features_reporters_.size(); ++i){
+
+				std::string report_name = features_reporters_[i]->type_name();
+
+				features_reporters_[i]->report_features(pose, relevant_residues, struct_id, db_session);
+
+				//Need to check for preexisting entry to avoid constraint failure caused by having multiple structures in a batch
 //        batch_reports_stmt.bind(1, batch_id_);
 //        batch_reports_stmt.bind(2, report_name);
 //        safely_write_to_database(batch_reports_stmt);
