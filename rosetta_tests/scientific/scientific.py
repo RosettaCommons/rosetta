@@ -154,7 +154,7 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
 
     # start to run the tests
     queue = Queue()
-    for test in tests:
+    for test in sorted(tests):
         queue.put(test)
         copytree( path.join("tests", test), path.join(outdir, test),
                   accept=lambda src, dst: path.basename(src) != '.svn' )
