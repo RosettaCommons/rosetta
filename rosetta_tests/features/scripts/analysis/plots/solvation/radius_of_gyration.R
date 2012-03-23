@@ -13,7 +13,7 @@ id = "radius_of_gyration",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RadiusOfGyrationFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT

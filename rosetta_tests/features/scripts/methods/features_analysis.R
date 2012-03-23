@@ -47,7 +47,7 @@ setClass("FeaturesAnalysis",
 		long_description = "Instantiate this class to create feature a features analysis.  This is usually done in a features analysis script. See scripts/analysis/plots/EXAMPLE_PLOT.R",
 		keywords = NA,
 		feature_reporter_dependencies = NA,
-		run=function(self){print("Implement this function to preform the features analysis script")}))
+		run=function(self, sample_sources, output_dir, output_formats){print("Implement this function to preform the features analysis script")}))
 
 
 
@@ -57,6 +57,6 @@ setClass("FeaturesAnalysis",
 #	brief_description="breif_description",
 #	long_description="long_description",
 #	feature_reporter_dependencies=c("abc"),
-#	run=function(self){print("Running test features analysis")})
+#	run=function(self, sample_sources, output_dir, output_formats){print("Running test features analysis")})
 
 

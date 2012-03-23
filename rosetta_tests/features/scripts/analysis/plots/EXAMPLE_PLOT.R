@@ -26,7 +26,7 @@ long_description = "
 keywords = c("bar_chart"),
 feature_reporter_dependencies = c("ResidueFeatures"),
 
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 # The SQL query is applied to each sample source and the resulting
 # tables are appended together with an additional sample_source column

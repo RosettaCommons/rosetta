@@ -29,7 +29,7 @@ This script generates 4 plots grouping the hydrogen bonds different ways:
 Currently this is only setup for a single sample source at a time.",
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 sele <-"

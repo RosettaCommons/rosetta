@@ -14,7 +14,7 @@ id = "lys_rotamer_hbond_interaction",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("SaltBridgeFeatures", "HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT

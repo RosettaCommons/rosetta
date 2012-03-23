@@ -19,7 +19,7 @@ In this case, hydrogen bonds that are forming beta sheet mediated
 protein-protein interfaces.",
 
 feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures", "HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 sele <-"

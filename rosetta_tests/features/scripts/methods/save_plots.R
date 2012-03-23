@@ -176,13 +176,16 @@ ggsave_with_footer <- function (
 
 # add footer text to the lower right corner
 add_footer_text <- function(text){
-	seekViewport("background")
-	pushViewport(viewport(name="footer", x=.99, y=.01, just=c(1,0), width=.4, height=.04))
 
-	#A box to help debug where the viewport will be
-	#	grid.rect(gp=gpar(col="red"))
+	# Broken by ggplot2 update to version 0.9.0.  FIXME!
 
-	grid.text(as.character(text), x=1, hjust=1, gp=gpar(fontsize=5, col="lightgray"))
-	upViewport(0)
+#	seekViewport("background")
+#	pushViewport(viewport(name="footer", x=.99, y=.01, just=c(1,0), width=.4, height=.04))
+#
+#	#A box to help debug where the viewport will be
+#	#	grid.rect(gp=gpar(col="red"))
+#
+#	grid.text(as.character(text), x=1, hjust=1, gp=gpar(fontsize=5, col="lightgray"))
+#	upViewport(0)
 }
 

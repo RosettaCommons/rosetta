@@ -13,7 +13,7 @@ id = "AHD_chem_type",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
@@ -44,7 +44,7 @@ f <- na.omit(f, method="r")
 
 f$AHD <- acos(f$cosAHD)
 
-#coAHD goes from 0 to 1, where 1 is linear since there is significant
+#AHD goes from 0 to 1, where 1 is linear since there is significant
 #density at 1, to accurately model a discontinuity, reflect the data
 #across the right boundary, in computing the density esitmation
 dens <- estimate_density_1d_reflect_boundary(
@@ -56,13 +56,13 @@ dens <- estimate_density_1d_reflect_boundary(
 	conical_3d_normalization,
 	adjust=.5)
 
-plot_id = "hbond_cosAHD_chem_type"
+plot_id = "hbond_AHD_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-x*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts)) +
 	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
 	opts(title = "HBond AHD Angle by Chemical Type, SeqSep > 5, B-Fact < 30\n(normalized for equal volume per unit distance)") +
-	scale_y_continuous("FeatureDensity", limits=c(0,30), breaks=c(0,10,20)) +
+	scale_y_continuous("Feature Density") +
 	scale_x_continuous(
 		"Acceptor -- Hydrogen -- Donor (degrees)", trans="reverse",
 		limits=c(180, 120), breaks=c(180, 160, 140))

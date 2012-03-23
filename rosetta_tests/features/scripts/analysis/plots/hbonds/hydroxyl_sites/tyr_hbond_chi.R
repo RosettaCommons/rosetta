@@ -44,7 +44,7 @@ Currently the atoms extracted for hydrogen bond sites are the atm, base, bbase, 
 
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT

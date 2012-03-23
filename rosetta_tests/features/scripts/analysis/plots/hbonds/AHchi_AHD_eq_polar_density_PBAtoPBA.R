@@ -15,7 +15,7 @@ brief_description = "",
 
 feature_reporter_dependencies = c("HBondFeatures"),
 
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -94,7 +94,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		scale_y_continuous(
 			'2*sin(AHD/2) * sin(AHchi)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 		coord_fixed(ratio = 1) +
-		scale_fill_gradientn('log(Density+1)', colour=jet.colors(10)) +
+		scale_fill_gradientn('log(Density+1)', colours=jet.colors(10)) +
 		opts(legend.position=c(.78,.23))
 	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, narrow_output_formats)

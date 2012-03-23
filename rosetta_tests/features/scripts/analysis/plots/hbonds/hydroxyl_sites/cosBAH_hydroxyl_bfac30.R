@@ -14,7 +14,7 @@ author = "Andrew Leaver-Fay",
 long_description = "",
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -61,6 +61,6 @@ ggplot(data=dens) +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 	scale_y_continuous("FeatureDensity", limits=c(0,6)) +
 	theme_bw()
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 })) # end FeaturesAnalysis

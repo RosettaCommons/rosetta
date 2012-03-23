@@ -13,7 +13,7 @@ id = "chiBAH_eqpoldens_bbbb",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -67,7 +67,7 @@ d_ply(f, .(sample_source), function(sub_f){
     scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 		polar_equal_area_grids_bw(bgcolor="#00007F") +
     coord_fixed(ratio = 1) +
-    scale_fill_gradientn('log(Density+1)', colour=jet.colors(10)) +
+    scale_fill_gradientn('log(Density+1)', colours=jet.colors(10)) +
 #         opts(legend.position="bottom", legend.direction="horizontal")
   save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,],
     output_dir, narrow_output_formats)
@@ -86,7 +86,7 @@ d_ply(f, .(sample_source), function(sub_f){
     scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
     polar_equal_area_grids_bw() +
     coord_fixed(ratio = 1) +
-    scale_fill_gradientn('Density', colour=jet.colors(10), limits=c(0,3)) +
+    scale_fill_gradientn('Density', colours=jet.colors(10), limits=c(0,3)) +
 #         opts(legend.position="bottom", legend.direction="horizontal")
   save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,],
     output_dir, narrow_output_formats)

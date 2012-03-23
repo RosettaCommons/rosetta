@@ -25,7 +25,7 @@ rsd
 		don_env
 ",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <- "
 CREATE INDEX IF NOT EXISTS hbond_sites_struct_id_resNum ON

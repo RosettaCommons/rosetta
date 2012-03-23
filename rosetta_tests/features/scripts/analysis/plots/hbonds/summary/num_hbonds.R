@@ -13,7 +13,7 @@ id = "num_hbonds",
 author = "Matthew O'Meara",
 brief_description = "Count the number of hydrogen bonds formed conditional on the donor and acceptor chemical types.",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 

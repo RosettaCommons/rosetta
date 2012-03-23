@@ -13,7 +13,7 @@ id = "bifurcated_at_acceptor",
 author = "Matthew O'Meara",
 brief_description = "The rank of a hydrogen bond at donor site or acceptor site is rank of the relative Rosetta HBond energy of the hydrogen bond at the site.",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 CREATE TEMPORARY TABLE hbs AS SELECT

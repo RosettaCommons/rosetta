@@ -13,7 +13,7 @@ id = "rotamer_recovery_by_res_type",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("RotamerRecoveryFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 

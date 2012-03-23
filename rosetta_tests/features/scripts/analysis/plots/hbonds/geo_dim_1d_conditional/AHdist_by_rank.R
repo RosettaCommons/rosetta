@@ -21,7 +21,7 @@ The indicator in each subplot counts the number of hbonds in each group for
 each sample sample source.",
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 description <-
 

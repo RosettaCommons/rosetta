@@ -13,7 +13,7 @@ id = "chi_BAH_eq_polar_density_bb_by_ss_long_range",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -79,7 +79,7 @@ d_ply(sample_sources, .(sample_source), function(sample_source){
 		opts(title = paste("Backbone-Backbone HBonds with Sequence Separation > 5: CHI vs BAH Angles by DSSP\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-		scale_fill_gradientn('log(Density)', colour=jet.colors(15))
+		scale_fill_gradientn('log(Density)', colours=jet.colors(15))
 	save_plots(self, plot_id, sample_source, output_dir, output_formats)
 })
 

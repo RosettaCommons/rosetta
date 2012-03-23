@@ -20,7 +20,7 @@ Dimensions of the plot is the direction of the Hydrogen atom from the Acceptor a
 
 The plot organization is a smooth 2D density for the first sample source and then put points on to it from the second sample source. This is useful, for example, when one wants to determine the likelihood that a few samples (the first sample source) came from the a larger sample source (the second sample source).",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -66,7 +66,7 @@ ggplot(data=f_first) + theme_bw() +
 	scale_y_continuous(
 		'2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 	coord_fixed(ratio = 1) +
-	scale_fill_gradientn('Density', colour=jet.colors(10))
+	scale_fill_gradientn('Density', colours=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 

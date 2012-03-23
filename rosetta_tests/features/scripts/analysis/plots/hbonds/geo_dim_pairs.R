@@ -13,7 +13,7 @@ id = "geo_dim_pairs",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 do_query <- function(dOH_clause, sample_source){
 	sele <- paste("

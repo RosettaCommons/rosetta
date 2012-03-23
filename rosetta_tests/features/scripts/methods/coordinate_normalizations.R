@@ -6,7 +6,7 @@
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
+require(proto)
 
 radial_3d_normalization <- function(x){ 1/(x^2*sum(1/x^2))}
 
@@ -21,8 +21,9 @@ no_normalization <- function(x) rep(1,length(x))
 
 #Adapted from
 #http://stackoverflow.com/questions/7660893/boxed-geom-text-with-ggplot2
-GeomTextBoxed <- proto(GeomText, {
+GeomTextBoxed <- proto(ggplot2:::GeomText, {
 	objname <- "text_boxed"
+	draw_groups <- function(., ...) .$draw(...)
 	draw <- function(.,
 		data, scales, coordinates, ..., parse = FALSE,
 		expand = 1.2, bgcol = "grey50", bgfill = NA, bgalpha = .8) {
@@ -30,7 +31,7 @@ GeomTextBoxed <- proto(GeomText, {
 		if (parse) {
 			lab <- parse(text = lab)
 		}
-		with(coordinates$transform(data, scales), {
+		with(coord_transform(coordinates, data, scales), {
 			sizes <- llply(1:nrow(data),
 				function(i) with(data[i, ], {
 					grobs <- textGrob(lab[i], default.units="native", rot=angle, gp=gpar(fontsize=size * .pt))
@@ -44,10 +45,39 @@ GeomTextBoxed <- proto(GeomText, {
 				.super$draw(., data, scales, coordinates, ..., parse))
 		})
 	}
+
+  draw_legend <- function(., data, ...) {
+		data <- aesdefaults(data, .$default_aes(), list(...))
+		with(data,
+			textGrob("a", 0.5, 0.5, rot = angle,
+				gp=gpar(col=alpha(colour, alpha), fontsize = size * .pt)))
+	}
+
+  icon <- function(.) textGrob("text", rot=45, gp=gpar(cex=1.2))
+  default_stat <- function(.) StatIdentity
+  required_aes <- c("x", "y", "label")
+  default_aes <- function(.)
+		aes(colour="black", size=5 , angle=0, hjust=0.5,
+			vjust=0.5, alpha = 1, family="", fontface=1, lineheight=1.2)
+  guide_geom <- function(x) "text"
 })
-geom_text_boxed <- GeomTextBoxed$build_accessor()
 
-
+geom_text <- function(
+	mapping = NULL,
+	data = NULL,
+	stat = "identity",
+	position = "identity",
+	parse = FALSE,
+	...
+) {
+	GeomText$new(
+		mapping = mapping,
+		data = data,
+		stat = stat,
+		position = position,
+		parse = parse,
+		...)
+}
 
 
 # These the coordinates for the Lambert-Azmuthal plots:

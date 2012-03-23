@@ -37,7 +37,7 @@ the coordinate of the HG atom may only be inferred and not directly observed.  I
 
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT

@@ -38,7 +38,7 @@ other information in the vicinity of the hydroxyl group that indicates where the
 
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 CREATE TEMPORARY TABLE hydroxyl_acceptor_sites_that_also_donate (

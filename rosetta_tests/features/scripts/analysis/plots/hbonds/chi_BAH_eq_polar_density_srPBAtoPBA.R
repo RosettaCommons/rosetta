@@ -13,7 +13,7 @@ id = "chi_BAH_eq_polar_density_srPBAtoPBA",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 
@@ -65,7 +65,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		scale_y_continuous(
 			'2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 		coord_fixed(ratio = 1) +
-		scale_fill_gradientn('Density', colour=jet.colors(10))
+		scale_fill_gradientn('Density', colours=jet.colors(10))
 	save_plots(self, plot_id, ss, output_dir, output_formats)
 })
 

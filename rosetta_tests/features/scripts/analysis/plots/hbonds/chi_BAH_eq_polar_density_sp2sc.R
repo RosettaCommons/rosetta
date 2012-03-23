@@ -13,7 +13,7 @@ id = "chi_BAH_eq_polar_density_sp2sc",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -58,7 +58,7 @@ ggplot(data=f) + theme_bw() +
 	scale_y_continuous(
 		'2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 	coord_fixed(ratio = 1) +
-	scale_fill_gradientn('Density', colour=jet.colors(10)) +
+	scale_fill_gradientn('Density', colours=jet.colors(10)) +
 	opts(legend.position=c(.68,.35)) +
 	opts(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, custom_output_formats)

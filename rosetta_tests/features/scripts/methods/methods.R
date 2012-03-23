@@ -31,14 +31,14 @@ check_setup <- function(){
 		stop("ERROR: The variable 'sample_sources' contains no sample sources.")
 	}
 
-	tryCatch(output_dir, error=function(e){
-		stop("ERROR: The variable 'output_dir' is not defined. See compare_sample_sources.R")
+	tryCatch(sample_source_output_dir, error=function(e){
+		stop("ERROR: The variable 'sample_source_output_dir' is not defined. See compare_sample_sources.R")
 	})
 	tryCatch(output_formats, error=function(e){
 		stop("ERROR: The variable 'output_formats' is not defined. See compare_sample_sources.R")
 	})
-	tryCatch(db_cache_size, error=function(e){
-		stop("ERROR: The variable 'db_cache_size' is not defined. See compare_sample_sources.R")
+	tryCatch(database_configuration$db_cache_size, error=function(e){
+		stop("ERROR: The variable 'database_configuration$db_cache_size' is not defined. See compare_sample_sources.R")
 	})
 }
 
@@ -52,7 +52,7 @@ set_db_cache_size <- function(con, cache_size){
 query_sample_sources <- function(
 	sample_sources,
 	sele,
-	cache_size=db_cache_size){
+	cache_size=database_configuration$db_cache_size){
 	tryCatch(sele,error=function(e){
 		cat("ERROR: The select statement is not defined.\n")
 	})
@@ -96,7 +96,7 @@ query_sample_sources <- function(
 query_sample_sources_against_ref <- function(
 	sample_sources,
 	sele,
-	cache_size=db_cache_size){
+	cache_size=database_configuration$db_cache_size){
 	tryCatch(sele,error=function(e){
 		cat("ERROR: The select statement ", sele, " is not defined.\n")
 	})

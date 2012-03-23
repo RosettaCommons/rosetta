@@ -17,7 +17,7 @@ These are example of asp/glu acceptors with his donors with long sequence
 separation and the chi angle between 160 and 200 -> which is the syn
 orbital sorted by hbond energy.",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 examples_sele <-"

@@ -25,7 +25,7 @@ similar. Therefore the cross validation grouping will be done over
 the input sequences.",
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT

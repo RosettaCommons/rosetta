@@ -45,7 +45,7 @@ long_description = "
              |       |
 ",
 feature_reporter_dependencies = c("ResidueSecondaryStructureFeatures", "ProteinBackboneAtomPairFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 # new idiom: union select

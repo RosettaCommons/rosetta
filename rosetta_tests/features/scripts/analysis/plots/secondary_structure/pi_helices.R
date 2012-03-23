@@ -32,7 +32,7 @@ Questions:
   * Does Rosetta recapitulate the hydrogen bond geometry that form pi-helices?
   * Does Rosetta recapitulate the geometry of backbone-backbone i<-i+5 hydrogen bonds?",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 

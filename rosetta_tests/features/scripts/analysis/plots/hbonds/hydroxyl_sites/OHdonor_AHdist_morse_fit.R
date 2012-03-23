@@ -13,7 +13,7 @@ id = "OHdonor_AHdist_morse_fit",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 morse_fn <- function(x, D_a, a, r_0, min_e){
 	D_a*(1+exp(-2*a*(x-r_0))-2*exp(-a*(x-r_0)))+min_e

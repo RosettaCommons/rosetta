@@ -13,7 +13,7 @@ id = "AHdist_CXL_ARG_bfac20",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 CREATE TEMPORARY TABLE max_residue_bfactors AS

@@ -13,7 +13,7 @@ id = "chi_sinBAH_polar_scatter_by_chem_type",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 

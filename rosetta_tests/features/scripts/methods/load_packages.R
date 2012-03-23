@@ -6,7 +6,7 @@
 #                                                                     #
 #######################################################################
 
-load_packages <- function(pkgs, verbose=FALSE){
+load_packages <- function(pkgs, fail_on_missing_packages=FALSE, verbose=FALSE){
 	failed_pkgs <- c()
 	for(pkg in pkgs){
 		if(verbose){        
@@ -23,6 +23,10 @@ load_packages <- function(pkgs, verbose=FALSE){
 		for(pkg in pkgs){
 			cat("    ", pkg, "\n")
 		}
+                if(fail_on_missing_packages){
+                  stop()
+                }
+                
 		valid_response = FALSE
 		while(!valid_response){
 			cat("Would you like to try to install the missing ones them from CRAN? It will install them locally and unless you have a good reason not to, this is the easiest way. Please indicator your preference: (y/n) \n")

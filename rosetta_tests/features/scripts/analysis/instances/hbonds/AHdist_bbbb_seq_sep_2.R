@@ -19,7 +19,7 @@ residue in between with phi~-80 and psi ~(50, 80). It is a little
 strained but it there are plenty of examples in the natives.",
 
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 sele <-"

@@ -9,10 +9,9 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "ramachandran_by_residue_type_and_secondary_structure",
-filename = "scripts/analysis/plots/backbone_geometry/ramachandran_by_residue_type_and_secondary_structure.R",
+id = "rama_by_chi1",
 author = "Matthew O'Meara",
-brief_description = "",
+brief_description = "Ramachandran plots conditional on the first sidechain torsional angle",
 feature_reporter_dependencies = c("ProteinBackboneTorsionAngleFeatures", "ResidueSecondaryStructureFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
@@ -20,25 +19,27 @@ run=function(self, sample_sources, output_dir, output_formats){
 sele <-"
 SELECT
 	res.name3 AS res_type,
-	ss.dssp,
+	CASE
+-- figure out which is gauche+, gauche- and trans
+		WHEN 0 < res_dofs.chi1 AND res_dofs.chi1 < 120 THEN 'chi1 60'
+		WHEN -120 < res_dofs.chi1 AND res_dofs.chi1 < 0 THEN 'chi1 -60'
+	  ELSE 'chi1 180' END AS chi1_bin,
 	bb.phi, bb.psi
 FROM
 	residues AS res,
 	residue_pdb_confidence AS res_conf,
-	residue_secondary_structure AS ss,
+	protein_residue_conformation AS res_dofs,
 	protein_backbone_torsion_angles AS bb
 WHERE
 	res_conf.struct_id = res.struct_id AND res_conf.residue_number = res.resNum AND
 	res_conf.max_temperature < 30 AND
-	ss.struct_id = res.struct_id AND ss.resNum == res.resNum AND
+	res_dofs.struct_id = res.struct_id AND res_dofs.seqpos == res.resNum AND
 	bb.struct_id = res.struct_id AND bb.resNum == res.resNum;"
 
 f <- query_sample_sources(sample_sources, sele)
 
-
-
 f <- ddply(
-	f, .(sample_source, res_type, dssp),
+	f, .(sample_source, res_type, chi1_bin),
 	transform, counts = length(sample_source))
 
 plot_parts <- list(
@@ -53,18 +54,31 @@ plot_parts <- list(
 	scale_fill_gradientn('Density', colours=jet.colors(15)),
 	opts(legend.position="bottom", legend.direction="horizontal"))
 
+
 narrow_output_formats <- transform(output_formats, width=height)
 
-d_ply(f, .(sample_source, res_type, dssp), function(sub_f){
-	if(nrow(sub_f) < 5) return()
+d_ply(f, .(sample_source, res_type, chi1_bin), function(sub_f){
+	if(nrow(sub_f) < 5) {
+		print("skipping this group:")
+		print(summary(sub_f))
+		return()
+	}
 
 	res_type <- as.character(sub_f[1, c("res_type")])
-	dssp <- as.character(sub_f[1, c("dssp")])
+	chi1_bin_numeric <- as.numeric(sub_f[1, c("chi1_bin")])
+	chi1_bin_character <- as.character(sub_f[1, c("chi1_bin")])
 	ss_id <- as.character(sub_f[1, c("sample_source")])
-	sub_plot_id <- paste("ramachandran_res-", res_type, "_dssp-", dssp,"_", ss_id, sep="")
+	sample_source <- sample_sources[sample_sources$sample_source == ss_id,]
+	sub_plot_id <- paste(
+		"ramachandran_res-", res_type, "_chi1-", chi1_bin_numeric,
+		sep="")
 	ggplot(data=sub_f) + plot_parts +
-		opts(title = paste("Backbone Torsion Angles Res: ", res_type, " DSSP: ", dssp, " B-Factor < 30\nSample Source: ", ss_id, sep=""))
-	save_plots(self, sub_plot_id, sample_sources, output_dir, narrow_output_formats)
+		opts(title = paste(
+			"Backbone Torsion Angles Res: ", res_type, " ",
+			chi1_bin_character, " B-Factor < 30\nSample Source: ",
+			ss_id, sep=""))
+	save_plots(self, sub_plot_id, sample_source, output_dir, narrow_output_formats)
 })
+
 
 })) # end FeaturesAnalysis

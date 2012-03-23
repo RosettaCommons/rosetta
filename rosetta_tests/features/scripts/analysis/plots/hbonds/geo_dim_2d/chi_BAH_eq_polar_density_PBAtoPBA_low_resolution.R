@@ -13,7 +13,7 @@ id = "chi_BAH_eq_polar_density_PBAtoPBA_low_resolution",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 sele <-"
@@ -67,7 +67,7 @@ l_ply(levels(f$sample_source), function(ss){
 		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 		coord_fixed(ratio = 1) +
-		scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(10)) +
+		scale_fill_gradientn('log(Normalized\nDensity)', colours=jet.colors(10)) +
 #        	opts(legend.position="bottom", legend.direction="horizontal")
 	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss,], output_dir, output_formats)
 })

@@ -13,7 +13,7 @@ id = "chiBAHD_cosAHD_eqpoldens_cation_pi_cpisp2",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 #####cation pi interactions
 

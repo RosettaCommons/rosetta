@@ -13,7 +13,7 @@ id = "residue_pair_distances_vs_neighbors",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("ResiduePairFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -35,10 +35,10 @@ ORDER BY
 LIMIT
   100000;"
 
-f <-  query_sample_sources(sample_sources, sele)
+all_geom <-  query_sample_sources(sample_sources, sele)
 
 plot_id <- "residue_pair_distances_vs_neighbors"
-p <- ggplot(data=f) + theme_bw() +
+p <- ggplot(data=all_geom, aes(x=dist, y=nbrs, color=sample_source))
 p <- p + geom_point( size = .5)
 p <- p + facet_wrap( ~ res1_type )
 p <- p + opts(title = "Residue Pair Distances vs Burial")

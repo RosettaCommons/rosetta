@@ -56,7 +56,7 @@ iscript_output_dir <- function(output_dir){
 	cat("if(!file.exists(\"", output_dir, "\")){
 	dir.create(\"", output_dir, "\", recursive=TRUE)
 }\n", file=iscript_fname, sep="", append=TRUE)
-  cat("output_dir <- \"", output_dir, "\"\n",
+  cat("sample_source_output_dir <- \"", output_dir, "\"\n",
       file=iscript_fname, sep="", append=TRUE)
   cat("\n", file=iscript_fname, append=TRUE)
 }
@@ -107,11 +107,11 @@ iscript_setup_add_footer_to_output_formats <- function(add_footer){
 
 
 iscript_db_cache_size <- function(db_cache_size){
-  cat("#number of 1k pages to use as cache\n",
-      file=iscript_fname, append=TRUE)
-  cat("db_cache_size <- ", db_cache_size,
-      file=iscript_fname, sep="", append=TRUE)
-  cat("\n", file=iscript_fname, append=TRUE)
+	cat(
+  	"database_configuration <- list(\n",
+		"	#number of 1k pages to use as cache\n",
+		"	db_cache_size = ", db_cache_size, ")\n\n",
+		file=iscript_fname, sep="", append=TRUE)
 }
 
 iscript_general_kernel_adjust <- function(general_kernel_adjust){
@@ -147,6 +147,7 @@ iscript_run_feature_analyses <- function(){
 	# current frame as well.
 
 	self <- features_analysis
+	output_dir <- sample_source_output_dir
 	eval(body(features_analysis@run))
 
 	cat(\"\\n\")

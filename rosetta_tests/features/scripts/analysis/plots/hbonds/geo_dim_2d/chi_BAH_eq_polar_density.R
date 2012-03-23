@@ -13,7 +13,7 @@ id = "chi_BAH_eq_polar_density",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -86,7 +86,7 @@ plot_parts <- list(
 	geom_indicator(aes(indicator=counts), color="white"),
 	polar_equal_area_grids_bw(),
 	coord_equal(ratio=1),
-	scale_fill_gradientn('Density', colour=jet.colors(15)),
+	scale_fill_gradientn('Density', colours=jet.colors(15)),
 	scale_x_continuous(limits=capx_limits),
 	scale_y_continuous(limits=capy_limits),
 	opts(
@@ -113,7 +113,7 @@ d_ply(f, .(sample_source, hybrid), function(sub_f){
 		geom_indicator(aes(indicator=counts), color="white") +
 		scale_x_continuous('', limits=capx_limits, breaks=c()) +
 		scale_y_continuous('', limits=capy_limits, breaks=c()) +
-		scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(15))
+		scale_fill_gradientn('log(Normalized\nDensity)', colours=jet.colors(15))
 	save_plots(self, sub_plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, narrow_output_formats)
 })
@@ -131,7 +131,7 @@ l_ply(levels(f$sample_source), function(ss){
 		geom_indicator(aes(indicator=counts), color="white") +
 		scale_x_continuous('', limits=capx_limits, breaks=c()) +
 		scale_y_continuous('', limits=capy_limits, breaks=c()) +
-		scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(15))
+		scale_fill_gradientn('log(Normalized\nDensity)', colours=jet.colors(15))
 	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss,], output_dir, output_formats)
 })
 

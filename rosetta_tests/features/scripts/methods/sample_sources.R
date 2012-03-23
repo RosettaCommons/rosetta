@@ -7,6 +7,8 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+
+#TODO THIS FUNCTION IS BROKEN
 #Each feature database contains a table sample_source with containing
 #meta data for the sample source.
 get_sample_source_meta_data <- function(fname){
@@ -62,7 +64,8 @@ get_sample_sources <- function(data_sources){
 		if(is.na(sample_source) || is.null(sample_source) || sample_source==""){
 			stop(paste("Unable to get 'sample_source_id' from sample source database file name '",fname,"', verify that it is of the form 'features_<sample_source_id>.db3'", sep=""))
 		}
-		cbind(data.frame(fname, sample_source), get_sample_source_meta_data(fname))
+		#cbind(data.frame(fname, sample_source), get_sample_source_meta_data(fname))
+		data.frame(fname, sample_source)
 	})
 	rownames(ss) <- ss$sample_source
 	ss

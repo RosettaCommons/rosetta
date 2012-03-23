@@ -13,7 +13,7 @@ id = "OHacceptor_chi",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -72,9 +72,9 @@ f <- transform(f,
 capx_limits <- c(-1.5,1.5); capy_limits <- capx_limits;
 
 l_ply(levels(f$hybrid), function(hybrid){
-	plot_id = paste("hbond_chi_BAH_polar_density_", hybrid, "_by_don_chem_type", sep="")
 	d_ply(sample_sources, .("sample_sources"), function(sample_source){
 		ss_id <- sample_source$sample_source[1]
+		plot_id = paste("hbond_chi_BAH_polar_density_", hybrid, "_by_don_chem_type_", ss_id, sep="")
 		ggplot(data=subset(f, sample_source == ss_id & hybrid==hybrid)) + theme_bw() +
 			polar_equal_area_grids_bw() +
 			stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.06,.06)) +
@@ -82,7 +82,7 @@ l_ply(levels(f$hybrid), function(hybrid){
 			opts(title = paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 			scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 			scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-			scale_fill_gradientn('log(Normalized\nDensity)', colour=jet.colors(15))
+			scale_fill_gradientn('log(Normalized\nDensity)', colours=jet.colors(15))
 		save_plots(self, plot_id, sample_source, output_dir, output_formats)
 	})
 })

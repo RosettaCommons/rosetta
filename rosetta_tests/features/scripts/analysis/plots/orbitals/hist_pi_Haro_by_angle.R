@@ -13,7 +13,7 @@ id = "hist_salt_bridges_by_angle",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <- "
 SELECT

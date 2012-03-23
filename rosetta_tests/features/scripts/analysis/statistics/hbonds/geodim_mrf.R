@@ -18,7 +18,7 @@ compute a markov random field a collection of geometric features
 This is quite rough, and is a work in progress
 ",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 
 # number of folds to do cross validation

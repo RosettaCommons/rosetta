@@ -13,7 +13,7 @@ id = "chi_BAH_eqpoldens_scatter_lrbbbbhbonds",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
-run=function(self){
+run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT
@@ -63,7 +63,7 @@ ggplot(data=f_first) + theme_bw() +
 	scale_y_continuous(
 		'2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 	coord_fixed(ratio = 1) +
-	scale_fill_gradientn('Density', colour=jet.colors(10))
+	scale_fill_gradientn('Density', colours=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
