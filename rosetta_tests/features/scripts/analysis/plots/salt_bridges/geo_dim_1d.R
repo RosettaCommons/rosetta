@@ -13,7 +13,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "salt_bridge_geo_dim_1d",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("SaltBridgeFeatures"),
+feature_reporter_dependencies = c("StructureFeatures", "ResidueFeatures", "SaltBridgeFeatures", "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 

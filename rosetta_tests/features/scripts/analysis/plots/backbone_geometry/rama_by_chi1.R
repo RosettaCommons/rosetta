@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rama_by_chi1",
 author = "Matthew O'Meara",
 brief_description = "Ramachandran plots conditional on the first sidechain torsional angle",
-feature_reporter_dependencies = c("ProteinBackboneTorsionAngleFeatures", "ResidueSecondaryStructureFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "ProteinBackboneTorsionAngleFeatures", "ResidueSecondaryStructureFeatures", , "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 

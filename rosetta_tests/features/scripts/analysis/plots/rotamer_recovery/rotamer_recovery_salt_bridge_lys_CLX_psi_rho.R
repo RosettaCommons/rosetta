@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_salt_bridge_lys_CLX_psi_rho",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("SaltBridgeFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "SaltBridgeFeatures", "HBondFeatures", "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"

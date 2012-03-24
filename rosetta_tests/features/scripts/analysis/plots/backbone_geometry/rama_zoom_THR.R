@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rama_zoom_THR",
 author = "Matthew O'Meara",
 brief_description = "Ramachandran plots conditional on the first sidechain torsional angle for THR when chi1 is in the -60 degree bin",
-feature_reporter_dependencies = c("ProteinBackboneTorsionAngleFeatures", "ResidueSecondaryStructureFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "ProteinBackboneTorsionAngleFeatures", "ResidueSecondaryStructureFeatures", "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 
@@ -22,12 +22,12 @@ SELECT
 	bb.phi, bb.psi
 FROM
 	residues AS res,
---	residue_pdb_confidence AS res_conf,
+	residue_pdb_confidence AS res_conf,
 	protein_residue_conformation AS res_dofs,
 	protein_backbone_torsion_angles AS bb
 WHERE
---	res_conf.struct_id = res.struct_id AND res_conf.residue_number = res.resNum AND
---	res_conf.max_temperature < 30 AND
+	res_conf.struct_id = res.struct_id AND res_conf.residue_number = res.resNum AND
+	res_conf.max_temperature < 30 AND
 	res_dofs.struct_id = res.struct_id AND res_dofs.seqpos == res.resNum AND
 	bb.struct_id = res.struct_id AND bb.resNum == res.resNum AND
 	res.name3 == 'THR' AND	-120 < res_dofs.chi1 AND res_dofs.chi1 < 0 AND

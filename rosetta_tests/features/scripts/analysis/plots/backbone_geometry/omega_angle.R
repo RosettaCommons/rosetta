@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "omega_angle",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("ProteinBackboneTorsionAngleFeatures", "ResidueSecondaryStructureFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "ProteinBackboneTorsionAngleFeatures", "ResidueSecondaryStructureFeatures", "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 

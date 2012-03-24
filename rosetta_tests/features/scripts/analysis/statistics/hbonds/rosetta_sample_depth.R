@@ -24,7 +24,7 @@ A consern is that decoys generated for the same sequence are
 similar. Therefore the cross validation grouping will be done over
 the input sequences.",
 
-feature_reporter_dependencies = c("HBondFeatures"),
+feature_reporter_dependencies = c("StructureFeatures", "HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"

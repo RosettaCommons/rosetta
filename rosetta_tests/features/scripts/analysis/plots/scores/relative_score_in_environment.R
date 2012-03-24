@@ -111,8 +111,8 @@ GROUP BY
 
 f <- query_sample_sources(sample_sources, sele)
 
-# remove residues that are clashing 
-clean_f <- f[f$total < 5,] 
+# remove residues that are clashing
+clean_f <- f[f$total < 5,]
 clean_f <- clean_f[clean_f$res_type != "CA",]
 
 sub_f <- sample_rows(clean_f, 8000)
@@ -121,7 +121,7 @@ plot_id <- "average_residue_score_in_environment"
 p <- ggplot() + theme_bw() +
 	geom_point(data=sub_f, aes(x=vDW_atr, y=total), size=.5) +
 	stat_smooth(data=sub_f, aes(x=vDW_atr, y=total), method="lm") +
-	facet_wrap(~res_type, scales="free_x") + 
+	facet_wrap(~res_type, scales="free_x") +
 	opts(title = "Total residue score as a function of Van der Waals attraction ") +
 	labs(x="Residue Total Van der Waals Attration (Rosetta Energy Units)") +
 	scale_y_continuous("Residue Total Energy (Rosetta Energy Units)")

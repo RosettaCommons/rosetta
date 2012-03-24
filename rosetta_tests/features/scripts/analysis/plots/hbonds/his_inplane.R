@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "his_inplane",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("HBondFeatures"),
+feature_reporter_dependencies = c("StructureFeatures", "HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
@@ -57,55 +57,10 @@ WHERE
   acc_site.struct_id = acc_atoms.struct_id AND acc_site.site_id = acc_atoms.site_id AND
   geom.chi > 2.61799388 AND geom.chi < 3.66519143;"  # 150-210 degrees
 
-#
-#sele <-"
-#SELECT
-#  geom.AHdist,
-#  acc_his_site.HBChemType AS acc_his_chem_type,
-#  acc_site.HBChemType AS acc_chem_type
-#FROM
-#  hbond_geom_coords AS geom,
-#  hbonds AS hbond,
-#  hbond_sites AS don_his_site,
-#  hbond_sites AS acc_his_site,
-#  hbond_sites AS acc_site
-#WHERE
-#  hbond.struct_id = geom.struct_id AND hbond.hbond_id =  geom.hbond_id AND
-#  hbond.struct_id = acc_site.struct_id AND hbond.acc_id = acc_site.site_id AND
-#  hbond.struct_id = don_his_site.struct_id AND hbond.don_id = don_his_site.site_id AND
-#  don_his_site.struct_id = acc_his_site.struct_id AND don_his_site.resNum = acc_his_site.resNum AND
-#  don_his_site.HBChemType = 'hbdon_IME' AND
-#  acc_site.HBChemType = 'hbacc_CXL' LIMIT 20;"
-#
-#sele <-"
-#SELECT
-#  structure.tag,
-#  don_his_site.resNum,
-#  don_his_site.site_id,
-#  acc_his_site.site_id,
-#  don_his_site.HBChemType AS don_his_chem_type,
-#  acc_his_site.HBChemType AS acc_his_chem_type,
-#  don_his_atoms.base_x AS p3x, don_his_atoms.base_y AS p3y, don_his_atoms.base_z AS p3z,
-#  acc_his_atoms.atm_x  AS p4x, acc_his_atoms.atm_y  AS p4y, acc_his_atoms.atm_z  AS p4z
-#FROM
-#  hbond_sites AS don_his_site,
-#  hbond_sites AS acc_his_site,
-#  hbond_site_atoms AS don_his_atoms,
-#  hbond_site_atoms AS acc_his_atoms,
-#  structures as structure
-#WHERE
-#  don_his_site.struct_id = acc_his_site.struct_id AND don_his_site.resNum = acc_his_site.resNum AND
-#  don_his_site.HBChemType = 'hbdon_IME' AND acc_his_site.HBChemType = 'hbacc_IME' AND
-#
-#  don_his_site.struct_id = structure.struct_id AND
-#
-#  don_his_site.struct_id = don_his_atoms.struct_id AND don_his_site.site_id == don_his_atoms.site_id AND
-#  acc_his_site.struct_id = acc_his_atoms.struct_id AND acc_his_site.site_id == acc_his_atoms.site_id
-#limit 5;"
-
-
-
 f <- query_sample_sources(sample_sources, sele)
+
+
+# TODO REPLACE THIS MATH WITH THE VERSIONS IN scripts/methods/vector_math.R
 
 normalize <- function(p){
   p/sqrt(sum(p*p))

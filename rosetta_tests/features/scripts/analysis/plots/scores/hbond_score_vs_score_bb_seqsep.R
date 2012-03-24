@@ -13,7 +13,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_scores_vs_score_bb_seqsep",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("ResidueFeatures", "HBondFeatures"),
+feature_reporter_dependencies = c("StructureFeatures", "ResidueFeatures", "HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 sele <- "

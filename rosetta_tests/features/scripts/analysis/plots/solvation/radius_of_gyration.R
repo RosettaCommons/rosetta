@@ -12,9 +12,11 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "radius_of_gyration",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("RadiusOfGyrationFeatures"),
+feature_reporter_dependencies  = c("PoseConformationFeatures", "RadiusOfGyrationFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
+# if you didn't extract PoseConformationFeatures you could compute
+# total_residue from the residues table, but it'd be slower.
 sele <-"
 SELECT
   pc.total_residue,

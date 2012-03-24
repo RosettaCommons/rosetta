@@ -37,38 +37,15 @@ Currently the atoms extracted for hydrogen bond sites are the atm, base, bbase, 
      |      |
       \    /
        \ _/
-         
+
   proton_chi = DIHEDRAL(CE2, CZ, OH, HH)
   hbond_chi = DIHEDRAL(CE2, CZ, OH, H)
 ",
 
-                                            
-feature_reporter_dependencies = c("HBondFeatures"),
+
+feature_reporter_dependencies = c("ResidueFeatures", "HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
-#sele <-"
-#SELECT
-#	atoms.bbase_x AS CE2x, atoms.bbase_y AS CE2y, atoms.bbase_z AS CE2z,
-# 	atoms.base_x  AS CZx,  atoms.base_y  AS CZy,  atoms.base_z  AS CZz,
-#	atoms.atm_x   AS OHx,  atoms.atm_y   AS OHy,  atoms.atm_z   AS OHz,
-#	atoms.base2_x AS HHx,  atoms.atm_y   AS HHy,  atoms.atm_z   AS HHz
-#FROM
-#	structures AS struct,
-#	hbond_sites AS site,
-#	hbond_site_atoms AS atoms,
-#	hbond_sites_pdb AS pdb
-#WHERE
-#	site.struct_id = struct.struct_id AND
-#	atoms.struct_id = site.struct_id AND atoms.site_id = site.site_id AND
-#	site.HBChemType = 'hbacc_AHX' AND
-#	pdb.struct_id = site.struct_id AND pdb.site_id = site.site_id AND
-#	pdb.heavy_atom_temperature < 30;"
-#f <- query_sample_sources(sample_sources, sele)
-#
-#f$proton_chi <- with(f, 
-#	vector_dihedral(cbind(CE2x, CE2y, CE2z), cbind(CZx, CZy, CZz),
-#		cbind(OHx, OHy, OHz), cbind(HHx, HHy, HHz)))
-#
 sele <- "
 SELECT
 	res_conf.chi3 AS proton_chi

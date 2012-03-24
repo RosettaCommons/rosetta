@@ -86,7 +86,7 @@ save_plots <- function(
 		date <- date_code()
 		fname <- paste(plot_id, date, sep="_")
 		full_path <- file.path(full_output_dir, paste(fname, fmt$extension, sep=""))
-		cat("Saving Plot: ", full_path, "\n")
+		cat("Saving Plot: ", full_path)
 		add_features_analysis_plot(
 			features_analysis,
 			plot_id,
@@ -94,24 +94,34 @@ save_plots <- function(
 			date,
 			file.path(features_analysis@id, fmt$id, paste(fname, fmt$extension, sep="")),
 			fmt)
-		if(fmt$add_footer){
-				ggsave_with_footer(
-					filename=full_path,
-					width=fmt$width,
-					height=fmt$height,
-					dpi=fmt$dpi,
-					scale=fmt$scale,
-					footer_text=analysis_script,
-					...)
-			} else {
-				ggsave(
-					filename=full_path,
-					width=fmt$width,
-					height=fmt$height,
-					dpi=fmt$dpi,
-					scale=fmt$scale,
-					...)
-			}
+		timing <- system.time({
+			tryCatch({
+				if(fmt$add_footer){
+					ggsave_with_footer(
+						filename=full_path,
+						width=fmt$width,
+						height=fmt$height,
+						dpi=fmt$dpi,
+						scale=fmt$scale,
+						footer_text=analysis_script,
+						...)
+				} else {
+					ggsave(
+						filename=full_path,
+						width=fmt$width,
+						height=fmt$height,
+						dpi=fmt$dpi,
+						scale=fmt$scale,
+						...)
+				}
+			}, error=function(e){
+				cat("\n")
+				cat(paste(
+					"ERROR: Generating and saving the plot:\n",
+					e, sep=""))
+			})
+		})
+		cat(" ... ", as.character(round(timing[3],2)), "s\n", sep="")
 	})
 }
 

@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_hbond_geometry",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("RotamerRecoveryFeatures", "HBondFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "RotamerRecoveryFeatures", "ResidueSecondaryStructureFeatures", "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 

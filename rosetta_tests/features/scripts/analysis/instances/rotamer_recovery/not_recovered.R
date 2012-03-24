@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "not_recovered",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("RotaermRecoveryFeatures"),
+feature_reporter_dependencies = c("StructureFeatures", "ResidueFeatures", "RotaermRecoveryFeatures", "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"

@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "residue_pair_distances_vs_neighbors",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("ResiduePairFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "ResiduePairFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"

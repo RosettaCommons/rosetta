@@ -16,7 +16,7 @@ long_description = "
 This features analysis requires the comparison to be the RRComparerRotBins
 ",
 
-feature_reporter_dependencies = c("RotamerRecoveryFeatures", "PdbDataFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "RotamerRecoveryFeatures", "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 # Rotamer recovery rate of first chi angle

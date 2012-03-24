@@ -37,7 +37,7 @@ WHERE
 	res.struct_id = acc_asn.struct_id AND
 	res.resNum = acc_asn.resNum AND
 	res.name3 = 'ASN' AND
-	don_bb.site_id = hb.don_id AND 
+	don_bb.site_id = hb.don_id AND
 	don_bb.struct_id = hb.struct_id AND
 	don_bb.HBChemType = 'hbdon_PBA' AND
 	(don_bb.resNum - 1 = acc_asn.resNum OR

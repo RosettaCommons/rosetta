@@ -13,7 +13,7 @@ id = "ramachandran_by_residue_type_and_secondary_structure",
 filename = "scripts/analysis/plots/backbone_geometry/ramachandran_by_residue_type_and_secondary_structure.R",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("ProteinBackboneTorsionAngleFeatures", "ResidueSecondaryStructureFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "ProteinBackboneTorsionAngleFeatures", "ResidueSecondaryStructureFeatures", "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 

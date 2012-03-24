@@ -13,7 +13,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "hbond_scores",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("ResidueScoreFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "ResidueScoreFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 

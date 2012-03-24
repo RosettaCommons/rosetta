@@ -13,7 +13,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "rotamer_recovery_vs_score",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("RotamerRecoveryFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "ResidueScoresFeatures", "RotamerRecoveryFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 

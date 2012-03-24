@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "weird_salt_bridges",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("RotaermRecoveryFeatures"),
+feature_reporter_dependencies = c("StructureFeatures", "ResidueFeatures", "RotamerRecoveryFeatures", "PdbDataFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
@@ -23,19 +23,11 @@ SELECT
 FROM
 	salt_bridges AS sb,
 	residues as don, hbond_sites AS acc,
---	residue_pdb_confidence AS don_con, hbond_sites_pdb AS acc_con,
---	residue_burial AS don_bur, residue_burial AS acc_bur,
 	structures AS struct
 WHERE
 	struct.struct_id = sb.struct_id AND
 	don.struct_id = sb.struct_id AND don.resNum = sb.don_resNum AND
 	acc.struct_id = sb.struct_id AND acc.site_id = sb.acc_id AND
---	don_con.struct_id = sb.struct_id AND don_con.residue_number = don.resNum AND
---	acc_con.struct_id = sb.struct_id AND acc_con.site_id = sb.acc_id AND
---	don_con.max_sc_temperature < 20 AND acc_con.heavy_atom_temperature < 20 AND
---	don_bur.struct_id = sb.struct_id AND don_bur.resNum = don.resNum AND
---	acc_bur.struct_id = sb.struct_id AND acc_bur.resNum = acc.resNum AND
---	don_bur.sasa_r140 = 0 AND acc_bur.sasa_r140 = 0 AND
 	don.name3 = 'LYS' AND acc.HBChemType = 'hbacc_CXL' AND sb.orbital = 'syn' AND
 	sb.rho > 2;"
 
