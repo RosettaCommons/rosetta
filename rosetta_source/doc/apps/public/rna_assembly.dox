@@ -10,7 +10,7 @@
 ///@author Rhiju Das
 /*!
 
-@page rna_assembly Documentation for RNA assembly withexperimental pair-wise constraints, using <em>rna_denovo</em> and <em>rna_helix</em> executables
+@page rna_assembly Documentation for RNA assembly with experimental pair-wise constraints, using <em>rna_denovo</em> and <em>rna_helix</em> executables
 
 @section metadata Metadata
 Nov. 2011 by Rhiju Das (rhiju [at] stanford.edu).
