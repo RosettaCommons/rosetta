@@ -8,19 +8,17 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c)University of Washington UW TechTransfer, email:license@u.washington.edu.
 
-/// @file protocols/antibody2/CDRH3Modeler2.cc
+/// @file protocols/antibody2/Ab_H3_Model_CDR_H3.cc
 /// @brief models CDR H3 loop using loop modeling
 /// @detailed
 ///// @author Jianqing Xu ( xubest@gmail.com )
 //
 
-// Rosetta Headers
-#include <protocols/antibody2/CDRH3Modeler2.hh>
+
+#include <protocols/antibody2/Ab_H3_Model_CDR_H3.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
-
-
 
 #include <core/id/types.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -61,7 +59,6 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
 
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
@@ -93,60 +90,45 @@
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.hh>
 #include <protocols/antibody2/Ab_Info.hh>
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.hh>
+#include <protocols/moves/PyMolMover.hh>
 
 
 
-
-static basic::Tracer TR("protocols.antibody2.CDRH3Modeler2");
+static basic::Tracer TR("protocols.antibody2.Ab_H3_Model_CDR_H3");
 using namespace core;
 
 namespace protocols {
 namespace antibody2 {
 
-CDRH3Modeler2::CDRH3Modeler2() : Mover()
+Ab_H3_Model_CDR_H3::Ab_H3_Model_CDR_H3() : Mover()
 {
 
 }
 
-CDRH3Modeler2::CDRH3Modeler2(
-                             bool apply_centroid_mode,
-                             bool apply_fullatom_mode,
-                             bool camelid,
-                             bool benchmark,
-                             Ab_InfoOP antibody_info) : Mover()
+Ab_H3_Model_CDR_H3::Ab_H3_Model_CDR_H3(bool camelid, bool benchmark, Ab_InfoOP antibody_info) : Mover()
 {
 	user_defined_ = true;
-	init( apply_centroid_mode, apply_fullatom_mode, camelid, benchmark, antibody_info );
+	init(camelid, benchmark, antibody_info );
 }
 
 
 
-void CDRH3Modeler2::init(
-                         bool apply_centroid_mode,
-                         bool apply_fullatom_mode,
-                         bool camelid,
-                         bool benchmark,
-                         Ab_InfoOP antibody_info)
+void Ab_H3_Model_CDR_H3::init(bool camelid, bool benchmark, Ab_InfoOP antibody_info)
 {
-	Mover::type( "CDRH3Modeler2" );
+	Mover::type( "Ab_H3_Model_CDR_H3" );
 
 
 	set_default();
     
 	if ( user_defined_ ) {
-		apply_centroid_mode_ = apply_centroid_mode;
-		apply_fullatom_mode_ = apply_fullatom_mode;
 		set_camelid( camelid );
 		benchmark_ = benchmark;
         ab_info_= antibody_info;
 	}
 
-
-    
     if( is_camelid_ && !ab_info_->is_extended() && !ab_info_->is_kinked() ){
         c_ter_stem_ = 0;
     }
-    
     
     
 	lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
@@ -160,32 +142,28 @@ void CDRH3Modeler2::init(
 	// adding constraints
 	highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
 
-	// set up objects based on the boolean values defined above
+    
 	setup_objects();
+    
+    
 }
 
-    
+
 
     
-
-    
-CDRH3Modeler2::~CDRH3Modeler2() {}
+Ab_H3_Model_CDR_H3::~Ab_H3_Model_CDR_H3() {}
     
     
-void CDRH3Modeler2::set_default()
+void Ab_H3_Model_CDR_H3::set_default()
 {
     do_cter_insert_ = true;
 	benchmark_ = false;
 	cen_cst_ = 10.0;
 	high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
-	apply_centroid_mode_ = false;
-	apply_fullatom_mode_ = false;
 	current_loop_is_H3_ = true;
-	H3_filter_ = true;
 	antibody_refine_ = true;
 	snug_fit_ = true;
 	loops_flag_ = true;
-	docking_local_refine_ = true;
 	dle_flag_ = true;
 	refine_input_loop_ = true;
 	is_camelid_ = false;
@@ -197,6 +175,7 @@ void CDRH3Modeler2::set_default()
     
     // size of loop above which 3mer frags are used
 	cutoff_3_ = 6; // default 6
+    
 
     
     //TODO:
@@ -211,31 +190,35 @@ void CDRH3Modeler2::set_default()
     
     
     
-void CDRH3Modeler2::setup_objects(){
+void Ab_H3_Model_CDR_H3::setup_objects(){
     h3_cter_insert_mover_ = new Ab_H3_cter_insert_mover(ab_info_, is_camelid_);
-    h3_perturb_ccd_build_ = new Ab_H3_perturb_ccd_build(current_loop_is_H3_,H3_filter_,is_camelid_, ab_info_ );        
+    h3_perturb_ccd_build_ = new Ab_H3_perturb_ccd_build(current_loop_is_H3_,is_camelid_, ab_info_ );        
 }
     
     
     
     
     
-void CDRH3Modeler2::set_lowres_score_func( scoring::ScoreFunctionOP lowres_scorefxn ) {
+void Ab_H3_Model_CDR_H3::set_lowres_score_func( scoring::ScoreFunctionOP lowres_scorefxn ) {
     lowres_scorefxn_ = lowres_scorefxn;
 } 
 
-void CDRH3Modeler2::set_highres_score_func(scoring::ScoreFunctionOP highres_scorefxn) {
+void Ab_H3_Model_CDR_H3::set_highres_score_func(scoring::ScoreFunctionOP highres_scorefxn) {
     highres_scorefxn_ = highres_scorefxn;
 }
 
-    
+void Ab_H3_Model_CDR_H3::turn_off_H3_filter(){
+    h3_perturb_ccd_build_->turn_off_H3_filter();
+}    
 
     
     
 
-void CDRH3Modeler2::apply( pose::Pose & pose_in )
+void Ab_H3_Model_CDR_H3::apply( pose::Pose & pose_in )
 {
-    
+        protocols::moves::PyMolMover pymol;
+        pymol.keep_history(true);
+
 
     TR << "Applying CDR H3 modeler" << std::endl;
 
@@ -244,7 +227,7 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
     using namespace protocols::moves;
 
     start_pose_ = pose_in;
-    setup_packer_task( pose_in, tf_ );
+
     pose::Pose start_pose = pose_in;
 
 
@@ -254,15 +237,16 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
     Size cutpoint = framework_loop_begin + 1;
     Size framework_loop_size = (framework_loop_end - framework_loop_begin) + 1;
 
-    
-    
     loops::Loop cdr_h3( framework_loop_begin, framework_loop_end, cutpoint, 0, true );
     loops::Loop trimmed_cdr_h3(framework_loop_begin, framework_loop_end - c_ter_stem_, cutpoint, 0, true );
     loops::Loop input_loop;
+    
     if (do_cter_insert_){
+        //JQX: the h3 loop removing the cterminal 3 residues
         input_loop = trimmed_cdr_h3;
     }
     else{
+        //JQX: the original h3 loop
         input_loop = cdr_h3;
     }
         
@@ -276,21 +260,31 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
     
     
     // Building centroid mode loop
+    pose_in.dump_pdb("right_before_centroid.pdb");
     to_centroid.apply( pose_in );
-    
+//    pymol.apply(pose_in);
+    pose_in.dump_pdb("just_centroid.pdb");
 
     
-    set_extended_torsions( pose_in, cdr_h3 );
+    // some initialization before you do h3 loop modeling
+//    my_LoopMover my_loop_mover;
+//    my_loop_mover.set_extended_torsions( pose_in, cdr_h3 );
+        set_extended_torsions( pose_in, cdr_h3 );
+       pose_in.dump_pdb("extend_centroid.pdb");
         //JQX:  this function is in loops_main.cc file
         //      firstly, idealize the loop (indealize bonds as well)
         //      phi(-150),  all the residue, except the first one
         //      psi(150),   all the residue, except the last one
         //      omega(180), all the residue, except the first & last one
-        //JQX:  in R2: the function is called insert_init_frag, which is 
-        //      in the file jumping_util.cc. All the phi, psi, omega are 
+        //JQX:  in R2: the function is called "insert_init_frag", which is 
+        //      in the file "jumping_util.cc". All the phi, psi, omega are 
         //      assigned to all the residues. "L" secondary structure is 
         //      also assinged. The bonds are idealized using 
-        //        framework_pose.insert_ideal_bonds(begin-1, end)
+        //      framework_pose.insert_ideal_bonds(begin-1, end)
+    
+    
+    
+    /*  JQX: the following code is probably not ncessary*/
     
     Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
     std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
@@ -304,8 +298,8 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
         pose_in.set_psi  (framework_loop_begin - 1, hfr_pose_.psi( unaligned_cdr_loop_begin - 1 )   );
         pose_in.set_omega(framework_loop_begin - 1, hfr_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
     }
-    
 
+        pose_in.dump_pdb("after_copying_nter.pdb");
 
     
     antibody2::Ab_InfoOP starting_antibody;
@@ -326,18 +320,14 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
             }
         }
         
-        exit(-1);
+
         
+        pose_in.dump_pdb("after_c_insert.pdb");
 
 
         h3_perturb_ccd_build_->apply(pose_in);
+
         
-        if( input_loop.size() > cutoff_9_  ) {
-            Size saved_cutoff_9 = cutoff_9_;
-            cutoff_9_ = 100; // never going to reach
-            h3_perturb_ccd_build_->apply(pose_in);
-            cutoff_9_ = saved_cutoff_9; // restoring
-        }
         closed_cutpoints = cutpoints_separation( pose_in, ab_info_ );
         ++cycle;
     } // while( ( cut_separation > 1.9 )
@@ -347,15 +337,11 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
 
     
     
-    
-    
-    //#############################
+    //#############################  //JQX: this should not be here
     if( is_camelid_ ){
         loop_centroid_relax( pose_in, ab_info_->get_CDR_loop("h1")->start(), ab_info_->get_CDR_loop("h1")->stop() );
     }
     //#############################
-    
-    
     
     
     
@@ -369,6 +355,8 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
     //recover sidechains from starting structures
     protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose_, allow_chi_copy );
     recover_sidechains.apply( pose_in );
+    
+    
 
     // Packer
     protocols::simple_moves::PackRotamersMoverOP packer;
@@ -378,18 +366,18 @@ void CDRH3Modeler2::apply( pose::Pose & pose_in )
 
 
 
-
+    pose_in.dump_pdb("finish_apply_CDR_H3_modeler.pdb");
     TR << "Finished applying CDR H3 modeler" << std::endl;
+    
 
     return;
-} // CDRH3Modeler2::apply()
+} // Ab_H3_Model_CDR_H3::apply()
 
     
     
     
-std::string
-CDRH3Modeler2::get_name() const {
-	return "CDRH3Modeler2";
+std::string Ab_H3_Model_CDR_H3::get_name() const {
+	return "Ab_H3_Model_CDR_H3";
 }
 
 
@@ -417,7 +405,7 @@ CDRH3Modeler2::get_name() const {
 		///
 		/// @last_modified 05/07/2010
 		///////////////////////////////////////////////////////////////////////////
-		void CDRH3Modeler2::loop_centroid_relax(
+		void Ab_H3_Model_CDR_H3::loop_centroid_relax(
 			pose::Pose & pose_in,
 			Size const loop_begin,
 			Size const loop_end )
@@ -476,10 +464,12 @@ CDRH3Modeler2::get_name() const {
 			Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
 			Size inner_cycles( loop_size );
 			Size outer_cycles( 1 );
-			if( antibody_refine_ || refine_input_loop_ )
+			if( antibody_refine_ || refine_input_loop_ ){
 				outer_cycles = 5;
-			if( antibody_refine_ && snug_fit_ )
+            }
+			if( antibody_refine_ && snug_fit_ ){
 				outer_cycles = 2;
+            }
 			if( benchmark_ ) {
 				n_small_moves = 1;
 				inner_cycles = 1;

@@ -387,7 +387,7 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
         cdrh3_map->set_chi( allow_repack );
         
         PackRotamersMoverOP loop_repack=new PackRotamersMover(highres_scorefxn_);
-        setup_packer_task( start_pose_, tf_ );
+
         ( *highres_scorefxn_ )( pose_in );
         tf_->push_back( new RestrictToInterface( allow_repack ) );
         loop_repack->task_factory(tf_);
@@ -456,7 +456,6 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
         select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
                              allow_repack);
         cdrh3_map->set_chi( allow_repack );
-        setup_packer_task( start_pose_, tf_ );
         ( *highres_scorefxn_ )( pose_in );
         tf_->push_back( new RestrictToInterface( allow_repack ) );
         RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
@@ -476,9 +475,7 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
         bool relaxed_H3_found_ever( false );
         if( H3_filter_)
             relaxed_H3_found_ever = CDR_H3_filter( pose_in,
-                                                  ab_info_->get_CDR_loop("h3")->start(),
-                                                  (ab_info_->get_CDR_loop("h3")->stop()-1 - ab_info_->get_CDR_loop("h3")->start()) + 1, 
-                                                  H3_filter_,
+                                                  ab_info_->get_CDR_loop("h3"),
                                                   is_camelid_
                                                   );
         
@@ -501,7 +498,6 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
                 select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
                                      allow_repack);
                 cdrh3_map->set_chi( allow_repack );
-                setup_packer_task( start_pose_, tf_ );
                 ( *highres_scorefxn_ )( pose_in );
                 tf_->push_back( new RestrictToInterface( allow_repack ) );
                 RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
@@ -512,9 +508,7 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
                 if(H3_filter_ && (h3_attempts <= inner_cycles)) {
                     h3_attempts++;
                     relaxed_H3_found_current = CDR_H3_filter(pose_in,
-                                                             ab_info_->get_CDR_loop("h3")->start(), 
-                                                             (ab_info_->get_CDR_loop("h3")->stop()-1 - ab_info_->get_CDR_loop("h3")->start()) + 1,
-                                                             H3_filter_,
+                                                             ab_info_->get_CDR_loop("h3"),
                                                              is_camelid_);
                     
                     if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
@@ -535,9 +529,7 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
                     if( H3_filter_ ) {
                         bool relaxed_H3_found_current(false);
                         relaxed_H3_found_current = CDR_H3_filter(pose_in,
-                                                                 ab_info_->get_CDR_loop("h3")->start(), 
-                                                                 ( ab_info_->get_CDR_loop("h3")->stop()-1 - ab_info_->get_CDR_loop("h3")->start()) + 1,
-                                                                 H3_filter_,
+                                                                 ab_info_->get_CDR_loop("h3"), 
                                                                  is_camelid_);
                         if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
                             mc->boltzmann( pose_in );
@@ -559,7 +551,6 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
                 if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
                     // repack trial
                     loop_repack = new PackRotamersMover( highres_scorefxn_ );
-                    setup_packer_task( start_pose_, tf_ );
                     ( *highres_scorefxn_ )( pose_in );
                     tf_->push_back( new RestrictToInterface( allow_repack ) );
                     loop_repack->task_factory( tf_ );

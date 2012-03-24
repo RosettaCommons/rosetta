@@ -24,14 +24,14 @@ sources = {
                 "Ab_GraftOneCDR_Mover",
                 "Ab_CloseOneCDR_Mover",
                 "Ab_RelaxCDRs_Mover",
-		"Ab_ModelCDRH3",
+		"Ab_H3_Modeler_full_protocol",
+		"Ab_H3_Model_CDR_H3",
+		"Ab_H3_perturb_ccd_build",
 		"Ab_H3_cter_insert_mover",
-                "CDRH3Modeler2",
 		"Ab_LH_RepulsiveRamp_Mover",
 		"Ab_LH_SnugFit_Mover",
 		"Ab_util",
 		"Ab_Relax_a_CDR_FullAtom",
-		"Ab_H3_perturb_ccd_build",
 	],
 }
 include_path = [

@@ -59,12 +59,11 @@ void setup_simple_fold_tree(
     
 bool CDR_H3_filter(
                        const core::pose::Pose & pose_in,
-                       core::Size const loop_begin,
-                       core::Size const size,
-                       bool H3_filter,
+                       loops::LoopOP input_loop,
                        bool is_camelid);
     
-void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactoryOP tf );
+    
+//void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactoryOP tf );
 
     
     

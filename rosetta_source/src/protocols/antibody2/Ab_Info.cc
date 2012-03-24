@@ -143,10 +143,16 @@ Ab_Info::set_default( bool is_camelid )
 
 
 
-
-
-void
-Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool is_camelid ) {
+// TODO:
+// JQX:
+// The code assumed that the input PDB has been been renumbered using the Chothia
+// numbering scheme [see the "get_CDRs_numbering()" function below]: as a matter 
+// of fact, since this code is desigend for the Rosetta Antibody Homology Modeling
+// the input is always the structure made from different templates, and they are 
+// always renumbered by the perl script from the Rosetta Antibody Server
+// A smart way would be to use the "identify_CDR_from_a_sequence()" to automatically
+// check this out. On my list!
+void Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool is_camelid ) {
 
 	set_default( is_camelid );
 
@@ -189,10 +195,10 @@ Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool is_camelid ) {
 
     
     // JQX:
-    // You should always see 95-102 as the positions for your H3 in your FR02.pdb, but as a matter of fact,
-    // the antibody script just copied h3.pdb (heavy atoms) into the FR02.pdb, sometimes you see the stop
-    // like postition pdb number 98, not 102, if the h3.pdb is short. Therefore, you use pdb number 102 to 
-    // define h3, sometimes it fails! 
+    // One should always see 95-102 as the positions for your H3 in your FR02.pdb, but as a matter of fact,
+    // the antibody script just copied h3.pdb (heavy atoms) into the FR02.pdb, sometimes one sees the stop
+    // postition pdb number 98, not 102, if the h3.pdb is short. Therefore, one useing the pdb number 102 to 
+    // define h3 fails! 
     // But in FR02.pdb, you always see 103, because 103 is on the framework. The idea is to find the pose number
     // of PDB number 103, then minus 1 will give you the last residue of h3.
     Size pose_num_end_plus_one = pose.pdb_info()->pdb2pose( 'H', CDR_numbering_end_["h3"]+1 ) ;  // PDB number 103 to get pose number
@@ -538,8 +544,196 @@ std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info )
 
     
     
-
+//TODO:
+//JQX: make Daisuke's code compatible with my code
+//
+// Identify 3 CDRs from a sequence
+// Automatically judge heavy or light chain (I hope!)
+// Author: Daisuke Kuroda
+// Last modified 03/16/2012 by Daisuke Kuroda
+//
     
+void Ab_Info::identify_CDR_from_a_sequence(std::string & querychain)
+{
+        using namespace std;
+
+        int l1found = 0, l2found = 0, l3found = 1, h1found = 1, h2found = 0, h3found = 1; 
+        // 0 if exst; otherwise 1.
+        int lenl1 =0, lenl2 = 0, lenl3 = 0, lenh1 = 0, lenh2 = 0, lenh3 = 0;
+        int posl1_s = 0, posl1_e = 0, posl2_s = 0, posl2_e = 0, posl3_s = 0, posl3_e = 0;
+        int posh1_s = 0, posh1_e = 0, posh2_s = 0, posh2_e = 0, posh3_s = 0, posh3_e = 0;
+        int i = 0, k = 0, l = 0, m = 0;
+        
+        string seql1, seql2, seql3, seqh1, seqh2, seqh3;
+        string frl3, frh1, frh3;
+        
+        // For L3
+        string p1_l3[] = {"G","A","P","C","D","E","Q","N","R","K","H","W","Y","F","M","T","V","I","S","L"};
+        
+        // For H1
+        string p1_h1[] = {"I","V","F","Y","A","M","L","N"};
+        string p2_h1[] = {"R","K","Q","V","N","C"};
+        string p3_h1[] = {"Q","K","H","E","L","R"};
+        
+        // For H3
+        string p1_h3[] = {"G","A","P","C","D","E","Q","N","R","K","H","W","Y","F","M","T","V","I","S","L"};
+        string p2_h3[] = {"G","R","D"};
+        
+        
+        cout << "*** Query sequence ***" << endl;
+        cout << querychain << endl;
+        cout << endl;
+        
+        /*****************************************************/
+        /***************** Is it light chain? ****************/
+        /*****************************************************/
+        /* L1 search Start */
+        if(querychain.find("WYL") != string::npos){
+            posl1_e = querychain.find("WYL") - 1;
+        }else if(querychain.find("WLQ") != string::npos){
+            posl1_e = querychain.find("WLQ") - 1;
+        }else if(querychain.find("WFQ") != string::npos){
+            posl1_e = querychain.find("WFQ") - 1;
+        }else if(querychain.find("WYQ") != string::npos){
+            posl1_e = querychain.find("WYQ") - 1;
+        }else if(querychain.find("WYH") != string::npos){
+            posl1_e = querychain.find("WYH") - 1;
+        }else if(querychain.find("WVQ") != string::npos){
+            posl1_e = querychain.find("WVQ") - 1;
+        }else if(querychain.find("WVR") != string::npos){
+            posl1_e = querychain.find("WVR") - 1;
+        }else if(querychain.find("WWQ") != string::npos){
+            posl1_e = querychain.find("WWQ") - 1;
+        }else if(querychain.find("WVK") != string::npos){
+            posl1_e = querychain.find("WVK") - 1;
+        }else if(querychain.find("WLL") != string::npos){
+            posl1_e = querychain.find("WLL") - 1;
+        }else if(querychain.find("WFL") != string::npos){
+            posl1_e = querychain.find("WFL") - 1;
+        }else if(querychain.find("WVF") != string::npos){
+            posl1_e = querychain.find("WVF") - 1;
+        }else if(querychain.find("WIQ") != string::npos){
+            posl1_e = querychain.find("WIQ") - 1;
+        }else if(querychain.find("WYR") != string::npos){
+            posl1_e = querychain.find("WYR") - 1;
+        }else if(querychain.find("WNQ") != string::npos){
+            posl1_e = querychain.find("WNQ") - 1;
+        }else if(querychain.find("WHL") != string::npos){
+            posl1_e = querychain.find("WHL") - 1;
+        }else{
+            l1found = 1;
+        }
+        
+        if(l1found != 1){
+            posl1_s = querychain.find("C") + 1;
+            lenl1   = posl1_e - posl1_s + 1;
+            seql1   = querychain.substr(posl1_s,lenl1);
+        }
+        /* L1 search Finish */
+        
+        /* L2 search start */
+        if(l1found != 1){
+            posl2_s = posl1_e + 16;
+            posl2_e = posl2_s + 6;
+            lenl2   = posl2_e - posl2_s + 1;
+            seql2   = querychain.substr(posl2_s,lenl2);
+        }else{
+            l2found = 1;
+        }
+        /* L2 search end */
+        
+        /* L3 search Start */
+        for(k = 0;k < 20; k++){
+            for(l = 0;l < 3; l++){
+                frl3 = "FG" + p1_l3[k] + "G";
+                
+                if(querychain.find(frl3, 80) != string::npos){
+                    posl3_e = querychain.find(frl3,80) - 1;
+                    posl3_s = querychain.find("C",70) + 1;
+                    lenl3   = posl3_e - posl3_s + 1;
+                    seql3   = querychain.substr(posl3_s,lenl3);
+                    l3found = 0;
+                }
+            }
+        }
+        /* L3 search Finish */
+        
+        /*****************************************************/
+        /***************** Is it heavy chain? ****************/
+        /*****************************************************/
+        if(l1found == 1 || l2found == 1 || l3found == 1){
+            /* H1 search Start */
+            for(k = 0;k < 8; k++){
+                for(l = 0; l < 6; l++){
+                    for(m = 0; m < 6; m++){
+                        frh1 = "W" + p1_h1[k] + p2_h1[l] + p3_h1[m];
+                        
+                        if(querychain.find(frh1, 0) != string::npos){
+                            posh1_e = querychain.find(frh1, 0) - 1;
+                            h1found = 0;
+                        }
+                    }
+                }
+            }
+            
+            if(h1found != 1){
+                posh1_s = querychain.find("C") + 4;
+                lenh1   = posh1_e - posh1_s + 1;
+                seqh1   = querychain.substr(posh1_s, lenh1);
+            }
+            /* H1 search Finish */
+            
+            /* H3 search Start */
+            for(k = 0;k < 20; k++){
+                for(l = 0;l < 3; l++){
+                    frh3 = "WG" + p1_h3[k] + p2_h3[l];
+                    
+                    if(querychain.find(frh3, 80) != string::npos){
+                        posh3_e = querychain.find(frh3,80) - 1;
+                        h3found = 0;
+                    }
+                }
+            }
+            
+            if(querychain.find("C", 80) != string::npos){
+                posh3_s = querychain.find("C", 80) + 3;
+            }else{
+                h3found = 1;
+            }
+            
+            if(h3found != 1){
+                lenh3 = posh3_e - posh3_s + 1;
+                seqh3 = querychain.substr(posh3_s,lenh3);
+            }
+            /* H3 search Finish */
+            
+            /* H2 search start */
+            if(h1found != 1 && h3found != 1){
+                posh2_s = posh1_e + 15;
+                posh2_e = posh3_s - 33;
+                lenh2   = posh2_e - posh2_s + 1;
+                seqh2   = querychain.substr(posh2_s,lenh2);
+            }
+            /* H2 search end */
+        }
+        
+        if(l1found == 0 && l2found == 0 && l3found == 0){
+            cout << "This is Light chain!" << endl;
+            cout << "L1 info:" << "\t" << lenl1 << "\t" << posl1_s << "-" << posl1_e << "\t" << seql1 << endl;
+            cout << "L2 info:" << "\t" << lenl2 << "\t" << posl2_s << "-" << posl2_e << "\t" << seql2 << endl;
+            cout << "L3 info:" << "\t" << lenl3 << "\t" << posl3_s << "-" << posl3_e << "\t" << seql3 << endl;
+        }else if(h1found == 0 && h2found == 0 && h3found == 0){
+            cout << "This is Heavy chain!" << endl;
+            cout << "H1 info:" << "\t" << lenh1 << "\t" << posh1_s << "-" << posh1_e << "\t" << seqh1 << endl;
+            cout << "H2 info:" << "\t" << lenh2 << "\t" << posh2_s << "-" << posh2_e << "\t" << seqh2 << endl;
+            cout << "H3 info:" << "\t" << lenh3 << "\t" << posh3_s << "-" << posh3_e << "\t" << seqh3 << endl;
+        }else{
+            cout << "Some CDRs seem to be missing!" << endl;
+        }
+        
+ 
+}
+
     
     
     

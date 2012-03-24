@@ -298,7 +298,6 @@ void Ab_LH_RepulsiveRamp_Mover::snugfit_MC_min (
         rigid::RigidBodyPerturbMoverOP rb_perturb=new rigid::RigidBodyPerturbMover(pose_in,
                                                                                    *cdr_dock_map, 2.0, 0.1 , rigid::partner_downstream, true );
         
-		setup_packer_task( pose_in, tf_ );
 		//set up sidechain movers for rigid body jump and loop & neighbors
 		utility::vector1_size rb_jump;
 		rb_jump.push_back( 1 );

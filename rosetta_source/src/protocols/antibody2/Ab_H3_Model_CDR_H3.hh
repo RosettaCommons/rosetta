@@ -8,30 +8,29 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/CDRH3Modeler2.hh
+/// @file protocols/antibody2/Ab_H3_Model_CDR_H3.hh
 /// @brief
 ///// @author Jianqing Xu ( xubest@gmail.com )
 //
 
 
-#ifndef INCLUDED_protocols_antibody2_CDRH3Modeler2_hh
-#define INCLUDED_protocols_antibody2_CDRH3Modeler2_hh
+#ifndef INCLUDED_protocols_antibody2_Ab_H3_Model_CDR_H3_hh
+#define INCLUDED_protocols_antibody2_Ab_H3_Model_CDR_H3_hh
 
-#include <protocols/antibody2/CDRH3Modeler2.fwd.hh>
+#include <protocols/antibody2/Ab_H3_Model_CDR_H3.fwd.hh>
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/vector1.fwd.hh>
-#include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
 #include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
-
-
+#include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
 
 
 
@@ -44,22 +43,20 @@ namespace antibody2 {
 //////////////////////////////////////////////////////////////////////////
 /// @brief Ab initio modeling of CDR H3 loop
 /// @details
-class CDRH3Modeler2 : public protocols::moves::Mover {
+class Ab_H3_Model_CDR_H3 : public protocols::moves::Mover {
 public:
 	/// @brief default constructor
-	CDRH3Modeler2();
+	Ab_H3_Model_CDR_H3();
 
 	/// @brief constructor with arguments
-	CDRH3Modeler2( bool apply_centroid_mode, 
-                   bool apply_fullatom_mode, 
-                   bool camelid, 
-                   bool benchmark, 
-                   Ab_InfoOP antibody_info );
-    
+	Ab_H3_Model_CDR_H3( bool camelid, bool benchmark, Ab_InfoOP antibody_info );
 
 	/// @brief default destructor
-	~CDRH3Modeler2();
-
+	~Ab_H3_Model_CDR_H3();
+    
+	void set_default();
+	virtual void apply( core::pose::Pose & pose_in );
+	virtual std::string get_name() const;
 
 	/// @brief enable benchmark mode
 	inline void enable_benchmark_mode( bool setting ) {
@@ -70,27 +67,10 @@ public:
 	inline void set_camelid( bool setting ) {
 		is_camelid_ = setting;
 		if( is_camelid_ ) {
-			H3_filter_ = false;
 			snug_fit_ = false;
-			docking_local_refine_ = false;
 		}
 	}
 
-	/// @brief set centroid mode loop building
-	inline void set_centroid_loop_building( bool setting ) {
-		apply_centroid_mode_ = setting;
-	}
-
-	/// @brief set fullatom mode loop building
-	inline void set_fullatom_loop_building( bool setting ) {
-		apply_fullatom_mode_ = setting;
-	};
-
-
-
-	void set_default();
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
 
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
 	void set_lowres_score_func(core::scoring::ScoreFunctionOP lowres_scorefxn );
@@ -104,7 +84,16 @@ public:
 		core::Size const loop_begin,
 		core::Size const loop_end );
 
-
+    void set_task_factory(pack::task::TaskFactoryCOP tf){
+        tf_ = new core::pack::task::TaskFactory(*tf);
+    }
+    
+    void turn_off_H3_filter();
+    
+    void turn_off_cter_insert(){
+        do_cter_insert_ = false;
+    }
+    
 private:
 	bool user_defined_;
 	core::pose::Pose start_pose_;
@@ -125,11 +114,8 @@ private:
     /// @brief Number of ADDITIONAL residues modeled from H3_CTERM
 	///        These residues range from H:n-2,n-1,n,n+1 of H3
 	core::Size c_ter_stem_;
-        core::Size max_cycle_;
-
-
-	core::scoring::ScoreFunctionOP fa_scorefxn_;
-
+    
+    core::Size max_cycle_;
 
 	// score functions
 	core::scoring::ScoreFunctionOP lowres_scorefxn_;
@@ -137,16 +123,10 @@ private:
 
 	/// @brief benchmark flag
 	bool benchmark_;
-	/// @brief Centroid mode loop building
-	bool apply_centroid_mode_;
-	/// @brief Fullatom mode loop building
-	bool apply_fullatom_mode_;
     
 	/// @brief flag indicating that current loop being modeled is CDR H3
 	bool current_loop_is_H3_;
-    
-	/// @brief actually enables H3 filter for H3 operations
-	bool H3_filter_;
+
 
 	/// @brief refine H3 only
 	bool antibody_refine_;
@@ -157,7 +137,6 @@ private:
 	/// @brief loop_building in docking
 	bool loops_flag_;
     
-	bool docking_local_refine_;
 	/// @brief insert fragment in docking
 	bool dle_flag_;
     
@@ -167,27 +146,38 @@ private:
 	/// @brief is camelid antibody without light chain
 	bool is_camelid_;
 
-
 	antibody2::Ab_InfoOP ab_info_;
 
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;
 
-	void init(
-              bool apply_centroid_mode,
-              bool apply_fullatom_mode,
-              bool camelid,
-              bool benchmark,
-              Ab_InfoOP antibody_info);
+	void init(bool camelid, bool benchmark, Ab_InfoOP antibody_info);
 
     void setup_objects();
 
     Ab_H3_cter_insert_moverOP h3_cter_insert_mover_;
     Ab_H3_perturb_ccd_buildOP h3_perturb_ccd_build_;
     
-}; // class CDRH3Modeler2
+}; // class Ab_H3_Model_CDR_H3
 
 
+    
+/*
+// JQX: make a class, which inherits from abstract class "loop_mover"
+class my_LoopMover: public protocols::loops::loop_mover::LoopMover {
+public:
+    my_LoopMover();
+    ~my_LoopMover();
+    virtual void apply( core::pose::Pose & pose_in );
+	virtual std::string get_name() const;
+    virtual void set_extended_torsions( core::pose::Pose & pose, loops::Loop const & loop );
+protected:
+    virtual basic::Tracer & tr() const;
+private:
+    
+};
+*/  
+    
 
 
 

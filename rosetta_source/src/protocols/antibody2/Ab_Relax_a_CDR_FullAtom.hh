@@ -26,7 +26,7 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loops.hh>
@@ -64,6 +64,10 @@ public:
     Ab_Relax_a_CDR_FullAtom(bool current_loop_is_H3, bool H3_filter, bool is_camelid, Ab_InfoOP antibody_info);
 
 
+    void set_task_factory(core::pack::task::TaskFactoryCOP tf){
+        tf_ = new core::pack::task::TaskFactory(*tf);
+    }
+    
         
     virtual protocols::moves::MoverOP clone() const;
     

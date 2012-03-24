@@ -61,7 +61,7 @@ public:
 	// return kinked/extended
 	bool is_kinked()   { return kinked_H3_;   }
 	bool is_extended() { return extended_H3_; }
-    bool is_camelid()  { return is_camelid_;     }
+    bool is_camelid()  { return is_camelid_;  }
     utility::vector1<char> get_Fv_sequence() { return Fv_sequence_;}
 
 	/// align current Fv to native.Fv
@@ -89,6 +89,7 @@ public:
 	void detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose );
     void get_CDRs_numbering();
 	void set_default( bool camelid );
+    void identify_CDR_from_a_sequence(std::string & querychain);
     
     //bool is_my_pose_antibody(core::pose::Pose & pose);
     //bool is_my_antibody_camelid(core::pose::Pose & pose);

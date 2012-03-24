@@ -14,7 +14,7 @@
 
 
 
-#include <protocols/antibody2/Ab_ModelCDRH3.hh>
+#include <protocols/antibody2/Ab_H3_Modeler_full_protocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
@@ -41,13 +41,13 @@ main( int argc, char * argv [] )
 	using namespace protocols::antibody2;
 	using namespace protocols::jd2;
 
-	Ab_ModelCDRH3::register_options();
+	Ab_H3_Modeler_full_protocol::register_options();
 	protocols::jd2::register_options();
 	// initialize core
 	devel::init(argc, argv);
 
 
-	Ab_ModelCDRH3OP ab_m_h3 = new Ab_ModelCDRH3();
+	Ab_H3_Modeler_full_protocolOP ab_m_h3 = new Ab_H3_Modeler_full_protocol();
 	TR<<*ab_m_h3<<std::endl;
 //    exit(-1);
 

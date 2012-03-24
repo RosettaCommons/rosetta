@@ -27,7 +27,7 @@
 #include <utility/vector1.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <protocols/antibody2/CDRH3Modeler2.hh>
+#include <protocols/antibody2/Ab_H3_Model_CDR_H3.hh>
 #include <protocols/simple_moves/MinMover.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>

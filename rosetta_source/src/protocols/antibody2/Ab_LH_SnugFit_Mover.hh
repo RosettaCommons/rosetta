@@ -26,7 +26,7 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loops.hh>
@@ -65,6 +65,9 @@ public:
     
     virtual std::string get_name() const;
     
+    void set_task_factory(core::pack::task::TaskFactoryCOP tf){
+        tf_ = new core::pack::task::TaskFactory(*tf);
+    }
     
 private:
 

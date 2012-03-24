@@ -31,13 +31,8 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/antibody2/Ab_Info.hh>
-
-
-//#include <protocols/antibody2/CDRH3Modeler2.hh>
-//TODO: JQX: the reason I used this CDRH3Modeler2 head file 
-// is because of the "simple_one_loop_fold_tree" function in CDRH3Modeler2 file.
-// Planning to make a independent file to save this function, since it is widely used
 #include <protocols/antibody2/Ab_util.hh>
+#include <protocols/moves/PyMolMover.hh>
 
 
 
@@ -122,8 +117,12 @@ void Ab_H3_cter_insert_mover::apply(pose::Pose & pose)
 //    finalize_setup(pose);
             
             
-        
+    protocols::moves::PyMolMover pymol;
+    pymol.keep_history(true);
+    
     antibody_modeling_insert_ter(pose) ;
+//    pymol.apply(pose);
+
             
 }
         
@@ -161,7 +160,7 @@ void Ab_H3_cter_insert_mover::read_H3_cter_fragment(bool is_camelid )
 
     Size cdr_h3_size = ( ab_info_->get_CDR_loop("h3")->stop() - ab_info_->get_CDR_loop("h3")->start() ) + 1;
     
-    TR<<cdr_h3_size<<std::endl;
+    TR<<"cdr_h3_size="<<cdr_h3_size<<std::endl;
     utility::vector1< char > aa_1name;
     for( Size ii =    ab_info_->get_CDR_loop("h3")->start() - 2;
               ii <= ( ab_info_->get_CDR_loop("h3")->start() - 2 ) + cdr_h3_size + 3; 
@@ -169,7 +168,7 @@ void Ab_H3_cter_insert_mover::read_H3_cter_fragment(bool is_camelid )
     {
         aa_1name.push_back( ab_info_->get_Fv_sequence()[ii] );
     }
-    TR<<aa_1name.size()<<std::endl;
+    TR<<"aa_1name.size()="<<aa_1name.size()<<std::endl;
     
     std::string tttttt="";
     for(int i=1;i<=aa_1name.size();i++){
@@ -301,6 +300,13 @@ void Ab_H3_cter_insert_mover::read_H3_cter_fragment(bool is_camelid )
         }
     }
             
+    
+    
+    
+    for (int i=1;i<=H3_base_library_.size();i++) 
+        TR<<H3_base_library_[i]<<std::endl;
+    
+    
     H3_ter_library_stream.close();
     H3_ter_library_stream.clear();
             
@@ -363,9 +369,10 @@ void Ab_H3_cter_insert_mover::antibody_modeling_insert_ter( core::pose::Pose & p
     TR<<pose.fold_tree()<<std::endl;
     
     // choosing a base randomly
-    //H3_ter = H3_ter + random_H3_ter;//R2 style
+    //H3_ter = H3_ter + random_H3_ter;//R2 style, comment out
     f = H3_base_library_[ random_H3_ter ];
-//    f = H3_base_library_[ 21 ]; //JQX: a test case to match R2_Antibody
+//    TR<<H3_base_library_.size()<<std::endl;
+//    f = H3_base_library_[ 30 ]; //JQX: a test case to match R2_Antibody
                                 //JQX: realize R2_antibody the fragment data was vector, not vector1
                                 //JQX: in another word, R2->20 match R3->21
     TR<<f<<std::endl;
@@ -385,13 +392,12 @@ void Ab_H3_cter_insert_mover::antibody_modeling_insert_ter( core::pose::Pose & p
                  ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos, 
                  ab_info_->get_CDR_loop("h3")->stop() + 1 );
     }
-    //JQX: it seems movemap is not required..... kind of weird, but it works!
+    //JQX: it seems movemap is not required..... kind of weird, but it works! maybe there's a default movemap
             
     // Restoring pose fold tree
     pose.fold_tree( input_tree );
             
     
-    pose.dump_pdb("after_c_insert.pdb");
     TR <<  "Finished Inserting CDR H3 C-ter Fragments" << std::endl;
 
     return;

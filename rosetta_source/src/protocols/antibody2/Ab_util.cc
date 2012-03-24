@@ -202,10 +202,6 @@ namespace antibody2{
     ///              a prediction of the H3 base type based on the
     ///              aforementioned dihedral angle
     ///
-    /// @global_write
-    ///
-    /// @remarks
-    ///
     /// @references Structural classification of CDR-H3 in antibodies
     ///             Hiroki Shirai, Akinori Kidera, Haruki Nakamura
     ///             FEBS Letters 399 (1996) 1-8
@@ -214,19 +210,21 @@ namespace antibody2{
     ///
     /// @last_modified 02/04/2010
     ///////////////////////////////////////////////////////////////////////////
-    bool CDR_H3_filter(
-                                      const pose::Pose & pose_in,
-                                      Size const loop_begin,
-                                      Size const size,
-                                      bool H3_filter,
-                                      bool is_camelid)
+    
+    //TODO:
+    //JQX:
+    //work with Daisuke to put the L89 creteria into the code
+    
+    bool CDR_H3_filter(const pose::Pose & pose_in, loops::LoopOP input_loop, bool is_camelid)
     {
-        
-        char const light_chain = 'L';
+
         
         TR <<  "Utility: Checking Kink/Extended CDR H3 Base Angle" << std::endl;
         
-        if( !H3_filter || is_camelid )
+        
+        char const light_chain = 'L';
+        
+        if(is_camelid )
             return( true );
         
         // Values read from plot in reference paper. Fig 1 on Page 3
@@ -241,8 +239,11 @@ namespace antibody2{
         // Salt Bridge maximum value is 2.0 Angstroms - not used
         //	Real const s_bridge(4.0);
         
-        // chop out the loop
-        pose::Pose h3_loop( pose_in, loop_begin - 2, loop_begin + size + 1 );
+        // chop out the loop: 
+        //JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
+        Size start(input_loop->start()-2);
+        Size stop(input_loop->stop()+1);
+        
         
         bool is_kinked( false );
         bool is_extended( false );
@@ -250,29 +251,61 @@ namespace antibody2{
         
         // extract 3 letter residue codes for the chopped loop
         std::vector <std::string> aa_name; // loop residue 3 letter codes
-        for(Size ii = 1; ii <= size + 3; ii++)
-            aa_name.push_back( h3_loop.residue(ii).name3() );
+        //JQX: pay attention here!! It is vector, not vector1! too painful to compare to R2 code
+        //     just make vector, so it can match R2 code easily
+        for(Size ii=start; ii<=stop;ii++){
+            aa_name.push_back(pose_in.residue(ii).name3() );
+//            TR<<pose_in.residue(ii).name1()<<std::endl;
+        }
         
         Size const CA(2);   // CA atom position in full_coord array
         // base dihedral angle to determine kinked/extended conformation
+
         Real base_dihedral( numeric::dihedral_degrees(
-                                                      h3_loop.residue( aa_name.size() ).xyz( CA ),
-                                                      h3_loop.residue( aa_name.size() - 1).xyz( CA ),
-                                                      h3_loop.residue( aa_name.size() - 2).xyz( CA ),
-                                                      h3_loop.residue( aa_name.size() - 3).xyz( CA ) ) );
+                                                      pose_in.residue( stop ).xyz( CA ),
+                                                      pose_in.residue( stop - 1).xyz( CA ),
+                                                      pose_in.residue( stop - 2).xyz( CA ),
+                                                      pose_in.residue( stop - 3).xyz( CA ) ) ); 
+
         
-        // std::cout << "Base Dihedral: " << base_dihedral << std::endl;
+         TR << "Base Dihedral: " << base_dihedral << std::endl;
+        
+        
+        // JQX: the code in the below if statement was in Rosetta 2, but Aroop did not port it into R3
+        //      Maybe he has already tested that, the performance was better if using extra 
+        //      sequence creteria. But for now, I still port the code in here. Maybe for some reason
+        //      one still decides not to use the sequence rules.
+        
+        bool H3_base_only=false;
+        
+        if( H3_base_only) {
+            std::string base;
+            if((base_dihedral > kink_lower_bound) && (base_dihedral < kink_upper_bound)){
+                base = "KINK";
+                TR << "              " << base << std::endl;
+            }
+            else if((base_dihedral > extended_lower_bound) && (base_dihedral < extended_upper_bound)){
+                base = "EXTENDED";
+                TR << "              " << base << std::endl;
+            }
+            else{
+                base = "NEUTRAL";
+                TR << "              " << base << std::endl;
+            }
+            
+            return( true );
+        }
+
         
         // setting up pseudo-periodic range used in extended base computation
-        if( base_dihedral < kink_lower_bound )
+        if( base_dihedral < kink_lower_bound ){
             base_dihedral = base_dihedral + 360.00;
-        
+        }
         
         // Rule 1a for standard kink
-        if ((aa_name[aa_name.size()-3] != "ASP") &&
-            (aa_name[aa_name.size()-1] == "TRP"))	{
-            if( (base_dihedral > kink_lower_bound) &&
-               (base_dihedral < kink_upper_bound))
+        if ((aa_name[aa_name.size()-3] != "ASP") && (aa_name[aa_name.size()-1] == "TRP"))	 //aa_name.size()-3 = n-1
+        {                                                                                    //aa_name.size()-1 = n+1
+            if( (base_dihedral > kink_lower_bound) && (base_dihedral < kink_upper_bound))
             {
                 // std::cout << "KINK Found" << std::endl; // aroop_temp remove
                 is_kinked = true;
@@ -281,12 +314,12 @@ namespace antibody2{
         }
         
         // Rule 1b for standard extended form
-        if ( ( aa_name[ aa_name.size() - 3 ] == "ASP" ) &&
-            ( ( aa_name[1] != "LYS" ) && ( aa_name[1] != "ARG" ) ) &&
-            ( is_H3 != true ) )     {
+        if (  ( aa_name[ aa_name.size() - 3 ] == "ASP" ) && 
+              ( ( aa_name[1] != "LYS" ) && ( aa_name[1] != "ARG" ) ) &&   
+              ( is_H3 != true )    )     //aa_name[1] = 0 position
+        {
             
-            if( ( base_dihedral > extended_lower_bound ) &&
-               ( base_dihedral < extended_upper_bound) ) {
+            if( ( base_dihedral>extended_lower_bound) && (base_dihedral<extended_upper_bound) ) {
                 // std::cout << "EXTENDED Found" << std::endl; // aroop_temp remove
                 is_extended = true;
                 is_H3 = true;
@@ -295,8 +328,8 @@ namespace antibody2{
             if(!is_H3) {
                 // Rule 1b extension for special kinked form
                 bool is_basic(false); // Special basic residue exception flag
-                for(Size ii = 2; ii <= Size(aa_name.size() - 5); ii++) {
-                    if( aa_name[ii] == "ARG" || aa_name[ii] == "LYS" ) {
+                for(Size ii = 2; ii <= Size(aa_name.size() - 5); ii++) {      //aa_name.size() - 5 = n-3
+                    if( aa_name[ii] == "ARG" || aa_name[ii] == "LYS" ) {      //aa_name[2] =  0 position
                         is_basic = true;
                         break;
                     }
@@ -305,8 +338,9 @@ namespace antibody2{
                 if(!is_basic) {
                     Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(light_chain, 49 );
                     std::string let3_code_L49 = pose_in.residue( rosetta_number_of_L49 ).name3();
-                    if( let3_code_L49 == "ARG" || let3_code_L49 == "LYS")
+                    if( let3_code_L49 == "ARG" || let3_code_L49 == "LYS"){
                         is_basic = true;
+                    }
                 }
                 if( is_basic && ( base_dihedral > kink_lower_bound ) &&
                    ( base_dihedral < kink_upper_bound ) ) {
@@ -332,8 +366,7 @@ namespace antibody2{
             }
             if(!is_H3) {
                 bool is_basic(false); // Special basic residue exception flag
-                Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose(
-                                                                          light_chain, 46 );
+                Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose( light_chain, 46 );
                 std::string let3_code_L46 = pose_in.residue( rosetta_number_of_L46 ).name3();
                 if( let3_code_L46 == "ARG" || let3_code_L46 == "LYS") is_basic = true;
                 if( is_basic && (base_dihedral > extended_lower_bound ) &&
@@ -347,10 +380,11 @@ namespace antibody2{
         }
         
         // Rule 1d for extened form with salt bridge
-        if ( ( aa_name[ aa_name.size() - 3 ] == "ASP") &&
-            ( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
-            ( ( aa_name[0] == "LYS") || ( aa_name[0] == "ARG") ) &&
-            ( is_H3 != true ) ) {
+        if (  (  aa_name[ aa_name.size() - 3 ] == "ASP") &&
+              ( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
+              ( ( aa_name[0] == "LYS") || ( aa_name[0] == "ARG") ) &&
+              ( is_H3 != true )       ) 
+        {
             if( ( base_dihedral > extended_lower_bound ) &&
                ( base_dihedral < extended_upper_bound ) ) {
                 // aroop_temp remove
@@ -367,7 +401,7 @@ namespace antibody2{
     
     
     
-    
+    /*
     
     //TODO:
     //JQX:
@@ -382,16 +416,16 @@ namespace antibody2{
 		using namespace pack::task;
 		using namespace pack::task::operation;
         
-/*		if( init_task_factory_ ) {
-			tf = new TaskFactory( *init_task_factory_ );
-			TR << "AbModeler Reinitializing Packer Task" << std::endl;
-			return;
-		}
-		else{
-			tf = new TaskFactory;
-        }
-*/
-        
+//		if( init_task_factory_ ) {
+//			tf = new TaskFactory( *init_task_factory_ );
+//			TR << "AbModeler Reinitializing Packer Task" << std::endl;
+//			return;
+//		}
+//		else{
+//			tf = new TaskFactory;
+//        }
+//
+        tf->clear();
         tf = new TaskFactory;
         
         
@@ -418,14 +452,15 @@ namespace antibody2{
         
 	} // setup_packer_task
 
-    
+    */
 
     
     
     
     
-    
-    
+    //TODO:
+    //JQX:
+    // should input a variable here to let the user to adjust 1.9
     
     bool cutpoints_separation( core::pose::Pose & pose, Ab_InfoOP & antibody_info ) 
     {
