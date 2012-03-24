@@ -12,8 +12,8 @@
 /// @detailed
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_moves_util_hh
-#define INCLUDED_protocols_moves_util_hh
+#ifndef INCLUDED_protocols_comparative_modeling_hybridize_util_hh
+#define INCLUDED_protocols_comparative_modeling_hybridize_util_hh
 
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
@@ -34,6 +34,7 @@ namespace hybridize {
 using namespace core;
 using namespace kinematics;
 
+// constraint loading and generation
 void setup_centroid_constraints( 
 	core::pose::Pose &pose,
 	utility::vector1 < core::pose::PoseCOP > templates,

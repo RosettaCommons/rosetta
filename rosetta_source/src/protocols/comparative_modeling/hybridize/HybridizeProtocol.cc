@@ -16,6 +16,7 @@
 #include <protocols/comparative_modeling/hybridize/CartesianHybridize.hh>
 #include <protocols/comparative_modeling/hybridize/TemplateHistory.hh>
 #include <protocols/comparative_modeling/hybridize/util.hh>
+#include <protocols/comparative_modeling/hybridize/DDomainParse.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -646,6 +647,17 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	std::vector < SilentStructOP > post_centroid_structs;
 	bool need_more_samples = true;
 
+	// number of residues in asu without VRTs
+	core::Size nres_tgt = pose.total_residue();
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+		nres_tgt = symm_info->num_independent_residues();
+	}
+	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+	
 	core::Real gdtmm = 0.0;
 	while(need_more_samples) {
 		need_more_samples = false;
@@ -663,6 +675,14 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			template_index_icluster, templates_icluster, weights_icluster,
 			template_chunks_icluster, template_contigs_icluster);
 		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
+
+		// domain parsing
+		DDomainParse ddom;
+		utility::vector1< loops::Loops > domains = ddom.split( *templates_[initial_template_index], nres_tgt );
+		TR << "Found " << domains.size() << "domains" << std::endl;
+		for (int i=1; i<=domains.size(); ++i) {
+			TR << "domain " << i << ": " << domains[i] << std::endl;
+		}
 
 		// initialize template history
 		TemplateHistoryOP history = new TemplateHistory(pose);

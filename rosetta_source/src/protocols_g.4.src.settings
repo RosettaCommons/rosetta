@@ -42,6 +42,7 @@ sources = {
 	"protocols/comparative_modeling/hybridize" : [
 		"CartesianHybridize",
 		"ChunkTrialMover",
+		"DDomainParse",
 		"FoldTreeHybridize",
 		"HybridizeFoldtreeDynamic",
 		"HybridizeProtocol",
