@@ -240,7 +240,7 @@ bsub \\
 ''' % m_vars
 
 
-if m_vars["run_type"] == "condor":
+if "run_type" not in m_vars or m_vars["run_type"] == "condor":
 	print 'Running submit.py script for cluster docking_local_refine scientific test on a condor cluster...'
 	prepare_input_targets(targets, m_vars)
 	prepare_output_paths(m_vars)
