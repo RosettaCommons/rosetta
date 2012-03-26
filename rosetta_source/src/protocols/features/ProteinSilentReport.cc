@@ -269,7 +269,7 @@ ProteinSilentReport::write_full_report(
     residue_conformation_features_->report_features(
         pose, relevant_residues, struct_id, db_session);
     job_data_features_->report_features(
-        pose, relevant_residues, struct_id, db_session);
+    	pose, relevant_residues, struct_id, db_session);
 
 	transact_guard.commit();
 }

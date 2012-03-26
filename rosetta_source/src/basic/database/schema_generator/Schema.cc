@@ -62,7 +62,11 @@ void Schema::init(){
 
 void Schema::add_foreign_key(ForeignKey key){
 	this->foreign_keys_.push_back(key);
-	this->columns_.push_back(key.column());
+	//if the foreign key is also a primary key it will have already been added
+	if(!this->columns_.contains(key.column()))
+	{
+		this->columns_.push_back(key.column());
+	}
 }
 
 void Schema::add_column(Column column){

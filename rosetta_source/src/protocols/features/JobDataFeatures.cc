@@ -19,6 +19,11 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
 
 //External
 #include <boost/uuid/uuid.hpp>
@@ -50,62 +55,28 @@ std::string JobDataFeatures::type_name() const
 
 std::string JobDataFeatures::schema() const
 {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 
-	if(db_mode == "sqlite3")
-	{
-		return
-				"CREATE TABLE IF NOT EXISTS job_string_data (\n"
-				"	struct_id BLOB,\n"
-				"	data_key TEXT,\n"
-				"	FOREIGN KEY (struct_id)\n"
-				"		REFERENCES structures(struct_id)\n"
-				"		DEFERRABLE INITIALLY DEFERRED,\n"
-				"	PRIMARY KEY (struct_id,data_key));\n"
-				"\n"
-				"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
-				"	struct_id BLOB,\n"
-				"	data_key TEXT,\n"
-				"	data_value TEXT,\n"
-				"	FOREIGN KEY (struct_id)\n"
-				"		REFERENCES structures(struct_id)\n"
-				"		DEFERRABLE INITIALLY DEFERRED,\n"
-				"	PRIMARY KEY (struct_id,data_key));\n"
-				"\n"
-				"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
-				"	struct_id BLOB,\n"
-				"	data_key TEXT,\n"
-				"	data_value REAL,\n"
-				"	FOREIGN KEY (struct_id)\n"
-				"		REFERENCES structures(struct_id)\n"
-				"		DEFERRABLE INITIALLY DEFERRED,\n"
-				"	PRIMARY KEY (struct_id, data_key));";
-	}else if(db_mode == "mysql")
-	{
-		return
-				"CREATE TABLE IF NOT EXISTS job_string_data (\n"
-				"	struct_id BINARY(36),\n"
-				"	data_key VARCHAR(255),\n"
-				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id),\n"
-				"	PRIMARY KEY (struct_id,data_key));\n"
-				"\n"
-				"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
-				"	struct_id BINARY(36),\n"
-				"	data_key VARCHAR(255),\n"
-				"	data_value TEXT,\n"
-				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id),\n"
-				"	PRIMARY KEY (struct_id,data_key));\n"
-				"\n"
-				"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
-				"	struct_id BINARY(36),\n"
-				"	data_key VARCHAR(255),\n"
-				"	data_value REAL,\n"
-				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id),\n"
-				"	PRIMARY KEY (struct_id, data_key));";
-	}else
-	{
-		return "";
-	}
+	using namespace basic::database::schema_generator;
+	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	Column data_key("data_key",DbText(255));
+
+	utility::vector1<Column> primary_columns;
+	primary_columns.push_back(struct_id);
+	primary_columns.push_back(data_key);
+	PrimaryKey primary_key(primary_columns);
+
+	Schema job_string_data("job_string_data",primary_key);
+	job_string_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+
+	Schema job_string_string_data("job_string_string_data",primary_key);
+	job_string_string_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+	job_string_string_data.add_column(Column("data_value",DbText()));
+
+	Schema job_string_real_data("job_string_real_data",primary_key);
+	job_string_real_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+	job_string_real_data.add_column(Column("data_value",DbReal()));
+
+	return job_string_data.print() +"\n" + job_string_string_data.print() + "\n" + job_string_real_data.print();
 
 }
 
@@ -169,11 +140,12 @@ void JobDataFeatures::delete_record(
 void JobDataFeatures::insert_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
-	std::string statement_string = "INSERT INTO job_string_data VALUES (?,?);";
+	std::string statement_string = "INSERT INTO job_string_data (struct_id, data_key) VALUES (?,?);";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	stmt.bind(1,struct_id);
+
 	for(; it != job->output_strings_end(); ++it)
 	{
+		stmt.bind(1,struct_id);
 		stmt.bind(2,*it);
 		basic::database::safely_write_to_database(stmt);
 	}
@@ -209,11 +181,12 @@ JobDataFeatures::load_string_data(
 void JobDataFeatures::insert_string_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin());
-	std::string statement_string = "INSERT INTO job_string_string_data VALUES (?,?,?);";
+	std::string statement_string = "INSERT INTO job_string_string_data (struct_id,data_key,data_value)  VALUES (?,?,?);";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	stmt.bind(1,struct_id);
+
 	for(; it != job->output_string_string_pairs_end();++it)
 	{
+		stmt.bind(1,struct_id);
 		stmt.bind(2,it->first);
 		stmt.bind(3,it->second);
 		basic::database::safely_write_to_database(stmt);
@@ -250,12 +223,13 @@ JobDataFeatures::load_string_string_data(
 void JobDataFeatures::insert_string_real_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
-	std::string statement_string = "INSERT INTO job_string_real_data VALUES (?,?,?);";
+	std::string statement_string = "INSERT INTO job_string_real_data (struct_id,data_key,data_value) VALUES (?,?,?);";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	stmt.bind(1,struct_id);
+
 
 	for(; it != job->output_string_real_pairs_end();++it)
 	{
+		stmt.bind(1,struct_id);
 		stmt.bind(2,it->first);
 		stmt.bind(3,it->second);
 		basic::database::safely_write_to_database(stmt);
