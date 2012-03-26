@@ -44,7 +44,7 @@ namespace simple_moves {
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief A protocols::moves::Mover that minimizes a Pose to a local energy minimum by
-/// performing energy minimization of a ScoreFunction over the allowable 
+/// performing energy minimization of a ScoreFunction over the allowable
 /// degrees of freedom, defined by a MoveMap. The minimization type,
 /// minimization tolerance, and various other options can be also be set.
 ///
@@ -139,11 +139,17 @@ public:
 	virtual void nb_list( bool nb_list_in );
 	virtual void deriv_check( bool deriv_check_in );
 
+	Real tolerance();
+	std::string min_type();
+	bool nb_list();
+	bool deriv_check();
+
+
 	//	void threshold( Real threshold_in ) { threshold_ = threshold_in; } // TODO: can be deleted?
 	//	Real threshold() { return threshold_; } // TODO: can be deleted?
 
 	/// @brief Minimizes the DOFs of  <pose_>  specified in the MoveMap
-	/// using the ScoreFunction 
+	/// using the ScoreFunction
 	///
 	/// example(s):
 	///     minmover.apply(pose)

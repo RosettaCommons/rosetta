@@ -159,17 +159,20 @@ MinMover::score_function() const
 	return scorefxn_;
 }
 
-void
-MinMover::min_type( std::string min_type_in ) { min_options_->min_type( min_type_in ); }
+void MinMover::min_type( std::string min_type_in ) { min_options_->min_type( min_type_in ); }
+std::string MinMover::min_type() { return min_options_->min_type(); }
 
-void
-MinMover::tolerance( Real tolerance_in ) { min_options_->minimize_tolerance( tolerance_in ); }
 
-void
-MinMover::nb_list( bool nb_list_in ) { min_options_->use_nblist( nb_list_in ); }
+void MinMover::tolerance( Real tolerance_in ) { min_options_->minimize_tolerance( tolerance_in ); }
+Real MinMover::tolerance() { return min_options_->minimize_tolerance(); }
 
-void
-MinMover::deriv_check( bool deriv_check_in ) { min_options_->deriv_check( deriv_check_in ); }
+
+void MinMover::nb_list( bool nb_list_in ) { min_options_->use_nblist( nb_list_in ); }
+bool MinMover::nb_list() { return min_options_->use_nblist(); }
+
+
+void MinMover::deriv_check( bool deriv_check_in ) { min_options_->deriv_check( deriv_check_in ); }
+bool MinMover::deriv_check() { return min_options_->deriv_check(); }
 
 void
 MinMover::apply( pose::Pose & pose_ )
