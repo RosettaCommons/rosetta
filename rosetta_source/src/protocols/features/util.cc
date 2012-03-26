@@ -59,6 +59,8 @@ map<string, Size> static_batch_id_map_;
 
 static Tracer TR("protocols.features.util");
 // End static data
+
+pair<Size, Size>
 get_protocol_and_batch_id(
 	string identifier,
 	sessionOP db_session
