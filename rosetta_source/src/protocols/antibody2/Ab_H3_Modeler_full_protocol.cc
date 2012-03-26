@@ -391,8 +391,8 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
         if(H3_filter_  ==false) { model_cdrh3_->turn_off_H3_filter();   }
         model_cdrh3_->set_task_factory(tf_);
         model_cdrh3_->apply( frame_pose );
-        exit(-1);
-
+//        exit(-1);
+	return;
         pymol.apply( frame_pose );
         pymol.send_energy( frame_pose );
     
