@@ -126,6 +126,14 @@ OPT_KEY ( IntegerVector, fixed_res )
 OPT_KEY ( IntegerVector, cutpoint_open )
 
 ////////////////////////////////////////////////////////////////////////
+bool
+check_num_in_vector ( int input_num, utility::vector1< int > const & input_vector  ) {
+	for (Size i = 0; i <= input_vector.size(); ++i) {
+		if (input_num == input_vector[i]) return true;
+	}
+	return false;
+}
+////////////////////////////////////////////////////////////////////////
 void
 translate_residue ( conformation::Residue & rsd,
                     Vector const & nbr_atom_xyz ) {
@@ -653,6 +661,7 @@ pdb_minimizer() {
 	Size virtual_res_pos = add_virtual_res ( pose );
 	pose::Pose pose_full = pose;
 	Size const nres ( pose.total_residue() );
+	Size const nres_moving ( nres - fixed_res_list.size() );
 
 	//Output the sequence
 	std::string working_sequence = pose.sequence();
@@ -663,7 +672,7 @@ pdb_minimizer() {
 	float const dummy_tol ( 0.00000001 );
 	MinimizerOptions min_options1 ( "dfpmin", dummy_tol, false, false,
 	                               false );
-	min_options1.max_iter ( std::min( 3000, std::max( 1000, int(nres * 12) ) ) );
+	min_options1.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 
 	//Set the MoveMap, avoiding moving the virtual residue
 	std::cout << "Setting up movemap ..." << std::endl;
@@ -683,12 +692,20 @@ pdb_minimizer() {
 
 	kinematics::FoldTree fold_tree ( pose.fold_tree() );
 
+	utility::vector1< core::Size > cut_upper, cut_lower;
 	for ( Size i = 1; i <= fold_tree.num_jump(); ++i ) {
 		Size const k = fold_tree.upstream_jump_residue ( i );
 		Size const m = fold_tree.downstream_jump_residue ( i );
+		cut_lower.push_back(k);
+		cut_upper.push_back(m);
 
-		if ( pose.residue ( k ).aa() != core::chemical::aa_vrt && pose.residue ( m ).aa() != core::chemical::aa_vrt ) {
-			mm.set_jump ( i, true );
+		if ( pose.residue ( k ).aa() != core::chemical::aa_vrt && 
+		     pose.residue ( m ).aa() != core::chemical::aa_vrt ) {
+			if ( fixed_res_list.size() != 0 &&
+					 ! ( check_num_in_vector(k, fixed_res_list) ) &&
+					 ! ( check_num_in_vector(m, fixed_res_list) ) ) {
+				mm.set_jump ( i, true );
+			}
 		}
 	}
 
@@ -723,7 +740,23 @@ pdb_minimizer() {
 		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexO1P, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexO1P ), new HarmonicFunc ( 0.0, coord_sdev ) ) );
 		pose.constraint_set ( cst_set );
 		scorefxn->set_weight ( coordinate_constraint, 10 );
+
 		mm.set_chi ( fixed_res_num, false );
+		mm.set_bb ( fixed_res_num, false );
+
+		allow_insert(fixed_res_num) = false;
+
+		if (fixed_res_num - 1 > 0 && 
+		    ! ( check_num_in_vector( fixed_res_num - 1, fixed_res_list ) ) &&
+		    ! ( check_num_in_vector( fixed_res_num, cut_lower ) ) ) {
+			allow_insert(fixed_res_num) = true;
+		}
+		if (fixed_res_num + 1 <= nres && 
+		    ! ( check_num_in_vector( fixed_res_num + 1, fixed_res_list ) ) &&
+		    ! ( check_num_in_vector( fixed_res_num, cut_upper ) ) ) {
+			allow_insert(fixed_res_num) = true;
+		}
+
 	}
 
 	std::cout << std::endl;
