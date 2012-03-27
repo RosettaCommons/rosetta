@@ -47,8 +47,10 @@
 #include <protocols/protein_interface_design/filters/RelativeSegmentFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/SequenceRecoveryFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/SpecificResiduesNearInterfaceFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilterCreator.hh>
+
 
 #include <protocols/simple_filters/AlaScanCreator.hh>
 #include <protocols/simple_filters/AtomicContactFilterCreator.hh>
