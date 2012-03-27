@@ -161,7 +161,9 @@ DeltaFilter::compute( core::pose::Pose const & p ) const{
 core::Real
 DeltaFilter::report_sm( core::pose::Pose const & pose ) const
 {
-	return( compute( pose ) );
+	core::pose::Pose p( pose );
+	unbind( p );
+	return( compute( p ) );
 }
 
 void
