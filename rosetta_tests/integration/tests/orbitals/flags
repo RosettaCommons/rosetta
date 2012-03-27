@@ -2,3 +2,4 @@
 -packing:repack_only
 -add_orbitals
 -output_orbitals
+-extra_res_fa input/made_up_ligand.params
