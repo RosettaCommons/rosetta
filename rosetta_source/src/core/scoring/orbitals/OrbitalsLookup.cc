@@ -134,6 +134,7 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 	}
 	std::cout << "###################################################################################\n#####################3" << std::endl;
 */
+/*
 	for(core::Real i=0.00; i <= 3; i+=0.1){
 		core::Size number=0;
 		for(core::Real j=-1.0; j<=0; j+=0.05){
@@ -148,6 +149,7 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 		}
 	}
 	std::cout << "###################################################################################\n#####################3" << std::endl;
+*/
 
 /*
 

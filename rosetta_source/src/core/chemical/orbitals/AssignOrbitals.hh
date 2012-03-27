@@ -23,14 +23,14 @@ namespace core{
 namespace chemical{
 namespace orbitals{
 
-struct OrbInfo{
+/*struct OrbInfo{
 	core::Size atom_index;
 	core::Size hybridization;
 	core::Size orbitaltypes;
 	core::Real dist;
 	utility::vector1<core::Size> bondedatoms;
 
-};
+};*/
 
 class AssignOrbitals {
 public:
@@ -40,13 +40,13 @@ public:
 	AssignOrbitals(core::chemical::ResidueTypeOP const restype);
 	void assign_orbitals();
 
-	void assign_only_pi_orbitals_to_atom(OrbInfo const & orbital_info, core::chemical::AtomType const & atmtype);
+	void assign_only_pi_orbitals_to_atom(/*OrbInfo const & orbital_info,*/ core::chemical::AtomType const & atmtype);
 
-	void assign_sp2_sp_orbitals_to_one_bonded_atom(OrbInfo const & orbital_info, core::chemical::AtomType const & atmtype);
+	void assign_sp2_sp_orbitals_to_one_bonded_atom(/*OrbInfo const & orbital_info*/ core::chemical::AtomType const & atmtype);
 	void add_orbitals_to_restype(
 			core::Size const atm_index2,
 			core::Size const atm_index3,
-			OrbInfo const & orbital_info,
+			//OrbInfo const & orbital_info,
 			core::chemical::AtomType const & atmtype,
 			std::string const atom_hybridization,
 			utility::vector1< numeric::xyzVector<core::Real> > const orbital_xyz_vectors
@@ -87,6 +87,11 @@ public:
 
 private:
 
+	core::Size Aindex_;
+	core::Size AOhybridization_;
+	core::Size Orbtype_;
+	core::Real AOdist_;
+	utility::vector1<core::Size> AObondedatoms_;
 
 	core::chemical::ResidueTypeOP restype_;
 	core::Size n_orbitals_;
