@@ -1,9 +1,3 @@
-/*
- * OrbitalsScore.cxxtest.hh
- *
- *  Created on: Apr 26, 2011
- *      Author: combss
- */
 
 #ifndef ORBITALSSCORE_CXXTEST_HH_
 #define ORBITALSSCORE_CXXTEST_HH_
@@ -81,7 +75,7 @@ public:
 	//}
 
 
-	void dont_test_orbital_scoring_function_values()
+	void test_orbital_scoring_function_values()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
@@ -89,7 +83,7 @@ public:
 		sfxn.set_weight( orbitals_haro, 1 );
 		sfxn.set_weight(orbitals_hpol_bb, 1);
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -3.9288, start_score, 0.0003 );
+		TS_ASSERT_DELTA( -11.3010, start_score, 0.0003 );
 
 
 

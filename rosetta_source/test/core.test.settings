@@ -183,9 +183,9 @@ sources = {
 		"NVlookup"
 	],
 
-	#"scoring/orbitals" : [
-#		"OrbitalsScore"
-#	],
+	"scoring/orbitals" : [
+		"OrbitalsScore"
+	],
 	"sequence" : [
 		"ScoringSchemes",
 		"SequenceMapping",
