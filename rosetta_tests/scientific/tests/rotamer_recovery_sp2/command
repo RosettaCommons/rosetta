@@ -46,15 +46,15 @@ nice %(bin)s/rosetta_scripts.%(binext)s @flags -database %(database)s >&1\
 	| egrep -v 'Finished.+in [0-9]+ seconds.' \
 	> outputs/features_generation.log
 
-sqlite3 outputs/features_sp2.db3 \
-	< average_rotamer_recovery_by_amino_acid.sql \
-	> outputs/rotamer_recovery_by_amino_acid.csv
+#sqlite3 outputs/features_sp2.db3 \
+#	< average_rotamer_recovery_by_amino_acid.sql \
+#	> outputs/rotamer_recovery_by_amino_acid.csv
 
-sqlite3 outputs/features_sp2.db3 \
-	< average_rotamer_recovery.sql \
-	| sed "s/^/\{ 'RTMin_rotamer_recovery_rate_with_sp2_correction' : /" \
-	| sed "s/$/, '_isTestPassed' : True \}/" \
-	> .results.yaml
+#sqlite3 outputs/features_sp2.db3 \
+#	< average_rotamer_recovery.sql \
+#	| sed "s/^/\{ 'RTMin_rotamer_recovery_rate_with_sp2_correction' : /" \
+#	| sed "s/$/, '_isTestPassed' : True \}/" \
+#	> .results.yaml
 
 
 #minidir=%(minidir)s

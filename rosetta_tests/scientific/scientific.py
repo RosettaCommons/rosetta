@@ -154,11 +154,14 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
 
     # start to run the tests
     queue = Queue()
-    for test in sorted(tests):
-        queue.put(test)
+    for test in tests:
+        #queue.put(test)
         copytree( path.join("tests", test), path.join(outdir, test),
                   accept=lambda src, dst: path.basename(src) != '.svn' )
+    
+	run_one_test(test, outdir, options)
 
+    '''
     # Start worker thread(s)
     for i in range(options.num_procs):
         worker = Worker(queue, outdir, options, timeout_minutes=options.timeout)
@@ -171,8 +174,9 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
         #thread.setDaemon(True) # shouldn't be necessary here
         thread.start()
         # Wait for them to finish
+	
     queue.join()
-
+    '''
     # Read and Analyze results
     print
     if outdir == "statistics":
@@ -256,6 +260,44 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
     else: return False
 
 
+def run_one_test(test, outdir, opts):
+			print 'Single CPU run...', test, outdir, opts
+                        workdir = path.abspath( path.join(outdir, test) )
+                        minidir = opts.mini_home
+                        database = opts.database
+                        bin = path.join(minidir, "bin")
+                        pyapps = path.join(minidir, "src", "python", "apps")
+                        if sys.platform.startswith("linux"): platform = "linux" # can be linux1, linux2, etc
+                        elif sys.platform == "darwin": platform = "macos"
+                        else: platform = "_unknown_"
+                        compiler = opts.compiler
+                        mode = opts.mode
+                        extras = opts.extras
+                        binext = extras+"."+platform+compiler+mode
+                        # Read the command from the file "command"
+                        cmd = file(path.join(workdir, "command")).read().strip()
+                        cmd = cmd % vars() # variable substitution using Python printf style
+                        cmd_line_sh = path.join(workdir, "command.sh")
+                        f = file(cmd_line_sh, 'w'); f.write(cmd); f.close() # writing back so test can be easily re-run by use later...
+                        #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
+                        #print cmd; print
+			
+                            #print "Running %s on localhost ..." % test
+                            #proc = subprocess.Popen(["bash", "-c", cmd])#, cwd=workdir)
+
+                            #execute("Running %s on localhost ..." % test, 'bash -c %s' % cmd, return_=True)
+                        print "Running %s on localhost ..." % test
+                        f = subprocess.Popen('bash %s 2>&1 >.command.sh.log' %cmd_line_sh, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
+                        for line in f:
+                            print line
+                            sys.stdout.flush()
+                        f.close()
+                        print "Finished %s" % test
+
+
+
+
+
 class Worker:
     def __init__(self, queue, outdir, opts, host=None, timeout_minutes=0):
         self.queue = queue
@@ -293,7 +335,15 @@ class Worker:
                         if self.host is None:
                             #print "Running %s on localhost ..." % test
                             #proc = subprocess.Popen(["bash", "-c", cmd])#, cwd=workdir)
-                            execute("Running %s on localhost ..." % test, 'bash -c %s' % cmd, return_=True)
+
+                            #execute("Running %s on localhost ..." % test, 'bash -c %s' % cmd, return_=True)
+                            print "Running %s on localhost ..." % test
+                            f = subprocess.Popen('bash %s 2>&1 >.command.sh.log' %cmd_line_sh, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
+                            for line in f:
+                                print line
+                                sys.stdout.flush()
+                            f.close()
+
 
                         # Can't use cwd=workdir b/c it modifies *local* dir, not remote dir.
                         else:
@@ -305,8 +355,8 @@ class Worker:
                             cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
                             proc = subprocess.Popen(["ssh", self.host, cmd])#, cwd=workdir)
                         if self.timeout == 0:
-			    pass
                             #retcode = proc.wait() # does this block all threads?
+                            pass
                         else:
                             start = time.time()
                             while time.time() - start <= self.timeout:
