@@ -32,6 +32,7 @@
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/AA.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
@@ -47,6 +48,8 @@
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/protein_interface_design/filters/DeltaFilter.hh>
+#include <utility/string_util.hh>
 
 //Auto Headers
 #include <basic/options/keys/OptionKeys.hh>
@@ -79,6 +82,7 @@ FilterScanFilter::FilterScanFilter() :
 	std::string temp_resfile_name( protocols::jd2::current_output_name() );
 	temp_resfile_name = temp_resfile_name + ".resfile";
 	resfile_name( temp_resfile_name );
+	delta_filters_.clear();
 }
 
 bool
@@ -200,6 +204,47 @@ FilterScanFilter::unbind( core::pose::Pose & pose ) const{
 	rbtm.apply( pose );
 }
 
+///@brief introduces a single-point subsitution and then performs the repack, rtmin, and relax moves that are requested.
+void
+FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const resi, core::chemical::AA const target_aa ) const{
+	using namespace core::chemical;
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+  using namespace protocols::toolbox::task_operations;
+
+  utility::vector1< bool > allowed_aas;
+  allowed_aas.clear();
+  allowed_aas.assign( num_canonical_aas, false );
+  allowed_aas[ target_aa ] = true;
+  TaskFactoryOP mut_res = new TaskFactory( *task_factory() );
+  DesignAroundOperationOP dao = new DesignAroundOperation;///restrict repacking to 8.0A around target res to save time
+  dao->design_shell( 8.0 );
+  dao->include_residue( resi );
+  mut_res->push_back( dao );
+  PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
+  mutate_residue->initialize_from_command_line().or_include_current( true );
+  for( core::Size resj = 1; resj <= pose.total_residue(); ++resj ){
+    if( resi != resj )
+      mutate_residue->nonconst_residue_task( resj ).restrict_to_repacking();
+    else
+      mutate_residue->nonconst_residue_task( resj ).restrict_absent_canonical_aas( allowed_aas );
+  }
+  TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
+  protocols::simple_moves::PackRotamersMoverOP pack;
+  protocols::simple_moves::RotamerTrialsMinMoverOP rtmin; //this is optional
+  if( core::pose::symmetry::is_symmetric( pose ) )
+ 	 pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
+  else{
+ 	 pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
+ 	 rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
+  }
+  pack->apply( pose );
+  if( rtmin() )
+ 	 rtmin->apply( pose );
+  TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
+  relax_mover()->apply( pose );
+}
+
 bool
 FilterScanFilter::apply(core::pose::Pose const & p ) const
 {
@@ -207,14 +252,14 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	using namespace core::pack::task::operation;
 	using namespace core::chemical;
 
-	core::pose::Pose pose_orig( p );
+	core::pose::Pose pose( p );
 
-	PackerTaskCOP task = task_factory()->create_task_and_apply_taskoperations( pose_orig );
+	PackerTaskCOP task = task_factory()->create_task_and_apply_taskoperations( pose );
 	utility::vector1< core::Size > being_designed;
 	being_designed.clear();
 
-	for( core::Size resi = 1; resi <= pose_orig.total_residue(); ++resi ){
-		if( task->residue_task( resi ).being_designed() && pose_orig.residue(resi).is_protein() )
+	for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
+		if( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() )
 			being_designed.push_back( resi );
 	}
 	if( being_designed.empty() ) {
@@ -224,77 +269,43 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	std::map< core::Size, utility::vector1< AA > > residue_id_map;
 	std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > > residue_id_val_map; // position, aa identity : report filter value, triage filter accepted?
 	residue_id_map.clear(); residue_id_val_map.clear();
-	unbind( pose_orig );
-	core::pose::Pose pose( pose_orig );
-	//compute baseline
-	TR<<"Computing baseline filter value\n";
-	PackerTaskOP repack = task_factory()->create_task_and_apply_taskoperations( pose );
-	repack->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
-
-	protocols::simple_moves::PackRotamersMoverOP repack_mover;
-	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover; //this is optional
-  if( core::pose::symmetry::is_symmetric( pose ) ){
-		runtime_assert( !rtmin() );/// RotamerTrials, but not RTMin is supported by symmetry, so failing
-		 repack_mover =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), repack );
-	}
- 	else{
-		 repack_mover = new protocols::simple_moves::PackRotamersMover( scorefxn(), repack );
-		 rtmin_mover = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *repack );
-	}
- 	repack_mover->apply( pose );
-	if( rtmin() ){//rtmin is noisy so try twice
-		rtmin_mover->apply( pose );
-		rtmin_mover->apply( pose );
-	}
-	pose_orig = pose;
-	relax_mover()->apply( pose );
-	core::Real const baseline( filter()->report_sm( pose ) );
-	TR<<"Starting pose's filter value (baseline) is: "<<baseline<<std::endl;
-	pose = pose_orig;
-
+	unbind( pose );
+	core::pose::Pose const pose_orig( pose );// const to ensure that nothing silly happens along the way...
+	core::Real baseline( 0.0 );
 	foreach( core::Size const resi, being_designed ){
-  	 typedef std::list< ResidueTypeCAP > ResidueTypeCAPList;
-		 ResidueTypeCAPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
-		 utility::vector1< AA > allow_temp;
-		 allow_temp.clear();
-		 foreach( ResidueTypeCAP const t, allowed ){
-		 	allow_temp.push_back( t->aa() );
-		 }
+		pose = pose_orig;
+		///compute baseline
+		single_substitution( pose, resi, pose.residue( resi ).aa() ); /// mutates to self. This simply activates packing/rtmin/relax at the site. By doing this on a per residue basis we ensure that the baseline is computed in exactly the same way as the mutations
+//		pose.dump_scored_pdb( "at_baseline.pdb", *scorefxn() );
+		foreach( DeltaFilterOP const delta_filter, delta_filters_ ){
+			std::string const fname( delta_filter->get_user_defined_name() );
+			core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
+			delta_filter->baseline( fbaseline );
+			TR<<"Computed baseline at position "<<resi<<" with filter "<<fname<<" is "<<fbaseline<<std::endl;
+		}
+		if( delta_filters_.size() == 0 )
+			baseline = filter()->report_sm( pose );
+    typedef std::list< ResidueTypeCAP > ResidueTypeCAPList;
+    ResidueTypeCAPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
+    utility::vector1< AA > allow_temp;
+    allow_temp.clear();
+    foreach( ResidueTypeCAP const t, allowed ){
+    	allow_temp.push_back( t->aa() );
+    }
 		foreach( AA const target_aa, allow_temp ){
 			 pose = pose_orig;
-    	 utility::vector1< bool > allowed_aas;
-    	 allowed_aas.clear();
-    	 allowed_aas.assign( num_canonical_aas, false );
-    	 allowed_aas[ target_aa ] = true;
-			 core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory( *task_factory() );
-			 protocols::toolbox::task_operations::DesignAroundOperationOP dao = new protocols::toolbox::task_operations::DesignAroundOperation;///restrict repacking to 8.0A around target res to save time
-			 dao->design_shell( 8.0 );
-			 dao->include_residue( resi );
-			 mut_res->push_back( dao );
-    	 PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
-    	 mutate_residue->initialize_from_command_line().or_include_current( true );
-    	 for( core::Size resj = 1; resj <= pose.total_residue(); ++resj ){
-    	   if( resi != resj )
-    	     mutate_residue->nonconst_residue_task( resj ).restrict_to_repacking();
-    	   else
-    	     mutate_residue->nonconst_residue_task( resj ).restrict_absent_canonical_aas( allowed_aas );
-    	 }
-			 pose = pose_orig;//unbind if necessary
-    	 TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
-			 protocols::simple_moves::PackRotamersMoverOP pack;
-			 protocols::simple_moves::RotamerTrialsMinMoverOP rtmin; //this is optional
-			 if( core::pose::symmetry::is_symmetric( pose ) )
-				 pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
-			 else{
-				 pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
-		 		 rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
+			 single_substitution( pose, resi, target_aa );
+//				pose.dump_scored_pdb( "after_mut.pdb", *scorefxn() );
+			 bool triage_filter_pass( false );
+			 if( delta_filters_.size() > 0 ){
+				 foreach( DeltaFilterCOP const delta_filter, delta_filters_ ){
+					 triage_filter_pass = delta_filter->apply( pose );
+					 if( !triage_filter_pass )
+						 break;
+				 }
 			 }
-    	 pack->apply( pose );
-			 if( rtmin() )
-				 rtmin->apply( pose );
-    	 TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
-    	 relax_mover()->apply( pose );
-			 bool const triage_filter_pass( triage_filter()->apply( pose ) );
+			 else
+			 	triage_filter_pass = triage_filter()->apply( pose );
 			 if( !triage_filter_pass ){
 				 TR<<"Triage filter fails"<<std::endl;
 				 if(report_all_) {
@@ -375,6 +386,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		core::pose::Pose const & pose )
 {
 	TR << "FilterScanFilter"<<std::endl;
+	runtime_assert( tag->hasOption( "filter" ) || tag->hasOption( "delta_filters" ));
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	std::string const triage_filter_name( tag->getOption< std::string >( "triage_filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator triage_filter_it( filters.find( triage_filter_name ) );
@@ -383,7 +395,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagPtr const tag,
 
 	triage_filter( triage_filter_it->second );
 
-	std::string const filter_name( tag->getOption< std::string >( "filter" ) );
+	std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
 	if( filter_it == filters.end() )
 		utility_exit_with_message( "Filter "+filter_name+" not found" );
@@ -396,26 +408,25 @@ FilterScanFilter::parse_my_tag( utility::tag::TagPtr const tag,
 
 	delta( tag->getOption< bool >( "delta", false ) );
 	report_all( tag->getOption< bool >( "report_all", false ) );
-//	if( delta() ){
-//		unbound( tag->getOption< bool >( "unbound", false ) );
-//		if( unbound() )
-//			jump( tag->getOption< core::Size >( "jump", 1 ) );
-
-//		core::pose::Pose p( pose );
-//		unbind( p );
-//		core::scoring::ScoreFunctionOP score12 = data.get< core::scoring::ScoreFunction *>( "scorefxns", "score12" );
-//		(*score12)(p);
-
-//		relax_mover()->apply( p );
-//		baseline( filter()->report_sm( p ) );
-//	}
-
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	resfile_name( tag->getOption< std::string >( "resfile_name",resfile_name() ) );
 	resfile_general_property( tag->getOption< std::string >( "resfile_general_property", "nataa" ) );
 	rtmin( tag->getOption< bool >( "rtmin", false ) );
 	score_log_file( tag->getOption< std::string >( "score_log_file",score_log_file() ) );
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
+
+
+	utility::vector1< std::string > delta_filter_names;
+	delta_filter_names.clear();
+	if( tag->hasOption( "delta_filters" ) ){
+		delta_filter_names = utility::string_split( tag->getOption< std::string >( "delta_filters" ), ',' );
+		TR<<"Using delta filters: ";
+		foreach( std::string const fname, delta_filter_names ){
+			delta_filters_.push_back( dynamic_cast< DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
+			TR<<fname<<",";
+		}
+		TR<<std::endl;
+	}
 	TR<<"with options resfile_name: "<<resfile_name()<<" resfile_general_property "<<resfile_general_property()<<" unbound "<<unbound()<<" jump "<<jump()<<" delta "<<delta()<<" filter "<<filter_name<<" dump_pdb "<<dump_pdb()<<" rtmin "<<rtmin()<<std::endl;
 }
 

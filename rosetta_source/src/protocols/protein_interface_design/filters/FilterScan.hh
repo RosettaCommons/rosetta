@@ -26,6 +26,8 @@
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/vector1.hh>
+#include <core/chemical/AA.hh>
+#include <protocols/protein_interface_design/filters/DeltaFilter.fwd.hh>
 
 // Unit headers
 
@@ -83,6 +85,9 @@ public:
 	bool dump_pdb() const;
 	bool rtmin() const{ return rtmin_; }
 	void rtmin( bool const r ){ rtmin_ = r; }
+	void single_substitution( core::pose::Pose & pose, core::Size const resi, core::chemical::AA const target_aa ) const;
+	utility::vector1< DeltaFilterOP > delta_filters() const { return delta_filters_; }
+	void delta_filters( utility::vector1< DeltaFilterOP > const d ){ delta_filters_ = d; }
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	protocols::filters::FilterOP triage_filter_;//dflt null; mutations that are categorically rejected, no matter what
@@ -99,6 +104,7 @@ private:
 	void unbind( core::pose::Pose & ) const; //utility function for unbinding the pose
 	bool dump_pdb_; // dflt false; dump a pdb for each substitution (with extensions signifying the substitution).
 	bool rtmin_; //dflt false; shall we do rtmin after each mutation (and at baseline)?
+	utility::vector1< DeltaFilterOP > delta_filters_;
 };
 
 } // filters
