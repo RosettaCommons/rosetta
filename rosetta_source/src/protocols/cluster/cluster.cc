@@ -33,6 +33,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <utility/io/izstream.hh>
+#include <numeric/random/random.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -41,6 +42,7 @@
 #include <string>
 #include <deque>
 #include <map>
+#include <cmath>
 
 // option key includes
 
@@ -68,6 +70,8 @@ using namespace basic::options;
 using namespace evaluation;
 
 static basic::Tracer tr("protocols.cluster");
+static numeric::random::RandomGenerator RG(42032);
+
 
 
 std::map< std::string, core::Real > read_template_scores( const std::string filename ){
@@ -383,6 +387,15 @@ void ClusterBase::add_structure( Pose & pose ) {
 	}
 }
 
+void Cluster::shuffle(){
+	// fisher-yates
+	for(int i=member.size()-1; i>-1; i--) { 
+			 int j = RG.random_range(0, 100000000) % (i + 1);
+			 if(i != j) {
+				 std::swap(member[j], member[i]);
+			 }
+	 }
+}
 // PostProcessing ---------------------------------------------------------
 
 void ClusterBase::sort_each_group_by_energy( ) {
@@ -489,6 +502,28 @@ void ClusterBase::limit_groupsize( int limit ) {
 	for (i=0;i<(int)clusterlist.size();i++ ) {
 		Cluster temp = clusterlist[i];
 		clusterlist[i].clear();
+		for (j=0;(j<(int)temp.size()) && (j<limit);j++ ) {
+			clusterlist[i].push_back( temp[j] );
+		}
+	}
+}
+
+// take first 'limit'%  from each cluster
+void ClusterBase::limit_groupsize( core::Real percent_limit ) {
+	int limit = std::floor(percent_limit*clusterlist.size());
+	limit_groupsize( limit );
+}
+
+// take random 'limit'% from each cluster
+void ClusterBase::random_limit_groupsize( core::Real percent_limit ) {
+	int limit = std::floor(percent_limit*clusterlist.size());
+	tr.Info << "Randomly limiting each cluster to a total size of : " << limit << std::endl;
+	int i,j;
+	if ( limit < 1 ) return;
+	for (i=0;i<(int)clusterlist.size();i++ ) {
+		Cluster temp = clusterlist[i];
+		clusterlist[i].clear();
+		temp.shuffle();
 		for (j=0;(j<(int)temp.size()) && (j<limit);j++ ) {
 			clusterlist[i].push_back( temp[j] );
 		}

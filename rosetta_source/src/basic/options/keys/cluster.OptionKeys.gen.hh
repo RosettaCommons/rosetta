@@ -30,6 +30,8 @@ namespace cluster { extern RealOptionKey const thinout_factor; }
 namespace cluster { extern IntegerOptionKey const max_cluster_seeds; }
 namespace cluster { extern RealOptionKey const radius; }
 namespace cluster { extern IntegerOptionKey const limit_cluster_size; }
+namespace cluster { extern RealOptionKey const limit_cluster_size_percent; }
+namespace cluster { extern RealOptionKey const random_limit_cluster_size_percent; }
 namespace cluster { extern IntegerOptionKey const limit_clusters; }
 namespace cluster { extern IntegerOptionKey const limit_total_structures; }
 namespace cluster { extern IntegerOptionKey const max_total_cluster; }

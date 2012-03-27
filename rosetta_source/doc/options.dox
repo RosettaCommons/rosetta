@@ -4598,6 +4598,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: -1</dd><br>
 </dl>
 <dl>
+<dt><b>-limit_cluster_size_percent</b> \<Real\><dt>
+<dd>0 to 1. For each cluster only retain top N % </dd><br>
+</dl>
+<dl>
+<dt><b>-random_limit_cluster_size_percent</b> \<Real\><dt>
+<dd>0 to 1. For each cluster only retain random N % </dd><br>
+</dl>
+<dl>
 <dt><b>-limit_clusters</b> \<Integer\><dt>
 <dd>Only retain largest N clusters</dd><br>
 <dd>Default: 100</dd><br>

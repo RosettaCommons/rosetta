@@ -73,6 +73,8 @@ main( int argc, char * argv [] ) {
 	option.add_relevant( OptionKeys::cluster::thinout_factor               );
 	option.add_relevant( OptionKeys::cluster::radius                       );
 	option.add_relevant( OptionKeys::cluster::limit_cluster_size           );
+	option.add_relevant( OptionKeys::cluster::limit_cluster_size_percent   );
+	option.add_relevant( OptionKeys::cluster::random_limit_cluster_size_percent   );
 	option.add_relevant( OptionKeys::cluster::limit_clusters               );
 	option.add_relevant( OptionKeys::cluster::limit_total_structures       );
 	option.add_relevant( OptionKeys::cluster::sort_groups_by_energy        );
@@ -109,6 +111,8 @@ main( int argc, char * argv [] ) {
 	std::cout << "                   -cluster:exclude_res <int> [<int> <int> ..] Exclude residue numbers               " << std::endl;
 	std::cout << "                   -cluster:radius        <float>              Cluster radius" << std::endl;
 	std::cout << "                   -cluster:limit_cluster_size      <int>      Maximal cluster size" << std::endl;
+	std::cout << "                   -cluster:limit_cluster_size_percent <float> Maximal cluster size by percentage" << std::endl;
+	std::cout << "                   -cluster:random_limit_cluster_size_percent <float> Maximal cluster size by percentage, cut randomly" << std::endl;
 	std::cout << "                   -cluster:limit_clusters          <int>      Maximal number of clusters" << std::endl;
 	std::cout << "                   -cluster:limit_total_structures  <int>      Maximal number of structures in total" << std::endl;
 	std::cout << "                   -cluster:sort_groups_by_energy              Sort clusters by energy." << std::endl;
@@ -227,6 +231,12 @@ main( int argc, char * argv [] ) {
 	}
 	if ( option[ limit_cluster_size ].user() ){
  		clustering->limit_groupsize( option[ limit_cluster_size ] );
+	}
+	if ( option[ limit_cluster_size_percent ].user() ){
+ 		clustering->limit_groupsize( option[ limit_cluster_size_percent ] );
+	}
+	if ( option[ random_limit_cluster_size_percent ].user() ){
+ 		clustering->random_limit_groupsize( option[ random_limit_cluster_size_percent ] );
 	}
 	if ( option[ limit_clusters ].user() ){
 		clustering->limit_groups( option[ limit_clusters ] );

@@ -1,4 +1,3 @@
-namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
@@ -347,6 +346,8 @@ namespace cluster { RealOptionKey const thinout_factor( "cluster:thinout_factor"
 namespace cluster { IntegerOptionKey const max_cluster_seeds( "cluster:max_cluster_seeds" );  }
 namespace cluster { RealOptionKey const radius( "cluster:radius" );  }
 namespace cluster { IntegerOptionKey const limit_cluster_size( "cluster:limit_cluster_size" );  }
+namespace cluster { RealOptionKey const limit_cluster_size_percent( "cluster:limit_cluster_size_percent" );  }
+namespace cluster { RealOptionKey const random_limit_cluster_size_percent( "cluster:random_limit_cluster_size_percent" );  }
 namespace cluster { IntegerOptionKey const limit_clusters( "cluster:limit_clusters" );  }
 namespace cluster { IntegerOptionKey const limit_total_structures( "cluster:limit_total_structures" );  }
 namespace cluster { IntegerOptionKey const max_total_cluster( "cluster:max_total_cluster" );  }

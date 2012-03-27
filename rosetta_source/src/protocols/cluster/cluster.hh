@@ -25,6 +25,7 @@
 #include <string>
 #include <deque>
 #include <vector>
+#include <algorithm>
 
 #include <utility/vector1.hh>
 
@@ -187,6 +188,7 @@ public:
 				it += j;
 				member.erase(it);
 	}
+	void shuffle();
 
 	core::Size group_size(){ return group_size_; }
 };
@@ -214,6 +216,8 @@ public:
 	void remove_singletons();
 	void export_only_low( bool value = false ){ export_only_low_ = value; };
 	void limit_groupsize( int limit = -1);
+	void limit_groupsize( core::Real percent_limit );
+	void random_limit_groupsize( core::Real percent_limit );
 	void limit_groups( int limit = -1);
 	void limit_total_structures( int limit = -1);
 	void clean_pose_store();
