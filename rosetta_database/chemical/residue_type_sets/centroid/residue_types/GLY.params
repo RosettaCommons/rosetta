@@ -17,7 +17,7 @@ BOND  CA   C
 BOND  C    O  
 PROPERTIES PROTEIN
 NBR_ATOM CEN
-NBR_RADIUS 3.025 # 6.025 - 3 (3 now included in atomic_interaction_cutoff) ## 0.5 * sqrt( cen_dist_cutoff2 + cen_dist12_pad ) 
+NBR_RADIUS 3.025 #fpd true neighbor radius is 2.400; keep this at prev. value so 12A neighbor graph is correct
 FIRST_SIDECHAIN_ATOM CEN
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
 ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  
