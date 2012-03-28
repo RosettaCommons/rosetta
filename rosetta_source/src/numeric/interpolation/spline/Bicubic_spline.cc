@@ -119,16 +119,20 @@ void BicubicSpline::train(
 /// @return value at certain (x, y)
 Real BicubicSpline::F( const MathVector< Real> &ARGUMENTS) const
 {
-	// check that there are two argument values given
-
 	const Real x( ARGUMENTS( 0));
 	const Real y( ARGUMENTS( 1));
 
+	// check that there are two argument values given
+	return F( x, y );
+}
+
+Real BicubicSpline::F( Real x, Real y ) const
+{
 	const int dimx( values_.get_number_rows());
 	const int dimy( values_.get_number_cols());
 
 	// check if argument x is in range for non-periodic splines
-	if( x < start_[ 0])
+	if( x < start_[ 0]) {
 		switch( border_[ 0])
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");
@@ -141,8 +145,9 @@ Real BicubicSpline::F( const MathVector< Real> &ARGUMENTS) const
 
 		case e_Periodic: break;
 		}
+	}
 
-	if( start_[ 0] + ( dimx - 1) * delta_[ 0] < x)
+	if( start_[ 0] + ( dimx - 1) * delta_[ 0] < x) {
 		switch( border_[ 0])
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");
@@ -155,9 +160,10 @@ Real BicubicSpline::F( const MathVector< Real> &ARGUMENTS) const
 
 		case e_Periodic: break;
 		}
+	}
 
 	//check if argument y is in range for non-periodic splines
-	if( y  < start_[ 1])
+	if( y  < start_[ 1]) {
 		switch( border_[ 1])
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 1], "argument out of range for non-periodic spline!");
@@ -170,8 +176,9 @@ Real BicubicSpline::F( const MathVector< Real> &ARGUMENTS) const
 
 		case e_Periodic: break;
 		}
+	}
 
-	if( start_[ 1] + ( dimy-1 ) * delta_[ 1] <  y )
+	if( start_[ 1] + ( dimy-1 ) * delta_[ 1] <  y ) {
 		switch( border_[ 1])
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 1], "argument out of range for non-periodic spline!");
@@ -184,6 +191,7 @@ Real BicubicSpline::F( const MathVector< Real> &ARGUMENTS) const
 
 		case e_Periodic: break;
 		}
+	}
 
 	//determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0] for the correct supporting points
 	int i( int (floor( (x-start_[ 0])/delta_[ 0])+1));
@@ -213,8 +221,7 @@ Real BicubicSpline::F( const MathVector< Real> &ARGUMENTS) const
 			+ dxm * ( dy3m * dsecoy_( (  i - 1) % dimx, ( j - 1) % dimy) + dy3p * dsecoy_( (  i - 1) % dimx, j % dimy))
 			+ dxp * ( dy3m * dsecoy_(   i      % dimx, ( j - 1) % dimy) + dy3p * dsecoy_(   i      % dimx, j % dimy))
 			+dx3m * ( dy3m * dsecoxy_( ( i - 1) % dimx, ( j - 1) % dimy) + dy3p * dsecoxy_( ( i - 1) % dimx, j % dimy))
-			+dx3p * ( dy3m * dsecoxy_(  i      % dimx, ( j - 1) % dimy) + dy3p * dsecoxy_(  i      % dimx, j % dimy))
-			;
+			+dx3p * ( dy3m * dsecoxy_(  i      % dimx, ( j - 1) % dimy) + dy3p * dsecoxy_(  i      % dimx, j % dimy));
 }
 
 
@@ -226,43 +233,53 @@ Real BicubicSpline::dFdx( const MathVector< Real> &ARGUMENTS) const
 
 	const Real x( ARGUMENTS(0));
 	const Real y( ARGUMENTS(1));
+	return dFdx( x, y );
+}
+
+/// @return partial derivative at certain (x, y) for x
+Real BicubicSpline::dFdx( Real x, Real y ) const
+{
 
 	const int dimx( values_.get_number_rows());
 	const int dimy( values_.get_number_cols());
 
 	//check if argument x is in range for non-periodic splines
-	if( x < start_[ 0])
+	if( x < start_[ 0]) {
 		switch( border_[ 0] )
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return firstbe_[ 0].first;
 		case e_Natural : //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdx( MakeVector( start_[ 0], y));
 		case e_Periodic: break;
 		}
+	}
 
-	if( start_[ 0] + ( dimx-1 ) * delta_[ 0] < x )
+	if( start_[ 0] + ( dimx-1 ) * delta_[ 0] < x ) {
 		switch( border_[ 0] )
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return firstbe_[ 0].second;
 		case e_Natural : //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdx( MakeVector( start_[ 0] + ( dimx-1 ) * delta_[ 0], y));
 		case e_Periodic: break;
 		}
+	}
 
 	//check if argument y is in range for non-periodic splines
-	if( y < start_[ 1])
+	if( y < start_[ 1]) {
 		switch( border_[ 1] )
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 1], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdx( MakeVector( x, start_[ 1]));
 		case e_Natural : //BCL_Assert( LinCont_[ 1], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdx( MakeVector( x, start_[ 1]));
 		case e_Periodic: break;
 		}
+	}
 
-	if( start_[ 1] + ( dimy-1 ) * delta_[ 1] < y )
+	if( start_[ 1] + ( dimy-1 ) * delta_[ 1] < y ) {
 		switch( border_[ 1] )
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdx( MakeVector( x, start_[ 1] + ( dimy-1 ) * delta_[ 1]));
 		case e_Natural : //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdx( MakeVector( x, start_[ 1] + ( dimy-1 ) * delta_[ 1]));
 		case e_Periodic: break;
 		}
+	}
 
 	// determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0] for the correct supporting points
 	int i( int( floor( ( x - start_[ 0]) / delta_[ 0])));
@@ -290,15 +307,14 @@ Real BicubicSpline::dFdx( const MathVector< Real> &ARGUMENTS) const
 	//  BCL_Message( basic::Message::e_Critical, "Final i orig: " + basic::Format()( i));
 
 	return
-			-( dym * values_( ( i - 1) % dimx, ( j - 1) % dimy) + dyp * values_( ( i - 1) % dimx  , j % dimy)) / delta_[ 0]
-			                                                                                                             +( dym * values_( i % dimx      , ( j - 1) % dimy) + dyp * values_( i % dimx        , j % dimy)) / delta_[ 0]
-			                                                                                                                                                                                                                        - ( 3 * dxm * dxm - 1) * delta_[ 0] / 6 *( dym*dsecox_( ( i - 1) % dimx, ( j - 1) % dimy) + dyp * dsecox_( ( i - 1) % dimx, j%dimy))
-			                                                                                                                                                                                                                        + ( 3 * dxp * dxp - 1) * delta_[ 0] / 6 *( dym*dsecox_( i % dimx      , ( j - 1) % dimy) + dyp * dsecox_( i % dimx      , j%dimy))
-			                                                                                                                                                                                                                        -( dy3m * dsecoy_( ( i - 1) % dimx , ( j - 1) % dimy) + dy3p * dsecoy_( ( i-1) % dimx , j % dimy)) / delta_[ 0]
-			                                                                                                                                                                                                                                                                                                                                     +( dy3m * dsecoy_( i % dimx       , ( j - 1) % dimy) + dy3p * dsecoy_( i % dimx     , j % dimy)) / delta_[ 0]
-			                                                                                                                                                                                                                                                                                                                                                                                                                                                - ( 3 * dxm * dxm - 1) * delta_[ 0] / 6 *( dy3m*dsecoxy_( ( i - 1)%dimx, ( j - 1) % dimy) + dy3p * dsecoxy_( ( i - 1) % dimx, j % dimy))
-			                                                                                                                                                                                                                                                                                                                                                                                                                                                + ( 3 * dxp * dxp - 1) * delta_[ 0] / 6 *( dy3m*dsecoxy_( i % dimx    , ( j - 1) % dimy) + dy3p * dsecoxy_( i % dimx      , j % dimy))
-			                                                                                                                                                                                                                                                                                                                                                                                                                                                ;
+		-( dym * values_( ( i - 1) % dimx, ( j - 1) % dimy) + dyp * values_( ( i - 1) % dimx  , j % dimy)) / delta_[ 0]
+		+( dym * values_( i % dimx      , ( j - 1) % dimy) + dyp * values_( i % dimx        , j % dimy)) / delta_[ 0]
+		- ( 3 * dxm * dxm - 1) * delta_[ 0] / 6 *( dym*dsecox_( ( i - 1) % dimx, ( j - 1) % dimy) + dyp * dsecox_( ( i - 1) % dimx, j%dimy))
+		+ ( 3 * dxp * dxp - 1) * delta_[ 0] / 6 *( dym*dsecox_( i % dimx      , ( j - 1) % dimy) + dyp * dsecox_( i % dimx      , j%dimy))
+		-( dy3m * dsecoy_( ( i - 1) % dimx , ( j - 1) % dimy) + dy3p * dsecoy_( ( i-1) % dimx , j % dimy)) / delta_[ 0]
+		+( dy3m * dsecoy_( i % dimx       , ( j - 1) % dimy) + dy3p * dsecoy_( i % dimx     , j % dimy)) / delta_[ 0]
+		- ( 3 * dxm * dxm - 1) * delta_[ 0] / 6 *( dy3m*dsecoxy_( ( i - 1)%dimx, ( j - 1) % dimy) + dy3p * dsecoxy_( ( i - 1) % dimx, j % dimy))
+		+ ( 3 * dxp * dxp - 1) * delta_[ 0] / 6 *( dy3m*dsecoxy_( i % dimx    , ( j - 1) % dimy) + dy3p * dsecoxy_( i % dimx      , j % dimy));
 }
 
 
@@ -310,43 +326,53 @@ Real BicubicSpline::dFdy( const MathVector< Real> &ARGUMENTS) const
 
 	const Real x( ARGUMENTS( 0));
 	const Real y( ARGUMENTS( 1));
+	return dFdy( x, y );
+}
+
+/// @return partial derivative at certain (x, y) for y
+Real BicubicSpline::dFdy( Real const x, Real const y) const
+{
 
 	const int dimx( values_.get_number_rows());
 	const int dimy( values_.get_number_cols());
 
 	//check if argument x is in range for non-periodic splines
-	if( x < start_[ 0])
+	if( x < start_[ 0]) {
 		switch( border_[ 0])
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdy( MakeVector( start_[ 0], y));
 		case e_Natural : //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdy( MakeVector( start_[ 0], y));
 		case e_Periodic: break;
 		}
+	}
 
-	if( start_[ 0] + ( dimx - 1) * delta_[ 0] < x)
+	if( start_[ 0] + ( dimx - 1) * delta_[ 0] < x) {
 		switch( border_[ 0])
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdy( MakeVector( start_[ 0] + ( dimx-1 ) * delta_[ 0], y));
 		case e_Natural : //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdy( MakeVector( start_[ 0] + ( dimx-1 ) * delta_[ 0], y));
 		case e_Periodic: break;
 		}
+	}
 
 	//check if argument y is in range for non-periodic splines
-	if( y < start_[ 1])
+	if( y < start_[ 1]) {
 		switch( border_[ 1])
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 1], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return firstbe_[ 1].first;
 		case e_Natural : //BCL_Assert( LinCont_[ 1], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdy( MakeVector( x, start_[ 1]));
 		case e_Periodic: break;
 		}
+	}
 
-	if( start_[ 1] + ( dimy - 1) * delta_[ 1] < y)
+	if( start_[ 1] + ( dimy - 1) * delta_[ 1] < y) {
 		switch( border_[ 1])
 		{
 		case e_FirstDer: //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return firstbe_[ 1].second;
 		case e_Natural : //BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");BCL_Message( basic::Message::e_Verbose, "argument out of range, using linear continuation");return dFdy( MakeVector( x, start_[ 1] + ( dimy-1 ) * delta_[ 1]));
 		case e_Periodic: break;
 		}
+	}
 
 	//determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0] for the correct supporting points
 	int i( int( floor( ( x - start_[ 0])/delta_[ 0])));
@@ -382,14 +408,13 @@ Real BicubicSpline::dFdy( const MathVector< Real> &ARGUMENTS) const
 
 	return
 			dxm *( -values_( ( i-1)%dimx  , (j-1)%dimy)+values_( (i-1)%dimx  , j%dimy))/delta_[ 1]
-			                                                                                    + dxp *( -values_( i%dimx      , (j-1)%dimy)+values_(i%dimx      , j%dimy))/delta_[ 1]
-			                                                                                                                                                                        +dx3m *( -dsecox_( ( i-1)%dimx  , (j-1)%dimy)+dsecox_( (i-1)%dimx  , j%dimy))/delta_[ 1]
-			                                                                                                                                                                                                                                                              +dx3p *( -dsecox_( i%dimx      , (j-1)%dimy)+dsecox_(i%dimx      , j%dimy))/delta_[ 1]
-			                                                                                                                                                                                                                                                                                                                                                  + dxm *( -( 3 * dym * dym - 1) * dsecoy_( ( i-1)%dimx , ( j - 1)% dimy) +( 3 * dyp * dyp - 1) * dsecoy_( ( i-1)%dimx , j % dimy)) * delta_[ 1]/ 6
-			                                                                                                                                                                                                                                                                                                                                                  + dxp *( -( 3 * dym * dym - 1) * dsecoy_( i%dimx     , ( j - 1)% dimy) +( 3 * dyp * dyp - 1) * dsecoy_( i%dimx     , j % dimy)) * delta_[ 1]/ 6
-			                                                                                                                                                                                                                                                                                                                                                  +dx3m *( -( 3 * dym * dym - 1) * dsecoxy_( ( i-1)%dimx, ( j - 1)% dimy) +( 3 * dyp * dyp - 1) * dsecoxy_( ( i-1)%dimx, j % dimy)) * delta_[ 1]/ 6
-			                                                                                                                                                                                                                                                                                                                                                  +dx3p *( -( 3 * dym * dym - 1) * dsecoxy_( i%dimx    , ( j - 1)% dimy) +( 3 * dyp * dyp - 1) * dsecoxy_( i%dimx    , j % dimy)) * delta_[ 1]/ 6
-			                                                                                                                                                                                                                                                                                                                                                  ;
+			+ dxp *( -values_( i%dimx      , (j-1)%dimy)+values_(i%dimx      , j%dimy))/delta_[ 1]
+			+dx3m *( -dsecox_( ( i-1)%dimx  , (j-1)%dimy)+dsecox_( (i-1)%dimx  , j%dimy))/delta_[ 1]
+			+dx3p *( -dsecox_( i%dimx      , (j-1)%dimy)+dsecox_(i%dimx      , j%dimy))/delta_[ 1]
+			+ dxm *( -( 3 * dym * dym - 1) * dsecoy_( ( i-1)%dimx , ( j - 1)% dimy) +( 3 * dyp * dyp - 1) * dsecoy_( ( i-1)%dimx , j % dimy)) * delta_[ 1]/ 6
+			+ dxp *( -( 3 * dym * dym - 1) * dsecoy_( i%dimx     , ( j - 1)% dimy) +( 3 * dyp * dyp - 1) * dsecoy_( i%dimx     , j % dimy)) * delta_[ 1]/ 6
+			+dx3m *( -( 3 * dym * dym - 1) * dsecoxy_( ( i-1)%dimx, ( j - 1)% dimy) +( 3 * dyp * dyp - 1) * dsecoxy_( ( i-1)%dimx, j % dimy)) * delta_[ 1]/ 6
+			+dx3p *( -( 3 * dym * dym - 1) * dsecoxy_( i%dimx    , ( j - 1)% dimy) +( 3 * dyp * dyp - 1) * dsecoxy_( i%dimx    , j % dimy)) * delta_[ 1]/ 6;
 }
 
 
@@ -443,9 +468,7 @@ std::pair<Real, MathVector<Real> > BicubicSpline::FdF( const MathVector< Real> &
 			dfdxvalue = dFdx( MakeVector( x, start_[ 1] + ( dimy-1 ) * delta_[ 1]));
 			dfdyvalue = dFdy( MakeVector( x, start_[ 1] + ( dimy-1 ) * delta_[ 1]));
 		}
-	}else
-
-	{
+	} else {
 		//determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0] for the correct supporting points
 		int    i(int (floor( (x-start_[ 0])/delta_[ 0])));
 		while  (start_[ 0]+i*delta_[ 0]<x)i++;
@@ -478,39 +501,38 @@ std::pair<Real, MathVector<Real> > BicubicSpline::FdF( const MathVector< Real> &
 		Real dy3m( ( dym*dym*dym - dym) * sqr( delta_[ 1]) / 6);
 
 		fvalue =
-
-				dxm*(dym*values_( (i-1)%dimx  , (j-1)%dimy)+dyp*values_( (i-1)%dimx  , j%dimy))
-				+ dxp*(dym*values_(i%dimx      , (j-1)%dimy)+dyp*values_(i%dimx      , j%dimy))
-				+dx3m*(dym*dsecox_( (i-1)%dimx  , (j-1)%dimy)+dyp*dsecox_( (i-1)%dimx  , j%dimy))
-				+dx3p*(dym*dsecox_(i%dimx      , (j-1)%dimy)+dyp*dsecox_(i%dimx      , j%dimy))
-				+ dxm*(dy3m*dsecoy_( (i-1)%dimx , (j-1)%dimy)+dy3p*dsecoy_( (i-1)%dimx , j%dimy))
-				+ dxp*(dy3m*dsecoy_(i%dimx     , (j-1)%dimy)+dy3p*dsecoy_(i%dimx     , j%dimy))
-				+dx3m*(dy3m*dsecoxy_( (i-1)%dimx, (j-1)%dimy)+dy3p*dsecoxy_( (i-1)%dimx, j%dimy))
-				+dx3p*(dy3m*dsecoxy_(i%dimx    , (j-1)%dimy)+dy3p*dsecoxy_(i%dimx    , j%dimy))
-				;
+			dxm*(dym*values_( (i-1)%dimx  , (j-1)%dimy)+dyp*values_( (i-1)%dimx  , j%dimy))
+			+ dxp*(dym*values_(i%dimx      , (j-1)%dimy)+dyp*values_(i%dimx      , j%dimy))
+			+dx3m*(dym*dsecox_( (i-1)%dimx  , (j-1)%dimy)+dyp*dsecox_( (i-1)%dimx  , j%dimy))
+			+dx3p*(dym*dsecox_(i%dimx      , (j-1)%dimy)+dyp*dsecox_(i%dimx      , j%dimy))
+			+ dxm*(dy3m*dsecoy_( (i-1)%dimx , (j-1)%dimy)+dy3p*dsecoy_( (i-1)%dimx , j%dimy))
+			+ dxp*(dy3m*dsecoy_(i%dimx     , (j-1)%dimy)+dy3p*dsecoy_(i%dimx     , j%dimy))
+			+dx3m*(dy3m*dsecoxy_( (i-1)%dimx, (j-1)%dimy)+dy3p*dsecoxy_( (i-1)%dimx, j%dimy))
+			+dx3p*(dy3m*dsecoxy_(i%dimx    , (j-1)%dimy)+dy3p*dsecoxy_(i%dimx    , j%dimy))
+			;
 
 		dfdxvalue =
-				-(dym*values_( (i-1)%dimx  , (j-1)%dimy)+dyp*values_( (i-1)%dimx  , j%dimy))/delta_[ 0]
-				                                                                                     +(dym*values_(i%dimx      , (j-1)%dimy)+dyp*values_(i%dimx      , j%dimy))/delta_[ 0]
-				                                                                                                                                                                        - (3 * dxm*dxm - 1) * delta_[ 0] / 6*(dym*dsecox_( (i-1)%dimx  , (j-1)%dimy)+dyp*dsecox_( (i-1)%dimx  , j%dimy))
-				                                                                                                                                                                        + (3 * dxp*dxp - 1) * delta_[ 0] / 6*(dym*dsecox_(i%dimx      , (j-1)%dimy)+dyp*dsecox_(i%dimx      , j%dimy))
-				                                                                                                                                                                        -(dy3m*dsecoy_( (i-1)%dimx , (j-1)%dimy)+dy3p*dsecoy_( (i-1)%dimx , j%dimy))/delta_[ 0]
-				                                                                                                                                                                                                                                                             +(dy3m*dsecoy_(i%dimx     , (j-1)%dimy)+dy3p*dsecoy_(i%dimx     , j%dimy))/delta_[ 0]
-				                                                                                                                                                                                                                                                                                                                                                - (3 * dxm*dxm - 1) * delta_[ 0] / 6*(dy3m*dsecoxy_( (i-1)%dimx, (j-1)%dimy)+dy3p*dsecoxy_( (i-1)%dimx, j%dimy))
-				                                                                                                                                                                                                                                                                                                                                                + (3 * dxp*dxp - 1) * delta_[ 0] / 6*(dy3m*dsecoxy_(i%dimx    , (j-1)%dimy)+dy3p*dsecoxy_(i%dimx    , j%dimy))
-				                                                                                                                                                                                                                                                                                                                                                ;
+			-(dym*values_( (i-1)%dimx  , (j-1)%dimy)+dyp*values_( (i-1)%dimx  , j%dimy))/delta_[ 0]
+			+(dym*values_(i%dimx      , (j-1)%dimy)+dyp*values_(i%dimx      , j%dimy))/delta_[ 0]
+			- (3 * dxm*dxm - 1) * delta_[ 0] / 6*(dym*dsecox_( (i-1)%dimx  , (j-1)%dimy)+dyp*dsecox_( (i-1)%dimx  , j%dimy))
+			+ (3 * dxp*dxp - 1) * delta_[ 0] / 6*(dym*dsecox_(i%dimx      , (j-1)%dimy)+dyp*dsecox_(i%dimx      , j%dimy))
+			-(dy3m*dsecoy_( (i-1)%dimx , (j-1)%dimy)+dy3p*dsecoy_( (i-1)%dimx , j%dimy))/delta_[ 0]
+			+(dy3m*dsecoy_(i%dimx     , (j-1)%dimy)+dy3p*dsecoy_(i%dimx     , j%dimy))/delta_[ 0]
+			- (3 * dxm*dxm - 1) * delta_[ 0] / 6*(dy3m*dsecoxy_( (i-1)%dimx, (j-1)%dimy)+dy3p*dsecoxy_( (i-1)%dimx, j%dimy))
+			+ (3 * dxp*dxp - 1) * delta_[ 0] / 6*(dy3m*dsecoxy_(i%dimx    , (j-1)%dimy)+dy3p*dsecoxy_(i%dimx    , j%dimy))
+			;
 
 		dfdyvalue =
-				dxm*(-values_( (i-1)%dimx  , (j-1)%dimy)+values_( (i-1)%dimx  , j%dimy))/delta_[ 1]
-				                                                                                 + dxp*(-values_(i%dimx      , (j-1)%dimy)+values_(i%dimx      , j%dimy))/delta_[ 1]
-				                                                                                                                                                                  +dx3m*(-dsecox_( (i-1)%dimx  , (j-1)%dimy)+dsecox_( (i-1)%dimx  , j%dimy))/delta_[ 1]
-				                                                                                                                                                                                                                                                     +dx3p*(-dsecox_(i%dimx      , (j-1)%dimy)+dsecox_(i%dimx      , j%dimy))/delta_[ 1]
-				                                                                                                                                                                                                                                                                                                                                      + dxm*(-(3*dym*dym-1)*dsecoy_( (i-1)%dimx , (j-1)%dimy)+(3*dyp*dyp-1)*dsecoy_( (i-1)%dimx , j%dimy))* delta_[ 1]/ 6
-				                                                                                                                                                                                                                                                                                                                                      + dxp*(-(3*dym*dym-1)*dsecoy_(i%dimx     , (j-1)%dimy)+(3*dyp*dyp-1)*dsecoy_(i%dimx     , j%dimy))* delta_[ 1]/ 6
-				                                                                                                                                                                                                                                                                                                                                      +dx3m*(-(3*dym*dym-1)*dsecoxy_( (i-1)%dimx, (j-1)%dimy)+(3*dyp*dyp-1)*dsecoxy_( (i-1)%dimx, j%dimy))* delta_[ 1]/ 6
-				                                                                                                                                                                                                                                                                                                                                      +dx3p*(-(3*dym*dym-1)*dsecoxy_(i%dimx    , (j-1)%dimy)+(3*dyp*dyp-1)*dsecoxy_(i%dimx    , j%dimy))* delta_[ 1]/ 6
-				                                                                                                                                                                                                                                                                                                                                      ;
-	};
+			dxm*(-values_( (i-1)%dimx  , (j-1)%dimy)+values_( (i-1)%dimx  , j%dimy))/delta_[ 1]
+			+ dxp*(-values_(i%dimx      , (j-1)%dimy)+values_(i%dimx      , j%dimy))/delta_[ 1]
+			+dx3m*(-dsecox_( (i-1)%dimx  , (j-1)%dimy)+dsecox_( (i-1)%dimx  , j%dimy))/delta_[ 1]
+			+dx3p*(-dsecox_(i%dimx      , (j-1)%dimy)+dsecox_(i%dimx      , j%dimy))/delta_[ 1]
+			+ dxm*(-(3*dym*dym-1)*dsecoy_( (i-1)%dimx , (j-1)%dimy)+(3*dyp*dyp-1)*dsecoy_( (i-1)%dimx , j%dimy))* delta_[ 1]/ 6
+			+ dxp*(-(3*dym*dym-1)*dsecoy_(i%dimx     , (j-1)%dimy)+(3*dyp*dyp-1)*dsecoy_(i%dimx     , j%dimy))* delta_[ 1]/ 6
+			+dx3m*(-(3*dym*dym-1)*dsecoxy_( (i-1)%dimx, (j-1)%dimy)+(3*dyp*dyp-1)*dsecoxy_( (i-1)%dimx, j%dimy))* delta_[ 1]/ 6
+			+dx3p*(-(3*dym*dym-1)*dsecoxy_(i%dimx    , (j-1)%dimy)+(3*dyp*dyp-1)*dsecoxy_(i%dimx    , j%dimy))* delta_[ 1]/ 6
+			;
+	}
 
 	Real dfvalues[] = { dfdxvalue, dfdyvalue};
 	MathVector<Real> dfvector( 2, dfvalues);

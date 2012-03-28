@@ -21,6 +21,8 @@
 
 // Unit headers
 #include <core/scoring/methods/RamachandranEnergy.hh>
+#include <core/scoring/Ramachandran.hh>
+#include <core/scoring/ScoringManager.hh>
 
 // Package Headers
 
@@ -92,7 +94,7 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 
 
 	// --------------- Test Cases --------------- //
-	void test_eval_energy()
+	void dont_test_eval_energy()
 	{
 		// correct answers taken from rosetta++ v17084
 		Real correct_answers[] = { 0,
@@ -141,7 +143,7 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 
 
 	// --------------- Test Cases --------------- //
-	void test_eval_deriv() {
+	void dont_test_eval_deriv() {
 
 		// correct answers taken from rosetta++ v17084
 		Real correct_dE_dphi[] = {
@@ -362,6 +364,20 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 		adv.simple_deriv_check( true, 1e-6 );
 	}
 
+	void dont_test_write_rama_energies() {
+		using namespace core::scoring;
+		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
+		// lets output a table of values from the leucine phi/psi distribution
+		for ( Size ii = 0; ii < 360; ++ii ) {
+			Real ii_phi = -180.0 + ii;
+			for ( Size jj = 0; jj < 360; ++jj ) {
+				Real jj_psi = -180.0 + jj;
+				std::cout << rama.eval_rama_score_residue( core::chemical::aa_leu, ii_phi, jj_psi );
+				if ( jj != 359 ) std::cout << " ";
+			}
+			std::cout << "\n";
+		}
+	}
 
 };
 

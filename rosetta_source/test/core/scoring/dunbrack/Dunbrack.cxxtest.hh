@@ -155,8 +155,21 @@ public:
 							eit = suggested_rotamers.end();
 						it!=eit;
 						++it ) {
+
+				// if the number of rotamers built does not match the number in the "gold" files, quit
+				if ( ct > chi_gold.size() ) {
+					TS_ASSERT( ct <= chi_gold.size() ); // tell the user that something is wrong
+					break;
+				}
+
 				if ( bOut )	std::cout << pos << " " << residue.nchi() << " ";
-				else TS_ASSERT( chi_gold[ ct ].size() == residue.nchi() );
+				else {
+					if ( chi_gold[ct].size() != residue.nchi() ) {
+						TS_ASSERT( chi_gold[ ct ].size() == residue.nchi() );
+						++ct;
+						break; // something is very wrong
+					}
+				}
 
 				for ( Size n = 1; n <= residue.nchi(); ++n ) {
 					if ( bOut ) {
@@ -174,7 +187,7 @@ public:
 				}
 				if ( residue.nchi() ) {
 					ct++;
-				};
+				}
 				if ( bOut ) std::cout << std::endl;
 			} // read-out
 		} // residues

@@ -46,12 +46,14 @@ public:
 	virtual ~RotamerLibraryScratchSpace();
 
 	Real rotprob() const { return rotprob_; }
+	Real negln_rotprob() const { return negln_rotprob_; }
 	Size4 const & rotwell() const { return rotwell_; }
 	Real4 const & chimean() const { return chimean_; }
 	Real4 const & chisd() const { return chisd_; }
 	Real4 const & chidev() const { return chidev_; }
 	Real4 const & chidevpen() const { return chidevpen_; }
-	Real3 const & drotprob_dbb() const { return drotprob_dbb_; }
+	Real3 const & drotprob_dbb() const { return drotprob_dbb_; } // Only preserved temporarily for use in the semirotameric libraries ('08, '10)
+	Real3 const & dneglnrotprob_dbb() const { return dneglnrotprob_dbb_; }
 	Real4 const & dchimean_dphi() const { return dchimean_dphi_; }
 	Real4 const & dchimean_dpsi() const { return dchimean_dpsi_; }
 	Real4 const & dchisd_dphi() const { return dchisd_dphi_; }
@@ -68,12 +70,14 @@ public:
 
 
 	Real   & rotprob()  { return rotprob_; }
+	Real   & negln_rotprob() { return negln_rotprob_; }
 	Size4  & rotwell()  { return rotwell_; }
 	Real4  & chimean()  { return chimean_; }
 	Real4  & chisd()    { return chisd_; }
 	Real4  & chidev()   { return chidev_; }
 	Real4  & chidevpen()     { return chidevpen_; }
-	Real3  & drotprob_dbb()  { return drotprob_dbb_; }
+	Real3  & drotprob_dbb()  { return drotprob_dbb_; } // TEMP
+	Real3  & dneglnrotprob_dbb()  { return dneglnrotprob_dbb_; }
 	Real4  & dchimean_dphi() { return dchimean_dphi_; }
 	Real4  & dchimean_dpsi() { return dchimean_dpsi_; }
 	Real4  & dchisd_dphi()   { return dchisd_dphi_; }
@@ -92,12 +96,14 @@ public:
 private:
 
 	Real rotprob_;
+	Real negln_rotprob_;
 	Size4 rotwell_;
 	Real4 chimean_;
 	Real4 chisd_;
 	Real4 chidev_;
 	Real4 chidevpen_;
 	Real3 drotprob_dbb_;
+	Real3 dneglnrotprob_dbb_;
 	Real4 dchimean_dphi_;
 	Real4 dchimean_dpsi_;
 	Real4 dchisd_dphi_;

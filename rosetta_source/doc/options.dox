@@ -3877,6 +3877,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-use_bicubic_interpolation</b> \<Boolean\><dt>
+<dd>Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>corrections:chemical</h2>
 <dl>

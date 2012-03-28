@@ -16,8 +16,10 @@
 
 // Unit headers
 #include <core/scoring/methods/P_AA_pp_Energy.hh>
+#include <core/scoring/P_AA.hh>
+#include <core/scoring/ScoringManager.hh>
 
-#include "platform/types.hh"
+#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/pose_funcs.hh>
@@ -86,7 +88,7 @@ class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 
 
 	// --------------- Test Cases --------------- //
-	void test_eval_energy()
+	void dont_test_eval_energy()
 	{
 		// correct answers taken from rosetta++ v17084
 		Real correct_answers[] = { 0,
@@ -132,7 +134,7 @@ class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 
 
 	// --------------- Test Cases --------------- //
-	void test_eval_deriv() {
+	void dont_test_eval_deriv() {
 
 		// correct answers taken from rosetta++ v17084
 		Real correct_dE_dphi[] = { 0,
@@ -228,7 +230,7 @@ class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 
 	}
 
-	void test_paappE_start_score_start_func_match_w_total_flexibility()
+	void dont_test_paappE_start_score_start_func_match_w_total_flexibility()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
@@ -271,7 +273,7 @@ class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 
 	}
 
-	void test_paappE_start_score_start_func_match_w_partial_flexibility()
+	void dont_test_paappE_start_score_start_func_match_w_partial_flexibility()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
@@ -323,6 +325,21 @@ class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 		MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( true, 1e-6 );
+	}
+
+	void dont_test_write_paapp_energies() {
+		using namespace core::scoring;
+		P_AA const & paa = core::scoring::ScoringManager::get_instance()->get_P_AA();
+		// lets output a table of values from the leucine phi/psi distribution
+		for ( Size ii = 0; ii < 360; ++ii ) {
+			Real ii_phi = -180.0 + ii;
+			for ( Size jj = 0; jj < 360; ++jj ) {
+				Real jj_psi = -180.0 + jj;
+				std::cout << paa.P_AA_pp_energy( core::chemical::aa_leu, ii_phi, jj_psi );
+				if ( jj != 359 ) std::cout << " ";
+			}
+			std::cout << "\n";
+		}
 	}
 
 };

@@ -2333,6 +2333,10 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_rotameric_data(
 				parent::rotamers()( phibin, psibin, nencountered ).chi_sd(   ii, stdev[ ii ] );
 			}
 			parent::rotamers()( phibin, psibin, nencountered ).rotamer_probability() = prob;
+			parent::rotamers()( phibin, psibin, nencountered ).rotE() = 0; // temp -- fill in sentinel values for unused variables
+			parent::rotamers()( phibin, psibin, nencountered ).rotE_dsecophi() = 0;
+			parent::rotamers()( phibin, psibin, nencountered ).rotE_dsecopsi() = 0;
+			parent::rotamers()( phibin, psibin, nencountered ).rotE_dsecophipsi() = 0;
 		} else {
 			Size const sorted_rotno = parent::packed_rotno_2_sorted_rotno()( phibin, psibin, packed_rotno );
 			parent::rotamers()( phibin, psibin, sorted_rotno ).rotamer_probability() += prob;

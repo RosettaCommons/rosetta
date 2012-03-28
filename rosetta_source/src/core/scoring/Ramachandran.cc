@@ -373,42 +373,51 @@ Ramachandran::eval_rama_score_residue(
 
 	//int const res_aa( rsd.aa() );
 	// 	int const res_aa( pose.residue( res ).aa() );
-	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
-	FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, res_aa), zero_index, zero_index );
-	Real interp_p,dp_dphi,dp_dpsi;
+	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 
-	using namespace numeric::interpolation::periodic_range::half;
-	interp_p = bilinearly_interpolated( phi, psi, binw_, n_phi_, rama_for_res, dp_dphi, dp_dpsi );
-
-	if ( interp_p > 0.0 ) {
-		rama = ram_entropy_(ss_type, res_aa ) - std::log( static_cast< double >( interp_p ) );
-		double const interp_p_inv_neg = -1.0 / interp_p;
-		drama_dphi = interp_p_inv_neg * dp_dphi;
-		drama_dpsi = interp_p_inv_neg * dp_dpsi;
+		rama = rama_energy_splines_[ res_aa ].F(phi,psi);
+		drama_dphi = rama_energy_splines_[ res_aa ].dFdx(phi,psi);
+		drama_dpsi = rama_energy_splines_[ res_aa ].dFdy(phi,psi);
+		return; // temp -- just stop right here
 	} else {
-		//if ( runlevel > silent ) { //apl fix this
-		//	std::cout << "rama prob = 0. in eval_rama_score_residue!" << std::endl;
-		//	std::cout << "phi" << SS( phi ) << " psi" << SS( psi ) <<
-		//	 " ss " << SS( ss ) << std::endl;
-		//}
-		drama_dphi = 0.0;
-		drama_dpsi = 0.0;
-		rama = 20.0;
-	}
 
-	if ( ! basic::options::option[basic::options::OptionKeys::corrections::score::rama_not_squared] ) {
-		if ( rama > 1.0 ) {
-			Real const rama_squared = rama * rama;
-			if ( rama_squared > 20.0 ) {
-				////  limit the score, but give the true derivative
-				////   as guidance out of the flat section of map
-				drama_dphi = 0.0;
-				drama_dpsi = 0.0;
-				rama = 20.0;
-			} else {
-				drama_dphi = 2 * rama * drama_dphi;
-				drama_dpsi = 2 * rama * drama_dpsi;
-				rama = rama_squared;
+		FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
+		FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, res_aa), zero_index, zero_index );
+		Real interp_p,dp_dphi,dp_dpsi;
+
+		using namespace numeric::interpolation::periodic_range::half;
+		interp_p = bilinearly_interpolated( phi, psi, binw_, n_phi_, rama_for_res, dp_dphi, dp_dpsi );
+
+		if ( interp_p > 0.0 ) {
+			rama = ram_entropy_(ss_type, res_aa ) - std::log( static_cast< double >( interp_p ) );
+			double const interp_p_inv_neg = -1.0 / interp_p;
+			drama_dphi = interp_p_inv_neg * dp_dphi;
+			drama_dpsi = interp_p_inv_neg * dp_dpsi;
+		} else {
+			//if ( runlevel > silent ) { //apl fix this
+			//	std::cout << "rama prob = 0. in eval_rama_score_residue!" << std::endl;
+			//	std::cout << "phi" << SS( phi ) << " psi" << SS( psi ) <<
+			//	 " ss " << SS( ss ) << std::endl;
+			//}
+			drama_dphi = 0.0;
+			drama_dpsi = 0.0;
+			rama = 20.0;
+		}
+
+		if ( ! basic::options::option[basic::options::OptionKeys::corrections::score::rama_not_squared] ) {
+			if ( rama > 1.0 ) {
+				Real const rama_squared = rama * rama;
+				if ( rama_squared > 20.0 ) {
+					////  limit the score, but give the true derivative
+					////   as guidance out of the flat section of map
+					drama_dphi = 0.0;
+					drama_dpsi = 0.0;
+					rama = 20.0;
+				} else {
+					drama_dphi = 2 * rama * drama_dphi;
+					drama_dpsi = 2 * rama * drama_dpsi;
+					rama = rama_squared;
+				}
 			}
 		}
 	}
@@ -511,6 +520,29 @@ L100:
 	iunit.close();
 	iunit.clear();
 
+	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+		using namespace numeric;
+		using namespace numeric::interpolation::spline;
+		rama_energy_splines_.resize( chemical::num_canonical_aas );
+		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+			BicubicSpline ramaEspline;
+			MathMatrix< Real > energy_vals( 36, 36 );
+			for ( Size jj = 0; jj < 36; ++jj ) {
+				for ( Size kk = 0; kk < 36; ++kk ) {
+					energy_vals( jj, kk ) = -std::log( ram_probabil_(jj+1,kk+1,3,ii )) + ram_entropy_(3,ii) ;
+				}
+			}
+			BorderFlag periodic_boundary[2] = { e_Periodic, e_Periodic };
+			Real start_vals[2] = {5.0, 5.0}; // grid is shifted by five degrees.
+			Real deltas[2] = {10.0, 10.0}; // grid is 10 degrees wide
+			bool lincont[2] = {false,false}; //meaningless argument for a bicubic spline with periodic boundary conditions
+			std::pair< Real, Real > unused[2];
+			unused[0] = std::make_pair( 0.0, 0.0 );
+			unused[1] = std::make_pair( 0.0, 0.0 );
+			ramaEspline.train( periodic_boundary, start_vals, deltas, energy_vals, lincont, unused );
+			rama_energy_splines_[ ii ] = ramaEspline;
+		}
+	}
 //cj      std::cout << "========================================" << std::endl;
 }
 

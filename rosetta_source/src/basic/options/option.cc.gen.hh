@@ -811,6 +811,7 @@ option.add( basic::options::OptionKeys::corrections::score::hb_sp2_chipen, "Expe
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_amp, "Experimental term for hydrogen bonds to sp2 acceptors: sets the amplitude of the sp2 hydrogen bond (greater than 1 upweights sp2 hydrogen bonds)" ).def(2.0);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_peak_heigh_above_trough, "Experimental term for hydrogen bonds to sp2 acceptors: sets the dynamic range between the most potent sp2 hydrogen bonds and the least potent" ).def(3.0);
 option.add( basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy, "If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen" ).def(false);
+option.add( basic::options::OptionKeys::corrections::score::use_bicubic_interpolation, "Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer" ).def(false);
 option.add( basic::options::OptionKeys::corrections::chemical::chemical, "chemical option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::chemical::icoor_05_2009, "New set of idealized coordinates for full atom, 05-2009" );
 option.add( basic::options::OptionKeys::corrections::chemical::parse_charge, "Use PARSE charge set." );

@@ -31,9 +31,7 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
-
-
-
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
 
 namespace core {
 namespace scoring {
@@ -60,6 +58,8 @@ private:
 	//extern Probability_AA_pp P_AA_pp;
 	typedef utility::vector1< FArray2D_Probability > Probability_AA_pp;
 	Probability_AA_pp P_AA_pp_;
+
+	utility::vector1< numeric::interpolation::spline::BicubicSpline > P_AA_pp_energy_splines_;
 
 public:
 	P_AA();

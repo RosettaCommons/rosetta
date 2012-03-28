@@ -27,7 +27,11 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/vector1.hh>
+
+// Numeric headers
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
+
 
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
@@ -121,6 +125,8 @@ private:
 	static ObjexxFCL::FArray4D_int ram_counts_;
 	//static utility::vector1< utility::vector1 < FArray2D< Real > > > > ram_energ_;
 	static ObjexxFCL::FArray4D< Real > ram_energ_;
+	utility::vector1< numeric::interpolation::spline::BicubicSpline > rama_energy_splines_; // loops only
+
 	static int const n_phi_ = 36;
 	static int const n_psi_ = 36;
 	static Real const binw_; // 360 / n_phi_ = 10;

@@ -69,72 +69,84 @@ class BicubicSpline
 {
 public:
 
-    //////////////////////////////////
-    // construction and destruction //
-    //////////////////////////////////
+   //////////////////////////////////
+   // construction and destruction //
+	//////////////////////////////////
 
-      /// construct generic BicubicSpline
-      BicubicSpline()
-      {
-      }
+	/// construct generic BicubicSpline
+	BicubicSpline()
+	{
+	}
 
-      /// copy constructor
-      BicubicSpline* Clone() const
-      {
-        return new BicubicSpline( *this);
-      }
+	/// copy constructor
+	BicubicSpline* Clone() const
+	{
+		return new BicubicSpline( *this);
+	}
 
-    /////////////////
-    // data access //
-    /////////////////
+   /////////////////
+   // data access //
+   /////////////////
 
 
-      /// get the second order derivatives of the spline
-      MathMatrix< Real> const &get_dsecox() const
-      {
-        return dsecox_;
-      }
+	/// get the second order derivatives of the spline
+	MathMatrix< Real> const &get_dsecox() const
+	{
+		return dsecox_;
+	}
 
-      MathMatrix< Real> const &get_dsecoy() const
-      {
-        return dsecoy_;
-      }
+	MathMatrix< Real> const &get_dsecoy() const
+	{
+		return dsecoy_;
+	}
 
-      MathMatrix< Real> const &get_dsecoxy() const
-      {
-        return dsecoxy_;
-      }
+	MathMatrix< Real> const &get_dsecoxy() const
+	{
+		return dsecoxy_;
+	}
 
-    //////////////
-    // operator //
-    //////////////
+	//////////////
+	// operator //
+	//////////////
 
-    ////////////////
-    // operations //
-    ////////////////
+	////////////////
+	// operations //
+	////////////////
 
-      /// @return value at (x, y)
-      Real F( const MathVector< Real> &ARGUMENTS) const;
+	/// @return value at (x, y)
+	Real F( const MathVector< Real> &ARGUMENTS) const;
 
-      /// @return partial derivative at (x, y) for x
-      Real dFdx( const MathVector< Real> &ARGUMENTS) const;
+	/// @return partial derivative at (x, y) for x
+	Real dFdx( const MathVector< Real> &ARGUMENTS) const;
 
-      /// @return partial derivative at (x, y) for y
-      Real dFdy( const MathVector< Real> &ARGUMENTS) const;
+	/// @return partial derivative at (x, y) for y
+	Real dFdy( const MathVector< Real> &ARGUMENTS) const;
 
-      /// @return value and derivative at (x, y)
-      std::pair< Real, MathVector< Real> > FdF( const MathVector< Real> &ARGUMENTS) const;
+	/// @return value at (x, y)
+	Real F( Real x, Real y ) const;
 
-      /// train BicubicSpline
-      void train
-      (
-        const BorderFlag BORDER[2], const Real START[2], const Real DELTA[2], const MathMatrix< Real> &RESULTS,
-        const bool LINCONT[2], const std::pair< Real, Real> FIRSTBE[2]
-      );
+	/// @return partial derivative at (x, y) for x
+	Real dFdx(  Real x, Real y ) const;
 
-      inline  Real sqr ( const Real & x ) const{
-      	return x*x;
-      }
+	/// @return partial derivative at (x, y) for y
+	Real dFdy(  Real x, Real y ) const;
+
+	/// @return value and derivative at (x, y)
+	std::pair< Real, MathVector< Real> > FdF( const MathVector< Real> &ARGUMENTS) const;
+
+	/// train BicubicSpline
+	void train (
+		const BorderFlag BORDER[2],
+		const Real START[2],
+		const Real DELTA[2],
+		const MathMatrix< Real> &RESULTS,
+		const bool LINCONT[2],
+		const std::pair< Real, Real> FIRSTBE[2]
+	);
+
+	inline  Real sqr ( const Real & x ) const{
+		return x*x;
+	}
 
 
 private:

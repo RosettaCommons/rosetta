@@ -31,6 +31,8 @@
 #include <numeric/interpolation/periodic_range/full/interpolation.hh>
 #include <numeric/interpolation/periodic_range/half/interpolation.hh>
 
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
+
 // ObjexxFCL headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -232,6 +234,39 @@ P_AA::read_P_AA_pp()
 //		}
 //	}
 //#endif
+
+
+
+	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+
+		// Now prepare the bicubic spline
+		using namespace numeric;
+		using namespace numeric::interpolation::spline;
+		P_AA_pp_energy_splines_.resize( chemical::num_canonical_aas );
+		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+			BicubicSpline paappEspline;
+			MathMatrix< Real > energy_vals( 36, 36 );
+			for ( Size jj = 0; jj < 36; ++jj ) {
+				for ( Size kk = 0; kk < 36; ++kk ) {
+					energy_vals( jj, kk ) = -std::log( P_AA_pp_[ ii ]( jj, kk ) /P_AA_[ ii ] );
+				}
+			}
+			BorderFlag periodic_boundary[2] = { e_Periodic, e_Periodic };
+			Real start_vals[2];
+			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) {
+				start_vals[0] = start_vals[1] = 0.0; // if this flag is on, then the PAAPP table is not shifted and aligns with the ten-degree boundaries.
+			} else {
+				start_vals[0] = start_vals[1] = 5.0; // otherwise, the grid is shifted by five degrees.
+			}
+			Real deltas[2] = {10.0, 10.0}; // grid is 10 degrees wide
+			bool lincont[2] = {false,false}; //meaningless argument for a bicubic spline with periodic boundary conditions
+			std::pair< Real, Real > unused[2];
+			unused[0] = std::make_pair( 0.0, 0.0 );
+			unused[1] = std::make_pair( 0.0, 0.0 );
+			paappEspline.train( periodic_boundary, start_vals, deltas, energy_vals, lincont, unused );
+			P_AA_pp_energy_splines_[ ii ] = paappEspline;
+		}
+	}
 }
 
 
@@ -254,7 +289,11 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 			return -std::log( numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
 		}
 		else {
-			return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
+			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+				return P_AA_pp_energy_splines_[ aa ].F( phi, psi );
+			} else {
+				return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
+			}
 		}
 	} else { // Probabilities for this amino acid aren't present in files or it is a terminus
 		return Energy( 0.0 );
@@ -274,7 +313,11 @@ P_AA::P_AA_pp_energy( chemical::AA const aa, Angle const phi, Angle const psi ) 
 			return -std::log( numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
 		}
 		else {
-			return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
+			//return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
+			numeric::MathVector< Real > args(2);
+			args(0) = phi;
+			args(1) = psi;
+			return P_AA_pp_energy_splines_[ aa ].F( args );
 		}
 	} else { // Probabilities for this amino acid aren't present in files or it is a terminus
 		return Energy( 0.0 );
@@ -321,15 +364,26 @@ P_AA::get_Paa_pp_deriv(
 			}
 		}
 		else {
-			Probability const interp_p = bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
-			//Energy Paa_ppE = -std::log( interp_p / P_AA_[ aa ] );
-			switch ( tor_id.torsion()  ) {
-				case phi_id :
-					return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * dp_dphi; break;
-				case psi_id :
-					return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * dp_dpsi; break;
-				default :
-					return EnergyDerivative( 0.0 );
+			Real interp_p( 0 );
+			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+				switch ( tor_id.torsion()  ) {
+					case phi_id :
+						return P_AA_pp_energy_splines_[ aa ].dFdx( phi, psi );
+					case psi_id :
+						return P_AA_pp_energy_splines_[ aa ].dFdy( phi, psi );
+					default :
+						return EnergyDerivative( 0.0 );
+				}
+			} else {
+				Real const interp_p = bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
+				switch ( tor_id.torsion()  ) {
+					case phi_id :
+						return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * dp_dphi; break;
+					case psi_id :
+						return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * dp_dpsi; break;
+					default :
+						return EnergyDerivative( 0.0 );
+				}
 			}
 		}
 	} else { // Probabilities for this amino acid aren't present in files or it is a terminus

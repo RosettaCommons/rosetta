@@ -199,6 +199,7 @@ namespace corrections { namespace score { BooleanOptionKey const hb_sp2_chipen( 
 namespace corrections { namespace score { RealOptionKey const hb_sp2_amp( "corrections:score:hb_sp2_amp" );  } }
 namespace corrections { namespace score { RealOptionKey const hb_sp2_peak_heigh_above_trough( "corrections:score:hb_sp2_peak_heigh_above_trough" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hbond_measure_sp3acc_BAH_from_hvy( "corrections:score:hbond_measure_sp3acc_BAH_from_hvy" );  } }
+namespace corrections { namespace score { BooleanOptionKey const use_bicubic_interpolation( "corrections:score:use_bicubic_interpolation" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const chemical( "corrections:chemical" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const icoor_05_2009( "corrections:chemical:icoor_05_2009" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const parse_charge( "corrections:chemical:parse_charge" );  } }

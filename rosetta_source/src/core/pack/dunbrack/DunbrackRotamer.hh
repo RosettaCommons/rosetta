@@ -52,17 +52,28 @@ namespace dunbrack {
 /// allocated for pointers.  These objects may be rapidly allocated and deallocated
 /// on the stack.
 ///
-/// @details S for Size, P for Precision
-
+/// @details S for Size, P for Precision.  Now incorporating the bicubic spline
+/// code from numerical recipies that was ported to Rosetta from the Meiler lab
+/// code base (biotools?) by Steven Combs.
 template < Size S, class P >
 class DunbrackRotamerMeanSD {
 public:
 	DunbrackRotamerMeanSD() :
-		rotamer_probability_( P( 0.0 ) )
+		rotamer_probability_( P( 0.0 ) ),
+		rotE_( 0 ),
+		rotE_dsecophi_( P( 0.0 ) ),
+		rotE_dsecopsi_( P( 0.0 ) ),
+		rotE_dsecophipsi_( P( 0.0 ) )
 	{
 		for ( Size ii = 1; ii <= S; ++ii ) {
 			chi_mean_[ ii ] = P( 0.0 );
+			//chi_mean_dsecophi_[ ii ] = P( 0.0 );
+			//chi_mean_dsecopsi_[ ii ] = P( 0.0 );
+			//chi_mean_dsecophipsi_[ ii ] = P( 0.0 );
 			chi_sd_[ ii ]   = P( 0.0 );
+			//chi_sd_dsecophi_[ ii ] = P( 0.0 );
+			//chi_sd_dsecopsi_[ ii ] = P( 0.0 );
+			//chi_sd_dsecophipsi_[ ii ] = P( 0.0 );
 		}
 	}
 
@@ -71,40 +82,138 @@ public:
 		typename utility::vector1< P > const & chisd_in,
 		P const prob_in
 	) :
-		rotamer_probability_( prob_in )
+		rotamer_probability_( prob_in ),
+		rotE_( P(0.0) ),
+		rotE_dsecophi_( P( 0.0 ) ),
+		rotE_dsecopsi_( P( 0.0 ) ),
+		rotE_dsecophipsi_( P( 0.0 ) )
 	{
 		for ( Size ii = 1; ii <= S; ++ii ) {
 			chi_mean_[ ii ] = chimean_in[ ii ];
+			//chi_mean_dsecophi_[ ii ] = P( 0.0 );
+			//chi_mean_dsecopsi_[ ii ] = P( 0.0 );
+			//chi_mean_dsecophipsi_[ ii ] = P( 0.0 );
 			chi_sd_  [ ii ] = chisd_in  [ ii ];
+			//chi_sd_dsecophi_[ ii ] = P( 0.0 );
+			//chi_sd_dsecopsi_[ ii ] = P( 0.0 );
+			//chi_sd_dsecophipsi_[ ii ] = P( 0.0 );
 		}
 	}
 
-	P chi_mean ( Size which_chi ) const {
+	P chi_mean( Size which_chi ) const {
 		return chi_mean_[ which_chi ];
 	}
 
-	P chi_sd ( Size which_chi ) const {
+	//P chi_mean_dsecophi( Size which_chi ) const {
+	//	return chi_mean_dsecophi_[ which_chi ];
+	//}
+
+	//P chi_mean_dsecopsi( Size which_chi ) const {
+	//	return chi_mean_dsecopsi_[ which_chi ];
+	//}
+
+	//P chi_mean_dsecophipsi( Size which_chi ) const {
+	//	return chi_mean_dsecophipsi_[ which_chi ];
+	//}
+
+	P chi_sd( Size which_chi ) const {
 		return chi_sd_[ which_chi ];
 	}
+
+	//P chi_sd_dsecophi( Size which_chi ) const {
+	//	return chi_sd_dsecophi_[ which_chi ];
+	//}
+
+	//P chi_sd_dsecopsi( Size which_chi ) const {
+	//	return chi_mean_dsecopsi_[ which_chi ];
+	//}
+
+	//P chi_sd_dsecophipsi( Size which_chi ) const {
+	//	return chi_mean_dsecophipsi_[ which_chi ];
+	//}
 
 	P
 	rotamer_probability() const {
 		return rotamer_probability_;
 	}
 
+	P
+	rotE() const {
+		return rotE_;
+	}
+
+	P
+	rotE_dsecophi() const {
+		return rotE_dsecophi_;
+	}
+
+	P
+	rotE_dsecopsi() const {
+		return rotE_dsecopsi_;
+	}
+
+	P
+	rotE_dsecophipsi() const {
+		return rotE_dsecophipsi_;
+	}
+
+
 	P &
 	chi_mean( Size which_chi ) {
 		return chi_mean_[ which_chi ];
 	}
+
+	//P & chi_mean_dsecophi( Size which_chi ) {
+	//	return chi_mean_dsecophi_[ which_chi ];
+	//}
+
+	//P & chi_mean_dsecopsi( Size which_chi ) {
+	//	return chi_mean_dsecopsi_[ which_chi ];
+	//}
+
+	//P & chi_mean_dsecophipsi( Size which_chi ) {
+	//	return chi_mean_dsecophipsi_[ which_chi ];
+	//}
 
 	P &
 	chi_sd( Size which_chi ) {
 		return chi_sd_[ which_chi ];
 	}
 
+	//P & chi_sd_dsecophi( Size which_chi ) {
+	//	return chi_sd_dsecophi_[ which_chi ];
+	//}
+
+	//P & chi_sd_dsecopsi( Size which_chi ) {
+	//	return chi_mean_dsecopsi_[ which_chi ];
+	//}
+
+	//P & chi_sd_dsecophipsi( Size which_chi ) {
+	//	return chi_mean_dsecophipsi_[ which_chi ];
+	//}
+
 	P &
 	rotamer_probability() {
 		return rotamer_probability_;
+	}
+
+	P & rotE() {
+		return rotE_;
+	}
+
+	P &
+	rotE_dsecophi() {
+		return rotE_dsecophi_;
+	}
+
+	P &
+	rotE_dsecopsi() {
+		return rotE_dsecopsi_;
+	}
+
+	P &
+	rotE_dsecophipsi() {
+		return rotE_dsecophipsi_;
 	}
 
 	void chi_mean ( Size which_chi, P chi_mean_in ) {
@@ -121,8 +230,18 @@ public:
 
 private:
 	utility::fixedsizearray1< P, S > chi_mean_;
+	//utility::fixedsizearray1< P, S > chi_mean_dsecophi_; // second order derivatives for chi mean wrt phi
+	//utility::fixedsizearray1< P, S > chi_mean_dsecopsi_; // second order derivatives for chi mean wrt psi
+	//utility::fixedsizearray1< P, S > chi_mean_dsecophipsi_; // second order derivatives for chi mean wrt to both phi and psi
 	utility::fixedsizearray1< P, S > chi_sd_;
+	//utility::fixedsizearray1< P, S > chi_sd_dsecophi_; // second order derivatives for the standard deviation of chi wrt phi
+	//utility::fixedsizearray1< P, S > chi_sd_dsecopsi_; // second order derivatives for the standard deviation of chi wrt psi
+	//utility::fixedsizearray1< P, S > chi_sd_dsecophipsi_; // second order derivatives for the standard deviation of chi wrt to both phi and psi
 	P rotamer_probability_;
+	P rotE_; // -log(rotamer probability)
+	P rotE_dsecophi_; // second order derivatives for the rotamer probability wrt phi
+	P rotE_dsecopsi_; // second order derivatives for the rotamer probability wrt psi
+	P rotE_dsecophipsi_; // second order derivatives for the rotamer probability wrt phi and psi
 };
 
 template < Size S, class P >
@@ -196,7 +315,6 @@ public:
 	{}
 
 	PackedDunbrackRotamer(
-
 		DunbrackRotamer< S, P > const & sibling,
 		Size const packed_rotno_in
 	) :
@@ -303,6 +421,21 @@ expand_proton_chi(
 	chemical::ResidueTypeCAP concrete_residue,
 	Size proton_chi,
 	utility::vector1< ChiSetOP > & chi_set_vector
+);
+
+
+void bicubic_interpolation(
+	Real v00, Real d2dx200, Real d2dy200, Real d4dx2y200,
+	Real v01, Real d2dx201, Real d2dy201, Real d4dx2y201,
+	Real v10, Real d2dx210, Real d2dy210, Real d4dx2y210,
+	Real v11, Real d2dx211, Real d2dy211, Real d4dx2y211,
+	Real dxp, // in the range [0..1) representing the distance to the left bin boundary
+	Real dyp, // in the range [0..1) representing the distance to the lower bin boundary
+	Real binwx, // the size of the bin witdh for x
+	Real binwy, // the size of the bin width for y
+	Real & val,
+	Real & dvaldx,
+	Real & dvaldy
 );
 
 void interpolate_rotamers(
