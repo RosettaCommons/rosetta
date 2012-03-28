@@ -82,6 +82,7 @@ class Tester:
                 platform = s.split()[1]
                 self.log( "Platform found: " + platform )
                 return platform
+        sys.exit("run.py is about to crash because it could not use SCons to detect your platform.  The most likely reason for this is that you are running it from the wrong directory - it must be run from the rosetta_source directory, not the rosetta_source/test directory, even though it lives in the latter.")
         return "PlatformWasNotFound!!!"  # <-- That should not reall happend.
 
 
