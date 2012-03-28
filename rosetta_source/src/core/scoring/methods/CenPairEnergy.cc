@@ -120,6 +120,9 @@ CenPairEnergy::residue_pair_energy(
 	conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );
 	Real const cendist = cen1.xyz().distance_squared( cen2.xyz() );
 
+	//fpd ignore cen-cen distances above 12.05A
+	if (cendist > 12.05*12.05) return;
+
 	/// accumulate total energies
 	Real pair_score( 0.0 ), cenpack_score( 0.0 );
 	potential_.evaluate_pair_and_cenpack_score( rsd1, rsd2, cendist,

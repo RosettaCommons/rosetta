@@ -31,6 +31,7 @@
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Atom.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
@@ -232,6 +233,11 @@ InterchainPotential::evaluate_pair_and_vdw_score(
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
 
 	if (interface.is_pair( rsd1, rsd2) == false) return;
+
+	//fpd to match pre-48179 only compute when centroids are within 12.05A
+	core::conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );
+	core::Real const cendist = cen1.xyz().distance_squared( cen2.xyz() );
+	if (cendist > 12.05*12.05) return;
 
 	pair_contribution = interchain_pair_log_( rsd1.aa(), rsd2.aa() );
 
