@@ -6,10 +6,28 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-/// @file
+//////////////////////////////////////////////////////////////////////
+/// @begin ResidueTypeSet
+///
 /// @brief
-/// @author Phil Bradley
+/// Residue Type Set class
+///
+/// @detailed
+/// This class is responsible for iterating through the set of canonical amino acids and non-canonical
+/// amino acids. It first reads through a file that contains the location of residues in the database.
+/// At the begining of that file are the atom types, mm atom types, element sets, and orbital types that will
+/// be used. The sets are all for fa_standard. If a new type of atoms are added for residues, this is where they
+/// would be added. Once it assigns the types, it then reads in extra residue params that are passed through the
+/// command line. Finally, patches are applied to all residues added.
+///
+///
+/// @authors
+/// Phil Bradley
+/// Steven Combs - these comments
+///
+///
+///
+/////////////////////////////////////////////////////////////////////////
 
 
 // Rosetta headers
@@ -132,6 +150,10 @@ ResidueTypeSet::ResidueTypeSet(
 			} else {
 				std::string const filename( directory + line );
 				ResidueTypeOP rsd_type( read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
+				if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
+					orbitals::AssignOrbitals add_orbitals_to_residue(rsd_type);
+					add_orbitals_to_residue.assign_orbitals();
+				}
 				//kwk commenting out csd_atom_types until they have been fully implemented
 				residue_types_.push_back( rsd_type );
 			}

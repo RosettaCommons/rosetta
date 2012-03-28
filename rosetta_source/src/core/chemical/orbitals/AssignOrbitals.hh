@@ -98,7 +98,7 @@ private:
 
 	std::string make_orbital_type_name
 	(
-		AtomType const atmtype,
+		AtomType const & atmtype,
 		std::string const orbitaltype,
 		core::Size const hybridization
 	);

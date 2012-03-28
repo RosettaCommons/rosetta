@@ -97,6 +97,7 @@ public:
 		sfxn.set_weight( orbitals_hpol, 1 );
 		sfxn.set_weight( orbitals_haro, 1 );
 		sfxn.set_weight(orbitals_hpol_bb, 1);
+		//sfxn.set_weight(orbitals_orbitals, 1);
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.validate_start_func_matches_start_score( -0.524698508539912, false, 1e-6 );
@@ -108,7 +109,7 @@ public:
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( orbitals_hpol, 1 );
 		sfxn.set_weight( orbitals_haro, 1 );
-		//sfxn.set_weight(orbitals_hpol_bb, 1);
+		//sfxn.set_weight(orbitals_orbitals, 1);
 		sfxn.set_weight( orbitals_hpol_bb, 1 );
 		kinematics::MoveMap movemap( create_trpcage_movemap_to_allow_bb10_freedom() );
 		AtomDerivValidator adv;
@@ -126,6 +127,7 @@ public:
 		sfxn.set_weight( orbitals_hpol, 1 );
 		sfxn.set_weight( orbitals_haro, 1 );
 		sfxn.set_weight(orbitals_hpol_bb, 1);
+		//sfxn.set_weight(orbitals_orbitals, 1);
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-6 );

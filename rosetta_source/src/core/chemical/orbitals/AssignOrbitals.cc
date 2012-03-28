@@ -53,7 +53,7 @@ void AssignOrbitals::assign_orbitals( )
 	// Get the chemical atom_type for each atom by it index number in this residue
 	for (core::Size atm_index = 1; atm_index <= restype_->natoms(); ++atm_index ){
 		/*OrbInfo orbital_info;*/
-		core::chemical::AtomType atmtype(restype_->atom_type(atm_index));
+		core::chemical::AtomType const & atmtype(restype_->atom_type(atm_index));
 
 		//core::chemical::orbitals::OrbitalType obtype (restype_->orbital_xyz(orbital_index));
 
@@ -287,7 +287,7 @@ void AssignOrbitals::add_orbitals_to_restype(
 
 std::string AssignOrbitals::make_orbital_type_name
 (
-		AtomType const atmtype,
+		AtomType const & atmtype,
 		std::string const orbitaltype,
 		core::Size const hybridization
 )
