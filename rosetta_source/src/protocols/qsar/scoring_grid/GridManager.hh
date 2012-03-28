@@ -47,6 +47,8 @@ public:
 	void set_width(core::Real width);
 	///@brief set resolution (must be done before initialization)
 	void set_resolution(core::Real resolution);
+	///@brief set chain (must be done before initialization)
+	void set_chain(char chain);
 	///@brief make a new grid from grid tag, and insert it into the grid manager
 	void make_new_grid(utility::tag::TagPtr const tag);
 	///@brief insert a grid pointer into the grid manager
@@ -69,8 +71,6 @@ public:
 	void update_grids(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude);
 	///@brief recalculate all grids for a pose.  This must be called if the backbone or sidechain conformations change!
 	void update_grids(core::pose::Pose const & pose, core::Vector const & center);
-	///@brief recalculate all grids for a pose, but only if the tag has changed
-	void update_grids(core::pose::Pose const & pose, core::Vector const & center,std::string const & tag);
 	///@brief initialize all grids and fill with 0s given a center point
 	void initialize_all_grids(core::Vector const & center);
 	///@brief return the number of grids in the manager
@@ -89,6 +89,8 @@ private:
 	//GridManager(core::Real width,core::Real resolution);
 	static GridManager * instance_;
 
+	std::map<core::Size,GridMap> grid_map_cache_;
+
 	GridMap grid_map_;
 	ScoreMap score_map_;
 	std::string last_tag_;
@@ -96,6 +98,7 @@ private:
 	core::Real resolution_;
 	qsar::qsarMapOP qsar_map_;
 	bool initialized_;
+	char chain_;
 };
 
 }

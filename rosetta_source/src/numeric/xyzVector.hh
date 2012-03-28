@@ -30,6 +30,7 @@
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyz.functions.fwd.hh>
 #include <numeric/trig.functions.hh>
+#include <platform/types.hh>
 
 // C++ headers
 #include <cassert>
@@ -37,6 +38,9 @@
 #ifdef GL_GRAPHICS
 	#include <numeric/xyz.functions.hh>
 #endif
+
+// Boost Headers
+#include <boost/functional/hash.hpp>
 
 namespace numeric {
 
@@ -1908,6 +1912,17 @@ public: // Comparison
 		return ( length_squared() <= v.length_squared() );
 	}
 
+	/// @brief Hashing of coords using boost::hash
+	friend
+	platform::Size
+	hash_value(xyzVector const & v)
+	{
+		platform::Size hash = 0;
+		boost::hash_combine(hash,v.x_);
+		boost::hash_combine(hash,v.y_);
+		boost::hash_combine(hash,v.z_);
+		return hash;
+	}
 
 private: // Methods
 

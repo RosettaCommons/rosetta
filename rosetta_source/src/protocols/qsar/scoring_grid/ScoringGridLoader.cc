@@ -65,6 +65,10 @@ void ScoringGridLoader::load_data(
 		grid_manager->set_resolution(tag->getOption<core::Real>("resolution"));
 	}
 
+	if(tag->hasOption("chain") ) {
+		grid_manager->set_chain(tag->getOption<char>("chain"));
+	}
+
 	/// Add grids to the scoring grid manager
 
 	TagPtrs const grid_tags( tag->getTags() );

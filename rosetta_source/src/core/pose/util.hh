@@ -559,6 +559,8 @@ num_chi_angles(
 	core::pose::Pose const & pose
 );
 
+core::Size
+get_hash_from_chain(char const & chain, core::pose::Pose const & pose);
 
 
 /// @brief Initialize a DOF_ID_Map for a given Pose using the DOF_ID_Map's current default fill values

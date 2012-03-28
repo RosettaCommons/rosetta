@@ -46,6 +46,10 @@ public:
 	GridBase(std::string type, core::Real weight);
 	/// @brief initialize a grid of zeros with a given centerpoint, width and resolution (in angstroms).
 	void initialize(core::Vector const & center, core::Real width, core::Real resolution);
+	/// @brief set the chain around which to calculate the grid
+	void set_chain(char chain);
+	/// @brief get the chain around which the grid is calculated
+	char get_chain();
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude)=0;
 	/// @brief populate the grid with values based on a passed pose
@@ -105,6 +109,7 @@ private:
 	std::string type_;
 	core::Real weight_;
 	core::Vector center_;
+	char chain_;
 
 };
 

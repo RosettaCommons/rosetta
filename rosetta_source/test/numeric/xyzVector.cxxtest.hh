@@ -21,6 +21,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
 
+#include <boost/functional/hash.hpp>
 
 // --------------- Test Class --------------- //
 
@@ -225,6 +226,21 @@ class XYZVectorTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( original.x(), mid.x(), delta_percent );
 		TS_ASSERT_DELTA( original.y(), mid.y(), delta_percent );
 		TS_ASSERT_DELTA( original.z(), mid.z(), delta_percent );
+	}
+
+
+	/// @brief boost::hash tests
+	void test_xyzVector_HashOperations() {
+		numeric::xyzVector_float v( 1.0, 2.0, 3.0 );
+		numeric::xyzVector_float w( 1.0, 2.0, 3.0 );
+		numeric::xyzVector_float x( 2.0, 2.0, 3.0 );
+
+
+		boost::hash<numeric::xyzVector_float> xyz_hasher;
+
+		TS_ASSERT(xyz_hasher(v) == xyz_hasher(w));
+		TS_ASSERT(xyz_hasher(v) != xyz_hasher(x));
+
 	}
 
 };

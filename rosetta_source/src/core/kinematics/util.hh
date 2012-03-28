@@ -72,7 +72,6 @@ setup_backrub_atom_tree(
 	Size const first_new_pseudo_residue
 );
 
-
 /// @brief prints something like this ***1***C***1*********2***C********3****C****2********3*****
 void
 simple_visualize_fold_tree( FoldTree const & fold_tree, std::ostream& out );

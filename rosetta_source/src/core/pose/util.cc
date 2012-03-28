@@ -67,6 +67,10 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 
+//Boost headers
+
+#include <boost/functional/hash.hpp>
+
 namespace core {
 namespace pose {
 
@@ -2263,6 +2267,26 @@ core::Size num_chi_angles(
 	return total_chi_angles;
 }
 
+core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose)
+{
+	core::Size hash = 0;
+
+	core::Size chain_id = get_chain_id_from_chain(chain,pose);
+	core::Size chain_begin = pose.conformation().chain_begin(chain_id);
+	core::Size chain_end = pose.conformation().chain_end(chain_id);
+	for(core::Size res_num = chain_begin; res_num <= chain_end; ++res_num)
+	{
+		core::Size natoms = pose.conformation().residue(res_num).natoms();
+		for(core::Size atom_num = 1; atom_num <= natoms; ++atom_num)
+		{
+			id::AtomID atom_id(atom_num,res_num);
+			PointPosition current_xyz = pose.conformation().xyz(atom_id);
+			boost::hash_combine(hash,current_xyz);
+		}
+	}
+
+	return hash;
+}
 
 void
 initialize_disulfide_bonds(

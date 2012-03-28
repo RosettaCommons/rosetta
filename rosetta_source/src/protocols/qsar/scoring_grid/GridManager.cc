@@ -70,9 +70,10 @@ void GridManager::reset()
 	resolution_ = 0.25;
 	qsar_map_ = 0;
 	initialized_ = false;
+	chain_ = 'A';
 }
 
-GridManager::GridManager() : last_tag_(""),width_(40), resolution_(0.25), qsar_map_(0),initialized_(false)
+GridManager::GridManager() : last_tag_(""),width_(40), resolution_(0.25), qsar_map_(0),initialized_(false),chain_('A')
 {
 	grid_map_.clear();
 	score_map_.clear();
@@ -88,6 +89,10 @@ void GridManager::set_resolution(core::Real resolution)
 	resolution_=resolution;
 }
 
+void GridManager::set_chain(char chain)
+{
+	chain_ = chain;
+}
 
 void GridManager::set_qsar_map(qsarMapOP qsar_map)
 {
@@ -200,6 +205,8 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 	for(;map_iterator != grid_map_.end(); ++map_iterator)
 	{
 		GridBaseOP current_grid(*map_iterator->second);
+		current_grid->initialize(center,width_,resolution_);
+		current_grid->set_chain(chain_);
 		current_grid->refresh(pose,center,ligand_chain_ids_to_exclude);
 	}
 }
@@ -211,6 +218,8 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 	for(;map_iterator != grid_map_.end();++map_iterator)
 	{
 		GridBaseOP current_grid(*map_iterator->second);
+		current_grid->initialize(center,width_,resolution_);
+		current_grid->set_chain(chain_);
 		current_grid->refresh(pose,center,ligand_chain_id_to_exclude);
 	}
 }
@@ -218,27 +227,33 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 
 void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector const & center)
 {
-	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 
-	for(;map_iterator != grid_map_.end();++map_iterator)
+	core::Size chain_hash = core::pose::get_hash_from_chain(chain_,pose);
+	std::map<core::Size,GridMap>::const_iterator grid_cache_entry(grid_map_cache_.find(chain_hash));
+
+	if(grid_cache_entry != grid_map_cache_.end()) //we've already seen this conformation, load the associated grid out of the map
 	{
-
-
-		GridBaseOP current_grid(*map_iterator->second);
-		GridManagerTracer.Debug <<"updating grid " << map_iterator->first << std::endl;
-		current_grid->refresh(pose,center);
-		GridManagerTracer.Debug <<"done updating grid" <<std::endl;
-	}
-}
-
-void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const & center,std::string const & tag)
-{
-	//std::cout << tag << " " <<last_tag_ <<std::endl;
-	if(tag != last_tag_)
+		GridManagerTracer << "Found a conformation matching hash: " << chain_hash << " Loading from grid cache" <<std::endl;
+		grid_map_ = grid_cache_entry->second;
+	}else // This is a new conformation
 	{
-		update_grids(pose,center);
+		GridManagerTracer << "No conformation matching hash: " << chain_hash << " Updating grid and adding it to the cache" <<std::endl;
+
+		std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
+
+		for(;map_iterator != grid_map_.end();++map_iterator)
+		{
+
+
+			GridBaseOP current_grid(*map_iterator->second);
+			GridManagerTracer.Debug <<"updating grid " << map_iterator->first << std::endl;
+			current_grid->initialize(center,width_,resolution_);
+			current_grid->set_chain(chain_);
+			current_grid->refresh(pose,center);
+			GridManagerTracer.Debug <<"done updating grid" <<std::endl;
+		}
+		grid_map_cache_.insert(std::make_pair(chain_hash,grid_map_));
 	}
-	last_tag_ = tag;
 }
 
 void GridManager::initialize_all_grids(core::Vector const & center)

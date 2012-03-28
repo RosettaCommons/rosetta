@@ -164,11 +164,11 @@ void Transform::apply(core::pose::Pose & pose)
 	*/
 	core::conformation::Residue original_residue = pose.residue(begin);
 	core::chemical::ResidueType residue_type = pose.residue_type(begin);
-	jd2::JobOP current_job = protocols::jd2::JobDistributor::get_instance()->current_job();
-	std::string tag = current_job->input_tag();
+	//jd2::JobOP current_job = protocols::jd2::JobDistributor::get_instance()->current_job();
+	//std::string tag = current_job->input_tag();
 
 	grid_manager->initialize_all_grids(center);
-	grid_manager->update_grids(pose,center,tag);
+	grid_manager->update_grids(pose,center);
 
 	core::pose::Pose best_pose(pose);
 	core::Real best_score(grid_manager->total_score(original_residue));

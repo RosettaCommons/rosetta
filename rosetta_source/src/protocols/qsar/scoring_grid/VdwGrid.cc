@@ -12,13 +12,14 @@
 
 #include <protocols/qsar/scoring_grid/VdwGrid.hh>
 #include <protocols/qsar/scoring_grid/VdwGridCreator.hh>
-// AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
+
+
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/conformation/AtomGraph.hh>
-// AUTO-REMOVED #include <core/conformation/find_neighbors.hh>
+#include <core/pose/util.hh>
 #include <basic/database/open.hh>
 #include <numeric/interpolation/util.hh>
 #include <utility/tag/Tag.hh>
@@ -54,13 +55,13 @@ std::string VdwGridCreator::grid_name()
 VdwGrid::VdwGrid() : GridBase("VdwGrid",1.0), cutoff_(10.0)
 {
 	std::string lj_file(basic::database::full_name("scoring/qsar/lj_table.txt"));
-	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01);
+	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01).get_interpolator();
 }
 
 VdwGrid::VdwGrid(core::Real weight) : GridBase ("VdwGrid",weight), cutoff_(10.0)
 {
 	std::string lj_file(basic::database::full_name("scoring/qsar/lj_table.txt"));
-	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01);
+	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01).get_interpolator();
 }
 
 void
@@ -79,10 +80,14 @@ void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const &  )
 	// for each square within cutoff of the atom, update the score
 	// continue
 
+	core::Size chain_id = core::pose::get_chain_id_from_chain(get_chain(),pose);
+	core::Size chain_begin = pose.conformation().chain_begin(chain_id);
+	core::Size chain_end = pose.conformation().chain_end(chain_id);
+
 	this->fill_with_value(cutoff_);
 
 
-	for(core::Size residue_index = 1; residue_index <= pose.n_residue(); ++residue_index)
+	for(core::Size residue_index = chain_begin; residue_index <= chain_end; ++residue_index)
 	{
 		core::conformation::Residue residue = pose.residue(residue_index);
 		for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
@@ -108,35 +113,22 @@ void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 
 core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map)
 {
-	numeric::interpolation::spline::InterpolatorOP interpolator(lj_spline_.get_interpolator());
 	core::Real score = 0.0;
 
 	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index )
 	{
-		//qsarPointOP qsar_info(qsar_map->get_point(atom_index,"VdwGrid"));
-		//if(qsar_info != 0)
-		//{
 		core::Vector const & atom_coord(residue.xyz(atom_index));
 		core::Real const & radius(residue.atom_type(atom_index).lj_radius());
 		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
 		{
-			//core::grid::CartGrid<core::Real>::GridPt grid_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 			core::Real max_radius = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 			core::Real spline_score = 0.0;
 			core::Real spline_score_deriv = 0.0;
-			if(max_radius-radius >= 1)
-			{
-				spline_score = 1.531066;
-			}else
-			{
-				interpolator->interpolate(max_radius-radius,spline_score,spline_score_deriv);
-			}
 
-
+			lj_spline_->interpolate(max_radius-radius,spline_score,spline_score_deriv);
 
 			score += spline_score;
 		}
-		//}
 	}
 	return score;
 }

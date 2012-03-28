@@ -15,6 +15,8 @@
 // AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
 #include <core/grid/CartGrid.hh>
 // AUTO-REMOVED #include <protocols/ligand_docking/grid_functions.hh>
+#include <core/pose/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 #include <algorithm>
 
@@ -30,7 +32,7 @@ namespace scoring_grid {
 static basic::Tracer GridBaseTracer("protocols.qsar.scoring_grid.GridBase");
 
 
-GridBase::GridBase(std::string type, core::Real weight) : type_(type), weight_(weight)
+GridBase::GridBase(std::string type, core::Real weight) : type_(type), weight_(weight),chain_('A')
 {
 
 }
@@ -51,6 +53,16 @@ void GridBase::initialize(core::Vector const & center, core::Real width,core::Re
 	grid_.setDimensions(num_pts,num_pts,num_pts,resolution,resolution,resolution);
 	grid_.setupZones();
 	grid_.zero();
+}
+
+void GridBase::set_chain(char chain)
+{
+	chain_ = chain;
+}
+
+char GridBase::get_chain()
+{
+	return chain_;
 }
 
 core::grid::CartGrid<core::Real> const & GridBase::get_grid()
