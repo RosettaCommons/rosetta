@@ -2,6 +2,7 @@
 ATOM_TYPE_SET fa_standard
 ELEMENT_SET fa_standard
 MM_ATOM_TYPE_SET fa_standard
+ORBITAL_TYPE_SET fa_standard
 #CSD_ATOM_TYPE_SET fa_standard
 ## 
 
