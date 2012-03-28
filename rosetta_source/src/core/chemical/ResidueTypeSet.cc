@@ -113,9 +113,11 @@ ResidueTypeSet::ResidueTypeSet(
 			} else if ( tag == "MM_ATOM_TYPE_SET" ) {
 				l >> tag;
 				mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set( tag );
+			} else if(tag == "ORBITAL_TYPE_SET"){
+				l >> tag;
 				orbital_types = ChemicalManager::get_instance()->orbital_type_set(tag);
-// kwk commenting out until the CSD_ATOM_TYPE_SET has been fully implemented
-//			} else if ( tag == "CSD_ATOM_TYPE_SET" ) {
+				// kwk commenting out until the CSD_ATOM_TYPE_SET has been fully implemented
+	//			} else if ( tag == "CSD_ATOM_TYPE_SET" ) {
 //				l >> tag;
 //				csd_atom_types = ChemicalManager::get_instance()->csd_atom_type_set( tag );
 //XRW_B_T1
