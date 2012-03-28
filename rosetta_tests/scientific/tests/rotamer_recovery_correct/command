@@ -41,10 +41,10 @@ then
         exit 1      
 fi
 
-nice %(bin)s/rosetta_scripts.%(binext)s @flags -database %(database)s >&1\
-	| egrep -v 'TIMING' \
-	| egrep -v 'Finished.+in [0-9]+ seconds.' \
-	> outputs/features_generation.log
+#nice %(bin)s/rosetta_scripts.%(binext)s @flags -database %(database)s >&1\
+#	| egrep -v 'TIMING' \
+#	| egrep -v 'Finished.+in [0-9]+ seconds.' \
+#	> outputs/features_generation.log
 
 #sqlite3 outputs/features_correct.db3 \
 #	< average_rotamer_recovery_by_amino_acid.sql \
