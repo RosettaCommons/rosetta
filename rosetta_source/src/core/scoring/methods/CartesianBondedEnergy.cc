@@ -908,10 +908,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
 			dE_dphi = weights[ cart_bonded_torsion ] * Kphi * (del_phi>0? 1 : -1);
-			dE_dphi = weights[ cart_bonded ] * Kphi * (del_phi>0? 1 : -1);
+			dE_dphi += weights[ cart_bonded ] * Kphi * (del_phi>0? 1 : -1);
 		} else {
 			dE_dphi = weights[ cart_bonded_torsion ] * Kphi * del_phi;
-			dE_dphi = weights[ cart_bonded ] * Kphi * del_phi;
+			dE_dphi += weights[ cart_bonded ] * Kphi * del_phi;
 		}
 
 		LF1 += dE_dphi * f1;
@@ -948,10 +948,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		if (linear_bonded_potential_ && std::fabs(theta - theta0)>1) {
 			dE_dtheta = weights[ cart_bonded_angle ] * Ktheta * ((theta - theta0)>0? 1 : -1);
-			dE_dtheta = weights[ cart_bonded ] * Ktheta * ((theta - theta0)>0? 1 : -1);
+			dE_dtheta += weights[ cart_bonded ] * Ktheta * ((theta - theta0)>0? 1 : -1);
 		} else {
 			dE_dtheta = weights[ cart_bonded_angle ] * Ktheta * (theta - theta0);
-			dE_dtheta = weights[ cart_bonded ] * Ktheta * (theta - theta0);
+			dE_dtheta += weights[ cart_bonded ] * Ktheta * (theta - theta0);
 		}
 
 		LF1 += dE_dtheta * f1;
@@ -976,10 +976,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
 			dE_dd = weights[ cart_bonded_length ] * Kd * ((d - d0)>0? 1 : -1);
-			dE_dd = weights[ cart_bonded ] * Kd * ((d - d0)>0? 1 : -1);
+			dE_dd += weights[ cart_bonded ] * Kd * ((d - d0)>0? 1 : -1);
 		} else {
 			dE_dd = weights[ cart_bonded_length ] * Kd * (d - d0);
-			dE_dd = weights[ cart_bonded ] * Kd * (d - d0);
+			dE_dd += weights[ cart_bonded ] * Kd * (d - d0);
 		}
 
 		LF1 += dE_dd * f1;
@@ -1033,10 +1033,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 		Real dE_dtheta;
 		if (linear_bonded_potential_  && std::fabs(theta - theta0)>1 ) {
 			dE_dtheta = weights[ cart_bonded_angle ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
-			dE_dtheta = weights[ cart_bonded ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
+			dE_dtheta += weights[ cart_bonded ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
 		} else {
 			dE_dtheta  = weights[ cart_bonded_angle ] * Ktheta * (theta - theta0);
-			dE_dtheta  = weights[ cart_bonded ] * Ktheta * (theta - theta0);
+			dE_dtheta  += weights[ cart_bonded ] * Ktheta * (theta - theta0);
 		}
 
 		LF1 += dE_dtheta * f1;
@@ -1088,10 +1088,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 			Real dE_dtheta;
 			if (linear_bonded_potential_ && std::fabs(theta - theta0)>1) {
 				dE_dtheta = weights[ cart_bonded_angle ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
-				dE_dtheta = weights[ cart_bonded ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
+				dE_dtheta += weights[ cart_bonded ] *  Ktheta * ((theta - theta0)>0? 1 : -1);
 			} else {
 				dE_dtheta  = weights[ cart_bonded_angle ] * Ktheta * (theta - theta0);
-				dE_dtheta  = weights[ cart_bonded ] * Ktheta * (theta - theta0);
+				dE_dtheta  += weights[ cart_bonded ] * Ktheta * (theta - theta0);
 			}
 
 			LF1 += dE_dtheta * f1;
@@ -1132,10 +1132,10 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
 			dE_dd = weights[ cart_bonded_length ] * Kd * ((d - d0)>0? 1 : -1);
-			dE_dd = weights[ cart_bonded ] * Kd * ((d - d0)>0? 1 : -1);
+			dE_dd += weights[ cart_bonded ] * Kd * ((d - d0)>0? 1 : -1);
 		} else {
 			dE_dd = weights[ cart_bonded_length ] * Kd * (d - d0);
-			dE_dd = weights[ cart_bonded ] * Kd * (d - d0);
+			dE_dd += weights[ cart_bonded ] * Kd * (d - d0);
 		}
 
 		LF1 += dE_dd * f1;

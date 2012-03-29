@@ -47,6 +47,7 @@ public:
 	void add_template(
 		std::string template_fn,
 		std::string cst_fn,
+		std::string symmdef_file,
 		core::Real weight = 1.,
 		core::Size cluster_id = 1,
 		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0) );
@@ -105,6 +106,7 @@ private:
 	utility::vector1 < core::pose::PoseOP > templates_;
 	utility::vector1 < std::string > template_fn_;
 	utility::vector1 < std::string > template_cst_fn_;
+	utility::vector1 < std::string > symmdef_files_;
 	utility::vector1 < core::Real > template_weights_;
 	utility::vector1 < core::Size > template_clusterID_;
 	utility::vector1 < protocols::loops::Loops > template_chunks_;

@@ -24,6 +24,7 @@
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -119,6 +120,7 @@
 
 // option
 #include <basic/options/option.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -487,6 +489,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 void HybridizeProtocol::add_template(
 	std::string template_fn,
 	std::string cst_fn,
+	std::string symm_file,
 	core::Real weight,
 	core::Size cluster_id,
 	utility::vector1<core::Size> cst_reses)
@@ -513,6 +516,7 @@ void HybridizeProtocol::add_template(
 	template_fn_.push_back(template_fn);
 	templates_.push_back(template_pose);
 	template_cst_fn_.push_back(cst_fn);
+	symmdef_files_.push_back(symm_file);
 	template_weights_.push_back(weight);
 	template_clusterID_.push_back(cluster_id);
 	template_chunks_.push_back(chunks);
@@ -520,6 +524,8 @@ void HybridizeProtocol::add_template(
 	template_cst_reses_.push_back(cst_reses);
 }
 
+
+///@brief  Old way of parsing hybrid config files; RosettaScripts is now preferred.
 void HybridizeProtocol::read_template_structures(utility::file::FileName template_list)
 {
 	utility::io::izstream f_stream( template_list );
@@ -553,7 +559,7 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 					cst_reses.push_back( (core::Size) std::atoi( cst_reses_parsed[i].c_str() ) );
 				}
 			}
-			add_template(template_fn, cst_fn, weight, cluster_id, cst_reses);
+			add_template(template_fn, cst_fn, "", weight, cluster_id, cst_reses);
 		}
 	}
 	f_stream.close();
@@ -684,7 +690,17 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			TR << "domain " << i << ": " << domains[i] << std::endl;
 		}
 
+		// symmetrize
+		std::string symmdef_file = symmdef_files_[initial_template_index];
+		if (!symmdef_file.empty() && symmdef_file != "NULL") {
+			protocols::simple_moves::symmetry::SetupForSymmetryMover makeSymm( symmdef_file );
+			makeSymm.apply(pose);
+			//fpd   to get the right rotamer set we need to do this
+			basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+		}
+
 		// initialize template history
+		//fpd this must be done after symmetrization!
 		TemplateHistoryOP history = new TemplateHistory(pose);
 		history->setall( initial_template_index_icluster );
 		pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
@@ -924,7 +940,9 @@ HybridizeProtocol::parse_my_tag(
 			if ((*tag_it)->hasOption( "constrain_res" ))
 				 cst_reses = protocols::rosetta_scripts::get_resnum_list_ordered( (*tag_it)->getOption<std::string>("constrain_res"), pose );
 
-			add_template(template_fn, cst_fn, weight, cluster_id, cst_reses);
+			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
+
+			add_template(template_fn, cst_fn, symm_file, weight, cluster_id, cst_reses);
 		}
 
 	}

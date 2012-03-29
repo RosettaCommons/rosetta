@@ -991,18 +991,6 @@ foreach my $i (0..$nclust) {
 		print XML  "    <FILTERS>\n";
 		print XML  "    </FILTERS>\n";
 		print XML  "    <MOVERS>\n";
-		if ($symmflag == 1) {
-			my (@allmovers,@allweights);
-			foreach my $symmdeffile (@{ $symdeffiles{$i}->{$symmgp} }) {
-				my $symmstem = $symmdeffile;
-				$symmstem =~ s/\.symm//;
-				print XML  "       <SetupForSymmetry name=$symmstem definition=\"$dir/$SYMMDEFDIR/$symmdeffile.symm\"/>\n";
-				my ($templ, $tag, $symmgp) = split '_', $symmstem;
-				push @allmovers, $symmstem;
-				push @allweights, $template_probs{$tag};
-			}
-			print XML  "       <RandomMover name=setup_symm movers=\"".(join ',',@allmovers)."\" weights=\"".(join ',',@allweights)."\"/>\n";
-		}
 		print XML  "        <Hybridize name=hybridize stage1_scorefxn=stage1 stage2_scorefxn=stage2 fa_scorefxn=fullatom $HYBRIDIZEOPTIONS>\n";
 		my $frag3filepath = sprintf "$dir/$FRAG3FILE", $dirtag;
 		my $frag9filepath = sprintf "$dir/$FRAG9FILE", $dirtag;
@@ -1012,9 +1000,11 @@ foreach my $i (0..$nclust) {
 			next if ($clusterid->[$j] != $i);
 			my $id = $THREADED_MDLS[$j];
 			$id =~ s/.*\///;
+			my $idstem = $id;
+			$idstem =~ s/.pdb$//;
 			$id =~ s/\.pdb$/_aln.cl$i.pdb/;
 			$id = "$dir/$ALNTEMPLATEDIR/$id";
-	
+
 			my $cstfile = sprintf $CSTFILENAMES, $i;
 			$cstfile = $dir."/$cstfile";
 	
@@ -1028,7 +1018,20 @@ foreach my $i (0..$nclust) {
 				$prob = $1+$template_M_EST_counts;
 			}
 
-			my $outline = sprintf "pdb=\"$id\" cst_file=\"$cstfile\" weight=$prob";
+			my $symtag = "";
+			if ($symmflag == 1) {
+		 		symmloop: foreach my $symmdeffile (@{ $symdeffiles{$i}->{$symmgp} }) {
+					if ($symmdeffile =~ $idstem) {
+						$symtag = "symmdef=\"$dir/$SYMMDEFDIR/$symmdeffile.symm\"";
+						last symmloop;
+					}
+				}
+				# if the template is not symmetric, we dont want to start with it for symmetric runs
+				#   (but it's ok to use fragments from it)
+				if ($symtag eq "") { $prob=0; }
+			}
+
+			my $outline = sprintf "pdb=\"$id\" cst_file=\"$cstfile\" weight=$prob $symtag";
 			print XML  "            <Template $outline/>\n";
 		}
 		print XML  "        </Hybridize>\n";
@@ -1036,25 +1039,28 @@ foreach my $i (0..$nclust) {
 		print XML  "    <APPLY_TO_POSE>\n";
 		print XML  "    </APPLY_TO_POSE>\n";
 		print XML  "    <PROTOCOLS>\n";
-		if ($symmflag == 1) {
-			print XML  "        <Add mover=setup_symm/>\n";
-		}
+		#if ($symmflag == 1) {
+		#	print XML  "        <Add mover=setup_symm/>\n";
+		#}
 		print XML  "        <Add mover=hybridize/>\n";
 		print XML  "    </PROTOCOLS>\n";
 		print XML  "</dock_design>\n";
 		close(XML);
-	
+
 		# finally write flags
 		my $flagfile = sprintf $FLAGFILENAMES, $i, $symmgp;
 		open (FLAGS, ">$flagfile") || die "Cannot open $_";
 		print FLAGS "-in:file:fasta $dir/$fastafile\n";
 		print FLAGS "-out:prefix $dirtag\n";
 		print FLAGS "-out:file:silent $dir/../$dirtag.$symmgp.cl$i.silent\n";
-		print FLAGS "-in:file:native $dir/$NATIVEDIR/$dirtag.pdb\n";
+		if (-e "$dir/$NATIVEDIR/$dirtag.pdb" ) {
+			print FLAGS "-in:file:native $dir/$NATIVEDIR/$dirtag.pdb\n";
+		}
 		print FLAGS "-parser:protocol $dir/$xmlfile\n";
-		printf FLAGS "-edensity::mapfile $dir/$MAPFILENAMES\n", $i;
+		#printf FLAGS "-edensity:mapfile $dir/$MAPFILENAMES\n", $i;
 	}
 }
+
 
 exit 0;
 
