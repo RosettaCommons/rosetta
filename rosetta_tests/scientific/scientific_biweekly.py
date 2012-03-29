@@ -148,13 +148,13 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     if len(args) > 0:
         tests = args
     else:
-        tests = [ d for d in os.listdir("biweekly_tests") if not d.startswith(".") and path.isdir(path.join("biweekly_tests", d)) ]
+        tests = [ d for d in os.listdir("biweekly") if not d.startswith(".") and path.isdir(path.join("biweekly", d)) ]
 
     # start to run the tests
     queue = Queue()
     for test in tests:
         queue.put(test)
-        copytree( path.join("biweekly_tests", test), path.join(outdir, test),
+        copytree( path.join("biweekly", test), path.join(outdir, test),
                   accept=lambda src, dst: path.basename(src) != '.svn' )
 
     # Start worker thread(s)

@@ -1,0 +1,1257 @@
+HEADER    HYDROLASE(O-GLYCOSYL)                   29-JUN-93   2IHL      2IHL   2
+COMPND    LYSOZYME (E.C.3.2.1.17) (JAPANESE QUAIL)                      2IHL   3
+SOURCE    JAPANESE QUAIL (COTURNIX COTURNIX JAPONICA) EGG WHITE         2IHL   4
+AUTHOR    A.HOUDUSSE,G.A.BENTLEY,R.J.POLJAK,H.SOUCHON,Z.ZHANG           2IHL   5
+REVDAT   1   31-JAN-94 2IHL    0                                        2IHL   6
+JRNL        AUTH   A.HOUDUSSE,G.A.BENTLEY,R.J.POLJAK,H.SOUCHON,         2IHL   7
+JRNL        AUTH 2 Z.ZHANG                                              2IHL   8
+JRNL        TITL                                                        2IHL   9
+JRNL        REF    TO BE PUBLISHED                                      2IHL  10
+JRNL        REFN                                                   353  2IHL  11
+REMARK   1                                                              2IHL  12
+REMARK   2                                                              2IHL  13
+REMARK   2 RESOLUTION. 1.4  ANGSTROMS.                                  2IHL  14
+REMARK   3                                                              2IHL  15
+REMARK   3 REFINEMENT.                                                  2IHL  16
+REMARK   3   PROGRAM                    PROLSQ                          2IHL  17
+REMARK   3   R VALUE                    0.165                           2IHL  18
+REMARK   3   RMSD BOND DISTANCES        0.016  ANGSTROMS                2IHL  19
+REMARK   3   RMSD BOND ANGLES           1.50   DEGREES                  2IHL  20
+REMARK   3                                                              2IHL  21
+REMARK   3   RESOLUTION RANGE       6.0 - 1.4  ANGSTROMS                2IHL  22
+REMARK   3   DATA CUTOFF                2.0    SIGMA(F)                 2IHL  23
+REMARK   3                                                              2IHL  24
+REMARK   3                                                              2IHL  25
+REMARK   3   NUMBER OF PROTEIN ATOMS                       1016         2IHL  26
+REMARK   3   (THE SIDE CHAINS OF GLN 41, ASN 44, ASN 77, AND SER 86     2IHL  27
+REMARK   3    ARE PRESENTED IN TWO CONFORMATIONS)                       2IHL  28
+REMARK   3   NUMBER OF SOLVENT ATOMS (INCLUDING 1 SODIUM)   151         2IHL  29
+REMARK   3                                                              2IHL  30
+REMARK   3  RMS DEVIATIONS FROM IDEAL VALUES (THE VALUES OF             2IHL  31
+REMARK   3      SIGMA, IN PARENTHESES, ARE THE INPUT ESTIMATED          2IHL  32
+REMARK   3      STANDARD DEVIATIONS THAT DETERMINE THE RELATIVE         2IHL  33
+REMARK   3      WEIGHTS OF THE CORRESPONDING RESTRAINTS)                2IHL  34
+REMARK   3    DISTANCE RESTRAINTS (ANGSTROMS)                           2IHL  35
+REMARK   3      BOND DISTANCE                            0.016(0.020)   2IHL  36
+REMARK   3      ANGLE DISTANCE                           0.034(0.040)   2IHL  37
+REMARK   3      PLANAR 1-4 DISTANCE                      0.045(0.050)   2IHL  38
+REMARK   3    PLANE RESTRAINT (ANGSTROMS)                0.007(0.020)   2IHL  39
+REMARK   3    CHIRAL-CENTER RESTRAINT (ANGSTROMS**3)     0.130(0.150)   2IHL  40
+REMARK   3    NON-BONDED CONTACT RESTRAINTS (ANGSTROMS)                 2IHL  41
+REMARK   3      SINGLE TORSION CONTACT                   0.166(0.500)   2IHL  42
+REMARK   3      MULTIPLE TORSION CONTACT                 0.185(0.500)   2IHL  43
+REMARK   3      POSSIBLE HYDROGEN BOND                   0.228(0.500)   2IHL  44
+REMARK   3    CONFORMATIONAL TORSION ANGLE RESTRAINT (DEGREES)          2IHL  45
+REMARK   3      PLANAR                                   4.600(3.000)   2IHL  46
+REMARK   3      STAGGERED                                14.90(15.00)   2IHL  47
+REMARK   3      ORTHONORMAL                              17.70(20.00)   2IHL  48
+REMARK   3    ISOTROPIC THERMAL FACTOR RESTRAINTS (ANGSTROMS**2)        2IHL  49
+REMARK   3      MAIN-CHAIN BOND                          0.977(1.500)   2IHL  50
+REMARK   3      MAIN-CHAIN ANGLE                         1.435(1.500)   2IHL  51
+REMARK   3      SIDE-CHAIN BOND                          2.054(2.000)   2IHL  52
+REMARK   3      SIDE-CHAIN ANGLE                         3.129(2.500)   2IHL  53
+REMARK   4                                                              2IHL  54
+REMARK   4 THE SEQUENCE USED IN THIS ENTRY IS THAT OF THE AUTHORS.      2IHL  55
+SEQRES   1    129  LYS VAL TYR GLY ARG CYS GLU LEU ALA ALA ALA MET LYS  2IHL  56
+SEQRES   2    129  ARG HIS GLY LEU ASP LYS TYR GLN GLY TYR SER LEU GLY  2IHL  57
+SEQRES   3    129  ASN TRP VAL CYS ALA ALA LYS PHE GLU SER ASN PHE ASN  2IHL  58
+SEQRES   4    129  THR GLN ALA THR ASN ARG ASN THR ASP GLY SER THR ASP  2IHL  59
+SEQRES   5    129  TYR GLY ILE LEU GLN ILE ASN SER ARG TRP TRP CYS ASN  2IHL  60
+SEQRES   6    129  ASP GLY ARG THR PRO GLY SER ARG ASN LEU CYS ASN ILE  2IHL  61
+SEQRES   7    129  PRO CYS SER ALA LEU LEU SER SER ASP ILE THR ALA SER  2IHL  62
+SEQRES   8    129  VAL ASN CYS ALA LYS LYS ILE VAL SER ASP VAL HIS GLY  2IHL  63
+SEQRES   9    129  MET ASN ALA TRP VAL ALA TRP ARG ASN ARG CYS LYS GLY  2IHL  64
+SEQRES  10    129  THR ASP VAL ASN ALA TRP ILE ARG GLY CYS ARG LEU      2IHL  65
+HET     NA    130       1     SODIUM +1 COUNTER ION                     2IHL  66
+FORMUL   2   NA    NA1 +                                                2IHL  67
+FORMUL   3  HOH   *151(H2 O1)                                           2IHL  68
+SSBOND   1 CYS      6    CYS    127                                     2IHL  69
+SSBOND   2 CYS     30    CYS    115                                     2IHL  70
+SSBOND   3 CYS     64    CYS     80                                     2IHL  71
+SSBOND   4 CYS     76    CYS     94                                     2IHL  72
+CRYST1  103.900   38.700   34.000  90.00 100.60  90.00 C 2           4  2IHL  73
+ORIGX1      1.000000  0.000000  0.000000        0.00000                 2IHL  74
+ORIGX2      0.000000  1.000000  0.000000        0.00000                 2IHL  75
+ORIGX3      0.000000  0.000000  1.000000        0.00000                 2IHL  76
+SCALE1      0.009625  0.000000  0.001801        0.00000                 2IHL  77
+SCALE2      0.000000  0.025840  0.000000        0.00000                 2IHL  78
+SCALE3      0.000000  0.000000  0.029922        0.00000                 2IHL  79
+ATOM      1  N   LYS     1      20.593   5.041  39.377  1.00 10.70      2IHL  80
+ATOM      2  CA  LYS     1      19.557   4.807  38.338  1.00 10.50      2IHL  81
+ATOM      3  C   LYS     1      20.215   4.170  37.127  1.00 10.53      2IHL  82
+ATOM      4  O   LYS     1      21.363   4.577  36.775  1.00 10.70      2IHL  83
+ATOM      5  CB  LYS     1      18.999   6.152  37.896  1.00 11.74      2IHL  84
+ATOM      6  CG  LYS     1      18.080   6.103  36.677  1.00 13.30      2IHL  85
+ATOM      7  CD  LYS     1      17.453   7.471  36.454  1.00 13.77      2IHL  86
+ATOM      8  CE  LYS     1      16.819   7.529  35.080  1.00 17.39      2IHL  87
+ATOM      9  NZ  LYS     1      15.442   7.010  35.075  1.00 18.82      2IHL  88
+ATOM     10  N   VAL     2      19.575   3.193  36.527  1.00  8.95      2IHL  89
+ATOM     11  CA  VAL     2      20.037   2.646  35.241  1.00  8.37      2IHL  90
+ATOM     12  C   VAL     2      19.146   3.205  34.137  1.00  8.09      2IHL  91
+ATOM     13  O   VAL     2      17.927   2.901  34.159  1.00  9.23      2IHL  92
+ATOM     14  CB  VAL     2      20.085   1.119  35.202  1.00  8.71      2IHL  93
+ATOM     15  CG1 VAL     2      20.433   0.613  33.792  1.00 10.72      2IHL  94
+ATOM     16  CG2 VAL     2      20.976   0.567  36.302  1.00  8.99      2IHL  95
+ATOM     17  N   TYR     3      19.650   4.030  33.270  1.00  8.09      2IHL  96
+ATOM     18  CA  TYR     3      18.884   4.533  32.133  1.00  8.59      2IHL  97
+ATOM     19  C   TYR     3      18.651   3.472  31.049  1.00  9.36      2IHL  98
+ATOM     20  O   TYR     3      19.474   2.570  30.829  1.00  8.39      2IHL  99
+ATOM     21  CB  TYR     3      19.672   5.650  31.402  1.00  6.74      2IHL 100
+ATOM     22  CG  TYR     3      19.552   6.968  32.119  1.00  6.77      2IHL 101
+ATOM     23  CD1 TYR     3      20.285   7.241  33.295  1.00  7.81      2IHL 102
+ATOM     24  CD2 TYR     3      18.700   7.958  31.666  1.00  7.33      2IHL 103
+ATOM     25  CE1 TYR     3      20.129   8.454  33.969  1.00  8.64      2IHL 104
+ATOM     26  CE2 TYR     3      18.558   9.171  32.303  1.00  8.45      2IHL 105
+ATOM     27  CZ  TYR     3      19.294   9.430  33.488  1.00  8.98      2IHL 106
+ATOM     28  OH  TYR     3      19.119  10.612  34.125  1.00 11.31      2IHL 107
+ATOM     29  N   GLY     4      17.486   3.674  30.387  1.00  9.02      2IHL 108
+ATOM     30  CA  GLY     4      17.300   2.917  29.119  1.00  9.29      2IHL 109
+ATOM     31  C   GLY     4      18.084   3.678  28.024  1.00  8.73      2IHL 110
+ATOM     32  O   GLY     4      18.390   4.867  28.135  1.00  9.06      2IHL 111
+ATOM     33  N   ARG     5      18.351   2.934  26.953  1.00  9.60      2IHL 112
+ATOM     34  CA  ARG     5      19.114   3.529  25.839  1.00  9.41      2IHL 113
+ATOM     35  C   ARG     5      18.513   4.826  25.319  1.00  8.60      2IHL 114
+ATOM     36  O   ARG     5      19.159   5.845  25.178  1.00  9.49      2IHL 115
+ATOM     37  CB  ARG     5      19.216   2.503  24.704  1.00 11.30      2IHL 116
+ATOM     38  CG  ARG     5      20.020   2.942  23.483  1.00 11.18      2IHL 117
+ATOM     39  CD  ARG     5      20.195   1.739  22.587  1.00 13.58      2IHL 118
+ATOM     40  NE  ARG     5      18.918   1.318  21.986  1.00 13.26      2IHL 119
+ATOM     41  CZ  ARG     5      18.411   1.847  20.854  1.00 12.78      2IHL 120
+ATOM     42  NH1 ARG     5      18.966   2.844  20.182  1.00 12.11      2IHL 121
+ATOM     43  NH2 ARG     5      17.279   1.303  20.414  1.00 14.60      2IHL 122
+ATOM     44  N   CYS     6      17.198   4.707  24.937  1.00  9.68      2IHL 123
+ATOM     45  CA  CYS     6      16.573   5.894  24.318  1.00  8.92      2IHL 124
+ATOM     46  C   CYS     6      16.303   7.012  25.318  1.00  7.17      2IHL 125
+ATOM     47  O   CYS     6      16.281   8.214  25.041  1.00  9.89      2IHL 126
+ATOM     48  CB  CYS     6      15.271   5.511  23.610  1.00 11.72      2IHL 127
+ATOM     49  SG  CYS     6      15.581   4.387  22.188  1.00 14.35      2IHL 128
+ATOM     50  N   GLU     7      16.078   6.570  26.579  1.00  8.56      2IHL 129
+ATOM     51  CA  GLU     7      15.907   7.519  27.687  1.00  8.66      2IHL 130
+ATOM     52  C   GLU     7      17.174   8.402  27.871  1.00  7.42      2IHL 131
+ATOM     53  O   GLU     7      17.072   9.621  27.991  1.00  8.45      2IHL 132
+ATOM     54  CB  GLU     7      15.605   6.770  28.980  1.00  9.70      2IHL 133
+ATOM     55  CG  GLU     7      15.302   7.591  30.233  1.00 11.47      2IHL 134
+ATOM     56  CD  GLU     7      15.229   6.710  31.484  1.00 10.85      2IHL 135
+ATOM     57  OE1 GLU     7      15.631   5.581  31.541  1.00 11.57      2IHL 136
+ATOM     58  OE2 GLU     7      14.701   7.354  32.431  1.00 13.64      2IHL 137
+ATOM     59  N   LEU     8      18.309   7.673  27.851  1.00  7.45      2IHL 138
+ATOM     60  CA  LEU     8      19.574   8.444  27.984  1.00  7.77      2IHL 139
+ATOM     61  C   LEU     8      19.802   9.344  26.769  1.00  7.40      2IHL 140
+ATOM     62  O   LEU     8      20.265  10.483  26.858  1.00  8.88      2IHL 141
+ATOM     63  CB  LEU     8      20.740   7.461  28.146  1.00  8.27      2IHL 142
+ATOM     64  CG  LEU     8      22.063   8.221  28.363  1.00  8.39      2IHL 143
+ATOM     65  CD1 LEU     8      22.034   8.931  29.703  1.00  8.52      2IHL 144
+ATOM     66  CD2 LEU     8      23.155   7.147  28.370  1.00  9.22      2IHL 145
+ATOM     67  N   ALA     9      19.488   8.771  25.573  1.00  7.92      2IHL 146
+ATOM     68  CA  ALA     9      19.683   9.552  24.336  1.00  7.82      2IHL 147
+ATOM     69  C   ALA     9      18.932  10.895  24.415  1.00  7.03      2IHL 148
+ATOM     70  O   ALA     9      19.389  12.001  24.087  1.00  9.06      2IHL 149
+ATOM     71  CB  ALA     9      19.255   8.751  23.122  1.00  9.94      2IHL 150
+ATOM     72  N   ALA    10      17.664  10.796  24.915  1.00  7.46      2IHL 151
+ATOM     73  CA  ALA    10      16.859  12.016  25.039  1.00  7.61      2IHL 152
+ATOM     74  C   ALA    10      17.424  12.998  26.039  1.00  6.99      2IHL 153
+ATOM     75  O   ALA    10      17.431  14.198  25.852  1.00  8.02      2IHL 154
+ATOM     76  CB  ALA    10      15.390  11.665  25.404  1.00  8.14      2IHL 155
+ATOM     77  N   ALA    11      17.907  12.411  27.180  1.00  7.63      2IHL 156
+ATOM     78  CA  ALA    11      18.530  13.296  28.209  1.00  8.06      2IHL 157
+ATOM     79  C   ALA    11      19.792  14.007  27.670  1.00  7.23      2IHL 158
+ATOM     80  O   ALA    11      19.992  15.187  27.917  1.00  8.80      2IHL 159
+ATOM     81  CB  ALA    11      18.825  12.510  29.470  1.00  7.72      2IHL 160
+ATOM     82  N   MET    12      20.578  13.195  26.959  1.00  7.12      2IHL 161
+ATOM     83  CA  MET    12      21.837  13.798  26.395  1.00  7.90      2IHL 162
+ATOM     84  C   MET    12      21.536  14.893  25.398  1.00  7.61      2IHL 163
+ATOM     85  O   MET    12      22.207  15.939  25.261  1.00  8.40      2IHL 164
+ATOM     86  CB  MET    12      22.722  12.656  25.857  1.00  7.33      2IHL 165
+ATOM     87  CG  MET    12      23.361  11.997  27.073  1.00  8.43      2IHL 166
+ATOM     88  SD  MET    12      24.494  10.690  26.407  1.00  9.93      2IHL 167
+ATOM     89  CE  MET    12      25.596  10.559  27.847  1.00  9.32      2IHL 168
+ATOM     90  N   LYS    13      20.464  14.645  24.601  1.00  9.11      2IHL 169
+ATOM     91  CA  LYS    13      20.037  15.652  23.632  1.00  9.51      2IHL 170
+ATOM     92  C   LYS    13      19.622  16.963  24.299  1.00  8.93      2IHL 171
+ATOM     93  O   LYS    13      20.009  18.075  23.934  1.00  9.11      2IHL 172
+ATOM     94  CB  LYS    13      18.864  15.125  22.781  1.00 12.62      2IHL 173
+ATOM     95  CG  LYS    13      18.588  15.995  21.545  1.00 16.58      2IHL 174
+ATOM     96  CD  LYS    13      17.523  15.276  20.703  1.00 21.35      2IHL 175
+ATOM     97  CE  LYS    13      17.039  16.095  19.529  1.00 24.15      2IHL 176
+ATOM     98  NZ  LYS    13      17.956  15.912  18.376  1.00 27.37      2IHL 177
+ATOM     99  N   ARG    14      18.780  16.916  25.270  1.00  9.26      2IHL 178
+ATOM    100  CA  ARG    14      18.325  17.985  26.172  1.00  9.74      2IHL 179
+ATOM    101  C   ARG    14      19.524  18.795  26.667  1.00 10.08      2IHL 180
+ATOM    102  O   ARG    14      19.411  19.990  26.971  1.00  9.69      2IHL 181
+ATOM    103  CB  ARG    14      17.631  17.373  27.382  1.00 13.04      2IHL 182
+ATOM    104  CG  ARG    14      16.307  18.033  27.762  1.00 20.33      2IHL 183
+ATOM    105  CD  ARG    14      15.556  17.194  28.797  1.00 20.15      2IHL 184
+ATOM    106  NE  ARG    14      14.825  16.095  28.167  1.00 21.49      2IHL 185
+ATOM    107  CZ  ARG    14      14.778  14.816  28.577  1.00 21.09      2IHL 186
+ATOM    108  NH1 ARG    14      15.419  14.390  29.674  1.00 21.93      2IHL 187
+ATOM    109  NH2 ARG    14      14.089  13.873  27.919  1.00 21.52      2IHL 188
+ATOM    110  N   HIS    15      20.585  18.021  27.030  1.00  9.03      2IHL 189
+ATOM    111  CA  HIS    15      21.795  18.626  27.637  1.00  9.97      2IHL 190
+ATOM    112  C   HIS    15      22.747  19.233  26.615  1.00 10.48      2IHL 191
+ATOM    113  O   HIS    15      23.850  19.715  26.977  1.00 11.31      2IHL 192
+ATOM    114  CB  HIS    15      22.515  17.658  28.591  1.00 11.47      2IHL 193
+ATOM    115  CG  HIS    15      21.876  17.500  29.920  1.00 10.82      2IHL 194
+ATOM    116  ND1 HIS    15      20.789  16.708  30.181  1.00 11.99      2IHL 195
+ATOM    117  CD2 HIS    15      22.257  18.020  31.118  1.00  9.73      2IHL 196
+ATOM    118  CE1 HIS    15      20.499  16.773  31.495  1.00  9.40      2IHL 197
+ATOM    119  NE2 HIS    15      21.386  17.554  32.045  1.00 10.85      2IHL 198
+ATOM    120  N   GLY    16      22.390  19.227  25.328  1.00  8.97      2IHL 199
+ATOM    121  CA  GLY    16      23.159  19.942  24.322  1.00  9.59      2IHL 200
+ATOM    122  C   GLY    16      24.418  19.212  23.842  1.00  8.56      2IHL 201
+ATOM    123  O   GLY    16      25.343  19.940  23.391  1.00  9.96      2IHL 202
+ATOM    124  N   LEU    17      24.411  17.902  23.912  1.00  8.05      2IHL 203
+ATOM    125  CA  LEU    17      25.627  17.171  23.450  1.00  8.04      2IHL 204
+ATOM    126  C   LEU    17      25.659  16.867  21.955  1.00  9.02      2IHL 205
+ATOM    127  O   LEU    17      26.708  16.491  21.414  1.00  9.18      2IHL 206
+ATOM    128  CB  LEU    17      25.747  15.859  24.221  1.00  7.47      2IHL 207
+ATOM    129  CG  LEU    17      26.241  16.013  25.663  1.00  7.28      2IHL 208
+ATOM    130  CD1 LEU    17      26.264  14.661  26.361  1.00  9.08      2IHL 209
+ATOM    131  CD2 LEU    17      27.656  16.599  25.629  1.00  9.09      2IHL 210
+ATOM    132  N   ASP    18      24.503  16.939  21.270  1.00  8.55      2IHL 211
+ATOM    133  CA  ASP    18      24.526  16.618  19.821  1.00  9.31      2IHL 212
+ATOM    134  C   ASP    18      25.353  17.655  19.090  1.00  8.23      2IHL 213
+ATOM    135  O   ASP    18      25.057  18.851  19.147  1.00  9.03      2IHL 214
+ATOM    136  CB  ASP    18      23.096  16.568  19.282  1.00  9.87      2IHL 215
+ATOM    137  CG  ASP    18      23.094  15.916  17.902  1.00 12.04      2IHL 216
+ATOM    138  OD1 ASP    18      23.987  15.184  17.446  1.00 11.59      2IHL 217
+ATOM    139  OD2 ASP    18      22.035  16.152  17.237  1.00 16.11      2IHL 218
+ATOM    140  N   LYS    19      26.400  17.152  18.440  1.00  8.46      2IHL 219
+ATOM    141  CA  LYS    19      27.353  17.950  17.645  1.00  8.98      2IHL 220
+ATOM    142  C   LYS    19      28.296  18.817  18.464  1.00  8.72      2IHL 221
+ATOM    143  O   LYS    19      29.002  19.706  17.956  1.00  9.60      2IHL 222
+ATOM    144  CB  LYS    19      26.697  18.824  16.565  1.00 11.95      2IHL 223
+ATOM    145  CG  LYS    19      25.846  17.995  15.584  1.00 14.65      2IHL 224
+ATOM    146  CD  LYS    19      25.258  18.875  14.477  1.00 18.84      2IHL 225
+ATOM    147  CE  LYS    19      24.578  18.051  13.391  1.00 21.92      2IHL 226
+ATOM    148  NZ  LYS    19      23.251  17.547  13.837  1.00 22.51      2IHL 227
+ATOM    149  N   TYR    20      28.346  18.546  19.765  1.00  8.69      2IHL 228
+ATOM    150  CA  TYR    20      29.288  19.204  20.667  1.00  8.73      2IHL 229
+ATOM    151  C   TYR    20      30.714  18.720  20.246  1.00  7.96      2IHL 230
+ATOM    152  O   TYR    20      31.023  17.547  20.209  1.00  8.66      2IHL 231
+ATOM    153  CB  TYR    20      29.042  18.824  22.129  1.00  9.61      2IHL 232
+ATOM    154  CG  TYR    20      29.966  19.597  23.055  1.00  8.92      2IHL 233
+ATOM    155  CD1 TYR    20      29.749  20.941  23.336  1.00 10.32      2IHL 234
+ATOM    156  CD2 TYR    20      31.107  18.990  23.555  1.00  9.86      2IHL 235
+ATOM    157  CE1 TYR    20      30.618  21.663  24.164  1.00 13.10      2IHL 236
+ATOM    158  CE2 TYR    20      31.999  19.686  24.367  1.00 10.16      2IHL 237
+ATOM    159  CZ  TYR    20      31.749  21.011  24.642  1.00 11.38      2IHL 238
+ATOM    160  OH  TYR    20      32.634  21.717  25.422  1.00 15.40      2IHL 239
+ATOM    161  N   GLN    21      31.492  19.760  19.929  1.00  9.70      2IHL 240
+ATOM    162  CA  GLN    21      32.855  19.532  19.414  1.00 10.41      2IHL 241
+ATOM    163  C   GLN    21      32.814  18.606  18.204  1.00 10.55      2IHL 242
+ATOM    164  O   GLN    21      33.768  17.857  17.921  1.00 11.90      2IHL 243
+ATOM    165  CB  GLN    21      33.858  19.008  20.448  1.00 11.60      2IHL 244
+ATOM    166  CG  GLN    21      34.067  19.995  21.569  1.00 15.23      2IHL 245
+ATOM    167  CD  GLN    21      34.876  21.208  21.250  1.00 18.13      2IHL 246
+ATOM    168  OE1 GLN    21      35.028  22.099  22.108  1.00 24.04      2IHL 247
+ATOM    169  NE2 GLN    21      35.431  21.278  20.072  1.00 18.33      2IHL 248
+ATOM    170  N   GLY    22      31.709  18.703  17.471  1.00 10.67      2IHL 249
+ATOM    171  CA  GLY    22      31.497  17.934  16.233  1.00 10.86      2IHL 250
+ATOM    172  C   GLY    22      31.073  16.509  16.431  1.00 10.27      2IHL 251
+ATOM    173  O   GLY    22      30.936  15.738  15.444  1.00 12.32      2IHL 252
+ATOM    174  N   TYR    23      30.856  16.050  17.656  1.00  8.99      2IHL 253
+ATOM    175  CA  TYR    23      30.477  14.678  17.944  1.00  8.50      2IHL 254
+ATOM    176  C   TYR    23      28.936  14.491  17.971  1.00  8.75      2IHL 255
+ATOM    177  O   TYR    23      28.266  15.072  18.824  1.00  8.66      2IHL 256
+ATOM    178  CB  TYR    23      31.014  14.321  19.366  1.00  8.10      2IHL 257
+ATOM    179  CG  TYR    23      32.508  13.983  19.357  1.00  8.68      2IHL 258
+ATOM    180  CD1 TYR    23      32.996  12.817  18.782  1.00  7.90      2IHL 259
+ATOM    181  CD2 TYR    23      33.398  14.895  19.915  1.00  8.63      2IHL 260
+ATOM    182  CE1 TYR    23      34.388  12.525  18.783  1.00  9.21      2IHL 261
+ATOM    183  CE2 TYR    23      34.771  14.638  19.939  1.00  9.14      2IHL 262
+ATOM    184  CZ  TYR    23      35.226  13.448  19.399  1.00  9.58      2IHL 263
+ATOM    185  OH  TYR    23      36.610  13.221  19.444  1.00 10.23      2IHL 264
+ATOM    186  N   SER    24      28.503  13.655  17.028  1.00  8.08      2IHL 265
+ATOM    187  CA  SER    24      27.050  13.366  16.973  1.00  9.01      2IHL 266
+ATOM    188  C   SER    24      26.598  12.661  18.253  1.00  9.01      2IHL 267
+ATOM    189  O   SER    24      27.369  11.978  18.917  1.00  9.08      2IHL 268
+ATOM    190  CB  SER    24      26.762  12.537  15.727  1.00 10.44      2IHL 269
+ATOM    191  OG  SER    24      27.256  11.230  15.844  1.00 12.95      2IHL 270
+ATOM    192  N   LEU    25      25.271  12.820  18.498  1.00  7.30      2IHL 271
+ATOM    193  CA  LEU    25      24.706  12.261  19.732  1.00  8.04      2IHL 272
+ATOM    194  C   LEU    25      25.032  10.802  19.990  1.00  6.51      2IHL 273
+ATOM    195  O   LEU    25      25.261  10.423  21.169  1.00  8.20      2IHL 274
+ATOM    196  CB  LEU    25      23.158  12.471  19.653  1.00  8.62      2IHL 275
+ATOM    197  CG  LEU    25      22.382  12.083  20.902  1.00 10.91      2IHL 276
+ATOM    198  CD1 LEU    25      22.738  12.958  22.103  1.00 12.60      2IHL 277
+ATOM    199  CD2 LEU    25      20.859  12.240  20.635  1.00 11.28      2IHL 278
+ATOM    200  N   GLY    26      25.069   9.923  19.032  1.00  6.60      2IHL 279
+ATOM    201  CA  GLY    26      25.274   8.500  19.212  1.00  6.88      2IHL 280
+ATOM    202  C   GLY    26      26.641   8.229  19.891  1.00  5.70      2IHL 281
+ATOM    203  O   GLY    26      26.777   7.197  20.536  1.00  7.89      2IHL 282
+ATOM    204  N   ASN    27      27.601   9.119  19.639  1.00  7.07      2IHL 283
+ATOM    205  CA  ASN    27      28.929   8.925  20.279  1.00  7.04      2IHL 284
+ATOM    206  C   ASN    27      28.850   8.894  21.821  1.00  6.49      2IHL 285
+ATOM    207  O   ASN    27      29.488   8.072  22.460  1.00  7.74      2IHL 286
+ATOM    208  CB  ASN    27      29.855  10.070  19.826  1.00  7.30      2IHL 287
+ATOM    209  CG  ASN    27      30.405   9.829  18.424  1.00  8.70      2IHL 288
+ATOM    210  OD1 ASN    27      31.207   8.892  18.290  1.00  9.90      2IHL 289
+ATOM    211  ND2 ASN    27      29.944  10.563  17.431  1.00 10.25      2IHL 290
+ATOM    212  N   TRP    28      28.034   9.828  22.306  1.00  6.27      2IHL 291
+ATOM    213  CA  TRP    28      27.903  10.001  23.777  1.00  6.09      2IHL 292
+ATOM    214  C   TRP    28      27.149   8.850  24.419  1.00  7.24      2IHL 293
+ATOM    215  O   TRP    28      27.433   8.388  25.528  1.00  7.90      2IHL 294
+ATOM    216  CB  TRP    28      27.246  11.350  24.061  1.00  7.31      2IHL 295
+ATOM    217  CG  TRP    28      27.946  12.507  23.437  1.00  6.96      2IHL 296
+ATOM    218  CD1 TRP    28      27.664  13.077  22.228  1.00  7.63      2IHL 297
+ATOM    219  CD2 TRP    28      29.099  13.206  23.949  1.00  7.61      2IHL 298
+ATOM    220  NE1 TRP    28      28.523  14.117  21.956  1.00  9.15      2IHL 299
+ATOM    221  CE2 TRP    28      29.417  14.208  23.015  1.00  8.45      2IHL 300
+ATOM    222  CE3 TRP    28      29.850  13.093  25.110  1.00  9.58      2IHL 301
+ATOM    223  CZ2 TRP    28      30.454  15.123  23.180  1.00  9.44      2IHL 302
+ATOM    224  CZ3 TRP    28      30.894  13.990  25.272  1.00  9.50      2IHL 303
+ATOM    225  CH2 TRP    28      31.217  14.971  24.339  1.00 10.64      2IHL 304
+ATOM    226  N   VAL    29      26.098   8.436  23.688  1.00  6.60      2IHL 305
+ATOM    227  CA  VAL    29      25.308   7.282  24.154  1.00  7.22      2IHL 306
+ATOM    228  C   VAL    29      26.176   6.016  24.172  1.00  6.57      2IHL 307
+ATOM    229  O   VAL    29      26.132   5.277  25.169  1.00  7.75      2IHL 308
+ATOM    230  CB  VAL    29      24.013   7.090  23.323  1.00  7.96      2IHL 309
+ATOM    231  CG1 VAL    29      23.220   5.889  23.844  1.00  8.84      2IHL 310
+ATOM    232  CG2 VAL    29      23.179   8.355  23.424  1.00  8.11      2IHL 311
+ATOM    233  N   CYS    30      26.878   5.788  23.076  1.00  7.11      2IHL 312
+ATOM    234  CA  CYS    30      27.779   4.611  23.015  1.00  7.14      2IHL 313
+ATOM    235  C   CYS    30      28.858   4.642  24.136  1.00  7.62      2IHL 314
+ATOM    236  O   CYS    30      29.082   3.586  24.734  1.00  8.47      2IHL 315
+ATOM    237  CB  CYS    30      28.380   4.652  21.623  1.00  9.31      2IHL 316
+ATOM    238  SG  CYS    30      29.352   3.154  21.251  1.00  9.48      2IHL 317
+ATOM    239  N   ALA    31      29.399   5.843  24.329  1.00  7.19      2IHL 318
+ATOM    240  CA  ALA    31      30.445   5.936  25.413  1.00  7.56      2IHL 319
+ATOM    241  C   ALA    31      29.851   5.442  26.726  1.00  8.20      2IHL 320
+ATOM    242  O   ALA    31      30.417   4.656  27.501  1.00  9.20      2IHL 321
+ATOM    243  CB  ALA    31      30.958   7.371  25.526  1.00  8.51      2IHL 322
+ATOM    244  N   ALA    32      28.644   5.988  27.034  1.00  8.92      2IHL 323
+ATOM    245  CA  ALA    32      28.030   5.645  28.334  1.00  7.80      2IHL 324
+ATOM    246  C   ALA    32      27.718   4.146  28.441  1.00  7.52      2IHL 325
+ATOM    247  O   ALA    32      27.875   3.477  29.489  1.00  8.99      2IHL 326
+ATOM    248  CB  ALA    32      26.730   6.420  28.559  1.00  8.63      2IHL 327
+ATOM    249  N   LYS    33      27.256   3.597  27.303  1.00  7.52      2IHL 328
+ATOM    250  CA  LYS    33      26.922   2.164  27.305  1.00  7.85      2IHL 329
+ATOM    251  C   LYS    33      28.112   1.290  27.749  1.00  8.52      2IHL 330
+ATOM    252  O   LYS    33      28.011   0.360  28.568  1.00  8.93      2IHL 331
+ATOM    253  CB  LYS    33      26.518   1.753  25.884  1.00  9.98      2IHL 332
+ATOM    254  CG  LYS    33      26.401   0.247  25.678  1.00 14.06      2IHL 333
+ATOM    255  CD  LYS    33      25.319  -0.391  26.533  1.00 17.05      2IHL 334
+ATOM    256  CE  LYS    33      25.271  -1.905  26.347  1.00 20.56      2IHL 335
+ATOM    257  NZ  LYS    33      24.098  -2.389  27.134  1.00 23.80      2IHL 336
+ATOM    258  N   PHE    34      29.279   1.663  27.130  1.00  8.62      2IHL 337
+ATOM    259  CA  PHE    34      30.435   0.739  27.334  1.00  9.27      2IHL 338
+ATOM    260  C   PHE    34      31.277   1.153  28.542  1.00  9.70      2IHL 339
+ATOM    261  O   PHE    34      32.057   0.304  28.988  1.00 11.91      2IHL 340
+ATOM    262  CB  PHE    34      31.245   0.581  26.029  1.00 10.65      2IHL 341
+ATOM    263  CG  PHE    34      30.459  -0.185  24.984  1.00 10.89      2IHL 342
+ATOM    264  CD1 PHE    34      30.296  -1.557  25.133  1.00 13.03      2IHL 343
+ATOM    265  CD2 PHE    34      29.885   0.476  23.902  1.00 12.79      2IHL 344
+ATOM    266  CE1 PHE    34      29.572  -2.276  24.179  1.00 14.87      2IHL 345
+ATOM    267  CE2 PHE    34      29.144  -0.219  22.942  1.00 13.10      2IHL 346
+ATOM    268  CZ  PHE    34      28.994  -1.593  23.098  1.00 14.59      2IHL 347
+ATOM    269  N   GLU    35      31.110   2.348  29.030  1.00  8.80      2IHL 348
+ATOM    270  CA  GLU    35      31.833   2.804  30.233  1.00  8.83      2IHL 349
+ATOM    271  C   GLU    35      31.126   2.334  31.491  1.00  9.71      2IHL 350
+ATOM    272  O   GLU    35      31.750   1.795  32.430  1.00 10.23      2IHL 351
+ATOM    273  CB  GLU    35      32.036   4.325  30.295  1.00  8.12      2IHL 352
+ATOM    274  CG  GLU    35      33.120   4.863  29.342  1.00 10.05      2IHL 353
+ATOM    275  CD  GLU    35      34.531   4.471  29.734  1.00 12.72      2IHL 354
+ATOM    276  OE1 GLU    35      34.751   4.090  30.854  1.00 13.80      2IHL 355
+ATOM    277  OE2 GLU    35      35.379   4.569  28.834  1.00 14.06      2IHL 356
+ATOM    278  N   SER    36      29.779   2.503  31.531  1.00  9.07      2IHL 357
+ATOM    279  CA  SER    36      29.041   2.253  32.790  1.00  8.66      2IHL 358
+ATOM    280  C   SER    36      27.793   1.342  32.602  1.00  8.92      2IHL 359
+ATOM    281  O   SER    36      27.136   1.082  33.624  1.00  9.26      2IHL 360
+ATOM    282  CB  SER    36      28.506   3.554  33.377  1.00  9.14      2IHL 361
+ATOM    283  OG  SER    36      27.543   4.095  32.502  1.00  8.64      2IHL 362
+ATOM    284  N   ASN    37      27.553   0.954  31.350  1.00  9.02      2IHL 363
+ATOM    285  CA  ASN    37      26.309   0.168  31.154  1.00 10.17      2IHL 364
+ATOM    286  C   ASN    37      25.094   1.035  31.573  1.00  9.14      2IHL 365
+ATOM    287  O   ASN    37      24.090   0.444  32.033  1.00 10.13      2IHL 366
+ATOM    288  CB  ASN    37      26.330  -1.180  31.842  1.00 14.18      2IHL 367
+ATOM    289  CG  ASN    37      25.448  -2.181  31.074  1.00 18.92      2IHL 368
+ATOM    290  OD1 ASN    37      25.103  -1.976  29.884  1.00 20.09      2IHL 369
+ATOM    291  ND2 ASN    37      25.075  -3.275  31.760  1.00 22.35      2IHL 370
+ATOM    292  N   PHE    38      25.192   2.318  31.419  1.00  8.51      2IHL 371
+ATOM    293  CA  PHE    38      24.100   3.273  31.695  1.00  8.46      2IHL 372
+ATOM    294  C   PHE    38      23.753   3.406  33.190  1.00  8.67      2IHL 373
+ATOM    295  O   PHE    38      22.660   3.916  33.509  1.00  9.60      2IHL 374
+ATOM    296  CB  PHE    38      22.802   2.895  30.925  1.00  8.37      2IHL 375
+ATOM    297  CG  PHE    38      22.932   2.844  29.431  1.00  8.62      2IHL 376
+ATOM    298  CD1 PHE    38      23.708   3.770  28.712  1.00  8.85      2IHL 377
+ATOM    299  CD2 PHE    38      22.228   1.870  28.731  1.00  9.15      2IHL 378
+ATOM    300  CE1 PHE    38      23.786   3.724  27.335  1.00  8.10      2IHL 379
+ATOM    301  CE2 PHE    38      22.274   1.799  27.337  1.00  9.59      2IHL 380
+ATOM    302  CZ  PHE    38      23.069   2.744  26.657  1.00  9.47      2IHL 381
+ATOM    303  N   ASN    39      24.657   2.961  34.062  1.00  8.35      2IHL 382
+ATOM    304  CA  ASN    39      24.401   3.007  35.532  1.00  8.58      2IHL 383
+ATOM    305  C   ASN    39      24.984   4.284  36.111  1.00  8.12      2IHL 384
+ATOM    306  O   ASN    39      26.223   4.464  36.091  1.00  8.70      2IHL 385
+ATOM    307  CB  ASN    39      24.988   1.718  36.118  1.00 10.27      2IHL 386
+ATOM    308  CG  ASN    39      24.912   1.747  37.651  1.00 10.15      2IHL 387
+ATOM    309  OD1 ASN    39      24.175   2.520  38.249  1.00 10.08      2IHL 388
+ATOM    310  ND2 ASN    39      25.684   0.803  38.235  1.00 11.45      2IHL 389
+ATOM    311  N   THR    40      24.191   5.216  36.629  1.00  8.54      2IHL 390
+ATOM    312  CA  THR    40      24.675   6.450  37.226  1.00  8.88      2IHL 391
+ATOM    313  C   THR    40      25.522   6.236  38.495  1.00  8.85      2IHL 392
+ATOM    314  O   THR    40      26.271   7.165  38.826  1.00 10.02      2IHL 393
+ATOM    315  CB  THR    40      23.481   7.445  37.533  1.00 10.85      2IHL 394
+ATOM    316  OG1 THR    40      22.677   6.839  38.578  1.00 11.12      2IHL 395
+ATOM    317  CG2 THR    40      22.694   7.673  36.235  1.00 11.00      2IHL 396
+ATOM    318  N   GLN    41      25.354   5.077  39.084  1.00  9.04      2IHL 397
+ATOM    319  CA  GLN    41      26.071   4.851  40.390  1.00 10.59      2IHL 398
+ATOM    320  C   GLN    41      27.353   4.072  40.209  1.00 11.37      2IHL 399
+ATOM    321  O   GLN    41      28.002   3.782  41.250  1.00 13.07      2IHL 400
+ATOM    322  CB  GLN    41      25.110   4.100  41.334  1.00 13.86      2IHL 401
+ATOM    323  CG AGLN    41      23.990   4.993  41.835  0.50 18.32      2IHL 402
+ATOM    324  CG BGLN    41      24.431   5.047  42.317  0.50 19.15      2IHL 403
+ATOM    325  CD AGLN    41      24.304   5.572  43.197  0.50 20.33      2IHL 404
+ATOM    326  CD BGLN    41      23.162   4.425  42.862  0.50 20.94      2IHL 405
+ATOM    327  OE1AGLN    41      25.458   5.710  43.598  0.50 20.82      2IHL 406
+ATOM    328  OE1BGLN    41      23.075   3.209  42.959  0.50 22.00      2IHL 407
+ATOM    329  NE2AGLN    41      23.243   5.901  43.928  0.50 23.11      2IHL 408
+ATOM    330  NE2BGLN    41      22.205   5.287  43.187  0.50 24.79      2IHL 409
+ATOM    331  N   ALA    42      27.738   3.773  38.992  1.00 10.91      2IHL 410
+ATOM    332  CA  ALA    42      28.929   2.932  38.751  1.00 11.30      2IHL 411
+ATOM    333  C   ALA    42      30.214   3.624  39.290  1.00 10.32      2IHL 412
+ATOM    334  O   ALA    42      30.436   4.799  39.087  1.00  9.78      2IHL 413
+ATOM    335  CB  ALA    42      29.080   2.728  37.239  1.00 10.62      2IHL 414
+ATOM    336  N   THR    43      31.009   2.799  39.965  1.00 12.03      2IHL 415
+ATOM    337  CA  THR    43      32.344   3.286  40.412  1.00 13.66      2IHL 416
+ATOM    338  C   THR    43      33.363   2.182  40.144  1.00 14.52      2IHL 417
+ATOM    339  O   THR    43      33.036   0.972  40.222  1.00 15.52      2IHL 418
+ATOM    340  CB  THR    43      32.333   3.651  41.945  1.00 14.69      2IHL 419
+ATOM    341  OG1 THR    43      31.995   2.378  42.608  1.00 18.25      2IHL 420
+ATOM    342  CG2 THR    43      31.372   4.772  42.314  1.00 15.15      2IHL 421
+ATOM    343  N   ASN    44      34.580   2.558  39.843  1.00 13.88      2IHL 422
+ATOM    344  CA  ASN    44      35.630   1.549  39.576  1.00 14.83      2IHL 423
+ATOM    345  C   ASN    44      36.935   2.110  40.150  1.00 14.34      2IHL 424
+ATOM    346  O   ASN    44      37.376   3.195  39.771  1.00 13.20      2IHL 425
+ATOM    347  CB  ASN    44      35.649   1.254  38.081  1.00 17.12      2IHL 426
+ATOM    348  CG AASN    44      36.814   0.421  37.597  0.50 20.87      2IHL 427
+ATOM    349  CG BASN    44      34.497   0.394  37.599  0.50 20.87      2IHL 428
+ATOM    350  OD1AASN    44      36.817  -0.795  37.822  0.50 23.41      2IHL 429
+ATOM    351  OD1BASN    44      33.453   0.878  37.130  0.50 23.41      2IHL 430
+ATOM    352  ND2AASN    44      37.793   1.043  36.936  0.50 23.24      2IHL 431
+ATOM    353  ND2BASN    44      34.652  -0.928  37.694  0.50 23.24      2IHL 432
+ATOM    354  N   ARG    45      37.504   1.357  41.090  1.00 16.05      2IHL 433
+ATOM    355  CA  ARG    45      38.804   1.751  41.685  1.00 17.60      2IHL 434
+ATOM    356  C   ARG    45      39.906   1.296  40.749  1.00 18.01      2IHL 435
+ATOM    357  O   ARG    45      39.820   0.154  40.281  1.00 19.45      2IHL 436
+ATOM    358  CB  ARG    45      38.974   1.181  43.087  1.00 21.89      2IHL 437
+ATOM    359  CG  ARG    45      37.881   1.652  44.041  1.00 25.86      2IHL 438
+ATOM    360  CD  ARG    45      38.462   2.042  45.356  1.00 30.50      2IHL 439
+ATOM    361  NE  ARG    45      39.741   2.775  45.216  1.00 33.71      2IHL 440
+ATOM    362  CZ  ARG    45      40.214   3.280  46.388  1.00 35.85      2IHL 441
+ATOM    363  NH1 ARG    45      39.491   3.053  47.497  1.00 36.65      2IHL 442
+ATOM    364  NH2 ARG    45      41.346   3.993  46.477  1.00 36.83      2IHL 443
+ATOM    365  N   ASN    46      40.842   2.146  40.462  1.00 18.90      2IHL 444
+ATOM    366  CA  ASN    46      42.003   1.961  39.596  1.00 19.75      2IHL 445
+ATOM    367  C   ASN    46      43.239   1.619  40.437  1.00 21.44      2IHL 446
+ATOM    368  O   ASN    46      43.346   1.981  41.625  1.00 21.11      2IHL 447
+ATOM    369  CB  ASN    46      42.267   3.245  38.799  1.00 20.63      2IHL 448
+ATOM    370  CG  ASN    46      41.091   3.536  37.867  1.00 22.31      2IHL 449
+ATOM    371  OD1 ASN    46      40.474   4.587  37.950  1.00 23.62      2IHL 450
+ATOM    372  ND2 ASN    46      40.795   2.563  37.024  1.00 24.04      2IHL 451
+ATOM    373  N   THR    47      44.199   0.982  39.773  1.00 22.85      2IHL 452
+ATOM    374  CA  THR    47      45.411   0.542  40.509  1.00 24.37      2IHL 453
+ATOM    375  C   THR    47      46.309   1.701  40.913  1.00 23.50      2IHL 454
+ATOM    376  O   THR    47      47.265   1.496  41.687  1.00 24.61      2IHL 455
+ATOM    377  CB  THR    47      46.210  -0.557  39.704  1.00 26.20      2IHL 456
+ATOM    378  OG1 THR    47      46.507   0.031  38.404  1.00 29.54      2IHL 457
+ATOM    379  CG2 THR    47      45.471  -1.891  39.576  1.00 28.16      2IHL 458
+ATOM    380  N   ASP    48      46.042   2.894  40.427  1.00 22.87      2IHL 459
+ATOM    381  CA  ASP    48      46.838   4.077  40.763  1.00 21.15      2IHL 460
+ATOM    382  C   ASP    48      46.225   4.781  41.972  1.00 20.18      2IHL 461
+ATOM    383  O   ASP    48      46.675   5.876  42.333  1.00 20.59      2IHL 462
+ATOM    384  CB  ASP    48      46.988   4.977  39.535  1.00 22.97      2IHL 463
+ATOM    385  CG  ASP    48      45.617   5.511  39.075  1.00 25.03      2IHL 464
+ATOM    386  OD1 ASP    48      44.601   5.285  39.741  1.00 23.50      2IHL 465
+ATOM    387  OD2 ASP    48      45.641   6.132  37.978  1.00 26.60      2IHL 466
+ATOM    388  N   GLY    49      45.198   4.169  42.548  1.00 18.36      2IHL 467
+ATOM    389  CA  GLY    49      44.542   4.804  43.711  1.00 16.44      2IHL 468
+ATOM    390  C   GLY    49      43.416   5.778  43.313  1.00 14.75      2IHL 469
+ATOM    391  O   GLY    49      42.800   6.357  44.224  1.00 15.55      2IHL 470
+ATOM    392  N   SER    50      43.233   5.956  42.005  1.00 12.68      2IHL 471
+ATOM    393  CA  SER    50      42.134   6.869  41.568  1.00 11.76      2IHL 472
+ATOM    394  C   SER    50      40.870   5.988  41.454  1.00 11.03      2IHL 473
+ATOM    395  O   SER    50      40.933   4.754  41.450  1.00 11.53      2IHL 474
+ATOM    396  CB  SER    50      42.424   7.584  40.234  1.00 11.45      2IHL 475
+ATOM    397  OG  SER    50      42.427   6.640  39.214  1.00 11.76      2IHL 476
+ATOM    398  N   THR    51      39.745   6.733  41.317  1.00  8.97      2IHL 477
+ATOM    399  CA  THR    51      38.459   6.010  41.057  1.00  9.49      2IHL 478
+ATOM    400  C   THR    51      37.746   6.677  39.868  1.00  7.98      2IHL 479
+ATOM    401  O   THR    51      37.853   7.890  39.717  1.00  8.24      2IHL 480
+ATOM    402  CB  THR    51      37.572   6.037  42.345  1.00 10.35      2IHL 481
+ATOM    403  OG1 THR    51      38.332   5.362  43.411  1.00 11.12      2IHL 482
+ATOM    404  CG2 THR    51      36.193   5.393  42.233  1.00  9.27      2IHL 483
+ATOM    405  N   ASP    52      37.034   5.810  39.100  1.00  8.85      2IHL 484
+ATOM    406  CA  ASP    52      36.160   6.297  37.988  1.00  9.01      2IHL 485
+ATOM    407  C   ASP    52      34.691   6.381  38.525  1.00  7.90      2IHL 486
+ATOM    408  O   ASP    52      34.268   5.402  39.156  1.00  8.89      2IHL 487
+ATOM    409  CB  ASP    52      36.194   5.363  36.801  1.00 10.44      2IHL 488
+ATOM    410  CG  ASP    52      37.619   5.216  36.211  1.00 13.68      2IHL 489
+ATOM    411  OD1 ASP    52      38.310   6.227  36.181  1.00 13.90      2IHL 490
+ATOM    412  OD2 ASP    52      37.859   4.046  35.855  1.00 18.29      2IHL 491
+ATOM    413  N   TYR    53      34.090   7.532  38.254  1.00  7.97      2IHL 492
+ATOM    414  CA  TYR    53      32.723   7.750  38.803  1.00  7.91      2IHL 493
+ATOM    415  C   TYR    53      31.622   8.055  37.752  1.00  7.13      2IHL 494
+ATOM    416  O   TYR    53      31.830   8.885  36.865  1.00  7.68      2IHL 495
+ATOM    417  CB  TYR    53      32.738   9.000  39.706  1.00  7.57      2IHL 496
+ATOM    418  CG  TYR    53      33.587   8.834  40.951  1.00  7.74      2IHL 497
+ATOM    419  CD1 TYR    53      34.959   9.128  40.936  1.00  7.26      2IHL 498
+ATOM    420  CD2 TYR    53      33.037   8.348  42.128  1.00  7.96      2IHL 499
+ATOM    421  CE1 TYR    53      35.700   9.001  42.123  1.00  8.91      2IHL 500
+ATOM    422  CE2 TYR    53      33.768   8.136  43.295  1.00  9.48      2IHL 501
+ATOM    423  CZ  TYR    53      35.134   8.464  43.253  1.00  9.79      2IHL 502
+ATOM    424  OH  TYR    53      35.809   8.311  44.442  1.00  9.64      2IHL 503
+ATOM    425  N   GLY    54      30.534   7.336  37.989  1.00  7.75      2IHL 504
+ATOM    426  CA  GLY    54      29.278   7.724  37.269  1.00  8.13      2IHL 505
+ATOM    427  C   GLY    54      29.168   7.136  35.852  1.00  8.05      2IHL 506
+ATOM    428  O   GLY    54      29.905   6.255  35.387  1.00  8.00      2IHL 507
+ATOM    429  N   ILE    55      28.106   7.698  35.242  1.00  7.36      2IHL 508
+ATOM    430  CA  ILE    55      27.699   7.192  33.915  1.00  8.55      2IHL 509
+ATOM    431  C   ILE    55      28.777   7.287  32.856  1.00  7.76      2IHL 510
+ATOM    432  O   ILE    55      28.756   6.486  31.908  1.00  9.27      2IHL 511
+ATOM    433  CB  ILE    55      26.327   7.906  33.584  1.00 10.03      2IHL 512
+ATOM    434  CG1 ILE    55      25.646   7.074  32.456  1.00 12.63      2IHL 513
+ATOM    435  CG2 ILE    55      26.522   9.395  33.264  1.00  9.76      2IHL 514
+ATOM    436  CD1 ILE    55      24.110   7.264  32.393  1.00 15.29      2IHL 515
+ATOM    437  N   LEU    56      29.674   8.289  32.974  1.00  7.98      2IHL 516
+ATOM    438  CA  LEU    56      30.810   8.428  32.028  1.00  8.09      2IHL 517
+ATOM    439  C   LEU    56      32.154   8.066  32.707  1.00  7.92      2IHL 518
+ATOM    440  O   LEU    56      33.174   8.361  32.067  1.00  9.50      2IHL 519
+ATOM    441  CB  LEU    56      30.832   9.821  31.393  1.00  9.18      2IHL 520
+ATOM    442  CG  LEU    56      29.650  10.034  30.396  1.00 11.85      2IHL 521
+ATOM    443  CD1 LEU    56      29.603  11.484  29.981  1.00 13.36      2IHL 522
+ATOM    444  CD2 LEU    56      29.893   9.137  29.184  1.00 12.95      2IHL 523
+ATOM    445  N   GLN    57      32.089   7.497  33.901  1.00  7.89      2IHL 524
+ATOM    446  CA  GLN    57      33.330   6.946  34.496  1.00  8.67      2IHL 525
+ATOM    447  C   GLN    57      34.460   7.962  34.481  1.00  8.25      2IHL 526
+ATOM    448  O   GLN    57      35.577   7.724  33.973  1.00  9.16      2IHL 527
+ATOM    449  CB  GLN    57      33.696   5.661  33.762  1.00  8.21      2IHL 528
+ATOM    450  CG  GLN    57      32.774   4.485  34.094  1.00  8.83      2IHL 529
+ATOM    451  CD  GLN    57      32.841   4.057  35.550  1.00  9.89      2IHL 530
+ATOM    452  OE1 GLN    57      33.671   3.197  35.887  1.00 10.85      2IHL 531
+ATOM    453  NE2 GLN    57      32.031   4.609  36.429  1.00  8.95      2IHL 532
+ATOM    454  N   ILE    58      34.196   9.115  35.018  1.00  7.49      2IHL 533
+ATOM    455  CA  ILE    58      35.142  10.252  35.071  1.00  6.79      2IHL 534
+ATOM    456  C   ILE    58      36.070  10.002  36.285  1.00  6.84      2IHL 535
+ATOM    457  O   ILE    58      35.634   9.694  37.384  1.00  7.66      2IHL 536
+ATOM    458  CB  ILE    58      34.357  11.585  35.137  1.00  7.76      2IHL 537
+ATOM    459  CG1 ILE    58      33.652  11.810  33.747  1.00  9.32      2IHL 538
+ATOM    460  CG2 ILE    58      35.248  12.801  35.503  1.00  8.34      2IHL 539
+ATOM    461  CD1 ILE    58      32.696  13.031  33.749  1.00 11.34      2IHL 540
+ATOM    462  N   ASN    59      37.359  10.254  35.986  1.00  7.63      2IHL 541
+ATOM    463  CA  ASN    59      38.408   9.830  36.966  1.00  8.79      2IHL 542
+ATOM    464  C   ASN    59      38.864  10.950  37.884  1.00  7.75      2IHL 543
+ATOM    465  O   ASN    59      38.995  12.106  37.553  1.00  8.91      2IHL 544
+ATOM    466  CB  ASN    59      39.524   9.172  36.141  1.00 11.91      2IHL 545
+ATOM    467  CG  ASN    59      40.687   8.649  36.980  1.00 14.50      2IHL 546
+ATOM    468  OD1 ASN    59      41.603   9.461  37.235  1.00 16.46      2IHL 547
+ATOM    469  ND2 ASN    59      40.593   7.377  37.331  1.00 16.71      2IHL 548
+ATOM    470  N   SER    60      39.099  10.473  39.146  1.00  8.18      2IHL 549
+ATOM    471  CA  SER    60      39.498  11.380  40.221  1.00  8.64      2IHL 550
+ATOM    472  C   SER    60      40.964  11.879  40.152  1.00  9.35      2IHL 551
+ATOM    473  O   SER    60      41.269  12.788  40.911  1.00  9.77      2IHL 552
+ATOM    474  CB  SER    60      39.264  10.759  41.595  1.00  8.43      2IHL 553
+ATOM    475  OG  SER    60      40.044   9.586  41.757  1.00  9.57      2IHL 554
+ATOM    476  N   ARG    61      41.734  11.286  39.332  1.00  9.45      2IHL 555
+ATOM    477  CA  ARG    61      43.125  11.758  39.346  1.00 10.25      2IHL 556
+ATOM    478  C   ARG    61      43.221  13.134  38.681  1.00 10.13      2IHL 557
+ATOM    479  O   ARG    61      44.057  13.972  39.057  1.00  9.16      2IHL 558
+ATOM    480  CB  ARG    61      44.013  10.782  38.584  1.00 14.18      2IHL 559
+ATOM    481  CG  ARG    61      45.242  11.465  38.014  1.00 19.67      2IHL 560
+ATOM    482  CD  ARG    61      46.505  11.212  38.824  1.00 24.24      2IHL 561
+ATOM    483  NE  ARG    61      46.436  11.586  40.246  1.00 30.73      2IHL 562
+ATOM    484  CZ  ARG    61      46.747  10.769  41.278  1.00 31.64      2IHL 563
+ATOM    485  NH1 ARG    61      47.087   9.479  41.101  1.00 33.29      2IHL 564
+ATOM    486  NH2 ARG    61      46.801  11.182  42.548  1.00 30.97      2IHL 565
+ATOM    487  N   TRP    62      42.303  13.467  37.748  1.00  8.82      2IHL 566
+ATOM    488  CA  TRP    62      42.292  14.767  37.121  1.00  8.58      2IHL 567
+ATOM    489  C   TRP    62      41.030  15.626  37.245  1.00  7.48      2IHL 568
+ATOM    490  O   TRP    62      41.161  16.836  37.242  1.00  8.06      2IHL 569
+ATOM    491  CB  TRP    62      42.516  14.576  35.582  1.00  9.89      2IHL 570
+ATOM    492  CG  TRP    62      43.949  14.160  35.324  1.00 11.74      2IHL 571
+ATOM    493  CD1 TRP    62      44.425  12.908  35.159  1.00 13.29      2IHL 572
+ATOM    494  CD2 TRP    62      45.066  15.068  35.227  1.00 12.41      2IHL 573
+ATOM    495  NE1 TRP    62      45.791  12.961  34.949  1.00 13.25      2IHL 574
+ATOM    496  CE2 TRP    62      46.190  14.259  34.984  1.00 11.79      2IHL 575
+ATOM    497  CE3 TRP    62      45.176  16.448  35.306  1.00 13.28      2IHL 576
+ATOM    498  CZ2 TRP    62      47.464  14.828  34.838  1.00 12.84      2IHL 577
+ATOM    499  CZ3 TRP    62      46.451  17.030  35.141  1.00 16.65      2IHL 578
+ATOM    500  CH2 TRP    62      47.552  16.195  34.920  1.00 13.61      2IHL 579
+ATOM    501  N   TRP    63      39.863  14.948  37.394  1.00  7.00      2IHL 580
+ATOM    502  CA  TRP    63      38.631  15.711  37.115  1.00  7.54      2IHL 581
+ATOM    503  C   TRP    63      37.729  16.053  38.286  1.00  7.08      2IHL 582
+ATOM    504  O   TRP    63      36.955  17.025  38.134  1.00  8.67      2IHL 583
+ATOM    505  CB  TRP    63      37.808  14.977  36.005  1.00  7.98      2IHL 584
+ATOM    506  CG  TRP    63      38.608  14.740  34.757  1.00  7.91      2IHL 585
+ATOM    507  CD1 TRP    63      39.170  13.564  34.356  1.00  9.83      2IHL 586
+ATOM    508  CD2 TRP    63      38.972  15.730  33.782  1.00  8.08      2IHL 587
+ATOM    509  NE1 TRP    63      39.820  13.748  33.147  1.00  7.80      2IHL 588
+ATOM    510  CE2 TRP    63      39.758  15.051  32.800  1.00  6.54      2IHL 589
+ATOM    511  CE3 TRP    63      38.723  17.075  33.662  1.00  6.83      2IHL 590
+ATOM    512  CZ2 TRP    63      40.233  15.737  31.667  1.00  8.46      2IHL 591
+ATOM    513  CZ3 TRP    63      39.189  17.755  32.544  1.00 10.26      2IHL 592
+ATOM    514  CH2 TRP    63      39.972  17.085  31.605  1.00  9.20      2IHL 593
+ATOM    515  N   CYS    64      37.879  15.340  39.378  1.00  8.05      2IHL 594
+ATOM    516  CA  CYS    64      36.995  15.624  40.531  1.00  8.21      2IHL 595
+ATOM    517  C   CYS    64      37.756  15.351  41.851  1.00  9.41      2IHL 596
+ATOM    518  O   CYS    64      38.799  14.688  41.785  1.00  8.89      2IHL 597
+ATOM    519  CB  CYS    64      35.707  14.796  40.421  1.00  7.20      2IHL 598
+ATOM    520  SG  CYS    64      35.853  13.066  40.401  1.00  8.13      2IHL 599
+ATOM    521  N   ASN    65      37.168  15.868  42.918  1.00  9.26      2IHL 600
+ATOM    522  CA  ASN    65      37.802  15.640  44.255  1.00  9.90      2IHL 601
+ATOM    523  C   ASN    65      37.054  14.561  45.034  1.00  8.60      2IHL 602
+ATOM    524  O   ASN    65      35.880  14.887  45.421  1.00  8.57      2IHL 603
+ATOM    525  CB  ASN    65      37.877  16.919  45.060  1.00 12.21      2IHL 604
+ATOM    526  CG  ASN    65      38.526  16.674  46.441  1.00 12.86      2IHL 605
+ATOM    527  OD1 ASN    65      39.345  15.766  46.556  1.00 16.98      2IHL 606
+ATOM    528  ND2 ASN    65      38.099  17.522  47.356  1.00 17.09      2IHL 607
+ATOM    529  N   ASP    66      37.631  13.409  45.304  1.00  8.46      2IHL 608
+ATOM    530  CA  ASP    66      37.029  12.386  46.171  1.00  8.20      2IHL 609
+ATOM    531  C   ASP    66      37.728  12.374  47.574  1.00  9.19      2IHL 610
+ATOM    532  O   ASP    66      37.315  11.528  48.377  1.00  9.96      2IHL 611
+ATOM    533  CB  ASP    66      36.926  10.992  45.613  1.00  7.92      2IHL 612
+ATOM    534  CG  ASP    66      38.257  10.368  45.214  1.00  7.03      2IHL 613
+ATOM    535  OD1 ASP    66      39.329  10.970  45.581  1.00  8.38      2IHL 614
+ATOM    536  OD2 ASP    66      38.227   9.308  44.604  1.00  9.10      2IHL 615
+ATOM    537  N   GLY    67      38.632  13.301  47.803  1.00  9.58      2IHL 616
+ATOM    538  CA  GLY    67      39.295  13.372  49.139  1.00 10.30      2IHL 617
+ATOM    539  C   GLY    67      40.173  12.165  49.386  1.00 10.66      2IHL 618
+ATOM    540  O   GLY    67      40.720  12.092  50.533  1.00 11.80      2IHL 619
+ATOM    541  N   ARG    68      40.413  11.275  48.480  1.00  9.67      2IHL 620
+ATOM    542  CA  ARG    68      41.162  10.043  48.717  1.00 10.74      2IHL 621
+ATOM    543  C   ARG    68      42.144   9.712  47.574  1.00  9.94      2IHL 622
+ATOM    544  O   ARG    68      42.631   8.563  47.565  1.00 12.78      2IHL 623
+ATOM    545  CB  ARG    68      40.331   8.816  49.063  1.00 12.58      2IHL 624
+ATOM    546  CG  ARG    68      39.474   8.362  47.895  1.00 14.58      2IHL 625
+ATOM    547  CD  ARG    68      38.755   7.101  48.255  1.00 16.91      2IHL 626
+ATOM    548  NE  ARG    68      38.327   6.442  47.015  1.00 19.63      2IHL 627
+ATOM    549  CZ  ARG    68      37.255   5.641  47.011  1.00 21.29      2IHL 628
+ATOM    550  NH1 ARG    68      36.595   5.472  48.172  1.00 22.01      2IHL 629
+ATOM    551  NH2 ARG    68      36.890   5.044  45.884  1.00 20.32      2IHL 630
+ATOM    552  N   THR    69      42.385  10.697  46.754  1.00  9.01      2IHL 631
+ATOM    553  CA  THR    69      43.359  10.481  45.668  1.00  9.31      2IHL 632
+ATOM    554  C   THR    69      44.467  11.515  45.836  1.00  8.76      2IHL 633
+ATOM    555  O   THR    69      44.415  12.612  45.323  1.00  9.73      2IHL 634
+ATOM    556  CB  THR    69      42.705  10.645  44.224  1.00  8.90      2IHL 635
+ATOM    557  OG1 THR    69      41.431   9.904  44.286  1.00  9.59      2IHL 636
+ATOM    558  CG2 THR    69      43.618  10.162  43.109  1.00  9.32      2IHL 637
+ATOM    559  N   PRO    70      45.529  11.119  46.579  1.00  9.88      2IHL 638
+ATOM    560  CA  PRO    70      46.545  12.129  46.871  1.00 10.45      2IHL 639
+ATOM    561  C   PRO    70      47.328  12.686  45.686  1.00 10.01      2IHL 640
+ATOM    562  O   PRO    70      47.651  11.850  44.831  1.00 11.39      2IHL 641
+ATOM    563  CB  PRO    70      47.450  11.402  47.877  1.00 10.20      2IHL 642
+ATOM    564  CG  PRO    70      47.139   9.958  47.840  1.00 11.35      2IHL 643
+ATOM    565  CD  PRO    70      45.778   9.794  47.111  1.00 10.64      2IHL 644
+ATOM    566  N   GLY    71      47.575  13.980  45.735  1.00 10.82      2IHL 645
+ATOM    567  CA  GLY    71      48.401  14.570  44.662  1.00 11.81      2IHL 646
+ATOM    568  C   GLY    71      47.615  14.713  43.347  1.00 12.82      2IHL 647
+ATOM    569  O   GLY    71      48.241  14.953  42.309  1.00 15.50      2IHL 648
+ATOM    570  N   SER    72      46.291  14.577  43.414  1.00 12.00      2IHL 649
+ATOM    571  CA  SER    72      45.470  14.684  42.171  1.00 12.23      2IHL 650
+ATOM    572  C   SER    72      44.974  16.097  41.962  1.00 11.78      2IHL 651
+ATOM    573  O   SER    72      45.108  17.049  42.755  1.00 13.04      2IHL 652
+ATOM    574  CB  SER    72      44.297  13.711  42.281  1.00 11.66      2IHL 653
+ATOM    575  OG  SER    72      43.380  14.250  43.220  1.00 10.17      2IHL 654
+ATOM    576  N   ARG    73      44.322  16.285  40.783  1.00 11.01      2IHL 655
+ATOM    577  CA  ARG    73      43.752  17.566  40.375  1.00 10.75      2IHL 656
+ATOM    578  C   ARG    73      42.197  17.426  40.370  1.00  9.38      2IHL 657
+ATOM    579  O   ARG    73      41.689  16.309  40.539  1.00 10.57      2IHL 658
+ATOM    580  CB  ARG    73      44.261  18.017  39.005  1.00 12.30      2IHL 659
+ATOM    581  CG  ARG    73      45.696  18.533  38.938  1.00 16.29      2IHL 660
+ATOM    582  CD  ARG    73      46.760  17.563  38.608  1.00 18.98      2IHL 661
+ATOM    583  NE  ARG    73      48.068  18.279  38.443  1.00 20.17      2IHL 662
+ATOM    584  CZ  ARG    73      49.185  17.610  38.785  1.00 20.82      2IHL 663
+ATOM    585  NH1 ARG    73      49.053  16.333  39.178  1.00 21.30      2IHL 664
+ATOM    586  NH2 ARG    73      50.371  18.236  38.790  1.00 17.78      2IHL 665
+ATOM    587  N   ASN    74      41.621  18.602  40.232  1.00 10.30      2IHL 666
+ATOM    588  CA  ASN    74      40.118  18.678  40.218  1.00  9.26      2IHL 667
+ATOM    589  C   ASN    74      39.681  19.691  39.152  1.00  9.16      2IHL 668
+ATOM    590  O   ASN    74      39.205  20.769  39.471  1.00 10.20      2IHL 669
+ATOM    591  CB  ASN    74      39.651  19.018  41.620  1.00 10.27      2IHL 670
+ATOM    592  CG  ASN    74      38.151  19.209  41.759  1.00 10.79      2IHL 671
+ATOM    593  OD1 ASN    74      37.396  18.817  40.864  1.00 10.95      2IHL 672
+ATOM    594  ND2 ASN    74      37.718  19.769  42.872  1.00 12.18      2IHL 673
+ATOM    595  N   LEU    75      39.866  19.311  37.906  1.00  9.50      2IHL 674
+ATOM    596  CA  LEU    75      39.616  20.224  36.772  1.00 11.11      2IHL 675
+ATOM    597  C   LEU    75      38.130  20.602  36.563  1.00 10.70      2IHL 676
+ATOM    598  O   LEU    75      37.878  21.689  36.053  1.00 12.75      2IHL 677
+ATOM    599  CB  LEU    75      40.296  19.660  35.503  1.00 14.29      2IHL 678
+ATOM    600  CG  LEU    75      41.737  20.051  35.182  1.00 16.65      2IHL 679
+ATOM    601  CD1 LEU    75      42.532  20.487  36.373  1.00 18.61      2IHL 680
+ATOM    602  CD2 LEU    75      42.422  18.977  34.338  1.00 17.23      2IHL 681
+ATOM    603  N   CYS    76      37.229  19.683  36.966  1.00 10.92      2IHL 682
+ATOM    604  CA  CYS    76      35.805  20.080  36.847  1.00 10.26      2IHL 683
+ATOM    605  C   CYS    76      35.331  20.877  38.051  1.00 11.29      2IHL 684
+ATOM    606  O   CYS    76      34.177  21.327  38.055  1.00 11.13      2IHL 685
+ATOM    607  CB  CYS    76      34.984  18.814  36.614  1.00 10.06      2IHL 686
+ATOM    608  SG  CYS    76      35.241  18.282  34.884  1.00  9.60      2IHL 687
+ATOM    609  N   ASN    77      36.144  21.013  39.067  1.00 10.64      2IHL 688
+ATOM    610  CA  ASN    77      35.841  21.771  40.282  1.00 11.38      2IHL 689
+ATOM    611  C   ASN    77      34.574  21.293  40.996  1.00 10.76      2IHL 690
+ATOM    612  O   ASN    77      33.679  22.087  41.352  1.00 12.14      2IHL 691
+ATOM    613  CB  ASN    77      35.815  23.270  39.977  1.00 14.23      2IHL 692
+ATOM    614  CG AASN    77      35.776  24.117  41.235  0.50 17.31      2IHL 693
+ATOM    615  CG BASN    77      37.168  23.782  39.499  0.50 15.77      2IHL 694
+ATOM    616  OD1AASN    77      36.571  23.871  42.158  0.50 19.36      2IHL 695
+ATOM    617  OD1BASN    77      37.260  24.381  38.418  0.50 17.16      2IHL 696
+ATOM    618  ND2AASN    77      34.868  25.085  41.282  0.50 19.11      2IHL 697
+ATOM    619  ND2BASN    77      38.204  23.536  40.299  0.50 17.41      2IHL 698
+ATOM    620  N   ILE    78      34.515  20.004  41.182  1.00  9.99      2IHL 699
+ATOM    621  CA  ILE    78      33.415  19.334  41.877  1.00  9.78      2IHL 700
+ATOM    622  C   ILE    78      33.878  18.133  42.711  1.00 10.18      2IHL 701
+ATOM    623  O   ILE    78      34.891  17.497  42.399  1.00 10.52      2IHL 702
+ATOM    624  CB  ILE    78      32.384  18.790  40.796  1.00 11.31      2IHL 703
+ATOM    625  CG1 ILE    78      33.124  17.988  39.706  1.00 11.76      2IHL 704
+ATOM    626  CG2 ILE    78      31.506  19.913  40.217  1.00 13.48      2IHL 705
+ATOM    627  CD1 ILE    78      32.217  16.991  38.935  1.00 14.14      2IHL 706
+ATOM    628  N   PRO    79      33.109  17.829  43.760  1.00 10.09      2IHL 707
+ATOM    629  CA  PRO    79      33.325  16.587  44.473  1.00  9.18      2IHL 708
+ATOM    630  C   PRO    79      32.938  15.447  43.543  1.00  8.85      2IHL 709
+ATOM    631  O   PRO    79      31.905  15.625  42.773  1.00  8.56      2IHL 710
+ATOM    632  CB  PRO    79      32.375  16.644  45.686  1.00 10.40      2IHL 711
+ATOM    633  CG  PRO    79      31.369  17.674  45.318  1.00 11.03      2IHL 712
+ATOM    634  CD  PRO    79      31.893  18.568  44.187  1.00 10.29      2IHL 713
+ATOM    635  N   CYS    80      33.572  14.308  43.565  1.00  7.82      2IHL 714
+ATOM    636  CA  CYS    80      33.265  13.178  42.689  1.00  8.48      2IHL 715
+ATOM    637  C   CYS    80      31.833  12.672  42.964  1.00  8.00      2IHL 716
+ATOM    638  O   CYS    80      31.246  12.155  42.016  1.00  8.41      2IHL 717
+ATOM    639  CB  CYS    80      34.255  12.008  42.766  1.00  8.00      2IHL 718
+ATOM    640  SG  CYS    80      35.967  12.550  42.382  1.00  7.70      2IHL 719
+ATOM    641  N   SER    81      31.391  12.835  44.192  1.00  8.19      2IHL 720
+ATOM    642  CA  SER    81      30.024  12.350  44.529  1.00  8.99      2IHL 721
+ATOM    643  C   SER    81      28.988  13.068  43.668  1.00  8.59      2IHL 722
+ATOM    644  O   SER    81      27.906  12.435  43.474  1.00 10.60      2IHL 723
+ATOM    645  CB  SER    81      29.747  12.523  46.042  1.00  8.83      2IHL 724
+ATOM    646  OG  SER    81      29.813  13.894  46.317  1.00 11.09      2IHL 725
+ATOM    647  N   ALA    82      29.220  14.263  43.203  1.00  8.98      2IHL 726
+ATOM    648  CA  ALA    82      28.262  14.997  42.318  1.00  9.78      2IHL 727
+ATOM    649  C   ALA    82      28.042  14.220  41.046  1.00 10.11      2IHL 728
+ATOM    650  O   ALA    82      26.998  14.370  40.347  1.00 10.62      2IHL 729
+ATOM    651  CB  ALA    82      28.735  16.383  42.015  1.00 11.52      2IHL 730
+ATOM    652  N   LEU    83      28.975  13.363  40.670  1.00  8.26      2IHL 731
+ATOM    653  CA  LEU    83      28.884  12.611  39.420  1.00  9.25      2IHL 732
+ATOM    654  C   LEU    83      28.055  11.332  39.568  1.00 10.23      2IHL 733
+ATOM    655  O   LEU    83      27.902  10.617  38.553  1.00 11.71      2IHL 734
+ATOM    656  CB  LEU    83      30.341  12.308  38.959  1.00  8.99      2IHL 735
+ATOM    657  CG  LEU    83      31.209  13.502  38.603  1.00 10.06      2IHL 736
+ATOM    658  CD1 LEU    83      32.646  13.052  38.373  1.00 11.08      2IHL 737
+ATOM    659  CD2 LEU    83      30.680  14.191  37.341  1.00 11.98      2IHL 738
+ATOM    660  N   LEU    84      27.560  11.027  40.751  1.00  9.84      2IHL 739
+ATOM    661  CA  LEU    84      26.773   9.812  40.996  1.00 11.22      2IHL 740
+ATOM    662  C   LEU    84      25.266  10.111  41.111  1.00 11.79      2IHL 741
+ATOM    663  O   LEU    84      24.558   9.229  41.611  1.00 13.98      2IHL 742
+ATOM    664  CB  LEU    84      27.332   9.171  42.289  1.00 11.19      2IHL 743
+ATOM    665  CG  LEU    84      28.789   8.718  42.281  1.00 10.61      2IHL 744
+ATOM    666  CD1 LEU    84      29.218   8.060  43.589  1.00 12.38      2IHL 745
+ATOM    667  CD2 LEU    84      29.009   7.697  41.169  1.00 10.68      2IHL 746
+ATOM    668  N   SER    85      24.869  11.279  40.711  1.00 11.88      2IHL 747
+ATOM    669  CA  SER    85      23.434  11.651  40.773  1.00 12.33      2IHL 748
+ATOM    670  C   SER    85      22.605  10.916  39.713  1.00 12.43      2IHL 749
+ATOM    671  O   SER    85      23.143  10.453  38.698  1.00 12.46      2IHL 750
+ATOM    672  CB  SER    85      23.344  13.157  40.573  1.00 11.53      2IHL 751
+ATOM    673  OG  SER    85      23.914  13.518  39.299  1.00 16.29      2IHL 752
+ATOM    674  N   SER    86      21.291  10.861  39.969  1.00 11.30      2IHL 753
+ATOM    675  CA  SER    86      20.379  10.247  38.994  1.00 12.07      2IHL 754
+ATOM    676  C   SER    86      20.249  11.087  37.718  1.00 10.33      2IHL 755
+ATOM    677  O   SER    86      20.057  10.495  36.638  1.00 11.44      2IHL 756
+ATOM    678  CB  SER    86      19.021   9.938  39.602  1.00 14.04      2IHL 757
+ATOM    679  OG ASER    86      18.402  11.110  40.041  0.50 18.38      2IHL 758
+ATOM    680  OG BSER    86      19.143   8.928  40.578  0.50 18.38      2IHL 759
+ATOM    681  N   ASP    87      20.281  12.417  37.852  1.00  9.83      2IHL 760
+ATOM    682  CA  ASP    87      20.268  13.316  36.679  1.00 10.29      2IHL 761
+ATOM    683  C   ASP    87      21.743  13.388  36.217  1.00  9.95      2IHL 762
+ATOM    684  O   ASP    87      22.660  13.280  37.055  1.00 11.51      2IHL 763
+ATOM    685  CB  ASP    87      19.729  14.683  37.027  1.00 14.31      2IHL 764
+ATOM    686  CG  ASP    87      20.547  15.344  38.092  1.00 19.37      2IHL 765
+ATOM    687  OD1 ASP    87      20.597  14.916  39.261  1.00 22.29      2IHL 766
+ATOM    688  OD2 ASP    87      21.223  16.357  37.707  1.00 24.21      2IHL 767
+ATOM    689  N   ILE    88      21.883  13.538  34.918  1.00  8.52      2IHL 768
+ATOM    690  CA  ILE    88      23.258  13.481  34.344  1.00  7.74      2IHL 769
+ATOM    691  C   ILE    88      23.880  14.844  34.270  1.00  7.79      2IHL 770
+ATOM    692  O   ILE    88      25.015  14.939  33.737  1.00  7.45      2IHL 771
+ATOM    693  CB  ILE    88      23.158  12.787  32.938  1.00  8.39      2IHL 772
+ATOM    694  CG1 ILE    88      22.392  13.658  31.912  1.00  8.20      2IHL 773
+ATOM    695  CG2 ILE    88      22.578  11.355  33.063  1.00  9.42      2IHL 774
+ATOM    696  CD1 ILE    88      22.533  13.130  30.458  1.00  9.12      2IHL 775
+ATOM    697  N   THR    89      23.337  15.919  34.804  1.00  6.91      2IHL 776
+ATOM    698  CA  THR    89      23.842  17.257  34.577  1.00  7.43      2IHL 777
+ATOM    699  C   THR    89      25.339  17.426  34.946  1.00  6.80      2IHL 778
+ATOM    700  O   THR    89      26.078  17.980  34.114  1.00  7.44      2IHL 779
+ATOM    701  CB  THR    89      22.947  18.355  35.276  1.00  8.30      2IHL 780
+ATOM    702  OG1 THR    89      21.574  17.969  34.922  1.00  7.99      2IHL 781
+ATOM    703  CG2 THR    89      23.254  19.772  34.875  1.00  8.75      2IHL 782
+ATOM    704  N   ALA    90      25.679  17.030  36.160  1.00  7.38      2IHL 783
+ATOM    705  CA  ALA    90      27.096  17.290  36.570  1.00  7.10      2IHL 784
+ATOM    706  C   ALA    90      28.047  16.526  35.660  1.00  7.62      2IHL 785
+ATOM    707  O   ALA    90      29.118  17.078  35.292  1.00  8.01      2IHL 786
+ATOM    708  CB  ALA    90      27.273  16.891  38.029  1.00  7.97      2IHL 787
+ATOM    709  N   SER    91      27.686  15.299  35.336  1.00  7.26      2IHL 788
+ATOM    710  CA  SER    91      28.531  14.488  34.439  1.00  6.85      2IHL 789
+ATOM    711  C   SER    91      28.659  15.127  33.053  1.00  8.29      2IHL 790
+ATOM    712  O   SER    91      29.754  15.116  32.478  1.00  8.82      2IHL 791
+ATOM    713  CB  SER    91      28.083  13.046  34.296  1.00  8.13      2IHL 792
+ATOM    714  OG  SER    91      28.194  12.295  35.486  1.00  8.78      2IHL 793
+ATOM    715  N   VAL    92      27.559  15.600  32.483  1.00  7.13      2IHL 794
+ATOM    716  CA  VAL    92      27.623  16.264  31.173  1.00  7.48      2IHL 795
+ATOM    717  C   VAL    92      28.453  17.527  31.261  1.00  7.33      2IHL 796
+ATOM    718  O   VAL    92      29.293  17.771  30.374  1.00  8.16      2IHL 797
+ATOM    719  CB  VAL    92      26.187  16.542  30.629  1.00 10.68      2IHL 798
+ATOM    720  CG1 VAL    92      26.224  17.512  29.457  1.00 11.02      2IHL 799
+ATOM    721  CG2 VAL    92      25.530  15.229  30.302  1.00 10.18      2IHL 800
+ATOM    722  N   ASN    93      28.262  18.354  32.311  1.00  7.30      2IHL 801
+ATOM    723  CA  ASN    93      29.042  19.601  32.386  1.00  7.35      2IHL 802
+ATOM    724  C   ASN    93      30.565  19.296  32.494  1.00  8.35      2IHL 803
+ATOM    725  O   ASN    93      31.314  20.094  31.916  1.00  9.68      2IHL 804
+ATOM    726  CB  ASN    93      28.527  20.496  33.507  1.00  8.96      2IHL 805
+ATOM    727  CG  ASN    93      27.212  21.172  33.101  1.00 11.50      2IHL 806
+ATOM    728  OD1 ASN    93      26.409  21.490  33.998  1.00 14.97      2IHL 807
+ATOM    729  ND2 ASN    93      27.040  21.392  31.834  1.00 13.86      2IHL 808
+ATOM    730  N   CYS    94      30.862  18.216  33.205  1.00  7.67      2IHL 809
+ATOM    731  CA  CYS    94      32.319  17.880  33.304  1.00  7.58      2IHL 810
+ATOM    732  C   CYS    94      32.796  17.315  31.966  1.00  7.70      2IHL 811
+ATOM    733  O   CYS    94      33.905  17.667  31.549  1.00  8.21      2IHL 812
+ATOM    734  CB  CYS    94      32.486  16.951  34.503  1.00  7.05      2IHL 813
+ATOM    735  SG  CYS    94      34.232  16.519  34.838  1.00  8.89      2IHL 814
+ATOM    736  N   ALA    95      32.063  16.406  31.352  1.00  8.28      2IHL 815
+ATOM    737  CA  ALA    95      32.391  15.857  30.024  1.00  7.64      2IHL 816
+ATOM    738  C   ALA    95      32.640  16.989  29.027  1.00  8.04      2IHL 817
+ATOM    739  O   ALA    95      33.546  16.885  28.165  1.00  8.15      2IHL 818
+ATOM    740  CB  ALA    95      31.314  14.909  29.517  1.00  8.55      2IHL 819
+ATOM    741  N   LYS    96      31.888  18.093  29.104  1.00  8.00      2IHL 820
+ATOM    742  CA  LYS    96      32.113  19.211  28.153  1.00  8.71      2IHL 821
+ATOM    743  C   LYS    96      33.470  19.897  28.406  1.00  9.50      2IHL 822
+ATOM    744  O   LYS    96      34.027  20.482  27.471  1.00 11.09      2IHL 823
+ATOM    745  CB  LYS    96      30.985  20.223  28.181  1.00  9.70      2IHL 824
+ATOM    746  CG  LYS    96      29.689  19.667  27.529  1.00  9.18      2IHL 825
+ATOM    747  CD  LYS    96      28.574  20.721  27.711  1.00 11.00      2IHL 826
+ATOM    748  CE  LYS    96      27.268  20.287  27.055  1.00 11.54      2IHL 827
+ATOM    749  NZ  LYS    96      26.154  21.299  27.284  1.00 10.87      2IHL 828
+ATOM    750  N   LYS    97      33.944  19.815  29.637  1.00  8.87      2IHL 829
+ATOM    751  CA  LYS    97      35.299  20.362  29.916  1.00 10.29      2IHL 830
+ATOM    752  C   LYS    97      36.342  19.376  29.442  1.00  9.62      2IHL 831
+ATOM    753  O   LYS    97      37.435  19.784  28.955  1.00 11.69      2IHL 832
+ATOM    754  CB  LYS    97      35.455  20.574  31.415  1.00 12.43      2IHL 833
+ATOM    755  CG  LYS    97      34.510  21.689  31.862  1.00 17.13      2IHL 834
+ATOM    756  CD  LYS    97      34.646  21.983  33.367  1.00 21.42      2IHL 835
+ATOM    757  CE  LYS    97      33.468  22.885  33.781  1.00 23.50      2IHL 836
+ATOM    758  NZ  LYS    97      33.837  23.553  35.061  1.00 27.72      2IHL 837
+ATOM    759  N   ILE    98      36.137  18.095  29.563  1.00  8.14      2IHL 838
+ATOM    760  CA  ILE    98      37.067  17.060  29.119  1.00  8.41      2IHL 839
+ATOM    761  C   ILE    98      37.274  17.115  27.595  1.00  9.90      2IHL 840
+ATOM    762  O   ILE    98      38.390  17.034  27.064  1.00  9.49      2IHL 841
+ATOM    763  CB  ILE    98      36.625  15.632  29.534  1.00  8.62      2IHL 842
+ATOM    764  CG1 ILE    98      36.591  15.560  31.097  1.00  9.02      2IHL 843
+ATOM    765  CG2 ILE    98      37.528  14.545  28.898  1.00  8.76      2IHL 844
+ATOM    766  CD1 ILE    98      35.940  14.237  31.581  1.00 10.80      2IHL 845
+ATOM    767  N   VAL    99      36.155  17.260  26.872  1.00  9.41      2IHL 846
+ATOM    768  CA  VAL    99      36.194  17.248  25.396  1.00 10.28      2IHL 847
+ATOM    769  C   VAL    99      36.403  18.671  24.946  1.00 11.00      2IHL 848
+ATOM    770  O   VAL    99      35.436  19.431  24.763  1.00 12.55      2IHL 849
+ATOM    771  CB  VAL    99      34.928  16.567  24.843  1.00  9.00      2IHL 850
+ATOM    772  CG1 VAL    99      34.983  16.594  23.312  1.00 10.71      2IHL 851
+ATOM    773  CG2 VAL    99      34.809  15.152  25.367  1.00 10.06      2IHL 852
+ATOM    774  N   SER   100      37.693  19.030  24.875  1.00 11.90      2IHL 853
+ATOM    775  CA  SER   100      38.038  20.423  24.568  1.00 13.44      2IHL 854
+ATOM    776  C   SER   100      38.389  20.692  23.107  1.00 12.94      2IHL 855
+ATOM    777  O   SER   100      38.588  21.871  22.766  1.00 14.29      2IHL 856
+ATOM    778  CB  SER   100      39.193  20.875  25.490  1.00 15.41      2IHL 857
+ATOM    779  OG  SER   100      40.305  20.078  25.135  1.00 19.77      2IHL 858
+ATOM    780  N   ASP   101      38.407  19.616  22.326  1.00 12.43      2IHL 859
+ATOM    781  CA  ASP   101      38.672  19.798  20.879  1.00 12.16      2IHL 860
+ATOM    782  C   ASP   101      37.986  18.657  20.169  1.00 11.01      2IHL 861
+ATOM    783  O   ASP   101      37.420  17.737  20.806  1.00  9.58      2IHL 862
+ATOM    784  CB  ASP   101      40.181  19.863  20.607  1.00 16.84      2IHL 863
+ATOM    785  CG  ASP   101      40.973  18.595  20.613  1.00 18.88      2IHL 864
+ATOM    786  OD1 ASP   101      40.647  17.433  20.891  1.00 18.74      2IHL 865
+ATOM    787  OD2 ASP   101      42.208  18.683  20.278  1.00 25.89      2IHL 866
+ATOM    788  N   VAL   102      38.118  18.671  18.824  1.00 10.16      2IHL 867
+ATOM    789  CA  VAL   102      37.439  17.683  17.988  1.00 10.43      2IHL 868
+ATOM    790  C   VAL   102      37.948  16.259  18.114  1.00  9.92      2IHL 869
+ATOM    791  O   VAL   102      37.379  15.336  17.471  1.00 10.15      2IHL 870
+ATOM    792  CB  VAL   102      37.443  18.172  16.490  1.00 13.33      2IHL 871
+ATOM    793  CG1 VAL   102      36.762  19.507  16.327  1.00 14.33      2IHL 872
+ATOM    794  CG2 VAL   102      38.857  18.185  15.941  1.00 14.51      2IHL 873
+ATOM    795  N   HIS   103      39.069  16.033  18.860  1.00  8.22      2IHL 874
+ATOM    796  CA  HIS   103      39.513  14.658  19.094  1.00  7.97      2IHL 875
+ATOM    797  C   HIS   103      39.336  14.245  20.573  1.00  8.54      2IHL 876
+ATOM    798  O   HIS   103      39.843  13.206  21.000  1.00  9.50      2IHL 877
+ATOM    799  CB  HIS   103      41.045  14.428  18.792  1.00  8.40      2IHL 878
+ATOM    800  CG  HIS   103      41.258  14.719  17.323  1.00  9.88      2IHL 879
+ATOM    801  ND1 HIS   103      41.834  15.841  16.822  1.00 13.38      2IHL 880
+ATOM    802  CD2 HIS   103      40.905  13.963  16.260  1.00 11.62      2IHL 881
+ATOM    803  CE1 HIS   103      41.824  15.792  15.475  1.00 12.11      2IHL 882
+ATOM    804  NE2 HIS   103      41.274  14.658  15.134  1.00 12.43      2IHL 883
+ATOM    805  N   GLY   104      38.558  15.068  21.284  1.00  8.34      2IHL 884
+ATOM    806  CA  GLY   104      38.512  14.909  22.754  1.00  9.27      2IHL 885
+ATOM    807  C   GLY   104      37.841  13.664  23.266  1.00  9.08      2IHL 886
+ATOM    808  O   GLY   104      38.100  13.316  24.460  1.00  9.02      2IHL 887
+ATOM    809  N   MET   105      36.999  12.963  22.520  1.00  8.86      2IHL 888
+ATOM    810  CA  MET   105      36.383  11.763  23.082  1.00  8.93      2IHL 889
+ATOM    811  C   MET   105      37.356  10.607  23.293  1.00  9.38      2IHL 890
+ATOM    812  O   MET   105      37.044   9.570  23.887  1.00  8.86      2IHL 891
+ATOM    813  CB  MET   105      35.151  11.264  22.301  1.00 10.45      2IHL 892
+ATOM    814  CG  MET   105      34.045  12.246  22.527  1.00 10.31      2IHL 893
+ATOM    815  SD  MET   105      32.401  11.538  22.115  1.00 12.97      2IHL 894
+ATOM    816  CE  MET   105      32.234  10.468  23.564  1.00 13.96      2IHL 895
+ATOM    817  N   ASN   106      38.604  10.840  22.779  1.00  8.74      2IHL 896
+ATOM    818  CA  ASN   106      39.653   9.795  22.974  1.00  9.84      2IHL 897
+ATOM    819  C   ASN   106      39.974   9.651  24.490  1.00  9.64      2IHL 898
+ATOM    820  O   ASN   106      40.667   8.686  24.816  1.00 11.27      2IHL 899
+ATOM    821  CB  ASN   106      40.888  10.143  22.108  1.00  9.52      2IHL 900
+ATOM    822  CG  ASN   106      40.640   9.797  20.648  1.00  8.96      2IHL 901
+ATOM    823  OD1 ASN   106      40.676   8.593  20.321  1.00 11.42      2IHL 902
+ATOM    824  ND2 ASN   106      40.412  10.754  19.772  1.00 11.85      2IHL 903
+ATOM    825  N   ALA   107      39.503  10.556  25.297  1.00  9.61      2IHL 904
+ATOM    826  CA  ALA   107      39.682  10.436  26.757  1.00 10.83      2IHL 905
+ATOM    827  C   ALA   107      39.022   9.170  27.297  1.00 10.76      2IHL 906
+ATOM    828  O   ALA   107      39.393   8.703  28.408  1.00 12.42      2IHL 907
+ATOM    829  CB  ALA   107      39.129  11.681  27.420  1.00 11.96      2IHL 908
+ATOM    830  N   TRP   108      38.025   8.628  26.616  1.00  9.78      2IHL 909
+ATOM    831  CA  TRP   108      37.357   7.409  27.046  1.00 10.11      2IHL 910
+ATOM    832  C   TRP   108      37.820   6.168  26.329  1.00  9.82      2IHL 911
+ATOM    833  O   TRP   108      37.582   5.991  25.096  1.00  9.68      2IHL 912
+ATOM    834  CB  TRP   108      35.803   7.521  26.900  1.00  9.33      2IHL 913
+ATOM    835  CG  TRP   108      35.234   8.441  27.933  1.00 10.19      2IHL 914
+ATOM    836  CD1 TRP   108      34.973   8.157  29.276  1.00 11.65      2IHL 915
+ATOM    837  CD2 TRP   108      34.893   9.815  27.762  1.00 10.25      2IHL 916
+ATOM    838  NE1 TRP   108      34.479   9.285  29.887  1.00 11.56      2IHL 917
+ATOM    839  CE2 TRP   108      34.422  10.327  28.998  1.00 11.05      2IHL 918
+ATOM    840  CE3 TRP   108      34.923  10.663  26.653  1.00 10.84      2IHL 919
+ATOM    841  CZ2 TRP   108      34.000  11.635  29.149  1.00 10.44      2IHL 920
+ATOM    842  CZ3 TRP   108      34.523  11.969  26.803  1.00 12.56      2IHL 921
+ATOM    843  CH2 TRP   108      34.058  12.467  28.047  1.00 11.80      2IHL 922
+ATOM    844  N   VAL   109      38.435   5.250  27.049  1.00 10.79      2IHL 923
+ATOM    845  CA  VAL   109      38.946   4.016  26.488  1.00 11.98      2IHL 924
+ATOM    846  C   VAL   109      37.856   3.162  25.843  1.00 11.45      2IHL 925
+ATOM    847  O   VAL   109      38.061   2.616  24.746  1.00 12.71      2IHL 926
+ATOM    848  CB  VAL   109      39.800   3.255  27.543  1.00 13.99      2IHL 927
+ATOM    849  CG1 VAL   109      40.188   1.883  27.041  1.00 17.18      2IHL 928
+ATOM    850  CG2 VAL   109      41.004   4.128  27.880  1.00 15.96      2IHL 929
+ATOM    851  N   ALA   110      36.719   3.112  26.549  1.00 11.28      2IHL 930
+ATOM    852  CA  ALA   110      35.644   2.242  26.003  1.00 11.82      2IHL 931
+ATOM    853  C   ALA   110      35.104   2.875  24.699  1.00 10.43      2IHL 932
+ATOM    854  O   ALA   110      34.696   2.097  23.814  1.00 11.88      2IHL 933
+ATOM    855  CB  ALA   110      34.583   1.925  27.029  1.00 12.10      2IHL 934
+ATOM    856  N   TRP   111      35.097   4.199  24.632  1.00  9.35      2IHL 935
+ATOM    857  CA  TRP   111      34.679   4.865  23.373  1.00 10.28      2IHL 936
+ATOM    858  C   TRP   111      35.643   4.506  22.231  1.00 11.10      2IHL 937
+ATOM    859  O   TRP   111      35.255   4.183  21.109  1.00 10.67      2IHL 938
+ATOM    860  CB  TRP   111      34.494   6.372  23.534  1.00  9.98      2IHL 939
+ATOM    861  CG  TRP   111      34.123   7.046  22.255  1.00 10.50      2IHL 940
+ATOM    862  CD1 TRP   111      32.868   7.253  21.710  1.00  9.07      2IHL 941
+ATOM    863  CD2 TRP   111      35.037   7.624  21.311  1.00 10.24      2IHL 942
+ATOM    864  NE1 TRP   111      32.969   7.877  20.498  1.00  9.19      2IHL 943
+ATOM    865  CE2 TRP   111      34.300   8.156  20.229  1.00 10.00      2IHL 944
+ATOM    866  CE3 TRP   111      36.442   7.742  21.306  1.00 10.42      2IHL 945
+ATOM    867  CZ2 TRP   111      34.892   8.799  19.157  1.00 11.49      2IHL 946
+ATOM    868  CZ3 TRP   111      37.023   8.397  20.249  1.00 11.41      2IHL 947
+ATOM    869  CH2 TRP   111      36.286   8.881  19.170  1.00 11.70      2IHL 948
+ATOM    870  N   ARG   112      36.964   4.579  22.564  1.00 11.32      2IHL 949
+ATOM    871  CA  ARG   112      37.932   4.271  21.479  1.00 12.69      2IHL 950
+ATOM    872  C   ARG   112      37.787   2.839  21.006  1.00 12.37      2IHL 951
+ATOM    873  O   ARG   112      37.899   2.568  19.795  1.00 13.72      2IHL 952
+ATOM    874  CB  ARG   112      39.354   4.415  22.055  1.00 13.62      2IHL 953
+ATOM    875  CG  ARG   112      39.866   5.829  22.203  1.00 13.71      2IHL 954
+ATOM    876  CD  ARG   112      41.147   5.827  22.983  1.00 16.24      2IHL 955
+ATOM    877  NE  ARG   112      42.095   4.849  22.480  1.00 16.87      2IHL 956
+ATOM    878  CZ  ARG   112      42.921   5.129  21.476  1.00 18.79      2IHL 957
+ATOM    879  NH1 ARG   112      42.886   6.340  20.915  1.00 20.47      2IHL 958
+ATOM    880  NH2 ARG   112      43.741   4.178  21.031  1.00 19.58      2IHL 959
+ATOM    881  N   ASN   113      37.522   1.918  21.930  1.00 13.17      2IHL 960
+ATOM    882  CA  ASN   113      37.521   0.488  21.606  1.00 14.42      2IHL 961
+ATOM    883  C   ASN   113      36.232  -0.051  21.005  1.00 15.39      2IHL 962
+ATOM    884  O   ASN   113      36.275  -1.014  20.224  1.00 15.44      2IHL 963
+ATOM    885  CB  ASN   113      37.806  -0.337  22.879  1.00 17.44      2IHL 964
+ATOM    886  CG  ASN   113      39.275  -0.223  23.295  1.00 18.69      2IHL 965
+ATOM    887  OD1 ASN   113      40.128   0.264  22.547  1.00 20.93      2IHL 966
+ATOM    888  ND2 ASN   113      39.470  -0.703  24.527  1.00 21.29      2IHL 967
+ATOM    889  N   ARG   114      35.138   0.594  21.434  1.00 14.78      2IHL 968
+ATOM    890  CA  ARG   114      33.831   0.025  21.016  1.00 14.90      2IHL 969
+ATOM    891  C   ARG   114      32.982   0.958  20.167  1.00 14.14      2IHL 970
+ATOM    892  O   ARG   114      31.967   0.431  19.668  1.00 15.13      2IHL 971
+ATOM    893  CB  ARG   114      32.994  -0.376  22.252  1.00 17.19      2IHL 972
+ATOM    894  CG  ARG   114      33.731  -1.213  23.298  1.00 20.83      2IHL 973
+ATOM    895  CD  ARG   114      34.063  -2.550  22.751  1.00 24.29      2IHL 974
+ATOM    896  NE  ARG   114      32.895  -3.289  22.294  1.00 28.43      2IHL 975
+ATOM    897  CZ  ARG   114      32.202  -4.121  23.091  1.00 31.05      2IHL 976
+ATOM    898  NH1 ARG   114      32.508  -4.325  24.385  1.00 32.60      2IHL 977
+ATOM    899  NH2 ARG   114      31.189  -4.823  22.569  1.00 31.79      2IHL 978
+ATOM    900  N   CYS   115      33.332   2.215  20.097  1.00 12.20      2IHL 979
+ATOM    901  CA  CYS   115      32.508   3.224  19.455  1.00 12.89      2IHL 980
+ATOM    902  C   CYS   115      33.147   3.886  18.257  1.00 13.06      2IHL 981
+ATOM    903  O   CYS   115      32.489   3.972  17.212  1.00 13.73      2IHL 982
+ATOM    904  CB  CYS   115      32.072   4.310  20.463  1.00 12.23      2IHL 983
+ATOM    905  SG  CYS   115      31.220   3.615  21.905  1.00  9.98      2IHL 984
+ATOM    906  N   LYS   116      34.366   4.371  18.445  1.00 13.21      2IHL 985
+ATOM    907  CA  LYS   116      35.115   5.100  17.408  1.00 15.25      2IHL 986
+ATOM    908  C   LYS   116      35.143   4.264  16.111  1.00 16.18      2IHL 987
+ATOM    909  O   LYS   116      35.416   3.065  16.153  1.00 16.37      2IHL 988
+ATOM    910  CB  LYS   116      36.553   5.336  17.898  1.00 15.05      2IHL 989
+ATOM    911  CG  LYS   116      37.424   6.139  16.901  1.00 17.13      2IHL 990
+ATOM    912  CD  LYS   116      38.784   6.423  17.541  1.00 18.26      2IHL 991
+ATOM    913  CE  LYS   116      39.680   7.436  16.871  1.00 17.90      2IHL 992
+ATOM    914  NZ  LYS   116      40.988   7.525  17.655  1.00 16.63      2IHL 993
+ATOM    915  N   GLY   117      34.792   4.934  15.038  1.00 18.12      2IHL 994
+ATOM    916  CA  GLY   117      34.768   4.334  13.703  1.00 20.24      2IHL 995
+ATOM    917  C   GLY   117      33.759   3.225  13.486  1.00 20.83      2IHL 996
+ATOM    918  O   GLY   117      33.899   2.372  12.580  1.00 22.74      2IHL 997
+ATOM    919  N   THR   118      32.719   3.177  14.284  1.00 20.40      2IHL 998
+ATOM    920  CA  THR   118      31.617   2.220  14.126  1.00 20.38      2IHL 999
+ATOM    921  C   THR   118      30.355   2.999  13.721  1.00 19.93      2IHL1000
+ATOM    922  O   THR   118      30.371   4.226  13.589  1.00 20.49      2IHL1001
+ATOM    923  CB  THR   118      31.367   1.398  15.445  1.00 21.12      2IHL1002
+ATOM    924  OG1 THR   118      30.673   2.319  16.365  1.00 20.37      2IHL1003
+ATOM    925  CG2 THR   118      32.673   0.828  15.991  1.00 20.62      2IHL1004
+ATOM    926  N   ASP   119      29.294   2.217  13.537  1.00 19.50      2IHL1005
+ATOM    927  CA  ASP   119      27.985   2.857  13.197  1.00 19.72      2IHL1006
+ATOM    928  C   ASP   119      27.397   3.340  14.543  1.00 18.36      2IHL1007
+ATOM    929  O   ASP   119      26.553   2.598  15.092  1.00 18.46      2IHL1008
+ATOM    930  CB  ASP   119      27.109   1.847  12.483  1.00 24.40      2IHL1009
+ATOM    931  CG  ASP   119      25.789   2.489  12.032  1.00 25.98      2IHL1010
+ATOM    932  OD1 ASP   119      25.779   3.609  11.500  1.00 29.08      2IHL1011
+ATOM    933  OD2 ASP   119      24.817   1.753  12.252  1.00 28.37      2IHL1012
+ATOM    934  N   VAL   120      27.894   4.483  15.001  1.00 17.51      2IHL1013
+ATOM    935  CA  VAL   120      27.433   4.963  16.313  1.00 16.27      2IHL1014
+ATOM    936  C   VAL   120      25.977   5.432  16.214  1.00 16.50      2IHL1015
+ATOM    937  O   VAL   120      25.383   5.545  17.307  1.00 16.00      2IHL1016
+ATOM    938  CB  VAL   120      28.321   6.038  16.963  1.00 17.33      2IHL1017
+ATOM    939  CG1 VAL   120      29.731   5.575  17.282  1.00 17.92      2IHL1018
+ATOM    940  CG2 VAL   120      28.344   7.306  16.122  1.00 18.11      2IHL1019
+ATOM    941  N   ASN   121      25.474   5.693  15.022  1.00 15.97      2IHL1020
+ATOM    942  CA  ASN   121      24.044   6.096  14.931  1.00 15.80      2IHL1021
+ATOM    943  C   ASN   121      23.166   4.949  15.439  1.00 14.76      2IHL1022
+ATOM    944  O   ASN   121      21.994   5.247  15.749  1.00 13.18      2IHL1023
+ATOM    945  CB  ASN   121      23.650   6.463  13.497  1.00 21.17      2IHL1024
+ATOM    946  CG  ASN   121      24.374   7.689  13.001  1.00 26.83      2IHL1025
+ATOM    947  OD1 ASN   121      24.218   8.788  13.585  1.00 30.30      2IHL1026
+ATOM    948  ND2 ASN   121      25.206   7.588  11.950  1.00 29.73      2IHL1027
+ATOM    949  N   ALA   122      23.679   3.731  15.480  1.00 13.22      2IHL1028
+ATOM    950  CA  ALA   122      22.887   2.609  15.963  1.00 13.17      2IHL1029
+ATOM    951  C   ALA   122      22.329   2.923  17.365  1.00 13.86      2IHL1030
+ATOM    952  O   ALA   122      21.232   2.513  17.712  1.00 14.20      2IHL1031
+ATOM    953  CB  ALA   122      23.650   1.289  16.036  1.00 12.42      2IHL1032
+ATOM    954  N   TRP   123      23.161   3.632  18.134  1.00 12.45      2IHL1033
+ATOM    955  CA  TRP   123      22.815   3.853  19.552  1.00 12.26      2IHL1034
+ATOM    956  C   TRP   123      21.611   4.747  19.710  1.00 12.17      2IHL1035
+ATOM    957  O   TRP   123      21.085   4.786  20.846  1.00 13.76      2IHL1036
+ATOM    958  CB  TRP   123      24.089   4.253  20.363  1.00 11.43      2IHL1037
+ATOM    959  CG  TRP   123      25.012   3.074  20.316  1.00 11.71      2IHL1038
+ATOM    960  CD1 TRP   123      26.111   2.880  19.516  1.00 12.24      2IHL1039
+ATOM    961  CD2 TRP   123      24.852   1.870  21.094  1.00 13.10      2IHL1040
+ATOM    962  NE1 TRP   123      26.615   1.634  19.747  1.00 12.73      2IHL1041
+ATOM    963  CE2 TRP   123      25.890   0.977  20.686  1.00 13.08      2IHL1042
+ATOM    964  CE3 TRP   123      23.940   1.472  22.052  1.00 13.11      2IHL1043
+ATOM    965  CZ2 TRP   123      26.026  -0.282  21.248  1.00 15.13      2IHL1044
+ATOM    966  CZ3 TRP   123      24.080   0.218  22.608  1.00 15.23      2IHL1045
+ATOM    967  CH2 TRP   123      25.111  -0.646  22.219  1.00 15.29      2IHL1046
+ATOM    968  N   ILE   124      21.174   5.488  18.708  1.00 11.98      2IHL1047
+ATOM    969  CA  ILE   124      19.956   6.317  18.848  1.00 12.61      2IHL1048
+ATOM    970  C   ILE   124      18.873   5.854  17.851  1.00 12.93      2IHL1049
+ATOM    971  O   ILE   124      17.805   6.487  17.846  1.00 12.46      2IHL1050
+ATOM    972  CB  ILE   124      20.303   7.829  18.700  1.00 14.59      2IHL1051
+ATOM    973  CG1 ILE   124      20.813   8.164  17.272  1.00 15.85      2IHL1052
+ATOM    974  CG2 ILE   124      21.344   8.275  19.774  1.00 13.41      2IHL1053
+ATOM    975  CD1 ILE   124      20.891   9.703  17.052  1.00 18.52      2IHL1054
+ATOM    976  N   ARG   125      19.168   4.839  17.081  1.00 12.99      2IHL1055
+ATOM    977  CA  ARG   125      18.177   4.362  16.067  1.00 14.32      2IHL1056
+ATOM    978  C   ARG   125      17.063   3.693  16.849  1.00 15.15      2IHL1057
+ATOM    979  O   ARG   125      17.251   3.018  17.868  1.00 14.23      2IHL1058
+ATOM    980  CB  ARG   125      18.919   3.391  15.142  1.00 14.88      2IHL1059
+ATOM    981  CG  ARG   125      18.388   3.155  13.752  1.00 16.42      2IHL1060
+ATOM    982  CD  ARG   125      19.317   2.204  13.028  1.00 14.82      2IHL1061
+ATOM    983  NE  ARG   125      20.414   2.969  12.459  1.00 14.43      2IHL1062
+ATOM    984  CZ  ARG   125      21.680   2.589  12.307  1.00 13.39      2IHL1063
+ATOM    985  NH1 ARG   125      22.166   1.425  12.698  1.00 14.18      2IHL1064
+ATOM    986  NH2 ARG   125      22.510   3.499  11.757  1.00 14.11      2IHL1065
+ATOM    987  N   GLY   126      15.827   3.892  16.377  1.00 16.59      2IHL1066
+ATOM    988  CA  GLY   126      14.682   3.266  17.052  1.00 18.94      2IHL1067
+ATOM    989  C   GLY   126      14.186   4.166  18.184  1.00 20.72      2IHL1068
+ATOM    990  O   GLY   126      13.201   3.698  18.788  1.00 22.46      2IHL1069
+ATOM    991  N   CYS   127      14.750   5.318  18.445  1.00 21.31      2IHL1070
+ATOM    992  CA  CYS   127      14.293   6.187  19.562  1.00 23.85      2IHL1071
+ATOM    993  C   CYS   127      13.482   7.360  18.997  1.00 27.01      2IHL1072
+ATOM    994  O   CYS   127      13.452   7.510  17.769  1.00 27.53      2IHL1073
+ATOM    995  CB  CYS   127      15.502   6.757  20.322  1.00 18.19      2IHL1074
+ATOM    996  SG  CYS   127      16.682   5.529  20.921  1.00 14.59      2IHL1075
+ATOM    997  N   ARG   128      12.891   8.163  19.852  1.00 30.72      2IHL1076
+ATOM    998  CA  ARG   128      12.129   9.367  19.416  1.00 35.12      2IHL1077
+ATOM    999  C   ARG   128      12.873  10.594  19.924  1.00 36.36      2IHL1078
+ATOM   1000  O   ARG   128      12.732  10.822  21.146  1.00 37.41      2IHL1079
+ATOM   1001  CB  ARG   128      10.711   9.362  19.986  1.00 38.83      2IHL1080
+ATOM   1002  CG  ARG   128      10.081  10.720  20.302  1.00 42.29      2IHL1081
+ATOM   1003  CD  ARG   128      10.104  11.652  19.129  1.00 44.75      2IHL1082
+ATOM   1004  NE  ARG   128       8.798  12.286  18.944  1.00 47.70      2IHL1083
+ATOM   1005  CZ  ARG   128       8.470  13.003  17.855  1.00 48.97      2IHL1084
+ATOM   1006  NH1 ARG   128       9.340  13.189  16.852  1.00 49.32      2IHL1085
+ATOM   1007  NH2 ARG   128       7.238  13.534  17.791  1.00 49.30      2IHL1086
+ATOM   1008  N   LEU   129      13.593  11.323  19.090  1.00 38.03      2IHL1087
+ATOM   1009  CA  LEU   129      14.425  12.424  19.656  1.00 39.52      2IHL1088
+ATOM   1010  C   LEU   129      14.246  13.743  18.903  1.00 40.78      2IHL1089
+ATOM   1011  O   LEU   129      14.154  13.628  17.646  1.00 41.65      2IHL1090
+ATOM   1012  CB  LEU   129      15.865  11.917  19.698  1.00 38.49      2IHL1091
+ATOM   1013  CG  LEU   129      16.148  10.532  20.243  1.00 38.22      2IHL1092
+ATOM   1014  CD1 LEU   129      17.640  10.219  20.075  1.00 38.31      2IHL1093
+ATOM   1015  CD2 LEU   129      15.762  10.473  21.712  1.00 37.53      2IHL1094
+ATOM   1016  OXT LEU   129      14.222  14.801  19.571  1.00 42.33      2IHL1095
+TER    1017      LEU   129                                              2IHL1096
+HETATM 1018 NA    NA   130      41.120  14.720  42.254  1.00 10.51      2IHL1097
+HETATM 1019  O   HOH   131      19.546   6.536  41.358  1.00 24.31      2IHL1098
+HETATM 1020  O   HOH   132      18.519  -0.106  27.468  1.00 26.95      2IHL1099
+HETATM 1021  O   HOH   133      21.758  18.191  21.798  1.00 13.37      2IHL1100
+HETATM 1022  O   HOH   134      31.020  22.850  20.029  1.00 14.13      2IHL1101
+HETATM 1023  O   HOH   135      21.882   2.556  39.906  1.00 12.03      2IHL1102
+HETATM 1024  O   HOH   136      37.911  10.722  33.095  1.00 22.62      2IHL1103
+HETATM 1025  O   HOH   137      30.185  10.320  35.035  1.00  8.91      2IHL1104
+HETATM 1026  O   HOH   138      46.735  14.632  38.421  1.00 21.83      2IHL1105
+HETATM 1027  O   HOH   139      51.057  14.691  40.923  1.00 19.65      2IHL1106
+HETATM 1028  O   HOH   140      33.347  12.575  46.649  1.00  9.14      2IHL1107
+HETATM 1029  O   HOH   141      41.843  13.991  46.523  1.00 18.16      2IHL1108
+HETATM 1030  O   HOH   142      34.681   7.919  46.852  1.00 17.89      2IHL1109
+HETATM 1031  O   HOH   143      17.264  15.618  31.545  1.00 17.68      2IHL1110
+HETATM 1032  O   HOH   144      30.141  19.238  36.661  1.00 16.17      2IHL1111
+HETATM 1033  O   HOH   145      24.012  23.189  33.310  1.00 13.75      2IHL1112
+HETATM 1034  O   HOH   146      16.868   2.559  37.689  1.00 12.62      2IHL1113
+HETATM 1035  O   HOH   148      19.555  -0.143  30.214  1.00 10.34      2IHL1114
+HETATM 1036  O   HOH   149      21.960  -1.393  30.754  1.00 19.29      2IHL1115
+HETATM 1037  O   HOH   150      15.524   1.949  25.178  1.00 18.77      2IHL1116
+HETATM 1038  O   HOH   151      14.571   3.788  27.020  1.00 16.13      2IHL1117
+HETATM 1039  O   HOH   152      13.245   1.356  29.593  1.00 28.40      2IHL1118
+HETATM 1040  O   HOH   153      14.842  11.043  29.020  1.00 19.36      2IHL1119
+HETATM 1041  O   HOH   154      24.228  14.790  14.927  1.00 21.59      2IHL1120
+HETATM 1042  O   HOH   155      34.640  15.568  16.450  1.00 12.15      2IHL1121
+HETATM 1043  O   HOH   156      37.594  11.645  17.236  1.00 15.40      2IHL1122
+HETATM 1044  O   HOH   157      37.590  13.854  15.195  1.00 14.57      2IHL1123
+HETATM 1045  O   HOH   158      30.363  12.658  14.958  1.00 17.67      2IHL1124
+HETATM 1046  O   HOH   159      32.770   8.256  15.903  1.00 22.61      2IHL1125
+HETATM 1047  O   HOH   160      38.078   5.287  29.824  1.00 23.28      2IHL1126
+HETATM 1048  O   HOH   161      25.960  13.237  36.967  1.00 11.99      2IHL1127
+HETATM 1049  O   HOH   162      26.457   9.270  36.924  1.00 10.95      2IHL1128
+HETATM 1050  O   HOH   163      39.955   7.183  44.669  1.00 12.02      2IHL1129
+HETATM 1051  O   HOH   164      40.440  13.308  44.304  1.00 12.41      2IHL1130
+HETATM 1052  O   HOH   165      41.209  16.464  43.923  1.00 14.34      2IHL1131
+HETATM 1053  O   HOH   166      49.422  11.604  34.796  1.00 28.18      2IHL1132
+HETATM 1054  O   HOH   167      35.128  20.661  44.552  1.00 28.29      2IHL1133
+HETATM 1055  O   HOH   168      46.540  15.600  48.009  1.00 23.42      2IHL1134
+HETATM 1056  O   HOH   169      36.926   5.860  51.194  1.00 23.59      2IHL1135
+HETATM 1057  O   HOH   170      42.858  21.269  40.182  1.00 25.68      2IHL1136
+HETATM 1058  O   HOH   171      32.166  20.879  35.985  1.00 17.86      2IHL1137
+HETATM 1059  O   HOH   172      25.096  16.241  41.025  1.00 20.38      2IHL1138
+HETATM 1060  O   HOH   173      23.881  16.194  38.284  1.00 14.54      2IHL1139
+HETATM 1061  O   HOH   174      40.171  17.443  24.247  1.00 19.48      2IHL1140
+HETATM 1062  O   HOH   175      39.272  21.198  18.028  1.00 30.03      2IHL1141
+HETATM 1063  O   HOH   176      22.372   7.800  41.051  1.00 19.02      2IHL1142
+HETATM 1064  O   HOH   177      24.521  11.048  36.276  1.00 14.15      2IHL1143
+HETATM 1065  O   HOH   179      12.112   4.745  39.956  1.00 51.51      2IHL1144
+HETATM 1066  O   HOH   180      19.276  13.557  33.525  1.00 15.19      2IHL1145
+HETATM 1067  O   HOH   181      24.554   9.750  15.999  1.00 13.36      2IHL1146
+HETATM 1068  O   HOH   182      26.081   0.305  41.213  1.00 20.08      2IHL1147
+HETATM 1069  O   HOH   183      39.564  17.030  49.834  1.00 33.16      2IHL1148
+HETATM 1070  O   HOH   185      12.474   5.819  26.301  1.00 38.34      2IHL1149
+HETATM 1071  O   HOH   186      23.859  -1.186  34.562  1.00 20.83      2IHL1150
+HETATM 1072  O   HOH   187      35.859   2.257  34.735  1.00 22.75      2IHL1151
+HETATM 1073  O   HOH   193      14.985   0.054  27.927  1.00 26.83      2IHL1152
+HETATM 1074  O   HOH   194      21.256  -0.986  24.939  1.00 28.03      2IHL1153
+HETATM 1075  O   HOH   196      13.982   1.511  36.676  1.00 28.88      2IHL1154
+HETATM 1076  O   HOH   197      14.682  10.410  32.438  1.00 28.18      2IHL1155
+HETATM 1077  O   HOH   198      10.987   1.088  28.594  1.00 30.80      2IHL1156
+HETATM 1078  O   HOH   199      16.483   7.993  16.306  1.00 35.14      2IHL1157
+HETATM 1079  O   HOH   201      25.969  22.300  24.509  1.00 20.42      2IHL1158
+HETATM 1080  O   HOH   203      35.871  22.329  26.900  1.00 31.51      2IHL1159
+HETATM 1081  O   HOH   204      28.201  -2.461  28.803  1.00 33.81      2IHL1160
+HETATM 1082  O   HOH   206      27.511  -0.761  36.061  1.00 28.49      2IHL1161
+HETATM 1083  O   HOH   207      36.225  -1.174  41.786  1.00 29.83      2IHL1162
+HETATM 1084  O   HOH   208      31.639   3.666  46.291  1.00 50.75      2IHL1163
+HETATM 1085  O   HOH   209      36.781   5.912  32.154  1.00 30.29      2IHL1164
+HETATM 1086  O   HOH   210      49.017   2.496  43.370  1.00 32.20      2IHL1165
+HETATM 1087  O   HOH   211      43.875   7.917  36.615  1.00 27.06      2IHL1166
+HETATM 1088  O   HOH   213      33.182  10.512  46.910  1.00 42.02      2IHL1167
+HETATM 1089  O   HOH   214      41.285  14.235  51.811  1.00 27.60      2IHL1168
+HETATM 1090  O   HOH   215      35.843   9.284  48.942  1.00 25.93      2IHL1169
+HETATM 1091  O   HOH   216      32.791  21.271  46.990  1.00 45.65      2IHL1170
+HETATM 1092  O   HOH   218      35.439  19.101  46.953  1.00 21.63      2IHL1171
+HETATM 1093  O   HOH   220      20.340  11.567  42.843  1.00 30.87      2IHL1172
+HETATM 1094  O   HOH   222      31.323  22.632  31.244  1.00 27.06      2IHL1173
+HETATM 1095  O   HOH   223      42.311  18.423  17.754  1.00 37.77      2IHL1174
+HETATM 1096  O   HOH   224      36.299   1.426  17.908  1.00 37.62      2IHL1175
+HETATM 1097  O   HOH   225      26.006  18.518  41.190  1.00 32.08      2IHL1176
+HETATM 1098  O   HOH   226      25.559  20.335  46.663  1.00 41.74      2IHL1177
+HETATM 1099  O   HOH   227      33.635  25.544  38.226  1.00 60.36      2IHL1178
+HETATM 1100  O   HOH   228      39.917  10.930  17.054  1.00 30.45      2IHL1179
+HETATM 1101  O   HOH   229      34.885  10.431  15.698  1.00 31.29      2IHL1180
+HETATM 1102  O   HOH   230      33.413  13.261  15.209  1.00 20.07      2IHL1181
+HETATM 1103  O   HOH   231      28.957   0.868  18.226  1.00 26.91      2IHL1182
+HETATM 1104  O   HOH   232      13.222  16.722  31.606  1.00 34.98      2IHL1183
+HETATM 1105  O   HOH   233      19.931  17.522  18.478  1.00 38.89      2IHL1184
+HETATM 1106  O   HOH   234      23.185  23.091  26.856  1.00 29.83      2IHL1185
+HETATM 1107  O   HOH   235      23.458  25.263  23.345  1.00 49.57      2IHL1186
+HETATM 1108  O   HOH   236      29.144  17.623  13.094  1.00 53.43      2IHL1187
+HETATM 1109  O   HOH   237      29.038   1.959  43.221  1.00 37.51      2IHL1188
+HETATM 1110  O   HOH   238      38.115   8.123  33.258  1.00 53.87      2IHL1189
+HETATM 1111  O   HOH   239      44.209  15.828  45.629  1.00 25.69      2IHL1190
+HETATM 1112  O   HOH   240      32.176   6.171  46.551  1.00 35.82      2IHL1191
+HETATM 1113  O   HOH   241      38.634   6.209  51.978  1.00 29.86      2IHL1192
+HETATM 1114  O   HOH   243      43.427  16.262  50.825  1.00 57.88      2IHL1193
+HETATM 1115  O   HOH   244      48.422  12.598  40.222  1.00 28.17      2IHL1194
+HETATM 1116  O   HOH   248      41.993  13.242  29.002  1.00 37.83      2IHL1195
+HETATM 1117  O   HOH   249      18.317   3.058  40.953  1.00 26.38      2IHL1196
+HETATM 1118  O   HOH   250      16.324   7.831  40.626  1.00 40.56      2IHL1197
+HETATM 1119  O   HOH   251      21.447  -3.223  32.992  1.00 37.57      2IHL1198
+HETATM 1120  O   HOH   253      23.283  -1.236  43.684  1.00 32.39      2IHL1199
+HETATM 1121  O   HOH   254      23.927  -4.024  42.770  1.00 29.42      2IHL1200
+HETATM 1122  O   HOH   255      23.496  -0.581  46.120  1.00 39.54      2IHL1201
+HETATM 1123  O   HOH   256      25.518   1.756  44.148  1.00 33.00      2IHL1202
+HETATM 1124  O   HOH   270      20.669  13.889  16.458  1.00 41.49      2IHL1203
+HETATM 1125  O   HOH   271      27.702  24.018  23.314  1.00 40.73      2IHL1204
+HETATM 1126  O   HOH   272      18.464  19.408  17.321  1.00 37.53      2IHL1205
+HETATM 1127  O   HOH   273      20.863  15.415  12.958  1.00 54.24      2IHL1206
+HETATM 1128  O   HOH   274      20.931  17.717  15.403  1.00 44.07      2IHL1207
+HETATM 1129  O   HOH   275      32.051  24.287  25.922  1.00 45.57      2IHL1208
+HETATM 1130  O   HOH   276      36.987  22.625  18.229  1.00 42.97      2IHL1209
+HETATM 1131  O   HOH   277      28.111  18.638   9.893  1.00 35.73      2IHL1210
+HETATM 1132  O   HOH   278      34.676  16.211  13.657  1.00 32.18      2IHL1211
+HETATM 1133  O   HOH   279      32.663  14.998  12.749  1.00 48.38      2IHL1212
+HETATM 1134  O   HOH   280      30.375   9.729  14.630  1.00 36.45      2IHL1213
+HETATM 1135  O   HOH   281      27.627  10.083  13.362  1.00 35.28      2IHL1214
+HETATM 1136  O   HOH   282      22.983  11.938  15.029  1.00 36.83      2IHL1215
+HETATM 1137  O   HOH   283      21.476  11.444  12.873  1.00 44.96      2IHL1216
+HETATM 1138  O   HOH   284      32.002  12.042  11.210  1.00 37.87      2IHL1217
+HETATM 1139  O   HOH   285      30.581  15.457  10.218  1.00 52.65      2IHL1218
+HETATM 1140  O   HOH   286      30.101  10.602  11.219  1.00 44.89      2IHL1219
+HETATM 1141  O   HOH   287      34.063  18.440  13.139  1.00 41.69      2IHL1220
+HETATM 1142  O   HOH   292      36.104   2.435  31.990  1.00 38.35      2IHL1221
+HETATM 1143  O   HOH   293      29.408  -1.882  33.380  1.00 50.98      2IHL1222
+HETATM 1144  O   HOH   295      27.832   4.448  43.944  1.00 43.58      2IHL1223
+HETATM 1145  O   HOH   296      43.251   6.114  48.451  1.00 35.02      2IHL1224
+HETATM 1146  O   HOH   297      46.857   8.601  44.445  1.00 42.27      2IHL1225
+HETATM 1147  O   HOH   298      32.317  -1.786  41.125  1.00 44.44      2IHL1226
+HETATM 1148  O   HOH   300      31.087   8.525  46.594  1.00 46.41      2IHL1227
+HETATM 1149  O   HOH   301      34.575   2.735  45.598  1.00 49.32      2IHL1228
+HETATM 1150  O   HOH   303      42.329  17.412  47.066  1.00 42.62      2IHL1229
+HETATM 1151  O   HOH   304      42.807  18.761  43.930  1.00 31.91      2IHL1230
+HETATM 1152  O   HOH   305      45.210  20.178  42.899  1.00 53.66      2IHL1231
+HETATM 1153  O   HOH   306      48.115  18.232  42.541  1.00 44.22      2IHL1232
+HETATM 1154  O   HOH   307      48.761  20.301  36.966  1.00 40.49      2IHL1233
+HETATM 1155  O   HOH   308      16.610  10.871  37.699  1.00 59.07      2IHL1234
+HETATM 1156  O   HOH   309      13.788   3.682  29.986  1.00 32.88      2IHL1235
+HETATM 1157  O   HOH   311      12.042   6.470  22.392  1.00 31.70      2IHL1236
+HETATM 1158  O   HOH   314      15.830  20.415  24.232  1.00 40.13      2IHL1237
+HETATM 1159  O   HOH   316      19.611  21.304  24.094  1.00 40.36      2IHL1238
+HETATM 1160  O   HOH   319      33.594  -1.822  27.776  1.00 44.49      2IHL1239
+HETATM 1161  O   HOH   320      36.758  -1.499  25.977  1.00 36.65      2IHL1240
+HETATM 1162  O   HOH   321      20.944   9.266  43.040  1.00 45.09      2IHL1241
+HETATM 1163  O   HOH   322      40.072   5.470  34.070  1.00 38.35      2IHL1242
+HETATM 1164  O   HOH   323      37.328  -0.018  29.031  1.00 41.55      2IHL1243
+HETATM 1165  O   HOH   324      30.083  -6.142  25.382  1.00 52.98      2IHL1244
+HETATM 1166  O   HOH   325      26.905   5.894  12.453  1.00 35.32      2IHL1245
+HETATM 1167  O   HOH   327      15.585   6.377  13.831  1.00 36.28      2IHL1246
+HETATM 1168  O   HOH   328      12.998   8.467  24.440  1.00 46.90      2IHL1247
+HETATM 1169  O   HOH   329      16.363  10.912  35.394  1.00 48.51      2IHL1248
+CONECT   49   48  996                                                   2IHL1249
+CONECT  238  237  905                                                   2IHL1250
+CONECT  520  519  640                                                   2IHL1251
+CONECT  608  607  735                                                   2IHL1252
+CONECT  640  520  639                                                   2IHL1253
+CONECT  735  608  734                                                   2IHL1254
+CONECT  905  238  904                                                   2IHL1255
+CONECT  996   49  995                                                   2IHL1256
+MASTER       44    0    1    0    0    0    0    6 1168    1    8   10  2IHL1257
+END                                                                     2IHL1258

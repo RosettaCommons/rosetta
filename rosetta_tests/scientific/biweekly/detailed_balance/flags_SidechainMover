@@ -1,0 +1,7 @@
+-backrub:sc_prob 1
+-backrub:sc_prob_withinrot .45
+-backrub:detailed_balance
+-backrub:test_detailed_balance
+-backrub:ntrials 200000
+#-backrub:ntrials 10000
+-out:prefix SidechainMover_

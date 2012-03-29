@@ -1,0 +1,843 @@
+HEADER    PHOSPHOTRANSFERASE                      04-OCT-93   1PTF      1PTF   2
+COMPND    HISTIDINE-CONTAINING PHOSPHOCARRIER PROTEIN (HPR)             1PTF   3
+SOURCE    (STREPTOCOCCUS FAECALIS, STRAIN HPR)                          1PTF   4
+AUTHOR    Z.JIA,W.QUAIL,L.DELBAERE                                      1PTF   5
+REVDAT   1   31-JAN-94 1PTF    0                                        1PTF   6
+JRNL        AUTH   Z.JIA,M.VANDONSELAAR,W.HENGSTENBERG,J.W.QUAIL,       1PTF   7
+JRNL        AUTH 2 L.T.J.DELBAERE                                       1PTF   8
+JRNL        TITL   THE 1.6 ANGSTROMS STRUCTURE OF                       1PTF   9
+JRNL        TITL 2 HISTIDINE-CONTAINING PHOSPHOTRANSFER PROTEIN HPR     1PTF  10
+JRNL        TITL 3 FROM STREPTOCOCCUS FAECALIS                          1PTF  11
+JRNL        REF    TO BE PUBLISHED                                      1PTF  12
+JRNL        REFN                                                   353  1PTF  13
+REMARK   1                                                              1PTF  14
+REMARK   1 REFERENCE 1                                                  1PTF  15
+REMARK   1  AUTH   Z.JIA,M.VANDONSELAAR,J.W.QUAIL,L.T.J.DELBAERE        1PTF  16
+REMARK   1  TITL   ACTIVE-CENTRE TORSION-ANGLE STRAIN REVEALED IN       1PTF  17
+REMARK   1  TITL 2 THE 1.6 ANGSTROMS RESOLUTION STRUCTURE OF THE        1PTF  18
+REMARK   1  TITL 3 HISTIDINE-CONTAINING PHOSPHOCARRIER PROTEIN HPR      1PTF  19
+REMARK   1  REF    NATURE                        V. 361    94 1993      1PTF  20
+REMARK   1  REFN   ASTM NATUAS  UK ISSN 0028-0836                  006  1PTF  21
+REMARK   2                                                              1PTF  22
+REMARK   2 RESOLUTION. 1.6  ANGSTROMS.                                  1PTF  23
+REMARK   3                                                              1PTF  24
+REMARK   3 REFINEMENT.                                                  1PTF  25
+REMARK   3   PROGRAM 1                  X-PLOR                          1PTF  26
+REMARK   3   AUTHORS 1                  BRUNGER                         1PTF  27
+REMARK   3   PROGRAM 2                  PROLSQ                          1PTF  28
+REMARK   3   AUTHORS 2                  KONNERT,HENDRICKSON             1PTF  29
+REMARK   3   R VALUE                    0.156                           1PTF  30
+REMARK   3   RMSD BOND DISTANCES        0.014  ANGSTROMS                1PTF  31
+REMARK   3   RMSD BOND ANGLES           1.9    DEGREES                  1PTF  32
+REMARK   3                                                              1PTF  33
+REMARK   3   NUMBER OF REFLECTIONS      9481                            1PTF  34
+REMARK   3   RESOLUTION RANGE       8.0 - 1.6  ANGSTROMS                1PTF  35
+REMARK   3   DATA CUTOFF                0.0    SIGMA(F)                 1PTF  36
+REMARK   3   PER CENT COMPLETION        95.0                            1PTF  37
+REMARK   3                                                              1PTF  38
+REMARK   3   NUMBER OF PROTEIN ATOMS                        737         1PTF  39
+REMARK   3   NUMBER OF SOLVENT ATOMS                        100         1PTF  40
+REMARK   3                                                              1PTF  41
+REMARK   3  RMS DEVIATIONS FROM IDEAL VALUES (THE VALUES OF             1PTF  42
+REMARK   3      SIGMA, IN PARENTHESES, ARE THE INPUT ESTIMATED          1PTF  43
+REMARK   3      STANDARD DEVIATIONS THAT DETERMINE THE RELATIVE         1PTF  44
+REMARK   3      WEIGHTS OF THE CORRESPONDING RESTRAINTS)                1PTF  45
+REMARK   3    DISTANCE RESTRAINTS (ANGSTROMS)                           1PTF  46
+REMARK   3      BOND DISTANCE                            0.014(0.010)   1PTF  47
+REMARK   3      ANGLE DISTANCE                           0.035(0.020)   1PTF  48
+REMARK   3      PLANAR 1-4 DISTANCE                      0.047(0.020)   1PTF  49
+REMARK   3    PLANE RESTRAINT (ANGSTROMS)                0.014(0.020)   1PTF  50
+REMARK   3    CHIRAL-CENTER RESTRAINT (ANGSTROMS**3)     0.240(0.150)   1PTF  51
+REMARK   3    NON-BONDED CONTACT RESTRAINTS (ANGSTROMS)                 1PTF  52
+REMARK   3      SINGLE TORSION CONTACT                   0.175(0.500)   1PTF  53
+REMARK   3      MULTIPLE TORSION CONTACT                 0.213(0.500)   1PTF  54
+REMARK   3      POSSIBLE HYDROGEN BOND                   0.188(0.500)   1PTF  55
+REMARK   3    CONFORMATIONAL TORSION ANGLE RESTRAINT (DEGREES)          1PTF  56
+REMARK   3      PLANAR                                     2.6(1.0)     1PTF  57
+REMARK   3      STAGGERED                                 15.4(15.0)    1PTF  58
+REMARK   3      ORTHONORMAL                               24.2(20.0)    1PTF  59
+REMARK   3    ISOTROPIC THERMAL FACTOR RESTRAINTS (ANGSTROMS**2)        1PTF  60
+REMARK   3      MAIN-CHAIN BOND                          2.247(2.000)   1PTF  61
+REMARK   3      MAIN-CHAIN ANGLE                         3.104(3.000)   1PTF  62
+REMARK   3      SIDE-CHAIN BOND                          7.902(5.000)   1PTF  63
+REMARK   3      SIDE-CHAIN ANGLE                        11.883(7.000)   1PTF  64
+REMARK   4                                                              1PTF  65
+REMARK   4 THE STREPTOCOCCUS FAECALIS HPR SEQUENCE HAS BEEN CORRECTED   1PTF  66
+REMARK   4 TO HAVE 88 RESIDUES INSTEAD OF 89 RESIDUES (Z.JIA,           1PTF  67
+REMARK   4 M.VANDONSELAAR,J.W.QUAIL,W.HENGSTENBERG,L.T.J.DELBAERE.      1PTF  68
+REMARK   4 (1993) THE 1.6 ANGSTROMS RESOLUTION STRUCTURE OF             1PTF  69
+REMARK   4 HISTIDINE-CONTAINING PHOSPHOCARRIER PROTEIN HPR FROM         1PTF  70
+REMARK   4 STREPTOCOCCUS FAECALIS.  JOURNAL OF MOLECULAR BIOLOGY, IN    1PTF  71
+REMARK   4 PRESS).                                                      1PTF  72
+REMARK   5                                                              1PTF  73
+REMARK   5 IN THE CURRENT STRUCTURE, THE LAST RESIDUE (GLU 88) IS       1PTF  74
+REMARK   5 MISSING DUE TO WEAK DENSITY.  LYS 83 HAS BEEN BUILT AS ALA   1PTF  75
+REMARK   5 INTO THE MODEL, DUE TO THE WEAK ELECTRON FOR THIS SIDE       1PTF  76
+REMARK   5 CHAIN.  ALA 16 HAS A HIGH-ENERGY CONFORMATION AS DISCUSSED   1PTF  77
+REMARK   5 IN NATURE V. 361, 94 (1993).                                 1PTF  78
+SEQRES   1     88  MET GLU LYS LYS GLU PHE HIS ILE VAL ALA GLU THR GLY  1PTF  79
+SEQRES   2     88  ILE HIS ALA ARG PRO ALA THR LEU LEU VAL GLN THR ALA  1PTF  80
+SEQRES   3     88  SER LYS PHE ASN SER ASP ILE ASN LEU GLU TYR LYS GLY  1PTF  81
+SEQRES   4     88  LYS SER VAL ASN LEU LYS SER ILE MET GLY VAL MET SER  1PTF  82
+SEQRES   5     88  LEU GLY VAL GLY GLN GLY SER ASP VAL THR ILE THR VAL  1PTF  83
+SEQRES   6     88  ASP GLY ALA ASP GLU ALA GLU GLY MET ALA ALA ILE VAL  1PTF  84
+SEQRES   7     88  GLU THR LEU GLN LYS GLU GLY LEU ALA GLU              1PTF  85
+FORMUL   2  HOH   *99(H2 O1)                                            1PTF  86
+HELIX    1 A   ALA     16  SER     27  1                                1PTF  87
+HELIX    2 B   SER     46  SER     52  1 DISTORTED SHORT HELIX          1PTF  88
+HELIX    3 C   ASP     69  GLU     84  1                                1PTF  89
+SHEET    1 S1  4 GLU     2  ILE     8  0                                1PTF  90
+SHEET    2 S1  4 GLY    58  ASP    66 -1  N  ILE    63   O  LYS     4   1PTF  91
+SHEET    3 S1  4 ASP    32  GLU    36 -1  N  GLU    36   O  THR    62   1PTF  92
+SHEET    4 S1  4 LYS    40  LEU    44 -1  N  VAL    42   O  LEU    35   1PTF  93
+TURN     1 T1  ALA    10  GLY    13     TYPE I                          1PTF  94
+TURN     2 T2  TYR    37  LYS    40     TYPE III'                       1PTF  95
+TURN     3 T3  ASN    43  SER    46     TYPE I                          1PTF  96
+TURN     4 T4  GLY    56  SER    59     TYPE II                         1PTF  97
+TURN     5 T5  GLY    67  GLU    70     TYPE I                          1PTF  98
+CRYST1   53.560   45.460   29.880  90.00  90.00  90.00 P 21 21 2     4  1PTF  99
+ORIGX1      1.000000  0.000000  0.000000        0.00000                 1PTF 100
+ORIGX2      0.000000  1.000000  0.000000        0.00000                 1PTF 101
+ORIGX3      0.000000  0.000000  1.000000        0.00000                 1PTF 102
+SCALE1      0.018671  0.000000  0.000000        0.00000                 1PTF 103
+SCALE2      0.000000  0.021997  0.000000        0.00000                 1PTF 104
+SCALE3      0.000000  0.000000  0.033467        0.00000                 1PTF 105
+ATOM      1  N   MET     1      -0.561 -16.653   8.467  1.00 14.99      1PTF 106
+ATOM      2  CA  MET     1       0.419 -15.666   8.975  1.00 17.05      1PTF 107
+ATOM      3  C   MET     1       1.634 -16.435   9.510  1.00 20.83      1PTF 108
+ATOM      4  O   MET     1       1.478 -17.497  10.151  1.00 17.97      1PTF 109
+ATOM      5  CB  MET     1      -0.257 -14.945  10.148  1.00 16.69      1PTF 110
+ATOM      6  CG  MET     1       0.724 -14.117  10.911  1.00 22.94      1PTF 111
+ATOM      7  SD  MET     1      -0.105 -13.398  12.359  1.00 29.20      1PTF 112
+ATOM      8  CE  MET     1       1.103 -13.699  13.650  1.00 39.30      1PTF 113
+ATOM      9  N   GLU     2       2.834 -15.969   9.195  1.00 16.22      1PTF 114
+ATOM     10  CA  GLU     2       4.085 -16.573   9.746  1.00 12.78      1PTF 115
+ATOM     11  C   GLU     2       4.849 -15.456  10.492  1.00 12.95      1PTF 116
+ATOM     12  O   GLU     2       4.878 -14.304   9.991  1.00 11.76      1PTF 117
+ATOM     13  CB  GLU     2       4.997 -16.907   8.532  1.00 15.63      1PTF 118
+ATOM     14  CG  GLU     2       4.332 -17.798   7.483  1.00 28.85      1PTF 119
+ATOM     15  CD  GLU     2       5.037 -19.117   7.299  1.00 35.26      1PTF 120
+ATOM     16  OE1 GLU     2       6.143 -19.346   7.756  1.00 38.35      1PTF 121
+ATOM     17  OE2 GLU     2       4.418 -19.914   6.565  1.00 35.62      1PTF 122
+ATOM     18  N   LYS     3       5.447 -15.826  11.597  1.00 11.30      1PTF 123
+ATOM     19  CA  LYS     3       6.253 -14.853  12.383  1.00 11.56      1PTF 124
+ATOM     20  C   LYS     3       7.574 -15.520  12.746  1.00 15.60      1PTF 125
+ATOM     21  O   LYS     3       7.627 -16.723  13.091  1.00 14.45      1PTF 126
+ATOM     22  CB  LYS     3       5.459 -14.486  13.617  1.00 15.12      1PTF 127
+ATOM     23  CG  LYS     3       6.231 -13.574  14.566  1.00 25.14      1PTF 128
+ATOM     24  CD  LYS     3       5.196 -12.983  15.523  1.00 43.69      1PTF 129
+ATOM     25  CE  LYS     3       5.608 -13.202  16.962  1.00 69.28      1PTF 130
+ATOM     26  NZ  LYS     3       4.531 -12.721  17.874  1.00 88.26      1PTF 131
+ATOM     27  N   LYS     4       8.666 -14.752  12.658  1.00 11.61      1PTF 132
+ATOM     28  CA  LYS     4      10.007 -15.299  13.016  1.00 11.30      1PTF 133
+ATOM     29  C   LYS     4      10.888 -14.214  13.630  1.00 10.93      1PTF 134
+ATOM     30  O   LYS     4      10.878 -13.049  13.145  1.00 11.56      1PTF 135
+ATOM     31  CB  LYS     4      10.700 -15.801  11.743  1.00 14.65      1PTF 136
+ATOM     32  CG  LYS     4      11.896 -16.718  12.094  1.00 29.79      1PTF 137
+ATOM     33  CD  LYS     4      12.109 -17.644  10.890  1.00 40.97      1PTF 138
+ATOM     34  CE  LYS     4      12.783 -18.948  11.248  1.00 55.88      1PTF 139
+ATOM     35  NZ  LYS     4      11.837 -20.092  11.156  1.00 61.05      1PTF 140
+ATOM     36  N   GLU     5      11.650 -14.665  14.615  1.00  8.47      1PTF 141
+ATOM     37  CA  GLU     5      12.612 -13.767  15.292  1.00  8.52      1PTF 142
+ATOM     38  C   GLU     5      14.031 -13.990  14.756  1.00 11.48      1PTF 143
+ATOM     39  O   GLU     5      14.446 -15.117  14.386  1.00 10.69      1PTF 144
+ATOM     40  CB  GLU     5      12.580 -14.075  16.776  1.00 13.85      1PTF 145
+ATOM     41  CG  GLU     5      13.037 -12.965  17.712  1.00 29.71      1PTF 146
+ATOM     42  CD  GLU     5      13.114 -13.383  19.166  1.00 44.79      1PTF 147
+ATOM     43  OE1 GLU     5      12.170 -14.161  19.478  1.00 40.67      1PTF 148
+ATOM     44  OE2 GLU     5      14.033 -13.037  19.894  1.00 48.34      1PTF 149
+ATOM     45  N   PHE     6      14.779 -12.871  14.721  1.00  9.84      1PTF 150
+ATOM     46  CA  PHE     6      16.174 -12.911  14.186  1.00 10.90      1PTF 151
+ATOM     47  C   PHE     6      17.088 -12.022  15.020  1.00 12.85      1PTF 152
+ATOM     48  O   PHE     6      16.563 -11.044  15.558  1.00 13.49      1PTF 153
+ATOM     49  CB  PHE     6      16.182 -12.326  12.767  1.00 10.22      1PTF 154
+ATOM     50  CG  PHE     6      15.357 -13.120  11.789  1.00 12.71      1PTF 155
+ATOM     51  CD1 PHE     6      15.902 -14.272  11.217  1.00 17.63      1PTF 156
+ATOM     52  CD2 PHE     6      14.070 -12.715  11.446  1.00 16.20      1PTF 157
+ATOM     53  CE1 PHE     6      15.130 -15.029  10.333  1.00 20.38      1PTF 158
+ATOM     54  CE2 PHE     6      13.335 -13.413  10.475  1.00 18.06      1PTF 159
+ATOM     55  CZ  PHE     6      13.879 -14.579   9.905  1.00 16.68      1PTF 160
+ATOM     56  N   HIS     7      18.371 -12.346  15.057  1.00 10.45      1PTF 161
+ATOM     57  CA  HIS     7      19.299 -11.458  15.850  1.00  8.17      1PTF 162
+ATOM     58  C   HIS     7      20.242 -10.947  14.751  1.00 11.03      1PTF 163
+ATOM     59  O   HIS     7      20.866 -11.760  13.992  1.00 12.30      1PTF 164
+ATOM     60  CB  HIS     7      20.105 -12.300  16.848  1.00 15.19      1PTF 165
+ATOM     61  CG  HIS     7      21.092 -11.566  17.700  1.00 22.38      1PTF 166
+ATOM     62  ND1 HIS     7      20.779 -10.571  18.594  1.00 26.02      1PTF 167
+ATOM     63  CD2 HIS     7      22.405 -11.863  17.928  1.00 28.47      1PTF 168
+ATOM     64  CE1 HIS     7      21.849 -10.249  19.310  1.00 23.65      1PTF 169
+ATOM     65  NE2 HIS     7      22.851 -10.985  18.887  1.00 30.09      1PTF 170
+ATOM     66  N   ILE     8      20.300  -9.636  14.656  1.00  9.48      1PTF 171
+ATOM     67  CA  ILE     8      21.131  -9.001  13.594  1.00  9.87      1PTF 172
+ATOM     68  C   ILE     8      22.595  -8.988  14.070  1.00 10.43      1PTF 173
+ATOM     69  O   ILE     8      22.938  -8.419  15.124  1.00 13.58      1PTF 174
+ATOM     70  CB  ILE     8      20.609  -7.518  13.410  1.00 11.05      1PTF 175
+ATOM     71  CG1 ILE     8      19.096  -7.622  13.093  1.00 13.88      1PTF 176
+ATOM     72  CG2 ILE     8      21.351  -6.815  12.233  1.00 12.12      1PTF 177
+ATOM     73  CD1 ILE     8      18.835  -8.394  11.762  1.00 14.70      1PTF 178
+ATOM     74  N   VAL     9      23.450  -9.459  13.179  1.00 10.01      1PTF 179
+ATOM     75  CA  VAL     9      24.888  -9.513  13.535  1.00 11.31      1PTF 180
+ATOM     76  C   VAL     9      25.726  -8.719  12.540  1.00 13.41      1PTF 181
+ATOM     77  O   VAL     9      26.932  -8.628  12.880  1.00 14.25      1PTF 182
+ATOM     78  CB  VAL     9      25.317 -11.014  13.612  1.00 14.07      1PTF 183
+ATOM     79  CG1 VAL     9      24.611 -11.748  14.739  1.00 14.08      1PTF 184
+ATOM     80  CG2 VAL     9      25.145 -11.673  12.257  1.00 13.25      1PTF 185
+ATOM     81  N   ALA    10      25.169  -8.189  11.457  1.00 10.54      1PTF 186
+ATOM     82  CA  ALA    10      26.033  -7.439  10.510  1.00 12.74      1PTF 187
+ATOM     83  C   ALA    10      26.530  -6.156  11.191  1.00 16.41      1PTF 188
+ATOM     84  O   ALA    10      25.826  -5.460  11.946  1.00 11.28      1PTF 189
+ATOM     85  CB  ALA    10      25.325  -7.185   9.210  1.00 12.70      1PTF 190
+ATOM     86  N   GLU    11      27.787  -5.815  10.901  1.00 15.78      1PTF 191
+ATOM     87  CA  GLU    11      28.424  -4.608  11.463  1.00 14.88      1PTF 192
+ATOM     88  C   GLU    11      27.711  -3.352  11.003  1.00 13.93      1PTF 193
+ATOM     89  O   GLU    11      27.695  -2.329  11.712  1.00 15.94      1PTF 194
+ATOM     90  CB  GLU    11      29.916  -4.579  11.062  1.00 20.86      1PTF 195
+ATOM     91  CG  GLU    11      30.752  -5.641  11.799  1.00 30.66      1PTF 196
+ATOM     92  CD  GLU    11      31.654  -5.126  12.880  1.00 63.17      1PTF 197
+ATOM     93  OE1 GLU    11      31.326  -4.927  14.041  1.00 72.07      1PTF 198
+ATOM     94  OE2 GLU    11      32.825  -4.904  12.476  1.00 76.97      1PTF 199
+ATOM     95  N   THR    12      27.102  -3.386   9.826  1.00 10.63      1PTF 200
+ATOM     96  CA  THR    12      26.360  -2.242   9.307  1.00 11.97      1PTF 201
+ATOM     97  C   THR    12      24.933  -2.152   9.909  1.00 14.32      1PTF 202
+ATOM     98  O   THR    12      24.308  -1.082   9.715  1.00 16.09      1PTF 203
+ATOM     99  CB  THR    12      26.243  -2.315   7.723  1.00 19.92      1PTF 204
+ATOM    100  OG1 THR    12      25.546  -3.580   7.438  1.00 17.86      1PTF 205
+ATOM    101  CG2 THR    12      27.556  -2.197   6.955  1.00 22.47      1PTF 206
+ATOM    102  N   GLY    13      24.457  -3.201  10.545  1.00 10.50      1PTF 207
+ATOM    103  CA  GLY    13      23.033  -3.236  11.031  1.00 11.48      1PTF 208
+ATOM    104  C   GLY    13      22.162  -3.280   9.758  1.00 13.68      1PTF 209
+ATOM    105  O   GLY    13      22.708  -3.632   8.687  1.00 10.94      1PTF 210
+ATOM    106  N   ILE    14      20.897  -2.864   9.828  1.00  9.12      1PTF 211
+ATOM    107  CA  ILE    14      20.120  -2.869   8.562  1.00  9.54      1PTF 212
+ATOM    108  C   ILE    14      20.229  -1.451   7.952  1.00 10.89      1PTF 213
+ATOM    109  O   ILE    14      19.323  -0.620   8.162  1.00 11.14      1PTF 214
+ATOM    110  CB  ILE    14      18.638  -3.341   8.794  1.00  9.78      1PTF 215
+ATOM    111  CG1 ILE    14      18.639  -4.702   9.528  1.00 10.02      1PTF 216
+ATOM    112  CG2 ILE    14      17.908  -3.474   7.417  1.00  9.34      1PTF 217
+ATOM    113  CD1 ILE    14      17.203  -5.276   9.841  1.00 13.27      1PTF 218
+ATOM    114  N   HIS    15      21.301  -1.261   7.204  1.00  7.88      1PTF 219
+ATOM    115  CA  HIS    15      21.552   0.046   6.558  1.00  7.17      1PTF 220
+ATOM    116  C   HIS    15      22.322  -0.265   5.272  1.00 11.87      1PTF 221
+ATOM    117  O   HIS    15      22.747  -1.413   5.107  1.00 10.85      1PTF 222
+ATOM    118  CB  HIS    15      22.480   0.949   7.416  1.00  7.64      1PTF 223
+ATOM    119  CG  HIS    15      21.829   1.326   8.719  1.00 10.52      1PTF 224
+ATOM    120  ND1 HIS    15      22.102   0.751   9.928  1.00 13.39      1PTF 225
+ATOM    121  CD2 HIS    15      20.927   2.327   8.963  1.00 10.69      1PTF 226
+ATOM    122  CE1 HIS    15      21.318   1.248  10.863  1.00  8.97      1PTF 227
+ATOM    123  NE2 HIS    15      20.634   2.225  10.301  1.00 15.74      1PTF 228
+ATOM    124  N   ALA    16      22.465   0.698   4.398  1.00 12.86      1PTF 229
+ATOM    125  CA  ALA    16      23.246   0.623   3.142  1.00 11.02      1PTF 230
+ATOM    126  C   ALA    16      22.762  -0.474   2.222  1.00 11.60      1PTF 231
+ATOM    127  O   ALA    16      21.547  -0.760   2.234  1.00 11.30      1PTF 232
+ATOM    128  CB  ALA    16      24.713   0.451   3.598  1.00 11.63      1PTF 233
+ATOM    129  N   ARG    17      23.607  -1.031   1.368  1.00 10.55      1PTF 234
+ATOM    130  CA  ARG    17      23.227  -2.105   0.467  1.00 12.54      1PTF 235
+ATOM    131  C   ARG    17      22.480  -3.285   1.080  1.00 11.02      1PTF 236
+ATOM    132  O   ARG    17      21.501  -3.782   0.510  1.00 10.95      1PTF 237
+ATOM    133  CB  ARG    17      24.378  -2.565  -0.434  1.00 12.73      1PTF 238
+ATOM    134  CG  ARG    17      23.990  -3.603  -1.490  1.00 16.76      1PTF 239
+ATOM    135  CD  ARG    17      25.145  -3.695  -2.464  1.00 17.07      1PTF 240
+ATOM    136  NE  ARG    17      25.005  -4.797  -3.406  1.00 18.48      1PTF 241
+ATOM    137  CZ  ARG    17      24.287  -4.682  -4.532  1.00 25.76      1PTF 242
+ATOM    138  NH1 ARG    17      23.729  -3.480  -4.711  1.00 28.16      1PTF 243
+ATOM    139  NH2 ARG    17      24.081  -5.692  -5.389  1.00 19.98      1PTF 244
+ATOM    140  N   PRO    18      22.885  -3.731   2.268  1.00 12.15      1PTF 245
+ATOM    141  CA  PRO    18      22.173  -4.837   2.956  1.00 10.87      1PTF 246
+ATOM    142  C   PRO    18      20.711  -4.457   3.159  1.00 10.64      1PTF 247
+ATOM    143  O   PRO    18      19.850  -5.326   2.945  1.00 10.86      1PTF 248
+ATOM    144  CB  PRO    18      22.872  -4.910   4.328  1.00 11.54      1PTF 249
+ATOM    145  CG  PRO    18      24.292  -4.500   3.984  1.00 13.05      1PTF 250
+ATOM    146  CD  PRO    18      24.130  -3.343   2.971  1.00 11.21      1PTF 251
+ATOM    147  N   ALA    19      20.435  -3.218   3.500  1.00  8.65      1PTF 252
+ATOM    148  CA  ALA    19      19.032  -2.757   3.695  1.00  9.43      1PTF 253
+ATOM    149  C   ALA    19      18.293  -2.692   2.356  1.00  8.89      1PTF 254
+ATOM    150  O   ALA    19      17.132  -3.172   2.285  1.00  9.73      1PTF 255
+ATOM    151  CB  ALA    19      19.049  -1.374   4.376  1.00  8.68      1PTF 256
+ATOM    152  N   THR    20      18.920  -2.193   1.312  1.00  8.19      1PTF 257
+ATOM    153  CA  THR    20      18.227  -2.096   0.021  1.00  9.75      1PTF 258
+ATOM    154  C   THR    20      17.886  -3.452  -0.588  1.00  9.86      1PTF 259
+ATOM    155  O   THR    20      16.815  -3.601  -1.238  1.00  9.21      1PTF 260
+ATOM    156  CB  THR    20      18.827  -1.062  -1.021  1.00 12.66      1PTF 261
+ATOM    157  OG1 THR    20      20.124  -1.628  -1.331  1.00 12.53      1PTF 262
+ATOM    158  CG2 THR    20      18.978   0.346  -0.410  1.00 12.10      1PTF 263
+ATOM    159  N   LEU    21      18.811  -4.379  -0.473  1.00  8.46      1PTF 264
+ATOM    160  CA  LEU    21      18.559  -5.744  -1.009  1.00  9.81      1PTF 265
+ATOM    161  C   LEU    21      17.396  -6.409  -0.229  1.00 10.72      1PTF 266
+ATOM    162  O   LEU    21      16.581  -7.102  -0.905  1.00  9.90      1PTF 267
+ATOM    163  CB  LEU    21      19.868  -6.543  -0.858  1.00 11.37      1PTF 268
+ATOM    164  CG  LEU    21      20.969  -6.137  -1.823  1.00 16.62      1PTF 269
+ATOM    165  CD1 LEU    21      22.205  -7.001  -1.584  1.00 18.64      1PTF 270
+ATOM    166  CD2 LEU    21      20.460  -6.294  -3.253  1.00 21.88      1PTF 271
+ATOM    167  N   LEU    22      17.393  -6.226   1.086  1.00  8.22      1PTF 272
+ATOM    168  CA  LEU    22      16.314  -6.827   1.898  1.00  7.53      1PTF 273
+ATOM    169  C   LEU    22      14.956  -6.260   1.450  1.00  7.78      1PTF 274
+ATOM    170  O   LEU    22      14.000  -7.040   1.287  1.00  7.49      1PTF 275
+ATOM    171  CB  LEU    22      16.629  -6.557   3.381  1.00  7.20      1PTF 276
+ATOM    172  CG  LEU    22      15.569  -7.054   4.370  1.00  9.45      1PTF 277
+ATOM    173  CD1 LEU    22      15.389  -8.593   4.260  1.00 13.87      1PTF 278
+ATOM    174  CD2 LEU    22      15.952  -6.691   5.806  1.00 11.79      1PTF 279
+ATOM    175  N   VAL    23      14.825  -4.950   1.391  1.00  6.85      1PTF 280
+ATOM    176  CA  VAL    23      13.545  -4.337   0.955  1.00  6.79      1PTF 281
+ATOM    177  C   VAL    23      13.161  -4.804  -0.449  1.00  9.08      1PTF 282
+ATOM    178  O   VAL    23      11.973  -5.063  -0.695  1.00 10.07      1PTF 283
+ATOM    179  CB  VAL    23      13.669  -2.805   1.051  1.00  8.71      1PTF 284
+ATOM    180  CG1 VAL    23      12.469  -2.123   0.427  1.00 10.13      1PTF 285
+ATOM    181  CG2 VAL    23      13.800  -2.456   2.534  1.00  6.72      1PTF 286
+ATOM    182  N   GLN    24      14.143  -4.936  -1.326  1.00  8.38      1PTF 287
+ATOM    183  CA  GLN    24      13.862  -5.397  -2.709  1.00 12.35      1PTF 288
+ATOM    184  C   GLN    24      13.250  -6.798  -2.699  1.00 12.23      1PTF 289
+ATOM    185  O   GLN    24      12.363  -7.111  -3.512  1.00 13.41      1PTF 290
+ATOM    186  CB  GLN    24      15.153  -5.435  -3.535  1.00 16.38      1PTF 291
+ATOM    187  CG  GLN    24      15.584  -4.107  -4.103  1.00 45.58      1PTF 292
+ATOM    188  CD  GLN    24      16.816  -4.314  -4.981  1.00 60.79      1PTF 293
+ATOM    189  OE1 GLN    24      16.998  -5.389  -5.565  1.00 60.14      1PTF 294
+ATOM    190  NE2 GLN    24      17.632  -3.260  -5.017  1.00 49.38      1PTF 295
+ATOM    191  N   THR    25      13.787  -7.641  -1.820  1.00 10.01      1PTF 296
+ATOM    192  CA  THR    25      13.298  -9.030  -1.704  1.00 10.21      1PTF 297
+ATOM    193  C   THR    25      11.848  -9.043  -1.161  1.00 11.65      1PTF 298
+ATOM    194  O   THR    25      10.985  -9.735  -1.754  1.00 11.46      1PTF 299
+ATOM    195  CB  THR    25      14.189  -9.915  -0.755  1.00 15.26      1PTF 300
+ATOM    196  OG1 THR    25      15.430 -10.003  -1.528  1.00 20.52      1PTF 301
+ATOM    197  CG2 THR    25      13.596 -11.309  -0.562  1.00 16.11      1PTF 302
+ATOM    198  N   ALA    26      11.633  -8.225  -0.157  1.00  7.18      1PTF 303
+ATOM    199  CA  ALA    26      10.290  -8.158   0.448  1.00 10.26      1PTF 304
+ATOM    200  C   ALA    26       9.262  -7.695  -0.580  1.00 10.24      1PTF 305
+ATOM    201  O   ALA    26       8.129  -8.189  -0.638  1.00  9.51      1PTF 306
+ATOM    202  CB  ALA    26      10.304  -7.233   1.673  1.00  8.05      1PTF 307
+ATOM    203  N   SER    27       9.673  -6.731  -1.386  1.00  9.28      1PTF 308
+ATOM    204  CA  SER    27       8.849  -6.133  -2.426  1.00 11.13      1PTF 309
+ATOM    205  C   SER    27       8.435  -7.122  -3.497  1.00 12.73      1PTF 310
+ATOM    206  O   SER    27       7.443  -6.780  -4.215  1.00 16.89      1PTF 311
+ATOM    207  CB  SER    27       9.629  -4.955  -3.057  1.00 10.83      1PTF 312
+ATOM    208  OG  SER    27       9.705  -3.981  -2.004  1.00 19.04      1PTF 313
+ATOM    209  N   LYS    28       9.014  -8.311  -3.544  1.00 11.61      1PTF 314
+ATOM    210  CA  LYS    28       8.606  -9.243  -4.624  1.00 11.13      1PTF 315
+ATOM    211  C   LYS    28       7.314 -10.016  -4.208  1.00 14.38      1PTF 316
+ATOM    212  O   LYS    28       6.766 -10.687  -5.114  1.00 16.57      1PTF 317
+ATOM    213  CB  LYS    28       9.667 -10.328  -4.841  1.00 21.30      1PTF 318
+ATOM    214  CG  LYS    28      11.037  -9.875  -5.340  1.00 29.68      1PTF 319
+ATOM    215  CD  LYS    28      11.906 -11.114  -5.581  1.00 52.67      1PTF 320
+ATOM    216  CE  LYS    28      13.132 -10.813  -6.415  1.00 75.08      1PTF 321
+ATOM    217  NZ  LYS    28      12.932 -11.011  -7.872  1.00 81.05      1PTF 322
+ATOM    218  N   PHE    29       6.902  -9.890  -2.959  1.00  9.10      1PTF 323
+ATOM    219  CA  PHE    29       5.758 -10.690  -2.493  1.00 11.73      1PTF 324
+ATOM    220  C   PHE    29       4.473  -9.863  -2.330  1.00 12.74      1PTF 325
+ATOM    221  O   PHE    29       4.597  -8.663  -2.091  1.00 12.70      1PTF 326
+ATOM    222  CB  PHE    29       6.119 -11.403  -1.179  1.00  9.61      1PTF 327
+ATOM    223  CG  PHE    29       7.280 -12.337  -1.438  1.00  9.39      1PTF 328
+ATOM    224  CD1 PHE    29       7.040 -13.584  -2.056  1.00 12.84      1PTF 329
+ATOM    225  CD2 PHE    29       8.587 -11.933  -1.186  1.00  8.77      1PTF 330
+ATOM    226  CE1 PHE    29       8.097 -14.452  -2.322  1.00 14.14      1PTF 331
+ATOM    227  CE2 PHE    29       9.666 -12.771  -1.494  1.00 10.35      1PTF 332
+ATOM    228  CZ  PHE    29       9.424 -14.047  -2.067  1.00 11.42      1PTF 333
+ATOM    229  N   ASN    30       3.329 -10.535  -2.390  1.00 10.84      1PTF 334
+ATOM    230  CA  ASN    30       2.029  -9.844  -2.201  1.00 11.89      1PTF 335
+ATOM    231  C   ASN    30       1.618  -9.760  -0.736  1.00 11.14      1PTF 336
+ATOM    232  O   ASN    30       0.927  -8.798  -0.315  1.00 13.17      1PTF 337
+ATOM    233  CB  ASN    30       0.954 -10.542  -3.060  1.00 11.63      1PTF 338
+ATOM    234  CG  ASN    30       1.384 -10.549  -4.527  1.00 16.51      1PTF 339
+ATOM    235  OD1 ASN    30       1.310  -9.461  -5.107  1.00 21.41      1PTF 340
+ATOM    236  ND2 ASN    30       1.679 -11.724  -5.077  1.00 17.67      1PTF 341
+ATOM    237  N   SER    31       2.040 -10.694   0.095  1.00  8.02      1PTF 342
+ATOM    238  CA  SER    31       1.691 -10.695   1.523  1.00  6.35      1PTF 343
+ATOM    239  C   SER    31       2.138  -9.381   2.168  1.00  8.97      1PTF 344
+ATOM    240  O   SER    31       3.065  -8.734   1.650  1.00 10.35      1PTF 345
+ATOM    241  CB  SER    31       2.462 -11.778   2.256  1.00 12.06      1PTF 346
+ATOM    242  OG  SER    31       2.169 -13.077   1.752  1.00 13.03      1PTF 347
+ATOM    243  N   ASP    32       1.476  -9.088   3.268  1.00  8.33      1PTF 348
+ATOM    244  CA  ASP    32       1.930  -7.949   4.107  1.00  8.85      1PTF 349
+ATOM    245  C   ASP    32       3.169  -8.479   4.881  1.00  8.79      1PTF 350
+ATOM    246  O   ASP    32       3.106  -9.551   5.496  1.00  9.26      1PTF 351
+ATOM    247  CB  ASP    32       0.870  -7.705   5.201  1.00 11.90      1PTF 352
+ATOM    248  CG  ASP    32      -0.328  -6.949   4.640  1.00 26.40      1PTF 353
+ATOM    249  OD1 ASP    32      -0.143  -6.332   3.567  1.00 24.46      1PTF 354
+ATOM    250  OD2 ASP    32      -1.392  -7.026   5.267  1.00 43.89      1PTF 355
+ATOM    251  N   ILE    33       4.226  -7.665   4.838  1.00 10.88      1PTF 356
+ATOM    252  CA  ILE    33       5.494  -8.027   5.542  1.00  8.83      1PTF 357
+ATOM    253  C   ILE    33       5.875  -6.879   6.478  1.00 10.48      1PTF 358
+ATOM    254  O   ILE    33       6.104  -5.764   5.950  1.00 11.24      1PTF 359
+ATOM    255  CB  ILE    33       6.655  -8.323   4.532  1.00  6.04      1PTF 360
+ATOM    256  CG1 ILE    33       6.189  -9.413   3.536  1.00  7.68      1PTF 361
+ATOM    257  CG2 ILE    33       7.890  -8.873   5.333  1.00  9.38      1PTF 362
+ATOM    258  CD1 ILE    33       7.240  -9.750   2.427  1.00 13.40      1PTF 363
+ATOM    259  N   ASN    34       5.983  -7.155   7.747  1.00  6.49      1PTF 364
+ATOM    260  CA  ASN    34       6.342  -6.051   8.689  1.00  7.91      1PTF 365
+ATOM    261  C   ASN    34       7.609  -6.464   9.458  1.00 12.92      1PTF 366
+ATOM    262  O   ASN    34       7.781  -7.658   9.747  1.00 12.09      1PTF 367
+ATOM    263  CB  ASN    34       5.187  -5.949   9.732  1.00 10.51      1PTF 368
+ATOM    264  CG  ASN    34       3.981  -5.353   9.009  1.00 22.59      1PTF 369
+ATOM    265  OD1 ASN    34       2.951  -6.009   8.869  1.00 51.05      1PTF 370
+ATOM    266  ND2 ASN    34       4.191  -4.224   8.359  1.00 23.89      1PTF 371
+ATOM    267  N   LEU    35       8.404  -5.490   9.791  1.00  8.63      1PTF 372
+ATOM    268  CA  LEU    35       9.618  -5.689  10.615  1.00  7.18      1PTF 373
+ATOM    269  C   LEU    35       9.356  -4.960  11.934  1.00  9.16      1PTF 374
+ATOM    270  O   LEU    35       8.981  -3.762  11.910  1.00  9.58      1PTF 375
+ATOM    271  CB  LEU    35      10.783  -5.050   9.829  1.00  7.04      1PTF 376
+ATOM    272  CG  LEU    35      12.108  -4.911  10.630  1.00 14.24      1PTF 377
+ATOM    273  CD1 LEU    35      12.719  -6.285  10.859  1.00 14.57      1PTF 378
+ATOM    274  CD2 LEU    35      13.092  -4.148   9.728  1.00 14.16      1PTF 379
+ATOM    275  N   GLU    36       9.620  -5.658  13.030  1.00  9.42      1PTF 380
+ATOM    276  CA  GLU    36       9.337  -5.016  14.336  1.00 10.68      1PTF 381
+ATOM    277  C   GLU    36      10.583  -5.023  15.218  1.00 11.68      1PTF 382
+ATOM    278  O   GLU    36      11.337  -6.027  15.220  1.00 10.48      1PTF 383
+ATOM    279  CB  GLU    36       8.200  -5.765  15.018  1.00  9.77      1PTF 384
+ATOM    280  CG  GLU    36       8.008  -5.281  16.463  1.00 24.84      1PTF 385
+ATOM    281  CD  GLU    36       7.305  -6.355  17.262  1.00 59.50      1PTF 386
+ATOM    282  OE1 GLU    36       7.844  -7.440  17.418  1.00 69.64      1PTF 387
+ATOM    283  OE2 GLU    36       6.140  -6.015  17.559  1.00 63.25      1PTF 388
+ATOM    284  N   TYR    37      10.841  -3.833  15.794  1.00  8.90      1PTF 389
+ATOM    285  CA  TYR    37      12.058  -3.700  16.648  1.00 10.23      1PTF 390
+ATOM    286  C   TYR    37      11.675  -2.873  17.874  1.00 12.73      1PTF 391
+ATOM    287  O   TYR    37      11.184  -1.759  17.692  1.00 11.54      1PTF 392
+ATOM    288  CB  TYR    37      13.166  -3.014  15.851  1.00 10.10      1PTF 393
+ATOM    289  CG  TYR    37      14.381  -2.564  16.633  1.00 16.36      1PTF 394
+ATOM    290  CD1 TYR    37      15.058  -3.483  17.441  1.00 17.34      1PTF 395
+ATOM    291  CD2 TYR    37      14.910  -1.272  16.477  1.00 14.02      1PTF 396
+ATOM    292  CE1 TYR    37      16.205  -3.116  18.147  1.00 20.37      1PTF 397
+ATOM    293  CE2 TYR    37      16.068  -0.912  17.161  1.00 15.17      1PTF 398
+ATOM    294  CZ  TYR    37      16.708  -1.834  17.977  1.00 18.77      1PTF 399
+ATOM    295  OH  TYR    37      17.843  -1.526  18.665  1.00 25.06      1PTF 400
+ATOM    296  N   LYS    38      11.883  -3.510  19.025  1.00 15.91      1PTF 401
+ATOM    297  CA  LYS    38      11.579  -2.814  20.291  1.00 19.11      1PTF 402
+ATOM    298  C   LYS    38      10.163  -2.218  20.316  1.00 22.96      1PTF 403
+ATOM    299  O   LYS    38       9.913  -1.068  20.752  1.00 20.28      1PTF 404
+ATOM    300  CB  LYS    38      12.653  -1.747  20.548  1.00 18.25      1PTF 405
+ATOM    301  CG  LYS    38      13.924  -2.472  21.076  1.00 16.84      1PTF 406
+ATOM    302  CD  LYS    38      14.986  -1.415  21.298  1.00 18.90      1PTF 407
+ATOM    303  CE  LYS    38      16.199  -1.946  22.017  1.00 25.92      1PTF 408
+ATOM    304  NZ  LYS    38      17.404  -1.133  21.673  1.00 42.57      1PTF 409
+ATOM    305  N   GLY    39       9.212  -3.059  19.865  1.00 20.83      1PTF 410
+ATOM    306  CA  GLY    39       7.808  -2.671  19.869  1.00 18.14      1PTF 411
+ATOM    307  C   GLY    39       7.350  -1.767  18.746  1.00 23.50      1PTF 412
+ATOM    308  O   GLY    39       6.126  -1.462  18.740  1.00 28.37      1PTF 413
+ATOM    309  N   LYS    40       8.231  -1.306  17.877  1.00 16.00      1PTF 414
+ATOM    310  CA  LYS    40       7.742  -0.456  16.771  1.00 14.36      1PTF 415
+ATOM    311  C   LYS    40       7.772  -1.297  15.490  1.00 11.50      1PTF 416
+ATOM    312  O   LYS    40       8.787  -1.933  15.210  1.00 11.41      1PTF 417
+ATOM    313  CB  LYS    40       8.624   0.779  16.692  1.00 13.30      1PTF 418
+ATOM    314  CG  LYS    40       8.333   1.591  15.410  1.00 39.30      1PTF 419
+ATOM    315  CD  LYS    40       9.285   2.769  15.277  1.00 56.03      1PTF 420
+ATOM    316  CE  LYS    40       9.162   3.500  13.954  1.00 70.82      1PTF 421
+ATOM    317  NZ  LYS    40      10.319   4.426  13.775  1.00 72.89      1PTF 422
+ATOM    318  N   SER    41       6.741  -1.192  14.707  1.00  9.60      1PTF 423
+ATOM    319  CA  SER    41       6.635  -1.992  13.462  1.00 14.69      1PTF 424
+ATOM    320  C   SER    41       6.601  -1.112  12.224  1.00 16.01      1PTF 425
+ATOM    321  O   SER    41       5.921  -0.067  12.211  1.00 13.23      1PTF 426
+ATOM    322  CB  SER    41       5.380  -2.843  13.698  1.00 16.37      1PTF 427
+ATOM    323  OG  SER    41       5.023  -3.645  12.594  1.00 32.00      1PTF 428
+ATOM    324  N   VAL    42       7.275  -1.563  11.157  1.00 10.25      1PTF 429
+ATOM    325  CA  VAL    42       7.285  -0.839   9.879  1.00 10.06      1PTF 430
+ATOM    326  C   VAL    42       7.021  -1.833   8.739  1.00 10.05      1PTF 431
+ATOM    327  O   VAL    42       7.295  -3.025   8.888  1.00 10.83      1PTF 432
+ATOM    328  CB  VAL    42       8.578   0.002   9.607  1.00  9.64      1PTF 433
+ATOM    329  CG1 VAL    42       8.875   0.898  10.826  1.00 12.66      1PTF 434
+ATOM    330  CG2 VAL    42       9.776  -0.940   9.426  1.00 10.64      1PTF 435
+ATOM    331  N   ASN    43       6.627  -1.266   7.614  1.00  7.69      1PTF 436
+ATOM    332  CA  ASN    43       6.422  -2.111   6.415  1.00  7.27      1PTF 437
+ATOM    333  C   ASN    43       7.824  -2.414   5.861  1.00  8.11      1PTF 438
+ATOM    334  O   ASN    43       8.561  -1.465   5.542  1.00  8.15      1PTF 439
+ATOM    335  CB  ASN    43       5.647  -1.215   5.450  1.00  7.93      1PTF 440
+ATOM    336  CG  ASN    43       5.291  -1.906   4.161  1.00 15.58      1PTF 441
+ATOM    337  OD1 ASN    43       4.501  -1.328   3.374  1.00 23.12      1PTF 442
+ATOM    338  ND2 ASN    43       5.786  -3.090   3.851  1.00  5.42      1PTF 443
+ATOM    339  N   LEU    44       8.147  -3.712   5.702  1.00  6.51      1PTF 444
+ATOM    340  CA  LEU    44       9.487  -4.085   5.202  1.00  5.90      1PTF 445
+ATOM    341  C   LEU    44       9.642  -3.752   3.729  1.00  6.86      1PTF 446
+ATOM    342  O   LEU    44      10.783  -3.813   3.195  1.00  8.45      1PTF 447
+ATOM    343  CB  LEU    44       9.800  -5.563   5.571  1.00  6.08      1PTF 448
+ATOM    344  CG  LEU    44      11.219  -6.041   5.198  1.00 10.72      1PTF 449
+ATOM    345  CD1 LEU    44      12.266  -5.240   5.984  1.00 11.16      1PTF 450
+ATOM    346  CD2 LEU    44      11.311  -7.509   5.705  1.00 13.01      1PTF 451
+ATOM    347  N   LYS    45       8.548  -3.401   3.049  1.00  5.64      1PTF 452
+ATOM    348  CA  LYS    45       8.661  -3.020   1.620  1.00  5.25      1PTF 453
+ATOM    349  C   LYS    45       8.970  -1.531   1.491  1.00  7.17      1PTF 454
+ATOM    350  O   LYS    45       9.144  -1.105   0.334  1.00 10.22      1PTF 455
+ATOM    351  CB  LYS    45       7.374  -3.316   0.857  1.00  5.14      1PTF 456
+ATOM    352  CG  LYS    45       6.968  -4.821   0.969  1.00 10.29      1PTF 457
+ATOM    353  CD  LYS    45       5.696  -5.086   0.132  1.00  8.84      1PTF 458
+ATOM    354  CE  LYS    45       5.141  -6.464   0.506  1.00  9.40      1PTF 459
+ATOM    355  NZ  LYS    45       3.838  -6.648  -0.177  1.00  8.74      1PTF 460
+ATOM    356  N   SER    46       9.175  -0.867   2.612  1.00  7.39      1PTF 461
+ATOM    357  CA  SER    46       9.413   0.609   2.569  1.00  6.09      1PTF 462
+ATOM    358  C   SER    46      10.834   0.901   3.069  1.00  6.95      1PTF 463
+ATOM    359  O   SER    46      11.138   0.723   4.263  1.00  7.45      1PTF 464
+ATOM    360  CB  SER    46       8.401   1.258   3.544  1.00  6.79      1PTF 465
+ATOM    361  OG  SER    46       8.735   2.653   3.785  1.00  9.99      1PTF 466
+ATOM    362  N   ILE    47      11.689   1.365   2.151  1.00  9.14      1PTF 467
+ATOM    363  CA  ILE    47      13.083   1.697   2.571  1.00  7.09      1PTF 468
+ATOM    364  C   ILE    47      13.051   2.806   3.621  1.00  7.13      1PTF 469
+ATOM    365  O   ILE    47      13.873   2.826   4.578  1.00  9.68      1PTF 470
+ATOM    366  CB  ILE    47      13.956   2.007   1.284  1.00 11.60      1PTF 471
+ATOM    367  CG1 ILE    47      15.455   2.161   1.671  1.00 12.07      1PTF 472
+ATOM    368  CG2 ILE    47      13.438   3.254   0.514  1.00 11.45      1PTF 473
+ATOM    369  CD1 ILE    47      16.045   0.963   2.475  1.00 12.25      1PTF 474
+ATOM    370  N   MET    48      12.127   3.759   3.484  1.00 10.55      1PTF 475
+ATOM    371  CA  MET    48      12.047   4.840   4.497  1.00  9.89      1PTF 476
+ATOM    372  C   MET    48      11.672   4.297   5.867  1.00  8.98      1PTF 477
+ATOM    373  O   MET    48      12.215   4.739   6.906  1.00 10.61      1PTF 478
+ATOM    374  CB  MET    48      11.174   5.999   4.034  1.00 13.21      1PTF 479
+ATOM    375  CG  MET    48      11.840   6.495   2.759  1.00 22.76      1PTF 480
+ATOM    376  SD  MET    48      11.341   8.198   2.421  1.00 36.74      1PTF 481
+ATOM    377  CE  MET    48       9.898   7.901   1.386  1.00 41.95      1PTF 482
+ATOM    378  N   GLY    49      10.679   3.405   5.840  1.00  7.78      1PTF 483
+ATOM    379  CA  GLY    49      10.299   2.799   7.145  1.00  8.46      1PTF 484
+ATOM    380  C   GLY    49      11.494   2.081   7.807  1.00  7.40      1PTF 485
+ATOM    381  O   GLY    49      11.692   2.206   9.041  1.00  9.34      1PTF 486
+ATOM    382  N   VAL    50      12.164   1.292   6.986  1.00  6.15      1PTF 487
+ATOM    383  CA  VAL    50      13.293   0.484   7.509  1.00  8.93      1PTF 488
+ATOM    384  C   VAL    50      14.373   1.423   8.059  1.00 10.99      1PTF 489
+ATOM    385  O   VAL    50      14.900   1.155   9.166  1.00 11.97      1PTF 490
+ATOM    386  CB  VAL    50      13.775  -0.490   6.403  1.00 10.36      1PTF 491
+ATOM    387  CG1 VAL    50      15.084  -1.172   6.845  1.00 14.44      1PTF 492
+ATOM    388  CG2 VAL    50      12.734  -1.582   6.144  1.00 11.18      1PTF 493
+ATOM    389  N   MET    51      14.735   2.438   7.276  1.00  8.77      1PTF 494
+ATOM    390  CA  MET    51      15.737   3.406   7.793  1.00 12.45      1PTF 495
+ATOM    391  C   MET    51      15.264   4.116   9.062  1.00 15.48      1PTF 496
+ATOM    392  O   MET    51      16.094   4.271   9.992  1.00 17.66      1PTF 497
+ATOM    393  CB  MET    51      15.989   4.487   6.728  1.00 14.57      1PTF 498
+ATOM    394  CG  MET    51      16.787   3.757   5.654  1.00 29.04      1PTF 499
+ATOM    395  SD  MET    51      17.397   5.068   4.518  1.00 36.18      1PTF 500
+ATOM    396  CE  MET    51      15.858   5.615   3.773  1.00 40.15      1PTF 501
+ATOM    397  N   SER    52      13.983   4.371   9.192  1.00 12.10      1PTF 502
+ATOM    398  CA  SER    52      13.490   5.079  10.384  1.00 16.77      1PTF 503
+ATOM    399  C   SER    52      13.618   4.258  11.658  1.00 13.38      1PTF 504
+ATOM    400  O   SER    52      13.669   4.806  12.766  1.00 14.38      1PTF 505
+ATOM    401  CB  SER    52      12.047   5.529  10.248  1.00 19.52      1PTF 506
+ATOM    402  OG  SER    52      11.178   4.403  10.490  1.00 20.70      1PTF 507
+ATOM    403  N   LEU    53      13.629   2.935  11.449  1.00 12.87      1PTF 508
+ATOM    404  CA  LEU    53      13.695   2.019  12.615  1.00 12.41      1PTF 509
+ATOM    405  C   LEU    53      15.048   2.036  13.292  1.00 11.91      1PTF 510
+ATOM    406  O   LEU    53      15.170   1.756  14.503  1.00 15.15      1PTF 511
+ATOM    407  CB  LEU    53      13.127   0.683  12.085  1.00 12.99      1PTF 512
+ATOM    408  CG  LEU    53      12.659  -0.321  13.086  1.00 20.25      1PTF 513
+ATOM    409  CD1 LEU    53      11.674   0.341  14.040  1.00 21.15      1PTF 514
+ATOM    410  CD2 LEU    53      12.088  -1.561  12.383  1.00 16.21      1PTF 515
+ATOM    411  N   GLY    54      16.124   2.261  12.531  1.00 10.82      1PTF 516
+ATOM    412  CA  GLY    54      17.477   2.368  13.111  1.00 13.17      1PTF 517
+ATOM    413  C   GLY    54      17.957   1.081  13.763  1.00 14.18      1PTF 518
+ATOM    414  O   GLY    54      18.441   1.112  14.906  1.00 17.03      1PTF 519
+ATOM    415  N   VAL    55      17.955   0.011  12.967  1.00  9.26      1PTF 520
+ATOM    416  CA  VAL    55      18.362  -1.292  13.536  1.00 10.42      1PTF 521
+ATOM    417  C   VAL    55      19.894  -1.504  13.398  1.00 11.37      1PTF 522
+ATOM    418  O   VAL    55      20.405  -1.648  12.275  1.00 12.59      1PTF 523
+ATOM    419  CB  VAL    55      17.574  -2.430  12.829  1.00 13.10      1PTF 524
+ATOM    420  CG1 VAL    55      17.945  -3.779  13.472  1.00 11.70      1PTF 525
+ATOM    421  CG2 VAL    55      16.042  -2.204  12.890  1.00 12.72      1PTF 526
+ATOM    422  N   GLY    56      20.537  -1.561  14.558  1.00  8.39      1PTF 527
+ATOM    423  CA  GLY    56      21.992  -1.781  14.546  1.00  9.00      1PTF 528
+ATOM    424  C   GLY    56      22.381  -3.224  14.856  1.00 10.54      1PTF 529
+ATOM    425  O   GLY    56      21.559  -4.094  15.095  1.00 10.01      1PTF 530
+ATOM    426  N   GLN    57      23.691  -3.435  14.730  1.00 11.09      1PTF 531
+ATOM    427  CA  GLN    57      24.317  -4.726  15.032  1.00  9.59      1PTF 532
+ATOM    428  C   GLN    57      23.904  -5.101  16.465  1.00 11.68      1PTF 533
+ATOM    429  O   GLN    57      23.918  -4.265  17.384  1.00 14.09      1PTF 534
+ATOM    430  CB  GLN    57      25.857  -4.581  14.914  1.00 14.15      1PTF 535
+ATOM    431  CG  GLN    57      26.527  -5.889  15.387  1.00 16.67      1PTF 536
+ATOM    432  CD  GLN    57      28.039  -5.845  15.200  1.00 23.93      1PTF 537
+ATOM    433  OE1 GLN    57      28.677  -6.721  14.614  1.00 31.28      1PTF 538
+ATOM    434  NE2 GLN    57      28.563  -4.713  15.620  1.00 16.48      1PTF 539
+ATOM    435  N   GLY    58      23.544  -6.358  16.699  1.00 12.27      1PTF 540
+ATOM    436  CA  GLY    58      23.130  -6.961  17.929  1.00 12.70      1PTF 541
+ATOM    437  C   GLY    58      21.652  -6.920  18.272  1.00 13.36      1PTF 542
+ATOM    438  O   GLY    58      21.208  -7.424  19.316  1.00 18.06      1PTF 543
+ATOM    439  N   SER    59      20.856  -6.311  17.417  1.00 12.84      1PTF 544
+ATOM    440  CA  SER    59      19.412  -6.105  17.617  1.00 10.24      1PTF 545
+ATOM    441  C   SER    59      18.618  -7.415  17.432  1.00 10.36      1PTF 546
+ATOM    442  O   SER    59      18.956  -8.250  16.569  1.00 12.08      1PTF 547
+ATOM    443  CB  SER    59      18.931  -5.130  16.526  1.00 10.83      1PTF 548
+ATOM    444  OG  SER    59      19.422  -3.813  16.772  1.00 16.47      1PTF 549
+ATOM    445  N   ASP    60      17.562  -7.515  18.249  1.00  8.47      1PTF 550
+ATOM    446  CA  ASP    60      16.586  -8.614  18.115  1.00  9.39      1PTF 551
+ATOM    447  C   ASP    60      15.380  -8.020  17.323  1.00 11.26      1PTF 552
+ATOM    448  O   ASP    60      14.886  -6.955  17.745  1.00 12.78      1PTF 553
+ATOM    449  CB  ASP    60      16.074  -9.079  19.477  1.00 14.65      1PTF 554
+ATOM    450  CG  ASP    60      17.134  -9.939  20.143  1.00 32.65      1PTF 555
+ATOM    451  OD1 ASP    60      17.881 -10.625  19.398  1.00 28.96      1PTF 556
+ATOM    452  OD2 ASP    60      17.196  -9.859  21.375  1.00 49.63      1PTF 557
+ATOM    453  N   VAL    61      15.044  -8.654  16.215  1.00  8.83      1PTF 558
+ATOM    454  CA  VAL    61      13.887  -8.140  15.429  1.00  9.34      1PTF 559
+ATOM    455  C   VAL    61      12.902  -9.292  15.163  1.00 11.07      1PTF 560
+ATOM    456  O   VAL    61      13.315 -10.456  15.189  1.00 11.56      1PTF 561
+ATOM    457  CB  VAL    61      14.313  -7.482  14.090  1.00 13.14      1PTF 562
+ATOM    458  CG1 VAL    61      15.259  -6.301  14.330  1.00 11.28      1PTF 563
+ATOM    459  CG2 VAL    61      14.867  -8.435  13.044  1.00 14.15      1PTF 564
+ATOM    460  N   THR    62      11.661  -8.900  14.853  1.00  8.70      1PTF 565
+ATOM    461  CA  THR    62      10.662  -9.943  14.469  1.00  9.09      1PTF 566
+ATOM    462  C   THR    62      10.109  -9.564  13.083  1.00 11.07      1PTF 567
+ATOM    463  O   THR    62       9.939  -8.356  12.820  1.00 11.57      1PTF 568
+ATOM    464  CB  THR    62       9.427  -9.942  15.470  1.00 11.40      1PTF 569
+ATOM    465  OG1 THR    62      10.083 -10.307  16.741  1.00 15.26      1PTF 570
+ATOM    466  CG2 THR    62       8.398 -10.999  15.074  1.00 19.09      1PTF 571
+ATOM    467  N   ILE    63       9.956 -10.579  12.261  1.00  8.72      1PTF 572
+ATOM    468  CA  ILE    63       9.365 -10.331  10.929  1.00  9.35      1PTF 573
+ATOM    469  C   ILE    63       8.047 -11.134  10.850  1.00  9.16      1PTF 574
+ATOM    470  O   ILE    63       8.059 -12.316  11.215  1.00  9.44      1PTF 575
+ATOM    471  CB  ILE    63      10.335 -10.665   9.750  1.00  8.76      1PTF 576
+ATOM    472  CG1 ILE    63      11.529  -9.637   9.879  1.00 11.59      1PTF 577
+ATOM    473  CG2 ILE    63       9.663 -10.447   8.343  1.00 10.29      1PTF 578
+ATOM    474  CD1 ILE    63      12.680  -9.839   8.869  1.00 13.18      1PTF 579
+ATOM    475  N   THR    64       7.000 -10.429  10.372  1.00  8.79      1PTF 580
+ATOM    476  CA  THR    64       5.701 -11.119  10.204  1.00  7.19      1PTF 581
+ATOM    477  C   THR    64       5.367 -11.077   8.703  1.00  8.12      1PTF 582
+ATOM    478  O   THR    64       5.576 -10.042   8.041  1.00  9.57      1PTF 583
+ATOM    479  CB  THR    64       4.560 -10.316  10.979  1.00 10.92      1PTF 584
+ATOM    480  OG1 THR    64       4.913 -10.518  12.395  1.00 15.66      1PTF 585
+ATOM    481  CG2 THR    64       3.221 -11.049  10.743  1.00 18.00      1PTF 586
+ATOM    482  N   VAL    65       4.893 -12.222   8.208  1.00  5.63      1PTF 587
+ATOM    483  CA  VAL    65       4.494 -12.355   6.808  1.00  7.31      1PTF 588
+ATOM    484  C   VAL    65       3.009 -12.867   6.783  1.00  9.85      1PTF 589
+ATOM    485  O   VAL    65       2.758 -13.915   7.380  1.00 11.66      1PTF 590
+ATOM    486  CB  VAL    65       5.434 -13.243   5.989  1.00  8.57      1PTF 591
+ATOM    487  CG1 VAL    65       5.029 -13.261   4.499  1.00  6.68      1PTF 592
+ATOM    488  CG2 VAL    65       6.916 -12.900   6.063  1.00 10.71      1PTF 593
+ATOM    489  N   ASP    66       2.144 -12.123   6.127  1.00  9.30      1PTF 594
+ATOM    490  CA  ASP    66       0.692 -12.525   6.157  1.00  8.83      1PTF 595
+ATOM    491  C   ASP    66       0.036 -12.280   4.809  1.00 10.53      1PTF 596
+ATOM    492  O   ASP    66      -0.116 -11.112   4.387  1.00  9.61      1PTF 597
+ATOM    493  CB  ASP    66       0.064 -11.691   7.282  1.00 10.43      1PTF 598
+ATOM    494  CG  ASP    66      -1.341 -12.122   7.673  1.00 27.26      1PTF 599
+ATOM    495  OD1 ASP    66      -1.887 -13.130   7.208  1.00 21.33      1PTF 600
+ATOM    496  OD2 ASP    66      -1.863 -11.489   8.610  1.00 33.11      1PTF 601
+ATOM    497  N   GLY    67      -0.351 -13.385   4.164  1.00  9.06      1PTF 602
+ATOM    498  CA  GLY    67      -0.993 -13.297   2.840  1.00  9.47      1PTF 603
+ATOM    499  C   GLY    67      -0.976 -14.576   2.015  1.00  8.74      1PTF 604
+ATOM    500  O   GLY    67      -0.492 -15.617   2.492  1.00 10.08      1PTF 605
+ATOM    501  N   ALA    68      -1.301 -14.390   0.721  1.00  9.01      1PTF 606
+ATOM    502  CA  ALA    68      -1.448 -15.531  -0.193  1.00  9.86      1PTF 607
+ATOM    503  C   ALA    68      -0.138 -16.235  -0.489  1.00 13.57      1PTF 608
+ATOM    504  O   ALA    68      -0.195 -17.441  -0.783  1.00 12.69      1PTF 609
+ATOM    505  CB  ALA    68      -2.101 -15.104  -1.496  1.00 12.16      1PTF 610
+ATOM    506  N   ASP    69       0.994 -15.528  -0.382  1.00 10.83      1PTF 611
+ATOM    507  CA  ASP    69       2.299 -16.156  -0.726  1.00  9.34      1PTF 612
+ATOM    508  C   ASP    69       3.219 -16.065   0.508  1.00  8.84      1PTF 613
+ATOM    509  O   ASP    69       4.447 -15.993   0.311  1.00 10.74      1PTF 614
+ATOM    510  CB  ASP    69       2.910 -15.467  -1.945  1.00 10.82      1PTF 615
+ATOM    511  CG  ASP    69       3.117 -13.957  -1.780  1.00 10.14      1PTF 616
+ATOM    512  OD1 ASP    69       2.854 -13.407  -0.682  1.00 10.24      1PTF 617
+ATOM    513  OD2 ASP    69       3.484 -13.374  -2.823  1.00  9.78      1PTF 618
+ATOM    514  N   GLU    70       2.620 -16.228   1.653  1.00  5.99      1PTF 619
+ATOM    515  CA  GLU    70       3.383 -16.074   2.874  1.00  7.82      1PTF 620
+ATOM    516  C   GLU    70       4.367 -17.214   3.098  1.00 11.63      1PTF 621
+ATOM    517  O   GLU    70       5.432 -16.914   3.700  1.00 10.19      1PTF 622
+ATOM    518  CB  GLU    70       2.506 -15.912   4.111  1.00  9.58      1PTF 623
+ATOM    519  CG  GLU    70       1.594 -17.122   4.401  1.00  7.92      1PTF 624
+ATOM    520  CD  GLU    70       0.682 -16.884   5.565  1.00 12.48      1PTF 625
+ATOM    521  OE1 GLU    70       0.061 -15.800   5.692  1.00 10.97      1PTF 626
+ATOM    522  OE2 GLU    70       0.623 -17.686   6.471  1.00 15.20      1PTF 627
+ATOM    523  N   ALA    71       4.076 -18.414   2.603  1.00 10.08      1PTF 628
+ATOM    524  CA  ALA    71       5.044 -19.529   2.873  1.00 11.69      1PTF 629
+ATOM    525  C   ALA    71       6.388 -19.273   2.152  1.00  8.44      1PTF 630
+ATOM    526  O   ALA    71       7.473 -19.386   2.797  1.00 11.32      1PTF 631
+ATOM    527  CB  ALA    71       4.403 -20.859   2.429  1.00 11.72      1PTF 632
+ATOM    528  N   GLU    72       6.266 -18.999   0.865  1.00  9.74      1PTF 633
+ATOM    529  CA  GLU    72       7.484 -18.736   0.078  1.00  8.65      1PTF 634
+ATOM    530  C   GLU    72       8.033 -17.359   0.464  1.00 10.12      1PTF 635
+ATOM    531  O   GLU    72       9.278 -17.193   0.417  1.00 11.69      1PTF 636
+ATOM    532  CB  GLU    72       7.228 -18.884  -1.405  1.00 16.49      1PTF 637
+ATOM    533  CG  GLU    72       5.959 -18.268  -1.930  1.00 34.31      1PTF 638
+ATOM    534  CD  GLU    72       4.589 -18.867  -1.867  1.00 34.49      1PTF 639
+ATOM    535  OE1 GLU    72       4.148 -19.268  -0.762  1.00 16.04      1PTF 640
+ATOM    536  OE2 GLU    72       3.845 -18.751  -2.851  1.00 27.01      1PTF 641
+ATOM    537  N   GLY    73       7.233 -16.422   0.920  1.00  8.57      1PTF 642
+ATOM    538  CA  GLY    73       7.718 -15.070   1.290  1.00  7.20      1PTF 643
+ATOM    539  C   GLY    73       8.581 -15.202   2.544  1.00  7.65      1PTF 644
+ATOM    540  O   GLY    73       9.723 -14.660   2.549  1.00  8.77      1PTF 645
+ATOM    541  N   MET    74       8.087 -15.888   3.568  1.00  6.13      1PTF 646
+ATOM    542  CA  MET    74       8.932 -16.072   4.783  1.00  7.04      1PTF 647
+ATOM    543  C   MET    74      10.210 -16.842   4.422  1.00  8.53      1PTF 648
+ATOM    544  O   MET    74      11.339 -16.518   4.887  1.00  9.32      1PTF 649
+ATOM    545  CB  MET    74       8.129 -16.683   5.928  1.00  9.42      1PTF 650
+ATOM    546  CG  MET    74       8.996 -16.933   7.146  1.00 12.58      1PTF 651
+ATOM    547  SD  MET    74       9.618 -15.388   7.901  1.00 15.21      1PTF 652
+ATOM    548  CE  MET    74       8.193 -14.987   8.914  1.00 11.65      1PTF 653
+ATOM    549  N   ALA    75      10.059 -17.893   3.601  1.00  8.71      1PTF 654
+ATOM    550  CA  ALA    75      11.263 -18.676   3.223  1.00  8.98      1PTF 655
+ATOM    551  C   ALA    75      12.327 -17.818   2.537  1.00  7.04      1PTF 656
+ATOM    552  O   ALA    75      13.554 -17.961   2.828  1.00  7.97      1PTF 657
+ATOM    553  CB  ALA    75      10.861 -19.902   2.396  1.00  8.94      1PTF 658
+ATOM    554  N   ALA    76      11.911 -16.976   1.608  1.00  5.96      1PTF 659
+ATOM    555  CA  ALA    76      12.799 -16.110   0.822  1.00  4.93      1PTF 660
+ATOM    556  C   ALA    76      13.469 -15.111   1.768  1.00  9.56      1PTF 661
+ATOM    557  O   ALA    76      14.649 -14.783   1.603  1.00  9.40      1PTF 662
+ATOM    558  CB  ALA    76      11.998 -15.449  -0.289  1.00  7.77      1PTF 663
+ATOM    559  N   ILE    77      12.732 -14.596   2.737  1.00  7.27      1PTF 664
+ATOM    560  CA  ILE    77      13.285 -13.603   3.702  1.00  9.48      1PTF 665
+ATOM    561  C   ILE    77      14.377 -14.290   4.562  1.00 10.78      1PTF 666
+ATOM    562  O   ILE    77      15.458 -13.710   4.826  1.00 10.97      1PTF 667
+ATOM    563  CB  ILE    77      12.106 -13.001   4.570  1.00 11.55      1PTF 668
+ATOM    564  CG1 ILE    77      11.162 -12.055   3.786  1.00 11.11      1PTF 669
+ATOM    565  CG2 ILE    77      12.655 -12.232   5.807  1.00 16.40      1PTF 670
+ATOM    566  CD1 ILE    77      11.842 -10.966   2.969  1.00 21.81      1PTF 671
+ATOM    567  N   VAL    78      14.104 -15.508   5.036  1.00  7.71      1PTF 672
+ATOM    568  CA  VAL    78      15.101 -16.236   5.866  1.00  7.50      1PTF 673
+ATOM    569  C   VAL    78      16.367 -16.432   5.011  1.00 10.28      1PTF 674
+ATOM    570  O   VAL    78      17.474 -16.172   5.463  1.00 10.01      1PTF 675
+ATOM    571  CB  VAL    78      14.528 -17.595   6.330  1.00 10.07      1PTF 676
+ATOM    572  CG1 VAL    78      15.666 -18.440   6.931  1.00 11.69      1PTF 677
+ATOM    573  CG2 VAL    78      13.441 -17.361   7.385  1.00  8.48      1PTF 678
+ATOM    574  N   GLU    79      16.149 -16.881   3.776  1.00  7.31      1PTF 679
+ATOM    575  CA  GLU    79      17.281 -17.114   2.886  1.00  8.11      1PTF 680
+ATOM    576  C   GLU    79      18.114 -15.863   2.682  1.00 10.18      1PTF 681
+ATOM    577  O   GLU    79      19.343 -15.916   2.704  1.00  9.57      1PTF 682
+ATOM    578  CB  GLU    79      16.768 -17.647   1.545  1.00  9.67      1PTF 683
+ATOM    579  CG  GLU    79      17.933 -17.947   0.594  1.00 13.11      1PTF 684
+ATOM    580  CD  GLU    79      17.626 -18.482  -0.769  1.00 20.35      1PTF 685
+ATOM    581  OE1 GLU    79      16.423 -18.513  -1.078  1.00 17.31      1PTF 686
+ATOM    582  OE2 GLU    79      18.507 -18.827  -1.545  1.00 16.49      1PTF 687
+ATOM    583  N   THR    80      17.436 -14.742   2.424  1.00  7.68      1PTF 688
+ATOM    584  CA  THR    80      18.100 -13.448   2.177  1.00  6.63      1PTF 689
+ATOM    585  C   THR    80      18.847 -12.951   3.400  1.00 10.52      1PTF 690
+ATOM    586  O   THR    80      20.007 -12.524   3.242  1.00  9.94      1PTF 691
+ATOM    587  CB  THR    80      17.020 -12.389   1.703  1.00 11.43      1PTF 692
+ATOM    588  OG1 THR    80      16.515 -12.955   0.421  1.00 15.96      1PTF 693
+ATOM    589  CG2 THR    80      17.724 -11.053   1.460  1.00 15.33      1PTF 694
+ATOM    590  N   LEU    81      18.244 -13.014   4.592  1.00  7.33      1PTF 695
+ATOM    591  CA  LEU    81      18.961 -12.574   5.777  1.00  7.28      1PTF 696
+ATOM    592  C   LEU    81      20.266 -13.349   5.964  1.00 10.19      1PTF 697
+ATOM    593  O   LEU    81      21.286 -12.789   6.401  1.00 11.70      1PTF 698
+ATOM    594  CB  LEU    81      18.016 -12.665   6.982  1.00  8.64      1PTF 699
+ATOM    595  CG  LEU    81      16.852 -11.657   6.949  1.00 14.85      1PTF 700
+ATOM    596  CD1 LEU    81      15.930 -11.990   8.137  1.00 15.61      1PTF 701
+ATOM    597  CD2 LEU    81      17.373 -10.242   7.108  1.00 17.22      1PTF 702
+ATOM    598  N   GLN    82      20.197 -14.657   5.728  1.00  9.60      1PTF 703
+ATOM    599  CA  GLN    82      21.437 -15.490   5.897  1.00  9.50      1PTF 704
+ATOM    600  C   GLN    82      22.404 -15.236   4.764  1.00 11.63      1PTF 705
+ATOM    601  O   GLN    82      23.590 -14.995   5.123  1.00 14.08      1PTF 706
+ATOM    602  CB  GLN    82      21.040 -16.943   5.808  1.00 13.87      1PTF 707
+ATOM    603  CG  GLN    82      20.167 -17.428   6.977  1.00 33.69      1PTF 708
+ATOM    604  CD  GLN    82      19.790 -18.892   6.813  1.00 58.82      1PTF 709
+ATOM    605  OE1 GLN    82      19.679 -19.700   7.727  1.00 72.47      1PTF 710
+ATOM    606  NE2 GLN    82      19.645 -19.255   5.616  1.00 61.43      1PTF 711
+ATOM    607  N   LYS    83      22.008 -15.153   3.511  1.00  9.53      1PTF 712
+ATOM    608  CA  LYS    83      22.922 -14.874   2.387  1.00 10.95      1PTF 713
+ATOM    609  C   LYS    83      23.618 -13.503   2.482  1.00 16.69      1PTF 714
+ATOM    610  O   LYS    83      24.799 -13.332   2.074  1.00 15.19      1PTF 715
+ATOM    611  CB  LYS    83      22.259 -15.032   0.996  1.00 13.72      1PTF 716
+ATOM    612  N   GLU    84      22.915 -12.508   3.012  1.00 10.80      1PTF 717
+ATOM    613  CA  GLU    84      23.501 -11.153   3.131  1.00 10.56      1PTF 718
+ATOM    614  C   GLU    84      24.351 -11.069   4.402  1.00 10.85      1PTF 719
+ATOM    615  O   GLU    84      24.933 -10.004   4.623  1.00 14.42      1PTF 720
+ATOM    616  CB  GLU    84      22.333 -10.151   3.338  1.00  9.12      1PTF 721
+ATOM    617  CG  GLU    84      21.498  -9.932   2.068  1.00  9.93      1PTF 722
+ATOM    618  CD  GLU    84      20.604  -8.715   2.234  1.00 22.76      1PTF 723
+ATOM    619  OE1 GLU    84      20.976  -7.597   2.571  1.00 21.71      1PTF 724
+ATOM    620  OE2 GLU    84      19.420  -8.978   2.012  1.00 34.46      1PTF 725
+ATOM    621  N   GLY    85      24.360 -12.084   5.246  1.00  8.78      1PTF 726
+ATOM    622  CA  GLY    85      25.098 -12.029   6.511  1.00 10.78      1PTF 727
+ATOM    623  C   GLY    85      24.473 -11.048   7.483  1.00 10.75      1PTF 728
+ATOM    624  O   GLY    85      25.152 -10.602   8.432  1.00 12.42      1PTF 729
+ATOM    625  N   LEU    86      23.148 -10.868   7.383  1.00  8.47      1PTF 730
+ATOM    626  CA  LEU    86      22.450  -9.958   8.311  1.00  9.12      1PTF 731
+ATOM    627  C   LEU    86      22.106 -10.651   9.610  1.00 12.83      1PTF 732
+ATOM    628  O   LEU    86      22.213  -9.989  10.661  1.00 15.67      1PTF 733
+ATOM    629  CB  LEU    86      21.202  -9.397   7.610  1.00 11.41      1PTF 734
+ATOM    630  CG  LEU    86      21.354  -8.100   6.854  1.00 18.66      1PTF 735
+ATOM    631  CD1 LEU    86      20.036  -7.790   6.152  1.00 12.08      1PTF 736
+ATOM    632  CD2 LEU    86      21.768  -6.975   7.813  1.00 16.86      1PTF 737
+ATOM    633  N   ALA    87      21.741 -11.918   9.562  1.00 13.14      1PTF 738
+ATOM    634  CA  ALA    87      21.345 -12.636  10.797  1.00 22.21      1PTF 739
+ATOM    635  C   ALA    87      21.685 -14.128  10.678  1.00 30.34      1PTF 740
+ATOM    636  O   ALA    87      21.867 -14.555   9.501  1.00 36.61      1PTF 741
+ATOM    637  CB  ALA    87      19.832 -12.490  11.001  1.00 27.80      1PTF 742
+TER     638      ALA    87                                              1PTF 743
+HETATM  639  O   HOH    90       7.815 -20.542   5.137  1.00 27.90      1PTF 744
+HETATM  640  O   HOH    91      11.690  -6.251  23.684  1.00 34.84      1PTF 745
+HETATM  641  O   HOH    92       6.071   1.686   7.364  1.00 15.26      1PTF 746
+HETATM  642  O   HOH    93      -3.057 -15.719   8.192  1.00 24.79      1PTF 747
+HETATM  643  O   HOH    94       2.430  -8.819   8.239  1.00 22.79      1PTF 748
+HETATM  644  O   HOH    95      17.597  -5.803  20.763  1.00 12.54      1PTF 749
+HETATM  645  O   HOH    96      13.058  -5.952  19.456  1.00 16.95      1PTF 750
+HETATM  646  O   HOH    97      17.422   0.321  10.207  1.00 11.06      1PTF 751
+HETATM  647  O   HOH    98      12.195   0.912  17.839  1.00 19.58      1PTF 752
+HETATM  648  O   HOH    99       6.786  -8.332  13.029  1.00 18.86      1PTF 753
+HETATM  649  O   HOH   100      25.444  -1.348  13.748  1.00 23.18      1PTF 754
+HETATM  650  O   HOH   101      10.954 -17.190  15.505  1.00 15.73      1PTF 755
+HETATM  651  O   HOH   102      14.493 -20.378   3.722  1.00  7.42      1PTF 756
+HETATM  652  O   HOH   103       3.926  -5.113   3.616  1.00 10.56      1PTF 757
+HETATM  653  O   HOH   104      20.248  -1.946  -3.791  1.00 40.81      1PTF 758
+HETATM  654  O   HOH   105      15.862 -21.609   0.746  1.00 16.84      1PTF 759
+HETATM  655  O   HOH   106       1.687 -19.496   0.842  1.00 24.14      1PTF 760
+HETATM  656  O   HOH   107      24.844 -11.158  -0.121  1.00 14.44      1PTF 761
+HETATM  657  O   HOH   108      31.367  -4.258  17.020  1.00 11.95      1PTF 762
+HETATM  658  O   HOH   109      12.932 -21.669   5.750  1.00 36.61      1PTF 763
+HETATM  659  O   HOH   110      14.090 -17.898  14.543  1.00 25.40      1PTF 764
+HETATM  660  O   HOH   111      19.085 -15.065  14.025  1.00 16.11      1PTF 765
+HETATM  661  O   HOH   112      32.133  -1.787  13.897  1.00 26.74      1PTF 766
+HETATM  662  O   HOH   113      27.912  -4.282   3.389  1.00 24.10      1PTF 767
+HETATM  663  O   HOH   114      27.091  -8.595   5.024  1.00 55.34      1PTF 768
+HETATM  664  O   HOH   115      16.819  -0.588  -4.457  1.00 42.40      1PTF 769
+HETATM  665  O   HOH   116      12.913   0.179  -2.137  1.00 11.08      1PTF 770
+HETATM  666  O   HOH   117       6.153  -3.135  -3.205  1.00 47.51      1PTF 771
+HETATM  667  O   HOH   118      -0.047  -6.560  -1.988  1.00 20.63      1PTF 772
+HETATM  668  O   HOH   119       2.549  -3.984   5.980  1.00 45.70      1PTF 773
+HETATM  669  O   HOH   120      19.879  -0.555  16.989  1.00 22.96      1PTF 774
+HETATM  670  O   HOH   121       9.486 -16.036  17.327  1.00 65.53      1PTF 775
+HETATM  671  O   HOH   122       4.384 -14.317  -5.084  1.00 25.89      1PTF 776
+HETATM  672  O   HOH   123       8.458   5.268  10.226  1.00 17.17      1PTF 777
+HETATM  673  O   HOH   124      19.741 -19.242  -5.786  1.00 16.87      1PTF 778
+HETATM  674  O   HOH   125      22.286 -20.946  -3.375  1.00 16.66      1PTF 779
+HETATM  675  O   HOH   127      17.530 -15.913  16.654  1.00 62.09      1PTF 780
+HETATM  676  O   HOH   128      13.597 -14.382  -3.873  1.00 55.41      1PTF 781
+HETATM  677  O   HOH   129       0.831 -21.779   3.289  1.00 47.75      1PTF 782
+HETATM  678  O   HOH   130      -1.582 -18.875  10.051  1.00  4.41      1PTF 783
+HETATM  679  O   HOH   131       1.637 -20.295   6.362  1.00 15.00      1PTF 784
+HETATM  680  O   HOH   132      28.004 -10.075   8.033  1.00 34.24      1PTF 785
+HETATM  681  O   HOH   133      29.782  -0.661  12.854  1.00 14.26      1PTF 786
+HETATM  682  O   HOH   134      15.438  -1.043  -2.048  1.00  7.86      1PTF 787
+HETATM  683  O   HOH   135       4.605  -7.534  -5.284  1.00 53.70      1PTF 788
+HETATM  684  O   HOH   136       2.115  -4.709   1.300  1.00 24.17      1PTF 789
+HETATM  685  O   HOH   137       3.652  -1.948   0.139  1.00 54.66      1PTF 790
+HETATM  686  O   HOH   138       4.892  -6.435  13.914  1.00 33.96      1PTF 791
+HETATM  687  O   HOH   139      18.781   4.532  10.634  1.00 15.40      1PTF 792
+HETATM  688  O   HOH   140      21.796  -2.864  18.984  1.00 21.56      1PTF 793
+HETATM  689  O   HOH   141      10.266 -20.504   6.529  1.00 21.80      1PTF 794
+HETATM  690  O   HOH   142      11.854  -1.770  -3.006  1.00 18.25      1PTF 795
+HETATM  691  O   HOH   143      16.630 -13.285  18.590  1.00 46.13      1PTF 796
+HETATM  692  O   HOH   144      28.968 -10.468  11.897  1.00 31.23      1PTF 797
+HETATM  693  O   HOH   145       4.178   0.317  15.648  1.00 16.30      1PTF 798
+HETATM  694  O   HOH   146      24.752 -15.115   7.885  1.00 44.14      1PTF 799
+HETATM  695  O   HOH   147      25.886 -15.423  -1.164  1.00 36.76      1PTF 800
+HETATM  696  O   HOH   148      23.330  -8.791  -5.075  1.00 25.70      1PTF 801
+HETATM  697  O   HOH   149      20.970 -19.976  -1.010  1.00 25.49      1PTF 802
+HETATM  698  O   HOH   150      13.384   7.518   6.606  1.00 46.74      1PTF 803
+HETATM  699  O   HOH   151       9.853 -20.214  13.028  1.00 41.55      1PTF 804
+HETATM  700  O   HOH   152       3.836  -6.324  19.367  1.00 85.44      1PTF 805
+HETATM  701  O   HOH   153      30.860  -4.971   6.968  1.00 77.37      1PTF 806
+HETATM  702  O   HOH   154      27.479  -5.999   5.555  1.00 34.61      1PTF 807
+HETATM  703  O   HOH   155      20.050  -3.081  -7.481  1.00 53.12      1PTF 808
+HETATM  704  O   HOH   156       0.012  -7.299  -4.312  1.00 41.17      1PTF 809
+HETATM  705  O   HOH   157       2.907   1.000   4.740  1.00 38.10      1PTF 810
+HETATM  706  O   HOH   159      29.189  -6.994   8.797  1.00 58.78      1PTF 811
+HETATM  707  O   HOH   160      19.115  -3.338  20.364  1.00 26.75      1PTF 812
+HETATM  708  O   HOH   161      14.155  -6.379  22.083  1.00 53.08      1PTF 813
+HETATM  709  O   HOH   162      11.349  -8.089  18.605  1.00 52.46      1PTF 814
+HETATM  710  O   HOH   163      10.795   1.439  20.448  1.00 50.30      1PTF 815
+HETATM  711  O   HOH   164      13.232 -19.988  13.181  1.00 20.77      1PTF 816
+HETATM  712  O   HOH   166      20.714   3.189   4.645  1.00 22.68      1PTF 817
+HETATM  713  O   HOH   167      -2.384  -9.839   3.262  1.00 34.46      1PTF 818
+HETATM  714  O   HOH   168       9.193  -5.776  18.999  1.00 32.42      1PTF 819
+HETATM  715  O   HOH   169       4.452  -9.519  18.970  1.00 21.10      1PTF 820
+HETATM  716  O   HOH   170       4.388  -9.461  15.676  1.00 66.17      1PTF 821
+HETATM  717  O   HOH   171      17.452 -20.893   3.970  1.00 32.84      1PTF 822
+HETATM  718  O   HOH   172      21.850 -14.859  13.048  1.00 51.54      1PTF 823
+HETATM  719  O   HOH   173       2.810  -5.712  -2.563  1.00 33.62      1PTF 824
+HETATM  720  O   HOH   174      -3.789 -13.833   8.873  1.00 17.08      1PTF 825
+HETATM  721  O   HOH   175      23.515 -15.091  16.865  1.00 44.46      1PTF 826
+HETATM  722  O   HOH   176       2.890  -7.037  12.174  1.00 35.42      1PTF 827
+HETATM  723  O   HOH   177      21.711 -19.649   3.184  1.00 93.19      1PTF 828
+HETATM  724  O   HOH   178      22.565 -11.281  -1.237  1.00 48.03      1PTF 829
+HETATM  725  O   HOH   179       0.910 -19.485  -1.616  1.00 12.03      1PTF 830
+HETATM  726  O   HOH   180      15.819 -16.787  13.018  1.00 38.04      1PTF 831
+HETATM  727  O   HOH   181      18.289 -16.237   8.167  1.00 24.80      1PTF 832
+HETATM  728  O   HOH   182       0.331 -22.234  -0.650  1.00 18.43      1PTF 833
+HETATM  729  O   HOH   183       1.180 -19.668  11.879  1.00 13.24      1PTF 834
+HETATM  730  O   HOH   184       7.842 -19.560  10.325  1.00 36.56      1PTF 835
+HETATM  731  O   HOH   185       0.936  -8.586  -7.679  1.00 39.98      1PTF 836
+HETATM  732  O   HOH   186       3.542   0.354   8.323  1.00 42.47      1PTF 837
+HETATM  733  O   HOH   187       3.082  -2.545  16.747  1.00 66.65      1PTF 838
+HETATM  734  O   HOH   188      12.182  -3.514  23.845  1.00 32.81      1PTF 839
+HETATM  735  O   HOH   189       5.540   2.706  12.274  1.00 29.37      1PTF 840
+HETATM  736  O   HOH   190       9.676   4.513  19.176  1.00 28.06      1PTF 841
+HETATM  737  O   HOH   191       6.737   0.687  -0.212  1.00 63.76      1PTF 842
+MASTER       65    0    0    3    4    5    0    6  736    1    0    7  1PTF 843
+END                                                                     1PTF 844

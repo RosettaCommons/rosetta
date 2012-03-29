@@ -1,0 +1,10 @@
+-s pdb/ala8.pdb
+-backrub:sc_prob 0
+-backrub:sm_prob 1
+-backrub:sm_angle_max 90
+-in:file:movemap bb.movemap
+-backrub:detailed_balance
+-backrub:test_detailed_balance
+-backrub:ntrials 1000000
+#-backrub:ntrials 10000
+-out:prefix SmallMover_
