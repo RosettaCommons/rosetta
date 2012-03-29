@@ -44,23 +44,24 @@ fi
 nice %(bin)s/rosetta_scripts.%(binext)s @flags -database %(database)s >&1\
 	| egrep -v 'TIMING' \
 	| egrep -v 'Finished.+in [0-9]+ seconds.' \
-	> outputs/features_generation.log
+	> files/features_generation.log
 
-#sqlite3 outputs/features_sp2.db3 \
-#	< average_rotamer_recovery_by_amino_acid.sql \
-#	> outputs/rotamer_recovery_by_amino_acid.csv
+sqlite3 outputs/features_sp2.db3 \
+	< average_rotamer_recovery_by_amino_acid.sql \
+	> files/rotamer_recovery_by_amino_acid.csv
 
-#sqlite3 outputs/features_sp2.db3 \
-#	< average_rotamer_recovery.sql \
-#	| sed "s/^/\{ 'RTMin_rotamer_recovery_rate_with_sp2_correction' : /" \
-#	| sed "s/$/, '_isTestPassed' : True \}/" \
-#	> .results.yaml
+sqlite3 outputs/features_sp2.db3 \
+	< average_rotamer_recovery.sql \
+	| sed "s/^/\{ 'RTMin_rotamer_recovery_rate_with_sp2_correction' : /" \
+	| sed "s/$/, '_isTestPassed' : True \}/" \
+	> .results.yaml
 
 
-#minidir=%(minidir)s
-#features_base_dir=${minidir%%source}tests/features
-#nice $features_base_dir/compare_sample_sources.R \
-#	--script $features_base_dir/scripts/analysis/statistics/rotamer_recovery/rotamer_recovery_summary.R \
-#	--output_dir %(workdir)s/outputs \
-#	%(workdir)s/outputs/features_sp2.db3 \
-#	&> %(workdir)s/outputs/rotamer_recovery_summary.log
+minidir=%(minidir)s
+features_base_dir=${minidir%%source}tests/features
+nice $features_base_dir/compare_sample_sources.R \
+	--fail_on_missing_packages \
+	--script $features_base_dir/scripts/analysis/statistics/rotamer_recovery/rotamer_recovery_summary.R \
+	--output_dir %(workdir)s/files \
+	%(workdir)s/outputs/features_sp2.db3 \
+	&> %(workdir)s/outputs/rotamer_recovery_summary.log
