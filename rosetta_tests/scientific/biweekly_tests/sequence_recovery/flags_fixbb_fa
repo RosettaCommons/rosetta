@@ -1,4 +1,0 @@
--l list.txt
--ignore_unrecognized_res
--out:path:pdb outputs/
-
