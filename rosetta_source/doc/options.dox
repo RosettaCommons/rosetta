@@ -7670,6 +7670,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Define starting templates</dd><br>
 </dl>
 <dl>
+<dt><b>-realign_domains</b> \<Boolean\><dt>
+<dd>domain parse and realign the starting templates</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-add_non_init_chunks</b> \<Boolean\><dt>
 <dd>non chunks from templates other than the initial one</dd><br>
 <dd>Default: false</dd><br>

@@ -1215,10 +1215,10 @@ option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No descripti
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
-option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
+option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
@@ -1584,6 +1584,7 @@ option.add( basic::options::OptionKeys::cm::hybridize::hybridize, "hybridize opt
 option.add( basic::options::OptionKeys::cm::hybridize::templates, "Input list of template files" );
 option.add( basic::options::OptionKeys::cm::hybridize::template_list, "Input list of templates, constaints, cluster, and weights" );
 option.add( basic::options::OptionKeys::cm::hybridize::starting_template, "Define starting templates" );
+option.add( basic::options::OptionKeys::cm::hybridize::realign_domains, "domain parse and realign the starting templates" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::add_non_init_chunks, "non chunks from templates other than the initial one" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure elements used to split the pose" ).def("HE");
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_increase_cycles, "Scale stage 1 cycles" ).def(1.0);
@@ -1821,11 +1822,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa,
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");

@@ -15,6 +15,7 @@
 #include <protocols/comparative_modeling/hybridize/util.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 
@@ -22,6 +23,12 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/types.hh>
+
+#include <numeric/model_quality/rms.hh>
+#include <numeric/model_quality/maxsub.hh>
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/format.hh>
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -198,12 +205,192 @@ downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_num
 		for ( Size ires = start; ires <= stop; ++ires ) {
 			residue_list.push_back(ires);
 		}
-		
 	}
 	residue_list.sort();
 	residue_list.unique();
 	return residue_list;
 }
+	
+void
+partial_align(
+			  core::pose::Pose & pose,
+			  core::pose::Pose const & ref_pose,
+			  id::AtomID_Map< id::AtomID > const & atom_map,
+			  std::list <Size> const & residue_list,
+			  bool iterate_convergence,
+			  core::Real distance_squared_threshold
+			  )
+{
+	numeric::xyzMatrix< core::Real > R;
+	numeric::xyzVector< core::Real > preT;
+	numeric::xyzVector< core::Real > postT;
+	
+	get_superposition_transformation( pose, ref_pose, atom_map, R, preT, postT );
+	apply_transformation( pose, residue_list, R, preT, postT );
+	
+	if (iterate_convergence) {
+		bool converged = false;
+		core::id::AtomID_Map< core::id::AtomID > updated_atom_map(atom_map);
+		while (!converged) {
+			core::id::AtomID_Map< core::id::AtomID > updated_atom_map_last_round = updated_atom_map;
+			updated_atom_map = update_atom_map(pose, ref_pose, atom_map, distance_squared_threshold);
+			if (updated_atom_map == updated_atom_map_last_round) {
+				converged = true;
+			}
+			else {
+				get_superposition_transformation( pose, ref_pose, updated_atom_map, R, preT, postT );
+				apply_transformation( pose, residue_list, R, preT, postT );
+			}
+		}
+	}
+}
+
+core::id::AtomID_Map< core::id::AtomID >
+update_atom_map(
+				core::pose::Pose & pose,
+				core::pose::Pose const & ref_pose,
+				id::AtomID_Map< id::AtomID > const & atom_map,
+				core::Real distance_squared_threshold
+				)
+{
+	core::id::AtomID_Map< core::id::AtomID > updated_atom_map;
+
+	core::pose::initialize_atomid_map( updated_atom_map, pose, core::id::BOGUS_ATOM_ID );
+
+	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
+			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
+			if (!aid.valid()) continue;
+			
+			if (pose.xyz(id::AtomID( iatom,ires )).distance_squared( ref_pose.xyz(aid) ) < distance_squared_threshold) {
+			updated_atom_map[ id::AtomID( iatom,ires ) ] = aid;
+			}
+		}
+	}
+	return updated_atom_map;
+}
+
+Size
+natom_aligned(
+		  core::pose::Pose & pose,
+		  core::pose::Pose const & ref_pose,
+		  id::AtomID_Map< id::AtomID > const & atom_map,
+		  core::Real distance_squared_threshold
+		  )
+{
+	Size n_align=0;
+	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
+			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
+			if (!aid.valid()) continue;
+			
+			if (pose.xyz(id::AtomID( iatom,ires )).distance_squared( ref_pose.xyz(aid) ) < distance_squared_threshold) {
+				++n_align;
+			}
+		}
+	}
+	return n_align;
+	
+}
+	
+// atom_map: from mod_pose to ref_pose
+void
+get_superposition_transformation(
+								 pose::Pose const & mod_pose,
+								 pose::Pose const & ref_pose,
+								 core::id::AtomID_Map< core::id::AtomID > const & atom_map,
+								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT )
+{
+	using namespace core;
+	using namespace core::id;
+	// count number of atoms for the array
+	Size total_mapped_atoms(0);
+	for ( Size ires=1; ires<= mod_pose.total_residue(); ++ires ) {
+		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
+			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
+			if (!aid.valid()) continue;
+			
+			++total_mapped_atoms;
+		}
+	}
+	
+	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
+	if (total_mapped_atoms <= 2) {
+		R.xx() = R.yy() = R.zz() = 1;
+		R.xy() = R.yx() = R.zx() = R.zy() = R.yz() = R.xz() = 0;
+		return;
+	}
+	
+	ObjexxFCL::FArray2D< core::Real > final_coords( 3, total_mapped_atoms );
+	ObjexxFCL::FArray2D< core::Real > init_coords( 3, total_mapped_atoms );
+	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
+	Size atomno(0);
+	for ( Size ires=1; ires<= mod_pose.total_residue(); ++ires ) {
+		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
+			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
+			if (!aid.valid()) continue;
+			++atomno;
+			
+			numeric::xyzVector< core::Real > x_i = mod_pose.residue(ires).atom(iatom).xyz();
+			preT += x_i;
+			numeric::xyzVector< core::Real > y_i = ref_pose.xyz( aid );
+			postT += y_i;
+			
+			for (int j=0; j<3; ++j) {
+				init_coords(j+1,atomno) = x_i[j];
+				final_coords(j+1,atomno) = y_i[j];
+			}
+		}
+	}
+	
+	preT /= (float) total_mapped_atoms;
+	postT /= (float) total_mapped_atoms;
+	for (int i=1; i<=(int)total_mapped_atoms; ++i) {
+		for ( int j=0; j<3; ++j ) {
+			init_coords(j+1,i) -= preT[j];
+			final_coords(j+1,i) -= postT[j];
+		}
+	}
+	
+	// get optimal superposition
+	// rotate >init< to >final<
+	ObjexxFCL::FArray1D< numeric::Real > ww( total_mapped_atoms, 1.0 );
+	ObjexxFCL::FArray2D< numeric::Real > uu( 3, 3, 0.0 );
+	numeric::Real ctx;
+	
+	numeric::model_quality::findUU( init_coords, final_coords, ww, total_mapped_atoms, uu, ctx );
+	R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
+	R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
+	R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
+}
+
+void
+apply_transformation(
+				pose::Pose & mod_pose,
+				std::list <Size> const & residue_list,
+				numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
+				)
+{
+	using namespace ObjexxFCL;
+	// translate xx2 by COM and fill in the new ref_pose coordinates
+	utility::vector1< core::id::AtomID > ids;
+	utility::vector1< numeric::xyzVector<core::Real> > positions;
+	
+	Vector x2;
+	FArray2D_double xx2;
+	FArray1D_double COM(3);
+	for (std::list<Size>::const_iterator it = residue_list.begin();
+		 it != residue_list.end();
+		 ++it) {
+		Size ires = *it;
+		for ( Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
+			ids.push_back(core::id::AtomID(iatom,ires));
+			positions.push_back(postT + (R*( mod_pose.xyz(core::id::AtomID(iatom,ires)) - preT )));
+		}
+	}
+	mod_pose.batch_set_xyz(ids,positions);
+}
+
     
 } // hybridize 
 } // comparative_modeling 

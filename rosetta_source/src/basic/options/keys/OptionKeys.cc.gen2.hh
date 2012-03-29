@@ -1,3 +1,4 @@
+namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
@@ -364,6 +365,7 @@ namespace cm { namespace hybridize { BooleanOptionKey const hybridize( "cm:hybri
 namespace cm { namespace hybridize { FileVectorOptionKey const templates( "cm:hybridize:templates" );  } }
 namespace cm { namespace hybridize { FileOptionKey const template_list( "cm:hybridize:template_list" );  } }
 namespace cm { namespace hybridize { IntegerVectorOptionKey const starting_template( "cm:hybridize:starting_template" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const realign_domains( "cm:hybridize:realign_domains" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const add_non_init_chunks( "cm:hybridize:add_non_init_chunks" );  } }
 namespace cm { namespace hybridize { StringOptionKey const ss( "cm:hybridize:ss" );  } }
 namespace cm { namespace hybridize { RealOptionKey const stage1_increase_cycles( "cm:hybridize:stage1_increase_cycles" );  } }
@@ -601,5 +603,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "Deno
 namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
 namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }

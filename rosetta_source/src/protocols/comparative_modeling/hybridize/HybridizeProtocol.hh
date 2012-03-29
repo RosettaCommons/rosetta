@@ -62,6 +62,15 @@ public:
 		utility::vector1 < protocols::loops::Loops > & template_chunks_icluster,
 		utility::vector1 < protocols::loops::Loops > & template_contigs_icluster);
 
+	utility::vector1 <Loops>
+	expand_domains_to_full_length(utility::vector1 < utility::vector1 < Loops > > all_domains, Size ref_domains_index, Size n_residues);
+	
+	void
+	align_by_domain(utility::vector1<core::pose::PoseOP> & poses, utility::vector1 < Loops > domains, core::Size const ref_index);
+	
+	void
+	align_by_domain(core::pose::Pose & pose, core::pose::Pose const & ref_pose, utility::vector1 <Loops> domains);
+
 	//fpd optionally do not hybridize in stage 1
 	void
 	initialize_and_sample_loops(
@@ -88,7 +97,7 @@ private:
 	core::Real stage1_probability_, stage1_increase_cycles_, stage2_increase_cycles_;
 	core::Real frag_weight_aligned_;
 	core::Size max_registry_shift_;
-	bool add_non_init_chunks_, no_global_frame_, linmin_only_;
+	bool realign_domains_, add_non_init_chunks_, no_global_frame_, linmin_only_;
 	core::scoring::ScoreFunctionOP stage1_scorefxn_, stage2_scorefxn_, fa_scorefxn_;
 	std::string fa_cst_fn_;
 

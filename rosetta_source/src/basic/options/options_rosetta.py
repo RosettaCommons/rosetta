@@ -3283,6 +3283,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'templates',                      'FileVector', desc='Input list of template files'),
 			Option( 'template_list',                  'File', desc='Input list of templates, constaints, cluster, and weights'),
 			Option( 'starting_template',              'IntegerVector',    desc='Define starting templates' ),
+			Option( 'realign_domains',                'Boolean',     desc='domain parse and realign the starting templates', default='false' ),
 			Option( 'add_non_init_chunks',            'Boolean',     desc='non chunks from templates other than the initial one', default='false' ),
 			Option( 'ss',                             'String',     desc='secondary structure elements used to split the pose', default='HE' ),
 			Option( 'stage1_increase_cycles',         'Real',     desc='Scale stage 1 cycles', default='1.0' ),

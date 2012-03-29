@@ -42,23 +42,6 @@ public:
 	
 InsertChunkMover();
 ~InsertChunkMover();
-	
-// atom_map: from mod_pose to ref_pose
-void
-get_superposition_transformation(
-								 pose::Pose const & mod_pose,
-								 pose::Pose const & ref_pose,
-								 id::AtomID_Map< id::AtomID > const & atom_map,
-								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT );
-
-void
-apply_transform(
-				pose::Pose & mod_pose,
-				std::list <Size> const & residue_list,
-				numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
-				);
-	
-void align_chunk(core::pose::Pose & pose);
 
 void set_bb_xyz_aligned(core::pose::Pose & pose);
 

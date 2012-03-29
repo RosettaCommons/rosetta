@@ -55,6 +55,7 @@ namespace cm { namespace hybridize { extern BooleanOptionKey const hybridize; } 
 namespace cm { namespace hybridize { extern FileVectorOptionKey const templates; } }
 namespace cm { namespace hybridize { extern FileOptionKey const template_list; } }
 namespace cm { namespace hybridize { extern IntegerVectorOptionKey const starting_template; } }
+namespace cm { namespace hybridize { extern BooleanOptionKey const realign_domains; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const add_non_init_chunks; } }
 namespace cm { namespace hybridize { extern StringOptionKey const ss; } }
 namespace cm { namespace hybridize { extern RealOptionKey const stage1_increase_cycles; } }

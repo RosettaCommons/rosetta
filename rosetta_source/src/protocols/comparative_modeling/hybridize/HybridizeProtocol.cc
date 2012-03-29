@@ -203,6 +203,7 @@ HybridizeProtocol::init() {
 
 	stage1_probability_ = option[cm::hybridize::stage1_probability]();
 	stage1_increase_cycles_ = option[cm::hybridize::stage1_increase_cycles]();
+	realign_domains_ = option[cm::hybridize::realign_domains]();
 	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
 	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
@@ -617,6 +618,7 @@ void HybridizeProtocol::pick_starting_template(core::Size & initial_template_ind
 	
 	for (Size i_template = 1; i_template <= template_clusterID_.size(); ++i_template) {
 		if ( cluster_id == template_clusterID_[i_template] ) {
+			// add templates from the same cluster
 			template_index_icluster.push_back(i_template);
 			templates_icluster.push_back(templates_[i_template]);
 			weights_icluster.push_back(template_weights_[i_template]);
@@ -679,15 +681,54 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		pick_starting_template(
 			initial_template_index, initial_template_index_icluster,
 			template_index_icluster, templates_icluster, weights_icluster,
-			template_chunks_icluster, template_contigs_icluster);
+			template_chunks_icluster, template_contigs_icluster );
 		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
 
-		// domain parsing
-		DDomainParse ddom;
-		utility::vector1< loops::Loops > domains = ddom.split( *templates_[initial_template_index], nres_tgt );
-		TR << "Found " << domains.size() << "domains" << std::endl;
-		for (int i=1; i<=domains.size(); ++i) {
-			TR << "domain " << i << ": " << domains[i] << std::endl;
+		// realign each template to the starting template by domain
+		if (realign_domains_) {
+			// domain parsing
+			DDomainParse ddom;
+			utility::vector1< utility::vector1< loops::Loops > > domains_all_templ;
+			domains_all_templ.resize( templates_.size() );
+			for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
+				if (template_clusterID_[i_template] != template_clusterID_[initial_template_index]) continue;
+				domains_all_templ[i_template] = ddom.split( *templates_[i_template], nres_tgt );
+				
+				//protocols::loops::Loops my_chunks(template_chunks_[initial_template_index_]);
+				// convert domain numbering to target pose numbering
+				for (Size iloops=1; iloops<=domains_all_templ[i_template].size(); ++iloops) {
+					for (Size iloop=1; iloop<=domains_all_templ[i_template][iloops].num_loop(); ++iloop) {
+						Size seqpos_start_pose = templates_[i_template]->pdb_info()->number(domains_all_templ[i_template][iloops][iloop].start());
+						domains_all_templ[i_template][iloops][iloop].set_start( seqpos_start_pose );
+						
+						Size seqpos_stop_pose = templates_[i_template]->pdb_info()->number(domains_all_templ[i_template][iloops][iloop].stop());
+						domains_all_templ[i_template][iloops][iloop].set_stop( seqpos_stop_pose );
+					}
+				}
+				
+				TR << "Found " << domains_all_templ[i_template].size() << " domains for template " << template_fn_[i_template] << std::endl;
+				for (int i=1; i<=domains_all_templ[i_template].size(); ++i) {
+					TR << "domain " << i << ": " << domains_all_templ[i_template][i] << std::endl;
+				}
+			}
+			
+			// combine domains that are not in the initial template
+			utility::vector1< loops::Loops > domains = expand_domains_to_full_length(domains_all_templ, initial_template_index, nres_tgt);
+			TR << "Final decision: " << domains.size() << " domains" << std::endl;
+			for (int i=1; i<= domains.size(); ++i) {
+				TR << "domain " << i << ": " << domains[i] << std::endl;
+			}
+			
+			// local align
+			align_by_domain(templates_, domains, initial_template_index);
+			
+			// update chunk, contig informations
+			for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
+				template_contigs_[i_template] = protocols::loops::extract_continuous_chunks(*templates_[i_template]); 
+				template_chunks_[i_template] = protocols::loops::extract_secondary_structure_chunks(*templates_[i_template], "HE", 3, 6, 3, 4);
+				if (template_chunks_[i_template].num_loop() == 0)
+					template_chunks_[i_template] = template_contigs_[i_template];
+			}
 		}
 
 		// symmetrize
@@ -857,6 +898,113 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	TR << "GDTMM_final" << F(8,3,gdtmm) << std::endl;
 }
 
+utility::vector1 <Loops>
+HybridizeProtocol::expand_domains_to_full_length(utility::vector1 < utility::vector1 < Loops > > all_domains, Size ref_domains_index, Size n_residues)
+{
+	utility::vector1 < Loops > domains = all_domains[ref_domains_index];
+	if (all_domains[ref_domains_index].size() == 0) return domains;
+
+	utility::vector1 < bool > residue_mask(n_residues, false);
+	residue_mask.resize(n_residues);
+	
+	//mask residues from all domains not to be cut
+	for (Size i_pose=1; i_pose <= all_domains.size(); ++i_pose) {
+		for (Size idomain=1; idomain <= all_domains[i_pose].size(); ++idomain) {
+			for (core::Size iloop=1; iloop<=all_domains[i_pose][idomain].num_loop(); ++iloop) {
+				for (core::Size ires=all_domains[i_pose][idomain][iloop].start()+1; ires<=all_domains[i_pose][idomain][iloop].stop(); ++ires) {
+					residue_mask[ires] = true;
+				}
+			}
+		}
+	}
+	
+	// assuming loops in domains are sequential
+	for (Size idomain=1; idomain <= all_domains[ref_domains_index].size(); ++idomain) {
+		for (core::Size iloop=1; iloop<=all_domains[ref_domains_index][idomain].num_loop(); ++iloop) {
+			if (idomain == 1 && iloop == 1) {
+				domains[idomain][iloop].set_start(1);
+			}
+			if (idomain == all_domains[ref_domains_index].size() && iloop == all_domains[ref_domains_index][idomain].num_loop()) {
+				domains[idomain][iloop].set_stop(n_residues);
+			}
+			
+			// the next loop
+			Size jdomain = idomain;
+			Size jloop = iloop+1;
+			if (jloop > all_domains[ref_domains_index][idomain].num_loop()) {
+				++jdomain;
+				jloop = 1;
+				if (jdomain > all_domains[ref_domains_index].size()) continue;
+				
+				Size gap_start = all_domains[ref_domains_index][idomain][iloop].stop()+1;
+				Size gap_stop  = all_domains[ref_domains_index][jdomain][jloop].start();
+				utility::vector1<Size> cut_options;
+				for (Size ires=gap_start; ires<=gap_stop; ++ires) {
+					if (residue_mask[ires]) continue;
+					cut_options.push_back(ires);
+				}
+				if (cut_options.size() == 0) {
+					for (Size ires=gap_start; ires<=gap_stop; ++ires) {
+						cut_options.push_back(ires);
+					}
+				}
+				Size cut = cut_options[RG.random_range(1,cut_options.size())];
+				
+				domains[idomain][iloop].set_stop(cut-1);
+				domains[jdomain][jloop].set_start(cut);
+			}
+		}
+	}
+	return domains;
+}
+
+void
+HybridizeProtocol::align_by_domain(utility::vector1<core::pose::PoseOP> & poses, utility::vector1 < Loops > domains, core::Size const ref_index)
+{
+	for (Size i_pose=1; i_pose <= poses.size(); ++i_pose) {
+		if (i_pose == ref_index) continue;
+		align_by_domain(*poses[i_pose], *poses[ref_index], domains);
+		
+		//std::string out_fn = template_fn_[i_pose] + "_realigned.pdb";
+		//poses[i_pose]->dump_pdb(out_fn);
+	}
+}
+
+
+void
+HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose const & ref_pose, utility::vector1 <Loops> domains)
+{
+	for (Size i_domain = 1; i_domain <= domains.size() ; ++i_domain) {
+		core::id::AtomID_Map< core::id::AtomID > atom_map;
+		core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
+		std::list <Size> residue_list;
+		core::Size n_mapped_residues=0;
+		for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
+			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
+				if ( pose.pdb_info()->number(ires) < domains[i_domain][iloop].start() || pose.pdb_info()->number(ires) > domains[i_domain][iloop].stop() ) continue;
+				
+				residue_list.push_back(ires);
+			
+				for (core::Size jres=1; jres<=ref_pose.total_residue(); ++jres) {
+					if ( pose.pdb_info()->number(ires) != ref_pose.pdb_info()->number(jres) ) continue;
+					if ( !pose.residue_type(ires).is_protein() ) continue;
+					core::id::AtomID const id1( pose.residue_type(ires).atom_index("CA"), ires );
+					core::id::AtomID const id2( ref_pose.residue_type(jres).atom_index("CA"), jres );
+
+					atom_map[ id1 ] = id2;
+					++n_mapped_residues;
+				}
+			}
+		}
+		if (n_mapped_residues >= 6) {
+			partial_align(pose, ref_pose, atom_map, residue_list, true); // iterate_convergence = true
+		}
+		//else {
+		//	TR << "This domain cannot be aligned: " << n_mapped_residues<< std::endl;
+		//	TR << domains[i_domain];
+		//}
+	}
+}
 
 protocols::moves::MoverOP HybridizeProtocol::clone() const { return new HybridizeProtocol( *this ); }
 protocols::moves::MoverOP HybridizeProtocol::fresh_instance() const { return new HybridizeProtocol; }
@@ -891,6 +1039,8 @@ HybridizeProtocol::parse_my_tag(
 	
 	if( tag->hasOption( "stage1_probability" ) )
 		stage1_probability_ = tag->getOption< core::Real >( "stage1_probability" );
+	if( tag->hasOption( "realign_domains" ) )
+		realign_domains_ = tag->getOption< bool >( "realign_domains" );
 	if( tag->hasOption( "add_non_init_chunks" ) )
 		add_non_init_chunks_ = tag->getOption< bool >( "add_non_init_chunks" );
 	if( tag->hasOption( "frag_weight_aligned" ) )
