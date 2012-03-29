@@ -44,7 +44,6 @@ f <- query_sample_sources(sample_sources, sele)
 
 plot_parts <- list(
   geom_hex(aes(x=chi4)),
-#  geom_indicator(aes(indicator=counts)),
   labs(x="CHI 4 Torsion Angle"),
   facet_grid(acc_chem_type ~ sample_source),
   theme_bw())

@@ -166,7 +166,7 @@ dens <- estimate_density_1d_wrap(f,
 plot_id = "tyr_as_donor_hbond_chi"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type ) +
 	opts(title = "HBond Torsional Angle for Tyrosine As Donors: (CE2, CZ, OH, A) SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
@@ -183,7 +183,7 @@ dens <- estimate_density_1d_wrap(f,
 plot_id = "tyr_as_donor_hbond_chi_by_hybrid"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_hybrid ) +
 	opts(title = "HBond Torsional Angle for Tyrosine As Donors: (CE2, CZ, OH, A) SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
@@ -200,7 +200,7 @@ dens <- estimate_density_1d_wrap(f,
 plot_id = "tyr_as_donor_proton_chi"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type ) +
 	opts(title = "Proton Torsional Angle for Tyrosine: (CE2, CZ, OH, HH) SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
@@ -216,7 +216,7 @@ dens <- estimate_density_1d_wrap(f,
 plot_id = "tyr_as_donor_proton_chi_by_hybrid"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_hybrid ) +
 	opts(title = "Proton Torsional Angle for Tyrosine: (CE2, CZ, OH, HH) SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
@@ -231,7 +231,7 @@ dens <- estimate_density_1d(f,
 plot_id = "tyr_as_donor_hbond_proton_chi_diff"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type ) +
 	opts(title = "HBond Torsion Angle - Proton Torsional Angle for Tyrosine Donors\n SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
@@ -246,7 +246,7 @@ dens <- estimate_density_1d(f,
 plot_id = "tyr_as_donor_proton_chi_diff_by_hybrid"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_hybrid ) +
 	opts(title = "HBond Torsion Angle - Proton Torsional Angle for Tyrosine Donors\n(CE2, CZ, OH, HH) SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +

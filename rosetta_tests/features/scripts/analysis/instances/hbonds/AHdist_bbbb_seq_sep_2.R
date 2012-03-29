@@ -55,6 +55,6 @@ f <- melt(f,
 
 instances_id <- "AHdist_bbbb_seq_sep_2"
 
-prepare_feature_instances(instances_id, sample_sources, f)
+prepare_feature_instances(instances_id, sample_sources, f, output_dir)
 
 })) # end FeaturesAnalysis

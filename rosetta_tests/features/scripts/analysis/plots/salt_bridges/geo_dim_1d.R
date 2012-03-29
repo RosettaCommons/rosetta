@@ -58,7 +58,7 @@ f$seq_sep <- factor(f$seq_sep,
 plot_parts <- list(
 	theme_bw(),
 	geom_line(aes(x=x, y=y, colour=sample_source)),
-	geom_indicator(aes(indicator=counts, colour=sample_source)),
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
 	scale_y_continuous("FeatureDensity"))
 
 
@@ -212,7 +212,7 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 plot_parts <- list(
 	theme_bw(),
 	geom_line(aes(x=x, y=log(y+1), colour=sample_source)),
-	geom_indicator(aes(indicator=counts, colour=sample_source)),
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
 	scale_y_continuous("log(FeatureDensity + 1)"))
 
 plot_id <- "salt_bridge_rho"

@@ -62,8 +62,8 @@ d_ply(f, .(sample_source), function(sub_f) {
 	p <- ggplot(data=sub_f) + theme_bw() +
 		stat_bin(aes(x=rel_div, y=log(..density.. + 1), colour=dssp),
 			breaks=c(-4.5, -3.5, -2.5, -1.5, -.5, .5, 1.5, 2.5, 3.5, 4.5), geom="line") +
-		geom_indicator(aes(indicator=counts, colour=dssp)) +
-		geom_indicator(aes(indicator=mean, color=dssp, xpos="left")) +
+		geom_indicator(aes(indicator=counts, colour=dssp, group=dssp)) +
+		geom_indicator(aes(indicator=mean, color=dssp, group=dssp), xpos="left") +
 		facet_wrap( ~ res_type ) +
 		opts(title = "Rotamer Recovery by Residue Type and DSSP, B-Factor < 20") +
 		labs(x="New Rotamer Recovery Score - Ref Recovery Score", y="log(Density + 1)") +

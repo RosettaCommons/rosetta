@@ -122,7 +122,7 @@ print(summary(dens))
 plot_id <- "HBond_AHdist_regression_by_chem_type"
 ggplot(dens) + theme_bw() +
   geom_line(aes(x=x, y=neg_log_y, colour=sample_source)) +
-  geom_indicator(aes(indicator=count, colour=sample_source)) +
+  geom_indicator(aes(indicator=count, colour=sample_source, group=sample_source)) +
   facet_grid(don_chem_type ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds A-H Distance by Chemical Type Fitted with Morse Function\nnormalized for equal weight per unit distance") +
   labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),

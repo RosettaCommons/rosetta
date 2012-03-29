@@ -83,7 +83,7 @@ dens <- estimate_density_1d(
 plot_id = "cosBAH_hydroxyl_acceptors"
 p <- ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
-  geom_indicator(aes(colour=sample_source, indicator=counts)) +
+  geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
   facet_wrap( ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds BAH Angle for Hydroxyl Acceptors, Measured from the Heavy-Atom Base\nB-Factors < 30; Sequence Separation > 5") +
   scale_x_continuous(paste('Heavyatom Base -- Acceptor -- Hydrogen (degrees)')) +
@@ -101,7 +101,7 @@ dens2 <- estimate_density_1d(
 plot_id = "cosBAH_hydroxyl_acceptors_chem_type"
 p <- ggplot(data=dens2) + theme_bw() +
   geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
-  geom_indicator(aes(colour=sample_source, indicator=counts)) +
+  geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
   facet_grid( don_chem_type ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds BAH Angle for Hydroxyl Acceptors, Measured from the Heavy-Atom Base\nB-Factors < 30; Sequence Separation > 5") +
   scale_x_continuous(paste('Heavyatom Base -- Acceptor -- Hydrogen (degrees)')) +

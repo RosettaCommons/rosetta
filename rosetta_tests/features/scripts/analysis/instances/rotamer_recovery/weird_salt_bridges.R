@@ -73,6 +73,6 @@ g <- melt(g[g$id <= n_examples,],
 	variable_name = "atom")
 
 instances_id <- "salt_bridge_instances_psi_rho_LYS_CXL"
-prepare_feature_instances(instances_id, sample_sources, g)
+prepare_feature_instances(instances_id, sample_sources, g, output_dir)
 
 })) # end FeaturesAnalysis

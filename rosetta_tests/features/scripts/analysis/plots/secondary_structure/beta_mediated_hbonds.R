@@ -62,7 +62,7 @@ dens <- estimate_density_1d(
 plot_id <- "beta_mediated_hbonds_AHdist"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=log(y+1), colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	opts(title = "Hydrogen Bonds A-H Distance For beta-mediated HBonds\nnormalized for equal weight per unit distance") +
 	labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
 	     y="log(FeatureDensity + 1)") +

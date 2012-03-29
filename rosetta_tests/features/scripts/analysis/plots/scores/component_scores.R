@@ -44,7 +44,7 @@ dens <- estimate_density_1d(
 plot_id <- "component_scores"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=log(y+1), colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ score_type, ncol = 4) +
 	opts(title = "Rosetta Component Scores") +
 	labs(x="Rosetta Energy Units") +

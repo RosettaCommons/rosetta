@@ -58,7 +58,7 @@ plot_id = "chi_BAH_lt150_aBB_dSC_long_range_by_acc_ss"
 dens <- estimate_density_1d_wrap(f, c("sample_source", "acc_ss"), "chi")
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap(~acc_ss, ncol=3) +
 	opts(title = "Hydrogen Bonds CHI Angle for Backbone Acceptors and Sidechain Donors with Sequence Separation > 5\n BAH < 150d By Acceptor DSSP Secondary Structure Type") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,180,270)) +

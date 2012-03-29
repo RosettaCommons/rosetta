@@ -88,6 +88,6 @@ names(acc_atoms)[7] <- "atom"
 instance_atoms <- rbind(don_atoms, acc_atoms)
 
 instances_id <- "hbond_dAMOaPBA"
-prepare_feature_instances(instances_id, sample_sources, instance_atoms)
+prepare_feature_instances(instances_id, sample_sources, instance_atoms, output_dir)
 
 })) # end FeaturesAnalysis

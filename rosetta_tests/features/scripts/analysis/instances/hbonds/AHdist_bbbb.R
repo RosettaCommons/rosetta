@@ -73,6 +73,6 @@ f <- query_sample_sources(sample_sources, sele)
 #	variable_name = "atom")
 #
 #instances_id <- "AHdist_bbbb"
-#prepare_feature_instances(instances_id, sample_sources, gm)
+#prepare_feature_instances(instances_id, sample_sources, gm, output_dir)
 
 })) # end FeaturesAnalysis

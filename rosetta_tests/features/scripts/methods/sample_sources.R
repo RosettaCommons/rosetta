@@ -75,33 +75,3 @@ sample_source_titles <- function(sample_sources){
 	paste(laply(sample_sources, function(ss) ss$sample_source), collapse=" ")
 }
 
-
-
-add_sample_sources_to_analysis_manager <- function(
-		con, sample_sources){
-
-	a_ply(sample_sources, 1, function(ss) {
-		#TODO sanitize ss$fname and ss$sample_source and ss$description
-		sql <- paste("INSERT OR REPLACE INTO sample_sources VALUES ('",
-			paste(as.character(ss$sample_source), as.character(ss$fname),
-				as.character(ss$description), sep="', '"), "');", sep="")
-		dbGetQuery(con, sql)
-
-		ss_con <- dbConnect(engine, as.character(ss$fname))
-		df <- dbGetQuery(ss_con, "SELECT count(*) AS has_features_reporters_table FROM sqlite_master WHERE name='features_reporters';")
-		dbDisconnect(ss_con)
-		if(df$has_features_reporters_table[1] == 0){
-			#print(WARNING: The feature database '", ss$fname, "' does not have a features_reporter table. This may be because the code you used to extract the features database is outdated."))
-		} else {
-			dbGetQuery(con, paste("ATTACH DATABASE '", ss$fname, "' AS ss;", sep=""))
-			dbGetQuery(con, "INSERT OR IGNORE INTO features_reporters
-SELECT * FROM ss.features_reporters;")
-			dbGetQuery(con, paste("INSERT OR IGNORE INTO sample_source_features_reporters
-		SELECT '", ss$sample_source, "', features_reporter.features_reporter_type_name
-		FROM features_reporters AS features_reporter;", sep=""))
-			dbGetQuery(con, "DETACH DATABASE ss;")
-		}
-#		dbDisconnect(ss_con)
-	})
-}
-

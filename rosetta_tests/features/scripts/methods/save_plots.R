@@ -78,8 +78,7 @@ save_plots <- function(
 	}
 
 	a_ply(output_formats, 1, function(fmt){
-		ss_ids <- paste(sample_sources$sample_source,collapse="_")
-		full_output_dir <- file.path(output_dir, ss_ids, features_analysis@id, fmt$id)
+		full_output_dir <- file.path(output_dir, features_analysis@id, fmt$id)
 		if(!file.exists(full_output_dir)){
 			dir.create(full_output_dir, recursive=TRUE)
 		}
@@ -87,13 +86,6 @@ save_plots <- function(
 		fname <- paste(plot_id, date, sep="_")
 		full_path <- file.path(full_output_dir, paste(fname, fmt$extension, sep=""))
 		cat("Saving Plot: ", full_path)
-		add_features_analysis_plot(
-			features_analysis,
-			plot_id,
-			sample_sources,
-			date,
-			file.path(features_analysis@id, fmt$id, paste(fname, fmt$extension, sep="")),
-			fmt)
 		timing <- system.time({
 			tryCatch({
 				if(fmt$add_footer){

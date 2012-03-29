@@ -85,7 +85,7 @@ l_ply(levels(dens$hybrid), function(hybrid){
 	ggplot(data=dens[dens$hybrid==hybrid,]) + theme_bw() +
 		geom_line(data=potential, aes(x=x, y=y*1000), size=1.1, colour="darkgray") +
 		geom_line(aes(x=x, y=y*1000, colour=sample_source)) +
-		geom_indicator(aes(indicator=counts, colour=sample_source)) +
+		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 		facet_wrap( ~ don_chem_type) +
 		opts(title = paste("HBonds with Sequence Separation > 5 and", hybrid, "Acceptors: CHI Angle\n(Normalized for Equal Volume per Unit Distance)")) +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
@@ -115,7 +115,7 @@ dens <- estimate_density_1d_wrap(
 	f, c("sample_source", "acc_chem_type", "don_chem_type"), "chi")
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y*1000, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "Hydrogen Bonds CHI Angle by Chemical Types with Sequence Separation > 5\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +

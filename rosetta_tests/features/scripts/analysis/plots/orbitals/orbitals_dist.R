@@ -37,7 +37,7 @@ all_geom$htype2 <- factor(all_geom$htype2)
 plot_parts <- list(
   theme_bw(),
   geom_line(aes(colour=orbName1)),
-  geom_indicator(aes(indicator=counts, colour=orbName1)),
+  geom_indicator(aes(indicator=counts, colour=orbName1, group=orbName1)),
   facet_grid(htype2 ~ orb_type),
   scale_y_continuous("log(FeatureDensity + 1)"))
 

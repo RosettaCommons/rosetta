@@ -73,7 +73,7 @@ dens <- estimate_density_1d_wrap(
 	f, c("sample_source", "acc_ss_name"), "chi")
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap(~acc_ss_name, ncol=3) +
 	opts(title = "Hydrogen Bonds CHI Angle for Backbone Acceptors and Sidechain Donors with Sequence Separation > 5\nBy Acceptor DSSP Secondary Structure Type") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
@@ -90,7 +90,7 @@ l_ply(levels(f$sample_source), function(ss){
 		sub_f, c("acc_ss_name", "accRank"), "chi")
 	ggplot(data=dens) + theme_bw() +
 		geom_line(aes(x=x, y=y, colour=accRank)) +
-		geom_indicator(aes(indicator=counts, colour=accRank)) +
+		geom_indicator(aes(indicator=counts, colour=accRank, group=accRank)) +
 		facet_wrap(~acc_ss_name, ncol=3) +
 		opts(title = paste("Hydrogen Bonds CHI Angle for Backbone Acceptors and Sidechain Donors with Sequence Separation > 5\nBy Acceptor DSSP Secondary Structure Type   Sample Source: ", ss, sep="")) +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
@@ -111,7 +111,7 @@ l_ply(levels(dens$acc_ss), function(ss){
 	ss_name <- sub_dens[1,"acc_ss_name"]
 	ggplot(data=sub_dens) + theme_bw() +
 		geom_line(aes(x=x, y=y, colour=sample_source)) +
-		geom_indicator(aes(indicator=counts, colour=sample_source)) +
+		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 		facet_wrap(~don_chem_type, ncol=3) +
 		opts(title = paste("Hydrogen Bonds CHI Angle for Backbone Acceptors and Sidechain Donors with Sequence Separation > 5\nBy Acceptor DSSP Secondary Structure Type: ", ss_name, sep="")) +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +

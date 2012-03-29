@@ -37,7 +37,7 @@ dens <- estimate_density_1d(
 plot_id <- "number_of_neighbors"
 p <- ggplot(data=dens, aes(x=x, y=log(y+1), color=sample_source, indicator=counts))
 p <- p + geom_line()
-p <- p + geom_indicator()
+p <- p + geom_indicator(aes(group=sample_source))
 p <- p + facet_wrap( ~ res_type )
 p <- p + opts(title = "Residue Burial by Residue Type")
 p <- p + labs(x="Number of Neighbors in 10 Angstroms",

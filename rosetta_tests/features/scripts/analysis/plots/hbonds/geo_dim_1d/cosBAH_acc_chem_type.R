@@ -63,7 +63,7 @@ dens <- estimate_density_1d(
 plot_id = "cosBAH_acc_chem_type"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=-log(y), colour=sample_source)) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type_label) +
 	opts(title = "Hydrogen Bonds BAH Angle by Acceptor Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
@@ -84,7 +84,7 @@ dens <- estimate_density_1d(
 plot_id = "cosBAH_acc_chem_type_filtered"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=-log(y), colour=sample_source)) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type_label) +
 	opts(title = "HBonds: Sidechain Donor, BFact < 30, SeqSep > 5   BAH Angle by Acceptor Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +

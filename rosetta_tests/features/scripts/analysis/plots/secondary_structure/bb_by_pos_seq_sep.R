@@ -78,7 +78,7 @@ dens <- estimate_density_1d(
 plot_id <- "hbond_backbone_backbone_seq_sep5_vs_long_range_AHdist"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=seq_sep_class)) +
-	geom_indicator(aes(indicator=counts, colour=seq_sep_class)) +
+	geom_indicator(aes(indicator=counts, colour=seq_sep_class, group=seq_sep_class)) +
 	facet_wrap( ~ sample_source) +
 	opts(title = "Backbone-Backbone H-Bonds A-H Distance by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +
@@ -100,7 +100,7 @@ dens <- estimate_density_1d_reflect_boundary(
 plot_id <- "hbond_backbone_backbone_seq_sep5_vs_long_range_cosAHD"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=seq_sep_class)) +
-	geom_indicator(aes(indicator=counts, colour=seq_sep_class)) +
+	geom_indicator(aes(indicator=counts, colour=seq_sep_class, group=seq_sep_class)) +
 	facet_wrap( ~ sample_source) +
 	opts(title = "Backbone-Backbone H-Bonds AHD Angle by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity", limits=c(0,20), breaks=c(0,5,10,15)) +
@@ -120,7 +120,7 @@ dens <- estimate_density_1d(
 plot_id <- "hbond_backbone_backbone_seq_sep5_vs_long_range_cosBAH"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=y, colour=seq_sep_class)) +
-	geom_indicator(aes(indicator=counts, colour=seq_sep_class)) +
+	geom_indicator(aes(indicator=counts, colour=seq_sep_class, group=seq_sep_class)) +
 	facet_wrap( ~ sample_source) +
 	opts(title = "Backbone-Backbone H-Bonds BAH Angle by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
@@ -140,7 +140,7 @@ dens <- estimate_density_1d_wrap(
 plot_id <- "hbond_backbone_backbone_seq_sep5_vs_long_range_chi"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=seq_sep_class)) +
-	geom_indicator(aes(indicator=counts, colour=seq_sep_class)) +
+	geom_indicator(aes(indicator=counts, colour=seq_sep_class, group=seq_sep_class)) +
 	facet_wrap( ~ sample_source) +
 	opts(title = "Backbone-Backbone H-Bonds CHI Angle by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +

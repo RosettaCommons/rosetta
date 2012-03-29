@@ -62,18 +62,18 @@ iscript_output_dir <- function(output_dir){
 }
 
 
-iscript_includes <- function(includes){
+iscript_includes <- function(base_dir, includes){
   for( inc in includes){
-    cat("source(\"", inc, "\")\n", file=iscript_fname, sep="", append=TRUE)
+    cat("source(\"",base_dir, "/", inc, "\")\n", file=iscript_fname, sep="", append=TRUE)
   }
   cat("\n", file=iscript_fname, append=TRUE)
 }
 
 
-iscript_setup_analysis_manager <- function(analysis_manager_db){
-	cat("analysis_manager_con <- initialize_analysis_manager_db(\n",
-		"	\"", analysis_manager_db, "\")\n\n",
-		file=iscript_fname, append=TRUE, sep="")
+iscript_summarize_configuration <- function(ss_cmp){
+	cat(
+		"## BEGIN SAMPLE SOURCE COMPARISON ##\n",
+		file=iscript_fname, sep="", append=T)
 }
 
 iscript_sample_sources <- function(sample_sources){
@@ -96,11 +96,11 @@ iscript_output_formats <- function(output_formats){
 iscript_setup_add_footer_to_output_formats <- function(add_footer){
 	if(add_footer){
 		cat("#Do not include footer information in any plots\n",
-"output_formats$add_footer <- FALSE\n\n",
+"output_formats$add_footer <- FALSE\n\n", sep="",
 				file=iscript_fname, append=TRUE)
 	} else {
 		cat("#nclude footer information for the plot formats that can accept them\n",
-"output_formats$add_footer <- output_formats$accept_footer\n\n",
+"output_formats$add_footer <- output_formats$accept_footer\n\n", sep="",
 				file=iscript_fname, append=TRUE)
 	}
 }
@@ -120,19 +120,19 @@ iscript_general_kernel_adjust <- function(general_kernel_adjust){
 		file=iscript_fname, sep="", append=TRUE)
 }
 
-iscript_source_scripts <- function(scripts){
+iscript_source_scripts <- function(base_dir, scripts){
   cat("\n", file=iscript_fname, append=TRUE)
   cat("#Source these analysis scripts:\n",
       file=iscript_fname, append=TRUE)
 	cat("feature_analyses <- c()\n",
 			file=iscript_fname, append=TRUE)
   for(script in scripts){
-    cat("source(\"", script, "\")\n",
+    cat("source(\"",base_dir, "/", script, "\")\n",
         file=iscript_fname, sep="", append=TRUE)
   }
 }
 
-iscript_run_feature_analyses <- function(){
+iscript_run_feature_analyses <- function(output_dir){
   cat("\n", file=iscript_fname, append=TRUE)
 	cat("#Run these feature_analyses:\n",
 			file=iscript_fname, append=TRUE)
@@ -146,11 +146,12 @@ iscript_run_feature_analyses <- function(){
 	# evironment and then evaluate the body of the function in the
 	# current frame as well.
 
+	setwd(\"", base_dir, "\")
 	self <- features_analysis
-	output_dir <- sample_source_output_dir
+	output_dir <- \"", output_dir, "\"
 	eval(body(features_analysis@run))
 
 	cat(\"\\n\")
-}\n\n",
+}\n\n", sep="",
 			file=iscript_fname, append=TRUE)
 }

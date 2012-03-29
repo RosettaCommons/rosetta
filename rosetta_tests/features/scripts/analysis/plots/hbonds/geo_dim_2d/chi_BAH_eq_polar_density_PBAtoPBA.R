@@ -21,7 +21,11 @@ SELECT
 	geom.cosBAH,
 	geom.chi,
   don_site.HBChemType AS don_chem_type,
-  acc_site.HBChemType AS acc_chem_type
+  acc_site.HBChemType AS acc_chem_type,
+	CASE don_site.resNum - acc_site.resNum
+		WHEN -1 THEN '-1' WHEN -2 THEN '-2' WHEN -3 THEN '-3' WHEN -4 THEN '-4'
+		WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4' WHEN 5 THEN '5'
+		ELSE 'long' END AS seq_sep
 FROM
 	hbond_geom_coords AS geom,
 	hbonds AS hbond,
@@ -53,12 +57,11 @@ d_ply(f, .(sample_source), function(sub_f){
 	ss = sample_sources[sample_sources$sample_source == ss_id,]
 
 	plot_id = paste("chi_BAH_eq_polar_density_lr_bbbb", ss_id, sep="_")
-	ggplot(data=sub_f) + theme_bw() +
+	ggplot(data=subset(sub_f, seq_sep='long')) + theme_bw() +
 		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
 		stat_density2d(
 			aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
 		geom_indicator(aes(indicator=counts), color="white") +
-		facet_grid(acc_chem_type ~ don_chem_type) +
 		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 		scale_x_continuous(
 			'2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
@@ -68,6 +71,28 @@ d_ply(f, .(sample_source), function(sub_f){
 		coord_fixed(ratio = 1) +
 		scale_fill_gradientn('Density', colours=jet.colors(10))
 	save_plots(self, plot_id, ss, output_dir, narrow_output_formats)
+
+
+	sub_f <- ddply(sub_f, c("seq_sep"),
+    transform, counts = length(sample_source))
+
+	plot_id = paste("chi_BAH_eq_polar_density_PBAtoPBA_by_sequence_separation", ss_id, sep="_")
+	ggplot(data=sub_f) + theme_bw() +
+		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		stat_density2d(
+			aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
+		geom_indicator(aes(indicator=counts), color="white") +
+		facet_wrap( ~ seq_sep) +
+		opts(title = paste("Hydrogen Bonds chi vs BAH Angles\nBackbone-Backbone Hydrogen Bonds by sequence separation\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
+		scale_x_continuous(
+			'2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+		scale_y_continuous(
+			'2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+		polar_equal_area_grids_bw() +
+		coord_fixed(ratio = 1) +
+		scale_fill_gradientn('Density', colours=jet.colors(10))
+	save_plots(self, plot_id, ss, output_dir, narrow_output_formats)
+
 })
 
 

@@ -74,36 +74,37 @@ plot_parts <- list(
 
 if(nrow(sample_sources) <= 3){
 	plot_parts_all <- c(plot_parts,
-		facet_wrap( ~ sample_source, ncol=1),
-		list(opts(legend.position="bottom", legend.direction="horizontal")))
+		list(
+			facet_wrap( ~ sample_source, nco=1),
+			list(opts(legend.position="bottom", legend.direction="horizontal"))))
 } else {
 	plot_parts_all <- c(plot_parts,
-		facet_wrap( ~ sample_source))
+		list(facet_wrap( ~ sample_source)))
 }
 
 plot_id <- "hbond_AHdist_by_donRank"
 d <- estimate_density_1d(f, c("sample_source", "donRank"), "AHdist", radial_3d_normalization)
-ggplot(d, aes(colour=donRank)) + plot_parts_all +
+ggplot(d, aes(colour=donRank, group=donRank)) + plot_parts_all +
   opts(title = "Hydrogen Bonds A-H Distance by Donor Rank, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "hbond_AHdist_by_accRank"
 d <- estimate_density_1d(f, c("sample_source", "accRank"), "AHdist", radial_3d_normalization)
-ggplot(d, aes(colour=accRank)) + plot_parts_all +
+ggplot(d, aes(colour=accRank, group=accRank)) + plot_parts_all +
   opts(title = "HBonds A-H Distance by Acceptor Rank, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$donRank==1,]
 plot_id <- "hbond_AHdist_donRank_is_1"
 d <- estimate_density_1d(f1, c("sample_source"), "AHdist", radial_3d_normalization)
-ggplot(d, aes(colour=sample_source)) + plot_parts +
+ggplot(d, aes(colour=sample_source, group=sample_source)) + plot_parts +
   opts(title = "HBonds A-H Distance, Primary HBond at Bifuracted Donor, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$donRank==1,]
 plot_id <- "hbond_AHdist_chem_type_donRank_is_1"
 d <- estimate_density_1d(f1, c("sample_source", "don_chem_type", "acc_chem_type"), "AHdist", radial_3d_normalization)
-ggplot(d, aes(colour=sample_source)) + plot_parts +
+ggplot(d, aes(colour=sample_source, group=sample_source)) + plot_parts +
   facet_grid( don_chem_type ~ acc_chem_type) +
   opts(title = "HBonds A-H Distance, Donor Rank=1, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

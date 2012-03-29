@@ -72,7 +72,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	opts(title = "Hydrogen Bonds BAH Angle by Chemical Type, AHdist < 2.4\n(normalized for equal volume per unit distance)") +
 	labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
 	     y="log(FeatureDensity + 1)") +
-	scale_y_continuous(limits=c(-2.3,6)) +
+	scale_y_continuous(limits=c(-2.3,6))
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }

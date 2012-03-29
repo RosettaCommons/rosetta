@@ -144,7 +144,7 @@ d_ply(f, .(sample_source), function(sub_f){
 
 	p <- ggplot(data=dens) + theme_bw() +
 		geom_line(aes(x=x, y=y, colour=cv_group)) +
-		geom_indicator(aes(indicator=counts, colour=cv_group)) +
+		geom_indicator(aes(indicator=counts, colour=cv_group, group=cv_group)) +
 		opts(title = paste("Hydrogen Bonds A-H Distance by Cross Validation Group\nnormalized for equal weight per unit distance ss_id:", ss_id)) +
 		facet_grid(don_chem_type ~ acc_chem_type) +
 		scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +

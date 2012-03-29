@@ -67,9 +67,10 @@ capx_limits <- c(-1.5,1.5); capy_limits <- capx_limits;
 f <- ddply(f, c("sample_source", "don_ss_name", "acc_ss_name"),
 	transform, counts = length(sample_source))
 
-plot_id = "chi_sinBAH_eq_polar_density_bb_by_ss_long_range"
 d_ply(sample_sources, .(sample_source), function(sample_source){
 	ss_id <- sample_source$sample_source[1]
+	plot_id = paste("chi_sinBAH_eq_polar_density_bb_by_ss_long_range", ss_id, sep="_")
+
 	ggplot(data=subset(f, sample_source == ss_id)) + theme_bw() +
 		stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.06,.06)) +
 		polar_equal_area_grids_bw() +
@@ -80,7 +81,7 @@ d_ply(sample_sources, .(sample_source), function(sample_source){
 		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 		scale_fill_gradientn('log(Density)', colours=jet.colors(15))
-	save_plots(self, plot_id, sample_source, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 })
 
 

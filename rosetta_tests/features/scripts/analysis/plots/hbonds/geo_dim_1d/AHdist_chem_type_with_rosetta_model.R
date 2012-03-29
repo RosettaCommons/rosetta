@@ -106,7 +106,7 @@ dens <- dens[!is.na(dens$acc_chem_type_name) & !is.na(dens$don_chem_type_name),]
 plot_id <- "hbond_AHdist_chem_type_with_parameters"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x, y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
 	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance in density estimation") +
 	scale_y_continuous("Energy (arbitrary units)", limits=c(-.6,1.1), breaks=c(-.5,0, .5)) +

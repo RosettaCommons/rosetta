@@ -177,9 +177,9 @@ dap <- dens[dens$strand_orientation == "antiparallel",]
 plot_id <- "SSDists_Sheet_O_HA_parallel_anti_parallel"
 p <- ggplot() + theme_bw() +
 	geom_line(data=dp, aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(data=dp, aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(data=dp, aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	geom_line(data=dap, aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, xpos="left")) +
+	geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="left")) +
 	opts(title = "O--HA atom atom distances involving beta-sheet residues\nnormalized for equal weight per unit distance\n(antiparallel-counts left, parallel-counts right)") +
 	scale_y_continuous("Feature Density") +
 	scale_x_continuous(expression(paste('O--HA Distances (', ring(A), ')')),

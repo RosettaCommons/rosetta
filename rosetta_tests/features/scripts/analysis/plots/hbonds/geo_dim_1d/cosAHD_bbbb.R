@@ -53,7 +53,7 @@ dens <- estimate_density_1d_reflect_boundary(
 plot_id <- "cosAHD_bbbb"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-180/pi*acos(x), y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ seq_sep ) +
 	opts(title = "BB/BB Hydrogen Bonds A-H-D Angle by Sequence Separation\n(donres - accres) normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity" ) +

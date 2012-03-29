@@ -144,9 +144,9 @@ p <- ggplot() + theme_bw() +
   geom_line(data=dpP, aes(x=x, y=y, colour=sample_source)) +
   geom_line(data=dpM, aes(x=x, y=y, colour=sample_source)) +
   geom_line(data=dap, aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(data=dpP, aes(indicator=counts, colour=sample_source, xpos="right")) +
-  geom_indicator(data=dpM, aes(indicator=counts, colour=sample_source, xpos="center")) +
-  geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, xpos="left")) +
+  geom_indicator(data=dpP, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="right")) +
+  geom_indicator(data=dpM, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="center")) +
+  geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="left")) +
   opts(title = "O--O atom atom distances involving beta-sheet residues\nnormalized for equal weight per unit distance\n(antiparallel                    parallel-minus                    parallel-plus)") +
   scale_y_log10("FeatureDensity", limits=c(1e-2,5))+
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(2.5,9), breaks=c(3, 4, 5, 6, 7, 8, 9))
@@ -162,7 +162,7 @@ lims <- c(.1, 3)
 plot_id <- "SSDists_Sheet_O_O_anti_parallel_zoom"
 p <- ggplot(data=dap) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   opts(title = "O--O atom atom distances involving antiparallel beta-sheet residues\nnormalized for equal weight per unit distance") +
   scale_y_log10("FeatureDensity", limits=lims) +
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(3,4), breaks=c(3, 3.25, 3.5, 3.75, 4) )
@@ -179,7 +179,7 @@ lims <- c(.1, 5)
 plot_id <- "SSDists_Sheet_O_O_parallel_minus_zoom"
 p <- ggplot(data=dpM) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   opts(title = "O--O atom atom distances involving parallel beta-sheet residues i to j-1\nnormalized for equal weight per unit distance") +
   scale_y_log10("FeatureDensity", limits=lims) +
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(4.5,5.5), breaks=c(4.5, 4.75, 5, 5.25, 5.5) )
@@ -196,7 +196,7 @@ lims <- c(.1, 1.5)
 plot_id <- "SSDists_Sheet_O_O_parallel_plus_zoom"
 p <- ggplot(data=dpP) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   opts(title = "O--O atom atom distances involving parallel beta-sheet residues i to j+1\nnormalized for equal weight per unit distance") +
   scale_y_log10("FeatureDensity", limits=lims) +
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(7.5,8.5), breaks=c(7.5, 7.75, 8, 8.25, 8.5) )

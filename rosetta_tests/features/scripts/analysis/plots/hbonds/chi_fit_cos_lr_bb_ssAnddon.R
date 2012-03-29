@@ -29,7 +29,7 @@ FROM
 	hbond_sites AS don_site,
 	hbond_sites AS acc_site,
 	residue_secondary_structure AS don_ss,
-	residue_secondary_structure AS acc_ss
+OB	residue_secondary_structure AS acc_ss
 WHERE
 	hbond.struct_id = geom.struct_id AND hbond.hbond_id   = geom.hbond_id AND
 	hbond.struct_id = don_site.struct_id AND hbond.don_id = don_site.site_id AND
@@ -64,8 +64,8 @@ dens <- estimate_density_1d_wrap(
 	f, c("sample_source", "acc_ss", "don_chem_type"), "chi")
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
-	facet_wrap(don_chem_type ~ acc_ss, ncol=3) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
+	facet_grid(don_chem_type ~ acc_ss) +
 	opts(title = "Hydrogen Bonds CHI Angle for Backbone Acceptors and Sidechain Donors with Sequence Separation > 5\nBy Acceptor DSSP Secondary Structure Type and Donor Type") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 	scale_y_continuous('Feature Density') +

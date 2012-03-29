@@ -68,7 +68,7 @@ plot_id = "cosAHD_don_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(
         	x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_wrap( ~ don_chem_type) +
 	opts(title = paste(
         	"Hydrogen Bonds AHD Angle ",

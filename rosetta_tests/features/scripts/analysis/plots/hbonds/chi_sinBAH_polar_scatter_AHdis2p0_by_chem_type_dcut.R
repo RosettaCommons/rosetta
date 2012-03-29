@@ -40,8 +40,6 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 
   f <- query_sample_sources(sample_source, sele)
 
-	print(summary(f))
-
   #equal area projection
   f <- transform(f,
     capx = 2*sin(acos(cosBAH)/2)*cos(chi),

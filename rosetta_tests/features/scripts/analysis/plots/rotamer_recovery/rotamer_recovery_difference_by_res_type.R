@@ -63,8 +63,8 @@ d_ply(f, .(sample_source), function(sub_f) {
 	p <- ggplot(data=sub_f) + theme_bw() +
 		stat_bin(aes(x=rel_div, y=log(..count.. + 1), colour=burial),
 			breaks=c(-4.5, -3.5, -2.5, -1.5, -.5, .5, 1.5, 2.5, 3.5, 4.5), geom="line") +
-		geom_indicator(aes(indicator=counts, colour=burial)) +
-		geom_indicator(aes(indicator=mean, color=burial, xpos="left")) +
+		geom_indicator(aes(indicator=counts, colour=burial, group=burial)) +
+		geom_indicator(aes(indicator=mean, color=burial, group=burial), xpos="left") +
 		facet_wrap( ~ res_type ) +
 		opts(title = "Rotamer Recovery by Residue Type and Burial, B-Factor < 20") +
 		labs(x="New Rotamer Recovery - Ref Recovery Score", y="log(counts + 1)") +

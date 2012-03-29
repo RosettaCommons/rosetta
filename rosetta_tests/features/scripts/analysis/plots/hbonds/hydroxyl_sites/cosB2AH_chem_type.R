@@ -64,7 +64,7 @@ dens <- estimate_density_1d(
 plot_id = "cosB2AH_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "Hydrogen Bonds B2AH Angle by Chemical Type") +
 	scale_x_continuous(paste('Base2 -- Acceptor -- Hydrogen (degrees)')) +

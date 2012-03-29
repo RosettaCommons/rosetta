@@ -59,7 +59,7 @@ dens <- estimate_density_1d_reflect_boundary(
 plot_id = "hbond_AHD_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
 	opts(title = "HBond AHD Angle by Chemical Type, SeqSep > 5, B-Fact < 30\n(normalized for equal volume per unit distance)") +
 	scale_y_continuous("Feature Density") +

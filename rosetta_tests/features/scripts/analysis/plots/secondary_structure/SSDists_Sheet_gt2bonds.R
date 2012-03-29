@@ -132,7 +132,7 @@ dens <- estimate_density_1d(
 plot_id <- "SSDists_Sheet_gt2bonds"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(at1 ~ at2) +
 	opts(title = "Backbone atom atom distances involving sheet residues (w/ > 2 bond separation)\nnormalized for equal weight per unit distance") +
 	scale_y_log10("FeatureDensity", limits=c(1e-3,1e0)) +

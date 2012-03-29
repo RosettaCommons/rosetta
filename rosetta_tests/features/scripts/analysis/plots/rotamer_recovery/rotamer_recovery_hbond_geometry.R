@@ -108,7 +108,7 @@ f$first <- factor(f$first, levels=c(1,0), labels=c("Recovered", "Not Recovered")
 plot_parts <- list(
 	theme_bw(),
 	geom_line(aes(x=x, y=y, colour=sample_source, size=first)),
-	geom_indicator(aes(indicator=counts, colour=sample_source)),
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
 	scale_y_continuous("FeatureDensity)", limits=c(0,6), breaks=c(1,3,5)),
 	scale_size_manual("first chi angle", values=c(.5, 1)))
 

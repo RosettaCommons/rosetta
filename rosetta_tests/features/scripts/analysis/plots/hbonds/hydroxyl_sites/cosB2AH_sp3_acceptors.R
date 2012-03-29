@@ -43,7 +43,7 @@ dens <- estimate_density_1d(
 plot_id = "cosB2AH_sp3_acceptors"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	opts(title = "Hydrogen Bonds B2AH Projection for sp3 Acceptors") +
 	scale_x_continuous("cos( Base2 -- Acceptor--Hydrogen Angle" ) +
 	scale_y_continuous("FeatureDensity")

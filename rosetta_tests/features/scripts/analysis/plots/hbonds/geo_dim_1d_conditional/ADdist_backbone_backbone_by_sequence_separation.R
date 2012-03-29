@@ -57,7 +57,7 @@ dens <- estimate_density_1d(
 plot_id <- "hbond_ADdist_backbone_backbone_by_sequence_separation"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ seq_sep ) +
 	opts(title = "Backbone-Backbone HBonds A-D Distance by Sequence Separation\n(DonRes - AccRes) normalized for equal weight per unit distance") +
 	scale_x_ADdist +

@@ -46,7 +46,7 @@ dens <- estimate_density_1d(
 plot_id = "cosBAH_scsc_sp3acc"
 ggplot(data=dens) +
 	geom_line(aes(x=(pi-acos(x))*180/pi, y=y, colour=sample_source),size=3) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	opts(title = "Sidechain/Sidechain Hydrogen Bonds to SP3 Acceptors. BAH Angle by Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 	scale_y_continuous("FeatureDensity")

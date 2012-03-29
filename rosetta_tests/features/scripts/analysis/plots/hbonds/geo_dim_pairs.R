@@ -69,7 +69,7 @@ plot_parts_window <- list(
   theme_bw(),
   aes(y=-log(y+1), colour=AHdist_range, group=AHdist_range),
 	geom_line(),
-	geom_indicator(aes(indicator=counts, colour=AHdist_range)),
+	geom_indicator(aes(indicator=counts, colour=AHdist_range, group=AHdist_range)),
 	facet_wrap( ~ acc_chem_type, ncol=2),
 	labs(y="-log(FeatureDensity+1)"),
   scale_colour_brewer(palette="Spectral"))

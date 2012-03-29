@@ -45,7 +45,7 @@ dens <- estimate_density_1d(
 plot_id <- "hbond_AHdist_by_environmental_weight"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=Burial), size=1.6) +
-	geom_indicator(aes(indicator=counts, colour=Burial)) +
+	geom_indicator(aes(indicator=counts, colour=Burial, group=Burial)) +
 	facet_wrap(~sample_source) +
 	opts(title = "Sidechain-Sidechain HBond A-H Distance by Neighbor Count based Solvent Exposure\n B-Factor < 30 normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity", limits=c(0,7), breaks=c(0,1,2,3,4,5,6,7)) +

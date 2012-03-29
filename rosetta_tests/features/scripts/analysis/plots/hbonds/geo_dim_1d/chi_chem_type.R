@@ -85,9 +85,8 @@ potential$y <- exp(-1*cos_potential(potential$x))/(12.5803 *180/pi)
 l_ply(levels(dens$hybrid), function(hybrid){
 	plot_id = paste("hbond_chi_", hybrid, "_acceptor_by_don_chem_type", sep="")
 	ggplot(data=dens[dens$hybrid==hybrid,]) + theme_bw() +
-#		geom_line(data=potential, aes(x=x, y=y*1000), size=1, colour="lightgray") +
 		geom_line(aes(x=x, y=y, colour=sample_source)) +
-		geom_indicator(aes(indicator=counts, colour=sample_source)) +
+		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 		facet_wrap( ~ don_chem_type) +
 		opts(title = paste("HBonds CHI Angle for ", hybrid, " acceptors and B-Factor < 30\n(Normalized for Equal Volume per Unit Distance)")) +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
@@ -115,7 +114,7 @@ dens <- estimate_density_1d_wrap(
 	f, c("sample_source", "acc_chem_type", "don_chem_type"), "chi")
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "HBonds CHI Angle by Chemical Types, B-Factor < 30\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +

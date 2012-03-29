@@ -62,7 +62,7 @@ GeomTextBoxed <- proto(ggplot2:::GeomText, {
   guide_geom <- function(x) "text"
 })
 
-geom_text <- function(
+geom_text_boxed <- function(
 	mapping = NULL,
 	data = NULL,
 	stat = "identity",
@@ -70,7 +70,7 @@ geom_text <- function(
 	parse = FALSE,
 	...
 ) {
-	GeomText$new(
+	GeomTextBoxed$new(
 		mapping = mapping,
 		data = data,
 		stat = stat,

@@ -61,6 +61,6 @@ g <- melt(f[f$id <= n_examples,],
 	variable_name = "atom")
 
 instances_id <- "rotamer_recovery_LYS_max_diff_divergence"
-prepare_feature_instances(instances_id, sample_sources, g)
+prepare_feature_instances(instances_id, sample_sources, g, output_dir)
 
 })) # end FeaturesAnalysis

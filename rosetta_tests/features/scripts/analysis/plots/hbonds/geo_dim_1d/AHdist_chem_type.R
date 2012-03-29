@@ -84,7 +84,7 @@ dens <- estimate_density_1d(
 plot_id <- "hbond_AHdist_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 #	geom_indicator(data=z, aes(indicator=round(statistic,2), colour=new_sample_source), xpos="left") +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "HBond A-H Distance by Chemical Type, SeqSep > 5, B-Factor < 30\nnormalized for equal weight per unit distance") +

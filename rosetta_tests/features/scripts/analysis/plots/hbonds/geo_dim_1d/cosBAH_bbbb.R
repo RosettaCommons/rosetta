@@ -51,7 +51,7 @@ plot_id <- "cosBAH_bbbb"
 
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-(180/pi*acos(x)), y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ seq_sep ) +
 	opts(title = "BB/BB Hydrogen Bonds B-A-H Angles by Sequence Separation\n(donres - accres) normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity)", limits=c(0,10), breaks=c(1,3,5,7,9)) +

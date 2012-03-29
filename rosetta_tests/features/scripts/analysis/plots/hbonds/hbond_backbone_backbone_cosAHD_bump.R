@@ -44,7 +44,7 @@ f <- query_sample_sources(sample_sources, sele)
 plot_parts <- list(
 	theme_bw(),
 	geom_line(aes(x=acos(x)*360/pi, y=log(y+1), colour=sample_source)),
-	geom_indicator(aes(indicator=counts, colour=sample_source)),
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
 	geom_vline(xintercept = 91.05),
 	scale_x_continuous("Acceptor -- Hydrogen -- Donor (Degrees)"),
 	scale_y_continuous("log(FeatureDensity + 1)"))

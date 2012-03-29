@@ -75,7 +75,7 @@ dens <- estimate_density_1d(
 plot_id <- "SSDists_Sheet_O_N_seqsep_gt1"
 p <- ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   opts(title = "O--N atom atom distances involving beta-sheet residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
   scale_y_log10("FeatureDensity", limits=c(1e-3,1e0)) +
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(1.5,7), breaks=2:7)
@@ -92,7 +92,7 @@ lims <- c(10^-1.5, 10^-.5)
 plot_id <- "SSDists_Sheet_O_N_seqsep_gt1_zoom_4_6p5"
 p <- ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   opts(title = "O--N atom atom distances involving beta-sheet residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
   scale_y_log10("FeatureDensity", limits=lims) +
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(4,6.5), breaks=c(4, 4.5, 5, 5.6, 6, 6.5) )

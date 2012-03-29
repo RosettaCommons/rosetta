@@ -204,8 +204,8 @@ dens <- merge(dens, exp)
 plot_id <- "salt_bridge_ARG_with_ASP-GLU_recovery"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
-  	geom_indicator(aes(indicator=mean, color=sample_source, xpos="left")) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
+	geom_indicator(aes(indicator=mean, color=sample_source, group=sample_source), xpos="left") +
 	facet_wrap( ~ num_sc_hbs, nrow=1 ) +
 	opts(title = "ARG Rotamer Recovery when forming HBonds with ASP/GLU and ARG and Bfactors < 20\nBy Number of sc hbonds between the acceptor and donor residues") +
 	labs(x="log(Automorphic RMSD + 1)", y="log(FeatureDensity + 1)")
@@ -229,8 +229,8 @@ dens <- merge(dens, exp)
 
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
-  	geom_indicator(aes(indicator=mean, color=sample_source, xpos="left")) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
+	geom_indicator(aes(indicator=mean, color=sample_source, group=sample_source), xpos="left") +
 	facet_wrap( ~ num_sc_hbs, nrow=1 ) +
 	opts(title = "ASP/GLU Rotamer Recovery when forming HBonds with ARG and Bfactors < 20\nBy Number of sc hbonds between the acceptor and donor residues") +
   	labs(x="log(Automorphic RMSD + 1)", y="log(FeatureDensity + 1)")

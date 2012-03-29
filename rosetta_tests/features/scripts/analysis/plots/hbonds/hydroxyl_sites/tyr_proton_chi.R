@@ -66,7 +66,7 @@ dens <- estimate_density_1d_wrap(
 plot_id = "tyr_proton_chi"
 ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   opts(title = "Proton Chi Torsional angle on Tyrosine Residues") +
   scale_x_continuous('Protein Chi (degrees)') +
   scale_y_continuous('Feature Density') +

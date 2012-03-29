@@ -111,7 +111,7 @@ dens <- estimate_density_1d(
 plot_id = "cosHAH_hydroxyl_acceptors_that_also_donate"
 p <- ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
-  geom_indicator(aes(colour=sample_source, indicator=counts)) +
+  geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
   facet_wrap( ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds HAH Angle for Hydroxyl Acceptors where the Hydroxyl also Donates\nB-Factors < 30; Sequence Separation > 5") +
   scale_x_continuous(paste('Acceptor Hydrogen -- Acceptor -- Donor Hydrogen (degrees)')) +
@@ -129,7 +129,7 @@ dens2 <- estimate_density_1d(
 plot_id = "cosHAH_hydroxyl_acceptors_that_also_donate_chem_type"
 p <- ggplot(data=dens2) + theme_bw() +
   geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
-  geom_indicator(aes(colour=sample_source, indicator=counts)) +
+  geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
   facet_grid( don_chem_type ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds BAH Angle for Hydroxyl Acceptors where the Hydroxyl also Donates\nB-Factors < 30; Sequence Separation > 5") +
   scale_x_continuous(paste('Acceptor Hydrogen -- Acceptor -- Donor Hydrogen (degrees)')) +

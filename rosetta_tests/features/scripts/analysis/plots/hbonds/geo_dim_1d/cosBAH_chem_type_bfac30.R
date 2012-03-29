@@ -53,7 +53,7 @@ dens$don_chem_type <- sub("^hbdon_", '', dens$don_chem_type)
 plot_id = "cosBAH_chem_type_bfac30"
 ggplot(data=dens) +
 	geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "Hydrogen Bonds BAH Angle by Chemical Type, SeqSep > 5; BFactors < 30\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +

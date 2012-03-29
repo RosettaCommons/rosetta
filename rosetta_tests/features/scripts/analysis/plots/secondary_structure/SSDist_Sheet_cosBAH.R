@@ -131,9 +131,9 @@ ylims <- c(0,8)
 plot_id <- "SSDists_Sheet_cosBAH_parallel_anti_parallel"
 p <- ggplot() + theme_bw() +
   geom_line(data=dp, aes(x=180-180/pi*acos(x), y=y, colour=sample_source)) +
-  geom_indicator(data=dp, aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(data=dp, aes(indicator=counts, colour=sample_source, group=sample_source)) +
   geom_line(data=dap, aes(x=180-180/pi*acos(x), y=y, colour=sample_source)) +
-  geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, xpos="left")) +
+  geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="left")) +
   opts(title = "BAH angles for beta-sheet hydrogen bonds\nnormalized for equal weight per unit distance\n(antiparallel-counts left, parallel-counts right)") +
   scale_y_continuous("FeatureDensity", ylims) +
   scale_x_continuous("BAH interior angle (degrees)",

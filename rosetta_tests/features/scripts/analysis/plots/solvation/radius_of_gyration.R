@@ -45,7 +45,7 @@ dens <- estimate_density_1d(f, c("sample_source"), "normed_radius_of_gyration")
 plot_id <- "radius_of_gyration"
 ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=x, y=y, color=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   opts(title = "Normalized Radius of Gyration") +
   labs(x="Radius of Gyration / Number of Residues", y="Feature Density")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

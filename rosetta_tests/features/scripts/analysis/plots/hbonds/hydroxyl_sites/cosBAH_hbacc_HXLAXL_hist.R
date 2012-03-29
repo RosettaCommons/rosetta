@@ -38,15 +38,10 @@ f <- query_sample_sources(sample_sources, sele)
 
 plot_id = "cosBAHhist_hydroxyl_acc"
 ggplot(data=f) +
-	#geom_line(aes(x=(pi-acos(x))*180/pi, y=y, colour=sample_source)) +
-	#stat_bin(aes(x=(pi-acos(cosBAH))*180/pi, colour=sample_source)) +
 	geom_bar(aes(x=(pi-acos(cosBAH))*180/pi, fill=sample_source), position="dodge") +
-	#geom_indicator(aes(colour=sample_source, indicator=count)) +
-	#facet_grid( ~ ) +
 	opts(title = "BAH Angle for Hydrogen Bonds to SP3 Acceptors") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)'))
 	scale_y_continuous("Hydrogen Bond Counts")
-	#scale_gradientn()
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

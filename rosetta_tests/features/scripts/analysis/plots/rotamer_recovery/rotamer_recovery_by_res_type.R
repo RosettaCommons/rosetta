@@ -87,8 +87,8 @@ dens <- merge(dens, exp)
 
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=log(x+1), y=log(y+1), colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
-	geom_indicator(aes(indicator=mean, color=sample_source, xpos="left")) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
+	geom_indicator(aes(indicator=mean, color=sample_source, group=sample_source), xpos="left") +
 	facet_wrap( ~ res_type ) +
 	opts(title = "Rotamer Recovery by Residue Type, B-Factor < 20") +
 	labs(x="log(Automorphic RMSD + 1)", y="log(FeatureDensity + 1)")

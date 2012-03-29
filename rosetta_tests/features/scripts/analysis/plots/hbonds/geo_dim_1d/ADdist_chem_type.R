@@ -48,6 +48,7 @@ feature_reporter_dependencies = c("HBondFeatures"),
 
 run=function(self, sample_sources, output_dir, output_formats){
 
+print(getwd())
 source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
 sele <- "
@@ -107,7 +108,7 @@ dens <- estimate_density_1d(f,
 plot_id <- "hbond_ADdist_chem_type"
 p <- ggplot(dens) + theme_bw() +
 	geom_line(aes(x, y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "Hydrogen Bond A-D Distance by Chemical Type, B-Factor < 30\n(normalized for equal volume per unit distance)") +
 	scale_x_ADdist +

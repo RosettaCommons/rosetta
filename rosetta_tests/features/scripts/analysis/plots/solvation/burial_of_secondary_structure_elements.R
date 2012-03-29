@@ -37,7 +37,7 @@ dens <- estimate_density_1d(
 plot_id <- "burial_of_secondary_structure_elements"
 p <- ggplot(data=dens, aes(x=log(x+1), y=log(y+1), color=secondary_struct, indicator=counts))
 p <- p + geom_line()
-p <- p + geom_indicator()
+p <- p + geom_indicator(aes(group=secondary_struct))
 p <- p + facet_wrap( ~ sample_source )
 p <- p + opts(title = "Burial by Secondary Structure")
 p <- p + labs(x="Number of Neighbors",

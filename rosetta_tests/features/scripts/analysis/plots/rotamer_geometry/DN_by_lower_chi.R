@@ -49,7 +49,7 @@ plot_id <-"rotamer_dn_chi2_by_chi1"
 p <- ggplot(data=dens) +
 	theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(chi1_bin ~ res_type) +
 	opts(title=paste("ASN/ASP chi2 by chi1, BFact < 30", sep="")) +
 	scale_x_continuous("Dihedral Angle") +

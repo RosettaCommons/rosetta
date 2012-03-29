@@ -103,7 +103,7 @@ dens <- estimate_density_1d_wrap(f,
 plot_id = "tyr_hbond_chi"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ don_chem_type ) +
 	opts(title = "HBond Torsional Angle for Tyrosine Acceptors") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
@@ -118,7 +118,7 @@ dens <- estimate_density_1d_wrap(f,
 plot_id = "tyr_hbond_chi_by_hybrid"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ don_hybrid ) +
 	opts(title = "HBond Torsional Angle for Tyrosine Acceptors") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
@@ -135,7 +135,7 @@ dens <- estimate_density_1d_wrap(f[f$seq_sep > 5,],
 plot_id = "tyr_hbond_chi_by_hybrid_seq_sep_5"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ don_hybrid ) +
 	opts(title = "HBond Torsional Angle for Tyrosine Acceptors SeqSep > 5") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +

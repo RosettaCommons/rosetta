@@ -75,7 +75,7 @@ d_ply(dens, .(chi_angle), function(sub_f){
 		data=dens[dens$chi_angle == chi & dens$nchi >= as.numeric(chi),]) +
 		theme_bw() +
 		geom_line(aes(x=x, y=y, colour=sample_source)) +
-		geom_indicator(aes(indicator=counts, colour=sample_source)) +
+		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 		facet_wrap( ~ res_type) +
 		opts(title=paste("Rotamer ", chi, ", BFact < 30", sep="")) +
 		scale_x_continuous("Dihedral Angle")

@@ -152,9 +152,9 @@ ylims <- c(10^-3,5)
 plot_id <- "SSDists_Sheet_O_HA_parallel_anti_parallel"
 p <- ggplot() + theme_bw() +
   geom_line(data=dp, aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(data=dp, aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(data=dp, aes(indicator=counts, colour=sample_source, group=sample_source)) +
   geom_line(data=dap, aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, xpos="left")) +
+  geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="left")) +
   opts(title = "O--Ha atom atom distances involving beta-sheet residues\nnormalized for equal weight per unit distance\n(antiparallel-counts left, parallel-counts right)") +
   scale_y_log10("FeatureDensity", ylims) +
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')),
@@ -170,9 +170,9 @@ ylims <- c(.1,5)
 plot_id <- "SSDists_Sheet_O_HA_parallel_anti_parallel_zoom_2_3"
 p <- ggplot(data=dens) + theme_bw() +
   geom_line(data=dp, aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(data=dp, aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(data=dp, aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	geom_line(data=dap, aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, xpos="left")) +
+  geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="left")) +
   opts(title = "O--Ha atom atom distances involving beta-sheet residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
   scale_y_log10("FeatureDensity", limits=ylims) +
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(2,3.5), breaks=c(2, 2.25, 2.5, 2.75, 3, 3.25, 3.5) )

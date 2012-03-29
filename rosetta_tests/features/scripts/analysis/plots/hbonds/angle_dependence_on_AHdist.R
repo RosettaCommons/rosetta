@@ -56,7 +56,7 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 plot_parts <- list(
 	theme_bw(),
 	geom_line(aes(colour=AHdist_quantile)),
-	geom_indicator(aes(indicator=counts, colour=AHdist_quantile)),
+	geom_indicator(aes(indicator=counts, colour=AHdist_quantile, group=AHdist_quantile)),
 	facet_grid(don_chem_type ~ acc_chem_type),
 	scale_y_continuous("log(FeatureDensity + 1)"))
 

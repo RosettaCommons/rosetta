@@ -21,29 +21,32 @@ setup_output_directory <- function(output_dir){
 }
 
 check_setup <- function(){
-	tryCatch(sample_sources, error=function(e){
-		stop("ERROR: The variable 'sample_sources' is not defined. See compare_sample_sources.R")
-	})
-	if(!is.data.frame(sample_sources)){
-		stop("ERROR: The variable 'sample_sources' is not a data frame.")
-	}
-	if(nrow(sample_sources) < 1){
-		stop("ERROR: The variable 'sample_sources' contains no sample sources.")
-	}
-
-	tryCatch(sample_source_output_dir, error=function(e){
-		stop("ERROR: The variable 'sample_source_output_dir' is not defined. See compare_sample_sources.R")
-	})
-	tryCatch(output_formats, error=function(e){
-		stop("ERROR: The variable 'output_formats' is not defined. See compare_sample_sources.R")
-	})
-	tryCatch(database_configuration$db_cache_size, error=function(e){
-		stop("ERROR: The variable 'database_configuration$db_cache_size' is not defined. See compare_sample_sources.R")
-	})
+#	tryCatch(sample_sources, error=function(e){
+#		stop("ERROR: The variable 'sample_sources' is not defined. See compare_sample_sources.R")
+#	})
+#	if(!is.data.frame(sample_sources)){
+#		stop("ERROR: The variable 'sample_sources' is not a data frame.")
+#	}
+#	if(nrow(sample_sources) < 1){
+#		stop("ERROR: The variable 'sample_sources' contains no sample sources.")
+#	}
+#
+#	tryCatch(sample_source_output_dir, error=function(e){
+#		stop("ERROR: The variable 'sample_source_output_dir' is not defined. See compare_sample_sources.R")
+#	})
+#	tryCatch(output_formats, error=function(e){
+#		stop("ERROR: The variable 'output_formats' is not defined. See compare_sample_sources.R")
+#	})
+#	tryCatch(database_configuration$db_cache_size, error=function(e){
+#		stop("ERROR: The variable 'database_configuration$db_cache_size' is not defined. See compare_sample_sources.R")
+#	})
 }
 
 
 set_db_cache_size <- function(con, cache_size){
+	if(is.null(cache_size)){
+		stop("ERROR: unable to set database cache size because the cache_size is null.")
+	}
 	dbGetQuery(con,
 		paste("PRAGMA cache_size=",as.integer(cache_size),";",sep=""))
 }
@@ -57,10 +60,10 @@ query_sample_sources <- function(
 		cat("ERROR: The select statement is not defined.\n")
 	})
 	features <- ddply(sample_sources, c("sample_source"), function(ss){
-
 		tryCatch(c(ss),error=function(e){
 			cat("ERROR: The specified sample source is not defined.\n")
 		})
+
 		cat("loading:", as.character(ss$sample_source), "... ")
 		if( is.na(ss$sample_source[1]) ){
 			stop("Specified sample source is not defined")
@@ -75,6 +78,7 @@ query_sample_sources <- function(
 			l_ply(sele_split[-length(sele_split)], function(sele){
 				dbGetQuery(con, sele)
 			})
+
 			last_stmt <- sele_split[length(sele_split)]
 			df <- dbGetQuery(con, last_stmt)
 			dbDisconnect(con)

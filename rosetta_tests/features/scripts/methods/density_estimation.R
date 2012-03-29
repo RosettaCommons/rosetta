@@ -42,7 +42,15 @@ estimate_density_1d <-function(
 	}
   compute_density <- function(factor_df){
     if (nrow(factor_df) < min_count){
-      return( data.frame(x=seq(sample_domain[1], sample_domain[2], n_pts), y=0))
+			#mjo I was having issues with whole columns/rows
+			#disappearing. This worked for ggplot2 version 0.8.9 but now
+			#gives warnings: asking "Do you need to adjust the group
+			#aesthetic?" with version 0.9.0. I'm trying just returning an
+			#empty data.frame to see if that works alright.
+			#return( data.frame(x=seq(sample_domain[1], sample_domain[2], n_pts), y=0))
+
+			return(data.frame())
+
     } else {
       weights <- weight_fun(factor_df[,variable])
       if(histogram){

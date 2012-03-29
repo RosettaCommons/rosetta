@@ -46,7 +46,7 @@ dens <- rbind(dens_raw, dens_normalized)
 plot_id = "3D_radial_length_null_model"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=normalization) +
-	geom_indicator(indicator=counts, colour=normalization) +
+	geom_indicator(aes(indicator=counts, colour=normalization, group=normalization)) +
 	opts(title = "3D Radial Length null Model by Normalization.") +
 	labs(x=expression(paste('Distance to Origin')),
 	     y="FeatureDensity"))
@@ -104,7 +104,7 @@ dens <- estimate_density_1d(
 plot_id = "hbond_cosAHD_spherical_null_model"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y)) +
-	geom_indicator(indicator=counts) +
+	geom_indicator(aes(indicator=counts)) +
 	opts(title = "Cosine of spherical Angle Null Model") +
 	labs(x=expression(paste('Cosine(Central Angle)')),
 	     y="FeatureDensity")

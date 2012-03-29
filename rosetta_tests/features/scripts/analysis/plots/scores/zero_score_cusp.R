@@ -50,7 +50,7 @@ dens <- estimate_density_1d(
 plot_id <- "zero_score_cusp"
 p <- ggplot(data=dens, aes(x=x, y=log(y+1), colour=sample_source, indicator=counts))
 p <- p + geom_line()
-p <- p + geom_indicator()
+p <- p + geom_indicator(aes(group=sample_source))
 p <- p + facet_wrap( ~ score_type, ncol = 3)
 p <- p + opts(title = "Residue Level Scores")
 p <- p + labs(x=expression(paste('Acceptor -- Donor Distance (', ring(A), ')')),

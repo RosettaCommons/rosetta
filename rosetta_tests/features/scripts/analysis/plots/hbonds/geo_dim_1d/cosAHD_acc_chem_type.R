@@ -68,7 +68,7 @@ dens <- estimate_density_1d_reflect_boundary(
 plot_id = "cosAHD_acc_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type) +
 	opts(title = "Hydrogen Bonds AHD Angle by Acceptor Chemical Type; SeqSep > 5; BFact < 30\n(normalized for equal volume per unit distance)") +
 	scale_y_continuous("FeatureDensity", limits=c(0,20), breaks=c(0,5,10,15)) +

@@ -62,7 +62,7 @@ plot_id <- "seq_sep_histogram"
 p <- ggplot(f) + theme_bw() +
   stat_bin(aes(x=seq_sep, y=log(..count..), colour=sample_source), geom="line", binwidth=1, position="identity") +
   facet_wrap( ~ hb1_acc_chem_type) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   opts(title="SC-BB + BB-BB HBond Motifs") +
   scale_x_log_pos_neg("Sequence Separation", breaks=c(-200,-25,-4,0,4,25,200)) +
   scale_y_log10("Count")

@@ -123,7 +123,7 @@ potential$y <- exp(-1*cos_potential(potential$x))/(12.5803 *180/pi)
 plot_id = "chi_cosBAH_chem_type_sp2_long_range"
 ggplot(data=dens) + theme_bw() +
 	geom_line(data=potential, aes(x=x, y=y), size=1.1, color="darkgray") +
-	geom_indicator(data=dens, aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(data=dens, aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	geom_line(data=dens, aes(x=x, y=y, colour=sample_source)) +
 	facet_wrap( ~ don_chem_type) +
 	opts(title = "Hydrogen Bonds CHI Angle for Sidechain sp2 Acceptors with sequence separation at least 6\n(normalized for equal volume per unit distance)") +
@@ -137,7 +137,7 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #p <- ggplot(data=dens)
 #p <- p + geom_line(data=potential, aes(x=x, y=y), size=1.2)
 #p <- p + geom_line(aes(x=x, y=y, colour=sample_source))
-#p <- p + geom_indicator(aes(indicator=counts, colour=sample_source))
+#p <- p + geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source))
 #p <- p + facet_wrap( ~ don_chem_type)
 #p <- p + opts(title = "Hydrogen Bonds CHI Angle for Sidechain sp2 Acceptors with sequence separation at least 6\n(normalized for equal volume per unit distance)")
 #p <- p + theme_bw()
@@ -155,7 +155,7 @@ dens <- estimate_density_1d_wrap(
 plot_id = "chi_cosBAH_chem_type_sp2_by_acc_long_range"
 ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   facet_grid(don_chem_type ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds CHI Angle by Acceptor types with sequence separation at least 6\n(normalized for equal volume per unit distance)") +
   scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +

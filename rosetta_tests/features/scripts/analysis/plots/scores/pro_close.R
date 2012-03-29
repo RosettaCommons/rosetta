@@ -37,7 +37,7 @@ dens <- estimate_density_1d(
 plot_id <- "pro_close"
 p <- ggplot(data=dens, aes(x=x, y=log(y+1), colour=sample_source, indicator=counts))
 p <- p + geom_line()
-p <- p + geom_indicator()
+p <- p + geom_indicator(aes(group=sample_source))
 p <- p + opts(title = "Proline Closure")
 p <- p + theme_bw()
 p <- p + scale_y_continuous("Score", limits=c(0,1.1))

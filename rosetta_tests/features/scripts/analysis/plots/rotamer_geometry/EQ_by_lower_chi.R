@@ -57,7 +57,7 @@ d_ply(f, .(res_type), function(sub_f){
 	p <- ggplot(data=dens) +
 		theme_bw() +
 		geom_line(aes(x=x, y=y, colour=sample_source)) +
-		geom_indicator(aes(indicator=counts, colour=sample_source)) +
+		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 		facet_grid(chi1_bin ~ chi2_bin) +
 		opts(title=paste(res_type, " chi3 by chi2 and chi1, BFact < 30", sep="")) +
 		scale_x_continuous("Dihedral Angle") +

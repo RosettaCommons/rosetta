@@ -20,7 +20,8 @@
 prepare_feature_instances <- function(
 	feature_instances_id,
 	sample_sources,
-	feature_atoms){
+	feature_atoms,
+	output_dir){
 
 	required_fields <- c("sample_source", "tag", "id", "chain", "resNum", "atom")
 	if(!(all(required_fields %in% names(feature_atoms)))){

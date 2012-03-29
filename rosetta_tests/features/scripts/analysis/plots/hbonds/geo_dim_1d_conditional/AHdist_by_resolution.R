@@ -66,7 +66,7 @@ dens <- estimate_density_1d(
 plot_id <- "AHdist_by_resolution"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=log(y+1), colour=resolution_q)) +
-	geom_indicator(aes(indicator=counts, colour=resolution_q)) +
+	geom_indicator(aes(indicator=counts, colour=resolution_q, group=resolution_q)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type by Resolution Quantiles\nnormalized for equal weight per unit distance") +
 	scale_y_continuous("log(FeatureDensity + 1)", limits=c(0,2.9), breaks=0:2) +

@@ -8,6 +8,9 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+
+
+
 # The base_dir is usually rosetta/rosetta_tests/features
 initialize_base_dir <- function(){
 	command_args <- commandArgs(trailingOnly = FALSE)
@@ -63,7 +66,7 @@ initialize_method_scripts_before_options <- function(base_dir) {
 			stop()
 		})
 	}
-	iscript_includes(includes)
+	iscript_includes(base_dir, includes)
 }
 
 
@@ -84,8 +87,9 @@ initialize_command_line_options <- function() {
 		make_option(c("--add_footer"), action="store_true", type="logical", default=TRUE, dest="add_footer",
 			help="Add footer to plots saying the analysis script and run date."),
 		make_option(c("--generate_website"), action="store_true", type="logical", default=TRUE, dest="generate_website",
-			help="Add footer to plots saying the analysis script and run date. [Default \"%defulat\"]")))
-
+			help="Add footer to plots saying the analysis script and run date. [Default \"%defulat\"]"),
+		make_option(c("--config"), action="store", type="character", default=NULL, dest="config_filename",
+			help=". [Default \"%defulat\"]")))
 
 	# Density estimation options
 	option_list <- c(option_list, list(
@@ -106,70 +110,14 @@ initialize_command_line_options <- function() {
 
 	option_list <- c(option_list, make_output_formats_options_list(all_output_formats))
 
-	# Analysis manager options
-	option_list <- c(option_list, list(
-		make_option(c("--analysis_manager_db"), type="character", default="analysis_manager.db3", dest="analysis_manager_db",
-			help="Store information about the results of the features analysis in the analysis manager database.  [Default \"<output_dir>/%default\"]"),
-		make_option(c("--store_plots_in_analysis_manager_db"), action="store_true", type="logical", default=FALSE, dest="store_plots_analysis_manager_db",
-			help="Should the plots themselves be stored in the the analysis manager database?  [Default \"%default\"]")))
-
 	opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TRUE)
 }
 
-initialize_packages <- function(opt, base_dir){
-	# load_packages() will help the user to install the packages if they are missing
-	source(paste(base_dir, "scripts/methods/load_packages.R", sep="/"))
-	libraries <- c(
-		"reshape",
-		"plyr",
-		"proto",
-		"ggplot2",
-		"RSQLite",
-		"logspline",
-		"plotrix",
-		"polynom",
-		"xtable")
-	load_packages(
-		libraries,
-		fail_on_missing_package=opt$options$fail_on_missing_packages)
-	iscript_libraries(libraries)
-}
-
-initialize_method_scripts <- function(base_dir) {
-	includes <- c(
-		"scripts/methods/sample_sources.R",
-		"scripts/methods/methods.R",
-		"scripts/methods/density_estimation.R",
-		"scripts/methods/features_analysis.R",
-		"scripts/methods/analysis_manager.R",
-		"scripts/methods/ggplot2_geom_indicator.R",
-		"scripts/methods/ggplot2_scales.R",
-		"scripts/methods/instancer.R",
-		"scripts/methods/output_formats.R",
-		"scripts/methods/save_plots.R",
-		"scripts/methods/coordinate_normalizations.R",
-		"scripts/methods/comparison_statistics.R",
-		"scripts/methods/generate_plot_webpage.R",
-		"scripts/methods/vector_math.R",
-		"scripts/methods/color_palettes.R")
-	for(inc in includes){
-		tryCatch(source(paste(base_dir, inc, sep="/")), error=function(e){
-			cat(paste(
-				"ERROR: Failed to parse the methods script: '", inc, "'",
-				"ERROR: It failed with the following error message:\n", e,
-				sep=""))
-			stop()
-		})
-	}
-	iscript_includes(includes)
-}
-
-initialize_sample_sources <- function(opt){
-	#Setup sample sources
+check_basic_input <- function(opt){
 	data_sources <- opt$args
-	if(length(data_sources) == 0){
+	if(!opt$options$dry_run & length(data_sources) == 0 & is.null(opt$options$config_filename)){
 		cat(
-			"ERROR: No sample_source databases were supplied",
+			"ERROR: No configuration file or sample_source databases was supplied",
 			"",
 			"##################################################",
 			"NAME",
@@ -201,49 +149,81 @@ initialize_sample_sources <- function(opt){
 			"    Matthew O'Meara (mattjomeara@gmail.com)\n", sep="\n")
 	  quit()
 	}
-	get_sample_sources(data_sources)
 }
 
-initialize_output_dir <- function(opt, sample_sources){
-	#setup ouput_dir
-	output_dir <- opt$options$output_dir
-	sample_source_output_dir <- file.path(
-		output_dir,
-		paste(sample_sources$sample_source, collapse="_"))
 
-	if(!file.exists(sample_source_output_dir)){
-		cat("Creating output directory: '", sample_source_output_dir, "' ...\n", sep="")
 
-		dir.create(sample_source_output_dir, recursive=TRUE)
+initialize_packages <- function(opt, base_dir){
+	# load_packages() will help the user to install the packages if they are missing
+	source(paste(base_dir, "scripts/methods/load_packages.R", sep="/"))
+	libraries <- c(
+		"reshape",
+		"plyr",
+		"proto",
+		"ggplot2",
+		"RSQLite",
+		"logspline",
+		"plotrix",
+		"polynom",
+		"rjson",
+		"xtable")
+	load_packages(
+		libraries,
+		fail_on_missing_package=opt$options$fail_on_missing_packages)
+	iscript_libraries(libraries)
+}
 
-		if(!file.exists(sample_source_output_dir)){
-			print("ERROR: Unable to create output directory.")
-			stop(1)
-		}
+initialize_method_scripts <- function(base_dir) {
+	includes <- c(
+		"scripts/methods/sample_sources.R",
+		"scripts/methods/methods.R",
+		"scripts/methods/density_estimation.R",
+		"scripts/methods/features_analysis.R",
+		"scripts/methods/ggplot2_geom_indicator.R",
+		"scripts/methods/ggplot2_scales.R",
+		"scripts/methods/instancer.R",
+		"scripts/methods/output_formats.R",
+		"scripts/methods/save_plots.R",
+		"scripts/methods/coordinate_normalizations.R",
+		"scripts/methods/comparison_statistics.R",
+		"scripts/methods/generate_plot_webpage.R",
+		"scripts/methods/vector_math.R",
+		"scripts/methods/color_palettes.R")
+	for(inc in includes){
+		tryCatch(source(paste(base_dir, inc, sep="/")), error=function(e){
+			cat(paste(
+				"ERROR: Failed to parse the methods script: '", inc, "'",
+				"ERROR: It failed with the following error message:\n", e,
+				sep=""))
+			stop()
+		})
 	}
-	iscript_output_dir(output_dir)
-	sample_source_output_dir
+	iscript_includes(base_dir, includes)
 }
 
-initialize_analysis_manager <- function(opt, sample_source_output_dir) {
-	#Setup analysis manager
-	analysis_manager_db_path <- file.path(
-		sample_source_output_dir,
-		opt$options$analysis_manager_db)
-	iscript_setup_analysis_manager(analysis_manager_db_path)
-	analysis_manager_con <- initialize_analysis_manager_db(
-		analysis_manager_db_path)
 
-	add_sample_sources_to_analysis_manager(analysis_manager_con, sample_sources)
-	iscript_sample_sources(sample_sources)
-	cat("Comparing the following sample sources:\n")
-	a_ply(sample_sources,1, function(ss){
-		cat("   ", as.character(ss$sample_source), " <- ", as.character(ss$fname), "\n", sep="")
+initialize_config_file <- function(opt){
+	config_filename <- opt$options$config_filename
+	if(is.null(config_filename)){
+		return(NULL)
+	}
+	if(!file.exists(config_filename)){
+		cat("ERROR: Config file '", config_filename, "' does not exit.")
+		stop(1)
+	}
+
+	tryCatch({
+		configuration <- fromJSON(file=config_filename)
+	}, error=function(e){
+		cat(paste(
+			"ERROR: Unable to parse configuration file '", config_filename, "'\n",
+			"failed with the following error:\n",
+			e, sep=""))
 	})
-	analysis_manager_con
+	return(configuration)
 }
 
-initialize_analysis_scripts <- function(opt, base_dir){
+initialize_analysis_scripts_from_options <- function(opt, base_dir){
 	if("script" %in% names(opt$options)){
 		if(file.exists(opt$options$script)){
 			analysis_scripts <- c(opt$options$script)
@@ -262,16 +242,88 @@ initialize_analysis_scripts <- function(opt, base_dir){
 		}
 		analysis_scripts <- dir(analysis_dir, "*.R$", full.names=TRUE, recursive=TRUE)
 	}
-	cat("\n")
-	cat("Running the following analysis scripts:\n   ")
-	cat(paste(analysis_scripts, sep="", colapse="\n  "))
-	cat("\n")
 	analysis_scripts
 }
 
-initialize_output_formats <- function(opt){
-	#Setup output formats
-	output_formats <- get_output_formats(opt$options, all_output_formats)
+
+add_command_line_options_to_configuration <- function(
+	configuration,
+	opt,
+	base_dir
+) {
+	configuration$build_dir <- opt$options$build_dir
+
+	sample_sources <- alply(get_sample_sources(opt$args), 1, function(ss){
+		list(
+			database_path=as.character(ss$fname),
+			id=as.character(ss$sample_source))
+	})
+	names(sample_sources) <- NULL
+	attributes(sample_sources) <- NULL
+
+	analysis_scripts <- initialize_analysis_scripts_from_options(opt, base_dir)
+
+
+	configuration$sample_source_comparisons <- c(
+		configuration$sample_source_comparisons,
+		list(list(
+			sample_sources=sample_sources,
+			analysis_scripts=analysis_scripts)))
+
+	configuration
+}
+
+
+initialize_output_dir <- function(opt, ss_cmp){
+	paste(
+		opt$options$output_dir,
+		paste(llply(ss_cmp$sample_sources, function(ss) ss$id), sep="/", collapse="_"),
+		sep="/")
+}
+
+summarize_configuration <- function(opt, sample_source_comparison){
+	cat(
+		"Sample Source Comparison:\n",
+		"  Output Directory <- ",
+		initialize_output_dir(opt, sample_source_comparison), "\n", sep="")
+	cat("  Sample Sources:\n")
+	l_ply(sample_source_comparison$sample_sources, function(ss) {
+		cat("  ", ss$id, " <- ", ss$database_path, "\n", sep="")
+	})
+	cat("\n  Analysis_scripts:\n")
+	cat(" ", paste(sample_source_comparison$analysis_scripts, sep="", colapse="\n "))
+	cat("\n")
+	iscript_summarize_configuration(sample_source_comparison)
+}
+
+initialize_sample_sources <- function(ss_cmp){
+	sample_sources <- ldply(ss_cmp$sample_sources, function(ss){
+
+		if(!file.exists(ss$database_path)){
+			stop(paste("ERROR: The database path '", ss$database_path, "' for sample source '", ss$id, "' does not exist.", sep=""))
+		}
+
+		data.frame(fname=ss$database_path, sample_source=ss$id)
+	})
+
+	if(nrow(sample_sources) != length(unique(sample_sources$sample_source))){
+		cat("ERROR: The sample sources must have unique identifiers:\n")
+		print(sample_sources)
+		stop()
+	}
+
+	iscript_sample_sources(sample_sources)
+	sample_sources
+}
+
+
+initialize_output_formats <- function(opt, ss_cmp){
+	if("output_formats" %in% names(ss_cmp)){
+		output_formats <- ss_cmp$output_formats
+	} else {
+		output_formats <- get_output_formats(opt$options, all_output_formats)
+	}
+
 	iscript_output_formats(output_formats)
 
 	#Setup footer specification in output_formats
@@ -297,9 +349,9 @@ initialize_density_estimation_kernel <- function(opt){
 	general_kernel_adjust
 }
 
-parse_analysis_scripts <- function(analysis_scripts){
+parse_analysis_scripts <- function(base_dir, analysis_scripts){
 	#Read in all the features analysis scripts
-	iscript_source_scripts(analysis_scripts)
+	iscript_source_scripts(base_dir, analysis_scripts)
 
 	# This is a vector of FeaturesAnalysis objects that are defined each features analysis script
 	feature_analyses <- c()
@@ -307,42 +359,48 @@ parse_analysis_scripts <- function(analysis_scripts){
 	for(analysis_script in analysis_scripts){
 
 		# parse all the analysis scripts
-		tryCatch(source(analysis_script, local=T), error=function(e){
-			cat(paste("ERROR: Failed to parse the Features Analysis '",analysis_script,"' with the following error message:\n",e,sep=""))
-		})
+		if(!file.exists(file.path(base_dir, analysis_script))){
+			cat(paste(
+				"ERROR: The features anlysis script '",
+				analysis_script,"' does not exist\n", sep=""))
+		} else {
+			tryCatch({
+				source(file.path(base_dir, analysis_script), local=T)
+			}, error=function(e){
+				cat(paste(
+					"ERROR: Failed to parse the Features Analysis '",
+					analysis_script,"' with the following error message:\n", e, sep=""))
+			})
 
-		# assign the filename to each feature analysis
-		num_new_feature_analyses = length(feature_analyses) - num_feature_analyses_before
-		for(feature_analysis in
-			feature_analyses[
-				seq(num_feature_analyses_before+1, length.out=num_new_feature_analyses)]){
-			feature_analysis@filename <- analysis_script
+			# assign the filename to each feature analysis
+			num_new_feature_analyses = length(feature_analyses) - num_feature_analyses_before
+			for(feature_analysis in
+				feature_analyses[
+					seq(num_feature_analyses_before+1, length.out=num_new_feature_analyses)]){
+				feature_analysis@filename <- analysis_script
+			}
+			num_feature_analyses_before <- length(feature_analyses)
 		}
-		num_feature_analyses_before <- length(feature_analyses)
+
 	}
 	feature_analyses
 }
 
 run_feature_analyses <- function(
 	feature_analyses,
+	sample_sources,
 	opt,
+	base_dir,
 	output_dir,
-	output_formats,
-	analysis_manager_con
+	output_formats
 ) {
 	#Run all the features analysis scripts
-	iscript_run_feature_analyses()
+	iscript_run_feature_analyses(output_dir)
 	if(!opt$options$dry_run){
 		for(features_analysis in feature_analyses){
 			cat(paste("Features Analysis: ", features_analysis@id, "\n", sep=""))
 
-			tryCatch({
-				add_features_analysis_to_analysis_manager(
-					analysis_manager_con, features_analysis)
-			}, error=function(e){
-				cat(paste("ERROR: Failed to store the Features Analysis '", features_analysis@id, "' in the analysis manager and it failed wih the following error message:\n", e, sep=""))
-			})
-
+			setwd(base_dir)
 			tryCatch({
 				features_analysis@run(
 					features_analysis,
@@ -363,14 +421,6 @@ generate_webpages <- function(opt, output_dir){
 	}
 }
 
-close_analysis_manager_connection <- function(analysis_manager_con) {
-	# close connection to the analysis manager
-	result <- dbDisconnect(analysis_manager_con)
-	if(!result){
-		cat("ERROR: Failed to close the analysis manager database connection.\n")
-	}
-}
-
 
 ########################################################
 
@@ -380,28 +430,39 @@ initialize_packages_before_options(base_dir)
 initialize_method_scripts_before_options(base_dir)
 
 opt <- initialize_command_line_options()
+check_basic_input(opt)
 
 initialize_packages(opt, base_dir)
 initialize_method_scripts(base_dir)
 
-sample_sources <- initialize_sample_sources(opt)
-sample_source_output_dir <- initialize_output_dir(opt, sample_sources)
-
-analysis_manager_con <- initialize_analysis_manager(opt, sample_source_output_dir)
-analysis_scripts <- initialize_analysis_scripts(opt, base_dir)
-
-output_formats <- initialize_output_formats(opt)
 database_configuration <- initialize_database_configuration(opt)
 general_kernel_adjust <- initialize_density_estimation_kernel(opt)
 
-feature_analyses <- parse_analysis_scripts(analysis_scripts)
-run_feature_analyses(
-	feature_analyses,
+configuration <- initialize_config_file(opt)
+configuration <- add_command_line_options_to_configuration(
+	configuration,
 	opt,
-	sample_source_output_dir,
-	output_formats,
-	analysis_manager_con)
+	base_dir)
 
-generate_webpages(opt, sample_source_output_dir)
+l_ply(configuration$sample_source_comparisons, function(ss_cmp){
+	summarize_configuration(opt, ss_cmp)
 
-close_analysis_manager_connection(analysis_manager_con)
+	sample_source_output_dir <- initialize_output_dir(opt, ss_cmp)
+
+	sample_sources <- initialize_sample_sources(ss_cmp)
+
+	output_formats <- initialize_output_formats(opt, ss_cmp)
+	feature_analyses <- parse_analysis_scripts(base_dir, ss_cmp$analysis_scripts)
+
+	run_feature_analyses(
+		feature_analyses,
+		sample_sources,
+		opt,
+		base_dir,
+		sample_source_output_dir,
+		output_formats)
+})
+
+
+#generate_webpages(opt, sample_source_output_dir)
+

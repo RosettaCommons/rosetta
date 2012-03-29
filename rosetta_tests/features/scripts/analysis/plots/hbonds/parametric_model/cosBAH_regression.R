@@ -68,7 +68,7 @@ dens$neg_log_y = -log(dens$y)
 plot_id <- "HBond_cosBAH_regression_by_range_hybrid"
 ggplot(dens) + plot_parts +
   geom_line(aes(x=x, y=neg_log_y, colour=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   facet_grid(seq_sep_geq_6 ~ hybrid) +
   opts(title = "Hydrogen Bonds cosBAH by Hybridization and Sequence Separation\nnormalized for equal weight per unit distance") +
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -85,7 +85,7 @@ d_ply(f, c("sample_source"), function(s_f){
 	plot_id <- "HBond_cosBAH_regression_by_range_hybrid_and_don_chem_type"
 	ggplot(dens) + plot_parts +
 	  geom_line(aes(x=x, y=neg_log_y, colour=don_chem_type)) +
-	  geom_indicator(aes(indicator=counts, colour=don_chem_type)) +
+	  geom_indicator(aes(indicator=counts, colour=don_chem_type, group=don_chem_type)) +
 	  facet_grid(seq_sep_geq_6 ~ hybrid) +
 	  opts(title = paste("Hydrogen Bonds cosBAH by Hybridization and Sequence Separation\nnormalized for equal weight per unit distance  Sample Source: ", ss, sep="")) +
 		scale_y_continuous("-log(FeatureDensity)", limits=c(-2, 3))

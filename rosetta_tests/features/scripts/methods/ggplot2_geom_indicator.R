@@ -14,6 +14,7 @@ require(proto)
 GeomIndicator <- proto(ggplot2:::Geom, {
 	objname <- "indicator"
 	draw <- function(., data, scales, coordinates, ...){
+
 		if("xpos" %in% names(data)){
 			if(data$xpos[1] == "left"){
 				xpos <- .07
@@ -44,7 +45,7 @@ GeomIndicator <- proto(ggplot2:::Geom, {
 			}
 		} else {
 			ypos <- .97
-		} 
+		}
 
 		if(!is.null(data$xjust[1])){
 			if(data$xjust[1] %in% c("left", "center", "right")){
@@ -83,7 +84,7 @@ GeomIndicator <- proto(ggplot2:::Geom, {
 				if(is.character(indicator)){
 		indicator_display_value <- indicator
 				} else {
-					indicator_display_value <- prettyNum(data$indicator[1], big.mark=",")		
+					indicator_display_value <- prettyNum(data$indicator[1], big.mark=",")
 				}
 			level <- data$group[1] - 1
 				colour <- data$colour[1]
@@ -98,7 +99,7 @@ GeomIndicator <- proto(ggplot2:::Geom, {
 	icon <- function(.) textGrob("text", gp=gpar(cex=1.2))
 	desc <- "Count Instances"
 	required_aes <- c("indicator")
-	default_aes <- function(.) aes(colour="black", xpos="right", ypos="top", xjust=NULL, yjust=NULL, size=5)
+	default_aes <- function(.) aes(colour="black", xpos="right", ypos="top", xjust=NULL, yjust=NULL, size=5, group=1)
 	guide_geom <- function(x) "text"
 	example <- function(.){
 		data <- rbind(

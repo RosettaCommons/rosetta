@@ -184,7 +184,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	plot_parts <- list(
 		theme_bw(),
 		geom_line(aes(x=x, y=log(y+1), colour=sample_source)),
-		geom_indicator(aes(indicator=counts, colour=sample_source)),
+		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
 		scale_y_continuous("log(FeatureDensity + 1)"))
 
 	plot_id <- "salt_bridge_rho"

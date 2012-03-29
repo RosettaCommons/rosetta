@@ -54,7 +54,7 @@ ddply(f, .(sample_source), function(sub_f){
 	plot_id = "hbonds_cosBAH_chem_type_by_resolution_qantile"
 	ggplot(data=dens) + theme_bw() +
 		geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=resolution_q)) +
-		geom_indicator(aes(colour=resolution_q, indicator=counts)) +
+		geom_indicator(aes(colour=resolution_q, indicator=counts, group=resolution_q)) +
 		facet_grid(don_chem_type ~ acc_chem_type) +
 		opts(title = "HBonds BAH Angle by Resolution Quantile\n(normalized for equal volume per unit distance)") +
 		scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +

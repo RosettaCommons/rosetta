@@ -40,7 +40,7 @@ dens <- estimate_density_1d(f, c("sample_source", "sc_type"), "score")
 plot_id <- "hbond_scores"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x,y, color=sample_source)) +
-	geom_indicator(aes(indicator=counts, color=sample_source)) +
+	geom_indicator(aes(indicator=counts, color=sample_source, group=sample_source)) +
 	opts(title = "Unweighted Rosetta HBond Scores") +
 	facet_wrap( ~ sc_type ) +
 	labs(x="Unweighted Rosetta Energy", y = "Feature Density")

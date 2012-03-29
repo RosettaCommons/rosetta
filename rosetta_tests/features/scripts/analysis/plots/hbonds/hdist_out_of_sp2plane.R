@@ -65,7 +65,7 @@ dens <- estimate_density_1d(f, c("sample_source", "don_chem_type"), "doop")
 plot_id = "hdist_out_of_sp2plane"
 ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
-  geom_indicator(aes(indicator=counts, colour=sample_source)) +
+  geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ don_chem_type ) +
   opts(title = "Hydrogen Distance out of the SP2 Plane") +
   scale_x_continuous('HDist out of plane') +

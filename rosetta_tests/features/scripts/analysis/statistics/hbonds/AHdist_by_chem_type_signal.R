@@ -68,7 +68,7 @@ d_ply(new_dens, .(sample_source), function(sub_dens){
 	plot_id <- "AHdist_chem_type"
 	p <- ggplot(data=new_dens) + theme_bw() +
 		geom_line(aes(x=x, y=log(y/ref_y)*ref_y, colour=sample_source)) +
-		geom_indicator(aes(indicator=counts, colour=sample_source)) +
+		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 		facet_grid(don_chem_type ~ acc_chem_type) +
 		opts(title = paste("Hydrogen Bonds A-H Distance Signal Ratio by Chemical Type\nNormalized for equal weight per unit distance\nref_ss: ", ref_ss_id, " new_ss: ", new_ss_id, sep="")) +
 		scale_y_continuous("log(Signal)") +

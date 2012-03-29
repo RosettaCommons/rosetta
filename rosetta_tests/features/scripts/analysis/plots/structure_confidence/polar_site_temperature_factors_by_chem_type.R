@@ -44,7 +44,7 @@ temperature_quantiles <- ddply(f, .(sample_source, chem_type), function(df){
 ggplot(data=temperature_quantiles) + theme_bw() +
   geom_line(aes(x=x, y=y, color=sample_source)) +
   facet_wrap( ~ chem_type ) +
-  geom_indicator(aes(indicator=counts, color=sample_source), xpos="left") +
+  geom_indicator(aes(indicator=counts, color=sample_source, group=sample_source), xpos="left") +
   opts(title = "Cumulative distribution of H-Bond heavy atom temperature factor by chemical type") +
 	scale_x_continuous("Temperature Factor", limit=c(0, 60)) +
 	scale_y_continuous("Fraction of polar sites less than temperature factor cut off")
@@ -61,7 +61,7 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 ## Generate a lattice of density plots for each chemical type type
 #p <- ggplot(dens) + theme_bw() +
 #	geom_line(aes(x, log(y+1), colour=sample_source)) +
-#	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+#	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 #	facet_wrap(~chem_type) +
 #	opts(title = "Polar Site Heavy Atom Temperature Factor By Chemical Type") +
 #	scale_x_continuous("Temperature Factor")

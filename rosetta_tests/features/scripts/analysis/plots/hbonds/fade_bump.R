@@ -35,7 +35,7 @@ f <-  query_sample_sources(sample_sources, sele)
 plot_parts <- list(
    theme_bw(),
    geom_line(aes(x,  log(y+1), colour=sample_source)),
-   geom_indicator(aes(indicator=counts, colour=sample_source)),
+   geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
    labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
      y="log(FeatureDensity + 1)"))
 

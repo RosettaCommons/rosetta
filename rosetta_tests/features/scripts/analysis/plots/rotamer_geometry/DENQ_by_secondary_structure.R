@@ -67,7 +67,7 @@ plot_id <-"rotamer_denq_by_secondary_structure"
 p <- ggplot(data=dens) +
 	theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
-	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=alpha_type)) +
 	facet_grid(dssp ~ res_type) +
 	opts(title=paste("ASN/ASP chi2 and GLN/GLU chi3 by Secondary Structure BFact < 30", sep="")) +
 	scale_x_continuous("Dihedral Angle") +
