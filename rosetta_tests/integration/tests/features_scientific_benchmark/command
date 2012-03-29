@@ -39,4 +39,6 @@ fi
 
 $features_base/compare_sample_sources.R --fail_on_missing_packages --dry_run | egrep -v "*.R" > dry_run.log 2>&1
 
-rm compare_sample_sources.R
+rm -f compare_sample_sources_iscript.R
+
+exit 0
