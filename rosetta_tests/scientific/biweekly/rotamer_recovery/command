@@ -28,13 +28,14 @@
 
 cd %(workdir)s
 
+minidir=%(minidir)s
 
 if [ ! -s inputs/list.txt ]
 then
         echo No structures found in \'inputs\' directory
         echo To retrieve the structure execute the following:
         echo
-        echo "    " cd %(minidir)s/test/scientific/tests/rotamer_recovery
+        echo "    " cd ${minidir%%source}tests/scientific/biweekly/rotamer_recovery
         echo "    " svn checkout https://svn.rosettacommons.org/source/trunk/mini.data/tests/scientific/tests/rotamer_recovery/inputs inputs
         echo
         echo Then run the test again.
