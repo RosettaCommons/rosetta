@@ -77,7 +77,7 @@ bool cutpoints_separation( core::pose::Pose & pose, Ab_InfoOP & antibody_info );
 // Compute the separation at the cutpoint. The N-C distance of the
 // peptide bond which should be formed at the cutpoint. A closed loop is
 // assumed to have a gap < 1.9 Ang
-core::Real cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
+core::Real cutpoint_separation(core::pose::Pose & pose_in, core::Size cutpoint);
 
     
     
