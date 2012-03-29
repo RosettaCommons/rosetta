@@ -254,6 +254,8 @@ std::string request_data_from_head_node(message_listening::listener_tags listene
     #ifndef USEMPI
     utility_exit_with_message("ERROR: You have tried to request a message from the head node but you are not in mpi mode (compile with extras=mpi)");
     #endif
+
+	return "";  // required for compilation on Windows
 }
     
 void send_data_to_head_node(message_listening::listener_tags listener_tag, std::string data){

@@ -27,6 +27,9 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
+#ifdef WIN32
+#include <boost/uuid/uuid.hpp>
+#endif
 
 namespace protocols {
 namespace qsar {

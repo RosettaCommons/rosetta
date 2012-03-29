@@ -22,6 +22,7 @@
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 
+#include <core/id/AtomID.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -91,7 +92,11 @@ public:
 	core::id::SequenceMappingCOP profile_mapping() const;
 
 	virtual core::Size natoms() const { return 0; }
-	virtual AtomID const & atom( core::Size const ) const { utility_exit_with_message("SequenceProfileConstraint is not atom-based!."); };
+	virtual AtomID const & atom( core::Size const ) const { 
+		utility_exit_with_message("SequenceProfileConstraint is not atom-based!.");
+		return core::id::BOGUS_ATOM_ID; // required for compilation on Windows
+	};
+	
 	virtual utility::vector1< core::Size > residues() const;
 
 	virtual ConstraintOP remap_resid( SequenceMapping const & ) const;

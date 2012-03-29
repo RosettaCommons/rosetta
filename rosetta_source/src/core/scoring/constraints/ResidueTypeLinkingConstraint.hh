@@ -21,6 +21,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 
 #include <core/conformation/Conformation.fwd.hh>
+#include <core/id/AtomID.hh>
 
 #include <utility/vector1.hh>
 
@@ -71,7 +72,10 @@ public:
 
 	virtual
 	AtomID const &
-	atom( Size const index ) const { utility_exit_with_message("ResidueTypeLinkingConstraint is not atom-based!."); }
+	atom( Size const index ) const { 
+		utility_exit_with_message("ResidueTypeLinkingConstraint is not atom-based!.");
+		return core::id::BOGUS_ATOM_ID;  // required for compilation on Windows
+	}
 
 	virtual
 	utility::vector1< core::Size >

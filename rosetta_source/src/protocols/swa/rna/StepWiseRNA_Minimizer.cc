@@ -700,7 +700,7 @@ namespace rna {
 		
 		native_edensity_score_cutoff_=setting;
 
-		perform_electron_density_screen_=(native_edensity_score_cutoff_ > -0.99999 or native_edensity_score_cutoff_ < -1.00001);
+		perform_electron_density_screen_=(native_edensity_score_cutoff_ > -0.99999 || native_edensity_score_cutoff_ < -1.00001);
 
 	}
 	//////////////////////////////////////////////////////////////////
