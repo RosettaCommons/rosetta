@@ -1,7 +1,3 @@
-
-#ifndef ORBITALSSCORE_CXXTEST_HH_
-#define ORBITALSSCORE_CXXTEST_HH_
-
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -83,7 +79,7 @@ public:
 		sfxn.set_weight( orbitals_haro, 1 );
 		sfxn.set_weight(orbitals_hpol_bb, 1);
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -11.3010, start_score, 0.0003 );
+		TS_ASSERT_DELTA( -11.3122, start_score, 0.0001 );
 
 
 
@@ -139,4 +135,3 @@ public:
 
 };
 
-#endif /* ORBITALSSCORE_CXXTEST_HH_ */
