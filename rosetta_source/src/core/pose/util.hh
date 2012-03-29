@@ -20,19 +20,15 @@
 #include <set>
 
 // Utility headers
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
@@ -45,7 +41,7 @@
 #include <core/scoring/ScoreType.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
+#include <core/pose/util.tmpl.hh>
 #include <core/pose/MiniPose.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -54,8 +50,6 @@
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.fwd.hh>
-
-
 
 namespace core {
 namespace pose {
