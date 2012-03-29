@@ -510,21 +510,30 @@ void ClusterBase::limit_groupsize( int limit ) {
 
 // take first 'limit'%  from each cluster
 void ClusterBase::limit_groupsize( core::Real percent_limit ) {
-	int limit = std::floor(percent_limit*clusterlist.size());
-	limit_groupsize( limit );
+	int i,j, limit;
+	if ( percent_limit > 1.0 ) return;
+	for (i=0;i<(int)clusterlist.size();i++ ) {
+		Cluster temp = clusterlist[i];
+		clusterlist[i].clear();
+		limit = std::floor(percent_limit*temp.size());
+		tr << "truncating from " << temp.size() << " to " << limit << std::endl;
+		for (j=0;j<limit;j++ ) {
+			clusterlist[i].push_back( temp[j] );
+		}
+	}
 }
 
 // take random 'limit'% from each cluster
 void ClusterBase::random_limit_groupsize( core::Real percent_limit ) {
-	int limit = std::floor(percent_limit*clusterlist.size());
-	tr.Info << "Randomly limiting each cluster to a total size of : " << limit << std::endl;
-	int i,j;
-	if ( limit < 1 ) return;
+	int i,j,limit;
+	if ( percent_limit >= 1.0 ) return;
 	for (i=0;i<(int)clusterlist.size();i++ ) {
 		Cluster temp = clusterlist[i];
 		clusterlist[i].clear();
+		limit = std::floor(percent_limit*temp.size());
+		tr << "truncating from " << temp.size() << " to " << limit << std::endl;
 		temp.shuffle();
-		for (j=0;(j<(int)temp.size()) && (j<limit);j++ ) {
+		for (j=0;j<limit;j++ ) {
 			clusterlist[i].push_back( temp[j] );
 		}
 	}
