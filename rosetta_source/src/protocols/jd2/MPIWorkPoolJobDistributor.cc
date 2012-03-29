@@ -129,7 +129,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	master_get_new_job_id();
 
 	// create a factory for listening
-	message_listening::MessageListenerFactory factory;
+	//message_listening::MessageListenerFactory factory;
 
 	// Job Distribution Loop
 	while ( next_job_to_assign_ != 0 ) {
@@ -164,7 +164,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			case REQUEST_MESSAGE_TAG:
 			{
 				TR << "Master Node: recieved a message request from the slave node, having the message listener factor create the appropriate message" << std::endl;
-				message_listening::MessageListenerOP listener(factory.get_listener((message_listening::listener_tags)slave_data));
+				message_listening::MessageListenerOP listener(message_listening::MessageListenerFactory::get_instance()->get_listener((message_listening::listener_tags)slave_data));
 
 				TR << "Master Node: recieved message data from the slave node, processing data now" << std::endl;
 				std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
@@ -217,7 +217,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			case REQUEST_MESSAGE_TAG:
 			{
 				TR << "Master Node: recieved a message request from the slave node, having the message listener factory create the appropriate message" << std::endl;
-				message_listening::MessageListenerOP listener(factory.get_listener((message_listening::listener_tags)slave_data));
+				message_listening::MessageListenerOP listener(message_listening::MessageListenerFactory::get_instance()->get_listener((message_listening::listener_tags)slave_data));
 
 				TR << "Master Node: recieved message data from the slave node, processing data now" << std::endl;
 				std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
@@ -434,7 +434,6 @@ MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose
 		// receive message from master that says is okay to write
 		TR << "Slave Node " << rank_ << ": Received output confirmation from master. Writing output." << std::endl;
 		MPI_Recv( &empty_data, 1, MPI_INT, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status );
-
 		// time and write output (pdb, silent file, score file etc.)
 		clock_t starttime = clock();
 		job_outputter()->final_pose( current_job(), pose );

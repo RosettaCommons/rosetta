@@ -30,6 +30,22 @@ namespace message_listening{
 
 static basic::Tracer TR("protocols.jd2.message_listening.MessageListenerFactory");
 
+MessageListenerFactory* MessageListenerFactory::instance_(0);
+
+MessageListenerFactory* MessageListenerFactory::get_instance()
+{
+	if(instance_ == 0)
+	{
+		instance_ = new MessageListenerFactory();
+	}
+	return instance_;
+}
+
+MessageListenerFactory::MessageListenerFactory()
+{
+	listeners_.clear();
+}
+
 MessageListenerOP MessageListenerFactory::get_listener(listener_tags tag){
 
 	//if we already made this listener then return it, otherwise create a new one

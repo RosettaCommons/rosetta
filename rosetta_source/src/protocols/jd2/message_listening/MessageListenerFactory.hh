@@ -32,9 +32,16 @@ enum listener_tags {
 class MessageListenerFactory {
 
 public:
+
+	static MessageListenerFactory* get_instance();
+
 	MessageListenerOP get_listener(listener_tags tag);
 
 private:
+	MessageListenerFactory();
+	MessageListenerFactory(MessageListenerFactory const &);
+	MessageListenerFactory const & operator = (MessageListenerFactory const &);
+	static MessageListenerFactory * instance_;
 	std::map<listener_tags, MessageListenerOP> listeners_;
 
 };

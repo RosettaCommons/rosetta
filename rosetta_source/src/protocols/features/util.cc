@@ -12,13 +12,20 @@
 /// @brief
 
 /// @author tim
+// MPI headers
+
+#ifdef USEMPI
+#include <mpi.h> //keep this first
+#endif
 
 #include <core/types.hh>
 
 #include <protocols/features/util.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/BatchFeatures.hh>
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/message_listening/MessageListenerFactory.hh>
+#include <protocols/jd2/message_listening/MessageListener.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
@@ -74,12 +81,29 @@ get_protocol_and_batch_id(
     
 #ifdef USEMPI
 
+	int rank = 0;
+	MPI_Comm_rank( MPI_COMM_WORLD, (int*)(&rank) );
+
 	//Send an identifier to the head node, along with a
 	//message_listening tag so that the messageListenerFactory of the
 	//job distributor knows who to give the data to.
-	string listener_data = request_data_from_head_node(DB_TAG, identifier);
 
-	TR << "recieved data from head node: " << listener_data << endl;
+	//Some implementations of mpi don't allow self messaging. So, if we
+	//are the head node, don't try to message yourself, just access the listener directly
+
+	string listener_data="";
+
+	if(rank != 0)
+	{
+		listener_data = request_data_from_head_node(DB_TAG, identifier);
+		TR << "Received data from head node: " << listener_data << endl;
+	}else
+	{
+		protocols::jd2::message_listening::MessageListenerOP listener(protocols::jd2::message_listening::MessageListenerFactory::get_instance()->get_listener(DB_TAG));
+		listener->request(identifier,listener_data);
+		//listener->recieve(listener_data);
+		TR << "Received data from message listener: " << listener_data << endl;
+	}
 
 	//deserialize data into protocol_id and batch_id
 	pair<Size, Size> ids = deserialize_db_listener_data(listener_data);
@@ -112,8 +136,17 @@ get_protocol_and_batch_id(
 			utility_exit_with_message(err_msg.str());
 		}
 
-		send_data_to_head_node(
-			DB_TAG, serialize_ids(protocol_id, identifier, batch_id));
+
+		if(rank != 0)
+		{
+			send_data_to_head_node(
+				DB_TAG, serialize_ids(protocol_id, identifier, batch_id));
+		}else
+		{
+			protocols::jd2::message_listening::MessageListenerOP listener(protocols::jd2::message_listening::MessageListenerFactory::get_instance()->get_listener(DB_TAG));
+			listener->recieve(serialize_ids(protocol_id, identifier, batch_id));
+		}
+
 	}
 	//protocol is set, but this is a new batch
 	else if(batch_id==0){
@@ -121,8 +154,16 @@ get_protocol_and_batch_id(
 		batch_id = batch_features->report_features(
 			protocol_id, identifier, "", db_session);
 
-		send_data_to_head_node(
-			DB_TAG, serialize_ids(protocol_id, identifier, batch_id));
+		if(rank != 0)
+		{
+			send_data_to_head_node(
+				DB_TAG, serialize_ids(protocol_id, identifier, batch_id));
+		}else
+		{
+			protocols::jd2::message_listening::MessageListenerOP listener(protocols::jd2::message_listening::MessageListenerFactory::get_instance()->get_listener(DB_TAG));
+			listener->recieve(serialize_ids(protocol_id, identifier, batch_id));
+		}
+
 	}
 
 #endif

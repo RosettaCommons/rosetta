@@ -65,6 +65,8 @@ DatabaseJobOutputter::DatabaseJobOutputter() : protocols::jd2::FileJobOutputter(
 	protein_silent_report_(new ProteinSilentReport())
 {
 	load_options_from_option_system();
+	sessionOP db_session(basic::database::get_db_session(database_fname_));
+	protein_silent_report_->initialize(db_session);
 
 	//sessionOP db_session(basic::database::get_db_session(database_fname_));
 
