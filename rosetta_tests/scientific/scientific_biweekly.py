@@ -103,7 +103,7 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     )
     parser.add_option("--output-dir",
       default="biweekly_statistics",
-      dest="outdir",
+      #dest="outdir",
       help="Where the output results should be written. (default: biweekly_statistics)"
     )
 
@@ -137,13 +137,13 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     # Make sure the current directory is the script directory:
     # Using argv[] here causes problems when people try to run the script as "python scientific.py ..."
     #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
-    if not path.isdir("tests"):
+    if not path.isdir("biweekly"):
         print "You must run this script from rosetta_tests/scientific/"
         return 2
 
     #If the output directory directory doesn't exist, create one;
     #else remove the old one and create a new one
-    outdir = options.outputdir
+    outdir = options.output_dir
     if not path.isdir(outdir): os.mkdir(outdir)
     else:
         if path.isdir(outdir): shutil.rmtree(outdir)
