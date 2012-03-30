@@ -21,6 +21,12 @@ initialize_base_dir <- function(){
 	base_dir
 }
 
+# The workdir is where the command was run from in particular the
+# output dir can be specified relative to the work_dir
+initialize_work_dir <- function(){
+	getwd()
+}
+
 # Running ./compare_sample_sources.R will auto-generate
 # compare_sample_sources_iscript.R which can be run in an interactive
 # R session to re-run the last execution, like this:
@@ -227,6 +233,8 @@ initialize_analysis_scripts_from_options <- function(opt, base_dir){
 	if("script" %in% names(opt$options)){
 		if(file.exists(opt$options$script)){
 			analysis_scripts <- c(opt$options$script)
+		} else if(file.exists(file.path(base_dir, opt$options$script))){
+			analysis_scripts <- c(file.path(base_dir, opt$options$script))
 		} else {
 			stop(paste("Analysis script '", opt$options$script, "', does not exist.", sep=""))
 		}
@@ -274,18 +282,26 @@ add_command_line_options_to_configuration <- function(
 }
 
 
-initialize_output_dir <- function(opt, ss_cmp){
-	paste(
-		opt$options$output_dir,
-		paste(llply(ss_cmp$sample_sources, function(ss) ss$id), sep="/", collapse="_"),
-		sep="/")
+initialize_output_dir <- function(work_dir, opt, ss_cmp){
+	# if the output dir is a relative path, make it relative to the
+	# work_dir, which is the path from which the script was executed
+	if(substr(opt$options$output_dir,1,1) == "/"){
+		output_dir <- opt$options$output_dir
+	} else {
+		output_dir <- file.path(work_dir, opt$options$output_dir)
+	}
+
+	file.path(
+		output_dir,
+		paste(
+			llply(ss_cmp$sample_sources, function(ss) ss$id),
+			sep="/", collapse="_"))
 }
 
-summarize_configuration <- function(opt, sample_source_comparison){
+summarize_configuration <- function(output_dir, sample_source_comparison){
 	cat(
 		"Sample Source Comparison:\n",
-		"  Output Directory <- ",
-		initialize_output_dir(opt, sample_source_comparison), "\n", sep="")
+		"  Output Directory <- ", output_dir, "\n", sep="")
 	cat("  Sample Sources:\n")
 	l_ply(sample_source_comparison$sample_sources, function(ss) {
 		cat("  ", ss$id, " <- ", ss$database_path, "\n", sep="")
@@ -359,13 +375,13 @@ parse_analysis_scripts <- function(base_dir, analysis_scripts){
 	for(analysis_script in analysis_scripts){
 
 		# parse all the analysis scripts
-		if(!file.exists(file.path(base_dir, analysis_script))){
+		if(!file.exists(analysis_script)){
 			cat(paste(
-				"ERROR: The features anlysis script '",
+				"ERROR: The features analysis script '",
 				analysis_script,"' does not exist\n", sep=""))
 		} else {
 			tryCatch({
-				source(file.path(base_dir, analysis_script), local=T)
+				source(analysis_script, local=T)
 			}, error=function(e){
 				cat(paste(
 					"ERROR: Failed to parse the Features Analysis '",
@@ -400,6 +416,9 @@ run_feature_analyses <- function(
 		for(features_analysis in feature_analyses){
 			cat(paste("Features Analysis: ", features_analysis@id, "\n", sep=""))
 
+			# set current working directory the base_dir so that way scripts
+			# can reference other scripts in a canonical way
+
 			setwd(base_dir)
 			tryCatch({
 				features_analysis@run(
@@ -425,6 +444,7 @@ generate_webpages <- function(opt, output_dir){
 ########################################################
 
 base_dir <- initialize_base_dir()
+work_dir <- initialize_work_dir()
 initialize_iscript(base_dir)
 initialize_packages_before_options(base_dir)
 initialize_method_scripts_before_options(base_dir)
@@ -445,9 +465,10 @@ configuration <- add_command_line_options_to_configuration(
 	base_dir)
 
 l_ply(configuration$sample_source_comparisons, function(ss_cmp){
-	summarize_configuration(opt, ss_cmp)
 
-	sample_source_output_dir <- initialize_output_dir(opt, ss_cmp)
+	sample_source_output_dir <- initialize_output_dir(work_dir, opt, ss_cmp)
+
+	summarize_configuration(sample_source_output_dir, ss_cmp)
 
 	sample_sources <- initialize_sample_sources(ss_cmp)
 

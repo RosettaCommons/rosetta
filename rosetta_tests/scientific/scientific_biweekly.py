@@ -101,6 +101,11 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
       default=None,
       help="Save results to specified file in YAML format. (default: None)",
     )
+    parser.add_option("--output-dir",
+      default="biweekly_statistics",
+      dest="outdir",
+      help="Where the output results should be written. (default: biweekly_statistics)"
+    )
 
     (options, args) = parser.parse_args(args=argv)
 
@@ -136,9 +141,9 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
         print "You must run this script from rosetta_tests/scientific/"
         return 2
 
-    #If the "statistics" directory doesn't exist, create one;
+    #If the output directory directory doesn't exist, create one;
     #else remove the old one and create a new one
-    outdir = "biweekly_statistics"
+    outdir = options.outputdir
     if not path.isdir(outdir): os.mkdir(outdir)
     else:
         if path.isdir(outdir): shutil.rmtree(outdir)
