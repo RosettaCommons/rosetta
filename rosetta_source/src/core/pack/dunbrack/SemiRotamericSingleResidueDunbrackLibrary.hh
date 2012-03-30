@@ -118,6 +118,30 @@ private:
 
 };
 
+struct BBDepScoreInterpData
+{
+public:
+	BBDepScoreInterpData() :
+		value_(0.0),
+		dsecox_(0.0),
+		dsecoy_(0.0),
+		dsecoz_(0.0),
+		dsecoxy_(0.0),
+		dsecoxz_(0.0),
+		dsecoyz_(0.0),
+		dsecoxyz_(0.0)
+	{}
+
+	DunbrackReal value_;      ///< f(x,y,z)
+	DunbrackReal dsecox_;     ///< second order derivative for x -- d**2/dx**2 f(x,y,z)
+	DunbrackReal dsecoy_;     ///< second order derivative for y
+	DunbrackReal dsecoz_;     ///< second order derivative for z
+	DunbrackReal dsecoxy_;    ///< second order derivative for x and y
+	DunbrackReal dsecoxz_;    ///< second order derivative for x and z
+	DunbrackReal dsecoyz_;    ///< second order derivative for y and z
+	DunbrackReal dsecoxyz_;   ///< second order derivative for x y and z
+};
+
 
 /// @brief A class to hold rotamer building data on the stack and yet have it
 /// accessible to derived classes when invoking base class functions.  An
@@ -621,11 +645,11 @@ private:
 	Real nrchi_lower_angle_; // Starting angle for both bbdep and bbind nrchi data
 
 	/// The non rotameric chi is n_rotameric_chi + 1;
-	/// The FArray3D is indexed as (phi, psi, nrchi).  Probabilities are input; scores
-	/// are stored.  The supporting information is used to snap chi values stored in a
-	/// residue to a meaningful periodic range and to make trilinear interpolation possible.
+	/// The FArray3D is indexed as (phi, psi, nrchi).  Probabilities are input; the
+	/// parameters for tricubic interpolation are stored.  The supporting information is used to snap chi values stored in a
+	/// residue to a meaningful periodic range and to make tricubic interpolation possible.
 	/// This data is used only if bbind_nrchi_scoring is false.
-	utility::vector1< ObjexxFCL::FArray3D< Real > > bbdep_non_rotameric_chi_scores_;
+	utility::vector1< ObjexxFCL::FArray3D< BBDepScoreInterpData > > bbdep_nrc_interpdata_;
 	Size bbdep_nrchi_nbins_;
 	Real bbdep_nrchi_binsize_;
 

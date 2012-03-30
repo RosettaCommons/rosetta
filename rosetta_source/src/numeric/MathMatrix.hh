@@ -47,6 +47,7 @@
 // C++ headers
 #include <math.h>
 #include <iostream>
+#include <cassert>
 
 namespace numeric{
 template<typename T>
@@ -65,9 +66,10 @@ public:
 
 	/// @brief default constructor
 	MathMatrix< T>() :
-	NumberRows_( 0),
-	NumberCols_( 0),
-	data_( NULL)
+		NumberRows_( 0),
+		NumberCols_( 0),
+		size_( 0 ),
+		data_( NULL)
 	{
 	}
 
@@ -77,18 +79,19 @@ public:
 	/// @param FILL_VALUE assign every element to that value
 	explicit MathMatrix< T>
 	(
-			const Size NUMBER_ROWS,
-			const Size NUMBER_COLS,
-			const T &FILL_VALUE = T( 0)
+		const Size NUMBER_ROWS,
+		const Size NUMBER_COLS,
+		const T &FILL_VALUE = T( 0)
 	) :
-	NumberRows_( NUMBER_ROWS),
-	NumberCols_( NUMBER_COLS),
-	data_( new T[ NumberRows_ * NumberCols_])
+		NumberRows_( NUMBER_ROWS),
+		NumberCols_( NUMBER_COLS),
+		size_( NumberRows_ * NumberCols_ ),
+		data_( new T[ size_ ])
 	{
 
 
 		// set all values to FILL_VALUE
-		std::fill( data_, data_ + NumberRows_ * NumberCols_, FILL_VALUE);
+		std::fill( data_, data_ + size_, FILL_VALUE);
 	}
 
 	/// @brief construct from dimension and pointer to data
@@ -97,18 +100,17 @@ public:
 	/// @param DATA pointer to field of data
 	MathMatrix< T>
 	(
-			const Size NUMBER_ROWS,
-			const Size NUMBER_COLS,
-			const T *DATA
+		const Size NUMBER_ROWS,
+		const Size NUMBER_COLS,
+		const T *DATA
 	) :
-	NumberRows_( NUMBER_ROWS),
-	NumberCols_( NUMBER_COLS),
-	data_( new T[ NumberRows_ * NumberCols_])
+		NumberRows_( NUMBER_ROWS),
+		NumberCols_( NUMBER_COLS),
+		size_( NumberRows_ * NumberCols_ ),
+		data_( new T[ NumberRows_ * NumberCols_])
 	{
-
-
 		// copy data
-		std::copy( DATA, DATA + NumberRows_ * NumberCols_, data_);
+		std::copy( DATA, DATA + size_, data_);
 	}
 
 	/// @brief copy constructor from Matrix
@@ -116,25 +118,26 @@ public:
 	MathMatrix< T>( const MathMatrix< T> &MATRIX) :
 		NumberRows_( MATRIX.NumberRows_),
 		NumberCols_( MATRIX.NumberCols_),
-		data_( new T[ NumberRows_ * NumberCols_])
-		{
-		std::copy( MATRIX.data_, MATRIX.data_ + NumberRows_ * NumberCols_, data_);
-		}
+		size_( MATRIX.size_ ),
+		data_( new T[ size_ ])
+	{
+		std::copy( MATRIX.data_, MATRIX.data_ + size_, data_);
+	}
 
 
 
 	/// @brief Clone function
 	/// @return pointer to new MatrixInterface< T>
 	MathMatrix< T> *Clone() const
-		{
+	{
 		return new MathMatrix< T>( *this);
-		}
+	}
 
 	/// @brief destructor
 	~MathMatrix< T>()
-		{
+	{
 		delete[] data_;
-		}
+	}
 
 	/////////////////
 	// data access //
@@ -159,14 +162,14 @@ public:
 	/// @return total number of elements in matrix
 	Size get_number_elements() const
 	{
-		return NumberRows_ * NumberCols_;
+		return size_;
 	}
 
 	/// @brief number of elements
 	/// @return total number of elements in matrix
 	Size size() const
 	{
-		return NumberRows_ * NumberCols_;
+		return size_;
 	}
 
 	/// @brief pointer to First Element
@@ -187,14 +190,14 @@ public:
 	/// @return const pointer to address one after last element in Matrix
 	const T *end() const
 	{
-		return data_ + NumberRows_ * NumberCols_;
+		return data_ + size_;
 	}
 
 	/// @brief pointer to end of range
 	/// @return pointer to address one after last element in Matrix
 	T *end()
 	{
-		return data_ + NumberRows_ * NumberCols_;
+		return data_ + size_;
 	}
 
 
@@ -206,7 +209,7 @@ public:
 
 	/// @return Col of Matrix
 	MathVector< T> get_col( const Size COL) const
-		{
+	{
 		//create a vector of the size of NumberRows
 		MathVector< T> col( NumberRows_);
 
@@ -221,7 +224,8 @@ public:
 
 		//return the column
 		return col;
-		}
+	}
+
 	////////////////
 	// operations //
 	////////////////
@@ -346,7 +350,7 @@ public:
 	MathMatrix< T> & set_zero()
 		{
 		// fill all with 0
-		std::fill( data_, data_ + NumberCols_ * NumberRows_, T( 0));
+		std::fill( data_, data_ + size_, T( 0));
 
 		//end
 		return *this;
@@ -369,7 +373,7 @@ public:
 
 	/// @return transpose of matrix
 	inline MathMatrix< T> & transpose()
-		{
+	{
 		MathMatrix< T> newthis( NumberCols_, NumberRows_);
 		for( Size i( 0); i < newthis.NumberRows_; ++i)
 		{
@@ -381,11 +385,11 @@ public:
 
 		//end
 		return ( operator =( newthis));
-		}
+	}
 
 	/// @return invert rectangular matrices exactly
 	inline MathMatrix< T> & inverse_rectangular_matrix()
-		{
+	{
 		MathMatrix< T> newmatrix( *this);
 		bool transposed( NumberRows_ < NumberCols_);
 		if( !transposed)
@@ -411,7 +415,7 @@ public:
 
 		return ( operator =( newmatrix));
 		//  return std::copy(newmatrix.data_, newmatrix.data_ + newmatrix.get_number_rows() * newmatrix.get_number_cols(), newmatrix.data_);
-		}
+	}
 
 
 
@@ -470,7 +474,7 @@ public:
 
 
 	inline MathMatrix< T> & inverse_diagonal_matrix()
-		{
+	{
 		for( Size i( 0); i < NumberRows_; ++i)
 		{
 			if( operator()( i, i) != T( 0))
@@ -480,7 +484,7 @@ public:
 		}
 
 		return *this;
-		}
+	}
 
 
 
@@ -669,6 +673,8 @@ public:
 	/// @return changable reference to the element defined bey ROW and COL number
 	T &operator()( const Size ROW, const Size COL)
 	{
+		assert( ROW < NumberRows_ );
+		assert( COL < NumberCols_ );
 		return data_[ ROW * NumberCols_ + COL];
 	}
 
@@ -678,6 +684,8 @@ public:
 	/// @return const element defined bey ROW and COL number
 	const T &operator()( const Size ROW, const Size COL) const
 	{
+		assert( ROW < NumberRows_ );
+		assert( COL < NumberCols_ );
 		return data_[ ROW * NumberCols_ + COL];
 	}
 
@@ -687,7 +695,7 @@ public:
 	MathMatrix< T> &operator = ( const MathMatrix< T> &MATRIX)
 	{
 		// copy all elements
-		if( data_ != MATRIX.data_)
+		if( this != & MATRIX )
 		{
 			// check that sizes match
 			if( NumberRows_ != MATRIX.NumberRows_ || NumberCols_ != MATRIX.NumberCols_)
@@ -698,13 +706,14 @@ public:
 				// reallocate
 				NumberRows_ = MATRIX.NumberRows_;
 				NumberCols_ = MATRIX.NumberCols_;
-				data_ = new T[ NumberRows_ * NumberCols_];
+				size_ = MATRIX.size_;
+				data_ = new T[ size_ ];
 
 
 			}
 
 			// copy elements
-			std::copy( MATRIX.data_, MATRIX.data_ + NumberRows_ * NumberCols_, data_);
+			std::copy( MATRIX.data_, MATRIX.data_ + size_, data_);
 		}
 		return *this;
 
@@ -719,7 +728,7 @@ public:
 	MathMatrix< T> &operator =( const T &VALUE)
 	{
 		// set all element to given VALUE
-		std::fill( data_, data_ + NumberRows_ * NumberCols_, VALUE);
+		std::fill( data_, data_ + size_, VALUE);
 
 		// return reference to this Vector
 		return *this;
@@ -728,6 +737,7 @@ public:
 	/// C-style data access with [] gives a pointer on a ROW
 	T *operator[]( const Size ROW)
 	{
+		assert( ROW < NumberRows_ );
 		//VectorMatrixTensorBase< t_DataType>::IsValidPosition( ROW * m_NumberCols);
 		return (data_ + ROW * NumberCols_);
 	}
@@ -735,6 +745,7 @@ public:
 	/// C-style data access with [] gives a pointer on a ROW
 	const T *operator[]( const Size ROW) const
 	{
+		assert( ROW < NumberRows_ );
 		//VectorMatrixTensorBase< t_DataType>::IsValidPosition( ROW * m_NumberCols);
 		return (data_ + ROW * NumberCols_);
 	}
@@ -789,6 +800,7 @@ public:
 private:
 	Size NumberRows_; //number of rows
 	Size NumberCols_; //number columns
+	Size size_; //NumberRows_ * NumberCols_;
 	T *data_;
 
 };

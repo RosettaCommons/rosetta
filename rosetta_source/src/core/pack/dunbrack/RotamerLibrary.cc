@@ -933,10 +933,11 @@ RotamerLibrary::get_binary_name_10() const
 /// Version 20: Limit zero-probability rotamers to the resolution of the library (1e-4).
 ///             6/16/2009.  Andrew Leaver-Fay
 /// Version 21: Write out bicubic spline parameters for -log(p(rot|phi,psi)).  3/28/2012.  Andrew Leaver-Fay
+/// Version 22: Bicubic spline bugfix  3/29/2012.  Andrew Leaver-Fay
 Size
 RotamerLibrary::current_binary_format_version_id_02() const
 {
-	return 21;
+	return 22;
 }
 
 /// @details Version number for binary format.  See comments for 02 version.
@@ -950,10 +951,12 @@ RotamerLibrary::current_binary_format_version_id_02() const
 ///            Also replacing the Jun8 library with the cross-validated Feb24 '09 library.
 ///            6/16/2009.  Andrew Leaver-Fay
 /// Version 3: Rotameric residues write out bicubic spline parameters for -log(p(rot|phi,psi)).  3/28/2012.  Andrew Leaver-Fay
+/// Version 4: Tricubic interpolation data for semi-rotameric residues.  3/29/2012.  Andrew Leaver-Fay
+/// Version 5: Generate and write out bicubic spline data for the rotameric portion of the semi-rotameric residues .  3/29/2012.  Andrew Leaver-Fay
 Size
 RotamerLibrary::current_binary_format_version_id_08() const
 {
-	return 3;
+	return 5;
 }
 
 /// @details Version number for binary format.  See comments for 02 version.
@@ -964,10 +967,12 @@ RotamerLibrary::current_binary_format_version_id_08() const
 ///
 /// Version 1: start vesion number.  6/3/11. Andrew Leaver-Fay
 /// Version 2: Rotameric residues write out bicubic spline parameters for -log(p(rot|phi,psi)).  3/28/2012.  Andrew Leaver-Fay
+/// Version 3: Tricubic interpolation data for semi-rotameric residues.  3/29/2012.  Andrew Leaver-Fay
+/// Version 4: Generate and write out bicubic spline data for the rotameric portion of the semi-rotameric residues .  3/29/2012.  Andrew Leaver-Fay
 Size
 RotamerLibrary::current_binary_format_version_id_10() const
 {
-	return 2;
+	return 4;
 }
 
 void

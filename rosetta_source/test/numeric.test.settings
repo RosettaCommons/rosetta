@@ -52,8 +52,10 @@ sources = {
 		"Histogram",
 	],
 	"interpolation/spline" : [
+        	"bicubic_interpolation_function",
 		"Bicubic_spline",
 		"Cubic_spline",
+		"TricubicSpline",
 	],
 }
 include_path = [ "#external/cxxtest", "#" ]

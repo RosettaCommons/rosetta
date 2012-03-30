@@ -190,6 +190,9 @@ public:
 
 protected:
 
+	void
+	initialize_bicubic_splines();
+
 	/// @brief When given a statically sized fixedsizearray, use this method.
 	void
 	get_rotamer_from_chi_static(

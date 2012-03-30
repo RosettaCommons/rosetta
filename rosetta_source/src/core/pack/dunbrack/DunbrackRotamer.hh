@@ -438,6 +438,24 @@ void bicubic_interpolation(
 	Real & dvaldy
 );
 
+void
+tricubic_interpolation(
+	Real v000, Real dvdx000, Real dvdy000, Real dvdz000, Real dvdxy000, Real dvdxz000, Real dvdyz000, Real dvdxyz000,
+	Real v001, Real dvdx001, Real dvdy001, Real dvdz001, Real dvdxy001, Real dvdxz001, Real dvdyz001, Real dvdxyz001,
+	Real v010, Real dvdx010, Real dvdy010, Real dvdz010, Real dvdxy010, Real dvdxz010, Real dvdyz010, Real dvdxyz010,
+	Real v011, Real dvdx011, Real dvdy011, Real dvdz011, Real dvdxy011, Real dvdxz011, Real dvdyz011, Real dvdxyz011,
+	Real v100, Real dvdx100, Real dvdy100, Real dvdz100, Real dvdxy100, Real dvdxz100, Real dvdyz100, Real dvdxyz100,
+	Real v101, Real dvdx101, Real dvdy101, Real dvdz101, Real dvdxy101, Real dvdxz101, Real dvdyz101, Real dvdxyz101,
+	Real v110, Real dvdx110, Real dvdy110, Real dvdz110, Real dvdxy110, Real dvdxz110, Real dvdyz110, Real dvdxyz110,
+	Real v111, Real dvdx111, Real dvdy111, Real dvdz111, Real dvdxy111, Real dvdxz111, Real dvdyz111, Real dvdxyz111,
+	Real dxp, Real dyp, Real dzp,
+	Real binwx, Real binwy, Real binwz,
+	Real & val,
+	Real & dvaldx,
+	Real & dvaldy,
+	Real & dvaldz
+);
+
 void interpolate_rotamers(
 	DunbrackRotamer< FOUR > const & rot00,
 	DunbrackRotamer< FOUR > const & rot10,

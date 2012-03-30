@@ -79,6 +79,7 @@ sources = {
 
 	"pack" : [
                 "annealer/FASTERAnnealer",
+                "dunbrack/DunbrackEnergy",
                 "dunbrack/RotamerConstraint",
 		"interaction_graph/InteractionGraphFactory",
 		"interaction_graph/FASTERInteractionGraph",

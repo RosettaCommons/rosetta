@@ -315,8 +315,8 @@ public:
 
 
 		AtomTreeMinimizer minimizer;
-		//std::cout.precision( 16 );
-		//std::cout << "start score: " << sfxn(pose) << std::endl;
+		std::cout.precision( 16 );
+		std::cout << "start score: " << sfxn(pose) << std::endl;
 		//Real start_score =
 		sfxn(pose);
 		//TS_ASSERT_DELTA( 38.86927045441701, start_score, 1e-12 );
@@ -340,9 +340,9 @@ public:
 		}
 
 		//Real end_score = sfxn(pose);
-		//std::cout << "end score: " << sfxn(pose) << std::endl;
+		std::cout << "end score: " << sfxn(pose) << std::endl;
 		//TS_ASSERT_DELTA( 38.57005418761457, end_score, 1e-12 );
-		//pose.dump_pdb( "cstetest1.pdb" );
+		pose.dump_pdb( "dunmin1.pdb" );
 
 	}
 
@@ -363,8 +363,8 @@ public:
 
 
 		AtomTreeMinimizer minimizer;
-		//std::cout.precision( 16 );
-		//std::cout << "start score: " << sfxn(pose) << std::endl;
+		std::cout.precision( 16 );
+		std::cout << "start score: " << sfxn(pose) << std::endl;
 		Real start_score = sfxn(pose);
 		TS_ASSERT_DELTA( 38.86927045441701, start_score, 1e-12 );
 
@@ -379,9 +379,9 @@ public:
 		minimizer.run( pose, movemap, sfxn, min_options );
 
 		Real end_score = sfxn(pose);
-		//std::cout << "end score: " << sfxn(pose) << std::endl;
-		TS_ASSERT_DELTA( 38.57005418761457, end_score, 1e-12 );
-		//pose.dump_pdb( "cstetest1.pdb" );
+		std::cout << "end score: " << sfxn(pose) << std::endl;
+		//TS_ASSERT_DELTA( 38.57005418761457, end_score, 1e-12 );
+		pose.dump_pdb( "dunmintest1.pdb" );
 
 	}
 
