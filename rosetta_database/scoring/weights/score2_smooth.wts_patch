@@ -1,0 +1,16 @@
+cen_env_smooth = 1.0
+cen_pair_smooth = 1.0
+cbeta_smooth = 0.25
+cenpack_smooth = 0.5
+vdw = 1.0
+rg = 0.0
+hs_pair = 1.0
+ss_pair = 1.0
+rsigma = 0.0
+sheet = 1.0
+env = 0.0
+pair = 0.0
+cbeta = 0.0
+cenpack = 0.0
+
+STRAND_STRAND_WEIGHTS 1 6
