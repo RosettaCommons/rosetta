@@ -192,6 +192,7 @@ CartesianHybridize::init() {
 	increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
 	no_global_frame_ = option[cm::hybridize::no_global_frame]();
 	linmin_only_ = option[cm::hybridize::linmin_only]();
+	cartfrag_overlap_ = 1;
 
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
