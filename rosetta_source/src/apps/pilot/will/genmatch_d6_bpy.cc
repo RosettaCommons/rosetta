@@ -395,7 +395,7 @@ void run() {
 		}
 		TR << std::endl;
 
-		vector1<Vec> Ns(in_fa.n_residue()),CAs(in_fa.n_residue()),Cs(in_fa.n_residue()),CBs(in_fa.n_residue());;
+		vector1<Vec> Ns(in_fa.n_residue()),CAs(in_fa.n_residue()),Cs(in_fa.n_residue()),CBs(in_fa.n_residue());
 		for(Size i = 1; i <= in_fa.n_residue(); ++i) Ns [i] = in_fa.residue(i).xyz("N" );
 		for(Size i = 1; i <= in_fa.n_residue(); ++i) CAs[i] = in_fa.residue(i).xyz("CA");
 		for(Size i = 1; i <= in_fa.n_residue(); ++i) Cs [i] = in_fa.residue(i).xyz("C" );

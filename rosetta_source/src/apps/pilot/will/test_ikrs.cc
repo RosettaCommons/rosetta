@@ -1567,7 +1567,7 @@ int main (int argc, char *argv[]) {
 #endif
               nhit++;
 
-              Pose tmp3;;
+              Pose tmp3;
 #ifdef USE_OPENMP
 #pragma omp critical
 #endif

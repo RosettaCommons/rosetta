@@ -196,7 +196,7 @@ public:
     return count;
   }
   inline float const ljenergy( float x, float y, float z ) {
-    float e = 0.0f;;
+    float e = 0.0f;
     int const ix  = (x<0) ? 0u : numeric::min(xdim_-1,(int)(x/grid_size_));
     int const iy0  = (y<0) ? 0u : y/grid_size_;
     int const iz0  = (z<0) ? 0u : z/grid_size_;

@@ -1131,7 +1131,7 @@ main( int argc, char * argv [] )
 	ScoreFunctionOP sfc,sfd,sf1,sf2,sf3,sf4,sf5;
 	make_sf(sfc,sfd,sf1,sf2,sf3,sf4,sf5);
 
-	Size NPACK=3,iter = 0;;
+	Size NPACK=3,iter = 0;
 	Real zcyl,censcore,censcore2,cstscore,znsscore;
 	while(true) {
 		iter++;

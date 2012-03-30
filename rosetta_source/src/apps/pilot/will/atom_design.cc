@@ -165,7 +165,7 @@ main( int argc, char * argv [] )
 			replace_pose_residue_copying_existing_coordinates(pose,start_pos+i,rs.name_map(tgrp1[j]));
 			// core::pack::optimizeH(pose,*sf);
 			sf->score(pose);
-			std::cout << tgrp1[j] << " " << std::endl;;
+			std::cout << tgrp1[j] << " " << std::endl;
 			pose.energies().show(std::cout,start_pos+i);
 		}
 	}

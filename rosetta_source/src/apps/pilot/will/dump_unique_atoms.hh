@@ -53,7 +53,7 @@ void dump_unique_atoms() {
       }
       if(cont) continue;
       string aname (p.residue(1).atom_name(k));
-      aname.erase(remove_if(aname.begin(),aname.end(),isspace),aname.end());;
+      aname.erase(remove_if(aname.begin(),aname.end(),isspace),aname.end());
       cout << "ATOM " << LJ(23,aname+"_"+seen_s[seen_x.size()+1]) << " " << F(10,7,x.x()) << " " << F(10,7,x.y()) << " " << F(10,7,x.z()) << std::endl;
       seen_x.push_back(x);
     }

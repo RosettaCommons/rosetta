@@ -314,7 +314,7 @@ public:
     vector1<ResidueOP> const & rsdlst(rsd_.find("CYS")->second);
     for(vector1<Stub>::const_iterator is = stb.begin(); is!=stb.end(); ++is,++ip) {
       if(*ip==qrsd.seqpos()) continue;
-						core::conformation::ResidueOP rtmp = rsdlst[*ip];;
+						core::conformation::ResidueOP rtmp = rsdlst[*ip];
       Real const cbd2 = q.cen.distance_squared(is->v);
       if( dis2ub < cbd2 || cbd2 < dis2lb ) continue;
       Vec  const qcen0(is->global2local(q.cen));

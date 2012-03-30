@@ -64,7 +64,7 @@ TrialCounterObserver::~TrialCounterObserver() {}
 
 std::string TrialCounterObserver::get_name() const {
 	return "TrialCounterObserver";
-};
+}
 
 protocols::moves::MoverOP
 TrialCounterObserver::clone() const {

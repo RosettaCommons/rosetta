@@ -26,8 +26,8 @@
 #include <string>
 #include <basic/options/option_macros.hh>
 
-OPT_1GRP_KEY(String,ligand_import,params_database_name);
-OPT_1GRP_KEY(String,ligand_import,database_mode);
+OPT_1GRP_KEY(String,ligand_import,params_database_name)
+OPT_1GRP_KEY(String,ligand_import,database_mode)
 
 int main(int argc, char*argv[])
 {

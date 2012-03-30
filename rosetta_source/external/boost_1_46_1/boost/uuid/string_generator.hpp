@@ -41,7 +41,7 @@ struct string_generator {
     template <typename ch, typename char_traits, typename alloc>
     uuid operator()(std::basic_string<ch, char_traits, alloc> const& s) const {
         return operator()(s.begin(), s.end());
-    };
+    }
 
     uuid operator()(char const*const s) const {
         return operator()(s, s+std::strlen(s));

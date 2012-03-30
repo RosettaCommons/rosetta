@@ -79,7 +79,7 @@ DatabaseFilterOP get_DB_filter_ptr(){
 	if(type == "TopCountOfAllInputs") return new TopCountOfAllInputs(arguments);
 
 	utility_exit_with_message(type+" is not a valid Database Filter name");
-};
+}
 
 WriteDeletePair get_write_delete_pair(
 		core::pose::Pose const & pose,
@@ -172,7 +172,7 @@ TopPercentOfEachInput::TopPercentOfEachInput(
 	core::Size n_structs = basic::options::option[basic::options::OptionKeys::out::nstruct];
 	core::Size percentile_count = static_cast<core::Size>(floor(percent*n_structs));
 	top_count_of_each_input_.count_ = percentile_count;
-};
+}
 
 WriteDeletePair
 TopPercentOfEachInput::operator()(
@@ -195,7 +195,7 @@ TopPercentOfAllInputs::TopPercentOfAllInputs(utility::vector1<std::string> argum
 	core::Size total_nr_jobs = protocols::jd2::JobDistributor::get_instance()->total_nr_jobs();
 	core::Size percentile_count = static_cast<core::Size>(floor(percent*total_nr_jobs));
 	top_count_of_all_inputs_.count_ = percentile_count;
-};
+}
 
 WriteDeletePair
 TopPercentOfAllInputs::operator()(
@@ -219,7 +219,7 @@ TopCountOfEachInput::TopCountOfEachInput(utility::vector1<std::string> arguments
 	}
 	score_term_ = arguments[1];
 	count_ = utility::from_string(arguments[2], core::Size());
-};
+}
 
 WriteDeletePair
 TopCountOfEachInput::operator()(
@@ -244,7 +244,7 @@ TopCountOfAllInputs::TopCountOfAllInputs(utility::vector1<std::string> arguments
 	}
 	score_term_ = arguments[1];
 	count_ = utility::from_string(arguments[2], core::Size());
-};
+}
 
 WriteDeletePair
 TopCountOfAllInputs::operator()(

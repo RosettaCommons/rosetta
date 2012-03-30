@@ -66,7 +66,7 @@ public:
 			assert(1 <= p && p <= 40974 || p == 65535);
 			parent[i] = p;
 			utility::vector1<int> c(7);
-			if(!(in >> c[1])) utility_exit_with_message("problem with sampling/spheres/sphere_hierarchy.dat.gz");;
+			if(!(in >> c[1])) utility_exit_with_message("problem with sampling/spheres/sphere_hierarchy.dat.gz");
 			if(c[1] != 65535) {
 				if(!(in >> c[2] >> c[3] >> c[4] >> c[5] >> c[6] >> c[7])) utility_exit_with_message("problem with sampling/spheres/sphere_hierarchy.dat.gz");
 				if( c.back() == 65535 ) c.pop_back();

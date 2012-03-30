@@ -712,7 +712,7 @@ vector1<DsfHit> find_dsf( Pose & p3a, Pose & p3b, ImplicitFastClashCheck const &
 }
 
 struct Hit {
-  Size rsd,cbc;;
+  Size rsd,cbc;
   Real chi1,chi2;
   Vec axs,cen;
   bool sym;
@@ -922,7 +922,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 void repack_iface(Pose & p, ScoreFunctionOP sf, Size Ntri, vector1<bool> & iface_io) {
   using namespace core::pack::task;
   PackerTaskOP task = TaskFactory::create_packer_task(p);
-	bool useiface_io = iface_io.size() == p.n_residue();;
+	bool useiface_io = iface_io.size() == p.n_residue();
   for(Size i = 1; i <= p.n_residue(); ++i) {
     bool iface = false;
     if( i <= Ntri ) {
@@ -1375,7 +1375,7 @@ vector1<Hit> dock(Pose & init, string fname) {
               ssym.replace_residue(dhits[id].rsd2+init.n_residue()*i,ala.residue(1),true);
             }
 
-            Real rholes,hsp,ssp,sht;;
+            Real rholes,hsp,ssp,sht;
             core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct );
             sf->score(ssym);
             ss->fill_struct(ssym,option[out::file::o]+"/"+tag+"_dsf"+lzs(id,3)+".pdb.gz");

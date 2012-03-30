@@ -226,7 +226,7 @@ utility_exit_with_message("NOT DONE CODING!!!!!!!");
     else {
       Real closestatom=9e9,closestcb=9e9;
       if( pose.residue(r1).xyz("NE1").distance_squared( pose.xyz(AtomID(2,ir)) ) > 225.0 ) continue;
-      //Real closestatom=9e9,closestcb=9e9;;
+      //Real closestatom=9e9,closestcb=9e9;
       for(Size jri = 1; jri <= 4; jri++) {
         Size jr = r1; if(2==jri) jr = r2; else  if(3==jri) jr = r3; else  if(4==jri) jr = r4;
         for(Size ja = 5; ja <= pose.residue(jr).nheavyatoms(); ++ja) {

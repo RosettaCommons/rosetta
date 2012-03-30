@@ -42,6 +42,6 @@ void PyExitCallback::global_exit_callback(void)
 }
 
 
-}; // namespace utility
+} // namespace utility
 
 

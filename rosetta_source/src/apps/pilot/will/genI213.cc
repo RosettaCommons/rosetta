@@ -280,7 +280,7 @@ void dumpsym2(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec HG, string fname,
 }
 
 struct Hit {
-  Size rsd,cbc;;
+  Size rsd,cbc;
   Real chi1,chi2;
   Vec axs,cen;
   bool sym;

@@ -139,7 +139,7 @@ void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 
     else {
       Real closestatom=9e9,closestcb=9e9;
       if( pose.residue(r1).xyz("NE1").distance_squared( pose.xyz(AtomID(2,ir)) ) > 225.0 ) continue;
-      //Real closestatom=9e9,closestcb=9e9;;
+      //Real closestatom=9e9,closestcb=9e9;
       for(Size jri = 1; jri <= 4; jri++) {
         Size jr = r1; if(2==jri) jr = r2; else  if(3==jri) jr = r3; else  if(4==jri) jr = r4;
         for(Size ja = 5; ja <= pose.residue(jr).nheavyatoms(); ++ja) {
@@ -275,7 +275,7 @@ void run() {
     ImplicitFastClashCheck clashcheck(fa_pose,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
 
     ScoreFunctionOP sf     = core::scoring::getScoreFunction();
-    ScoreFunctionOP sfhard = core::scoring::ScoreFunctionFactory::create_score_function("standard");;
+    ScoreFunctionOP sfhard = core::scoring::ScoreFunctionFactory::create_score_function("standard");
     //sf->set_weight(core::scoring::fa_dun,1.0);
     sf->set_weight(core::scoring::fa_sol,0.0);
     sf->set_weight(core::scoring::hbond_sr_bb,2.0);
@@ -548,7 +548,7 @@ void run() {
     }
     TR << std::endl;
 
-    vector1<Vec> Ns(in_fa.n_residue()),CAs(in_fa.n_residue()),Cs(in_fa.n_residue()),CBs(in_fa.n_residue());;
+    vector1<Vec> Ns(in_fa.n_residue()),CAs(in_fa.n_residue()),Cs(in_fa.n_residue()),CBs(in_fa.n_residue());
     for(Size i = 1; i <= in_fa.n_residue(); ++i) Ns [i] = in_fa.residue(i).xyz("N" );
     for(Size i = 1; i <= in_fa.n_residue(); ++i) CAs[i] = in_fa.residue(i).xyz("CA");
     for(Size i = 1; i <= in_fa.n_residue(); ++i) Cs [i] = in_fa.residue(i).xyz("C" );

@@ -60,9 +60,9 @@
 
 
 //These things really sketch me out but all the cool kids are using them sooooo
-OPT_1GRP_KEY(String,roc_opt,active_list);
-OPT_1GRP_KEY(String,roc_opt,inactive_list);
-//OPT_1GRP_KEY(Integer,roc_opt,outer_cycles);
+OPT_1GRP_KEY(String,roc_opt,active_list)
+OPT_1GRP_KEY(String,roc_opt,inactive_list)
+//OPT_1GRP_KEY(Integer,roc_opt,outer_cycles)
 
 
 basic::Tracer roc_tracer("ROC_optimizer");

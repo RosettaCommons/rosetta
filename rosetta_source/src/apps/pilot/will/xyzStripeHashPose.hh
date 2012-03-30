@@ -44,7 +44,7 @@ public:
       core::conformation::Residue const & r(p.residue(ir));
       if(NBR==m) {
         int ia = r.nbr_atom();
-        core::id::AtomID const aid(ia,ir);;
+        core::id::AtomID const aid(ia,ir);
         atoms[++count] = p.xyz(aid);
         meta [  count] = r.atom_type(ia).lj_radius();
       } else if(CB==m) {
@@ -60,7 +60,7 @@ public:
 		if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=r.atom_type(r.atom_index( "C")).lj_radius(); }
         if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=r.atom_type(r.atom_index("CB")).lj_radius(); }
       } else {
-        int natom = (ALL==m) ? r.natoms() : r.nheavyatoms();;
+        int natom = (ALL==m) ? r.natoms() : r.nheavyatoms();
         for(int ia = 1; ia <= natom; ++ia) {
           core::id::AtomID const aid(ia,ir);
           atoms[++count] = p.xyz(aid);
