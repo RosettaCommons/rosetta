@@ -101,6 +101,8 @@ private:
 	core::scoring::ScoreFunctionOP stage1_scorefxn_, stage2_scorefxn_, fa_scorefxn_;
 	std::string fa_cst_fn_;
 
+	core::Size cartfrag_overlap_;
+
 	// relax
 	core::Size batch_relax_, relax_repeats_;
 

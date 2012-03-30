@@ -36,6 +36,10 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/viewer/viewers.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/jd2/JobDistributor.hh>
+
 
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -83,6 +87,131 @@ OPT_1GRP_KEY(Boolean, min, cartesian)
 OPT_1GRP_KEY(String, min, minimizer)
 
 
+class MinTestMover : public protocols::moves::Mover {
+public:
+	MinTestMover(){}
+	void apply( core::pose::Pose & pose) {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+	
+		using namespace protocols::moves;
+		using namespace scoring;
+	
+		// steal relax flags
+		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		kinematics::MoveMap mm;
+		mm.set_bb  ( true );
+		mm.set_chi ( true );
+		mm.set_jump( true );
+		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_mainchain_bond_angles ]() );
+		mm.set( core::id::D, option[ OptionKeys::relax::minimize_mainchain_bond_lengths ]() );
+	
+		if ( option[ OptionKeys::relax::jump_move ].user() )
+			mm.set_jump( option[ OptionKeys::relax::jump_move ]() );
+		if ( option[ OptionKeys::relax::bb_move ].user() )
+			mm.set_jump( option[ OptionKeys::relax::bb_move ]() );
+		if ( option[ OptionKeys::relax::chi_move ].user() )
+			mm.set_jump( option[ OptionKeys::relax::chi_move ]() );
+			
+	
+		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+			protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+			symm->apply( pose );
+			core::pose::symmetry::make_symmetric_movemap( pose, mm );
+		}
+	
+		// csts
+		if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
+				protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
+				loadCsts->apply(pose);
+		}
+	
+		// now add density scores from cmd line
+		if ( option[ edensity::mapfile ].user() ) {
+			core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn );
+		}
+	
+		// set pose for density scoring if a map was input
+		//   + (potentially) dock map into density
+		if ( option[ edensity::mapfile ].user() ) {
+			protocols::electron_density::SetupForDensityScoringMoverOP edens
+											 ( new protocols::electron_density::SetupForDensityScoringMover );
+			edens->apply( pose );
+		}
+	
+		pose::PoseOP start_pose ( new pose::Pose(pose) );
+		(*scorefxn)(pose);
+		scorefxn->show(std::cout, pose);
+	
+		bool debug_verbose = option[ OptionKeys::min::debug_verbose ]();
+		bool debug_derivs = option[ OptionKeys::min::debug ]() | debug_verbose;
+		std::string minimizer_name = option[ OptionKeys::min::minimizer ]();
+	
+		// setup the options
+		if ( !option[ OptionKeys::min::cartesian ]() )  {
+			if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+				core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_derivs );
+				core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
+				std::cout << "SYMTORSION MINTEST: " << "\n";
+				std::cout << "start score: " << (*scorefxn)(pose) << "\n";
+				long t1=clock();
+				minimizer.run( pose, mm, *scorefxn, options );
+				long t2=clock();
+				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
+				std::cout << "end score: " << (*scorefxn)(pose) << "\n";
+				std::cout << "MIN TIME: " << time << " sec \n";
+			} else {
+				core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
+				options.nblist_auto_update( true );
+				core::optimization::AtomTreeMinimizer minimizer;
+				std::cout << "TORSION MINTEST: " << "\n";
+				std::cout << "start score: " << (*scorefxn)(pose) << "\n";
+				long t1=clock();
+				minimizer.run( pose, mm, *scorefxn, options );
+				long t2=clock();
+				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
+				std::cout << "end score: " << (*scorefxn)(pose) << "\n";
+				std::cout << "MIN TIME: " << time << " sec \n";
+				(*scorefxn)(pose);
+				scorefxn->show(std::cout, pose);
+			}
+		} else {
+			core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
+			core::optimization::CartesianMinimizer minimizer;
+			std::cout << "CART MINTEST: " << "\n";
+			std::cout << "start score: " << (*scorefxn)(pose) << "\n";
+			long t1=clock();
+			minimizer.run( pose, mm, *scorefxn, options );
+			long t2=clock();
+			double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
+			std::cout << "end score: " << (*scorefxn)(pose) << "\n";
+			std::cout << "MIN TIME: " << time << " sec \n";
+			(*scorefxn)(pose);
+			scorefxn->show(std::cout, pose);
+		}
+	}
+	virtual std::string get_name() const {
+		return "MinTestMover";
+	}
+};
+
+void*
+my_main( void* ) {
+	using namespace protocols::moves;
+	using namespace protocols::simple_moves::symmetry;
+
+	try{
+		protocols::jd2::JobDistributor::get_instance()->go( new MinTestMover() );
+	} catch ( utility::excn::EXCN_Base& excn ) {
+		std::cerr << "Exception: " << std::endl;
+		excn.show( std::cerr );
+	}
+
+	return 0;
+}
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -96,109 +225,5 @@ main( int argc, char * argv [] )
 
 	devel::init(argc, argv);
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	using namespace protocols::moves;
-	using namespace scoring;
-
-	pose::PoseOP pose ( new pose::Pose );
-	core::import_pose::pose_from_pdb( *pose, option[ in::file::s ]()[1] );
-
-	// steal relax flags
-	scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
-	kinematics::MoveMap mm;
-	mm.set_bb  ( true );
-	mm.set_chi ( true );
-	mm.set_jump( true );
-	//mm.set( core::id::THETA, true );
-	//mm.set( core::id::D, true );
-
-	if ( option[ OptionKeys::relax::jump_move ].user() )
-		mm.set_jump( option[ OptionKeys::relax::jump_move ]() );
-	if ( option[ OptionKeys::relax::bb_move ].user() )
-		mm.set_jump( option[ OptionKeys::relax::bb_move ]() );
-	if ( option[ OptionKeys::relax::chi_move ].user() )
-		mm.set_jump( option[ OptionKeys::relax::chi_move ]() );
-		
-
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
-		symm->apply( *pose );
-		core::pose::symmetry::make_symmetric_movemap( *pose, mm );
-	}
-
-	// csts
-	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
-			loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
-			loadCsts->apply(*pose);
-	}
-
-	// now add density scores from cmd line
-	if ( option[ edensity::mapfile ].user() ) {
-		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn );
-	}
-
-	// set pose for density scoring if a map was input
-	//   + (potentially) dock map into density
-	if ( option[ edensity::mapfile ].user() ) {
-		protocols::electron_density::SetupForDensityScoringMoverOP edens
-		                 ( new protocols::electron_density::SetupForDensityScoringMover );
-		edens->apply( *pose );
-	}
-
-	pose::PoseOP start_pose ( new pose::Pose(*pose) );
-	(*scorefxn)(*pose);
-	scorefxn->show(std::cout, *pose);
-
-	bool debug_verbose = option[ OptionKeys::min::debug_verbose ]();
-	bool debug_derivs = option[ OptionKeys::min::debug ]() | debug_verbose;
-	std::string minimizer_name = option[ OptionKeys::min::minimizer ]();
-
-	// setup the options
-	if ( !option[ OptionKeys::min::cartesian ]() )  {
-		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_derivs );
-			core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
-			std::cout << "SYMTORSION MINTEST: " << "\n";
-			std::cout << "start score: " << (*scorefxn)(*pose) << "\n";
-			long t1=clock();
-			minimizer.run( *pose, mm, *scorefxn, options );
-			long t2=clock();
-			double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-			std::cout << "end score: " << (*scorefxn)(*pose) << "\n";
-			std::cout << "MIN TIME: " << time << " sec \n";
-		} else {
-			core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
-			options.nblist_auto_update( true );
-			core::optimization::AtomTreeMinimizer minimizer;
-			std::cout << "TORSION MINTEST: " << "\n";
-			std::cout << "start score: " << (*scorefxn)(*pose) << "\n";
-			long t1=clock();
-			minimizer.run( *pose, mm, *scorefxn, options );
-			long t2=clock();
-			double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-			std::cout << "end score: " << (*scorefxn)(*pose) << "\n";
-			std::cout << "MIN TIME: " << time << " sec \n";
-			pose->dump_pdb( "torsion_min.pdb" );
-			(*scorefxn)(*pose);
-			scorefxn->show(std::cout, *pose);
-		}
-	} else {
-		core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
-		core::optimization::CartesianMinimizer minimizer;
-		std::cout << "CART MINTEST: " << "\n";
-		std::cout << "start score: " << (*scorefxn)(*pose) << "\n";
-		long t1=clock();
-		minimizer.run( *pose, mm, *scorefxn, options );
-		long t2=clock();
-		double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-		std::cout << "end score: " << (*scorefxn)(*pose) << "\n";
-		std::cout << "MIN TIME: " << time << " sec \n";
-		pose->dump_pdb( "cart_min.pdb" );
-		(*scorefxn)(*pose);
-		scorefxn->show(std::cout, *pose);
-	}
-
+	protocols::viewer::viewer_main( my_main );
 }

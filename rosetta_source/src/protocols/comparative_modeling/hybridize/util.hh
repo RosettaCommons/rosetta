@@ -77,13 +77,6 @@ get_superposition_transformation(
 								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT );
 
 void
-apply_transform(
-				pose::Pose & mod_pose,
-				std::list <Size> const & residue_list,
-				numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
-				);
-
-void
 partial_align(
 			  core::pose::Pose & pose,
 			  core::pose::Pose const & ref_pose,

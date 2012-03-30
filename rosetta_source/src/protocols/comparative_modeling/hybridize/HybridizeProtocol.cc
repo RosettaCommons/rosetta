@@ -79,6 +79,11 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/util.hh>
 
+#include <core/optimization/MinimizerOptions.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/optimization/CartesianMinimizer.hh>
+#include <core/optimization/MinimizerOptions.hh>
+
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -207,6 +212,7 @@ HybridizeProtocol::init() {
 	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
 	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
+	cartfrag_overlap_ = 1;
 
 	if (option[cm::hybridize::starting_template].user()) {
 		starting_templates_ = option[cm::hybridize::starting_template]();
@@ -800,10 +806,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			cart_hybridize->set_increase_cycles( stage2_increase_cycles_ );
 			cart_hybridize->set_no_global_frame( no_global_frame_ );
 			cart_hybridize->set_linmin_only( linmin_only_ );
+			cart_hybridize->set_cartfrag_overlap( cartfrag_overlap_ );
+			bool linbonded_old = option[ score::linear_bonded_potential ]();
 			option[ score::linear_bonded_potential ].value( true );  //fpd hack
 			cart_hybridize->apply(pose);
-			if (batch_relax_>0)
-				option[ score::linear_bonded_potential ].value( false ); //fpd hack
+			option[ score::linear_bonded_potential ].value( linbonded_old ); //fpd hack
 		}
 
 		//write gdtmm to output
@@ -821,6 +828,27 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		TR << "History :";
 		for (int i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
 		TR << std::endl;
+
+		// stage "2.5" .. minimize with centroid energy + full-strength cart bonded
+		// {
+		// 	core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
+		// 	core::optimization::CartesianMinimizer minimizer;
+		// 	core::scoring::ScoreFunctionOP stage2_scorefxn_copy = stage2_scorefxn_->clone();
+		// 	core::scoring::ScoreFunctionOP stage2_scorefxn_bonded = stage2_scorefxn_->clone();
+		// 	stage2_scorefxn_bonded->reset();
+		// 	core::Real fa_cart_bonded_wt = fa_scorefxn_->get_weight(core::scoring::cart_bonded);
+		// 	if (fa_cart_bonded_wt == 0) fa_cart_bonded_wt = 0.5;
+		// 	stage2_scorefxn_copy->set_weight( core::scoring::cart_bonded, fa_cart_bonded_wt );
+		// 	stage2_scorefxn_bonded->set_weight( core::scoring::cart_bonded, fa_cart_bonded_wt );
+		// 	core::kinematics::MoveMap mm;
+		// 	mm.set_bb( true ); mm.set_chi( true ); mm.set_jump( true );
+		// 
+		// 	options_lbfgs.max_iter(50);
+		// 	(*stage2_scorefxn_bonded)(pose); minimizer.run( pose, mm, *stage2_scorefxn_bonded, options_lbfgs );
+		// 	options_lbfgs.max_iter(200);
+		// 	(*stage2_scorefxn_copy)(pose); minimizer.run( pose, mm, *stage2_scorefxn_copy, options_lbfgs );
+		// 	(*stage2_scorefxn_copy)(pose); minimizer.run( pose, mm, *stage2_scorefxn_copy, options_lbfgs );
+		// }
 
 		// optional relax
 		if (batch_relax_ > 0) {
@@ -865,7 +893,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				if (post_centroid_structs.size() == batch_relax_) {
 					protocols::relax::FastRelax relax_prot( fa_scorefxn_ );
 					relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
-					relax_prot.set_force_nonideal("true");
+					relax_prot.set_force_nonideal(true);
 					relax_prot.set_script_to_batchrelax_default( relax_repeats_ );
 
 					// need to use a packer task factory to handle poses with different disulfide patterning
@@ -1035,7 +1063,6 @@ HybridizeProtocol::parse_my_tag(
 			starting_templates_.push_back(value);
 		}
 	}
-
 	
 	if( tag->hasOption( "stage1_probability" ) )
 		stage1_probability_ = tag->getOption< core::Real >( "stage1_probability" );
@@ -1053,6 +1080,8 @@ HybridizeProtocol::parse_my_tag(
 		linmin_only_ = tag->getOption< bool >( "linmin_only" );
 	if( tag->hasOption( "repeats" ) )
 		relax_repeats_ = tag->getOption< core::Size >( "repeats" );
+	if( tag->hasOption( "cartfrag_overlap" ) )
+		cartfrag_overlap_ = tag->getOption< core::Size >( "cartfrag_overlap" );
 
 	// scorfxns
 	if( tag->hasOption( "stage1_scorefxn" ) ) {

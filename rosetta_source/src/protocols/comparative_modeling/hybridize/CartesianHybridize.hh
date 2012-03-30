@@ -76,7 +76,8 @@ public:
 	// set options
 	void set_increase_cycles(core::Real increase_cycles_in) { increase_cycles_=increase_cycles_in; }
 	void set_no_global_frame(bool no_global_frame_in) { no_global_frame_=no_global_frame_in; }
-	void set_linmin_only(core::Real linmin_only_in) { linmin_only_=linmin_only_in; }
+	void set_linmin_only(bool linmin_only_in) { linmin_only_=linmin_only_in; }
+	void set_cartfrag_overlap(core::Size cartfrag_overlap_in) { cartfrag_overlap_=cartfrag_overlap_in; }
 
 	//
 	std::string	get_name() const { return "CartesianHybridize"; }
@@ -91,7 +92,7 @@ protected:
 private:
 	// parameters
 	core::Real increase_cycles_;
-	core::Size ncycles_;
+	core::Size ncycles_, cartfrag_overlap_;
 	bool no_global_frame_, linmin_only_;
 
 	// fragments

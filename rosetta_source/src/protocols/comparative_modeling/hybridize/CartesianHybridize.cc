@@ -298,8 +298,9 @@ CartesianHybridize::apply_frame( core::pose::Pose & pose, core::fragment::Frame 
 	// we might want to tune this
 	// it might make sense to change this based on gap width
 	// for really large gaps make it one sided to emulate fold-tree fragment insertion
-	int aln_len = 3;
-	
+	int aln_len = cartfrag_overlap_;
+	runtime_assert( cartfrag_overlap_>=1 && cartfrag_overlap_<=len/2);
+
 	core::Size nres = pose.total_residue();
 
 	//symmetry
@@ -421,7 +422,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	core::optimization::MinimizerOptions options_minilbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 	options_minilbfgs.max_iter(5);
 	core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-	options_lbfgs.max_iter(500);
+	options_lbfgs.max_iter(200);
 	core::optimization::CartesianMinimizer minimizer;
 	core::kinematics::MoveMap mm;
 	mm.set_bb  ( true ); mm.set_chi ( true ); mm.set_jump( true );
@@ -630,12 +631,12 @@ sampler:
 	//	templates_[i]->dump_pdb( oss.str() );
 	//}
 
-	// final minimization	
+	// final minimization
 	try {
 		(*min_scorefxn_)(pose); minimizer.run( pose, mm, *min_scorefxn_, options_lbfgs );
 		(*nocst_scorefxn_)(pose); minimizer.run( pose, mm, *nocst_scorefxn_, options_lbfgs );
-		(*bonds_scorefxn_)(pose); minimizer.run( pose, mm, *bonds_scorefxn_, options_lbfgs );
-		(*min_scorefxn_)(pose); minimizer.run( pose, mm, *min_scorefxn_, options_lbfgs );
+		(*bonds_scorefxn_)(pose); minimizer.run( pose, mm, *nocst_scorefxn_, options_lbfgs );
+		(*nocst_scorefxn_)(pose); minimizer.run( pose, mm, *nocst_scorefxn_, options_lbfgs );
 	} catch( utility::excn::EXCN_Base& excn ) {
 		//fpd hbond fail? start over
 		pose = pose_in;

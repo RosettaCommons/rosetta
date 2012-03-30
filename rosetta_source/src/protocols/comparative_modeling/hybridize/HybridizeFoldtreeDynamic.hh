@@ -10,8 +10,8 @@
 /// @file protocols/comparative_modeling/hybridize/HybridizeFoldtreeDynamic.hh
 /// @author Yifan Song
 
-#ifndef PROTOCOLS_COMPARATIVE_MODELING_HYBRIDIZE_HYBRIDIZEFOLDTREEDYNAMIC_HH_
-#define PROTOCOLS_COMPARATIVE_MODELING_HYBRIDIZE_HYBRIDIZEFOLDTREEDYNAMIC_HH_
+#ifndef INCLUDED_protocols_comparative_modeling_hybridize_HybridizeFoldtreeDynamic_hh
+#define INCLUDED_protocols_comparative_modeling_hybridize_HybridizeFoldtreeDynamic_hh
 
 // Unit headers
 #include <protocols/comparative_modeling/hybridize/HybridizeFoldtreeDynamic.fwd.hh>

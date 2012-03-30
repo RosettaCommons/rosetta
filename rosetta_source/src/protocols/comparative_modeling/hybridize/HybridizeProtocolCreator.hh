@@ -9,10 +9,10 @@
 
 ///@file protocols/moves/HybridizeProtocolHybridizeProtocolCreator.hh
 ///@brief This class will create instances of Mover HybridizeProtocol for the MoverFactory
-///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
+///@author
 
-#ifndef INCLUDED_protocols_moves_HybridizeProtocolCreator_hh
-#define INCLUDED_protocols_moves_HybridizeProtocolCreator_hh
+#ifndef INCLUDED_protocols_comparative_modeling_hybridize_HybridizeProtocolCreator_hh
+#define INCLUDED_protocols_comparative_modeling_hybridize_HybridizeProtocolCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

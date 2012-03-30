@@ -12,8 +12,8 @@
 /// @detailed
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_moves_InsertChunkMover_hh
-#define INCLUDED_protocols_moves_InsertChunkMover_hh
+#ifndef INCLUDED_protocols_comparative_modeling_hybridize_InsertChunkMover_hh
+#define INCLUDED_protocols_comparative_modeling_hybridize_InsertChunkMover_hh
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
