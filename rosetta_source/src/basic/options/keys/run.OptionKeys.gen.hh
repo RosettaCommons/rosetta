@@ -105,6 +105,7 @@ namespace run { extern IntegerOptionKey const nproc; }
 namespace run { extern IntegerOptionKey const proc_id; }
 namespace run { extern BooleanOptionKey const exit_if_missing_heavy_atoms; }
 namespace run { extern RealOptionKey const show_simulation_in_pymol; }
+namespace run { extern BooleanOptionKey const keep_pymol_simulation_history; }
 
 } // namespace OptionKeys
 } // namespace options

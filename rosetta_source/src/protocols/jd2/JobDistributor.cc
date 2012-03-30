@@ -267,7 +267,7 @@ JobDistributor::go_main( protocols::moves::MoverOP mover ) {
 		try{
 			// Can we add the PyMOL mover here?
 			if ( option[ OptionKeys::run::show_simulation_in_pymol ].user() && option[ OptionKeys::run::show_simulation_in_pymol ].value() > 0.0 ){
-				moves::AddPyMolObserver( pose, true, option[ OptionKeys::run::show_simulation_in_pymol ].value() );
+				moves::AddPyMolObserver( pose, option[ OptionKeys::run::keep_pymol_simulation_history ](), option[ OptionKeys::run::show_simulation_in_pymol ].value() );
 			}
 			job_inputter_->pose_from_job( pose, current_job_ );
 

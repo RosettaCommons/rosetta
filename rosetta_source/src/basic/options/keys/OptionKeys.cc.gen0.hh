@@ -393,6 +393,7 @@ namespace run { IntegerOptionKey const nproc( "run:nproc" );  }
 namespace run { IntegerOptionKey const proc_id( "run:proc_id" );  }
 namespace run { BooleanOptionKey const exit_if_missing_heavy_atoms( "run:exit_if_missing_heavy_atoms" );  }
 namespace run { RealOptionKey const show_simulation_in_pymol( "run:show_simulation_in_pymol" );  }
+namespace run { BooleanOptionKey const keep_pymol_simulation_history( "run:keep_pymol_simulation_history" );  }
 namespace jd2 { BooleanOptionKey const jd2( "jd2" );  }
 namespace jd2 { BooleanOptionKey const pose_input_stream( "jd2:pose_input_stream" );  }
 namespace jd2 { BooleanOptionKey const lazy_silent_file_reader( "jd2:lazy_silent_file_reader" );  }
@@ -602,4 +603,3 @@ namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
 namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
 namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
-namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }

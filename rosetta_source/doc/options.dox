@@ -1884,6 +1884,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Attach PyMOL observer to pose at the beginning of the simulation. Refreshes pose every [argument] seconds, default 5.  Don't forget to run the PyMOLPyRosettaServer.py script within PyMOL!</dd><br>
 <dd>Default: 5.0</dd><br>
 </dl>
+<dl>
+<dt><b>-keep_pymol_simulation_history</b> \<Boolean\><dt>
+<dd>Keep history when using show_simulation_in_pymol flag?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>jd2</h2>
 <dl>
