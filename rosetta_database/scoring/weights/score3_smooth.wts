@@ -1,0 +1,13 @@
+# smooth variant of score3 from rosetta++
+cen_env_smooth  1.0
+cen_pair_smooth 1.0
+cbeta_smooth    1.0
+vdw             1.0
+rg              3.0
+cenpack_smooth  1.0
+hs_pair         1.0
+ss_pair         1.0
+rsigma          1.0
+sheet           1.0
+
+STRAND_STRAND_WEIGHTS 0 6
