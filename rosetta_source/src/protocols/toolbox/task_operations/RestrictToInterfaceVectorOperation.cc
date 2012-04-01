@@ -66,35 +66,38 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation() :
 
 ///@brief this ctor will generate the calculator for you (may use defaults)
 ///if you want to use chain characters make the calculator that way and pass it to the constructor above
-RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( core::Size const lower_chain, core::Size const upper_chain ):
+RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( core::Size const lower_chain_id, core::Size const upper_chain_id ):
 	parent(),
-	lower_chain_(lower_chain),
-	upper_chain_(upper_chain),
 	jump_active_(false),
 	CB_dist_cutoff_( 11.0 ),
 	nearby_atom_cutoff_( 5.5 ),
 	vector_angle_cutoff_( 75.0 ),
 	vector_dist_cutoff_( 9.0 )
-{ }
+{
+	lower_chain(lower_chain_id);
+	upper_chain(upper_chain_id);
+
+}
 
 //full constructor
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
-	core::Size const lower_chain,
-	core::Size const upper_chain,
+	core::Size const lower_chain_id,
+	core::Size const upper_chain_id,
 	core::Real CB_dist_cutoff,
 	core::Real nearby_atom_cutoff,
 	core::Real vector_angle_cutoff,
 	core::Real vector_dist_cutoff
 ):
 	parent(),
-	lower_chain_(lower_chain),
-	upper_chain_(upper_chain),
 	jump_active_(false),
 	CB_dist_cutoff_( CB_dist_cutoff ),
 	nearby_atom_cutoff_( nearby_atom_cutoff ),
 	vector_angle_cutoff_( vector_angle_cutoff ),
 	vector_dist_cutoff_( vector_dist_cutoff )
-{ }
+{
+	lower_chain(lower_chain_id);
+	upper_chain(upper_chain_id);
+}
 
 ///@brief this ctor will generate the calculator for you (may use defaults)
 ///if you want to use chain characters make the calculator that way and pass it to the constructor above
@@ -170,14 +173,37 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 
  	else{ // if using only the two chain case
 		//vector for filling packertask
-		utility::vector1_bool repack =
-			core::pack::task::operation::util::calc_interface_vector( pose,
-			lower_chain_, upper_chain_,
-			CB_dist_cutoff_,
-			nearby_atom_cutoff_,
-			vector_angle_cutoff_,
-			vector_dist_cutoff_ );
-		task.restrict_to_residues(repack);
+
+ 		utility::vector1_bool repack_full(pose.total_residue(),false);
+
+ 		for(utility::vector1<core::Size>::const_iterator lower_chain_it = lower_chains_.begin();
+ 			lower_chain_it != lower_chains_.end(); ++lower_chain_it)
+ 		{
+ 			core::Size current_lower_chain = *lower_chain_it;
+
+ 	 		for(utility::vector1<core::Size>::const_iterator upper_chain_it = upper_chains_.begin();
+ 	 			upper_chain_it != upper_chains_.end(); ++upper_chain_it)
+ 	 		{
+ 	 			core::Size current_upper_chain = *upper_chain_it;
+ 	 			TR.Debug << "calculating_interface between: " << current_lower_chain << " " << current_upper_chain <<std::endl;
+ 	 				utility::vector1_bool repack =
+ 	 				core::pack::task::operation::util::calc_interface_vector( pose,
+ 	 				current_lower_chain, current_upper_chain,
+ 	 				CB_dist_cutoff_,
+ 	 				nearby_atom_cutoff_,
+ 	 				vector_angle_cutoff_,
+ 	 				vector_dist_cutoff_ );
+ 	 			for(core::Size ii = 1; ii <=repack.size(); ++ii)
+ 	 			{
+ 	 				if(repack[ii])
+ 	 				{
+ 	 					repack_full[ii] = true;
+ 	 				}
+ 	 			}
+ 	 		}
+ 		}
+
+		task.restrict_to_residues(repack_full);
 	}
 
 
@@ -186,15 +212,33 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 ///@details setters: only exist to pass info from the parser
 void
 RestrictToInterfaceVectorOperation::upper_chain( core::Size upper_chain){
-	upper_chain_ = upper_chain;
+	upper_chains_.clear();
+	upper_chains_.push_back(upper_chain);
 	jump_active_ = false;
+	assert(upper_chains_.size() == 1);
 	//make_name();
 }
+
+void RestrictToInterfaceVectorOperation::upper_chain(utility::vector1<core::Size> upper_chain)
+{
+	upper_chains_ = upper_chain;
+	jump_active_ = false;
+}
+
 void
 RestrictToInterfaceVectorOperation::lower_chain( core::Size lower_chain){
-	lower_chain_ = lower_chain;
+	lower_chains_.clear();
+	lower_chains_.push_back(lower_chain);
 	jump_active_ = false;
+	assert(lower_chains_.size() == 1);
 	//make_name();
+}
+
+
+void RestrictToInterfaceVectorOperation::lower_chain(utility::vector1<core::Size> lower_chain)
+{
+	lower_chains_ = lower_chain;
+	jump_active_ = false;
 }
 
 // void
@@ -241,8 +285,12 @@ RestrictToInterfaceVectorOperation::parse_tag( TagPtr tag )
 		utility_exit_with_message( "You can't define chains and jumps" );
 	//use chain numbers if given, otherwise use jump
 	if( tag->hasOption("chain1_num" ) && tag->hasOption("chain2_num" ) ){
-		lower_chain( tag->getOption< core::Size >( "chain1_num") );
-		upper_chain( tag->getOption< core::Size >( "chain2_num") );
+
+		utility::vector1<core::Size> lower_chains = utility::string_split(tag->getOption<std::string>("chain1_num"),',',core::Size());
+		utility::vector1<core::Size> upper_chains = utility::string_split(tag->getOption<std::string>("chain2_num"),',',core::Size());
+
+		lower_chain( lower_chains );
+		upper_chain( upper_chains );
 		jump_active_ = false;
 	}
 	//go through the jumps, should probably be a utility function for this

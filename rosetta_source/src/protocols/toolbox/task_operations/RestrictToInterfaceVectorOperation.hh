@@ -47,7 +47,7 @@ public:
 	//empty contstructor for parser, uses jumps
 	RestrictToInterfaceVectorOperation();
 
-	RestrictToInterfaceVectorOperation( core::Size const lower_chain, core::Size const upper_chain );
+	RestrictToInterfaceVectorOperation( core::Size const lower_chain_id, core::Size const upper_chain_id );
 
 	//full constructor
 	RestrictToInterfaceVectorOperation( core::Size const lower_chain,	core::Size const upper_chain,
@@ -80,6 +80,10 @@ public:
 	//@brief, setters for the calculator.
 	void upper_chain( core::Size upper_chain);
 	void lower_chain( core::Size lower_chain);
+
+	void upper_chain( utility::vector1<core::Size> upper_chain);
+	void lower_chain( utility::vector1<core::Size> lower_chain);
+
 	/// Commenting out to fix PyRosetta build  void jump_num( int jump_num);
 	void CB_dist_cutoff( core::Real CB_dist_cutoff);
 	void nearby_atom_cutoff(core::Real nearby_atom_cutoff);
@@ -89,7 +93,7 @@ public:
 	void parse_tag( TagPtr tag );
 
     /*
-    // Used to make the eventual inheritance from protocols::toolbox::task_operations::InterfaceTaskOperation easier.
+    // Used to make the eventual inheritance frodm protocols::toolbox::task_operations::InterfaceTaskOperation easier.
     void
     setup_interface_chains_from_jumps( core::pose::Pose const & pose );
     */
@@ -98,10 +102,10 @@ private:
 
 	///@brief private data used to pass to the definition function
 	//chain ids of the interface lower=chain1 upper=chain2 for most purposes.
-	core::Size lower_chain_;
-	core::Size upper_chain_;
+	utility::vector1<core::Size> lower_chains_;
+	utility::vector1<core::Size> upper_chains_;
 	//cutoffs for various restrictions
-	core::Real CB_dist_cutoff_; //distance for big CB cutoff
+	core::Real CB_dist_cutoff_; //distance for big CB cutoffs
 	core::Real nearby_atom_cutoff_; // used for finding atoms that are close
 	core::Real vector_angle_cutoff_; // used for cutoff for res1 CB to res2 CB angle cutoff
 	core::Real vector_dist_cutoff_; // used for distance between CBs for vector

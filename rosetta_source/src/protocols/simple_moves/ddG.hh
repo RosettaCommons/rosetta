@@ -75,6 +75,7 @@ private :
 	void fill_energy_vector( Pose const & pose, std::map<ScoreType, Real > & energy_map );
 	void fill_per_residue_energy_vector(Pose const & pose, std::map<Size,Real> & energy_map);
 	core::Size rb_jump_;
+	utility::vector1<core::Size> chain_ids_;
 	bool symmetry_;
 	bool per_residue_ddg_;
 	bool repack_;

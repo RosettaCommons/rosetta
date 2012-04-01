@@ -28,6 +28,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -49,6 +50,7 @@
 
 // C++ headers
 #include <map>
+#include <algorithm>
 
 #include <basic/Tracer.hh>
 
@@ -137,13 +139,42 @@ void ddG::parse_my_tag(
 	protocols::moves::DataMap  & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const& )
+	core::pose::Pose const& pose)
 {
 	rb_jump_ = tag->getOption<core::Size>("jump", 1);
 	symmetry_ = tag->getOption<bool>("symmetry",0);
 	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",0);
 	repack_ = tag->getOption<bool>("repack",0);
 	repeats_ = tag->getOption<Size>("repeats",1);
+
+	if(tag->hasOption("chains") && symmetry_)
+	{
+		utility_exit_with_message("you cannot specify multiple chains and use symmetry mode in the ddG mover at the same time right now. Sorry");
+	}
+
+	if( ( tag->hasOption("chain_num") || tag->hasOption("chain_name") ) && tag->hasOption("jump"))
+	{
+		utility_exit_with_message("you can specify either chains or jump in the ddG mover, but not both");
+	}
+
+	if(tag->hasOption("chain_num"))
+	{
+		chain_ids_ = utility::string_split(tag->getOption<std::string>("chain_num"),',',core::Size());
+	}
+
+	if(tag->hasOption("chain_name"))
+	{
+		utility::vector1<std::string> chain_names = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
+		for(utility::vector1<std::string>::iterator chain_name_it = chain_names.begin(); chain_name_it != chain_names.end(); ++chain_name_it)
+		{
+			chain_ids_.push_back(core::pose::get_chain_id_from_chain(*chain_name_it,pose));
+		}
+	}
+
+	if(std::find(chain_ids_.begin(),chain_ids_.end(),1) != chain_ids_.end())
+	{
+		utility_exit_with_message("You can't move the first chain.  Moving chain 2 is the same as moving chain 1, so do that instead.");
+	}
 
 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
 	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
@@ -305,8 +336,26 @@ ddG::calculate( pose::Pose const & pose_in )
 	rpk.apply( pose, *task_ );
 	core::pack::task::operation::NoRepackDisulfides nodisulf;
 	nodisulf.apply( pose, *task_ );
-	protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
-	rti.apply( pose, *task_ );
+	if(chain_ids_.size() > 0 )
+	{
+		//We want to translate each chain the same direction, though it doesnt matter much which one
+		core::Size first_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose);
+		protocols::toolbox::task_operations::RestrictToInterface rti( first_jump, 8.0 /*interface_distance_cutoff_*/ );
+		if(chain_ids_.size() > 1)
+		{
+			for(core::Size chain_index = 2; chain_index <= chain_ids_.size();++chain_index)
+			{
+				core::Size current_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[chain_index],pose);
+				rti.add_jump(current_jump);
+			}
+		}
+		rti.apply(pose,*task_);
+	}
+	else
+	{
+		protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
+		rti.apply( pose, *task_ );
+	}
 
 	pack::pack_rotamers( pose, *scorefxn_, task_ );
 	(*scorefxn_)( pose );
@@ -315,9 +364,27 @@ ddG::calculate( pose::Pose const & pose_in )
 	{
 		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
 	}
-	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
-	translate->step_size( 1000.0 );
-	translate->apply( pose );
+
+	if(chain_ids_.size() > 0)
+	{
+		//We want to translate each chain the same direction, though it doesnt matter much which one
+		Vector translation_axis(1,0,0);
+		for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it)
+		{
+			core::Size current_chain_id = *chain_it;
+			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
+			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
+			translate->step_size( 1000.0 );
+			translate->trans_axis(translation_axis);
+			translate->apply( pose );
+		}
+	}else
+	{
+		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
+		translate->step_size( 1000.0 );
+		translate->apply( pose );
+	}
+
 	pack::pack_rotamers( pose, *scorefxn_, task_ );
 	if( relax_mover() )
 		relax_mover()->apply( pose );
@@ -390,9 +457,29 @@ ddG::no_repack_ddG(Pose const & pose_in)
 	{
 		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
 	}
-	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose,rb_jump_ ) );
-	translate->step_size( 1000.0 );
-	translate->apply( pose );
+
+	if(chain_ids_.size()  > 0 )
+	{
+		//We want to translate each chain the same direction, though it doesnt matter much which one
+		Vector translation_axis(1,0,0);
+
+		for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it)
+		{
+			core::Size current_chain_id = *chain_it;
+			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
+			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
+			translate->trans_axis(translation_axis);
+			translate->step_size( 1000.0 );
+			translate->apply( pose );
+		}
+
+	}else
+	{
+		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose,rb_jump_ ) );
+		translate->step_size( 1000.0 );
+		translate->apply( pose );
+	}
+
 	if( relax_mover() )
 		relax_mover()->apply( pose );
 	(*scorefxn_)( pose );
