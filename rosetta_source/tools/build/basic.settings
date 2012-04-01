@@ -117,18 +117,16 @@ settings = {
             "flags" : {
                 # We don't use any C -- but if we did would it really
                 # be C99?  Are there portability issues?
-                "cc"        : [ "std=c99" ],
-                "cxx"       : [ "std=c++98" ],
+				# GCC's `pedantic` option triggers a compilation error in the c++ standard library
+				# when intrinsics are referenced (e.g. in certain portions of Boost). There are 2
+				# options-- 1) remove pedantic warnings; or 2) add the Boost directory to GCC's
+				# system include path. Warnings from code on the system include path are suppressed.
+				"cc"        : [ "std=c99", "isystem external/boost_1_46_1/boost/" ], 
+				"cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/boost/" ], 
                 "compile"   : [ "pipe", "ffor-scope" ],
                 # By default, warn as much as possible.
                 "warn"      : [ "W", "Wall", "pedantic", "Wno-long-long" ],
             },
-            # GCC's `pedantic` option triggers a compilation error in the c++ standard library
-            # when intrinsics are referenced (e.g. in certain portions of Boost). There are 2
-            # options-- 1) remove pedantic warnings; or 2) add the Boost directory to GCC's
-            # system include path. Warnings from code on the system include path are suppressed.
-            "CCFLAGS"  : '-isystem external/boost_1_46_1/boost/',
-            "CXXFLAGS" : '-isystem external/boost_1_46_1/boost/',
         },
     },
 
