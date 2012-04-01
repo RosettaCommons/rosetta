@@ -213,13 +213,12 @@ downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_num
 	
 void
 partial_align(
-			  core::pose::Pose & pose,
-			  core::pose::Pose const & ref_pose,
-			  id::AtomID_Map< id::AtomID > const & atom_map,
-			  std::list <Size> const & residue_list,
-			  bool iterate_convergence,
-			  core::Real distance_squared_threshold
-			  )
+		core::pose::Pose & pose,
+		core::pose::Pose const & ref_pose,
+		id::AtomID_Map< id::AtomID > const & atom_map,
+		std::list <Size> const & residue_list,
+		bool iterate_convergence,
+		core::Real distance_squared_threshold )
 {
 	numeric::xyzMatrix< core::Real > R;
 	numeric::xyzVector< core::Real > preT;
@@ -247,11 +246,10 @@ partial_align(
 
 core::id::AtomID_Map< core::id::AtomID >
 update_atom_map(
-				core::pose::Pose & pose,
-				core::pose::Pose const & ref_pose,
-				id::AtomID_Map< id::AtomID > const & atom_map,
-				core::Real distance_squared_threshold
-				)
+		core::pose::Pose & pose,
+		core::pose::Pose const & ref_pose,
+		id::AtomID_Map< id::AtomID > const & atom_map,
+		core::Real distance_squared_threshold )
 {
 	core::id::AtomID_Map< core::id::AtomID > updated_atom_map;
 
@@ -366,19 +364,15 @@ get_superposition_transformation(
 
 void
 apply_transformation(
-				pose::Pose & mod_pose,
-				std::list <Size> const & residue_list,
-				numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
-				)
-{
+	pose::Pose & mod_pose,
+	std::list <Size> const & residue_list,
+	numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
+) {
 	using namespace ObjexxFCL;
 	// translate xx2 by COM and fill in the new ref_pose coordinates
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
 	
-	Vector x2;
-	FArray2D_double xx2;
-	FArray1D_double COM(3);
 	for (std::list<Size>::const_iterator it = residue_list.begin();
 		 it != residue_list.end();
 		 ++it) {

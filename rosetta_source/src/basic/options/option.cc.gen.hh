@@ -1585,7 +1585,7 @@ option.add( basic::options::OptionKeys::cm::hybridize::hybridize, "hybridize opt
 option.add( basic::options::OptionKeys::cm::hybridize::templates, "Input list of template files" );
 option.add( basic::options::OptionKeys::cm::hybridize::template_list, "Input list of templates, constaints, cluster, and weights" );
 option.add( basic::options::OptionKeys::cm::hybridize::starting_template, "Define starting templates" );
-option.add( basic::options::OptionKeys::cm::hybridize::realign_domains, "domain parse and realign the starting templates" ).def(false);
+option.add( basic::options::OptionKeys::cm::hybridize::realign_domains, "domain parse and realign the starting templates" ).def(true);
 option.add( basic::options::OptionKeys::cm::hybridize::add_non_init_chunks, "non chunks from templates other than the initial one" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure elements used to split the pose" ).def("HE");
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_increase_cycles, "Scale stage 1 cycles" ).def(1.0);

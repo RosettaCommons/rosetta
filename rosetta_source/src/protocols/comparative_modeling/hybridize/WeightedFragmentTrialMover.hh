@@ -29,8 +29,11 @@ namespace hybridize {
 class WeightedFragmentTrialMover : public protocols::moves::Mover
 {
 public:
-	WeightedFragmentTrialMover(utility::vector1< core::fragment::FragSetOP > const frag_libs,
-							   utility::vector1< core::Real > const residue_weights);
+	WeightedFragmentTrialMover(
+		utility::vector1< core::fragment::FragSetOP > const frag_libs,
+		utility::vector1< core::Real > const residue_weights,
+		utility::vector1< core::Size > const anchor_residues=utility::vector1< core::Size >(0)
+	);
 	void update_sampler_weights( utility::vector1< core::Real > const residue_weights );
 	
 	void apply(core::pose::Pose & pose);
@@ -39,7 +42,7 @@ public:
 private:
 	utility::vector1< core::fragment::FragSetOP > frag_libs_;
 	utility::vector1< numeric::random::WeightedSampler > weighted_sampler_;
-	//utility::vector1< utility::vector1< Size > > frag_insertion_positions_; // list of residue indices
+	utility::vector1< Size > anchor_reses_; // list of residue indices
 };
 
 } // hybridize 

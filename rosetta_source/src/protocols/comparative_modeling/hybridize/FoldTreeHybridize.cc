@@ -41,6 +41,7 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -115,7 +116,8 @@ FoldTreeHybridize::FoldTreeHybridize (
 		utility::vector1 < core::Real > const & template_wts,
 		utility::vector1 < protocols::loops::Loops > const & template_chunks,
 		utility::vector1 < protocols::loops::Loops > const & template_contigs,
-		utility::vector1 < core::fragment::FragSetOP > & frag_libs)
+		core::fragment::FragSetOP fragments3_in,
+		core::fragment::FragSetOP fragments9_in )
 {
 	init();
 
@@ -132,7 +134,10 @@ FoldTreeHybridize::FoldTreeHybridize (
 	for (int i=1; i<=template_poses_.size(); ++i) template_wts_[i] /= weight_sum;
 
 	// abinitio frag9,frag3 flags
-	frag_libs_ = frag_libs;
+	frag_libs3_.push_back(fragments3_in);
+	frag_libs9_.push_back(fragments9_in);
+	frag_libs_.push_back(fragments3_in);
+	frag_libs_.push_back(fragments9_in);
 }
 	
 void
@@ -361,7 +366,6 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	TR << "Chunks used for foldtree setup: " << std::endl;
 	TR << my_chunks << std::endl;
 
-	//HybridizeFoldtreeDynamic foldtree_mover;
 	foldtree_mover_.initialize(pose, my_chunks);
 	TR << pose.fold_tree() << std::endl;
 }
@@ -442,6 +446,81 @@ void FoldTreeHybridize::restore_original_foldtree(core::pose::Pose & pose) {
 }
 
 void
+FoldTreeHybridize::setup_scorefunctions( 
+		core::scoring::ScoreFunctionOP score0,
+		core::scoring::ScoreFunctionOP score1,
+		core::scoring::ScoreFunctionOP score2,
+		core::scoring::ScoreFunctionOP score5,
+		core::scoring::ScoreFunctionOP score3) {
+	core::Real lincb_orig = scorefxn_->get_weight( core::scoring::linear_chainbreak );
+	core::Real cb_orig = scorefxn_->get_weight( core::scoring::chainbreak );
+	core::Real cst_orig = scorefxn_->get_weight( core::scoring::atom_pair_constraint );
+	
+	score0->reset();
+	score0->set_weight( core::scoring::vdw, 0.1*scorefxn_->get_weight( core::scoring::vdw ) );
+
+	score1->reset();
+	score2->set_weight( core::scoring::linear_chainbreak, 0.1*lincb_orig );
+	score1->set_weight( core::scoring::atom_pair_constraint, 0.1*cst_orig );
+	score1->set_weight( core::scoring::vdw, scorefxn_->get_weight( core::scoring::vdw ) );
+	score1->set_weight( core::scoring::env, scorefxn_->get_weight( core::scoring::env ) );
+	score1->set_weight( core::scoring::cen_env_smooth, scorefxn_->get_weight( core::scoring::cen_env_smooth ) );
+	score1->set_weight( core::scoring::pair, scorefxn_->get_weight( core::scoring::pair ) );
+	score1->set_weight( core::scoring::cen_pair_smooth, scorefxn_->get_weight( core::scoring::cen_pair_smooth ) );
+	score1->set_weight( core::scoring::hs_pair, scorefxn_->get_weight( core::scoring::hs_pair ) );
+	score1->set_weight( core::scoring::ss_pair, 0.3*scorefxn_->get_weight( core::scoring::ss_pair ) );
+	score1->set_weight( core::scoring::sheet, scorefxn_->get_weight( core::scoring::sheet ) );
+	//STRAND_STRAND_WEIGHTS 1 11
+	core::scoring::methods::EnergyMethodOptions score1_options(score1->energy_method_options());
+	score1_options.set_strand_strand_weights(1,11);
+	score1->set_energy_method_options(score1_options);
+	
+
+	score2->reset();
+	score2->set_weight( core::scoring::linear_chainbreak, 0.25*lincb_orig );
+	score2->set_weight( core::scoring::atom_pair_constraint, 0.25*cst_orig );
+	score2->set_weight( core::scoring::vdw, scorefxn_->get_weight( core::scoring::vdw ) );
+	score2->set_weight( core::scoring::env, scorefxn_->get_weight( core::scoring::env ) );
+	score2->set_weight( core::scoring::cen_env_smooth, scorefxn_->get_weight( core::scoring::cen_env_smooth ) );
+	score2->set_weight( core::scoring::cbeta, 0.25*scorefxn_->get_weight( core::scoring::cbeta ) );
+	score2->set_weight( core::scoring::cbeta_smooth, 0.25*scorefxn_->get_weight( core::scoring::cbeta_smooth ) );
+	score2->set_weight( core::scoring::cenpack, 0.5*scorefxn_->get_weight( core::scoring::cenpack ) );
+	score2->set_weight( core::scoring::cenpack_smooth, 0.5*scorefxn_->get_weight( core::scoring::cenpack_smooth ) );
+	score2->set_weight( core::scoring::pair, scorefxn_->get_weight( core::scoring::pair ) );
+	score2->set_weight( core::scoring::cen_pair_smooth, scorefxn_->get_weight( core::scoring::cen_pair_smooth ) );
+	score2->set_weight( core::scoring::hs_pair, scorefxn_->get_weight( core::scoring::hs_pair ) );
+	score2->set_weight( core::scoring::ss_pair, 0.3*scorefxn_->get_weight( core::scoring::ss_pair ) );
+	score2->set_weight( core::scoring::sheet, scorefxn_->get_weight( core::scoring::sheet ) );
+	//STRAND_STRAND_WEIGHTS 1 6
+	core::scoring::methods::EnergyMethodOptions score2_options(score1->energy_method_options());
+	score2_options.set_strand_strand_weights(1,6);
+	score2->set_energy_method_options(score2_options);
+
+	score5->reset();
+	score5->set_weight( core::scoring::linear_chainbreak, 0.25*lincb_orig );
+	score5->set_weight( core::scoring::atom_pair_constraint, 0.25*cst_orig );
+	score5->set_weight( core::scoring::vdw, scorefxn_->get_weight( core::scoring::vdw ) );
+	score5->set_weight( core::scoring::env, scorefxn_->get_weight( core::scoring::env ) );
+	score5->set_weight( core::scoring::cen_env_smooth, scorefxn_->get_weight( core::scoring::cen_env_smooth ) );
+	score5->set_weight( core::scoring::cbeta, 0.25*scorefxn_->get_weight( core::scoring::cbeta ) );
+	score5->set_weight( core::scoring::cbeta_smooth, 0.25*scorefxn_->get_weight( core::scoring::cbeta_smooth ) );
+	score5->set_weight( core::scoring::cenpack, 0.5*scorefxn_->get_weight( core::scoring::cenpack ) );
+	score5->set_weight( core::scoring::cenpack_smooth, 0.5*scorefxn_->get_weight( core::scoring::cenpack_smooth ) );
+	score5->set_weight( core::scoring::pair, scorefxn_->get_weight( core::scoring::pair ) );
+	score5->set_weight( core::scoring::cen_pair_smooth, scorefxn_->get_weight( core::scoring::cen_pair_smooth ) );
+	score5->set_weight( core::scoring::hs_pair, scorefxn_->get_weight( core::scoring::hs_pair ) );
+	score5->set_weight( core::scoring::ss_pair, 0.3*scorefxn_->get_weight( core::scoring::ss_pair ) );
+	score5->set_weight( core::scoring::sheet, scorefxn_->get_weight( core::scoring::sheet ) );
+	//STRAND_STRAND_WEIGHTS 1 11
+	core::scoring::methods::EnergyMethodOptions score5_options(score1->energy_method_options());
+	score5_options.set_strand_strand_weights(1,11);
+	score5->set_energy_method_options(score5_options);
+
+	score3 = scorefxn_->clone();
+}
+
+
+void
 FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	//backup_original_foldtree(pose);
 	setup_foldtree(pose);
@@ -458,49 +537,83 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	use_random_template = true;
 	Size max_registry_shift = max_registry_shift_;
 	ChunkTrialMoverOP random_sample_chunk_mover(
-		new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, max_registry_shift)
-	);
-	
+		new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, max_registry_shift) );
+
 	utility::vector1< core::Real > residue_weights( get_residue_weights_from_loops(pose) );
+	utility::vector1< core::Size > jump_anchors = foldtree_mover_.get_anchors();
 	WeightedFragmentTrialMoverOP fragment_trial_mover(
-		new WeightedFragmentTrialMover(frag_libs_, residue_weights)
-	);
-	
-	// just fragment mover
-	core::Real chainbreak_wts_orig = scorefxn_->get_weight( core::scoring::linear_chainbreak );
+		new WeightedFragmentTrialMover(frag_libs_, residue_weights, jump_anchors) );
 
-	scorefxn_->set_weight( core::scoring::linear_chainbreak, chainbreak_wts_orig * 0.25 );
-	(*scorefxn_)(pose);
-	protocols::moves::MonteCarloOP mc_frag = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
-	core::Size nfragcycles =  (core::Size)(2000*increase_cycles_);
-	for (Size i = 1; i<= nfragcycles; ++i) {
-		fragment_trial_mover->apply(pose);
-		(*scorefxn_)(pose);
-		mc_frag->boltzmann(pose);
+	// ab initio ramping up of weights
+	// set up scorefunctions
+	core::scoring::ScoreFunctionOP score0=scorefxn_->clone(),
+	                               score1=scorefxn_->clone(),
+	                               score2=scorefxn_->clone(),
+	                               score5=scorefxn_->clone(),
+	                               score3=scorefxn_->clone();
+	setup_scorefunctions( score0, score1, score2, score5, score3 );
+
+	// set up movers
+	RandomMoverOP stage0mover( new RandomMover() );
+	stage0mover->add_mover(random_sample_chunk_mover, 0.5);
+	stage0mover->add_mover(fragment_trial_mover, 0.5);
+
+	// stage 1
+ 	protocols::moves::MonteCarloOP mc1 = new protocols::moves::MonteCarlo( pose, *score0, 2.0 );
+ 	for (int i=1; i<=2000*increase_cycles_; ++i) {
+ 		stage0mover->apply(pose);
+ 	 	(*score0)(pose); mc1->boltzmann(pose);
+ 	}
+ 	mc1->show_scores();
+ 	mc1->show_counters();
+ 	mc1->recover_low(pose);
+
+	// stage 2
+	protocols::moves::MonteCarloOP mc2 = new protocols::moves::MonteCarlo( pose, *score1, 2.0 );
+	for (int i=1; i<=2000*increase_cycles_; ++i) {
+		stage0mover->apply(pose);
+	 	(*score1)(pose); mc2->boltzmann(pose);
 	}
-	mc_frag->recover_low(pose);
-	scorefxn_->set_weight( core::scoring::linear_chainbreak, 0. );
-	
-	core::Size ncycles =  (core::Size)(500*increase_cycles_);
-	for (Size i=1;i<=4;++i) {
-		if (i==3) scorefxn_->set_weight( core::scoring::linear_chainbreak, chainbreak_wts_orig * 0.25 );
-		if (i==4) scorefxn_->set_weight( core::scoring::linear_chainbreak, chainbreak_wts_orig );
+	mc2->show_scores();
+	mc2->show_counters();
+	mc2->recover_low(pose);
 
-		RandomMoverOP random_mover( new RandomMover() );
-		Real weight = 0.05 * (Real)i;
-		random_mover->add_mover(random_sample_chunk_mover, 1. - weight);
-		random_mover->add_mover(fragment_trial_mover, weight);
-		//random_mover->add_mover(new HelixMover(RG));
-
-		(*scorefxn_)(pose);
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
-
-		for (Size i = 1; i <= ncycles; ++i) {
-			random_mover->apply(pose);
-			(*scorefxn_)(pose);
-			mc->boltzmann(pose);
+	// stage 3
+	for (int nmacro=1; nmacro<=10; ++nmacro) {
+		protocols::moves::MonteCarloOP mc3a = new protocols::moves::MonteCarlo( pose, *score2, 2.0 );
+		for (int i=1; i<=200*increase_cycles_; ++i) {
+			stage0mover->apply(pose);
+			(*score2)(pose); mc3a->boltzmann(pose);
 		}
-		mc->recover_low(pose);
+		mc3a->show_scores();
+		mc3a->show_counters();
+		mc3a->recover_low(pose);
+
+		protocols::moves::MonteCarloOP mc3b = new protocols::moves::MonteCarlo( pose, *score5, 2.0 );
+		for (int i=1; i<=200*increase_cycles_; ++i) {
+			stage0mover->apply(pose);
+			(*score5)(pose); mc3b->boltzmann(pose);
+		}
+		mc3b->show_scores();
+		mc3b->show_counters();
+		mc3b->recover_low(pose);
+	}
+
+	// stage 4 -- ramp up chainbreak
+	core::Real lincb_orig = scorefxn_->get_weight( core::scoring::linear_chainbreak );
+	if (lincb_orig == 0) lincb_orig = 1.0;  // force chainbreak
+	score3->set_weight( core::scoring::linear_chainbreak, 0.0 );
+	for (int nmacro=1; nmacro<=4; ++nmacro) {
+		score3->set_weight( core::scoring::linear_chainbreak, 0.25 * nmacro * lincb_orig );
+
+		protocols::moves::MonteCarloOP mc5 = new protocols::moves::MonteCarlo( pose, *score3, 2.0 );
+		for (int i=1; i<=(core::Size)(500*increase_cycles_); ++i) {
+			stage0mover->apply( pose );
+			(*score3)(pose); mc5->boltzmann(pose);
+		}
+		mc5->show_scores();
+		mc5->show_counters();
+		mc5->recover_low(pose);
 	}
 
 	pose.remove_constraints();

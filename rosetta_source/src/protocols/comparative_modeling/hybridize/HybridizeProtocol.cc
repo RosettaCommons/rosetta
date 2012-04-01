@@ -763,17 +763,12 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// fold tree hybridize
 		if (RG.uniform() < stage1_probability_) {
-			// package up fragments
-			utility::vector1 < core::fragment::FragSetOP > frag_libs;
-			frag_libs.push_back(fragments3_);
-			frag_libs.push_back(fragments9_);
-
-    		std::string cst_fn = template_cst_fn_[initial_template_index];
+   		std::string cst_fn = template_cst_fn_[initial_template_index];
 	
 			FoldTreeHybridizeOP ft_hybridize(
 				new FoldTreeHybridize(
 					initial_template_index_icluster, templates_icluster, weights_icluster,
-					template_chunks_icluster, template_contigs_icluster, frag_libs) ) ;
+					template_chunks_icluster, template_contigs_icluster, fragments3_, fragments9_) ) ;
 			ft_hybridize->set_constraint_file( cst_fn );
 			ft_hybridize->set_scorefunction( stage1_scorefxn_ );
 			ft_hybridize->set_increase_cycles( stage1_increase_cycles_ );
@@ -830,25 +825,20 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		TR << std::endl;
 
 		// stage "2.5" .. minimize with centroid energy + full-strength cart bonded
-		// {
-		// 	core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-		// 	core::optimization::CartesianMinimizer minimizer;
-		// 	core::scoring::ScoreFunctionOP stage2_scorefxn_copy = stage2_scorefxn_->clone();
-		// 	core::scoring::ScoreFunctionOP stage2_scorefxn_bonded = stage2_scorefxn_->clone();
-		// 	stage2_scorefxn_bonded->reset();
-		// 	core::Real fa_cart_bonded_wt = fa_scorefxn_->get_weight(core::scoring::cart_bonded);
-		// 	if (fa_cart_bonded_wt == 0) fa_cart_bonded_wt = 0.5;
-		// 	stage2_scorefxn_copy->set_weight( core::scoring::cart_bonded, fa_cart_bonded_wt );
-		// 	stage2_scorefxn_bonded->set_weight( core::scoring::cart_bonded, fa_cart_bonded_wt );
-		// 	core::kinematics::MoveMap mm;
-		// 	mm.set_bb( true ); mm.set_chi( true ); mm.set_jump( true );
-		// 
-		// 	options_lbfgs.max_iter(50);
-		// 	(*stage2_scorefxn_bonded)(pose); minimizer.run( pose, mm, *stage2_scorefxn_bonded, options_lbfgs );
-		// 	options_lbfgs.max_iter(200);
-		// 	(*stage2_scorefxn_copy)(pose); minimizer.run( pose, mm, *stage2_scorefxn_copy, options_lbfgs );
-		// 	(*stage2_scorefxn_copy)(pose); minimizer.run( pose, mm, *stage2_scorefxn_copy, options_lbfgs );
-		// }
+		if (!option[cm::hybridize::skip_stage2]()) {
+		 	core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
+		 	core::optimization::CartesianMinimizer minimizer;
+		 	core::scoring::ScoreFunctionOP stage2_scorefxn_copy = stage2_scorefxn_->clone();
+		 	core::Real fa_cart_bonded_wt = fa_scorefxn_->get_weight(core::scoring::cart_bonded);
+		 	if (fa_cart_bonded_wt == 0) fa_cart_bonded_wt = 0.5;
+		 	stage2_scorefxn_copy->set_weight( core::scoring::cart_bonded, fa_cart_bonded_wt );
+		 	core::kinematics::MoveMap mm;
+		 	mm.set_bb( true ); mm.set_chi( true ); mm.set_jump( true );
+			if (core::pose::symmetry::is_symmetric(pose) )
+				core::pose::symmetry::make_symmetric_movemap( pose, mm );
+		 	options_lbfgs.max_iter(200);
+		 	(*stage2_scorefxn_copy)(pose); minimizer.run( pose, mm, *stage2_scorefxn_copy, options_lbfgs );
+		}
 
 		// optional relax
 		if (batch_relax_ > 0) {

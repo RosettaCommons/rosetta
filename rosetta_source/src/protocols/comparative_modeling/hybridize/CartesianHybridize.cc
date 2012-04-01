@@ -69,6 +69,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/Energies.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -168,12 +169,12 @@ CartesianHybridize::CartesianHybridize(
 					spilt_chunk=true;
 					core::Size cutpoint = (j0stop+j1start)/2;
 					template_contigs_[tmpl].add_loop( cstart, cutpoint-1 );
-					TR << "Make subfrag " << cstart << " , " << cutpoint-1 << std::endl;
+					TR.Debug << "Make subfrag " << cstart << " , " << cutpoint-1 << std::endl;
 					cstart=cutpoint;
 				} else if(spilt_chunk && j0incontig && !j1incontig) {
 					spilt_chunk=false;
 					template_contigs_[tmpl].add_loop( cstart, cstop );
-					TR << "Make subfrag " << cstart << " , " << cstop << std::endl;
+					TR.Debug << "Make subfrag " << cstart << " , " << cstop << std::endl;
 				}
 			}
 		}
@@ -192,7 +193,7 @@ CartesianHybridize::init() {
 	increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
 	no_global_frame_ = option[cm::hybridize::no_global_frame]();
 	linmin_only_ = option[cm::hybridize::linmin_only]();
-	cartfrag_overlap_ = 1;
+	cartfrag_overlap_ = 2;
 
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
@@ -413,7 +414,6 @@ CartesianHybridize::apply( Pose & pose ) {
 	using namespace core::pose::datacache;
 
 	//protocols::viewer::add_conformation_viewer(  pose.conformation(), "hybridize" );
-
 	protocols::moves::MoverOP tocen =
 		new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
 	tocen->apply( pose );
@@ -426,7 +426,14 @@ CartesianHybridize::apply( Pose & pose ) {
 	options_lbfgs.max_iter(200);
 	core::optimization::CartesianMinimizer minimizer;
 	core::kinematics::MoveMap mm;
-	mm.set_bb  ( true ); mm.set_chi ( true ); mm.set_jump( true );
+	mm.set_bb  ( true );
+	mm.set_chi ( true );
+	mm.set_jump( true );
+
+	//fpd  --  this should really be automated somewhere
+	if (core::pose::symmetry::is_symmetric(pose) ) {
+		core::pose::symmetry::make_symmetric_movemap( pose, mm );
+	}
 
 	core::Real max_cart = lowres_scorefxn_->get_weight( core::scoring::cart_bonded );
 	core::Real max_cart_angle = lowres_scorefxn_->get_weight( core::scoring::cart_bonded_angle );
@@ -493,7 +500,6 @@ sampler:
 		lowres_scorefxn_->set_weight( core::scoring::atom_pair_constraint, cst_weight );
 		lowres_scorefxn_->set_weight( core::scoring::vdw, vdw_weight );
 
-		(*min_scorefxn_)(pose);
 		(*lowres_scorefxn_)(pose);
 		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 2.0 );
 
@@ -525,16 +531,6 @@ sampler:
 			if (action == 3) action_string = "picker";
 
 			if (action == 1 || action == 2) {
-				// uniform sampling of templates ... change this for weighted sampling
-				// core::Size templ_id = numeric::random::random_range( 1, templates_.size() );
-				// core::Size nfrags = template_chunks_[templ_id].num_loop() + template_contigs_[templ_id].num_loop();
-				// core::Size frag_id = numeric::random::random_range( 1, nfrags );
-				// protocols::loops::LoopOP frag =  new protocols::loops::Loop (
-				// 	(frag_id <= template_chunks_[templ_id].num_loop()) ? 
-				// 			template_chunks_[templ_id][frag_id]
-				// 		: template_contigs_[templ_id][frag_id - template_chunks_[templ_id].num_loop()]
-				// 	);
-
 				core::Size templ_id = numeric::random::random_range( 1, templates_.size() );
 				core::Size nfrags = template_contigs_[templ_id].num_loop();
 				core::Size frag_id = numeric::random::random_range( 1, nfrags );

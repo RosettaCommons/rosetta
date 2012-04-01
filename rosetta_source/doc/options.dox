@@ -7677,7 +7677,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-realign_domains</b> \<Boolean\><dt>
 <dd>domain parse and realign the starting templates</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-add_non_init_chunks</b> \<Boolean\><dt>

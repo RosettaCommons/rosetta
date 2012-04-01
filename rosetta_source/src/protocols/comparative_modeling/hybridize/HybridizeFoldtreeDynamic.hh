@@ -38,7 +38,9 @@ public:
 
 	// initialize pose ... add VRT if needed
 	void initialize( core::pose::Pose & pose, protocols::loops::Loops const & core_chunks );
-    void reset( core::pose::Pose & pose );
+	void reset( core::pose::Pose & pose );
+
+	utility::vector1 < core::Size > get_anchors() { return anchor_positions_; }
 
 private:
 	// HELPER FUNCTIONS
