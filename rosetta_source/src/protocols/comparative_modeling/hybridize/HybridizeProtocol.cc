@@ -1015,7 +1015,15 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 			}
 		}
 		if (n_mapped_residues >= 6) {
-			partial_align(pose, ref_pose, atom_map, residue_list, true); // iterate_convergence = true
+			utility::vector1< core::Real > aln_cutoffs;
+			aln_cutoffs.push_back(6);
+			aln_cutoffs.push_back(4);
+			aln_cutoffs.push_back(3);
+			aln_cutoffs.push_back(2);
+			aln_cutoffs.push_back(1.5);
+			aln_cutoffs.push_back(1);
+			core::Real min_coverage = 0.2;
+			partial_align(pose, ref_pose, atom_map, residue_list, true, aln_cutoffs, min_coverage); // iterate_convergence = true
 		}
 		//else {
 		//	TR << "This domain cannot be aligned: " << n_mapped_residues<< std::endl;

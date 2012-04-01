@@ -83,8 +83,8 @@ partial_align(
 			  id::AtomID_Map< id::AtomID > const & atom_map,
 			  std::list <Size> const & residue_list,
 			  bool iterate_convergence = false,
-			  core::Real distance_squared_threshold = 4.0
-			  );
+				utility::vector1<core::Real> distance_thresholds=utility::vector1<core::Real>(0),
+				core::Real min_coverage = 0.2);
 
 core::id::AtomID_Map< core::id::AtomID >
 update_atom_map(

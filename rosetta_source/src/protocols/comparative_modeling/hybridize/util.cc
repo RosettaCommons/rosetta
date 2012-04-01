@@ -218,27 +218,44 @@ partial_align(
 		id::AtomID_Map< id::AtomID > const & atom_map,
 		std::list <Size> const & residue_list,
 		bool iterate_convergence,
-		core::Real distance_squared_threshold )
+		utility::vector1<core::Real> distance_thresholds,
+		core::Real min_coverage )
 {
 	numeric::xyzMatrix< core::Real > R;
 	numeric::xyzVector< core::Real > preT;
 	numeric::xyzVector< core::Real > postT;
-	
+
+	// default
+	if (distance_thresholds.size() == 0) {
+		distance_thresholds.push_back(6);
+		distance_thresholds.push_back(4);
+		distance_thresholds.push_back(3);
+		distance_thresholds.push_back(2);
+		distance_thresholds.push_back(1.5);
+		distance_thresholds.push_back(1);
+	}
+
 	get_superposition_transformation( pose, ref_pose, atom_map, R, preT, postT );
 	apply_transformation( pose, residue_list, R, preT, postT );
-	
+
 	if (iterate_convergence) {
-		bool converged = false;
 		core::id::AtomID_Map< core::id::AtomID > updated_atom_map(atom_map);
-		while (!converged) {
-			core::id::AtomID_Map< core::id::AtomID > updated_atom_map_last_round = updated_atom_map;
-			updated_atom_map = update_atom_map(pose, ref_pose, atom_map, distance_squared_threshold);
-			if (updated_atom_map == updated_atom_map_last_round) {
-				converged = true;
-			}
-			else {
-				get_superposition_transformation( pose, ref_pose, updated_atom_map, R, preT, postT );
-				apply_transformation( pose, residue_list, R, preT, postT );
+		core::Real coverage = 1.0;
+		core::Size natoms_aln = updated_atom_map.size();
+
+		for (int i=1; i<=distance_thresholds.size() && coverage>=min_coverage; ++i) {
+			core::Real my_d_sq = distance_thresholds[i]*distance_thresholds[i];
+			bool converged = false;
+			while (!converged) {
+				core::id::AtomID_Map< core::id::AtomID > updated_atom_map_last_round = updated_atom_map;
+				updated_atom_map = update_atom_map(pose, ref_pose, atom_map, my_d_sq);
+				coverage = ((core::Real)(updated_atom_map.size()))/natoms_aln;
+				if (updated_atom_map == updated_atom_map_last_round || coverage<min_coverage) {
+					converged = true;
+				} else {
+					get_superposition_transformation( pose, ref_pose, updated_atom_map, R, preT, postT );
+					apply_transformation( pose, residue_list, R, preT, postT );
+				}
 			}
 		}
 	}
@@ -260,9 +277,8 @@ update_atom_map(
 			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
 			
-			if (pose.xyz(id::AtomID( iatom,ires )).distance_squared( ref_pose.xyz(aid) ) < distance_squared_threshold) {
-			updated_atom_map[ id::AtomID( iatom,ires ) ] = aid;
-			}
+			if (pose.xyz(id::AtomID( iatom,ires )).distance_squared( ref_pose.xyz(aid) ) < distance_squared_threshold)
+				updated_atom_map[ id::AtomID( iatom,ires ) ] = aid;
 		}
 	}
 	return updated_atom_map;
