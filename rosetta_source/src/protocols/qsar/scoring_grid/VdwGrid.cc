@@ -130,7 +130,7 @@ core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Rea
 			score += spline_score;
 		}
 	}
-	return score;
+	return score/static_cast<core::Real>(residue.natoms());
 }
 
 
