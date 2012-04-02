@@ -163,7 +163,7 @@ void ZnHash::build_hash()
 
 	core::Vector dim_ranges = bb_.upper() - bb_.lower();
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		ngrid_cells_[ ii ] = std::ceil( dim_ranges(ii) / grid_size_ );
+		ngrid_cells_[ ii ] = static_cast<core::Size>( std::ceil( dim_ranges(ii) / (grid_size_) ) );
 		if ( ngrid_cells_[ ii ] == 0 ) ngrid_cells_[ ii ] = 1; // imagine there's only one point
 	}
 	core::Vector new_upper(

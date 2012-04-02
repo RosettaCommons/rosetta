@@ -515,7 +515,7 @@ void ClusterBase::limit_groupsize( core::Real percent_limit ) {
 	for (i=0;i<(int)clusterlist.size();i++ ) {
 		Cluster temp = clusterlist[i];
 		clusterlist[i].clear();
-		limit = std::floor(percent_limit*temp.size());
+		limit = static_cast<core::Size>( std::floor(percent_limit*temp.size()) );
 		tr << "truncating from " << temp.size() << " to " << limit << std::endl;
 		for (j=0;j<limit;j++ ) {
 			clusterlist[i].push_back( temp[j] );
@@ -530,7 +530,7 @@ void ClusterBase::random_limit_groupsize( core::Real percent_limit ) {
 	for (i=0;i<(int)clusterlist.size();i++ ) {
 		Cluster temp = clusterlist[i];
 		clusterlist[i].clear();
-		limit = std::floor(percent_limit*temp.size());
+		limit = static_cast<core::Size> (std::floor(percent_limit*temp.size()) );
 		tr << "truncating from " << temp.size() << " to " << limit << std::endl;
 		temp.shuffle();
 		for (j=0;j<limit;j++ ) {
