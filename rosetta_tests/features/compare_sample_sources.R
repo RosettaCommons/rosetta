@@ -337,6 +337,13 @@ initialize_output_formats <- function(opt, ss_cmp){
 	if("output_formats" %in% names(ss_cmp)){
 		output_formats <- ss_cmp$output_formats
 	} else {
+
+		# If we're generating the features website for analysis we better
+		# have the plots in the formats that we expect.
+		if(opt$options$generate_website){
+			opt$options$output_web_raster <- T
+			opt$options$output_web_icon <- T
+		}
 		output_formats <- get_output_formats(opt$options, all_output_formats)
 	}
 
@@ -436,7 +443,8 @@ run_feature_analyses <- function(
 
 generate_webpages <- function(opt, output_dir){
 	if(opt$options$generate_website){
-		generate_all_webpages(output_dir)
+		cat("Generating Features website: '", output_dir, "'\n", sep="")
+		generate_sample_source_comparison_webpages(output_dir)
 	}
 }
 
@@ -482,8 +490,11 @@ l_ply(configuration$sample_source_comparisons, function(ss_cmp){
 		base_dir,
 		sample_source_output_dir,
 		output_formats)
+
+	generate_webpages(opt, sample_source_output_dir)
+
 })
 
 
-#generate_webpages(opt, sample_source_output_dir)
+
 

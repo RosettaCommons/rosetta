@@ -87,16 +87,6 @@ get_subdirs <- function(base_dir){
 	dir_contents[file.info(paste(base_dir, dir_contents, sep="/"))$isdir]
 }
 
-generate_all_webpages <- function(
-	output_dir
-) {
-	sample_source_comparisons <- get_subdirs(output_dir)
-
-	l_ply(sample_source_comparisons, function(sample_source_dir){
-		generate_sample_source_comparison_webpages(file.path(output_dir, sample_source_dir))
-	})
-}
-
 
 generate_sample_source_comparison_webpages <- function(
 	sample_source_comparison_dir,
@@ -113,7 +103,7 @@ generate_sample_source_comparison_webpages <- function(
 			features_analysis_id,
 			"</A><br>\n", file=full_main_page_fname, sep="", append=T)
 		cat(
-			"<span class='features_analysis_description'> Put the contents of features_analysis@short_description here</span><br><br>\n", file=full_main_page_fname, sep="", append=T)
+			"<span class='features_analysis_description'> Put the contents of features_analysis@brief_description here</span><br><br>\n", file=full_main_page_fname, sep="", append=T)
 
 		generate_features_analysis_webpage(
 			file.path(sample_source_comparison_dir, features_analysis_id))
@@ -205,12 +195,12 @@ features_analysis_page_template <- function()
 
 <body>
 
-<div id=\"main\">
-MAIN_PANEL
-</div>
-
 <div id=\"navigator\">
 NAVIGATOR_PANEL
+</div>
+
+<div id=\"main\">
+MAIN_PANEL
 </div>
 
 </body>
@@ -230,12 +220,6 @@ generate_features_analysis_webpage <- function(
 	plot_count = 1
 	for(i in 1:length(plot_fnames)){
 		plot_fname <- plot_fnames[i]
-		main_panel <- paste(main_panel,
-			"	<div class=\"plot_div\">\n",
-			"		<img src=\"output_web_raster/", plot_fname, "\" class=\"plot\" id=\"plot_", i, "\"/>\n",
-			"	</div>\n",
-			"	<div class=\"plot_separator\"></div>\n",
-			sep="")
 
 		navigator_panel <- paste(navigator_panel,
 			"	<div class=\"plot_div\">\n",
@@ -244,6 +228,13 @@ generate_features_analysis_webpage <- function(
 			"		</a>\n",
 			"	</div>\n",
 			"	<div class=\"plot_separator_navigator\"></div>\n",
+			sep="")
+
+		main_panel <- paste(main_panel,
+			"	<div class=\"plot_div\">\n",
+			"		<img src=\"output_web_raster/", plot_fname, "\" class=\"plot\" id=\"plot_", i, "\"/>\n",
+			"	</div>\n",
+			"	<div class=\"plot_separator\"></div>\n",
 			sep="")
 
 	}

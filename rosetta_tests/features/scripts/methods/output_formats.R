@@ -15,7 +15,7 @@ make_output_formats_options_list <- function(output_formats){
 }    
 
 get_output_formats <- function(options, output_formats){
-	adply(output_formats, 1, function(output_format){
+	output_formats <- adply(output_formats, 1, function(output_format){
 	       	if(options[as.character(output_format$id)] == TRUE){
 			return(output_format)
 		} else {
