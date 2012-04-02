@@ -45,9 +45,9 @@ namespace comparative_modeling {
 namespace hybridize {
 
 // parameters
-const core::Real DDomainParse::pcut_ = 0.81;
-const core::Real DDomainParse::hcut_ = 0.18;
-const core::Real DDomainParse::length_ = 38;
+//const core::Real DDomainParse::pcut_ = 0.81;
+//const core::Real DDomainParse::hcut_ = 0.18;
+//const core::Real DDomainParse::length_ = 38;
 
 void
 DDomainParse::pulldomain( int isize0, int ist, int ilast, utility::vector1< core::Real > &resect, int &idip) {

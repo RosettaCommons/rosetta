@@ -101,8 +101,11 @@ private:
 	bool realign_domains_, add_non_init_chunks_, no_global_frame_, linmin_only_;
 	core::scoring::ScoreFunctionOP stage1_scorefxn_, stage2_scorefxn_, fa_scorefxn_;
 	std::string fa_cst_fn_;
-
 	core::Size cartfrag_overlap_;
+
+	// ddomain options
+	core::Real pcut_,hcut_;
+	core::Size length_;
 
 	// relax
 	core::Size batch_relax_, relax_repeats_;

@@ -694,7 +694,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// realign each template to the starting template by domain
 		if (realign_domains_) {
 			// domain parsing
-			DDomainParse ddom;
+			DDomainParse ddom(pcut_,hcut_,length_);
 			utility::vector1< utility::vector1< loops::Loops > > domains_all_templ;
 			domains_all_templ.resize( templates_.size() );
 			for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
@@ -1098,6 +1098,11 @@ HybridizeProtocol::parse_my_tag(
 		std::string const scorefxn_name( tag->getOption<std::string>( "fa_scorefxn" ) );
 		fa_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
+
+	//ddomain
+	hcut_ = tag->getOption< core::Real >( "domain_hcut" , 0.18);
+	pcut_ = tag->getOption< core::Real >( "domain_pcut" , 0.81);
+	length_ = tag->getOption< core::Size >( "domain_length" , 38);
 
 	// fragments
 	utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );

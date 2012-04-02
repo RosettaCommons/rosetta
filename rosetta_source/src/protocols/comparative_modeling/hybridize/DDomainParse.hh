@@ -37,6 +37,18 @@ namespace hybridize {
 
 class DDomainParse {
 public:
+	DDomainParse( ) {
+		pcut_ = 0.81;
+		hcut_ = 0.18;
+		length_ = 38;
+	}
+
+	DDomainParse( core::Real pcut_in, core::Real hcut_in, core::Size length_in) {
+		pcut_ = pcut_in;
+		hcut_ = hcut_in;
+		length_ = length_in;
+	}
+
 	// domain splitting
 	utility::vector1< loops::Loops > split( core::pose::Pose const &templ, core::Size nres );
 
@@ -51,7 +63,8 @@ private:
 		utility::vector1< utility::vector1< core::Real > > const &dij, utility::vector1< core::Real > &resect);
 
 	// parameters
-	static const core::Real pcut_,hcut_,length_;
+	core::Real pcut_,hcut_;
+	core::Size length_;
 
 	core::Size mseq_;
 	core::Size nseq_;
