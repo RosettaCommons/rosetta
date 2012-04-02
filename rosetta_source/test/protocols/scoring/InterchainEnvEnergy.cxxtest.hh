@@ -72,7 +72,7 @@ public:
 		using namespace core::scoring;
 		ScoreFunction sfxn;
 		sfxn.set_weight( interchain_env, 1.0 );
-		TS_ASSERT_DELTA( sfxn( *the_pose ), 30.9088, 1e-3 );
+		TS_ASSERT_DELTA( sfxn( *the_pose ), 6.2852, 1e-3 );
 	}
 };
 
