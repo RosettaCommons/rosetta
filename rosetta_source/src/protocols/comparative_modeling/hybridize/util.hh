@@ -34,9 +34,6 @@ namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
 			
-using namespace core;
-using namespace kinematics;
-
 // constraint loading and generation
 void setup_centroid_constraints( 
 	core::pose::Pose &pose,
@@ -62,26 +59,26 @@ void generate_fullatom_constraints(
 	utility::vector1 < core::Real > template_weights );
 
 
-bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos);
+bool discontinued_upper(core::pose::Pose const & pose, core::Size const seqpos);
 
-bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos);
+bool discontinued_lower(core::pose::Pose const & pose, core::Size const seqpos);
 
-std::list < Size > downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_number);
+std::list < core::Size > downstream_residues_from_jump(core::pose::Pose const & pose, core::Size const jump_number);
 	
 // atom_map: from mod_pose to ref_pose
 void
 get_superposition_transformation(
-								 pose::Pose const & mod_pose,
-								 pose::Pose const & ref_pose,
-								 id::AtomID_Map< id::AtomID > const & atom_map,
+								 core::pose::Pose const & mod_pose,
+								 core::pose::Pose const & ref_pose,
+								 core::id::AtomID_Map< core::id::AtomID > const & atom_map,
 								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT );
 
 void
 partial_align(
 			  core::pose::Pose & pose,
 			  core::pose::Pose const & ref_pose,
-			  id::AtomID_Map< id::AtomID > const & atom_map,
-			  std::list <Size> const & residue_list,
+			  core::id::AtomID_Map< core::id::AtomID > const & atom_map,
+			  std::list <core::Size> const & residue_list,
 			  bool iterate_convergence = false,
 				utility::vector1<core::Real> distance_thresholds=utility::vector1<core::Real>(0),
 				core::Real min_coverage = 0.2);
@@ -90,31 +87,31 @@ core::id::AtomID_Map< core::id::AtomID >
 update_atom_map(
 				core::pose::Pose & pose,
 				core::pose::Pose const & ref_pose,
-				id::AtomID_Map< id::AtomID > const & atom_map,
+				core::id::AtomID_Map< core::id::AtomID > const & atom_map,
 				core::Real distance_squared_threshold
 				);
 
-Size
+core::Size
 natom_aligned(
 			  core::pose::Pose & pose,
 			  core::pose::Pose const & ref_pose,
-			  id::AtomID_Map< id::AtomID > const & atom_map,
+			  core::id::AtomID_Map< core::id::AtomID > const & atom_map,
 			  core::Real distance_squared_threshold = 4.0
 			  );
 
 void
 get_superposition_transformation(
-								 pose::Pose const & mod_pose,
-								 pose::Pose const & ref_pose,
+								 core::pose::Pose const & mod_pose,
+								 core::pose::Pose const & ref_pose,
 								 core::id::AtomID_Map< core::id::AtomID > const & atom_map,
 								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT );
 
 void
 apply_transformation(
-				pose::Pose & mod_pose,
-				std::list <Size> const & residue_list,
-				numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
-				);
+					 core::pose::Pose & mod_pose,
+					 std::list <core::Size> const & residue_list,
+					 numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
+					 );
 
 } // hybridize 
 } // comparative_modeling 

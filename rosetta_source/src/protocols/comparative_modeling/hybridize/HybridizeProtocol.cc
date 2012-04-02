@@ -212,6 +212,7 @@ HybridizeProtocol::init() {
 	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
 	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
+	frag_insertion_weight_ = 0.5;
 	cartfrag_overlap_ = 1;
 
 	if (option[cm::hybridize::starting_template].user()) {
@@ -773,6 +774,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			ft_hybridize->set_scorefunction( stage1_scorefxn_ );
 			ft_hybridize->set_increase_cycles( stage1_increase_cycles_ );
 			ft_hybridize->set_add_non_init_chunks( add_non_init_chunks_ );
+			ft_hybridize->set_frag_insertion_weight( frag_insertion_weight_ );
 			ft_hybridize->set_frag_weight_aligned( frag_weight_aligned_ );
 			ft_hybridize->set_max_registry_shift( max_registry_shift_ );
 			ft_hybridize->apply(pose);
@@ -1068,6 +1070,8 @@ HybridizeProtocol::parse_my_tag(
 		realign_domains_ = tag->getOption< bool >( "realign_domains" );
 	if( tag->hasOption( "add_non_init_chunks" ) )
 		add_non_init_chunks_ = tag->getOption< bool >( "add_non_init_chunks" );
+	if( tag->hasOption( "frag_insertion_weight" ) )
+		frag_insertion_weight_ = tag->getOption< core::Real >( "frag_insertion_weight" );
 	if( tag->hasOption( "frag_weight_aligned" ) )
 		frag_weight_aligned_ = tag->getOption< core::Real >( "frag_weight_aligned" );
 	if( tag->hasOption( "max_registry_shift" ) )

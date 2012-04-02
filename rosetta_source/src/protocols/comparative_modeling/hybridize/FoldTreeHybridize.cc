@@ -149,6 +149,7 @@ FoldTreeHybridize::init() {
 	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
 	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
+	frag_insertion_weight_ = 0.5;
 
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ) );
@@ -555,8 +556,10 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 	// set up movers
 	RandomMoverOP stage0mover( new RandomMover() );
-	stage0mover->add_mover(random_sample_chunk_mover, 0.5);
-	stage0mover->add_mover(fragment_trial_mover, 0.5);
+	if ( frag_insertion_weight_ < 1. ) {
+	stage0mover->add_mover(random_sample_chunk_mover, 1.-frag_insertion_weight_);
+	}
+	stage0mover->add_mover(fragment_trial_mover, frag_insertion_weight_);
 
 	// stage 1
  	protocols::moves::MonteCarloOP mc1 = new protocols::moves::MonteCarlo( pose, *score0, 2.0 );
