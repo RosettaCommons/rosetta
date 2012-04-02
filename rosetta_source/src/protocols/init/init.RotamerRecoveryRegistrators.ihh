@@ -21,6 +21,7 @@ static RotamerRecoveryRegistrator< RRProtocolRTMinCreator > RRProtocolRTMinCreat
 static RotamerRecoveryRegistrator< RRProtocolMinPackCreator > RRProtocolMinPackCreator_registrator;
 static RotamerRecoveryRegistrator< RRProtocolMoverCreator > RRProtocolMoverCreator_registrator;
 static RotamerRecoveryRegistrator< RRComparerRotBinsCreator > RRComparerRotBinsCreator_registrator;
+static RotamerRecoveryRegistrator< RRComparerChiDiffCreator > RRComparerChiDiffCreator_registrator;
 static RotamerRecoveryRegistrator< RRComparerAutomorphicRMSDCreator > RRComparerAutomorphicRMSDCreator_registrator;
 static RotamerRecoveryRegistrator< RRReporterSimpleCreator > RRReporterSimpleCreator_registrator;
 static RotamerRecoveryRegistrator< RRReporterHumanCreator > RRReporterHumanCreator_registrator;

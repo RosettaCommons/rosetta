@@ -108,6 +108,15 @@ public:
 	std::string type_name() const;
 };
 
+class RRComparerChiDiffCreator : public RRComparerCreator {
+public:
+	RRComparerChiDiffCreator() {}
+	~RRComparerChiDiffCreator() {}
+
+	RRComparerOP create_comparer() const;
+	std::string type_name() const;
+};
+
 
 
 /// @brief The Creator class is responsible for creating a particular

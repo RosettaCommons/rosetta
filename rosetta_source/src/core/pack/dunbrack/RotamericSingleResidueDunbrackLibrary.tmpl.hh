@@ -584,9 +584,11 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 		chidevpen[ ii ] = chidev[ ii ]*chidev[ ii ] / ( 2 * chisd[ ii ] * chisd[ ii ] );
 
 		/// Add in gaussian height normalization
-		/// p = 1/(stdv*sqrt(2*pi)) * exp( -1* (chi_i - chi_mean_i)**2/(2 chisd_i**2) )
-		/// -ln(p) = (chi_i - chi_mean_i)**2/(2 chisd_i**2) + log(stdv*sqrt(2*pi)) <-- where sqrt2pi is just a constant per amino acid
-		/// chidevpen[ ii ] = chidev[ ii ]*chidev[ ii ] / ( 2 * chisd[ ii ] * chisd[ ii ] ) + std::log(chisd[ii]);
+		/// p = prod( i, 1/(stdv_i*sqrt(2*pi)) * exp( -1* (chi_i - chi_mean_i)**2/(2 chisd_i**2) ) )
+		/// -ln(p) == sum( i, (chi_i - chi_mean_i)**2/(2 chisd_i**2) + log(stdv_i*sqrt(2*pi)) )
+		///        == sum( i, (chi_i - chi_mean_i)**2/(2 chisd_i**2) + log(stdv_i) + log(sqrt(2*pi)))  <-- where sum(i,sqrt2pi) is just a constant per amino acid
+		///           and can be treated as part of the reference energies.
+		//chidevpen[ ii ] = chidev[ ii ]*chidev[ ii ] / ( 2 * chisd[ ii ] * chisd[ ii ] ) + std::log(chisd[ii]);
 
 	}
 	Real chidevpensum( 0.0 );
@@ -631,10 +633,10 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 
 		dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX  ] +=
 			( g*fprime*dchimean_dphi[ ii ] - f*gprime*dchisd_dphi[ ii ] ) * invgg;// +
-			//1/chisd[ii]*dchisd_dphi[ii];
+		//1/chisd[ii]*dchisd_dphi[ii];
 		dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX  ] +=
 			( g*fprime*dchimean_dpsi[ ii ] - f*gprime*dchisd_dpsi[ ii ] ) * invgg;// +
-			//1/chisd[ii]*dchisd_dpsi[ii];
+		//1/chisd[ii]*dchisd_dpsi[ii];
 
 		dchidevpen_dchi[ ii ] = chidev[ ii ] / ( chisd[ ii ] * chisd[ ii ] );
 	}

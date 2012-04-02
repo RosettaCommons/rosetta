@@ -225,6 +225,7 @@ RotamerRecoveryFeatures::report_features(
 	PackerTaskOP packer_task(task_factory.create_packer_task(pose));
 	packer_task->restrict_to_repacking();
 	packer_task->restrict_to_residues(relevant_residues);
+	packer_task->initialize_from_command_line();
 
 	rotamer_recovery.run(pose, *scfxn_, *packer_task);
 

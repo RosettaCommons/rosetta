@@ -102,7 +102,43 @@ public: // public interface
 		bool & recovered);
 
 private: // data members
+};
 
+
+class RRComparerChiDiff : public RRComparer {
+
+public: // constructors destructors
+
+	RRComparerChiDiff();
+
+	~RRComparerChiDiff();
+
+	RRComparerChiDiff( RRComparerChiDiff const & );
+
+public: // public interface
+
+	virtual void set_recovery_threshold( core::Real const setting );
+
+	virtual
+	std::string
+	get_name() const;
+
+	virtual
+	std::string
+	get_parameters() const;
+
+	virtual
+	bool
+	measure_rotamer_recovery(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Real & score,
+		bool & recovered);
+
+private: // data members
+	core::Real tolerance_;
 
 };
 

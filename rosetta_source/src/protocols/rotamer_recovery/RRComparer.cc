@@ -104,5 +104,68 @@ RRComparerRotBins::get_parameters() const {
 	return "";
 }
 
+
+RRComparerChiDiff::RRComparerChiDiff() : tolerance_( 20.0 ) {}
+
+RRComparerChiDiff::RRComparerChiDiff( RRComparerChiDiff const & src ) :
+	RRComparer(),
+	tolerance_( src.tolerance_ )
+{}
+
+RRComparerChiDiff::~RRComparerChiDiff() {}
+
+void
+RRComparerChiDiff::set_recovery_threshold( core::Real const setting ) { tolerance_ = setting; }
+
+/// @details measure the rotamer recovery by comparing rotamer bins
+/// @return  true, if the measurement was successful, false otherwise
+bool
+RRComparerChiDiff::measure_rotamer_recovery(
+	Pose const & /* pose1 */,
+	Pose const & /* pose2 */,
+	Residue const & res1,
+	Residue const & res2,
+	Real & score,
+	bool & recovered
+) {
+
+	using core::pack::dunbrack::subtract_chi_angles;
+
+	if( res1.aa() != res2.aa() ) {
+		TR << "Cannot measure rotamer recovery because" << endl;
+		TR << "residue 1 has type '" << res1.type().name() << "'" << endl;
+		TR << "residue 2 has type '" << res2.type().name() << "'" << endl;
+		TR << "Make sure the protocol to generate the conformations did not 'design' the sequence identity too." << endl;
+		utility_exit();
+	}
+
+	if( res1.aa() > num_canonical_aas ){
+		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
+		return false;
+	}
+
+	score = 0;
+	recovered=true;
+	for ( Size chi_index=1; chi_index <= res1.nchi(); ++chi_index ){
+		if ( res1.type().chi_2_proton_chi( chi_index ) == 0 ) { // ignore proton chi (tyr,ser,thr)
+			Real chidiff = std::abs( subtract_chi_angles( res1.chi(chi_index), res2.chi(chi_index), res1.aa(), chi_index ));
+			if ( score < chidiff ) { score = chidiff; }
+			if ( chidiff > tolerance_ ) { recovered = false; }
+		}
+	}
+
+	return true;
+}
+
+string
+RRComparerChiDiff::get_name() const {
+	return "RRComparerChiDiff";
+}
+
+string
+RRComparerChiDiff::get_parameters() const {
+	return "";
+}
+
 } // rotamer_recovery
 } // protocols

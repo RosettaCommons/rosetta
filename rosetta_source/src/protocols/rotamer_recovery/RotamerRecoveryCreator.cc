@@ -112,6 +112,18 @@ RRComparerRotBinsCreator::type_name() const {
 	return "RRComparerRotBins";
 }
 
+//////////////// ChiDiff ///////////////////
+RRComparerOP
+RRComparerChiDiffCreator::create_comparer(
+) const {
+	return new RRComparerChiDiff;
+}
+
+string
+RRComparerChiDiffCreator::type_name() const {
+	return "RRComparerChiDiff";
+}
+
 
 //////////////// Simple ///////////////////
 RRReporterOP

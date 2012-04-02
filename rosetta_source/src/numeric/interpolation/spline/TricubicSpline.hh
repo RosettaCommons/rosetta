@@ -98,13 +98,9 @@ public:
 	  return dsecoxyz_;
 	}
 
-    //////////////
-    // operator //
-    //////////////
-
-    ////////////////
-    // operations //
-    ////////////////
+	////////////////
+	// operations //
+	////////////////
 
 	/// @return value at (x, y)
 	Real F( Real x, Real y, Real z ) const;
@@ -119,7 +115,7 @@ public:
 	Real dFdz( Real x, Real y, Real z ) const;
 
 	/// @return value and derivative at (x, y)
-	void FdF( Real x, Real y, Real z, Real & val, Real & dvaldx, Real & dvaldy, Real & dvaldz) const;
+	//void FdF( Real x, Real y, Real z, Real & val, Real & dvaldx, Real & dvaldy, Real & dvaldz) const;
 
 	/// train TricubicSpline
 	void train
