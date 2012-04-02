@@ -78,6 +78,7 @@ using protocols::moves::MoverOP;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_mover;
 using protocols::rosetta_scripts::saved_reference_pose;
+using protocols::rosetta_scripts::parse_task_operations;
 using protocols::rotamer_recovery::RotamerRecovery;
 using protocols::rotamer_recovery::RotamerRecoveryFactory;
 using protocols::rotamer_recovery::RRProtocolMover;
@@ -94,22 +95,25 @@ static Tracer TR("protocols.features.RotamerRecoveryFeatures");
 RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
 	scfxn_(getScoreFunction()),
 	protocol_(),
-	comparer_()
+	comparer_(),
+	task_factory_()
 {}
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	ScoreFunctionOP scfxn) :
 	scfxn_(scfxn),
 	protocol_(),
-	comparer_()
+	comparer_(),
+	task_factory_()
 {}
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	RotamerRecoveryFeatures const & src) :
 	FeaturesReporter(),
 	scfxn_(src.scfxn_),
-	protocol_(),
-	comparer_()
+	protocol_(src.protocol_),
+	comparer_(src.comparer_),
+	task_factory_(src.task_factory_)
 {}
 
 RotamerRecoveryFeatures::~RotamerRecoveryFeatures() {}
@@ -123,11 +127,18 @@ RotamerRecoveryFeatures::schema() const {
 		RRReporterSQLite::OutputLevel::features );
 }
 
-utility::vector1<std::string>
+vector1<string>
 RotamerRecoveryFeatures::features_reporter_dependencies() const {
-	utility::vector1<std::string> dependencies;
+	vector1<string> dependencies;
 	dependencies.push_back("ResidueFeatures");
 	return dependencies;
+}
+
+void
+RotamerRecoveryFeatures::initialize_task_factory(
+	core::pack::task::TaskFactoryOP task_factory
+) {
+	task_factory_ = task_factory;
 }
 
 void
@@ -201,6 +212,13 @@ RotamerRecoveryFeatures::parse_my_tag(
 	string const & comparer_name(tag->getOption<string>(
 			"comparer", "RRComparerAutomorphicRMSD"));
 	comparer_ = factory->get_rotamer_recovery_comparer(comparer_name);
+
+	if(tag->hasOption("recovery_theshold")){
+		comparer_->set_recovery_threshold(tag->getOption<Real>("recovery_threshold"));
+	}
+
+	task_factory_ = parse_task_operations(tag, data);
+
 }
 
 
@@ -221,8 +239,11 @@ RotamerRecoveryFeatures::report_features(
 	// I would like to assert that this has been called but I don't know how.
 	//scfxn.setup_for_scoring(pose);
 
-	TaskFactory task_factory;
-	PackerTaskOP packer_task(task_factory.create_packer_task(pose));
+	if(task_factory_ == 0){
+		task_factory_ = new TaskFactory();
+	}
+
+	PackerTaskOP packer_task(task_factory_->create_packer_task(pose));
 	packer_task->restrict_to_repacking();
 	packer_task->restrict_to_residues(relevant_residues);
 	packer_task->initialize_from_command_line();

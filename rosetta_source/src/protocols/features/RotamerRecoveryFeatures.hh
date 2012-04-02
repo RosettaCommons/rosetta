@@ -24,6 +24,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -70,6 +71,10 @@ public:
 	features_reporter_dependencies() const;
 
 	void
+	initialize_task_factory(
+		core::pack::task::TaskFactoryOP task_factory);
+
+	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,
 		protocols::moves::DataMap & data,
@@ -89,6 +94,7 @@ private:
 	core::scoring::ScoreFunctionOP scfxn_;
 	protocols::rotamer_recovery::RRProtocolOP protocol_;
 	protocols::rotamer_recovery::RRComparerOP comparer_;
+	core::pack::task::TaskFactoryOP task_factory_;
 
 };
 

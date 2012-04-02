@@ -60,6 +60,11 @@ public: // public interface
 	get_parameters() const = 0;
 
 	virtual
+	void
+	set_recovery_threshold(
+		core::Real const recovery_threshold) = 0;
+
+	virtual
 	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -92,6 +97,11 @@ public: // public interface
 	get_parameters() const;
 
 	virtual
+	void
+	set_recovery_threshold(
+		core::Real const recovery_threshold);
+
+	virtual
 	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -102,8 +112,10 @@ public: // public interface
 		bool & recovered);
 
 private: // data members
-};
 
+	core::Real recovery_threshold_;
+
+};
 
 class RRComparerChiDiff : public RRComparer {
 

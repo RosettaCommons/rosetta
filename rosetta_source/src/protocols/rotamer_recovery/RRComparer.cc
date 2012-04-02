@@ -45,13 +45,23 @@ namespace rotamer_recovery {
 
 static Tracer TR("protocol.moves.RRComparer");
 
-RRComparerRotBins::RRComparerRotBins() {}
+RRComparerRotBins::RRComparerRotBins() :
+	recovery_threshold_(0)
+{}
 
-RRComparerRotBins::RRComparerRotBins( RRComparerRotBins const & ) :
-	RRComparer()
+RRComparerRotBins::RRComparerRotBins( RRComparerRotBins const & src) :
+	RRComparer(),
+	recovery_threshold_(src.recovery_threshold_)
 {}
 
 RRComparerRotBins::~RRComparerRotBins() {}
+
+void
+RRComparerRotBins::set_recovery_threshold(
+	Real const recovery_threshold
+) {
+	recovery_threshold_ = recovery_threshold;
+}
 
 /// @details measure the rotamer recovery by comparing rotamer bins
 /// @return  true, if the measurement was successful, false otherwise
@@ -90,7 +100,7 @@ RRComparerRotBins::measure_rotamer_recovery(
 		}
 	}
 	score = res1_rotbins.size() - chi_match;
-	recovered = (score == 0);
+	recovered = (score <= recovery_threshold_);
 	return true;
 }
 
