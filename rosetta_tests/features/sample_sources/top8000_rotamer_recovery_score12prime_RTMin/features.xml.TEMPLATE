@@ -8,7 +8,7 @@
 	</TASKOPERATIONS>		
         <MOVERS>
 		<SavePoseMover name=save_primary reference_name=primary_structure/>
-		<RotamerTrialsMinMover name=rt_min scorefxn=s task_operations=relevant_chain,extra_chi/>
+		<RotamerTrialsMinMover name=rt_min scorefxn=s task_operations=relevant_chain/>
                 <ReportToDB name=report_features db="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="RTMin with the score12prime score function" task_operations=relevant_chain>
 
 			<feature name=ScoreTypeFeatures/>
@@ -26,7 +26,7 @@
                         <feature name=HBondFeatures scorefxn=s/>
 			<feature name=HBondParameterFeatures scorefxn=s/>
                         <feature name=SaltBridgeFeatures/>
-                        <feature name=RotamerRecoveryFeatures reference_name=primary_structure comparer=RRComparerRotBins/>
+                        <feature name=RotamerRecoveryFeatures reference_name=primary_structure comparer=RRComparerRotBins task_operations=extra_chi/>
                 </ReportToDB>
         </MOVERS>
         <PROTOCOLS>

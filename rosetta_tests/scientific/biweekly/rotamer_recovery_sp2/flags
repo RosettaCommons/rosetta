@@ -11,13 +11,6 @@
 #
 -out:nooutput
 #
-# Include extra rotamers in packing
--ex1
--ex2
--ex3
--extrachi_cutoff 1
-#
-#
 # The sp2 correction
 -score:weights sp2_correction
 -hbond_params sp2_params
