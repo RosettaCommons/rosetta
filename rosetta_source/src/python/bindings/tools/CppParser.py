@@ -355,6 +355,11 @@ class CppFunction:
     def isWrapable(self):
         ''' Check if we can really wrap this object now, not theoretical but practically...
         '''
+        #print '_____ %s number of args: %s' % (self.name, len(self.argsTypes) )
+        if len(self.argsTypes) > 70:
+            print '\033[31m\033[1m%s\033[0m' % (  'Too many arguments for function:%s... Skipping...' % self.demangled )
+            return False
+
         tp = [self.returnType] + map(lambda x: x.type_, self.argsTypes)
         for a in tp:  # check if function contain types that we don't know how to deal with yet...
             #print a
