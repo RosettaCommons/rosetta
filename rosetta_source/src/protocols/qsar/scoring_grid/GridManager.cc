@@ -71,12 +71,25 @@ void GridManager::reset()
 	qsar_map_ = 0;
 	initialized_ = false;
 	chain_ = 'A';
+	normalized_ = false;
 }
 
-GridManager::GridManager() : last_tag_(""),width_(40), resolution_(0.25), qsar_map_(0),initialized_(false),chain_('A')
+GridManager::GridManager() :
+	last_tag_(""),
+	width_(40),
+	resolution_(0.25),
+	qsar_map_(0),
+	initialized_(false),
+	chain_('A'),
+	normalized_(false)
 {
 	grid_map_.clear();
 	score_map_.clear();
+}
+
+void GridManager::set_normalized(bool normalized)
+{
+	normalized_ = normalized;
 }
 
 void GridManager::set_width(core::Real width)
@@ -166,6 +179,11 @@ core::Real GridManager::total_score(core::conformation::Residue const & residue)
 		std::pair<std::string, core::Real> new_score(current_grid->get_type(),component_score);
 		score_map_.insert(new_score);
 	}
+
+	if(normalized_)
+	{
+		return total_score/static_cast<core::Real>(residue.natoms());
+	}
 	return total_score;
 }
 
@@ -195,6 +213,17 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 		std::pair<std::string, core::Real> new_score(current_grid->get_type(),component_score);
 		score_map_.insert(new_score);
 	}
+
+	if(normalized_)
+	{
+		core::Size n_atoms = 0;
+		for(core::Size i = 1; i < residue_vector.size();++i)
+		{
+			n_atoms += residue_vector[i]->natoms();
+		}
+		return total_score/static_cast<core::Real>(n_atoms);
+	}
+
 	return total_score;
 
 }

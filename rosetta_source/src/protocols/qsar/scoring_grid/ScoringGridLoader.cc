@@ -69,6 +69,11 @@ void ScoringGridLoader::load_data(
 		grid_manager->set_chain(tag->getOption<char>("chain"));
 	}
 
+	if(tag->hasOption("normalized"))
+	{
+		grid_manager->set_normalized(tag->getOption<bool>("normalized"));
+	}
+
 	/// Add grids to the scoring grid manager
 
 	TagPtrs const grid_tags( tag->getTags() );
