@@ -318,7 +318,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( atom_id.rsd() ).has_variant_type( "REPLONLY" )){
+	if ( pose.residue( atom_id.rsd() ).has_variant_type( core::chemical::REPLONLY )){
 		return;
 	}
 

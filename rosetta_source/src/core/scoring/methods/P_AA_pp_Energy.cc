@@ -112,7 +112,7 @@ P_AA_pp_Energy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
 			return 0.0;
 	}
 
@@ -131,7 +131,7 @@ P_AA_pp_Energy::eval_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( tor_id.rsd() ).has_variant_type( "REPLONLY" ) ){
+	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ){
 			return 0.0;
 	}
 

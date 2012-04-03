@@ -21,6 +21,7 @@
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
@@ -59,13 +60,13 @@ RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
 	if (	basic::options::option[basic::options::OptionKeys::in::replonly_loops]() ){
 		for ( core::Size i=1; i<=pose.n_residue(); i++ ){   
 			if ( pose.secstruct(i)=='L' ){
-				if ( ! pose.residue(i).has_variant_type( "REPLONLY" ) ){
+				if ( ! pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ){
 					core::pose::remove_lower_terminus_type_from_pose_residue( pose, i );
 					core::pose::remove_upper_terminus_type_from_pose_residue( pose, i );
 					core::pose::add_variant_type_to_pose_residue( pose, "REPLONLY", i );
 				}
 			}else {
-				if ( pose.residue(i).has_variant_type( "REPLONLY" )){
+				if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY )){
 					core::pose::remove_variant_type_from_pose_residue( pose, "REPLONLY", i );
 				}
 			}
@@ -78,7 +79,7 @@ RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
 			core::chemical::ResidueType const & gly( pose.residue(i).residue_type_set().name_map("GLY") );
 			core::pose::replace_pose_residue_copying_existing_coordinates( pose, replonly_rsd[i], gly );
 		//TR << replonly_rsd[i] << " has been changed as GLY" << std::endl;
-			if ( ! pose.residue( replonly_rsd[i] ).has_variant_type( "REPLONLY" ) ){
+			if ( ! pose.residue( replonly_rsd[i] ).has_variant_type( core::chemical::REPLONLY ) ){
 				core::pose::remove_lower_terminus_type_from_pose_residue( pose, replonly_rsd[i] );
 				core::pose::remove_upper_terminus_type_from_pose_residue( pose, replonly_rsd[i] );
 				core::pose::add_variant_type_to_pose_residue( pose, "REPLONLY", replonly_rsd[i] );

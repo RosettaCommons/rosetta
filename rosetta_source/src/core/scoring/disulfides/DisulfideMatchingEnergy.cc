@@ -22,13 +22,11 @@
 #include <core/scoring/disulfides/DisulfideMatchingEnergyContainer.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <basic/Tracer.hh>
@@ -114,7 +112,7 @@ void DisulfideMatchingEnergy::residue_pair_energy(
 		) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 		return;
 	}
 

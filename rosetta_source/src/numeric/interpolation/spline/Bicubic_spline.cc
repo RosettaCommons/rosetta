@@ -434,34 +434,29 @@ std::pair<Real, MathVector<Real> > BicubicSpline::FdF( const MathVector< Real> &
 
 	//check if argument is in range for non-periodic splines
 	if( ( ( border_[ 0] != e_Periodic ) && ( x < start_[ 0] || start_[ 0] + ( dimx-1 ) * delta_[ 0] < x))
-			|| ( ( border_[ 1] != e_Periodic ) && (y < start_[ 1] || start_[ 1] + ( dimy-1 ) * delta_[ 1] < y)) )
-	{
-		if( x < start_[ 0] )
-		{
+			|| ( ( border_[ 1] != e_Periodic ) && (y < start_[ 1] || start_[ 1] + ( dimy-1 ) * delta_[ 1] < y)) ) {
+		if( x < start_[ 0] ) {
 			//BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");
 			//BCL_Message( basic::Message::e_Debug, "argument out of range, using linear continuation");
 			fvalue    = F(MakeVector( start_[ 0], y))+(x-start_[ 0])*dFdx( MakeVector(start_[ 0], y));
 			dfdxvalue = dFdx( MakeVector( start_[ 0], y));
 			dfdyvalue = dFdy( MakeVector( start_[ 0], y));
 		}
-		if( x > start_[ 0] + ( dimx-1 ) * delta_[ 0])
-		{
+		if( x > start_[ 0] + ( dimx-1 ) * delta_[ 0]) {
 			//BCL_Assert( LinCont_[ 0], "argument out of range for non-periodic spline!");
 			//BCL_Message( basic::Message::e_Debug, "argument out of range, using linear continuation");
 			fvalue    = F(    MakeVector( start_[ 0] + ( dimx-1 ) * delta_[ 0] , y))+(x-start_[ 0] - ( dimx-1 ) * delta_[ 0])*dFdx( MakeVector( start_[ 0] + ( dimx-1 ) * delta_[ 0], y));
 			dfdxvalue = dFdx( MakeVector( start_[ 0] + ( dimx-1 ) * delta_[ 0] , y));
 			dfdyvalue = dFdy( MakeVector( start_[ 0] + ( dimx-1 ) * delta_[ 0] , y));
 		}
-		if( y < start_[ 1] )
-		{
+		if( y < start_[ 1] ) {
 			//BCL_Assert( LinCont_[ 1], "argument out of range for non-periodic spline!");
 			//BCL_Message( basic::Message::e_Debug, "argument out of range, using linear continuation");
 			fvalue    = F(    MakeVector( x, start_[ 1]))+(y-start_[ 1])*dFdy( MakeVector( x, start_[ 1]));
 			dfdxvalue = dFdx( MakeVector( x, start_[ 1]));
 			dfdyvalue = dFdy( MakeVector( x, start_[ 1]));
 		}
-		if( y > start_[ 1] + ( dimy-1 ) * delta_[ 1])
-		{
+		if( y > start_[ 1] + ( dimy-1 ) * delta_[ 1]) {
 			//BCL_Assert( LinCont_[ 1], "argument out of range for non-periodic spline!");
 			//BCL_Message( basic::Message::e_Debug, "argument out of range, using linear continuation");
 			fvalue    = F(    MakeVector( x, start_[ 1] + ( dimy-1 ) * delta_[ 1]))+(y-start_[ 1] - ( dimy-1 ) * delta_[ 1])*dFdy( MakeVector( x, start_[ 1] + ( dimy-1 ) * delta_[ 1]));
@@ -480,7 +475,7 @@ std::pair<Real, MathVector<Real> > BicubicSpline::FdF( const MathVector< Real> &
 		//determine j with start_[ 1]+(j-1)*delta_[ 1] < y < start_[ 1]+j*delta_[ 1] for the correct supporting points
 		int    j(int (floor( (y-start_[ 1])/delta_[ 1])));
 		while  (start_[ 1]+j*delta_[ 1]<y)j++;
-		if(!j){
+		if (!j) {
 			while  (start_[ 1]+j*delta_[ 1]>y)j--;
 			j++;
 		}

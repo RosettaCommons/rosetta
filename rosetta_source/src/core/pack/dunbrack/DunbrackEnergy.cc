@@ -17,13 +17,13 @@
 
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 
 #include <core/scoring/ScoreType.hh>
 
 // Project headers
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
@@ -88,7 +88,7 @@ DunbrackEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" )){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY )){
 			return;
 	}
 
@@ -124,7 +124,7 @@ DunbrackEnergy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" )){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY )){
 			return 0.0;
 	}
 
@@ -160,7 +160,7 @@ DunbrackEnergy::eval_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( tor_id.rsd() ).has_variant_type( "REPLONLY" )){
+	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY )){
 			return 0.0;
 	}
 

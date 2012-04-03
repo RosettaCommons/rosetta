@@ -191,7 +191,7 @@ FullatomDisulfideEnergy::residue_pair_energy_ext(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 		return;
 	}
 
@@ -238,7 +238,7 @@ FullatomDisulfideEnergy::setup_for_minimizing_for_residue_pair(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 		return;
 	}
 	
@@ -264,7 +264,7 @@ FullatomDisulfideEnergy::eval_residue_pair_derivatives(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 		return;
 	}
 
@@ -358,7 +358,7 @@ FullatomDisulfideEnergy::old_eval_atom_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( atomid.rsd() ).has_variant_type( "REPLONLY" )){
+	if ( pose.residue( atomid.rsd() ).has_variant_type( core::chemical::REPLONLY )){
 		return;
 	}
 
@@ -418,7 +418,7 @@ FullatomDisulfideEnergy::residue_pair_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 		return;
 	}
 	

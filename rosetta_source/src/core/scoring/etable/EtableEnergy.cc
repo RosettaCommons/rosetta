@@ -24,6 +24,7 @@
 #include <core/scoring/ScoringManager.hh>
 
 // Project headers
+#include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
@@ -97,7 +98,7 @@ EtableEnergy::eval_intrares_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( res.has_variant_type( "REPLONLY" ) ){
+	if ( res.has_variant_type( core::chemical::REPLONLY ) ){
 			return;
 	}
 
