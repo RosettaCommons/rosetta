@@ -71,6 +71,11 @@ Sets the coordinate_constraint weight to <scale>*start_weight.
 This is used when using the commandline options -constrain_relax_to_native_coords and
 -constrain_relax_to_start_coords.
 
+switch:<torsion/cartesian>
+
+Switches to the torsion minimizer (AtomTreeMinimzer, dfp minimizer) or the cartesian
+minimizer (CartesianMinimizer, lbfgs).  Obviously ignores command line flags.
+
 repack
 
 Triggers a full repack
@@ -631,6 +636,19 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				// no input validation as of now, relax will just die
 				scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
 				local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
+		}   else
+
+		if( cmd.command.substr(0,6) == "switch" ){
+				// no input validation as of now, relax will just die
+				if( cmd.command.substr(7) == "torsion" ) {
+					TR << "Using AtomTreeMinimizer with dfp"  << std::endl;
+					cartesian( false );
+					set_min_type("dfpmin_armijo_nonmonotone");
+				} else if( cmd.command.substr(7) == "cartesian" ) {
+					TR << "Using CartesianMinizer with lbfgs"  << std::endl;
+					cartesian( true );
+					set_min_type("lbfgs_armijo_nonmonotone");
+				}
 		}   else
 
 		if( cmd.command.substr(0,6) == "weight" ){
