@@ -1,3 +1,4 @@
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
@@ -859,15 +860,15 @@ void run() {
 					int bpy_mono_atom_nbrs = 0;
 					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
 						if(ir==ibpy) continue;
-						for(Size ia = 1; ia <= base.residue(ir).nheavyatoms(); ia++) {
-							Vec const x0 =     base.xyz(AtomID(ia,ir))           ;
-							Vec const x1 = R1*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
-							Vec const x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
-							for(Size ja = 7; ja <= base.residue(ibpy).nheavyatoms(); ja++) {
-								if( x0.distance_squared(base.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_mono_atom_nbrs++;
-								if( x0.distance_squared(base.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
-								if( x1.distance_squared(base.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
-								if( x2.distance_squared(base.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
+						for(Size ia = 1; ia <= psym.residue(ir).nheavyatoms(); ia++) {
+							Vec const x0 =     psym.xyz(AtomID(ia,ir))           ;
+							Vec const x1 = R1*(psym.xyz(AtomID(ia,ir))-c3f1)+c3f1;
+							Vec const x2 = R2*(psym.xyz(AtomID(ia,ir))-c3f1)+c3f1;
+							for(Size ja = 7; ja <= psym.residue(ibpy).nheavyatoms(); ja++) {
+								if( x0.distance_squared(psym.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_mono_atom_nbrs++;
+								if( x0.distance_squared(psym.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
+								if( x1.distance_squared(psym.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
+								if( x2.distance_squared(psym.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
 							}
 						}
 					}
@@ -880,45 +881,45 @@ void run() {
 
 					// continue;
 
-					using namespace core::pack::task;
-					using namespace core::pack::task::operation;
-					TaskFactoryOP task_factory( new TaskFactory );
-					protocols::toolbox::task_operations::JointSequenceOperationOP revert = new protocols::toolbox::task_operations::JointSequenceOperation;
-					Pose basesym(base);
-					core::pose::symmetry::make_symmetric_pose(basesym);
-					revert->add_pose(psym);
-					revert->add_pose(basesym);
-				 	task_factory->push_back(revert);
-					protocols::filters::FilterOP filter = new protocols::simple_filters::ScoreTypeFilter(sfsym,core::scoring::total_score,sfsym->score(psym));
+					// using namespace core::pack::task;
+					// using namespace core::pack::task::operation;
+					// TaskFactoryOP task_factory( new TaskFactory );
+					// protocols::toolbox::task_operations::JointSequenceOperationOP revert = new protocols::toolbox::task_operations::JointSequenceOperation;
+					// Pose basesym(base);
+					// core::pose::symmetry::make_symmetric_pose(basesym);
+					// revert->add_pose(psym);
+					// revert->add_pose(basesym);
+				 // 	task_factory->push_back(revert);
+					// protocols::filters::FilterOP filter = new protocols::simple_filters::ScoreTypeFilter(sfsym,core::scoring::total_score,sfsym->score(psym));
 
 
-					// filter->apply(psym);
-					// double tmp1 = filter->report_sm(psym);
-					// double tmp2 =  sfsym->score(psym);
-					// std::cout << tmp1 << " " << tmp2 << std::endl;
-					// utility_exit_with_message("aoristn");
+					// // filter->apply(psym);
+					// // double tmp1 = filter->report_sm(psym);
+					// // double tmp2 =  sfsym->score(psym);
+					// // std::cout << tmp1 << " " << tmp2 << std::endl;
+					// // utility_exit_with_message("aoristn");
 
-					using namespace core::scoring::constraints;
-					using core::id::AtomID;
-					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+1*base.n_residue()),new HarmonicFunc(0,0.01)));
-					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+2*base.n_residue()),new HarmonicFunc(0,0.01)));
+					// using namespace core::scoring::constraints;
+					// using core::id::AtomID;
+					// psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+1*base.n_residue()),new HarmonicFunc(0,0.01)));
+					// psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+2*base.n_residue()),new HarmonicFunc(0,0.01)));
 
-					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-					movemap->set_jump(true); movemap->set_bb(false); movemap->set_chi(true);
-					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
-					relax_mover->apply(psym);
-					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_min.pdb");
+					// core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+					// movemap->set_jump(true); movemap->set_bb(false); movemap->set_chi(true);
+					// protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+					// relax_mover->apply(psym);
+					// // psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_min.pdb");
 
-					sfsym->show(psym);
+					// sfsym->show(psym);
 
-					protocols::simple_moves::GreedyOptMutationMover gomm;
-					gomm.task_factory( task_factory );
-					gomm.scorefxn( sfsym );
-					gomm.filter( filter );
-					gomm.relax_mover( relax_mover );
-					gomm.apply(psym);
+					// protocols::simple_moves::GreedyOptMutationMover gomm;
+					// gomm.task_factory( task_factory );
+					// gomm.scorefxn( sfsym );
+					// gomm.filter( filter );
+					// gomm.relax_mover( relax_mover );
+					// gomm.apply(psym);
 
-					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_greedy.pdb");
+					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_greedy.pdb");
 
 					// repack(psym,ibpy,dimersub);
 					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_RPK.pdb");
