@@ -110,7 +110,7 @@ bool AsymFoldandDockClaimer::read_tag( std::string tag, std::istream& is ) {
 		std::string file;
 		is >> file;
 		std::ifstream infile( file.c_str() );
-		
+
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
@@ -134,6 +134,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	DofClaims& /*failed_to_init*/ ) {
 
 	using namespace loops;
+	using namespace kinematics;
 
 	if ( moving_res_.size() == 0 ) throw utility::excn::EXCN_BadInput( " missing definition of moving residues, add a LOOP definition ");
 	if ( moving_res_.size() > 1 ) throw utility::excn::EXCN_BadInput( " Only one movable region possible at this stage ");
@@ -168,6 +169,14 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	protocols::docking::DockingProtocol dock;
 	protocols::docking::DockingInitialPerturbation dock_init(slide);
 	std::string chainID("A_B");
+	// If we don't have a docking jump we have to create it before calling setup_foldtree (strangely enough)
+	if ( pose.fold_tree().num_jump() == 0 ) {
+		FoldTree f(pose.fold_tree());
+		f.clear();
+    f.simple_tree( pose.total_residue() );
+		f.new_jump( 1, pose.total_residue() , chain_break_res_ );
+		pose.fold_tree( f );
+	}
 	protocols::docking::setup_foldtree( pose, chainID, dock.movable_jumps() );
 	docking_jump_ = docking_jump( pose, chain_break_res_ );
 	dock_init.apply( pose );
