@@ -17,7 +17,9 @@
 // Package Headers
 #include <protocols/rotamer_recovery/RRProtocolReferenceStructure.hh>
 #include <protocols/rotamer_recovery/RRProtocolRTMin.hh>
+#include <protocols/rotamer_recovery/RRProtocolRotamerTrials.hh>
 #include <protocols/rotamer_recovery/RRProtocolMinPack.hh>
+#include <protocols/rotamer_recovery/RRProtocolPackRotamers.hh>
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>
 #include <protocols/rotamer_recovery/RRComparer.hh>
 #include <protocols/rotamer_recovery/RRComparerAutomorphicRMSD.hh>
@@ -61,6 +63,18 @@ RRProtocolRTMinCreator::type_name() const {
 	return "RRProtocolRTMin";
 }
 
+//////////////// RotamerTrials ///////////////////
+RRProtocolOP
+RRProtocolRotamerTrialsCreator::create_protocol(
+) const {
+	return new RRProtocolRotamerTrials;
+}
+
+string
+RRProtocolRotamerTrialsCreator::type_name() const {
+	return "RRProtocolRotamerTrials";
+}
+
 //////////////// MinPack ///////////////////
 RRProtocolOP
 RRProtocolMinPackCreator::create_protocol(
@@ -71,6 +85,18 @@ RRProtocolMinPackCreator::create_protocol(
 string
 RRProtocolMinPackCreator::type_name() const {
 	return "RRProtocolMinPack";
+}
+
+//////////////// PackRotamers ///////////////////
+RRProtocolOP
+RRProtocolPackRotamersCreator::create_protocol(
+) const {
+	return new RRProtocolPackRotamers;
+}
+
+string
+RRProtocolPackRotamersCreator::type_name() const {
+	return "RRProtocolPackRotamers";
 }
 
 

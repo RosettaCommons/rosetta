@@ -18,7 +18,9 @@ namespace protocols {
 
 using namespace protocols::rotamer_recovery;
 static RotamerRecoveryRegistrator< RRProtocolRTMinCreator > RRProtocolRTMinCreator_registrator;
+static RotamerRecoveryRegistrator< RRProtocolRotamerTrialsCreator > RRProtocolRotamerTrialsCreator_registrator;
 static RotamerRecoveryRegistrator< RRProtocolMinPackCreator > RRProtocolMinPackCreator_registrator;
+static RotamerRecoveryRegistrator< RRProtocolPackRotamersCreator > RRProtocolPackRotamersCreator_registrator;
 static RotamerRecoveryRegistrator< RRProtocolMoverCreator > RRProtocolMoverCreator_registrator;
 static RotamerRecoveryRegistrator< RRComparerRotBinsCreator > RRComparerRotBinsCreator_registrator;
 static RotamerRecoveryRegistrator< RRComparerChiDiffCreator > RRComparerChiDiffCreator_registrator;

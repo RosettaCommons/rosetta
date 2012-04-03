@@ -59,10 +59,28 @@ public:
 	std::string type_name() const;
 };
 
+class RRProtocolRotamerTrialsCreator : public RRProtocolCreator {
+public:
+	RRProtocolRotamerTrialsCreator() {}
+	~RRProtocolRotamerTrialsCreator() {}
+
+	RRProtocolOP create_protocol() const;
+	std::string type_name() const;
+};
+
 class RRProtocolMinPackCreator : public RRProtocolCreator {
 public:
 	RRProtocolMinPackCreator() {}
 	~RRProtocolMinPackCreator() {}
+
+	RRProtocolOP create_protocol() const;
+	std::string type_name() const;
+};
+
+class RRProtocolPackRotamersCreator : public RRProtocolCreator {
+public:
+	RRProtocolPackRotamersCreator() {}
+	~RRProtocolPackRotamersCreator() {}
 
 	RRProtocolOP create_protocol() const;
 	std::string type_name() const;

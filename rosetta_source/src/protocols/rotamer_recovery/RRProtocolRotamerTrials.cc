@@ -11,7 +11,7 @@
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
-#include <protocols/rotamer_recovery/RRProtocolRTMin.hh>
+#include <protocols/rotamer_recovery/RRProtocolRotamerTrials.hh>
 
 // Project Headers
 #include <protocols/rotamer_recovery/RRComparer.hh>
@@ -22,7 +22,7 @@
 // AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AA.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
-#include <core/pack/rtmin.hh>
+#include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
@@ -35,7 +35,6 @@
 #include <utility/vector1.hh>
 using std::string;
 using core::Size;
-using core::pack::RTMin;
 using core::pack::task::PackerTask;
 using core::pack::task::PackerTaskOP;
 using core::pose::Pose;
@@ -46,21 +45,21 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
-static Tracer TR("protocol.moves.RRProtocolRTMin");
+static Tracer TR("protocol.moves.RRProtocolRotamerTrials");
 
-RRProtocolRTMin::RRProtocolRTMin() {}
+RRProtocolRotamerTrials::RRProtocolRotamerTrials() {}
 
-RRProtocolRTMin::RRProtocolRTMin(RRProtocolRTMin const & ) {}
+RRProtocolRotamerTrials::RRProtocolRotamerTrials(RRProtocolRotamerTrials const & ) {}
 
-RRProtocolRTMin::~RRProtocolRTMin() {}
+RRProtocolRotamerTrials::~RRProtocolRotamerTrials() {}
 
 string
-RRProtocolRTMin::get_name() const {
-	return "RRProtocolRTMin";
+RRProtocolRotamerTrials::get_name() const {
+	return "RRProtocolRotamerTrials";
 }
 
 string
-RRProtocolRTMin::get_parameters() const {
+RRProtocolRotamerTrials::get_parameters() const {
 	return "";
 }
 
@@ -68,7 +67,7 @@ RRProtocolRTMin::get_parameters() const {
 /// @details For each residue, minimize it, and measure the rotamer
 /// compared to where it started
 void
-RRProtocolRTMin::run(
+RRProtocolRotamerTrials::run(
   RRComparerOP comparer,
   RRReporterOP reporter,
   Pose const & pose,
@@ -82,8 +81,6 @@ RRProtocolRTMin::run(
 
 	PackerTaskOP one_res_task( packer_task.clone() );
 
-	RTMin rtmin;
-
 	// I don't know if rtmin looks at more than pack_residue(..)
 	one_res_task->temporarily_fix_everything();
 
@@ -93,7 +90,7 @@ RRProtocolRTMin::run(
 		if ( !packer_task.pack_residue(ii) ) continue;
 		Pose working_pose = pose;  // deep copy
 		one_res_task->temporarily_set_pack_residue( ii, true );
-		rtmin.rtmin( working_pose, score_function, one_res_task );
+		core::pack::rotamer_trials( working_pose, score_function, one_res_task );
 		measure_rotamer_recovery(
 			comparer, reporter,
 			pose, working_pose,
