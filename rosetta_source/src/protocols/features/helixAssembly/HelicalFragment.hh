@@ -27,10 +27,10 @@
 //#include <devel/helixAssembly/NativeResidue.hh>
 
 //External
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/string.hpp>
+//#include <boost/serialization/access.hpp>
+//#include <boost/serialization/map.hpp>
+//#include <boost/serialization/vector.hpp>
+//#include <boost/serialization/string.hpp>
 
 //C++ Headers
 #include <string>
@@ -40,7 +40,7 @@
 namespace protocols {
 namespace features {
 namespace helixAssembly {
-		
+
 class HelicalFragment{
 
 public:
@@ -69,6 +69,7 @@ public:
 //	std::string print() const;
 
 private:
+	/*
 	friend class boost::serialization::access;
 
 	// When the class Archive corresponds to an output archive, the
@@ -83,7 +84,7 @@ private:
 		ar & direction_;
 //		ar & residue_map_;
 //		ar & residue_list_;
-	}
+	} */
 
 	core::Size start_;
 	core::Size end_;
@@ -123,5 +124,5 @@ private:
 } //namespace helixAssembly
 } //namespace features
 } //namespace protocols
-		
+
 #endif /* HELICALFRAGMENT_HH_ */

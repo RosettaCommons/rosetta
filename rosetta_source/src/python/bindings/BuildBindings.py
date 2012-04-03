@@ -660,7 +660,14 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
         s = '../external/' + s
 
         if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-            execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
+            execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS \
+                    /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" \
+                    /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY \
+                    /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
+
+        '''DNDEBUG -DCPPDB_EXPORTS -DCPPDB_LIBRARY_SUFFIX=\".dylib\" -DCPPDB_LIBRARY_PREFIX=\"lib\" -DCPPDB_DISABLE_SHARED_OBJECT_LOADING
+           -DCPPDB_DISABLE_THREAD_SAFETY -DCPPDB_SOVERSION=\"0\" -DCPPDB_WITH_SQLITE3
+        '''
 
     latest = None
     for s in sources:
@@ -686,7 +693,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     #execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, dll) )
 
     if (not os.path.isfile(rosetta_lib))   or  os.path.getmtime(rosetta_lib) < latest:
-        execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, rosetta_lib))
+        # /INCREMENTAL:NO /LTCG
+        execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib /LTCG @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, rosetta_lib))
         latest = max(latest, os.path.getmtime(rosetta_lib) )
 
     # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
