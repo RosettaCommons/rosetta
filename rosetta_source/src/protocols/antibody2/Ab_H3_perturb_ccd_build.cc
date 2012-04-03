@@ -112,28 +112,18 @@ Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build(
     
     
 void Ab_H3_perturb_ccd_build::set_default(){ 
-
-	// size of loop above which 9mer frags are used
-	cutoff_9_ = 16; // default 16
-
-    // size of loop above which 3mer frags are used
-	cutoff_3_ = 6; // default 6
-    
-    cen_cst_ = 10.0;
+	cutoff_9_       = 16; // size of loop above which 9mer frags are used
+	cutoff_3_       = 6;  // size of loop above which 3mer frags are used
+    cen_cst_        = 10.0;
+    num_cycles1_    = 10;  //max cycles to be spent building loops
+    h3_fraction_    = 0.75; // 75% of loops are required to be H3's
+    max_ccd_cycles_ = 500;
+    ccd_threshold_  = 0.1;
+    Temperature_    = 2.0;
     
 	current_loop_is_H3_ = true;
-    
-    H3_filter_ = true;
-   
-    //max cycles to be spent building loops
-    num_cycles1_ = 10; 
-    
-    // 75% of loops are required to be H3's
-    h3_fraction_ = 0.75; 
-
-    max_ccd_cycles_ = 500;
-    ccd_threshold_ = 0.1;
-    Temperature_ = 2.0;
+    H3_filter_          = true;
+    use_pymol_diy_      = false;
 }
     
     
@@ -168,32 +158,14 @@ void Ab_H3_perturb_ccd_build::init(bool current_loop_is_H3,bool is_camelid, Ab_I
 	// adding constraints
 	lowres_scorefxn_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
     
-//    setup_objects();
+
+    pymol_ = new protocols::moves::PyMolMover;
+    pymol_->keep_history(true);
+    
 }
     
     
     
-    
-//void Ab_H3_perturb_ccd_build::setup_objects(){
-
-//}
-    
-    
-std::string Ab_H3_perturb_ccd_build::get_name() const {
-    return "Ab_H3_perturb_ccd_build";
-}
-
-    
-    
-    
-    
-
-    
-    
-void Ab_H3_perturb_ccd_build::pass_the_loop(loops::Loop & input_loop) {
-    input_loop_=input_loop;
-    
-}
     
     
     
@@ -215,10 +187,7 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
     
     
     finalize_setup( pose_in );
-    protocols::moves::PyMolMover pymol;
-    pymol.keep_history(true);
 
-    pymol.apply(pose_in);
     
     loops::Loop trimmed_cdr_h3 = input_loop_;
     
@@ -274,7 +243,7 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
     kinematics::FoldTree old_fold_tree = pose_in.fold_tree();
     
     // New Fold Tree
-    simple_one_loop_fold_tree( pose_in, trimmed_cdr_h3 );
+    simple_one_loop_fold_tree( pose_in, trimmed_cdr_h3 );// is the cutpoint important or not???
     TR<<trimmed_cdr_h3<<std::endl;
     TR<<pose_in<<std::endl;
 
@@ -291,8 +260,7 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
         cdrh3_map->set_bb( ii, true );
     }
     cdrh3_map->set_jump( 1, false );
-    
-    pymol.apply(pose_in);
+
     
     // aroop_temp default 25 * loop size
     Size num_cycles2(25 * trimmed_cdr_h3.size() );
@@ -312,11 +280,9 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
             cfm->enable_end_bias_check( false );
             cfm->define_start_window( ii );
             cfm->apply( pose_in );
-            
-            pymol.apply(pose_in);
-            
         }
-        pose_in.dump_pdb("insert_all.pdb");
+        
+        if(use_pymol_diy_) pymol_->apply(pose_in);
 
         if( total_cycles == 1 ) {
             mc_->reset( pose_in );
@@ -332,13 +298,13 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
             cfm->set_check_ss( false );
             cfm->enable_end_bias_check( false );
             cfm->apply( pose_in );
-            
-            pymol.apply(pose_in);
+            if(use_pymol_diy_) pymol_->apply(pose_in);
 
+            
             
             bool H3_found_current(false);
             if( current_loop_is_H3_ && H3_filter_ && ( local_h3_attempts++ < (50 * num_cycles2) ) ) {
-                H3_found_current = CDR_H3_filter(pose_in, ab_info_->get_CDR_loop("h3"), is_camelid_);
+                H3_found_current = CDR_H3_filter(pose_in, *(ab_info_->get_CDR_loop("h3")), is_camelid_);
                 if( !H3_found_ever && !H3_found_current) {
                     --c2;
                     mc_->boltzmann( pose_in );
@@ -381,6 +347,7 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
                 }
                 mc_->boltzmann( pose_in );
             }
+            if(use_pymol_diy_) pymol_->apply(pose_in);
         }// finish cycles2
         
         
@@ -394,6 +361,8 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
         ccd_closure->set_ccd_cycles( max_ccd_cycles_ );
         ccd_closure->apply( pose_in );
         
+        
+        
         if( total_cycles == 1 ){
             outer_mc_->reset( pose_in );
         }
@@ -405,7 +374,7 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
             outer_mc_->boltzmann( pose_in );
             if( current_loop_is_H3_ && H3_filter_ && (current_h3_prob < h3_fraction_) && (h3_attempts++<50) ){
                 if( !CDR_H3_filter(pose_in, 
-                                   ab_info_->get_CDR_loop("h3"),
+                                   *(ab_info_->get_CDR_loop("h3")),
                                    is_camelid_)    )
                 {
                     continue; 
@@ -414,6 +383,8 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
             loop_found = true;
         }
         else if( H3_filter_ ){h3_attempts++;}
+        if(use_pymol_diy_) pymol_->apply(pose_in);
+
     }// finish cycles1
     
     outer_mc_->recover_low( pose_in );
@@ -422,7 +393,6 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
     pose_in.fold_tree( old_fold_tree );
     
     TR <<  "Finished Fragments based centroid CDR H3 loop building" << std::endl;
-//    pose_in.dump_pdb("check_loop.pdb");
 
     return;
 }

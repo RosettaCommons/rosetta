@@ -32,6 +32,7 @@
 #include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/moves/PyMolMover.fwd.hh>
 
 
 
@@ -70,9 +71,24 @@ public:
 
     virtual void apply( core::pose::Pose & pose );
     
-    virtual std::string get_name() const;
+    virtual std::string get_name() const {
+        return "Ab_H3_perturb_ccd_build";
+    }
+    
     void read_and_store_fragments( core::pose::Pose & pose );
-    void pass_the_loop(loops::Loop & input_loop);
+    
+    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
+        use_pymol_diy_ = true;
+        pymol_ = pymol;
+    }
+    
+    void turn_on_pymol_diy(){
+        use_pymol_diy_ = true;
+    }
+    
+    void pass_the_loop(loops::Loop & input_loop){
+        input_loop_ = input_loop;
+    }
     
     void turn_off_H3_filter(){
         H3_filter_ = false;
@@ -87,11 +103,14 @@ private:
     
     bool user_defined_;
     bool is_camelid_;
+    bool use_pymol_diy_;
     
+    protocols::moves::PyMolMoverOP pymol_;
+
     
     void set_default();
     void init( bool current_loop_is_H3, bool is_camelid, Ab_InfoOP & antibody_in);
-    //void setup_objects();
+
     void finalize_setup( core::pose::Pose & pose );
 
     
@@ -116,6 +135,7 @@ private:
     
     /// @brief flag indicating that current loop being modeled is CDR H3
 	bool current_loop_is_H3_;
+    
     /// @brief actually enables H3 filter for H3 operations
 	bool H3_filter_;
     

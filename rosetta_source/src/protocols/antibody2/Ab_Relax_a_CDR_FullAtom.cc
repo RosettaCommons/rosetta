@@ -19,16 +19,10 @@
 
 #include <protocols/antibody2/Ab_Relax_a_CDR_FullAtom.hh>
 
-
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
-
-#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -58,10 +52,13 @@
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
+
 #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/PyMolMover.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -96,74 +93,59 @@ namespace antibody2 {
     
     
 // default constructor
-Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom() : Mover() {
-
-}
-
-   
-    
-Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( bool current_loop_is_H3, bool H3_filter ) : Mover() 
+Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( ) : Mover() 
 {
     set_default();
     
-    current_loop_is_H3_ = current_loop_is_H3;
-    H3_filter_ = H3_filter;
     is_camelid_ = false;
     init();
 }
 
-Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( bool current_loop_is_H3, bool H3_filter, Ab_InfoOP antibody_info ) : Mover() 
+Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( Ab_InfoOP antibody_info, std::string loop_name ) : Mover() 
 {
     set_default();
-        
-    current_loop_is_H3_ = current_loop_is_H3;
-    H3_filter_ = H3_filter;
+
     is_camelid_ = false;
-    ab_info_ = antibody_info;
+    ab_info_    = antibody_info;
+    loop_name_  = loop_name;
+    
+    
     init();
 }
   
     
-Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( bool current_loop_is_H3, bool H3_filter, bool is_camelid ) : Mover() 
+
+    
+Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( bool is_camelid, Ab_InfoOP antibody_info ) : Mover() 
 {        
     set_default();
-    
-    current_loop_is_H3_ = current_loop_is_H3;
-    H3_filter_ = H3_filter;
+        
+
     is_camelid_ = is_camelid;
+    ab_info_ = antibody_info;
     init();
 }
     
-    Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( bool current_loop_is_H3, bool H3_filter, bool is_camelid, Ab_InfoOP antibody_info ) : Mover() 
-    {        
-        set_default();
-        
-        current_loop_is_H3_ = current_loop_is_H3;
-        H3_filter_ = H3_filter;
-        is_camelid_ = is_camelid;
-        ab_info_ = antibody_info;
-        init();
-    }
+    
+
     
 void Ab_Relax_a_CDR_FullAtom::set_default(){ 
-    apply_fullatom_mode_ = true;
-    max_cycle_ = 20;
-    base_ = 1;
-	refine_input_loop_ = true;
-	snug_fit_ = true;
-    freeze_h3_ = true;
+    benchmark_ = false;
+    include_neighbors_ = true;
+    max_cycle_close_trial_ = 20;
+	refine_input_loop_ = false;
     flank_relax_ = true;
-	h3_flank_ = 2;
-	decoy_loop_cutpoint_ = 0;
+	flank_size_ = 2;
 	h3_random_cut_ = false;
-	min_base_relax_ = false;
-    antibody_refine_ = true;
-
-	antibody_build_ = true;
 	H3_filter_ = true;
-    current_loop_is_H3_ = true;
-
-
+    min_tolerance_ = 0.001;
+    high_move_temp_ = 2.00;
+    minimization_type_ = "dfpmin_armijo_nonmonotone" ;
+    init_temp_ = 2.0;
+    last_temp_ = 0.5;
+    gamma_ = std::pow( (last_temp_/init_temp_), (1.0/inner_cycles_));
+    use_pymol_diy_ = false;
+    neighbor_dist_ = 10.0;
 }
     
     
@@ -182,16 +164,44 @@ protocols::moves::MoverOP Ab_Relax_a_CDR_FullAtom::clone() const {
     
 void Ab_Relax_a_CDR_FullAtom::init( ) 
 {
-    if(is_camelid_) {
-        snug_fit_=false;
+
+    the_loop_   = *(ab_info_->get_CDR_loop(loop_name_));
+    loop_begin_ = the_loop_.start();
+    loop_end_   = the_loop_.stop();
+    loop_size_  = ( loop_end_ - loop_begin_ ) + 1;
+    
+    cutpoint_ = loop_begin_ + int(loop_size_/2);
+
+    if( h3_random_cut_ ){
+        //	cutpoint_ = dle_choose_random_cutpoint(loop_begin_, loop_end_);
     }
 
+    the_loop_.set_cut(cutpoint_);
+    
+    n_small_moves_ =  numeric::max(Size(5), Size(loop_size_/2)) ;
+    inner_cycles_ = loop_size_;
+    outer_cycles_ = 2; //JQX: assume the SnugFit step has done some minimization
+    if(  refine_input_loop_ ){
+        outer_cycles_ = 5;
+    }
+    if( benchmark_ ) {
+        min_tolerance_ = 1.0;
+        n_small_moves_ = 1;
+        inner_cycles_ = 1;
+        outer_cycles_ = 1;
+    }
+    
+    highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
+	highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
+	highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
+	// adding constraints
+	//highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
+
+
+    
 }
     
-    
-void Ab_Relax_a_CDR_FullAtom::setup_objects(){
-        
-}
+
     
     
 std::string Ab_Relax_a_CDR_FullAtom::get_name() const {
@@ -209,385 +219,294 @@ void Ab_Relax_a_CDR_FullAtom::pass_start_pose(core::pose::Pose & start_pose){
     
     
     
-//APPLY
-void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
-
-
-    build_fullatom_loop(pose)    ;
     
+    
+    
+void Ab_Relax_a_CDR_FullAtom::finalize_setup( core::pose::Pose & pose ){
+
+    setup_packer_task( start_pose_, tf_ );
+    
+    // set cutpoint variants for correct chainbreak scoring
+    if( !pose.residue( cutpoint_ ).is_upper_terminus() ) {
+        if( !pose.residue( cutpoint_ ).has_variant_type(chemical::CUTPOINT_LOWER)){
+            core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint_ );
+        }
+        if( !pose.residue( cutpoint_ + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) ){
+            core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint_ + 1 );
+        }
+    }
+
+    // the list of residues that are allowed to pack
+    for(Size ii=1; ii <=pose.total_residue();ii++) {allow_repack_.push_back(false);}
+    select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
+
+    
+    // the list of residues that are allowed to change backbone
+    utility::vector1< bool> allow_bb_move( pose.total_residue(), false );
+    for( Size ii = loop_begin_; ii <= loop_end_; ii++ ){
+        allow_bb_move[ ii ] = true;
+    }
+    
+    // the movemap of the h3 loop, if flank_relax_=false, flank_cdrh3_map_=cdrh3_map_
+    cdrh3_map_ = new kinematics::MoveMap();
+    cdrh3_map_->set_jump( 1, false );
+    cdrh3_map_->set_bb( allow_bb_move );
+    cdrh3_map_->set_chi( allow_repack_ );
+    
+    if( flank_relax_) {
+        utility::vector1< bool> flank_allow_bb_move( allow_bb_move );
+        for( Size i = 1; i <= pose.total_residue(); i++ ){
+            if(  (i >= (loop_begin_ - flank_size_)) && (i <= (loop_end_ + flank_size_))   ){
+                flank_allow_bb_move[i] = true;
+            }
+        }
+       
+        flank_cdrh3_map_ = new kinematics::MoveMap();
+        flank_cdrh3_map_->set_jump( 1, false );
+        flank_cdrh3_map_->set_bb( flank_allow_bb_move );
+        flank_cdrh3_map_->set_chi( allow_repack_ );
+    }
+    else{
+        flank_cdrh3_map_ = cdrh3_map_;
+    }
+    
+
+    // below are the definitions of a bunch of movers 
+    using namespace protocols;
+    using namespace protocols::simple_moves;
+    using namespace protocols::loops;
+    using namespace protocols::moves;
+    using namespace protocols::toolbox::task_operations;
+    using namespace pack;
+    using namespace pack::task;
+    using namespace pack::task::operation;
+    using loop_closure::ccd::CcdMover;
+    using loop_closure::ccd::CcdMoverOP;
+    
+    
+    // the Monte Carlo mover
+    mc_ = new protocols::moves::MonteCarlo( pose, *highres_scorefxn_, init_temp_ );
+    
+    
+    // setup some easy objects to change the fold trees
+    // if not flank_relax =false, then   change_FT_to_flankloop_ = change_FT_to_simpleloop_
+    simple_fold_tree( pose, loop_begin_ - 1, cutpoint_, loop_end_ + 1 );
+    change_FT_to_simpleloop_ = new ChangeFoldTreeMover( pose.fold_tree() );
+    
+    if(flank_relax_){
+        simple_fold_tree( pose, loop_begin_ - flank_size_ - 1, cutpoint_, loop_end_ + flank_size_ + 1 );
+    }
+    change_FT_to_flankloop_ = new ChangeFoldTreeMover( pose.fold_tree() );
+    
+    
+    // pack the loop and its neighboring residues
+    loop_repack_ = new PackRotamersMover(highres_scorefxn_);
+    setup_packer_task( start_pose_, tf_ );
+    ( *highres_scorefxn_ )( pose );
+    tf_->push_back( new RestrictToInterface( allow_repack_ ) );
+    loop_repack_->task_factory(tf_);
+        //loop_repack_->apply( pose_in );
+    
+    
+    // minimize amplitude of moves if correct parameter is set
+    BackboneMoverOP small_mover = new SmallMover( cdrh3_map_, high_move_temp_, n_small_moves_ );
+    BackboneMoverOP shear_mover = new ShearMover( cdrh3_map_, high_move_temp_, n_small_moves_ );
+
+    small_mover->angle_max( 'H', 2.0 ); small_mover->angle_max( 'E', 5.0 ); small_mover->angle_max( 'L', 6.0 );
+    shear_mover->angle_max( 'H', 2.0 ); shear_mover->angle_max( 'E', 5.0 ); shear_mover->angle_max( 'L', 6.0 );
+
+    
+    // ccd moves
+    CcdMoverOP ccd_moves = new CcdMover( the_loop_, cdrh3_map_ );
+    RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves_);
+    
+    
+    // minimization mover
+    loop_min_mover_ = new MinMover( flank_cdrh3_map_, highres_scorefxn_, minimization_type_, min_tolerance_, true /*nb_list*/ );
+
+    
+    // put everything into a sequence mover
+    wiggle_cdr_h3_ = new SequenceMover() ;
+    wiggle_cdr_h3_->add_mover( change_FT_to_simpleloop_ );
+    wiggle_cdr_h3_->add_mover( small_mover );     if(use_pymol_diy_) wiggle_cdr_h3_->add_mover(pymol_);
+    wiggle_cdr_h3_->add_mover( shear_mover );     if(use_pymol_diy_) wiggle_cdr_h3_->add_mover(pymol_);
+    wiggle_cdr_h3_->add_mover( ccd_cycle );       if(use_pymol_diy_) wiggle_cdr_h3_->add_mover(pymol_);
+    wiggle_cdr_h3_->add_mover( change_FT_to_flankloop_ );
+    wiggle_cdr_h3_->add_mover( loop_min_mover_ ); if(use_pymol_diy_) wiggle_cdr_h3_->add_mover(pymol_);
+
 }
     
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+//APPLY
+void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
+    using namespace protocols::simple_moves;
+    using namespace protocols::moves;
+    using namespace protocols::toolbox::task_operations;
+    using namespace pack::task;
+    using namespace pack::task::operation;
+        
+    
+    if ( !pose.is_fullatom() ){utility_exit_with_message("Fullatom poses only");}
+    
+    TR <<  " Relaxing Fullatom CDR H3 loop" << std::endl;
     
 
-    void Ab_Relax_a_CDR_FullAtom::build_fullatom_loop( core::pose::Pose & pose ) {
-        using namespace core::pose;
-        using namespace core::scoring;
-        using namespace protocols::moves;
+    finalize_setup(pose);
+
+    
+    bool closed_cutpoints( false );
+    Size cycle( 1 );
+    while( !closed_cutpoints && cycle<max_cycle_close_trial_ ) {
+            TR <<  "    Refining CDR H3 loop in HighRes.  close_trial_cycle="<<cycle << std::endl;
+
         
-        if( !apply_fullatom_mode_ )
-            return;
+            change_FT_to_flankloop_->apply(pose);
+            loop_min_mover_->apply(pose);
         
-        TR <<  "H3M Modeling Fullatom CDR H3 loop" << std::endl;
+            // rotamer trials
+            select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
+            setup_packer_task( start_pose_, tf_ );
+            ( *highres_scorefxn_ )( pose );
+            tf_->push_back( new RestrictToInterface( allow_repack_ ) );
+            RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
+            pack_rottrial->apply( pose );        
         
-        antibody2::Ab_InfoOP starting_antibody;
-        starting_antibody = ab_info_;
-        bool closed_cutpoints( false );
         
-        Size cycle( 1 );
-        while( !closed_cutpoints && cycle<max_cycle_ ) {
-            ab_info_ = starting_antibody;
-            if(current_loop_is_H3_ && H3_filter_) {
-                loop_fa_relax( pose, ab_info_->get_CDR_loop("h3")->start(), 
-                                    ab_info_->get_CDR_loop("h3")->stop()-1 + base_ );
+        
+
+            Real temperature = init_temp_;
+            mc_->reset( pose ); // monte carlo reset
+        
+            bool relaxed_H3_found_ever( false );
+            if( H3_filter_){
+                relaxed_H3_found_ever = CDR_H3_filter( pose,the_loop_, is_camelid_);
             }
-            else if(!current_loop_is_H3_ && !H3_filter_&&is_camelid_){
-                loop_fa_relax( pose, ab_info_->get_CDR_loop("h2")->start(),
-                              ab_info_->get_CDR_loop("h2")->stop()  );
-            }
-
-            closed_cutpoints = cutpoints_separation( pose, ab_info_ );
-            ++cycle;
-        } // while( ( cut_separation > 1.9 )
         
-        TR <<  "H3M Finished modeling Fullatom CDR H3 loop" << std::endl;
-        
-        return;
-    } // build_fullatom_loop
-    
-
-    
-
-    
-    ///////////////////////////////////////////////////////////////////////////
-    /// @begin loop_fa_relax  //JQX: this is actually the H3_refinment
-    ///
-    /// @brief actually relaxes the region specified
-    ///
-    /// @detailed This is all done in high resolution.Hence there are no rigid
-    ///           body moves relative to the docking partners. Only small moves
-    ///           are carried out here to see if there are better fits.
-    ///           Repacking is carried out extensively after each move.
-    ///
-    /// @param[in] pose, loop begin position, loop end position
-    ///
-    /// @global_read none
-    ///
-    /// @global_write none
-    ///
-    /// @remarks
-    ///
-    /// @references
-    ///
-    /// @authors Aroop 02/04/2010
-    ///
-    /// @last_modified 02/04/2010
-    ///////////////////////////////////////////////////////////////////////////
-    void Ab_Relax_a_CDR_FullAtom::loop_fa_relax(
-                                      pose::Pose & pose_in,
-                                      Size const loop_begin,
-                                      Size const loop_end )
-    {
-        using namespace protocols;
-        using namespace protocols::simple_moves;
-        using namespace protocols::loops;
-        using namespace protocols::moves;
-        using namespace protocols::toolbox::task_operations;
-        using namespace pack;
-        using namespace pack::task;
-        using namespace pack::task::operation;
-        using loop_closure::ccd::CcdMover;
-        using loop_closure::ccd::CcdMoverOP;
-        
-        TR << "H3M Relaxing CDR H3 Loop" << std::endl;
-        
-        // storing starting fold tree
-        kinematics::FoldTree tree_in( pose_in.fold_tree() );
-        
-        //setting MoveMap
-        kinematics::MoveMapOP cdrh3_map;
-        cdrh3_map = new kinematics::MoveMap();
-        cdrh3_map->clear();
-        cdrh3_map->set_chi( false );
-        cdrh3_map->set_bb( false );
-        utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
-        for( Size ii = loop_begin; ii <= loop_end; ii++ )
-            allow_bb_move[ ii ] = true;
-        cdrh3_map->set_bb( allow_bb_move );
-        cdrh3_map->set_jump( 1, false );
-        
-        
-        // minimize_set_local_min( false, 0 );// all non-move-list rsds minimized
-        
-        Size loop_size = ( loop_end - loop_begin ) + 1;
-        Size cutpoint = loop_begin + int(loop_size/2);
-        if( current_loop_is_H3_ ) {
-            if( (antibody_build_ || antibody_refine_ ) &&
-               !min_base_relax_ && !h3_random_cut_ &&
-               (decoy_loop_cutpoint_ != 0))
-                cutpoint = decoy_loop_cutpoint_;
-            //else if( h3_random_cut_ )
-            //	cutpoint = dle_choose_random_cutpoint(loop_begin, loop_end);
-        }
-        else
-            cutpoint = loop_begin + Size( loop_size / 2);
-        /*
-         if( snug_fit_ && loops_flag_ && docking_local_refine_ &&
-         dle_flag_ ) {
-         one_loop = dle_ns::dle_loops;
-         }
-         else */
-        loops::Loop one_loop( loop_begin, loop_end,	cutpoint,	0, false );
-        
-        // sets up stuff to use rosetta's fullatom energy function
-        //initialize_fullatom();
-        // maximum number of rotamers to allow (buried, surface)
-        //set_rot_limit( 45, 27 );
-        // maximum sum for the dunbrak prob (buried,surf)
-        //set_perc_limit( 0.9999, 0.9999 );
-        // include extra rotamers in chi1/chi2/chi1aro
-        //design::active_rotamer_options.set_ex12( true, true, true);
-        // checking if old rosetta full atom flag is on
-        
-        if ( !pose_in.is_fullatom() )
-            utility_exit_with_message("Fullatom poses only");
-        
-        ChangeFoldTreeMoverOP one_loop_fold_tree;
-        ChangeFoldTreeMoverOP with_flank_fold_tree;
-        simple_fold_tree( pose_in, loop_begin - 1, cutpoint, loop_end + 1 );
-        one_loop_fold_tree = new ChangeFoldTreeMover( pose_in.fold_tree() );
-        with_flank_fold_tree = new ChangeFoldTreeMover( pose_in.fold_tree() );
-        
-        //////////////////
-        // setup fold_tree
-        utility::vector1< bool> flank_allow_bb_move( allow_bb_move  );
-        if( current_loop_is_H3_  && flank_relax_ && freeze_h3_) {
-            simple_fold_tree( pose_in, loop_begin - h3_flank_ - 1, cutpoint,
-                             loop_end + h3_flank_ + 1 );
-            with_flank_fold_tree = new ChangeFoldTreeMover( pose_in.fold_tree() );
-            for( Size i = 1; i <= pose_in.total_residue(); i++ )
-                if(  (i >= (loop_begin - h3_flank_)) && (i <= (loop_end + h3_flank_))   )
-                    flank_allow_bb_move[i] = true;
-        }
-        else
-            one_loop_fold_tree->apply( pose_in );
-        
-        // set cutpoint variants for correct chainbreak scoring
-        if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
-            if( !pose_in.residue( cutpoint ).has_variant_type(chemical::CUTPOINT_LOWER))
-                core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, cutpoint );
-            if( !pose_in.residue( cutpoint + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) )
-                core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, cutpoint + 1 );
-        }
-        
-        
-        
-        utility::vector1< bool> allow_repack( pose_in.total_residue(), false );
-        select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
-                             allow_repack);
-        cdrh3_map->set_chi( allow_repack );
-        
-        PackRotamersMoverOP loop_repack=new PackRotamersMover(highres_scorefxn_);
-
-        ( *highres_scorefxn_ )( pose_in );
-        tf_->push_back( new RestrictToInterface( allow_repack ) );
-        loop_repack->task_factory(tf_);
-        // loop_repack->apply( pose_in );
-        
-        Real min_tolerance = 0.001;
-        if( benchmark_ ) min_tolerance = 1.0;
-        std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
-        bool nb_list = true;
-        MinMoverOP loop_min_mover = new MinMover( cdrh3_map,
-                                                 highres_scorefxn_, min_type, min_tolerance, nb_list );
-        
-        // more params
-        Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
-        Size inner_cycles( loop_size );
-        Size outer_cycles( 1 );
-        if( antibody_refine_ || refine_input_loop_ )
-            outer_cycles = 5;
-        if( antibody_refine_ && snug_fit_ )
-            outer_cycles = 2;
-        if( benchmark_ ) {
-            n_small_moves = 1;
-            inner_cycles = 1;
-            outer_cycles = 1;
-        }
-        
-        Real high_move_temp = 2.00;
-        // minimize amplitude of moves if correct parameter is set
-        BackboneMoverOP small_mover = new SmallMover( cdrh3_map, high_move_temp, n_small_moves );
-        BackboneMoverOP shear_mover = new ShearMover( cdrh3_map, high_move_temp, n_small_moves );
-        if( min_base_relax_ ) {
-            small_mover->angle_max( 'H', 0.5 );
-            small_mover->angle_max( 'E', 0.5 );
-            small_mover->angle_max( 'L', 1.0 );
-            shear_mover->angle_max( 'H', 0.5 );
-            shear_mover->angle_max( 'E', 0.5 );
-            shear_mover->angle_max( 'L', 1.0 );
-        }
-        else {
-            small_mover->angle_max( 'H', 2.0 );
-            small_mover->angle_max( 'E', 5.0 );
-            small_mover->angle_max( 'L', 6.0 );
-            shear_mover->angle_max( 'H', 2.0 );
-            shear_mover->angle_max( 'E', 5.0 );
-            shear_mover->angle_max( 'L', 6.0 );
-        }
-        
-        CcdMoverOP ccd_moves = new CcdMover( one_loop, cdrh3_map );
-        RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
-        
-        SequenceMoverOP wiggle_cdr_h3( new SequenceMover() );
-        wiggle_cdr_h3->add_mover( one_loop_fold_tree );
-        wiggle_cdr_h3->add_mover( small_mover );
-        wiggle_cdr_h3->add_mover( shear_mover );
-        wiggle_cdr_h3->add_mover( ccd_cycle );
-        wiggle_cdr_h3->add_mover( with_flank_fold_tree );
-        
-        
-        cdrh3_map->set_bb( flank_allow_bb_move );
-        with_flank_fold_tree->apply( pose_in );
-        loop_min_mover->movemap( cdrh3_map );
-        loop_min_mover->apply( pose_in );
-        cdrh3_map->set_bb( allow_bb_move );
-        
-        // rotamer trials
-        select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
-                             allow_repack);
-        cdrh3_map->set_chi( allow_repack );
-        ( *highres_scorefxn_ )( pose_in );
-        tf_->push_back( new RestrictToInterface( allow_repack ) );
-        RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
-        
-        pack_rottrial->apply( pose_in );
-        
-        
-        Real const init_temp( 2.0 );
-        Real const last_temp( 0.5 );
-        Real const gamma = std::pow( (last_temp/init_temp), (1.0/inner_cycles));
-        Real temperature = init_temp;
-        
-        MonteCarloOP mc;
-        mc = new protocols::moves::MonteCarlo( pose_in, *highres_scorefxn_, temperature );
-        mc->reset( pose_in ); // monte carlo reset
-        
-        bool relaxed_H3_found_ever( false );
-        if( H3_filter_)
-            relaxed_H3_found_ever = CDR_H3_filter( pose_in,
-                                                  ab_info_->get_CDR_loop("h3"),
-                                                  is_camelid_
-                                                  );
-        
-        // outer cycle
-        for(Size i = 1; i <= outer_cycles; i++) {
-            mc->recover_low( pose_in );
-            Size h3_attempts(0); // number of H3 checks after refinement
+            // outer cycle
+            for(Size i = 1; i <= outer_cycles_; i++) {
+                mc_->recover_low( pose );
+                Size h3_attempts(0); // number of H3 checks after refinement
             
-            // inner cycle
-            for ( Size j = 1; j <= inner_cycles; j++ ) {
-                temperature *= gamma;
-                mc->set_temperature( temperature );
-                wiggle_cdr_h3->apply( pose_in );
-                cdrh3_map->set_bb( flank_allow_bb_move );
-                loop_min_mover->movemap( cdrh3_map );
-                loop_min_mover->apply( pose_in );
-                cdrh3_map->set_bb( allow_bb_move );
+                // inner cycle
+                for ( Size j = 1; j <= inner_cycles_; j++ ) {
+                    mc_->set_temperature( temperature*= gamma_ );
                 
-                // rotamer trials
-                select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
-                                     allow_repack);
-                cdrh3_map->set_chi( allow_repack );
-                ( *highres_scorefxn_ )( pose_in );
-                tf_->push_back( new RestrictToInterface( allow_repack ) );
-                RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
-                pack_rottrial->apply( pose_in );
+                    wiggle_cdr_h3_->apply( pose );
                 
-                bool relaxed_H3_found_current(false);
-                // H3 filter check
-                if(H3_filter_ && (h3_attempts <= inner_cycles)) {
-                    h3_attempts++;
-                    relaxed_H3_found_current = CDR_H3_filter(pose_in,
-                                                             ab_info_->get_CDR_loop("h3"),
-                                                             is_camelid_);
+                    // rotamer trials
+                    select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
+                    setup_packer_task( start_pose_, tf_ );
+                    ( *highres_scorefxn_ )( pose );
+                    tf_->push_back( new RestrictToInterface( allow_repack_ ) );
+                    pack_rottrial->task_factory(tf_);
+                    pack_rottrial->apply( pose );
+                
+                    bool relaxed_H3_found_current(false);
+                    // H3 filter check
+                    if(H3_filter_ && (h3_attempts <= inner_cycles_)) {
+                        h3_attempts++;
+                        relaxed_H3_found_current = CDR_H3_filter(pose, the_loop_, is_camelid_);
                     
-                    if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
-                        mc->boltzmann( pose_in );
-                    }
-                    else if( !relaxed_H3_found_ever && relaxed_H3_found_current ) {
-                        relaxed_H3_found_ever = true;
-                        mc->reset( pose_in );
-                    }
-                    else if( relaxed_H3_found_ever && !relaxed_H3_found_current ) {
-                        --j;
-                        continue;
-                    }
-                    else if( relaxed_H3_found_ever && relaxed_H3_found_current )
-                        mc->boltzmann( pose_in );
-                }
-                else {
-                    if( H3_filter_ ) {
-                        bool relaxed_H3_found_current(false);
-                        relaxed_H3_found_current = CDR_H3_filter(pose_in,
-                                                                 ab_info_->get_CDR_loop("h3"), 
-                                                                 is_camelid_);
                         if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
-                            mc->boltzmann( pose_in );
+                            mc_->boltzmann( pose );
                         }
                         else if( !relaxed_H3_found_ever && relaxed_H3_found_current ) {
                             relaxed_H3_found_ever = true;
-                            mc->reset( pose_in );
+                            mc_->reset( pose );
                         }
                         else if( relaxed_H3_found_ever && !relaxed_H3_found_current ) {
-                            mc->recover_low( pose_in );
+                            --j;
+                            continue;
                         }
-                        else if( relaxed_H3_found_ever && relaxed_H3_found_current )
-                            mc->boltzmann( pose_in );
+                        else if( relaxed_H3_found_ever && relaxed_H3_found_current ){
+                            mc_->boltzmann( pose );
+                        }
                     }
-                    else
-                        mc->boltzmann( pose_in );
-                }
+                    else {
+                        if( H3_filter_ ) {
+                            bool relaxed_H3_found_current(false);
+                            relaxed_H3_found_current = CDR_H3_filter(pose,the_loop_, is_camelid_);
+                            if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
+                                mc_->boltzmann( pose );
+                            }
+                            else if( !relaxed_H3_found_ever && relaxed_H3_found_current ) {
+                                relaxed_H3_found_ever = true;
+                                mc_->reset( pose );
+                            }
+                            else if( relaxed_H3_found_ever && !relaxed_H3_found_current ) {
+                                mc_->recover_low( pose );
+                            }
+                            else if( relaxed_H3_found_ever && relaxed_H3_found_current ){
+                                mc_->boltzmann( pose );
+                            }
+                        }
+                        else{
+                            mc_->boltzmann( pose );
+                        }
+                    }
                 
-                if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
-                    // repack trial
-                    loop_repack = new PackRotamersMover( highres_scorefxn_ );
-                    ( *highres_scorefxn_ )( pose_in );
-                    tf_->push_back( new RestrictToInterface( allow_repack ) );
-                    loop_repack->task_factory( tf_ );
-                    loop_repack->apply( pose_in );
-                    mc->boltzmann( pose_in );
-                }
-            } // inner cycles
-        } // outer cycles
-        mc->recover_low( pose_in );
+                    if ( numeric::mod(j,Size(20))==0 || j==inner_cycles_ ) {
+                        // repack trial
+                        loop_repack_ = new PackRotamersMover( highres_scorefxn_ );
+                        setup_packer_task( start_pose_, tf_ );
+                        ( *highres_scorefxn_ )( pose );
+                        tf_->push_back( new RestrictToInterface( allow_repack_ ) );
+                        loop_repack_->task_factory( tf_ );
+                        loop_repack_->apply( pose );
+                        mc_->boltzmann( pose );
+                    }
+                
+                
+                } // inner 
+            } // outer
+            mc_->recover_low( pose );
+
+            // minimize
+            change_FT_to_flankloop_->apply( pose );
+            loop_min_mover_->apply( pose );
         
-        // minimize
-        if( !benchmark_ ) {
-            cdrh3_map->set_bb( flank_allow_bb_move );
-            with_flank_fold_tree->apply( pose_in );
-            loop_min_mover->movemap( cdrh3_map );
-            loop_min_mover->apply( pose_in );
-            cdrh3_map->set_bb( allow_bb_move );
-        }
-        
-        // Restoring pose stuff
-        pose_in.fold_tree( tree_in ); // Tree
-        
-        TR << "H3M Finished Relaxing CDR H3 Loop" << std::endl;
-        
-        return;
-    } //  CDRH3Modeler2::loop_fa_relax
 
 
+
+            closed_cutpoints = cutpoints_separation( pose, ab_info_ );
+            ++cycle;
+    } // while( ( cut_separation > 1.9 )
+        
+    TR << "Finished Relaxing CDR H3 Loop" << std::endl;
+        
+    return;
     
+} 
     
+
     
+
     
+
 
 
 
 } // namespace antibody2
 } // namespace protocols
+
+
+
+
+
+
+
+
 
 
 
@@ -624,7 +543,7 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
     bool closed_cutpoints( false );
  
     Size cycle( 1 );
-    while( !closed_cutpoints && cycle<max_cycle_ ) {
+    while( !closed_cutpoints && cycle<max_cycle_close_trial_ ) {
         ab_info_ = starting_antibody;
         loop_fa_relax( pose, ab_info_.get_CDR_loop("h3")->start(),
         ab_info_.get_CDR_loop("h3")->stop()-1 + base_ );
@@ -651,7 +570,7 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
     bool closed_cutpoints( false );
  
     Size cycle (1 );
-    while( !closed_cutpoints && cycle < max_cycle_ ) {
+    while( !closed_cutpoints && cycle < max_cycle_close_trial_ ) {
         ab_info_ = starting_antibody;
         loop_fa_relax( pose_in, ab_info_.get_CDR_loop("h2")->start(),
         ab_info_.get_CDR_loop("h2")->stop()  );

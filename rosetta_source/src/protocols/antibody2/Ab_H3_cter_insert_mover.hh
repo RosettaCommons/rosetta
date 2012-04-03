@@ -27,6 +27,7 @@
 #include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/PyMolMover.fwd.hh>
 
 
 
@@ -63,6 +64,10 @@ public:
     // read CDR H3 C-terminal fragments (size: 4)
     void read_H3_cter_fragment( bool is_camelid);
     
+    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
+        use_pymol_diy_ = true;
+        pymol_ = pymol;
+    }
     
 private:
     
@@ -70,11 +75,11 @@ private:
 	utility::vector1< core::fragment::FragData > H3_base_library_;
    
     Ab_InfoOP ab_info_;
-
-    /// @brief insert C-terminal fragments
-    void antibody_modeling_insert_ter( core::pose::Pose & pose) ;
     
     bool user_defined_;
+    
+    bool use_pymol_diy_;
+    moves::PyMolMoverOP pymol_;
         
     /// @brief benchmark flag
 	bool benchmark_;

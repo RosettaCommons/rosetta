@@ -31,6 +31,7 @@
 #include <protocols/antibody2/Ab_Info.fwd.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
+#include <protocols/moves/PyMolMover.fwd.hh>
 
 
 
@@ -94,6 +95,8 @@ public:
         do_cter_insert_ = false;
     }
     
+    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol);
+    
 private:
 	bool user_defined_;
 	core::pose::Pose start_pose_;
@@ -116,6 +119,9 @@ private:
 	core::Size c_ter_stem_;
     
     core::Size max_cycle_;
+    
+    bool use_pymol_diy_;
+    moves::PyMolMoverOP pymol_;
 
 	// score functions
 	core::scoring::ScoreFunctionOP lowres_scorefxn_;

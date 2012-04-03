@@ -59,11 +59,11 @@ void setup_simple_fold_tree(
     
 bool CDR_H3_filter(
                        const core::pose::Pose & pose_in,
-                       loops::LoopOP input_loop,
+                       loops::Loop & input_loop,
                        bool is_camelid);
     
     
-//void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactoryOP tf );
+void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactoryOP & tf );
 
     
     
@@ -77,7 +77,7 @@ bool cutpoints_separation( core::pose::Pose & pose, Ab_InfoOP & antibody_info );
 // Compute the separation at the cutpoint. The N-C distance of the
 // peptide bond which should be formed at the cutpoint. A closed loop is
 // assumed to have a gap < 1.9 Ang
-core::Real cutpoint_separation(core::pose::Pose & pose_in, core::Size cutpoint);
+core::Real cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 
     
     

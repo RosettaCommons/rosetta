@@ -28,6 +28,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/moves/PyMolMover.fwd.hh>
 
 #include <protocols/antibody2/Ab_H3_Model_CDR_H3.fwd.hh>
 #include <protocols/antibody2/Ab_Info.hh>
@@ -109,7 +110,9 @@ public:
 
 private:
     bool model_h3_;
+    bool extreme_repacking_;
 	bool snugfit_;
+    bool refine_h3_;
 	bool camelid_;
 	bool camelid_constraints_;
     bool H3_filter_;
@@ -120,6 +123,11 @@ private:
 	bool antibody_refine_;
     core::Real high_cst_;
 
+    moves::PyMolMoverOP pymol_;
+    bool use_pymol_diy_;
+
+    
+    
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;
 

@@ -87,6 +87,7 @@ public:
     void detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose );
 	void detect_and_set_camelid_CDR_H3_stem_type();
 	void detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose );
+    
     void get_CDRs_numbering();
 	void set_default( bool camelid );
     void identify_CDR_from_a_sequence(std::string & querychain);

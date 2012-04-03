@@ -64,8 +64,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DiagnosticData.hh>
 
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-
 #include <protocols/jd2/ScoreMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -148,7 +146,9 @@ void Ab_H3_Modeler_full_protocol::set_default()
 {
 	TR <<  "Setting Up defaults.........." << std::endl;
     model_h3_  = true;
+    extreme_repacking_ =  true;
 	snugfit_   = true;
+    refine_h3_ = true;
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
@@ -156,6 +156,7 @@ void Ab_H3_Modeler_full_protocol::set_default()
     high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
     H3_filter_ = true;
     cter_insert_ = true;
+    use_pymol_diy_ = true;
 }
 
     
@@ -243,6 +244,8 @@ Ab_H3_Modeler_full_protocol::setup_objects() {
 	sync_objects_with_flags();
     
     tf_ = new pack::task::TaskFactory;
+    pymol_ = new protocols::moves::PyMolMover;
+    pymol_->keep_history(true);
 
 }
     
@@ -281,7 +284,7 @@ Ab_H3_Modeler_full_protocol::finalize_setup( pose::Pose & frame_pose )
 
 	// check for native and input pose
 	if ( !get_input_pose() ) {
-		pose::PoseOP input_pose = new pose::Pose(frame_pose);  //JQX: QUESTION: why owning pointer here
+		pose::PoseOP input_pose = new pose::Pose(frame_pose); 
 		set_input_pose( input_pose );   // JQX: pass the input_pose to the mover.input_pose_
 	}
 
@@ -304,11 +307,8 @@ Ab_H3_Modeler_full_protocol::finalize_setup( pose::Pose & frame_pose )
     TR<<*ab_info_<<std::endl;
     
     model_cdrh3_ = new Ab_H3_Model_CDR_H3(camelid_, benchmark_, ab_info_ );
-    model_cdrh3_->set_native_pose( get_native_pose() );	
     
-    
-    
-    
+
 
     
     
@@ -349,8 +349,8 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
     // the default inital secstruct is all "L" loop!
     start_pose_ = frame_pose;
     
-    protocols::moves::PyMolMover pymol;
-    pymol.keep_history(true);
+
+
     if ( !flags_and_objects_are_in_sync_ ){ 
        sync_objects_with_flags(); 
     }
@@ -368,8 +368,6 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
 
 	pose::set_ss_from_phipsi( frame_pose );
     
-//	pymol.apply( frame_pose );
-//	pymol.send_energy( frame_pose );
 
 	// display constraints and return
 	if( camelid_constraints_ ) {
@@ -378,38 +376,27 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
 	}
 
 
-    //JQX:
-    //Make the classes in the modules described in the flow chart of 
-    //the paper:
-    
-    if(model_h3_){
 
-        // Step 1: model the cdr h3: 
-        //  notes: pay attention to the way it treats the stems
-        
-        if(cter_insert_==false) { model_cdrh3_->turn_off_cter_insert(); }
-        if(H3_filter_  ==false) { model_cdrh3_->turn_off_H3_filter();   }
+
+    // Step 1: model the cdr h3
+    // JQX notes: pay attention to the way it treats the stems when extending the loop
+    if(use_pymol_diy_) pymol_->apply(frame_pose);
+    if(model_h3_){        
+        if(cter_insert_   ==false) { model_cdrh3_->turn_off_cter_insert(); }
+        if(H3_filter_     ==false) { model_cdrh3_->turn_off_H3_filter();   }
         model_cdrh3_->set_task_factory(tf_);
+        if(use_pymol_diy_) model_cdrh3_->turn_on_and_pass_the_pymol(pymol_);
         model_cdrh3_->apply( frame_pose );
-//        exit(-1);
-	return;
-        pymol.apply( frame_pose );
-        pymol.send_energy( frame_pose );
-    
-    
-        
-        // Step 2: packing the CDRs
-        relax_cdrs( frame_pose );
-        pymol.apply( frame_pose );
-        pymol.send_energy( frame_pose );
     }
     
+    // Step 2: packing the CDRs
+    extreme_repacking_ = false;
+    if(extreme_repacking_) { relax_cdrs( frame_pose );    }
+    if(use_pymol_diy_) pymol_->apply(frame_pose);
     
     
-    
-    
+    snugfit_ = false;
 	// Step 3: SnugFit: relieve the clashes between L-H
-    
 	if ( !camelid_ && snugfit_ ) {
 		all_cdr_VL_VH_fold_tree( frame_pose, ab_info_->all_cdr_loops_ );
         
@@ -417,20 +404,12 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
         Ab_LH_RepulsiveRamp_Mover ab_lh_repulsiveramp_mover (ab_info_->all_cdr_loops_);
         ab_lh_repulsiveramp_mover.set_task_factory(tf_);
         ab_lh_repulsiveramp_mover.apply(frame_pose);
-            //repulsive_ramp ( frame_pose, ab_info_.all_cdr_loops_ );
-		pymol.apply( frame_pose );
-		pymol.send_energy( frame_pose );
-        
-        // turn on repulsive
+
         //$$$$$$$$$$$$$$$$$$$$$$$$$
         Ab_LH_SnugFit_Mover ab_lh_snugfit_mover(ab_info_->all_cdr_loops_); 
         ab_lh_snugfit_mover.set_task_factory(tf_);
         ab_lh_snugfit_mover.apply(frame_pose);
-            //snugfit_mcm_protocol ( frame_pose, ab_info_.all_cdr_loops_ );
-		pymol.apply( frame_pose );
-		pymol.send_energy( frame_pose );
-        // turn off repulsive
-        //$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
         //TODO: 
         //JQX: need to read creafully these two functions, maybe they should be merged into one class
@@ -442,25 +421,23 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
 		antibody2::Ab_Info native_ab( native_pose, camelid_ );
 //		ab_info_.align_to_native( pose, native_ab, native_pose );
 	}
-	pymol.apply( frame_pose );
-	pymol.send_energy( frame_pose );
 
-    
-    
     
     
 	// Step 4: Full Atom Relax 
-
+    if(refine_h3_){
         //$$$$$$$$$$$$$$$$$$$$$$$$
-        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(true/*current_loop_is_H3_*/, true/*H3_filter_*/, ab_info_); 
+        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(ab_info_, "h3"); 
         relax_a_cdr_high_res.set_task_factory(tf_);
         relax_a_cdr_high_res.pass_start_pose(start_pose_);
+        if(use_pymol_diy_) relax_a_cdr_high_res.turn_on_and_pass_the_pymol(pymol_);
         relax_a_cdr_high_res.apply(frame_pose);
-        //build_fullatom_loop( pose_in );
+        frame_pose.dump_pdb("finish_h3_refinement.pdb");
+
+
         //$$$$$$$$$$$$$$$$$$$$$$$$$
         if( !benchmark_ ) 
         {
-            
             Size repack_cycles(1);
             if( antibody_refine_ && !snugfit_ ){repack_cycles = 3;}
             protocols::simple_moves::PackRotamersMoverOP packer;
@@ -469,27 +446,26 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
             packer->nloop( repack_cycles );
             packer->apply( frame_pose );
         }
-    
-    
+        if(use_pymol_diy_) pymol_->apply(frame_pose);
+
+        return;
         // Minimize CDR H2 loop if this is a camelid
     
         if( camelid_ ) {
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-            Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(false, false, camelid_, ab_info_); // because of h2
+            Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(camelid_, ab_info_); // because of h2
+            //relax_a_cdr_high_res.turn_off_h3_default();
+            relax_a_cdr_high_res.turn_off_h3_filter();
             relax_a_cdr_high_res.apply(frame_pose);
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         
             //JQX: remove the duplicated code, camelid H2 will be automatically taken care of
             //     see the code in Ab_Relax_a_CDR_FullAtom file
         }
+    }
     
     
-    
-    
-    
-    
-    
-    
+
     
 	// Step 5: Store the homolgy models
     
@@ -555,15 +531,6 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
 ///           states before exiting the routine. Similarly the fold tree
 ///           and jump movements are restored to their initial states
 ///
-/// @param[out]
-///
-/// @global_read
-///
-/// @global_write
-///
-/// @remarks
-///
-/// @references
 ///
 /// @authors Aroop 02/15/2010
 ///
@@ -825,7 +792,6 @@ std::ostream & operator<<(std::ostream& out, const Ab_H3_Modeler_full_protocol &
     out << line_marker << "  H3_filter   : " << ab_m_2.H3_filter_   << std::endl;
 
 
-        
     // Close the box I have drawn
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;

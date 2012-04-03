@@ -215,7 +215,7 @@ namespace antibody2{
     //JQX:
     //work with Daisuke to put the L89 creteria into the code
     
-    bool CDR_H3_filter(const pose::Pose & pose_in, loops::LoopOP input_loop, bool is_camelid)
+    bool CDR_H3_filter(const pose::Pose & pose_in, loops::Loop & input_loop, bool is_camelid)
     {
 
         
@@ -241,8 +241,8 @@ namespace antibody2{
         
         // chop out the loop: 
         //JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
-        Size start(input_loop->start()-2);
-        Size stop(input_loop->stop()+1);
+        Size start(input_loop.start()-2);
+        Size stop(input_loop.stop()+1);
         
         
         bool is_kinked( false );
@@ -401,7 +401,6 @@ namespace antibody2{
     
     
     
-    /*
     
     //TODO:
     //JQX:
@@ -411,20 +410,12 @@ namespace antibody2{
     // can be changed in this function. If not, maybe this function should return a 
     // pointer
     
-    void setup_packer_task(pose::Pose & pose_in, core::pack::task::TaskFactoryOP tf ) 
+    void setup_packer_task(pose::Pose & pose_in, core::pack::task::TaskFactoryOP & tf ) 
     {
 		using namespace pack::task;
 		using namespace pack::task::operation;
         
-//		if( init_task_factory_ ) {
-//			tf = new TaskFactory( *init_task_factory_ );
-//			TR << "AbModeler Reinitializing Packer Task" << std::endl;
-//			return;
-//		}
-//		else{
-//			tf = new TaskFactory;
-//        }
-//
+
         tf->clear();
         tf = new TaskFactory;
         
@@ -441,18 +432,20 @@ namespace antibody2{
 		// note that nothing happens if unboundrot option is inactive!
 		pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
 		unboundrot->initialize_from_command_line();
+        
 		operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
 		tf->push_back( unboundrot_operation );
+        
 		// adds scoring bonuses for the "unbound" rotamers, if any
 		core::pack::dunbrack::load_unboundrot( pose_in );
         
-//		init_task_factory_ = tf;
+
         
 		TR << "Utility: Done: Setting Up Packer Task" << std::endl;
         
 	} // setup_packer_task
 
-    */
+
 
     
     

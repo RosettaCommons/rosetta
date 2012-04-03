@@ -167,6 +167,7 @@ void Ab_H3_Model_CDR_H3::set_default()
 	dle_flag_ = true;
 	refine_input_loop_ = true;
 	is_camelid_ = false;
+    use_pymol_diy_ =false;
     c_ter_stem_ = 3;
     max_cycle_ = 20;
     
@@ -211,13 +212,16 @@ void Ab_H3_Model_CDR_H3::turn_off_H3_filter(){
     h3_perturb_ccd_build_->turn_off_H3_filter();
 }    
 
-    
+void Ab_H3_Model_CDR_H3::turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){        
+    use_pymol_diy_ = true;
+    pymol_ = pymol;
+    h3_cter_insert_mover_->turn_on_and_pass_the_pymol(pymol);
+    h3_perturb_ccd_build_->turn_on_and_pass_the_pymol(pymol);
+}
     
 
 void Ab_H3_Model_CDR_H3::apply( pose::Pose & pose_in )
 {
-        protocols::moves::PyMolMover pymol;
-        pymol.keep_history(true);
 
 
     TR << "Applying CDR H3 modeler" << std::endl;
@@ -260,10 +264,8 @@ void Ab_H3_Model_CDR_H3::apply( pose::Pose & pose_in )
     
     
     // Building centroid mode loop
-    pose_in.dump_pdb("right_before_centroid.pdb");
     to_centroid.apply( pose_in );
-//    pymol.apply(pose_in);
-    pose_in.dump_pdb("just_centroid.pdb");
+//    pymol_->apply(pose_in);
 
     
     // some initialization before you do h3 loop modeling
