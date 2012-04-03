@@ -17,20 +17,6 @@ sources = {
 		"FlexPepDockingPoseMetrics",
 		"FlexPepDockingProtocol",
 	],
-	"protocols/loophash": [
-		"BackboneDB",
-		"FastGapMover",
-		"LocalInserter",
-		"LoopHashLibrary",
-		"LoopHashMap",
-		"LoopHashMoverWrapper",
-		"LoopHashSampler",
-		"Mover_LoopHashRefine",
-		"MPI_LoopHashRefine",
-		"MPI_LoopHashRefine_Emperor",
-		"MPI_LoopHashRefine_Master",
-		"WorkUnit_LoopHash",
-	],
 }
 include_path = [
 ]
