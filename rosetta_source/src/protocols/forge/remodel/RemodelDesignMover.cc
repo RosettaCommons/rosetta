@@ -210,8 +210,8 @@ void RemodelDesignMover::apply( Pose & pose )
 	}
 
 	//debug
-	TR.Debug << working_model_.task->task_string(pose) << std::endl;
-	TR.Debug << *working_model_.task << std::endl;
+	//TR.Debug << working_model_.task->task_string(pose) << std::endl;
+	//TR.Debug << *working_model_.task << std::endl;
 
 	core::pack::pack_rotamers(pose, *score_fxn_ , working_model_.task);
 	score_fxn_->show(TR, pose);

@@ -1,4 +1,3 @@
-namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
@@ -603,3 +602,5 @@ namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_
 namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
+namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
+namespace lh { StringOptionKey const jobname( "lh:jobname" );  }

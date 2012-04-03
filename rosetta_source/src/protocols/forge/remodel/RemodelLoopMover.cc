@@ -34,6 +34,9 @@
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
+
+#include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -47,6 +50,13 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+
+//loophash
+#include <protocols/loophash/BackboneDB.hh>
+#include <protocols/loophash/LoopHashLibrary.hh>
+#include <protocols/loophash/LoopHashLibrary.fwd.hh>
+#include <protocols/loophash/LoopHashMap.hh>
+
 
 //#include <basic/options/keys/Remodel.OptionKeys.gen.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
@@ -508,11 +518,17 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			mc.reset(pose);
 	}
 
+
+
 	for ( Size attempt = 1; attempt <= allowed_closure_attempts_; ++attempt ) {
 		TR << "* closure_attempt " << attempt << std::endl;
 
 		// reset score function at the beginning of each attempt
 		mc.score_function( *sfxOP );
+
+		if (basic::options::option[ OptionKeys::remodel::RemodelLoopMover::use_loop_hash].user()) {
+			loophash_stage(pose, mc, cbreak_increment );
+		}
 
 		// simultaneous loop movements using fragment + ccd_move (default 20% of the time)
 		simultaneous_stage( pose, mc, cbreak_increment );
@@ -621,7 +637,13 @@ RemodelLoopMover::get_name() const {
 
 /// @brief randomize loops
 void RemodelLoopMover::randomize_stage( Pose & pose ) {
+
+	using core::kinematics::FoldTree;
+
 	TR << "** randomize_stage" << std::endl;
+
+	// archive
+	FoldTree const archive_ft = pose.fold_tree();
 
 	// simul movemap -- all loops moveable
 	MoveMap movemap;
@@ -654,6 +676,9 @@ void RemodelLoopMover::randomize_stage( Pose & pose ) {
 	}
 
 	check_closure_criteria( pose, true );
+
+	//return original foldtree
+	pose.fold_tree(archive_ft);
 }
 
 
@@ -710,6 +735,360 @@ void RemodelLoopMover::insert_random_smallestmer_per_loop(
 	}
 }
 
+/// @brief independent stage: single loop movement prior to MC accept/reject
+void RemodelLoopMover::loophash_stage(
+	Pose & pose,
+	MonteCarlo & mc,
+	Real const cbreak_increment
+)
+{
+	using protocols::forge::methods::linear_chainbreak;
+	using protocols::loops::add_cutpoint_variants;
+	using namespace basic::options;
+	using namespace OptionKeys::remodel;
+	using namespace protocols::loophash;
+	using namespace numeric::geometry::hashing;
+	using protocols::loops::loop_closure::ccd::ccd_moves;
+	using protocols::loops::remove_cutpoint_variants;
+
+	TR << "** LoopHash_stage" << std::endl;
+	pose.dump_pdb("loophashstart.pdb");
+
+	Pose const constantPose(pose); //needed this because get_rt function for loophash doesn't honor the cut positions needed to build the loop.
+
+
+	// setup loops
+	loops::LoopsOP loops_to_model = determine_loops_to_model( pose );
+	TR << "   n_loops = " << loops_to_model->size() << std::endl;
+
+	if ( loops_to_model->size() == 0 ) { // nothing to do...
+		return;
+	}
+
+	utility::vector1<core::Size> loopsizes;
+	loopsizes.push_back(10);
+
+
+	//test loophashing
+	LoopHashLibraryOP loop_hash_library = new LoopHashLibrary ( loopsizes, 1, 0 );
+	std::cout << "initialize loophash" << std::endl;
+
+
+	// parameters
+	Size const n_standard_cycles = total_standard_cycles();
+	Size const max_outer_cycles = independent_cycles();
+
+	// per-loop frag + ccd_move
+	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
+		Loop & loop = *l;
+
+
+		//special: just for loophashing
+		loop.set_cut(loop.stop()); //1 because remodel needs one residue flanking
+
+		// alter cutpoint to one before the end of the loop (either direction,
+		// based on option) if closure is bypassed.  this is already set in VLB,
+		// but reenforce here.
+		if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+		//	if (option[OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user()){
+		//		loop.set_cut(loop.start()+1); //1 because remodel needs one residue flanking
+		//	}
+		//	else {
+		//	}
+		}
+
+
+		// movemap
+		MoveMap movemap;
+		mark_loop_moveable( loop, movemap, true );
+		enforce_false_movemap( movemap );
+
+		// fragment movers
+		FragmentMoverOPs frag_movers = create_fragment_movers( movemap );
+		assert( !frag_movers.empty() );
+
+		// parameters
+		Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
+		Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
+
+		// set appropriate topology
+		if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
+		}
+		else {
+			if ( core::pose::symmetry::is_symmetric( pose ) ) {
+				protocols::loops::set_single_loop_fold_tree( pose, loop );
+			} else {
+				protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
+			}
+		}
+
+		//fix geometry for junction
+		for (Size jxn=loop.start(); jxn <=loop.stop()-1; jxn++){
+			//std::cout << "fix junction at " << jxn << std::endl;
+			pose.conformation().insert_ideal_geometry_at_polymer_bond(jxn);
+		}
+
+		//pose.dump_pdb("fix_junction.pdb");
+		// add cutpoint variants
+		add_cutpoint_variants( pose );
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+			mc.reset(repeat_pose_);
+		}	else{
+		mc.reset( pose );
+		}
+		// reset counters
+		mc.reset_counters();
+
+		// now LoopHash specific
+		//testing
+		//	loopsizes.push_back(15);
+
+		Size loopsize = loopsizes[1];
+
+		loop_hash_library->load_mergeddb();
+		//std::cout << "load merged db finish" << std::endl;
+		//	std::cout << pose.fold_tree()<< std::endl;
+
+
+
+		// if input is index and offset, go grab the angles
+
+		//container for the actual fragments to use
+		std::vector < BackboneSegment > bs_vec_;
+
+		const BackboneDB & bbdb_ = loop_hash_library->backbone_database();
+
+		Real6 loop_transform;
+
+		PoseOP pose_for_rt = new Pose(constantPose); //probably redundant, but const pose can't change foldtree.
+
+		core::kinematics::FoldTree f;
+		f.simple_tree(pose_for_rt->total_residue());
+		pose_for_rt->fold_tree(f);
+
+		//pose_for_rt->dump_pdb("pose_for_rt.pdb");
+
+		//potentially throwing error if this step below doesn't pass
+		//std::cout << "start " << loop.start() << " stop " << loop.stop() << std::endl;
+		TR << "loophashing from " << loop.start()-1 << " to " << loop.stop()+1 << " using " << loop.stop()+1 - (loop.start()-1) << " residue loops." << std::endl;
+
+		get_rt_over_leap_fast( *pose_for_rt, loop.start()-1, loop.stop()+1, loop_transform);
+
+		/*
+		std::cout << sqrt((loop_transform[1]* loop_transform[1]) + (loop_transform[2]*loop_transform[2]) + (loop_transform[3]*loop_transform[3])) << std::endl;
+		std::cout << loop_transform[1] << std::endl;
+		std::cout << loop_transform[2] << std::endl;
+		std::cout << loop_transform[3] << std::endl;
+		 */
+
+
+		BackboneSegment backbone_;
+		LoopHashMap &hashmap = loop_hash_library->gethash(loopsize);
+
+		std::vector < core::Size > leap_index_list;
+
+		TR << "radius = ";
+		for (Size radius = 0; radius <= 5 ; radius++ ){
+			hashmap.radial_lookup( radius, loop_transform, leap_index_list );
+			TR << radius << "... ";
+			if (leap_index_list.size() < 100){ //making sure at least harvest one segment to build.
+				continue;
+			} else {
+				break;
+			}
+		}
+		TR << std::endl;
+
+
+
+		//std::cout << "hash lookup finish" << std::endl;
+
+		//not doing shuffle for now
+		//std::random_shuffle( leap_index_list.begin(), leap_index_list.end() );
+
+		TR << "collected " << leap_index_list.size() << " fragments." << std::endl;
+
+		for( std::vector < core::Size >::const_iterator itx = leap_index_list.begin(); itx != leap_index_list.end(); ++itx ){
+					core::Size bb_index = *itx;
+					LeapIndex cp = hashmap.get_peptide( bb_index );
+					bbdb_.get_backbone_segment( cp.index, cp.offset , loopsize , backbone_ );
+					bs_vec_.push_back( backbone_ );
+		}
+
+		if( bs_vec_.size() == 0 ) {
+					TR << "No frags matched" << std::endl;
+		}
+		else {
+					//output_pdb(bs_vec_, loopsize, out_path, utility::to_string(key[i]) + ".");
+		}
+
+
+		// do closure
+		for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
+
+			// increment the chainbreak weight
+			ScoreFunctionOP sfxOP = mc.score_function().clone();
+			sfxOP->set_weight(
+				core::scoring::linear_chainbreak,
+				sfxOP->get_weight( core::scoring::linear_chainbreak ) + cbreak_increment
+			);
+
+			if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
+			}
+
+			if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+		//	sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
+			sfxOP->set_weight(
+				core::scoring::atom_pair_constraint,
+				sfxOP->get_weight( core::scoring::atom_pair_constraint) + cbreak_increment
+			);
+		}
+
+			mc.score_function( *sfxOP );
+
+			// recover low
+			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			Size copy_size =0;
+		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+				copy_size = pose.total_residue()-1;
+			} else {
+				copy_size = pose.total_residue();
+			}
+				for (Size res = 1; res<=copy_size; res++){
+					pose.set_phi(res,mc.lowest_score_pose().phi(res));
+					pose.set_psi(res,mc.lowest_score_pose().psi(res));
+					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				}
+			}
+			else{
+				pose = mc.lowest_score_pose();
+			}
+
+			// currently it seems the collection of loops aren't too many.  So run through them all, or whatever cycle defined by n_standard_cycles
+				//for ( Size inner = 1; inner <= 1; ++inner ) {
+				// fragments
+				//pose.dump_pdb("loophash0.pdb");
+
+				if ( loop.is_terminal( pose ) || RG.uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
+
+					//again, no shuffling in early development stage
+					//random_permutation( bs_vec_.begin(), bs_vec_.end(), RG );
+					//int j = 1; //for debug dumping PDBs
+					for ( std::vector< BackboneSegment >::iterator i = bs_vec_.begin(), ie = bs_vec_.end(); i != ie; ++i) {
+
+						std::vector<core::Real> phi = (*i).phi();
+						std::vector<core::Real> psi = (*i).psi();
+						std::vector<core::Real> omega = (*i).omega();
+						Size seg_length = (*i).length();
+
+						/*
+						Pose test_segment;
+						core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+						core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+						for (Size i = 1; i<=14; i++){
+
+							test_segment.append_residue_by_bond( *new_rsd, true );
+
+						}
+
+						for ( Size i = 1; i <= seg_length; i++){
+							test_segment.set_phi( i, phi[i-1]);
+							test_segment.set_psi( i, psi[i]);
+							test_segment.set_omega( i, omega[i]);
+						}
+
+
+						(*i).apply_to_pose(test_segment,3);
+
+						std::string name = "segment" + utility::to_string(j) + ".pdb";
+
+						test_segment.dump_pdb(name);
+						*/
+
+
+						//insert hashed loop segment: relic, in case insertion indexing should change.
+						//pose.set_phi( loop.start()-1, phi[0]);
+						//pose.set_psi( loop.start()-1, psi[0]);
+						//pose.set_omega( loop.start()-1, omega[0]);
+
+						for ( Size i = 0; i < seg_length-1; i++){
+							Size ires = (int)loop.start()-1+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+							if (ires > pose.total_residue() ) break;
+						//	std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
+							pose.set_phi( ires, phi[i]);
+							pose.set_psi( ires, psi[i]);
+							pose.set_omega( ires, omega[i]);
+						}
+ 						//name = "dump" + utility::to_string(j) + ".pdb";
+						//j++;
+						//pose.dump_pdb(name);
+
+						if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+							repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+							mc.boltzmann( repeat_pose_, "loophash" );
+						}else {
+							mc.boltzmann( pose, "loophash" );
+						}
+					}
+				} else { // ccd
+					if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+						ccd_moves( 10, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
+					}
+					if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+					//	Pose temp_pose(pose);
+						repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+						mc.boltzmann( repeat_pose_, "ccd_move" );
+					//	pose=temp_pose;
+					}else {
+					mc.boltzmann( pose, "ccd_move" );
+					}
+				}
+
+		//	} // inner_cycles
+
+		} // outer_cycles
+
+		// recover low
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			Size copy_size =0;
+		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+				copy_size = pose.total_residue()-1;
+			} else {
+				copy_size = pose.total_residue();
+			}
+				for (Size res = 1; res<=copy_size; res++){
+					pose.set_phi(res,mc.lowest_score_pose().phi(res));
+					pose.set_psi(res,mc.lowest_score_pose().psi(res));
+					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+					//mc.lowest_score_pose().dump_pdb("independent_stage.pdb");
+				}
+		} else{
+				pose = mc.lowest_score_pose();
+		}
+
+		// report status
+	//	mc.score_function().show_line_headers( TR );
+//	TR << std::endl;
+
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+	//		mc.score_function().show_line( TR, repeat_pose_ );
+			mc.score_function().show( TR, repeat_pose_ );
+	//	repeat_pose_.dump_scored_pdb("checkRepeat2.pdb", mc.score_function());
+		}	else {
+			mc.score_function().show( TR, pose );
+		}
+
+		TR << std::endl;
+		mc.show_state();
+
+		// remove cutpoints
+		remove_cutpoint_variants( pose );
+	}
+
+	check_closure_criteria( pose, true );
+}
 
 
 /// @brief simultaneous stage: multiple loop movement prior to MC accept/reject

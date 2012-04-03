@@ -354,6 +354,12 @@ protected: // loop modeling stages
 		bool const only_broken_loops = true
 	);
 
+	void loophash_stage(
+	  Pose & pose,
+	  MonteCarlo & mc,
+	  Real const cbreak_increment
+	);
+
 
 	/// @brief simultaneous stage: multiple loop movement prior to MC accept/reject
 	void simultaneous_stage(

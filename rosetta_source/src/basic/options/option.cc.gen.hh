@@ -608,10 +608,10 @@ option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of res
 option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
+option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
-option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
@@ -1215,11 +1215,11 @@ option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No descripti
 option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
+option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
+option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
-option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
-option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
@@ -1822,12 +1822,12 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, 
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
@@ -2065,6 +2065,7 @@ option.add( basic::options::OptionKeys::remodel::rank_by_bsasa, "rank results by
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::RemodelLoopMover, "RemodelLoopMover option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak, "linear chainbreak is <= this value, loop is considered closed (default 0.07) " );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::randomize_loops, "randomize loops prior to running main protocol (default false)" );
+option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::use_loop_hash, "centroid build with loop hash (default false)" );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts, "the allowed number of overall closure attempts (default 1)" );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles, "the number of simultaneous closure cycles to perform (default 2)" );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::independent_cycles, "the number of independent closure cycles to perform (default 8)" );

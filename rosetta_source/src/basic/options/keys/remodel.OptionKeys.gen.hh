@@ -85,6 +85,7 @@ namespace remodel { extern BooleanOptionKey const rank_by_bsasa; }
 namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const RemodelLoopMover; } }
 namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const max_linear_chainbreak; } }
 namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const randomize_loops; } }
+namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const use_loop_hash; } }
 namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const allowed_closure_attempts; } }
 namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const simultaneous_cycles; } }
 namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const independent_cycles; } }

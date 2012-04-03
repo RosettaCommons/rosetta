@@ -4029,6 +4029,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
     Option_Group( 'RemodelLoopMover',
       Option( 'max_linear_chainbreak', 'Integer', desc="linear chainbreak is <= this value, loop is considered closed (default 0.07) " ),
       Option( 'randomize_loops', 'Boolean', desc="randomize loops prior to running main protocol (default false)" ),
+      Option( 'use_loop_hash', 'Boolean', desc="centroid build with loop hash (default false)" ),
 			Option( 'allowed_closure_attempts', 'Integer', desc="the allowed number of overall closure attempts (default 1)" ),
 			Option( 'simultaneous_cycles', 'Integer', desc="the number of simultaneous closure cycles to perform (default 2)" ),
       Option( 'independent_cycles', 'Integer', desc="the number of independent closure cycles to perform (default 8)" ),

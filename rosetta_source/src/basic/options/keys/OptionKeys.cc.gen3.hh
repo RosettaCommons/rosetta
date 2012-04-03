@@ -1,6 +1,3 @@
-namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
@@ -239,6 +236,7 @@ namespace remodel { BooleanOptionKey const rank_by_bsasa( "remodel:rank_by_bsasa
 namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const RemodelLoopMover( "remodel:RemodelLoopMover" );  } }
 namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const max_linear_chainbreak( "remodel:RemodelLoopMover:max_linear_chainbreak" );  } }
 namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const randomize_loops( "remodel:RemodelLoopMover:randomize_loops" );  } }
+namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const use_loop_hash( "remodel:RemodelLoopMover:use_loop_hash" );  } }
 namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const allowed_closure_attempts( "remodel:RemodelLoopMover:allowed_closure_attempts" );  } }
 namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const simultaneous_cycles( "remodel:RemodelLoopMover:simultaneous_cycles" );  } }
 namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const independent_cycles( "remodel:RemodelLoopMover:independent_cycles" );  } }
