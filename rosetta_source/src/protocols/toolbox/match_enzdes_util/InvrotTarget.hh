@@ -22,8 +22,12 @@
 //package headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.hh>
-#include <protocols/toolbox/match_enzdes_util/InvrotTreeNode.fwd.hh>
 
+#ifdef WIN32
+#include <protocols/toolbox/match_enzdes_util/InvrotTreeNode.hh>
+#else
+#include <protocols/toolbox/match_enzdes_util/InvrotTreeNode.fwd.hh>
+#endif
 
 // Utility headers
 //#include <util

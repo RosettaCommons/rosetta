@@ -180,11 +180,8 @@ InvrotTreeNode::generate_constraints(
 ) const
 {
 	//bunch of code, not written yet
-	for( core::Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ){
-
-
-	}
-
+	for( core::Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ) {}
+	return NULL;  // required for compilation on Windows
 }
 
 
