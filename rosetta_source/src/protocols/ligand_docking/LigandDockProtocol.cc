@@ -811,7 +811,8 @@ LigandDockProtocol::append_ligand_docking_scores(
 
 		// Fun stuff from the pose metrics calculators:
 		core::Real const sasa_radius = 1.4;
-		scores["if_buried_unsat_hbonds"] = count_buried_unsat_Hbonds(after) - count_buried_unsat_Hbonds(*after_unbound);
+		// Explicit cast to Real, as you can get negative numbers when the ligand is making buried hydrogen bonds to the protein
+		scores["if_buried_unsat_hbonds"] = core::Real(count_buried_unsat_Hbonds(after)) - core::Real(count_buried_unsat_Hbonds(*after_unbound));
 		scores["if_buried_sasa"] = -( core::scoring::calc_total_sasa(after, sasa_radius) - core::scoring::calc_total_sasa(*after_unbound, sasa_radius) );
 		print_buried_unsat_Hbonds(after, *after_unbound);
 
