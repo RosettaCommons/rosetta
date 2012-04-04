@@ -642,6 +642,9 @@ def get_CL_Options():
 def BuildRosettaOnWindows(build_dir, bindings_path):
     ''' bypassing scones and build rosetta on windows native
     '''
+    # copy svn_version file from pre-generated sources
+    shutil.copyfile(Options.use_pre_generated_sources + '/svn_version.cc', './../../core/svn_version.cc')
+
     external, sources = getAllRosettaSourceFiles()
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
 
