@@ -78,6 +78,7 @@
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <protocols/simple_moves/ddG.hh>
+#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 
 static basic::Tracer TR("2comp_design");
 
@@ -247,8 +248,11 @@ void design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, 
 		}
 	}
 
-	// Actually perform design.
 	make_symmetric_PackerTask(pose, task);
+	// Get rid of Nobu's rotamers of death
+	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
+	limit_rots->apply(pose, *task);
+	// Actually perform design.
 	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
 
@@ -571,6 +575,7 @@ void *dostuff(void*) {
 		// Handle all of the symmetry stuff
 		core::pose::symmetry::make_symmetric_pose(pose);
 		SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+		Pose original_pose = pose;
 
 		// std::map<Size,SymDof> dofs = sym_info->get_dofs();
 		// int sym_jump = 0;
@@ -709,21 +714,26 @@ void *dostuff(void*) {
 						// Design
 						design(pose_for_design, sf, design_pos, true);
 
+						// 120206: Get min_rb commandline to implement rigid body minimization
+      			bool min_rb = option[matdes::mutalyze::min_rb]();
+
 						// Repack and minimize using score12
 						ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
 						repack(pose_for_design, score12, design_pos);
-						minimize(pose_for_design, score12, design_pos, false, true, false);
+						minimize(pose_for_design, score12, design_pos, false, true, min_rb);
 						score12->score(pose_for_design);
 
 						// Build a filename for the output PDB
 						std::string tag = string_of(numeric::random::uniform()).substr(2,4);
 						std::ostringstream r_string;
-						r_string << std::fixed << std::setprecision(1) << "0";
-						std::string fn = string_of(option[matdes::prefix]()+option[matdes::pdbID]())+"_"+r_string.str()+"_"+"0"+"_"+tag+".pdb.gz";
+						//r_string << std::fixed << std::setprecision(1) << "0";
+						std::string fn = string_of(option[matdes::prefix]()+"_"+option[matdes::pdbID]())+"_"+ObjexxFCL::string_of(iangle1)+"_"+ObjexxFCL::string_of(iradius1)+"_"+ObjexxFCL::string_of(iangle2)+"_"+ObjexxFCL::string_of(iradius2)+"_"+tag+".pdb.gz";
 
 						// Write the pdb file of the design
 						utility::io::ozstream out( option[out::file::o]() + "/" + fn );
-						pose_for_design.dump_pdb(out);
+						Pose pose_out;
+						core::pose::symmetry::extract_asymmetric_unit(pose_for_design, pose_out);
+						pose_out.dump_pdb(out);
 						core::io::pdb::extract_scores(pose_for_design,out);
 						out.close();
 
@@ -779,9 +789,14 @@ void *dostuff(void*) {
 						Real interface_energy = 0;
 						core::scoring::EnergyMap em;
 						Real avg_interface_energy = 0;
+						Size mutations = 0;
 						for(Size index=1; index<=design_pos.size(); index++) {
 							interface_energy += pose_for_design.energies().residue_total_energy(design_pos[index]);
 							em += pose_for_design.energies().residue_total_energies(design_pos[index]);
+							// Also, while we're looping, count the number of mutations from the input protein
+							if (pose_for_design.residue(design_pos[index]).name3() != original_pose.residue(design_pos[index]).name3()) {
+							mutations++;
+							}
 						}
 						avg_interface_energy = interface_energy / design_pos.size();
 						// Multiply those energies by the weights
@@ -796,6 +811,7 @@ void *dostuff(void*) {
 						ss_out->add_energy("air_fa_rep", em[core::scoring::fa_rep] / design_pos.size());
 						ss_out->add_energy("air_fa_dun", em[core::scoring::fa_dun] / design_pos.size());
 						ss_out->add_energy("des_pos", design_pos.size());
+						ss_out->add_energy("mutations", mutations);
 						ss_out->add_energy("packing", packing);
 						ss_out->add_energy("avg_deg", avg_deg);
 						ss_out->add_energy("int_area", int_area);
