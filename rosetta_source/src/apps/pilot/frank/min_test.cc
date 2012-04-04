@@ -109,9 +109,9 @@ public:
 		if ( option[ OptionKeys::relax::jump_move ].user() )
 			mm.set_jump( option[ OptionKeys::relax::jump_move ]() );
 		if ( option[ OptionKeys::relax::bb_move ].user() )
-			mm.set_jump( option[ OptionKeys::relax::bb_move ]() );
+			mm.set_bb( option[ OptionKeys::relax::bb_move ]() );
 		if ( option[ OptionKeys::relax::chi_move ].user() )
-			mm.set_jump( option[ OptionKeys::relax::chi_move ]() );
+			mm.set_chi( option[ OptionKeys::relax::chi_move ]() );
 			
 	
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
@@ -221,7 +221,7 @@ main( int argc, char * argv [] )
 	NEW_OPT(min::debug, "debug derivs?", false);
 	NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
 	NEW_OPT(min::cartesian, "cartesian minimization?", false);
-	NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo");
+	NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo_nonmonotone");
 
 	devel::init(argc, argv);
 
