@@ -43,6 +43,10 @@ dump <number>
 
 DUmps a pdbfile called dump_<number>.pdb
 
+dumpall:<true/false>
+
+Will dump a pdb for every repack/min/ramp_repack_min hereafter with an incrementing number
+
 scale:<scoretype> <scale>
 
 Scales the scoretype's default value by whatever the scale number is.
@@ -392,6 +396,9 @@ void FastRelax::set_to_default( )
 	ramady_rms_limit_ = basic::options::option[ OptionKeys::relax::ramady_rms_limit ]();
 
 	// cartesian
+	
+	// dumpall
+	dumpall_ = false;
 
 }
 
@@ -571,6 +578,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	apply_disulfides(pose);
 
 	int total_count=0;
+	int dump_counter=0;
 	for ( core::Size ncmd = 0; ncmd < script_.size(); ncmd ++ ){
 		total_count++;
 		if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) local_scorefxn->show( TR, pose );
@@ -605,6 +613,13 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			pose.dump_pdb( "dump_" + right_string_of( (int) cmd.param1, 4, '0' ) );
 		}	else
 
+		if( cmd.command.substr(0,7) == "dumpall" ){
+				if( cmd.command.substr(8) == "true" ) 
+					dumpall_ = true;
+				if( cmd.command.substr(8) == "false" ) 
+					dumpall_ = false;
+		}	else
+
 		if( cmd.command == "repack" ){
 			//if( cmd.nparams < 0 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 			chk_counter++;
@@ -612,6 +627,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
 				pack_full_repack_->apply( pose );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
+			}
+			if ( dumpall_ ) {
+				pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
+				dump_counter++;
 			}
 		}	else
 
@@ -624,6 +643,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
         do_minimize( pose, cmd.param1, local_movemap, local_scorefxn );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}
+			if ( dumpall_) {
+				pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
+				dump_counter++;
+				}
 		}	else
 
 		if( cmd.command.substr(0,5) == "scale" ){
@@ -698,6 +721,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				core::pose::setPoseExtraScores( pose, "R" + right_string_of( total_count ,5,'0'), imedscore );
 			}
 
+			if ( dumpall_ ) {
+				pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
+				dump_counter++;
+			}
 		}	else
 
 

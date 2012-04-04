@@ -180,6 +180,9 @@ private:   // options
 	/// @brief [batch mode only] force structures to be nonideal?  Default uses -out:silent_struct_type to decide
 	bool force_nonideal_;
 
+	/// @brief Dump pdb after repack, min, or ramp_repack_min?
+	bool dumpall_;
+
   /// @brief Quit after this many accepts ?// limits themaximum number of accepts, default is 1000000
 	core::Size script_max_accept_;
 
