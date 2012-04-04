@@ -150,7 +150,7 @@ namespace oddm {
 	RealOptionKey const pert_pep_shear_L( "oddm::pert_pep_shear_L" );
 	RealOptionKey const pert_pep_shear_E( "oddm::pert_pep_shear_E" );
 
-	RealOptionKey const pert_pep_num_rep( "oddm::pert_pep_num_rep" );
+	IntegerOptionKey const pert_pep_num_rep( "oddm::pert_pep_num_rep" );
 	IntegerOptionKey const pert_num( "oddm::pert_num" );
 	IntegerOptionKey const dock_design_loop_num( "oddm::dock_design_loop_num" );
 
@@ -214,7 +214,7 @@ main( int argc, char* argv[] )
 	option.add( oddm::pert_pep_shear_L, "" ).def( 2.0 );
 	option.add( oddm::pert_pep_shear_E, "" ).def( 2.0 );
 
-	option.add( oddm::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100.0 );
+	option.add( oddm::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
 	option.add( oddm::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
 	option.add( oddm::dock_design_loop_num, "Number of iterations of pertubation and design" ).def(10);
 
