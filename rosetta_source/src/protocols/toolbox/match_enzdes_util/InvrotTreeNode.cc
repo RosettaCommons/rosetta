@@ -19,6 +19,7 @@
 //package headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
 //project headers
 #include <core/conformation/Atom.hh>
@@ -42,7 +43,7 @@ static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.InvrotTreeNode" );
 
 InvrotTreeNode::InvrotTreeNode( InvrotTreeNodeBaseCAP parent )
 	: InvrotTreeNodeBase( parent ),
-		geom_cst_(0) //location_in_parent_node_(0)
+		geom_cst_(0)
 {
 	invrots_and_next_nodes_.clear();
 }
@@ -173,15 +174,37 @@ InvrotTreeNode::initialize_from_enzcst_io(
 }
 
 /// @details the real meat of this thing
+/// see brief description in .hh file
 core::scoring::constraints::ConstraintCOP
 InvrotTreeNode::generate_constraints(
-	core::pose::Pose const &,  //pose,  commented out to prevent compiler warning
-	AllowedSeqposForGeomCstOP //geomcst_seqpos commented out to prevent compiler warning
+	core::pose::Pose const &  pose,
+	AllowedSeqposForGeomCstOP geomcst_seqpos
 ) const
 {
-	//bunch of code, not written yet
-	for( core::Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ) {}
-	return NULL;  // required for compilation on Windows
+
+	utility::vector1< core::scoring::constraints::ConstraintCOP > constraints_this_node;
+	for( core::Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ){
+
+		//utility::vector1< core::scoring::constraints::ConstraintCOP > constraints_this_invrot_set;
+		utility::vector1< core::scoring::constraints::ConstraintCOP > constraints_this_invrot_node_pair;
+
+		//1a. create the ambiguous constraint for this set of inverse rotamers
+		constraints_this_invrot_node_pair.push_back( constrain_pose_res_to_invrots( invrots_and_next_nodes_[i].first, geomcst_seqpos->seqpos_for_geomcst( geom_cst_), pose ) );
+
+		//1b.
+		for( utility::vector1< InvrotTreeNodeBaseOP >::const_iterator node_it( invrots_and_next_nodes_[i].second.begin() ), node_end( invrots_and_next_nodes_[i].second.end() ); node_it != node_end; ++node_it ){
+			constraints_this_invrot_node_pair.push_back( (*node_it)->generate_constraints( pose, geomcst_seqpos ) );
+		}
+
+		//1c.
+		if( constraints_this_invrot_node_pair.size() == 1 ) constraints_this_node.push_back( constraints_this_invrot_node_pair[1] );
+		else constraints_this_node.push_back( new core::scoring::constraints::MultiConstraint( constraints_this_invrot_node_pair ) );
+
+	}//loop over node_pointer_pairs_
+
+	if( constraints_this_node.size() == 1 ) return constraints_this_node[1];
+
+	return new core::scoring::constraints::AmbiguousConstraint( constraints_this_node );
 }
 
 
@@ -195,7 +218,7 @@ InvrotTreeNode::all_target_residues( InvrotTreeNodeBaseCAP child_node ) const
 	InvrotTreeNodeBaseCAP parent(this->parent_node() );
 	if( parent ) to_return = parent->all_target_residues( this );
 
-	//2. add the target residues from this node corresponding
+	//2. add the target residues from this node
 	//corresponding to the asking child node
 	bool child_found(false);
 	for( Size i =1; i <= invrots_and_next_nodes_.size(); ++i ){
@@ -325,14 +348,14 @@ InvrotTreeNode::collect_all_inverse_rotamers(
 	Size total_parents( empty_parent_collectors.size() + filled_parent_collectors.size() );
 	runtime_assert( total_parents != 0);
 
-	//2 for every parent, we need to add rotamers for every definiton
+	//2a for every parent, we need to add rotamers for every definiton
 	utility::vector1< Size > collectors_to_fill( empty_parent_collectors );
 	for( Size i =1; i <= filled_parent_collectors.size(); ++ i ){
 		invrot_collectors.push_back( invrot_collectors[ filled_parent_collectors[i] ]->clone() );
 		collectors_to_fill.push_back( invrot_collectors.size() );
 	}
 
-	//3. fill 'er up
+	//2b. fill 'er up
 	for( Size i = 1; i <= collectors_to_fill.size(); ++i ){
 		Size overflow_start( invrot_collectors.size());
 		for( Size j = 2; j <= invrots_and_next_nodes_.size(); ++j ){
@@ -346,7 +369,7 @@ InvrotTreeNode::collect_all_inverse_rotamers(
 		}
 	}
 
-	//4. call this shit on all daughter nodes
+	//3. call this shit on all daughter nodes
 	for( Size i = 1; i <= invrots_and_next_nodes_.size(); ++i){
 		for( utility::vector1< InvrotTreeNodeBaseOP >::const_iterator child_it( invrots_and_next_nodes_[i].second.begin() ); child_it != invrots_and_next_nodes_[i].second.end(); ++child_it ){
 			(*child_it)->collect_all_inverse_rotamers( invrot_collectors );

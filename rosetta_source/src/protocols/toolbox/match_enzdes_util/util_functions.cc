@@ -21,7 +21,14 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/constraints/BoundConstraint.hh>
+#include <core/scoring/constraints/AmbiguousConstraint.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/BackboneStubConstraint.hh>
+#include <core/scoring/constraints/MultiConstraint.hh>
 
 
 //utility headers
@@ -69,6 +76,55 @@ replace_residue_keeping_all_atom_positions(
 	}
 
 } //replace_residues_keeping_positions
+
+
+core::scoring::constraints::AmbiguousConstraintCOP
+constrain_pose_res_to_invrots(
+	std::list< core::conformation::ResidueCOP > const & invrots,
+	utility::vector1< core::Size > const & seqpos,
+	core::pose::Pose const & pose,
+	core::scoring::constraints::FuncOP constraint_func
+)
+{
+	using namespace core::scoring::constraints;
+
+	if( !constraint_func ) constraint_func = new BoundFunc( 0, 0.05, 0.4, "invrot");
+	//see the comment in protocols/ligand_docking/LigandBaseProtocol.cc::restrain_protein_Calphas
+	core::id::AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
+
+	utility::vector1< ConstraintCOP > all_res_invrot_csts;
+	core::Size totrescount(0);
+
+	for( core::Size i =1; i <= seqpos.size(); ++i ){
+
+		core::conformation::ResidueCOP cur_remodel_res( &pose.residue( seqpos[i] ) );
+		if( cur_remodel_res->name3() == "GLY" ) continue;
+		totrescount++;
+
+		core::id::AtomID rem_CA( cur_remodel_res->type().atom_index("CA"), seqpos[i] );
+		core::id::AtomID rem_CB( cur_remodel_res->type().atom_index("CB"), seqpos[i] );
+		core::id::AtomID rem_N( cur_remodel_res->type().atom_index("N"), seqpos[i] );
+
+		for( std::list< core::conformation::ResidueCOP >::const_iterator invrot_it( invrots.begin() ), invrot_end( invrots.end() ); invrot_it != invrot_end; ++invrot_it ){
+
+			utility::vector1< ConstraintCOP > cur_res_invrot_csts;
+			cur_res_invrot_csts.push_back( new BackboneStubConstraint( pose, seqpos[i], fixed_pt, **invrot_it, -20.0, 0.8) );
+
+			//old style: coordinate constraints for all atoms, backbone stub csts
+			// might be working better
+			cur_res_invrot_csts.push_back( new CoordinateConstraint( rem_CA, fixed_pt, (*invrot_it)->xyz("CA"), constraint_func ) );
+				cur_res_invrot_csts.push_back( new CoordinateConstraint( rem_CB, fixed_pt, (*invrot_it)->xyz("CB"), constraint_func ) );
+				cur_res_invrot_csts.push_back( new CoordinateConstraint( rem_N, fixed_pt, (*invrot_it)->xyz("N"), constraint_func ) );
+
+				all_res_invrot_csts.push_back( new MultiConstraint( cur_res_invrot_csts ) );
+		}// loop over invrots
+	}//loop over seqpos
+
+	tr << "Created a total of " << all_res_invrot_csts.size() << " constraints between " << invrots.size() << " inverse rotamers and " << totrescount << " residues." << std::endl;
+
+	return new AmbiguousConstraint( all_res_invrot_csts );
+
+} //constrain_pose_res_to_invrots
 
 
 std::string

@@ -14,17 +14,13 @@
 
 #include <protocols/forge/constraints/InverseRotamersRCG.hh>
 #include <protocols/forge/build/Interval.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/AmbiguousConstraint.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/BackboneStubConstraint.hh>
-#include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/id/SequenceMapping.hh>
+#include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
@@ -57,7 +53,7 @@ void
 InverseRotamersRCG::generate_remodel_constraints(
 	core::pose::Pose const & pose )
 {
-	using namespace core::scoring::constraints;
+	//using namespace core::scoring::constraints;
 	//safeguard against bad user input
 	if( inverse_rotamers_.size() == 0 ){
 		std::cerr << "WARNING: InverseRotamersRCG is asked to produce constraints but was not given any inverse rotamers. Something's probably wrong somewhere." << std::endl;
@@ -66,55 +62,20 @@ InverseRotamersRCG::generate_remodel_constraints(
 
 	//if no constraint func has been set, we'll create a default one
 	if( !constraint_func_ ){
-		constraint_func_ = new BoundFunc( 0, 0.05, func_sd_, "invrot");
+		constraint_func_ = new core::scoring::constraints::BoundFunc( 0, 0.05, func_sd_, "invrot");
 	}
-
-	//see the comment in protocols/ligand_docking/LigandBaseProtocol.cc::restrain_protein_Calphas
-	core::id::AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
-
-	utility::vector1< ConstraintCOP > all_res_invrot_csts;
-	core::Size totrescount(0);
-
+	utility::vector1< core::Size > seqpos;
 	for( core::Size i(1); i <= intervals_.size(); ++i ){
-
 		//eventually remap intervals according to vlb seqmap
 		if( this->seqmap() ){
 			intervals_[i].left = (*(this->seqmap() ))[ intervals_[i].left ];
 			intervals_[i].right = (*(this->seqmap() ))[ intervals_[i].right ];
 		}
-
 		for( core::Size remres( intervals_[i].left ); remres <= intervals_[i].right; ++remres ){
-			core::conformation::ResidueCOP cur_remodel_res( &pose.residue( remres ) );
-			if( cur_remodel_res->name3() == "GLY" ) continue;
-			totrescount++;
-
-			core::id::AtomID rem_CA( cur_remodel_res->type().atom_index("CA"), remres );
-			core::id::AtomID rem_CB( cur_remodel_res->type().atom_index("CB"), remres );
-			core::id::AtomID rem_N( cur_remodel_res->type().atom_index("N"), remres );
-			//core::id::AtomID rem_C( cur_remodel_res->type().atom_index("C"), remres );
-
-			for( core::Size invrot(1); invrot <= inverse_rotamers_.size(); ++invrot ){
-
-				utility::vector1< ConstraintCOP > cur_res_invrot_csts;
-				cur_res_invrot_csts.push_back( new BackboneStubConstraint( pose, remres, fixed_pt, *(inverse_rotamers_[invrot]), -20.0, 0.8) );
-				//old style: coordinate constraints for all atoms, backbone stub csts
-				// might be working better
-
-				//utility::vector1< ConstraintCOP > cur_res_invrot_csts;
-				cur_res_invrot_csts.push_back( new CoordinateConstraint( rem_CA, fixed_pt, inverse_rotamers_[invrot]->xyz("CA"), constraint_func_ ) );
-				cur_res_invrot_csts.push_back( new CoordinateConstraint( rem_CB, fixed_pt, inverse_rotamers_[invrot]->xyz("CB"), constraint_func_ ) );
-				cur_res_invrot_csts.push_back( new CoordinateConstraint( rem_N, fixed_pt, inverse_rotamers_[invrot]->xyz("N"), constraint_func_ ) );
-				//cur_res_invrot_csts.push_back( new CoordinateConstraint( rem_C, fixed_pt, inverse_rotamers_[invrot]->xyz("C"), constraint_func_ ) );
-
-				all_res_invrot_csts.push_back( new MultiConstraint( cur_res_invrot_csts ) );
-
-
-			} //loop over inverse rotamers
-		} // loop over all remodel residues in this interval
-	} //loop over all intervals
-	tr << "Created a total of " << all_res_invrot_csts.size() << " constraints between " << inverse_rotamers_.size() << " inverse rotamers and " << totrescount << " residues in " << intervals_.size() << " intervals." << std::endl;
-
-	this->add_constraint( new AmbiguousConstraint( all_res_invrot_csts ) );
+			seqpos.push_back( remres );
+		}
+	}
+	this->add_constraint( protocols::toolbox::match_enzdes_util::constrain_pose_res_to_invrots( inverse_rotamers_, seqpos, pose, constraint_func_ ) );
 
 	//we can probably delete the inverse rotamers now, to save some memory
 	this->clear_inverse_rotamers();

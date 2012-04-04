@@ -84,7 +84,7 @@ private:
 
 	utility::vector1< forge::build::Interval > intervals_;
 
-	utility::vector1< core::conformation::ResidueCOP > inverse_rotamers_;
+	std::list< core::conformation::ResidueCOP > inverse_rotamers_;
 
 	core::scoring::constraints::FuncOP constraint_func_;
 	core::Real func_sd_;

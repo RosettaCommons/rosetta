@@ -63,7 +63,7 @@ public:
 	/// 1. for each invrots/node pointer pair:
 	///     a.generate an ambigous constraint for the inverse rots
 	///     for each node pointer to child nodes (only if there are child nodes, of course)
-	///         b. call the generate_constraints function on the pointer to child node
+	///         b. call the generate_constraints function on the pointers to child nodes
 	///     c. package the ambig constraint generated for the inverse rots
 	///     and the constraints that come from the child nodes into one multicst
 	///     caveat: if the child nodes send up a multi constraint and not an ambiguous
@@ -99,13 +99,8 @@ private:
 
 	Size geom_cst_; //which geometric constraint the invrots belong to
 
-	//Size location_in_parent_node_; //where in the parent node vector this node is pointed at
-
 	utility::vector1< invrots_node_ptrs_pair > invrots_and_next_nodes_;
-
-
 };
-
 
 }
 }
