@@ -102,6 +102,11 @@ VariantType const C_METHYLAMIDATION( "C_METHYLAMIDATION" );
 // @ brief only the repulsive energy will be considered during structure calculations
 VariantType const REPLONLY("REPLONLY");
 
+// @ brief oop_pre patch, used for oligooxopiperazines (OOPs)
+VariantType const OOP_PRE("OOP_PRE");
+// @ brief oop_post patch, used for oligooxopiperazines (OOPs)
+VariantType const OOP_POST("OOP_POST");
+
 
 
 } // chemical

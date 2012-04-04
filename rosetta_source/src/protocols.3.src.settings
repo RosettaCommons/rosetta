@@ -294,6 +294,13 @@ sources = {
 		"AsymFoldandDockMoveRbJumpMover",
 		"AsymFoldandDockRbTrialMover",
 	],
+	"protocols/simple_moves/oop": [
+		"OopPuckMover",
+		"OopMover",
+		"OopPatcher",
+		"OopRandomPuckMover",
+		"OopRandomSmallMover",
+	],
 	"protocols/simple_moves/rational_mc": [
 		"RationalMonteCarlo",
 	],

@@ -1,0 +1,14 @@
+-include_patches patches/oop_pre.txt patches/oop_post.txt
+-s input/mdm2_oop.pdb
+-nstruct 1
+-resfile input/oop_dimer.res
+-constraints::cst_fa_file input/constraint_file
+-constraints::cst_fa_weight 1 
+-in:file:fullatom 
+-pert_num 10
+-pert_pep_num_rep 10
+-final_design_min false
+-dock_design_loop_num 1
+-score:weights mm_std 
+-oop_positions 86 88  
+-packing:linmem_ig 10 

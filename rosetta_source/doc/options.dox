@@ -3399,6 +3399,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-exclude_patches</b> \<StringVector\><dt>
 <dd>Names of the residue-type-set patches which should not be applied; if you know which patches you do not need for a particular run, this flag can reduce your memory use</dd><br>
 </dl>
+<dl>
+<dt><b>-include_patches</b> \<StringVector\><dt>
+<dd>Names of the residue-type-set patches which should be applied even if excluded/commented out in patches.txt; useful for testing non-default patches</dd><br>
+</dl>
  </li>
 <li><h2>score</h2>
 <dl>
@@ -9993,6 +9997,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-randomize_loops</b> \<Boolean\><dt>
 <dd>randomize loops prior to running main protocol (default false)</dd><br>
+</dl>
+<dl>
+<dt><b>-use_loop_hash</b> \<Boolean\><dt>
+<dd>centroid build with loop hash (default false)</dd><br>
 </dl>
 <dl>
 <dt><b>-allowed_closure_attempts</b> \<Integer\><dt>

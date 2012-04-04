@@ -69,6 +69,9 @@ extern VariantType const C_METHYLAMIDATION;
 extern VariantType const SC_ORBITALS;
 
 extern VariantType const REPLONLY;
+
+extern VariantType const OOP_PRE;
+extern VariantType const OOP_POST;
 } // chemical
 } // core
 

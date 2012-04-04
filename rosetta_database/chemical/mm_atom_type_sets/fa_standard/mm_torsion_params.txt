@@ -859,3 +859,47 @@ CT2	S	C	CT2	4.8	2	180 #from Yang and Drueckhammer, Understanding the Relative Ac
 CT2	S	C	CT2	2.2	1	0 #from Yang and Drueckhammer, Understanding the Relative Acyl-Transfer ..., JACS, 2001, 123, 11004-11009
 CT2	S	C	O	0	0	0 #subsumed into CT2-S-C-CT2 above
 
+#kdrew: for oops
+#kdrew: took from CT3	CT1	NH1	C	1.8000	1	0.00
+C	CT1	NH1	CT2	1.8000	1	0.00
+CT2	CT1	NH1	CT2	1.8000	1	0.00
+CT3	CT1	NH1	CT2	1.8000	1	0.00
+CC	CT1	NH1	CT2	1.8000	1	0.00
+#kdrew: took from HB	CT1	NH1	C	0.0000	1	0.00
+CT2	NH1	CT1	HB      0.0000  1       0.00
+CT1	NH1	CT2	HA      0.0000  1       0.00
+
+#kdrew: took from C	CT2	NH1	C	0.2000	1	180.00
+C	CT2	NH1	CT2	0.2000	1	180.00
+#kdrew: other options
+#CT2	CT2	NH1	C	1.8000	1	0.00
+
+#kdrew: took from HB	CT2	NH1	C	0.0000	1	0.00
+HB	CT2	NH1	CT2	0.0000	1	0.00
+#kdrew: took from HA	CT2	NH1	C	0.0000	3	0.00
+HA	CT2	NH1	CT2	0.0000	3	0.00
+
+
+#kdrew: took from CT1	CT1	NH1	C	1.8000	1	0.00
+CT1	CT1	NH1	CT2	1.8000	1	0.00 
+
+
+#kdrew: took from CC	CT2	NH1	C	0.2000	1	180.00
+CC	CT2	NH1	CT2	0.2000	1	180.00
+
+#CT2-NH1-CT1-CA
+CA	CT1	NH1	CT2	1.8000	1	0.00
+#CT2-NH1-CT1-CF1
+CF1	CT1	NH1	CT2	1.8000	1	0.00
+#CC-CT1-CF1-F1
+CC	CT1	CF1	F1	0.1850	3	0.00	#from:	X	CT3	 CF1	X
+#CC-CT1-CF1-HA
+CC	CT1	CF1	HA	0.1850	3	0.00	#from:	X	CT3	 CF1	X
+#CT2-NH1-CT1-CF3
+CT2	NH1	CT1	CF3	1.8000	1	0.00	#from:	CT3	CT1	NH1	C
+#CC-CT1-CF3-F3
+CC	CT1	CF3	F3	0.1580	3	0.00	#from:	X	CT3	 CF3	X
+
+#CT2-CT2-NH1-CT1
+CT2	CT2	NH1	CT1	1.8000	1	0.00 #from CT2	CT2	NH1	C
+

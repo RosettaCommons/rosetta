@@ -633,6 +633,14 @@ sources = {
 	],
 	"pilot/lior" : [ "feature_schema_generator"
 	],
+	"pilot/kdrew" : [
+		"oop_dock_design",
+		"oop_creator",
+		#"oop_puck_energy_calc",
+		#"oop_puck_energy_calc_mc",
+		#"oop_dimer_rama_calc",
+		],
+
 }
 
 include_path = [ ]

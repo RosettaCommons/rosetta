@@ -206,6 +206,19 @@ ResidueTypeSet::ResidueTypeSet(
 			}
 			patch_filenames.push_back( directory + line );
 		}
+
+        //kdrew: include list allows patches to be included while being commented out in patches.txt, useful for testing non-canonical patches.
+		//tr << "include_patches activated? " << basic::options::option[ basic::options::OptionKeys::chemical::include_patches ].active() << std::endl;
+		if ( basic::options::option[ basic::options::OptionKeys::chemical::include_patches ].active() ) {
+			utility::vector1< std::string > includelist = basic::options::option[ basic::options::OptionKeys::chemical::include_patches ];
+			for ( Size ii = 1; ii <= includelist.size(); ++ii ) {
+				utility::file::FileName fname( includelist[ ii ] );
+				patch_filenames.push_back( directory + includelist[ ii ]);
+				tr << "While generating ResidueTypeSet " << name << ": Including patch " << fname << " as requested" << std::endl;
+			}
+		}
+		
+
 		apply_patches( patch_filenames );
 	}
 

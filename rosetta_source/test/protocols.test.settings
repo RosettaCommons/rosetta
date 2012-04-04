@@ -155,6 +155,9 @@ sources = {
         "simple_moves" : [
         	"FavorSequenceProfile",
         ],
+        "simple_moves/oop" : [
+        	"OopPuckMover",
+        ],
 	"toolbox/pose_metric_calculators" : [
 		"Neighbor_Calculators",
 #		SolubilityCalculator",
@@ -301,6 +304,7 @@ testinputfiles = [
 	"pmut_scan/shortloop.01.pdb.gz",
 	"pmut_scan/shortloop.02.pdb.gz",
         "simple_moves/1bl0_auto.fasta.pssm",
+	"simple_moves/oop/oop_test.pdb",
 	"toolbox/task_operations/RestrictToInterfaceOperation.u",
 	"toolbox/task_operations/RestrictToInterfaceVectorOperation.u",
 	"toolbox/task_operations/RestrictToNeighborhoodOperation.u",

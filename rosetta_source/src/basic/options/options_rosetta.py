@@ -1684,6 +1684,7 @@ Options = Option_Group( '',
 	# chemical settings -----------------------------------------------------------
 	Option_Group( 'chemical',
 		Option( 'exclude_patches', 'StringVector', desc="Names of the residue-type-set patches which should not be applied; if you know which patches you do not need for a particular run, this flag can reduce your memory use" ),
+		Option( 'include_patches', 'StringVector', desc="Names of the residue-type-set patches which should be applied even if excluded/commented out in patches.txt; useful for testing non-default patches", ),
 	),
 	# score function settings  -----------------------------------------------------------
 	Option_Group( 'score',
