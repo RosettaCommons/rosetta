@@ -112,6 +112,7 @@ OPT_1GRP_KEY( FileVector, matdes2c, O4 )
 OPT_1GRP_KEY( FileVector, matdes2c, T2 )
 OPT_1GRP_KEY( FileVector, matdes2c, T3 )
 OPT_1GRP_KEY( Boolean   , matdes2c, mutate_intra_bb )
+OPT_1GRP_KEY( Boolean   , matdes2c, dump_symmetric )
 
 void register_options() {
 	using namespace basic::options;
@@ -131,6 +132,7 @@ void register_options() {
 	NEW_OPT( matdes2c::T2      , "file(s) for tetr 2fold comp1"     , ""     );
 	NEW_OPT( matdes2c::T3      , "file(s) for tetr 3fold comp2"    , ""     );
 	NEW_OPT( matdes2c::mutate_intra_bb      , ""    , false );
+	NEW_OPT( matdes2c::dump_symmetric      , ""    , false );
 }
 
 
@@ -344,20 +346,20 @@ utility::vector1<Real> sidechain_sasa(Pose const & pose, Real probe_radius) {
 	return sc_sasa;
 }
 
-void new_sc(Pose &pose, Sizes isubs, int pricmp, Pose const & p1, Pose const & p2, Real& int_area, Real& sc) {
+void new_sc(Pose &pose, Sizes isubs1, Sizes isubs2, Pose const & p1, Pose const & p2, Real& int_area, Real& sc) {
 	using namespace core;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	core::scoring::sc::ShapeComplementarityCalculator scc; scc.Init();
 	Size nres_monomer = symm_info->num_independent_residues();
 	std::set<Size> iset,jset;
 	for(Size ir=1; ir <= symm_info->num_total_residues_without_pseudo(); ++ir){
-		if(std::find(isubs.begin(),isubs.end(),symm_info->subunit_index(ir))==isubs.end()) continue;
-		if(which_subsub(ir,p1,p2)!=pricmp) continue;
+		if(std::find(isubs1.begin(),isubs1.end(),symm_info->subunit_index(ir))==isubs1.end()) continue; // sub must be 123
+		if(which_subsub(ir,p1,p2)!=1) continue;                                                         // subsub must be 1
 		for(Size jr=1; jr <= symm_info->num_total_residues_without_pseudo(); ++jr){
-			if(std::find(isubs.begin(),isubs.end(),symm_info->subunit_index(jr))!=isubs.end()) continue;
-			if(which_subsub(jr,p1,p2)==pricmp) continue;
-			if(pose.residue(ir).nbr_atom_xyz().distance_squared(pose.residue(jr).nbr_atom_xyz()) > 
-			   sqr(pose.residue(ir).nbr_radius()+pose.residue(jr).nbr_radius()+4.0)) continue;
+			if(std::find(isubs2.begin(),isubs2.end(),symm_info->subunit_index(jr))==isubs2.end()) continue; // sub 14
+			if(which_subsub(jr,p1,p2)!=2) continue;                                                         // subsub 2
+			//if(pose.residue(ir).nbr_atom_xyz().distance_squared(pose.residue(jr).nbr_atom_xyz()) >
+			// sqr(pose.residue(ir).nbr_radius()+pose.residue(jr).nbr_radius()+4.0)) continue;
 			iset.insert(ir);
 			jset.insert(jr);
 		}
@@ -367,7 +369,7 @@ void new_sc(Pose &pose, Sizes isubs, int pricmp, Pose const & p1, Pose const & p
 	for(std::set<Size>::const_iterator i=jset.begin(); i!=jset.end(); ++i) { cout << "+" << *i; scc.AddResidue(1,pose.residue(*i)); } cout << std::endl;
 	if(scc.Calc()) {
 		sc = scc.GetResults().sc;
-		int_area = scc.GetResults().surface[2].trimmedArea / isubs.size();
+		int_area = scc.GetResults().surface[2].trimmedArea;
 	}						TR << std::endl;
 	TR << "SC DONE" << std::endl;
 	// pose.dump_pdb("test.pdb");
@@ -680,7 +682,7 @@ void *dostuff(void*) {
 							if(!contact || option[matdes2c::mutate_intra_bb]()) nontrimer_pos.push_back(ir);
 						}
 
-						// cout << "show spheres, name ca and resi "; 
+						// cout << "show spheres, name ca and resi ";
 						// for(int i = 1; i <= nontrimer_pos.size(); ++i) cout << (i==1?"":"+") << nontrimer_pos[i]; cout << endl;
 
 						// Finally, filter the positions for design based on surface accessibility.
@@ -706,7 +708,7 @@ void *dostuff(void*) {
 							pose_for_design.add_constraints(favor_native_constraints);
 						}
 
-						// cout << "show spheres, name ca and resi "; 
+						// cout << "show spheres, name ca and resi ";
 						// for(int i = 1; i <= design_pos.size(); ++i) cout << (i==1?"":"+") << design_pos[i]; cout << endl;
 						// utility_exit_with_message("aorisn");
 
@@ -731,9 +733,13 @@ void *dostuff(void*) {
 
 						// Write the pdb file of the design
 						utility::io::ozstream out( option[out::file::o]() + "/" + fn );
-						Pose pose_out;
-						core::pose::symmetry::extract_asymmetric_unit(pose_for_design, pose_out);
-						pose_out.dump_pdb(out);
+						if(option[matdes2c::dump_symmetric]){
+							pose_for_design.dump_pdb(out);
+						} else {
+							Pose pose_out;
+							core::pose::symmetry::extract_asymmetric_unit(pose_for_design, pose_out);
+							pose_out.dump_pdb(out);
+						}
 						core::io::pdb::extract_scores(pose_for_design,out);
 						out.close();
 
@@ -761,7 +767,7 @@ void *dostuff(void*) {
 
 						// Calculate the surface area and surface complementarity for the interface
 						Real int_area = 0; Real sc = 0;
-						new_sc(pose_for_design, intra_subs2,2, p1, p2, int_area, sc);
+						new_sc(pose_for_design, intra_subs1, intra_subs2, p1, p2, int_area, sc);
 
 						// Get the packing score
 						Real packing = get_atom_packing_score(pose_for_design, intra_subs1, intra_subs2, p1, p2, 9.0);
@@ -770,10 +776,6 @@ void *dostuff(void*) {
 						// protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
 						// ddG_mover.calculate(pose_for_design);
 						Real ddG;// = ddG_mover.sum_ddG();
-
-
-
-
 						//must do ddG manually, moving each BB separately
 						{
 							Pose pose(pose_for_design);
@@ -785,6 +787,8 @@ void *dostuff(void*) {
 							Real ubounde = score12->score(pose);
 							ddG = bounde - ubounde;
 						}
+
+
 						// Calculate per-residue energies for interface residues
 						Real interface_energy = 0;
 						core::scoring::EnergyMap em;
