@@ -132,7 +132,6 @@ private:
     
     // movers
     protocols::moves::SequenceMoverOP graft_sequence_ ;
-    protocols::moves::SequenceMoverOP relax_sequence_ ;
     protocols::simple_moves::PackRotamersMoverOP packer_ ;
     protocols::moves::PyMolMoverOP pymol_ ;
 

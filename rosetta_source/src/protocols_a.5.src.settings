@@ -23,7 +23,6 @@ sources = {
                 "Ab_Assemble_Templates",
                 "Ab_GraftOneCDR_Mover",
                 "Ab_CloseOneCDR_Mover",
-                "Ab_RelaxCDRs_Mover",
 		"Ab_H3_Modeler_full_protocol",
 		"Ab_H3_Model_CDR_H3",
 		"Ab_H3_perturb_ccd_build",

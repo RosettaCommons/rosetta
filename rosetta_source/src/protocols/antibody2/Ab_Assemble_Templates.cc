@@ -46,7 +46,6 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/antibody2/Ab_GraftOneCDR_Mover.hh>
 #include <protocols/antibody2/Ab_CloseOneCDR_Mover.hh>
-#include <protocols/antibody2/Ab_RelaxCDRs_Mover.hh>
 #include <protocols/antibody2/Ab_Info.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
 #include <protocols/antibody2/Ab_Assemble_Templates.hh>
@@ -208,7 +207,6 @@ void Ab_Assemble_Templates::setup_objects() {
     ab_t_info_ = NULL;
     
     graft_sequence_ = NULL;
-    relax_sequence_= NULL;
     packer_ = NULL;
     pymol_=NULL;
     
@@ -265,7 +263,6 @@ void Ab_Assemble_Templates::finalize_setup( pose::Pose & frame_pose ) {
                                       graft_h1_, graft_h2_, graft_h3_, camelid_);
     
     graft_sequence_ = new moves::SequenceMover();
-    relax_sequence_ = new moves::SequenceMover();
     pymol_ = new moves::PyMolMover();
     
     
@@ -291,15 +288,6 @@ void Ab_Assemble_Templates::finalize_setup( pose::Pose & frame_pose ) {
              closeone->set_pymol( pymol_ );
              graft_sequence_->add_mover( closeone );
              graft_sequence_->add_mover( pymol_ );
-             
-            
-            
-            Ab_RelaxCDRs_MoverOP rlx_one_cdr = new Ab_RelaxCDRs_Mover(  ab_info_->get_CDR_loop(it->first)->start(),
-                                                                        ab_info_->get_CDR_loop(it->first)->stop()    );
-            
-            rlx_one_cdr->enable_benchmark_mode( benchmark_ );
-            relax_sequence_->add_mover( rlx_one_cdr );
-            relax_sequence_->add_mover( pymol_ );
              */
         }
     }
@@ -376,10 +364,6 @@ void Ab_Assemble_Templates::apply( pose::Pose & frame_pose ) {
 
     // Recover secondary structures
     for( Size i = 1; i <= nres; i++ ) frame_pose.set_secstruct( i, secondary_struct_storage[ i ] );
-    
-    // relax optimized CDR grafted regions
-    relax_sequence_->apply( frame_pose );
-    
     
     // Recover secondary structures
     for( Size i = 1; i <= nres; i++ ) frame_pose.set_secstruct( i, secondary_struct_storage[ i ] );
