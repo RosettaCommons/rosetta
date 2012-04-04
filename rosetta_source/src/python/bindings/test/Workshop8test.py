@@ -4,6 +4,8 @@
 from rosetta import *
 from rosetta.protocols.loops.loop_closure.ccd import *
 from rosetta.protocols.loops.loop_mover.refine import *
+from rosetta.protocols.loops.loop_mover.perturb import *
+from rosetta.protocols.loops.loop_closure.kinematic_closure import *
 
 init()
 
@@ -65,3 +67,31 @@ jd.additional_decoy_info = " LRMSD: " + str(lrms)
 loop_refine = LoopMover_Refine_CCD(loops)
 
 # loop_refine.apply(pose)  # takes too long
+
+
+# KIC
+loops = Loops()
+loops.add_loop(loop1)
+
+set_single_loop_fold_tree(pose, loop1)
+
+sw_low = SwitchResidueTypeSetMover("centroid")
+sw_low.apply(pose)
+kic_perturb = LoopMover_Perturb_KIC(loops)
+kic_perturb.apply(pose)  # won't show in Pymol for efficiency
+
+
+sw_high = SwitchResidueTypeSetMover("fa_standard")
+sw_high.apply(pose)
+kic_refine = LoopMover_Refine_KIC(loops)
+kic_refine.apply(pose)  # won't show in Pymol for efficiency
+
+# use the KinematicMover explicitly in centroid stage
+sw_low.apply(pose)
+kic_mover = KinematicMover()
+kic_mover.set_pivots(16, 20, 24)
+kic_mover.apply(pose)
+
+
+
+
