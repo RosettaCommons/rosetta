@@ -651,13 +651,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	// make fragments if we don't have them at this point
 	check_and_create_fragments( pose );
 
-	// set pose for density scoring if a map was input
-	//fpd eventually this should be moved to after pose initialization
-	if ( option[ OptionKeys::edensity::mapfile ].user() ) {
-		MoverOP dens( new protocols::electron_density::SetupForDensityScoringMover );
-		dens->apply( pose );
-	}
-
 	// starting structure pool
 	std::vector < SilentStructOP > post_centroid_structs;
 	bool need_more_samples = true;
@@ -746,6 +739,14 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			//fpd   to get the right rotamer set we need to do this
 			basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 		}
+
+		// set pose for density scoring if a map was input
+		//keep this after symmetry
+		if ( option[ OptionKeys::edensity::mapfile ].user() ) {
+			MoverOP dens( new protocols::electron_density::SetupForDensityScoringMover );
+			dens->apply( pose );
+		}
+
 
 		// initialize template history
 		//fpd this must be done after symmetrization!
