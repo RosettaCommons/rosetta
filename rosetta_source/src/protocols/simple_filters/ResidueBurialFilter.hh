@@ -41,11 +41,14 @@ public:
 
 	virtual ~ResidueBurialFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	core::Real residue_fraction_buried() const { return residue_fraction_buried_; }
+	void residue_fraction_buried( core::Real const r ){ residue_fraction_buried_ = r; }
 private:
 	core::Size target_residue_;
 	core::Size neighbors_;
 	core::Real distance_threshold_;
 	core::pack::task::TaskFactoryOP task_factory_; /// used to determine which residues to check for burial dynamically. All designable residues will be checked, and if any of them is buried, returns true
+	core::Real residue_fraction_buried_; // dflt 0.0001; what fraction of the residues specified by the task_factory should be buried for the filter to pass
 
 };
 

@@ -67,10 +67,15 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 	if( task_factory() ){//taskfactory is on, iterate over all designable residues and check whether any one passes the filter
 /// This looks like recursion but is really quite limited, b/c the call below to rbf.apply uses the functionality where task_factory() is off, so it goes by a different route, and could never go to a depth of more than 2
 		utility::vector1< core::Size > const target_residues( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
+		core::Size const total_designable( target_residues.size() );
+		core::Size count_buried( 0 );
 		foreach( core::Size const resi, target_residues ){
 			ResidueBurialFilter const rbf( resi/*target_residue*/, neighbors_, distance_threshold_ );
-			if( rbf.apply( pose ) )
-				return true;
+			if( rbf.apply( pose ) ){
+				count_buried++;
+				if( (core::Real ) ( count_buried / total_designable ) >= residue_fraction_buried() )
+					return true;
+			}
 		}
 		return false;
 	}
@@ -88,9 +93,10 @@ ResidueBurialFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMa
 		target_residue_ = protocols::rosetta_scripts::get_resnum( tag, pose );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 	neighbors_ = tag->getOption<core::Size>( "neighbors", 1 );
+	residue_fraction_buried( tag->getOption< core::Real >( "residue_fraction_buried", 0.0001 ) );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
-	residue_burial_filter_tracer<<"ResidueBurialFilter with distance threshold of "<<distance_threshold_<<" around residue "<<target_residue_<<" with "<<neighbors_<<" neighbors."<<std::endl;
+	residue_burial_filter_tracer<<"ResidueBurialFilter with distance threshold of "<<distance_threshold_<<" around residue "<<target_residue_<<" residue_fraction_buried "<<residue_fraction_buried()<<" with "<<neighbors_<<" neighbors."<<std::endl;
 }
 
 void
