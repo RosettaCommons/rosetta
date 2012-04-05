@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
-#include <protocols/antibody2/Ab_Info.fwd.hh>
+#include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 #include <protocols/antibody2/Ab_Assemble_Templates.fwd.hh>
 #include <protocols/loops/Loops.hh>
@@ -120,7 +120,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 	// external objects
-	Ab_InfoOP ab_info_;
+	AntibodyInfoOP ab_info_;
     Ab_TemplateInfoOP ab_t_info_ ;
 
 

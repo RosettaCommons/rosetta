@@ -29,7 +29,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/antibody2/Ab_Info.fwd.hh>
+#include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
@@ -55,12 +55,12 @@ public:
 	/// @brief constructor with arguments
     Ab_H3_perturb_ccd_build(
                             bool is_camelid, 
-                            Ab_InfoOP & antibody_in);
+                            AntibodyInfoOP & antibody_in);
     
     /// @brief constructor with arguments
     Ab_H3_perturb_ccd_build(bool current_loop_is_H3, 
                             bool is_camelid, 
-                            Ab_InfoOP & antibody_in);
+                            AntibodyInfoOP & antibody_in);
         
     virtual protocols::moves::MoverOP clone() const;
     
@@ -97,7 +97,7 @@ public:
     
 private:
 
-    Ab_InfoOP ab_info_;
+    AntibodyInfoOP ab_info_;
     
     loops::Loop input_loop_;
     
@@ -109,7 +109,7 @@ private:
 
     
     void set_default();
-    void init( bool current_loop_is_H3, bool is_camelid, Ab_InfoOP & antibody_in);
+    void init( bool current_loop_is_H3, bool is_camelid, AntibodyInfoOP & antibody_in);
 
     void finalize_setup( core::pose::Pose & pose );
 

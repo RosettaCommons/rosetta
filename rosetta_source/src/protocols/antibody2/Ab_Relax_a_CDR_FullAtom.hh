@@ -37,7 +37,7 @@
 #include <protocols/moves/ChangeFoldTreeMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_Relax_a_CDR_FullAtom.fwd.hh>
 
 
@@ -55,10 +55,10 @@ public:
 	Ab_Relax_a_CDR_FullAtom();
     
     /// @brief constructor with arguments
-    Ab_Relax_a_CDR_FullAtom(Ab_InfoOP antibody_info, std::string loop_name);
+    Ab_Relax_a_CDR_FullAtom(AntibodyInfoOP antibody_info, std::string loop_name);
     
     /// @brief constructor with arguments
-    Ab_Relax_a_CDR_FullAtom( bool is_camelid, Ab_InfoOP antibody_info);
+    Ab_Relax_a_CDR_FullAtom( bool is_camelid, AntibodyInfoOP antibody_info);
 
 
     void set_task_factory(core::pack::task::TaskFactoryCOP tf){
@@ -88,7 +88,7 @@ public:
     
 private:
 
-    Ab_InfoOP ab_info_;
+    AntibodyInfoOP ab_info_;
     std::string loop_name_;
     loops::Loop the_loop_;
     

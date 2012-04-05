@@ -23,7 +23,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -113,12 +113,12 @@ Ab_LH_SnugFit_Mover::Ab_LH_SnugFit_Mover(loops::Loops loops_in ) : Mover() {
 }
     
     
-Ab_LH_SnugFit_Mover::Ab_LH_SnugFit_Mover(antibody2::Ab_Info & antibody_in) : Mover() {
+Ab_LH_SnugFit_Mover::Ab_LH_SnugFit_Mover(antibody2::AntibodyInfo & antibody_in) : Mover() {
     user_defined_ = true;
     init(antibody_in.all_cdr_loops_,false);
 }
     
-Ab_LH_SnugFit_Mover::Ab_LH_SnugFit_Mover(antibody2::Ab_Info & antibody_in, bool camelid) : Mover() {
+Ab_LH_SnugFit_Mover::Ab_LH_SnugFit_Mover(antibody2::AntibodyInfo & antibody_in, bool camelid) : Mover() {
     user_defined_ = true;
     init(antibody_in.all_cdr_loops_, camelid);
 }

@@ -8,11 +8,11 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_Info.cc
+/// @file protocols/antibody2/AntibodyInfo.cc
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 
 // Rosetta Headers
 #include <core/kinematics/FoldTree.hh>
@@ -42,13 +42,13 @@
 
 
 
-static basic::Tracer TR("antibody2.Ab_Info");
+static basic::Tracer TR("antibody2.AntibodyInfo");
 
 namespace protocols{
 namespace antibody2{
 
 /// default constructor
-Ab_Info::Ab_Info() {
+AntibodyInfo::AntibodyInfo() {
 	set_default( false/*is_camelid*/ );
 
 	for( core::Size i = 0; i <= 6; i++ ) hfr_[i][0] = hfr_[i][1] = hfr_[i][2] = 0;
@@ -56,19 +56,19 @@ Ab_Info::Ab_Info() {
 
 
 /// constructor with arguments
-Ab_Info::Ab_Info( core::pose::Pose & pose ) {
+AntibodyInfo::AntibodyInfo( core::pose::Pose & pose ) {
 	setup_CDR_loops( pose, false/*is_camelid*/ );
 }
 
 /// constructor with arguments
-Ab_Info::Ab_Info( core::pose::Pose & pose, bool is_camelid ) {
+AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, bool is_camelid ) {
 	setup_CDR_loops( pose, is_camelid );
 }
 
 
 
 /// constructor with one cdr loop arguments
-Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
+AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, std::string cdr_name )
 {
     if(is_camelid_){
         if (cdr_name == "l1" || cdr_name == "l2" ||cdr_name == "l3") {
@@ -129,7 +129,7 @@ Ab_Info::Ab_Info( core::pose::Pose & pose, std::string cdr_name )
 
 
 void
-Ab_Info::set_default( bool is_camelid )
+AntibodyInfo::set_default( bool is_camelid )
 {
 	is_camelid_ = is_camelid;
 	current_start = 0;
@@ -152,7 +152,7 @@ Ab_Info::set_default( bool is_camelid )
 // always renumbered by the perl script from the Rosetta Antibody Server
 // A smart way would be to use the "identify_CDR_from_a_sequence()" to automatically
 // check this out. On my list!
-void Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool is_camelid ) {
+void AntibodyInfo::setup_CDR_loops( core::pose::Pose & pose, bool is_camelid ) {
 
 	set_default( is_camelid );
 
@@ -244,7 +244,7 @@ void Ab_Info::setup_CDR_loops( core::pose::Pose & pose, bool is_camelid ) {
 
 
 
-loops::LoopOP Ab_Info::get_CDR_loop( std::string loop ) {
+loops::LoopOP AntibodyInfo::get_CDR_loop( std::string loop ) {
 	LoopMap::iterator iter = loops_.begin();
 	iter = loops_.find(loop);
 	if ( iter != loops_.end() ) {return iter->second;}
@@ -255,7 +255,7 @@ loops::LoopOP Ab_Info::get_CDR_loop( std::string loop ) {
 
 
 
-void Ab_Info::align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & native, core::pose::Pose & native_pose ) {
+void AntibodyInfo::align_to_native( core::pose::Pose & pose, antibody2::AntibodyInfo & native, core::pose::Pose & native_pose ) {
 
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
@@ -282,7 +282,7 @@ void Ab_Info::align_to_native( core::pose::Pose & pose, antibody2::Ab_Info & nat
 
 
 
-void Ab_Info::detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose ) {
+void AntibodyInfo::detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	if( is_camelid_ )
 		detect_and_set_camelid_CDR_H3_stem_type();
 	else
@@ -293,7 +293,7 @@ void Ab_Info::detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose ) {
 
 
 
-void Ab_Info::detect_and_set_camelid_CDR_H3_stem_type() {
+void AntibodyInfo::detect_and_set_camelid_CDR_H3_stem_type() {
 	TR << "AC Detecting Camelid CDR H3 Stem Type" << std::endl;
 
 	// extract single letter aa codes for the chopped loop residues
@@ -330,7 +330,7 @@ void Ab_Info::detect_and_set_camelid_CDR_H3_stem_type() {
 
 
 
-void Ab_Info::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
+void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
 
 	bool is_H3( false );
@@ -421,7 +421,7 @@ void Ab_Info::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose )
 
 
 
-void Ab_Info::all_cdr_fold_tree( core::pose::Pose & pose ) {
+void AntibodyInfo::all_cdr_fold_tree( core::pose::Pose & pose ) {
 	using namespace core::kinematics;
 
 	all_cdr_loops_.sequential_order();
@@ -459,7 +459,7 @@ void Ab_Info::all_cdr_fold_tree( core::pose::Pose & pose ) {
     
     // JQX:: assuming Chothia numbering
     //   setup_CDRs_numbering
-void Ab_Info::get_CDRs_numbering(){
+void AntibodyInfo::get_CDRs_numbering(){
     CDR_numbering_begin_.insert( std::pair<std::string, core::Size>("l1", 24) );
     CDR_numbering_end_.insert( std::pair<std::string, core::Size>("l1", 34) );
         
@@ -489,14 +489,14 @@ void Ab_Info::get_CDRs_numbering(){
 
 
 /// @details  Show the complete setup of the docking protocol
-void Ab_Info::show( std::ostream & out ) {
+void AntibodyInfo::show( std::ostream & out ) {
     //      if ( !flags_and_objects_are_in_sync_ ){
     //              sync_objects_with_flags();
     //      }
     out << *this;
 }
 
-std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info )
+std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )
 {
         using namespace ObjexxFCL::fmt;
         // All output will be 80 characters - 80 is a nice number, don't you think?
@@ -553,7 +553,7 @@ std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info )
 // Last modified 03/16/2012 by Daisuke Kuroda
 //
     
-void Ab_Info::identify_CDR_from_a_sequence(std::string & querychain)
+void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain)
 {
         using namespace std;
 
@@ -749,7 +749,7 @@ void Ab_Info::identify_CDR_from_a_sequence(std::string & querychain)
     
     
     
-void Ab_Info::load_CDR_query_info_to_check(){
+void AntibodyInfo::load_CDR_query_info_to_check(){
 
         using namespace std;
         ifstream inf;

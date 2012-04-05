@@ -23,7 +23,7 @@
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 
 
 
@@ -69,7 +69,7 @@ void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactor
     
 
 /// @brief return false if any cdr cutpoint is broken
-bool cutpoints_separation( core::pose::Pose & pose, Ab_InfoOP & antibody_info );
+bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info );
     
     
     

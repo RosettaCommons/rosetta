@@ -18,7 +18,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -66,7 +66,7 @@ Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover(std::string cdr_name,
     
 
 Ab_GraftOneCDR_Mover::Ab_GraftOneCDR_Mover( std::string cdr_name, 
-                                           Ab_InfoOP ab_info, 
+                                           AntibodyInfoOP ab_info, 
                                            Ab_TemplateInfoOP ab_t_info, 
                                            scoring::ScoreFunctionOP scorefxn ) : Mover( "Ab_GraftOneCDR_Mover" )
 {

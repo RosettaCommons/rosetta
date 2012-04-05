@@ -30,7 +30,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_util.hh>
 #include <protocols/moves/PyMolMover.hh>
 
@@ -57,7 +57,7 @@ Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover() : Mover()
         
         
         
-Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover(antibody2::Ab_InfoOP  antibody_info, bool camelid ) : Mover()
+Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover(antibody2::AntibodyInfoOP  antibody_info, bool camelid ) : Mover()
 {
     user_defined_ = true;
     init(antibody_info, camelid, false);
@@ -72,7 +72,7 @@ Ab_H3_cter_insert_mover::~Ab_H3_cter_insert_mover() {}
         
         
         
-void Ab_H3_cter_insert_mover::init(Ab_InfoOP antibody_info, bool camelid, bool benchmark)
+void Ab_H3_cter_insert_mover::init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark)
 {
     Mover::type( "Ab_H3_cter_insert_mover" );
             

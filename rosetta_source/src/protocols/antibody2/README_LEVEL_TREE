@@ -7,7 +7,7 @@ Ab_AssembleCDRs
 	Ab_RelaxOneCDR_Mover
 
 
-Ab_Info
+AntibodyInfo
     Ab_TemplateInfo
 
 

@@ -58,7 +58,7 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <protocols/antibody2/Ab_util.hh>
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 
 #include <protocols/moves/PyMolMover.hh>
 
@@ -91,7 +91,7 @@ Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build() : Mover() {
 
 Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build(  
                                                      bool is_camelid, 
-                                                     Ab_InfoOP & antibody_in ) : Mover()     
+                                                     AntibodyInfoOP & antibody_in ) : Mover()     
 {
     user_defined_ = true;
     init(true, is_camelid, antibody_in);
@@ -101,7 +101,7 @@ Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build(
 Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build( 
                                                  bool current_loop_is_H3, 
                                                  bool is_camelid, 
-                                                 Ab_InfoOP & antibody_in ) : Mover() 
+                                                 AntibodyInfoOP & antibody_in ) : Mover() 
 {
     user_defined_ = true;
     init(current_loop_is_H3, is_camelid, antibody_in);
@@ -140,7 +140,7 @@ protocols::moves::MoverOP Ab_H3_perturb_ccd_build::clone() const {
 
     
     
-void Ab_H3_perturb_ccd_build::init(bool current_loop_is_H3,bool is_camelid, Ab_InfoOP & antibody_in ) 
+void Ab_H3_perturb_ccd_build::init(bool current_loop_is_H3,bool is_camelid, AntibodyInfoOP & antibody_in ) 
 {
     set_default();
     

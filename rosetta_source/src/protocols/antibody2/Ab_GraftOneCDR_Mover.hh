@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.hh>  
 // Needs to be the full header so the scorefxn can default to NULL
 #include <protocols/moves/Mover.hh>
-#include <protocols/antibody2/Ab_Info.fwd.hh>
+#include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 
 namespace protocols {
@@ -41,7 +41,7 @@ namespace antibody2 {
                              core::scoring::ScoreFunctionOP scorefxn );
         
 		Ab_GraftOneCDR_Mover(std::string cdr_name, 
-                             Ab_InfoOP ab_info,
+                             AntibodyInfoOP ab_info,
                              Ab_TemplateInfoOP ab_t_info,
                              core::scoring::ScoreFunctionOP scorefxn );
 

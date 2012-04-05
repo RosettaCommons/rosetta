@@ -24,7 +24,7 @@
 
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
 #include <core/fragment/FragData.hh>
-#include <protocols/antibody2/Ab_Info.fwd.hh>
+#include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
@@ -50,7 +50,7 @@ public:
 	Ab_H3_cter_insert_mover();
     
 	/// @brief constructor with arguments
-	Ab_H3_cter_insert_mover(antibody2::Ab_InfoOP antibody_info, bool camelid );
+	Ab_H3_cter_insert_mover(antibody2::AntibodyInfoOP antibody_info, bool camelid );
 	
     
 	/// @brief default destructor
@@ -74,7 +74,7 @@ private:
     // CDR H3 C-terminal fragments
 	utility::vector1< core::fragment::FragData > H3_base_library_;
    
-    Ab_InfoOP ab_info_;
+    AntibodyInfoOP ab_info_;
     
     bool user_defined_;
     
@@ -88,7 +88,7 @@ private:
 	bool is_camelid_;
     
         
-    void init(Ab_InfoOP antibody_info, bool camelid, bool benchmark);
+    void init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark);
 //    void setup_objects();
 //    void finalize_setup( core::pose::Pose & pose );
 

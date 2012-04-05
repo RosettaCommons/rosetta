@@ -88,7 +88,7 @@
 
 #include <protocols/antibody2/Ab_util.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.hh>
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.hh>
 #include <protocols/moves/PyMolMover.hh>
 
@@ -105,7 +105,7 @@ Ab_H3_Model_CDR_H3::Ab_H3_Model_CDR_H3() : Mover()
 
 }
 
-Ab_H3_Model_CDR_H3::Ab_H3_Model_CDR_H3(bool camelid, bool benchmark, Ab_InfoOP antibody_info) : Mover()
+Ab_H3_Model_CDR_H3::Ab_H3_Model_CDR_H3(bool camelid, bool benchmark, AntibodyInfoOP antibody_info) : Mover()
 {
 	user_defined_ = true;
 	init(camelid, benchmark, antibody_info );
@@ -113,7 +113,7 @@ Ab_H3_Model_CDR_H3::Ab_H3_Model_CDR_H3(bool camelid, bool benchmark, Ab_InfoOP a
 
 
 
-void Ab_H3_Model_CDR_H3::init(bool camelid, bool benchmark, Ab_InfoOP antibody_info)
+void Ab_H3_Model_CDR_H3::init(bool camelid, bool benchmark, AntibodyInfoOP antibody_info)
 {
 	Mover::type( "Ab_H3_Model_CDR_H3" );
 
@@ -292,7 +292,7 @@ void Ab_H3_Model_CDR_H3::apply( pose::Pose & pose_in )
     std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
     core::import_pose::pose_from_pdb( hfr_pose_, path+"hfr.pdb" );
     std::string cdr_name = "h3";
-    Ab_InfoOP hfr_info =  new Ab_Info ( hfr_pose_, cdr_name );
+    AntibodyInfoOP hfr_info =  new AntibodyInfo ( hfr_pose_, cdr_name );
     unaligned_cdr_loop_begin = hfr_info->current_start;
     unaligned_cdr_loop_end   = hfr_info->current_end;
     
@@ -304,7 +304,7 @@ void Ab_H3_Model_CDR_H3::apply( pose::Pose & pose_in )
         pose_in.dump_pdb("after_copying_nter.pdb");
 
     
-    antibody2::Ab_InfoOP starting_antibody;
+    antibody2::AntibodyInfoOP starting_antibody;
     starting_antibody = ab_info_;
     bool closed_cutpoints( false );
     

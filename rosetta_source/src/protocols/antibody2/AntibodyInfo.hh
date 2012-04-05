@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_Info.hh
+/// @file protocols/antibody2/AntibodyInfo.hh
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_Ab_Info_hh
-#define INCLUDED_protocols_antibody2_Ab_Info_hh
+#ifndef INCLUDED_protocols_antibody2_AntibodyInfo_hh
+#define INCLUDED_protocols_antibody2_AntibodyInfo_hh
 
-#include <protocols/antibody2/Ab_Info.fwd.hh>
+#include <protocols/antibody2/AntibodyInfo.fwd.hh>
 
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
@@ -34,7 +34,7 @@ namespace protocols {
 namespace antibody2 {
 
 /// antibody2 definition
-class Ab_Info : public utility::pointer::ReferenceCount {
+class AntibodyInfo : public utility::pointer::ReferenceCount {
 
 public:
 	typedef std::map < std::string, loops::LoopOP > LoopMap;
@@ -43,12 +43,12 @@ public:
 
     
 	/// default constructor
-	Ab_Info();
+	AntibodyInfo();
 
 	/// constructor with arguments
-	Ab_Info( core::pose::Pose & pose );
-	Ab_Info( core::pose::Pose & pose, bool camelid );
-	Ab_Info( core::pose::Pose & pose, std::string cdr_name );
+	AntibodyInfo( core::pose::Pose & pose );
+	AntibodyInfo( core::pose::Pose & pose, bool camelid );
+	AntibodyInfo( core::pose::Pose & pose, std::string cdr_name );
 
 	void setup_CDR_loops( core::pose::Pose & pose, bool camelid );
 
@@ -66,13 +66,13 @@ public:
 
 	/// align current Fv to native.Fv
 	void align_to_native( core::pose::Pose & pose, 
-                          antibody2::Ab_Info & native, 
+                          antibody2::AntibodyInfo & native, 
                           core::pose::Pose & native_pose );
     
     void load_CDR_query_info_to_check();
 
     void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const Ab_Info & ab_info );
+    friend std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info );
 
     
     
@@ -129,7 +129,7 @@ private:
 } //namespace protocols
 
 
-#endif //INCLUDED_protocols_loops_Ab_Info_HH
+#endif //INCLUDED_protocols_loops_AntibodyInfo_HH
 
 
 

@@ -101,7 +101,7 @@ Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( ) : Mover()
     init();
 }
 
-Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( Ab_InfoOP antibody_info, std::string loop_name ) : Mover() 
+Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( AntibodyInfoOP antibody_info, std::string loop_name ) : Mover() 
 {
     set_default();
 
@@ -116,7 +116,7 @@ Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( Ab_InfoOP antibody_info, std::
     
 
     
-Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( bool is_camelid, Ab_InfoOP antibody_info ) : Mover() 
+Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( bool is_camelid, AntibodyInfoOP antibody_info ) : Mover() 
 {        
     set_default();
         
@@ -538,7 +538,7 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
  
     TR <<  "H3M Modeling Fullatom CDR H3 loop" << std::endl;
  
-    antibody2::Ab_Info starting_antibody;
+    antibody2::AntibodyInfo starting_antibody;
     starting_antibody = ab_info_;
     bool closed_cutpoints( false );
  
@@ -565,7 +565,7 @@ void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
     current_loop_is_H3_ = false;
     H3_filter_ = false;
  
-    antibody2::Ab_Info starting_antibody;
+    antibody2::AntibodyInfo starting_antibody;
     starting_antibody = ab_info_;
     bool closed_cutpoints( false );
  

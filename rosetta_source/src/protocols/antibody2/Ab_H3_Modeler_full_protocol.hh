@@ -31,7 +31,7 @@
 #include <protocols/moves/PyMolMover.fwd.hh>
 
 #include <protocols/antibody2/Ab_H3_Model_CDR_H3.fwd.hh>
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_H3_Modeler_full_protocol.fwd.hh>
 
 
@@ -145,7 +145,7 @@ private:
 
 
 	// external objects
-	Ab_InfoOP ab_info_;
+	AntibodyInfoOP ab_info_;
 
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;

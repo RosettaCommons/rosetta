@@ -46,7 +46,7 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/antibody2/Ab_GraftOneCDR_Mover.hh>
 #include <protocols/antibody2/Ab_CloseOneCDR_Mover.hh>
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
 #include <protocols/antibody2/Ab_Assemble_Templates.hh>
 
@@ -258,7 +258,7 @@ void Ab_Assemble_Templates::finalize_setup( pose::Pose & frame_pose ) {
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
     
-    ab_info_   =  new Ab_Info(frame_pose, camelid_);
+    ab_info_   =  new AntibodyInfo(frame_pose, camelid_);
     ab_t_info_ =  new Ab_TemplateInfo(graft_l1_, graft_l2_, graft_l3_,
                                       graft_h1_, graft_h2_, graft_h3_, camelid_);
     
@@ -266,7 +266,7 @@ void Ab_Assemble_Templates::finalize_setup( pose::Pose & frame_pose ) {
     pymol_ = new moves::PyMolMover();
     
     
-    TR<<" Checking Ab_Info object: "<<std::endl<<*ab_info_<<std::endl<<std::endl;
+    TR<<" Checking AntibodyInfo object: "<<std::endl<<*ab_info_<<std::endl<<std::endl;
     TR<<" Checking Ab_TemplateInfo object: "<<std::endl<<*ab_t_info_<<std::endl<<std::endl;
 
     for ( GraftMap::const_iterator it = grafts_.begin(); it != grafts_.end(); ++it ) {
@@ -373,7 +373,7 @@ void Ab_Assemble_Templates::apply( pose::Pose & frame_pose ) {
     if( get_native_pose() ) native_pose = *get_native_pose();
     else                    native_pose = frame_pose;
     
-    Ab_Info native_ab( native_pose, camelid_ );
+    AntibodyInfo native_ab( native_pose, camelid_ );
     
     
     ab_info_->align_to_native( frame_pose, native_ab, native_pose );

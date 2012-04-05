@@ -455,7 +455,7 @@ namespace antibody2{
     //JQX:
     // should input a variable here to let the user to adjust 1.9
     
-    bool cutpoints_separation( core::pose::Pose & pose, Ab_InfoOP & antibody_info ) 
+    bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info ) 
     {
         
         bool closed_cutpoints = true;

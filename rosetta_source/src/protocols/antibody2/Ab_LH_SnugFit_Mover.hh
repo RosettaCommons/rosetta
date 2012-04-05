@@ -30,7 +30,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 
 #include <protocols/antibody2/Ab_LH_SnugFit_Mover.fwd.hh>
 
@@ -50,8 +50,8 @@ public:
     
 	/// @brief constructor with arguments
     Ab_LH_SnugFit_Mover(loops::Loops loops_in );
-    Ab_LH_SnugFit_Mover(antibody2::Ab_Info & antibody_in );
-	Ab_LH_SnugFit_Mover(antibody2::Ab_Info & antibody_in, bool camelid );
+    Ab_LH_SnugFit_Mover(antibody2::AntibodyInfo & antibody_in );
+	Ab_LH_SnugFit_Mover(antibody2::AntibodyInfo & antibody_in, bool camelid );
         
     virtual protocols::moves::MoverOP clone() const;
     
@@ -71,7 +71,7 @@ public:
     
 private:
 
-    Ab_Info ab_info_;
+    AntibodyInfo ab_info_;
     
     bool user_defined_;
     bool benchmark_;

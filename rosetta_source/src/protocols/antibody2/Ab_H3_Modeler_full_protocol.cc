@@ -82,7 +82,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <protocols/antibody2/Ab_util.hh>
-#include <protocols/antibody2/Ab_Info.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_H3_Modeler_full_protocol.hh>
 #include <protocols/antibody2/Ab_H3_Model_CDR_H3.hh>
 #include <protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.hh>
@@ -303,7 +303,7 @@ Ab_H3_Modeler_full_protocol::finalize_setup( pose::Pose & frame_pose )
 
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
-    ab_info_ = new Ab_Info(frame_pose,camelid_);
+    ab_info_ = new AntibodyInfo(frame_pose,camelid_);
     TR<<*ab_info_<<std::endl;
     
     model_cdrh3_ = new Ab_H3_Model_CDR_H3(camelid_, benchmark_, ab_info_ );
@@ -418,7 +418,7 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
 
 		// align pose to native pose
 		pose::Pose native_pose = *get_native_pose();
-		antibody2::Ab_Info native_ab( native_pose, camelid_ );
+		antibody2::AntibodyInfo native_ab( native_pose, camelid_ );
 //		ab_info_.align_to_native( pose, native_ab, native_pose );
 	}
 

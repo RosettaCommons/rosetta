@@ -28,7 +28,7 @@
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/vector1.fwd.hh>
-#include <protocols/antibody2/Ab_Info.fwd.hh>
+#include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
@@ -50,7 +50,7 @@ public:
 	Ab_H3_Model_CDR_H3();
 
 	/// @brief constructor with arguments
-	Ab_H3_Model_CDR_H3( bool camelid, bool benchmark, Ab_InfoOP antibody_info );
+	Ab_H3_Model_CDR_H3( bool camelid, bool benchmark, AntibodyInfoOP antibody_info );
 
 	/// @brief default destructor
 	~Ab_H3_Model_CDR_H3();
@@ -152,12 +152,12 @@ private:
 	/// @brief is camelid antibody without light chain
 	bool is_camelid_;
 
-	antibody2::Ab_InfoOP ab_info_;
+	antibody2::AntibodyInfoOP ab_info_;
 
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;
 
-	void init(bool camelid, bool benchmark, Ab_InfoOP antibody_info);
+	void init(bool camelid, bool benchmark, AntibodyInfoOP antibody_info);
 
     void setup_objects();
 

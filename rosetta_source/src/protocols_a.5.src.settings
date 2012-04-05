@@ -19,7 +19,7 @@ sources = {
 	],
 	"protocols/antibody2": [
                 "Ab_TemplateInfo",
-                "Ab_Info",
+                "AntibodyInfo",
                 "Ab_Assemble_Templates",
                 "Ab_GraftOneCDR_Mover",
                 "Ab_CloseOneCDR_Mover",
