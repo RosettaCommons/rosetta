@@ -88,7 +88,7 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 		TR<<"Designable residues:"<<std::endl;
 		for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
 			if( packer_task->being_designed( resi ) )
-				TR<<pose.residue( resi ).name3()<<" "<< pose.pdb_info()->number( resi )<<std::endl;
+				TR<<pose.residue( resi ).name3()<<" "<< pose.pdb_info()->number( resi )<<pose.pdb_info()->chain( resi )<<std::endl;
 		}
 	}
 	if( packable() ){
