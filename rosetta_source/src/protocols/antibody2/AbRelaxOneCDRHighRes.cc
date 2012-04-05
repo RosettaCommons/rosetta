@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_Relax_a_CDR_FullAtom.cc
+/// @file protocols/antibody2/AbRelaxOneCDRHighRes.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,7 +17,7 @@
 
 
 
-#include <protocols/antibody2/Ab_Relax_a_CDR_FullAtom.hh>
+#include <protocols/antibody2/AbRelaxOneCDRHighRes.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -80,7 +80,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.Ab_Relax_a_CDR_FullAtom");
+static basic::Tracer TR("protocols.antibody2.AbRelaxOneCDRHighRes");
 
 
 
@@ -93,7 +93,7 @@ namespace antibody2 {
     
     
 // default constructor
-Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( ) : Mover() 
+AbRelaxOneCDRHighRes::AbRelaxOneCDRHighRes( ) : Mover() 
 {
     set_default();
     
@@ -101,7 +101,7 @@ Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( ) : Mover()
     init();
 }
 
-Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( AntibodyInfoOP antibody_info, std::string loop_name ) : Mover() 
+AbRelaxOneCDRHighRes::AbRelaxOneCDRHighRes( AntibodyInfoOP antibody_info, std::string loop_name ) : Mover() 
 {
     set_default();
 
@@ -116,7 +116,7 @@ Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( AntibodyInfoOP antibody_info, 
     
 
     
-Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( bool is_camelid, AntibodyInfoOP antibody_info ) : Mover() 
+AbRelaxOneCDRHighRes::AbRelaxOneCDRHighRes( bool is_camelid, AntibodyInfoOP antibody_info ) : Mover() 
 {        
     set_default();
         
@@ -129,7 +129,7 @@ Ab_Relax_a_CDR_FullAtom::Ab_Relax_a_CDR_FullAtom( bool is_camelid, AntibodyInfoO
     
 
     
-void Ab_Relax_a_CDR_FullAtom::set_default(){ 
+void AbRelaxOneCDRHighRes::set_default(){ 
     benchmark_ = false;
     include_neighbors_ = true;
     max_cycle_close_trial_ = 20;
@@ -151,18 +151,18 @@ void Ab_Relax_a_CDR_FullAtom::set_default(){
     
     
 // default destructor
-Ab_Relax_a_CDR_FullAtom::~Ab_Relax_a_CDR_FullAtom() {}
+AbRelaxOneCDRHighRes::~AbRelaxOneCDRHighRes() {}
     
 //clone
-protocols::moves::MoverOP Ab_Relax_a_CDR_FullAtom::clone() const {
-    return( new Ab_Relax_a_CDR_FullAtom() );
+protocols::moves::MoverOP AbRelaxOneCDRHighRes::clone() const {
+    return( new AbRelaxOneCDRHighRes() );
 }
     
     
 
     
     
-void Ab_Relax_a_CDR_FullAtom::init( ) 
+void AbRelaxOneCDRHighRes::init( ) 
 {
 
     the_loop_   = *(ab_info_->get_CDR_loop(loop_name_));
@@ -204,13 +204,13 @@ void Ab_Relax_a_CDR_FullAtom::init( )
 
     
     
-std::string Ab_Relax_a_CDR_FullAtom::get_name() const {
-    return "Ab_Relax_a_CDR_FullAtom";
+std::string AbRelaxOneCDRHighRes::get_name() const {
+    return "AbRelaxOneCDRHighRes";
 }
 
     
     
-void Ab_Relax_a_CDR_FullAtom::pass_start_pose(core::pose::Pose & start_pose){
+void AbRelaxOneCDRHighRes::pass_start_pose(core::pose::Pose & start_pose){
     start_pose_ = start_pose;
 }
     
@@ -222,7 +222,7 @@ void Ab_Relax_a_CDR_FullAtom::pass_start_pose(core::pose::Pose & start_pose){
     
     
     
-void Ab_Relax_a_CDR_FullAtom::finalize_setup( core::pose::Pose & pose ){
+void AbRelaxOneCDRHighRes::finalize_setup( core::pose::Pose & pose ){
 
     setup_packer_task( start_pose_, tf_ );
     
@@ -349,7 +349,7 @@ void Ab_Relax_a_CDR_FullAtom::finalize_setup( core::pose::Pose & pose ){
     
     
 //APPLY
-void Ab_Relax_a_CDR_FullAtom::apply( pose::Pose & pose ) {
+void AbRelaxOneCDRHighRes::apply( pose::Pose & pose ) {
     using namespace protocols::simple_moves;
     using namespace protocols::moves;
     using namespace protocols::toolbox::task_operations;

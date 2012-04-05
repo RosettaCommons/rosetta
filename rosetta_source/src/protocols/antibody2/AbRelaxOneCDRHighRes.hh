@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_Relax_a_CDR_FullAtom.hh
+/// @file protocols/antibody2/AbRelaxOneCDRHighRes.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,8 +17,8 @@
 
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_Relax_a_CDR_FullAtom_hh
-#define INCLUDED_protocols_antibody2_Ab_Relax_a_CDR_FullAtom_hh
+#ifndef INCLUDED_protocols_antibody2_AbRelaxOneCDRHighRes_hh
+#define INCLUDED_protocols_antibody2_AbRelaxOneCDRHighRes_hh
 
 
 #include <core/pose/Pose.hh>
@@ -38,7 +38,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
 #include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/Ab_Relax_a_CDR_FullAtom.fwd.hh>
+#include <protocols/antibody2/AbRelaxOneCDRHighRes.fwd.hh>
 
 
 
@@ -46,19 +46,19 @@
 namespace protocols {
 namespace antibody2 {
         
-class Ab_Relax_a_CDR_FullAtom: public moves::Mover {
+class AbRelaxOneCDRHighRes: public moves::Mover {
             
             
 public:
     
     /// @brief default constructor
-	Ab_Relax_a_CDR_FullAtom();
+	AbRelaxOneCDRHighRes();
     
     /// @brief constructor with arguments
-    Ab_Relax_a_CDR_FullAtom(AntibodyInfoOP antibody_info, std::string loop_name);
+    AbRelaxOneCDRHighRes(AntibodyInfoOP antibody_info, std::string loop_name);
     
     /// @brief constructor with arguments
-    Ab_Relax_a_CDR_FullAtom( bool is_camelid, AntibodyInfoOP antibody_info);
+    AbRelaxOneCDRHighRes( bool is_camelid, AntibodyInfoOP antibody_info);
 
 
     void set_task_factory(core::pack::task::TaskFactoryCOP tf){
@@ -69,7 +69,7 @@ public:
     virtual protocols::moves::MoverOP clone() const;
     
 	/// @brief default destructor
-	~Ab_Relax_a_CDR_FullAtom();
+	~AbRelaxOneCDRHighRes();
     
     void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
         use_pymol_diy_ = true;

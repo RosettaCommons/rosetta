@@ -8,14 +8,14 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c)University of Washington UW TechTransfer, email:license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_H3_Model_CDR_H3.cc
+/// @file protocols/antibody2/AbModelCDRH3.cc
 /// @brief models CDR H3 loop using loop modeling
 /// @detailed
 ///// @author Jianqing Xu ( xubest@gmail.com )
 //
 
 
-#include <protocols/antibody2/Ab_H3_Model_CDR_H3.hh>
+#include <protocols/antibody2/AbModelCDRH3.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
@@ -94,18 +94,18 @@
 
 
 
-static basic::Tracer TR("protocols.antibody2.Ab_H3_Model_CDR_H3");
+static basic::Tracer TR("protocols.antibody2.AbModelCDRH3");
 using namespace core;
 
 namespace protocols {
 namespace antibody2 {
 
-Ab_H3_Model_CDR_H3::Ab_H3_Model_CDR_H3() : Mover()
+AbModelCDRH3::AbModelCDRH3() : Mover()
 {
 
 }
 
-Ab_H3_Model_CDR_H3::Ab_H3_Model_CDR_H3(bool camelid, bool benchmark, AntibodyInfoOP antibody_info) : Mover()
+AbModelCDRH3::AbModelCDRH3(bool camelid, bool benchmark, AntibodyInfoOP antibody_info) : Mover()
 {
 	user_defined_ = true;
 	init(camelid, benchmark, antibody_info );
@@ -113,9 +113,9 @@ Ab_H3_Model_CDR_H3::Ab_H3_Model_CDR_H3(bool camelid, bool benchmark, AntibodyInf
 
 
 
-void Ab_H3_Model_CDR_H3::init(bool camelid, bool benchmark, AntibodyInfoOP antibody_info)
+void AbModelCDRH3::init(bool camelid, bool benchmark, AntibodyInfoOP antibody_info)
 {
-	Mover::type( "Ab_H3_Model_CDR_H3" );
+	Mover::type( "AbModelCDRH3" );
 
 
 	set_default();
@@ -151,10 +151,10 @@ void Ab_H3_Model_CDR_H3::init(bool camelid, bool benchmark, AntibodyInfoOP antib
 
 
     
-Ab_H3_Model_CDR_H3::~Ab_H3_Model_CDR_H3() {}
+AbModelCDRH3::~AbModelCDRH3() {}
     
     
-void Ab_H3_Model_CDR_H3::set_default()
+void AbModelCDRH3::set_default()
 {
     do_cter_insert_ = true;
 	benchmark_ = false;
@@ -191,7 +191,7 @@ void Ab_H3_Model_CDR_H3::set_default()
     
     
     
-void Ab_H3_Model_CDR_H3::setup_objects(){
+void AbModelCDRH3::setup_objects(){
     h3_cter_insert_mover_ = new Ab_H3_cter_insert_mover(ab_info_, is_camelid_);
     h3_perturb_ccd_build_ = new Ab_H3_perturb_ccd_build(current_loop_is_H3_,is_camelid_, ab_info_ );        
 }
@@ -200,19 +200,19 @@ void Ab_H3_Model_CDR_H3::setup_objects(){
     
     
     
-void Ab_H3_Model_CDR_H3::set_lowres_score_func( scoring::ScoreFunctionOP lowres_scorefxn ) {
+void AbModelCDRH3::set_lowres_score_func( scoring::ScoreFunctionOP lowres_scorefxn ) {
     lowres_scorefxn_ = lowres_scorefxn;
 } 
 
-void Ab_H3_Model_CDR_H3::set_highres_score_func(scoring::ScoreFunctionOP highres_scorefxn) {
+void AbModelCDRH3::set_highres_score_func(scoring::ScoreFunctionOP highres_scorefxn) {
     highres_scorefxn_ = highres_scorefxn;
 }
 
-void Ab_H3_Model_CDR_H3::turn_off_H3_filter(){
+void AbModelCDRH3::turn_off_H3_filter(){
     h3_perturb_ccd_build_->turn_off_H3_filter();
 }    
 
-void Ab_H3_Model_CDR_H3::turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){        
+void AbModelCDRH3::turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){        
     use_pymol_diy_ = true;
     pymol_ = pymol;
     h3_cter_insert_mover_->turn_on_and_pass_the_pymol(pymol);
@@ -220,7 +220,7 @@ void Ab_H3_Model_CDR_H3::turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
 }
     
 
-void Ab_H3_Model_CDR_H3::apply( pose::Pose & pose_in )
+void AbModelCDRH3::apply( pose::Pose & pose_in )
 {
 
 
@@ -373,13 +373,13 @@ void Ab_H3_Model_CDR_H3::apply( pose::Pose & pose_in )
     
 
     return;
-} // Ab_H3_Model_CDR_H3::apply()
+} // AbModelCDRH3::apply()
 
     
     
     
-std::string Ab_H3_Model_CDR_H3::get_name() const {
-	return "Ab_H3_Model_CDR_H3";
+std::string AbModelCDRH3::get_name() const {
+	return "AbModelCDRH3";
 }
 
 
@@ -407,7 +407,7 @@ std::string Ab_H3_Model_CDR_H3::get_name() const {
 		///
 		/// @last_modified 05/07/2010
 		///////////////////////////////////////////////////////////////////////////
-		void Ab_H3_Model_CDR_H3::loop_centroid_relax(
+		void AbModelCDRH3::loop_centroid_relax(
 			pose::Pose & pose_in,
 			Size const loop_begin,
 			Size const loop_end )

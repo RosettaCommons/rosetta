@@ -30,7 +30,7 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
 
-#include <protocols/antibody2/Ab_H3_Model_CDR_H3.fwd.hh>
+#include <protocols/antibody2/AbModelCDRH3.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AbModelH3FullProtocol.fwd.hh>
 
@@ -151,7 +151,7 @@ private:
 	core::pack::task::TaskFactoryOP tf_;
 
 	// movers
-	protocols::antibody2::Ab_H3_Model_CDR_H3OP model_cdrh3_;
+	protocols::antibody2::AbModelCDRH3OP model_cdrh3_;
 
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();

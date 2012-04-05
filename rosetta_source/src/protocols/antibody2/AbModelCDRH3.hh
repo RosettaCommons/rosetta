@@ -8,16 +8,16 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_H3_Model_CDR_H3.hh
+/// @file protocols/antibody2/AbModelCDRH3.hh
 /// @brief
 ///// @author Jianqing Xu ( xubest@gmail.com )
 //
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_H3_Model_CDR_H3_hh
-#define INCLUDED_protocols_antibody2_Ab_H3_Model_CDR_H3_hh
+#ifndef INCLUDED_protocols_antibody2_AbModelCDRH3_hh
+#define INCLUDED_protocols_antibody2_AbModelCDRH3_hh
 
-#include <protocols/antibody2/Ab_H3_Model_CDR_H3.fwd.hh>
+#include <protocols/antibody2/AbModelCDRH3.fwd.hh>
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
@@ -44,16 +44,16 @@ namespace antibody2 {
 //////////////////////////////////////////////////////////////////////////
 /// @brief Ab initio modeling of CDR H3 loop
 /// @details
-class Ab_H3_Model_CDR_H3 : public protocols::moves::Mover {
+class AbModelCDRH3 : public protocols::moves::Mover {
 public:
 	/// @brief default constructor
-	Ab_H3_Model_CDR_H3();
+	AbModelCDRH3();
 
 	/// @brief constructor with arguments
-	Ab_H3_Model_CDR_H3( bool camelid, bool benchmark, AntibodyInfoOP antibody_info );
+	AbModelCDRH3( bool camelid, bool benchmark, AntibodyInfoOP antibody_info );
 
 	/// @brief default destructor
-	~Ab_H3_Model_CDR_H3();
+	~AbModelCDRH3();
     
 	void set_default();
 	virtual void apply( core::pose::Pose & pose_in );
@@ -164,7 +164,7 @@ private:
     Ab_H3_cter_insert_moverOP h3_cter_insert_mover_;
     Ab_H3_perturb_ccd_buildOP h3_perturb_ccd_build_;
     
-}; // class Ab_H3_Model_CDR_H3
+}; // class AbModelCDRH3
 
 
     

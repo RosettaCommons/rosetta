@@ -84,10 +84,10 @@
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AbModelH3FullProtocol.hh>
-#include <protocols/antibody2/Ab_H3_Model_CDR_H3.hh>
+#include <protocols/antibody2/AbModelCDRH3.hh>
 #include <protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.hh>
 #include <protocols/antibody2/Ab_LH_SnugFit_Mover.hh>
-#include <protocols/antibody2/Ab_Relax_a_CDR_FullAtom.hh>
+#include <protocols/antibody2/AbRelaxOneCDRHighRes.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -306,7 +306,7 @@ AbModelH3FullProtocol::finalize_setup( pose::Pose & frame_pose )
     ab_info_ = new AntibodyInfo(frame_pose,camelid_);
     TR<<*ab_info_<<std::endl;
     
-    model_cdrh3_ = new Ab_H3_Model_CDR_H3(camelid_, benchmark_, ab_info_ );
+    model_cdrh3_ = new AbModelCDRH3(camelid_, benchmark_, ab_info_ );
     
 
 
@@ -427,7 +427,7 @@ void AbModelH3FullProtocol::apply( pose::Pose & frame_pose ) {
 	// Step 4: Full Atom Relax 
     if(refine_h3_){
         //$$$$$$$$$$$$$$$$$$$$$$$$
-        Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(ab_info_, "h3"); 
+        AbRelaxOneCDRHighRes relax_a_cdr_high_res(ab_info_, "h3"); 
         relax_a_cdr_high_res.set_task_factory(tf_);
         relax_a_cdr_high_res.pass_start_pose(start_pose_);
         if(use_pymol_diy_) relax_a_cdr_high_res.turn_on_and_pass_the_pymol(pymol_);
@@ -453,14 +453,14 @@ void AbModelH3FullProtocol::apply( pose::Pose & frame_pose ) {
     
         if( camelid_ ) {
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-            Ab_Relax_a_CDR_FullAtom relax_a_cdr_high_res(camelid_, ab_info_); // because of h2
+            AbRelaxOneCDRHighRes relax_a_cdr_high_res(camelid_, ab_info_); // because of h2
             //relax_a_cdr_high_res.turn_off_h3_default();
             relax_a_cdr_high_res.turn_off_h3_filter();
             relax_a_cdr_high_res.apply(frame_pose);
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         
             //JQX: remove the duplicated code, camelid H2 will be automatically taken care of
-            //     see the code in Ab_Relax_a_CDR_FullAtom file
+            //     see the code in AbRelaxOneCDRHighRes file
         }
     }
     
