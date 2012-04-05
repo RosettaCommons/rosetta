@@ -58,17 +58,17 @@ std::map<core::Size, utility::vector1<core::conformation::ResidueOP> >
       std::string line;
       input_stream.getline(line);
 
-      std::vector<std::string> tokens = utility::split(line);
+      utility::vector1<std::string> tokens = utility::split(line);
 
       TR << "Parsing: " << line << std::endl;
 
       if(tokens.size() > 0){ //Allow spaces in the file
-		  if ( tokens[0]=="RESNUM" ){
-			  res_num = utility::string2int(tokens[1]);
+		  if ( tokens[1]=="RESNUM" ){
+			  res_num = utility::string2int(tokens[2]);
 			  TR << "Creating Residue object for resnum: " << res_num << std::endl;
-		  } else if( tokens[0]=="RESIDUE"){
+		  } else if( tokens[1]=="RESIDUE"){
 			  //get ResidueType from NativeResidue file residue name
-			  core::chemical::ResidueType const & res_type = residue_set->name_map(tokens[1]);
+			  core::chemical::ResidueType const & res_type = residue_set->name_map(tokens[2]);
 
 			  //create new residue
 			  new_rsd = core::conformation::ResidueFactory::create_residue(res_type);
@@ -76,11 +76,11 @@ std::map<core::Size, utility::vector1<core::conformation::ResidueOP> >
 			  res_map[res_num].push_back(new_rsd);
 
 			  TR << "Creating default " << res_type.name3() << " to be populated: " << new_rsd->natoms() << std::endl;
-		  } else if( tokens[0]=="ATOM"){
+		  } else if( tokens[1]=="ATOM"){
 			  double offset = 1e-250; /// coordinates now double, so we can use _really_ small offset.
 
-			  core::Vector xyz(utility::string2float(tokens[2]),utility::string2float(tokens[3]),utility::string2float(tokens[4]));
-			  core::Size atom_index(utility::string2int(tokens[1]));
+			  core::Vector xyz(utility::string2float(tokens[3]),utility::string2float(tokens[4]),utility::string2float(tokens[5]));
+			  core::Size atom_index(utility::string2int(tokens[2]));
 			  new_rsd->atom(atom_index).xyz(xyz+offset);
 
 			  TR << "Modified xyz of atom with index " << atom_index << std::endl;

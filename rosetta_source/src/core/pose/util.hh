@@ -513,6 +513,12 @@ get_jump_id_from_chain(std::string const & chain, core::pose::Pose const & pose)
 core::Size
 get_jump_id_from_chain(char const & chain, core::pose::Pose const & pose);
 
+utility::vector1<core::Size>
+get_jump_ids_from_chain(char const & chain, core::pose::Pose const & pose);
+
+utility::vector1<core::Size>
+get_jump_ids_from_chain(std::string const & chain, core::pose::Pose const & pose);
+
 core::Size
 get_chain_id_from_jump_id(core::Size const & jump_id, core::pose::Pose const & pose);
 

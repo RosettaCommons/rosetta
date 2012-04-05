@@ -52,10 +52,10 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 			continue;
 		}
 		boost::trim(line);
-		std::vector<std::string>  split_fields(utility::string_split(line,'\t'));
-		if(split_fields[0] == "x_axis")
+		utility::vector1<std::string>  split_fields(utility::string_split(line,'\t'));
+		if(split_fields[1] == "x_axis")
 		{
-			for(platform::Size count = 1; count < split_fields.size(); ++count)
+			for(platform::Size count = 2; count <= split_fields.size(); ++count)
 			{
 				bins_vect.push_back(utility::from_string(split_fields[count],platform::Real(0.0)));
 			}
@@ -64,9 +64,9 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 			utility::vector1<platform::Real>::const_reverse_iterator upper_bound_x_iterator(bins_vect.rbegin());
 			lower_bound_x = ((*lower_bound_x_iterator) - (0.5*bin_size));
 			upper_bound_x = ((*upper_bound_x_iterator) + (0.5*bin_size));
-		}else if(split_fields[0] == "y_axis")
+		}else if(split_fields[1] == "y_axis")
 		{
-			for(platform::Size count = 1; count < split_fields.size(); ++count)
+			for(platform::Size count = 2; count <= split_fields.size(); ++count)
 			{
 				potential_vect.push_back(utility::from_string(split_fields[count],platform::Real(0.0)));
 			}
@@ -76,12 +76,12 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 			lower_bound_y = *lower_bound_y_iterator;
 			upper_bound_y = *upper_bound_y_iterator;
 		}
-		if(split_fields[0] == "lb_function" || split_fields[0] == "ub_function")
+		if(split_fields[1] == "lb_function" || split_fields[1] == "ub_function")
 		{
-			platform::Real cutoff= utility::from_string(split_fields[1],platform::Real(0.0));
-			platform::Real slope = utility::from_string(split_fields[2],platform::Real(0.0));
-			platform::Real intercept = utility::from_string(split_fields[3],platform::Real(0.0));
-			boundary_functions.push_back(std::make_pair(split_fields[0],spline::LinearFunction(cutoff,slope,intercept)));
+			platform::Real cutoff= utility::from_string(split_fields[2],platform::Real(0.0));
+			platform::Real slope = utility::from_string(split_fields[3],platform::Real(0.0));
+			platform::Real intercept = utility::from_string(split_fields[4],platform::Real(0.0));
+			boundary_functions.push_back(std::make_pair(split_fields[1],spline::LinearFunction(cutoff,slope,intercept)));
 		}
 
 	}

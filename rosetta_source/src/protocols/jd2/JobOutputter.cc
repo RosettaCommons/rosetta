@@ -85,7 +85,7 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 		case JobInputterInputSource::PDB_FILE : { // remove paths and ext.
 
 			// Treat tags as file names so that we put the number before the extension.
-			std::vector< std::string > temp_out_names= utility::split( base_name );
+			utility::vector1< std::string > temp_out_names= utility::split( base_name );
 			utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 			base_name = out_name.base();
 

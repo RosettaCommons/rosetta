@@ -34,8 +34,8 @@ DnaDesignDef::DnaDesignDef( std::string const & strdef )
 {
 	// command-line dna_defs are of the format "C.501.ADE"
 	// split on '.'
-	std::vector< std::string > parts( string_split( strdef, '.' ) );
-	std::vector< std::string >::const_iterator part( parts.begin() );
+	utility::vector1< std::string > parts( string_split( strdef, '.' ) );
+	utility::vector1< std::string >::const_iterator part( parts.begin() );
 	chain = (*(part++))[0];
 	std::istringstream inum_stream( *(part++) );
 	inum_stream >> pdbpos;

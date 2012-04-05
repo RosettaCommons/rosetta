@@ -299,8 +299,8 @@ RestrictToInterfaceVectorOperation::parse_tag( TagPtr tag )
 			//jump_num( tag->getOption< int >( "jump", 1) );
 			//get a string of comma separated jumps
 			utility::vector1_int jump_vector(0); //init to zero to cause insant problem if nothing passed
-			std::vector<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
-			for( std::vector<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
+			utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
+			for( utility::vector1<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
 				// convert to C string, then convert to integer then push back in vector
 				int this_jump(std::atoi( it->c_str() ) );
 				jump_vector.push_back( this_jump );

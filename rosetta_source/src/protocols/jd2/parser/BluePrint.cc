@@ -41,28 +41,28 @@ namespace parser {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief default constructor
 BluePrint::BluePrint() :
-	total_residue_( 0 ),
-	sequence_( "" ),
-	secstruct_( "" ),
-	strand_pairings_( "" ),
-	helix_pairings_( "" ),
-	hss_triplets_( "" )
+			total_residue_( 0 ),
+			sequence_( "" ),
+			secstruct_( "" ),
+			strand_pairings_( "" ),
+			helix_pairings_( "" ),
+			hss_triplets_( "" )
 {}
 
 
 /// @brief value constructor
 BluePrint::BluePrint( std::string const & filename ):
-	total_residue_( 0 ),
-	sequence_( "" ),
-	secstruct_( "" ),
-	strand_pairings_( "" ),
-	helix_pairings_( "" ),
-	hss_triplets_( "" )
+			total_residue_( 0 ),
+			sequence_( "" ),
+			secstruct_( "" ),
+			strand_pairings_( "" ),
+			helix_pairings_( "" ),
+			hss_triplets_( "" )
 {
 	if ( ! read_blueprint( filename ) ) {
-    TR.Error << "Error in reading blueprint file " << filename << std::endl;
-    exit(0);
-  }
+		TR.Error << "Error in reading blueprint file " << filename << std::endl;
+		exit(0);
+	}
 }
 
 
@@ -73,19 +73,19 @@ BluePrint::~BluePrint()
 
 /// @brief copy constructor
 BluePrint::BluePrint( BluePrint const & src ):
-	ReferenceCount(),
-	total_residue_( src.total_residue_ ),
-	sequence_( src.sequence_ ),
-	secstruct_( src.secstruct_ ),
-	resnum_( src.resnum_ ),
-	resname_( src.resname_ ),
-	sstype_( src.sstype_ ),
-	abego_( src.abego_ ),
-	buildtype_( src.buildtype_ ),
-	resnum_map_( src.resnum_map_ ),
-	strand_pairings_( src.strand_pairings_ ),
-	helix_pairings_( src.helix_pairings_ ),
-	hss_triplets_( src.hss_triplets_ )
+			ReferenceCount(),
+			total_residue_( src.total_residue_ ),
+			sequence_( src.sequence_ ),
+			secstruct_( src.secstruct_ ),
+			resnum_( src.resnum_ ),
+			resname_( src.resname_ ),
+			sstype_( src.sstype_ ),
+			abego_( src.abego_ ),
+			buildtype_( src.buildtype_ ),
+			resnum_map_( src.resnum_map_ ),
+			strand_pairings_( src.strand_pairings_ ),
+			helix_pairings_( src.helix_pairings_ ),
+			hss_triplets_( src.hss_triplets_ )
 {}
 
 
@@ -232,26 +232,26 @@ BluePrint::read_blueprint( std::string const & filename )
 {
 	using utility::string_split;
 
-  utility::io::izstream data( filename );
-  if ( !data ) {
-    TR.Error << "can not open blueprint file " << filename << std::endl;
-    return false;
-  }
+	utility::io::izstream data( filename );
+	if ( !data ) {
+		TR.Error << "can not open blueprint file " << filename << std::endl;
+		return false;
+	}
 
 	// StranPairing info read from the line of SSPAIR
 	//StrandPairings spairs;
 	String spairs;
 
-  String line;
-  Size linecount( 0 ), count( 0 );
-  while( getline( data, line ) ) {
-    linecount++;
-    std::vector< String > tokens ( utility::split( line ) );
+	String line;
+	Size linecount( 0 ), count( 0 );
+	while( getline( data, line ) ) {
+		linecount++;
+		utility::vector1< String > tokens ( utility::split( line ) );
 
 		// skip reading line that is commented out
-    if( tokens[0][0] == '#' ) continue;
+		if( tokens[1][1] == '#' ) continue;
 
-		if( tokens[0] == "FOLDINFO" || tokens[0] == "SSPAIR" || tokens[0] == "HHPAIR" || tokens[0] == "HSSTRIPLET" ) {
+		if( tokens[1] == "FOLDINFO" || tokens[1] == "SSPAIR" || tokens[1] == "HHPAIR" || tokens[1] == "HSSTRIPLET" ) {
 			// read the line of SSPAIR( FOLDINFO ), HHPAIR
 
 			if( tokens.size() > 2 ) {
@@ -259,20 +259,20 @@ BluePrint::read_blueprint( std::string const & filename )
 				return false;
 			}
 
-			if( tokens[0] == "SSPAIR" || tokens[0] == "FOLDINFO" ) {
+			if( tokens[1] == "SSPAIR" || tokens[1] == "FOLDINFO" ) {
 				// set string of strand pairings
 				strand_pairings_ = tokens[1];
-			} else if( tokens[0] == "HHPAIR" ) {
+			} else if( tokens[1] == "HHPAIR" ) {
 				// set string of helix pairings
-				helix_pairings_ = tokens[1];
-			} else if( tokens[0] == "HSSTRIPLET" ) {
+				helix_pairings_ = tokens[2];
+			} else if( tokens[1] == "HSSTRIPLET" ) {
 				// set string of hss triplets
-				hss_triplets_ = tokens[1];
+				hss_triplets_ = tokens[2];
 			}
 
-		} else if( tokens[0] == "INSERT" ) {
+		} else if( tokens[1] == "INSERT" ) {
 			// read the line of INSERT for reading insertion pdb file
-			insertion_.push_back( tokens[1] );
+			insertion_.push_back( tokens[2] );
 
 		} else {
 
@@ -281,17 +281,17 @@ BluePrint::read_blueprint( std::string const & filename )
 			runtime_assert( tokens.size() == 3 || tokens.size() == 4 || tokens.size() == 5 );
 
 			count ++;
-			Size ii = boost::lexical_cast<Size>( tokens[0] );
-			char aa ( tokens[1][0] );
-			char sec( tokens[2][0] );
+			Size ii = boost::lexical_cast<Size>( tokens[1] );
+			char aa ( tokens[2][1] );
+			char sec( tokens[3][1] );
 			String abego("");
-			if( tokens[2].length() > 1 ) {
+			if( tokens[3].length() > 1 ) {
 				core::util::ABEGOManager am;
 				// check characters of abego is appropriate or not
-				for( Size k=2; k<=tokens[2].length(); k++ ) {
-					am.symbol2index( tokens[2][k-1] );
+				for( Size k=2; k<=tokens[3].length(); k++ ) {
+					am.symbol2index( tokens[3][k-1] );
 				}
-				abego = tokens[2].substr( 1, tokens[2].length() - 1 );
+				abego = tokens[3].substr( 1, tokens[3].length() - 1 );
 			} else {
 				abego = "X";
 			}
@@ -312,7 +312,7 @@ BluePrint::read_blueprint( std::string const & filename )
 
 			if( tokens.size() >= 4 ) {
 
-				char build( tokens[3][0] );
+				char build( tokens[4][1] );
 				if( build != '.' && build != 'R' && build != 'I' && build != 'X' &&
 						build != 'F' && build != 'P' && build != 'C' ) {
 					TR.Error << "unrecognized build char : " << build << " at lines "	<< linecount << " in " << filename << std::endl;
@@ -325,7 +325,7 @@ BluePrint::read_blueprint( std::string const & filename )
 				buildtype_.push_back( build );
 
 				if( tokens.size() >= 5 ) {
-					String extra( tokens[4] );
+					String extra( tokens[5] );
 					extra_.push_back( extra );
 				} else {
 					extra_.push_back( "" );
@@ -336,28 +336,28 @@ BluePrint::read_blueprint( std::string const & filename )
 			} // tokens.size() >=4
 
 		}// tokens.size() == 2 || tokens.size() == 3
-  } // while ( getline )
+	} // while ( getline )
 
-  assert( resname_.size() == sstype_.size() );
-  total_residue_ = sstype_.size();
-  assert( total_residue_ > 0 );
+	assert( resname_.size() == sstype_.size() );
+	total_residue_ = sstype_.size();
+	assert( total_residue_ > 0 );
 
-  for( utility::vector1< char >::const_iterator iter = sstype_.begin(); iter != sstype_.end() ; ++iter) {
-    secstruct_ += *iter;
-  }
-  for( utility::vector1< char >::const_iterator iter = resname_.begin(); iter != resname_.end() ; ++iter) {
-    sequence_ += *iter;
-  }
+	for( utility::vector1< char >::const_iterator iter = sstype_.begin(); iter != sstype_.end() ; ++iter) {
+		secstruct_ += *iter;
+	}
+	for( utility::vector1< char >::const_iterator iter = resname_.begin(); iter != resname_.end() ; ++iter) {
+		sequence_ += *iter;
+	}
 
-  TR << secstruct_ << std::endl;
-  TR << sequence_ << std::endl;
+	TR << secstruct_ << std::endl;
+	TR << sequence_ << std::endl;
 
 	//ss_info_->initialize( secstruct_ );
 	//if( spairs.size() > 0 ){
 	//strand_pairings_ = set_strand_pairings( ss_info_, spairs );
 	//}
 
-  return true;
+	return true;
 
 } // read_blueprint
 
@@ -366,7 +366,7 @@ BluePrint::read_blueprint( std::string const & filename )
 void
 BluePrint::set_movemap( MoveMapOP & movemap )
 {
-  for ( Size i=1; i<=total_residue_ ; ++i )	{
+	for ( Size i=1; i<=total_residue_ ; ++i )	{
 		if ( buildtype( i ) == '.' ) {
 			movemap->set_bb( i, true );
 			movemap->set_chi( i, true );

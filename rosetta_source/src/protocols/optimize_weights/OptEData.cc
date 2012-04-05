@@ -505,21 +505,21 @@ PNatAAOptEPositionData::write_to_file( std::ofstream & outfile ) const
 void
 PNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 {
-	typedef std::vector< std::string > Strings;
+	typedef utility::vector1< std::string > Strings;
 	using namespace utility;
 
 	// read first line with position, native aa, neighbor_count, and num_rotamers data
 	std::string line;
 	getline( infile, line );
 	Strings words( string_split( line, ' ' ) );
-	runtime_assert( words[ 0 ] == "position" );
-	position_ = from_string( words[ 1 ], Size( 0 ) );
-	runtime_assert( words[ 2 ] == "nataa" );
-	native_aa_ = chemical::aa_from_name( words[ 3 ] );
-	runtime_assert( words[ 4 ] == "neighbor_count" );
-	neighbor_count_ = from_string( words[ 5 ], Size( 0 ) );
-	runtime_assert( words[ 6 ] == "nrots" );
-	Size num_rotamers = from_string( words[ 7 ], Size( 0 ) );
+	runtime_assert( words[ 1 ] == "position" );
+	position_ = from_string( words[ 2 ], Size( 0 ) );
+	runtime_assert( words[ 3 ] == "nataa" );
+	native_aa_ = chemical::aa_from_name( words[ 4 ] );
+	runtime_assert( words[ 5 ] == "neighbor_count" );
+	neighbor_count_ = from_string( words[ 6 ], Size( 0 ) );
+	runtime_assert( words[ 7] == "nrots" );
+	Size num_rotamers = from_string( words[ 8 ], Size( 0 ) );
 
 	for ( Size ii = 1; ii <= num_rotamers; ++ii ) {
 		getline( infile, line );
@@ -529,13 +529,13 @@ PNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 		// sections:
 		// 0 - rotnum, 1 - aa three-letter code, 2 - energies for fixed terms, 3 - energies for free terms
 		Size rotnum;
-		std::istringstream ss( sections[0] );
+		std::istringstream ss( sections[1] );
 		ss >> rotnum;
-		chemical::AA aa( chemical::aa_from_name( sections[1] ) );
+		chemical::AA aa( chemical::aa_from_name( sections[2] ) );
 		utility::vector1< Real > fixed_energies, energies;
 		Strings
-			fixed_vals( string_split( sections[2], ' ' ) ),
-			free_vals( string_split( sections[3], ' ' ) );
+			fixed_vals( string_split( sections[3], ' ' ) ),
+			free_vals( string_split( sections[4], ' ' ) );
 		for ( Strings::iterator fixed_val( fixed_vals.begin() ); fixed_val != fixed_vals.end(); ++fixed_val ) {
 			Real val;
 			std::istringstream ss( *fixed_val );
@@ -3947,7 +3947,7 @@ OptEData::read_from_file( std::string filename )
 	std::ifstream infile( filename.c_str() );
 	std::string line;
 
-	typedef std::vector< std::string > Strings;
+	typedef utility::vector1< std::string > Strings;
 	using utility::string_split;
 
 	// first read the header to get the get list of fixed and free terms
@@ -3975,9 +3975,9 @@ OptEData::read_from_file( std::string filename )
 		Strings words( string_split( line, ' ' ) );
 
 		if ( words.size() == 0 ) { utility_exit_with_message("Bad line from optE data file"); }
-		if ( words[ 0 ] != "optE_position_data_type" ) { utility_exit_with_message("Bad line from optE data file"); }
+		if ( words[ 1 ] != "optE_position_data_type" ) { utility_exit_with_message("Bad line from optE data file"); }
 
-		OptEPositionDataType postype = (OptEPositionDataType) utility::from_string( words[1], int( 0 ) /* dummy */ );
+		OptEPositionDataType postype = (OptEPositionDataType) utility::from_string( words[2], int( 0 ) /* dummy */ );
 		OptEPositionDataOP new_position_data = OptEPositionDataFactory::create_position_data( postype );
 		new_position_data->read_from_file( infile );
 		add_position_data( new_position_data );

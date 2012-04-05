@@ -121,13 +121,13 @@ SetAACompositionPotential::set_parameters( String const & file )
   while( getline( data, line ) ) {
 
     linecount++;
-    std::vector< String > tokens ( utility::split( line ) );
-    if( tokens[0][0] == '#' ) continue;  		// skip reading line that is commented out
+    utility::vector1< String > tokens ( utility::split( line ) );
+    if( tokens[1][0] == '#' ) continue;  		// skip reading line that is commented out
 		runtime_assert( tokens.size() == 3 );
 
-		core::chemical::AA const aa = core::chemical::aa_from_name( tokens[0] );
-		Real const lower_threshold = boost::lexical_cast<Real>( tokens[1] );
-		Real const upper_threshold = boost::lexical_cast<Real>( tokens[2] );
+		core::chemical::AA const aa = core::chemical::aa_from_name( tokens[1] );
+		Real const lower_threshold = boost::lexical_cast<Real>( tokens[2] );
+		Real const upper_threshold = boost::lexical_cast<Real>( tokens[3] );
 
 		runtime_assert( lower_threshold <= upper_threshold );
 

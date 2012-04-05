@@ -59,7 +59,7 @@ class SymDof {
 	~SymDof();
 
 	void
-	add_dof_from_string( std::vector< std::string > dof_string );
+	add_dof_from_string( utility::vector1< std::string > dof_string );
 
 	// io
 	void read( std::string dof_line);

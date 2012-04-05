@@ -172,7 +172,7 @@ pose_from_pdb(
 	bool read_fold_tree
 )
 {
-	std::vector<std::string> filenames= utility::split(filenames_string);
+	utility::vector1<std::string> filenames= utility::split(filenames_string);
 
 
 	std::string res;

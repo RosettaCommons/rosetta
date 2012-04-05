@@ -142,11 +142,11 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 
 	std::string input_tag = protocols::jd2::get_current_job()->input_tag();
 	// tag format example:  12asA_1_17_28_132
-	std::vector< std::string >  tag = utility::string_split( input_tag, '_');
+	utility::vector1< std::string >  tag = utility::string_split( input_tag, '_');
 	if ( tag.size() != 5 )
 		utility_exit_with_message( "Pose " + input_tag + " format error!" );
-	int frag1_start = atoi(tag[1].c_str());
-	int frag2_start = atoi(tag[2].c_str());
+	int frag1_start = atoi(tag[2].c_str());
+	int frag2_start = atoi(tag[3].c_str());
 	// fragment size should be pose total residue / 2
 	if (pose.total_residue() % 2 != 0)
 		utility_exit_with_message( "Pose " + input_tag + " total_residue() % 2 != 0" );

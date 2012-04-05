@@ -97,9 +97,9 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 		while( getline( in_stream, line) ) {
 			++seqpos;
 			std::cout << "JL got " << seqpos << " line " << line << std::endl;
-			std::vector< std::string > const tokens ( utility::split( line ) );
+			utility::vector1< std::string > const tokens ( utility::split( line ) );
 			utility::vector1< Real > energies;
-			for ( std::vector< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
+			for ( utility::vector1< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
 				energies.push_back( atof(it->c_str()) );
 			}
 			aa_seq_weights_.push_back(energies);
@@ -117,9 +117,9 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 			while( getline( in_stream, line) ) {
 				++seqpos;
 				std::cout << "JL got " << seqpos << " line " << line << std::endl;
-				std::vector< std::string > const tokens ( utility::split( line ) );
+				utility::vector1< std::string > const tokens ( utility::split( line ) );
 				utility::vector1< Real > energies;
-				for ( std::vector< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
+				for ( utility::vector1< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
 					energies.push_back( atof(it->c_str()) );
 				}
 				core::Size aa(0);

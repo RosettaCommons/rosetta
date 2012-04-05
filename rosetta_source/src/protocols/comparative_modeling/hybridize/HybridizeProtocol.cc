@@ -562,8 +562,8 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 			std::string cst_reses_str;
 			utility::vector1<core::Size> cst_reses;
 			if ( str_stream >> cst_reses_str ) {
-				std::vector<std::string> cst_reses_parsed = utility::string_split( cst_reses_str , ',' ) ;
-				for (int i=0; i< cst_reses_parsed.size(); ++i ) {
+				utility::vector1<std::string> cst_reses_parsed = utility::string_split( cst_reses_str , ',' ) ;
+				for (int i=1; i<= cst_reses_parsed.size(); ++i ) {
 					cst_reses.push_back( (core::Size) std::atoi( cst_reses_parsed[i].c_str() ) );
 				}
 			}
@@ -1058,7 +1058,7 @@ HybridizeProtocol::parse_my_tag(
 	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
 
 	if( tag->hasOption( "starting_template" ) ) {
-		std::vector<std::string> buff = utility::string_split( tag->getOption<std::string>( "starting_template" ), ',' );
+		utility::vector1<std::string> buff = utility::string_split( tag->getOption<std::string>( "starting_template" ), ',' );
 		foreach(std::string field, buff){
 			Size const value = std::atoi( field.c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
 			starting_templates_.push_back(value);

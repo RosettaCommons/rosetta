@@ -82,19 +82,17 @@ HelixPairing::HelixPairing( String const & hp ):
 	align_angle_( -99.0 ),
 	loop_length_( 6 )
 {
-	using utility::string_split;
-
-	std::vector< String > parts( string_split( hp, '.' ) );
+	utility::vector1< String > parts( utility::string_split( hp, '.' ) );
 	runtime_assert( parts.size() == 2 );
 
-	std::vector< String > helices( string_split( parts[0], '-' ) );
-	h1_ = boost::lexical_cast<Size>( helices[0] );
-	h2_ = boost::lexical_cast<Size>( helices[1] );
+	utility::vector1< String > helices( utility::string_split( parts[1], '-' ) );
+	h1_ = boost::lexical_cast<Size>( helices[1] );
+	h2_ = boost::lexical_cast<Size>( helices[2] );
 	runtime_assert( h1_ < h2_ );
 
-	char para = parts[1][0];
+	char para = parts[2][0];
 	runtime_assert( para == 'P' || para == 'A' );
-	orient_ = parts[1][0];
+	orient_ = parts[3][0];
 
 	name_ = hp;
 }
@@ -221,9 +219,8 @@ HelixPairingSet::HelixPairingSet( String const & helix_pairings ):
 		return;
 	}
 
-	using utility::string_split;
-	std::vector< String > hpairs( string_split( helix_pairings, ';' ) );
-	for( std::vector< String >::const_iterator iter = hpairs.begin(); iter != hpairs.end() ; ++iter) {
+	utility::vector1< String > hpairs( utility::string_split( helix_pairings, ';' ) );
+	for( utility::vector1< String >::const_iterator iter = hpairs.begin(); iter != hpairs.end() ; ++iter) {
 		helix_pairings_.push_back( new HelixPairing( *iter ) );
 	}
 }

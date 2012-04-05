@@ -751,7 +751,7 @@ load_dna_design_defs_from_file(
 	utility::io::izstream defs_file( filename.c_str() );
 	std::string line;
 	while ( getline( defs_file, line ) ) {
-		std::vector< std::string > words( string_split( line, ' ' ) );
+		utility::vector1< std::string > words( string_split( line, ' ' ) );
 		// multiple pdbs may be specified in this file:
 		// only match lines beginning with stripped_prefix, if specified
 		if ( ! stripped_prefix.empty() && words.front() != stripped_prefix ) continue;

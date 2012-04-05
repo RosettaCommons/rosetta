@@ -77,13 +77,13 @@ public:
 	void set_file_name( std::string filename_ ) {
 		filename = filename_;
 		std::cout << "reading: " << filename << std::endl;
-		std::vector< std::string > token;
+		utility::vector1< std::string > token;
 
 		token = utility::string_split( filename, '.' );
 		if ( token.size() < 2 ) {
 			utility_exit_with_message( "Invalid filename: " + std::string(filename) + " \n" );
 		}
-		clusternumber = utility::string2int( token[1] );
+		clusternumber = utility::string2int( token[2] );
 		if ( clusternumber < 0 ) {
 			utility_exit_with_message( "Invalid filename: " + std::string(filename) + " \n" );
 		}

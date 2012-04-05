@@ -52,12 +52,9 @@ void ReadFromFileOrDie(const std::string& filename, std::string* contents) {
 	in.close();
 }
 
-///TODO get rid of std::vector
-///TODO implement this function in terms of string_split, found below
-/// @details split given std::string using ' ' symbol.
-std::vector< std::string > split(const std::string &s)
+utility::vector1< std::string > split(const std::string &s)
 {
-	std::vector<std::string> r;
+	utility::vector1<std::string> r;
 	unsigned int start=0, i=0;
 	while( start < s.size() ) {
 		if( s[i] == ' ' /*|| i==s.size()-1 */) {
@@ -97,7 +94,7 @@ std::string join(std::vector<std::string> const & s, std::string const & connect
 
 std::string join(std::string const & string_w_spaces, std::string const & connector){
 	std::string trimmed= trim(string_w_spaces);
-	std::vector<std::string> pieces= split(string_w_spaces);
+	utility::vector1<std::string> pieces= split(string_w_spaces);
 	return join(pieces, connector);
 }
 
@@ -141,12 +138,10 @@ std::set< std::string > split_to_set(const std::string &s) {
 	return r;
 }
 
-/// @details split to vector< std::string > using arbitrary split character
-/// @author ashworth
-std::vector< std::string >
+utility::vector1< std::string >
 string_split( std::string const & in, char splitchar /* = ' ' */ )
 {
-	std::vector< std::string > parts;
+	utility::vector1< std::string > parts;
 	size_t i(0), j(0);
 	while ( j != std::string::npos ) {
 		j = in.find( splitchar, i );
@@ -155,6 +150,7 @@ string_split( std::string const & in, char splitchar /* = ' ' */ )
 	}
 	return parts;
 }
+
 
 /// @details convert a string to a float
 float string2float( std::string st ){

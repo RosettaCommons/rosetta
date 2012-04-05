@@ -444,7 +444,7 @@ const char* const kGetStdoutMethodId = "getStdout";
 ////// //////		//rosetta->ss_cout << "LOADFILE: " << loader.read_file( "scoring/weights/score12_full.wts"  ) << std::endl;
 ////// //////
 ////// 		// build c-style arguments.
-////// 		std::vector< std::string > tokens ( utility::split( rosetta->command_line() ) );
+////// 		utility::vector1< std::string > tokens ( utility::split( rosetta->command_line() ) );
 ////// 		utility::vector1<std::string> tokens_v1;
 ////// 		basic::final_channel = &rosetta->ss_cout;
 //////
@@ -562,7 +562,7 @@ void * run( void * data ){
 	ss_cout << "Arguments: '" + command_line + "'\n";
 
 	// build c-style arguments.
-	std::vector< std::string > tokens ( utility::split( command_line ) );
+	utility::vector1< std::string > tokens ( utility::split( command_line ) );
 	utility::vector1<std::string> tokens_v1;
 	basic::final_channel = &ss_cout;
 

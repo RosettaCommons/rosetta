@@ -511,7 +511,7 @@ main( int argc, char * argv [] )
 
 
 //    String spairs_string = option[ spairs ]();
-//		std::vector< String > sp( utility::string_split( spairs_string, '.' ) );
+//		utility::vector1< String > sp( utility::string_split( spairs_string, '.' ) );
 //		if( sp.size() == 2 ) {
 //			if( spairs_string != "" && spairset->name_wo_rgstr() != spairs_string ) return;		
 //		} else if ( sp.size() == 3 ) {

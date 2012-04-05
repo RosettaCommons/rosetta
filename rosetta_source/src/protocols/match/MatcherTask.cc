@@ -168,8 +168,8 @@ MatcherTask::set_upstream_pose(
 )
 {
 	upstream_pose_ = new core::pose::Pose( input_pose );
-	std::vector< std::string > path = utility::string_split( input_pose.pdb_info()->name(), '/' );
-	upstream_pose_name_ = utility::string_split( path[ path.size() - 1 ], '.' )[0];
+	utility::vector1< std::string > path = utility::string_split( input_pose.pdb_info()->name(), '/' );
+	upstream_pose_name_ = utility::string_split( path[ path.size() ], '.' )[1];
 }
 
 void

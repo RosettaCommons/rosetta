@@ -89,7 +89,7 @@ std::map<core::Size,std::string> parse_atom_type_data(std::string raw_data)
 	}
 	else
 	{
-		//std::vector<std::string> tokens=utility::split(atom_type_data);
+		//utility::vector1<std::string> tokens=utility::split(atom_type_data);
 		for(core::Size index = 1; index <= tokens.size();++index)
 		{
 
@@ -98,12 +98,12 @@ std::map<core::Size,std::string> parse_atom_type_data(std::string raw_data)
 			{
 				continue;
 			}
-			std::vector<std::string> token_split=utility::string_split(current_token,',');
-			utility::trim(token_split[0],"(");
-			utility::trim(token_split[1],")");
+			utility::vector1<std::string> token_split=utility::string_split(current_token,',');
+			utility::trim(token_split[1],"(");
+			utility::trim(token_split[2],")");
 			//std::cout << current_token<<std::endl;
-			core::Size atomno = atoi(token_split[0].c_str());
-			std::pair<core::Size, std::string> atom_type_point(atomno,token_split[1]);
+			core::Size atomno = atoi(token_split[1].c_str());
+			std::pair<core::Size, std::string> atom_type_point(atomno,token_split[2]);
 			data_map.insert(atom_type_point);
 		}
 

@@ -67,14 +67,14 @@ OrbitalType::OrbitalType(std::string & orbital_name, std::string & /*atom_type_n
 {
 
 
-	std::vector<std::string> name_split(utility::string_split(orbital_name, '.'));
+	utility::vector1<std::string> name_split(utility::string_split(orbital_name, '.'));
 	orbital_type_name_= orbital_name;
 	orbital_type_enum_ = OrbitalTypeMapper::get_instance()->get_orbital_enum(orbital_name);
-	orbital_name_= name_split[1];
-	hybridization_= name_split[2];
+	orbital_name_= name_split[2];
+	hybridization_= name_split[3];
 
 	name_split=utility::string_split(orbital_name, '_');
-	for(int i=0; i < name_split.size(); ++i){
+	for(int i=1; i <= name_split.size(); ++i){
 		atom_type_name_.push_back(name_split[i]);
 	}
 

@@ -236,16 +236,16 @@ void ctabV2000Parser::ParseBond(std::string bond_line)
 	 }
 	 else
 	 {
-		 std::vector<std::string> tokens=utility::split(atom_type_data);
-		 for(core::Size index = 0; index < tokens.size();++index)
+		 utility::vector1<std::string> tokens=utility::split(atom_type_data);
+		 for(core::Size index = 1; index <= tokens.size();++index)
 		 {
 			 std::string current_token = tokens[index];
-			 std::vector<std::string> token_split=utility::split(current_token);
-			 utility::trim(token_split[1],"(");
-			 utility::trim(token_split[2],")");
+			 utility::vector1<std::string> token_split=utility::split(current_token);
+			 utility::trim(token_split[2],"(");
+			 utility::trim(token_split[3],")");
 
-			 core::Size atomno = atoi(token_split[1].c_str());
-			 std::pair<core::Size, std::string> atom_type_point(atomno,token_split[2]);
+			 core::Size atomno = atoi(token_split[2].c_str());
+			 std::pair<core::Size, std::string> atom_type_point(atomno,token_split[3]);
 			 data_map.insert(atom_type_point);
 		 }
 
@@ -335,37 +335,37 @@ void ctabV3000Parser::ParseTable()
 
 	foreach(std::string current_line, connector_table_lines_){
 
-		std::vector<std::string> line_vector(utility::split(current_line));
-		//if(line_vector[0] != "M" || line_vector[1] != "V30")
+		utility::vector1<std::string> line_vector(utility::split(current_line));
+		//if(line_vector[1] != "M" || line_vector[2] != "V30")
 		//{
 		//	utility_exit_with_message("This doesn't look like a V3000 CTAB, bailing out");
 		//}
 
 		core::Size atom_count(0);
 		core::Size bond_count(0);
-		if(line_vector[1] == "END")
+		if(line_vector[2] == "END")
 		{
 			break;
 		}
-		if(line_vector[1] != "V30" || line_vector.size() <2)
+		if(line_vector[2] != "V30" || line_vector.size() <2)
 		{
 			continue;
 		}
-		if(line_vector[2] == "COUNTS")
+		if(line_vector[3] == "COUNTS")
 		{
-			atom_count = atoi(line_vector[3].c_str());
-			bond_count = atoi(line_vector[4].c_str());
-		}else if(line_vector[2] == "BEGIN")
+			atom_count = atoi(line_vector[4].c_str());
+			bond_count = atoi(line_vector[5].c_str());
+		}else if(line_vector[3] == "BEGIN")
 		{
-			if (line_vector[3] == "ATOM")
+			if (line_vector[4] == "ATOM")
 				atom_block = true;
-			else if (line_vector[3] == "BOND")
+			else if (line_vector[4] == "BOND")
 				bond_block = true;
-		}else if(line_vector[2] == "END")
+		}else if(line_vector[3] == "END")
 		{
-			if (line_vector[3] == "ATOM")
+			if (line_vector[4] == "ATOM")
 				atom_block = false;
-			else if (line_vector[3] == "BOND")
+			else if (line_vector[4] == "BOND")
 				bond_block = false;
 		}else
 		{
@@ -403,15 +403,15 @@ void ctabV3000Parser::ParseTable()
 
 void ctabV3000Parser::ParseAtom(const std::string atom_line)
 {
-	std::vector<std::string> atom_vector(utility::split(atom_line));
+	utility::vector1<std::string> atom_vector(utility::split(atom_line));
 
-	core::Size index = atoi(atom_vector[2].c_str());
-	std::string element_name(atom_vector[3]);
-	std::string element_id(element_name+atom_vector[2]);
+	core::Size index = atoi(atom_vector[3].c_str());
+	std::string element_name(atom_vector[4]);
+	std::string element_id(element_name+atom_vector[3]);
 	utility::add_spaces_left_align(element_id,4);
-	core::Real x_coord = atof(atom_vector[4].c_str());
-	core::Real y_coord = atof(atom_vector[5].c_str());
-	core::Real z_coord = atof(atom_vector[6].c_str());
+	core::Real x_coord = atof(atom_vector[5].c_str());
+	core::Real y_coord = atof(atom_vector[6].c_str());
+	core::Real z_coord = atof(atom_vector[7].c_str());
 
 	numeric::xyzVector<core::Real> coordinates(x_coord,y_coord,z_coord);
 
@@ -431,13 +431,13 @@ void ctabV3000Parser::ParseAtom(const std::string atom_line)
 
 void ctabV3000Parser::ParseBond(const std::string bond_line)
 {
-	std::vector<std::string> bond_vector(utility::split(bond_line));
+	utility::vector1<std::string> bond_vector(utility::split(bond_line));
 
-	core::Size index = atoi(bond_vector[2].c_str());
-	core::chemical::BondName type = static_cast<core::chemical::BondName>(atoi(bond_vector[3].c_str()));
+	core::Size index = atoi(bond_vector[3].c_str());
+	core::chemical::BondName type = static_cast<core::chemical::BondName>(atoi(bond_vector[4].c_str()));
 
-	core::Size atom1_index = atoi(bond_vector[4].c_str());
-	core::Size atom2_index = atoi(bond_vector[5].c_str());
+	core::Size atom1_index = atoi(bond_vector[5].c_str());
+	core::Size atom2_index = atoi(bond_vector[6].c_str());
 
 	std::string atom1_id(index_to_names_map_.find(atom1_index)->second);
 	std::string atom2_id(index_to_names_map_.find(atom2_index)->second);
@@ -470,16 +470,16 @@ std::map<core::Size, std::string>  ctabV3000Parser::ParseAtomTypeData()
 	 }
 	 else
 	 {
-		 //std::vector<std::string> tokens=utility::split(atom_type_data);
+		 //utility::vector1<std::string> tokens=utility::split(atom_type_data);
 		 for(core::Size index = 0; index < tokens.size();++index)
 		 {
 			 std::string current_token = tokens[index];
-			 std::vector<std::string> token_split=utility::string_split(current_token,',');
-			 utility::trim(token_split[0],"(");
-			 utility::trim(token_split[1],")");
+			 utility::vector1<std::string> token_split=utility::string_split(current_token,',');
+			 utility::trim(token_split[1],"(");
+			 utility::trim(token_split[2],")");
 
-			 core::Size atomno = atoi(token_split[0].c_str());
-			 std::pair<core::Size, std::string> atom_type_point(atomno,token_split[1]);
+			 core::Size atomno = atoi(token_split[1].c_str());
+			 std::pair<core::Size, std::string> atom_type_point(atomno,token_split[2]);
 			 data_map.insert(atom_type_point);
 		 }
 

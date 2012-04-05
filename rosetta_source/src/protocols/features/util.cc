@@ -213,12 +213,12 @@ pair<Size, Size>
 deserialize_db_listener_data(
 	string data
 ){
-	std::vector< std::string > tokens = utility::split(data);
+	utility::vector1< std::string > tokens = utility::split(data);
 	if(tokens.size() != 2){
 		utility_exit_with_message("failed to deserialize the message from master node. Message was: " + data + " You will get this message if trying to run ReportToDB mover in MPI mode with only on processor.");
 	}
-	int protocol_id=utility::string2int(tokens[0]);
-	int batch_id=utility::string2int(tokens[1]);
+	int protocol_id=utility::string2int(tokens[1]);
+	int batch_id=utility::string2int(tokens[2]);
 	return pair<Size, Size>(protocol_id, batch_id);
 }
 

@@ -50,7 +50,7 @@ std::string BasicJob::output_tag(int struct_n) const
 	for(int i = 1; i <= nstruct_ || nstruct_width < 4; i *= 10) nstruct_width += 1;
 	// Treat tags as file names so that we put the number before the extension.
 	// Everything will still work if they're not file names, though.
-	std::vector<std::string> temp_out_names= utility::split(input_id_);
+	utility::vector1<std::string> temp_out_names= utility::split(input_id_);
 	utility::file::FileName out_name = utility::file::combine_names( temp_out_names);
 //jobs_tracer<< out_name.base()<< std::endl;
 	if( option[ run::shuffle ].user() ) out_name = "S_shuffle";

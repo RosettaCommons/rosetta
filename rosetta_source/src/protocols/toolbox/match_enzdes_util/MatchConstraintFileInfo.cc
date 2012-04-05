@@ -342,10 +342,10 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 		key = ""; tag = "";
 		getline(data,line);
 
-		std::vector< std::string > comment_split = utility::string_split( line, '#' );
-		if( comment_split[0] == "" ) continue;
+		utility::vector1< std::string > comment_split = utility::string_split( line, '#' );
+		if( comment_split[1] == "" ) continue;
 		line_stream.clear();
-		line_stream.str( comment_split[0] );
+		line_stream.str( comment_split[1] );
 		line_stream >> key;
 
 		//std::cerr << "reading shit, line is " << line << ", key is " << key;
@@ -638,9 +638,9 @@ MatchConstraintFileInfo::process_algorithm_info(
 			return true;
 		}
 
-		std::vector< std::string > comment_split = utility::string_split( line, '#' );
+		utility::vector1< std::string > comment_split = utility::string_split( line, '#' );
 
-		if( comment_split[0] != "" ) alg_strings.push_back( comment_split[0] );
+		if( comment_split[1] != "" ) alg_strings.push_back( comment_split[1] );
 
 	} //while( !data.eof() ){
 

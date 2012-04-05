@@ -69,20 +69,20 @@ DatabaseEntryWorkUnit::deserialize(){
     TR << "De-serializing db entry data" << endl;
     
     //split between the serialized row map data and the query string
-    std::vector< std::string > tokens = utility::string_split(data, '|');
+    utility::vector1< std::string > tokens = utility::string_split(data, '|');
     if(tokens.size() != 2){
         utility_exit_with_message("Error: DatabaseEntryWorkUnit failed to deserialize");
     }
-    result_query_string_=tokens[1];
+    result_query_string_=tokens[2];
     
     //deserialize the map
-    std::vector< std::string > entries = utility::string_split(tokens[0], '/');
+    utility::vector1< std::string > entries = utility::string_split(tokens[1], '/');
     
     TR << "Total columns: " << entries.size() << endl;
     
     for(int i=0; i<entries.size(); ++i){
         if(!entries[i].empty()){
-            std::vector< std::string > key_values = utility::string_split(entries[i], ',');
+        	utility::vector1< std::string > key_values = utility::string_split(entries[i], ',');
             if(key_values.size() != 2){
                 utility_exit_with_message("Error: DatabaseEntryWorkUnit failed to deserialize the results map");
             }

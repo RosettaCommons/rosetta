@@ -92,7 +92,7 @@ trytry_ofstream_open(
 
 int list_dir (std::string dir, utility::vector1<std::string> & files);
 
-FileName combine_names(std::vector<std::string> file_name_strings);
+FileName combine_names(utility::vector1<std::string> file_name_strings);
 
 } // namespace file
 } // namespace utility

@@ -119,19 +119,17 @@ StrandPairing::StrandPairing( String const & spair ):
 	end2_( 0 ),
 	has_bulge_( false )
 {
-	using utility::string_split;
-
-	std::vector< String > parts( string_split( spair, '.' ) );
+	utility::vector1< String > parts( utility::string_split( spair, '.' ) );
 	runtime_assert( parts.size() == 3 );
 
-	std::vector< String > st( string_split( parts[0], '-' ) );
-	s1_ = boost::lexical_cast<Size>( st[0] );
-	s2_ = boost::lexical_cast<Size>( st[1] );
+	utility::vector1< String > st( utility::string_split( parts[1], '-' ) );
+	s1_ = boost::lexical_cast<Size>( st[1] );
+	s2_ = boost::lexical_cast<Size>( st[2] );
 	runtime_assert( s1_ < s2_ );
 
-	orient_ = parts[1][0];
+	orient_ = parts[2][0];
 	runtime_assert( orient_ == 'P' || orient_ == 'A' || orient_ == 'N'  );
-	rgstr_shift_ = boost::lexical_cast<Real>( parts[2] );
+	rgstr_shift_ = boost::lexical_cast<Real>( parts[3] );
 
 	name_ = spair;
 }
@@ -446,14 +444,12 @@ StrandPairingSet::StrandPairingSet( String const & spairstring, SS_Info2_COP con
 	finalized_( false ),
 	empty_( new StrandPairing )
 {
-	using utility::string_split;
-
 	if( spairstring == "" ) {
 		return;
 	}
 
-	std::vector< String > spairs( string_split( spairstring, ';' ) );
-	for( std::vector< String >::const_iterator iter = spairs.begin(); iter != spairs.end() ; ++iter) {
+	utility::vector1< String > spairs( utility::string_split( spairstring, ';' ) );
+	for( utility::vector1< String >::const_iterator iter = spairs.begin(); iter != spairs.end() ; ++iter) {
 		String spair( *iter );
 		StrandPairingOP sp = new StrandPairing( spair );
 		if( ssinfo ) {
@@ -612,12 +608,12 @@ StrandPairingSet::name_wo_rgstr() const
 	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),
 						ite=strand_pairings_.end(); it != ite; ++it ) {
 		StrandPairing const & spair( **it );
-		std::vector< String > sp( utility::string_split( spair.name(), '.' ) );
+		utility::vector1< String > sp( utility::string_split( spair.name(), '.' ) );
 		runtime_assert( sp.size() == 3 );
 		if( spairs == "" ){
-			spairs = sp[ 0 ] + '.' + sp[ 1 ];
+			spairs = sp[ 1 ] + '.' + sp[ 2 ];
 		}else{
-			spairs = spairs + ';' + sp[ 0 ] + '.' + sp[ 1 ];
+			spairs = spairs + ';' + sp[ 1 ] + '.' + sp[ 2 ];
 		}
 	}
 	return spairs;

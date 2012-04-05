@@ -1084,7 +1084,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 			// remove completed positions as they are found in file
 			std::string line;
 			while ( file.getline( line ) ) {
-				std::vector< std::string > words( string_split( line ) );
+				utility::vector1< std::string > words( string_split( line ) );
 				if ( words.front() != "Done" ) continue; // skip to next line
 				// expected line format: "Done scanning at index #"
 				if ( words.size() < 5 ) continue;

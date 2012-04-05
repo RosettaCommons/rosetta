@@ -68,7 +68,7 @@ InterfaceBuilder::parse_my_tag(
 	if (! tag->hasOption("ligand_areas")) utility_exit_with_message("InterfaceBuilders need at least one ligand area to build around");
 
 	std::string ligand_areas_string= tag->getOption<std::string>("ligand_areas");
-	std::vector<std::string> ligand_area_strings= utility::string_split(ligand_areas_string, ',');
+	utility::vector1<std::string> ligand_area_strings= utility::string_split(ligand_areas_string, ',');
 
 	foreach(std::string ligand_area_string, ligand_area_strings){
 		LigandAreaOP ligand_area = datamap.get< protocols::ligand_docking::LigandArea * >( "ligand_areas", ligand_area_string);

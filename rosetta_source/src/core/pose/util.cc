@@ -64,6 +64,9 @@
 
 #include <utility/vector1.hh>
 
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 
@@ -2132,6 +2135,7 @@ get_jump_id_from_chain_id(core::Size const & chain_id,const core::pose::Pose & p
 core::Size
 get_chain_id_from_chain(std::string const & chain, core::pose::Pose const & pose){
 	assert(chain.size()==1);// chain is one char
+	if( chain.size() > 1) utility_exit_with_message("Multiple chain_ids per chain! Are you using '-treat_residues_in_these_chains_as_separate_chemical_entities', and not using compatible movers?" );
 	char chain_char= chain[0];
 	return get_chain_id_from_chain(chain_char, pose);
 }
@@ -2173,6 +2177,23 @@ core::Size
 get_jump_id_from_chain(char const & chain, core::pose::Pose const & pose){
 	core::Size chain_id= get_chain_id_from_chain(chain, pose);
 	return get_jump_id_from_chain_id(chain_id, pose);
+}
+
+utility::vector1<core::Size>
+get_jump_ids_from_chain(char const & chain, core::pose::Pose const & pose){
+	utility::vector1<core::Size> jump_ids;
+	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
+	foreach(core::Size chain_id, chain_ids){
+		jump_ids.push_back( get_jump_id_from_chain_id(chain_id, pose));
+	}
+	return jump_ids;
+}
+
+utility::vector1<core::Size>
+get_jump_ids_from_chain(std::string const & chain, core::pose::Pose const & pose){
+	assert(chain.size()==1);// chain is one char
+	char chain_char= chain[0];
+	return get_jump_ids_from_chain(chain_char, pose);
 }
 
 core::Size get_chain_id_from_jump_id(core::Size const & jump_id, core::pose::Pose const & pose){

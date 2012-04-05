@@ -536,7 +536,7 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 	std::string const & ss_blueprint )
 {
 
-	std::vector< std::string > blueprint_elements = utility::string_split( ss_blueprint, ')' );
+	utility::vector1< std::string > blueprint_elements = utility::string_split( ss_blueprint, ')' );
 
 	utility::vector1< char > blueprint_element_ss_chars;
 	utility::vector1< core::Size > blueprint_element_num_lengths;
@@ -544,12 +544,12 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 	core::Size num_previous_ss_strings( ss_strings_.size() );
 	core::Size num_combos(1);
 
-	for( std::vector< std::string >::iterator ble_it = blueprint_elements.begin(); ble_it != blueprint_elements.end(); ++ble_it ){
+	for(utility::vector1< std::string >::iterator ble_it = blueprint_elements.begin(); ble_it != blueprint_elements.end(); ++ble_it ){
 
 		if( *ble_it == "" ) continue;
 
 		std::string ble_length_info = ble_it->substr(2);
-		std::vector< std::string > min_max_strings( utility::string_split( ble_length_info, '-' ) );
+		utility::vector1< std::string > min_max_strings( utility::string_split( ble_length_info, '-' ) );
 
 		if( ( (min_max_strings.size() != 1 ) && (min_max_strings.size() != 2 ) ) || ( (*ble_it)[1] != '(' ) ){
 			utility_exit_with_message("SS_blueprint "+ *ble_it + " could not be understood when trying to generate ss_strings from it.");
@@ -559,11 +559,11 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 
 		if( min_max_strings.size() == 1 ){
 			blueprint_element_num_lengths.push_back(1);
-			blueprint_element_min_lengths.push_back( (core::Size) atoi( min_max_strings[0].c_str() ) );
+			blueprint_element_min_lengths.push_back( (core::Size) atoi( min_max_strings[1].c_str() ) );
 		}
 		else{  //implies min_max_strings.size() == 2, see above check
-			core::Size ble_min_length( (core::Size) atoi( min_max_strings[0].c_str() ) );
-			core::Size ble_max_length( (core::Size) atoi(min_max_strings[1].c_str() ) );
+			core::Size ble_min_length( (core::Size) atoi( min_max_strings[1].c_str() ) );
+			core::Size ble_max_length( (core::Size) atoi(min_max_strings[2].c_str() ) );
 			//runtime_assert( ble_min_length <= ble_max_length );
 			blueprint_element_num_lengths.push_back( ble_max_length - ble_min_length + 1);
 			blueprint_element_min_lengths.push_back( ble_min_length );

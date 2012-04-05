@@ -405,21 +405,21 @@ MoveMap::init_from_file( std::string const & filename ) {
 		if ( line.substr(0,1) == "#" ) continue;
 		if ( line == "" ) continue;
 
-		std::vector< std::string > tokens ( utility::split( line ) );
+		utility::vector1< std::string > tokens ( utility::split( line ) );
 		if( tokens.size() > 0 ) {
-			if ( tokens[0] == "JUMP" || tokens[0] == "jump" ) {
+			if ( tokens[1] == "JUMP" || tokens[1] == "jump" ) {
 				if (tokens.size() < 2) {
 					utility_exit_with_message( "Error reading movemap at line: " + line );
 				}
 
-				if ( tokens[1] == "*" ) {
+				if ( tokens[2] == "*" ) {
 					if (jump_default_set) {
 						utility_exit_with_message( "Error reading movemap: default jump set multiple times!" );
 					} else {
 						jump_default_set=true;
-						if ( tokens.size() < 3 || tokens[2] == "YES" || tokens[2] == "yes" ) {
+						if ( tokens.size() < 3 || tokens[3] == "YES" || tokens[3] == "yes" ) {
 							set_jump( true );
-						} else if (tokens[2] == "NO" || tokens[2] == "no" ){
+						} else if (tokens[3] == "NO" || tokens[3] == "no" ){
 							set_jump( false );
 						} else {
 							utility_exit_with_message( "Error reading movemap at line: " + line );
@@ -427,67 +427,67 @@ MoveMap::init_from_file( std::string const & filename ) {
 					}
 				} else {
 					core::Size jump_num = (core::Size) atoi(tokens[1].c_str());
-					if ( tokens.size() < 3 || tokens[2] == "YES" || tokens[2] == "yes" ) {
+					if ( tokens.size() < 3 || tokens[3] == "YES" || tokens[3] == "yes" ) {
 						set_jump( jump_num, true );
-					} else if (tokens[2] == "NO" || tokens[2] == "no" ){
+					} else if (tokens[3] == "NO" || tokens[3] == "no" ){
 						set_jump( jump_num, false );
 					} else {
 						utility_exit_with_message( "Error reading movemap at line: " + line );
 					}
 				}
-			} else if ( tokens[0] == "RESIDUE" || tokens[0] == "residue" ) {
+			} else if ( tokens[1] == "RESIDUE" || tokens[1] == "residue" ) {
 				if (tokens.size() < 3) {
 					utility_exit_with_message( "Error reading movemap at line: " + line );
 				}
-				if ( tokens[1] == "*" ) {
+				if ( tokens[2] == "*" ) {
 					if (res_default_set) {
 						utility_exit_with_message( "Error reading movemap: default residue set multiple times!" );
 					} else {
 						res_default_set=true;
-						if ( tokens[2] == "BB" || tokens[2] == "bb" ) {
+						if ( tokens[3] == "BB" || tokens[3] == "bb" ) {
 							set_bb( true ); set_chi( false );
-						} else if (tokens[2] == "CHI" || tokens[2] == "chi" ){
+						} else if (tokens[3] == "CHI" || tokens[3] == "chi" ){
 							set_bb( false ); set_chi( true );
-						} else if (tokens[2] == "BBCHI" || tokens[2] == "bbchi" ){
+						} else if (tokens[3] == "BBCHI" || tokens[3] == "bbchi" ){
 							set_bb( true ); set_chi( true );
-						} else if (tokens[2] == "NO" || tokens[2] == "no" ){
+						} else if (tokens[3] == "NO" || tokens[3] == "no" ){
 							set_bb( false ); set_chi( false );
 						} else {
 							utility_exit_with_message( "Error reading movemap at line: " + line );
 						}
 					}
 				} else if (tokens.size() == 3) {
-					core::Size start_res   = (core::Size) atoi(tokens[1].c_str());
-					if ( tokens[2] == "BB" || tokens[2] == "bb" ) {
+					core::Size start_res   = (core::Size) atoi(tokens[2].c_str());
+					if ( tokens[3] == "BB" || tokens[3] == "bb" ) {
 						set_bb( start_res, true ); set_chi( start_res, false );
-					} else if (tokens[2] == "CHI" || tokens[2] == "chi" ){
+					} else if (tokens[3] == "CHI" || tokens[3] == "chi" ){
 						set_bb( start_res, false ); set_chi( start_res, true );
-					} else if (tokens[2] == "BBCHI" || tokens[2] == "bbchi" ){
+					} else if (tokens[3] == "BBCHI" || tokens[3] == "bbchi" ){
 						set_bb( start_res, true ); set_chi( start_res, true );
-					} else if (tokens[2] == "NO" || tokens[2] == "no" ){
+					} else if (tokens[3] == "NO" || tokens[3] == "no" ){
 						set_bb( start_res, false ); set_chi( start_res, false );
 					} else {
 						utility_exit_with_message( "Error reading movemap at line: " + line );
 					}
 				} else {
-					core::Size start_res = (core::Size) atoi(tokens[1].c_str());
-					core::Size end_res = (core::Size) atoi(tokens[2].c_str());
+					core::Size start_res = (core::Size) atoi(tokens[2].c_str());
+					core::Size end_res = (core::Size) atoi(tokens[3].c_str());
 					if ( start_res > end_res ) {
 						utility_exit_with_message( "Error reading movemap at line: " + line );
 					}
-					if ( tokens[3] == "BB" || tokens[3] == "bb" ) {
+					if ( tokens[4] == "BB" || tokens[4] == "bb" ) {
 						for (core::Size i = start_res; i<= end_res; ++i) {
 							set_bb( i, true ); set_chi( i, false );
 						}
-					} else if (tokens[3] == "CHI" || tokens[3] == "chi" ){
+					} else if (tokens[4] == "CHI" || tokens[4] == "chi" ){
 						for (core::Size i = start_res; i<= end_res; ++i) {
 							set_bb( i, false ); set_chi( i, true );
 						}
-					} else if (tokens[3] == "BBCHI" || tokens[3] == "bbchi" ){
+					} else if (tokens[4] == "BBCHI" || tokens[4] == "bbchi" ){
 						for (core::Size i = start_res; i<= end_res; ++i) {
 							set_bb( i, true ); set_chi( i, true );
 						}
-					} else if (tokens[3] == "NO" || tokens[3] == "no" ){
+					} else if (tokens[4] == "NO" || tokens[4] == "no" ){
 						for (core::Size i = start_res; i<= end_res; ++i) {
 							set_bb( i, false ); set_chi( i, false );
 						}

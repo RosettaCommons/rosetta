@@ -61,7 +61,7 @@ polarizGrid::polarizGrid() : GridBase("polarizGrid",1.0), radius_(3.0)
 		getline(infile,line);
 		if(line.size() > 0 && line[0] != '#')
 		{
-			std::vector<std::string> split_line(utility::string_split(line, ' '));
+			utility::vector1<std::string> split_line(utility::string_split(line, ' '));
 
 			if(split_line.size() != 2)
 			{
@@ -87,7 +87,7 @@ polarizGrid::polarizGrid(core::Real weight) : GridBase("polarizGrid",weight), ra
 		getline(infile,line);
 		if(line.size() > 0 && line[0] != '#')
 		{
-			std::vector<std::string> split_line(utility::string_split(line, ' '));
+			utility::vector1<std::string> split_line(utility::string_split(line, ' '));
 
 			if(split_line.size() != 2)
 			{

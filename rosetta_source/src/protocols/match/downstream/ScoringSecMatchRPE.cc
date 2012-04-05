@@ -104,7 +104,7 @@ std::string const & s_in, core::pose::Pose const & ref_pose)
 	shortRange_ = false;
 
 	//parse input into line
-	std::vector<std::string> vLineString = utility::string_split( s_in, '\n' );
+	utility::vector1<std::string> vLineString = utility::string_split( s_in, '\n' );
 	TR << s_in << std::endl;
 	//keyword in the CONSTRAINT file
 	std::string const keywordSCORING ("SCORING_SECMATCH::");
@@ -113,15 +113,15 @@ std::string const & s_in, core::pose::Pose const & ref_pose)
 	std::string const keywordCutOff ("cutoff:");
 	std::string const keywordTotal_score ("total_score");
 
-	for(std::vector< std::string >::iterator it_line=vLineString.begin(), end_line =vLineString.end();
+	for(utility::vector1< std::string >::iterator it_line=vLineString.begin(), end_line =vLineString.end();
 			it_line != end_line; ++it_line ) {
 
 		//if line contain CONSTRINAT SCORING_SECMATCH keyword
 		if ((*it_line).find(keywordSCORING) != std::string::npos){
 
 			//parse each line into words
-			std::vector<std::string> vString = utility::string_split( *it_line );
-			for (std::vector< std::string >::iterator it=vString.begin(), end = vString.end(); it != end; ++it){
+			utility::vector1<std::string> vString = utility::string_split( *it_line );
+			for (utility::vector1< std::string >::iterator it=vString.begin(), end = vString.end(); it != end; ++it){
 
 				//weigh file ex. standard.wts
 				if ((*it).find(keywordFilename) != std::string::npos){

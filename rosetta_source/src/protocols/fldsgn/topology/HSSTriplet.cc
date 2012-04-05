@@ -36,16 +36,14 @@ namespace topology {
 /// @value constructor
 HSSTriplet::HSSTriplet( String const & hss )
 {
-	using utility::string_split;
-
-	std::vector< String > parts( string_split( hss, ',' ) );
+	utility::vector1< String > parts( utility::string_split( hss, ',' ) );
 	runtime_assert( parts.size() == 2 );
-	helix_ = boost::lexical_cast<Size>( parts[0] );
+	helix_ = boost::lexical_cast<Size>( parts[1] );
 
-	std::vector< String > st( string_split( parts[1], '-' ) );
+	utility::vector1< String > st( utility::string_split( parts[2], '-' ) );
 	runtime_assert( st.size() == 2 );
-	strand1_ = boost::lexical_cast<Size>( st[0] );
-	strand2_ = boost::lexical_cast<Size>( st[1] );
+	strand1_ = boost::lexical_cast<Size>( st[1] );
+	strand2_ = boost::lexical_cast<Size>( st[2] );
 }
 
 
@@ -249,15 +247,14 @@ HSSTripletSet::HSSTripletSet()
 /// @brief value constructor
 HSSTripletSet::HSSTripletSet( String const & s )
 {
-	using utility::string_split;
 	clear();
 
 	if( s == "" ) {
 		return;
 	}
 
-	std::vector< String > hsss( string_split( s, ';' ) );
-	for( std::vector< String >::const_iterator iter = hsss.begin(); iter != hsss.end() ; ++iter) {
+	utility::vector1< String > hsss( utility::string_split( s, ';' ) );
+	for( utility::vector1< String >::const_iterator iter = hsss.begin(); iter != hsss.end() ; ++iter) {
 		push_back( new HSSTriplet( *iter ) );
 	}
 }

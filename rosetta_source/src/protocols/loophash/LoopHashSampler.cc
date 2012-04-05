@@ -150,11 +150,11 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 		std::string sample_weight_str;
 		core::pose::get_comment(start_pose, "sample_weight", sample_weight_str);
 		
-		std::vector < std::string > sample_weight_input_parameters;
+		utility::vector1 < std::string > sample_weight_input_parameters;
 		sample_weight_input_parameters = utility::split(sample_weight_str);
 		
 		utility::vector1 < core::Size > sample_weight;
-		for ( core::Size res_count = 0; res_count < start_pose.total_residue(); ++res_count ){ 
+		for ( core::Size res_count = 1; res_count <= start_pose.total_residue(); ++res_count ){
 			core::Size new_sample_weight = 50;
 			if( res_count < sample_weight_input_parameters.size() ) new_sample_weight = utility::string2int( sample_weight_input_parameters[res_count] );
 			sample_weight.push_back( new_sample_weight );

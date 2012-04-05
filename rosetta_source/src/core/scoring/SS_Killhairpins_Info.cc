@@ -364,12 +364,12 @@ SS_Killhairpins_Info::setup_killhairpins()
 
 		std::string line, a(""), b("");
 		getline(input_file, line);
-    std::vector< std::string > tokens ( utility::split( line ) );
+		utility::vector1< std::string > tokens ( utility::split( line ) );
 		if ( tokens.size() == 4 ) {
-			a = tokens[ 2 ];
-			b = tokens[ 3 ];
+			a = tokens[ 3 ];
+			b = tokens[ 4 ];
 		} else if ( tokens.size() == 3 ) {
-			a = tokens[ 2 ];
+			a = tokens[ 3 ];
 		} else if ( tokens.size() == 2 ) {
 		} else {
 			utility_exit_with_message("[ERROR] invalid header input for kill_hairpins file. ");
@@ -389,7 +389,7 @@ SS_Killhairpins_Info::setup_killhairpins()
 			kill_parallel_ = true;  // as default, kill_antiparallel_ is true
 		}
 
-		std::string keyword = tokens[ 1 ];
+		std::string keyword = tokens[ 2 ];
 		if ( keyword == "PSIPRED" ) {
 			setup_from_psipred(input_file);
 		} else {

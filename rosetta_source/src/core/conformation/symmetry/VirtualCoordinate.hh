@@ -23,6 +23,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
@@ -64,7 +65,7 @@ class VirtualCoordinate {
 
 	void
 	add_coordinate_from_string(
-		std::vector< std::string > coords,
+		utility::vector1< std::string > coords,
 		core::Size coord_start=2
 	);
 

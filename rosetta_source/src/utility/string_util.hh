@@ -38,7 +38,7 @@ namespace utility {
 void ReadFromFileOrDie(const std::string& filename, std::string* contents);
 	
 /// @brief split given std::string using ' ' symbol.
-std::vector< std::string > split(const std::string &s);
+utility::vector1< std::string > split(const std::string &s);
 
 ///@brief combine strings with anything
 std::string join(utility::vector1<std::string> const & s, std::string const & connector);
@@ -56,7 +56,7 @@ std::list< std::string > split_to_list(const std::string &s);
 std::set< std::string > split_to_set(std::string const & s);
 
 /// @details split to vector< std::string > using arbitrary split character
-std::vector< std::string >
+utility::vector1< std::string >
 string_split( std::string const & in, char splitchar = ' ' );
 
 /// @brief convert a string to a float

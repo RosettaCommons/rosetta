@@ -68,31 +68,31 @@ void LoopsFileIO::read_stream_to_END(
 	
 	while( getline( is, line) ) {
 		linecount++;
-		std::vector< std::string > tokens ( utility::split( line ) );
+		utility::vector1< std::string > tokens ( utility::split( line ) );
 		
 		SerializedLoop current_loop;
 		if( tokens.size() > 0 ) {
-			if ( tokens[0].substr(0,3) == "END" ) break;
-			if ( tokens[0] == token ) {
+			if ( tokens[1].substr(0,3) == "END" ) break;
+			if ( tokens[1] == token ) {
 				if ( tokens.size() < 3 ) {
 					utility_exit_with_message( "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Minimum of 3 tokens necessary (begin, end, cutpoint)"  );
 				}
 				if ( tokens.size() > 6 ) {
 					utility_exit_with_message( "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Maximum of 6 tokens allowed (LOOP begin end cutpoint skiprate extended)"  );
 				}
-				current_loop.start = (core::Size) atoi(tokens[1].c_str());
-				current_loop.stop = (core::Size) atoi(tokens[2].c_str());
+				current_loop.start = (core::Size) atoi(tokens[2].c_str());
+				current_loop.stop = (core::Size) atoi(tokens[3].c_str());
 				current_loop.cut = 0;        // default - let LoopRebuild choose cutpoint
 				current_loop.skip_rate = 0.0;  // default - never skip
 				std::string extend_loop_str;
 				bool extend_loop = false;
 
 				if (tokens.size() > 3)
-					current_loop.cut = (core::Size) atoi(tokens[3].c_str());
+					current_loop.cut = (core::Size) atoi(tokens[4].c_str());
 				if (tokens.size() > 4)
-					current_loop.skip_rate = atof(tokens[4].c_str());
+					current_loop.skip_rate = atof(tokens[5].c_str());
 				if (tokens.size() > 5){
-					if( tokens[5] == "X" ){
+					if( tokens[6] == "X" ){
 						tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
 						extend_loop = true;
 						if ( errcount > 0 ) errcount--;
@@ -100,7 +100,7 @@ void LoopsFileIO::read_stream_to_END(
 							utility_exit_with_message( "too many errors in loop-file " + filename );
 						}
 					}else{
-						int extended_token = atoi(tokens[5].c_str());
+						int extended_token = atoi(tokens[6].c_str());
 						if( extended_token == 0 ) extend_loop = false;
 						else                      extend_loop = true;
 					}
@@ -112,7 +112,7 @@ void LoopsFileIO::read_stream_to_END(
 				} else {
 					loops_.push_back( current_loop );
 				}
-			} else if ( tokens[0][0] != '#' ) {
+			} else if ( tokens[1][0] != '#' ) {
 				if (tokens.size() >= 2) {
 					tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "DEPRECATED r++ style loopfile" << std::endl;
 
@@ -121,21 +121,21 @@ void LoopsFileIO::read_stream_to_END(
 						utility_exit_with_message( "too many errors in loop-file " + filename );
 					}
 
-					current_loop.start = (core::Size) atoi(tokens[0].c_str());
-					current_loop.stop   = (core::Size) atoi(tokens[1].c_str());
+					current_loop.start = (core::Size) atoi(tokens[1].c_str());
+					current_loop.stop   = (core::Size) atoi(tokens[2].c_str());
 					current_loop.cut = 0;        // default - let LoopRebuild choose cutpoint
 					current_loop.skip_rate = 0.0;  // default - never skip
 					bool extend_loop = false;    // default - not extended
 					if (tokens.size() > 2)
-						current_loop.cut = (core::Size) atoi(tokens[2].c_str());
+						current_loop.cut = (core::Size) atoi(tokens[3].c_str());
 					if (tokens.size() > 3)
-						current_loop.skip_rate = atof(tokens[3].c_str());
+						current_loop.skip_rate = atof(tokens[4].c_str());
 					if (tokens.size() > 4){
-						if( tokens[4] == "X" ){
+						if( tokens[5] == "X" ){
 							tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
 							extend_loop = true;
 						} else {
-							int extended_token = atoi(tokens[4].c_str());
+							int extended_token = atoi(tokens[5].c_str());
 							if ( extended_token == 0 ) extend_loop = false;
 							else                extend_loop = true;
 						}

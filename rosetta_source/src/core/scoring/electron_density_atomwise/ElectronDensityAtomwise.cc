@@ -196,7 +196,7 @@ void ElectronDensityAtomwise::initializeSymmOps ( utility::vector1< std::string 
 
 	for ( int i = 1; i <= ( int ) symList.size(); ++i ) {
 		std::string line = symList[i];
-		std::vector< std::string > rows = utility::string_split ( line, ',' );
+		utility::vector1< std::string > rows = utility::string_split ( line, ',' );
 
 		if ( rows.size() != 3 ) {
 			TR.Error << "[ ERROR ] invalid symmop in map file" << std::endl;
@@ -215,32 +215,32 @@ void ElectronDensityAtomwise::initializeSymmOps ( utility::vector1< std::string 
 		int k;
 
 		for ( int j = 0; j < 3; ++j ) {
-			k = rows[j].find ( '/' );
+			k = rows[j+1].find ( '/' );
 
 			if ( k != ( int ) std::string::npos ) {
 				// numerator
-				int startNum = rows[j].find_last_not_of ( "0123456789", k - 1 ) + 1;
+				int startNum = rows[j+1].find_last_not_of ( "0123456789", k - 1 ) + 1;
 				int startDenom = k + 1;
-				float denom = std::atof ( &rows[j][startDenom] );
+				float denom = std::atof ( &rows[j+1][startDenom] );
 				// make sure this shift corresponds to a point in the map
-				trans[j] = std::atof ( &rows[j][startNum] ) / denom;
+				trans[j] = std::atof ( &rows[j+1][startNum] ) / denom;
 			} else {
 				trans[j] = 0;
 			}
 
-			if ( rows[j].find ( "-X" ) != std::string::npos )
+			if ( rows[j+1].find ( "-X" ) != std::string::npos )
 				rot ( j + 1, 1 ) = -1;
-			else if ( rows[j].find ( "X" ) != std::string::npos )
+			else if ( rows[j+1].find ( "X" ) != std::string::npos )
 				rot ( j + 1, 1 ) = 1;
 
-			if ( rows[j].find ( "-Y" ) != std::string::npos )
+			if ( rows[j+1].find ( "-Y" ) != std::string::npos )
 				rot ( j + 1, 2 ) = -1;
-			else if ( rows[j].find ( "Y" ) != std::string::npos )
+			else if ( rows[j+1].find ( "Y" ) != std::string::npos )
 				rot ( j + 1, 2 ) = 1;
 
-			if ( rows[j].find ( "-Z" ) != std::string::npos )
+			if ( rows[j+1].find ( "-Z" ) != std::string::npos )
 				rot ( j + 1, 3 ) = -1;
-			else if ( rows[j].find ( "Z" ) != std::string::npos )
+			else if ( rows[j+1].find ( "Z" ) != std::string::npos )
 				rot ( j + 1, 3 ) = 1;
 		}
 

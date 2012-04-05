@@ -54,12 +54,12 @@ void DbMoverMessageListener::recieve(std::string data) {
 }
 
 void DbMoverMessageListener::deserialize_data(std::string data){
-	std::vector< std::string > tokens = utility::split(data);
+	utility::vector1< std::string > tokens = utility::split(data);
 	if(tokens.size() != 3){
 		utility_exit_with_message("failed to deserialize the database message from slave node.");
 	}
-	protocol_id_=utility::string2int(tokens[0]);
-	batch_ids_[tokens[1]]=utility::string2int(tokens[2]);
+	protocol_id_=utility::string2int(tokens[1]);
+	batch_ids_[tokens[2]]=utility::string2int(tokens[3]);
 }
 
 

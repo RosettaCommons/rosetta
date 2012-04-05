@@ -121,7 +121,7 @@ std::map<core::Size, std::string> CtabBase::ParseAtomTypeData()
 	 }
 	 else
 	 {
-		 //std::vector<std::string> tokens=utility::split(atom_type_data);
+		 //utility::vector1<std::string> tokens=utility::split(atom_type_data);
 		 for(core::Size index = 1; index <= tokens.size();++index)
 		 {
 
@@ -130,7 +130,7 @@ std::map<core::Size, std::string> CtabBase::ParseAtomTypeData()
 			 {
 				 continue;
 			 }
-			 std::vector<std::string> token_split=utility::string_split(current_token,',');
+			 utility::vector1<std::string> token_split=utility::string_split(current_token,',');
 			 utility::trim(token_split[0],"(");
 			 utility::trim(token_split[1],")");
 			 //std::cout << current_token<<std::endl;

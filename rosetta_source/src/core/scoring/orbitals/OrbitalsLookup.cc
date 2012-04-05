@@ -244,19 +244,19 @@ utility::vector1< utility::vector1< core::Real > > OrbitalsLookup::parse_files(
 	core::Size orbital_type(0);
 	core::Size overall_count(1);
 	for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
-		std::vector< std::string > split_string = utility::string_split(line, '\t'); //file is tab-delimenated
-		if(split_string[0]=="Orbital"){
-			orbital_type = static_cast< core::Size > (core::chemical::orbitals::OrbitalTypeMapper::get_instance()->get_orbital_enum(split_string[1]));
+		utility::vector1< std::string > split_string = utility::string_split(line, '\t'); //file is tab-delimenated
+		if(split_string[1]=="Orbital"){
+			orbital_type = static_cast< core::Size > (core::chemical::orbitals::OrbitalTypeMapper::get_instance()->get_orbital_enum(split_string[2]));
 			overall_count=1;
-		}else if(split_string[0] == "Size"){
-			core::Size angle_bins = utility::string2int(split_string[1]);
-			core::Size dist_bins = utility::string2int(split_string[2]);
+		}else if(split_string[1] == "Size"){
+			core::Size angle_bins = utility::string2int(split_string[2]);
+			core::Size dist_bins = utility::string2int(split_string[3]);
 			std::pair<core::Size, core::Size> angle_dist(angle_bins, dist_bins);
 			orbital_angle_dist_map.insert(std::pair<core::Size, std::pair<core::Size, core::Size> >(orbital_type, angle_dist));
 			energy_vector[orbital_type].resize((angle_bins*dist_bins), 0);//need to resize. KBP have differing amount of elements
 		}else{
 			for(core::Size x=1; x<= orbital_angle_dist_map[orbital_type].first; ++x){//iterate through angles and put into vector
-				energy_vector[orbital_type][overall_count] = utility::string2float(split_string[x-1]);//x-1 conversion of std::vector to utility::vector1
+				energy_vector[orbital_type][overall_count] = utility::string2float(split_string[x]);
 				++overall_count;
 			}
 		}

@@ -237,7 +237,7 @@ void MinMover::parse_opts(
 		if( tag->getOption< core::Size > ( "jump" ) == 0 ) {
 			movemap_->set_jump( false );
 		} else {
-			std::vector<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
+			utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 			foreach(std::string jump, jumps){
 				Size const value = std::atoi( jump.c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
 				TR << "Setting min on jump " << value << std::endl;

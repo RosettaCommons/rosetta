@@ -88,25 +88,25 @@ VirtualCoordinate::VirtualCoordinate(
 // do that?
 void
 VirtualCoordinate::add_coordinate_from_string(
-										std::vector< std::string > coords,
+										utility::vector1< std::string > coords,
                     core::Size coord_start )
 {
 		assert( coords.size() >= 3 );
-		std::vector< std::string> split ( utility::string_split( coords[ coord_start -1 ], ',' ) );
+		utility::vector1< std::string> split ( utility::string_split( coords[ coord_start  ], ',' ) );
 		assert( split.size() == 3 );
-    axis_x_ = Vector( ( static_cast<core::Real>( std::atof( split[0].c_str() ) ) ),
-                                             ( static_cast<core::Real>( std::atof( split[1].c_str() ) ) ),
-                                             ( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ) );
-		split = utility::string_split( coords[ coord_start ], ',' );
-		axis_y_ = Vector( ( static_cast<core::Real>( std::atof( split[0].c_str() ) ) ),
-                                             ( static_cast<core::Real>( std::atof( split[1].c_str() ) ) ),
-                                             ( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ) );
+    axis_x_ = Vector( ( static_cast<core::Real>( std::atof( split[1].c_str() ) ) ),
+                                             ( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ),
+                                             ( static_cast<core::Real>( std::atof( split[3].c_str() ) ) ) );
+		split = utility::string_split( coords[ coord_start +1 ], ',' );
+		axis_y_ = Vector( ( static_cast<core::Real>( std::atof( split[1].c_str() ) ) ),
+                                             ( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ),
+                                             ( static_cast<core::Real>( std::atof( split[3].c_str() ) ) ) );
 		axis_origin_ = Vector(0,0,0);
 		if ( coords.size() == 5 ) {
-			split = utility::string_split( coords[ coord_start +1 ], ',' );
-			axis_origin_ = Vector( ( static_cast<core::Real>( std::atof( split[0].c_str() ) ) ),
-                                             ( static_cast<core::Real>( std::atof( split[1].c_str() ) ) ),
-                                             ( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ) );
+			split = utility::string_split( coords[ coord_start +2 ], ',' );
+			axis_origin_ = Vector( ( static_cast<core::Real>( std::atof( split[1].c_str() ) ) ),
+                                             ( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ),
+                                             ( static_cast<core::Real>( std::atof( split[3].c_str() ) ) ) );
 		}
 }
 

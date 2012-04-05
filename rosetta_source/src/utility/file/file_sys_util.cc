@@ -421,7 +421,7 @@ int list_dir (std::string dir, utility::vector1<std::string> & files)
     return 0;
 }
 
-FileName combine_names(std::vector<std::string> file_name_strings){
+FileName combine_names(utility::vector1<std::string> file_name_strings){
 	std::vector<FileName> file_names;
 	std::vector<std::string>::const_iterator begin= file_name_strings.begin();
 	for(; begin != file_name_strings.end(); ++begin){

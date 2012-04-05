@@ -209,14 +209,14 @@ void SymDof::read( std::string dof_line )
 		// first read dof_type
 		int dof_type(0);
 		//  Split for parsing
-		std::vector< std::string> split ( utility::string_split( j, '(' ) );
+		utility::vector1< std::string> split ( utility::string_split( j, '(' ) );
 		//std::cout<< dof_line <<" "<<j<<" "<<split[0]<<std::endl;
-		if ( split[0] == "x" ) dof_type = X_DOF;
-		if ( split[0] == "y" ) dof_type = Y_DOF;
-		if ( split[0] == "z" ) dof_type = Z_DOF;
-		if ( split[0] == "angle_x" ) dof_type = X_ANGLE_DOF;
-		if ( split[0] == "angle_y" ) dof_type = Y_ANGLE_DOF;
-		if ( split[0] == "angle_z" ) dof_type = Z_ANGLE_DOF;
+		if ( split[1] == "x" ) dof_type = X_DOF;
+		if ( split[1] == "y" ) dof_type = Y_DOF;
+		if ( split[1] == "z" ) dof_type = Z_DOF;
+		if ( split[1] == "angle_x" ) dof_type = X_ANGLE_DOF;
+		if ( split[1] == "angle_y" ) dof_type = Y_ANGLE_DOF;
+		if ( split[1] == "angle_z" ) dof_type = Z_ANGLE_DOF;
 		if ( dof_type == 0 ) utility_exit_with_message("Dof type must be x,y,z,x_angle,y_angle,z_angle...");
 
 		// Allow dof is true
@@ -224,15 +224,15 @@ void SymDof::read( std::string dof_line )
 
 		// Parse the rest
 		if ( split.size() == 2 ) {
-			std::vector< std::string> direction_split ( utility::string_split( split[1], ';' ) );
+			utility::vector1< std::string> direction_split ( utility::string_split( split[2], ';' ) );
 			// Parse the range1
 			if ( direction_split.size() >= 1 ) {
-				std::vector< std::string> range_split ( utility::string_split( direction_split[ 0 ], ':' ) );
+				utility::vector1< std::string> range_split ( utility::string_split( direction_split[ 1 ], ':' ) );
 				if ( range_split.size() >= 1 ) {
-					lower_range_dof_jumps1_[dof_type] = std::atof( range_split[0].c_str() );
+					lower_range_dof_jumps1_[dof_type] = std::atof( range_split[1].c_str() );
 					has_range1_lower_[dof_type] = true;
-					if ( range_split.size() == 2  && range_split[0] != range_split[1] ) {
-						upper_range_dof_jumps1_[dof_type] = std::atof( range_split[1].c_str() );
+					if ( range_split.size() == 2  && range_split[1] != range_split[2] ) {
+						upper_range_dof_jumps1_[dof_type] = std::atof( range_split[2].c_str() );
 						has_range1_upper_[dof_type] = true;
 					} else {
 						upper_range_dof_jumps1_[dof_type] = lower_range_dof_jumps1_[dof_type];
@@ -241,12 +241,12 @@ void SymDof::read( std::string dof_line )
 			}
 			// Parse the range2
 			if ( direction_split.size() >= 2 ) {
-				std::vector< std::string> range_split ( utility::string_split( direction_split[ 1 ], ':' ) );
+				utility::vector1< std::string> range_split ( utility::string_split( direction_split[ 2 ], ':' ) );
 				if ( range_split.size() >= 1 ) {
-					lower_range_dof_jumps2_[dof_type] = std::atof( range_split[0].c_str() );
+					lower_range_dof_jumps2_[dof_type] = std::atof( range_split[1].c_str() );
 					has_range2_lower_[dof_type] = true;
-					if ( range_split.size() == 2 && range_split[0] != range_split[1] ) {
-						upper_range_dof_jumps2_[dof_type] = std::atof( range_split[1].c_str() );
+					if ( range_split.size() == 2 && range_split[1] != range_split[2] ) {
+						upper_range_dof_jumps2_[dof_type] = std::atof( range_split[2].c_str() );
 						has_range2_upper_[dof_type] = true;
 					} else {
 						upper_range_dof_jumps2_[dof_type] = lower_range_dof_jumps2_[dof_type];
@@ -255,9 +255,9 @@ void SymDof::read( std::string dof_line )
 			}
 			// Parse the jump direction. Either dof_type(n2c) or dof_type(c2n)
 			if ( direction_split.size() == 3 ) {
-				if ( direction_split[2] == "n2c" ) {
+				if ( direction_split[3] == "n2c" ) {
 					jump_dir_[dof_type] = 1;
-				} else if ( direction_split[2] == "c2n" ) {
+				} else if ( direction_split[3] == "c2n" ) {
 					jump_dir_[dof_type] = -1;
 				} else {
 					utility_exit_with_message("Unknown jump direction in Dof parsing...");
@@ -289,13 +289,12 @@ std::ostream& operator<< ( std::ostream & s, const SymDof & dof )
 }
 
 void
-SymDof::add_dof_from_string(
-										std::vector< std::string > dof_line )
+SymDof::add_dof_from_string( utility::vector1< std::string > dof_line )
 {
 	assert( dof_line.size() >= 3 );
 
 	for ( Size i = 3; i <= dof_line.size(); ++i ) {
-		read(dof_line[i-1]);
+		read(dof_line[i]);
 	}
 }
 

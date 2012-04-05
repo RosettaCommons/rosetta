@@ -460,9 +460,9 @@ get_pdb_code_from_pose_tag( core::pose::Pose const & pose ){
 
 	//std::cerr <<"string that's supposed to contain a pdb code is " << outtag << ", found to contain the following pdb tags: " << std::endl;
 
-	std::vector< std::string > tagparts = utility::string_split( outtag, '_' );
+	utility::vector1< std::string > tagparts = utility::string_split( outtag, '_' );
 
-	for( std::vector< std::string >::const_iterator it = tagparts.begin(); it != tagparts.end(); ++it){
+	for( utility::vector1< std::string >::const_iterator it = tagparts.begin(); it != tagparts.end(); ++it){
 
 		if( it->size() != 4 ) continue;
 		std::string cand_str = *it;

@@ -33,7 +33,7 @@ public:
 private:
 	virtual void ParseAtom(std::string const atom_line, core::Size const );
 	virtual void ParseBond(std::string const bond_line);
-	core::Real FindExtraParameter( std::vector<std::string> const extra_parameters,  std::string const query);
+	core::Real FindExtraParameter( utility::vector1<std::string> const extra_parameters,  std::string const query);
 
 };
 

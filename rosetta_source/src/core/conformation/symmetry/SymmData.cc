@@ -448,25 +448,25 @@ SymmData::read_symmetry_info_from_pdb(
 	std::vector< numeric::xyzMatrix < Real > > smtry_trans_matrices;
 	while( getline(infile,line) ) {
 		linecount++;
-		std::vector< std::string > tokens ( utility::split( line ) );
+		utility::vector1< std::string > tokens ( utility::split( line ) );
 
 		if( tokens.size() > 0 ) {
-			if ( tokens[0] == "REMARK" && tokens[1] == "290" ) {
-				if ( tokens.size() > 7 && tokens[5] == "SPACE" && tokens[6] == "GROUP:" )
+			if ( tokens[1] == "REMARK" && tokens[2] == "290" ) {
+				if ( tokens.size() > 7 && tokens[6] == "SPACE" && tokens[7] == "GROUP:" )
 				{
 					std::string symmetry_name = "";
-					for (Size i=7; i< tokens.size(); ++i ){
+					for (Size i=8; i<= tokens.size(); ++i ){
 						symmetry_name += tokens[i];
 						symmetry_name += " ";
 					}
 				}
-				if ( tokens[2] == "SYMOP" ){
+				if ( tokens[3] == "SYMOP" ){
 					start_symm_matrices = linecount + 2;
 				}
-				std::vector< std::vector< std::string> > matrices;
-				std::vector< std::string> split_vector;
+				utility::vector1< utility::vector1< std::string> > matrices;
+				utility::vector1< std::string> split_vector;
 				if ( linecount >= start_symm_matrices ){
-					split_vector = utility::string_split( tokens[3], ',' );
+					split_vector = utility::string_split( tokens[4], ',' );
 					if ( split_vector.size() == 3 ){
 							matrices.push_back( split_vector );
 					}
@@ -478,27 +478,27 @@ SymmData::read_symmetry_info_from_pdb(
 // 					std::cout << std::endl;
 // 				}
 				Vector row1, row2,row3, rowa, rowb, rowc;
-				if ( tokens[2] == "SMTRY1" ){
-					row1 = Vector ( static_cast<core::Real>( std::atof( tokens[4].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[5].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[6].c_str() ) ) );
-					rowa = Vector ( static_cast<core::Real>( std::atof( tokens[7].c_str() ) ),
+				if ( tokens[3] == "SMTRY1" ){
+					row1 = Vector ( static_cast<core::Real>( std::atof( tokens[5].c_str() ) ),
+					                static_cast<core::Real>( std::atof( tokens[6].c_str() ) ),
+					                static_cast<core::Real>( std::atof( tokens[7].c_str() ) ) );
+					rowa = Vector ( static_cast<core::Real>( std::atof( tokens[8].c_str() ) ),
 					                0.0, 0.0 );
 					row1_found = true;
 				}
-				if ( tokens[2] == "SMTRY2" ){
-					row2 = Vector ( static_cast<core::Real>( std::atof( tokens[4].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[5].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[6].c_str() ) ) );
-					rowb = Vector ( 0.0, static_cast<core::Real>( std::atof( tokens[7].c_str() ) ),
+				if ( tokens[3] == "SMTRY2" ){
+					row2 = Vector ( static_cast<core::Real>( std::atof( tokens[5].c_str() ) ),
+					                static_cast<core::Real>( std::atof( tokens[6].c_str() ) ),
+					                static_cast<core::Real>( std::atof( tokens[7].c_str() ) ) );
+					rowb = Vector ( 0.0, static_cast<core::Real>( std::atof( tokens[8].c_str() ) ),
 					                0.0 );
 					row2_found = true;
 				}
-				if ( tokens[2] == "SMTRY3" ){
-					row3 = Vector ( static_cast<core::Real>( std::atof( tokens[4].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[5].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[6].c_str() ) ) );
-					rowc = Vector ( 0.0, 0.0, static_cast<core::Real>( std::atof( tokens[7].c_str() ) ) );
+				if ( tokens[3] == "SMTRY3" ){
+					row3 = Vector ( static_cast<core::Real>( std::atof( tokens[5].c_str() ) ),
+					                static_cast<core::Real>( std::atof( tokens[6].c_str() ) ),
+					                static_cast<core::Real>( std::atof( tokens[7].c_str() ) ) );
+					rowc = Vector ( 0.0, 0.0, static_cast<core::Real>( std::atof( tokens[8].c_str() ) ) );
 					row3_found = true;
 				}
 				if ( row1_found && row2_found && row3_found ){
@@ -509,13 +509,13 @@ SymmData::read_symmetry_info_from_pdb(
 					row1_found = row2_found = row3_found = false;
 				}
 			} // End REMARK 290
-			if ( tokens[0] == "CRYST1" && tokens.size() > 7){
-				cell_a_ = static_cast<core::Real>( std::atof( tokens[1].c_str() ) );
-				cell_b_ = static_cast<core::Real>( std::atof( tokens[2].c_str() ) );
-				cell_c_ = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
-				cell_alfa_ = static_cast<core::Real>( std::atof( tokens[4].c_str() ) );
-				cell_beta_ = static_cast<core::Real>( std::atof( tokens[5].c_str() ) );
-				cell_gamma_ = static_cast<core::Real>( std::atof( tokens[6].c_str() ) );
+			if ( tokens[1] == "CRYST1" && tokens.size() > 7){
+				cell_a_ = static_cast<core::Real>( std::atof( tokens[2].c_str() ) );
+				cell_b_ = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
+				cell_c_ = static_cast<core::Real>( std::atof( tokens[4].c_str() ) );
+				cell_alfa_ = static_cast<core::Real>( std::atof( tokens[5].c_str() ) );
+				cell_beta_ = static_cast<core::Real>( std::atof( tokens[6].c_str() ) );
+				cell_gamma_ = static_cast<core::Real>( std::atof( tokens[7].c_str() ) );
 			}
 		}
 	}
@@ -564,21 +564,21 @@ SymmData::read_symmetry_data_from_stream(
 	// Read the file
 	while( getline(infile,line) ) {
 		linecount++;
-		std::vector< std::string > tokens ( utility::split( line ) );
+		utility::vector1< std::string > tokens ( utility::split( line ) );
 
 		if (tokens.size() == 0) continue;      // blank line
 		if (line.substr(0,1) == "#") continue; // comment
 
 		// if we're reading a coordinate block ...
 		if (read_virtual_coords) {
-			if ( tokens[0] == "xyz" ) {
+			if ( tokens[1] == "xyz" ) {
 				// Lines of virtual coordinate systems start with "xyz" and occur in
 				//    virtual_coordinates_start ... virtual_coordinates_stop blocks
 				// parse the coordinate system into a VirtualCoordinate object. Need to
 				// have at least x and y axis. If no origin is specified we assume 0,0,0
 				if ( tokens.size() < 5 )
 					utility_exit_with_message("[ERROR] xyz lines in symm def file const contain an identifier and 3 coordinate vectors (X,Y,ORIG)" );
-				std::string identifier( tokens[1] );
+				std::string identifier( tokens[2] );
 				VirtualCoordinate coord;
 				coord.add_coordinate_from_string( tokens, 3 );
 
@@ -591,7 +591,7 @@ SymmData::read_symmetry_data_from_stream(
 				// vrt id to idx maps
 				virt_id_to_virt_num_[identifier] = jump_num;
 				virt_num_to_virt_id_[jump_num] = identifier;
-			} else if ( tokens[0] == "virtual_coordinates_stop" ) {
+			} else if ( tokens[1] == "virtual_coordinates_stop" ) {
 				read_virtual_coords = false;
 				have_virtual_coordinates = true;
 			} else {
@@ -602,7 +602,7 @@ SymmData::read_symmetry_data_from_stream(
 		else if (read_transforms) {
 			// Read the start coordinate system upon which the first transformation operation work on.
 			// Store the value in a VirtualCoordinate system
-			if ( tokens[0] == "start" && tokens.size() >= 3 ) {
+			if ( tokens[1] == "start" && tokens.size() >= 3 ) {
 				std::string identifier = "VRT0001";
 				VirtualCoordinate start_coord;
 				start_coord.add_coordinate_from_string( tokens );
@@ -617,81 +617,81 @@ SymmData::read_symmetry_data_from_stream(
 				virt_id_to_subunit_num_.insert( std::make_pair( identifier, 1 ) );
 				subunit_num_to_virt_id_.insert( std::make_pair( 1, identifier ) );
 				start_coordinates_found = true;
-			} else if ( tokens[0] == "rot" || tokens[0] == "trans" ) {
+			} else if ( tokens[1] == "rot" || tokens[1] == "trans" ) {
 				if ( !start_coordinates_found ) {
 					utility_exit_with_message( "[ERROR] When specifying Rotation operations a starting coordinate must be give" );
 				}
 				// Rotation around the x-axis
-				if ( tokens[1] == "Rx" ) {
+				if ( tokens[2] == "Rx" ) {
 					// Check that we have both rot, Rx and a value specifying the number of rotations
 					if ( tokens.size() != 3 ) {
 						utility_exit_with_message( "[ERROR] Need to give two arguments..." );
 					}
 					// Read the N-fold rotation
-					N = utility::string2int( tokens[1] );
+					N = utility::string2int( tokens[2] );
 					Vector axis (1,0,0);
 					// Save the rotation matrix in the rot_matrix vector
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, 360.0 / N ) );
 					// We need to know what type of transformation this is
 					transform_type.push_back( std::make_pair( ++num_transformations, "rot") );
 				}
-				if ( tokens[1] == "Ry" ) {
-					if ( tokens.size() != 3 ) {
-						utility_exit_with_message( "[ERROR] Need to give two arguments..." );
-					}
-					N = utility::string2int( tokens[1] );
-					Vector axis (0,1,0);
-					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, 360.0 / N ) );
-					transform_type.push_back( std::make_pair( ++num_transformations, "rot") );
-				}
-				if ( tokens[1] == "Rz" ) {
+				if ( tokens[2] == "Ry" ) {
 					if ( tokens.size() != 3 ) {
 						utility_exit_with_message( "[ERROR] Need to give two arguments..." );
 					}
 					N = utility::string2int( tokens[2] );
+					Vector axis (0,1,0);
+					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, 360.0 / N ) );
+					transform_type.push_back( std::make_pair( ++num_transformations, "rot") );
+				}
+				if ( tokens[2] == "Rz" ) {
+					if ( tokens.size() != 3 ) {
+						utility_exit_with_message( "[ERROR] Need to give two arguments..." );
+					}
+					N = utility::string2int( tokens[3] );
 					Vector axis (0,0,1);
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, 360.0 / N ) );
 					transform_type.push_back( std::make_pair( ++num_transformations, "rot") );
 				}
 				// Rotate an angle "angle" around the x-axis
-				if ( tokens[1] == "Rx_angle" ) {
+				if ( tokens[2] == "Rx_angle" ) {
 					if ( tokens.size() != 3 ) {
 						utility_exit_with_message( "[ERROR] Need to give two arguments..." );
 					}
 					Vector axis (1,0,0);
-					Real angle = static_cast<core::Real>( std::atof( tokens[2].c_str() ) );
+					Real angle = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, angle ) );
 					transform_type.push_back( std::make_pair( ++num_transformations, "rot") );
 				}
-				if ( tokens[1] == "Ry_angle" ) {
+				if ( tokens[2] == "Ry_angle" ) {
 						if ( tokens.size() != 3 ) {
 							utility_exit_with_message( "[ERROR] Need to give two arguments..." );
 						}
 					Vector axis (0,1,0);
-					Real angle = static_cast<core::Real>( std::atof( tokens[2].c_str() ) );
+					Real angle = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, angle ) );
 					transform_type.push_back( std::make_pair( ++num_transformations, "rot") );
 				}
-				if ( tokens[1] == "Rz_angle" ) {
+				if ( tokens[2] == "Rz_angle" ) {
 					if ( tokens.size() != 3 ) {
 						utility_exit_with_message( "[ERROR] Need to give two arguments..." );
 					}
 					Vector axis (0,0,1);
-					Real angle = static_cast<core::Real>( std::atof( tokens[2].c_str() ) );
+					Real angle = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, angle ) );
 					transform_type.push_back( std::make_pair( ++num_transformations, "rot") );
 				}
 				// read translations. Need to give a vector
-				if ( tokens[0] == "trans" ) {
-					std::vector< std::string> split ( utility::string_split( tokens[1], ',' ) );
+				if ( tokens[1] == "trans" ) {
+					utility::vector1< std::string> split ( utility::string_split( tokens[2], ',' ) );
 					runtime_assert( split.size() == 3 );
-					Vector trans( ( static_cast<core::Real>( std::atof( split[0].c_str() ) ) ),
-								  ( static_cast<core::Real>( std::atof( split[1].c_str() ) ) ),
-								  ( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ) );
+					Vector trans( ( static_cast<core::Real>( std::atof( split[1].c_str() ) ) ),
+								  ( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ),
+								  ( static_cast<core::Real>( std::atof( split[3].c_str() ) ) ) );
 					trans_vector.push_back( trans );
 					transform_type.push_back( std::make_pair( ++num_transformations, "trans") );
 				}
-			} else if ( tokens[0] == "virtual_transforms_stop" ) {
+			} else if ( tokens[1] == "virtual_transforms_stop" ) {
 				read_transforms = false;
 				// For all the subunits generate a coordinate system. Go through all the tranformation
 				// operations and operate on the previous coordinate system sequentially. The first
@@ -781,35 +781,35 @@ SymmData::read_symmetry_data_from_stream(
 		}
 		// otherwise just reading std info
 		else {
-			if ( tokens[0] == "virtual_coordinates_start" ) {
+			if ( tokens[1] == "virtual_coordinates_start" ) {
 				// Start virtual coordinate system block
 				read_virtual_coords = true;
-			} else if ( tokens[0] == "virtual_transforms_start" ) {
+			} else if ( tokens[1] == "virtual_transforms_start" ) {
 				// Start transformation block
 				read_transforms = true;
-				if ( tokens.size() >= 2 && tokens[1] == "consecutive" )
+				if ( tokens.size() >= 2 && tokens[2] == "consecutive" )
 					read_consecutive_transforms = true;
-			} else if ( tokens[0] == "symmetry_name" ) {
+			} else if ( tokens[1] == "symmetry_name" ) {
 				// parse the name of the symmetry type. Not required
-				symmetry_name_ = tokens[1];
-			} else if ( tokens[0] == "subunits" ) {
+				symmetry_name_ = tokens[2];
+			} else if ( tokens[1] == "subunits" ) {
 				// parse the number of subunits. Required.
-				subunits_ = utility::string2int( tokens[1] );
+				subunits_ = utility::string2int( tokens[2] );
 				read_subunits = true;
 				for( Size i =1; i<=subunits_;i++) {
 					include_subunit_.push_back(i);
 					output_subunit_.push_back(i);
 				}
-			} else if ( tokens[0] == "number_of_interfaces") {
+			} else if ( tokens[1] == "number_of_interfaces") {
 				// parse the number of different type of interfaces. Required
-				interfaces_ = utility::string2int( tokens[1] );
-			} else if ( tokens[0] == "anchor_residue") {
+				interfaces_ = utility::string2int( tokens[2] );
+			} else if ( tokens[1] == "anchor_residue") {
 				// anchor residue id
-				if ( tokens[1] == "COM" || tokens[1] == "com" ) anchor_residue_ = 0;
-				else anchor_residue_ = utility::string2int( tokens[1] );
-			} else if ( tokens[0] == "recenter" ) {
+				if ( tokens[2] == "COM" || tokens[2] == "com" ) anchor_residue_ = 0;
+				else anchor_residue_ = utility::string2int( tokens[2] );
+			} else if ( tokens[1] == "recenter" ) {
 				recenter_ =  true;
-			} else if ( tokens[0] == "E" && tokens[1] == "=" ) {
+			} else if ( tokens[1] == "E" && tokens[2] == "=" ) {
 				// Define how the total energy should be calculated. The format is
 				// E = X*E2 + Y*E3 + ...
 				// where X and Y are integers. If not specified we assume that E = subunits_*E2.
@@ -818,26 +818,26 @@ SymmData::read_symmetry_data_from_stream(
 				//	score_multiply_subunit_string.push_back( tokens[i] );
 				//}
 				score_multiply_subunit_string.push_back( line );
-			} else if ( tokens[0] == "connect_virtual" ) {
+			} else if ( tokens[1] == "connect_virtual" ) {
 				// Read information on how virtual coordinate systems are connected by jumps. Not required
 				connect_virtuals_specified = true;
 				if ( tokens.size() < 4 )
 					utility_exit_with_message( "[ERROR] You have to give jump identifier together with two virtual residue ids..." );
-				if ( jump_string_to_virtual_pair_.find( tokens[1] ) != jump_string_to_virtual_pair_.end() )
-					utility_exit_with_message( "[ERROR] jump identifiers have to be unique..." + tokens[1] + " found twice " );
-				if ( virtual_coordinates_.find( tokens[2] ) == virtual_coordinates_.end() )
-					utility_exit_with_message( "[ERROR] Virtual residue " + tokens[2] + " in jump " + tokens[1] + " not found" );
-				if ( tokens[3] != "SUBUNIT" && virtual_coordinates_.find( tokens[3] ) == virtual_coordinates_.end() )
-					utility_exit_with_message( "[ERROR] Virtual residue " + tokens[3] + " in jump " + tokens[1] + " not found" );
+				if ( jump_string_to_virtual_pair_.find( tokens[2] ) != jump_string_to_virtual_pair_.end() )
+					utility_exit_with_message( "[ERROR] jump identifiers have to be unique..." + tokens[2] + " found twice " );
+				if ( virtual_coordinates_.find( tokens[3] ) == virtual_coordinates_.end() )
+					utility_exit_with_message( "[ERROR] Virtual residue " + tokens[3] + " in jump " + tokens[2] + " not found" );
+				if ( tokens[4] != "SUBUNIT" && virtual_coordinates_.find( tokens[4] ) == virtual_coordinates_.end() )
+					utility_exit_with_message( "[ERROR] Virtual residue " + tokens[4] + " in jump " + tokens[2] + " not found" );
 
-				jump_string_to_virtual_pair_[ tokens[1] ] = std::make_pair( tokens[2], tokens[3] );
-				if ( tokens[3] == "SUBUNIT" ) {
+				jump_string_to_virtual_pair_[ tokens[2] ] = std::make_pair( tokens[3], tokens[4] );
+				if ( tokens[4] == "SUBUNIT" ) {
 					if ( !read_subunits ) ++subunits_;
 					Size newId = virt_id_to_subunit_num_.size()+1;
-					virt_id_to_subunit_num_[ tokens[2] ] = newId;
-					subunit_num_to_virt_id_[ newId ] = tokens[2];
+					virt_id_to_subunit_num_[ tokens[3] ] = newId;
+					subunit_num_to_virt_id_[ newId ] = tokens[3];
 				}
-			} else if ( tokens[0] == "set_dof" ) {
+			} else if ( tokens[1] == "set_dof" ) {
 				// Store the degrees of freedom associated with a jump to a virtual residue. If not given
 				// we assume that all dofs are allowed. Format:
 				// set_dof x y z angle_x angle_x angle_y angle_z
@@ -886,7 +886,7 @@ SymmData::read_symmetry_data_from_stream(
 				if ( tokens.size() < 3 )
 					utility_exit_with_message("[ERROR] Error reading set_dof line '"+line+"'");
 
-				std::string jump_id ( tokens[1] );
+				std::string jump_id ( tokens[2] );
 				if ( jump_string_to_jump_num_.find(jump_id) == jump_string_to_jump_num_.end() ) {
 					std::string error( "[ERROR] Jump id is not found..." + jump_id );
 					utility_exit_with_message( error );
@@ -895,19 +895,19 @@ SymmData::read_symmetry_data_from_stream(
 				SymDof dof;
 				dof.add_dof_from_string(tokens);
 				dofs_[ jump_nbr ] = dof;
-			} else if( tokens[0] == "include_subunit" ) {
+			} else if( tokens[1] == "include_subunit" ) {
 				include_subunit_.clear();
-				for( Size i=1; i<tokens.size();i++) {
+				for( Size i=2; i<=tokens.size();i++) {
 					core::Size j ( utility:: string2int( tokens[i] ) );
 					include_subunit_.push_back(j);
 				}
-			} else if( tokens[0] == "output_subunit" ) {
+			} else if( tokens[1] == "output_subunit" ) {
 				output_subunit_.clear();
-				for( Size i =1; i<tokens.size();i++) {
+				for( Size i =2; i<=tokens.size();i++) {
 					core::Size j ( utility:: string2int( tokens[i] ) );
 					output_subunit_.push_back(j);
 				}
-			} else if( tokens[0] == "set_jump_group" ) {
+			} else if( tokens[1] == "set_jump_group" ) {
 				// set groups of jumps that move together
 				int master(-1);
 
@@ -943,23 +943,23 @@ SymmData::read_symmetry_data_from_stream(
 				// The master is the jump that has a dof line
 				utility::vector1< Size > jump_nums;
 				utility::vector1< Real > jump_wts;
-				for ( Size i = 2; i <= tokens.size() - 1; ++i ) {
+				for ( Size i = 3; i <= tokens.size(); ++i ) {
 					// read tags of the form 'JUMP_0_0:0.333333'
 					// which means this jump has a weight 0.333333
-					std::vector< std::string > jump_split_i ( utility::string_split( tokens[i], ':' ) );
+					utility::vector1< std::string > jump_split_i ( utility::string_split( tokens[i], ':' ) );
 					core::Real wt_i = 0.0;
 
 					if (jump_split_i.size() > 1) {
-						wt_i = std::atof( jump_split_i[1].c_str() );
+						wt_i = std::atof( jump_split_i[2].c_str() );
 					}
 
-					if ( jump_string_to_jump_num_.find( jump_split_i[0] ) == jump_string_to_jump_num_.end() )
-						utility_exit_with_message("[ERROR] Undefined jump "+jump_split_i[0]+" in jump group '"+tokens[1]+"'");
+					if ( jump_string_to_jump_num_.find( jump_split_i[1] ) == jump_string_to_jump_num_.end() )
+						utility_exit_with_message("[ERROR] Undefined jump "+jump_split_i[1]+" in jump group '"+tokens[2]+"'");
 
-					Size jump_nbr( jump_string_to_jump_num_.find( jump_split_i[0] )->second );
+					Size jump_nbr( jump_string_to_jump_num_.find( jump_split_i[1] )->second );
 					if ( dofs_.find(jump_nbr) != dofs_.end() ) {
 						if (master >= 0)
-							utility_exit_with_message("[ERROR] Multiple movable jumps specified in jump group '"+tokens[1]+"'");
+							utility_exit_with_message("[ERROR] Multiple movable jumps specified in jump group '"+tokens[2]+"'");
 						master = jump_nbr;
 					}
 
@@ -992,39 +992,39 @@ SymmData::read_symmetry_data_from_stream(
 				jump_clones_[master] = thisCloneList;
 
 				if (jump_nums.size() > 1) {
-					TR.Warning << "Setting jump_group " << tokens[1] << ": [master " << master << "] ";
+					TR.Warning << "Setting jump_group " << tokens[2] << ": [master " << master << "] ";
 					for ( Size i = 1; i <= jump_nums.size(); ++i ) {
 						if ( (int)jump_nums[i] != master ) TR.Warning << " " << jump_nums[i] << ":" << jump_wts[i] << " ";
 					}
 					TR.Warning << std::endl;
 				}
-			} else if( tokens[0] == "slide_type" ) {
+			} else if( tokens[1] == "slide_type" ) {
 				if ( tokens.size() != 2 ) utility_exit_with_message("[ERROR] Error reading slide_type '"+line+"'");
-					if ( tokens[1] == "SEQUENTIAL" ) {
+					if ( tokens[2] == "SEQUENTIAL" ) {
 						slide_info_.set_slide_type( SEQUENTIAL );
-					} else if ( tokens[1] == "ORDERED_SEQUENTIAL" ) {
+					} else if ( tokens[2] == "ORDERED_SEQUENTIAL" ) {
 						slide_info_.set_slide_type( ORDERED_SEQUENTIAL );
-					} else if ( tokens[1] == "RANDOM" ) {
+					} else if ( tokens[2] == "RANDOM" ) {
 						slide_info_.set_slide_type( RANDOM );
 					} else {
-							utility_exit_with_message("[ERROR] Unknown slide_type '"+tokens[1]+"'");
+							utility_exit_with_message("[ERROR] Unknown slide_type '"+tokens[2]+"'");
 				}
-			} else if( tokens[0] == "slide_criteria_type" ) {
+			} else if( tokens[1] == "slide_criteria_type" ) {
 				if ( tokens.size() != 2 ) utility_exit_with_message("[ERROR] Error reading slide_criteria_type '"+line+"'");
-				if ( tokens[1] == "CEN_DOCK_SCORE" ) {
+				if ( tokens[2] == "CEN_DOCK_SCORE" ) {
 					slide_info_.set_SlideCriteriaType( CEN_DOCK_SCORE );
-				} else if ( tokens[1] == "FA_REP_SCORE" ) {
+				} else if ( tokens[2] == "FA_REP_SCORE" ) {
 					slide_info_.set_SlideCriteriaType( FA_REP_SCORE );
-				} else if ( tokens[1] == "CONTACTS" ) {
+				} else if ( tokens[2] == "CONTACTS" ) {
 					slide_info_.set_SlideCriteriaType( CONTACTS );
 				} else {
-						utility_exit_with_message("[ERROR] Unknown slide_type '"+tokens[1]+"'");
+						utility_exit_with_message("[ERROR] Unknown slide_type '"+tokens[2]+"'");
 				}
-			} else if( tokens[0] == "slide_criteria_val" ) {
+			} else if( tokens[1] == "slide_criteria_val" ) {
 					if ( tokens.size() != 2 ) utility_exit_with_message("[ERROR] Error reading slide_criteria_val '"+line+"'");
-					slide_info_.set_SlideCriteriaVal(tokens[1]);
-			} else if( tokens[0] == "slide_order" ) {
-					for  ( Size record = 1; record < tokens.size(); ++record ) {
+					slide_info_.set_SlideCriteriaVal(tokens[2]);
+			} else if( tokens[1] == "slide_order" ) {
+					for  ( Size record = 2; record <= tokens.size(); ++record ) {
 						slide_order_string_.push_back( tokens[record] );
 					}
 			} else {
@@ -1077,39 +1077,39 @@ SymmData::read_symmetry_data_from_stream(
 
 	if (score_multiply_subunit_string.size() == 0)
 		utility_exit_with_message( "[ERROR] No total energy line specified!" );
-	std::vector< std::string> split_1 = utility::string_split( score_multiply_subunit_string[1], '=' );
+	utility::vector1< std::string> split_1 = utility::string_split( score_multiply_subunit_string[1], '=' );
 	if (split_1.size() < 2)
 		utility_exit_with_message( "[ERROR] Error parsing line '"+score_multiply_subunit_string[1]+"'" );
-	std::vector< std::string> split_2 = utility::string_split( split_1[1], '+' );
+	utility::vector1< std::string> split_2 = utility::string_split( split_1[2], '+' );
 
-	for ( Size i = 0; i<split_2.size(); ++i ) {
+	for ( Size i = 1; i<=split_2.size(); ++i ) {
 		// trim whitespace
 		utility::trim(split_2[i], " ");
 
-		std::vector< std::string> split_3 = utility::string_split( split_2[i], '*' );
+		utility::vector1< std::string> split_3 = utility::string_split( split_2[i], '*' );
 		Size factor=1;
-		std::string virtual_residues = split_3[0];
+		std::string virtual_residues = split_3[1];
 		if (split_3.size() > 1) {
-			factor = utility::string2int( split_3[0] );
-			virtual_residues = split_3[1];
+			factor = utility::string2int( split_3[1] );
+			virtual_residues = split_3[2];
 		}
 		utility::trim( virtual_residues, "()" );
-		std::vector< std::string> virtual_residues_split ( utility::string_split( virtual_residues, ':' ) );
+		utility::vector1< std::string> virtual_residues_split ( utility::string_split( virtual_residues, ':' ) );
 
 		Size subunit(0);
 		if ( virtual_residues_split.size() == 1 ) {
-			utility::trim(virtual_residues_split[0], " ");
-			if ( virt_id_to_subunit_num_.find( virtual_residues_split[0] ) == virt_id_to_subunit_num_.end() ) {
-		        utility_exit_with_message( "[ERROR] VRT " + virtual_residues_split[0] + " not attached to a subunit");
-			}
-			score_subunit_ = virt_id_to_subunit_num_.find( virtual_residues_split[0] )->second;
-			subunit = score_subunit_;
-		} else if ( virtual_residues_split.size() == 2 ) {
 			utility::trim(virtual_residues_split[1], " ");
 			if ( virt_id_to_subunit_num_.find( virtual_residues_split[1] ) == virt_id_to_subunit_num_.end() ) {
 		        utility_exit_with_message( "[ERROR] VRT " + virtual_residues_split[1] + " not attached to a subunit");
 			}
-			subunit = virt_id_to_subunit_num_.find( virtual_residues_split[1] )->second;
+			score_subunit_ = virt_id_to_subunit_num_.find( virtual_residues_split[1] )->second;
+			subunit = score_subunit_;
+		} else if ( virtual_residues_split.size() == 2 ) {
+			utility::trim(virtual_residues_split[2], " ");
+			if ( virt_id_to_subunit_num_.find( virtual_residues_split[2] ) == virt_id_to_subunit_num_.end() ) {
+		        utility_exit_with_message( "[ERROR] VRT " + virtual_residues_split[2] + " not attached to a subunit");
+			}
+			subunit = virt_id_to_subunit_num_.find( virtual_residues_split[2] )->second;
 		} else {
 			utility_exit_with_message( "[ERROR] Error parsing 'E =' line while at " + split_2[i] );
 		}

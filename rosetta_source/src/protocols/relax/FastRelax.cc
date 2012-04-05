@@ -857,16 +857,16 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 		line = filelines[i];
 		TR.Debug << line << std::endl;
 		linecount++;
-		std::vector< std::string > tokens ( utility::split( line ) );
+		utility::vector1< std::string > tokens ( utility::split( line ) );
 
 		if ( tokens.size() > 0 ) {
 			RelaxScriptCommand newcmd;
-			newcmd.command = tokens[0];
+			newcmd.command = tokens[1];
 
-			if (tokens.size() > 1) {newcmd.param1 = atof(tokens[1].c_str()); newcmd.nparams = 1;}
-			if (tokens.size() > 2) {newcmd.param2 = atof(tokens[2].c_str()); newcmd.nparams = 2;}
-			if (tokens.size() > 3) {newcmd.param3 = atof(tokens[3].c_str()); newcmd.nparams = 3;}
-			if (tokens.size() > 4) {newcmd.param4 = atof(tokens[4].c_str()); newcmd.nparams = 4;}
+			if (tokens.size() > 1) {newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
+			if (tokens.size() > 2) {newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
+			if (tokens.size() > 3) {newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
+			if (tokens.size() > 4) {newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
 
 			script_.push_back( newcmd );
 		}
@@ -921,16 +921,16 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 		line = filelines[i];
 		TR.Debug << line << std::endl;
 		linecount++;
-		std::vector< std::string > tokens ( utility::split( line ) );
+		utility::vector1< std::string > tokens ( utility::split( line ) );
 
 		if ( tokens.size() > 0 ) {
 			RelaxScriptCommand newcmd;
-			newcmd.command = tokens[0];
+			newcmd.command = tokens[1];
 
-			if (tokens.size() > 1) {newcmd.param1 = atof(tokens[1].c_str()); newcmd.nparams = 1;}
-			if (tokens.size() > 2) {newcmd.param2 = atof(tokens[2].c_str()); newcmd.nparams = 2;}
-			if (tokens.size() > 3) {newcmd.param3 = atof(tokens[3].c_str()); newcmd.nparams = 3;}
-			if (tokens.size() > 4) {newcmd.param4 = atof(tokens[4].c_str()); newcmd.nparams = 4;}
+			if (tokens.size() > 1) {newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
+			if (tokens.size() > 2) {newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
+			if (tokens.size() > 3) {newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
+			if (tokens.size() > 4) {newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
 
 			script_.push_back( newcmd );
 		}

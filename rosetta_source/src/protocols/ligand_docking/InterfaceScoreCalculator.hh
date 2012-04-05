@@ -63,7 +63,7 @@ public:
 	void apply(core::pose::Pose & pose);
 
 private:
-	std::vector<std::string> chains_;
+	utility::vector1<std::string> chains_;
 	core::pose::PoseOP native_;
 	core::scoring::ScoreFunctionOP score_fxn_;
 

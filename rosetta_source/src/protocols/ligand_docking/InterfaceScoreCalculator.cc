@@ -134,7 +134,7 @@ InterfaceScoreCalculator::parse_my_tag(
 
 	if (tag->hasOption("native") ){
 		std::string const & native_str= tag->getOption<std::string>("native");
-		std::vector<std::string> natives_strs= utility::string_split(native_str, ',');
+		utility::vector1<std::string> natives_strs= utility::string_split(native_str, ',');
 		std::string natives_str = utility::join(natives_strs, " ");
 
 		native_ = new core::pose::Pose;

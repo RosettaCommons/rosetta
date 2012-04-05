@@ -223,8 +223,8 @@ PDBWriter::initialize_from_matcher_task(
 		output_dsgeom_for_geomcst_[ mtask->geom_csts_downstream_output()[i] ] = true;
 	}
 	scaf_name_ = mtask->upstream_pose_name();
-	std::vector< std::string > cst_path = utility::string_split( mtask->cstfile_name(), '/' );
-	cstfile_name_ = (utility::string_split( cst_path[ cst_path.size() -1 ] , '.' ) )[0];
+	utility::vector1< std::string > cst_path = utility::string_split( mtask->cstfile_name(), '/' );
+	cstfile_name_ = (utility::string_split( cst_path[ cst_path.size() ] , '.' ) )[1];
 	upstream_only_geom_cst_ = mtask->upstream_only_geom_cst();
 }
 

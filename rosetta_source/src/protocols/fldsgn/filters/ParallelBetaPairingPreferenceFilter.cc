@@ -60,16 +60,16 @@ ParallelBetaPairingPreferenceFilter::ParallelBetaPairingPreferenceFilter():
 
   String line;
 	while( getline( stream, line ) ){
-    std::vector< String > tokens ( utility::string_split( line, '\t' ) );
+		utility::vector1< String > tokens ( utility::string_split( line, '\t' ) );
 		runtime_assert( tokens.size() == 21 );
-		AA aa = core::chemical::aa_from_oneletter_code( tokens[ 0 ][ 0 ] );
+		AA aa = core::chemical::aa_from_oneletter_code( tokens[ 1 ][ 0 ] );
 		score_pairmatrix_[ Size ( aa ) ].resize( 20 );
 		for( Size ii=1; ii<=20; ii++ ) {
 			Real value;
 			if( aa == core::chemical::aa_pro ) {
 				value = 0.01;
 			} else {
-				value = boost::lexical_cast<Real>( tokens[ ii ] );
+				value = boost::lexical_cast<Real>( tokens[ ii+1 ] );
 			}
 			score_pairmatrix_[ Size( aa ) ][ ii ] = -std::log( value );
 			// TR << tokens[ 0 ][ 0 ] << " " << ii << " " << tokens[ ii ] << std::endl;

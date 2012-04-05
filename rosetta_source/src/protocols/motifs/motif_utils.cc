@@ -1043,7 +1043,7 @@ single_residue_from_stream(
 		std::string atomname;
 		residue_info >> atomname;
 		//getline( residue_info, atomline );
-		std::vector< std::string > atomwords( utility::string_split( atomname, ':' ) );
+		utility::vector1< std::string > atomwords( utility::string_split( atomname, ':' ) );
 		std::string atomname2( atomwords.front() );
 	//	std::cout << "atomname: " << atomname << std::endl;
 	//	std::cout << "atomname2: " << atomname2 << std::endl;

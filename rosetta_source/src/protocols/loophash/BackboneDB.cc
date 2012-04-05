@@ -422,8 +422,8 @@ namespace loophash {
 		if( !file ) throw EXCN_DB_IO_Failed( option[ lh::homo_file ](), "read" );
 		std::string line;
 		while( getline( file, line) ) {
-			std::vector< std::string > tokens ( utility::split( line ) );
-			for( std::vector< std::string >::const_iterator token = tokens.begin(); token != tokens.end(); ++token ){
+			utility::vector1< std::string > tokens ( utility::split( line ) );
+			for( utility::vector1< std::string >::const_iterator token = tokens.begin(); token != tokens.end(); ++token ){
 				std::string homolog_pdb_code_and_chain = (*token);
 				TR << "Adding homolog: " << homolog_pdb_code_and_chain << std::endl;
 				homologs_[homolog_pdb_code_and_chain] = true;

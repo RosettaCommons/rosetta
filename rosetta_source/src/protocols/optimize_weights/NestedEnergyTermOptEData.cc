@@ -54,7 +54,7 @@ using namespace ObjexxFCL::fmt;
 namespace protocols {
 namespace optimize_weights {
 
-typedef std::vector< std::string > Strings;
+typedef utility::vector1< std::string > Strings;
 
 static basic::Tracer TR("NestedEnergyTermOptEData");
 
@@ -440,15 +440,15 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 	std::string line;
 	getline( infile, line );
 	Strings words( string_split( line, ' ' ) );
-	assert( words[ 0 ] == "position" );
-	set_position( from_string( words[ 1 ], Size( 0 ) ) );
-	assert( words[ 2 ] == "nataa" );
-	set_native_aa ( chemical::aa_from_name( words[ 3 ] ) );
-	assert( words[ 4 ] == "neighbor_count" );
-	set_neighbor_count( from_string( words[ 5 ], Size( 0 ) ) );
+	assert( words[ 1 ] == "position" );
+	set_position( from_string( words[ 2 ], Size( 0 ) ) );
+	assert( words[ 3 ] == "nataa" );
+	set_native_aa ( chemical::aa_from_name( words[ 4 ] ) );
+	assert( words[ 5 ] == "neighbor_count" );
+	set_neighbor_count( from_string( words[ 6 ], Size( 0 ) ) );
 
 	// extra logic to handle reading in the unfolded state energies into an EnergyMap
-	assert( words[ 6 ] == "unfolded_energy" );
+	assert( words[ 7 ] == "unfolded_energy" );
 	utility::vector1 < EnergyMap > emap_vector;
 	emap_vector.resize( chemical::num_canonical_aas );
 
@@ -459,9 +459,9 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 		EnergyMap emap;
 		for ( Strings::iterator section = sections.begin(); section != sections.end(); ++section ) {
 			Strings pair( string_split( *section, '=' ) );
-			ScoreType st = ScoreTypeManager::score_type_from_name( pair[0] );
+			ScoreType st = ScoreTypeManager::score_type_from_name( pair[1] );
 			Real score;
-			std::istringstream ss( pair[1] );
+			std::istringstream ss( pair[2] );
 			ss >> score;
 			emap[ st ] = score;
 		}
@@ -470,8 +470,8 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 
 	getline( infile, line );
 	Strings rotamer_line_words( string_split( line, ' ' ) );
-	assert( rotamer_line_words[ 0 ] == "nrots" );
-	Size num_rotamers = from_string( rotamer_line_words[ 1 ], Size( 0 ) );
+	assert( rotamer_line_words[ 1 ] == "nrots" );
+	Size num_rotamers = from_string( rotamer_line_words[ 2 ], Size( 0 ) );
 
 	for ( Size ii = 1; ii <= num_rotamers; ++ii ) {
 		getline( infile, line );
@@ -481,11 +481,11 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 		// sections:
 		// 0 - rotnum, 1 - aa three-letter code, 2 - energies for fixed terms, 3 - energies for free terms
 		Size rotnum;
-		std::istringstream ss( sections[0] );
+		std::istringstream ss( sections[1] );
 		ss >> rotnum;
-		chemical::AA aa( chemical::aa_from_name( sections[1] ) );
+		chemical::AA aa( chemical::aa_from_name( sections[2] ) );
 		utility::vector1< Real > fixed_energies, energies;
-		Strings fixed_vals( string_split( sections[2], ' ' ) ), free_vals( string_split( sections[3], ' ' ) );
+		Strings fixed_vals( string_split( sections[3], ' ' ) ), free_vals( string_split( sections[4], ' ' ) );
 		for ( Strings::iterator fixed_val( fixed_vals.begin() ); fixed_val != fixed_vals.end(); ++fixed_val ) {
 			Real val;
 			std::istringstream ss( *fixed_val );

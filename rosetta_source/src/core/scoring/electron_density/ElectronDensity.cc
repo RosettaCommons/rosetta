@@ -3583,7 +3583,7 @@ void ElectronDensity::initializeSymmOps( utility::vector1< std::string > const &
 	MINMULT[0] = MINMULT[1] = MINMULT[2] = 2;
 	for (int i=1; i<=(int)symList.size(); ++i) {
 		std::string line = symList[i];
-		std::vector< std::string > rows = utility::string_split(line, ',');
+		utility::vector1< std::string > rows = utility::string_split(line, ',');
 		if ( rows.size() != 3 ) {
 			TR.Error << "[ ERROR ] invalid symmop in map file" << std::endl;
 			TR.Error << line << std::endl;
@@ -3601,7 +3601,7 @@ void ElectronDensity::initializeSymmOps( utility::vector1< std::string > const &
 		numeric::xyzMatrix< core::Real > rot(0);
 		numeric::xyzVector< core::Real > trans(0,0,0);
 		int k;
-		for (int j=0; j<3; ++j) {
+		for (int j=1; j<=3; ++j) {
 			k = rows[j].find('/');
 			if (k != (int)std::string::npos) {
 				// numerator
