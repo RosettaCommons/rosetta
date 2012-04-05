@@ -56,8 +56,7 @@ main( int argc, char* argv[] )
 	devel::init(argc, argv);
 
 	// read loops file
-	protocols::loops::Loops loops;
-	loops.read_loop_file( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value()[1] );
+	protocols::loops::Loops loops( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value()[1] );
 
 	TR << "initial loops " << loops << std::flush;
 	TR << "Read in files" << std::endl;
