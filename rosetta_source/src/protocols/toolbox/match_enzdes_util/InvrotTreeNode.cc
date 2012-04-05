@@ -18,6 +18,7 @@
 
 //package headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
@@ -79,11 +80,12 @@ InvrotTreeNode::initialize_from_enzcst_io(
 	//and we return false
 	Size num_rots_total( all_invrots.size() );
 	this->remove_invrots_clashing_with_parent_res( all_invrots );
+	Size num_invrots_clashing( num_rots_total - all_invrots.size() );
+	tr << "When initializing a node for geomcst " << geom_cst_ << ", " << num_invrots_clashing << " of a total of " << num_rots_total << " inverse rotamers were found to clash with something." << std::endl;
 	if( all_invrots.size() == 0 ){
 		return false;
 	}
-	Size num_invrots_clashing( num_rots_total - all_invrots.size() );
-	tr << "When initializing a node for geomcst " << geom_cst_ << ", " << num_invrots_clashing << " of a total of " << num_rots_total << " inverse rotamers were found to clash with something." << std::endl;
+
 
 	//3. now we have to figure out if the upstream_res of
 	//this geom_cst (i.e. what this node represents) is the
@@ -121,15 +123,30 @@ InvrotTreeNode::initialize_from_enzcst_io(
 	//check for redundancy to other invrots with respect to
 	//positioning of dependent inverse rotamer trees
 	std::list<core::conformation::ResidueCOP>::iterator invrot_it1 = all_invrots.begin();
-	invrot_it1++;
+	invrot_it1++; //first one was already taken care of
 	while( invrot_it1 != all_invrots.end() ){
-		bool this_invrot_redundant(true);
+		bool this_invrot_redundant(false);
 		for( core::Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ){
 
 			//4.3 really complicated code goes here
-			//not written yet, for now we just push back into first list, i.e. everything redundant
-			invrots_and_next_nodes_[1].first.push_back( *invrot_it1 );
+			//let's see: we have to see whether the two rotamers
+			//are redundant according to each of the dependent mcfi,
+			//i.e. we have to ask the downstream EnzCstTemplateRes
+			//of the dependent mcfi whether the two rotamers are redundant
+			core::conformation::Residue const & cur_rot(**invrot_it1), test_rot( **(invrots_and_next_nodes_[i].first.begin()) );
+			bool these_two_redundant(true);
+			for( Size j = 1; j <= dependent_mcfi.size(); ++j){
 
+				if( !enzcst_io->mcfi_list( dependent_mcfi[j])->mcfi(1)->enz_cst_template_res( enzcst_io->mcfi_list( dependent_mcfi[j])->mcfi(1)->downstream_res() )->residue_conformations_redundant( cur_rot, test_rot ) ){
+					these_two_redundant = false;
+					break;
+				}
+			}
+			if( these_two_redundant ){
+				invrots_and_next_nodes_[i].first.push_back( *invrot_it1 );
+				this_invrot_redundant = true;
+				break;
+			}
 		}//loop over all so-far non redundant rots
 
 		//if this rotamer is non redundant, we throw it into a new list
@@ -139,7 +156,7 @@ InvrotTreeNode::initialize_from_enzcst_io(
 		}
 		invrot_it1++;
 	} //while loop over invrot_it1
-
+	tr << "Node initialization for geomcst " << geom_cst_ << ". After redundancy determination, " << invrots_and_next_nodes_.size() << " non-redundant sets of inverse rotamers exist." << std::endl;
 	//4.4 redundancy determined, almost done, now we need to
 	//initialize the daughter nodes for each set of non-redundant
 	//invrots. note that if any of these nodes fail to initialize,
@@ -152,16 +169,20 @@ InvrotTreeNode::initialize_from_enzcst_io(
 			InvrotTreeNodeOP child = new InvrotTreeNode( this );
 			pair_it->second.push_back( child );
 			if( ! child->initialize_from_enzcst_io( this_target, enzcst_io, dependent_mcfi[j],geom_cst_ ) ){
-				//this_node_ptr_pair_dead_end = true;
 				pair_it = invrots_and_next_nodes_.erase( pair_it ); //note: erasing from vector, not ideal, but the vectors should usually be fairly small and the initialization shenanigans are only called once
 				all_initialization_successful = false;
 				break;
 			}
 		} // loop over dependent mcfi
-		if( all_initialization_successful ) ++pair_it;
+		if( all_initialization_successful ){
+			++pair_it;
+		}
 	}//loop over all non-redundant invrot groups
-	//i guess we have to set the locations in this node in the parent nodes
+	//I guess we have to set the locations in this node in the child nodes
+
+	tr << "Node initialization for geomcst " << geom_cst_ << ". After child node initialization, " << invrots_and_next_nodes_.size() << " non-redundant sets of inverse rotamers exist." << std::endl;
 	for( Size i =1; i <= invrots_and_next_nodes_.size(); ++i ){
+		tr << invrots_and_next_nodes_[i].first.size() << " inverse rotamers for non-redundant set " << i << std::endl;
 		for( utility::vector1< InvrotTreeNodeBaseOP >::iterator child_it( invrots_and_next_nodes_[i].second.begin() ); child_it != invrots_and_next_nodes_[i].second.end(); ++child_it ){
 			(*child_it)->set_location_in_parent_node( i );
 		}
@@ -217,13 +238,12 @@ InvrotTreeNode::all_target_residues( InvrotTreeNodeBaseCAP child_node ) const
 	//1. get the target residues of the parent node
 	InvrotTreeNodeBaseCAP parent(this->parent_node() );
 	if( parent ) to_return = parent->all_target_residues( this );
-
 	//2. add the target residues from this node
 	//corresponding to the asking child node
 	bool child_found(false);
 	for( Size i =1; i <= invrots_and_next_nodes_.size(); ++i ){
 		for( Size j =1; j <= invrots_and_next_nodes_[i].second.size(); ++j ){
-			if( child_node == invrots_and_next_nodes_[i].second[j] ){
+			if( &(*child_node) == &(*(invrots_and_next_nodes_[i].second[j])) ){
 				to_return.push_back( invrots_and_next_nodes_[i].first );
 				child_found = true;
 				break;

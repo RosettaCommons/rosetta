@@ -24,7 +24,7 @@
 // Project headers
 //#include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
@@ -177,6 +177,16 @@ public:
 		core::Size template_atom,
 		core::chemical::ResidueTypeCAP restype
   ) const;
+
+	/// @brief checks whether the distance
+	/// between any of the template res atoms
+	/// of res1 and res2 is below a certain
+	/// cutoff.
+	bool
+	residue_conformations_redundant(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2
+	) const;
 
 	void
 	identical_info_consistency_check() const;

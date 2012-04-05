@@ -566,6 +566,52 @@ EnzCstTemplateRes::atom_inds_for_restype(
 
 }
 
+bool
+EnzCstTemplateRes::residue_conformations_redundant(
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2
+) const {
+	core::Real const sqdist_cutoff(0.2*0.2); //hardcoded for now
+
+	RestypeToTemplateAtomsMap::const_iterator res1_it(atom_inds_for_restype_.find( &(res1.type()) ) ), res2_it(atom_inds_for_restype_.find( &(res2.type()) ) );
+	if( res1_it == atom_inds_for_restype_.end() ) utility_exit_with_message("Residue of type "+res1.type().name()+" is not part of EnzCstTemplateRes.");
+	if( res2_it == atom_inds_for_restype_.end() ) utility_exit_with_message("Residue of type "+res2.type().name()+" is not part of EnzCstTemplateRes.");
+
+	utility::vector1< utility::vector1< core::Size > > const & res1_at_ids( res1_it->second );
+	utility::vector1< utility::vector1< core::Size > > const & res2_at_ids( res2_it->second );
+	//tr << "beginning redundancy check, there are " << res1_at_ids[1].size() << " atom definitions for res1." << std::endl;
+	//first redundancy check: if there are different numbers of
+	//atom1s, the residues are non-redundant
+	if( res1_at_ids[1].size() != res2_at_ids[1].size() ) return false;
+
+	for( core::Size i = 1; i <= res1_at_ids[1].size(); ++i){
+		//find the closest set from res2
+		core::Real smallest_large_deviation_this_set( sqdist_cutoff + 1.0 );
+
+		//tr << "ATOM1 res1 atom " << res1.atom_name( res1_at_ids[1][i] ) << " has sqdist of " << closest_atom1_sqdist << " from res2 atom " << res2.atom_name( res2_at_ids[1][1] ) << std::endl;
+
+		for( core::Size j = 1; j <= res2_at_ids[1].size(); ++j ){
+			core::Real large_deviation_this_pair(  res1.atom( res1_at_ids[1][i] ).xyz().distance_squared( res2.atom( res2_at_ids[1][j] ).xyz() ) );
+
+			core::Real atom2_deviation(  res1.atom( res1_at_ids[2][i] ).xyz().distance_squared( res2.atom( res2_at_ids[2][j] ).xyz() ) );
+			if( atom2_deviation > large_deviation_this_pair ) large_deviation_this_pair = atom2_deviation;
+
+			core::Real atom3_deviation(  res1.atom( res1_at_ids[3][i] ).xyz().distance_squared( res2.atom( res2_at_ids[3][j] ).xyz() ) );
+
+			if( atom3_deviation > large_deviation_this_pair ) large_deviation_this_pair = atom3_deviation;
+
+			if( large_deviation_this_pair < smallest_large_deviation_this_set ) smallest_large_deviation_this_set = large_deviation_this_pair;
+			//tr << "res 1 set" <<i << " and res 2 set" << j << " have large_deviation of " << large_deviation_this_pair << std::endl;
+		}
+		if( smallest_large_deviation_this_set > sqdist_cutoff ) return false;
+
+	} //loop over the different template atom sets
+
+	//if we make it to here, that means no atoms were
+	//farther apart than the cutoff
+	return true;
+}
+
 void
 EnzCstTemplateRes::identical_info_consistency_check() const
 {
