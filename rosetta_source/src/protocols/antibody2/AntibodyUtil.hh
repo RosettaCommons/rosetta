@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_util.hh
+/// @file protocols/antibody2/AntibodyUtil.hh
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_Ab_util_hh
-#define INCLUDED_protocols_antibody2_Ab_util_hh
+#ifndef INCLUDED_protocols_antibody2_AntibodyUtil_hh
+#define INCLUDED_protocols_antibody2_AntibodyUtil_hh
 
 
 #include <core/kinematics/MoveMap.hh>
@@ -91,7 +91,7 @@ std::string get_seq_from_a_loop(core::pose::Pose & pose_in, loops::LoopOP  loop)
 } //namespace protocols
 
 
-#endif //INCLUDED_protocols_loops_Ab_util_HH
+#endif //INCLUDED_protocols_loops_AntibodyUtil_HH
 
 
 

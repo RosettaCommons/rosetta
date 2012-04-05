@@ -86,7 +86,7 @@
 #include <cstddef>
 #include <limits>
 
-#include <protocols/antibody2/Ab_util.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/Ab_H3_perturb_ccd_build.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_H3_cter_insert_mover.hh>

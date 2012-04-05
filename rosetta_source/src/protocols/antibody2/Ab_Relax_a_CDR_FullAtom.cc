@@ -67,7 +67,7 @@
 #include <core/pose/util.hh>
 
 
-#include <protocols/antibody2/Ab_util.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
 
 #include <core/chemical/VariantType.hh>
 //JQX:: this header file took care of the "CUTPOINT_LOWER" options below

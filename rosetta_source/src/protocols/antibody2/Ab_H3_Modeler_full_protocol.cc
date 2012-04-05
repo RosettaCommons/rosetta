@@ -81,7 +81,7 @@
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-#include <protocols/antibody2/Ab_util.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_H3_Modeler_full_protocol.hh>
 #include <protocols/antibody2/Ab_H3_Model_CDR_H3.hh>

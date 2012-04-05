@@ -8,11 +8,11 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_util.cc
+/// @file protocols/antibody2/AntibodyUtil.cc
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#include <protocols/antibody2/Ab_util.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
 
 // Rosetta Headers
 #include <core/kinematics/FoldTree.hh>
@@ -55,7 +55,7 @@
 
 
 
-static basic::Tracer TR("antibody2.Ab_util");
+static basic::Tracer TR("antibody2.AntibodyUtil");
 
 
 using namespace core;

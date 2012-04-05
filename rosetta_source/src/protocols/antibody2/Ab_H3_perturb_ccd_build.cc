@@ -57,7 +57,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
-#include <protocols/antibody2/Ab_util.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 
 #include <protocols/moves/PyMolMover.hh>

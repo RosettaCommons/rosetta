@@ -28,7 +28,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <protocols/antibody2/Ab_H3_Model_CDR_H3.hh>
-#include <protocols/antibody2/Ab_util.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
 
 #include <basic/Tracer.hh>
 static basic::Tracer TRC("protocols.antibody2.Ab_CloseOneCDR_Mover");

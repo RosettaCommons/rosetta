@@ -37,7 +37,7 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
 
-#include <protocols/antibody2/Ab_util.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
 
 
 
