@@ -6,10 +6,10 @@
 block 1 for arginine to grab carboxylate that's moving
 CST::BEGIN
   TEMPLATE::   ATOM_MAP: 1 atom_name:  O3 C9 C8 
-  #TEMPLATE::   ATOM_MAP: 1 atom_name:  O4 C9 C8 
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O4 C9 C8 
   TEMPLATE::   ATOM_MAP: 1 residue3: CTP
 
-  #TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NE
+  TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NE
   TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NH1
   TEMPLATE::   ATOM_MAP: 2 residue1:  R
  
@@ -34,10 +34,10 @@ CST::END
 #block 2 for arginine to grab other carboxylate
 CST::BEGIN
   TEMPLATE::   ATOM_MAP: 1 atom_name:  O5 C7 C2 
-  #TEMPLATE::   ATOM_MAP: 1 atom_name:  O6 C7 C2 
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O6 C7 C2 
   TEMPLATE::   ATOM_MAP: 1 residue3: CTP
 
-  #TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NE
+  TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NE
   TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NH1
   TEMPLATE::   ATOM_MAP: 2 residue1:  R
  
@@ -61,7 +61,7 @@ CST::END
 #block 3: DE to back up first arginine
 CST::BEGIN
   TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NE
-  #TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NH1
+  TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NH1
   TEMPLATE::   ATOM_MAP: 1 residue1: R
 
   TEMPLATE::   ATOM_MAP: 2 atom_type: OOC ,
@@ -86,7 +86,7 @@ CST::END
 #VARIABLE_CST::BEGIN
 CST::BEGIN
   TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NE
-  #TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NH1
+  TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NH1
   TEMPLATE::   ATOM_MAP: 1 residue1: R
 
   TEMPLATE::   ATOM_MAP: 2 atom_type: OOC ,
