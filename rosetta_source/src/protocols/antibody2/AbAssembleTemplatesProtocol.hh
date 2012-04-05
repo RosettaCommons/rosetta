@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_Assemble_Templates.hh
+/// @file protocols/antibody2/AbAssembleTemplatesProtocol.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -16,8 +16,8 @@
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_Assemble_Templates_hh
-#define INCLUDED_protocols_antibody2_Ab_Assemble_Templates_hh
+#ifndef INCLUDED_protocols_antibody2_AbAssembleTemplatesProtocol_hh
+#define INCLUDED_protocols_antibody2_AbAssembleTemplatesProtocol_hh
 
 
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -27,7 +27,7 @@
 
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
-#include <protocols/antibody2/Ab_Assemble_Templates.fwd.hh>
+#include <protocols/antibody2/AbAssembleTemplatesProtocol.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
@@ -42,15 +42,15 @@
 namespace protocols {
 namespace antibody2 {
 
-class Ab_Assemble_Templates: public moves::Mover {
+class AbAssembleTemplatesProtocol: public moves::Mover {
 public:
     typedef std::map < std::string, bool > GraftMap;
 
 	// default constructor
-	Ab_Assemble_Templates();
+	AbAssembleTemplatesProtocol();
 
 	// default destructor
-	~Ab_Assemble_Templates();
+	~AbAssembleTemplatesProtocol();
 
 	virtual protocols::moves::MoverOP clone() const;
 
@@ -83,7 +83,7 @@ public:
 	void display_constraint_residues( core::pose::Pose & pose );
     
     void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const Ab_Assemble_Templates & ab_m_2 );
+    friend std::ostream & operator<<(std::ostream& out, const AbAssembleTemplatesProtocol & ab_m_2 );
 
     
     
@@ -145,7 +145,7 @@ private:
 
 	void setup_objects();
 
-}; // class Ab_Assemble_Templates
+}; // class AbAssembleTemplatesProtocol
 
     
     

@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_H3_Modeler_full_protocol.hh
+/// @file protocols/antibody2/AbModelH3FullProtocol.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -16,8 +16,8 @@
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_H3_Modeler_full_protocol_hh
-#define INCLUDED_protocols_antibody2_Ab_H3_Modeler_full_protocol_hh
+#ifndef INCLUDED_protocols_antibody2_AbModelH3FullProtocol_hh
+#define INCLUDED_protocols_antibody2_AbModelH3FullProtocol_hh
 
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -32,7 +32,7 @@
 
 #include <protocols/antibody2/Ab_H3_Model_CDR_H3.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/Ab_H3_Modeler_full_protocol.fwd.hh>
+#include <protocols/antibody2/AbModelH3FullProtocol.fwd.hh>
 
 
 #include <utility/vector1.hh>
@@ -40,14 +40,14 @@
 namespace protocols {
 namespace antibody2 {
 
-class Ab_H3_Modeler_full_protocol: public moves::Mover {
+class AbModelH3FullProtocol: public moves::Mover {
 public:
 
 	// default constructor
-	Ab_H3_Modeler_full_protocol();
+	AbModelH3FullProtocol();
 
 	// default destructor
-	~Ab_H3_Modeler_full_protocol();
+	~AbModelH3FullProtocol();
 
 	virtual protocols::moves::MoverOP clone() const;
 
@@ -104,7 +104,7 @@ public:
 
         
     void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const Ab_H3_Modeler_full_protocol & ab_m_2 );
+    friend std::ostream & operator<<(std::ostream& out, const AbModelH3FullProtocol & ab_m_2 );
     
     
 
@@ -165,7 +165,7 @@ private:
 
 	void setup_objects();
 
-}; // class Ab_H3_Modeler_full_protocol
+}; // class AbModelH3FullProtocol
 
     
     

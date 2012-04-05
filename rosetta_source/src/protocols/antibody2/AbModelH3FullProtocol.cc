@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_H3_Modeler_full_protocol.cc
+/// @file protocols/antibody2/AbModelH3FullProtocol.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -83,7 +83,7 @@
 
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/Ab_H3_Modeler_full_protocol.hh>
+#include <protocols/antibody2/AbModelH3FullProtocol.hh>
 #include <protocols/antibody2/Ab_H3_Model_CDR_H3.hh>
 #include <protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.hh>
 #include <protocols/antibody2/Ab_LH_SnugFit_Mover.hh>
@@ -100,32 +100,32 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.Ab_H3_Modeler_full_protocol");
+static basic::Tracer TR("protocols.antibody2.AbModelH3FullProtocol");
 using namespace core;
 
 namespace protocols {
 namespace antibody2 {
 
 // default constructor
-Ab_H3_Modeler_full_protocol::Ab_H3_Modeler_full_protocol() : Mover() {
+AbModelH3FullProtocol::AbModelH3FullProtocol() : Mover() {
 	user_defined_ = false;
 	init();
 }
 
 // default destructor
-Ab_H3_Modeler_full_protocol::~Ab_H3_Modeler_full_protocol() {}
+AbModelH3FullProtocol::~AbModelH3FullProtocol() {}
 
 //clone
 protocols::moves::MoverOP
-Ab_H3_Modeler_full_protocol::clone() const {
-	return( new Ab_H3_Modeler_full_protocol() );
+AbModelH3FullProtocol::clone() const {
+	return( new AbModelH3FullProtocol() );
 }
 
     
     
-void Ab_H3_Modeler_full_protocol::init() 
+void AbModelH3FullProtocol::init() 
 {
-	Mover::type( "Ab_H3_Modeler_full_protocol" );
+	Mover::type( "AbModelH3FullProtocol" );
     
 	set_default();
     
@@ -142,7 +142,7 @@ void Ab_H3_Modeler_full_protocol::init()
 
     
     
-void Ab_H3_Modeler_full_protocol::set_default()
+void AbModelH3FullProtocol::set_default()
 {
 	TR <<  "Setting Up defaults.........." << std::endl;
     model_h3_  = true;
@@ -161,7 +161,7 @@ void Ab_H3_Modeler_full_protocol::set_default()
 
     
     
-void Ab_H3_Modeler_full_protocol::register_options()
+void AbModelH3FullProtocol::register_options()
 {
 	using namespace basic::options;
 
@@ -180,7 +180,7 @@ void Ab_H3_Modeler_full_protocol::register_options()
     
     
     
-void Ab_H3_Modeler_full_protocol::init_from_options() 
+void AbModelH3FullProtocol::init_from_options() 
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -239,7 +239,7 @@ void Ab_H3_Modeler_full_protocol::init_from_options()
 
     
 void
-Ab_H3_Modeler_full_protocol::setup_objects() {
+AbModelH3FullProtocol::setup_objects() {
     
 	sync_objects_with_flags();
     
@@ -249,7 +249,7 @@ Ab_H3_Modeler_full_protocol::setup_objects() {
 
 }
     
-void Ab_H3_Modeler_full_protocol::sync_objects_with_flags() 
+void AbModelH3FullProtocol::sync_objects_with_flags() 
 {
 	using namespace protocols::moves;
 
@@ -260,9 +260,9 @@ void Ab_H3_Modeler_full_protocol::sync_objects_with_flags()
 }
 
 
-std::string Ab_H3_Modeler_full_protocol::get_name() const 
+std::string AbModelH3FullProtocol::get_name() const 
 {        
-    return "Ab_H3_Modeler_full_protocol";
+    return "AbModelH3FullProtocol";
 }
 
     
@@ -274,7 +274,7 @@ std::string Ab_H3_Modeler_full_protocol::get_name() const
     
 
 void
-Ab_H3_Modeler_full_protocol::finalize_setup( pose::Pose & frame_pose ) 
+AbModelH3FullProtocol::finalize_setup( pose::Pose & frame_pose ) 
 {
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
 	if(  cst_weight_ != 0.00  ) {
@@ -337,7 +337,7 @@ Ab_H3_Modeler_full_protocol::finalize_setup( pose::Pose & frame_pose )
 
 
 //APPLY
-void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
+void AbModelH3FullProtocol::apply( pose::Pose & frame_pose ) {
 
     using namespace chemical;
     using namespace id;
@@ -536,7 +536,7 @@ void Ab_H3_Modeler_full_protocol::apply( pose::Pose & frame_pose ) {
 ///
 /// @last_modified 02/15/2010
 ///////////////////////////////////////////////////////////////////////////
-void Ab_H3_Modeler_full_protocol::relax_cdrs( core::pose::Pose & pose )
+void AbModelH3FullProtocol::relax_cdrs( core::pose::Pose & pose )
 {
 	using namespace pack;
 	using namespace pack::task;
@@ -616,7 +616,7 @@ void Ab_H3_Modeler_full_protocol::relax_cdrs( core::pose::Pose & pose )
 	///
 	/// @last_modified 07/13/2010
 	///////////////////////////////////////////////////////////////////////////
-	void Ab_H3_Modeler_full_protocol::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) 
+	void AbModelH3FullProtocol::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) 
     {
 
 		using namespace kinematics;
@@ -691,7 +691,7 @@ void Ab_H3_Modeler_full_protocol::relax_cdrs( core::pose::Pose & pose )
 
 
 
-Real Ab_H3_Modeler_full_protocol::global_loop_rmsd (
+Real AbModelH3FullProtocol::global_loop_rmsd (
     const pose::Pose & pose_in,
     const pose::Pose & native_pose,
     std::string cdr_type ) 
@@ -719,7 +719,7 @@ Real Ab_H3_Modeler_full_protocol::global_loop_rmsd (
     
     
 
-void Ab_H3_Modeler_full_protocol::display_constraint_residues( core::pose::Pose & pose ) 
+void AbModelH3FullProtocol::display_constraint_residues( core::pose::Pose & pose ) 
 {
 
     // Detecting di-sulfide bond
@@ -768,14 +768,14 @@ void Ab_H3_Modeler_full_protocol::display_constraint_residues( core::pose::Pose 
     
     
 /// @details  Show the complete setup of the antibody modeler protocol
-void Ab_H3_Modeler_full_protocol::show( std::ostream & out ) {
+void AbModelH3FullProtocol::show( std::ostream & out ) {
     if ( !flags_and_objects_are_in_sync_ ){
         sync_objects_with_flags();
     }
     out << *this;
 }
     
-std::ostream & operator<<(std::ostream& out, const Ab_H3_Modeler_full_protocol & ab_m_2 ){
+std::ostream & operator<<(std::ostream& out, const AbModelH3FullProtocol & ab_m_2 ){
     using namespace ObjexxFCL::fmt;
         
     // All output will be 80 characters - 80 is a nice number, don't you think?

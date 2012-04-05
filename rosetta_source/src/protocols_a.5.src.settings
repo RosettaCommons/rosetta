@@ -20,10 +20,10 @@ sources = {
 	"protocols/antibody2": [
                 "Ab_TemplateInfo",
                 "AntibodyInfo",
-                "Ab_Assemble_Templates",
+                "AbAssembleTemplatesProtocol",
                 "Ab_GraftOneCDR_Mover",
                 "Ab_CloseOneCDR_Mover",
-		"Ab_H3_Modeler_full_protocol",
+		"AbModelH3FullProtocol",
 		"Ab_H3_Model_CDR_H3",
 		"Ab_H3_perturb_ccd_build",
 		"Ab_H3_cter_insert_mover",

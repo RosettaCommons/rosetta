@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_Assemble_Templates.cc
+/// @file protocols/antibody2/AbAssembleTemplatesProtocol.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -48,7 +48,7 @@
 #include <protocols/antibody2/Ab_CloseOneCDR_Mover.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
-#include <protocols/antibody2/Ab_Assemble_Templates.hh>
+#include <protocols/antibody2/AbAssembleTemplatesProtocol.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -60,30 +60,30 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.Ab_Assemble_Templates");
+static basic::Tracer TR("protocols.antibody2.AbAssembleTemplatesProtocol");
 using namespace core;
 
 namespace protocols {
 namespace antibody2 {
 
 // default constructor
-Ab_Assemble_Templates::Ab_Assemble_Templates() : Mover() {
+AbAssembleTemplatesProtocol::AbAssembleTemplatesProtocol() : Mover() {
 	user_defined_ = false;
 	init();
 }
 
 // default destructor
-Ab_Assemble_Templates::~Ab_Assemble_Templates() {}
+AbAssembleTemplatesProtocol::~AbAssembleTemplatesProtocol() {}
 
 //clone
-protocols::moves::MoverOP Ab_Assemble_Templates::clone() const {
-	return( new Ab_Assemble_Templates() );
+protocols::moves::MoverOP AbAssembleTemplatesProtocol::clone() const {
+	return( new AbAssembleTemplatesProtocol() );
 }
 
     
     
-void Ab_Assemble_Templates::init() {
-	Mover::type( "Ab_Assemble_Templates" );
+void AbAssembleTemplatesProtocol::init() {
+	Mover::type( "AbAssembleTemplatesProtocol" );
 
 	// setup all the booleans with default values
 	// they will get overwritten by the options and/or passed values
@@ -106,7 +106,7 @@ void Ab_Assemble_Templates::init() {
 
 
     
-void Ab_Assemble_Templates::set_default()
+void AbAssembleTemplatesProtocol::set_default()
 {
 	TR <<  "Setting up default settings to all FALSE" << std::endl;
 	graft_l1_  = false;
@@ -123,7 +123,7 @@ void Ab_Assemble_Templates::set_default()
 
     
     
-void Ab_Assemble_Templates::register_options()
+void AbAssembleTemplatesProtocol::register_options()
 {
 	using namespace basic::options;
 
@@ -144,7 +144,7 @@ void Ab_Assemble_Templates::register_options()
     
     
     
-void Ab_Assemble_Templates::init_from_options() {
+void AbAssembleTemplatesProtocol::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	TR <<  "Reading Options" << std::endl;
@@ -202,7 +202,7 @@ void Ab_Assemble_Templates::init_from_options() {
     
 
     
-void Ab_Assemble_Templates::setup_objects() {
+void AbAssembleTemplatesProtocol::setup_objects() {
     ab_info_ = NULL;
     ab_t_info_ = NULL;
     
@@ -217,7 +217,7 @@ void Ab_Assemble_Templates::setup_objects() {
     
     
     
-void Ab_Assemble_Templates::sync_objects_with_flags() {
+void AbAssembleTemplatesProtocol::sync_objects_with_flags() {
 
 	flags_and_objects_are_in_sync_ = true;
 	first_apply_with_current_setup_ = true;
@@ -232,7 +232,7 @@ void Ab_Assemble_Templates::sync_objects_with_flags() {
 
     
 
-void Ab_Assemble_Templates::finalize_setup( pose::Pose & frame_pose ) {
+void AbAssembleTemplatesProtocol::finalize_setup( pose::Pose & frame_pose ) {
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
 
 	// check for native and input pose
@@ -307,7 +307,7 @@ void Ab_Assemble_Templates::finalize_setup( pose::Pose & frame_pose ) {
     
     
 //APPLY
-void Ab_Assemble_Templates::apply( pose::Pose & frame_pose ) {
+void AbAssembleTemplatesProtocol::apply( pose::Pose & frame_pose ) {
 
     using namespace chemical;
     using namespace id;
@@ -391,11 +391,11 @@ void Ab_Assemble_Templates::apply( pose::Pose & frame_pose ) {
 
 
 
-std::string Ab_Assemble_Templates::get_name() const {
-	return "Ab_Assemble_Templates";
+std::string AbAssembleTemplatesProtocol::get_name() const {
+	return "AbAssembleTemplatesProtocol";
 }
 
-void Ab_Assemble_Templates::set_packer_default(pose::Pose & pose, bool include_current) {
+void AbAssembleTemplatesProtocol::set_packer_default(pose::Pose & pose, bool include_current) {
     //set up packer
     pack::task::PackerTaskOP task;
     task = pack::task::TaskFactory::create_packer_task( pose );
@@ -408,7 +408,7 @@ void Ab_Assemble_Templates::set_packer_default(pose::Pose & pose, bool include_c
 
 
 
-void Ab_Assemble_Templates::display_constraint_residues( core::pose::Pose & pose ) {		
+void AbAssembleTemplatesProtocol::display_constraint_residues( core::pose::Pose & pose ) {		
     // Detecting di-sulfide bond
 
     Size H1_Cys(0), H3_Cys(0);
@@ -449,14 +449,14 @@ void Ab_Assemble_Templates::display_constraint_residues( core::pose::Pose & pose
     
     
 /// @details  Show the complete setup of the docking protocol
-void Ab_Assemble_Templates::show( std::ostream & out ) {
+void AbAssembleTemplatesProtocol::show( std::ostream & out ) {
     if ( !flags_and_objects_are_in_sync_ ){
         sync_objects_with_flags();
     }
     out << *this;
 }
     
-std::ostream & operator<<(std::ostream& out, const Ab_Assemble_Templates & ab_m_2 )
+std::ostream & operator<<(std::ostream& out, const AbAssembleTemplatesProtocol & ab_m_2 )
 {
     using namespace ObjexxFCL::fmt;
         

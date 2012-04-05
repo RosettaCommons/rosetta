@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   Ab_H3_Modeler_full_protocol.fwd.hh
+/// @file   AbModelH3FullProtocol.fwd.hh
 ///
 /// @brief forward declaration
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_Ab_H3_Modeler_full_protocol_fwd_hh
-#define INCLUDED_protocols_antibody2_Ab_H3_Modeler_full_protocol_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_AbModelH3FullProtocol_fwd_hh
+#define INCLUDED_protocols_antibody2_AbModelH3FullProtocol_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
 
-	class Ab_H3_Modeler_full_protocol;
-	typedef utility::pointer::owning_ptr< Ab_H3_Modeler_full_protocol > Ab_H3_Modeler_full_protocolOP;
-	typedef utility::pointer::owning_ptr< Ab_H3_Modeler_full_protocol const > Ab_H3_Modeler_full_protocolCOP;
+	class AbModelH3FullProtocol;
+	typedef utility::pointer::owning_ptr< AbModelH3FullProtocol > AbModelH3FullProtocolOP;
+	typedef utility::pointer::owning_ptr< AbModelH3FullProtocol const > AbModelH3FullProtocolCOP;
 
 }
 }
