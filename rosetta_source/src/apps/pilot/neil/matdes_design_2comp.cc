@@ -17,6 +17,7 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -79,6 +80,12 @@
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <protocols/simple_moves/ddG.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <core/pack/task/ResfileReader.hh>
+#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <core/pose/metrics/CalculatorFactory.hh>
+#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
+#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <basic/MetricValue.hh>
 
 static basic::Tracer TR("2comp_design");
 
@@ -260,6 +267,68 @@ void design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, 
 
 }
 
+
+
+void
+design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utility::vector1<Size> & design_pos) {
+
+  using namespace core;
+  using namespace pack;
+  using namespace task;
+  using namespace conformation;
+  using namespace conformation::symmetry;
+  using namespace scoring;
+  using namespace chemical;
+
+  // Get the symmetry info and make the packer task
+  SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+  PackerTaskOP task(TaskFactory::create_packer_task(pose));
+
+	// Modify the packer task according to the resfile
+	core::pack::task::parse_resfile(pose,*task, resfile);
+
+
+	// If design_pos is populated then we are doing design	
+	if(design_pos.size() > 0){
+		
+		for(Size i=1; i<=pose.n_residue(); i++) {
+			if(!sym_info->bb_is_independent(i)) {
+				task->nonconst_residue_task(i).prevent_repacking();
+			} else if(pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
+				// Don't mess with Pros or Glys at the interfaces
+				task->nonconst_residue_task(i).prevent_repacking();
+			} else if(find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
+				task->nonconst_residue_task(i).prevent_repacking();
+			} else {
+				task->nonconst_residue_task(i).initialize_from_command_line();
+			}
+		}
+
+
+	} else {
+
+
+	// Get from the packer task the mutalyze positions
+		Size nres_monomer = sym_info->num_independent_residues();
+		for(Size i=1; i<=nres_monomer; ++i) {
+			if(! task->residue_task(i).has_behavior("AUTO")) {
+				design_pos.push_back(i);
+				task->nonconst_residue_task(i).initialize_from_command_line();
+			}
+		}
+	}
+  make_symmetric_PackerTask(pose, task);
+	// Get rid of Nobu's rotamers of death
+	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
+	limit_rots->apply(pose, *task);
+  // Actually perform design
+  protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+  packer->apply(pose);
+
+}
+
+
+
 void repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 
 	using namespace core;
@@ -406,6 +475,49 @@ Pose get_neighbor_subs(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, P
 	}
 	return sub_pose;
 }
+
+
+
+// Find residues with buried polar atoms.
+Real
+get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer, string fn){
+
+  core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+  basic::MetricValue< id::AtomID_Map<bool> > bound_Amap;
+  unsat_calc_bound->get("atom_bur_unsat", bound_Amap, bound);
+
+  core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+  basic::MetricValue< id::AtomID_Map<bool> > unbound_Amap;
+  unsat_calc_unbound->get("atom_bur_unsat", unbound_Amap, unbound);
+
+	id::AtomID_Map<bool> bound_am = bound_Amap.value();
+	id::AtomID_Map<bool> unbound_am = unbound_Amap.value();
+	Size buried_unsat_polars = 0;
+	string select_buried_unsat_polars("select buried_unsat_polars, ");
+	for (Size ir=1; ir<=nres_monomer; ir++) {
+		Size flag = 0;
+		for (Size ia=1; ia<=bound.residue(ir).nheavyatoms(); ia++) {
+			if (bound_am[id::AtomID(ia,ir)] != unbound_am[id::AtomID(ia,ir)]) {
+				buried_unsat_polars++;
+				if (flag == 0) {
+					TR << "buried unsat polar(s): " << bound.residue(ir).name3() << ir << "\t" << bound.residue(ir).atom_name(ia);
+					select_buried_unsat_polars.append("resi " + ObjexxFCL::string_of(ir) + " and name " + bound.residue(ir).atom_name(ia) + "+ ");   
+					flag = 1;
+				} else {
+					TR << "," << bound.residue(ir).atom_name(ia);
+				}
+			}
+		}
+		if (flag) TR << std::endl;
+	}
+	select_buried_unsat_polars.erase(select_buried_unsat_polars.end()-2,select_buried_unsat_polars.end());
+	TR << select_buried_unsat_polars << " in " << fn << "_0001";
+	TR << std::endl;
+	return buried_unsat_polars;
+
+}
+
+
 
 Real get_atom_packing_score(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2, Real cutoff=9.0){
 	Pose sub_pose = get_neighbor_subs(pose, intra_subs1,intra_subs2,p1,p2);
@@ -714,7 +826,9 @@ void *dostuff(void*) {
 
 
 						// Design
-						design(pose_for_design, sf, design_pos, true);
+						//design(pose_for_design, sf, design_pos, true);
+						utility::vector1<utility::file::FileName> resfile = option[basic::options::OptionKeys::packing::resfile]();
+						design_using_resfile(pose_for_design, sf, resfile[1], design_pos); 
 
 						// 120206: Get min_rb commandline to implement rigid body minimization
       			bool min_rb = option[matdes::mutalyze::min_rb]();
@@ -729,10 +843,10 @@ void *dostuff(void*) {
 						std::string tag = string_of(numeric::random::uniform()).substr(2,4);
 						std::ostringstream r_string;
 						//r_string << std::fixed << std::setprecision(1) << "0";
-						std::string fn = string_of(option[matdes::prefix]()+"_"+option[matdes::pdbID]())+"_"+ObjexxFCL::string_of(iangle1)+"_"+ObjexxFCL::string_of(iradius1)+"_"+ObjexxFCL::string_of(iangle2)+"_"+ObjexxFCL::string_of(iradius2)+"_"+tag+".pdb.gz";
+						std::string fn = string_of(option[matdes::prefix]()+"_"+option[matdes::pdbID]())+"_"+ObjexxFCL::string_of(iangle1)+"_"+ObjexxFCL::string_of(iradius1)+"_"+ObjexxFCL::string_of(iangle2)+"_"+ObjexxFCL::string_of(iradius2)+"_"+tag;
 
 						// Write the pdb file of the design
-						utility::io::ozstream out( option[out::file::o]() + "/" + fn );
+						utility::io::ozstream out( option[out::file::o]() + "/" + fn + ".pdb.gz");
 						if(option[matdes2c::dump_symmetric]){
 							pose_for_design.dump_pdb(out);
 						} else {
@@ -777,16 +891,24 @@ void *dostuff(void*) {
 						// ddG_mover.calculate(pose_for_design);
 						Real ddG;// = ddG_mover.sum_ddG();
 						//must do ddG manually, moving each BB separately
-						{
-							Pose pose(pose_for_design);
-							Real bounde = score12->score(pose);
-							trans_pose(pose,cmp1axs*1000.0,               1,p1.n_residue()               );
-							trans_pose(pose,cmp2axs*1000.0,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
-							repack(pose, score12, design_pos);
-							minimize(pose, score12, design_pos, false, true, false);
-							Real ubounde = score12->score(pose);
+						
+							Pose boundpose(pose_for_design);
+							Pose unboundpose(pose_for_design);
+							trans_pose(unboundpose,cmp1axs*1000.0,               1,p1.n_residue()               );
+							trans_pose(unboundpose,cmp2axs*1000.0,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
+							repack(unboundpose, score12, design_pos);
+							minimize(unboundpose, score12, design_pos, false, true, false);
+							Real ubounde = score12->score(unboundpose);
+							Real bounde = score12->score(boundpose);
 							ddG = bounde - ubounde;
-						}
+						
+						
+
+						// Calculate the number of hbonding groups buried by the interface, also prints them to TR
+						Size nres_monomer = sym_info->num_independent_residues();
+						Real buried_unsat_polars = get_unsat_polars(boundpose, unboundpose, nres_monomer, fn);
+
+
 
 
 						// Calculate per-residue energies for interface residues
@@ -816,6 +938,7 @@ void *dostuff(void*) {
 						ss_out->add_energy("air_fa_dun", em[core::scoring::fa_dun] / design_pos.size());
 						ss_out->add_energy("des_pos", design_pos.size());
 						ss_out->add_energy("mutations", mutations);
+						ss_out->add_energy("unsat_pols", buried_unsat_polars);
 						ss_out->add_energy("packing", packing);
 						ss_out->add_energy("avg_deg", avg_deg);
 						ss_out->add_energy("int_area", int_area);
