@@ -1,3 +1,7 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+// :noTabs=false:tabSize=4:indentSize=4:
+
 /*
 WISH LIST
 	buried unsats
@@ -93,6 +97,12 @@ OPT_1GRP_KEY( FileVector, tcdock, O3 )
 OPT_1GRP_KEY( FileVector, tcdock, O4 )
 OPT_1GRP_KEY( FileVector, tcdock, T2 )
 OPT_1GRP_KEY( FileVector, tcdock, T3 )
+OPT_1GRP_KEY( Boolean , tcdock, usen1 )
+OPT_1GRP_KEY( Boolean , tcdock, usec1 )
+OPT_1GRP_KEY( Boolean , tcdock, require_exposed_termini )
+OPT_1GRP_KEY( Real , tcdock, term_min_expose )
+OPT_1GRP_KEY( Real , tcdock, term_max_angle )
+
 void register_options() {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
@@ -127,6 +137,11 @@ void register_options() {
 		NEW_OPT( tcdock::termini_weight   ,"tscore = w*max(0,cut-x)"             ,  0.0   );
 		NEW_OPT( tcdock::termini_trim     ,"trim termini up to for termini score",  0     );
 		NEW_OPT( tcdock::hash_3D_vs_2D    ,"grid spacing top 2D hash"            ,  1.3   );
+		NEW_OPT( tcdock::usec1            ,"use comp1 cterm"                     , true  );
+		NEW_OPT( tcdock::usen1            ,"use comp1 nterm"                     , true  );
+		NEW_OPT( tcdock::term_max_angle ,""             , 50.0  );
+		NEW_OPT( tcdock::term_min_expose ,""            , 0.85  );
+
 }
 template<typename T> inline T sqr(T x) { return x*x; }
 void dump_points_pdb(utility::vector1<Vecf> const & p, std::string fn) {
@@ -472,7 +487,7 @@ struct SICFast {
 		if(score != -12345.0) score = get_score(cba,cbb,ori,mindis,anga,angb,axsa,axsb,cmp1or2_a,cmp1or2_b);
 		return mindis;
 	}
-	virtual void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
+	void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
 		xlb = (int)(xmn/BIN)-2; xub = (int)(xmx/BIN+0.999999999)+2; // one extra on each side for correctness,
 		ylb = (int)(ymn/BIN)-2; yub = (int)(ymx/BIN+0.999999999)+2; // and one extra for outside atoms
 		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf(0,0,-9e9));
@@ -497,7 +512,7 @@ struct SICFast {
 		}
 
 	}
-	virtual double get_mindis_with_plane_hashes() {
+	double get_mindis_with_plane_hashes() {
 		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
 		int imna=0,jmna=0,imnb=0,jmnb=0;
 		double m = 9e9;
@@ -538,6 +553,40 @@ struct LMAX {
 int compareLMAX(const LMAX a,const LMAX b) {
 	return a.score > b.score;
 }
+
+
+void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood ) {
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+	Vec nt = pose.residue(        1       ).xyz("N");
+	Vec ct = pose.residue(pose.n_residue()).xyz("C");
+	core::Real nnt=0.0,nct=0.0,gnt=0.0,gct=0.0;
+	for(int ir=1; ir<=pose.n_residue(); ++ir) {
+		for(int ia=1; ia<=5; ++ia) {
+			Vec x = pose.residue(ir).xyz(ia);
+			if(angle_degrees(x,Vec(0,0,0),nt) < 15.0 &&  ) {
+				nnt += 1.0;
+				if( nt.normalized().dot(x) < nt.length() )
+					gnt += 1.0;
+			}
+			if(angle_degrees(x,Vec(0,0,0),ct) < 15.0 ) {
+				nct += 1.0;
+				if( ct.normalized().dot(x) < ct.length() )
+					gct += 1.0;
+			}
+		}
+	}
+	ntgood = gnt/nnt > option[tcdock::term_min_expose]() && angle_degrees(nt,Vec(0,0,0),Vec(nt.x(),nt.y(),0)) < option[tcdock::term_max_angle]();
+	ctgood = gct/nct > option[tcdock::term_min_expose]() && angle_degrees(ct,Vec(0,0,0),Vec(ct.x(),ct.y(),0)) < option[tcdock::term_max_angle]();
+
+	std::cerr << gnt/nnt << " " << angle_degrees(nt,Vec(0,0,0),Vec(nt.x(),nt.y(),0)) << endl;
+	std::cerr << gct/nct << " " << angle_degrees(ct,Vec(0,0,0),Vec(ct.x(),ct.y(),0)) << endl;
+	std::cerr << ntgood << endl;
+	std::cerr << ctgood << endl;
+}
+
+
+
 struct TCDock {
 	vector1<double> cmp2mnpos_,cmp1mnpos_,cmp2mnneg_,cmp1mnneg_,cmp2dspos_,cmp1dspos_,cmp2dsneg_,cmp1dsneg_;
 	ObjexxFCL::FArray2D<double> cmp2cbpos_,cmp1cbpos_,cmp2cbneg_,cmp1cbneg_;
@@ -589,6 +638,24 @@ struct TCDock {
 		if(cmp2type[1]=='4') { make_tetramer(cmp2in_); cmp2nsub_ = 4; }
 		if(cmp2type[1]=='5') { make_pentamer(cmp2in_); cmp2nsub_ = 5; }
 		if(option[tcdock::reverse]()) rot_pose(cmp1in_,Vecf(0,1,0),180.0);
+
+		bool nt1good=1,nt2good=1,ct1good=1,ct2good=1;
+		termini_exposed(cmp1in_,nt1good,ct1good);
+		termini_exposed(cmp2in_,nt2good,ct2good);
+		if(option[tcdock::require_exposed_termini]()) {
+			if( !(ct1good&&nt2good) && !(ct2good&&nt1good) ) {
+				std::cout << "no exposed termini on comp1" << std::endl;
+				return;
+			}
+		}
+		if(!option[tcdock::usec1].user()) {
+			if( ct1good && nt2good ) option[tcdock::usec1](true);
+			else                     option[tcdock::usec1](false);
+		}
+		if(!option[tcdock::usen1].user()) {
+			if( ct2good && nt1good ) option[tcdock::usen1](true);
+			else                     option[tcdock::usen1](false);
+		}
 
 		cmp1name_ = utility::file_basename(cmp1pdb);
 		cmp2name_ = utility::file_basename(cmp2pdb);
@@ -921,6 +988,15 @@ struct TCDock {
 			Vecf sicaxis = rotation_matrix_degrees( cmp1axs_.cross(cmp2axs_) ,(double)iori) * (cmp1axs_+cmp2axs_).normalized();
 			// cerr << cmp1axs_.cross(cmp2axs_) << endl;
 			// utility_exit_with_message("arstio");
+
+			// if( min_termini_proj(icmp2,icmp1,sicaxis) > 3.0 ) {
+			// 	gradii(icmp2+1,icmp1+1,iori+1) =  0;
+			// 	gscore(icmp2+1,icmp1+1,iori+1) = -9e9;
+			// 	//std::cout << "skip" << std::endl;
+			// 	return -9e9;
+			// }
+			//std::cout << "calc" << std::endl;
+
 			double const d = sics_[thread_num()]->slide_into_contact(pb,pa,cbb,cba,sicaxis,icbc,icmp2,icmp1,cmp2axs_,cmp1axs_,false,true);
 			dori = d;
 			if(d > 0) utility_exit_with_message("ZERO!!");
@@ -991,29 +1067,59 @@ struct TCDock {
 	double min_termini_dis(double d1, double a1, double d2, double a2){
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
+		bool usen1 = option[tcdock::usen1]();
+		bool usec1 = option[tcdock::usec1]();
 		double td = 9e9;
 		for(int t1 = 0; t1 <= option[tcdock::termini_trim](); ++t1) {
 			Vecf n1_0 = cmp1in_.xyz(core::id::AtomID(1,1+t1));
-		for(int t2 = 0; t2 <= option[tcdock::termini_trim](); ++t2) {
-			Vecf n2_0 = cmp2in_.xyz(core::id::AtomID(1,1+t2));
-		for(int t3 = 0; t3 <= option[tcdock::termini_trim](); ++t3) {
-			Vecf c1_0 = cmp1in_.xyz(core::id::AtomID(3,cmp1in_.n_residue()-t3));
-		for(int t4 = 0; t4 <= option[tcdock::termini_trim](); ++t4) {
-			Vecf c2_0 = cmp2in_.xyz(core::id::AtomID(3,cmp2in_.n_residue()-t4));
-			for(int i1 = 0; i1 < cmp1nsub_; ++i1){
-				Vecf n1 = d1*cmp1axs_ + rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(double)cmp1nsub_*(double)i1) * n1_0;
-				Vecf c1 = d1*cmp1axs_ + rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(double)cmp1nsub_*(double)i1) * c1_0;
-				for(int i2 = 0; i2 < cmp2nsub_; ++i2){
-					Vecf n2 = d2*cmp2axs_ + rotation_matrix_degrees(cmp2axs_,a2 + 360.0/(double)cmp2nsub_*(double)i2) * n2_0;
-					Vecf c2 = d2*cmp2axs_ + rotation_matrix_degrees(cmp2axs_,a2 + 360.0/(double)cmp2nsub_*(double)i2) * c2_0;
-					td = min( n1.distance(c2), td );
-					td = min( c1.distance(n2), td );
+			for(int t2 = 0; t2 <= option[tcdock::termini_trim](); ++t2) {
+				Vecf n2_0 = cmp2in_.xyz(core::id::AtomID(1,1+t2));
+				for(int t3 = 0; t3 <= option[tcdock::termini_trim](); ++t3) {
+					Vecf c1_0 = cmp1in_.xyz(core::id::AtomID(3,cmp1in_.n_residue()-t3));
+					for(int t4 = 0; t4 <= option[tcdock::termini_trim](); ++t4) {
+						Vecf c2_0 = cmp2in_.xyz(core::id::AtomID(3,cmp2in_.n_residue()-t4));
+						for(int i1 = 0; i1 < cmp1nsub_; ++i1){
+							Vecf n1 = d1*cmp1axs_ + rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(double)cmp1nsub_*(double)i1) * n1_0;
+							Vecf c1 = d1*cmp1axs_ + rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(double)cmp1nsub_*(double)i1) * c1_0;
+							for(int i2 = 0; i2 < cmp2nsub_; ++i2){
+								Vecf n2 = d2*cmp2axs_ + rotation_matrix_degrees(cmp2axs_,a2 + 360.0/(double)cmp2nsub_*(double)i2) * n2_0;
+								Vecf c2 = d2*cmp2axs_ + rotation_matrix_degrees(cmp2axs_,a2 + 360.0/(double)cmp2nsub_*(double)i2) * c2_0;
+								if(usen1) td = min( n1.distance(c2), td );
+								if(usec1) td = min( c1.distance(n2), td );
+							}
+						}
+					}
 				}
 			}
 		}
+		return td;
+	}
+	double min_termini_proj(double a1, double a2, Vec sicaxis){
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+//		return 0.0;
+		bool usen1 = option[tcdock::usen1]();
+		bool usec1 = option[tcdock::usec1]();
+		double td = 9e9;
+		int t1=1;
+		Vecf n1_0 = cmp1in_.xyz(core::id::AtomID(1,1+t1));
+		int t2=1;
+		Vecf n2_0 = cmp2in_.xyz(core::id::AtomID(1,1+t2));
+		int t3=0;
+		Vecf c1_0 = cmp1in_.xyz(core::id::AtomID(3,cmp1in_.n_residue()-t3));
+		int t4=0;
+		Vecf c2_0 = cmp2in_.xyz(core::id::AtomID(3,cmp2in_.n_residue()-t4));
+		for(int i1 = 0; i1 < cmp1nsub_; ++i1){
+			Vecf n1 = rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(double)cmp1nsub_*(double)i1) * n1_0;
+			Vecf c1 = rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(double)cmp1nsub_*(double)i1) * c1_0;
+			for(int i2 = 0; i2 < cmp2nsub_; ++i2){
+				Vecf n2 = rotation_matrix_degrees(cmp2axs_,a2 + 360.0/(double)cmp2nsub_*(double)i2) * n2_0;
+				Vecf c2 = rotation_matrix_degrees(cmp2axs_,a2 + 360.0/(double)cmp2nsub_*(double)i2) * c2_0;
+				if(usen1) td = min( projperp(sicaxis,n1-c2).length(), td );
+				if(usec1) td = min( projperp(sicaxis,c1-n2).length(), td );
+			}
 		}
-		}
-		}
+		//std::cerr << td << std::endl;
 		return td;
 	}
 	double termini_score(double d1, double a1, double d2, double a2){
@@ -1152,9 +1258,9 @@ struct TCDock {
 						} else {
 							iori += (stg%2==0) ? -3 : 3;
 						}
-					// for(int iori = 0; iori < 360; ++iori) {
+//					for(int iori = 0; iori < 360; ++iori) {
 						double const score = dock_score(icmp2,icmp1,iori);
-						if( 0.0==score ) { stg++; newstage=true;	continue; }
+						if( 0.0==score ) { stg++; newstage=true; continue; }
 						#ifdef USE_OPENMP
 						#pragma omp critical
 						#endif

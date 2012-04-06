@@ -1,3 +1,6 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+// :noTabs=false:tabSize=4:indentSize=4:
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
@@ -230,20 +233,20 @@ void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
 	ScoreFunctionOP sf = core::scoring::getScoreFunction();
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
-	// vector1<bool> allowed_aas(20,false);
-	// allowed_aas[aa_ala] = true;
-	// allowed_aas[aa_phe] = true;
-	// allowed_aas[aa_ile] = true;
-	// allowed_aas[aa_leu] = true;
-	// allowed_aas[aa_met] = true;
-	// allowed_aas[aa_val] = true;
-	// allowed_aas[aa_trp] = true;
-	// allowed_aas[aa_tyr] = true;
-	vector1<bool> allowed_aas(20,true);
+	vector1<bool> allowed_aas(20,false);
+	allowed_aas[aa_ala] = true;
+	allowed_aas[aa_phe] = true;
+	allowed_aas[aa_ile] = true;
+	allowed_aas[aa_leu] = true;
+	allowed_aas[aa_met] = true;
+	allowed_aas[aa_val] = true;
+	allowed_aas[aa_trp] = true;
+
+	vector1<bool> allowed_all(20,true);
 
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
-	vector1<Size> design_pos;
+	std::set<Size> design_pos;
 	for( Size i=1; i <= sym_info->num_independent_residues() ; i++) {
 		if(i==ibpy) continue;
 		if(!sym_info->bb_is_independent(i)) continue;
@@ -251,9 +254,29 @@ void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
 		for( Size j=sym_info->num_independent_residues()+1; j <= sym_info->num_total_residues_without_pseudo(); j++) {
 			if(sym_info->subunit_index(j) == dsub ) continue;
 			if(pose.residue(j).name3()=="GLY"||pose.residue(j).name3()=="PRO") continue;
-			if( pose.residue(i).xyz("CB").distance_squared( pose.residue(j).xyz("CB") ) < 100.0 ) {
-				//TR << "design_pos " << i << " " << j << std::endl;
-				if( find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) design_pos.push_back(i);
+			for(int ia=1; ia <= pose.residue(i).nheavyatoms();++ia){
+				for(int ja=1; ja <= pose.residue(j).nheavyatoms();++ja){
+					if( pose.residue(i).xyz(ia).distance_squared( pose.residue(j).xyz(ja) ) < 36.0 ) design_pos.insert(i);
+				}
+			}
+		}
+	}
+	std::set<Size> design_pos_bpy;
+	std::set<Size> design_pos_bpy_ex;
+	for( Size i=1; i <= sym_info->num_independent_residues() ; i++) {
+		if(i==ibpy) continue;
+		if(!sym_info->bb_is_independent(i)) continue;
+		for( Size j=1; j <= sym_info->num_total_residues_without_pseudo(); j++) {
+			if(pose.residue(j).name3()!="BPY") continue;
+			for(int ja=6; ja <= pose.residue(j).nheavyatoms();++ja){
+				if( pose.residue(i).has("CB") ){
+					if(pose.residue(i).xyz("CB").distance_squared( pose.residue(j).xyz(ja) ) < 81.0 ){
+						design_pos_bpy.insert(i);
+					}
+				}
+				for(int ia=5; ia <= pose.residue(i).nheavyatoms();++ia){
+					if( pose.residue(i).xyz(ia).distance_squared( pose.residue(j).xyz(ja) ) < 36.0 ) design_pos_bpy_ex.insert(i);
+				}
 			}
 		}
 	}
@@ -265,17 +288,37 @@ void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
 			//TR << "res " << i << " fix" << std::endl;
 			// Don't mess with Pros or Glys at the interfaces
 			task->nonconst_residue_task(i).prevent_repacking();
-		} else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
-			//TR << "res " << i << " fix" << std::endl;
-			task->nonconst_residue_task(i).prevent_repacking();
-		} else {
-			std::cout << "design_pos " << i << " " << pose.residue(i).name3() << std::endl;
+		} else if (find(design_pos_bpy_ex.begin(), design_pos_bpy_ex.end(), i) != design_pos_bpy_ex.end()) {
+			std::cout << "design_pos_bpy_ex " << i << " " << pose.residue(i).name3() << std::endl;
+			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
+		//	EX_ONE_STDDEV,                 //1
+		//	EX_ONE_HALF_STEP_STDDEV,       //2
+		//	EX_TWO_FULL_STEP_STDDEVS,      //3
+		//	EX_TWO_HALF_STEP_STDDEVS,      //4
+		//	EX_FOUR_HALF_STEP_STDDEVS,     //5
+		//	EX_THREE_THIRD_STEP_STDDEVS,   //6
+		//	EX_SIX_QUARTER_STEP_STDDEVS,   //7
+			task->nonconst_residue_task(i).or_ex1_sample_level( EX_TWO_FULL_STEP_STDDEVS );
+			task->nonconst_residue_task(i).or_ex2_sample_level( EX_TWO_FULL_STEP_STDDEVS );
+		} else if (find(design_pos_bpy.begin(), design_pos_bpy.end(), i) != design_pos_bpy.end()) {
+			std::cout << "design_pos_bpy " << i << " " << pose.residue(i).name3() << std::endl;
 			bool temp = allowed_aas[pose.residue(i).aa()];
 			allowed_aas[pose.residue(i).aa()] = true;
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
 			task->nonconst_residue_task(i).or_include_current(true);
 			task->nonconst_residue_task(i).initialize_from_command_line();
 			allowed_aas[pose.residue(i).aa()] = temp;
+		} else if (find(design_pos.begin(), design_pos.end(), i) != design_pos.end()) {
+			std::cout << "design_pos " << i << " " << pose.residue(i).name3() << std::endl;
+			bool temp = allowed_aas[pose.residue(i).aa()];
+			allowed_aas[pose.residue(i).aa()] = true;
+			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_all);
+			task->nonconst_residue_task(i).or_include_current(true);
+			task->nonconst_residue_task(i).initialize_from_command_line();
+			allowed_aas[pose.residue(i).aa()] = temp;
+		} else {
+			//TR << "res " << i << " fix" << std::endl;
+			task->nonconst_residue_task(i).prevent_repacking();
 		}
 	}
 
@@ -759,7 +802,8 @@ void run() {
 					Pose psym_bare = psym;
 					Mat Rsymm;
 					string symtag;
-					Vec f1=(c3f1-isct).normalized(),f2=(c2f1-isct).normalized(),t1=Vec(0,0,1);
+					Vec f3=(c3f1-isct).normalized(),f2=(c2f1-isct).normalized(),t1=Vec(0,0,1);
+					//Vec newf2,newf3;
 					Size dimersub = 0;
 					Real angerr = 0.0;
 					{
@@ -771,31 +815,42 @@ void run() {
 							angerr = fabs(ang-ATET);
 							symtag = "TET";
 							option[OptionKeys::symmetry::symmetry_definition]("input/sym/tetra.sym");
-							Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.8164965743782284,0.0,0.5773502784520137) );
+							Rsymm = alignVectorSets(f3,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.8164965743782284,0.0,0.5773502784520137) );
+							//newf2 = (orig_ang<90.0?1.0:-1.0)*Vec(0.8164965743782284,0.0,0.5773502784520137);
+							//newf3 = Vec(0,0,1);
 							dimersub =	4;
 						} else
 						if( dmin==doct ) {
 							angerr = fabs(ang-AOCT);
 							symtag = "OCT";
 							option[OptionKeys::symmetry::symmetry_definition]("input/sym/octa.sym");
-							Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.4082482904638630,0.4082482904638626,0.8164965809277260));
+							Rsymm = alignVectorSets(f3,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.4082482904638630,0.4082482904638626,0.8164965809277260));
+							//newf2 = (orig_ang<90.0?1.0:-1.0)*Vec(0.4082482904638630,0.4082482904638626,0.8164965809277260);
+							//newf3 = Vec(0,0,1);
 							dimersub =	4;
 						} else
 						if( dmin==dics ) {
 							angerr = fabs(ang-AICS);
 							symtag = "ICS";
 							option[OptionKeys::symmetry::symmetry_definition]("input/sym/icosa.sym");
-							Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*rotation_matrix_degrees(Vec(0,0,1),120.0)*Vec(0.35670090519235864157,0.0,0.93421863834701557305));
+							Rsymm = alignVectorSets(f3,f2,t1, (orig_ang<90.0?1.0:-1.0)*rotation_matrix_degrees(Vec(0,0,1),120.0)*Vec(0.35670090519235864157,0.0,0.93421863834701557305));
+							//newf2 = (orig_ang<90.0?1.0:-1.0)*rotation_matrix_degrees(Vec(0,0,1),120.0)*Vec(0.35670090519235864157,0.0,0.93421863834701557305);
+							//newf3 = Vec(0,0,1);
 							dimersub =	4;
 						} else {
 							utility_exit_with_message("closed symm not yet supported");
 						}
 					}
 					rot_pose(psym,Rsymm);
+					//alignaxis(psym,newf2,f2); // f2/3 now invalid!!!!
+					//Vec iron = psym.residue(ibpy).xyz("ZN");
+					//rot_pose( psym, newf2, -dihedral_degrees(Vec(0,0,1),Vec(0,0,0),newf2,iron) );
 
-					string outfname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+
-					                     "_"+lead_zero_string_of(jaxs,1)+".pdb";
+					string outfname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+"_"+lead_zero_string_of(jaxs,1)+".pdb";
 					core::pose::symmetry::make_symmetric_pose(psym);
+
+					//psym.dump_pdb("test.pdb");
+					//utility_exit_with_message("arisetnario");
 
 					Real bpymdis = psym.residue(ibpy).xyz("ZN").distance(psym.residue(ibpy+base.n_residue()).xyz("ZN"));
 					if( bpymdis > option[bpytoi::max_sym_error]() ) { /*BPYGEOM*/ continue; };
@@ -856,24 +911,28 @@ void run() {
 					std::cout << "calc buttressing" << endl;
 
 					// BPY buttressing atom count
-					int bpy_tri_atom_nbrs = 0;
+					int bpy_tri_atom_nbrs  = 0;
 					int bpy_mono_atom_nbrs = 0;
+					Mat Rz0 = rotation_matrix_degrees(Vec(0,0,1),  0.0);
+					Mat Rz1 = rotation_matrix_degrees(Vec(0,0,1),120.0);
+					Mat Rz2 = rotation_matrix_degrees(Vec(0,0,1),240.0);
 					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
 						if(ir==ibpy) continue;
+						if(!psym.residue(ir).is_protein()) continue;
 						for(Size ia = 1; ia <= psym.residue(ir).nheavyatoms(); ia++) {
-							Vec const x0 =     psym.xyz(AtomID(ia,ir))           ;
-							Vec const x1 = R1*(psym.xyz(AtomID(ia,ir))-c3f1)+c3f1;
-							Vec const x2 = R2*(psym.xyz(AtomID(ia,ir))-c3f1)+c3f1;
+						    Vec const x0 = Rz0*psym.xyz(AtomID(ia,ir));
+							Vec const x1 = Rz1*psym.xyz(AtomID(ia,ir));
+							Vec const x2 = Rz2*psym.xyz(AtomID(ia,ir));
 							for(Size ja = 7; ja <= psym.residue(ibpy).nheavyatoms(); ja++) {
-								if( x0.distance_squared(psym.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_mono_atom_nbrs++;
-								if( x0.distance_squared(psym.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
-								if( x1.distance_squared(psym.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
-								if( x2.distance_squared(psym.xyz(AtomID(ja,ibpy))) < 25.0 ) bpy_tri_atom_nbrs++;
+							  Vec Xbpy = psym.xyz(AtomID(ja,ibpy));
+								if( x0.distance_squared(Xbpy) < 25.0 ) bpy_mono_atom_nbrs++;
+								if( x0.distance_squared(Xbpy) < 25.0 ) bpy_tri_atom_nbrs++;
+								if( x1.distance_squared(Xbpy) < 25.0 ) bpy_tri_atom_nbrs++;
+								if( x2.distance_squared(Xbpy) < 25.0 ) bpy_tri_atom_nbrs++;
 							}
 						}
 					}
-
-					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=psym.residue(i).name3()) nmut++;
+					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=                psym.residue(i).name3()) nmut++;
 					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
 
 					std::cout << "dump des" << endl;
