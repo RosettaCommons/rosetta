@@ -558,7 +558,7 @@ int compareLMAX(const LMAX a,const LMAX b) {
 core::pose::Pose ntrim(core::pose::Pose const & pose, int Nsym) {
 	core::pose::Pose trimmed(pose);
 	for(int i=1; i <= Nsym; ++i) {
-		pose.remove_residue(1);
+		trimmed.conformation().delete_residue_slow(1); // This is probably not quite right.
 	}
 	return trimmed;
 }
