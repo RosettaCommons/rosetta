@@ -51,6 +51,7 @@ DONE
 #include <omp.h>
 #endif
 using core::Size;
+using core::Real;
 using core::pose::Pose;
 using std::string;
 using utility::vector1;
@@ -554,35 +555,53 @@ int compareLMAX(const LMAX a,const LMAX b) {
 	return a.score > b.score;
 }
 
+core::pose::Pose ntrim(core::pose::Pose const & pose, int Nsym) {
+	core::pose::Pose trimmed(pose);
+	for(int i=1; i <= Nsym; ++i) {
+
+	}
+	return trimmed;
+}
+
+void trim_tails(core::pose::Pose & pose, int Nsym) {
+	// for(int i = 1; i < )
+}
 
 void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood ) {
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
+	core::id::AtomID_Map<Real> atom_sasa;
+	core::id::AtomID_Map<bool> atom_subset;
+	utility::vector1<Real> rsd_sasa;
+	core::pose::initialize_atomid_map(           atom_subset, pose, false);
+	core::pose::initialize_atomid_map_heavy_only(atom_subset, pose, true);	
+	core::scoring::calc_per_atom_sasa( pose, atom_sasa,rsd_sasa, 4.0, false, atom_subset );
+	Real nexpose = atom_sasa[core::id::AtomID(1,        1       )];
+	Real cexpose = atom_sasa[core::id::AtomID(3,pose.n_residue())];
+
 	Vec nt = pose.residue(        1       ).xyz("N");
 	Vec ct = pose.residue(pose.n_residue()).xyz("C");
-	core::Real nnt=0.0,nct=0.0,gnt=0.0,gct=0.0;
-	for(int ir=1; ir<=pose.n_residue(); ++ir) {
-		for(int ia=1; ia<=5; ++ia) {
-			Vec x = pose.residue(ir).xyz(ia);
-			if(angle_degrees(x,Vec(0,0,0),nt) < 15.0 &&  ) {
-				nnt += 1.0;
-				if( nt.normalized().dot(x) < nt.length() )
-					gnt += 1.0;
-			}
-			if(angle_degrees(x,Vec(0,0,0),ct) < 15.0 ) {
-				nct += 1.0;
-				if( ct.normalized().dot(x) < ct.length() )
-					gct += 1.0;
-			}
-		}
-	}
-	ntgood = gnt/nnt > option[tcdock::term_min_expose]() && angle_degrees(nt,Vec(0,0,0),Vec(nt.x(),nt.y(),0)) < option[tcdock::term_max_angle]();
-	ctgood = gct/nct > option[tcdock::term_min_expose]() && angle_degrees(ct,Vec(0,0,0),Vec(ct.x(),ct.y(),0)) < option[tcdock::term_max_angle]();
+	Real nang = angle_degrees(nt,Vec(0,0,0),Vec(nt.x(),nt.y(),0));
+	Real cang = angle_degrees(ct,Vec(0,0,0),Vec(ct.x(),ct.y(),0));
+	ntgood = nexpose > option[tcdock::term_min_expose]() && nang < option[tcdock::term_max_angle]();
+	ctgood = cexpose > option[tcdock::term_min_expose]() && cang < option[tcdock::term_max_angle]();
 
-	std::cerr << gnt/nnt << " " << angle_degrees(nt,Vec(0,0,0),Vec(nt.x(),nt.y(),0)) << endl;
-	std::cerr << gct/nct << " " << angle_degrees(ct,Vec(0,0,0),Vec(ct.x(),ct.y(),0)) << endl;
-	std::cerr << ntgood << endl;
-	std::cerr << ctgood << endl;
+	// core::Real nnt=0.0,nct=0.0,gnt=0.0,gct=0.0;
+	// for(int ir=1; ir<=pose.n_residue(); ++ir) {
+	// 	for(int ia=1; ia<=5; ++ia) {
+	// 		Vec x = pose.residue(ir).xyz(ia);
+	// 		if(angle_degrees(x,Vec(0,0,0),nt) < 15.0 &&  ) {
+	// 			nnt += 1.0;
+	// 			if( nt.normalized().dot(x) < nt.length() )
+	// 				gnt += 1.0;
+	// 		}
+	// 		if(angle_degrees(x,Vec(0,0,0),ct) < 15.0 ) {
+	// 			nct += 1.0;
+	// 			if( ct.normalized().dot(x) < ct.length() )
+	// 				gct += 1.0;
+	// 		}
+	// 	}
+	// }
 }
 
 
@@ -1197,7 +1216,7 @@ struct TCDock {
 					}
 				}
 				o.close();
-				dump_pdb(h.icmp2,h.icmp1,h.iori,"test_"+ObjexxFCL::string_of(ilm)+".pdb",0,true);
+				dump_pdb(h.icmp2,h.icmp1,h.iori,"test_"+symtype_.substr(0,1)+"_"+ObjexxFCL::string_of(ilm)+".pdb",0,true);
 			}
 		}
 		double score = dock_get_geom(h.icmp2,h.icmp1,h.iori,d,dcmp2,dcmp1,icbc,cmp2cbc,cmp1cbc);
