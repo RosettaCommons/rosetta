@@ -493,7 +493,7 @@ get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer, str
 	id::AtomID_Map<bool> bound_am = bound_Amap.value();
 	id::AtomID_Map<bool> unbound_am = unbound_Amap.value();
 	Size buried_unsat_polars = 0;
-	string select_buried_unsat_polars("select buried_unsat_polars, ");
+	string select_buried_unsat_polars("select buried_unsat_polars, (");
 	for (Size ir=1; ir<=nres_monomer; ir++) {
 		Size flag = 0;
 		for (Size ia=1; ia<=bound.residue(ir).nheavyatoms(); ia++) {
@@ -511,7 +511,7 @@ get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer, str
 		if (flag) TR << std::endl;
 	}
 	select_buried_unsat_polars.erase(select_buried_unsat_polars.end()-2,select_buried_unsat_polars.end());
-	TR << select_buried_unsat_polars << " in " << fn << "_0001";
+	TR << select_buried_unsat_polars << ") and " << fn << "_0001";
 	TR << std::endl;
 	return buried_unsat_polars;
 
