@@ -173,7 +173,8 @@ TheozymeInvrotTree::generate_targets_and_inverse_rotamers()
 	//ligand?
 	else if( ligres->is_ligand() ){
 		//for now
-		all_rots.push_back( ligres );
+		//all_rots.push_back( ligres );
+		all_rots = core::pack::rotamer_set::bb_independent_rotamers( &(ligres->type()) );
 	}
 
 	else{

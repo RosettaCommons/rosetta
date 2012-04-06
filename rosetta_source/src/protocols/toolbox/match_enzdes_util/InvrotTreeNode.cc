@@ -79,7 +79,7 @@ InvrotTreeNode::initialize_from_enzcst_io(
 	//if all get removed, this means this is a dead end
 	//and we return false
 	Size num_rots_total( all_invrots.size() );
-	this->remove_invrots_clashing_with_parent_res( all_invrots );
+	this->remove_invrots_clashing_with_parent_res( all_invrots, enzcst_io->mcfi_list( geom_cst_)->mcfi(1)->is_covalent() );
 	Size num_invrots_clashing( num_rots_total - all_invrots.size() );
 	tr << "When initializing a node for geomcst " << geom_cst_ << ", " << num_invrots_clashing << " of a total of " << num_rots_total << " inverse rotamers were found to clash with something." << std::endl;
 	if( all_invrots.size() == 0 ){
@@ -256,9 +256,14 @@ InvrotTreeNode::all_target_residues( InvrotTreeNodeBaseCAP child_node ) const
 }
 
 
+/// @details if covalent is true, clashes will not be checked
+/// for the last vector that comes down from the parent.
+/// kinda crude, could be made better, i.e. only except the actual
+/// constrained atoms from clash check
 void
 InvrotTreeNode::remove_invrots_clashing_with_parent_res(
-	std::list< core::conformation::ResidueCOP > & invrots
+	std::list< core::conformation::ResidueCOP > & invrots,
+	bool covalent
 ) const
 {
 
@@ -271,6 +276,8 @@ InvrotTreeNode::remove_invrots_clashing_with_parent_res(
 
 	//1. get all parent rotamers
 	utility::vector1< std::list< core::conformation::ResidueCOP > > all_targets ( (*parent).all_target_residues( this ) );
+
+	if( covalent ) all_targets.pop_back(); //covalent: we ignore the last list, since this represents the immediate parent residues
 
 	//safety: if for some reason all_targets is empty,
 	//we return

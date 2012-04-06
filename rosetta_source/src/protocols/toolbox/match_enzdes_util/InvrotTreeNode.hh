@@ -87,7 +87,8 @@ public:
 
 	void
 	remove_invrots_clashing_with_parent_res(
-		std::list< core::conformation::ResidueCOP > & invrots
+		std::list< core::conformation::ResidueCOP > & invrots,
+		bool covalent
 	) const;
 
 	void

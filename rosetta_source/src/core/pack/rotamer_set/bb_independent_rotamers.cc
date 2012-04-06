@@ -43,8 +43,10 @@ bb_independent_rotamers(
 	core::conformation::Residue firstres( *rot_restype, true );
 	core::pose::Pose dummy_pose;
 	dummy_pose.append_residue_by_jump( firstres, (core::Size) 0 );
-	core::pose::add_lower_terminus_type_to_pose_residue( dummy_pose, 1 ); //prolly critical so that the dunbrack library uses neutral phi
-	core::pose::add_upper_terminus_type_to_pose_residue( dummy_pose, 1 ); //prolly critical so that the dunbrack library uses neutral psi
+	if( rot_restype->is_polymer() ){
+		core::pose::add_lower_terminus_type_to_pose_residue( dummy_pose, 1 ); //prolly critical so that the dunbrack library uses neutral phi
+		core::pose::add_upper_terminus_type_to_pose_residue( dummy_pose, 1 ); //prolly critical so that the dunbrack library uses neutral psi
+	}
 	core::scoring::ScoreFunction dummy_sfxn;
 	dummy_sfxn( dummy_pose );
 	core::pack::task::PackerTaskOP dummy_task = core::pack::task::TaskFactory::create_packer_task( dummy_pose );
