@@ -60,6 +60,7 @@ sources = {
                 #"fragment_agreement",
 		#"fragment_rmsd",
                 #"helix_rotate",
+                "jumping",
                 "kcluster",
 		"medal",
 		"medal_exchange",

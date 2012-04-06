@@ -6162,6 +6162,20 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Number of clusters to use during k clustering</dd><br>
 </dl>
  </li>
+<li><h2>cmiles:jumping</h2>
+<dl>
+<dt><b>-jumping</b> \<Boolean\><dt>
+<dd>jumping option group</dd><br>
+</dl>
+<dl>
+<dt><b>-resi</b> \<Integer\><dt>
+<dd>Residue i</dd><br>
+</dl>
+<dl>
+<dt><b>-resj</b> \<Integer\><dt>
+<dd>Residue j</dd><br>
+</dl>
+ </li>
 <li><h2>james</h2>
 <dl>
 <dt><b>-james</b> \<Boolean\><dt>

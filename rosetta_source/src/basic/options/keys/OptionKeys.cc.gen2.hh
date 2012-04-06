@@ -1,5 +1,3 @@
-namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
-namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
 namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
@@ -53,6 +51,9 @@ namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cl
 namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
 namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
 namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
+namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
+namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
+namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
 namespace james { BooleanOptionKey const james( "james" );  }
 namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
 namespace james { StringVectorOptionKey const atom_names( "james:atom_names" );  }

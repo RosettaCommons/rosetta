@@ -24,6 +24,9 @@ namespace OptionKeys {
 namespace cmiles { extern BooleanOptionKey const cmiles; }
 namespace cmiles { namespace kcluster { extern BooleanOptionKey const kcluster; } }
 namespace cmiles { namespace kcluster { extern IntegerOptionKey const num_clusters; } }
+namespace cmiles { namespace jumping { extern BooleanOptionKey const jumping; } }
+namespace cmiles { namespace jumping { extern IntegerOptionKey const resi; } }
+namespace cmiles { namespace jumping { extern IntegerOptionKey const resj; } }
 
 } // namespace OptionKeys
 } // namespace options

@@ -2811,6 +2811,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	  Option_Group('kcluster',
       Option('num_clusters', 'Integer', desc = 'Number of clusters to use during k clustering')
     ),
+		Option_Group('jumping',
+      Option('resi', 'Integer', desc = 'Residue i'),
+			Option('resj', 'Integer', desc = 'Residue j'),
+    ),
   ),
 
 	##options for liz
