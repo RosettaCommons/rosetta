@@ -875,7 +875,8 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
 
     #headers.sort()
     # now, because of abstract class issue we have to sort header list first...
-    headers.sort(key = lambda x: IncludeDict.get(x, (None, 999, None) )[1])
+    #headers.sort(key = lambda x: IncludeDict.get(x, (None, 999, None) )[1])
+    headers.sort()
 
     # tmp  for generating original exclude list
     #for i in headers: IncludeDict[i] = True

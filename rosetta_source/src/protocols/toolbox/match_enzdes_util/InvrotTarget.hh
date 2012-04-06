@@ -23,6 +23,10 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.hh>
 
+#ifdef PYROSETTA
+	#include <core/conformation/Residue.hh>
+#endif
+
 #ifdef WIN32
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNode.hh>
 #else
