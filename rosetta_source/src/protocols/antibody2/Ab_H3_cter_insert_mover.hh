@@ -29,78 +29,80 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
 
-
+#ifdef PYROSETTA
+	#include <protocols/moves/PyMolMover.hh>
+#endif
 
 
 using namespace core;
 namespace protocols {
 namespace antibody2 {
 
-    
-    
-    
-    
+
+
+
+
 //////////////////////////////////////////////////////////////////////////
 /// @brief H3 CDR, Fragment Insertion and CCD
 /// @details
 class Ab_H3_cter_insert_mover : public protocols::moves::Mover {
-    
+
 public:
     /// @brief default constructor
 	Ab_H3_cter_insert_mover();
-    
+
 	/// @brief constructor with arguments
 	Ab_H3_cter_insert_mover(antibody2::AntibodyInfoOP antibody_info, bool camelid );
-	
-    
+
+
 	/// @brief default destructor
 	~Ab_H3_cter_insert_mover();
-    
+
     void set_default();
-    
+
 	virtual void apply(pose::Pose & pose );
     virtual std::string get_name() const;
-    
+
     // read CDR H3 C-terminal fragments (size: 4)
     void read_H3_cter_fragment( bool is_camelid);
-    
+
     void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
         use_pymol_diy_ = true;
         pymol_ = pymol;
     }
-    
+
 private:
-    
+
     // CDR H3 C-terminal fragments
 	utility::vector1< core::fragment::FragData > H3_base_library_;
-   
+
     AntibodyInfoOP ab_info_;
-    
+
     bool user_defined_;
-    
+
     bool use_pymol_diy_;
     moves::PyMolMoverOP pymol_;
-        
+
     /// @brief benchmark flag
 	bool benchmark_;
-    
+
     /// @brief is camelid antibody without light chain
 	bool is_camelid_;
-    
-        
+
+
     void init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark);
 //    void setup_objects();
 //    void finalize_setup( core::pose::Pose & pose );
 
-    
+
     std::string H3_ter_library_filename_;
-    
+
 };
-    
-    
-    
-    
-    
+
+
+
+
+
 
 }//antibody2
 }//protocols

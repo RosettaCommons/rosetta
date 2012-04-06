@@ -36,124 +36,127 @@
 
 
 
+#ifdef PYROSETTA
+	#include <protocols/moves/PyMolMover.hh>
+#endif
 
 
 
 namespace protocols {
 namespace antibody2 {
-        
-    
-    
+
+
+
 class Ab_H3_perturb_ccd_build: public moves::Mover {
-            
-            
+
+
 public:
-    
+
     /// @brief default constructor
 	Ab_H3_perturb_ccd_build();
-    
+
 	/// @brief constructor with arguments
     Ab_H3_perturb_ccd_build(
-                            bool is_camelid, 
+                            bool is_camelid,
                             AntibodyInfoOP & antibody_in);
-    
+
     /// @brief constructor with arguments
-    Ab_H3_perturb_ccd_build(bool current_loop_is_H3, 
-                            bool is_camelid, 
+    Ab_H3_perturb_ccd_build(bool current_loop_is_H3,
+                            bool is_camelid,
                             AntibodyInfoOP & antibody_in);
-        
+
     virtual protocols::moves::MoverOP clone() const;
-    
+
 	/// @brief default destructor
 	~Ab_H3_perturb_ccd_build();
-    
+
 
 
     virtual void apply( core::pose::Pose & pose );
-    
+
     virtual std::string get_name() const {
         return "Ab_H3_perturb_ccd_build";
     }
-    
+
     void read_and_store_fragments( core::pose::Pose & pose );
-    
+
     void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
         use_pymol_diy_ = true;
         pymol_ = pymol;
     }
-    
+
     void turn_on_pymol_diy(){
         use_pymol_diy_ = true;
     }
-    
+
     void pass_the_loop(loops::Loop & input_loop){
         input_loop_ = input_loop;
     }
-    
+
     void turn_off_H3_filter(){
         H3_filter_ = false;
     }
-    
-    
+
+
 private:
 
     AntibodyInfoOP ab_info_;
-    
+
     loops::Loop input_loop_;
-    
+
     bool user_defined_;
     bool is_camelid_;
     bool use_pymol_diy_;
-    
+
     protocols::moves::PyMolMoverOP pymol_;
 
-    
+
     void set_default();
     void init( bool current_loop_is_H3, bool is_camelid, AntibodyInfoOP & antibody_in);
 
     void finalize_setup( core::pose::Pose & pose );
 
-    
+
     /// @brief Build centroid mode CDR H3 loop
 	void build_centroid_loop( core::pose::Pose & pose );
-    
+
     void scored_frag_close(
                            core::pose::Pose & pose_in,
                            loops::Loop const trimmed_cdr_h3 );
 
-        
-    
+
+
     /// @brief size of loop above which 9mer frags are used
 	core::Size cutoff_9_; // default 16
-    
+
 	/// @brief size of loop above which 3mer frags are used
 	core::Size cutoff_3_; // default 6
-    
+
     core::scoring::ScoreFunctionOP lowres_scorefxn_;
 
     core::Real cen_cst_;
-    
+
     /// @brief flag indicating that current loop being modeled is CDR H3
 	bool current_loop_is_H3_;
-    
+
     /// @brief actually enables H3 filter for H3 operations
 	bool H3_filter_;
-    
+
     core::Size num_cycles1_;
     core::Size max_ccd_cycles_;
-    
+
     utility::vector1< core::fragment::FragSetOP > cdr_h3_frags_;
-    
+
     core::Real h3_fraction_;
     core::Real ccd_threshold_;
     core::Real Temperature_;
-    
+
     protocols::moves::MonteCarloOP mc_, outer_mc_;
-    
+
 };
-    
-    
-    
+
+
+
 } // namespace antibody2
 } // namespace protocols
 
