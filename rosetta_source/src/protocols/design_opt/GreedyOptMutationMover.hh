@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_moves/GreedyOptMutationMover.hh
+/// @file protocols/design_opt/GreedyOptMutationMover.hh
 /// @author Chris King (chrisk1@uw.edu)
 
-#ifndef INCLUDED_protocols_simple_moves_GreedyOptMutationMover_hh
-#define INCLUDED_protocols_simple_moves_GreedyOptMutationMover_hh
-#include <protocols/simple_moves/GreedyOptMutationMover.fwd.hh>
+#ifndef INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
+#define INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
+#include <protocols/design_opt/GreedyOptMutationMover.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -31,7 +31,7 @@
 
 
 namespace protocols {
-namespace simple_moves{
+namespace design_opt{
 
 class GreedyOptMutationMover : public protocols::moves::Mover
 {
@@ -81,4 +81,4 @@ private:
 } // protocols
 
 
-#endif /*INCLUDED_protocols_simple_moves_GreedyOptMutationMover_HH*/
+#endif /*INCLUDED_protocols_design_opt_GreedyOptMutationMover_HH*/

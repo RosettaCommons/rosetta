@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/GreedyOptMutationMoverGreedyOptMutationMoverCreator.hh
+///@file protocols/design_opt/GreedyOptMutationMoverGreedyOptMutationMoverCreator.hh
 ///@brief This class will create instances of Mover GreedyOptMutationMover for the MoverFactory
 ///@author Chris King (chrisk1@uw.edu)
 
-#ifndef INCLUDED_protocols_simple_moves_GreedyOptMutationMoverCreator_hh
-#define INCLUDED_protocols_simple_moves_GreedyOptMutationMoverCreator_hh
+#ifndef INCLUDED_protocols_design_opt_GreedyOptMutationMoverCreator_hh
+#define INCLUDED_protocols_design_opt_GreedyOptMutationMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace simple_moves {
+namespace design_opt {
 
 class GreedyOptMutationMoverCreator : public protocols::moves::MoverCreator {
 public:

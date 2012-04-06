@@ -64,6 +64,9 @@ sources = {
 		"SequenceCoupling1BDConstraint",
 		"SequenceCouplingConstraint",
 	],
+	"protocols/design_opt": [
+		"GreedyOptMutationMover",
+	],
 	"protocols/electron_density": [
 		"SetupForDensityScoringMover",
 		"util",
@@ -256,7 +259,6 @@ sources = {
 		"ExtendedPoseMoverCreator",
 		"FavorSequenceProfile",
 		"FragmentMover",
-		"GreedyOptMutationMover",
 		"GreenPacker",
 		"GunnCost",
 		"LoadUnboundRotMover",

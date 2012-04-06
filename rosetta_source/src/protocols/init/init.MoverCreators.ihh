@@ -35,6 +35,8 @@
 
 #include <protocols/contact_map/ContactMapCreator.hh>
 
+#include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
+
 #include <protocols/dna/DesignProteinBackboneAroundDNACreator.hh>
 #include <protocols/dna/DnaInterfaceMinMoverCreator.hh>
 #include <protocols/dna/DnaInterfaceMultiStateDesignCreator.hh>
@@ -177,7 +179,6 @@
 #include <protocols/seeded_abinitio/SeedSetupMoverCreator.hh>
 #include <protocols/seeded_abinitio/SwapSegmentCreator.hh>
 
-#include <protocols/simple_moves/GreedyOptMutationMoverCreator.hh>
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMoverCreator.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
 #include <protocols/simple_moves/ClearConstraintsMoverCreator.hh>

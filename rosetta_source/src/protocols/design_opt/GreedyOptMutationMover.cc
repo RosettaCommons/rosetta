@@ -9,8 +9,8 @@
 
 /// @author Chris King (chrisk1@uw.edu)
 //#include <algorithm >
-#include <protocols/simple_moves/GreedyOptMutationMover.hh>
-#include <protocols/simple_moves/GreedyOptMutationMoverCreator.hh>
+#include <protocols/design_opt/GreedyOptMutationMover.hh>
+#include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
@@ -51,9 +51,9 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 namespace protocols {
-namespace simple_moves {
+namespace design_opt {
 
-static basic::Tracer TR( "protocols.simple_moves.GreedyOptMutationMover" );
+static basic::Tracer TR( "protocols.design_opt.GreedyOptMutationMover" );
 using namespace core;
 using namespace chemical;
 

@@ -39,6 +39,8 @@ static MoverRegistrator< comparative_modeling::hybridize::HybridizeProtocolCreat
 
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 
+static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
+
 static MoverRegistrator< dna::DesignProteinBackboneAroundDNACreator > reg_DesignProteinBackboneAroundDNACreator;
 static MoverRegistrator< dna::DnaInterfaceMinMoverCreator > reg_DnaInterfaceMinMoverCreator;
 static MoverRegistrator< dna::DnaInterfaceMultiStateDesignCreator > reg_DnaInterfaceMultiStateDesignCreator;
@@ -180,7 +182,6 @@ static MoverRegistrator< seeded_abinitio::SeedFoldTreeCreator > SeedFoldTreeCrea
 static MoverRegistrator< seeded_abinitio::SeedSetupMoverCreator > SeedSetupMoverCreator;
 static MoverRegistrator< seeded_abinitio::SwapSegmentCreator > SwapSegmentCreator;
 
-static MoverRegistrator< simple_moves::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
 static MoverRegistrator< simple_moves::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;
 static MoverRegistrator< simple_moves::ClearConstraintsMoverCreator > reg_ClearConstraintsMoverCreator;
 static MoverRegistrator< simple_moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
