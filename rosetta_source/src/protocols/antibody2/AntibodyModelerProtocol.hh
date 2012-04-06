@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/AbAssembleTemplatesProtocol.hh
+/// @file protocols/antibody2/AntibodyModelerProtocol.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -16,41 +16,38 @@
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 
-#ifndef INCLUDED_protocols_antibody2_AbAssembleTemplatesProtocol_hh
-#define INCLUDED_protocols_antibody2_AbAssembleTemplatesProtocol_hh
+#ifndef INCLUDED_protocols_antibody2_AntibodyModelerProtocol_hh
+#define INCLUDED_protocols_antibody2_AntibodyModelerProtocol_hh
 
-
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
-
-#include <protocols/antibody2/AntibodyInfo.fwd.hh>
-#include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
-#include <protocols/antibody2/AbAssembleTemplatesProtocol.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 
-#include <iostream>
+#include <protocols/antibody2/ModelCDRH3.fwd.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
+#include <protocols/antibody2/AntibodyModelerProtocol.fwd.hh>
 
 
-
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace antibody2 {
 
-class AbAssembleTemplatesProtocol: public moves::Mover {
+class AntibodyModelerProtocol: public moves::Mover {
 public:
-    typedef std::map < std::string, bool > GraftMap;
 
 	// default constructor
-	AbAssembleTemplatesProtocol();
+	AntibodyModelerProtocol();
 
 	// default destructor
-	~AbAssembleTemplatesProtocol();
+	~AntibodyModelerProtocol();
 
 	virtual protocols::moves::MoverOP clone() const;
 
@@ -62,54 +59,80 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 
-	// simple inline setters
-	void set_graft_l1( bool graft_l1 ) { graft_l1_ = graft_l1; }
-	void set_graft_l2( bool graft_l2 ) { graft_l2_ = graft_l2; }
-	void set_graft_l3( bool graft_l3 ) { graft_l3_ = graft_l3; }
-	void set_graft_h1( bool graft_h1 ) { graft_h1_ = graft_h1; }
-	void set_graft_h2( bool graft_h2 ) { graft_h2_ = graft_h2; }
-	void set_graft_h3( bool graft_h3 ) { graft_h3_ = graft_h3; }
-	void set_camelid( bool camelid ) { camelid_ = camelid; }
-	void set_camelid_constraints( bool camelid_constraints ) { camelid_constraints_ = camelid_constraints; }
-	void set_benchmark( bool benchmark ) { benchmark_ = benchmark; }
-    void set_cst_weight(core::Real cst_weight){ cst_weight_ = cst_weight; }
-
 	virtual std::string get_name() const;
-
     
     /// @brief Associates relevant options with the AntibodyModeler class
     static void register_options();
     
+	// simple inline setters
+    void set_h3modeler( bool model_h3 ){ 
+        model_h3_ = model_h3; 
+    }
+	void set_snugfit( bool snugfit ) { 
+        snugfit_ = snugfit; 
+    }
+	void set_camelid( bool camelid ) { 
+        camelid_ = camelid; 
+    }
+	void set_camelid_constraints(bool camelid_constraints ) { 
+        camelid_constraints_ = camelid_constraints; 
+    }
+	void set_benchmark( bool benchmark ) { 
+        benchmark_ = benchmark; 
+    }
+    void set_cst_weight( core::Real const cst_weight){
+        cst_weight_=cst_weight;
+    }
+    void set_H3_filter(bool H3_filter){
+        H3_filter_ = H3_filter;
+    }
+    void set_cter_insert(bool cter_insert){
+        cter_insert_ = cter_insert;
+    }
+
+	void relax_cdrs( core::pose::Pose & pose );
+
+	void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in, 
+                                  const loops::Loops & loops );
+
+
+	core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, 
+                                  const core::pose::Pose & native_pose, 
+                                  std::string cdr_type );
+
 	void display_constraint_residues( core::pose::Pose & pose );
-    
+
+        
     void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const AbAssembleTemplatesProtocol & ab_m_2 );
+    friend std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m_2 );
+    
+    
 
-    
-    
 private:
-
-	// Modeling H3 options
-	bool graft_l1_;
-	bool graft_l2_;
-	bool graft_l3_;
-	bool graft_h1_;
-	bool graft_h2_;
-	bool graft_h3_;
+    bool model_h3_;
+    bool extreme_repacking_;
+	bool snugfit_;
+    bool refine_h3_;
 	bool camelid_;
 	bool camelid_constraints_;
+    bool H3_filter_;
+    bool cter_insert_;
+    core::pose::Pose start_pose_;
+    
+    /// @brief refine H3 only
+	bool antibody_refine_;
+    core::Real high_cst_;
+
+    moves::PyMolMoverOP pymol_;
+    bool use_pymol_diy_;
 
     
-    GraftMap grafts_ ;
-    
-
     
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;
 
 	bool user_defined_; // for constructor options passed to init
 
-	// flag for one time fragment initialization
 	bool flags_and_objects_are_in_sync_;
 	bool first_apply_with_current_setup_;
 
@@ -118,23 +141,20 @@ private:
 
 	// score functions
 	core::scoring::ScoreFunctionOP scorefxn_;
+    core::scoring::ScoreFunctionOP highres_scorefxn_;
+
 
 	// external objects
 	AntibodyInfoOP ab_info_;
-    Ab_TemplateInfoOP ab_t_info_ ;
 
+	//packer task
+	core::pack::task::TaskFactoryOP tf_;
+
+	// movers
+	protocols::antibody2::ModelCDRH3OP model_cdrh3_;
 
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();
-    void set_packer_default( core::pose::Pose & pose, bool include_current ) ;
-
-
-    
-    // movers
-    protocols::moves::SequenceMoverOP graft_sequence_ ;
-    protocols::simple_moves::PackRotamersMoverOP packer_ ;
-    protocols::moves::PyMolMoverOP pymol_ ;
-
 
 	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
 	void finalize_setup( core::pose::Pose & pose );
@@ -145,7 +165,7 @@ private:
 
 	void setup_objects();
 
-}; // class AbAssembleTemplatesProtocol
+}; // class AntibodyModelerProtocol
 
     
     
@@ -155,8 +175,4 @@ private:
 } // namespace protocols
 
 #endif
-
-
-
-
 

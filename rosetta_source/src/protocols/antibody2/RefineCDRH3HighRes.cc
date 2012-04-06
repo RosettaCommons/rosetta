@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/AbRelaxOneCDRHighRes.cc
+/// @file protocols/antibody2/RefineCDRH3HighRes.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,7 +17,7 @@
 
 
 
-#include <protocols/antibody2/AbRelaxOneCDRHighRes.hh>
+#include <protocols/antibody2/RefineCDRH3HighRes.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -80,7 +80,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.AbRelaxOneCDRHighRes");
+static basic::Tracer TR("protocols.antibody2.RefineCDRH3HighRes");
 
 
 
@@ -93,7 +93,7 @@ namespace antibody2 {
     
     
 // default constructor
-AbRelaxOneCDRHighRes::AbRelaxOneCDRHighRes( ) : Mover() 
+RefineCDRH3HighRes::RefineCDRH3HighRes( ) : Mover() 
 {
     set_default();
     
@@ -101,7 +101,7 @@ AbRelaxOneCDRHighRes::AbRelaxOneCDRHighRes( ) : Mover()
     init();
 }
 
-AbRelaxOneCDRHighRes::AbRelaxOneCDRHighRes( AntibodyInfoOP antibody_info, std::string loop_name ) : Mover() 
+RefineCDRH3HighRes::RefineCDRH3HighRes( AntibodyInfoOP antibody_info, std::string loop_name ) : Mover() 
 {
     set_default();
 
@@ -116,7 +116,7 @@ AbRelaxOneCDRHighRes::AbRelaxOneCDRHighRes( AntibodyInfoOP antibody_info, std::s
     
 
     
-AbRelaxOneCDRHighRes::AbRelaxOneCDRHighRes( bool is_camelid, AntibodyInfoOP antibody_info ) : Mover() 
+RefineCDRH3HighRes::RefineCDRH3HighRes( bool is_camelid, AntibodyInfoOP antibody_info ) : Mover() 
 {        
     set_default();
         
@@ -129,7 +129,7 @@ AbRelaxOneCDRHighRes::AbRelaxOneCDRHighRes( bool is_camelid, AntibodyInfoOP anti
     
 
     
-void AbRelaxOneCDRHighRes::set_default(){ 
+void RefineCDRH3HighRes::set_default(){ 
     benchmark_ = false;
     include_neighbors_ = true;
     max_cycle_close_trial_ = 20;
@@ -151,18 +151,18 @@ void AbRelaxOneCDRHighRes::set_default(){
     
     
 // default destructor
-AbRelaxOneCDRHighRes::~AbRelaxOneCDRHighRes() {}
+RefineCDRH3HighRes::~RefineCDRH3HighRes() {}
     
 //clone
-protocols::moves::MoverOP AbRelaxOneCDRHighRes::clone() const {
-    return( new AbRelaxOneCDRHighRes() );
+protocols::moves::MoverOP RefineCDRH3HighRes::clone() const {
+    return( new RefineCDRH3HighRes() );
 }
     
     
 
     
     
-void AbRelaxOneCDRHighRes::init( ) 
+void RefineCDRH3HighRes::init( ) 
 {
 
     the_loop_   = *(ab_info_->get_CDR_loop(loop_name_));
@@ -204,13 +204,13 @@ void AbRelaxOneCDRHighRes::init( )
 
     
     
-std::string AbRelaxOneCDRHighRes::get_name() const {
-    return "AbRelaxOneCDRHighRes";
+std::string RefineCDRH3HighRes::get_name() const {
+    return "RefineCDRH3HighRes";
 }
 
     
     
-void AbRelaxOneCDRHighRes::pass_start_pose(core::pose::Pose & start_pose){
+void RefineCDRH3HighRes::pass_start_pose(core::pose::Pose & start_pose){
     start_pose_ = start_pose;
 }
     
@@ -222,7 +222,7 @@ void AbRelaxOneCDRHighRes::pass_start_pose(core::pose::Pose & start_pose){
     
     
     
-void AbRelaxOneCDRHighRes::finalize_setup( core::pose::Pose & pose ){
+void RefineCDRH3HighRes::finalize_setup( core::pose::Pose & pose ){
 
     setup_packer_task( start_pose_, tf_ );
     
@@ -349,7 +349,7 @@ void AbRelaxOneCDRHighRes::finalize_setup( core::pose::Pose & pose ){
     
     
 //APPLY
-void AbRelaxOneCDRHighRes::apply( pose::Pose & pose ) {
+void RefineCDRH3HighRes::apply( pose::Pose & pose ) {
     using namespace protocols::simple_moves;
     using namespace protocols::moves;
     using namespace protocols::toolbox::task_operations;

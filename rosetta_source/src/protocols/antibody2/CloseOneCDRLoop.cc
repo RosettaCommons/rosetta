@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_CloseOneCDR_Mover.cc
+/// @file protocols/antibody2/CloseOneCDRLoop.cc
 /// @brief grafts a cdr onto the template of an antibody framework
 /// @detailed
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
 
-#include <protocols/antibody2/Ab_CloseOneCDR_Mover.hh>
+#include <protocols/antibody2/CloseOneCDRLoop.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -27,47 +27,46 @@
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
-#include <protocols/antibody2/AbModelCDRH3.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
 
 #include <basic/Tracer.hh>
-static basic::Tracer TRC("protocols.antibody2.Ab_CloseOneCDR_Mover");
+static basic::Tracer TRC("protocols.antibody2.CloseOneCDRLoop");
 
 namespace protocols {
 namespace antibody2 {
 using namespace core;
 
 
-Ab_CloseOneCDR_Mover::Ab_CloseOneCDR_Mover( ) : Mover( "Ab_CloseOneCDR_Mover" ) {
+CloseOneCDRLoop::CloseOneCDRLoop( ) : Mover( "CloseOneCDRLoop" ) {
 	set_default();
 	cdr_loop_start_ = 0;
 	cdr_loop_end_   = 0;
 	loop_start_ = 0-flanking_residues_;
 	loop_end_   = 0+flanking_residues_;
-} // Ab_CloseOneCDR_Mover default constructor
+} // CloseOneCDRLoop default constructor
 
     
 
-Ab_CloseOneCDR_Mover::Ab_CloseOneCDR_Mover( Size query_start, Size query_end ) : Mover( "Ab_CloseOneCDR_Mover" ) {
+CloseOneCDRLoop::CloseOneCDRLoop( Size query_start, Size query_end ) : Mover( "CloseOneCDRLoop" ) {
 	set_default();
 	cdr_loop_start_ = query_start;
 	cdr_loop_end_   = query_end;
 	loop_start_ = query_start-flanking_residues_;
 	loop_end_   = query_end+flanking_residues_;
-} // Ab_CloseOneCDR_Mover default constructor
+} // CloseOneCDRLoop default constructor
 
     
     
     
-// Ab_CloseOneCDR_Mover default destructor
-Ab_CloseOneCDR_Mover::~Ab_CloseOneCDR_Mover() {}
+// CloseOneCDRLoop default destructor
+CloseOneCDRLoop::~CloseOneCDRLoop() {}
 
     
     
     
     
     
-void Ab_CloseOneCDR_Mover::set_default()
+void CloseOneCDRLoop::set_default()
 {
 	allowed_separation_ = 1.9;
 	flanking_residues_ = 5; // default 5;
@@ -75,17 +74,17 @@ void Ab_CloseOneCDR_Mover::set_default()
 	movemap_->set_chi( false );
 	movemap_->set_bb( false );
 	pymol_ = new protocols::moves::PyMolMover();
-} // Ab_CloseOneCDR_Mover::set_default
+} // CloseOneCDRLoop::set_default
 
     
     
     
 std::string
-Ab_CloseOneCDR_Mover::get_name() const { return "Ab_CloseOneCDR_Mover"; }
+CloseOneCDRLoop::get_name() const { return "CloseOneCDRLoop"; }
 
     
     
-void Ab_CloseOneCDR_Mover::set_pymol( protocols::moves::PyMolMoverOP pymol )
+void CloseOneCDRLoop::set_pymol( protocols::moves::PyMolMoverOP pymol )
 {
     pymol_ = pymol;
 }
@@ -95,7 +94,7 @@ void Ab_CloseOneCDR_Mover::set_pymol( protocols::moves::PyMolMoverOP pymol )
     
     
 
-void Ab_CloseOneCDR_Mover::apply( pose::Pose & pose_in )
+void CloseOneCDRLoop::apply( pose::Pose & pose_in )
 {
     using loops::loop_closure::ccd::CcdMover;
     using loops::loop_closure::ccd::CcdMoverOP;
@@ -167,7 +166,7 @@ void Ab_CloseOneCDR_Mover::apply( pose::Pose & pose_in )
 
 	// reset to original foldtree
 	pose_in.fold_tree( f );
-} // Ab_CloseOneCDR_Mover::apply
+} // CloseOneCDRLoop::apply
 
 
 

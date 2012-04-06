@@ -7,28 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   Ab_LHSnugFit_Mover.fwd.hh
+/// @file protocols/antibody2/RefineBetaBarrel.fwd.hh
 ///
 /// @brief forward declaration
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_Ab_H3_perturb_ccd_build_fwd_hh
-#define INCLUDED_protocols_antibody2_Ab_H3_perturb_ccd_build_fwd_hh
+
+
+#ifndef INCLUDED_protocols_antibody2_RefineBetaBarrel_fwd_hh
+#define INCLUDED_protocols_antibody2_RefineBetaBarrel_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
         
-    class Ab_H3_perturb_ccd_build;
-    typedef utility::pointer::owning_ptr< Ab_H3_perturb_ccd_build > Ab_H3_perturb_ccd_buildOP;
-    typedef utility::pointer::owning_ptr< Ab_H3_perturb_ccd_build const > Ab_H3_perturb_ccd_buildCOP;
+    class RefineBetaBarrel;
+    typedef utility::pointer::owning_ptr< RefineBetaBarrel > RefineBetaBarrelOP;
+    typedef utility::pointer::owning_ptr< RefineBetaBarrel const > RefineBetaBarrelCOP;
         
 }
 }
 
 #endif
-
-
-
-

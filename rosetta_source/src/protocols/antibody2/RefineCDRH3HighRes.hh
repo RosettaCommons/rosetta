@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/AbRelaxOneCDRHighRes.hh
+/// @file protocols/antibody2/RefineCDRH3HighRes.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,8 +17,8 @@
 
 
 
-#ifndef INCLUDED_protocols_antibody2_AbRelaxOneCDRHighRes_hh
-#define INCLUDED_protocols_antibody2_AbRelaxOneCDRHighRes_hh
+#ifndef INCLUDED_protocols_antibody2_RefineCDRH3HighRes_hh
+#define INCLUDED_protocols_antibody2_RefineCDRH3HighRes_hh
 
 
 #include <core/pose/Pose.hh>
@@ -38,7 +38,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
 #include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/AbRelaxOneCDRHighRes.fwd.hh>
+#include <protocols/antibody2/RefineCDRH3HighRes.fwd.hh>
 
 #ifdef PYROSETTA
 	#include <protocols/moves/PyMolMover.hh>
@@ -48,19 +48,19 @@
 namespace protocols {
 namespace antibody2 {
 
-class AbRelaxOneCDRHighRes: public moves::Mover {
+class RefineCDRH3HighRes: public moves::Mover {
 
 
 public:
 
     /// @brief default constructor
-	AbRelaxOneCDRHighRes();
+	RefineCDRH3HighRes();
 
     /// @brief constructor with arguments
-    AbRelaxOneCDRHighRes(AntibodyInfoOP antibody_info, std::string loop_name);
+    RefineCDRH3HighRes(AntibodyInfoOP antibody_info, std::string loop_name);
 
     /// @brief constructor with arguments
-    AbRelaxOneCDRHighRes( bool is_camelid, AntibodyInfoOP antibody_info);
+    RefineCDRH3HighRes( bool is_camelid, AntibodyInfoOP antibody_info);
 
 
     void set_task_factory(core::pack::task::TaskFactoryCOP tf){
@@ -71,7 +71,7 @@ public:
     virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief default destructor
-	~AbRelaxOneCDRHighRes();
+	~RefineCDRH3HighRes();
 
     void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
         use_pymol_diy_ = true;

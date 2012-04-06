@@ -8,15 +8,15 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/Ab_CloseOneCDR_Mover.hh
+/// @file protocols/antibody2/CloseOneCDRLoop.hh
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_CloseOneCDR_Mover_hh
-#define INCLUDED_protocols_antibody2_Ab_CloseOneCDR_Mover_hh
+#ifndef INCLUDED_protocols_antibody2_CloseOneCDRLoop_hh
+#define INCLUDED_protocols_antibody2_CloseOneCDRLoop_hh
 
-#include <protocols/antibody2/Ab_CloseOneCDR_Mover.fwd.hh>
+#include <protocols/antibody2/CloseOneCDRLoop.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -27,16 +27,16 @@ namespace protocols {
 namespace antibody2 {
 
 	/// @brief Closes only one CDR onto a framework
-	class Ab_CloseOneCDR_Mover : public protocols::moves::Mover {
+	class CloseOneCDRLoop : public protocols::moves::Mover {
 	public:
 		// default constructor
-		Ab_CloseOneCDR_Mover();
+		CloseOneCDRLoop();
 
 		// constructor with arguments
-		Ab_CloseOneCDR_Mover( core::Size query_start, core::Size query_end  );
+		CloseOneCDRLoop( core::Size query_start, core::Size query_end  );
 
 		// default destructor
-		~Ab_CloseOneCDR_Mover();
+		~CloseOneCDRLoop();
 
 		void set_default();
 		virtual void apply( core::pose::Pose & pose_in );
@@ -62,7 +62,7 @@ namespace antibody2 {
 		core::kinematics::MoveMapOP movemap_;
 		protocols::moves::PyMolMoverOP pymol_;
 
-	}; // class Ab_CloseOneCDR_Mover
+	}; // class CloseOneCDRLoop
 
 
 } // antibody2

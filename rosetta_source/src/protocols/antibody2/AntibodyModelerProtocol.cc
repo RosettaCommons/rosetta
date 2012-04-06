@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/AbModelH3FullProtocol.cc
+/// @file protocols/antibody2/AntibodyModelerProtocol.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -83,11 +83,11 @@
 
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/AbModelH3FullProtocol.hh>
-#include <protocols/antibody2/AbModelCDRH3.hh>
+#include <protocols/antibody2/AntibodyModelerProtocol.hh>
+#include <protocols/antibody2/ModelCDRH3.hh>
 #include <protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.hh>
 #include <protocols/antibody2/Ab_LH_SnugFit_Mover.hh>
-#include <protocols/antibody2/AbRelaxOneCDRHighRes.hh>
+#include <protocols/antibody2/RefineCDRH3HighRes.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -100,32 +100,32 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.AbModelH3FullProtocol");
+static basic::Tracer TR("protocols.antibody2.AntibodyModelerProtocol");
 using namespace core;
 
 namespace protocols {
 namespace antibody2 {
 
 // default constructor
-AbModelH3FullProtocol::AbModelH3FullProtocol() : Mover() {
+AntibodyModelerProtocol::AntibodyModelerProtocol() : Mover() {
 	user_defined_ = false;
 	init();
 }
 
 // default destructor
-AbModelH3FullProtocol::~AbModelH3FullProtocol() {}
+AntibodyModelerProtocol::~AntibodyModelerProtocol() {}
 
 //clone
 protocols::moves::MoverOP
-AbModelH3FullProtocol::clone() const {
-	return( new AbModelH3FullProtocol() );
+AntibodyModelerProtocol::clone() const {
+	return( new AntibodyModelerProtocol() );
 }
 
     
     
-void AbModelH3FullProtocol::init() 
+void AntibodyModelerProtocol::init() 
 {
-	Mover::type( "AbModelH3FullProtocol" );
+	Mover::type( "AntibodyModelerProtocol" );
     
 	set_default();
     
@@ -142,7 +142,7 @@ void AbModelH3FullProtocol::init()
 
     
     
-void AbModelH3FullProtocol::set_default()
+void AntibodyModelerProtocol::set_default()
 {
 	TR <<  "Setting Up defaults.........." << std::endl;
     model_h3_  = true;
@@ -161,7 +161,7 @@ void AbModelH3FullProtocol::set_default()
 
     
     
-void AbModelH3FullProtocol::register_options()
+void AntibodyModelerProtocol::register_options()
 {
 	using namespace basic::options;
 
@@ -180,7 +180,7 @@ void AbModelH3FullProtocol::register_options()
     
     
     
-void AbModelH3FullProtocol::init_from_options() 
+void AntibodyModelerProtocol::init_from_options() 
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -239,7 +239,7 @@ void AbModelH3FullProtocol::init_from_options()
 
     
 void
-AbModelH3FullProtocol::setup_objects() {
+AntibodyModelerProtocol::setup_objects() {
     
 	sync_objects_with_flags();
     
@@ -249,7 +249,7 @@ AbModelH3FullProtocol::setup_objects() {
 
 }
     
-void AbModelH3FullProtocol::sync_objects_with_flags() 
+void AntibodyModelerProtocol::sync_objects_with_flags() 
 {
 	using namespace protocols::moves;
 
@@ -260,9 +260,9 @@ void AbModelH3FullProtocol::sync_objects_with_flags()
 }
 
 
-std::string AbModelH3FullProtocol::get_name() const 
+std::string AntibodyModelerProtocol::get_name() const 
 {        
-    return "AbModelH3FullProtocol";
+    return "AntibodyModelerProtocol";
 }
 
     
@@ -274,7 +274,7 @@ std::string AbModelH3FullProtocol::get_name() const
     
 
 void
-AbModelH3FullProtocol::finalize_setup( pose::Pose & frame_pose ) 
+AntibodyModelerProtocol::finalize_setup( pose::Pose & frame_pose ) 
 {
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
 	if(  cst_weight_ != 0.00  ) {
@@ -306,7 +306,7 @@ AbModelH3FullProtocol::finalize_setup( pose::Pose & frame_pose )
     ab_info_ = new AntibodyInfo(frame_pose,camelid_);
     TR<<*ab_info_<<std::endl;
     
-    model_cdrh3_ = new AbModelCDRH3(camelid_, benchmark_, ab_info_ );
+    model_cdrh3_ = new ModelCDRH3(camelid_, benchmark_, ab_info_ );
     
 
 
@@ -337,7 +337,7 @@ AbModelH3FullProtocol::finalize_setup( pose::Pose & frame_pose )
 
 
 //APPLY
-void AbModelH3FullProtocol::apply( pose::Pose & frame_pose ) {
+void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 
     using namespace chemical;
     using namespace id;
@@ -427,7 +427,7 @@ void AbModelH3FullProtocol::apply( pose::Pose & frame_pose ) {
 	// Step 4: Full Atom Relax 
     if(refine_h3_){
         //$$$$$$$$$$$$$$$$$$$$$$$$
-        AbRelaxOneCDRHighRes relax_a_cdr_high_res(ab_info_, "h3"); 
+        RefineCDRH3HighRes relax_a_cdr_high_res(ab_info_, "h3"); 
         relax_a_cdr_high_res.set_task_factory(tf_);
         relax_a_cdr_high_res.pass_start_pose(start_pose_);
         if(use_pymol_diy_) relax_a_cdr_high_res.turn_on_and_pass_the_pymol(pymol_);
@@ -453,14 +453,14 @@ void AbModelH3FullProtocol::apply( pose::Pose & frame_pose ) {
     
         if( camelid_ ) {
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-            AbRelaxOneCDRHighRes relax_a_cdr_high_res(camelid_, ab_info_); // because of h2
+            RefineCDRH3HighRes relax_a_cdr_high_res(camelid_, ab_info_); // because of h2
             //relax_a_cdr_high_res.turn_off_h3_default();
             relax_a_cdr_high_res.turn_off_h3_filter();
             relax_a_cdr_high_res.apply(frame_pose);
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         
             //JQX: remove the duplicated code, camelid H2 will be automatically taken care of
-            //     see the code in AbRelaxOneCDRHighRes file
+            //     see the code in RefineCDRH3HighRes file
         }
     }
     
@@ -536,7 +536,7 @@ void AbModelH3FullProtocol::apply( pose::Pose & frame_pose ) {
 ///
 /// @last_modified 02/15/2010
 ///////////////////////////////////////////////////////////////////////////
-void AbModelH3FullProtocol::relax_cdrs( core::pose::Pose & pose )
+void AntibodyModelerProtocol::relax_cdrs( core::pose::Pose & pose )
 {
 	using namespace pack;
 	using namespace pack::task;
@@ -616,7 +616,7 @@ void AbModelH3FullProtocol::relax_cdrs( core::pose::Pose & pose )
 	///
 	/// @last_modified 07/13/2010
 	///////////////////////////////////////////////////////////////////////////
-	void AbModelH3FullProtocol::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) 
+	void AntibodyModelerProtocol::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) 
     {
 
 		using namespace kinematics;
@@ -691,7 +691,7 @@ void AbModelH3FullProtocol::relax_cdrs( core::pose::Pose & pose )
 
 
 
-Real AbModelH3FullProtocol::global_loop_rmsd (
+Real AntibodyModelerProtocol::global_loop_rmsd (
     const pose::Pose & pose_in,
     const pose::Pose & native_pose,
     std::string cdr_type ) 
@@ -719,7 +719,7 @@ Real AbModelH3FullProtocol::global_loop_rmsd (
     
     
 
-void AbModelH3FullProtocol::display_constraint_residues( core::pose::Pose & pose ) 
+void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & pose ) 
 {
 
     // Detecting di-sulfide bond
@@ -768,14 +768,14 @@ void AbModelH3FullProtocol::display_constraint_residues( core::pose::Pose & pose
     
     
 /// @details  Show the complete setup of the antibody modeler protocol
-void AbModelH3FullProtocol::show( std::ostream & out ) {
+void AntibodyModelerProtocol::show( std::ostream & out ) {
     if ( !flags_and_objects_are_in_sync_ ){
         sync_objects_with_flags();
     }
     out << *this;
 }
     
-std::ostream & operator<<(std::ostream& out, const AbModelH3FullProtocol & ab_m_2 ){
+std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m_2 ){
     using namespace ObjexxFCL::fmt;
         
     // All output will be 80 characters - 80 is a nice number, don't you think?

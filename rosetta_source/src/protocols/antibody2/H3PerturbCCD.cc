@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_H3_perturb_ccd_build.cc
+/// @file protocols/antibody2/H3PerturbCCD.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,7 +17,7 @@
 
 
 
-#include <protocols/antibody2/Ab_H3_perturb_ccd_build.hh>
+#include <protocols/antibody2/H3PerturbCCD.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -72,7 +72,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.Ab_H3_perturb_ccd_build");
+static basic::Tracer TR("protocols.antibody2.H3PerturbCCD");
 
 
 
@@ -85,11 +85,11 @@ namespace antibody2 {
     
     
 // default constructor
-Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build() : Mover() {
+H3PerturbCCD::H3PerturbCCD() : Mover() {
     user_defined_ = false;
 }
 
-Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build(  
+H3PerturbCCD::H3PerturbCCD(  
                                                      bool is_camelid, 
                                                      AntibodyInfoOP & antibody_in ) : Mover()     
 {
@@ -98,7 +98,7 @@ Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build(
 }
     
     
-Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build( 
+H3PerturbCCD::H3PerturbCCD( 
                                                  bool current_loop_is_H3, 
                                                  bool is_camelid, 
                                                  AntibodyInfoOP & antibody_in ) : Mover() 
@@ -111,7 +111,7 @@ Ab_H3_perturb_ccd_build::Ab_H3_perturb_ccd_build(
 
     
     
-void Ab_H3_perturb_ccd_build::set_default(){ 
+void H3PerturbCCD::set_default(){ 
 	cutoff_9_       = 16; // size of loop above which 9mer frags are used
 	cutoff_3_       = 6;  // size of loop above which 3mer frags are used
     cen_cst_        = 10.0;
@@ -129,18 +129,18 @@ void Ab_H3_perturb_ccd_build::set_default(){
     
     
 // default destructor
-Ab_H3_perturb_ccd_build::~Ab_H3_perturb_ccd_build() {}
+H3PerturbCCD::~H3PerturbCCD() {}
     
 //clone
-protocols::moves::MoverOP Ab_H3_perturb_ccd_build::clone() const {
-    return( new Ab_H3_perturb_ccd_build() );
+protocols::moves::MoverOP H3PerturbCCD::clone() const {
+    return( new H3PerturbCCD() );
 }
     
     
 
     
     
-void Ab_H3_perturb_ccd_build::init(bool current_loop_is_H3,bool is_camelid, AntibodyInfoOP & antibody_in ) 
+void H3PerturbCCD::init(bool current_loop_is_H3,bool is_camelid, AntibodyInfoOP & antibody_in ) 
 {
     set_default();
     
@@ -170,7 +170,7 @@ void Ab_H3_perturb_ccd_build::init(bool current_loop_is_H3,bool is_camelid, Anti
     
     
     
-void Ab_H3_perturb_ccd_build::finalize_setup( pose::Pose & pose_in ) {  
+void H3PerturbCCD::finalize_setup( pose::Pose & pose_in ) {  
         
     read_and_store_fragments( pose_in );
         
@@ -183,7 +183,7 @@ void Ab_H3_perturb_ccd_build::finalize_setup( pose::Pose & pose_in ) {
     
     
 //APPLY
-void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
+void H3PerturbCCD::apply( pose::Pose & pose_in ) {
     
     
     finalize_setup( pose_in );
@@ -402,7 +402,7 @@ void Ab_H3_perturb_ccd_build::apply( pose::Pose & pose_in ) {
     
     
     
-void Ab_H3_perturb_ccd_build::read_and_store_fragments( core::pose::Pose & pose ) {
+void H3PerturbCCD::read_and_store_fragments( core::pose::Pose & pose ) {
     using namespace chemical;
     using namespace id;
     using namespace fragment;

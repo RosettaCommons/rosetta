@@ -7,25 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+/// @file
+/// @brief
+/// @author Jianqing Xu (xubest@gmail.com)
 
-/// @file protocols/antibody2/Ab_ModelCDRH3.fwd.hh
-/// @brief Build a homology model of an antibody2
-/// @detailed
-///
-///// @author Jianqing Xu (xubest@gmail.com)
-//
-
-#ifndef INCLUDED_protocols_antibody2_AbModelCDRH3_fwd_hh
-#define INCLUDED_protocols_antibody2_AbModelCDRH3_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_CloseOneCDRLoop_fwd_hh
+#define INCLUDED_protocols_antibody2_CloseOneCDRLoop_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
 
-class AbModelCDRH3;
-typedef utility::pointer::owning_ptr< AbModelCDRH3 > AbModelCDRH3OP;
-typedef utility::pointer::owning_ptr< AbModelCDRH3 const > AbModelCDRH3COP;
+class CloseOneCDRLoop;
+typedef utility::pointer::owning_ptr< CloseOneCDRLoop > CloseOneCDRLoopOP;
+typedef utility::pointer::owning_ptr< CloseOneCDRLoop const > CloseOneCDRLoopCOP;
 
 } // antibody2
 } // protocols

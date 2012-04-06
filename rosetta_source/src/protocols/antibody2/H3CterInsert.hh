@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_H3_cter_insert_mover.hh
+/// @file protocols/antibody2/H3CterInsert.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -18,11 +18,11 @@
 
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_H3_cter_insert_mover_hh
-#define INCLUDED_protocols_antibody2_Ab_H3_cter_insert_mover_hh
+#ifndef INCLUDED_protocols_antibody2_H3CterInsert_hh
+#define INCLUDED_protocols_antibody2_H3CterInsert_hh
 
 
-#include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
+#include <protocols/antibody2/H3CterInsert.fwd.hh>
 #include <core/fragment/FragData.hh>
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/loops/Loop.hh>
@@ -45,18 +45,18 @@ namespace antibody2 {
 //////////////////////////////////////////////////////////////////////////
 /// @brief H3 CDR, Fragment Insertion and CCD
 /// @details
-class Ab_H3_cter_insert_mover : public protocols::moves::Mover {
+class H3CterInsert : public protocols::moves::Mover {
 
 public:
     /// @brief default constructor
-	Ab_H3_cter_insert_mover();
+	H3CterInsert();
 
 	/// @brief constructor with arguments
-	Ab_H3_cter_insert_mover(antibody2::AntibodyInfoOP antibody_info, bool camelid );
+	H3CterInsert(antibody2::AntibodyInfoOP antibody_info, bool camelid );
 
 
 	/// @brief default destructor
-	~Ab_H3_cter_insert_mover();
+	~H3CterInsert();
 
     void set_default();
 

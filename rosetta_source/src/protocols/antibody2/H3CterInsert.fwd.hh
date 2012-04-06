@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh
+/// @file protocols/antibody2/H3CterInsert.fwd.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -18,8 +18,8 @@
 
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_H3_cter_insert_mover_fwd_hh
-#define INCLUDED_protocols_antibody2_Ab_H3_cter_insert_mover_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_H3CterInsert_fwd_hh
+#define INCLUDED_protocols_antibody2_H3CterInsert_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -29,9 +29,9 @@
 namespace protocols {
 namespace antibody2 {
     
-    class Ab_H3_cter_insert_mover;
-    typedef utility::pointer::owning_ptr< Ab_H3_cter_insert_mover > Ab_H3_cter_insert_moverOP;
-    typedef utility::pointer::owning_ptr< Ab_H3_cter_insert_mover const > Ab_H3_cter_insert_moverCOP;
+    class H3CterInsert;
+    typedef utility::pointer::owning_ptr< H3CterInsert > H3CterInsertOP;
+    typedef utility::pointer::owning_ptr< H3CterInsert const > H3CterInsertCOP;
     
 }
 }

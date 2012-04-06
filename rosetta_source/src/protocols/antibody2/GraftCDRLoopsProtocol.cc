@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/AbAssembleTemplatesProtocol.cc
+/// @file protocols/antibody2/GraftCDRLoopsProtocol.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -44,11 +44,11 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/antibody2/Ab_GraftOneCDR_Mover.hh>
-#include <protocols/antibody2/Ab_CloseOneCDR_Mover.hh>
+#include <protocols/antibody2/GraftOneCDRLoop.hh>
+#include <protocols/antibody2/CloseOneCDRLoop.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
-#include <protocols/antibody2/AbAssembleTemplatesProtocol.hh>
+#include <protocols/antibody2/GraftCDRLoopsProtocol.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -60,30 +60,30 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.AbAssembleTemplatesProtocol");
+static basic::Tracer TR("protocols.antibody2.GraftCDRLoopsProtocol");
 using namespace core;
 
 namespace protocols {
 namespace antibody2 {
 
 // default constructor
-AbAssembleTemplatesProtocol::AbAssembleTemplatesProtocol() : Mover() {
+GraftCDRLoopsProtocol::GraftCDRLoopsProtocol() : Mover() {
 	user_defined_ = false;
 	init();
 }
 
 // default destructor
-AbAssembleTemplatesProtocol::~AbAssembleTemplatesProtocol() {}
+GraftCDRLoopsProtocol::~GraftCDRLoopsProtocol() {}
 
 //clone
-protocols::moves::MoverOP AbAssembleTemplatesProtocol::clone() const {
-	return( new AbAssembleTemplatesProtocol() );
+protocols::moves::MoverOP GraftCDRLoopsProtocol::clone() const {
+	return( new GraftCDRLoopsProtocol() );
 }
 
     
     
-void AbAssembleTemplatesProtocol::init() {
-	Mover::type( "AbAssembleTemplatesProtocol" );
+void GraftCDRLoopsProtocol::init() {
+	Mover::type( "GraftCDRLoopsProtocol" );
 
 	// setup all the booleans with default values
 	// they will get overwritten by the options and/or passed values
@@ -106,7 +106,7 @@ void AbAssembleTemplatesProtocol::init() {
 
 
     
-void AbAssembleTemplatesProtocol::set_default()
+void GraftCDRLoopsProtocol::set_default()
 {
 	TR <<  "Setting up default settings to all FALSE" << std::endl;
 	graft_l1_  = false;
@@ -123,7 +123,7 @@ void AbAssembleTemplatesProtocol::set_default()
 
     
     
-void AbAssembleTemplatesProtocol::register_options()
+void GraftCDRLoopsProtocol::register_options()
 {
 	using namespace basic::options;
 
@@ -144,7 +144,7 @@ void AbAssembleTemplatesProtocol::register_options()
     
     
     
-void AbAssembleTemplatesProtocol::init_from_options() {
+void GraftCDRLoopsProtocol::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	TR <<  "Reading Options" << std::endl;
@@ -202,7 +202,7 @@ void AbAssembleTemplatesProtocol::init_from_options() {
     
 
     
-void AbAssembleTemplatesProtocol::setup_objects() {
+void GraftCDRLoopsProtocol::setup_objects() {
     ab_info_ = NULL;
     ab_t_info_ = NULL;
     
@@ -217,7 +217,7 @@ void AbAssembleTemplatesProtocol::setup_objects() {
     
     
     
-void AbAssembleTemplatesProtocol::sync_objects_with_flags() {
+void GraftCDRLoopsProtocol::sync_objects_with_flags() {
 
 	flags_and_objects_are_in_sync_ = true;
 	first_apply_with_current_setup_ = true;
@@ -232,7 +232,7 @@ void AbAssembleTemplatesProtocol::sync_objects_with_flags() {
 
     
 
-void AbAssembleTemplatesProtocol::finalize_setup( pose::Pose & frame_pose ) {
+void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
 
 	// check for native and input pose
@@ -275,14 +275,14 @@ void AbAssembleTemplatesProtocol::finalize_setup( pose::Pose & frame_pose ) {
             TR << "                  start (chothia): "<<ab_info_->get_CDR_loop(it->first)->start()<<std::endl;
             TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it->first)->stop()<<std::endl;
             
-            Ab_GraftOneCDR_MoverOP graft_one_cdr = new Ab_GraftOneCDR_Mover( it->first, ab_info_, ab_t_info_, scorefxn_) ;
+            GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it->first, ab_info_, ab_t_info_, scorefxn_) ;
             graft_one_cdr->enable_benchmark_mode( benchmark_ );
             graft_sequence_->add_mover( graft_one_cdr);
             //              graft_sequence_->add_mover( pymol_ );
             
             
             /*
-             Ab_CloseOneCDR_MoverOP closeone( new Ab_CloseOneCDR_Mover( ab_info.get_loop(it->first)->start(),
+             CloseOneCDRLoopOP closeone( new CloseOneCDRLoop( ab_info.get_loop(it->first)->start(),
              ab_info.get_loop(it->first)->stop()   )     );
              closeone->enable_benchmark_mode( benchmark_ );
              closeone->set_pymol( pymol_ );
@@ -307,7 +307,7 @@ void AbAssembleTemplatesProtocol::finalize_setup( pose::Pose & frame_pose ) {
     
     
 //APPLY
-void AbAssembleTemplatesProtocol::apply( pose::Pose & frame_pose ) {
+void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 
     using namespace chemical;
     using namespace id;
@@ -391,11 +391,11 @@ void AbAssembleTemplatesProtocol::apply( pose::Pose & frame_pose ) {
 
 
 
-std::string AbAssembleTemplatesProtocol::get_name() const {
-	return "AbAssembleTemplatesProtocol";
+std::string GraftCDRLoopsProtocol::get_name() const {
+	return "GraftCDRLoopsProtocol";
 }
 
-void AbAssembleTemplatesProtocol::set_packer_default(pose::Pose & pose, bool include_current) {
+void GraftCDRLoopsProtocol::set_packer_default(pose::Pose & pose, bool include_current) {
     //set up packer
     pack::task::PackerTaskOP task;
     task = pack::task::TaskFactory::create_packer_task( pose );
@@ -408,7 +408,7 @@ void AbAssembleTemplatesProtocol::set_packer_default(pose::Pose & pose, bool inc
 
 
 
-void AbAssembleTemplatesProtocol::display_constraint_residues( core::pose::Pose & pose ) {		
+void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose ) {		
     // Detecting di-sulfide bond
 
     Size H1_Cys(0), H3_Cys(0);
@@ -449,14 +449,14 @@ void AbAssembleTemplatesProtocol::display_constraint_residues( core::pose::Pose 
     
     
 /// @details  Show the complete setup of the docking protocol
-void AbAssembleTemplatesProtocol::show( std::ostream & out ) {
+void GraftCDRLoopsProtocol::show( std::ostream & out ) {
     if ( !flags_and_objects_are_in_sync_ ){
         sync_objects_with_flags();
     }
     out << *this;
 }
     
-std::ostream & operator<<(std::ostream& out, const AbAssembleTemplatesProtocol & ab_m_2 )
+std::ostream & operator<<(std::ostream& out, const GraftCDRLoopsProtocol & ab_m_2 )
 {
     using namespace ObjexxFCL::fmt;
         

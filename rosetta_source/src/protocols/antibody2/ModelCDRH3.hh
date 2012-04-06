@@ -8,16 +8,16 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody2/AbModelCDRH3.hh
+/// @file protocols/antibody2/ModelCDRH3.hh
 /// @brief
 ///// @author Jianqing Xu ( xubest@gmail.com )
 //
 
 
-#ifndef INCLUDED_protocols_antibody2_AbModelCDRH3_hh
-#define INCLUDED_protocols_antibody2_AbModelCDRH3_hh
+#ifndef INCLUDED_protocols_antibody2_ModelCDRH3_hh
+#define INCLUDED_protocols_antibody2_ModelCDRH3_hh
 
-#include <protocols/antibody2/AbModelCDRH3.fwd.hh>
+#include <protocols/antibody2/ModelCDRH3.fwd.hh>
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
@@ -29,8 +29,8 @@
 #include <protocols/moves/Mover.hh>
 #include <utility/vector1.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
-#include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
-#include <protocols/antibody2/Ab_H3_cter_insert_mover.fwd.hh>
+#include <protocols/antibody2/H3PerturbCCD.fwd.hh>
+#include <protocols/antibody2/H3CterInsert.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
 
 
@@ -44,16 +44,16 @@ namespace antibody2 {
 //////////////////////////////////////////////////////////////////////////
 /// @brief Ab initio modeling of CDR H3 loop
 /// @details
-class AbModelCDRH3 : public protocols::moves::Mover {
+class ModelCDRH3 : public protocols::moves::Mover {
 public:
 	/// @brief default constructor
-	AbModelCDRH3();
+	ModelCDRH3();
 
 	/// @brief constructor with arguments
-	AbModelCDRH3( bool camelid, bool benchmark, AntibodyInfoOP antibody_info );
+	ModelCDRH3( bool camelid, bool benchmark, AntibodyInfoOP antibody_info );
 
 	/// @brief default destructor
-	~AbModelCDRH3();
+	~ModelCDRH3();
     
 	void set_default();
 	virtual void apply( core::pose::Pose & pose_in );
@@ -161,10 +161,10 @@ private:
 
     void setup_objects();
 
-    Ab_H3_cter_insert_moverOP h3_cter_insert_mover_;
-    Ab_H3_perturb_ccd_buildOP h3_perturb_ccd_build_;
+    H3CterInsertOP h3_cter_insert_mover_;
+    H3PerturbCCDOP h3_perturb_ccd_build_;
     
-}; // class AbModelCDRH3
+}; // class ModelCDRH3
 
 
     

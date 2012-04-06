@@ -12,17 +12,17 @@
 /// @brief forward declaration
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_AbRelaxOneCDRHighRes_fwd_hh
-#define INCLUDED_protocols_antibody2_AbRelaxOneCDRHighRes_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_H3PerturbCCD_fwd_hh
+#define INCLUDED_protocols_antibody2_H3PerturbCCD_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
         
-    class AbRelaxOneCDRHighRes;
-    typedef utility::pointer::owning_ptr< AbRelaxOneCDRHighRes > AbRelaxOneCDRHighResOP;
-    typedef utility::pointer::owning_ptr< AbRelaxOneCDRHighRes const > AbRelaxOneCDRHighResCOP;
+    class H3PerturbCCD;
+    typedef utility::pointer::owning_ptr< H3PerturbCCD > H3PerturbCCDOP;
+    typedef utility::pointer::owning_ptr< H3PerturbCCD const > H3PerturbCCDCOP;
         
 }
 }

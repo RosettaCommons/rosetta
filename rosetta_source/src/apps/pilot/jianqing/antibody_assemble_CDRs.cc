@@ -14,7 +14,7 @@
 
 
 
-#include <protocols/antibody2/AbAssembleTemplatesProtocol.hh>
+#include <protocols/antibody2/GraftCDRLoopsProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
@@ -41,13 +41,13 @@ main( int argc, char * argv [] )
 	using namespace protocols::antibody2;
 	using namespace protocols::jd2;
 
-	AbAssembleTemplatesProtocol::register_options();
+	GraftCDRLoopsProtocol::register_options();
 	protocols::jd2::register_options();
 	// initialize core
 	devel::init(argc, argv);
 
 
-	AbAssembleTemplatesProtocolOP abm = new AbAssembleTemplatesProtocol();
+	GraftCDRLoopsProtocolOP abm = new GraftCDRLoopsProtocol();
     TR<<*abm<<std::endl;
 //    exit(-1);
 

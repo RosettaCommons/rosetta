@@ -14,7 +14,7 @@
 
 
 
-#include <protocols/antibody2/AbModelH3FullProtocol.hh>
+#include <protocols/antibody2/AntibodyModelerProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
@@ -41,13 +41,13 @@ main( int argc, char * argv [] )
 	using namespace protocols::antibody2;
 	using namespace protocols::jd2;
 
-	AbModelH3FullProtocol::register_options();
+	AntibodyModelerProtocol::register_options();
 	protocols::jd2::register_options();
 	// initialize core
 	devel::init(argc, argv);
 
 
-	AbModelH3FullProtocolOP ab_m_h3 = new AbModelH3FullProtocol();
+	AntibodyModelerProtocolOP ab_m_h3 = new AntibodyModelerProtocol();
 	TR<<*ab_m_h3<<std::endl;
 //    exit(-1);
 

@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_H3_perturb_ccd_build.hh
+/// @file protocols/antibody2/H3PerturbCCD.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,8 +17,8 @@
 
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_H3_perturb_ccd_build_hh
-#define INCLUDED_protocols_antibody2_Ab_H3_perturb_ccd_build_hh
+#ifndef INCLUDED_protocols_antibody2_H3PerturbCCD_hh
+#define INCLUDED_protocols_antibody2_H3PerturbCCD_hh
 
 
 #include <protocols/moves/Mover.hh>
@@ -30,7 +30,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
-#include <protocols/antibody2/Ab_H3_perturb_ccd_build.fwd.hh>
+#include <protocols/antibody2/H3PerturbCCD.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
 
@@ -47,35 +47,35 @@ namespace antibody2 {
 
 
 
-class Ab_H3_perturb_ccd_build: public moves::Mover {
+class H3PerturbCCD: public moves::Mover {
 
 
 public:
 
     /// @brief default constructor
-	Ab_H3_perturb_ccd_build();
+	H3PerturbCCD();
 
 	/// @brief constructor with arguments
-    Ab_H3_perturb_ccd_build(
+    H3PerturbCCD(
                             bool is_camelid,
                             AntibodyInfoOP & antibody_in);
 
     /// @brief constructor with arguments
-    Ab_H3_perturb_ccd_build(bool current_loop_is_H3,
+    H3PerturbCCD(bool current_loop_is_H3,
                             bool is_camelid,
                             AntibodyInfoOP & antibody_in);
 
     virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief default destructor
-	~Ab_H3_perturb_ccd_build();
+	~H3PerturbCCD();
 
 
 
     virtual void apply( core::pose::Pose & pose );
 
     virtual std::string get_name() const {
-        return "Ab_H3_perturb_ccd_build";
+        return "H3PerturbCCD";
     }
 
     void read_and_store_fragments( core::pose::Pose & pose );

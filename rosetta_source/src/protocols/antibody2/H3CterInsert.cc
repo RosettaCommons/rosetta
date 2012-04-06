@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_H3_cter_insert_mover.cc
+/// @file protocols/antibody2/H3CterInsert.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -16,7 +16,7 @@
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 
-#include <protocols/antibody2/Ab_H3_cter_insert_mover.hh>
+#include <protocols/antibody2/H3CterInsert.hh>
 
 #include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
@@ -38,7 +38,7 @@
 
 static numeric::random::RandomGenerator RG(19810606);
 
-static basic::Tracer TR("protocols.antibody2.Ab_H3_cter_insert_mover");
+static basic::Tracer TR("protocols.antibody2.H3CterInsert");
 using namespace core;
 
 
@@ -50,14 +50,14 @@ namespace antibody2 {
     
     
         
-Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover() : Mover()   
+H3CterInsert::H3CterInsert() : Mover()   
 {
     user_defined_ = false;    
 }
         
         
         
-Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover(antibody2::AntibodyInfoOP  antibody_info, bool camelid ) : Mover()
+H3CterInsert::H3CterInsert(antibody2::AntibodyInfoOP  antibody_info, bool camelid ) : Mover()
 {
     user_defined_ = true;
     init(antibody_info, camelid, false);
@@ -66,15 +66,15 @@ Ab_H3_cter_insert_mover::Ab_H3_cter_insert_mover(antibody2::AntibodyInfoOP  anti
         
         
         
-// Ab_H3_cter_insert_mover default destructor
-Ab_H3_cter_insert_mover::~Ab_H3_cter_insert_mover() {}
+// H3CterInsert default destructor
+H3CterInsert::~H3CterInsert() {}
         
         
         
         
-void Ab_H3_cter_insert_mover::init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark)
+void H3CterInsert::init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark)
 {
-    Mover::type( "Ab_H3_cter_insert_mover" );
+    Mover::type( "H3CterInsert" );
             
     set_default();
             
@@ -94,25 +94,25 @@ void Ab_H3_cter_insert_mover::init(AntibodyInfoOP antibody_info, bool camelid, b
     
     
         
-void Ab_H3_cter_insert_mover::set_default(){
+void H3CterInsert::set_default(){
     is_camelid_ = false;
     benchmark_ = false;
     use_pymol_diy_ = false;
 }
         
         
-//void Ab_H3_cter_insert_mover::setup_objects(){
+//void H3CterInsert::setup_objects(){
 //}
         
         
         
-//void Ab_H3_cter_insert_mover::finalize_setup(core::pose::Pose & pose ){
+//void H3CterInsert::finalize_setup(core::pose::Pose & pose ){
         
 //}
         
         
         
-void Ab_H3_cter_insert_mover::apply(pose::Pose & pose)    
+void H3CterInsert::apply(pose::Pose & pose)    
 {        
 
 //    finalize_setup(pose);
@@ -194,8 +194,8 @@ void Ab_H3_cter_insert_mover::apply(pose::Pose & pose)
         
         
         
-std::string Ab_H3_cter_insert_mover::get_name() const {
-    return "Ab_H3_cter_insert_mover";
+std::string H3CterInsert::get_name() const {
+    return "H3CterInsert";
 }
         
         
@@ -205,7 +205,7 @@ std::string Ab_H3_cter_insert_mover::get_name() const {
         
         
         
-void Ab_H3_cter_insert_mover::read_H3_cter_fragment(bool is_camelid ) 
+void H3CterInsert::read_H3_cter_fragment(bool is_camelid ) 
 {
     using namespace fragment;
             
