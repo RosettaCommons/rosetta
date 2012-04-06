@@ -93,6 +93,7 @@ MonteCarlo::MonteCarlo(
 	autotemp_( false ),
 	quench_temp_( 0.0 ),
 	last_accept_( 0 ),
+	mc_accepted_( MCA_accepted_score_beat_last ), // init_pose beats the absence of a pose
 	update_boinc_( true ),
 	total_score_of_last_considered_pose_( 0.0 ),
 	last_accepted_score_( 0.0 ),
@@ -117,6 +118,7 @@ MonteCarlo::MonteCarlo(
 	autotemp_( false ),
 	quench_temp_( 0.0 ),
 	last_accept_( 0 ),
+	mc_accepted_( MCA_accepted_score_beat_last ), // an empty pose beats the absence of a pose
 	update_boinc_( true ),
 	total_score_of_last_considered_pose_( 0.0 ),
 	last_accepted_score_( 0.0 ),
