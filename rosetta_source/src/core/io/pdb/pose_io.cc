@@ -434,6 +434,24 @@ traced_dump_pdb(
 // 	pose.conformation().fill_missing_atoms( missing );
 // }
 
+/// @brief Utility function to round a real value to the given precisions (number of digits after the decimal place) for output.
+/// For use solely by extract_scores()
+/// @details Apparently, there isn't an easy way to do this in C++, or even the general goal
+/// of limiting the precision in output streams. (setprecision() with default formatting doesn't
+/// correctly handle very small numbers, and with fixed precision outputs superfluous zeros.)
+
+core::Real restrict_prec( core::Real inval )
+{
+	if( inval >= 1 || inval <= -1 ) { // Don't alter value, as the default precision of 6 works fine, and we avoid rounding artifacts
+		return inval;
+	}
+	core::Real outval;
+	std::stringstream temp;
+	temp << std::fixed << std::setprecision(5) << inval;
+	temp >> outval;
+	return outval;
+}
+
 // @brief Write energies information into an output stream (e.g. the tail of a pdb file)
 void extract_scores(
 	core::pose::Pose const & pose,
@@ -473,19 +491,19 @@ void extract_scores(
 	if ( pose.energies().energies_updated() ) {
 		foreach(core::scoring::ScoreType score_type, score_types){
 			core::Real score = (weights[score_type] * pose.energies().total_energies()[ score_type ]);
-			out << " " << score;
+			out << " " << restrict_prec(score);
 			pose_total += score;
 		}
-		out << " " << pose_total << "\n";
+		out << " " << restrict_prec(pose_total) << "\n";
 		for(core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j) {
 			core::Real rsd_total = 0.0;
 			out << pose.residue(j).name() << "_" << j;
 			foreach(core::scoring::ScoreType score_type, score_types){
 				core::Real score = (weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
-				out << " " << score;
+				out << " " << restrict_prec(score);
 				rsd_total += score;
 			}
-			out << " " << rsd_total << "\n";
+			out << " " << restrict_prec(rsd_total) << "\n";
 		}
 	}
 	out << "#END_POSE_ENERGIES_TABLE " << out.filename() << "\n";
