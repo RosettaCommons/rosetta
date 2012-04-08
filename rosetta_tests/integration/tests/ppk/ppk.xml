@@ -7,7 +7,7 @@
         </FILTERS>
         <MOVERS>
                 <Prepack name=ppk jump_number=1 scorefxn=score12/>
-								<MinMover name=min bb=1>
+								<MinMover name=min bb=1 chi=1>
 									<MoveMap>
 										<Chain number=1 bb=0 chi=0/>
 										<Chain number=2 bb=0 chi=1/>
