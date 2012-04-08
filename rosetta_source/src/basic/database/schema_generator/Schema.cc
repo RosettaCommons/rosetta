@@ -63,14 +63,23 @@ void Schema::init(){
 void Schema::add_foreign_key(ForeignKey key){
 	this->foreign_keys_.push_back(key);
 	//if the foreign key is also a primary key it will have already been added
-	if(!this->columns_.contains(key.column()))
-	{
-		this->columns_.push_back(key.column());
+	
+	utility::vector1<Column> key_cols = key.columns();
+	
+	for(size_t i=1; i <= key_cols.size(); ++i){
+		if(!this->columns_.contains(key_cols[i]))
+		{
+			this->columns_.push_back(key_cols[i]);
+		}
 	}
 }
 
 void Schema::add_column(Column column){
-	this->columns_.push_back(column);
+	//Don't add a column more than once
+	if(!this->columns_.contains(column))
+	{
+		this->columns_.push_back(column);
+	}
 }
 
 void Schema::add_constraint(ConstraintOP constraint){
@@ -87,7 +96,7 @@ std::string Schema::print(){
 		schema_string += it->print();
 	}
 
-	for(int i=1; i<=foreign_keys_.size(); i++){
+	for(size_t i=1; i<=foreign_keys_.size(); i++){
 		schema_string += "," + foreign_keys_[i].print();
 	}
 
@@ -105,7 +114,7 @@ std::string Schema::print(){
 		}
 	}
 
-	for(int i=1; i<=constraints_.size(); i++){
+	for(size_t i=1; i<=constraints_.size(); i++){
 		schema_string += "," + constraints_[i]->print();
 	}
 

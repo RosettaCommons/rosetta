@@ -31,10 +31,13 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
-// Basic Headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
+//Basic Headers
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -60,81 +63,143 @@ using cppdb::result;
 
 string
 ResidueConformationFeatures::type_name() const {
-	return "ProteinResidueConformationFeatures";
+	return "ResidueConformationFeatures";
 }
 
 string
 ResidueConformationFeatures::schema() const {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+	using namespace basic::database::schema_generator;
+	
+	//******nonprotein_residue_conformation******//
+	Column struct_id("struct_id",DbUUID(), false);
+	Column seqpos("seqpos",DbInteger(), false);
+	Column phi("phi",DbReal(), false);
+	Column psi("psi",DbReal(), false);
+	Column omega("omega",DbReal(), false);
+	
+	utility::vector1<Column> non_prot_res_pkeys;
+	non_prot_res_pkeys.push_back(struct_id);
+	non_prot_res_pkeys.push_back(seqpos);
+	
+	utility::vector1<Column> fkey_cols;
+	fkey_cols.push_back(struct_id);
+	fkey_cols.push_back(seqpos);
+	
+	utility::vector1<std::string> fkey_reference_cols;
+	fkey_reference_cols.push_back("struct_id");
+	fkey_reference_cols.push_back("resNum");
+	
+	Schema nonprotein_residue_conformation("nonprotein_residue_conformation", PrimaryKey(non_prot_res_pkeys));
+	nonprotein_residue_conformation.add_column(struct_id);
+	nonprotein_residue_conformation.add_column(seqpos);
+	nonprotein_residue_conformation.add_column(phi);
+	nonprotein_residue_conformation.add_column(psi);
+	nonprotein_residue_conformation.add_column(omega);
+	nonprotein_residue_conformation.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
+	
+	//******nonprotein_residue_angles******//
+	Column chinum("chinum",DbInteger(), false);
+	Column chiangle("chiangle",DbReal(), false);
+	
+	Schema nonprotein_residue_angles("nonprotein_residue_angles", PrimaryKey(non_prot_res_pkeys));
+	nonprotein_residue_angles.add_column(struct_id);
+	nonprotein_residue_angles.add_column(seqpos);
+	nonprotein_residue_angles.add_column(chinum);
+	nonprotein_residue_angles.add_column(chiangle);
+	nonprotein_residue_angles.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
-			"	struct_id BLOB,\n"
-			"	seqpos INTEGER,\n"
-			"	phi REAL,\n"
-			"	psi REAL,\n"
-			"	omega REAL,\n"
-			"	FOREIGN KEY (struct_id, seqpos)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY (struct_id, seqpos));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
-			"	struct_id BLOB,\n"
-			"	seqpos INTEGER,\n"
-			"	chinum INTEGER,\n"
-			"	chiangle REAL,\n"
-			"	FOREIGN KEY (struct_id, seqpos)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-			"	struct_id BLOB,\n"
-			"	seqpos INTEGER,\n"
-			"	atomno INTEGER,\n"
-			"	x REAL,\n"
-			"	y REAL,\n"
-			"	z REAL,\n"
-			"	FOREIGN KEY (struct_id, seqpos)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY (struct_id, seqpos, atomno));\n";
-	}else if(db_mode == "mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
-			"	struct_id BINARY(36),\n"
-			"	seqpos INTEGER,\n"
-			"	phi DOUBLE,\n"
-			"	psi DOUBLE,\n"
-			"	omega DOUBLE,\n"
-			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
-			"	PRIMARY KEY (struct_id, seqpos));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
-			"	struct_id BINARY(36),\n"
-			"	seqpos INTEGER,\n"
-			"	chinum INTEGER,\n"
-			"	chiangle DOUBLE,\n"
-			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
-			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-			"	struct_id BINARY(36),\n"
-			"	seqpos INTEGER,\n"
-			"	atomno INTEGER,\n"
-			"	x DOUBLE,\n"
-			"	y DOUBLE,\n"
-			"	z DOUBLE,\n"
-			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
-			"	PRIMARY KEY (struct_id, seqpos, atomno));";
-	}else
-	{
-		return "";
-	}
+	//******residue_atom_coords******//
+	Column atomno("atomno",DbInteger(), false);
+	Column x("x",DbReal(), false);
+	Column y("y",DbReal(), false);
+	Column z("z",DbReal(), false);
+	
+	utility::vector1<Column> res_atm_coords_pkeys;
+	res_atm_coords_pkeys.push_back(struct_id);
+	res_atm_coords_pkeys.push_back(seqpos);
+	res_atm_coords_pkeys.push_back(atomno);
+	
+	Schema residue_atom_coords("residue_atom_coords", PrimaryKey(res_atm_coords_pkeys));
+	residue_atom_coords.add_column(struct_id);
+	residue_atom_coords.add_column(seqpos);
+	residue_atom_coords.add_column(atomno);
+	residue_atom_coords.add_column(x);
+	residue_atom_coords.add_column(y);
+	residue_atom_coords.add_column(z);
+	residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
+
+	return nonprotein_residue_conformation.print() + "\n" 
+	+ nonprotein_residue_angles.print() + "\n" 
+	+ residue_atom_coords.print();
+	
+//	if(db_mode == "sqlite3")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
+//			"	struct_id BLOB,\n"
+//			"	seqpos INTEGER,\n"
+//			"	phi REAL,\n"
+//			"	psi REAL,\n"
+//			"	omega REAL,\n"
+//			"	FOREIGN KEY (struct_id, seqpos)\n"
+//			"		REFERENCES residues (struct_id, resNum)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED,\n"
+//			"	PRIMARY KEY (struct_id, seqpos));\n"
+//			"\n"
+//			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
+//			"	struct_id BLOB,\n"
+//			"	seqpos INTEGER,\n"
+//			"	chinum INTEGER,\n"
+//			"	chiangle REAL,\n"
+//			"	FOREIGN KEY (struct_id, seqpos)\n"
+//			"		REFERENCES residues (struct_id, resNum)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED,\n"
+//			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
+//			"\n"
+//			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
+//			"	struct_id BLOB,\n"
+//			"	seqpos INTEGER,\n"
+//			"	atomno INTEGER,\n"
+//			"	x REAL,\n"
+//			"	y REAL,\n"
+//			"	z REAL,\n"
+//			"	FOREIGN KEY (struct_id, seqpos)\n"
+//			"		REFERENCES residues (struct_id, resNum)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED,\n"
+//			"	PRIMARY KEY (struct_id, seqpos, atomno));\n";
+//	}else if(db_mode == "mysql")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
+//			"	struct_id BINARY(36),\n"
+//			"	seqpos INTEGER,\n"
+//			"	phi DOUBLE,\n"
+//			"	psi DOUBLE,\n"
+//			"	omega DOUBLE,\n"
+//			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
+//			"	PRIMARY KEY (struct_id, seqpos));\n"
+//			"\n"
+//			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
+//			"	struct_id BINARY(36),\n"
+//			"	seqpos INTEGER,\n"
+//			"	chinum INTEGER,\n"
+//			"	chiangle DOUBLE,\n"
+//			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
+//			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
+//			"\n"
+//			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
+//			"	struct_id BINARY(36),\n"
+//			"	seqpos INTEGER,\n"
+//			"	atomno INTEGER,\n"
+//			"	x DOUBLE,\n"
+//			"	y DOUBLE,\n"
+//			"	z DOUBLE,\n"
+//			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
+//			"	PRIMARY KEY (struct_id, seqpos, atomno));";
+//	}else
+//	{
+//		return "";
+//	}
 
 }
 

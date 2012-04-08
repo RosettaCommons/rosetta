@@ -172,40 +172,40 @@ namespace database {
 static basic::Tracer TR( "basic.database.sql_utils" );
 
 std::string mode_specific_primary_key(bool auto_increment){
-    std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-    if(db_mode == "sqlite3"){
-        if(auto_increment){
-            return "INTEGER PRIMARY KEY AUTOINCREMENT";
-        }
-        else{
-            return "INTEGER PRIMARY KEY UNIQUE";
-        }
-    }
-    else if(db_mode == "mysql"){
-        if(auto_increment){
-            return "INTEGER PRIMARY KEY AUTOINCREMENT";
-        }
-        else{
-            return "INTEGER PRIMARY KEY UNIQUE";
-        }
-    }
-    else if(db_mode == "postgres"){
-        if(auto_increment){
-            return "SERIAL";
-        }
-        else{
-            return "INTEGER PRIMARY KEY";
-        }
-    }
-    else{
-        utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
-    }
+	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+	if(db_mode == "sqlite3"){
+		if(auto_increment){
+			return "INTEGER PRIMARY KEY AUTOINCREMENT";
+		}
+		else{
+			return "INTEGER PRIMARY KEY UNIQUE";
+		}
+	}
+	else if(db_mode == "mysql"){
+		if(auto_increment){
+			return "INTEGER PRIMARY KEY AUTOINCREMENT";
+		}
+		else{
+			return "INTEGER PRIMARY KEY UNIQUE";
+		}
+	}
+	else if(db_mode == "postgres"){
+		if(auto_increment){
+			return "SERIAL";
+		}
+		else{
+			return "INTEGER PRIMARY KEY";
+		}
+	}
+	else{
+		utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
+	}
 }
-    
+
 utility::sql_database::sessionOP get_db_session(
 	string const & db_name,
 	bool const readonly /* = false */,
-  bool const separate_db_per_mpi_process /* = false */
+	bool const separate_db_per_mpi_process /* = false */
 ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -386,6 +386,85 @@ table_exists(
 	} else {
 		return false;
 	}
+}
+
+//This should ideally only be used for reference tables that have static data that needs to only be written once(ex: dssp_codes)
+std::string generate_insert_ignore_stmt(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> values){
+
+	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+	std::string statement_string="";
+
+	if(db_mode == "sqlite3")
+	{
+		statement_string = "INSERT OR IGNORE into "+table_name+"(";
+		for(size_t i=0; i<column_names.size(); i++){
+			statement_string+=column_names[i];
+			if(i != column_names.size()-1){
+			 statement_string+=",";
+			}
+		}
+
+		statement_string+=") VALUES(";
+		for(size_t i=0; i<values.size(); i++){
+			statement_string+=values[i];
+			if(i != column_names.size()-1){
+				statement_string+=",";
+			}
+		}
+		statement_string+=");";
+	}else if(db_mode == "mysql")
+	{
+		statement_string = "INSERT IGNORE into "+table_name+"(";
+		for(size_t i=0; i<column_names.size(); i++){
+			statement_string+=column_names[i];
+			if(i != column_names.size()-1){
+				statement_string+=",";
+			}
+		}
+
+		statement_string+=") VALUES(";
+		for(size_t i=0; i<values.size(); i++){
+			statement_string+=values[i];
+			if(i != column_names.size()-1){
+				statement_string+=",";
+			}
+		}
+		statement_string+=");";
+	}
+	else if(db_mode == "postgres")
+	{
+		//This is a dirty postgres hack and seems to be the easiest workaround for lack of INSERT IGNORE support in postgres
+		statement_string = "DELETE FROM "+table_name+" WHERE ";
+		for(size_t i=0; i<column_names.size(); i++){
+			statement_string+=column_names[i] + "=" + values[i];
+			if(i != column_names.size()-1){
+				statement_string+=" AND ";
+			}
+		}
+		statement_string+=";\n";
+
+		statement_string += "INSERT into "+table_name+"(";
+		for(size_t i=0; i<column_names.size(); i++){
+			statement_string+=column_names[i];
+			if(i != column_names.size()-1){
+				statement_string+=",";
+			}
+		}
+
+		statement_string+=") VALUES(";
+		for(size_t i=0; i<values.size(); i++){
+			statement_string+=values[i];
+			if(i != column_names.size()-1){
+				statement_string+=",";
+			}
+		}
+		statement_string+=");";
+	}
+	else
+	{
+		utility_exit_with_message("unknown database mode");
+	}
+	return statement_string;
 }
 
 void write_schema_to_database(

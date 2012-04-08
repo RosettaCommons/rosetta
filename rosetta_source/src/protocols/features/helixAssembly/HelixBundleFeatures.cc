@@ -39,6 +39,12 @@
 #include <basic/Tracer.hh>
 #include <basic/options/util.hh>
 #include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
+
 
 
 static basic::Tracer TR("protocols.features.helixAssembly.HelixBundleFeatures");
@@ -77,30 +83,75 @@ void HelixBundleFeatures::init_from_options(){
 	}
 }
 
+utility::vector1<std::string>
+HelixBundleFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	dependencies.push_back("ProteinResidueConformationFeatures");
+	dependencies.push_back("ResidueSecondaryStructureFeatures");
+	return dependencies;
+}
+	
 string
 HelixBundleFeatures::schema() const {
-	return
+	using namespace basic::database::schema_generator;
+	
+	/******helix_bundles******/
+	Column bundle_id("bundle_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
+	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	
+	Schema helix_bundles("helix_bundles", PrimaryKey(bundle_id));
+	helix_bundles.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
+	
+	/******bundle_helices******/
+	Column helix_id("helix_id",DbInteger(), false /*not null*/, true /*autoincrement*/);	
+	Schema bundle_helices("bundle_helices", PrimaryKey(helix_id));
+	
+	bundle_helices.add_column(struct_id);
+	
+	Column residue_begin("residue_begin",DbInteger());
+	Column residue_end("residue_end",DbInteger());
+	
+	utility::vector1<std::string> fkey_reference_cols;
+	fkey_reference_cols.push_back("struct_id");
+	fkey_reference_cols.push_back("resNum");
+	
+	utility::vector1<Column> fkey_cols_begin;
+	fkey_cols_begin.push_back(struct_id);
+	fkey_cols_begin.push_back(residue_begin);
+	
+	utility::vector1<Column> fkey_cols_end;
+	fkey_cols_end.push_back(struct_id);
+	fkey_cols_end.push_back(residue_end);
+	
+	ForeignKey bundle_id_fkey(Column("bundle_id",DbInteger(),false), "helix_bundles", "bundle_id");
+	
+	bundle_helices.add_foreign_key(bundle_id_fkey);
+	bundle_helices.add_foreign_key(ForeignKey(fkey_cols_begin, "residues", fkey_reference_cols, true /*defer*/));
+	bundle_helices.add_foreign_key(ForeignKey(fkey_cols_end, "residues", fkey_reference_cols, true /*defer*/));
+	
+	return helix_bundles.print() + "\n" + bundle_helices.print();
 
-	"CREATE TABLE IF NOT EXISTS helix_bundles (\n"
-	"   bundle_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-	"   struct_id BLOB,\n"
-	"	FOREIGN KEY(struct_id)\n"
-	"		REFERENCES structures(struct_id)\n"
-	"		DEFERRABLE INITIALLY DEFERRED);"
-
-	//does this need to be keyed on struct_id too?
-	"CREATE TABLE IF NOT EXISTS bundle_helices (\n"
-	"   helix_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-	"   bundle_id INTEGER,\n"
-	"	residue_begin INTEGER,\n"
-	"	residue_end INTEGER,\n"
-	"	FOREIGN KEY(bundle_id)\n"
-	"		REFERENCES helix_bundles(bundle_id)\n"
-	"		DEFERRABLE INITIALLY DEFERRED,\n"
-	"	FOREIGN KEY(residue_begin,residue_end)\n"
-	"		REFERENCES residues(resNum,resNum)\n"
-	"		DEFERRABLE INITIALLY DEFERRED);"
-	;
+//	"CREATE TABLE IF NOT EXISTS helix_bundles (\n"
+//	"	bundle_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+//	"	struct_id BLOB,\n"
+//	"	FOREIGN KEY(struct_id)\n"
+//	"		REFERENCES structures(struct_id)\n"
+//	"		DEFERRABLE INITIALLY DEFERRED);"
+//
+//	//does this need to be keyed on struct_id too?
+//	"CREATE TABLE IF NOT EXISTS bundle_helices (\n"
+//	"	helix_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+//	"	bundle_id INTEGER,\n"
+//	"	residue_begin INTEGER,\n"
+//	"	residue_end INTEGER,\n"
+//	"	FOREIGN KEY(bundle_id)\n"
+//	"		REFERENCES helix_bundles(bundle_id)\n"
+//	"		DEFERRABLE INITIALLY DEFERRED,\n"
+//	"	FOREIGN KEY(residue_begin,residue_end)\n"
+//	"		REFERENCES residues(resNum,resNum)\n"
+//	"		DEFERRABLE INITIALLY DEFERRED);"
+//	;
 }
 
 //Select all helical segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
@@ -619,34 +670,33 @@ HelixBundleFeatures::report_features(
 					bundle_counter++;
 					TR << "saving bundle: " << bundle_counter << endl;
 
-					string bundle_insert =  "INSERT INTO helix_bundles VALUES (?,?);";
+					string bundle_insert =  "INSERT INTO helix_bundles (struct_id)  VALUES (?);";
 					statement bundle_insert_stmt(basic::database::safely_prepare_statement(bundle_insert,db_session));
-					bundle_insert_stmt.bind_null(1);
-					bundle_insert_stmt.bind(2,struct_id);
+					bundle_insert_stmt.bind(1,struct_id);
 					basic::database::safely_write_to_database(bundle_insert_stmt);
 
 					TR << "Saving helices" << endl;
 					//Get bundle primary key
-					core::Size bundle_id(bundle_insert_stmt.last_insert_id());
+					core::Size bundle_id(bundle_insert_stmt.sequence_last("helix_bundles_bundle_id_seq"));
 
 					TR << "Bundle saved and given id: " << bundle_id << endl;
 
-					string helix_insert =  "INSERT INTO bundle_helices VALUES (?,?,?,?);";
+					string helix_insert =  "INSERT INTO bundle_helices (bundle_id, struct_id, residue_begin, residue_end) VALUES (?,?,?,?);";
 					statement helix_insert_stmt(basic::database::safely_prepare_statement(helix_insert,db_session));
-					helix_insert_stmt.bind_null(1);
-					helix_insert_stmt.bind(2,bundle_id);
+					helix_insert_stmt.bind(1,bundle_id);
+					helix_insert_stmt.bind(2,struct_id);
 					helix_insert_stmt.bind(3,helix_i.get_start());
 					helix_insert_stmt.bind(4,helix_i.get_end());
 					basic::database::safely_write_to_database(helix_insert_stmt);
 
-					helix_insert_stmt.bind_null(1);
-					helix_insert_stmt.bind(2,bundle_id);
+					helix_insert_stmt.bind(1,bundle_id);
+					helix_insert_stmt.bind(2,struct_id);
 					helix_insert_stmt.bind(3,helix_j.get_start());
 					helix_insert_stmt.bind(4,helix_j.get_end());
 					basic::database::safely_write_to_database(helix_insert_stmt);
 
-					helix_insert_stmt.bind_null(1);
-					helix_insert_stmt.bind(2,bundle_id);
+					helix_insert_stmt.bind(1,bundle_id);
+					helix_insert_stmt.bind(2,struct_id);
 					helix_insert_stmt.bind(3,helix_k.get_start());
 					helix_insert_stmt.bind(4,helix_k.get_end());
 					basic::database::safely_write_to_database(helix_insert_stmt);

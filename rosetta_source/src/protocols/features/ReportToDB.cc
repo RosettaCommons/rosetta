@@ -673,6 +673,8 @@ ReportToDB::report_features(
 	for(Size i=1; i <= features_reporters_.size(); ++i){
 		string report_name = features_reporters_[i]->type_name();
 
+		TR << "Reporting " << report_name << std::endl;
+		
 		try {
 			features_reporters_[i]->report_features(
 				pose, relevant_residues, struct_id, db_session);
@@ -690,7 +692,7 @@ ReportToDB::report_features(
 			utility_exit_with_message(err_msg.str());
 		}
 
-		//Need to check for preexisting entry to avoid constraint failure caused by having multiple structures in a batch
+		//Need to check for preexisting entry to avoid constraint failure caused by having multiple structures in a batch. Alternatively, we could add struct_id to batch_reports table
 		//        batch_reports_stmt.bind(1, batch_id_);
 		//        batch_reports_stmt.bind(2, report_name);
 		//        safely_write_to_database(batch_reports_stmt);

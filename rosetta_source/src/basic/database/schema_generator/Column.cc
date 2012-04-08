@@ -36,6 +36,15 @@ auto_increment_(false)
 	init_db_mode();
 }
 
+Column::Column(std::string name, DbDataType type, bool allow_null):
+name_(name),
+type_(type),
+allow_null_(allow_null),
+auto_increment_(false)
+{
+	init_db_mode();
+}
+	
 Column::Column(std::string name, DbDataType type, bool allow_null, bool auto_increment):
 name_(name),
 type_(type),

@@ -30,6 +30,8 @@ public:
 
 	Column(std::string name, DbDataType type);
 
+	Column(std::string name, DbDataType type, bool allow_null);
+	
 	Column(std::string name, DbDataType type, bool allow_null, bool auto_increment);
 
 	void init_db_mode();

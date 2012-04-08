@@ -39,7 +39,7 @@ namespace basic {
 namespace database {
 
 std::string mode_specific_primary_key(bool auto_increment);
-    
+
 utility::sql_database::sessionOP get_db_session(
 	std::string const & db_name,
 	bool const readonly = false,
@@ -57,6 +57,7 @@ void safely_write_to_database(cppdb::statement & statement);
 
 cppdb::result safely_read_from_database(cppdb::statement & statement);
 
+std::string generate_insert_ignore_stmt(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> values);
 
 bool
 table_exists(

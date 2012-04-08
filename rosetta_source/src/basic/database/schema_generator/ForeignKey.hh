@@ -16,6 +16,7 @@
 #ifndef INCLUDED_basic_database_schema_generator_ForeignKey_HH
 #define INCLUDED_basic_database_schema_generator_ForeignKey_HH
 
+#include <utility/vector1.hh>
 #include <basic/database/schema_generator/Column.hh>
 
 //C++ Headers
@@ -33,17 +34,22 @@ public:
 
 	ForeignKey(Column column, std::string reference_table, std::string reference_column, bool defer);
 
+	ForeignKey(utility::vector1<Column> columns,
+			   std::string reference_table,
+			   utility::vector1<std::string> reference_columns,
+			   bool defer);
+	
 	void init_db_mode();
+	
+	utility::vector1<Column> columns();
 
 	std::string print();
-
-	Column column();
 
 private:
 
 	std::string database_mode_;
-	Column column_;
-	std::string reference_column_;
+	utility::vector1<Column> columns_;
+	utility::vector1<std::string> reference_columns_;
 	std::string reference_table_;
 	bool defer_;
 };

@@ -23,7 +23,14 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
+
+//Basic Headers
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -62,33 +69,53 @@ ResidueFeatures::type_name() const { return "ResidueFeatures"; }
 
 string
 ResidueFeatures::schema() const {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS residues (\n"
-			"	struct_id BLOB,\n"
-			"	resNum INTEGER,\n"
-			"	name3 TEXT,\n"
-			"	res_type TEXT,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	CONSTRAINT resNum_is_positive CHECK (resNum >= 1),\n"
-			"	PRIMARY KEY(struct_id, resNum));";
-	}else if(db_mode=="mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS residues (\n"
-			"	struct_id BINARY(36),\n"
-			"	resNum INTEGER,\n"
-			"	name3 TEXT,\n"
-			"	res_type TEXT,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-			"	CONSTRAINT resNum_is_positive CHECK (resNum >= 1),\n"
-			"	PRIMARY KEY(struct_id, resNum));";
-	}
+	using namespace basic::database::schema_generator;
+	
+	Column struct_id("struct_id",DbUUID(), false);
+	Column resNum("resNum",DbInteger(), false);
+	Column name3("name3",DbText(), false);
+	Column res_type("res_type",DbText(), false);
+	
+	utility::vector1<Column> residues_pkey_cols;
+	residues_pkey_cols.push_back(struct_id);
+	residues_pkey_cols.push_back(resNum);
+	
+	Schema residues("residues", PrimaryKey(residues_pkey_cols));
+	residues.add_column(struct_id);
+	residues.add_column(resNum);
+	residues.add_column(name3);
+	residues.add_column(res_type);
+	residues.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
+	
+	//TODO add constraint
+	
+	return residues.print();
+	
+//	if(db_mode == "sqlite3")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS residues (\n"
+//			"	struct_id BLOB,\n"
+//			"	resNum INTEGER,\n"
+//			"	name3 TEXT,\n"
+//			"	res_type TEXT,\n"
+//			"	FOREIGN KEY (struct_id)\n"
+//			"		REFERENCES structures (struct_id)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED,\n"
+//			"	CONSTRAINT resNum_is_positive CHECK (resNum >= 1),\n"
+//			"	PRIMARY KEY(struct_id, resNum));";
+//	}else if(db_mode=="mysql")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS residues (\n"
+//			"	struct_id BINARY(36),\n"
+//			"	resNum INTEGER,\n"
+//			"	name3 TEXT,\n"
+//			"	res_type TEXT,\n"
+//			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
+//			"	CONSTRAINT resNum_is_positive CHECK (resNum >= 1),\n"
+//			"	PRIMARY KEY(struct_id, resNum));";
+//	}
 }
 
 utility::vector1<std::string>

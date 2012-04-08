@@ -60,7 +60,7 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
-    
+
 ProtocolFeatures::ProtocolFeatures(){}
 
 ProtocolFeatures::ProtocolFeatures( ProtocolFeatures const & ) :
@@ -74,38 +74,38 @@ ProtocolFeatures::type_name() const { return "ProtocolFeatures"; }
 
 string
 ProtocolFeatures::schema() const {
-    using namespace basic::database::schema_generator;
-    
+	using namespace basic::database::schema_generator;
+
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 	bool protocol_id_mode = basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user();
-    
-    if(protocol_id_mode){
-        
-        Column protocol_id("protocol_id",DbInteger());
-        Schema protocols("protocols", PrimaryKey(protocol_id));
 
-        protocols.add_column( Column("specified_options", DbText()) );
-        protocols.add_column( Column("command_line", DbText()) );
-        protocols.add_column( Column("svn_url", DbText()) );
-        protocols.add_column( Column("svn_version", DbText()) );
-        protocols.add_column( Column("script", DbText()) );
-        return protocols.print();
-    }
-    
-    else{
-        
-        Column protocol_id("protocol_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
-        Schema protocols("protocols", PrimaryKey(protocol_id));
-        
-        protocols.add_column( Column("specified_options", DbText()) );
-        protocols.add_column( Column("command_line", DbText()) );
-        protocols.add_column( Column("svn_url", DbText()) );
-        protocols.add_column( Column("svn_version", DbText()) );
-        protocols.add_column( Column("script", DbText()) );
-        return protocols.print();
-    }
-    
-    
+	if(protocol_id_mode){
+
+		Column protocol_id("protocol_id",DbInteger());
+		Schema protocols("protocols", PrimaryKey(protocol_id));
+
+		protocols.add_column( Column("specified_options", DbText()) );
+		protocols.add_column( Column("command_line", DbText()) );
+		protocols.add_column( Column("svn_url", DbText()) );
+		protocols.add_column( Column("svn_version", DbText()) );
+		protocols.add_column( Column("script", DbText()) );
+		return protocols.print();
+	}
+
+	else{
+
+		Column protocol_id("protocol_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
+		Schema protocols("protocols", PrimaryKey(protocol_id));
+
+		protocols.add_column( Column("specified_options", DbText()) );
+		protocols.add_column( Column("command_line", DbText()) );
+		protocols.add_column( Column("svn_url", DbText()) );
+		protocols.add_column( Column("svn_version", DbText()) );
+		protocols.add_column( Column("script", DbText()) );
+		return protocols.print();
+	}
+
+
 }
 
 utility::vector1<std::string>

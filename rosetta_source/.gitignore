@@ -10,8 +10,7 @@
 /build/*
 /bin/*
 /html/
-/external/dbio/mysql/*.h
-/external/dbio/mysql/*/*
+/external/dbio/mysql/**
 /src/core/svn_version.cc
 /src/pilot_apps.src.settings
 /src/pilot_apps.src.settings.my

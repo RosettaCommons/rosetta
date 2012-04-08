@@ -1,0 +1,2 @@
+To add mysql or postgres support place the appropriate header files either the
+mysql or postgres directory and compile with extras=mysql or extras=postgres.
