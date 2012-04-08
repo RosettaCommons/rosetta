@@ -258,16 +258,11 @@ void MinMover::parse_opts(
 
 void MinMover::parse_chi_and_bb( TagPtr const tag )
 {
-	if ( tag->hasOption("chi") ) {
-		bool const value( tag->getOption<bool>("chi") );
-		if ( ! movemap_ ) movemap_ = new MoveMap;
-		movemap_->set_chi(value);
-	}
-	if ( tag->hasOption("bb") ) {
-		bool const value( tag->getOption<bool>("bb") );
-		if ( ! movemap_ ) movemap_ = new MoveMap;
-		movemap_->set_bb(value);
-	}
+	if ( ! movemap_ ) movemap_ = new MoveMap;
+	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
+	movemap_->set_chi( chi );
+	movemap_->set_bb( bb );
+	TR<<"Options chi, bb: "<<chi<<", "<<bb<<std::endl;
 }
 
 
