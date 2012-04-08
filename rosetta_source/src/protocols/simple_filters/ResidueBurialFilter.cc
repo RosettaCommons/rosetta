@@ -68,12 +68,13 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 /// This looks like recursion but is really quite limited, b/c the call below to rbf.apply uses the functionality where task_factory() is off, so it goes by a different route, and could never go to a depth of more than 2
 		utility::vector1< core::Size > const target_residues( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
 		core::Size const total_designable( target_residues.size() );
+		residue_burial_filter_tracer<<"total target residues: "<<total_designable<<". At least "<<(core::Real)total_designable * (core::Real)residue_fraction_buried()<<" should be buried to pass."<<std::endl;
 		core::Size count_buried( 0 );
 		foreach( core::Size const resi, target_residues ){
 			ResidueBurialFilter const rbf( resi/*target_residue*/, neighbors_, distance_threshold_ );
 			if( rbf.apply( pose ) ){
 				count_buried++;
-				if( (core::Real ) ( count_buried / total_designable ) >= residue_fraction_buried() )
+				if( (core::Real ) ( (core::Real) count_buried / (core::Real) total_designable ) >= residue_fraction_buried() )
 					return true;
 			}
 		}
