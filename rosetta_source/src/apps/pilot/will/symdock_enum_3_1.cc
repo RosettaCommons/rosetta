@@ -52,7 +52,7 @@ DONE
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
-#include <apps/pilot/will/xyzStripeHash.hh>
+//#include <numeric/geometry/hashing/xyzStripeHash.hh>
 
 #ifdef USE_OPENMP
 #include <omp.h>
@@ -179,24 +179,24 @@ void dump_points_pdb(utility::vector1<Vecf> const & p, Vec t, std::string fn) {
 	}
 	o.close();
 }
-void dump_points_pdb(xyzStripeHash<double>::float4 const *p, int n, Vec t, std::string fn) {
-	using namespace ObjexxFCL::fmt;
-	std::ofstream o(fn.c_str());
-	for(Size i = 0; i < n; ++i) {
-		std::string rn = "VIZ";
-		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x-t.x())<<F(8,3,p[i].y-t.y())<<F(8,3,p[i].z-t.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	}
-	o.close();
-}
-void dump_points_pdb(xyzStripeHash<double>::float4 const *p, int n, std::string fn) {
-	using namespace ObjexxFCL::fmt;
-	std::ofstream o(fn.c_str());
-	for(Size i = 0; i < n; ++i) {
-		std::string rn = "VIZ";
-		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x)<<F(8,3,p[i].y)<<F(8,3,p[i].z)<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-	}
-	o.close();
-}
+// void dump_points_pdb(numeric::geometry::hashing::xyzStripeHash<double>::float4 const *p, int n, Vec t, std::string fn) {
+// 	using namespace ObjexxFCL::fmt;
+// 	std::ofstream o(fn.c_str());
+// 	for(Size i = 0; i < n; ++i) {
+// 		std::string rn = "VIZ";
+// 		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x-t.x())<<F(8,3,p[i].y-t.y())<<F(8,3,p[i].z-t.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+// 	}
+// 	o.close();
+// }
+// void dump_points_pdb(numeric::geometry::hashing::xyzStripeHash<double>::float4 const *p, int n, std::string fn) {
+// 	using namespace ObjexxFCL::fmt;
+// 	std::ofstream o(fn.c_str());
+// 	for(Size i = 0; i < n; ++i) {
+// 		std::string rn = "VIZ";
+// 		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x)<<F(8,3,p[i].y)<<F(8,3,p[i].z)<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+// 	}
+// 	o.close();
+// }
 void trans_pose( Pose & pose, Vecf const & trans, Size start=1, Size end=0 ) {
 	if(0==end) end = pose.n_residue();
 	for(Size ir = start; ir <= end; ++ir) {
@@ -290,63 +290,6 @@ int compareLMAX(const LMAX a,const LMAX b) {
 	return a.score > b.score;
 }
 
-core::pose::Pose ntrim(core::pose::Pose const & pose, int Nsym) {
-	core::pose::Pose trimmed(pose);
-	for(int i=1; i <= Nsym; ++i) {
-		trimmed.conformation().delete_residue_slow(1); // This is probably not quite right.
-	}
-	return trimmed;
-}
-
-void trim_tails(core::pose::Pose & pose, int Nsym) {
-	// for(int i = 1; i < )
-}
-
-void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood ) {
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	core::id::AtomID_Map<Real> atom_sasa;
-	core::id::AtomID_Map<bool> atom_subset;
-	utility::vector1<Real> rsd_sasa;
-	core::pose::initialize_atomid_map(atom_subset, pose, false);
-	for(int i = 2; i <= pose.n_residue()-1; ++i) {
-		for(int ia = 1; ia <= pose.residue(i).nheavyatoms(); ++ia) {
-			if(pose.residue(i).atom_is_backbone(ia))
-				atom_subset[core::id::AtomID(ia,i)] = true;
-		}
-	}
-	atom_subset[core::id::AtomID(1,1)] = true;
-	atom_subset[core::id::AtomID(3,pose.n_residue())] = true;
-	core::scoring::calc_per_atom_sasa( pose, atom_sasa,rsd_sasa, 4.0, false, atom_subset );
-	Real nexpose = atom_sasa[core::id::AtomID(1,        1       )] / 12.56637 / 5.44 / 5.44;
-	Real cexpose = atom_sasa[core::id::AtomID(3,pose.n_residue())] / 12.56637 / 5.44 / 5.44;
-
-	Vec nt = pose.residue(        1       ).xyz("N");
-	Vec ct = pose.residue(pose.n_residue()).xyz("C");
-	Real nang = angle_degrees(nt,Vec(0,0,0),Vec(nt.x(),nt.y(),0));
-	Real cang = angle_degrees(ct,Vec(0,0,0),Vec(ct.x(),ct.y(),0));
-	ntgood = nexpose > option[tcdock::term_min_expose]() && nang < option[tcdock::term_max_angle]();
-	ctgood = cexpose > option[tcdock::term_min_expose]() && cang < option[tcdock::term_max_angle]();
-
-	cout << nexpose << " " << nang << endl;
-	cout << cexpose << " " << cang << endl;
-	// core::Real nnt=0.0,nct=0.0,gnt=0.0,gct=0.0;
-	// for(int ir=1; ir<=pose.n_residue(); ++ir) {
-	// 	for(int ia=1; ia<=5; ++ia) {
-	// 		Vec x = pose.residue(ir).xyz(ia);
-	// 		if(angle_degrees(x,Vec(0,0,0),nt) < 15.0 &&  ) {
-	// 			nnt += 1.0;
-	// 			if( nt.normalized().dot(x) < nt.length() )
-	// 				gnt += 1.0;
-	// 		}
-	// 		if(angle_degrees(x,Vec(0,0,0),ct) < 15.0 ) {
-	// 			nct += 1.0;
-	// 			if( ct.normalized().dot(x) < ct.length() )
-	// 				gct += 1.0;
-	// 		}
-	// 	}
-	// }
-}
 
 
 
@@ -404,8 +347,8 @@ struct TCDock {
 		if(option[tcdock::reverse]()) rot_pose(cmp1in_,Vecf(0,1,0),180.0);
 
 		bool nt1good=1,nt2good=1,ct1good=1,ct2good=1;
-		termini_exposed(cmp1in_,nt1good,ct1good);
-		termini_exposed(cmp2in_,nt2good,ct2good);
+		protocols::sic_dock::termini_exposed(cmp1in_,nt1good,ct1good);
+		protocols::sic_dock::termini_exposed(cmp2in_,nt2good,ct2good);
 		cout << cmp1pdb << " nterm 1: " << nt1good << endl;
 		cout << cmp1pdb << " cterm 1: " << ct1good << endl;
 		cout << cmp2pdb << " nterm 2: " << nt2good << endl;
@@ -493,7 +436,7 @@ struct TCDock {
 
 		sics_.resize(num_threads());
 		for(int i = 0; i < num_threads(); ++i) sics_[i] = new protocols::sic_dock::SICFast;
-		for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp1axs_,cmp2in_,cmp2cbs_,cmp2wts_,cmp2axs_);
+		for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp2in_,cmp2cbs_,cmp2wts_);
 
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
 		cmp2mnpos_.resize(cmp2nangle_,0.0);
@@ -557,6 +500,14 @@ struct TCDock {
 			vector1<double>             & cmpdsneg( i12?cmp1dsneg_:cmp2dsneg_ );
 			ObjexxFCL::FArray2D<double> & cmpcbpos( i12?cmp1cbpos_:cmp2cbpos_ );
 			ObjexxFCL::FArray2D<double> & cmpcbneg( i12?cmp1cbneg_:cmp2cbneg_ );
+
+			std::vector<protocols::sic_dock::SICFast> sics;
+			sics.resize(num_threads());
+			for(int i = 0; i < num_threads(); ++i){
+				sics[i].init(i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_,
+										 i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_);
+			}
+
 			for(int ipn = 0; ipn < 2; ++ipn) {
 				#ifdef USE_OPENMP
 				#pragma omp parallel for schedule(dynamic,1)
@@ -570,7 +521,10 @@ struct TCDock {
 					Vecf const axis2 = swap_axis( cbB,i12?cmp1type_:cmp2type_);
 					Vecf const sicaxis = ipn ? (axis2-axis).normalized() : (axis-axis2).normalized();
 					double score = 0;
-					double const d = sics_[thread_num()]->slide_into_contact(ptsA,ptsB,cbA,cbB,sicaxis,score,icmp,icmp,axis,axis2,i12,i12);
+					core::kinematics::Stub xa,xb;
+					xa.M = rotation_matrix_degrees(axis ,(double)icmp);
+					xb.M = rotation_matrix_degrees(axis2,(double)icmp);
+					double const d = sics[thread_num()].slide_into_contact(ptsA,ptsB,cbA,cbB,sicaxis,score,xa,xb);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmppos! "+ObjexxFCL::string_of(icmp));
 					(ipn?cmpmnpos:cmpmnneg)[icmp+1] = (ipn?-1.0:1.0) * d/2.0/sin( angle_radians(axis2,Vecf(0,0,0),axis)/2.0 );
 					(ipn?cmpdspos:cmpdsneg)[icmp+1] = (ipn?-1.0:1.0) * d;
@@ -770,7 +724,11 @@ struct TCDock {
 			// }
 			//std::cout << "calc" << std::endl;
 
-			double const d = sics_[thread_num()]->slide_into_contact(pb,pa,cbb,cba,sicaxis,icbc,icmp2,icmp1,cmp2axs_,cmp1axs_,false,true);
+			core::kinematics::Stub xa,xb;
+			xa.M = rotation_matrix_degrees(cmp2axs_,(double)icmp2);
+			xb.M = rotation_matrix_degrees(cmp1axs_,(double)icmp1);
+
+			double const d = sics_[thread_num()]->slide_into_contact(pb,pa,cbb,cba,sicaxis,icbc,xa,xb);
 			dori = d;
 			if(d > 0) utility_exit_with_message("ZERO!!");
 			double const theta=(double)iori;
@@ -1252,37 +1210,5 @@ int main (int argc, char *argv[]) {
 			}
 		}
 	}
-	cout << "DONE testing: move SICFast to protocols" << endl;
+	cout << "DONE testing: some change to sicfast" << endl;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

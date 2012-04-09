@@ -1,5 +1,9 @@
-#include <apps/pilot/will/xyzStripeHash.hh>
-#include <apps/pilot/will/xyzStripeHashPose.hh>
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+// :noTabs=false:tabSize=4:indentSize=4:
+
+#include <numeric/geometry/hashing/xyzStripeHash.hh>
+#include <protocols/sic_dock/xyzStripeHashPose.hh>
 //#include <apps/pilot/will/gpu/gpu_refold.hh>
 
 #include <basic/options/option.hh>
@@ -82,7 +86,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	xyzStripeHashPose xyzhash(DIST,p,ALL);
+	protocols::sic_dock::xyzStripeHashPose xyzhash(DIST,p,protocols::sic_dock::ALL);
 	xyzhash.sanity_check();
 
 	if(basic::options::option[basic::options::OptionKeys::dump_hash]()) {
@@ -126,7 +130,7 @@ int main(int argc, char *argv[]) {
 	// mx += Vec(15,15,15);
 	mn = Vec(-10,-10,-10);
 	mx = Vec( 50, 50, 50);
-	
+
 	std::cout << "ncells: " << xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim() << std::endl;
 	std::cout << "Bounds: " << mn << " " << mx << std::endl;
 	std::cout << "Natom: " << real_natom << " " << xyzhash.natom() << std::endl;

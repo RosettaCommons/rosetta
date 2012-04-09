@@ -1,12 +1,20 @@
-#ifndef INCLUDED_apps_pilot_will_xyzStripeHashPose_hh
-#define INCLUDED_apps_pilot_will_xyzStripeHashPose_hh
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+// :noTabs=false:tabSize=4:indentSize=4:
 
-#include <apps/pilot/will/xyzStripeHash.hh>
+#ifndef INCLUDED_protocols_sic_dock_xyzStripeHashPose_hh
+#define INCLUDED_protocols_sic_dock_xyzStripeHashPose_hh
+
+#include <numeric/geometry/hashing/xyzStripeHash.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
+
+namespace protocols {
+namespace sic_dock {
+
 
 enum xyzStripeHashPoseMode {
 	NBR,
@@ -17,10 +25,10 @@ enum xyzStripeHashPoseMode {
 	ALL
 };
 
-class xyzStripeHashPose : public xyzStripeHash<double> {
+class xyzStripeHashPose : public numeric::geometry::hashing::xyzStripeHash<double> {
 public:
   xyzStripeHashPose(double radius) : xyzStripeHash<double>(radius) {}
-  xyzStripeHashPose(double radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : xyzStripeHash<double>(radius) {
+  xyzStripeHashPose(double radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : numeric::geometry::hashing::xyzStripeHash<double>(radius) {
 	  init_with_pose(p,BB);
   }
   void init_with_pose(core::pose::Pose const & p, xyzStripeHashPoseMode m = BB) {
@@ -76,5 +84,9 @@ public:
   }
 
 };
+
+
+} // namespace sic_dock
+} // namespace protocols
 
 #endif

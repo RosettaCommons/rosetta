@@ -1,5 +1,9 @@
-#include <apps/pilot/will/xyzStripeHash.hh>
-#include <apps/pilot/will/xyzStripeHashPose.hh>
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+// :noTabs=false:tabSize=4:indentSize=4:
+
+#include <numeric/geometry/hashing/xyzStripeHash.hh>
+#include <protocols/sic_dock/xyzStripeHashPose.hh>
 //#include <apps/pilot/will/gpu/gpu_refold.hh>
 
 #include <basic/options/option.hh>
@@ -66,8 +70,8 @@ int main(int argc, char *argv[]) {
 	Real const DIST(option[OptionKeys::clash_dis]());
 	Real const DIST2(DIST*DIST);	
 
-  core::pose::Pose p;
-  core::import_pose::pose_from_pdb(p,option[OptionKeys::in::file::s]()[1]);
+	core::pose::Pose p;
+	core::import_pose::pose_from_pdb(p,option[OptionKeys::in::file::s]()[1]);
 	if(false) {
 		for(Size ir = 1; ir <= p.n_residue(); ++ir) {
 			if( p.residue(ir).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(p,ir);
@@ -79,7 +83,7 @@ int main(int argc, char *argv[]) {
 	
 	utility_exit_with_message("TEST GET SURF PTS");
 	
-  xyzStripeHashPose xyzhash(DIST,p,ALL);
+	protocols::sic_dock::xyzStripeHashPose xyzhash(DIST,p,protocols::sic_dock::ALL);
 	xyzhash.sanity_check();
 
 	using namespace ObjexxFCL::fmt;

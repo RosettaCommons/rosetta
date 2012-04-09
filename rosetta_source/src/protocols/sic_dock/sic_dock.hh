@@ -2,92 +2,96 @@
 // vi: set ts=2 noet:
 // :noTabs=false:tabSize=4:indentSize=4:
 
-
+#ifndef INCLUDED_protocols_sic_dock_sic_dock_hh
+#define INCLUDED_protocols_sic_dock_sic_dock_hh
 
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
+#include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <protocols/sic_dock/xyzStripeHashPose.fwd.hh>
 
-struct xyzStripeHashPose;
 
 namespace protocols {
-  namespace sic_dock {
+namespace sic_dock {
 
-    struct SICFast {
-      typedef numeric::xyzVector<core::Real> Vec;
+	class SICFast {
+	public:
+		typedef numeric::xyzVector<core::Real> Vec;
 
-      double xmx1,xmn1,ymx1,ymn1,xmx,xmn,ymx,ymn;
-      double CTD,CLD,CTD2,CLD2,BIN;
-      int xlb,ylb,xub,yub;
-      xyzStripeHashPose *xh1_bb_,*xh2_bb_,*xh1_cb_,*xh2_cb_;
-      utility::vector1<double> w1_,w2_;
-      ObjexxFCL::FArray2D<Vec> ha,hb;
+		SICFast();
 
+		virtual ~SICFast();
 
+		void init(
+							core::pose::Pose         const & cmp1in,
+							utility::vector1<Vec>            cmp1cbs,
+							utility::vector1<double> const & cmp1wts,
+							core::pose::Pose         const & cmp2in,
+							utility::vector1<Vec>            cmp2cbs,
+							utility::vector1<double> const & cmp2wts
+							);
 
-    public:
-      SICFast();
-
-      void init(
-		core::pose::Pose const & cmp1in,
-		utility::vector1<Vec> cmp1cbs, 
-		utility::vector1<double> const & cmp1wts, 
-		Vec cmp1axs,
-		core::pose::Pose const & cmp2in,
-		utility::vector1<Vec> cmp2cbs,
-		utility::vector1<double> const & cmp2wts,
-		Vec cmp2axs
-		);
-
-      double slide_into_contact(
-				utility::vector1<Vec> pa,
-				utility::vector1<Vec> pb,
-				utility::vector1<Vec> const & cba, 
-				utility::vector1<Vec> const & cbb, 
-				Vec ori, 
-				double & score,
-				double anga, 
-				double angb, 
-				Vec axsa, 
-				Vec axsb,
-				bool cmp1or2_a, 
-				bool cmp1or2_b
-				);
+		double slide_into_contact(
+															utility::vector1<Vec>          pa,
+															utility::vector1<Vec>          pb,
+															utility::vector1<Vec>  const & cba,
+															utility::vector1<Vec>  const & cbb,
+															Vec                            ori,
+															double                       & score,
+															core::kinematics::Stub const & xa,
+															core::kinematics::Stub const & xb
+															);
 
 
-    private:
-      void rotate_points(utility::vector1<Vec> & pa, utility::vector1<Vec> & pb, Vec ori);
+	private:
+		double refine_mindis_with_xyzHash(utility::vector1<Vec> const & pa, utility::vector1<Vec> const & pb, double mindis, Vec ori,
+																			core::kinematics::Stub const & xa, core::kinematics::Stub const & xb);
+		double get_score(utility::vector1<Vec> const & cba, utility::vector1<Vec> const & cbb, Vec ori, double mindis,
+										 core::kinematics::Stub const & xa, core::kinematics::Stub const & xb);
+		void rotate_points(utility::vector1<Vec> & pa, utility::vector1<Vec> & pb, Vec ori);
+		void get_bounds(utility::vector1<Vec> & pa, utility::vector1<Vec> & pb);
+		void fill_plane_hash(utility::vector1<Vec> & pa, utility::vector1<Vec> & pb);
+		double get_mindis_with_plane_hashes();
 
-      void get_bounds(utility::vector1<Vec> & pa, utility::vector1<Vec> & pb);
+	private:
+		double xmx1,xmn1,ymx1,ymn1,xmx,xmn,ymx,ymn;
+		double CTD,CLD,CTD2,CLD2,BIN;
+		int xlb,ylb,xub,yub;
+		xyzStripeHashPose *xh2_bb_,*xh2_cb_;
+		utility::vector1<double> w1_,w2_;
+		ObjexxFCL::FArray2D<Vec> ha,hb;
 
-      double get_score(utility::vector1<Vec> const & cba, utility::vector1<Vec> const & cbb, Vec ori, double mindis,
-		       double anga, double angb, Vec axsa, Vec axsb, bool cmp1or2_a, bool cmp1or2_b);
-
-      double refine_mindis_with_xyzHash(utility::vector1<Vec> const & pa, utility::vector1<Vec> const & pb, double mindis, Vec ori,
-					double anga, double angb, Vec axsa, Vec axsb, bool cmp1or2_a, bool cmp1or2_b);
-
-      void fill_plane_hash(utility::vector1<Vec> & pa, utility::vector1<Vec> & pb);
-
-      double get_mindis_with_plane_hashes();
-
-    };
-    int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t) {
-      if( grid(i,j,k) <= t ) return 0;
-      grid(i,j,k) = t;
-      int nmark = 1;
-      if(i>1           ) nmark += flood_fill3D(i-1,j  ,k  ,grid,t);
-      if(i<grid.size1()) nmark += flood_fill3D(i+1,j  ,k  ,grid,t);
-      if(j>1           ) nmark += flood_fill3D(i  ,j-1,k  ,grid,t);
-      if(j<grid.size2()) nmark += flood_fill3D(i  ,j+1,k  ,grid,t);
-      if(k>1           ) nmark += flood_fill3D(i  ,j  ,k-1,grid,t);
-      if(k<grid.size3()) nmark += flood_fill3D(i  ,j  ,k+1,grid,t);
-      return nmark;
-    }
+	};
 
 
-  } // namespace sic_dock
+
+
+	int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t);
+
+
+
+
+	// core::pose::Pose ntrim(core::pose::Pose const & pose, int Nsym) {
+	// 	core::pose::Pose trimmed(pose);
+	// 	for(int i=1; i <= Nsym; ++i) {
+	// 		trimmed.conformation().delete_residue_slow(1); // This is probably not quite right.
+	// 	}
+	// 	return trimmed;
+	// }
+
+	// void trim_tails(core::pose::Pose & pose, int Nsym) {
+	// 	// for(int i = 1; i < )
+	// }
+
+	void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood );
+
+
+} // namespace sic_dock
 } // namespace protocols
+
+#endif

@@ -1,10 +1,16 @@
-#ifndef INCLUDED_apps_pilot_will_xyzStripeHash_hh
-#define INCLUDED_apps_pilot_will_xyzStripeHash_hh
+#ifndef INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
+#define INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
 
 #include <utility/vector1.hh>
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 #include <ObjexxFCL/format.hh>
+
+
+namespace numeric {
+namespace geometry {
+namespace hashing {
+
 
 template<typename T>
 class xyzStripeHash {
@@ -251,5 +257,8 @@ inline short const ushort_min(ushort const a, ushort const b) { return (a < b) ?
 inline short const ushort_max(ushort const a, ushort const b) { return (a > b) ? a : b; }
 
 
+} // namespace hashing
+} // namespace geometry
+} // namespace numeric
 
 #endif
