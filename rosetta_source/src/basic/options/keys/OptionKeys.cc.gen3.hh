@@ -1,6 +1,3 @@
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
-namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
 namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
@@ -566,6 +563,12 @@ namespace pepspec { RealOptionKey const prep_trans_std_dev( "pepspec:prep_trans_
 namespace pepspec { RealOptionKey const prep_rot_std_dev( "pepspec:prep_rot_std_dev" );  }
 namespace pepspec { BooleanOptionKey const seq_align( "pepspec:seq_align" );  }
 namespace pepspec { StringOptionKey const prep_align_prot_to( "pepspec:prep_align_prot_to" );  }
+namespace sicdock { BooleanOptionKey const sicdock( "sicdock" );  }
+namespace sicdock { RealOptionKey const clash_dis( "sicdock:clash_dis" );  }
+namespace sicdock { RealOptionKey const contact_dis( "sicdock:contact_dis" );  }
+namespace sicdock { RealOptionKey const hash_2D_vs_3D( "sicdock:hash_2D_vs_3D" );  }
+namespace sicdock { RealOptionKey const term_min_expose( "sicdock:term_min_expose" );  }
+namespace sicdock { RealOptionKey const term_max_angle( "sicdock:term_max_angle" );  }
 namespace orbitals { BooleanOptionKey const orbitals( "orbitals" );  }
 namespace orbitals { BooleanOptionKey const Hpol( "orbitals:Hpol" );  }
 namespace orbitals { BooleanOptionKey const Haro( "orbitals:Haro" );  }

@@ -4653,6 +4653,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	),
 
+	###############################################################################
+	## peptide specificity / flexible backbone design options (chrisk)
+	Option_Group( 'sicdock',
+		Option( 'clash_dis'    ,    'Real', default='3.5' , desc="max acceptable clash dis"),
+		Option( 'contact_dis'  ,    'Real', default='12.0', desc="max acceptable contact dis"),
+		Option( 'hash_2D_vs_3D',    'Real', default='1.3' , desc="grid spacing top 2D hash"),
+		Option( 'term_min_expose',  'Real', default='0.1' , desc="terminus at least X exposed"),
+		Option( 'term_max_angle',   'Real', default='45.0' , desc="terminus at most X degrees from XY plane"),
+	),
 
 ################STEVEN COMBS#######################
 	Option_Group( 'orbitals',
