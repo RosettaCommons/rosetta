@@ -738,7 +738,7 @@ void run() {
 					if( fabs(ang-ATET)*(isct.distance(c3f1))*0.01745418/3.0 > option[bpytoi::max_sym_error]() && // sin(x) ~ x for small x
 					    fabs(ang-AOCT)*(isct.distance(c3f1))*0.01745418/3.0 > option[bpytoi::max_sym_error]() && // sin(x) ~ x for small x
 					    fabs(ang-AICS)*(isct.distance(c3f1))*0.01745418/3.0 > option[bpytoi::max_sym_error]() ){ /*SYM_GEOM*/ continue; }; // sin(x) ~ x for small x
-					
+
 					Real const dang = dihedral_degrees( c3f1,CG,CB,base.residue(ibpy).xyz(iZN) );
 					base.set_chi(2,ibpy, base.chi(2,ibpy) + dang );
 
@@ -898,8 +898,46 @@ void run() {
 
 					// Real batr = psym.energies().residue_total_energies(ibpy)[core::scoring::fa_atr];
 					fixbb_design(psym,ibpy,dimersub);
+					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=                psym.residue(i).name3()) nmut++;
+					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
+					std::cout << "dump des" << endl;
+					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
 
 					std::cout << "fixbb done" << endl;
+
+					using namespace core::pack::task;
+					using namespace core::pack::task::operation;
+					TaskFactoryOP task_factory( new TaskFactory );
+					protocols::toolbox::task_operations::JointSequenceOperationOP revert = new protocols::toolbox::task_operations::JointSequenceOperation;
+					Pose basesym(base);
+					core::pose::symmetry::make_symmetric_pose(basesym);
+					revert->add_pose(psym);
+					revert->add_pose(basesym);
+				 	task_factory->push_back(revert);
+					protocols::filters::FilterOP filter = new protocols::simple_filters::ScoreTypeFilter(sfsym,core::scoring::total_score,sfsym->score(psym));
+					// filter->apply(psym);
+					// double tmp1 = filter->report_sm(psym);
+					// double tmp2 =  sfsym->score(psym);
+					// std::cout << tmp1 << " " << tmp2 << std::endl;
+					// utility_exit_with_message("aoristn");
+					using namespace core::scoring::constraints;
+					using core::id::AtomID;
+					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+1*base.n_residue()),new HarmonicFunc(0,0.01)));
+					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+2*base.n_residue()),new HarmonicFunc(0,0.01)));
+					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+					movemap->set_jump(true); movemap->set_bb(false); movemap->set_chi(true);
+					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+					relax_mover->apply(psym);
+					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_min.pdb");
+					sfsym->show(psym);
+					protocols::simple_moves::GreedyOptMutationMover gomm;
+					gomm.task_factory( task_factory );
+					gomm.scorefxn( sfsym );
+					gomm.filter( filter );
+					gomm.relax_mover( relax_mover );
+					gomm.apply(psym);
+					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_greedy.pdb");
+
 
 					// Real rms = core::scoring::CA_rmsd(psym,psym_bare);
 					Real sc,int_area;
@@ -932,53 +970,11 @@ void run() {
 							}
 						}
 					}
-					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=                psym.residue(i).name3()) nmut++;
-					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
-
-					std::cout << "dump des" << endl;
-					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
 
 					// continue;
 
-					// using namespace core::pack::task;
-					// using namespace core::pack::task::operation;
-					// TaskFactoryOP task_factory( new TaskFactory );
-					// protocols::toolbox::task_operations::JointSequenceOperationOP revert = new protocols::toolbox::task_operations::JointSequenceOperation;
-					// Pose basesym(base);
-					// core::pose::symmetry::make_symmetric_pose(basesym);
-					// revert->add_pose(psym);
-					// revert->add_pose(basesym);
-				 // 	task_factory->push_back(revert);
-					// protocols::filters::FilterOP filter = new protocols::simple_filters::ScoreTypeFilter(sfsym,core::scoring::total_score,sfsym->score(psym));
 
 
-					// // filter->apply(psym);
-					// // double tmp1 = filter->report_sm(psym);
-					// // double tmp2 =  sfsym->score(psym);
-					// // std::cout << tmp1 << " " << tmp2 << std::endl;
-					// // utility_exit_with_message("aoristn");
-
-					// using namespace core::scoring::constraints;
-					// using core::id::AtomID;
-					// psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+1*base.n_residue()),new HarmonicFunc(0,0.01)));
-					// psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+2*base.n_residue()),new HarmonicFunc(0,0.01)));
-
-					// core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-					// movemap->set_jump(true); movemap->set_bb(false); movemap->set_chi(true);
-					// protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
-					// relax_mover->apply(psym);
-					// // psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_min.pdb");
-
-					// sfsym->show(psym);
-
-					// protocols::simple_moves::GreedyOptMutationMover gomm;
-					// gomm.task_factory( task_factory );
-					// gomm.scorefxn( sfsym );
-					// gomm.filter( filter );
-					// gomm.relax_mover( relax_mover );
-					// gomm.apply(psym);
-
-					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_greedy.pdb");
 
 					// repack(psym,ibpy,dimersub);
 					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_RPK.pdb");

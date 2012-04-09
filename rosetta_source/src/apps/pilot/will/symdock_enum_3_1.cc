@@ -9,7 +9,7 @@ WISH LIST
 		detect and penalize missing BB density
 	strand pairs
 	centriod score components ?
-	disulfide-compatible positions
+p	disulfide-compatible positions
 	low-res sc? maybe patchdock-like complimentarity measure?
 	statistically "good" BB xforms? all of by good contacts?
 IGNORE
@@ -18,10 +18,14 @@ DONE
 	termini distance
 	contacts weight by avg. deg.
 */
-#include <apps/pilot/will/xyzStripeHashPose.hh>
+
+#include <protocols/sic_dock/sic_dock.hh>
+
+
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+#include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
@@ -47,6 +51,9 @@ DONE
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+
+#include <apps/pilot/will/xyzStripeHash.hh>
+
 #ifdef USE_OPENMP
 #include <omp.h>
 #endif
@@ -68,14 +75,11 @@ typedef numeric::xyzMatrix<core::Real> Mat;
 typedef numeric::xyzVector<double> Vecf;
 typedef numeric::xyzMatrix<double> Matf;
 static basic::Tracer TR("symdock_enum");
-OPT_1GRP_KEY( Real , tcdock, clash_dis	)
-OPT_1GRP_KEY( Real , tcdock, contact_dis )
 OPT_1GRP_KEY( Real , tcdock, intra )
 OPT_1GRP_KEY( Real , tcdock, intra1 )
 OPT_1GRP_KEY( Real , tcdock, intra2 )
 OPT_1GRP_KEY( Real , tcdock, termini_weight )
 OPT_1GRP_KEY( Real , tcdock, termini_cutoff )
-OPT_1GRP_KEY( Real , tcdock, hash_3D_vs_2D )
 OPT_1GRP_KEY( Integer , tcdock, termini_trim )
 OPT_1GRP_KEY( Integer , tcdock, nsamp1 )
 OPT_1GRP_KEY( Integer , tcdock, topx )
@@ -101,6 +105,7 @@ OPT_1GRP_KEY( FileVector, tcdock, T3 )
 OPT_1GRP_KEY( Boolean , tcdock, usen1 )
 OPT_1GRP_KEY( Boolean , tcdock, usec1 )
 OPT_1GRP_KEY( Boolean , tcdock, require_exposed_termini )
+OPT_1GRP_KEY( Boolean , tcdock, dry_run )
 OPT_1GRP_KEY( Real , tcdock, term_min_expose )
 OPT_1GRP_KEY( Real , tcdock, term_max_angle )
 
@@ -108,8 +113,6 @@ void register_options() {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		OPT( in::file::s );
-		NEW_OPT( tcdock::clash_dis	      ,"max acceptable clash dis"            ,  3.5   );
-		NEW_OPT( tcdock::contact_dis      ,"max acceptable contact dis"          , 12     );
 		NEW_OPT( tcdock::intra            ,"weight for intra contacts"           ,  1.0   );
 		NEW_OPT( tcdock::intra1           ,"weight for comp1 intra contacts"     ,  1.0   );
 		NEW_OPT( tcdock::intra2           ,"weight for conp2 intra contacts"     ,  1.0   );
@@ -137,14 +140,27 @@ void register_options() {
 		NEW_OPT( tcdock::termini_cutoff   ,"tscore = w*max(0,cut-x)"             , 20.0   );
 		NEW_OPT( tcdock::termini_weight   ,"tscore = w*max(0,cut-x)"             ,  0.0   );
 		NEW_OPT( tcdock::termini_trim     ,"trim termini up to for termini score",  0     );
-		NEW_OPT( tcdock::hash_3D_vs_2D    ,"grid spacing top 2D hash"            ,  1.3   );
 		NEW_OPT( tcdock::usec1            ,"use comp1 cterm"                     , true  );
 		NEW_OPT( tcdock::usen1            ,"use comp1 nterm"                     , true  );
-		NEW_OPT( tcdock::term_max_angle ,""             , 50.0  );
-		NEW_OPT( tcdock::term_min_expose ,""            , 0.85  );
+		NEW_OPT( tcdock::require_exposed_termini,""         , false );
+		NEW_OPT( tcdock::dry_run          ,"no calculations, just setup"         , false );
+		NEW_OPT( tcdock::term_max_angle ,""             , 45.0  );
+		NEW_OPT( tcdock::term_min_expose ,""            , 0.1  );
 
 }
 template<typename T> inline T sqr(T x) { return x*x; }
+inline double sigmoid( double const & sqdist, double const & start, double const & stop ) {
+	if( sqdist > stop*stop ) {
+		return 0.0;
+	} else if( sqdist < start*start ) {
+		return 1.0;
+	} else {
+		double dist = sqrt( sqdist );
+		return (stop-dist)/(stop-start);
+		//return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
+	}
+}
+
 void dump_points_pdb(utility::vector1<Vecf> const & p, std::string fn) {
 	using namespace ObjexxFCL::fmt;
 	std::ofstream o(fn.c_str());
@@ -180,17 +196,6 @@ void dump_points_pdb(xyzStripeHash<double>::float4 const *p, int n, std::string 
 		o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x)<<F(8,3,p[i].y)<<F(8,3,p[i].z)<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 	}
 	o.close();
-}
-inline double sigmoid( double const & sqdist, double const & start, double const & stop ) {
-	if( sqdist > stop*stop ) {
-		return 0.0;
-	} else if( sqdist < start*start ) {
-		return 1.0;
-	} else {
-		double dist = sqrt( sqdist );
-		return (stop-dist)/(stop-start);
-		//return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
-	}
 }
 void trans_pose( Pose & pose, Vecf const & trans, Size start=1, Size end=0 ) {
 	if(0==end) end = pose.n_residue();
@@ -274,276 +279,6 @@ double brute_mindis(vector1<Vecf> const & pa, vector1<Vecf> const & pb, Vecf con
 	}
 	return mindis;
 }
-struct SICFast {
-	double xmx1,xmn1,ymx1,ymn1,xmx,xmn,ymx,ymn;
-	double CTD,CLD,CTD2,CLD2,BIN;
-	int xlb,ylb,xub,yub;
-	xyzStripeHashPose xh1_bb_,xh2_bb_,xh1_cb_,xh2_cb_;
-	vector1<double> w1_,w2_;
-	ObjexxFCL::FArray2D<Vecf> ha,hb;
-	SICFast() :
-		CTD(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]()),
-		CLD(basic::options::option[basic::options::OptionKeys::tcdock::clash_dis]()),
-		CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD*basic::options::option[basic::options::OptionKeys::tcdock::hash_3D_vs_2D]()),
-		xh1_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+0.5),
-		xh2_bb_(basic::options::option[basic::options::OptionKeys::tcdock::  clash_dis]()+0.5),
-		xh1_cb_(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]()),
-		xh2_cb_(basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]())
-	{}
-	void init(
-		core::pose::Pose const & cmp1in, vector1<Vecf> cmp1cbs, vector1<double> const & cmp1wts, Vecf cmp1axs,
-		core::pose::Pose const & cmp2in, vector1<Vecf> cmp2cbs, vector1<double> const & cmp2wts, Vecf cmp2axs
-	) {
-		xh1_bb_.init_with_pose(cmp1in,BB); // default meta is radius
-		xh2_bb_.init_with_pose(cmp2in,BB);
-		xh1_cb_.init_with_pose(cmp1in,cmp1wts,CB);
-		xh2_cb_.init_with_pose(cmp2in,cmp2wts,CB);
-		w1_ = cmp1wts;
-		w2_ = cmp2wts;
-		// Pose tmp1(cmp1in); trans_pose(tmp1,xh1_bb_.translation()); tmp1.dump_pdb("pose1.pdb");
-		// Pose tmp2(cmp2in); trans_pose(tmp2,xh2_bb_.translation()); tmp2.dump_pdb("pose2.pdb");
-		// dump_points_pdb(xh1_bb_.grid_atoms(),xh1_bb_.natom()                                            ,"xh1.pdb");
-		// dump_points_pdb(xh2_bb_.grid_atoms(),xh2_bb_.natom()                                            ,"xh2.pdb");
-		// dump_points_pdb(xh1_cb_.grid_atoms(),xh1_cb_.natom(),xh1_cb_.translation()-xh1_bb_.translation(),"xh1_cb.pdb");
-		// dump_points_pdb(xh2_cb_.grid_atoms(),xh2_cb_.natom(),xh2_cb_.translation()-xh2_bb_.translation(),"xh2_cb.pdb");
-		// dump_points_pdb(cmp1cbs                             ,xh1_bb_.translation()                      ,"cmp1cbs.pdb");
-		// dump_points_pdb(cmp2cbs                             ,xh2_bb_.translation()                      ,"cmp2cbs.pdb");
-		// cmp1in.dump_pdb("cmp1in.pdb");
-		// cmp2in.dump_pdb("cmp2in.pdb");
-		// utility_exit_with_message("hashes");
-		// double xmn=9e9,ymn=9e9,zmn=9e9;
-		// for(vector1<Vecf>::const_iterator i = cmp1cbs.begin(); i != cmp1cbs.end(); ++i) {
-		// 	xmn = min(i->x(),xmn);
-		// 	ymn = min(i->y(),ymn);
-		// 	zmn = min(i->z(),zmn);
-		// }
-		// cout << xmn << " " << ymn << " " << zmn << endl;
-		// xmn=9e9,ymn=9e9,zmn=9e9;
-		// for(vector1<Vecf>::const_iterator i = cmp2cbs.begin(); i != cmp2cbs.end(); ++i) {
-		// 	xmn = min(i->x(),xmn);
-		// 	ymn = min(i->y(),ymn);
-		// 	zmn = min(i->z(),zmn);
-		// }
-		// cout << xmn << " " << ymn << " " << zmn << endl;
-		// cout << xh1_cb_.translation() << endl;
-		// cout << xh2_cb_.translation() << endl;
-		// utility_exit_with_message("arst");
-	}
-	void rotate_points(vector1<Vecf> & pa, vector1<Vecf> & pb, Vecf ori) {
-		// // get points, rotated ro ori is 0,0,1, might already be done
-		// Matf rot = Matf::identity();
-		// if     ( ori.dot(Vecf(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vecf(1,0,0).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
-		// else if( ori.dot(Vecf(0,0,1)) <  0.99999 ) rot = rotation_matrix( Vecf(0,0,1).cross(ori), (double)-acos(Vecf(0,0,1).dot(ori)) );
-		// if( rot != Matf::identity() ) {
-		//         for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-		//         for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
-		// }
-		Matf rot = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
-		for(vector1<Vecf>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-		for(vector1<Vecf>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
-	}
-	void get_bounds(vector1<Vecf> & pa, vector1<Vecf> & pb) {
-		// get bounds for plane hashes
-		xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
-		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-			xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
-			ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
-		}
-		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-			xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
-			ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
-		}
-		xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
-		ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
-	}
-	double get_score(vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double mindis,
-	                 double anga, double angb, Vecf axsa, Vecf axsb, bool cmp1or2_a, bool cmp1or2_b)
-	{
- 		vector1<double> const & wa = cmp1or2_a ? w1_ : w2_;
-		vector1<double> const & wb = cmp1or2_b ? w1_ : w2_;
-		xyzStripeHash<double> const & xh( cmp1or2_a ? xh1_cb_ : xh2_cb_);
-		Matf R = numeric::rotation_matrix_degrees(axsa,-anga);
-		float score = 0.0;
-		vector1<double>::const_iterator iwb = wb.begin();
-		for(vector1<Vecf>::const_iterator i = cbb.begin(); i != cbb.end(); ++i,++iwb) {
-			Vecf v = R*((*i)-mindis*ori) + xh.translation();
-			if( v.x() < -xh.grid_size_ || v.y() < -xh.grid_size_ || v.z() < -xh.grid_size_ ) continue; // worth it?
-			if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it?
-			int const ix	= (v.x()<0.0) ? 0 : (int)(numeric::min(xh.xdim_-1,(int)(v.x()/xh.grid_size_)));
-			int const iy0	= (v.y()<0.0) ? 0 : (int)(v.y()/xh.grid_size_);
-			int const iz0	= (v.z()<0.0) ? 0 : (int)(v.z()/xh.grid_size_);
-			int const iyl = numeric::max(0,iy0-1);
-			int const izl = numeric::max(0,iz0-1);
-			int const iyu = numeric::min((int)xh.ydim_,     iy0+2);
-			int const izu = numeric::min((int)xh.zdim_,(int)iz0+2);
-			for(int iy = iyl; iy < iyu; ++iy) {
-				for(int iz = izl; iz < izu; ++iz) {
-					int const ig = ix+xh.xdim_*iy+xh.xdim_*xh.ydim_*iz;
-					assert(ig < xh.xdim_*xh.ydim_*xh.zdim_ && ix < xh.xdim_ && iy < xh.ydim_ && iz < xh.zdim_);
-					int const igl = xh.grid_stripe_[ig].x;
-					int const igu = xh.grid_stripe_[ig].y;
-					for(int i = igl; i < igu; ++i) {
-						xyzStripeHash<double>::float4 const & a2 = xh.grid_atoms_[i];
-						float const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
-						if( d2 <= xh.grid_size2_ ) {
-							score += sigmoid(d2, CLD, CTD ) * a2.w * (*iwb);
-						}
-					}
-				}
-			}
-		}
-		// double cbcount = 0.0;
-		// vector1<double>::const_iterator iwa = wa.begin();
-		// for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia,++iwa) {
-		// 	vector1<double>::const_iterator iwb = wb.begin();
-		// 	for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib,++iwb) {
-		// 		double d2 = ib->distance_squared( (*ia) + (mindis*ori) );
-		// 		if( d2 < CTD2 ) {
-		// 			cbcount += sigmoid(d2, CLD, CTD ) * (*iwa) * (*iwb);
-		// 		}
-		// 	}
-		// }
-		// if( fabs(cbcount-score) > 0.0001 ) {
-		// 	cout << "btute/hash score mismatch!!!! " << anga << " " << angb << " " << cbcount << " " << score << endl;
-		// }
-		return score;
-	}
-	double refine_mindis_with_xyzHash(vector1<Vecf> const & pa, vector1<Vecf> const & pb, double mindis, Vecf ori,
-	                                  double anga, double angb, Vecf axsa, Vecf axsb, bool cmp1or2_a, bool cmp1or2_b)
-	{
-
-		xyzStripeHashPose const & xh( cmp1or2_a ? xh1_bb_ : xh2_bb_ );
-		Matf Rori = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
-		Matf R    = numeric::rotation_matrix_degrees(axsa,-anga);
-		Matf Rinv = numeric::rotation_matrix_degrees(axsa, anga);
-		while(true){
-			double correction_hash = 9e9;
-			for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-				Vecf const v = R*Rori*((*ib)-Vecf(0,0,mindis)) + xh.translation();
-				Vecf const b = Rori * Rinv * v;
-				if( v.x() < -xh.grid_size_ || v.y() < -xh.grid_size_ || v.z() < -xh.grid_size_ ) continue; // worth it?
-				if( v.x() >  xh.xmx_       || v.y() >  xh.ymx_       || v.z() >  xh.zmx_       ) continue; // worth it?
-				int const ix  = (v.x()<0) ? 0 : numeric::min(xh.xdim_-1,(int)(v.x()/xh.grid_size_));
-				int const iy0 = (int)((v.y()<0) ? 0 : v.y()/xh.grid_size_);
-				int const iz0 = (int)((v.z()<0) ? 0 : v.z()/xh.grid_size_);
-				int const iyl = numeric::max(0,iy0-1);
-				int const izl = numeric::max(0,iz0-1);
-				int const iyu = numeric::min((int)xh.ydim_,     iy0+2);
-				int const izu = numeric::min((int)xh.zdim_,(int)iz0+2);
-				for(int iy = iyl; iy < iyu; ++iy) {
-					for(int iz = izl; iz < izu; ++iz) {
-						int const ig = ix+xh.xdim_*iy+xh.xdim_*xh.ydim_*iz;
-						assert(ig < xh.xdim_*xh.ydim_*xh.zdim_ && ix < xh.xdim_ && iy < xh.ydim_ && iz < xh.zdim_);
-						int const igl = xh.grid_stripe_[ig].x;
-						int const igu = xh.grid_stripe_[ig].y;
-						for(int i = igl; i < igu; ++i) {
-							xyzStripeHash<double>::float4 const & a2 = xh.grid_atoms_[i];
-							float const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
-							Vecf const a = Rori * Rinv * Vecf(a2.x,a2.y,a2.z);
-							double const dxy2 = (a.x()-b.x())*(a.x()-b.x()) + (a.y()-b.y())*(a.y()-b.y());
-							if( dxy2 >= CLD2 ) continue;
-							double const dz = b.z() - a.z() - sqrt(CLD2-dxy2);
-							// cout << "HASH " << dz << endl;
-							correction_hash = min(dz,correction_hash);
-						}
-					}
-				}
-			}
-			mindis += correction_hash;
-			if( fabs(correction_hash) < 0.001 ) break;
-		}
-		// double correction_safe = 9e9;
-		// for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-		// 	Vecf const v = ((*ib)-Vecf(0,0,mindis));
-		// 	// dbg2.push_back(v);
-		// 	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-		// 		// correction_safe = min(correction_safe,ia->distance_squared(v));
-		// 		double const dxy2 = (ia->x()-v.x())*(ia->x()-v.x()) + (ia->y()-v.y())*(ia->y()-v.y());
-		// 		if( dxy2 >= CLD2 ) continue;
-		// 		// cout << "BRUTE " << dxy2 << endl;
-		// 		double const dz = v.z() - ia->z() - sqrt(CLD2-dxy2);
-		// 		if( dz < correction_safe) correction_safe = dz;
-		// 	}
-		// }
-		// #ifdef USE_OPENMP
-		// #pragma omp critical
-		// #endif
-		// if( fabs(correction_safe-correction_hash) > 0.01 ) {
-		// 	cout << F(9,5,correction_hash) << " " << F(9,5,correction_safe) << " " << mindis << endl;
-		// 	// utility_exit_with_message("FOO");
-		// }
-
-		return mindis;
-	}
-	double slide_into_contact(vector1<Vecf> pa, vector1<Vecf> pb, vector1<Vecf> const & cba, vector1<Vecf> const & cbb, Vecf ori, double & score,
-	                          double anga, double angb, Vecf axsa, Vecf axsb, bool cmp1or2_a, bool cmp1or2_b)
-	{
-		rotate_points(pa,pb,ori);
-		get_bounds(pa,pb);
-		fill_plane_hash(pa,pb);
-		double const mindis_approx = get_mindis_with_plane_hashes();
-		double const mindis = refine_mindis_with_xyzHash(pa,pb,mindis_approx,ori,anga,angb,axsa,axsb,cmp1or2_a,cmp1or2_b);
-		//cerr << brute_mindis(pa,pb,Vecf(0,0,-mindis)) << endl;
-		// if( fabs(CLD2-brute_mindis(pa,pb,Vecf(0,0,-mindis))) > 0.0001 ) utility_exit_with_message("DIAF!");
-		if(score != -12345.0) score = get_score(cba,cbb,ori,mindis,anga,angb,axsa,axsb,cmp1or2_a,cmp1or2_b);
-		return mindis;
-	}
-	void fill_plane_hash(vector1<Vecf> & pa, vector1<Vecf> & pb) {
-		xlb = (int)(xmn/BIN)-2; xub = (int)(xmx/BIN+0.999999999)+2; // one extra on each side for correctness,
-		ylb = (int)(ymn/BIN)-2; yub = (int)(ymx/BIN+0.999999999)+2; // and one extra for outside atoms
-		ha.dimension(xub-xlb+1,yub-ylb+1,Vecf(0,0,-9e9));
-		hb.dimension(xub-xlb+1,yub-ylb+1,Vecf(0,0, 9e9));
-		int const xsize = xub-xlb+1;
-		int const ysize = yub-ylb+1;
-		for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-			int const ix = (int)((ia->x()/BIN)-xlb+0.999999999);
-			int const iy = (int)((ia->y()/BIN)-ylb+0.999999999);
-			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-			if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
-			// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize) && ha(ix,iy).z() < ia->z();
-			// ha(ix,iy) = test ? *ia : ha(ix,iy);
-		}
-		for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-			int const ix = (int)((ib->x()/BIN)-xlb+0.999999999);
-			int const iy = (int)((ib->y()/BIN)-ylb+0.999999999);
-			if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-			if( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
-			// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) && hb(ix,iy).z() > ib->z();
-			// hb(ix,iy) = test ? *ib : hb(ix,iy);
-		}
-
-	}
-	double get_mindis_with_plane_hashes() {
-		int const xsize=xub-xlb+1, ysize=yub-ylb+1;
-		int imna=0,jmna=0,imnb=0,jmnb=0;
-		double m = 9e9;
-		for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
-			for(int j = 1; j <= ysize; ++j) {
-				for(int k = -1; k <= 1; ++k) {
-					if(i+k < 1 || i+k > xsize) continue;
-					for(int l = -1; l <= 1; ++l) {
-						if(j+l < 1 || j+l > ysize) continue;
-						double const xa1=ha(i,j).x(),ya1=ha(i,j).y(),xb1=hb(i+k,j+l).x(),yb1=hb(i+k,j+l).y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1);
-						if(d21<CLD2){ double const dz=hb(i+k,j+l).z()-ha(i,j).z()-sqrt(CLD2-d21); if(dz<m) m=dz; }
-					}
-				}
-			}
-		}
-		return m;
-	}
-};
-int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t) {
-	if( grid(i,j,k) <= t ) return 0;
-	grid(i,j,k) = t;
-	int nmark = 1;
-	if(i>1           ) nmark += flood_fill3D(i-1,j  ,k  ,grid,t);
-	if(i<grid.size1()) nmark += flood_fill3D(i+1,j  ,k  ,grid,t);
-	if(j>1           ) nmark += flood_fill3D(i  ,j-1,k  ,grid,t);
-	if(j<grid.size2()) nmark += flood_fill3D(i  ,j+1,k  ,grid,t);
-	if(k>1           ) nmark += flood_fill3D(i  ,j  ,k-1,grid,t);
-	if(k<grid.size3()) nmark += flood_fill3D(i  ,j  ,k+1,grid,t);
-	return nmark;
-}
 struct LMAX {
 	double score,radius;
 	int icmp2,icmp1,iori;
@@ -573,11 +308,18 @@ void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood
 	core::id::AtomID_Map<Real> atom_sasa;
 	core::id::AtomID_Map<bool> atom_subset;
 	utility::vector1<Real> rsd_sasa;
-	core::pose::initialize_atomid_map(           atom_subset, pose, false);
-	core::pose::initialize_atomid_map_heavy_only(atom_subset, pose, true);	
+	core::pose::initialize_atomid_map(atom_subset, pose, false);
+	for(int i = 2; i <= pose.n_residue()-1; ++i) {
+		for(int ia = 1; ia <= pose.residue(i).nheavyatoms(); ++ia) {
+			if(pose.residue(i).atom_is_backbone(ia))
+				atom_subset[core::id::AtomID(ia,i)] = true;
+		}
+	}
+	atom_subset[core::id::AtomID(1,1)] = true;
+	atom_subset[core::id::AtomID(3,pose.n_residue())] = true;
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa,rsd_sasa, 4.0, false, atom_subset );
-	Real nexpose = atom_sasa[core::id::AtomID(1,        1       )];
-	Real cexpose = atom_sasa[core::id::AtomID(3,pose.n_residue())];
+	Real nexpose = atom_sasa[core::id::AtomID(1,        1       )] / 12.56637 / 5.44 / 5.44;
+	Real cexpose = atom_sasa[core::id::AtomID(3,pose.n_residue())] / 12.56637 / 5.44 / 5.44;
 
 	Vec nt = pose.residue(        1       ).xyz("N");
 	Vec ct = pose.residue(pose.n_residue()).xyz("C");
@@ -586,6 +328,8 @@ void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood
 	ntgood = nexpose > option[tcdock::term_min_expose]() && nang < option[tcdock::term_max_angle]();
 	ctgood = cexpose > option[tcdock::term_min_expose]() && cang < option[tcdock::term_max_angle]();
 
+	cout << nexpose << " " << nang << endl;
+	cout << cexpose << " " << cang << endl;
 	// core::Real nnt=0.0,nct=0.0,gnt=0.0,gct=0.0;
 	// for(int ir=1; ir<=pose.n_residue(); ++ir) {
 	// 	for(int ia=1; ia<=5; ++ia) {
@@ -619,14 +363,15 @@ struct TCDock {
 	string cmp1name_,cmp2name_,cmp1type_,cmp2type_,symtype_;
 	int cmp1nangle_,cmp2nangle_,cmp1nsub_,cmp2nsub_;
 	std::map<string,Vecf> axismap_;
-	std::vector<SICFast*> sics_;
-	TCDock( string cmp1pdb, string cmp2pdb, string cmp1type, string cmp2type ) : cmp1type_(cmp1type),cmp2type_(cmp2type) {
+	std::vector<protocols::sic_dock::SICFast*> sics_;
+	bool abort_;
+	TCDock( string cmp1pdb, string cmp2pdb, string cmp1type, string cmp2type ) : cmp1type_(cmp1type),cmp2type_(cmp2type),abort_(false) {
 		#ifdef USE_OPENMP
 		cout << "OMP info: " << num_threads() << " " << thread_num() << endl;
 		#endif
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
-		core::chemical::ResidueTypeSetCAP crs=core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID);
+		core::chemical::ResidueTypeSetCAP crs=core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD);
 		core::import_pose::pose_from_pdb(cmp1in_,*crs,cmp1pdb);
 		core::import_pose::pose_from_pdb(cmp2in_,*crs,cmp2pdb);
 
@@ -661,12 +406,10 @@ struct TCDock {
 		bool nt1good=1,nt2good=1,ct1good=1,ct2good=1;
 		termini_exposed(cmp1in_,nt1good,ct1good);
 		termini_exposed(cmp2in_,nt2good,ct2good);
-		if(option[tcdock::require_exposed_termini]()) {
-			if( !(ct1good&&nt2good) && !(ct2good&&nt1good) ) {
-				std::cout << "no exposed termini on comp1" << std::endl;
-				return;
-			}
-		}
+		cout << cmp1pdb << " nterm 1: " << nt1good << endl;
+		cout << cmp1pdb << " cterm 1: " << ct1good << endl;
+		cout << cmp2pdb << " nterm 2: " << nt2good << endl;
+		cout << cmp2pdb << " cterm 2: " << ct2good << endl;
 		if(!option[tcdock::usec1].user()) {
 			if( ct1good && nt2good ) option[tcdock::usec1](true);
 			else                     option[tcdock::usec1](false);
@@ -675,6 +418,17 @@ struct TCDock {
 			if( ct2good && nt1good ) option[tcdock::usen1](true);
 			else                     option[tcdock::usen1](false);
 		}
+		cout << "TERMINI " << cmp1pdb << " " << cmp2pdb << " " << option[tcdock::usec1]() << " " << option[tcdock::usen1]() << endl;
+		if( !option[tcdock::usec1]() && !option[tcdock::usen1]() ) {
+			if(option[tcdock::require_exposed_termini]()) {
+				std::cout << "no compatible good termini" << std::endl;
+				abort_ = true;
+				return;
+			}
+		}
+
+
+
 
 		cmp1name_ = utility::file_basename(cmp1pdb);
 		cmp2name_ = utility::file_basename(cmp2pdb);
@@ -738,7 +492,7 @@ struct TCDock {
 		}
 
 		sics_.resize(num_threads());
-		for(int i = 0; i < num_threads(); ++i) sics_[i] = new SICFast;
+		for(int i = 0; i < num_threads(); ++i) sics_[i] = new protocols::sic_dock::SICFast;
 		for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp1axs_,cmp2in_,cmp2cbs_,cmp2wts_,cmp2axs_);
 
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
@@ -758,7 +512,7 @@ struct TCDock {
 
 	}
 	virtual ~TCDock() {
-		for(int i = 0; i < num_threads(); ++i) delete sics_[i];
+		for(int i = 0; i < sics_.size(); ++i) if(sics_[i]) delete sics_[i];
 	}
 	int num_threads() {
 		#ifdef USE_OPENMP
@@ -788,8 +542,8 @@ struct TCDock {
 		return other_axis.normalized();
 	}
 	void precompute_intra() {
-		double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
-		double const CLASH_D		= basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
+		double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]();
+		double const CLASH_D		= basic::options::option[basic::options::OptionKeys::sicdock::	clash_dis]();
 		double const CONTACT_D2 = sqr(CONTACT_D);
 		double const CLASH_D2	= sqr(CLASH_D);
 		// compute high/low min dis for pent and cmp1 here, input to sicfast and don't allow any below
@@ -1178,7 +932,7 @@ struct TCDock {
 		// #pragma omp parallel for schedule(dynamic,1)
 		// #endif
 		for(int ifh = 0; ifh < ffhist.size(); ++ifh) {
-			flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
+			protocols::sic_dock::flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
 			double count = 0;
 			int Nedge = option[tcdock::peak_grid_smooth]();
 			ObjexxFCL::FArray3D<double> grid2(grid);
@@ -1243,12 +997,16 @@ struct TCDock {
 
 	}
 	void run() {
+		if(abort_) {
+			cout << "abort run" << endl;
+			return;
+		}
 		using basic::options::option;
 		using namespace basic::options::OptionKeys;
 		using namespace core::id;
 		using numeric::conversions::radians;
-		double const CONTACT_D  = basic::options::option[basic::options::OptionKeys::tcdock::contact_dis]();
-		double const CLASH_D    = basic::options::option[basic::options::OptionKeys::tcdock::	clash_dis]();
+		double const CONTACT_D  = basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]();
+		double const CLASH_D    = basic::options::option[basic::options::OptionKeys::sicdock::	clash_dis]();
 		double const CONTACT_D2 = sqr(CONTACT_D);
 		double const CLASH_D2   = sqr(CLASH_D);
 		Pose const cmp1init(cmp1in_);
@@ -1396,7 +1154,7 @@ struct TCDock {
 			// #pragma omp parallel for schedule(dynamic,1)
 			// #endif
 			for(int ifh = 0; ifh < ffhist.size(); ++ifh) {
-				flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
+				protocols::sic_dock::flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
 				double count = 0;
 				int Nedge = option[tcdock::peak_grid_smooth]();
 				ObjexxFCL::FArray3D<double> grid2(grid);
@@ -1489,11 +1247,12 @@ int main (int argc, char *argv[]) {
 				int iori = option[tcdock::justone]()[3];
 				tcd.justone(icm2,icm1,iori);
 			} else {
+				cout << "RUN " << i << " " << j << endl;
 				tcd.run();
 			}
 		}
 	}
-	// cout << "DONE testing: nothing really" << endl;
+	cout << "DONE testing: move SICFast to protocols" << endl;
 }
 
 
