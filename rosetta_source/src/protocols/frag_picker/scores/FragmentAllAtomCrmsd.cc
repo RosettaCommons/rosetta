@@ -87,11 +87,11 @@ FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(Size priority, Real lowest_acceptable
 		}
 		trRmsScore.Trace <<std::endl;
 	}
-	core::pose::make_pose_from_sequence(*fragment_pose_, reference_pose_->sequence(), *(chemical::ChemicalManager::get_instance()->residue_type_set("centroid")));	
+	core::pose::make_pose_from_sequence(*fragment_pose_, reference_pose_->sequence(), *(chemical::ChemicalManager::get_instance()->residue_type_set("centroid")));
 }
 
 void FragmentAllAtomCrmsd::fill_coords(core::pose::Pose const& pose,
-		FArray2_double& coords, Size n_res, std::string aa_sequence) {
+		FArray2_double& coords, Size n_res, std::string ) {
 
 	trRmsScore.Debug << "Copying coordinates from ... The first residues are: "
 			<< pose.residue(1).name3() << " " << pose.residue(2).name3() << " "
@@ -105,7 +105,7 @@ void FragmentAllAtomCrmsd::fill_coords(core::pose::Pose const& pose,
 			coords(d, n_at) = xyzN[d - 1];
 		}
 		n_at++;
-		
+
 		id::NamedAtomID idCA("CA", i);
 		PointPosition const& xyzCA = pose.xyz(idCA);
 		for (core::Size d = 1; d <= 3; ++d) {

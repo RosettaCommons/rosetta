@@ -155,20 +155,20 @@ PoissonBoltzmannEnergy::clone() const
 /// }
 
 bool PoissonBoltzmannEnergy::defines_residue_pair_energy(
-												 pose::Pose const & pose,
-												 Size res1,
-												 Size res2
-												 ) const {
+	pose::Pose const &,
+	Size res1,
+	Size res2
+) const {
 	return ( res1 == fixed_residue_ || res2 == fixed_residue_ );
 }
 
 void
 PoissonBoltzmannEnergy::eval_intrares_energy(
-									 conformation::Residue const &,
-									 pose::Pose const &,
-									 ScoreFunction const &,
-									 EnergyMap &
-									 ) const {
+	conformation::Residue const &,
+	pose::Pose const &,
+	ScoreFunction const &,
+	EnergyMap &
+) const {
 	return;
 }
 

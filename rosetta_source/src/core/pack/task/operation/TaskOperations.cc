@@ -377,7 +377,7 @@ InitializeFromCommandline::apply( pose::Pose const &, PackerTask & task ) const
 }
 
 void
-InitializeFromCommandline::parse_tag( TagPtr tag )
+InitializeFromCommandline::parse_tag( TagPtr )
 {
 }
 

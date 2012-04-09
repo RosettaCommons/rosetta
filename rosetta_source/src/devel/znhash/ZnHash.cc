@@ -527,11 +527,11 @@ void ZnCoordinationScorer::add_match_from_file(
 }
 
 void ZnCoordinationScorer::add_matches_from_files(
-	std::list< std::string > const & fnames
+	std::list< std::string > const &
 )
 {}
 
-void ZnCoordinationScorer::add_match_from_istream( std::istream & input_match )
+void ZnCoordinationScorer::add_match_from_istream( std::istream & )
 {}
 
 void ZnCoordinationScorer::finalize_after_all_matches_added()

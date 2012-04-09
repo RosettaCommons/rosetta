@@ -549,7 +549,7 @@ CartesianBondedEnergy::defines_intrares_energy( EnergyMap const & ) const {
 
 bool
 CartesianBondedEnergy::defines_residue_pair_energy(
-	pose::Pose const & pose,
+	pose::Pose const &,
 	Size res1,
 	Size res2
 ) const {

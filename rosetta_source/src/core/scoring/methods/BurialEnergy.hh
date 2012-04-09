@@ -60,9 +60,9 @@ public:
 
 	void
 	finalize_total_energy(
-		pose::Pose & pose,
+		pose::Pose &,
 		ScoreFunction const &,
-		EnergyMap & totals
+		EnergyMap &
 	) const {}
 
 	virtual

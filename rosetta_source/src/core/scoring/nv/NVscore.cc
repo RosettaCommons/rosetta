@@ -88,12 +88,12 @@ void NVscore::setup_for_packing(pose::Pose &pose, utility::vector1< bool > const
 	pose.update_residue_neighbors();
 }
 
-void NVscore::setup_for_derivatives(pose::Pose &pose, const ScoreFunction &) const
+void NVscore::setup_for_derivatives(pose::Pose & /*pose*/, const ScoreFunction &) const
 {
 	//pose.update_residue_neighbors();
 }
 
-void NVscore::setup_for_minimizing(pose::Pose & pose, ScoreFunction const & ,kinematics::MinimizerMapBase const &) const
+void NVscore::setup_for_minimizing(pose::Pose & /*pose*/, ScoreFunction const & ,kinematics::MinimizerMapBase const &) const
 {
 	//pose.update_residue_neighbors();
 }

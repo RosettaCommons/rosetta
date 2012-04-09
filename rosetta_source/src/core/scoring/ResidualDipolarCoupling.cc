@@ -838,7 +838,7 @@ typedef struct {
 } data_structDaR;
 
 //Evaluaterdc function required by lmmin
-void evaluaterdc(const double *par, int m_dat, const void *data, double *fvec, int *info ) {
+void evaluaterdc(const double *par, int m_dat, const void *data, double *fvec, int * ) {
     data_struct *mydata;
     mydata= (data_struct*)data;
     int i;
@@ -847,7 +847,7 @@ void evaluaterdc(const double *par, int m_dat, const void *data, double *fvec, i
     }
 }//evaluaterdc
 
-void evaluaterdcDa(const double *par, int m_dat, const void *data, double *fvec, int *info ) {
+void evaluaterdcDa(const double *par, int m_dat, const void *data, double *fvec, int * ) {
     data_structDa *mydata;
     mydata= (data_structDa*)data;
     int i;
@@ -856,7 +856,7 @@ void evaluaterdcDa(const double *par, int m_dat, const void *data, double *fvec,
     }
 }//evaluaterdcDa
 
-void evaluaterdcR(const double *par, int m_dat, const void *data, double *fvec, int *info ) {
+void evaluaterdcR(const double *par, int m_dat, const void *data, double *fvec, int * ) {
     data_structR *mydata;
     mydata= (data_structR*)data;
     int i;
@@ -865,7 +865,7 @@ void evaluaterdcR(const double *par, int m_dat, const void *data, double *fvec, 
     }
 }//evaluaterdcR
 
-void evaluaterdcDaR(const double *par, int m_dat, const void *data, double *fvec, int *info ) {
+void evaluaterdcDaR(const double *par, int m_dat, const void *data, double *fvec, int * ) {
     data_structDaR *mydata;
     mydata= (data_structDaR*)data;
     int i;
@@ -2053,7 +2053,7 @@ void ResidualDipolarCoupling::show_tensor_stats( std::ostream& out, Size ex ) co
 	out << F( width, precision, Aa ) << F( width, precision, Ar ) << F( width, precision, rhombicity ) << std::endl;
 }
 
-void ResidualDipolarCoupling::show_tensor_stats_nls( std::ostream& out, Size ex , const double *par) const {
+void ResidualDipolarCoupling::show_tensor_stats_nls( std::ostream& out, Size, const double *par) const {
   using namespace ObjexxFCL;
   using namespace ObjexxFCL::fmt;
 

@@ -63,11 +63,11 @@ namespace helixAssembly {
 	///@brief collect all the feature data for the pose
 	core::Size
 	ConcurrencyTest::report_features(
-									 core::pose::Pose const & pose,
-									 utility::vector1<bool> const & relevant_residues,
-									 boost::uuids::uuid struct_id,
-									 utility::sql_database::sessionOP db_session
-									 ){
+		core::pose::Pose const &,
+		utility::vector1<bool> const &,
+		boost::uuids::uuid ,
+		utility::sql_database::sessionOP db_session
+	){
 
 		std::cout << "I'M ABOUT TO COMMIT A BUNCH O' STUFF. SNAP" << std::endl;
 

@@ -34,7 +34,7 @@ LoopsFileIO::LoopsFileIO() : utility::pointer::ReferenceCount()
 
 }
 
-LoopsFileIO::LoopsFileIO( const LoopsFileIO & src ) : utility::pointer::ReferenceCount()
+LoopsFileIO::LoopsFileIO( const LoopsFileIO & ) : utility::pointer::ReferenceCount()
 {
 }
 
@@ -42,7 +42,7 @@ LoopsFileIO::LoopsFileIO( const LoopsFileIO & src ) : utility::pointer::Referenc
 LoopsFileIO::~LoopsFileIO(){}
 
 //////////////////////////////////////////////////////////////////////
-std::ostream & operator<< ( std::ostream & os, const LoopsFileIO & loops ) {
+std::ostream & operator<< ( std::ostream & os, const LoopsFileIO & /*loops*/ ) {
 	/*
 	os << "LOOP  begin  end  cut  skip_rate  extended" << std::endl;
 	for ( Loops::const_iterator it = loops.begin(), it_end = loops.end();

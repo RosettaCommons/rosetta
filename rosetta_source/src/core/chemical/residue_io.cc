@@ -195,7 +195,7 @@ read_topology_file(
 
 	// add the atoms
 	Size const nlines( lines.size() );
-	Size natoms(0), norbitals(0);
+	Size natoms(0);//, norbitals(0);
 	for (Size i=1; i<= nlines; ++i ) {
 		std::string line( lines[i] );
 		if (line.size() > 0) {

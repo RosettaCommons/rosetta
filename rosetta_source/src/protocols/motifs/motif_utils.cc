@@ -886,7 +886,7 @@ load_build_position_data(
 	BuildPosition & bp,
 	std::string const & filename,
 	core::pose::Pose & pose,
-	core::Size const ligand_marker
+	core::Size const
 )
 {
 	bool keep_one_motif( true );

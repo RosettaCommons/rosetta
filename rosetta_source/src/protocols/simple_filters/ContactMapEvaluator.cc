@@ -102,7 +102,7 @@ ContactMapEvaluator::ContactMapEvaluator(
 
 void ContactMapEvaluator::apply(
 	core::pose::Pose & pose,
-	std::string tag,
+	std::string,
 	core::io::silent::SilentStruct & ss
 ) const {
 	using ObjexxFCL::string_of;

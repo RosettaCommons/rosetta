@@ -339,7 +339,7 @@ VMaxBy::operator() () const
 }
 
 ExpressionCOP
-VMaxBy::differentiate( std::string const & varname ) const
+VMaxBy::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "VMaxBy cannot be differentiated" );
 	return 0;
@@ -373,7 +373,7 @@ VMinBy::operator() () const
 }
 
 ExpressionCOP
-VMinBy::differentiate( std::string const & varname ) const
+VMinBy::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "VMinBy cannot be differentiated" );
 	return 0;

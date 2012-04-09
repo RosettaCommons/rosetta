@@ -68,11 +68,11 @@ RelativeSegmentFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Data
 }
 
 void
-RelativeSegmentFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
+RelativeSegmentFilter::report( std::ostream &, core::pose::Pose const & ) const {
 }
 
 core::Real
-RelativeSegmentFilter::report_sm( core::pose::Pose const & pose ) const {
+RelativeSegmentFilter::report_sm( core::pose::Pose const & ) const {
 	return( 0.0 );
 }
 

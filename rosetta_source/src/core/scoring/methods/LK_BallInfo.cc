@@ -270,9 +270,9 @@ setup_water_builders_for_residue_type(
 }
 
 LKB_ResidueInfo::LKB_ResidueInfo(
-																 pose::Pose const & pose,
-																 conformation::Residue const & rsd
-																 )
+	pose::Pose const &,
+	conformation::Residue const & rsd
+)
 {
 	build_waters( rsd );
 }

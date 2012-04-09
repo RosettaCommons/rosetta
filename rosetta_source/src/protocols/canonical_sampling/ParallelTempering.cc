@@ -258,7 +258,7 @@ void ParallelTempering::deallocate_buffers() {
 }
 
 core::Real
-ParallelTempering::temperature_move( core::Real score ) {
+ParallelTempering::temperature_move( core::Real MPI_ONLY( score ) ) {
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
 

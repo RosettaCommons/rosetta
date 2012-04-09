@@ -112,8 +112,8 @@ JumpRotamerSidechainMover::set_defaults() {
 
 void
 JumpRotamerSidechainMover::parse_my_tag(
-  utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+  utility::tag::TagPtr const /*tag*/,
+	protocols::moves::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	pose::Pose const & /*pose*/
@@ -130,7 +130,7 @@ JumpRotamerSidechainMover::get_name() const {
 void
 JumpRotamerSidechainMover::make_chi_move(
 	conformation::Residue const& residue,
-	ChiVector const& old_chi,
+	ChiVector const&,
 	ChiVector& new_chi
 ) {
 
@@ -176,9 +176,9 @@ JumpRotamerSidechainMover::make_chi_move(
 ///all angles in degree
 Real JumpRotamerSidechainMover::compute_proposal_density(
   Residue const & new_residue,
-	Size const new_resnum,
-	chemical::ResidueType const & old_residue_type,
-	utility::vector1<Real> const & old_chi /* in degree */
+	Size const,
+	chemical::ResidueType const &,
+	utility::vector1<Real> const &
 ) const {
 	utility::vector1<Real> const & new_chi( new_residue.chi() );
 	using namespace pack::dunbrack;
@@ -232,7 +232,7 @@ JumpRotamerSidechainMover::compute_rotdensities(
 void
 JumpRotamerSidechainMover::compute_tempered_rotamer_probabilities(
   RotamerList const& rotamers,
-	core::Real temperature,
+	core::Real,
 	utility::vector1< Real >& rot_probs,
 	core::Real& normalize
 ) const {

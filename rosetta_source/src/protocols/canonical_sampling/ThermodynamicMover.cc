@@ -56,7 +56,7 @@ void
 ThermodynamicMover::initialize_simulation(
 	core::pose::Pose & /*pose*/,
 	protocols::canonical_sampling::MetropolisHastingsMover const &, /*metropolis_hastings_mover*/
-	core::Size cycle //default=0; non-zero if trajectory is restarted
+	core::Size //default=0; non-zero if trajectory is restarted
 )
 {}
 

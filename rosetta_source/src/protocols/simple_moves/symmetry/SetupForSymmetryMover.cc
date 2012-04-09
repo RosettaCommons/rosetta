@@ -164,11 +164,11 @@ ExtractAsymmetricUnitMover::apply( core::pose::Pose & pose )
 }
 
 void ExtractAsymmetricUnitMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ ) { }
+	utility::tag::TagPtr const /*tag*/,
+	moves::DataMap & /*data*/,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ ) { }
 
 std::string
 ExtractAsymmetricUnitMover::get_name() const {
@@ -193,11 +193,11 @@ ExtractAsymmetricPoseMover::apply( core::pose::Pose & pose )
 }
 
 void ExtractAsymmetricPoseMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ ) { }
+	utility::tag::TagPtr const /*tag*/,
+	moves::DataMap & /*data*/,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ ) { }
 
 std::string
 ExtractAsymmetricPoseMover::get_name() const {

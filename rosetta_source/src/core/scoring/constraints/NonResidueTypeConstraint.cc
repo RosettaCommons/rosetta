@@ -51,7 +51,7 @@ NonResidueTypeConstraint::NonResidueTypeConstraint(
 
 
 NonResidueTypeConstraint::NonResidueTypeConstraint(
-	core::pose::Pose const & pose,
+	core::pose::Pose const &,
 	Size seqpos,
 	std::string AAname,
 	core::Real favor_non_native_bonus

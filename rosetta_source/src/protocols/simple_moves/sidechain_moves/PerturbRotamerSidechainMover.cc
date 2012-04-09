@@ -113,8 +113,8 @@ PerturbRotamerSidechainMover::set_defaults() {
 
 void
 PerturbRotamerSidechainMover::parse_my_tag(
-  utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+  utility::tag::TagPtr const /*tag*/,
+	protocols::moves::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	pose::Pose const & /*pose*/
@@ -162,8 +162,8 @@ PerturbRotamerSidechainMover::make_chi_move(
 ///all angles in degree
 Real PerturbRotamerSidechainMover::compute_proposal_density(
   Residue const & new_residue,
-	Size const new_resnum,
-	chemical::ResidueType const & old_residue_type,
+	Size const,
+	chemical::ResidueType const &,
 	ChiVector const& old_chi /* in degree */
 ) const {
 

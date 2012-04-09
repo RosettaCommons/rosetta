@@ -412,7 +412,7 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 		const core::pose::Pose& start_pose,
     std::vector< core::pose::Pose> &lib_structs,
 		core::Size loop_size,
-		core::Size round
+		core::Size
 	)
   {
     using namespace core;

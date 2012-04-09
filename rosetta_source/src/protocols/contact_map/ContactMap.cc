@@ -121,7 +121,7 @@ std::string ContactMap::get_name() const {
 }
 
 /// @brief Processes options specified in xml-file and sets up the ContactMap
-void ContactMap::parse_my_tag(TagPtr const tag, moves::DataMap & datamap,
+void ContactMap::parse_my_tag(TagPtr const tag, moves::DataMap &,
 	protocols::filters::Filters_map const &, moves::Movers_map const &,
 	Pose const & pose) {
 
@@ -463,7 +463,7 @@ std::string ContactPartner::string_rep(){
 ///////////////////////////////  Contact  ///////////////////////////////
 
 /// @brief	Adds distance to the contact
-void Contact::add_distance(core::Real distance){
+void Contact::add_distance(core::Real ){
 	++count_;
 }
 

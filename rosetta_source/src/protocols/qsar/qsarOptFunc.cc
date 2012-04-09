@@ -105,12 +105,12 @@ core::Real qsarOptFunc::operator() (core::optimization::Multivec const & vars) c
 
 }
 
-void qsarOptFunc::dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const
+void qsarOptFunc::dfunc( core::optimization::Multivec const &, core::optimization::Multivec & ) const
 {
 	utility_exit_with_message("haven't implemented dfunc sorry bye");
 }
 
-void qsarOptFunc::dump( core::optimization::Multivec const & vars, core::optimization::Multivec const & vars2 ) const
+void qsarOptFunc::dump( core::optimization::Multivec const &, core::optimization::Multivec const & ) const
 {
 	utility_exit_with_message("haven't implemented dump sorry bye");
 }

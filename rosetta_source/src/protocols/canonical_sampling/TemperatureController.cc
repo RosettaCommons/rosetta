@@ -117,7 +117,7 @@ TemperatureController::monte_carlo() {
 /// @brief execute the temperatur move ( called by observer_after_metropolis )
 /// returns the current temperatur in kT.
 core::Real
-TemperatureController::temperature_move( core::pose::Pose& pose, core::Real score) {
+TemperatureController::temperature_move( core::pose::Pose&, core::Real score) {
 	return temperature_move( score );
 }
 
@@ -130,11 +130,11 @@ TemperatureController::get_name() const
 
 void
 TemperatureController::initialize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & mhm,
-		core::Size level,
-		core::Real temperature,
-		core::Size cycle //default=0; non-zero if trajectory is restarted
+	core::pose::Pose &,
+	protocols::canonical_sampling::MetropolisHastingsMover const &,
+	core::Size level,
+	core::Real,
+	core::Size
 ) {
 	if ( level != 1 ) {
 		utility_exit_with_message( "TemperatureController - Baseclass doesn't know about different temp-levels" );

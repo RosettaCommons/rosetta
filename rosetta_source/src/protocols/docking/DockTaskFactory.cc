@@ -157,7 +157,7 @@ utility::vector1< core::pack::task::operation::TaskOperationOP > DockTaskFactory
     return additional_task_operations_;
 }
 
-void DockTaskFactory::set_interface_definition_task_operation(  protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition )
+void DockTaskFactory::set_interface_definition_task_operation(  protocols::toolbox::task_operations::InterfaceTaskOperationOP /*interface_definition*/ )
 {
     //restrict_to_interface_ = interface_definition;
     return;

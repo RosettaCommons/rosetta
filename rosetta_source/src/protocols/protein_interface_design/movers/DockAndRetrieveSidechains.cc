@@ -119,7 +119,7 @@ DockAndRetrieveSidechains::get_name() const {
 }
 
 void
-DockAndRetrieveSidechains::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+DockAndRetrieveSidechains::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	std::string const score_low( tag->getOption<string>( "score_low", "score_docking_low" ) );
 	std::string const score_high( tag->getOption<string>( "score_high", "score12" ) );

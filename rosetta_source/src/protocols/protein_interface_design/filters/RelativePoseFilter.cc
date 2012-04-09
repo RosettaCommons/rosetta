@@ -208,7 +208,7 @@ RelativePoseFilter::report_sm( core::pose::Pose const & pose ) const
 }
 
 void
-RelativePoseFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
+RelativePoseFilter::report( std::ostream & out, core::pose::Pose const & ) const
 {
 	out<<"Dummy: All reports are dummy for this filter. Only report_sm is defined"<<std::endl;
 }

@@ -71,7 +71,7 @@ MotifLibrary::MotifLibrary(
 }
 
 MotifLibrary::MotifLibrary(
-	std::istream & motif_info, core::Size ligand_marker
+	std::istream & motif_info, core::Size
 )
 {
 		//std::cout << "In MotifLibrary.cc, in LigandMotifLibrary istream function" << std::endl;

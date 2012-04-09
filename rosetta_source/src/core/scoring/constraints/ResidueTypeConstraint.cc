@@ -132,7 +132,7 @@ ResidueTypeConstraint::operator == ( Constraint const & other_cst ) const
 }
 
 ConstraintOP
-ResidueTypeConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
+ResidueTypeConstraint::remapped_clone( pose::Pose const&, pose::Pose const&, id::SequenceMappingCOP smap ) const {
 
 	core::Size newseqpos = seqpos_;
 	if ( smap ) {

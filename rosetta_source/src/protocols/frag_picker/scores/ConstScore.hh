@@ -64,7 +64,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value,
-			bool use_lowest, FragmentPickerOP picker, std::string /* params */) {
+			bool use_lowest, FragmentPickerOP, std::string /* params */) {
 		return (FragmentScoringMethodOP) new ConstScore(priority,
 				lowest_acceptable_value, use_lowest);
 	}

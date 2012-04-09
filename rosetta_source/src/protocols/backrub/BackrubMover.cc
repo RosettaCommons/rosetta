@@ -195,7 +195,7 @@ void
 protocols::backrub::BackrubMover::initialize_simulation(
 	core::pose::Pose & pose,
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
-	core::Size cycle
+	core::Size
 )
 {
 	if ( ! branchopt_.initialized() ) branchopt_.read_database();

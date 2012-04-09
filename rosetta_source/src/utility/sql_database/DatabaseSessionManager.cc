@@ -22,6 +22,7 @@
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
+#include <utility/assert.hh>
 
 // Boost Headers
 #ifdef MULTITHREADED
@@ -71,7 +72,7 @@ sessionOP
 DatabaseSessionManager::get_session(
 	std::string const & db_fname,
 	bool const readonly /* = false */,
-	bool const separate_db_per_mpi_process /* = false */
+	bool const MPI_ONLY( separate_db_per_mpi_process ) /* = false */
 ){
 	sessionOP s(new session());
 

@@ -368,13 +368,13 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 }
 
 core::Real
-FilterScanFilter::report_sm( core::pose::Pose const & pose ) const
+FilterScanFilter::report_sm( core::pose::Pose const & ) const
 {
 	return( 1 );
 }
 
 void
-FilterScanFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
+FilterScanFilter::report( std::ostream &, core::pose::Pose const & ) const
 {
 }
 
@@ -383,7 +383,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		protocols::moves::DataMap & data,
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose )
+		core::pose::Pose const & )
 {
 	TR << "FilterScanFilter"<<std::endl;
 	runtime_assert( tag->hasOption( "filter" ) || tag->hasOption( "delta_filters" ));

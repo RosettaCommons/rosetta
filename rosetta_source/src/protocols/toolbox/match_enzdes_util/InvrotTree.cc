@@ -151,7 +151,7 @@ TheozymeInvrotTree::~TheozymeInvrotTree(){}
 
 bool
 TheozymeInvrotTree::check_pose_tree_compatibility(
-		core::pose::Pose & pose ) const
+		core::pose::Pose & ) const
 {
 	utility_exit_with_message("stubbed out");
 	return false;  // required for compilation on Windows

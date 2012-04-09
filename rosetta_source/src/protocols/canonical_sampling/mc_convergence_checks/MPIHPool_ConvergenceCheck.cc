@@ -569,7 +569,7 @@ namespace mc_convergence_checks{
 
   bool
   MPIHPool_RMSD::is_new_structure( Address & address,
-				   utility::vector1< core::Real > & radii,
+				   utility::vector1< core::Real > &,
 				   utility::vector1< core::Real > & rmsds ) {
     for( core::Size ii = 1; ii <= address.size(); ii++ ) {
       if( address[ ii ] == 0 ) {
@@ -1139,7 +1139,7 @@ namespace mc_convergence_checks{
   }
 
   void
-  MPIHPool_RMSD::address_to_string( Address & address_buf, core::Size index, std::string & address_tag ) {
+  MPIHPool_RMSD::address_to_string( Address & address_buf, core::Size, std::string & address_tag ) {
     address_tag = "";
     std::ostringstream q;
     q.width(5);

@@ -132,16 +132,16 @@ BoltzmannFilter::report_sm( core::pose::Pose const & pose ) const
 }
 
 void
-BoltzmannFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
+BoltzmannFilter::report( std::ostream &, core::pose::Pose const & ) const
 {
 }
 
 void
 BoltzmannFilter::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose )
+	protocols::moves::DataMap &,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	TR << "BoltzmannFilter"<<std::endl;
 	runtime_assert( tag->hasOption( "anchors" ) || tag->hasOption( "negative_filters" ) );

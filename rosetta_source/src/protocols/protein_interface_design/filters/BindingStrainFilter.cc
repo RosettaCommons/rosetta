@@ -145,9 +145,9 @@ BindingStrainFilter::report( std::ostream & out, core::pose::Pose const & pose )
 void
 BindingStrainFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		protocols::moves::DataMap & data,
-		protocols::filters::Filters_map const & filters,
+	protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose )
+		core::pose::Pose const & )
 {
 	using namespace protocols::rosetta_scripts;
 	TR << "BindingStrainFilter"<<std::endl;

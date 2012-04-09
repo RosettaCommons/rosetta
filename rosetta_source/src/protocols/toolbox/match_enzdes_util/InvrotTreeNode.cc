@@ -62,7 +62,7 @@ InvrotTreeNode::initialize_from_enzcst_io(
 	core::conformation::Residue const & target_residue,
 	EnzConstraintIOCOP enzcst_io,
 	Size invrot_geomcst,
-	Size target_geomcst
+	Size
 )
 {
 	invrots_and_next_nodes_.clear(); //safety

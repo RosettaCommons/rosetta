@@ -47,6 +47,7 @@
 #include <basic/options/option_macros.hh>
 
 #include <utility/mpi_util.hh>
+#include <utility/assert.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
@@ -237,7 +238,7 @@ MPI_Comm const& current_mpi_comm() {
 
 ///@brief used for message passing to the MPIWorkPoolJobDistributor. This function will ask the head node for data.
 //The type of data returned is based on the type of listener created based on the listener_tags of the MessageListenerFactory
-std::string request_data_from_head_node(message_listening::listener_tags listener_tag, std::string data){
+std::string request_data_from_head_node(message_listening::listener_tags MPI_ONLY( listener_tag ), std::string MPI_ONLY( data ) ){
     #ifdef USEMPI
     
     //send a message to the head node that tells jd2 to create a message listener
@@ -258,7 +259,7 @@ std::string request_data_from_head_node(message_listening::listener_tags listene
 	return "";  // required for compilation on Windows
 }
     
-void send_data_to_head_node(message_listening::listener_tags listener_tag, std::string data){
+void send_data_to_head_node(message_listening::listener_tags MPI_ONLY( listener_tag ), std::string MPI_ONLY( data ) ){
 #ifdef USEMPI
     //send a message to the head node that tells jd2 to create a message listener
     MPI_Send( &listener_tag, 1, MPI_INT, 0/*head node*/, RECIEVE_MESSAGE_TAG, MPI_COMM_WORLD );

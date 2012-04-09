@@ -44,7 +44,7 @@ using basic::database::table_exists;
 
 JobDataFeatures::JobDataFeatures() {}
 
-JobDataFeatures::JobDataFeatures(JobDataFeatures const & src) {}
+JobDataFeatures::JobDataFeatures(JobDataFeatures const & ) {}
 
 JobDataFeatures::~JobDataFeatures() {}
 
@@ -155,7 +155,7 @@ void
 JobDataFeatures::load_string_data(
 		utility::sql_database::sessionOP db_session,
 		boost::uuids::uuid struct_id,
-		core::pose::Pose & pose
+		core::pose::Pose &
 ){
 	if(!table_exists(db_session, "job_string_data")) return;
 
@@ -197,7 +197,7 @@ void
 JobDataFeatures::load_string_string_data(
 		utility::sql_database::sessionOP db_session,
 		boost::uuids::uuid struct_id,
-		core::pose::Pose & pose
+		core::pose::Pose &
 ){
 	if(!table_exists(db_session, "job_string_string_data")) return;
 	std::string statement_string =
@@ -241,7 +241,7 @@ void
 JobDataFeatures::load_string_real_data(
 		utility::sql_database::sessionOP db_session,
 		boost::uuids::uuid struct_id,
-		core::pose::Pose & pose
+		core::pose::Pose &
 ){
 	if(!table_exists(db_session, "job_string_real_data")) return;
 	std::string statement_string =

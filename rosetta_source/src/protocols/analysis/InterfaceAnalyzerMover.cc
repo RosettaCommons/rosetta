@@ -1291,7 +1291,7 @@ namespace analysis{
   // }
 
 void
-InterfaceAnalyzerMover::compute_interface_sc( core::Size & interface_jump, core::pose::Pose const & complexed_pose){
+InterfaceAnalyzerMover::compute_interface_sc( core::Size &, core::pose::Pose const & complexed_pose){
 
 	core::scoring::sc::ShapeComplementarityCalculator sc_calc;
 	// Split PDB into two surfaces
@@ -1415,9 +1415,9 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size & interface_jump, core:
   InterfaceAnalyzerMover::parse_my_tag(
       TagPtr const tag,
       DataMap & datamap,
-      Filters_map const & filters,
-      Movers_map const & movers,
-      Pose const & pose
+      Filters_map const &,
+      Movers_map const &,
+      Pose const &
   )
   {
     if ( tag->getName() != "InterfaceAnalyzerMover" ) {

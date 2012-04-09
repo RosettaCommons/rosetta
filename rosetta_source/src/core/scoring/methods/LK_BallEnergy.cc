@@ -652,15 +652,15 @@ determine_crossover_behavior(
 
 void
 LK_BallEnergy::accumulate_single_atom_contributions(
-																										Size const atom1,
-																										Size const atom1_type_index,
-																										Vectors const & atom1_waters,
-																										conformation::Residue const & rsd1,
-																										Size const atom2_type_index,
-																										Vector const & atom2_xyz,
-																										Real const lk_desolvation_of_atom1_by_atom2,
-																										EnergyMap & emap
-																										) const
+	Size const,
+	Size const,
+	Vectors const & atom1_waters,
+	conformation::Residue const &,
+	Size const atom2_type_index,
+	Vector const & atom2_xyz,
+	Real const lk_desolvation_of_atom1_by_atom2,
+	EnergyMap & emap
+) const
 {
 	/// for first checkin to trunk, take old approach of only counting things for atoms with waters attached
 	/// more logic here in the blab branch, hence existence as separate fxn
@@ -918,18 +918,18 @@ LK_BallEnergy::sum_contributions_for_atom_pair_one_way(
 /// @note  Calculates the water positions for atom2 if d2 < safe_max_dis2
 void
 LK_BallEnergy::sum_contributions_for_atom_pair(
-																							 Size const atom1,
-																							 conformation::Residue const & rsd1,
-																							 LKB_ResidueInfo const & rsd1_info,
-																							 Size const atom2,
-																							 conformation::Residue const & rsd2,
-																							 LKB_ResidueInfo const & rsd2_info,
-																							 pose::Pose const & pose,
-																							 EnergyMap const & weights,
-																							 Real const cp_weight,
-																							 Vector & F1,
-																							 Vector & F2
-																							 ) const
+	Size const atom1,
+	conformation::Residue const & rsd1,
+	LKB_ResidueInfo const & rsd1_info,
+	Size const atom2,
+	conformation::Residue const & rsd2,
+	LKB_ResidueInfo const & rsd2_info,
+	pose::Pose const &,
+	EnergyMap const & weights,
+	Real const cp_weight,
+	Vector & F1,
+	Vector & F2
+) const
 {
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 	Real const d2( rsd1.xyz( atom1 ).distance_squared( rsd2.xyz( atom2 ) ) );

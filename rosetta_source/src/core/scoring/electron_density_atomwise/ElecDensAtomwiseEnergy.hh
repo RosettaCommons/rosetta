@@ -89,10 +89,10 @@ public:
 	virtual
 	void
 	eval_intrares_energy (
-	  conformation::Residue const & rsd,
-	  pose::Pose const & pose,
-	  ScoreFunction const & sfxn,
-	  EnergyMap & emap
+	  conformation::Residue const &,
+	  pose::Pose const &,
+	  ScoreFunction const &,
+	  EnergyMap &
 	) const {
 		return;
 	}
@@ -123,9 +123,9 @@ public:
 	virtual
 	void
 	finalize_total_energy (
-	  pose::Pose const & pose,
+	  pose::Pose const &,
 	  ScoreFunction const &,
-	  EnergyMap & totals
+	  EnergyMap &
 	) const {
 		return;
 	}

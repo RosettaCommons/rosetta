@@ -55,7 +55,7 @@ typedef utility::vector1< std::pair<Size,Real> > WtedClones;
 static basic::Tracer TR("core.conformation.symmetry.SymmData");
 
 // @define: constructor
-SymmData::SymmData( Size nres, Size njump ) :
+SymmData::SymmData( Size, Size ) :
 	utility::pointer::ReferenceCount(),
 	//nres_subunit_( nres ),
 	//njump_subunit_( njump ),

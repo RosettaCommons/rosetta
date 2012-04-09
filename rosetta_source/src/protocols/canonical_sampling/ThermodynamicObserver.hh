@@ -45,26 +45,26 @@ public:
 	~ThermodynamicObserver();
 
 	virtual
-	void apply( core::pose::Pose& pose ) {};
+	void apply( core::pose::Pose& ) {};
 	/// @brief callback executed before any Monte Carlo trials
 
 	virtual
 	bool
 	restart_simulation(
-			 core::pose::Pose & pose,
-			 protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
-			 core::Size& cycle,
-			 core::Size& temp_level,
-			 core::Real& temperature
+		core::pose::Pose &,
+		protocols::canonical_sampling::MetropolisHastingsMover&,
+		core::Size&,
+		core::Size&,
+		core::Real& 
 	) { return false; }
 
 
 	virtual
 	void
 	initialize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
-		core::Size cycle //non-zero if trajectory is restarted
+		core::pose::Pose &,
+		protocols::canonical_sampling::MetropolisHastingsMover const &,
+		core::Size //non-zero if trajectory is restarted
 	) {};
 
 	/// @brief callback executed after the Metropolis criterion is evaluated
@@ -78,8 +78,8 @@ public:
 	virtual
 	void
 	finalize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+		core::pose::Pose &,
+		protocols::canonical_sampling::MetropolisHastingsMover const &
 	) {};
 
 	/// @brief return false here if a valid pose is not required for "observe"

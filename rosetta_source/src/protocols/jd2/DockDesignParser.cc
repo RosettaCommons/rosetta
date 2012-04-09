@@ -126,7 +126,7 @@ typedef utility::vector0< TagPtr > TagPtrs;
 /// Notice that the order of the sections by which the protocol is written doesn't matter, BUT the order of the
 /// mover-filter pairs in PROTOCOLS section does matter.
 bool
-DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & in_mover, bool new_input, std::string const xml_fname ){
+DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mover, bool new_input, std::string const xml_fname ){
 
 	bool modified_pose( false );
 

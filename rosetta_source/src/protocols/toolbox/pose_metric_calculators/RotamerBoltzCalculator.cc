@@ -151,7 +151,7 @@ namespace pose_metric_calculators {
     PackerTaskOP task = tf->create_task_and_apply_taskoperations( pose );
     return task;
   }
-  protocols::simple_moves::MinMoverOP RotamerBoltzCalculator::init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task){
+  protocols::simple_moves::MinMoverOP RotamerBoltzCalculator::init_minmover(core::pose::Pose& pose, core::Size, bool unbound, core::pack::task::PackerTaskOP  task){
 	  using namespace core::conformation;
 
     core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;

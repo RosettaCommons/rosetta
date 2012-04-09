@@ -72,7 +72,7 @@ using cppdb::result;
 
 StructureFeatures::StructureFeatures(){}
 
-StructureFeatures::StructureFeatures( StructureFeatures const & src) :
+StructureFeatures::StructureFeatures( StructureFeatures const & ) :
 	FeaturesReporter()
 {}
 
@@ -139,7 +139,7 @@ StructureFeatures::report_features(
 //@details missing struct_id and input/output tags
 boost::uuids::uuid
 StructureFeatures::report_features(
-	vector1< bool > const & relevant_residues,
+	vector1< bool > const &,
 	Size batch_id,
 	sessionOP db_session,
 	string const & tag,

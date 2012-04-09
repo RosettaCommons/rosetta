@@ -104,7 +104,7 @@ std::string Translate::get_name() const{
 void
 Translate::parse_my_tag(
 		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data_map,
+		protocols::moves::DataMap & /*data_map*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose
@@ -254,7 +254,7 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 }
 
 core::Size
-Translate::get_chain_id(core::pose::Pose const & pose){
+Translate::get_chain_id(core::pose::Pose const & ){
 	return translate_info_.chain_id;
 }
 

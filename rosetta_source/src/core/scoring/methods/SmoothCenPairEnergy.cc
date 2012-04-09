@@ -98,7 +98,7 @@ void
 SmoothCenPairEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
+	pose::Pose const &,
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const {
@@ -129,8 +129,8 @@ SmoothCenPairEnergy::eval_residue_pair_derivatives(
 		conformation::Residue const & rsd2,
 		ResSingleMinimizationData const &,
 		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
-		pose::Pose const & pose, // provides context
+		ResPairMinimizationData const &,
+		pose::Pose const &,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs

@@ -120,9 +120,9 @@ DFIRE_Energy::clone() const
 ///
 void
 DFIRE_Energy::residue_energy(
-	conformation::Residue const & rsd,
+	conformation::Residue const &,
 	pose::Pose const &,
-	EnergyMap & emap
+	EnergyMap &
 ) const {
 	//std::cout << "called residue_energy" << std::endl;
 	return;
@@ -158,7 +158,7 @@ void
 DFIRE_Energy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
+	pose::Pose const &,
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const {

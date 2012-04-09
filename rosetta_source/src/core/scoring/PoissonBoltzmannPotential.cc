@@ -68,7 +68,7 @@ void
 dump_pqr(
 		 core::pose::Pose const & pose,
 		 std::ostream & out,
-		 std::string const & tag,
+		 std::string const &,
 		 utility::vector1 <Size> const & zero_charge_chains
 		 ) {
 	Size const nres( pose.total_residue() );

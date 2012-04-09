@@ -263,7 +263,7 @@ GraftOneCDRLoop & GraftOneCDRLoop::operator=( GraftOneCDRLoop const & rhs ){
     return *this;
 }
     
-void GraftOneCDRLoop::initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & lhs, GraftOneCDRLoop const & rhs) {
+void GraftOneCDRLoop::initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop &, GraftOneCDRLoop const & ) {
         
 }
     

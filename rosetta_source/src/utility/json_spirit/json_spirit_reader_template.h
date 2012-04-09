@@ -10,6 +10,8 @@
 # pragma once
 #endif
 
+#include <utility/assert.hh>
+
 #include "json_spirit_value.h"
 #include "json_spirit_error_position.h"
 
@@ -214,28 +216,28 @@ namespace json_spirit
         {
         }
 
-        void begin_obj( Char_type c )
+        void begin_obj( Char_type ASSERT_ONLY( c ) )
         {
             assert( c == '{' );
 
             begin_compound< Object_type >();
         }
 
-        void end_obj( Char_type c )
+        void end_obj( Char_type ASSERT_ONLY( c ) )
         {
             assert( c == '}' );
 
             end_compound();
         }
 
-        void begin_array( Char_type c )
+        void begin_array( Char_type ASSERT_ONLY( c ) )
         {
             assert( c == '[' );
 
             begin_compound< Array_type >();
         }
 
-        void end_array( Char_type c )
+        void end_array( Char_type ASSERT_ONLY( c ) )
         {
             assert( c == ']' );
 
@@ -254,21 +256,21 @@ namespace json_spirit
             add_to_current( get_str< String_type >( begin, end ) );
         }
 
-        void new_true( Iter_type begin, Iter_type end )
+        void new_true( Iter_type ASSERT_ONLY( begin ), Iter_type ASSERT_ONLY( end ) )
         {
             assert( is_eq( begin, end, "true" ) );
 
             add_to_current( true );
         }
 
-        void new_false( Iter_type begin, Iter_type end )
+        void new_false( Iter_type ASSERT_ONLY( begin ), Iter_type ASSERT_ONLY( end ) )
         {
             assert( is_eq( begin, end, "false" ) );
 
             add_to_current( false );
         }
 
-        void new_null( Iter_type begin, Iter_type end )
+        void new_null( Iter_type ASSERT_ONLY( begin ), Iter_type ASSERT_ONLY( end ) )
         {
             assert( is_eq( begin, end, "null" ) );
 
@@ -364,7 +366,7 @@ namespace json_spirit
     }
 
     template< typename Iter_type >
-    void throw_error( Iter_type i, const std::string& reason )
+    void throw_error( Iter_type /*i*/, const std::string& reason )
     {
        throw reason;
     }
@@ -383,32 +385,32 @@ namespace json_spirit
         {
         }
 
-        static void throw_not_value( Iter_type begin, Iter_type end )
+        static void throw_not_value( Iter_type begin, Iter_type /*end*/ )
         {
     	    throw_error( begin, "not a value" );
         }
 
-        static void throw_not_array( Iter_type begin, Iter_type end )
+        static void throw_not_array( Iter_type begin, Iter_type /*end*/ )
         {
     	    throw_error( begin, "not an array" );
         }
 
-        static void throw_not_object( Iter_type begin, Iter_type end )
+        static void throw_not_object( Iter_type begin, Iter_type /*end*/ )
         {
     	    throw_error( begin, "not an object" );
         }
 
-        static void throw_not_pair( Iter_type begin, Iter_type end )
+        static void throw_not_pair( Iter_type begin, Iter_type /*end*/ )
         {
     	    throw_error( begin, "not a pair" );
         }
 
-        static void throw_not_colon( Iter_type begin, Iter_type end )
+        static void throw_not_colon( Iter_type begin, Iter_type /*end*/ )
         {
     	    throw_error( begin, "no colon in pair" );
         }
 
-        static void throw_not_string( Iter_type begin, Iter_type end )
+        static void throw_not_string( Iter_type begin, Iter_type /*end*/ )
         {
     	    throw_error( begin, "not a string" );
         }

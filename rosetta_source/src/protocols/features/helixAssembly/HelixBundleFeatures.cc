@@ -233,11 +233,11 @@ bool HelixBundleFeatures::checkHelixContacts(Pose const & pose, HelicalFragment 
 ///@brief collect all the feature data for the pose
 core::Size
 HelixBundleFeatures::report_features(
-									 core::pose::Pose const & pose,
-									 utility::vector1<bool> const & relevant_residues,
-									 boost::uuids::uuid struct_id,
-									 utility::sql_database::sessionOP db_session
-									 ){
+	core::pose::Pose const & pose,
+	utility::vector1<bool> const &,
+	boost::uuids::uuid struct_id,
+	utility::sql_database::sessionOP db_session
+){
 
 	utility::vector1<HelicalFragment> all_helices = get_full_helices(struct_id, db_session);
 

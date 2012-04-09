@@ -75,7 +75,7 @@ AddChainBreak::clone() const {
 }
 
 void
-AddChainBreak::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+AddChainBreak::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	/// resnum & pdb_num are now equivalent
 	if( tag->hasOption( "resnum" ) )

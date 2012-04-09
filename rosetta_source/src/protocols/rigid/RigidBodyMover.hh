@@ -107,7 +107,7 @@ public:
 	virtual
 	void
 	set_preserve_detailed_balance(
-		bool preserve_detailed_balance
+		bool
 	) {};
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges

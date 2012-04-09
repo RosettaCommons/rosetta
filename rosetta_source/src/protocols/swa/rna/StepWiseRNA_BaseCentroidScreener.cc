@@ -70,7 +70,7 @@ namespace rna {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_BaseCentroidScreener::Initialize_is_virtual_base( pose::Pose const & pose, bool const verbose ){
+	StepWiseRNA_BaseCentroidScreener::Initialize_is_virtual_base( pose::Pose const & pose, bool const ){
 
 		Size const & nres = pose.total_residue();
 		is_virtual_base_.dimension( nres, false );

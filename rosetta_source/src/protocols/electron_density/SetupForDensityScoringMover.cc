@@ -123,12 +123,12 @@ void SetupForDensityScoringMover::mask( protocols::loops::Loops const & loops ) 
 			mask_reses_.push_back(i);
 }
 
-void SetupForDensityScoringMover::parse_my_tag( 
+void SetupForDensityScoringMover::parse_my_tag(
 			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose ) {
+			moves::DataMap &,
+			filters::Filters_map const &,
+			moves::Movers_map const &,
+			core::pose::Pose const & ) {
 
 	TR << "Parsing SetupForDensityScoringMover----" << std::endl;
 	dock_into_dens_strategy_ = tag->getOption<std::string>( "realign", "no" );

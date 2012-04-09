@@ -62,7 +62,7 @@ SequenceCouplingConstraint::SequenceCouplingConstraint()
 {}
 
 SequenceCouplingConstraint::SequenceCouplingConstraint(
-	Pose const & pose,
+	Pose const &,
 	Size seqpos1,
 	Size seqpos2,
 	SequenceCouplingOP coupling/* = NULL */

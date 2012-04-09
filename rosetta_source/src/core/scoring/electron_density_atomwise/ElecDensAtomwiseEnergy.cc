@@ -153,7 +153,7 @@ void
 ElecDensAtomwiseEnergy::residue_pair_energy (
   conformation::Residue const & rsd1,
   conformation::Residue const & rsd2,
-  pose::Pose const & pose,
+  pose::Pose const &,
   ScoreFunction const &,
   EnergyMap & emap
 ) const {
@@ -172,7 +172,7 @@ ElecDensAtomwiseEnergy::eval_atom_derivative (
   id::AtomID const & id,
   pose::Pose const & pose,
   kinematics::DomainMap const &, // domain_map,
-  ScoreFunction const & sfxn,
+  ScoreFunction const &,
   EnergyMap const & weights,
   Vector & F1,
   Vector & F2

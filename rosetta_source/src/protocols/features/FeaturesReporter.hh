@@ -108,15 +108,15 @@ public:
 	virtual
 	void
 	load_into_pose(
-		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
-		core::pose::Pose & pose) {}
+		utility::sql_database::sessionOP,
+		boost::uuids::uuid,
+		core::pose::Pose & ) {}
 
 	virtual
 	void
 	delete_record(
-		boost::uuids::uuid struct_id,
-		utility::sql_database::sessionOP db_session) {}
+		boost::uuids::uuid,
+		utility::sql_database::sessionOP ) {}
 
 protected:
 

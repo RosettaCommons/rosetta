@@ -451,7 +451,7 @@ int ShapeComplementarityCalculator::WildcardMatch(
 }
 
 // Determine assign the attention numbers for each atom
-int ShapeComplementarityCalculator::AssignAttentionNumbers(std::vector<Atom> &atoms)
+int ShapeComplementarityCalculator::AssignAttentionNumbers(std::vector<Atom> & )
 {
 	std::vector<Atom>::iterator pAtom1, pAtom2;
 
@@ -488,7 +488,7 @@ int ShapeComplementarityCalculator::AssignAttentionNumbers(std::vector<Atom> &at
 // Compute the surface for the atoms in the interface and its neighbours
 ////////////////////////////////////////////////////////////////////////////
 
-int ShapeComplementarityCalculator::CalcDotsForAllAtoms(std::vector<Atom> &atoms)
+int ShapeComplementarityCalculator::CalcDotsForAllAtoms(std::vector<Atom> & )
 {
 	// Calc maximum radius for atoms list
 	run_.radmax = 0.0;

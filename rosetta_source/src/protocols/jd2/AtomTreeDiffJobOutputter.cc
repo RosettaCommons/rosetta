@@ -185,8 +185,8 @@ AtomTreeDiffJobOutputter::other_pose(
   JobCOP /*job*/,
 	core::pose::Pose const & /*pose*/,
 	std::string const & /*tag*/,
-	int copy_count, /*default -1 */
-	bool score_only /*default false*/
+	int /*copy_count*/, /*default -1 */
+	bool /*score_only*/ /*default false*/
  ){
 	// do something with this function later
 	return;

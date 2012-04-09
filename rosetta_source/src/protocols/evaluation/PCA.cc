@@ -51,7 +51,7 @@ using namespace core;
 
 
 /// @brief A function (not a macro) that will not print a square matrix to tr.Debug
-template< class T > void dump_matrix( Size nr, T const & a, basic::Tracer & tr) {}
+template< class T > void dump_matrix( Size, T const &, basic::Tracer & ) {}
 
 /// @brief A function (not a macro) that will print a square matrix to tr.Debug
 template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tr)

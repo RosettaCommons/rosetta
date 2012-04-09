@@ -190,7 +190,7 @@ RG_Energy_Fast::calculate_rg_score(
 
 
 void
-RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const {
+RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
 	RG_MinData &mindata = nonconst_mindata_from_pose( pose );
 
 	// calculate center of mass

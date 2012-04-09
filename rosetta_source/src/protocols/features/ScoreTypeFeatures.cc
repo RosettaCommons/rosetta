@@ -146,8 +146,8 @@ ScoreTypeFeatures::report_features(
 }
 
 void ScoreTypeFeatures::delete_record(
-	boost::uuids::uuid struct_id,
-	utility::sql_database::sessionOP db_session){}
+	boost::uuids::uuid,
+	utility::sql_database::sessionOP ){}
 
 void
 ScoreTypeFeatures::insert_score_type_rows(

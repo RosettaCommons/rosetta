@@ -55,7 +55,7 @@ void RdcSelectEvaluatorCreator::register_options() {
 
 }
 
-void RdcSelectEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval ) const {
+void RdcSelectEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & ) const {
 
 }
 

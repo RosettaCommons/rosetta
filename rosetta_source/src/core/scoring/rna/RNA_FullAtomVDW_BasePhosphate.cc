@@ -289,7 +289,7 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 void
 RNA_FullAtomVDW_BasePhosphate::residue_energy(
 		conformation::Residue const & rsd,
-		pose::Pose const & pose,
+		pose::Pose const &,
 		EnergyMap & emap 	) const {
 
 	return residue_energy( rsd, emap );

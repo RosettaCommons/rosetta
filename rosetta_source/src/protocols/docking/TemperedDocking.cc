@@ -261,7 +261,7 @@ void TemperedDocking::set_highres_scorefxn(
 	docking_scorefxn_output_ = docking_scorefxn_output;
 }
 
-void TemperedDocking::set_sc_min( bool sc_min ) {}
+void TemperedDocking::set_sc_min( bool ) {}
 
 void TemperedDocking::set_use_constraints( bool setting )
 {
@@ -439,7 +439,7 @@ TemperedDocking::init_from_options()
 
 
 void
-TemperedDocking::parse_my_tag( TagPtr const tag, moves::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+TemperedDocking::parse_my_tag( TagPtr const tag, moves::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 

@@ -101,7 +101,7 @@ CartesianMinimizerMap::copy_dofs_to_pose(
 void
 CartesianMinimizerMap::add_torsion(
 	DOF_ID const & dof_id,
-	DOF_ID const & parent_id
+	DOF_ID const &
 ) {
 	// only care about torsional DOFs
 	if ( dof_id.type() == id::PHI )
@@ -111,8 +111,8 @@ CartesianMinimizerMap::add_torsion(
 /////////////////////////////////////////////////////////////////////////////
 void
 CartesianMinimizerMap::add_atom(
-	AtomID const & AtomID,
-	DOF_ID const & dof_id
+	AtomID const &,
+	DOF_ID const &
 )
 {
 	; // do nothing

@@ -59,7 +59,7 @@ bool is_upper_cutpoint(
 
 void find_cutpoint_variants(
 	const core::pose::Pose& pose,
-	const core::kinematics::FoldTree& tree,
+	const core::kinematics::FoldTree&,
 	utility::vector1<int>* cutpoints
 ) {
   using core::Size;

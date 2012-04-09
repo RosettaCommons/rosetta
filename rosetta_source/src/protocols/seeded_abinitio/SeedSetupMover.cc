@@ -250,7 +250,7 @@ void define_movemap_chains(
 									bool chi_chain1,
 									bool chi_chain2,
 									bool interface_chi1,
-									bool interface_chi2,
+									bool,
 									core::Real interface_distance_cutoff
 									){
 			

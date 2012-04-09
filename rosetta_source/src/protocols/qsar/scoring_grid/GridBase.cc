@@ -125,7 +125,7 @@ numeric::xyzVector<core::Size> GridBase::get_dimensions()
 	return numeric::xyzVector<core::Size>(x_size,y_size,z_size);
 }
 
-core::Real GridBase::score(core::conformation::Residue const & residue, core::Real const max_score,qsarMapOP qsar_map)
+core::Real GridBase::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP )
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;

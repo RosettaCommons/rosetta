@@ -122,8 +122,8 @@ Torsion::report( std::ostream & out, core::pose::Pose const & pose ) const
 void
 Torsion::parse_my_tag( utility::tag::TagPtr const tag,
 		protocols::moves::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
 		core::pose::Pose const & pose )
 {
 	task_factory_set( false );

@@ -98,7 +98,7 @@ void OrbitalsScore::setup_for_derivatives(pose::Pose & pose , ScoreFunction cons
 
 }
 void
-OrbitalsScore::finalize_after_derivatives( pose::Pose & pose, ScoreFunction const &  ) const{
+OrbitalsScore::finalize_after_derivatives( pose::Pose & /*pose*/, ScoreFunction const &  ) const{
 /*	for(core::Size resid=1; resid <= pose.n_residue(); ++resid){
 		pose.update_orbital_coords(resid);
 	}*/

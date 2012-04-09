@@ -88,10 +88,10 @@ public:
 
 	virtual core::Real
 	compute_proposal_density(
-		core::conformation::Residue const & new_residue,
-		core::Size const resnum,
-		core::chemical::ResidueType const & old_res_type,
-		ChiVector const & old_chi
+		core::conformation::Residue const &,
+		core::Size const,
+		core::chemical::ResidueType const &,
+		ChiVector const &
 	) const { return 1.0; };
 
 	void set_magnitude( core::Real setting ) {

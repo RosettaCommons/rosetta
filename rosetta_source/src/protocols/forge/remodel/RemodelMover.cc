@@ -1596,11 +1596,11 @@ utility::vector1< bool > const & RemodelMover::allowed_surface_aa() {
 /// @brief parse xml
 void
 RemodelMover::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagPtr const,
+	DataMap &,
 	Filters_map const &,
 	Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {}
 
 

@@ -918,7 +918,7 @@ ScoreFunction::get_sub_score(
 core::Real
 ScoreFunction::get_sub_score_exclude_res(
 	pose::Pose const & pose,
-	utility::vector1< core::Size > const & exclude_list
+	utility::vector1< core::Size > const &
 ) const {
 
 	utility::vector1< bool > residue_mask(true, pose.total_residue());
@@ -932,7 +932,7 @@ ScoreFunction::get_sub_score_exclude_res(
 core::Real
 ScoreFunction::get_sub_score_exclude_res(
 	pose::Pose & pose,
-	utility::vector1< core::Size > const & exclude_list
+	utility::vector1< core::Size > const &
 ) const {
 
 	//If the energies are not up-to-date score the pose
@@ -951,7 +951,7 @@ ScoreFunction::get_sub_score_exclude_res(
 void
 ScoreFunction::get_sub_score_exclude_res(
 	pose::Pose const & pose,
-	utility::vector1< core::Size > const & exclude_list,
+	utility::vector1< core::Size > const &,
 	EnergyMap & emap
 ) const {
 	utility::vector1< bool > residue_mask(true, pose.total_residue());
@@ -965,7 +965,7 @@ ScoreFunction::get_sub_score_exclude_res(
 void
 ScoreFunction::get_sub_score_exclude_res(
 	pose::Pose & pose,
-	utility::vector1< core::Size > const & exclude_list,
+	utility::vector1< core::Size > const &,
 	EnergyMap & emap
 ) const {
 

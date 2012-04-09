@@ -430,7 +430,7 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops
 	return residue_weights;
 }
 
-void FoldTreeHybridize::backup_original_foldtree(core::pose::Pose const & pose) {
+void FoldTreeHybridize::backup_original_foldtree(core::pose::Pose const & /*pose*/ ) {
 	//orig_ft_ = pose.conformation().fold_tree();
 	//orig_n_residue_ = pose.total_residue();
 }

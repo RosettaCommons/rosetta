@@ -105,9 +105,9 @@ void
 SpecificResiduesNearInterfaceFilter::parse_my_tag(
 	utility::tag::TagPtr const tag,
 	protocols::moves::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	Pose const & pose )
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	Pose const & )
 {
 	if(!tag->hasOption("task_operations" )){
 		utility_exit_with_message(

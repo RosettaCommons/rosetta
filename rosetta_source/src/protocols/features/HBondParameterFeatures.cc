@@ -80,7 +80,7 @@ HBondParameterFeatures::HBondParameterFeatures() :
 {}
 
 HBondParameterFeatures::HBondParameterFeatures(
-	ScoreFunctionOP scfxn) :
+	ScoreFunctionOP ) :
 	FeaturesReporter(),
 	scfxn_(getScoreFunction())
 {}

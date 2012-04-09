@@ -89,9 +89,9 @@ BetaTurnDetectionFeatures::BetaTurnDetectionFeatures() :
 	setup_conformation_to_turn_type_map();
 }
 
-BetaTurnDetectionFeatures::BetaTurnDetectionFeatures( BetaTurnDetectionFeatures const & src) :
+BetaTurnDetectionFeatures::BetaTurnDetectionFeatures( BetaTurnDetectionFeatures const & ) :
 	FeaturesReporter()
-{ 
+{
 	setup_conformation_to_turn_type_map();
 }
 

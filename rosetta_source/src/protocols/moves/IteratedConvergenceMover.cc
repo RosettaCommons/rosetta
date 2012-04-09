@@ -125,10 +125,10 @@ IteratedConvergenceMover::get_name() const {
 void
 IteratedConvergenceMover::parse_my_tag(
 	TagPtr const tag,
-	DataMap & datamap,
+	DataMap &,
 	Filters_map const & filters,
 	Movers_map const & movers,
-	Pose const & pose
+	Pose const &
 )
 {
 	delta( tag->getOption< core::Real >( "delta", 0.1 ) );

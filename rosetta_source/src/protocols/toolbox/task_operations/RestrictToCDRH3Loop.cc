@@ -38,7 +38,7 @@ using utility::tag::TagPtr;
 
 RestrictToCDRH3Loop::RestrictToCDRH3Loop() : parent() {}
 
-RestrictToCDRH3Loop::RestrictToCDRH3Loop( RestrictToCDRH3Loop const & src) : parent() {}
+RestrictToCDRH3Loop::RestrictToCDRH3Loop( RestrictToCDRH3Loop const & ) : parent() {}
 
 RestrictToCDRH3Loop::~RestrictToCDRH3Loop() {}
 

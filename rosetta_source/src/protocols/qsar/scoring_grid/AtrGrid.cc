@@ -141,7 +141,7 @@ void AtrGrid::set_ligand_rings(
 
 void AtrGrid::refresh(
 		core::pose::Pose const & pose,
-		core::Vector const & center,
+		core::Vector const &,
 		utility::vector1<core::Size> ligand_chain_ids_to_exclude
 ){
 	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.

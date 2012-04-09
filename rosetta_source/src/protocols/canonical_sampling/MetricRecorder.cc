@@ -366,9 +366,9 @@ MetricRecorder::apply(
 
 void
 MetricRecorder::initialize_simulation(
-	core::pose::Pose & pose,
+	core::pose::Pose &,
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
-	core::Size cycle //default=0; non-zero if trajectory is restarted
+	core::Size //default=0; non-zero if trajectory is restarted
 )
 {
 	std::string original_file_name(file_name());
@@ -396,8 +396,8 @@ MetricRecorder::observe_after_metropolis(
 
 void
 MetricRecorder::finalize_simulation(
-	core::pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+	core::pose::Pose &,
+	protocols::canonical_sampling::MetropolisHastingsMover const &
 )
 {
 	recorder_stream_.close();

@@ -274,7 +274,7 @@ LoopMoverFromCommandLine::get_name() const {
 	return LoopMoverFromCommandLineCreator::mover_name();
 }
 void
-LoopMoverFromCommandLine::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+LoopMoverFromCommandLine::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
 	perturb_ = tag->getOption<bool>( "perturb", 1 );

@@ -532,7 +532,7 @@ void
 HBondFeatures::insert_site_pdb_row(
 	Pose const & pose,
 	Size resNum,
-	Size atmNum,
+	Size,
   Size heavy_atmNum,
 	boost::uuids::uuid struct_id,
 	Size site_id,
@@ -563,7 +563,7 @@ HBondFeatures::insert_site_pdb_row(
 
 void
 HBondFeatures::insert_site_environment_row(
-	Pose const & pose,
+	Pose const &,
 	Size resNum,
 	Size atmNum,
 	boost::uuids::uuid struct_id,

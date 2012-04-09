@@ -446,7 +446,7 @@ ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_dono
 	conformation::Residue const & don_rsd,
 	Size const  & occ_atm,
 	conformation::Residue const & occ_rsd,
-	pose::Pose const & pose,
+	pose::Pose const &,
 	Real & energy,
 	bool const update_deriv /*= false*/,
 	HBondDerivs & deriv /* = DUMMY_DERIVS */) const
@@ -525,7 +525,7 @@ ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_acce
 	conformation::Residue const & acc_rsd,
 	Size const & occ_atm,
 	conformation::Residue const & occ_rsd,
-	pose::Pose const & pose,
+	pose::Pose const &,
 	Real & energy,
 	bool const update_deriv /*= false*/,
 	HBondDerivs & deriv /* = DUMMY_DERIV2D */) const

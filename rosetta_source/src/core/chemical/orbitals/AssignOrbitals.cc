@@ -144,8 +144,8 @@ void AssignOrbitals::assign_orbitals( )
 					core::Real const phi(numeric::conversions::radians(120.0));
 					core::Real const theta(numeric::conversions::radians(70.0));
 
-					core::Real const phi_De(numeric::conversions::radians(180.0));
-					core::Real const theta_De(numeric::conversions::radians(70.0));
+					//core::Real const phi_De(numeric::conversions::radians(180.0));
+					//core::Real const theta_De(numeric::conversions::radians(70.0));
 
 					std::string orbital_type_full_name(make_orbital_type_name(atmtype, "p",AOhybridization_) );
 					std::string const orbital_element_name( make_orbital_element_name() );

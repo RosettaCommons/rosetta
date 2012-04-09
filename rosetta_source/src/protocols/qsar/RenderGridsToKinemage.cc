@@ -109,7 +109,7 @@ std::string RenderGridsToKinemage::get_name() const
 }
 
 
-void RenderGridsToKinemage::apply(core::pose::Pose & pose)
+void RenderGridsToKinemage::apply(core::pose::Pose & )
 {
 
 	setup_colors();
@@ -139,11 +139,11 @@ void RenderGridsToKinemage::apply(core::pose::Pose & pose)
 }
 
 void RenderGridsToKinemage::parse_my_tag(utility::tag::TagPtr const tag,
-		moves::DataMap & data,
-		filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose
-		)
+	moves::DataMap &,
+	filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+)
 {
 
 	if(!tag->hasOption("grid_name"))

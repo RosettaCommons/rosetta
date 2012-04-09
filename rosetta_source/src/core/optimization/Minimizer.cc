@@ -808,7 +808,7 @@ Minimizer::linmin(
 	Multivec & P,
 	Multivec & XI,
 	Real & FRET,
-	int const ITMAX
+	int const
 ) const {
 	//Try to use a line minimizer algorithm
 	BrentLineMinimization test_brent( func_, P.size() );

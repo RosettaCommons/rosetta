@@ -142,10 +142,10 @@ TemperingBase::get_name() const
 void
 TemperingBase::parse_my_tag(
 	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	pose::Pose const & pose
+	protocols::moves::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	pose::Pose const &
 ) {
 	//figure out temperatures...
 	std::string temp_file = tag->getOption< std::string >( "temp_file", "" );
@@ -181,9 +181,9 @@ void TemperingBase::set_defaults() {
 
 	/// @brief callback executed before any Monte Carlo trials
 void TemperingBase::initialize_simulation(
-	pose::Pose& pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & mh_mover,
-	core::Size cycle //default=0; non-zero if trajectory is restarted
+	pose::Pose&,
+	protocols::canonical_sampling::MetropolisHastingsMover const &,
+	core::Size //default=0; non-zero if trajectory is restarted
 ) {
 	if ( !instance_initialized_ ) init_from_options();
 	current_temp_=temperatures_.size();
@@ -219,8 +219,8 @@ TemperingBase::initialize_simulation(
 
 void
 TemperingBase::finalize_simulation(
-	pose::Pose& pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & mh_mover
+	pose::Pose&,
+	protocols::canonical_sampling::MetropolisHastingsMover const &
 ) {
 	job_ = NULL;
 }
@@ -361,7 +361,7 @@ void TemperingBase::clear() {
 	instance_initialized_ = false;
 }
 
-void TemperingBase::write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< Real > const& wcounts ) {
+void TemperingBase::write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< Real > const& ) {
 
 	//either write all these things to a single file, or write to <jobname>.file_in
 	std::string file;

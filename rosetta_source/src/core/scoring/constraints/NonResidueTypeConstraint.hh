@@ -69,7 +69,7 @@ public:
 
 	virtual
 	AtomID const &
-	atom( Size const index ) const {
+	atom( Size const ) const {
 		utility_exit_with_message("NonResidueTypeConstraint is not atom-based!.");
 		return core::id::BOGUS_ATOM_ID;  // required for compilation on Windows
 	}

@@ -38,7 +38,7 @@ PredictedBurialEvaluator::~PredictedBurialEvaluator() {}
 
 void PredictedBurialEvaluator::apply(
 	core::pose::Pose & pose,
-	std::string tag,
+	std::string,
 	core::io::silent::SilentStruct & ss
 ) const {
 	using core::Real;
@@ -66,7 +66,7 @@ void PredictedBurialEvaluator::apply(
 }
 
 void PredictedBurialEvaluator::init_from_file(
-	std::string const & fn
+	std::string const &
 ) {
 	utility::io::izstream input;
 	std::string line;

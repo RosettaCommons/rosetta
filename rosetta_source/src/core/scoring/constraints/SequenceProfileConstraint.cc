@@ -61,7 +61,7 @@ SequenceProfileConstraint::SequenceProfileConstraint()
 {}
 
 SequenceProfileConstraint::SequenceProfileConstraint(
-	Pose const & pose,
+	Pose const &,
 	Size seqpos,
 	SequenceProfileCOP profile /* = NULL */,
 	core::id::SequenceMappingCOP mapping /* = NULL */ // current pose numbers onto profile numbers.
@@ -200,8 +200,8 @@ SequenceProfileConstraint::remap_resid(
 
 ConstraintOP
 SequenceProfileConstraint::remapped_clone(
-	pose::Pose const& src,
-	pose::Pose const& dest,
+	pose::Pose const&,
+	pose::Pose const&,
 	id::SequenceMappingCOP map /*=NULL*/ ) const
 {
 	if ( ! map ) {

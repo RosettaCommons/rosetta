@@ -52,7 +52,7 @@ namespace scoring {
 namespace packing {
 
 
-void compute_holes_surfs(PoseBalls & pb, std::string cmd ) {
+void compute_holes_surfs(PoseBalls & pb, std::string ) {
 
 #ifndef WIN32
 #ifndef NATCL

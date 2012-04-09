@@ -1087,7 +1087,7 @@ void DisableZnCoordinationResiduesTaskOp::apply(
 
 }
 
-void DisableZnCoordinationResiduesTaskOp::parse_tag( TagPtr tag )
+void DisableZnCoordinationResiduesTaskOp::parse_tag( TagPtr )
 {
 }
 

@@ -134,10 +134,10 @@ protocols::moves::MoverOP SingleFragmentMover::fresh_instance() const {
 }
 
 void SingleFragmentMover::parse_my_tag(const utility::tag::TagPtr tag,
-                                       protocols::moves::DataMap& data,
-                                       const protocols::filters::Filters_map& filters,
-                                       const protocols::moves::Movers_map& movers,
-                                       const core::pose::Pose& pose) {
+	protocols::moves::DataMap& data,
+	const protocols::filters::Filters_map&,
+	const protocols::moves::Movers_map&,
+	const core::pose::Pose& pose) {
   using core::fragment::FragmentIO;
   using core::fragment::FragSetOP;
   using core::kinematics::MoveMap;

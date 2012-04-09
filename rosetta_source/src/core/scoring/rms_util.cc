@@ -509,9 +509,9 @@ core::Real
 bb_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2,
-	Size start,
-	Size end,
-	utility::vector1< Size > const& exclude
+	Size,
+	Size,
+	utility::vector1< Size > const&
 ) {
 	using namespace core;
 	Real rms = rmsd_with_super( pose1, pose2, is_protein_backbone );
@@ -535,9 +535,9 @@ core::Real
 bb_rmsd_including_O(
         const core::pose::Pose & pose1,
         const core::pose::Pose & pose2,
-        Size start,
-        Size end,
-        utility::vector1< Size > const& exclude
+        Size,
+        Size,
+        utility::vector1< Size > const&
 ) {
         using namespace core;
         Real rms = rmsd_with_super( pose1, pose2, is_protein_backbone_including_O );

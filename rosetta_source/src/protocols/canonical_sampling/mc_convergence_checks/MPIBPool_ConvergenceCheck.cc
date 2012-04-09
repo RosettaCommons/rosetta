@@ -438,7 +438,7 @@ MPIBPool_RMSD::slave_report_no_new_coords(){
   PROF_STOP( basic::MPI_SLAVE_REPORT_NEW_COORDS );
 }
 
-void MPIBPool_RMSD::farray_to_array( core::Size index, core::Size num_to_add ){
+void MPIBPool_RMSD::farray_to_array( core::Size index, core::Size ){
   PROF_START( basic::FARRAY_MANIPULATION );
   for (int ii = 1; ii <= transfer_buf_.temp_coord_for_evaluation_.u1(); ii++ ) {
     for (int jj = 1; jj <= transfer_buf_.temp_coord_for_evaluation_.u2(); jj++ ) {
@@ -452,7 +452,7 @@ void MPIBPool_RMSD::farray_to_array( core::Size index ){
   farray_to_array( index, 1 );
 }
 
-void MPIBPool_RMSD::array_to_farray( core::Size index, core::Size num_to_add ){
+void MPIBPool_RMSD::array_to_farray( core::Size index, core::Size ){
   PROF_START( basic::FARRAY_MANIPULATION );
   for ( int ii = 1; ii <= transfer_buf_.temp_coord_for_evaluation_.u1(); ii++ ) {
     for( int jj = 1; jj <= transfer_buf_.temp_coord_for_evaluation_.u2(); jj++ ) {

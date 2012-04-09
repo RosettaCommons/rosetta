@@ -263,7 +263,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_add_unfolded_ener
 }
 
 void
-UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_add_unfolded_energy_data( std::string tlc, core::scoring::EMapVector const & MPI_ONLY( scores ) )
+UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_add_unfolded_energy_data( std::string MPI_ONLY( tlc ), core::scoring::EMapVector const & MPI_ONLY( scores ) )
 {
 #ifdef USEMPI
 	using namespace core;

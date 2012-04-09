@@ -120,7 +120,7 @@ SmoothEnvEnergy::residue_energy(
 void
 SmoothEnvEnergy::eval_residue_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & min_data,
+	ResSingleMinimizationData const &,
 	pose::Pose const & pose,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs

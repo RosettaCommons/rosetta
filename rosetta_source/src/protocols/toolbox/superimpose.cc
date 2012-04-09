@@ -158,7 +158,7 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xp,rvec const*x, ma
 void jacobi(double a[6][6],double d[],double v[6][6],int *nrot);
 
 /// @brief A function (not a macro) that will not print a square matrix to tr.Debug
-template< class T > void dump_matrix( Size nr, T const & a, basic::Tracer & tr) {}
+template< class T > void dump_matrix( Size, T const &, basic::Tracer & ) {}
 
 /// @brief A function (not a macro) that will print a square matrix to tr.Debug
 template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tr)

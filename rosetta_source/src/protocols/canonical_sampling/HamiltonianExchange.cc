@@ -345,14 +345,14 @@ HamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 }
 
 core::Real
-HamiltonianExchange::temperature_move( core::Real score ) {
+HamiltonianExchange::temperature_move( core::Real ) {
 	utility_exit_with_message( "HamiltonianExchange::temperature_move() called without pose... HamEx requires pose \
   to evaluate alternative energy function prior to switching..." );
 	return -1;
 }
 
 core::Real
-HamiltonianExchange::temperature_move( pose::Pose& pose, core::Real score ) {
+HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ), core::Real MPI_ONLY( score ) ) {
 	using namespace ObjexxFCL::fmt;
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();

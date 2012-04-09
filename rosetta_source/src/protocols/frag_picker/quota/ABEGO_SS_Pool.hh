@@ -113,7 +113,7 @@ public:
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
-	void insert(Size pos, CandidatesCollectorOP collector) {
+	void insert(Size, CandidatesCollectorOP collector) {
 		ABEGO_SS_Pool *c = dynamic_cast<ABEGO_SS_Pool*> (collector());
 		if (c == 0)
 			utility_exit_with_message("Cant' cast candidates' collector to ABEGO_SS_Pool.");

@@ -870,7 +870,7 @@ HBondEnergy::setup_for_derivatives_for_residue_pair(
 void
 HBondEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & min_data,
+	ResSingleMinimizationData const &,
 	pose::Pose const & pose,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
@@ -1468,7 +1468,7 @@ HBondEnergy::defines_intrares_energy( EnergyMap const & weights ) const
 void
 HBondEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
-	pose::Pose const & pose,
+	pose::Pose const &,
 	ScoreFunction const & ,
 	EnergyMap & emap
 ) const

@@ -130,8 +130,8 @@ void DatabaseJobOutputter::other_pose(
 	protocols::jd2::JobCOP,
 	core::pose::Pose const & pose,
 	std::string const & tag,
-	int copy_count, /*default -1 */
-	bool score_only /*default false*/
+	int , /*default -1 */
+	bool /*default false*/
 ) {
 
 	sessionOP db_session(basic::database::get_db_session(database_fname_));

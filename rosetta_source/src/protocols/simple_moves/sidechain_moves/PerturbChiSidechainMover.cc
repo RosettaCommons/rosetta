@@ -115,7 +115,7 @@ PerturbChiSidechainMover::set_defaults() {
 void
 PerturbChiSidechainMover::parse_my_tag(
   utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	protocols::moves::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	pose::Pose const & /*pose*/
@@ -131,7 +131,7 @@ PerturbChiSidechainMover::get_name() const {
 
 void
 PerturbChiSidechainMover::make_chi_move(
-	conformation::Residue const& residue,
+	conformation::Residue const&,
 	ChiVector const& old_chi,
 	ChiVector& new_chi
 ) {

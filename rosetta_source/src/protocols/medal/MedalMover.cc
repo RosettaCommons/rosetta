@@ -322,12 +322,12 @@ protocols::moves::MoverOP MedalMover::fresh_instance() const {
 }
 
 protocols::moves::MoverOP MedalMover::create_fragment_mover(
-    core::pose::PoseOP native,
-    core::scoring::ScoreFunctionOP score,
-    core::fragment::FragSetOP fragments,
-    const Probabilities& probs,
-    const std::string& policy,
-    unsigned library_size) const {
+	core::pose::PoseOP,
+	core::scoring::ScoreFunctionOP score,
+	core::fragment::FragSetOP fragments,
+	const Probabilities& probs,
+	const std::string& policy,
+	unsigned library_size) const {
 
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -352,7 +352,7 @@ protocols::moves::MoverOP MedalMover::create_fragment_mover(
 
 protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
     const core::pose::Pose& pose,
-    core::pose::PoseOP native,
+    core::pose::PoseOP,
     core::scoring::ScoreFunctionOP score,
     core::fragment::FragSetOP fragments,
     const Probabilities& probs,
@@ -383,7 +383,7 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
   return mover;
 }
 
-protocols::moves::MoverOP MedalMover::create_small_mover(core::pose::PoseOP native, core::scoring::ScoreFunctionOP score) const {
+protocols::moves::MoverOP MedalMover::create_small_mover(core::pose::PoseOP, core::scoring::ScoreFunctionOP score) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace protocols::moves;

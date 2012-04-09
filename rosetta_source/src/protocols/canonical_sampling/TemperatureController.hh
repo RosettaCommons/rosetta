@@ -110,9 +110,9 @@ public:
 	virtual
 	void
 	initialize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
-		core::Size cycle   //non-zero if trajectory is restarted
+		core::pose::Pose &,
+		protocols::canonical_sampling::MetropolisHastingsMover const &,
+		core::Size
 	) {};
 
 	virtual core::Size n_temp_levels() const { return 1; };
@@ -147,12 +147,12 @@ public:
 	get_name() const { return "FixedTemperatureContoller"; }
 	/// @brief execute the temperatur move ( called by observer_after_metropolis )
 	/// returns the current temperatur in kT.
-	virtual core::Real temperature_move( core::Real score) { return temperature_; };
+	virtual core::Real temperature_move( core::Real ) { return temperature_; };
 
 	virtual core::Real temperature() const { return temperature_; };
 
 	///@brief  return temperature of a certain level
-	virtual core::Real temperature( core::Size level ) const { return temperature_; };
+	virtual core::Real temperature( core::Size ) const { return temperature_; };
 
 private:
 	core::Real temperature_;

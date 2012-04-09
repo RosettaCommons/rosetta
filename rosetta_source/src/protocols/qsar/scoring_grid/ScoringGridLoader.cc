@@ -44,7 +44,7 @@ ScoringGridLoader::~ScoringGridLoader() {}
 void ScoringGridLoader::load_data(
 	core::pose::Pose const &,
 	utility::tag::TagPtr const tag,
-	moves::DataMap & data
+	moves::DataMap &
 ) const
 {
 	using namespace utility::tag;

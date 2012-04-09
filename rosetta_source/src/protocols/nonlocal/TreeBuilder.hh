@@ -37,7 +37,7 @@ class TreeBuilder : public utility::pointer::ReferenceCount {
   /// @brief Reverts any modifications to <pose> introduced in preceding calls
   /// to set_up(). Only subclasses that introduce modifications are responsible
   /// for overriding this method.
-  virtual void tear_down(core::pose::Pose* pose) {}
+  virtual void tear_down(core::pose::Pose*) {}
 };
 
 }  // namespace nonlocal

@@ -1092,7 +1092,7 @@ std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp )
 }
 
 void
-DockingProtocol::parse_my_tag( TagPtr const tag, moves::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+DockingProtocol::parse_my_tag( TagPtr const tag, moves::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 

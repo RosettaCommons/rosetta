@@ -65,7 +65,7 @@ PdbDataFeatures::PdbDataFeatures()
 
 }
 
-PdbDataFeatures::PdbDataFeatures(PdbDataFeatures const & src)
+PdbDataFeatures::PdbDataFeatures(PdbDataFeatures const & )
 {
 
 }
@@ -149,7 +149,7 @@ PdbDataFeatures::features_reporter_dependencies() const {
 
 Size PdbDataFeatures::report_features(
 	Pose const & pose,
-	vector1<bool> const & relevant_residues,
+	vector1<bool> const &,
 	boost::uuids::uuid struct_id,
 	sessionOP db_session )
 {

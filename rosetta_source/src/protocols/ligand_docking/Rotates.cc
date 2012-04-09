@@ -85,7 +85,7 @@ std::string Rotates::get_name() const{
 void
 Rotates::parse_my_tag(
 		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data_map,
+		protocols::moves::DataMap & /*data_map*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose

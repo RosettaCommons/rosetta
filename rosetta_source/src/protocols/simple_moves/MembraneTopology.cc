@@ -77,7 +77,7 @@ void MembraneTopology::parse_my_tag( utility::tag::TagPtr const tag,
 		protocols::moves::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & pose)
+		Pose const & )
 {
 
 	span_file( tag->getOption< std::string >( "span_file" ) );

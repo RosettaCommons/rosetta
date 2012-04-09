@@ -573,7 +573,6 @@ ResidueDatabaseIO::read_residue_type_atom(
 		core::Size atom_index;
 		std::string atom_name, atom_type_name,mm_atom_type_name;
 		core::Real charge;
-		core::Size is_backbone;
 
 		res >> atom_index >> atom_name >> atom_type_name >> mm_atom_type_name >> charge;
 		res_type.add_atom(atom_name,atom_type_name,mm_atom_type_name,charge);
@@ -847,7 +846,7 @@ void
 ResidueDatabaseIO::read_residue_type_proton_chi(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::ResidueType &,
 	utility::sql_database::sessionOP db_session)
 {
 	std::string proton_chi_statement_string =

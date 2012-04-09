@@ -204,7 +204,7 @@ PrepackMover::get_name() const {
 }
 
 void
-PrepackMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const & movers, core::pose::Pose const & pose )
+PrepackMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	std::string const scorefxn( tag->getOption<string>( "scorefxn", "score12" ));
 	jump_num_ = tag->getOption<core::Size>("jump_number", 1 );

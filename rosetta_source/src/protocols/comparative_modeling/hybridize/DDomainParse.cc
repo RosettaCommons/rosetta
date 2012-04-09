@@ -148,7 +148,7 @@ DDomainParse::pulldomain( int isize0, int ist, int ilast, utility::vector1< core
 
 void
 DDomainParse::findpos(
-	int mdom, int ndom, int id,
+	int, int ndom, int id,
 	utility::vector1<int> &ipdom, int &ist, int &ilast)
 {
 	if (ndom > 1) {

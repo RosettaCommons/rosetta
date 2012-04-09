@@ -265,10 +265,10 @@ void RigidBodyPerturbMover::rot_center( core::Vector const /*rot_center_in*/ )
 void
 RigidBodyPerturbNoCenterMover::parse_my_tag(
    utility::tag::TagPtr const tag,
-	 protocols::moves::DataMap& data,
-	 protocols::filters::Filters_map const &filters,
-	 protocols::moves::Movers_map const &movers,
-	 core::pose::Pose const &pose
+	 protocols::moves::DataMap&,
+	 protocols::filters::Filters_map const &,
+	 protocols::moves::Movers_map const &,
+	 core::pose::Pose const &
 ) {
 	rot_mag_ = tag->getOption< core::Real >( "rot_mag", 0.1 );
 	trans_mag_ = tag->getOption< core::Real >( "trans_mag", 0.4 );

@@ -30,7 +30,7 @@ public:
 
 	/// @brief constructor with an atom type number
 	// type is set at construction time -- atom is placed at the origin
-	OrbitalXYZCoords( ShortSize const type_in, ShortSize const mm_type_in ):
+	OrbitalXYZCoords( ShortSize const, ShortSize const ):
 		xyz_( 0.0 )
 	{}
 

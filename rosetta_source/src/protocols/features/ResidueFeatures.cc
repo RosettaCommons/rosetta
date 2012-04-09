@@ -57,7 +57,7 @@ using cppdb::statement;
 
 ResidueFeatures::ResidueFeatures() {}
 
-ResidueFeatures::ResidueFeatures( ResidueFeatures const & src) :
+ResidueFeatures::ResidueFeatures( ResidueFeatures const & ) :
 	FeaturesReporter()
 {}
 

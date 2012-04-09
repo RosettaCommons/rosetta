@@ -703,7 +703,7 @@ void
 SymmetricConformation::insert_conformation_by_jump(
 	Conformation const & new_conf,
 	Size const insert_seqpos,
-	Size const insert_jumppos,
+	Size const,
 	Size const anchor_pos,
 	Size const anchor_jump_number,
 	std::string const & anchor_atom,

@@ -99,7 +99,7 @@ public:
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
-	void insert(Size pos, CandidatesCollectorOP collector) {
+	void insert(Size, CandidatesCollectorOP collector) {
 		SecondaryStructurePool *c = dynamic_cast<SecondaryStructurePool*> (collector());
 		if (c == 0)
 			utility_exit_with_message("Cant' cast candidates' collector to SecondaryStructurePool.");

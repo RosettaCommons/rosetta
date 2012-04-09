@@ -69,7 +69,7 @@ namespace pose_stream {
 	} // fill_pose
 
 	void ExtendedPoseInputStream::fill_pose(
-		core::pose::Pose & pose
+		core::pose::Pose &
 	) {
 		utility_exit_with_message(
 				"ExtendedPoseInputStream: called fill_pose, but without ResidueType Set"
