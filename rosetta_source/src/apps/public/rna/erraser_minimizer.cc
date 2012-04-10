@@ -128,7 +128,7 @@ OPT_KEY ( IntegerVector, cutpoint_open )
 ////////////////////////////////////////////////////////////////////////
 bool
 check_num_in_vector ( int input_num, utility::vector1< int > const & input_vector  ) {
-	for (Size i = 0; i <= input_vector.size(); ++i) {
+	for (Size i = 1; i <= input_vector.size(); ++i) {
 		if (input_num == input_vector[i]) return true;
 	}
 	return false;
@@ -670,8 +670,7 @@ pdb_minimizer() {
 	//Start minimize the pose
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol ( 0.00000001 );
-	MinimizerOptions min_options1 ( "dfpmin", dummy_tol, false, false,
-	                               false );
+	MinimizerOptions min_options1 ( "dfpmin", dummy_tol, true, false, false );
 	min_options1.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 
 	//Set the MoveMap, avoiding moving the virtual residue
