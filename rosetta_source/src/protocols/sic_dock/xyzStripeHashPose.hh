@@ -28,7 +28,7 @@ enum xyzStripeHashPoseMode {
 
 class xyzStripeHashPose : public numeric::geometry::hashing::xyzStripeHash<double> {
 public:
-  xyzStripeHashPose(double radius) : xyzStripeHash<double>(radius) {}
+  xyzStripeHashPose(double radius) : numeric::geometry::hashing::xyzStripeHash<double>(radius) {}
   xyzStripeHashPose(double radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : numeric::geometry::hashing::xyzStripeHash<double>(radius) {
 	  init_with_pose(p,BB);
   }
