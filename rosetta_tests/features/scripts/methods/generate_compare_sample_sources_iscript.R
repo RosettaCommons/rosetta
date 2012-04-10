@@ -127,7 +127,13 @@ iscript_source_scripts <- function(base_dir, scripts){
 	cat("feature_analyses <- c()\n",
 			file=iscript_fname, append=TRUE)
   for(script in scripts){
-    cat("source(\"",base_dir, "/", script, "\")\n",
+		if(file.exists(script)){
+			# analysis script is ok
+		} else if (file.exists(file.path(base_dir, script))){
+			script <- file.path(base_dir, script)
+		}
+
+		cat("source(\"", script, "\")\n",
         file=iscript_fname, sep="", append=TRUE)
   }
 }

@@ -8,9 +8,6 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-
-
-
 # The base_dir is usually rosetta/rosetta_tests/features
 initialize_base_dir <- function(){
 	command_args <- commandArgs(trailingOnly = FALSE)
@@ -106,7 +103,7 @@ initialize_command_line_options <- function() {
 	option_list <- c(option_list, list(
 		make_option(c("-i", "--script"), action="store", type="character", default=NULL, dest="script",
 			help="Path to a single analysis script.  [Default \"%default\"]"),
-		make_option(c("-a", "--analysis_dir"), type="character", default="scripts/analysis", dest="analysis_dir",
+		make_option(c("-a", "--analysis_dir"), type="character", default=NULL, dest="analysis_dir",
 			help="Directory where the analysis scripts are located. The supplied directory is searched recursively for files of the form \"*.R\".  [Default \"%default\"]")))
 
 	# Where should the results be stored?
@@ -214,7 +211,7 @@ initialize_config_file <- function(opt){
 		return(NULL)
 	}
 	if(!file.exists(config_filename)){
-		cat("ERROR: Config file '", config_filename, "' does not exit.")
+		cat("ERROR: Config file '", config_filename, "' does not exist.\n")
 		stop(1)
 	}
 
@@ -238,7 +235,7 @@ initialize_analysis_scripts_from_options <- function(opt, base_dir){
 		} else {
 			stop(paste("Analysis script '", opt$options$script, "', does not exist.", sep=""))
 		}
-	} else {
+	} else if("analysis_dir" %in% names(opt$options)) {
 		if(substr(opt$options$analysis_dir,1,1) == "/"){
 			analysis_dir <- opt$options$analysis_dir
 		} else {
@@ -249,10 +246,11 @@ initialize_analysis_scripts_from_options <- function(opt, base_dir){
 			stop(1)
 		}
 		analysis_scripts <- dir(analysis_dir, "*.R$", full.names=TRUE, recursive=TRUE)
+	} else {
+		analysis_scripts <- c()
 	}
 	analysis_scripts
 }
-
 
 add_command_line_options_to_configuration <- function(
 	configuration,
@@ -271,12 +269,13 @@ add_command_line_options_to_configuration <- function(
 
 	analysis_scripts <- initialize_analysis_scripts_from_options(opt, base_dir)
 
-
-	configuration$sample_source_comparisons <- c(
-		configuration$sample_source_comparisons,
-		list(list(
-			sample_sources=sample_sources,
-			analysis_scripts=analysis_scripts)))
+	if(length(analysis_scripts)){
+		configuration$sample_source_comparisons <- c(
+			configuration$sample_source_comparisons,
+			list(list(
+				sample_sources=sample_sources,
+				analysis_scripts=analysis_scripts)))
+	}
 
 	configuration
 }
@@ -298,10 +297,18 @@ initialize_output_dir <- function(work_dir, opt, ss_cmp){
 			sep="/", collapse="_"))
 }
 
-summarize_configuration <- function(output_dir, sample_source_comparison){
+summarize_configuration <- function(
+	output_dir,
+	output_formats,
+	sample_source_comparison){
+
 	cat(
 		"Sample Source Comparison:\n",
-		"  Output Directory <- ", output_dir, "\n", sep="")
+		"  Output Directory <- '", output_dir, "'\n", sep="")
+	cat(
+		"    Output Formats <- ", paste(output_formats$id, collapse=", "), "\n\n",
+		sep="")
+
 	cat("  Sample Sources:\n")
 	l_ply(sample_source_comparison$sample_sources, function(ss) {
 		cat("  ", ss$id, " <- ", ss$database_path, "\n", sep="")
@@ -315,11 +322,19 @@ summarize_configuration <- function(output_dir, sample_source_comparison){
 initialize_sample_sources <- function(ss_cmp){
 	sample_sources <- ldply(ss_cmp$sample_sources, function(ss){
 
-		if(!file.exists(ss$database_path)){
-			stop(paste("ERROR: The database path '", ss$database_path, "' for sample source '", ss$id, "' does not exist.", sep=""))
+		if(substr(ss$database_path,1,1) == "/"){
+			database_path <- ss$database_path
+		} else {
+			database_path <- file.path(getwd(), ss$database_path)
 		}
 
-		data.frame(fname=ss$database_path, sample_source=ss$id)
+		if(!file.exists(database_path)){
+			stop(paste(
+				"ERROR: The database path '", database_path, "' ",
+				"for sample source '", ss$id, "' does not exist.", sep=""))
+		}
+
+		data.frame(fname=database_path, sample_source=ss$id)
 	})
 
 	if(nrow(sample_sources) != length(unique(sample_sources$sample_source))){
@@ -335,16 +350,25 @@ initialize_sample_sources <- function(ss_cmp){
 
 initialize_output_formats <- function(opt, ss_cmp){
 	if("output_formats" %in% names(ss_cmp)){
-		output_formats <- ss_cmp$output_formats
-	} else {
+		output_formats <- get_output_formats_from_comparison(
+			ss_cmp, all_output_formats)
+	}
 
-		# If we're generating the features website for analysis we better
-		# have the plots in the formats that we expect.
-		if(opt$options$generate_website){
-			opt$options$output_web_raster <- T
-			opt$options$output_web_icon <- T
-		}
-		output_formats <- get_output_formats(opt$options, all_output_formats)
+
+	# If we're generating the features website for analysis we better
+	# have the plots in the formats that we expect.
+	if(opt$options$generate_website){
+		opt$options$output_web_raster <- T
+		opt$options$output_web_icon <- T
+	}
+	output_formats <- rbind(
+		output_formats,
+		get_output_formats(opt$options, all_output_formats))
+
+
+	if(nrow(output_formats) == 0){
+		stop(paste(
+			"ERROR: No output formats were specified.  To specify an output format, either add the appropriate tags the sample source configuration file or specify one or more output formats on the command line on the command line."))
 	}
 
 	iscript_output_formats(output_formats)
@@ -382,29 +406,32 @@ parse_analysis_scripts <- function(base_dir, analysis_scripts){
 	for(analysis_script in analysis_scripts){
 
 		# parse all the analysis scripts
-		if(!file.exists(analysis_script)){
+		if(file.exists(analysis_script)){
+			# analysis script is ok
+		} else if (file.exists(file.path(base_dir, analysis_script))){
+			analysis_script <- file.path(base_dir, analysis_script)
+		} else {
 			cat(paste(
 				"ERROR: The features analysis script '",
 				analysis_script,"' does not exist\n", sep=""))
-		} else {
-			tryCatch({
-				source(analysis_script, local=T)
-			}, error=function(e){
-				cat(paste(
-					"ERROR: Failed to parse the Features Analysis '",
-					analysis_script,"' with the following error message:\n", e, sep=""))
-			})
-
-			# assign the filename to each feature analysis
-			num_new_feature_analyses = length(feature_analyses) - num_feature_analyses_before
-			for(feature_analysis in
-				feature_analyses[
-					seq(num_feature_analyses_before+1, length.out=num_new_feature_analyses)]){
-				feature_analysis@filename <- analysis_script
-			}
-			num_feature_analyses_before <- length(feature_analyses)
 		}
 
+		tryCatch({
+			source(analysis_script, local=T)
+		}, error=function(e){
+			cat(paste(
+				"ERROR: Failed to parse the Features Analysis '",
+				analysis_script,"' with the following error message:\n", e, sep=""))
+		})
+
+		# assign the filename to each feature analysis
+		num_new_feature_analyses = length(feature_analyses) - num_feature_analyses_before
+		for(feature_analysis in
+			feature_analyses[
+				seq(num_feature_analyses_before+1, length.out=num_new_feature_analyses)]){
+			feature_analysis@filename <- analysis_script
+		}
+		num_feature_analyses_before <- length(feature_analyses)
 	}
 	feature_analyses
 }
@@ -475,12 +502,12 @@ configuration <- add_command_line_options_to_configuration(
 l_ply(configuration$sample_source_comparisons, function(ss_cmp){
 
 	sample_source_output_dir <- initialize_output_dir(work_dir, opt, ss_cmp)
+	output_formats <- initialize_output_formats(opt, ss_cmp)
 
-	summarize_configuration(sample_source_output_dir, ss_cmp)
+	summarize_configuration(sample_source_output_dir, output_formats, ss_cmp)
 
 	sample_sources <- initialize_sample_sources(ss_cmp)
 
-	output_formats <- initialize_output_formats(opt, ss_cmp)
 	feature_analyses <- parse_analysis_scripts(base_dir, ss_cmp$analysis_scripts)
 
 	run_feature_analyses(

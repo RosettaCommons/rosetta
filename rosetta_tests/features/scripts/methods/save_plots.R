@@ -73,8 +73,8 @@ save_plots <- function(
 
 	if(nrow(output_formats)==0){
 		stop(paste(
-			"ERROR: Unable to save teh plot '", plot_id, "' ",
-			"because no output formats were specified.", e, sep=""))
+			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"because no output formats were specified.", sep=""))
 	}
 
 	a_ply(output_formats, 1, function(fmt){

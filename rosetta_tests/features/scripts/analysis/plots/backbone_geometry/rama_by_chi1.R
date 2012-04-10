@@ -70,7 +70,7 @@ d_ply(f, .(sample_source, res_type, chi1_bin), function(sub_f){
 	ss_id <- as.character(sub_f[1, c("sample_source")])
 	sample_source <- sample_sources[sample_sources$sample_source == ss_id,]
 	sub_plot_id <- paste(
-		"ramachandran_res-", res_type, "_chi1-", chi1_bin_numeric,
+		"ramachandran_res-", res_type, "_chi1-", chi1_bin_numeric, "_ssid", ss_id,
 		sep="")
 	ggplot(data=sub_f) + plot_parts +
 		opts(title = paste(

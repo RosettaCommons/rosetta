@@ -93,8 +93,16 @@ generate_sample_source_comparison_webpages <- function(
 	main_page_fname = "main.html"
 ) {
 
+	if(!file.exists(sample_source_comparison_dir)){
+		cat("Not generating webpage for '", sample_source_comparison_dir, "' because it does not exist.", sep="")
+		return()
+	}
+
+
 	full_main_page_fname <- file.path(sample_source_comparison_dir, main_page_fname)
-  cat(generate_page_header(), file=full_main_page_fname, append=F)
+
+
+	cat(generate_page_header(), file=full_main_page_fname, append=F)
 
 	features_analyses <- get_subdirs(sample_source_comparison_dir)
 	l_ply(features_analyses, function(features_analysis_id){

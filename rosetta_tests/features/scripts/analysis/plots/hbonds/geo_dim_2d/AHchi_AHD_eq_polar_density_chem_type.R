@@ -65,7 +65,7 @@ plot_parts <- list(
 	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F"),
 	stat_density2d(
 		aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE),
-	geom_indicator(aes(indicator=counts), color="white"),
+	geom_indicator(aes(indicator=counts, group=counts), color="white"),
 	polar_equal_area_grids_bw(),
 	coord_fixed(ratio = 1),
 	scale_fill_gradientn('Density', colours=jet.colors(15)),
