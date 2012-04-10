@@ -11,6 +11,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/AtomID_Map.hh>
 
 namespace protocols {
 namespace sic_dock {
@@ -35,6 +36,32 @@ public:
 	  utility::vector1<double> dummy;
 	  init_with_pose(p,dummy,BB);
   }
+
+	void init_with_pose(core::pose::Pose const & p, core::id::AtomID_Map<double> const & amap) {
+		using core::id::AtomID;
+		int natom = 0;
+		if( amap.n_residue() != p.n_residue()) utility_exit_with_message("BAD ATOMID_MAP");
+		for(int ir = 1; ir <= p.n_residue(); ++ir) {
+			core::conformation::Residue const & r(p.residue(ir));
+			for(int ia = 1; ia <= amap.n_atom(ir); ia++) {
+				if(amap[AtomID(ia,ir)] > 0)  natom++;
+			}
+		}
+		utility::vector1<numeric::xyzVector<double> > atoms(natom);
+		utility::vector1<double>                      meta (natom);
+		uint count = 0;
+		for(int ir = 1; ir <= p.n_residue(); ++ir) {
+			core::conformation::Residue const & r(p.residue(ir));
+			for(int ia = 1; ia <= amap.n_atom(ir); ia++) {
+				if(amap[AtomID(ia,ir)] > 0) {
+					atoms[++count] = p.xyz(AtomID(ia,ir));
+					meta [  count] = amap[AtomID(ia,ir)];
+				}
+			}
+		}
+		init(atoms,meta);
+	}
+
   void init_with_pose(core::pose::Pose const & p, utility::vector1<double> const & meta_in, xyzStripeHashPoseMode m = BB) {
     int natom = 0;
     for(int ir = 1; ir <= p.n_residue(); ++ir) {

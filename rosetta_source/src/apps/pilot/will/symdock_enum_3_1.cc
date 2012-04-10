@@ -308,6 +308,7 @@ struct TCDock {
 	std::map<string,Vecf> axismap_;
 	std::vector<protocols::sic_dock::SICFast*> sics_;
 	bool abort_;
+	core::id::AtomID_Map<core::Real> clashmap1_,clashmap2_,scoremap1_,scoremap2_;
 	TCDock( string cmp1pdb, string cmp2pdb, string cmp1type, string cmp2type ) : cmp1type_(cmp1type),cmp2type_(cmp2type),abort_(false) {
 		#ifdef USE_OPENMP
 		cout << "OMP info: " << num_threads() << " " << thread_num() << endl;
@@ -405,38 +406,48 @@ struct TCDock {
 		sin_alpha_ = sin(numeric::conversions::radians(alpha_));
 		tan_alpha_ = tan(numeric::conversions::radians(alpha_));
 
-		// rot_pose(cmp2in_,Vec(0,1,0),-alpha_,Vecf(0,0,0));
 		alignaxis(cmp1in_,cmp1axs_,Vec(0,0,1),Vec(0,0,0));
 		alignaxis(cmp2in_,cmp2axs_,Vec(0,0,1),Vec(0,0,0));
-		// cmp1in_.dump_pdb("out/test1.pdb");
-		// cmp2in_.dump_pdb("out/test2.pdb");
 
+		// COMPUTE WEIGHTS BB, AND CBS
+		using core::id::AtomID;
+		core::pose::initialize_atomid_map(clashmap1_,cmp1in_,-1.0);
+		core::pose::initialize_atomid_map(scoremap1_,cmp1in_,-1.0);
+		core::pose::initialize_atomid_map(clashmap2_,cmp2in_,-1.0);
+		core::pose::initialize_atomid_map(scoremap2_,cmp2in_,-1.0);
 		for(Size i = 1; i <= cmp1in_.n_residue(); ++i) {
 			if(cmp1in_.residue(i).has("CB")) {
+				double cbw = min(1.0,(double)neighbor_count(cmp1in_,i)/20.0);
+				scoremap1_[AtomID(cmp1in_.residue(i).atom_index("CB"),i)] = cbw;
 				cmp1cbs_.push_back(Vecf(cmp1in_.residue(i).xyz("CB")));
-				cmp1wts_.push_back(min(1.0,(double)neighbor_count(cmp1in_,i)/20.0));
+				cmp1wts_.push_back(cbw);
 			}
 			int const natom = (cmp1in_.residue(i).name3()=="GLY") ? 4 : 5;
 			for(int j = 1; j <= natom; ++j) {
 				Vec const & v( cmp1in_.residue(i).xyz(j) );
+				clashmap1_[AtomID(j,i)] = 1.0;
 				cmp1pts_.push_back(v);
 			}
 		}
 		for(Size i = 1; i <= cmp2in_.n_residue(); ++i) {
 			if(cmp2in_.residue(i).has("CB")) {
+				double cbw = min(1.0,(double)neighbor_count(cmp2in_,i)/20.0);
+				scoremap2_[AtomID(cmp2in_.residue(i).atom_index("CB"),i)] = cbw;
 				cmp2cbs_.push_back(Vecf(cmp2in_.residue(i).xyz("CB")));
-				cmp2wts_.push_back(min(1.0,(double)neighbor_count(cmp2in_,i)/20.0));
+				cmp2wts_.push_back(cbw);
 			}
 			int const natom = (cmp2in_.residue(i).name3()=="GLY") ? 4 : 5;
 			for(int j = 1; j <= natom; ++j) {
 				Vec const & v( cmp2in_.residue(i).xyz(j) );
+				clashmap2_[AtomID(j,i)] = 1.0;
 				cmp2pts_.push_back(v);
 			}
 		}
 
 		sics_.resize(num_threads());
 		for(int i = 0; i < num_threads(); ++i) sics_[i] = new protocols::sic_dock::SICFast;
-		for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp2in_,cmp2cbs_,cmp2wts_);
+//  for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp2in_,cmp2cbs_,cmp2wts_);
+		for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp2in_,clashmap1_,clashmap2_,scoremap1_,scoremap2_);
 
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
 		cmp2mnpos_.resize(cmp2nangle_,0.0);
@@ -504,8 +515,11 @@ struct TCDock {
 			std::vector<protocols::sic_dock::SICFast> sics;
 			sics.resize(num_threads());
 			for(int i = 0; i < num_threads(); ++i){
-				sics[i].init(i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_,
-										 i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_);
+				sics[i].init(i12?cmp1in_   :cmp2in_    ,i12?cmp1in_  :cmp2in_   ,
+										 i12?clashmap1_:clashmap2_,i12?clashmap1_:clashmap2_,
+										 i12?scoremap1_:scoremap2_,i12?scoremap1_:scoremap2_);
+				//				sics[i].init(i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_,
+				//										 i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_);
 			}
 
 			for(int ipn = 0; ipn < 2; ++ipn) {
@@ -524,7 +538,7 @@ struct TCDock {
 					core::kinematics::Stub xa,xb;
 					xa.M = rotation_matrix_degrees(axis ,(double)icmp);
 					xb.M = rotation_matrix_degrees(axis2,(double)icmp);
-					double const d = sics[thread_num()].slide_into_contact(ptsA,ptsB,cbA,cbB,sicaxis,score,xa,xb);
+					double const d = sics[thread_num()].slide_into_contact(xa,xb,ptsA,ptsB,cbA,cbB,sicaxis,score);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmppos! "+ObjexxFCL::string_of(icmp));
 					(ipn?cmpmnpos:cmpmnneg)[icmp+1] = (ipn?-1.0:1.0) * d/2.0/sin( angle_radians(axis2,Vecf(0,0,0),axis)/2.0 );
 					(ipn?cmpdspos:cmpdsneg)[icmp+1] = (ipn?-1.0:1.0) * d;
@@ -728,7 +742,7 @@ struct TCDock {
 			xa.M = rotation_matrix_degrees(cmp2axs_,(double)icmp2);
 			xb.M = rotation_matrix_degrees(cmp1axs_,(double)icmp1);
 
-			double const d = sics_[thread_num()]->slide_into_contact(pb,pa,cbb,cba,sicaxis,icbc,xa,xb);
+			double const d = sics_[thread_num()]->slide_into_contact(xa,xb,pb,pa,cbb,cba,sicaxis,icbc);
 			dori = d;
 			if(d > 0) utility_exit_with_message("ZERO!!");
 			double const theta=(double)iori;
@@ -1210,5 +1224,5 @@ int main (int argc, char *argv[]) {
 			}
 		}
 	}
-	cout << "DONE testing: some change to sicfast" << endl;
+	cout << "DONE testing: starting to redo SICFast interface, different init" << endl;
 }

@@ -63,38 +63,63 @@ namespace sic_dock {
 		xh2_bb_(NULL),xh2_cb_(NULL)
 	{}
 
-	void SICFast::init(
-										 core::pose::Pose const & cmp1in, vector1<Vec> cmp1cbs, vector1<double> const & cmp1wts,
-										 core::pose::Pose const & cmp2in, vector1<Vec> cmp2cbs, vector1<double> const & cmp2wts
+
+
+	// void SICFast::init(core::pose::Pose const & cmp1in, vector1<Vec> cmp1cbs, vector1<double> const & cmp1wts,
+	// 									 core::pose::Pose const & cmp2in, vector1<Vec> cmp2cbs, vector1<double> const & cmp2wts
+	// 									 )
+	// {
+	// 	xh2_bb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()+0.5);
+	// 	xh2_cb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
+	// 	xh2_bb_->init_with_pose(cmp2in,BB);
+	// 	xh2_cb_->init_with_pose(cmp2in,cmp2wts,CB);
+	// 	w1_ = cmp1wts;
+	// 	w2_ = cmp2wts;
+	// }
+
+	void SICFast::init(core::pose::Pose const & pose1,
+										 core::pose::Pose const & pose2,
+										 core::id::AtomID_Map<core::Real> const & clash_atoms1,
+										 core::id::AtomID_Map<core::Real> const & clash_atoms2,
+										 core::id::AtomID_Map<core::Real> const & score_atoms1,
+										 core::id::AtomID_Map<core::Real> const & score_atoms2
 										 )
 	{
-		xh2_bb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::  clash_dis]()+0.5);
+		using core::id::AtomID;
+		xh2_bb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()+0.5);
 		xh2_cb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
-		xh2_bb_->init_with_pose(cmp2in,BB);
-		xh2_cb_->init_with_pose(cmp2in,cmp2wts,CB);
-		w1_ = cmp1wts;
-		w2_ = cmp2wts;
+		xh2_bb_->init_with_pose(pose2,clash_atoms2);
+		xh2_cb_->init_with_pose(pose2,score_atoms2);
+		for(int ir = 1; ir <= pose1.n_residue(); ++ir) {
+			for(int ia = 1; ia <= clash_atoms1.n_atom(ir); ++ia) { if(clash_atoms1[AtomID(ia,ir)] > 0) clash1_.push_back(pose1.xyz(AtomID(ia,ir))); }
+			for(int ia = 1; ia <= score_atoms1.n_atom(ir); ++ia) { if(score_atoms1[AtomID(ia,ir)] > 0) score1_.push_back(pose1.xyz(AtomID(ia,ir))); }
+			for(int ia = 1; ia <= score_atoms1.n_atom(ir); ++ia) { if(score_atoms1[AtomID(ia,ir)] > 0) w1_.push_back(score_atoms1[AtomID(ia,ir)]); }
+		}
+		for(int ir = 1; ir <= pose2.n_residue(); ++ir) {
+			for(int ia = 1; ia <= clash_atoms2.n_atom(ir); ++ia) { if(clash_atoms2[AtomID(ia,ir)] > 0) clash2_.push_back(pose2.xyz(AtomID(ia,ir))); }
+			for(int ia = 1; ia <= score_atoms2.n_atom(ir); ++ia) { if(score_atoms2[AtomID(ia,ir)] > 0) score2_.push_back(pose2.xyz(AtomID(ia,ir))); }
+			for(int ia = 1; ia <= score_atoms2.n_atom(ir); ++ia) { if(score_atoms2[AtomID(ia,ir)] > 0) w2_.push_back(score_atoms2[AtomID(ia,ir)]); }
+		}
 	}
 
-	double SICFast::slide_into_contact(
+	double SICFast::slide_into_contact(core::kinematics::Stub const & xa,
+																		 core::kinematics::Stub const & xb,
 																		 utility::vector1<Vec>          pa,
 																		 utility::vector1<Vec>          pb,
 																		 utility::vector1<Vec>  const & cba,
 																		 utility::vector1<Vec>  const & cbb,
 																		 Vec                            ori,
-																		 double                       & score,
-																		 core::kinematics::Stub const & xa,
-																		 core::kinematics::Stub const & xb
+																		 double                       & score
 																		 )
 	{
 		rotate_points(pa,pb,ori);
 		get_bounds(pa,pb);
 		fill_plane_hash(pa,pb);
 		double const mindis_approx = get_mindis_with_plane_hashes();
-		double const mindis = refine_mindis_with_xyzHash(pa,pb,mindis_approx,ori,xa,xb);
+		double const mindis = refine_mindis_with_xyzHash(xa,xb,pa,pb,mindis_approx,ori);
 		//cerr << brute_mindis(pa,pb,Vec(0,0,-mindis)) << endl;
 		// if( fabs(CLD2-brute_mindis(pa,pb,Vec(0,0,-mindis))) > 0.0001 ) utility_exit_with_message("DIAF!");
-		if(score != -12345.0) score = get_score(cba,cbb,ori,mindis,xa,xb);
+		if(score != -12345.0) score = get_score(xa,xb,cba,cbb,ori,mindis);
 		return mindis;
 	}
 
@@ -127,8 +152,8 @@ namespace sic_dock {
 		xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
 		ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
 	}
-	double SICFast::get_score(vector1<Vec> const & cba, vector1<Vec> const & cbb, Vec ori, double mindis,
-														core::kinematics::Stub const & xa, core::kinematics::Stub const & xb)
+	double SICFast::get_score(core::kinematics::Stub const & xa, core::kinematics::Stub const & xb,
+														vector1<Vec> const & cba, vector1<Vec> const & cbb, Vec ori, double mindis)
 	{
 		vector1<double> const & wa = w2_;
 		vector1<double> const & wb = w1_;
@@ -179,8 +204,8 @@ namespace sic_dock {
 		// }
 		return score;
 	}
-	double SICFast::refine_mindis_with_xyzHash(vector1<Vec> const & pa, vector1<Vec> const & pb, double mindis, Vec ori,
-																						 core::kinematics::Stub const & xa, core::kinematics::Stub const & xb)
+	double SICFast::refine_mindis_with_xyzHash(core::kinematics::Stub const & xa, core::kinematics::Stub const & xb,
+																						 vector1<Vec> const & pa, vector1<Vec> const & pb, double mindis, Vec ori)
 	{
 
 		numeric::geometry::hashing::xyzStripeHash<double> const * xh( xh2_bb_ );

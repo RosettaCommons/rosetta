@@ -10,6 +10,7 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
+#include <core/id/AtomID_Map.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -28,31 +29,41 @@ namespace sic_dock {
 		virtual ~SICFast();
 
 		void init(
-							core::pose::Pose         const & cmp1in,
-							utility::vector1<Vec>            cmp1cbs,
-							utility::vector1<double> const & cmp1wts,
-							core::pose::Pose         const & cmp2in,
-							utility::vector1<Vec>            cmp2cbs,
-							utility::vector1<double> const & cmp2wts
+							core::pose::Pose const & pose1,
+							core::pose::Pose const & pose2,
+							core::id::AtomID_Map<core::Real> const & clash_atoms1,
+							core::id::AtomID_Map<core::Real> const & clash_atoms2,
+							core::id::AtomID_Map<core::Real> const & score_atoms1,
+							core::id::AtomID_Map<core::Real> const & score_atoms2
 							);
 
-		double slide_into_contact(
+		// void init(
+		// 					core::pose::Pose         const & cmp1in,
+		// 					utility::vector1<Vec>            cmp1cbs,
+		// 					utility::vector1<double> const & cmp1wts,
+		// 					core::pose::Pose         const & cmp2in,
+		// 					utility::vector1<Vec>            cmp2cbs,
+		// 					utility::vector1<double> const & cmp2wts
+		// 					);
+
+		double slide_into_contact(core::kinematics::Stub const & xa,
+															core::kinematics::Stub const & xb,
 															utility::vector1<Vec>          pa,
 															utility::vector1<Vec>          pb,
 															utility::vector1<Vec>  const & cba,
 															utility::vector1<Vec>  const & cbb,
 															Vec                            ori,
-															double                       & score,
-															core::kinematics::Stub const & xa,
-															core::kinematics::Stub const & xb
+															double                       & score
 															);
 
 
 	private:
-		double refine_mindis_with_xyzHash(utility::vector1<Vec> const & pa, utility::vector1<Vec> const & pb, double mindis, Vec ori,
-																			core::kinematics::Stub const & xa, core::kinematics::Stub const & xb);
-		double get_score(utility::vector1<Vec> const & cba, utility::vector1<Vec> const & cbb, Vec ori, double mindis,
-										 core::kinematics::Stub const & xa, core::kinematics::Stub const & xb);
+		double refine_mindis_with_xyzHash(core::kinematics::Stub const & xa, core::kinematics::Stub const & xb,
+																			utility::vector1<Vec> const & pa, utility::vector1<Vec> const & pb, double mindis, Vec ori);
+
+		double get_score(core::kinematics::Stub const & xa, core::kinematics::Stub const & xb,
+										 utility::vector1<Vec> const & cba, utility::vector1<Vec> const & cbb, Vec ori, double mindis);
+
 		void rotate_points(utility::vector1<Vec> & pa, utility::vector1<Vec> & pb, Vec ori);
 		void get_bounds(utility::vector1<Vec> & pa, utility::vector1<Vec> & pb);
 		void fill_plane_hash(utility::vector1<Vec> & pa, utility::vector1<Vec> & pb);
@@ -63,6 +74,8 @@ namespace sic_dock {
 		double CTD,CLD,CTD2,CLD2,BIN;
 		int xlb,ylb,xub,yub;
 		xyzStripeHashPose *xh2_bb_,*xh2_cb_;
+		utility::vector1<Vec>    clash1_,clash2_;
+		utility::vector1<Vec>    score1_,score2_;
 		utility::vector1<double> w1_,w2_;
 		ObjexxFCL::FArray2D<Vec> ha,hb;
 
