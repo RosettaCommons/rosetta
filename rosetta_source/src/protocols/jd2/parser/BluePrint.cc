@@ -249,7 +249,7 @@ BluePrint::read_blueprint( std::string const & filename )
 		utility::vector1< String > tokens ( utility::split( line ) );
 
 		// skip reading line that is commented out
-		if( tokens[1][1] == '#' ) continue;
+		if( tokens[1][0] == '#' ) continue;
 
 		if( tokens[1] == "FOLDINFO" || tokens[1] == "SSPAIR" || tokens[1] == "HHPAIR" || tokens[1] == "HSSTRIPLET" ) {
 			// read the line of SSPAIR( FOLDINFO ), HHPAIR
@@ -282,8 +282,8 @@ BluePrint::read_blueprint( std::string const & filename )
 
 			count ++;
 			Size ii = boost::lexical_cast<Size>( tokens[1] );
-			char aa ( tokens[2][1] );
-			char sec( tokens[3][1] );
+			char aa ( tokens[2][0] );
+			char sec( tokens[3][0] );
 			String abego("");
 			if( tokens[3].length() > 1 ) {
 				core::util::ABEGOManager am;
@@ -312,7 +312,7 @@ BluePrint::read_blueprint( std::string const & filename )
 
 			if( tokens.size() >= 4 ) {
 
-				char build( tokens[4][1] );
+				char build( tokens[4][0] );
 				if( build != '.' && build != 'R' && build != 'I' && build != 'X' &&
 						build != 'F' && build != 'P' && build != 'C' ) {
 					TR.Error << "unrecognized build char : " << build << " at lines "	<< linecount << " in " << filename << std::endl;
