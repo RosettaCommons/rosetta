@@ -149,8 +149,9 @@ settings = {
         "appends" : {
             "version"       : [ "3", "4" ],
             "flags" : {
-                "compile"   : [ "-param inline-unit-growth=1000",
-                "-param large-function-growth=50000" ],
+                ## These flags likely cause memory exhaustion on whatever platform they're active 
+                #"compile"   : [ "-param inline-unit-growth=1000",
+                #"-param large-function-growth=50000" ],
             },
         },
     },
@@ -159,8 +160,9 @@ settings = {
         "appends" : {
             "version"       : [ "4", "0" ],
             "flags" : {
-                "compile"   : [ "-param inline-unit-growth=1000",
-                "-param large-function-growth=50000" ],
+                ## These flags causes memory exhaustion during compiling on MacOS 10.5 
+                #"compile"   : [ "-param inline-unit-growth=1000",
+                #"-param large-function-growth=50000" ],
             },
         },
     },
@@ -169,6 +171,7 @@ settings = {
         "appends" : {
             "version"       : [ "4", "1" ],
             "flags" : {
+               ## These flags causes memory exhaustion during compiling on the test server  
                # "compile"   : [ "-param inline-unit-growth=1000",
                # "-param large-function-growth=50000" ],
             },
