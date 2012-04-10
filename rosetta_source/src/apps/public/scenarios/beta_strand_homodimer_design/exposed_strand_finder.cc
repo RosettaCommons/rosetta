@@ -97,7 +97,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 //  Index for location of tokens in a defined mutation
-typedef enum Index{
+enum Index{
   chain_index = 1,
   start_index = 2,
   end_index = 3,

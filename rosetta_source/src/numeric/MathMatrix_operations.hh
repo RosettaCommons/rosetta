@@ -89,7 +89,7 @@ MathMatrix< T> & operator -= ( MathMatrix< T> &MATRIX_LHS, const MathMatrix< T> 
 /// @return the changed lhs matrix
 template< typename T>
 inline
-MathMatrix< T> & operator /= ( MathMatrix< T> &MATRIX_LHS, const MathMatrix< T> &MATRIX_RHS )
+MathMatrix< T> & operator /= ( MathMatrix< T> &MATRIX_LHS, const MathMatrix< T> & )
 {
 
 	return MATRIX_LHS;

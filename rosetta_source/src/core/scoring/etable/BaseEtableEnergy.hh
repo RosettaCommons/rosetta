@@ -796,8 +796,8 @@ protected:
 
 	void
 	derived_prepare_for_residue_pair(
-		Size const res1,
-		Size const res2,
+		Size const,
+		Size const,
 		pose::Pose const &
 	) const
 	{ //do nothing if the derived class does not override this method

@@ -31,10 +31,10 @@ namespace mpi_stream {
 		typename ByteAT
 	>
 	basic_mpi_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_mpi_streambuf(
-    std::string filename,
+    std::string MPI_ONLY( filename ),
 		size_t buffer_size_,
 		int master_rank,
-		bool append
+		bool MPI_ONLY( append )
 	) :	m_buffer( buffer_size_, 0 ), master_rank_( master_rank )
 	{
 		//find channel_id_;

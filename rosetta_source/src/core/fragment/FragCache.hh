@@ -75,7 +75,7 @@ public:
 		map_[ frag_id ] = value;
 	}
 
-	void register_frag_id( Size frag_id ) { }; //do nothing -- cache has lazy evaluation
+	void register_frag_id( Size ) { }; //do nothing -- cache has lazy evaluation
 private:
 	TMap map_;
 };

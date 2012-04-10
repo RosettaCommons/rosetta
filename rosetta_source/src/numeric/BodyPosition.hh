@@ -146,10 +146,10 @@ public: // Creation
 	///        bound to p and separated by an angle on (0,pi) from position 1 to 2
 	inline
 	BodyPosition(
-		Point const & p1,
+		Point const &,
 		Vector const & x1,
 		Vector const & u1,
-		Point const & p2,
+		Point const &,
 		Vector const & x2,
 		Vector const & u2,
 		Value const & cos,

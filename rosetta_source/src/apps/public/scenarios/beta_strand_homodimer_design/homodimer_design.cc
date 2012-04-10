@@ -116,7 +116,7 @@ using namespace protocols::jd2;
 using namespace core::pose::metrics;
 
 //  Index for option[ OptionKeys::symmetry::perturb_rigid_body_dofs ] values
-typedef enum Index{
+enum Index{
   trans = 1,
   rot = 2
 };
