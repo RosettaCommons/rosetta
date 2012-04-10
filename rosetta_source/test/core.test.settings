@@ -15,7 +15,7 @@ sources = {
                 "automorphism",
                 "ResidueTypeBloatTests",
                 "ResidueTypeTests",
-		#"ResidueTypeSetTests",
+		"ResidueTypeSetTests",
 	],
 	"chemical/orbitals" :[
 		"OrbitalTypeSet",
@@ -237,6 +237,7 @@ libraries    = [
 subprojects  = []
 testinputfiles = [
 	"chemical/1pqc.params",
+	"chemical/1pqc_test.patch",
 	"chemical/atom_properties.txt",
 	"chemical/mm_atom_properties.txt",
 	"chemical/orbitals/orbital_properties.txt",

@@ -65,6 +65,8 @@ option.add( basic::options::OptionKeys::in::file::extra_res_database_mode, "The 
 option.add( basic::options::OptionKeys::in::file::extra_res_database_resname_list, "Path to a list of residue names to be read in from the residue database.  The list should have one residue name per line" );
 option.add( basic::options::OptionKeys::in::file::extra_res_cen, ".params file(s) for new centroid residue types (e.g. ligands)" );
 option.add( basic::options::OptionKeys::in::file::extra_res_path, "directories with .params files.  Only files containing 'param' will be chosen" );
+option.add( basic::options::OptionKeys::in::file::extra_patch_fa, "patch files for full atom variants not specified in the database" );
+option.add( basic::options::OptionKeys::in::file::extra_patch_cen, "patch files for centroid atom variants not specified in the database" );
 option.add( basic::options::OptionKeys::in::file::frag3, "No description" );
 option.add( basic::options::OptionKeys::in::file::frag9, "No description" );
 option.add( basic::options::OptionKeys::in::file::fragA, "No description" );
@@ -610,10 +612,10 @@ option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for ea
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
@@ -1831,10 +1833,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequen
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);

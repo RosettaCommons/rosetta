@@ -286,6 +286,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>directories with .params files.  Only files containing 'param' will be chosen</dd><br>
 </dl>
 <dl>
+<dt><b>-extra_patch_fa</b> \<FileVector\><dt>
+<dd>patch files for full atom variants not specified in the database</dd><br>
+</dl>
+<dl>
+<dt><b>-extra_patch_cen</b> \<FileVector\><dt>
+<dd>patch files for centroid atom variants not specified in the database</dd><br>
+</dl>
+<dl>
 <dt><b>-frag3</b> \<String\><dt>
 <dd>No description</dd><br>
 </dl>
@@ -11601,6 +11609,37 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-prep_align_prot_to</b> \<String\><dt>
 <dd>No description</dd><br>
+</dl>
+ </li>
+<li><h2>sicdock</h2>
+<dl>
+<dt><b>-sicdock</b> \<Boolean\><dt>
+<dd>sicdock option group</dd><br>
+</dl>
+<dl>
+<dt><b>-clash_dis</b> \<Real\><dt>
+<dd>max acceptable clash dis</dd><br>
+<dd>Default: 3.5</dd><br>
+</dl>
+<dl>
+<dt><b>-contact_dis</b> \<Real\><dt>
+<dd>max acceptable contact dis</dd><br>
+<dd>Default: 12.0</dd><br>
+</dl>
+<dl>
+<dt><b>-hash_2D_vs_3D</b> \<Real\><dt>
+<dd>grid spacing top 2D hash</dd><br>
+<dd>Default: 1.3</dd><br>
+</dl>
+<dl>
+<dt><b>-term_min_expose</b> \<Real\><dt>
+<dd>terminus at least X exposed</dd><br>
+<dd>Default: 0.1</dd><br>
+</dl>
+<dl>
+<dt><b>-term_max_angle</b> \<Real\><dt>
+<dd>terminus at most X degrees from XY plane</dd><br>
+<dd>Default: 45.0</dd><br>
 </dl>
  </li>
 <li><h2>orbitals</h2>

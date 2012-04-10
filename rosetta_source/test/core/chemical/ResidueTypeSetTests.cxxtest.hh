@@ -26,7 +26,8 @@
 
 // Platform Headers
 #include <basic/Tracer.hh>
-
+#include <basic/database/open.hh>
+#
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -93,6 +94,44 @@ public:
 		//ResidueTypeCAP * newpointer10 = &(rs->residue_types()[10]);
 		//TR << "old pointer addr is " << pointer10 << ", new pointer addr is " << newpointer10 << std::endl;
 		//TS_ASSERT( pointer10 == newpointer10 );
+	}
+
+
+	void test_extra_params() {
+		using namespace core::chemical;
+		using namespace ObjexxFCL::fmt;
+
+		std::vector< std::string > extra_params_files( 1, "core/chemical/1pqc.params");
+		std::vector< std::string > extra_patch_files( 1, "core/chemical/1pqc_test.patch");
+
+		ResidueTypeSet rtset( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ), extra_params_files, extra_patch_files );
+
+		TS_ASSERT( rtset.has_name3("QC1") );
+		TS_ASSERT( rtset.has_name("QC1") );
+		TS_ASSERT( rtset.has_name("QC1_p:1pqcTestPatch") );
+
+		ResidueType const & plain( rtset.name_map("QC1") );
+		ResidueType const & decorated( rtset.name_map("QC1_p:1pqcTestPatch") );
+
+		// This is here mainly to make sure it doesn't crash.
+		ResidueType const & dec_gen( rtset.get_residue_type_with_variant_added( plain, "TESTPATCH" ) );
+
+		TS_ASSERT_EQUALS( plain.natoms(), 43 );
+		TS_ASSERT_EQUALS( decorated.natoms(), 48 );
+		TS_ASSERT_EQUALS( dec_gen.natoms(), 48 );
+
+		TS_ASSERT( plain.has("F9") );
+		TS_ASSERT( plain.has("S1") );
+		TS_ASSERT( plain.has("H12") );
+		TS_ASSERT( ! plain.has("OP1") );
+		TS_ASSERT( ! plain.has("3HP2") );
+
+		TS_ASSERT( decorated.has("F9") );
+		TS_ASSERT( dec_gen.has("S1") );
+		TS_ASSERT( ! decorated.has("H12") );
+		TS_ASSERT( dec_gen.has("OP1") );
+		TS_ASSERT( decorated.has("3HP2") );
+
 	}
 
 

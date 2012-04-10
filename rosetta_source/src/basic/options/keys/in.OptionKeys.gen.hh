@@ -65,6 +65,8 @@ namespace in { namespace file { extern StringOptionKey const extra_res_database_
 namespace in { namespace file { extern FileOptionKey const extra_res_database_resname_list; } }
 namespace in { namespace file { extern FileVectorOptionKey const extra_res_cen; } }
 namespace in { namespace file { extern PathVectorOptionKey const extra_res_path; } }
+namespace in { namespace file { extern FileVectorOptionKey const extra_patch_fa; } }
+namespace in { namespace file { extern FileVectorOptionKey const extra_patch_cen; } }
 namespace in { namespace file { extern StringOptionKey const frag3; } }
 namespace in { namespace file { extern StringOptionKey const frag9; } }
 namespace in { namespace file { extern StringOptionKey const fragA; } }

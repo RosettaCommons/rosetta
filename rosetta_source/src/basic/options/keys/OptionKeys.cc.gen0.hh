@@ -60,6 +60,8 @@ namespace in { namespace file { StringOptionKey const extra_res_database_mode( "
 namespace in { namespace file { FileOptionKey const extra_res_database_resname_list( "in:file:extra_res_database_resname_list" );  } }
 namespace in { namespace file { FileVectorOptionKey const extra_res_cen( "in:file:extra_res_cen" );  } }
 namespace in { namespace file { PathVectorOptionKey const extra_res_path( "in:file:extra_res_path" );  } }
+namespace in { namespace file { FileVectorOptionKey const extra_patch_fa( "in:file:extra_patch_fa" );  } }
+namespace in { namespace file { FileVectorOptionKey const extra_patch_cen( "in:file:extra_patch_cen" );  } }
 namespace in { namespace file { StringOptionKey const frag3( "in:file:frag3" );  } }
 namespace in { namespace file { StringOptionKey const frag9( "in:file:frag9" );  } }
 namespace in { namespace file { StringOptionKey const fragA( "in:file:fragA" );  } }
@@ -605,4 +607,3 @@ namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty"
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
-namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }

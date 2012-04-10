@@ -181,6 +181,7 @@ ChemicalManager::residue_type_set( std::string const & tag )
 	if ( iter == residue_type_sets_.end() ) {
 		// Look for additional residue .params files specified on the cmd line
 		std::vector< std::string > extra_params_files;
+		std::vector< std::string > extra_patch_files;
 		std::vector<core::chemical::ResidueTypeOP> extra_residues;
 		if(tag == FA_STANDARD) {
 			utility::options::FileVectorOption & fvec
@@ -279,7 +280,12 @@ ChemicalManager::residue_type_set( std::string const & tag )
 				}
 			}
 
-
+			// Patches
+			utility::options::FileVectorOption & pfvec
+				= basic::options::option[ basic::options::OptionKeys::in::file::extra_patch_fa ];
+			for(Size i = 1, e = pfvec.size(); i <= e; ++i) {
+				extra_patch_files.push_back( pfvec[i].name());
+			}
 
 		} else if(tag == CENTROID) {
 			utility::options::FileVectorOption & fvec
@@ -287,6 +293,12 @@ ChemicalManager::residue_type_set( std::string const & tag )
 			for(Size i = 1, e = fvec.size(); i <= e; ++i) {
 				utility::file::FileName fname = fvec[i];
 				extra_params_files.push_back(fname.name());
+			}
+			// Patches
+			utility::options::FileVectorOption & pfvec
+				= basic::options::option[ basic::options::OptionKeys::in::file::extra_patch_cen ];
+			for(Size i = 1, e = pfvec.size(); i <= e; ++i) {
+				extra_patch_files.push_back( pfvec[i].name());
 			}
 		}
 		// read from file
@@ -303,7 +315,7 @@ ChemicalManager::residue_type_set( std::string const & tag )
 
 
 		std::string const directory( temp_str );
-		ResidueTypeSetOP new_set( new ResidueTypeSet( tag, directory, extra_params_files ) );
+		ResidueTypeSetOP new_set( new ResidueTypeSet( tag, directory, extra_params_files, extra_patch_files ) );
 		ResidueTypeSetCAP new_setCAP(*new_set);
 
 		for(core::Size index =0 ;index < extra_residues.size();++index)

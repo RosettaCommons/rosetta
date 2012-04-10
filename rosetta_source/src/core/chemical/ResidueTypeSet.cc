@@ -86,7 +86,8 @@ static basic::Tracer tr("core.chemical.ResidueTypeSet");
 ResidueTypeSet::ResidueTypeSet(
 	std::string const & name,
 	std::string const & directory,
-	std::vector< std::string > const & extra_res_param_files // defaults to empty
+	std::vector< std::string > const & extra_res_param_files, // defaults to empty
+	std::vector< std::string > const & extra_patch_files // defaults to empty
 ) :
 	name_( name ),
 	database_directory_(directory)
@@ -193,7 +194,8 @@ ResidueTypeSet::ResidueTypeSet(
 			}
 		}
 
-		utility::vector1< std::string > patch_filenames;
+		utility::vector1< std::string > patch_filenames(extra_patch_files);
+		// Unconditional loading of listed patches is deliberate - if you specified it explicitly, you probably want it to load.
 		std::string line;
 		while ( getline( data,line) ) {
 			if ( line.size() < 1 || line[0] == '#' ) continue;

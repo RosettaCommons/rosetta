@@ -87,7 +87,8 @@ public:
 	ResidueTypeSet(
 		std::string const & name,
 		std::string const & directory,
-		std::vector< std::string > const & extra_res_param_files = std::vector< std::string >()
+		std::vector< std::string > const & extra_res_param_files = std::vector< std::string >(),
+		std::vector< std::string > const & extra_patch_files = std::vector< std::string >()
 	);
 
 	virtual ~ResidueTypeSet();
