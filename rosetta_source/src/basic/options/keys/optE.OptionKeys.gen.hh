@@ -78,6 +78,7 @@ namespace optE { extern BooleanOptionKey const fit_reference_energies_to_aa_prof
 namespace optE { extern FileOptionKey const starting_refEs; }
 namespace optE { extern BooleanOptionKey const repeat_swarm_optimization_until_fitness_improves; }
 namespace optE { extern BooleanOptionKey const design_with_minpack; }
+namespace optE { extern BooleanOptionKey const limit_bad_scores; }
 namespace optE { namespace rescore { extern BooleanOptionKey const rescore; } }
 namespace optE { namespace rescore { extern FileOptionKey const weights; } }
 namespace optE { namespace rescore { extern IntegerOptionKey const context_round; } }

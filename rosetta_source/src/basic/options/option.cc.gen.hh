@@ -1945,6 +1945,7 @@ option.add( basic::options::OptionKeys::optE::fit_reference_energies_to_aa_profi
 option.add( basic::options::OptionKeys::optE::starting_refEs, "IterativeOptEDriver flag: specify a weights file to read reference energies from; do not optimize reference energies in the first round of weight fitting" );
 option.add( basic::options::OptionKeys::optE::repeat_swarm_optimization_until_fitness_improves, "After the first time though the particle swarm optimization phase, if the end fitness is not better than the start fitness, recreate the swarm around the start dofs and repeat the swarm optimization." ).def(false);
 option.add( basic::options::OptionKeys::optE::design_with_minpack, "Use the min-packer to design in the sequence recovery stages." ).def(false);
+option.add( basic::options::OptionKeys::optE::limit_bad_scores, "Quit after one million inf or NaN errors in optE objective function" );
 option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
 option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );

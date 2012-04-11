@@ -195,6 +195,13 @@ OptEMultifunc::operator()( Multivec const & vars ) const
 			score += s;
 #ifndef WIN32
 		if ( bad ) {
+			if ( basic::options::option[ basic::options::OptionKeys::optE::limit_bad_scores ].user() )					//NaN and inf errors can accumulate into the gigabytes if optE is left unattended
+			{	
+				static Size count = 0;																
+				++count;
+				if (count > 100000)
+					utility::exit(__FILE__,__LINE__, "Counted over 100,000 inf/NaN scores. Admitting defeat now.");
+			}
 			std::cerr << "vars: " << std::endl;
 			for ( Size ii = 1; ii <= local_vars.size(); ++ii ) {
 				if ( ii != 1 ) std::cerr << ", ";

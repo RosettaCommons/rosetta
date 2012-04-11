@@ -9421,6 +9421,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Use the min-packer to design in the sequence recovery stages.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-limit_bad_scores</b> \<Boolean\><dt>
+<dd>Quit after one million inf or NaN errors in optE objective function</dd><br>
+</dl>
  </li>
 <li><h2>optE:rescore</h2>
 <dl>

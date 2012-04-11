@@ -3883,6 +3883,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'starting_refEs', 'File', desc='IterativeOptEDriver flag: specify a weights file to read reference energies from; do not optimize reference energies in the first round of weight fitting'),
 		Option( 'repeat_swarm_optimization_until_fitness_improves', 'Boolean', desc='After the first time though the particle swarm optimization phase, if the end fitness is not better than the start fitness, recreate the swarm around the start dofs and repeat the swarm optimization.', default='false'),
 		Option( 'design_with_minpack', 'Boolean', desc='Use the min-packer to design in the sequence recovery stages.', default='false'),
+		Option( 'limit_bad_scores',  'Boolean', desc='Quit after 100,000 inf or NaN errors in optE objective function'),
 		Option_Group( 'rescore',
 			Option( 'weights', 'File', desc='Weight set to use when rescoring optE partition functions' ),
 			Option( 'context_round', 'Integer', desc='Integer of the context PDBs generated during design to use to measure the pNatAA'),

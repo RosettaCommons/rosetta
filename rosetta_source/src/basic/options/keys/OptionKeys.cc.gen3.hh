@@ -107,6 +107,7 @@ namespace optE { BooleanOptionKey const fit_reference_energies_to_aa_profile_rec
 namespace optE { FileOptionKey const starting_refEs( "optE:starting_refEs" );  }
 namespace optE { BooleanOptionKey const repeat_swarm_optimization_until_fitness_improves( "optE:repeat_swarm_optimization_until_fitness_improves" );  }
 namespace optE { BooleanOptionKey const design_with_minpack( "optE:design_with_minpack" );  }
+namespace optE { BooleanOptionKey const limit_bad_scores( "optE:limit_bad_scores" );  }
 namespace optE { namespace rescore { BooleanOptionKey const rescore( "optE:rescore" );  } }
 namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }
 namespace optE { namespace rescore { IntegerOptionKey const context_round( "optE:rescore:context_round" );  } }
