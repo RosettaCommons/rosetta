@@ -33,6 +33,8 @@
 #include <protocols/antibody2/ModelCDRH3.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.fwd.hh>
+#include <protocols/antibody2/RefineBetaBarrel.fwd.hh>
+
 
 
 #include <utility/vector1.hh>
@@ -92,13 +94,10 @@ public:
 
 	void relax_cdrs( core::pose::Pose & pose );
 
-	void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in, 
-                                  const loops::Loops & loops );
 
 
-	core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, 
-                                  const core::pose::Pose & native_pose, 
-                                  std::string cdr_type );
+
+
 
 	void display_constraint_residues( core::pose::Pose & pose );
 
@@ -117,6 +116,7 @@ private:
 	bool camelid_constraints_;
     bool H3_filter_;
     bool cter_insert_;
+    bool LH_repulsive_ramp_;
     core::pose::Pose start_pose_;
     
     /// @brief refine H3 only
@@ -151,7 +151,8 @@ private:
 	core::pack::task::TaskFactoryOP tf_;
 
 	// movers
-	protocols::antibody2::ModelCDRH3OP model_cdrh3_;
+	ModelCDRH3OP model_cdrh3_;
+    RefineBetaBarrelOP refine_beta_barrel_;
 
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();

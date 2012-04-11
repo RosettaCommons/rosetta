@@ -28,8 +28,9 @@ sources = {
 		"ModelCDRH3",
 		"H3CterInsert",
 		"H3PerturbCCD",
-		"Ab_LH_RepulsiveRamp_Mover",
-		"Ab_LH_SnugFit_Mover",
+		"RefineBetaBarrel",
+		"LHRepulsiveRamp",
+		"LHSnugFitLegacy",
 		"RefineCDRH3HighRes",
 	],
 }

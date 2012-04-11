@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_LH_SnugFit_Mover.hh
+/// @file protocols/antibody2/LHSnugFitLegacy.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,8 +17,8 @@
 
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_LH_SnugFit_Mover_hh
-#define INCLUDED_protocols_antibody2_Ab_LH_SnugFit_Mover_hh
+#ifndef INCLUDED_protocols_antibody2_LHSnugFitLegacy_hh
+#define INCLUDED_protocols_antibody2_LHSnugFitLegacy_hh
 
 
 
@@ -30,33 +30,33 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/antibody2/AntibodyInfo.hh>
+#include <protocols/antibody2/AntibodyInfo.fwd.hh>
 
-#include <protocols/antibody2/Ab_LH_SnugFit_Mover.fwd.hh>
-
-
+#include <protocols/antibody2/LHSnugFitLegacy.fwd.hh>
 
 
+
+using namespace core;
 namespace protocols {
 namespace antibody2 {
         
-class Ab_LH_SnugFit_Mover: public moves::Mover {
+class LHSnugFitLegacy: public moves::Mover {
             
             
 public:
     
     /// @brief default constructor
-	Ab_LH_SnugFit_Mover();
+	LHSnugFitLegacy();
     
 	/// @brief constructor with arguments
-    Ab_LH_SnugFit_Mover(loops::Loops loops_in );
-    Ab_LH_SnugFit_Mover(antibody2::AntibodyInfo & antibody_in );
-	Ab_LH_SnugFit_Mover(antibody2::AntibodyInfo & antibody_in, bool camelid );
+    LHSnugFitLegacy(loops::Loops loops_in );
+    LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in );
+	LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in, bool camelid );
         
     virtual protocols::moves::MoverOP clone() const;
     
 	/// @brief default destructor
-	~Ab_LH_SnugFit_Mover();
+	~LHSnugFitLegacy();
     
     void set_default();
     
@@ -71,25 +71,22 @@ public:
     
 private:
 
-    AntibodyInfo ab_info_;
+    AntibodyInfoOP ab_info_;
     
     bool user_defined_;
     bool benchmark_;
     bool is_camelid_;
     loops::Loops all_loops_; 
-    
-    
+    std::string min_type_;
+    Real rot_mag_;
+    Real trans_mag_;
+    Real temperature_;
     
     void init(loops::Loops loops_in, bool camelid);
     
     void setup_objects();
     
     void snugfit_mcm_protocol( core::pose::Pose & pose_in, loops::Loops loops_in );
-    
-    
-    
-    
-    
     
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;

@@ -54,7 +54,8 @@ void setup_simple_fold_tree(
                                 core::pose::Pose & pose_in );
     
     
-    
+void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in, 
+                            const loops::Loops & loops );
     
     
 bool CDR_H3_filter(
@@ -82,7 +83,10 @@ core::Real cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
     
     
     
-    
+core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, 
+                              const core::pose::Pose & native_pose, 
+                              loops::LoopOP current_loop );
+
     
 std::string get_seq_from_a_loop(core::pose::Pose & pose_in, loops::LoopOP  loop);
     

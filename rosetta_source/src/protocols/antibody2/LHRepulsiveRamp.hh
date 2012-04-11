@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.hh
+/// @file protocols/antibody2/LHRepulsiveRamp.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,13 +17,14 @@
 
 
 
-#ifndef INCLUDED_protocols_antibody2_Ab_LH_RepulsiveRamp_Mover_hh
-#define INCLUDED_protocols_antibody2_Ab_LH_RepulsiveRamp_Mover_hh
+#ifndef INCLUDED_protocols_antibody2_LHRepulsiveRamp_hh
+#define INCLUDED_protocols_antibody2_LHRepulsiveRamp_hh
 
 
 
 
 
+#include <protocols/antibody2/LHRepulsiveRamp.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -31,32 +32,32 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
-
-#include <protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.fwd.hh>
-
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 
 
+
+using namespace core;
 namespace protocols {
 namespace antibody2 {
         
-class Ab_LH_RepulsiveRamp_Mover: public moves::Mover {
+class LHRepulsiveRamp: public moves::Mover {
             
             
 public:
     
     /// @brief default constructor
-	Ab_LH_RepulsiveRamp_Mover();
+	LHRepulsiveRamp();
     
 	/// @brief constructor with arguments
-    Ab_LH_RepulsiveRamp_Mover(loops::Loops loops_in );
-    Ab_LH_RepulsiveRamp_Mover(antibody2::AntibodyInfo & antibody_in );
-	Ab_LH_RepulsiveRamp_Mover(antibody2::AntibodyInfo & antibody_in, bool camelid );
+    LHRepulsiveRamp(loops::Loops loops_in );
+    LHRepulsiveRamp(antibody2::AntibodyInfoOP antibody_in );
+	LHRepulsiveRamp(antibody2::AntibodyInfoOP antibody_in, bool camelid );
         
     virtual protocols::moves::MoverOP clone() const;
     
 	/// @brief default destructor
-	~Ab_LH_RepulsiveRamp_Mover();
+	~LHRepulsiveRamp();
     
     void set_default();
     
@@ -65,44 +66,48 @@ public:
     
     virtual std::string get_name() const;
     
-    void set_task_factory(core::pack::task::TaskFactoryCOP tf){
-        tf_ = new core::pack::task::TaskFactory(*tf);
+    
+    void set_task_factory(pack::task::TaskFactoryCOP tf){
+        tf_ = new pack::task::TaskFactory(*tf);
     }
     
 private:
 
-    AntibodyInfo ab_info_;
-    // AntibodyInfoOP
+    AntibodyInfoOP ab_info_;
     
     bool user_defined_;
     bool benchmark_;
     bool is_camelid_;
     loops::Loops all_loops_; 
+    Size nres_;
+    kinematics::MoveMapOP cdr_dock_map_;
+    Size rep_ramp_cycles_;
+    std::string min_type_;
+    Real rot_mag_;
+    Real trans_mag_;
+    Real temperature_;
+    Real min_threshold_;
+    Size cycles_;
+
     
-    
+    scoring::ScoreFunctionOP dock_scorefxn_;
+    scoring::ScoreFunctionOP pack_scorefxn_;
     
     void init(loops::Loops loops_in, bool camelid);
     
     void setup_objects();
     
-    
-    
+    void finalize_setup(pose::Pose & pose );
+
 
     
 	void repulsive_ramp( core::pose::Pose & pose_in, loops::Loops loops_in );
     
-	void snugfit_MC_min (
-                         core::pose::Pose & pose_in,
-                         core::kinematics::MoveMapOP cdr_dock_map,
-                         core::Size cycles,
-                         core::Real minimization_threshold,
-                         core::scoring::ScoreFunctionOP scorefxn,
-                         core::scoring::ScoreFunctionOP pack_scorefxn,
-                         utility::vector1< bool> is_flexible );
+	void snugfit_MC_min (core::pose::Pose & pose_in);
     
     
 	//packer task
-	core::pack::task::TaskFactoryOP tf_;
+    pack::task::TaskFactoryOP tf_;
 
 };
     

@@ -56,7 +56,7 @@ public:
 	~ModelCDRH3();
     
 	void set_default();
-	virtual void apply( core::pose::Pose & pose_in );
+	virtual void apply( pose::Pose & pose_in );
 	virtual std::string get_name() const;
 
 	/// @brief enable benchmark mode
@@ -74,19 +74,19 @@ public:
 
 
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
-	void set_lowres_score_func(core::scoring::ScoreFunctionOP lowres_scorefxn );
+	void set_lowres_score_func(scoring::ScoreFunctionOP lowres_scorefxn );
 
 	/// @brief set scorefunction for high resolution of CDR H3 modeling
-	void set_highres_score_func(core::scoring::ScoreFunctionOP highres_scorefxn);
+	void set_highres_score_func(scoring::ScoreFunctionOP highres_scorefxn);
 
     
 	void loop_centroid_relax(
-		core::pose::Pose & pose_in,
-		core::Size const loop_begin,
-		core::Size const loop_end );
+		pose::Pose & pose_in,
+		Size const loop_begin,
+		Size const loop_end );
 
     void set_task_factory(pack::task::TaskFactoryCOP tf){
-        tf_ = new core::pack::task::TaskFactory(*tf);
+        tf_ = new pack::task::TaskFactory(*tf);
     }
     
     void turn_off_H3_filter();
@@ -99,33 +99,33 @@ public:
     
 private:
 	bool user_defined_;
-	core::pose::Pose start_pose_;
+	pose::Pose start_pose_;
     
     bool do_cter_insert_;
 
 	// constraints
-	core::Real cen_cst_;
-	core::Real high_cst_;
-    core::pose::Pose hfr_pose_;
+	Real cen_cst_;
+	Real high_cst_;
+    pose::Pose hfr_pose_;
     
     /// @brief size of loop above which 9mer frags are used
-	core::Size cutoff_9_; // default 16
+	Size cutoff_9_; // default 16
     
 	/// @brief size of loop above which 3mer frags are used
-	core::Size cutoff_3_; // default 6
+	Size cutoff_3_; // default 6
     
     /// @brief Number of ADDITIONAL residues modeled from H3_CTERM
 	///        These residues range from H:n-2,n-1,n,n+1 of H3
-	core::Size c_ter_stem_;
+	Size c_ter_stem_;
     
-    core::Size max_cycle_;
+    Size max_cycle_;
     
     bool use_pymol_diy_;
     moves::PyMolMoverOP pymol_;
 
 	// score functions
-	core::scoring::ScoreFunctionOP lowres_scorefxn_;
-	core::scoring::ScoreFunctionOP highres_scorefxn_;
+	scoring::ScoreFunctionOP lowres_scorefxn_;
+	scoring::ScoreFunctionOP highres_scorefxn_;
 
 	/// @brief benchmark flag
 	bool benchmark_;
@@ -155,7 +155,7 @@ private:
 	antibody2::AntibodyInfoOP ab_info_;
 
 	//packer task
-	core::pack::task::TaskFactoryOP tf_;
+	pack::task::TaskFactoryOP tf_;
 
 	void init(bool camelid, bool benchmark, AntibodyInfoOP antibody_info);
 

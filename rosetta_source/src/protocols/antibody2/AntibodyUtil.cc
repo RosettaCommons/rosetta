@@ -47,6 +47,8 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <core/scoring/rms_util.tmpl.hh>
 
 
 
@@ -177,6 +179,88 @@ namespace antibody2{
 		TR << "Utility: Done: Setting up simple fold tree" << std::endl;
         
 	} // setup_simple_fold_tree
+    
+    
+    
+    
+    
+    ///////////////////////////////////////////////////////////////////////////
+	/// @begin all_cdr_VL_VH_fold_tree
+	///
+	/// @brief change to all CDR and VL-VH dock fold tree
+	///
+	/// @authors Aroop 07/13/2010
+	///
+	/// @last_modified 07/13/2010
+	///////////////////////////////////////////////////////////////////////////
+	void all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) 
+    {
+        
+		using namespace kinematics;
+        
+		Size nres = pose_in.total_residue();
+		core::pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
+		char second_chain = 'H';
+		Size rb_cutpoint(0);
+        
+		for ( Size i = 1; i <= nres; ++i ) {
+			if( pdb_info->chain( i ) == second_chain) {
+				rb_cutpoint = i-1;
+				break;
+			}
+		}
+        
+		Size jump_pos1 ( geometry::residue_center_of_mass( pose_in, 1, rb_cutpoint ) );
+		Size jump_pos2 ( geometry::residue_center_of_mass( pose_in,rb_cutpoint+1, nres ) );
+        
+		// make sure rb jumps do not reside in the loop region
+		for( loops::Loops::const_iterator it= loops_in.begin(), it_end = loops_in.end(); it != it_end; ++it ) {
+			if ( jump_pos1 >= ( it->start() - 1 ) &&
+                jump_pos1 <= ( it->stop() + 1) )
+				jump_pos1 = it->stop() + 2;
+			if ( jump_pos2 >= ( it->start() - 1 ) &&
+                jump_pos2 <= ( it->stop() + 1) )
+				jump_pos2 = it->start() - 2;
+		}
+        
+		// make a simple rigid-body jump first
+		setup_simple_fold_tree(jump_pos1,rb_cutpoint,jump_pos2,nres, pose_in );
+        
+		// add the loop jump into the current tree,
+		// delete some old edge accordingly
+		FoldTree f( pose_in.fold_tree() );
+        
+		for( loops::Loops::const_iterator it=loops_in.begin(),
+            it_end=loops_in.end(); it != it_end; ++it ) {
+			Size const loop_start ( it->start() );
+			Size const loop_stop ( it->stop() );
+			Size const loop_cutpoint ( it->cut() );
+			Size edge_start(0), edge_stop(0);
+			bool edge_found = false;
+			const FoldTree & f_const = f;
+			Size const num_jump = f_const.num_jump();
+			for( FoldTree::const_iterator it2=f_const.begin(),
+                it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
+				edge_start = std::min( it2->start(), it2->stop() );
+				edge_stop = std::max( it2->start(), it2->stop() );
+				if ( ! it2->is_jump() && loop_start > edge_start
+                    && loop_stop < edge_stop ) {
+					edge_found = true;
+					break;
+				}
+			}
+            
+			f.delete_unordered_edge( edge_start, edge_stop, Edge::PEPTIDE);
+			f.add_edge( loop_start-1, loop_stop+1, num_jump+1 );
+			f.add_edge( edge_start, loop_start-1, Edge::PEPTIDE );
+			f.add_edge( loop_start-1, loop_cutpoint, Edge::PEPTIDE );
+			f.add_edge( loop_cutpoint+1, loop_stop+1, Edge::PEPTIDE );
+			f.add_edge( loop_stop+1, edge_stop, Edge::PEPTIDE );
+		}
+        
+		f.reorder(1);
+		pose_in.fold_tree(f);
+	} // all_cdr_VL_VH_fold_tree
     
     
 
@@ -489,6 +573,31 @@ namespace antibody2{
         return( cutpoint_separation );
     } // cutpoint_separation
 
+    
+    
+    
+    
+    
+    
+    Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopOP current_loop ) 
+    {
+        using namespace scoring;
+        
+        Size loop_start = current_loop->start();
+        Size loop_end = current_loop->stop();
+        
+        using ObjexxFCL::FArray1D_bool;
+        FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
+        
+        for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
+        
+        using namespace core::scoring;
+        Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_CA );
+        return ( rmsG );
+    } 
+    
+    
+    
     
     
     

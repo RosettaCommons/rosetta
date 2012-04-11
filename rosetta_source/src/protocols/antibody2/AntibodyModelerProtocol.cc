@@ -45,7 +45,6 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintFactory.hh>
@@ -78,16 +77,15 @@
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMolMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.hh>
 #include <protocols/antibody2/ModelCDRH3.hh>
-#include <protocols/antibody2/Ab_LH_RepulsiveRamp_Mover.hh>
-#include <protocols/antibody2/Ab_LH_SnugFit_Mover.hh>
+
 #include <protocols/antibody2/RefineCDRH3HighRes.hh>
+#include <protocols/antibody2/RefineBetaBarrel.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -149,6 +147,7 @@ void AntibodyModelerProtocol::set_default()
     extreme_repacking_ =  true;
 	snugfit_   = true;
     refine_h3_ = true;
+    
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
@@ -157,6 +156,7 @@ void AntibodyModelerProtocol::set_default()
     H3_filter_ = true;
     cter_insert_ = true;
     use_pymol_diy_ = true;
+    LH_repulsive_ramp_ = true;
 }
 
     
@@ -307,7 +307,7 @@ AntibodyModelerProtocol::finalize_setup( pose::Pose & frame_pose )
     TR<<*ab_info_<<std::endl;
     
     model_cdrh3_ = new ModelCDRH3(camelid_, benchmark_, ab_info_ );
-    
+    refine_beta_barrel_ = new RefineBetaBarrel(ab_info_);
 
 
     
@@ -380,49 +380,31 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 
     // Step 1: model the cdr h3
     // JQX notes: pay attention to the way it treats the stems when extending the loop
+    //model_h3_=false;
     if(use_pymol_diy_) pymol_->apply(frame_pose);
     if(model_h3_){        
-        if(cter_insert_   ==false) { model_cdrh3_->turn_off_cter_insert(); }
-        if(H3_filter_     ==false) { model_cdrh3_->turn_off_H3_filter();   }
+        if(cter_insert_ ==false) { model_cdrh3_->turn_off_cter_insert(); }
+        if(H3_filter_   ==false) { model_cdrh3_->turn_off_H3_filter();   }
         model_cdrh3_->set_task_factory(tf_);
         if(use_pymol_diy_) model_cdrh3_->turn_on_and_pass_the_pymol(pymol_);
         model_cdrh3_->apply( frame_pose );
     }
     
+    
     // Step 2: packing the CDRs
-    extreme_repacking_ = false;
+    //extreme_repacking_ = false;
     if(extreme_repacking_) { relax_cdrs( frame_pose );    }
     if(use_pymol_diy_) pymol_->apply(frame_pose);
     
     
-    snugfit_ = false;
+    
 	// Step 3: SnugFit: relieve the clashes between L-H
-	if ( !camelid_ && snugfit_ ) {
-		all_cdr_VL_VH_fold_tree( frame_pose, ab_info_->all_cdr_loops_ );
-        
-        //$$$$$$$$$$$$$$$$$$$$$$$$
-        Ab_LH_RepulsiveRamp_Mover ab_lh_repulsiveramp_mover (ab_info_->all_cdr_loops_);
-        ab_lh_repulsiveramp_mover.set_task_factory(tf_);
-        ab_lh_repulsiveramp_mover.apply(frame_pose);
-
-        //$$$$$$$$$$$$$$$$$$$$$$$$$
-        Ab_LH_SnugFit_Mover ab_lh_snugfit_mover(ab_info_->all_cdr_loops_); 
-        ab_lh_snugfit_mover.set_task_factory(tf_);
-        ab_lh_snugfit_mover.apply(frame_pose);
-
-
-        //TODO: 
-        //JQX: need to read creafully these two functions, maybe they should be merged into one class
-        // but this will be in planned phase 2
-        
-
-		// align pose to native pose
-		pose::Pose native_pose = *get_native_pose();
-		antibody2::AntibodyInfo native_ab( native_pose, camelid_ );
-//		ab_info_.align_to_native( pose, native_ab, native_pose );
+	if ( snugfit_ ) { 
+        if (LH_repulsive_ramp_) {refine_beta_barrel_-> turn_off_repulsive_ramp();};
+        refine_beta_barrel_->apply(frame_pose);
 	}
 
-    
+
     
 	// Step 4: Full Atom Relax 
     if(refine_h3_){
@@ -467,6 +449,13 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
     
 
     
+    
+    // align pose to native pose
+    pose::Pose native_pose = *get_native_pose();
+    antibody2::AntibodyInfo native_ab( native_pose, camelid_ );
+    //		ab_info_.align_to_native( pose, native_ab, native_pose );
+    
+    
 	// Step 5: Store the homolgy models
     
 	// remove cutpoints variants for all cdrs
@@ -494,13 +483,13 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 	// add scores to map for output
 	( *scorefxn_ )( frame_pose );
 
-	job->add_string_real_pair("AA_H3", global_loop_rmsd( frame_pose, *get_native_pose(), "h3" ));
-	job->add_string_real_pair("AB_H2", global_loop_rmsd( frame_pose, *get_native_pose(), "h2" ));
-	job->add_string_real_pair("AC_H1", global_loop_rmsd( frame_pose, *get_native_pose(), "h1" ));
+	job->add_string_real_pair("AA_H3", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("h3") ));
+	job->add_string_real_pair("AB_H2", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("h2") ));
+	job->add_string_real_pair("AC_H1", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("h1") ));
 	if( !camelid_ ) {
-		job->add_string_real_pair("AC_L3", global_loop_rmsd( frame_pose, *get_native_pose(), "l3" ));
-		job->add_string_real_pair("AD_L2", global_loop_rmsd( frame_pose, *get_native_pose(), "l2" ));
-		job->add_string_real_pair("AE_L1", global_loop_rmsd( frame_pose, *get_native_pose(), "l1" ));
+		job->add_string_real_pair("AC_L3", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l3")));
+		job->add_string_real_pair("AD_L2", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l2") ));
+		job->add_string_real_pair("AE_L1", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l1") ));
 	}
 	job->add_string_real_pair("AF_constraint", constraint_score);
 
@@ -515,6 +504,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 
 
 
+    
 
 
 
@@ -555,19 +545,22 @@ void AntibodyModelerProtocol::relax_cdrs( core::pose::Pose & pose )
 
 	Size const nres = pose.total_residue();
 
+    
+    ( *scorefxn_ )( pose );
+    
 	//setting MoveMap
 	kinematics::MoveMapOP allcdr_map;
 	allcdr_map = new kinematics::MoveMap();
 	allcdr_map->clear();
 	allcdr_map->set_chi( false );
 	allcdr_map->set_bb( false );
-	utility::vector1< bool> is_flexible( nres, false );
-	bool include_neighbors( false );
-	select_loop_residues( pose, ab_info_->all_cdr_loops_, include_neighbors, is_flexible );
-	allcdr_map->set_bb( is_flexible );
-	include_neighbors = true;
-	select_loop_residues( pose, ab_info_->all_cdr_loops_, include_neighbors, is_flexible );
-	allcdr_map->set_chi( is_flexible );
+	utility::vector1< bool> bb_is_flexible( nres, false );
+    utility::vector1< bool> sc_is_flexible( nres, false );
+
+	select_loop_residues( pose, ab_info_->all_cdr_loops_, false /*include_neighbors*/, bb_is_flexible );
+	allcdr_map->set_bb( bb_is_flexible );
+	select_loop_residues( pose, ab_info_->all_cdr_loops_, true /*include_neighbors*/, sc_is_flexible );
+	allcdr_map->set_chi( sc_is_flexible );
 	for( Size ii = 1; ii <= ab_info_->all_cdr_loops_.num_loop(); ii++ ){
 		allcdr_map->set_jump( ii, false );
     }
@@ -589,7 +582,7 @@ void AntibodyModelerProtocol::relax_cdrs( core::pose::Pose & pose )
     if( !benchmark_ ) {
         simple_moves::PackRotamersMoverOP repack=new simple_moves::PackRotamersMover( scorefxn );
         ( *scorefxn )( pose );
-        tf_->push_back( new RestrictToInterface( is_flexible ) );
+        tf_->push_back( new RestrictToInterface( sc_is_flexible ) );
         repack->task_factory( tf_ );
         repack->apply( pose );
 
@@ -606,84 +599,6 @@ void AntibodyModelerProtocol::relax_cdrs( core::pose::Pose & pose )
     
     
     
-    
-	///////////////////////////////////////////////////////////////////////////
-	/// @begin all_cdr_VL_VH_fold_tree
-	///
-	/// @brief change to all CDR and VL-VH dock fold tree
-	///
-	/// @authors Aroop 07/13/2010
-	///
-	/// @last_modified 07/13/2010
-	///////////////////////////////////////////////////////////////////////////
-	void AntibodyModelerProtocol::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) 
-    {
-
-		using namespace kinematics;
-
-		Size nres = pose_in.total_residue();
-		core::pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
-		char second_chain = 'H';
-		Size rb_cutpoint(0);
-
-		for ( Size i = 1; i <= nres; ++i ) {
-			if( pdb_info->chain( i ) == second_chain) {
-				rb_cutpoint = i-1;
-				break;
-			}
-		}
-
-		Size jump_pos1 ( geometry::residue_center_of_mass( pose_in, 1, rb_cutpoint ) );
-		Size jump_pos2 ( geometry::residue_center_of_mass( pose_in,rb_cutpoint+1, nres ) );
-
-		// make sure rb jumps do not reside in the loop region
-		for( loops::Loops::const_iterator it= loops_in.begin(), it_end = loops_in.end(); it != it_end; ++it ) {
-			if ( jump_pos1 >= ( it->start() - 1 ) &&
-					 jump_pos1 <= ( it->stop() + 1) )
-				jump_pos1 = it->stop() + 2;
-			if ( jump_pos2 >= ( it->start() - 1 ) &&
-					 jump_pos2 <= ( it->stop() + 1) )
-				jump_pos2 = it->start() - 2;
-		}
-
-		// make a simple rigid-body jump first
-		setup_simple_fold_tree(jump_pos1,rb_cutpoint,jump_pos2,nres, pose_in );
-
-		// add the loop jump into the current tree,
-		// delete some old edge accordingly
-		FoldTree f( pose_in.fold_tree() );
-
-		for( loops::Loops::const_iterator it=loops_in.begin(),
-					 it_end=loops_in.end(); it != it_end; ++it ) {
-			Size const loop_start ( it->start() );
-			Size const loop_stop ( it->stop() );
-			Size const loop_cutpoint ( it->cut() );
-			Size edge_start(0), edge_stop(0);
-			bool edge_found = false;
-			const FoldTree & f_const = f;
-			Size const num_jump = f_const.num_jump();
-			for( FoldTree::const_iterator it2=f_const.begin(),
-						 it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
-				edge_start = std::min( it2->start(), it2->stop() );
-				edge_stop = std::max( it2->start(), it2->stop() );
-				if ( ! it2->is_jump() && loop_start > edge_start
-						 && loop_stop < edge_stop ) {
-					edge_found = true;
-					break;
-				}
-			}
-
-			f.delete_unordered_edge( edge_start, edge_stop, Edge::PEPTIDE);
-			f.add_edge( loop_start-1, loop_stop+1, num_jump+1 );
-			f.add_edge( edge_start, loop_start-1, Edge::PEPTIDE );
-			f.add_edge( loop_start-1, loop_cutpoint, Edge::PEPTIDE );
-			f.add_edge( loop_cutpoint+1, loop_stop+1, Edge::PEPTIDE );
-			f.add_edge( loop_stop+1, edge_stop, Edge::PEPTIDE );
-		}
-
-		f.reorder(1);
-		pose_in.fold_tree(f);
-	} // all_cdr_VL_VH_fold_tree
 
 
 
@@ -691,26 +606,6 @@ void AntibodyModelerProtocol::relax_cdrs( core::pose::Pose & pose )
 
 
 
-Real AntibodyModelerProtocol::global_loop_rmsd (
-    const pose::Pose & pose_in,
-    const pose::Pose & native_pose,
-    std::string cdr_type ) 
-{
-    using namespace scoring;
-
-    loops::LoopOP current_loop = ab_info_->get_CDR_loop( cdr_type );
-    Size loop_start = current_loop->start();
-    Size loop_end = current_loop->stop();
-
-    using ObjexxFCL::FArray1D_bool;
-    FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
-
-    for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
-
-    using namespace core::scoring;
-    Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_CA );
-    return ( rmsG );
-} // global_loop_rmsd
     
     
     
@@ -785,11 +680,16 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
     out << line_marker << space( 74 ) << line_marker << std::endl;
 
     // Display the state of the antibody modeler protocol that will be used
-    out << line_marker << "  model_h3    : " << ab_m_2.model_h3_    << std::endl;
-    out << line_marker << "  camelid     : " << ab_m_2.camelid_     << std::endl;
-    out << line_marker << "  snugfit     : " << ab_m_2.snugfit_     << std::endl;
-    out << line_marker << "  cter_insert : " << ab_m_2.cter_insert_ << std::endl;
-    out << line_marker << "  H3_filter   : " << ab_m_2.H3_filter_   << std::endl;
+    out << line_marker << "  camelid                : " << ab_m_2.camelid_     << std::endl;
+    out << line_marker << "  model_h3               : " << ab_m_2.model_h3_    << std::endl;
+    out << line_marker << "     cter_insert         : " << ab_m_2.cter_insert_ << std::endl;
+    out << line_marker << "     H3_filter           : " << ab_m_2.H3_filter_   << std::endl;
+    out << line_marker << "  extreme_repacking_     : " << ab_m_2.extreme_repacking_   << std::endl;
+    out << line_marker << "  snugfit                : " << ab_m_2.snugfit_     << std::endl;
+    out << line_marker << "     LH_repulsive_ramp   : " << ab_m_2.LH_repulsive_ramp_ << std::endl;
+    out << line_marker << "  refine_h3              : " << ab_m_2.refine_h3_     << std::endl;
+
+
 
 
     // Close the box I have drawn

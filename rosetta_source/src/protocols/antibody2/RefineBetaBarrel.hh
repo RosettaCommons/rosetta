@@ -19,11 +19,20 @@
 #ifndef INCLUDED_protocols_antibody2_RefineBetaBarrel_hh
 #define INCLUDED_protocols_antibody2_RefineBetaBarrel_hh
 
-#include <protocols/antibody2/RefineBetaBarrel.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
+#include <protocols/antibody2/RefineBetaBarrel.fwd.hh>
+#include <protocols/antibody2/AntibodyInfo.fwd.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <protocols/loops/Loops.hh>
+#include <protocols/antibody2/LHRepulsiveRamp.fwd.hh>
+#include <protocols/antibody2/LHSnugFitLegacy.fwd.hh>
+#include <protocols/docking/DockMCMProtocol.fwd.hh>
 
 
+
+
+using namespace core;
 namespace protocols {
 namespace antibody2 {
         
@@ -39,14 +48,34 @@ class RefineBetaBarrel: public moves::Mover {
         /// @brief default destructor
         ~RefineBetaBarrel();
         
+        RefineBetaBarrel(AntibodyInfoOP antibody_info);
+    
         void set_default();
         virtual void apply( core::pose::Pose & pose_in );
         virtual std::string get_name() const;
+    
+        void set_task_factory(core::pack::task::TaskFactoryCOP tf){
+            tf_ = new pack::task::TaskFactory(*tf);
+        }
+    
+        void turn_off_repulsive_ramp(){
+            repulsive_ramp_ = false;
+        }
             
     private:
         bool user_defined_;
+        bool repulsive_ramp_;
+        AntibodyInfoOP ab_info_;
+    	pack::task::TaskFactoryOP tf_;
         
-        
+        void init(AntibodyInfoOP antibody_info);
+
+    
+        LHRepulsiveRampOP lh_repulsive_ramp_;
+        LHSnugFitLegacyOP lh_snugfit_;
+        docking::DockMCMProtocolOP dock_mcm_protocol_;
+    
+    
 };
     
     

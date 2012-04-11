@@ -12,17 +12,17 @@
 /// @brief forward declaration
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_Ab_LH_RepulsiveRamp_Mover_fwd_hh
-#define INCLUDED_protocols_antibody2_Ab_LH_RepulsiveRamp_Mover_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_LHRepulsiveRamp_fwd_hh
+#define INCLUDED_protocols_antibody2_LHRepulsiveRamp_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
         
-    class Ab_LH_RepulsiveRamp_Mover;
-    typedef utility::pointer::owning_ptr< Ab_LH_RepulsiveRamp_Mover > Ab_LH_RepulsiveRamp_MoverOP;
-    typedef utility::pointer::owning_ptr< Ab_LH_RepulsiveRamp_Mover const > Ab_LH_RepulsiveRamp_MoverCOP;
+    class LHRepulsiveRamp;
+    typedef utility::pointer::owning_ptr< LHRepulsiveRamp > LHRepulsiveRampOP;
+    typedef utility::pointer::owning_ptr< LHRepulsiveRamp const > LHRepulsiveRampCOP;
         
 }
 }

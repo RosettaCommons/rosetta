@@ -18,6 +18,17 @@
 
 
 #include <protocols/antibody2/RefineBetaBarrel.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
+#include <protocols/antibody2/LHRepulsiveRamp.hh>
+#include <protocols/antibody2/LHSnugFitLegacy.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <protocols/docking/DockMCMProtocol.hh>
+
+#include <utility/tools/make_vector1.hh>
+
+
 
 #include <basic/Tracer.hh>
 
@@ -37,6 +48,23 @@ RefineBetaBarrel::RefineBetaBarrel() : Mover() {
     user_defined_ = false;
 }
 
+RefineBetaBarrel::RefineBetaBarrel(AntibodyInfoOP antibody_info) : Mover() {        
+    user_defined_ = true;
+    init(antibody_info);
+}
+    
+
+void RefineBetaBarrel::init(AntibodyInfoOP antibody_info){
+    repulsive_ramp_ = true;
+    ab_info_ = antibody_info;
+    lh_repulsive_ramp_ = new LHRepulsiveRamp(ab_info_);
+    lh_snugfit_ = new LHSnugFitLegacy(ab_info_);
+    //TODO: replace the vector1 by ab_info->LH_jump;
+    dock_mcm_protocol_ = new docking::DockMCMProtocol();
+
+}
+   
+    
 RefineBetaBarrel::~RefineBetaBarrel() {}
     
     
@@ -52,9 +80,31 @@ std::string RefineBetaBarrel::get_name() const {
     
 void RefineBetaBarrel::apply( pose::Pose & pose ) {
 
+    all_cdr_VL_VH_fold_tree( pose, ab_info_->all_cdr_loops_ );
+    
+
+    if(repulsive_ramp_) {lh_repulsive_ramp_->apply(pose);}
+    
+    TR<<"finish repulsive ramping"<<std::endl;
+
+    
+    //lh_snugfit_ ->set_task_factory(tf_);
+    //lh_snugfit_ -> apply(pose);
+    
+    // TODO: 
+    // JQX: check fold tree, move map, and task factory
+    dock_mcm_protocol_ -> apply(pose);
+    
 }
 
 
+    
+    
+
+
+    
+    
+    
 
 }// namespace antibody2
 }// namespace protocols

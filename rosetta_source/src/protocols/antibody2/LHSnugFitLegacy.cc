@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/Ab_LH_SnugFit_Mover.cc
+/// @file protocols/antibody2/LHSnugFitLegacy.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,7 +17,7 @@
 
 
 
-#include <protocols/antibody2/Ab_LH_SnugFit_Mover.hh>
+#include <protocols/antibody2/LHSnugFitLegacy.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -84,13 +84,12 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.Ab_LH_SnugFit_Mover");
+static basic::Tracer TR("protocols.antibody2.LHSnugFitLegacy");
+
+
+
+
 using namespace core;
-
-
-
-
-
 namespace protocols {
 namespace antibody2 {
 
@@ -102,54 +101,57 @@ namespace antibody2 {
     
     
 // default constructor
-Ab_LH_SnugFit_Mover::Ab_LH_SnugFit_Mover() : Mover() {
+LHSnugFitLegacy::LHSnugFitLegacy() : Mover() {
 
 }
 
     
-Ab_LH_SnugFit_Mover::Ab_LH_SnugFit_Mover(loops::Loops loops_in ) : Mover() {
+LHSnugFitLegacy::LHSnugFitLegacy(loops::Loops loops_in ) : Mover() {
     user_defined_ = true;
     init(loops_in, false);
 }
     
     
-Ab_LH_SnugFit_Mover::Ab_LH_SnugFit_Mover(antibody2::AntibodyInfo & antibody_in) : Mover() {
+LHSnugFitLegacy::LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in) : Mover() {
     user_defined_ = true;
-    init(antibody_in.all_cdr_loops_,false);
+    init(antibody_in->all_cdr_loops_,false);
 }
     
-Ab_LH_SnugFit_Mover::Ab_LH_SnugFit_Mover(antibody2::AntibodyInfo & antibody_in, bool camelid) : Mover() {
+LHSnugFitLegacy::LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in, bool camelid) : Mover() {
     user_defined_ = true;
-    init(antibody_in.all_cdr_loops_, camelid);
+    init(antibody_in->all_cdr_loops_, camelid);
 }
     
     
 // default destructor
-Ab_LH_SnugFit_Mover::~Ab_LH_SnugFit_Mover() {}
+LHSnugFitLegacy::~LHSnugFitLegacy() {}
     
 //clone
-protocols::moves::MoverOP Ab_LH_SnugFit_Mover::clone() const {
-    return( new Ab_LH_SnugFit_Mover() );
+protocols::moves::MoverOP LHSnugFitLegacy::clone() const {
+    return( new LHSnugFitLegacy() );
 }
     
     
 
     
     
-void Ab_LH_SnugFit_Mover::init(loops::Loops loops_in, bool camelid ) 
+void LHSnugFitLegacy::init(loops::Loops loops_in, bool camelid ) 
 {
     is_camelid_ = camelid;
     all_loops_ = loops_in;
 }
     
     
-void Ab_LH_SnugFit_Mover::set_default(){
-        
+void LHSnugFitLegacy::set_default(){
+    min_type_="dfpmin_armijo_nonmonotone";
+    rot_mag_ = 5.0 ;
+    trans_mag_ = 0.1 ;
+    temperature_ = 0.8;
 }
     
     
-std::string Ab_LH_SnugFit_Mover::get_name() const {
-    return "Ab_LH_SnugFit_Mover";
+std::string LHSnugFitLegacy::get_name() const {
+    return "LHSnugFitLegacy";
 }
 
     
@@ -161,58 +163,36 @@ std::string Ab_LH_SnugFit_Mover::get_name() const {
     
     
     
-//APPLY
-void Ab_LH_SnugFit_Mover::apply( pose::Pose & pose ) {
+void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 
-    
-    snugfit_mcm_protocol( pose, all_loops_ ) ;
-    
-    
-}
-    
-    
-    
-
-
-
-
-void Ab_LH_SnugFit_Mover::snugfit_mcm_protocol( pose::Pose & pose_in, loops::Loops loops_in ) 
-{
     
     using namespace moves;
     bool nb_list = true;
-    Size nres = pose_in.total_residue();
-    
-    //MC move
-    Real trans_mag ( 0.1 );
-    Real rot_mag ( 5.0 );
+    Size nres = pose.total_residue();
     
     // rb minimization
-    std::string min_type = "dfpmin_armijo_nonmonotone";
     Real min_threshold ( 15.0 ); /* score unit */
     
     // score functions
     using namespace core::scoring;
-    core::scoring::ScoreFunctionOP scorefxn;
-    scorefxn = core::scoring::ScoreFunctionFactory::
-        create_score_function( "docking", "docking_min" );
-    scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
-    scorefxn->set_weight( core::scoring::overlap_chainbreak, 10./3. );
+    core::scoring::ScoreFunctionOP dock_scorefxn;
+    dock_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
+    dock_scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
+    dock_scorefxn->set_weight( core::scoring::overlap_chainbreak, 10./3. );
     
     // score functions
     core::scoring::ScoreFunctionOP pack_scorefxn;
-    pack_scorefxn = core::scoring::ScoreFunctionFactory::
-    create_score_function( "standard" );
+    pack_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
     
     // remove cutpoints variants for all cdrs
     // "true" forces removal of variants even from non-cutpoints
-    loops::remove_cutpoint_variants( pose_in, true );
+    loops::remove_cutpoint_variants( pose, true );
     
     using namespace core::chemical;
-    for ( loops::Loops::const_iterator it = loops_in.begin(),
-         it_end = loops_in.end();	it != it_end; ++it ) {
-        core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it->cut() );
-        core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it->cut()+1);
+    for ( loops::Loops::const_iterator it = all_loops_.begin(),
+         it_end = all_loops_.end();	it != it_end; ++it ) {
+        core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it->cut() );
+        core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it->cut()+1);
     }
     
     //setting MoveMap
@@ -221,24 +201,23 @@ void Ab_LH_SnugFit_Mover::snugfit_mcm_protocol( pose::Pose & pose_in, loops::Loo
     cdr_dock_map->clear();
     cdr_dock_map->set_chi( false );
     cdr_dock_map->set_bb( false );
-    utility::vector1< bool> is_flexible( nres, false );
-    bool include_neighbors( false );
-    select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
-    cdr_dock_map->set_bb( is_flexible );
-    include_neighbors = true;
-    select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
-    cdr_dock_map->set_chi( is_flexible );
+    utility::vector1< bool> bb_is_flexible( nres, false );
+    utility::vector1< bool> sc_is_flexible( nres, false );
+    select_loop_residues( pose, all_loops_, false /*include_neighbors*/, bb_is_flexible);
+    cdr_dock_map->set_bb( bb_is_flexible );
+    select_loop_residues( pose, all_loops_, true/*include_neighbors*/, sc_is_flexible);
+    cdr_dock_map->set_chi( sc_is_flexible );
     cdr_dock_map->set_jump( 1, true );
-    for( Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ )
+    for( Size ii = 2; ii <= all_loops_.num_loop() + 1; ii++ )
         cdr_dock_map->set_jump( ii, false );
     
     
     //set up minimizer movers
-    simple_moves::MinMoverOP min_mover = new simple_moves::MinMover( cdr_dock_map, scorefxn, min_type, min_threshold, nb_list );
+    simple_moves::MinMoverOP min_mover = new simple_moves::MinMover( cdr_dock_map, dock_scorefxn, min_type_, min_threshold, nb_list );
     
     //set up rigid body movers
-    rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose_in,
-                                                                                 *cdr_dock_map, rot_mag, trans_mag, rigid::partner_downstream, true );
+    rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose,
+                                                                                 *cdr_dock_map, rot_mag_, trans_mag_, rigid::partner_downstream, true );
     
 
     
@@ -251,7 +230,7 @@ void Ab_LH_SnugFit_Mover::snugfit_mcm_protocol( pose::Pose & pose_in, loops::Loo
     // selecting movable c-terminal residues
     ObjexxFCL::FArray1D_bool loop_residues( nres, false );
     for( Size i = 1; i <= nres; i++ )
-        loop_residues( i ) = is_flexible[ i ]; // check mapping
+        loop_residues( i ) = sc_is_flexible[ i ]; // check mapping
     using namespace protocols::toolbox::task_operations;
     tf_->push_back( new RestrictToInterface( rb_jump, loop_residues ) );
     
@@ -262,20 +241,19 @@ void Ab_LH_SnugFit_Mover::snugfit_mcm_protocol( pose::Pose & pose_in, loops::Loo
     simple_moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::PackRotamersMover( pack_scorefxn );
     pack_interface_repack->task_factory(tf_);
     
-    Real temperature = 0.8;
-    MonteCarloOP mc = new MonteCarlo( pose_in, *scorefxn, temperature );
+
+    MonteCarloOP mc = new MonteCarlo( pose, *dock_scorefxn, temperature_ );
     
     TrialMoverOP pack_interface_trial = new TrialMover(pack_interface_repack, mc );
     
-    protocols::docking::SidechainMinMoverOP scmin_mover = new
-    protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionCOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
+    protocols::docking::SidechainMinMoverOP scmin_mover = new protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionCOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
     TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc );
     
     SequenceMoverOP rb_mover = new SequenceMover;
     rb_mover->add_mover( rb_perturb );
     rb_mover->add_mover( pack_rottrial );
     
-    JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover, scorefxn, min_threshold);
+    JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover, dock_scorefxn, min_threshold);
     TrialMoverOP rb_mover_min_trial = new TrialMover( rb_mover_min, mc  );
     
     SequenceMoverOP repack_step = new SequenceMover;
@@ -310,10 +288,10 @@ void Ab_LH_SnugFit_Mover::snugfit_mcm_protocol( pose::Pose & pose_in, loops::Loo
     snugfit_mcm->add_mover( mcm_final_cycles );
     snugfit_mcm->add_mover( minimize_trial );
     
-    snugfit_mcm->apply ( pose_in );
+    snugfit_mcm->apply ( pose );
     
     return;
-} // snugfit_mcm_protocol
+}
 
 
     
