@@ -352,6 +352,8 @@ initialize_output_formats <- function(opt, ss_cmp){
 	if("output_formats" %in% names(ss_cmp)){
 		output_formats <- get_output_formats_from_comparison(
 			ss_cmp, all_output_formats)
+	} else {
+		output_formats <- c()
 	}
 
 
