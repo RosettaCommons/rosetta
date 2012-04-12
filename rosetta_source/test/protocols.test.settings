@@ -107,6 +107,10 @@ sources = {
 		"VoxelSetIterator",
 	],
 
+	"match_enzdes_util" : [
+		"InvrotTree",
+	],
+
 	"rigid" : [
 		"RigidBodyMover",
 	],
@@ -279,6 +283,9 @@ testinputfiles = [
 	"match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb",
 	"match/MBH_LG.params",
 	"match/mbh_lg_0001.pdb",
+	"match_enzdes_util/mocktim.cst",
+	"match_enzdes_util/1n1.params",
+	"match_enzdes_util/1ney_invtree_unittest.pdb",
 	"moves/test_in.pdb",
 	"moves/test_in_short.pdb",
 	"moves/fullatom_typeset.test_in_short.pdb",

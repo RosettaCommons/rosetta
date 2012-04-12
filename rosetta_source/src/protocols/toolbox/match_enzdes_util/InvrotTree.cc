@@ -77,13 +77,20 @@ InvrotTree::generate_inverse_rotamer_constraints(
 
 }
 
+utility::vector1< InvrotCollectorCOP >
+InvrotTree::collect_all_inverse_rotamers( ) const
+{
+	utility::vector1< InvrotCollectorOP > invrot_collectors;
+	for(Size i =1; i <= invrot_targets_.size(); ++i ) invrot_targets_[i]->collect_all_inverse_rotamers( invrot_collectors );
+	return invrot_collectors;
+}
+
 void
 InvrotTree::dump_invrots_tree_as_multimodel_pdbs( std::string filename_base) const
 {
 	tr << "Writing InvrotTree to file(s).... " << std::endl;
 	//1. collect all the invrots
-	utility::vector1< InvrotCollectorOP > invrot_collectors;
-	for(Size i =1; i <= invrot_targets_.size(); ++i ) invrot_targets_[i]->collect_all_inverse_rotamers( invrot_collectors );
+	utility::vector1< InvrotCollectorCOP > invrot_collectors( this->collect_all_inverse_rotamers() );
 	if( invrot_collectors.size() == 0 ){
 		tr <<"Error when trying to dump inverse rotamer tree to file. No inverse rotamers found in tree.";
 		return;

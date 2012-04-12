@@ -63,6 +63,15 @@ public:
 		AllowedSeqposForGeomCstOP geomcst_seqpos
 	);
 
+	/// @brief convenience access function
+	/// to the inverse rotamers in the tree
+	/// note: the returned invrots can contain
+	/// duplications, as every unique definition
+	/// of the tree is returned
+	utility::vector1< InvrotCollectorCOP >
+	collect_all_inverse_rotamers() const;
+
+
 	/// @brief visualization
 	/// this can lead to several files
 	/// being written, depending on the
