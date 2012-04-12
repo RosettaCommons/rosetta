@@ -41,7 +41,7 @@ namespace nonlocal {
 
 /// @brief A multiplicative factor applied to control the width of the normal
 /// distribution. Affects the width of the distribution.
-#define SD_MULTIPLIER 0.4
+#define SD_MULTIPLIER 1.0
 
 typedef boost::math::normal Normal;
 using core::Size;
