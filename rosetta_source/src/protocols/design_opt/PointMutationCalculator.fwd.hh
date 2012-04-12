@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/design_opt/GreedyOptMutationMover.fwd.hh
+/// @file src/protocols/design_opt/PointMutationCalculator.fwd.hh
 /// @brief
 /// @author Chris King (chrisk1@uw.edu)
 
-#ifndef INCLUDED_protocols_design_opt_GreedyOptMutationMover_fwd_hh
-#define INCLUDED_protocols_design_opt_GreedyOptMutationMover_fwd_hh
+#ifndef INCLUDED_protocols_design_opt_PointMutationCalculator_fwd_hh
+#define INCLUDED_protocols_design_opt_PointMutationCalculator_fwd_hh
 
 
 // Utility headers
@@ -22,9 +22,9 @@
 namespace protocols {
 namespace design_opt {
 
-class GreedyOptMutationMover;
-typedef utility::pointer::owning_ptr< GreedyOptMutationMover >  GreedyOptMutationMoverOP;
-typedef utility::pointer::owning_ptr< GreedyOptMutationMover const >  GreedyOptMutationMoverCOP;
+class PointMutationCalculator;
+typedef utility::pointer::owning_ptr< PointMutationCalculator >  PointMutationCalculatorOP;
+typedef utility::pointer::owning_ptr< PointMutationCalculator const >  PointMutationCalculatorCOP;
 
 
 } // namespace design_opt

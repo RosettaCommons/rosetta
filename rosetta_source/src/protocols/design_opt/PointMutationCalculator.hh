@@ -7,14 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/design_opt/GreedyOptMutationMover.hh
+/// @file protocols/design_opt/PointMutationCalculator.hh
 /// @author Chris King (chrisk1@uw.edu)
 
-#ifndef INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
-#define INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
-#include <protocols/design_opt/GreedyOptMutationMover.fwd.hh>
+#ifndef INCLUDED_protocols_design_opt_PointMutationCalculator_hh
+#define INCLUDED_protocols_design_opt_PointMutationCalculator_hh
+#include <protocols/design_opt/PointMutationCalculator.fwd.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/chemical/AA.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -33,64 +34,61 @@
 namespace protocols {
 namespace design_opt{
 
-class GreedyOptMutationMover : public protocols::moves::Mover
+class PointMutationCalculator : public utility::pointer::ReferenceCount
 {
 public:
 	typedef core::pose::Pose Pose;
 public:
-	GreedyOptMutationMover();
-	GreedyOptMutationMover(
+	PointMutationCalculator();
+	PointMutationCalculator(
+		core::pack::task::TaskFactoryOP task_factory,
+		core::scoring::ScoreFunctionOP scorefxn,
+		utility::vector1< protocols::filters::FilterOP > filters,
+		protocols::moves::MoverOP relax_mover,
+		bool dump_pdb = false,
+		std::string sample_type = "low"
+	);
+	PointMutationCalculator(
 		core::pack::task::TaskFactoryOP task_factory,
 		core::scoring::ScoreFunctionOP scorefxn,
 		protocols::filters::FilterOP filter,
 		protocols::moves::MoverOP relax_mover,
 		bool dump_pdb = false,
-		std::string sample_type = "low",
-		core::Size diversify_lvl = core::Size( 1 ), 
-		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
+		std::string sample_type = "low"
 	);
+	virtual ~PointMutationCalculator();
 
-	bool pose_coords_are_same( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
-	void apply( Pose & pose );
-	protocols::moves::MoverOP clone() const;
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new GreedyOptMutationMover ); }
+	void calc_point_mut_filters( Pose const & start_pose,
+			utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > & seqpos_aa_vals_vec );
+	void calc_point_mut_filters( Pose const & start_pose,
+			utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > & seqpos_aa_val_vec );
+	protocols::design_opt::PointMutationCalculatorOP clone() const;
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	virtual ~GreedyOptMutationMover();
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
-	protocols::filters::FilterOP filter() const;
-	void filter( protocols::filters::FilterOP filter );
+	utility::vector1< protocols::filters::FilterOP > filters() const;
+	void filters( utility::vector1< protocols::filters::FilterOP > filters );
 	protocols::moves::MoverOP relax_mover() const;
 	void relax_mover( protocols::moves::MoverOP relax_mover );
 	bool dump_pdb() const;
 	void dump_pdb( bool const dump_pdb );
 	std::string sample_type() const;
 	void sample_type( std::string const sample_type );
-	core::Size diversify_lvl() const;
-	void diversify_lvl( core::Size const diversify_lvl );
-	void stopping_condition( protocols::filters::FilterOP f ){ stopping_condition_ = f; }
-	protocols::filters::FilterOP stopping_condition() const{ return stopping_condition_; }
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-	protocols::filters::FilterOP filter_;
+	utility::vector1< protocols::filters::FilterOP > filters_;
 	protocols::moves::MoverOP relax_mover_;
 	std::string sample_type_;
-	core::Size diversify_lvl_;
 	core::Real flip_sign_;
 	bool dump_pdb_;
-	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
-	utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > seqpos_aa_val_vec_;
-	core::pose::Pose ref_pose_;
 };
 
 
-} // design_opt
+} // design_opt 
 } // protocols
 
 
-#endif /*INCLUDED_protocols_design_opt_GreedyOptMutationMover_HH*/
+#endif /*INCLUDED_protocols_design_opt_PointMutationCalculator_HH*/
