@@ -9,7 +9,7 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "chiBDHO_cosDHO_eqpoldens_cation_pi_cpisp2",
+id = "cation_pi_eqpoldens_scOrbCpi_Hpol_chiBDHO_cosDHO",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
@@ -46,7 +46,7 @@ f <- transform(f,
 
 capx_limits <- c(-1.5,1.5)
 capy_limits <- capx_limits
-plot_id = "chiBDHO_cosDHO_eqpoldens_cation_pi_cpisp2_all_interactions_2A"
+plot_id = "cation_pi_eqpoldens_scOrbCpi_Hpol_chiBDHO_cosDHO_all_2A"
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
 ggplot(data=f_first) + theme_bw() +

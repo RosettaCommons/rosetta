@@ -48,7 +48,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	capy_limits <- capx_limits
 	
 	
-	plot_id = "cation_pi_eqpoldens_scOrbCpi_Hpol_chiBAOH_cosAOH_all_interactions_2A"
+	plot_id = "cation_pi_eqpoldens_scOrbCpi_Hpol_chiBAOH_cosAOH_all_2A"
 	
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	

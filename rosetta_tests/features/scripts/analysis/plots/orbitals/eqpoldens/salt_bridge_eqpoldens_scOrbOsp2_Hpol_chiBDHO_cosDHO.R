@@ -9,7 +9,7 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "chiBAOH_cosAOH_eqpoldens_salt_bridge_opsp2",
+id = "salt_bridge_eqpoldens_scOrbOsp2_Hpol_chiBDHO_cosDHO",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
@@ -24,9 +24,9 @@ run=function(self, sample_sources, output_dir, output_formats){
 			resNum2,
 			resName2,
 			OrbName1,
-			cosAOH,
+			cosDHO,
 			OrbHdist,
-			chiBAOH,
+			chiBDHO,
 			htype2
 			FROM
 			Hpol_orbital
@@ -40,14 +40,15 @@ run=function(self, sample_sources, output_dir, output_formats){
 	f <- query_sample_sources(sample_sources, sele)
 	
 	f <- transform(f,
-			capx = 2*sin(acos(cosAOH)/2)*cos(chiBAOH),
-			capy = 2*sin(acos(cosAOH)/2)*sin(chiBAOH))
+			capx = 2*sin(acos(cosDHO)/2)*cos(chiBDHO),
+			capy = 2*sin(acos(cosDHO)/2)*sin(chiBDHO))
 	
 	capx_limits <- c(-1.5,1.5)
 	capy_limits <- capx_limits
 	
 	
-	plot_id = "chiBAOH_cosAOH_eqpoldens_salt_bridge_opsp2"
+	
+	plot_id = "salt_bridge_eqpoldens_scOrbOsp2_Hpol_chiBDHO_cosDHO"
 	
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	
@@ -57,13 +58,13 @@ run=function(self, sample_sources, output_dir, output_formats){
 					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 			polar_equal_area_grids_bw() +
 			opts(title =
-							paste("Salt bridge chiBAOH vs AOH Angles with Sequence Separation > 5\n",
+							paste("Salt bridge chiBDHO vs DHO Angles with Sequence Separation > 5\n",
 									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 									"LYS+ARG to ASP+GLU at 2.0A", sep="")) +
 			scale_x_continuous(
-					'2*sin(AOH/2) * cos(chiBAOH)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+					'2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 			scale_y_continuous(
-					'2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+					'2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 			coord_fixed(ratio = 1) +
 			scale_fill_gradientn('Density', colour=jet.colors(10))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)

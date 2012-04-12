@@ -34,7 +34,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	
 	all_geom <- query_sample_sources(sample_sources, sele)
 
-	plot_id = "hist_AOH_scOrbPi_Hpol_all_residues"
+	plot_id = "cation_pi_hist_AOH_scOrbPi_Hpol_all_residues"
 	ggplot(data=all_geom) +
 			geom_freqpoly(aes(x=AOH_angle, fill=sample_source, color = sample_source), density=0.1, binwidth=0.1, position="dodge") +
 			opts(title = "AOH Cation - Pi Measured Via Orb - Hpol \n",
@@ -43,7 +43,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	scale_y_continuous("scOrbCpi scHpol Counts < 3.0 A from Orbital -- Hydrogen")
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 	
-	plot_id = "hist_DHO_scOrbPi_Hpol_all_residues"
+	plot_id = "cation_pi_hist_DHO_scOrbPi_Hpol_all_residues"
 	ggplot(data=all_geom) +
 			geom_freqpoly(aes(x=DHO_angle, fill=sample_source, color = sample_source), binwidth=0.1, position="dodge") +
 			opts(title = "DHO Cation - Pi Measured Via Orb - Hpol \n",

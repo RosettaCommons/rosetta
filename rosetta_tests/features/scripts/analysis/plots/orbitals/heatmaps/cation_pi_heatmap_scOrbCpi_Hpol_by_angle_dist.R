@@ -33,29 +33,16 @@ run=function(self, sample_sources, output_dir, output_formats){
 	
 	f <- query_sample_sources(sample_sources, sele)
 	
-	plot_id = "stat_bin2d_AOH_scOrbPi_Hpol_all_residues"
+	plot_id = "cation_pi_stat_bin2d_heatmap_AOH_scOrbPi_Hpol_all_residues"
 	ggplot(f, aes(x=AOH_angle, y=OrbHdist)) +
 			stat_bin2d(aes(x=AOH_angle, y=OrbHdist, fill=..count..)) + 
 			scale_fill_gradient(low = "white", high = "steelblue")
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 	
 	
-	plot_id = "stat_density2d_AOH_scOrbPi_Hpol_all_residues"
+	plot_id = "cation_pi_stat_density2d_heatmap_AOH_scOrbPi_Hpol_all_residues"
 	ggplot(f, aes(x=AOH_angle, y=OrbHdist)) + stat_density2d(aes(x=AOH_angle, y=OrbHdist, fill = ..density..), geom="raster", contour=F) + 
 			scale_fill_gradient(low = "white", high = "steelblue")	
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 	
-	
-#	(p <- ggplot(nba.m, aes(variable, Name)) + 
-#				geom_tile(aes(fill = rescale), + colour = "white") + scale_fill_gradient(low = "white",
-#						+     high = "steelblue"))
-#	plot_id = "hist_DHO_scOrbPi_Hpol_all_residues"
-#	ggplot(data=all_geom) +
-#			geom_bar(aes(x=DHO_angle, fill=sample_source), binwidth=0.1, position="dodge") +
-#			opts(title = "DHO Cation - Pi Measured Via Orb - Hpol \n",
-#						"ScOrbCpi to Hpol TYR/PHE/TRP to LYS/ARG") +
-#			scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Donor -- Hydrogen -- Orbital'))
-#	scale_y_continuous("scOrbCpi scHpol Counts < 3.0 A from Orbital -- Hydrogen")
-#	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
-
 })) # end FeaturesAnalysis

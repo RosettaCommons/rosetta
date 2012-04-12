@@ -9,7 +9,7 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "chiBAOH_cosAOH_eqpoldens_anion_pi_cpisp2",
+id = "anion_pi_eqpoldens_scOrbOp_Haro_chiBDHO_cosDHO",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
@@ -24,9 +24,9 @@ SELECT
   resNum2,
   resName2,
 	OrbName1,
-	cosAOH,
+	cosDHO,
   OrbHdist,
-	chiBAOH,
+	chiBDHO,
 	htype2
 FROM
   Haro_orbital
@@ -39,14 +39,14 @@ WHERE
 f <- query_sample_sources(sample_sources, sele)
 
 f <- transform(f,
-  capx = 2*sin(acos(cosAOH)/2)*cos(chiBAOH),
-  capy = 2*sin(acos(cosAOH)/2)*sin(chiBAOH))
+  capx = 2*sin(acos(cosDHO)/2)*cos(chiBDHO),
+  capy = 2*sin(acos(cosDHO)/2)*sin(chiBDHO))
 
 capx_limits <- c(-1.5,1.5)
 capy_limits <- capx_limits
 
 
-plot_id = "chiBAOH_cosAOH_eqpoldens_anion_pi_opsp2_all_2.0A"
+plot_id = "anion_pi_eqpoldens_scOrbOp_Haro_chiBDHO_cosDHO_all_2.0A"
 
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
@@ -56,13 +56,13 @@ ggplot(data=f_first) + theme_bw() +
     aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
   polar_equal_area_grids_bw() +
   opts(title =
-    paste("Anion Pi chiBAOH vs AOH Angles with Sequence Separation > 5\n",
+    paste("Anion Pi chiBDHO vs DHO Angles with Sequence Separation > 5\n",
     "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 		"GLU+ASP to PHE+TYR+TRP at 2.0A", sep="")) +
   scale_x_continuous(
-    '2*sin(AOH/2) * cos(chiBAOH)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+    '2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
   scale_y_continuous(
-    '2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+    '2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
   coord_fixed(ratio = 1) +
   scale_fill_gradientn('Density', colour=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -77,9 +77,9 @@ SELECT
   resNum2,
   resName2,
   OrbName1,
-  cosAOH,
+  cosDHO,
   OrbHdist,
-  chiBAOH,
+  chiBDHO,
   htype2
 FROM
   Haro_orbital
@@ -92,14 +92,14 @@ WHERE
 f <- query_sample_sources(sample_sources, sele)
 
 f <- transform(f,
-  capx = 2*sin(acos(cosAOH)/2)*cos(chiBAOH),
-  capy = 2*sin(acos(cosAOH)/2)*sin(chiBAOH))
+  capx = 2*sin(acos(cosDHO)/2)*cos(chiBDHO),
+  capy = 2*sin(acos(cosDHO)/2)*sin(chiBDHO))
 
 capx_limits <- c(-1.5,1.5)
 capy_limits <- capx_limits
 
 
-plot_id = "chiBAOH_cosAOH_eqpoldens_anion_anion_pi_opsp2_all_3.5A"
+plot_id = "anion_pi_eqpoldens_scOrbOp_Haro_chiBDHO_cosDHO_all_3.5A"
 
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
@@ -109,13 +109,13 @@ ggplot(data=f_first) + theme_bw() +
     aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
   polar_equal_area_grids_bw() +
   opts(title =
-    paste("Anion pi chiBAOH vs AOH Angles with Sequence Separation > 5\n",
+    paste("Anion pi chiBDHO vs DHO Angles with Sequence Separation > 5\n",
     "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
     "GLU+ASP to PHE+TYR+TRP at 3.5A", sep="")) +
   scale_x_continuous(
-    '2*sin(AOH/2) * cos(chiBAOH)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+    '2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
   scale_y_continuous(
-    '2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+    '2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
   coord_fixed(ratio = 1) +
   scale_fill_gradientn('Density', colour=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -128,9 +128,9 @@ SELECT
   resNum2,
   resName2,
   OrbName1,
-  cosAOH,
+  cosDHO,
   OrbHdist,
-  chiBAOH,
+  chiBDHO,
   htype2
 FROM
   Haro_orbital
@@ -143,14 +143,14 @@ WHERE
 f <- query_sample_sources(sample_sources, sele)
 
 f <- transform(f,
-  capx = 2*sin(acos(cosAOH)/2)*cos(chiBAOH),
-  capy = 2*sin(acos(cosAOH)/2)*sin(chiBAOH))
+  capx = 2*sin(acos(cosDHO)/2)*cos(chiBDHO),
+  capy = 2*sin(acos(cosDHO)/2)*sin(chiBDHO))
 
 capx_limits <- c(-1.5,1.5)
 capy_limits <- capx_limits
 
 
-plot_id = "chiBAOH_cosAOH_eqpoldens_anion_pi_stacking_opsp2_glu_asp_phe_2.0A"
+plot_id = "anion_pi_eqpoldens_scOrbOp_Haro_chiBDHO_cosDHO_glu_asp_phe_2.0A"
 
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
@@ -160,13 +160,13 @@ ggplot(data=f_first) + theme_bw() +
     aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
   polar_equal_area_grids_bw() +
   opts(title =
-    paste("Anion Pi chiBAOH vs AOH Angles with Sequence Separation > 5\n",
+    paste("Anion Pi chiBDHO vs DHO Angles with Sequence Separation > 5\n",
     "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
     "GLU+ASP to PHE at 2.0A", sep="")) +
   scale_x_continuous(
-    '2*sin(AOH/2) * cos(chiBAOH)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+    '2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
   scale_y_continuous(
-    '2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+    '2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
   coord_fixed(ratio = 1) +
   scale_fill_gradientn('Density', colour=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -179,9 +179,9 @@ SELECT
   resNum2,
   resName2,
   OrbName1,
-  cosAOH,
+  cosDHO,
   OrbHdist,
-  chiBAOH,
+  chiBDHO,
   htype2
 FROM
   Haro_orbital
@@ -194,14 +194,14 @@ WHERE
 f <- query_sample_sources(sample_sources, sele)
 
 f <- transform(f,
-  capx = 2*sin(acos(cosAOH)/2)*cos(chiBAOH),
-  capy = 2*sin(acos(cosAOH)/2)*sin(chiBAOH))
+  capx = 2*sin(acos(cosDHO)/2)*cos(chiBDHO),
+  capy = 2*sin(acos(cosDHO)/2)*sin(chiBDHO))
 
 capx_limits <- c(-1.5,1.5)
 capy_limits <- capx_limits
 
 
-plot_id = "chiBAOH_cosAOH_eqpoldens_anion_pi_opsp2_glu_asp_phe_3.5A"
+plot_id = "anion_pi_eqpoldens_scOrbOp_Haro_chiBDHO_cosDHO_glu_asp_phe_3.5A"
 
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
@@ -211,13 +211,13 @@ ggplot(data=f_first) + theme_bw() +
     aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
   polar_equal_area_grids_bw() +
   opts(title =
-    paste("Anion pi chiBAOH vs AOH Angles with Sequence Separation > 5\n",
+    paste("Anion pi chiBDHO vs DHO Angles with Sequence Separation > 5\n",
     "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
     "GLU+ASP to PHE at 3.5A", sep="")) +
   scale_x_continuous(
-    '2*sin(AOH/2) * cos(chiBAOH)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+    '2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
   scale_y_continuous(
-    '2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+    '2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
   coord_fixed(ratio = 1) +
   scale_fill_gradientn('Density', colour=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

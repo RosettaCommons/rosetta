@@ -9,7 +9,7 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "chiBDHO_cosDHO_eqpoldens_pi_stacking_cpisp2",
+id = "pi_pi_eqpoldens_scOrbCpi_Haro_chiBDHO_cosDHO",
 author = "Matthew O'Meara, Steven Combs",
 brief_description = "",
 feature_reporter_dependencies = c("OrbitalFeatures"),
@@ -48,7 +48,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	capy_limits <- capx_limits
 	
 	
-	plot_id = "chiBDHO_cosDHO_eqpoldens_pi_stacking_cpisp2_all_2.5A"
+	plot_id = "pi_pi_eqpoldens_scOrbCpi_Haro_chiBDHO_cosDHO_all_2.5A"
 	
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	
@@ -102,7 +102,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	capy_limits <- capx_limits
 	
 	
-	plot_id = "chiBDHO_cosDHO_eqpoldens_pi_stacking_cpisp2_phe_phe_2.5A"
+	plot_id = "pi_pi_eqpoldens_scOrbCpi_Haro_chiBDHO_cosDHO_phe_phe_2.5A"
 	
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	
