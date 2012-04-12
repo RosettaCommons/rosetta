@@ -93,32 +93,52 @@ namespace protocols {
 namespace antibody2 {
 
 
-
-
-    
-    
-    
     
 // default constructor
 LHRepulsiveRamp::LHRepulsiveRamp() : Mover() {
 
 }
 
+
     
 LHRepulsiveRamp::LHRepulsiveRamp(loops::Loops loops_in ) : Mover() {
-    user_defined_ = true;
+    user_defined_ = false;
+    
     init(loops_in, false);
 }
     
     
-LHRepulsiveRamp::LHRepulsiveRamp(antibody2::AntibodyInfoOP antibody_in) : Mover() {
-    user_defined_ = true;
+LHRepulsiveRamp::LHRepulsiveRamp(AntibodyInfoOP antibody_in) : Mover() {
+    user_defined_ = false;
+    
     init(antibody_in->all_cdr_loops_,false);
 }
     
-LHRepulsiveRamp::LHRepulsiveRamp(antibody2::AntibodyInfoOP antibody_in, bool camelid) : Mover() {
-    user_defined_ = true;
+LHRepulsiveRamp::LHRepulsiveRamp(AntibodyInfoOP antibody_in, bool camelid) : Mover() {
+    user_defined_ = false;
+    
     init(antibody_in->all_cdr_loops_, camelid);
+}
+    
+    
+LHRepulsiveRamp::LHRepulsiveRamp( loops::Loops loops_in,
+                                core::scoring::ScoreFunctionCOP dock_scorefxn,
+                                core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover(){
+    user_defined_ = true;
+    dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+    pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+    
+    init(loops_in, false);
+}
+    
+LHRepulsiveRamp::LHRepulsiveRamp( AntibodyInfoOP antibody_in,
+                                   core::scoring::ScoreFunctionCOP dock_scorefxn,
+                                   core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover(){
+    user_defined_ = true;
+    dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+    pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+    
+    init(antibody_in->all_cdr_loops_,false);
 }
     
     
@@ -137,30 +157,35 @@ protocols::moves::MoverOP LHRepulsiveRamp::clone() const {
 void LHRepulsiveRamp::init(loops::Loops loops_in, bool camelid ) 
 {
     set_default();
+    
     is_camelid_ = camelid;
     all_loops_ = loops_in;
     
     tf_ = new pack::task::TaskFactory;
     
-    // score functions
-    dock_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-    dock_scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
-    dock_scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. ); 
-    
-    pack_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
 }
     
     
 void LHRepulsiveRamp::set_default(){
-    benchmark_= false;
-    rep_ramp_cycles_= 3 ;
-    min_type_="dfpmin_armijo_nonmonotone";
-    rot_mag_ = 2.0 ;
-    trans_mag_ = 0.1 ;
-    temperature_ = 0.8;
-    min_threshold_=15.0;
-    cycles_= 4;
+    benchmark_       = false;
+    rep_ramp_cycles_ = 3 ;
+    rot_mag_         = 2.0 ;
+    trans_mag_       = 0.1 ;
+    temperature_     = 0.8;
+    min_threshold_   = 15.0;
+    num_repeats_     = 4;
+    min_type_        = "dfpmin_armijo_nonmonotone";
+    
+    if(!user_defined_){
+        dock_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
+            dock_scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
+            dock_scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. ); 
+        pack_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+    }
+
 }
+    
+    
     
     
 std::string LHRepulsiveRamp::get_name() const {
@@ -171,9 +196,10 @@ std::string LHRepulsiveRamp::get_name() const {
     
     
 void LHRepulsiveRamp::finalize_setup(pose::Pose & pose ){
+    TR<<"   start finalize_setup function ..."<<std::endl;
+
     setup_packer_task(pose, tf_);
     
-    Size nres_ = pose.total_residue();
     
     ( *dock_scorefxn_ )( pose );
     
@@ -182,8 +208,8 @@ void LHRepulsiveRamp::finalize_setup(pose::Pose & pose ){
     cdr_dock_map_->clear();
     cdr_dock_map_->set_chi( false );
     cdr_dock_map_->set_bb( false );
-    utility::vector1< bool> bb_is_flexible( nres_, false );
-    utility::vector1< bool> sc_is_flexible( nres_, false );
+    utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
+    utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
 
     select_loop_residues( pose, all_loops_, false/*include_neighbors*/, bb_is_flexible);
     cdr_dock_map_->set_bb( bb_is_flexible );
@@ -201,13 +227,17 @@ void LHRepulsiveRamp::finalize_setup(pose::Pose & pose ){
     using namespace core::pack::task;
     using namespace core::pack::task::operation;
     // selecting movable c-terminal residues
-    ObjexxFCL::FArray1D_bool loop_residues( nres_, false );
-    for( Size i = 1; i <= nres_; i++ ) {
+    ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
+    for( Size i = 1; i <= pose.total_residue(); i++ ) {
         loop_residues(i) = sc_is_flexible[i]; 
     } // check mapping
     
     using namespace protocols::toolbox::task_operations;
     tf_->push_back( new RestrictToInterface( rb_jump, loop_residues ) );
+    
+
+    TR<<"   finish finalize_setup function !!!"<<std::endl;
+
 }
 
     
@@ -245,98 +275,92 @@ void LHRepulsiveRamp::finalize_setup(pose::Pose & pose ){
 ///////////////////////////////////////////////////////////////////////////
     
 void LHRepulsiveRamp::apply( pose::Pose & pose ) {
-    
+    TR<<"start apply function ..."<<std::endl;
+
     
     finalize_setup(pose );
-
-
-    
-    
     
     // remove cutpoints variants for all cdrs
     // "true" forces removal of variants even from non-cutpoints
     loops::remove_cutpoint_variants( pose, true );
-    
     using namespace core::chemical;
     for ( loops::Loops::const_iterator it = all_loops_.begin(),
          it_end = all_loops_.end();	it != it_end; ++it ) {
         core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it->cut() );
         core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it->cut()+1);
     }
+    
     // add scores to map
     ( *dock_scorefxn_ )( pose );
     
     // dampen fa_rep weight
-    Real rep_weight_max = dock_scorefxn_->get_weight( core::scoring::fa_rep );
-    Real func_tol(1.0);
-    //mjo commenting out 'nb_list' because it is unused and causes a warning
-    //bool nb_list( true );
+    core::Real rep_weight_max = dock_scorefxn_->get_weight( core::scoring::fa_rep );
+
     if( benchmark_ ) {
         rep_ramp_cycles_ = 1;
-        cycles_ = 1;
+        num_repeats_ = 1;
         min_threshold_ = 150.0;
-        func_tol = 10.0;
     }
     
-    Real rep_ramp_step = (rep_weight_max - 0.02) / Real(rep_ramp_cycles_-1);
+    
+    
+    core::Real rep_ramp_step = (rep_weight_max - 0.02) / core::Real(rep_ramp_cycles_-1);
+    core::scoring::ScoreFunctionOP temp_scorefxn =new core::scoring::ScoreFunction( *dock_scorefxn_);
+    
     for ( Size i = 1; i <= rep_ramp_cycles_; i++ ) {
-        Real rep_weight = 0.02 + rep_ramp_step * Real(i-1);
-        dock_scorefxn_->set_weight( core::scoring::fa_rep, rep_weight );
-        snugfit_MC_min ( pose);
+        core::Real rep_weight = 0.02 + rep_ramp_step * Real(i-1);
+        TR<<"   repulsive ramp cycle "<<i<<":     rep_weight = "<<rep_weight<<std::endl;
+        temp_scorefxn->set_weight( core::scoring::fa_rep, rep_weight );
+        
+        snugfit_MC_min(pose, temp_scorefxn);        
     }
 
-    
+    TR<<"finish apply function !!!"<<std::endl;
+
     
 }
     
     
     
-
-
+    
+    
+//JQX: since the scorefxn needs to be changed, you have to
+//     completely re-build the "simple_mcm_repeat" mover
+void LHRepulsiveRamp::snugfit_MC_min(pose::Pose & pose, core::scoring::ScoreFunctionOP temp_scorefxn)
+{
+    using namespace moves;
+    
+    simple_moves::MinMoverOP 
+    min_mover = new simple_moves::MinMover( cdr_dock_map_, temp_scorefxn,  min_type_, min_threshold_, true/*nb_list*/ );
+    
+    rigid::RigidBodyPerturbMoverOP 
+    rb_perturb = new rigid::RigidBodyPerturbMover(pose, *cdr_dock_map_, rot_mag_, trans_mag_, rigid::partner_downstream, true );
+    
+    simple_moves::RotamerTrialsMoverOP 
+    pack_rottrial = new simple_moves::RotamerTrialsMover( pack_scorefxn_, tf_ );
+    
+    SequenceMoverOP rb_mover = new SequenceMover;
+    rb_mover->add_mover( rb_perturb );
+    rb_mover->add_mover( pack_rottrial );
+    
+    JumpOutMoverOP 
+    rb_mover_min = new JumpOutMover( rb_mover, min_mover, temp_scorefxn, min_threshold_ );
+    
+    
+    MonteCarloOP 
+    mc = new MonteCarlo( pose, *temp_scorefxn, temperature_ );
+    
+    TrialMoverOP 
+    rb_mover_min_trial = new TrialMover( rb_mover_min, mc);
+    
+    RepeatMoverOP 
+    simple_mcm_repeat = new RepeatMover( rb_mover_min_trial, num_repeats_ );
     
     
     
-    
-    
-    
-void LHRepulsiveRamp::snugfit_MC_min ( pose::Pose & pose_in) {
+    simple_mcm_repeat->apply( pose );
+}
         
-		using namespace moves;
-		bool nb_list = true;
-        
-        simple_moves::MinMoverOP min_mover = new simple_moves::MinMover( cdr_dock_map_, dock_scorefxn_,
-                                                                        min_type_, min_threshold_, nb_list );
-        
-		//set up rigid body movers
-        rigid::RigidBodyPerturbMoverOP rb_perturb=new rigid::RigidBodyPerturbMover(pose_in,
-                                                                                   *cdr_dock_map_, rot_mag_, trans_mag_ , rigid::partner_downstream, true );
-        
-
-        
-        simple_moves::RotamerTrialsMoverOP pack_rottrial = new simple_moves::RotamerTrialsMover( pack_scorefxn_, tf_ );
-		SequenceMoverOP rb_mover = new SequenceMover;
-		rb_mover->add_mover( rb_perturb );
-		rb_mover->add_mover( pack_rottrial );
-		JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover, dock_scorefxn_,	min_threshold_ );
-        
-
-		MonteCarloOP mc = new MonteCarlo( pose_in, *dock_scorefxn_, temperature_ );
-		TrialMoverOP rb_mover_min_trial = new TrialMover( rb_mover_min, mc);
-    
-		RepeatMoverOP first_mcm_cycles = new RepeatMover( rb_mover_min_trial, cycles_ );
-		first_mcm_cycles->apply( pose_in );
-        
-		return;
-        
-	} // snugfit_MC_min
-    
-
-
-
-
-
-    
-    
 
     
     

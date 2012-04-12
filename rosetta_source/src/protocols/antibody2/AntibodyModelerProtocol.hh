@@ -34,11 +34,13 @@
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.fwd.hh>
 #include <protocols/antibody2/RefineBetaBarrel.fwd.hh>
-
-
-
+#include <protocols/antibody2/RefineCDRH3HighRes.fwd.hh>
 #include <utility/vector1.hh>
 
+
+
+
+using namespace core;
 namespace protocols {
 namespace antibody2 {
 
@@ -59,7 +61,7 @@ public:
 	/// @brief Instantiates non-primitive members based on the value of the primitive members
 	void sync_objects_with_flags();
 
-	virtual void apply( core::pose::Pose & pose );
+	virtual void apply( pose::Pose & pose );
 
 	virtual std::string get_name() const;
     
@@ -67,40 +69,20 @@ public:
     static void register_options();
     
 	// simple inline setters
-    void set_h3modeler( bool model_h3 ){ 
-        model_h3_ = model_h3; 
-    }
-	void set_snugfit( bool snugfit ) { 
-        snugfit_ = snugfit; 
-    }
-	void set_camelid( bool camelid ) { 
-        camelid_ = camelid; 
-    }
+    void set_BenchMark  ( bool benchmark  ) {benchmark_   = benchmark;}
+    void set_ModelH3    ( bool model_h3   ) {model_h3_    = model_h3; }
+	void set_SnugFit    ( bool snugfit    ) {snugfit_     = snugfit;  }
+    void set_H3Filter   ( bool H3_filter  ) {H3_filter_   = H3_filter;}
+    void set_CterInsert ( bool cter_insert) {cter_insert_ = cter_insert;}
+    void set_cst_weight ( core::Real const cst_weight){cst_weight_=cst_weight;}
+    void set_camelid( bool camelid )  { camelid_ = camelid; }
 	void set_camelid_constraints(bool camelid_constraints ) { 
         camelid_constraints_ = camelid_constraints; 
     }
-	void set_benchmark( bool benchmark ) { 
-        benchmark_ = benchmark; 
-    }
-    void set_cst_weight( core::Real const cst_weight){
-        cst_weight_=cst_weight;
-    }
-    void set_H3_filter(bool H3_filter){
-        H3_filter_ = H3_filter;
-    }
-    void set_cter_insert(bool cter_insert){
-        cter_insert_ = cter_insert;
-    }
 
-	void relax_cdrs( core::pose::Pose & pose );
+	void relax_cdrs( pose::Pose & pose );
 
-
-
-
-
-
-	void display_constraint_residues( core::pose::Pose & pose );
-
+	void display_constraint_residues( pose::Pose & pose );
         
     void show( std::ostream & out=std::cout );
     friend std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m_2 );
@@ -117,16 +99,13 @@ private:
     bool H3_filter_;
     bool cter_insert_;
     bool LH_repulsive_ramp_;
-    core::pose::Pose start_pose_;
+    pose::Pose start_pose_;
     
     /// @brief refine H3 only
 	bool antibody_refine_;
-    core::Real high_cst_;
-
+    core::Real cen_cst_, high_cst_;
     moves::PyMolMoverOP pymol_;
     bool use_pymol_diy_;
-
-    
     
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;
@@ -139,20 +118,22 @@ private:
 	// used as a flag to enable reading in of cst files
 	core::Real cst_weight_;
 
-	// score functions
-	core::scoring::ScoreFunctionOP scorefxn_;
-    core::scoring::ScoreFunctionOP highres_scorefxn_;
-
-
+	// score functions    
+    core::scoring::ScoreFunctionOP loop_scorefxn_highres_;
+    core::scoring::ScoreFunctionOP loop_scorefxn_centroid_;
+    core::scoring::ScoreFunctionOP dock_scorefxn_highres_;
+    core::scoring::ScoreFunctionOP pack_scorefxn_;
+    
 	// external objects
 	AntibodyInfoOP ab_info_;
 
 	//packer task
-	core::pack::task::TaskFactoryOP tf_;
+	pack::task::TaskFactoryOP tf_;
 
 	// movers
 	ModelCDRH3OP model_cdrh3_;
     RefineBetaBarrelOP refine_beta_barrel_;
+    RefineCDRH3HighResOP cdr_highres_refine_;
 
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();

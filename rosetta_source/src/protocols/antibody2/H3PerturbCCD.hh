@@ -28,7 +28,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/H3PerturbCCD.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -41,7 +41,7 @@
 #endif
 
 
-
+using namespace core;
 namespace protocols {
 namespace antibody2 {
 
@@ -55,15 +55,15 @@ public:
     /// @brief default constructor
 	H3PerturbCCD();
 
+    /// @brief constructor with arguments
+    H3PerturbCCD(loops::LoopOP a_cdr_loop);
+    
 	/// @brief constructor with arguments
-    H3PerturbCCD(
-                            bool is_camelid,
-                            AntibodyInfoOP & antibody_in);
+    H3PerturbCCD(AntibodyInfoOP antibody_in);
 
     /// @brief constructor with arguments
-    H3PerturbCCD(bool current_loop_is_H3,
-                            bool is_camelid,
-                            AntibodyInfoOP & antibody_in);
+    H3PerturbCCD(AntibodyInfoOP antibody_in, 
+                 core::scoring::ScoreFunctionCOP highres_scorefxn);
 
     virtual protocols::moves::MoverOP clone() const;
 
@@ -96,7 +96,11 @@ public:
     void turn_off_H3_filter(){
         H3_filter_ = false;
     }
-
+    
+    /// @brief set scorefunction for low resolution of CDR H3 modeling
+	void set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn ){
+        lowres_scorefxn_ = new core::scoring::ScoreFunction(*lowres_scorefxn);
+    }
 
 private:
 
@@ -112,7 +116,7 @@ private:
 
 
     void set_default();
-    void init( bool current_loop_is_H3, bool is_camelid, AntibodyInfoOP & antibody_in);
+    void init();
 
     void finalize_setup( core::pose::Pose & pose );
 

@@ -36,7 +36,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
-
 #include <protocols/antibody2/AntibodyUtil.hh>
 
 
@@ -137,6 +136,11 @@ AntibodyInfo::set_default( bool is_camelid )
 	kinked_H3_ = false;
 	extended_H3_ = false;
     get_CDRs_numbering();
+    LH_dock_jumps_.push_back(1);
+    Ab_Ag_dock_jumps_.push_back(1);
+    Ab_Ag_dock_jumps_.push_back(2);
+
+
 }
 
 

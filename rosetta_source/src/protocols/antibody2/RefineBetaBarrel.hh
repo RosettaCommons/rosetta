@@ -28,7 +28,7 @@
 #include <protocols/antibody2/LHRepulsiveRamp.fwd.hh>
 #include <protocols/antibody2/LHSnugFitLegacy.fwd.hh>
 #include <protocols/docking/DockMCMProtocol.fwd.hh>
-
+#include <core/scoring/ScoreFunction.hh>
 
 
 
@@ -50,12 +50,24 @@ class RefineBetaBarrel: public moves::Mover {
         
         RefineBetaBarrel(AntibodyInfoOP antibody_info);
     
-        void set_default();
+        RefineBetaBarrel(AntibodyInfoOP antibody_info,
+                         core::scoring::ScoreFunctionCOP dock_scorefxn,
+                         core::scoring::ScoreFunctionCOP pack_scorefxn);
+    
         virtual void apply( core::pose::Pose & pose_in );
         virtual std::string get_name() const;
     
         void set_task_factory(core::pack::task::TaskFactoryCOP tf){
             tf_ = new pack::task::TaskFactory(*tf);
+        }
+    
+    
+        void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ){
+            dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+        }
+    
+        void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn){
+            pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
         }
     
         void turn_off_repulsive_ramp(){
@@ -68,12 +80,17 @@ class RefineBetaBarrel: public moves::Mover {
         AntibodyInfoOP ab_info_;
     	pack::task::TaskFactoryOP tf_;
         
-        void init(AntibodyInfoOP antibody_info);
+        void init( );
 
     
         LHRepulsiveRampOP lh_repulsive_ramp_;
         LHSnugFitLegacyOP lh_snugfit_;
         docking::DockMCMProtocolOP dock_mcm_protocol_;
+    
+    
+    
+        core::scoring::ScoreFunctionOP dock_scorefxn_;
+        core::scoring::ScoreFunctionOP pack_scorefxn_;
     
     
 };

@@ -88,25 +88,47 @@ namespace antibody2 {
 H3PerturbCCD::H3PerturbCCD() : Mover() {
     user_defined_ = false;
 }
-
-H3PerturbCCD::H3PerturbCCD(  
-                                                     bool is_camelid, 
-                                                     AntibodyInfoOP & antibody_in ) : Mover()     
+    
+// default destructor
+H3PerturbCCD::~H3PerturbCCD() {}
+    
+    
+H3PerturbCCD::H3PerturbCCD(loops::LoopOP a_cdr_loop) : Mover()         
 {
-    user_defined_ = true;
-    init(true, is_camelid, antibody_in);
+    user_defined_ = false;
+        
+    init();
+}   
+    
+H3PerturbCCD::H3PerturbCCD( AntibodyInfoOP antibody_in ) : Mover()     
+{
+    user_defined_ = false;
+    ab_info_ = antibody_in;
+    
+    init();
 }
     
     
-H3PerturbCCD::H3PerturbCCD( 
-                                                 bool current_loop_is_H3, 
-                                                 bool is_camelid, 
-                                                 AntibodyInfoOP & antibody_in ) : Mover() 
+H3PerturbCCD::H3PerturbCCD( AntibodyInfoOP antibody_in, 
+                           core::scoring::ScoreFunctionCOP lowres_scorefxn ) : Mover() 
 {
     user_defined_ = true;
-    init(current_loop_is_H3, is_camelid, antibody_in);
+    ab_info_=antibody_in;
+    lowres_scorefxn_ = new core::scoring::ScoreFunction(*lowres_scorefxn);
+    
+    init();
 }
-
+    
+    
+    
+void H3PerturbCCD::init( ) 
+{
+    set_default();
+        
+    pymol_ = new protocols::moves::PyMolMover;
+    pymol_->keep_history(true);
+        
+}
     
 
     
@@ -121,47 +143,27 @@ void H3PerturbCCD::set_default(){
     ccd_threshold_  = 0.1;
     Temperature_    = 2.0;
     
+    is_camelid_         = false;
 	current_loop_is_H3_ = true;
     H3_filter_          = true;
     use_pymol_diy_      = false;
+    
+    
+    
+    if(!user_defined_){
+        lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
+            lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
+            lowres_scorefxn_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
+    }
 }
     
     
     
-// default destructor
-H3PerturbCCD::~H3PerturbCCD() {}
+
     
 //clone
 protocols::moves::MoverOP H3PerturbCCD::clone() const {
     return( new H3PerturbCCD() );
-}
-    
-    
-
-    
-    
-void H3PerturbCCD::init(bool current_loop_is_H3,bool is_camelid, AntibodyInfoOP & antibody_in ) 
-{
-    set_default();
-    
-    if(user_defined_){
-        current_loop_is_H3_ = current_loop_is_H3;
-        is_camelid_= is_camelid;
-        ab_info_ = antibody_in;
-    }
-    
-    if(is_camelid_) {
-    }
-    
-    lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
-	lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
-	// adding constraints
-	lowres_scorefxn_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
-    
-
-    pymol_ = new protocols::moves::PyMolMover;
-    pymol_->keep_history(true);
-    
 }
     
     
@@ -181,8 +183,7 @@ void H3PerturbCCD::finalize_setup( pose::Pose & pose_in ) {
     
     
     
-    
-//APPLY
+
 void H3PerturbCCD::apply( pose::Pose & pose_in ) {
     
     

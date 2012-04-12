@@ -25,7 +25,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
-
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <utility/tools/make_vector1.hh>
 
 
@@ -44,32 +45,51 @@ namespace antibody2 {
         
         
 // default constructor
-RefineBetaBarrel::RefineBetaBarrel() : Mover() {
-    user_defined_ = false;
-}
+RefineBetaBarrel::RefineBetaBarrel() : Mover() {}
+RefineBetaBarrel::~RefineBetaBarrel() {}
+    
 
 RefineBetaBarrel::RefineBetaBarrel(AntibodyInfoOP antibody_info) : Mover() {        
+    user_defined_ = false;
+    ab_info_ = antibody_info;
+
+    init();
+}
+    
+RefineBetaBarrel::RefineBetaBarrel(AntibodyInfoOP antibody_info,
+                                    core::scoring::ScoreFunctionCOP dock_scorefxn,
+                                    core::scoring::ScoreFunctionCOP pack_scorefxn) : Mover() {
     user_defined_ = true;
-    init(antibody_info);
+    ab_info_ = antibody_info;
+    dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+    pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+    
+    init();
 }
     
 
-void RefineBetaBarrel::init(AntibodyInfoOP antibody_info){
+void RefineBetaBarrel::init( ){
+    
+    if(!user_defined_){
+        dock_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
+            dock_scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
+            dock_scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
+        pack_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+    }
+
     repulsive_ramp_ = true;
-    ab_info_ = antibody_info;
-    lh_repulsive_ramp_ = new LHRepulsiveRamp(ab_info_);
-    lh_snugfit_ = new LHSnugFitLegacy(ab_info_);
-    //TODO: replace the vector1 by ab_info->LH_jump;
-    dock_mcm_protocol_ = new docking::DockMCMProtocol();
+
+    // set up objects
+    lh_repulsive_ramp_ = new LHRepulsiveRamp(ab_info_, dock_scorefxn_, pack_scorefxn_);
+    dock_mcm_protocol_ = new docking::DockMCMProtocol( ab_info_->LH_dock_jump(), dock_scorefxn_, pack_scorefxn_ );
+        //TODO: check move map, fold tree, task factory that you should pass into.
+        //lh_snugfit_ = new LHSnugFitLegacy(ab_info_);
 
 }
    
+
     
-RefineBetaBarrel::~RefineBetaBarrel() {}
-    
-    
-void RefineBetaBarrel::set_default(){
-}
+
     
     
 std::string RefineBetaBarrel::get_name() const {
@@ -78,14 +98,19 @@ std::string RefineBetaBarrel::get_name() const {
     
     
     
+    
+    
+    
 void RefineBetaBarrel::apply( pose::Pose & pose ) {
 
     all_cdr_VL_VH_fold_tree( pose, ab_info_->all_cdr_loops_ );
     
 
-    if(repulsive_ramp_) {lh_repulsive_ramp_->apply(pose);}
+    if(repulsive_ramp_) {
+        lh_repulsive_ramp_->apply(pose);
+    }
     
-    TR<<"finish repulsive ramping"<<std::endl;
+    TR<<"finish repulsive ramping !"<<std::endl;
 
     
     //lh_snugfit_ ->set_task_factory(tf_);
@@ -94,7 +119,8 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
     // TODO: 
     // JQX: check fold tree, move map, and task factory
     dock_mcm_protocol_ -> apply(pose);
-    
+
+    TR<<"finish dock_mcm ramping !"<<std::endl;
 }
 
 

@@ -23,7 +23,7 @@
 #include <core/fragment/FragData.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/Mover.hh>
@@ -49,8 +49,13 @@ public:
 	/// @brief default constructor
 	ModelCDRH3();
 
+    /// @brief constructor with arguments
+	ModelCDRH3(  AntibodyInfoOP antibody_info );
+    
 	/// @brief constructor with arguments
-	ModelCDRH3( bool camelid, bool benchmark, AntibodyInfoOP antibody_info );
+	ModelCDRH3(  AntibodyInfoOP antibody_info ,                         
+                core::scoring::ScoreFunctionCOP lowres_scorefxn,
+                core::scoring::ScoreFunctionCOP highres_scorefxn);
 
 	/// @brief default destructor
 	~ModelCDRH3();
@@ -67,23 +72,20 @@ public:
 	/// @brief enable camelid modeling mode
 	inline void set_camelid( bool setting ) {
 		is_camelid_ = setting;
-		if( is_camelid_ ) {
-			snug_fit_ = false;
-		}
 	}
 
 
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
-	void set_lowres_score_func(scoring::ScoreFunctionOP lowres_scorefxn );
+	void set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn ){
+        lowres_scorefxn_ = new core::scoring::ScoreFunction(*lowres_scorefxn);
+    }
 
 	/// @brief set scorefunction for high resolution of CDR H3 modeling
-	void set_highres_score_func(scoring::ScoreFunctionOP highres_scorefxn);
+	void set_highres_score_func(scoring::ScoreFunctionCOP highres_scorefxn){
+        highres_scorefxn_ = new core::scoring::ScoreFunction(*highres_scorefxn);
+    }
 
-    
-	void loop_centroid_relax(
-		pose::Pose & pose_in,
-		Size const loop_begin,
-		Size const loop_end );
+
 
     void set_task_factory(pack::task::TaskFactoryCOP tf){
         tf_ = new pack::task::TaskFactory(*tf);
@@ -133,12 +135,6 @@ private:
 	/// @brief flag indicating that current loop being modeled is CDR H3
 	bool current_loop_is_H3_;
 
-
-	/// @brief refine H3 only
-	bool antibody_refine_;
-
-	/// @brief enable docking local refine of LH chains & simultaneous H3 min
-	bool snug_fit_;
     
 	/// @brief loop_building in docking
 	bool loops_flag_;
@@ -146,8 +142,7 @@ private:
 	/// @brief insert fragment in docking
 	bool dle_flag_;
     
-	/// @brief just refine input loop
-	bool refine_input_loop_;
+
 
 	/// @brief is camelid antibody without light chain
 	bool is_camelid_;
@@ -157,7 +152,7 @@ private:
 	//packer task
 	pack::task::TaskFactoryOP tf_;
 
-	void init(bool camelid, bool benchmark, AntibodyInfoOP antibody_info);
+	void init();
 
     void setup_objects();
 
@@ -169,6 +164,7 @@ private:
 
     
 /*
+//TODO:
 // JQX: make a class, which inherits from abstract class "loop_mover"
 class my_LoopMover: public protocols::loops::loop_mover::LoopMover {
 public:

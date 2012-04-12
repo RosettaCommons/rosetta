@@ -90,6 +90,7 @@
 #include <protocols/antibody2/H3PerturbCCD.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/H3CterInsert.hh>
+#include <protocols/antibody2/RefineCDRH1Centroid.hh>
 #include <protocols/moves/PyMolMover.hh>
 
 
@@ -100,113 +101,98 @@ using namespace core;
 namespace protocols {
 namespace antibody2 {
 
-ModelCDRH3::ModelCDRH3() : Mover()
-{
-
+ModelCDRH3::ModelCDRH3() : Mover(){}
+    
+ModelCDRH3::~ModelCDRH3() {}
+    
+ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info) : Mover(){
+    user_defined_ = false;
+    ab_info_ = antibody_info;
+    
+    init();
 }
-
-ModelCDRH3::ModelCDRH3(bool camelid, bool benchmark, AntibodyInfoOP antibody_info) : Mover()
+    
+    
+ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info,                 
+                        core::scoring::ScoreFunctionCOP lowres_scorefxn,
+                        core::scoring::ScoreFunctionCOP highres_scorefxn) : Mover()
 {
 	user_defined_ = true;
-	init(camelid, benchmark, antibody_info );
+    ab_info_ = antibody_info;
+    lowres_scorefxn_  = new core::scoring::ScoreFunction(*lowres_scorefxn);
+    highres_scorefxn_ = new core::scoring::ScoreFunction(*highres_scorefxn);
+    
+	init();
 }
 
 
-
-void ModelCDRH3::init(bool camelid, bool benchmark, AntibodyInfoOP antibody_info)
+    
+void ModelCDRH3::init( )
 {
 	Mover::type( "ModelCDRH3" );
 
-
 	set_default();
-    
-	if ( user_defined_ ) {
-		set_camelid( camelid );
-		benchmark_ = benchmark;
-        ab_info_= antibody_info;
-	}
 
+    //TODO:
+    //JQX: need to deal with this
     if( is_camelid_ && !ab_info_->is_extended() && !ab_info_->is_kinked() ){
         c_ter_stem_ = 0;
     }
     
-    
-	lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
-	lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
-	// adding constraints
-	lowres_scorefxn_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
-
-	highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
-	highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
-	highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
-	// adding constraints
-	highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
-
-    
 	setup_objects();
-    
-    
 }
 
-
-
-    
-ModelCDRH3::~ModelCDRH3() {}
-    
     
 void ModelCDRH3::set_default()
 {
-    do_cter_insert_ = true;
-	benchmark_ = false;
-	cen_cst_ = 10.0;
-	high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
-	current_loop_is_H3_ = true;
-	antibody_refine_ = true;
-	snug_fit_ = true;
-	loops_flag_ = true;
-	dle_flag_ = true;
-	refine_input_loop_ = true;
-	is_camelid_ = false;
-    use_pymol_diy_ =false;
+    benchmark_          = false;
+    is_camelid_         = false;
+    do_cter_insert_     = true;
+    current_loop_is_H3_ = true;
+    loops_flag_         = true;
+    dle_flag_           = true;
+    use_pymol_diy_      = false;
+        
     c_ter_stem_ = 3;
     max_cycle_ = 20;
-    
-    // size of loop above which 9mer frags are used
-	cutoff_9_ = 16; // default 16
-    
-    // size of loop above which 3mer frags are used
-	cutoff_3_ = 6; // default 6
-    
-
-    
+        
+    cen_cst_ = 10.0;
+    high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
+        
+    cutoff_9_ = 16; // above 16, 9mer frags are used 
+    cutoff_3_ = 6;  // above  6, 3mer frags are used 
+        
     //TODO:
     //JQX:
     //if one decides to insert c_terminal first, it means the h3 loop has 3 less residues
     //should one change the creteria of cutoff_3_ and cutoff_9_?
-    
-    
-	TR << "Finished Setting Defaults" << std::endl;
+        
+    if(!user_defined_)
+    {
+        lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
+            lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
+            lowres_scorefxn_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
+        highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
+            highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
+            highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
+            highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
+    }
 } 
+
+    
+
+    
+
 
     
     
     
 void ModelCDRH3::setup_objects(){
     h3_cter_insert_mover_ = new H3CterInsert(ab_info_, is_camelid_);
-    h3_perturb_ccd_build_ = new H3PerturbCCD(current_loop_is_H3_,is_camelid_, ab_info_ );        
+    h3_perturb_ccd_build_ = new H3PerturbCCD(ab_info_, lowres_scorefxn_);        
 }
     
     
-    
-    
-    
-void ModelCDRH3::set_lowres_score_func( scoring::ScoreFunctionOP lowres_scorefxn ) {
-    lowres_scorefxn_ = lowres_scorefxn;
-} 
-
-void ModelCDRH3::set_highres_score_func(scoring::ScoreFunctionOP highres_scorefxn) {
-    highres_scorefxn_ = highres_scorefxn;
-}
 
 void ModelCDRH3::turn_off_H3_filter(){
     h3_perturb_ccd_build_->turn_off_H3_filter();
@@ -341,7 +327,8 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     
     //#############################  //JQX: this should not be here
     if( is_camelid_ ){
-        loop_centroid_relax( pose_in, ab_info_->get_CDR_loop("h1")->start(), ab_info_->get_CDR_loop("h1")->stop() );
+        RefineCDRH1Centroid refine_cdr_centroid( ab_info_->get_CDR_loop("h1") );
+        refine_cdr_centroid.apply(pose_in);
     }
     //#############################
     
@@ -351,8 +338,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     to_full_atom.apply( pose_in );
 
     utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
-    for( Size ii = ab_info_->get_CDR_loop("h3")->start();
-						 ii <= ( ab_info_->get_CDR_loop("h3")->stop() ); ii++ )
+    for( Size ii = ab_info_->get_CDR_loop("h3")->start(); ii <= ( ab_info_->get_CDR_loop("h3")->stop() ); ii++ )
 					allow_chi_copy[ii] = false;
     //recover sidechains from starting structures
     protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose_, allow_chi_copy );
@@ -385,159 +371,6 @@ std::string ModelCDRH3::get_name() const {
 
     
 
-		///////////////////////////////////////////////////////////////////////////
-		/// @begin loop_centroid_relax
-		///
-		/// @brief actually relaxes the region specified
-		///
-		/// @detailed This is all done in low resolution. Intention was to give
-		///           camelid CDR H1 a larger perturbation.
-		///
-		/// @param[in] pose, loop begin position, loop end position
-		///
-		/// @global_read none
-		///
-		/// @global_write none
-		///
-		/// @remarks
-		///
-		/// @references
-		///
-		/// @authors Aroop 05/07/2010
-		///
-		/// @last_modified 05/07/2010
-		///////////////////////////////////////////////////////////////////////////
-		void ModelCDRH3::loop_centroid_relax(
-			pose::Pose & pose_in,
-			Size const loop_begin,
-			Size const loop_end )
-		{
-			using namespace protocols;
-			using namespace protocols::simple_moves;
-			using namespace protocols::loops;
-			using namespace protocols::moves;
-			using namespace pack;
-			using namespace pack::task;
-			using namespace pack::task::operation;
-            using loop_closure::ccd::CcdMover;
-            using loop_closure::ccd::CcdMoverOP;
-
-			TR << "H3M Centroid Relaxing Loop" << std::endl;
-
-			// storing starting fold tree
-			kinematics::FoldTree tree_in( pose_in.fold_tree() );
-
-			//setting MoveMap
-			kinematics::MoveMapOP loop_map;
-			loop_map = new kinematics::MoveMap();
-			loop_map->clear();
-			loop_map->set_chi( false );
-			loop_map->set_bb( false );
-			utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
-			for( Size ii = loop_begin; ii <= loop_end; ii++ )
-				allow_bb_move[ ii ] = true;
-			loop_map->set_bb( allow_bb_move );
-			loop_map->set_jump( 1, false );
-
-
-			Size loop_size = ( loop_end - loop_begin ) + 1;
-			Size cutpoint = loop_begin + Size(loop_size/2);
-
-			loops::Loop one_loop( loop_begin, loop_end,	cutpoint,	0, false );
-			simple_one_loop_fold_tree( pose_in, one_loop );
-
-			// set cutpoint variants for correct chainbreak scoring
-			if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
-				if( !pose_in.residue( cutpoint ).has_variant_type(chemical::CUTPOINT_LOWER))
-					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, cutpoint );
-				if( !pose_in.residue( cutpoint + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) )
-					core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, cutpoint + 1 );
-			}
-
-
-
-			Real min_tolerance = 0.001;
-			if( benchmark_ ) min_tolerance = 1.0;
-			std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
-			bool nb_list = true;
-			MinMoverOP loop_min_mover = new MinMover( loop_map, lowres_scorefxn_, min_type, min_tolerance, nb_list );
-
-			// more params
-			Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
-			Size inner_cycles( loop_size );
-			Size outer_cycles( 1 );
-			if( antibody_refine_ || refine_input_loop_ ){
-				outer_cycles = 5;
-            }
-			if( antibody_refine_ && snug_fit_ ){
-				outer_cycles = 2;
-            }
-			if( benchmark_ ) {
-				n_small_moves = 1;
-				inner_cycles = 1;
-				outer_cycles = 1;
-			}
-
-			Real high_move_temp = 2.00;
-			// minimize amplitude of moves if correct parameter is set
-			BackboneMoverOP small_mover = new SmallMover( loop_map, high_move_temp, n_small_moves );
-			BackboneMoverOP shear_mover = new ShearMover( loop_map, high_move_temp, n_small_moves );
-			small_mover->angle_max( 'H', 2.0 );
-			small_mover->angle_max( 'E', 5.0 );
-			small_mover->angle_max( 'L', 6.0 );
-
-			shear_mover->angle_max( 'H', 2.0 );
-			shear_mover->angle_max( 'E', 5.0 );
-			shear_mover->angle_max( 'L', 6.0 );
-
-			CcdMoverOP ccd_moves = new CcdMover( one_loop, loop_map );
-			RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
-
-			SequenceMoverOP wiggle_cdr_h3( new SequenceMover() );
-			wiggle_cdr_h3->add_mover( small_mover );
-			wiggle_cdr_h3->add_mover( shear_mover );
-			wiggle_cdr_h3->add_mover( ccd_cycle );
-
-
-			loop_min_mover->apply( pose_in );
-
-			Real const init_temp( 2.0 );
-			Real const last_temp( 0.5 );
-			Real const gamma = std::pow( (last_temp/init_temp), (1.0/inner_cycles));
-			Real temperature = init_temp;
-
-			MonteCarloOP mc;
-			mc = new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, temperature );
-			mc->reset( pose_in ); // monte carlo reset
-
-			// outer cycle
-			for(Size i = 1; i <= outer_cycles; i++) {
-				mc->recover_low( pose_in );
-
-				// inner cycle
-				for ( Size j = 1; j <= inner_cycles; j++ ) {
-					temperature *= gamma;
-					mc->set_temperature( temperature );
-					wiggle_cdr_h3->apply( pose_in );
-					loop_min_mover->apply( pose_in );
-
-					mc->boltzmann( pose_in );
-
-				} // inner cycles
-			} // outer cycles
-			mc->recover_low( pose_in );
-
-			// minimize
-			if( !benchmark_ )
-				loop_min_mover->apply( pose_in );
-
-			// Restoring pose stuff
-			pose_in.fold_tree( tree_in ); // Tree
-
-			TR << "Finished Centroid Relaxing Loop" << std::endl;
-
-			return;
-		} // loop_centroid_relax
 
 
 

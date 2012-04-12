@@ -93,59 +93,106 @@ namespace antibody2 {
     
     
 // default constructor
-RefineCDRH3HighRes::RefineCDRH3HighRes( ) : Mover() 
-{
-    set_default();
-    
-    is_camelid_ = false;
-    init();
-}
+RefineCDRH3HighRes::RefineCDRH3HighRes( ) : Mover() {}
 
 RefineCDRH3HighRes::RefineCDRH3HighRes( AntibodyInfoOP antibody_info, std::string loop_name ) : Mover() 
 {
-    set_default();
-
-    is_camelid_ = false;
+    user_defined_ = false;
     ab_info_    = antibody_info;
     loop_name_  = loop_name;
-    
     
     init();
 }
   
     
-
+RefineCDRH3HighRes::RefineCDRH3HighRes(AntibodyInfoOP antibody_info, std::string loop_name,
+                   scoring::ScoreFunctionCOP highres_scorefxn ) : Mover()  
+{
+    user_defined_ = true;
+    ab_info_    = antibody_info;
+    loop_name_  = loop_name;
+    highres_scorefxn_ = new scoring::ScoreFunction(*highres_scorefxn);
     
-RefineCDRH3HighRes::RefineCDRH3HighRes( bool is_camelid, AntibodyInfoOP antibody_info ) : Mover() 
+    init();   
+}
+    
+RefineCDRH3HighRes::RefineCDRH3HighRes( AntibodyInfoOP antibody_info ) : Mover() 
 {        
-    set_default();
-        
-
-    is_camelid_ = is_camelid;
     ab_info_ = antibody_info;
+    
     init();
 }
     
     
+void RefineCDRH3HighRes::init( ) 
+{
+    set_default();
+        
+    the_loop_   = *(ab_info_->get_CDR_loop(loop_name_));
+    loop_begin_ = the_loop_.start();
+    loop_end_   = the_loop_.stop();
+    loop_size_  = ( loop_end_ - loop_begin_ ) + 1;
+    gamma_ = std::pow( (last_temp_/init_temp_), (1.0/loop_size_)); 
+    //TODO: check this gama value carefully
+
+    cutpoint_ = loop_begin_ + int(loop_size_/2);
+        
+    if( h3_random_cut_ ){
+        //	cutpoint_ = dle_choose_random_cutpoint(loop_begin_, loop_end_);
+    }
+        
+    the_loop_.set_cut(cutpoint_);
+        
+    n_small_moves_ =  numeric::max(Size(5), Size(loop_size_/2)) ;
+    inner_cycles_ = loop_size_;
+    outer_cycles_ = 2; //JQX: assume the SnugFit step has done some minimization
+    if(  refine_input_loop_ ){
+        outer_cycles_ = 5;
+    }
+    if( benchmark_ ) {
+        min_tolerance_ = 1.0;
+        n_small_moves_ = 1;
+        inner_cycles_ = 1;
+        outer_cycles_ = 1;
+    }
+        
+}
 
     
-void RefineCDRH3HighRes::set_default(){ 
-    benchmark_ = false;
+    
+    
+    
+void RefineCDRH3HighRes::set_default()
+{ 
+    benchmark_         = false;
     include_neighbors_ = true;
-    max_cycle_close_trial_ = 20;
 	refine_input_loop_ = false;
-    flank_relax_ = true;
-	flank_size_ = 2;
-	h3_random_cut_ = false;
-	H3_filter_ = true;
-    min_tolerance_ = 0.001;
+    flank_relax_       = true;
+	h3_random_cut_     = false;
+	H3_filter_         = true;
+    use_pymol_diy_     = false;
+    is_camelid_        = false;
+
+    neighbor_dist_  = 10.0;
+	flank_size_     = 2;
+    min_tolerance_  = 0.001;
     high_move_temp_ = 2.00;
+    
+    init_temp_      = 2.0;
+    last_temp_      = 0.5;
+
+    high_cst_       = 100.0;
+    max_cycle_close_trial_ = 20;
     minimization_type_ = "dfpmin_armijo_nonmonotone" ;
-    init_temp_ = 2.0;
-    last_temp_ = 0.5;
-    gamma_ = std::pow( (last_temp_/init_temp_), (1.0/inner_cycles_));
-    use_pymol_diy_ = false;
-    neighbor_dist_ = 10.0;
+
+    
+    if(!user_defined_){
+        highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
+            highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
+            highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
+            highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
+    }
+    
 }
     
     
@@ -161,45 +208,7 @@ protocols::moves::MoverOP RefineCDRH3HighRes::clone() const {
     
 
     
-    
-void RefineCDRH3HighRes::init( ) 
-{
 
-    the_loop_   = *(ab_info_->get_CDR_loop(loop_name_));
-    loop_begin_ = the_loop_.start();
-    loop_end_   = the_loop_.stop();
-    loop_size_  = ( loop_end_ - loop_begin_ ) + 1;
-    
-    cutpoint_ = loop_begin_ + int(loop_size_/2);
-
-    if( h3_random_cut_ ){
-        //	cutpoint_ = dle_choose_random_cutpoint(loop_begin_, loop_end_);
-    }
-
-    the_loop_.set_cut(cutpoint_);
-    
-    n_small_moves_ =  numeric::max(Size(5), Size(loop_size_/2)) ;
-    inner_cycles_ = loop_size_;
-    outer_cycles_ = 2; //JQX: assume the SnugFit step has done some minimization
-    if(  refine_input_loop_ ){
-        outer_cycles_ = 5;
-    }
-    if( benchmark_ ) {
-        min_tolerance_ = 1.0;
-        n_small_moves_ = 1;
-        inner_cycles_ = 1;
-        outer_cycles_ = 1;
-    }
-    
-    highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
-	highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
-	highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
-	// adding constraints
-	//highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
-
-
-    
-}
     
 
     

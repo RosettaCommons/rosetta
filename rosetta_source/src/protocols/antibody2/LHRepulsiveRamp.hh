@@ -32,7 +32,8 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <protocols/moves/RepeatMover.fwd.hh>
 
 
 
@@ -51,8 +52,18 @@ public:
     
 	/// @brief constructor with arguments
     LHRepulsiveRamp(loops::Loops loops_in );
-    LHRepulsiveRamp(antibody2::AntibodyInfoOP antibody_in );
-	LHRepulsiveRamp(antibody2::AntibodyInfoOP antibody_in, bool camelid );
+    
+    LHRepulsiveRamp(AntibodyInfoOP antibody_in );
+    
+	LHRepulsiveRamp(AntibodyInfoOP antibody_in, bool camelid );
+    
+    LHRepulsiveRamp(loops::Loops loops_in, 
+                    core::scoring::ScoreFunctionCOP dock_scorefxn,
+                    core::scoring::ScoreFunctionCOP pack_scorefxn );
+    
+    LHRepulsiveRamp(AntibodyInfoOP antibody_in,
+                    core::scoring::ScoreFunctionCOP dock_scorefxn,
+                    core::scoring::ScoreFunctionCOP pack_scorefxn );
         
     virtual protocols::moves::MoverOP clone() const;
     
@@ -61,7 +72,14 @@ public:
     
     void set_default();
     
-
+    void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ){
+        dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+    }
+    
+    void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn){
+        pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+    }
+    
     virtual void apply( core::pose::Pose & pose );
     
     virtual std::string get_name() const;
@@ -71,6 +89,9 @@ public:
         tf_ = new pack::task::TaskFactory(*tf);
     }
     
+    core::Real set_rot_mag  (core::Real rot_mag)  {return rot_mag_  =rot_mag;  }
+    core::Real set_trans_mag(core::Real trans_mag){return trans_mag_=trans_mag;}
+    
 private:
 
     AntibodyInfoOP ab_info_;
@@ -79,15 +100,15 @@ private:
     bool benchmark_;
     bool is_camelid_;
     loops::Loops all_loops_; 
-    Size nres_;
+    core::Size nres_;
     kinematics::MoveMapOP cdr_dock_map_;
-    Size rep_ramp_cycles_;
+    core::Size rep_ramp_cycles_;
     std::string min_type_;
-    Real rot_mag_;
-    Real trans_mag_;
-    Real temperature_;
-    Real min_threshold_;
-    Size cycles_;
+    core::Real rot_mag_;
+    core::Real trans_mag_;
+    core::Real temperature_;
+    core::Real min_threshold_;
+    core::Size num_repeats_;
 
     
     scoring::ScoreFunctionOP dock_scorefxn_;
@@ -98,12 +119,13 @@ private:
     void setup_objects();
     
     void finalize_setup(pose::Pose & pose );
-
+    
+    void snugfit_MC_min(pose::Pose & pose, core::scoring::ScoreFunctionOP  temp_scorefxn);
 
     
-	void repulsive_ramp( core::pose::Pose & pose_in, loops::Loops loops_in );
+	void repulsive_ramp( pose::Pose & pose_in, loops::Loops loops_in );
     
-	void snugfit_MC_min (core::pose::Pose & pose_in);
+
     
     
 	//packer task

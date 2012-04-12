@@ -24,6 +24,8 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
+#include <protocols/docking/types.hh>
+
 // C++ Headers
 
 // Utility Headers
@@ -95,6 +97,8 @@ public:
     //bool is_my_pose_antibody(core::pose::Pose & pose);
     //bool is_my_antibody_camelid(core::pose::Pose & pose);
 
+    docking::DockJumps LH_dock_jump(){ return LH_dock_jumps_;}
+    docking::DockJumps Ab_Ag_dock_jumps(){ return Ab_Ag_dock_jumps_;}
 
     
 private:
@@ -118,8 +122,8 @@ private:
     
     utility::vector1< char > Fv_sequence_;
  
-    
-    
+    docking::DockJumps LH_dock_jumps_;
+    docking::DockJumps Ab_Ag_dock_jumps_;    
     
 
 };

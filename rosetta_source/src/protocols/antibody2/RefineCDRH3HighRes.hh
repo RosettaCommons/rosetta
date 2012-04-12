@@ -23,7 +23,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 #include <protocols/loops/Loops.hh>
@@ -44,7 +44,7 @@
 	#include <protocols/moves/PyMolMover.hh>
 #endif
 
-
+using namespace core;
 namespace protocols {
 namespace antibody2 {
 
@@ -58,9 +58,13 @@ public:
 
     /// @brief constructor with arguments
     RefineCDRH3HighRes(AntibodyInfoOP antibody_info, std::string loop_name);
+    
+    /// @brief constructor with arguments
+    RefineCDRH3HighRes(AntibodyInfoOP antibody_info, std::string loop_name, 
+                       scoring::ScoreFunctionCOP highres_scorefxn );
 
     /// @brief constructor with arguments
-    RefineCDRH3HighRes( bool is_camelid, AntibodyInfoOP antibody_info);
+    RefineCDRH3HighRes( AntibodyInfoOP antibody_info);
 
 
     void set_task_factory(core::pack::task::TaskFactoryCOP tf){
@@ -86,14 +90,17 @@ public:
     virtual void apply( core::pose::Pose & pose );
 
     virtual std::string get_name() const;
-
+    
+	void set_highres_score_func(scoring::ScoreFunctionCOP highres_scorefxn){
+        highres_scorefxn_ = new core::scoring::ScoreFunction(*highres_scorefxn);
+    }
 
 private:
 
     AntibodyInfoOP ab_info_;
     std::string loop_name_;
     loops::Loop the_loop_;
-
+    core::Size high_cst_;
     core::Size loop_begin_,loop_end_,loop_size_;
     core::Size cutpoint_;
     core::Size n_small_moves_;

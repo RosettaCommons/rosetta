@@ -32,6 +32,7 @@ sources = {
 		"LHRepulsiveRamp",
 		"LHSnugFitLegacy",
 		"RefineCDRH3HighRes",
+		"RefineCDRH1Centroid"
 	],
 }
 include_path = [
