@@ -45,6 +45,7 @@
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loop.hh>
 
 //movers
 #include <protocols/moves/MonteCarlo.hh>
@@ -133,7 +134,7 @@ public:
 		loop_(), //we want default ctor
 		atomIDs(atomID_tot, core::id::BOGUS_ATOM_ID ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
-		IAM_(new protocols::moves::InterfaceAnalyzerMover)
+		IAM_(new protocols::analysis::InterfaceAnalyzerMover)
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
@@ -149,6 +150,12 @@ public:
 		}
 
 		IAM_->set_use_centroid_dG(false);
+
+		//set up loop object
+		if ( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].user() ) {
+			protocols::loops::Loops loops( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value()[1] );
+			loop_ = *(loops.begin());\
+		}
 	}
 
 	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
@@ -328,7 +335,6 @@ public:
 		std::set< core::Size > loop_posns;
 		//setup loop
 		if ( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].user() ) {
-			loop_ = *(protocols::loops::get_loops_from_file().begin());
 			TR << "loop " <<  loop_ << std::endl;
 			//set up for interface-plus-neighbors-positions operation
 			for (core::Size j(loop_.start()), end(loop_.stop()); j <= end; ++j){
@@ -469,7 +475,7 @@ public:
 		}
 
 		//////////////////////////////RotateJumpAxisMover for second ubiquitin//////////////////////
-		protocols::rigid::RotateJumpAxisMoverOP RJAmover(new protocols::moves::RotateJumpAxisMover(1));
+		protocols::rigid::RotateJumpAxisMoverOP RJAmover(new protocols::rigid::RotateJumpAxisMover(1));
 		backbone_mover->add_mover(RJAmover, 1);
 
 
@@ -663,7 +669,7 @@ private:
 
 	std::string const InterfaceSasaDefinition_; //calculator name
 
-	protocols::moves::InterfaceAnalyzerMoverOP IAM_;
+	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 
 };
 
