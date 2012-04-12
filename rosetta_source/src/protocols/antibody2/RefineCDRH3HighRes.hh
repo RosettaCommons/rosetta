@@ -100,7 +100,7 @@ private:
     AntibodyInfoOP ab_info_;
     std::string loop_name_;
     loops::Loop the_loop_;
-    core::Size high_cst_;
+    core::Real high_cst_;
     core::Size loop_begin_,loop_end_,loop_size_;
     core::Size cutpoint_;
     core::Size n_small_moves_;
