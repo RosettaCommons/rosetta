@@ -45,7 +45,6 @@ sources = {
 		"combine_silent",
 		"extract_pdbs",
 		"fragment_picker",
-		"idealize",
 		"idealize_jd2",
 		"minimize",
 		"packstat",

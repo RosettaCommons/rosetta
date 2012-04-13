@@ -28,7 +28,7 @@
 // C++ headers
 #include <iostream>
 
-#include <protocols/jobdist/Jobs.hh>
+//#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -38,11 +38,13 @@
 OPT_KEY( Real, atom_pair_constraint_weight )
 OPT_KEY( Real, coordinate_constraint_weight )
 OPT_KEY( Boolean, fast )
+OPT_KEY( Boolean, chainbreaks )
 
 void register_options() {
   NEW_OPT( atom_pair_constraint_weight, "atompair constraint weight", 0.0 );
   NEW_OPT( coordinate_constraint_weight, "coordinate constraint weight", 0.0 );
   NEW_OPT( fast, "fast protocol", false );
+  NEW_OPT( chainbreaks, "keep chainbreaks", false );
 }
 
 int main( int argc, char * argv [] ) {
@@ -68,6 +70,7 @@ int main( int argc, char * argv [] ) {
 		idealizer->atom_pair_constraint_weight( option[ atom_pair_constraint_weight ]() );
 	}
 	idealizer->fast( option[ fast ]() );
+	idealizer->chainbreaks( option[ chainbreaks ]() );
 
 	MoverOP mover (idealizer);
 
