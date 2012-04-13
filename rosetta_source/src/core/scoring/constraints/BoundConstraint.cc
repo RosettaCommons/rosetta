@@ -19,6 +19,7 @@
 // Project Headers
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <basic/Tracer.hh>
+#include <utility/exit.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
@@ -34,9 +35,16 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+
 Real
 BoundFunc::func( Real const x ) const
 {
+
+	if(rswitch_!=0.5)
+	{
+		tr.Error << "WARNING! rswitch in BoundConstraint function != 0.5. Results in discontinuity of the derivative." << std::endl;
+		utility_exit_with_message ("rswitch != 0.5. Derivatives may be discontinuous.");
+	}
 
 	Real const rswitch_offset (( rswitch_ * rswitch_ ) - rswitch_ );
 	Real delta;
@@ -60,6 +68,13 @@ BoundFunc::func( Real const x ) const
 
 Real
 BoundFunc::dfunc( Real const x ) const {
+
+	if(rswitch_!=0.5)
+	{
+		tr.Error << "WARNING! rswitch in BoundConstraint function != 0.5. Results in discontinuity of the derivative." << std::endl;
+		utility_exit_with_message ("rswitch != 0.5. Derivatives may be discontinuous.");
+	}
+
 	Real delta;
 	if ( x > ub_ ) {
 		delta = x - ub_;
@@ -101,7 +116,7 @@ BoundFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real 
 void
 BoundFunc::show_definition( std::ostream &out ) const {
 	using namespace ObjexxFCL::fmt;
-	out << "BOUNDED " << std::setprecision( 4 ) << RJ(7, lb_) << " " << RJ(7, ub_) << " " << RJ(3,sd_) << " "  << A(50, type_) << " ";
+	out << "BOUNDED " << std::setprecision( 4 ) << RJ(7, lb_) << " " << RJ(7, ub_) << " " << RJ(3,sd_) << " "  << A(5, type_) << " ";
 	if ( rswitch_ != 0.5 ) out << RJ(5,rswitch_ );
 	out << "\n";
 }
@@ -122,7 +137,6 @@ BoundFunc::read_data( std::istream& in ) {
 		type_ = tag;
 	}
 }
-
 
 
 void
@@ -155,6 +169,7 @@ OffsetPeriodicBoundFunc::read_data( std::istream& in )
 	in >> offset_ >> periodicity_ ;
 	parent::read_data( in );
 }
+
 
 }
 }

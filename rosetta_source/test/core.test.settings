@@ -141,6 +141,8 @@ sources = {
 		"GaussianFunc",
 		"util",
 		"SplineFunc",
+		"BoundConstraint",
+		"ScalarWeightedFunc",
 		"SiteConstraint",
 	],
 	"scoring/disulfides" : [

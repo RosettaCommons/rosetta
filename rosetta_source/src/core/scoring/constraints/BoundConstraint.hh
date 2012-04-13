@@ -68,6 +68,8 @@ public:
 	Real lb() const { return lb_; }
 	Real ub() const { return ub_; }
 	Real sd() const { return sd_; }
+	Real rswitch() const {return rswitch_;}
+	std::string type() const {return type_;}
 
 private:
 	Real lb_;
@@ -161,6 +163,7 @@ public:
 	{
 		return parent::show_violations( out, basic::periodic_range( x, periodicity_ ), verbose_level, threshold );
 	}
+
 
 private:
 	Real periodicity_;

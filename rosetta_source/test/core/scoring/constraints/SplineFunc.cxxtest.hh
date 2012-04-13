@@ -49,9 +49,6 @@ public:
 	// Shared finalization goes here.
 	void tearDown() {}
 
-	///////////////////////////////////////////////////////////////////////////////
-	// ------------------------------------------ //
-	/// @brief simple test minimization
 	void test_spline_func()
 	{
 		static basic::Tracer TR("core.scoring.constraints.SplineFunc.cxxtest");

@@ -44,13 +44,23 @@ namespace constraints {
 
 		virtual ~ScalarWeightedFunc();
 
+		virtual
 		FuncOP
 		clone() const { return new ScalarWeightedFunc( *this ); }
 
+		virtual
 		Real func( Real const x ) const;
+		virtual
 		Real dfunc( Real const x ) const;
 
+		virtual
 		void read_data( std::istream& );
+
+		virtual
+		void show_definition( std::ostream &out ) const;
+		virtual
+		Size show_violations(std::ostream &out, Real x, Size verbose_level, Real threshold = 1) const;
+
 
 	private:
 		Real weight_;
