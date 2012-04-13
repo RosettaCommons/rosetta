@@ -60,7 +60,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     # )
     parser.add_option("-d", "--database",
       default="", # processed below
-      help="Path to Rosetta database. (default: $ROSETTA3_DB, ../..//rosetta_database)",
+      help="Path to Rosetta database. (default: $ROSETTA_DB, ../..//rosetta_database)",
     )
 
     parser.add_option("-m", "--mini_home",
@@ -333,6 +333,7 @@ class Worker:
         self.timeout = timeout_minutes * 60
 
     def work(self):
+        running=0
         try:
             while True:
                 test = self.queue.get_nowait()
@@ -362,17 +363,18 @@ class Worker:
                         #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
                         #print cmd; print
                         if self.host is None:
-                            print "Running %s on localhost ..." % test
+                            print "Running  %-40s on localhost ..." % test
                             proc = subprocess.Popen(["bash",  cmd_line_sh], preexec_fn=os.setpgrp)
                         # Can't use cwd=workdir b/c it modifies *local* dir, not remote dir.
                         else:
-                            print "Running %s on %s ..." % (test, self.host)
+                            print "Running  %-40s on %20s ..." % (test, self.host)
                             # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile
                             # when executing specific remote commands.
                             # This causes problems with e.g. the custom Python install on the Whips.
                             # So we replace the default remote PATH with the current local one.
                             cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
                             proc = subprocess.Popen(["ssh", self.host, cmd], preexec_fn=os.setpgrp)#, cwd=workdir)
+
                         start = time.time() # refined start time
                         if self.timeout == 0:
                             retcode = proc.wait() # does this block all threads?
@@ -392,10 +394,9 @@ class Worker:
                             # Writing error_string to a file, so integration test should fail for sure
                             file(path.join(workdir, ".test_did_not_run.log"), 'w').write(error_string)
 
-
                     finally: # inner try
                         percent = (100* (self.queue.TotalNumberOfTasks-self.queue.qsize())) / self.queue.TotalNumberOfTasks
-                        print "Finished %s in %i seconds\t [~%s test (%s%%) started, %s in queue]" % (test, time.time() - start, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize())
+                        print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (test, time.time() - start, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize(), self.queue.unfinished_tasks-self.queue.qsize() )
                         self.queue.task_done()
 
                 except Exception, e: # middle try
