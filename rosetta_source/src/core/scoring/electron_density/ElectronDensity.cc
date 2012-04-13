@@ -3619,19 +3619,19 @@ void ElectronDensity::initializeSymmOps( utility::vector1< std::string > const &
 			}
 
 			if (rows[j].find("-X") != std::string::npos)
-				rot(j+1,1) = -1;
+				rot(j,1) = -1;
 			else if (rows[j].find("X") != std::string::npos)
-				rot(j+1,1) = 1;
+				rot(j,1) = 1;
 
 			if (rows[j].find("-Y") != std::string::npos)
-				rot(j+1,2) = -1;
+				rot(j,2) = -1;
 			else if (rows[j].find("Y") != std::string::npos)
-				rot(j+1,2) = 1;
+				rot(j,2) = 1;
 
 			if (rows[j].find("-Z") != std::string::npos)
-				rot(j+1,3) = -1;
+				rot(j,3) = -1;
 			else if (rows[j].find("Z") != std::string::npos)
-				rot(j+1,3) = 1;
+				rot(j,3) = 1;
 		}
 
 		symmOps.push_back( RT( rot, trans ) );
