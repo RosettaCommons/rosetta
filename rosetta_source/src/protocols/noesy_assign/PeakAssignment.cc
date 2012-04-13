@@ -108,7 +108,7 @@ void PeakAssignment::update_chemshiftscore_from_peak() {
 	for ( Size d=1; d<=crosspeak_->dimension(); d++ ) {
 		CrossPeak::Spin const& spin( crosspeak_->spin( d ) );
 		Resonance const& assigned_resonance( resonances()[ spin.assignment( spin_id( d>2 ? d-2 : d ) ) ] );
-		Real diff( spin.freq()-assigned_resonance.freq() );
+		Real diff( spin.freq()-crosspeak_->fold_resonance( assigned_resonance.freq(), d ) );
 		Real s( diff/weight/std::max( crosspeak_->tolerance( d ), assigned_resonance.tolerance() ) );
 		sum += s*s;
 	}

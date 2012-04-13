@@ -1,3 +1,5 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
@@ -14,7 +16,7 @@
 #include <protocols/noesy_assign/CrossPeakInfo.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/noesy_assign/ResonanceList.fwd.hh>
+#include <protocols/noesy_assign/FoldResonance.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -89,12 +91,25 @@ public:
 
   void show( std::ostream& ) const;
 
+  FoldResonance const& fold_label_resonance() const { return fold_label_resonance_; }
+  FoldResonance const& fold_proton_resonance() const { return fold_proton_resonance_; }
+
+  void set_folding_window( core::Real start, core::Real end, bool label=true ) {
+    if ( label ) {
+      fold_label_resonance_.set_window( start, end );
+    } else {
+      fold_proton_resonance_.set_window( start, end );
+    }
+  }
+
 private:
   std::string proton_atom_name_;
   std::string label_atom_type_;
   core::Real proton_tolerance_;
   core::Real label_tolerance_;
   std::string filename_;
+  FoldResonance fold_label_resonance_;
+  FoldResonance fold_proton_resonance_; //this is probably nonsense but for completeness...
 };
 
 std::ostream& operator<< ( std::ostream&, CrossPeakInfo const& );

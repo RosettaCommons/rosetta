@@ -65,6 +65,10 @@ void CrossPeakInfo::show( std::ostream& os ) const {
 		 << proton_atom_name_ << " " << label_atom_type_ << " "
 		 << "TOL: " << proton_tolerance_ << " " << label_tolerance_
 		 << " from file " << filename_;
+	os << "PROTON: ";
+	fold_proton_resonance_.show( os );
+	os << "LABEL: ";
+	fold_label_resonance_.show( os );
 }
 
 std::ostream& operator<< ( std::ostream& os, CrossPeakInfo const& cpi ) {

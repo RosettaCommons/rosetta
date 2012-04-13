@@ -186,6 +186,9 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
   Size dim( 0 );
   utility::vector1< std::string > atom_names;
   utility::vector1< core::Real > tolerances;
+	utility::vector1< core::Real > fold_starts( 4, 0);
+	utility::vector1< core::Real > fold_ends( 4, 0);
+
 	bool HN_column_labels( false ); //true if we find a HC or HN ( instead of h vs H )
   std::string line;
 	std::string cyana_string("none");
@@ -245,6 +248,13 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
       atom_names[ index ] = name;
     } else if ( tag == "#CYANAFORMAT" ) {
 			line_stream >> cyana_string;
+		} else if ( tag == "#FOLD" ) {
+			Size fold_dim;
+			Size start;
+			Size end;
+			line_stream >> fold_dim >> start >> end;
+			fold_starts[ fold_dim ]=start;
+			fold_ends[ fold_dim ]=end;
     } else if ( tag == "#TOLERANCE" ) {
       for ( Size i = 1; i <= dim; i++ ) {
 				core::Real val;
@@ -327,6 +337,11 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
       }
     }
   }
+	for ( Size i = 1; i<=dim; i++ ) {
+		CrossPeakInfoOP info = col2proton_[ i ]==1 ? info1_ : info2_;
+		info->set_folding_window( fold_starts[ i ], fold_ends[ i ], col2islabel_[ i ] );
+	}
+
 	if ( !info2_  || !info1_ ) {
 		throw utility::excn::EXCN_BadInput(" problem reading peak file, no or errorenous header ");
 	}

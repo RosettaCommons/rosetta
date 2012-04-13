@@ -155,7 +155,7 @@ void CrossPeak::assign_spin( Size iproton ) {
   Real const my_freq( proton( iproton ).freq() );
   Real const my_tolerance( info_struct( iproton ).proton_tolerance() );
   for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
-    if ( std::abs( it->second.freq() - my_freq ) < std::max( my_tolerance, it->second.error() ) ) {
+    if ( std::abs( fold_resonance( it->second.freq(), iproton ) - my_freq ) < std::max( my_tolerance, it->second.error() ) ) {
       proton( iproton ).add_assignment( it->first );
     }
   }
@@ -443,7 +443,7 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 	/// if we have pseudo 4D spectrum we speed things up a bit by filtering out non-protons here
 	if ( my_tolerance > 99 ) {
 		for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
-			if ( std::abs( it->second.freq() - my_label_freq ) < std::max( my_label_tolerance, it->second.error() ) ) {
+			if ( std::abs( fold_resonance( it->second.freq(), iproton + 2 ) - my_label_freq ) < std::max( my_label_tolerance, it->second.error() ) ) {
 				//now find all proton-resonances that are bound to this label atom
 				core::Size resid( it->second.resid() );
 				std::string const& label_name( it->second.name() );
@@ -473,13 +473,13 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 			/// if we have pseudo 4D spectrum we speed things up a bit by filtering out non-protons here
 			//			if ( my_tolerance > 99 && ( it->second.freq() > 13.0 && info_struct( iproton ).main_atom() == "H" ) ) continue;
 
-			if ( std::abs( it->second.freq() - my_freq ) < std::max( my_tolerance, it->second.tolerance() ) ) {
+			if ( std::abs( fold_resonance( it->second.freq(), iproton ) - my_freq ) < std::max( my_tolerance, it->second.tolerance() ) ) {
 				Size resid( it->second.atom().rsd() );
 				//maybe also map resonance by resid?
 				try {
 					id::NamedAtomID atomID( info_struct( iproton ).label_atom_name( it->second.atom().atom(), resonances().aa_from_resid( resid ) ), resid );
 					Resonance const& label_reso ( resonances()[ atomID ] );
-					if ( std::abs( label_reso.freq() - my_label_freq ) < my_label_tolerance ) {
+					if ( std::abs( fold_resonance( label_reso.freq(), iproton+2 ) - my_label_freq ) < my_label_tolerance ) {
 						proton( iproton ).add_assignment( it->first );
 						label( iproton ).add_assignment( label_reso.label() );
 					}

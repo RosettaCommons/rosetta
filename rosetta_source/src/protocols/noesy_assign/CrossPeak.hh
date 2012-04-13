@@ -118,6 +118,23 @@ public:
   ///@brief expect res_ids in order: spin1, spin2, label1, label2
   virtual void add_full_assignment( core::Size res_ids[] );
 
+  core::Real fold_resonance( core::Real freq, core::Size i /*dim*/ ) {
+    // dim = 1, 2 are the protons
+    // dim = 3, 4 are the labels
+
+    /// for now only labels can be folded
+    if ( i==1 ) {
+      return info1_->fold_proton_resonance()( freq );
+    } else if ( i==2 ) {
+      return info2_->fold_proton_resonance()( freq );
+    } else if ( i==3 ) {
+      return info1_->fold_label_resonance()( freq );
+    } else if ( i==4 ) {
+      return info2_->fold_label_resonance()( freq );
+    } else {
+      runtime_assert( false ); //should never get here...
+    }
+  }
 //  virtual void read_from_stream( std::istream& );
 //   virtual void add_assignment_from_stream( std::istream& );
 //   virtual void write_to_stream( std::ostream& ) const;

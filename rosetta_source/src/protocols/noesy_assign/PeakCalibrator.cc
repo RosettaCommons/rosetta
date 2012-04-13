@@ -171,7 +171,7 @@ void PeakCalibrator::do_calibration() {
   while ( !finished && max_cycles ) {
     --max_cycles;
 		reset_statistics();
-		set_new_upper_bounds();
+		set_new_upper_bounds(); //compute statistics about upper bounds
 		//		show_statistics( tr.Info );
 		tr.Info << accumulated_target_[ BACKBONE ]/accumulated_count_[ BACKBONE ] << " " << target_;
 		tr.Info << " " << calibration_constant_[ BACKBONE ] << " " << calibration_constant_[ SIDECHAIN ] << " " << calibration_constant_[ METHYL ] << std::endl;
