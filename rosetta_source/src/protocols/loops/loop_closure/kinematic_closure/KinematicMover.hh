@@ -110,6 +110,14 @@ public:
 	bool check_rama(core::Real old_rama_score, core::Real new_rama_score);
 	bool last_move_succeeded();
 	void set_perturber( KinematicPerturberOP perturber_in );
+	core::Real get_bump_overlap_factor() const
+  {
+    return bump_overlap_factor_;
+  }
+  void set_bump_overlap_factor(core::Real bump_overlap_factor)
+	{
+		bump_overlap_factor_=bump_overlap_factor;
+	}
 
 private:
 
