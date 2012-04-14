@@ -47,12 +47,12 @@ std::string RepGridCreator::grid_name()
 	return "RepGrid";
 }
 
-RepGrid::RepGrid() : GridBase("RepGrid",0.0), radius_(2.25), bb_(1), sc_(0), ligand_(1)
+RepGrid::RepGrid() : SingleGrid("RepGrid",0.0), radius_(2.25), bb_(1), sc_(0), ligand_(1)
 {
 
 }
 
-RepGrid::RepGrid(core::Real weight) : GridBase("RepGrid",weight), radius_(2.25)
+RepGrid::RepGrid(core::Real weight) : SingleGrid("RepGrid",weight), radius_(2.25)
 {
 }
 

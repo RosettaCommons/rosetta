@@ -11,35 +11,27 @@
 /// @author Sam DeLuca
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
-//#include <protocols/qsar/qsarTypeManager.hh>
 
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
 #include <protocols/jd2/Job.hh>
+#include <protocols/qsar/qsarMap.hh>
 
 #include <core/pose/util.hh>
-
-//#include <protocols/jd2/PDBJobOutputter.hh>
-
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/qsar.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
+#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
 
+//STL headers
 #include <iostream>
 #include <fstream>
 #include <map>
-
-#include <protocols/qsar/qsarMap.hh>
-#include <utility/vector0.hh>
 
 //Auto Headers
 #include <boost/bind.hpp>

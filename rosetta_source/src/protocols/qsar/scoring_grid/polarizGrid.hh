@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_qsar_scoring_grid_polarizGrid_hh
 
 #include <protocols/qsar/scoring_grid/polarizGrid.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <map>
 
 #include <utility/vector1.hh>
@@ -24,7 +24,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class polarizGrid : public GridBase
+class polarizGrid : public SingleGrid
 {
 public:
 	polarizGrid();

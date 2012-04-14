@@ -24,5 +24,6 @@ static GridRegistrator<HbaGridCreator> reg_HbaGridCreator;
 static GridRegistrator<HbdGridCreator> reg_HbdGridCreator;
 static GridRegistrator<polarizGridCreator> reg_polarizGridCreator;
 static GridRegistrator<VdwGridCreator> reg_VdwGridCreator;
+static GridRegistrator<ElectroStaticMetaGridCreator> reg_ElectroStaticMetaGridCreator;
 
 } //namespace protocols

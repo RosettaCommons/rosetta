@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_qsar_scoring_grid_VdwGrid_hh
 
 #include <protocols/qsar/scoring_grid/VdwGrid.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 
 #include <utility/vector1.hh>
@@ -25,7 +25,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class VdwGrid : public GridBase
+class VdwGrid : public SingleGrid
 {
 public:
 

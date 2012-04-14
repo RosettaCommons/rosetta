@@ -47,12 +47,12 @@ std::string HbdGridCreator::grid_name()
 	return "HbdGrid";
 }
 
-HbdGrid::HbdGrid(): GridBase ("HbdGrid",1.0), radius_(2.4),width_(1.0), magnitude_(-1.0)
+HbdGrid::HbdGrid(): SingleGrid ("HbdGrid",1.0), radius_(2.4),width_(1.0), magnitude_(-1.0)
 {
 
 }
 
-HbdGrid::HbdGrid(core::Real weight) : GridBase ("HbdGrid",weight), radius_(2.4),width_(1.0), magnitude_(-1.0)
+HbdGrid::HbdGrid(core::Real weight) : SingleGrid ("HbdGrid",weight), radius_(2.4),width_(1.0), magnitude_(-1.0)
 {
 
 }

@@ -1,0 +1,84 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   src/protocols/qsar/scoring_grid/ChargeGrid.hh
+/// @author Sam DeLuca
+/// @brief This is an implementation of equation 3 in Goodford, J. Med. Chem. 1985,28,849-857.  doi:10.1021/jm00145a002
+
+#ifndef INCLUDED_protocols_qsar_scoring_grid_ChargeGrid_HH
+#define INCLUDED_protocols_qsar_scoring_grid_ChargeGrid_HH
+
+#include <protocols/qsar/scoring_grid/ChargeGrid.fwd.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
+
+namespace protocols {
+namespace qsar {
+namespace scoring_grid {
+
+/// @brief a very light representation of an atom that is just a charge and a cartesian space position
+struct ChargeAtom
+{
+	ChargeAtom(core::Vector const &  in_xyz, core::Real const & in_charge, core::Size const & nc)
+	{
+		xyz = in_xyz;
+		charge = in_charge;
+		neighbor_count = nc;
+
+	}
+
+	core::Vector xyz;
+	core::Real charge;
+	core::Size neighbor_count;
+};
+
+
+class ChargeGrid : public SingleGrid
+{
+public:
+	ChargeGrid();
+	ChargeGrid(core::Real charge, core::Real weight);
+	ChargeGrid(core::Real weight);
+	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude);
+	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
+	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude);
+
+	void parse_my_tag(utility::tag::TagPtr const tag);
+
+	void set_charge(core::Real charge);
+
+private:
+
+	/// @brief calculate nominal depth based on atom count within 4 Angstroms. See
+	/// Table 2 of the 1985 Goodford Paper
+	core::Real nominal_depth(core::Size const & n_atoms) const;
+
+	core::Real charge_charge_electrostatic(core::pose::Pose const & pose, ChargeAtom const & atom_q, ChargeAtom const & atom_p) const;
+
+	void setup_charge_atoms(core::pose::Pose const & pose);
+
+private:
+
+	core::Real const zeta_;
+	core::Real const epsilon_;
+	core::Real const indirect_numerator_; // (zeta - epsilon) / (zeta + epsilon)
+	core::Real const epsilon_0_;
+
+	core::Real charge_;
+	std::list<ChargeAtom> charge_atom_list_;
+
+};
+
+
+}
+}
+}
+
+
+
+#endif /* CHARGEGRID_HH_ */

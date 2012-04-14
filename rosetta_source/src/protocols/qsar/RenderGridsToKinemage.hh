@@ -20,7 +20,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridBase.fwd.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.fwd.hh>
 
 #include <protocols/qsar/RenderGridsToKinemage.fwd.hh>
 #include <numeric/xyzVector.hh>
@@ -84,7 +84,7 @@ private:
 	numeric::xyzVector<core::Real> zero_color_;
 	numeric::xyzVector<core::Real> high_color_;
 	utility::vector1<ColorGradient> color_data_;
-	scoring_grid::GridBaseOP grid_;
+	scoring_grid::SingleGridOP grid_;
 
 };
 

@@ -7,26 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/qsar/scoring_grid/GridBase.fwd.hh
+/// @file   src/protocols/qsar/scoring_grid/ChargeGridCreator.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_GridBase_FWD_HH
-#define INCLUDED_protocols_qsar_scoring_grid_GridBase_FWD_HH
+#ifndef INCLUDED_protocols_qsar_scoring_grid_ChargeGridCreator_HH_
+#define INCLUDED_protocols_qsar_scoring_grid_ChargeGridCreator_HH_
 
-#include <utility/pointer/owning_ptr.hh>
+#include <protocols/qsar/scoring_grid/GridCreator.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class GridBase;
-
-typedef utility::pointer::owning_ptr<GridBase> GridBaseOP;
-typedef utility::pointer::owning_ptr<GridBase const> GridBaseCOP;
+class ChargeGridCreator : public GridCreator
+{
+public:
+	virtual GridBaseOP create_grid(utility::tag::TagPtr const tag) const;
+	virtual std::string keyname() const;
+	static std::string grid_name();
+};
 
 }
 }
 }
 
-
-#endif /* GRIDBASE_FWD_HH_ */
+#endif /* CHARGEGRIDCREATOR_HH_ */

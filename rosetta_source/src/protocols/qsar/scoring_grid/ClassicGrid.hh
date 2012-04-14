@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_qsar_scoring_grid_ClassicGrid_HH_
 
 #include <protocols/qsar/scoring_grid/ClassicGrid.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
 #include <utility/vector1.hh>
 
@@ -22,7 +22,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class ClassicGrid : public GridBase
+class ClassicGrid : public SingleGrid
 {
 public:
 	ClassicGrid();

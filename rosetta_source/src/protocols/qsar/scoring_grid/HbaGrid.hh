@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_qsar_scoring_grid_HbaGrid_hh
 
 #include <protocols/qsar/scoring_grid/HbaGrid.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
 #include <utility/vector1.hh>
 
@@ -24,7 +24,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class HbaGrid : public GridBase
+class HbaGrid : public SingleGrid
 {
 public:
 	HbaGrid();

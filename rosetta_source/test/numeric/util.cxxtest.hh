@@ -85,4 +85,23 @@ class NumericUtilTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA(numeric::log(64,8), 2, delta);
 		TS_ASSERT_DELTA(numeric::log(512,8), 3, delta);
 	}
+
+	void test_find_nearest() {
+		using utility::vector1;
+		using namespace numeric;
+		vector1< Real > values;
+		values.push_back(1);
+		values.push_back(2);
+		values.push_back(5);
+		values.push_back(3);
+
+		Real nearest = find_nearest_value<Real>(values,2.0);
+		TS_ASSERT(nearest == 2.0);
+
+		nearest = find_nearest_value(values,5.2);
+		TS_ASSERT(nearest == 5.0);
+
+
+	}
+
 }; // NumericUtilTests

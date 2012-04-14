@@ -10,27 +10,27 @@
 /// @file   src/protocols/qsar/RenderGridsToKinemage.cc
 /// @author Sam DeLuca
 
-//utility headers
+
+#include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/qsar/RenderGridsToKinemage.hh>
+#include <protocols/qsar/RenderGridsToKinemageCreator.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
+
+#include <core/pose/Pose.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/tag/Tag.hh>
+
 #include <numeric/xyz.functions.hh>
 #include <numeric/color_util.hh>
 
-//Project headers
-#include <protocols/qsar/scoring_grid/GridManager.hh>
-
-
-//Unit headers
-#include <protocols/qsar/RenderGridsToKinemage.hh>
-#include <protocols/qsar/RenderGridsToKinemageCreator.hh>
-
 #include <iostream>
 
-#include <core/pose/Pose.hh>
-#include <protocols/jobdist/Jobs.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
+
 
 
 namespace protocols {
@@ -152,7 +152,11 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagPtr const tag,
 	}
 
 	grid_name_ = tag->getOption<std::string>("grid_name");
-	grid_ = scoring_grid::GridManager::get_instance()->get_grid(grid_name_);
+	grid_ = utility::pointer::dynamic_pointer_cast<scoring_grid::SingleGrid,scoring_grid::GridBase>(scoring_grid::GridManager::get_instance()->get_grid(grid_name_) );
+	if(grid_ == NULL)
+	{
+		utility_exit_with_message("RenderGridsToKinemage is currently unable to output the contents of a metagrid.  Sorry.");
+	}
 
 	if(!tag->hasOption("file_name"))
 	{

@@ -11,7 +11,7 @@
 /// @author Sam DeLuca
 
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 //#include <protocols/qsar/qsarTypeManager.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>

@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_qsar_scoring_grid_RepGrid_hh
 
 #include <protocols/qsar/scoring_grid/RepGrid.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <utility/vector1.fwd.hh>
 #include <numeric/xyzVector.hh>
 
@@ -25,7 +25,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class RepGrid : public GridBase
+class RepGrid : public SingleGrid
 {
 public:
 	RepGrid();

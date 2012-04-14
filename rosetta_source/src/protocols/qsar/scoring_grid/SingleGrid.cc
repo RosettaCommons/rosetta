@@ -10,7 +10,7 @@
 /// @file   protocols/ligand_docking/scoring_grid/GridBase.cc
 /// @author Sam DeLuca
 
-#include <protocols/qsar/scoring_grid/GridBase.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
 #include <core/grid/CartGrid.hh>
@@ -29,15 +29,20 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-static basic::Tracer GridBaseTracer("protocols.qsar.scoring_grid.GridBase");
+static basic::Tracer GridBaseTracer("protocols.qsar.scoring_grid.SingleGrid");
 
 
-GridBase::GridBase(std::string type, core::Real weight) : type_(type), weight_(weight),chain_('A')
+SingleGrid::SingleGrid(std::string type, core::Real weight) : type_(type), weight_(weight),chain_('A')
 {
 
 }
 
-void GridBase::initialize(core::Vector const & center, core::Real width,core::Real resolution )
+SingleGrid::~SingleGrid()
+{
+
+}
+
+void SingleGrid::initialize(core::Vector const & center, core::Real width,core::Real resolution )
 {
 	center_=center;
 
@@ -55,67 +60,73 @@ void GridBase::initialize(core::Vector const & center, core::Real width,core::Re
 	grid_.zero();
 }
 
-void GridBase::set_chain(char chain)
+void SingleGrid::set_chain(char chain)
 {
 	chain_ = chain;
 }
 
-char GridBase::get_chain()
+char SingleGrid::get_chain()
 {
 	return chain_;
 }
 
-core::grid::CartGrid<core::Real> const & GridBase::get_grid()
+core::grid::CartGrid<core::Real> const & SingleGrid::get_grid()
 {
 	return grid_;
 }
 
-void GridBase::set_type(std::string type)
+void SingleGrid::set_type(std::string type)
 {
 	type_ = type;
 }
 
-std::string GridBase::get_type()
+std::string SingleGrid::get_type()
 {
 	return type_;
 }
 
-void GridBase::set_weight(core::Real weight)
+void SingleGrid::set_weight(core::Real weight)
 {
 	weight_ = weight;
 }
 
-core::Real GridBase::get_weight()
+core::Real SingleGrid::get_weight()
 {
 	return weight_;
 }
 
-void GridBase::set_center(core::Vector center)
+void SingleGrid::set_center(core::Vector center)
 {
 	center_ = center;
 }
 
-core::Vector GridBase::get_center()
+core::Vector SingleGrid::get_center()
 {
 	return center_;
 }
 
-core::Real GridBase::get_max_value() const
+core::Real SingleGrid::get_max_value() const
 {
 	return grid_.getMaxValue();
 }
 
-core::Real GridBase::get_min_value() const
+core::Real SingleGrid::get_min_value() const
 {
 	return grid_.getMinValue();
 }
 
-core::Real GridBase::get_point(core::Real x, core::Real y, core::Real z)
+core::Real SingleGrid::get_point(core::Real x, core::Real y, core::Real z)
 {
 	 return grid_.getValue(x,y,z);
 }
 
-numeric::xyzVector<core::Size> GridBase::get_dimensions()
+core::Real SingleGrid::get_point(core::Vector coords)
+{
+	return grid_.getValue(coords);
+}
+
+
+numeric::xyzVector<core::Size> SingleGrid::get_dimensions()
 {
 	int x_size(0);
 	int y_size(0);
@@ -125,7 +136,18 @@ numeric::xyzVector<core::Size> GridBase::get_dimensions()
 	return numeric::xyzVector<core::Size>(x_size,y_size,z_size);
 }
 
-core::Real GridBase::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP )
+core::Vector SingleGrid::get_pdb_coords(int x, int y, int z)
+{
+	core::grid::CartGrid<core::Real>::GridPt gridpt(x,y,z);
+	return get_pdb_coords(gridpt);
+}
+
+core::Vector SingleGrid::get_pdb_coords(core::grid::CartGrid<core::Real>::GridPt gridpt)
+{
+	return grid_.coords(gridpt);
+}
+
+core::Real SingleGrid::score(core::conformation::Residue const & residue, core::Real const max_score,qsarMapOP qsar_map)
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
@@ -151,7 +173,7 @@ core::Real GridBase::score(core::conformation::Residue const & residue, core::Re
 }
 
 std::list<std::pair<core::Vector, core::Real> >
-GridBase::get_point_value_list_within_range(
+SingleGrid::get_point_value_list_within_range(
 		core::Real lower_bound,
 		core::Real upper_bound,
 		core::Size stride)
@@ -182,7 +204,7 @@ GridBase::get_point_value_list_within_range(
 	return point_list;
 }
 
-void GridBase::grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride)
+void SingleGrid::grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride)
 {
 	int x_size(0);
 	int y_size(0);
@@ -208,12 +230,12 @@ void GridBase::grid_to_kin(utility::io::ozstream & out, core::Real min_val, core
 }
 
 
-void GridBase::fill_with_value(core::Real value)
+void SingleGrid::fill_with_value(core::Real value)
 {
 	grid_.setFullOccupied(value);
 }
 
-void GridBase::set_sphere(
+void SingleGrid::set_sphere(
 		core::Vector const & coords,
 		core::Real radius,
 		core::Real value
@@ -221,7 +243,7 @@ void GridBase::set_sphere(
 	set_ring(coords, 0, radius, value);
 }
 
-void GridBase::set_ring(
+void SingleGrid::set_ring(
 		core::Vector const & coords,
 		core::Real inner_radius,
 		core::Real outer_radius,
@@ -261,7 +283,7 @@ void GridBase::set_ring(
 	//TR << "done making sphere "<<std::endl;
 }
 
-void GridBase::set_distance_sphere_for_atom(core::Real const & atom_shell,core::Vector const & coords,core::Real cutoff)
+void SingleGrid::set_distance_sphere_for_atom(core::Real const & atom_shell,core::Vector const & coords,core::Real cutoff)
 {
 	core::Real cutoff2 = cutoff*cutoff;
 	int x_count(0);
@@ -295,7 +317,7 @@ void GridBase::set_distance_sphere_for_atom(core::Real const & atom_shell,core::
 	}
 }
 
-void GridBase::diffuse_ring(core::Vector const & coords, core::Real radius, core::Real width, core::Real magnitude)
+void SingleGrid::diffuse_ring(core::Vector const & coords, core::Real radius, core::Real width, core::Real magnitude)
 {
 	core::Real radius_squared = radius*radius;
 	core::Real half_width = width/2;
@@ -352,12 +374,12 @@ void GridBase::diffuse_ring(core::Vector const & coords, core::Real radius, core
 	}
 }
 
-void GridBase::set_point(core::Vector const & coords, core::Real value)
+void SingleGrid::set_point(core::Vector const & coords, core::Real value)
 {
 	grid_.setValue(coords,value);
 }
 
-void GridBase::dump_BRIX(std::string const & prefix)
+void SingleGrid::dump_BRIX(std::string const & prefix)
 {
 	//std::string grid_type_string(qsar::qsarTypeManager::name_from_qsar_type(type_));
 	grid_.write_to_BRIX(prefix + type_ + ".omap");

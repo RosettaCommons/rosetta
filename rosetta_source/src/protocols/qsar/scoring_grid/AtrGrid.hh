@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_qsar_scoring_grid_AtrGrid_hh
 
 #include <protocols/qsar/scoring_grid/AtrGrid.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
 #include <utility/vector1.hh>
 
@@ -23,7 +23,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class AtrGrid : public GridBase
+class AtrGrid : public SingleGrid
 {
 public:
 

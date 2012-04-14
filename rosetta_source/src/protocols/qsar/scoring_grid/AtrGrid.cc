@@ -45,7 +45,7 @@ std::string AtrGridCreator::grid_name()
 
 
 AtrGrid::AtrGrid() :
-		GridBase("AtrGrid",0.0),
+		SingleGrid("AtrGrid",0.0),
 		inner_radius_(2.25),
 		outer_radius_(4.75),
 		bb_(-1),
@@ -56,7 +56,7 @@ AtrGrid::AtrGrid() :
 }
 
 AtrGrid::AtrGrid(core::Real weight) :
-		GridBase("AtrGrid",weight),
+		SingleGrid("AtrGrid",weight),
 		inner_radius_(2.25),
 		outer_radius_(4.75),
 		bb_(-1),

@@ -92,6 +92,57 @@ namespace numeric {
 		);
 		return probability;
 	}
+
+	/// @brief recursive binary search that finds the value closest to key.  Call find_nearest_value(input_list,value) instead.  It's the driver
+	/// function for this function.  This fails miserably (and silently!) on a non-sorted vector, so don't do that!.
+	template < typename T >
+	T find_nearest_value(typename utility::vector1<T> const & input_list, T key, platform::Size min_index, platform::Size max_index)
+	{
+
+		if((max_index - min_index) == 1 )
+		{
+			//down to the last two items and we haven't found the key yet, one of these must be the closest.
+			T max_distance = std::abs(input_list[max_index] - key);
+			T min_distance = std::abs(input_list[min_index] - key);
+			if(max_distance < min_distance )
+			{
+				return input_list[max_index];
+			}else
+			{
+				return input_list[min_index];
+			}
+		}
+
+		platform::Size mid_index = (min_index + max_index) /2;
+
+		if(input_list[mid_index] > key)
+		{
+			return find_nearest_value<T>(input_list,key,min_index,mid_index-1);
+		}else if(input_list[mid_index] < key)
+		{
+			return find_nearest_value<T>(input_list,key,mid_index+1, max_index);
+		}else
+		{
+			return input_list[mid_index];
+		}
+	}
+
+	/// @brief given a vector and an input value, return the value in the vector that is closest to the input
+	/// This is a wrapper for find_nearest_value(input_list,key,min,max) and insures that you're sorted.
+	template < typename T >
+	T find_nearest_value(typename utility::vector1<T> const & input_list, T key)
+	{
+		utility::vector1<T> temp_list = input_list;
+		std::sort(temp_list.begin(),temp_list.end());
+
+		platform::Size initial_minimum = 1;
+		platform::Size initial_maximum = temp_list.size();
+
+		return find_nearest_value<T>(temp_list,key,initial_minimum,initial_maximum);
+
+	}
+
+
 } // numeric
 
 #endif

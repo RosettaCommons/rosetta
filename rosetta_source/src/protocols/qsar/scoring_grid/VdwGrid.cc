@@ -52,13 +52,13 @@ std::string VdwGridCreator::grid_name()
 	return "VdwGrid";
 }
 
-VdwGrid::VdwGrid() : GridBase("VdwGrid",1.0), cutoff_(10.0)
+VdwGrid::VdwGrid() : SingleGrid("VdwGrid",1.0), cutoff_(10.0)
 {
 	std::string lj_file(basic::database::full_name("scoring/qsar/lj_table.txt"));
 	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01).get_interpolator();
 }
 
-VdwGrid::VdwGrid(core::Real weight) : GridBase ("VdwGrid",weight), cutoff_(10.0)
+VdwGrid::VdwGrid(core::Real weight) : SingleGrid ("VdwGrid",weight), cutoff_(10.0)
 {
 	std::string lj_file(basic::database::full_name("scoring/qsar/lj_table.txt"));
 	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01).get_interpolator();

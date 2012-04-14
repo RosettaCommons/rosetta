@@ -13,23 +13,23 @@
 #include <protocols/qsar/qsarMover.hh>
 #include <protocols/qsar/qsarMoverCreator.hh>
 #include <protocols/qsar/qsarMap.hh>
+#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
+
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
-#include <protocols/rigid/RB_geometry.hh>
+#include <core/pose/Pose.hh>
+
 #include <basic/Tracer.hh>
-#include <protocols/jd2/JobDistributor.hh>
+
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
-
-//Auto Headers
-#include <core/conformation/Conformation.hh>
-#include <core/pose/Pose.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace qsar {

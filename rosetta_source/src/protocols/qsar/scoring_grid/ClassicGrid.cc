@@ -39,12 +39,12 @@ std::string ClassicGridCreator::grid_name()
 	return "ClassicGrid";
 }
 
-ClassicGrid::ClassicGrid(): GridBase("ClassicGrid",1.0), atr_radius_(4.75), rep_radius_(2.25)
+ClassicGrid::ClassicGrid(): SingleGrid("ClassicGrid",1.0), atr_radius_(4.75), rep_radius_(2.25)
 {
 	//
 }
 
-ClassicGrid::ClassicGrid(core::Real weight) : GridBase("ClassicGrid",weight),  atr_radius_(4.75), rep_radius_(2.25)
+ClassicGrid::ClassicGrid(core::Real weight) : SingleGrid("ClassicGrid",weight),  atr_radius_(4.75), rep_radius_(2.25)
 {
 	//
 }

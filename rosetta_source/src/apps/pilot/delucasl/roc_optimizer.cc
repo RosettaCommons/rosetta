@@ -150,11 +150,11 @@ void setup_grid_manager(GridWeights const & weights)
 	GridManager* grid_manager( GridManager::get_instance() );
 	grid_manager->reset();
 
-	GridBaseOP atr(new AtrGrid(weights.atr()));
-	GridBaseOP rep(new RepGrid(weights.rep()));
-	GridBaseOP vdw(new VdwGrid(weights.vdw()));
-	GridBaseOP hba(new HbaGrid(weights.hba()));
-	GridBaseOP hbd(new HbdGrid(weights.hbd()));
+	SingleGridOP atr(new AtrGrid(weights.atr()));
+	SingleGridOP rep(new RepGrid(weights.rep()));
+	SingleGridOP vdw(new VdwGrid(weights.vdw()));
+	SingleGridOP hba(new HbaGrid(weights.hba()));
+	SingleGridOP hbd(new HbdGrid(weights.hbd()));
 
 	grid_manager->insert_grid("atr",atr);
 	grid_manager->insert_grid("rep",rep);

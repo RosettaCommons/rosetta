@@ -49,7 +49,7 @@ std::string polarizGridCreator::grid_name()
 	return "polarizGrid";
 }
 
-polarizGrid::polarizGrid() : GridBase("polarizGrid",1.0), radius_(3.0)
+polarizGrid::polarizGrid() : SingleGrid("polarizGrid",1.0), radius_(3.0)
 {
 	//TODO: extract this to a method
 	utility::io::izstream infile;
@@ -76,7 +76,7 @@ polarizGrid::polarizGrid() : GridBase("polarizGrid",1.0), radius_(3.0)
 	infile.close();
 }
 
-polarizGrid::polarizGrid(core::Real weight) : GridBase("polarizGrid",weight), radius_(3.0)
+polarizGrid::polarizGrid(core::Real weight) : SingleGrid("polarizGrid",weight), radius_(3.0)
 {
 	utility::io::izstream infile;
 
