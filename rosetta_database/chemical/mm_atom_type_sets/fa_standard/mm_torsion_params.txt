@@ -1,8 +1,9 @@
-#The earlier lines in this file were approved by Doug (?) when this system was created.
-#atom1	atom2   atom3   atom4   strength, periodicity, minimum 
+#The earlier lines in this file were approved by Doug when this system was created.
 # ADDED FROM top_all27_prot_na.rtf, certain params sets are commented
-#out because they are also commneted out in the mm_atoms_properties
+#out because they are also commented out in the mm_atoms_properties
 #file since no residue type use them yet --Doug
+#(This means you can activate them if you need them) -- SML
+#atom1	atom2   atom3   atom4   strength, periodicity, minimum 
 NH2	CT1	C	O	0.0000	1	0.00
 NH2	CT1	C	NH1	0.0000	1	0.00	
 H	NH2	CT1	CT1	0.0000	1	0.00
@@ -855,8 +856,8 @@ C	S	CT2	CT1	0.3700	3	0.00 #wild guess, borrowed from CT3-S-CT2-CT2 (methionine)
 HA	CT2	S	C	0	0	0 #0, hydrogens often are
 S	C	CT2	NH1	0.6	1	0 #copied from NH1 C CT2 NH1 (psi)
 S	C	CT2	HB	0	1	0 #copied from NH1 C CT2 HB (psi)
-CT2	S	C	CT2	4.8	2	180 #from Yang and Drueckhammer, Understanding the Relative Acyl-Transfer ..., JACS, 2001, 123, 11004-11009
-CT2	S	C	CT2	2.2	1	0 #from Yang and Drueckhammer, Understanding the Relative Acyl-Transfer ..., JACS, 2001, 123, 11004-11009
+CT2	S	C	CT2	4.8	2	180 #from Yang and Drueckhammer, Understanding the Relative Acyl-Transfer ..., JACS, 2001, 123, 11004-11009; Figure 6 (circles)
+CT2	S	C	CT2	2.2	1	0 #from Yang and Drueckhammer, Understanding the Relative Acyl-Transfer ..., JACS, 2001, 123, 11004-11009; Figure 6 (circles)
 CT2	S	C	O	0	0	0 #subsumed into CT2-S-C-CT2 above
 
 #kdrew: for oops
