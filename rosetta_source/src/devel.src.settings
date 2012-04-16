@@ -75,6 +75,13 @@ sources = {
 	"devel/loop_grids": [
 		"LoopGrid",
 	],
+        "devel/matdes" : [
+                "util",
+                "Symmetrizer",
+                "SymmetrizerSampler",
+                "BuildingBlockInterfaceOperation",
+                "RestrictToNonzeroSASAOperation",
+        ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",
 		"DualMonteCarlo",

@@ -18,21 +18,38 @@
 // Package headers
 
 // project headers
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
+
+// STL headers
+#include <set>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
 
 namespace devel {
 namespace matdes {
+using core::pose::Pose;
+using core::Real;
+using core::Size;
 
-PackerTaskOP
-make_interface_design_packertask(core:pose:Pose & pose);
+template<typename T>
+std::string stringify_iterable(const T& iterable, std::string sep=" "){
+		std::ostringstream ss;
+		const char* c_sep = sep.c_str();
+		std::copy(iterable.begin(), iterable.end(), std::ostream_iterator<typename T::value_type>(ss, c_sep));
+		return ss.str();
+}
 
-void add_native_bias_constraints(Pose & pose, Real cst_weight, const std::set<Size>& design_pos);
+void add_native_bias_constraints(Pose & pose, core::Real cst_weight, const std::set<Size>& design_pos);
+
 
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius = 2.2);
 
 std::set<Size>
-pick_design_position(core::pose::Pose & pose, Real contact_dist=10.0, Real bblock_dist = 5.0, Real probe_radius = 2.2);
-
+pick_design_position(core::pose::Pose const & pose, Size nsub_bblock = 1, Real contact_dist=10.0, Real bblock_dist = 5.0, Real probe_radius = 2.2);
 } // devel
 } // matdes
 #endif

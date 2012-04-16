@@ -26,6 +26,7 @@
 //mover creators
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
 //#include <devel/constrained_sequence_design/ConstrainedDesignMoverCreator.hh>
+#include <devel/matdes/SymmetrizerMoverCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -38,6 +39,8 @@
 // Task Operation creators
 #include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
 #include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
+#include <devel/matdes/BuildingBlockInterfaceOperationCreator.hh>
+#include <devel/matdes/RestrictToNonzeroSASAOperationCreator.hh>
 
 #include <utility/vector1.hh>
 
@@ -49,9 +52,12 @@ protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_Enzd
 protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
 protocols::moves::MoverRegistrator< devel::znhash::InsertZincCoordinationRemarkLinesCreator > reg_InsertZincCoordinationRemarkLinesCreator;
 protocols::moves::MoverRegistrator< znhash::LoadZnCoordNumHbondCalculatorMoverCreator > reg_LoadZnCoordNumHbondCalculatorMoverCreator;
+static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
 
 // Task creators
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
+static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
+static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
 
 void init( int argc, char * argv [] )
 {

@@ -293,6 +293,7 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 
 }
 
+/*
 void
 minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool move_bb, bool move_sc, bool move_rb) {
 	
@@ -314,6 +315,41 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
 	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 }
+*/
+
+// Frank's new and improved minimize function from mutalyze, hacky solution for iterative design 120206
+void
+minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool move_bb, bool move_sc, bool move_rb) {
+
+  // Initialize a MoveMap
+  // fpd 2-phase minimization
+  // 1 - minimize SC only
+  // 2 - minimize SC + RB (iff RB move enabled)
+  core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+   movemap->set_jump(false);
+   movemap->set_bb(false);
+   movemap->set_chi(false);
+
+   // Set allowable move types at interface positions
+   // Currently, only sc moves allowed
+   for (utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++) {
+     movemap->set_bb (*i, move_bb);
+     movemap->set_chi(*i, move_sc);
+   }
+
+   // Make MoveMap symmetric, apply it to minimize the pose
+   core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
+   protocols::simple_moves::symmetry::SymMinMover m1( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+   m1.apply(pose);
+
+  if (move_rb) {
+    movemap->set_jump(true);
+    core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
+    protocols::simple_moves::symmetry::SymMinMover m2( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+    m2.apply(pose);
+  }
+}
+
 
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius) {
@@ -681,14 +717,22 @@ void
 						if (fav_nat_bonus != 0.0) {
 		        	pose_for_design.add_constraints(favor_native_constraints);
 						}
-		
+
+						// 120206: Get min_rb commandline to implement rigid body minimization
+      			bool min_rb = option[matdes::mutalyze::min_rb]();
+	
 						// Design
-						design(pose_for_design, sf, design_pos, true);		
+						//design(pose_for_design, sf, design_pos, true);
+			      //minimize(pose_for_design, sf, design_pos, false, true, min_rb);
+						//design(pose_for_design, sf, design_pos, true);
+			      //minimize(pose_for_design, sf, design_pos, false, true, min_rb);
+						design(pose_for_design, sf, design_pos, true);
+			      minimize(pose_for_design, sf, design_pos, false, true, min_rb);
 		
 						// Repack and minimize using score12
 						ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
-						repack(pose_for_design, score12, design_pos);
-						minimize(pose_for_design, score12, design_pos, false, true, false);
+						//repack(pose_for_design, score12, design_pos);
+						//minimize(pose_for_design, score12, design_pos, false, true, false);
 						score12->score(pose_for_design);
 	
 						// Build a filename for the output PDB	

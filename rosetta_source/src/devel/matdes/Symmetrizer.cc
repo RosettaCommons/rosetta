@@ -1,4 +1,3 @@
-
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -18,10 +17,12 @@
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 
 // Package headers
+#include <devel/matdes/SymmetrizerSampler.hh>
 
 // project headers
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymDof.hh>
@@ -32,6 +33,12 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/Tracer.hh>
+#include <utility/exit.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+
+static basic::Tracer TR("devel.matdes.Symmetrizer");
 
 namespace devel {
 namespace matdes {
@@ -58,6 +65,50 @@ SymmetrizerMoverCreator::mover_name()
 }
 // -------------  Mover Creator -------------
 
+Symmetrizer::Symmetrizer() :
+	symm_file_(""),
+	radial_disp_(0),
+	angle_(0),
+	symmetry_axis_('z'),
+	explore_grid_(false)
+{ }
+
+Symmetrizer::Symmetrizer(const Symmetrizer& rval) :
+	symm_file_( rval.symm_file_ ),
+	radial_disp_( rval.radial_disp_ ),
+	angle_( rval.angle_ ),
+	explore_grid_( rval.explore_grid_ ),
+	symmetry_axis_( rval.symmetry_axis_ )
+{ }
+
+protocols::moves::MoverOP 
+Symmetrizer::clone() const {
+	return new Symmetrizer( *this );
+}
+
+protocols::moves::MoverOP 
+Symmetrizer::fresh_instance() const {
+				return new Symmetrizer();
+}
+
+
+Real
+Symmetrizer::get_angle() { 
+	if(!explore_grid_)
+		return angle_;
+	else
+		return SymmetrizerSampler::get_instance().get_angle();
+}
+
+
+Real
+Symmetrizer::get_radial_disp() { 
+	if(!explore_grid_)
+		return radial_disp_;
+	else
+		return SymmetrizerSampler::get_instance().get_radial_disp();
+}
+
 void
 Symmetrizer::apply(Pose & pose) {
 	using core::conformation::symmetry::SymmetryInfoCOP;
@@ -82,31 +133,76 @@ Symmetrizer::apply(Pose & pose) {
 
 	core::kinematics::Jump j = pose.jump(sym_jump);
 
-	Mat init_rot = pose.jump(sym_jump).get_rotation();
+	const	Vec init_trans = pose.jump(sym_jump).get_translation();
+	const Mat init_rot = pose.jump(sym_jump).get_rotation();
 
-	
+	Real radial_disp = get_radial_disp();
+	Real angle = get_angle();
+	TR << "radial_disp = " << radial_disp << " angle = " << angle << std::endl;
+	core::pose::setPoseExtraScores(pose, "radial_disp", radial_disp);
+	core::pose::setPoseExtraScores(pose, "angle", angle);
 	Vec translation;
 	Mat rotation;
-	switch(symmetry_axis) {
+	switch(symmetry_axis_) {
 				case 'x' : 
-					translation = Vec(get_radial_disp(),0,0);
-					rotation = Mat(numeric::x_rotation_matrix_degrees(get_angle()* init_rot));
-				break;
+					translation = Vec(get_radial_disp(),0,0) + init_trans;
+					rotation = Mat(numeric::x_rotation_matrix_degrees( angle ) * init_rot);
+					break;
 
 				case 'y' : 
-					translation = Vec(0, get_radial_disp(), 0);
-					rotation = Mat(numeric::y_rotation_matrix_degrees(get_angle() * init_rot));
-				break;
+					translation = Vec(0, get_radial_disp(), 0) + init_trans;
+					rotation = Mat(numeric::y_rotation_matrix_degrees( angle )* init_rot);
+					break;
 
 				case 'z' : 
-					translation = Vec(0,0, get_radial_disp());
-					rotation = Mat(numeric::z_rotation_matrix_degrees(get_angle()* init_rot));
-				break;
+					translation = Vec(0,0, get_radial_disp()) + init_trans;
+					rotation = Mat(numeric::z_rotation_matrix_degrees( angle ) * init_rot);
+					break;
+
+				default:
+					utility_exit_with_message(symmetry_axis_ + " is not a valid axis (x,y or z). Use lower case");
 	}
 	j.set_translation( translation );
 	j.set_rotation( rotation );
 	pose.set_jump(sym_jump,j); 
+	
+	if(explore_grid_)
+		TR << "angle = " << get_angle() << " radial_disp = " << get_radial_disp() << std::endl;
+		SymmetrizerSampler::get_instance().step();
 }
 
+void 
+Symmetrizer::parse_my_tag( TagPtr const tag,
+										 DataMap & data,
+										 Filters_map const &,
+										 Movers_map const &,
+										 Pose const & ) {
+
+	// Turn symmetry hacks on
+	basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+
+	using std::string;
+	symm_file_ = tag->getOption<string>( "symm_file" );
+	symmetry_axis_ = tag->getOption<char>("axis", 'z');
+
+	explore_grid_ = tag->getOption<bool>("grid", false);
+	if(explore_grid_) {
+		Real angle_min = tag->getOption<Real>("angle_min");
+		Real angle_max = tag->getOption<Real>("angle_max");
+		Real angle_step = tag->getOption<Real>("angle_step");
+		Real radial_disp_min = tag->getOption<Real>("radial_disp_min");
+		Real radial_disp_max = tag->getOption<Real>("radial_disp_max");
+		Real radial_disp_step = tag->getOption<Real>("radial_disp_step");
+		TR << "Setting the exploration grid." << std::endl;
+		SymmetrizerSampler::get_instance().set_angle_range(angle_min, angle_max, angle_step);
+		SymmetrizerSampler::get_instance().set_radial_disp_range(radial_disp_min, radial_disp_max, radial_disp_step);
+	} else {
+		radial_disp_ = tag->getOption<Real>( "radial_disp" ,0.0);
+		angle_ = tag->getOption<Real>( "angle",0.0 );
+	}
+
 }
-}
+
+
+} // matdes
+} // devel

@@ -76,11 +76,11 @@ private:
 	std::string symm_file_;
 	Real radial_disp_;
 	Real angle_;
-	bool explore_grid_;
-	char symmetry_axis;
+	char symmetry_axis_;
 	
+	bool explore_grid_;
 };
 
-} // devel
 } // matdes
+} // devel
 #endif

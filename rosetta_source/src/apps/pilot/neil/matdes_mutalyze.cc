@@ -89,6 +89,7 @@
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <basic/MetricValue.hh>
+#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 //Auto Headers
 
 static basic::Tracer TR("matdes::mutalyze");
@@ -170,8 +171,11 @@ design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utili
 		}
 	}
 
-  // Actually perform design
   make_symmetric_PackerTask(pose, task);
+	// Get rid of Nobu's rotamers of death
+	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
+	limit_rots->apply(pose, *task);
+  // Actually perform design
   protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
 
@@ -208,6 +212,9 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 
   // Actually repack.
   make_symmetric_PackerTask(pose, task);
+	// Get rid of Nobu's rotamers of death
+	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
+	limit_rots->apply(pose, *task);
   protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
 
@@ -669,7 +676,7 @@ void
 	
 					// Design
 					design(pose_for_ala_scan, score12, pos, id);
-		
+
 					// Calculate the ddG of the monomer in the assembled and unassembled states
 					protocols::simple_moves::ddG ddG_mover3 = protocols::simple_moves::ddG(score12, 1, true);
 					ddG_mover3.calculate(pose_for_ala_scan);
