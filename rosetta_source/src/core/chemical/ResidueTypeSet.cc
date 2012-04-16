@@ -179,7 +179,7 @@ ResidueTypeSet::ResidueTypeSet(
 		utility::io::izstream data( list_filename.c_str() );
 
 		if ( !data.good() ) {
-			utility_exit_with_message( "Unable to open file: "+list_filename );
+			utility_exit_with_message( "Unable to open patch list file: "+list_filename );
 		}
 
 		// Read the command line and avoid applying patches that the user has requested be
@@ -298,6 +298,8 @@ ResidueTypeSet::read_files(
 	update_residue_maps();
 }
 
+/* Old code - doesn't respect various command line options. See constructor for current patch-loading functionality
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief apply patches to base ResidueType to generate variant ResidueTyes
 ///
@@ -316,6 +318,7 @@ ResidueTypeSet::apply_patches(
 	utility::vector1< std::string > filenames;
 	{
 		utility::io::izstream data( list_filename.c_str() );
+		if( !data.good() ) { utility_exit_with_message("Unable to open patch list file " + list_filename); }
 		std::string line;
 		while ( getline( data, line ) ) {
 			// add full database path to the patch filename
@@ -326,6 +329,7 @@ ResidueTypeSet::apply_patches(
 
 	apply_patches( filenames );
 }
+*/
 
 	//XRW_B_T1
 	/*

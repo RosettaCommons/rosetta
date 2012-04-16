@@ -120,9 +120,10 @@ public:
 //		CSDAtomTypeSetCAP csd_atom_types kwk commenting out the csd atomtypes until I have had a chance to implement them
 	);
 
-	/// @brief apply patches to base ResidueType to generate variant ResidueTyes
-	void
-	apply_patches( std::string const & filename );
+// Old code - doesn't respect various command line options. See constructor for current patch-loading functionality
+//	/// @brief apply patches to base ResidueType to generate variant ResidueTyes
+//	void
+//	apply_patches( std::string const & filename );
 
 	void
 	apply_patches(
