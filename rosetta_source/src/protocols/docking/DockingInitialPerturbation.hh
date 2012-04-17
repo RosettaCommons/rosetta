@@ -145,6 +145,7 @@ class FaDockingSlideIntoContact : public moves::Mover
 public:
 	FaDockingSlideIntoContact();
 	FaDockingSlideIntoContact( core::Size const rb_jump);
+	FaDockingSlideIntoContact( utility::vector1<core::Size> rb_jumps);
 
 	//destructor
 	~FaDockingSlideIntoContact();
@@ -153,7 +154,8 @@ public:
 	virtual std::string get_name() const;
 
 private:
-	core::Size rb_jump_;
+	core::Size rb_jump_; // use this or rb_jumps_, not both
+	utility::vector1<core::Size> rb_jumps_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real tolerance_; ///< how accurate do you want to be?
 

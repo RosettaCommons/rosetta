@@ -54,8 +54,6 @@ using basic::T;
 
 #include <utility/vector1.hh>
 
-
-
 using basic::Error;
 using basic::Warning;
 
@@ -91,8 +89,8 @@ DockingInitialPerturbation::DockingInitialPerturbation(): Mover(), slide_( true 
 }
 
 DockingInitialPerturbation::DockingInitialPerturbation(
-	core::Size const rb_jump,
-	bool const slide
+		core::Size const rb_jump,
+		bool const slide
 ) : Mover(), slide_(slide)
 {
 	Mover::type( "DockingInitialPerturbation" );
@@ -102,8 +100,8 @@ DockingInitialPerturbation::DockingInitialPerturbation(
 }
 
 DockingInitialPerturbation::DockingInitialPerturbation(
-	DockJumps const movable_jumps,
-	bool const slide
+		DockJumps const movable_jumps,
+		bool const slide
 ): Mover(), slide_(slide), movable_jumps_(movable_jumps)
 {
 	Mover::type( "DockingInitialPerturbation" );
@@ -129,8 +127,8 @@ DockingInitialPerturbation::set_default()
 	if_uniform_trans_ = false;
 	spin_ = false;
 	center_at_interface_ = false;
-//	dock_pert_ = new utility::vector1< Real >(NULL);
-//	uniform_trans_ = NULL;
+	//	dock_pert_ = new utility::vector1< Real >(NULL);
+	//	uniform_trans_ = NULL;
 }
 
 
@@ -279,7 +277,7 @@ DockingSlideIntoContact::DockingSlideIntoContact() : Mover()
 
 //constructor
 DockingSlideIntoContact::DockingSlideIntoContact(
-	core::Size const rb_jump
+		core::Size const rb_jump
 ) : Mover(), rb_jump_(rb_jump)
 {
 	using namespace core::scoring;
@@ -343,9 +341,7 @@ DockingSlideIntoContact::get_name() const {
 // default constructor
 FaDockingSlideIntoContact::FaDockingSlideIntoContact()
 {
-
 	Mover::type( "FaDockingSlideIntoContact" );
-	rb_jump_ = 1;
 	scorefxn_ = new core::scoring::ScoreFunction();
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 }
@@ -353,9 +349,16 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact()
 
 //constructor
 FaDockingSlideIntoContact::FaDockingSlideIntoContact(
-	core::Size const rb_jump
+		core::Size const rb_jump
 ) : Mover(), rb_jump_(rb_jump), tolerance_(0.2)
 {
+	Mover::type( "FaDockingSlideIntoContact" );
+	scorefxn_ = new core::scoring::ScoreFunction();
+	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
+}
+
+FaDockingSlideIntoContact::FaDockingSlideIntoContact( utility::vector1<core::Size> rb_jumps):
+		Mover(), rb_jumps_(rb_jumps),tolerance_(0.2){
 	Mover::type( "FaDockingSlideIntoContact" );
 	scorefxn_ = new core::scoring::ScoreFunction();
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
@@ -374,19 +377,48 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 	(*scorefxn_)( pose );
 	core::Real const initial_fa_rep = pose.energies().total_energies()[ fa_rep ];
 	bool are_touching = false;
-	rigid::RigidBodyTransMover trans_mover( pose, rb_jump_ );
+
+	utility::vector1<rigid::RigidBodyTransMover> trans_movers;
+
+	if(rb_jumps_.size()<1){
+		trans_movers.push_back( rigid::RigidBodyTransMover(pose,rb_jump_));
+	}
+	else{
+		for(
+				utility::vector1<core::Size>::iterator jump_idx = rb_jumps_.begin(),
+				end = rb_jumps_.end();
+				jump_idx != end;
+				jump_idx++
+		){
+			trans_movers.push_back( rigid::RigidBodyTransMover(pose, *jump_idx));
+		}
+	}
+
+	utility::vector1< rigid::RigidBodyTransMover >::iterator const end(trans_movers.end());
 
 	//int i=1;
 	// Take 2A steps till clash, then back apart one step.  Now you're within 2A of touching.
 	// Repeat with 1A steps, 0.5A steps, 0.25A steps, etc until you're as close are you want.
 	for( core::Real stepsize = 2.0; stepsize > tolerance_; stepsize /= 2.0 ) {
-		trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move together
-		trans_mover.step_size(stepsize);
+		for(
+				utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
+				trans_mover != end;
+				trans_mover++
+		){
+			trans_mover->trans_axis( trans_mover->trans_axis().negate() ); // now move together
+			trans_mover->step_size(stepsize);
+		}
 		core::Size const counter_breakpoint( 500 );
 		core::Size counter( 0 );
 		do
 		{
-			trans_mover.apply( pose );
+			for(
+					utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
+					trans_mover != end;
+					trans_mover++
+			){
+				trans_mover->apply( pose );
+			}
 			(*scorefxn_)( pose );
 			core::Real const push_together_fa_rep = pose.energies().total_energies()[ fa_rep ];
 			//std::cout << "fa_rep = " << push_together_fa_rep << std::endl;
@@ -401,8 +433,14 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 			TR<<"Failed Fadocking Slide Together. Aborting."<<std::endl;
 			set_current_tag( "fail" );
 		}
-		trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move apart
-		trans_mover.apply( pose );
+		for(
+				utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
+				trans_mover != end;
+				trans_mover++
+		){
+			trans_mover->trans_axis( trans_mover->trans_axis().negate() ); // now move apart
+			trans_mover->apply( pose );
+		}
 	}
 }
 
