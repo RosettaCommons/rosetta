@@ -35,6 +35,7 @@ WHERE
 	(acc.HBChemType == 'hbacc_CXL' OR acc.HBChemType == 'hbacc_CXA') AND
 	hbond.struct_id = geom.struct_id AND hbond.hbond_id = geom.hbond_id AND
 	hbond.struct_id = don.struct_id AND hbond.don_id = don.site_id AND
+	hbond.struct_id = acc.struct_id AND hbond.acc_id = acc.site_id AND
 	ABS(don.resNum - acc.resNum) > 5;";
 f <- query_sample_sources(sample_sources, sele)
 
