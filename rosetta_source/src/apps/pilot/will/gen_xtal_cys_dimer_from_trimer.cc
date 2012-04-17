@@ -262,7 +262,7 @@ int dumpsymfile(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fn
     zero = R3[l3a]*zero; if(l2a) zero = R2*(zero-cen2)+cen2;
     zero = R3[m3a]*zero; if(m2a) zero = R2*(zero-cen2)+cen2;
     zero = R3[n3a]*zero; if(n2a) zero = R2*(zero-cen2)+cen2;
-    if( zero.length() > 2.0 * mxd + 20.0 ) continue;
+    if( zero.length() > 2.0 * mxd + 10.0 ) continue;
 
     SYMSUB s;
     Vec X = Vec(0,0,1);
