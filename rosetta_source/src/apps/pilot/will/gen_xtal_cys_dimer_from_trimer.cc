@@ -331,10 +331,15 @@ inline double fang(Vec const & v) {
 }
 vector1<core::Real>
 get_chi2(
-  Vec cax,
-  Vec dax
+  core::pose::Pose const & pose,
+  core::Size irsd,
+  int idh
 ){
-  std::cerr << "get_chi2" << std::endl;
+  Vec CB = pose.xyz(AtomID(pose.residue(irsd).atom_index("CB"),irsd));
+  Vec SG = pose.xyz(AtomID(pose.residue(irsd).atom_index("SG"),irsd));
+  Vec HG = pose.xyz(AtomID(pose.residue(irsd).atom_index("HG"),irsd));
+  Vec cax = SG-CB;
+  Vec dax = rotation_matrix_degrees(HG-SG,idh?45.0:-45.0) * projperp(HG-SG,CB-SG).normalized();
   dax.normalize();
   Mat R = rotation_matrix_degrees(cax,0.1);
   vector1<core::Real> chi2s;
@@ -414,12 +419,8 @@ void dock(Pose & init, string fname) {
     for(Size krot = 1; krot <= chi1s.size(); ++krot) {
       pose.set_chi(1,irsd,chi1s[krot]);
       pose.set_chi(2,irsd,0.0);
-      Vec CB = pose.xyz(AtomID(pose.residue(irsd).atom_index("CB"),irsd));
-      Vec SG = pose.xyz(AtomID(pose.residue(irsd).atom_index("SG"),irsd));
-      Vec HG = pose.xyz(AtomID(pose.residue(irsd).atom_index("HG"),irsd));
       for(int idh = 0; idh < 2; idh++) {
-        Vec AX = rotation_matrix_degrees(HG-SG,idh?45.0:-45.0) * projperp(HG-SG,CB-SG).normalized();
-        vector1<core::Real> chi2s = get_chi2(SG-CB,AX);
+        vector1<core::Real> chi2 = get_chi2(pose,irsd,idh);
         for(Size ich2 = 1; ich2 <= chi2s.size(); ++ich2){
           pose.set_chi(2,irsd,chi2s[ich2]);
           {
