@@ -33,7 +33,6 @@
 #include <algorithm>
 // AUTO-REMOVED #include <cmath>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 

@@ -32,7 +32,6 @@
 // AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>

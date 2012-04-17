@@ -40,7 +40,6 @@
 #include <protocols/nonlocal/Policy.hh>
 
 #include <core/fragment/FrameIteratorWorker_.hh>
-#include <protocols/jobdist/Jobs.hh>
 
 //Auto Headers
 #include <numeric/random/random.fwd.hh>

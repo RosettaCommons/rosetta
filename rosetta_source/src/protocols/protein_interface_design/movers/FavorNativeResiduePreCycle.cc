@@ -17,7 +17,6 @@
 #include <protocols/moves/DataMap.hh>
 // AUTO-REMOVED #include <boost/foreach.hpp>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 

@@ -28,7 +28,6 @@
 #include <utility/exit.hh>
 
 //Auto Headers
-#include <protocols/jobdist/Jobs.hh>
 
 
 namespace protocols {

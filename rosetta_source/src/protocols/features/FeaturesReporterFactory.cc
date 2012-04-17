@@ -23,7 +23,6 @@
 
 // Project Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 
 // Boost Headers

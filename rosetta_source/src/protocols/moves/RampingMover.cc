@@ -23,7 +23,6 @@
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/jobdist/Jobs.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>

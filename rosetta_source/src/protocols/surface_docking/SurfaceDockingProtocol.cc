@@ -36,7 +36,6 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/surface_docking/SurfaceParameters.fwd.hh>
 #include <protocols/surface_docking/SurfaceParameters.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>

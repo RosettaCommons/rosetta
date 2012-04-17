@@ -31,7 +31,6 @@
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 

@@ -43,7 +43,6 @@
 
 // AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 
 //Auto Headers

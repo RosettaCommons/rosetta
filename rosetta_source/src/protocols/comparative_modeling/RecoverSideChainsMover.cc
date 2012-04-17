@@ -19,7 +19,6 @@
 
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
 
 

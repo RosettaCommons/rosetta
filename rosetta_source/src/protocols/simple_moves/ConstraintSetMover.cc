@@ -25,10 +25,10 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <protocols/jobdist/Jobs.hh>
+
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
+#include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.simple_moves.ConstraintSetMover" );
 

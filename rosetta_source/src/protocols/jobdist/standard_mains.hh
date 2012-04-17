@@ -31,8 +31,7 @@ namespace protocols {
 namespace jobdist {
 
 
-///@brief Returns a string giving the pose's tqag if there is such a thing or "UnknownTag" otherwise.
-std::string extract_tag_from_pose( core::pose::Pose &pose );
+
 
 ///@brief Handles loading and writing of silent files and or PDB files - superseeds the bottom two
 /// functions.

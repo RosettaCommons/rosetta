@@ -56,7 +56,6 @@
 #include <numeric/xyz.functions.hh>
 
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
 
 

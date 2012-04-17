@@ -56,7 +56,6 @@
 // AUTO-REMOVED #include <fstream>
 // AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

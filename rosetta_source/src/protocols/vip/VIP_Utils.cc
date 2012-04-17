@@ -25,7 +25,6 @@
 
 #include "core/pose/Pose.hh"
 
-#include <protocols/jobdist/standard_mains.hh>
 #include <protocols/analysis/PackStatMover.hh>
 
 #include <protocols/simple_filters/PackStatFilter.hh>

@@ -104,7 +104,6 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>

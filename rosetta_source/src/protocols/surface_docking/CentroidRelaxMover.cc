@@ -32,7 +32,6 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>

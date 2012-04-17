@@ -70,7 +70,6 @@
 #include <basic/basic.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/disulfides/FullatomDisulfidePotential.hh>
-#include <protocols/jobdist/standard_mains.hh>
 using namespace core;
 namespace protocols {
 namespace CycPepMover {

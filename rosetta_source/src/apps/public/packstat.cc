@@ -23,7 +23,6 @@
 // AUTO-REMOVED #include "core/scoring/packstat/sasa_dot_locations.hh"
 // AUTO-REMOVED #include "core/scoring/packstat/packing_score_params.hh"
 
-#include <protocols/jobdist/standard_mains.hh>
 #include <protocols/analysis/PackStatMover.hh>
 
 #include <devel/init.hh>

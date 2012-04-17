@@ -31,7 +31,6 @@
 // option key includes
 // AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 

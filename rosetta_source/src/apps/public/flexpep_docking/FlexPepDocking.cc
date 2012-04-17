@@ -27,9 +27,6 @@
 #include <basic/datacache/CacheableString.hh>
 // AUTO-REMOVED #include <basic/datacache/DiagnosticData.hh>
 
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/jobdist/Jobs.hh>
-#include <protocols/jobdist/JobDistributors.hh>
 #include <protocols/jd2/JobDistributor.hh>
 // AUTO-REMOVED #include <protocols/jd2/util.hh>
 
@@ -75,116 +72,7 @@ static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not ch
 basic::Tracer TR("pilot_apps.FlexPepDock");
 //static numeric::random::RandomGenerator JDRG(32342524); // magic number copied from Job Distributor
 
-// copied from
-int distribute_jobs(protocols::moves::Mover& mover, bool random_permutation)
-{
-  time_t overall_start_time = time(NULL);
-  utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 
-#ifndef USEMPI
-  // Reduce read contention between processes by randomizing the order in which structures are processed
-  // Do not randomize, though, if job distribution is controlled by MPI
-  if( random_permutation ) {
-    numeric::random::random_permutation( input_jobs, numeric::random::RG );
-  }
-#endif
-
-  protocols::jobdist::BasicJobOP curr_job, prev_job;
-  int curr_nstruct, num_structures_processed = 0;
-  core::pose::PoseOP input_pose; // starts NULL, coords *never* modified!
-  core::pose::PoseOP native_pose; // starts NULL, coords *never* modified!
-
-  protocols::jobdist::BaseJobDistributorOP jobdist;
-
-  // pick the job distributor type based on a flag
-  using basic::options::option;
-  using namespace basic::options::OptionKeys;
-
-  // What on earth is "raw" ? Surely these are called silent files ?
-  bool const is_raw = option[ out::file::raw ]();
-  bool const silent_output = option[ out::file::silent ].user();
-  if ( is_raw || silent_output ) {
-    jobdist = new protocols::jobdist::PlainRawJobDistributor(input_jobs, ".out");
-  } else {
-    std::string scorefile_name;
-    if ( option[ out::file::scorefile ].user() ){
-      scorefile_name = option[ out::file::scorefile ]();
-    } else {
-      scorefile_name = "score";
-    }
-    jobdist = new protocols::jobdist::PlainPdbJobDistributor(input_jobs, scorefile_name);
-  }
-
-  if( option[ out::nooutput ]() ){
-    jobdist->disable_output();
-    jobdist->enable_ignorefinished();
-  }
-
-  std::map < std::string, core::Real > score_map;
-
-  jobdist->startup();
-  while( jobdist->next_job(curr_job, curr_nstruct) ) {
-    time_t pdb_start_time = time(NULL);
-    TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
-    jobdist->temp_file( curr_job->output_tag(curr_nstruct) );
-
-    // we read each PDB just once to save on disk I/O
-    if( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
-      input_pose = new core::pose::Pose();
-      if ( option[ in::file::centroid_input ].user() ) {
-	core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() );
-	native_pose = new core::pose::Pose();
-	core::import_pose::centroid_pose_from_pdb( *native_pose, curr_job->native_tag() );
-      } else {
-	core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
-	native_pose = new core::pose::Pose();
-	core::import_pose::pose_from_pdb( *native_pose, curr_job->native_tag() );
-      }
-    }
-    mover.set_input_pose( input_pose );
-    mover.set_native_pose( native_pose );
-
-    // Make a modifiable copy of the pose read from disk
-    core::pose::PoseOP the_pose = new core::pose::Pose( *input_pose );
-    the_pose->data().set(
-      core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-      new basic::datacache::CacheableString(curr_job->output_tag(curr_nstruct)));
-
-    mover.apply( *the_pose );
-
-    prev_job = curr_job; // pointer assignment, not a copy op
-    num_structures_processed += 1;
-    time_t pdb_end_time = time(NULL);
-    TR << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
-
-    score_map = protocols::jobdist::get_score_map( *the_pose );
-
-    if ( option[ run::timer ].user() ){
-      score_map["time"] = pdb_end_time - pdb_start_time;
-    }
-
-    jobdist->score_map( score_map );
-    jobdist->dump_pose_and_map( curr_job->output_tag(curr_nstruct), *the_pose );
-    jobdist->begin_critical_section();
-    // -scorefile overrides -nooutput (otherwise, dump_pose_and_map would have taken care of this)
-    jobdist->begin_critical_section();
-    if ( option[ out::nooutput ]() && option[ out::file::scorefile ].user()){
-      std::string scorefile_name ( option[ out::file::scorefile ] );
-      std::string tag = curr_job->output_tag(curr_nstruct);
-      core::io::raw_data::ScoreFileData sfd(scorefile_name);
-      sfd.write_pose( *the_pose, score_map, tag );
-    }
-    jobdist->end_critical_section();
-
-  } // loop over jobs and nstructs
-  jobdist->shutdown();
-
-  time_t overall_end_time = time(NULL);
-  TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
-  if ( num_structures_processed == 0 )
-    basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them?" << std::endl;
-  return 0;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 int

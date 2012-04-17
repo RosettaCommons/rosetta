@@ -76,7 +76,6 @@
 
 //Auto Headers
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>

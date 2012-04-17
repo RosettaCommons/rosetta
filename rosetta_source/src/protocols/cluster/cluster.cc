@@ -221,7 +221,7 @@ void GatherPosesMover::apply( Pose & pose ) {
 			////////////////// add constraints if specified by user.
 			scoring::constraints::add_constraints_from_cmdline( pose, *sfxn_ );
 			Real score = (*sfxn_)(pose)	;
-			tr.Info << "RESCORING: " << protocols::jobdist::extract_tag_from_pose( pose )<< std::endl;
+			tr.Info << "RESCORING: " << core::pose::extract_tag_from_pose( pose )<< std::endl;
 			setPoseExtraScores( pose, "silent_score", score );
 
 			if ( get_native_pose() ) {
@@ -233,7 +233,7 @@ void GatherPosesMover::apply( Pose & pose ) {
 		}
 
 		// remember tag!
-		tag_list.push_back( protocols::jobdist::extract_tag_from_pose( pose ) );
+		tag_list.push_back( core::pose::extract_tag_from_pose( pose ) );
 	}
 
 	if( template_scores.size() > 0 ){
@@ -620,7 +620,7 @@ void ClusterBase::print_summary() {
 		count += clusterlist[i].size();
 		for (j=0;j<(int)clusterlist[i].size();j++ ) {
 			tr.Info << "    ";
-			tr.Info << protocols::jobdist::extract_tag_from_pose( poselist[ clusterlist[i][j] ]  ) << "  " ;
+			tr.Info << core::pose::extract_tag_from_pose( poselist[ clusterlist[i][j] ]  ) << "  " ;
 			Real score = 0.0;
 			if ( !getPoseExtraScores( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
 				tr.Info << "----" ;
@@ -653,7 +653,7 @@ void ClusterBase::print_cluster_assignment() {
 	for (i=0;i<(int)clusterlist.size();i++ ) {
 		for (j=0;j<(int)clusterlist[i].size();j++ ) {
 			tr.Info << clusterlist[i][j]
-							<< " " << protocols::jobdist::extract_tag_from_pose( poselist[ clusterlist[i][j] ]  )
+							<< " " << core::pose::extract_tag_from_pose( poselist[ clusterlist[i][j] ]  )
 							<< "  " << i << "  " << j << std::endl;
 		}
 	}
@@ -671,7 +671,7 @@ void ClusterBase::print_cluster_PDBs( std::string prefix ) {
 				if( clusterlist[i].size() >= 1 && j!=0 ) continue; // print only clustercenter
 			}
 			//std::string output_name = "c." + string_of( i ) + "." + string_of( j ) + "." +
-			//                         protocols::jobdist::extract_tag_from_pose( poselist[ clusterlist[i][j] ] ) + ".pdb";
+			//                         core::pose::extract_tag_from_pose( poselist[ clusterlist[i][j] ] ) + ".pdb";
 			std::string output_name = "c." + string_of( i ) + "." + string_of( j ) + "." + "pdb";
 			utility::replace_in( output_name, '/', "_" );
 
@@ -1040,8 +1040,8 @@ void AssignToClustersMover::apply( Pose & pose ) {
 	GatherPosesMover::apply( pose );
 
 	// check we hvnt added this structure before !
-	if ( cluster_base_->check_tag( protocols::jobdist::extract_tag_from_pose( pose ) ) ) {
-		tr.Info << "Already added: " << protocols::jobdist::extract_tag_from_pose( pose )  << std::endl;
+	if ( cluster_base_->check_tag( core::pose::extract_tag_from_pose( pose ) ) ) {
+		tr.Info << "Already added: " << core::pose::extract_tag_from_pose( pose )  << std::endl;
 		return;
 	}
 
@@ -1058,7 +1058,7 @@ void AssignToClustersMover::apply( Pose & pose ) {
 	Real score;
 	getPoseExtraScores(                        pose , "silent_score", score );
 	tr.Info << "Adding a "
-		<< protocols::jobdist::extract_tag_from_pose( pose )
+		<< core::pose::extract_tag_from_pose( pose )
 		<< "  " << score
 		<< std::endl;
 

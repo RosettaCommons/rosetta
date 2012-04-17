@@ -45,7 +45,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh> // used for internal tracking of ntrials (fragment caching)
 
-#include <protocols/jobdist/Jobs.hh>
+#include <basic/Tracer.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 

@@ -2334,6 +2334,19 @@ initialize_disulfide_bonds(
 
 }
 
+std::string extract_tag_from_pose( core::pose::Pose &pose )
+{
+	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
+	using basic::datacache::CacheableString;
+
+	if( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ){
+			CacheableString *data =  dynamic_cast< CacheableString* > (  (pose.data().get_raw_ptr( ( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG  )) ));
+			if( data == NULL ) return std::string("UnknownTag");
+			else               return data->str();
+	}
+
+	return std::string("UnknownTag");
+}
 
 } // pose
 } // core

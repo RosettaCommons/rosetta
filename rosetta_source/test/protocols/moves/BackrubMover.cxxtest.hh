@@ -79,7 +79,6 @@
 #include <protocols/branch_angle/BranchParam1.fwd.hh>
 #include <protocols/branch_angle/BranchParam2.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/backrub/BackrubSegment.hh>
 #include <protocols/moves/DataMap.fwd.hh>

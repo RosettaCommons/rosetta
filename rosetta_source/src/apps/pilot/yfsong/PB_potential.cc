@@ -22,6 +22,7 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -63,7 +64,7 @@ class PBPotentialMover : public protocols::moves::Mover {
 public:
 
 void write_APBS_config(core::pose::Pose & pose, std::ostream & config_file, std::string pqr_fn) {
-	std::string tag = protocols::jobdist::extract_tag_from_pose( pose );
+	std::string tag = core::pose::extract_tag_from_pose( pose );
 	numeric::xyzVector <core::Real> min_r(9999,9999,9999);
 	numeric::xyzVector <core::Real> max_r(-9999,-9999,-9999);
 	for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
@@ -162,7 +163,7 @@ void write_APBS_config(core::pose::Pose & pose, std::ostream & config_file, std:
 void
 apply ( core::pose::Pose & pose )
 {
-	std::string tag = protocols::jobdist::extract_tag_from_pose( pose );
+	std::string tag = core::pose::extract_tag_from_pose( pose );
 	std::string pqr_fn = tag + ".pqr";
 	std::ofstream out_pqr(pqr_fn.c_str());
 	utility::vector1<Size> zero_charge_chains;

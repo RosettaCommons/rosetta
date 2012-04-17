@@ -73,9 +73,9 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
 
+#include <protocols/jobdist/Jobs.hh>
 //Auto Headers
 
 

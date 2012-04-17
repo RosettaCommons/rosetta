@@ -15,7 +15,6 @@
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
 
-#include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi
 
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>

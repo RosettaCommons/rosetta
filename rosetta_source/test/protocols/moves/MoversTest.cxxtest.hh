@@ -34,7 +34,6 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>

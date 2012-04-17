@@ -34,8 +34,7 @@
 #include <core/pose/Pose.hh>
 //#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/jobdist/Jobs.hh>
-#include <protocols/jobdist/standard_mains.hh>
+#include <basic/options/util.hh>
 
 #include <protocols/match/Matcher.hh>
 #include <protocols/match/MatcherTask.hh>
@@ -101,11 +100,12 @@ match_main()
 
 	MatcherTaskOP mtask = new MatcherTask;
 
-	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
+	utility::vector1< std::string > input_jobs = basic::options::start_files();
 	if( input_jobs.size() == 0 ) utility_exit_with_message("No input scaffold structures specified for matcher. Check for -s <pdbfile> in arguments.");
 
+
 	pose::Pose scaffold;
-	core::import_pose::pose_from_pdb( scaffold, input_jobs[ 1 ]->input_tag() );
+	core::import_pose::pose_from_pdb( scaffold, input_jobs[ 1 ] );
 	scaffold.update_residue_neighbors();
 
 	pose::Pose ligpose;

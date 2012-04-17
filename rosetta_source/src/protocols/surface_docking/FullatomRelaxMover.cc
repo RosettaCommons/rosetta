@@ -30,7 +30,6 @@
 #include <protocols/docking/DockFilters.hh> // get error if you did not include
 #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/jobdist/Jobs.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -42,7 +41,6 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>

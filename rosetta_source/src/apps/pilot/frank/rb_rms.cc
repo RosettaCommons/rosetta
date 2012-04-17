@@ -33,6 +33,7 @@
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
@@ -110,7 +111,7 @@ int main(int argc, char **argv) {
 			core::Real CA_rmsd = core::scoring::CA_rmsd( native_pose, current_pose );
 			core::Real CA_core_rmsd = core::scoring::CA_rmsd( native_pose, current_pose , core_reses );
 
-			std::cout << protocols::jobdist::extract_tag_from_pose( current_pose ) << "  " << CA_core_rmsd << "  " << CA_rmsd << std::endl;
+			std::cout << core::pose::extract_tag_from_pose( current_pose ) << "  " << CA_core_rmsd << "  " << CA_rmsd << std::endl;
 		}
 
 	} // while( input.has_another_pose() )

@@ -61,7 +61,6 @@
 
 #include <core/id/TorsionID_Range.hh>
 #include <core/kinematics/tree/Atom.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/keys/Key3Vector.hh>

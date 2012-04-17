@@ -32,6 +32,8 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 
+#include <basic/Tracer.hh>
+
 #include <numeric/xyzVector.hh>
 
 // ObjexxFCL headers
@@ -39,7 +41,6 @@
 // C++ headers
 
 #include <protocols/jd2/Job.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 
 //Auto Headers
