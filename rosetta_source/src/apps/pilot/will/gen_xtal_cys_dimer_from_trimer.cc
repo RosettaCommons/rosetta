@@ -154,8 +154,8 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
             for(Size k2a = 0; k2a < 2; k2a++) {
               for(Size l3a = 0; l3a < 3; l3a++) {
                 for(Size l2a = 0; l2a < 2; l2a++) {
-                  // for(Size m3a = 0; m3a < 2; m3a++) {
-                  //   for(Size m2a = 0; m2a < 2; m2a++) {
+                  for(Size m3a = 0; m3a < 2; m3a++) {
+                    for(Size m2a = 0; m2a < 2; m2a++) {
                   //     for(Size n3a = 0; n3a < 2; n3a++) {
                   //       for(Size n2a = 0; n2a < 2; n2a++) {
 
@@ -164,7 +164,7 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
 													chk = R3[j3a]*chk; if(j2a) chk = R2*(chk-cen2)+cen2;
 													chk = R3[k3a]*chk; if(k2a) chk = R2*(chk-cen2)+cen2;
 													chk = R3[l3a]*chk; if(l2a) chk = R2*(chk-cen2)+cen2;
-													// chk = R3[m3a]*chk; if(m2a) chk = R2*(chk-cen2)+cen2;
+													chk = R3[m3a]*chk; if(m2a) chk = R2*(chk-cen2)+cen2;
 													// chk = R3[n3a]*chk; if(n2a) chk = R2*(chk-cen2)+cen2;
                           for(vector1<Vec>::const_iterator i = seenit.begin(); i != seenit.end(); ++i) {
                             if( i->distance_squared(chk) < 1.0 ) goto cont2;
@@ -172,15 +172,16 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                           goto done2; cont2: continue; done2:
                           seenit.push_back(chk);
 
-													char chain = CHAIN[ccount];
-													if( (i2a+j2a+k2a+l2a/*+m2a+n2a*/) % 2 == 1 ) chain = 'B';
+													char chain = CHAIN[ccount%CHAIN.size()];
+                          std::cout << chain << std::endl;
+													// if( (i2a+j2a+k2a+l2a/*+m2a+n2a*/) % 2 == 1 ) chain = 'B';
                           for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 														if( rcount >= 9999) {
 															rcount = 0;
 															ccount++;
 														}
                             Size rn = ++rcount;
-                            Size natom = 5;
+                            Size natom = 3;
                             if(pose.residue(ir).name3()=="CYS") natom = 6;
                             for(Size ia = 1; ia <= natom; ia++) {
                               Vec tmp(pose.residue(ir).xyz(ia));
@@ -188,7 +189,7 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                               tmp = R3[j3a]*tmp; if(j2a) tmp = R2*(tmp-cen2)+cen2;
                               tmp = R3[k3a]*tmp; if(k2a) tmp = R2*(tmp-cen2)+cen2;
                               tmp = R3[l3a]*tmp; if(l2a) tmp = R2*(tmp-cen2)+cen2;
-                              // tmp = R3[m3a]*tmp; if(m2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[m3a]*tmp; if(m2a) tmp = R2*(tmp-cen2)+cen2;
                               // tmp = R3[n3a]*tmp; if(n2a) tmp = R2*(tmp-cen2)+cen2;
                               string X = F(8,3,tmp.x());
                               string Y = F(8,3,tmp.y());
@@ -197,20 +198,168 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                             }
                           }
 													out << "TER" << std::endl;
-                        }
-                      }
+                  //       }
+                  //     }
                     }
                   }
                 }
               }
             }
           }
-  //       }
-  //     }
-  //   }
-  // }
+        }
+      }
+    }
+  }
   out.close();
 }
+
+struct SYMSUB {
+  std::string vname;
+  Vec X,Y,C;
+};
+
+int dumpsymfile(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname) {
+  double mxd = 0.0;
+  for(Size i = 1; i <= pose.n_residue(); ++i) {
+    if( pose.residue(i).nbr_atom_xyz().length() > mxd ) mxd = pose.residue(i).nbr_atom_xyz().length();
+  }
+  vector1<Vec> seenit;
+  Mat R3[3];
+  R3[0] = Mat::identity();
+  R3[1] = R3a;
+  R3[2] = R3b;
+  Size acount=0,rcount=0,ccount=0;
+  vector1<SYMSUB> subs;
+  for(Size i3a = 0; i3a < 3; i3a++) {
+  for(Size i2a = 0; i2a < 2; i2a++) {
+  for(Size j3a = 0; j3a < 3; j3a++) {
+  for(Size j2a = 0; j2a < 2; j2a++) {
+  for(Size k3a = 0; k3a < 3; k3a++) {
+  for(Size k2a = 0; k2a < 2; k2a++) {
+  for(Size l3a = 0; l3a < 3; l3a++) {
+  for(Size l2a = 0; l2a < 2; l2a++) {
+  for(Size m3a = 0; m3a < 2; m3a++) {
+  for(Size m2a = 0; m2a < 2; m2a++) {
+  for(Size n3a = 0; n3a < 2; n3a++) {
+  for(Size n2a = 0; n2a < 2; n2a++) {
+    Vec chk( pose.xyz(AtomID(1,1)) );
+    chk = R3[i3a]*chk; if(i2a) chk = R2*(chk-cen2)+cen2;
+    chk = R3[j3a]*chk; if(j2a) chk = R2*(chk-cen2)+cen2;
+    chk = R3[k3a]*chk; if(k2a) chk = R2*(chk-cen2)+cen2;
+    chk = R3[l3a]*chk; if(l2a) chk = R2*(chk-cen2)+cen2;
+    chk = R3[m3a]*chk; if(m2a) chk = R2*(chk-cen2)+cen2;
+    chk = R3[n3a]*chk; if(n2a) chk = R2*(chk-cen2)+cen2;
+    for(vector1<Vec>::const_iterator i = seenit.begin(); i != seenit.end(); ++i) {
+      if( i->distance_squared(chk) < 1.0 ) goto cont2;
+    }
+    goto done2; cont2: continue; done2:
+    seenit.push_back(chk);
+
+    Vec zero(0,0,0);
+    zero = R3[i3a]*zero; if(i2a) zero = R2*(zero-cen2)+cen2;
+    zero = R3[j3a]*zero; if(j2a) zero = R2*(zero-cen2)+cen2;
+    zero = R3[k3a]*zero; if(k2a) zero = R2*(zero-cen2)+cen2;
+    zero = R3[l3a]*zero; if(l2a) zero = R2*(zero-cen2)+cen2;
+    zero = R3[m3a]*zero; if(m2a) zero = R2*(zero-cen2)+cen2;
+    zero = R3[n3a]*zero; if(n2a) zero = R2*(zero-cen2)+cen2;
+    if( zero.length() > 2.0 * mxd + 20.0 ) continue;
+
+    SYMSUB s;
+    Vec X = Vec(0,0,1);
+    X=R3[i3a]*X;if(i2a)X=R2*(X);X=R3[j3a]*X;if(j2a)X=R2*(X);X=R3[k3a]*X;if(k2a)X=R2*(X);
+    X=R3[l3a]*X;if(l2a)X=R2*(X);X=R3[m3a]*X;if(m2a)X=R2*(X);X=R3[n3a]*X;if(n2a)X=R2*(X);
+    Vec Y = Vec(0,1,0);
+    Y=R3[i3a]*Y;if(i2a)Y=R2*(Y);Y=R3[j3a]*Y;if(j2a)Y=R2*(Y);Y=R3[k3a]*Y;if(k2a)Y=R2*(Y);
+    Y=R3[l3a]*Y;if(l2a)Y=R2*(Y);Y=R3[m3a]*Y;if(m2a)Y=R2*(Y);Y=R3[n3a]*Y;if(n2a)Y=R2*(Y);
+    Vec C = Vec(0,0,0);
+    C=R3[i3a]*C;if(i2a)C=R2*(C-cen2)+cen2;C=R3[j3a]*C;if(j2a)C=R2*(C-cen2)+cen2;C=R3[k3a]*C;if(k2a)C=R2*(C-cen2)+cen2;
+    C=R3[l3a]*C;if(l2a)C=R2*(C-cen2)+cen2;C=R3[m3a]*C;if(m2a)C=R2*(C-cen2)+cen2;C=R3[n3a]*C;if(n2a)C=R2*(C-cen2)+cen2;
+    s.X = X;
+    s.Y = Y;
+    s.C = C;
+    s.vname = "S"+str(i3a)+str(i2a)+str(j3a)+str(j2a)+str(k3a)+str(k2a)+str(l3a)+str(l2a)+str(m3a)+str(m2a)+str(n3a)+str(n2a);
+    subs.push_back(s);
+
+  }}}}}}}}}}}}
+
+  TR << "output" << std::endl;
+  ozstream out( fname );
+  out << "symmetry_name X23D" << endl;
+  out << "anchor_residue 1" << endl;
+  out << "E = 1*" << subs[1].vname;
+  for(int i = 2; i <= subs.size(); ++i) out << " + 1*(" << subs[1].vname << ":" << subs[i].vname << ")";
+  out << endl;
+  out << "virtual_coordinates_start" << endl;
+  for(int i = 1; i <= subs.size(); ++i) {
+    Vec X=subs[i].X, Y=subs[i].Y, C=subs[i].C;
+    out << "xyz " << subs[i].vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
+  }
+  out << "virtual_coordinates_stop" << endl;
+  for(int i = 2; i <= subs.size(); ++i) out << "connect_virtual J" << subs[i].vname << " " << subs[1].vname << " " << subs[i].vname << endl;
+  for(int i = 1; i <= subs.size(); ++i) out << "connect_virtual JS" << subs[i].vname << " " << subs[i].vname << " SUBUNIT" << endl;
+  out << "set_jump_group JGS";
+  for(int i = 1; i <= subs.size(); ++i) out << " JS" << subs[i].vname;
+  out << endl;
+  out.close();
+  return subs.size();
+}
+
+void dumpsymfile_minimal(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname) {
+  vector1<Vec> seenit;
+  Mat R3[3];
+  R3[0] = Mat::identity();
+  R3[1] = R3a;
+  R3[2] = R3b;
+  Size acount=0,rcount=0,ccount=0;
+  vector1<SYMSUB> subs;
+  for(Size i3a = 0; i3a < 3; i3a++) {
+  for(Size i2a = 0; i2a < 2; i2a++) {
+  for(Size j3a = 0; j3a < 3; j3a++) {
+    Vec chk( pose.xyz(AtomID(1,1)) );
+    chk = R3[i3a]*chk; if(i2a) chk = R2*(chk-cen2)+cen2;
+    chk = R3[j3a]*chk;;
+    for(vector1<Vec>::const_iterator i = seenit.begin(); i != seenit.end(); ++i) {
+      if( i->distance_squared(chk) < 1.0 ) goto cont2;
+    }
+    goto done2; cont2: continue; done2:
+    seenit.push_back(chk);
+
+    SYMSUB s;
+    Vec X = Vec(0,0,1);
+    X=R3[i3a]*X;if(i2a)X=R2*(X);X=R3[j3a]*X;
+    Vec Y = Vec(0,1,0);
+    Y=R3[i3a]*Y;if(i2a)Y=R2*(Y);Y=R3[j3a]*Y;
+    Vec C = Vec(0,0,0);
+    C=R3[i3a]*C;if(i2a)C=R2*(C-cen2)+cen2;C=R3[j3a]*C;
+    s.X = X;
+    s.Y = Y;
+    s.C = C;
+    s.vname = "S"+str(i3a)+str(i2a)+str(j3a);
+    subs.push_back(s);
+
+  }}}
+  TR << "output" << std::endl;
+  ozstream out( fname );
+  out << "symmetry_name X23D" << endl;
+  out << "anchor_residue 1" << endl;
+  out << "E = 1*" << subs[1].vname;
+  for(int i = 2; i <= subs.size(); ++i) out << " + 1*(" << subs[1].vname << ":" << subs[i].vname << ")";
+  out << endl;
+  out << "virtual_coordinates_start" << endl;
+  for(int i = 1; i <= subs.size(); ++i) {
+    Vec X=subs[i].X, Y=subs[i].Y, C=subs[i].C;
+    out << "xyz " << subs[i].vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
+  }
+  out << "virtual_coordinates_stop" << endl;
+  for(int i = 2; i <= subs.size(); ++i) out << "connect_virtual J" << subs[i].vname << " " << subs[1].vname << " " << subs[i].vname << endl;
+  for(int i = 1; i <= subs.size(); ++i) out << "connect_virtual JS" << subs[i].vname << " " << subs[i].vname << " SUBUNIT" << endl;
+  out << "set_jump_group JGS";
+  for(int i = 1; i <= subs.size(); ++i) out << " JS" << subs[i].vname;
+  out << endl;
+  
+  out.close();
+}
+
 
 void dumpsym6(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec HG, string fname, Size irsd, Size ch1, Size ch2, Real ANG) {
   vector1<Vec> seenit;
@@ -553,7 +702,7 @@ void dock(Pose & init, string fname) {
   Vec com(0,0,0);
   for(Size ir = 1; ir <= init.n_residue(); ++ir) {
     init.replace_residue(ir,cys.residue(1),true);
-    replace_pose_residue_copying_existing_coordinates(init,ir,init.residue(ir).residue_type_set().name_map("ALA"));
+    // replace_pose_residue_copying_existing_coordinates(init,ir,init.residue(ir).residue_type_set().name_map("ALA"));
     com += init.xyz(AtomID(2,ir));
   }
   com /= init.n_residue();
@@ -616,23 +765,24 @@ void dock(Pose & init, string fname) {
 
           {
             string sym = "P432";
-            if( angle_degrees(a2f,Vec(0,0,0),Vec(0,0,1)) > 44.0 ) sym = "I213";
+            double axang = angle_degrees(a2f,Vec(0,0,0),Vec(0,0,1));
+            if( fabs(axang-ATET) > 0.1 && fabs(axang-AOCT) > 0.1 ) utility_exit_with_message("bad axis angle!!!!!!! " +str(axang) );
+            if( axang > 44.0 ) sym = "I213";
             // Vec AX = rotation_matrix_degrees(HG-SG,idh?45.0:-45.0) * projperp(HG-SG,CB-SG).normalized();
-            pose.set_xyz(AtomID(pose.residue(irsd).atom_index("H"),irsd),HG+a2f);
-            
+            // pose.set_xyz(AtomID(pose.residue(irsd).atom_index("H"),irsd),HG+a2f);
             string fn = utility::file_basename(fname).substr(0,4)+"_"+str(irsd)+"_"+sym+"_"+str(krot)+"_"+str(idh)+"_"+str(ich2);
-
             if(check_dsf_dimer(pose,R2f,HG,irsd)) {
-              Pose tmp(pose);
-              rot_pose(tmp,R2f,HG);
-              pose.dump_pdb(fn+"A.pdb");
-              tmp .dump_pdb(fn+"B.pdb");
-              dumpsym(pose,R2f,R3f1,R3f2,HG,fn+".pdb" );
+              // Pose tmp(pose);
+              // rot_pose(tmp,R2f,HG);
+              pose.dump_pdb(fn+"_chainA.pdb");
+              // tmp .dump_pdb(fn+"B.pdb");
+              dumpsymfile_minimal(pose,R2f,R3f1,R3f2,HG,fn+".sym" );
+              int nsubs = dumpsymfile(pose,R2f,R3f1,R3f2,HG,fn+"_ALL.sym" );
+              // dumpsym(pose,R2f,R3f1,R3f2,HG,fn+".pdb" );
               // utility_exit_with_message("oiarseht");
-              std::cerr << "HIT  " << fname << " " << sym << " " << irsd << " " << krot << " " << idh << " " << ich2 << std::endl;
-          } else {
-              std::cerr << "FAIL " << fname << " " << sym << " " << irsd << " " << krot << " " << idh << " " << ich2 << std::endl;
-
+              std::cerr << "HIT  " << fn << " " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << nsubs << std::endl;
+            } else {
+              std::cerr << "FAIL " << fn << " " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << std::endl;
             }
           }
         }
