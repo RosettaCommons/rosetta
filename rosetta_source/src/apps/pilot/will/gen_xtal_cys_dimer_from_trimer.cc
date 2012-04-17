@@ -329,11 +329,19 @@ inline double fang(Vec const & v) {
              fabs(angle_degrees(v,Vec(0,0,0),Vec(0,0,1))-180.0+ATET),
              fabs(angle_degrees(v,Vec(0,0,0),Vec(0,0,1))-180.0+AOCT))));
 }
+inline double wang(Vec const & v) {
+  if(fang(v)==fabs(angle_degrees(v,Vec(0,0,0),Vec(0,0,1))-ATET)) return ATET;
+  else if(fang(v)==fabs(angle_degrees(v,Vec(0,0,0),Vec(0,0,1))-AOCT)) return AOCT;
+  else if(fang(v)==fabs(angle_degrees(v,Vec(0,0,0),Vec(0,0,1))-180.0+ATET)) return 180.0-ATET;
+  else if(fang(v)==fabs(angle_degrees(v,Vec(0,0,0),Vec(0,0,1))-180.0+AOCT)) return 180.0-AOCT;
+  else utility_exit_with_message("FFFFUUUUU");
+}
 vector1<core::Real>
 get_chi2(
   core::pose::Pose const & pose,
   core::Size irsd,
-  int idh
+  int idh,
+  vector1<Vec> & axes
 ){
   Vec CB = pose.xyz(AtomID(pose.residue(irsd).atom_index("CB"),irsd));
   Vec SG = pose.xyz(AtomID(pose.residue(irsd).atom_index("SG"),irsd));
@@ -351,8 +359,15 @@ get_chi2(
     double ang = dax.z();
     double f = fang(dax);
     if( oldf1 <= f && oldf1 <= oldf2 && oldf1 < 1.0) {
-      std::cerr << angle_degrees(Vec(0,0,1),Vec(0,0,0),dax) << " " << i << " " << oldf1 << " " << dax.z() << std::endl;
+      // std::cerr << angle_degrees(Vec(0,0,1),Vec(0,0,0),dax) << " " << i << " " << oldf1 << " " << dax.z() << std::endl;
       chi2s.push_back((core::Real)i/10.0);
+      Vec tmpaxs = dax.cross(Vec(0,0,1));
+      double da = wang(dax)-dihedral_degrees(dax,Vec(0,0,0),tmpaxs,Vec(0,0,1));
+      // std::cerr << da << std::endl;
+      Vec realdax = rotation_matrix_degrees(tmpaxs,-da) * dax;
+      if( 90.0 < angle_degrees(realdax,Vec(0,0,0),Vec(0,0,1)) ) realdax *= -1.0;
+      // std::cerr << angle_degrees(realdax,Vec(0,0,0),Vec(0,0,1)) << " " << dax << " " << realdax << " " << std::endl;
+      axes.push_back(realdax);
     }
     oldf2 = oldf1;
     oldf1 = f;
@@ -420,8 +435,10 @@ void dock(Pose & init, string fname) {
       pose.set_chi(1,irsd,chi1s[krot]);
       pose.set_chi(2,irsd,0.0);
       for(int idh = 0; idh < 2; idh++) {
-        vector1<core::Real> chi2 = get_chi2(pose,irsd,idh);
+        vector1<Vec> axes;
+        vector1<core::Real> chi2s = get_chi2(pose,irsd,idh,axes);
         for(Size ich2 = 1; ich2 <= chi2s.size(); ++ich2){
+          Vec a2f = axes[ich2];
           pose.set_chi(2,irsd,chi2s[ich2]);
           {
             Vec CB2 = pose.xyz(AtomID(pose.residue(irsd).atom_index("CB"),irsd));
@@ -429,7 +446,11 @@ void dock(Pose & init, string fname) {
             Vec HG2 = pose.xyz(AtomID(pose.residue(irsd).atom_index("HG"),irsd));
             Vec AX2 = rotation_matrix_degrees(HG2-SG2,idh?45.0:-45.0) * projperp(HG2-SG2,CB2-SG2).normalized();
             pose.set_xyz(AtomID(pose.residue(irsd).atom_index("H"),irsd),HG2+AX2);
-            pose.dump_pdb("test_"+str(krot)+"_"+str(idh)+"_"+str(ich2)+".pdb");
+            pose.dump_pdb("test_"+str(krot)+"_"+str(idh)+"_"+str(ich2)+"_A.pdb");
+            // std::cerr << angle_degrees(Vec(0,0,1),Vec(0,0,0),axes[ich2]) << std::endl;
+            rot_pose(pose,a2f,180.0,HG2);
+            pose.dump_pdb("test_"+str(krot)+"_"+str(idh)+"_"+str(ich2)+"_B.pdb");
+            rot_pose(pose,a2f,180.0,HG2);
           }
         }
 
