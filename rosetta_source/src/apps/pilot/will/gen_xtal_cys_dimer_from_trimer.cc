@@ -68,6 +68,7 @@
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
+#include <protocols/sic_dock/xyzStripeHashPose.hh>
 #include <sstream>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -84,13 +85,14 @@
 #include <apps/pilot/will/mynamespaces.ihh>
 #include <apps/pilot/will/will_util.ihh>
 
+#define CONTACT_D2 36.0
 
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 using core::pose::Pose;
 using core::conformation::ResidueOP;
 
-static basic::Tracer TR("genI213");
+static basic::Tracer TR("genxtal");
 static core::io::silent::SilentFileData sfd;
 
 
@@ -134,10 +136,13 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
   R3[1] = R3a;
   R3[2] = R3b;
   TR << "output" << std::endl;
-	vector1<string> ANAME(3);
+	vector1<string> ANAME(6);
 	ANAME[1] = " N  ";
 	ANAME[2] = " CA ";
-	ANAME[3] = " C  ";
+  ANAME[3] = " C  ";
+  ANAME[4] = " O  ";
+  ANAME[5] = " CB ";
+  ANAME[6] = " SG ";
 	string CHAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   ozstream out( fname );
   Size acount=0,rcount=0,ccount=0;
@@ -149,18 +154,18 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
             for(Size k2a = 0; k2a < 2; k2a++) {
               for(Size l3a = 0; l3a < 3; l3a++) {
                 for(Size l2a = 0; l2a < 2; l2a++) {
-                  for(Size m3a = 0; m3a < 2; m3a++) {
-                    for(Size m2a = 0; m2a < 2; m2a++) {
-                      for(Size n3a = 0; n3a < 2; n3a++) {
-                        for(Size n2a = 0; n2a < 2; n2a++) {
+                  // for(Size m3a = 0; m3a < 2; m3a++) {
+                  //   for(Size m2a = 0; m2a < 2; m2a++) {
+                  //     for(Size n3a = 0; n3a < 2; n3a++) {
+                  //       for(Size n2a = 0; n2a < 2; n2a++) {
 
                           Vec chk( pose.xyz(AtomID(1,1)) );
 													chk = R3[i3a]*chk; if(i2a) chk = R2*(chk-cen2)+cen2;
 													chk = R3[j3a]*chk; if(j2a) chk = R2*(chk-cen2)+cen2;
 													chk = R3[k3a]*chk; if(k2a) chk = R2*(chk-cen2)+cen2;
 													chk = R3[l3a]*chk; if(l2a) chk = R2*(chk-cen2)+cen2;
-													chk = R3[m3a]*chk; if(m2a) chk = R2*(chk-cen2)+cen2;
-													chk = R3[n3a]*chk; if(n2a) chk = R2*(chk-cen2)+cen2;
+													// chk = R3[m3a]*chk; if(m2a) chk = R2*(chk-cen2)+cen2;
+													// chk = R3[n3a]*chk; if(n2a) chk = R2*(chk-cen2)+cen2;
                           for(vector1<Vec>::const_iterator i = seenit.begin(); i != seenit.end(); ++i) {
                             if( i->distance_squared(chk) < 1.0 ) goto cont2;
                           }
@@ -168,26 +173,28 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                           seenit.push_back(chk);
 
 													char chain = CHAIN[ccount];
-													if( (i2a+j2a+k2a+l2a+m2a+n2a) % 2 == 1 ) chain = 'B';
+													if( (i2a+j2a+k2a+l2a/*+m2a+n2a*/) % 2 == 1 ) chain = 'B';
                           for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 														if( rcount >= 9999) {
 															rcount = 0;
 															ccount++;
 														}
                             Size rn = ++rcount;
-														for(Size ia = 1; ia <= 3; ia++) {
-															Vec tmp(pose.residue(ir).xyz(ia));
-															tmp = R3[i3a]*tmp; if(i2a) tmp = R2*(tmp-cen2)+cen2;
-															tmp = R3[j3a]*tmp; if(j2a) tmp = R2*(tmp-cen2)+cen2;
-															tmp = R3[k3a]*tmp; if(k2a) tmp = R2*(tmp-cen2)+cen2;
-															tmp = R3[l3a]*tmp; if(l2a) tmp = R2*(tmp-cen2)+cen2;
-															tmp = R3[m3a]*tmp; if(m2a) tmp = R2*(tmp-cen2)+cen2;
-															tmp = R3[n3a]*tmp; if(n2a) tmp = R2*(tmp-cen2)+cen2;
-															string X = F(8,3,tmp.x());
-															string Y = F(8,3,tmp.y());
-															string Z = F(8,3,tmp.z());
-															out<<"ATOM  "<<I(5,++acount)<<' '<<ANAME[ia]<<' '<<"ALA"<<' '<<chain<<I(4,rn)<<"    "<<X<<Y<<Z<<F(6,2,1.0)<<F(6,2,0.0)<<'\n';
-														}
+                            Size natom = 5;
+                            if(pose.residue(ir).name3()=="CYS") natom = 6;
+                            for(Size ia = 1; ia <= natom; ia++) {
+                              Vec tmp(pose.residue(ir).xyz(ia));
+                              tmp = R3[i3a]*tmp; if(i2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[j3a]*tmp; if(j2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[k3a]*tmp; if(k2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[l3a]*tmp; if(l2a) tmp = R2*(tmp-cen2)+cen2;
+                              // tmp = R3[m3a]*tmp; if(m2a) tmp = R2*(tmp-cen2)+cen2;
+                              // tmp = R3[n3a]*tmp; if(n2a) tmp = R2*(tmp-cen2)+cen2;
+                              string X = F(8,3,tmp.x());
+                              string Y = F(8,3,tmp.y());
+                              string Z = F(8,3,tmp.z());
+                              out<<"ATOM  "<<I(5,++acount)<<' '<<ANAME[ia]<<' '<<"ALA"<<' '<<chain<<I(4,rn)<<"    "<<X<<Y<<Z<<F(6,2,1.0)<<F(6,2,0.0)<<'\n';
+                            }
                           }
 													out << "TER" << std::endl;
                         }
@@ -198,10 +205,10 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
               }
             }
           }
-        }
-      }
-    }
-  }
+  //       }
+  //     }
+  //   }
+  // }
   out.close();
 }
 
@@ -284,7 +291,142 @@ void dumpsym2(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec HG, string fname,
   }
 }
 
+bool symclash(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec C2, 
+  protocols::sic_dock::xyzStripeHashPose const & xh2,
+  protocols::sic_dock::xyzStripeHashPose const & xh3
+){
+  Vec com(0,0,0);
+  for(Size ir = 1; ir <= pose.n_residue(); ++ir) com += pose.xyz(AtomID(2,ir));
+  com /= pose.n_residue();
+  Real mxd = 0;
+  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+    if( pose.xyz(AtomID(5,ir)).distance(com) > mxd ) mxd = pose.xyz(AtomID(5,ir)).distance(com);
+  }
+  mxd = (2*mxd+4.0)*(2*mxd+4.0);
 
+
+  Mat R3[3];
+  R3[0] = Mat::identity();
+  R3[1] = R3a;
+  R3[2] = R3b;
+
+  vector1<Pose> toadd;
+  vector1<Vec> olap,ori1,ori2,toaddcom;
+  { // now check xtal symm
+    {
+      Vec chk( com );
+      olap.push_back(        chk);
+      olap.push_back(    R3a*chk);
+      olap.push_back(    R3b*chk);
+      olap.push_back(R2*(    chk-C2)+C2);
+      olap.push_back(R2*(R3a*chk-C2)+C2);
+      olap.push_back(R2*(R3b*chk-C2)+C2);
+      chk = Vec(0,0,1);
+      ori1.push_back(       chk);
+      ori1.push_back(   R3a*chk);
+      ori1.push_back(   R3b*chk);
+      ori1.push_back(R2*    chk);
+      ori1.push_back(R2*R3a*chk);
+      ori1.push_back(R2*R3b*chk);
+      chk = Vec(0,1,0);
+      ori2.push_back(       chk);
+      ori2.push_back(   R3a*chk);
+      ori2.push_back(   R3b*chk);
+      ori2.push_back(R2*    chk);
+      ori2.push_back(R2*R3a*chk);
+      ori2.push_back(R2*R3b*chk);
+    }
+    for(Size i3a = 0; i3a < 3; i3a++) {
+      for(Size i2a = 0; i2a < 2; i2a++) {
+        for(Size j3a = 0; j3a < 3; j3a++) {
+          for(Size j2a = 0; j2a < 2; j2a++) {
+            for(Size k3a = 0; k3a < 3; k3a++) {
+              for(Size k2a = 0; k2a < 2; k2a++) {
+                for(Size l3a = 0; l3a < 3; l3a++) {
+                  for(Size l2a = 0; l2a < 2; l2a++) {
+                    for(Size m3a = 0; m3a < 3; m3a++) {
+                      for(Size m2a = 0; m2a < 2; m2a++) {
+                        for(Size n3a = 0; n3a < 3; n3a++) {
+                          for(Size n2a = 0; n2a < 2; n2a++) {
+                            Vec chk(com),or1(0,0,1),or2(0,1,0);
+                            chk = R3[i3a] * chk; if(i2a) chk = R2*(chk-C2)+C2;
+                            chk = R3[j3a] * chk; if(j2a) chk = R2*(chk-C2)+C2;
+                            chk = R3[k3a] * chk; if(k2a) chk = R2*(chk-C2)+C2;
+                            chk = R3[l3a] * chk; if(l2a) chk = R2*(chk-C2)+C2;
+                            chk = R3[m3a] * chk; if(m2a) chk = R2*(chk-C2)+C2;
+                            chk = R3[n3a] * chk; if(n2a) chk = R2*(chk-C2)+C2;
+                            or1 = R3[i3a] * or1; if(i2a) or1 = R2*or1;
+                            or1 = R3[j3a] * or1; if(j2a) or1 = R2*or1;
+                            or1 = R3[k3a] * or1; if(k2a) or1 = R2*or1;
+                            or1 = R3[l3a] * or1; if(l2a) or1 = R2*or1;
+                            or1 = R3[m3a] * or1; if(m2a) or1 = R2*or1;
+                            or1 = R3[n3a] * or1; if(n2a) or1 = R2*or1;
+                            or2 = R3[i3a] * or2; if(i2a) or2 = R2*or2;
+                            or2 = R3[j3a] * or2; if(j2a) or2 = R2*or2;
+                            or2 = R3[k3a] * or2; if(k2a) or2 = R2*or2;
+                            or2 = R3[l3a] * or2; if(l2a) or2 = R2*or2;
+                            or2 = R3[m3a] * or2; if(m2a) or2 = R2*or2;
+                            or2 = R3[n3a] * or2; if(n2a) or2 = R2*or2;
+                            for(vector1<Vec>::const_iterator i0=olap.begin(),i1=ori1.begin(),i2=ori2.begin(); i0 != olap.end(); ++i0,++i1,++i2) {
+                              if( i0->distance_squared(chk) < 1.0 && or1.dot( *i1 ) > 0.95 && or2.dot( *i2 ) > 0.95 ) goto cont6;
+                            } goto done6; cont6: continue; done6:
+                            olap.push_back(chk);
+                            ori1.push_back(or1);
+                            ori2.push_back(or2);
+                            string X = F(8,3,chk.x());
+                            string Y = F(8,3,chk.y());
+                            string Z = F(8,3,chk.z());
+                            //xout<<"ATOM  "<<I(5,1)<<' '<<" CA "<<' '<<"ALA"<<' '<<"Z"<<I(4,1)<<"    "<<X<<Y<<Z<<F(6,2,1.0)<<F(6,2,0.0)<<'\n';
+                            if( chk.distance_squared(com) > mxd ) continue;
+                            //TR << chk << std::endl;
+                            bool contact = false;
+                            for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+                              for(Size ia = 1; ia <= 5; ++ia) {
+                                Vec X( pose.xyz(AtomID(ia,ir)) );
+                                X = R3[i3a] * X; if(i2a) X = R2*(X-C2)+C2;
+                                X = R3[j3a] * X; if(j2a) X = R2*(X-C2)+C2;
+                                X = R3[k3a] * X; if(k2a) X = R2*(X-C2)+C2;
+                                X = R3[l3a] * X; if(l2a) X = R2*(X-C2)+C2;
+                                X = R3[m3a] * X; if(m2a) X = R2*(X-C2)+C2;
+                                X = R3[n3a] * X; if(n2a) X = R2*(X-C2)+C2;
+                                if( xh2.nbcount(X)>0 ) goto cont7;
+                                // if( ia == 5 ) {
+                                //   for(vector1<Vec>::const_iterator jcb = cba.begin(); jcb != cba.end(); ++jcb) {
+                                //     if( jcb->distance_squared(X) < CONTACT_D2 ) {
+                                //       contact = true;
+                                //     }
+                                //   }
+                                // }
+                              }
+                            }
+                            // if(contact) {
+                            //   Pose tmp(pose);
+                            //   //core::util::switch_to_residue_type_set(tmp,"centroid");
+                            //   rot_pose(tmp,R3[i3a]); if(i2a) rot_pose(tmp,R2,C2);
+                            //   rot_pose(tmp,R3[j3a]); if(j2a) rot_pose(tmp,R2,C2);
+                            //   rot_pose(tmp,R3[k3a]); if(k2a) rot_pose(tmp,R2,C2);
+                            //   rot_pose(tmp,R3[l3a]); if(l2a) rot_pose(tmp,R2,C2);
+                            //   rot_pose(tmp,R3[m3a]); if(m2a) rot_pose(tmp,R2,C2);
+                            //   rot_pose(tmp,R3[n3a]); if(n2a) rot_pose(tmp,R2,C2);
+                            //   toadd.push_back(tmp);
+                            //   toaddcom.push_back(chk);
+                            // }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } goto done7; cont7: return true; done7:
+    ;// if(olap.size() < 25) return true;
+  }
+  return false;
+}
 
 vector1<core::Real>
 get_chi1(
@@ -348,6 +490,8 @@ get_chi2(
   Vec HG = pose.xyz(AtomID(pose.residue(irsd).atom_index("HG"),irsd));
   Vec cax = SG-CB;
   Vec dax = rotation_matrix_degrees(HG-SG,idh?45.0:-45.0) * projperp(HG-SG,CB-SG).normalized();
+  if( fabs(dax.dot(HG-SG)) > 0.0001 ) utility_exit_with_message("bad dsf axs " + str(dax.dot(HG-SG)));
+
   dax.normalize();
   Mat R = rotation_matrix_degrees(cax,0.1);
   vector1<core::Real> chi2s;
@@ -360,13 +504,14 @@ get_chi2(
     double f = fang(dax);
     if( oldf1 <= f && oldf1 <= oldf2 && oldf1 < 1.0) {
       // std::cerr << angle_degrees(Vec(0,0,1),Vec(0,0,0),dax) << " " << i << " " << oldf1 << " " << dax.z() << std::endl;
-      chi2s.push_back((core::Real)i/10.0);
       Vec tmpaxs = dax.cross(Vec(0,0,1));
       double da = wang(dax)-dihedral_degrees(dax,Vec(0,0,0),tmpaxs,Vec(0,0,1));
       // std::cerr << da << std::endl;
       Vec realdax = rotation_matrix_degrees(tmpaxs,-da) * dax;
       if( 90.0 < angle_degrees(realdax,Vec(0,0,0),Vec(0,0,1)) ) realdax *= -1.0;
       // std::cerr << angle_degrees(realdax,Vec(0,0,0),Vec(0,0,1)) << " " << dax << " " << realdax << " " << std::endl;
+      if(da > 1.0) continue;
+      chi2s.push_back((core::Real)i/10.0);
       axes.push_back(realdax);
     }
     oldf2 = oldf1;
@@ -374,6 +519,17 @@ get_chi2(
     dax = R * dax;
   }
   return chi2s;
+}
+
+
+
+bool check_dsf_dimer(Pose const & pose, Mat R2f, Vec C2f, Size irsd) {
+  Vec CB1 = pose.residue(irsd).xyz("CB");
+  Vec SG1 = pose.residue(irsd).xyz("SG");
+  Vec CB2 = R2f * (CB1-C2f) + C2f;
+  Vec SG2 = R2f * (SG1-C2f) + C2f;
+  if( fabs(SG1.distance(SG2) - 2.02) > 0.1 ) return false;
+  return true;
 }
 
 
@@ -402,8 +558,8 @@ void dock(Pose & init, string fname) {
   }
   com /= init.n_residue();
 
-  protocols::scoring::ImplicitFastClashCheck ifc3(init,3.5);
-  protocols::scoring::ImplicitFastClashCheck ifc2(init,2.8);
+  protocols::sic_dock::xyzStripeHashPose xh2(2.8,init);
+  protocols::sic_dock::xyzStripeHashPose xh3(3.5,init);
 
   Size nres = init.n_residue();
   // ScoreFunctionOP sf = core::scoring::getScoreFunction();
@@ -427,12 +583,16 @@ void dock(Pose & init, string fname) {
       if( iss < 1 || iss > pose.n_residue() ) goto contss;
       if( pose.secstruct(iss) != 'L' ) goto doness;
     } goto doness; contss: continue; doness:
+    Mat R3f1 = rotation_matrix_degrees(Vec(0,0,1),120.0);
+    Mat R3f2 = rotation_matrix_degrees(Vec(0,0,1),240.0);
 
     ResidueOP rprev = pose.residue(irsd).clone();
     pose.replace_residue(irsd,cys.residue(1),true);
+    Vec CB = pose.xyz(AtomID(pose.residue(irsd).atom_index("CB"),irsd));
     vector1<core::Real> chi1s = get_chi1(pose,irsd);
     for(Size krot = 1; krot <= chi1s.size(); ++krot) {
       pose.set_chi(1,irsd,chi1s[krot]);
+      Vec SG = pose.xyz(AtomID(pose.residue(irsd).atom_index("SG"),irsd));
       pose.set_chi(2,irsd,0.0);
       for(int idh = 0; idh < 2; idh++) {
         vector1<Vec> axes;
@@ -440,23 +600,45 @@ void dock(Pose & init, string fname) {
         for(Size ich2 = 1; ich2 <= chi2s.size(); ++ich2){
           Vec a2f = axes[ich2];
           pose.set_chi(2,irsd,chi2s[ich2]);
+          Vec HG = pose.xyz(AtomID(pose.residue(irsd).atom_index("HG"),irsd));
+          Mat R2f = rotation_matrix_degrees(a2f,180.0);
+
+          for(int i = 1; i <= pose.n_residue(); ++i) {
+            for(int j = 1; j <= pose.residue(i).last_backbone_atom(); ++j){
+              Vec p1 =      (R2f*(pose.xyz(AtomID(j,i))-HG)+HG);
+              Vec p2 = R3f1*(R2f*(pose.xyz(AtomID(j,i))-HG)+HG);
+              Vec p3 = R3f2*(R2f*(pose.xyz(AtomID(j,i))-HG)+HG);
+              if(xh3.nbcount(p1)>0||xh3.nbcount(p2)>0||xh3.nbcount(p3)>0) goto clash1;
+            }
+          }
+          goto noclash1; clash1: continue; noclash1:
+          if(symclash(pose,R2f,R3f1,R3f2,HG,xh2,xh3)) continue;
+
           {
-            Vec CB2 = pose.xyz(AtomID(pose.residue(irsd).atom_index("CB"),irsd));
-            Vec SG2 = pose.xyz(AtomID(pose.residue(irsd).atom_index("SG"),irsd));
-            Vec HG2 = pose.xyz(AtomID(pose.residue(irsd).atom_index("HG"),irsd));
-            Vec AX2 = rotation_matrix_degrees(HG2-SG2,idh?45.0:-45.0) * projperp(HG2-SG2,CB2-SG2).normalized();
-            pose.set_xyz(AtomID(pose.residue(irsd).atom_index("H"),irsd),HG2+AX2);
-            pose.dump_pdb("test_"+str(krot)+"_"+str(idh)+"_"+str(ich2)+"_A.pdb");
-            // std::cerr << angle_degrees(Vec(0,0,1),Vec(0,0,0),axes[ich2]) << std::endl;
-            rot_pose(pose,a2f,180.0,HG2);
-            pose.dump_pdb("test_"+str(krot)+"_"+str(idh)+"_"+str(ich2)+"_B.pdb");
-            rot_pose(pose,a2f,180.0,HG2);
+            string sym = "P432";
+            if( angle_degrees(a2f,Vec(0,0,0),Vec(0,0,1)) > 44.0 ) sym = "I213";
+            // Vec AX = rotation_matrix_degrees(HG-SG,idh?45.0:-45.0) * projperp(HG-SG,CB-SG).normalized();
+            pose.set_xyz(AtomID(pose.residue(irsd).atom_index("H"),irsd),HG+a2f);
+            
+            string fn = utility::file_basename(fname).substr(0,4)+"_"+str(irsd)+"_"+sym+"_"+str(krot)+"_"+str(idh)+"_"+str(ich2);
+
+            if(check_dsf_dimer(pose,R2f,HG,irsd)) {
+              Pose tmp(pose);
+              rot_pose(tmp,R2f,HG);
+              pose.dump_pdb(fn+"A.pdb");
+              tmp .dump_pdb(fn+"B.pdb");
+              dumpsym(pose,R2f,R3f1,R3f2,HG,fn+".pdb" );
+              // utility_exit_with_message("oiarseht");
+              std::cerr << "HIT  " << fname << " " << sym << " " << irsd << " " << krot << " " << idh << " " << ich2 << std::endl;
+          } else {
+              std::cerr << "FAIL " << fname << " " << sym << " " << irsd << " " << krot << " " << idh << " " << ich2 << std::endl;
+
+            }
           }
         }
 
       }
     }
-    utility_exit_with_message("arostn");
     pose.replace_residue(irsd,*rprev,false);
   }
 
@@ -477,6 +659,7 @@ int main (int argc, char *argv[]) {
       if(pnat.residue(ir).name3()=="CYS") goto cont1;
     } goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
 		//continue;
+    std::cout << "searching " << fn << std::endl;
     dock(pnat,fn);
   }
 }
