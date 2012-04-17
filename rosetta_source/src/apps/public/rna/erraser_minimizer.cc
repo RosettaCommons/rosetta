@@ -508,7 +508,7 @@ add_virtual_res ( core::pose::Pose & pose ) {
 
 	// if already rooted on virtual residue , return
 	if ( pose.residue ( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
-		std::cout << "addVirtualResAsRoot() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
+		std::cout << "add_virtual_res() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
 		return  pose.fold_tree().root();
 	}
 
@@ -650,6 +650,9 @@ pdb_minimizer() {
 	core::scoring::ScoreFunctionOP scorefxn =
 			ScoreFunctionFactory::create_score_function ( score_weight_file );
 
+	core::scoring::ScoreFunctionOP edens_scorefxn = new ScoreFunction;
+	edens_scorefxn -> set_weight( elec_dens_atomwise, 1.0 );
+
 	//Setup fold tree using user input or using Rhiju's function
 	if ( cutpoint_list.size() == 0 ) {
 		protocols::rna::figure_out_reasonable_rna_fold_tree ( pose );
@@ -658,8 +661,8 @@ pdb_minimizer() {
 	}
 
 	//Add a virtual residue for density scoring
-	Size virtual_res_pos = add_virtual_res ( pose );
-	pose::Pose pose_full = pose;
+	Size const virtual_res_pos = add_virtual_res ( pose );
+	pose::Pose const pose_full = pose;
 	Size const nres ( pose.total_residue() );
 	Size const nres_moving ( nres - fixed_res_list.size() );
 
@@ -667,11 +670,6 @@ pdb_minimizer() {
 	std::string working_sequence = pose.sequence();
 	std::cout << "Pose sequence = " << working_sequence << std::endl;
 	protocols::swa::rna::Output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" );
-	//Start minimize the pose
-	AtomTreeMinimizer minimizer;
-	float const dummy_tol ( 0.00000001 );
-	MinimizerOptions min_options1 ( "dfpmin", dummy_tol, true, false, false );
-	min_options1.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 
 	//Set the MoveMap, avoiding moving the virtual residue
 	std::cout << "Setting up movemap ..." << std::endl;
@@ -770,18 +768,59 @@ pdb_minimizer() {
 
 	Output_movemap ( mm, pose );
 	scorefxn->show ( std::cout, pose );
-	std::cout << "Start Minimizing ..." << std::endl;
+	Real const score_before = ( (*scorefxn) (pose) );
+	Real const edens_score_before = ( (*edens_scorefxn) (pose) );
+
+	std::cout << "Start Minimizing using dfpmin_strong_wolfe ..." << std::endl;
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 400, 400 );
 
 	//Start Minimizing the Full Structure
-	Pose start_pose = pose;
-	minimizer.run ( pose, mm, *scorefxn, min_options1 );
+	//Start minimize the pose
+	AtomTreeMinimizer minimizer;
+	float const dummy_tol ( 0.00000001 );
+	MinimizerOptions min_options_wolfe ( "dfpmin_strong_wolfe", dummy_tol, true, false, false );
+	min_options_wolfe.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
+
+	Pose const start_pose = pose;
+	minimizer.run ( pose, mm, *scorefxn, min_options_wolfe );
 
 	scorefxn -> show ( std::cout, pose );
-	Real score = ( (*scorefxn) (pose) );
-	if (score > 100) {
-		utility_exit_with_message( "The minimization went wild!!!" );
+	Real const score = ( (*scorefxn) (pose) );
+	Real const edens_score = ( (*edens_scorefxn) (pose) );
+	if (score > score_before || edens_score > edens_score_before * 0.9) {
+		std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
+		std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
+		std::cout << "The minimization went wild!!! Try alternative minimization using dfpmin .." << std::endl;
+		pose = start_pose;
+
+		MinimizerOptions min_options_dfpmin ( "dfpmin", dummy_tol, true, false, false );
+		min_options_dfpmin.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
+		minimizer.run ( pose, mm, *scorefxn, min_options_dfpmin );
+
+		scorefxn -> show ( std::cout, pose );
+		Real const score = ( (*scorefxn) (pose) );
+		Real const edens_score = ( (*edens_scorefxn) (pose) );
+		if (score > score_before || edens_score > edens_score_before * 0.9) {
+			std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
+			std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
+			std::cout << "The minimization went wild!!! Try alternative minimization using dfpmin with use_nb_list=false .." << std::endl;
+
+			pose = start_pose;
+
+			MinimizerOptions min_options_dfpmin_no_nb ( "dfpmin", dummy_tol, false, false, false );
+			min_options_dfpmin.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
+			minimizer.run ( pose, mm, *scorefxn, min_options_dfpmin_no_nb );
+
+			Real const score = ( (*scorefxn) (pose) );
+			Real const edens_score = ( (*edens_scorefxn) (pose) );
+			if (score > score_before || edens_score > edens_score_before * 0.9) {
+				std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
+				std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
+				utility_exit_with_message("The minimization went wild!!!");
+			}
+		}
 	}
+
 
 	pose.dump_pdb ( output_pdb_name );
 	std::cout << "Job completed sucessfully." << std::endl;
