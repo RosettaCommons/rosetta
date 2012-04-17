@@ -3483,7 +3483,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
       ),
     Option( 'max_kic_build_attempts', 'Integer',
       desc='Number of attempts at initial kinematic closure loop building',
-      default='100'
+      default='10000'
       ),
     Option( 'remodel_kic_attempts', 'Integer',
       desc='Number of kic attempts per inner cycle during perturb_kic protocol',

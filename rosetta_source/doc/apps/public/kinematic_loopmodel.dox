@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@author Daniel J. Mandell, Roland A. Pache
+///@author Daniel J. Mandell, Roland A. Pache, Amelie Stein
 /*!
 
 @page kinematic_loopmodel Documentation for kinematic loop modeling
 
 @section metadata Metadata
-This document was last updated October 4, 2011 by Roland A. Pache. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.
+This document was last updated April 16, 2012 by Amelie Stein. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.
 
 @section kic_code_demos Code and Demo
 The current application for this method (in Rosetta 3.3) is <code>bin/loopmodel.<my_os>gccrelease</code>. The major protocol movers are <code>src/protocols/moves/KinematicMover</code>, which performs a localized kinematic perturbation to a peptide chain, <code>src/protocols/loops/LoopMover_KIC</code>, which wraps the KinematicMover into a Monte Carlo protocol for loop modeling, and <code>src/protocols/loops/LoopRelaxMover</code>, which allows the protocols in LoopMover_KIC to be combined with other loop modeling protocols. A basic usage example that briefly remodels an 8-residue loop is the <code>kinematic_looprelax</code> integration test, which resides at <code>test/integration/tests/kinematic_looprelax</code>.
@@ -166,7 +166,7 @@ LOOP 88 95 92 0 1
 -loops:refine_init_temp         Initial temperature for simulated annealing in 'refine_kic'. default = '1.5'. [Float]
 -loops:refine_final_temp        Final temperature for simulated annealing in 'refine_kic'. default = '0.5'. [Float]
 -loops:max_kic_build_attempts   Number of times to attempt initial closure in 'perturb_kic' protocol.
-                                Try increasing to 10000 if initial closure is failing. default = 100. [Integer]
+                                Try increasing to 1000000 if initial closure is failing. default = 10000. [Integer]
 -loops:outer_cycles             Number of outer cycles for Monte Carlo (described above in Protocol). default = '3'. [Integer]
 -loops:max_inner_cycles         Maximum number of inner cycles for Monte Carlo (default described above in Protocol). [Integer]
 -loops:kic_recover_last         Keep the last sampled conformation at the end of each outer cycle instead of the lowest

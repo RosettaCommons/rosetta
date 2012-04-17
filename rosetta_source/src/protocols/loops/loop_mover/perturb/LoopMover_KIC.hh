@@ -11,6 +11,7 @@
 /// @brief
 /// @author Mike Tyka
 /// @author Daniel J. Mandell
+/// @author Amelie Stein
 
 #ifndef INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_KIC_hh
 #define INCLUDED_protocols_loops_loop_mover_perturb_LoopMover_KIC_hh
@@ -65,6 +66,18 @@ public:
 	);
 
 	void set_default_settings();
+
+    
+    const core::Size get_max_kic_build_attempts()
+    {
+        return max_kic_build_attempts_;
+    }
+
+    void set_max_kic_build_attempts( core::Size max_kic_build_attempts )
+    {
+        max_kic_build_attempts_ = max_kic_build_attempts;
+    }
+    
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const;

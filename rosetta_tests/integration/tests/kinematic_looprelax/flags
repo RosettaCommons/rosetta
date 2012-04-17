@@ -2,6 +2,7 @@
 -loops:loop_file input/4fxn.loop
 -loops:remodel perturb_kic
 -loops:refine refine_kic
+-loops:max_kic_build_attempts 25
 -in:file:fullatom
 -in:file:native input/4fxn.start.pdb
 -out:file:fullatom

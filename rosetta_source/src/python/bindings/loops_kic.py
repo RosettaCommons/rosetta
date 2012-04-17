@@ -15,7 +15,7 @@ import math
 # and will not display in PyMOL for efficiency, but will output
 # loop rms and energy to command line terminal.
 
-MAX_KIC_BUILD_ATTEMPTS = 100
+MAX_KIC_BUILD_ATTEMPTS = 10000
 
 args = [ "app", 
          "-database minirosetta_database", \
