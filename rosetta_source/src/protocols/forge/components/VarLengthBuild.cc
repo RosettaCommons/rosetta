@@ -268,6 +268,36 @@ void VarLengthBuild::apply( Pose & pose ) {
 	// REPEAT: also used for monomeric repeat
 	Pose archive_pose = pose;
 
+	utility::vector1<Real> cached_phi, cached_psi, cached_omega;
+
+  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+
+		Size len_start = remodel_data_.sequence.length();
+
+		// length should honor the blueprint length, and subsequently if the input
+		// pose is longer than blueprint, allow copying of phi-psi beyond the last
+		// residue. only for repeats with matching blueprint and pdb lengths.
+		//cache the phi psi angles
+		if (len_start < pose.total_residue() && len_start * (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure]) == pose.total_residue() ){
+			for (Size i = len_start+1; i <= pose.total_residue(); i++){
+				cached_phi.push_back( pose.phi( i ) );
+				cached_psi.push_back( pose.psi( i ) );
+				cached_omega.push_back( pose.omega( i ));
+			}
+
+			Size max_pdb_index = remodel_data_.blueprint.size()*2;
+
+			while (pose.total_residue() != max_pdb_index){
+				pose.delete_polymer_residue(pose.total_residue());
+			}
+
+			//similarly update archive pose in repeat cases
+			while (archive_pose.total_residue() != max_pdb_index){
+				archive_pose.delete_polymer_residue(archive_pose.total_residue());
+			}
+		}
+	}
+
 	// alter pose
 	Original2Modified original2modified; // keep track of old -> new mapping
 	if ( get_last_move_status() == MS_SUCCESS ) {
@@ -296,25 +326,36 @@ void VarLengthBuild::apply( Pose & pose ) {
 		}
 	}
 	// REPEAT: used for fragment picking and others
-
 	repeat_tail_length_ =0;
   if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 		// adding a tail to the starter monomer pose
+		if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
 
-		// cache the original lengh
-		Size len_start = pose.total_residue();
-
-		// append a tail of the same length
-		for (int i = 1; i<= len_start; i++){
-			core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
-			pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-			pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-			pose.set_omega(pose.total_residue()-1,180);
-			repeat_tail_length_++;
+			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
+			// append a tail of the same length
+			for (int i = 1; i<= len_diff; i++){
+				core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+				pose.set_omega(pose.total_residue()-1,180);
+			}
 		}
-		//confirm new length and update the number used for later
-		//std::cout << "pose_with_tail " << pose.total_residue() << std::endl;
+		assert( pose.total_residue() == (2* remodel_data_.sequence.length()));
+		repeat_tail_length_ = remodel_data_.sequence.length();
+
+		//update the new lenghened pose with pose angles.
+		for (int i = remodel_data_.sequence.length()+1, j=1; i<= pose.total_residue(); i++,j++){
+			if (cached_phi.size() != 0){
+				pose.set_phi(i, cached_phi[j]);
+				pose.set_psi(i, cached_psi[j]);
+				pose.set_omega(i, cached_omega[j]);
+			}else {
+				pose.set_phi(i, 150);
+				pose.set_psi(i, 150);
+				pose.set_omega(i, 180);
+			}
+		}
 	}
 
 	// centroid level protocol
@@ -505,7 +546,9 @@ bool VarLengthBuild::centroid_build(
 		Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
 
 		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
-			interval.right = interval.right + repeat_tail_length_; // pad interval to include the extra shadow residue in pose
+			if (interval.right == pose.total_residue()){
+				interval.right = interval.right + repeat_tail_length_; // pad interval to include the extra shadow residue in pose
+			}
 		}
 		TR << "VLB count_cutpoints " << n_cuts << " interval.left " << interval.left << " interval.right " << interval.right << std::endl;
 
@@ -619,7 +662,7 @@ bool VarLengthBuild::centroid_build(
 	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = linear_chainbreak( pose, l->cut() );
-			TR << "centroid_build: final chainbreak = " << c << std::endl;
+			TR << "centroid_build: final chainbreak at " << l->cut() << " = " << c << std::endl;
 			cbreaks_pass = c <= max_linear_chainbreak_;
 		}
 	}

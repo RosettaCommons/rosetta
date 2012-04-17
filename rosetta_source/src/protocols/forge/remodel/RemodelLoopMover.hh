@@ -218,6 +218,13 @@ public: // mutators
 
 	void repeat_generation(Pose & pose, Pose &repeat_pose);
 
+	void
+	repeat_sync(
+	  core::pose::Pose & repeat_pose,
+	  core::Size repeat_number
+	);
+
+
 	// @brief for updating repeat angles from a monomeric copy
 	void repeat_propagation( Pose & pose, Pose & repeat_pose, Size repeat_number);
 

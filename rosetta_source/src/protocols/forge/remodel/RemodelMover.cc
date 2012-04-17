@@ -992,7 +992,12 @@ bool RemodelMover::centroid_build(
 		pose.energies().clear();
 
 		if (option[ OptionKeys::remodel::repeat_structure].user()) {
-			RemodelLoopMover RLM;
+			using namespace protocols::loops;
+			using protocols::forge::methods::intervals_to_loops;
+			std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
+			LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+
+			RemodelLoopMover RLM(loops);
 			Pose bufferPose(modified_archive_pose);
 			RLM.repeat_generation( bufferPose, modified_archive_pose );
 		}
