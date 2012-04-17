@@ -701,7 +701,7 @@ void dock(Pose & init, string fname) {
 
   Vec com(0,0,0);
   for(Size ir = 1; ir <= init.n_residue(); ++ir) {
-    init.replace_residue(ir,cys.residue(1),true);
+    // init.replace_residue(ir,cys.residue(1),true);
     // replace_pose_residue_copying_existing_coordinates(init,ir,init.residue(ir).residue_type_set().name_map("ALA"));
     com += init.xyz(AtomID(2,ir));
   }
@@ -780,9 +780,9 @@ void dock(Pose & init, string fname) {
               int nsubs = dumpsymfile(pose,R2f,R3f1,R3f2,HG,fn+"_ALL.sym" );
               // dumpsym(pose,R2f,R3f1,R3f2,HG,fn+".pdb" );
               // utility_exit_with_message("oiarseht");
-              std::cerr << "HIT  " << fn << " " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << nsubs << std::endl;
+              std::cerr << "HIT  " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,nsubs) << " " << fn << std::endl;
             } else {
-              std::cerr << "FAIL " << fn << " " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << std::endl;
+              std::cerr << "FAIL " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,    0) << " " << fn << std::endl;
             }
           }
         }
