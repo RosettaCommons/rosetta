@@ -19,22 +19,24 @@
 #include <protocols/ligand_docking/grid_functions.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 
 #include <utility/exit.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.io.hh>
+
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 //Auto Headers
 #include <core/pose/Pose.hh>
@@ -69,21 +71,24 @@ Translate::Translate():
 		//utility::pointer::ReferenceCount(),
 		Mover("Translate"),
 		translate_info_(),
-		chain_ids_to_exclude_()
+		chain_ids_to_exclude_(),
+		tag_along_jumps_()
 {}
 
 Translate::Translate(Translate_info translate_info):
 		//utility::pointer::ReferenceCount(),
 		Mover("Translate"),
 		translate_info_(translate_info),
-		chain_ids_to_exclude_()
+		chain_ids_to_exclude_(),
+		tag_along_jumps_()
 {}
 
 Translate::Translate(Translate const & that):
 		//utility::pointer::ReferenceCount(),
 		protocols::moves::Mover( that ),
 		translate_info_(that.translate_info_),
-		chain_ids_to_exclude_(that.chain_ids_to_exclude_)
+		chain_ids_to_exclude_(that.chain_ids_to_exclude_),
+		tag_along_jumps_(that.tag_along_jumps_)
 {}
 
 Translate::~Translate() {}
@@ -117,6 +122,7 @@ Translate::parse_my_tag(
 	if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Translate' mover requires distribution tag");
 	if ( ! tag->hasOption("angstroms") ) utility_exit_with_message("'Translate' mover requires angstroms tag");
 	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Translate' mover requires cycles tag");
+	//if ( ! tag->hasOption("force") ) utility_exit_with_message("'Translate' mover requires force tag"); optional. default is don't force, meaning ligand stays put if it can't find somewhere to go.
 
 	std::string chain = tag->getOption<std::string>("chain");
 	translate_info_.chain_id = core::pose::get_chain_id_from_chain(chain, pose);
@@ -125,6 +131,27 @@ Translate::parse_my_tag(
 	translate_info_.distribution= get_distribution(distribution_str);
 	translate_info_.angstroms = tag->getOption<core::Real>("angstroms");
 	translate_info_.cycles = tag->getOption<core::Size>("cycles");
+
+	if(tag->hasOption("force")){
+		if(tag->getOption<std::string>("force") == "true")
+			translate_info_.force= true;
+		else if(tag->getOption<std::string>("force") != "false")
+			utility_exit_with_message("'force' option is true or false");
+	}
+
+	if ( tag->hasOption("tag_along_chains") ){
+		std::string const tag_along_chains_str = tag->getOption<std::string>("tag_along_chains");
+		utility::vector1<std::string> tag_along_chain_strs= utility::string_split(tag_along_chains_str, ',');
+		foreach(std::string tag_along_chain_str, tag_along_chain_strs){
+			utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(tag_along_chain_str, pose);
+			foreach( core::Size chain_id, chain_ids){
+				core::Size jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
+				chain_ids_to_exclude_.push_back(chain_id);
+				tag_along_jumps_.push_back(jump_id);
+			}
+		}
+	}
+
 }
 
 void Translate::apply(core::pose::Pose & pose) {
@@ -162,6 +189,106 @@ void Translate::apply(core::pose::Pose & pose) {
 	}
 }
 
+void Translate::uniform_translate_ligand(
+		const utility::pointer::owning_ptr<core::grid::CartGrid<int> >  & grid,
+		const core::Size jump_id,
+		core::pose::Pose & pose
+){
+	translate_tracer.Debug<< "making a uniform translator of up to " << translate_info_.angstroms<< " angstroms" << std::endl;
+	protocols::rigid::UniformSphereTransMover mover( jump_id, translate_info_.angstroms);
+
+	core::pose::Pose const orig_pose(pose);
+	core::pose::Pose best_pose;
+	int best_score=100000;
+
+	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;
+	for (Size cycle = 0; cycle < translate_info_.cycles; ++cycle) {
+		mover.apply(pose);
+		core::Vector c = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
+		// did our nbr_atom land in an empty space on the grid?
+		// Don't want to insist the nbr_atom is in the attractive region, because it may not be!
+		int grid_value=best_score;
+		if ( grid->is_in_grid(c.x(), c.y(), c.z()) )
+		{
+			grid_value= grid->getValue(c.x(), c.y(), c.z());
+		}
+		if ( grid_value <= 0 ){
+			translate_tracer.Trace << "Accepting ligand position with nbr_atom at " << c << std::endl;
+			mover.freeze();
+			foreach(core::Size tag_along_jump, tag_along_jumps_){
+				translate_tracer.Trace << "moving jump " << tag_along_jump<< " the same amount"<< std::endl;
+				mover.rb_jump(tag_along_jump);
+				mover.apply(pose);
+			}
+			return;
+		}
+		translate_tracer.Trace << "Rejecting ligand position with nbr_atom at " << c << std::endl;
+
+		if( translate_info_.force && grid_value < best_score){
+			best_score = grid_value;
+			best_pose = pose;
+		}
+		pose = orig_pose; // reset and try again
+	}
+	// The code below only executes if we still haven't found a nonclashing position for the neighbor atom
+	if( translate_info_.force ){
+		translate_tracer.Trace << "Forcing neighbor atom to move (leading to a clash)" << std::endl;
+		pose= best_pose;
+		mover.freeze();
+		foreach(core::Size tag_along_jump, tag_along_jumps_){
+			mover.rb_jump(tag_along_jump);
+			mover.apply(pose);
+		}
+		return;
+	}else{
+		translate_tracer << "WARNING: cannot find placement for this ligand.  Keeping original position. Use the force option to force translation"<< std::endl;
+	}
+
+}
+
+void Translate::gaussian_translate_ligand(
+		const utility::pointer::owning_ptr<core::grid::CartGrid<int> >  & grid,
+		const core::Size jump_id,
+		core::pose::Pose & pose
+){
+	translate_tracer.Debug<< "making a Gaussian translator of up to "<< translate_info_.angstroms<<" angstroms";
+	protocols::rigid::RigidBodyPerturbMover mover( jump_id, 0 /*rotation*/, translate_info_.angstroms);
+
+	core::pose::Pose const orig_pose(pose);
+	core::pose::Pose best_pose;
+	int best_score=100000;
+
+	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;
+	for (Size cycle = 0; cycle < translate_info_.cycles; ++cycle) {
+		mover.apply(pose);
+		core::Vector c = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
+		// did our nbr_atom land in an empty space on the grid?
+		// Don't want to insist the nbr_atom is in the attractive region, because it may not be!
+		int grid_value=0;
+		if ( grid->is_in_grid(c.x(), c.y(), c.z()) )
+		{
+			grid_value= grid->getValue(c.x(), c.y(), c.z()) <= 0;
+		}
+		if ( grid_value < 0 ){
+			translate_tracer.Trace << "Accepting ligand position with nbr_atom at " << c << std::endl;
+			return;
+		}
+		translate_tracer.Trace << "Rejecting ligand position with nbr_atom at " << c << std::endl;
+
+		if( translate_info_.force && grid_value < best_score){
+			best_score = grid_value;
+			best_pose = pose;
+		}
+		pose = orig_pose; // reset and try again
+	}
+	if( translate_info_.force ){
+		pose= best_pose;
+		return;
+	}else{
+		translate_tracer << "WARNING: cannot find placement for this ligand.  Keeping original position. Use the force option to force translation"<< std::endl;
+	}
+}
+
 void Translate::translate_ligand(
 		const utility::pointer::owning_ptr<core::grid::CartGrid<int> >  & grid,
 		const core::Size jump_id,
@@ -170,36 +297,8 @@ void Translate::translate_ligand(
 	if(translate_info_.angstroms < 0) utility_exit_with_message("cannot have a negative translation value");
 	if(translate_info_.angstroms == 0) return;
 
-	protocols::rigid::RigidBodyMoverOP mover;
-	if(translate_info_.distribution == Uniform){
-		translate_tracer.Debug<< "making a uniform translator of up to "<< translate_info_.angstroms<<" angstroms"<< std::endl;
-		mover= new protocols::rigid::UniformSphereTransMover( jump_id, translate_info_.angstroms);
-	}
-	else if(translate_info_.distribution == Gaussian){
-		translate_tracer.Debug<< "making a Gaussian translator of up to "<< translate_info_.angstroms<<" angstroms";
-		mover= new protocols::rigid::RigidBodyPerturbMover ( jump_id, 0 /*rotation*/, translate_info_.angstroms);
-	}
-
-	core::pose::Pose const orig_pose(pose);
-
-	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;
-	for (Size cycle = 0; cycle < translate_info_.cycles; ++cycle) {
-		mover->apply(pose);
-		core::Vector c = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
-		// did our nbr_atom land in an empty space on the grid?
-		// Don't want to insist the nbr_atom is in the attractive region, because it may not be!
-		if (
-				grid->is_in_grid(c.x(), c.y(), c.z())
-				&& grid->getValue(c.x(), c.y(), c.z()) <= 0
-		) {
-			translate_tracer.Trace << "Accepting ligand position with nbr_atom at " << c << std::endl;
-			return;
-		}
-		translate_tracer.Trace << "Rejecting ligand position with nbr_atom at " << c << std::endl;
-		pose = orig_pose; // reset and try again
-	}///TODO alert the user that we cannot find a placement for this ligand.  Do not proceed with docking this ligand.
-
-	translate_tracer << "WARNING: cannot find placement for this ligand"<< std::endl;
+	if(translate_info_.distribution == Uniform) uniform_translate_ligand(grid, jump_id, pose);
+	else if(translate_info_.distribution == Gaussian) gaussian_translate_ligand(grid, jump_id, pose);
 }
 
 void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pose, core::Size const & residue_id)
@@ -227,9 +326,7 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 	for (Size cycle = 0; cycle < translate_info_.cycles; ++cycle) {
-	//	core::Real pick_move(numeric::random::gaussian());
-	//	if(pick_move >= 0.50)
-	//	{
+
 			translate_tracer.Trace <<"Doing a translate move" <<std::endl;
 			translate_mover->apply(pose);
 	//	}else

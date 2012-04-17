@@ -45,8 +45,12 @@ static FilterRegistrator< protocols::fldsgn::filters::ParallelBetaPairingPrefere
 static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureFilterCreator > reg_SecondaryStructureFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator > reg_SheetTopologyFilterCreator;
 
+static FilterRegistrator< protocols::ligand_docking::AtomCountFilterCreator > reg_AtomCountFilterCreator;
 static FilterRegistrator< protocols::ligand_docking::CompleteConnectionsFilterCreator > reg_CompleteConnectionsFilterCreator;
+static FilterRegistrator< protocols::ligand_docking::ChainExistsFilterCreator > reg_ChainExistsFilterCreator;
 static FilterRegistrator< protocols::ligand_docking::HeavyAtomFilterCreator > reg_HeavyAtomFilterCreator;
+static FilterRegistrator< protocols::ligand_docking::HBondAcceptorFilterCreator > reg_HBondAcceptorFilterCreator;
+static FilterRegistrator< protocols::ligand_docking::HBondDonorFilterCreator > reg_HBondDonorFilterCreator;
 
 static FilterRegistrator< protocols::protein_interface_design::filters::AverageDegreeFilterCreator > reg_AverageFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::BindingStrainFilterCreator > reg_BindingStrainFilterCreator;

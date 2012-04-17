@@ -91,14 +91,16 @@ void InterfaceBuilder::find_interface_residues(
 	LigandAreas::const_iterator ligand_area= ligand_areas_.begin();
 	for(; ligand_area != ligand_areas_.end(); ++ligand_area){
 		char const & chain= ligand_area->first;
-		core::Size const & chain_id= core::pose::get_chain_id_from_chain(chain, pose);
-		core::Size ligand_residue_id= pose.conformation().chain_begin(chain_id);
-		core::Size const & end= pose.conformation().chain_end(chain_id);
-		for(; ligand_residue_id <= end; ++ligand_residue_id){
-			interface[ligand_residue_id].type=  ligand_options::InterfaceInfo::is_interface;
-			interface[ligand_residue_id].chain_id= chain_id;
-			interface[ligand_residue_id].chain= chain;
-			find_protein_residues(interface, ligand_residue_id, pose);
+		utility::vector1<core::Size> chain_ids= core::pose::get_chain_ids_from_chain(chain, pose);
+		foreach(core::Size chain_id, chain_ids){
+			core::Size ligand_residue_id= pose.conformation().chain_begin(chain_id);
+			core::Size const & end= pose.conformation().chain_end(chain_id);
+			for(; ligand_residue_id <= end; ++ligand_residue_id){
+				interface[ligand_residue_id].type=  ligand_options::InterfaceInfo::is_interface;
+				interface[ligand_residue_id].chain_id= chain_id;
+				interface[ligand_residue_id].chain= chain;
+				find_protein_residues(interface, ligand_residue_id, pose);
+			}
 		}
 	}
 	interface_builder_tracer.Debug << "interface: " << interface << std::endl;

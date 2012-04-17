@@ -42,7 +42,7 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 		</CompoundTranslate>
 		<Rotate name=rotate chain=X distribution=uniform degrees=360 cycles=500/>
 		<Rotates name=rotates chain=W distribution=uniform degrees=360 cycles=15/> rotate each water molecule
-		<SlideTogether name=slide_together chain=X/>
+		<SlideTogether name=slide_together chains=X/>
 		<HighResDocker name=high_res_docker cycles=6 repack_every_Nth=3 scorefxn=ligand_soft_rep movemap_builder=docking/>
 		<FinalMinimizer name=final scorefxn=hard_rep movemap_builder=final/>
 		<InterfaceScoreCalculator name=add_scores chains=X scorefxn=hard_rep native="inputs/7cpa_native.pdb.gz"/>

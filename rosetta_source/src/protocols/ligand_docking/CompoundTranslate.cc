@@ -134,10 +134,10 @@ CompoundTranslate::parse_my_tag(
 			translates_.push_back(translate);
 		}
 		else if( name == "Translates"){
-			if ( ! tag->hasOption("chain") ) utility_exit_with_message("'Translate' mover requires chain tag");
-			if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Translate' mover requires distribution tag");
-			if ( ! tag->hasOption("angstroms") ) utility_exit_with_message("'Translate' mover requires angstroms tag");
-			if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Translate' mover requires cycles tag");
+			if ( ! tag->hasOption("chain") ) utility_exit_with_message("'Translates' mover requires chain tag");
+			if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Translates' mover requires distribution tag");
+			if ( ! tag->hasOption("angstroms") ) utility_exit_with_message("'Translates' mover requires angstroms tag");
+			if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Translates' mover requires cycles tag");
 
 			std::string const chain = tag->getOption<std::string>("chain");
 			utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
@@ -150,6 +150,12 @@ CompoundTranslate::parse_my_tag(
 				translate_info.distribution= get_distribution(distribution_str);
 				translate_info.angstroms = tag->getOption<core::Real>("angstroms");
 				translate_info.cycles = tag->getOption<core::Size>("cycles");
+				if(tag->hasOption("force")){
+					if(tag->getOption<std::string>("force") == "true")
+						translate_info.force= true;
+					else if(tag->getOption<std::string>("force") != "false")
+						utility_exit_with_message("'force' option is true or false");
+				}
 				translates_.push_back(new Translate(translate_info));
 			}
 		}

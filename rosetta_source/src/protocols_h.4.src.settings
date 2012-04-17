@@ -38,6 +38,7 @@ sources = {
 		"AddHydrogen",
 		"AddHydrogens",
 		"AtomCountFilter",
+		"ChainExistsFilter",
 		"CompleteConnectionsFilter",
 		"CompoundTranslate",
 		"DistributionMap",

@@ -63,7 +63,9 @@ static numeric::random::RandomGenerator RG(43225);
 const Real max_allowed_rot_mag ( 60.0 );
 
 // default constructor
-RigidBodyMover::RigidBodyMover() : protocols::canonical_sampling::ThermodynamicMover(), rb_jump_( 1 ), dir_( n2c ), rot_center_( 0.0 )
+RigidBodyMover::RigidBodyMover() :
+		protocols::canonical_sampling::ThermodynamicMover(),
+		rb_jump_( 1 ), dir_( n2c ), rot_center_( 0.0 )
 {
 	Mover::type( "RigidBodyBase" );
 }
@@ -92,7 +94,20 @@ RigidBodyMover::RigidBodyMover( RigidBodyMover const & src ) :
 	rot_center_( src.rot_center_ )
 {}
 
+RigidBodyMover::~RigidBodyMover() {}
 
+std::string
+RigidBodyMover::get_name() const {
+	return "RigidBodyMover";
+}
+
+utility::vector1<core::id::TorsionID_Range>
+RigidBodyMover::torsion_id_ranges(
+	core::pose::Pose & //pose
+)
+{
+	return utility::vector1<core::id::TorsionID_Range>();
+}
 
 RigidBodyPerturbMover::RigidBodyPerturbMover(
 		int const rb_jump_in,
@@ -112,21 +127,6 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 	TRBM.Debug << "rot_mag " << rot_mag_ << std::endl;
 	TRBM.Debug << "trans_mag " << trans_mag_ << std::endl;
 	Mover::type( "RigidBodyPerturb" );
-}
-
-RigidBodyMover::~RigidBodyMover() {}
-
-std::string
-RigidBodyMover::get_name() const {
-	return "RigidBodyMover";
-}
-
-utility::vector1<core::id::TorsionID_Range>
-RigidBodyMover::torsion_id_ranges(
-	core::pose::Pose & //pose
-)
-{
-	return utility::vector1<core::id::TorsionID_Range>();
 }
 
 
@@ -576,9 +576,10 @@ RigidBodyTransMover::get_name() const {
 }
 
 
-UniformSphereTransMover::UniformSphereTransMover() : parent(), step_size_(1)
+UniformSphereTransMover::UniformSphereTransMover() : parent(), step_size_(1), trans_axis_(), random_step_(0), freeze_(false)
 {
 	moves::Mover::type( "UniformSphereTrans" );
+	reset_trans_axis();
 }
 
 // constructor with arguments
@@ -587,36 +588,44 @@ UniformSphereTransMover::UniformSphereTransMover(
 	core::Real step_size_in
 ):
 	parent( rb_jump_in ),
-	step_size_( step_size_in )
+	step_size_( step_size_in ),
+	trans_axis_(),
+	random_step_(0),
+	freeze_(false)
 {
 	moves::Mover::type( "UniformSphereTrans" );
+	reset_trans_axis(); // start with a random trans_axis, freeze is valid without first calling apply
 }
 
 UniformSphereTransMover::UniformSphereTransMover( UniformSphereTransMover const & src ) :
 	//utility::pointer::ReferenceCount(),
 	parent( src ),
-	step_size_( src.step_size_ )
+	step_size_( src.step_size_ ),
+	trans_axis_(src.trans_axis_),
+	random_step_(src.random_step_),
+	freeze_(src.freeze_)
 {}
 
 UniformSphereTransMover::~UniformSphereTransMover() {}
 
+void UniformSphereTransMover::reset_trans_axis(){
+	do {
+		trans_axis_.assign( step_size_*2*(RG.uniform()-0.5), step_size_*2*(RG.uniform()-0.5), step_size_*2*(RG.uniform()-0.5) );
+		random_step_ = trans_axis_.length();
+	} while( random_step_ > step_size_ );
+	trans_axis_.normalize();
+}
 
 /// @details Sample points in a cube randomly, and discard ones that are outside the sphere.
 /// This gives us *uniform* sampling of the space inside, whereas
 /// choosing a random distance and a random direction samples more near the center.
 void UniformSphereTransMover::apply( core::pose::Pose & pose )
 {
-	core::Vector trans_axis;
-	core::Real random_step;
-	do {
-		trans_axis.assign( step_size_*2*(RG.uniform()-0.5), step_size_*2*(RG.uniform()-0.5), step_size_*2*(RG.uniform()-0.5) );
-		random_step = trans_axis.length();
-	} while( random_step > step_size_ );
-	trans_axis.normalize();
+	if(! freeze_) reset_trans_axis();
 
 	RigidBodyTransMover mover( pose, rb_jump_);
-	mover.trans_axis( trans_axis );
-	mover.step_size( random_step );
+	mover.trans_axis( trans_axis_ );
+	mover.step_size( random_step_ );
 	mover.apply( pose );
 }
 

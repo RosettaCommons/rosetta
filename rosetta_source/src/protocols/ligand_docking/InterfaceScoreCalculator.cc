@@ -187,19 +187,16 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 		protocols::jd2::JobOP job
 ) const
 {
-	std::vector<std::string>::const_iterator begin = chains_.begin();
-	std::vector<std::string>::const_iterator end = chains_.end();
 	foreach(std::string chain, chains_){
 		InterfaceScoreCalculator_tracer.Debug << "appending ligand: "<< chain << std::endl;
 		assert( core::pose::has_chain(chain, after));
-		core::Size jump_id = core::pose::get_jump_id_from_chain(chain, after);
-		append_interface_deltas(jump_id, job, after, score_fxn_);
+		if(native_)	assert( core::pose::has_chain(chain, *native_));
 
-		if(native_)
-		{
-			assert( core::pose::has_chain(chain, *native_));
+		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, after);
+		foreach(core::Size jump_id, jump_ids){
+			append_interface_deltas(jump_id, job, after, score_fxn_);
+			append_ligand_docking_scores(jump_id, after, job);
 		}
-		append_ligand_docking_scores(jump_id, after, job);
 	}
 }
 

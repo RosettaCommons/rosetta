@@ -31,8 +31,12 @@
 #include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
 #include <protocols/fldsgn/filters/SheetTopologyFilterCreator.hh>
 
+#include <protocols/ligand_docking/AtomCountFilterCreator.hh>
+#include <protocols/ligand_docking/ChainExistsFilterCreator.hh>
 #include <protocols/ligand_docking/CompleteConnectionsFilterCreator.hh>
 #include <protocols/ligand_docking/HeavyAtomFilterCreator.hh>
+#include <protocols/ligand_docking/HBondAcceptorFilterCreator.hh>
+#include <protocols/ligand_docking/HBondDonorFilterCreator.hh>
 
 #include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>

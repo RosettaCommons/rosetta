@@ -42,6 +42,7 @@ class SlideTogether : public protocols::moves::Mover
 public:
 	SlideTogether();
 	SlideTogether(std::string const & chain);
+
 	virtual ~SlideTogether();
 	SlideTogether(SlideTogether const & that);
 
@@ -62,6 +63,7 @@ public:
 
 private:
 	std::string chain_;
+	utility::vector1<core::Size> jumps_; // these guys tag along, such as waters and metals
 };
 
 } //namespace ligand_docking

@@ -23,6 +23,7 @@
 // Utility Headers
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
@@ -94,27 +95,38 @@ Rotates::parse_my_tag(
 	if ( tag->getName() != "Rotates" ){
 		utility_exit_with_message("This should be impossible");
 	}
-	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'Rotates' mover requires 'chain' tag");
 	if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Rotates' mover requires 'distribution' tag");
 	if ( ! tag->hasOption("degrees") ) utility_exit_with_message("'Rotates' mover requires 'degrees' tag");
 	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Rotates' mover requires 'cycles' tag");
+	if( tag->hasOption("chain") && tag->hasOption("chains") ) utility_exit_with_message("'Rotates' mover cannot have both a 'chain' and a 'chains' tag");
+	if( ! (tag->hasOption("chain") || tag->hasOption("chains") ) ) utility_exit_with_message("'Rotates' mover requires either a 'chain' or a 'chains' tag");
 
-	std::string const chain = tag->getOption<std::string>("chain");
-	utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
+	utility::vector1<std::string> chain_strs;
+	if( tag->hasOption("chain")){
+		chain_strs.push_back( tag->getOption<std::string>("chain") );
+	}
+	else if( tag->hasOption("chains") ){
+		std::string const chains_str = tag->getOption<std::string>("chains");
+		chain_strs= utility::string_split(chains_str, ',');
+	}
+
 	std::string const distribution_str= tag->getOption<std::string>("distribution");
 	Distribution distribution= get_distribution(distribution_str);
 	core::Size const degrees = tag->getOption<core::Size>("degrees");
 	core::Size const cycles = tag->getOption<core::Size>("cycles");
 
-	foreach(core::Size chain_id, chain_ids){
-		Rotate_info rotate_info;
-		rotate_info.chain = chain;
-		rotate_info.chain_id= chain_id;
-		rotate_info.jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
-		rotate_info.distribution= distribution;
-		rotate_info.degrees = degrees;
-		rotate_info.cycles = cycles;
-		rotates_.push_back( new Rotate(rotate_info) );
+	foreach(std::string chain, chain_strs){
+		utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
+		foreach(core::Size chain_id, chain_ids){
+			Rotate_info rotate_info;
+			rotate_info.chain = chain;
+			rotate_info.chain_id= chain_id;
+			rotate_info.jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
+			rotate_info.distribution= distribution;
+			rotate_info.degrees = degrees;
+			rotate_info.cycles = cycles;
+			rotates_.push_back( new Rotate(rotate_info) );
+		}
 	}
 }
 

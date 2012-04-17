@@ -55,6 +55,11 @@ using basic::Warning;
 //Auto Headers
 #include <core/kinematics/tree/Atom.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
+
 namespace protocols {
 namespace ligand_docking {
 
@@ -373,10 +378,13 @@ std::map<core::Size, core::Size> MinimizeBackbone::find_attach_pts(
 ) const {
 	std::map<core::Size, core::Size> jumpToAttach;
 	std::map<char, LigandAreaOP> const ligand_areas= interface_builder_->get_ligand_areas();
-	std::map<char, LigandAreaOP>::const_iterator index = ligand_areas.begin();
-	for (; index != ligand_areas.end(); ++index) { // these are just the ligand chains to dock
-		core::Size jump_id = core::pose::get_jump_id_from_chain(index->first, pose);
-		jumpToAttach[jump_id] = find_attach_pt(jump_id, interface, pose);
+	//std::map<char, LigandAreaOP>::const_iterator index = ligand_areas.begin();
+	foreach(LigandAreas::value_type ligand_area_pair, ligand_areas){
+	//for (; index != ligand_areas.end(); ++index) { // these are just the ligand chains to dock
+		utility::vector1<core::Size> jump_ids = core::pose::get_jump_ids_from_chain(ligand_area_pair.first, pose);
+		foreach(core::Size jump_id, jump_ids){
+			jumpToAttach[jump_id] = find_attach_pt(jump_id, interface, pose);
+		}
 	}
 	return jumpToAttach;
 }

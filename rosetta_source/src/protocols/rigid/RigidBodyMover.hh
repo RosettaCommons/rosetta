@@ -92,10 +92,6 @@ public:
 	/// @brief Manual override of rotation center.
 	void rot_center( core::Vector const rot_center_in )	{	rot_center_ = rot_center_in; }
 
-	// Can't change jump number after creation b/c it determines center of rotation!
-	//void rb_jump_( int const rb_jump_in ) { rb_jump_ = rb_jump_in; }
-	int rb_jump() const { return rb_jump_; }
-
 	virtual void apply( core::pose::Pose & pose ) = 0;
 	virtual std::string get_name() const;
 
@@ -115,7 +111,6 @@ public:
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges( core::pose::Pose & pose );
 
-
 	// data
 protected:
 	int rb_jump_;
@@ -124,6 +119,12 @@ protected:
 
 	/// center of rotation
 	core::Vector rot_center_;
+
+public:
+	// Can't change jump number after creation b/c it determines center of rotation!
+	//void rb_jump_( int const rb_jump_in ) { rb_jump_ = rb_jump_in; }
+	int rb_jump() const { return rb_jump_; }
+	void rb_jump(int jump_id){rb_jump_ = jump_id;} // set jump
 };
 
 // does a perturbation defined by the rotational and translational magnitudes
@@ -372,8 +373,17 @@ public:
 	virtual std::string get_name() const;
 
 private:
-	core::Real step_size_;
+	void reset_trans_axis();
 
+private:
+	core::Real step_size_;
+	core::Real random_step_; // by saving these we can apply the same random step to other things after we freeze
+	core::Vector trans_axis_;// by saving these we can apply the same random step to other things after we freeze
+	bool freeze_; // use the same movement as before (if one is set) during apply
+
+public:
+	void unfreeze(){freeze_=false;}  // create a new trans_axis during apply
+	void freeze(){freeze_=true;} // use the same trans_axis as before (if one is set) during apply
 };
 
 // Initialize all dofs in the system randomly. Start by rotation angles

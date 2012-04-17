@@ -62,8 +62,10 @@ set_jumps(
 ){
 	foreach(LigandAreas::value_type ligand_area_pair, ligand_areas){
 		char const & chain= ligand_area_pair.first;
-		core::Size jump_id= core::pose::get_jump_id_from_chain(chain, pose);
-		movemap->set_jump(jump_id, true);
+		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, pose);
+		foreach(core::Size jump_id, jump_ids){
+			movemap->set_jump(jump_id, true);
+		}
 	}
 }
 

@@ -390,13 +390,15 @@ HighResDocker::create_rigid_body_movers(core::pose::Pose const & pose) const{
 
 	foreach(LigandAreas::value_type ligand_area_pair, ligand_areas){
 		char const & chain= ligand_area_pair.first;
-		core::Size jump_id= core::pose::get_jump_id_from_chain(chain, pose);
+		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, pose);
+		foreach(core::Size jump_id, jump_ids){
+			LigandAreaOP const ligand_area = ligand_area_pair.second;
+			core::Real const & angstroms= ligand_area->high_res_angstroms_;
+			core::Real const & degrees= ligand_area->high_res_degrees_;
+			protocols::moves::MoverOP rigid_body_mover= new protocols::rigid::RigidBodyPerturbMover( jump_id, degrees, angstroms);
+			rigid_body_movers.push_back(rigid_body_mover);
+		}
 
-		LigandAreaOP const ligand_area = ligand_area_pair.second;
-		core::Real const & angstroms= ligand_area->high_res_angstroms_;
-		core::Real const & degrees= ligand_area->high_res_degrees_;
-		protocols::moves::MoverOP rigid_body_mover= new protocols::rigid::RigidBodyPerturbMover( jump_id, degrees, angstroms);
-		rigid_body_movers.push_back(rigid_body_mover);
 	}
 	return rigid_body_movers;
 }
