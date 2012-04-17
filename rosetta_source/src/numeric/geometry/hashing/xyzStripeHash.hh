@@ -170,7 +170,9 @@ public:
     return true;
   }
 
-  inline int const nbcount( float x, float y, float z ) const {
+  int nbcount( xyzVector<T> v ) const {
+    v = v+translation_;
+    T x = v.x(); T y = v.y(); T z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
 		if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff 
     int count = 0;
