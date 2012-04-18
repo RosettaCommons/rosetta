@@ -319,20 +319,9 @@ HackElecEnergy::residue_pair_energy(
 
 	static Real const attached_h_max_dis2 = hydrogen_interaction_cutoff2();
 
-	if ( rsd1.seqpos() == rsd2.seqpos() ) {
-		// pass
-	} else if ( exclude_protein_protein_ && rsd1.is_protein() && rsd2.is_protein() ) {
-		// pass
-	} else if ( exclude_monomer_ && monomer_test( rsd1.seqpos(), rsd2.seqpos()) ) {
-		// pass
-	} else if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) {
-		//std::cout << "PHOSCHARGE: " << rsd1.atomic_charge(rsd1.atom_index("O1P")) << std::endl;
-		// pass
-	//} else if ( rsd1.is_RNA() && rsd2.is_RNA() ) {
-		//score = residue_pair_energy_RNA( rsd1, rsd2, emap ); // In the grand spirit of hack_elec hackiness
-		/// special RNA/RNA interactions are now handled by RNAHackElecEnergy class, regular interactions are
-		/// handled here.
-	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
+
+	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
 		CountPairFunctionOP cpfxn =
@@ -463,11 +452,21 @@ HackElecEnergy::minimize_in_whole_structure_context( pose::Pose const & pose ) c
 
 bool
 HackElecEnergy::defines_score_for_residue_pair(
-	conformation::Residue const &,
-	conformation::Residue const &,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
 	bool res_moving_wrt_eachother
 ) const
 {
+	if ( rsd1.seqpos() == rsd2.seqpos() ) {
+		return false;
+	} else if ( exclude_protein_protein_ && rsd1.is_protein() && rsd2.is_protein() ) {
+		return false;
+	} else if ( exclude_monomer_ && monomer_test( rsd1.seqpos(), rsd2.seqpos()) ) {
+		return false;
+	} else if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) {
+		return false;
+	}
+
 	return res_moving_wrt_eachother;
 }
 
@@ -594,16 +593,9 @@ HackElecEnergy::backbone_backbone_energy(
 
 	Real score(0.0);
 
-	if ( rsd1.seqpos() == rsd2.seqpos() ) {
-		// pass
-	} else if ( exclude_protein_protein_ && rsd1.is_protein() && rsd2.is_protein() ) {
-		// pass
-	} else if ( exclude_monomer_ && monomer_test( rsd1.seqpos(), rsd2.seqpos()) ) {
-		// pass
-	} else if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) {
-		//std::cout << "PHOSCHARGE: " << rsd1.atomic_charge(rsd1.atom_index("O1P")) << std::endl;
-		// pass
-	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
+
+	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
 		CountPairFunctionOP cpfxn =
@@ -666,16 +658,9 @@ HackElecEnergy::backbone_sidechain_energy(
 
 	Real score(0.0);
 
-	if ( rsd1.seqpos() == rsd2.seqpos() ) {
-		// pass
-	} else if ( exclude_protein_protein_ && rsd1.is_protein() && rsd2.is_protein() ) {
-		// pass
-	} else if ( exclude_monomer_ && monomer_test( rsd1.seqpos(), rsd2.seqpos()) ) {
-		// pass
-	} else if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) {
-		//std::cout << "PHOSCHARGE: " << rsd1.atomic_charge(rsd1.atom_index("O1P")) << std::endl;
-		// pass
-	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
+
+	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
 		CountPairFunctionOP cpfxn =
@@ -740,16 +725,9 @@ HackElecEnergy::sidechain_sidechain_energy(
 
 	Real score(0.0);
 
-	if ( rsd1.seqpos() == rsd2.seqpos() ) {
-		// pass
-	} else if ( exclude_protein_protein_ && rsd1.is_protein() && rsd2.is_protein() ) {
-		// pass
-	} else if ( exclude_monomer_ && monomer_test( rsd1.seqpos(), rsd2.seqpos()) ) {
-		// pass
-	} else if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) {
-		//std::cout << "PHOSCHARGE: " << rsd1.atomic_charge(rsd1.atom_index("O1P")) << std::endl;
-		// pass
-	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
+
+	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
 		CountPairFunctionOP cpfxn =
@@ -897,11 +875,7 @@ HackElecEnergy::evaluate_rotamer_pair_energies(
 
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.
-	if ( exclude_protein_protein_
-		&& pose.residue_type(set1.resid()).is_protein()
-		&& pose.residue_type(set2.resid()).is_protein() ) return;
-
-	if ( exclude_monomer_ && monomer_test( set1.resid(), set2.resid()) ) return;
+	if ( ! defines_score_for_residue_pair(pose.residue(set1.resid()), pose.residue(set2.resid()), true) ) return;
 
 	using namespace methods;
 	using namespace trie;
@@ -978,12 +952,7 @@ HackElecEnergy::evaluate_rotamer_background_energies(
 
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.
-	if ( exclude_protein_protein_
-		&& pose.residue_type(set.resid()).is_protein()
-		&& residue.is_protein() ) return;
-
-	if ( exclude_monomer_ ) return;
-	// pass
+	if ( ! defines_score_for_residue_pair( pose.residue(set.resid()), residue, true) ) return;
 
 	using namespace methods;
 	using namespace trie;
@@ -1084,15 +1053,9 @@ HackElecEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( rsd1.seqpos() == rsd2.seqpos() ) return new CountPairNone;
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return new CountPairNone;
 
-	if ( exclude_protein_protein_ && rsd1.is_protein() && rsd2.is_protein() ) {
-		return new CountPairNone;
-	} else if ( exclude_monomer_ && monomer_test( rsd1.seqpos(), rsd2.seqpos()) ) {
-		return new CountPairNone;
-	} else if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) {
-		return new CountPairNone;
-	} else if ( rsd1.is_RNA() && rsd2.is_RNA() ) {
+	if ( rsd1.is_RNA() && rsd2.is_RNA() ) {
 		/// IMPLEMENT THIS!
 	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -1223,16 +1186,7 @@ HackElecEnergy::get_count_pair_function_trie(
 	using namespace etable::etrie;
 
 	TrieCountPairBaseOP tcpfxn;
-	if ( exclude_DNA_DNA_ && res1.is_DNA() && res2.is_DNA() ) {
-		tcpfxn = new TrieCountPairNone();
-		return tcpfxn;
-	} else if ( exclude_protein_protein_ && res1.is_protein() && res2.is_protein() ) {
-		tcpfxn = new TrieCountPairNone();
-		return tcpfxn;
-	} else if ( exclude_monomer_ && monomer_test( res1.seqpos(), res2.seqpos()) ) {
-		tcpfxn = new TrieCountPairNone();
-		return tcpfxn;
-	}
+	if ( ! defines_score_for_residue_pair(res1, res2, true) ) return new TrieCountPairNone();
 
 	/// code needs to be added here to deal with multiple bonds (and psuedubonds!) between residues,
 	/// but ultimately, this code is incompatible with designing both disulfides and non-disulfies
