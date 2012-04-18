@@ -917,13 +917,13 @@ void dock(Pose & init, string fname) {
 
           int ncontact = 0;
           for(int i = 1; i <= pose.n_residue(); ++i) {
-            if(pose.residue(i).name3()=="GLY") continue;
+            if(pose.residue(i).aa()==core::chemical::aa_gly||pose.residue(i).aa()==core::chemical::aa_pro) continue;
             // if(pose.secstruct(i)=='L') continue;
             Vec pa = pose.xyz(AtomID(5,i));
             Vec pb = R3f1 * pa;
             Vec pc = R3f2 * pa;
             for(int j = 1; j <= pose.n_residue(); ++j) {
-              if(pose.residue(j).name3()=="GLY") continue;
+              if(pose.residue(j).aa()==core::chemical::aa_gly||pose.residue(j).aa()==core::chemical::aa_pro) continue;
               // if(pose.secstruct(j)=='L') continue;
               Vec qa = R2f * (       pose.xyz(AtomID(5,j)) - HG) + HG;
               Vec qb = R2f * (R3f1 * pose.xyz(AtomID(5,j)) - HG) + HG;
