@@ -20,6 +20,7 @@
 #include <core/chemical/AA.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/util/ABEGOManager.hh>
+#include <core/pose/PDBInfo.hh>
 #include <protocols/moves/DsspMover.hh>
 
 #include <devel/init.hh>
@@ -82,7 +83,7 @@ main( int argc, char * argv [] )
 	using namespace ObjexxFCL::fmt;
 	out << "# resn aa ss abego phi psi omega" << std::endl;
 	for ( core::Size ii=1; ii<=pose.total_residue(); ii++ ) {
-		out << I( 5, ii ) << " " << oneletter_code_from_aa( pose.aa( ii ) ) << " " << pose.secstruct( ii ) << " " << abego_[ ii ] << " "
+		out << I( 5, pose.pdb_info()->number( ii ) ) << " " << oneletter_code_from_aa( pose.aa( ii ) ) << " " << pose.secstruct( ii ) << " " << abego_[ ii ] << " "
 				<< F( 8, 2, pose.phi( ii ) ) << F( 8, 2, pose.psi( ii ) ) << F( 8, 2, pose.omega( ii ) )
 				<< std::endl;
 	}
