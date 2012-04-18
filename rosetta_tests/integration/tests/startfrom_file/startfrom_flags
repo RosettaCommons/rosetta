@@ -1,0 +1,14 @@
+-run
+ -constant_seed
+ -rng mt19937
+-in
+ -file
+  -s inputs/7cpa_7cpa_input.pdb
+  -extra_res_fa inputs/7cpa.params inputs/ZN1.params
+
+-ligand_chain X
+-protein_chain A
+-start_position_file startfrom.json
+
+-mute core.util.prof ## dont show timing info
+-mute core.io.database

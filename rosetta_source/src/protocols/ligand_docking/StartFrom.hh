@@ -61,9 +61,13 @@ public:
 	// Undefined, commenting out to make PyRosetta compile
 	//StartFrom(core::pose::Pose & pose);
 
+	void parse_startfrom_file(std::string filename);
+
 private:
 	std::string chain_;
+	std::string chain_for_hash_;
 	std::map< std::string, utility::vector1<core::Vector> > starting_points_;
+	std::map<core::Size,core::Vector > potential_starting_positions_;
 };
 
 void move_ligand_to_desired_centroid(

@@ -35,10 +35,15 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
+#include <utility/io/izstream.hh>
+
+#include <utility/json_spirit/json_spirit_reader.h>
 
 // Boost headers
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
+
+#include <fstream>
 
 using basic::T;
 using basic::Error;
@@ -77,7 +82,9 @@ StartFrom::StartFrom(StartFrom const & that):
 		//utility::pointer::ReferenceCount(),
 		protocols::moves::Mover( that ),
 		chain_(that.chain_),
-		starting_points_(that.starting_points_)
+		chain_for_hash_(that.chain_for_hash_),
+		starting_points_(that.starting_points_),
+		potential_starting_positions_(that.potential_starting_positions_)
 {}
 
 StartFrom::~StartFrom() {}
@@ -116,25 +123,34 @@ StartFrom::parse_my_tag(
 		if( name == "features"){
 			std::cout << "found features tag with type '" << child_tag->getOption<std::string>("type") << "'" << std::endl;
 
-		} else if( name != "Coordinates")
-			utility_exit_with_message("StartFrom's children are always of type 'Coordinates'");
-		if ( ! child_tag->hasOption("x") ) utility_exit_with_message("'StartFrom' mover requires 'x' coordinates option");
-		if ( ! child_tag->hasOption("y") ) utility_exit_with_message("'StartFrom' mover requires 'y' coordinates option");
-		if ( ! child_tag->hasOption("z") ) utility_exit_with_message("'StartFrom' mover requires 'z' coordinates option");
-
-		std::string pdb_tag = "default";
-		if(child_tag->hasOption("pdb_tag"))
+		} else if( name == "Coordinates")
 		{
-			pdb_tag = child_tag->getOption<std::string>("pdb_tag");
+			if ( ! child_tag->hasOption("x") ) utility_exit_with_message("'StartFrom' mover Coordinates tag requires 'x' coordinates option");
+			if ( ! child_tag->hasOption("y") ) utility_exit_with_message("'StartFrom' mover Coordinates tag requires 'y' coordinates option");
+			if ( ! child_tag->hasOption("z") ) utility_exit_with_message("'StartFrom' mover Coordinates tag requires 'z' coordinates option");
+
+			std::string pdb_tag = "default";
+			if(child_tag->hasOption("pdb_tag"))
+			{
+				pdb_tag = child_tag->getOption<std::string>("pdb_tag");
+			}
+
+			core::Vector v(
+					child_tag->getOption<core::Real>("x"),
+					child_tag->getOption<core::Real>("y"),
+					child_tag->getOption<core::Real>("z")
+			);
+
+			coords(v,pdb_tag);
+		}else if(name == "File")
+		{
+			if(!child_tag->hasOption("filename")) utility_exit_with_message("'StartFrom' mover File tag requires 'filename' coordinates option");
+			if(!child_tag->hasOption("chain_for_hash")) utility_exit_with_message("'StartFrom' mover File tag requires 'chain_for_hash' coordinates option");
+
+			chain_for_hash_ = child_tag->getOption<std::string>("chain_for_hash");
+			parse_startfrom_file(child_tag->getOption<std::string>("filename"));
+
 		}
-
-		core::Vector v(
-				child_tag->getOption<core::Real>("x"),
-				child_tag->getOption<core::Real>("y"),
-				child_tag->getOption<core::Real>("z")
-		);
-
-		coords(v,pdb_tag);
 	}
 }
 
@@ -159,39 +175,98 @@ void StartFrom::chain(std::string const & chain)
 }
 
 void StartFrom::apply(core::pose::Pose & pose){
-	assert(!starting_points_.empty());
+	assert(!starting_points_.empty() || !potential_starting_positions_.empty());
 	int const starting_point_index= numeric::random::RG.random_range(1, starting_points_.size());
 
-	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-	std::list<std::string> component_tags(utility::split_to_list(input_tag));
-
-	utility::vector1<core::Vector> centroid_points;
-
-	for(std::list<std::string>::iterator tag_it = component_tags.begin(); tag_it != component_tags.end();++tag_it)
+	if(!starting_points_.empty())
 	{
-		std::map< std::string, utility::vector1<core::Vector> >::iterator tag_points( starting_points_.find(*tag_it));
-		if(tag_points != starting_points_.end())
+		std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+		std::list<std::string> component_tags(utility::split_to_list(input_tag));
+
+		utility::vector1<core::Vector> centroid_points;
+
+		for(std::list<std::string>::iterator tag_it = component_tags.begin(); tag_it != component_tags.end();++tag_it)
 		{
-			centroid_points = tag_points->second;
-			break;
+			std::map< std::string, utility::vector1<core::Vector> >::iterator tag_points( starting_points_.find(*tag_it));
+			if(tag_points != starting_points_.end())
+			{
+				centroid_points = tag_points->second;
+				break;
+			}else
+			{
+				tag_points = starting_points_.find("default");
+				if(tag_points == starting_points_.end())
+				{
+					utility_exit_with_message("There are no default starting coordinates specified in the StartFrom mover, and none of the specified coordinates match the current tag");
+				}
+				centroid_points = tag_points->second;
+				break;
+			}
+		}
+		assert(centroid_points.size());
+
+		core::Vector desired_centroid = centroid_points[starting_point_index];
+
+		core::Size jump_id = core::pose::get_jump_id_from_chain(chain_, pose);
+		move_ligand_to_desired_centroid(jump_id, desired_centroid, pose);
+	}else if(!potential_starting_positions_.empty())
+	{
+		core::Size hash = core::pose::get_hash_from_chain(chain_for_hash_[0],pose);
+		std::map<core::Size,core::Vector >::iterator position_hash = potential_starting_positions_.find(hash);
+		if(position_hash != potential_starting_positions_.end())
+		{
+			core::Size jump_id = core::pose::get_jump_id_from_chain(chain_, pose);
+			move_ligand_to_desired_centroid(jump_id, position_hash->second , pose);
 		}else
 		{
-			tag_points = starting_points_.find("default");
-			if(tag_points == starting_points_.end())
-			{
-				utility_exit_with_message("There are no default starting coordinates specified in the StartFrom mover, and none of the specified coordinates match the current tag");
-			}
-			centroid_points = tag_points->second;
-			break;
+			utility_exit_with_message("the current structure is not in the startfrom_file");
 		}
+	}else
+	{
+		utility_exit_with_message("You must specify either a Coordinates or a File tag in the StartFrom mover");
+	}
+}
+
+void StartFrom::parse_startfrom_file(std::string filename)
+{
+	utility::io::izstream infile;
+	infile.open(filename.c_str(),std::ifstream::in);
+	utility::json_spirit::mValue startfrom_data;
+	utility::json_spirit::read(infile,startfrom_data);
+	infile.close();
+
+	//The format is something like this:
+	/*
+	[
+	    {
+	        "input_tag" : "infile.pdb",
+	        "x" : 0.0020,
+	        "y" : -0.004,
+	        "z" : 0.0020,
+	        "hash" : 14518543732039167129
+	    }
+	]
+	*/
+
+	utility::json_spirit::mArray start_positions = startfrom_data.get_array();
+	for(utility::json_spirit::mArray::iterator start_it = start_positions.begin(); start_it != start_positions.end();++start_it)
+	{
+		utility::json_spirit::mObject position_data(start_it->get_obj());
+
+		core::Size hash = position_data["hash"].get_uint64();
+		core::Real x = position_data["x"].get_real();
+		core::Real y = position_data["y"].get_real();
+		core::Real z = position_data["z"].get_real();
+
+		core::Vector coords(x,y,z);
+		if(potential_starting_positions_.find(hash) !=potential_starting_positions_.end() )
+		{
+			utility_exit_with_message("hashes in startfrom files must all be unique");
+		}
+		potential_starting_positions_[hash] = coords;
+
 	}
 
-	assert(centroid_points.size());
-
-	core::Vector desired_centroid = centroid_points[starting_point_index];
-
-	core::Size jump_id = core::pose::get_jump_id_from_chain(chain_, pose);
-	move_ligand_to_desired_centroid(jump_id, desired_centroid, pose);
 }
 
 void
