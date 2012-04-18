@@ -130,6 +130,10 @@ vector1<Size> get_scanres(Pose const & pose) {
 
 
 void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname) {
+  double mxd = 0.0;
+  for(Size i = 1; i <= pose.n_residue(); ++i) {
+    if( pose.residue(i).nbr_atom_xyz().length() > mxd ) mxd = pose.residue(i).nbr_atom_xyz().length();
+  }
   vector1<Vec> seenit;
   Mat R3[3];
   R3[0] = Mat::identity();
@@ -156,8 +160,8 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                 for(Size l2a = 0; l2a < 2; l2a++) {
                   for(Size m3a = 0; m3a < 2; m3a++) {
                     for(Size m2a = 0; m2a < 2; m2a++) {
-                  //     for(Size n3a = 0; n3a < 2; n3a++) {
-                  //       for(Size n2a = 0; n2a < 2; n2a++) {
+                      for(Size n3a = 0; n3a < 2; n3a++) {
+                        for(Size n2a = 0; n2a < 2; n2a++) {
 
                           Vec chk( pose.xyz(AtomID(1,1)) );
 													chk = R3[i3a]*chk; if(i2a) chk = R2*(chk-cen2)+cen2;
@@ -172,14 +176,41 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                           goto done2; cont2: continue; done2:
                           seenit.push_back(chk);
 
+                          Vec zero(0,0,0);
+                          zero = R3[i3a]*zero; if(i2a) zero = R2*(zero-cen2)+cen2;
+                          zero = R3[j3a]*zero; if(j2a) zero = R2*(zero-cen2)+cen2;
+                          zero = R3[k3a]*zero; if(k2a) zero = R2*(zero-cen2)+cen2;
+                          zero = R3[l3a]*zero; if(l2a) zero = R2*(zero-cen2)+cen2;
+                          zero = R3[m3a]*zero; if(m2a) zero = R2*(zero-cen2)+cen2;
+                          zero = R3[n3a]*zero; if(n2a) zero = R2*(zero-cen2)+cen2;
+                          if( zero.length() > 2.0 * mxd + 10.0 ) continue;
+                          bool contact = false;
+                          for(int i = 1; i <= pose.n_residue(); ++i) {
+                            Vec N = pose.residue(i).nbr_atom_xyz();
+                            N = R3[i3a]*N; if(i2a) N = R2*(N-cen2)+cen2;
+                            N = R3[j3a]*N; if(j2a) N = R2*(N-cen2)+cen2;
+                            N = R3[k3a]*N; if(k2a) N = R2*(N-cen2)+cen2;
+                            N = R3[l3a]*N; if(l2a) N = R2*(N-cen2)+cen2;
+                            N = R3[m3a]*N; if(m2a) N = R2*(N-cen2)+cen2;
+                            N = R3[n3a]*N; if(n2a) N = R2*(N-cen2)+cen2;
+                            for(int j = 1; j <= pose.n_residue(); ++j) {
+                              if(pose.residue(j).nbr_atom_xyz().distance_squared(N) < 200.0) {
+                                contact = true;
+                                break;
+                              }
+                            }
+                            if(contact) break;
+                          }
+                          if(!contact) continue;
+
 													char chain = CHAIN[ccount%CHAIN.size()];
-                          std::cout << chain << std::endl;
+                          ccount++;
 													// if( (i2a+j2a+k2a+l2a/*+m2a+n2a*/) % 2 == 1 ) chain = 'B';
                           for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
-														if( rcount >= 9999) {
-															rcount = 0;
-															ccount++;
-														}
+														// if( rcount >= 9999) {
+														// 	rcount = 0;
+														// 	ccount++;
+														// }
                             Size rn = ++rcount;
                             Size natom = 3;
                             if(pose.residue(ir).name3()=="CYS") natom = 6;
@@ -190,7 +221,7 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                               tmp = R3[k3a]*tmp; if(k2a) tmp = R2*(tmp-cen2)+cen2;
                               tmp = R3[l3a]*tmp; if(l2a) tmp = R2*(tmp-cen2)+cen2;
                               tmp = R3[m3a]*tmp; if(m2a) tmp = R2*(tmp-cen2)+cen2;
-                              // tmp = R3[n3a]*tmp; if(n2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[n3a]*tmp; if(n2a) tmp = R2*(tmp-cen2)+cen2;
                               string X = F(8,3,tmp.x());
                               string Y = F(8,3,tmp.y());
                               string Z = F(8,3,tmp.z());
@@ -198,8 +229,8 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                             }
                           }
 													out << "TER" << std::endl;
-                  //       }
-                  //     }
+                        }
+                      }
                     }
                   }
                 }
@@ -263,6 +294,24 @@ int dumpsymfile(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fn
     zero = R3[m3a]*zero; if(m2a) zero = R2*(zero-cen2)+cen2;
     zero = R3[n3a]*zero; if(n2a) zero = R2*(zero-cen2)+cen2;
     if( zero.length() > 2.0 * mxd + 10.0 ) continue;
+    bool contact = false;
+    for(int i = 1; i <= pose.n_residue(); ++i) {
+      Vec N = pose.residue(i).nbr_atom_xyz();
+      N = R3[i3a]*N; if(i2a) N = R2*(N-cen2)+cen2;
+      N = R3[j3a]*N; if(j2a) N = R2*(N-cen2)+cen2;
+      N = R3[k3a]*N; if(k2a) N = R2*(N-cen2)+cen2;
+      N = R3[l3a]*N; if(l2a) N = R2*(N-cen2)+cen2;
+      N = R3[m3a]*N; if(m2a) N = R2*(N-cen2)+cen2;
+      N = R3[n3a]*N; if(n2a) N = R2*(N-cen2)+cen2;
+      for(int j = 1; j <= pose.n_residue(); ++j) {
+        if(pose.residue(j).nbr_atom_xyz().distance_squared(N) < 200.0) {
+          contact = true;
+          break;
+        }
+      }
+      if(contact) break;
+    }
+    if(!contact) continue;
 
     SYMSUB s;
     Vec X = Vec(0,0,1);
@@ -761,6 +810,33 @@ void dock(Pose & init, string fname) {
             }
           }
           goto noclash1; clash1: continue; noclash1:
+
+          int ncontact = 0;
+          for(int i = 1; i <= pose.n_residue(); ++i) {
+            if(pose.residue(i).name3()=="GLY") continue;
+            // if(pose.secstruct(i)=='L') continue;
+            Vec pa = pose.xyz(AtomID(5,i));
+            Vec pb = R3f1 * pa;
+            Vec pc = R3f2 * pa;
+            for(int j = 1; j <= pose.n_residue(); ++j) {
+              if(pose.residue(j).name3()=="GLY") continue;
+              // if(pose.secstruct(j)=='L') continue;
+              Vec qa = R2f * (       pose.xyz(AtomID(5,j)) - HG) + HG;
+              Vec qb = R2f * (R3f1 * pose.xyz(AtomID(5,j)) - HG) + HG;
+              Vec qc = R2f * (R3f2 * pose.xyz(AtomID(5,j)) - HG) + HG;
+              if( pa.distance_squared(qa) < 64.0 ) ncontact++;
+              if( pa.distance_squared(qb) < 64.0 ) ncontact++;
+              if( pa.distance_squared(qc) < 64.0 ) ncontact++;
+              if( pb.distance_squared(qa) < 64.0 ) ncontact++;
+              if( pb.distance_squared(qb) < 64.0 ) ncontact++;
+              if( pb.distance_squared(qc) < 64.0 ) ncontact++;
+              if( pc.distance_squared(qa) < 64.0 ) ncontact++;
+              if( pc.distance_squared(qb) < 64.0 ) ncontact++;
+              if( pc.distance_squared(qc) < 64.0 ) ncontact++;
+            }
+          }
+          if(ncontact < 20) continue;
+
           if(symclash(pose,R2f,R3f1,R3f2,HG,xh2,xh3)) continue;
 
           {
@@ -776,13 +852,14 @@ void dock(Pose & init, string fname) {
               // rot_pose(tmp,R2f,HG);
               pose.dump_pdb(fn+"_chainA.pdb");
               // tmp .dump_pdb(fn+"B.pdb");
+              dumpsym(pose,R2f,R3f1,R3f2,HG,fn+".pdb");
               dumpsymfile_minimal(pose,R2f,R3f1,R3f2,HG,fn+".sym" );
-              int nsubs = dumpsymfile(pose,R2f,R3f1,R3f2,HG,fn+"_ALL.sym" );
+              int nsubs = dumpsymfile(pose,R2f,R3f1,R3f2,HG,fn+"_contact.sym" );
               // dumpsym(pose,R2f,R3f1,R3f2,HG,fn+".pdb" );
               // utility_exit_with_message("oiarseht");
-              std::cerr << "HIT  " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,nsubs) << " " << fn << std::endl;
+              std::cerr << "HIT  " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,ncontact) << " " << I(4,nsubs) << " " << fn << std::endl;
             } else {
-              std::cerr << "FAIL " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,    0) << " " << fn << std::endl;
+              std::cerr << "FAIL " << endl;//<< sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,ncontact) << " " << I(4,    0) << " " << fn << std::endl;
             }
           }
         }
