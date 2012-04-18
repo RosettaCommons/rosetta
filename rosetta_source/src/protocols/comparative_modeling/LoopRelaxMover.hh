@@ -23,6 +23,7 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <string>
 
@@ -146,6 +147,8 @@ public:
 	bool compute_rmsd() const { return compute_rmsd_; }
 
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+//	void task_factory( core::pack::task::TaskFactoryOP tf ); /// currently taskfactory is not supported
+//	core::pack::task::TaskFactoryOP task_factory() const;
 
 private:
 	void set_defaults_();
@@ -168,6 +171,7 @@ private:
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs_;
 	bool compute_rmsd_; //dflt true; but set to false if you change the pose length between start and rmsd measurements;
+//	core::pack::task::TaskFactoryOP task_factory_; //dflt NULL; a way to restrict packing from outside the mover
 };
 
 } // namespace loops

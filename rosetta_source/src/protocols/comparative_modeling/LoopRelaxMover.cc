@@ -17,7 +17,7 @@
 
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
-
+#include <core/chemical/VariantType.hh>
 #ifdef BOINC_GRAPHICS
 #include <protocols/boinc/boinc.hh>
 #endif // BOINC_GRAPHICS
@@ -26,6 +26,8 @@
 
 // Project Headers
 
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
@@ -748,17 +750,20 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		}
 
 		if ( debug ) pose.dump_pdb(curr_job_tag + "_before_repack.pdb");
-
 		if ( needToRepackAtAll ) { // kic refine does its own initial repacking
 			TR << "Repacking required" << std::endl;
 			TR << "Detecting disulfides" << std::endl;
 			TR << "Annotated sequence before repack: " << pose.annotated_sequence(true) << std::endl;
-
 			// repack loop + missing-density residues
-			core::pack::task::PackerTaskOP taskstd
-				= core::pack::task::TaskFactory::create_packer_task( pose );
-			taskstd->restrict_to_repacking();
-			taskstd->or_include_current(true);
+			pose.conformation().detect_disulfides();
+			using namespace core::pack::task;
+			using namespace core::pack::task::operation;
+			TaskFactoryOP tf = new TaskFactory;
+			tf->push_back( new NoRepackDisulfides );
+			tf->push_back( new InitializeFromCommandline );
+			tf->push_back( new IncludeCurrent );
+			tf->push_back( new RestrictToRepacking );
+			PackerTaskOP taskstd = tf->create_task_and_apply_taskoperations( pose );
 			core::pose::symmetry::make_residue_mask_symmetric( pose, needToRepack );
 			             // does nothing if pose is not symm
 			taskstd->restrict_to_residues(needToRepack);
@@ -767,6 +772,12 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );  //fpd symmetrize this
 			mm->set_bb( false );
 			mm->set_chi( true );
+			for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+				if( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ){
+					TR<<"disabling minimization on disulfide residue "<<i<<std::endl;
+					mm->set_chi( i, false );
+				}
+			}
 
 			//fpd symmetrize this
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -873,7 +884,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////  Loop refine (fullatom type loop modelling )
 	////
 	////
-    
+
 	if ( refine() != "no" && (all_loops_closed)) {
 		TR << "====================================================================================" << std::endl;
 		TR << "===" << std::endl;
@@ -1218,6 +1229,15 @@ LoopRelaxMover::fresh_instance() const{ return protocols::moves::MoverOP( new Lo
 protocols::moves::MoverOP
 LoopRelaxMover::clone() const{ return protocols::moves::MoverOP( new LoopRelaxMover( *this ) ); }
 
+
+/*
+/// currrently taskfactory is not supported
+core::pack::task::TaskFactoryOP
+LoopRelaxMover::task_factory() const{ return task_factory_; }
+
+void
+LoopRelaxMover::task_factory( core::pack::task::TaskFactoryOP tf ){ task_factory_ = tf; }
+*/
 
 } // namespace loops
 } // namespace protocols

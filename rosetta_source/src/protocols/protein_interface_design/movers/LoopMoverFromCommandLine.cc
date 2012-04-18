@@ -291,7 +291,7 @@ LoopMoverFromCommandLine::parse_my_tag( TagPtr const tag, protocols::moves::Data
 	lores_score_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", lores_score ));
 
 	loop_file_name_ = tag->getOption<std::string>("loop_file", "loops.loops");
-	task_factory(protocols::rosetta_scripts::parse_task_operations( tag, data ));
+//	task_factory(protocols::rosetta_scripts::parse_task_operations( tag, data ));
 
 }//parsemytags
 }//movers

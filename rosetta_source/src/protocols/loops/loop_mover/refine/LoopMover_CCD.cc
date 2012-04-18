@@ -44,6 +44,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -166,12 +167,12 @@ void LoopMover_Refine_CCD::set_default_settings()
 		packing_isolated_to_active_loops_ = false;
 }
 loop_mover::LoopMover::MoveMapOP LoopMover_Refine_CCD::move_map() const
-{ 
-    return move_map_; 
+{
+    return move_map_;
 }
 void LoopMover_Refine_CCD::move_map( LoopMover::MoveMapOP mm )
-{ 
-    move_map_ = mm; 
+{
+    move_map_ = mm;
 }
 
 void
@@ -331,9 +332,11 @@ void LoopMover_Refine_CCD::apply(
 	if ( task_factory_ == 0 ) {
 		// the default Packer behavior is defined here
 		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
 		task_factory_ = new TaskFactory;
-		task_factory_->push_back( new operation::InitializeFromCommandline );
-		task_factory_->push_back( new operation::IncludeCurrent );
+		task_factory_->push_back( new InitializeFromCommandline );
+		task_factory_->push_back( new IncludeCurrent );
+		task_factory_->push_back( new NoRepackDisulfides );
 		base_packer_task = task_factory_->create_task_and_apply_taskoperations( pose );
 		if ( redesign_loop_ ) {
 			// allow design at loop positions
