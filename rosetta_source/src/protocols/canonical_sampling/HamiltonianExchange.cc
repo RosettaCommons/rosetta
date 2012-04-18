@@ -310,7 +310,7 @@ HamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 
 	//	tr.Trace<< "find exchange partner... " << std::endl;
 	int sendbuf = current_temp();
-	int recvbuf[ n_temp_levels() ];
+	int* recvbuf = new int[ n_temp_levels() ];
 	MPI_Allgather( &sendbuf, 1, MPI_INT,
               		recvbuf, 1, MPI_INT, mpi_comm() );
 	//tr.Trace<< " received all current cell-indices: ";
@@ -337,6 +337,8 @@ HamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 		if ( recvbuf[ r ]==other ) break;
 	}
 	runtime_assert( r<n_temp_levels() );
+
+	delete [ ] recvbuf;
 #else
 	Size r( 0 );
 #endif
