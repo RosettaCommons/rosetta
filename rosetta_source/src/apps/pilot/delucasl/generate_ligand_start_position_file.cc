@@ -25,9 +25,9 @@
 #include <string>
 #include <iostream>
 
-OPT_KEY(String,ligand_chain);
-OPT_KEY(String,protein_chain);
-OPT_KEY(String,start_position_file);
+OPT_KEY(String,ligand_chain)
+OPT_KEY(String,protein_chain)
+OPT_KEY(String,start_position_file)
 
 int main(int argc, char*argv[])
 {
