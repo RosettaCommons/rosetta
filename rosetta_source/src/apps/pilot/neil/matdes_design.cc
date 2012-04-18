@@ -235,7 +235,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
 	for (Size i=1; i<=pose.n_residue(); i++) {
 		if (!sym_info->bb_is_independent(i)) {
 			task->nonconst_residue_task(i).prevent_repacking();
-		} else if (pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
+		} else if (pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY" || pose.residue(i).name3() == "CYS" || pose.residue(i).name3() == "CYD") {
 			// Don't mess with Pros or Glys at the interfaces
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
