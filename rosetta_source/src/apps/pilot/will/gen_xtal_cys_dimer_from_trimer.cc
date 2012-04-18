@@ -232,7 +232,7 @@ struct SYMSUB {
   int trimer_id;
 };
 
-int dumpsymfile_contact(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname) {
+int dumpsymfile_contact(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname, int & ncontact) {
   double mxd = 0.0;
   for(Size i = 1; i <= pose.n_residue(); ++i) {
     if( pose.residue(i).nbr_atom_xyz().length() > mxd ) mxd = pose.residue(i).nbr_atom_xyz().length();
@@ -245,6 +245,7 @@ int dumpsymfile_contact(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, s
   Size acount=0,rcount=0,ccount=0;
   vector1<SYMSUB> subs;
   std::map<int,SYMSUB> tsubs;
+  ncontact = 0;
   for(Size n2a = 0; n2a < 2; n2a++) {
   for(Size n3a = 0; n3a < 3; n3a++) {
   for(Size m2a = 0; m2a < 2; m2a++) {
@@ -272,17 +273,18 @@ int dumpsymfile_contact(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, s
     if( zero.length() > 2.0 * mxd + 10.0 ) continue;
     bool contact=false;
     for(int i=1; i <= pose.n_residue(); ++i) {
-      Vec pa=R3[0]*pose.residue(i).nbr_atom_xyz();
+      if(pose.residue(i).aa()==core::chemical::aa_gly||pose.residue(i).aa()==core::chemical::aa_pro) continue;
+      Vec pa=R3[0]*pose.xyz(AtomID(5,i));
       pa=R3[i3a]*pa;if(i2a)pa=R2*(pa-cen2)+cen2;pa=R3[j3a]*pa;if(j2a)pa=R2*(pa-cen2)+cen2;pa=R3[k3a]*pa;if(k2a)pa=R2*(pa-cen2)+cen2;
       pa=R3[l3a]*pa;if(l2a)pa=R2*(pa-cen2)+cen2;pa=R3[m3a]*pa;if(m2a)pa=R2*(pa-cen2)+cen2;pa=R3[n3a]*pa;if(n2a)pa=R2*(pa-cen2)+cen2;
       for(int j=1; j <= pose.n_residue(); ++j) {
-        Vec qa=R3[0]*pose.residue(j).nbr_atom_xyz();
-        if(pa.distance_squared(qa)<200.0) {
+        if(pose.residue(j).aa()==core::chemical::aa_gly||pose.residue(j).aa()==core::chemical::aa_pro) continue;
+        Vec qa = pose.xyz(AtomID(5,j));
+        if(pa.distance_squared(qa)<400.0) {
           contact=true;
-          break;
+          if(pa.distance_squared(qa)<64.0) ncontact++;
         }
       }
-      if(contact) break;
     }
     if(!contact) continue;
 
@@ -955,14 +957,13 @@ void dock(Pose & init, string fname) {
               pose.dump_pdb(fn+"_chainA.pdb");
               // tmp .dump_pdb(fn+"B.pdb");
               // dumpsym(pose,R2f,R3f1,R3f2,HG,fn+".pdb");
-              int nsubs = dumpsymfile_contact (pose,R2f,R3f1,R3f2,HG,fn+".sym" );
+              int nsymcontact = 0;
+              int nsubs = dumpsymfile_contact(pose,R2f,R3f1,R3f2,HG,fn+".sym",nsymcontact);
               // int nsubs = dumpsymfile_contact3(pose,R2f,R3f1,R3f2,HG,fn+"_contact3.sym" );
               // dumpsym(pose,R2f,R3f1,R3f2,HG,fn+".pdb" );
               // utility_exit_with_message("oiarseht");
-              std::cerr << "HIT  " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,ncontact) << " " << I(4,nsubs) << " " << fn << std::endl;
-
-              utility_exit_with_message("arst");
-
+              std::cerr << "HIT  " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,ncontact) << " " << I(4,nsymcontact) << " " << I(4,nsubs) << " " << fn << std::endl;
+              // utility_exit_with_message("arst");
             } else {
               std::cerr << "FAIL " << endl;//<< sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,ncontact) << " " << I(4,    0) << " " << fn << std::endl;
             }
