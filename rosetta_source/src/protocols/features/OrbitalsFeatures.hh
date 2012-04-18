@@ -126,7 +126,11 @@ public:
 			core::Real & chiBDOO,
 			core::Real & AOO_angle,
 			core::Real & DOO_angle,
-			core::Real & OrbHdist
+			core::Real & OrbHdist,
+			core::Real & cosAOD,
+			core::Real & AOD_angle,
+			core::Real & chiBAHD,
+			core::Real & cosAHD
 		);
 
 };

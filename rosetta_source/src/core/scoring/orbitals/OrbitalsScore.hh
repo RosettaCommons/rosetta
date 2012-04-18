@@ -46,7 +46,7 @@ public:
 	virtual methods::EnergyMethodOP clone() const;
 
 	virtual
-	void setup_for_scoring(pose::Pose & pose, ScoreFunction const &) const;
+	void setup_for_scoring(pose::Pose & pose, ScoreFunction const & weights) const;
 
 	virtual
 	void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const;
@@ -131,6 +131,11 @@ public:
 			core::Real & HPOL_bb_H_sc_orb_energy
 	) const;
 
+	void get_orb_orb_E(
+			core::conformation::Residue const & res1,
+			core::conformation::Residue const & res2,
+			core::Real & orb_orb_E
+	)const;
 	void get_orb_H_distance_and_energy(
 			core::conformation::Residue const & res1,
 			core::Size const & Aindex,
@@ -160,11 +165,9 @@ public:
 
 	) const;
 
-	bool cation_pi_rules(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			core::Size const & Aindex,
-			core::Size const & Dindex
+	bool orb_orb_rules(
+			const core::chemical::orbitals::orbital_type_enum orb_type_name1,
+			const core::chemical::orbitals::orbital_type_enum orb_type_name2
 	)const;
 
 
@@ -176,6 +179,14 @@ public:
 			core::Size const & H_index,
 			numeric::xyzVector<core::Real> const & H_xyz,
 			OrbitalsLookup::h_type htype,
+			EnergyMap const & weights,
+			utility::vector1< DerivVectorPair > & r1_atom_derivs,
+			utility::vector1< DerivVectorPair > & r2_atom_derivs
+	)const;
+	void
+	assign_orb_orb_derivs(
+			core::conformation::Residue const & res1,
+			core::conformation::Residue const & res2,
 			EnergyMap const & weights,
 			utility::vector1< DerivVectorPair > & r1_atom_derivs,
 			utility::vector1< DerivVectorPair > & r2_atom_derivs

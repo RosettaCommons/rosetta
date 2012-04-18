@@ -55,20 +55,20 @@ plot_id = "pi_pi_eqpoldens_scOrbCpi_Haro_chiBAHD_cosAHD_all_2.0A"
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
 ggplot(data=f_first) + theme_bw() +
-  geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
-  stat_density2d(
-    aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
-  polar_equal_area_grids_bw() +
-  opts(title =
-    paste("Pi Stacking chiBAHD vs AHD Angles with Sequence Separation > 5\n",
+		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		stat_density2d(
+				aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
+		polar_equal_area_grids_bw() +
+		opts(title =
+						paste("Pi Stacking chiBAHD vs AHD Angles with Sequence Separation > 5\n",
     "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 		"PHE+TYR+TRP to PHE+TYR+TRP at 2.0A", sep="")) +
-  scale_x_continuous(
-    '2*sin(AHD/2) * cos(chiBAHD)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-  scale_y_continuous(
-    '2*sin(AHD/2) * sin(chiBAHD)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-  coord_fixed(ratio = 1) +
-  scale_fill_gradientn('Density', colour=jet.colors(10))
+		scale_x_continuous(
+				'2*sin(AHD/2) * cos(chiBAHD)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+		scale_y_continuous(
+				'2*sin(AHD/2) * sin(chiBAHD)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+		coord_fixed(ratio = 1) +
+		scale_fill_gradientn('Density', colours=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
@@ -107,21 +107,22 @@ plot_id = "pi_pi_eqpoldens_scOrbCpi_Haro_chiBAHD_cosAHD_all_3.5A"
 
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
+
 ggplot(data=f_first) + theme_bw() +
-  geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
-  stat_density2d(
-    aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
-  polar_equal_area_grids_bw() +
-  opts(title =
-    paste("Pi Stacking chiBAHD vs AHD Angles with Sequence Separation > 5\n",
+		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		stat_density2d(
+				aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
+		polar_equal_area_grids_bw() +
+		opts(title =
+						paste("Pi Stacking chiBAHD vs AHD Angles with Sequence Separation > 5\n",
     "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
     "PHE+TYR+TRP to PHE+TYR+TRP at 3.5A", sep="")) +
-  scale_x_continuous(
-    '2*sin(AHD/2) * cos(chiBAHD)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-  scale_y_continuous(
-    '2*sin(AHD/2) * sin(chiBAHD)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-  coord_fixed(ratio = 1) +
-  scale_fill_gradientn('Density', colour=jet.colors(10))
+		scale_x_continuous(
+				'2*sin(AHD/2) * cos(chiBAHD)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+		scale_y_continuous(
+				'2*sin(AHD/2) * sin(chiBAHD)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+		coord_fixed(ratio = 1) +
+		scale_fill_gradientn('Density', colours=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 ###Phe-Phe 2.0
@@ -159,21 +160,24 @@ plot_id = "pi_pi_eqpoldens_scOrbCpi_Haro_chiBAHD_cosAHD_phe_phe_2.0A"
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
 ggplot(data=f_first) + theme_bw() +
-  geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
-  stat_density2d(
-    aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
-  polar_equal_area_grids_bw() +
-  opts(title =
-    paste("Pi Stacking chiBAHD vs AHD Angles with Sequence Separation > 5\n",
+		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		stat_density2d(
+				aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
+		polar_equal_area_grids_bw() +
+		opts(title =
+						paste("Pi Stacking chiBAHD vs AHD Angles with Sequence Separation > 5\n",
     "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
     "PHE to PHE at 2.0A", sep="")) +
-  scale_x_continuous(
-    '2*sin(AHD/2) * cos(chiBAHD)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-  scale_y_continuous(
-    '2*sin(AHD/2) * sin(chiBAHD)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-  coord_fixed(ratio = 1) +
-  scale_fill_gradientn('Density', colour=jet.colors(10))
+		scale_x_continuous(
+				'2*sin(AHD/2) * cos(chiBAHD)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+		scale_y_continuous(
+				'2*sin(AHD/2) * sin(chiBAHD)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+		coord_fixed(ratio = 1) +
+		scale_fill_gradientn('Density', colours=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
+
 
 ###Phe -Phe 3.5
 sele <- "
@@ -209,22 +213,22 @@ plot_id = "pi_pi_eqpoldens_scOrbCpi_Haro_chiBAHD_cosAHD_phe_phe_3.5A"
 
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
+
 ggplot(data=f_first) + theme_bw() +
-  geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
-  stat_density2d(
-    aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
-  polar_equal_area_grids_bw() +
-  opts(title =
-    paste("Pi Stacking chiBAHD vs AHD Angles with Sequence Separation > 5\n",
+		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		stat_density2d(
+				aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
+		polar_equal_area_grids_bw() +
+		opts(title =
+						paste("Pi Stacking chiBAHD vs AHD Angles with Sequence Separation > 5\n",
     "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
     "PHE to PHE at 3.5A", sep="")) +
-  scale_x_continuous(
-    '2*sin(AHD/2) * cos(chiBAHD)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-  scale_y_continuous(
-    '2*sin(AHD/2) * sin(chiBAHD)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-  coord_fixed(ratio = 1) +
-  scale_fill_gradientn('Density', colour=jet.colors(10))
+		scale_x_continuous(
+				'2*sin(AHD/2) * cos(chiBAHD)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+		scale_y_continuous(
+				'2*sin(AHD/2) * sin(chiBAHD)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+		coord_fixed(ratio = 1) +
+		scale_fill_gradientn('Density', colours=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
-
 
 })) # end FeaturesAnalysis

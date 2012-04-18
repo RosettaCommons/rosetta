@@ -62,6 +62,7 @@ OrbitalsScoreCreator::score_types_for_method() const
 	sts.push_back( orbitals_hpol );
 	sts.push_back( orbitals_haro );
 	sts.push_back(orbitals_hpol_bb);
+	sts.push_back(orbitals_orbitals);
 	return sts;
 }
 
@@ -85,9 +86,10 @@ OrbitalsScore::clone() const
 	return new OrbitalsScore(*this);
 }
 
-void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const &) const
+void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const & weights) const
 {
 	pose.update_residue_neighbors();
+	lookup_table_.set_orb_weights(weights);
 }
 
 void OrbitalsScore::setup_for_derivatives(pose::Pose & pose , ScoreFunction const &) const
@@ -146,7 +148,6 @@ OrbitalsScore::update_residue_for_packing(
 	Size resid
 ) const
 {
-
 	pose.update_orbital_coords( resid );
 }
 
@@ -184,16 +185,30 @@ OrbitalsScore::version() const
 //////////////////////////////////////////////////////////////////
 /////////////////////////////////
 
-bool OrbitalsScore::cation_pi_rules(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		core::Size const & Aindex,
-		core::Size const & Dindex
+bool OrbitalsScore::orb_orb_rules(
+		const core::chemical::orbitals::orbital_type_enum orb_type_name1,
+		const core::chemical::orbitals::orbital_type_enum orb_type_name2
 )const
 {
-	if(res1.atom_type(Aindex).atom_type_name() == "COO" && res2.atom_type(Dindex).atom_type_name() == "OH") return false;
-	if(res1.atom_type(Aindex).atom_type_name() == "aroC" && res2.atom_type(Dindex).atom_type_name() == "OH") return false;
-	return true;
+
+	if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
+		if(
+				orb_type_name2==core::chemical::orbitals::N_pi_sp2 ||
+				orb_type_name2==core::chemical::orbitals::O_pi_sp2 ||
+				orb_type_name2==core::chemical::orbitals::C_pi_sp2
+		)
+		{
+			return true;
+		}else {return false;}
+	}
+	if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		return true;
+
+	}
+	if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		return true;
+	}
+	return false;
 }
 
 
@@ -206,32 +221,113 @@ OrbitalsScore::residue_pair_energy(
 		EnergyMap & emap
 ) const
 {
-	if(res1.is_aromatic()) {
+	if(res1.is_aromatic()) {//scOrb scHaro energy calculation 1
 		core::Real HARO_scHscOrb_E(0.0);
 		get_E_haro_one_way(res2, res1, HARO_scHscOrb_E);
 		emap[orbitals_haro] += HARO_scHscOrb_E;
 	}
-	if(res2.is_aromatic()){
+	if(res2.is_aromatic()){//scOrb scHaro energy calculation 2
 		core::Real HARO_scHscOrb_E(0.0);
 		get_E_haro_one_way(res1, res2, HARO_scHscOrb_E);
 		emap[orbitals_haro] += HARO_scHscOrb_E;
 	}
 
-	{
+	{//scOrb scHpol energy calculation 1
 		core::Real HPOL_scHscOrb_E(0.0);
 		core::Real HPOL_bb_E(0.0);
 		get_E_hpol_one_way(res1, res2, HPOL_scHscOrb_E, HPOL_bb_E);
 		emap[orbitals_hpol] += HPOL_scHscOrb_E;
 		emap[orbitals_hpol_bb] += HPOL_bb_E;
 	}
-	{
+	{//scOrb scHpol energy calculation 2
 		core::Real HPOL_scHscOrb_E(0.0);
 		core::Real HPOL_bb_E(0.0);
 		get_E_hpol_one_way(res2, res1, HPOL_scHscOrb_E, HPOL_bb_E);
 		emap[orbitals_hpol] += HPOL_scHscOrb_E;
 		emap[orbitals_hpol_bb] += HPOL_bb_E;
 	}
+	{//orbital orbital energy calculation
+		//for now cation-pi interactions, maybe pi-pi interactions later. only the future knows!
+		core::Real orb_orb_E(0.0);
+		get_orb_orb_E(res1, res2, orb_orb_E);
+		emap[orbitals_orbitals] += orb_orb_E;
+	}
 
+	{//orbital orbital energy calculation
+		//for now cation-pi interactions, maybe pi-pi interactions later. only the future knows!
+		core::Real orb_orb_E(0.0);
+		get_orb_orb_E(res2, res1, orb_orb_E);
+		emap[orbitals_orbitals] += orb_orb_E;
+	}
+
+
+}
+
+void OrbitalsScore::get_orb_orb_E(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Real & orb_orb_E
+)const{
+	core::Real add_orb_orb_E(0.0);
+	for (
+			chemical::AtomIndices::const_iterator
+			Aindex = res1.atoms_with_orb_index().begin(),
+			Aindex_end = res1.atoms_with_orb_index().end();
+			Aindex != Aindex_end; ++Aindex
+	){
+		if ( !res1.atom_is_backbone(*Aindex) ) {
+			for (
+					chemical::AtomIndices::const_iterator
+					Dindex = res2.atoms_with_orb_index().begin(),
+					Dindex_end = res2.atoms_with_orb_index().end();
+					Dindex != Dindex_end; ++Dindex
+			)
+			{
+				if(!res2.atom_is_backbone(*Dindex)){
+					utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
+					for(
+							utility::vector1< core::Size >::const_iterator
+							res1_orb = res1_orbs.begin(),
+							res1_orb_end = res1_orbs.end();
+							res1_orb != res1_orb_end; ++res1_orb
+					){
+						numeric::xyzVector< core::Real > const res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
+						utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
+						for(
+								utility::vector1< core::Size >::const_iterator
+								res2_orb = res2_orbs.begin(),
+								res2_orb_end = res2_orbs.end();
+								res2_orb != res2_orb_end; ++res2_orb
+						){
+							core::chemical::orbitals::orbital_type_enum orbital_type1 = res1.orbital_type(*res1_orb).orbital_enum();
+							core::chemical::orbitals::orbital_type_enum orbital_type2 = res2.orbital_type(*res2_orb).orbital_enum();
+							if(orb_orb_rules(orbital_type1,orbital_type2 )){
+								numeric::xyzVector< core::Real > const res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
+								core::Real orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
+								if(orb1_orb2_dist < 16){
+									core::Real dist(std::sqrt(orb1_orb2_dist));
+									numeric::xyzVector< core::Real > const Axyz(res1.xyz(*Aindex));
+									numeric::xyzVector< core::Real > const Dxyz(res2.xyz(*Dindex));
+									core::Real cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
+									core::Real cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
+									core::Real d_deriv(0.0);
+									core::Real a_deriv(0.0);
+									lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, false);
+									add_orb_orb_E +=orb_orb_E;
+									orb_orb_E=0.0;
+									lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, false);
+									add_orb_orb_E +=orb_orb_E;
+									orb_orb_E=0.0;
+								}
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
+	orb_orb_E=add_orb_orb_E;
 }
 
 void OrbitalsScore::get_E_haro_one_way(
@@ -301,10 +397,6 @@ void OrbitalsScore::get_E_hpol_one_way(
 			if(res1.atom_is_backbone(*atoms_with_orb_index) && res2.atom_is_backbone(donor_index)){
 				continue;
 			}
-			if(cation_pi_rules(res1, res2, *atoms_with_orb_index, donor_index) == false){
-				continue;
-			}
-
 			numeric::xyzVector<core::Real> const & Hxyz = res2.atom(*hpol_index).xyz(); //hydrogen xyz
 			core::Size donor_id(res2.bonded_neighbor(*hpol_index)[1]);
 			core::Real temp_dist = Axyz.distance_squared(Hxyz);
@@ -404,6 +496,8 @@ OrbitalsScore::eval_residue_pair_derivatives(
 	}
 	assign_hpol_derivs_one_way(res1, res2, weights, r1_atom_derivs, r2_atom_derivs);
 	assign_hpol_derivs_one_way(res2, res1, weights, r2_atom_derivs, r1_atom_derivs);
+	assign_orb_orb_derivs(res1, res2, weights, r1_atom_derivs, r2_atom_derivs);
+	assign_orb_orb_derivs(res2, res1, weights, r2_atom_derivs, r1_atom_derivs);
 
 }
 
@@ -478,9 +572,7 @@ void OrbitalsScore::assign_hpol_derivs_one_way(
 			if(res1.atom_is_backbone(*atoms_with_orb_index) && res2.atom_is_backbone(donor_index)){
 				continue;
 			}
-			if(cation_pi_rules(res1, res2, *atoms_with_orb_index, donor_index) == false){
-				continue;
-			}
+
 			numeric::xyzVector<core::Real> const & Axyz = res1.atom(*atoms_with_orb_index).xyz();
 			numeric::xyzVector<core::Real> const & Hxyz = res2.atom(*hpol_index).xyz();
 			core::Real temp_dist = Axyz.distance_squared(Hxyz);
@@ -500,9 +592,167 @@ void OrbitalsScore::assign_hpol_derivs_one_way(
 				}
 			}
 		}
-
 	}
 }
+
+
+void
+OrbitalsScore::assign_orb_orb_derivs(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+)const {
+	core::Real add_orb_orb_E(0.0);
+	for (
+			chemical::AtomIndices::const_iterator
+			Aindex = res1.atoms_with_orb_index().begin(),
+			Aindex_end = res1.atoms_with_orb_index().end();
+			Aindex != Aindex_end; ++Aindex
+	){
+		if ( !res1.atom_is_backbone(*Aindex) ) {
+			for (
+					chemical::AtomIndices::const_iterator
+					Dindex = res2.atoms_with_orb_index().begin(),
+					Dindex_end = res2.atoms_with_orb_index().end();
+					Dindex != Dindex_end; ++Dindex
+			)
+			{
+				if(!res2.atom_is_backbone(*Dindex)){
+
+					utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
+					for(
+							utility::vector1< core::Size >::const_iterator
+							res1_orb = res1_orbs.begin(),
+							res1_orb_end = res1_orbs.end();
+							res1_orb != res1_orb_end; ++res1_orb
+					){
+						numeric::xyzVector< core::Real > const res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
+						utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
+						for(
+								utility::vector1< core::Size >::const_iterator
+								res2_orb = res2_orbs.begin(),
+								res2_orb_end = res2_orbs.end();
+								res2_orb != res2_orb_end; ++res2_orb
+						){
+							core::chemical::orbitals::orbital_type_enum orbital_type1 = res1.orbital_type(*res1_orb).orbital_enum();
+							core::chemical::orbitals::orbital_type_enum orbital_type2 = res2.orbital_type(*res2_orb).orbital_enum();
+							if(orb_orb_rules(orbital_type1,orbital_type2 )){
+								numeric::xyzVector< core::Real > const res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
+								core::Real orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
+								if(orb1_orb2_dist < 16){
+									core::Real dist(std::sqrt(orb1_orb2_dist));
+									numeric::xyzVector< core::Real > const Axyz(res1.xyz(*Aindex));
+									numeric::xyzVector< core::Real > const Dxyz(res2.xyz(*Dindex));
+									core::Real cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
+									core::Real cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
+									core::Real d_deriv(0.0);
+									core::Real a_deriv(0.0);
+									core::Real orb_orb_E(0.0);
+									lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, true);
+									core::Real weight = weights[orbitals_orbitals];
+
+
+
+									Vector pD(Dxyz);
+									Vector pDH(res2_Orbxyz);
+									Vector pO(Axyz);
+
+
+
+
+									Vector f1ab,f2ab;
+									Vector f1ao,f2ao;
+									Vector f1h,f2h;
+									core::Real tau(0.0);
+
+									numeric::deriv::angle_p1_deriv( pD, pDH, pO, tau, f1ab, f2ab  );
+									numeric::deriv::angle_p2_deriv( pD, pDH, pO, tau, f1ao, f2ao  );
+									numeric::deriv::angle_p1_deriv( pO, pDH, pD, tau, f1h, f2h  );
+
+
+									Real neg_sine_tau = -sin( tau ); // d cos(theta) / d theta;
+
+
+									r2_atom_derivs[ *Dindex ].f1() += weight * neg_sine_tau * a_deriv * f1ab;
+									r2_atom_derivs[ *Dindex ].f2() += weight * neg_sine_tau * a_deriv * f2ab;
+
+									r2_atom_derivs[ *Dindex ].f1() += weight * neg_sine_tau * a_deriv * f1ao;
+									r2_atom_derivs[ *Dindex ].f2() += weight * neg_sine_tau * a_deriv * f2ao;
+
+									r1_atom_derivs[ *Aindex ].f1() += weight * neg_sine_tau * a_deriv * f1h;
+									r1_atom_derivs[ *Aindex ].f2() += weight * neg_sine_tau * a_deriv * f2h;
+
+
+									f1ao = f2ao = 0;
+									Real dis(0.0);
+									numeric::deriv::distance_f1_f2_deriv( pDH, res1_Orbxyz, dis, f1ao, f2ao );
+
+									r2_atom_derivs[ *Dindex ].f1() += weight * d_deriv * f1ao;
+									r2_atom_derivs[ *Dindex ].f2() += weight * d_deriv * f2ao;
+
+									r1_atom_derivs[ *Aindex ].f1() -= weight * d_deriv * f1ao;
+									r1_atom_derivs[ *Aindex ].f2() -= weight * d_deriv * f2ao;
+
+
+									/////////
+									//this starts the AOH derivative calculation
+
+									lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, true);
+
+
+
+									Vector pAB(Axyz);
+									Vector pAO(res1_Orbxyz);
+									Vector pH(Dxyz);
+
+									f1ab=f2ab=f1ao=f2ao=f1h=f2h=0;
+									tau=0;
+
+
+
+									numeric::deriv::angle_p1_deriv( pAB, pAO, pH, tau, f1ab, f2ab  );
+									numeric::deriv::angle_p2_deriv( pAB, pAO, pH, tau, f1ao, f2ao  );
+									numeric::deriv::angle_p1_deriv( pH, pAO, pAB, tau, f1h, f2h  );
+
+									neg_sine_tau = -sin( tau ); // d cos(theta) / d theta;core::Size orbital_surrogate_atom_index = atom_index;
+
+
+									r1_atom_derivs[ *Aindex ].f1() += weight * neg_sine_tau * a_deriv * f1ab;
+									r1_atom_derivs[ *Aindex ].f2() += weight * neg_sine_tau * a_deriv * f2ab;
+
+									r1_atom_derivs[ *Aindex ].f1() += weight * neg_sine_tau * a_deriv * f1ao;
+									r1_atom_derivs[ *Aindex ].f2() += weight * neg_sine_tau * a_deriv * f2ao;
+
+									r2_atom_derivs[ *Dindex ].f1() += weight * neg_sine_tau * a_deriv * f1h;
+									r2_atom_derivs[ *Dindex ].f2() += weight * neg_sine_tau * a_deriv * f2h;
+
+									f1ao = f2ao = 0;
+									dis= 0.0;
+									numeric::deriv::distance_f1_f2_deriv( pAO, res2_Orbxyz, dis, f1ao, f2ao );
+
+									r1_atom_derivs[ *Aindex ].f1() += weight * d_deriv * f1ao;
+									r1_atom_derivs[ *Aindex ].f2() += weight * d_deriv * f2ao;
+
+									r2_atom_derivs[ *Dindex ].f1() -= weight * d_deriv * f1ao;
+									r2_atom_derivs[ *Dindex ].f2() -= weight * d_deriv * f2ao;
+
+
+								}
+							}
+
+						}
+					}
+
+
+				}
+			}
+		}
+	}
+}
+
+
 
 
 void OrbitalsScore::assign_orb_H_derivs(
@@ -573,14 +823,7 @@ void OrbitalsScore::assign_orb_H_derivs(
 			core::Real tau(0.0);
 
 
-
-
-
 			core::Size orbital_surrogate_atom_index = atom_index;
-
-
-
-
 
 			numeric::deriv::angle_p1_deriv( pD, pDH, pO, tau, f1ab, f2ab  );
 			numeric::deriv::angle_p2_deriv( pD, pDH, pO, tau, f1ao, f2ao  );
@@ -598,14 +841,6 @@ void OrbitalsScore::assign_orb_H_derivs(
 
 			r1_atom_derivs[ atom_index ].f1() += weight * neg_sine_tau * a_deriv * f1h;
 			r1_atom_derivs[ atom_index ].f2() += weight * neg_sine_tau * a_deriv * f2h;
-
-
-/*			if(res1.atom_type(atom_index).name() == "OH"){
-				r1_atom_derivs[atom_index].f1() = weight * neg_sine_tau * a_deriv * f1ab;
-				r1_atom_derivs[atom_index].f2() = weight * neg_sine_tau * a_deriv * f2ab;
-				r1_atom_derivs[atom_index].f1() = weight * neg_sine_tau * a_deriv * f1h;
-				r1_atom_derivs[atom_index].f2() = weight * neg_sine_tau * a_deriv * f2h;
-			}*/
 
 
 			f1ao = f2ao = 0;
@@ -636,10 +871,6 @@ void OrbitalsScore::assign_orb_H_derivs(
 
 
 
-
-
-
-
 			numeric::deriv::angle_p1_deriv( pAB, pAO, pH, tau, f1ab, f2ab  );
 			numeric::deriv::angle_p2_deriv( pAB, pAO, pH, tau, f1ao, f2ao  );
 			numeric::deriv::angle_p1_deriv( pH, pAO, pAB, tau, f1h, f2h  );
@@ -656,14 +887,6 @@ void OrbitalsScore::assign_orb_H_derivs(
 			r2_atom_derivs[ H_index ].f1() += weight * neg_sine_tau * a_deriv * f1h;
 			r2_atom_derivs[ H_index ].f2() += weight * neg_sine_tau * a_deriv * f2h;
 
-/*			if(res1.atom_type(atom_index).name() == "OH"){
-				r1_atom_derivs[res1.atom_base(atom_index)].f1() = weight * neg_sine_tau * a_deriv * f1ab;
-				r1_atom_derivs[res1.atom_base(atom_index)].f2() = weight * neg_sine_tau * a_deriv * f2ab;
-				r1_atom_derivs[res1.atom_base(atom_index)].f1() = weight * neg_sine_tau * a_deriv * f1h;
-				r1_atom_derivs[res1.atom_base(atom_index)].f2() = weight * neg_sine_tau * a_deriv * f2h;
-
-			}*/
-
 			f1ao = f2ao = 0;
 			dis= 0.0;
 			numeric::deriv::distance_f1_f2_deriv( pAO, pH, dis, f1ao, f2ao );
@@ -673,9 +896,6 @@ void OrbitalsScore::assign_orb_H_derivs(
 
 			r2_atom_derivs[ H_index ].f1() -= weight * d_deriv * f1ao;
 			r2_atom_derivs[ H_index ].f2() -= weight * d_deriv * f2ao;
-
-
-
 		}
 	}
 }

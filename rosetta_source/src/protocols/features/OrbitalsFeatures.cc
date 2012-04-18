@@ -154,6 +154,10 @@ OrbitalsFeatures::schema() const {
 			"   chiBDOO REAL, \n" //used in R plots
 			"   AOO_angle REAL, \n" //preserve stats used for KBP
 			"   DOO_angle REAL, \n" //preserve stats used KBP
+			"   DOA_angle REAL, \n"
+			"   AOD_angle REAL, \n"
+			"   chiBAHD, \n"
+			"   cosAHD, \n"
 			"	FOREIGN KEY (struct_id, resNum1)\n"
 			"		REFERENCES residues (struct_id, resNum)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
@@ -180,7 +184,7 @@ OrbitalsFeatures::report_features(
 		sessionOP db_session
 ){
 	report_hpol_orbital_interactions( pose, relevant_residues, struct_id, db_session );
-	report_haro_orbital_interactions( pose, relevant_residues, struct_id, db_session );
+	//report_haro_orbital_interactions( pose, relevant_residues, struct_id, db_session );
 	return 0;
 }
 
@@ -195,8 +199,12 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 ){
 	std::string orbita_H_string = "INSERT INTO HPOL_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement orbital_H_statement(basic::database::safely_prepare_statement(orbita_H_string,db_session));
-	std::string orbita_orbital_string = "INSERT INTO orbital_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string orbita_orbital_string = "INSERT INTO orbital_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement orbital_orbital_statement(basic::database::safely_prepare_statement(orbita_orbital_string,db_session));
+	std::string orbita_Haro_string = "INSERT INTO HARO_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	statement orbital_Haro_statement(basic::database::safely_prepare_statement(orbita_Haro_string,db_session));
+
+
 
 	for(Size resNum1 = 1; resNum1 <= pose.n_residue(); ++resNum1){
 		Residue  res1 = pose.residue(resNum1);
@@ -208,6 +216,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		Size orbNum1(0);
 		Size hpolNum2(0);
 		Size atm(0);
+		Size haroNum2(0);
 		Real cosAOH(0);
 		Real cosDHO(0);
 		Real chiBDHO(0);
@@ -225,40 +234,15 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		Real chiBDOO(0);
 		Real AOO_angle(0);
 		Real DOO_angle(0);
-
+		Real DOA_angle(0);
+		Real AOD_angle(0);
 		Real OrbHdist(10.1); // min distance used to derive statistics. Should be the shortest distance between an orbital and hydrogen
-		bool cation_pi=false;
+		bool orb_orb=false;
+		bool orb_haro=false;
+		bool orb_hpol=false;
 		for(Size res_num2 = 1; res_num2 <= pose.n_residue(); ++res_num2){
 			Residue res2 = pose.residue(res_num2);
-			foreach(Size const Aindex, res1.atoms_with_orb_index()){
-				foreach(Size const Orbindex, res1.bonded_orbitals(Aindex)){
-					xyzVector<Real> const Orbxyz(res1.orbital_xyz(Orbindex));
-					if(resNum1 != res_num2){
-						foreach(Size const Hindex, res2.Hpol_index()){
-							Size Dindex(res2.bonded_neighbor(Hindex)[1]);
-							if(res1.atom_is_backbone(Aindex) && res2.atom_is_backbone(Dindex)){
-								continue;//do nothing. Dont really want to calculate bb-bb interactions
-							}else{
-								xyzVector<Real> Hxyz(res2.atom(Hindex).xyz());
-								Real const container(Orbxyz.distance(Hxyz));
-								if(container <= OrbHdist){
-									set_OrbH_features_data(res1, res2, Aindex, Hindex, Orbindex, Orbxyz, resNum2, orbName1, htype2, res2name,
-											orbNum1, hpolNum2, cosAOH, cosDHO, chiBDHO, chiBAOH, AOH_angle, DHO_angle, chiBAHD,cosAHD, OrbHdist );
-									cation_pi=false;
-								}
-							}
-						}
-					}
-				}
-			}
-			//we have to check cation pi interactions. This type of interaction for an arg/aromatic
-			//can be between the polar hydrogen of the arg and the pi-orbital of the aromatic ring
-			//or it can be between the pi orbital on the arg and the pi-orbital on the aromatic ring
-			//this is a special case. Lys does not have a pi-orbital on its nitrogen, therefore, lys
-			//can go go on through the if loop that checks distances
-			//NOTE this does not take into consideration cation-pi interactions between a ligand
-			//something more elegant is needed for that
-		if(res1.is_aromatic() && res2.aa() == core::chemical::aa_arg){
+			if(resNum1 != res_num2){
 				foreach(Size const Aindex, res1.atoms_with_orb_index()){
 					foreach(Size const Dindex, res2.atoms_with_orb_index()){
 						if(res1.atom_is_backbone(Aindex) || res2.atom_is_backbone(Dindex)){
@@ -274,54 +258,68 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 									if(container <= OrbHdist){
 										set_OrbOrb_features_data(res1, res2, Aindex, Dindex, Orbindex1, Orbindex2, res1_Orbxyz, res2_Orbxyz, resNum2,
 												orbName1, res2name, OrbName2, orbNum1, OrbNum2, cosAOO, cosDOO, chiBAOO, chiBDOO, AOO_angle,
-												DOO_angle, OrbHdist);
-										cation_pi=true; //registering with the features reporter that we have a cation_pi interaction
-
+												DOO_angle, OrbHdist, DOA_angle, AOD_angle, chiBAHD, cosAHD);
+										orb_orb=true; //registering with the features reporter that we have a cation_pi interaction
+										orb_hpol=false;
+										orb_haro=false;
 									}
-
-
 								}
 							}
 						}
 					}
-
 				}
-
-			}
-		if(res1.is_aromatic() && (res2.aa() == core::chemical::aa_ser || res2.aa() == core::chemical::aa_thr) ){
 				foreach(Size const Aindex, res1.atoms_with_orb_index()){
-					foreach(Size const Dindex, res2.atoms_with_orb_index()){
-						if(res1.atom_is_backbone(Aindex) || res2.atom_is_backbone(Dindex)){
-							continue;//just say no to backbone backbone interactions!
-						}else{
-							foreach(Size const Orbindex1, res1.bonded_orbitals(Aindex)){
-								foreach(Size const Orbindex2, res2.bonded_orbitals(Dindex)){
-									xyzVector<Real> const res1_Orbxyz(res1.orbital_xyz(Orbindex1));
-									xyzVector<Real> const res2_Orbxyz(res2.orbital_xyz(Orbindex2));
-									Real const container(res1_Orbxyz.distance(res2_Orbxyz));
-									//this will actually set OrbHdist to a new low if the container is less than OrbHdist
-									//making this type of interaction a pi-pi interaction for cation-pi, not a pi-hpol cation-pi interaction
-									if(container <= OrbHdist){
-										set_OrbOrb_features_data(res1, res2, Aindex, Dindex, Orbindex1, Orbindex2, res1_Orbxyz, res2_Orbxyz, resNum2,
-												orbName1, res2name, OrbName2, orbNum1, OrbNum2, cosAOO, cosDOO, chiBAOO, chiBDOO, AOO_angle,
-												DOO_angle, OrbHdist);
-										cation_pi=true; //registering with the features reporter that we have a cation_pi interaction
+					foreach(Size const Orbindex, res1.bonded_orbitals(Aindex)){
+						xyzVector<Real> const Orbxyz(res1.orbital_xyz(Orbindex));
+						foreach(Size const Hindex, res2.Haro_index()){
+							xyzVector<Real> Hxyz(res2.atom(Hindex).xyz());
+							Real const container(Orbxyz.distance(Hxyz));
+							if(container <= OrbHdist){
+								set_OrbH_features_data(res1, res2, Aindex, Hindex, Orbindex, Orbxyz, resNum2, orbName1, htype2, res2name,
+										orbNum1, haroNum2, cosAOH, cosDHO, chiBDHO, chiBAOH, AOH_angle, DHO_angle, chiBAHD,cosAHD, OrbHdist );
+								orb_haro=true;
+								orb_hpol=false;
+								orb_orb=false;
 
-									}
-
-
-								}
 							}
 						}
 					}
 
 				}
+				foreach(Size const Aindex, res1.atoms_with_orb_index()){
+					foreach(Size const Orbindex, res1.bonded_orbitals(Aindex)){
+						xyzVector<Real> const Orbxyz(res1.orbital_xyz(Orbindex));
+
+							foreach(Size const Hindex, res2.Hpol_index()){
+								Size Dindex(res2.bonded_neighbor(Hindex)[1]);
+								if(res1.atom_is_backbone(Aindex) && res2.atom_is_backbone(Dindex)){
+									continue;//do nothing. Dont really want to calculate bb-bb interactions
+								}else{
+									xyzVector<Real> Hxyz(res2.atom(Hindex).xyz());
+									Real const container(Orbxyz.distance(Hxyz));
+									if(container <= OrbHdist){
+										set_OrbH_features_data(res1, res2, Aindex, Hindex, Orbindex, Orbxyz, resNum2, orbName1, htype2, res2name,
+												orbNum1, hpolNum2, cosAOH, cosDHO, chiBDHO, chiBAOH, AOH_angle, DHO_angle, chiBAHD,cosAHD, OrbHdist );
+										orb_hpol=true;
+										orb_orb=false;
+										orb_haro=false;
+									}
+								}
+							}
+
+					}
+				}
+				//we have to check cation pi interactions. This type of interaction for an arg/aromatic
+				//can be between the polar hydrogen of the arg and the pi-orbital of the aromatic ring
+				//or it can be between the pi orbital on the arg and the pi-orbital on the aromatic ring
+				//this is a special case. Lys does not have a pi-orbital on its nitrogen, therefore, lys
+				//can go go on through the if loop that checks distances
+				//NOTE this does not take into consideration cation-pi interactions between a ligand
+				//something more elegant is needed for that
 
 			}
-
-
 		}
-		if(OrbHdist <=10.0 /*&& cation_pi == false*/){
+		if(OrbHdist <=10.0 && orb_hpol == true){
 			orbital_H_statement.bind(1, struct_id);
 			orbital_H_statement.bind(2, resNum1);
 			orbital_H_statement.bind(3, resName1);
@@ -342,7 +340,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 			orbital_H_statement.bind(18, cosAHD);
 			basic::database::safely_write_to_database(orbital_H_statement);
 		}
-		if(OrbHdist <=10.0 && cation_pi== true){
+		if(OrbHdist <=10.0 && orb_orb== true){
 			orbital_orbital_statement.bind(1, struct_id);
 			orbital_orbital_statement.bind(2, resNum1);
 			orbital_orbital_statement.bind(3, resName1);
@@ -359,10 +357,38 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 			orbital_orbital_statement.bind(14, chiBDOO);
 			orbital_orbital_statement.bind(15, AOO_angle);
 			orbital_orbital_statement.bind(16, DOO_angle);
+			orbital_orbital_statement.bind(17, DOA_angle);
+			orbital_orbital_statement.bind(18, AOD_angle);
+			orbital_orbital_statement.bind(19, chiBAHD);
+			orbital_orbital_statement.bind(18, cosAHD);
+
+
 			basic::database::safely_write_to_database(orbital_orbital_statement);
+		}
+		if(OrbHdist <=10.0 && orb_haro == true){
+			orbital_Haro_statement.bind(1, struct_id);
+			orbital_Haro_statement.bind(2, resNum1);
+			orbital_Haro_statement.bind(3, resName1);
+			orbital_Haro_statement.bind(4,orbNum1 );
+			orbital_Haro_statement.bind(5, orbName1);
+			orbital_Haro_statement.bind(6, resNum2);
+			orbital_Haro_statement.bind(7, res2name);
+			orbital_Haro_statement.bind(8, hpolNum2);
+			orbital_Haro_statement.bind(9, htype2);
+			orbital_Haro_statement.bind(10, OrbHdist);
+			orbital_Haro_statement.bind(11, cosAOH);
+			orbital_Haro_statement.bind(12, cosDHO);
+			orbital_Haro_statement.bind(13, chiBAOH);
+			orbital_Haro_statement.bind(14, chiBDHO);
+			orbital_Haro_statement.bind(15, AOH_angle);
+			orbital_Haro_statement.bind(16, DHO_angle);
+			orbital_Haro_statement.bind(17, chiBAHD);
+			orbital_Haro_statement.bind(18, cosAHD);
+			basic::database::safely_write_to_database(orbital_Haro_statement);
 		}
 	}
 }
+
 
 
 ///@brief get statistics based upon aromatic hydrogen to orbital distance/angle
@@ -373,7 +399,7 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 		boost::uuids::uuid const struct_id,
 		sessionOP db_session
 ){
-	std::string orbita_H_string = "INSERT INTO HARO_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+/*	std::string orbita_H_string = "INSERT INTO HARO_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement orbital_H_statement(basic::database::safely_prepare_statement(orbita_H_string,db_session));
 
 
@@ -439,7 +465,7 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 
 			basic::database::safely_write_to_database(orbital_H_statement);
 		}
-	}
+	}*/
 }
 
 
@@ -549,7 +575,11 @@ OrbitalsFeatures::set_OrbOrb_features_data(
 		Real & chiBDOO,
 		Real & AOO_angle,
 		Real & DOO_angle,
-		Real & OrbHdist
+		Real & OrbHdist,
+		Real & DOA_angle,
+		Real & AOD_angle,
+		Real & chiBAHD,
+		Real & cosAHD
 	){
 	Real const container(Orbxyz1.distance(Orbxyz2));
 	xyzVector<Real> const Axyz(res1.atom(Aindex).xyz());
@@ -560,7 +590,8 @@ OrbitalsFeatures::set_OrbOrb_features_data(
 	resNum2=res2.seqpos();
 	orbName1=res1.orbital_type(Orbindex1).name();
 	OrbName2=res2.orbital_type(Orbindex2).name();
-
+	AOD_angle = cos_of(Axyz, Orbxyz1, Dxyz);
+	DOA_angle = cos_of(Dxyz, Orbxyz2, Axyz);
 	orbNum1=Orbindex1;
 	OrbNum2=Orbindex2;
 	std::string res1name = res1.name3();
@@ -595,6 +626,23 @@ OrbitalsFeatures::set_OrbOrb_features_data(
 
 	cosAOO = dot( BAunit, AHunit );
 	chiBAOO = numeric::dihedral_radians(Bxyz,Axyz, Orbxyz1,Orbxyz2);
+	Bxyz = res1.atom(res1.atom_base(Aindex)).xyz();
+
+/*
+	if(res1name == "PHE" || res1name == "TYR" || res1name == "TRP" || res1name == "HIS"){
+		res1.update_actcoord();
+		Bxyz= res1.actcoord();
+	}
+
+	AHunit = Dxyz - Hxyz;
+	AHunit.normalize();
+	BAunit = Hxyz - Axyz;
+	BAunit.normalize();
+
+	cosAHD = dot(BAunit, AHunit);
+	chiBAHD = numeric::dihedral_radians(Bxyz, Axyz, Hxyz, Dxyz);
+*/
+
 }
 
 

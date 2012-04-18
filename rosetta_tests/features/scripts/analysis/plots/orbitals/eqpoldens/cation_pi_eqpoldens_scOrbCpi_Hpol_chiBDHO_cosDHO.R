@@ -49,22 +49,42 @@ capy_limits <- capx_limits
 plot_id = "cation_pi_eqpoldens_scOrbCpi_Hpol_chiBDHO_cosDHO_all_2A"
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 
+#ggplot(data=f_first) + theme_bw() +
+#  geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+#  stat_density2d(
+#    aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
+#  polar_equal_area_grids_bw() +
+#  opts(title =
+#    paste("Cation pi chiBDHO vs DHO Angles with Sequence Separation > 5\n",
+#    "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
+#    "LYS+ARG to PHE+TYR+TRP at 2.0", sep="")) +
+#  scale_x_continuous(
+#    '2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+#  scale_y_continuous(
+#    '2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+#  coord_fixed(ratio = 1) +
+#  scale_fill_gradientn('Density', colour=jet.colors(10))
+#save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
 ggplot(data=f_first) + theme_bw() +
-  geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
-  stat_density2d(
-    aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
-  polar_equal_area_grids_bw() +
-  opts(title =
-    paste("Cation pi chiBDHO vs DHO Angles with Sequence Separation > 5\n",
+		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		stat_density2d(
+				aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
+		polar_equal_area_grids_bw() +
+		opts(title =
+						paste("Cation pi chiBDHO vs DHO Angles with Sequence Separation > 5\n",
     "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
-    "LYS+ARG to PHE+TYR+TRP at 2.0", sep="")) +
-  scale_x_continuous(
-    '2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-  scale_y_continuous(
-    '2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-  coord_fixed(ratio = 1) +
-  scale_fill_gradientn('Density', colour=jet.colors(10))
+    "LYS+ARG to PHE+TYR+TRP at 2.0)", sep="")) +
+		scale_x_continuous(
+				'2*sin(DHO/2) * cos(chiBDHO)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+		scale_y_continuous(
+				'2*sin(DHO/2) * sin(chiBDHO)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+		coord_fixed(ratio = 1) +
+		scale_fill_gradientn('Density', colours=jet.colors(10))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
 
 })) # end FeaturesAnalysis
 

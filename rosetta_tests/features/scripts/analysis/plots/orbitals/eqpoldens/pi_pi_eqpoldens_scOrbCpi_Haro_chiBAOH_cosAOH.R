@@ -52,6 +52,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	
+	
 	ggplot(data=f_first) + theme_bw() +
 			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
 			stat_density2d(
@@ -66,8 +67,9 @@ run=function(self, sample_sources, output_dir, output_formats){
 			scale_y_continuous(
 					'2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 			coord_fixed(ratio = 1) +
-			scale_fill_gradientn('Density', colour=jet.colors(10))
+			scale_fill_gradientn('Density', colours=jet.colors(10))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+	
 	
 	
 	#################################################################################
@@ -120,7 +122,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 			scale_y_continuous(
 					'2*sin(AOH/2) * sin(chiBAOH)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 			coord_fixed(ratio = 1) +
-			scale_fill_gradientn('Density', colour=jet.colors(10))
+			scale_fill_gradientn('Density', colours=jet.colors(10))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 	
 	

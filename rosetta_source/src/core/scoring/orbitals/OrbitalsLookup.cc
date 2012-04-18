@@ -26,6 +26,7 @@
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -38,7 +39,12 @@ namespace scoring{
 namespace orbitals{
 
 //this function reads in the potentials from database. The potentials are already in the form of Energy.
-OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_energies, utility::vector1< std::string > const & ) :
+OrbitalsLookup::OrbitalsLookup(
+		utility::vector1< std::string > const & DHO_energies,
+		utility::vector1< std::string > const & AOH_energies,
+		utility::vector1< std::string > const & AOD_orb_orb_energies,
+		utility::vector1< std::string > const & DOA_orb_orb_energies
+) :
 	number_stats_(6),
 	number_elements_(600)
 {
@@ -134,8 +140,9 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 	}
 	std::cout << "###################################################################################\n#####################3" << std::endl;
 */
+
 /*
-	for(core::Real i=0.00; i <= 3; i+=0.1){
+	for(core::Real i=0.00; i <= 4; i+=0.1){
 		core::Size number=0;
 		for(core::Real j=-1.0; j<=0; j+=0.05){
 			++number;
@@ -150,6 +157,7 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 	}
 	std::cout << "###################################################################################\n#####################3" << std::endl;
 */
+
 
 /*
 
@@ -224,7 +232,70 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 		AOH_Haro_scOrbH_splines_.push_back(AOH_Haro_scOrbH_vector_spline[count]);
 	}
 
+	//std::cout << "###################################################################################\n#####################3" << std::endl;
 
+
+
+	std::map<core::Size, std::pair<core::Size, core::Size> > AOD_orb_orb_map;
+	utility::vector1< utility::vector1< core::Real > > AOD_orb_orb_vector = parse_files(AOD_orb_orb_energies[1], AOD_orb_orb_map);
+
+	std::map<core::Size, std::pair<core::Size, core::Size> > DOA_orb_orb_map;
+	utility::vector1< utility::vector1< core::Real > > DOA_orb_orb_vector = parse_files(DOA_orb_orb_energies[1], DOA_orb_orb_map);
+
+	utility::vector1< numeric::MathMatrix<core::Real> > AOD_orb_orb_vector_matrix;
+	utility::vector1< numeric::MathMatrix<core::Real> > DOA_orb_orb_vector_matrix;
+
+	for( core::Size count=1; count <= 5; ++count ) {
+		//MathMatrix requires an array, not a vector. To get an array from a vector, we can use the & vector[1]. See wikipedia!
+		numeric::MathMatrix<core::Real> AOD_orb_orb_matrix(AOD_orb_orb_map[count].second, AOD_orb_orb_map[count].first, & AOD_orb_orb_vector[count][1] );
+		numeric::MathMatrix<core::Real> DOA_orb_orb_matrix(DOA_orb_orb_map[count].second, DOA_orb_orb_map[count].first, & DOA_orb_orb_vector[count][1] );
+
+		AOD_orb_orb_vector_matrix.push_back(AOD_orb_orb_matrix);
+		DOA_orb_orb_vector_matrix.push_back(DOA_orb_orb_matrix);
+	}
+
+	utility::vector1<numeric::interpolation::spline::BicubicSpline> AOD_orb_orb_vector_spline;
+	utility::vector1<numeric::interpolation::spline::BicubicSpline> DOA_orb_orb_vector_spline;
+
+	for(core::Size count=1; count <= 5; ++count){
+		bicubic_spline.train(behavior, start, delta, AOD_orb_orb_vector_matrix[count], linear_cont, first_deriv);
+		AOD_orb_orb_vector_spline.push_back( bicubic_spline );
+
+		bicubic_spline.train(behavior, start, delta, DOA_orb_orb_vector_matrix[count], linear_cont, first_deriv);
+		DOA_orb_orb_vector_spline.push_back( bicubic_spline );
+	}
+
+	//store all splines in a private member look up table. This allows for looking up the values in the actual score and provides an
+	//interface for the OrbitalsScore class.
+	for(core::Size count=1; count <= 5; ++count){
+		AOD_orb_orb_splines_.push_back(AOD_orb_orb_vector_spline[count]);
+		DOA_orb_orb_splines_.push_back(DOA_orb_orb_vector_spline[count]);
+	}
+
+
+/*
+	for(core::Real i=0.00; i <= 4; i+=0.1){
+		core::Size number=0;
+		for(core::Real j=-1.0; j<=0; j+=0.05){
+			++number;
+			if( number == 40){
+				if(AOD_orb_orb_splines_[1].F((numeric::MakeVector(i,j))) > 0 || AOD_orb_orb_splines_[1].F((numeric::MakeVector(i,j))) > -1e-5){
+					std::cout << "0" << std::endl;
+				}else {
+					std::cout << AOD_orb_orb_splines_[1].F((numeric::MakeVector(i,j))) << std::endl;
+				}
+			}else{
+				if(AOD_orb_orb_splines_[1].F((numeric::MakeVector(i,j))) > 0 || AOD_orb_orb_splines_[1].F((numeric::MakeVector(i,j))) > -1e-5){
+					std::cout << "0" << " ";
+				}else {
+					std::cout << AOD_orb_orb_splines_[1].F((numeric::MakeVector(i,j))) << " ";
+				}
+				//std::cout << i << " " << j << std::endl;
+			}
+		}
+	}
+	std::cout << "###################################################################################\n#####################3" << std::endl;
+*/
 
 
 }//end orbitalsLookup
@@ -232,37 +303,37 @@ OrbitalsLookup::OrbitalsLookup( utility::vector1< std::string > const & DHO_ener
 
 
 utility::vector1< utility::vector1< core::Real > > OrbitalsLookup::parse_files(
-		std::string const & file,
-		std::map<core::Size, std::pair<core::Size, core::Size> > & orbital_angle_dist_map
+    std::string const & file,
+    std::map<core::Size, std::pair<core::Size, core::Size> > & orbital_angle_dist_map
 )const
 {
-	utility::vector1< core::Real > E_vector(number_elements_, 0);
-	utility::vector1< utility::vector1< core::Real > > energy_vector(static_cast <core::Size> (number_stats_), E_vector); //600 default value for KBP, resized later
-	std::string line;
-	utility::io::izstream stream;
-	basic::database::open( stream, file );
-	core::Size orbital_type(0);
-	core::Size overall_count(1);
-	for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
-		utility::vector1< std::string > split_string = utility::string_split(line, '\t'); //file is tab-delimenated
-		if(split_string[1]=="Orbital"){
-			orbital_type = static_cast< core::Size > (core::chemical::orbitals::OrbitalTypeMapper::get_instance()->get_orbital_enum(split_string[2]));
-			overall_count=1;
-		}else if(split_string[1] == "Size"){
-			core::Size angle_bins = utility::string2int(split_string[2]);
-			core::Size dist_bins = utility::string2int(split_string[3]);
-			std::pair<core::Size, core::Size> angle_dist(angle_bins, dist_bins);
-			orbital_angle_dist_map.insert(std::pair<core::Size, std::pair<core::Size, core::Size> >(orbital_type, angle_dist));
-			energy_vector[orbital_type].resize((angle_bins*dist_bins), 0);//need to resize. KBP have differing amount of elements
-		}else{
-			for(core::Size x=1; x<= orbital_angle_dist_map[orbital_type].first; ++x){//iterate through angles and put into vector
-				energy_vector[orbital_type][overall_count] = utility::string2float(split_string[x]);
-				++overall_count;
-			}
-		}
-	}
-	stream.close();
-	return energy_vector;
+  utility::vector1< core::Real > E_vector(number_elements_, 0);
+  utility::vector1< utility::vector1< core::Real > > energy_vector(static_cast <core::Size> (number_stats_), E_vector); //600 default value for KBP, resized later
+  std::string line;
+  utility::io::izstream stream;
+  basic::database::open( stream, file );
+  core::Size orbital_type(0);
+  core::Size overall_count(1);
+  for( core::Size count=1; utility::io::getline(stream, line); ++count ) {
+    utility::vector1< std::string > split_string = utility::string_split(line, '\t'); //file is tab-delimenated
+    if(split_string[1]=="Orbital"){
+      orbital_type = static_cast< core::Size > (core::chemical::orbitals::OrbitalTypeMapper::get_instance()->get_orbital_enum(split_string[2]));
+      overall_count=1;
+    }else if(split_string[1] == "Size"){
+      core::Size angle_bins = utility::string2int(split_string[2]);
+      core::Size dist_bins = utility::string2int(split_string[3]);
+      std::pair<core::Size, core::Size> angle_dist(angle_bins, dist_bins);
+      orbital_angle_dist_map.insert(std::pair<core::Size, std::pair<core::Size, core::Size> >(orbital_type, angle_dist));
+      energy_vector[orbital_type].resize((angle_bins*dist_bins), 0);//need to resize. KBP have differing amount of elements
+    }else{
+      for(core::Size x=1; x<= orbital_angle_dist_map[orbital_type].first; ++x){//iterate through angles and put into vector
+        energy_vector[orbital_type][overall_count] = utility::string2float(split_string[x]);
+        ++overall_count;
+      }
+    }
+  }
+  stream.close();
+  return energy_vector;
 }
 
 
@@ -280,9 +351,9 @@ void OrbitalsLookup::OrbHdist_cosDHO_energy
 ) const
 {
 
-	if ((orb_type_name != core::chemical::orbitals::C_pi_sp2) && (distance > 3.0 ||  DHO_angle > -0.025) ) { energy = distance_derivative = angle_derivative = 0.0; return; }
+	if ( (distance > 4.0 ) ) { energy = distance_derivative = angle_derivative = 0.0; return; }
 
-	if(orb_type_name == core::chemical::orbitals::N_pi_sp2 && h_enum==Hpol_scOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
+	//if(orb_type_name == core::chemical::orbitals::N_pi_sp2 && h_enum==Hpol_scOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
 
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, DHO_angle));
 	if(check_derivative){
@@ -290,6 +361,11 @@ void OrbitalsLookup::OrbHdist_cosDHO_energy
 			const numeric::interpolation::spline::BicubicSpline &spline( DHO_Hpol_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
+			if(orb_type_name==chemical::orbitals::C_pi_sp2){
+				//this is to match the orbital orbital and orbital hpol weight. Set the weight of cation_pi interactions to that of orb orb
+				distance_derivative = ((distance_derivative*scOrb_scOrb_weight_));
+				angle_derivative = ((angle_derivative*scOrb_scOrb_weight_));
+			}
 
 		}
 		if(h_enum == Haro_scOrbH){
@@ -306,6 +382,10 @@ void OrbitalsLookup::OrbHdist_cosDHO_energy
 		if(h_enum == Hpol_scOrbH){
 			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Hpol_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
 			energy = spline.F(dist_angle_pair);
+			if(orb_type_name==chemical::orbitals::C_pi_sp2){
+				//this is to match the orbital orbital and orbital hpol weight. Set the weight of cation_pi interactions to that of orb orb
+				energy = ((energy*scOrb_scOrb_weight_));
+			}
 		}
 		if(h_enum == Haro_scOrbH){
 			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
@@ -331,9 +411,9 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 	bool check_derivative
 ) const
 {
-	if ( distance > 3.0 ||  AOH_angle > -0.025 ) { energy = distance_derivative = angle_derivative = 0.0; return; }
-	if(orb_type_name == core::chemical::orbitals::N_pi_sp2 && h_enum==Hpol_scOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
-	if(orb_type_name == core::chemical::orbitals::C_pi_sp2 && h_enum==Hpol_bbOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
+	if ( distance > 4.0 ) { energy = distance_derivative = angle_derivative = 0.0; return; }
+	//if(orb_type_name == core::chemical::orbitals::N_pi_sp2 && h_enum==Hpol_scOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
+//	if(orb_type_name == core::chemical::orbitals::C_pi_sp2 && h_enum==Hpol_bbOrbH){energy = distance_derivative = angle_derivative = 0.0; return;}
 
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, AOH_angle));
 	if(check_derivative){
@@ -341,6 +421,11 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 			const numeric::interpolation::spline::BicubicSpline &spline( AOH_Hpol_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
+			if(orb_type_name==chemical::orbitals::C_pi_sp2){
+				//this is to match the orbital orbital and orbital hpol weight. Set the weight of cation_pi interactions to that of orb orb
+				distance_derivative = ((distance_derivative*scOrb_scOrb_weight_));
+				angle_derivative = ((angle_derivative*scOrb_scOrb_weight_));
+			}
 
 		}
 		if(h_enum == Haro_scOrbH){
@@ -357,6 +442,10 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 		if(h_enum == Hpol_scOrbH){
 			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Hpol_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
 			energy = spline.F(dist_angle_pair);
+			if(orb_type_name==chemical::orbitals::C_pi_sp2){
+				//this is to match the orbital orbital and orbital hpol weight. Set the weight of cation_pi interactions to that of orb orb
+				energy = ((energy*scOrb_scOrb_weight_));
+			}
 		}
 		if(h_enum == Haro_scOrbH){
 			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
@@ -369,6 +458,155 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 	}
 }
 
+void OrbitalsLookup::OrbOrbDist_cosAOD_energy(
+		const core::chemical::orbitals::orbital_type_enum orb_type_name1,
+		const core::chemical::orbitals::orbital_type_enum orb_type_name2,
+		const core::Real distance,
+		const core::Real AOO_angle,
+		core::Real & energy,
+		core::Real & distance_derivative,
+		core::Real & angle_derivative,
+		bool check_derivative
+)const{
+
+	//if(AOO_angle > 0) energy=distance_derivative=angle_derivative=0.0;
+	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, AOO_angle));
+	if(check_derivative){
+		if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
+			if(orb_type_name2==core::chemical::orbitals::N_pi_sp2)
+			{
+				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[2]);
+				distance_derivative = spline.dFdx(dist_angle_pair);
+				angle_derivative = spline.dFdy(dist_angle_pair);
+			}
+			if(orb_type_name2==core::chemical::orbitals::O_pi_sp2){
+				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[3]);
+				distance_derivative = spline.dFdx(dist_angle_pair);
+				angle_derivative = spline.dFdy(dist_angle_pair);
+			}
+			if(orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[1]);
+				distance_derivative = spline.dFdx(dist_angle_pair);
+				angle_derivative = spline.dFdy(dist_angle_pair);
+			}
+
+		}
+		if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[4]);
+			distance_derivative = spline.dFdx(dist_angle_pair);
+			angle_derivative = spline.dFdy(dist_angle_pair);
+		}
+		if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[5]);
+			distance_derivative = spline.dFdx(dist_angle_pair);
+			angle_derivative = spline.dFdy(dist_angle_pair);
+		}
+
+	}else{
+		if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
+			if(orb_type_name2==core::chemical::orbitals::N_pi_sp2)
+			{
+				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[2]);
+				energy = spline.F(dist_angle_pair);
+			}
+			if(orb_type_name2==core::chemical::orbitals::O_pi_sp2){
+				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[3]);
+				energy = spline.F(dist_angle_pair);
+			}
+			if(orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[1]);
+				energy = spline.F(dist_angle_pair);
+			}
+
+		}
+		if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[4]);
+			energy = spline.F(dist_angle_pair);
+		}
+		if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[5]);
+			energy = spline.F(dist_angle_pair);
+		}
+	}
+}
+void OrbitalsLookup::OrbOrbDist_cosDOA_energy(
+		const core::chemical::orbitals::orbital_type_enum orb_type_name1,
+		const core::chemical::orbitals::orbital_type_enum orb_type_name2,
+		const core::Real distance,
+		const core::Real DOO_angle,
+		core::Real & energy,
+		core::Real & distance_derivative,
+		core::Real & angle_derivative,
+		bool check_derivative
+
+)const{
+	//if(DOO_angle > 0) energy=distance_derivative=angle_derivative=0.0;
+	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, DOO_angle));
+
+	if(check_derivative){
+		if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
+			if(orb_type_name2==core::chemical::orbitals::N_pi_sp2)
+			{
+				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[2]);
+				distance_derivative = spline.dFdx(dist_angle_pair);
+				angle_derivative = spline.dFdy(dist_angle_pair);
+			}
+			if(orb_type_name2==core::chemical::orbitals::O_pi_sp2){
+				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[3]);
+				distance_derivative = spline.dFdx(dist_angle_pair);
+				angle_derivative = spline.dFdy(dist_angle_pair);
+			}
+			if(orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[1]);
+				distance_derivative = spline.dFdx(dist_angle_pair);
+				angle_derivative = spline.dFdy(dist_angle_pair);
+			}
+
+		}
+		if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[4]);
+			distance_derivative = spline.dFdx(dist_angle_pair);
+			angle_derivative = spline.dFdy(dist_angle_pair);
+		}
+		if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[5]);
+			distance_derivative = spline.dFdx(dist_angle_pair);
+			angle_derivative = spline.dFdy(dist_angle_pair);
+		}
+
+	}else{
+		if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
+			if(orb_type_name2==core::chemical::orbitals::N_pi_sp2)
+			{
+				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[2]);
+				energy = spline.F(dist_angle_pair);
+			}
+			if(orb_type_name2==core::chemical::orbitals::O_pi_sp2){
+				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[3]);
+				energy = spline.F(dist_angle_pair);
+			}
+			if(orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[1]);
+				energy = spline.F(dist_angle_pair);
+			}
+
+		}
+		if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[4]);
+			energy = spline.F(dist_angle_pair);
+		}
+		if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[5]);
+			energy = spline.F(dist_angle_pair);
+		}
+	}
+}
+
+
+void OrbitalsLookup::set_orb_weights(ScoreFunction const & weights) const{
+	scOrb_scHpol_weight_ = weights[orbitals_hpol];
+	scOrb_scOrb_weight_ = weights[orbitals_orbitals];
+}
 
 
 }//namespace orbitals

@@ -7,9 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   test/core/scoring/methods/PairEnergy.cxxtest.hh
-/// @brief  test suite for core::scoring::PairEnergy.cc
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+
+/// @author Steven Combs (aleaverfay@gmail.com)
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -78,12 +77,14 @@ public:
 		sfxn.set_weight( orbitals_hpol, 1 );
 		sfxn.set_weight( orbitals_haro, 1 );
 		sfxn.set_weight(orbitals_hpol_bb, 1);
+		sfxn.set_weight(orbitals_orbitals, 1);
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -11.3122, start_score, 0.0001 );
+		TS_ASSERT_DELTA( -14.1672, start_score, 0.0001 );
 
 
 
 	}
+
 
 
 	void dont_test_orbital_start_score_start_func_match_w_total_flexibility()
@@ -93,11 +94,12 @@ public:
 		sfxn.set_weight( orbitals_hpol, 1 );
 		sfxn.set_weight( orbitals_haro, 1 );
 		sfxn.set_weight(orbitals_hpol_bb, 1);
-		//sfxn.set_weight(orbitals_orbitals, 1);
+		sfxn.set_weight(orbitals_orbitals, 1);
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.validate_start_func_matches_start_score( -0.524698508539912, false, 1e-6 );
 	}
+
 
 	void dont_test_orbital_deriv_check_w_partial_flexibility()
 	{
@@ -105,7 +107,7 @@ public:
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( orbitals_hpol, 1 );
 		sfxn.set_weight( orbitals_haro, 1 );
-		//sfxn.set_weight(orbitals_orbitals, 1);
+		sfxn.set_weight(orbitals_orbitals, 1);
 		sfxn.set_weight( orbitals_hpol_bb, 1 );
 		kinematics::MoveMap movemap( create_trpcage_movemap_to_allow_bb10_freedom() );
 		AtomDerivValidator adv;
@@ -123,7 +125,7 @@ public:
 		sfxn.set_weight( orbitals_hpol, 1 );
 		sfxn.set_weight( orbitals_haro, 1 );
 		sfxn.set_weight(orbitals_hpol_bb, 1);
-		//sfxn.set_weight(orbitals_orbitals, 1);
+		sfxn.set_weight(orbitals_orbitals, 1);
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-6 );

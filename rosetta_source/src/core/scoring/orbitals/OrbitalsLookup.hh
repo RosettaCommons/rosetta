@@ -23,6 +23,7 @@
 #include <string>
 
 #include <vector>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 namespace core {
 namespace scoring {
@@ -33,7 +34,7 @@ public:
 	enum h_type { Hpol_scOrbH, Haro_scOrbH, Hpol_bbOrbH };
 
 
-	OrbitalsLookup( utility::vector1< std::string > const & DHO_energies, utility::vector1< std::string > const & AOH_energies );
+	OrbitalsLookup( utility::vector1< std::string > const & DHO_energies, utility::vector1< std::string > const & AOH_energies, utility::vector1< std::string > const & AOO_energies, utility::vector1< std::string > const & DOO_energies );
 
 	utility::vector1< utility::vector1< core::Real > > parse_files(
 			std::string const & file,
@@ -63,6 +64,29 @@ public:
 		bool check_derivative
 	) const;
 
+	void OrbOrbDist_cosAOD_energy(
+			const core::chemical::orbitals::orbital_type_enum orb_type_name1,
+			const core::chemical::orbitals::orbital_type_enum orb_type_name2,
+			const core::Real distance,
+			const core::Real AOO_angle,
+			core::Real & energy,
+			core::Real & distance_derivative,
+			core::Real & angle_derivative,
+			bool check_derivative
+	)const;
+	void OrbOrbDist_cosDOA_energy(
+			const core::chemical::orbitals::orbital_type_enum orb_type_name1,
+			const core::chemical::orbitals::orbital_type_enum orb_type_name2,
+			const core::Real distance,
+			const core::Real DOO_angle,
+			core::Real & energy,
+			core::Real & distance_derivative,
+			core::Real & angle_derivative,
+			bool check_derivative
+
+	)const;
+
+	void set_orb_weights(ScoreFunction const & weights) const;
 
 private:
 	///@brief number of statistics to put into matrix
@@ -79,6 +103,12 @@ private:
 	utility::vector1< numeric::interpolation::spline::BicubicSpline  > AOH_Hpol_bbOrbH_splines_;
 
 
+	utility::vector1< numeric::interpolation::spline::BicubicSpline  > AOD_orb_orb_splines_;
+	utility::vector1< numeric::interpolation::spline::BicubicSpline  > DOA_orb_orb_splines_;
+
+
+	mutable core::Real scOrb_scHpol_weight_;
+	mutable core::Real scOrb_scOrb_weight_;
 
 };
 
