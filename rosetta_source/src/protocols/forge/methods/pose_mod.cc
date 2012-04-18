@@ -156,6 +156,12 @@ restore_residues(
 
 
 	for ( Old2New::const_iterator i = old2new.begin(), ie = old2new.end(); i != ie; ++i ) {
+/*
+	if ( i->second > pose.total_residue() || i->first > archive_pose.total_residue()){
+		//TR << "mappign beyond pose length.  only possible in repeat generation!!" << std::endl;
+		continue;
+	}
+	*/
 	/*
 		// check variant type
 		core::chemical::ResidueType const & rsd_type (pose.residue(i->second).type());
