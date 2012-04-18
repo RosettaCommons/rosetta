@@ -184,6 +184,32 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                           zero = R3[m3a]*zero; if(m2a) zero = R2*(zero-cen2)+cen2;
                           zero = R3[n3a]*zero; if(n2a) zero = R2*(zero-cen2)+cen2;
                           if( zero.length() > 5.0 * mxd + 10.0 ) continue;
+
+													char chain = CHAIN[ccount%CHAIN.size()];
+                          ccount++;
+													// if( (i2a+j2a+k2a+l2a/*+m2a+n2a*/) % 2 == 1 ) chain = 'B';
+                          for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+														// if( rcount >= 9999) {
+														// 	rcount = 0;
+														// 	ccount++;
+														// }
+                            Size rn = ++rcount;
+                            Size natom = 3;
+                            if(pose.residue(ir).name3()=="CYS") natom = 6;
+                            for(Size ia = 1; ia <= natom; ia++) {
+                              Vec tmp(pose.residue(ir).xyz(ia));
+                              tmp = R3[i3a]*tmp; if(i2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[j3a]*tmp; if(j2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[k3a]*tmp; if(k2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[l3a]*tmp; if(l2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[m3a]*tmp; if(m2a) tmp = R2*(tmp-cen2)+cen2;
+                              tmp = R3[n3a]*tmp; if(n2a) tmp = R2*(tmp-cen2)+cen2;
+                              string X = F(8,3,tmp.x());
+                              string Y = F(8,3,tmp.y());
+                              string Z = F(8,3,tmp.z());
+                              out<<"ATOM  "<<I(5,++acount)<<' '<<ANAME[ia]<<' '<<"ALA"<<' '<<chain<<I(4,rn)<<"    "<<X<<Y<<Z<<F(6,2,1.0)<<F(6,2,0.0)<<'\n';
+                            }
+                          }
 													out << "TER" << std::endl;
                         }
                       }
