@@ -183,51 +183,7 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
                           zero = R3[l3a]*zero; if(l2a) zero = R2*(zero-cen2)+cen2;
                           zero = R3[m3a]*zero; if(m2a) zero = R2*(zero-cen2)+cen2;
                           zero = R3[n3a]*zero; if(n2a) zero = R2*(zero-cen2)+cen2;
-                          if( zero.length() > 2.0 * mxd + 10.0 ) continue;
-                          bool contact = false;
-                          for(int i = 1; i <= pose.n_residue(); ++i) {
-                            Vec N = pose.residue(i).nbr_atom_xyz();
-                            N = R3[i3a]*N; if(i2a) N = R2*(N-cen2)+cen2;
-                            N = R3[j3a]*N; if(j2a) N = R2*(N-cen2)+cen2;
-                            N = R3[k3a]*N; if(k2a) N = R2*(N-cen2)+cen2;
-                            N = R3[l3a]*N; if(l2a) N = R2*(N-cen2)+cen2;
-                            N = R3[m3a]*N; if(m2a) N = R2*(N-cen2)+cen2;
-                            N = R3[n3a]*N; if(n2a) N = R2*(N-cen2)+cen2;
-                            for(int j = 1; j <= pose.n_residue(); ++j) {
-                              if(pose.residue(j).nbr_atom_xyz().distance_squared(N) < 200.0) {
-                                contact = true;
-                                break;
-                              }
-                            }
-                            if(contact) break;
-                          }
-                          if(!contact) continue;
-
-													char chain = CHAIN[ccount%CHAIN.size()];
-                          ccount++;
-													// if( (i2a+j2a+k2a+l2a/*+m2a+n2a*/) % 2 == 1 ) chain = 'B';
-                          for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
-														// if( rcount >= 9999) {
-														// 	rcount = 0;
-														// 	ccount++;
-														// }
-                            Size rn = ++rcount;
-                            Size natom = 3;
-                            if(pose.residue(ir).name3()=="CYS") natom = 6;
-                            for(Size ia = 1; ia <= natom; ia++) {
-                              Vec tmp(pose.residue(ir).xyz(ia));
-                              tmp = R3[i3a]*tmp; if(i2a) tmp = R2*(tmp-cen2)+cen2;
-                              tmp = R3[j3a]*tmp; if(j2a) tmp = R2*(tmp-cen2)+cen2;
-                              tmp = R3[k3a]*tmp; if(k2a) tmp = R2*(tmp-cen2)+cen2;
-                              tmp = R3[l3a]*tmp; if(l2a) tmp = R2*(tmp-cen2)+cen2;
-                              tmp = R3[m3a]*tmp; if(m2a) tmp = R2*(tmp-cen2)+cen2;
-                              tmp = R3[n3a]*tmp; if(n2a) tmp = R2*(tmp-cen2)+cen2;
-                              string X = F(8,3,tmp.x());
-                              string Y = F(8,3,tmp.y());
-                              string Z = F(8,3,tmp.z());
-                              out<<"ATOM  "<<I(5,++acount)<<' '<<ANAME[ia]<<' '<<"ALA"<<' '<<chain<<I(4,rn)<<"    "<<X<<Y<<Z<<F(6,2,1.0)<<F(6,2,0.0)<<'\n';
-                            }
-                          }
+                          if( zero.length() > 5.0 * mxd + 10.0 ) continue;
 													out << "TER" << std::endl;
                         }
                       }
@@ -260,7 +216,7 @@ int dumpsymfile(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fn
   R3[1] = R3a;
   R3[2] = R3b;
   Size acount=0,rcount=0,ccount=0;
-  vector1<SYMSUB> subs;
+  vector1<SYMSUB> subs,allsubs;
   for(Size i3a = 0; i3a < 3; i3a++) {
   for(Size i2a = 0; i2a < 2; i2a++) {
   for(Size j3a = 0; j3a < 3; j3a++) {
@@ -327,29 +283,33 @@ int dumpsymfile(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fn
     s.Y = Y;
     s.C = C;
     s.vname = "S"+str(i3a)+str(i2a)+str(j3a)+str(j2a)+str(k3a)+str(k2a)+str(l3a)+str(l2a)+str(m3a)+str(m2a)+str(n3a)+str(n2a);
+    allsubs.push_back(s);
+
     subs.push_back(s);
 
   }}}}}}}}}}}}
 
-  TR << "output" << std::endl;
-  ozstream out( fname );
-  out << "symmetry_name X23D" << endl;
-  out << "anchor_residue 1" << endl;
-  out << "E = 1*" << subs[1].vname;
-  for(int i = 2; i <= subs.size(); ++i) out << " + 1*(" << subs[1].vname << ":" << subs[i].vname << ")";
-  out << endl;
-  out << "virtual_coordinates_start" << endl;
-  for(int i = 1; i <= subs.size(); ++i) {
-    Vec X=subs[i].X, Y=subs[i].Y, C=subs[i].C;
-    out << "xyz " << subs[i].vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
+  {
+    TR << "output" << std::endl;
+    ozstream out( fname );
+    out << "symmetry_name X23D" << endl;
+    out << "anchor_residue 1" << endl;
+    out << "E = 1*" << subs[1].vname;
+    for(int i = 2; i <= subs.size(); ++i) out << " + 1*(" << subs[1].vname << ":" << subs[i].vname << ")";
+    out << endl;
+    out << "virtual_coordinates_start" << endl;
+    for(int i = 1; i <= subs.size(); ++i) {
+      Vec X=subs[i].X, Y=subs[i].Y, C=subs[i].C;
+      out << "xyz " << subs[i].vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
+    }
+    out << "virtual_coordinates_stop" << endl;
+    for(int i = 2; i <= subs.size(); ++i) out << "connect_virtual J" << subs[i].vname << " " << subs[1].vname << " " << subs[i].vname << endl;
+    for(int i = 1; i <= subs.size(); ++i) out << "connect_virtual JS" << subs[i].vname << " " << subs[i].vname << " SUBUNIT" << endl;
+    out << "set_jump_group JGS";
+    for(int i = 1; i <= subs.size(); ++i) out << " JS" << subs[i].vname;
+    out << endl;
+    out.close();
   }
-  out << "virtual_coordinates_stop" << endl;
-  for(int i = 2; i <= subs.size(); ++i) out << "connect_virtual J" << subs[i].vname << " " << subs[1].vname << " " << subs[i].vname << endl;
-  for(int i = 1; i <= subs.size(); ++i) out << "connect_virtual JS" << subs[i].vname << " " << subs[i].vname << " SUBUNIT" << endl;
-  out << "set_jump_group JGS";
-  for(int i = 1; i <= subs.size(); ++i) out << " JS" << subs[i].vname;
-  out << endl;
-  out.close();
   return subs.size();
 }
 
