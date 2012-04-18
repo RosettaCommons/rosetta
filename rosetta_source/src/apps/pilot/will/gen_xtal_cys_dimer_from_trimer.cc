@@ -282,7 +282,7 @@ int dumpsymfile_contact(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, s
         Vec qa = pose.xyz(AtomID(5,j));
         if(pa.distance_squared(qa)<400.0) {
           contact=true;
-          if(pa.distance_squared(qa)<64.0) ncontact++;
+          if(pa.distance_squared(qa)<81.0 && (n2a||n3a||m2a||m3a||l2a||l3a||k2a||k3a||j2a||j3a||i2a)) ncontact++;
         }
       }
     }
@@ -928,15 +928,15 @@ void dock(Pose & init, string fname) {
               Vec qa = R2f * (       pose.xyz(AtomID(5,j)) - HG) + HG;
               Vec qb = R2f * (R3f1 * pose.xyz(AtomID(5,j)) - HG) + HG;
               Vec qc = R2f * (R3f2 * pose.xyz(AtomID(5,j)) - HG) + HG;
-              if( pa.distance_squared(qa) < 64.0 ) ncontact++;
-              if( pa.distance_squared(qb) < 64.0 ) ncontact++;
-              if( pa.distance_squared(qc) < 64.0 ) ncontact++;
-              if( pb.distance_squared(qa) < 64.0 ) ncontact++;
-              if( pb.distance_squared(qb) < 64.0 ) ncontact++;
-              if( pb.distance_squared(qc) < 64.0 ) ncontact++;
-              if( pc.distance_squared(qa) < 64.0 ) ncontact++;
-              if( pc.distance_squared(qb) < 64.0 ) ncontact++;
-              if( pc.distance_squared(qc) < 64.0 ) ncontact++;
+              if( pa.distance_squared(qa) < 81.0 ) ncontact++;
+              if( pa.distance_squared(qb) < 81.0 ) ncontact++;
+              if( pa.distance_squared(qc) < 81.0 ) ncontact++;
+              if( pb.distance_squared(qa) < 81.0 ) ncontact++;
+              if( pb.distance_squared(qb) < 81.0 ) ncontact++;
+              if( pb.distance_squared(qc) < 81.0 ) ncontact++;
+              if( pc.distance_squared(qa) < 81.0 ) ncontact++;
+              if( pc.distance_squared(qb) < 81.0 ) ncontact++;
+              if( pc.distance_squared(qc) < 81.0 ) ncontact++;
             }
           }
           if(ncontact < 20) continue;
@@ -962,7 +962,7 @@ void dock(Pose & init, string fname) {
               // int nsubs = dumpsymfile_contact3(pose,R2f,R3f1,R3f2,HG,fn+"_contact3.sym" );
               // dumpsym(pose,R2f,R3f1,R3f2,HG,fn+".pdb" );
               // utility_exit_with_message("oiarseht");
-              std::cerr << "HIT  " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,ncontact) << " " << I(4,nsymcontact) << " " << I(4,nsubs) << " " << fn << std::endl;
+              std::cerr << "HIT  " << sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,ncontact) << " " << I(4,nsymcontact-ncontact) << " " << I(4,nsymcontact) << " " << I(4,nsubs) << " " << fn << std::endl;
               // utility_exit_with_message("arst");
             } else {
               std::cerr << "FAIL " << endl;//<< sym << " " << I(4,irsd) << " " << krot << " " << idh << " " << ich2 << " " << I(4,ncontact) << " " << I(4,    0) << " " << fn << std::endl;
