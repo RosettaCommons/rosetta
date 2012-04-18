@@ -80,7 +80,7 @@ settings = {
             "library_path"  : [
                 "/usr/lib",
                 "/usr/local/lib",
-            ],            
+            ],
         },
     },
 
@@ -115,20 +115,16 @@ settings = {
     "gcc" : {
         "appends" : {
             "flags" : {
-                # We don't use any C -- but if we did would it really
-                # be C99?  Are there portability issues?
-				"cc"        : [ "std=c99" ], 
-				"cxx"       : [ "std=c++98" ], 
+                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/"],
+                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/" ],
                 "compile"   : [ "pipe", "ffor-scope" ],
+                "warn"      : [ "Wall", "Wextra", "pedantic", "Wno-long-long" ],
                 # By default, warn as much as possible.
-                "warn"      : [ "W", "Wall", "pedantic", "Wno-long-long" ],
+                # GCC's `pedantic` option triggers a compilation error in the c++ standard library
+                # when intrinsics are referenced (e.g. in certain portions of Boost). There are 2
+                # options-- 1) remove pedantic warnings; or 2) add the Boost directory to GCC's
+                # system include path. Warnings from code on the system include path are suppressed.
             },
-			# GCC's `pedantic` option triggers a compilation error in the c++ standard library
-			# when intrinsics are referenced (e.g. in certain portions of Boost). There are 2
-			# options-- 1) remove pedantic warnings; or 2) add the Boost directory to GCC's
-			# system include path. Warnings from code on the system include path are suppressed.
-			"CCFLAGS"  : '-isystem external/boost_1_46_1/boost/', 
-			"CXXFLAGS" : '-isystem external/boost_1_46_1/boost/',
         },
     },
 
@@ -149,7 +145,7 @@ settings = {
         "appends" : {
             "version"       : [ "3", "4" ],
             "flags" : {
-                ## These flags likely cause memory exhaustion on whatever platform they're active 
+                ## These flags likely cause memory exhaustion on whatever platform they're active
                 #"compile"   : [ "-param inline-unit-growth=1000",
                 #"-param large-function-growth=50000" ],
             },
