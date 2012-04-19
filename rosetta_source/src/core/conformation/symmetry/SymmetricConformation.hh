@@ -219,6 +219,11 @@ public:
 
 	//fpd eventually we should have symmetric implementations of all the insert/append/delete residue functions
 
+	virtual
+	void
+	detect_disulfides();
+
+
 private:
 
 	/////////////////////////////////////////////////////////////////////////////

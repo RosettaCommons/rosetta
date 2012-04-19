@@ -22,6 +22,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
@@ -72,7 +74,13 @@ void NoRepackDisulfides::apply( Pose const & pose, PackerTask & task ) const {
 	using core::chemical::DISULFIDE;
 	using core::conformation::Residue;
 
-	for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+	core::Size nres = pose.total_residue();
+	if( core::pose::symmetry::is_symmetric(pose) ) {
+		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+	}
+
+
+	for ( Size i = 1, ie = nres; i <= ie; ++i ) {
 		Residue const & res = pose.residue( i );
 
 		// residue appears to be a disulfide...?

@@ -667,6 +667,7 @@ public:
 	/// @note Assumes full atom
 	/// @details looks at SG-SG distance. If the SG-SG are about 2.02 A apart, calls
 	/// it a disulfide bond.
+	virtual
 	void
 	detect_disulfides();
 
@@ -1282,8 +1283,11 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 
+protected:
 	/// @brief container of Residues
 	ResidueOPs residues_;
+
+private:
 	/// ResidueCOPs const_residues_; // mirrors residues_ allowing const access -- this will be reinstated soon.
 
 	/// @brief chain number for each position

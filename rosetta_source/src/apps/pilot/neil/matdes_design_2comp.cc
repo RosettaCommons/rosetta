@@ -754,6 +754,7 @@ void *dostuff(void*) {
 							for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
 								Sizes const & isubs( which_subsub(ir,p1,p2)==1?intra_subs1:intra_subs2);
 								if(which_subsub(jr,p1,p2)==which_subsub(ir,p1,p2)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end()) continue;
+								// if both dimer or trimer, and jr in primary sub
 								// std::cout << sym_info->subunit_index(ir) << " " << sym_info->subunit_index(jr) << std::endl;
 								std::string atom_j = (pose_for_design.residue(jr).name3() == "GLY") ? "CA" : "CB";
 								if(pose_for_design.residue(ir).xyz(atom_i).distance_squared(pose_for_design.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
@@ -784,7 +785,7 @@ void *dostuff(void*) {
 											core::scoring::EnergyMap em1 = pose_for_design.energies().residue_total_energies(ir);
 											Real resi_fa_rep = em1[core::scoring::fa_rep];
 											if(resi_fa_rep < 3.0) { contact = true; break; }
-											// contact = true; break; 
+											// contact = true; break;
 										}
 									}
 									if(contact == true) break;

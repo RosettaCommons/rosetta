@@ -25,6 +25,7 @@
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -52,6 +53,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <fstream>
@@ -94,7 +96,7 @@ void
 print_movemap(core::kinematics::MoveMap const & movemap) {
 	using namespace core::id;
 	using namespace core::kinematics;
-	TR << "movemap " << std::endl;		
+	TR << "movemap " << std::endl;
 	for(std::map< TorsionType, bool >::const_iterator i = movemap.torsion_type_begin(); i != movemap.torsion_type_end(); ++i) {
 		TR << "TorsionType " << i->first << " " << i->second << std::endl;
 	}
@@ -113,12 +115,12 @@ print_movemap(core::kinematics::MoveMap const & movemap) {
 	for(std::map< JumpID, bool >::const_iterator i = movemap.jump_id_begin(); i != movemap.jump_id_end(); ++i) {
 		TR << "JumpID " << i->first << " " << i->second << std::endl;
 	}
-	
+
 }
 
 
 void
-design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool hphobic_only) {
+design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool /*hphobic_only*/) {
 
 	using namespace core;
 	using namespace pack;
@@ -296,20 +298,20 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 /*
 void
 minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool move_bb, bool move_sc, bool move_rb) {
-	
+
 	// Initialize a MoveMap
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_jump(move_rb);
 	movemap->set_bb(false);
 	movemap->set_chi(false);
-	
+
 	// Set allowable move types at interface positions
 	// Currently, only sc moves allowed
 	for (utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++) {
 		movemap->set_bb (*i, move_bb);
 		movemap->set_chi(*i, move_sc);
 	}
-	
+
 	// Make MoveMap symmetric, apply it to minimize the pose
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
@@ -362,13 +364,13 @@ sidechain_sasa(Pose const & pose, Real probe_radius) {
 	for(Size i = 1; i <= pose.n_residue(); i++) {
 		for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
 			atom_mask[AtomID(j,i)] = true;
-		}	
+		}
 	}
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
 	utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
 	for(Size i = 1; i <= pose.n_residue(); i++) {
 		// Use CA as the side chain for Glys
-		if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];		
+		if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];
 		for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
 			sc_sasa[i] += atom_sasa[AtomID(j,i)];
 		}
@@ -387,7 +389,7 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 	scc.Init();
 
 	// Figure out which chains touch chain A, and add the residues from those chains
-	// into the sc surface objects	
+	// into the sc surface objects
 	Size nres_monomer = symm_info->num_independent_residues();
 	for (Size i=1; i<=nres_monomer; ++i) {
 		scc.AddResidue(0, pose.residue(i));
@@ -524,12 +526,12 @@ void
 	using namespace scoring;
 	using namespace utility;
 	using basic::options::option;
-	
+
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-	core::io::silent::SilentFileData sfd;	
+	core::io::silent::SilentFileData sfd;
 
 	// Create a score function object, turn hack_elec off in the monomer
-	ScoreFunctionOP sf = getScoreFunction();	
+	ScoreFunctionOP sf = getScoreFunction();
 	core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
 	eo.exclude_monomer_hack_elec(true);
 	sf->set_energy_method_options(eo);
@@ -537,7 +539,7 @@ void
 	utility::vector1<std::string> files = option[in::file::s]();
 	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
 		std::string file = files[ifile];
-		
+
 		// Read in pose
 		Pose pose;
 		import_pose::pose_from_pdb(pose, file, resi_set);
@@ -553,6 +555,13 @@ void
 
 		// Handle all of the symmetry stuff
 		core::pose::symmetry::make_symmetric_pose(pose);
+		//		std::cerr << "matdes detect disulf" << std::endl;
+		//		pose.dump_pdb("test1.pdb");
+		//		std::cerr << "127 name " << pose.residue(127).name() << " " << pose.residue(127).has_variant_type( core::chemical::DISULFIDE ) << std::endl;
+		pose.conformation().detect_disulfides();
+		//		std::cerr << "127 name " << pose.residue(127).name() << " " << pose.residue(127).has_variant_type( core::chemical::DISULFIDE ) << std::endl;
+		//		pose.dump_pdb("test2.pdb");
+
 		SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 		std::map<Size,SymDof> dofs = sym_info->get_dofs();
 	 	int sym_jump = 0;
@@ -618,21 +627,21 @@ void
 				pose.set_jump(sym_jump,j); // COMMENT THIS OUT FOR WILL'S C(N) SYMMETRIES
 				Vec start_trans = pose.jump(sym_jump).get_translation();
 				Mat start_rot   = pose.jump(sym_jump).get_rotation();
-			
+
 				Pose const start_pose = pose;
-		
+
 				// Iterate over the rigid body grid, performing design & minimization at each starting point
 				for(Size iangle = 1; iangle <= grid_nsamp_angle; iangle++) {
 					Real delta_ang = (grid_start_angle + (iangle-1)*grid_incr_angle);
 					Mat rot = numeric::x_rotation_matrix_degrees(delta_ang) * start_rot;
 					for(Size iradius = 1; iradius <= grid_nsamp_radius; iradius++) {
 						Vec trans = start_trans + (grid_start_radius + (iradius-1)*grid_incr_radius) * Vec(1,0,0);
-						// Move the pose to the current point on the rigid body grid			
+						// Move the pose to the current point on the rigid body grid
 						j.set_translation(trans);
 						j.set_rotation(rot);
 						Pose pose_for_design = start_pose;
 						pose_for_design.set_jump(sym_jump,j);
-			
+
 						// Find out which positions are near the inter-subunit interfaces
 						// These will be further screened below, then passed to design()
 						Real const contact_dist = option[matdes::design::contact_dist]();
@@ -661,7 +670,7 @@ void
 								}
 							}
 						}
-		
+
 						// Here we filter the residues that we are selecting for design
 						// to get rid of those that make intra-building block interactions
 						Sizes nontrimer_pos;
@@ -690,11 +699,11 @@ void
 									}
 									if (contact == true) break;
 								}
-								if (contact == true) break;					
+								if (contact == true) break;
 							}
 							if (!contact) nontrimer_pos.push_back(ir);
 						}
-		
+
 		        // Finally, filter the positions for design based on surface accessibility.
 		        // We don't want to design positions that are near to the interface but pointed
 		        // in toward the core of the monomer (e.g., positions on the insides of helices).
@@ -720,7 +729,7 @@ void
 
 						// 120206: Get min_rb commandline to implement rigid body minimization
       			bool min_rb = option[matdes::mutalyze::min_rb]();
-	
+
 						// Design
 						//design(pose_for_design, sf, design_pos, true);
 			      //minimize(pose_for_design, sf, design_pos, false, true, min_rb);
@@ -728,14 +737,14 @@ void
 			      //minimize(pose_for_design, sf, design_pos, false, true, min_rb);
 						design(pose_for_design, sf, design_pos, true);
 			      minimize(pose_for_design, sf, design_pos, false, true, min_rb);
-		
+
 						// Repack and minimize using score12
 						ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
 						//repack(pose_for_design, score12, design_pos);
 						//minimize(pose_for_design, score12, design_pos, false, true, false);
 						score12->score(pose_for_design);
-	
-						// Build a filename for the output PDB	
+
+						// Build a filename for the output PDB
 						std::string tag = string_of(numeric::random::uniform()).substr(2,4);
 						std::ostringstream r_string;
 						r_string << std::fixed << std::setprecision(1) << pose_for_design.jump(sym_jump).get_translation().x();
@@ -746,7 +755,7 @@ void
 						pose_for_design.dump_pdb(out);
 						core::io::pdb::extract_scores(pose_for_design,out);
 						out.close();
-	
+
             // Spit these positions out for visual debugging
             TR << "select interface_pos, " << fn << " and resi ";
             for (Size index=1; index<=interface_pos.size(); index++) {
@@ -772,16 +781,21 @@ void
 		        // Calculate the surface area and surface complementarity for the interface
 		        Real int_area = 0; Real sc = 0;
 		        new_sc(pose_for_design, intra_subs, int_area, sc);
-		
+
 		        // Get the packing score
 		        Real packing = get_atom_packing_score(pose_for_design, intra_subs, 9.0);
-	
+
 						// Calculate the ddG of the monomer in the assembled and unassembled states
-				    protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
+						core::scoring::ScoreFunctionOP score12_no_dsf = score12->clone();
+						score12_no_dsf->set_weight(core::scoring::dslf_ss_dst,0.0);
+						score12_no_dsf->set_weight(core::scoring::dslf_cs_ang,0.0);
+						score12_no_dsf->set_weight(core::scoring::dslf_ss_dih,0.0);
+						score12_no_dsf->set_weight(core::scoring::dslf_ca_dih,0.0);
+				    protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12_no_dsf, 1, true);
 				    ddG_mover.calculate(pose_for_design);
 				    Real ddG = ddG_mover.sum_ddG();
 				    TR << files[ifile] << " ddG = " << ddG << std::endl;
-		
+
 						// Calculate per-residue energies for interface residues
 						Real interface_energy = 0;
 						core::scoring::EnergyMap em;
@@ -793,7 +807,7 @@ void
 						avg_interface_energy = interface_energy / design_pos.size();
 						// Multiply those energies by the weights
 						em *= sf->weights();
-		
+
 						// Create a scorefile struct, add custom metrics to it
 						core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 						ss_out->fill_struct(pose_for_design,fn);
@@ -807,10 +821,10 @@ void
 						ss_out->add_energy("avg_deg", avg_deg);
 						ss_out->add_energy("int_area", int_area);
 						ss_out->add_energy("sc", sc);
-		
+
 						// Write the scorefile
 						sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
-					
+
 					} // iradius
 				} // iangle
 				// Reset the symmetric DOF so that it can be moved to the next docked configuration
