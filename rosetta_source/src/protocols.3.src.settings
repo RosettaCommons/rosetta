@@ -66,6 +66,7 @@ sources = {
 	],
 	"protocols/design_opt": [
 		"GreedyOptMutationMover",
+		"ParetoOptMutationMover",
 		"PointMutationCalculator",
 	],
 	"protocols/electron_density": [

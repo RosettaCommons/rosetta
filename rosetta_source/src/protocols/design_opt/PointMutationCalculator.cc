@@ -61,29 +61,20 @@ using std::pair;
 PointMutationCalculator::PointMutationCalculator() :
 	task_factory_( NULL ),
 //	filters_( NULL ), /*TODO: this throws a warning!*/
+//	sample_type_( "low" )
 	relax_mover_( NULL ),
 	scorefxn_( NULL ),
-	dump_pdb_( false ),
-	sample_type_( "low" )
-{
-	if( sample_type_ == "high" ){
-		flip_sign_ = Real( -1 );
-	}else if( sample_type_ == "low" ){
-		flip_sign_ = Real( 1 );
-	}else{
-		TR << "WARNING: the sample type, " << sample_type_ << ", is not defined. Use \'high\' or \'low\'." << std::endl;
-		runtime_assert( false );
-  }
-}
+	dump_pdb_( false )
+{}
 
 //full ctor
 PointMutationCalculator::PointMutationCalculator(
 	core::pack::task::TaskFactoryOP task_factory,
 	core::scoring::ScoreFunctionOP scorefxn,
-	vector1< protocols::filters::FilterOP > filters,
 	protocols::moves::MoverOP relax_mover,
-	bool dump_pdb,
-	std::string sample_type
+	vector1< protocols::filters::FilterOP > filters,
+	utility::vector1< std::string > sample_types,
+	bool dump_pdb
 )
 {
 	task_factory_ = task_factory;
@@ -91,45 +82,43 @@ PointMutationCalculator::PointMutationCalculator(
 	relax_mover_ = relax_mover;
 	scorefxn_ = scorefxn;
 	dump_pdb_ = dump_pdb;
-	sample_type_ = sample_type;
+	sample_types_ = sample_types;
 	
-	if( sample_type_ == "high" ){
-		flip_sign_ = Real( -1 );
-	}else if( sample_type_ == "low" ){
-		flip_sign_ = Real( 1 );
-	}else{
-		TR << "WARNING: the sample type, " << sample_type_ << ", is not defined. Use \'high\' or \'low\'." << std::endl;
-		runtime_assert( false );
-  }
+	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){	
+		if( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ){
+			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
+			runtime_assert( false );
+		}
+	}
 }
 
 //backcompatible; single-filter convenience ctor
 PointMutationCalculator::PointMutationCalculator(
 	core::pack::task::TaskFactoryOP task_factory,
 	core::scoring::ScoreFunctionOP scorefxn,
-	protocols::filters::FilterOP filter,
 	protocols::moves::MoverOP relax_mover,
-	bool dump_pdb,
-	std::string sample_type
+	protocols::filters::FilterOP filter,
+	std::string sample_type,
+	bool dump_pdb
 )
 {
 	vector1< protocols::filters::FilterOP > filters;
 	filters.push_back( filter );
+	vector1< std::string > sample_types;
+	sample_types.push_back( sample_type );
 	task_factory_ = task_factory;
 	filters_ = filters;
 	relax_mover_ = relax_mover;
 	scorefxn_ = scorefxn;
 	dump_pdb_ = dump_pdb;
-	sample_type_ = sample_type;
-	
-	if( sample_type_ == "high" ){
-		flip_sign_ = Real( -1 );
-	}else if( sample_type_ == "low" ){
-		flip_sign_ = Real( 1 );
-	}else{
-		TR << "WARNING: the sample type, " << sample_type_ << ", is not defined. Use \'high\' or \'low\'." << std::endl;
-		runtime_assert( false );
-  }
+	sample_types_ = sample_types;
+
+	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){	
+		if( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ){
+			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
+			runtime_assert( false );
+		}
+	}
 }
 
 //destruction!
@@ -184,13 +173,13 @@ PointMutationCalculator::dump_pdb() const{
 }
 
 void
-PointMutationCalculator::sample_type( std::string const sample_type ){
-  sample_type_ = sample_type;
+PointMutationCalculator::sample_types( vector1< std::string > const sample_types ){
+  sample_types_ = sample_types;
 }
 
-std::string
-PointMutationCalculator::sample_type() const{
-  return sample_type_;
+vector1< std::string >
+PointMutationCalculator::sample_types() const{
+  return sample_types_;
 }
 
 void
@@ -230,11 +219,75 @@ cmp_pair_vec_by_first_vec_val(
 }
 */
 
+void
+PointMutationCalculator::mutate_and_relax(
+	pose::Pose & pose,
+	Size const & resi,
+	AA const & target_aa
+){
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+	using namespace core::chemical;
+
+	//make bool vector of allowed aa's [1,20], all false except for target_aa
+	vector1< bool > allowed_aas;
+	allowed_aas.clear();
+	allowed_aas.assign( num_canonical_aas, false );
+	allowed_aas[ target_aa ] = true;
+	//make mut_res task factory by copying input task_factory,
+	//then restrict to mutates resi to target_aa and repack 8A shell
+	core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory( *task_factory() );
+	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op =
+		new protocols::toolbox::task_operations::DesignAroundOperation;
+	repack_around_op->design_shell( -1.0 ); //neg radius insures no designing nbrs
+	repack_around_op->repack_shell( 8.0 );
+	repack_around_op->allow_design( true ); //because we still want to design resi
+	repack_around_op->include_residue( resi );
+	mut_res->push_back( repack_around_op );
+	//make mutate_residue packer task, mutate target res, repack all others
+	PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
+	mutate_residue->initialize_from_command_line().or_include_current( true );
+	mutate_residue->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
+	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
+	//run PackRotamers with mutate_residue task
+	protocols::simple_moves::PackRotamersMoverOP pack;
+	if( core::pose::symmetry::is_symmetric( pose ) )
+		pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
+	else
+		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
+	pack->apply( pose );
+	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
+	//then run input relax mover
+	relax_mover()->apply( pose );
+}
+
+void
+PointMutationCalculator::eval_filters(
+	pose::Pose & pose,
+	bool & filter_pass,
+	vector1< Real > & vals
+){
+	//now run filters
+	filter_pass = true;
+	vals.clear();
+	for( Size ifilt = 1; ifilt <= filters_.size(); ++ifilt ){
+		//check if this filter passes, AND it with current value of pass/fail
+		filter_pass = filter_pass && ( filters_[ ifilt ] )->apply( pose );
+		//val sign is switched if type is high
+		Real const flip_sign( sample_types_[ ifilt ] == "high" ? -1 : 1 );
+		Real const val( flip_sign * ( filters_[ ifilt ] )->report_sm( pose ) );
+		//TODO: option to bail at first fail??
+		if( !filter_pass ) TR<<"Filter fails with value "<< val << std::endl;
+		else TR<<"Filter succeeds with value "<< val << std::endl;
+		vals.push_back( val );
+	}
+}
+
 //backcompatibility; overloaded interface that allows the same data struct but wth one val/aa instead of a vector
 void
 PointMutationCalculator::calc_point_mut_filters(
-	pose::Pose const & pose,
-	vector1< pair< Size, vector1< pair< AA, Real > > > > & seqpos_aa_val_vec
+		pose::Pose const & pose,
+		vector1< pair< Size, vector1< pair< AA, Real > > > > & seqpos_aa_val_vec
 )
 {
 	//call the default with a new tmp container
@@ -302,59 +355,18 @@ PointMutationCalculator::calc_point_mut_filters(
 		foreach( AA const target_aa, allow_temp ){
 			//make copy of original
 			pose::Pose pose( start_pose );
-			//make bool vector of allowed aa's [1,20], all false except for target_aa
-			vector1< bool > allowed_aas;
-			allowed_aas.clear();
-			allowed_aas.assign( num_canonical_aas, false );
-			allowed_aas[ target_aa ] = true;
-			//make mut_res task factory by copying input task_factory,
-			//then restrict to mutates resi to target_aa and repack 8A shell
-			core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory( *task_factory() );
-			protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op =
-					new protocols::toolbox::task_operations::DesignAroundOperation;
-			repack_around_op->design_shell( -1.0 ); //neg radius insures no designing nbrs
-			repack_around_op->repack_shell( 8.0 );
-			repack_around_op->allow_design( true ); //because we still want to design resi
-			repack_around_op->include_residue( resi );
-			mut_res->push_back( repack_around_op );
-			//make mutate_residue packer task, mutate target res, repack all others
-			PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
-			mutate_residue->initialize_from_command_line().or_include_current( true );
-			mutate_residue->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
-			TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
-			//run PackRotamers with mutate_residue task
-			protocols::simple_moves::PackRotamersMoverOP pack;
-			if( core::pose::symmetry::is_symmetric( pose ) )
-				pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
-			else
-				pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
-			pack->apply( pose );
-			TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
-			//then run input relax mover
-			relax_mover()->apply( pose );
+			//make the mutation and relax
 			//then check if passes input filter, bail out if it doesn't
-			//store aa/val pair in seqpos_aa_vals_vec
 			//TODO: if no filter defined, just use total_score
-			bool filter_pass( true );
+			bool filter_pass;
 			vector1< Real > vals;
-			for( vector1< protocols::filters::FilterOP >::iterator filter = filters_.begin(); filter != filters_.end(); ++filter ){
-				//check if this filter passes, AND it with current value of pass/fail
-				filter_pass = filter_pass && ( *filter )->apply( pose );
-				//val sign is switched if type is high
-				Real const val( flip_sign_ * ( *filter )->report_sm( pose ) );
-				//bail at first fail
-				if( !filter_pass ){
-					TR<<"Filter fails with value "<< val << std::endl;
-					break;
-				}
-				TR<<"Filter succeeds with value "<< val << std::endl;
-				vals.push_back( val );
-			}
+			mutate_and_relax( pose, resi, target_aa );
+			eval_filters( pose, filter_pass, vals );
+
 			//don't store this aa/val if any filter failed
 			if( !filter_pass ) continue;
-
-			//filter passed, store this aa/vals pair
 			assert( !vals.empty() );
+			//store aa/val pair in seqpos_aa_vals_vec
 			aa_vals.push_back( pair< AA, vector1< Real > >( target_aa, vals ) );
 			//dump pdb?
 			if( dump_pdb() ){

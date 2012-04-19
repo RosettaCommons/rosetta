@@ -278,7 +278,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		seqpos_aa_val_vec_.clear();
 		//get the point mut values
 		design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
-					task_factory(), scorefxn(), filter(), relax_mover(), dump_pdb(), sample_type() ) );
+					task_factory(), scorefxn(), relax_mover(), filter(), sample_type(), dump_pdb() ) );
 		ptmut_calc->calc_point_mut_filters( pose_orig, seqpos_aa_val_vec_ );
 		//and (re)set ref_pose_ to this pose
 		ref_pose_ = pose_orig;

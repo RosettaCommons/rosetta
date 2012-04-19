@@ -40,6 +40,7 @@ static MoverRegistrator< comparative_modeling::hybridize::HybridizeProtocolCreat
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
+static MoverRegistrator< design_opt::ParetoOptMutationMoverCreator > reg_ParetoOptMutationMoverCreator;
 
 static MoverRegistrator< dna::DesignProteinBackboneAroundDNACreator > reg_DesignProteinBackboneAroundDNACreator;
 static MoverRegistrator< dna::DnaInterfaceMinMoverCreator > reg_DnaInterfaceMinMoverCreator;
