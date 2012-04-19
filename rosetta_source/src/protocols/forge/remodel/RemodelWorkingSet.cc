@@ -252,7 +252,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 				segment.residues.clear();
 			}
 		}
-		else if (next.index != first.index+1 && next.index == (int) temp.size()-1){ //if there's a loner in the end by itself
+		else if (next.index != first.index+1 && next.index == (int) temp[temp.size()-1].index){ //if there's a loner in the end by itself
         segment.residues.push_back(first.index);
         segmentStorageVector.push_back(segment);
         segment.residues.clear();
