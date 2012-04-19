@@ -1173,6 +1173,7 @@ def init(*args, **kargs):
 
 
     if not args: args = ["app", "-database", database, "-ex1", "-ex2aro"]
+    else: args=list(args)
 
     args.extend( kargs.get('extra_options', '').split(' ') )
 
