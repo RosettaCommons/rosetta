@@ -1,3 +1,12 @@
+NOTES: 2012/04/19
+Version OLF_params_8s
+Uses the new parameterization of the AHD polynomial where the polynomial is a function of the angle
+instead of being a function of the cosine of the angle.
+
+NOTES: 2012/03/13
+Trying once again to revamp the AHD polynomial for bb/bb contacts.  Will also try to revamp the polynomial for ASP/ARG contacts, in a bit.
+Derived from OLF_params_8h.
+
 Generated HBond parameters by Matthew O'Meara in 2010
 
 
