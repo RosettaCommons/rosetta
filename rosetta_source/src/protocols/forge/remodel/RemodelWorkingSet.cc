@@ -318,7 +318,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	runtime_assert (build_aa_type.size() == 1);
 
 	if (option[OptionKeys::remodel::use_blueprint_sequence].user()){
-		for (int i = 0; i < data.blueprint.size(); i++){
+		for (int i = 0; i < (int)data.blueprint.size(); i++){
 			if ( data.blueprint[i].resname.compare("x") == 0  || data.blueprint[i].resname.compare("X") == 0 ){
 				aa.append(build_aa_type);
 			}
@@ -341,7 +341,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 		if ( build_aa_type.compare("A") != 0){
 						//build the aa string to be the same length as dssp updated ss
 						//use that length because repeat structures are bigger than blueprint
-						for (int i = 1; i<= data.dssp_updated_ss.size(); i++){
+						for (int i = 1; i<= (int)data.dssp_updated_ss.size(); i++){
 							aa.append(build_aa_type);
 						}
 		}
