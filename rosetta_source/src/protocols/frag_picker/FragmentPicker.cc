@@ -85,7 +85,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-#ifdef MULTI_THREADED
+#ifdef USE_BOOST_THREAD
 // Boost headers
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
@@ -101,7 +101,7 @@ using namespace protocols::frag_picker::scores;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-//#ifdef MULTI_THREADED
+//#ifdef USE_BOOST_THREAD
 //boost::mutex picker_mutex;
 //#endif
 
@@ -591,7 +591,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 		if (qPosi_to_run[thread].size() >= qPosi_per_thread && thread < max_threads_) ++thread;
 	}
 	utility::vector1<utility::vector1<nonlocal::NonlocalPairOP> > thread_pairs(max_threads_);
-#ifdef MULTI_THREADED
+#ifdef USE_BOOST_THREAD
 	boost::thread_group threads;
 	trPicker.super_mute(true); // lets suppress tracer output when running multi threads
 	for (Size j = 1; j <= max_threads_; ++j) {
@@ -946,7 +946,7 @@ void FragmentPicker::pick_candidates() {
 
 	time_t time_start = time(NULL);
 
-#ifdef MULTI_THREADED
+#ifdef USE_BOOST_THREAD
 	if (max_threads_ > 1) {
 		utility::vector1<utility::vector1<VallChunkOP> > chunks_to_run( max_threads_ );
 		Size valid_chunks_cnt = 0;
@@ -983,7 +983,7 @@ void FragmentPicker::pick_candidates() {
 
 		return;
 	}
-#endif // MULTI_THREADED
+#endif // USE_BOOST_THREAD
 
 	scores::FragmentScoreMapOP empty_map = scores_[1]->create_empty_map();
 
@@ -1295,7 +1295,7 @@ void FragmentPicker::pick_candidates(Size i_pos,Size frag_len) {
 // called in main
 void FragmentPicker::parse_command_line() {
 
-#ifdef MULTI_THREADED
+#ifdef USE_BOOST_THREAD
 	//## multi-threaded?
 	if (option[ frags::j ].user()) max_threads_ = option[ frags::j ]();
 #endif
