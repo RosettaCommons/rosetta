@@ -2309,6 +2309,30 @@ core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose
 	return hash;
 }
 
+core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const & pose)
+{
+	core::Size hash = 0;
+
+	core::Size chain_id = get_chain_id_from_chain(chain,pose);
+
+	for(core::Size res_num = 1; res_num <= pose.n_residue(); ++res_num)
+	{
+		if(chain_id == pose.chain(res_num))
+		{
+			continue;
+		}
+		core::Size natoms = pose.conformation().residue(res_num).natoms();
+		for(core::Size atom_num = 1; atom_num <= natoms; ++atom_num)
+		{
+			id::AtomID atom_id(atom_num,res_num);
+			PointPosition current_xyz = pose.conformation().xyz(atom_id);
+			boost::hash_combine(hash,current_xyz);
+		}
+	}
+
+	return hash;
+}
+
 void
 initialize_disulfide_bonds(
 	Pose & pose

@@ -82,7 +82,6 @@ StartFrom::StartFrom(StartFrom const & that):
 		//utility::pointer::ReferenceCount(),
 		protocols::moves::Mover( that ),
 		chain_(that.chain_),
-		chain_for_hash_(that.chain_for_hash_),
 		starting_points_(that.starting_points_),
 		potential_starting_positions_(that.potential_starting_positions_)
 {}
@@ -145,9 +144,6 @@ StartFrom::parse_my_tag(
 		}else if(name == "File")
 		{
 			if(!child_tag->hasOption("filename")) utility_exit_with_message("'StartFrom' mover File tag requires 'filename' coordinates option");
-			if(!child_tag->hasOption("chain_for_hash")) utility_exit_with_message("'StartFrom' mover File tag requires 'chain_for_hash' coordinates option");
-
-			chain_for_hash_ = child_tag->getOption<std::string>("chain_for_hash");
 			parse_startfrom_file(child_tag->getOption<std::string>("filename"));
 
 		}
@@ -211,7 +207,7 @@ void StartFrom::apply(core::pose::Pose & pose){
 		move_ligand_to_desired_centroid(jump_id, desired_centroid, pose);
 	}else if(!potential_starting_positions_.empty())
 	{
-		core::Size hash = core::pose::get_hash_from_chain(chain_for_hash_[0],pose);
+		core::Size hash = core::pose::get_hash_excluding_chain(chain_[0],pose);
 		std::map<core::Size,core::Vector >::iterator position_hash = potential_starting_positions_.find(hash);
 		if(position_hash != potential_starting_positions_.end())
 		{
@@ -219,6 +215,8 @@ void StartFrom::apply(core::pose::Pose & pose){
 			move_ligand_to_desired_centroid(jump_id, position_hash->second , pose);
 		}else
 		{
+			start_from_tracer << "cannot find structure with hash " <<hash <<" and tag " <<
+					protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag() << std::endl;
 			utility_exit_with_message("the current structure is not in the startfrom_file");
 		}
 	}else
@@ -261,7 +259,9 @@ void StartFrom::parse_startfrom_file(std::string filename)
 		core::Vector coords(x,y,z);
 		if(potential_starting_positions_.find(hash) !=potential_starting_positions_.end() )
 		{
-			utility_exit_with_message("hashes in startfrom files must all be unique");
+
+			start_from_tracer << "WARNING: There is more than one entry in the startfrom_file with the hash " << hash <<std::endl;
+			//utility_exit_with_message("hashes in startfrom files must all be unique");
 		}
 		potential_starting_positions_[hash] = coords;
 

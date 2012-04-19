@@ -26,20 +26,17 @@
 #include <iostream>
 
 OPT_KEY(String,ligand_chain)
-OPT_KEY(String,protein_chain)
 OPT_KEY(String,start_position_file)
 
 int main(int argc, char*argv[])
 {
 	NEW_OPT(ligand_chain,"the name of the ligand chain","");
-	NEW_OPT(protein_chain,"the name of the protein chain","");
 	NEW_OPT(start_position_file,"the name of the file to output to","");
 
 	devel::init(argc,argv);
 
 
 	char ligand_id = basic::options::option[basic::options::OptionKeys::ligand_chain]()[0];
-	char protein_id = basic::options::option[basic::options::OptionKeys::protein_chain]()[0];
 	std::string outfile_path =  basic::options::option[basic::options::OptionKeys::start_position_file]();
 
 	utility::vector1<std::string> file_names = basic::options::start_files();
@@ -50,10 +47,10 @@ int main(int argc, char*argv[])
 	{
 		core::pose::PoseOP current_pose(core::import_pose::pose_from_pdb(*file_it,false));
 
-		core::Size protein_hash = core::pose::get_hash_from_chain(protein_id,*current_pose);
+		core::Size protein_hash = core::pose::get_hash_excluding_chain(ligand_id,*current_pose);
 		core::Size ligand_chain_id = core::pose::get_chain_id_from_chain(ligand_id,*current_pose);
 		core::conformation::ResidueCOPs ligand_residues(core::pose::get_chain_residues(*current_pose,ligand_chain_id));
-
+		std::cout << *file_it <<std::endl;
 		if(ligand_residues.size() != 1)
 		{
 			std::cout <<ligand_residues.size() <<std::endl;

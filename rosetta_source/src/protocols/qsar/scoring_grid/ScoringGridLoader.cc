@@ -65,8 +65,8 @@ void ScoringGridLoader::load_data(
 		grid_manager->set_resolution(tag->getOption<core::Real>("resolution"));
 	}
 
-	if(tag->hasOption("chain") ) {
-		grid_manager->set_chain(tag->getOption<char>("chain"));
+	if(tag->hasOption("ligand_chain") ) {
+		grid_manager->set_chain(tag->getOption<char>("ligand_chain"));
 	}
 
 	if(tag->hasOption("normalized"))

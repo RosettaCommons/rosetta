@@ -62,7 +62,7 @@ void GridManager::reset()
 	resolution_ = 0.25;
 	qsar_map_ = 0;
 	initialized_ = false;
-	chain_ = 'A';
+	chain_ = 'X';
 	normalized_ = false;
 }
 
@@ -72,7 +72,7 @@ GridManager::GridManager() :
 	resolution_(0.25),
 	qsar_map_(0),
 	initialized_(false),
-	chain_('A'),
+	chain_('X'),
 	normalized_(false)
 {
 	grid_map_.clear();
@@ -249,7 +249,7 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector const & center)
 {
 
-	core::Size chain_hash = core::pose::get_hash_from_chain(chain_,pose);
+	core::Size chain_hash = core::pose::get_hash_excluding_chain(chain_,pose);
 	std::map<core::Size,GridMap>::const_iterator grid_cache_entry(grid_map_cache_.find(chain_hash));
 
 	if(grid_cache_entry != grid_map_cache_.end()) //we've already seen this conformation, load the associated grid out of the map

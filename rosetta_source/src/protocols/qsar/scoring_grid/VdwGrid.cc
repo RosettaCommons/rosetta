@@ -81,15 +81,19 @@ void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const &  )
 	// continue
 
 	core::Size chain_id = core::pose::get_chain_id_from_chain(get_chain(),pose);
-	core::Size chain_begin = pose.conformation().chain_begin(chain_id);
-	core::Size chain_end = pose.conformation().chain_end(chain_id);
+	//core::Size chain_begin = pose.conformation().chain_begin(chain_id);
+	//core::Size chain_end = pose.conformation().chain_end(chain_id);
 
 	this->fill_with_value(cutoff_);
 
 
-	for(core::Size residue_index = chain_begin; residue_index <= chain_end; ++residue_index)
+	for(core::Size residue_index = 1; residue_index <= pose.n_residue(); ++residue_index)
 	{
 		core::conformation::Residue residue = pose.residue(residue_index);
+		if(residue.chain() == chain_id)
+		{
+			continue;
+		}
 		for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
 		{
 			core::id::AtomID atom_id(atom_index,residue_index);

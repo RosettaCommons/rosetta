@@ -7,7 +7,7 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 	<MOVERS>
 	single movers		
 		<StartFrom name=start_from chain=X>
-			<File filename="startfrom.json" chain_for_hash="A"/>
+			<File filename="startfrom.json"/>
 		</StartFrom>
 	</MOVERS>
 	<PROTOCOLS>

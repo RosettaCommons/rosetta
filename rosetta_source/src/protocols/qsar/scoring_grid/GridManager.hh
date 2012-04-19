@@ -49,7 +49,7 @@ public:
 	void set_width(core::Real width);
 	///@brief set resolution (must be done before initialization)
 	void set_resolution(core::Real resolution);
-	///@brief set chain (must be done before initialization)
+	///@brief set ligand chain (must be done before initialization)
 	void set_chain(char chain);
 	///@brief make a new grid from grid tag, and insert it into the grid manager
 	void make_new_grid(utility::tag::TagPtr const tag);
