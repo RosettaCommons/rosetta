@@ -313,8 +313,11 @@ my_main( void* )
 			allow_repacked[i] = false;
 			TR << "Disabling side-chain optimization of disulfide bonded residue " << i << std::endl;
 		}
+		else if (! pose.residue(i).is_protein() ) {
+			allow_repacked[i] = false;
+		}
 		else {
-			mm_all_sc.set_chi( true );
+			mm_all_sc.set_chi( i, true );
 		}
 	}
 	this_packer_task->restrict_to_residues( allow_repacked );
