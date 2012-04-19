@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file Schema.cc
+/// @file basic/database/schema_generator/Schema.cc
 ///
-/// @brief
-/// @author tim
+/// @brief Construct a database backend independant schema
+/// @author Tim Jacobs
 
 //Unit
 #include <basic/database/schema_generator/Schema.hh>
@@ -63,9 +63,9 @@ void Schema::init(){
 void Schema::add_foreign_key(ForeignKey key){
 	this->foreign_keys_.push_back(key);
 	//if the foreign key is also a primary key it will have already been added
-	
+
 	utility::vector1<Column> key_cols = key.columns();
-	
+
 	for(size_t i=1; i <= key_cols.size(); ++i){
 		if(!this->columns_.contains(key_cols[i]))
 		{
@@ -87,35 +87,35 @@ void Schema::add_constraint(ConstraintOP constraint){
 }
 
 std::string Schema::print(){
-	std::string schema_string = "CREATE TABLE IF NOT EXISTS " + table_name_ + "(";
+	std::string schema_string = "CREATE TABLE IF NOT EXISTS " + table_name_ + "(\n\t";
 
 	for (utility::vector1<Column>::const_iterator it=columns_.begin(); it!=columns_.end(); it++){
 		if(it!=columns_.begin()){
-			schema_string += ",";
+			schema_string += ",\n\t";
 		}
 		schema_string += it->print();
 	}
 
 	for(size_t i=1; i<=foreign_keys_.size(); i++){
-		schema_string += "," + foreign_keys_[i].print();
+		schema_string += ",\n\t" + foreign_keys_[i].print();
 	}
 
 	if(primary_key_.columns().size() > 0){
 		if(database_mode_ != "sqlite3"){
-			schema_string += "," + primary_key_.print();
+			schema_string += ",\n\t" + primary_key_.print();
 		}
 		else{
 			//Prevent adding the primary key twice - this will happen if you have an autoincrementing primary key in sqlite3
 			utility::vector1<Column> keys = this->primary_key_.columns();
 
 			if(!(keys.size()==1 && keys.begin()->auto_increment())){
-				schema_string += "," + primary_key_.print();
+				schema_string += ",\n\t" + primary_key_.print();
 			}
 		}
 	}
 
 	for(size_t i=1; i<=constraints_.size(); i++){
-		schema_string += "," + constraints_[i]->print();
+		schema_string += ",\n\t" + constraints_[i]->print();
 	}
 
 	schema_string += ");";
@@ -125,4 +125,3 @@ std::string Schema::print(){
 } // schema_generator
 } // namespace database
 } // namespace utility
-
