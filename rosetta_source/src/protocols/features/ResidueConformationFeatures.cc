@@ -81,6 +81,8 @@ ResidueConformationFeatures::schema() const {
 	non_prot_res_pkeys.push_back(struct_id);
 	non_prot_res_pkeys.push_back(seqpos);
 	
+
+
 	utility::vector1<Column> fkey_cols;
 	fkey_cols.push_back(struct_id);
 	fkey_cols.push_back(seqpos);
@@ -101,7 +103,12 @@ ResidueConformationFeatures::schema() const {
 	Column chinum("chinum",DbInteger(), false);
 	Column chiangle("chiangle",DbReal(), false);
 	
-	Schema nonprotein_residue_angles("nonprotein_residue_angles", PrimaryKey(non_prot_res_pkeys));
+	utility::vector1<Column> non_prot_res_angle_keys;
+	non_prot_res_angle_keys.push_back(struct_id);
+	non_prot_res_angle_keys.push_back(seqpos);
+	non_prot_res_angle_keys.push_back(chinum);
+
+	Schema nonprotein_residue_angles("nonprotein_residue_angles", PrimaryKey(non_prot_res_angle_keys));
 	nonprotein_residue_angles.add_column(struct_id);
 	nonprotein_residue_angles.add_column(seqpos);
 	nonprotein_residue_angles.add_column(chinum);

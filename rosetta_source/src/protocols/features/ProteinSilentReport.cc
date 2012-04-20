@@ -135,8 +135,8 @@ ProteinSilentReport::write_schema_to_db(
 	pdb_data_features_->write_schema_to_db(db_session);
 	pose_conformation_features_->write_schema_to_db(db_session);
 	pose_comments_features_->write_schema_to_db(db_session);
-	protein_residue_conformation_features_->write_schema_to_db(db_session);
 	residue_features_->write_schema_to_db(db_session);
+	protein_residue_conformation_features_->write_schema_to_db(db_session);
 	residue_conformation_features_->write_schema_to_db(db_session);
 	job_data_features_->write_schema_to_db(db_session);
 }
@@ -262,10 +262,10 @@ ProteinSilentReport::write_full_report(
 
 	pose_comments_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);
-	protein_residue_conformation_features_->report_features(
-		pose, relevant_residues, struct_id, db_session);
     residue_features_->report_features(
         pose, relevant_residues, struct_id, db_session);
+	protein_residue_conformation_features_->report_features(
+		pose, relevant_residues, struct_id, db_session);
     residue_conformation_features_->report_features(
         pose, relevant_residues, struct_id, db_session);
     job_data_features_->report_features(
