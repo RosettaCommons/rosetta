@@ -70,7 +70,7 @@ void ThisApplication::register_options() {
 	using namespace basic::options::OptionKeys;
 	NEW_OPT( f, "fragment file", "" );
 	NEW_OPT( s, "pdb file name", "" );
-	NEW_OPT( o, "output filename", "default" );
+	NEW_OPT( o, "output filename", "output" );
 	NEW_OPT( rmsd, "output filename", 1.0 );
 }
 
@@ -88,9 +88,9 @@ main( int argc, char * argv [] )
 	using namespace basic::options::OptionKeys;
 
 	ThisApplication::register_options();
-  devel::init(argc, argv);
+	devel::init(argc, argv);
 
-	// output file
+	// output file //////////////////////////////////////////////////////////////////////////////////////////////////
 	std::ofstream output_;
 	std::ostringstream filename;
 	if( option[ o ].active() ) {
@@ -119,14 +119,14 @@ main( int argc, char * argv [] )
 	fasta_.open( filename.str().c_str() ,std::ios::out );
 
 
-	//
+	// rmsd //////////////////////////////////////////////////////////////////////////////////////////////////
 	core::Real rmsd_cutoff_ = option[ rmsd ]();
 
-	// read structure
+	// read structure //////////////////////////////////////////////////////////////////////////////////////////////////
 	core::pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, option[ s ]() );
 
-	// read fragments
+	// read fragments //////////////////////////////////////////////////////////////////////////////////////////////////
 	using core::fragment::FragSetOP;
 	using core::fragment::FragData;
 	using core::fragment::FrameList;
@@ -144,7 +144,7 @@ main( int argc, char * argv [] )
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 	core::util::switch_to_residue_type_set( test_pose, core::chemical::CENTROID );
 
-	// intialize
+	// intialize //////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< utility::vector1<Size> > freq( pose.total_residue(), utility::vector1<Size>( 20, 0 ) );
 	for( Size i=1; i<=pose.total_residue(); i++ ) {
 		for( Size j=1; j<=20; j++ ) {
@@ -155,26 +155,32 @@ main( int argc, char * argv [] )
 	for ( FrameIterator frame = fragset->begin(); frame != fragset->end(); ++frame ) {
 
 		Size const start ( frame->start() );
+		if( ( start + ( frame->length() - 1 ) ) > pose.total_residue() ) continue;
 		runtime_assert( start <= pose.total_residue() );
-
+		
 		for ( Size i=1; i<=frame->nr_frags(); i++ ) {
 			// insert fragment
+			
 			frame->apply( i, test_pose );
 			// calc rmsd
 			core::Real rmsd = CA_rmsd( pose, test_pose, start, start + frame->length() - 1 );
+
+			
 			if( rmsd <= rmsd_cutoff_ ) {
 				FragData fragdat = frame->fragment( i );
 				for( Size j=1; j<=fragdat.size(); j++ ) {
+					
 					Size res = start + j - 1;
 					freq[ res ][ core::chemical::aa_from_oneletter_code( fragdat.sequence( j ) ) ] ++;
-					//std::cout << j << " " << res << " " << fragdat.sequence( j ) << " " << fragdat.sequence() << std::endl;
+					
+					// std::cout << j << " " << res << " " << fragdat.sequence( j ) << " " << fragdat.sequence() << std::endl;
+					
 				}
 			}
 		}
 	} // FrameIterator
-
-
-	/// output
+	
+	/// output //////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > total;
 	total.resize( pose.total_residue() );
 	for( Size i=1; i<=pose.total_residue(); i++ ) {
@@ -184,9 +190,9 @@ main( int argc, char * argv [] )
 		}
 	}
 
-  using ObjexxFCL::fmt::I;
-  using ObjexxFCL::fmt::F;
-  using ObjexxFCL::fmt::RJ;
+	using ObjexxFCL::fmt::I;
+	using ObjexxFCL::fmt::F;
+	using ObjexxFCL::fmt::RJ;
 
 	output_ << " RES" << " ";
 	for( Size i=1; i<=20; i++ ) {
@@ -212,16 +218,19 @@ main( int argc, char * argv [] )
 	for( Size i=1; i<=pose.total_residue(); i++ ) {
 		output_ << I( 4, i ) << " ";
 		for( Size j=1; j<=20; j++ ) {
-			output_ << F( 5, 2, core::Real( freq[ i ][ j ] )/core::Real( total[ i ] ) ) << " ";
+			if( total[ i ] == 0 ) {
+				output_ << F( 5, 2, 0.0 ) << " ";
+			} else {
+				output_ << F( 5, 2, core::Real( freq[ i ][ j ] )/core::Real( total[ i ] ) ) << " ";
+			}
 		}
 		output_ << std::endl;
 	}
 	output_ << std::endl;
 
-
-	//////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Size l( 0 );
-	fasta_ << ">idea.L" << std::endl;
+	fasta_ << ">ideal.L" << std::endl;
 	resfile_ << " start" << std::endl;
 	for( Size i=1; i<=pose.total_residue(); i++ ) {
 
