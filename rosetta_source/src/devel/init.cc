@@ -27,6 +27,7 @@
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
 //#include <devel/constrained_sequence_design/ConstrainedDesignMoverCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
+#include <devel/matdes/TaskAwareSymMinMoverCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -41,6 +42,7 @@
 #include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 #include <devel/matdes/BuildingBlockInterfaceOperationCreator.hh>
 #include <devel/matdes/RestrictToNonzeroSASAOperationCreator.hh>
+#include <devel/matdes/RestrictIdentitiesToRepackingOperationCreator.hh>
 
 #include <utility/vector1.hh>
 
@@ -53,11 +55,13 @@ protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalcula
 protocols::moves::MoverRegistrator< devel::znhash::InsertZincCoordinationRemarkLinesCreator > reg_InsertZincCoordinationRemarkLinesCreator;
 protocols::moves::MoverRegistrator< znhash::LoadZnCoordNumHbondCalculatorMoverCreator > reg_LoadZnCoordNumHbondCalculatorMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
+static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 
 // Task creators
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
+static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesToRepackingOperationCreator > RestrictIdentitiesToRepackingOperationCreator_registrator;
 
 void init( int argc, char * argv [] )
 {

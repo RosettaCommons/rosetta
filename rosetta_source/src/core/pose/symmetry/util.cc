@@ -919,6 +919,35 @@ sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
 	return f;
 }
 
+// @brief given a symmetric pose and a jump number, get_sym_aware_jump_num
+// translates the jump number into the corresponding SymDof so that the
+// symmetric can moved moved appropriately.
+int
+get_sym_aware_jump_num ( core::pose::Pose const & pose, int jump_num ) {
+
+	using namespace core::conformation::symmetry;
+
+	int sym_jump = jump_num;
+  if (core::pose::symmetry::is_symmetric(pose)) {
+	  SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+    std::map<Size,SymDof> dofs = sym_info->get_dofs();
+    sym_jump = 0;
+    for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
+      Size jump_num = i->first;
+      if (sym_jump == 0) {
+        sym_jump = jump_num;
+      } else {
+        utility_exit_with_message("Warning! Multiple symmetric DOFs found!");
+      }
+    }
+    if (sym_jump == 0) {
+      utility_exit_with_message("No sym_dofs found!");
+    }
+  }
+
+	return sym_jump;
+
+} // get_symdof_from_jump_num
 
 
 } // symmetry

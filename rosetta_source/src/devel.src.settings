@@ -77,10 +77,12 @@ sources = {
 	],
         "devel/matdes" : [
                 "util",
+		"TaskAwareSymMinMover",
                 "Symmetrizer",
                 "SymmetrizerSampler",
                 "BuildingBlockInterfaceOperation",
                 "RestrictToNonzeroSASAOperation",
+		"RestrictIdentitiesToRepackingOperation",
         ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",

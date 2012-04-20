@@ -315,6 +315,53 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 	}
 }
 
+void
+newer_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) {
+
+  using namespace core;
+
+  core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+  core::scoring::sc::ShapeComplementarityCalculator scc;
+  scc.Init();
+  
+  // Figure out which chains touch chain A, and add the residues from those chains
+  // into the sc surface objects  
+  Size nres_monomer = symm_info->num_independent_residues();
+  for (Size i=1; i<=nres_monomer; ++i) {
+    scc.AddResidue(0, pose.residue(i));
+		TR << "scChainA: " << i << pose.residue(i).name3() << std::endl;
+  }
+  for (Size i=2; i<=symm_info->subunits(); ++i) {
+    Size start = (i-1)*nres_monomer;
+    bool contact = false;
+    if (std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) {
+			for (Size ir=1; ir<=nres_monomer; ir++) {
+				scc.AddResidue(0, pose.residue(ir+start));
+				TR << "scChainA: " << ir+start << pose.residue(ir+start).name3() << std::endl;
+			}
+		} else {
+/*
+	    for (Size ir=1; ir<=nres_monomer; ir++) {
+	      if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
+	        contact = true;
+	        break;
+	      }
+	    }
+	    if (contact) {
+*/
+	      for (Size ir=1; ir<=nres_monomer; ir++) {
+	        scc.AddResidue(1, pose.residue(ir+start));
+					TR << "scChainB: " << ir+start << pose.residue(ir+start).name3() << std::endl;
+	      }
+//	    }
+	  }
+	}
+  if (scc.Calc()) {
+    sc = scc.GetResults().sc;
+    int_area = scc.GetResults().surface[2].trimmedArea;
+  }
+}
+
 // Pose must be scored in order for this to work.
 Pose
 get_neighbor_subs (Pose const &pose, vector1<Size> intra_subs)
@@ -609,7 +656,7 @@ void
 	
 	    // Calculate the surface area and surface complementarity for the interface
 	    Real int_area = 0; Real sc = 0;
-	    new_sc(pose, intra_subs, int_area, sc);
+	    newer_sc(pose, intra_subs, int_area, sc);
 	
 	    // Get the packing score
 	    Real packing = get_atom_packing_score(pose, intra_subs, 9.0);

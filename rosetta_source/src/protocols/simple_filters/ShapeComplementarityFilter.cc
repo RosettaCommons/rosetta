@@ -18,6 +18,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 
 // Utility headers
@@ -108,7 +109,8 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 			return 0;
 
 	} else {
-		if(!scc_.Calc( pose, jump_id_ ))
+		int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id_);
+		if(!scc_.Calc( pose, sym_aware_jump_id ))
 			return 0;
 	}
 

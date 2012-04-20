@@ -134,6 +134,10 @@ make_residue_mask_symmetric( core::pose::Pose const &p, utility::vector1< bool >
 core::kinematics::FoldTree
 sealed_symmetric_fold_tree( core::pose::Pose  & pose );
 
+int
+get_sym_aware_jump_num ( core::pose::Pose const & pose, int jump_num );
+
+
 } // symmetry
 } // pose
 } // core

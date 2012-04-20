@@ -206,7 +206,7 @@ int ShapeComplementarityCalculator::Calc(core::pose::Pose const & pose, core::Si
 		core::conformation::Residue const & residue = pose.residue(i);
 		if(residue.type().name() == "VRT")
 			continue;
-		AddResidue(is_upstream[i] ? 0 : 1, residue);
+		AddResidue(is_upstream(i) ? 0 : 1, residue);
 	}
 
 	return Calc();
