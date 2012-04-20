@@ -122,19 +122,24 @@ sources = {
 		#"cen_hybridize_ft", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"cen_relax", # /* Frank Dimaio,Documentation Location,Demo Location */
 	],
-	"pilot/grant" : [
-		#"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */
-	],
-	"pilot/johnk" : [
-		#"johnk_recompute_score_and_rmsd",
-		#"johnk_interface_recompute_score_and_rmsd",
-		#"johnk_interface_geosol_minimization",
-		#"johnk_gapless_threading",
-		#"johnk_parametrize_geometric_solvation",
-		#"johnk_exact_geometric_solvation",
-		#"justin_identify_holes",
-		#"justin_local_backrub",
-		#"srirupa_phosphoArg_build_rotamers",
+         "pilot/grant" : [
+             #"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */
+         ],
+ 	"pilot/johnk" : [
+                #"chet_trp_to_gly",
+                #"chet_report_rmsd",
+                #"constellation_list",
+                #"johnk_docking_protocol",
+                #"johnk_recompute_score_and_rmsd",
+                #"johnk_interface_recompute_score_and_rmsd",
+                #"johnk_interface_geosol_minimization",
+                #"johnk_gapless_threading",
+                #"johnk_parametrize_geometric_solvation",
+                #"johnk_exact_geometric_solvation",
+                #"justin_identify_holes",
+                #"justin_local_backrub",
+                #"phosphoArg_build_rotamers",
+                #"phosphoArg_minimize",
 		#"srirupa_two_loops",
 		#"ragul_backbone_diversity",
 		#"nadeem_find_destabilizing_mutation",
@@ -145,14 +150,24 @@ sources = {
 	],
 	"pilot/jstev" : [
 		#"collect_features",
-	],
-	"pilot/ragul" : [
-		#"ragul_fingerprint_test",
-		#"ragul_darc_minimize",
-		"ragul_darc_run",
-		"ragul_darc_score",
-	],
-	"pilot/whitney" : [
+ 	],
+ 	"pilot/biokhar" : [
+		#"karen_compare_different_proteins",
+		#"karen_pocket_compare",
+		#"karen_pocket_save",
+                #"karen_compare_pocket_rmsd",
+ 	],
+ 	"pilot/ragul" : [
+               # "ragul_fingerprint_test",
+                #"ragul_minimize",
+                #"ragul_darc_minimize",
+                "ragul_darc_run",
+                #"ragul_test_darc_run",
+                #"ragul_test_darc_score",
+                #"ragul_run_darc_with_input_eggshell",
+                #"ragul_darc_get_rmsd",
+ 	],
+ 	"pilot/whitney" : [
 		#"whitney_identify_epitope",
 		#"whitney_prepare_native",
 		#"whitney_local_backrub",
@@ -168,8 +183,11 @@ sources = {
 		#"david_open_pocket",
 		#"david_check_pocket",
 		#"david_recompute_score_and_rmsd",
+		#"david_align_and_recompute_score_and_rmsd",
+		#"david_align_append_and_recompute_score_and_rmsd",
 		#"david_find_best_pocket",
-		#"david_find_best_contact_pocket"
+		#"david_find_best_contact_pocket",
+		#"david_darc_multirun",
 	],
 	"pilot/kuichan" : [
 		#"design_disulfide",

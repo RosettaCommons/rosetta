@@ -125,12 +125,12 @@ std::set <std::string> interface;
   for( Size i = 1; i <= pose.total_residue(); ++i){
     if (last == -100){
       last = pose.pdb_info()->number(i);
-      //std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
+      std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
       continue;
     }
     if (last > pose.pdb_info()->number(i)+1){
       for (int j = last-1; j > pose.pdb_info()->number(i); j--){
-        //std::cout<<seq[j-1]<<"\n";
+        std::cout<<seq[j-1]<<"\n";
         core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( seq[j-1] ).exclude_variants().select( rsd_set )[1] );
         core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
         pose.append_polymer_residue_after_seqpos(*new_rsd, i, true );
@@ -140,7 +140,7 @@ std::set <std::string> interface;
 
     }else if (last < pose.pdb_info()->number(i)-1){
       for (int j = last+1; j < pose.pdb_info()->number(i); j++){
-        //std::cout<<seq[j-1]<<"\n";
+        std::cout<<seq[j-1]<<"\n";
         core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( seq[j-1] ).exclude_variants().select( rsd_set )[1] );
         core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
         pose.append_polymer_residue_after_seqpos(*new_rsd, i-1, true );
@@ -151,7 +151,7 @@ std::set <std::string> interface;
 
 
     }
-    //std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
+    std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
     last = pose.pdb_info()->number(i);
   }
 

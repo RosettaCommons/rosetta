@@ -36,6 +36,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
 
 #include <core/scoring/rms_util.hh>
 
@@ -47,6 +48,7 @@
 
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -58,6 +60,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 OPT_KEY( String, ref_decoy )
+OPT_KEY( String, contact_list )
 
 static basic::Tracer TR( "apps.pilot.david_recompute_score_and_rmsd.main" );
 
@@ -80,7 +83,8 @@ void define_interface( core::pose::Pose & ref_pose ) {
 	}
 
 	TR <<"sele ";
-
+	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+        (*scorefxn)(ref_pose);
 	EnergyGraph & energy_graph(ref_pose.energies().energy_graph());
 	for ( graph::Graph::EdgeListIter
                                 iru  = energy_graph.get_node( lig_res_num )->lower_edge_list_begin(),
@@ -154,12 +158,33 @@ is_interface_heavyatom(
 	return false;
 }
 
+bool
+is_interface_bbatom(
+	core::pose::Pose const & pose,
+	 core::pose::Pose const & ,//pose2,
+	core::Size resno,
+	core::Size atomno
+)
+{
+	// ws get residue "key" for set
+	std::ostringstream residuestream;
+	residuestream << pose.pdb_info()->chain(resno) << pose.pdb_info()->number(resno);
+	std::string res_id = residuestream.str();
+
+	core::conformation::Residue const & rsd = pose.residue(resno);
+
+	if ( interface.count( res_id ) > 0 ) return rsd.is_protein() && rsd.atom_is_backbone(atomno);
+
+	return false;
+}
+
 /// General testing code
 int
 main( int argc, char * argv [] )
 {
 
 	NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
+	NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
 	devel::init(argc, argv);
 
 	TR << "Starting recomputing scores and rmsds" << std::endl;
@@ -172,7 +197,7 @@ main( int argc, char * argv [] )
 	core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname );
 
 	// This is the residue we'll use for the pocket constraint
-       std::string resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
+/*        std::string resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
         int  central_relax_pdb_number;
         char chain= ' ';
         core::Size central_relax_res = 0;
@@ -198,7 +223,7 @@ main( int argc, char * argv [] )
                 }
         }
 
-
+*/
 
 
 /*
@@ -210,42 +235,65 @@ main( int argc, char * argv [] )
                 }
         }
 */
-        if ( central_relax_res == 0 ) {
-                std::cerr << "ERROR!! Could not find residue measure pocket constraint" << std::endl;
-                exit(1);
-        }
+        //if ( central_relax_res == 0 ) {
+        //        std::cerr << "ERROR!! Could not find residue measure pocket constraint" << std::endl;
+        //        exit(1);
+        //}
 
 	// scoring function
 	//scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	//scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
 
 	// PocketConstraint set to unweighted (1)
-        scorefxn->set_weight( core::scoring::pocket_constraint, 1 );
+        //scorefxn->set_weight( core::scoring::pocket_constraint, 1 );
 
 	// Calculate score without Pocket Constraint
-	(*scorefxn)(ref_pose);
-	core::Real ref_score = ref_pose.energies().total_energies()[ total_score ];
-	define_interface( ref_pose );
+	//(*scorefxn)(ref_pose);
+	//core::Real ref_score = ref_pose.energies().total_energies()[ total_score ];
+  	std::string const cfilename = option[ contact_list ];
+  	if ( cfilename != "" ){
+  	  std::ifstream ifs(cfilename.c_str(), std::ifstream::in);
+ 	   if (!ifs.is_open()){
+  	    std::cout<< "Error opening contact list file "<<cfilename<<std::endl;
+ 	     return -100;
+  	  }
+  	  //ifb.open (cfilename,std::ios::in);
+  	  //std::ostream ios(&ifb);
+  	  std::string intres;
+  	  while (ifs.good()){
+  	    ifs >> intres;
+  	    interface.insert(intres);
+          }
+
+
+	}else{
+	    define_interface( ref_pose );
+	}
 
 	TR << "Defined interface" << std::endl;
 
 	// Add pocket constraint, rescore
-	TR << "Add pocket scoring ref_pose" << std::endl;
+	//TR << "Add pocket scoring ref_pose" << std::endl;
 	//core::scoring::constraints::PocketConstraintOP tmp( new core::scoring::constraints::PocketConstraint( ref_pose, central_relax_res ));
 	//ref_pose.add_constraint( tmp );
 	//ref_pose.add_constraint( new core::scoring::constraints::PocketConstraint( ref_pose) );
-	TR << "rescore" << std::endl;
-        (*scorefxn)(ref_pose);
-	core::Real const starting_pocket_score = ref_pose.energies().total_energies()[ pocket_constraint ];
+	//TR << "rescore" << std::endl;
+        //(*scorefxn)(ref_pose);
+	//core::Real const starting_pocket_score = ref_pose.energies().total_energies()[ pocket_constraint ];
 
-	TR << "P score: " << starting_pocket_score<< std::endl;
+	//TR << "P score: " << starting_pocket_score<< std::endl;
 //	ref_pose.remove_constraint( tmp );
 
-        scorefxn->set_weight( core::scoring::pocket_constraint, 0 );
+        //scorefxn->set_weight( core::scoring::pocket_constraint, 0 );
 	// Open output file, generate the header line (save it for printing in the log later), print to file
-	std::string outfname = "score_vs_rmsd.out";
+	std::stringstream filename;
+	if (!option[ OptionKeys::out::output_tag ]().empty()){
+	  filename << "score_vs_rmsd." << option[ OptionKeys::out::output_tag ]()<<".out";
+	}else {
+	  filename<<"score_vs_rmsd.out";
+	}
   utility::io::ozstream outstream;
-	outstream.open(outfname, std::ios::out);
+	outstream.open(filename.str().c_str(), std::ios::out);
 
 	outstream << "fname ca_rms allatom_rms relative_score relative_p_constr" << std::endl;
 
@@ -258,30 +306,32 @@ main( int argc, char * argv [] )
 		core::import_pose::pose_from_pdb( curr_pose, curr_decoy_fname );
 
 		// This is the residue we'll use for PocketConstraint
-        	central_relax_res = 0;
-        	for ( int j = 1, resnum = curr_pose.total_residue(); j <= resnum; ++j ) {
-                if ( curr_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
-                        central_relax_res = j;
-                }
-        }
-	TR << "Set constraint to 0" << std::endl;
-        	scorefxn->set_weight( core::scoring::pocket_constraint, 0 );
-		(*scorefxn)(curr_pose);
+        	//central_relax_res = 0;
+        	//for ( int j = 1, resnum = curr_pose.total_residue(); j <= resnum; ++j ) {
+                //if ( curr_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
+                //        central_relax_res = j;
+                //}
+          //}
+	//TR << "Set constraint to 0" << std::endl;
+        	//scorefxn->set_weight( core::scoring::pocket_constraint, 0 );
+		//(*scorefxn)(curr_pose);
 
-	TR << "Set constraint to 1" << std::endl;
-		core::Real score_diff = curr_pose.energies().total_energies()[ total_score ] - ref_score;
-        	scorefxn->set_weight( core::scoring::pocket_constraint, 1 );
+	//TR << "Set constraint to 1" << std::endl;
+		//core::Real score_diff = curr_pose.energies().total_energies()[ total_score ] - ref_score;
+        	//scorefxn->set_weight( core::scoring::pocket_constraint, 1 );
 
-		curr_pose.add_constraint( new protocols::constraints_additional::PocketConstraint( curr_pose) );
+		//curr_pose.add_constraint( new protocols::constraints_additional::PocketConstraint( curr_pose) );
 
         	// rescore, report new score
-        	(*scorefxn)(curr_pose);
-	TR << "Done rescoring" << std::endl;
-		core::Real p_score_diff = curr_pose.energies().total_energies()[ pocket_constraint ];
+        	//(*scorefxn)(curr_pose);
+	//TR << "Done rescoring" << std::endl;
+		//core::Real p_score_diff = curr_pose.energies().total_energies()[ pocket_constraint ];
 		core::Real CA_rms = rmsd_with_super( ref_pose, curr_pose, is_protein_CA );
 		core::Real heavyatom_rms = rmsd_with_super( ref_pose, curr_pose, is_interface_heavyatom );
+		core::Real bb_rms = rmsd_with_super( ref_pose, curr_pose, is_interface_bbatom );
 
-		outstream << curr_decoy_fname << ' ' << CA_rms << ' ' << heavyatom_rms << ' ' << score_diff << ' ' << p_score_diff <<std::endl;
+		//outstream << curr_decoy_fname << ' ' << CA_rms << ' ' << heavyatom_rms << ' ' << score_diff << ' ' << p_score_diff <<std::endl;
+		outstream << curr_decoy_fname << ' ' << CA_rms << ' ' << heavyatom_rms << ' ' << bb_rms << std::endl;
 
 	}
 
