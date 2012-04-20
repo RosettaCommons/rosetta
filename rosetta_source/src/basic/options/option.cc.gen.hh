@@ -612,10 +612,10 @@ option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for ea
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
@@ -784,6 +784,11 @@ option.add( basic::options::OptionKeys::score::hackelec_min_dis, "changes the mi
 option.add( basic::options::OptionKeys::score::hackelec_max_dis, "changes the maximum distance cut-off for hack-elec energy" ).def(5.5);
 option.add( basic::options::OptionKeys::score::hackelec_die, "changes the dielectric constant for hack-elec energy" ).def(10.0);
 option.add( basic::options::OptionKeys::score::hackelec_r_option, "changes the dielectric from distance dependent to distance independent" ).def(false);
+option.add( basic::options::OptionKeys::score::nmer_ref_energies, "nmer ref energies database filename" );
+option.add( basic::options::OptionKeys::score::nmer_pssm, "nmer pssm database filename" );
+option.add( basic::options::OptionKeys::score::nmer_pssm_list, "nmer pssm database filename" );
+option.add( basic::options::OptionKeys::score::nmer_pssm_scorecut, "nmer pssm scorecut gate for ignoring lowscore nmers" ).def(0.0);
+option.add( basic::options::OptionKeys::score::nmer_ref_seq_length, "length of nmers in nmer_ref score" ).def(9);
 option.add( basic::options::OptionKeys::corrections::corrections, "corrections option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::correct, "turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::score, "score option group" ).legal(true).def(true);
@@ -1220,12 +1225,12 @@ option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No descripti
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
-option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
+option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
@@ -1680,7 +1685,7 @@ option.add( basic::options::OptionKeys::loops::kic_max_seglen, "maximum size of 
 option.add( basic::options::OptionKeys::loops::kic_recover_last, "If true, do not recover lowest scoring pose after each outer cycle and at end of protocol in kic remodel and refine" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_min_after_repack, "Should the kinematic closure refine protocol minimize after repacking steps" ).def(false);
 option.add( basic::options::OptionKeys::loops::optimize_only_kic_region_sidechains_after_move, "Should we perform rotamer trials and minimization after every KIC move but only within the loops:neighbor_dist of the residues in the moved KIC segment. Useful to speed up when using very large loop definitions (like when whole chains are used for ensemble generation)." ).def(false);
-option.add( basic::options::OptionKeys::loops::max_kic_build_attempts, "Number of attempts at initial kinematic closure loop building" ).def(100);
+option.add( basic::options::OptionKeys::loops::max_kic_build_attempts, "Number of attempts at initial kinematic closure loop building" ).def(10000);
 option.add( basic::options::OptionKeys::loops::remodel_kic_attempts, "Number of kic attempts per inner cycle during perturb_kic protocol" ).def(300);
 option.add( basic::options::OptionKeys::loops::max_kic_perturber_samples, "Maximum number of kinematic perturber samples" ).def(2000);
 option.add( basic::options::OptionKeys::loops::nonpivot_torsion_sampling, "enables sampling of non-pivot residue torsions when the kinematic loop closure segment length is > 3" ).legal(true).legal(false).def(true);
@@ -1832,11 +1837,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_p
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
@@ -1945,7 +1950,7 @@ option.add( basic::options::OptionKeys::optE::fit_reference_energies_to_aa_profi
 option.add( basic::options::OptionKeys::optE::starting_refEs, "IterativeOptEDriver flag: specify a weights file to read reference energies from; do not optimize reference energies in the first round of weight fitting" );
 option.add( basic::options::OptionKeys::optE::repeat_swarm_optimization_until_fitness_improves, "After the first time though the particle swarm optimization phase, if the end fitness is not better than the start fitness, recreate the swarm around the start dofs and repeat the swarm optimization." ).def(false);
 option.add( basic::options::OptionKeys::optE::design_with_minpack, "Use the min-packer to design in the sequence recovery stages." ).def(false);
-option.add( basic::options::OptionKeys::optE::limit_bad_scores, "Quit after one million inf or NaN errors in optE objective function" );
+option.add( basic::options::OptionKeys::optE::limit_bad_scores, "Quit after 100,000 inf or NaN errors in optE objective function" );
 option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
 option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );

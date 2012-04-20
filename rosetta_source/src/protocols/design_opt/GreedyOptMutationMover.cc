@@ -66,12 +66,12 @@ using std::pair;
 GreedyOptMutationMover::GreedyOptMutationMover() :
 	Mover( GreedyOptMutationMoverCreator::mover_name() ),
 	task_factory_( NULL ),
-	filter_( NULL ),
-	relax_mover_( NULL ),
 	scorefxn_( NULL ),
+	relax_mover_( NULL ),
+	filter_( NULL ),
 	sample_type_( "low" ),
-	diversify_lvl_( 1 ),
 	dump_pdb_( false ),
+	diversify_lvl_( 1 ),
 	stopping_condition_( NULL )
 {
 	if( sample_type_ == "high" ){
@@ -88,10 +88,10 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 GreedyOptMutationMover::GreedyOptMutationMover(
 	core::pack::task::TaskFactoryOP task_factory,
 	core::scoring::ScoreFunctionOP scorefxn,
-	protocols::filters::FilterOP filter,
 	protocols::moves::MoverOP relax_mover,
-	bool dump_pdb,
+	protocols::filters::FilterOP filter,
 	std::string sample_type,
+	bool dump_pdb,
 	core::Size diversify_lvl,
 	protocols::filters::FilterOP stopping_condition
 ) :
@@ -267,21 +267,21 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 	using namespace core::chemical;
 
 	//store input pose
-	core::pose::Pose pose_orig( pose );
+	core::pose::Pose start_pose( pose );
+	design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
+				task_factory(), scorefxn(), relax_mover(), filter(), sample_type(), dump_pdb() ) );
 
 	//create vec of pairs of seqpos, vector of AA/val pairs that pass input filter
 	//only calc the ptmut data and sort once per pose, not at every nstruct iteration
 	//but how will we know if that data is still valid? what if the backbone has moved?
 	//the best answer is to store the pose passed to apply in a private variable (ref_pose_)
 	//and only calc and sort if ref_pose_ is still undef or doesnt match apply pose
-	if( ref_pose_.empty() || !pose_coords_are_same( pose_orig, ref_pose_ ) ){
+	if( ref_pose_.empty() || !pose_coords_are_same( start_pose, ref_pose_ ) ){
 		seqpos_aa_val_vec_.clear();
 		//get the point mut values
-		design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
-					task_factory(), scorefxn(), relax_mover(), filter(), sample_type(), dump_pdb() ) );
-		ptmut_calc->calc_point_mut_filters( pose_orig, seqpos_aa_val_vec_ );
+		ptmut_calc->calc_point_mut_filters( start_pose, seqpos_aa_val_vec_ );
 		//and (re)set ref_pose_ to this pose
-		ref_pose_ = pose_orig;
+		ref_pose_ = start_pose;
 
 		//this part sorts the seqpos/aa/val data
 		//first over each seqpos by aa val, then over all seqpos by best aa val
@@ -301,7 +301,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 	TR<<"Combining sorted independently optimal mutations… " << std::endl;
 	//reset pose to original, init starting filter val
 	//must use same relax mover before scoring so comparison is fair!
-	pose = pose_orig;
+	pose = start_pose;
 	relax_mover()->apply( pose );
 	Real best_val( flip_sign_ * filter()->report_sm( pose ) );
 	pose::Pose best_pose( pose );
@@ -322,39 +322,13 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		//dont need to make a "mutation" if target_aa is same as original aa
 		if( target_aa == pose.residue( resi ).type().aa() ) continue;
 
-		//make bool vector of allowed aa's [1,20], all false except for target_aa(s)
-		vector1< bool > allowed_aas;
-		allowed_aas.clear();
-		allowed_aas.assign( num_canonical_aas, false );
-		allowed_aas[ target_aa ] = true;
-		//make mut_res task factory, mutates resi to target_aa
-		core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory();
-		//make mutate_residue packer task, mutate target res, repack all others
-		protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op =
-			new protocols::toolbox::task_operations::DesignAroundOperation;
-		repack_around_op->design_shell( -1.0 ); //neg radius insures no designing nbrs
-		repack_around_op->repack_shell( 8.0 );
-		repack_around_op->allow_design( true ); //because we still want to design resi
-		repack_around_op->include_residue( resi );
-		mut_res->push_back( repack_around_op );
-		PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
-		mutate_residue->initialize_from_command_line().or_include_current( true );
-		mutate_residue->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
-		TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
-		//run PackRotamers with mutate_residue task
-		protocols::simple_moves::PackRotamersMoverOP pack;
-		if( core::pose::symmetry::is_symmetric( pose ) )
-			pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
-		else
-			pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
-		pack->apply( pose );
-		TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
-		//then run input relax mover
-		relax_mover()->apply( pose );
 		//then check if passes input filter, bail out if it doesn't
-		//TODO: if no filter defined, just use total_score
-		bool const filter_pass( filter()->apply( pose ) );
-		Real const val( flip_sign_ * filter()->report_sm( pose ) );
+		bool filter_pass;
+		vector1< Real > vals;
+		ptmut_calc->mutate_and_relax( pose, resi, target_aa );
+		ptmut_calc->eval_filters( pose, filter_pass, vals );
+		Real const val( vals[ 1 ] );
+
 		if( !filter_pass ){
 			TR<<"Filter fails with value "<< val << std::endl;
 			continue;

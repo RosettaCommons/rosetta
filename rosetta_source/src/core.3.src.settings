@@ -348,6 +348,8 @@ sources = {
 		"MMLJEnergyInter",
 		"MMLJEnergyIntra",
 		"MMTorsionEnergy",
+    "NMerRefEnergy",
+    "NMerPSSMEnergy",
 		"OmegaTetherEnergy",
 		"OneBodyEnergy",
 		"P_AA_Energy",

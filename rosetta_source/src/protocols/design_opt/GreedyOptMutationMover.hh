@@ -42,10 +42,10 @@ public:
 	GreedyOptMutationMover(
 		core::pack::task::TaskFactoryOP task_factory,
 		core::scoring::ScoreFunctionOP scorefxn,
-		protocols::filters::FilterOP filter,
 		protocols::moves::MoverOP relax_mover,
-		bool dump_pdb = false,
+		protocols::filters::FilterOP filter,
 		std::string sample_type = "low",
+		bool dump_pdb = false,
 		core::Size diversify_lvl = core::Size( 1 ), 
 		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
 	);
@@ -62,10 +62,10 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
-	protocols::filters::FilterOP filter() const;
-	void filter( protocols::filters::FilterOP filter );
 	protocols::moves::MoverOP relax_mover() const;
 	void relax_mover( protocols::moves::MoverOP relax_mover );
+	protocols::filters::FilterOP filter() const;
+	void filter( protocols::filters::FilterOP filter );
 	bool dump_pdb() const;
 	void dump_pdb( bool const dump_pdb );
 	std::string sample_type() const;
@@ -77,12 +77,12 @@ public:
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-	protocols::filters::FilterOP filter_;
 	protocols::moves::MoverOP relax_mover_;
+	protocols::filters::FilterOP filter_;
 	std::string sample_type_;
+	bool dump_pdb_;
 	core::Size diversify_lvl_;
 	core::Real flip_sign_;
-	bool dump_pdb_;
 	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
 	utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > seqpos_aa_val_vec_;
 	core::pose::Pose ref_pose_;

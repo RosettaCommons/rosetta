@@ -91,6 +91,11 @@ namespace score { extern RealOptionKey const hackelec_min_dis; }
 namespace score { extern RealOptionKey const hackelec_max_dis; }
 namespace score { extern RealOptionKey const hackelec_die; }
 namespace score { extern BooleanOptionKey const hackelec_r_option; }
+namespace score { extern StringOptionKey const nmer_ref_energies; }
+namespace score { extern StringOptionKey const nmer_pssm; }
+namespace score { extern StringOptionKey const nmer_pssm_list; }
+namespace score { extern RealOptionKey const nmer_pssm_scorecut; }
+namespace score { extern IntegerOptionKey const nmer_ref_seq_length; }
 
 } // namespace OptionKeys
 } // namespace options

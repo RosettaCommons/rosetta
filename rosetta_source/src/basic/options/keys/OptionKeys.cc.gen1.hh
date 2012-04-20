@@ -1,4 +1,3 @@
-namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
@@ -168,6 +167,11 @@ namespace score { RealOptionKey const hackelec_min_dis( "score:hackelec_min_dis"
 namespace score { RealOptionKey const hackelec_max_dis( "score:hackelec_max_dis" );  }
 namespace score { RealOptionKey const hackelec_die( "score:hackelec_die" );  }
 namespace score { BooleanOptionKey const hackelec_r_option( "score:hackelec_r_option" );  }
+namespace score { StringOptionKey const nmer_ref_energies( "score:nmer_ref_energies" );  }
+namespace score { StringOptionKey const nmer_pssm( "score:nmer_pssm" );  }
+namespace score { StringOptionKey const nmer_pssm_list( "score:nmer_pssm_list" );  }
+namespace score { RealOptionKey const nmer_pssm_scorecut( "score:nmer_pssm_scorecut" );  }
+namespace score { IntegerOptionKey const nmer_ref_seq_length( "score:nmer_ref_seq_length" );  }
 namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }
 namespace corrections { namespace score { BooleanOptionKey const score( "corrections:score" );  } }
@@ -604,6 +608,3 @@ namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multipl
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
 namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
-namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
-namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
-namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }

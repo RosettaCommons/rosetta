@@ -1762,6 +1762,11 @@ Options = Option_Group( '',
 		Option( 'hackelec_max_dis', 'Real', desc='changes the maximum distance cut-off for hack-elec energy', default='5.5'),
 		Option( 'hackelec_die', 'Real', desc='changes the dielectric constant for hack-elec energy', default='10.0'),
 		Option( 'hackelec_r_option', 'Boolean', desc='changes the dielectric from distance dependent to distance independent', default='false'),
+    Option( 'nmer_ref_energies', 'String', desc='nmer ref energies database filename' ),
+    Option( 'nmer_pssm', 'String', desc='nmer pssm database filename' ),
+    Option( 'nmer_pssm_list', 'String', desc='nmer pssm database filename' ),
+    Option( 'nmer_pssm_scorecut', 'Real', desc='nmer pssm scorecut gate for ignoring lowscore nmers', default='0.0' ),
+    Option( 'nmer_ref_seq_length', 'Integer', desc='length of nmers in nmer_ref score', default='9' ),
 	),
 
 	# correction for testing ------------------------------------------------------------

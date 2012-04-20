@@ -265,6 +265,8 @@ enum ScoreType {
 	h2o_intra,
 	ref,
 	seqdep_ref,
+  nmer_ref,
+  nmer_pssm,
 	envsmooth,
 	e_pH,
 	rna_bulge,

@@ -1,3 +1,6 @@
+namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
+namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
+namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
 namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
 namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
 namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }
@@ -605,5 +608,3 @@ namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
-namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
