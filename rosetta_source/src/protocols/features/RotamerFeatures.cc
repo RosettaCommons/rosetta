@@ -255,6 +255,15 @@ RotamerFeatures::report_features(
 			continue;
 		}
 
+		if(residue.type().get_use_ncaa_rotlib()){
+			TR.Warning << "Currently the RotamerFeatures only supports canonical amino acids, but this residue type is '" << residue.type().name() << "'" << endl;
+			continue;
+		}
+
+
+		Size rotamer_bin;
+		bool recognized_residue_type;
+
 		ChiVector const & chis(residue.chi());
 
 		bool semi_rotameric(true);
@@ -277,25 +286,29 @@ RotamerFeatures::report_features(
 		}
 
 
-		Size rotamer_bin;
-
 		if(nchi == 0){
 			continue;
 		} else if( nchi == ONE){
-			RotamerInitializer<ONE>::initialize_rotamer(
+			recognized_residue_type = RotamerInitializer<ONE>::initialize_rotamer(
 				residue, scratch, rotamer_bin);
 		} else if( nchi == TWO){
-			RotamerInitializer<TWO>::initialize_rotamer(
+			recognized_residue_type = RotamerInitializer<TWO>::initialize_rotamer(
 				residue, scratch, rotamer_bin);
 		} else if( nchi == THREE){
-			RotamerInitializer<THREE>::initialize_rotamer(
+			recognized_residue_type = RotamerInitializer<THREE>::initialize_rotamer(
 				residue, scratch, rotamer_bin);
 		} else if( nchi == FOUR){
-			RotamerInitializer<FOUR>::initialize_rotamer(
+			recognized_residue_type = RotamerInitializer<FOUR>::initialize_rotamer(
 				residue, scratch, rotamer_bin);
 		} else {
-			utility_exit();
+			continue;
 		}
+
+		if(!recognized_residue_type){
+			TR.Warning << "Unable to report protein rotamer features for residue " << residue_number << " because there is no rotamer library defined for this residue type: '" << residue.type().name() << "'" << endl;
+			continue;
+		}
+
 
 		vector1< Real > chi_deviations(0, 4);
 

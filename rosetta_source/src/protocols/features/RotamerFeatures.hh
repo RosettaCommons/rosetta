@@ -52,7 +52,7 @@ class RotamerInitializer {
 
 public:
 	static
-	void
+	bool
 	initialize_rotamer(
 		core::conformation::Residue const & residue,
 		core::pack::dunbrack::RotamerLibraryScratchSpace & scratch,
@@ -63,6 +63,10 @@ public:
 		SingleResidueRotamerLibraryCAP generic_rotlib =
 			RotamerLibrary::get_instance().get_rsd_library( residue.type() );
 
+		if(!generic_rotlib){
+			return false;
+		}
+
 		RotamericSingleResidueDunbrackLibrary< T > const & rotlib(
 			dynamic_cast< RotamericSingleResidueDunbrackLibrary< T > const & >(
 				* generic_rotlib));
@@ -71,8 +75,17 @@ public:
 		Size4 rotamer_fixed_vector;
 		core::Size packed_rotno;
 
+		// can't use get_rotamer_from_chi_static because it's private. Perhaps it should be made public?
 		rotlib.get_rotamer_from_chi(residue.chi(), rotamer_vector);
+
+		if(rotamer_vector.size() > 4){
+			//eg LYS_p:dimethylated, perhaps there is a more direct way to
+			//detect cases like this?
+			return false;
+		}
+
 		copy(rotamer_vector.begin(), rotamer_vector.end(), rotamer_fixed_vector.begin());
+
 		packed_rotno = rotlib.rotwell_2_packed_rotno(rotamer_vector);
 		if(packed_rotno == 0){
 			packed_rotno = rotlib.find_another_representative_for_unlikely_rotamer(
@@ -84,6 +97,8 @@ public:
 		PackedDunbrackRotamer< T, core::Real > interpolated_rotamer;
 		rotlib.interpolate_rotamers(
 			residue, scratch, packed_rotno, interpolated_rotamer);
+
+		return true;
 
 	}
 

@@ -92,7 +92,7 @@ public:
 	report_features(
 		core::pose::Pose const & /*pose*/,
 		utility::vector1< bool > const & /*relevant_residues*/,
-        boost::uuids::uuid /*parent uuid*/,
+		boost::uuids::uuid /*parent uuid*/,
 		utility::sql_database::sessionOP /*db_session*/
 	);
 

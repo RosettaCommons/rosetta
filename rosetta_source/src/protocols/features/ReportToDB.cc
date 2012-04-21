@@ -43,7 +43,7 @@
 #include <protocols/features/BatchFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/util.hh>
-#include <protocols/jd2/JobDistributor.fwd.hh>
+#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
@@ -515,7 +515,9 @@ ReportToDB::initialize_pose(
 		<< "Reporting features for "
 		<< accumulate(relevant_residues.begin(), relevant_residues.end(), 0)
 		<< " of the " << pose.total_residue()
-		<< " total residues in the pose for batch '" << name_ << "'." << endl;
+		<< " total residues in the pose "
+		<< JobDistributor::get_instance()->current_output_name()
+		<< " for batch '" << name_ << "'." << endl;
 
 	return relevant_residues;
 }
