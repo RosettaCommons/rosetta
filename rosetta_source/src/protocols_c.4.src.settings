@@ -76,6 +76,8 @@ sources = {
 		"ResidueTypesFeaturesCreator",
 		"RotamerBoltzmannWeightFeatures",
 		"RotamerBoltzmannWeightFeaturesCreator",
+		"RotamerFeatures",
+		"RotamerFeaturesCreator",
 		"RotamerRecoveryFeatures",
 		"RotamerRecoveryFeaturesCreator",
 		"SaltBridgeFeatures",

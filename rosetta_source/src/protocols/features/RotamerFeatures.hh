@@ -1,0 +1,137 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   protocols/features/RotamerFeatures.hh
+/// @brief  report idealized torsional DOFs Statistics Scientific Benchmark
+/// @author Matthew O'Meara
+
+#ifndef INCLUDED_protocols_features_RotamerFeatures_hh
+#define INCLUDED_protocols_features_RotamerFeatures_hh
+
+// Unit Headers
+#include <protocols/features/FeaturesReporter.hh>
+#include <protocols/features/RotamerFeatures.fwd.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
+
+#include <protocols/features/RotamerFeatures.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
+#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
+#include <core/pack/dunbrack/DunbrackRotamer.hh>
+
+
+//External
+#include <boost/uuid/uuid.hpp>
+
+// Project Headers
+#include <core/types.hh>
+#include <utility/vector1.fwd.hh>
+
+// C++ Headers
+#include <string>
+
+#include <utility/vector1.hh>
+
+
+namespace protocols{
+namespace features{
+
+//@brief Extract from the dunbrack Energy term the model for the
+// rotamer conformation.
+template < core::Size T >
+class RotamerInitializer {
+
+public:
+	static
+	void
+	initialize_rotamer(
+		core::conformation::Residue const & residue,
+		core::pack::dunbrack::RotamerLibraryScratchSpace & scratch,
+		core::Size & rotamer_bin
+	) {
+		using namespace core::pack::dunbrack;
+
+		SingleResidueRotamerLibraryCAP generic_rotlib =
+			RotamerLibrary::get_instance().get_rsd_library( residue.type() );
+
+		RotamericSingleResidueDunbrackLibrary< T > const & rotlib(
+			dynamic_cast< RotamericSingleResidueDunbrackLibrary< T > const & >(
+				* generic_rotlib));
+
+		RotVector rotamer_vector;
+		Size4 rotamer_fixed_vector;
+		core::Size packed_rotno;
+
+		rotlib.get_rotamer_from_chi(residue.chi(), rotamer_vector);
+		copy(rotamer_vector.begin(), rotamer_vector.end(), rotamer_fixed_vector.begin());
+		packed_rotno = rotlib.rotwell_2_packed_rotno(rotamer_vector);
+		if(packed_rotno == 0){
+			packed_rotno = rotlib.find_another_representative_for_unlikely_rotamer(
+				residue, rotamer_fixed_vector);
+			rotlib.packed_rotno_2_rotwell(packed_rotno, rotamer_vector);
+		}
+		rotamer_bin = rotlib.rotwell_2_rotno(rotamer_vector);
+
+		PackedDunbrackRotamer< T, core::Real > interpolated_rotamer;
+		rotlib.interpolate_rotamers(
+			residue, scratch, packed_rotno, interpolated_rotamer);
+
+	}
+
+};
+
+
+class RotamerFeatures : public protocols::features::FeaturesReporter {
+public:
+	RotamerFeatures(){}
+
+	RotamerFeatures(
+		RotamerFeatures const & ) :
+		FeaturesReporter()
+	{}
+
+	virtual ~RotamerFeatures(){}
+
+	///@brief return sql statements that setup the right tables
+	std::string
+	schema() const;
+
+	basic::database::schema_generator::Schema
+	residue_rotamers_schema() const;
+
+	///@brief return the set of features reporters that are required to
+	///also already be extracted by the time this one is used.
+	utility::vector1<std::string>
+	features_reporter_dependencies() const;
+
+	///@brief return string with class name
+	std::string
+	type_name() const;
+
+	///@brief collect all the feature data for the pose
+	core::Size
+	report_features(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session);
+
+	void
+	delete_record(
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session);
+};
+
+} // namespace
+} // namespace
+
+#endif // include guard

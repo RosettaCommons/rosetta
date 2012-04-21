@@ -267,6 +267,7 @@ protected:
 		bool eval_deriv
 	) const;
 
+public:
 	Size
 	find_another_representative_for_unlikely_rotamer(
 		conformation::Residue const & rsd,
@@ -282,6 +283,7 @@ protected:
 		PackedDunbrackRotamer< T, Real > & interpolated_rotamer
 	) const;
 
+protected:
 	void
 	interpolate_rotamers(
 		RotamerLibraryScratchSpace & scratch,

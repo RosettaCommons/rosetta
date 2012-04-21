@@ -40,6 +40,7 @@
 #include <protocols/features/ResidueScoresFeaturesCreator.hh>
 #include <protocols/features/ResidueSecondaryStructureFeaturesCreator.hh>
 #include <protocols/features/ResidueTypesFeaturesCreator.hh>
+#include <protocols/features/RotamerFeaturesCreator.hh>
 #include <protocols/features/RotamerBoltzmannWeightFeaturesCreator.hh>
 #include <protocols/features/RotamerRecoveryFeaturesCreator.hh>
 #include <protocols/features/SaltBridgeFeaturesCreator.hh>

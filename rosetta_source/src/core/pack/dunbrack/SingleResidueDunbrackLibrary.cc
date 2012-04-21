@@ -594,6 +594,13 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	chemical::ResidueType blah( 0, 0, 0, 0 ); ///TODO shouldnt this variable be named something else?
 	conformation::Residue rsd( blah, true );
 	RotamerLibraryScratchSpace scratch;
+	Size4 rotwell;
+	Size i;
+
+	PackedDunbrackRotamer< ONE, Real > prot1;
+	PackedDunbrackRotamer< TWO, Real > prot2;
+	PackedDunbrackRotamer< THREE, Real > prot3;
+	PackedDunbrackRotamer< FOUR, Real > prot4;
 
 	rsrdl_1.nchi();
 	rsrdl_2.nchi();
@@ -682,6 +689,20 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	rsrdl_4.get_rotamer_from_chi( chi, rot );
 	srsrdl_1.get_rotamer_from_chi( chi, rot );
 	srsrdl_2.get_rotamer_from_chi( chi, rot );
+
+	rsrdl_1.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
+	rsrdl_2.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
+	rsrdl_3.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
+	rsrdl_4.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
+	srsrdl_1.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
+	srsrdl_2.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
+
+	rsrdl_1.interpolate_rotamers( rsd, scratch, i, prot1 );
+	rsrdl_2.interpolate_rotamers( rsd, scratch, i, prot2 );
+	rsrdl_3.interpolate_rotamers( rsd, scratch, i, prot3 );
+	rsrdl_4.interpolate_rotamers( rsd, scratch, i, prot4 );
+	srsrdl_1.interpolate_rotamers( rsd, scratch, i, prot1 );
+	srsrdl_2.interpolate_rotamers( rsd, scratch, i, prot2 );
 
 	rsrdl_1.memory_usage_dynamic();
 	rsrdl_2.memory_usage_dynamic();

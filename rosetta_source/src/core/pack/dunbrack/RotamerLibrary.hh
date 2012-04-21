@@ -383,6 +383,7 @@ private:
 		chemical::AA aa_in
 	) const;
 
+public:
 	static
 	void
 	initialize_dun08_aa_parameters(
@@ -410,6 +411,7 @@ private:
 		Size & n_rotameric_aas
 	);
 
+private:
 	void
 	write_to_binary( utility::io::ozstream & out ) const;
 
@@ -417,7 +419,7 @@ private:
 	read_from_binary( utility::io::izstream & in );
 
 
-private:
+
 	RotamerLibrary();
 	RotamerLibrary( RotamerLibrary const & ); // unimplemented
 	RotamerLibrary const & operator = ( RotamerLibrary const & ); // unimplemented
