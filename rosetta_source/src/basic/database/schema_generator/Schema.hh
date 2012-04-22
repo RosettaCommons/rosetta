@@ -38,8 +38,6 @@ public:
 
 	Schema(std::string table_name, PrimaryKey primary_key);
 
-	void init();
-
 	void add_foreign_key(ForeignKey key);
 
 	void add_column(Column column);
@@ -49,6 +47,8 @@ public:
 	std::string print();
 
 private:
+
+	void init();
 
 	std::string database_mode_;
 

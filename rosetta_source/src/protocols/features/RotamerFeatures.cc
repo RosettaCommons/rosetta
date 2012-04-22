@@ -261,7 +261,7 @@ RotamerFeatures::report_features(
 		}
 
 
-		Size rotamer_bin;
+		Size rotamer_bin(0);
 		bool recognized_residue_type;
 
 		ChiVector const & chis(residue.chi());
@@ -331,19 +331,20 @@ RotamerFeatures::report_features(
 
 		for(Size chi = 1; chi <= 4; ++chi){
 			if( chi <= nchi){
-				insert_stmt.bind(5+nchi, scratch.chimean()[chi]);
-				insert_stmt.bind(9+nchi, scratch.chisd()[chi]);
-				insert_stmt.bind(13+nchi, chi_deviations[chi]);
+				insert_stmt.bind(5+chi, scratch.chimean()[chi]);
+				insert_stmt.bind(9+chi, scratch.chisd()[chi]);
+				insert_stmt.bind(13+chi, chi_deviations[chi]);
 			} else {
-				insert_stmt.bind_null(5+nchi);
-				insert_stmt.bind_null(9+nchi);
-				insert_stmt.bind_null(13+nchi);
+				insert_stmt.bind_null(5+chi);
+				insert_stmt.bind_null(9+chi);
+				insert_stmt.bind_null(13+chi);
 			}
 		}
 
 		insert_stmt.bind(18, scratch.rotprob());
 		safely_write_to_database(insert_stmt);
 	}
+	return 0;
 }
 
 void

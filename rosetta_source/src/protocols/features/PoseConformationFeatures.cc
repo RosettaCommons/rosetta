@@ -236,17 +236,17 @@ PoseConformationFeatures::report_features(
 
 	}
 
-	bool ideal = true;
-	core::conformation::Conformation const & conformation(pose->conformation());
-	for(core::Size resn = 1; resn <= pose->n_residue();++resn)
-	{
-		bool residue_status(core::conformation::is_ideal_position(resn,conformation));
-		if(!residue_status)
-		{
-			ideal = false;
-			break;
-		}
-	}
+//	bool ideal = true;
+//	core::conformation::Conformation const & conformation(pose->conformation());
+//	for(core::Size resn = 1; resn <= pose->n_residue();++resn)
+//	{
+//		bool residue_status(core::conformation::is_ideal_position(resn,conformation));
+//		if(!residue_status)
+//		{
+//			ideal = false;
+//			break;
+//		}
+//	}
 
 	string annotated_sequence(pose->annotated_sequence(true));
 
