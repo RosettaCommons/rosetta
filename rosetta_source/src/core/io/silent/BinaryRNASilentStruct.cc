@@ -322,20 +322,16 @@ bool BinaryRNASilentStruct::init_from_lines(
 			decode6bit( (unsigned char*)&(atm_buff[1]) , tag.substr(1) );
 
 			// endianness check ...
-			//   check the dist between atoms 1 and 2 as well as atoms 2 and 3 if
-			//   EITHER is unreasonable .. and flipping fixes BOTH then turn bitflip
+			//   check the dist between atoms 1 and 2 is unreasonable .. and flipping fixes then turn bitflip
 			//   on
+
 			if (currpos == 1) {
 				core::Real len_check12 = (atm_buff[1]-atm_buff[2]).length();
-				core::Real len_check23 = (atm_buff[3]-atm_buff[2]).length();
-				if ( len_check12 < 0.5 || len_check12 > 2.0 || len_check23 < 0.5 ||
-							len_check23 > 2.0
-				) {
+				if ( len_check12 < 0.5 || len_check12 > 2.0 ) {
 					swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 						// recheck; if not better flip back
 					len_check12 = (atm_buff[1]-atm_buff[2]).length();
-					len_check23 = (atm_buff[3]-atm_buff[2]).length();
-					if ( len_check12 < 0.5 || len_check12 > 2.0 || len_check23 < 0.5 || len_check23 > 2.0 ) {
+					if ( len_check12 < 0.5 || len_check12 > 2.0 ) {
 						swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 					} else {
 						tr.Warning << "reading big-endian binary silent file! " << decoy_tag() << std::endl;
@@ -521,8 +517,7 @@ void BinaryRNASilentStruct::print_conformation(
 	for ( Size i = 1; i <= nres(); ++i ) {
 		// make sure secstruct is valid
 		char this_secstr = secstruct_[i];
-		if (this_secstr < 'A' || this_secstr > 'Z')
-			this_secstr = 'L';
+		if (this_secstr < 'A' || this_secstr > 'Z') this_secstr = 'L';
 		encode6bit(  (unsigned char*)&atm_coords_[i][1][0], atm_coords_[i].size()*12, resline );  // ASSUMES FLOAT == 4 BYTES!!! (eep!)
 		output << this_secstr << resline << ' ' << decoy_tag() << "\n";
 	} // for ( Size i = 1; i <= nres; ++i )

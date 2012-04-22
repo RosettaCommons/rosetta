@@ -771,18 +771,17 @@ pdb_minimizer() {
 	Real const score_before = ( (*scorefxn) (pose) );
 	Real const edens_score_before = ( (*edens_scorefxn) (pose) );
 
-	std::cout << "Start Minimizing using dfpmin_strong_wolfe ..." << std::endl;
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 400, 400 );
 
 	//Start Minimizing the Full Structure
-	//Start minimize the pose
+	Pose const start_pose = pose;
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol ( 0.00000001 );
-	MinimizerOptions min_options_wolfe ( "dfpmin_strong_wolfe", dummy_tol, true, false, false );
-	min_options_wolfe.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 
-	Pose const start_pose = pose;
-	minimizer.run ( pose, mm, *scorefxn, min_options_wolfe );
+	std::cout << "Minimize using dfpmin with use_nb_list=true .." << std::endl;
+	MinimizerOptions min_options_dfpmin ( "dfpmin", dummy_tol, true, false, false );
+	min_options_dfpmin.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
+	minimizer.run ( pose, mm, *scorefxn, min_options_dfpmin );
 
 	scorefxn -> show ( std::cout, pose );
 	Real const score = ( (*scorefxn) (pose) );
@@ -790,34 +789,19 @@ pdb_minimizer() {
 	if (score > score_before || edens_score > edens_score_before * 0.9) {
 		std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
 		std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
-		std::cout << "The minimization went wild!!! Try alternative minimization using dfpmin .." << std::endl;
+		std::cout << "The minimization went wild!!! Try alternative minimization using dfpmin with use_nb_list=false .." << std::endl;
+
 		pose = start_pose;
 
-		MinimizerOptions min_options_dfpmin ( "dfpmin", dummy_tol, true, false, false );
-		min_options_dfpmin.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
-		minimizer.run ( pose, mm, *scorefxn, min_options_dfpmin );
-
-		scorefxn -> show ( std::cout, pose );
+		MinimizerOptions min_options_dfpmin_no_nb ( "dfpmin", dummy_tol, false, false, false );
+		min_options_dfpmin_no_nb.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
+		minimizer.run ( pose, mm, *scorefxn, min_options_dfpmin_no_nb );
 		Real const score = ( (*scorefxn) (pose) );
 		Real const edens_score = ( (*edens_scorefxn) (pose) );
 		if (score > score_before || edens_score > edens_score_before * 0.9) {
 			std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
 			std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
-			std::cout << "The minimization went wild!!! Try alternative minimization using dfpmin with use_nb_list=false .." << std::endl;
-
-			pose = start_pose;
-
-			MinimizerOptions min_options_dfpmin_no_nb ( "dfpmin", dummy_tol, false, false, false );
-			min_options_dfpmin.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
-			minimizer.run ( pose, mm, *scorefxn, min_options_dfpmin_no_nb );
-
-			Real const score = ( (*scorefxn) (pose) );
-			Real const edens_score = ( (*edens_scorefxn) (pose) );
-			if (score > score_before || edens_score > edens_score_before * 0.9) {
-				std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
-				std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
-				utility_exit_with_message("The minimization went wild!!!");
-			}
+			utility_exit_with_message("The minimization went wild!!!");
 		}
 	}
 

@@ -201,7 +201,7 @@ namespace rna {
 				utility_exit_with_message("debug_silent_file ("+debug_silent_file+") SHOULD exist!");
 			} 
 
-			remove_file(debug_silent_file);
+			//remove_file(debug_silent_file);
 
 			if(trail_num==1){
 				first_trail_pose_from_silent_file=pose_from_silent_file;
@@ -212,7 +212,6 @@ namespace rna {
 			//pose_from_silent_file.dump_pdb( "IMPORTED_SILENT_FILE_CONVERSION_TEST_" + tag +"_TRAIL_" + lead_zero_string_of(trail_num, 3) + ".pdb" );
 
 			if(check_for_messed_up_structure(pose_from_silent_file, debug_tag)==false){
-
 				return silent_struct;
 
 			}else{
