@@ -88,7 +88,7 @@ class Base_pair
     //There must be a more elegant way to do this...
     if( lhs.res1 < rhs.res1 ) {
       return true;
-		} else if ( lhs.res1 == rhs.res1 )
+		} else if ( lhs.res1 == rhs.res1 ) {
       if ( lhs.res2 < rhs.res2 ) {
 				return true;
 			} else if ( lhs.res2 == rhs.res2 ) {
@@ -102,6 +102,7 @@ class Base_pair
 					}
 				}
 			}
+		}
 		return false;
   };
 

@@ -723,12 +723,14 @@ pdb_minimizer() {
 		Size const atm_indexO3 = rsd.atom_index ( "O3*" );
 		Size const atm_indexO1P = rsd.atom_index ( "O1P" );
 		Size const atm_indexC6 = rsd.atom_index ( "C6" );
-		Size atm_indexBase;
+		Size atm_indexBase = 0;
 		if ( rsd.aa() == core::chemical::na_rgu || rsd.aa() == core::chemical::na_rad ) {
 			atm_indexBase = rsd.atom_index ( "N9" );
 		} else if ( rsd.aa() == core::chemical::na_ura || rsd.aa() == core::chemical::na_rcy ) {
 			atm_indexBase = rsd.atom_index ( "N1" );
-		}		
+		}	else {
+			utility_exit_with_message("Fixed residue is not a RNA residue!!!!");
+		}
 
 		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexP, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexP ), new HarmonicFunc ( 0.0, coord_sdev ) ) );
 		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexO3, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexO3 ), new HarmonicFunc ( 0.0, coord_sdev ) ) );
