@@ -58,6 +58,7 @@ public: // public interface
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & score_function,
 		core::pack::task::PackerTask const & packer_task);
+
 };
 
 } // namespace

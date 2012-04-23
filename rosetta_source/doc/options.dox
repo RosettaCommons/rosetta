@@ -3929,6 +3929,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-dun_normsd</b> \<Boolean\><dt>
+<dd>Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>corrections:chemical</h2>
 <dl>

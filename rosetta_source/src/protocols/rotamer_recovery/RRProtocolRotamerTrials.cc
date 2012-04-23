@@ -19,10 +19,18 @@
 
 // Platform Headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+
 // AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AA.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
+#include <core/graph/Graph.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_trials.hh>
+#include <core/pack/packer_neighbors.hh>
+#include <core/pack/rotamer_set/RotamerSetFactory.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
@@ -49,7 +57,7 @@ static Tracer TR("protocol.moves.RRProtocolRotamerTrials");
 
 RRProtocolRotamerTrials::RRProtocolRotamerTrials() {}
 
-RRProtocolRotamerTrials::RRProtocolRotamerTrials(RRProtocolRotamerTrials const & ) {}
+RRProtocolRotamerTrials::RRProtocolRotamerTrials( RRProtocolRotamerTrials const & ) {}
 
 RRProtocolRotamerTrials::~RRProtocolRotamerTrials() {}
 
@@ -80,6 +88,9 @@ RRProtocolRotamerTrials::run(
 	// Assume score_function.setup_for_scoring(pose) has already been called.
 
 	PackerTaskOP one_res_task( packer_task.clone() );
+	Pose working_pose = pose;  // deep copy
+
+	core::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, score_function, one_res_task );
 
 	// I don't know if rtmin looks at more than pack_residue(..)
 	one_res_task->temporarily_fix_everything();
@@ -88,13 +99,26 @@ RRProtocolRotamerTrials::run(
 	// rtmin residue -> and measure recovery
 	for( Size ii = 1; ii <= pose.total_residue(); ++ii ){
 		if ( !packer_task.pack_residue(ii) ) continue;
-		Pose working_pose = pose;  // deep copy
 		one_res_task->temporarily_set_pack_residue( ii, true );
+
+		if ( ! packer_task.include_current(ii) ) {
+			// if we're not asking for the input sidechains, then don't use them -- replace the input sidechain with a rotamer that will be sampled inside
+			// rotamer trials anyways
+			core::pack::rotamer_set::RotamerSetFactory rsf;
+			core::pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( pose.residue( ii ) ));
+			rotset->set_resid( ii );
+			rotset->build_rotamers( pose, score_function, *one_res_task, packer_neighbor_graph );
+			if ( rotset->num_rotamers() > 0 ) {
+				working_pose.replace_residue( ii, *rotset->rotamer(1), false );
+			}
+		}
+
 		core::pack::rotamer_trials( working_pose, score_function, one_res_task );
 		measure_rotamer_recovery(
 			comparer, reporter,
 			pose, working_pose,
 			pose.residue(ii), working_pose.residue(ii) );
+		working_pose.replace_residue( ii, pose.residue( ii ), false ); // restore the original conformation
 		one_res_task->temporarily_set_pack_residue( ii, false );
 	}
 }

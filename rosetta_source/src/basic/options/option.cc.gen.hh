@@ -823,6 +823,7 @@ option.add( basic::options::OptionKeys::corrections::score::hb_sp2_amp, "Experim
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_peak_heigh_above_trough, "Experimental term for hydrogen bonds to sp2 acceptors: sets the dynamic range between the most potent sp2 hydrogen bonds and the least potent" ).def(3.0);
 option.add( basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy, "If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::use_bicubic_interpolation, "Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer" ).def(false);
+option.add( basic::options::OptionKeys::corrections::score::dun_normsd, "Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians" ).def(false);
 option.add( basic::options::OptionKeys::corrections::chemical::chemical, "chemical option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::chemical::icoor_05_2009, "New set of idealized coordinates for full atom, 05-2009" );
 option.add( basic::options::OptionKeys::corrections::chemical::parse_charge, "Use PARSE charge set." );
@@ -1228,10 +1229,10 @@ option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(10
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
@@ -1842,10 +1843,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_templat
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);

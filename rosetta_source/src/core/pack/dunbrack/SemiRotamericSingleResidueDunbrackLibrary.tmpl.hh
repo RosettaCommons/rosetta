@@ -921,7 +921,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::fill_rotamer_vector_bbind(
 
 	Size const max_rots_that_can_be_built = grandparent::n_packed_rots() * n_nrchi_sample_bins_;
 
-	Real const requisit_probability = buried ? 0.99 : 0.99;
+	Real const requisit_probability = buried ? 0.87 : 0.95;
 	//grandparent::probability_to_accumulate_while_building_rotamers( buried ); -- 98/95 split generates too many samples
 	Real accumulated_probability( 0.0 );
 
