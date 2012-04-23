@@ -241,6 +241,8 @@ Options = Option_Group( '',
 			Option( 'template_pdb', 'FileVector', desc = 'Name of input template PDB files for comparative modeling' ),
 			Option( 'template_silent', 'File', desc = 'input templates for comparative modeling -- tag needs to fit alignment id' ),
 			Option( 'rdc', 'FileVector', desc='Experimental NMR Residual Dipolar Coupling File --- one file per alignment medium' ),
+			Option( 'csa', 'FileVector', desc='Experimental NMR Chemical Shift Anisotropy File' ),
+			Option( 'dc', 'FileVector', desc='Experimental NMR Dipolar Coupling File' ),
 			Option( 'burial', 'FileVector', desc='WESA-formatted burial prediction' ),
 			Option( 'vall', 'FileVector', desc='Fragment database file, e.g vall.dat.2006-05-05', default='/sampling/filtered.vall.dat.2006-05-05' ),
 			Option( 'rescore', 'Boolean', desc = 'Governs whether input poses are rescored or not in not_universal_main, defaults to false.', default = 'false' ),
@@ -4228,6 +4230,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
         Option( 'fixDa', 'RealVector'),
         Option( 'fixR', 'RealVector'),
     ),
+
+############################################################################
+# Solid state NMR orientational constraints
+   Option_Group('csa',
+        Option( 'useZ', 'Boolean', desc='Use absolute zaxis for scoring csa'),
+   ),
+   Option_Group('dc',
+        Option( 'useZ', 'Boolean', desc='Use absolute zaxis for scoring dc'),
+   ),
 
 	##############################################################################
 	# Rosetta Antibody Options -----------------------------------------------

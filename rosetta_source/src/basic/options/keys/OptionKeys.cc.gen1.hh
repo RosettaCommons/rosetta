@@ -608,3 +608,5 @@ namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multipl
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
 namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
+namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
+namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }

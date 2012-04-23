@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/ResidualDipolarCoupling.fwd.hh
+/// @file   core/scoring/DipolarCoupling.fwd.hh
 /// @brief
-/// @author Srivatsan Raman
+/// @author Lei Shi
 
 
-#ifndef INCLUDED_core_scoring_ResidualDipolarCoupling_fwd_hh
-#define INCLUDED_core_scoring_ResidualDipolarCoupling_fwd_hh
+#ifndef INCLUDED_core_scoring_DipolarCoupling_fwd_hh
+#define INCLUDED_core_scoring_DipolarCoupling_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -22,12 +22,11 @@
 namespace core {
 namespace scoring {
 
-class ResidualDipolarCoupling;
-typedef utility::pointer::owning_ptr< ResidualDipolarCoupling > ResidualDipolarCouplingOP;
-typedef utility::pointer::owning_ptr< ResidualDipolarCoupling const > ResidualDipolarCouplingCOP;
+class DipolarCoupling;
+typedef utility::pointer::owning_ptr< DipolarCoupling > DipolarCouplingOP;
+typedef utility::pointer::owning_ptr< DipolarCoupling const > DipolarCouplingCOP;
 
-
-class RDC;
+class DC;
 
 } // scoring
 } // core

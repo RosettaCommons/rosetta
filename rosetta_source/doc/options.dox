@@ -497,6 +497,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Experimental NMR Residual Dipolar Coupling File --- one file per alignment medium</dd><br>
 </dl>
 <dl>
+<dt><b>-csa</b> \<FileVector\><dt>
+<dd>Experimental NMR Chemical Shift Anisotropy File</dd><br>
+</dl>
+<dl>
+<dt><b>-dc</b> \<FileVector\><dt>
+<dd>Experimental NMR Dipolar Coupling File</dd><br>
+</dl>
+<dl>
 <dt><b>-burial</b> \<FileVector\><dt>
 <dd>WESA-formatted burial prediction</dd><br>
 </dl>
@@ -3747,6 +3755,28 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-hackelec_r_option</b> \<Boolean\><dt>
 <dd>changes the dielectric from distance dependent to distance independent</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-nmer_ref_energies</b> \<String\><dt>
+<dd>nmer ref energies database filename</dd><br>
+</dl>
+<dl>
+<dt><b>-nmer_pssm</b> \<String\><dt>
+<dd>nmer pssm database filename</dd><br>
+</dl>
+<dl>
+<dt><b>-nmer_pssm_list</b> \<String\><dt>
+<dd>nmer pssm database filename</dd><br>
+</dl>
+<dl>
+<dt><b>-nmer_pssm_scorecut</b> \<Real\><dt>
+<dd>nmer pssm scorecut gate for ignoring lowscore nmers</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-nmer_ref_seq_length</b> \<Integer\><dt>
+<dd>length of nmers in nmer_ref score</dd><br>
+<dd>Default: 9</dd><br>
 </dl>
  </li>
 <li><h2>corrections</h2>
@@ -8148,7 +8178,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-max_kic_build_attempts</b> \<Integer\><dt>
 <dd>Number of attempts at initial kinematic closure loop building</dd><br>
-<dd>Default: 100</dd><br>
+<dd>Default: 10000</dd><br>
 </dl>
 <dl>
 <dt><b>-remodel_kic_attempts</b> \<Integer\><dt>
@@ -9423,7 +9453,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-limit_bad_scores</b> \<Boolean\><dt>
-<dd>Quit after one million inf or NaN errors in optE objective function</dd><br>
+<dd>Quit after 100,000 inf or NaN errors in optE objective function</dd><br>
 </dl>
  </li>
 <li><h2>optE:rescore</h2>
@@ -10619,6 +10649,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-fixR</b> \<RealVector\><dt>
 <dd>No description</dd><br>
+</dl>
+ </li>
+<li><h2>csa</h2>
+<dl>
+<dt><b>-csa</b> \<Boolean\><dt>
+<dd>csa option group</dd><br>
+</dl>
+<dl>
+<dt><b>-useZ</b> \<Boolean\><dt>
+<dd>Use absolute zaxis for scoring csa</dd><br>
+</dl>
+ </li>
+<li><h2>dc</h2>
+<dl>
+<dt><b>-dc</b> \<Boolean\><dt>
+<dd>dc option group</dd><br>
+</dl>
+<dl>
+<dt><b>-useZ</b> \<Boolean\><dt>
+<dd>Use absolute zaxis for scoring dc</dd><br>
 </dl>
  </li>
 <li><h2>antibody</h2>

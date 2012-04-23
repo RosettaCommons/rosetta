@@ -117,6 +117,8 @@
 #include <core/scoring/methods/MembraneEnvSmoothEnergyCreator.hh>
 #include <core/scoring/methods/pHEnergyCreator.hh>
 #include <core/scoring/methods/PoissonBoltzmannEnergyCreator.hh>
+#include <core/scoring/methods/ChemicalShiftAnisotropyEnergyCreator.hh>
+#include <core/scoring/methods/DipolarCouplingEnergyCreator.hh>
 #include <core/scoring/methods/ResidualDipolarCouplingEnergyCreator.hh>
 #include <core/scoring/methods/ResidualDipolarCouplingEnergy_RohlCreator.hh>
 #include <core/scoring/methods/SmoothCenPairEnergyCreator.hh>
@@ -327,6 +329,8 @@ static EnergyMethodRegistrator< scoring::methods::CenHBEnergyCreator > CenHBEner
 static EnergyMethodRegistrator< scoring::methods::MembraneLipoCreator > MembraneLipoCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MembraneEnvSmoothEnergyCreator > MembraneEnvSmoothEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::pHEnergyCreator > pHEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::ChemicalShiftAnisotropyEnergyCreator > ChemicalShiftAnisotropyEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::DipolarCouplingEnergyCreator > DipolarCouplingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ResidualDipolarCouplingEnergyCreator > ResidualDipolarCouplingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ResidualDipolarCouplingEnergy_RohlCreator > ResidualDipolarCouplingEnergy_RohlCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SuckerEnergyCreator > SuckerEnergyCreator_registrator;

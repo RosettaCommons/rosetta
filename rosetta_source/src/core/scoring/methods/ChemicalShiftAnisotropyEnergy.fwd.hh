@@ -7,28 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/ResidualDipolarCoupling.fwd.hh
+/// @file
 /// @brief
-/// @author Srivatsan Raman
+/// @author
 
 
-#ifndef INCLUDED_core_scoring_ResidualDipolarCoupling_fwd_hh
-#define INCLUDED_core_scoring_ResidualDipolarCoupling_fwd_hh
+#ifndef INCLUDED_core_scoring_methods_ChemicalShiftAnisotropyEnergy_fwd_hh
+#define INCLUDED_core_scoring_methods_ChemicalShiftAnisotropyEnergy_fwd_hh
 
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
-//#include <utility/pointer/ReferenceCount.hh>
 
 namespace core {
 namespace scoring {
+namespace methods {
 
-class ResidualDipolarCoupling;
-typedef utility::pointer::owning_ptr< ResidualDipolarCoupling > ResidualDipolarCouplingOP;
-typedef utility::pointer::owning_ptr< ResidualDipolarCoupling const > ResidualDipolarCouplingCOP;
+class ChemicalShiftAnisotropyEnergy;
+
+typedef utility::pointer::owning_ptr< ChemicalShiftAnisotropyEnergy > ChemicalShiftAnisotropyEnergyOP;
 
 
-class RDC;
-
+} // methods
 } // scoring
 } // core
 

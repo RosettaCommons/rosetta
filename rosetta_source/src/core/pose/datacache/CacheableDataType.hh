@@ -55,6 +55,7 @@ enum Enum {
 	TEMPLATE_HYBRIDIZATION_HISTORY,  // during template hybridization, the source id for each residue
 	DAB_SASA_POSE_INFO,
 	DAB_SEV_POSE_INFO,
+  CHEMICAL_SHIFT_ANISOTROPY_DATA, //NMR Chemical Shift Anisotropy
 	RESIDUAL_DIPOLAR_COUPLING_DATA,//NMR Residual Dipolar Coupling data
 	RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL,//NMR Residual Dipolar Coupling data - for rdc_rohl
 	RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA,

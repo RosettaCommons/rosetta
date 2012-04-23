@@ -107,6 +107,8 @@ namespace in { namespace file { IntegerOptionKey const extended_pose( "in:file:e
 namespace in { namespace file { FileVectorOptionKey const template_pdb( "in:file:template_pdb" );  } }
 namespace in { namespace file { FileOptionKey const template_silent( "in:file:template_silent" );  } }
 namespace in { namespace file { FileVectorOptionKey const rdc( "in:file:rdc" );  } }
+namespace in { namespace file { FileVectorOptionKey const csa( "in:file:csa" );  } }
+namespace in { namespace file { FileVectorOptionKey const dc( "in:file:dc" );  } }
 namespace in { namespace file { FileVectorOptionKey const burial( "in:file:burial" );  } }
 namespace in { namespace file { FileVectorOptionKey const vall( "in:file:vall" );  } }
 namespace in { namespace file { BooleanOptionKey const rescore( "in:file:rescore" );  } }

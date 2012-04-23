@@ -112,6 +112,8 @@ namespace in { namespace file { extern IntegerOptionKey const extended_pose; } }
 namespace in { namespace file { extern FileVectorOptionKey const template_pdb; } }
 namespace in { namespace file { extern FileOptionKey const template_silent; } }
 namespace in { namespace file { extern FileVectorOptionKey const rdc; } }
+namespace in { namespace file { extern FileVectorOptionKey const csa; } }
+namespace in { namespace file { extern FileVectorOptionKey const dc; } }
 namespace in { namespace file { extern FileVectorOptionKey const burial; } }
 namespace in { namespace file { extern FileVectorOptionKey const vall; } }
 namespace in { namespace file { extern BooleanOptionKey const rescore; } }

@@ -112,6 +112,8 @@ option.add( basic::options::OptionKeys::in::file::extended_pose, "number of exte
 option.add( basic::options::OptionKeys::in::file::template_pdb, "Name of input template PDB files for comparative modeling" );
 option.add( basic::options::OptionKeys::in::file::template_silent, "input templates for comparative modeling -- tag needs to fit alignment id" );
 option.add( basic::options::OptionKeys::in::file::rdc, "Experimental NMR Residual Dipolar Coupling File --- one file per alignment medium" );
+option.add( basic::options::OptionKeys::in::file::csa, "Experimental NMR Chemical Shift Anisotropy File" );
+option.add( basic::options::OptionKeys::in::file::dc, "Experimental NMR Dipolar Coupling File" );
 option.add( basic::options::OptionKeys::in::file::burial, "WESA-formatted burial prediction" );
 option.add( basic::options::OptionKeys::in::file::vall, "Fragment database file, e.g vall.dat.2006-05-05" ).def("/sampling/filtered.vall.dat.2006-05-05");
 option.add( basic::options::OptionKeys::in::file::rescore, "Governs whether input poses are rescored or not in not_universal_main, defaults to false." ).def(false);
@@ -1225,11 +1227,11 @@ option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No descripti
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
+option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
@@ -1837,13 +1839,13 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_p
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
@@ -2201,6 +2203,10 @@ option.add( basic::options::OptionKeys::rdc::select_residues_file, "loop/rigid-f
 option.add( basic::options::OptionKeys::rdc::fit_method, "No description" ).legal("svd").legal("nls").def("svd");
 option.add( basic::options::OptionKeys::rdc::fixDa, "No description" );
 option.add( basic::options::OptionKeys::rdc::fixR, "No description" );
+option.add( basic::options::OptionKeys::csa::csa, "csa option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::csa::useZ, "Use absolute zaxis for scoring csa" );
+option.add( basic::options::OptionKeys::dc::dc, "dc option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::dc::useZ, "Use absolute zaxis for scoring dc" );
 option.add( basic::options::OptionKeys::antibody::antibody, "Antibody option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::antibody::graft_l1, "Graft CDR L1 from template" ).def(false);
 option.add( basic::options::OptionKeys::antibody::l1_template, "Choose specified template for CDR L1 grafting" ).def("l1.pdb");

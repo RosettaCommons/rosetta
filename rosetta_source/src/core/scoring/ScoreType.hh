@@ -309,6 +309,8 @@ enum ScoreType {
 
 	dock_ens_conf, //conformer reference energies for docking
 
+	csa,//NMR chemical shift anisotropy energy
+	dc,//NMR dipolar coupling energy
 	rdc,//NMR residual dipolar coupling energy
 	rdc_segments, //fit alignment on multiple segments independently
 	rdc_rohl,

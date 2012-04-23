@@ -95,6 +95,7 @@
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/fold_from_loops.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/csa.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/keys/archive.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
@@ -103,6 +104,7 @@
 #include <basic/options/keys/patterson.OptionKeys.gen.hh>
 #include <basic/options/keys/optE.OptionKeys.gen.hh>
 #include <basic/options/keys/residues.OptionKeys.gen.hh>
+#include <basic/options/keys/dc.OptionKeys.gen.hh>
 #include <basic/options/keys/phil.OptionKeys.gen.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>

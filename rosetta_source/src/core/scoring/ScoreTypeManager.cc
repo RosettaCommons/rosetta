@@ -242,6 +242,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "ss_pair" ] = ss_pair;
 	name2score_type_[ "rsigma" ] = rsigma;
 	name2score_type_[ "sheet" ] = sheet;
+	name2score_type_[ "csa" ] = csa;
+	name2score_type_[ "dc" ] = dc;
 	name2score_type_[ "rdc" ] = rdc;
 	name2score_type_[ "rdc_segments" ] = rdc_segments;
 	name2score_type_[ "rdc_rohl" ] =rdc_rohl;
