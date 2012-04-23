@@ -46,6 +46,7 @@ public:
 	// add an ncs group
 	void add_group( std::string src, std::string tgt );
 	void add_groupE( std::string src, std::string tgt );
+	void add_groupD( std::string src, std::string tgt );
 
 
 	void set_defaults();
@@ -73,21 +74,27 @@ public:
 	bool chi( ) { return chi_; }
 	void set_symmetric_sequence( bool symmetric_sequence_in ) { symmetric_sequence_ = symmetric_sequence_in; } //to symmetrize sequence
 	bool symmetric_sequence( ) { return symmetric_sequence_; }
+	bool distance_pair( ) { return distance_pair_; }
 
 	void set_limit( core::Real limit_in) { limit_ = limit_in; }
 	core::Real limit( ) { return limit_; }
 	void set_weight( core::Real wt_in) { wt_ = wt_in; }
 	core::Real weight( ) { return wt_; }
 
+	void set_sd( core::Real sd_in) { sd_ = sd_in; } 
+	core::Real sd( ) { return sd_; } 
+
 private:
 	utility::vector1< std::string > src_;
 	utility::vector1< std::string > tgt_;
 	utility::vector1< std::string > srcE_;
 	utility::vector1< std::string > tgtE_;
+	utility::vector1< std::string > srcD_;
+	utility::vector1< std::string > tgtD_;
 
-	bool bb_, chi_, symmetric_sequence_; 
+	bool bb_, chi_, symmetric_sequence_, distance_pair_; 
 
-	core::Real limit_, wt_;
+	core::Real limit_, wt_, wtD_, sd_; 
 };
 
 } // symmetry

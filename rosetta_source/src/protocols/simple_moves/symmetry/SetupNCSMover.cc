@@ -27,7 +27,9 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/scoring/constraints/DihedralPairConstraint.hh>
+#include <core/scoring/constraints/DistancePairConstraint.hh>
 #include <core/scoring/constraints/TopOutFunc.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
 
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
@@ -92,6 +94,8 @@ void SetupNCSMover::set_defaults() {
 	limit_ = 10.0;  // in degrees
 	bb_ = chi_ = true;
 	symmetric_sequence_ = false;
+	sd_ = 1000; // for Harmonic, distance. Value determined empirically after test with relaxed structures
+	distance_pair_ = false;
 }
 
 void SetupNCSMover::add_group( std::string src, std::string tgt ) {
@@ -104,6 +108,10 @@ void SetupNCSMover::add_groupE( std::string src, std::string tgt ) {
   tgtE_.push_back( tgt );
 }
 
+void SetupNCSMover::add_groupD( std::string src, std::string tgt ) {
+  srcD_.push_back( src );
+  tgtD_.push_back( tgt );
+}
 
 //
 void SetupNCSMover::apply( core::pose::Pose & pose ) {
@@ -115,10 +123,23 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 
 	assert( src_.size() == tgt_.size() );
 
+  core::Real test1a=src_.size();
+  core::Real test2a=tgt_.size();
+	TZ.Debug << "Size src angle " << test1a << " Size tgt angle " << test2a << std::endl;
+
+
 	// map residue ranges -> resid pairs (using PDBinfo if necessary)
 	for (int i=1; i<=src_.size(); ++i) {
 		utility::vector1<Size> src_i = protocols::rosetta_scripts::get_resnum_list_ordered( src_[i], pose );
+
+		core::Real temp_a=src_i.size();
+		TZ.Debug << "src angle size " << temp_a << std::endl;
+
 		utility::vector1<Size> tgt_i = protocols::rosetta_scripts::get_resnum_list_ordered( tgt_[i], pose );
+
+		core::Real temp_b=tgt_i.size();
+		TZ.Debug << "src angle size " << temp_b << std::endl;
+
 		runtime_assert( src_i.size() == tgt_i.size() );
 
 		//
@@ -190,25 +211,74 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 	
 	  // map residue ranges -> resid pairs (using PDBinfo if necessary)
 	  for (int i=1; i<=srcE_.size(); ++i) {
-	    utility::vector1<Size> src_i = protocols::rosetta_scripts::get_resnum_list_ordered( srcE_[i], pose );
-	    utility::vector1<Size> tgt_i = protocols::rosetta_scripts::get_resnum_list_ordered( tgtE_[i], pose );
-	    runtime_assert( src_i.size() == tgt_i.size() );
+	    utility::vector1<Size> srcE_i = protocols::rosetta_scripts::get_resnum_list_ordered( srcE_[i], pose );
+	    utility::vector1<Size> tgtE_i = protocols::rosetta_scripts::get_resnum_list_ordered( tgtE_[i], pose );
+	    runtime_assert( srcE_i.size() == tgtE_i.size() );
 	
 	    //
-	    if ( src_i.size() == 0 ) {
-	      utility_exit_with_message("Error creating NCS constraints: " + src_[i] +" : "+tgt_[i]);
+	    if ( srcE_i.size() == 0 ) {
+	      utility_exit_with_message("Error creating NCS constraints: " + srcE_[i] +" : "+tgtE_[i]);
 	    }
 	
-	    for (int j=1; j<=src_i.size(); ++j) {
-	      core::Size resnum_src = src_i[j], resnum_tgt = tgt_i[j];
+	    for (int j=1; j<=srcE_i.size(); ++j) {
+	      core::Size resnum_srcE = srcE_i[j], resnum_tgtE = tgtE_i[j];
 	
-	      TZ.Debug << "Symmetrizing residues " << resnum_src << " <--> " << resnum_tgt << std::endl;
+	      TZ.Debug << "Symmetrizing residues " << resnum_srcE << " <--> " << resnum_tgtE << std::endl;
 	
 	      //replace residue identity to match reference positions
-	      pose.replace_residue( resnum_tgt, pose.residue(resnum_src), true );
+	      pose.replace_residue( resnum_tgtE, pose.residue(resnum_srcE), true );
 			}
 		}
 	}
+
+
+//calculate distance pairing constraints
+	if (distance_pair_) {
+	  assert( srcD_.size() == tgtD_.size() );
+
+  core::Real test1=srcD_.size();
+  core::Real test2=tgtD_.size();
+	TZ.Debug << "Size src " << test1 << " Size tgt " << test2 << std::endl;
+
+	  
+	  // map residue ranges -> resid pairs (using PDBinfo if necessary)
+	for (int i=1; i<=srcD_.size(); ++i ) {
+	    utility::vector1<Size> srcD_i = protocols::rosetta_scripts::get_resnum_list_ordered( srcD_[i], pose );
+
+			core::Real temp_d=srcD_i.size();
+			TZ.Debug << "src 1 size " << temp_d << std::endl;
+
+	    utility::vector1<Size> tgtD_i = protocols::rosetta_scripts::get_resnum_list_ordered( tgtD_[i], pose );
+	    runtime_assert( srcD_i.size() == tgtD_i.size() );
+	    runtime_assert( srcD_i.size() % 2 == 0 );
+	
+			//
+			if ( srcD_i.size() == 0 ) {
+				utility_exit_with_message("Error creating NCS distance pair constraints: " + srcD_[i] + " : " + tgtD_[i] );
+			}
+	
+			for (int j=1; j<=srcD_i.size()/2; ++j) {
+			core::Size resnum_src1 = srcD_i[j], resnum_tgt1 = tgtD_i[j], resnum_src2 = srcD_i[j+srcD_i.size()/2], resnum_tgt2 = tgtD_i[j+srcD_i.size()/2];
+			id::AtomID id_ad1,id_ad2, id_bd1,id_bd2;
+	
+				TZ.Debug << "Add distance pair constraint " << resnum_src1 << " - " << resnum_src2 << " <--> " << resnum_tgt1 << " - " << resnum_tgt2 << std::endl;
+	
+//get the ca atoms	
+				id_ad1 = id::AtomID(pose.residue(resnum_src1).atom_index("CA") , resnum_src1);
+				id_ad2 = id::AtomID(pose.residue(resnum_src2).atom_index("CA") , resnum_src2);
+				id_bd1 = id::AtomID(pose.residue(resnum_tgt1).atom_index("CA") , resnum_tgt1);
+				id_bd2 = id::AtomID(pose.residue(resnum_tgt2).atom_index("CA") , resnum_tgt2);
+
+						// make the cst
+				pose.add_constraint( new DistancePairConstraint( id_ad1, id_ad2, id_bd1, id_bd2, new HarmonicFunc( 0.0, sd_ ) ) ); // for Harmonic
+	
+			}
+		}
+
+	}
+
+
+
 
 
 }
@@ -224,6 +294,8 @@ void SetupNCSMover::parse_my_tag(
 	if (tag->hasOption( "wt" )) wt_ = tag->getOption< core::Real >( "wt" );
 	if (tag->hasOption( "limit" )) limit_ = tag->getOption< core::Real >( "limit" );
 	if (tag->hasOption( "symmetric_sequence" )) symmetric_sequence_ = tag->getOption< bool >( "symmetric_sequence" );
+	if (tag->hasOption( "sd" )) sd_ = tag->getOption< core::Real >( "sd" ); // for Harmonic, distance
+	if (tag->hasOption( "distance_pair" )) distance_pair_ = tag->getOption< bool >( "distance_pair" );
 
 
 	// now parse ncs groups <<< subtags
@@ -248,7 +320,15 @@ void SetupNCSMover::parse_my_tag(
 			}
       add_groupE( srcE_i, tgtE_i );
 		}
-		
+
+//group in the format <NCSdistance source="2A,9A" target="28A,35A"/> or
+//										<NCSdistance source="2A-20A,42A-60A" target="128A-156A,168A-186A"/>
+		if( (*tag_it)->getName() == "NCSdistance" || (*tag_it)->getName() == "ncsdistance" ){
+      std::string srcD_i = (*tag_it)->getOption<std::string>( "source" );
+      std::string tgtD_i = (*tag_it)->getOption<std::string>( "target" );
+      add_groupD( srcD_i, tgtD_i );
+		}
+
 	}
 }
 
