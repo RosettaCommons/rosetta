@@ -172,6 +172,15 @@ settings = {
                # "-param large-function-growth=50000" ],
             },
         },
+	
+	"overrides" : {
+            "flags" : {
+                "cc"        : [ "std=c99" ],   # "-isystem external/boost_1_46_1/"],
+                "cxx"       : [ "std=c++98" ], # "-isystem external/boost_1_46_1/" ],
+                "compile"   : [ "pipe", "ffor-scope" ],
+                "warn"      : [], # "Wall", "Wextra", "pedantic", "Wno-long-long" ],
+	    },
+	},
     },
 
     "gcc, debug" : {
