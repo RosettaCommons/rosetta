@@ -101,6 +101,7 @@ ShapeComplementarityCalculator::ShapeComplementarityCalculator()
 	settings.binwidth_dist = 0.02;
 	settings.binwidth_norm = 0.02;
 
+	run_.results.valid = 0;
 #ifdef USECUDA
 	settings.gpu = -1;
 #endif
