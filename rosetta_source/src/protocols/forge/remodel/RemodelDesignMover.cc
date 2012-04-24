@@ -102,7 +102,9 @@ RemodelDesignMover::RemodelDesignMover(RemodelData const & remodel_data, Remodel
 			//	std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
 			//	std::cout << "manger size"  << working_model.manager.union_of_intervals_containing_undefined_positions().size() <<  std::endl;
 			//	std::cout << *it  << std::endl;
-				und_pos.insert(*it + remodel_data.blueprint.size()*rep);
+				if ( !(*it+remodel_data.blueprint.size()*rep > (remodel_data.blueprint.size()*repeatCount)) ){ //Extrapolation of positions shouldn't go beyond the length of pose
+					und_pos.insert(*it + remodel_data.blueprint.size()*rep);
+				}
 			}
 		}
 	}

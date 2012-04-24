@@ -26,6 +26,7 @@ namespace remodel{
         // to create domain assembly type of fold-tree
         public:
           protocols::loops::Loops loops;
+					int safe_root_;
           std::string sequence;
           std::string ss;
           std::map<int,int> translate_index;

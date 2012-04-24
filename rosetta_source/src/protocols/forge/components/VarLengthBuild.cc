@@ -317,9 +317,15 @@ void VarLengthBuild::apply( Pose & pose ) {
 			//original2modified map if running in restart_mode
 			Original2Modified dummy = manager_.original2modified();
 			for (Original2Modified::const_iterator it = dummy.begin(), end=dummy.end(); it != end; ++ it){
-			//	TR << "idx restart mode " << it->second << std::endl;
-				original2modified[(*it).second] = (*it).second;
+				//TR << "idx restart mode " << it->second << std::endl;
+				if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ){
+					if ((*it).second <= (remodel_data_.sequence.length()*2) ){
+						original2modified[(*it).second] = (*it).second;
+					}
+				} else {
+					original2modified[(*it).second] = (*it).second;
 				}
+			}
 
 		} else {
 			original2modified = manager_.modify( pose );

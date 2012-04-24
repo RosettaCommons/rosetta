@@ -524,6 +524,15 @@ if (working_model.manager.size()!= 0){
 
 	RemodelDesignMover designMover(remodel_data, working_model, fullatom_sfx_);
 
+	Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
+//rerooting tree
+	if (option[ OptionKeys::remodel::repeat_structure].user() && pose.total_residue() == remodel_data.blueprint.size()*repeat_number) {
+		core::kinematics::FoldTree f = pose.fold_tree();
+		f.reorder(working_model.safe_root_);
+		pose.fold_tree(f);
+		TR << "rerooting tree: " << pose.fold_tree() << std::endl;
+	}
+
 	while ( i > 0){
 
 		//cache the modified pose first for REPEAT
@@ -990,16 +999,23 @@ bool RemodelMover::centroid_build(
 		// safety, clear all the energies before restoring full-atom residues and
 		// scoring
 		pose.energies().clear();
-
 		if (option[ OptionKeys::remodel::repeat_structure].user()) {
-			using namespace protocols::loops;
-			using protocols::forge::methods::intervals_to_loops;
-			std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
-			LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
-
-			RemodelLoopMover RLM(loops);
-			Pose bufferPose(modified_archive_pose);
-			RLM.repeat_generation( bufferPose, modified_archive_pose );
+		//this part really needs work....  currently doesn't allow growing a loop
+		//in regional repeat building.  This section is used in de novo rebuild
+		//cases where the monomer pose is extended, so to restore the sidechain,
+		//the source of the sidechains has to be extended too in de novo cases.
+		//but with refining an existing repeat pose, no need to extend
+			if (modified_archive_pose.total_residue() == pose.total_residue()){ //dangerous, assuming no further length change
+				//do nothing.
+			} else { // if there's mismatch, assuming restoration source need extension... dangerous.
+				using namespace protocols::loops;
+				using protocols::forge::methods::intervals_to_loops;
+				std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
+				LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+				RemodelLoopMover RLM(loops);
+				Pose bufferPose(modified_archive_pose);
+				RLM.repeat_generation( bufferPose, modified_archive_pose );
+			}
 		}
 
 
@@ -1014,6 +1030,11 @@ bool RemodelMover::centroid_build(
 		// go ahead and score w/ full-atom here; we do this in case there are no
 		// design-refine cycles -- it's useful to have e.g. rama in the output
 		(*fullatom_sfx_)( pose );
+
+	if (option[ OptionKeys::remodel::repeat_structure].user()) {
+		//return the modified pose to original state, otherwise it keeps growing.
+      modified_archive_pose = archive_pose;
+   }
 
 		return true; // loop closed
 

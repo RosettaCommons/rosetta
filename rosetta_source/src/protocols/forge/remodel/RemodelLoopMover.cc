@@ -247,7 +247,6 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
 	core::pose::Pose non_terminal_pose(pose);
 
-
   if (option[ OptionKeys::remodel::repeat_structure].user()){
 
 		//remove the extra tail from pose, but still use the pose with tail to build
@@ -268,6 +267,11 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		Real jxnh_omega = pose.omega(non_terminal_pose.total_residue()+1);
 
 		repeat_pose=non_terminal_pose;
+
+		//reset foldtree and simply depend on coordinates for appendage
+		core::kinematics::FoldTree ft = repeat_pose.fold_tree();
+		ft.simple_tree(repeat_pose.total_residue());
+		repeat_pose.fold_tree(ft);
     core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
 
     Size repeatFactor = option[ OptionKeys::remodel::repeat_structure];
@@ -278,15 +282,18 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
         Size current_term = repeat_pose.total_residue();
 				//intentially insert behind the last residue, this way blueprint definition will cover the junction with fragments
 				if (rsd == non_terminal_pose.total_residue()){
-        repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(), true);
-				}else {
-        repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(), false);
+					repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(), false);
+				} else {
+					repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(), false);
 				/*
 				for (int i =1; i<= repeat_pose.total_residue(); i++){
-			std::cout << "repeat_pose Phi: "<< repeat_pose.phi(i) << " psi: " << repeat_pose.psi(i) <<  " omega: " << repeat_pose.omega(i) << " at " << i << std::endl;
-		} */
+				std::cout << "repeat_pose Phi: "<< repeat_pose.phi(i) << " psi: " << repeat_pose.psi(i) <<  " omega: " << repeat_pose.omega(i) << " at " << i << std::endl;
+				} */
 				}
       }
+
+
+
       Size junction = (non_terminal_pose.total_residue())* count;
 			repeat_pose.conformation().insert_ideal_geometry_at_polymer_bond(junction);
 			/*
@@ -312,7 +319,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		//terminus residue check
 		for (Size res=2; res< repeat_pose.total_residue(); res++){
 			if (repeat_pose.residue(res).is_terminus()){
-				std::cout<< "FIX TERMINUS " << res << std::endl;
+		//		std::cout<< "FIX TERMINUS " << res << std::endl;
 				core::pose::remove_upper_terminus_type_from_pose_residue(repeat_pose, res);
 				core::pose::remove_lower_terminus_type_from_pose_residue(repeat_pose, res);
 			}
@@ -330,6 +337,13 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
 	LoopsOP repeat_loops = new Loops();
 
+	std::set< Size > lower_termini;
+	std::set< Size > upper_termini;
+	for ( Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
+		lower_termini.insert( pose.conformation().chain_begin( i ) );
+		upper_termini.insert( pose.conformation().chain_end( i ) );
+	}
+
 	for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
     Loop & loop = *l;
 		if (loop.start() == 1 && loop.stop() == segment_length){
@@ -337,23 +351,37 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		} else {
 
 		repeat_loops->push_back(loop); //load the first guy
-		TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
+		//TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
 
 		//math to figure out the different segments
 			for (Size rep = 0; rep < repeat_number; rep++){
-				LoopOP newLoop = new Loop(loop.start()+(segment_length*rep), loop.stop()+(segment_length*rep),loop.cut()+(segment_length*rep));
-		//		TR << "adding loop in repeat propagation: " << loop.start()+(segment_length*rep) << std::endl;
-				repeat_loops->push_back(*newLoop);
+
+				//find equals iterator end means not found.  If the loops is internal, increment by repeats
+				if ( lower_termini.find( loop.start() ) == lower_termini.end() && upper_termini.find( loop.stop() ) == upper_termini.end()){
+					Size tempStart = loop.start()+(segment_length*rep);
+					Size tempStop = loop.stop()+(segment_length*rep);
+					Size tempCut = loop.cut()+(segment_length*rep);
+					if (tempStop > repeat_pose.total_residue()){
+							tempStop = repeat_pose.total_residue();
+					}
+					LoopOP newLoop = new Loop( tempStart, tempStop , tempCut);
+					//TR << "adding loop in repeat propagation: " << tempStart << " " << tempStop <<  " " << tempCut << std::endl;
+					repeat_loops->push_back(*newLoop);
+				}
+				else {
+					LoopOP newLoop = new Loop(loop.start(), loop.stop(), loop.cut());
+					repeat_loops->push_back(*newLoop);
+				}
 			}
 		}
 	}
 	  if (!repeat_loops->empty()){
-		  fold_tree_from_loops(repeat_pose, *repeat_loops, f);
+		  f = protocols::forge::methods::fold_tree_from_loops(repeat_pose, *repeat_loops);
 	  } else {
 		  f.simple_tree(repeat_pose.total_residue());
 	  }
-
     repeat_pose.fold_tree(f);
+		TR << repeat_pose.fold_tree() << std::endl;
 
 	for ( Loops::iterator l = repeat_loops->v_begin(), le = repeat_loops->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
@@ -425,6 +453,14 @@ void RemodelLoopMover::repeat_generation(Pose &pose, Pose & repeat_pose)
 	//core::pose::Pose repeat_pose;
   if (option[ OptionKeys::remodel::repeat_structure].user()){
 		repeat_pose=non_terminal_pose;
+
+		//reset foldtree and simply depend on coordinates for appendage
+		core::kinematics::FoldTree ft = repeat_pose.fold_tree();
+		ft.simple_tree(repeat_pose.total_residue());
+		repeat_pose.fold_tree(ft);
+    core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
+
+
 		core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
 
     Size repeatFactor = option[ OptionKeys::remodel::repeat_structure];
@@ -466,7 +502,45 @@ void RemodelLoopMover::repeat_generation(Pose &pose, Pose & repeat_pose)
   core::kinematics::FoldTree f;
 
 	LoopsOP repeat_loops = new Loops();
+  std::set< Size > lower_termini;
+  std::set< Size > upper_termini;
+  for ( Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
+    lower_termini.insert( pose.conformation().chain_begin( i ) );
+    upper_termini.insert( pose.conformation().chain_end( i ) );
+  }
 
+  for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
+    Loop & loop = *l;
+    if (loop.start() == 1 && loop.stop() == segment_length){
+      break;  //don't need to do anything about foldtree if fully de novo
+    } else {
+
+    repeat_loops->push_back(loop); //load the first guy
+    //TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
+
+    //math to figure out the different segments
+      for (Size rep = 0; rep < repeat_number; rep++){
+
+        //find equals iterator end means not found.  If the loops is internal, increment by repeats
+        if ( lower_termini.find( loop.start() ) == lower_termini.end() && upper_termini.find( loop.stop() ) == upper_termini.end()){
+          Size tempStart = loop.start()+(segment_length*rep);
+          Size tempStop = loop.stop()+(segment_length*rep);
+          Size tempCut = loop.cut()+(segment_length*rep);
+          if (tempStop > repeat_pose.total_residue()){
+              tempStop = repeat_pose.total_residue();
+          }
+          LoopOP newLoop = new Loop( tempStart, tempStop , tempCut);
+          //TR << "adding loop in repeat propagation: " << tempStart << " " << tempStop <<  " " << tempCut << std::endl;
+          repeat_loops->push_back(*newLoop);
+        }
+        else {
+          LoopOP newLoop = new Loop(loop.start(), loop.stop(), loop.cut());
+          repeat_loops->push_back(*newLoop);
+        }
+      }
+    }
+  }
+/*
 	for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
     Loop & loop = *l;
 		if (loop.start() == 1 && loop.stop() == segment_length){
@@ -484,9 +558,9 @@ void RemodelLoopMover::repeat_generation(Pose &pose, Pose & repeat_pose)
 			}
 		}
 	}
-
+*/
 	  if (!repeat_loops->empty()){
-		  fold_tree_from_loops(repeat_pose, *repeat_loops, f);
+		  f = protocols::forge::methods::fold_tree_from_loops(repeat_pose, *repeat_loops);
 	  } else {
 		  f.simple_tree(repeat_pose.total_residue());
 	  }
@@ -595,11 +669,25 @@ void RemodelLoopMover::repeat_sync( //utility function
 						repeat_pose.set_omega( res+(segment_length*rep),loop_omega );
 					}
 				}
+				else if (res > segment_length ){ //for spanning builds
+					loop_phi = repeat_pose.phi(res-segment_length);
+					loop_psi = repeat_pose.psi(res-segment_length);
+					loop_omega = repeat_pose.omega(res-segment_length);
+					for (Size rep = 1; rep < repeat_number; rep++){
+						if (res+( segment_length*rep)<= repeat_pose.total_residue()){
+							repeat_pose.set_phi(res+( segment_length*rep), loop_phi );
+							repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
+							repeat_pose.set_omega( res+(segment_length*rep),loop_omega );
+						}
+					}
+
+				}
 				else {
-					TR << "ERROR in collecting positions" << std::endl;
+					TR << "ERROR in collecting positions: res: " << res <<  std::endl;
 				}
 		}
 	}
+	//repeat_pose.dump_pdb("rep_test.pdb");
 }
 
 void RemodelLoopMover::repeat_propagation( //utility function
@@ -622,7 +710,45 @@ void RemodelLoopMover::repeat_propagation( //utility function
   core::kinematics::FoldTree f;
 
 	LoopsOP repeat_loops = new Loops();
+  std::set< Size > lower_termini;
+  std::set< Size > upper_termini;
+  for ( Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
+    lower_termini.insert( pose.conformation().chain_begin( i ) );
+    upper_termini.insert( pose.conformation().chain_end( i ) );
+  }
 
+  for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
+    Loop & loop = *l;
+    if (loop.start() == 1 && loop.stop() == segment_length){
+      break;  //don't need to do anything about foldtree if fully de novo
+    } else {
+
+    repeat_loops->push_back(loop); //load the first guy
+    //TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
+
+    //math to figure out the different segments
+      for (Size rep = 0; rep < repeat_number; rep++){
+
+        //find equals iterator end means not found.  If the loops is internal, increment by repeats
+        if ( lower_termini.find( loop.start() ) == lower_termini.end() && upper_termini.find( loop.stop() ) == upper_termini.end()){
+          Size tempStart = loop.start()+(segment_length*rep);
+          Size tempStop = loop.stop()+(segment_length*rep);
+          Size tempCut = loop.cut()+(segment_length*rep);
+          if (tempStop > repeat_pose.total_residue()){
+              tempStop = repeat_pose.total_residue();
+          }
+          LoopOP newLoop = new Loop( tempStart, tempStop , tempCut);
+          //TR << "adding loop in repeat propagation: " << tempStart << " " << tempStop <<  " " << tempCut << std::endl;
+          repeat_loops->push_back(*newLoop);
+        }
+        else {
+          LoopOP newLoop = new Loop(loop.start(), loop.stop(), loop.cut());
+          repeat_loops->push_back(*newLoop);
+        }
+      }
+    }
+  }
+/*
 	for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
     Loop & loop = *l;
 		if (loop.start() == 1 && loop.stop() == segment_length){
@@ -640,9 +766,9 @@ void RemodelLoopMover::repeat_propagation( //utility function
 			}
 		}
 	}
-
+*/
 	if (!repeat_loops->empty()){
-		fold_tree_from_loops(repeat_pose, *repeat_loops, f);
+		f = protocols::forge::methods::fold_tree_from_loops(repeat_pose, *repeat_loops);
 	} else {
 		f.simple_tree(repeat_pose.total_residue());
 	}
@@ -839,7 +965,6 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 		// reset score function at the beginning of each attempt
 		mc.score_function( *sfxOP );
-
 		if (basic::options::option[ OptionKeys::remodel::RemodelLoopMover::use_loop_hash].user()) {
 			loophash_stage(pose, mc, cbreak_increment );
 		}
@@ -854,6 +979,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		// "boost": if any loops are not closed but within a chainbreak interval, attempt
 		// to close them with 1-mer + ccd_move.
 		boost_closure_stage( pose, mc, boost_closure_cbreak_increment );
+
+		//pose.dump_pdb("test.pdb");
 
 		// check to see if all loops closed, if so rescore w/out chainbreak
 		// and store in accumulator
@@ -1108,8 +1235,19 @@ void RemodelLoopMover::loophash_stage(
 
 
 	// setup loops
-	//loops::LoopsOP loops_to_model = determine_loops_to_model( pose );
-	loops::LoopsOP loops_to_model = new loops::Loops( *loops_ );
+	loops::LoopsOP loops_to_model = new loops::Loops();
+
+	//find terminal loops and skip them; loophash can't handle terminal loops
+	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
+		bool skip_loop = false;
+		if ( l->is_terminal( pose ) ) {
+			skip_loop = true;
+		}
+		if ( !skip_loop ) {
+			loops_to_model->add_loop( *l );
+		}
+	}
+
 	TR << "   n_loops = " << loops_to_model->size() << std::endl;
 
 	if ( loops_to_model->size() == 0 ) { // nothing to do...
@@ -1126,15 +1264,14 @@ void RemodelLoopMover::loophash_stage(
 		loopsizes.push_back(db_to_use);
 	}
 
-
 	//test loophashing
 	LoopHashLibraryOP loop_hash_library = new LoopHashLibrary ( loopsizes, 1, 0 );
 
 	// parameters
 	Size const n_standard_cycles = total_standard_cycles();
-//	Size const n_standard_cycles = 3;
+	//	Size const n_standard_cycles = 3;
 	Size const max_outer_cycles = independent_cycles();
-//	Size const max_outer_cycles = 1;
+	//	Size const max_outer_cycles = 1;
 
 	// per-loop frag + ccd_move
 	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
@@ -1921,6 +2058,10 @@ void RemodelLoopMover::boost_closure_stage(
 			if ( cbreak < cbreak_tolerance ) {
 				loops_to_model->add_loop( *l );
 			}
+			else if (cbreak >= cbreak_tolerance ){
+				TR << "at least one loop is beyond tolerance" << std::endl;
+				return;
+			}
 		}
 	}
 
@@ -2005,7 +2146,22 @@ void RemodelLoopMover::boost_closure_stage(
 
 			mc.score_function( *sfxOP );
 
-			pose = mc.lowest_score_pose();
+      // recover low
+      if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+				Size copy_size =0;
+				if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+					copy_size = pose.total_residue()-1;
+				} else {
+					copy_size = pose.total_residue();
+				}
+				for (Size res = 1; res<=copy_size; res++){
+					pose.set_phi(res,mc.lowest_score_pose().phi(res));
+					pose.set_psi(res,mc.lowest_score_pose().psi(res));
+					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				}
+      } else {
+				pose = mc.lowest_score_pose();
+			}
 
 			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);

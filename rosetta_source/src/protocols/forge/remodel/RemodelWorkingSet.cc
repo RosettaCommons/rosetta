@@ -25,6 +25,7 @@
 //#include <core/fragment/OrderedFragSet.hh>
 
 #include <core/chemical/ResidueType.hh>
+#include <core/kinematics/FoldTree.hh>
  // for switch typeset
 
 // for yab managers
@@ -237,6 +238,30 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 		}
 	}
 
+	if (option[ OptionKeys::remodel::repeat_structure].user()){ // repeat structure loop over a second time; merge sections and update index
+		core::Size repeat_number = option[OptionKeys::remodel::repeat_structure];
+		core::Size repeat_size = (int)data.blueprint.size() * repeat_number;
+		for (int i = 0, ie = (int)data.blueprint.size(); i < ie; i++){
+			if (data.blueprint[i].sstype != ".") { // first find the segments to be remodeled
+				LineObject LO = data.blueprint[i];
+				//update indeces
+				LO.index = LO.index + (int)data.blueprint.size();
+				LO.original_index = LO.original_index + (int)data.blueprint.size();
+				temp.push_back(LO);
+			}
+			else if (data.blueprint[i].sstype == "."){ // parts to be copied
+				//not needed here
+			}
+			else {
+				std::cout << "assignment error" << std::endl;
+			}
+		}
+	}
+
+	//save the first non-rebuilt position for potentially rooting a tree.
+	safe_root_ = temp_for_copy.front().index;
+
+
 	//break up temp into small segments
 	protocols::forge::remodel::Segment segment;
 	for (int i = 0, ie = (int)temp.size()-1;  i < ie ; i++) { // compare the (i)-th and (i+1)-th element to find contiguous segments
@@ -357,23 +382,66 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	for (int i = 0, ie = (int)segmentStorageVector.size(); i < ie ; i++){
 		this->begin.push_back(segmentStorageVector[i].residues.front());
 		this->end.push_back(segmentStorageVector[i].residues.back());
-		core::Size head = data.blueprint[segmentStorageVector[i].residues.front()-1].original_index;
-		core::Size tail = data.blueprint[segmentStorageVector[i].residues.back()-1].original_index;
-		core::Size headNew = data.blueprint[segmentStorageVector[i].residues.front()-1].index;
-		core::Size tailNew = data.blueprint[segmentStorageVector[i].residues.back()-1].index;
-		int gap = segmentStorageVector[i].residues.back()-segmentStorageVector[i].residues.front()+1;
+
+		core::Size idFront = segmentStorageVector[i].residues.front();
+		core::Size idBack = segmentStorageVector[i].residues.back();
+		core::Size seg_size = (int)data.blueprint.size();
+		core::Size rep_number = option[ OptionKeys::remodel::repeat_structure];
+		std::string DSSP = data.dssp_updated_ss;
+
+		core::Size head, tail, headNew, tailNew;
+
+		if (option[ OptionKeys::remodel::repeat_structure].user() && input_pose.total_residue() == seg_size * rep_number){ //repeat and the blueprint do not match input pdb
+			//duplicate length of dssp and aastring
+			DSSP += DSSP;
+			aa += aa;
+
+			if (idFront > seg_size && idBack > seg_size){ //ignore this type of assigment in repeat structures
+			continue;
+			/*
+				if (idBack == 2*seg_size){ // can't hit the final residue in repeat unit pose
+					idBack = idBack-1;
+				}
+				head = data.blueprint[ idFront-seg_size-1 ].original_index + seg_size;
+				tail = data.blueprint[ idBack-seg_size-1 ].original_index + seg_size;
+				headNew = data.blueprint[ idFront-seg_size-1 ].index + seg_size;
+				tailNew = data.blueprint[ idBack-seg_size-1 ].index + seg_size;
+				*/
+			}
+			else if (idFront <= seg_size && idBack > seg_size){ //spanning across repeat, adjust the tail
+				if (idBack == 2*seg_size){ // can't hit the final residue in repeat unit pose
+					idBack = idBack-1;
+				}
+				head = data.blueprint[ idFront-1 ].original_index;
+				tail = data.blueprint[ idBack-seg_size-1 ].original_index + seg_size;
+				headNew = data.blueprint[ idFront-1 ].index;
+				tailNew = data.blueprint[ idBack-seg_size-1 ].index + seg_size;
+			} else { //normal build in the first segment
+				head = data.blueprint[ idFront-1 ].original_index;
+				tail = data.blueprint[ idBack-1 ].original_index;
+				headNew = data.blueprint[ idFront-1 ].index;
+				tailNew = data.blueprint[ idBack-1 ].index;
+			}
+		} else {
+			head = data.blueprint[ idFront-1 ].original_index;
+			tail = data.blueprint[ idBack-1 ].original_index;
+			headNew = data.blueprint[ idFront-1 ].index;
+			tailNew = data.blueprint[ idBack-1 ].index;
+		}
+
+		int gap = idBack - idFront +1;
 
 		//debug
 		//TR << "dssp size: " << data.dssp_updated_ss.size() << std::endl;
-		TR << "head " << head << ":" << headNew << " tail " << tail << ":" << tailNew << " gap " << gap <<  " ss " << data.dssp_updated_ss.size() << " " << data.dssp_updated_ss.substr( headNew-1, gap ) << std::endl; // head -1 because dssp_updated_ss is 0 based std::string
+		TR << "head " << head << ":" << headNew << " tail " << tail << ":" << tailNew << " gap " << gap <<  " ss " << DSSP.size() << " " << DSSP.substr( headNew-1, gap ) << std::endl; // head -1 because dssp_updated_ss is 0 based std::string
 
 		this->loops.add_loop(segmentStorageVector[i].residues.front(), segmentStorageVector[i].residues.back(), segmentStorageVector[i].residues.front()+1, 0, 0);
 
 	  // process regions containing insertion
 		if ( headNew <= insertStartIndex && tailNew >= insertEndIndex && ((insertEndIndex-insertStartIndex) != 0)){
 			TR << "segment contain insertion, skip normal SegmentRebuild instructions, use SegmentInsert instructions instead" << std::endl;
-		String beforeInsert = data.dssp_updated_ss.substr(headNew-1, insertStartIndex-head+1);
-		String afterInsert = data.dssp_updated_ss.substr(insertEndIndex+1, tailNew-insertEndIndex-1);
+		String beforeInsert = DSSP.substr(headNew-1, insertStartIndex-head+1);
+		String afterInsert = DSSP.substr(insertEndIndex+1, tailNew-insertEndIndex-1);
 		TR << "DEBUG beforeInsert: " << beforeInsert << std::endl;
 		TR << "DEBUG afterInsert: " << afterInsert << std::endl;
 		String blank;
@@ -396,21 +464,18 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 
 		if (head == 0 && segmentStorageVector[i].residues.front() == 1 ){ // N-term extension
 			TR << "debug: N-term ext" << std::endl;
-			this->manager.add( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) );
+			this->manager.add( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) );
 		}
 		else if (tail ==0 && segmentStorageVector[i].residues.back() == model_length){
 		  TR << "debug: C-term ext" << std::endl;
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
-			this->manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), data.dssp_updated_ss.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) );
+			this->manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) );
 		}
 		else {
 			TR << "debug: normal rebuild" << std::endl;
-			this->manager.add( new SegmentRebuild( Interval(head, tail),  data.dssp_updated_ss.substr( headNew-1, gap ), aa.substr( headNew-1, gap )) );
+			this->manager.add( new SegmentRebuild( Interval(head, tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1, gap )) );
 		}
 	}
-
-
-
 
 /*
 //	ConstantLengthFragSetOP frag9( new ConstantLengthFragSet( 9 ) );
