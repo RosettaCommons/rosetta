@@ -71,7 +71,7 @@
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/simple_moves/GreedyOptMutationMover.hh>
+#include <protocols/design_opt/GreedyOptMutationMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
