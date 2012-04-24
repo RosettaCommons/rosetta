@@ -307,7 +307,7 @@ sources = {
 	],
 	"pilot/javierbq" : [
 		"fragment_sequence_quality",
-		"matdes_design",
+		#"matdes_design",
 	],
 
 	"pilot/jd2" : [
