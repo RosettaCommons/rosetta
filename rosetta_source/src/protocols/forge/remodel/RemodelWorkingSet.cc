@@ -190,6 +190,12 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 		std::cout << "length change found" << std::endl;
 	}
 
+	//this is needed for manipulating denovo cases, as they are coded as Cterm
+	//extensions.  Affects SegmentRebuld selections.
+	if (option[ OptionKeys::remodel::repeat_structure].user() && CtermExt){
+		model_length = model_length * 2;
+	}
+
 
 // find all the indices.
 	//identify truncation
@@ -257,7 +263,11 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	}
 
 	//save the first non-rebuilt position for potentially rooting a tree.
-	safe_root_ = temp_for_copy.front().index;
+	if ( !temp_for_copy.empty() ){
+		safe_root_ = temp_for_copy.front().index;
+	}else {
+		safe_root_ = 1;
+		}
 
 
 	//break up temp into small segments
