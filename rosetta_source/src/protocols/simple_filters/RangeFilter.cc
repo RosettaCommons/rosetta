@@ -66,7 +66,7 @@ RangeFilter::report( std::ostream & out, Pose const & pose ) const
 // @brief returns true if the given pose passes the filter, false otherwise.
 bool RangeFilter::apply( Pose const & pose ) const
 {
-	Real value = filter_->apply( pose );
+	Real value = filter_->report_sm( pose );
 	if( value > lower_bound_ && value < upper_bound_ ){
 		tr << "Successfully filtered: " << value << " in range " << lower_bound_ << " - " << upper_bound_ << std::endl;
 		return true;
