@@ -1310,7 +1310,7 @@ void RemodelLoopMover::loophash_stage(
 		assert( !frag_movers.empty() );
 
 		// parameters
-		Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
+		//Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
 		//currently looping over all the hashed loops
 		//Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
 

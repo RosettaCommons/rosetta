@@ -43,7 +43,7 @@ public:
 	{
 		if (index <= links_.size())
 		return links_[index];
-
+		return 0;	
 	}
 
 	void

@@ -239,7 +239,6 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	}
 
 	if (option[ OptionKeys::remodel::repeat_structure].user()){ // repeat structure loop over a second time; merge sections and update index
-		core::Size repeat_number = option[OptionKeys::remodel::repeat_structure];
 		for (int i = 0, ie = (int)data.blueprint.size(); i < ie; i++){
 			if (data.blueprint[i].sstype != ".") { // first find the segments to be remodeled
 				LineObject LO = data.blueprint[i];
