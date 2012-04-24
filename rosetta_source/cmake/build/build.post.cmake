@@ -1,5 +1,5 @@
 INCLUDE(../build/libraries.cmake)
-INCLUDE(../build/external.${LINK_RULES}.cmake)
+INCLUDE(../build/external.cmake)
 
 ## Library definitions
 #SET( LAST_LIBRARY "empty" )
