@@ -11,6 +11,7 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/option_macros.hh>
 // AUTO-REMOVED #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 //#include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -42,6 +43,7 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
+#include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 
@@ -89,6 +91,19 @@
 using core::Size;
 using core::Real;
 using ObjexxFCL::string_of;
+
+
+OPT_1GRP_KEY( Real , gendsf, rms_cutoff )
+
+void register_options() {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		NEW_OPT( gendsf::rms_cutoff, "rms rudundency cutoff", 2.0 );
+}
+
+
+
+
 
 Real norm_degrees(Real x) {
 	if(x < 0.0) return x+360.0;
@@ -287,14 +302,40 @@ bool clash_check_bb(core::pose::Pose & pose, Size icys, Size N, Size Nsub) {
 	return true;
 }
 
-void gendsf(core::pose::Pose const & in_pose, Size N) {
+Real repack(core::pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, Size icys, Size N) {
+	core::conformation::ResidueOP old1 = pose.residue(0*N+icys).clone();
+	core::conformation::ResidueOP old2 = pose.residue(3*N+icys).clone();
+	// core::pose::replace_pose_residue_copying_existing_coordinates(pose,0*N+icys,pose.residue(1).residue_type_set().name_map("CYD"));
+	// core::pose::replace_pose_residue_copying_existing_coordinates(pose,3*N+icys,pose.residue(1).residue_type_set().name_map("CYD"));
+	pose.conformation().detect_disulfides();
+	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(pose);
+	task->restrict_to_repacking();
+	task->or_include_current(true);
+	core::pack::pack_rotamers(pose,sfxn,task);
+	Real s = sfxn(pose);
+	pose.replace_residue(0*N+icys,*old1,false);
+	pose.replace_residue(3*N+icys,*old2,false);
+	return s;
+}
+
+struct HIT {
+	Pose pose;
+	Real ddg;
+	string fn;
+	HIT(Pose const & _pose, Real _ddg, string _fn) : pose(_pose), ddg(_ddg), fn(_fn) {}
+};
+
+void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size N) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	core::pose::Pose pose(in_pose);
+	core::scoring::ScoreFunctionOP score12 = core::scoring::ScoreFunctionFactory::create_score_function("standard");
 	core::scoring::ScoreFunction sf;
 	Size icys = 1;
 	for(icys = 1; icys < N; ++icys){
 		if(pose.residue(icys).aa() == core::chemical::aa_cys) break;
 	}
-	std::cerr << icys << std::endl;
+	Real score_ref = repack(pose,*score12,icys,N);
 	if( pose.residue(icys).xyz("SG").distance(pose.residue(3*N+icys).xyz("SG")) > 2.2 ) {
 		utility_exit_with_message("BAD DISULFIDE!!!");
 	}
@@ -313,7 +354,11 @@ void gendsf(core::pose::Pose const & in_pose, Size N) {
 	cys.set_chi(1,1,start_chi1);
 	cys.set_chi(2,1,start_chi2);	
 	pose.replace_residue(0*N+icys,cys.residue(1),true);
+	pose.replace_residue(1*N+icys,cys.residue(1),true);
+	pose.replace_residue(2*N+icys,cys.residue(1),true);
 	pose.replace_residue(3*N+icys,cys.residue(1),true);
+	pose.replace_residue(4*N+icys,cys.residue(1),true);
+	pose.replace_residue(5*N+icys,cys.residue(1),true);
 
 	core::pose::Pose small;
 	Size smallsize = 1;
@@ -346,69 +391,83 @@ void gendsf(core::pose::Pose const & in_pose, Size N) {
 		} else med.append_residue_by_bond(pose.residue(3*N+ir));
 	}
 
-	vector1<Pose> alts;
+	vector1<HIT> alts;
 	vector1<vector1<Real> > chis = get_chis(pose,icys);
-	for(Size idsf = 0; idsf < 6; ++idsf) {
-		Real chiss = 90.0;
-		if( idsf == 1 ) chiss =   80.0;
-		if( idsf == 2 ) chiss =  100.0;
-		if( idsf == 3 ) chiss =  -90.0;
-		if( idsf == 4 ) chiss =  -80.0;
-		if( idsf == 5 ) chiss = -100.0;
-		for(Size irot = 1; irot <= chis.size(); ++irot){
-			Real chi1i = chis[irot][1];
-			Real chi2i = chis[irot][2];	
-			Real chi1j = chis[irot][3];
-			Real chi2j = chis[irot][4];
+	for(Size irot = 1; irot <= chis.size(); ++irot){
+		Real chi1i = chis[irot][1];
+		Real chi2i = chis[irot][2];	
+		Real chi1j = chis[irot][3];
+		Real chi2j = chis[irot][4];
+		if(irot%100==0) std::cout << "porgress " << 6*irot << " of " << 6*chis.size() << std::endl;
+		for(Size idsf = 0; idsf < 6; ++idsf) {
+			Real chiss = 90.0;
+			if( idsf == 1 ) chiss =   80.0;
+			if( idsf == 2 ) chiss =  100.0;
+			if( idsf == 3 ) chiss =  -90.0;
+			if( idsf == 4 ) chiss =  -80.0;
+			if( idsf == 5 ) chiss = -100.0;
+
+			string fn = "alt_disulf_"+string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb";
 			// std::cout << "check " << string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j) << std::endl;
 			// check small
 			set_disulf(small,smallicys,nsmall,1,chi1i,chi2i,chiss,chi2j,chi1j);
 			if( !clash_check_bb(small,smallicys,nsmall,1) ) {
-				std::cout << "clash small  " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
+				// std::cout << "clash small  " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
 				continue;					
 			}
 			set_disulf(med,medicys,nmed,1,chi1i,chi2i,chiss,chi2j,chi1j);
 			if( !clash_check_bb(med,medicys,nmed,1) ) {
-				std::cout << "clash medium " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
+				// std::cout << "clash medium " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
 				continue;					
 			}
 			// now full
 			set_disulf(pose,icys,N,3,chi1i,chi2i,chiss,chi2j,chi1j);
 			if( !clash_check_bb(pose,icys,N,3) ) {
-				std::cout << "clash " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
+				// std::cout << "clash full   " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
 				continue;					
 			}
-			if( core::scoring::CA_rmsd(in_pose,pose) < 2.0 ) {
-				std::cout << "same " << " " << string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb";
+			if( core::scoring::CA_rmsd(in_pose,pose) < option[gendsf::rms_cutoff]() ) {
+				// std::cout << "same " << " " << string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb";
 				// pose.dump_pdb("same_"+string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb");
+				continue;
 			}
-			std::cout << "alt_disulfide rms " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
+			Real ddg = repack(pose,*score12,icys,N) - score_ref;
+			if(ddg > 100.0) continue;
 			bool seenit = false;
 			for(Size ip = 1; ip <= alts.size(); ++ip) {
-				if( core::scoring::CA_rmsd(pose,alts[ip]) < 2.0 ) seenit = true;
+				if( core::scoring::CA_rmsd(pose,alts[ip].pose) < option[gendsf::rms_cutoff]() ) {
+					if( alts[ip].ddg > ddg ) {
+						// std::cout << "alt_disulfide ddG " << ddg << " " << fn << std::endl;
+						alts[ip] = HIT(pose,ddg,fn); // if lower ddg, replace it
+					}
+					seenit = true;
+				}
 			}
 			if(!seenit) {
-				alts.push_back(pose);
-				pose.dump_pdb("alt_disulf_"+string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb");
+				alts.push_back(HIT(pose,ddg,fn));
 			}
 			// utility_exit_with_message("arst");
 		}
+	}
+	for(Size ihit = 1; ihit <= alts.size(); ++ihit) {		
+		std::cout << "alt_disulfide ddG " << alts[ihit].ddg << " " << alts[ihit].fn << std::endl;
+		alts[ihit].pose.dump_pdb(option[out::file::o]+"/"+alts[ihit].fn);
 	}
 }
 
 
 int main (int argc, char *argv[]) {
-  devel::init(argc,argv);
-  using namespace basic::options::OptionKeys;
-  for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
-    string fn = option[in::file::s]()[ifn];
-    Pose pnat;
-    core::import_pose::pose_from_pdb(pnat,fn);
-    Size N = get_N(pnat);
-    std::cerr << N << std::endl;
-    Pose tri2 = make_two_trimers(pnat,N);
-    gendsf(tri2,N);
-  }
+	register_options();
+	devel::init(argc,argv);
+	using namespace basic::options::OptionKeys;
+	for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
+		string fn = option[in::file::s]()[ifn];
+		Pose pnat;
+		core::import_pose::pose_from_pdb(pnat,fn);
+		Size N = get_N(pnat);
+		Pose tri2 = make_two_trimers(pnat,N);
+		generate_disulfide_conformations(tri2,N);
+	}
 }
 
 
