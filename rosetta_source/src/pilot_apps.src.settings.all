@@ -150,12 +150,12 @@ sources = {
 	"pilot/jstev" : [
 		#"collect_features",
  	],
- 	"pilot/biokhar" : [
+ 	#"pilot/biokhar" : [
 		#"karen_compare_different_proteins",
 		#"karen_pocket_compare",
 		#"karen_pocket_save",
                 #"karen_compare_pocket_rmsd",
- 	],
+ 	#],
  	"pilot/ragul" : [
                # "ragul_fingerprint_test",
                 #"ragul_minimize",
@@ -305,6 +305,11 @@ sources = {
 		#"score_silent_cst",
 		#"constraints_viewer",
 	],
+	"pilot/javierbq" : [
+		"fragment_sequence_quality",
+		"matdes_design",
+	],
+
 	"pilot/jd2" : [
 		"jd2test", # /* Steven Lewis, src/apps/pilot/jd2/jd2test.readme, test/integration/tests/jd2test/ */
 		#"jd2memtest",
@@ -367,10 +372,17 @@ sources = {
                 "r_tempered_sidechains",
 	],
 	"pilot/neil" : [
-		"matdes_dock",
-		"matdes_design",
-		"matdes_mutalyze",
-    ],
+		#"enumeration_test",
+		"design_symm",
+		#"char_native",
+		#"design_symm_no_hack_elec",
+		#"symdock_enum_3_1",
+		#"symdock_enum",
+		#"des_pos_ddG",
+		#"matdes_dock",
+		#"matdes_design",
+		#"coiled_coil_search",
+	],
 	"pilot/nikolas" : [
 		#"r_segment_rdc",
 		#"r_SymDock_viewer",
@@ -582,10 +594,10 @@ sources = {
 
 	"pilot/nobuyasu" : [
 		#"flxbb", # /* Nobuyasu,Documentation Location,Demo Location */
-		#"foldptn", # /* Nobuyasu,Documentation Location,Demo Location */
+		"foldptn", # /* Nobuyasu,Documentation Location,Demo Location */
 		#"local_rmsd", # /* Nobuyasu,Documentation Location,Demo Location */
 		#"ncontact", # /* Nobuyasu,Documentation Location,Demo Location */
-		#"make_blueprint", # /* Nobuyasu,Documentation Location,Demo Location */
+		"make_blueprint", # /* Nobuyasu,Documentation Location,Demo Location */
 	],
 	"pilot/aroop" : [
 		#"antibody_mode", # /* Aroop,Documentation Location,Demo Location */

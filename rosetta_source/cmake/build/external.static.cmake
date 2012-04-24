@@ -11,7 +11,7 @@ set(CPPDB_SOVERSION 0)
 include_directories(../../external/dbio)
 include_directories(../../external)
 
-option(DISABLE_SQLITE	"Link sqlite3 backend into the libcppdb" ON)
+option(DISABLE_SQLITE	"Link sqlite3 backend into the libcppdb" OFF)
 
 add_definitions(-DCPPDB_EXPORTS)
 add_definitions(-DCPPDB_LIBRARY_PREFIX="${CMAKE_SHARED_LIBRARY_PREFIX}")

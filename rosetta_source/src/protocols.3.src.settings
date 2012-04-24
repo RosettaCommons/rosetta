@@ -219,6 +219,7 @@ sources = {
 		"PoolEvaluatorCreator",
 		"PredictedBurialEvaluator",
 		"PredictedBurialFnEvaluatorCreator",
+		"RangeFilter",
 		"RDC_Evaluator",
 		"RdcEvaluatorCreator",
 		"RdcSelectEvaluatorCreator",

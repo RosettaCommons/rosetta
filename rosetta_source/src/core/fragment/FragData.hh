@@ -99,6 +99,14 @@ public:
 		return data_[ pos ] -> sequence();
 	}
 
+	std::string secstruct() const {
+		std::string str;
+		for (Size pos=1; pos<=size(); pos++ ) {
+			str.push_back( secstruct( pos) );
+		};
+		return str;
+	};
+
 	std::string sequence() const {
 		std::string str;
 		for (Size pos=1; pos<=size(); pos++ ) {

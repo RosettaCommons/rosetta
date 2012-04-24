@@ -81,6 +81,7 @@ static FilterRegistrator< protocols::simple_filters::InterfaceSasaFilterCreator 
 static FilterRegistrator< protocols::simple_filters::InterfaceBindingEnergyDensityFilterCreator > reg_InterfaceBindingEnergyDensityFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NeighborTypeFilterCreator > reg_NeighborTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::PackStatFilterCreator > reg_PackStatFilterCreator;
+static FilterRegistrator< protocols::simple_filters::RangeFilterCreator > reg_RangeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueBurialFilterCreator > reg_ResidueBurialFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueDistanceFilterCreator > reg_ResidueDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResiduesInInterfaceFilterCreator > reg_ResiduesInInterfaceFilterCreator;

@@ -1,9 +1,5 @@
 INCLUDE(../build/libraries.cmake)
-IF( ${LINK_RULES} STREQUAL "static" )
-  INCLUDE(../build/external.static.cmake)
-ELSE()
-  INCLUDE(../build/external.cmake)
-ENDIF()
+INCLUDE(../build/external.${LINK_RULES}.cmake)
 
 ## Library definitions
 #SET( LAST_LIBRARY "empty" )

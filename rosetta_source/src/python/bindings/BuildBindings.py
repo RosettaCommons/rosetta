@@ -1555,8 +1555,8 @@ def buildModule_All(path, dest, include_paths, libpaths, runtime_libpaths, gccxm
         #exclude.finalize_old(fname, path, mb)  # remove init for some reasons.
         print 'Module name="%s"' % dname
 
-        if Platform == 'linux' and PlatformBits == '32': add_option = '-malign-double'
-        else: add_option = ''
+        if Platform == 'linux':
+            add_option = '-malign-double' if PlatformBits == '32' else '-fPIC'
 
         execute("Compiling...", # -fPIC
             "gcc %(fname)s -o %(obj_name)s -c \

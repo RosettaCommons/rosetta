@@ -8,9 +8,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   apps/pilot/r_frag_quality.cc
-/// @brief  check quality of fragments against input structure
-/// @author Oliver Lange
+/// @file   
+/// @brief  
+/// @author 
 
 #include <core/conformation/Conformation.hh>
 
@@ -18,9 +18,9 @@
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FragID_Iterator.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/OrderedFragSet.hh>
+#include <core/fragment/FragData.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
@@ -101,7 +101,6 @@ OPT_KEY( File, filter )
 OPT_KEY( File, write )
 OPT_KEY( Boolean, intrinsic )
 OPT_KEY( File, write_big_cluster)
-//OPT_KEY( File, custer_check )
 OPT_KEY( Integer, min_chop_in_quality_check )
 OPT_KEY( File, fill_frags)
 OPT_KEY( Integer, cluster_size)
@@ -151,17 +150,18 @@ int main( int argc, char** argv ) {
     FragSetOP orig_frags;
     orig_frags = FragmentIO().read_data( option[ f ]() );
     Size max_pdb( 0 );
-    typedef boost::tuple<Real, std::string, Size, std::string> FragRMSDAndSequence;
+    typedef boost::tuple<Real, std::string, Size, std::string, std::string, char, Size> FragRMSDAndSequence;
     for ( FrameIterator frame = orig_frags->begin(), eframe=orig_frags->end(); frame != eframe; ++frame ) {
         assert( frame->length() == 9);
-        out << "start: " << LJ(5,frame->start())  << "end: " << LJ(5,frame->end())<< std::endl; 
+        out << "\nstart: " << LJ(5,frame->start())  << "end: " << LJ(5,frame->end())<< std::endl; 
+				out << RJ(16,"rmsd") << RJ(5,"sequence") <<RJ(15,"secstruct") <<RJ(15,"pdb") <<RJ(8,"chain")<< RJ(6,"start")<< std::endl;
         std::set<FragRMSDAndSequence> data;
         for ( Size i=1; i<=frame->nr_frags(); i++ ) {
             frame->apply( i, test_pose );
-            data.insert(boost::make_tuple(scoring::CA_rmsd( native, test_pose, frame->start(), frame->end()),frame->fragment_ptr(i)->sequence(),i, frame->fragment_ptr(i)->secstruct()));
+            data.insert(boost::make_tuple(scoring::CA_rmsd( native, test_pose, frame->start(), frame->end()),frame->fragment_ptr(i)->sequence(),i,frame->fragment_ptr(i)->secstruct(), frame->fragment_ptr(i)->pdbid(),frame->fragment_ptr(i)->chain(), frame->fragment_ptr(i)->pdbpos()  ));
         }
 				for(std::set<FragRMSDAndSequence>::iterator fd = data.begin(); fd!=data.end(); fd++){
-						out << RJ(16,boost::get<0>(*fd)) << RJ(5,boost::get<2>(*fd)) <<RJ(15,boost::get<1>(*fd)) <<RJ(15,boost::get<3>(*fd))<<< std::endl;
+						out << RJ(16,boost::get<0>(*fd)) << RJ(5,boost::get<2>(*fd)) <<RJ(15,boost::get<1>(*fd)) <<RJ(15,boost::get<3>(*fd)) <<RJ(8,boost::get<4>(*fd))<< RJ(6,boost::get<5>(*fd))<< std::endl;
 				}
     }
 }
