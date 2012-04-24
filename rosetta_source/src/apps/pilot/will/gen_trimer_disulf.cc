@@ -363,33 +363,37 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size N) 
 	core::pose::Pose small;
 	Size smallsize = 1;
 	Size nsmall = 0, smallicys;
-	for(Size ir = max(1ul,icys-smallsize); ir <= min(N,icys+smallsize); ++ir) {
+	Size smst = (Size)max(1,(int)icys-(int)smallsize);
+	for(Size ir = smst; ir <= min(N,icys+smallsize); ++ir) {
 		nsmall++;
 		if(ir==icys) smallicys = nsmall;
-		if(ir==max(1ul,icys-smallsize) || pose.residue(ir).is_lower_terminus()||pose.residue(ir).is_ligand()) {
+		if(ir==smst || pose.residue(ir).is_lower_terminus()||pose.residue(ir).is_ligand()) {
 			   small.append_residue_by_jump(pose.residue(ir),1);
 		} else small.append_residue_by_bond(pose.residue(ir));
 	}
-	for(Size ir = max(1ul,icys-smallsize); ir <= min(N,icys+smallsize); ++ir) {
-		if(ir==max(1ul,icys-smallsize) || pose.residue(ir).is_lower_terminus()||pose.residue(ir).is_ligand()) {
+	for(Size ir = smst; ir <= min(N,icys+smallsize); ++ir) {
+		if(ir==smst || pose.residue(ir).is_lower_terminus()||pose.residue(ir).is_ligand()) {
 			   small.append_residue_by_jump(pose.residue(3*N+ir),1);
 		} else small.append_residue_by_bond(pose.residue(3*N+ir));
 	}
+	assert( nsmall > 1);
 	core::pose::Pose med;
 	Size medsize = 20;
 	Size nmed = 0, medicys;
-	for(Size ir = max(1ul,icys-medsize); ir <= min(N,icys+medsize); ++ir) {
+	Size medst = (Size)max(1,(int)icys-(int)medsize);
+	for(Size ir = medst; ir <= min(N,icys+medsize); ++ir) {
 		nmed++;
 		if(ir==icys) medicys = nmed;
-		if(ir==max(1ul,icys-medsize) || pose.residue(ir).is_lower_terminus()||pose.residue(ir).is_ligand()) {
+		if(ir==medst || pose.residue(ir).is_lower_terminus()||pose.residue(ir).is_ligand()) {
 			   med.append_residue_by_jump(pose.residue(ir),1);
 		} else med.append_residue_by_bond(pose.residue(ir));
 	}
-	for(Size ir = max(1ul,icys-medsize); ir <= min(N,icys+medsize); ++ir) {
-		if(ir==max(1ul,icys-medsize) || pose.residue(ir).is_lower_terminus()||pose.residue(ir).is_ligand()) {
+	for(Size ir = medst; ir <= min(N,icys+medsize); ++ir) {
+		if(ir==medst || pose.residue(ir).is_lower_terminus()||pose.residue(ir).is_ligand()) {
 			   med.append_residue_by_jump(pose.residue(3*N+ir),1);
 		} else med.append_residue_by_bond(pose.residue(3*N+ir));
 	}
+	assert( nmed > 21);
 
 	vector1<HIT> alts;
 	vector1<vector1<Real> > chis = get_chis(pose,icys);
